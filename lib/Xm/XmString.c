@@ -6272,6 +6272,7 @@ ComputeMetrics(XmRendition rend,
 
 		  XTextExtents16(font_struct, str, str_len,
 			     &dir, &asc, &desc, &char_ret);
+                  XFree(str);
 		} else
 	      XTextExtents16(font_struct, 
 			     (XChar2b *)text, Half(byte_count),
