@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <Xm/XmAll.h>
 #include <Xmd/AdjView.h>   
-#include <Xmd/RegEdit.h>   
 #include <Xmd/Help.h>   
 #ifdef SYS_DIR
 #include <sys/dir.h>
@@ -367,8 +366,6 @@ main(int argc, char **argv)
 			      XtNumber(resources),
 			      NULL,
 			      0);
-
-    XmdRegisterEditres(toplevel) ;
 
     mainw = CreateMainWindowWithMenuBar(toplevel, &cont);
     XtManageChild(mainw);

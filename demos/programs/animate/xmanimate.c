@@ -53,7 +53,6 @@
 #include <Xm/Xm.h>          /* Motif Toolkit */
 #include <Xm/Scale.h>
 #include <Mrm/MrmPublic.h>   /* Mrm */
-#include <Xmd/RegEdit.h>   
 #include <Xmd/Help.h>   
 #include <stdlib.h>
 
@@ -146,9 +145,6 @@ int main(argc, argv)
 				 NULL , 0, &argc, argv, fallbacks, 
                                  sessionShellWidgetClass, 
                                  NULL);
-
-    /**  Plug in Editres protocol  */
-    XmdRegisterEditres(toplevel);
 
     /*
      *  Parsing of the remaining animation options

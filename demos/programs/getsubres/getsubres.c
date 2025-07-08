@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <Xm/XmAll.h>
 #include <Xmd/Help.h>   
-#include <Xmd/RegEdit.h>   
 
 /* This is no your ordinary demo, it displays widget class info and
    needs a couple of P.h file usually reserved for widget writers */

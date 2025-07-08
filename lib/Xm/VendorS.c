@@ -66,8 +66,11 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 #include "TraversalI.h"
 #include "XmImI.h"
 #include "VendorSI.h"
-#include "EditresComI.h"
 #include "XmI.h"
+
+#if HAVE_LIBXMU
+#include <X11/Xmu/Editres.h>
+#endif
 
 #ifndef NO_MESSAGE_CATALOG
 #if !defined(NL_CAT_LOCALE)
@@ -1888,7 +1891,7 @@ Initialize(
 	 xmDisplay->display.shellCount += 1;
 
 #ifdef HAVE_LIBXMU
-	XtAddEventHandler(new_w, (EventMask)0, True, (XtEventHandler)_XmEditResCheckMessages, NULL);
+	XtAddEventHandler(new_w, (EventMask)0, True, (XtEventHandler)_XEditResCheckMessages, NULL);
 #endif
 
     }
