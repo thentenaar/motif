@@ -27,7 +27,6 @@
  */
 #include <stdio.h>
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>
 
 void   CreateNotebook(Widget);
 extern void CreateMenus(Widget);
@@ -50,7 +49,6 @@ main(int    argc,
                                 NULL,
                                 sessionShellWidgetClass, 
                                 NULL);
-   XmdRegisterEditres(top_level);
    main_window = XtVaCreateManagedWidget("main_window", 
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);

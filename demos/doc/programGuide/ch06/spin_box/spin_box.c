@@ -29,7 +29,6 @@
 #include <stdlib.h>
 /* #include <X11/Xos.h>  */
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>
 
 #define NUM_MONTHS	12
 #define NUM_LETTERS	10
@@ -110,7 +109,6 @@ main (int argc, char **argv)
                                 NULL, 0, &argc, argv, 
                                 fallbacks, sessionShellWidgetClass,
                                 NULL);
-   XmdRegisterEditres(top_level);
    main_window = XtVaCreateManagedWidget("main_window", 
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);

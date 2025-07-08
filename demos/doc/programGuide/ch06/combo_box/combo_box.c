@@ -27,7 +27,6 @@
  */
 #include <stdio.h>
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>
 
 void   CreateComboBox(Widget);
 extern void CreateMenus(Widget);
@@ -57,7 +56,6 @@ main(int    argc,
                                 fallbacks,
                                 sessionShellWidgetClass, 
                                 NULL);
-   XmdRegisterEditres(top_level);
    main_window = XtVaCreateManagedWidget("main_window", 
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);

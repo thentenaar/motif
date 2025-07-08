@@ -52,7 +52,6 @@
 #include <stdio.h>
 #include <Xm/Xm.h>          /* Motif Toolkit */
 #include <Mrm/MrmPublic.h>   /* Mrm */
-#include <Xmd/RegEdit.h>   
 #include <Xmd/Help.h>   
 
 static MrmHierarchy	s_MrmHierarchy;	   /* MRM database hierarch id */
@@ -144,9 +143,6 @@ int main(argc, argv)
 				 NULL , 0, &argc, argv, fallbacks, 
                                  sessionShellWidgetClass, 
                                  NULL);
-
-    /**  Plug in Editres protocol  */
-    XmdRegisterEditres(toplevel);
 
     /*
      *  Parsing of the remaining animation options

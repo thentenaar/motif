@@ -28,7 +28,6 @@
 
 #include <stdlib.h> 
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>   
 #include <Xmd/AdjView.h>   
 #include <Xmd/Help.h>   
 /* need these semi public header during the construction of the
@@ -179,9 +178,6 @@ int main(int argc, char *argv[])
     XtSetLanguageProc(NULL, NULL, NULL);
     toplevel = XtVaAppInitialize(&app_context, APP_CLASS, NULL, 0,
 			       &argc, argv, fallbacks, NULL);
-
-    /**  Plug in Editres protocol  */
-    XmdRegisterEditres(toplevel);
 
     /*** create utility widgets */
     mainw = CreateMainWindowWithMenuBar(toplevel);

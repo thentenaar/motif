@@ -27,7 +27,6 @@
  */
 #include <stdio.h>
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>
 
 void        CreateScale(Widget);
 extern void CreateMenus(Widget);
@@ -56,7 +55,6 @@ main(int    argc,
                                 NULL, 0, &argc, argv, 
                                 fallbacks,sessionShellWidgetClass, 
                                 NULL);
-   XmdRegisterEditres(top_level);
    main_window = XtVaCreateManagedWidget("main_window", 
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);

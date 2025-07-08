@@ -38,7 +38,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <Xm/XmAll.h>
-#include <Xmd/RegEdit.h>   
 #include <Xmd/Help.h>   
 #include <X11/IntrinsicP.h>
 
@@ -165,9 +164,6 @@ main(int argc, char	*argv[])
 
     toplevel = XtAppInitialize(&app_context, APP_CLASS, NULL, 0,
 			       &argc, argv, fallback_resources, NULL, 0);
-
-    /**  Plug in Editres protocol  */
-    XmdRegisterEditres(toplevel);
 
     XtGetApplicationResources(toplevel, (XtPointer)&app_data,
 			      app_resources, XtNumber(app_resources),

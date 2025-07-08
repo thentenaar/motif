@@ -43,12 +43,6 @@ EXTRA_SRCS = XmExtUtil.c \
 SLIDE_HDRS = SlideC.h SlideCP.h
 SLIDE_SRCS = SlideC.c
 
-if OM_XMU
-EDITRES_SRCS = EditresCom.c
-else
-EDITRES_SRCS =
-endif
-
 if OM_LIBJPEG
 JPEG_SRCS = Jpeg.c
 JPEG_HDRS = JpegI.h
@@ -164,7 +158,6 @@ XmStringI.h \
 XmTabListI.h \
 XmosI.h \
 XpmI.h \
-EditresComI.h \
 $(JPEG_HDRS) \
 $(PNG_HDRS) \
 $(TIP_HDRS)
@@ -273,7 +266,7 @@ NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
         SSpinB.c       TxtPropCv.c    XmStringSeg.c   TranslNew.c
 
 libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(XPM_SRCS) $(NEW_WID_SRCS) $(SLIDE_SRCS) \
-        $(TIP_SRCS) $(EDITRES_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
+        $(TIP_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
 
 EXTRA_libXm_la_SOURCES = $(SLIDE_SRCS) $(TIP_SRCS)
 
