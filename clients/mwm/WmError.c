@@ -266,13 +266,12 @@ WmXIOErrorHandler (Display *display)
  *
  *************************************<->***********************************/
 
-void
+_X_NORETURN void
 WmXtErrorHandler (char *message)
 {
 
     Warning (message);
     ExitWM (WM_ERROR_EXIT_VALUE);
-
 } /* END OF FUNCTION WmXtErrorHandler */
 
 

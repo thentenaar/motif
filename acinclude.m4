@@ -18,6 +18,7 @@ LIBS="$X_LIBS -lXt $X_PRE_LIBS -lX11 $X_EXTRA_LIBS $LIBS"
 CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 AC_TRY_RUN([
+#include <stdlib.h>
 #include <X11/Intrinsic.h>
 int main() {
 Boolean brc;
@@ -50,6 +51,7 @@ dnl This test is not very reliable probably ...
 AC_DEFUN([AM_FUNC_VOID_SPRINTF],
 [AC_CACHE_CHECK(whether sprintf returns void, ac_cv_func_void_sprintf,
 [AC_TRY_RUN([#include <stdio.h>
+#include <stdlib.h>
 int sprintf(); main() { exit(sprintf(".")); }],
   ac_cv_func_void_sprintf=no, ac_cv_func_void_sprintf=yes, ac_cv_func_void_sprintf=yes)])
 if test $ac_cv_func_void_sprintf = no; then

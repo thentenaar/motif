@@ -8,5 +8,5 @@ bin_PROGRAMS = todo
 todo_SOURCES = todo.c io.c actions.c page.h
 data_DATA = $(EXTRA_DIST) $(todo_SOURCES)
 
-INCLUDES = -I$(srcdir)/../../../lib -I$(srcdir)/../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
-LDADD = -L../../lib/Xmd -lXmd -L../../lib/Exm -lExm ../../../lib/Xm/libXm.la 
+INCLUDES = -I$(srcdir)/../../../lib -I$(srcdir)/../../lib -I$(top_builddir)/lib ${X_CFLAGS}
+LDADD = ../../lib/Xmd/libXmd.la -L../../lib/Exm -lExm ../../../lib/Xm/libXm.la

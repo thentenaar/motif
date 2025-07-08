@@ -17,7 +17,7 @@ data_DATA = dog.uid plane.uid superman.uid xmanimate.uid $(xmanimate_SOURCES) \
 
 bin_PROGRAMS = xmanimate
 
-LDADD = ../../lib/Xmd/libXmd.a ../../../lib/Mrm/libMrm.la ../../../lib/Xm/libXm.la
+LDADD = ../../lib/Xmd/libXmd.la ../../../lib/Mrm/libMrm.la ../../../lib/Xm/libXm.la
 
 INCLUDES = -I$(srcdir)/../../../lib \
            -I$(srcdir)/../../lib \

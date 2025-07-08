@@ -602,7 +602,7 @@ typedef struct {
 # endif
 } _Xreaddirparams;
 
-# if defined(AIXV3) || defined(AIXV4) || defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+# if defined(AIXV3) || defined(AIXV4) || defined(HAVE_READDIR_R_3) || defined(_POSIX_THREAD_SAFE_FUNCTIONS)
 /* AIX defines the draft POSIX symbol, but uses the final API. */
 /* POSIX final API, returns (int)0 on success. */
 #  if defined(__osf__)

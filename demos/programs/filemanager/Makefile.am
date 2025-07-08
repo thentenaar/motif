@@ -11,7 +11,7 @@ EXTRA_DIST = filemanager.man filemanager.help XmdFilemanager.ad \
            obj.xpm pix.xpm s_dir.xpm s_exec.xpm s_file.xpm \
            s_none.xpm s_pix.xpm
 data_DATA = $(EXTRA_DIST) $(filemanager_SOURCES)
-LDADD = ../../lib/Xmd/libXmd.a ../../../lib/Xm/libXm.la
-INCLUDES = -I$(srcdir)/../../lib -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
+LDADD = ../../lib/Xmd/libXmd.la ../../../lib/Xm/libXm.la
+INCLUDES = -I$(srcdir)/../../lib -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
 
 

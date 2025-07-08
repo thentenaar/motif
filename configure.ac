@@ -163,7 +163,7 @@ fi
 
 if test x$GCC = xyes
 then
-    CFLAGS="$CFLAGS -Wall -g -fno-strict-aliasing -Wno-unused -Wno-comment"
+    CFLAGS="$CFLAGS -Wall -fno-strict-aliasing -Wno-unused -Wno-comment"
     if test ` $CC -dumpversion | sed -e 's/\(^.\).*/\1/'` = "4" ; then
         CFLAGS="$CFLAGS -fno-tree-ter"
     fi
@@ -179,13 +179,13 @@ AC_SUBST(CDE_CONFIGURATION_TOP)
 LIBDIR="${libdir}/X11"
 AC_SUBST(LIBDIR)
 
-MWMRCDIR="${libdir}/X11"
+MWMRCDIR="${sysconfdir}/X11"
 AC_SUBST(MWMRCDIR)
 
 INCDIR="${includedir}/X11"
 AC_SUBST(INCDIR)
 
-XMBINDDIR_FALLBACK="${libdir}/X11/bindings"
+XMBINDDIR_FALLBACK="${datadir}/X11/bindings"
 AC_SUBST(XMBINDDIR_FALLBACK)
 
 RM="rm -f"
@@ -197,22 +197,8 @@ AC_ARG_ENABLE(utf8, [  --disable-utf8
                        Disable UTF-8 support])
 
 case "$host_os" in
-    freebsd*) CFLAGS="$CFLAGS -DCSRG_BASED -DXNO_MTSAFE_API -DXNO_MTSAFE_PWDAPI";
-        LDFLAGS="$LDFLAGS -L/usr/local/lib";;
+    freebsd*) CFLAGS="$CFLAGS -DCSRG_BASED -DXNO_MTSAFE_API -DXNO_MTSAFE_PWDAPI" ;;
     cygwin*) CFLAGS="$CFLAGS -DXNO_MTSAFE_DIRENTDAPI";;
-    solaris* | sunos*) X_LIBS="$X_LIBS -L/usr/X/lib" &&
-        if test x$enable_motif22_compatibility = x
-        then
-            enable_motif22_compatibility="no"
-        fi;
-        if test x$enable_utf8 = x
-        then
-            enable_utf8="no"
-        fi;
-        if test x$enable_xft = x
-        then
-            enable_xft="no"
-        fi;;
 esac
 
 if test x$enable_motif22_compatibility = x
