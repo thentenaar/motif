@@ -23,6 +23,7 @@
 /* 
  * Motif Release 1.2.3
 */ 
+#include <stdlib.h>
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -58,8 +59,10 @@ static char rcsid[] = "$TOG: WmWinList.c /main/8 1997/06/10 15:50:50 samborn $"
 #include "WmWrkspace.h"
 #endif /* WSM */
 #include "WmEvent.h"
+#include "WmICCC.h"
 
-
+/* WmProperty.c */
+void SetMwmClientList (Window propWindow, Window *wmWindowList, unsigned int wmWindowCount);
 
 /*
  * Global Variables:
