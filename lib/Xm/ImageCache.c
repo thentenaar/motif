@@ -745,7 +745,7 @@ GetXpmImage(
 	if (mask_image && useMask) {
 	    char mask_name[255] ;
 	    
-	    _XmOSGenerateMaskName(image_name, mask_name);
+	    _XmOSGenerateMaskName(image_name, mask_name, sizeof mask_name);
 	    /* if an image already exist under that
 	       name, nothing will be done */
 	    _XmInstallImage (mask_image, mask_name, hot_x, hot_y);
@@ -1696,7 +1696,7 @@ XmeGetMask(
     _XmAppLock(app);
     
     _XmProcessLock();
-    _XmOSGenerateMaskName(image_name, mask_name);
+    _XmOSGenerateMaskName(image_name, mask_name, sizeof mask_name);
     _XmProcessUnlock();
 
     ret_val = XmGetPixmapByDepth(screen, mask_name, 1, 0, 1);

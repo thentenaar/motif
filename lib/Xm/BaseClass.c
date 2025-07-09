@@ -558,7 +558,7 @@ ExtTypeToContext(
   static ExtToContextRec extToContextMap[16];
   Cardinal		 i;
   ExtToContext		 curr;
-  XContext		 context = (XContext) NULL;
+  XContext		 context = 0;
   
   _XmProcessLock();
   for (i = 0, curr = &extToContextMap[0];

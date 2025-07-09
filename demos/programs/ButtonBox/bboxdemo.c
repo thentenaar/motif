@@ -15,6 +15,16 @@
 #include <Xm/MenuShell.h>
 #include <Xm/ButtonBox.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 Widget bbox;
 
 void Exit(Widget w, XtPointer client, XtPointer call);
@@ -82,7 +92,7 @@ void Equal(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     Boolean equal;
 
-    if ((int)client == 1) 
+    if ((intptr_t)client == 1) 
         equal = True;
     else
         equal = False;
@@ -90,7 +100,6 @@ void Equal(Widget w, XtPointer client, XtPointer call)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNequalSize, equal); argcnt++;
     XtSetValues(bbox, args, argcnt);
-
 }
 
 /*
@@ -112,7 +121,7 @@ void Width(Widget w, XtPointer client, XtPointer call)
     margin = atoi(val);
 
     argcnt = 0;
-    if ((int)client == 1)
+    if ((intptr_t)client == 1)
     {
         XtSetArg(args[argcnt], XmNmarginHeight, (short) margin); argcnt++;
     }
@@ -137,10 +146,9 @@ void Fill(Widget w, XtPointer client, XtPointer call)
 {
     Arg args[5];
     Cardinal argcnt;
-    int val = (int)client;
 
     argcnt = 0;
-    switch (val) {
+    switch ((intptr_t)client) {
     case 1:
            XtSetArg(args[argcnt], XmNfillOption, XmFillNone); argcnt++;
            XtSetValues(bbox, args, argcnt);
@@ -190,7 +198,7 @@ void Orient(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     unsigned char orient;
 
-    if ((int)client == 1)
+    if ((intptr_t)client == 1)
         orient = XmVERTICAL;
     else
         orient = XmHORIZONTAL;
@@ -198,8 +206,6 @@ void Orient(Widget w, XtPointer client, XtPointer call)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNorientation, orient); argcnt++;
     XtSetValues(bbox, args, argcnt);
-
-
 }
 
 /*
@@ -214,7 +220,7 @@ void Explain(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     XmString xmstring = NULL;
     static Widget info = NULL;
-    int explain = (int) client;
+    intptr_t explain = (intptr_t)client;
 
     if (info == NULL) {
         Widget temp;

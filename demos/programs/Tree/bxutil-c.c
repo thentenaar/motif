@@ -37,6 +37,10 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /*
  * Include stdlib.h and malloc.h if code is C++, ANSI, or Extended ANSI.
  */
@@ -49,6 +53,13 @@
 #  endif
 #endif
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
+#define min(x, y) (((x) < (y)) ? (x) : (y))
 
 /*****************************************************************************
  *       TYPDEFS AND DEFINES
@@ -1342,6 +1353,7 @@ XtPointer CONVERT
     XrmValue		fromVal, toVal;	/* resource holders		*/
     Boolean		convResult;	/* return value			*/
     XtPointer		val;		/* Pointer size return value    */
+    intptr_t            generic;
 
     /*
      * We will assume that the conversion is going to fail and change this
@@ -1403,28 +1415,9 @@ XtPointer CONVERT
     }
     else
     {
-	/*
-	 * Here is the generic conversion return value handler.  This 
-	 * just does some size specific casting so that value that we
-	 * return is in the correct bytes of the XtPointer that we
-	 * return.  Here we check all sizes from 1 to 8 bytes.
-	 */
-	switch(toVal.size)
-	{
-	case 1:
-	    val = (XTPOINTER)(*(char*)toVal.addr);    /* may be here bug */
-	    break;
-	case 2:
-	    val = (XTPOINTER)(*(short*)toVal.addr);   /* may be here bug */
-	    break;
-	case 4:
-	    val = (XTPOINTER)(*(int*)toVal.addr);     /* may be here bug */
-	    break;
-	case 8:
-	default:
-        val = (*(XTPOINTER*)toVal.addr);
-	    break;
-	}
+	generic = 0;
+	memcpy(&generic, toVal.addr, min(toVal.size, sizeof generic));
+	val = (XTPOINTER)generic;
     }
 
     /*
@@ -1437,7 +1430,7 @@ XtPointer CONVERT
      * Finally lets return the converted value.
      */
     /*SUPPRESS 80*/
-    return(val);
+    return val;
 }
 #endif
 

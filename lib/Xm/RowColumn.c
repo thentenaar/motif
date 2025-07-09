@@ -2059,11 +2059,10 @@ SetValues(
             XmeWarning( (Widget) new_w, BadMenuPostMsg);
             /* Do Nothing - No change to postButton/Modifiers/EventType */
          }
-         else
-            if (RC_MenuPost(new_w))
-               RC_MenuPost(new_w) = XtNewString(RC_MenuPost(new_w));
-            set_values_passive_grab(old, new_w);
-            if (RC_MenuPost(old)) XtFree(RC_MenuPost(old));
+         else if (RC_MenuPost(new_w))
+            RC_MenuPost(new_w) = XtNewString(RC_MenuPost(new_w));
+         set_values_passive_grab(old, new_w);
+         if (RC_MenuPost(old)) XtFree(RC_MenuPost(old));
       }
    }
    else   /* For backwards compatibility... */

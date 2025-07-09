@@ -34,6 +34,16 @@ static char rcsid[] = "$TOG: command_ui.c /main/8 1997/05/02 10:08:26 dbl $"
 #include <Xm/ToggleB.h>
 #include <X11/Xmd.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 #include "Wsm/wsm_proto.h"
 #include "Wsm/wsm_funcs.h"
 #include "Wsm/utm_send.h"
@@ -181,7 +191,7 @@ SendMessage(RType rtype, XtPointer msg, int len, Time time)
 
   UTMSendMessage(utmShell, WM_S0, target,
 		 (XtPointer) msg, (unsigned long)len, WSM_PROTO_FMT,
-		 s_proc, (XtPointer)++debug_index, time);
+		 s_proc, (XtPointer)(intptr_t)++debug_index, time);
 
   if (msg != NULL)
     XtFree(msg);

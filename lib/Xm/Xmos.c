@@ -1402,7 +1402,8 @@ _XmOSFindPathParts(String  path,
 void
 _XmOSGenerateMaskName(
     String	imageName,
-    String	maskNameBuf)
+    String	maskNameBuf,
+    size_t	buf_len)
 {
     String 	file, suffix;
     int		len;
@@ -1417,13 +1418,8 @@ _XmOSGenerateMaskName(
     else
       len = strlen(imageName);
 
-    strncpy(maskNameBuf, imageName, len);
-    maskNameBuf += len;
-    strcpy(maskNameBuf, "_m");
-    if (suffix) 
-      strcpy(maskNameBuf+2, suffix);
-    else
-      maskNameBuf[2] = '\0';
+    snprintf(maskNameBuf, buf_len, "%s_m%s",
+            imageName, suffix ? suffix : "");
 }
 
 

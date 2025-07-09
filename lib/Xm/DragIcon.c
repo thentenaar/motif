@@ -738,7 +738,7 @@ static XmQuarkToCursorEntryRec	quarkTo16CursorTable[] = {
 #undef Offset
 #define Offset(x) (XtOffsetOf( struct _XmDragIconRec, drag.x))
 
-static XContext _XmTextualDragIconContext = (XContext) NULL;
+static XContext _XmTextualDragIconContext = 0;
 
 static XtResource resources[]=
 {
@@ -1218,7 +1218,7 @@ XmeGetTextualDragIcon(
    use_alt = dpy -> display.enable_drag_icon;
 
    _XmProcessLock();
-   if (_XmTextualDragIconContext == (XContext) NULL)
+   if (!_XmTextualDragIconContext)
       _XmTextualDragIconContext = XUniqueContext();
    loc_context = _XmTextualDragIconContext;
    _XmProcessUnlock();

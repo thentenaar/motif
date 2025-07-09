@@ -14,6 +14,15 @@
 #include <Xm/Paned.h>
 #include <Xm/ButtonBox.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 
 /*
  *
@@ -89,7 +98,6 @@ void Explain(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     XmString xmstring=NULL;
     static Widget info = NULL;
-    int explain = (int) client;
 
     if (info == NULL) {
         Widget temp;
@@ -104,7 +112,7 @@ void Explain(Widget w, XtPointer client, XtPointer call)
         XtUnmanageChild(temp);
     }
 
-    switch (explain) {
+    switch ((intptr_t)client) {
     case EXPLAIN_MODE:
         xmstring = XmStringCreateLtoR(
 "This resouce may be either XmListMode and XmScaleMode. This\n\

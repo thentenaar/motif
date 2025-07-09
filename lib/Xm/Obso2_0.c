@@ -1573,7 +1573,7 @@ _XmVendorExtRealize(
   Stuff from Desktop.c
 **********************/
 
-static XContext	actualClassContext = (XContext) NULL;
+static XContext	actualClassContext = 0;
 
 
 /*ARGSUSED*/
@@ -1600,7 +1600,7 @@ _XmGetActualClass(
 {
 	  WidgetClass		actualClass;
 
-	  if (actualClassContext == (XContext) NULL)
+	  if (!actualClassContext)
 	    actualClassContext = XUniqueContext();
 	  
 	  /*
@@ -1634,7 +1634,7 @@ _XmSetActualClass(
     WidgetClass previous;
     WidgetClass oldActualClass;
 
-    if (actualClassContext == (XContext) NULL)
+    if (!actualClassContext)
       actualClassContext = XUniqueContext();
     
     /*
@@ -1681,7 +1681,7 @@ _XmGetWorldObject(
         Cardinal *num_args )
 {
     XmDesktopObject	worldObject;
-    static XContext	worldObjectContext = (XContext) NULL;
+    static XContext	worldObjectContext = 0;
     XmWidgetExtData     ext;
     Display		*display;
     
@@ -1690,7 +1690,7 @@ _XmGetWorldObject(
     ** the display is closed, so that we don't get bad data if a second 
     ** display with the same id is opened.
     */
-    if (worldObjectContext == (XContext) NULL)
+    if (!worldObjectContext)
       worldObjectContext = XUniqueContext();
 
     display = XtDisplayOfObject(shell);

@@ -1349,6 +1349,8 @@ SetValues (
 	LayoutChildren(new_w, NULL);
 
 	/* Get preferred size unless app changed both width & height */
+	preferred_geo.width  = save_width;
+	preferred_geo.height = save_height;
 	if ((XtWidth(old) == save_width) || (XtHeight(old) == save_height))
 	    NewPreferredGeometry(new_w, NULL, NULL, &preferred_geo);
 

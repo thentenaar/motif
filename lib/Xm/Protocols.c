@@ -118,7 +118,7 @@ static void RemoveProtocols(
  *
  ***************************************************************************/
 
-static XContext	allProtocolsMgrContext = (XContext) NULL;
+static XContext	allProtocolsMgrContext = 0;
 
 
 #define Offset(field) XtOffsetOf( struct _XmProtocolRec, protocol.field)
@@ -356,7 +356,7 @@ GetAllProtocolsMgr(
 	  display = XtDisplay(shell);
 	  
 	  _XmProcessLock();
-	  if (allProtocolsMgrContext == (XContext) NULL)
+	  if (!allProtocolsMgrContext)
 	    allProtocolsMgrContext = XUniqueContext();
 	  _XmProcessUnlock();
 	  

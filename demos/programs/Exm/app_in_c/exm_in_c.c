@@ -52,6 +52,15 @@
 #include <Exm/Panner.h>
 #include <Exm/MenuB.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 
 void CreateMenus(Widget);
 void ExerciseExmSimpleWidgets(Widget);
@@ -235,10 +244,9 @@ CreateMenus(Widget parent_of_menu_bar)
 				XmNmnemonic, mnemonic_char,
                                 NULL);
       XtAddCallback (MenuButtonWidget[menu_num], XmNactivateCallback, 
-                     HelpCB, (XtPointer)menu_num);
+                     HelpCB, (XtPointer)(intptr_t)menu_num);
       XmStringFree(menu_as_a_cs);
    }
-
 }
 
 
@@ -469,7 +477,7 @@ HelpCB(Widget w,
        XtPointer cd, 
        XtPointer cb)
 {
- int       what_kind_of_help = (int)cd;  
+ intptr_t       what_kind_of_help = (intptr_t)cd;  
 static char      *messages[] = {
 "ExmSimple displays one oval or rectangle.\n",
 "ExmString displays one compound string.\n", 
@@ -500,7 +508,7 @@ as a button inside a menu.",
  Widget    help_dialog; 
  Arg       arg[3];
 
-   message_as_a_cs = XmStringCreateLtoR(messages[(int)cd], 
+   message_as_a_cs = XmStringCreateLtoR(messages[(intptr_t)cd], 
                                         XmFONTLIST_DEFAULT_TAG);
    
    XtSetArg(arg[0], XmNmessageString, message_as_a_cs);

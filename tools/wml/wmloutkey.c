@@ -618,7 +618,7 @@ for ( ndx=0 ; ndx<tokvec->cnt ; ndx++ )
     wmlTokenClassString (tkclass, tok);
     wmlTokenSymKString (tksym, tok);
     wmlTokenTokenString (tktoken, tok);
-    fprintf (outfil, "    {%s, %s, %d, %s, \"%s\"},\n",
+    fprintf (outfil, "    {%s, %s, %lu, %s, \"%s\"},\n",
 	     tkclass,
 	     tksym,
 	     strlen(tokstg),

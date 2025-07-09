@@ -246,7 +246,7 @@ AddToBuffer (String fmt, ...)
 
     Va_start(args, fmt);
 
-    (void) vsprintf(tmp, fmt, args);
+    (void)vsnprintf(tmp, sizeof tmp, fmt, args);
     tmplen = strlen(tmp) ;
     columns = (columns > tmplen)? columns : tmplen ;
     buffer = XtRealloc(buffer, curpos + tmplen + 1);
@@ -268,7 +268,7 @@ String name ;
     XtResourceList resource_list ;
     XmSecondaryResourceData * res_sec_list ;
     WidgetClass class ;
-    char buff_line[256] ;
+    char buff_line[128];
 
     if ((class = GetClassPointer(name)) == NULL) {
 	XtWarning("Cannot find specified class name");
@@ -281,92 +281,83 @@ String name ;
     AddToBuffer("Fetching resources for widget %s:\n", name);
     AddToBuffer("=======================================\n");
 
-    /* fecth Xt regular */
+    /* fetch Xt regular */
     XtGetResourceList(class, &resource_list, &num_resources);
-
     AddToBuffer("\nRegular Xt resources: %d\n",num_resources);
     AddToBuffer(  "------------------------\n");
-    for (j=0; j < 256; j++) buff_line[j] = ' ' ;
+    buff_line[0] = ' ';
+    buff_line[1] = '\0';
+
     for (i = 0 ; i < num_resources; i++) {
-	if ((i%2) == 0) {
-	    strncpy (buff_line, resource_list[i].resource_name,
-		     strlen(resource_list[i].resource_name)) ;
-	} else {
-	    strcpy (buff_line + 37, resource_list[i].resource_name) ;
+	snprintf(buff_line + strlen(buff_line) - 1,
+	         sizeof buff_line - strlen(buff_line),
+	         "%-38s", resource_list[i].resource_name);
+
+	if (i & 1) {
 	    AddToBuffer(" %s\n", buff_line);
-	    for (j=0; j < 256; j++) buff_line[j] = ' ' ;
+	    buff_line[0] = ' ';
+	    buff_line[1] = '\0';
 	}
     }
-    if ((i%2) != 0) {
-	buff_line[strlen(resource_list[i-1].resource_name)] = '\0' ;
+
+    if (!(i & 1))
 	AddToBuffer(" %s\n", buff_line);
-	for (j=0; j < 256; j++) buff_line[j] = ' ' ;
-    }
+    XtFree((XtPointer)resource_list) ;
 
-    XtFree((char*)resource_list) ;
-
-    /* fecth Xt constraint  */
+    /* fetch Xt constraint  */
     XtGetConstraintResourceList(class, &resource_list, &num_resources);
-
     if (num_resources) {
 	AddToBuffer("\nConstraint Xt resources: %d\n",num_resources);
 	AddToBuffer(  "------------------------\n");
-	for (j=0; j < 256; j++) buff_line[j] = ' ' ;
+	buff_line[0] = ' ';
+	buff_line[1] = '\0';
+
 	for (i = 0 ; i < num_resources; i++) {
-	    if ((i%2) == 0) {
-		strncpy (buff_line, resource_list[i].resource_name,
-			 strlen(resource_list[i].resource_name)) ;
-	    } else {
-		strcpy (buff_line + 37, resource_list[i].resource_name) ;
+	    snprintf(buff_line + strlen(buff_line) - 1,
+	             sizeof buff_line - strlen(buff_line),
+	             "%-38s", resource_list[i].resource_name);
+
+	    if (i & 1) {
 		AddToBuffer(" %s\n", buff_line);
-		for (j=0; j < 256; j++) buff_line[j] = ' ' ;
+		buff_line[0] = ' ';
+		buff_line[1] = '\0';
 	    }
 	}
-	if ((i%2) != 0) {
-	    buff_line[strlen(resource_list[i-1].resource_name)] = '\0' ;
+
+	if (!(i & 1))
 	    AddToBuffer(" %s\n", buff_line);
-	    for (j=0; j < 256; j++) buff_line[j] = ' ' ;
-	}
-
-	XtFree((char*)resource_list) ;
+	XtFree((XtPointer)resource_list) ;
     }
-
     
     /* fetch Motif second */
-    num_sec = XmGetSecondaryResourceData (class, &res_sec_list);
-
-    if (num_sec) {
+    if ((num_sec = XmGetSecondaryResourceData (class, &res_sec_list))) {
 	AddToBuffer("\n\nMotif secondary blocks: %d\n", num_sec);    
 	AddToBuffer(    "--------------------------\n");
     
 	for (i = 0; i < num_sec; i++) {
-	    AddToBuffer("\nSecondary[%d] : %d resources\n\n", 
-		   i, res_sec_list[i]->num_resources);
+	    buff_line[0] = ' ';
+	    buff_line[1] = '\0';
+	    AddToBuffer("\nSecondary[%d] : %d resources\n\n", i,
+	                res_sec_list[i]->num_resources);
 	    for (j = 0 ; j < res_sec_list[i]->num_resources; j++) {
-		if ((j%2) == 0) {
-		    strncpy (buff_line, 
-			     res_sec_list[i]->resources[j].resource_name,
-			     strlen(
-				res_sec_list[i]->resources[j].resource_name)) ;
-		} else {
-		    strcpy (buff_line + 37, 
-			    res_sec_list[i]->resources[j].resource_name) ;
+		snprintf(buff_line + strlen(buff_line) - 1,
+		         sizeof buff_line - strlen(buff_line),
+		         "%-38s", res_sec_list[i]->resources[j].resource_name);
+
+		if (j & 1) {
 		    AddToBuffer(" %s\n", buff_line);
-		    for (k=0; k < 256; k++) buff_line[k] = ' ' ;
-		}
-	    }
-	    if ((j%2) != 0) {
-		buff_line[strlen(
-		  res_sec_list[i]->resources[j-1].resource_name)] = '\0' ;
-		AddToBuffer(" %s\n", buff_line);
-		for (k=0; k < 256; k++) buff_line[k] = ' ' ;
+		    buff_line[0] = ' ';
+		    buff_line[1] = '\0';
+	        }
 	    }
 
-	    XtFree((char *)res_sec_list[i]->resources);
-	    XtFree((char *)res_sec_list[i]);
+	    if (!(j & 1))
+		AddToBuffer(" %s\n", buff_line);
+	    XtFree((XtPointer)res_sec_list[i]->resources);
+	    XtFree((XtPointer)res_sec_list[i]);
 	}
 
-	XtFree((char*) res_sec_list);
+	XtFree((XtPointer)res_sec_list);
     }
 }
 
@@ -392,9 +383,6 @@ int argc ; char **argv;
     /* Usage: getres class | getres All*/
     toplevel = XtAppInitialize(&app_context, APP_CLASS, NULL, 0,
 			       &argc, argv, fallbacks, NULL, 0);
-
-    /**  Plug in Editres protocol  */
-    XmdRegisterEditres(toplevel);
 
     /* get a default in no name provided */
     if (argc == 1) name = "Widget";

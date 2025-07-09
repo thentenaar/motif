@@ -104,14 +104,14 @@ static void TransferDone(Widget transfer, XtPointer client_data,
 static void Warning(DropDemo this, String s1, String s2)
 {
    XmString msg;
-   char tmp[256];
+   char tmp[512];
 
    if (s1 == NULL)
      msg = XmStringCreateLocalized(s2);
    else if (s2 == NULL)
      msg = XmStringCreateLocalized(s1);
    else {
-      strncat(strcpy(tmp, s1), s2, 256);
+      strncat(strcpy(tmp, s1), s2, sizeof(tmp) - strlen(s1));
       msg = XmStringCreateLocalized(tmp);
    }
    

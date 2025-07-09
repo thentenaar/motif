@@ -40,6 +40,13 @@
 #endif
 #include "SyntheticI.h"
 
+/**
+ * For conversion between a String and a XrmQuark
+ */
+union string_quark {
+  String str;
+  XrmQuark quark;
+};
 
 /*******    Static Function Declarations    ********/
 
@@ -183,10 +190,12 @@ _XmInitializeSyntheticResources(XmSyntheticResource *resources,
 				int num_resources )
 {
   register int i;
+  union string_quark q;
   
-  for (i = 0; i < num_resources; i++)
-    resources[i].resource_name = 
-      (String) XrmPermStringToQuark (resources[i].resource_name);
+  for (i = 0, q.str = NULL; i < num_resources; i++, q.str = NULL) {
+    q.quark = XrmPermStringToQuark(resources[i].resource_name);
+    resources[i].resource_name = q.str;
+  }
 }
 
 /**********************************************************************
@@ -219,6 +228,7 @@ GetValuesHook(Widget w,
   XtPointer value_ptr;
   Widget value_widget;
   Cardinal value_offset;
+  union string_quark q;
   
   /*  Loop through each argument, quarkifing the name.  Then loop  */
   /*  through each synthetic resource to see if there is a match.  */
@@ -229,8 +239,8 @@ GetValuesHook(Widget w,
       
       for (j = 0; j < num_resources; j++) 
 	{
-	  if ((resources[j].export_proc) &&
-	      (XrmQuark)(resources[j].resource_name) == quark) 
+	  q.str = resources[j].resource_name;
+	  if (resources[j].export_proc && q.quark == quark)
 	    {
 	      value_size = resources[j].resource_size;
 
@@ -494,6 +504,7 @@ ImportArgs(Widget w,
   Widget value_widget;
   XtPointer value_base;
   XmImportOperator op;
+  union string_quark q;
   
   /*  Loop through each argument, quarkifing the name.  Then loop  */
   /*  through each synthetic resource to see if there is a match.  */
@@ -504,8 +515,8 @@ ImportArgs(Widget w,
       
       for (j = 0; j < num_resources; j++) 
 	{
-	  if ((resources[j].import_proc) &&
-	      (XrmQuark)(resources[j].resource_name) == quark) 
+	  q.str = resources[j].resource_name;
+	  if (resources[j].import_proc && q.quark == quark)
 	    {
 	      value = args[i].value;
 	      

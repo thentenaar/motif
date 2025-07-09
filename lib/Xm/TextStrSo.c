@@ -1267,7 +1267,7 @@ Scan(XmTextSource source,
 	/* DELTA: Look now returns a pointer */
 	if ((int)tw->text.char_size == 1) {
 	  c = Look(data, position, dir);
-	  if ((c == '\0') || (*c == *data->PSWC_NWLN))
+	  if (!*c || *c == *data->PSWC_NWLN)
 	    break;
 	}
 	else if ((int)tw->text.char_size == 2) {

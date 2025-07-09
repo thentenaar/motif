@@ -11,7 +11,6 @@
  */
 #include <Xm/Xm.h>
 
-
 /*
  * Standard includes for builtins.
  */
@@ -19,6 +18,16 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 
 /*
  * Macros to make code look nicer between ANSI and K&R.
@@ -68,9 +77,7 @@ UARG( Widget, w)
 ARG( XtPointer, client)
 GRAU( XtPointer, call)
 {
-    int		exitValue = (int)client;
-    
-    exit(exitValue);
+    exit((intptr_t)client & 0xff);
 }
 
 /*      Function Name:	BxSetValuesCB

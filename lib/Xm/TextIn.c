@@ -1690,7 +1690,7 @@ KeySelection(Widget w,
   (*tw->text.source->GetSelection)(tw->text.source,
 				   &(data->origLeft), &(data->origRight));
   
-  cursorPos = tw->text.cursor_position;
+  position = cursorPos = tw->text.cursor_position;
 
   data->selectionHint.x = data->selectionHint.y = 0;
   data->extending = TRUE;
