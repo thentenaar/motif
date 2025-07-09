@@ -1460,8 +1460,7 @@ XmStringConcatAndFree(XmString a,
 	    (a_len == 0))) &&
 	  (a_type == b_type || a_type == XmNO_TEXT || b_type == XmNO_TEXT) &&
 	  ((a_len + b_len) < (1 << BYTE_COUNT_BITS)) &&
-	  ((_XmStrText(a) && b_tabs==0) || 
-	   (!_XmStrText(a) && a_tabs+b_tabs <= 3)))
+	  ((_XmStrText(a) && b_tabs==0) || (a_tabs+b_tabs <= 3)))
 	{
 	  /* Compatible strings.  Make an optimized string. */
 	  if ((b_len == 0) && (_XmStrRefCountGet(a) == 1))
@@ -3409,7 +3408,7 @@ _XmString
 _XmStringOptToNonOpt(_XmStringOpt string)
 {
   _XmString str;
-  _XmStringOptSegRec seg;  
+  _XmStringUnoptSegRec seg;  
 
   _XmStrCreate(str, XmSTRING_MULTIPLE_ENTRY, 0);
   _XmEntryInit((_XmStringEntry)&seg, XmSTRING_ENTRY_OPTIMIZED);
@@ -3427,8 +3426,7 @@ _XmStringOptToNonOpt(_XmStringOpt string)
   _XmEntryTextSet((_XmStringEntry)&seg, _XmStrText((_XmString)string));
   
   _XmStringSegmentNew(str, 0, (_XmStringEntry)&seg, True);
-  
-  return(str);
+   return str;
 }
 
 /*
@@ -4648,7 +4646,7 @@ DrawLine(
        * This is optimized; build an optimized segment and call the drawing
        * routine.
        */
-      _XmStringOptSegRec	segm;
+      _XmStringUnoptSegRec	segm;
       _XmString 		optline = (_XmString)line;
       
       _XmEntryInit((_XmStringEntry)&segm, XmSTRING_ENTRY_OPTIMIZED);

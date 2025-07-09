@@ -16,6 +16,16 @@
 #include <Xm/FontS.h>
 #include "fontsel.h"
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 /**************************************************************
  *		GLOBALS' EXTERNS
  **************************************************************/
@@ -70,9 +80,8 @@ XtPointer call;
     Cardinal argcnt;
     XmString xmstring=NULL;
     static Widget info = NULL;
-    int explain = (int) client;
 
-    if (info == NULL) {
+    if (!info) {
 	Widget temp;
 
 	argcnt = 0;
@@ -85,7 +94,7 @@ XtPointer call;
 	XtUnmanageChild(temp);
     }
 
-    switch (explain) {
+    switch ((intptr_t)client) {
     case EXPLAIN_SHOWFONT:
 	xmstring = XmStringCreateLtoR(
 "The Font Selector widget can display the name of the current font\n\

@@ -39,6 +39,16 @@
 #include <pixmaps/porsche.xpm>
 #include <pixmaps/stopsign.xpm>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 /**************************************************************
 External functions
 **************************************************************/
@@ -739,7 +749,7 @@ ScaleCB(Widget w, XtPointer client, XtPointer call)
 {
 	XmScaleCallbackStruct *cbs = (XmScaleCallbackStruct *)call;
 
-	XtVaSetValues(G_tree, resources[(int)client], cbs->value, NULL);
+	XtVaSetValues(G_tree, resources[(intptr_t)client], cbs->value, NULL);
 }
 
 /*
@@ -950,7 +960,7 @@ void MakeControlPanel(Widget right_pane)
 		XtVaGetValues(G_tree, resources[i], &val, NULL);
 		XtSetArg(args[n], XmNvalue, val); n++;
 		scale = XmCreateScale(rightBbox, resources[i], args, n);
-		XtAddCallback(scale, XmNvalueChangedCallback, ScaleCB, (XtPointer)i);
+		XtAddCallback(scale, XmNvalueChangedCallback, ScaleCB, (XtPointer)(intptr_t)i);
 		XtManageChild(scale);
 		}
 	}

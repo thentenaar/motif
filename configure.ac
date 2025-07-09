@@ -106,6 +106,8 @@ AC_TYPE_MODE_T
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+AC_TYPE_INTPTR_T
+AC_TYPE_UINTPTR_T
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_TYPE_UID_T
@@ -164,9 +166,9 @@ fi
 if test x$GCC = xyes
 then
     CFLAGS="$CFLAGS -Wall -fno-strict-aliasing -Wno-unused -Wno-comment"
-    if test ` $CC -dumpversion | sed -e 's/\(^.\).*/\1/'` = "4" ; then
-        CFLAGS="$CFLAGS -fno-tree-ter"
-    fi
+	CFLAGS="$CFLAGS -Wno-unused-result -Wno-misleading-indentation"
+	CFLAGS="$CFLAGS -Wno-deprecated-declarations -Wno-implicit-fallthrough"
+	CFLAGS="$CFLAGS -Wno-int-in-bool-context"
 fi
 AC_DEFINE(NO_OL_COMPAT, 1, "No OL Compatability")
 

@@ -2700,10 +2700,10 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
       number = tlist -> count;
       tab = (_XmTab) tlist -> start;
 
-      char temp2[2048];
+      char temp2[2044];
       while(number > 0) {
-        strncpy(temp2, temp, 2048);
-        sprintf(temp, "%s %f %d %d %d, ", temp2, tab -> value, 
+        strcpy(temp2, temp);
+        snprintf(temp, sizeof(temp) - 5, "%s %f %d %d %d, ", temp2, tab -> value,
             tab -> units, tab -> alignment, tab -> offsetModel);
         tab = (_XmTab) tab -> next;
         number--;

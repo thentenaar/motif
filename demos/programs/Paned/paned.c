@@ -21,6 +21,16 @@
 #include <Xm/Paned.h>
 #include <Xm/ToggleB.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 /**************************************************************
  *		GLOBALS
  **************************************************************/
@@ -180,7 +190,7 @@ SepValChCB(Widget w, XtPointer client, XtPointer call)
 {
     Arg args[5];
     Cardinal argcnt;
-    Boolean val = (Boolean) (unsigned)client;
+    Boolean val = !!client;
 
     if (!XmToggleButtonGetState(w))
 	return;
@@ -201,7 +211,7 @@ OrientChValCB(Widget w, XtPointer client, XtPointer call)
 {
     Arg args[5];
     Cardinal argcnt;
-    unsigned char orient = (unsigned char) (unsigned)client;
+    unsigned char orient = (uintptr_t)client & 0xff;
     
     if (!XmToggleButtonGetState(w))
 	return;

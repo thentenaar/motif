@@ -65,16 +65,16 @@ int main(int argc, char **argv)
   Display     * display;
   Widget        top_level;
   char        * aclass = "XmdDaInput";
-  char          name[132];
+  char          name[512];
   char       ** temp_argv = argv;
 
 
-  (void) strncpy(name, base(argv[0]), 132);
+  (void) strncpy(name, base(argv[0]), sizeof(name) - 1);
 
   /* handle the '-name' option */
   while (*temp_argv) {
     if (strcmp(*temp_argv, "-name") == 0) {
-      (void) strncpy(name, *++temp_argv, 132);
+      (void) strncpy(name, *++temp_argv, sizeof(name) - 1);
       break;
     }
     temp_argv++;

@@ -198,9 +198,9 @@ static XErrorHandler	oldErrorHandler = NULL;
 static unsigned long	firstProtectRequest;
 static Window		errorWindow;
 
-static XContext 	displayToMotifWindowContext = (XContext) NULL;
-static XContext 	displayToTargetsContext = (XContext) NULL;
-static XContext		displayToAtomsContext = (XContext) NULL;
+static XContext 	displayToMotifWindowContext = 0;
+static XContext 	displayToTargetsContext = 0;
+static XContext		displayToAtomsContext = 0;
 
 
 /*****************************************************************************
@@ -285,9 +285,9 @@ GetMotifWindow(
     XContext	loc_context;
 
     _XmProcessLock();
-    if (displayToMotifWindowContext == (XContext) NULL) {
+    if (!displayToMotifWindowContext)
         displayToMotifWindowContext = XUniqueContext();
-    }
+
     loc_context = displayToMotifWindowContext;
     _XmProcessUnlock();
     
@@ -316,9 +316,9 @@ SetMotifWindow(
     XContext loc_context;
 
     _XmProcessLock();
-    if (displayToMotifWindowContext == (XContext) NULL) {
+    if (!displayToMotifWindowContext)
         displayToMotifWindowContext = XUniqueContext();
-    }
+
     loc_context = displayToMotifWindowContext;
     _XmProcessUnlock();
 
@@ -359,9 +359,9 @@ GetTargetsTable(
     XContext		loc_context;
 
     _XmProcessLock();
-    if (displayToTargetsContext == (XContext) NULL) {
+    if (!displayToTargetsContext)
         displayToTargetsContext = XUniqueContext();
-    }
+
     loc_context = displayToTargetsContext;
     _XmProcessUnlock();
     
@@ -390,9 +390,9 @@ SetTargetsTable(
     XContext	loc_context;
 
     _XmProcessLock();
-    if (displayToTargetsContext == (XContext) NULL) {
+    if (!displayToTargetsContext)
         displayToTargetsContext = XUniqueContext();
-    }
+
     loc_context = displayToTargetsContext;
     _XmProcessUnlock();
 
@@ -445,9 +445,9 @@ GetAtomsTable(
     XContext		loc_context;
 
     _XmProcessLock();
-    if (displayToAtomsContext == (XContext) NULL) {
+    if (!displayToAtomsContext)
 	displayToAtomsContext = XUniqueContext();
-    }
+
     loc_context = displayToAtomsContext;
     _XmProcessUnlock();
     
@@ -476,9 +476,9 @@ SetAtomsTable(
     XContext loc_context;
 
     _XmProcessLock();
-    if (displayToAtomsContext == (XContext) NULL) {
+    if (!displayToAtomsContext)
         displayToAtomsContext = XUniqueContext();
-    }
+
     loc_context = displayToAtomsContext;
     _XmProcessUnlock();
 

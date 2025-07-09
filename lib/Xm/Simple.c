@@ -110,7 +110,7 @@ EvaluateConvenienceStructure(
 {
         XmRowColumnWidget rc = (XmRowColumnWidget) wid ;
 	int i, n;
-	char name_buf[20];
+	char name_buf[25];
 	int button_count = 0;
 	int separator_count = 0;
 	int label_count = 0;

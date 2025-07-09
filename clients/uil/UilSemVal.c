@@ -1844,10 +1844,9 @@ sym_name_entry_type		*control_obj_name;
  * issue an error message if so. If it is not verified, it need not be
  * checked again.
  */
-if ( list_entry == NULL ) return FALSE;
-if ( cycle_name == NULL ) return FALSE;
+if (!list_entry || !cycle_name) return FALSE;
 if ( cycle_name->b_flags & sym_m_cycle_checked )
-    return (cycle_name->b_flags&sym_m_has_cycle) == 1;
+    return !!(cycle_name->b_flags & sym_m_has_cycle);
 
 for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
      list_member!=NULL;

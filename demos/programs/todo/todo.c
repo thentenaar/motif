@@ -54,6 +54,16 @@ static char *rcsid = "$XConsortium: todo.c /main/6 1995/07/14 09:46:43 drk $";
 #include <Xmd/Menus.h>
 #include <Xmd/Print.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 #include "page.h"
 
 #define APP_CLASS "XmdTodo"
@@ -327,7 +337,7 @@ void
 help_cb(Widget w, XtPointer item, XmAnyCallbackStruct *cb)
 {
   XtManageChild(help_widget);
-  XmdGotoHelpItem(w, (int) item, help_widget);
+  XmdGotoHelpItem(w, (intptr_t)item, help_widget);
 }
 
 void 

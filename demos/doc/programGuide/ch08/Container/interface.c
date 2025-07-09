@@ -29,6 +29,16 @@
 #include <stdlib.h>
 #include <Xm/XmAll.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 void CreateMenus(Widget);
 void HelpCB(Widget, XtPointer, XtPointer); 
 void QuitCB(Widget, XtPointer, XtPointer); 
@@ -96,7 +106,6 @@ HelpCB(Widget   w,
        XtPointer cb
       )
 {
- int       what_kind_of_help = (int)cd;  
  char      help_string[400]; 
  XmString  hs_as_cs; 
  Widget    dialog_general_help; 
@@ -116,7 +125,7 @@ a callback.  The callback merely prints the word 'Ring!' to standard output.");
                                              "message", arg, 1);
    XmStringFree(hs_as_cs);
  
-   switch (what_kind_of_help)  {
+   switch ((intptr_t)cd)  {
      case 1: XtManageChild(dialog_general_help);
              break;
      default: /* no other help */

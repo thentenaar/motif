@@ -1862,11 +1862,9 @@ _XmCharsetCanonicalize(
   else
     /* Anything else is copied but not modified. */
     {
-      len = strlen(charset);
-      
-      new_s = XtMalloc(len + 1);
+      len = strlen(charset) + 1;
+      new_s = XtMalloc(len);
       strncpy(new_s, charset, len);
-      new_s[len] = '\0';
     }
   return (new_s);
 }

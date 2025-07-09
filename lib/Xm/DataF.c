@@ -9147,7 +9147,7 @@ df_InitializeTextStruct(
       /* CR03685 */
       SGI_hack_XmImRegister((Widget)tf);
 #else
-      XmImRegister((Widget)tf, (unsigned int) NULL);
+      XmImRegister((Widget)tf, 0);
 #endif
       df_GetXYFromPos(tf, XmTextF_cursor_position(tf), &xmim_point.x, &xmim_point.y);
       n = 0;
@@ -10658,7 +10658,7 @@ df_SetValues(
            diff_values = True;
            if (XmTextF_wc_value(new_tf) == NULL) {
               XmTextF_wc_value(new_tf) = (wchar_t*) XtMalloc(sizeof(wchar_t));
-              *XmTextF_wc_value(new_tf) = (wchar_t)NULL;
+              *XmTextF_wc_value(new_tf) = (wchar_t)0;
            }
            df_ValidateString(new_tf, (char*)XmTextF_wc_value(new_tf), True);
         } else if (XmTextF_value(new_tf) != XmTextF_value(old_tf)) {
@@ -11803,7 +11803,7 @@ XmDataFieldSetEditable(
        /* CR03685 */
        SGI_hack_XmImRegister((Widget)tf);
 #else
-       XmImRegister((Widget)tf, (unsigned int) NULL);
+       XmImRegister((Widget)tf, 0);
 #endif
        df_GetXYFromPos(tf, XmTextF_cursor_position(tf), &xmim_point.x, 
 		       &xmim_point.y);

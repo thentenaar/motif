@@ -451,13 +451,12 @@ static void readIcon(str, icon, mask, fg, bg)
     char msk[256];
 
     if (strcmp(find_suffix(str), "xpm") == 0) {
-      int len = strlen(str);
-      strncpy(msk, str, len - 4);
+      size_t len = strlen(str);
+      strncpy(msk, str, sizeof msk - 4);
       msk[len - 4] = 0;
       strcat(msk, "_m.xpm");
     } else {
-      strcpy(msk, str);
-      strcat(msk, "_m");
+      snprintf(msk, sizeof msk, "%s_m", str);
     }
 
     *icon = XmGetPixmap(XtScreen(toplevel), str, fg, bg);

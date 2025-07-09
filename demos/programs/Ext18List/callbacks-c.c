@@ -15,6 +15,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 extern PlayerData players[];
 extern Pixmap porsche_pix;
 extern Pixmap stopsign_pix; 
@@ -329,7 +339,7 @@ ChoosePlayerCB(Widget w,XtPointer client, XtPointer call )
 	XmString xmstring;
 	static Widget info = NULL;
 
-	if ((int) row_info[i].data == playernum) {
+	if ((intptr_t)row_info[i].data == playernum) {
 	    
 	    if (info == NULL) {
 		Arg args[5];
@@ -359,7 +369,7 @@ ChoosePlayerCB(Widget w,XtPointer client, XtPointer call )
 	}
     }
 
-    row_info[num_rows].data = (XtPointer) playernum;
+    row_info[num_rows].data = (XtPointer)(intptr_t)playernum;
 
     switch (players[playernum].picture) {
     case PPORSCHE:

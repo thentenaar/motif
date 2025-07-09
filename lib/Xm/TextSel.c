@@ -1526,9 +1526,9 @@ TextDestinationCallback(Widget w,
     
     ds->location_data = (XtPointer) &DropPoint;
     
-    if (cb->dropAction != XmDROP_HELP) {
+    if (cb->dropAction != XmDROP_HELP)
       HandleDrop(w, cb, ds);
-    }
+    ds->location_data = NULL;
   }
   else if (ds->selection == XA_SECONDARY) {
     Atom CS_OF_ENCODING;

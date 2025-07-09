@@ -2510,7 +2510,7 @@ set_current_xic(XmImXICInfo 	xic_info,
   (void) add_ref(&xic_info->widget_refs, widget);
   
   /* Set the current XIC for this widget. */
-  if (xim_info->current_xics == (XContext) NULL)
+  if (!xim_info->current_xics)
     xim_info->current_xics = XUniqueContext();
   (void) XSaveContext(XtDisplay(widget), (XID) widget, 
 		      xim_info->current_xics, (XPointer) xic_info);

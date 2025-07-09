@@ -1211,7 +1211,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 {
     FILE *file;
     char buf[BUFSIZ];
-    char string_buffer[BUFSIZ];
+    char string_buffer[BUFSIZ + (BUFSIZ >> 1)];
     char *color_name;
     ColorInfo * color_info = NULL;
     register int i;
@@ -1279,8 +1279,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 			alloc = 755;	/* rather than stat the file and determine a good value to use, just use enough for X11R5, X11R6, and OpenWindows3 */
 		else
 			{
-#define ALLOC_INC 	20
-			alloc += ALLOC_INC;
+			alloc += 20;
 			}
 		color_info = (ColorInfo *)XtRealloc((XtPointer) color_info,
 						    sizeof(ColorInfo) * alloc);
@@ -1295,7 +1294,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 	    len = strlen(color_name);
 	    if (len > XmColorSelector_COLOR_NAME_SIZE) {
 		color_name[XmColorSelector_COLOR_NAME_SIZE - 1] = '\0';
-		snprintf(string_buffer, BUFSIZ,
+		snprintf(string_buffer, sizeof string_buffer,
 			 XmNcolorNameTooLongMsg, buf, color_name);
 		XmeWarning((Widget)csw, string_buffer);
 	    }

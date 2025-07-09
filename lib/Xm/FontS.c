@@ -27,6 +27,12 @@
 #include <stdlib.h>
 #include <string.h>		/* May have to be strings.h on some systems. */
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 #include <Xm/Xm.h>
 #include <Xm/FontSP.h>
 #include <Xm/Label.h>
@@ -2747,7 +2753,7 @@ CreateEncodingMenu(XmFontSelectorWidget fsw,
 				   num_args + num_largs);
     
     XtAddCallback(button,
-		  XmNactivateCallback, ChangeEncoding, (XtPointer) 0);
+		  XmNactivateCallback, ChangeEncoding, NULL);
 
     current = 0;
     for (i = 1, encodings = ENCODING_LIST(fsw) ;
@@ -2764,7 +2770,7 @@ CreateEncodingMenu(XmFontSelectorWidget fsw,
 	XmStringFree(label);
 
 	XtAddCallback(button,
-		      XmNactivateCallback, ChangeEncoding, (XtPointer) i);
+		      XmNactivateCallback, ChangeEncoding, (XtPointer)(intptr_t)i);
 
 	if (streq(*encodings, ENCODING_STRING(fsw)))
 	{
@@ -2926,7 +2932,7 @@ ChangeEncoding(Widget w, XtPointer data, XtPointer junk)
     fsw = (XmFontSelectorWidget) w;
     cf = XmFontS_font_info(fsw)->current_font;
 
-    if ((int) data == 0)
+    if (!data)
 	{
 	XtFree(ENCODING_STRING(fsw));
 	ENCODING_STRING(fsw) = XtNewString(ANY_ENCODING);
@@ -2934,11 +2940,11 @@ ChangeEncoding(Widget w, XtPointer data, XtPointer junk)
     else
 	{
 	XtFree(ENCODING_STRING(fsw));
-	ENCODING_STRING(fsw) = XtNewString(ENCODING_LIST(fsw)[(int) data - 1]);
+	ENCODING_STRING(fsw) = XtNewString(ENCODING_LIST(fsw)[(intptr_t)data - 1]);
 	}
 
     UpdateFamilies(fsw);
-    DisplayCurrentFont(fsw, BuildFontString(fsw, cf, buf, BUFSIZ));
+    DisplayCurrentFont(fsw, BuildFontString(fsw, cf, buf, sizeof buf));
 }
 
 /*	Function Name: ToggleScaling
@@ -3692,7 +3698,7 @@ SetValues(Widget old, Widget request, Widget set,
 	    num_largs = 0;
 	    XtSetArg(largs[num_largs], XmNmenuHistory, button); num_largs++;
 	    XtSetValues(XmFontS_option_menu(set_fsw), largs, num_largs);
-	    ChangeEncoding((Widget) set_fsw, (XtPointer) current, NULL);
+	    ChangeEncoding((Widget) set_fsw, (XtPointer)(intptr_t)current, NULL);
 	}
 	else
 	{

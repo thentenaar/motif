@@ -59,9 +59,14 @@ static char rcsid[] = "$TOG: motifshell.c /main/7 1997/03/31 13:41:20 dbl $"
 #include <stdlib.h>
 #include <sys/signal.h>
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 /*  X headers  */
 #include <X11/IntrinsicP.h>
-
 
 /*  Xm headers  */
 #include <Xm/Xm.h>
@@ -102,7 +107,7 @@ XtAppContext AppContext;
 int          perr[2], p;
 
 /*  Declarations  */
-int GetFileLen (int fd);
+size_t GetFileLen(int fd);
 
 
 
@@ -187,7 +192,7 @@ void FontTest (Widget w, XtPointer client_data, XtPointer call_data)
   XmSelectionBoxCallbackStruct *callback_data = 
     (XmSelectionBoxCallbackStruct *)call_data;
   Widget       txtWidget = (Widget)client_data;
-  char        *textstr = DEFAULT_FONT;
+  char        *textstr;
   XmFontList   fontList; 
   XFontStruct *mfinfo;
 
@@ -195,8 +200,8 @@ void FontTest (Widget w, XtPointer client_data, XtPointer call_data)
   if (callback_data->value == (XmString) NULL)
     return;
 
-  textstr = ExtractNormalString (callback_data->value);
-  if (textstr == NULL) sprintf(textstr, "%s", DEFAULT_FONT);
+  if (!(textstr = ExtractNormalString (callback_data->value)))
+      textstr = DEFAULT_FONT;
 
   if ((mfinfo = XLoadQueryFont(display, textstr))==NULL)
       printf ("couldn't open %s font\n", textstr);
@@ -296,7 +301,8 @@ char *search_in_env (char *filename)
 char *GetSource (char *fileptr)
 {
   static char *retbuff;
-  int          fd, flen, catlen;
+  size_t       flen, catlen;
+  int          fd;
   char        *capfileptr, *defaultcap, *datahome;
   
   
@@ -314,7 +320,7 @@ char *GetSource (char *fileptr)
 	{
 	  catlen = strlen(defaultcap);
 	  datahome = (char *) malloc(catlen + strlen(fileptr) + 2);
-	  strncpy(datahome, defaultcap, catlen);
+	  strcpy(datahome, defaultcap);
 	  datahome[catlen] = '/';
 	  datahome[catlen + 1] = '\0';
 	  strcat(datahome, fileptr);
@@ -343,16 +349,16 @@ char *GetSource (char *fileptr)
   }
 
   flen = GetFileLen(fd);
-  retbuff = (char*) calloc (1, flen + 1);
+  retbuff = calloc(1, flen + 1);
 
-  if (read (fd, retbuff, flen) <= 0)
-    {
-      printf ("Error reading file %s\n", fileptr);
-      return ((char *) NULL);
-    }
-  close (fd);
+  if (read(fd, retbuff, flen) <= 0) {
+      printf("Error reading file %s\n", fileptr);
+      free(retbuff);
+      return NULL;
+  }
 
-  return (retbuff);
+  close(fd);
+  return retbuff;
 }
 
 
@@ -554,9 +560,9 @@ Widget CreateTextWin (Widget parent)
 /*-------------------------------------------------------------*
  |                         GetFileLen                          |
  *-------------------------------------------------------------*/
-int GetFileLen (int fd)
+size_t GetFileLen(int fd)
 {
-  static int retval;
+  static size_t retval;
 
 #if defined(L_SET) && defined(L_XTND)
   lseek (fd, 0, L_SET);  
@@ -567,7 +573,7 @@ int GetFileLen (int fd)
   retval = lseek (fd, 0, SEEK_END);
   lseek (fd, 0, SEEK_SET);
 #endif
-  return (retval);
+  return retval;
 }
 
 
@@ -641,12 +647,8 @@ void Quit(int i)
  *-------------------------------------------------------------*/
 void Menu1CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int   itemNo = (int)clientData;
-
-  switch (itemNo)
-    {
-    case 0: Quit(0);  break;  /* Quit */
-    }
+  if (!clientData)
+    Quit(0);
 }
 
 
@@ -656,7 +658,7 @@ void Menu1CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu2CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int        itemNo = (int)clientData;
+  int        itemNo = (intptr_t)clientData & 7;
   char      *buffer = NULL;
   XmString   labelStr;
 
@@ -681,7 +683,7 @@ void Menu2CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu3CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int      itemNo = (int)clientData;
+  int      itemNo = (intptr_t)clientData & 3;
   XmString labelStr;
 
 
@@ -703,7 +705,7 @@ void Menu3CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu4CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int       itemNo = (int)clientData;
+  int       itemNo = (intptr_t)clientData & 3;
   char     *buffer;
   XmString  labelStr;
 
@@ -751,7 +753,7 @@ void Menu4CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu5CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int itemNo = (int)clientData;
+  int itemNo = (intptr_t)clientData & 3;
 
   switch (itemNo)
     {
@@ -768,16 +770,8 @@ void Menu5CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu6CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int itemNo = (int)clientData;
-
-  switch (itemNo)
-    {
-    case 0: /* Load... */
-      {
-	ShowFontDialogShell (XtParent(w), "List O' Fonts");
-	break;
-      }
-    }
+  if (!clientData) /* Load... */
+    ShowFontDialogShell(XtParent(w), "List O' Fonts");
 }
 
 
@@ -787,17 +781,8 @@ void Menu6CB (Widget w, XtPointer clientData, XtPointer callData)
  *-------------------------------------------------------------*/
 void Menu7CB (Widget w, XtPointer clientData, XtPointer callData)
 {
-  int itemNo = (int)clientData;
-  
-
-  switch (itemNo)
-    {
-    case 0: /* Are you sure? */
-      {
-	CreateHelpDialogShell (XtParent(w), "Help Window");
-	break;
-      }
-    }
+  if (!clientData) /* Are you sure? */
+    CreateHelpDialogShell(XtParent(w), "Help Window");
 }
 
 

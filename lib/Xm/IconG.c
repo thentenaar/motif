@@ -267,8 +267,8 @@ static  Boolean PointIn(Widget widget,
 
 /* those are created in ClassInitialize and filled by the
    IconConverter. */
-static XContext 	largeIconContext = (XContext) NULL;
-static XContext		smallIconContext = (XContext) NULL;
+static XContext 	largeIconContext = 0;
+static XContext		smallIconContext = 0;
 
 static XPointer dummy;
 #define OwnLargeMask(widget) \
@@ -740,7 +740,7 @@ FetchPixmap(
 	  specified for image_name. When an XPM file with a mask 
 	  in it is read, the mask is cached with mask_name. */
 
-       _XmOSGenerateMaskName(image_name, mask_name) ;
+       _XmOSGenerateMaskName(image_name, mask_name, sizeof mask_name);
 
        *(Pixmap*)mask_addr = (Pixmap) XmGetScaledPixmap(widget,
 							mask_name,

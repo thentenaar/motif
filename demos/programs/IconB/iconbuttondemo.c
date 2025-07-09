@@ -21,6 +21,16 @@
 #include <pixmaps/porsche.xpm>
 #include <pixmaps/stopsign.xpm>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 void Exit(Widget , XtPointer , XtPointer );
 void Explain(Widget , XtPointer client, XtPointer );
 void ShowThisButton(Widget, XtPointer, XtPointer);
@@ -202,9 +212,8 @@ void Explain(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     XmString xmstring =0 ;
     static Widget info = NULL;
-    int explain = (int) client;
 
-    if (info == NULL) {
+    if (!info) {
         Widget temp;
 
         argcnt = 0;
@@ -217,7 +226,7 @@ void Explain(Widget w, XtPointer client, XtPointer call)
         XtUnmanageChild(temp);
     }
 
-    switch (explain) {
+    switch ((intptr_t)client) {
     case 1:
         xmstring = XmStringCreateLtoR(
 " This is an IconButton resource. \n\

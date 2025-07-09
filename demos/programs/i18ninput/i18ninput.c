@@ -81,10 +81,7 @@ static char *base(char *str)
  **************************************************************/
 int main(int argc, char **argv)
 {
-  Display     * display;
-  char          name[132];
-
-  (void) strncpy(name, base(argv[0]), 132);
+  Display *display;
 
   /* Initialize the X Intrinsics */
   XtToolkitInitialize();
@@ -99,7 +96,7 @@ int main(int argc, char **argv)
   /* open up one display */
   display = XtOpenDisplay(app_context,
                           NULL,
-                          name, "XmdI18nInput",
+                          "XmdI18nInput", "XmdI18nInput",
                           (XrmOptionDescRec *)NULL, 0,
                           &argc, argv);
   if (!display) {

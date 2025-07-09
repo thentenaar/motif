@@ -41,6 +41,10 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /*
  * Include stdlib.h and malloc.h if code is C++, ANSI, or Extended ANSI.
  */
@@ -52,6 +56,14 @@
 #  include <sys/malloc.h>
 #  endif
 #endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
+#define min(x, y) (((x) < (y)) ? (x) : (y))
 
 /*****************************************************************************
  *       TYPDEFS AND DEFINES
@@ -453,7 +465,7 @@ static void copyWcsToMbs
     }
 
     tmp = tbuf[lenToConvert];
-    tbuf[lenToConvert] = (unsigned)NULL;
+    tbuf[lenToConvert] = 0;
     numCvt = doWcstombs(mbs, tbuf, lenToConvert);
     tbuf[lenToConvert] = tmp;
     
@@ -1355,6 +1367,7 @@ XtPointer CONVERT
     XrmValue		fromVal, toVal;	/* resource holders		*/
     Boolean		convResult;	/* return value			*/
     XtPointer		val;		/* Pointer size return value    */
+    intptr_t            generic;
 
     to_size = 0;
 
@@ -1397,7 +1410,7 @@ XtPointer CONVERT
 	 * If this conversion failed that we can pretty much return right
 	 * here because there is nothing else we can do.
 	 */
-	return((XtPointer) NULL);
+	return NULL;
     }
 
     /*
@@ -1426,28 +1439,9 @@ XtPointer CONVERT
     }
     else
     {
-	/*
-	 * Here is the generic conversion return value handler.  This 
-	 * just does some size specific casting so that value that we
-	 * return is in the correct bytes of the XtPointer that we
-	 * return.  Here we check all sizes from 1 to 8 bytes.
-	 */
-	switch(toVal.size)
-	{
-	case 1:
-	    val = (XTPOINTER)(*(char*)toVal.addr);    /* may be here exists bug ! */
-	    break;
-	case 2:
-	    val = (XTPOINTER)(*(short*)toVal.addr);   /* may be here exists bug ! */
-	    break;
-	case 4:
-	    val = (XTPOINTER)(*(int*)toVal.addr);     /* may be here exists bug ! */
-	    break;
-	case 8:
-	default:
-        val = (*(XTPOINTER*)toVal.addr);
-	    break;
-	}
+	generic = 0;
+	memcpy(&generic, toVal.addr, min(toVal.size, sizeof generic));
+	val = (XTPOINTER)generic;
     }
 
     /*
@@ -1460,7 +1454,7 @@ XtPointer CONVERT
      * Finally lets return the converted value.
      */
     /*SUPPRESS 80*/
-    return(val);
+    return val;
 }
 #endif
 
@@ -3775,7 +3769,7 @@ GRA(char*, inst_name)
    Display*		dpy = XtDisplay ( w );	/*  Retrieve the display */
    XrmDatabase		rdb = NULL;		/* A resource data base */
    char			lineage[1000];
-   char			buf[1000];
+   char			buf[2000];
    Widget       	parent;
 
    /* Protect ourselves */
