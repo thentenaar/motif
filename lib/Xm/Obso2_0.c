@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -145,40 +145,40 @@ typedef struct _XmWorldRec {
 
 externaldef(worldobjectclass) XmWorldClassRec xmWorldClassRec =
 {
-  {	
-    (WidgetClass) &xmDesktopClassRec, /* superclass		*/   
-    "World",			/* class_name 		*/   
-    sizeof(XmWorldRec),		/* size 		*/   
-    NULL,			/* Class Initializer 	*/   
-    NULL,			/* class_part_init 	*/ 
-    FALSE,			/* Class init'ed ? 	*/   
-    NULL,			/* initialize         	*/   
-    NULL,			/* initialize_notify    */ 
-    NULL,			/* realize            	*/   
-    NULL,			/* actions            	*/   
-    0,				/* num_actions        	*/   
-    NULL,			/* resources          	*/   
-    0,				/* resource_count     	*/   
-    NULLQUARK, 			/* xrm_class          	*/   
-    FALSE,			/* compress_motion    	*/   
-    FALSE,			/* compress_exposure  	*/   
-    FALSE,			/* compress_enterleave	*/   
-    FALSE,			/* visible_interest   	*/   
-    NULL,			/* destroy            	*/   
-    NULL,			/* resize             	*/   
-    NULL,			/* expose             	*/   
-    NULL,			/* set_values         	*/   
-    NULL,			/* set_values_hook      */ 
-    NULL,			/* set_values_almost    */ 
-    NULL,			/* get_values_hook      */ 
-    NULL,			/* accept_focus       	*/   
-    XtVersion, 			/* intrinsics version 	*/   
-    NULL,			/* callback offsets   	*/   
-    NULL,			/* tm_table           	*/   
-    NULL,			/* query_geometry       */ 
-    NULL,			/* world_accelerator    */ 
-    NULL,			/* extension            */ 
-  },	
+  {
+    (WidgetClass) &xmDesktopClassRec, /* superclass		*/
+    "World",			/* class_name 		*/
+    sizeof(XmWorldRec),		/* size 		*/
+    NULL,			/* Class Initializer 	*/
+    NULL,			/* class_part_init 	*/
+    FALSE,			/* Class init'ed ? 	*/
+    NULL,			/* initialize         	*/
+    NULL,			/* initialize_notify    */
+    NULL,			/* realize            	*/
+    NULL,			/* actions            	*/
+    0,				/* num_actions        	*/
+    NULL,			/* resources          	*/
+    0,				/* resource_count     	*/
+    NULLQUARK, 			/* xrm_class          	*/
+    FALSE,			/* compress_motion    	*/
+    FALSE,			/* compress_exposure  	*/
+    FALSE,			/* compress_enterleave	*/
+    FALSE,			/* visible_interest   	*/
+    NULL,			/* destroy            	*/
+    NULL,			/* resize             	*/
+    NULL,			/* expose             	*/
+    NULL,			/* set_values         	*/
+    NULL,			/* set_values_hook      */
+    NULL,			/* set_values_almost    */
+    NULL,			/* get_values_hook      */
+    NULL,			/* accept_focus       	*/
+    XtVersion, 			/* intrinsics version 	*/
+    NULL,			/* callback offsets   	*/
+    NULL,			/* tm_table           	*/
+    NULL,			/* query_geometry       */
+    NULL,			/* world_accelerator    */
+    NULL,			/* extension            */
+  },
   {				/* ext			*/
     NULL,			/* synthetic resources	*/
     0,				/* num syn resources	*/
@@ -192,7 +192,7 @@ externaldef(worldobjectclass) XmWorldClassRec xmWorldClassRec =
   }
 };
 
-externaldef(worldobjectclass) WidgetClass 
+externaldef(worldobjectclass) WidgetClass
      xmWorldClass = (WidgetClass) &xmWorldClassRec;
 
 /************************************************************************
@@ -201,7 +201,7 @@ externaldef(worldobjectclass) WidgetClass
  *                                                                      *
  ************************************************************************/
 
-char * 
+char *
 _XmGetRealXlations(
         Display *dpy,
         _XmBuildVirtualKeyStruct *keys,
@@ -215,14 +215,14 @@ _XmGetRealXlations(
   XmKeyBinding vkeys;
   KeySym    keysym;
   Modifiers mods;
-  
+
   *tmp = '\0';
   for (i = 0; i < num_keys; i++)
     {
       keysym = XStringToKeysym(keys[i].key);
-      if (keysym == NoSymbol) 
+      if (keysym == NoSymbol)
 	break;
-      
+
       /* A virtual keysym may map to multiple real keysyms. */
       num_vkeys = XmeVirtualToActualKeysyms(dpy, keysym, &vkeys);
       while (--num_vkeys >= 0)
@@ -231,16 +231,16 @@ _XmGetRealXlations(
 	  if (!keystring)
 	    break;
 	  mods = vkeys[num_vkeys].modifiers | keys[i].mod;
-	  
+
 	  if (mods & ControlMask)
 	    strcat(tmp, "Ctrl ");
-	  
+
 	  if (mods & ShiftMask)
 	    strcat(tmp, "Shift ");
-	  
+
 	  if (mods & Mod1Mask)
 	    strcat(tmp, "Mod1 ");  /* "Alt" may not be right on some systems */
-	  
+
 	  strcat(tmp,"<Key>");
 	  strcat(tmp, keystring);
 	  strcat(tmp,": ");
@@ -255,10 +255,10 @@ _XmGetRealXlations(
 
   if (buf[0] != '\0')
     result = XtNewString(buf);
-  else 
+  else
     result = NULL;
   return(result);
-  
+
 }
 
 
@@ -268,7 +268,7 @@ _XmGetRealXlations(
  *	Set the scrollbar variable which causes the slider pixmap
  *	to be etched. Was in ScrollBar.c
  ************************************************************************/
-void 
+void
 _XmSetEtchedSlider(
         XmScrollBarWidget sbw )
 {
@@ -281,9 +281,9 @@ _XmSetEtchedSlider(
 /**********************************************************************
  *
  * _XmSortResourceList: superceded by XmReorderResourceList
- * 
+ *
  **********************************************************************/
-void 
+void
 _XmSortResourceList(
         XrmResource *list[],
         Cardinal len )
@@ -305,14 +305,14 @@ _XmSortResourceList(
 			p = list[n];
 			break;
 		}
-	
+
 	if (n == len)
 		return; /* No unit type resource found in this list. */
 	else
 	{
 		for (i=n; i > 0; i--)
 			list[i] = list[i-1];
-		
+
 		list[0] = p;
 	}
 }
@@ -333,7 +333,7 @@ _XmSortResourceList(
  *	resource converter.  This is used by primitive and manager.
  *
  ************************************************************************/
-char * 
+char *
 _XmGetBGPixmapName( void )
 {
    return NULL;
@@ -348,7 +348,7 @@ _XmGetBGPixmapName( void )
  *	resource converter.  This is used by primitive and manager.
  *
  ************************************************************************/
-void 
+void
 _XmClearBGPixmapName( void )
 {
   /*EMPTY*/
@@ -371,7 +371,7 @@ _XmBlackPixel(
 	      XColor blackcolor )
 {
   Pixel p;
-  
+
   blackcolor.red = 0;
   blackcolor.green = 0;
   blackcolor.blue = 0;
@@ -382,7 +382,7 @@ _XmBlackPixel(
     p = blackcolor.pixel;
   else
     p = blackcolor.pixel = BlackPixelOfScreen(screen); /* fallback pixel */
-  
+
   return (p);
 }
 
@@ -398,7 +398,7 @@ _XmWhitePixel(
   whitecolor.red = XmMAX_SHORT;
   whitecolor.green = XmMAX_SHORT;
   whitecolor.blue = XmMAX_SHORT;
- 
+
   if (colormap == DefaultColormapOfScreen(screen))
     p = whitecolor.pixel = WhitePixelOfScreen(screen);
   else if (XAllocColor(screen->display, colormap, &whitecolor))
@@ -407,9 +407,9 @@ _XmWhitePixel(
     p = whitecolor.pixel = WhitePixelOfScreen(screen); /* fallback pixel */
   return (p);
 }
-  
 
-String   
+
+String
 _XmGetDefaultBackgroundColorSpec( Screen *screen )
 {
   XrmName names[2];
@@ -420,12 +420,12 @@ _XmGetDefaultBackgroundColorSpec( Screen *screen )
 
   names[0] = XrmPermStringToQuark(XmNbackground);
   names[1] = NULLQUARK;
-      
+
   classes[0] = XrmPermStringToQuark(XmCBackground);
   classes[1] = NULLQUARK;
-	 
+
   if (XrmQGetResource(XtScreenDatabase(screen), names, classes,
-		      &rep, &db_value)) 
+		      &rep, &db_value))
      {
 	if (rep == XrmPermStringToQuark(XmRString))
 	    default_background_color_spec = db_value.addr;
@@ -437,7 +437,7 @@ _XmGetDefaultBackgroundColorSpec( Screen *screen )
 
 
 /*ARGSUSED*/
-void 
+void
 _XmSetDefaultBackgroundColorSpec(
 	Screen *screen,	/* unused */
         String new_color_spec )
@@ -492,7 +492,7 @@ _XmGetDefaultThresholdsForScreen( Screen *screen )
 
   XmTHRESHOLDS_INITD = True;
 
- /* 
+ /*
   * We need a widget to pass into the XtConvertAndStore() function
   * to convert the string to an int.  Since a widget can't be
   * passed into this procedure because the public interfaces
@@ -508,12 +508,12 @@ _XmGetDefaultThresholdsForScreen( Screen *screen )
 
   names[0] = XrmPermStringToQuark(XmNlightThreshold);
   names[1] = NULLQUARK;
-      
+
   classes[0] = XrmPermStringToQuark(XmCLightThreshold);
   classes[1] = NULLQUARK;
 
   if (XrmQGetResource(XtScreenDatabase(screen), names, classes,
-		      &rep, &db_value))  
+		      &rep, &db_value))
     {
      /* convert the string to an int value */
       to_value.size = sizeof(int);
@@ -527,16 +527,16 @@ _XmGetDefaultThresholdsForScreen( Screen *screen )
       }
       else default_light_threshold_spec = XmDEFAULT_LIGHT_THRESHOLD;
     }
-  else default_light_threshold_spec = XmDEFAULT_LIGHT_THRESHOLD; 
+  else default_light_threshold_spec = XmDEFAULT_LIGHT_THRESHOLD;
 
   names[0] = XrmPermStringToQuark(XmNdarkThreshold);
   names[1] = NULLQUARK;
-      
+
   classes[0] = XrmPermStringToQuark(XmCDarkThreshold);
   classes[1] = NULLQUARK;
-      
+
   if (XrmQGetResource(XtScreenDatabase(screen), names, classes,
-		      &rep, &db_value))  
+		      &rep, &db_value))
     {
      /* convert the string to an int value */
       to_value.size = sizeof(int);
@@ -555,12 +555,12 @@ _XmGetDefaultThresholdsForScreen( Screen *screen )
 
   names[0] = XrmPermStringToQuark(XmNforegroundThreshold);
   names[1] = NULLQUARK;
-      
+
   classes[0] = XrmPermStringToQuark(XmCForegroundThreshold);
   classes[1] = NULLQUARK;
-      
+
   if (XrmQGetResource(XtScreenDatabase(screen), names, classes,
-		      &rep, &db_value))  
+		      &rep, &db_value))
     {
      /* convert the string to an int value */
       to_value.size = sizeof(int);
@@ -610,7 +610,7 @@ _XmGetIconPixmapName( void )
  *      converter.  This is used by the vendor shell.
  *
  ************************************************************************/
-void 
+void
 _XmClearIconPixmapName( void )
 {
   /*EMPTY*/
@@ -623,7 +623,7 @@ _XmClearIconPixmapName( void )
  *			WAS in ScrolledW.c      			*
  ************************************************************************/
 #define ScrollBarVisible( wid)      (wid && XtIsManaged( wid))
-void 
+void
 _XmInitializeScrollBars(
         Widget w )
 {
@@ -632,17 +632,17 @@ _XmInitializeScrollBars(
     Dimension bw;
     Arg vSBArgs[6];
     Arg hSBArgs[6];
-    
+
     if (sw->swindow.VisualPolicy == XmVARIABLE)
-	return;	
-    
+	return;
+
     bw = 0;
     if (sw->swindow.WorkWindow)
         bw = sw->swindow.WorkWindow->core.border_width;
-    
-    sw->swindow.vmin = 0;    
+
+    sw->swindow.vmin = 0;
     sw->swindow.vOrigin = 0;
-    sw->swindow.hmin = 0;    
+    sw->swindow.hmin = 0;
     sw->swindow.hOrigin = 0;
     if (ScrollBarVisible(sw->swindow.WorkWindow))
     {
@@ -693,7 +693,7 @@ _XmInitializeScrollBars(
         {
             if ((inc = ((sw->swindow.WorkWindow->core.height) / 10)) < 1)
                 inc = 1;
-            XtSetArg (vSBArgs[i], XmNincrement, (XtArgVal) inc); i++; 
+            XtSetArg (vSBArgs[i], XmNincrement, (XtArgVal) inc); i++;
         }
 	if ((inc = (sw->swindow.AreaHeight - (sw->swindow.AreaHeight / 10))) < 1)
 	    inc = sw->swindow.AreaHeight;
@@ -712,7 +712,7 @@ _XmInitializeScrollBars(
         {
             if ((inc = ((sw->swindow.WorkWindow->core.width) / 10)) < 1)
                 inc = 1;
-            XtSetArg (hSBArgs[i], XmNincrement, (XtArgVal) inc); i++; 
+            XtSetArg (hSBArgs[i], XmNincrement, (XtArgVal) inc); i++;
         }
 	if ((inc = (sw->swindow.AreaWidth - (sw->swindow.AreaWidth / 10))) < 1)
 	    inc = sw->swindow.AreaWidth;
@@ -725,10 +725,10 @@ _XmInitializeScrollBars(
 	assert(i <= XtNumber(hSBArgs));
 	XtSetValues((Widget) sw->swindow.hScrollBar,hSBArgs,i);
     }
-    
+
 }
 
-void 
+void
 InitializeScrollBars(
         Widget w )
 {
@@ -736,7 +736,7 @@ InitializeScrollBars(
 }
 
 
-void 
+void
 _XmClearBCompatibility(
         Widget pb )
 {
@@ -745,7 +745,7 @@ _XmClearBCompatibility(
 }
 
 
-void 
+void
 _XmClearBGCompatibility(
         Widget pbg )
 {
@@ -756,10 +756,10 @@ _XmClearBGCompatibility(
 
 
 /****************************************************************/
-void 
+void
 _XmBulletinBoardSetDefaultShadow(
         Widget button )
-{   
+{
             Arg             argv[2] ;
             Cardinal        argc ;
             Dimension       dbShadowTh = 0;
@@ -768,30 +768,30 @@ _XmBulletinBoardSetDefaultShadow(
 
     if(    XmIsPushButtonGadget( button)    )
     {   _XmClearBGCompatibility( button) ;
-        } 
+        }
     else
     {   if(    XmIsPushButton( button)    )
         {   _XmClearBCompatibility( button) ;
-            } 
-        } 
+            }
+        }
     argc = 0 ;
     XtSetArg( argv[argc], XmNshadowThickness, &shadowTh) ; ++argc ;
-    XtSetArg( argv[argc], XmNdefaultButtonShadowThickness, 
+    XtSetArg( argv[argc], XmNdefaultButtonShadowThickness,
                                                         &dbShadowTh) ; ++argc ;
     XtGetValues( button, argv, argc) ;
-    
+
     if(    !dbShadowTh    )
     {   if(    shadowTh > 1    )
         {   dbShadowTh = shadowTh >> 1 ;
             }
         else
         {   dbShadowTh = shadowTh ;
-            } 
+            }
         argc = 0 ;
-        XtSetArg( argv[argc], XmNdefaultButtonShadowThickness, 
+        XtSetArg( argv[argc], XmNdefaultButtonShadowThickness,
                                                          dbShadowTh) ; ++argc ;
         XtSetValues( button, argv, argc) ;
-        } 
+        }
     return ;
     }
 
@@ -801,7 +801,7 @@ GetBBWithDB(
  	Widget wid)
  {
    Widget focus ;
- 
+
    if(    (_XmGetFocusPolicy( wid) == XmEXPLICIT)
       &&  (    (focus = XmGetFocusWidget( wid))
  	  ||  (focus = _XmGetFirstFocus( wid)))    )
@@ -816,7 +816,7 @@ GetBBWithDB(
  	    }
  	  focus = XtParent( focus) ;
  	}
- 
+
      }
    return NULL ;
  }
@@ -827,7 +827,7 @@ _XmBBUpdateDynDefaultButton(
  	Widget bb)
  {
    Widget bbwdb = GetBBWithDB( bb) ;
- 
+
    if(    bbwdb == NULL    )
      {
        if(    ((XmBulletinBoardWidget) bb)
@@ -844,10 +844,10 @@ _XmBBUpdateDynDefaultButton(
  	}
      }
  }
- 
+
 /********************************************************************/
 
-Boolean 
+Boolean
 _XmDifferentBackground(
         Widget w,
         Widget parent )
@@ -857,7 +857,7 @@ _XmDifferentBackground(
 	    w->core.background_pixmap != parent->core.background_pixmap)
 	    return (True);
     }
-    
+
     return (False);
 }
 
@@ -867,7 +867,7 @@ _XmDifferentBackground(
 
 
 
-static void 
+static void
 SetMonochromeColors(
         XmColorData *colors )
 {
@@ -877,41 +877,41 @@ SetMonochromeColors(
 	if (background == BlackPixelOfScreen(screen))
 	{
 		colors->foreground.pixel = WhitePixelOfScreen (screen);
-		colors->foreground.red = colors->foreground.green = 
+		colors->foreground.red = colors->foreground.green =
 			colors->foreground.blue = XmMAX_SHORT;
 
 		colors->bottom_shadow.pixel = WhitePixelOfScreen(screen);
-		colors->bottom_shadow.red = colors->bottom_shadow.green = 
+		colors->bottom_shadow.red = colors->bottom_shadow.green =
 			colors->bottom_shadow.blue = XmMAX_SHORT;
 
 		colors->select.pixel = WhitePixelOfScreen(screen);
-		colors->select.red = colors->select.green = 
+		colors->select.red = colors->select.green =
 			colors->select.blue = XmMAX_SHORT;
 
 		colors->top_shadow.pixel = BlackPixelOfScreen(screen);
-		colors->top_shadow.red = colors->top_shadow.green = 
+		colors->top_shadow.red = colors->top_shadow.green =
 			colors->top_shadow.blue = 0;
 	}
 	else if (background == WhitePixelOfScreen(screen))
 	{
 		colors->foreground.pixel = BlackPixelOfScreen(screen);
-		colors->foreground.red = colors->foreground.green = 
+		colors->foreground.red = colors->foreground.green =
 			colors->foreground.blue = 0;
 
 		colors->top_shadow.pixel = WhitePixelOfScreen(screen);
-		colors->top_shadow.red = colors->top_shadow.green = 
+		colors->top_shadow.red = colors->top_shadow.green =
 			colors->top_shadow.blue = XmMAX_SHORT;
 
 		colors->bottom_shadow.pixel = BlackPixelOfScreen(screen);
-		colors->bottom_shadow.red = colors->bottom_shadow.green = 
+		colors->bottom_shadow.red = colors->bottom_shadow.green =
 			colors->bottom_shadow.blue = 0;
 
 		colors->select.pixel = BlackPixelOfScreen(screen);
-		colors->select.red = colors->select.green = 
+		colors->select.red = colors->select.green =
 			colors->select.blue = 0;
 	}
 
-	colors->allocated |= (XmFOREGROUND | XmTOP_SHADOW 
+	colors->allocated |= (XmFOREGROUND | XmTOP_SHADOW
 		| XmBOTTOM_SHADOW | XmSELECT);
 }
 
@@ -923,7 +923,7 @@ SetMonochromeColors(
  *  _XmGetColors
  *
  *********************************************************************/
-XmColorData * 
+XmColorData *
 _XmGetColors(
         Screen *screen,
         Colormap color_map,
@@ -983,7 +983,7 @@ _XmGetColors(
 
 
 
-XmColorData * 
+XmColorData *
 _XmGetDefaultColors(
         Screen *screen,
         Colormap color_map )
@@ -1011,18 +1011,18 @@ _XmGetDefaultColors(
 	}
 
 	/*  See if more space is needed in the array  */
-  
+
 	if (default_set == NULL)
 	{
 		default_set_size = 10;
-		default_set = (XmColorData **) XtRealloc((char *) default_set, 
+		default_set = (XmColorData **) XtRealloc((char *) default_set,
 			(sizeof(XmColorData *) * default_set_size));
-		
+
 	}
 	else if (default_set_count == default_set_size)
 	{
 		default_set_size += 10;
-		default_set = (XmColorData **) XtRealloc((char *) default_set, 
+		default_set = (XmColorData **) XtRealloc((char *) default_set,
 			sizeof(XmColorData *) * default_set_size);
 	}
 
@@ -1041,14 +1041,14 @@ _XmGetDefaultColors(
 	  args[1].addr = (XPointer) &color_map;
 	  args[1].size = sizeof(Colormap);
 	  num_args = 2;
-	  
+
 	  fromVal.addr = default_string;
 	  fromVal.size = strlen(default_string);
-	  
+
 	  toVal.addr = (XPointer) &background;
 	  toVal.size = sizeof(Pixel);
-	  
-	  if(!XtCallConverter(DisplayOfScreen(screen),XtCvtStringToPixel, 
+
+	  if(!XtCallConverter(DisplayOfScreen(screen),XtCvtStringToPixel,
 			      args, num_args, &fromVal, &toVal, NULL))
 	    background = WhitePixelOfScreen(screen);
         }
@@ -1084,7 +1084,7 @@ _XmGetDefaultColors(
 	 * of the data pointed to by color_set (defined in _XmGetColors).
 	 */
 
-	default_set[default_set_count] = 
+	default_set[default_set_count] =
 		_XmGetColors(screen, color_map, background);
 	default_set_count++;
 
@@ -1093,7 +1093,7 @@ _XmGetDefaultColors(
 
 
 
-static int 
+static int
 _XmBrightness(
         XColor *color )
 {
@@ -1107,7 +1107,7 @@ _XmBrightness(
 
 	intensity = (red + green + blue) / 3;
 
-	/* 
+	/*
 	 * The casting nonsense below is to try to control the point at
 	 * the truncation occurs.
 	 */
@@ -1133,7 +1133,7 @@ _XmBrightness(
 }
 
 /* This one still used by mwm: fix mwm */
-Pixel 
+Pixel
 _XmAccessColorData(
         XmColorData *cd,
 #if NeedWidePrototypes
@@ -1143,22 +1143,22 @@ _XmAccessColorData(
 #endif /* NeedWidePrototypes */
 {
     Pixel p;
-    
+
     switch(which) {
     case XmBACKGROUND:
-	if (!(cd->allocated & which) && 
+	if (!(cd->allocated & which) &&
 	    (XAllocColor(cd->screen->display,
 			 cd->color_map, &(cd->background)) == 0)) {
 	    if (_XmBrightness(&(cd->background))
 		< XmFOREGROUND_THRESHOLD )
-		cd->background.pixel = _XmBlackPixel(cd->screen, 
+		cd->background.pixel = _XmBlackPixel(cd->screen,
 						     cd->color_map,
 						     cd->background);
-	    else 
-		cd->background.pixel = _XmWhitePixel(cd->screen, 
+	    else
+		cd->background.pixel = _XmWhitePixel(cd->screen,
 						     cd->color_map,
-						     cd->background);				    
-	    XQueryColor(cd->screen->display, cd->color_map, 
+						     cd->background);
+	    XQueryColor(cd->screen->display, cd->color_map,
 			&(cd->background));
 	}
 	p = cd->background.pixel;
@@ -1167,21 +1167,21 @@ _XmAccessColorData(
     case XmFOREGROUND:
 	if (!(cd->allocated & which) &&
 	    (XAllocColor(cd->screen->display,
-			 cd->color_map, &(cd->foreground)) == 0 )) 
+			 cd->color_map, &(cd->foreground)) == 0 ))
 	    {
 		if (_XmBrightness(&(cd->background))
 		    < XmFOREGROUND_THRESHOLD )
-		    cd->foreground.pixel = _XmWhitePixel(cd->screen, 
+		    cd->foreground.pixel = _XmWhitePixel(cd->screen,
 							 cd->color_map,
 							 cd->foreground);
-		else 
-		    cd->foreground.pixel = _XmBlackPixel(cd->screen, 
+		else
+		    cd->foreground.pixel = _XmBlackPixel(cd->screen,
 							 cd->color_map,
 							 cd->foreground);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->foreground));
 	    }
-	p =  cd->foreground.pixel;	
+	p =  cd->foreground.pixel;
 	cd->allocated |= which;
 	break;
     case XmTOP_SHADOW:
@@ -1191,16 +1191,16 @@ _XmAccessColorData(
 	    {
 		if (_XmBrightness(&(cd->background))
 		    > XmCOLOR_LITE_THRESHOLD)
-		    cd->top_shadow.pixel = 
+		    cd->top_shadow.pixel =
 			_XmBlackPixel(cd->screen, cd->color_map,
 				      cd->top_shadow);
 		else
 		    cd->top_shadow.pixel =
 			_XmWhitePixel(cd->screen, cd->color_map,
 				      cd->top_shadow);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->top_shadow));
-		
+
 	    }
 	p = cd->top_shadow.pixel;
 	cd->allocated |= which;
@@ -1212,14 +1212,14 @@ _XmAccessColorData(
 	    {
 		if (_XmBrightness(&(cd->background))
 		    < XmCOLOR_DARK_THRESHOLD)
-		    cd->bottom_shadow.pixel =  
+		    cd->bottom_shadow.pixel =
 			_XmWhitePixel(cd->screen, cd->color_map,
 				      cd->bottom_shadow);
 		else
-		    cd->bottom_shadow.pixel = 
+		    cd->bottom_shadow.pixel =
 			_XmBlackPixel(cd->screen, cd->color_map,
 				      cd->bottom_shadow);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->bottom_shadow));
 	    }
 	p = cd->bottom_shadow.pixel;
@@ -1230,16 +1230,16 @@ _XmAccessColorData(
 	    (XAllocColor(cd->screen->display,
 			 cd->color_map, &(cd->select)) == 0))
 	    {
-		if (_XmBrightness(&(cd->background)) 
+		if (_XmBrightness(&(cd->background))
 		    < XmFOREGROUND_THRESHOLD)
-		    cd->select.pixel = _XmWhitePixel(cd->screen, 
-						     cd->color_map, 
+		    cd->select.pixel = _XmWhitePixel(cd->screen,
+						     cd->color_map,
 						     cd->select);
 		else
-		    cd->select.pixel = _XmBlackPixel(cd->screen, 
-						     cd->color_map, 
+		    cd->select.pixel = _XmBlackPixel(cd->screen,
+						     cd->color_map,
 						     cd->select);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->select));
 	    }
 	p = cd->select.pixel;
@@ -1250,13 +1250,13 @@ _XmAccessColorData(
 	p = _XmBlackPixel(cd->screen, cd->color_map, cd->background);
 	break;
     }
-    
+
     return(p);
 }
 
 
 /* OBSOLETE: Replaced by _XmMapKeyEvents. */
-Boolean 
+Boolean
 _XmMapKeyEvent(
         register String str,
         int *eventType,
@@ -1292,7 +1292,7 @@ _XmMapKeyEvent(
 }
 
 
-void XmRegisterConverters() { _XmRegisterConverters() ; } 
+void XmRegisterConverters() { _XmRegisterConverters() ; }
 
 
 /************************************************************************
@@ -1301,13 +1301,13 @@ void XmRegisterConverters() { _XmRegisterConverters() ; }
  *	Given a filename, extract and create an image from the file data.
  *
  ************************************************************************/
-XImage * 
+XImage *
 _XmGetImageAndHotSpotFromFile(
         char *filename,
-	int *hot_x, 
+	int *hot_x,
 	int *hot_y)
 {
-    return _XmReadImageAndHotSpotFromFile(_XmGetDefaultDisplay(), 
+    return _XmReadImageAndHotSpotFromFile(_XmGetDefaultDisplay(),
 					filename, hot_x, hot_y) ;
 
 }
@@ -1320,12 +1320,12 @@ _XmGetImageAndHotSpotFromFile(
  *
  ************************************************************************/
 
-XImage * 
+XImage *
 _XmGetImageFromFile(
         char *filename )
 {
    int hot_x, hot_y;
-   return _XmReadImageAndHotSpotFromFile(_XmGetDefaultDisplay(), 
+   return _XmReadImageAndHotSpotFromFile(_XmGetDefaultDisplay(),
 					filename, &hot_x, &hot_y) ;
 }
 
@@ -1349,26 +1349,25 @@ int
 _XmOSPutenv(
     char *string)
 {
-#ifndef NO_PUTENV
-  return (putenv(string));
-  
+#if HAVE_PUTENV
+  return putenv(string);
 #else
   char *value;
-  
+
   if ((value = strchr(string, '=')) != NULL)
     {
       char *name  = XtNewString(string);
       int result;
-      
+
       name[value-string] = '\0';
-      
+
       result = setenv(name, value+1, 1);
       XtFree(name);
       return result;
     }
   else
     return -1;
-#endif
+#endif /* HAVE_PUTENV */
 }
 
 /* after rework of inheritance of class extension method */
@@ -1376,15 +1375,15 @@ externaldef(xmprimbaseclassextrec) XmBaseClassExtRec
      _XmPrimbaseClassExtRec = { 0 };
 externaldef(xmprimclassextrec) XmPrimitiveClassExtRec
      _XmPrimClassExtRec = { 0 };
-externaldef(xmdrawnbprimclassextrec) XmPrimitiveClassExtRec 
+externaldef(xmdrawnbprimclassextrec) XmPrimitiveClassExtRec
      _XmDrawnBPrimClassExtRec = { 0 };
 externaldef(xmtogglebprimclassextrec) XmPrimitiveClassExtRec
-     _XmToggleBPrimClassExtRec = { 0 }; 
-externaldef(xmpushbprimclassextrec) XmPrimitiveClassExtRec 
+     _XmToggleBPrimClassExtRec = { 0 };
+externaldef(xmpushbprimclassextrec) XmPrimitiveClassExtRec
      _XmPushBPrimClassExtRec = { 0 };
 externaldef(xmcascadebprimclassextrec) XmPrimitiveClassExtRec
      _XmCascadeBPrimClassExtRec = { 0 };
-externaldef(xmtearoffbprimclassextrec) XmPrimitiveClassExtRec 
+externaldef(xmtearoffbprimclassextrec) XmPrimitiveClassExtRec
      _XmTearOffBPrimClassExtRec = { 0 };
 
 
@@ -1392,7 +1391,7 @@ externaldef(xmtearoffbprimclassextrec) XmPrimitiveClassExtRec
 
 /* From old Visual.c */
 
-void 
+void
 _XmPrimitiveTopShadowPixmapDefault(
         Widget widget,
         int offset,
@@ -1401,7 +1400,7 @@ _XmPrimitiveTopShadowPixmapDefault(
     _XmTopShadowPixmapDefault(widget, offset, value );
 }
 
-void 
+void
 _XmManagerTopShadowPixmapDefault(
         Widget widget,
         int offset,
@@ -1410,7 +1409,7 @@ _XmManagerTopShadowPixmapDefault(
     _XmTopShadowPixmapDefault(widget, offset, value );
 }
 
-void 
+void
 _XmPrimitiveHighlightPixmapDefault(
         Widget widget,
         int offset,
@@ -1419,7 +1418,7 @@ _XmPrimitiveHighlightPixmapDefault(
     _XmHighlightPixmapDefault(widget, offset, value );
 }
 
-void 
+void
 _XmManagerHighlightPixmapDefault(
         Widget widget,
         int offset,
@@ -1435,7 +1434,7 @@ _XmManagerHighlightPixmapDefault(
  *  _XmFilterResources
  *
  ************************************************************************/
-Cardinal 
+Cardinal
 _XmFilterResources(
         XtResource *resources,
         Cardinal numResources,
@@ -1475,7 +1474,7 @@ _XmFilterResources(
  *
  ************************************************************************/
 /*ARGSUSED*/
-XtGeometryResult 
+XtGeometryResult
 _XmRootGeometryManager(
 	 Widget w,
 	 XtWidgetGeometry *request,
@@ -1495,7 +1494,7 @@ _XmRootGeometryManager(
         XmeWarning(NULL, "_XmGetWidgetExtData() returned NULL pointer.");
 #endif
         return XtGeometryNo;
-    }    
+    }
 
     if (se)
       {
@@ -1512,13 +1511,13 @@ _XmRootGeometryManager(
     if (request->request_mode & XtCWQueryOnly)
       {
 	   if (!(wmShell->shell.allow_shell_resize) &&
-	       (request->request_mode & 
+	       (request->request_mode &
 		(CWWidth | CWHeight | CWBorderWidth)))
 	     return XtGeometryNo;
 	   /*
 	    * we should switch on useAsyncGeometry but we won't |||
 	    */
-	   else 
+	   else
 	     return XtGeometryYes;
       }
 
@@ -1545,9 +1544,9 @@ _XmRootGeometryManager(
 		   w->core.height = request->height ;
 	       if (request->request_mode & CWBorderWidth)
 		   w->core.border_width = request->border_width ;
-	       if (request->request_mode & CWX) 
+	       if (request->request_mode & CWX)
 		   w->core.x = request->x;
-	       if (request->request_mode & CWY) 
+	       if (request->request_mode & CWY)
 		   w->core.y = request->y;
 
 	       returnVal = XtGeometryYes;
@@ -1558,7 +1557,7 @@ _XmRootGeometryManager(
 
 
 /*ARGSUSED*/
-void 
+void
 _XmVendorExtRealize(
 	 Widget w,
 	 XtPointer closure,	/* unused */
@@ -1577,8 +1576,8 @@ static XContext	actualClassContext = 0;
 
 
 /*ARGSUSED*/
-static void 
-DisplayDestroyCallback 
+static void
+DisplayDestroyCallback
 	( Widget w,
         XtPointer client_data,
         XtPointer call_data )	/* unused */
@@ -1593,7 +1592,7 @@ DisplayDestroyCallback
  *
  ************************************************************************/
 /* ARGSUSED */
-WidgetClass 
+WidgetClass
 _XmGetActualClass(
 	Display     *display,
         WidgetClass w_class )
@@ -1602,7 +1601,7 @@ _XmGetActualClass(
 
 	  if (!actualClassContext)
 	    actualClassContext = XUniqueContext();
-	  
+
 	  /*
 	   * see if a non-default class has been specified for the
 	   * class
@@ -1624,7 +1623,7 @@ _XmGetActualClass(
  *
  ************************************************************************/
 /* ARGSUSED */
-void 
+void
 _XmSetActualClass(
 	Display     *display,
         WidgetClass w_class,
@@ -1636,7 +1635,7 @@ _XmSetActualClass(
 
     if (!actualClassContext)
       actualClassContext = XUniqueContext();
-    
+
     /*
      * see if a non-default class has been specified for the
      * class
@@ -1662,7 +1661,7 @@ _XmSetActualClass(
 
     }
 
-    XtAddCallback((Widget)dd, XtNdestroyCallback, 
+    XtAddCallback((Widget)dd, XtNdestroyCallback,
 			DisplayDestroyCallback, (XtPointer) w_class);
 }
 
@@ -1684,17 +1683,17 @@ _XmGetWorldObject(
     static XContext	worldObjectContext = 0;
     XmWidgetExtData     ext;
     Display		*display;
-    
+
     /*
     ** Note: in an ideal World we would be sure to delete this context when
-    ** the display is closed, so that we don't get bad data if a second 
+    ** the display is closed, so that we don't get bad data if a second
     ** display with the same id is opened.
     */
     if (!worldObjectContext)
       worldObjectContext = XUniqueContext();
 
     display = XtDisplayOfObject(shell);
-    
+
     if (XFindContext(display,
 		     (Window) NULL,
 		     worldObjectContext,
@@ -1704,10 +1703,10 @@ _XmGetWorldObject(
 	  Widget		appShell = shell;
 
 	  worldClass = _XmGetActualClass(display, xmDesktopClass);
-	  
-	  while (XtParent(appShell)) 
+
+	  while (XtParent(appShell))
 	    appShell = XtParent(appShell);
-	  
+
 	  worldObject = (XmDesktopObject)
 	    XtCreateWidget("world",
 			   worldClass,
@@ -1729,24 +1728,24 @@ _XmGetWorldObject(
             XmeWarning(NULL, "_XmGetWidgetExtData() returned NULL pointer.");
           }
 #endif
-	  
+
 	  XSaveContext(display,
 		       (Window) NULL,
 		       worldObjectContext,
 		       (char *) worldObject);
       }
-    return 
+    return
       worldObject;
 }
 
 /************************************************************************
  *
  *  _XmVirtKeysHandler
- *     
+ *
  ************************************************************************/
 
 /*ARGSUSED*/
-void 
+void
 _XmVirtKeysHandler(Widget    widget,
 		   XtPointer client_data,
 		   XEvent   *event,
@@ -1763,19 +1762,19 @@ _XmVirtKeysHandler(Widget    widget,
 
 /****************************************************************
  *
- *  TextOut.c functions 
+ *  TextOut.c functions
  *
  ****************************************************************/
 
 /* ARGSUSED */
-void 
+void
 _XmTextDrawDestination(XmTextWidget tw)
 {
   /* DEPRECATED */
 }
 
 /* ARGSUSED */
-void 
+void
 _XmTextClearDestination(XmTextWidget tw,
 #if NeedWidePrototypes
         int ignore_sens)
@@ -1787,7 +1786,7 @@ _XmTextClearDestination(XmTextWidget tw,
 }
 
 /* ARGSUSED */
-void 
+void
 _XmTextDestinationVisible(Widget w,
 #if NeedWidePrototypes
         int turn_on)
@@ -1801,7 +1800,7 @@ _XmTextDestinationVisible(Widget w,
 
 /****************************************************************
  *
- *  TextStrSo.c functions 
+ *  TextStrSo.c functions
  *
  ****************************************************************/
 
@@ -1816,26 +1815,26 @@ _XmStringSourceFindString(Widget w,
 
 /****************************************************************
  *
- *  TextIn.c functions 
+ *  TextIn.c functions
  *
  ****************************************************************/
 
-XmTextPosition 
+XmTextPosition
 _XmTextGetAnchor(XmTextWidget tw)
 {
   InputData data = tw->text.input->data;
-  
+
   return(data->anchor);
 }
 
 /****************************************************************
  *
- *  Traversal.c functions 
+ *  Traversal.c functions
  *
  ****************************************************************/
 
 /*ARGSUSED*/
-Boolean 
+Boolean
 _XmGrabTheFocus(
         Widget w,
         XEvent *event )		/* unused */
@@ -1847,7 +1846,7 @@ _XmGrabTheFocus(
 
 
 /*ARGSUSED*/
-void 
+void
 _XmProcessTraversal(
         Widget w,
         XmTraversalDirection dir,
@@ -1856,12 +1855,12 @@ _XmProcessTraversal(
 #else
         Boolean check )		/* unused */
 #endif /* NeedWidePrototypes */
-{   
+{
   _XmMgrTraversal( w, dir ) ;
 }
 
 
-Widget 
+Widget
 _XmFindNextTabGroup(
         Widget wid )
 {
@@ -1869,7 +1868,7 @@ _XmFindNextTabGroup(
 }
 
 
-Widget 
+Widget
 _XmFindPrevTabGroup(
         Widget wid )
 {
@@ -1877,16 +1876,16 @@ _XmFindPrevTabGroup(
 }
 
 
-Boolean 
+Boolean
 _XmCreateVisibilityRect(Widget w,
 			XRectangle *rectPtr)
-{   
+{
   return _XmComputeVisibilityRect(w, rectPtr, FALSE, TRUE);
 }
 
 /****************************************************************
  *
- *  MenuShell.c functions 
+ *  MenuShell.c functions
  *
  ****************************************************************/
 void
@@ -1900,14 +1899,14 @@ _XmSetLastManagedMenuTime (
 
 /****************************************************************
  *
- *  XmString.c functions 
+ *  XmString.c functions
  *
  ****************************************************************/
 
 /*
  * count the number of lines in an _XmString.
  */
-int 
+int
 _XmStringLineCount(
         _XmString string )
 {
@@ -1915,7 +1914,7 @@ _XmStringLineCount(
 }
 
 /* Used to create internal XmString, now just copies. */
-_XmString 
+_XmString
 _XmStringCreate(
         XmString cs )
 {
@@ -1924,22 +1923,22 @@ _XmStringCreate(
 
 /* Used to create external XmString from internal, now just copies. */
 /*ARGSUSED*/
-XmString 
+XmString
 _XmStringCreateExternal(
         XmRenderTable rendertable, /* unused */
         _XmString cs )
 {
   return(XmStringCopy((XmString)cs));
-}  
+}
 
-Boolean 
+Boolean
 _XmStringEmpty(
         _XmString string )
 {
   return(XmStringEmpty(string));
 }
 
-void 
+void
 _XmStringFree(
         _XmString string )
 {
@@ -1949,7 +1948,7 @@ _XmStringFree(
 /*
  * find total height of XmString
  */
-Dimension 
+Dimension
 _XmStringHeight(
         XmRenderTable rendertable,
         _XmString string )
@@ -1960,9 +1959,9 @@ _XmStringHeight(
 }
 
 /*
- * find the rectangle which will enclose the text 
+ * find the rectangle which will enclose the text
  */
-void 
+void
 _XmStringExtent(
         XmRenderTable rendertable,
         _XmString string,
@@ -1983,7 +1982,7 @@ _XmStringExtent(
 /*
  * find width of widest line in XmString
  */
-Dimension 
+Dimension
 _XmStringWidth(
         XmRenderTable rendertable,
         _XmString string )
@@ -1993,7 +1992,7 @@ _XmStringWidth(
   return(XmStringWidth(rendertable, string));
 }
 
-void 
+void
 _XmStringDraw(
         Display *d,
         Window w,
@@ -2015,11 +2014,11 @@ _XmStringDraw(
 #endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
-    XmStringDraw(d, w, rendertable, string, gc, x, y, width, 
+    XmStringDraw(d, w, rendertable, string, gc, x, y, width,
 		 align, lay_dir, clip);
 }
 
-void 
+void
 _XmStringDrawImage(
         Display *d,
         Window w,
@@ -2041,11 +2040,11 @@ _XmStringDrawImage(
 #endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
-    XmStringDrawImage(d, w, rendertable, string, gc, x, y, width, 
+    XmStringDrawImage(d, w, rendertable, string, gc, x, y, width,
 		      align, lay_dir, clip);
 }
 
-void 
+void
 _XmStringDrawUnderline(
         Display *d,
         Window w,
@@ -2068,11 +2067,11 @@ _XmStringDrawUnderline(
         XRectangle *clip,
         _XmString u )
 {
-    XmStringDrawUnderline(d, w, f, s, gc, x, y, width, 
+    XmStringDrawUnderline(d, w, f, s, gc, x, y, width,
 			  align, lay_dir, clip, u);
 }
 
-void 
+void
 _XmStringDrawMnemonic(
         Display *d,
         Window w,
@@ -2097,10 +2096,10 @@ _XmStringDrawMnemonic(
         XmStringTag tag )
 {
     XmString underline;
- 
+
     underline = XmStringCreate(mnemonic, tag);
- 
-    XmStringDrawUnderline(d, w, rendertable, string, gc, x, y, width, 
+
+    XmStringDrawUnderline(d, w, rendertable, string, gc, x, y, width,
 			  align, lay_dir, clip, underline);
     XmStringFree(underline);
 }
@@ -2108,7 +2107,7 @@ _XmStringDrawMnemonic(
 /*
  * internal structure access routines
  */
-Boolean 
+Boolean
 _XmStringInitContext(
         _XmStringContext *context,
         _XmString string )
@@ -2116,14 +2115,14 @@ _XmStringInitContext(
   return(XmStringInitContext(context, string));
 }
 
-void 
+void
 _XmStringFreeContext(
         _XmStringContext context )
 {
   XmStringFreeContext(context);
 }
 
-_XmString 
+_XmString
 _XmStringCopy( _XmString string )
 {
   if (string == (_XmString) NULL) return ((_XmString) NULL);
@@ -2133,7 +2132,7 @@ _XmStringCopy( _XmString string )
 /*
  * check these two internals
  */
-Boolean 
+Boolean
 _XmStringByteCompare(
         _XmString a,
         _XmString b )
@@ -2144,7 +2143,7 @@ _XmStringByteCompare(
   return(XmStringByteCompare(a, b));
 }
 
-Dimension 
+Dimension
 _XmStringBaseline(
         XmRenderTable rendertable,
         _XmString string )
@@ -2154,7 +2153,7 @@ _XmStringBaseline(
   return(XmStringBaseline(rendertable, string));
 }
 
-Boolean 
+Boolean
 _XmStringHasSubstring(
         _XmString string,
         _XmString substring )
@@ -2170,7 +2169,7 @@ _XmStringHasSubstring(
 
 /* Replaced by XmTextGetInsertionPosition */
 
-XmTextPosition 
+XmTextPosition
 XmTextGetCursorPosition(Widget widget)
 {
   if (XmIsTextField(widget))
@@ -2183,7 +2182,7 @@ XmTextGetCursorPosition(Widget widget)
 
 /* Replaced by XmTextSetInsertionPosition */
 
-void 
+void
 XmTextSetCursorPosition(Widget widget,
 			XmTextPosition position)
 {
@@ -2196,7 +2195,7 @@ XmTextSetCursorPosition(Widget widget,
 
 /* Replaced by XmTextFieldSetInsertionPosition */
 
-void 
+void
 XmTextFieldSetCursorPosition(Widget w,
 			     XmTextPosition position)
 {
@@ -2205,7 +2204,7 @@ XmTextFieldSetCursorPosition(Widget w,
 
 /* Replaced by XmTextFieldGetInsertionPosition */
 
-XmTextPosition 
+XmTextPosition
 XmTextFieldGetCursorPosition(Widget w)
 {
   return XmTextFieldGetInsertionPosition(w);
@@ -2214,7 +2213,7 @@ XmTextFieldGetCursorPosition(Widget w)
 
 /****************************************************************
  *
- *  TravAct.c functions 
+ *  TravAct.c functions
  *
  ****************************************************************/
 
@@ -2223,7 +2222,7 @@ XmTextFieldGetCursorPosition(Widget w)
  * Get the state of the 'ResettingFocus' flag, based upon the
  * display to which the widget is tied.
  */
-Boolean 
+Boolean
 _XmGetFocusResetFlag(
         Widget w )
 {
@@ -2234,7 +2233,7 @@ _XmGetFocusResetFlag(
 /*
  * Set the state of the 'ResettingFocus' flag.
  */
-void 
+void
 _XmSetFocusResetFlag(
         Widget w,
 #if NeedWidePrototypes
@@ -2249,7 +2248,7 @@ _XmSetFocusResetFlag(
 /********************************************************************/
 
 /*ARGSUSED*/
-void 
+void
 _XmStringUpdate(XmFontList fontlist, /* unused */
 		_XmString string ) /* unused */
 {
@@ -2261,7 +2260,7 @@ _XmStringUpdate(XmFontList fontlist, /* unused */
 /* From BaseClass.c */
 
 /*ARGSUSED*/
-void 
+void
 _XmFreeWidgetExtData(
         Widget widget )		/* unused */
 {
@@ -2270,7 +2269,7 @@ _XmFreeWidgetExtData(
 
 
 /*ARGSUSED*/
-void 
+void
 _XmBaseClassPartInitialize(
         WidgetClass wc )	/* unused */
 {
@@ -2278,16 +2277,16 @@ _XmBaseClassPartInitialize(
 }
 
 
-Boolean 
+Boolean
 _XmIsSlowSubclass(
         WidgetClass wc,
         unsigned int bit )
 {
   XmBaseClassExt *wcePtr = _XmGetBaseClassExtPtr(wc, XmQmotif);
-  
+
   if (!wcePtr || !(*wcePtr))
     return False;
-  
+
   if ((_XmGetFlagsBit((*wcePtr)->flags, bit)) != 0)
     return True;
   else
@@ -2303,7 +2302,7 @@ _XmIsStandardMotifWidgetClass(
   XmBaseClassExt * fastPtr;
   XmBaseClassExt * superFastPtr;
   WidgetClass super_wc = wc->core_class.superclass;
-  
+
   if ((fastPtr = _XmGetBaseClassExtPtr( wc, XmQmotif)) && *fastPtr)
     {
       if (!(superFastPtr = _XmGetBaseClassExtPtr( super_wc, XmQmotif)))
@@ -2319,7 +2318,7 @@ _XmIsStandardMotifWidgetClass(
           unsigned char * superFlags = (*superFastPtr)->flags;
           unsigned numBytes = (XmLAST_FAST_SUBCLASS_BIT >> 3) + 1;
           unsigned Index;
-	  
+
           Index = numBytes;
           while (Index--)
             {
@@ -2344,20 +2343,20 @@ _XmIsStandardMotifWidgetClass(
 
 /** Obsolete from ImageCache.c */
 
-Pixmap 
+Pixmap
 _XmGetPixmap(
     Screen *screen,
     char *image_name,
     int depth,
     Pixel foreground,
     Pixel background)
-{    
+{
     return(XmGetPixmapByDepth(screen, image_name,
 			      foreground, background, depth));
 }
 
- 
-Boolean 
+
+Boolean
 _XmInstallPixmap(
         Pixmap pixmap,
         Screen *screen,
@@ -2365,7 +2364,7 @@ _XmInstallPixmap(
         Pixel foreground,
         Pixel background )
 {
-  return _XmCachePixmap(pixmap, screen, image_name, 
+  return _XmCachePixmap(pixmap, screen, image_name,
 			foreground, background, 0, 0, 0);
 }
 

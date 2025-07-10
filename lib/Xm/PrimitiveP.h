@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmPrimitiveP_h
 #define _XmPrimitiveP_h
 
@@ -65,8 +65,8 @@ typedef struct _XmPrimitiveClassPart
    XtWidgetProc         border_unhighlight;
    String               translations;
    XtActionProc         arm_and_activate;
-   XmSyntheticResource * syn_resources;   
-   int                  num_syn_resources;   
+   XmSyntheticResource * syn_resources;
+   int                  num_syn_resources;
    XtPointer            extension;
 } XmPrimitiveClassPart;
 
@@ -121,7 +121,7 @@ typedef struct _XmPrimitivePart
 
    XmDirection layout_direction;
 #endif
-#ifdef OM22_COMPATIBILITY
+#if XM_22_COMPAT
    XmString tool_tip_string;
 #endif
 } XmPrimitivePart;

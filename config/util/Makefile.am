@@ -6,7 +6,7 @@ EXTRA_DIST = aminstall.sh bsdinst.sh checktree.c chownxterm.c \
 	     mkdirhier.man mkdirhier.sh syminst.sh x11mf.sh \
 	     xmkmf.cpp xmkmf.man Makefile.ini
 
-INCLUDES = ${X_CFLAGS}
+AM_CPPFLAGS = ${X_CFLAGS}
 noinst_PROGRAMS = makestrs
 
 

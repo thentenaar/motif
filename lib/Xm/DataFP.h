@@ -164,7 +164,7 @@ extern XmDataFieldClassRec xmDataFieldClassRec;
 #define XmTextF_overstrike(w) (((XmDataFieldWidget)(w))->text.overstrike)
 #define XmTextF_redisplay(w) (((XmDataFieldWidget)(w))->text.redisplay)
 #define XmTextF_have_fontset(w) (((XmDataFieldWidget)(w))->text.have_fontset)
-#ifdef USE_XFT
+#if USE_XFT
 #define XmTextF_use_xft(w) (((XmDataFieldWidget)(w))->text.use_xft)
 #define	XmTextF_xft_font(w) (((XftFont*)((XmDataFieldWidget)(w))->text.font))
 #endif

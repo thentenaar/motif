@@ -8,6 +8,6 @@ LDADD = ../../../lib/Xm/libXm.la
 
 EXTRA_DIST =
 
-INCLUDES = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
+AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
 
 noinst_HEADERS = dainput.h

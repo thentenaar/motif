@@ -10,6 +10,6 @@ data_DATA = $(iconbuttondemo_SOURCES) $(EXTRA_DIST)
 TOPDIR = ../../..
 LDADD = $(TOPDIR)/lib/Xm/libXm.la
 
-INCLUDES = -I$(TOPDIR)/lib -I$(srcdir)/.. \
+AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/.. \
            -I$(srcdir)/$(TOPDIR)/lib \
-           ${X_CFLAGS} 
+           ${X_CFLAGS}

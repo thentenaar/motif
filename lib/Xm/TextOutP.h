@@ -132,7 +132,7 @@ typedef struct _OutputDataRec {
     int tabheight;		/* Number of pixels for a tab. */
     Dimension linewidth;	/* Number of pixels per line (when vw). */
     Boolean suspend_voffset;	/* temporarily suspend horizontal scrolling */
-#ifdef USE_XFT
+#if USE_XFT
     Boolean use_xft;            /* True if font to be used is XftFont */
 #endif
 } OutputDataRec, *OutputData;

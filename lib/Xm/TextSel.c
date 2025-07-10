@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -49,16 +49,16 @@ static char rcsid[] = "$TOG: TextSel.c /main/24 1998/12/07 11:12:08 mgreess $"
 
 /********    Static Function Declarations    ********/
 
-static void InsertSelection( 
+static void InsertSelection(
                         Widget w,
                         XtPointer closure,
                         Atom *seltype,
                         Atom *type,
                         XtPointer value,
                         unsigned long *length,
-                        int *format, 
+                        int *format,
 			XtPointer tid) ;
-static void HandleInsertTargets( 
+static void HandleInsertTargets(
                         Widget w,
                         XtPointer closure,
                         Atom *seltype,
@@ -72,27 +72,27 @@ static void HandleDrop(Widget w,
 		       XmDropProcCallbackStruct *cb,
 		       XmDestinationCallbackStruct *ds);
 
-static void HandleTargets(Widget w, 
-			  XtPointer ignore, 
+static void HandleTargets(Widget w,
+			  XtPointer ignore,
 			  XmSelectionCallbackStruct *ds);
 
-static void DoStuff(Widget w, 
-		    XtPointer closure, 
+static void DoStuff(Widget w,
+		    XtPointer closure,
 		    XmSelectionCallbackStruct *ds);
 
 static void DropDestroyCB(Widget w,
 			  XtPointer clientData,
 			  XtPointer callData);
 
-static void DropTransferProc(Widget w, XtPointer ignore, 
+static void DropTransferProc(Widget w, XtPointer ignore,
 			     XmSelectionCallbackStruct *ds);
 
 static void SetDropContext(Widget w);
 
 static void DeleteDropContext(Widget w);
-static void TextSecondaryWrapper(Widget, XtPointer, 
+static void TextSecondaryWrapper(Widget, XtPointer,
 				 XmSelectionCallbackStruct *);
-static void TextConvertCallback(Widget, XtPointer, 
+static void TextConvertCallback(Widget, XtPointer,
 				XmConvertCallbackStruct*);
 static void TextDestinationCallback(Widget, XtPointer,
 				    XmDestinationCallbackStruct*);
@@ -114,14 +114,14 @@ static _XmInsertSelect insert_select;
 
 /*ARGSUSED*/
 static void
-SetPrimarySelection(Widget w, 
+SetPrimarySelection(Widget w,
 		    XtEnum op,	/* unused */
 		    XmTransferDoneCallbackStruct *ts) /* unused */
 {
   XmTextWidget tw = (XmTextWidget) w;
   InputData data = tw->text.input->data;
   XmTextPosition cursorPos = tw->text.cursor_position;
- 
+
   _XmProcessLock();
   if (!prim_select) {
     _XmProcessUnlock();
@@ -148,7 +148,7 @@ SetPrimarySelection(Widget w,
 
 /*ARGSUSED*/
 static void
-CleanPrimarySelection(Widget w, 
+CleanPrimarySelection(Widget w,
 		    XtEnum op,	/* unused */
 		    XmTransferDoneCallbackStruct *ts) /* unused */
 {
@@ -166,7 +166,7 @@ CleanPrimarySelection(Widget w,
 }
 
 
-static void 
+static void
 TextSecondaryWrapper(Widget w, XtPointer closure,
 			XmSelectionCallbackStruct *ds)
 {
@@ -191,7 +191,7 @@ InsertSelection(
         Atom *type,
         XtPointer value,
         unsigned long *length,
-        int *format, 
+        int *format,
 	XtPointer tid)
 {
   _XmInsertSelect *insert_select = (_XmInsertSelect *)closure;
@@ -200,19 +200,19 @@ InsertSelection(
   XmTextPosition right = 0;
   Boolean dest_disjoint = False;
   Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), XmSCOMPOUND_TEXT, False);
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   Atom UTF8_STRING = XInternAtom(XtDisplay(w), XmSUTF8_STRING, False);
 #endif
   char * total_value = NULL;
   XmTextBlockRec block, newblock;
   XmTextPosition cursorPos;
   Boolean freeBlock;
-  
+
   if (!value) {
     insert_select->done_status = True;
     return;
   }
-  
+
   /* Don't do replace if there is no text to add */
   if (*(char *)value == '\0' || *length == 0){
     XtFree((char*)value);
@@ -220,7 +220,7 @@ InsertSelection(
     insert_select->done_status = True;
     return;
   }
-  
+
   if (insert_select->select_type == XmPRIM_SELECT) {
     if (!(*tw->text.source->GetSelection)(tw->text.source, &left, &right) ||
 	left == right) {
@@ -232,29 +232,29 @@ InsertSelection(
       return;
     }
   } else if (insert_select->select_type == XmDEST_SELECT) {
-    if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) && 
+    if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) &&
 	left != right) {
       if (tw->text.cursor_position < left ||
 	  tw->text.cursor_position > right ||
 	  !tw->text.input->data->pendingdelete) {
-	left = right = tw->text.cursor_position; 
+	left = right = tw->text.cursor_position;
 	dest_disjoint = True;
       }
     } else
       left = right = tw->text.cursor_position;
   }
-  
+
   (*tw->text.output->DrawInsertionPoint)(tw, tw->text.cursor_position, off);
-  
+
   block.format = XmFMT_8_BIT;
-  
+
   if (*type == COMPOUND_TEXT || *type == XA_STRING
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       || *type == UTF8_STRING
 #endif
   ) {
     if ((total_value =
-	 _XmTextToLocaleText(w, value, *type, *format, 
+	 _XmTextToLocaleText(w, value, *type, *format,
 			     *length, NULL)) != NULL) {
       block.ptr = total_value;
       block.length = strlen(block.ptr);
@@ -270,28 +270,28 @@ InsertSelection(
     block.length = (unsigned) *length;
     block.format = XmFMT_8_BIT;
   }
-  
+
   if (_XmTextModifyVerify(tw, (XEvent *)insert_select->event, &left, &right,
 			  &cursorPos, &block, &newblock, &freeBlock)) {
-    if ((*tw->text.source->Replace)(tw, (XEvent *)insert_select->event, 
+    if ((*tw->text.source->Replace)(tw, (XEvent *)insert_select->event,
 				    &left, &right,
 				    &newblock, False) != EditDone) {
       if (tw->text.verify_bell) XBell(XtDisplay(w), 0);
       insert_select->success_status = False;
     } else {
       insert_select->success_status = True;
-      
+
       if (!tw->text.add_mode) tw->text.input->data->anchor = left;
-      
+
       if (tw->text.add_mode && cursorPos >= left && cursorPos <= right)
 	tw->text.pendingoff = FALSE;
       else
 	tw->text.pendingoff = TRUE;
-      
+
       _XmTextSetCursorPosition(w, cursorPos);
       _XmTextSetDestinationSelection(w, tw->text.cursor_position, False,
 				     insert_select->event->time);
-      
+
       if (insert_select->select_type == XmDEST_SELECT) {
 	if (left != right) {
 	  if (!dest_disjoint || !tw->text.add_mode) {
@@ -299,14 +299,14 @@ InsertSelection(
 					     tw->text.cursor_position,
 					     tw->text.cursor_position,
 					     insert_select->event->time);
-	  } 
+	  }
 	}
       }
       _XmTextValueChanged(tw, (XEvent *)insert_select->event);
     }
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   }
-  
+
   (*tw->text.output->DrawInsertionPoint)(tw, tw->text.cursor_position, on);
   if (total_value) XtFree(total_value);
   XtFree((char*)value);
@@ -327,12 +327,12 @@ HandleInsertTargets(
 	XtPointer tid )
 {
   enum { XmATEXT, XmACOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmAUTF8_STRING,
 #endif
       NUM_ATOMS };
   static char *atom_names[] = { XmSTEXT, XmSCOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmSUTF8_STRING
 #endif
       };
@@ -347,37 +347,37 @@ HandleInsertTargets(
   Boolean supports_text = False;
   Boolean supports_utf8_string = False;
   int i;
-  
+
   if (0 == *length) {
     XtFree((char *)value);
     insert_select->done_status = True;
     return; /* Supports no targets, so don't bother sending anything */
   }
-  
+
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
   atom_ptr = (Atom *)value;
-  
+
   for (i = 0; i < *length; i++, atom_ptr++) {
     if (*atom_ptr == atoms[XmATEXT])
       supports_text = True;
-    
-    if (*atom_ptr == CS_OF_ENCODING) 
+
+    if (*atom_ptr == CS_OF_ENCODING)
       supports_encoding_data = True;
-    
-    if (*atom_ptr == atoms[XmACOMPOUND_TEXT]) 
+
+    if (*atom_ptr == atoms[XmACOMPOUND_TEXT])
       supports_CT = True;
 
-#ifdef UTF8_SUPPORTED
-    if (*atom_ptr == atoms[XmAUTF8_STRING]) 
+#if XM_UTF8
+    if (*atom_ptr == atoms[XmAUTF8_STRING])
       supports_utf8_string = True;
 #endif
   }
 
   if (supports_text && supports_encoding_data)
     target = atoms[XmATEXT];
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   else if (supports_utf8_string)
     target = atoms[XmAUTF8_STRING];
 #endif
@@ -409,7 +409,7 @@ _XmTextConvert(
   enum { XmA_MOTIF_DESTINATION, XmAINSERT_SELECTION, XmADELETE,
 	 XmATARGETS, XmATEXT, XmACOMPOUND_TEXT, XmATIMESTAMP,
 	 XmA_MOTIF_DROP, XmACLIPBOARD, XmANULL,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 	 XmAUTF8_STRING,
 #endif
 	 NUM_ATOMS };
@@ -417,7 +417,7 @@ _XmTextConvert(
     XmS_MOTIF_DESTINATION, XmSINSERT_SELECTION, XmSDELETE,
     XmSTARGETS, XmSTEXT, XmSCOMPOUND_TEXT, XmSTIMESTAMP,
     XmS_MOTIF_DROP, XmSCLIPBOARD, XmSNULL,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
     XmSUTF8_STRING
 #endif
     };
@@ -439,20 +439,20 @@ _XmTextConvert(
   int status = 0;
   char * tmp_value;
   Time _time;
-  
+
   if (w == NULL) return False;
-  
+
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
   CS_OF_ENCODING = XmeGetEncodingAtom(w);
 
-  if (req_event == NULL) 
+  if (req_event == NULL)
     _time = XtLastTimestampProcessed(XtDisplay(w));
   else
     _time = req_event -> time;
-  
+
   source = tw->text.source;
-  
+
   if (*selection == XA_PRIMARY || *selection == atoms[XmACLIPBOARD]) {
     has_selection = (*tw->text.source->GetSelection)(source, &left, &right);
     is_primary = True;
@@ -471,15 +471,15 @@ _XmTextConvert(
     is_destination = is_primary = is_secondary = False;
   } else
     return False;
-  
-  
+
+
   /*
    * TARGETS identifies what targets the text widget can
    * provide data for.
    */
   if (*target == atoms[XmATARGETS]) {
     Atom *targs = XmeStandardTargets(w, 10, &target_count);
-    
+
     *value = (XtPointer) targs;
     if (XA_STRING != CS_OF_ENCODING) {
       targs[target_count] = CS_OF_ENCODING;  target_count++;
@@ -491,7 +491,7 @@ _XmTextConvert(
       targs[target_count] = atoms[XmACOMPOUND_TEXT];  target_count++;
       targs[target_count] = atoms[XmATEXT];  target_count++;
       targs[target_count] = XA_STRING;  target_count++;
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       targs[target_count] = atoms[XmAUTF8_STRING];  target_count++;
 #endif
     }
@@ -524,7 +524,7 @@ _XmTextConvert(
     tmp_prop.value = NULL;
     tmp_value = _XmStringSourceGetString(tw, left, right, False);
     status = XmbTextListToTextProperty(XtDisplay(tw), &tmp_value, 1,
-				       (XICCEncodingStyle)XStringStyle, 
+				       (XICCEncodingStyle)XStringStyle,
 				       &tmp_prop);
     XtFree(tmp_value);
     if (status == Success || status > 0){
@@ -541,7 +541,7 @@ _XmTextConvert(
       *length = 0;
       return False;
     }
-    
+
   } else if (*target == atoms[XmATEXT] || *target == CS_OF_ENCODING) {
     *type = CS_OF_ENCODING;
     *format = 8;
@@ -569,7 +569,7 @@ _XmTextConvert(
       *length = 0;
       return False;
     }
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   } else if (*target == atoms[XmAUTF8_STRING]) {
     *type = atoms[XmAUTF8_STRING];
     *format = 8;
@@ -593,7 +593,7 @@ _XmTextConvert(
     }
 #endif
   } else if (*target == atoms[XmAINSERT_SELECTION]) {
-    if (is_secondary) 
+    if (is_secondary)
       return False;
     else
       return True;
@@ -602,20 +602,20 @@ _XmTextConvert(
     XmTextBlockRec block, newblock;
     XmTextPosition cursorPos;
     Boolean freeBlock;
-    
+
     if (!(is_primary || is_drop)) return False;
-    
+
     /* The on_or_off flag is set to prevent unecessary
        cursor shifting during the Replace operation */
     tw->text.on_or_off = off;
-    
+
     block.ptr = "";
     block.length = 0;
     block.format = XmFMT_8_BIT;
-    
+
     if (_XmTextModifyVerify(tw, event, &left, &right,
 			    &cursorPos, &block, &newblock, &freeBlock)) {
-      if ((*tw->text.source->Replace)(tw, event, &left, &right, 
+      if ((*tw->text.source->Replace)(tw, event, &left, &right,
 				      &newblock, False) != EditDone) {
 	if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
 	return False;
@@ -624,7 +624,7 @@ _XmTextConvert(
 	  if (_XmTextGetDropReciever((Widget)tw) != (Widget) tw)
 	    _XmTextSetCursorPosition((Widget)tw, cursorPos);
 	} else {
-	  if ((*selection == atoms[XmACLIPBOARD]) || 
+	  if ((*selection == atoms[XmACLIPBOARD]) ||
 	      (req_event != NULL &&
 	      req_event->requestor != XtWindow((Widget) tw)))
 	    _XmTextSetCursorPosition(w, cursorPos);
@@ -632,22 +632,22 @@ _XmTextConvert(
 	_XmTextValueChanged(tw, (XEvent *) req_event);
       }
       if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
-    } 
+    }
     if (!tw->text.input->data->has_destination)
       tw->text.input->data->anchor = tw->text.cursor_position;
-    
+
     (*tw->text.source->SetSelection)(tw->text.source,
 				     tw->text.cursor_position,
 				     tw->text.cursor_position,
 				     _time);
-    
+
     *type = atoms[XmANULL];
     *value = NULL;
     *length = 0;
     *format = 8;
-    
+
     tw->text.on_or_off = on;
-    
+
     /* unknown selection type */
   } else
     return FALSE;
@@ -700,29 +700,29 @@ HandleDrop(Widget w,
   Boolean doTransfer = False;
   XtPointer tid = ds->transfer_id;
   _XmTextDropTransferRec *transfer_rec = NULL;
-  
+
   drag_cont = cb->dragContext;
-  
+
   n = 0;
   XtSetArg(args[n], XmNsourceWidget, &initiator); n++;
   XtSetArg(args[n], XmNexportTargets, &exportTargets); n++;
   XtSetArg(args[n], XmNnumExportTargets, &numExportTargets); n++;
   XtGetValues((Widget) drag_cont, args, n);
-  
+
   insert_pos = (*tw->text.output->XYToPos)(tw, cb->x, cb->y);
-  
+
   if (cb->operation & XmDROP_MOVE && w == initiator &&
       ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) &&
        left != right && insert_pos >= left && insert_pos <= right)) {
     XmTransferDone(tid, XmTRANSFER_DONE_FAIL);
   } else {
     enum { XmATEXT, XmACOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
         XmAUTF8_STRING,
 #endif
 	NUM_ATOMS };
     static char *atom_names[] = { XmSTEXT, XmSCOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
         XmSUTF8_STRING
 #endif
 	};
@@ -733,7 +733,7 @@ HandleDrop(Widget w,
     Boolean string_found = False;
     Boolean text_found = False;
     Boolean utf8_string_found = False;
-    
+
     assert(XtNumber(atom_names) == NUM_ATOMS);
     XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
@@ -744,34 +744,34 @@ HandleDrop(Widget w,
     transfer_rec->insert_pos = insert_pos;
     transfer_rec->num_chars = 0;
     transfer_rec->timestamp = cb->timeStamp;
-    
+
     if (cb->operation & XmDROP_MOVE) {
       transfer_rec->move = True;
     } else {
       transfer_rec->move = False;
     }
-    
+
     for (n = 0; n < numExportTargets; n++) {
       if (exportTargets[n] == CS_OF_ENCODING) {
 	desiredTarget = CS_OF_ENCODING;
 	encoding_found = True;
 	break;
       }
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       if (exportTargets[n] == atoms[XmAUTF8_STRING]) utf8_string_found = True;
 #endif
       if (exportTargets[n] == atoms[XmACOMPOUND_TEXT]) c_text_found = True;
       if (exportTargets[n] == XA_STRING) string_found = True;
       if (exportTargets[n] == atoms[XmATEXT]) text_found = True;
     }
-    
+
     n = 0;
     if (encoding_found || c_text_found || string_found || text_found
         || utf8_string_found) {
       if (!encoding_found) {
 	if (c_text_found)
 	  desiredTarget = atoms[XmACOMPOUND_TEXT];
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 	else if (utf8_string_found)
 	  desiredTarget = atoms[XmAUTF8_STRING];
 #endif
@@ -780,7 +780,7 @@ HandleDrop(Widget w,
 	else
 	  desiredTarget = atoms[XmATEXT];
       }
-      
+
       if (cb->operation & XmDROP_MOVE || cb->operation & XmDROP_COPY) {
 	doTransfer = True;
       } else {
@@ -791,7 +791,7 @@ HandleDrop(Widget w,
     }
   }
   SetDropContext(w);
-  
+
   if (doTransfer) {
     XmeTransferAddDoneProc(tid, (XmSelectionFinishedProc) DropDestroyCB);
     XmTransferValue(tid, desiredTarget,
@@ -809,18 +809,18 @@ HandleDrop(Widget w,
  * successful exchange.
  */
 
-static void 
-HandleTargets(Widget w, 
+static void
+HandleTargets(Widget w,
 	      XtPointer closure,
 	      XmSelectionCallbackStruct *ds)
 {
   enum { XmACOMPOUND_TEXT, XmACLIPBOARD, XmATEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmAUTF8_STRING,
 #endif
       NUM_ATOMS };
   static char *atom_names[] =  { XmSCOMPOUND_TEXT, XmSCLIPBOARD, XmSTEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmSUTF8_STRING
 #endif
       };
@@ -838,57 +838,57 @@ HandleTargets(Widget w,
   XmTextPosition select_pos;
   XmTextPosition left, right;
   int i;
-  
+
   if (!ds->length) {
     XtFree((char *)ds->value);
     ds->value = NULL;
     return;
   }
-  
+
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
   CS_OF_ENCODING = XmeGetEncodingAtom(w);
 
   atom_ptr = (Atom *)ds->value;
-  
+
   for (i = 0; i < ds->length; i++, atom_ptr++) {
     if (*atom_ptr == atoms[XmATEXT])
       supports_text = True;
 
-    if (*atom_ptr == CS_OF_ENCODING) 
+    if (*atom_ptr == CS_OF_ENCODING)
       supports_encoding_data = True;
 
     if (*atom_ptr == atoms[XmACOMPOUND_TEXT])
       supports_CT = True;
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
     if (*atom_ptr == atoms[XmAUTF8_STRING])
       supports_utf8_string = True;
 #endif
   }
-  
-  
+
+
   /*
    * Set stuff position to the x and y position of
    * the button pressed event for primary pastes.
    */
   if (ds->selection != atoms[XmACLIPBOARD] && point) {
-    select_pos = 
+    select_pos =
       (*tw->text.output->XYToPos)(tw, (Position)point->x, (Position)point->y);
   } else {
     select_pos = tw->text.cursor_position;
   }
-  
+
   if (ds->selection != atoms[XmACLIPBOARD]) {
-    if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) && 
-	left != right && select_pos > left && 
+    if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) &&
+	left != right && select_pos > left &&
 	select_pos < right) {
       XtFree((char *)ds->value);
       ds->value = NULL;
       return;
     }
   }
-  
+
   _XmProcessLock();
   if (prim_select) {
     prim_select->ref_count++;
@@ -899,17 +899,17 @@ HandleTargets(Widget w,
   prim_select->position = select_pos;
   prim_select->time = XtLastTimestampProcessed(XtDisplay(w));
   prim_select->num_chars = 0;
-  
-  /* If owner supports TEXT and the current locale, ask for TEXT.  
-   * If not, and if the owner supports compound text, ask for 
-   * compound text. If not, and owner and I have the same encoding, 
-   * ask for that encoding. If not, fall back position is to ask for 
+
+  /* If owner supports TEXT and the current locale, ask for TEXT.
+   * If not, and if the owner supports compound text, ask for
+   * compound text. If not, and owner and I have the same encoding,
+   * ask for that encoding. If not, fall back position is to ask for
    * STRING and try to convert it locally.
    */
-  
+
   if (supports_text && supports_encoding_data)
     prim_select->target = targets[0] = atoms[XmATEXT];
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   else if (supports_utf8_string)
     prim_select->target = targets[0] = atoms[XmAUTF8_STRING];
 #endif
@@ -919,12 +919,12 @@ HandleTargets(Widget w,
     prim_select->target = targets[0] = CS_OF_ENCODING;
   else
     prim_select->target = targets[0] = XA_STRING;
-  
+
   prim_select->ref_count = 1;
   /* Make request to call DoStuff() with the primary selection. */
-  XmTransferValue(ds->transfer_id, targets[0], (XtCallbackProc) DoStuff, 
+  XmTransferValue(ds->transfer_id, targets[0], (XtCallbackProc) DoStuff,
 		  (XtPointer) prim_select, prim_select->time);
-  
+
   _XmProcessUnlock();
   XtFree((char *)ds->value);
   ds->value = NULL;
@@ -932,18 +932,18 @@ HandleTargets(Widget w,
 
 /* Pastes the primary selection to the stuff position. */
 static void
-DoStuff(Widget w, 
-	XtPointer closure, 
+DoStuff(Widget w,
+	XtPointer closure,
 	XmSelectionCallbackStruct *ds)
 {
   enum { XmANULL, XmACLIPBOARD, XmATEXT, XmACOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmAUTF8_STRING,
 #endif
       NUM_ATOMS };
-  static char *atom_names[] =  { 
+  static char *atom_names[] =  {
     XmSNULL, XmSCLIPBOARD, XmSTEXT, XmSCOMPOUND_TEXT,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
     XmSUTF8_STRING
 #endif
     };
@@ -964,8 +964,8 @@ DoStuff(Widget w,
 
   if (!o_data->hasfocus && _XmGetFocusPolicy(w) == XmEXPLICIT)
     (void) XmProcessTraversal(w, XmTRAVERSE_CURRENT);
-  
-  if (ds->selection != atoms[XmACLIPBOARD] && 
+
+  if (ds->selection != atoms[XmACLIPBOARD] &&
       !(ds->length) && ds->type != atoms[XmANULL]) {
     /* Backwards compatibility for 1.0 Selections */
     _XmProcessLock();
@@ -979,7 +979,7 @@ DoStuff(Widget w,
     ds->value = NULL;
     return;
   }
-  
+
   /* if length == 0 and ds->type is the NULL atom we are assuming
    * that a DELETE target is requested.
    */
@@ -1002,15 +1002,15 @@ DoStuff(Widget w,
     Boolean local = _XmStringSourceHasSelection(source);
     Boolean *pendingoff = NULL;
     Boolean dest_disjoint = True;
-    
+
     block.format = XmFMT_8_BIT;
-    
+
     if (ds->type == atoms[XmACOMPOUND_TEXT] ||
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
         ds->type == atoms[XmAUTF8_STRING] ||
 #endif
 	ds->type == XA_STRING) {
-      if ((total_value = 
+      if ((total_value =
 	   _XmTextToLocaleText(w, ds->value, ds->type, ds->format,
 			       ds->length, NULL)) != NULL) {
 	block.ptr = total_value;
@@ -1025,12 +1025,12 @@ DoStuff(Widget w,
       block.length = (int) ds->length; /* NOTE: this causes a truncation on
 					  some architectures */
     }
-    
+
     if (data->selectionMove && local) {
       max_length = _XmStringSourceGetMaxLength(source);
       _XmStringSourceSetMaxLength(source, INT_MAX);
     }
-    
+
     replace_from = replace_to = prim_select->position;
     pendingoff = _XmStringSourceGetPending(tw);
 
@@ -1043,21 +1043,21 @@ DoStuff(Widget w,
 	  dest_disjoint = False;
 	}
       }
-   } else {  
+   } else {
       /* The on_or_off flag is set to prevent unnecessary
 	 cursor shifting during the Replace operation */
       tw->text.on_or_off = off;
 
       _XmStringSourceSetPending(tw, (Boolean *)FALSE);
     }
-    
+
     if (_XmTextModifyVerify(tw, ds->event, &replace_from, &replace_to,
 			    &cursorPos, &block, &newblock, &freeBlock)) {
       _XmProcessLock();
-      prim_select->num_chars = _XmTextCountCharacters(newblock.ptr, 
+      prim_select->num_chars = _XmTextCountCharacters(newblock.ptr,
 						      newblock.length);
       _XmProcessUnlock();
-      if ((*tw->text.source->Replace)(tw, ds->event, 
+      if ((*tw->text.source->Replace)(tw, ds->event,
 				      &replace_from, &replace_to,
 				      &newblock, False) != EditDone) {
 	XtCallActionProc(w, "beep", NULL, (String *) NULL, (Cardinal) 0);
@@ -1067,7 +1067,7 @@ DoStuff(Widget w,
 	_XmProcessUnlock();
 	_XmStringSourceSetPending(tw, pendingoff);
       } else {
-	if ((newblock.length > 0 && !data->selectionMove) || 
+	if ((newblock.length > 0 && !data->selectionMove) ||
 	    ds->selection == atoms[XmACLIPBOARD]) {
 	  _XmTextSetCursorPosition(w, cursorPos);
 	  _XmTextSetDestinationSelection(w, tw->text.cursor_position,
@@ -1078,7 +1078,7 @@ DoStuff(Widget w,
 	    data->anchor = replace_from;
 	    if (left != right && (!dest_disjoint || !tw->text.add_mode))
 	      (*source->SetSelection)(source, tw->text.cursor_position,
-				      tw->text.cursor_position, 
+				      tw->text.cursor_position,
 				      prim_select->time);
 	  } else {
 	    if (data->selectionMove) {
@@ -1116,12 +1116,12 @@ DoStuff(Widget w,
       _XmProcessUnlock();
       _XmStringSourceSetPending(tw, pendingoff);
     }
-    
+
     if (data->selectionMove && local) {
       _XmStringSourceSetMaxLength(source, max_length);
     }
-    
-    if (ds->selection != atoms[XmACLIPBOARD]) 
+
+    if (ds->selection != atoms[XmACLIPBOARD])
       tw->text.on_or_off = on;
 
     if (pendingoff) XtFree((char *)pendingoff);
@@ -1139,24 +1139,24 @@ DropDestroyCB(Widget      w,
 	      XtPointer   callData)
 {
   XmTransferDoneCallbackStruct *ts = (XmTransferDoneCallbackStruct *)callData;
-  
+
   DeleteDropContext(w);
   if (ts->client_data != NULL) XtFree((char*) ts->client_data);
 }
 
 /* ARGSUSED */
 static void
-DropTransferProc(Widget w, 
-		 XtPointer closure, 
+DropTransferProc(Widget w,
+		 XtPointer closure,
 		 XmSelectionCallbackStruct *ds)
 {
   enum { XmACOMPOUND_TEXT, XmANULL, XmADELETE,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   XmAUTF8_STRING,
 #endif
   NUM_ATOMS };
   static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSNULL, XmSDELETE,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       XmSUTF8_STRING
 #endif
       };
@@ -1174,7 +1174,7 @@ DropTransferProc(Widget w,
   char * total_value = NULL;
   Boolean pendingoff;
   Boolean freeBlock;
-  
+
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
@@ -1185,7 +1185,7 @@ DropTransferProc(Widget w,
       cursorPos = transfer_rec->insert_pos + transfer_rec->num_chars;
       _XmTextSetCursorPosition((Widget)tw, cursorPos);
       _XmTextSetDestinationSelection((Widget)tw, tw->text.cursor_position,
-				     False, 
+				     False,
 				     XtLastTimestampProcessed(XtDisplay(w)));
       (*tw->text.source->SetSelection)(tw->text.source, data->anchor,
 				       tw->text.cursor_position,
@@ -1197,11 +1197,11 @@ DropTransferProc(Widget w,
       return;
     }
   }
-  
-  if (!ds->value || 
-      (ds->type != atoms[XmACOMPOUND_TEXT] && 
-#ifdef UTF8_SUPPORTED
-       ds->type != atoms[XmAUTF8_STRING] && 
+
+  if (!ds->value ||
+      (ds->type != atoms[XmACOMPOUND_TEXT] &&
+#if XM_UTF8
+       ds->type != atoms[XmAUTF8_STRING] &&
 #endif
        ds->type != CS_OF_ENCODING &&
        ds->type != XA_STRING)) {
@@ -1212,15 +1212,15 @@ DropTransferProc(Widget w,
     }
     return;
   }
-  
+
   insertPosLeft = insertPosRight = transfer_rec->insert_pos;
-  
+
   if (ds->type == XA_STRING || ds->type == atoms[XmACOMPOUND_TEXT]
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       || ds->type == atoms[XmAUTF8_STRING]
 #endif
   ) {
-    if ((total_value = _XmTextToLocaleText(w, ds->value, ds->type, 
+    if ((total_value = _XmTextToLocaleText(w, ds->value, ds->type,
 					   8, ds->length, NULL)) != NULL) {
       block.ptr = total_value;
       block.length = strlen(block.ptr);
@@ -1236,31 +1236,31 @@ DropTransferProc(Widget w,
     block.length = (int) ds->length; /* NOTE: this causes a truncation on
 					  some architectures */
   }
-  
+
   block.format = XmFMT_8_BIT;
-  
-  if (data->pendingdelete && 
+
+  if (data->pendingdelete &&
       (*tw->text.source->GetSelection)(tw->text.source, &left, &right) &&
       (left != right)){
     if(insertPosLeft > left && insertPosLeft < right) insertPosLeft = left;
     if(insertPosRight < right && insertPosRight > left) insertPosRight = right;
   }
-  
+
   if (transfer_rec->move && local) {
     max_length = _XmStringSourceGetMaxLength(source);
     _XmStringSourceSetMaxLength(source, INT_MAX);
   }
-  
+
   /* The on_or_off flag is set to prevent unecessary
      cursor shifting during the Replace operation */
   tw->text.on_or_off = off;
 
   pendingoff = tw->text.pendingoff;
   tw->text.pendingoff = FALSE;
-  
+
   if (_XmTextModifyVerify(tw, ds->event, &insertPosLeft, &insertPosRight,
 			  &cursorPos, &block, &newblock, &freeBlock)) {
-    if ((*tw->text.source->Replace)(tw, ds->event, 
+    if ((*tw->text.source->Replace)(tw, ds->event,
 				    &insertPosLeft, &insertPosRight,
 				    &newblock, False) != EditDone) {
       if (tw->text.verify_bell) XBell(XtDisplay(tw), 0);
@@ -1286,12 +1286,12 @@ DropTransferProc(Widget w,
 	  data->anchor = insertPosLeft;
       }
       if (transfer_rec->move) {
-	XmTransferValue(ds->transfer_id, 
+	XmTransferValue(ds->transfer_id,
 			atoms[XmADELETE],
-			(XtCallbackProc) DropTransferProc, 
+			(XtCallbackProc) DropTransferProc,
 			(XtPointer) transfer_rec, 0);
       }
-      
+
       if (transfer_rec->move && local) {
 	_XmStringSourceSetMaxLength(source, max_length);
       }
@@ -1347,43 +1347,43 @@ _XmTextGetDropReciever(Widget w)
   Screen  *screen = XtScreen(w);
   Widget widget;
   XContext loc_context;
- 
+
   _XmProcessLock();
   loc_context = _XmTextDNDContext;
   _XmProcessUnlock();
   if (loc_context == 0) return NULL;
-  
+
   if (!XFindContext(display, (Window)screen,
 		    loc_context, (char **) &widget)) {
     return widget;
   }
-  
+
   return NULL;
 }
 
 
 
 /********************************************
- * Transfer trait method implementation 
+ * Transfer trait method implementation
  ********************************************/
 
 /*ARGSUSED*/
 static void
-TextConvertCallback(Widget w, 
+TextConvertCallback(Widget w,
 		    XtPointer ignore, /* unused */
 		    XmConvertCallbackStruct *cs)
 {
   enum { XmADELETE, XmA_MOTIF_LOSE_SELECTION,
 	 XmA_MOTIF_EXPORT_TARGETS, XmATEXT, XmACOMPOUND_TEXT,
 	 XmATARGETS, XmA_MOTIF_CLIPBOARD_TARGETS, XmACLIPBOARD,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 	 XmAUTF8_STRING,
 #endif
 	 NUM_ATOMS };
   static char *atom_names[] = { XmSDELETE, XmS_MOTIF_LOSE_SELECTION,
 	 XmS_MOTIF_EXPORT_TARGETS, XmSTEXT, XmSCOMPOUND_TEXT,
 	 XmSTARGETS, XmS_MOTIF_CLIPBOARD_TARGETS, XmSCLIPBOARD,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 	 XmSUTF8_STRING
 #endif
 	 };
@@ -1394,7 +1394,7 @@ TextConvertCallback(Widget w,
   unsigned long size;
   int format;
   Atom atoms[XtNumber(atom_names)];
-  
+
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
@@ -1405,14 +1405,14 @@ TextConvertCallback(Widget w,
     cs->status = XmCONVERT_DONE;
     return;
   }
-  
+
   if (cs->target == atoms[XmADELETE] &&
       cs->selection == XA_SECONDARY) {
     _XmTextHandleSecondaryFinished(w, cs->event);
     cs->status = XmCONVERT_DONE;
     return;
   }
-  
+
   /* When this is called as a result of a clipboard copy link,  we
      don't have any available targets.  Make sure to return immediately
      without modification */
@@ -1420,7 +1420,7 @@ TextConvertCallback(Widget w,
       cs->parm == (XtPointer) XmLINK &&
       (cs->target == atoms[XmA_MOTIF_CLIPBOARD_TARGETS] ||
        cs->target == atoms[XmATARGETS])) return;
-  
+
   if (!_XmTextConvert(w, &cs->selection, &cs->target,
 		      &type, &value, &size, &format,
 		      (Widget) cs->source_data, cs->event)) {
@@ -1429,7 +1429,7 @@ TextConvertCallback(Widget w,
     size = 0;
     format = 8;
   }
-  
+
   if (cs->target == atoms[XmADELETE]) {
     cs->status = XmCONVERT_DONE;
     cs->type = type;
@@ -1438,14 +1438,14 @@ TextConvertCallback(Widget w,
     cs->format = format;
     return;
   }
-  
+
   if (cs->target == atoms[XmA_MOTIF_EXPORT_TARGETS] ||
       cs->target == atoms[XmA_MOTIF_CLIPBOARD_TARGETS]) {
     Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 5);
     int n = 0;
-    
+
     value = (XtPointer) targs;
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
     targs[n] = atoms[XmAUTF8_STRING]; n++;
 #endif
     targs[n] = atoms[XmACOMPOUND_TEXT]; n++;
@@ -1458,19 +1458,19 @@ TextConvertCallback(Widget w,
     size = n;
     type = XA_ATOM;
   }
-  
+
   _XmConvertComplete(w, value, size, format, type, cs);
 }
 
 /************************************************
- * Free data allocated for destination callback 
+ * Free data allocated for destination callback
  ************************************************/
 
 /*ARGSUSED*/
 static void
 FreeLocationData(Widget w,     /* unused */
 		 XtEnum op,    /* unused */
-		 XmTransferDoneCallbackStruct *ts) 
+		 XmTransferDoneCallbackStruct *ts)
 {
   XmDestinationCallbackStruct *ds;
 
@@ -1482,8 +1482,8 @@ FreeLocationData(Widget w,     /* unused */
 }
 
 /*ARGSUSED*/
-static void 
-TextDestinationCallback(Widget w, 
+static void
+TextDestinationCallback(Widget w,
 			XtPointer closure, /* unused */
 			XmDestinationCallbackStruct *ds)
 {
@@ -1498,7 +1498,7 @@ TextDestinationCallback(Widget w,
 
   /*
    ** In case of a primary transfer operation where a location_data
-   ** has been allocated, register a done proc to be called when 
+   ** has been allocated, register a done proc to be called when
    ** the data transfer is complete to free the location_data
    */
   if (ds->selection == XA_PRIMARY && ds->location_data)
@@ -1506,33 +1506,33 @@ TextDestinationCallback(Widget w,
 
   /* If we aren't sensitive,  don't allow transfer */
   if (! w -> core.sensitive ||
-      ! w -> core.ancestor_sensitive) 
+      ! w -> core.ancestor_sensitive)
     XmTransferDone(ds -> transfer_id, XmTRANSFER_DONE_FAIL);
 
   /* We don't handle LINKs internally */
   if (ds->operation == XmLINK) return;
-  
+
   if (ds->selection == XA_PRIMARY && ds->operation == XmMOVE)
     XmeTransferAddDoneProc(ds->transfer_id, SetPrimarySelection);
   else
     XmeTransferAddDoneProc(ds->transfer_id, CleanPrimarySelection);
-     
+
   if (ds->selection == atoms[XmA_MOTIF_DROP]) {
-    XmDropProcCallbackStruct *cb = 
+    XmDropProcCallbackStruct *cb =
       (XmDropProcCallbackStruct *) ds->destination_data;
-    
+
     DropPoint.x = cb->x;
     DropPoint.y = cb->y;
-    
+
     ds->location_data = (XtPointer) &DropPoint;
-    
+
     if (cb->dropAction != XmDROP_HELP)
       HandleDrop(w, cb, ds);
     ds->location_data = NULL;
   }
   else if (ds->selection == XA_SECONDARY) {
     Atom CS_OF_ENCODING;
-    
+
     CS_OF_ENCODING = XmeGetEncodingAtom(w);
 
     _XmProcessLock();
@@ -1540,13 +1540,13 @@ TextDestinationCallback(Widget w,
     insert_select.success_status = False;
     insert_select.event = (XSelectionRequestEvent *) ds->event;
     insert_select.select_type = XmDEST_SELECT;
-    
+
     if (((Atom) ds->location_data) != CS_OF_ENCODING) {
       /*
        * Make selection request to find out which targets
        * the selection can provide.
        */
-      XmTransferValue(ds->transfer_id, atoms[XmATARGETS], 
+      XmTransferValue(ds->transfer_id, atoms[XmATARGETS],
 		      (XtCallbackProc) TextSecondaryWrapper,
 		      (XtPointer) &insert_select, ds->time);
     } else {
@@ -1559,16 +1559,16 @@ TextDestinationCallback(Widget w,
 		      (XtPointer) &insert_select, ds->time);
     }
     _XmProcessUnlock();
-  } else 
+  } else
     /* CLIPBOARD or PRIMARY */
     XmTransferValue(ds->transfer_id, atoms[XmATARGETS],
-		    (XtCallbackProc) HandleTargets, 
+		    (XtCallbackProc) HandleTargets,
 		    ds->location_data, ds->time);
 }
 
 void
 _XmTextInstallTransferTrait(void)
 {
-  XmeTraitSet((XtPointer)xmTextWidgetClass, XmQTtransfer, 
+  XmeTraitSet((XtPointer)xmTextWidgetClass, XmQTtransfer,
 	      (XtPointer) &TextTransfer);
 }

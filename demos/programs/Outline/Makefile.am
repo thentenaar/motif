@@ -9,4 +9,5 @@ outline_SOURCES = outline.c
 data_DATA = $(outline_SOURCES) $(EXTRA_DIST)
 LDADD = $(TOPDIR)/lib/Xm/libXm.la
 TOPDIR = ../../..
-INCLUDES = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS} 
+
+AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}

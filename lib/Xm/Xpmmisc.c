@@ -41,7 +41,7 @@
 #define NO_XPMFREE_MACRO
 #include "XpmI.h"
 
-#ifdef NEED_STRDUP
+#if !HAVE_STRDUP
 /*
  * in case strdup is not provided by the system here is one
  * which does the trick

@@ -12,4 +12,4 @@ data_DATA = $(EXTRA_DIST) $(DNDDemo_SOURCES) $(simpledrop_SOURCES)
 noinst_HEADERS = DNDDemo.h
 LDADD = ../../../lib/Xm/libXm.la
 
-INCLUDES = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
+AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}

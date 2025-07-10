@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
@@ -58,10 +58,10 @@ static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 #include "TextOutI.h"
 #include "TraversalI.h"
 #include "XmI.h"
-#ifdef PRINTING_SUPPORTED
+#if XM_PRINTING
 #include <Xm/PrintSP.h>         /* for XmIsPrintShell */
 #endif
-#ifdef USE_XFT
+#if USE_XFT
 #include "XmRenderTI.h"
 #endif
 #include <Xm/XmP.h>
@@ -281,7 +281,7 @@ static Boolean SetXOCOrientation(XmTextWidget tw,
 				 XOC om,
 				 XOrientation orientation);
 
-static void CursorPosVisDefault( 
+static void CursorPosVisDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
@@ -388,11 +388,11 @@ static XtResource output_resources[] =
 /*********************************************************************
  *
  * CursorPosVisDefault
- *    
+ *
  *
  *********************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 CursorPosVisDefault(
         Widget widget,
         int offset,		/* unused */
@@ -402,10 +402,10 @@ CursorPosVisDefault(
       Widget print_shell ;
 
       value->addr = (XPointer) &cursor_pos_vis;
-              
+
       print_shell = widget ;
-      while(print_shell && !XmIsPrintShell(print_shell)) 
-	  print_shell = XtParent(print_shell);    
+      while(print_shell && !XmIsPrintShell(print_shell))
+	  print_shell = XtParent(print_shell);
 
       if (print_shell) cursor_pos_vis = False ;
       else             cursor_pos_vis = True ;
@@ -421,18 +421,18 @@ _XmTextFreeContextData(Widget w,		/* unused */
   XmTextContextData ctx_data = (XmTextContextData) clientData;
   Display *display = DisplayOfScreen(ctx_data->screen);
   XtPointer data_ptr;
-  
+
   if (XFindContext(display, (Window) ctx_data->screen,
 		   ctx_data->context, (char **) &data_ptr)) {
-    
+
     if (ctx_data->type != '\0') {
       if (data_ptr)
 	XtFree((char *) data_ptr);
     }
-    
+
     XDeleteContext (display, (Window) ctx_data->screen, ctx_data->context);
   }
-  
+
   XtFree ((char *) ctx_data);
 }
 
@@ -440,7 +440,7 @@ _XmTextFreeContextData(Widget w,		/* unused */
 /*****************************************************************************
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
-static void 
+static void
 _XmTextDrawShadow(XmTextWidget tw)
 {
   if (XtIsRealized((Widget)tw)) {
@@ -456,15 +456,15 @@ _XmTextDrawShadow(XmTextWidget tw)
 		      2 * tw->primitive.highlight_thickness,
 		      tw->primitive.shadow_thickness,
 		      XmSHADOW_OUT);
-    
-    
-    if (tw->primitive.highlighted) {   
+
+
+    if (tw->primitive.highlighted) {
       (*(((XmPrimitiveWidgetClass) XtClass((Widget)tw))
 	 ->primitive_class.border_highlight))((Widget)tw);
-    } else {   
+    } else {
       (*(((XmPrimitiveWidgetClass) XtClass((Widget)tw))
 	 ->primitive_class.border_unhighlight))((Widget)tw);
-    } 
+    }
   }
 }
 
@@ -481,25 +481,25 @@ _XmTextResetClipOrigin(XmTextWidget tw,
   OutputData data = tw->text.output->data;
   int x, y;
   Position x_pos, y_pos;
-  
+
   if (!XtIsRealized((Widget)tw)) return;
-  
+
   if (!PosToXY(tw, tw->text.cursor_position, &x_pos, &y_pos)) return;
-  
+
   x = (int) x_pos; y = (int) y_pos;
-  
+
   x -=(data->cursorwidth >> 1) + 1;
   y = (y + data->font_descent) - data->cursorheight;
-  
+
   XSetTSOrigin(XtDisplay((Widget)tw), data->imagegc, x, y);
 }
 
-static void 
+static void
 SetFullGC(XmTextWidget tw,
 	    GC gc)
 {
   XRectangle ClipRect;
-  
+
   ClipRect.x = tw->primitive.highlight_thickness +
     tw->primitive.shadow_thickness;
   ClipRect.y = tw->primitive.highlight_thickness +
@@ -508,12 +508,12 @@ SetFullGC(XmTextWidget tw,
 					 tw->primitive.shadow_thickness));
   ClipRect.height = tw->core.height - (2 *(tw->primitive.highlight_thickness +
 					   tw->primitive.shadow_thickness));
-  
-  XSetClipRectangles(XtDisplay(tw), gc, 0, 0, 
+
+  XSetClipRectangles(XtDisplay(tw), gc, 0, 0,
 		     &ClipRect, 1, Unsorted);
 }
 
-static void 
+static void
 GetRect(XmTextWidget tw,
         XRectangle *rect)
 {
@@ -523,36 +523,36 @@ GetRect(XmTextWidget tw,
   Dimension margin_height = tw->text.margin_height +
     tw->primitive.shadow_thickness +
       tw->primitive.highlight_thickness;
-  
+
   if (margin_width < tw->core.width)
     rect->x = margin_width;
   else
     rect->x = tw->core.width;
-  
+
   if (margin_height < tw->core.height)
     rect->y = margin_height;
   else
     rect->y = tw->core.height;
-  
+
   if ((int) (2 * margin_width) < (int) tw->core.width)
     rect->width = (int) tw->core.width - (2 * margin_width);
   else
     rect->width = 0;
-  
+
   if ((int) (2 * margin_height) < (int) tw->core.height)
     rect->height = (int) tw->core.height - (2 * margin_height);
   else
     rect->height = 0;
 }
 
-static void 
+static void
 SetMarginGC(XmTextWidget tw,
 	      GC gc)
 {
   XRectangle ClipRect;
-  
+
   GetRect(tw, &ClipRect);
-#ifdef USE_XFT
+#if USE_XFT
   if (tw->text.output->data->use_xft)
     _XmXftSetClipRectangles(XtDisplay(tw), XtWindow(tw), 0, 0, &ClipRect, 1);
 #endif
@@ -569,19 +569,19 @@ SetMarginGC(XmTextWidget tw,
  * done on each focus in event since the text widgets
  * share the same GC.
  */
-void 
+void
 _XmTextAdjustGC(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
   unsigned long valueMask = (GCForeground | GCBackground);
   XGCValues values;
-  
+
   if (!XtIsRealized((Widget)tw)) return;
-  
+
   SetMarginGC(tw, data->gc);
-  
+
   /* Restore cached text gc to state correct for this instantiation */
-  
+
   if (data->gc) {
     values.foreground = tw->primitive.foreground ^ tw->core.background_pixel;
     values.background = 0;
@@ -590,7 +590,7 @@ _XmTextAdjustGC(XmTextWidget tw)
 }
 
 
-static void 
+static void
 SetNormGC(XmTextWidget tw,
 	    GC gc,
 #if NeedWidePrototypes
@@ -604,7 +604,7 @@ SetNormGC(XmTextWidget tw,
   unsigned long valueMask = (GCForeground | GCBackground);
   XGCValues values;
   OutputData data = tw->text.output->data;
-  
+
   values.foreground = tw->primitive.foreground;
   values.background = tw->core.background_pixel;
   if (change_stipple) {
@@ -620,10 +620,10 @@ SetNormGC(XmTextWidget tw,
       values.stipple = data->stipple_tile;
 #endif
 
-    } else 
+    } else
       values.fill_style = FillSolid;
   }
-  
+
   XChangeGC(XtDisplay(tw), gc, valueMask, &values);
 }
 
@@ -646,7 +646,7 @@ SetShadowGC(XmTextWidget tf, GC gc)
 
 
 
-static void 
+static void
 InvertImageGC(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -660,15 +660,15 @@ SetInvGC(XmTextWidget tw,
 {
   unsigned long valueMask = (GCForeground | GCBackground);
   XGCValues values;
-  
+
   values.foreground = tw->core.background_pixel;
   values.background = tw->primitive.foreground;
-  
+
   XChangeGC(XtDisplay(tw), gc, valueMask, &values);
 }
 
 
-static int 
+static int
 _FontStructFindWidth(XmTextWidget tw,
 		     int x,    /* Starting position (needed for tabs) */
 		     XmTextBlock block,
@@ -679,13 +679,13 @@ _FontStructFindWidth(XmTextWidget tw,
   XFontStruct *font = data->font;
   char *ptr;
   unsigned char c;
-  int i, csize; 
+  int i, csize;
   int result = 0;
-  
+
   if (tw->text.char_size != 1) {
     int dummy;
     XCharStruct overall;
-    
+
     for (i = from, ptr = block->ptr + from; i < to; i +=csize, ptr += csize) {
 #ifndef NO_MULTIBYTE
       csize = mblen(ptr, tw->text.char_size);
@@ -699,7 +699,7 @@ _FontStructFindWidth(XmTextWidget tw,
 	  result += (data->tabwidth -
 		     ((x + result - data->leftmargin) % data->tabwidth));
 	} else {
-	  if (font->per_char && (c >= font->min_char_or_byte2 && 
+	  if (font->per_char && (c >= font->min_char_or_byte2 &&
 				 c <= font->max_char_or_byte2))
 	    result += font->per_char[c - font->min_char_or_byte2].width;
 	  else
@@ -731,7 +731,7 @@ _FontStructFindWidth(XmTextWidget tw,
 	    result += font->per_char[c - font->min_char_or_byte2].width;
 	  else if (font->default_char >= font->min_char_or_byte2 &&
 		   font->default_char <= font->max_char_or_byte2)
-	    result += font->per_char[font->default_char - 
+	    result += font->per_char[font->default_char -
 				     font->min_char_or_byte2].width;
 	  else
 	    result += font->min_bounds.width;
@@ -743,7 +743,7 @@ _FontStructFindWidth(XmTextWidget tw,
   return result;
 }
 
-static int 
+static int
 FindWidth(XmTextWidget tw,
 	  int x,                  /* Starting position (needed for tabs) */
 	  XmTextBlock block,
@@ -757,14 +757,14 @@ FindWidth(XmTextWidget tw,
   int tmp;
   int csize = 1;
   int i;
-  
+
 #if USE_XFT
   if (!data->use_fontset && !data->use_xft)
 #else
   if (!data->use_fontset)
 #endif
     return _FontStructFindWidth(tw, x, block, from, to);
-  
+
   if (to > block->length)
     to = block->length;
   if (from > to) {
@@ -772,9 +772,9 @@ FindWidth(XmTextWidget tw,
     to = from;
     from = tmp;
   }
-  
+
   if (to == from || to == 0) return 0;
-  
+
   if (tw->text.char_size != 1) {
     for (i = from, ptr = block->ptr + from; i < to; i +=csize, ptr += csize) {
 #ifndef NO_MULTIBYTE
@@ -788,7 +788,7 @@ FindWidth(XmTextWidget tw,
 	result += (data->tabwidth -
 		   ((x + result - data->leftmargin) % data->tabwidth));
       else
-#ifdef USE_XFT
+#if USE_XFT
         if (data->use_xft) {
 	  XGlyphInfo	ext;
 	  XftTextExtentsUtf8(XtDisplay(tw), ((XftFont*)data->font),
@@ -798,7 +798,7 @@ FindWidth(XmTextWidget tw,
 #endif
 	result += XmbTextEscapement((XFontSet)data->font, ptr, csize);
     }
-    
+
   } else { /* no need to pay for mblen if we know all chars are 1 byte */
     for (i = from, ptr = block->ptr + from; i < to; i++, ptr++) {
       c = (unsigned char) *ptr;
@@ -806,7 +806,7 @@ FindWidth(XmTextWidget tw,
 	result += (data->tabwidth -
 		   ((x + result - data->leftmargin) % data->tabwidth));
       else
-#ifdef USE_XFT
+#if USE_XFT
         if (data->use_xft) {
 	  XGlyphInfo	ext;
 	  XftTextExtentsUtf8(XtDisplay(tw), ((XftFont*)data->font),
@@ -816,12 +816,12 @@ FindWidth(XmTextWidget tw,
 #endif
 	result += XmbTextEscapement((XFontSet)data->font, ptr, 1);
     }
-  } 
+  }
   return result;
 }
 
 
-static int 
+static int
 _FontStructFindHeight(XmTextWidget tw,
 		     int y,    /* Starting position (needed for tabs) */
 		     XmTextBlock block,
@@ -835,7 +835,7 @@ _FontStructFindHeight(XmTextWidget tw,
   int i = 0, csize = 0;
   int result = 0;
   XCharStruct overall;
-  
+
   if (tw->text.char_size != 1) {
     for (i = from, ptr = block->ptr + from; i < to; i +=csize, ptr += csize) {
       csize = mblen(ptr, tw->text.char_size);
@@ -863,8 +863,8 @@ _FontStructFindHeight(XmTextWidget tw,
   return result;
 }
 
-#ifdef USE_XFT
-static int 
+#if USE_XFT
+static int
 _XftFindHeight(XmTextWidget tw,
 		     int y,    /* Starting position (needed for tabs) */
 		     XmTextBlock block,
@@ -878,7 +878,7 @@ _XftFindHeight(XmTextWidget tw,
   int i = 0, csize = 0;
   int result = 0;
   XGlyphInfo ext;
-  
+
   if (tw->text.char_size != 1) {
     for (i = from, ptr = block->ptr + from; i < to; i +=csize, ptr += csize) {
       csize = mblen(ptr, tw->text.char_size);
@@ -907,7 +907,7 @@ _XftFindHeight(XmTextWidget tw,
 }
 #endif
 
-static int 
+static int
 FindHeight(XmTextWidget tw,
 	  int y,                  /* Starting position (needed for tabs) */
 	  XmTextBlock block,
@@ -922,15 +922,15 @@ FindHeight(XmTextWidget tw,
   int csize = 1;
   int i = 0;
   XOrientation orient;
-  
-#ifdef USE_XFT
+
+#if USE_XFT
   if (data->use_xft)
     return _XftFindHeight(tw, y, block, from, to);
 #endif
 
   if (!data->use_fontset)
     return _FontStructFindHeight(tw, y, block, from, to);
-  
+
   if (to > block->length)
     to = block->length;
   if (from > to) {
@@ -938,9 +938,9 @@ FindHeight(XmTextWidget tw,
     to = from;
     from = tmp;
   }
-  
+
   if (to == from || to == 0) return 0;
-  
+
   if(data->use_fontset == True) {
     XGetOCValues((XOC)data->font, XNOrientation, &orient, NULL);
     SetXOCOrientation(tw, (XOC)data->font, XOMOrientation_TTB_RTL);
@@ -956,7 +956,7 @@ FindHeight(XmTextWidget tw,
       else
 	result += XmbTextEscapement((XFontSet)data->font, ptr, csize);
     }
-    
+
   } else { /* no need to pay for mblen if we know all chars are 1 byte */
     for (i = from, ptr = block->ptr + from; i < to; i++, ptr++) {
       c = (unsigned char) *ptr;
@@ -966,7 +966,7 @@ FindHeight(XmTextWidget tw,
       else
 	result += XmbTextEscapement((XFontSet)data->font, ptr, 1);
     }
-  } 
+  }
   if(data->use_fontset == True) {
     SetXOCOrientation(tw, (XOC)data->font, orient);
   }
@@ -976,7 +976,7 @@ FindHeight(XmTextWidget tw,
 
 /* Semi-public routines. */
 
-static XmTextPosition 
+static XmTextPosition
 XYToPos(XmTextWidget tw,
 #if NeedWidePrototypes
         int x,
@@ -996,9 +996,9 @@ XYToPos(XmTextWidget tw,
   XmTextPosition start, end, laststart;
   XmTextBlockRec block;
   int delta = 0;
-  
+
   start = end = laststart = 0;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     y += data->voffset;
@@ -1021,24 +1021,24 @@ XYToPos(XmTextWidget tw,
 				     XmSELECT_POSITION, XmsdLeft, 1, True);
     height = lastheight = data->topmargin;
     if (start >= end && !delta) return start;
-  
+
     /* if original y was negative, we need to find new laststart */
     if (delta && start > 0) {
       end = (*tw->text.source->Scan)(tw->text.source, start,
                                        XmSELECT_POSITION, XmsdLeft, 1, True);
       start = _XmTextFindScroll(tw, start, delta);
     }
-  
+
     do {
       laststart = start;
       start = (*tw->text.source->ReadSource)(tw->text.source, start,
 					       end, &block);
       length = block.length;
       if ((int)tw->text.char_size > 1) {
-	for (i = num_chars = 0, num_bytes = mblen(block.ptr, 
+	for (i = num_chars = 0, num_bytes = mblen(block.ptr,
 						(int)tw->text.char_size);
-	     i < length && height < y && num_bytes >= 0; 
-	     i += num_bytes, num_chars++, 
+	     i < length && height < y && num_bytes >= 0;
+	     i += num_bytes, num_chars++,
 	     num_bytes = mblen(&block.ptr[i], (int)tw->text.char_size)) {
 	  lastheight = height;
 	  height += FindHeight(tw, height, &block, i, i + num_bytes);
@@ -1051,10 +1051,10 @@ XYToPos(XmTextWidget tw,
 	}
       }
     } while (height < y && start < end && laststart != end);
-  
+
     if (abs(lastheight - y) < abs(height - y)) i--;
   } else {
-  
+
   x += data->hoffset;
   y -= data->topmargin;
   /* take care of negative y case */
@@ -1075,14 +1075,14 @@ XYToPos(XmTextWidget tw,
 				     XmSELECT_POSITION, XmsdLeft, 1, True);
   width = lastwidth = data->leftmargin;
   if (start >= end && !delta) return start;
-  
+
   /* if original y was negative, we need to find new laststart */
   if (delta && start > 0) {
     end = (*tw->text.source->Scan)(tw->text.source, start,
                                        XmSELECT_POSITION, XmsdLeft, 1, True);
     start = _XmTextFindScroll(tw, start, delta);
   }
-  
+
   do {
     laststart = start;
     start = (*tw->text.source->ReadSource)(tw->text.source, start,
@@ -1095,8 +1095,8 @@ XYToPos(XmTextWidget tw,
 #else
 	   num_bytes = *block.ptr ? 1 : 0;
 #endif
-	   i < length && width < x && num_bytes >= 0; 
-	   i += num_bytes, num_chars++, 
+	   i < length && width < x && num_bytes >= 0;
+	   i += num_bytes, num_chars++,
 #ifndef NO_MULTIBYTE
 	   num_bytes = mblen(&block.ptr[i], (int)tw->text.char_size)) {
 #else
@@ -1113,7 +1113,7 @@ XYToPos(XmTextWidget tw,
       }
     }
   } while (width < x && start < end && laststart != end);
-  
+
   if (abs(lastwidth - x) < abs(width - x)) i--;
   }
   return (*tw->text.source->Scan)(tw->text.source, laststart,
@@ -1124,7 +1124,7 @@ XYToPos(XmTextWidget tw,
 /*****************************************************************************
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
-Boolean 
+Boolean
 _XmTextShouldWordWrap(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -1135,7 +1135,7 @@ _XmTextShouldWordWrap(XmTextWidget tw)
 /*****************************************************************************
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
-Boolean 
+Boolean
 _XmTextScrollable(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -1146,7 +1146,7 @@ _XmTextScrollable(XmTextWidget tw)
     return (data->scrollvertical && XmIsScrolledWindow(XtParent(tw)));
 }
 
-static Boolean 
+static Boolean
 PosToXY(XmTextWidget tw,
         XmTextPosition position,
         Position *x,
@@ -1158,7 +1158,7 @@ PosToXY(XmTextWidget tw,
   LineTableExtra extra;
   XmTextBlockRec block;
   Position local_x, local_y;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
   _XmProcessLock();
@@ -1179,13 +1179,13 @@ PosToXY(XmTextWidget tw,
     _XmTextLineInfo(tw, line, &linestart, &extra);
     while (linestart < position) {
       linestart = (*tw->text.source->ReadSource)(tw->text.source,
-						   linestart, position, 
+						   linestart, position,
 						   &block);
       local_y += FindHeight(tw, local_y, &block, 0, block.length);
     }
     local_y -= data->voffset;
   } else {
-  
+
   _XmProcessLock();
   if (tw == posToXYCachedWidget && position == posToXYCachedPosition) {
     *x = posToXYCachedX;
@@ -1202,7 +1202,7 @@ PosToXY(XmTextWidget tw,
   _XmTextLineInfo(tw, line, &linestart, &extra);
   while (linestart < position) {
     linestart = (*tw->text.source->ReadSource)(tw->text.source,
-						   linestart, position, 
+						   linestart, position,
 						   &block);
     local_x += FindWidth(tw, local_x, &block, 0, block.length);
   }
@@ -1222,7 +1222,7 @@ PosToXY(XmTextWidget tw,
 /*****************************************************************************
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
-XmTextPosition 
+XmTextPosition
 _XmTextFindLineEnd(XmTextWidget tw,
 		   XmTextPosition position,
 		   LineTableExtra *extra)
@@ -1234,11 +1234,11 @@ _XmTextFindLineEnd(XmTextWidget tw,
   int x, lastX, goalwidth, length, i;
   int y, lastY, goalheight;
   int num_bytes = 0;
-  
+
   lastChar = (*tw->text.source->Scan)(tw->text.source, position,
 					  XmSELECT_LINE, XmsdRight, 1, False);
   lastBreak = startpos = position;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     y = lastY = data->topmargin;
@@ -1252,7 +1252,7 @@ _XmTextFindLineEnd(XmTextWidget tw,
 					     1, True);
       while (position < nextLeft) {
 	position = (*tw->text.source->ReadSource)(tw->text.source,
-						    position, nextLeft, 
+						    position, nextLeft,
 						    &block);
 	length = block.length;
 	y += FindHeight(tw, y, &block, 0, block.length);
@@ -1271,7 +1271,7 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	         XmsdLeft, 1, True);
 	      (void) (*tw->text.source->ReadSource)
 	        (tw->text.source, position, oldpos, &block);
-	      num_bytes = mblen(block.ptr, 
+	      num_bytes = mblen(block.ptr,
 			        (int)tw->text.char_size);
 	      /* Pitiful error handling, but what else can you do? */
 	      if (num_bytes < 0) num_bytes = 1;
@@ -1295,9 +1295,9 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	  if ((int)tw->text.char_size == 1) {
 	    for (i=length - 1; i>=0 && y > goalheight; i--) {
 	      y -= FindHeight(tw, y, &block, i, i + 1);
-	      position = 
+	      position =
 	        (*tw->text.source->Scan)(tw->text.source,
-					     position, 
+					     position,
 					     XmSELECT_POSITION,
 					     XmsdLeft, 1, True);
 	    }
@@ -1309,12 +1309,12 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	    char tmp_char[MB_LEN_MAX];
 	    int num_chars = 0;
 	    XmTextBlockRec mini_block;
-	  
+
 	    /* If 16-bit data, convert the char* to wchar_t*... this
 	     * allows us to scan backwards through the text one
 	     * character at a time.  Without wchar_t, we would have
 	     * to continually scan from the start of the string to
-	     * find the byte offset of character n-1. 
+	     * find the byte offset of character n-1.
 	     */
 	    mini_block.ptr = tmp_char;
 	    num_chars = _XmTextCountCharacters(block.ptr, block.length);
@@ -1327,9 +1327,9 @@ _XmTextFindLineEnd(XmTextWidget tw,
 		if (mini_block.length < 0) mini_block.length = 0;
 		y -= FindHeight(tw, y, &mini_block,
 			        0, mini_block.length);
-		position = 
+		position =
 		  (*tw->text.source->Scan)(tw->text.source,
-					       position, 
+					       position,
 					       XmSELECT_POSITION,
 					       XmsdLeft, 1, True);
 	      }
@@ -1350,7 +1350,7 @@ _XmTextFindLineEnd(XmTextWidget tw,
       lastY = y;
     }
   } else {
-  
+
   x = lastX = data->leftmargin;
   goalwidth = tw->text.inner_widget->core.width - data->rightmargin;
   while (position < lastChar) {
@@ -1364,11 +1364,11 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	   (nextBreak == lastChar && position < nextBreak)) {
       if (position < nextLeft)
         position = (*tw->text.source->ReadSource)(tw->text.source,
-						    position, nextLeft, 
+						    position, nextLeft,
 						    &block);
       else
         position = (*tw->text.source->ReadSource)(tw->text.source,
-						    position, nextBreak, 
+						    position, nextBreak,
 						    &block);
       length = block.length;
       x += FindWidth(tw, x, &block, 0, block.length);
@@ -1414,9 +1414,9 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	if ((int)tw->text.char_size == 1) {
 	  for (i=length - 1; i>=0 && x > goalwidth; i--) {
 	    x -= FindWidth(tw, x, &block, i, i + 1);
-	    position = 
+	    position =
 	      (*tw->text.source->Scan)(tw->text.source,
-					   position, 
+					   position,
 					   XmSELECT_POSITION,
 					   XmsdLeft, 1, True);
 	  }
@@ -1428,12 +1428,12 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	  char tmp_char[MB_LEN_MAX];
 	  int num_chars = 0;
 	  XmTextBlockRec mini_block;
-	  
+
 	  /* If 16-bit data, convert the char* to wchar_t*... this
 	   * allows us to scan backwards through the text one
 	   * character at a time.  Without wchar_t, we would have
 	   * to continually scan from the start of the string to
-	   * find the byte offset of character n-1. 
+	   * find the byte offset of character n-1.
 	   */
 	  mini_block.ptr = tmp_char;
 	  num_chars = _XmTextCountCharacters(block.ptr, block.length);
@@ -1446,9 +1446,9 @@ _XmTextFindLineEnd(XmTextWidget tw,
 	      if (mini_block.length < 0) mini_block.length = 0;
               x -= FindWidth(tw, x, &mini_block,
 			     0, mini_block.length);
-	      position = 
+	      position =
 		(*tw->text.source->Scan)(tw->text.source,
-					     position, 
+					     position,
 					     XmSELECT_POSITION,
 					     XmsdLeft, 1, True);
 	    }
@@ -1475,7 +1475,7 @@ _XmTextFindLineEnd(XmTextWidget tw,
   else return PASTENDPOS;
 }
 
-static XtGeometryResult 
+static XtGeometryResult
 TryResize(XmTextWidget tw,
 #if NeedWidePrototypes
 	  int width,
@@ -1489,29 +1489,29 @@ TryResize(XmTextWidget tw,
   Dimension origwidth = tw->text.inner_widget->core.width;
   Dimension origheight = tw->text.inner_widget->core.height;
   XtWidgetGeometry request, reply;
-  
+
   if (origwidth != width) {
     request.request_mode = CWWidth;
     request.width = width;
   } else
     request.request_mode = (XtGeometryMask)0;
-  
+
   if (origheight != height) {
     request.request_mode |= CWHeight;
     request.height = height;
   }
-  
+
   /* requesting current size */
   if (request.request_mode == (XtGeometryMask)0) return XtGeometryNo;
-  
+
   result = XtMakeGeometryRequest(tw->text.inner_widget, &request, &reply);
-  
+
   if (result == XtGeometryAlmost) {
     if (request.request_mode & CWWidth)
       request.width = reply.width;
     if (request.request_mode & CWHeight)
       request.height = reply.height;
-    
+
     result = XtMakeGeometryRequest(tw->text.inner_widget, &request,
 				   &reply);
     if (result == XtGeometryYes) {
@@ -1522,8 +1522,8 @@ TryResize(XmTextWidget tw,
     }
     return result;
   }
-  
-  
+
+
   if (result == XtGeometryYes) {
     /* Some brain damaged geometry managers return XtGeometryYes and
        don't change the widget's size. */
@@ -1539,7 +1539,7 @@ TryResize(XmTextWidget tw,
   return result;
 }
 
-void 
+void
 _XmRedisplayHBar(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -1551,16 +1551,16 @@ _XmRedisplayHBar(XmTextWidget tw)
       data->suspend_hoffset || tw->text.disable_depth != 0 ||
       tw->core.being_destroyed || data->hbar == NULL)
     return;
-  
-  ChangeHOffset(tw, data->hoffset, False); /* Makes sure that hoffset is 
+
+  ChangeHOffset(tw, data->hoffset, False); /* Makes sure that hoffset is
 						  still reasonable. */
-  
+
   new_sliderSize = tw->text.inner_widget->core.width
     - (data->leftmargin + data->rightmargin);
-  
+
   if (new_sliderSize < 1) new_sliderSize = 1;
   if (new_sliderSize > data->scrollwidth) new_sliderSize = data->scrollwidth;
-  
+
   nav_data.valueMask = NavValue|NavSliderSize|NavMaximum;
   nav_trait = (XmNavigatorTrait)
     XmeTraitGet((XtPointer)XtClass(data->hbar), XmQTnavigator);
@@ -1572,32 +1572,32 @@ _XmRedisplayHBar(XmTextWidget tw)
 
   } else
     return;
-  
-  if ((maximum != data->scrollwidth || 
-       value != data->hoffset || 
+
+  if ((maximum != data->scrollwidth ||
+       value != data->hoffset ||
        sliderSize != new_sliderSize) &&
       !(sliderSize == maximum && new_sliderSize == data->scrollwidth)) {
-    
+
     data->ignorehbar = True;
-    
+
     nav_data.value.x = data->hoffset;
     nav_data.minimum.x = 0;
     nav_data.maximum.x = data->scrollwidth;
     nav_data.slider_size.x = new_sliderSize;
     nav_data.increment.x = 0;   /* increments stay at current values */
     nav_data.page_increment.x = new_sliderSize;
-    
+
     nav_data.dimMask = NavigDimensionX;
     nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
       NavSliderSize|NavIncrement|NavPageIncrement;
-    _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True); 
-    
+    _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
+
     data->ignorehbar = False;
   }
 }
 
 
-void 
+void
 _XmRedisplayVBar(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -1609,16 +1609,16 @@ _XmRedisplayVBar(XmTextWidget tw)
       data->suspend_voffset || tw->text.disable_depth != 0 ||
       tw->core.being_destroyed || data->vbar == NULL)
     return;
-  
-  ChangeVOffset(tw, data->voffset, False); /* Makes sure that voffset is 
+
+  ChangeVOffset(tw, data->voffset, False); /* Makes sure that voffset is
 						  still reasonable. */
-  
+
   new_sliderSize = tw->text.inner_widget->core.height
     - (data->topmargin + data->bottommargin);
-  
+
   if (new_sliderSize < 1) new_sliderSize = 1;
   if (new_sliderSize > data->scrollheight) new_sliderSize = data->scrollheight;
-  
+
   nav_data.valueMask = NavValue|NavSliderSize|NavMaximum;
   nav_trait = (XmNavigatorTrait)
     XmeTraitGet((XtPointer)XtClass(data->vbar), XmQTnavigator);
@@ -1630,32 +1630,32 @@ _XmRedisplayVBar(XmTextWidget tw)
 
   } else
     return;
-  
-  if ((maximum != data->scrollheight || 
-       value != data->voffset || 
+
+  if ((maximum != data->scrollheight ||
+       value != data->voffset ||
        sliderSize != new_sliderSize) &&
       !(sliderSize == maximum && new_sliderSize == data->scrollheight)) {
-    
+
     data->ignorehbar = True;
-    
+
     nav_data.value.y = data->voffset;
     nav_data.minimum.y = 0;
     nav_data.maximum.y = data->scrollheight;
     nav_data.slider_size.y = new_sliderSize;
     nav_data.increment.y = 0;   /* increments stay at current values */
     nav_data.page_increment.y = new_sliderSize;
-    
+
     nav_data.dimMask = NavigDimensionY;
     nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
       NavSliderSize|NavIncrement|NavPageIncrement;
-    _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True); 
-    
+    _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
+
     data->ignorehbar = False;
   }
 }
 
 
-static int 
+static int
 CountLines(XmTextWidget tw,
 	   XmTextPosition start,
 	   XmTextPosition end)
@@ -1664,12 +1664,12 @@ CountLines(XmTextWidget tw,
   register unsigned int t_index;
   register unsigned int max_index = 0;
   int numlines = 0;
-  
+
   line_table = tw->text.line_table;
   t_index = tw->text.table_index;
-  
+
   max_index = tw->text.total_lines - 1;
-  
+
   /* look forward to find the current record */
   if (line_table[t_index].start_pos < (unsigned int) start) {
     while (t_index <= max_index &&
@@ -1679,50 +1679,50 @@ CountLines(XmTextWidget tw,
     while (t_index &&
 	   line_table[t_index].start_pos > (unsigned int) start) t_index--;
   }
-  
+
   while(line_table[t_index].start_pos < (unsigned int) end) {
     t_index++;
     numlines++;
   }
-  
+
   return (numlines);
 }
 
-void 
+void
 _XmChangeVSB(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
   int local_total;
   int new_size;
   XmNavigatorDataRec nav_data;
-  
+
   if (tw->text.disable_depth != 0) return;
   if (tw->core.being_destroyed) return;
-  
+
   if (!tw->text.top_character) tw->text.top_line = 0;
-  else 
+  else
     tw->text.top_line = _XmTextGetTableIndex(tw, tw->text.top_character);
-  
+
   if (tw->text.top_line > tw->text.total_lines)
     tw->text.top_line = tw->text.total_lines;
-  
+
   if (tw->text.top_line + tw->text.number_lines >
       tw->text.total_lines)
     local_total = tw->text.top_line + tw->text.number_lines;
   else
     local_total = tw->text.total_lines;
-  
+
   if (data->vbar) {
-    
+
     if (local_total >= tw->text.number_lines)
       new_size = tw->text.number_lines;
     else
       new_size = local_total;
     if (new_size + tw->text.top_line > local_total)
       new_size = local_total - tw->text.top_line;
-    
+
     data->ignorevbar = True;
-    
+
     nav_data.value.y = tw->text.top_line;
     nav_data.minimum.y = 0;
     nav_data.maximum.y = local_total;
@@ -1730,18 +1730,18 @@ _XmChangeVSB(XmTextWidget tw)
     nav_data.increment.y = 0;   /* increments stay at current values */
     nav_data.page_increment.y = (data->number_lines > 1)?
       (data->number_lines - 1): 1;
-    
+
     nav_data.dimMask = NavigDimensionY;
     nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
       NavSliderSize|NavIncrement|NavPageIncrement;
     _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
-    
+
     data->ignorevbar = False;
   }
 }
 
 
-void 
+void
 _XmChangeHSB(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -1749,35 +1749,35 @@ _XmChangeHSB(XmTextWidget tw)
   int new_size = 0;
   XmNavigatorDataRec nav_data;
   int offset = 0;
-  
+
   if (tw->text.disable_depth != 0) return;
   if (tw->core.being_destroyed) return;
-  
+
   if (!tw->text.top_character) tw->text.top_line = 0;
-  else 
+  else
     tw->text.top_line = _XmTextGetTableIndex(tw, tw->text.top_character);
-  
+
   if (tw->text.top_line > tw->text.total_lines)
     tw->text.top_line = tw->text.total_lines;
-  
+
   if (tw->text.top_line + tw->text.number_lines >
       tw->text.total_lines)
     local_total = tw->text.top_line + tw->text.number_lines;
   else
     local_total = tw->text.total_lines;
-  
+
   if (data->hbar) {
-    
+
     if (local_total >= tw->text.number_lines)
       new_size = tw->text.number_lines;
     else
       new_size = local_total;
-    
+
     if (new_size + tw->text.top_line > local_total)
       new_size = local_total - tw->text.top_line;
-    
+
     data->ignorehbar = True;
-    
+
     offset = local_total - (tw->text.number_lines + tw->text.top_line);
     nav_data.value.x = tw->text.top_line;
     nav_data.minimum.x = 0;
@@ -1786,27 +1786,27 @@ _XmChangeHSB(XmTextWidget tw)
     nav_data.increment.x = 0;   /* increments stay at current values */
     nav_data.page_increment.x = (data->number_lines > 1)?
       (data->number_lines - 1): 1;
-    
+
     nav_data.dimMask = NavigDimensionX;
     nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
       NavSliderSize|NavIncrement|NavPageIncrement;
     _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
-    
+
     data->ignorehbar = False;
   }
 }
 
 
-static void 
+static void
 TextFindNewWidth(XmTextWidget tw,
 		 Dimension *widthRtn)
 {
   OutputData data = tw->text.output->data;
   XmTextPosition start;
   Dimension newwidth;
-  
+
   newwidth = 0;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     XmTextPosition first_position = 0;
@@ -1814,9 +1814,9 @@ TextFindNewWidth(XmTextWidget tw,
 
     newwidth = (int)(tw->text.total_lines * data->linewidth) +
 		data->leftmargin + data->rightmargin;
-  
+
     _XmTextLineInfo(tw, (LineNum) 0, &start, &extra);
-  
+
     if (start > 0) {
       first_position = (*tw->text.source->Scan)
 	(tw->text.source, start,
@@ -1827,13 +1827,13 @@ TextFindNewWidth(XmTextWidget tw,
       }
     }
   } else {
-  
+
   if (data->resizeheight && tw->text.total_lines > data->number_lines) {
     int i;
     XmTextPosition linestart, position;
     Dimension text_width;
     XmTextBlockRec block;
-    
+
     i = _XmTextGetTableIndex(tw, tw->text.top_character);
     for (linestart = tw->text.top_character;
 	 i + 1 < tw->text.total_lines; i++) {
@@ -1859,20 +1859,20 @@ TextFindNewWidth(XmTextWidget tw,
   } else {
     LineNum l;
     LineTableExtra extra;
-    
+
     for (l = 0; l < data->number_lines; l++) {
       _XmTextLineInfo(tw, l, &start, &extra);
       if (extra && newwidth < extra->width) newwidth = extra->width;
     }
   }
   }
-  
+
   *widthRtn = newwidth;
 }
 
 
 /*ARGSUSED*/
-static void 
+static void
 TextFindNewHeight(XmTextWidget tw,
 		  XmTextPosition position, /* unused */
 		  Dimension *heightRtn)
@@ -1880,7 +1880,7 @@ TextFindNewHeight(XmTextWidget tw,
   OutputData data = tw->text.output->data;
   XmTextPosition first_position, start;
   LineTableExtra extra;
-  
+
   Dimension newheight = 0;
 
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -1890,7 +1890,7 @@ TextFindNewHeight(XmTextWidget tw,
       XmTextPosition linestart, pos;
       Dimension text_height;
       XmTextBlockRec block;
-    
+
       i = _XmTextGetTableIndex(tw, tw->text.top_character);
       for (linestart = tw->text.top_character;
 	   i + 1 < tw->text.total_lines; i++) {
@@ -1916,7 +1916,7 @@ TextFindNewHeight(XmTextWidget tw,
     } else {
       LineNum l;
       LineTableExtra extra;
-    
+
       for (l = 0; l < data->number_lines; l++) {
 	_XmTextLineInfo(tw, l, &start, &extra);
 	if (extra && newheight < extra->width) newheight = extra->width;
@@ -1924,12 +1924,12 @@ TextFindNewHeight(XmTextWidget tw,
     }
     *heightRtn = newheight;
   } else {
-  
+
   *heightRtn = tw->text.total_lines * data->lineheight +
     data->topmargin + data->bottommargin;
-  
+
   _XmTextLineInfo(tw, (LineNum) 0, &start, &extra);
-  
+
   if (start > 0) {
     first_position = (*tw->text.source->Scan)
       (tw->text.source, start,
@@ -1940,17 +1940,17 @@ TextFindNewHeight(XmTextWidget tw,
     }
   }
   }
-  
+
 }
 
 
-static void 
+static void
 CheckForNewSize(XmTextWidget tw,
 		XmTextPosition position)
 {
   OutputData data = tw->text.output->data;
   Dimension newwidth, newheight;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     if (data->scrollhorizontal &&
@@ -1963,8 +1963,8 @@ CheckForNewSize(XmTextWidget tw,
       !tw->text.vsbar_scrolling)
     _XmChangeVSB(tw);
   }
-  
-  
+
+
   if (tw->text.in_resize || tw->text.in_expose) {
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -1995,7 +1995,7 @@ CheckForNewSize(XmTextWidget tw,
   } else {
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-      if (data->resizeheight  || 
+      if (data->resizeheight  ||
 	  (data->scrollvertical &&
 	   XmIsScrolledWindow(XtParent(tw))))
 	{
@@ -2013,15 +2013,15 @@ CheckForNewSize(XmTextWidget tw,
 	      newheight = tw->text.inner_widget->core.height;
 	    } else if (newheight < data->minheight) newheight = data->minheight;
 	} else newheight = tw->text.inner_widget->core.height;
-    
+
       newwidth = tw->text.inner_widget->core.width;
-    
+
       if (data->resizewidth) {
 	TextFindNewWidth(tw, &newwidth);
 	if (newwidth < data->minwidth) newwidth = data->minwidth;
       }
     } else {
-    if (data->resizewidth  || 
+    if (data->resizewidth  ||
 	(data->scrollhorizontal &&
 	 XmIsScrolledWindow(XtParent(tw))))
       {
@@ -2039,9 +2039,9 @@ CheckForNewSize(XmTextWidget tw,
 	    newwidth = tw->text.inner_widget->core.width;
 	  } else if (newwidth < data->minwidth) newwidth = data->minwidth;
       } else newwidth = tw->text.inner_widget->core.width;
-    
+
     newheight = tw->text.inner_widget->core.height;
-    
+
      if (data->resizeheight
        && !(data->scrollvertical &&
        XmIsScrolledWindow(XtParent((Widget)tw))) ) {
@@ -2049,7 +2049,7 @@ CheckForNewSize(XmTextWidget tw,
       if (newheight < data->minheight) newheight = data->minheight;
     }
     }
-    
+
     if ((newwidth != tw->text.inner_widget->core.width ||
 	 newheight != tw->text.inner_widget->core.height)) {
       if (tw->text.in_setvalues) {
@@ -2085,11 +2085,11 @@ void
 _XmTextOutputGetSecResData(XmSecondaryResourceData *secResDataRtn)
 {
   XmSecondaryResourceData secResData = XtNew(XmSecondaryResourceDataRec);
-  
+
   _XmTransformSubResources(output_resources, XtNumber(output_resources),
-			   &(secResData->resources), 
+			   &(secResData->resources),
 			   &(secResData->num_resources));
-  
+
   secResData->name = NULL;
   secResData->res_class = NULL;
   secResData->client_data = NULL;
@@ -2123,11 +2123,11 @@ _XmTextMovingCursorPosition(XmTextWidget	tw,
   OutputData data = tw->text.output->data;
   _XmHighlightRec 	*hl_list = tw->text.highlight.list;
   int			i;
-  
+
   for (i = tw->text.highlight.number - 1; i >= 0; i--)
     if (position >= hl_list[i].position)
       break;
-  
+
   if (position == hl_list[i].position) {
     if (data->have_inverted_image_gc)
       InvertImageGC(tw);
@@ -2139,7 +2139,7 @@ _XmTextMovingCursorPosition(XmTextWidget	tw,
   }
 }
 
-static Boolean 
+static Boolean
 MeasureLine(XmTextWidget tw,
 	    LineNum line,
 	    XmTextPosition position,
@@ -2151,7 +2151,7 @@ MeasureLine(XmTextWidget tw,
   XmTextBlockRec block;
   Dimension width = 0;
   Dimension height = 0;
-  
+
   _XmProcessLock();
   posToXYCachedWidget = NULL;
   _XmProcessUnlock();
@@ -2180,11 +2180,11 @@ MeasureLine(XmTextWidget tw,
 						XmsdRight, 1, True);
 	if (*nextpos == last_position)
 	  *nextpos = PASTENDPOS;
-	
+
 	if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			    XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-	  if (extra && (data->resizeheight || 
-		        (data->scrollvertical && 
+	  if (extra && (data->resizeheight ||
+		        (data->scrollvertical &&
 		         XmIsScrolledWindow(XtParent(tw))))) {
 	    (*extra) = (LineTableExtra)
 	      XtMalloc((unsigned) sizeof(LineTableExtraRec));
@@ -2200,8 +2200,8 @@ MeasureLine(XmTextWidget tw,
 	    (*extra)->width = height + data->bottommargin;
 	  }
 	} else {
-	if (extra && (data->resizewidth || 
-		      (data->scrollhorizontal && 
+	if (extra && (data->resizewidth ||
+		      (data->scrollhorizontal &&
 		       XmIsScrolledWindow(XtParent(tw))))) {
 	  (*extra) = (LineTableExtra)
 	    XtMalloc((unsigned) sizeof(LineTableExtraRec));
@@ -2316,7 +2316,7 @@ _FontStructPerCharExtents(XmTextWidget tw,
 }
 
 
-static void 
+static void
 Draw(XmTextWidget tw,
      LineNum line,
      XmTextPosition start,
@@ -2333,7 +2333,7 @@ Draw(XmTextWidget tw,
   int rightedge = (((int)tw->text.inner_widget->core.width) -
 		   data->rightmargin) + data->hoffset;
   Boolean stipple = False;
-  
+
   int width, height;
   int rec_width = 0;
   int rec_height = 0;
@@ -2344,32 +2344,32 @@ Draw(XmTextWidget tw,
   int win_width = 0;
   int newy = 0;
   int charheight = data->font_ascent + data->font_descent;
-  
+
   if (!XtIsRealized((Widget) tw)) return;
   _XmTextLineInfo(tw, line+1, &nextlinestart, &extra);
   _XmTextLineInfo(tw, line, &linestart, &extra);
-  
+
   _XmTextAdjustGC(tw);
-  
+
   if (!XtIsSensitive((Widget)tw)) stipple = True;
-  
+
   if (linestart == PASTENDPOS) {
     start = end = nextlinestart = PASTENDPOS;
     cleartoend = cleartobottom = True;
   } else if (nextlinestart == PASTENDPOS) {
     nextlinestart = (*tw->text.source->Scan)(tw->text.source, 0,
-						 XmSELECT_ALL, XmsdRight, 1, 
+						 XmSELECT_ALL, XmsdRight, 1,
 						 False);
     cleartoend = cleartobottom = (end >= nextlinestart);
-    if (start >= nextlinestart) 
+    if (start >= nextlinestart)
       endhighlight = highlight = XmHIGHLIGHT_NORMAL;
-    else if (cleartoend) 
+    else if (cleartoend)
       endhighlight = XmHIGHLIGHT_NORMAL;
   } else {
     cleartobottom = False;
     cleartoend = (end >= nextlinestart);
     if (cleartoend && (!extra || !extra->wrappedbychar))
-      end = (*tw->text.source->Scan)(tw->text.source, nextlinestart, 
+      end = (*tw->text.source->Scan)(tw->text.source, nextlinestart,
 					 XmSELECT_POSITION, XmsdLeft, 1, True);
   }
   if (XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -2392,12 +2392,12 @@ Draw(XmTextWidget tw,
       x += FindWidth(tw, x, &block, 0, block.length);
     }
   }
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     XOrientation orient = 0;
     newy = y;
-  
+
     if(data->use_fontset == True) {
       XGetOCValues((XOC)data->font, XNOrientation, &orient, NULL);
       SetXOCOrientation(tw, (XOC)data->font, XOMOrientation_TTB_RTL);
@@ -2417,65 +2417,65 @@ Draw(XmTextWidget tw,
 	         newy - data->voffset < data->topmargin) {
 	    height = FindHeight(tw, newy, &block, 0, 1);
 	    newy += height;
-	  
+
 	    if (newy - data->voffset < data->topmargin) {
 	      block.length--;
 	      block.ptr++;
 	      y = newy;
-	      if ((int)tw->text.char_size != 1) { 
+	      if ((int)tw->text.char_size != 1) {
 		/* check if we've got mbyte char */
-		num_bytes = mblen(block.ptr, 
+		num_bytes = mblen(block.ptr,
 				  (int)tw->text.char_size);
 		if (num_bytes < 1) num_bytes = 1;
 	      }
 	    }
 	  }
-	  if (block.length <= 0 || num_bytes != 1 || 
+	  if (block.length <= 0 || num_bytes != 1 ||
 	      block.ptr[0] != '\t') break;
-	
+
 	  height = FindHeight(tw, y, &block, 0, 1);
-	
+
 	  if (highlight == XmHIGHLIGHT_SELECTED)
 	    SetNormGC(tw, data->gc, False, False);
 	  else
 	    SetInvGC(tw, data->gc);
 	  SetFullGC(tw, data->gc);
-	
+
 	  if (((y - data->voffset) + height) >
 	      (int)(tw->text.inner_widget->core.height - data->bottommargin))
 	    rec_height = (tw->text.inner_widget->core.height -
 		          data->bottommargin) - (y - data->voffset);
 	  else
 	    rec_height = height;
-	
+
 	  if (x - (int)(data->linewidth * 0.5) < data->leftmargin)
 	    rec_width = (tw->text.inner_widget->core.width -
 			 data->rightmargin) - x;
 	  else
 	    rec_width = data->linewidth;
-	
+
 	  XFillRectangle(XtDisplay(tw),
-		         XtWindow(tw->text.inner_widget), data->gc, 
+		         XtWindow(tw->text.inner_widget), data->gc,
 		         x - (data->linewidth * 0.5), y - data->voffset,
 		         rec_width, rec_height);
-	
+
 	  SetMarginGC(tw, data->gc);
 	  if (highlight == XmHIGHLIGHT_SECONDARY_SELECTED) {
-	  
+
 	    if (highlight == XmHIGHLIGHT_SELECTED)
 	      SetInvGC(tw, data->gc);
 	    else
 	      SetNormGC(tw, data->gc, False, False);
-	  
+
 	    XDrawLine(XtDisplay(tw),
-		      XtWindow(tw->text.inner_widget), data->gc, 
+		      XtWindow(tw->text.inner_widget), data->gc,
 		      x + (int)(data->linewidth * 0.5) - 1, y - data->voffset,
 		      (int)(x + data->linewidth * 0.5) - 1,
 		      ((y - data->voffset) + height) - 1);
 	  }
 	  y += height;
-	
-	
+
+
 	  block.length--;
 	  block.ptr++;
 	  if ((int)tw->text.char_size != 1) {
@@ -2490,10 +2490,10 @@ Draw(XmTextWidget tw,
 	    if (block.ptr[length] == '\t') break;
 	  }
         } else {
-	  for (length = 0, num_bytes = mblen(block.ptr, 
-					     (int)tw->text.char_size); 
-	       length < block.length; 
-	       num_bytes = mblen(&block.ptr[length], 
+	  for (length = 0, num_bytes = mblen(block.ptr,
+					     (int)tw->text.char_size);
+	       length < block.length;
+	       num_bytes = mblen(&block.ptr[length],
 			         (int)tw->text.char_size)) {
 	    if ((num_bytes == 1) && block.ptr[length] == '\t') break;
 	    if (num_bytes == 0) break;
@@ -2532,48 +2532,48 @@ Draw(XmTextWidget tw,
 	      newy += FindHeight(tw, newy, &block, i, i+1);
 	    }
 	  } else {
-	    for (i=0, num_bytes = mblen(block.ptr, (int)tw->text.char_size); 
+	    for (i=0, num_bytes = mblen(block.ptr, (int)tw->text.char_size);
 	         i < length && (newy - data->voffset) <= bottomedge &&
 		 num_bytes > 0;
-	         i += num_bytes, num_bytes = mblen(&block.ptr[i], 
+	         i += num_bytes, num_bytes = mblen(&block.ptr[i],
 						   (int)tw->text.char_size))
 	      newy += FindHeight(tw, newy, &block, i, i + num_bytes);
 	  }
 	  length = i;
 	  start = end; /* Force a break out of the outer loop. */
 	  block.length = length; /* ... and out of the inner loop. */
-        }   
+        }
         if (highlight == XmHIGHLIGHT_SELECTED) {
 	  /* Draw the inverse background, then draw the text over it */
 	  SetNormGC(tw, data->gc, False, False);
 	  SetFullGC(tw, data->gc);
-	
+
 	  if (((y - data->voffset) + (newy - y)) >
 	      (int) tw->text.inner_widget->core.height - data->bottommargin)
 	    rec_height = tw->text.inner_widget->core.height -
 	      (y - data->voffset) - data->bottommargin;
 	  else
 	    rec_height = newy - y;
-	
+
 	  if (x + (int)(data->linewidth * 0.5) < data->leftmargin)
 	    rec_width = x + (tw->text.inner_widget->core.width -
 			 data->rightmargin);
 	  else
 	    rec_width = data->linewidth;
-	
+
 	  XFillRectangle(XtDisplay(tw),
 		         XtWindow(tw->text.inner_widget),
 		         data->gc, x - (int)(data->linewidth * 0.5),
 		         y - data->voffset, rec_width, rec_height);
-	
+
 	  SetInvGC(tw, data->gc);
 	  SetMarginGC(tw, data->gc);
 	  if (data->use_fontset) {
 	    XmbDrawString(XtDisplay(tw),
-			  XtWindow(tw->text.inner_widget), 
-			  (XFontSet) data->font, data->gc, 
+			  XtWindow(tw->text.inner_widget),
+			  (XFontSet) data->font, data->gc,
 			  x, y - data->voffset, block.ptr, length);
-#ifdef USE_XFT
+#if USE_XFT
 	  } else if (data->use_xft) {
 	    _XmXftDrawString2(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 			      data->gc, (XftFont*) data->font, 1,
@@ -2617,7 +2617,7 @@ Draw(XmTextWidget tw,
 			       data->rightmargin);
 	    else
 	      rec_width = data->linewidth;
-	  
+
 	    XFillRectangle(XtDisplay(tw),
 			   XtWindow(tw->text.inner_widget),
 			   data->gc, x - (int)(data->linewidth * 0.5),
@@ -2643,9 +2643,9 @@ Draw(XmTextWidget tw,
 
 	    XmbDrawString(XtDisplay(tw),
 			  XtWindow(tw->text.inner_widget),
-			  (XFontSet) data->font, data->gc, 
+			  (XFontSet) data->font, data->gc,
 			  wx, y - data->voffset, block.ptr, length);
-#ifdef USE_XFT
+#if USE_XFT
 	  } else if (data->use_xft) {
 #ifdef FIX_1381
 	    if (stipple)
@@ -2735,7 +2735,7 @@ Draw(XmTextWidget tw,
       SetXOCOrientation(tw, (XOC)data->font, orient);
     }
   } else {
-  
+
   newx = x;
   while (start < end && x <= rightedge) {
     start = (*tw->text.source->ReadSource)(tw->text.source, start,
@@ -2756,12 +2756,12 @@ Draw(XmTextWidget tw,
 	       newx - data->hoffset < data->leftmargin) {
 	  width = FindWidth(tw, newx, &block, 0, 1);
 	  newx += width;
-	  
+
 	  if (newx - data->hoffset < data->leftmargin) {
 	    block.length--;
 	    block.ptr++;
 	    x = newx;
-	    if ((int)tw->text.char_size != 1) { 
+	    if ((int)tw->text.char_size != 1) {
 	      /* check if we've got mbyte char */
 #ifndef NO_MULTIBYTE
 	      num_bytes = mblen(block.ptr, (int)tw->text.char_size);
@@ -2772,52 +2772,52 @@ Draw(XmTextWidget tw,
 	    }
 	  }
 	}
-	if (block.length <= 0 || num_bytes != 1 || 
+	if (block.length <= 0 || num_bytes != 1 ||
 	    block.ptr[0] != '\t') break;
-	
+
 	width = FindWidth(tw, x, &block, 0, 1);
-	
+
 	if (highlight == XmHIGHLIGHT_SELECTED)
 	  SetNormGC(tw, data->gc, False, False);
 	else
 	  SetInvGC(tw, data->gc);
 	SetFullGC(tw, data->gc);
-	
+
 	if ((int) ((x - data->hoffset) + width) >
 	    (int) (tw->text.inner_widget->core.width - data->rightmargin))
 	  rec_width = (tw->text.inner_widget->core.width -
 		       data->rightmargin) - (x - data->hoffset);
 	else
 	  rec_width = width;
-	
+
 	if ((int) (y + data->font_descent) >
 	    (int) (tw->text.inner_widget->core.height - data->bottommargin))
 	  rec_height = (tw->text.inner_widget->core.height -
 			data->bottommargin) - y;
 	else
 	  rec_height = data->font_ascent + data->font_descent;
-	
+
 	XFillRectangle(XtDisplay(tw),
-		       XtWindow(tw->text.inner_widget), data->gc, 
+		       XtWindow(tw->text.inner_widget), data->gc,
 		       x - data->hoffset, y - data->font_ascent,
 		       rec_width, rec_height);
-	
+
 	SetMarginGC(tw, data->gc);
 	if (highlight == XmHIGHLIGHT_SECONDARY_SELECTED) {
-	  
+
 	  if (highlight == XmHIGHLIGHT_SELECTED)
 	    SetInvGC(tw, data->gc);
 	  else
 	    SetNormGC(tw, data->gc, False, False);
-	  
+
 	  XDrawLine(XtDisplay(tw),
-		    XtWindow(tw->text.inner_widget), data->gc, 
+		    XtWindow(tw->text.inner_widget), data->gc,
 		    x - data->hoffset, y,
 		    ((x - data->hoffset) + width) - 1, y);
 	}
 	x += width;
-	
-	
+
+
 	block.length--;
 	block.ptr++;
 	if ((int)tw->text.char_size != 1) {
@@ -2838,11 +2838,11 @@ Draw(XmTextWidget tw,
       } else {
 	for (length = 0,
 #ifndef NO_MULTIBYTE
-             num_bytes = mblen(block.ptr, (int)tw->text.char_size); 
+             num_bytes = mblen(block.ptr, (int)tw->text.char_size);
 #else
 	     num_bytes = *block.ptr ? 1 : 0;
 #endif
-	     length < block.length; 
+	     length < block.length;
 #ifndef NO_MULTIBYTE
 	     num_bytes = mblen(&block.ptr[length], (int)tw->text.char_size)) {
 #else
@@ -2891,11 +2891,11 @@ Draw(XmTextWidget tw,
 	} else {
 	  for (i=0,
 #ifndef NO_MULTIBYTE
-	       num_bytes = mblen(block.ptr, (int)tw->text.char_size); 
+	       num_bytes = mblen(block.ptr, (int)tw->text.char_size);
 #else
 	       num_bytes = *block.ptr ? 1 : 0;
 #endif
-	       i < length && newx <= rightedge && num_bytes > 0; 
+	       i < length && newx <= rightedge && num_bytes > 0;
 	       i += num_bytes,
 #ifndef NO_MULTIBYTE
 	       num_bytes = mblen(&block.ptr[i], (int)tw->text.char_size))
@@ -2907,39 +2907,39 @@ Draw(XmTextWidget tw,
 	length = i;
 	start = end; /* Force a break out of the outer loop. */
 	block.length = length; /* ... and out of the inner loop. */
-      }   
+      }
       if (highlight == XmHIGHLIGHT_SELECTED) {
 	/* Draw the inverse background, then draw the text over it */
 	SetNormGC(tw, data->gc, False, False);
 	SetFullGC(tw, data->gc);
-	
+
 	if ((int) ((x - data->hoffset) + (newx - x)) >
 	    (int) (tw->text.inner_widget->core.width - data->rightmargin))
 	  rec_width = tw->text.inner_widget->core.width -
 	    (x - data->hoffset) - data->rightmargin;
 	else
 	  rec_width = newx - x;
-	
+
 	if ((int) (y + data->font_descent) >
 	    (int) (tw->text.inner_widget->core.height - data->bottommargin))
 	  rec_height = (tw->text.inner_widget->core.height -
 			data->bottommargin) - (y - data->font_ascent);
 	else
 	  rec_height = data->font_ascent + data->font_descent;
-	
+
 	XFillRectangle(XtDisplay(tw),
 		       XtWindow(tw->text.inner_widget),
 		       data->gc, x - data->hoffset,
 		       y - data->font_ascent, rec_width, rec_height);
-	
+
 	SetInvGC(tw, data->gc);
 	SetMarginGC(tw, data->gc);
 	if (data->use_fontset) {
 	  XmbDrawString(XtDisplay(tw),
-			XtWindow(tw->text.inner_widget), 
-			(XFontSet) data->font, data->gc, 
+			XtWindow(tw->text.inner_widget),
+			(XFontSet) data->font, data->gc,
 			x - data->hoffset, y, block.ptr, length);
-#ifdef USE_XFT
+#if USE_XFT
 	} else if (data->use_xft) {
 	  _XmXftDrawString2(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 			    data->gc, (XftFont*) data->font, 1,
@@ -2955,8 +2955,8 @@ Draw(XmTextWidget tw,
 	    XFree(ucsstr);
 	  } else
 	    XDrawString(XtDisplay(tw),
-		      XtWindow(tw->text.inner_widget), 
-		      data->gc, x - data->hoffset, y, 
+		      XtWindow(tw->text.inner_widget),
+		      data->gc, x - data->hoffset, y,
 		      block.ptr, length);
 	}
       } else {
@@ -2968,11 +2968,11 @@ Draw(XmTextWidget tw,
 			  data->bottommargin) - (y - data->font_ascent);
 	  else
 	    rec_height = data->font_ascent + data->font_descent;
-	  
+
 	  XFillRectangle(XtDisplay(tw),
 			 XtWindow(tw->text.inner_widget),
 			 data->gc, x - data->hoffset,
-			 y - data->font_ascent, newx - x, 
+			 y - data->font_ascent, newx - x,
 			 rec_height);
 	}
 	SetNormGC(tw, data->gc, True, stipple);
@@ -2991,9 +2991,9 @@ Draw(XmTextWidget tw,
 #endif
 	  XmbDrawString(XtDisplay(tw),
 			XtWindow(tw->text.inner_widget),
-			(XFontSet) data->font, data->gc, 
+			(XFontSet) data->font, data->gc,
 			x - data->hoffset, y, block.ptr, length);
-#ifdef USE_XFT
+#if USE_XFT
 	} else if (data->use_xft) {
 #ifdef FIX_1381
 	  if (stipple)
@@ -3052,7 +3052,7 @@ Draw(XmTextWidget tw,
       }
       if (highlight == XmHIGHLIGHT_SECONDARY_SELECTED)
 	XDrawLine(XtDisplay(tw), XtWindow(tw->text.inner_widget),
-		  data->gc, x - data->hoffset, y, 
+		  data->gc, x - data->hoffset, y,
 		  (newx - data->hoffset) - 1, y);
       x = newx;
       block.length -= length;
@@ -3065,10 +3065,10 @@ Draw(XmTextWidget tw,
         num_bytes = 1;
 #endif
       }
-    }    
+    }
   }
   }
-  
+
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
   /* clear top margin */
@@ -3079,7 +3079,7 @@ Draw(XmTextWidget tw,
 		 x - (int) (data->linewidth * 0.5)-1, text_border,
 		 rightedge - x + (int) (data->linewidth * 0.5),
 		 data->topmargin - text_border, FALSE);
-  
+
     if (cleartoend) {
       y -= data->voffset;
       if (y > ((int)tw->text.inner_widget->core.height)- data->bottommargin)
@@ -3098,8 +3098,8 @@ Draw(XmTextWidget tw,
 	  rec_width = x + (data->linewidth * 0.5) - data->leftmargin;
 	else
 	  rec_width = data->linewidth;
-      
-        XFillRectangle(XtDisplay(tw), 
+
+        XFillRectangle(XtDisplay(tw),
 		       XtWindow(tw->text.inner_widget), data->gc,
 		       x - (int)(data->linewidth * 0.5), y, rec_width, height);
 	SetMarginGC(tw, data->gc);
@@ -3122,7 +3122,7 @@ Draw(XmTextWidget tw,
     XClearArea(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 	       text_border, text_border, data->leftmargin - text_border,
 	       y + data->font_descent - text_border, False);
-  
+
   if (cleartoend) {
     x -= data->hoffset;
     if (x > ((int)tw->text.inner_widget->core.width)- data->rightmargin)
@@ -3143,9 +3143,9 @@ Draw(XmTextWidget tw,
 		      data->bottommargin) - (y - data->font_ascent);
       else
 	rec_height = data->font_ascent + data->font_descent;
-      
-      XFillRectangle(XtDisplay(tw), 
-		     XtWindow(tw->text.inner_widget), data->gc, x, 
+
+      XFillRectangle(XtDisplay(tw),
+		     XtWindow(tw->text.inner_widget), data->gc, x,
 		     y - data->font_ascent, width, rec_height);
       SetMarginGC(tw, data->gc);
     }
@@ -3165,7 +3165,7 @@ Draw(XmTextWidget tw,
   data->refresh_ibeam_off = True;
 }
 
-static OnOrOff 
+static OnOrOff
 CurrentCursorState(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -3179,16 +3179,16 @@ CurrentCursorState(XmTextWidget tw)
 /*
  * All the info about the cursor has been figured; draw or erase it.
  */
-static void 
+static void
 PaintCursor(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
   Position x, y;
-  
+
   if (!data->cursor_position_visible) return;
-  
+
   _XmTextToggleCursorGC((Widget)tw);
-  
+
   if (!tw->text.input->data->overstrike)
     x = data->insertx - (data->cursorwidth >> 1) - 1;
   else {
@@ -3204,7 +3204,7 @@ PaintCursor(XmTextWidget tw)
       x += (short) (pxlen - data->cursorwidth) >> 1;
   }
   y = data->inserty + data->font_descent - data->cursorheight;
-  
+
   /* If time to paint the I Beam... first capture the IBeamOffArea, then draw
    * the I Beam. */
   if ((tw->text.top_character <= tw->text.cursor_position) &&
@@ -3220,17 +3220,17 @@ PaintCursor(XmTextWidget tw)
 		data->cursorheight, 0, 0);
       data->refresh_ibeam_off = False;
     }
-    
-    /* redraw cursor, being very sure to keep it within the bounds of the 
+
+    /* redraw cursor, being very sure to keep it within the bounds of the
     ** text area, not spilling into the highlight area
     */
     if ((data->cursor_on >= 0) && (data->blinkstate == on)) {
-	  if (x + data->cursorwidth > tw->text.inner_widget->core.width -     
-		tw->primitive.shadow_thickness -   
-		tw->primitive.highlight_thickness) 
-	     cursor_width = (tw->text.inner_widget->core.width -              
-			(tw->primitive.shadow_thickness +          
-			tw->primitive.highlight_thickness)) - x;   
+	  if (x + data->cursorwidth > tw->text.inner_widget->core.width -
+		tw->primitive.shadow_thickness -
+		tw->primitive.highlight_thickness)
+	     cursor_width = (tw->text.inner_widget->core.width -
+			(tw->primitive.shadow_thickness +
+			tw->primitive.highlight_thickness)) - x;
 #ifdef FIX_1501
 	  if ( cursor_width > 0 && cursor_height > 0 ) {
 	    if (!XtIsSensitive((Widget)tw)) {
@@ -3245,45 +3245,45 @@ PaintCursor(XmTextWidget tw)
 #else
 	  if ( cursor_width > 0 && cursor_height > 0 )
 #endif
-		XFillRectangle(XtDisplay((Widget)tw), XtWindow((Widget)tw),  
-			data->imagegc, x, y, 
-			(unsigned int )cursor_width,          
-			(unsigned int )cursor_height);                        
+		XFillRectangle(XtDisplay((Widget)tw), XtWindow((Widget)tw),
+			data->imagegc, x, y,
+			(unsigned int )cursor_width,
+			(unsigned int )cursor_height);
 #ifdef FIX_1501
 	  }
 #endif
     } else {
-        Position src_x = 0;                                                     
-        if (x + data->cursorwidth > tw->text.inner_widget->core.width -    
-                            tw->primitive.shadow_thickness -                 
-                            tw->primitive.highlight_thickness) {            
-          cursor_width = (tw->text.inner_widget->core.width -               
-                                 (tw->primitive.shadow_thickness +           
-                                 tw->primitive.highlight_thickness)) - x;   
+        Position src_x = 0;
+        if (x + data->cursorwidth > tw->text.inner_widget->core.width -
+                            tw->primitive.shadow_thickness -
+                            tw->primitive.highlight_thickness) {
+          cursor_width = (tw->text.inner_widget->core.width -
+                                 (tw->primitive.shadow_thickness +
+                                 tw->primitive.highlight_thickness)) - x;
         }
-         else if (x < tw->primitive.highlight_thickness +                   
-                                 tw->primitive.shadow_thickness) {          
-             cursor_width = data->cursorwidth -                                 
-                                 (tw->primitive.highlight_thickness +       
-                                 tw->primitive.shadow_thickness - x);        
-             src_x = data->cursorwidth - cursor_width;                          
-             x = tw->primitive.highlight_thickness +                        
-                                 tw->primitive.shadow_thickness;             
+         else if (x < tw->primitive.highlight_thickness +
+                                 tw->primitive.shadow_thickness) {
+             cursor_width = data->cursorwidth -
+                                 (tw->primitive.highlight_thickness +
+                                 tw->primitive.shadow_thickness - x);
+             src_x = data->cursorwidth - cursor_width;
+             x = tw->primitive.highlight_thickness +
+                                 tw->primitive.shadow_thickness;
          }
-        if (y + data->cursorheight > tw->text.inner_widget->core.height -    
-                                 (tw->primitive.highlight_thickness +        
-                                 tw->primitive.shadow_thickness)) {         
-          cursor_height = data->cursorheight -                                   
-                                 ((y + data->cursorheight) -                    
-                                 (tw->text.inner_widget->core.height -       
-                                 (tw->primitive.highlight_thickness +        
-                                 tw->primitive.shadow_thickness)));          
+        if (y + data->cursorheight > tw->text.inner_widget->core.height -
+                                 (tw->primitive.highlight_thickness +
+                                 tw->primitive.shadow_thickness)) {
+          cursor_height = data->cursorheight -
+                                 ((y + data->cursorheight) -
+                                 (tw->text.inner_widget->core.height -
+                                 (tw->primitive.highlight_thickness +
+                                 tw->primitive.shadow_thickness)));
         }
            if (cursor_width > 0 && cursor_height > 0)
            {
-              XCopyArea(XtDisplay((Widget)tw), data->ibeam_off,                 
-                     XtWindow((Widget)tw), data->save_gc, src_x, 0,         
-                     (unsigned int)cursor_width, 
+              XCopyArea(XtDisplay((Widget)tw), data->ibeam_off,
+                     XtWindow((Widget)tw), data->save_gc, src_x, 0,
+                     (unsigned int)cursor_width,
  		    (unsigned int)cursor_height, x, y);
            }
     }
@@ -3292,7 +3292,7 @@ PaintCursor(XmTextWidget tw)
 
 
 
-static void 
+static void
 ChangeHOffset(XmTextWidget tw,
 	      int newhoffset,
 #if NeedWidePrototypes
@@ -3400,12 +3400,12 @@ ChangeHOffset(XmTextWidget tw,
 		   delta, height);
     }
   }
-  
+
   if (redisplay_hbar) _XmRedisplayHBar(tw);
 }
 
 
-static void 
+static void
 ChangeVOffset(XmTextWidget tw,
 	      int newvoffset,
 #if NeedWidePrototypes
@@ -3516,18 +3516,18 @@ ChangeVOffset(XmTextWidget tw,
 		   width, delta);
     }
   }
-  
+
   if (redisplay_vbar) _XmRedisplayVBar(tw);
 }
 
 
-static void 
+static void
 DrawInsertionPoint(XmTextWidget tw,
 		   XmTextPosition position,
 		   OnOrOff onoroff)
 {
   OutputData data = tw->text.output->data;
-  
+
   if (onoroff == on) {
     data->cursor_on +=1;
     if (data->blinkrate == 0 || !data->hasfocus)
@@ -3544,14 +3544,14 @@ DrawInsertionPoint(XmTextWidget tw,
     else
       data->cursor_on -= 1;
   }
-  
+
   if (data->cursor_on < 0 || !XtIsRealized((Widget)tw))
     return;
   if (PosToXY(tw, position, &data->insertx, &data->inserty))
     PaintCursor(tw);
 }
 
-static void 
+static void
 MakePositionVisible(XmTextWidget tw,
 		    XmTextPosition position)
 {
@@ -3569,9 +3569,9 @@ MakePositionVisible(XmTextWidget tw,
 	} else {
 	  line_num = _XmTextGetTableIndex(tw, position);
 	  if (position == tw->text.bottom_position ||
-	      (line_num < tw->text.total_lines && 
+	      (line_num < tw->text.total_lines &&
 	       position == tw->text.line_table[line_num+1].start_pos - 1))
-	    position = 
+	    position =
 	      MAX(position - (int) data->rows/2,
 		  line_num ? (int) (tw->text.line_table[line_num].start_pos) :
 				    0);
@@ -3597,9 +3597,9 @@ MakePositionVisible(XmTextWidget tw,
       } else {
 	line_num = _XmTextGetTableIndex(tw, position);
 	if (position == tw->text.bottom_position ||
-	    (line_num < tw->text.total_lines && 
+	    (line_num < tw->text.total_lines &&
 	     position == tw->text.line_table[line_num+1].start_pos - 1))
-	  position = 
+	  position =
 	    MAX(position - data->columns/2,
                 line_num ? (int) (tw->text.line_table[line_num].start_pos) : 0);
       }
@@ -3620,25 +3620,25 @@ MakePositionVisible(XmTextWidget tw,
   }
 }
 
-static void 
+static void
 BlinkInsertionPoint(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
-  
-  if ((data->cursor_on >=0) && 
+
+  if ((data->cursor_on >=0) &&
       data->blinkstate == CurrentCursorState(tw) &&
       XtIsRealized((Widget)tw)) {
-    
+
     /* Toggle blink state */
     if (data->blinkstate == on) data->blinkstate = off;
     else data->blinkstate = on;
-    
+
     PaintCursor(tw);
-    
+
   }
 }
 
-static Boolean 
+static Boolean
 MoveLines(XmTextWidget tw,
 	  LineNum fromline,
 	  LineNum toline,
@@ -3690,7 +3690,7 @@ MoveLines(XmTextWidget tw,
 }
 
 /* ARGSUSED */
-static void 
+static void
 OutputInvalidate(XmTextWidget tw,
 		 XmTextPosition position,
 		 XmTextPosition topos,
@@ -3701,11 +3701,11 @@ OutputInvalidate(XmTextWidget tw,
   _XmProcessUnlock();
 }
 
-static void 
+static void
 RefigureDependentInfo(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
-  
+
   data->columns = data->number_lines;
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -3720,20 +3720,20 @@ RefigureDependentInfo(XmTextWidget tw)
   data->columns = (short)(((int) tw->core.width -
 			   (data->leftmargin + data->rightmargin))
 			  / (data->averagecharwidth));
-  
+
   if (data->columns <= 0)
     data->columns = 1;
   }
 }
 
-static void 
+static void
 SizeFromRowsCols(XmTextWidget tw,
 		 Dimension *width,
 		 Dimension *height)
 {
   OutputData data = tw->text.output->data;
   short lines = 0;
-  
+
   if (tw->text.edit_mode == XmSINGLE_LINE_EDIT)
     lines = 1;
   else {
@@ -3743,12 +3743,12 @@ SizeFromRowsCols(XmTextWidget tw,
     else
       lines = data->rows_set;
   }
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     *width = (Dimension) ((lines * data->linewidth) +
 			  data->leftmargin + data->rightmargin);
-  
+
     *height = (Dimension) ((data->rows_set *
 			    (data->font_ascent + data->font_descent)) +
 			   data->topmargin + data->bottommargin);
@@ -3757,12 +3757,12 @@ SizeFromRowsCols(XmTextWidget tw,
       LineTableExtra extra = NULL;
       Boolean past_end = False;
       int i;
-      
+
       for (i = 0; i < tw->text.number_lines && !past_end; i++) {
-	past_end = !MeasureLine(tw, i, tw->text.line[i].start, 
+	past_end = !MeasureLine(tw, i, tw->text.line[i].start,
 				&nextpos, &extra);
 	if (extra) {
-	  if (extra->width > *height) 
+	  if (extra->width > *height)
 	    *height = extra->width;
 	  XtFree((char *)extra);
 	}
@@ -3776,25 +3776,25 @@ SizeFromRowsCols(XmTextWidget tw,
     LineTableExtra extra = NULL;
     Boolean past_end = False;
     int i;
-    
+
     for (i = 0; i < tw->text.number_lines && !past_end; i++) {
-      past_end = !MeasureLine(tw, i, tw->text.line[i].start, 
+      past_end = !MeasureLine(tw, i, tw->text.line[i].start,
 			      &nextpos, &extra);
       if (extra) {
-	if (extra->width > *width) 
+	if (extra->width > *width)
 	  *width = extra->width;
 	XtFree((char *)extra);
       }
     }
   }
-  
+
   *height = (Dimension) ((lines * data->lineheight) +
                          data->topmargin + data->bottommargin);
 
   }
 }
 
-static Boolean 
+static Boolean
 LoadFontMetrics(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
@@ -3804,17 +3804,17 @@ LoadFontMetrics(XmTextWidget tw)
   XtPointer tmp_font;
   Boolean have_font_struct = False;
   Boolean have_font_set = False;
-#ifdef USE_XFT
+#if USE_XFT
   Boolean have_xft_font = False;
 #endif
   XFontSetExtents *fs_extents;
   XFontStruct *font = NULL;
   unsigned long width = 0;
   char* font_tag = NULL;
-  
+
   if (!XmFontListInitFontContext(&context, data->fontlist))
     XmeWarning((Widget) tw, MSG3);
-  
+
   do {
     next_entry = XmFontListNextEntry(context);
     if (next_entry
@@ -3825,14 +3825,14 @@ LoadFontMetrics(XmTextWidget tw)
 			      * case we don't find a default tag set.
 			      */
 	  data->use_fontset = True;
-#ifdef USE_XFT
+#if USE_XFT
 	  data->use_xft = False;
 #endif
 	  data->font = (XFontStruct *)tmp_font;
 	  have_font_struct = True; /* we have a font set, so no need to
 				    * consider future font structs */
 	  have_font_set = True;    /* we have a font set. */
-	  
+
 	  if (!strcmp(XmFONTLIST_DEFAULT_TAG, font_tag)) {
 	    if (font_tag) XtFree(font_tag);
 	    break; /* Break out!  We've found the one we want. */
@@ -3846,14 +3846,14 @@ LoadFontMetrics(XmTextWidget tw)
 	if (font_tag) XtFree(font_tag);
       } else if (type_return == XmFONT_IS_FONT && !have_font_struct) {
 	data->use_fontset = False;
-#ifdef USE_XFT
+#if USE_XFT
 	data->use_xft = False;
 #endif
 	/* save the first one in case no font set is found */
 	data->font = (XFontStruct*)tmp_font;
 	data->use_fontset = False;
 	have_font_struct = True;
-#ifdef USE_XFT
+#if USE_XFT
       } else if (type_return == XmFONT_IS_XFT && !have_xft_font) {
 	data->use_fontset = False;
 	data->use_xft = True;
@@ -3869,13 +3869,13 @@ LoadFontMetrics(XmTextWidget tw)
 #else
   if (!have_font_struct && !have_font_set) {
 #endif
-    XmeWarning ((Widget)tw, MSG4); /* fontlist without font null entry cause 
+    XmeWarning ((Widget)tw, MSG4); /* fontlist without font null entry cause
 				  core dump */
     return False;
   }
-  
+
   XmFontListFreeFontContext(context);
-  
+
   if(data->use_fontset) {
     fs_extents = XExtentsOfFontSet((XFontSet)data->font);
     if (XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -3889,7 +3889,7 @@ LoadFontMetrics(XmTextWidget tw)
     data->font_ascent = -fs_extents->max_logical_extent.y;
     data->font_descent = fs_extents->max_logical_extent.height +
       fs_extents->max_logical_extent.y;
-#ifdef USE_XFT
+#if USE_XFT
   } else if (data->use_xft) {
     width = ((XftFont*)data->font)->max_advance_width;
     data->font_ascent = ((XftFont*)data->font)->ascent;
@@ -3937,7 +3937,7 @@ LoadFontMetrics(XmTextWidget tw)
 }
 
 
-static Boolean 
+static Boolean
 SetXOCOrientation(XmTextWidget tw,
         XOC oc,
         XOrientation orientation)
@@ -3965,19 +3965,19 @@ SetXOCOrientation(XmTextWidget tw,
 }
 
 
-static void 
+static void
 LoadGCs(XmTextWidget tw,
         Pixel background,
         Pixel foreground)
 {
   OutputData data = tw->text.output->data;
   XGCValues values;
-  unsigned long valueMask = (GCFunction | GCForeground | GCBackground | 
+  unsigned long valueMask = (GCFunction | GCForeground | GCBackground |
 			     GCGraphicsExposures);
   unsigned long dynamicMask = GCClipMask;
   unsigned long unusedMask = GCClipXOrigin | GCClipYOrigin | GCFont;
-   
-  /* 
+
+  /*
    *Get GC for saving area under cursor.
    */
   values.function = GXcopy;
@@ -3988,11 +3988,11 @@ LoadGCs(XmTextWidget tw,
     XtReleaseGC((Widget) tw, data->save_gc);
   data->save_gc = XtAllocateGC((Widget) tw, tw->core.depth, valueMask,
 			       &values, dynamicMask, unusedMask);
-  
+
   /*
    * Get GC for drawing text.
    */
-  
+
 #if USE_XFT
   if (!data->use_fontset && !data->use_xft) {
 #else
@@ -4000,8 +4000,8 @@ LoadGCs(XmTextWidget tw,
 #endif
     valueMask |= GCFont;
     values.font = data->font->fid;
-  } 
-  
+  }
+
   values.graphics_exposures = (Bool) True;
   values.foreground = foreground ^ background;
   values.background = 0;
@@ -4010,7 +4010,7 @@ LoadGCs(XmTextWidget tw,
   dynamicMask |= GCForeground | GCBackground | GCFillStyle | GCStipple;
   data->gc = XtAllocateGC((Widget) tw, tw->core.depth, valueMask,
 			  &values, dynamicMask, 0);
-  
+
   /* Create a temporary GC - change it later in MakeIBeamStencil */
   valueMask |= GCStipple | GCFillStyle;
   values.graphics_exposures = (Bool) False;
@@ -4036,23 +4036,23 @@ MakeIBeamOffArea(XmTextWidget tw,
   OutputData data = tw->text.output->data;
   Display *dpy = XtDisplay(tw);
   Screen  *screen = XtScreen((Widget)tw);
-  
+
   /* Create a pixmap for storing the screen data where the I-Beam will
    * be painted */
   data->ibeam_off = XCreatePixmap(dpy, RootWindowOfScreen(screen), width,
 				  height, tw->core.depth);
-  
+
   data->refresh_ibeam_off = True;
 }
 
-static Pixmap 
+static Pixmap
 FindPixmap(
     Screen *screen,
     char *image_name,
     Pixel foreground,
     Pixel background,
     int depth )
-{    
+{
     XmAccessColorDataRec acc_color_rec;
 
     acc_color_rec.foreground = foreground;
@@ -4061,7 +4061,7 @@ FindPixmap(
     acc_color_rec.bottom_shadow_color = XmUNSPECIFIED_PIXEL;
     acc_color_rec.select_color = XmUNSPECIFIED_PIXEL;
     acc_color_rec.highlight_color = XmUNSPECIFIED_PIXEL;
-    return  _XmGetColoredPixmap(screen, image_name, 
+    return  _XmGetColoredPixmap(screen, image_name,
 				&acc_color_rec, depth, True);
 }
 
@@ -4074,18 +4074,18 @@ MakeIBeamStencil(XmTextWidget tw,
   XGCValues values;
   unsigned long valueMask;
   OutputData data = tw->text.output->data;
-  
+
   sprintf(pixmap_name, "_XmText_%d_%d", data->cursorheight, line_width);
   data->cursor = FindPixmap(screen, pixmap_name, 1, 0, 1);
-  
+
   if (data->cursor == XmUNSPECIFIED_PIXMAP) {
     Display *dpy = XtDisplay(tw);
     XSegment segments[3];
-    
+
     /* Create a pixmap for the I-Beam stencil */
     data->cursor = XCreatePixmap(dpy, XtWindow(tw), data->cursorwidth,
 				 data->cursorheight, 1);
-    
+
     values.foreground = 0;
     values.line_width = 0;
     values.fill_style = FillSolid;
@@ -4095,12 +4095,12 @@ MakeIBeamStencil(XmTextWidget tw,
 
     XFillRectangle(dpy, data->cursor, data->cursor_gc, 0, 0, data->cursorwidth,
 		   data->cursorheight);
-    
+
     /* Change the GC for use in "cutting out" the I-Beam shape */
     values.foreground = 1;
     values.line_width = line_width;
     XChangeGC(dpy, data->cursor_gc, GCForeground | GCLineWidth, &values);
-    
+
     /* Draw the segments of the I-Beam */
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -4127,33 +4127,33 @@ MakeIBeamStencil(XmTextWidget tw,
     segments[0].y1 = line_width - 1;
     segments[0].x2 = data->cursorwidth;
     segments[0].y2 = line_width - 1;
-    
+
     /* 2nd segment is the bottom horizontal line of the 'I' */
     segments[1].x1 = 0;
     segments[1].y1 = data->cursorheight - 1;
     segments[1].x2 = data->cursorwidth;
     segments[1].y2 = data->cursorheight - 1;
-    
+
     /* 3rd segment is the vertical line of the 'I' */
     segments[2].x1 = data->cursorwidth >> 1;
     segments[2].y1 = line_width;
     segments[2].x2 = data->cursorwidth >> 1;
     segments[2].y2 = data->cursorheight - 1;
     }
-    
+
     /* Draw the segments onto the cursor */
     XDrawSegments(dpy, data->cursor, data->cursor_gc, segments, 3);
-    
+
     /* Install the cursor for pixmap caching */
     (void) _XmCachePixmap(data->cursor, screen, pixmap_name, 1, 0,
 			    1, data->cursorwidth, data->cursorheight);
-    
+
   }
-  
+
   valueMask = (GCForeground | GCBackground | GCStipple |
 	       GCFillStyle);
   if (tw->text.input->data->overstrike) {
-    values.background = values.foreground = 
+    values.background = values.foreground =
       tw->core.background_pixel ^ tw->primitive.foreground;
   } else {
     values.foreground = tw->primitive.foreground;
@@ -4162,7 +4162,7 @@ MakeIBeamStencil(XmTextWidget tw,
   values.stipple = data->cursor;
   values.fill_style = FillStippled;
   XChangeGC(XtDisplay(tw), data->imagegc, valueMask, &values);
-  
+
 }
 
 
@@ -4171,35 +4171,35 @@ MakeIBeamStencil(XmTextWidget tw,
   * is called.
   */
 /* ARGSUSED */
-static void 
+static void
 MakeAddModeCursor(XmTextWidget tw,
 		  int line_width)
 {
   Screen *screen = XtScreen((Widget)tw);
   char pixmap_name[64];
   OutputData data = tw->text.output->data;
-  
+
   sprintf(pixmap_name, "_XmText_AddMode_%d_%d",
 	  data->cursorheight,line_width);
-  
+
   data->add_mode_cursor = FindPixmap(screen, pixmap_name, 1, 0, 1);
-  
+
   if (data->add_mode_cursor == XmUNSPECIFIED_PIXMAP) {
     XtGCMask  valueMask;
     XGCValues values;
     Display *dpy = XtDisplay((Widget)tw);
-    
+
     data->add_mode_cursor =  XCreatePixmap(dpy, XtWindow((Widget)tw),
 					   data->cursorwidth,
 					   data->cursorheight, 1);
-    
+
     values.function = GXcopy;
     valueMask = GCFunction;
     XChangeGC(dpy, data->cursor_gc, valueMask, &values);
 
     XCopyArea(dpy, data->cursor, data->add_mode_cursor, data->cursor_gc, 0, 0,
 	      data->cursorwidth, data->cursorheight, 0, 0);
-    
+
     valueMask = (GCTile | GCFillStyle | GCForeground |
 		 GCBackground | GCFunction | GCTileStipXOrigin);
     values.function = GXand;
@@ -4208,30 +4208,30 @@ MakeAddModeCursor(XmTextWidget tw,
     values.ts_x_origin = -1;
     values.foreground = tw->primitive.foreground;
     values.background = tw->core.background_pixel;
-    
+
     XChangeGC(XtDisplay((Widget)tw), data->cursor_gc, valueMask, &values);
-    
+
     XFillRectangle(dpy, data->add_mode_cursor, data->cursor_gc,
 		   0, 0, data->cursorwidth, data->cursorheight);
-    
+
     /* Install the pixmap for pixmap caching */
     _XmCachePixmap(data->add_mode_cursor, screen, pixmap_name, 1, 0,
 		     1, data->cursorwidth, data->cursorheight);
-    
+
   }
 }
 
-static void 
+static void
 MakeCursors(XmTextWidget tw)
 {
   OutputData data = tw->text.output->data;
   Screen *screen = XtScreen(tw);
   int line_width = 1;
-  int oldwidth = data->cursorwidth; 
+  int oldwidth = data->cursorwidth;
   int oldheight = data->cursorheight;
-  
+
   if (!XtIsRealized((Widget) tw)) return;
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     data->cursorwidth = data->averagecharwidth;
@@ -4245,14 +4245,14 @@ MakeCursors(XmTextWidget tw)
   } else {
   data->cursorwidth = 5;
   data->cursorheight = data->font_ascent + data->font_descent;
-  
+
   /* setup parameters to make a thicker I-Beam */
   if (data->cursorheight > 19) {
     data->cursorwidth++;
     line_width = 2;
   }
   }
-  
+
   if (data->cursor == XmUNSPECIFIED_PIXMAP ||
       data->add_mode_cursor == XmUNSPECIFIED_PIXMAP ||
       data->ibeam_off == XmUNSPECIFIED_PIXMAP ||
@@ -4261,8 +4261,8 @@ MakeCursors(XmTextWidget tw)
     if (data->cursor_gc == NULL) {
       unsigned long valueMask = 0;
       XGCValues values;
-      unsigned long dynamicMask = 
-	GCForeground | GCLineWidth | GCTile | GCFillStyle | 
+      unsigned long dynamicMask =
+	GCForeground | GCLineWidth | GCTile | GCFillStyle |
 	GCBackground | GCFunction | GCTileStipXOrigin;
 
       data->cursor_gc = XtAllocateGC((Widget)tw, 1, valueMask, &values,
@@ -4272,38 +4272,38 @@ MakeCursors(XmTextWidget tw)
     /* Remove old ibeam_off pixmap */
     if (data->ibeam_off != XmUNSPECIFIED_PIXMAP)
       XFreePixmap(XtDisplay((Widget)tw), data->ibeam_off);
-    
+
     /* Remove old insert stencil */
     if (data->cursor != XmUNSPECIFIED_PIXMAP)
       (void) XmDestroyPixmap(screen, data->cursor);
-    
+
     /* Remove old add mode cursor */
     if (data->add_mode_cursor != XmUNSPECIFIED_PIXMAP)
       (void) XmDestroyPixmap(screen, data->add_mode_cursor);
-    
+
     /* Create area in which to save text located underneath I beam */
     MakeIBeamOffArea(tw, MAX((int) data->cursorwidth,
                              (int) data->cursorheight >> 1),
                      data->cursorheight);
-    
+
     /* Create a new i-beam stencil */
     MakeIBeamStencil(tw, line_width);
-    
+
     /* Create a new add_mode cursor */
     MakeAddModeCursor(tw, line_width);
   }
-  
+
   if (tw->text.input->data->overstrike)
     data->cursorwidth = data->cursorheight >> 1;
 }
 
-static void 
+static void
 OutputGetValues(Widget w,
 		ArgList args,
 		Cardinal num_args)
 {
   XmTextWidget tw = (XmTextWidget) w;
-  
+
   RefigureDependentInfo(tw);
   XtGetSubvalues((XtPointer) tw->text.output->data, output_resources,
 		 XtNumber(output_resources), args, num_args);
@@ -4335,7 +4335,7 @@ CKRows(ArgList args,
 
 
 /* ARGSUSED */
-static Boolean 
+static Boolean
 OutputSetValues(Widget oldw,
 		Widget reqw,
 		Widget new_w,
@@ -4344,7 +4344,7 @@ OutputSetValues(Widget oldw,
 {
 #define CK(fld) (newdata->fld != data->fld)
 #define CP(fld) (data->fld = newdata->fld)
-  
+
   XmTextWidget oldtw = (XmTextWidget) oldw;
   XmTextWidget newtw = (XmTextWidget) new_w;
   OutputData data = newtw->text.output->data;
@@ -4363,15 +4363,15 @@ OutputSetValues(Widget oldw,
   *newdata = *data;
   XtSetSubvalues((XtPointer) newdata, output_resources,
 		 XtNumber(output_resources), args, *num_args);
-  
+
   if (newtw->core.background_pixel != oldtw->core.background_pixel) {
     needgcs = True;
   }
-  
+
   if (newtw->primitive.foreground != oldtw->primitive.foreground) {
     needgcs = True;
   }
-  
+
   if (CK(fontlist) || CK(rendertable)) {
     XmRenderTableFree(data->fontlist);
     if (CK(rendertable)) {
@@ -4396,7 +4396,7 @@ OutputSetValues(Widget oldw,
       CP(rendertable);
       (void)LoadFontMetrics(newtw);
     }
-    
+
     /* We want to be able to connect to an IM if XmNfontList has changed. */
     if (newtw->text.editable) {
       newtw->text.editable = False;
@@ -4410,28 +4410,28 @@ OutputSetValues(Widget oldw,
 	int new_sliderSize = 0;
 
 	data->ignorevbar = True;
-      
+
 	new_sliderSize = newtw->text.inner_widget->core.height
 	  - (data->topmargin + data->bottommargin);
-      
+
 	if (new_sliderSize < 1) new_sliderSize = 1;
-	if (new_sliderSize > data->scrollheight) 
+	if (new_sliderSize > data->scrollheight)
 	  new_sliderSize = data->scrollheight;
-	
+
 	nav_data.value.y = data->voffset;
 	nav_data.minimum.y = 0;
 	nav_data.maximum.y = data->scrollheight;
 	nav_data.slider_size.y = new_sliderSize;
-	nav_data.increment.y = data->font_ascent + data->font_descent;  
+	nav_data.increment.y = data->font_ascent + data->font_descent;
 	nav_data.page_increment.y = 0;
-	
+
 	nav_data.dimMask = NavigDimensionY;
 	nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	  NavSliderSize|NavIncrement;
-	_XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True); 
-      
+	_XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True);
+
 	data->ignorevbar = False;
-	
+
       }
     } else {
     if (data->hbar) {
@@ -4439,35 +4439,35 @@ OutputSetValues(Widget oldw,
       int new_sliderSize;
 
       data->ignorehbar = True;
-      
+
       new_sliderSize = newtw->text.inner_widget->core.width
 	- (data->leftmargin + data->rightmargin);
-      
+
       if (new_sliderSize < 1) new_sliderSize = 1;
-      if (new_sliderSize > data->scrollwidth) 
+      if (new_sliderSize > data->scrollwidth)
 	new_sliderSize = data->scrollwidth;
-      
+
       nav_data.value.x = data->hoffset;
       nav_data.minimum.x = 0;
       nav_data.maximum.x = data->scrollwidth;
       nav_data.slider_size.x = new_sliderSize;
-      nav_data.increment.x = data->averagecharwidth;  
+      nav_data.increment.x = data->averagecharwidth;
       nav_data.page_increment.x = 0;
-      
+
       nav_data.dimMask = NavigDimensionX;
       nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	NavSliderSize|NavIncrement;
-      _XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True); 
-      
+      _XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True);
+
       data->ignorehbar = False;
-      
+
     }
     }
     o_redisplay = True;
     needgcs = True;
     newsize = True;
   }
-  
+
   if (data->fontlist != oldtw->text.output->data->fontlist ||
       newtw->core.background_pixel != oldtw->core.background_pixel ||
       newtw->primitive.foreground != oldtw->primitive.foreground) {
@@ -4475,13 +4475,13 @@ OutputSetValues(Widget oldw,
     XtSetArg(im_args[n], XmNforeground, newtw->primitive.foreground); n++;
     XtSetArg(im_args[n], XmNfontList, data->fontlist); n++;
   }
-  
+
   /* Don't word wrap, have multiple row or have vertical scrollbars
      if editMode is single_line */
   if (newtw->text.edit_mode != oldtw->text.edit_mode) {
     if (newtw->text.edit_mode == XmSINGLE_LINE_EDIT)
 	newdata->rows = 1;
-    
+
     if(XmDirectionMatch(XmPrim_layout_direction(newtw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
       if (newtw->text.edit_mode == XmSINGLE_LINE_EDIT) {
@@ -4504,13 +4504,13 @@ OutputSetValues(Widget oldw,
     }
     o_redisplay = True;
   }
-  
+
   /*  what is called margin, in this code, is composed of margin, shadow, and
       highlight.   Previously, only margin was accomodated.   This addition
       may not be very clever, but it blends in with the rest of the way this
       code works.
       */
-  
+
   if (newtw->text.margin_width != oldtw->text.margin_width ||
       newtw->text.margin_height != oldtw->text.margin_height ||
       newtw->primitive.shadow_thickness !=
@@ -4527,33 +4527,33 @@ OutputSetValues(Widget oldw,
       o_redisplay = True;
       newsize = True;
     }
-  
+
   if (CK(wordwrap)) {
     if(XmDirectionMatch(XmPrim_layout_direction(newtw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
       /* If we are turning on wrapping, we don't want any horiz. offset */
       if (!data->wordwrap) ChangeVOffset(newtw, 0, True);
-    
+
       if (data->vbar) {
 	if (newdata->wordwrap) {
 	  XmNavigatorDataRec nav_data;
-	
+
 	  data->ignorevbar = True;
-	
+
 	  nav_data.value.y = 0;
 	  nav_data.minimum.y = 0;
 	  nav_data.maximum.y = 1;
 	  nav_data.slider_size.y = 1;
-	  nav_data.increment.y = 0;  
+	  nav_data.increment.y = 0;
 	  nav_data.page_increment.y = 0;
-	
+
 	  nav_data.dimMask = NavigDimensionY;
 	  nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	    NavSliderSize;
-	  _XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True); 
-	
+	  _XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True);
+
 	  data->ignorevbar = False;
-	
+
 	  data->voffset = 0;
 	} else {
 	  _XmRedisplayVBar(newtw);
@@ -4562,38 +4562,38 @@ OutputSetValues(Widget oldw,
     } else {
     /* If we are turning on wrapping, we don't want any horiz. offset */
     if (!data->wordwrap) ChangeHOffset(newtw, 0, True);
-    
+
     if (data->hbar) {
       if (newdata->wordwrap) {
 	XmNavigatorDataRec nav_data;
-	
+
 	data->ignorehbar = True;
-	
+
 	nav_data.value.x = 0;
 	nav_data.minimum.x = 0;
 	nav_data.maximum.x = 1;
 	nav_data.slider_size.x = 1;
-	nav_data.increment.x = 0;  
+	nav_data.increment.x = 0;
 	nav_data.page_increment.x = 0;
-	
+
 	nav_data.dimMask = NavigDimensionX;
 	nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	  NavSliderSize;
-	_XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True); 
-	
+	_XmSFUpdateNavigatorsValue(XtParent(new_w), &nav_data, True);
+
 	data->ignorehbar = False;
-	
+
 	data->hoffset = 0;
       } else {
 	_XmRedisplayHBar(newtw);
       }
     }
     }
-    
+
     CP(wordwrap);
-    
+
     _XmTextRealignLineTable(newtw, NULL, 0, 0, 0, PASTENDPOS);
-    
+
     /* If we've just turned off wrapping, get new top_character by scanning */
     /* left from the current top character until we find a new line. */
     if (!oldtw->text.output->data->wordwrap) {
@@ -4606,15 +4606,15 @@ OutputSetValues(Widget oldw,
 	newtw->text.new_top = newtw->text.top_character;
       }
     }
-    
+
     if (newtw->text.top_character)
       newtw->text.top_line = CountLines(newtw, 0,
 					newtw->text.top_character);
-    
-    
+
+
     o_redisplay = True;
   }
-  
+
   if (data->hasfocus && XtIsSensitive((Widget)newtw) && CK(blinkrate)) {
     if (newdata->blinkrate == 0) {
       data->blinkstate = on;
@@ -4630,12 +4630,12 @@ OutputSetValues(Widget oldw,
     }
   }
   CP(blinkrate);
-  
+
   CP(resizewidth);
   CP(resizeheight);
-  
+
   CP(cursor_position_visible);
-  
+
   if (needgcs) {
     EraseInsertionPoint(newtw);
     LoadGCs(newtw, newtw->core.background_pixel,
@@ -4646,25 +4646,25 @@ OutputSetValues(Widget oldw,
     TextDrawInsertionPoint(newtw);
     o_redisplay = True;
   }
-  
+
   if (newdata->rows <= 0) {
     XmeWarning(new_w, MSG1);
     newdata->rows = data->rows;
   }
-  
+
   if (newdata->columns <= 0) {
     XmeWarning(new_w, MSG2);
     newdata->columns = data->columns;
   }
-  
+
   /* Process arglist to verify the a value is being set */
   if (CKCols(args, *num_args))
     data->columns_set = newdata->columns_set = newdata->columns;
-  
+
   /* Process arglist to verify the a value is being set */
   if (CKRows(args, *num_args))
     data->rows_set = newdata->rows_set = newdata->rows;
-  
+
   if (!(new_width != oldtw->core.width &&
 	new_height != oldtw->core.height)) {
     if (CK(columns) || CK(rows) || newsize) {
@@ -4672,12 +4672,12 @@ OutputSetValues(Widget oldw,
       SizeFromRowsCols(newtw, &width, &height);
       if(XmDirectionMatch(XmPrim_layout_direction(newtw),
 			  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-	if (new_width == oldtw->core.width) 
+	if (new_width == oldtw->core.width)
 	  newtw->core.width = width;
 	data->minwidth = newtw->core.width;
 	if (new_height == oldtw->core.height) {
 	  newtw->core.height = height;
-	  data->minheight = 
+	  data->minheight =
 	    (Dimension)((data->rows_set *
 			(data->font_ascent + data->font_descent)) +
 			 data->topmargin + data->bottommargin);
@@ -4687,13 +4687,13 @@ OutputSetValues(Widget oldw,
       } else {
       if (new_width == oldtw->core.width) {
 	newtw->core.width = width;
-	data->minwidth = 
+	data->minwidth =
 	  (Dimension)((data->columns_set * data->averagecharwidth) +
 		      data->leftmargin + data->rightmargin);
       } else {
 	data->minwidth = new_width;
       }
-      if (new_height == oldtw->core.height) 
+      if (new_height == oldtw->core.height)
 	newtw->core.height = height;
       data->minheight = newtw->core.height;
       }
@@ -4707,7 +4707,7 @@ OutputSetValues(Widget oldw,
     newtw->core.height = new_height;
     data->minheight = new_height;
   }
-  
+
   PosToXY(newtw, newtw->text.cursor_position, &xmim_point.x, &xmim_point.y);
   (void)_XmTextGetDisplayRect((Widget)newtw, &xmim_area);
   XtSetArg(im_args[n], XmNbackgroundPixmap,
@@ -4716,13 +4716,13 @@ OutputSetValues(Widget oldw,
   XtSetArg(im_args[n], XmNarea, &xmim_area); n++;
   XtSetArg(im_args[n], XmNlineSpace, newdata->lineheight); n++;
   XmImSetValues(new_w, im_args, n);
-  
+
   return (o_redisplay);
 #undef CK
 #undef CP
 }
 
-static void 
+static void
 NotifyResized(Widget w,
 #if NeedWidePrototypes
 	      int o_create)
@@ -4741,7 +4741,7 @@ NotifyResized(Widget w,
   int n;
   XmTextBlockRec block;
   Arg args[10];
-  
+
   data->resizewidth = data->resizeheight = False;
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -4751,7 +4751,7 @@ NotifyResized(Widget w,
       data->number_lines = 1;
     else
       data->number_lines /= (int) data->linewidth;
-  
+
     if (tw->text.top_character)
     {
       tw->text.top_line = CountLines(tw, 0,
@@ -4768,7 +4768,7 @@ NotifyResized(Widget w,
     data->number_lines = 1;
   else
     data->number_lines /= (int) data->lineheight;
-  
+
   if (tw->text.top_character)
   {
     tw->text.top_line = CountLines(tw, 0,
@@ -4779,22 +4779,22 @@ NotifyResized(Widget w,
     tw->text.new_top = tw->text.line_table[tw->text.top_line].start_pos;
   }
   }
-  
+
   if (data->vbar)
     {
       int local_total, new_size;
       XmNavigatorDataRec nav_data;
-#ifdef FIX_1396      
+#ifdef FIX_1396
       int new_voffset = 0;
 #endif
-      
+
       if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
 	new_size = tw->text.inner_widget->core.height
 	  - (data->topmargin + data->bottommargin);
 	if (new_size < 1) new_size = 1;
 	if (new_size > data->scrollheight) new_size = data->scrollheight;
-#ifdef FIX_1396      
+#ifdef FIX_1396
         new_voffset = data->voffset;
         if (new_voffset > data->scrollheight - new_size)
     	    new_voffset = data->scrollheight - new_size;
@@ -4811,13 +4811,13 @@ NotifyResized(Widget w,
 	nav_data.page_increment.y = new_size;
       } else {
       data->ignorevbar = True;
-      
+
       if (tw->text.top_line + tw->text.number_lines >
 	  tw->text.total_lines)
 	local_total = tw->text.top_line + tw->text.number_lines;
       else
 	local_total = tw->text.total_lines;
-      
+
       if (local_total >= tw->text.number_lines)
 	new_size = tw->text.number_lines;
       else
@@ -4832,34 +4832,34 @@ NotifyResized(Widget w,
       nav_data.page_increment.y = (data->number_lines > 1)?
 	(data->number_lines - 1): 1;
       }
-      
+
       nav_data.dimMask = NavigDimensionY;
       nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	NavSliderSize|NavPageIncrement;
       _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
-      
+
       data->ignorevbar = False;
-      
+
     }
-  
+
   if (data->hbar)
     {
       XmNavigatorDataRec nav_data;
       int new_size = 0;
       int local_total = 0;
 #ifdef FIX_1396
-      int new_hoffset = 0;      
+      int new_hoffset = 0;
 #endif
       if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
 	data->ignorehbar = True;
-      
+
 	if (tw->text.top_line + tw->text.number_lines >
 	    tw->text.total_lines)
 	  local_total = tw->text.top_line + tw->text.number_lines;
 	else
 	  local_total = tw->text.total_lines;
-      
+
 	if (local_total >= tw->text.number_lines)
 	  new_size = tw->text.number_lines;
 	else
@@ -4878,7 +4878,7 @@ NotifyResized(Widget w,
 	- (data->leftmargin + data->rightmargin);
       if (new_size < 1) new_size = 1;
       if (new_size > data->scrollwidth) new_size = data->scrollwidth;
-#ifdef FIX_1396      
+#ifdef FIX_1396
       new_hoffset = data->hoffset;
       if (new_hoffset > data->scrollwidth - new_size)
         new_hoffset = data->scrollwidth - new_size;
@@ -4894,30 +4894,30 @@ NotifyResized(Widget w,
       nav_data.slider_size.x = new_size;
       nav_data.page_increment.x = new_size;
       }
-      
+
       nav_data.dimMask = NavigDimensionX;
       nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	NavSliderSize|NavPageIncrement;
-      _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True); 
-      
+      _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
+
       data->ignorehbar = False;
     }
-  
+
   RefigureDependentInfo(tw);
   if (resizewidth)
     data->columns_set = data->columns;
   if (resizeheight)
     data->rows_set = data->rows;
-  
+
   if (XtIsRealized(w)) {
     XClearWindow(XtDisplay(tw), XtWindow(tw->text.inner_widget));
     data->refresh_ibeam_off = True;
   }
-  
+
   if (!o_create)              /* False only if called from OutputCreate */
     _XmTextInvalidate(tw, (XmTextPosition) 0, (XmTextPosition) 0,
 		      NODELTA);
-  
+
   /* the new size grew enough to include new text */
 
   if (XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -4929,7 +4929,7 @@ NotifyResized(Widget w,
 #else
       int text_height = data->topmargin; /* to make tab calculation correct */
       int new_height = tw->core.height - (data->topmargin + data->bottommargin);
-  
+
       position = (*tw->text.source->Scan)(tw->text.source, linestart,
 					      XmSELECT_LINE, XmsdRight,
 					      1, False);
@@ -4960,7 +4960,7 @@ NotifyResized(Widget w,
 #else
     int text_width = data->leftmargin; /* to make tab calculation correct */
     int new_width = tw->core.width - (data->leftmargin + data->rightmargin);
-  
+
     position = (*tw->text.source->Scan)(tw->text.source, linestart,
 					    XmSELECT_LINE, XmsdRight,
 					    1, False);
@@ -4983,25 +4983,25 @@ NotifyResized(Widget w,
     }
   } else _XmRedisplayHBar(tw);
   }
-  
+
   data->resizewidth = resizewidth;
   data->resizeheight = resizeheight;
-  
+
   if (XtIsRealized(w))
     _XmTextDrawShadow(tw);
-  
+
   /* Text is now rediplayed at the correct location, so force the tw to
    * refresh the putback area.
    */
-  
+
   data->refresh_ibeam_off = True;
-  
+
   /* Somehow we need to let the input method know that the window has
    * changed size (for case of over-the-spot).  Try telling it that
    * the cursor position has changed and hopefully it will re-evaluate
    * the position/visibility/... of the pre-edit window.
    */
-  
+
   PosToXY(tw, tw->text.cursor_position, &xmim_point.x, &xmim_point.y);
   (void)_XmTextGetDisplayRect((Widget)tw, &xmim_area);
   n = 0;
@@ -5011,7 +5011,7 @@ NotifyResized(Widget w,
 }
 
 /* ARGSUSED */
-static void 
+static void
 HandleTimer(XtPointer closure,
 	    XtIntervalId *id)
 {
@@ -5028,7 +5028,7 @@ HandleTimer(XtPointer closure,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-void 
+void
 _XmTextChangeBlinkBehavior(XmTextWidget tw,
 #if NeedWidePrototypes
 			   int newvalue)
@@ -5037,7 +5037,7 @@ _XmTextChangeBlinkBehavior(XmTextWidget tw,
 #endif /* NeedWidePrototypes */
 {
   OutputData data = tw->text.output->data;
-  
+
   if (newvalue) {
     if (data->blinkrate != 0 && data->timerid == (XtIntervalId)0)
       data->timerid =
@@ -5068,10 +5068,10 @@ HandleFocusEvents(Widget w,
   XRectangle xmim_area;
   Arg  args[10];
   int  n = 0;
-  
+
   PosToXY(tw, tw->text.cursor_position, &xmim_point.x, &xmim_point.y);
   (void)_XmTextGetDisplayRect((Widget)tw, &xmim_area);
-  
+
   switch (event->type) {
   case FocusIn:
     if (event->xfocus.send_event && !(newhasfocus)) {
@@ -5079,7 +5079,7 @@ HandleFocusEvents(Widget w,
       cb.event = event;
       XtCallCallbackList (w, tw->text.focus_callback, (Opaque) &cb);
       newhasfocus = True;
-      
+
       n = 0;
       XtSetArg(args[n], XmNspotLocation, &xmim_point); n++;
       XtSetArg(args[n], XmNarea, &xmim_area); n++;
@@ -5135,7 +5135,7 @@ HandleFocusEvents(Widget w,
 
 
 /* ARGSUSED */
-static void 
+static void
 HandleGraphicsExposure(Widget w,
 		       XtPointer closure,
 		       XEvent *event,
@@ -5166,52 +5166,52 @@ HandleGraphicsExposure(Widget w,
 }
 
 
-static void 
+static void
 OutputRealize(Widget w,
 	      XtValueMask *valueMask,
 	      XSetWindowAttributes *attributes)
 {
   XmTextWidget tw = (XmTextWidget) w;
-  
+
   XtCreateWindow(w, (unsigned int) InputOutput, (Visual *) CopyFromParent,
 		 *valueMask, attributes);
   MakeCursors(tw);
 }
 
 
-static void 
+static void
 OutputDestroy(Widget w)
 {
   XmTextWidget tw = (XmTextWidget) w;
   OutputData data = tw->text.output->data;
-  
+
   if (data->timerid)
     XtRemoveTimeOut(data->timerid);
-  
+
   XtRemoveEventHandler((Widget) tw->text.inner_widget,
 		       FocusChangeMask|EnterWindowMask|LeaveWindowMask,
 		       False, HandleFocusEvents, NULL);
-  
+
   XtRemoveEventHandler((Widget) tw->text.inner_widget,
 		       (EventMask) 0, True, HandleGraphicsExposure,
 		       NULL);
-  
+
   XtReleaseGC(w, data->imagegc);
   XtReleaseGC(w, data->gc);
   XtReleaseGC(w, data->save_gc);
   XtReleaseGC(w, data->cursor_gc);
-  
+
   XmFontListFree(data->fontlist);
-  
+
   if (data->add_mode_cursor != XmUNSPECIFIED_PIXMAP)
     (void) XmDestroyPixmap(XtScreen(tw), data->add_mode_cursor);
-  
+
   if (data->cursor != XmUNSPECIFIED_PIXMAP)
     (void) XmDestroyPixmap(XtScreen(tw), data->cursor);
-  
+
   if (data->ibeam_off != XmUNSPECIFIED_PIXMAP)
     XFreePixmap(XtDisplay((Widget)tw), data->ibeam_off);
-  
+
   XtFree((char *)data);
   XtFree((char *)tw->text.output);
   _XmProcessLock();
@@ -5219,7 +5219,7 @@ OutputDestroy(Widget w)
   _XmProcessUnlock();
 }
 
-static void 
+static void
 RedrawRegion(XmTextWidget tw,
 	     int x,
 	     int y,
@@ -5257,10 +5257,10 @@ RedrawRegion(XmTextWidget tw,
     _XmTextMarkRedraw(tw, first, last);
   }
   }
-} 
+}
 
 /* ARGSUSED */
-static void 
+static void
 OutputExpose(Widget w,
 	     XEvent *event,
 	     Region region)
@@ -5276,7 +5276,7 @@ OutputExpose(Widget w,
   int n = 0;
   Boolean font_may_have_changed = False;
   int offset = 0;
-  
+
   if (tw->text.in_setvalues) {
     /* Get here via SetValues.  Force x,y of IM and clip origin for
      * I-beam in case font changed.
@@ -5284,14 +5284,14 @@ OutputExpose(Widget w,
     tw->text.in_setvalues = False;
     font_may_have_changed = True;
   }
-  
+
   if (event->xany.type != Expose)
     return;
-  
+
   if (XtIsSensitive(w) && data->hasfocus)
     _XmTextChangeBlinkBehavior(tw, False);
   EraseInsertionPoint(tw);
-  
+
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     data->number_lines = tw->text.inner_widget->core.width -
@@ -5300,20 +5300,20 @@ OutputExpose(Widget w,
       data->number_lines = 1;
     else
       data->number_lines /= (int) data->linewidth;
-  
+
     if (data->hbar && old_number_lines != data->number_lines)
       {
 	int local_total, new_size;
 	XmNavigatorDataRec nav_data;
-      
+
 	data->ignorehbar = True;
-      
+
 	if (tw->text.top_line + tw->text.number_lines >
 	    tw->text.total_lines)
 	  local_total = tw->text.top_line + tw->text.number_lines;
 	else
 	  local_total = tw->text.total_lines;
-      
+
 	if (local_total >= tw->text.number_lines)
 	  new_size = tw->text.number_lines;
 	else
@@ -5328,12 +5328,12 @@ OutputExpose(Widget w,
 	nav_data.slider_size.x = new_size;
 	nav_data.page_increment.x = (data->number_lines > 1)?
 	  (data->number_lines - 1): 1;
-      
+
 	nav_data.dimMask = NavigDimensionX;
 	nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	  NavSliderSize|NavPageIncrement;
 	_XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
-      
+
 	data->ignorehbar = False;
       }
   } else {
@@ -5343,20 +5343,20 @@ OutputExpose(Widget w,
     data->number_lines = 1;
   else
     data->number_lines /= (int) data->lineheight;
-  
+
   if (data->vbar && old_number_lines != data->number_lines)
     {
       int local_total, new_size;
       XmNavigatorDataRec nav_data;
-      
+
       data->ignorevbar = True;
-      
+
       if (tw->text.top_line + tw->text.number_lines >
 	  tw->text.total_lines)
 	local_total = tw->text.top_line + tw->text.number_lines;
       else
 	local_total = tw->text.total_lines;
-      
+
       if (local_total >= tw->text.number_lines)
 	new_size = tw->text.number_lines;
       else
@@ -5370,16 +5370,16 @@ OutputExpose(Widget w,
       nav_data.slider_size.y = new_size;
       nav_data.page_increment.y = (data->number_lines > 1)?
 	(data->number_lines - 1): 1;
-      
+
       nav_data.dimMask = NavigDimensionY;
       nav_data.valueMask = NavValue|NavMinimum|NavMaximum|
 	NavSliderSize|NavPageIncrement;
       _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, True);
-      
+
       data->ignorevbar = False;
     }
   }
-  
+
   if (!data->handlingexposures) {
     _XmTextDisableRedisplay(tw, False);
     data->handlingexposures = True;
@@ -5399,16 +5399,16 @@ OutputExpose(Widget w,
     if (!erased_cursor)
       RedrawRegion(tw, xe->x, xe->y, xe->width, xe->height);
   }
-  
+
   _XmTextInvalidate(tw, (XmTextPosition) tw->text.top_character,
 		    (XmTextPosition) tw->text.top_character, NODELTA);
-  
+
   _XmTextEnableRedisplay(tw);
-  
+
   data->handlingexposures = False;
-  
+
   _XmTextDrawShadow(tw);
-  
+
   /* If the expose happened because of SetValues, the font may have changed.
    * At this point, RefigureLines has run and the tw is relayed out.
    * So it is safe to calculate the x,y position of the cursor to pass
@@ -5425,30 +5425,30 @@ OutputExpose(Widget w,
     XtSetArg(im_args[n], XmNarea, &xmim_area); n++;
     XmImSetValues(w, im_args, n);
   }
-  
+
   if ((data->cursor_on < 0) || (data->blinkstate == off))
     data->refresh_ibeam_off = True;
-  
+
   if (XtIsSensitive((Widget)tw) && data->hasfocus)
     _XmTextChangeBlinkBehavior(tw, True);
   TextDrawInsertionPoint(tw);
 }
 
-static void 
+static void
 GetPreferredSize(Widget w,
 		 Dimension *width,
 		 Dimension *height)
 {
   XmTextWidget tw = (XmTextWidget) w;
   OutputData data = tw->text.output->data;
-  
+
   SizeFromRowsCols(tw, width, height);
-  
+
   if (data->resizewidth) {
     TextFindNewWidth(tw, width);
     if (*width < data->minwidth) *width = data->minwidth;
   }
-  
+
   if (data->resizeheight) {
     TextFindNewHeight(tw, PASTENDPOS, height);
     if (*height < data->minheight) *height = data->minheight;
@@ -5459,7 +5459,7 @@ GetPreferredSize(Widget w,
 }
 
 /* ARGSUSED */
-static void 
+static void
 HandleVBarButtonRelease(Widget w,
 			XtPointer closure,
 			XEvent *event,
@@ -5467,9 +5467,9 @@ HandleVBarButtonRelease(Widget w,
 {
   XmTextWidget tw = (XmTextWidget) closure;
   OutputData data = tw->text.output->data;
-  
+
   data->suspend_hoffset = False;
-  
+
   EraseInsertionPoint(tw);
   XmTextScroll((Widget) tw, 0);
   TextDrawInsertionPoint(tw);
@@ -5477,7 +5477,7 @@ HandleVBarButtonRelease(Widget w,
 
 
 /* ARGSUSED */
-static void 
+static void
 HandleHBarButtonRelease(Widget w,
 			XtPointer closure,
 			XEvent *event,
@@ -5485,9 +5485,9 @@ HandleHBarButtonRelease(Widget w,
 {
   XmTextWidget tw = (XmTextWidget) closure;
   OutputData data = tw->text.output->data;
-  
+
   data->suspend_voffset = False;
-  
+
   EraseInsertionPoint(tw);
   XmTextScroll((Widget) tw, 0);
   TextDrawInsertionPoint(tw);
@@ -5496,9 +5496,9 @@ HandleHBarButtonRelease(Widget w,
 
 /************************************************************************
  *
- *  SliderMove	
+ *  SliderMove
  *  Callback for the value changes of navigators.
- * 
+ *
  ************************************************************************/
 /* ARGSUSED */
 static void
@@ -5507,7 +5507,7 @@ SliderMove(Widget w,
 	   XtPointer cd)
 {
   /* w is a navigator tw */
-  
+
   XmTextWidget tw = (XmTextWidget) closure;
   XmNavigatorDataRec nav_data;
   int offset, n;
@@ -5517,17 +5517,17 @@ SliderMove(Widget w,
   OutputData data = tw->text.output->data;
   int local_total = 0;
   int new_top = 0;
-  
+
   /* get the navigator information using the trait getValue since I
      cannot use a callback struct */
-  
+
   nav_data.valueMask = NavValue;
   ((XmNavigatorTrait)XmeTraitGet((XtPointer) XtClass(w), XmQTnavigator))
     ->getValue(w, &nav_data);
-  
-  
+
+
   /* look at the kind of navigator and make the appropriate update */
-  
+
   if (!data->ignorehbar && (nav_data.dimMask & NavigDimensionX)) {
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -5537,7 +5537,7 @@ SliderMove(Widget w,
 	local_total = tw->text.top_line + tw->text.number_lines;
       else
 	local_total = tw->text.total_lines;
-  
+
       new_top = local_total - nav_data.value.x - tw->text.number_lines;
       offset = nav_data.value.x - tw->text.top_line;
       tw->text.top_line = nav_data.value.x;
@@ -5551,7 +5551,7 @@ SliderMove(Widget w,
     ChangeHOffset(tw, offset, False);
     TextDrawInsertionPoint(tw);
     }
-    
+
     PosToXY(tw, tw->text.cursor_position, &xmim_point.x, &xmim_point.y);
     (void)_XmTextGetDisplayRect((Widget)tw, &xmim_area);
     n = 0;
@@ -5560,7 +5560,7 @@ SliderMove(Widget w,
     XmImSetValues(w, args, n);
     data->suspend_voffset = False;
   }
-  
+
   if (!data->ignorevbar && (nav_data.dimMask & NavigDimensionY)) {
     if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -5570,14 +5570,14 @@ SliderMove(Widget w,
       TextDrawInsertionPoint(tw);
     } else {
     data->suspend_hoffset = True;
-    
+
     tw->text.vsbar_scrolling = True;
     offset = nav_data.value.y - tw->text.top_line;
     tw->text.top_line = nav_data.value.y;
     EraseInsertionPoint(tw);
     XmTextScroll((Widget)tw, offset);
     TextDrawInsertionPoint(tw);
-    
+
     tw->text.vsbar_scrolling = False;
     }
     PosToXY(tw, tw->text.cursor_position, &xmim_point.x, &xmim_point.y);
@@ -5587,12 +5587,12 @@ SliderMove(Widget w,
     XtSetArg(args[n], XmNspotLocation, &xmim_point); n++;
     XmImSetValues(w, args, n);
     data->suspend_hoffset = False;
-  } 
+  }
 
     /* now update the other navigator value */
     _XmSFUpdateNavigatorsValue(XtParent((Widget)tw), &nav_data, False);
 
-  
+
 }
 
 
@@ -5601,7 +5601,7 @@ SliderMove(Widget w,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-void 
+void
 _XmTextOutputCreate(Widget wid,
 		    ArgList args,
 		    Cardinal num_args)
@@ -5611,15 +5611,15 @@ _XmTextOutputCreate(Widget wid,
   OutputData data;
   Dimension width, height;
   XmScrollFrameTrait scrollFrameTrait;
-  
+
   tw->text.output = output = (Output)
     XtMalloc((unsigned) sizeof(OutputRec));
   output->data = data = (OutputData)
     XtMalloc((unsigned) sizeof(OutputDataRec));
-  
+
   XtGetSubresources(wid, (XtPointer)data, NULL, NULL, output_resources,
 		    XtNumber(output_resources), args, num_args);
-  
+
   if (output->data->scrollleftside == XmDYNAMIC_BOOL) {
     if (XmDirectionMatch(XmPrim_layout_direction(tw),
 			 XmTOP_TO_BOTTOM_RIGHT_TO_LEFT))
@@ -5643,7 +5643,7 @@ _XmTextOutputCreate(Widget wid,
   output->destroy = OutputDestroy;
   output->resize = NotifyResized;
   output->expose = OutputExpose;
-  
+
   data->insertx = data->inserty = -99;
   data->suspend_hoffset = False;
   data->hoffset = 0;
@@ -5660,8 +5660,8 @@ _XmTextOutputCreate(Widget wid,
   data->suspend_voffset = False;
 
   /* copy over the fontlist/rendertable */
-  /* Final result stored in fontlist since that's what the rest of the 
-   * code is expecting, but rendertable takes precedence since that's the 
+  /* Final result stored in fontlist since that's what the rest of the
+   * code is expecting, but rendertable takes precedence since that's the
    * model for 2.0.
    */
   if ((data->fontlist == NULL) && (data->rendertable == NULL)) {
@@ -5679,7 +5679,7 @@ _XmTextOutputCreate(Widget wid,
     (void)!LoadFontMetrics(tw);
   }
   data->rendertable = data->fontlist;
-  
+
   data->cursorwidth = 5;
   data->cursorheight = data->font_ascent + data->font_descent;
   tw->text.inner_widget = wid;
@@ -5689,7 +5689,7 @@ _XmTextOutputCreate(Widget wid,
   data->topmargin = data->bottommargin = tw->text.margin_height +
     tw->primitive.shadow_thickness +
       tw->primitive.highlight_thickness;
-  
+
   /* Don't word wrap, have multiple row or have vertical scrollbars
      if editMode is single_line */
   if (tw->text.edit_mode == XmSINGLE_LINE_EDIT) {
@@ -5699,7 +5699,7 @@ _XmTextOutputCreate(Widget wid,
     else
       data->rows = 1;
   }
-  
+
   /* Don't grow in width if word wrap is on */
   if (tw->text.edit_mode != XmSINGLE_LINE_EDIT &&
       data->wordwrap) {
@@ -5709,7 +5709,7 @@ _XmTextOutputCreate(Widget wid,
     else
         data->resizewidth = False;
   }
-  
+
   if (data->rows <= 0) {
     if (data->rows < 0)
       XmeWarning(wid, MSG1);
@@ -5720,7 +5720,7 @@ _XmTextOutputCreate(Widget wid,
     else
       data->rows = 1;
   }
-  
+
   if (data->columns <= 0) {
     if (data->columns < 0)
       XmeWarning(wid, MSG2);
@@ -5731,20 +5731,20 @@ _XmTextOutputCreate(Widget wid,
     else
       data->columns = 20;
   }
-  
+
   /* Initialize columns_set and rows_set for Query Geometry.  Also
    * used in SizeFromRowsCols().
    */
   data->columns_set = data->columns;
   data->rows_set = data->rows;
-  
+
   SizeFromRowsCols(tw, &width, &height);
-  
+
   if (tw->core.width == 0)
     tw->core.width = width;
   if (tw->core.height == 0)
     tw->core.height = height;
-  
+
   /* initialize number_lines before RefigureDependentInfo() */
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
 		      XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
@@ -5762,10 +5762,10 @@ _XmTextOutputCreate(Widget wid,
   else
     data->number_lines /= (int) data->lineheight;
   }
-  
+
   if (tw->core.height != height || tw->core.width != width)
     RefigureDependentInfo(tw);
-  
+
   /* reset columns_set and rows_set after RefigureDependentInfo() */
   data->columns_set = data->columns;
   data->rows_set = data->rows;
@@ -5773,27 +5773,27 @@ _XmTextOutputCreate(Widget wid,
   data->prevH = tw->core.height;
   data->minwidth = tw->core.width;
   data->minheight = tw->core.height;
-  
+
   data->imagegc = NULL;
   data->gc = NULL;
   data->save_gc = NULL;
   data->cursor_gc = NULL;
   data->has_rect = False;
-  
+
   LoadGCs(tw, tw->core.background_pixel,
 	  tw->primitive.foreground);
-  
-  
+
+
   /****************
    *
-   * Now look at our parent and see if it's a non inited ScrollFrame. 
-   * If it is, create the navigators 
+   * Now look at our parent and see if it's a non inited ScrollFrame.
+   * If it is, create the navigators
    * and set up all the scrolling stuff using the trait.
    *
    */
-  scrollFrameTrait = (XmScrollFrameTrait) 
+  scrollFrameTrait = (XmScrollFrameTrait)
     XmeTraitGet((XtPointer) XtClass(wid->core.parent), XmQTscrollFrame);
-  
+
   if (scrollFrameTrait != NULL &&
       !(scrollFrameTrait -> getInfo (wid->core.parent, NULL, NULL, NULL))) {
     int n;
@@ -5804,11 +5804,11 @@ _XmTextOutputCreate(Widget wid,
       set up the default move callback, so that our navigator gets
       associated nicely by the scrollFrame */
     scrollFrameTrait -> init (wid->core.parent, SliderMove, wid);
-    
+
     if (data->scrollhorizontal) {
       data->resizewidth = False;
       data->ignorehbar = False;
-      
+
       n = 0;
       /* Force to use pixels for shadowThickness */
       XtSetArg(arglist[n], XmNunitType, XmPIXELS); n++;
@@ -5816,13 +5816,13 @@ _XmTextOutputCreate(Widget wid,
 	       tw->primitive.shadow_thickness); n++;
 
       XtSetArg(arglist[n], XmNorientation, XmHORIZONTAL); n++;
-      
+
       XtSetArg(arglist[n], XmNtraversalOn, False); n++;
       XtSetArg(arglist[n], XmNhighlightThickness, 0); n++;
-      
+
       data->hbar = XmCreateScrollBar(XtParent(tw), "HorScrollBar",
 				     arglist, n);
-      
+
       if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
 	if (tw->text.edit_mode != XmSINGLE_LINE_EDIT)
@@ -5832,14 +5832,14 @@ _XmTextOutputCreate(Widget wid,
 			  False, HandleHBarButtonRelease, (Opaque)tw);
       } else
 	XtManageChild(data->hbar);
-      
-      
+
+
     } else data->hbar = NULL;
-    
+
     if (data->scrollvertical) {
       data->resizeheight = False;
       data->ignorevbar = False;
-      
+
       n = 0;
       /* Force to use pixels for shadowThickness */
       XtSetArg(arglist[n], XmNunitType, XmPIXELS); n++;
@@ -5847,14 +5847,14 @@ _XmTextOutputCreate(Widget wid,
 	       tw->primitive.shadow_thickness); n++;
 
       XtSetArg(arglist[n], XmNorientation, XmVERTICAL); n++;
-      
+
       XtSetArg(arglist[n], XmNtraversalOn, False); n++;
       XtSetArg(arglist[n], XmNhighlightThickness, 0); n++;
-      
-      
-      data->vbar = XmCreateScrollBar(XtParent(tw), 
+
+
+      data->vbar = XmCreateScrollBar(XtParent(tw),
 				     "VertScrollBar", arglist, n);
-      
+
       if(XmDirectionMatch(XmPrim_layout_direction(tw),
 			  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
 	XtManageChild(data->vbar);
@@ -5865,13 +5865,13 @@ _XmTextOutputCreate(Widget wid,
 	XtAddEventHandler(data->vbar, (EventMask)ButtonReleaseMask,
 			  False, HandleVBarButtonRelease, (Opaque)tw);
       }
-      
-      
+
+
     } else data->vbar = NULL;
-    
-    
+
+
     /* Tell scrolled window parent where to put the scrollbars */
-    
+
     if (data->scrollleftside) {
       if (data->scrolltopside)
 	XtSetArg(swarglist[0], XmNscrollBarPlacement, XmTOP_LEFT);
@@ -5883,9 +5883,9 @@ _XmTextOutputCreate(Widget wid,
       else
 	XtSetArg(swarglist[0], XmNscrollBarPlacement, XmBOTTOM_RIGHT);
     }
-    
+
     XtSetValues(tw->core.parent, swarglist, 1);
-    
+
   } else {
     data->vbar = NULL;
     data->hbar = NULL;
@@ -5898,7 +5898,7 @@ _XmTextOutputCreate(Widget wid,
       data->resizeheight = True;
     }
   }
-  
+
   data->hasfocus = False;
   data->blinkstate = on;
   data->cursor_on = 0;
@@ -5917,7 +5917,7 @@ _XmTextOutputCreate(Widget wid,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-Boolean 
+Boolean
 _XmTextGetBaselines(Widget w,
 		    Dimension ** baselines,
 		    int *line_count)
@@ -5926,18 +5926,18 @@ _XmTextGetBaselines(Widget w,
   OutputData data = tw->text.output->data;
   Dimension *base_array;
   int i;
-  
+
   *line_count = data->number_lines;
-  
+
   base_array = (Dimension *)XtMalloc((sizeof(Dimension) * (*line_count)));
-  
+
   for (i = 0; i < *line_count; i++) {
     base_array[i] = data->topmargin + i * data->lineheight +
       data->font_ascent;
   }
-  
+
   *baselines = base_array;
-  
+
   return (True);
 }
 
@@ -5945,19 +5945,19 @@ _XmTextGetBaselines(Widget w,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-Boolean 
+Boolean
 _XmTextGetDisplayRect(Widget w,
 		      XRectangle * display_rect)
 {
   XmTextWidget tw = (XmTextWidget) w;
   OutputData data = tw->text.output->data;
-  
+
   (*display_rect).x = data->leftmargin;
   (*display_rect).y = data->topmargin;
   (*display_rect).width = tw->core.width -
     (data->leftmargin + data->rightmargin);
   (*display_rect).height = data->number_lines * data->lineheight;
-  
+
   return(True);
 }
 
@@ -5966,13 +5966,13 @@ _XmTextGetDisplayRect(Widget w,
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
 /* ARGSUSED */
-void 
+void
 _XmTextMarginsProc(Widget w,
 		   XmBaselineMargins *margins_rec)
 {
   XmTextWidget tw = (XmTextWidget) w;
   OutputData data = tw->text.output->data;
-  
+
   if (margins_rec->get_or_set == XmBASELINE_SET) {
     data->topmargin = margins_rec->margin_top +
       tw->primitive.shadow_thickness +
@@ -5997,7 +5997,7 @@ _XmTextMarginsProc(Widget w,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-void 
+void
 _XmTextChangeHOffset(XmTextWidget tw,
 		     int length)
 {
@@ -6017,7 +6017,7 @@ _XmTextChangeHOffset(XmTextWidget tw,
   /* subtract margins from the offset: Fixes CR 3187 */
   length += (length < 0 ? (2 * margin_width) : - (2 * margin_width));
   new_offset += length;
-  
+
   for (i = 0; i < tw->text.number_lines; i++) {
     last_position = (*tw->text.source->Scan) (tw->text.source,
 						  tw->text.line[i].start,
@@ -6039,11 +6039,11 @@ _XmTextChangeHOffset(XmTextWidget tw,
     new_text_width = width - data->leftmargin;
     if (new_text_width > text_width) text_width = new_text_width;
   }
-  
+
   inner_width = tw->core.width - (2 * margin_width);
   if (new_offset >= text_width - inner_width)
     new_offset = text_width - inner_width;
-  
+
   ChangeHOffset(tw, new_offset, True);
 }
 
@@ -6051,7 +6051,7 @@ _XmTextChangeHOffset(XmTextWidget tw,
 /*****************************************************************************
  * To make TextOut a True "Object" this function should be a class function. *
  *****************************************************************************/
-void 
+void
 _XmTextChangeVOffset(XmTextWidget tw,
 		     int length)
 {
@@ -6071,7 +6071,7 @@ _XmTextChangeVOffset(XmTextWidget tw,
   /* subtract margins from the offset: Fixes CR 3187 */
   length += (length < 0 ? (2 * margin_height) : - (2 * margin_height));
   new_offset += length;
-  
+
   for (i = 0; i < tw->text.number_lines; i++) {
     last_position = (*tw->text.source->Scan) (tw->text.source,
 						  tw->text.line[i].start,
@@ -6093,11 +6093,11 @@ _XmTextChangeVOffset(XmTextWidget tw,
     new_text_height = height - data->topmargin;
     if (new_text_height > text_height) text_height = new_text_height;
   }
-  
+
   inner_height = tw->core.height - (2 * margin_height);
   if (new_offset >= text_height - inner_height)
     new_offset = text_height - inner_height;
-  
+
   ChangeVOffset(tw, new_offset, True);
 }
 
@@ -6105,7 +6105,7 @@ _XmTextChangeVOffset(XmTextWidget tw,
 /*****************************************************************************
  * To make TextOut a true "Object" this function should be a class function. *
  *****************************************************************************/
-void 
+void
 _XmTextToggleCursorGC(Widget w)
 {
   XmTextWidget tw = (XmTextWidget) w;
@@ -6116,11 +6116,11 @@ _XmTextToggleCursorGC(Widget w)
   Pixmap stipple = XmUNSPECIFIED_PIXMAP;
 
   if (!XtIsRealized((Widget)tw)) return;
-  
+
   SetFullGC(tw, data->imagegc);
-  
+
   _XmTextResetClipOrigin(tw, tw->text.cursor_position, False);
-  
+
 #ifdef FIX_1501
   if (!XtIsSensitive((Widget)tw)) {
     valueMask = GCForeground|GCBackground|GCFillStyle|GCStipple|GCFunction;
@@ -6154,7 +6154,7 @@ _XmTextToggleCursorGC(Widget w)
     values.function = GXxor;
   } else {
     valueMask = GCStipple;
-    if (XGetGCValues(XtDisplay(tw), data->imagegc, 
+    if (XGetGCValues(XtDisplay(tw), data->imagegc,
 		     valueMask, &values))
       stipple = values.stipple;
     valueMask = GCFillStyle|GCFunction|GCForeground|GCBackground;
@@ -6170,7 +6170,7 @@ _XmTextToggleCursorGC(Widget w)
 	valueMask |= GCStipple;
       }
     if (tw->text.input->data->overstrike) {
-      values.background = values.foreground = 
+      values.background = values.foreground =
 	tw->core.background_pixel ^ tw->primitive.foreground;
     } else if (data->have_inverted_image_gc) {
       values.background = tw->primitive.foreground;

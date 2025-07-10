@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
 **++
@@ -203,7 +203,7 @@ XmConst diag_rz_msg_entry diag_rz_msg_table[81] =
 	   { 1, msg80 },
         };
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 #include <nl_types.h>
 #include "UilMsgCatI.h"
 externalref nl_catd uil_catd;
@@ -224,7 +224,7 @@ XmConst int msg_cat_table[81] = {
   UIL_60, UIL_61, UIL_62, UIL_63, UIL_64,
   UIL_65, UIL_66, UIL_67, UIL_68, UIL_69,
   UIL_70, UIL_71, UIL_72,
-  UIL_V2_73, UIL_V2_74, UIL_V2_75, UIL_V2_76, 
+  UIL_V2_73, UIL_V2_74, UIL_V2_75, UIL_V2_76,
   UIL_V2_77, UIL_78, UIL_V2_79, UIL_V2_80,
 };
 

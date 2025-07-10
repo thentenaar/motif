@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,7 +37,7 @@
 #endif
 #include <string.h>
 #include <ctype.h>
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 #include <iconv.h>
 #endif
 #include <errno.h>
@@ -88,7 +88,7 @@ typedef enum {
     cs_LatinHebrew,
     cs_NonStandard,
     cs_ir111
-} ct_Charset; 
+} ct_Charset;
 
 /* Internal context block */
 typedef struct _ct_context {
@@ -221,7 +221,7 @@ static XmConst Octet CTEXT_SET_KSC5601_0[] = "\033\044\050\103\033\044\051\103";
 static XmConst Octet CTEXT_SET_IR_111[] = "\033\050\102\033\055\100";
 #define CTEXT_SET_IR_111_LEN		sizeof(CTEXT_SET_IR_111)-1
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 static XmConst char UTF8_NEWLINESTRING[] = "\012";
 #define UTF8_NEWLINESTRING_LEN		sizeof(UTF8_NEWLINESTRING)-1
 
@@ -233,12 +233,12 @@ static XmConst char UTF8_L_TO_R[] = "\342\200\216";
 
 static XmConst char UTF8_R_TO_L[] = "\342\200\217";
 #define UTF8_R_TO_L_LEN		sizeof(UTF8_R_TO_L)-1
-#endif /* UTF8_SUPPORTED */
+#endif /* XM_UTF8 */
 
 #define CTVERSION 1
-#define _IsValidC0(ctx, c)	(((c) == HT) || ((c) == NL) || ((ctx)->version > CTVERSION)) 
+#define _IsValidC0(ctx, c)	(((c) == HT) || ((c) == NL) || ((ctx)->version > CTVERSION))
 #define _IsValidC1(ctx, c)	((ctx)->version > CTVERSION)
- 
+
 #define _IsValidESCFinal(c)	(((c) >= 0x30) && ((c) <= 0x7e))
 #define _IsValidCSIFinal(c)	(((c) >= 0x40) && ((c) <= 0x7e))
 
@@ -287,53 +287,53 @@ static XmConst char UTF8_R_TO_L[] = "\342\200\217";
 
 /* Define the MIT registered charset */
 
-static SegmentEncoding _mit_ISO_IR_1111_registry = 
+static SegmentEncoding _mit_ISO_IR_1111_registry =
 { "ISO-IR-111", "ISO-IR-111", NULL};
-static SegmentEncoding _mit_UTF_8_registry = 
+static SegmentEncoding _mit_UTF_8_registry =
 { "UTF-8", "UTF-8", &_mit_ISO_IR_1111_registry};
-static SegmentEncoding _mit_KSC5601_1987_1_registry = 
+static SegmentEncoding _mit_KSC5601_1987_1_registry =
 { "KSC5601.1987-1", "KSC5601.1987-1", &_mit_UTF_8_registry};
-static SegmentEncoding _mit_KSC5601_1987_0_registry = 
+static SegmentEncoding _mit_KSC5601_1987_0_registry =
 { "KSC5601.1987-0", "KSC5601.1987-0", &_mit_KSC5601_1987_1_registry};
-static SegmentEncoding _mit_JISX0208_1983_1_registry = 
+static SegmentEncoding _mit_JISX0208_1983_1_registry =
 { "JISX0208.1983-1", "JISX0208.1983-1", &_mit_KSC5601_1987_0_registry};
-static SegmentEncoding _mit_JISX0208_1983_0_registry = 
+static SegmentEncoding _mit_JISX0208_1983_0_registry =
 { "JISX0208.1983-0", "JISX0208.1983-0", &_mit_JISX0208_1983_1_registry};
-static SegmentEncoding _mit_GB2312_1980_1_registry = 
+static SegmentEncoding _mit_GB2312_1980_1_registry =
 { "GB2312.1980-1", "GB2312.1980-1", &_mit_JISX0208_1983_0_registry};
-static SegmentEncoding _mit_GB2312_1980_0_registry = 
+static SegmentEncoding _mit_GB2312_1980_0_registry =
 { "GB2312.1980-0", "GB2312.1980-0", &_mit_GB2312_1980_1_registry};
-static SegmentEncoding _mit_JISX0201_1976_0_registry = 
+static SegmentEncoding _mit_JISX0201_1976_0_registry =
 { "JISX0201.1976-0", "JISX0201.1976-0", &_mit_GB2312_1980_0_registry};
-static SegmentEncoding _mit_ISO8859_9_registry = 
+static SegmentEncoding _mit_ISO8859_9_registry =
 { "ISO8859-9", "ISO8859-9", &_mit_JISX0201_1976_0_registry};
-static SegmentEncoding _mit_ISO8859_8_registry = 
+static SegmentEncoding _mit_ISO8859_8_registry =
 { "ISO8859-8", "ISO8859-8", &_mit_ISO8859_9_registry};
-static SegmentEncoding _mit_ISO8859_7_registry = 
+static SegmentEncoding _mit_ISO8859_7_registry =
 { "ISO8859-7", "ISO8859-7", &_mit_ISO8859_8_registry};
-static SegmentEncoding _mit_ISO8859_6_registry = 
+static SegmentEncoding _mit_ISO8859_6_registry =
 { "ISO8859-6", "ISO8859-6", &_mit_ISO8859_7_registry};
-static SegmentEncoding _mit_ISO8859_5_registry = 
+static SegmentEncoding _mit_ISO8859_5_registry =
 { "ISO8859-5", "ISO8859-5", &_mit_ISO8859_6_registry};
-static SegmentEncoding _mit_ISO8859_4_registry = 
+static SegmentEncoding _mit_ISO8859_4_registry =
 { "ISO8859-4", "ISO8859-4", &_mit_ISO8859_5_registry};
-static SegmentEncoding _mit_ISO8859_3_registry = 
+static SegmentEncoding _mit_ISO8859_3_registry =
 { "ISO8859-3", "ISO8859-3", &_mit_ISO8859_4_registry};
-static SegmentEncoding _mit_ISO8859_2_registry = 
+static SegmentEncoding _mit_ISO8859_2_registry =
 { "ISO8859-2", "ISO8859-2", &_mit_ISO8859_3_registry};
-static SegmentEncoding _mit_ISO8859_1_registry = 
+static SegmentEncoding _mit_ISO8859_1_registry =
 { "ISO8859-1", "ISO8859-1", &_mit_ISO8859_2_registry};
 
-static SegmentEncoding _loc_encoding_registry = 
+static SegmentEncoding _loc_encoding_registry =
 { _MOTIF_DEFAULT_LOCALE, XmFONTLIST_DEFAULT_TAG, &_mit_ISO8859_1_registry};
-static SegmentEncoding _encoding_registry = 
+static SegmentEncoding _encoding_registry =
 { XmFONTLIST_DEFAULT_TAG, XmFONTLIST_DEFAULT_TAG, &_loc_encoding_registry};
 static SegmentEncoding *_encoding_registry_ptr = &_encoding_registry;
 
 
 /********    Static Function Declarations    ********/
 
-static SegmentEncoding * FindEncoding( 
+static SegmentEncoding * FindEncoding(
                         char *fontlist_tag) ;
 static Boolean processCharsetAndText(XmStringCharSet tag,
 				     OctetPtr	ctext,
@@ -345,7 +345,7 @@ static Boolean processCharsetAndText(XmStringCharSet tag,
 				     OctetPtr	*outc,
 				     unsigned int	*outlen,
 				     ct_Charset	*prev);
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 static Boolean processCharsetAndTextUtf8(XmStringCharSet tag,
 				     OctetPtr	ctext,
 #if NeedWidePrototypes
@@ -358,31 +358,31 @@ static Boolean processCharsetAndTextUtf8(XmStringCharSet tag,
 				     ct_Charset	*prev);
 #endif
 
-static Boolean processESCHack( 
+static Boolean processESCHack(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean processExtendedSegmentsHack( 
+static Boolean processExtendedSegmentsHack(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean cvtTextToXmString( 
+static Boolean cvtTextToXmString(
                         XrmValue *from,
                         XrmValue *to) ;
-static void outputXmString( 
+static void outputXmString(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int separator) ;
 #else
                         Boolean separator) ;
 #endif /* NeedWidePrototypes */
-static XmString concatStringToXmString( 
+static XmString concatStringToXmString(
                         XmString compoundstring,
                         char *textstring,
 			int textlen,
@@ -394,72 +394,72 @@ static XmString concatStringToXmString(
                         XmStringDirection direction,
                         Boolean separator) ;
 #endif /* NeedWidePrototypes */
-static Boolean processESC( 
+static Boolean processESC(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean processCSI( 
+static Boolean processCSI(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean processExtendedSegments( 
+static Boolean processExtendedSegments(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean process94n( 
+static Boolean process94n(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean process94GL( 
+static Boolean process94GL(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean process94GR( 
+static Boolean process94GR(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean process96GR( 
+static Boolean process96GR(
                         ct_context *ctx,
 #if NeedWidePrototypes
                         int final) ;
 #else
                         Octet final) ;
 #endif /* NeedWidePrototypes */
-static Boolean cvtXmStringToText( 
+static Boolean cvtXmStringToText(
                         XrmValue *from,
                         XrmValue *to) ;
-static OctetPtr ctextConcat( 
+static OctetPtr ctextConcat(
                         OctetPtr str1,
                         unsigned int str1len,
                         const_OctetPtr str2,
                         unsigned int str2len) ;
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 static Boolean  cvtXmStringToUTF8String(
         XrmValue *from,
         XrmValue *to ) ;
 
 static char* Convert(
         const char     *str,
-        unsigned int    len,  
+        unsigned int    len,
         const char      *to_codeset,
         const char      *from_codeset);
 
@@ -470,7 +470,7 @@ static char* ConvertWithIconv(
 #endif
 
 /********    End Static Function Declarations    ********/
- 
+
 /************************************************************************
  *
  *  FindEncoding
@@ -490,7 +490,7 @@ FindEncoding(char *fontlist_tag)
       if (strcmp(fontlist_tag, EncodingRegistryTag(encodingPtr)) == 0)
       {
         encoding = EncodingRegistryEncoding(encodingPtr);
-        
+
         /* Free unregistered encodings. */
         if (encoding == NULL)
           {
@@ -498,12 +498,12 @@ FindEncoding(char *fontlist_tag)
             XtFree( (char *) encodingPtr);
             encodingPtr = NULL;
           }
-        
+
         return(encodingPtr);
       }
     }
   else return(encodingPtr);
-  
+
   for (prevPtr = encodingPtr, encodingPtr = EncodingRegistryNext(encodingPtr);
        encodingPtr != NULL;
        prevPtr = encodingPtr, encodingPtr = EncodingRegistryNext(encodingPtr))
@@ -511,16 +511,16 @@ FindEncoding(char *fontlist_tag)
       if (strcmp(fontlist_tag, EncodingRegistryTag(encodingPtr)) == 0)
       {
         encoding = EncodingRegistryEncoding(encodingPtr);
-        
+
         /* Free unregistered encodings. */
         if (encoding == NULL)
           {
-            EncodingRegistryNext(prevPtr) = 
+            EncodingRegistryNext(prevPtr) =
               EncodingRegistryNext(encodingPtr);
             XtFree( (char *) encodingPtr);
             encodingPtr = NULL;
           }
-        
+
         return(encodingPtr);
       }
       /* Free unregistered encodings. */
@@ -530,7 +530,7 @@ FindEncoding(char *fontlist_tag)
         XtFree( (char *) encodingPtr);
       }
     }
-  
+
   return(NULL);
 }
 
@@ -550,27 +550,27 @@ XmRegisterSegmentEncoding(
 {
   SegmentEncoding     *encodingPtr = NULL;
   String              ret_val = NULL;
-  
+
   _XmProcessLock();
   encodingPtr = FindEncoding(fontlist_tag);
 
   if (encodingPtr)
     {
       ret_val = XtNewString(EncodingRegistryEncoding(encodingPtr));
-      EncodingRegistryEncoding(encodingPtr) = 
+      EncodingRegistryEncoding(encodingPtr) =
       ct_encoding ? XtNewString(ct_encoding) : (String)NULL;
     }
   else if (ct_encoding != NULL)
     {
-      encodingPtr = 
+      encodingPtr =
       (SegmentEncoding *)XtMalloc((Cardinal)sizeof(SegmentEncoding));
       EncodingRegistryTag(encodingPtr) = XtNewString(fontlist_tag);
       EncodingRegistryEncoding(encodingPtr) = XtNewString(ct_encoding);
-      
+
       EncodingRegistryNext(encodingPtr) = _encoding_registry_ptr;
       _encoding_registry_ptr = encodingPtr;
     }
-  
+
   _XmProcessUnlock();
   return(ret_val);
 }
@@ -584,13 +584,13 @@ XmRegisterSegmentEncoding(
  * the passed length pointer.
  *
  ************************************************************************/
-XtPointer 
+XtPointer
 _XmGetEncodingRegistryTarget(int *length)
 {
   int i, count, total_size;
   SegmentEncoding *current;
   char *rval;
-  
+
   total_size = 0;
 
   _XmProcessLock();
@@ -622,7 +622,7 @@ _XmGetEncodingRegistryTarget(int *length)
     i++;
     current = EncodingRegistryNext(current);
   }
-  
+
   _XmProcessUnlock();
   return((XtPointer) rval);
 }
@@ -643,9 +643,9 @@ XmMapSegmentEncoding(char        *fontlist_tag)
   _XmProcessLock();
   encodingPtr = FindEncoding(fontlist_tag);
 
-  if (encodingPtr) 
+  if (encodingPtr)
     ret_val = XtNewString(EncodingRegistryEncoding(encodingPtr));
-  
+
   _XmProcessUnlock();
   return(ret_val);
 }
@@ -660,7 +660,7 @@ XmMapSegmentEncoding(char        *fontlist_tag)
  *	for this to work.
  *
  ************************************************************************/
-XmString 
+XmString
 XmCvtCTToXmString(
         char *text )
 {
@@ -685,7 +685,7 @@ XmCvtCTToXmString(
  * Define XLIB_HANDLES_DIRECTION if vendor's X library knows how
  * to deal with direction control sequences in CT. Otherwise
  * no such ones will be output if there are no Rtol segments
- * in the XmString. Note that the MIT sample implementation 
+ * in the XmString. Note that the MIT sample implementation
  * does not deal with direction control sequences...
  */
 #ifdef XLIB_HANDLES_DIRECTION
@@ -832,7 +832,7 @@ XmCvtCTToXmString(
 	      if (ctx->xmsep == NULL) {
 		ctx->xmsep = XmStringSeparatorCreate();
 	      }
-	      ctx->xmstring = XmStringConcatAndFree(ctx->xmstring, 
+	      ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
 						    XmStringCopy(ctx->xmsep));
 	    }
 	    ctx->octet++;			/* advance ptr to next char */
@@ -843,12 +843,12 @@ XmCvtCTToXmString(
 	    if (ctx->flags.text) {
 	      outputXmString(ctx, False);
 	      ctx->flags.text = False;
-	    } 
+	    }
 	    if (ctx->xmtab == NULL) {
-	      ctx->xmtab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, 
+	      ctx->xmtab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0,
 						   NULL);
 	    }
-	    ctx->xmstring = XmStringConcatAndFree(ctx->xmstring, 
+	    ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
 						  XmStringCopy(ctx->xmtab));
 	    ctx->octet++;			/* advance ptr to next char */
 	    break;
@@ -902,9 +902,9 @@ XmCvtCTToXmString(
 
     if (ok)
       return ( xmsReturned );
-    else 
+    else
 	return ( (XmString)NULL );
-    
+
 }
 
 
@@ -915,7 +915,7 @@ XmCvtCTToXmString(
  ***********************************************************************/
 
 /* processESCHack - handle valid ESC sequences */
-static Boolean 
+static Boolean
 processESCHack(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -955,7 +955,7 @@ processESCHack(
 }
 
 
-static Boolean 
+static Boolean
 processExtendedSegmentsHack(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -982,11 +982,11 @@ processExtendedSegmentsHack(
     if (	(ctx->itemlen == 4)
 	&&	(ctx->item[2] == 0x2f)
 	&&	(_IsInColumn3(final))
-       ) 
+       )
       {
 	if (    (ctx->octet[0] < 0x80)
 	    ||  (ctx->octet[1] < 0x80)
-	   )	
+	   )
 	  {
 	    return(False);
 	  }
@@ -999,15 +999,15 @@ processExtendedSegmentsHack(
 	ctx->octet++; ctx->itemlen++;		/* advance pointer */
 	seglen = (seglen << 7) + (*ctx->octet - 0x80);
 	ctx->octet++; ctx->itemlen++;		/* advance pointer */
-	
+
 	/* Check for premature end. */
-	for (esptr = ctx->octet; esptr < (ctx->octet + seglen); esptr++) 
+	for (esptr = ctx->octet; esptr < (ctx->octet + seglen); esptr++)
 	  {
-	    if (*esptr == 0) 
+	    if (*esptr == 0)
 	      {
 		return(False);
 	      }
-	  }	
+	  }
 
         esptr = ctx->octet;			/* point to charset */
 	ctx->itemlen += seglen;			/* advance pointer over segment */
@@ -1037,7 +1037,7 @@ processExtendedSegmentsHack(
 	      XtFree(charset_copy);
 	      return (False);
             }
-	    
+
 	    text_copy = (unsigned char *) XtMalloc(len + 1);
 	    memcpy( text_copy, esptr, len);
 	    text_copy[len] = EOS;
@@ -1046,7 +1046,7 @@ processExtendedSegmentsHack(
 						  ct_Dir_LeftToRight ?
 						  XmSTRING_DIRECTION_L_TO_R :
 						  (_CurDir(ctx) ==
-						   ct_Dir_RightToLeft ? 
+						   ct_Dir_RightToLeft ?
 						   XmSTRING_DIRECTION_R_TO_L :
 						   XmSTRING_DIRECTION_UNSET))),
 			 XmStringCreate((char *)text_copy, charset_copy));
@@ -1055,7 +1055,7 @@ processExtendedSegmentsHack(
 	    XtFree((char *) charset_copy);
 	    ok = True;
 	    break;
-	    
+
 	case 0x33:				/* 3 octets per char */
 	case 0x34:				/* 4 octets per char */
 	    /* not supported */
@@ -1071,7 +1071,7 @@ processExtendedSegmentsHack(
 
     return(ok);
 }
-  
+
 
 /************************************************************************
  *
@@ -1080,7 +1080,7 @@ processExtendedSegmentsHack(
  *
  ************************************************************************/
 /*ARGSUSED*/
-Boolean 
+Boolean
 XmCvtTextToXmString(
         Display *display,
         XrmValuePtr args,	/* unused */
@@ -1108,7 +1108,7 @@ XmCvtTextToXmString(
 }
 
 
-static Boolean 
+static Boolean
 cvtTextToXmString(
         XrmValue *from,
         XrmValue *to )
@@ -1134,7 +1134,7 @@ cvtTextToXmString(
  * Define XLIB_HANDLES_DIRECTION if vendor's X library knows how
  * to deal with direction control sequences in CT. Otherwise
  * no such ones will be output if there are no Rtol segments
- * in the XmString. Note that the MIT sample implementation 
+ * in the XmString. Note that the MIT sample implementation
  * does not deal with direction control sequences...
  */
 #ifdef XLIB_HANDLES_DIRECTION
@@ -1293,12 +1293,12 @@ cvtTextToXmString(
 	    if (ctx->flags.text) {
 	      outputXmString(ctx, False);
 	      ctx->flags.text = False;
-	    } 
+	    }
 	    if (ctx->xmtab == NULL) {
-	      ctx->xmtab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, 
+	      ctx->xmtab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0,
 						   NULL);
 	    }
-	    ctx->xmstring = XmStringConcatAndFree(ctx->xmstring, 
+	    ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
 						  XmStringCopy(ctx->xmtab));
 	    ctx->octet++;			/* advance ptr to next char */
 	    break;
@@ -1372,10 +1372,10 @@ cvtCTsegment(ct_context *ctx,
   int count;
   int ret_val;
   char **strings = NULL;
-  
+
   if (ctx->encoding) {
     if (ctx->encoding + ctx->encodinglen != item) {
-      octets = 
+      octets =
 	(OctetPtr)XtMalloc((ctx->encodinglen + length) * sizeof(Octet));
       memcpy((char *)octets, (char *)ctx->encoding, ctx->encodinglen);
       memcpy((char *)(octets + ctx->encodinglen), (char *)item, length);
@@ -1388,13 +1388,13 @@ cvtCTsegment(ct_context *ctx,
   }
 
   tmp_prop.value = octets;
-  tmp_prop.encoding = XInternAtom(_XmGetDefaultDisplay(), 
+  tmp_prop.encoding = XInternAtom(_XmGetDefaultDisplay(),
 				  XmSCOMPOUND_TEXT, False);
   tmp_prop.format = 8;
   tmp_prop.nitems = ctx->encodinglen + length;
-  ret_val = XmbTextPropertyToTextList(_XmGetDefaultDisplay(), 
+  ret_val = XmbTextPropertyToTextList(_XmGetDefaultDisplay(),
 				      &tmp_prop,
-				      &strings, 
+				      &strings,
 				      &count);
   if (ret_val > 0) {
     XFreeStringList(strings);
@@ -1408,7 +1408,7 @@ cvtCTsegment(ct_context *ctx,
 
 
 /* outputXmString */
-static void 
+static void
 outputXmString(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1419,12 +1419,12 @@ outputXmString(
 {
   char **strings = NULL;
 
-  /* 
+  /*
    * CR # 8544: XmbTextListToTextProperty converts from locale encoding
    * to MIT registered encodings. We have to convert back - UNLESS the
    * CT was not created with XmbTextListToTextProperty. However, there
    * is no way to tell how we got the CT, but in most cases, the
-   * tag will be FONTLIST_DEFAULT_TAG, and then we want to do this. So 
+   * tag will be FONTLIST_DEFAULT_TAG, and then we want to do this. So
    * we try this, and only use the encoding tags if we could not convert.
    */
   strings = cvtCTsegment(ctx, ctx->item, ctx->itemlen);
@@ -1440,13 +1440,13 @@ outputXmString(
 			   XmSTRING_DIRECTION_R_TO_L :
 			   XmSTRING_DIRECTION_UNSET)),
      separator );
-    
+
     XFreeStringList(strings);
     return;
   }
 
   /* If we couldn't convert to locale encoding... */
-  /* This is not really right. We can probably never draw this string and 
+  /* This is not really right. We can probably never draw this string and
      get something that looks right out of this */
 
   /*
@@ -1467,21 +1467,21 @@ outputXmString(
    *  and GR segments each time the high bit changes.
    */
   if (((ctx->gl_charset == CS_ISO8859_1)
-       &&	
+       &&
        ((ctx->gr_charset == CS_ISO8859_1) ||
 	(ctx->gr_charset == CS_ISO8859_2) ||
 	(ctx->gr_charset == CS_ISO8859_3) ||
 	(ctx->gr_charset == CS_ISO8859_4) ||
-	(ctx->gr_charset == CS_ISO8859_5) || 
-	(ctx->gr_charset == CS_ISO8859_6) || 
-	(ctx->gr_charset == CS_ISO8859_7) || 
-	(ctx->gr_charset == CS_ISO8859_8) || 
+	(ctx->gr_charset == CS_ISO8859_5) ||
+	(ctx->gr_charset == CS_ISO8859_6) ||
+	(ctx->gr_charset == CS_ISO8859_7) ||
+	(ctx->gr_charset == CS_ISO8859_8) ||
 	(ctx->gr_charset == CS_ISO8859_9)))
       ||
-      ((ctx->gl_charset == CS_GB2312_0) && 
+      ((ctx->gl_charset == CS_GB2312_0) &&
        (ctx->gr_charset == CS_GB2312_1))
       ||
-      ((ctx->gl_charset == CS_KSC5601_0) && 
+      ((ctx->gl_charset == CS_KSC5601_0) &&
        (ctx->gr_charset == CS_KSC5601_1)))
     {
       /* OK to do single segment output but always use GR charset */
@@ -1496,7 +1496,7 @@ outputXmString(
 			       XmSTRING_DIRECTION_R_TO_L :
 			       XmSTRING_DIRECTION_UNSET)),
 	 separator );
-      
+
     }
   else
     {
@@ -1505,9 +1505,9 @@ outputXmString(
       unsigned int	start = 0;
       Octet		c;
       Boolean		curseg_is_gl;
-      
+
       curseg_is_gl = isascii((unsigned char)ctx->item[0]);
-      
+
       while (j < ctx->itemlen)
 	{
 	  c = ctx->item[j];
@@ -1558,7 +1558,7 @@ outputXmString(
 	      j++;
 	    }; /* end if */
 	}; /* end while */
-      
+
       /* output last segment */
       ctx->xmstring = concatStringToXmString
 	(ctx->xmstring,
@@ -1573,7 +1573,7 @@ outputXmString(
 			       XmSTRING_DIRECTION_R_TO_L :
 			       XmSTRING_DIRECTION_UNSET)),
 	 False );
-      
+
 
       if (separator)
 	{
@@ -1581,13 +1581,13 @@ outputXmString(
 	    {
 	      ctx->xmsep = XmStringSeparatorCreate();
 	    };
-	  ctx->xmstring = XmStringConcatAndFree(ctx->xmstring, 
+	  ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
 						XmStringCopy(ctx->xmsep));
 	};
     }; /* end if paired */
 }
 
-static XmString 
+static XmString
 concatStringToXmString(
         XmString compoundstring,
         char *textstring,
@@ -1606,7 +1606,7 @@ concatStringToXmString(
     tempxm1 =
       XmStringConcatAndFree(XmStringDirectionCreate(direction),
 			    _XmStringNCreate(textstring, charset, textlen));
-    
+
     if (separator)
       tempxm1 = XmStringConcatAndFree(tempxm1,
 				      XmStringSeparatorCreate());
@@ -1617,7 +1617,7 @@ concatStringToXmString(
 
 
 /* processESC - handle valid ESC sequences */
-static Boolean 
+static Boolean
 processESC(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1665,7 +1665,7 @@ processESC(
 **	09/11 05/13	    end of string
 **	09/11 P I F	    reserved for use in future extensions
 */
-static Boolean 
+static Boolean
 processCSI(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1696,7 +1696,7 @@ processCSI(
 	case 0x5d:			/* Just CSI EOS - revert */
 	    if (ctx->dirsp > 0) {
 		_PopDir(ctx);
-		
+
 	    } else {
 		ok = False;
 	    }
@@ -1715,7 +1715,7 @@ processCSI(
 
 
 
-static Boolean 
+static Boolean
 processExtendedSegments(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1790,7 +1790,7 @@ processExtendedSegments(
 						  ct_Dir_LeftToRight ?
 						  XmSTRING_DIRECTION_L_TO_R :
 						  (_CurDir(ctx) ==
-						   ct_Dir_RightToLeft ? 
+						   ct_Dir_RightToLeft ?
 						   XmSTRING_DIRECTION_R_TO_L :
 						   XmSTRING_DIRECTION_UNSET))),
 			 XmStringCreate((char *)text_copy, charset_copy));
@@ -1799,7 +1799,7 @@ processExtendedSegments(
 	    XtFree(charset_copy);
 	    ok = True;
 	    break;
-	    
+
 	case 0x33:				/* 3 octets per char */
 	case 0x34:				/* 4 octets per char */
 	    /* not supported */
@@ -1817,7 +1817,7 @@ processExtendedSegments(
 }
 
 
-static Boolean 
+static Boolean
 process94n(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1876,7 +1876,7 @@ process94n(
 
 
 
-static Boolean 
+static Boolean
 process94GL(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1900,7 +1900,7 @@ process94GL(
 }
 
 
-static Boolean 
+static Boolean
 process94GR(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1922,7 +1922,7 @@ process94GR(
 
 
 
-static Boolean 
+static Boolean
 process96GR(
         ct_context *ctx,
 #if NeedWidePrototypes
@@ -1978,7 +1978,7 @@ process96GR(
  *	requires the XmString as an argument.
  *
  ************************************************************************/
-char * 
+char *
 XmCvtXmStringToCT(
         XmString string )
 {
@@ -1986,14 +1986,14 @@ XmCvtXmStringToCT(
   /* Dummy up some XrmValues to pass to cvtXmStringToText. */
   XrmValue	from_val;
   XrmValue	to_val;
-  
+
   if (string == NULL)
     return ( (char *) NULL );
-  
+
   from_val.addr = (char *) string;
-  
+
   ok = cvtXmStringToText(&from_val, &to_val);
-  
+
   if (!ok)
   {
     XtWarningMsg( "conversionError","compoundText", "XtToolkitError",
@@ -2003,7 +2003,7 @@ XmCvtXmStringToCT(
   return( (char *) to_val.addr) ;
   }
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 /************************************************************************
  *
  *  XmCvtXmStringToUTF8String
@@ -2012,7 +2012,7 @@ XmCvtXmStringToCT(
  *	requires the XmString as an argument.
  *
  ************************************************************************/
-char * 
+char *
 XmCvtXmStringToUTF8String(
         XmString string )
 {
@@ -2020,14 +2020,14 @@ XmCvtXmStringToUTF8String(
   /* Dummy up some XrmValues to pass to cvtXmStringToText. */
   XrmValue	from_val;
   XrmValue	to_val;
-  
+
   if (string == NULL)
     return ( (char *) NULL );
-  
+
   from_val.addr = (char *) string;
-  
+
   ok = cvtXmStringToUTF8String(&from_val, &to_val);
-  
+
   if (!ok)
   {
     XtWarningMsg( "conversionError","compoundText", "XtToolkitError",
@@ -2040,7 +2040,7 @@ XmCvtXmStringToUTF8String(
 
 /***************************************************************************
  *                                                                       *
- * _XmConvertCSToString - Converts compound string to corresponding      * 
+ * _XmConvertCSToString - Converts compound string to corresponding      *
  *   STRING if it can be fully converted.  Otherwise returns NULL.       *
  *                                                                       *
  ***************************************************************************/
@@ -2049,7 +2049,7 @@ char *
 _XmConvertCSToString(XmString cs) /* unused */
 {
   return((char *)NULL);
-  
+
 }
 
 
@@ -2059,7 +2059,7 @@ _XmConvertCSToString(XmString cs) /* unused */
  *   This returns the length info as well - critical for the list widget   *
  * 									   *
  ***************************************************************************/
-Boolean 
+Boolean
 _XmCvtXmStringToCT(
         XrmValue *from,
         XrmValue *to )
@@ -2067,14 +2067,14 @@ _XmCvtXmStringToCT(
     return (cvtXmStringToText( from, to ));
 }
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 /***************************************************************************
  *									   *
  * _XmCvtXmStringToUTF8String - public wrapper for the widgets to use.	   *
  *   This returns the length info as well - critical for the list widget   *
  * 									   *
  ***************************************************************************/
-Boolean 
+Boolean
 _XmCvtXmStringToUTF8String(
         XrmValue *from,
         XrmValue *to )
@@ -2090,7 +2090,7 @@ _XmCvtXmStringToUTF8String(
  *
  ************************************************************************/
 /*ARGSUSED*/
-Boolean 
+Boolean
 XmCvtXmStringToText(
         Display *display,
         XrmValuePtr args,	/* unused */
@@ -2115,16 +2115,16 @@ XmCvtXmStringToText(
     return(ok);
 }
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 /************************************************************************
  *
  *  cvtXmStringToUTF8String
- *    Convert an XmString to a compound text string.  This is the 
+ *    Convert an XmString to a compound text string.  This is the
  *    underlying conversion routine for XmCvtXmStringToUTF8String,
  *    _XmCvtXmStringToUTF8String.
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 cvtXmStringToUTF8String(
         XrmValue *from,
         XrmValue *to )
@@ -2141,18 +2141,18 @@ cvtXmStringToUTF8String(
   XtPointer		val = NULL;
   Octet			tmp_buf[256];
   OctetPtr		tmp;
-  
+
   /* Initialize the return parameters. */
   to->addr = (XPointer) NULL;
   to->size = 0;
 
-  if (!from->addr) 
+  if (!from->addr)
     return(False);
 
   _XmStringContextReInit(&stack_context, (XmString) from->addr);
 
 /* BEGIN OSF Fix CR 7403 */
-  while ((comp = XmeStringGetComponent(&stack_context, True, False, 
+  while ((comp = XmeStringGetComponent(&stack_context, True, False,
 				       &len, &val)) !=
 	 XmSTRING_COMPONENT_END)
     {
@@ -2177,12 +2177,12 @@ cvtXmStringToUTF8String(
 
 	  if (ct_encoding != NULL) {
 	    /* We have a mapping. */
-	    ok = processCharsetAndTextUtf8(ct_encoding, tmp, FALSE, 
+	    ok = processCharsetAndTextUtf8(ct_encoding, tmp, FALSE,
 				       &outc, &outlen, &prev_charset);
 	  } else {
 	    /* No mapping.  Vendor dependent. */
-	    ok = processCharsetAndTextUtf8(cset_save, tmp, FALSE, 
-						    &outc, &outlen, 
+	    ok = processCharsetAndTextUtf8(cset_save, tmp, FALSE,
+						    &outc, &outlen,
 						    &prev_charset);
 	  }
 
@@ -2195,16 +2195,16 @@ cvtXmStringToUTF8String(
 	      return(False);
 	    }
 	  break;
-	
+
 	case XmSTRING_COMPONENT_CHARSET:
 	  cset_save = (XmStringCharSet)val;
 	  break;
-	
+
 	case XmSTRING_COMPONENT_DIRECTION:
 	  /* Output the direction, if changed */
 	  if (*(XmStringDirection *)val == XmSTRING_DIRECTION_L_TO_R) {
 	    if (prev_direction != ct_Dir_LeftToRight) {
-	      outc = ctextConcat(outc, outlen, 
+	      outc = ctextConcat(outc, outlen,
 				 (unsigned char *) UTF8_L_TO_R,
 				 (unsigned int)UTF8_L_TO_R_LEN);
 	      outlen += UTF8_L_TO_R_LEN;
@@ -2212,7 +2212,7 @@ cvtXmStringToUTF8String(
 	    }
 	  } else {
 	    if (prev_direction != ct_Dir_RightToLeft) {
-	      outc = ctextConcat(outc, outlen, 
+	      outc = ctextConcat(outc, outlen,
 				 (unsigned char *) UTF8_R_TO_L,
 				 (unsigned int)UTF8_R_TO_L_LEN);
 	      outlen += UTF8_R_TO_L_LEN;
@@ -2220,13 +2220,13 @@ cvtXmStringToUTF8String(
 	    }
 	  };
 	  break;
-	
+
 	case XmSTRING_COMPONENT_SEPARATOR:
 	  if (ct_encoding != NULL) {		  /* We have a mapping. */
-	    ok = processCharsetAndTextUtf8(ct_encoding, NULL, TRUE, 
+	    ok = processCharsetAndTextUtf8(ct_encoding, NULL, TRUE,
 				       &outc, &outlen, &prev_charset);
 	  }
-	  else 
+	  else
 	    {
 	      /* No mapping.  Vendor dependent. */
 	      ok = processCharsetAndTextUtf8(cset_save, NULL, TRUE,
@@ -2239,10 +2239,10 @@ cvtXmStringToUTF8String(
 	      return(False);
 	    }
 	  break;
-	
+
 	case XmSTRING_COMPONENT_TAB:
-	  outc = ctextConcat(outc, outlen, 
-			     (unsigned char *)UTF8_TABSTRING, 
+	  outc = ctextConcat(outc, outlen,
+			     (unsigned char *)UTF8_TABSTRING,
 			     (unsigned int)UTF8_TABSTRING_LEN);
 	  outlen++;
 	  break;
@@ -2271,12 +2271,12 @@ cvtXmStringToUTF8String(
 /************************************************************************
  *
  *  cvtXmStringToText
- *    Convert an XmString to a compound text string.  This is the 
- *    underlying conversion routine for XmCvtXmStringToCT, 
+ *    Convert an XmString to a compound text string.  This is the
+ *    underlying conversion routine for XmCvtXmStringToCT,
  *    _XmCvtXmStringToCT, and XmCvtXmStringToText.
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 cvtXmStringToText(
         XrmValue *from,
         XrmValue *to )
@@ -2290,8 +2290,8 @@ cvtXmStringToText(
  * Define XLIB_HANDLES_DIRECTION if vendor's X library knows how
  * to deal with direction control sequences in CT. Otherwise
  * no such beasts will be output if there are no Rtol segments
- * in the XmString. Note that the MIT sample implementation 
- * does not deal with direction control sequences... 
+ * in the XmString. Note that the MIT sample implementation
+ * does not deal with direction control sequences...
  */
 #ifdef XLIB_HANDLES_DIRECTION
   ct_Direction		prev_direction = ct_Dir_Undefined;
@@ -2304,18 +2304,18 @@ cvtXmStringToText(
   XtPointer		val = NULL;
   Octet			tmp_buf[256];
   OctetPtr		tmp;
-  
+
   /* Initialize the return parameters. */
   to->addr = (XPointer) NULL;
   to->size = 0;
 
-  if (!from->addr) 
+  if (!from->addr)
     return(False);
 
   _XmStringContextReInit(&stack_context, (XmString) from->addr);
 
 /* BEGIN OSF Fix CR 7403 */
-  while ((comp = XmeStringGetComponent(&stack_context, True, False, 
+  while ((comp = XmeStringGetComponent(&stack_context, True, False,
 				       &len, &val)) !=
 	 XmSTRING_COMPONENT_END)
     {
@@ -2340,12 +2340,12 @@ cvtXmStringToText(
 
 	  if (ct_encoding != NULL) {
 	    /* We have a mapping. */
-	    ok = processCharsetAndText(ct_encoding, tmp, FALSE, 
+	    ok = processCharsetAndText(ct_encoding, tmp, FALSE,
 				       &outc, &outlen, &prev_charset);
 	  } else {
 	    /* No mapping.  Vendor dependent. */
-	    ok = _XmOSProcessUnmappedCharsetAndText(cset_save, tmp, FALSE, 
-						    &outc, &outlen, 
+	    ok = _XmOSProcessUnmappedCharsetAndText(cset_save, tmp, FALSE,
+						    &outc, &outlen,
 						    &prev_charset);
 	  }
 
@@ -2358,16 +2358,16 @@ cvtXmStringToText(
 	      return(False);
 	    }
 	  break;
-	
+
 	case XmSTRING_COMPONENT_CHARSET:
 	  cset_save = (XmStringCharSet)val;
 	  break;
-	
+
 	case XmSTRING_COMPONENT_DIRECTION:
 	  /* Output the direction, if changed */
 	  if (*(XmStringDirection *)val == XmSTRING_DIRECTION_L_TO_R) {
 	    if (prev_direction != ct_Dir_LeftToRight) {
-	      outc = ctextConcat(outc, outlen, 
+	      outc = ctextConcat(outc, outlen,
 				 (unsigned char *) CTEXT_L_TO_R,
 				 (unsigned int)CTEXT_L_TO_R_LEN);
 	      outlen += CTEXT_L_TO_R_LEN;
@@ -2375,7 +2375,7 @@ cvtXmStringToText(
 	    }
 	  } else {
 	    if (prev_direction != ct_Dir_RightToLeft) {
-	      outc = ctextConcat(outc, outlen, 
+	      outc = ctextConcat(outc, outlen,
 				 (unsigned char *) CTEXT_R_TO_L,
 				 (unsigned int)CTEXT_R_TO_L_LEN);
 	      outlen += CTEXT_R_TO_L_LEN;
@@ -2383,16 +2383,16 @@ cvtXmStringToText(
 	    }
 	  };
 	  break;
-	
+
 	case XmSTRING_COMPONENT_SEPARATOR:
 	  if (ct_encoding != NULL) {		  /* We have a mapping. */
-	    ok = processCharsetAndText(ct_encoding, NULL, TRUE, 
+	    ok = processCharsetAndText(ct_encoding, NULL, TRUE,
 				       &outc, &outlen, &prev_charset);
 	  }
-	  else 
+	  else
 	    {
 	      /* No mapping.  Vendor dependent. */
-	      ok = _XmOSProcessUnmappedCharsetAndText(cset_save, NULL, TRUE, 
+	      ok = _XmOSProcessUnmappedCharsetAndText(cset_save, NULL, TRUE,
 						      &outc, &outlen, &prev_charset);
 	    }
 
@@ -2402,10 +2402,10 @@ cvtXmStringToText(
 	      return(False);
 	    }
 	  break;
-	
+
 	case XmSTRING_COMPONENT_TAB:
-	  outc = ctextConcat(outc, outlen, 
-			     (unsigned char *)TABSTRING, 
+	  outc = ctextConcat(outc, outlen,
+			     (unsigned char *)TABSTRING,
 			     (unsigned int)TABSTRING_LEN);
 	  outlen++;
 	  break;
@@ -2430,7 +2430,7 @@ cvtXmStringToText(
   return(True);
 }
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 static Boolean
 processCharsetAndTextUtf8(XmStringCharSet tag,
 		      OctetPtr		ctext,
@@ -2458,9 +2458,9 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
           XTextProperty	prop_rtn;
           int		ret_val;
           String	msg;
-     
+
          /* Call XmbTextListToTextProperty */
-          ret_val = 
+          ret_val =
               XmbTextListToTextProperty(_XmGetDefaultDisplay(),
                       (char **)&ctext,
                       1, XUTF8StringStyle, &prop_rtn);
@@ -2483,7 +2483,7 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 
               return(False);
           }
-	
+
           ctlen = strlen((char *)prop_rtn.value);
 
           /* Now copy in the text */
@@ -2497,8 +2497,8 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 
       /* Finally, add the separator if any */
       if (separator) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)UTF8_NEWLINESTRING, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)UTF8_NEWLINESTRING,
 			    (unsigned int)UTF8_NEWLINESTRING_LEN);
 	(*outlen)++;
       };
@@ -2507,7 +2507,7 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 
       return(True);
   }
-	
+
   if (ctext)
     ctlen = strlen((char *)ctext);
 
@@ -2522,8 +2522,8 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 
   /* Finally, add the separator if any */
   if (separator) {
-    *outc = ctextConcat(*outc, *outlen, 
-			(unsigned char *)UTF8_NEWLINESTRING, 
+    *outc = ctextConcat(*outc, *outlen,
+			(unsigned char *)UTF8_NEWLINESTRING,
 			(unsigned int)UTF8_NEWLINESTRING_LEN);
     (*outlen)++;
   }
@@ -2545,7 +2545,7 @@ processCharsetAndText(XmStringCharSet tag,
 		      ct_Charset	*prev)
 {
   unsigned int		ctlen = 0, len;
-  
+
   if (strcmp(tag, CS_UTF_8) == 0)
     tag = XmFONTLIST_DEFAULT_TAG;
 
@@ -2554,12 +2554,12 @@ processCharsetAndText(XmStringCharSet tag,
       XTextProperty	prop_rtn;
       int		ret_val;
       String		msg;
-      
+
       /* Call XmbTextListToTextProperty */
-      ret_val = 
+      ret_val =
 	XmbTextListToTextProperty(_XmGetDefaultDisplay(), (char **)&ctext,
 				  1, XCompoundTextStyle, &prop_rtn);
-      
+
       if (ret_val)
 	{
 	  switch (ret_val)
@@ -2574,13 +2574,13 @@ processCharsetAndText(XmStringCharSet tag,
 	      msg = MSG11;
 	      break;
 	    }
-	  
+
 	  XtWarningMsg("conversionError", "textProperty", "XtToolkitError",
 		       msg, NULL, 0);
 
 	  return(False);
 	}
-	
+
       /* Now copy in the text */
       if (prop_rtn.value) {
         ctlen = strlen((char *)prop_rtn.value);
@@ -2592,8 +2592,8 @@ processCharsetAndText(XmStringCharSet tag,
 
       /* Finally, add the separator if any */
       if (separator) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)NEWLINESTRING, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)NEWLINESTRING,
 			    (unsigned int)NEWLINESTRING_LEN);
 	(*outlen)++;
       };
@@ -2602,15 +2602,15 @@ processCharsetAndText(XmStringCharSet tag,
 
       return(True);
     }
-	
+
   if (ctext)
     ctlen = strlen((char *)ctext);
 
   /* Next output the charset */
   if (strcmp(tag, CS_ISO8859_1) == 0) {
     if (*prev != cs_Latin1) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_1, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_1,
 			  (unsigned int)CTEXT_SET_ISO8859_1_LEN);
       *outlen += CTEXT_SET_ISO8859_1_LEN;
       *prev = cs_Latin1;
@@ -2618,8 +2618,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_2) == 0) {
     if (*prev != cs_Latin2) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_2, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_2,
 			  (unsigned int)CTEXT_SET_ISO8859_2_LEN);
       *outlen += CTEXT_SET_ISO8859_2_LEN;
       *prev = cs_Latin2;
@@ -2627,8 +2627,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_3) == 0) {
     if (*prev != cs_Latin3) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_3, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_3,
 			  (unsigned int)CTEXT_SET_ISO8859_3_LEN);
       *outlen += CTEXT_SET_ISO8859_3_LEN;
       *prev = cs_Latin3;
@@ -2636,8 +2636,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_4) == 0) {
     if (*prev != cs_Latin4) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_4, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_4,
 			  (unsigned int)CTEXT_SET_ISO8859_4_LEN);
       *outlen += CTEXT_SET_ISO8859_4_LEN;
       *prev = cs_Latin4;
@@ -2645,8 +2645,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_5) == 0) {
     if (*prev != cs_LatinCyrillic) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_5, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_5,
 			  (unsigned int)CTEXT_SET_ISO8859_5_LEN);
       *outlen += CTEXT_SET_ISO8859_5_LEN;
       *prev = cs_LatinCyrillic;
@@ -2654,8 +2654,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_6) == 0) {
     if (*prev != cs_LatinArabic) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_6, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_6,
 			  (unsigned int)CTEXT_SET_ISO8859_6_LEN);
       *outlen += CTEXT_SET_ISO8859_6_LEN;
       *prev = cs_LatinArabic;
@@ -2663,8 +2663,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_7) == 0) {
     if (*prev != cs_LatinGreek) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_7, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_7,
 			  (unsigned int)CTEXT_SET_ISO8859_7_LEN);
       *outlen += CTEXT_SET_ISO8859_7_LEN;
       *prev = cs_LatinGreek;
@@ -2672,8 +2672,8 @@ processCharsetAndText(XmStringCharSet tag,
   }
   else if (strcmp(tag, CS_ISO8859_8) == 0) {
     if (*prev != cs_LatinHebrew) {
-      *outc = ctextConcat(*outc, *outlen, 
-			  (unsigned char *)CTEXT_SET_ISO8859_8, 
+      *outc = ctextConcat(*outc, *outlen,
+			  (unsigned char *)CTEXT_SET_ISO8859_8,
 			  (unsigned int)CTEXT_SET_ISO8859_8_LEN);
       *outlen += CTEXT_SET_ISO8859_8_LEN;
       *prev = cs_LatinHebrew;
@@ -2682,8 +2682,8 @@ processCharsetAndText(XmStringCharSet tag,
   else
     if (strcmp(tag, CS_ISO8859_9) == 0) {
       if (*prev != cs_Latin5) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_ISO8859_9, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_ISO8859_9,
 			    (unsigned int)CTEXT_SET_ISO8859_9_LEN);
 	*outlen += CTEXT_SET_ISO8859_9_LEN;
 	*prev = cs_Latin5;
@@ -2691,8 +2691,8 @@ processCharsetAndText(XmStringCharSet tag,
     }
     else if (strcmp(tag, CS_JISX0201) == 0) {
       if (*prev != cs_Katakana) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_JISX0201, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_JISX0201,
 			    (unsigned int)CTEXT_SET_JISX0201_LEN);
 	*outlen += CTEXT_SET_JISX0201_LEN;
 	*prev = cs_Katakana;
@@ -2701,8 +2701,8 @@ processCharsetAndText(XmStringCharSet tag,
     else if ((strcmp(tag, CS_GB2312_0) == 0) ||
 	     (strcmp(tag, CS_GB2312_1) == 0)) {
       if (*prev != cs_Hanzi) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_GB2312_0, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_GB2312_0,
 			    (unsigned int)CTEXT_SET_GB2312_0_LEN);
 	*outlen += CTEXT_SET_GB2312_0_LEN;
 	*prev = cs_Hanzi;
@@ -2711,18 +2711,18 @@ processCharsetAndText(XmStringCharSet tag,
     else if ((strcmp(tag, CS_JISX0208_0) == 0) ||
 	     (strcmp(tag, CS_JISX0208_1) == 0)) {
       if (*prev != cs_JapaneseGCS) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_JISX0208_0, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_JISX0208_0,
 			    (unsigned int)CTEXT_SET_JISX0208_0_LEN);
 	*outlen += CTEXT_SET_JISX0208_0_LEN;
 	*prev = cs_JapaneseGCS;
       };
     }
-    else if ((strcmp(tag, CS_KSC5601_0) == 0) ||  
+    else if ((strcmp(tag, CS_KSC5601_0) == 0) ||
 	     (strcmp(tag, CS_KSC5601_1) == 0)) {
       if (*prev != cs_KoreanGCS) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_KSC5601_0, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_KSC5601_0,
 			    (unsigned int)CTEXT_SET_KSC5601_0_LEN);
 	*outlen += CTEXT_SET_KSC5601_0_LEN;
 	*prev = cs_KoreanGCS;
@@ -2730,8 +2730,8 @@ processCharsetAndText(XmStringCharSet tag,
     }
     else if (strcmp(tag, CS_ISO_IR_111) == 0) {
       if (*prev != cs_ir111) {
-	*outc = ctextConcat(*outc, *outlen, 
-			    (unsigned char *)CTEXT_SET_IR_111, 
+	*outc = ctextConcat(*outc, *outlen,
+			    (unsigned char *)CTEXT_SET_IR_111,
 			    (unsigned int)CTEXT_SET_IR_111_LEN);
 	*outlen += CTEXT_SET_IR_111_LEN;
 	*prev = cs_ir111;
@@ -2762,7 +2762,7 @@ processCharsetAndText(XmStringCharSet tag,
        */
       *temp++ = 0x30;
       /* encode len in next 2 octets */
-      *temp++ = 0x80 + (len+ctlen+1)/128; 
+      *temp++ = 0x80 + (len+ctlen+1)/128;
       *temp++ = 0x80 + (len+ctlen+1)%128;
       strcpy((char *) temp, tag);
       temp += len;
@@ -2771,7 +2771,7 @@ processCharsetAndText(XmStringCharSet tag,
       *prev = cs_NonStandard;
       *outlen += 6 + len + 1;
     };
-      
+
   /* Now copy in the text */
   if (ctlen > 0) {
     *outc = ctextConcat(*outc, *outlen, ctext, ctlen);
@@ -2780,16 +2780,16 @@ processCharsetAndText(XmStringCharSet tag,
 
   /* Finally, add the separator if any */
   if (separator) {
-    *outc = ctextConcat(*outc, *outlen, 
-			(unsigned char *)NEWLINESTRING, 
+    *outc = ctextConcat(*outc, *outlen,
+			(unsigned char *)NEWLINESTRING,
 			(unsigned int)NEWLINESTRING_LEN);
     (*outlen)++;
   }
   return(True);
 }
-  
+
 
-static OctetPtr 
+static OctetPtr
 ctextConcat(
         OctetPtr str1,
         unsigned int str1len,
@@ -2802,10 +2802,10 @@ ctextConcat(
 	return(str1);
 }
 
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 char*
 Convert(const char     *str,
-        unsigned int    len,  
+        unsigned int    len,
         const char      *to_codeset,
         const char      *from_codeset)
 {
@@ -2814,22 +2814,22 @@ Convert(const char     *str,
 
     if (str == NULL || to_codeset == NULL || from_codeset == NULL)
         return NULL;
-  
+
     cd = iconv_open(to_codeset, from_codeset);
     if (cd == (iconv_t) -1) {
         char msg[255];
-      
+
         snprintf(msg, sizeof(msg),
                 "Could not open converter from '%s' to '%s'",
                 from_codeset, to_codeset);
-        
+
         XmeWarning(NULL, msg);
-        
+
         return NULL;
     }
 
     res = ConvertWithIconv(str, len, cd);
-  
+
     iconv_close(cd);
 
     return res;
@@ -2848,10 +2848,10 @@ ConvertWithIconv(const char  *str,
     size_t err;
     size_t outbuf_size;
     Boolean have_error = FALSE;
-  
+
     if (str == NULL || converter == (iconv_t) -1)
         return NULL;
-    
+
    if (len < 0)
        len = strlen(str);
 
@@ -2863,7 +2863,7 @@ ConvertWithIconv(const char  *str,
    outp = dest = XtMalloc(outbuf_size);
 
 again:
-  
+
    err = iconv(converter, (char **)&p, &inbytes_remaining, &outp,
            &outbytes_remaining);
 
@@ -2878,7 +2878,7 @@ again:
 
                 outbuf_size *= 2;
                 dest = XtRealloc(dest, outbuf_size);
-		
+
                 outp = dest + used;
                 outbytes_remaining = outbuf_size - used - 1; /* -1 for nul */
 
@@ -2901,7 +2901,7 @@ again:
    }
 
    *outp = '\0';
-  
+
    if (have_error) {
       XtFree(dest);
       dest = NULL;

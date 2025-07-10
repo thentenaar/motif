@@ -30,9 +30,10 @@ static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
 #include <config.h>
 #endif
 
-
 #include <stdio.h>
 #include <limits.h>
+#include <X11/Xos.h>
+
 #ifndef CSRG_BASED
 /*
  * Modification by Integrated Computer Solutions, Inc.  May 2000
@@ -64,7 +65,8 @@ static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
 # endif
 #else
 # define nl_langinfo(radixchar)	"."
-#endif
+#endif /* !CSRG_BASED */
+
 #ifdef __cplusplus
 extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #endif
@@ -1412,7 +1414,7 @@ SetValues(
 	    if (!XmeRenderTableGetDefaultFont(new_w->scale.font_list,
 					      &new_w->scale.font_struct))
 	        new_w->scale.font_struct = NULL;
-#ifdef USE_XFT
+#if USE_XFT
         /* TODO: should it be ifndef? */
 	} else {
 	    new_w->scale.font_struct =
@@ -1555,7 +1557,7 @@ Destroy(
 
     XtReleaseGC ((Widget) sw, sw->scale.foreground_GC);
 
-#ifdef USE_XFT
+#if USE_XFT
     if (sw->scale.font_list == NULL && sw->scale.font_struct != NULL)
 	XFreeFont (XtDisplay (sw), sw->scale.font_struct);
 #endif

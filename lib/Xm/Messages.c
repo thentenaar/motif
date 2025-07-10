@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -83,7 +83,7 @@ static char rcsid[] = "$TOG: Messages.c /main/23 1997/03/19 11:49:58 dbl $"
 
 
 /*
- * Text for message catalog header 
+ * Text for message catalog header
  */
 /***+$ This message catalog contains messages issued by Motif toolkit library.*/
 /***+$ Consult X-Window systems, OSF/MOTIF Programmer's Guide and OSF/MOTIF*/
@@ -1239,7 +1239,7 @@ externaldef(messages) _XmConst char *_XmMsgResConvert_0009 =
    "Locale not supported for XmbTextListToTextProperty";
 
 externaldef(messages) _XmConst char *_XmMsgResConvert_0010 =
-   "XmbTextListToTextProperty failed"; 
+   "XmbTextListToTextProperty failed";
 
 externaldef(messages) _XmConst char *_XmMsgResConvert_0011 =
    "Cannot convert widget name to Widget.";
@@ -1570,7 +1570,7 @@ externaldef(messages) _XmConst char *_XmMsgXmString_0000 =
 
 externaldef(messages) _XmConst char *_XmMsgXmTabList_0000 =
   "Tab value cannot be negative.";
- 
+
 /**************** SSpinB.c ****************/
 
 externaldef(messages) _XmConst char *_XmMsgSSpinB_0001 =
@@ -1616,7 +1616,7 @@ externaldef(messages) _XmConst char *_XmMsgDataFWcs_0001 =
  */
 externaldef(messages) _XmConst char *XME_WARNING="XmeWarning";
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 externaldef(messages) nl_catd Xm_catd = NULL;
 #endif
 

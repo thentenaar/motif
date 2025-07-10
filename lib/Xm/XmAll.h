@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 #ifndef _XmAll_h
 #define _XmAll_h
@@ -68,7 +68,7 @@
 #include <Xm/PanedW.h>
 #include <Xm/Paned.h>
 #include <Xm/Primitive.h>
-#ifdef PRINTING_SUPPORTED
+#if XM_PRINTING
 #include <Xm/Print.h>
 #endif
 #include <Xm/Protocols.h>

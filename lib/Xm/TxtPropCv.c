@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -54,7 +54,7 @@ GetLocaleEncodingAtom(Display *dpy)
 
   tmp_prop.value = NULL; /* just in case X doesn't do it */
   ret_status = XmbTextListToTextProperty(dpy, &tmp_string, 1,
-					 (XICCEncodingStyle)XTextStyle, 
+					 (XICCEncodingStyle)XTextStyle,
 					 &tmp_prop);
   if (ret_status == Success)
     encoding = tmp_prop.encoding;
@@ -71,7 +71,7 @@ GetLocaleEncodingAtom(Display *dpy)
 /************************************************************************
  *
  *  TextPropertyToSingleTextItem
- *  
+ *
  ************************************************************************/
 
 static int
@@ -86,7 +86,7 @@ TextPropertyToSingleTextItem(Display *display, XTextProperty *text_prop,
     if (result != Success) return(result);
     if (count == 1)
     {
-	/* Otherwise just return the first element of the 
+	/* Otherwise just return the first element of the
 	   text list */
 	*text_item = XtNewString(textlist[0]);
 	XFreeStringList(textlist);
@@ -97,7 +97,7 @@ TextPropertyToSingleTextItem(Display *display, XTextProperty *text_prop,
 	   let's concatenate them all together. */
 	int i, length = 0;
 	char *newstring;
-	
+
 	/* First figure out how big the final string will be */
 	for (i = 0; i < count; ++i)
 	  length += strlen(textlist[i]);
@@ -144,7 +144,7 @@ static unsigned char
 GetTextSegment(Display *display, /* unused */
 	       XmStringContext xmcontext,
 	       XmString xmstring, /* unused */
-	       char **buffer, 
+	       char **buffer,
 	       unsigned char texttype)
 {
     XtPointer text;
@@ -158,7 +158,7 @@ GetTextSegment(Display *display, /* unused */
     short char_count;
     char *encoding;
     int i;
-    
+
     /* Initialize the locale_buffer just in case we need to return
        Failure at any point along the way. */
     *buffer = NULL;
@@ -231,7 +231,7 @@ GetTextSegment(Display *display, /* unused */
 	{
 	    int newlength;
 	    char *newstring;
-	    
+
 	    newlength =
 	      strlen(*buffer) + (separator ? 1 : 0) + tabs;
 	    newstring = (char *)XtMalloc(sizeof(char) * (newlength + 1));
@@ -251,7 +251,7 @@ GetTextSegment(Display *display, /* unused */
 	return(_NO_MORE_SEGMENTS);
     }
 }
-    
+
 /************************************************************************
  *
  *  GetUseableText
@@ -319,7 +319,7 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
 
     /* If we encountered an invalid segment, then we will throw up our
        hands and try all over again by converting the compound string to
-       compound text and then converting the compound text to a text 
+       compound text and then converting the compound text to a text
        property and from a text property back to a text list. This should
        result in text but with possible loss of information. */
     if (return_status == _INVALID_SEGMENT)
@@ -333,7 +333,7 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
 	/* If we are in strict mode, then return XLocaleNotSupported to
 	   let the caller know that we could not decompose one of the
 	   XmStrings in the context of the current locale */
-	if (strict) 
+	if (strict)
 	  {
 	    _XmStringContextFree(&stack_context);
 	    return(XLocaleNotSupported);
@@ -360,10 +360,10 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
 	/* then to a text list, which should result in text. */
 	result = TextPropertyToSingleTextItem(display, &text_prop_return,
 					      &text_item);
-	if (text_prop_return.value != NULL) 
+	if (text_prop_return.value != NULL)
 	    XtFree((char *)text_prop_return.value);
 
-	if (result != Success) 
+	if (result != Success)
 	  {
 	    _XmStringContextFree(&stack_context);
 	    return(result);
@@ -376,11 +376,11 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
     _XmStringContextFree(&stack_context);
     return(Success);
 }
-    
+
 /************************************************************************
  *
  *  XmCvtXmStringTableToTextProperty
- *  
+ *
  ************************************************************************/
 int
 XmCvtXmStringTableToTextProperty(Display *display,
@@ -407,10 +407,10 @@ XmCvtXmStringTableToTextProperty(Display *display,
 	total_size += (compound_text[i] ? strlen(compound_text[i]) : 0) +1;
       }
       /* Generate the resulting XTextProperty value as a set of
-	 null-separated compound text elements. A final terminating 
-	 null is stored at the end of the value field of text_prop_return 
+	 null-separated compound text elements. A final terminating
+	 null is stored at the end of the value field of text_prop_return
 	 but is not included in the nitems member. */
-      ptr = xm_compound_text = 
+      ptr = xm_compound_text =
 	  (char *) XtMalloc(sizeof(char) * (total_size + 1));
       for (i = 0; i < count; i++)
       {
@@ -428,13 +428,13 @@ XmCvtXmStringTableToTextProperty(Display *display,
       *ptr = '\0';
       XtFree((char *) compound_text);
       text_prop_return->value = (unsigned char *) xm_compound_text;
-      text_prop_return->encoding = 
+      text_prop_return->encoding =
 	  XInternAtom(display, XmSCOMPOUND_TEXT, False);
       text_prop_return->format = 8;
       text_prop_return->nitems = total_size;
       _XmAppUnlock(app);
       return(Success);
-      
+
     case XmSTYLE_COMPOUND_STRING:
       /* First calculate how much space the compound strings will occupy
 	 when they are all converted to ASN1 strings. */
@@ -459,7 +459,7 @@ XmCvtXmStringTableToTextProperty(Display *display,
 	XInternAtom(display, XmS_MOTIF_COMPOUND_STRING, False);
       _XmAppUnlock(app);
       return(Success);
-      
+
     case XmSTYLE_LOCALE:
     case XmSTYLE_TEXT:
     case XmSTYLE_STRING:
@@ -547,19 +547,19 @@ XmCvtXmStringTableToTextProperty(Display *display,
 	  bufptr += strlen(useable_text[i]) + 1;
 	}
       *bufptr = '\0';
-      
+
       /* Fill in the text property with the data */
       text_prop_return->encoding = encoding;
       text_prop_return->value = final_string;
       text_prop_return->nitems = total_size;
       text_prop_return->format = 8;
-      
+
       /* Clean up and leave town */
       for (i = 0; i < count; ++i) XtFree(useable_text[i]);
       XtFree((char *) useable_text);
       _XmAppUnlock(app);
       return(Success);
-      
+
     default:
       _XmAppUnlock(app);
       return(XLocaleNotSupported);
@@ -569,7 +569,7 @@ XmCvtXmStringTableToTextProperty(Display *display,
 /************************************************************************
  *
  *  XmCvtTextPropertyToXmStringTable
- *  
+ *
  ************************************************************************/
 int
 XmCvtTextPropertyToXmStringTable(Display *display,
@@ -578,12 +578,12 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 				 int *count_return)
 {
     enum { XmACOMPOUND_TEXT, XmA_MOTIF_COMPOUND_STRING,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
         XmAUTF8_STRING,
 #endif
         NUM_ATOMS };
     static char* atom_names[] = { XmSCOMPOUND_TEXT, XmS_MOTIF_COMPOUND_STRING,
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
         XmSUTF8_STRING
 #endif
 	};
@@ -670,7 +670,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 	tag = "ISO8859-1";
 	type = XmCHARSET_TEXT;
     }
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
     else if (text_prop->encoding == atoms[XmAUTF8_STRING])
     {
 	tag = "UTF-8";
@@ -700,15 +700,15 @@ XmCvtTextPropertyToXmStringTable(Display *display,
     /* Create an appropriately sized array of xmstrings */
     string_table =
       (XmStringTable)XtMalloc(sizeof(XmString) * (elements));
-    
+
     /* Create XmStrings from each string in the value field */
-    string_table[0] = XmStringGenerate((XtPointer)text_prop->value, 
+    string_table[0] = XmStringGenerate((XtPointer)text_prop->value,
 				       tag, type, NULL);
     for (i = 0, elements = 1; i < text_prop->nitems - 1; ++i)
     {
 	if (text_prop->value[i] == '\0')
 	  string_table[elements++] =
-	    XmStringGenerate((XtPointer) &(text_prop->value[i + 1]), 
+	    XmStringGenerate((XtPointer) &(text_prop->value[i + 1]),
 			     tag, type, NULL);
     }
     *string_table_return = string_table;

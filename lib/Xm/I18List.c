@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -73,10 +73,10 @@
 #define NoTimeout ((XtIntervalId) 0)
 
 /*
- * DANGER:  XmeRenderTableGetDefaultFont is an undocumented 
+ * DANGER:  XmeRenderTableGetDefaultFont is an undocumented
  *          internal MOTIF(tm) function.
  */
-    
+
 #define GetDefaultFont XmeRenderTableGetDefaultFont
 
 /************************************************************
@@ -155,7 +155,7 @@ static void FreeColumnTitles(XmI18ListWidget);
 static void SelectRow(XmI18ListWidget, int, Boolean, Boolean);
 static void SelectItems(XmI18ListWidget, XmString,
 			int, Boolean, Boolean);
-static void CheckSetRenderTable(Widget wid, int offset, XrmValue *value); 
+static void CheckSetRenderTable(Widget wid, int offset, XrmValue *value);
 static void ListConvert(Widget, XtPointer, XmConvertCallbackStruct*);
 static void ListPreDestProc(Widget, XtPointer, XmDestinationCallbackStruct*);
 static void CopyToClipboard(Widget, XEvent*, String*, Cardinal*);
@@ -184,7 +184,7 @@ static void MotionAction(Widget, XEvent *, String *, Cardinal *);
  * The Translation table routines are getting in the way here.
  * Since the implicit removal of event disallows using both:
  *
- * <Btn1Up> (2)  and   button1 <Motion> 
+ * <Btn1Up> (2)  and   button1 <Motion>
  *
  * in the same translation table I have to do all the work myself.
  */
@@ -318,16 +318,16 @@ static XtResource resources[] =
 
   {
     XmNselectionPolicy, XmCSelectionPolicy, XmRSelectionPolicy,
-    sizeof(unsigned char), XtOffsetOf(XmI18ListRec, ilist.selection_policy), 
+    sizeof(unsigned char), XtOffsetOf(XmI18ListRec, ilist.selection_policy),
     XmRImmediate, (XtPointer) XmEXTENDED_SELECT
   },
-  
+
   {
     XmNsingleSelectionCallback, XmCCallback, XmRCallback,
     sizeof(XtCallbackList), XtOffsetOf(XmI18ListRec, ilist.single_select),
     XmRImmediate, (XtPointer) NULL
   },
-  
+
   {
       XmNalignment, XmCAlignment, XmRAlignment,
       sizeof(unsigned char), XtOffsetOf(XmI18ListRec, ilist.alignment),
@@ -434,7 +434,7 @@ static XmConst XmTransferTraitRec ListTransfer = {
  *
  * The first is the default space defined by pixels and the X Server.
  *
- * The second is "input" space that contains all the information 
+ * The second is "input" space that contains all the information
  * to display in the actual list.  This space runs from 0 -> (num_rows - 1)
  * in the y direction and 0 -> (num_cols - 1) in the x direction.  The
  * input from the application is sent in this space.
@@ -461,7 +461,7 @@ ClassInitialize()
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
+static void
 #ifdef _NO_PROTO
 ClassPartInitialize(w_class)
         WidgetClass w_class ;
@@ -484,19 +484,19 @@ ClassPartInitialize(WidgetClass w_class)
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /*ARGSUSED*/
-static void Initialize(Widget req, Widget set, 
+static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) set;
 
     XmI18List_column_widths(ilist) = NULL;
-    XmI18List_left_loc(ilist) = 0;    
+    XmI18List_left_loc(ilist) = 0;
     XmI18List_state(ilist) = 0;
     XmI18List_timeout(ilist) = NoTimeout;
     XmI18List_working_row(ilist) = -1;
@@ -542,20 +542,20 @@ static void Initialize(Widget req, Widget set,
   /* If layout_direction is set, it overrides string_direction.
    * If string_direction is set, but not layout_direction, use
    *	string_direction value.
-   * If neither is set, get from parent 
+   * If neither is set, get from parent
    */
     if (XmPrim_layout_direction(ilist) != XmDEFAULT_DIRECTION) {
-	XmI18List_string_direction(ilist) = 
+	XmI18List_string_direction(ilist) =
 	    XmDirectionToStringDirection(XmPrim_layout_direction(ilist));
     } else if (XmI18List_string_direction(ilist) != XmDEFAULT_DIRECTION) {
-	XmPrim_layout_direction(ilist) = 
+	XmPrim_layout_direction(ilist) =
 	    XmStringDirectionToDirection(XmI18List_string_direction(ilist));
     } else {
 	XmPrim_layout_direction(ilist) = _XmGetLayoutDirection(XtParent(set));
-	XmI18List_string_direction(ilist) = 
+	XmI18List_string_direction(ilist) =
 	    XmDirectionToStringDirection(XmPrim_layout_direction(ilist));
     }
-  
+
     if (!XmRepTypeValidValue(XmRID_STRING_DIRECTION,
 			   XmI18List_string_direction(ilist), set))
     {
@@ -573,7 +573,7 @@ static void Initialize(Widget req, Widget set,
  *      This overrides the Manager's frobbing with various values.
  */
 
-static void 
+static void
 Realize(Widget w, Mask *valueMask, XSetWindowAttributes * attributes)
 {
     XmI18ListWidget ilist = (XmI18ListWidget)w;
@@ -612,12 +612,12 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes * attributes)
  *                     the-fly.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  *
  * NOTE:  No provision is made for SetValues on the mini-icons.
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -635,27 +635,27 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
     Boolean		readjust = False;
     Boolean		check_pos = False;
     Boolean		copyTitles = False;
-  
+
     for (i = 0; i < *num_args; i++)
     {
 	String name = args[i].name;
-    
+
 	if (streq(XmNcolumnTitles, name))
 	{
 	    copyTitles = True;
 	    redisplay = recalculate = XtIsRealized(set);
 	}
-    
-	if (streq(XmNentryData, name)) 
+
+	if (streq(XmNentryData, name))
 	{
 	    redisplay = recalculate = resort = XtIsRealized(set);
 	}
-    
+
 	if (streq(XmNsortFunctions, name))
 	{
 	    redisplay = resort = XtIsRealized(set);
 	}
-    
+
 	if (streq(XmNfirstRow, name) || streq(XmNfirstColumn,name))
 	{
 	    check_pos = True;
@@ -665,41 +665,41 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
 	{
 	    check_pos = True;
 	    /*
-	    int num_rows = (XmI18List_num_rows(i_set) - 
+	    int num_rows = (XmI18List_num_rows(i_set) -
                            XmI18List_visible_rows(i_set));
-	
+
 	    check_pos = (XmI18List_first_row(i_set) > ((num_rows < 0)
-                         ? 0 
+                         ? 0
 	                 : num_rows));
 	    */
 	}
     }
-  
+
     if ((XmI18List_v_bar(i_set) != XmI18List_v_bar(i_old)) ||
 	(XmI18List_h_bar(i_set) != XmI18List_h_bar(i_old)))
     {
 	XmI18List_v_bar(i_set) = XmI18List_v_bar(i_old);
 	XmI18List_h_bar(i_set) = XmI18List_h_bar(i_old);
-      
+
 	XmeWarning(current, XmNstaticScrollbarsMsg);
     }
-  
+
     if( XtIsSensitive(current) != XtIsSensitive(set) )
     {
 	redisplay = XtIsRealized(set);
     }
-  
+
     if (XmI18List_font_list(i_set) != XmI18List_font_list(i_old))
     {
 	refreshGCs = recalculate = redisplay = XtIsRealized(set);
     }
-  
+
     if ((i_set->primitive.foreground != i_old->primitive.foreground) ||
 	(i_set->core.background_pixel != i_old->core.background_pixel))
     {
 	refreshGCs = redisplay = XtIsRealized(set);
     }
-  
+
     if (XmI18List_selected_header(i_set) != XmI18List_selected_header(i_old))
     {
 	resort = redisplay = XtIsRealized(set);
@@ -718,14 +718,14 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
 	/* Change height only... */
 	SetVisibleSize(set, False);
     }
-  
+
     /*
      * Convert the user desired column to view to pixels
      * if and only if the entry Data has been specified
      */
-    if ( XmI18List_row_data(i_set) != NULL || 
+    if ( XmI18List_row_data(i_set) != NULL ||
 	 XmI18List_row_data(i_old) != NULL ) {
-#ifdef UNUSED_CODE    
+#ifdef UNUSED_CODE
 	short	column;
 	if (XmI18List_first_col(i_set) > XmI18List_num_columns(i_set))
 	{
@@ -737,23 +737,23 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
 	}
 	else
 	{
-	    column = XmI18List_first_col(i_set) - 1; 
+	    column = XmI18List_first_col(i_set) - 1;
 	}
 #endif
 	if ((XmI18List_num_rows(i_old) != XmI18List_num_rows(i_set)) ||
 	    (XmI18List_num_columns(i_old) != XmI18List_num_columns(i_set)) ||
-	    (XmI18List_row_data(i_set) != XmI18List_row_data(i_old))) 
+	    (XmI18List_row_data(i_set) != XmI18List_row_data(i_old)))
 	{
 	    redisplay = recalculate = XtIsRealized(set);
 	}
-    
-    
+
+
 	if ((XmI18List_first_col(i_set) != XmI18List_first_col(i_old)) ||
-	    (XmI18List_first_row(i_set) != XmI18List_first_row(i_old)) || 
+	    (XmI18List_first_row(i_set) != XmI18List_first_row(i_old)) ||
 	    check_pos)
 	{
-	    redisplay = readjust = XtIsRealized(set);		
-	}	
+	    redisplay = readjust = XtIsRealized(set);
+	}
     }
 
     if (XmI18List_entry_background_pixel(i_set) !=
@@ -764,13 +764,13 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
 	redisplay = True;
 	refreshGCs = True;
     }
-  
+
     if (refreshGCs)
     {
 	DestroyGCs(current);
 	CreateGCs(set);
     }
-    if (XmI18List_num_columns(i_old) != XmI18List_num_columns(i_set)) 
+    if (XmI18List_num_columns(i_old) != XmI18List_num_columns(i_set))
     {
 	/* CR03506 */
 	recalculate = redisplay = XtIsRealized(set);
@@ -780,7 +780,7 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
 	FreeColumnTitles(i_old);
 	CopyColumnTitles(i_set);
     }
-  
+
     if (readjust && !recalculate)
     {
 	AdjustFirstRowAndCol(i_set);
@@ -789,23 +789,23 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
     {
 	CalcColumnInfo(set, True);
 	CalcLocations(set);
-      
+
 	if (!readjust) AdjustFirstCol(set);
 	else AdjustFirstRowAndCol( i_set );
     }
-  
+
     if (resort) SortList(set, False);
-  
-    return(redisplay);   
+
+    return(redisplay);
 }
-  
+
 /*	Function Name: Redisplay
  *	Description:   This function redraws the list contents.
  *	Arguments:     w - the Frame Widget widget.
  *                     event - event that caused the exposure.
  *                     region - the region containing all the exposures.
  *	Returns:       none
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -824,7 +824,7 @@ Redisplay(Widget w, XEvent * event, Region region)
     /*
      * Just refresh the entire window each time.
      */
-      
+
     DisplayList(w, XmI18List_first_row(ilist), num_rows, TRUE);
     ResizeSliders( w );
     DrawSeparator(w);
@@ -836,7 +836,7 @@ Redisplay(Widget w, XEvent * event, Region region)
  *	Returns:       none.
  */
 
-static void 
+static void
 Resize(Widget w)
 {
     if (!XtIsRealized(w))
@@ -883,7 +883,7 @@ Destroy(Widget w)
  *  If we move out of the current row then reset the stored time to zero since
  *  we should not call the double click callback.
  *
- *  The single click timeout takes care of initializing the extended 
+ *  The single click timeout takes care of initializing the extended
  *  select code.  We know it will be executed before the motion callback
  *  ever does anything interesting because of the action defined in the
  *  previous paragraph.
@@ -934,7 +934,7 @@ ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
 	    }
 	}
     }
-	    
+
     if (event->type != ButtonPress) {
         static String params[] = { "BtnDown" };
 
@@ -951,7 +951,7 @@ ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
 	 * This click not in the same row as the previous one, reset time to
 	 * zero so that double click will not fire.
 	 */
-	XmI18List_time(ilist) = 0;	
+	XmI18List_time(ilist) = 0;
     }
 
     XmI18List_working_row(ilist) = row;
@@ -995,7 +995,7 @@ ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
 
 /*ARGSUSED*/
 static void
-ButtonUpOrLeaveAction(Widget w, XEvent *event, 
+ButtonUpOrLeaveAction(Widget w, XEvent *event,
 		      String *params, Cardinal *num_params)
 {
     Boolean notify_type;
@@ -1003,10 +1003,10 @@ ButtonUpOrLeaveAction(Widget w, XEvent *event,
 
     if (event->type != ButtonRelease) {
 	static String params[] = { "BtnUp or BtnLeave" };
-	
+
 	_XmWarningMsg(w, XmNunexpectedEvent,
 		XmNunexpectedEventMsg, params, 1);
-	
+
 	return;
     }
 
@@ -1014,8 +1014,8 @@ ButtonUpOrLeaveAction(Widget w, XEvent *event,
      * Invalid row started selection.
      */
 
-    if ((XmI18List_working_col(ilist) >= XmI18List_num_columns(ilist)) || 
-	(XmI18List_working_row(ilist) >= XmI18List_num_rows(ilist))) 
+    if ((XmI18List_working_col(ilist) >= XmI18List_num_columns(ilist)) ||
+	(XmI18List_working_row(ilist) >= XmI18List_num_rows(ilist)))
     {
 	return;
     }
@@ -1033,7 +1033,7 @@ ButtonUpOrLeaveAction(Widget w, XEvent *event,
     XmI18List_time(ilist) = event->xbutton.time;
 
     /*
-     * Reset all these flags. 
+     * Reset all these flags.
      */
 
     XmI18List_state(ilist) &= ~OUTSIDE_WIDGET;
@@ -1060,24 +1060,24 @@ MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
      * Invalid row to start selection.
      */
 
-    if ((XmI18List_working_col(ilist) >= XmI18List_num_columns(ilist)) || 
-	(XmI18List_working_row(ilist) >= XmI18List_num_rows(ilist))) 
+    if ((XmI18List_working_col(ilist) >= XmI18List_num_columns(ilist)) ||
+	(XmI18List_working_row(ilist) >= XmI18List_num_rows(ilist)))
     {
 	return;
     }
 
-    if (XmI18List_selection_policy(ilist) == XmSINGLE_SELECT) 
+    if (XmI18List_selection_policy(ilist) == XmSINGLE_SELECT)
 	return;			/* Do nothing here... */
 
-    CvtPositionToRowColumn(w, bevent->x, y,  &row, &col); 
-    
+    CvtPositionToRowColumn(w, bevent->x, y,  &row, &col);
+
     /*
      * We have not moved to a new row, or we started in the headers then
      * do nothing.
      */
-    
-    if ((row == XmI18List_working_row(ilist)) || 
-	(XmI18List_working_row(ilist) == IN_COLUMN_HEADER)) 
+
+    if ((row == XmI18List_working_row(ilist)) ||
+	(XmI18List_working_row(ilist) == IN_COLUMN_HEADER))
     {
 	return;
     }
@@ -1085,7 +1085,7 @@ MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
     /*
      * Begin reporting motion events.
      */
-    
+
     if (y < 0) {
 	if (XmI18List_state(ilist) & OFF_TOP)
 	    return;		/* We are already off the top. */
@@ -1094,7 +1094,7 @@ MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
     }
     else
 	XmI18List_state(ilist) &= ~OFF_TOP;	/* remove this flag. */
-    
+
     if (y > ((short) w->core.height)) {
 	if (XmI18List_state(ilist) & OFF_BOTTOM)
 	    return;		/* We are already off the bottom. */
@@ -1103,7 +1103,7 @@ MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
     }
     else
 	XmI18List_state(ilist) &= ~OFF_BOTTOM;	/* remove this flag. */
-    
+
     if (!(XmI18List_state(ilist) & OUTSIDE_WIDGET)) { /* Not outside widget.*/
 	if (XmI18List_timeout(ilist) != NoTimeout) {
 	    (void) XtRemoveTimeOut(XmI18List_timeout(ilist));
@@ -1148,14 +1148,14 @@ SingleClick(XmI18ListWidget ilist)
 		ToggleRow((Widget) ilist, XmI18List_working_row(ilist));
 	    else		/* !EXTEND and !TOGGLE */
 		UnselectRows((Widget) ilist, XmI18List_working_row(ilist));
-	 
-	    for (ptr = XmI18List_row_data(ilist), i = 0; i < last; i++, ptr++) 
+
+	    for (ptr = XmI18List_row_data(ilist), i = 0; i < last; i++, ptr++)
 		ptr->old_sel_state = ptr->selected;
 	}
 	else {
 	    short l_first, l_last;
 
-	    if (XmI18List_anchor(ilist) == NO_SELECTION) 
+	    if (XmI18List_anchor(ilist) == NO_SELECTION)
 		return;
 
 	    if (XmI18List_end(ilist) < XmI18List_anchor(ilist)) {
@@ -1166,7 +1166,7 @@ SingleClick(XmI18ListWidget ilist)
 		l_first = XmI18List_anchor(ilist);
 		l_last = XmI18List_end(ilist);
 	    }
-	    
+
 	    for (ptr = XmI18List_row_data(ilist), i = 0; i < last; i++, ptr++) {
 		if ((i >= l_first) && (i <= l_last))
 		    ptr->old_sel_state = FALSE;
@@ -1181,7 +1181,7 @@ SingleClick(XmI18ListWidget ilist)
 }
 
 /*	Function Name: MoveListTimeout
- *	Description:   Called when enough time passes so that we know it 
+ *	Description:   Called when enough time passes so that we know it
  *                     is time to move the list.
  *	Arguments:     w_ptr - the ilist widget.
  *                     id - the interval id.
@@ -1219,26 +1219,26 @@ MoveListTimeout(XtPointer w_ptr, XtIntervalId *id)
     }
     VScroll(w, v_inc);
     ResizeSliders(w);	/* Reset the sliders on my scrollbars. */
-    
+
     /*
      * Get new end point (first or last row on screen).
      */
-    
-    if (v_inc < 0) 
+
+    if (v_inc < 0)
 	row = XmI18List_first_row(ilist);
     else {
 	register int i;
 	register int row_height = XmI18List_row_height(ilist);
 	register Dimension h, height = w->core.height;
-	
+
 	i = XmI18List_first_row(ilist);
 	h = (XmI18List_sep_y(ilist) + VERTICAL_SPACE/2);
-	
+
 	if(XmI18List_new_visual_style(ilist))
 	    h += ilist->primitive.shadow_thickness;
 	else
 	    h += LINE_HEIGHT;
-	
+
 	/*
 	 * This used to be:
 	 * for (; h < height; h += row_height, i++) {}
@@ -1251,13 +1251,13 @@ MoveListTimeout(XtPointer w_ptr, XtIntervalId *id)
 	}
 
 	i--;
-	
+
 	if (i > (XmI18List_num_rows(ilist) - 1))
 	    row = XmI18List_num_rows(ilist) - 1;
 	else
 	    row = i;
     }
-    
+
     ExtendedSelect(w, row);
 
     /*
@@ -1266,7 +1266,7 @@ MoveListTimeout(XtPointer w_ptr, XtIntervalId *id)
 
     XmI18List_timeout(ilist) = XtAppAddTimeOut(XtWidgetToApplicationContext(w),
 					   DELAY_TIME(w),
-					   MoveListTimeout, (XtPointer) w);    
+					   MoveListTimeout, (XtPointer) w);
 }
 
 /*	Function Name: Notify
@@ -1303,14 +1303,14 @@ Notify(Widget w, Boolean dclick)
 	Widget    elist = XtParent(XtParent(w));
 
 	XtPointer cbdata;
-	if(row >= 0) 
+	if(row >= 0)
 	    cbdata = (XtPointer) &(XmI18List_row_data(ilist)[row]);
 	else
 	    cbdata = NULL;
 
 	/*
 	 * If my parent is an extended list, then call all callbacks
-	 * on its callback list. 
+	 * on its callback list.
 	 *
 	 * This is a hack to get around a toolkit specification bug.
 	 *
@@ -1319,7 +1319,7 @@ Notify(Widget w, Boolean dclick)
 
 	if( dclick )
 	{
-	    if( _XmUtilIsSubclassByNameQ(elist, elist_q) ) 
+	    if( _XmUtilIsSubclassByNameQ(elist, elist_q) )
 	    {
 		XtCallCallbacks(elist, XmNdoubleClickCallback, cbdata);
 	    }
@@ -1327,7 +1327,7 @@ Notify(Widget w, Boolean dclick)
 	}
 	else /* Is Single notify */
 	{
-	    if( _XmUtilIsSubclassByNameQ(elist, elist_q) ) 
+	    if( _XmUtilIsSubclassByNameQ(elist, elist_q) )
 	    {
 		XtCallCallbacks(elist, XmNsingleSelectionCallback, cbdata);
 	    }
@@ -1344,7 +1344,7 @@ Notify(Widget w, Boolean dclick)
 
 /*	Function Name: GetListWidth
  *	Description:   determines total width of data in list
- *	Arguments:     w - Extended List Widget 
+ *	Arguments:     w - Extended List Widget
  *	Returns:       total width of data in list
  */
 
@@ -1360,7 +1360,7 @@ GetListWidth(Widget w)
     width = HORIZONTAL_SPACE;
     for (i=0; i < XmI18List_num_columns(ilist); i++)
         width += XmI18List_column_widths(ilist)[i] + HORIZONTAL_SPACE;
- 
+
     return((short) width);
 }
 
@@ -1370,13 +1370,13 @@ GetListWidth(Widget w)
  *	Returns:       none.
  */
 
-static void 
+static void
 AdjustFirstCol(Widget w)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) w;
     register int i, extra, width;
 
-    /*   
+    /*
      * Determine if the first pixel position is negative or positive
      */
     if ((0 - XmI18List_left_loc(ilist)) >= 0)
@@ -1478,7 +1478,7 @@ ExtendedSelect(Widget w, short row)
 	 */
 
 	ptr = XmI18List_row_data(ilist) + t_first;
-	for (i = t_first; i <= t_last; i++, ptr++) 
+	for (i = t_first; i <= t_last; i++, ptr++)
 	    if (ptr->old_sel_state != ptr->selected)
 		ToggleRow(w, i);
     }
@@ -1487,7 +1487,7 @@ ExtendedSelect(Widget w, short row)
      * Set all these nodes to the same state as the anchor.
      */
 
-    for (ptr = XmI18List_row_data(ilist) + first,i = first; i <= last;i++, ptr++) 
+    for (ptr = XmI18List_row_data(ilist) + first,i = first; i <= last;i++, ptr++)
 	if (ptr->selected != state)
 	    ToggleRow(w, i);
 
@@ -1511,9 +1511,9 @@ ExtendedSelect(Widget w, short row)
  *	Returns:       none
  */
 
-/*ARGSUSED*/ 
+/*ARGSUSED*/
 static void
-VScrollCallback(Widget w, XtPointer client_data, XtPointer call_data) 
+VScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) client_data;
     XmScrollBarCallbackStruct * scroll_info;
@@ -1525,20 +1525,20 @@ VScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
 }
 
 /*	Function Name: HScrollCallback
- *	Description:   Called by the horiz. scrollbar when it 
+ *	Description:   Called by the horiz. scrollbar when it
  *                     has been selected.
  *                     by the user.
  *	Arguments:     w - the scrollbar widget.
  *                     client_data - the ilist widget.
  *                     call_data - information about where to scroll.
  *	Returns:       none
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
- 
-/*ARGSUSED*/ 
+
+/*ARGSUSED*/
 static void
-HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data) 
+HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) client_data;
     XmScrollBarCallbackStruct *scroll_info;
@@ -1548,7 +1548,7 @@ HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
     HScroll((Widget)ilist,(short) scroll_info->value);
 
 }
-    
+
 /*	Function Name: HSlideLeftArrowCallback
  *	Description:   handles repositioning of the window data according
  *                     to how long the user pressed on the left arrow
@@ -1556,13 +1556,13 @@ HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
  *                     client_data - the ilist widget.
  *                     junk - ***UNUSED***
  *	Returns:       none
- * 
+ *
  *      Added:         03/19/92 beth - for conversion to pixels
  */
 
 /*ARGSUSED*/
 static void
-HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk) 
+HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) client_data;
 
@@ -1581,7 +1581,7 @@ HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
         register int i, begin, end, before = 0;
 
         for (i=0; i < XmI18List_num_columns(ilist); i++) {
-            if (i == 0) 
+            if (i == 0)
                 begin = before = XmI18List_left_loc(ilist);
             else
                 begin = before + HORIZONTAL_SPACE;
@@ -1608,7 +1608,7 @@ HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
     }
 
     XClearWindow(XtDisplay(ilist), XtWindow(ilist));
-    DisplayList((Widget) ilist, XmI18List_first_row(ilist), 
+    DisplayList((Widget) ilist, XmI18List_first_row(ilist),
                 (XmI18List_num_rows(ilist) - XmI18List_first_row(ilist)), TRUE);
     DrawSeparator((Widget) ilist);
     ResizeSliders((Widget) ilist);
@@ -1621,13 +1621,13 @@ HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
  *                     client_data - the ilist widget.
  *                     junk - ***UNUSED***
  *	Returns:       none
- * 
+ *
  *      Added:         03/19/92 beth - for conversion to pixels
  */
 
 /*ARGSUSED*/
 static void
-HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk) 
+HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) client_data;
     register int i, width;
@@ -1639,7 +1639,7 @@ HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
      * is currently between columns, then we will shift all columns
      * once to the right, thereby changing the last visible column.
      */
-     
+
     if ((0 - XmI18List_left_loc(ilist)) >= 0)
         i = XmI18List_left_loc(ilist);
     else
@@ -1653,7 +1653,7 @@ HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
         register int begin, end, before = 0;
 
         for (i=0; i < XmI18List_num_columns(ilist); i++) {
-            if (i == 0) 
+            if (i == 0)
                 begin = before = XmI18List_left_loc(ilist);
             else
                 begin = before + HORIZONTAL_SPACE;
@@ -1678,7 +1678,7 @@ HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
     }
 
     XClearWindow(XtDisplay(ilist), XtWindow(ilist));
-    DisplayList((Widget) ilist, XmI18List_first_row(ilist), 
+    DisplayList((Widget) ilist, XmI18List_first_row(ilist),
                 (XmI18List_num_rows(ilist) - XmI18List_first_row(ilist)), TRUE);
     DrawSeparator((Widget) ilist);
     ResizeSliders((Widget) ilist);
@@ -1714,7 +1714,7 @@ static void CalcLocations(Widget w)
  *                     num_rows - the number of rows to display
  *                     redraw_headers - boolean flag for redrawing
  *	Returns:       none
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -1751,7 +1751,7 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 
     tot_width = GetListWidth((Widget) ilist);
 
-    /* 
+    /*
      * Find the row height.
      */
     row_height = XmI18List_row_height(ilist) + VERTICAL_SPACE;
@@ -1763,10 +1763,10 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
      *
      * NOTE: this must draw exactly the same rectangle as InvertArea.
      */
-    
+
     cur_y = (XmI18List_sep_y(ilist) + VERTICAL_SPACE/2 +
 	     (start_row - XmI18List_first_row(ilist)) * row_height);
-    
+
     if(XmI18List_new_visual_style(ilist)) {
         cur_y += ilist->primitive.shadow_thickness;
     }
@@ -1787,7 +1787,7 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 			   : XmI18List_left_loc(ilist) - HORIZONTAL_SPACE/2,
 			   cur_y,
 #define MaX(a,b) (a>b?a:b)
-			   (unsigned int) MaX(w->core.width,tot_width), 
+			   (unsigned int) MaX(w->core.width,tot_width),
 #undef MaX
 			   (unsigned int) height);
     }
@@ -1799,10 +1799,10 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 			   ? -tot_width + XtWidth(w) - XmI18List_left_loc(ilist) + HORIZONTAL_SPACE/2
 			   : XmI18List_left_loc(ilist) - HORIZONTAL_SPACE/2,
 			   cur_y,
-			   (unsigned int) tot_width, 
+			   (unsigned int) tot_width,
 			   (unsigned int) row_height);
 	}
-	
+
 	cur_y += row_height;
     }
 
@@ -1832,16 +1832,16 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 	}
 	else
 	{
-	    if (cur_x > (int) width) 
+	    if (cur_x > (int) width)
 		return;
 	}
-	
+
 	if (redraw_headers) {
 
 	    /*
-	     * Paint the Column Header 
+	     * Paint the Column Header
 	     */
-	    
+
 	    if ((XmI18List_selected_header(ilist) == i) &&
 		(XmI18List_sort_functions(ilist) != NULL))
 	    {
@@ -1849,12 +1849,12 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 		    gc = XmI18List_rev_gc(ilist);
 		else
 		    gc = XmI18List_stippled_rev_gc(ilist);
-		
+
 		y_loc = VERTICAL_SPACE/2;
 		x_loc = cur_x - HORIZONTAL_SPACE/2;
-		
+
 		XFillRectangle(XtDisplay(w), XtWindow(w), XmI18List_gc(ilist),
-			       x_loc, y_loc, 
+			       x_loc, y_loc,
 			       (unsigned int) col_widths[i] + HORIZONTAL_SPACE,
 			       (unsigned int) title_row_height);
 	    }
@@ -1864,7 +1864,7 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 		else
 		    gc = XmI18List_stippled_gc(ilist);
 	    }
-	    
+
 	    if (XmI18List_column_titles(ilist) != NULL)
 	    {
 		ptr = XmI18List_column_titles(ilist)[i];
@@ -1882,15 +1882,15 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 	}
 
 	/*
-	 * Put in the mini icons if this is column 0 and 
+	 * Put in the mini icons if this is column 0 and
 	 * first_col_pixmaps is true.
 	 */
-	
+
 	if ( (XmI18List_first_col_pixmaps(ilist)) && (i == 0)) {
 	    int pix_y_offset;
 
 	    cur_y = XmI18List_sep_y(ilist) + VERTICAL_SPACE;
-	    
+
 	    if(XmI18List_new_visual_style(ilist))
 		cur_y += ilist->primitive.shadow_thickness;
 	    else
@@ -1898,18 +1898,18 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 
 	    for (j = start_row; j <= end_row; j++) {
 		if (IsValidPixmap(XmI18List_row_data(ilist)[j].pixmap)) {
-		    
-		    if (XmI18List_row_data(ilist)[j].selected) 
+
+		    if (XmI18List_row_data(ilist)[j].selected)
 			entry_gc = XmI18List_entry_background_rev_gc(ilist);
 		    else
 			entry_gc = XmI18List_entry_background_gc(ilist);
-		    
+
 		    /*
 		     * Copy it in.
 		     */
-		    pix_y_offset = 
+		    pix_y_offset =
 		      (row_height - XmI18List_row_data(ilist)[j].pix_height)/2;
-		    
+
 		    if (XmI18List_row_data(ilist)[j].pix_depth == 1 ){
 		      XCopyPlane(XtDisplay(w), XmI18List_row_data(ilist)[j].pixmap,
 				 XtWindow(w), entry_gc, 0, 0,
@@ -1931,56 +1931,56 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 				 cur_y+pix_y_offset );
 		    }
 		}
-		
+
 		cur_y += row_height;
 		if (cur_y > (int) height)
 		    break;
 	    }
 	}
 	else {
-	    /* 
+	    /*
 	     * Draw in the row data.
 	     */
-	    
+
 	    cur_y = start_y;
 	    for (j = start_row; j <= end_row; j++) {
-		
+
 		if (cur_y > (int) height)
 		    break;
-		
+
 		if (XtIsSensitive(w)) {
-		    if (XmI18List_row_data(ilist)[j].selected) 
+		    if (XmI18List_row_data(ilist)[j].selected)
 			entry_gc = XmI18List_entry_background_rev_gc(ilist);
 		    else
 			entry_gc = XmI18List_entry_background_gc(ilist);
 		}
 		else {
-		    if (XmI18List_row_data(ilist)[j].selected) 
+		    if (XmI18List_row_data(ilist)[j].selected)
 			entry_gc = XmI18List_entry_background_stippled_rev_gc(ilist);
 		    else
 			entry_gc = XmI18List_entry_background_stippled_gc(ilist);
 		}
-		
+
 		ptr = XmI18List_row_data(ilist)[j].values[i];
 
 		XmStringExtent(XmI18List_font_list(ilist), ptr,
 			       &width_unused, &text_height);
 
 		/* to center each string within its row */
-		cur_y += (int)(XmI18List_row_height(ilist) - VERTICAL_SPACE - 
+		cur_y += (int)(XmI18List_row_height(ilist) - VERTICAL_SPACE -
 			       text_height)/2;
-		XmStringDraw(XtDisplay(w), XtWindow(w), 
+		XmStringDraw(XtDisplay(w), XtWindow(w),
 			     XmI18List_font_list(ilist), ptr, entry_gc, cur_x, cur_y,
 			     col_widths[i], XmI18List_alignment(ilist),
 			     XmPrim_layout_direction(ilist), NULL);
-		
+
 		cur_y -= (int)(XmI18List_row_height(ilist) - VERTICAL_SPACE -
 			       text_height)/2;
 		cur_y += XmI18List_row_height(ilist) + VERTICAL_SPACE;
 	    }
 	}
-	
-	if (LayoutIsRtoLP(w))    
+
+	if (LayoutIsRtoLP(w))
 	    cur_x -= HORIZONTAL_SPACE;
 	else
 	    cur_x += HORIZONTAL_SPACE + col_widths[i];
@@ -1988,7 +1988,7 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 }
 
 /*	Function Name: DrawSeparator
- *	Description:   Draws the line that separates the titles form the 
+ *	Description:   Draws the line that separates the titles form the
  *                     list elements.
  *	Arguments:     w - the ilist widget.
  *	Returns:       none.
@@ -2010,8 +2010,8 @@ DrawSeparator(Widget w)
 		       height + ilist->primitive.shadow_thickness,
 		       ilist->primitive.shadow_thickness,
 		       XmSHADOW_OUT);
-		       
-		       
+
+
     }
     else
     {
@@ -2019,7 +2019,7 @@ DrawSeparator(Widget w)
 	    gc = XmI18List_gc(ilist);
 	else
 	    gc = XmI18List_stippled_gc(ilist);
-	
+
 	XFillRectangle(XtDisplay(w), XtWindow(w), gc,
 		       0,
 		       XmI18List_sep_y(ilist),
@@ -2034,7 +2034,7 @@ DrawSeparator(Widget w)
  *	Returns:       none.
  */
 
- /* Always create the entry_background GCs and always use them, but their 
+ /* Always create the entry_background GCs and always use them, but their
  ** values may be different depending on whether or not to use the pixel
  ** (and may be identical to the regular GCs). We don't need new GCs for
  ** operations that don't use patterning or that don't use the background
@@ -2044,16 +2044,16 @@ DrawSeparator(Widget w)
 static void
 CreateGCs(Widget w)
 {
-    XmI18ListWidget ilist = (XmI18ListWidget) w;    
+    XmI18ListWidget ilist = (XmI18ListWidget) w;
     XtGCMask mask, smask;
     XGCValues values;
     Arg args[2];
-    Cardinal num_args = 0;                
+    Cardinal num_args = 0;
     Pixel temp;
     Pixmap stipple;
     XFontStruct *font;
 
-    stipple = XCreateBitmapFromData(XtDisplay(w), 
+    stipple = XCreateBitmapFromData(XtDisplay(w),
 				    RootWindowOfScreen(XtScreen(w)), gray_bits,
 				    gray_width, gray_height);
 
@@ -2075,7 +2075,7 @@ CreateGCs(Widget w)
 #else
     smask = mask | GCStipple | GCFillStyle;
 #endif
-    
+
     XmI18List_gc(ilist) = XtGetGC(w, mask, &values);
 
     if (XmI18List_entry_background_use(ilist))
@@ -2164,7 +2164,7 @@ CreateGCs(Widget w)
     values.foreground ^= values.background;
     values.function = GXxor;
     mask = GCForeground | GCFunction;
-    
+
     XmI18List_inv_gc(ilist) = XtGetGC(w, mask, &values);
 
     if (XmI18List_entry_background_use(ilist))
@@ -2267,14 +2267,14 @@ SetVisibleSize(Widget w, Boolean set_width)
 	title_height += ilist->primitive.shadow_thickness;
     else
 	title_height += LINE_HEIGHT;
-       
+
     /* If we have no rows, guess at row size with font struct info... */
     if (XmI18List_num_rows(ilist) == 0)
     {
 #if USE_XFT
         XmRenderTableGetDefaultFontExtents(XmI18List_font_list(ilist),
 	                                   &height, NULL, NULL);
-	
+
 	if (height == 0)
 	    height = VERTICAL_SPACE * XmI18List_visible_rows(ilist);
 #else
@@ -2283,7 +2283,7 @@ SetVisibleSize(Widget w, Boolean set_width)
 	XmeRenderTableGetDefaultFont(XmI18List_font_list(ilist), &font);
 
 	if (font)
-	    height = (font->ascent + font->descent + VERTICAL_SPACE) * 
+	    height = (font->ascent + font->descent + VERTICAL_SPACE) *
 		XmI18List_visible_rows(ilist);
 	else
 	    height = VERTICAL_SPACE * XmI18List_visible_rows(ilist);
@@ -2291,7 +2291,7 @@ SetVisibleSize(Widget w, Boolean set_width)
     }
     else
     {
-	height = (XmI18List_row_height(ilist) + VERTICAL_SPACE) * 
+	height = (XmI18List_row_height(ilist) + VERTICAL_SPACE) *
 	    XmI18List_visible_rows(ilist);
     }
 
@@ -2319,7 +2319,7 @@ CalcColumnInfo(Widget w, Boolean force)
     register int num_cols = XmI18List_num_columns(ilist);
     register int num_rows = XmI18List_num_rows(ilist);
 
-    if (XmI18List_first_col_pixmaps(ilist)) 
+    if (XmI18List_first_col_pixmaps(ilist))
 	GetPixmapInfo(w);
 
     if (((XmI18List_column_widths(ilist) == NULL) || force) && (num_cols != 0))
@@ -2348,7 +2348,7 @@ CalcColumnInfo(Widget w, Boolean force)
 		if( (int)(height =XmI18List_row_data(ilist)[j].pix_height) >
 		    (int)max_height )
 		    max_height = height;
-		
+
 		if ( (int)(width = XmI18List_row_data(ilist)[j].pix_width) >
 		     (int)max_width )
 		    max_width = width;
@@ -2377,14 +2377,14 @@ CalcColumnInfo(Widget w, Boolean force)
  *	Description:   Resizes the thumbs of the v and h scrollbars.
  *	Arguments:     w - the ilist widget.
  *	Returns:       none
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
 static void
 ResizeSliders(Widget w)
 {
-    XmI18ListWidget ilist = (XmI18ListWidget) w;    
+    XmI18ListWidget ilist = (XmI18ListWidget) w;
     Arg args[5];
     Cardinal num_args=0;
     register int i, height, max_width, rows_per_screen;
@@ -2401,7 +2401,7 @@ ResizeSliders(Widget w)
     }
 
     if (((col_width + HORIZONTAL_SPACE) != 0) &&
-	(XmI18List_h_bar(ilist) != NULL)) 
+	(XmI18List_h_bar(ilist) != NULL))
     {
         /*
          * Adjust the slider size and page increment values
@@ -2442,7 +2442,7 @@ ResizeSliders(Widget w)
 	XtSetValues(XmI18List_h_bar(ilist), args, num_args);
     }
 
-    height = ilist->core.height - 
+    height = ilist->core.height -
 	     (2 * VERTICAL_SPACE + XmI18List_title_row_height(ilist));
 
     if(XmI18List_new_visual_style(ilist))
@@ -2533,7 +2533,7 @@ VScroll(Widget w, short amount)
  *	Arguments:     w - the ilist widget data to retrieve info from
  *                     col - the column number to search in
  *	Returns:       the pixel value
- * 
+ *
  *      Added:         03/17/92 beth
  */
 
@@ -2560,7 +2560,7 @@ CvtColNumToPixelVal(Widget w, short col)
  *	Arguments:     w - the ilist widget data to retrieve info from
  *                     x - the x pixel value to look for
  *	Returns:       the column number
- * 
+ *
  *      Added:         03/17/92 beth
  */
 
@@ -2603,7 +2603,7 @@ CvtPixelValToColNum(Widget w, short x)
  *	Arguments:     w - the ICS list widget.
  *                     amount - the pixel amount to scroll.
  *	Returns:       none
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -2628,9 +2628,9 @@ HScroll(Widget w, short amount)
     else
 	y_start += LINE_HEIGHT;
 
-    XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 
+    XClearArea(XtDisplay(w), XtWindow(w), 0, 0,
 	       (unsigned int) 0, title_height, FALSE);
-    XClearArea(XtDisplay(w), XtWindow(w), 0, y_start, 
+    XClearArea(XtDisplay(w), XtWindow(w), 0, y_start,
 	       (unsigned int) 0, (unsigned int) 0, FALSE);
 
     num_rows = XmI18List_num_rows(ilist) - XmI18List_first_row(ilist);
@@ -2647,7 +2647,7 @@ HScroll(Widget w, short amount)
  * NOTE:  This functions can return cells the are off the end of
  *        the current space.  It is up to the caller to check
  *        to be sure he does not run off then end of an array.
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -2687,7 +2687,7 @@ CvtPositionToRowColumn(Widget w, short x, short y, short * row, short * column)
  *                     row, column - the location of this point in list space.
  *    RETURNED         x, y - the location in the window in pixel space.
  *	Returns:       none.
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -2702,11 +2702,11 @@ CvtRowColumnToPosition(Widget w, short row, short column, short * x, short * y)
     else
 	title_extra = LINE_HEIGHT;
 
-    if (row == IN_COLUMN_HEADER) 
+    if (row == IN_COLUMN_HEADER)
 	*y = VERTICAL_SPACE/2;
     else {
-	*y = (XmI18List_sep_y(ilist) + title_extra + 
-	      (row - XmI18List_first_row(ilist)) * 
+	*y = (XmI18List_sep_y(ilist) + title_extra +
+	      (row - XmI18List_first_row(ilist)) *
 	      (XmI18List_row_height(ilist) + VERTICAL_SPACE) + VERTICAL_SPACE/2);
     }
 
@@ -2750,7 +2750,7 @@ UnselectRows(Widget w, short sel_row)
 
     for (row = 0; row < XmI18List_num_rows(ilist); row++, ptr++) {
 	/*
-	 * if the row is correct and it is unselected 
+	 * if the row is correct and it is unselected
 	 * or if the row incorrect and it is selected then toggle the row.
 	 */
 	if (ptr->selected != (row == sel_row))
@@ -2803,17 +2803,17 @@ SortList(Widget w, Boolean redisplay)
 	    RedrawList(w);
     }
          /* this is kind of unnecessary, instead should just update headers */
-    else RedrawList(w);    
+    else RedrawList(w);
 }
 
 /*	Function Name: QSortTest
- *	Description:   Takes the internal data, and the calls the 
+ *	Description:   Takes the internal data, and the calls the
  *                     appropriate sort routine supplied by the client.
  *	Arguments:     str1, str2 - the two values to compare.
- *	Returns:       
+ *	Returns:
  */
 
-static int 
+static int
 QSortTest(const void * row1, const void * row2)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) global_current_widget;
@@ -2822,7 +2822,7 @@ QSortTest(const void * row1, const void * row2)
 
     return ((*sort_f) (col, (XmMultiListRowInfo*)row1,
             (XmMultiListRowInfo*)row2));
-}    
+}
 
 
 /*	Function Name: InvertArea
@@ -2836,7 +2836,7 @@ QSortTest(const void * row1, const void * row2)
  *
  *        The value ENTIRE_ROW for the column causes the entire row to
  *        be inverted.
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -2847,15 +2847,15 @@ InvertArea(Widget w, short row, short column)
   unsigned int width, height;
   short x, y, pix_y_offset;
   GC gc_to_use;
-  
-  if (!XtIsRealized(w)) return; 
+
+  if (!XtIsRealized(w)) return;
 
   if ((row == NO_SELECTION) || (column == NO_SELECTION))
     return;
-  
+
   if (column == ENTIRE_ROW) {
     CvtRowColumnToPosition(w, row, 0, &x, &y);
-    
+
     width = GetListWidth((Widget) ilist);
     if (LayoutIsRtoLP(w))
 	x = -width + XtWidth(w) - XmI18List_left_loc(ilist) + HORIZONTAL_SPACE/2;
@@ -2866,7 +2866,7 @@ InvertArea(Widget w, short row, short column)
     CvtRowColumnToPosition(w, row, column, &x, &y);
     width = HORIZONTAL_SPACE + XmI18List_column_widths(ilist)[column];
   }
-  
+
   if (row == IN_COLUMN_HEADER)
   {
     height = XmI18List_title_row_height(ilist) + VERTICAL_SPACE;
@@ -2877,11 +2877,11 @@ InvertArea(Widget w, short row, short column)
     height = XmI18List_row_height(ilist) + VERTICAL_SPACE;
     gc_to_use = XmI18List_entry_background_inv_gc(ilist);
   }
-  
+
   XFillRectangle(XtDisplay(w), XtWindow(w), gc_to_use,
 		 (int) x, (int) y, width, height);
-  
-  if ( (XmI18List_first_col_pixmaps(ilist)) && 
+
+  if ( (XmI18List_first_col_pixmaps(ilist)) &&
        (XmI18List_row_data(ilist)[row].pix_depth != 1 ) &&
        IsValidPixmap(XmI18List_row_data(ilist)[row].pixmap) )
   {
@@ -2902,7 +2902,7 @@ InvertArea(Widget w, short row, short column)
  *	Description:   Redraws the current list contents.
  *	Arguments:     w - the ilist widget.
  *	Returns:       none.
- * 
+ *
  *      Modified:      03/17/92 beth - converted to pixels
  */
 
@@ -2923,13 +2923,13 @@ RedrawList(Widget w)
 
 /*	Function Name: IsRowVisible
  *	Description:   returns 0 if the row is visable. Otherwise returns
- * 		the number of rows down we have to scroll (- values for up) 
+ * 		the number of rows down we have to scroll (- values for up)
  *		to make the row visible.
  *	Arguments:     w - the ilist widget.
  *                     row - the row to check.
  *	Returns:       none.
  */
- 
+
 static int
 IsRowVisible(Widget w, short row)
 {
@@ -2938,13 +2938,13 @@ IsRowVisible(Widget w, short row)
 
     if (row < XmI18List_first_row(ilist))
 	return(row - XmI18List_first_row(ilist));
-   
+
     CvtPositionToRowColumn((Widget) w, 0, (short) (ilist->core.height + 1),
 			   &r_row, &r_col);
- 
+
     if (row >= r_row)
 	return(row - r_row + 1);
-   
+
     return(0);
 }
 
@@ -2987,15 +2987,15 @@ AdjustFirstRowAndCol( XmI18ListWidget ilist )
   int rows_per_screen, new_left_loc;
   register int j;
   int title_extra;
-  
+
   if(XmI18List_new_visual_style(ilist))
       title_extra = ilist->primitive.shadow_thickness;
   else
       title_extra = LINE_HEIGHT;
-  
-  new_left_loc = 0;	
+
+  new_left_loc = 0;
   for (j=0;  j < XmI18List_first_col(ilist); j++){
-    new_left_loc -=  (XmI18List_column_widths(ilist)[j] + 
+    new_left_loc -=  (XmI18List_column_widths(ilist)[j] +
 		      HORIZONTAL_SPACE);
   }
 
@@ -3010,18 +3010,18 @@ AdjustFirstRowAndCol( XmI18ListWidget ilist )
 				  (int)total_width);
   }
   else XmI18List_left_loc(ilist) = new_left_loc;
-  
-  
-  height = ilist->core.height - 
+
+
+  height = ilist->core.height -
     (2 * VERTICAL_SPACE + XmI18List_title_row_height(ilist) +  title_extra);
-  
+
   rows_per_screen = (int)height/(int)(XmI18List_row_height(ilist)+ VERTICAL_SPACE);
-  
+
   if (XmI18List_num_rows(ilist) < rows_per_screen)
   {
       XmI18List_first_row(ilist) = 0;
   }
-  else if (XmI18List_first_row(ilist) > (XmI18List_num_rows(ilist) - 
+  else if (XmI18List_first_row(ilist) > (XmI18List_num_rows(ilist) -
 				     rows_per_screen))
   {
       XmI18List_first_row(ilist) = (XmI18List_num_rows(ilist) - rows_per_screen);
@@ -3098,7 +3098,7 @@ MakePositionVisible(Widget w, short row, short start, short last, int width)
         }
 
         if (move != 0)
-            AdjustVisiblePosition((Widget) ilist, move, True, 
+            AdjustVisiblePosition((Widget) ilist, move, True,
                                   (width - (before + ilist->core.width)));
         return(TRUE);
     }
@@ -3114,7 +3114,7 @@ MakePositionVisible(Widget w, short row, short start, short last, int width)
 
 /* -kat 1/18/91
  * Function Name: XmI18ListGetSelectedRows
- * Description:   Takes an IList and returns a NULL terminated array 
+ * Description:   Takes an IList and returns a NULL terminated array
  *                of pointers to selected rows
  * Arguments:     w - the ilist widget
  * Returns:       A NULL terminated array of the row info structures.
@@ -3130,19 +3130,19 @@ XmI18ListGetSelectedRows(Widget w)
     XmI18ListWidget ilist = (XmI18ListWidget) w;
 
     row_data = XmI18List_row_data(ilist);
-    for (i = j = 0; j < XmI18List_num_rows(ilist); j++, row_data++) { 
-	if (row_data->selected) 
+    for (i = j = 0; j < XmI18List_num_rows(ilist); j++, row_data++) {
+	if (row_data->selected)
 	    i++;
     }
-    
+
     if (i != 0) {
 	ptr = ret_rows = (XmMultiListRowInfo **) XtMalloc(
                 sizeof(XmMultiListRowInfo *) * (i + 1));
 	ret_rows[i] = NULL;
-	
+
 	row_data = XmI18List_row_data(ilist);
-	for (j = 0; j < XmI18List_num_rows(ilist); j++, row_data++) { 
-	    if (row_data->selected) 
+	for (j = 0; j < XmI18List_num_rows(ilist); j++, row_data++) {
+	    if (row_data->selected)
 		*ptr++ = row_data;
 	}
     }
@@ -3181,7 +3181,7 @@ XmI18ListDoSearch(Widget w, String str, Boolean reset)
 
     if ( first_selected_row == -1 ) first_selected_row = 0;
 
-    foundit = Search(ilist, xms, 
+    foundit = Search(ilist, xms,
 		     first_selected_row, search_column,
 		     &found_row, &found_column);
 
@@ -3327,11 +3327,11 @@ MakeCellVisible(Widget w, int row, int col)
     short end;                                         /* RHS of col */
 
     if (!XtIsRealized(w))
-	return; 
+	return;
 
     if (col >= XmI18List_num_columns(ilist))
     	end = width;
-    else 
+    else
     	end = XmI18List_column_widths(ilist)[col] + start;
 
     (void) MakePositionVisible(w, row, start, end, width);
@@ -3584,13 +3584,13 @@ SelectItems(XmI18ListWidget i18list, XmString item,
 
 /*
  * XmRCallProc routine for checking font_list before setting it to NULL
- * If "check_set_render_table" is True, then function has 
- * been called twice on same widget, thus resource needs to be set NULL, 
+ * If "check_set_render_table" is True, then function has
+ * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
 
 /*ARGSUSED*/
-static void 
+static void
 CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
 {
   XmI18ListWidget il = (XmI18ListWidget)wid;
@@ -3620,7 +3620,7 @@ ListConvert(Widget w, XtPointer client_data,
 	   XmA_MOTIF_EXPORT_TARGETS, XmA_MOTIF_CLIPBOARD_TARGETS,
 	   XmAUTF8_STRING,
 	   NUM_ATOMS };
-    static char *atom_names[] = { 
+    static char *atom_names[] = {
 	   XmS_MOTIF_COMPOUND_STRING, XmSCOMPOUND_TEXT, XmSTEXT,
 	   XmSTARGETS, XmS_MOTIF_DROP, XmS_MOTIF_LOSE_SELECTION,
 	   XmS_MOTIF_EXPORT_TARGETS, XmS_MOTIF_CLIPBOARD_TARGETS,
@@ -3785,7 +3785,7 @@ ListConvert(Widget w, XtPointer client_data,
 		}
 	    }
 	}
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 	else if (cs->target == atoms[XmAUTF8_STRING])
 	{
 	    type = atoms[XmAUTF8_STRING];
@@ -3815,7 +3815,7 @@ ListConvert(Widget w, XtPointer client_data,
     {
 	/* Get row's pixmap */
 	Pixmap *pix;
-      
+
 	pix = (Pixmap *) XtMalloc(sizeof(Pixmap));
 	*pix = ListDragConv->pixmap;
 	/* value, type, size, and format must be set */
@@ -3870,7 +3870,7 @@ GetConcatenatedRow(Widget w, int row)
     XmString tab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, NULL);
     XmI18ListWidget lw = (XmI18ListWidget)w;
     short i;
-    
+
     for (i = 0; i < lw->ilist.num_columns; i++) {
 	if (lw->ilist.row_data[row].values[i]) {
 	    if (result) {
@@ -3905,7 +3905,7 @@ ProcessDrag(Widget wid,
     Widget drag_icon, dc;
     Arg args[10];
     int n, location_data;
-    XmI18ListDragConvertStruct *ListDragConv; 
+    XmI18ListDragConvertStruct *ListDragConv;
 
     /* Don't allow multi-button drags. */
     if (event->xbutton.state &
@@ -3915,12 +3915,12 @@ ProcessDrag(Widget wid,
 	return;
 
     CvtPositionToRowColumn(wid, event->xbutton.x, event->xbutton.y, &row, &col);
-    
+
     if (col < 0 || row >= lw->ilist.num_rows || col >= lw->ilist.num_columns)
 	return;
 
     location_data = row;
-    
+
     lw->ilist.drag_conv = ListDragConv = (XmI18ListDragConvertStruct *)
 	    XtMalloc(sizeof(XmI18ListDragConvertStruct));
 
@@ -3928,12 +3928,12 @@ ProcessDrag(Widget wid,
     ListDragConv->strings = NULL;
     ListDragConv->pixmap = None;
     ListDragConv->num_items = 0;
-    
+
     if (col == 0 && lw->ilist.first_col_pixmaps && row >= 0) {
     	ListDragConv->num_items = 1;
 	ListDragConv->pixmap = lw->ilist.row_data[row].pixmap;
     }
-    
+
     if (row >= 0) {
 	if (lw->ilist.row_data[row].selected)
 	{
@@ -3990,7 +3990,7 @@ CopyToClipboard(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     XmI18ListWidget lw = (XmI18ListWidget) w;
     int rowcount;
-    
+
     /* text to the clipboard */
     (void)GetSelectedRows(lw, &rowcount);
     if (rowcount > 0)

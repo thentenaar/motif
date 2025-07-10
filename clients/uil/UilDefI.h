@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
 **++
@@ -57,7 +57,7 @@
 #include <Mrm/Mrm.h>
 
 /*
-**                                    
+**
 **  Universal Definitions
 **
 */
@@ -102,7 +102,7 @@ typedef int boolean;
 #endif /* XmConst */
 
 /* Uil will automatically strip this prefix when saving name of automatically
- * created child.  This is used to prevent name conflicts in existing uil 
+ * created child.  This is used to prevent name conflicts in existing uil
  * files.  Children names without this prefix will be saved as is.
  */
 #define AUTO_CHILD_PREFIX "Xm_"
@@ -199,14 +199,7 @@ typedef int boolean;
 **
 */
 
-#ifdef NO_MEMMOVE
-/* For fixing the bug CR 4581 */
-extern char* uil_mmove(char*, char*, int);
-
-#define _move uil_mmove
-#else
 #define _move memmove
-#endif /* NO_MEMMOVE */
 
 /*
 **
@@ -292,8 +285,8 @@ extern char* uil_mmove(char*, char*, int);
 extern "C" {
 #endif
 
-extern void diag_issue_diagnostic  
-	_ARGUMENTS(( int d_message_number , 
+extern void diag_issue_diagnostic
+	_ARGUMENTS(( int d_message_number ,
 		    src_source_record_type *az_src_rec ,
 		    int l_start_column, ... ));
 extern void lst_debug_output  _ARGUMENTS(( char *format, ... ));
@@ -412,7 +405,7 @@ extern void sem_append_cstr_to_cstr  _ARGUMENTS(( sym_value_entry_type *az_cstr1
 extern sym_value_entry_type *sem_cat_str_to_str  _ARGUMENTS(( sym_value_entry_type *az_str1_entry , boolean op1_temporary , sym_value_entry_type *az_str2_entry , boolean op2_temporary ));
 extern int sem_map_subclass_to_charset  _ARGUMENTS(( int charset_as_subclass ));
 extern void sar_charset_verify  _ARGUMENTS(( yystype *charset_frame ));
-extern void sar_make_fallback_charset _ARGUMENTS((yystype *name_frame)); 
+extern void sar_make_fallback_charset _ARGUMENTS((yystype *name_frame));
 extern void sar_chk_charset_attr  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *prior_value_frame ));
 extern void sar_make_charset  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *attr_frame , yystype *keyword_frame ));
 

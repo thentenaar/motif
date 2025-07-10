@@ -614,7 +614,7 @@ Redisplay(
 		           CB_IsArmed(cb) ? CB_ArmGC(cb) : CB_BackgroundGC(cb),
 			   0, 0, cb->core.width, cb->core.height);
 #endif
-#ifdef USE_XFT
+#if USE_XFT
 	} else if (Lab_MenuType(cb) != XmWORK_AREA) { /* adeed with XFT support */
         XClearArea(XtDisplay(cb), XtWindow(cb),
 			0, 0, cb->core.width, cb->core.height, False);

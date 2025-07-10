@@ -118,7 +118,6 @@ extern "C" {
 /*
  * lets try to solve include files
  */
-
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -384,7 +383,7 @@ FUNC(xpm_znormalizeimagebits, void, (register unsigned char *bp,
 #define ZINDEX1(x, y, img) ((y) * img->bytes_per_line) + ((x) >> 3)
 #endif /* not AMIGA */
 
-#ifdef NEED_STRDUP
+#if !HAVE_STRDUP
 FUNC(xpmstrdup, char *, (char *s1));
 #else
 #undef xpmstrdup
@@ -392,7 +391,7 @@ FUNC(xpmstrdup, char *, (char *s1));
 #include <string.h>
 #endif
 
-#ifdef NEED_STRCASECMP
+#if !HAVE_STRCASECMP
 FUNC(xpmstrcasecmp, int, (char *s1, char *s2));
 #else
 #undef xpmstrcasecmp

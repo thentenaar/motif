@@ -146,23 +146,10 @@ XpmCreateDataFromXpmImage(
 
     /* print the hints line */
     s = buf;
-#ifndef VOID_SPRINTF
-    s +=
-#endif
-    sprintf(s, "%d %d %d %d", image->width, image->height,
-	    image->ncolors, image->cpp);
-#ifdef VOID_SPRINTF
-    s += strlen(s);
-#endif
+    s += sprintf(s, "%d %d %d %d", image->width, image->height, image->ncolors, image->cpp);
 
     if (info && (info->valuemask & XpmHotspot)) {
-#ifndef VOID_SPRINTF
-	s +=
-#endif
-	sprintf(s, " %d %d", info->x_hotspot, info->y_hotspot);
-#ifdef VOID_SPRINTF
-	s += strlen(s);
-#endif
+	s += sprintf(s, " %d %d", info->x_hotspot, info->y_hotspot);
     }
     if (extensions) {
 	strcpy(s, " XPMEXT");
@@ -272,14 +259,7 @@ CreateColors(
 
 	for (key = 1; key <= NKEYS; key++, defaults++) {
 	    if ((s2 = *defaults)) {
-#ifndef VOID_SPRINTF
-		s +=
-#endif
-		/* assume C99 compliance */
-			snprintf(s, sizeof(buf)-(s-buf), "\t%s %s", xpmColorKeys[key - 1], s2);
-#ifdef VOID_SPRINTF
-		s += strlen(s);
-#endif
+		s += snprintf(s, sizeof(buf)-(s-buf), "\t%s %s", xpmColorKeys[key - 1], s2);
 		/* does s point out-of-bounds? */
 		if(sizeof(buf) < (s-buf))
 			return XpmNoMemory;

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilDiags.c /main/15 1996/10/21 11:06:46 cde-osf $"
@@ -181,7 +181,7 @@ void    diag_store_handlers
 #define buf_size (src_k_max_source_line_length + 1)
 
 void	diag_issue_diagnostic
-	    ( int d_message_number, src_source_record_type *az_src_rec, 
+	    ( int d_message_number, src_source_record_type *az_src_rec,
 	      int l_start_column, ...)
 
 {
@@ -261,26 +261,26 @@ void	diag_issue_diagnostic
     **		column pointer
     **		message
     **		location in source message
-    **	   4) source and column but no access key 
+    **	   4) source and column but no access key
     **		message
     **		location in source message
     */
 
-    /* 
+    /*
     **	substitute any parameters into the error message placing the
     **	resultant string in msg_buffer
     */
 
     va_start(ap, l_start_column);
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     vsnprintf( msg_buffer, sizeof(msg_buffer),
 	      catgets(uil_catd, UIL_SET1, msg_cat_table[ message_number ],
-		      diag_rz_msg_table[ message_number ].ac_text), 
+		      diag_rz_msg_table[ message_number ].ac_text),
 	     ap );
 #else
     vsnprintf( msg_buffer, sizeof(msg_buffer),
-	      diag_rz_msg_table[ message_number ].ac_text, 
+	      diag_rz_msg_table[ message_number ].ac_text,
 	      ap );
 #endif
     va_end(ap);
@@ -289,7 +289,7 @@ void	diag_issue_diagnostic
     loc_buffer[ 0 ] = 0;
     ptr_buffer[ 0 ] = 0;
 
-    if (az_src_rec != diag_k_no_source) 
+    if (az_src_rec != diag_k_no_source)
     {
 	if ( !_src_null_access_key(az_src_rec->z_access_key) )
 	{
@@ -297,7 +297,7 @@ void	diag_issue_diagnostic
 	    **	create the location line line
 	    */
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	    sprintf( loc_buffer,
 		     catgets(uil_catd, UIL_SET_MISC,
 			     UIL_MISC_0, "\t\t line: %d  file: %s"),
@@ -351,10 +351,10 @@ void	diag_issue_diagnostic
 	    */
 
 	    if (l_start_column != diag_k_no_column)
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	      sprintf(loc_buffer,
 		      catgets(uil_catd, UIL_SET_MISC,
-			      UIL_MISC_1, 
+			      UIL_MISC_1,
 			      "\t\t line: %d  position: %d  file: %s"),
 		      az_src_rec->w_line_number,
 		      l_start_column + 1,
@@ -367,7 +367,7 @@ void	diag_issue_diagnostic
 		      src_get_file_name( az_src_rec ) );
 #endif
 	    else
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 		sprintf( loc_buffer, catgets(uil_catd, UIL_SET_MISC,
 					     UIL_MISC_0,
 					     "\t\t line: %d  file: %s"),
@@ -389,7 +389,7 @@ void	diag_issue_diagnostic
     write_msg_to_standard_error
 	( message_number, src_buffer, ptr_buffer, msg_buffer, loc_buffer );
 
-    /* 
+    /*
     **	if we have a listing, place message in the source structure
     */
 
@@ -399,7 +399,7 @@ void	diag_issue_diagnostic
 
     issuing_diagnostic = FALSE;
 
-    /* 
+    /*
     **	if there are fatal errors, print the listing file and exit.
     */
 
@@ -444,7 +444,7 @@ void	diag_issue_diagnostic
 void	diag_issue_summary()
 
 {
-    
+
     if (uil_l_compile_status == uil_k_success_status)
 	return;
 
@@ -542,7 +542,7 @@ int XmConst   b_tag;
 	return "section";
 
     default:
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
 #else
 	return "** unknown **";
@@ -588,14 +588,14 @@ int XmConst   b_type;
 
 {
     if ( b_type <= sym_k_error_object )
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
 #else
 	return "** error **";
 #endif
     if ( b_type <= uil_max_object )
 	return uil_widget_names[b_type];
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
 #else
     return "** unknown **";
@@ -641,14 +641,14 @@ int XmConst   b_type;
 {
 
     if ( b_type <= sym_k_error_value )
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
 #else
 	return "** error **";
 #endif
     if ( b_type <= sym_k_max_value )
 	return uil_datatype_names[b_type];
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
 #else
     return "** unknown **";
@@ -693,16 +693,16 @@ char	*diag_charset_text( b_type )
 int XmConst   b_type;
 
 {
-    
+
     if ( b_type <= sym_k_error_charset )
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
 #else
 	return "** error **";
 #endif
     if ( b_type <= uil_max_charset )
 	return uil_charset_names[b_type];
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
 #else
     return "** unknown **";
@@ -750,7 +750,7 @@ void	diag_initialize_diagnostics()
 
     int	    i;
 
-    /* 
+    /*
     **	Set up a handler to be invoked if access violations or
     **	bad arguments to sys calls occur.
     **  Other errors should be processed as is standard for the OS.
@@ -814,7 +814,7 @@ void	diag_initialize_diagnostics()
 **
 **  SIDE EFFECTS:
 **
-**      error handler is supplied for SIGFPE 
+**      error handler is supplied for SIGFPE
 **
 **--
 **/
@@ -862,9 +862,9 @@ void	diag_handler( l_error )
 int	l_error;
 
 {
-    /* 
-    **	This handler is invoked for access violations, oeverflows or bad 
-    **  arguments to sys calls.  Other errors are processed as is standard 
+    /*
+    **	This handler is invoked for access violations, oeverflows or bad
+    **  arguments to sys calls.  Other errors are processed as is standard
     **	for the OS.  The handler checks on overflow to see if we are trying
     **	to catch them at the moment.  Otherwise it issues an internal error.
     */
@@ -880,7 +880,7 @@ int	l_error;
 #if debug_version
     {
       char	*error_text;
-      
+
       switch (l_error)
 	{
 	case SIGBUS:
@@ -900,7 +900,7 @@ int	l_error;
 
       diag_issue_internal_error( error_text );
     }
-    
+
 #else
 
     diag_issue_internal_error( NULL );
@@ -948,7 +948,7 @@ char	* error_text;
 
 {
 
-    /* 
+    /*
     **	This routine is a focal point for issuing internal errors.
     **  In DEBUG mode it takes an argument that gives more information
     **	about the failure.
@@ -980,7 +980,7 @@ char	* error_text;
 **
 **  FORMAL PARAMETERS:
 **
-**	msg_number:	message number 
+**	msg_number:	message number
 **      src_buffer:	ptr to source buffer for the error
 **      ptr_buffer:	ptr to column buffer locator for the error
 **      msg_buffer:	ptr to message buffer for the error
@@ -1030,7 +1030,7 @@ XmConst char  *loc_buffer;
     **  If message callback was supplied, call it with the description of the
     **  error instead of writing it to standard output.
     */
-    if (Uil_cmd_z_command.message_cb != (Uil_continue_type(*)())NULL) 
+    if (Uil_cmd_z_command.message_cb != (Uil_continue_type(*)())NULL)
     {
 	Uil_status_type return_status;
 /*
@@ -1057,7 +1057,7 @@ XmConst char  *loc_buffer;
 	**  and set the return status to reflect user abort.
 	*/
 	if (return_status == Uil_k_terminate)
-	    uil_exit (uil_k_error_status);	    
+	    uil_exit (uil_k_error_status);
 	else
 	    return;
     }
@@ -1082,15 +1082,15 @@ XmConst char  *loc_buffer;
 
     /* print message line */
 
-#ifndef NO_MESSAGE_CATALOG
-    fprintf ( stderr, "%s%s\n", 
+#if XM_MSGCAT
+    fprintf ( stderr, "%s%s\n",
 	      catgets(uil_catd, UIL_SET_MISC,
-		      diag_rz_msg_table[ message_number ].l_severity, 
+		      diag_rz_msg_table[ message_number ].l_severity,
 		      severity_table
 		      [ diag_rz_msg_table[ message_number ].l_severity ]),
 	      msg_buffer );
 #else
-    fprintf ( stderr, "%s%s\n", 
+    fprintf ( stderr, "%s%s\n",
 	      severity_table
 		[ diag_rz_msg_table[ message_number ].l_severity ],
 	      msg_buffer );
@@ -1156,7 +1156,7 @@ int	d_message_number;
 **	is supplied this routine returns without error.  Otherwise, the user's
 **	delay information is processed and if the requested criteria is met the
 **	user's routine is invoked.  with parameters to describe the progress of
-**	the compilation.  
+**	the compilation.
 **
 **  FORMAL PARAMETERS:
 **
@@ -1200,7 +1200,7 @@ void	diag_report_status ( )
 	Uil_diag_status_delay_count = Uil_cmd_z_command.status_update_delay;
 /*
  * Fix for CR 5534 - restore the application signal handlers before calling
- *                   status_cb and then return the Uil signal handlers 
+ *                   status_cb and then return the Uil signal handlers
  *                   immediately after.
  */
         diag_restore_diagnostics();
@@ -1221,9 +1221,9 @@ void	diag_report_status ( )
 	*/
 	if (return_status == Uil_k_terminate)
 	{
-	    uil_exit (uil_k_error_status);	    
+	    uil_exit (uil_k_error_status);
 	}
-    }	
+    }
 
     /*
     **  Delay not used-up, so decrement by one.
@@ -1237,7 +1237,7 @@ void	diag_report_status ( )
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This routine restores the old signal handlers that were replaced by 
+**      This routine restores the old signal handlers that were replaced by
 **	Uil.  This routine is only called by the callable Uil.
 **
 **  FORMAL PARAMETERS:

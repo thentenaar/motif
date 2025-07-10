@@ -9,15 +9,15 @@ rcdir = $(MWMRCDIR)
 rc_DATA = system.mwmrc
 
 bin_PROGRAMS = mwm
-mwm_LDADD = ./WmWsmLib/libWsm.a ../../lib/Xm/libXm.la 
+mwm_LDADD = ./WmWsmLib/libWsm.a ../../lib/Xm/libXm.la
 
-INCLUDES = -DLARGECURSORS -DR2_COMPAT -DUNMAP_ON_RESTART \
-           -DCDE_INSTALLATION_TOP=\"@CDE_INSTALLATION_TOP@\" \
-           -DCDE_CONFIGURATION_TOP=\"@CDE_CONFIGURATION_TOP@\" \
-           -DBITMAPDIR=\"@INCDIR@/bitmaps\" \
-           -DMWMRCDIR=\"$(MWMRCDIR)\" \
-           -I$(top_builddir)/lib \
-           -I$(srcdir)/../../lib ${X_CFLAGS}
+AM_CPPFLAGS = -DLARGECURSORS -DR2_COMPAT -DUNMAP_ON_RESTART \
+              -DCDE_INSTALLATION_TOP=\"@CDE_INSTALLATION_TOP@\" \
+              -DCDE_CONFIGURATION_TOP=\"@CDE_CONFIGURATION_TOP@\" \
+              -DBITMAPDIR=\"@INCDIR@/bitmaps\" \
+              -DMWMRCDIR=\"$(MWMRCDIR)\" \
+              -I$(top_builddir)/lib \
+              -I$(srcdir)/../../lib ${X_CFLAGS}
 
 SRCS1=	WmCDInfo.c	WmCDecor.c	WmCEvent.c\
 	WmCPlace.c	WmColormap.c	WmError.c\
@@ -71,13 +71,11 @@ WmXSMP.h
 
 mwm_SOURCES = $(SRCS1)
 
-if MessageCatalog
-
+if XM_MSGCAT
 CAT_FILES = Mwm.cat MwmMsgCatI.h
 
 $(CAT_FILES): Mwm.msg
 	$(mkinstalldirs) $(top_builddir)/localized/C/msg
 	$(top_builddir)/localized/util/mkcatdefs MwmMsgCatI.h $(srcdir)/Mwm.msg >$(top_builddir)/localized/C/msg/Mwm.msg
 	gencat Mwm.cat $(top_builddir)/localized/C/msg/Mwm.msg
-
 endif

@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,13 +37,13 @@ extern "C" {
 /********    Private Function Declarations for ResConvert.c    ********/
 
 extern void _XmRegisterConverters( void ) ;
-extern char * _XmConvertCSToString( 
+extern char * _XmConvertCSToString(
                         XmString cs) ;
-extern Boolean _XmCvtXmStringToCT( 
+extern Boolean _XmCvtXmStringToCT(
                         XrmValue *from,
                         XrmValue *to) ;
-#ifdef UTF8_SUPPORTED
-extern Boolean _XmCvtXmStringToUTF8String( 
+#if XM_UTF8
+extern Boolean _XmCvtXmStringToUTF8String(
                         XrmValue *from,
                         XrmValue *to) ;
 #endif

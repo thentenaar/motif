@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,21 +19,21 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
-/* 
+ */
+/*
  * HISTORY
  */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: XmIm.c /main/28 1997/10/13 14:57:31 cshi $"
 #endif
 #endif
-  
+
 #include <stdio.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DrawP.h>
@@ -46,9 +46,9 @@ static char rcsid[] = "$TOG: XmIm.c /main/28 1997/10/13 14:57:31 cshi $"
 #include "XmI.h"
 #include "XmImI.h"
 #include <X11/Xlib.h>
-  
+
 #define FIX_1534
-  
+
 # include <stdarg.h>
 # define Va_start(a,b) va_start(a,b)
 
@@ -56,7 +56,7 @@ static char rcsid[] = "$TOG: XmIm.c /main/28 1997/10/13 14:57:31 cshi $"
 #define FIX_1129
 #define FIX_1196
 
-#ifdef NO_XICPROC
+#if !HAVE_XICPROC
 typedef Bool (*XICProc)( XIC, XPointer, XPointer);
 #endif
 
@@ -106,7 +106,7 @@ typedef struct _XmImShellRec {
   /* per-Shell fields. */
   Widget 	im_widget;	/* Dummy widget to make intrinsics behave. */
   Widget	current_widget;	/* Widget whose visual we're matching. */
-  
+
   /* per <Shell,XIM> fields. */
   XmImXICInfo	shell_xic;	/* For PER_SHELL sharing policy. */
   XmImXICInfo	iclist;		/* All known XICs for this <XIM,Shell>. */
@@ -115,7 +115,7 @@ typedef struct _XmImShellRec {
 typedef struct {
   /* per-Display fields. */
   XContext	current_xics;	/* Map widget -> current XmImXICInfo. */
-  
+
   /* per-XIM fields. */
   XIM		xim;		/* The XIM. */
   XIMStyles	*styles;	/* XNQueryInputStyle result. */
@@ -187,7 +187,7 @@ static void ImCountVaList(va_list var,
 			  int *total_count);
 static ArgList ImCreateArgList(va_list var,
 			       int total_count);
-     
+
 static XmImXICInfo create_xic_info(Widget	   shell,
 				   XmImDisplayInfo xim_info,
 				   XmImShellInfo   im_info,
@@ -208,22 +208,22 @@ static void set_values(Widget w,
 #else
                        XmInputPolicy policy);
 #endif /*NeedWidePrototypes*/
-     
+
 static XmImXICInfo get_current_xic(XmImDisplayInfo xim_info,
 				   Widget 	   widget);
-static void set_current_xic(XmImXICInfo     xic_info, 
+static void set_current_xic(XmImXICInfo     xic_info,
 			    XmImDisplayInfo xim_info,
 			    Widget 	    widget);
 static void unset_current_xic(XmImXICInfo     xic_info,
 			      XmImShellInfo   im_info,
 			      XmImDisplayInfo xim_info,
 			      Widget 	      widget);
-     
+
 static Cardinal add_ref(XmImRefInfo refs,
 			Widget      widget);
 static Cardinal remove_ref(XmImRefInfo refs,
 			   Widget      widget);
-     
+
 static XVaNestedList VaCopy(VaArgList   list);
 static void VaSetArg(VaArgList   list,
 		     char       *name,
@@ -256,21 +256,21 @@ static XICProc get_real_callback(Widget w,
 static void move_preedit_string(XmImXICInfo icp,
 			  Widget wfrom,
 			  Widget wto);
-     
+
      /********    End Static Function Declarations    ********/
-     
-     
+
+
 typedef int (*XmImResLProc)(String, XPointer,
 			   VaArgList, VaArgList, VaArgList);
-     
-     
+
+
 typedef struct {
   String xmstring;
   String xstring;
   XrmName xrmname;
   XmImResLProc proc;
 } XmImResListRec;
-     
+
 static XmImResListRec XmImResList[] = {
   {XmNbackground,       XNBackground,       NULLQUARK, add_sp},
   {XmNforeground,       XNForeground,       NULLQUARK, add_sp},
@@ -304,7 +304,7 @@ static XmImResListRec XmImResList[] = {
 #define MSG1	_XmMMsgXmIm_0000
 
 /*ARGSUSED*/
-void 
+void
 XmImRegister(Widget w,
 	     unsigned int reserved) /* unused */
 {
@@ -314,13 +314,13 @@ XmImRegister(Widget w,
   XmInputPolicy input_policy = XmINHERIT_POLICY;
 
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
   /* Find the enclosing shell. */
   p = XtParent(w);
   while (!XtIsShell(p))
     p = XtParent(p);
-  
+
   /* Lookup or create per-shell IM info and an XIM. */
   if (((xim_info = get_xim_info(p)) == NULL) ||
       (xim_info->xim == NULL)) {
@@ -331,13 +331,13 @@ XmImRegister(Widget w,
     _XmAppUnlock(app);
     return;
   }
-  
+
   /* Check that this widget doesn't already have a current XIC. */
   if (get_current_xic(xim_info, w) != NULL) {
     _XmAppUnlock(app);
     return;
   }
-  
+
   /* See if this widget will be sharing an existing XIC. */
   XtVaGetValues(p, XmNinputPolicy, &input_policy, NULL);
   switch (input_policy)
@@ -347,12 +347,12 @@ XmImRegister(Widget w,
 	(void) create_xic_info(p, xim_info, im_info, input_policy);
       set_current_xic(im_info->shell_xic, xim_info, w);
       break;
-      
+
     case XmPER_WIDGET:
       set_current_xic(create_xic_info(p, xim_info, im_info, input_policy),
 		      xim_info, w);
       break;
-      
+
     case XmINHERIT_POLICY:
       break;
 
@@ -362,18 +362,18 @@ XmImRegister(Widget w,
   _XmAppUnlock(app);
 }
 
-void 
+void
 XmImUnregister(Widget w)
 {
   register XmImDisplayInfo xim_info;
   register XmImShellInfo im_info;
   register XmImXICInfo xic_info;
   XtAppContext app;
-  
+
   /* Punt if insufficient information was provided. */
   if (w == NULL)
     return;
-  
+
   app = XtWidgetToApplicationContext(w);
   _XmAppLock(app);
   /* Locate this record. */
@@ -386,7 +386,7 @@ XmImUnregister(Widget w)
     _XmAppUnlock(app);
     return;
   }
-  
+
   /* Unregister this record. */
   unset_current_xic(xic_info, im_info, xim_info, w);
 
@@ -398,7 +398,7 @@ XmImUnregister(Widget w)
   _XmAppUnlock(app);
 }
 
-void 
+void
 XmImSetFocusValues(Widget w,
 		   ArgList args,
 		   Cardinal num_args)
@@ -420,17 +420,17 @@ XmImSetFocusValues(Widget w,
   p = w;
   while (!XtIsShell(p))
     p = XtParent(p);
-  
+
   if ((xic_info = get_current_xic(get_xim_info(p), w)) == NULL) {
     _XmAppUnlock(app);
     return;
   }
-  
+
   wind = xic_info->focus_window;
   xic_info->focus_window = XtWindow(w);
 
   set_values(w, args, num_args, XmINHERIT_POLICY);
-  
+
   if (wind != XtWindow(w)) {
     /* Safe, since we have a window - so it's no gadget */
     XtVaGetValues(w, XmNbackground, &bg, NULL);
@@ -438,15 +438,15 @@ XmImSetFocusValues(Widget w,
     XtVaGetValues(w, XmNfontList, &fl, NULL);
     if (fl) fs = extract_fontset(fl);
     if (fs)
-      list = XVaCreateNestedList(0, 
+      list = XVaCreateNestedList(0,
 				 XNBackground, bg,
-				 XNForeground, fg, 
+				 XNForeground, fg,
 				 XNFontSet,    fs, NULL);
     else
-      list = XVaCreateNestedList(0, 
+      list = XVaCreateNestedList(0,
 				 XNBackground, bg,
 				 XNForeground, fg, NULL);
-    XSetICValues(xic_info->xic,	
+    XSetICValues(xic_info->xic,
 		 XNFocusWindow, XtWindow(w),
 		 XNStatusAttributes,  list,
 		 XNPreeditAttributes, list,
@@ -455,19 +455,19 @@ XmImSetFocusValues(Widget w,
 
     if (xic_info->input_style & XIMPreeditCallbacks) {
       XtVaGetValues(p, XmNinputPolicy, &input_policy, NULL);
-      if (input_policy == XmPER_SHELL && wind) 
-	move_preedit_string(xic_info, 
+      if (input_policy == XmPER_SHELL && wind)
+	move_preedit_string(xic_info,
 			XtWindowToWidget(XtDisplay(w), wind), w);
     }
   }
   XSetICFocus(xic_info->xic);
   xic_info->has_focus = True;
-  
+
   extData = _XmGetWidgetExtData((Widget)p, XmSHELL_EXTENSION);
   if (extData)
     {
       ve = (XmVendorShellExtObject) extData->widget;
-  
+
       if (ve->vendor.im_height)
         {
           im_info = (XmImShellInfo)ve->vendor.im_info;
@@ -483,7 +483,7 @@ XmImSetFocusValues(Widget w,
   _XmAppUnlock(app);
 }
 
-void 
+void
 XmImSetValues(Widget w,
 	      ArgList args,
 	      Cardinal num_args )
@@ -494,7 +494,7 @@ XmImSetValues(Widget w,
   _XmAppUnlock(app);
 }
 
-void 
+void
 XmImUnsetFocus(Widget w)
 {
   register XmImXICInfo xic_info;
@@ -505,14 +505,14 @@ XmImUnsetFocus(Widget w)
     _XmAppUnlock(app);
     return;
   }
-  
+
   if (xic_info->xic)
     XUnsetICFocus(xic_info->xic);
   xic_info->has_focus = False;
   _XmAppUnlock(app);
 }
 
-XIM 
+XIM
 XmImGetXIM(Widget w)
 {
   XmImDisplayInfo xim_info;
@@ -542,14 +542,14 @@ XmImCloseXIM(Widget w)
   Arg args[1];
   XtWidgetGeometry my_request;
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
   /* Allow (xim_info->xim == NULL) so we can reset the "failed" flag. */
   if ((xim_info = get_xim_info(w)) == NULL) {
     _XmAppUnlock(app);
     return;
   }
-  
+
   /* Remove all references to all XICs */
   while (xim_info->shell_refs.refs != NULL)
     {
@@ -558,7 +558,7 @@ XmImCloseXIM(Widget w)
       assert((xim_info->shell_refs.refs == NULL) ||
 	     (xim_info->shell_refs.refs[0] != shell));
     }
-  
+
   shell = w;
   while (!XtIsShell(shell))
     shell = XtParent(shell);
@@ -567,7 +567,7 @@ XmImCloseXIM(Widget w)
   if (extData) {
     ve = (XmVendorShellExtObject) extData->widget;
     height = ve->vendor.im_height;
-    
+
     if (height != 0){
       XtSetArg(args[0], XtNbaseHeight, &base_height);
       XtGetValues(shell, args, 1);
@@ -593,17 +593,17 @@ XmImCloseXIM(Widget w)
       XCloseIM(xim_info->xim);
       xim_info->xim = NULL;
     }
-  
+
   XFree(xim_info->styles);
   xim_info->styles = NULL;
-  
+
   xmDisplay = (XmDisplay) XmGetXmDisplay(XtDisplay(w));
   xmDisplay->display.xmim_info = NULL;
   XtFree((char *) xim_info);
   _XmAppUnlock(app);
 }
 
-int 
+int
 XmImMbLookupString(Widget w,
 		   XKeyPressedEvent *event,
 		   char *buf,
@@ -614,9 +614,9 @@ XmImMbLookupString(Widget w,
   register XmImXICInfo icp;
   int ret_val;
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
-  if ((icp = get_current_xic(get_xim_info(w), w)) == NULL || 
+  if ((icp = get_current_xic(get_xim_info(w), w)) == NULL ||
       icp->xic == NULL)
     {
       if (status)
@@ -625,7 +625,7 @@ XmImMbLookupString(Widget w,
       _XmAppUnlock(app);
       return ret_val;
     }
-  
+
   ret_val = XmbLookupString( icp->xic, event, buf, nbytes,
 				keysym, status );
   _XmAppUnlock(app);
@@ -647,7 +647,7 @@ XmImGetXIC(Widget 	 w,
   XmImXICInfo xic_info;
   Widget shell;
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
   xim_info = get_xim_info(w);
   im_info = get_im_info(w, True);
@@ -657,16 +657,16 @@ XmImGetXIC(Widget 	 w,
     _XmAppUnlock(app);
     return NULL;
   }
-  
+
   /* Find the enclosing shell. */
   shell = w;
   while (!XtIsShell(shell))
     shell = XtParent(shell);
-  
+
   /* Resolve the true input policy. */
   if (input_policy == XmINHERIT_POLICY)
     XtVaGetValues(shell, XmNinputPolicy, &input_policy, NULL);
-  
+
   /* If there is already a current XIC, we may want to unregister it. */
   switch (input_policy)
     {
@@ -677,7 +677,7 @@ XmImGetXIC(Widget 	 w,
 	  xic_info = NULL;
 	}
       break;
-      
+
     case XmPER_WIDGET:
       if (xic_info != NULL)
 	{
@@ -685,21 +685,21 @@ XmImGetXIC(Widget 	 w,
 	  xic_info = NULL;
 	}
       break;
-      
+
     default:
       assert(False);
     }
-  
+
   /* Register an XIC with the desired input policy. */
   if (xic_info == NULL)
     {
       xic_info = create_xic_info(shell, xim_info, im_info, input_policy);
       set_current_xic(xic_info, xim_info, w);
     }
-  
+
   /* Set the values, which creates an XIC. */
   set_values(w, args, num_args, input_policy);
-  
+
   /* Return the current XIC. */
   if (xic_info != NULL) {
     _XmAppUnlock(app);
@@ -710,7 +710,7 @@ XmImGetXIC(Widget 	 w,
 }
 
 XIC
-XmImSetXIC(Widget widget, 
+XmImSetXIC(Widget widget,
 	   XIC    xic)
 {
   XmImDisplayInfo xim_info;
@@ -727,7 +727,7 @@ XmImSetXIC(Widget widget,
     _XmAppUnlock(app);
     return NULL;
   }
-  
+
   /* This may be a simple query. */
   if (xic == NULL)
     {
@@ -736,7 +736,7 @@ XmImSetXIC(Widget widget,
 	_XmAppUnlock(app);
 	return NULL;
       }
-      
+
       /* Force creation of the XIC. */
       if (xic_info->xic == NULL)
 	set_values(widget, NULL, 0, XmINHERIT_POLICY);
@@ -744,13 +744,13 @@ XmImSetXIC(Widget widget,
       _XmAppUnlock(app);
       return xic_info->xic;
     }
-  
+
   /* We don't support multiple IMs. */
   if (XIMOfIC(xic) != xim_info->xim) {
     _XmAppUnlock(app);
     return NULL;
   }
-  
+
   /* Unregister the current XIC. */
   if (xic_info != NULL)
     {
@@ -759,22 +759,22 @@ XmImSetXIC(Widget widget,
 	_XmAppUnlock(app);
 	return xic;
       }
-      
+
       unset_current_xic(xic_info, im_info, xim_info, widget);
       xic_info = NULL;
     }
-  
+
   /* Find the enclosing shell. */
   shell = widget;
   while (!XtIsShell(shell))
     shell = XtParent(shell);
-  
+
   /* Get or create xic_info for this xic. */
   xic_info = recreate_xic_info(xic, shell, xim_info, im_info);
-  
+
   /* Make this the current XIC for this widget. */
   set_current_xic(xic_info, xim_info, widget);
-  
+
   _XmAppUnlock(app);
   return xic;
 }
@@ -788,11 +788,11 @@ XmImFreeXIC(Widget w,
   register XmImShellInfo im_info;
   register XmImXICInfo xic_info;
   XtAppContext app;
-  
+
   /* Punt if insufficient information was provided. */
   if (w == NULL)
     return;
-  
+
   app = XtWidgetToApplicationContext(w);
   _XmAppLock(app);
   /* Locate this record. */
@@ -809,11 +809,11 @@ XmImFreeXIC(Widget w,
     _XmAppUnlock(app);
     return;
   }
-  
+
   /* Remove all references. */
   index = xic_info->widget_refs.num_refs;
   while (--index >= 0)
-    unset_current_xic(xic_info, im_info, xim_info, 
+    unset_current_xic(xic_info, im_info, xim_info,
 		      xic_info->widget_refs.refs[index]);
   _XmAppUnlock(app);
 }
@@ -831,16 +831,16 @@ _XmImFreeShellData(Widget     widget,
   XmImDisplayInfo xim_info;
   XmImXICInfo	  xic_info;
   Widget	  reference;
-  
+
   if ((data == NULL) ||
       (im_info = (XmImShellInfo) *data) == NULL)
     return;
-  
+
   /* Ignore (xim_info->xim == NULL), since it is immaterial here. */
   xim_info = get_xim_info(widget);
   if (xim_info == NULL)
     return;
-  
+
   /* Remove any dangling references. */
   while (im_info->iclist != NULL)
     {
@@ -851,7 +851,7 @@ _XmImFreeShellData(Widget     widget,
 	     (reference != xic_info->widget_refs.refs[0]));
     }
   assert(im_info->shell_xic == NULL);
-  
+
   /* Delete the dummy widget. */
 #ifdef FIX_1534
   if (im_info->im_widget != NULL &&
@@ -863,28 +863,28 @@ _XmImFreeShellData(Widget     widget,
       XtDestroyWidget(im_info->im_widget);
       im_info->im_widget = NULL;
     }
-  
+
   /* Remove this shell as a reference to the XIM. */
   (void) remove_ref(&xim_info->shell_refs, widget);
-  
+
   /* Delete the data. */
   XtFree((char *) im_info);
   *data = NULL;
 }
 
-void 
+void
 _XmImChangeManaged(
 		   Widget vw )
 {
   XmVendorShellExtObject ve;
   XmWidgetExtData extData;
   register int height, old_height;
-  
+
   extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION);
   if (extData) {
     ve = (XmVendorShellExtObject) extData->widget;
 
-    old_height = ve->vendor.im_height;  
+    old_height = ve->vendor.im_height;
 
     height = ImGetGeo(vw, NULL);
     if (!ve->vendor.im_vs_height_set) {
@@ -912,27 +912,27 @@ _XmImRealize(
   XmWidgetExtData extData;
   XmImShellInfo im_info;
   XmImDisplayInfo xim_info;
-  
+
   xim_info = get_xim_info(vw);
   im_info = get_im_info(vw, False);
-  
-  if ((xim_info == NULL) || 
+
+  if ((xim_info == NULL) ||
       (im_info == NULL) ||
       (im_info->iclist == NULL))
     return;
-  
+
   /* We need to synchronize here to make sure the server has created
    * the client window before the input server attempts to reparent
    * any windows to it
    */
   XSync(XtDisplay(vw), False);
-  
+
   for (icp = im_info->iclist; icp != NULL; icp = icp->next)
     {
       if (!icp->xic) continue;
       XSetICValues(icp->xic, XNClientWindow, XtWindow(vw), NULL);
     }
-  
+
   extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION);
   if (extData)
     ve = (XmVendorShellExtObject) extData->widget;
@@ -947,8 +947,8 @@ _XmImRealize(
     if (!resize) shell->shell.allow_shell_resize = False;
   } else
     ImSetGeo(vw, NULL);
-  
-  /* For some reason we need to wait till now before we set the 
+
+  /* For some reason we need to wait till now before we set the
    * initial background pixmap.
    */
   if (ve && ve->vendor.im_height && im_info->current_widget)
@@ -972,15 +972,15 @@ _XmImRedisplay(
 {
   XmVendorShellExtObject ve;
   XmWidgetExtData extData;
-  
+
   if ((extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION)) == NULL)
     return;
-  
+
   ve = (XmVendorShellExtObject) extData->widget;
-  
+
   if (ve->vendor.im_height == 0)
     return;
-  
+
   draw_separator(vw);
 }
 
@@ -998,7 +998,7 @@ recreate_xic_info(XIC		  xic,
   Cardinal index;
   XmImXICInfo xic_info;
   assert(xic != NULL);
-  
+
   /* Search for an existing record in this shell's im_info. */
   for (xic_info = im_info->iclist;
        xic_info != NULL;
@@ -1007,15 +1007,15 @@ recreate_xic_info(XIC		  xic,
       if (xic_info->xic == xic)
 	return xic_info;
     }
-  
+
   /* Search for an existing record in another shell's im_info? */
   for (index = 0; index < xim_info->shell_refs.num_refs; index++)
     if (shell != xim_info->shell_refs.refs[index])
       {
-	XmImShellInfo tmp_info = 
+	XmImShellInfo tmp_info =
 	  get_im_info(xim_info->shell_refs.refs[index], False);
 	assert(tmp_info != NULL);
-	
+
 	for (xic_info = tmp_info->iclist;
 	     xic_info != NULL;
 	     xic_info = xic_info->next)
@@ -1024,24 +1024,24 @@ recreate_xic_info(XIC		  xic,
 	      return xic_info;
 	  }
       }
-  
+
   /* This XIC must have been created by the application directly. */
   xic_info = XtNew(XmImXICRec);
   bzero((char*) xic_info, sizeof(XmImXICRec));
   (void) XGetICValues(xic, XNInputStyle, &xic_info->input_style, NULL);
   xic_info->next = im_info->iclist;
   im_info->iclist = xic_info;
-  
+
   if (XtIsRealized (shell))
     {
       /* If client_window hasn't been set already, set it now. */
       (void) XSetICValues(xic, XNClientWindow, XtWindow(shell), NULL);
-      
+
       /* Update cached geometry fields */
       ImGetGeo(shell, xic_info);
       ImSetGeo(shell, xic_info);
     }
-  
+
   return xic_info;
 }
 
@@ -1058,12 +1058,12 @@ create_xic_info(Widget		shell,
 {
   XIMStyle style = 0;
   char tmp[BUFSIZ];
-  char *cp = NULL; 
+  char *cp = NULL;
   char *tp = NULL;
   char *cpend = NULL;
   register XIMStyles *styles;
   XmImXICInfo xic_info;
-  
+
   /* Determine the input style to be used for this XIC. */
   styles = xim_info->styles;
   XtVaGetValues(shell, XmNpreeditType, &cp, NULL);
@@ -1095,7 +1095,7 @@ create_xic_info(Widget		shell,
           else if (XmeNamesAreEqual(cp, ONTHESPOT))
             style = check_style(styles, XIMPreeditCallbacks,
                                 XIMStatusArea|XIMStatusNothing|XIMStatusNone);
-         
+
           cp = tp+1;
         }
     }
@@ -1114,10 +1114,10 @@ create_xic_info(Widget		shell,
    */
   if ((im_info->im_widget == NULL) &&
       (style & (XIMStatusArea | XIMPreeditArea | XIMPreeditPosition)))
-    im_info->im_widget = 
+    im_info->im_widget =
       XtVaCreateWidget("xmim_wrapper", coreWidgetClass,
 		       shell, XmNwidth, 10, XmNheight, 10, NULL);
-  
+
   /* Create the XIC info record. */
   xic_info = XtNew(XmImXICRec);
   bzero((char*) xic_info, sizeof(XmImXICRec));
@@ -1125,10 +1125,10 @@ create_xic_info(Widget		shell,
   xic_info->anonymous = True;
   xic_info->preedit_buffer = XtNew(PreeditBufferRec);
   bzero((char *) xic_info->preedit_buffer, sizeof(PreeditBufferRec));
-  
+
   xic_info->next = im_info->iclist;
   im_info->iclist = xic_info;
-  
+
   /* Setup sharing for this XIC. */
   switch (input_policy)
     {
@@ -1137,17 +1137,17 @@ create_xic_info(Widget		shell,
       im_info->shell_xic = xic_info;
       im_info->shell_xic->source = &im_info->shell_xic;
       break;
-      
-    case XmPER_WIDGET: 
+
+    case XmPER_WIDGET:
       break;
 
     case XmINHERIT_POLICY:
       break;
- 
+
     default:
       assert(False);
     }
-  
+
   return xic_info;
 }
 
@@ -1159,7 +1159,7 @@ create_xic_info(Widget		shell,
       name == XrmStringToName(XmNpreeditCaretCallback))
 
 
-static void 
+static void
 set_values(Widget w,
 	   ArgList args,
 	   Cardinal num_args,
@@ -1184,29 +1184,29 @@ set_values(Widget w,
   char *ret;
   unsigned long mask = 0;
   Boolean unrecognized = False;
-  
+
   p = w;
   while (!XtIsShell(p))
     p = XtParent(p);
-  
+
   xim_info = get_xim_info(p);
   if ((icp = get_current_xic(xim_info, w)) == NULL)
     return;
-  
+
   im_info = get_im_info(p, False);
   assert(im_info != NULL);
-  
+
   if (!XtIsRealized(p)) {
     /* If vendor widget not realized, then the current info
      * is that for the last widget to set values.
      */
     im_info->current_widget = w;
   }
-  
-  if (icp->xic && 
+
+  if (icp->xic &&
       icp->focus_window && icp->focus_window != XtWindow(w))
     return;
-  
+
   bzero((char*) &status_vlist, sizeof(VaArgListRec));
   bzero((char*) &preedit_vlist, sizeof(VaArgListRec));
   bzero((char*) &xic_vlist, sizeof(VaArgListRec));
@@ -1239,7 +1239,7 @@ set_values(Widget w,
       unrecognized = True;
     }
   }
-  
+
   /* We do not create the IC until the initial data is ready to be passed */
   assert(xim_info != NULL);
   if (icp->xic == NULL) {
@@ -1251,7 +1251,7 @@ set_values(Widget w,
       VaSetArg(&xic_vlist, XNFocusWindow, (XPointer) icp->focus_window);
     }
     VaSetArg(&xic_vlist, XNInputStyle, (XPointer) icp->input_style);
-    
+
     va_plist = VaCopy(&preedit_vlist);
     if (va_plist)
       VaSetArg(&xic_vlist, XNPreeditAttributes, (XPointer)va_plist);
@@ -1259,7 +1259,7 @@ set_values(Widget w,
     if (va_slist)
       VaSetArg(&xic_vlist, XNStatusAttributes, (XPointer)va_slist);
     va_vlist = VaCopy(&xic_vlist);
-    
+
     if (va_vlist)
     {
       icp->xic = XCreateIC(xim_info->xim, XNVaNestedList, va_vlist, NULL);
@@ -1274,14 +1274,14 @@ set_values(Widget w,
     }
     else
       icp->xic = XCreateIC(xim_info->xim, NULL);
-    
+
     if (va_vlist) XFree(va_vlist);
     if (va_plist) XFree(va_plist);
     if (va_slist) XFree(va_slist);
     if (preedit_vlist.args) XtFree((char *)preedit_vlist.args);
     if (status_vlist.args) XtFree((char *)status_vlist.args);
     if (xic_vlist.args) XtFree((char *)xic_vlist.args);
-    
+
     if (icp->xic == NULL) {
       unset_current_xic(icp, im_info, xim_info, w);
       return;
@@ -1295,8 +1295,8 @@ set_values(Widget w,
       im_info->current_widget = w;
 #endif
       if (XmIsDialogShell(p)) {
-	for (i = 0; 
-	     i < ((CompositeWidget)p)->composite.num_children; 
+	for (i = 0;
+	     i < ((CompositeWidget)p)->composite.num_children;
 	     i++)
 	  if (XtIsManaged(((CompositeWidget)p)->composite.children[i])) {
 	    ImGeoReq(p);
@@ -1315,7 +1315,7 @@ set_values(Widget w,
 	assert(im_info->shell_xic == NULL);
 	im_info->shell_xic = icp;
 	break;
-	
+
       case XmPER_WIDGET:
 	break;
       default:
@@ -1330,60 +1330,60 @@ set_values(Widget w,
     if (va_slist)
       VaSetArg(&xic_vlist, XNStatusAttributes, (XPointer)va_slist);
     va_vlist = VaCopy(&xic_vlist);
-    
+
     if (va_vlist)
       ret = XSetICValues(icp->xic, XNVaNestedList, va_vlist, NULL);
-    else 
+    else
       ret = NULL;
-    
+
     if (va_vlist) XFree(va_vlist);
     if (va_plist) XFree(va_plist);
     if (va_slist) XFree(va_slist);
     if (preedit_vlist.args) XtFree((char *)preedit_vlist.args);
     if (status_vlist.args) XtFree((char *)status_vlist.args);
     if (xic_vlist.args) XtFree((char *)xic_vlist.args);
-    
+
     /* ??? Both a write-once and an unrecognized arg might be present. */
     if ((ret != NULL) && unrecognized)	{
       unsigned long status_bg, status_fg;
       unsigned long preedit_bg, preedit_fg;
-      
+
       /* ??? This code assumes that the XIM hasn't changed. */
       assert(XIMOfIC(icp->xic) == xim_info->xim);
-      
+
       /* We do this in case an input method does not support
        * change of some value, but does allow it to be set on
-       * create.  If however the value is not one of the 
+       * create.  If however the value is not one of the
        * standard values, this im may not support it so we
        * should ignore it.
        */
-      
-      va_slist = XVaCreateNestedList(0, 
+
+      va_slist = XVaCreateNestedList(0,
 				     XNBackground, &status_bg,
-				     XNForeground, &status_fg, 
+				     XNForeground, &status_fg,
 				     NULL);
-      va_plist = XVaCreateNestedList(0, 
+      va_plist = XVaCreateNestedList(0,
 				     XNBackground, &preedit_bg,
-				     XNForeground, &preedit_fg, 
+				     XNForeground, &preedit_fg,
 				     NULL);
-      XGetICValues(icp->xic, 
+      XGetICValues(icp->xic,
 		   XNStatusAttributes,  va_slist,
 		   XNPreeditAttributes, va_plist,
 		   NULL);
       XFree(va_slist);
       XFree(va_plist);
-      
+
       if (icp->anonymous)
 	XDestroyIC(icp->xic);
       icp->anonymous = TRUE;
       icp->xic = NULL;
-      
+
       VaSetArg(&status_vlist, XNBackground, (XPointer) status_bg);
       VaSetArg(&status_vlist, XNForeground, (XPointer) status_fg);
-      
+
       VaSetArg(&preedit_vlist, XNBackground, (XPointer) preedit_bg);
       VaSetArg(&preedit_vlist, XNForeground, (XPointer) preedit_fg);
-      
+
       if (XtIsRealized(p)) {
 	XSync(XtDisplay(p), False);
 	VaSetArg(&xic_vlist, XNClientWindow, (XPointer) XtWindow(p));
@@ -1392,7 +1392,7 @@ set_values(Widget w,
 	VaSetArg(&xic_vlist, XNFocusWindow, (XPointer)icp->focus_window);
       }
       VaSetArg(&xic_vlist, XNInputStyle, (XPointer) icp->input_style);
-      
+
       va_plist = VaCopy(&preedit_vlist);
       if (va_plist)
 	VaSetArg(&xic_vlist, XNPreeditAttributes, (XPointer)va_plist);
@@ -1400,7 +1400,7 @@ set_values(Widget w,
       if (va_slist)
 	VaSetArg(&xic_vlist, XNStatusAttributes, (XPointer)va_slist);
       va_vlist = VaCopy(&xic_vlist);
-      
+
       if (va_vlist)
       {
 	icp->xic = XCreateIC(xim_info->xim, XNVaNestedList, va_vlist, NULL);
@@ -1415,14 +1415,14 @@ set_values(Widget w,
       }
       else
 	icp->xic = XCreateIC(xim_info->xim, NULL);
-      
+
       if (va_vlist) XFree(va_vlist);
       if (va_plist) XFree(va_plist);
       if (va_slist) XFree(va_slist);
       if (preedit_vlist.args) XtFree((char *)preedit_vlist.args);
       if (status_vlist.args) XtFree((char *)status_vlist.args);
       if (xic_vlist.args) XtFree((char *)xic_vlist.args);
-      
+
       if (icp->xic == NULL) {
 	unset_current_xic(icp, im_info, xim_info, w);
 	return;
@@ -1438,7 +1438,7 @@ set_values(Widget w,
 	XSetICFocus(icp->xic);
     }
   }
-  
+
   /* Since we do not know whether a set values may have been done
    * on top shadow or bottom shadow (used for the separator), we
    * will redraw the separator in order to keep the visuals in sync
@@ -1457,7 +1457,7 @@ ImFreePreeditBuffer(PreeditBuffer pb)
   if (pb->text) XtFree((char *)pb->text);
   if (pb->feedback) XtFree((char *)pb->feedback);
   XtFree((char *)pb);
-} 
+}
 
 
 static int
@@ -1493,7 +1493,7 @@ ImPreeditDoneCallback(XIC xic,
   if (!client_data){
     assert(False);
   }
- 
+
   if ((im_info = get_im_info(w, False)) == NULL)
     return;
   if ((icp = im_info->shell_xic) == NULL)
@@ -1503,11 +1503,11 @@ ImPreeditDoneCallback(XIC xic,
   if (proc)
     (*proc)(xic, (XPointer)real, call_data);
 
-  if (icp->preedit_buffer->text) 
+  if (icp->preedit_buffer->text)
     XtFree((char *)icp->preedit_buffer->text);
   if (icp->preedit_buffer->feedback)
     XtFree((char *)icp->preedit_buffer->feedback);
-  bzero((char *)icp->preedit_buffer, sizeof(PreeditBufferRec)); 
+  bzero((char *)icp->preedit_buffer, sizeof(PreeditBufferRec));
 }
 
 static void
@@ -1549,7 +1549,7 @@ ImPreeditDrawCallback(XIC xic,
     if (data->chg_length > 0) { /* replace */
 	if ((int)text->length > (int)data->chg_length) {
 	  pb->text = (wchar_t *)
-	    XtRealloc((char *)pb->text, (pb->length - data->chg_length + 
+	    XtRealloc((char *)pb->text, (pb->length - data->chg_length +
 			text->length + 1) * sizeof(wchar_t));
 	  pb->feedback = (XIMFeedback *)
 	    XtRealloc((char *)pb->feedback, (pb->length - data->chg_length +
@@ -1558,15 +1558,15 @@ ImPreeditDrawCallback(XIC xic,
 	from = data->chg_first + data->chg_length;
 	to = data->chg_first + text->length;
  	ml = pb->length - from;
-    } 
+    }
     else if (data->chg_length == 0) { /* insert */
       /* do we really need to change anything? */
       if (data->text->length) {
         pb->text = (wchar_t *)
-	  XtRealloc((char *)pb->text, (pb->length + text->length +1) 
-		    * sizeof(wchar_t)); 
+	  XtRealloc((char *)pb->text, (pb->length + text->length +1)
+		    * sizeof(wchar_t));
 	pb->feedback = (XIMFeedback *)
-	  XtRealloc((char *)pb->feedback, (pb->length + text->length +1) 
+	  XtRealloc((char *)pb->feedback, (pb->length + text->length +1)
 		    * sizeof(XIMFeedback));
 	from = data->chg_first;
 	to = data->chg_first + text->length;
@@ -1576,7 +1576,7 @@ ImPreeditDrawCallback(XIC xic,
 
     /*
     ** if preedit buffer changed, then we munge it,
-    ** otherwise we just leave it alone 
+    ** otherwise we just leave it alone
     */
     if (from || to || ml) {
 
@@ -1616,10 +1616,10 @@ ImPreeditDrawCallback(XIC xic,
   }
   else { /* text field is NULL, delete */
     from = data->chg_first + data->chg_length;
-    to = data->chg_first; 
-    ml = pb->length - from;   
+    to = data->chg_first;
+    ml = pb->length - from;
     memmove((char *)pb->text + to * sizeof(wchar_t),
-	    (char *)pb->text + from * sizeof(wchar_t), 
+	    (char *)pb->text + from * sizeof(wchar_t),
 	    ml * sizeof(wchar_t));
     memmove((char *)pb->feedback + to * sizeof(XIMFeedback),
 	    (char *)pb->feedback + from * sizeof(XIMFeedback),
@@ -1647,7 +1647,7 @@ ImPreeditCaretCallback(XIC xic,
   XmImShellInfo im_info;
   XmImXICInfo icp;
   PreeditBuffer pb;
-  XIMPreeditCaretCallbackStruct *data = 
+  XIMPreeditCaretCallbackStruct *data =
 		(XIMPreeditCaretCallbackStruct *) call_data;
   Widget real = NULL;
 
@@ -1675,7 +1675,7 @@ ImPreeditCaretCallback(XIC xic,
 	pb->caret = data->position;
 	break;
     default:
-	break;    
+	break;
   }
 
   proc = get_real_callback((Widget)client_data, PREEDIT_CARET, &real);
@@ -1698,7 +1698,7 @@ get_real_callback(Widget w,
   if ((icp = im_info->shell_xic) == NULL)
         return (XICProc)NULL;
 
-  if (*real_widget == NULL) 
+  if (*real_widget == NULL)
     *real_widget = XtWindowToWidget(XtDisplay(w), icp->focus_window);
 
   refs = icp->widget_refs;
@@ -1877,12 +1877,12 @@ move_preedit_string(XmImXICInfo icp,
   proc = get_real_callback(wto, PREEDIT_DRAW, &wto);
   if (proc)
     (*proc)(icp->xic, (XPointer)wto, (XPointer)&draw_data);
-}   
+}
 
 
 
 /*ARGSUSED*/
-static int 
+static int
 add_sp(String name,
        XPointer value,
        VaArgList slp,
@@ -1891,12 +1891,12 @@ add_sp(String name,
 {
   VaSetArg(slp, name, value);
   VaSetArg(plp, name, value);
-  
+
   return BG_CHG;
 }
 
 /*ARGSUSED*/
-static int 
+static int
 add_p(String name,
       XPointer value,
       VaArgList slp,		/* unused */
@@ -1904,13 +1904,13 @@ add_p(String name,
       VaArgList vlp )		/* unused */
 {
   VaSetArg(plp, name, value);
-  
+
   return 0;
 }
 
 
 /*ARGSUSED*/
-static int 
+static int
 add_fs(String name,
        XPointer value,
        VaArgList slp,
@@ -1918,17 +1918,17 @@ add_fs(String name,
        VaArgList vlp )		/* unused */
 {
   XFontSet fs;
-  
+
   if ( (fs = extract_fontset((XmFontList)value)) == NULL)
     return 0;
-  
+
   VaSetArg(slp, name, (XPointer) fs);
   VaSetArg(plp, name, (XPointer) fs);
-  
+
   return GEO_CHG;
 }
 
-static int 
+static int
 add_bgpxmp(String name,
 	   XPointer value,
 	   VaArgList slp,
@@ -1937,17 +1937,17 @@ add_bgpxmp(String name,
 {
   if ( (Pixmap)value == XtUnspecifiedPixmap )
     return 0;
-  
+
   return add_sp( name, value, slp, plp, vlp );
 }
 
-static XIMStyle 
+static XIMStyle
 check_style(XIMStyles *styles,
 	    XIMStyle preedit_style,
 	    XIMStyle status_style )
 {
   register int i;
-  
+
   /* Is this preedit & status style combination supported? */
   for (i=0; i < (int) styles->count_styles; i++)
     {
@@ -1962,7 +1962,7 @@ check_style(XIMStyles *styles,
 /* if this_icp is non-null, operations will only be performed on the
    corresponding IC. (Basically disables looping) */
 
-static int 
+static int
 ImGetGeo(Widget  vw,
 	 XmImXICInfo this_icp )
 {
@@ -1974,15 +1974,15 @@ ImGetGeo(Widget  vw,
   XRectangle *rp;
   XmImShellInfo im_info;
   XVaNestedList set_list, get_list;
-  
+
   extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION);
   if (extData)
     ve = (XmVendorShellExtObject) extData->widget;
   else
     ve = NULL;
-  
+
   im_info = get_im_info(vw, False);
-  
+
   if (ve && ((im_info == NULL) || (im_info->iclist == NULL))) {
     ve->vendor.im_height = 0;
     return 0;
@@ -1990,21 +1990,21 @@ ImGetGeo(Widget  vw,
 
   set_list = XVaCreateNestedList(0, XNAreaNeeded, (XPointer) &rect, NULL);
   get_list = XVaCreateNestedList(0, XNAreaNeeded, (XPointer) &rp, NULL);
-  
-  for (icp = this_icp ? this_icp : im_info->iclist; 
-       icp != NULL; 
+
+  for (icp = this_icp ? this_icp : im_info->iclist;
+       icp != NULL;
        icp = icp->next) {
     if (icp->xic) {
       if (icp->input_style & XIMStatusArea) {
 	rect.width = vw->core.width;
 	rect.height = 0;
-	
+
 	XSetICValues(icp->xic, XNStatusAttributes, set_list, NULL);
 	XGetICValues(icp->xic, XNStatusAttributes, get_list, NULL);
-	
+
 	if ((int) rp->height > height)
 	  height = rp->height;
-	
+
 	icp->status_width = MIN(rp->width, vw->core.width);
 	icp->sp_height = rp->height;
 	  XFree(rp);
@@ -2012,13 +2012,13 @@ ImGetGeo(Widget  vw,
       if (icp->input_style & XIMPreeditArea) {
 	rect.width = vw->core.width;
 	rect.height = 0;
-	
+
 	XSetICValues(icp->xic, XNPreeditAttributes, set_list, NULL);
 	XGetICValues(icp->xic, XNPreeditAttributes, get_list, NULL);
-	
+
 	if ((int) rp->height > height)
 	  height = rp->height;
-	
+
 	icp->preedit_width = MIN((int) rp->width,
 				 (int) (vw->core.width - icp->status_width));
 	if (icp->sp_height < (int) rp->height)
@@ -2026,17 +2026,17 @@ ImGetGeo(Widget  vw,
 	XFree(rp);
       }
     }
-    
+
     if (this_icp)
       break;
   }
-  
+
   XFree(set_list);
   XFree(get_list);
-  
+
   if (height)
     height += SEPARATOR_HEIGHT;
-  
+
   if (ve)
     ve->vendor.im_height = height;
   return height;
@@ -2046,7 +2046,7 @@ ImGetGeo(Widget  vw,
 /* if this_icp is non-null, operations will only be performed on the
    corresponding IC. (Basically disables looping) */
 
-static void 
+static void
 ImSetGeo(Widget  vw,
 	 XmImXICInfo this_icp )
 {
@@ -2058,23 +2058,23 @@ ImSetGeo(Widget  vw,
   XmImShellInfo im_info;
   XVaNestedList va_slist, va_plist;
   unsigned long use_slist, use_plist;
-  
+
   im_info = get_im_info(vw, False);
   if ((im_info == NULL) || (im_info->iclist == NULL))
     return;
-  
+
   extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION);
   if (!extData) return;
   ve = (XmVendorShellExtObject) extData->widget;
-  
+
   if (ve->vendor.im_height == 0)
     return;
-  
+
   va_slist = XVaCreateNestedList(0, XNArea, &rect_status, NULL);
   va_plist = XVaCreateNestedList(0, XNArea, &rect_preedit, NULL);
-  
+
   for (icp = this_icp ? this_icp : im_info->iclist;
-       icp != NULL; 
+       icp != NULL;
        icp = icp->next)
     {
       if ((use_slist = (icp->input_style & XIMStatusArea)) != 0)
@@ -2084,7 +2084,7 @@ ImSetGeo(Widget  vw,
 	  rect_status.width = icp->status_width;
 	  rect_status.height = icp->sp_height;
 	}
-      
+
       if ((use_plist = (icp->input_style & XIMPreeditArea)) != 0)
 	{
 	  rect_preedit.x = icp->status_width;
@@ -2113,9 +2113,9 @@ ImSetGeo(Widget  vw,
             rect_preedit.height = MIN(icp->sp_height,
                   XtHeight(im_info->current_widget) - 2*margin);
 	}
-      
+
       if (use_slist && use_plist)
-	XSetICValues(icp->xic, 
+	XSetICValues(icp->xic,
 		     XNStatusAttributes,  va_slist,
 		     XNPreeditAttributes, va_plist,
 		     NULL);
@@ -2124,19 +2124,19 @@ ImSetGeo(Widget  vw,
 		     XNStatusAttributes,  va_slist,
 		     NULL);
       else if (use_plist)
-	XSetICValues(icp->xic, 
+	XSetICValues(icp->xic,
 		     XNPreeditAttributes, va_plist,
 		     NULL);
-      
+
       if (this_icp)
 	break;
     }
-  
+
   XFree(va_slist);
   XFree(va_plist);
 }
 
-static void 
+static void
 ImGeoReq(Widget vw )
 {
   XmVendorShellExtObject ve;
@@ -2145,14 +2145,14 @@ ImGeoReq(Widget vw )
   int old_height;
   int delta_height;
   ShellWidget shell = (ShellWidget)(vw);
-  
+
   if (!(shell->shell.allow_shell_resize) && XtIsRealized(vw))
     return;
-  
+
   extData = _XmGetWidgetExtData(vw, XmSHELL_EXTENSION);
   if (!extData) return;
   ve = (XmVendorShellExtObject) extData->widget;
-  
+
   old_height = ve->vendor.im_height;
   ImGetGeo(vw, NULL);
   if ((delta_height = ve->vendor.im_height - old_height) != 0)
@@ -2173,7 +2173,7 @@ ImGeoReq(Widget vw )
   ImSetGeo(vw, NULL);
 }
 
-static XFontSet 
+static XFontSet
 extract_fontset(
 		XmFontList fl )
 {
@@ -2183,10 +2183,10 @@ extract_fontset(
   XtPointer tmp_font;
   XFontSet first_fs = NULL;
   char *font_tag = NULL;
-  
+
   if (!XmFontListInitFontContext(&context, fl))
     return NULL;
-  
+
   do {
     next_entry = XmFontListNextEntry(context);
     if (next_entry)
@@ -2207,7 +2207,7 @@ extract_fontset(
 	  }
       }
   } while (next_entry);
-  
+
   XmFontListFreeFontContext(context);
   return first_fs;
 }
@@ -2223,28 +2223,28 @@ get_xim_info(Widget  widget)
   String name, w_class;
   Display *dpy;
   Widget shell;
-  
+
   if (widget == NULL)
     return NULL;
-  
+
   /* Find the parent shell. */
   shell = widget;
   while (!XtIsShell(shell))
     shell = XtParent(shell);
-  
+
   dpy = XtDisplay(shell);
   xmDisplay = (XmDisplay) XmGetXmDisplay(dpy);
   xim_info = (XmImDisplayInfo)xmDisplay->display.xmim_info;
-  
+
   /* If this is a simple lookup we're done. */
   if (xim_info != NULL)
     return xim_info;
-  
+
   /* Create a record so that we only try XOpenIM() once. */
   xim_info = XtNew(XmImDisplayRec);
   bzero((char*) xim_info, sizeof(XmImDisplayRec));
   xmDisplay->display.xmim_info = (XtPointer)xim_info;
-  
+
   /* Setup any specified locale modifiers. */
   XtVaGetValues(shell, XmNinputMethod, &cp, NULL);
   if (cp != NULL)
@@ -2254,9 +2254,9 @@ get_xim_info(Widget  widget)
       assert(strlen(tmp) < BUFSIZ);
       XSetLocaleModifiers(tmp);
     }
-  
+
   XtGetApplicationNameAndClass(dpy, &name, &w_class);
-  
+
   /* Try to open the input method. */
   xim_info->xim = XOpenIM(dpy, XtDatabase(dpy), name, w_class);
   if (xim_info->xim == NULL)
@@ -2269,14 +2269,14 @@ get_xim_info(Widget  widget)
       if (encoding != XA_STRING)
 	XmeWarning ((Widget)widget, MSG1);
 #endif
-      
+
       /* Leave the null xim_info attached to the display so we only */
       /* print the warning message once. */
       return xim_info;
     }
-  
+
   /* Lookup the styles this input method supports. */
-  if (XGetIMValues(xim_info->xim, 
+  if (XGetIMValues(xim_info->xim,
 		   XNQueryInputStyle, &xim_info->styles, NULL) != NULL)
     {
       XCloseIM(xim_info->xim);
@@ -2284,20 +2284,20 @@ get_xim_info(Widget  widget)
       XmeWarning ((Widget)widget, MSG1);
       return xim_info;
     }
-  
+
   /* Initialize the list of xrm names */
   {
     XmImResListRec *rlp;
     register int i;
 
     _XmProcessLock();
-    for (rlp = XmImResList, i = XtNumber(XmImResList); 
-	 i != 0; 
+    for (rlp = XmImResList, i = XtNumber(XmImResList);
+	 i != 0;
 	 i--, rlp++)
       rlp->xrmname = XrmStringToName(rlp->xmstring);
     _XmProcessUnlock();
   }
-  
+
   return xim_info;
 }
 
@@ -2310,33 +2310,33 @@ get_im_info_ptr(Widget  w,
   XmWidgetExtData extData;
   XmImShellInfo im_info;
   XmImDisplayInfo xim_info;
-  
+
   if (w == NULL)
     return NULL;
-  
+
   p = w;
   while (!XtIsShell(p))
     p = XtParent(p);
-  
+
   /* Check extension data since app could be attempting to create
    * a text widget as child of menu shell.  This is illegal, and will
    * be detected later, but check here so we don't core dump.
    */
   if ((extData = _XmGetWidgetExtData((Widget)p, XmSHELL_EXTENSION)) == NULL)
     return NULL;
-  
+
   ve = (XmVendorShellExtObject) extData->widget;
-  
+
   if ((ve->vendor.im_info == NULL) && create)
     {
       im_info = XtNew(XmImShellRec);
       bzero((char*) im_info, sizeof(XmImShellRec));
       ve->vendor.im_info = (XtPointer)im_info;
-      
+
       xim_info = get_xim_info(p);
       (void) add_ref(&xim_info->shell_refs, p);
     }
-  
+
   return &ve->vendor.im_info;
 }
 
@@ -2351,23 +2351,23 @@ get_im_info(Widget w,
     return NULL;
 }
 
-static void 
+static void
 draw_separator(Widget vw )
 {
   XmPrimitiveWidget pw;
   XmVendorShellExtObject ve;
   XmWidgetExtData extData;
   XmImShellInfo im_info;
-  
+
   extData = _XmGetWidgetExtData((Widget)vw, XmSHELL_EXTENSION);
   if (!extData) return;
   ve = (XmVendorShellExtObject) extData->widget;
   if ((im_info = (XmImShellInfo)ve->vendor.im_info) == NULL)
-    return; 
+    return;
   pw = (XmPrimitiveWidget)im_info->current_widget;
   if (!pw || !XmIsPrimitive(pw))
     return;
-  
+
   XmeDrawSeparator(XtDisplay(vw), XtWindow(vw),
 		   pw->primitive.top_shadow_GC,
 		   pw->primitive.bottom_shadow_GC,
@@ -2383,7 +2383,7 @@ draw_separator(Widget vw )
 }
 
 /*ARGSUSED*/
-static void 
+static void
 null_proc(Widget w,		/* unused */
 	  XtPointer ptr,		/* unused */
 	  XEvent *ev,		/* unused */
@@ -2399,7 +2399,7 @@ null_proc(Widget w,		/* unused */
 
 
 /*VARARGS*/
-void 
+void
 XmImVaSetFocusValues(Widget w,
 		     ... )
 {
@@ -2407,16 +2407,16 @@ XmImVaSetFocusValues(Widget w,
   int	    	total_count;
   ArgList     args;
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
   Va_start(var,w);
   ImCountVaList(var, &total_count);
   va_end(var);
-  
+
   Va_start(var,w);
   args  = ImCreateArgList(var, total_count);
   va_end(var);
-  
+
   XmImSetFocusValues(w, args, total_count);
   XtFree((char *)args);
   _XmAppUnlock(app);
@@ -2431,31 +2431,31 @@ void
   int	    	total_count;
   ArgList     args;
   _XmWidgetToAppContext(w);
-  
+
   _XmAppLock(app);
   Va_start(var,w);
   ImCountVaList(var, &total_count);
   va_end(var);
-  
+
   Va_start(var,w);
   args  = ImCreateArgList(var, total_count);
   va_end(var);
-  
+
   XmImSetValues(w, args, total_count);
   XtFree((char *)args);
   _XmAppUnlock(app);
 }
 
 
-static void 
+static void
 ImCountVaList(va_list var,
 	      int *total_count )
 {
   String          attr;
-  
+
   *total_count = 0;
-  
-  for(attr = va_arg(var, String); attr != NULL; attr = va_arg(var, String)) 
+
+  for(attr = va_arg(var, String); attr != NULL; attr = va_arg(var, String))
     {
       (void) va_arg(var, XPointer);
       ++(*total_count);
@@ -2468,29 +2468,29 @@ ImCreateArgList(va_list var,
 {
   ArgList args = (ArgList)XtCalloc(total_count, sizeof(Arg));
   register int i;
-  
+
   assert(args || (total_count == 0));
   for (i = 0; i < total_count; i++)
     {
       args[i].name = va_arg(var,String);
       args[i].value = (XtArgVal)va_arg(var,XPointer);
     }
-  
+
   return args;
 }
 
 /* Return the current xic info for a widget, or NULL. */
 static XmImXICInfo
-get_current_xic(XmImDisplayInfo xim_info, 
+get_current_xic(XmImDisplayInfo xim_info,
 		Widget          widget)
 {
   XmImXICInfo xic_info;
-  
+
   if ((xim_info == NULL) ||
       (xim_info->current_xics == (XContext) 0))
     return NULL;
-  
-  if (XFindContext(XtDisplay(widget), (XID) widget, 
+
+  if (XFindContext(XtDisplay(widget), (XID) widget,
 		   xim_info->current_xics, (XPointer*) &xic_info) != 0)
     return NULL;
   else
@@ -2498,26 +2498,26 @@ get_current_xic(XmImDisplayInfo xim_info,
 }
 
 /* Set the current XIC for an unregistered widget. */
-static void 
+static void
 set_current_xic(XmImXICInfo 	xic_info,
 		XmImDisplayInfo	xim_info,
 		Widget		widget)
 {
   if (xic_info == NULL)
     return;
-  
+
   /* Record this widget as a reference to this XIC. */
   (void) add_ref(&xic_info->widget_refs, widget);
-  
+
   /* Set the current XIC for this widget. */
   if (!xim_info->current_xics)
     xim_info->current_xics = XUniqueContext();
-  (void) XSaveContext(XtDisplay(widget), (XID) widget, 
+  (void) XSaveContext(XtDisplay(widget), (XID) widget,
 		      xim_info->current_xics, (XPointer) xic_info);
 }
 
 /* Unset the current XIC for a widget, freeing data as necesary. */
-static void 
+static void
 unset_current_xic(XmImXICInfo	  xic_info,
 		  XmImShellInfo   im_info,
 		  XmImDisplayInfo xim_info,
@@ -2525,7 +2525,7 @@ unset_current_xic(XmImXICInfo	  xic_info,
 {
   /* Remove the current xic for this widget. */
   assert(xim_info->current_xics != (XContext) 0);
-  (void) XDeleteContext(XtDisplay(widget), (XID) widget, 
+  (void) XDeleteContext(XtDisplay(widget), (XID) widget,
 			xim_info->current_xics);
 #ifdef FIX_1196
   if (im_info->current_widget == widget)
@@ -2549,11 +2549,11 @@ unset_current_xic(XmImXICInfo	  xic_info,
       /* Don't let anyone share this XIC. */
       if (xic_info->source != NULL)
 	*(xic_info->source) = NULL;
-      
+
       /* Destroy the XIC */
       if ((xic_info->anonymous) && (xic_info->xic != NULL))
 	XDestroyIC(xic_info->xic);
-      
+
       ImFreePreeditBuffer (xic_info->preedit_buffer);
       XtFree((char *) xic_info);
     }
@@ -2570,7 +2570,7 @@ add_ref(XmImRefInfo refs,
   for (index = 0; index < refs->num_refs; index++)
     assert(refs->refs[index] != widget);
 #endif
-  
+
   /* Make room in the array. */
   if (refs->num_refs == refs->max_refs)
     {
@@ -2578,19 +2578,19 @@ add_ref(XmImRefInfo refs,
 	refs->max_refs = 10;
       else
 	refs->max_refs += (refs->max_refs / 2);
-      
-      refs->refs = (Widget*) XtRealloc((char *) refs->refs, 
+
+      refs->refs = (Widget*) XtRealloc((char *) refs->refs,
 				       refs->max_refs * sizeof(Widget));
       refs->callbacks = (XtPointer **) XtRealloc((char *) refs->callbacks,
                                        refs->max_refs * sizeof(XtPointer *));
     }
   assert(refs->num_refs < refs->max_refs);
-  
+
   refs->callbacks[refs->num_refs] = NULL;
 
   /* Insert this reference. */
   refs->refs[refs->num_refs++] = widget;
-  
+
   return refs->num_refs;
 }
 
@@ -2618,13 +2618,13 @@ remove_ref(XmImRefInfo refs,
 	  }
 	index++;
       }
-      
+
       /* Free some storage from the array? */
       if ((refs->num_refs * 3 < refs->max_refs) &&
 	  (refs->max_refs >= 20))
 	{
 	  refs->max_refs /= 2;
-	  refs->refs = (Widget*) XtRealloc((char *) refs->refs, 
+	  refs->refs = (Widget*) XtRealloc((char *) refs->refs,
 					   refs->max_refs * sizeof(Widget));
           refs->callbacks = (XtPointer **) XtRealloc((char *) refs->callbacks,
                                    refs->max_refs * sizeof(XtPointer *));
@@ -2640,7 +2640,7 @@ remove_ref(XmImRefInfo refs,
       refs->callbacks = NULL;
       refs->max_refs = 0;
     }
-  
+
   return refs->num_refs;
 }
 
@@ -2654,12 +2654,12 @@ VaCopy(VaArgList list)
   /* recursive approach would leak memory. */
   register Cardinal count = list->count;
   register VaArg *args = list->args;
-  
+
 #define VA_NAME(index)	(index < count ? args[index].name : NULL)
 #define VA_VALUE(index)	(index < count ? args[index].value : NULL)
-  
+
   assert(count <= 10);
-  return XVaCreateNestedList(0, 
+  return XVaCreateNestedList(0,
 			     VA_NAME(0), VA_VALUE(0),
 			     VA_NAME(1), VA_VALUE(1),
 			     VA_NAME(2), VA_VALUE(2),
@@ -2671,23 +2671,23 @@ VaCopy(VaArgList list)
 			     VA_NAME(8), VA_VALUE(8),
 			     VA_NAME(9), VA_VALUE(9),
 			     NULL);
-  
+
 #undef VA_NAME
 #undef VA_VALUE
 }
 
 static void
-VaSetArg(VaArgList list, 
-	 char     *name, 
+VaSetArg(VaArgList list,
+	 char     *name,
 	 XPointer  value)
 {
   if (list->max <= list->count)
     {
       list->max += 10;
-      list->args = (VaArg*) XtRealloc((char*) list->args, 
+      list->args = (VaArg*) XtRealloc((char*) list->args,
 				      list->max * sizeof(VaArg));
     }
-  
+
   list->args[list->count].name = name;
   list->args[list->count].value = value;
   list->count++;
@@ -2706,7 +2706,7 @@ XmImMbResetIC(
 
     *mb = NULL;
 
-    if ((icp = get_current_xic(get_xim_info(w), w)) == NULL || 
+    if ((icp = get_current_xic(get_xim_info(w), w)) == NULL ||
 	icp->xic == NULL) {
 	_XmAppUnlock(app);
         return;

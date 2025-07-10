@@ -25,7 +25,7 @@
 
 #include <Xm/PrimitiveP.h>
 #include <Xm/TextF.h>
-#ifdef USE_XFT
+#if USE_XFT
 #include <X11/Xft/Xft.h>
 #endif
 
@@ -239,7 +239,7 @@ typedef struct _XmTextFieldPart {
 
     Boolean check_set_render_table; /* used for MT safe work */
     Boolean programmatic_highlights;	/* XmTextFieldSetHighlight called */
-#ifdef USE_XFT
+#if USE_XFT
     Boolean use_xft;
 #endif
 } XmTextFieldPart;
@@ -311,7 +311,7 @@ typedef struct _XmTextFieldRec {
 	(((XmTextFieldWidget)(tfg)) -> text.threshold)
 #define TextF_UseFontSet(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.have_fontset)
-#ifdef USE_XFT
+#if USE_XFT
 #define TextF_UseXft(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.use_xft)
 #define	TextF_XftFont(tfg)		\

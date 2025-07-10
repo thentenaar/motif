@@ -1,4 +1,5 @@
-/* 
+/* lib/Xm/Xm.h.  Generated from Xm.h.in by configure.  */
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,36 +20,37 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 /* $TOG: Xm.h /main/38 1999/10/18 14:50:22 samborn $ */
 
 #ifndef _Xm_h
 #define _Xm_h
 
-#ifndef OM22_COMPATIBILITY
-#undef OM22_COMPATIBILITY
-#endif
+/**
+ * 1 for OpenMotif 2.2 compatibility
+ */
+#undef XM_22_COMPAT
 
-#ifndef JPEG_SUPPORTED
-#undef JPEG_SUPPORTED
-#endif
+/**
+ * 1 if Motif was built with JPEG support
+ */
+#undef XM_WITH_JPEG
 
-#ifndef PNG_SUPPORTED
-#undef PNG_SUPPORTED
-#endif
+/**
+ * 1 if Motif was built with PNG support
+ */
+#undef XM_WITH_PNG
 
-#ifndef UTF8_SUPPORTED
-#undef UTF8_SUPPORTED
-#endif
+/**
+ * 1 if Motif was built with UTF-8 support
+ */
+#undef XM_UTF8
 
-#ifndef PRINTING_SUPPORTED
-#undef PRINTING_SUPPORTED
-#endif
+/**
+ * 1 if Motif was built with printing support
+ */
+#undef XM_PRINTING
 
-#ifndef USE_XFT
-#undef USE_XFT
-#endif
- 
 #if    !defined(__STDC__) \
     && !defined(__cplusplus) && !defined(c_plusplus) \
     && !defined(FUNCPROTO) && !defined(XTFUNCPROTO) && !defined(XMFUNCPROTO)
@@ -58,7 +60,7 @@
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>
 #include <X11/Xatom.h>
-#ifdef PRINTING_SUPPORTED
+#if XM_PRINTING
 #include <X11/extensions/Print.h>
 #endif
 #include <Xm/XmStrDefs.h>
@@ -74,14 +76,8 @@
 extern "C" {
 #endif
 
-#define XmVERSION	2
-#define XmREVISION	3
-#define XmUPDATE_LEVEL	8
-#define XmVersion	(XmVERSION * 1000 + XmREVISION)
-#define XmVERSION_STRING "@(#)Motif Version 2.3.8"
-
+#include <Xm/version.h>
 externalref int xmUseVersion;
-
 
 /* define used to denote an unspecified pixmap  */
 
@@ -92,7 +88,7 @@ externalref int xmUseVersion;
 #define XmUNSPECIFIED_POSITION          -1
 
 /*******************
- *  
+ *
  * Defines for resources to be defaulted by vendors.
  * String are initialized in Xmos.c
  *
@@ -127,43 +123,43 @@ typedef unsigned char	XmDirection;
 #define XmPRECEDENCE_MASK              0xc0
 
 enum {
-  XmRIGHT_TO_LEFT_TOP_TO_BOTTOM = 
+  XmRIGHT_TO_LEFT_TOP_TO_BOTTOM =
       XmRIGHT_TO_LEFT_MASK | XmTOP_TO_BOTTOM_MASK | XmPRECEDENCE_HORIZ_MASK,
-  XmLEFT_TO_RIGHT_TOP_TO_BOTTOM = 
+  XmLEFT_TO_RIGHT_TOP_TO_BOTTOM =
       XmLEFT_TO_RIGHT_MASK | XmTOP_TO_BOTTOM_MASK | XmPRECEDENCE_HORIZ_MASK,
-  XmRIGHT_TO_LEFT_BOTTOM_TO_TOP = 
+  XmRIGHT_TO_LEFT_BOTTOM_TO_TOP =
       XmRIGHT_TO_LEFT_MASK | XmBOTTOM_TO_TOP_MASK | XmPRECEDENCE_HORIZ_MASK,
-  XmLEFT_TO_RIGHT_BOTTOM_TO_TOP = 
+  XmLEFT_TO_RIGHT_BOTTOM_TO_TOP =
       XmLEFT_TO_RIGHT_MASK | XmBOTTOM_TO_TOP_MASK | XmPRECEDENCE_HORIZ_MASK,
-  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT = 
+  XmTOP_TO_BOTTOM_RIGHT_TO_LEFT =
       XmRIGHT_TO_LEFT_MASK | XmTOP_TO_BOTTOM_MASK | XmPRECEDENCE_VERT_MASK,
-  XmTOP_TO_BOTTOM_LEFT_TO_RIGHT = 
+  XmTOP_TO_BOTTOM_LEFT_TO_RIGHT =
       XmLEFT_TO_RIGHT_MASK | XmTOP_TO_BOTTOM_MASK | XmPRECEDENCE_VERT_MASK,
-  XmBOTTOM_TO_TOP_RIGHT_TO_LEFT = 
+  XmBOTTOM_TO_TOP_RIGHT_TO_LEFT =
       XmRIGHT_TO_LEFT_MASK | XmBOTTOM_TO_TOP_MASK | XmPRECEDENCE_VERT_MASK,
-  XmBOTTOM_TO_TOP_LEFT_TO_RIGHT = 
+  XmBOTTOM_TO_TOP_LEFT_TO_RIGHT =
       XmLEFT_TO_RIGHT_MASK | XmBOTTOM_TO_TOP_MASK | XmPRECEDENCE_VERT_MASK,
-  XmTOP_TO_BOTTOM = 
+  XmTOP_TO_BOTTOM =
       XmTOP_TO_BOTTOM_MASK | XmHORIZONTAL_MASK | XmPRECEDENCE_MASK,
-  XmBOTTOM_TO_TOP = 
+  XmBOTTOM_TO_TOP =
       XmBOTTOM_TO_TOP_MASK | XmHORIZONTAL_MASK | XmPRECEDENCE_MASK,
-  XmRIGHT_TO_LEFT = 
+  XmRIGHT_TO_LEFT =
       XmRIGHT_TO_LEFT_MASK | XmVERTICAL_MASK | XmPRECEDENCE_MASK,
-  XmLEFT_TO_RIGHT = 
+  XmLEFT_TO_RIGHT =
       XmLEFT_TO_RIGHT_MASK | XmVERTICAL_MASK | XmPRECEDENCE_MASK,
   XmDEFAULT_DIRECTION = 0xff
   };
 
 
-extern Boolean XmDirectionMatch(XmDirection d1, 
+extern Boolean XmDirectionMatch(XmDirection d1,
 				XmDirection d2);
-extern Boolean XmDirectionMatchPartial(XmDirection d1, 
-				       XmDirection d2, 
+extern Boolean XmDirectionMatchPartial(XmDirection d1,
+				       XmDirection d2,
 				       XmDirection dmask);
 
 /****************
  *
- * XmString structure defines. These must be here (at the start of the file) 
+ * XmString structure defines. These must be here (at the start of the file)
  * becaused they are used later on.
  *
  ****************/
@@ -266,11 +262,11 @@ typedef XmIncludeStatus (*XmParseProc) (XtPointer     *in_out,
 
 /****************
  *
- * XmTabList structure defines. These must be here (at the start of the file) 
+ * XmTabList structure defines. These must be here (at the start of the file)
  * becaused they are used later on.
  *
  ****************/
-typedef enum { 
+typedef enum {
   XmABSOLUTE,		XmRELATIVE
   } XmOffsetModel;
 
@@ -280,7 +276,7 @@ typedef struct __XmTabListRec	*XmTabList;	  /* opaque */
 
 /****************
  *
- * XmRenderTable structure defines. These must be here (at the start of the file) 
+ * XmRenderTable structure defines. These must be here (at the start of the file)
  * becaused they are used later on.
  *
  ****************/
@@ -288,21 +284,21 @@ typedef struct __XmTabListRec	*XmTabList;	  /* opaque */
 typedef struct __XmRenditionRec		**XmRendition;   /* opaque */
 typedef struct __XmRenderTableRec	**XmRenderTable; /* opaque */
 
-typedef enum { 
+typedef enum {
   XmSKIP,		XmMERGE_REPLACE,
-  XmMERGE_OLD,		XmMERGE_NEW, 
+  XmMERGE_OLD,		XmMERGE_NEW,
   XmDUPLICATE	/* For XmFontListAdd and XmFontListAppendEntry. */
-  } XmMergeMode; 
+  } XmMergeMode;
 
 #define XmAS_IS			255
 #define XmFORCE_COLOR		1
 
 #define XmUNSPECIFIED_PIXEL	 ((Pixel) (~0))
-#define XmDEFAULT_SELECT_COLOR   XmUNSPECIFIED_PIXEL	
-#define XmREVERSED_GROUND_COLORS (XmDEFAULT_SELECT_COLOR - 1)	
-#define XmHIGHLIGHT_COLOR        (XmREVERSED_GROUND_COLORS - 1)	
+#define XmDEFAULT_SELECT_COLOR   XmUNSPECIFIED_PIXEL
+#define XmREVERSED_GROUND_COLORS (XmDEFAULT_SELECT_COLOR - 1)
+#define XmHIGHLIGHT_COLOR        (XmREVERSED_GROUND_COLORS - 1)
 
-enum { XmUNSPECIFIED_LOAD_MODEL, XmLOAD_DEFERRED, XmLOAD_IMMEDIATE }; 
+enum { XmUNSPECIFIED_LOAD_MODEL, XmLOAD_DEFERRED, XmLOAD_IMMEDIATE };
 
 
 
@@ -333,7 +329,7 @@ enum{	XmDESTROY,			XmUNMAP,
 enum{	XmEXPLICIT,			XmPOINTER
 	} ;
 /************************************************************************
- *  Navigation defines 
+ *  Navigation defines
  ************************************************************************/
 
 enum{	XmNONE,				XmTAB_GROUP,
@@ -420,23 +416,23 @@ enum{   XmZERO_BASED,		XmONE_BASED
 /************************************************************************
  *  Icon & Button Box defines
  ************************************************************************/
-typedef enum { XmIconTop, 
-               XmIconLeft, 
-               XmIconRight, 
+typedef enum { XmIconTop,
+               XmIconLeft,
+               XmIconRight,
                XmIconBottom,
-               XmIconOnly, 
+               XmIconOnly,
                XmIconNone } XmIconPlacement;
 
-typedef enum { XmFillNone, 
-               XmFillMajor, 
-               XmFillMinor, 
+typedef enum { XmFillNone,
+               XmFillMajor,
+               XmFillMinor,
                XmFillAll } XmFillOption;
 
 /************************************************************************
  * Hierarchy/Tree/Outline defines
  ************************************************************************/
-typedef enum {XmAlwaysOpen, 
-              XmOpen, 
+typedef enum {XmAlwaysOpen,
+              XmOpen,
               XmClosed, XmHidden,
 	      XmNotInHierarchy} XmHierarchyNodeState;
 
@@ -531,7 +527,7 @@ typedef struct _XmTabBoxCallbackStruct {
 } XmTabBoxCallbackStruct;
 
 /****************************************************************************
- *  Callback reasons 
+ *  Callback reasons
  ****************************************************************************/
 
 enum{	XmCR_NONE,			XmCR_HELP,
@@ -567,7 +563,7 @@ enum{	XmCR_NONE,			XmCR_HELP,
 	XmCR_START_JOB,			XmCR_END_JOB,
 	XmCR_PAGE_SETUP,		XmCR_PDM_NONE,
 	XmCR_PDM_UP,			XmCR_PDM_START_ERROR,
-	XmCR_PDM_START_VXAUTH,		XmCR_PDM_START_PXAUTH, 
+	XmCR_PDM_START_VXAUTH,		XmCR_PDM_START_PXAUTH,
 	XmCR_PDM_OK,			XmCR_PDM_CANCEL,
 	XmCR_PDM_EXIT_ERROR,
         XmCR_UPDATE_SHELL,              XmCR_UPDATE_TEXT,
@@ -596,7 +592,7 @@ enum{	XmSLIDER,		XmTHERMOMETER} ;
  *  Slider Visual
  ************************************************************************/
 
-enum{	XmBACKGROUND_COLOR,     XmFOREGROUND_COLOR, 
+enum{	XmBACKGROUND_COLOR,     XmFOREGROUND_COLOR,
         XmTROUGH_COLOR,         XmSHADOWED_BACKGROUND} ;
 
 
@@ -604,12 +600,12 @@ enum{	XmBACKGROUND_COLOR,     XmFOREGROUND_COLOR,
  *  Slider Mark
  ************************************************************************/
 
-enum{	/* XmNONE, */           XmETCHED_LINE = 1, 
+enum{	/* XmNONE, */           XmETCHED_LINE = 1,
         XmTHUMB_MARK,     XmROUND_MARK } ;
 
 
 /************************************************************************
- *  new Scale showValue 
+ *  new Scale showValue
  ************************************************************************/
 
 enum{	/* XmNONE */		XmNEAR_SLIDER = 1,
@@ -622,10 +618,10 @@ enum{	/* XmNONE */		XmNEAR_SLIDER = 1,
  ************************************************************************/
 
 /* XmWORK_AREA, XmMENU_BAR and XmSEPARATOR have to match the existing ones */
-enum{	/* XmWORK_AREA = 0, XmMENU_BAR = 1, */ 
-        XmHOR_SCROLLBAR = 2, 
+enum{	/* XmWORK_AREA = 0, XmMENU_BAR = 1, */
+        XmHOR_SCROLLBAR = 2,
 	XmVERT_SCROLLBAR,
-	XmCOMMAND_WINDOW, 
+	XmCOMMAND_WINDOW,
         /* XmSEPARATOR = 5 */
         XmMESSAGE_WINDOW = 6,
         XmSCROLL_HOR, XmSCROLL_VERT, XmNO_SCROLL,
@@ -663,7 +659,7 @@ enum{   XmAUTO_UNSET,                   XmAUTO_BEGIN,
         };
 
 /************************************************************************
- *  Callback structures 
+ *  Callback structures
  ************************************************************************/
 
 typedef struct
@@ -785,7 +781,7 @@ typedef struct
 } XmFileSelectionBoxCallbackStruct;
 
 
-typedef struct 
+typedef struct
 {
    int reason;
    XEvent * event;
@@ -838,7 +834,7 @@ typedef struct
     XmStringTag		tag;
 } XmDisplayCallbackStruct;
 
-#ifdef PRINTING_SUPPORTED
+#if XM_PRINTING
 typedef struct
 {
     int		reason;	   /* XmCR_START_JOB, XmCR_END_JOB, XmCR_PAGE_SETUP */
@@ -847,7 +843,7 @@ typedef struct
     Boolean	last_page; /* in_out */
     XtPointer	detail;
 } XmPrintShellCallbackStruct;
-#endif /* PRINTING_SUPPORTED */
+#endif /* XM_PRINTING */
 
 /************************************************************************
  *  PushButton defines
@@ -1054,7 +1050,7 @@ enum
 };
 
 /* XmNarrowSensitivity and XmNdefaultArrowSensitivity */
-/* Please note that these arrows form the proper values 
+/* Please note that these arrows form the proper values
    for a bit mask. */
 enum
 {
@@ -1364,7 +1360,7 @@ enum {
 };
 
 
-/* This one cannot be put at the beginning because it needs 
+/* This one cannot be put at the beginning because it needs
    XmStringTable */
 #include <Xm/TxtPropCv.h>
 
@@ -1383,7 +1379,7 @@ typedef struct _XmSecondaryResourceDataRec{
 
 /********    Public Function Declarations for BaseClass.c    ********/
 
-extern Cardinal XmGetSecondaryResourceData( 
+extern Cardinal XmGetSecondaryResourceData(
                         WidgetClass w_class,
                         XmSecondaryResourceData **secondaryDataRtn) ;
 
@@ -1391,23 +1387,23 @@ extern Cardinal XmGetSecondaryResourceData(
 
 /********    Public Function Declarations for ImageCache.c    ********/
 
-extern Boolean XmInstallImage( 
+extern Boolean XmInstallImage(
                         XImage *image,
                         char *image_name) ;
-extern Boolean XmUninstallImage( 
+extern Boolean XmUninstallImage(
                         XImage *image) ;
-extern Pixmap XmGetPixmap( 
+extern Pixmap XmGetPixmap(
                         Screen *screen,
                         char *image_name,
                         Pixel foreground,
                         Pixel background) ;
-extern Pixmap XmGetPixmapByDepth( 
+extern Pixmap XmGetPixmapByDepth(
                         Screen *screen,
                         char *image_name,
                         Pixel foreground,
                         Pixel background,
 			int depth) ;
-extern Boolean XmDestroyPixmap( 
+extern Boolean XmDestroyPixmap(
                         Screen *screen,
                         Pixmap pixmap) ;
 
@@ -1415,7 +1411,7 @@ extern Boolean XmDestroyPixmap(
 
 /********    Public Function Declarations for Resolve.c    ********/
 /*-- XmeResolvePartOffsets is defined in XmP.h.
-     These also belong there but for source compatibility, we let 
+     These also belong there but for source compatibility, we let
      them here --- */
 
 typedef long XmOffset;
@@ -1423,11 +1419,11 @@ typedef XmOffset *XmOffsetPtr;
 
 
 
-extern void XmResolveAllPartOffsets( 
+extern void XmResolveAllPartOffsets(
                         WidgetClass w_class,
                         XmOffsetPtr *offset,
                         XmOffsetPtr *constraint_offset) ;
-extern void XmResolvePartOffsets( 
+extern void XmResolvePartOffsets(
                         WidgetClass w_class,
                         XmOffsetPtr *offset) ;
 
@@ -1438,7 +1434,7 @@ extern void XmResolvePartOffsets(
 /********    Public Function Declarations for Xm.c    ********/
 
 
-extern void XmUpdateDisplay( 
+extern void XmUpdateDisplay(
                         Widget w) ;
 extern Widget XmObjectAtPoint(
 			Widget wid,
@@ -1465,35 +1461,35 @@ extern Boolean XmWidgetGetDisplayRect(
 
 /********    Public Function Declarations for ResConvert.c    ********/
 
-extern void XmCvtStringToUnitType( 
+extern void XmCvtStringToUnitType(
                         XrmValuePtr args,
                         Cardinal *num_args,
                         XrmValue *from_val,
                         XrmValue *to_val) ;
-extern char * XmRegisterSegmentEncoding( 
+extern char * XmRegisterSegmentEncoding(
                         char *fontlist_tag,
                         char *ct_encoding) ;
-extern char * XmMapSegmentEncoding( 
+extern char * XmMapSegmentEncoding(
                         char *fontlist_tag) ;
-extern XmString XmCvtCTToXmString( 
+extern XmString XmCvtCTToXmString(
                         char *text) ;
-extern Boolean XmCvtTextToXmString( 
+extern Boolean XmCvtTextToXmString(
                         Display *display,
                         XrmValuePtr args,
                         Cardinal *num_args,
                         XrmValue *from_val,
                         XrmValue *to_val,
                         XtPointer *converter_data) ;
-extern char * XmCvtXmStringToCT( 
+extern char * XmCvtXmStringToCT(
                         XmString string) ;
-extern Boolean XmCvtXmStringToText( 
+extern Boolean XmCvtXmStringToText(
                         Display *display,
                         XrmValuePtr args,
                         Cardinal *num_args,
                         XrmValue *from_val,
                         XrmValue *to_val,
                         XtPointer *converter_data) ;
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
 extern char * XmCvtXmStringToUTF8String(
                         XmString string) ;
 #endif
@@ -1502,38 +1498,38 @@ extern char * XmCvtXmStringToUTF8String(
 /********    Public Function Declarations for ResInd.c    ********/
 
 extern int XmConvertStringToUnits(
-				  Screen *screen, 
+				  Screen *screen,
 				  String spec,
 				  int orientation,
 				  int to_type,
 				  XtEnum *parse_error);
-extern int XmConvertUnits( 
+extern int XmConvertUnits(
                         Widget widget,
                         int dimension,
                         register int from_type,
                         register int from_val,
                         register int to_type) ;
-extern int XmCvtToHorizontalPixels( 
+extern int XmCvtToHorizontalPixels(
                         Screen *screen,
                         register int from_val,
                         register int from_type) ;
-extern int XmCvtToVerticalPixels( 
+extern int XmCvtToVerticalPixels(
                         Screen *screen,
                         register int from_val,
                         register int from_type) ;
-extern int XmCvtFromHorizontalPixels( 
+extern int XmCvtFromHorizontalPixels(
                         Screen *screen,
                         register int from_val,
                         register int to_type) ;
-extern int XmCvtFromVerticalPixels( 
+extern int XmCvtFromVerticalPixels(
                         Screen *screen,
                         register int from_val,
                         register int to_type) ;
-extern void XmSetFontUnits( 
+extern void XmSetFontUnits(
                         Display *display,
                         int h_value,
                         int v_value) ;
-extern void XmSetFontUnit( 
+extern void XmSetFontUnit(
                         Display *display,
                         int value) ;
 
@@ -1541,42 +1537,42 @@ extern void XmSetFontUnit(
 
 /********    Public Function Declarations for MenuUtil.c    ********/
 
-extern void XmSetMenuCursor( 
+extern void XmSetMenuCursor(
                         Display *display,
                         Cursor cursorId) ;
-extern Cursor XmGetMenuCursor( 
+extern Cursor XmGetMenuCursor(
                         Display *display) ;
 
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for Simple.c    ********/
 
-extern Widget XmCreateSimpleMenuBar( 
+extern Widget XmCreateSimpleMenuBar(
                         Widget parent,
                         String name,
                         ArgList args,
                         Cardinal arg_count) ;
-extern Widget XmCreateSimplePopupMenu( 
+extern Widget XmCreateSimplePopupMenu(
                         Widget parent,
                         String name,
                         ArgList args,
                         Cardinal arg_count) ;
-extern Widget XmCreateSimplePulldownMenu( 
+extern Widget XmCreateSimplePulldownMenu(
                         Widget parent,
                         String name,
                         ArgList args,
                         Cardinal arg_count) ;
-extern Widget XmCreateSimpleOptionMenu( 
+extern Widget XmCreateSimpleOptionMenu(
                         Widget parent,
                         String name,
                         ArgList args,
                         Cardinal arg_count) ;
-extern Widget XmCreateSimpleRadioBox( 
+extern Widget XmCreateSimpleRadioBox(
                         Widget parent,
                         String name,
                         ArgList args,
                         Cardinal arg_count) ;
-extern Widget XmCreateSimpleCheckBox( 
+extern Widget XmCreateSimpleCheckBox(
                         Widget parent,
                         String name,
                         ArgList args,
@@ -1585,7 +1581,7 @@ extern Widget XmCreateSimpleCheckBox(
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for VaSimple.c   ********/
-extern Widget XmVaCreateSimpleMenuBar( 
+extern Widget XmVaCreateSimpleMenuBar(
 			Widget parent,
 			String name,
 			...) ;
@@ -1594,7 +1590,7 @@ extern Widget XmVaCreateSimplePopupMenu(
 			String name,
 			XtCallbackProc callback,
 			...) ;
-extern Widget XmVaCreateSimplePulldownMenu( 
+extern Widget XmVaCreateSimplePulldownMenu(
 			Widget parent,
 			String name,
 			int post_from_button,
@@ -1608,13 +1604,13 @@ extern Widget XmVaCreateSimpleOptionMenu(
                         int button_set,
                         XtCallbackProc callback,
 			...) ;
-extern Widget XmVaCreateSimpleRadioBox( 
+extern Widget XmVaCreateSimpleRadioBox(
 			Widget parent,
 			String name,
 			int button_set,
 			XtCallbackProc callback,
 			...) ;
-extern Widget XmVaCreateSimpleCheckBox( 
+extern Widget XmVaCreateSimpleCheckBox(
 			Widget parent,
 			String name,
 			XtCallbackProc callback,
@@ -1623,7 +1619,7 @@ extern Widget XmVaCreateSimpleCheckBox(
 
 /********    Public Function Declarations for TrackLoc.c    ********/
 
-extern Widget XmTrackingEvent( 
+extern Widget XmTrackingEvent(
                         Widget widget,
                         Cursor cursor,
 #if NeedWidePrototypes
@@ -1632,7 +1628,7 @@ extern Widget XmTrackingEvent(
                         Boolean confineTo,
 #endif /* NeedWidePrototypes */
                         XEvent *pev) ;
-extern Widget XmTrackingLocate( 
+extern Widget XmTrackingLocate(
                         Widget widget,
                         Cursor cursor,
 #if NeedWidePrototypes
@@ -1649,10 +1645,10 @@ typedef void (*XmColorProc) (XColor *bg_color, XColor *fg_color,
 
 /********    Public Function Declarations for Visual.c    ********/
 
-extern XmColorProc XmSetColorCalculation( 
+extern XmColorProc XmSetColorCalculation(
                         XmColorProc proc) ;
 extern XmColorProc XmGetColorCalculation( void ) ;
-extern void XmGetColors( 
+extern void XmGetColors(
                         Screen *screen,
                         Colormap color_map,
                         Pixel background,
@@ -1668,21 +1664,21 @@ extern void XmChangeColor(
 
 /********    Public Function Declarations for XmString.c    ********/
 
-extern XmString XmStringCreate( 
+extern XmString XmStringCreate(
                         char *text,
                         XmStringCharSet charset) ;
-extern XmString XmStringCreateSimple( 
+extern XmString XmStringCreateSimple(
                         char *text) ;
-extern XmString XmStringCreateLocalized( 
+extern XmString XmStringCreateLocalized(
                         String text) ;
-extern XmString XmStringDirectionCreate( 
+extern XmString XmStringDirectionCreate(
 #if NeedWidePrototypes
                         int direction) ;
 #else
                         XmStringDirection direction) ;
 #endif /* NeedWidePrototypes */
 extern XmString XmStringSeparatorCreate( void ) ;
-extern XmString XmStringSegmentCreate( 
+extern XmString XmStringSegmentCreate(
                         char *text,
                         XmStringCharSet charset,
 #if NeedWidePrototypes
@@ -1692,18 +1688,18 @@ extern XmString XmStringSegmentCreate(
                         XmStringDirection direction,
                         Boolean separator) ;
 #endif /* NeedWidePrototypes */
-extern XmString XmStringLtoRCreate( 
+extern XmString XmStringLtoRCreate(
                         char *text,
                         XmStringCharSet charset) ;
-extern XmString XmStringCreateLtoR( 
+extern XmString XmStringCreateLtoR(
                         char *text,
                         XmStringCharSet charset) ;
-extern Boolean XmStringInitContext( 
+extern Boolean XmStringInitContext(
                         XmStringContext *context,
                         XmString string) ;
-extern void XmStringFreeContext( 
+extern void XmStringFreeContext(
                         XmStringContext context) ;
-extern XmStringComponentType XmStringGetNextComponent( 
+extern XmStringComponentType XmStringGetNextComponent(
                         XmStringContext context,
                         char **text,
                         XmStringCharSet *charset,
@@ -1711,19 +1707,19 @@ extern XmStringComponentType XmStringGetNextComponent(
                         XmStringComponentType *unknown_tag,
                         unsigned short *unknown_length,
                         unsigned char **unknown_value) ;
-extern XmStringComponentType XmStringPeekNextComponent( 
+extern XmStringComponentType XmStringPeekNextComponent(
                         XmStringContext context) ;
-extern Boolean XmStringGetNextSegment( 
+extern Boolean XmStringGetNextSegment(
                         XmStringContext context,
                         char **text,
                         XmStringCharSet *charset,
                         XmStringDirection *direction,
                         Boolean *separator) ;
-extern Boolean XmStringGetLtoR( 
+extern Boolean XmStringGetLtoR(
                         XmString string,
                         XmStringCharSet charset,
                         char **text) ;
-extern XmFontListEntry XmFontListEntryCreate( 
+extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,
                         XmFontType type,
                         XtPointer font) ;
@@ -1732,105 +1728,105 @@ extern XmFontListEntry XmFontListEntryCreate_r(
                         XmFontType type,
                         XtPointer font,
                         Widget wid) ;
-extern void XmFontListEntryFree( 
+extern void XmFontListEntryFree(
                         XmFontListEntry *entry) ;
-extern XtPointer XmFontListEntryGetFont( 
+extern XtPointer XmFontListEntryGetFont(
                         XmFontListEntry entry,
                         XmFontType *typeReturn) ;
-extern char * XmFontListEntryGetTag( 
+extern char * XmFontListEntryGetTag(
                         XmFontListEntry entry) ;
-extern XmFontList XmFontListAppendEntry( 
+extern XmFontList XmFontListAppendEntry(
                         XmFontList old,
                         XmFontListEntry entry) ;
-extern XmFontListEntry XmFontListNextEntry( 
+extern XmFontListEntry XmFontListNextEntry(
                         XmFontContext context) ;
-extern XmFontList XmFontListRemoveEntry( 
+extern XmFontList XmFontListRemoveEntry(
                         XmFontList old,
                         XmFontListEntry entry) ;
-extern XmFontListEntry XmFontListEntryLoad( 
+extern XmFontListEntry XmFontListEntryLoad(
                         Display *display,
                         char *fontName,
                         XmFontType type,
                         char *tag) ;
-extern XmFontList XmFontListCreate( 
+extern XmFontList XmFontListCreate(
                         XFontStruct *font,
                         XmStringCharSet charset) ;
 extern XmFontList XmFontListCreate_r(
                         XFontStruct *font,
                         XmStringCharSet charset,
                         Widget wid) ;
-extern XmFontList XmStringCreateFontList( 
+extern XmFontList XmStringCreateFontList(
                         XFontStruct *font,
                         XmStringCharSet charset) ;
 extern XmFontList XmStringCreateFontList_r(
                         XFontStruct *font,
                         XmStringCharSet charset,
                         Widget wid) ;
-extern void XmFontListFree( 
+extern void XmFontListFree(
                         XmFontList fontlist) ;
-extern XmFontList XmFontListAdd( 
+extern XmFontList XmFontListAdd(
                         XmFontList old,
                         XFontStruct *font,
                         XmStringCharSet charset) ;
-extern XmFontList XmFontListCopy( 
+extern XmFontList XmFontListCopy(
                         XmFontList fontlist) ;
-extern Boolean XmFontListInitFontContext( 
+extern Boolean XmFontListInitFontContext(
                         XmFontContext *context,
                         XmFontList fontlist) ;
-extern Boolean XmFontListGetNextFont( 
+extern Boolean XmFontListGetNextFont(
                         XmFontContext context,
                         XmStringCharSet *charset,
                         XFontStruct **font) ;
-extern void XmFontListFreeFontContext( 
+extern void XmFontListFreeFontContext(
                         XmFontContext context) ;
-extern XmString XmStringConcat( 
+extern XmString XmStringConcat(
                         XmString a,
                         XmString b) ;
 extern XmString XmStringConcatAndFree(
-			XmString a, 
+			XmString a,
 			XmString b) ;
-extern XmString XmStringNConcat( 
+extern XmString XmStringNConcat(
                         XmString first,
                         XmString second,
                         int n) ;
-extern XmString XmStringCopy( 
+extern XmString XmStringCopy(
                         XmString string) ;
-extern XmString XmStringNCopy( 
+extern XmString XmStringNCopy(
                         XmString str,
                         int n) ;
-extern Boolean XmStringByteCompare( 
+extern Boolean XmStringByteCompare(
                         XmString a1,
                         XmString b1) ;
-extern Boolean XmStringCompare( 
+extern Boolean XmStringCompare(
                         XmString a,
                         XmString b) ;
-extern int XmStringLength( 
+extern int XmStringLength(
                         XmString string) ;
-extern Boolean XmStringEmpty( 
+extern Boolean XmStringEmpty(
                         XmString string) ;
-extern Boolean XmStringIsVoid(XmString string); 
-extern Boolean XmStringHasSubstring( 
+extern Boolean XmStringIsVoid(XmString string);
+extern Boolean XmStringHasSubstring(
                         XmString string,
                         XmString substring) ;
-extern void XmStringFree( 
+extern void XmStringFree(
                         XmString string) ;
-extern Dimension XmStringBaseline( 
+extern Dimension XmStringBaseline(
                         XmFontList fontlist,
                         XmString string) ;
-extern Dimension XmStringWidth( 
+extern Dimension XmStringWidth(
                         XmFontList fontlist,
                         XmString string) ;
-extern Dimension XmStringHeight( 
+extern Dimension XmStringHeight(
                         XmFontList fontlist,
                         XmString string) ;
-extern void XmStringExtent( 
+extern void XmStringExtent(
                         XmFontList fontlist,
                         XmString string,
                         Dimension *width,
                         Dimension *height) ;
-extern int XmStringLineCount( 
+extern int XmStringLineCount(
                         XmString string) ;
-extern void XmStringDraw( 
+extern void XmStringDraw(
                         Display *d,
                         Window w,
                         XmFontList fontlist,
@@ -1850,7 +1846,7 @@ extern void XmStringDraw(
                         unsigned char lay_dir,
 #endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
-extern void XmStringDrawImage( 
+extern void XmStringDrawImage(
                         Display *d,
                         Window w,
                         XmFontList fontlist,
@@ -1870,7 +1866,7 @@ extern void XmStringDrawImage(
                         unsigned char lay_dir,
 #endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
-extern void XmStringDrawUnderline( 
+extern void XmStringDrawUnderline(
                         Display *d,
                         Window w,
                         XmFontList fntlst,
@@ -1948,7 +1944,7 @@ extern XmString XmStringGenerate(XtPointer   text,
 				 XmTextType  type,
 				 XmStringTag rendition);
 extern XmString XmStringPutRendition(XmString string,
-				     XmStringTag rendition); 
+				     XmStringTag rendition);
 
 extern XmParseMapping XmParseMappingCreate(ArgList  arg_list,
 					   Cardinal arg_count);
@@ -1966,41 +1962,41 @@ extern void XmParseTableFree(XmParseTable parse_table,
 
 /********    Public Function Declarations for XmTabList.c    ********/
 
-extern XmTabList 
-  XmStringTableProposeTablist(XmStringTable strings, 
+extern XmTabList
+  XmStringTableProposeTablist(XmStringTable strings,
 			      Cardinal num_strings,
 			      Widget widget,
 			      float pad_value,
 			      XmOffsetModel offset_model);
 extern void XmTabSetValue(XmTab xmtab, float value);
-extern float 
-  XmTabGetValues(XmTab xmtab, 
-		 unsigned char *units, 
-		 XmOffsetModel *offset, 
-		 unsigned char *alignment, 
+extern float
+  XmTabGetValues(XmTab xmtab,
+		 unsigned char *units,
+		 XmOffsetModel *offset,
+		 unsigned char *alignment,
 		 char **decimal);
 extern void XmTabFree(XmTab xmtab);
-extern XmTab XmTabCreate(float value, 
-			 unsigned char units, 
-			 XmOffsetModel offset_model, 
-			 unsigned char alignment, 
+extern XmTab XmTabCreate(float value,
+			 unsigned char units,
+			 XmOffsetModel offset_model,
+			 unsigned char alignment,
 			 char *decimal);
-extern XmTabList 
-  XmTabListRemoveTabs(XmTabList oldlist, 
-		      Cardinal *position_list, 
+extern XmTabList
+  XmTabListRemoveTabs(XmTabList oldlist,
+		      Cardinal *position_list,
 		      Cardinal position_count);
-extern XmTabList 
-  XmTabListReplacePositions(XmTabList oldlist, 
-			    Cardinal *position_list, 
-			    XmTab *tabs, 
+extern XmTabList
+  XmTabListReplacePositions(XmTabList oldlist,
+			    Cardinal *position_list,
+			    XmTab *tabs,
 			    Cardinal tab_count);
 extern XmTab XmTabListGetTab(XmTabList tablist, Cardinal position);
 extern Cardinal XmTabListTabCount(XmTabList tablist);
 extern XmTabList XmTabListCopy(XmTabList tablist, int offset, Cardinal count);
 extern void XmTabListFree(XmTabList tablist);
 extern XmTabList XmTabListInsertTabs(XmTabList oldlist,
-				     XmTab *tabs, 
-				     Cardinal tab_count, 
+				     XmTab *tabs,
+				     Cardinal tab_count,
 				     int position);
 /********    End Public Function Declarations    ********/
 
@@ -2009,7 +2005,7 @@ extern XmTabList XmTabListInsertTabs(XmTabList oldlist,
 extern XmRenderTable XmRenderTableCvtFromProp(Widget, char *prop, unsigned int len);
 extern unsigned int XmRenderTableCvtToProp(Widget, XmRenderTable table, char **prop_return);
 extern void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal argcount);
-extern void XmRenditionRetrieve(XmRendition rendition, 
+extern void XmRenditionRetrieve(XmRendition rendition,
 				ArgList arglist,
 				Cardinal argcount);
 extern void XmRenditionFree(XmRendition rendition);
@@ -2017,8 +2013,8 @@ extern XmRendition XmRenditionCreate(Widget widget,
 				     XmStringTag tag,
 				     ArgList arglist,
 				     Cardinal argcount);
-extern XmRendition 
-  *XmRenderTableGetRenditions(XmRenderTable table, 
+extern XmRendition
+  *XmRenderTableGetRenditions(XmRenderTable table,
 			      XmStringTag *tags,
 			      Cardinal tag_count);
 extern XmRendition XmRenderTableGetRendition(XmRenderTable table,
@@ -2027,43 +2023,43 @@ extern int XmRenderTableGetTags(XmRenderTable table,
 				XmStringTag **tag_list);
 extern void XmRenderTableFree(XmRenderTable table);
 extern XmRenderTable XmRenderTableCopy(XmRenderTable table,
-				       XmStringTag *tags, 
+				       XmStringTag *tags,
 				       int tag_count);
-extern XmRenderTable 
+extern XmRenderTable
   XmRenderTableRemoveRenditions(XmRenderTable oldtable,
-				XmStringTag *tags, 
+				XmStringTag *tags,
 				int tag_count);
-extern XmRenderTable 
-  XmRenderTableAddRenditions(XmRenderTable oldtable, 
-			     XmRendition *renditions, 
-			     Cardinal rendition_count, 
+extern XmRenderTable
+  XmRenderTableAddRenditions(XmRenderTable oldtable,
+			     XmRendition *renditions,
+			     Cardinal rendition_count,
 			     XmMergeMode merge_mode);
 
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for Dest.c    ********/
 
-extern Widget XmGetDestination( 
+extern Widget XmGetDestination(
                         Display *display) ;
 
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for Traversal.c    ********/
 
-extern Boolean XmIsTraversable( 
+extern Boolean XmIsTraversable(
                         Widget wid) ;
-extern XmVisibility XmGetVisibility( 
+extern XmVisibility XmGetVisibility(
                         Widget wid) ;
-extern Widget XmGetTabGroup( 
+extern Widget XmGetTabGroup(
                         Widget wid) ;
-extern Widget XmGetFocusWidget( 
+extern Widget XmGetFocusWidget(
                         Widget wid) ;
-extern Boolean XmProcessTraversal( 
+extern Boolean XmProcessTraversal(
                         Widget w,
                         XmTraversalDirection dir) ;
-extern void XmAddTabGroup( 
+extern void XmAddTabGroup(
                         Widget tabGroup) ;
-extern void XmRemoveTabGroup( 
+extern void XmRemoveTabGroup(
                         Widget w) ;
 
 /********    End Public Function Declarations    ********/
@@ -2087,7 +2083,7 @@ extern void XmRemoveTabGroup(
 #define XmINDICATOR_CROSS_GLYPH		0x20
 
 enum {
-  XmINDICATOR_NONE      = 0, 
+  XmINDICATOR_NONE      = 0,
   XmINDICATOR_FILL      = 1,	/* Treated as _BOX or _CHECK_BOX */
   XmINDICATOR_BOX	= 255,	/* Treated as XmINDICATOR_3D_BOX */
   XmINDICATOR_CHECK     = XmINDICATOR_CHECK_GLYPH,
@@ -2111,6 +2107,6 @@ enum { XmEXTERNAL_HIGHLIGHT, XmINTERNAL_HIGHLIGHT };
 
 enum { XmPATH_MODE_FULL, XmPATH_MODE_RELATIVE };
 enum { XmFILTER_NONE, XmFILTER_HIDDEN_FILES} ;
-  
+
 #endif /* _Xm_h */
  /* DON'T ADD STUFF AFTER THIS #endif */

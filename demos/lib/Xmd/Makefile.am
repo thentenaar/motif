@@ -13,7 +13,7 @@ Print.h PrintP.h
 
 LDADD = libXmd.la ../../../lib/Xm/libXm.la
 
-INCLUDES = -I$(top_builddir)/lib -I$(srcdir)/../../../lib ${X_CFLAGS}
+AM_CPPFLAGS = -I$(top_builddir)/lib -I$(srcdir)/../../../lib ${X_CFLAGS}
 
 EXTRA_DIST =
 

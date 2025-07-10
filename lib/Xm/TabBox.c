@@ -51,7 +51,7 @@
 
 #define FIX_1503
 
-#ifdef USE_XFT
+#if USE_XFT
 #include <X11/Xft/Xft.h>
 #endif
 
@@ -4988,7 +4988,7 @@ CalcCornerSize(tab)
 	    tmp = font->ascent + font->descent;
 	    AssignMax(size, tmp);
 	}
-#ifdef USE_XFT
+#if USE_XFT
         else if (font_type == XmFONT_IS_XFT)
 	{
 	    tmp = ((XftFont*)value)->ascent + ((XftFont*)value)->descent;

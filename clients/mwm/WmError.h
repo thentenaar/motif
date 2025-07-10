@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2
-*/ 
+*/
 
 #ifdef WSM
 #ifdef DEBUGGER
@@ -35,7 +35,7 @@ extern int WmXIOErrorHandler (Display *display);
 extern _X_NORETURN void WmXtErrorHandler (char *message);
 extern void WmXtWarningHandler (char *message);
 extern void Warning (char *message);
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 extern char * GetMessage(int set, int n, char * s);
 #endif
 #ifdef WSM

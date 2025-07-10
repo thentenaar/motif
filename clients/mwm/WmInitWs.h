@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.2
-*/ 
+*/
 
 extern void InitWmGlobal (int argc, char *argv [], char *environ []);
 extern void InitWmScreen (WmScreenData *pSD, int sNum);
@@ -34,7 +34,7 @@ extern void MakeWmFunctionResources (WmScreenData *pSD);
 extern void MakeXorGC (WmScreenData *pSD);
 extern void CopyArgv (int argc, char *argv []);
 extern void InitScreenNames (void);
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 extern void InitNlsStrings( void ) ;
 #endif
 #ifdef WSM

@@ -7,4 +7,4 @@ noinst_HEADERS	= Container.h ContainerP.h
 
 EXTRA_DIST =
 
-INCLUDES = -I$(srcdir)/../../../lib -I$(srcdir)/.. -I$(srcdir)/../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
+AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(srcdir)/.. -I$(srcdir)/../../lib -I$(top_builddir)/lib ${X_CFLAGS}

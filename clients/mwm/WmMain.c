@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.1
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -78,7 +78,7 @@ WmScreenData *pSD;
  */
 
 WmGlobalData wmGD;
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 NlsStrings wmNLS;
 #endif
 #ifdef WSM
@@ -124,7 +124,7 @@ main (int argc, char *argv [], char *environ [])
     _DtEnvControl(DT_ENV_SET);
 
     /*
-     * Force LANG lookup early. 
+     * Force LANG lookup early.
      * (Front end may change $LANG to 'C' as part
      *  of string space reduction optimization.)
      */
@@ -135,7 +135,7 @@ main (int argc, char *argv [], char *environ [])
     XtSetLanguageProc (NULL, (XtLanguageProc)NULL, NULL);
 #endif
 #ifdef WSM
-    /*  
+    /*
      * Get Identity
      */
     WmIdentity = WmReturnIdentity(argc, argv, environ);
@@ -157,7 +157,7 @@ main (int argc, char *argv [], char *environ [])
 	_DtEnvControl(DT_ENV_SET_BIN);
     }
 #endif /* WSM */
-    
+
     /*
      * MAIN EVENT HANDLING LOOP:
      */
@@ -177,11 +177,11 @@ main (int argc, char *argv [], char *environ [])
 	wmGD.attributesWindow = 0L;
 
 #ifdef WSM
-	if ((event.type == ButtonPress) || 
+	if ((event.type == ButtonPress) ||
 	    (event.type == ButtonRelease))
 	{
 	    if ((wmGD.evLastButton.button != 0) &&
-		ReplayedButtonEvent (&(wmGD.evLastButton), 
+		ReplayedButtonEvent (&(wmGD.evLastButton),
 				     &(event.xbutton)))
 	    {
 		wmGD.bReplayedButton = True;
@@ -254,7 +254,7 @@ main (int argc, char *argv [], char *environ [])
  *
  ******************************<->***********************************/
 
-int WmReturnIdentity ( int argc, char *argv[], char *environ[]) 
+int WmReturnIdentity ( int argc, char *argv[], char *environ[])
 {
 	char *tempString;
 	char *origPtr;
@@ -263,7 +263,7 @@ int WmReturnIdentity ( int argc, char *argv[], char *environ[])
 
  	int retVal = DT_MWM;
 
-	if (!(tempString = 
+	if (!(tempString =
 	      (char *)(XtMalloc ((unsigned int)(strlen (argv[0]) + 1)))))
 	{
 		Warning(((char *)GETMESSAGE(44, 2, "Insufficient memory for name of window manager")));
@@ -274,7 +274,7 @@ int WmReturnIdentity ( int argc, char *argv[], char *environ[])
 
 	if (strrchr(argv[0], '/'))
 	{
-		
+
 		strcpy(tempString, (strrchr(argv[0], '/')));
 
 		tempString++;

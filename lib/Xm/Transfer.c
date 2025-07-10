@@ -47,7 +47,7 @@
 
 
 typedef enum { DoXFree, DoFree } FreeType;
-#define FreeSafeAtomName(val,how) if (1) { if (DoXFree==how) XFree(val); else free(val); } 
+#define FreeSafeAtomName(val,how) if (1) { if (DoXFree==how) XFree(val); else free(val); }
 
 static ConvertContext LookupContextBlock(Display*, Atom);
 static void ClearContextBlock(Display*, Atom);
@@ -58,9 +58,9 @@ static void CallDoneProcs(Widget, XtPointer, XmTransferDoneCallbackStruct*);
 static XtPointer GetTransferID(void);
 static void SelectionCallbackWrapper(Widget, XtPointer, Atom*, Atom*,
 				     XtPointer, unsigned long*, int*);
-static Boolean DragConvertHandler(Widget, Atom *, Atom *, Atom *, 
+static Boolean DragConvertHandler(Widget, Atom *, Atom *, Atom *,
 				  XtPointer *, unsigned long *, int *);
-static void SecondaryConvertHandler(Widget, XtPointer, 
+static void SecondaryConvertHandler(Widget, XtPointer,
 				    XmConvertCallbackStruct *);
 static void ReleaseSecondaryLock(Widget, XtEnum, XmTransferDoneCallbackStruct*);
 static void DropDestinationHandler(Widget, XtPointer,
@@ -124,8 +124,8 @@ _XmConvertHandlerSetLocal(void)
 /****************************************************************/
 
 Boolean
-_XmConvertHandler(Widget wid, Atom *selection, Atom *target, 
-		  Atom *type, XtPointer *value, 
+_XmConvertHandler(Widget wid, Atom *selection, Atom *target,
+		  Atom *type, XtPointer *value,
 		  unsigned long *size, int *fmt)
 {
   enum { XmA_MOTIF_DESTINATION, XmAINSERT_SELECTION,
@@ -170,7 +170,7 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
   cbstruct.format = 8;
   cbstruct.length = 0;
 
- 
+
   _XmProcessLock();
   /* Get the request event if we can */
   if (my_local_convert_flag == 0) {
@@ -180,12 +180,12 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
     if (*selection == atoms[XmA_MOTIF_DROP]) {
       XtSetArg(args[0], XmNiccHandle, &real_selection_atom);
       XtGetValues(cc -> drag_context, args, 1);
-      cbstruct.event = (XEvent *) XtGetSelectionRequest(cc -> drag_context, 
-							real_selection_atom, 
+      cbstruct.event = (XEvent *) XtGetSelectionRequest(cc -> drag_context,
+							real_selection_atom,
 							NULL);
       req_widget = cc -> drag_context;
     } else {
-      cbstruct.event = (XEvent *) XtGetSelectionRequest(wid, *selection, 
+      cbstruct.event = (XEvent *) XtGetSelectionRequest(wid, *selection,
 							NULL);
       req_widget = wid;
     }
@@ -193,10 +193,10 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
     /* Get the parameters from this request.  Use the correct
        selection atom here as well */
     {
-      Atom sel_atom = (real_selection_atom != None) 
+      Atom sel_atom = (real_selection_atom != None)
 	? real_selection_atom : *selection;
       XtGetSelectionParameters(req_widget, sel_atom, NULL,
-			       &cbstruct.parm_type, &cbstruct.parm, 
+			       &cbstruct.parm_type, &cbstruct.parm,
 			       &cbstruct.parm_length, &cbstruct.parm_format);
     }
   } else {
@@ -217,7 +217,7 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
 	cbstruct.parm_type = None;
       }
     }
-  }    
+  }
   _XmProcessUnlock();
 
   if (cbstruct.event != NULL &&
@@ -251,14 +251,14 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
 
     if (cbstruct.status == XmCONVERT_DEFAULT ||
 	cbstruct.status == XmCONVERT_MERGE) {
-      ttrait = (XmTransferTrait) 
+      ttrait = (XmTransferTrait)
 	XmeTraitGet((XtPointer) XtClass(wid), XmQTtransfer);
       if (ttrait != NULL)
 	ttrait -> convertProc(wid, NULL, &cbstruct);
     }
   }
 
-  /* If this is an INSERT_SELECTION or LINK_SELECTION then 
+  /* If this is an INSERT_SELECTION or LINK_SELECTION then
      we call SecondaryConvertHandler to finish the work */
   if (cbstruct.status == XmCONVERT_DEFAULT &&
       (*target == atoms[XmAINSERT_SELECTION] ||
@@ -295,8 +295,8 @@ _XmConvertHandler(Widget wid, Atom *selection, Atom *target,
 /****************************************************************/
 
 static Boolean
-DragConvertHandler(Widget drag_context, Atom *selection, Atom *target, 
-		      Atom *type, XtPointer *value, 
+DragConvertHandler(Widget drag_context, Atom *selection, Atom *target,
+		      Atom *type, XtPointer *value,
 		      unsigned long *size, int *fmt)
 {
   ConvertContext cc;
@@ -309,7 +309,7 @@ DragConvertHandler(Widget drag_context, Atom *selection, Atom *target,
   /* Originating widget was stored in client_data */
 
   return(_XmConvertHandler((Widget) cc -> client_data,
-			   selection, target, 
+			   selection, target,
 			   type, value, size, fmt));
 
 }
@@ -324,7 +324,7 @@ static int secondary_lock = 0;
 
 /*ARGSUSED*/
 static void
-SecondaryConvertHandler(Widget w, 
+SecondaryConvertHandler(Widget w,
 			XtPointer ignored, /* unused */
 			XmConvertCallbackStruct *cs)
 {
@@ -381,11 +381,11 @@ SecondaryConvertHandler(Widget w,
     operation = XmCOPY;
   else if (cs -> target == atoms[XmALINK_SELECTION])
     operation = XmLINK;
-  else 
+  else
     operation = XmOTHER;
 
-  if (_XmDestinationHandler(w, pair -> selection, 
-			    operation, ReleaseSecondaryLock, 
+  if (_XmDestinationHandler(w, pair -> selection,
+			    operation, ReleaseSecondaryLock,
 			    (XtPointer) pair -> target,
 			    req_event -> time, req_event) != True) {
     cs -> status = XmCONVERT_REFUSE;
@@ -460,7 +460,7 @@ ClipboardLoseProc(Widget w, Atom *selection)
   int fmt;
 
   _XmConvertHandlerSetLocal();
-  _XmConvertHandler(w, selection, &DELETE, 
+  _XmConvertHandler(w, selection, &DELETE,
 		    &type, &value, &size, &fmt);
 
   LoseProc(w, selection);
@@ -481,7 +481,7 @@ LoseProc(Widget w, Atom *selection)
   Atom MOTIF_LOSE = XInternAtom(XtDisplay(w), XmS_MOTIF_LOSE_SELECTION, False);
 
   _XmConvertHandlerSetLocal();
-  _XmConvertHandler(w, selection, &MOTIF_LOSE, 
+  _XmConvertHandler(w, selection, &MOTIF_LOSE,
 		    &type, &value, &size, &fmt);
   XtFree((char*) value);
   XtRemoveCallback(w, XmNdestroyCallback, DisownCallback,
@@ -493,8 +493,8 @@ LoseProc(Widget w, Atom *selection)
 /********************************************************************/
 
 /*ARGSUSED*/
-static void 
-DisownCallback(Widget w, 
+static void
+DisownCallback(Widget w,
 	       XtPointer ignore, /* unused */
 	       XtPointer client_data)
 {
@@ -509,7 +509,7 @@ DisownCallback(Widget w,
 /* value in the callback structure.				*/
 /****************************************************************/
 void
-XmeConvertMerge(XtPointer data, Atom type, int format, 
+XmeConvertMerge(XtPointer data, Atom type, int format,
 		unsigned long size, XmConvertCallbackStruct *cs)
 {
   _XmProcessLock();
@@ -523,7 +523,7 @@ XmeConvertMerge(XtPointer data, Atom type, int format,
   if (format == cs -> format && type == cs -> type)
     {
       int total_size, offset, user_bytes;
-	      
+
       /* Calculate all sizes in bytes */
       offset = BYTELENGTH(cs -> length, cs -> format);
       user_bytes = BYTELENGTH(size, format);
@@ -561,10 +561,10 @@ XmeTransferAddDoneProc(XtPointer id,
   tid -> numDoneProcs++;
 
   if (tid -> numDoneProcs == 1)
-    tid -> doneProcs = (XmSelectionFinishedProc *) 
+    tid -> doneProcs = (XmSelectionFinishedProc *)
       XtMalloc(sizeof(XmSelectionFinishedProc*));
   else
-    tid -> doneProcs = (XmSelectionFinishedProc *) 
+    tid -> doneProcs = (XmSelectionFinishedProc *)
       XtRealloc((char*) tid -> doneProcs,
 		sizeof(XmSelectionFinishedProc*) * tid -> numDoneProcs);
 
@@ -603,7 +603,7 @@ XmeNamedSource(Widget w, Atom sel, Time time)
 
   if (time == 0) time = XtLastTimestampProcessed(XtDisplay(w));
 
-  status = XtOwnSelection(w, sel, time, _XmConvertHandler, 
+  status = XtOwnSelection(w, sel, time, _XmConvertHandler,
 			  LoseProc, NULL);
 
   if (status) XtAddCallback(w, XmNdestroyCallback, DisownCallback,
@@ -676,11 +676,11 @@ XmeSecondaryTransfer(Widget w, Atom target, XtEnum op, Time time)
 /* issues surrounding the success or failure of the transfer     */
 /*****************************************************************/
 /*ARGSUSED*/
-static void 
-SecondaryDone(Widget wid, 
+static void
+SecondaryDone(Widget wid,
 	      XtPointer client_data, /* unused */
 	      Atom *selection,	/* unused */
-	      Atom *type, XtPointer value, 
+	      Atom *type, XtPointer value,
 	      unsigned long *length, int *format)
 {
   ConvertContext cc;
@@ -700,12 +700,12 @@ SecondaryDone(Widget wid,
   if (success && cc -> op == XmMOVE) {
     _XmConvertHandlerSetLocal();
     _XmConvertHandler(wid, &convert_selection,
-		      &DELETE, 
+		      &DELETE,
 		      type, (XtPointer*) &value, length, format);
     XtFree((char*) value);
   }
 
-  XtDisownSelection(wid, convert_selection, 
+  XtDisownSelection(wid, convert_selection,
 		    XtLastTimestampProcessed(XtDisplay(wid)));
 }
 
@@ -753,7 +753,7 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
   cc = LookupContextBlock(display, atoms[XmACLIPBOARD]);
   cc -> op = op;
 
-  /* If there is a clipboard manager,  then just take 
+  /* If there is a clipboard manager,  then just take
      ownership of the clipboard selection and the manager
      will do the rest.  Otherwise we use the motif clipboard
      code. */
@@ -782,19 +782,19 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
   }
 
   /* Use Motif clipboard */
-  status = XmClipboardStartCopy(display, XtWindow(w), NULL, 
+  status = XmClipboardStartCopy(display, XtWindow(w), NULL,
 				time, w, ClipboardCallback, &itemid);
-  
+
   if (status == XmClipboardLocked) {
 	_XmAppUnlock(app);
 	return(False);
   }
-  
+
   /* OK.  We've got the clipboard, now setup the targets items */
   cc -> itemid = itemid;
-  
+
   /* Call the converter to get the targets for the clipboard
-     if _MOTIF_CLIPBOARD_TARGETS doesn't work then try 
+     if _MOTIF_CLIPBOARD_TARGETS doesn't work then try
      TARGETS target */
   _XmConvertHandlerSetLocal();
   if (_XmConvertHandler(w, &atoms[XmACLIPBOARD],
@@ -809,7 +809,7 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
     for(i = 0; i < count; i++) {
       name = GetSafeAtomName(display, targets[i], &howFree);
       _XmConvertHandlerSetLocal();
-      if (_XmConvertHandler(w, &atoms[XmACLIPBOARD], &targets[i], 
+      if (_XmConvertHandler(w, &atoms[XmACLIPBOARD], &targets[i],
 			    &type2, &value, &size2, &format2) == True &&
 	  ! (cc -> flags & XmCONVERTING_PARTIAL)) {
 	XmClipboardRegisterFormat(display, name, format2);
@@ -828,7 +828,7 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
     }
     XtFree((char*) targets);
   }
-  
+
   /* Call the converter to get the deferred targets for the
      clipboard */
   _XmConvertHandlerSetLocal();
@@ -840,26 +840,26 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
     _XmProcessLock();
     if (DataIdDictionary == NULL) {
       /* Create dictionary which stores data about particular
-	 snapshots and particular dataids.  Since it 
-	 takes an integer as a key,  don't need match or hash 
+	 snapshots and particular dataids.  Since it
+	 takes an integer as a key,  don't need match or hash
 	 functions */
       DataIdDictionary = _XmAllocHashTable(10, NULL, NULL);
     }
     _XmProcessUnlock();
-    
+
     targets = (Atom *) value;
     count = size;
     /* If there are deferred targets then the snapshot target
        must be converted successfully.  The value returned
-       by snapshot will be used as a unique id in the 
+       by snapshot will be used as a unique id in the
        clipboard callback to identify this deferred data
        item */
     _XmConvertHandlerSetLocal();
-    if (_XmConvertHandler(w, &atoms[XmACLIPBOARD], &atoms[XmA_MOTIF_SNAPSHOT], 
+    if (_XmConvertHandler(w, &atoms[XmACLIPBOARD], &atoms[XmA_MOTIF_SNAPSHOT],
 			  &type2, &value, &size2, &format2) == True) {
       long data_id;
       SnapshotRequest req;
-      
+
       if (count != 0) {
 	req = (SnapshotRequest) XtMalloc(sizeof(SnapshotRequestRec));
 	req -> outstanding = 0;
@@ -867,9 +867,9 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
       } else {
 	req = NULL;
       }
-      
+
       XtFree((char*) value);
-      
+
       for(i = 0; i < count; i++) {
 	name = GetSafeAtomName(display, targets[i], &howFree);
 	transferred++;
@@ -892,10 +892,10 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
     XtFree((char*) targets);
   }
   XmClipboardEndCopy(display, XtWindow(w), itemid);
-  
+
   if (op == XmMOVE && transferred != 0) {
     _XmConvertHandlerSetLocal();
-    _XmConvertHandler(w, &atoms[XmACLIPBOARD], &atoms[XmADELETE], 
+    _XmConvertHandler(w, &atoms[XmACLIPBOARD], &atoms[XmADELETE],
 		      &type, &value, &size, &format);
     XtFree((char*) value);
   }
@@ -910,7 +910,7 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
   }
 }
 
-static void 
+static void
 ClipboardCallback(Widget w, long *data_id, long *target, int *reason)
 {
   XtPointer value;
@@ -936,28 +936,28 @@ ClipboardCallback(Widget w, long *data_id, long *target, int *reason)
 
   if (*reason != XmCR_CLIPBOARD_DATA_DELETE) {
     _XmConvertHandlerSetLocal();
-    if (_XmConvertHandler(w, &req -> distinguisher, (Atom *) target, 
+    if (_XmConvertHandler(w, &req -> distinguisher, (Atom *) target,
 			  &type, &value, &size, &format) == True &&
 	! (cc -> flags & XmCONVERTING_PARTIAL)) {
       char *name;
       FreeType howFree;
-     
+
       size = BYTELENGTH( size, format );
       if (format % 8 != 0) size++;
-      
+
       name = GetSafeAtomName(display, * (Atom *) target, &howFree);
       XmClipboardRegisterFormat(display, name, format);
       FreeSafeAtomName(name,howFree);
       /* Critical section for MT */
       _XmProcessLock();
       _XmClipboardPassType(type);
-      XmClipboardCopyByName(display, XtWindow(w), *data_id, 
+      XmClipboardCopyByName(display, XtWindow(w), *data_id,
 			    value, size, 0L);
       _XmProcessUnlock();
       XtFree((char*) value);
     }
     else
-      XmClipboardCopyByName(display, XtWindow(w), *data_id, 
+      XmClipboardCopyByName(display, XtWindow(w), *data_id,
 			    NULL, 0, 0L);
   }
 
@@ -967,7 +967,7 @@ ClipboardCallback(Widget w, long *data_id, long *target, int *reason)
     /* If this was the last item,  call _XmConvertHandler with
        DELETE on the distinguisher and then free the req */
     _XmConvertHandlerSetLocal();
-    _XmConvertHandler(w, &req -> distinguisher, 
+    _XmConvertHandler(w, &req -> distinguisher,
 		      (Atom *) &done, &type, &value, &size, &format);
     XtFree((char*) value);
     XtFree((char*) req);
@@ -979,7 +979,7 @@ ClipboardCallback(Widget w, long *data_id, long *target, int *reason)
 /* Sets up for drag and drop and calls XmDragStart		*/
 /****************************************************************/
 
-Widget 
+Widget
 XmeDragSource(Widget w, XtPointer location_data, XEvent *event,
 	      ArgList in_args, Cardinal in_arg_count)
 {
@@ -1017,7 +1017,7 @@ XmeDragSource(Widget w, XtPointer location_data, XEvent *event,
   cc -> location_data = location_data;
   cc -> client_data = (XtPointer) w;
 
-  XtSetArg(args[arg_count], XmNconvertProc, DragConvertHandler); 
+  XtSetArg(args[arg_count], XmNconvertProc, DragConvertHandler);
   arg_count++;
 
   _XmConvertHandlerSetLocal();
@@ -1068,7 +1068,7 @@ _XmDestinationHandler(Widget wid, Atom selection, XtEnum op,
   XmTransferTrait ttrait;
   Atom MOTIF_DROP = XInternAtom(XtDisplay(wid), XmS_MOTIF_DROP, False);
 
-  cbstruct = (XmDestinationCallbackStruct *) 
+  cbstruct = (XmDestinationCallbackStruct *)
     XtMalloc(sizeof(XmDestinationCallbackStruct));
 
   cbstruct -> reason = XmCR_OK;
@@ -1100,7 +1100,7 @@ _XmDestinationHandler(Widget wid, Atom selection, XtEnum op,
   if (done_proc != NULL)
     XmeTransferAddDoneProc((XtPointer) tc, done_proc);
 
-  ttrait = (XmTransferTrait) 
+  ttrait = (XmTransferTrait)
     XmeTraitGet((XtPointer) XtClass(wid), XmQTtransfer);
 
   if (tc -> selection == MOTIF_DROP) {
@@ -1178,7 +1178,7 @@ _XmDestinationHandler(Widget wid, Atom selection, XtEnum op,
     TB_internal = 0;
     _XmProcessUnlock();
   }
-  
+
   if (tc -> count == 0 &&
       tc -> selection == MOTIF_DROP) {
     XmDropProcCallbackStruct *ds = (XmDropProcCallbackStruct *) location_data;
@@ -1209,7 +1209,7 @@ _XmDestinationHandler(Widget wid, Atom selection, XtEnum op,
       return(True);
     }
   else {
-    /* Otherwise set the flag so SelectionCallbackWrapper can 
+    /* Otherwise set the flag so SelectionCallbackWrapper can
        finish the work */
     tc -> flags |= TC_EXITED_DH; /* Indicate safe to free record */
     return(True);
@@ -1250,7 +1250,7 @@ FinishTransfer(Widget wid, TransferContext tc)
 /****************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 DeleteDropCBStruct(Widget w,	/* unused */
 		   XtEnum ignored_status, /* unused */
 		   XmTransferDoneCallbackStruct *cs)
@@ -1262,8 +1262,8 @@ DeleteDropCBStruct(Widget w,	/* unused */
 }
 
 /*ARGSUSED*/
-static void 
-DropDestinationHandler(Widget w, 
+static void
+DropDestinationHandler(Widget w,
 		       XtPointer client_data, /* unused */
 		       XmDropProcCallbackStruct *ds)
 {
@@ -1381,7 +1381,7 @@ XmeDropSink(Widget w, ArgList in_args, Cardinal in_arg_count)
 
   arg_count = in_arg_count;
 
-  XtSetArg(args[arg_count], XmNdropProc, DropDestinationHandler); 
+  XtSetArg(args[arg_count], XmNdropProc, DropDestinationHandler);
   arg_count++;
 
   XmDropSiteRegister(w, args, arg_count);
@@ -1415,13 +1415,13 @@ XmTransferDone(XtPointer transfer_id, XmTransferStatus status)
   /* Make sure MULTIPLE request is unblocked */
   if (tc -> flags & TC_IN_MULTIPLE) {
     tc -> flags &= ~ TC_IN_MULTIPLE;
-    XtSendSelectionRequest(tc -> widget, tc -> selection, 
+    XtSendSelectionRequest(tc -> widget, tc -> selection,
 			   XtLastTimestampProcessed(XtDisplay(tc -> widget)));
   }
 
   if (status == XmTRANSFER_DONE_SUCCEED ||
       status == XmTRANSFER_DONE_FAIL ||
-      status == XmTRANSFER_DONE_CONTINUE) 
+      status == XmTRANSFER_DONE_CONTINUE)
     {
       tc -> flags |= TC_FLUSHED;
 
@@ -1429,7 +1429,7 @@ XmTransferDone(XtPointer transfer_id, XmTransferStatus status)
 	  tc -> selection == MOTIF_DROP) {
 	Arg args[2];
 	XtSetArg(args[0], XmNtransferStatus, XmTRANSFER_FAILURE);
-	XtSetArg(args[1], XmNnumDropTransfers, 0); 
+	XtSetArg(args[1], XmNnumDropTransfers, 0);
 	if (tc -> drop_context != (Widget) NULL)
 	  XtSetValues(tc -> drop_context, args, 2);
 	else
@@ -1445,13 +1445,13 @@ XmTransferDone(XtPointer transfer_id, XmTransferStatus status)
 	}
       }
     }
-  else if (status == XmTRANSFER_DONE_DEFAULT) 
+  else if (status == XmTRANSFER_DONE_DEFAULT)
     {
       TransferBlock tb;
-      
+
       /* If we are going to default then we'll skip
 	 all requests placed by callbacks */
-      for(tb = tc -> requests; 
+      for(tb = tc -> requests;
 	  tb != NULL;
 	  tb = (TransferBlock) tb -> next) {
 	if (!(tb -> flags & TB_INTERNAL))
@@ -1467,10 +1467,10 @@ XmTransferDone(XtPointer transfer_id, XmTransferStatus status)
 /************************************************************************/
 
 void
-XmTransferSetParameters(XtPointer transfer_id, 
-			XtPointer parm, 
+XmTransferSetParameters(XtPointer transfer_id,
+			XtPointer parm,
 			int parm_fmt,
-			unsigned long parm_length, 
+			unsigned long parm_length,
 			Atom parm_type)
 {
   TransferContext tc = (TransferContext) transfer_id;
@@ -1504,11 +1504,11 @@ XmTransferSetParameters(XtPointer transfer_id,
 /* CLIPBOARD) or from another mechanism (Drag and Drop).		*/
 /************************************************************************/
 
-void 
+void
 XmTransferValue(XtPointer transfer_id,
 		Atom target,
-		XtCallbackProc proc, 
-		XtPointer client_data, 
+		XtCallbackProc proc,
+		XtPointer client_data,
 		Time time)
 {
   enum { XmACLIPBOARD, XmA_MOTIF_DROP, NUM_ATOMS };
@@ -1529,15 +1529,15 @@ XmTransferValue(XtPointer transfer_id,
   /******************************************************/
   if (tc -> flags & TC_FLUSHED) {
 	_XmAppUnlock(app);
-	return;  
+	return;
   }
 
   assert(XtNumber(atom_names) == NUM_ATOMS);
-  XInternAtoms(XtDisplay(tc -> widget), atom_names, XtNumber(atom_names), 
-	       False, atoms); 
+  XInternAtoms(XtDisplay(tc -> widget), atom_names, XtNumber(atom_names),
+	       False, atoms);
 
   if (time == 0)
-    time = XtLastTimestampProcessed(XtDisplay(tc -> widget));  
+    time = XtLastTimestampProcessed(XtDisplay(tc -> widget));
 
   tb = AddTransferBlock(tc);
 
@@ -1552,13 +1552,13 @@ XmTransferValue(XtPointer transfer_id,
   if (tc -> selection == atoms[XmACLIPBOARD]) {
     /* Assure the clipboard is owned to prevent orphan data
        problems in the data transfer */
-    XmClipboardInquireLength(XtDisplay(tc -> widget), 
+    XmClipboardInquireLength(XtDisplay(tc -> widget),
 			     XtWindow(tc -> widget),
 			     XmSTARGETS,
 			     &length);
   }
 
-  if (tc -> selection != atoms[XmA_MOTIF_DROP]) 
+  if (tc -> selection != atoms[XmA_MOTIF_DROP])
     {
       XtGetSelectionValue(tc -> widget, tc -> real_selection, target,
 			  SelectionCallbackWrapper, (XtPointer)tc, time);
@@ -1576,7 +1576,7 @@ XmTransferValue(XtPointer transfer_id,
 	  XtSetArg(args[0], XmNdropTransfers, transfers);
 	  XtSetArg(args[1], XmNnumDropTransfers, 1);
 	  XtSetArg(args[2], XmNtransferProc, SelectionCallbackWrapper);
-	  tc -> drop_context = 
+	  tc -> drop_context =
 	    (Widget) XmDropTransferStart(tc -> drag_context, args, 3);
 	}
       else
@@ -1606,7 +1606,7 @@ XmTransferStartRequest(XtPointer transfer_id)
   /******************************************************/
   if (tc -> flags & TC_FLUSHED) {
 	_XmAppUnlock(app);
-	return;  
+	return;
   }
 
   if (tc -> flags & TC_IN_MULTIPLE) {
@@ -1616,7 +1616,7 @@ XmTransferStartRequest(XtPointer transfer_id)
     sel = GetSafeAtomName(XtDisplay(tc -> widget), tc -> selection, &howFree);
     /* Already doing a multiple */
     TransferWarning(tc->widget, START_MULTIPLE,
-		    sel, 
+		    sel,
 		    ERROR_MULTIPLE_IN_PROGRESS);
     FreeSafeAtomName(sel,howFree);
     _XmAppUnlock(app);
@@ -1629,7 +1629,7 @@ XmTransferStartRequest(XtPointer transfer_id)
   _XmAppUnlock(app);
 }
 
-void 
+void
 XmTransferSendRequest(XtPointer transfer_id, Time time)
 {
   TransferContext tc = (TransferContext) transfer_id;
@@ -1646,7 +1646,7 @@ XmTransferSendRequest(XtPointer transfer_id, Time time)
     /* Assume that cleanup would be appropriate here */
     XtCancelSelectionRequest(tc -> widget, tc -> real_selection);
     _XmAppUnlock(app);
-    return;  
+    return;
   }
 
   if (! (tc -> flags & TC_IN_MULTIPLE)) {
@@ -1656,7 +1656,7 @@ XmTransferSendRequest(XtPointer transfer_id, Time time)
     sel = GetSafeAtomName(XtDisplay(tc -> widget), tc -> selection, &howFree);
     /* Not doing a multiple */
     TransferWarning(tc->widget, END_MULTIPLE,
-		    sel, 
+		    sel,
 		    ERROR_MULTIPLE_NOT_IN_PROGRESS);
     FreeSafeAtomName(sel, howFree);
     _XmAppUnlock(app);
@@ -1676,8 +1676,8 @@ XmTransferSendRequest(XtPointer transfer_id, Time time)
 /* routines and makes sure that the TransferContext is deleted when 	*/
 /* there are no more outstanding transfers.				*/
 /************************************************************************/
-static void 
-SelectionCallbackWrapper(Widget wid, XtPointer client_data, 
+static void
+SelectionCallbackWrapper(Widget wid, XtPointer client_data,
 			 Atom *selection, Atom *type,
 			 XtPointer value, unsigned long *length,
 			 int *format)
@@ -1710,7 +1710,7 @@ SelectionCallbackWrapper(Widget wid, XtPointer client_data,
   }
 
   if (! (tc -> flags & TC_FLUSHED)) {
-    if (tb != NULL && 
+    if (tb != NULL &&
 	! (tb -> flags & TB_IGNORE)) {
       cbstruct.reason = XmCR_OK;
       cbstruct.event = (XEvent *) NULL;
@@ -1750,7 +1750,7 @@ SelectionCallbackWrapper(Widget wid, XtPointer client_data,
     XmTransferTrait ttrait;
 
     tc -> flags |= TC_CALLED_WIDGET;
-    ttrait = (XmTransferTrait) 
+    ttrait = (XmTransferTrait)
       XmeTraitGet((XtPointer) XtClass(wid), XmQTtransfer);
 
     /* Now lookup the trait on this widget and call the
@@ -1782,7 +1782,7 @@ SelectionCallbackWrapper(Widget wid, XtPointer client_data,
   }
 
   /* When outstanding reaches 0,  free context block.  But don't
-     do this in the local case.  There we can free in the caller, 
+     do this in the local case.  There we can free in the caller,
      so check the TC_EXITED_DH flag to see if we've exited
      _XmDestinationHandler yet. */
   if (tc -> outstanding == 0 &&
@@ -1801,7 +1801,7 @@ typedef struct __XmCCKey {
 } _XmCCKeyRec, *_XmCCKey;
 
 static Boolean
-CCMatch(XtPointer x, XtPointer y) 
+CCMatch(XtPointer x, XtPointer y)
 {
   _XmCCKey a, b;
 
@@ -1834,7 +1834,7 @@ LookupContextBlock(Display *d, Atom a)
   x.selection = a;
 
   _XmProcessLock();
-  if (ConvertHashTable == (XmHashTable) NULL) 
+  if (ConvertHashTable == (XmHashTable) NULL)
     ConvertHashTable = _XmAllocHashTable(10, CCMatch, CCHash);
 
   cc = (ConvertContext) _XmGetHashEntry(ConvertHashTable, (XmHashKey) &x);
@@ -1861,7 +1861,7 @@ static void
 ClearContextBlock(Display *d, Atom a)
 {
   ConvertContext cc;
-  
+
   cc = LookupContextBlock(d, a);
 
   cc -> flags = 0;
@@ -1877,7 +1877,7 @@ ClearContextBlock(Display *d, Atom a)
 static TransferContext global_tc = NULL;
 static TransferContext free_tc = NULL;
 
-static XtPointer 
+static XtPointer
 GetTransferID(void)
 {
   TransferContext rval;
@@ -1886,7 +1886,7 @@ GetTransferID(void)
      and return it */
 
   _XmProcessLock();
-  if (free_tc != NULL) 
+  if (free_tc != NULL)
     {
       rval = free_tc;
       free_tc = (TransferContext) rval -> next;
@@ -1924,7 +1924,7 @@ FreeTransferID(XtPointer id)
 
   /* first unchain from global_tc */
 
-  if (global_tc == tid) 
+  if (global_tc == tid)
     {
       _XmProcessLock();
       global_tc = (TransferContext) tid -> next;
@@ -1968,12 +1968,12 @@ AddTransferBlock(TransferContext tc)
   tb = (TransferBlock) XtMalloc(sizeof(TransferBlockRec));
   tb -> next = NULL;
   /* we append blocks to the end of the list */
-  if (tc -> requests == NULL) 
+  if (tc -> requests == NULL)
     {
       tc -> requests = tb;
       tc -> last = tb;
     }
-  else 
+  else
     {
       (tc -> last) -> next = (XtPointer) tb;
       tc -> last = tb;
@@ -1990,7 +1990,7 @@ AddTransferBlock(TransferContext tc)
 }
 
 /* Warning routine */
-static void 
+static void
 TransferWarning(Widget w, char* name, char* type, char* message)
 {
   XmeWarning(w, message);
@@ -2004,7 +2004,7 @@ TransferWarning(Widget w, char* name, char* type, char* message)
 /*								*/
 /****************************************************************/
 
-/* 
+/*
  * XmeStandardTargets takes a widget, and a count of the widget's
  * private target list, and returns a list of standard targets.
  * The count of standard targets is returned in the passed in
@@ -2061,7 +2061,7 @@ XmeStandardTargets(Widget w, int count, int *tcount)
 
 /*ARGSUSED*/
 void
-XmeStandardConvert(Widget w, 
+XmeStandardConvert(Widget w,
 		   XtPointer ignore, /* unused */
 		   XmConvertCallbackStruct *cs)
 {
@@ -2135,13 +2135,13 @@ XmeStandardConvert(Widget w,
     cs -> length = 0;
     cs -> type = XA_INTEGER;
 
-    for(current = w; 
-	current != (Widget) NULL; 
+    for(current = w;
+	current != (Widget) NULL;
 	current = XtParent(current)) {
       if (XtIsShell(current)) {
-	XGetWindowProperty(XtDisplay(current), XtWindow(current), 
+	XGetWindowProperty(XtDisplay(current), XtWindow(current),
 			   XA_WM_CLASS, 0L, 100000L, False,
-			   (Atom) AnyPropertyType, 
+			   (Atom) AnyPropertyType,
 			   &cs -> type,
 			   &cs -> format,
 			   &cs -> length,
@@ -2159,13 +2159,13 @@ XmeStandardConvert(Widget w,
     char *total_value;
     unsigned long length;
 
-    for(current = w; 
-	current != (Widget) NULL; 
+    for(current = w;
+	current != (Widget) NULL;
 	current = XtParent(current)) {
       if (XtIsShell(current)) {
-	XGetWindowProperty(XtDisplay(current), XtWindow(current), 
+	XGetWindowProperty(XtDisplay(current), XtWindow(current),
 			   XA_WM_NAME, 0L, 100000L, False,
-			   (Atom) AnyPropertyType, 
+			   (Atom) AnyPropertyType,
 			   &type,
 			   &format,
 			   &length,
@@ -2174,10 +2174,10 @@ XmeStandardConvert(Widget w,
 	if (value != NULL) break;
       }
     }
-    
-    total_value = _XmTextToLocaleText(w, (XtPointer)value, type, 
+
+    total_value = _XmTextToLocaleText(w, (XtPointer)value, type,
 				      format, length, NULL);
-    
+
     cs -> value = (XtPointer) total_value;
     cs -> format = 8;
     cs -> length = total_value != NULL ? strlen(total_value) : 0;
@@ -2207,7 +2207,7 @@ XmeStandardConvert(Widget w,
 
     if (table == NULL) {
       /* If we didn't find a render table on this widget, then
-	 go ahead and look up the chain for something which 
+	 go ahead and look up the chain for something which
 	 does have one */
       table = XmeGetDefaultRenderTable(w, XmTEXT_RENDER_TABLE);
     }
@@ -2242,7 +2242,7 @@ XmeGetEncodingAtom(Widget w)
   _XmAppLock(app);
   tmp_prop.value = NULL; /* just in case X doesn't do it */
   ret_status = XmbTextListToTextProperty(XtDisplay(w), &tmp_string, 1,
-					 (XICCEncodingStyle)XTextStyle, 
+					 (XICCEncodingStyle)XTextStyle,
 					 &tmp_prop);
   if (ret_status == Success)
     encoding = tmp_prop.encoding;
@@ -2267,7 +2267,7 @@ _XmTextToLocaleText(Widget w,
 		    Boolean *success)
 {
   Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), XmSCOMPOUND_TEXT, False);
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
   Atom UTF8_STRING = XInternAtom(XtDisplay(w), XmSUTF8_STRING, False);
 #endif
   XTextProperty text_prop;
@@ -2279,7 +2279,7 @@ _XmTextToLocaleText(Widget w,
   int i;
 
   if (type == XA_STRING || type == COMPOUND_TEXT
-#ifdef UTF8_SUPPORTED
+#if XM_UTF8
       || type == UTF8_STRING
 #endif
      ) {
@@ -2298,7 +2298,7 @@ _XmTextToLocaleText(Widget w,
 	*success = False;
     }
 
-    if (num_values) { 
+    if (num_values) {
       for (i = 0; i < num_values ; i++)
 	malloc_size += strlen(values[i]);
 
@@ -2313,7 +2313,7 @@ _XmTextToLocaleText(Widget w,
 }
 
 void
-_XmConvertComplete(Widget wid, XtPointer value, 
+_XmConvertComplete(Widget wid, XtPointer value,
 		   unsigned long size, int format, Atom type,
 		   XmConvertCallbackStruct *cs)
 {
@@ -2324,7 +2324,7 @@ _XmConvertComplete(Widget wid, XtPointer value,
     if (cs -> status == XmCONVERT_MERGE) {
       XmeConvertMerge(value, type, format,  size, cs);
       XtFree((char*) value);
-    } else { 
+    } else {
       /* Not merging */
       if (cs -> value != NULL) XtFree((char*) cs -> value);
       cs -> type = type;
@@ -2351,9 +2351,9 @@ _XmTransferGetDestinationCBStruct(XtPointer tid)
 /* Error handler for XGetAtomName */
 
 static int SIF_ErrorFlag;
- 
+
 /*ARGSUSED*/
-static int 
+static int
 SIF_ErrorHandler(
      Display *display,		/* unused */
      XErrorEvent *event)
@@ -2372,7 +2372,7 @@ SIF_ErrorHandler(
  ** not to free; for now, just pass information back on what to do with the
  ** returned value.
  */
-static char* 
+static char*
 GetSafeAtomName(Display *display, Atom a, FreeType *howFree)
 {
   XErrorHandler old_Handler;

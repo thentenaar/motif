@@ -1,12 +1,6 @@
 datadir = ${prefix}/share/Xm/doc
 
-#data_DATA = BUGREPORT COPYRIGHT.MOTIF COPYING \
-#            README RELEASE RELNOTES
-
-EXTRA_DIST = BUGREPORT \
-             COPYING \
-             README RELEASE RELNOTES \
-             INSTALL.configure Makefile.imake-pure
+EXTRA_DIST = COPYING README RELEASE RELNOTES
 
 MAINTAINERCLEANFILES = Makefile.in \
              configure libtool \
@@ -20,14 +14,6 @@ MAINTAINERCLEANFILES = Makefile.in \
              missing mkinstalldirs \
              compile
 
-SUBDIRS	= bindings bitmaps \
-             config \
-             localized \
-             lib \
-             include \
-             tools \
-             clients \
-             doc \
-             demos
-AUTOMAKE_OPTIONS = 1.4
-ACLOCAL_AMFLAGS = -I .
+SUBDIRS	= bindings bitmaps localized lib include tools clients doc demos
+ACLOCAL_AMFLAGS = -I m4
+

@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -36,53 +36,53 @@ extern "C" {
 
 /********    Private Function Declarations for Synthetic.c    ********/
 
-extern void _XmBuildResources( 
+extern void _XmBuildResources(
                         XmSyntheticResource **wc_resources_ptr,
                         int *wc_num_resources_ptr,
                         XmSyntheticResource *sc_resources,
                         int sc_num_resources) ;
-extern void _XmInitializeSyntheticResources( 
+extern void _XmInitializeSyntheticResources(
                         XmSyntheticResource *resources,
                         int num_resources) ;
-extern void _XmPrimitiveGetValuesHook( 
+extern void _XmPrimitiveGetValuesHook(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmGadgetGetValuesHook( 
+extern void _XmGadgetGetValuesHook(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmManagerGetValuesHook( 
+extern void _XmManagerGetValuesHook(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-#ifdef PRINTING_SUPPORTED
-extern void _XmPrintShellGetValuesHook( 
+#if XM_PRINTING
+extern void _XmPrintShellGetValuesHook(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
 #endif
-extern void _XmExtGetValuesHook( 
+extern void _XmExtGetValuesHook(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmExtImportArgs( 
+extern void _XmExtImportArgs(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmPrimitiveImportArgs( 
+extern void _XmPrimitiveImportArgs(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmGadgetImportArgs( 
+extern void _XmGadgetImportArgs(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmGadgetImportSecondaryArgs( 
+extern void _XmGadgetImportSecondaryArgs(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmManagerImportArgs( 
+extern void _XmManagerImportArgs(
                         Widget w,
                         ArgList args,
                         Cardinal *num_args) ;

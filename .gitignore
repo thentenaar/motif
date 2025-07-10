@@ -7,6 +7,7 @@
 .libs
 Makefile.in
 aclocal.m4
+acinclude.m4
 autom4te.cache
 compile
 config.log
@@ -111,6 +112,7 @@ demos/unsupported/xmfonts/xmfonts
 demos/unsupported/xmforc/xmforc
 demos/unsupported/xmform/xmform
 lib/Xm/Xm.h
+lib/Xm/version.h
 lib/Xm/XmStrDefs.c
 lib/Xm/XmStrDefs.h
 lib/Xm/XmStrDefs22.h

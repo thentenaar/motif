@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -63,7 +63,7 @@ static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk 
 
 #include "MrmMsgI.h"
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 #if !defined(NL_CAT_LOCALE)
 #define NL_CAT_LOCALE	0
 #endif
@@ -89,8 +89,8 @@ static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk 
  *
  */
 
-static Cardinal I18NOpenFile (Display		 *display, 
-			      String		 name , 
+static Cardinal I18NOpenFile (Display		 *display,
+			      String		 name ,
 			      MrmOsOpenParamPtr	 os_ext ,
 			      IDBFile		 *file_id_return );
 
@@ -140,7 +140,7 @@ static SubstitutionRec	uidSubs[1];
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__OpenHierarchy (MrmCount			num_files,
 		    String			*name_list,
 		    MrmOsOpenParamPtr		*os_ext_list,
@@ -164,21 +164,21 @@ Urm__OpenHierarchy (MrmCount			num_files,
   Display		*display;	/* display for XtResolvePathNames */
   char                 	err_stg[300];
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
   static Boolean first = True;
 
   /*
    * We open the message catalog from MrmOpenHierarchy... routines.
-   * We cannot open it from MrmInitialize, since this call can be done 
+   * We cannot open it from MrmInitialize, since this call can be done
    * before Xt has been initialized, so at that time the locale could
    * be wrong.
    */
 
   /* We only want to open the message catalog once. */
 
-  if (first) 
+  if (first)
     {
-      Mrm_catd = catopen("Mrm", NL_CAT_LOCALE);    
+      Mrm_catd = catopen("Mrm", NL_CAT_LOCALE);
       first = False;
     }
 #endif
@@ -187,7 +187,7 @@ Urm__OpenHierarchy (MrmCount			num_files,
     {
       display = NULL;
     }
-  else 
+  else
     {
       MrmOsOpenParamPtr os_data;
       os_data = *os_ext_list;
@@ -216,7 +216,7 @@ Urm__OpenHierarchy (MrmCount			num_files,
    * If the uidPath was previously set, XtFree it so we can try any
    * new paths that may have been setup.
    */
-  if (uidPath != 0) 
+  if (uidPath != 0)
     {
       XtFree (uidPath);
       uidPath = 0;
@@ -251,7 +251,7 @@ Urm__OpenHierarchy (MrmCount			num_files,
    */
   for ( file_ndx=0 ; file_ndx<num_files ; file_ndx++ )
     {
-      if ( in_memory == TRUE ) 
+      if ( in_memory == TRUE )
 	{
 	  result = UrmIdbOpenBuffer(uid_buffer, &cur_file) ;
 	  switch ( result )
@@ -269,7 +269,7 @@ Urm__OpenHierarchy (MrmCount			num_files,
       else if ( os_ext_list == NULL )
 	result = I18NOpenFile (display, name_list[file_ndx], NULL, &cur_file) ;
       else
-        result = I18NOpenFile (display, name_list[file_ndx], 
+        result = I18NOpenFile (display, name_list[file_ndx],
 			       os_ext_list[file_ndx], &cur_file) ;
       if ( result != MrmSUCCESS )
         {
@@ -301,10 +301,10 @@ Urm__OpenHierarchy (MrmCount			num_files,
       result = UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL,
 				      0, &resource_ctx);
       if ( result != MrmSUCCESS ) return result;
-      result = UrmGetIndexedLiteral (cur_file, UilMrmClassTableIndex, 
+      result = UrmGetIndexedLiteral (cur_file, UilMrmClassTableIndex,
 				     class_ctx);
       if ( result != MrmSUCCESS ) continue;
-      result = UrmGetIndexedLiteral (cur_file, UilMrmResourceTableIndex, 
+      result = UrmGetIndexedLiteral (cur_file, UilMrmResourceTableIndex,
 				     resource_ctx);
       if ( result != MrmSUCCESS ) continue;
 
@@ -316,13 +316,13 @@ Urm__OpenHierarchy (MrmCount			num_files,
 	UrmRCBuffer (class_ctx);
       UrmRCSetBuffer (class_ctx, NULL);
       UrmFreeResourceContext (class_ctx);
-      Urm__FixupCompressionTable (cur_file->class_ctable, TRUE, 
+      Urm__FixupCompressionTable (cur_file->class_ctable, TRUE,
 				  cur_file->byte_swapped);
       cur_file->resource_ctable = (UidCompressionTablePtr)
 	UrmRCBuffer (resource_ctx);
       UrmRCSetBuffer (resource_ctx, NULL);
       UrmFreeResourceContext (resource_ctx);
-      Urm__FixupCompressionTable (cur_file->resource_ctable, FALSE, 
+      Urm__FixupCompressionTable (cur_file->resource_ctable, FALSE,
 				  cur_file->byte_swapped);
     }
 
@@ -364,7 +364,7 @@ Urm__OpenHierarchy (MrmCount			num_files,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CloseHierarchy (MrmHierarchy	hierarchy_id)
 {
 
@@ -401,7 +401,7 @@ Urm__CloseHierarchy (MrmHierarchy	hierarchy_id)
     XtFree ((char*)hierarchy_id->name_registry);
   }
   /* End fixing DTS 7303 */
- 
+
   XtFree ((char*)hierarchy_id->file_list);
 
   for ( ndx=URMgMin ; ndx<=URMgMax ; ndx++ )
@@ -453,10 +453,10 @@ Urm__CloseHierarchy (MrmHierarchy	hierarchy_id)
  *--
  */
 
-Cardinal 
+Cardinal
 UrmHGetIndexedResource (MrmHierarchy		hierarchy_id,
 			String			index ,
-			MrmGroup			group_filter, 
+			MrmGroup			group_filter,
 			MrmType			type_filter,
 			URMResourceContextPtr	context_id,
 			IDBFile			*file_id_return)
@@ -538,8 +538,8 @@ UrmHGetIndexedResource (MrmHierarchy		hierarchy_id,
  *--
  */
 
-Cardinal 
-Urm__RegisterNamesInHierarchy (MrmHierarchy		hierarchy_id, 
+Cardinal
+Urm__RegisterNamesInHierarchy (MrmHierarchy		hierarchy_id,
 			       String			*names,
 			       XtPointer			*values,
 			       MrmCount			num_cb)
@@ -683,7 +683,7 @@ Urm__LookupNameInHierarchy (MrmHierarchy	hierarchy_id,
  *--
  */
 
-static Cardinal 
+static Cardinal
 I18NOpenFile (Display			*display,
 	      String			name,
 	      MrmOsOpenParamPtr		os_ext,
@@ -721,7 +721,7 @@ I18NOpenFile (Display			*display,
    * resolve the pathname with .uid suffix first. If that fails or the suffix is
    * already on the file then just try to resolve the pathname.
    */
-  if ( strcmp (&name[strlen(name)-4],".uid") != 0 ) 
+  if ( strcmp (&name[strlen(name)-4],".uid") != 0 )
     resolvedname = XtResolvePathname (display,
 				      "uid",
 				      NULL,
@@ -734,7 +734,7 @@ I18NOpenFile (Display			*display,
   /*
    * No .uid suffix or a failure to resolve the pathname with the .uid suffix
    */
-  if (resolvedname == 0) 
+  if (resolvedname == 0)
     resolvedname = XtResolvePathname (display,
 				      "uid",
 				      NULL,

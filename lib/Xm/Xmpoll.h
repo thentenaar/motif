@@ -28,11 +28,10 @@ from The Open Group.
 #ifndef _XPOLL_H_
 #define _XPOLL_H_
 
-#ifndef WIN32
-
-#ifndef USE_POLL
-
 #include <X11/Xos.h>
+
+#ifndef WIN32
+#ifndef USE_POLL
 #if !defined(DGUX)
 #if (defined(SVR4) || defined(CRAY) || defined(AIXV3)) && !defined(FD_SETSIZE)
 #include <sys/select.h>
@@ -41,7 +40,7 @@ from The Open Group.
 #endif
 #endif
 #else /* DGUX  -- No sys/select in Intel DG/ux */
-#include <sys/time.h> 
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #endif
@@ -116,10 +115,10 @@ typedef struct fd_set {
 /*
  * The following macros are used by the servers only. There is an
  * explicit assumption that the bit array in the fd_set is at least
- * 256 bits long (8 32-bit words). This is true on most modern POSIX 
+ * 256 bits long (8 32-bit words). This is true on most modern POSIX
  * systems. Note that this is merely an optimization for the servers
  * based on assumptions about the way that file descripters are
- * allocated on POSIX systems. 
+ * allocated on POSIX systems.
  *
  * When porting X to new systems it is important to adjust these
  * macros if the system has fewer than 256 bits in the fd_set bit
@@ -232,7 +231,7 @@ typedef struct fd_set {
         XFD_FD(set,XFD_SETCOUNT(set)++)=(fd); \
 } while(0)
 
-#define getdtablesize() FD_SETSIZE 
+#define getdtablesize() FD_SETSIZE
 
 #endif /* WIN32 */
 

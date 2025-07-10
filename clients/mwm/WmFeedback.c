@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.3
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -78,7 +78,7 @@ static Cursor  waitCursor = (Cursor)0L;
 
 /* see WmGlobal.h for index defines: */
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 static char *confirm_mesg[4] = {"Switch to Default Behavior?",
 				"Switch to Custom Behavior?",
                                 "Restart Mwm?",
@@ -93,7 +93,7 @@ initMesg()
 
     /*
      * catgets returns a pointer to an area that is over written
-     * on each call to catgets.  
+     * on each call to catgets.
      */
 
     tmpString = ((char *)GETMESSAGE(22, 12, "Switch to Default Behavior?"));
@@ -167,7 +167,7 @@ initMesg()
 	tmpString = ((char *)GETMESSAGE(22, 11, "QUIT Workspace Manager?"));
 #endif /* MINIMAL_DT */
     }
-    
+
     if ((confirm_mesg[3] =
          (char *)XtMalloc ((unsigned int) (strlen(tmpString) + 1))) == NULL)
     {
@@ -235,8 +235,8 @@ static ConfirmFunc confirm_func[4] = {Do_Set_Behavior,
  *  width 	- initial width value
  *  height	- initial height value
  *  style	- show size, position, or both
- *  
- * 
+ *
+ *
  *  Outputs:
  *  -------
  *
@@ -264,15 +264,15 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 
     /*
      * Derive the size and position of the window from the text extents
-     * Set starting position of each string 
+     * Set starting position of each string
      */
-    XTextExtents(pSD->feedbackAppearance.font, DEFAULT_POSITION_STRING, 
-		 strlen(DEFAULT_POSITION_STRING), &direction, &ascent, 
+    XTextExtents(pSD->feedbackAppearance.font, DEFAULT_POSITION_STRING,
+		 strlen(DEFAULT_POSITION_STRING), &direction, &ascent,
 		 &descent, &xcsLocation);
-    
+
     pSD->fbWinWidth = xcsLocation.width + 4*FEEDBACK_BEVEL;
 
-    switch (pSD->fbStyle) 
+    switch (pSD->fbStyle)
     {
 	case FB_SIZE:
 	    pSD->fbSizeY = 2*FEEDBACK_BEVEL + ascent;
@@ -302,9 +302,9 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 
     if (mask & (XValue|YValue))
     {
-	winX = (mask & XNegative) ? 
+	winX = (mask & XNegative) ?
 	    DisplayWidth(DISPLAY, pSD->screen)  + tmpX - pSD->fbWinWidth : tmpX;
-	winY = (mask & YNegative) ? 
+	winY = (mask & YNegative) ?
 	    DisplayHeight(DISPLAY, pSD->screen) + tmpY -pSD->fbWinHeight : tmpY;
     }
     else
@@ -313,7 +313,7 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 	winY = (DisplayHeight(DISPLAY, pSD->screen) -pSD->fbWinHeight)/2;
     }
 
-    /* 
+    /*
      * Put new text into the feedback strings
      */
     UpdateFeedbackText (pSD, x, y, width, height);
@@ -329,7 +329,7 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 	pSD->fbBottom->used = 0;
 	BevelRectangle (pSD->fbTop,
 			pSD->fbBottom,
-			0, 0, 
+			0, 0,
 			pSD->fbWinWidth, pSD->fbWinHeight,
 			FEEDBACK_BEVEL, FEEDBACK_BEVEL,
 			FEEDBACK_BEVEL, FEEDBACK_BEVEL);
@@ -351,9 +351,9 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 	win_attribs.override_redirect = TRUE;
 	win_attribs.save_under = TRUE;
 
-	/* 
+	/*
 	 * Use background pixmap if one is specified, otherwise set the
-	 * appropriate background color. 
+	 * appropriate background color.
 	 */
 
 	if (pSD->feedbackAppearance.backgroundPixmap)
@@ -369,12 +369,12 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 				pSD->feedbackAppearance.background;
 	}
 
-	pSD->feedbackWin = XCreateWindow (DISPLAY, pSD->rootWindow, 
+	pSD->feedbackWin = XCreateWindow (DISPLAY, pSD->rootWindow,
 					  winX, winY,
-					  pSD->fbWinWidth, 
+					  pSD->fbWinWidth,
 					  pSD->fbWinHeight,
-					  0, CopyFromParent, 
-					  InputOutput, CopyFromParent, 
+					  0, CopyFromParent,
+					  InputOutput, CopyFromParent,
 					  mask, &win_attribs);
     }
     else
@@ -387,7 +387,7 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 
 	mask = CWX | CWY | CWWidth | CWHeight | CWStackMode;
 
-	XConfigureWindow(DISPLAY, pSD->feedbackWin, (unsigned int) mask, 
+	XConfigureWindow(DISPLAY, pSD->feedbackWin, (unsigned int) mask,
 	    &win_changes);
     }
 
@@ -421,7 +421,7 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  Inputs:
  *  ------
  *  pSD		- pointer to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -433,47 +433,47 @@ void PaintFeedbackWindow (WmScreenData *pSD)
 {
     if (pSD->feedbackWin)
     {
-	/* 
-	 * draw beveling 
+	/*
+	 * draw beveling
 	 */
-	if (pSD->fbTop->used > 0) 
+	if (pSD->fbTop->used > 0)
 	{
-	    XFillRectangles (DISPLAY, pSD->feedbackWin, 
+	    XFillRectangles (DISPLAY, pSD->feedbackWin,
 			     pSD->feedbackAppearance.inactiveTopShadowGC,
 			     pSD->fbTop->prect, pSD->fbTop->used);
 	}
-	if (pSD->fbBottom->used > 0) 
+	if (pSD->fbBottom->used > 0)
 	{
-	    XFillRectangles (DISPLAY, pSD->feedbackWin, 
+	    XFillRectangles (DISPLAY, pSD->feedbackWin,
 			     pSD->feedbackAppearance.inactiveBottomShadowGC,
-			     pSD->fbBottom->prect, 
+			     pSD->fbBottom->prect,
 			     pSD->fbBottom->used);
 	}
 
 	/*
-	 * clear old text 
+	 * clear old text
 	 */
-	XClearArea (DISPLAY, pSD->feedbackWin, 
+	XClearArea (DISPLAY, pSD->feedbackWin,
 		    FEEDBACK_BEVEL, FEEDBACK_BEVEL,
-		    pSD->fbWinWidth-2*FEEDBACK_BEVEL, 
+		    pSD->fbWinWidth-2*FEEDBACK_BEVEL,
 		    pSD->fbWinHeight-2*FEEDBACK_BEVEL,
 		    FALSE);
 
 	/*
 	 * put up new text
 	 */
-	if (pSD->fbStyle & FB_POSITION) 
+	if (pSD->fbStyle & FB_POSITION)
 	{
-	    WmDrawString (DISPLAY, pSD->feedbackWin, 
+	    WmDrawString (DISPLAY, pSD->feedbackWin,
 			 pSD->feedbackAppearance.inactiveGC,
-			 pSD->fbLocX, pSD->fbLocY, 
+			 pSD->fbLocX, pSD->fbLocY,
 			 pSD->fbLocation, strlen(pSD->fbLocation));
 	}
-	if (pSD->fbStyle & FB_SIZE) 
+	if (pSD->fbStyle & FB_SIZE)
 	{
-	    WmDrawString (DISPLAY, pSD->feedbackWin, 
+	    WmDrawString (DISPLAY, pSD->feedbackWin,
 			 pSD->feedbackAppearance.inactiveGC,
-			 pSD->fbSizeX, pSD->fbSizeY, 
+			 pSD->fbSizeX, pSD->fbSizeY,
 			 pSD->fbSize, strlen(pSD->fbSize));
 	}
     }
@@ -494,14 +494,14 @@ void PaintFeedbackWindow (WmScreenData *pSD)
  *  Inputs:
  *  ------
  *  pDS		- pointer to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void HideFeedbackWindow (WmScreenData *pSD)
 {
@@ -536,14 +536,14 @@ void HideFeedbackWindow (WmScreenData *pSD)
  *  width 	- width value
  *  height	- height value
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void UpdateFeedbackInfo (WmScreenData *pSD, int x, int y, unsigned int width, unsigned int height)
 {
@@ -558,7 +558,7 @@ void UpdateFeedbackInfo (WmScreenData *pSD, int x, int y, unsigned int width, un
 #ifdef NOTDONE
     /* only update if something changed */
     if (((pSD->fbStyle & FB_POSITION) &&
-	 ((pSD->fbLastX != x) || (pSD->fbLastY != y))) || 
+	 ((pSD->fbLastX != x) || (pSD->fbLastY != y))) ||
 	((pSD->fbStyle & FB_SIZE) &&
 	 ((pSD->fbLastWidth != width) || (pSD->fbLastHeight != height))))
 #endif /* NOTDONE */
@@ -595,34 +595,34 @@ void UpdateFeedbackInfo (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  width 	- width value
  *  height	- height value
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, unsigned int height)
 {
     int         direction, ascent, descent;
     XCharStruct xcs;
 
-    if (pSD->fbStyle & FB_POSITION) 
+    if (pSD->fbStyle & FB_POSITION)
     {
 	sprintf (pSD->fbLocation, "(%4d,%-4d)", x, y);
 	XTextExtents(pSD->feedbackAppearance.font, pSD->fbLocation,
-		 strlen(pSD->fbLocation), &direction, &ascent, 
+		 strlen(pSD->fbLocation), &direction, &ascent,
 		 &descent, &xcs);
 	pSD->fbLocX = (pSD->fbWinWidth - xcs.width)/2;
     }
 
-    if (pSD->fbStyle & FB_SIZE) 
+    if (pSD->fbStyle & FB_SIZE)
     {
 	sprintf (pSD->fbSize,     "%4dx%-4d", width, height);
 	XTextExtents(pSD->feedbackAppearance.font, pSD->fbSize,
-		 strlen(pSD->fbSize), &direction, &ascent, 
+		 strlen(pSD->fbSize), &direction, &ascent,
 		 &descent, &xcs);
 	pSD->fbSizeX = (pSD->fbWinWidth - xcs.width)/2;
     }
@@ -645,7 +645,7 @@ void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  ------
  *  None.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -654,7 +654,7 @@ void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 static void OkCB (w, client_data, call_data)
@@ -687,7 +687,7 @@ static void OkCB (w, client_data, call_data)
  *  ------
  *  None.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -696,7 +696,7 @@ static void OkCB (w, client_data, call_data)
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 static void CancelCB (w, client_data, call_data)
@@ -731,7 +731,7 @@ static void CancelCB (w, client_data, call_data)
  *  pSD->screen
  *  pSD->screenTopLevel
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  actionNbr = current QuestionBox widget index.
@@ -740,7 +740,7 @@ static void CancelCB (w, client_data, call_data)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void ConfirmAction (WmScreenData *pSD, int nbr)
@@ -758,7 +758,7 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
      * If there is a system modal window, don't post another
      * one.  We need to think about a way to let a new system
      * modal window be posted, and when unposted, restore the
-     * modal state of the current system modal window.  
+     * modal state of the current system modal window.
      */
 
     if(wmGD.systemModalActive)
@@ -769,14 +769,14 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
     if (pSD->confirmboxW[nbr] == NULL)
     /* First time for this one */
     {
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	/*
 	 * Initialize messages
 	 */
 	initMesg();
 #endif
 
-        /* 
+        /*
          * Create a dialog popup shell with explicit keyboard policy.
          */
 
@@ -787,17 +787,17 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
 	         (DisplayHeight (DISPLAY, pSD->screen)/2)); n++;
         XtSetArg(args[n], XtNallowShellResize, (XtArgVal) TRUE);  n++;
         XtSetArg(args[n], XtNkeyboardFocusPolicy, (XtArgVal) XmEXPLICIT);  n++;
-        XtSetArg(args[n], XtNdepth, 
+        XtSetArg(args[n], XtNdepth,
 		(XtArgVal) DefaultDepth(DISPLAY, pSD->screen));  n++;
-        XtSetArg(args[n], XtNscreen, 
+        XtSetArg(args[n], XtNscreen,
 		(XtArgVal) ScreenOfDisplay(DISPLAY, pSD->screen));  n++;
 
         dialogShellW =
-    	        XtCreatePopupShell ((String) WmNfeedback, 
+    	        XtCreatePopupShell ((String) WmNfeedback,
 				    transientShellWidgetClass,
 		                    pSD->screenTopLevelW, args, n);
 
-        /* 
+        /*
          * Create a QuestionBox as a child of the popup shell.
 	 * Set traversalOn and add callbacks for the OK and CANCEL buttons.
 	 * Unmanage the HELP button.
@@ -816,7 +816,7 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
 	 * "Mwm*confirmRestart*messageString: restart it?").
 	 */
 
-        pSD->confirmboxW[nbr] = 
+        pSD->confirmboxW[nbr] =
 	    XtCreateManagedWidget (confirm_widget[nbr], xmMessageBoxWidgetClass,
                                    dialogShellW, args, n);
 
@@ -846,31 +846,31 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
 
         n = 0;
         XtSetArg (args[n], XmNtraversalOn, (XtArgVal) TRUE); n++;
-        XtSetArg (args[n], XmNhighlightThickness, 
+        XtSetArg (args[n], XmNhighlightThickness,
 		  (XtArgVal) CB_HIGHLIGHT_THICKNESS); n++;
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	XtSetArg(args[n], XmNlabelString, wmGD.okLabel); n++;
 #endif
-        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr], 
+        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr],
 			    XmDIALOG_OK_BUTTON), args, n);
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 	n--;
 	XtSetArg(args[n], XmNlabelString, wmGD.cancelLabel); n++;
 #endif
-        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr], 
+        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr],
 			    XmDIALOG_CANCEL_BUTTON), args, n);
-        XtAddCallback (pSD->confirmboxW[nbr], XmNokCallback, 
-	    (XtCallbackProc)OkCB, (XtPointer)pSD); 
-        XtAddCallback (pSD->confirmboxW[nbr], XmNcancelCallback, 
-	    (XtCallbackProc)CancelCB, (XtPointer)NULL); 
+        XtAddCallback (pSD->confirmboxW[nbr], XmNokCallback,
+	    (XtCallbackProc)OkCB, (XtPointer)pSD);
+        XtAddCallback (pSD->confirmboxW[nbr], XmNcancelCallback,
+	    (XtCallbackProc)CancelCB, (XtPointer)NULL);
 
         XtUnmanageChild
-	    (XmMessageBoxGetChild (pSD->confirmboxW[nbr], 
+	    (XmMessageBoxGetChild (pSD->confirmboxW[nbr],
 		XmDIALOG_HELP_BUTTON));
 
         XtRealizeWidget (dialogShellW);
 
-        /* 
+        /*
          * Center the DialogShell in the display.
          */
 
@@ -917,7 +917,7 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
  *  ------
  *  flag = TRUE for Enter, FALSE for Leave.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -926,7 +926,7 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 void ShowWaitState (Boolean flag)
@@ -965,12 +965,12 @@ void ShowWaitState (Boolean flag)
 	    yHotspot = time16_y_hot;
 	}
 
-        pixmap = XCreateBitmapFromData (DISPLAY, 
-		         DefaultRootWindow(DISPLAY), bits, 
+        pixmap = XCreateBitmapFromData (DISPLAY,
+		         DefaultRootWindow(DISPLAY), bits,
 			 width, height);
 
-        maskPixmap = XCreateBitmapFromData (DISPLAY, 
-		         DefaultRootWindow(DISPLAY), maskBits, 
+        maskPixmap = XCreateBitmapFromData (DISPLAY,
+		         DefaultRootWindow(DISPLAY), maskBits,
 			 width, height);
 #ifdef INTEGRATION_TESTING_
         xcolors[1].pixel = BlackPixelOfScreen(DefaultScreenOfDisplay(DISPLAY));
@@ -981,9 +981,9 @@ void ShowWaitState (Boolean flag)
         xcolors[1].pixel = WhitePixelOfScreen(DefaultScreenOfDisplay(DISPLAY));
 
 #endif /* INTEGRATION_TESTING */
-        XQueryColors (DISPLAY, 
+        XQueryColors (DISPLAY,
 		      DefaultColormapOfScreen(DefaultScreenOfDisplay
-					      (DISPLAY)), 
+					      (DISPLAY)),
 		      xcolors, 2);
 	waitCursor = XCreatePixmapCursor (DISPLAY, pixmap, maskPixmap,
 	                                  &(xcolors[0]), &(xcolors[1]),
@@ -994,10 +994,10 @@ void ShowWaitState (Boolean flag)
 
     if (flag)
     {
-	XGrabPointer (DISPLAY, DefaultRootWindow(DISPLAY), FALSE, 
-			0, GrabModeAsync, GrabModeAsync, None, 
+	XGrabPointer (DISPLAY, DefaultRootWindow(DISPLAY), FALSE,
+			0, GrabModeAsync, GrabModeAsync, None,
 			waitCursor, CurrentTime);
-	XGrabKeyboard (DISPLAY, DefaultRootWindow(DISPLAY), FALSE, 
+	XGrabKeyboard (DISPLAY, DefaultRootWindow(DISPLAY), FALSE,
 			GrabModeAsync, GrabModeAsync, CurrentTime);
     }
     else
@@ -1024,7 +1024,7 @@ void ShowWaitState (Boolean flag)
  *  Outputs:
  *  -------
  *  wmGD.useLargeCusors = set to True if larger cursors are supported.
- * 
+ *
  *************************************<->***********************************/
 
 void InitCursorInfo (void)
@@ -1034,7 +1034,7 @@ void InitCursorInfo (void)
 
     wmGD.useLargeCursors = False;
 
-    if (XQueryBestCursor (DISPLAY, DefaultRootWindow(DISPLAY), 
+    if (XQueryBestCursor (DISPLAY, DefaultRootWindow(DISPLAY),
 	32, 32, &cWidth, &cHeight))
     {
 	if ((cWidth >= 32) && (cHeight >= 32))
@@ -1044,9 +1044,3 @@ void InitCursorInfo (void)
     }
 
 } /* END OF FUNCTION InitCursorInfo */
-
-
-
-
-
-

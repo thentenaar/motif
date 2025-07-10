@@ -8,7 +8,8 @@ EXTRA_DIST = hellomotif.uil README
 hellomotif_SOURCES = hellomotif.c
 data_DATA = $(EXTRA_DIST) $(hellomotif_SOURCES) hellomotif.uid
 LDADD = ../../../lib/Xm/libXm.la ../../../lib/Mrm/libMrm.la
-INCLUDES = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS} 
+
+AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
 
 all: hellomotif.uid
 

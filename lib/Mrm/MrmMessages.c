@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 
 /*
  *++
@@ -96,7 +96,7 @@
 
 
 /*
- * Text for message catalog header 
+ * Text for message catalog header
  */
 /***+$ This message catalog contains messages issued by Motif Mrm library.*/
 /***+$ Consult X-Window systems, OSF/MOTIF Programmer's Guide and OSF/MOTIF*/
@@ -119,7 +119,7 @@ externaldef(mrmmsg) _MrmConst char *_MrmMsg_0001 =
 	 "Buffer allocation failed";
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0002 =
 	 "Invalid buffer";
-externaldef(mrmmsg) _MrmConst char *_MrmMsg_0003 = 
+externaldef(mrmmsg) _MrmConst char *_MrmMsg_0003 =
 	"Get block failed";
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0004 =
 	 "Put block failed";
@@ -199,7 +199,7 @@ externaldef(mrmmsg) _MrmConst char *_MrmMsg_0041 =
 	 "Illegal Color item monochrome state %d";
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0042 =
 	 "Cannot find literal '%s'";
-/***+$ literal in this context means a named value. */ 
+/***+$ literal in this context means a named value. */
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0043 =
 	 "Invalid resource context";
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0044 =
@@ -358,6 +358,6 @@ externaldef(mrmmsg) _MrmConst char *_MrmMsg_0118 =
 externaldef(mrmmsg) _MrmConst char *_MrmMsg_0119 =
        "Object '%s' declared PRIVATE.";
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 externaldef(mrmmsg) nl_catd Mrm_catd = NULL;
 #endif

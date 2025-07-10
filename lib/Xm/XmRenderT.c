@@ -61,7 +61,7 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 #include "XmTabListI.h"
-#ifdef USE_XFT
+#if USE_XFT
 #include <X11/Xft/Xft.h>
 #endif
 
@@ -173,7 +173,7 @@ static Boolean GetResources(XmRendition rend,
 			    ArgList arglist,
 			    Cardinal argcount);
 static void SetDefault(XmRendition rend); 
-#ifdef USE_XFT
+#if USE_XFT
 #ifdef FIX_1536
 static XftColor GetCachedXftColor(Display *display, Pixel color);
 #endif
@@ -200,7 +200,7 @@ static XftColor GetCachedXftColor(Display *display, Pixel color);
 #define DEFAULT_strikethruType		XmAS_IS
 #define DEFAULT_backgroundState		XmAS_IS
 #define DEFAULT_foregroundState		XmAS_IS
-#ifdef USE_XFT
+#if USE_XFT
 #define DEFAULT_xftFont			(XtPointer)XmAS_IS
 #define DEFAULT_fontStyle		(String)NULL
 #define DEFAULT_fontFoundry		(String)NULL
@@ -864,7 +864,7 @@ RendComplete(XmRendition rend)
 	 (_XmRendLoadModel(rend) != XmAS_IS) &&
 	 (
 	  ((unsigned int) (unsigned long) _XmRendFont (rend) != XmAS_IS)
-#ifdef USE_XFT
+#if USE_XFT
             || ((unsigned int) (unsigned long) _XmRendXftFont (rend) != XmAS_IS)
 #endif
          ) &&
@@ -1049,7 +1049,7 @@ _XmRenderTableFindFirstFont(XmRenderTable rendertable,
 			    XmRendition *rend_ptr)
 {
   int i, f_idx = -1, fs_idx = -1;
-#ifdef USE_XFT
+#if USE_XFT
   int xft_idx = -1;
 #endif
 
@@ -1061,13 +1061,13 @@ _XmRenderTableFindFirstFont(XmRenderTable rendertable,
       {
 	if (_XmRendFontType(*rend_ptr) == XmFONT_IS_FONT) f_idx = i;
 	else if (_XmRendFontType(*rend_ptr) == XmFONT_IS_FONTSET) fs_idx = i;
-#ifdef USE_XFT
+#if USE_XFT
       } else if (_XmRendXftFont(*rend_ptr) != NULL) {
         if (_XmRendFontType(*rend_ptr) == XmFONT_IS_XFT) xft_idx = i;
 #endif
       }
   }
-#ifdef USE_XFT
+#if USE_XFT
   if (xft_idx >= 0)
     {
       *rend_ptr = _XmRTRenditions (rendertable)[xft_idx];
@@ -1953,7 +1953,7 @@ CleanupResources(XmRendition rend,
   else if (_XmRendFontType(rend) == XmAS_IS)
     _XmRendFontType(rend) = XmFONT_IS_FONT;
 
-#ifdef USE_XFT
+#if USE_XFT
   if ((unsigned int)(unsigned long)_XmRendXftFont (rend) == XmAS_IS)
     _XmRendXftFont (rend) = NULL;
 #endif
@@ -1985,7 +1985,7 @@ ValidateTag(XmRendition rend,
 }
 
 #ifdef FIX_1414
-#ifdef USE_XFT
+#if USE_XFT
 static int
 GetSameRenditions(XmRendition *rend_cache, XmRendition rend, int count_rend)
 {
@@ -2039,7 +2039,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
       XmDisplayCallbackStruct	cb;
 
       if ((_XmRendFont(rend) == NULL) &&
-#ifdef USE_XFT
+#if USE_XFT
           (_XmRendXftFont (rend) == NULL) &&
 #endif
 	  (_XmRendFontName(rend) != NULL))
@@ -2080,7 +2080,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		  result = XtCallConverter (display, XtCvtStringToFontSet, args,
 					    num_args, &fromVal, &toVal, NULL);
 		  break;
-#ifdef USE_XFT
+#if USE_XFT
 		case XmFONT_IS_XFT:
 		  {
 		    FcResult res;
@@ -2175,7 +2175,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		}
 	      else
 		{
-#ifdef USE_XFT
+#if USE_XFT
 		  if (_XmRendFontType(rend) != XmFONT_IS_XFT)
 #endif
 		    _XmRendFont(rend) = font;
@@ -2190,7 +2190,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 	}
       else if ((_XmRendLoadModel(rend) == XmLOAD_IMMEDIATE) &&
 	       (_XmRendFont(rend) == NULL) &&
-#ifdef USE_XFT
+#if USE_XFT
 	       (_XmRendXftFont (rend) == NULL) &&
 #endif
 	       (_XmRendFontName(rend) == NULL))
@@ -2378,7 +2378,7 @@ FreeRendition(XmRendition rendition)
 	XmTabListFree(_XmRendTabs(rendition));
       if (_XmRendTagCount(rendition) != 0)
 	XtFree((char *)_XmRendTags(rendition));
-#ifdef USE_XFT
+#if USE_XFT
       if (_XmRendXftFont(rendition))
         {
           XftFontClose(_XmRendDisplay(rendition),
@@ -2443,7 +2443,7 @@ XmRenditionRetrieve(XmRendition rendition,
 	      if (strcmp(res->resource_name, XmNfont) == 0)
 		{
 		  if ((_XmRendFont(rendition) == NULL) &&
-#ifdef USE_XFT
+#if USE_XFT
 		      (_XmRendXftFont (rendition) == NULL) &&
 #endif
 		      (_XmRendFontName(rendition) != NULL))
@@ -2453,7 +2453,7 @@ XmRenditionRetrieve(XmRendition rendition,
 		      ValidateAndLoadFont(rendition, _XmRendDisplay(rendition));
 		    }
 		  if (_XmRendFont (rendition) == NULL
-#ifdef USE_XFT
+#if USE_XFT
 		      && _XmRendXftFont (rendition) == NULL
 #endif
 		     )
@@ -3429,7 +3429,7 @@ XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
                     }
                 }
                 break;
-#ifdef USE_XFT
+#if USE_XFT
                 case XmFONT_IS_XFT:
                     if (_XmRendXftFont(rend)) {
                         a = _XmRendXftFont(rend)->ascent;

@@ -30,7 +30,7 @@ wml_SOURCES = wml.c
 wml_LDADD = libwml.la
 wmldbcreate_LDADD = ../../lib/Xm/libXm.la
 
-INCLUDES = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include ${X_CFLAGS} 
+AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include ${X_CFLAGS}
 
 noinst_LTLIBRARIES = libwml.la
 libwml_la_SOURCES = wmlparse.y wmloutkey.c wmlouth.c wmloutmm.c wmloutp1.c wmlresolve.c wmlsynbld.c wmlutils.c
@@ -67,4 +67,4 @@ clean-local:
 	$(RM) $(WMLTARGETS) $(WMDTABLE) $(REPORT) lex.yy.c libwml.la wml \
 	*.mm *.sdml *.txt wmlparse.c wmlparse.h wmluiltok wmllex.c \
 	tokens.dat DONE wmluiltok.c Uil.c Uil.h wml.report UilLexPars.[ch] ylwrap
- 
+

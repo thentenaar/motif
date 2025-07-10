@@ -153,7 +153,7 @@ LFUNC(MSWPutImagePixels, void, (Display *dc, XImage *image,
 				unsigned int *pixelindex, Pixel *pixels));
 #endif /* FOR_MSW */
 
-#ifdef NEED_STRCASECMP
+#if !HAVE_STRCASECMP
 FUNC(xpmstrcasecmp, int, (char *s1, char *s2));
 
 /*

@@ -5,19 +5,16 @@ CLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST = xmstring.list Xm.msg \
              XmStrDefs.ct
 
-INCLUDES = -I.. -I$(srcdir)/.. -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
-           -DINCDIR=\"@INCDIR@\" \
-           -DLIBDIR=\"@LIBDIR@\" \
-           ${X_CFLAGS}
+AM_CPPFLAGS = -I.. -I$(srcdir)/.. -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
+              $(XFT_CFLAGS) ${X_CFLAGS}
 xmdir = $(includedir)/Xm
 
-libXm_la_LDFLAGS = -version-info @CURRENT@:@REVISION@:@AGE@
-
-lib_LTLIBRARIES = libXm.la
+libXm_la_LDFLAGS = -version-info @ABI_VERSION@
+libXm_la_LIBADD  = $(XFT_LIBS) ${X_LIBS}
+lib_LTLIBRARIES  = libXm.la
 
 TIP_SRCS = ToolTip.c
 TIP_HDRS = ToolTipI.h
-
 
 EXTRA_HDRS = Ext.h ExtP.h  \
              Column.h ColumnP.h \
@@ -43,29 +40,33 @@ EXTRA_SRCS = XmExtUtil.c \
 SLIDE_HDRS = SlideC.h SlideCP.h
 SLIDE_SRCS = SlideC.c
 
-if OM_LIBJPEG
+if XM_WITH_JPEG
 JPEG_SRCS = Jpeg.c
 JPEG_HDRS = JpegI.h
+AM_CPPFLAGS     += $(JPEG_CFLAGS)
+libXm_la_LIBADD += $(JPEG_LIBS)
 else
 JPEG_SRCS =
 JPEG_HDRS =
 endif
 
-if OM_LIBPNG
+if XM_WITH_PNG
 PNG_SRCS = Png.c
 PNG_HDRS = PngI.h
+AM_CPPFLAGS += $(PNG_CFLAGS)
+libXm_la_LIBADD += $(PNG_LIBS)
 else
 PNG_SRCS =
 PNG_HDRS =
 endif
 
-if PRINTING
+if XM_PRINTING
 PRINTS_SRC = PrintS.c
+AM_CPPFLAGS += $(XP_CFLAGS)
+libXm_la_LIBADD += $(XP_LIBS)
 else
 PRINTS_SRC =
 endif
-
-libXm_la_LIBADD = ${X_LIBS} ${X_XMU} -lXt -lXext ${LIB_XP} -lX11 ${X_EXTRA_LIBS}
 
 noinst_HEADERS = BaseClassI.h \
 BitmapsI.h \
@@ -288,20 +289,12 @@ XmStrDefs.c: Makefile $(XMSTRING_LIST) XmStrDefs.ht XmStrDefsI.ht XmStrDefs.ct $
 	test -f XmStrDefs.ct || $(LN_S) $(srcdir)/XmStrDefs.ct XmStrDefs.ct
 	$(top_builddir)/config/util/makestrs -f $(XMSTRING_LIST) >XmStrDefs.c
 
-if MessageCatalog
-
+if XM_MSGCAT
 CAT_FILES = Xm.cat XmMsgCatI.h
 
 $(CAT_FILES): Xm.msg
 	$(mkinstalldirs) $(top_builddir)/localized/C/msg
 	$(top_builddir)/localized/util/mkcatdefs XmMsgCatI.h $(srcdir)/Xm.msg >$(top_builddir)/localized/C/msg/Xm.msg
 	gencat Xm.cat $(top_builddir)/localized/C/msg/Xm.msg
-    SPLINT_EXTRAFLAGS = -I/usr/include -I. +posixlib -nestcomment
-else
-    SPLINT_EXTRAFLAGS = -I/usr/include -I. -DNO_MESSAGE_CATALOG +posixlib -nestcomment
 endif
 
-splint: $(STRING_FILES)
-	$(SPLINT) $(INCLUDES) $(SPLINT_EXTRAFLAGS) $(top_srcdir)/lib/Xm/*.c
-
-#include $(srcdir)/check_headers.am

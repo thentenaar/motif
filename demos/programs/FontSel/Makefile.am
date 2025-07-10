@@ -9,4 +9,5 @@ EXTRA_DIST =
 data_DATA = $(EXTRA_DIST) $(fontsel_SOURCES)
 LDADD = $(TOPDIR)/lib/Xm/libXm.la
 TOPDIR = ../../..
-INCLUDES = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS} 
+
+AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}

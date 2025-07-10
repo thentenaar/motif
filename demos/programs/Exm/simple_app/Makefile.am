@@ -10,9 +10,9 @@ simpleDemo_SOURCES = simpleDemo.c
 
 EXTRA_DIST = simpleDemo.man README
 
-INCLUDES = -I$(srcdir)/../../../../lib \
+AM_CPPFLAGS = -I$(srcdir)/../../../../lib \
            -I$(srcdir)/../../../lib \
            -I$(top_builddir)/lib \
-           ${X_CFLAGS} 
+           ${X_CFLAGS}
 LDADD = ../../../../lib/Xm/libXm.la \
         ../../../lib/Exm/libExm.a -lX11

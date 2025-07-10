@@ -1,277 +1,217 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT
+dnl Library version
+m4_define([XM_MAJOR], [2])
+m4_define([XM_MINOR], [3])
+m4_define([XM_PATCH], [9])
+m4_define([XM_VERSION], [XM_MAJOR.XM_MINOR.XM_PATCH])
+
+dnl Shared library version (libtool)
+m4_define([ABI_CURRENT],  [4])
+m4_define([ABI_REVISION], [5])
+m4_define([ABI_AGE],      [0])
+m4_define([ABI_VERSION],  [ABI_CURRENT:ABI_REVISION:ABI_AGE])
+
+AC_PREREQ([2.70])
+LT_PREREQ([2.4.6])
+AC_INIT([motif], [XM_VERSION], [https://github.com/thentenaar/motif])
+AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_SRCDIR([lib/Xm/Form.c])
-AC_PREREQ(2.52)
-AC_CONFIG_AUX_DIR(.)
-AC_CHECK_FILE(/usr/X/include/X11/X.h,
-  AC_PREFIX_DEFAULT(/usr/X),
-  AC_PREFIX_DEFAULT(/usr))
-AC_CHECK_FILE(/usr/X11R6/include/X11/X.h,
-  AC_PREFIX_DEFAULT(/usr/X11R6),
-  AC_PREFIX_DEFAULT(/usr))
+AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define])
+LT_INIT
+AM_SILENT_RULES([yes])
+AC_LANG([C])
 
-dnl AM_MAINTAINER_MODE
-AC_CANONICAL_TARGET
-
-dnl The version of the Motif libraries
-CURRENT=4
-REVISION=4
-AGE=0
-AC_SUBST(CURRENT)
-AC_SUBST(REVISION)
-AC_SUBST(AGE)
-
-dnl This is really dumb but it seems to be bug
-AM_INIT_AUTOMAKE(motif,2.3.8,no-define)
-
-LIBTOOL_VERSION=$CURRENT:$REVISION:$AGE
-
-dnl
-dnl Override a default in libtool.
-dnl
-dnl AC_DISABLE_STATIC
-
-AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
-
-dnl Checks for programs.
+dnl Check for the C compiler / pkg-config
 AC_PROG_CC
-AC_PROG_CPP
-AM_PROG_LIBTOOL
-
-AC_EXEEXT
-
-dnl AC_PROG_YACC
-dnl Do this the old fashioned way. 'bison -y' doesn't cut it
-AC_CHECK_PROGS(YACC, byacc, yacc)
-
-dnl AC_PROG_SPLINT
-AC_CHECK_PROGS(SPLINT, splint)
-
-AM_PROG_LEX
-if test "x$LEX" == xflex; then
-  AC_SUBST([LEXLIB], ['-lfl'])
-fi
-
+AC_PROG_MAKE_SET
+AC_PROG_MKDIR_P
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_MAKE_SET
+AC_PATH_PROG([PKG_CONFIG], [pkg-config])
+AC_CHECK_PROGS(YACC, byacc, yacc)
+AM_PROG_LEX(noyywrap)
 
+dnl Flex needs libfl
+LEXLIB=
+if test "x$LEX" == "xflex"; then
+	LEXLIB=-lfl
+fi
+AC_SUBST([LEXLIB])
 
-dnl Checks for libraries.
-
-AC_PATH_X
-AC_PATH_XTRA
-LT_LIB_XTHREADS
-
-dnl Checks for Xos_r.h
-
-AC_CHECK_HEADERS([X11/Xos_r.h])
-AC_CHECK_HEADERS([X11/Xpoll.h])
-
-dnl Compile in EditRes support if we can find Xmu
-
-save_LIBS="$LIBS"
-save_CFLAGS="$CFLAGS"
-LIBS="$X_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
-AC_CHECK_HEADERS(X11/Xmu/Editres.h,
-AC_CHECK_LIB(Xmu, _XEditResCheckMessages,
-X_XMU=-lXmu
-AC_DEFINE(HAVE_LIBXMU, 1, This System has libXmu)
-, X_XMU="", -lXt -lX11)
-AC_CHECK_LIB(Xmu,XmuNCopyISOLatin1Lowered ,
-AC_DEFINE(HAVE_XMU_N_COPY_ISO,1,Have XmuNCopyISOLatin1Lowered)
-, , -lXt -lX11)
-,,[[#include <X11/Intrinsic.h>]]
-)
-
-
-AC_SUBST(X_XMU)
-LIBS="$save_LIBS"
-CFLAGS="$save_CFLAGS"
-AM_CONDITIONAL(OM_XMU, test x$X_XMU != x)
-
-dnl Checks for header files.
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h limits.h malloc.h sys/malloc.h strings.h sys/file.h sys/time.h unistd.h wchar.h)
-AC_CHECK_HEADERS(wctype.h, AC_DEFINE(HAS_WIDECHAR_FUNCTIONS,1,System supports wchar))
-AC_CHECK_HEADER(langinfo.h,,AC_DEFINE(CSRG_BASED,1,System Has langinfo.h))
-AC_CHECK_HEADER(X11/Xos_r.h,,AC_DEFINE(NEED_XOS_R_H,1,System Missing Xos_r.h))
-AC_CHECK_HEADER(X11/Xpoll.h,,AC_DEFINE(NEED_XPOLL_H,1,system Missing X11/Xpoll.h))
-dnl Checks for typedefs, structures, and compiler characteristics.
+dnl Check the host system type and compiler characteristics
+AC_CANONICAL_HOST
 AC_C_CONST
-AC_TYPE_MODE_T
-AC_TYPE_OFF_T
-AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_INTPTR_T
 AC_TYPE_UINTPTR_T
-AC_HEADER_TIME
-AC_STRUCT_TM
-AC_TYPE_UID_T
-WEAK_ALIAS_SUPPORT
+AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
 
-dnl Checks for library functions.
-AC_FUNC_ALLOCA
-AC_FUNC_MEMCMP
-AC_FUNC_SETPGRP
-AC_TYPE_SIGNAL
-AC_FUNC_STRCOLL
-AC_FUNC_STRFTIME
-AC_FUNC_FORK([])
-AC_FUNC_VPRINTF
-AM_FUNC_VOID_SPRINTF
-AC_CHECK_FUNCS(wcslen wcscpy wcsncpy wcschr wcscat wcsncat getcwd gettimeofday mkdir re_comp regcmp select strcspn strerror strstr strtod strtol uname)
-AC_CHECK_FUNCS(strdup,,AC_DEFINE(NEED_STRDUP, 1, no strdup))
-AC_CHECK_FUNCS(strcasecmp,,AC_DEFINE(NEED_STRCASECMP, 1, no strcasecmp))
-AC_CHECK_FUNCS(putenv,,AC_DEFINE(NO_PUTENV, 1, No PUTENV))
-AC_CHECK_FUNCS(regcomp,,AC_DEFINE(NO_REGCOMP, 1, no regcmp))
-AC_CHECK_FUNCS(memmove,,AC_DEFINE(NO_MEMMOVE, 1, no memmove))
-AC_CHECK_TYPE(XICProc,,AC_DEFINE(NO_XICPROC, 1, XICProc isn't defined), [#include <X11/Xlib.h>])
+dnl Check for X
+PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 
-AC_ARG_ENABLE(message-catalog, [  --enable-message-catalog
-                          Enable building of the message catalog (default=no)])
-if test "$enable_message_catalog" != "yes"
-then
-    AC_DEFINE(NO_MESSAGE_CATALOG, 1, No Defined Message Catalog)
-fi
-AM_CONDITIONAL(MessageCatalog, test x$enable_message_catalog = xyes)
+dnl Check for particular headers / functions
+AC_CHECK_HEADERS([alloca.h iconv.h wctype.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
+AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
+AC_DEFINE([HAVE_SYS_POLL_H])
+AC_DEFINE([HAVE_SYS_TIME_H])
+AC_DEFINE_UNQUOTED([HAS_WIDECHAR_FUNCTIONS], $(test "x$ac_cv_header_wctype_h" == "x" ; echo $?),
+                   [True if we have wctype.h])
 
-AC_ARG_ENABLE(themes, [  --enable-themes         Enable themes (default=no)])
-if test "$enable_themes" = "yes"
-then
-    if test -f $srcdir/lib/Xm/Theme.h
-    then
-	AC_DEFINE(USE_XMTHEMES, 1, "Use XmThemes")
-	XMTHEME_DIST = "Theme.h ThemeP.h DynLibP.h Theme.c DynLib.c"
-    else
-	AC_MSG_WARN([--enable-themes specified, but I don't have the code. Disabled])
-	enable_themes="no"
-    fi
-fi
-AC_SUBST(XMTHEME_DIST)
-AM_CONDITIONAL(OM_XMTHEMES, test "$enable_themes" = "yes")
+dnl Image formats
+AC_ARG_WITH([jpeg],
+	[AS_HELP_STRING([--with-jpeg], [Enable jpeg support])],
+	[with_jpeg=$withval], [with_jpeg=yes])
 
-AC_ARG_ENABLE(debug-themes, [  --enable-debug-themes   Enable themes debugging (default=no)])
-if test "$enable_themes" = "yes"
-then
-    if test "$enable_debug_themes" = "yes"
-    then
-	AC_DEFINE(DEBUGTHEMES, 1, "Debug Themes")
-    fi
-fi
+AC_ARG_WITH([png],
+	[AS_HELP_STRING([--with-png], [Enable png support])],
+	[with_png=$withval], [with_png=yes])
 
-if test x$GCC = xyes
-then
-    CFLAGS="$CFLAGS -Wall -fno-strict-aliasing -Wno-unused -Wno-comment"
-	CFLAGS="$CFLAGS -Wno-unused-result -Wno-misleading-indentation"
-	CFLAGS="$CFLAGS -Wno-deprecated-declarations -Wno-implicit-fallthrough"
-	CFLAGS="$CFLAGS -Wno-int-in-bool-context"
-fi
-AC_DEFINE(NO_OL_COMPAT, 1, "No OL Compatability")
+AC_ARG_WITH([xft],
+	[AS_HELP_STRING([--with-xft], [Enable xft support])],
+	[with_xft=$withval], [with_xft=yes])
 
-CDE_INSTALLATION_TOP="\${prefix}/dt"
-AC_SUBST(CDE_INSTALLATION_TOP)
+AS_IF([test "x$with_jpeg" == "xyes"],[PKG_CHECK_MODULES([JPEG], [libjpeg])])
+AS_IF([test "x$with_png"  == "xyes"],[PKG_CHECK_MODULES([PNG],  [libpng])])
+AS_IF([test "x$with_xft"  == "xyes"],[PKG_CHECK_MODULES([XFT],  [xft >= 2])])
 
-CDE_CONFIGURATION_TOP="\${prefix}/etc/dt"
-AC_SUBST(CDE_CONFIGURATION_TOP)
+AC_ARG_ENABLE([debug],
+	[AS_HELP_STRING(
+		[--enable-debug],
+		[enable debugging support])
+	], [enable_debug=$enableval], [enable_debug=no]
+)
 
-LIBDIR="${libdir}/X11"
-AC_SUBST(LIBDIR)
+AC_ARG_ENABLE([utf8],
+	[AS_HELP_STRING(
+		[--enable-utf8],
+		[enable UTF-8 support])
+	], [enable_utf8=$enableval], [enable_utf8=yes]
+)
 
-MWMRCDIR="${sysconfdir}/X11"
-AC_SUBST(MWMRCDIR)
+AC_ARG_ENABLE([printing],
+	[AS_HELP_STRING(
+		[--enable-printing],
+		[enable printing support])
+	], [enable_printing=$enableval], [enable_printing=no]
+)
 
-INCDIR="${includedir}/X11"
-AC_SUBST(INCDIR)
+dnl Printing support relies on the X print protocol
+AS_IF([test "x$enable_printing" == "xyes"],[
+	PKG_CHECK_MODULES([XP], [xp], [], [enable_printing=no])
+	AS_IF([test "x$enable_printing" == "xno"], [AC_MSG_FAILURE([libXp not found])])
+])
 
-XMBINDDIR_FALLBACK="${datadir}/X11/bindings"
-AC_SUBST(XMBINDDIR_FALLBACK)
+AC_ARG_ENABLE([motif22-compatibility],
+	[AS_HELP_STRING(
+		[--enable-motif22-compatibility],
+		[enable backwards compatibility for Motif 2.2])
+	],
+	[enable_motif22_compatibility=$enableval],
+	[enable_motif22_compatibility=no]
+)
 
-RM="rm -f"
-AC_SUBST(RM)
+dnl Signal backward-compatibility via libtool's age
+AS_IF([test "x$enable_motif22_compatibility" == "xyes"],[
+	ABI_AGE=1
+	dnl For lib/Xm/xmstring.list
+	XM_22_COMPAT_TRUE=
+	XM_22_COMPAT_FALSE=!
+].[
+	XM_22_COMPAT_TRUE=!
+	XM_22_COMPAT_FALSE=
+])
 
-AC_ARG_ENABLE(motif22-compatibility, [  --disable-motif22-compatibility
-                       Disable binary compatibility with OpenMotif 2.2])
-AC_ARG_ENABLE(utf8, [  --disable-utf8
-                       Disable UTF-8 support])
+AC_ARG_ENABLE([message-catalog],
+	[AS_HELP_STRING(
+		[--enable-message-catalog],
+		[enable X/Open message catalog support])
+	],
+	[enable_message_catalog=$enableval],
+	[enable_message_catalog=no]
+)
 
-case "$host_os" in
-    freebsd*) CFLAGS="$CFLAGS -DCSRG_BASED -DXNO_MTSAFE_API -DXNO_MTSAFE_PWDAPI" ;;
-    cygwin*) CFLAGS="$CFLAGS -DXNO_MTSAFE_DIRENTDAPI";;
-esac
+dnl Debug builds (assert, etc.)
+AS_IF([test "x$enable_debug" == "xyes"],[
+	AX_APPEND_COMPILE_FLAGS([-Og -ggdb])
+],[
+	AX_APPEND_COMPILE_FLAGS([-O2])
+	AX_APPEND_COMPILE_FLAGS([-DNDEBUG], [CPPFLAGS])
+])
 
-if test x$enable_motif22_compatibility = x
-then
-    enable_motif22_compatibility="yes"
-fi
+dnl Compiler flags
+AX_CFLAGS
 
-if test "$enable_motif22_compatibility" = "yes"
-then
-  AC_DEFINE([OM22_COMPATIBILITY], [1], [Compatibility with OpenMotif 2.2])
-  OM22_COMPATIBILITY_FALSE=!
-  OM22_COMPATIBILITY_TRUE=
-else
-  OM22_COMPATIBILITY_FALSE=
-  OM22_COMPATIBILITY_TRUE=!
-fi
-AC_SUBST(OM22_COMPATIBILITY_FALSE)
-AC_SUBST(OM22_COMPATIBILITY_TRUE)
+dnl Automake substitutions
+AC_SUBST([ABI_VERSION], [ABI_VERSION])
+AM_CONDITIONAL([XM_PRINTING],  test "x$enable_printing" == "xyes")
+AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
+AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
+AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
 
-if test x$enable_utf8 = x
-then
-    enable_utf8="yes"
-fi
+dnl Substitutions for lib/Xm/Xm.h
+AC_SUBST([XM_MAJOR], [XM_MAJOR])
+AC_SUBST([XM_MINOR], [XM_MINOR])
+AC_SUBST([XM_PATCH], [XM_PATCH])
+AC_DEFINE_UNQUOTED(
+	[XM_22_COMPAT],
+	$(test "x$enable_motif22_compatibility" != "xyes" ; echo $?),
+	[1 for OpenMotif 2.2 Compatibility]
+)
 
-if test "$enable_utf8" = "yes"
-then
-  AC_DEFINE([UTF8_SUPPORTED], [1], [UTF8 is supported])
-  AC_SEARCH_LIBS([iconv_open], [iconv], ,
-    AC_SEARCH_LIBS([libiconv_open], [iconv]))
-fi
+AC_DEFINE_UNQUOTED(
+	[XM_UTF8],
+	$(test "x$enable_utf8" != "xyes"; echo $?),
+	[1 if Motif was built with UTF8 Support]
+)
 
-AC_ARG_ENABLE(printing, [  --disable-printing
-                       Disable printing support])
+AC_DEFINE_UNQUOTED(
+	[XM_PRINTING],
+	$(test "x$enable_printing" != "xyes"; echo $?),
+	[1 if Motif was built with printing support]
+)
 
-if test x$enable_printing = x
-then
-    enable_printing="yes"
-fi
+AC_DEFINE_UNQUOTED(
+	[USE_XFT],
+	$(test "x$pkg_cv_XFT_LIBS"  == "x" ; echo $?),
+	[1 if Motif ws built with Xft support]
+)
 
-if test "$enable_printing" = "yes"
-then
-  AC_MSG_CHECKING([for libXp])
-  AC_CHECK_HEADERS(X11/extensions/Print.h,
-    AC_CHECK_LIB(Xp, XpCreateContext, ,enable_printing="no"),
-  enable_printing="no")
-fi
+AC_DEFINE_UNQUOTED(
+	[XM_WITH_JPEG],
+	$(test "x$with_jpeg" != "xyes" ; echo $?),
+	[1 if Motif was built with JPEG support]
+)
 
-if test "$enable_printing" = "yes"
-then
-  LIB_XP=-lXp
-  AC_DEFINE([PRINTING_SUPPORTED], [1], [Printing is supported])
-  PRINTING_SUPPORTED_FALSE=!
-  PRINTING_SUPPORTED_TRUE=
-else
-  LIB_XP=
-  PRINTING_SUPPORTED_FALSE=
-  PRINTING_SUPPORTED_TRUE=!
-fi
-AC_SUBST(PRINTING_SUPPORTED_FALSE)
-AC_SUBST(PRINTING_SUPPORTED_TRUE)
+AC_DEFINE_UNQUOTED(
+	[XM_WITH_PNG],
+	$(test "x$with_png"  != "xyes" ; echo $?),
+	[1 if Motif was built with PNG support]
+)
 
-AM_CONDITIONAL(PRINTING, test "$enable_printing" = "yes")
-AC_SUBST(LIB_XP)
+AC_DEFINE_UNQUOTED(
+	[XM_MSGCAT],
+	$(test "x$enable_message_catalog" != "xyes" ; echo $?),
+	[1 if X/Open message catalog support is enabled]
+)
 
-AC_FIND_XFT
-AC_IMAGE_SUPPORT
+dnl Substitutions for lib/Xm/xmstring.list
+AC_SUBST(XM_22_COMPAT_TRUE)
+AC_SUBST(XM_22_COMPAT_FALSE)
 
+dnl Defines/substitutions for mwm
+AC_DEFINE([NO_OL_COMPAT], 1, "No OL Compatability")
+AC_SUBST([CDE_INSTALLATION_TOP], "\${prefix}/dt")
+AC_SUBST([CDE_CONFIGURATION_TOP], "\${prefix}/etc/dt")
+AC_SUBST([MWMRCDIR], "${sysconfdir}/X11")
 
+dnl lib/Xm/VirtKeys.c
+AC_SUBST([XMBINDDIR_FALLBACK], "${datadir}/X11/bindings")
 
-# AM_CONDITIONAL(Motif22Compatibility, test x$enable_motif22_compatibility = xyes)
+dnl lib/Xm/Xmos.c
+AC_SUBST([INCDIR], "${includedir}/X11")
+AC_SUBST([LIBDIR], "${libdir}/X11")
 
+AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \
 bindings/Makefile \
 bitmaps/Makefile \
@@ -286,6 +226,7 @@ include/Makefile \
 include/Dt/Makefile \
 lib/Makefile \
 lib/Xm/Makefile \
+lib/Xm/version.h \
 lib/Mrm/Makefile \
 localized/Makefile \
 localized/util/Makefile \
@@ -384,3 +325,4 @@ demos/doc/programGuide/ch17/simple_drag/Makefile \
 lib/Xm/xmstring.list \
 ])
 AC_OUTPUT
+

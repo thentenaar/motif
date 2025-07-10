@@ -1,0 +1,13 @@
+/**
+ * Motif library version
+ */
+#ifndef XM_VERSION_H
+#define XM_VERSION_H
+
+#define XmVERSION	@XM_MAJOR@
+#define XmREVISION	@XM_MINOR@
+#define XmUPDATE_LEVEL	@XM_PATCH@
+#define XmVersion	(XmVERSION * 1000 + XmREVISION)
+#define XmVERSION_STRING "@(#)Motif Version @XM_MAJOR@.@XM_MINOR@.@XM_PATCH@"
+
+#endif /* XM_VERSION_H */

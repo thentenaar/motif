@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.3
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: WmWinInfo.c /main/18 1999/02/04 15:17:25 mgreess $"
@@ -68,7 +68,7 @@ static char rcsid[] = "$TOG: WmWinInfo.c /main/18 1999/02/04 15:17:25 mgreess $"
 #include "WmImage.h"
 #include "WmManage.h"
 #include "WmMenu.h"
-#include "WmProperty.h" 
+#include "WmProperty.h"
 #include "WmResource.h"
 #ifdef WSM
 #include "WmWrkspace.h"
@@ -84,7 +84,7 @@ static void AdjustSlideOutGeometry (ClientData *pCD);
 static void FixSubpanelEmbeddedClientGeometry (ClientData *pCD);
 #endif /* PANELIST */
 
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 # define LOCALE_MSG GETMESSAGE(70, 7, "[XmbTextPropertyToTextList]:\n     Locale (%.100s) not supported. (Check $LANG).")
 #else
 # define LOCALE_MSG "[XmbTextPropertyToTextList]:\n     Locale (%.100s) not supported. (Check $LANG)."
@@ -118,7 +118,7 @@ WmWorkspaceData *pIconBoxInitialWS;
  *
  *  manageFlags = flags that indicate wm state info
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to an initialized client data structure for the
@@ -126,7 +126,7 @@ WmWorkspaceData *pIconBoxInitialWS;
  *
  *************************************<->***********************************/
 
-ClientData * 
+ClientData *
 GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 
 {
@@ -145,7 +145,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 	return (NULL);
     }
 
-    
+
     /*
      * Initialize the data structure:
      */
@@ -220,7 +220,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
     pCD->pclientMatteBottomShadows = NULL;
     pCD->piconTopShadows = NULL;
     pCD->piconBottomShadows = NULL;
-    pCD->internalBevel = (wmGD.frameStyle == WmSLAB) ? 0 : 
+    pCD->internalBevel = (wmGD.frameStyle == WmSLAB) ? 0 :
 						FRAME_INTERNAL_SHADOW_WIDTH;
 #ifndef NO_OL_COMPAT
     pCD->bPseudoTransient = False;
@@ -253,7 +253,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 	{
 	    pWS = pIconBoxInitialWS;
 	}
-	else 
+	else
 	{
 	    pWS = pSD->pActiveWS;
 	}
@@ -272,16 +272,16 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 
 
     /*
-     * Listen for property change events on the window so that we keep 
+     * Listen for property change events on the window so that we keep
      * in sync with the hints.
      */
-    sAttributes.event_mask = (PropertyChangeMask | ColormapChangeMask);    
+    sAttributes.event_mask = (PropertyChangeMask | ColormapChangeMask);
     XChangeWindowAttributes (DISPLAY, pCD->client, CWEventMask,
         &sAttributes);
 
     /*
      * Get window configuration attributes.  WmGetWindowAttributes sets
-     * up the global window attributes cache with the client window 
+     * up the global window attributes cache with the client window
      * attributes.
      */
 
@@ -299,7 +299,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 
 #ifdef WSM
     /*
-     * Get the initial list of properties on this window. 
+     * Get the initial list of properties on this window.
      * Save it to optimize subsequent property fetching.
      */
     GetInitialPropertyList (pCD);
@@ -390,7 +390,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
 
     /*
      * Retrieve and process WM_NORMAL_HINTS client window property info:
-     * 
+     *
      */
 
     ProcessWmNormalHints (pCD, True /*first time*/, manageFlags);
@@ -468,7 +468,7 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
  *  Description:
  *  -----------
  *  This function is used to initialize client window data for a window
- *  that is controlled by the window manager (e.g., the icon box).  The 
+ *  that is controlled by the window manager (e.g., the icon box).  The
  *  client window may get made in the process.
  *
  *
@@ -480,14 +480,14 @@ GetClientInfo (WmScreenData *pSD, Window clientWindow, long manageFlags)
  *
  *  manageFlags = flags that indicate wm state info
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to an initialized client data structure or NULL
  *           if the client data could not be initialized
  *
  *************************************<->***********************************/
-ClientData * 
+ClientData *
 GetWmClientInfo (WmWorkspaceData *pWS,
 			      ClientData * pCD,
 			      long manageFlags)
@@ -514,7 +514,7 @@ int i;
 	pCD->iconImage = NULL;
 	pCD->useClientIcon = False;
 	pCD->focusAutoRaise = True;
-	pCD->internalBevel = (wmGD.frameStyle == WmSLAB) ? 0 : 
+	pCD->internalBevel = (wmGD.frameStyle == WmSLAB) ? 0 :
 						FRAME_INTERNAL_SHADOW_WIDTH;
 	pCD->matteWidth = 0;
 	pCD->maximumClientSize.width = 0;
@@ -538,14 +538,14 @@ int i;
 
     pCD->inputFocusModel = True;
     pCD->clientState = NORMAL_STATE;
-    
+
     if (ICON_DECORATION(pCD) & ICON_IMAGE_PART)
     {
 	if (manageFlags & MANAGEW_ICON_BOX)
 	{
 	    pCD->clientFlags |= ICON_BOX;
 	}
-        
+
 	if (!pCD->useClientIcon && pCD->iconImage)
         {
 	    /*
@@ -570,11 +570,11 @@ int i;
 		 * Make a default iconBox icon image.
 		 */
 
-		iconBitmap = XCreateBitmapFromData (DISPLAY, 
-				ROOT_FOR_CLIENT(pCD), (char *)iconBox_bits, 
+		iconBitmap = XCreateBitmapFromData (DISPLAY,
+				ROOT_FOR_CLIENT(pCD), (char *)iconBox_bits,
 				iconBox_width, iconBox_height);
 
-		pCD->iconPixmap = MakeIconPixmap (pCD, 
+		pCD->iconPixmap = MakeIconPixmap (pCD,
 				iconBitmap, (Pixmap)0L,
 				iconBox_width, iconBox_height, 1);
 
@@ -583,11 +583,11 @@ int i;
     }
 
 #ifdef WSM
-    /* 
-     * Allocate initial workspace ID list 
+    /*
+     * Allocate initial workspace ID list
      * fill with NULL IDs
      */
-    if ((pCD->pWsList = (WsClientData *) 
+    if ((pCD->pWsList = (WsClientData *)
 	    XtMalloc(pCD->pSD->numWorkspaces * sizeof(WsClientData))) == NULL)
     {
 	Warning (((char *)GETMESSAGE(70, 2, "Insufficient memory for client data")));
@@ -603,7 +603,7 @@ int i;
 	pCD->pWsList[i].iconFrameWin = (Window)0L;
 	pCD->pWsList[i].pIconBox = NULL;
     }
-    /* 
+    /*
      * Internally managed clients must be specifically inserted
      * into workspaces the first time by calling
      * PutClientIntoWorkspace.
@@ -653,8 +653,8 @@ int i;
 	    pCD->dtwmFunctions &= ~DtWM_FUNCTION_OCCUPY_WS;
 #endif /* WSM */
 #ifdef PANELIST
-	    if (wmGD.useFrontPanel && pCD->pSD->iconBoxControl) 
-	    { 
+	    if (wmGD.useFrontPanel && pCD->pSD->iconBoxControl)
+	    {
 		/*
 		 * If there's a front panel button for the icon
 		 * box, then use it to "hide" the box on "close"
@@ -701,12 +701,12 @@ int i;
     pCD->icccVersion = ICCC_CURRENT;
     pCD->sizeFlags = US_POSITION | US_SIZE;
 
-    /* 
+    /*
      * Any calls to create Window Manager clients should
      * return with the values for the following fields set.
      *  If it fails, it should free any space allocated and
      *  set pCD = NULL
-     * 
+     *
      *  pCD->clientX =
      *  pCD->clientY =
      *  pCD->clientWidth =
@@ -728,16 +728,16 @@ int i;
 
     pCD->windowGravity = NorthWestGravity;
 
-    /* 
-     * Create IconBox window 
+    /*
+     * Create IconBox window
      */
-    
+
     if (manageFlags & MANAGEW_ICON_BOX)
     {
         if (!MakeIconBox (pWS, pCD))
         {
             /*
-             *  May want a more verbose message here 
+             *  May want a more verbose message here
              */
 
             Warning (((char *)GETMESSAGE(70, 3, "Couldn't make icon box")));
@@ -755,7 +755,7 @@ int i;
 
         XGetGeometry (DISPLAY, pCD->client, &root,
 		      &(pCD->clientX), &(pCD->clientY),
-		      &cbWidth, &cbHeight, 
+		      &cbWidth, &cbHeight,
 		      (unsigned int*)&(pCD->xBorderWidth), &depth);
 
         pCD->clientWidth = cbWidth;
@@ -805,7 +805,7 @@ int i;
 	MenuItem *iconBoxMenuItems, *lastItem;
 
 	/* This MenuSpec is not added to pSD->acceleratorMenuSpecs */
-	pCD->systemMenuSpec = 
+	pCD->systemMenuSpec =
 	    MAKE_MENU (PSD_FOR_CLIENT(pCD), pCD, pCD->systemMenu,
 		      F_CONTEXT_WINDOW, F_CONTEXT_WINDOW|F_CONTEXT_ICON,
 		      NULL, TRUE);
@@ -815,14 +815,14 @@ int i;
 	    XtFree(pCD->systemMenuSpec->name);
 	    pCD->systemMenuSpec->name = XtNewString("IconBoxMenu");
 	    iconBoxMenuItems = GetIconBoxMenuItems (PSD_FOR_CLIENT(pCD));
-	    
+
 	    /* Find the last menu item in the menu spec's list. */
 	    for (lastItem = pCD->systemMenuSpec->menuItems;
 		 lastItem->nextMenuItem != (MenuItem *) NULL;
 		 lastItem = lastItem->nextMenuItem)
 	      /*EMPTY*/;
 	    lastItem->nextMenuItem = iconBoxMenuItems;
-	    
+
 	    /* Now recreate the menu widgets since we've appended the
 	       icon box menu items */
 	    DestroyMenuSpecWidgets(pCD->systemMenuSpec);
@@ -833,7 +833,7 @@ int i;
 	}
 	/** END FIX CR 6941 **/
 #else
-	pCD->systemMenuSpec = 
+	pCD->systemMenuSpec =
 	    MAKE_MENU (PSD_FOR_CLIENT(pCD), pCD, pCD->systemMenu,
 		       F_CONTEXT_WINDOW, F_CONTEXT_WINDOW|F_CONTEXT_ICON,
 		       GetIconBoxMenuItems(PSD_FOR_CLIENT(pCD)),
@@ -878,16 +878,16 @@ int i;
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmClass (ClientData *pCD)
 {
     XClassHint classHint;
@@ -932,16 +932,16 @@ ProcessWmClass (ClientData *pCD)
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessSmClientID (ClientData *pCD)
 {
     Atom actualType;
@@ -985,16 +985,16 @@ ProcessSmClientID (ClientData *pCD)
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmSaveHint (ClientData *pCD)
 {
     Atom actualType;
@@ -1037,7 +1037,7 @@ ProcessWmSaveHint (ClientData *pCD)
  *
  *  firstTime = if True this is the first time the property has been processed
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = initialize various WM_HINTS related fields
@@ -1045,10 +1045,10 @@ ProcessWmSaveHint (ClientData *pCD)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmHints (ClientData *pCD, Boolean firstTime)
 {
     register XWMHints *pXWMHints;
@@ -1108,9 +1108,9 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 	{
 	    pCD->windowGroup = pXWMHints->window_group;
 	    /*
-	     * Pretend this is a transient window 
+	     * Pretend this is a transient window
 	     */
-	    if ((pCD->bPseudoTransient) && 
+	    if ((pCD->bPseudoTransient) &&
 		(pCD->transientFor == (Window)0L))
 	    {
 		pCD->clientFlags |= CLIENT_TRANSIENT;
@@ -1121,7 +1121,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		 */
 
 		if ((pCD->client != pCD->windowGroup) &&
-		    !XFindContext (DISPLAY, pCD->windowGroup, 
+		    !XFindContext (DISPLAY, pCD->windowGroup,
 			wmGD.windowContextType, (caddr_t *)&leader))
 		{
 		    pCD->transientFor = pCD->windowGroup;
@@ -1131,7 +1131,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		     * Insure it is in the same set of workspaces
 		     * as the leader.
 		     */
-		    if (pCD->transientLeader && 
+		    if (pCD->transientLeader &&
 			GetLeaderPresence(pCD, &pIDs, &numIDs))
 		    {
 			ProcessWorkspaceHintList (pCD, pIDs, numIDs);
@@ -1213,9 +1213,9 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 	        if ((flags & IconWindowHint) &&
 		    (pXWMHints->icon_window != pCD->client))
 	        {
-	            /* 
+	            /*
 	             * An icon window has been supplied that is different from
-		     * the client window.  Check out the window and get it 
+		     * the client window.  Check out the window and get it
 		     * ready to be reparented to the window manager supplied
 	             * icon frame.
 	             */
@@ -1233,11 +1233,11 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		    iconMask = (flags & IconMaskHint) ?
 				pXWMHints->icon_mask : (Pixmap) NULL;
 	            /*
-	             * A client supplied icon window is NOT 
+	             * A client supplied icon window is NOT
 		     * available so use the client supplied icon image.
 	             */
 
-	            if ((pCD->iconPixmap = 
+	            if ((pCD->iconPixmap =
 			    MakeClientIconPixmap (pCD,
 			      pXWMHints->icon_pixmap, iconMask)) != None)
 		    {
@@ -1272,7 +1272,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		     * Try to make a user specified icon image.
 		     */
 
-		    pCD->iconPixmap = 
+		    pCD->iconPixmap =
 			MakeNamedIconPixmap (pCD, pCD->iconImage);
 	        }
 
@@ -1286,7 +1286,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		    pCD->iconPixmap = MakeNamedIconPixmap (pCD, NULL);
 	        }
 	    }
-    
+
 
             /*
              * Save the client (user?) supplied icon position:
@@ -1299,7 +1299,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 	        if (wmGD.iconAutoPlace)
 #ifdef WSM
 	        {
-		    /* 
+		    /*
 		     * Initialize icon placement data in all inhabited
 		     * workspaces
 		     */
@@ -1345,7 +1345,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 		      pCD->iconX : pXWMHints->icon_x;
 		    tmpIconY = (pCD->clientFlags & SM_ICON_Y) ?
 		      pCD->iconY : pXWMHints->icon_y;
-		    pCD->iconPlace = 
+		    pCD->iconPlace =
 			FindIconPlace (pCD, &(pCD->pSD->pActiveWS->IPData),
 				       tmpIconX, tmpIconY);
 		    if (pCD->iconPlace != NO_ICON_PLACE)
@@ -1368,7 +1368,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 	        if (wmGD.iconAutoPlace)
 	        {
 #ifdef WSM
-		    /* 
+		    /*
 		     * Initialize icon placement data in all inhabited
 		     * workspaces
 		     */
@@ -1415,8 +1415,8 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
 	    iconMask = (flags & IconMaskHint)?
                        pXWMHints->icon_mask : (Pixmap) NULL;
 
-	    if ((iconPixmap = 
-		 MakeClientIconPixmap (pCD, pXWMHints->icon_pixmap, 
+	    if ((iconPixmap =
+		 MakeClientIconPixmap (pCD, pXWMHints->icon_pixmap,
 					     iconMask)) != None)
 	    {
 		/*
@@ -1440,13 +1440,13 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
                 {
                     pCD->iconFlags |= ICON_HINTS_PIXMAP;
                 }
-		
+
                 pCD->iconPixmap = iconPixmap;
-		
+
                 /*
                  * Display new icon image if the icon is showing:
                  */
-		
+
                 if (((pCD->clientState == MINIMIZED_STATE) ||
                      ((pCD->pSD->useIconBox) && (P_ICON_BOX(pCD)))) &&
                     ICON_FRAME_WIN(pCD))
@@ -1487,7 +1487,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
  *
  *  manageFlags = flags that indicate wm state information
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = client location and size fields set
@@ -1503,7 +1503,7 @@ ProcessWmHints (ClientData *pCD, Boolean firstTime)
  *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 {
     register SizeHints *pNormalHints;
@@ -1559,7 +1559,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
          */
 
 #ifdef R2_COMPAT
-    /* 
+    /*
      * Maintain R2 compatiblity code for CND product xnm
      */
         if ((pNormalHints->icccVersion == ICCC_R2) &&
@@ -1590,7 +1590,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	 */
 
 #ifdef R2_COMPAT
-    /* 
+    /*
      * Maintain R2 compatiblity code for CND product xnm
      */
 	if ((pNormalHints->icccVersion == ICCC_R2) &&
@@ -1748,7 +1748,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	}
 	else
 	{
-	    pCD->maxWidth = (pCD->maximumClientSize.width * 
+	    pCD->maxWidth = (pCD->maximumClientSize.width *
 			     pCD->widthInc) + pCD->baseWidth;
 	}
     }
@@ -1785,7 +1785,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	}
 	else
 	{
-	    /* 
+	    /*
 	     * If the hints changed we need to adjust the maximum
 	     * size (if not specified in the hints).
 	     */
@@ -1794,7 +1794,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 		 (oldWidthInc != pCD->widthInc)))
 	    {
 		incWidth = (pCD->maxWidth - oldBaseWidth) / oldWidthInc;
-		pCD->maxWidth =  
+		pCD->maxWidth =
 		    (incWidth * pCD->widthInc) + pCD->baseWidth;
 	    }
 	    else
@@ -1874,7 +1874,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	}
 	else
 	{
-	    /* 
+	    /*
 	     * If the hints changed we need to adjust the maximum
 	     * size (if not specified in the hints).
 	     */
@@ -1883,7 +1883,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 		 (oldHeightInc != pCD->heightInc)))
 	    {
 		incHeight = (pCD->maxHeight - oldBaseHeight) / oldHeightInc;
-		pCD->maxHeight =  
+		pCD->maxHeight =
 		    (incHeight * pCD->heightInc) + pCD->baseHeight;
 	    }
 	    else
@@ -1917,7 +1917,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
      *
      *   minAspect.y > 0
      *   maxAspect.y > 0
-     *   0 <= minAspect.x / minAspect.y <= maxAspect.x / maxAspect.y 
+     *   0 <= minAspect.x / minAspect.y <= maxAspect.x / maxAspect.y
      */
 
     if (flags & P_ASPECT)
@@ -2035,7 +2035,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
     /*
      * Make:
      *
-     *   maxWidth >= minWidth 
+     *   maxWidth >= minWidth
      *     & an integral number of widthInc from baseWidth.
      *   maxHeight >= minHeight
      *     & an integral number of heightInc from baseHeight.
@@ -2098,8 +2098,8 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 
     if (!firstTime && pCD->maxConfig)
     {
-	/* 
-	 * If the hints changed while we were maximized then 
+	/*
+	 * If the hints changed while we were maximized then
 	 * we may need to adjust the normalized size of the window.
 	 */
 	if (!firstTime &&
@@ -2110,9 +2110,9 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	{
 	    incWidth = (pCD->clientWidth - oldBaseWidth) / oldWidthInc;
 	    incHeight = (pCD->clientHeight - oldBaseHeight) / oldHeightInc;
-	    pCD->clientWidth =  
+	    pCD->clientWidth =
 		(incWidth * pCD->widthInc) + pCD->baseWidth;
-	    pCD->clientHeight =  
+	    pCD->clientHeight =
 		(incHeight * pCD->heightInc) + pCD->baseHeight;
 	}
     }
@@ -2120,7 +2120,7 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
     /*
      * If using aspect ratios, make:
      *
-     *  minWidth / maxHeight <= minAspect.x / minAspect.y 
+     *  minWidth / maxHeight <= minAspect.x / minAspect.y
      *                       <= maxAspect.x / maxAspect.y
      *                       <= maxWidth / minHeight
      */
@@ -2143,12 +2143,12 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 
         FixWindowSize (pCD, (unsigned int *) &(pCD->maxWidth),
 	                    (unsigned int *) &(pCD->maxHeight),
-			    (unsigned int) (pCD->widthInc), 
+			    (unsigned int) (pCD->widthInc),
 			    (unsigned int) (pCD->heightInc));
     }
 
     /*
-     * If this is the first time, make sure the client dimensions are within 
+     * If this is the first time, make sure the client dimensions are within
      * range and that they satisfy any aspect ratio constraints:
      *
      *  0 < minWidth  <= clientWidth  <= maxWidth
@@ -2179,9 +2179,9 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
 	    }
 	}
 
-        FixWindowSize (pCD, (unsigned int *) &(pCD->clientWidth), 
+        FixWindowSize (pCD, (unsigned int *) &(pCD->clientWidth),
 	                    (unsigned int *) &(pCD->clientHeight),
-			    (unsigned int) (pCD->widthInc), 
+			    (unsigned int) (pCD->widthInc),
 			    (unsigned int) (pCD->heightInc));
     }
 
@@ -2201,11 +2201,11 @@ ProcessWmNormalHints (ClientData *pCD, Boolean firstTime, long manageFlags)
  *  Inputs:
  *  ------
  *  wmNameProp	- the text property
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = new XmString, or NULL if the property didn't have a value.
- * 
+ *
  *************************************<->***********************************/
 
 static XmString
@@ -2231,14 +2231,14 @@ WmICCCMToXmString (XTextProperty *wmNameProp)
       case XConverterNotFound:
 #ifndef MOTIF_ONE_DOT_ONE
 	  sprintf(msg, GETMESSAGE (70,5,
-		    "Window manager cannot convert property %.100s as clientTitle/iconTitle: XmbTextPropertyToTextList"), 
+		    "Window manager cannot convert property %.100s as clientTitle/iconTitle: XmbTextPropertyToTextList"),
 		  XGetAtomName (DISPLAY,wmNameProp->encoding));
 	  Warning(msg);
 #endif /* MOTIF_ONE_DOT_ONE */
 	  break;
 
       case XNoMemory:
-	  sprintf(msg, GETMESSAGE (70, 6, 
+	  sprintf(msg, GETMESSAGE (70, 6,
 		    "insufficient memory to convert property %.100s as clientTitle/iconTitle: XmbTextPropertyToTextList"),
 		  XGetAtomName(DISPLAY,wmNameProp->encoding));
 	  Warning(msg);
@@ -2253,7 +2253,7 @@ WmICCCMToXmString (XTextProperty *wmNameProp)
 	  else
 	  {
 	      /* Atom was neither STRING nor COMPOUND_TEXT */
-	      sprintf(msg, GETMESSAGE(70, 8, 
+	      sprintf(msg, GETMESSAGE(70, 8,
 			"Window manager received unknown property as clientTitle/iconTitle: %.100s. Property ignored."),
 		      XGetAtomName(DISPLAY, wmNameProp->encoding));
 	  }
@@ -2297,14 +2297,14 @@ WmICCCMToXmString (XTextProperty *wmNameProp)
  *  firstTime	- false if the window is already managed and the title
  *                is being changed.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD		- clientTitle, iconTitle
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmWindowTitle (ClientData *pCD, Boolean firstTime)
 {
     XTextProperty wmNameProp;
@@ -2422,7 +2422,7 @@ ProcessWmWindowTitle (ClientData *pCD, Boolean firstTime)
  *
  *  Description:
  *  -----------
- *  This function adjusts the embedded clients in a subpanel if the 
+ *  This function adjusts the embedded clients in a subpanel if the
  *  geometry of the subpanel is adjusted.
  *
  *
@@ -2430,7 +2430,7 @@ ProcessWmWindowTitle (ClientData *pCD, Boolean firstTime)
  *  ------
  *  pCD		- pointer to client data structure
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2440,7 +2440,7 @@ ProcessWmWindowTitle (ClientData *pCD, Boolean firstTime)
  *
  *************************************<->***********************************/
 
-static void 
+static void
 FixSubpanelEmbeddedClientGeometry (ClientData *pCD)
 {
     WmScreenData *pSD = PSD_FOR_CLIENT(pCD);
@@ -2455,7 +2455,7 @@ FixSubpanelEmbeddedClientGeometry (ClientData *pCD)
 
     if (pSD->wPanelist && wSubpanel)
     {
-	WmFpEmbeddedClientData  *pECD; 
+	WmFpEmbeddedClientData  *pECD;
 	int i;
 
 	/*
@@ -2495,7 +2495,7 @@ FixSubpanelEmbeddedClientGeometry (ClientData *pCD)
 		    pCD2->clientWidth = pECD->width;
 		    pCD2->clientHeight = pECD->height;
 
-		    XMoveResizeWindow (DISPLAY1, pCD2->client, 
+		    XMoveResizeWindow (DISPLAY1, pCD2->client,
 			pECD->x, pECD->y, pECD->width, pECD->height);
 		}
 	    }
@@ -2525,14 +2525,14 @@ FixSubpanelEmbeddedClientGeometry (ClientData *pCD)
  *  firstTime	- false if the window is already managed and the title
  *                is being changed.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD		- iconTitle
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmIconTitle (ClientData *pCD, Boolean firstTime)
 {
   XTextProperty wmIconNameProp;
@@ -2601,16 +2601,16 @@ ProcessWmIconTitle (ClientData *pCD, Boolean firstTime)
  *  ------
  *  pCD = pointer to the client data structure for the window with the property
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD.transientFor = if tranient then this is the associated main window
  *
  *  pCD.clientFlags = indicate that this is a transient window
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ProcessWmTransientFor (ClientData *pCD)
 {
     Window window;
@@ -2667,15 +2667,15 @@ ProcessWmTransientFor (ClientData *pCD)
  *  ------
  *  pCD = pointer to the client data structure for the managed window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD.systemMenuSpec = system menu specification for the client, not added
- *                       to wmGD.acceleratorMenuSpecs 
+ *                       to wmGD.acceleratorMenuSpecs
  *
  *************************************<->***********************************/
 
-void 
+void
 MakeSystemMenu (ClientData *pCD)
 {
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
@@ -2683,11 +2683,11 @@ MakeSystemMenu (ClientData *pCD)
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
     pCD->mwmMenuItems = GetMwmMenuItems(pCD);
-    pCD->systemMenuSpec = 
+    pCD->systemMenuSpec =
        MAKE_MENU (PSD_FOR_CLIENT(pCD), pCD, pCD->systemMenu, F_CONTEXT_WINDOW,
 	         F_CONTEXT_WINDOW|F_CONTEXT_ICON, pCD->mwmMenuItems, TRUE);
 
-#ifdef NO_MESSAGE_CATALOG
+#if !XM_MSGCAT
     if (pCD->systemMenuSpec == NULL)
     {
         /*
@@ -2733,7 +2733,7 @@ MakeSystemMenu (ClientData *pCD)
       /*EMPTY*/;
     lastItem->nextMenuItem = pCD->mwmMenuItems;
 
-    /* Now recreate the menu widgets since we've appended the 
+    /* Now recreate the menu widgets since we've appended the
        protocol menu items */
     DestroyMenuSpecWidgets(pCD->systemMenuSpec);
     pCD->systemMenuSpec->menuWidget =
@@ -2765,7 +2765,7 @@ MakeSystemMenu (ClientData *pCD)
  *  ------
  *  pCD = pointer to the client data structure for the managed window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD.clientColormap = client colormap to be installed when the client
@@ -2775,7 +2775,7 @@ MakeSystemMenu (ClientData *pCD)
  *
  *************************************<->***********************************/
 
-void 
+void
 InitCColormapData (ClientData *pCD)
 {
 
@@ -2793,7 +2793,7 @@ InitCColormapData (ClientData *pCD)
      */
 
     ProcessWmColormapWindows (pCD);
-    
+
 
 } /* END OF FUNCTION InitCColormapData */
 
@@ -2816,12 +2816,12 @@ InitCColormapData (ClientData *pCD)
  *  xoff = pointer to xoffset
  *  yoff = pointer to yoffset
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  xoff = pointer to xoffset set
  *  yoff = pointer to yoffset set
- * 
+ *
  *************************************<->***********************************/
 
 void
@@ -2853,7 +2853,7 @@ CalculateGravityOffset (ClientData *pCD, int *xoff, int *yoff)
 		*yoff = pCD->clientOffset.y;
 		break;
 	    }
-                
+
 	    case NorthEastGravity:
 	    {
 		*xoff = -(pCD->clientOffset.x - (2 * borderWidth));
@@ -2928,15 +2928,15 @@ CalculateGravityOffset (ClientData *pCD, int *xoff, int *yoff)
  *  manageFlags = flags that indicate wm state information (e.g. whether
  *                the window manager is starting up or restarting)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = True if position changed by this routine.
  *  pCD = changes to the client window configuration fields
- * 
+ *
  *************************************<->***********************************/
 
-Boolean 
+Boolean
 InitClientPlacement (ClientData *pCD, long manageFlags)
 {
     Boolean interactivelyPlaced = False;
@@ -2959,18 +2959,18 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
 
     /*
      * Do interactive placement if...
-     *     + the resource is turned on 
+     *     + the resource is turned on
      *     + the window's coming up on the active screen
      *
      * Don't do it if...
      *     + position specified in DB or by Session Manager
      *     + the user has specified a position
-     *     + the window is coming up iconic 
+     *     + the window is coming up iconic
      *     + the window is transient
      *     + we're system modal
      */
 
-    if (wmGD.interactivePlacement && 
+    if (wmGD.interactivePlacement &&
 	(!(pCD->clientFlags & (SM_X | SM_Y))) &&
 	!(pCD->sizeFlags & US_POSITION) &&
 	(pCD->clientState != MINIMIZED_STATE) &&
@@ -2996,9 +2996,9 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
      * the constraints.
      */
 
-    FixWindowConfiguration (pCD, (unsigned int *) &(pCD->clientWidth), 
+    FixWindowConfiguration (pCD, (unsigned int *) &(pCD->clientWidth),
 	                         (unsigned int *) &(pCD->clientHeight),
-				 (unsigned int) (pCD->widthInc), 
+				 (unsigned int) (pCD->widthInc),
 	                         (unsigned int) (pCD->heightInc));
 
     /*
@@ -3033,8 +3033,8 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
 
     /*
      * Do PositionIsFrame processing:
-     * Use window gravity to allow the user to specify the window 
-     * position on the screen  without having to know the dimensions 
+     * Use window gravity to allow the user to specify the window
+     * position on the screen  without having to know the dimensions
      * of the decoration that mwm is adding.
      */
 
@@ -3060,7 +3060,7 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
     {
 	if (pCD->dtwmBehaviors & DtWM_BEHAVIOR_SUB_RESTORED)
 	{
-	    SetFrameInfo (pCD);   
+	    SetFrameInfo (pCD);
 	}
 	else
 	{
@@ -3097,7 +3097,7 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
 	    {
 		pCD->pWsList[iwsc].iconX = pCD->clientX;
 		pCD->pWsList[iwsc].iconY = pCD->clientY;
-		PlaceIconOnScreen (pCD, &pCD->pWsList[iwsc].iconX, 
+		PlaceIconOnScreen (pCD, &pCD->pWsList[iwsc].iconX,
 					&pCD->pWsList[iwsc].iconY);
 	    }
 	}
@@ -3111,7 +3111,7 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
 #endif /* WSM */
     }
 
-    /* 
+    /*
      * if client size or position has been changed by this routine,
      * then indicate in return value
      */
@@ -3138,7 +3138,7 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
  *  Inputs:
  *  ------
  *  pCD = pointer to a client data of slide out
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -3147,7 +3147,7 @@ InitClientPlacement (ClientData *pCD, long manageFlags)
  *  Subpanel is to appear above or below the front panel, centered
  *  on the vertical axis of the spawning control.
  ******************************<->***********************************/
-static void 
+static void
 AdjustSlideOutGeometry ( ClientData *pCD)
 {
     ClientData  *pCD_FP = NULL;
@@ -3162,22 +3162,22 @@ AdjustSlideOutGeometry ( ClientData *pCD)
     {
 	/*
 	* Adjust slide up position if coming from front
-	* panel. 
+	* panel.
 	* (Assumes no nesting of panels !!!)
 	* (Assumes horizontal oriented front panel!!!)
 	*/
 	if (pCD->transientLeader == pCD_FP)
 	{
-	    /* 
+	    /*
 	     * Subpanel should be sort-of centered already,
 	     * adjust by width of window manager frame.
 	     */
 	    pCD->clientX -= pCD->frameInfo.lowerBorderWidth;
 
-	    /* 
+	    /*
 	     * Adjust to slide up above front panel.
 	     */
-	    pCD->clientY = pCD_FP->frameInfo.y - 
+	    pCD->clientY = pCD_FP->frameInfo.y -
 			 pCD->frameInfo.lowerBorderWidth -
 			 pCD->clientHeight + 3;
 
@@ -3198,7 +3198,7 @@ AdjustSlideOutGeometry ( ClientData *pCD)
 	    }
 
 	    if ((pCD->clientY + pCD->clientHeight +
-		   pCD->frameInfo.lowerBorderWidth) > 
+		   pCD->frameInfo.lowerBorderWidth) >
 		XDisplayHeight (DISPLAY, pCD->pSD->screen))
 	    {
 	       /*
@@ -3236,7 +3236,7 @@ AdjustSlideOutGeometry ( ClientData *pCD)
  *  w		- width of window
  *  h		- height of window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *pX		- new x-coord
@@ -3245,10 +3245,10 @@ AdjustSlideOutGeometry ( ClientData *pCD)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 PlaceFrameOnScreen (ClientData *pCD, int *pX, int *pY, int w, int h)
 {
     int clientOffsetX;
@@ -3309,7 +3309,7 @@ PlaceFrameOnScreen (ClientData *pCD, int *pX, int *pY, int w, int h)
  *  pCD		- pointer to client data
  *  pX		- pointer to x-coord
  *  pY		- pointer to y-coord
- * 
+ *
  *  Outputs:
  *  -------
  *  *pX		- new x-coord
@@ -3317,10 +3317,10 @@ PlaceFrameOnScreen (ClientData *pCD, int *pX, int *pY, int w, int h)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 PlaceIconOnScreen (ClientData *pCD, int *pX, int *pY)
 {
     int screenWidth;
@@ -3377,15 +3377,15 @@ PlaceIconOnScreen (ClientData *pCD, int *pX, int *pY)
  *  pWidth, pHeight = pointers to the window configuration values
  *  widthInc, heightInc = window size increment values
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pWidth, pHeight = adjusted configuration values are returned here
  *
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 FixWindowConfiguration (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, unsigned int widthInc, unsigned int heightInc)
 {
     register int  delta;
@@ -3438,17 +3438,17 @@ FixWindowConfiguration (ClientData *pCD, unsigned int *pWidth, unsigned int *pHe
  *  pCD = a pointer to the client window data
  *  pWidth, pHeight = pointers to the window size values
  *  widthInc, heightInc = window size increment values
- *  pWS->limitResize 
+ *  pWS->limitResize
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pWidth, pHeight = adjusted size values.
  *
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, unsigned int widthInc, unsigned int heightInc)
 {
     register int  deltaW;
@@ -3467,7 +3467,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 	*pWidth = pCD->minWidth;
     }
     else if (*pWidth > pCD->maxWidthLimit &&
-             pSD->limitResize && 
+             pSD->limitResize &&
 	     !(pCD->clientFlags & CLIENT_WM_CLIENTS))
     {
 	*pWidth = pCD->maxWidthLimit;
@@ -3478,7 +3478,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 	*pHeight = pCD->minHeight;
     }
     else if (*pHeight > pCD->maxHeightLimit &&
-             pSD->limitResize && 
+             pSD->limitResize &&
 	     !(pCD->clientFlags & CLIENT_WM_CLIENTS))
     {
 	*pHeight = pCD->maxHeightLimit;
@@ -3486,7 +3486,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 
     if ((pCD->sizeFlags & P_ASPECT) &&
         *pWidth * pCD->maxAspect.y > *pHeight * pCD->maxAspect.x)
-    /* 
+    /*
      * Client aspect is too big.
      * Candidate height >= client height:
      *   Try to increase the client's height without violating bounds.
@@ -3498,7 +3498,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
     {
         if ((*pHeight >= pCD->clientHeight) ||
             (*pWidth > pCD->clientWidth))
-        /* 
+        /*
          * Candidate height >= client height:
          *   Try to increase the client's height without violating bounds.
          *   If this fails, use maximum height and try to decrease its width.
@@ -3512,15 +3512,15 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 	    {
 	        *pHeight += deltaH;
 	    }
-	    else 
+	    else
 	    {
 	        *pHeight = pCD->maxHeightLimit;
-	        deltaW = makemult (*pWidth - *pHeight * pCD->maxAspect.x / 
+	        deltaW = makemult (*pWidth - *pHeight * pCD->maxAspect.x /
 			           pCD->maxAspect.y, widthInc);
 	        if (*pWidth - deltaW >= pCD->minWidth)
 	        {
 	            *pWidth -= deltaW;
-                }  
+                }
 		else
 		{
 	            *pWidth = pCD->minWidth;
@@ -3534,17 +3534,17 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
          *   If this fails, use minimum width and try to increase its height.
 	 */
 	{
-	    deltaW = makemult (*pWidth - *pHeight * pCD->maxAspect.x / 
+	    deltaW = makemult (*pWidth - *pHeight * pCD->maxAspect.x /
 			       pCD->maxAspect.y, widthInc);
 
 	    if (*pWidth - deltaW >= pCD->minWidth)
 	    {
 	        *pWidth -= deltaW;
-            }  
+            }
 	    else
 	    {
 	        *pWidth = pCD->minWidth;
-                deltaH = makemult (*pWidth * pCD->maxAspect.y / 
+                deltaH = makemult (*pWidth * pCD->maxAspect.y /
 				   pCD->maxAspect.x - *pHeight, heightInc);
 	        if (*pHeight + deltaH <= pCD->maxHeightLimit ||
                      !pSD->limitResize ||
@@ -3562,7 +3562,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 
     else if ((pCD->sizeFlags & P_ASPECT) &&
              *pHeight * pCD->minAspect.x > *pWidth * pCD->minAspect.y)
-    /* 
+    /*
      * Client aspect is too small.
      * Candidate width >= client width:
      *   Try to increase the client's width without violating bounds.
@@ -3591,8 +3591,8 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 	    else
 	    {
 	        *pWidth = pCD->maxWidthLimit;
-	        deltaH = makemult (*pHeight - *pWidth * pCD->minAspect.y / 
-			           pCD->minAspect.x, heightInc); 
+	        deltaH = makemult (*pHeight - *pWidth * pCD->minAspect.y /
+			           pCD->minAspect.x, heightInc);
 	        if (*pHeight - deltaH >= pCD->minHeight)
 	        {
 	            *pHeight -= deltaH;
@@ -3610,8 +3610,8 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
          *   If this fails, use minimum height and try to increase its width.
 	 */
 	{
-	    deltaH = makemult (*pHeight - *pWidth * pCD->minAspect.y / 
-			       pCD->minAspect.x, heightInc); 
+	    deltaH = makemult (*pHeight - *pWidth * pCD->minAspect.y /
+			       pCD->minAspect.x, heightInc);
 	    if (*pHeight - deltaH >= pCD->minHeight)
 	    {
 	        *pHeight -= deltaH;
@@ -3619,7 +3619,7 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
 	    else
 	    {
 	        *pHeight = pCD->minHeight;
-                deltaW = makemult (*pHeight * pCD->minAspect.x / 
+                deltaW = makemult (*pHeight * pCD->minAspect.x /
 				   pCD->minAspect.y - *pWidth, widthInc);
 	        if (*pWidth + deltaW <= pCD->maxWidthLimit ||
                      !pSD->limitResize ||
@@ -3654,14 +3654,14 @@ FixWindowSize (ClientData *pCD, unsigned int *pWidth, unsigned int *pHeight, uns
  *  ------
  *  pCD = pointer to client data (client window configuration fields)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = changes to the client window configuration fields
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 FindClientPlacement (ClientData *pCD)
 {
     static Boolean clientPlacementInitialized = False;
@@ -3838,7 +3838,7 @@ FindClientPlacement (ClientData *pCD)
  *  ------
  *  window = get attributes for window with this id
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD.attributesWindow = set to window that matches windowAttributes
@@ -3851,10 +3851,10 @@ FindClientPlacement (ClientData *pCD)
  *  The attributes in the global cache are (known) current only for a
  *  single pass through the wm event processing loop.  They (should be)
  *  regularly cleared.
- * 
+ *
  *************************************<->***********************************/
 
-Boolean 
+Boolean
 WmGetWindowAttributes (Window window)
 {
     if (wmGD.attributesWindow != window)
@@ -3894,7 +3894,7 @@ WmGetWindowAttributes (Window window)
  *
  *  window = client supplied icon window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = (iconWindow)
@@ -3903,7 +3903,7 @@ WmGetWindowAttributes (Window window)
  *
  *************************************<->***********************************/
 
-Boolean 
+Boolean
 SetupClientIconWindow (ClientData *pCD, Window window)
 {
     ClientData *pcd;
@@ -3927,8 +3927,8 @@ SetupClientIconWindow (ClientData *pCD, Window window)
 	}
 
 	/*
-	 * The proposed icon window is already being managed. 
-	 * Assume that we managed it by mistake. Unmanage the 
+	 * The proposed icon window is already being managed.
+	 * Assume that we managed it by mistake. Unmanage the
 	 * window and use it as the icon window for this client.
 	 */
 
@@ -3963,14 +3963,14 @@ SetupClientIconWindow (ClientData *pCD, Window window)
  *  ------
  *  pCD	= pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD	= may be changed.
  *
  *************************************<->***********************************/
 
-void 
+void
 ProcessMwmHints (ClientData *pCD)
 {
     PropMwmHints *pHints;
@@ -3994,12 +3994,12 @@ ProcessMwmHints (ClientData *pCD)
 #ifdef PANELIST
         if (pCD->dtwmBehaviors & DtWM_BEHAVIOR_SUBPANEL)
 	{
-	    pCD->clientFunctions &= WM_FUNC_SUBPANEL_DEFAULT;   
+	    pCD->clientFunctions &= WM_FUNC_SUBPANEL_DEFAULT;
 	    pCD->dtwmFunctions &= ~DtWM_FUNCTION_OCCUPY_WS;
 	}
         else if (pCD->dtwmBehaviors & DtWM_BEHAVIOR_PANEL)
 	{
-	    pCD->clientFunctions &= WM_FUNC_PANEL_DEFAULT;   
+	    pCD->clientFunctions &= WM_FUNC_PANEL_DEFAULT;
 	    pCD->dtwmFunctions &= ~DtWM_FUNCTION_OCCUPY_WS;
 	}
 #endif /* PANELIST */
@@ -4022,7 +4022,7 @@ ProcessMwmHints (ClientData *pCD)
 	}
         else if (pCD->dtwmBehaviors & DtWM_BEHAVIOR_PANEL)
 	{
-	    pCD->clientDecoration &= WM_DECOR_PANEL_DEFAULT;   
+	    pCD->clientDecoration &= WM_DECOR_PANEL_DEFAULT;
 	}
 #endif /* PANELIST */
     }
@@ -4054,14 +4054,14 @@ ProcessMwmHints (ClientData *pCD)
 	    {
 		/*
 		 * !!! Backward compatibility heurisitic !!!
-		 * 
+		 *
 		 * If client doesn't want any functions and
-		 * no DT_WM_HINTS specified, then remove 
+		 * no DT_WM_HINTS specified, then remove
 		 * workspace functions.
 		 */
 		pCD->dtwmFunctions &= ~DtWM_FUNCTION_OCCUPY_WS;
 	    }
-#endif 
+#endif
 	    /* !!! check for some minimal level of functionality? !!! */
 	}
 
@@ -4099,7 +4099,7 @@ ProcessMwmHints (ClientData *pCD)
 		(pHints->inputMode == MWM_INPUT_FULL_APPLICATION_MODAL) ||
 		((pHints->inputMode == MWM_INPUT_SYSTEM_MODAL) &&
 		 !wmGD.systemModalActive))
-		
+
 	    {
 	        pCD->inputMode = pHints->inputMode;
 
@@ -4137,7 +4137,7 @@ ProcessMwmHints (ClientData *pCD)
 #endif /* NO_OL_COMPAT */
 
 #ifdef WSM
-    /* 
+    /*
      * If primary window can't move between workspaces, then
      * secondary window shouldn't either.
      */
@@ -4177,8 +4177,6 @@ ProcessMwmHints (ClientData *pCD)
     {
 	pCD->clientDecoration &= ~MWM_DECOR_MAXIMIZE;
     }
-    
+
     pCD->decor = pCD->clientDecoration;  /* !!! combine decor ... !!! */
-
-
 } /* END OF ProcessMwmHints */

@@ -81,7 +81,7 @@ static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
 #include <Xm/ColorI.h>
 #endif
 #ifdef FIX_1521
-#ifdef USE_XFT
+#if USE_XFT
 #include "XmRenderTI.h"
 #include <X11/Xft/Xft.h>
 #endif
@@ -2322,7 +2322,7 @@ LRectangle *background_box)
 
         XSetClipRectangles(XtDisplay(lw), clipgc, 0,0, &clip_rect, 1, Unsorted);
 #ifdef FIX_1521
-#ifdef USE_XFT
+#if USE_XFT
         _XmXftSetClipRectangles(XtDisplay(lw), XtWindow(lw), 0, 0, &clip_rect, 1);
 #endif
 #endif
@@ -2330,7 +2330,7 @@ LRectangle *background_box)
     {
     XSetClipMask (XtDisplay (lw), clipgc, None);
 #ifdef FIX_1521    
-#ifdef USE_XFT
+#if USE_XFT
 	XftDraw	*draw = _XmXftDrawCreate(XtDisplay(lw), XtWindow(lw));
 	XftDrawSetClip(draw, NULL);
 #endif
@@ -2338,7 +2338,7 @@ LRectangle *background_box)
     }
 
 #ifdef FIX_1517
-#ifdef USE_XFT
+#if USE_XFT
     {
     int width, height;
     
@@ -2574,7 +2574,7 @@ LRectangle *background_box)
 #endif
 
 #ifndef FIX_1381
-#ifdef USE_XFT
+#if USE_XFT
         if (!XtIsSensitive(wid)) {
           XSetFillStyle(XtDisplay(lw), LabG_InsensitiveGC(lw), FillStippled);
           XFillRectangle(XtDisplay(lw), XtWindow(lw), LabG_InsensitiveGC(lw),

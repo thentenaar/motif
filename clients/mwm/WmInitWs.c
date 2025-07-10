@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.4
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -145,11 +145,11 @@ typedef struct
 static void InsureDefaultBackdropDir(char **ppchBackdropDirs);
 #endif /* WSM */
 void InitWmDisplayEnv (void);
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 void InitNlsStrings (void);
 #endif
 #ifndef NO_HP_KEY_REMAP
-Boolean VirtKeys4DIN(Display *dpy); 
+Boolean VirtKeys4DIN(Display *dpy);
 #endif /* NO_HP_KEY_REMAP */
 
 #ifdef WSM
@@ -165,7 +165,7 @@ WmScreenData *dtSD;       /* for the "DT screen" of the display */
  * Global Variables:
  */
 extern int firstTime;
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
 extern char * pWarningStringFile;
 extern char * pWarningStringLine;
 #endif
@@ -173,14 +173,14 @@ extern char * pWarningStringLine;
 /*
  * InitMouseBinding
  *
- * Special case for a two button mouse; move the BMENU binding 
+ * Special case for a two button mouse; move the BMENU binding
  * from Button3 to Button2.  Fails for one-button mice.
  */
 static void
 InitMouseBinding(void)
 {
     wmGD.numMouseButtons = XGetPointerMapping(DISPLAY, (unsigned char *)0, 0);
-    
+
     if (wmGD.numMouseButtons < 3) {
         wmGD.bMenuButton = Button2;
     } else {
@@ -192,7 +192,7 @@ InitMouseBinding(void)
  *
  *  BuildLockMaskSequence ()
  *
- *  Set up the sequence of modifier masks to use to when grabbing 
+ *  Set up the sequence of modifier masks to use to when grabbing
  *  key- and button-bindings. This sequence of masks is NULL
  *  terminated.
  *
@@ -217,7 +217,7 @@ BuildLockMaskSequence(void)
     int run;
 
     /*
-     * Count the bits to determine the number of elements in 
+     * Count the bits to determine the number of elements in
      * the mask sequence.  The actual number of masks is
      * 2^<bitcount> - 1. We're not interested in the case
      * where there none of the mask bits are set.
@@ -238,7 +238,7 @@ BuildLockMaskSequence(void)
     /*
      * Allocate the space for the mask sequence + terminator.
      */
-    wmGD.pLockMaskSequence = (unsigned int *) 
+    wmGD.pLockMaskSequence = (unsigned int *)
 			XtCalloc (num_masks+1, sizeof (unsigned int));
 
     /*
@@ -260,7 +260,7 @@ BuildLockMaskSequence(void)
 
 	bit++;
 
-	/* 
+	/*
 	 * Set it in the appropriate slots in the
 	 * mask sequence. The start of the loop is
 	 * funny because we skip the case of all the
@@ -279,7 +279,7 @@ BuildLockMaskSequence(void)
 		else
 		    bit_on = True;
 
-		k = run; 
+		k = run;
 	    }
 
 	    if (bit_on) wmGD.pLockMaskSequence[j] |= thisbit;
@@ -295,10 +295,10 @@ BuildLockMaskSequence(void)
  *  Set up the mask used to ignore locking modifier keys (e.g. Shift Lock)
  *  when processing key- and button-bindings.
  *
- *  We want to try to ignore the set of locking modifers 
+ *  We want to try to ignore the set of locking modifers
  *  such as Shift Lock, Num Lock, Kana Lock, etc. This involves
  *  some amount of guessing since these things can be mapped
- *  onto any of the Mod1-Mod5 modifiers. The approach taken is to 
+ *  onto any of the Mod1-Mod5 modifiers. The approach taken is to
  *  identify the mapping of the locking modifier keysyms to
  *  Mod1-Mod5 and build the set of masks needed to ignore them.
  *
@@ -335,7 +335,7 @@ SetupLockingModifierMask(void)
 	pkcLockingMods[i] = XKeysymToKeycode(dpy, pksLockingMods[i]);
     }
 
-    /* 
+    /*
      * Start out with Caps lock and add others we discover.
      */
     wmGD.lockingModMask = LockMask;
@@ -347,7 +347,7 @@ SetupLockingModifierMask(void)
 
     for (i = start_index; i < modifier_map->max_keypermod * 8; i++) {
         int this_mod = ((i - start_index) / modifier_map->max_keypermod) + 1;
- 
+
         kc = modifier_map->modifiermap[i];
         if (kc)
 	{
@@ -387,7 +387,7 @@ MappingEventHandler(
         if(event->xany.type != MappingNotify ||
                 event->xmapping.request == MappingPointer)
                 return;
- 
+
         if(event->xmapping.request == MappingModifier)
                 SetupLockingModifierMask();
 }
@@ -411,11 +411,11 @@ MappingEventHandler(
  *
  *  environ = window manager environment
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD = (initialize the global data structure)
- * 
+ *
  *************************************<->***********************************/
 
 void InitWmGlobal (int argc, char *argv [], char *environ [])
@@ -435,7 +435,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     wmGD.errorFlag = False;
 #ifdef WSM
 #ifndef PANELIST
-    dtSD = NULL; 
+    dtSD = NULL;
 #else /* PANELIST  */
     wmGD.dtSD = NULL;
     wmGD.iSlideUpsInProgress = 0;
@@ -484,7 +484,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     {
 	res_class = WM_RESOURCE_CLASS;
     }
-    else 
+    else
     {
 	res_class = DT_WM_RESOURCE_CLASS;
     }
@@ -499,7 +499,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 
     /*
      * Do X Tookit initialization:
-     */   
+     */
 
     XtToolkitInitialize();
 
@@ -513,7 +513,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 				  0,
 				  &argc, /* R5 changed from Cardinal to int*/
 				  argv);
-    
+
     if (!wmGD.display)
     {
 	Warning(((char *)GETMESSAGE(40, 1, "Could not open display.")));
@@ -524,8 +524,8 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     {
 	int dummy;
 
-	wmGD.allplanes = XAllPlanesQueryExtension(wmGD.display, 
-				&dummy, &dummy);	
+	wmGD.allplanes = XAllPlanesQueryExtension(wmGD.display,
+				&dummy, &dummy);
     }
 #endif /* defined(sun) && defined(ALLPLANES) */
 
@@ -536,10 +536,10 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     WmInitErrorHandler(wmGD.display);
 
     /*
-     * Initialize cursor size info and 
+     * Initialize cursor size info and
      * display the startup cursor.
      */
-    
+
     InitCursorInfo ();
 #ifdef WSM
     InitWmDisplayEnv ();
@@ -554,7 +554,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
      * Set up the _MOTIF_BINDINGS property on the root window
      * of screen 0.  Must do this before we create shells.
      */
-    
+
     ProcessMotifBindings ();
 #ifndef NO_HP_KEY_REMAP
 
@@ -604,7 +604,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
      */
     VirtKeys4DIN(DISPLAY);
 #endif /* NO_HP_KEY_REMAP */
-    
+
     argnum = 0;
     XtSetArg (args[argnum], XtNgeometry, NULL);	argnum++;
     XtSetArg (args[argnum], XtNx, 10000);	argnum++;
@@ -622,7 +622,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     XtSetArg (args[argnum], XtNargv, wmGD.argv); argnum++;
 
     /* create topmost shell (application shell) */
-    wmGD.topLevelW = XtAppCreateShell (NULL, 
+    wmGD.topLevelW = XtAppCreateShell (NULL,
 			      res_class,
 			      sessionShellWidgetClass,
 			      DISPLAY,
@@ -642,18 +642,18 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 
     /* allocate namespace for screens */
     InitScreenNames();
-    
-    /* 
+
+    /*
      * Determine the screen management policy (all or none)
-     * Process command line arguments that we handle 
-     * This could change the number of screens we manage 
+     * Process command line arguments that we handle
+     * This could change the number of screens we manage
      */
     ProcessGlobalScreenResources ();
     ProcessCommandLine (argc, argv);
 
 #ifdef WSM
     /*
-     * Make sure backdrops are in our icon search path. 
+     * Make sure backdrops are in our icon search path.
      * This call MUST occur before ANY icons are looked up either
      * explicitly or through resource processing!!!
      * Uses variables set by ProcessGlobalScreenResources and
@@ -674,7 +674,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
         sBdPath = wmGD.backdropDirs;
 	InsureDefaultBackdropDir ((char **) &sBdPath);
 
-	_DtWsmSetBackdropSearchPath(XScreenOfDisplay(DISPLAY, sNum), 
+	_DtWsmSetBackdropSearchPath(XScreenOfDisplay(DISPLAY, sNum),
 			sBdPath, useMultiColorIcons);
 
         XtFree(sBdPath);
@@ -685,30 +685,30 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
      * Allocate data and initialize for screens we manage:
      */
 
-    if (!(wmGD.Screens = (WmScreenData *) 
+    if (!(wmGD.Screens = (WmScreenData *)
 	    XtCalloc (wmGD.numScreens, sizeof(WmScreenData))))
     {
 	ShowWaitState (FALSE);
 	Warning (((char *)GETMESSAGE(40, 2, "Insufficient memory for Screen data")));
 	ExitWM (WM_ERROR_EXIT_VALUE);
     }
-    else 
+    else
     {
 
 	sAttributes.event_mask = SubstructureRedirectMask;
 
-	for (scr=0; scr<wmGD.numScreens; scr++) 
+	for (scr=0; scr<wmGD.numScreens; scr++)
 	{
 	    int sNum;
-	    
-	    /* 
+
+	    /*
 	     * Gain control of the root windows of each screen:
 	     */
 
 	    sNum = (wmGD.numScreens == 1) ? DefaultScreen(DISPLAY) : scr;
 	    wmGD.errorFlag = False;
 
-	    XChangeWindowAttributes (DISPLAY, RootWindow (DISPLAY, sNum), 
+	    XChangeWindowAttributes (DISPLAY, RootWindow (DISPLAY, sNum),
 		CWEventMask, &sAttributes);
 	    /*
 	     * Do XSync to force server action and catch errors
@@ -720,17 +720,17 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		(RootWindow (DISPLAY, sNum) == (Window) wmGD.errorResource) &&
 		(wmGD.errorRequestCode == X_ChangeWindowAttributes))
 	    {
-		sprintf(pch, 
+		sprintf(pch,
 		    ((char *)GETMESSAGE(40, 3, "Another window manager is running on screen %d")), sNum);
 		Warning ((char *) &pch[0]);
 		wmGD.Screens[scr].managed = False;
 	    }
-	    else 
+	    else
 	    {
 		if (!processedGlobalResources)
 		{
 #ifdef WSM
-		    enum { 
+		    enum {
 		      XA_DT_SESSION_HINTS, XA_DT_SM_WM_PROTOCOL,
 		      XA_DT_SM_START_ACK_WINDOWS, XA_DT_SM_STOP_ACK_WINDOWS,
 		      XA_DT_WM_WINDOW_ACK, XA_DT_WM_EXIT_SESSION,
@@ -742,15 +742,15 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		      _XA_DT_WM_LOCK_DISPLAY, _XA_DT_WM_READY };
 
 		    Atom atoms[XtNumber(atom_names)];
-		    XInternAtoms(DISPLAY, atom_names, XtNumber(atom_names), 
+		    XInternAtoms(DISPLAY, atom_names, XtNumber(atom_names),
 				 False, atoms);
 
 		    wmGD.xa_DT_SESSION_HINTS = atoms[XA_DT_SESSION_HINTS];
 		    wmGD.xa_DT_SM_WM_PROTOCOL = atoms[XA_DT_SM_WM_PROTOCOL];
 		    wmGD.xa_DT_SM_START_ACK_WINDOWS =
-		      atoms[XA_DT_SM_START_ACK_WINDOWS]; 
+		      atoms[XA_DT_SM_START_ACK_WINDOWS];
 		    wmGD.xa_DT_SM_STOP_ACK_WINDOWS =
-		      atoms[XA_DT_SM_STOP_ACK_WINDOWS]; 
+		      atoms[XA_DT_SM_STOP_ACK_WINDOWS];
 		    wmGD.xa_DT_WM_WINDOW_ACK = atoms[XA_DT_WM_WINDOW_ACK];
 		    wmGD.xa_DT_WM_EXIT_SESSION = atoms[XA_DT_WM_EXIT_SESSION];
                     wmGD.xa_DT_WM_LOCK_DISPLAY = atoms[XA_DT_WM_LOCK_DISPLAY];
@@ -779,9 +779,9 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		    wmGD.preMove = False;
 		    wmGD.gadgetClient = NULL;
 		    wmGD.wmTimers = NULL;
-		    wmGD.clientDefaultTitle = 
+		    wmGD.clientDefaultTitle =
 			XmStringCreateLocalized(DEFAULT_CLIENT_TITLE);
-		    wmGD.iconDefaultTitle = 
+		    wmGD.iconDefaultTitle =
 			XmStringCreateLocalized(DEFAULT_ICON_TITLE);
 		    wmGD.attributesWindow = (Window)NULL;
 		    wmGD.clickData.pCD = NULL;
@@ -802,7 +802,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		    wmGD.bReplayedButton = False;
 		    wmGD.bSuspendSecondaryRestack = False;
 		    /*
-		     *  Get a second display connection for 
+		     *  Get a second display connection for
 		     *  internal WM windows.
 		     */
 		    wmGD.display1 = XtOpenDisplay (wmGD.mwmAppContext,
@@ -820,13 +820,13 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 			ExitWM (WM_ERROR_EXIT_VALUE);
 		    }
 
-		    _DtGetSmWindow(DISPLAY, 
-				  RootWindow(DISPLAY, 0), 
+		    _DtGetSmWindow(DISPLAY,
+				  RootWindow(DISPLAY, 0),
 				  &wmGD.dtSmWindow) ;
 #ifdef PANACOMM
 		    /*
 		     * If this is the first screen we've managed,
-		     * tell the session manager we're ready 
+		     * tell the session manager we're ready
 		     */
 		    if (!processedGlobalResources)
 		    {
@@ -844,11 +844,11 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		    XtSetArg (args[argnum], XtNy, 0);		argnum++;
 		    XtSetArg (args[argnum], XtNwidth, 10);	argnum++;
 		    XtSetArg (args[argnum], XtNheight, 10);	argnum++;
-		    XtSetArg (args[argnum], 
+		    XtSetArg (args[argnum],
 				XtNmappedWhenManaged, False);	argnum++;
 
-		    wmGD.topLevelW1 = 
-			XtAppCreateShell (NULL, 
+		    wmGD.topLevelW1 =
+			XtAppCreateShell (NULL,
 					  res_class,
 					  applicationShellWidgetClass,
 					  DISPLAY1,
@@ -856,33 +856,33 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 					  argnum);
 
 #endif /* WSM */
-		    
 
-		    /* 
-		     * if this is the first screen we can manage, 
+
+		    /*
+		     * if this is the first screen we can manage,
 		     * process global.
 		     */
-		    
+
 		    processedGlobalResources = True;
 
 		    /*
-		     * Get the _MOTIF_WM_INFO property and determine 
+		     * Get the _MOTIF_WM_INFO property and determine
 		     * the startup / restart state.
 		     */
-		    
+
 		    ProcessMotifWmInfo (RootWindow (DISPLAY, sNum));
-		    
+
 		    /*
 		     * Process global window manager resources:
 		     */
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     		    InitBuiltinSystemMenu();
 #endif
-		    
+
 		    ProcessWmResources ();
 
 		}
-		
+
 		InitWmScreen (&(wmGD.Screens[scr]), sNum);
 		wmGD.Screens[scr].managed = True;
 		managed++;
@@ -890,7 +890,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 		GetDtSessionHints(&(wmGD.Screens[scr]), sNum);
 #endif /* WSM */
 
-		if (!activeSet) 
+		if (!activeSet)
 		{
 		    activeSet = True;
 		    ACTIVE_PSD = &wmGD.Screens[scr];
@@ -898,7 +898,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 	    }
 	}
 
-	if (managed == 0) 
+	if (managed == 0)
 	{
 	    /*
 	     * No screens for me to manage, give up.
@@ -909,11 +909,11 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 	}
     }
 #ifdef WSM
-    /*  
+    /*
      * Initialize the IPC mechanism
      */
     dtInitialize(argv[0], wmGD.mwmAppContext);
-#ifndef NO_MESSAGE_CATALOG
+#if XM_MSGCAT
     /*
      * Set up NLS error messages.
      * Must be done after DtInitialize.
@@ -933,7 +933,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
     XtSetValues (wmGD.topLevelW1, args, argnum);
 
 #endif /* WSM */
-    
+
 
     /*
      * Prepare to have child processes (e.g., exec'ed commands).
@@ -1048,7 +1048,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 	    if(pSD->iconDecoration & ICON_ACTIVE_LABEL_PART)
 	    {
 		/* create active icon window */
-		CreateActiveIconTextWindow(pSD); 
+		CreateActiveIconTextWindow(pSD);
 	    }
 
 
@@ -1180,7 +1180,7 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 	    int iws;
 #endif /* WSM */
             pSD = &(wmGD.Screens[scr]);
-	    
+
             if (pSD->managed)
             {
                 ACTIVE_PSD = &wmGD.Screens[scr];
@@ -1221,7 +1221,7 @@ XFlush (DISPLAY);
 		    WmPanelistObject  pPanelist;
 
                     wmGD.dtSD->wPanelist =
-		       WmPanelistAllocate(pSD->screenTopLevelW1, 
+		       WmPanelistAllocate(pSD->screenTopLevelW1,
 		                          (XtPointer) &wmGD, (XtPointer) pSD);
 
 		    pPanelist = (WmPanelistObject) pSD->wPanelist;
@@ -1231,20 +1231,20 @@ XFlush (DISPLAY);
 			/*
 			 * Make a default front panel icon image.
 			 */
-			iconBitmap = XCreateBitmapFromData (DISPLAY, 
-				    pSD->rootWindow, 
-				    (char *) fntpl_i_bm_bits, 
-				    fntpl_i_bm_width, 
+			iconBitmap = XCreateBitmapFromData (DISPLAY,
+				    pSD->rootWindow,
+				    (char *) fntpl_i_bm_bits,
+				    fntpl_i_bm_width,
 				    fntpl_i_bm_height);
 
-			ac = 0; 
-			XtSetArg (al[ac], XmNiconPixmap, iconBitmap); ac++; 
+			ac = 0;
+			XtSetArg (al[ac], XmNiconPixmap, iconBitmap); ac++;
 			XtSetValues (O_Shell(pPanelist), al, ac);
 
 		    }
 		}
 
-		if (wmGD.useFrontPanel && pSD->wPanelist && 
+		if (wmGD.useFrontPanel && pSD->wPanelist &&
 		    (pSD == wmGD.dtSD))
 		{
 		    /*
@@ -1261,7 +1261,7 @@ XFlush (DISPLAY);
 		    ScanForEmbeddedClients (pSD);
 		}
 #endif /* PANELIST */
-		
+
 		RestoreHelpDialogs(pSD);
 #else /* WSM */
                 MapIconBoxes (pSD->pActiveWS);
@@ -1270,7 +1270,7 @@ XFlush (DISPLAY);
         }
         firstTime = 0;
     }
-    
+
     InitKeyboardFocus ();
 
 #ifndef WSM
@@ -1436,7 +1436,7 @@ InitWmScreen (WmScreenData *pSD, int sNum)
 
 	buf_size = strlen(buffer) + 1;
 
-	if ((wmGD.screenNames[sNum] = 
+	if ((wmGD.screenNames[sNum] =
 	     (unsigned char *)XtRealloc (wmGD.screenNames[sNum], buf_size)) == NULL)
 	{
 	    Warning (((char *)GETMESSAGE(40, 7, "Cannot create enough memory for the screen names")));
@@ -1466,13 +1466,13 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     XtSetArg (args[argnum], XtNheight, 10);	argnum++;
     XtSetArg (args[argnum], XtNoverrideRedirect, True);	argnum++;
 
-    XtSetArg (args[argnum], XtNdepth, 
+    XtSetArg (args[argnum], XtNdepth,
 	    DefaultDepth(DISPLAY, sNum));	argnum++;
-    XtSetArg (args[argnum], XtNscreen, 
+    XtSetArg (args[argnum], XtNscreen,
 	    ScreenOfDisplay(DISPLAY, sNum)); 	argnum++;
-    XtSetArg (args[argnum], XtNcolormap, 
+    XtSetArg (args[argnum], XtNcolormap,
 	    DefaultColormap(DISPLAY, sNum)); 	argnum++;
-    XtSetArg (args[argnum], XtNvisual, 
+    XtSetArg (args[argnum], XtNvisual,
 	    DefaultVisual(DISPLAY, sNum)); 	argnum++;
 
     pSD->screenTopLevelW = XtCreatePopupShell ((String) wmGD.screenNames[sNum],
@@ -1513,11 +1513,11 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     XtSetArg (args[argnum], XtNoverrideRedirect, True);		argnum++;
     XtSetArg (args[argnum], XtNmappedWhenManaged, False);	argnum++;
 
-    XtSetArg (args[argnum], XtNdepth, 
+    XtSetArg (args[argnum], XtNdepth,
 	    DefaultDepth(DISPLAY1, sNum));	argnum++;
-    XtSetArg (args[argnum], XtNscreen, 
+    XtSetArg (args[argnum], XtNscreen,
 	    ScreenOfDisplay(DISPLAY1, sNum)); 	argnum++;
-    XtSetArg (args[argnum], XtNcolormap, 
+    XtSetArg (args[argnum], XtNcolormap,
 	    DefaultColormap(DISPLAY1, sNum)); 	argnum++;
 
     pSD->screenTopLevelW1 = XtCreatePopupShell ((String) wmGD.screenNames[sNum],
@@ -1542,8 +1542,8 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     /*
      *  Complete initialization of workspace structures
      */
-    for (wsnum = 0, 
-	 pwsI = pSD->pWS; wsnum < pSD->numWorkspaces; 
+    for (wsnum = 0,
+	 pwsI = pSD->pWS; wsnum < pSD->numWorkspaces;
 	 wsnum++, pwsI++)
     {
 	/*
@@ -1555,9 +1555,9 @@ InitWmScreen (WmScreenData *pSD, int sNum)
 
     if (pSD->initialWorkspace)
     {
-	/* 
+	/*
 	 * restore to the last initialWorkspace saved from
-	 * Quit, Restart, OR save session 
+	 * Quit, Restart, OR save session
 	 */
 
 	/*
@@ -1591,7 +1591,7 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     /*
      *  Allocate and initialize a workspace structure
      */
-    
+
     if (!(pSD->pWS = (WmWorkspaceData *) XtMalloc (sizeof(WmWorkspaceData))))
     {
 	ShowWaitState (FALSE);
@@ -1610,7 +1610,7 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     pDisplayName = DisplayString (DISPLAY);
 
     /*
-     * Construct displayString for this string.  
+     * Construct displayString for this string.
      *
      * NOTE: The variable buffer is reused here. It was
      * used earlier to generate a screen name.
@@ -1634,14 +1634,14 @@ InitWmScreen (WmScreenData *pSD, int sNum)
 		    token1, token2, sNum);
 	}
 
-	/*		
+	/*
 	 * Allocate space for the display string
 	 */
-    
+
 	if ((pSD->displayString =
 	     (String)XtMalloc ((unsigned int) (strlen(buffer) + 1))) == NULL)
 	{
-	    Warning (((char *)GETMESSAGE(40, 9, 
+	    Warning (((char *)GETMESSAGE(40, 9,
 				    "Insufficient memory for displayString")));
 	}
 	else
@@ -1696,7 +1696,7 @@ void InitWmWorkspace (WmWorkspaceData *pWS, WmScreenData *pSD)
     pWS->buttonW = NULL;
 #else /* WSM */
 
-    if ((pWS->name = (char *) 
+    if ((pWS->name = (char *)
 	    XtMalloc ((1+strlen(DEFAULT_WS_NAME)) * sizeof (char))) == NULL)
     {
 	ShowWaitState (FALSE);
@@ -1709,11 +1709,11 @@ void InitWmWorkspace (WmWorkspaceData *pWS, WmScreenData *pSD)
      * Create widget for workspace resource hierarchy
      */
     argnum = 0;
-    XtSetArg (args[argnum], XtNdepth, 
+    XtSetArg (args[argnum], XtNdepth,
 	    DefaultDepth(DISPLAY, pSD->screen));	argnum++;
-    XtSetArg (args[argnum], XtNscreen, 
+    XtSetArg (args[argnum], XtNscreen,
 	    ScreenOfDisplay(DISPLAY, pSD->screen)); 	argnum++;
-    XtSetArg (args[argnum], XtNcolormap, 
+    XtSetArg (args[argnum], XtNcolormap,
 	    DefaultColormap(DISPLAY, pSD->screen)); 	argnum++;
     XtSetArg (args[argnum], XtNwidth,  5);		argnum++;
     XtSetArg (args[argnum], XtNheight,  5);		argnum++;
@@ -1732,12 +1732,12 @@ void InitWmWorkspace (WmWorkspaceData *pWS, WmScreenData *pSD)
     /*
      * Process workspace based resources
      */
-    ProcessWorkspaceResources (pWS);	
+    ProcessWorkspaceResources (pWS);
 
     /* setup icon placement */
     if (wmGD.iconAutoPlace)
     {
-	InitIconPlacement (pWS); 
+	InitIconPlacement (pWS);
     }
 
 } /* END OF FUNCTION  InitWmWorkspace */
@@ -1752,27 +1752,27 @@ void InitWmWorkspace (WmWorkspaceData *pWS, WmScreenData *pSD)
  *  Description:
  *  -----------
  *  This function checks and edits a directory path to insure
- *  that the system backdrop directroy (/usr/dt/backdrops) is in the 
- *  path. If not it adds it to the end. Further, it always adds the user's 
- *  backdrop directory ($HOME/.dt/backdrops) to the beginning of the path 
+ *  that the system backdrop directroy (/usr/dt/backdrops) is in the
+ *  path. If not it adds it to the end. Further, it always adds the user's
+ *  backdrop directory ($HOME/.dt/backdrops) to the beginning of the path
  *  and the system admin directory (/etc/dt/backdrops) before the system
  *  directory.
  *
  *  Inputs:
  *  -------
- *  ppchBackdropDirs  - Pointer to a pointer to a directory path 
+ *  ppchBackdropDirs  - Pointer to a pointer to a directory path
  *			(must be allocated memory)
  *
  *  Outputs:
  *  -------
- *  *ppchBackdropDirs - Directory path may be modified, path 
+ *  *ppchBackdropDirs - Directory path may be modified, path
  *			pointer may be realloc'ed.
- * 
+ *
  *  Comments:
  *  --------
  *  Assumes that the default directory does not start with a
  *  multi-byte character.
- * 
+ *
  ******************************<->***********************************/
 static void
 InsureDefaultBackdropDir(char **ppchBackdropDirs)
@@ -1790,16 +1790,16 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
   pch = *ppchBackdropDirs;
   len = strlen (pchD);
   pchEnd = pch + strlen(pch);
-  
+
   while (!bFound && (pch != NULL) && (*pch != NULL))
     {
       if (strncmp (pch, pchD, len) == 0)
 	{
 	  /* found partial match, confirm complete match ...
 	   * complete match if char off end of partial match
-	   * is a NULL or a colon 
+	   * is a NULL or a colon
 	   */
-	  pch2 = pch + len;	
+	  pch2 = pch + len;
 	  if ((pch2 <= pchEnd) &&
 	      ((*pch2 == NULL) ||
 	       (((mblen (pch2, MB_CUR_MAX) == 1) &&
@@ -1808,33 +1808,33 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
 	      bFound = True;
 	    }
 	}
-      else 
+      else
 	{
 	  /* find next path component */
-	  pch = strchr (pch, (int) ':'); 
+	  pch = strchr (pch, (int) ':');
 	  if ((pch != NULL) && (*pch != NULL))
-	    { 
+	    {
 	      /* skip path separator */
 	      chlen = mblen (pch, MB_CUR_MAX);
 	      pch += chlen;
 	    }
 	}
     }
-  
+
 
   /*
    * Always add the user's home directory to the beginning of the string
    */
-  homeDir = (char *) XmeGetHomeDirName();  
-    
+  homeDir = (char *) XmeGetHomeDirName();
+
   /*
-   * If found add the user's home directory ($HOME/.dt/backdrops) and the 
+   * If found add the user's home directory ($HOME/.dt/backdrops) and the
    * admin directory /etc/dt/backdrops to the beginning of the string
    */
-  
-  if (bFound)  
+
+  if (bFound)
     {
-      len = strlen (homeDir) + strlen("/.dt/backdrops") + 
+      len = strlen (homeDir) + strlen("/.dt/backdrops") +
 	    strlen (*ppchBackdropDirs) + strlen("/etc/dt/backdrops") + 3;
       tmpptr = XtMalloc (len * sizeof (char *));
       strcpy (tmpptr, homeDir);
@@ -1847,25 +1847,25 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
     }
   else
     /*
-     * If string not found, then add home directory to the beginning of 
+     * If string not found, then add home directory to the beginning of
      * string and the admin directory and system directory to the end.
      */
     {
-      len = strlen (homeDir) + strlen("/.dt/backdrops") + 
-	    strlen (*ppchBackdropDirs) + strlen(pchD) + 
+      len = strlen (homeDir) + strlen("/.dt/backdrops") +
+	    strlen (*ppchBackdropDirs) + strlen(pchD) +
 	    strlen("/etc/dt/backdrops") + 4;
       tmpptr = XtMalloc (len * sizeof (char *));
       strcpy (tmpptr, homeDir);
       strcat (tmpptr, "/.dt/backdrops");
       strcat (tmpptr, ":");
-      strcat (tmpptr, *ppchBackdropDirs); 
+      strcat (tmpptr, *ppchBackdropDirs);
       strcat (tmpptr, ":");
-      strcat (tmpptr, "/etc/dt/backdrops"); 
+      strcat (tmpptr, "/etc/dt/backdrops");
       strcat (tmpptr, ":");
       strcat (tmpptr, pchD);
       *ppchBackdropDirs = tmpptr;
     }
-  
+
 } /* END OF FUNCTION InsureDefaultBackdropDirs */
 #endif /* WSM */
 
@@ -1877,7 +1877,7 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
  *
  *  Description:
  *  -----------
- *  This function is used retrieve and save the information in the 
+ *  This function is used retrieve and save the information in the
  *  _MOTIF_WM_INFO property.  If the property does not exist then
  *  the start / restart state is set to initial startup with the
  *  user specified (not standard) configuration.
@@ -1888,7 +1888,7 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
  *  wmGD.useStandardBehavior = True if set indicated in property
  *
  *  wmGD.wmRestarted = True if the window manager was restarted
- * 
+ *
  *************************************<->***********************************/
 
 void ProcessMotifWmInfo (Window rootWindowOfScreen)
@@ -1927,7 +1927,7 @@ void ProcessMotifWmInfo (Window rootWindowOfScreen)
  *  Outputs:
  *  -------
  *  pSD->wmWorkspaceWin = window that is used to hold wm properties
- * 
+ *
  *************************************<->***********************************/
 
 void SetupWmWorkspaceWindows (void)
@@ -1943,20 +1943,20 @@ void SetupWmWorkspaceWindows (void)
 	{
 	    sAttributes.override_redirect = True;
 	    sAttributes.event_mask = FocusChangeMask | PropertyChangeMask;
-	    pSD->wmWorkspaceWin = XCreateWindow (DISPLAY, pSD->rootWindow, 
-				      -100, -100, 10, 10, 0, 0, 
+	    pSD->wmWorkspaceWin = XCreateWindow (DISPLAY, pSD->rootWindow,
+				      -100, -100, 10, 10, 0, 0,
 				      InputOnly, CopyFromParent,
 				      (CWOverrideRedirect |CWEventMask),
 				      &sAttributes);
 
 	    XMapWindow (DISPLAY, pSD->wmWorkspaceWin);
 
-	    SetMwmInfo (pSD->rootWindow, 
+	    SetMwmInfo (pSD->rootWindow,
 			(long) ((wmGD.useStandardBehavior) ?
-                        MWM_INFO_STARTUP_STANDARD : MWM_INFO_STARTUP_CUSTOM), 
+                        MWM_INFO_STARTUP_STANDARD : MWM_INFO_STARTUP_CUSTOM),
 			pSD->wmWorkspaceWin);
 #ifdef WSM
-	    XSaveContext (DISPLAY, pSD->wmWorkspaceWin, 
+	    XSaveContext (DISPLAY, pSD->wmWorkspaceWin,
 		    wmGD.mwmWindowContextType, (caddr_t)pSD);
 #endif /* WSM */
 	}
@@ -1982,11 +1982,11 @@ void SetupWmWorkspaceWindows (void)
  *
  *  XXinput = ...
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD = (stretchCursors ...)
- * 
+ *
  *************************************<->***********************************/
 
 void MakeWorkspaceCursors (void)
@@ -2035,7 +2035,7 @@ void MakeWorkspaceCursors (void)
  *  ------
  *  wmGD  = (menuSpecs, keySpecs, buttonSpecs)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD (menuSpecs) = new menu panes, protocol atoms
@@ -2080,12 +2080,12 @@ void MakeWmFunctionResources (WmScreenData *pSD)
 
 	    menuSpec = MAKE_MENU (pSD, NULL, buttonSpec->wmFuncArgs,
 				 menuContext,
-	                         buttonSpec->context, 
+	                         buttonSpec->context,
 				 (MenuItem *) NULL, FALSE);
 
 	    if (menuSpec)
-	    /* 
-	     * If successful, save in pSD->acceleratorMenuSpecs 
+	    /*
+	     * If successful, save in pSD->acceleratorMenuSpecs
 	     * Note: these accelerators have nonzero contexts.
 	     */
 	    {
@@ -2124,12 +2124,12 @@ void MakeWmFunctionResources (WmScreenData *pSD)
 	    }
 
 	    menuSpec = MAKE_MENU (pSD, NULL, keySpec->wmFuncArgs, menuContext,
-	                         keySpec->context, 
+	                         keySpec->context,
 				 (MenuItem *) NULL, FALSE);
 
 	    if (menuSpec)
-	    /* 
-	     * If successful, save in pSD->acceleratorMenuSpecs 
+	    /*
+	     * If successful, save in pSD->acceleratorMenuSpecs
 	     * Note: these accelerators have nonzero contexts.
 	     */
 	    {
@@ -2161,15 +2161,15 @@ void MakeWmFunctionResources (WmScreenData *pSD)
  *  Inputs:
  *  ------
  *  pSD = pointer to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *  Modifies global data
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 void MakeXorGC (WmScreenData *pSD)
@@ -2187,7 +2187,7 @@ void MakeXorGC (WmScreenData *pSD)
      *  have more contrasting colors.
      */
 
-    gcv.plane_mask = BlackPixelOfScreen( DefaultScreenOfDisplay( DISPLAY )) ^ 
+    gcv.plane_mask = BlackPixelOfScreen( DefaultScreenOfDisplay( DISPLAY )) ^
                      WhitePixelOfScreen( DefaultScreenOfDisplay( DISPLAY ));
     mask = mask | GCPlaneMask;
 
@@ -2216,7 +2216,7 @@ void MakeXorGC (WmScreenData *pSD)
  *
  *  argv = window manager parameters
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = a copy of argv
@@ -2261,7 +2261,7 @@ void CopyArgv (int argc, char *argv [])
 	}
 #endif /* WSM */
     }
-    
+
 } /* END OF FUNCTION CopyArgv */
 
 
@@ -2288,20 +2288,20 @@ void CopyArgv (int argc, char *argv [])
 void InitScreenNames (void)
 {
     int num, numScreens;
-    
+
     numScreens = ScreenCount (wmGD.display);
-    
-    if (!(wmGD.screenNames = 
+
+    if (!(wmGD.screenNames =
 	  (unsigned char **) XtMalloc (numScreens * sizeof(char *))))
     {
 	ShowWaitState (FALSE);
 	Warning (((char *)GETMESSAGE(40, 12, "Insufficient memory for screen names")));
 	ExitWM (WM_ERROR_EXIT_VALUE);
     }
-    
+
     for (num=0; num<numScreens; num++)
     {
-	if (!(wmGD.screenNames[num] = 
+	if (!(wmGD.screenNames[num] =
 	      (unsigned char *) XtMalloc (4*sizeof(char))))
 	{
 	    ShowWaitState (FALSE);
@@ -2316,9 +2316,8 @@ void InitScreenNames (void)
 #endif /* WSM */
     }
 }
-#ifndef NO_MESSAGE_CATALOG
 
-
+#if XM_MSGCAT
 void InitNlsStrings (void)
 {
     char * tmpString;
@@ -2330,7 +2329,7 @@ void InitNlsStrings (void)
     wmGD.okLabel=XmStringCreateLocalized(_DtOkString);
     wmGD.cancelLabel=XmStringCreateLocalized(_DtCancelString);
     wmGD.helpLabel=XmStringCreateLocalized(_DtHelpString);
-#endif /* WSM */    
+#endif /* WSM */
 
     /*
      * catgets returns a pointer to an area that is over written
@@ -2413,7 +2412,7 @@ void InitNlsStrings (void)
 #endif /* WSM */
 
 } /* InitNlsStrings  */
-#endif
+#endif /* XM_MSGCAT */
 
 
 
@@ -2441,21 +2440,21 @@ InitWmDisplayEnv (void)
     char displayName[256];
 
     pDisplayName = DisplayString (DISPLAY);
-    
+
     /*
-     * Construct displayString for this string.  
+     * Construct displayString for this string.
      */
     strcpy(displayName, pDisplayName);
     sprintf(buffer, "DISPLAY=%s",displayName);
-    
-    /*		
+
+    /*
      * Allocate space for the display string
      */
     if ((wmGD.displayString =
 	 (String)XtMalloc ((unsigned int) (strlen(buffer) + 1))) == NULL)
     {
 	wmGD.displayString = NULL;
-        Warning (((char *)GETMESSAGE(40, 9, 
+        Warning (((char *)GETMESSAGE(40, 9,
 				     "Insufficient memory for displayString")));
     }
     else
@@ -2465,7 +2464,7 @@ InitWmDisplayEnv (void)
 	putenv(wmGD.displayString);
 #endif /* WSM */
     }
-    
+
 } /* END OF FUNCTION  InitWmDisplayEnv */
 
 #ifndef NO_HP_KEY_REMAP
@@ -2479,7 +2478,7 @@ GetReplacementList(
   int max_kc ;
   int ks_per_kc ;
   int kc_count ;
-  KeySym *key_map ; 
+  KeySym *key_map ;
   unsigned i ;
   str_xref xref_rtn = NULL ;
   unsigned num_xref = 0 ;

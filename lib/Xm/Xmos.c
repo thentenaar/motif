@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -41,8 +40,7 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
-#include <X11/Xos.h>
-#ifndef NEED_XPOLL_H
+#if HAVE_X11_XPOLL_H
 #include <X11/Xpoll.h>
 #else
 #include <Xm/Xmpoll.h>
@@ -54,10 +52,9 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #endif
 
 #include <ctype.h>		/* for isspace() */
-
 #include <sys/time.h>		/* For declaration of select(). */
 
-#if defined(NO_REGCOMP) && !defined(NO_REGEX)
+#if HAVE_REGEX && !HAVE_REGCOMP
 # ifdef __sgi
 extern char *regcmp();
 extern int regex();
@@ -67,11 +64,11 @@ extern int regex();
 extern char *regcmp();
 extern int regex();
 # endif
-#endif /* NO_REGEX */
+#endif /* HAVE_REGEX && !HAVE_REGCOMP */
 
-#ifndef NO_REGCOMP
-# include <regex.h>
-#endif /* NO_REGCOMP */
+#if HAVE_REGCOMP
+#include <regex.h>
+#endif
 
 #include <sys/stat.h>
 
@@ -79,7 +76,7 @@ extern int regex();
 #define X_INCLUDE_DIRENT_H
 #define XOS_USE_XT_LOCKING
 
-#ifndef NEED_XOS_R_H
+#if HAVE_X11_XOS_R_H
 #include <X11/Xos_r.h>
 #else
 #include <Xm/Xmos_r.h>
@@ -88,7 +85,7 @@ extern int regex();
 #include "XmosI.h"
 #include "XmI.h"
 
-#ifdef USE_GETWD
+#if !HAVE_GETCWD && HAVE_GETWD
 # include <sys/param.h>
 # define MAX_DIR_PATH_LEN    MAXPATHLEN
 # define getcwd(buf, len)   ((char *) getwd(buf))
@@ -107,8 +104,8 @@ extern int regex();
 
 #define FILE_LIST_BLOCK 64
 
-typedef struct {   
-  unsigned char type ; 
+typedef struct {
+  unsigned char type ;
   char file_name[1] ;		/* Must be last entry in structure. */
 } XmDirCacheRec, **XmDirCache ;
 
@@ -116,7 +113,7 @@ typedef struct {
 /********
  * Set defaults for resources that are implementation dependant
  * and may be modified.
- ********/ 
+ ********/
 
 externaldef(xmos) char _XmSDEFAULT_FONT[] = "fixed";
 externaldef(xmos) char _XmSDEFAULT_BACKGROUND[] = "#c4c4c4";
@@ -135,51 +132,51 @@ static int Wcslen(wchar_t *wcs);
 
 /********    End Static Function Declarations    ********/
 
-static char *dirCacheName; 
-static unsigned dirCacheNameLen; 
+static char *dirCacheName;
+static unsigned dirCacheNameLen;
 static XmDirCache dirCache;
 static unsigned numCacheAlloc;
 static unsigned numCacheEntries;
- 
+
 static void
 FreeDirCache(void)
-{   
+{
   if (dirCacheName != NULL)
-    {   
+    {
       XtFree(dirCacheName);
       dirCacheName = NULL;
       dirCacheNameLen = 0;
-      
+
       while (numCacheEntries)
 	XtFree((char *) dirCache[--numCacheEntries]);
-    } 
-} 
+    }
+}
 
 static void
 ResetCache(char *qDirName)
-{   
+{
   FreeDirCache();
 
   dirCacheNameLen = strlen(qDirName);
   dirCacheName = XtMalloc(dirCacheNameLen + MAX_USER_NAME_LEN + 1);
   strcpy(dirCacheName, qDirName);
-} 
+}
 
 static unsigned char
 AddEntryToCache(char *entryName,
 		unsigned entryNameLen)
-{   
+{
   struct stat statBuf;
   unsigned char result = 0;
 
   if (numCacheEntries == numCacheAlloc)
     {
       numCacheAlloc += FILE_LIST_BLOCK;
-      dirCache = (XmDirCache) 
+      dirCache = (XmDirCache)
 	XtRealloc((char *) dirCache, numCacheAlloc * sizeof(XmDirCacheRec *));
-    } 
+    }
 
-  dirCache[numCacheEntries] = (XmDirCacheRec *) 
+  dirCache[numCacheEntries] = (XmDirCacheRec *)
     XtMalloc(sizeof(XmDirCacheRec) + entryNameLen);
   strcpy(dirCache[numCacheEntries]->file_name, entryName);
 
@@ -187,12 +184,12 @@ AddEntryToCache(char *entryName,
   strcpy(&dirCacheName[dirCacheNameLen], entryName);
 
   if (!stat(dirCacheName, &statBuf))
-    {   
+    {
       if (S_ISREG(statBuf.st_mode))
 	result = XmFILE_REGULAR;
       else if (S_ISDIR(statBuf.st_mode))
 	result = XmFILE_DIRECTORY;
-    } 
+    }
 
   /* Restore to dir path only. */
   dirCacheName[dirCacheNameLen] = '\0';
@@ -205,7 +202,7 @@ AddEntryToCache(char *entryName,
 static String
 GetQualifiedDir(String dirSpec)
 /*************GENERAL:
- * dirSpec is a directory name, that can contain relative 
+ * dirSpec is a directory name, that can contain relative
  *   as well as logical reference. This routine resolves all these
  *   references, so that dirSpec is now suitable for open().
  * The routine allocates memory for the result, which is guaranteed to be
@@ -215,7 +212,7 @@ GetQualifiedDir(String dirSpec)
 /*************UNIX:
  * Builds directory name showing descriptive path components.  The result
  *   is a directory path beginning at the root directory and terminated
- *   with a '/'.  The path will not contain ".", "..", or "~" components.  
+ *   with a '/'.  The path will not contain ".", "..", or "~" components.
  ****************/
 {
   int             dirSpecLen;
@@ -231,18 +228,18 @@ GetQualifiedDir(String dirSpec)
   char *          scanPtr;
   char            nameBuf[MAX_USER_NAME_LEN];
   char            dirbuf[MAX_DIR_PATH_LEN];
-  
+
   dirSpecLen = strlen(dirSpec);
   outputBuf = NULL;
-  
+
   switch (*dirSpec)
-    {   
+    {
     case '~':
       if (!(dirSpec[1])  ||  (dirSpec[1] == '/'))
 	{
 	  userDir = XmeGetHomeDirName();
 	  if (*userDir)
-	    {   
+	    {
 	      userDirLen = strlen(userDir);
 	      outputBuf = XtMalloc(userDirLen + dirSpecLen + 2);
 	      strcpy(outputBuf, userDir);
@@ -256,20 +253,20 @@ GetQualifiedDir(String dirSpec)
 	  srcPtr = dirSpec + 1;
 	  while (*srcPtr  &&  (*srcPtr != '/') &&
 		 (++userNameLen < MAX_USER_NAME_LEN))
-	    { 
+	    {
 	      *destPtr++ = *srcPtr++;
-	    } 
+	    }
 	  *destPtr = '\0';
-	  
+
 	  pwd_value = _XGetpwnam(nameBuf, pwd_buf);
 	  if (pwd_value != NULL)
-	    {   
+	    {
 	      userDirLen = strlen(pwd_value->pw_dir);
 	      dirSpecLen = strlen(srcPtr);
 	      outputBuf = XtMalloc(userDirLen + dirSpecLen + 2);
 	      strcpy(outputBuf, pwd_value->pw_dir);
 	      strcpy(&outputBuf[userDirLen], srcPtr);
-	    } 
+	    }
 	}
       break;
 
@@ -286,33 +283,33 @@ GetQualifiedDir(String dirSpec)
 	  strcpy(outputBuf, destPtr);
 	  outputBuf[userDirLen++] = '/';
 	  strcpy(&outputBuf[userDirLen], dirSpec);
-	} 
+	}
       break;
-    } 
+    }
 
   if (!outputBuf)
-    { 
+    {
       outputBuf = XtMalloc(2);
       outputBuf[0] = '/';
       outputBuf[1] = '\0';
-    } 
+    }
   else
-    { 
+    {
       userDirLen = strlen(outputBuf);
       if (outputBuf[userDirLen - 1]  !=  '/')
-        { 
+        {
 	  outputBuf[userDirLen] = '/';
 	  outputBuf[++userDirLen] = '\0';
-	} 
+	}
       /* The string in outputBuf is assumed to begin and end with a '/'. */
       scanPtr = outputBuf;
       while (*++scanPtr)               /* Skip past '/'. */
-        { 
+        {
 	  /* scanPtr now points to non-NULL character following '/'. */
 	  if (scanPtr[0] == '.')
-            {   
+            {
 	      if (scanPtr[1] == '/')
-                { 
+                {
 		  /* Have "./", so just erase (overwrite with shift).
 		   */
 		  destPtr = scanPtr;
@@ -321,33 +318,33 @@ GetQualifiedDir(String dirSpec)
 		    /*EMPTY*/;
 		  --scanPtr;     /* Leave scanPtr at preceding '/'. */
 		  continue;
-		} 
+		}
 	      else
-                { 
+                {
 		  if ((scanPtr[1] == '.')  &&  (scanPtr[2] == '/'))
-                    { 
+                    {
 		      /* Have "../", so back up one directory. */
 		      srcPtr = &scanPtr[2];
 		      --scanPtr;      /* Move scanPtr to preceding '/'.*/
 		      if (scanPtr != outputBuf)
-                        { 
+                        {
 			  while ((*--scanPtr != '/'))
 			    /*EMPTY*/;        /* Now move to previous '/'.*/
-			} 
+			}
 		      destPtr = scanPtr;
 		      while ((*++destPtr = *++srcPtr) != '\0')
 			/*EMPTY*/;		/* Overwrite "../" with shift.*/
 		      continue;
-		    } 
-		} 
-	    } 
+		    }
+		}
+	    }
 	  else
-            { 
+            {
 	      /* Check for embedded "//".  Posix allows a leading double
 	       *   slash (and Apollos require it).
 	       */
 	      if (*scanPtr == '/')
-                {   
+                {
 		  if ((scanPtr > (outputBuf + 1)) ||
 		      (scanPtr[1] == '/'))
                     {
@@ -362,11 +359,11 @@ GetQualifiedDir(String dirSpec)
 		    }
 		  continue;
 		}
-	    } 
+	    }
 	  while (*++scanPtr != '/')
 	    /*EMPTY*/;
-	} 
-    } 
+	}
+    }
 
   return outputBuf;
 }
@@ -389,40 +386,40 @@ _XmOSFindPatternPart(String fileSpec)
   Boolean         hasWildcards;
   char            prevChar;
   char            prev2Char ;
-  
+
   /* Stop at final name segment or if wildcards were found. */
   do {
     maskPtr = lookAheadPtr;
     hasWildcards = FALSE;
     prevChar = '\0';
     prev2Char = '\0';
-    while ((*lookAheadPtr != '/') && !hasWildcards && *lookAheadPtr) 
-      {   
-	switch (*lookAheadPtr) 
-	  {   
-	  case '*': 
-	  case '?': 
-	  case '[': 
-	    if ((prevChar != '\\')  ||  (prev2Char == '\\')) 
-	      {   
+    while ((*lookAheadPtr != '/') && !hasWildcards && *lookAheadPtr)
+      {
+	switch (*lookAheadPtr)
+	  {
+	  case '*':
+	  case '?':
+	  case '[':
+	    if ((prevChar != '\\')  ||  (prev2Char == '\\'))
+	      {
 		hasWildcards = TRUE;
 		break;
-	      } 
+	      }
 	  }
 	prev2Char = prevChar;
 	prevChar = *lookAheadPtr;
 #ifndef NO_MULTIBYTE
-	lookAheadPtr += ((MB_CUR_MAX > 1) ? 
+	lookAheadPtr += ((MB_CUR_MAX > 1) ?
 			 abs(mblen(lookAheadPtr, MB_CUR_MAX)) : 1);
 #else
 	lookAheadPtr++;
 #endif
-      } 
+      }
   } while (!hasWildcards  &&  *lookAheadPtr++);
-  
-  if (*maskPtr == '/') 
+
+  if (*maskPtr == '/')
     ++maskPtr;
-  
+
   return(maskPtr);
 }
 
@@ -435,7 +432,7 @@ _XmOSQualifyFileSpec(String  dirSpec,
 /************GENERAL:
  * dirSpec, filterSpec can contain relative or logical reference.
  * dirSpec cannot contain pattern characters.
- * if filterSpec does not specify all for its last segment, a pattern 
+ * if filterSpec does not specify all for its last segment, a pattern
  * for 'all' is added.
  * Use GetQualifiedDir() for dirSpec.
  ****************/
@@ -451,41 +448,41 @@ _XmOSQualifyFileSpec(String  dirSpec,
   char *maskPtr;
   char *dSpec;
   char *dPtr;
-  
-  if (!dirSpec) 
+
+  if (!dirSpec)
     dirSpec = "";
-  if (!filterSpec) 
+  if (!filterSpec)
     filterSpec = "";
-  
+
   filterLen = strlen(filterSpec);
-  
+
   /* Allocate extra for NULL character and for the appended '*' (as needed). */
   fSpec = XtMalloc(filterLen + 2);
   strcpy(fSpec, filterSpec);
-  
+
   /* If fSpec ends with a '/' or is a null string, add '*' since this is
    *   the interpretation.
    */
   if (!filterLen  ||  (fSpec[filterLen - 1] == '/'))
-    {   
+    {
       fSpec[filterLen] = '*';
       fSpec[filterLen + 1] = '\0';
-    } 
-  
-  /* Some parts of fSpec may be copied to dSpec, so allocate "filterLen" 
+    }
+
+  /* Some parts of fSpec may be copied to dSpec, so allocate "filterLen"
    *   extra, plus some for added literals.
    */
   dirLen = strlen(dirSpec);
   dSpec = XtMalloc(filterLen + dirLen + 4);
   strcpy(dSpec, dirSpec);
   dPtr = dSpec + dirLen;
-  
+
   /* Check for cases when the specified filter overrides anything
    *   in the dirSpec.
    */
   remFSpec = fSpec;
-  switch(*fSpec) 
-    {   
+  switch(*fSpec)
+    {
     case '/':
       dSpec[0] = '/';
       dSpec[1] = '\0';
@@ -495,39 +492,39 @@ _XmOSQualifyFileSpec(String  dirSpec,
 
     case '~':
       dPtr = dSpec;
-      while ((*dPtr = *remFSpec)  &&  (*remFSpec++ != '/')) 
+      while ((*dPtr = *remFSpec)  &&  (*remFSpec++ != '/'))
 	++dPtr;
       *dPtr = '\0';
       break;
-    } 
-  
+    }
+
   /* If directory spec. is not null, then make sure that it has a
    *   trailing '/', to be prepared for appending from filter spec.
    */
-  if (*dSpec  &&  (*(dPtr - 1) != '/')) 
-    {   
+  if (*dSpec  &&  (*(dPtr - 1) != '/'))
+    {
       *dPtr++ = '/';
       *dPtr = '\0';
-    } 
-  
+    }
+
   maskPtr = _XmOSFindPatternPart(remFSpec);
-  
-  if (maskPtr != remFSpec) 
-    {  
-      do {   
+
+  if (maskPtr != remFSpec)
+    {
+      do {
 	*dPtr++ = *remFSpec++;
       } while (remFSpec != maskPtr);
       *dPtr = '\0';
-    } 
-  
-  if (remFSpec != fSpec) 
-    {   
+    }
+
+  if (remFSpec != fSpec)
+    {
       /* Shift remaining filter spec. to the beginning of the buffer. */
       remFSpec = fSpec;
-      while ((*remFSpec++ = *maskPtr++) != '\0') 
+      while ((*remFSpec++ = *maskPtr++) != '\0')
 	/*EMPTY*/;
-    } 
-  
+    }
+
   *pQualifiedDir = GetQualifiedDir(dSpec);
   *pQualifiedPattern = fSpec;
   XtFree(dSpec);
@@ -551,12 +548,12 @@ GetFixedMatchPattern(String pattern)
   char *outputBuf;
   char lastchar = '\0';
   int len;
-  
+
   outputBuf = XtCalloc(2, strlen(pattern) + 4);
-  
+
   bufPtr = outputBuf;
   *bufPtr++ = '^';
-  
+
 #ifndef NO_MULTIBYTE
   while ((len = mblen(pattern, MB_CUR_MAX)) > 0)
 #else
@@ -573,7 +570,7 @@ GetFixedMatchPattern(String pattern)
 	  else
 	    {
 	      switch(*pattern)
-		{   
+		{
 		case '.':
 		  *bufPtr++ = '\\';
 		  *bufPtr++ = '.';
@@ -591,23 +588,23 @@ GetFixedMatchPattern(String pattern)
 		default:
 		  *bufPtr++ = *pattern;
 		  break;
-		} 
+		}
 	    }
 	  lastchar = *pattern;
 	  ++pattern;
-	} 
+	}
       else
 	{
 	  strncpy(bufPtr, pattern, len);
 	  bufPtr += len;
 	  pattern += len;
 	  lastchar = '\0';
-	} 
+	}
     }
-  
+
   *bufPtr++ = '$';
   *bufPtr = '\0';
-  
+
   return outputBuf;
 }
 
@@ -630,24 +627,24 @@ void
 
 /***********GENERAL:
  * This routine opens the specified directory and builds a buffer containing
- * a series of strings containing the full path of each file in the directory 
+ * a series of strings containing the full path of each file in the directory
  * The memory allocated should eventually be freed using XtFree.
- * The 'qualifiedDir' parameter must be a fully qualified directory path 
- * The matchPattern parameter must be in the proper form for a regular 
+ * The 'qualifiedDir' parameter must be a fully qualified directory path
+ * The matchPattern parameter must be in the proper form for a regular
  * expression parsing.
  * If the location pointed to by pEntries is NULL, this routine allocates
  *   and returns a list to *pEntries, though the list may have no entries.
- *   pEntries, pEndIndex, pNumAlloc are updated as required for memory 
+ *   pEntries, pEndIndex, pNumAlloc are updated as required for memory
  *   management.
  ****************/
 
 /***********UNIX:
- * Fully qualified directory means begins with '/', does not have 
+ * Fully qualified directory means begins with '/', does not have
  * embedded "." or "..", but does not need trailing '/'.
  * Regular expression parsing is regcmp or re_comp.
  * Directory entries are also Unix dependent.
  ****************/
- 
+
 {
   char *          fixedMatchPattern;
   String          entryPtr;
@@ -659,10 +656,10 @@ void
   Boolean         loadCache = FALSE;
   unsigned        readCacheIndex = 0;
   unsigned char   dirFileType = 0;
-#ifndef NO_REGCOMP
+#if HAVE_REGCOMP
   regex_t         preg;
   int             comp_status = 0;
-#elif !defined(NO_REGEX)
+#elif HAVE_REGEX
   char *          compiledRE = NULL;
 #endif /* NO_REGCOMP */
 /****************/
@@ -674,46 +671,46 @@ void
       *pNumEntries = 0;
       *pNumAlloc = FILE_LIST_BLOCK;
       *pEntries = (String *) XtMalloc(FILE_LIST_BLOCK * sizeof(char *));
-    } 
+    }
   fixedMatchPattern = GetFixedMatchPattern(matchPattern);
-  
+
   if (fixedMatchPattern)
-    {   
+    {
       if (!*fixedMatchPattern)
-	{   
+	{
 	  XtFree(fixedMatchPattern);
 	  fixedMatchPattern = NULL;
-	} 
+	}
       else
-	{   
-#ifndef NO_REGCOMP
+	{
+#if HAVE_REGCOMP
 	  comp_status = regcomp(&preg, fixedMatchPattern, REG_NOSUB);
 	  if (comp_status)
-#elif !defined(NO_REGEX)
+#elif HAVE_REGEX
             compiledRE = (char *)regcmp(fixedMatchPattern, (char *) NULL);
 	  if (!compiledRE)
-#else
+#else /* Obsolete BSD re_comp */
           if (re_comp(fixedMatchPattern))
 #endif
 	    {
 	      XtFree(fixedMatchPattern);
 	      fixedMatchPattern = NULL;
-	    } 
+	    }
 	}
     }
 
   if ((dirCacheName != NULL) &&
       !strcmp(qualifiedDir, dirCacheName))
-    {   
+    {
       useCache = TRUE;
       readCacheIndex = 0;
-    } 
+    }
   else
-    {   
+    {
       if (!strcmp(matchPattern, "*") &&
 	  (fileType == XmFILE_DIRECTORY) &&
 	  !matchDotsLiterally)
-	{   
+	{
 	  /* This test is a incestual way of knowing that we are searching
 	   * a directory to fill the directory list.  We can thereby conclude
 	   * that a subsequent call will be made to search the same directory
@@ -728,13 +725,13 @@ void
     }
 
   if (dirStream || useCache)
-    {   
+    {
       unsigned loopCount = 0;
       _Xreaddirparams dirEntryBuf;
-      
+
       if (loadCache)
 	ResetCache(qualifiedDir);
-      
+
       /* The POSIX specification for the "readdir" routine makes
        *  it OPTIONAL to return the "." and ".." entries in a
        *  directory.  The algorithm used here depends on these
@@ -743,41 +740,41 @@ void
        *  them later if they happen to be returned by "readdir".
        */
       while (TRUE)
-	{   
+	{
 	  char *dirName;
 	  unsigned dirNameLen = 0;
-	  
+
 	  if (loopCount < 2)
-	    {   
+	    {
 	      if (loopCount == 0)
-		{   
+		{
 		  /* Do current directory the first time through. */
 		  dirName = ".";
 		  dirNameLen = 1;
-		} 
+		}
 	      else
-		{   
+		{
 		  /* Do parent directory the second time through. */
 		  dirName = "..";
 		  dirNameLen = 2;
-		} 
+		}
 	      ++loopCount;
-	      
+
 	      if (useCache || loadCache)
 		dirFileType = XmFILE_DIRECTORY;
-	    } 
+	    }
 	  else
-	    {   
+	    {
 	      struct dirent * dirEntry;
 
-	      do {   
+	      do {
 		if (useCache)
-		  {   
+		  {
 		    if (readCacheIndex == numCacheEntries)
-		      {   
-			dirName = NULL; 
+		      {
+			dirName = NULL;
 			break;
-		      } 
+		      }
 		    else
 		      {
 			dirFileType = dirCache[readCacheIndex]->type;
@@ -786,12 +783,12 @@ void
 		      }
 		  }
 		else
-		  {   
+		  {
 		    if ((dirEntry = _XReaddir(dirStream, dirEntryBuf)) == NULL)
 		      {
 			dirName = NULL;
 			break;
-		      } 
+		      }
 		    dirName = dirEntry->d_name;
 		    dirNameLen = strlen(dirName);
 		    if (loadCache)
@@ -803,25 +800,23 @@ void
 		 *  we just ignore them.
 		 */
 	      } while (((dirNameLen == 1) && (dirName[0] == '.')) ||
-		       ((dirNameLen == 2) && 
+		       ((dirNameLen == 2) &&
 			(dirName[0] == '.') && (dirName[1] == '.')));
-	      
+
 	      if (dirName == NULL)
 		break;             /* Exit from outer loop. */
 	    }
 	  if (fixedMatchPattern)
-	    {   
-#ifndef NO_REGCOMP
+	    {
+#if HAVE_REGCOMP
 	      if (regexec(&preg, dirName, 0, NULL, 0))
-#else /* NO_REGCOMP */
-#  ifndef NO_REGEX
+#elif HAVE_REGEX
               if (!regex(compiledRE, dirName))
-#  else
+#else /* obsolete BSD re_exec */
               if (!re_exec(dirName))
-#  endif
-#endif /* NO_REGCOMP */
+#endif
 		continue;
-	    } 
+	    }
 	  if (matchDotsLiterally &&
 	      (dirName[0] == '.') &&
 	      (*matchPattern != '.'))
@@ -829,36 +824,36 @@ void
 	  if (*pNumEntries == *pNumAlloc)
 	    {
 	      *pNumAlloc += FILE_LIST_BLOCK;
-	      *pEntries = (String *) 
+	      *pEntries = (String *)
 		XtRealloc((char*) *pEntries, (*pNumAlloc* sizeof(char *)));
-	    } 
+	    }
 	  entryPtr = XtMalloc(dirNameLen + dirLen + 1);
 	  strcpy(entryPtr, qualifiedDir);
 	  strcpy(&entryPtr[dirLen], dirName);
-	  
+
 	  /* Now screen entry according to type. */
 	  entryTypeOK = FALSE;
-	  
+
 	  if (fileType == XmFILE_ANY_TYPE)
 	    {
 	      entryTypeOK = TRUE;
 	    }
 	  else if (useCache || loadCache)
-	    {   
+	    {
 	      if (dirFileType == fileType)
 		entryTypeOK = TRUE;
-	    } 
+	    }
 	  else
-	    {   
+	    {
 	      if (!stat(entryPtr, &statBuf))
-		{   
+		{
 		  switch (fileType)
-		    {   
+		    {
 		    case XmFILE_REGULAR:
 		      if (S_ISREG(statBuf.st_mode))
 			entryTypeOK = TRUE;
 		      break;
-		      
+
 		    case XmFILE_DIRECTORY:
 		      if (S_ISDIR(statBuf.st_mode))
 			entryTypeOK = TRUE;
@@ -867,11 +862,11 @@ void
 		}
 	    }
 	  if (entryTypeOK)
-	    {   
+	    {
 	      if (listWithFullPath)
-		{   
+		{
 		  (*pEntries)[(*pNumEntries)++] = entryPtr;
-		} 
+		}
 	      else
 		{
 		  /* This is ONLY for BC in a (apparently unused) API, (w/o
@@ -881,26 +876,24 @@ void
 		  entryPtr = XtMalloc(dirNameLen + 1);
 		  strcpy(entryPtr, dirName);
 		  (*pEntries)[(*pNumEntries)++] = entryPtr;
-		} 
-	    } 
+		}
+	    }
 	  else
 	    XtFree(entryPtr);
 	}
       if (!useCache)
 	closedir(dirStream);
     }
-#ifndef NO_REGCOMP
+#if HAVE_REGCOMP
   if (!comp_status)
     regfree(&preg);
-#else /* NO_REGCOMP */
-#  ifndef NO_REGEX
+#elif !HAVE_REGEX
   if (compiledRE)
     {
       /* Use free instead of XtFree since malloc is inside of regex(). */
-      free(compiledRE); 
-    } 
-#  endif
-#endif /* NO_REGCOMP */
+      free(compiledRE);
+    }
+#endif
   XtFree(fixedMatchPattern);
 
   if (!loadCache)
@@ -931,39 +924,39 @@ _XmOSBuildFileList(String          dirPath,
 		   String * *      pEntries,       /* Cannot be NULL. */
 		   unsigned int *  pNumEntries,    /* Cannot be NULL. */
 		   unsigned int *  pNumAlloc)      /* Cannot be NULL. */
-{  
+{
   String          qualifiedDir;
   String          nextPatternPtr;
   String *        localEntries;
   unsigned int    localNumEntries;
   unsigned int    localNumAlloc;
   unsigned int    entryIndex;
-  
+
   qualifiedDir = GetQualifiedDir(dirPath);
   nextPatternPtr = pattern;
-  while (*nextPatternPtr  &&  (*nextPatternPtr != '/')) 
+  while (*nextPatternPtr  &&  (*nextPatternPtr != '/'))
     ++nextPatternPtr;
-  
-  if (!*nextPatternPtr) 
-    {   
+
+  if (!*nextPatternPtr)
+    {
       /* At lowest level directory, so simply return matching entries.*/
-      _XmOSGetDirEntries(qualifiedDir, pattern, typeMask, FALSE, TRUE, 
+      _XmOSGetDirEntries(qualifiedDir, pattern, typeMask, FALSE, TRUE,
 			 pEntries, pNumEntries, pNumAlloc);
-    } 
+    }
   else
-    {   
+    {
       ++nextPatternPtr;               /* Move past '/' character.*/
       localEntries = NULL;
-      _XmOSGetDirEntries(qualifiedDir, pattern, XmFILE_DIRECTORY, TRUE, TRUE, 
+      _XmOSGetDirEntries(qualifiedDir, pattern, XmFILE_DIRECTORY, TRUE, TRUE,
 			 &localEntries, &localNumEntries, &localNumAlloc);
       entryIndex = 0;
-      while (entryIndex < localNumEntries) 
-	{   
-	  _XmOSBuildFileList(localEntries[entryIndex], nextPatternPtr, 
+      while (entryIndex < localNumEntries)
+	{
+	  _XmOSBuildFileList(localEntries[entryIndex], nextPatternPtr,
 			     typeMask, pEntries, pNumEntries, pNumAlloc);
 	  XtFree(localEntries[entryIndex]);
 	  ++entryIndex;
-	} 
+	}
       XtFree((char*)localEntries);
     }
   XtFree(qualifiedDir);
@@ -1000,15 +993,15 @@ XmeGetHomeDirName(void)
   char *ptr = NULL;
   static char empty = '\0';
   static char *homeDir = NULL;
-  
+
   _XmProcessLock();
-  if (homeDir == NULL) 
+  if (homeDir == NULL)
     {
-      if ((ptr = (char *)getenv("HOME")) == NULL) 
+      if ((ptr = (char *)getenv("HOME")) == NULL)
 	{
 	  if ((ptr = (char *)getenv(USER_VAR)) != NULL)
 	    pwd_value = _XGetpwnam(ptr, pwd_buf);
-	  else 
+	  else
 	    {
 	      uid = getuid();
 	      pwd_value = _XGetpwuid(uid, pwd_buf);
@@ -1020,17 +1013,17 @@ XmeGetHomeDirName(void)
 	    ptr = NULL;
         }
 
-      if (ptr != NULL) 
+      if (ptr != NULL)
 	{
 	  homeDir = XtMalloc (strlen(ptr) + 1);
 	  strcpy (homeDir, ptr);
 	}
-      else 
+      else
 	{
 	  homeDir = &empty;
 	}
     }
-  
+
   _XmProcessUnlock();
   return homeDir;
 }
@@ -1050,7 +1043,7 @@ static XmConst char incdir[] = INCDIR;
  *   When the locale contains a codeset, the Toolkit's default path fail
  *   to search for the directory with only language and territory.
  *
- *   For example, when locale is "zh_TW.dechanyu", directories searched 
+ *   For example, when locale is "zh_TW.dechanyu", directories searched
  *   should be :
  *
  *   1. zh_TW.dechanyu       (%L)
@@ -1162,7 +1155,7 @@ GetCurrentDir(String 	buf)
 	/* Use PWD environment variable */
 	strcpy(buf, pwd);
 	return pwd ;
-    } 
+    }
 
     return getcwd(buf, MAX_DIR_PATH_LEN) ;
 }
@@ -1170,7 +1163,7 @@ GetCurrentDir(String 	buf)
 #ifdef notdef
     /* old way */
     String pwd = NULL;
-    
+
     if ((pwd = getenv("PWD")) != NULL)
 	strcpy(buf, pwd);
     if (!pwd) pwd = getcwd(buf, MAX_DIR_PATH_LEN)
@@ -1192,7 +1185,7 @@ _XmOSAbsolutePathName(String path, String *pathRtn, String buf)
       return True;
 
     if (path[0] == '.') {
-	if (path[1] == '/') 
+	if (path[1] == '/')
 	  doubleDot = False;
 	else if ((path[1] == '.') &&
 		 (path[2] == '/'))
@@ -1228,20 +1221,20 @@ _XmOSInitPath(String   file_name,
   char stackString[MAX_DIR_PATH_LEN];
   String homedir = stackString ;
   String local_path;
-  
+
   *user_path = False;
-  
+
   if (file_name && _XmOSAbsolutePathName(file_name, &file_name, homedir)) {
       path = XtNewString(ABSOLUTE_PATH);
-  } 
+  }
   else
     {
       local_path = (char *)getenv (env_pathname);
-      if (local_path  == NULL) 
+      if (local_path  == NULL)
 	{
 	  homedir = XmeGetHomeDirName();
 	  old_path = (char *)getenv ("XAPPLRESDIR");
-	  if (old_path == NULL) 
+	  if (old_path == NULL)
 	    {
 	      path = XtCalloc(1, (9*strlen(homedir) + strlen(PATH_DEFAULT) +
 				  8*strlen(libdir) + strlen(incdir) + 1));
@@ -1249,19 +1242,19 @@ _XmOSInitPath(String   file_name,
 		      homedir, homedir, homedir, homedir, homedir, homedir,
 		      libdir, libdir, libdir, libdir, libdir, libdir, libdir,
 		      libdir, incdir);
-	    } 
+	    }
 	  else
 	    {
 	      path = XtCalloc(1, (8*strlen(old_path) + 2*strlen(homedir) +
 				  strlen(XAPPLRES_DEFAULT) + 8*strlen(libdir) +
 				  strlen(incdir) + 1));
-	      sprintf(path, XAPPLRES_DEFAULT, 
-		      old_path, old_path, old_path, old_path, old_path, 
+	      sprintf(path, XAPPLRES_DEFAULT,
+		      old_path, old_path, old_path, old_path, old_path,
 		      old_path, old_path, old_path, homedir, homedir,
 		      libdir, libdir, libdir, libdir, libdir, libdir, libdir,
 		      libdir, incdir);
 	    }
-	} 
+	}
       else
 	{
 	  path = XtMalloc(strlen(local_path) + 1);
@@ -1277,24 +1270,24 @@ int
 XmeMicroSleep(long usecs)
 {
   struct timeval      timeoutVal;
-  
+
   /* split the micro seconds in seconds and remainder */
   timeoutVal.tv_sec = usecs/1000000;
   timeoutVal.tv_usec = usecs - timeoutVal.tv_sec*1000000;
-  
+
   return Select(0, NULL, NULL, NULL, &timeoutVal);
 }
 
 /************************************************************************
- * 
+ *
  *	XmeGetLocalizedString	Map an X11 R5 XPCS string in a locale
  *				sensitive XmString.
- * 
+ *
  *		reserved	Reserved for future use.
- *		widget		The widget id.		
- *		resource	The resource name.	
- *		string		The input 8859-1 value.	
- * 
+ *		widget		The widget id.
+ *		resource	The resource name.
+ *		string		The input 8859-1 value.
+ *
  ************************************************************************/
 
 /*ARGSUSED*/
@@ -1322,20 +1315,20 @@ _XmOSBuildFileName(String path,
 		   String file)
 {
   String fileName;
-  
-  if (file[0] == '/') 
+
+  if (file[0] == '/')
     {
       fileName = XtMalloc (strlen (file) + 1);
       strcpy (fileName, file);
     }
-  else 
+  else
     {
       fileName = XtMalloc (strlen(path) + strlen (file) + 2);
       strcpy (fileName, path);
       strcat (fileName, "/");
       strcat (fileName, file);
     }
-  
+
   return fileName;
 }
 
@@ -1360,15 +1353,15 @@ _XmOSFindPathParts(String  path,
    */
 #define FILESEP '/'
 #define SUFFIXSEP '.'
-  
+
   s = path;
-  while (*s) 
+  while (*s)
     {
-      if (*s == FILESEP) 
+      if (*s == FILESEP)
 	{
 	  filename = s++;
 	}
-      else if (*s == SUFFIXSEP) 
+      else if (*s == SUFFIXSEP)
 	{
 	  suffix = s++;
 	}
@@ -1393,7 +1386,7 @@ _XmOSFindPathParts(String  path,
 
 /************************************************************
  *
- *  Add _m to the imageName: 
+ *  Add _m to the imageName:
  *        transform /usr/foo/bar.xpm in /usr/foo/bar_m.xpm
  *        or        joe in joe_m
  *
@@ -1439,13 +1432,13 @@ _XmOSGetInitialCharsDirection(XtPointer     characters,
       *num_bytes = Wcslen((wchar_t*) characters) * sizeof(wchar_t);
       *direction = XmLEFT_TO_RIGHT;
       return Success;
-      
+
     case XmCHARSET_TEXT:
     case XmMULTIBYTE_TEXT:
       *num_bytes = strlen((char*) characters);
       *direction = XmLEFT_TO_RIGHT;
       return Success;
-      
+
     default:
       *num_bytes = 0;
       *direction = XmDEFAULT_DIRECTION;
@@ -1493,13 +1486,13 @@ typedef struct XmOSMethodEntryRec {
 
 
 static XmOSMethodEntry method_table[] = {
-  { 
+  {
     XmMCharDirection,
     (XtPointer)_XmOSGetCharDirection,
     NULL, NULL
   },
 
-  { 
+  {
     XmMInitialCharsDirection,
     (XtPointer)_XmOSGetInitialCharsDirection,
     NULL, NULL
@@ -1516,49 +1509,49 @@ static XmOSMethodEntry method_table[] = {
 /*ARGSUSED*/
 XmOSMethodStatus
 XmOSGetMethod(Widget w,		/* unused */
-	      String method_id, 
+	      String method_id,
 	      XtPointer *method,
 	      XtPointer *os_data)
 {
   int i;
-  
+
   if (method == NULL)
     return XmOS_METHOD_NULL;
-  
+
   for (i = 0; method_table[i].method_id; i++)
-    if (method_id == method_table[i].method_id) 
+    if (method_id == method_table[i].method_id)
       {
-	if (*method == NULL || (method_table[i].method != NULL && 
-				*method != method_table[i].method)) 
+	if (*method == NULL || (method_table[i].method != NULL &&
+				*method != method_table[i].method))
 	  {
 	    *method = method_table[i].method;
 	    if (os_data) *os_data = method_table[i].os_data;
 	    return XmOS_METHOD_REPLACED;
-	  } 
+	  }
 	else
 	  {
 	    if (os_data) *os_data = method_table[i].os_data;
 	    return XmOS_METHOD_DEFAULTED;
 	  }
       }
-  
+
   for (i = 0; method_table[i].method_id; i++)
-    if (strcmp(method_id, method_table[i].method_id) == 0) 
+    if (strcmp(method_id, method_table[i].method_id) == 0)
       {
-	if (*method == NULL || (method_table[i].method != NULL && 
-				*method != method_table[i].method)) 
+	if (*method == NULL || (method_table[i].method != NULL &&
+				*method != method_table[i].method))
 	  {
 	    *method = method_table[i].method;
 	    if (os_data) *os_data = method_table[i].os_data;
 	    return XmOS_METHOD_REPLACED;
-	  } 
+	  }
 	else
 	  {
 	    if (os_data) *os_data = method_table[i].os_data;
 	    return XmOS_METHOD_DEFAULTED;
 	  }
       }
-  
+
   return XmOS_METHOD_DEFAULTED;
 }
 
@@ -1578,12 +1571,12 @@ XmOSGetMethod(Widget w,		/* unused */
  */
 
 /*ARGSUSED*/
-int 
+int
 _XmOSKeySymToCharacter(KeySym keysym,
 		       char  *locale,
 		       char  *buffer)
 {
-  /* 
+  /*
    * This implementation is exceptionally stupid, but works in the
    * common case of ISO8859-1 locales and keysyms.
    *
