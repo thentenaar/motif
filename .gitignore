@@ -5,6 +5,7 @@
 *~
 .deps
 .libs
+motif.pc
 Makefile.in
 aclocal.m4
 acinclude.m4

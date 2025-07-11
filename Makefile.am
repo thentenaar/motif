@@ -1,6 +1,6 @@
 datadir = ${prefix}/share/Xm/doc
 
-EXTRA_DIST = COPYING README RELEASE RELNOTES
+EXTRA_DIST = LICENSE
 
 MAINTAINERCLEANFILES = Makefile.in \
              configure libtool \
@@ -12,8 +12,17 @@ MAINTAINERCLEANFILES = Makefile.in \
              config.h.in \
              install-sh \
              missing mkinstalldirs \
-             compile
+             compile \
+             motif.pc
 
-SUBDIRS	= bindings bitmaps localized lib include tools clients doc demos
+pkgconfig_DATA  = motif.pc
 ACLOCAL_AMFLAGS = -I m4
+
+SUBDIRS	= bindings bitmaps localized lib include tools clients
+
+doc:
+	@$(MAKE) -C doc
+
+demos:
+	@$(MAKE) -C demos
 

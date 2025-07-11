@@ -19,6 +19,7 @@ AC_CONFIG_SRCDIR([lib/Xm/Form.c])
 AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define])
 LT_INIT
 AM_SILENT_RULES([yes])
+AM_EXTRA_RECURSIVE_TARGETS([demos doc])
 AC_LANG([C])
 
 dnl Check for the C compiler / pkg-config
@@ -47,6 +48,7 @@ AC_TYPE_UINTPTR_T
 AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
 
 dnl Check for X
+PKG_INSTALLDIR
 PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 
 dnl Check for particular headers / functions
@@ -141,6 +143,9 @@ AS_IF([test "x$enable_debug" == "xyes"],[
 dnl Compiler flags
 AX_CFLAGS
 
+dnl .pc
+AC_SUBST([XM_VERSION], [XM_VERSION])
+
 dnl Automake substitutions
 AC_SUBST([ABI_VERSION], [ABI_VERSION])
 AM_CONDITIONAL([XM_PRINTING],  test "x$enable_printing" == "xyes")
@@ -213,6 +218,7 @@ AC_SUBST([LIBDIR], "${libdir}/X11")
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \
+motif.pc \
 bindings/Makefile \
 bitmaps/Makefile \
 clients/Makefile \
