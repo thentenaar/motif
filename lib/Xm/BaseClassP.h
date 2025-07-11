@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmBaseClassP_h
 #define _XmBaseClassP_h
 
@@ -55,50 +55,27 @@ extern "C" {
 #define _XmSetFlagsBit(field, bit) \
 	    (field[ (bit >> 3) ] |= (1 << (bit & 0x07)))
 
-
-#ifndef XTHREADS
-#define _XmFastSubclassInit(wc, bit_field) { \
-	if((_Xm_fastPtr = _XmGetBaseClassExtPtr( wc, XmQmotif)) && \
-	   (*_Xm_fastPtr)) \
-		_XmSetFlagsBit((*_Xm_fastPtr)->flags, bit_field) ; \
-   }
-
-/* _XmGetBaseClassExtPtr can return NULL or a pointer to a NULL extension,
- * for non Motif classes in particular, so we check that up front.
- * We use the global _Xm_fastPtr for that purpose, this variable exists
- * already in BaseClass.c for apparently no other use.
- */
-
-#define _XmIsFastSubclass(wc, bit) \
-	((_Xm_fastPtr = _XmGetBaseClassExtPtr((wc),XmQmotif)) && \
-         (*_Xm_fastPtr)) ? \
-	     (_XmGetFlagsBit(((*_Xm_fastPtr)->flags), bit) ? TRUE : FALSE) \
-		 : FALSE
-
-#else
-extern void _XmFastSubclassInit(WidgetClass, unsigned int);
-extern Boolean _XmIsFastSubclass(WidgetClass, unsigned int);
-#endif  /* XTHREADS */
+void _XmFastSubclassInit(WidgetClass, unsigned int);
+Boolean _XmIsFastSubclass(WidgetClass, unsigned int);
 
 #define XmBaseClassExtVersion 2L
 #define XmBaseClassExtVersion 2L
-
 
 typedef Cardinal (*XmGetSecResDataFunc)( WidgetClass,
 					    XmSecondaryResourceData **);
 
 typedef struct _XmObjectClassExtRec{
-    XtPointer 		next_extension;	
-    XrmQuark 		record_type;	
-    long 		version;	
-    Cardinal 		record_size;	
+    XtPointer 		next_extension;
+    XrmQuark 		record_type;
+    long 		version;
+    Cardinal 		record_size;
 } XmObjectClassExtRec, *XmObjectClassExt;
 
 typedef struct _XmGenericClassExtRec{
-    XtPointer 		next_extension;	
-    XrmQuark 		record_type;	
-    long 		version;	
-    Cardinal 		record_size;	
+    XtPointer 		next_extension;
+    XrmQuark 		record_type;
+    long 		version;
+    Cardinal 		record_size;
 } XmGenericClassExtRec, *XmGenericClassExt;
 
 typedef struct _XmWrapperDataRec{
@@ -125,10 +102,10 @@ typedef struct _XmWrapperDataRec{
 } XmWrapperDataRec, *XmWrapperData;
 
 typedef struct _XmBaseClassExtRec{
-    XtPointer 		next_extension;	
-    XrmQuark 		record_type;	
-    long 		version;	
-    Cardinal 		record_size;	
+    XtPointer 		next_extension;
+    XrmQuark 		record_type;
+    long 		version;
+    Cardinal 		record_size;
     XtInitProc		initializePrehook;
     XtSetValuesFunc 	setValuesPrehook;
     XtInitProc		initializePosthook;
@@ -160,11 +137,11 @@ typedef struct _XmWidgetExtDataRec{
 externalref XrmQuark	     XmQmotif;
 externalref int		     _XmInheritClass;
 externalref XmBaseClassExt * _Xm_fastPtr;
-  
+
 /********    Private Function Declarations    ********/
 
 
-extern XmGenericClassExt * _XmGetClassExtensionPtr( 
+extern XmGenericClassExt * _XmGetClassExtensionPtr(
                         XmGenericClassExt *listHeadPtr,
                         XrmQuark owner) ;
 extern Boolean _XmIsSubclassOf(WidgetClass wc, WidgetClass sc);
