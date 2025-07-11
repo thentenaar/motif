@@ -46,13 +46,18 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include <Xm/Xmpoll.h>
 #endif
 
+#if HAVE_NANOSLEEP
+#include <time.h>
+#elif HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
 #ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
 #include <unistd.h>
 #endif
 
 #include <ctype.h>		/* for isspace() */
-#include <sys/time.h>		/* For declaration of select(). */
 
 #if HAVE_REGEX && !HAVE_REGCOMP
 # ifdef __sgi
@@ -1269,13 +1274,21 @@ _XmOSInitPath(String   file_name,
 int
 XmeMicroSleep(long usecs)
 {
+#if HAVE_NANOSLEEP
+	struct timespec ts;
+	ts.tv_sec  = usecs / 1e6;
+	ts.tv_nsec = (usecs - ts.tv_sec * 1e6) * 1000;
+	return nanosleep(&ts, NULL);
+#elif defined(USE_POLL)
+	return poll(NULL, 0, usecs / 1000);
+#else
   struct timeval      timeoutVal;
 
   /* split the micro seconds in seconds and remainder */
   timeoutVal.tv_sec = usecs/1000000;
   timeoutVal.tv_usec = usecs - timeoutVal.tv_sec*1000000;
-
   return Select(0, NULL, NULL, NULL, &timeoutVal);
+#endif
 }
 
 /************************************************************************
