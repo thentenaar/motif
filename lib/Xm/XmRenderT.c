@@ -110,7 +110,7 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
  *	refcount, the actual memory is freed.  If an increment
  *	produces a zero refcount, then the refcount has overflowed.  The
  *	refcount is decremented, and new memory is allocated for a new
- *	copy. 
+ *	copy.
  *
  *	Finally, I have defined a terminology for the different types
  *	of "copying" that can done based on allocating a new handle or
@@ -135,15 +135,15 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 
 /********    Static Function Declarations    ********/
 
-static void CopyInto(XmRendition toRend, 
-		     XmRendition fromRend); 
-static void MergeInto(XmRendition toRend, 
-		     XmRendition fromRend); 
-static XmRendition CloneRendition(XmRendition rend); 
-static XmRendition CopyRendition(XmRendition rend); 
-static XmRendition RenewRendition(XmRendition rend); 
-static XmRendition DuplicateRendition(XmRendition rend); 
-static Boolean FreeRendition(XmRendition rend); 
+static void CopyInto(XmRendition toRend,
+		     XmRendition fromRend);
+static void MergeInto(XmRendition toRend,
+		     XmRendition fromRend);
+static XmRendition CloneRendition(XmRendition rend);
+static XmRendition CopyRendition(XmRendition rend);
+static XmRendition RenewRendition(XmRendition rend);
+static XmRendition DuplicateRendition(XmRendition rend);
+static Boolean FreeRendition(XmRendition rend);
 static void RenditionWarning(char *tag, char *type,
 			     char *message, Display *dpy);
 static void CleanupResources(XmRendition rend, Boolean copy);
@@ -151,19 +151,19 @@ static void ValidateTag(XmRendition rend,
 			XmStringTag dflt);
 static void ValidateAndLoadFont(XmRendition rend, Display *display);
 static void SetRend(XmRendition to,
-		    XmRendition from); 
-static Boolean RendComplete(XmRendition rend);      
+		    XmRendition from);
+static Boolean RendComplete(XmRendition rend);
 static void CopyFromArg(XtArgVal src,
 			char *dst,
 			unsigned int size);
 static void CopyToArg(char *src,
 		      XtArgVal *dst,
-		      unsigned int size); 
+		      unsigned int size);
 static Cardinal GetNamesAndClasses(Widget w,
 				   XrmNameList names,
-				   XrmClassList classes); 
+				   XrmClassList classes);
 static XrmResourceList CompileResourceTable(XtResourceList resources,
-					    Cardinal num_resources); 
+					    Cardinal num_resources);
 static Boolean GetResources(XmRendition rend,
 			    Display *dsp,
 			    Widget wid,
@@ -172,7 +172,7 @@ static Boolean GetResources(XmRendition rend,
 			    XmStringTag tag,
 			    ArgList arglist,
 			    Cardinal argcount);
-static void SetDefault(XmRendition rend); 
+static void SetDefault(XmRendition rend);
 #if USE_XFT
 #ifdef FIX_1536
 static XftColor GetCachedXftColor(Display *display, Pixel color);
@@ -209,32 +209,32 @@ static XftColor GetCachedXftColor(Display *display, Pixel color);
 #endif
 
 static XtResource _XmRenditionResources[] = {
-  { 
+  {
     XmNtag, XmCTag, XmRString,
     sizeof(XmStringTag), XtOffsetOf(_XmRenditionRec, tag),
     XmRImmediate, (XtPointer) DEFAULT_tag
   },
-  { 
+  {
     XmNfontName, XmCFontName, XmRString,
     sizeof(String), XtOffsetOf(_XmRenditionRec, fontName),
     XmRImmediate, (XtPointer) DEFAULT_fontName
   },
-  { 
+  {
     XmNfontType, XmCFontType, XmRFontType,
     sizeof(XmFontType), XtOffsetOf(_XmRenditionRec, fontType),
     XmRImmediate, (XtPointer) DEFAULT_fontType
   },
-  { 
+  {
     XmNfont, XmCFont, XmRFontStruct,
     sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, font),
     XmRImmediate, (XtPointer) DEFAULT_font
   },
-  { 
+  {
     XmNloadModel, XmCLoadModel, XmRLoadModel,
     sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, loadModel),
     XmRImmediate, (XtPointer) DEFAULT_loadModel
   },
-  { 
+  {
     XmNtabList, XmCTabList, XmRTabList,
     sizeof(XmTabList), XtOffsetOf(_XmRenditionRec, tabs),
     XmRImmediate, (XtPointer) DEFAULT_tabs
@@ -287,29 +287,29 @@ static XtResource _XmRenditionResources[] = {
     XmRImmediate, (XtPointer) DEFAULT_foreground
   },
 #endif
-  { 
+  {
     XmNunderlineType, XmCUnderlineType, XmRLineType,
     sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, underlineType),
     XmRImmediate, (XtPointer) DEFAULT_underlineType
   },
-  { 
+  {
     XmNstrikethruType, XmCStrikethruType, XmRLineType,
     sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, strikethruType),
     XmRImmediate, (XtPointer) DEFAULT_strikethruType
   },
-  { 
+  {
     XmNforegroundState, XmCGroundState, XmRGroundState,
     sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, foregroundState),
     XmRImmediate, (XtPointer) DEFAULT_foregroundState
   },
-  { 
+  {
     XmNbackgroundState, XmCGroundState, XmRGroundState,
     sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, backgroundState),
     XmRImmediate, (XtPointer) DEFAULT_backgroundState
   },
 };
-  
-static XmConst Cardinal _XmNumRenditionResources = 
+
+static XmConst Cardinal _XmNumRenditionResources =
 	XtNumber(_XmRenditionResources);
 
 /* Searches up widget hierarchy, quarkifying ancestor names and */
@@ -358,10 +358,10 @@ CompileResourceTable(XtResourceList resources,
   Cardinal		count;
   XrmResourceList	table, tPtr;
   XtResourceList	rPtr;
-  
+
   tPtr = table = (XrmResourceList)XtMalloc(num_resources * sizeof(XrmResource));
   rPtr = resources;
-  
+
   for (count = 0; count < num_resources; count++, tPtr++, rPtr++)
     {
       tPtr->xrm_name 		= XrmPermStringToQuark(rPtr->resource_name);
@@ -437,17 +437,17 @@ GetResources(XmRendition rend,
   /* Compile names and classes. */
   if (wid != NULL)
     length = GetNamesAndClasses(wid, names, classes);
-  
+
   names[length] = XrmStringToQuark(resname);
   classes[length] = XrmStringToQuark(resclass);
   length++;
-  
+
   if (tag != NULL)
     {
       names[length] = XrmStringToQuark(tag);
       classes[length] = XrmPermStringToQuark(XmCRendition);
       length++;
-    }      
+    }
 
   names[length] = NULLQUARK;
   classes[length] = NULLQUARK;
@@ -470,12 +470,12 @@ GetResources(XmRendition rend,
       QString = XrmPermStringToQuark(XtCString);
       Qfont = XrmPermStringToQuark(XmNfont);
     }
-  
+
   /* Set resources from arglist. */
   for (arg = arglist, i = 0; i < argcount; arg++, i++)
     {
       argName = quarks[i];
-      
+
       for (j = 0, res = table; j < _XmNumRenditionResources; j++, res++)
 	{
 	  if (res->xrm_name == argName)
@@ -488,7 +488,7 @@ GetResources(XmRendition rend,
 	    }
 	}
     }
-  
+
   /* DB query */
   /* Get database */
   if ((wid != NULL) || (dsp != NULL))
@@ -508,7 +508,7 @@ GetResources(XmRendition rend,
 						 (searchListSize *= 2));
 	}
     }
-  
+
   /* Loop over table */
   for (j = 0, res = table; j < _XmNumRenditionResources; j++, res++)
     {
@@ -516,7 +516,7 @@ GetResources(XmRendition rend,
 	{
 	  copied = False;
 	  have_value = False;
-	  
+
 	  if ((db != NULL) &&
 	      (XrmQGetSearchResource(searchList, res->xrm_name,
 				     res->xrm_class, &rawType, &value)))
@@ -536,23 +536,23 @@ GetResources(XmRendition rend,
 		      if ((res->xrm_name == Qfont) &&
 			  (_XmRendFontType(rend) == XmFONT_IS_FONTSET))
 			  copied = have_value =
-			     XtConvertAndStore(wid, 
+			     XtConvertAndStore(wid,
 					       XrmQuarkToString(rawType),
 					       &value,
 					       "FontSet",
 					       &convValue);
 		      else
 			  copied = have_value =
-			     XtConvertAndStore(wid, 
+			     XtConvertAndStore(wid,
 					       XrmQuarkToString(rawType),
 					       &value,
 					       XrmQuarkToString(res->xrm_type),
 					       &convValue);
 		    }
 		  else have_value = False;
-		} 
+		}
 	      else have_value = True;
-		  
+
 	      /* Check for special font case */
 	      if (have_value)
 		{
@@ -563,7 +563,7 @@ GetResources(XmRendition rend,
 		    }
 		}
 	    }
-	      
+
 	  if (!got_one && have_value) got_one = True;
 
 	  /* Set defaults */
@@ -584,10 +584,10 @@ GetResources(XmRendition rend,
 	      else if (value.addr != NULL)
 		memcpy(((char *)GetPtr(rend) + res->xrm_offset),
 		       value.addr, res->xrm_size);
-	      else 
+	      else
 		bzero(((char *)GetPtr(rend) + res->xrm_offset), res->xrm_size);
 	    }
-	      
+
 	}
     }
   if (searchList != stackSearchList) XtFree((char *)searchList);
@@ -607,7 +607,7 @@ SetDefault(XmRendition rend)
 {
   /* A more robust implementation of this routine would to to loop
    * over _XmRenditionResources and use CopyFromArg to reset values
-   * in rend, but to improve performance we use direct assignments. 
+   * in rend, but to improve performance we use direct assignments.
    */
 
   if (rend == NULL) return;
@@ -664,7 +664,7 @@ _XmRenderTableDisplay(XmRenderTable table)
 /* found and callback available.  Fail if need_font is true and */
 /* rendition found does not provide font. */
 XmRendition
-_XmRenderTableFindRendition(XmRenderTable table, 
+_XmRenderTableFindRendition(XmRenderTable table,
 			    XmStringTag tag,
 #if NeedWidePrototypes
 			    int cached_tag,
@@ -683,22 +683,22 @@ _XmRenderTableFindRendition(XmRenderTable table,
   XmDisplayCallbackStruct	cb;
   XmDisplay			dsp;
   XmRenderTable			copy;
-  
+
   if ((table == NULL) || (tag == NULL)) return(NULL);
-  
+
 
   for (;;) /* May have to try twice */
-    {  
+    {
       for (i = 0; i < _XmRTCount(table); i++)
 	{
 	  rend = _XmRTRenditions(table)[i];
-      
+
 	  if ((cached_tag) ?
 	      (_XmRendTag(rend) == tag) :
 	      (strcmp(_XmRendTag(rend), tag) == 0))
 	    {
 	      hit = TRUE;
-	  
+
 	      if ((_XmRendFont(rend) == NULL) && (_XmRendXftFont (rend) == NULL) &&
 		  NameIsString(_XmRendFontName(rend)))
 		{
@@ -706,12 +706,12 @@ _XmRenderTableFindRendition(XmRenderTable table,
 		    _XmRendLoadModel(rend) = XmLOAD_IMMEDIATE;
 
 		  ValidateAndLoadFont(rend, _XmRendDisplay(rend));
-	      
+
 		  if (need_font && (_XmRendFont(rend) == NULL &&
                       _XmRendXftFont(rend) == NULL))
 		    break;
 		}
-	  
+
 	      if (index != NULL) *index = i;
 	      return(rend);
 	    }
@@ -719,27 +719,27 @@ _XmRenderTableFindRendition(XmRenderTable table,
 
       /* Are we done? */
       if (hit || !call) break;
-      
+
       call = FALSE;
 
       /* Call callback */
       if (_XmRTDisplay(table) != NULL)
 	{
 	  dsp = (XmDisplay) XmGetXmDisplay(_XmRTDisplay(table));
-	  
+
 	  /* CR 7964: XtHasCallbacks is surprisingly expensive, */
 	  /*	so we use a conservative approximation here. */
 	  if (dsp && dsp->display.noRenditionCallback)
 	    {
 	      copy = XmRenderTableCopy(table, NULL, 0);
-	  
+
 	      cb.reason = XmCR_NO_RENDITION;
 	      cb.event = NULL;
 	      cb.render_table = copy;
 	      cb.tag = tag;
-      
-	      XtCallCallbackList((Widget)dsp, 
-				 dsp->display.noRenditionCallback, 
+
+	      XtCallCallbackList((Widget)dsp,
+				 dsp->display.noRenditionCallback,
 				 &cb);
 
 	      if (cb.render_table != copy)
@@ -750,7 +750,7 @@ _XmRenderTableFindRendition(XmRenderTable table,
 		  for (j = 0; j < _XmRTCount(table); j++)
 		    if (FreeRendition(_XmRTRenditions(table)[j]))
 		      FreeHandle(_XmRTRenditions(table)[j]);
-  
+
 		  if (_XmRTRefcountDec(table) == 0)
 		    XtFree((char *)GetPtr(table));
 
@@ -762,8 +762,8 @@ _XmRenderTableFindRendition(XmRenderTable table,
 	  else break;
 	}
       else break;
-    } 
-  
+    }
+
   /* Didn't find it. */
   if (index != NULL) *index = -1;
   return(NULL);
@@ -857,7 +857,7 @@ SetRend(XmRendition to,
 
 /* Check that all resources are not default values. */
 static Boolean
-RendComplete(XmRendition rend)      
+RendComplete(XmRendition rend)
 {
   return(((unsigned int)(unsigned long)_XmRendFontName(rend) != XmAS_IS) &&
 	 (_XmRendFontType(rend) != XmAS_IS) &&
@@ -888,7 +888,7 @@ _XmRenditionMerge(Display *d,	/* unused */
 #if NeedWidePrototypes
 		  unsigned int tag_count,
 		  unsigned int copy
-#else			
+#else
 		  unsigned short tag_count,
 		  Boolean copy
 #endif /* NeedWidePrototypes */
@@ -896,7 +896,7 @@ _XmRenditionMerge(Display *d,	/* unused */
 {
   XmRendition 	rend, tmp;
   int 		i;
-  
+
   if (scr == NULL)
     {
       rend = XmRenditionCreate(NULL, XmS, NULL, 0); /* Create new */
@@ -918,7 +918,7 @@ _XmRenditionMerge(Display *d,	/* unused */
     {
       tmp = _XmRenderTableFindRendition(rt, tags[i], TRUE, FALSE, TRUE, NULL);
       if (tmp == NULL) continue;
-      
+
       SetRend(rend, tmp);
       if (RendComplete(rend)) break;
     }
@@ -926,28 +926,28 @@ _XmRenditionMerge(Display *d,	/* unused */
   if (!RendComplete(rend))
     {
       short index;
-      
+
       _XmRenderTableFindFallback(rt, base_tag, TRUE, &index, &tmp);
       if (tmp != NULL) SetRend(rend, tmp);
     }
 
-  if (base_rend != NULL) 
+  if (base_rend != NULL)
     {
       SetRend(rend, base_rend);
-  
+
       if (_XmRendFGState(base_rend) == XmFORCE_COLOR)
 #if USE_XFT
 	_XmRendXftFG(rend) = _XmRendXftFG(base_rend);
 #else
 	_XmRendFG(rend) = _XmRendFG(base_rend);
 #endif
-  
+
       if (_XmRendBGState(base_rend) == XmFORCE_COLOR)
 	_XmRendBG(rend) = _XmRendBG(base_rend);
     }
-  	
+
   CleanupResources(rend, copy);
-  
+
   return(rend);
 }
 
@@ -958,7 +958,7 @@ _XmRenditionMerge(Display *d,	/* unused */
  *   Since XmRenditionCreate also uses tag pointers out of this cache,
  *   a string compare is avoided by simply comparing pointer values.
  ****************/
-extern Boolean 
+extern Boolean
 _XmRenderTableFindFallback(
         XmRenderTable rendertable,
         XmStringTag tag,
@@ -969,9 +969,9 @@ _XmRenderTableFindFallback(
 #endif /* NeedWidePrototypes */
         short *indx,
 	XmRendition *rend_ptr )
-{   
+{
   XmStringTag     search_cset = NULL;
-  
+
   *indx = -1 ;
 
   if ((rendertable != NULL) && (_XmRTCount(rendertable) == 0))
@@ -979,21 +979,21 @@ _XmRenderTableFindFallback(
       *rend_ptr = NULL;
       return(FALSE);
     }
-  
+
   if (rendertable != NULL)
-    {   
+    {
       if (tag != NULL)
 	{
 	  if (cached_tag)			  /* No XmSTRING_DEFAULT_CHARSET */
-	    {   
+	    {
 	      *rend_ptr = (XmRendition)
 		_XmRenderTableFindRendition(rendertable, tag, TRUE, TRUE, FALSE,
 					    indx);
 	      if (*rend_ptr != NULL) return(TRUE);
 	    }
 	  else
-	    {   
-	      XmStringTag       curtag; 
+	    {
+	      XmStringTag       curtag;
 
 	      if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
 		curtag = _XmStringGetCurrentCharset();
@@ -1002,10 +1002,10 @@ _XmRenderTableFindFallback(
 	      *rend_ptr = (XmRendition)
 		_XmRenderTableFindRendition(rendertable, curtag, FALSE, TRUE, FALSE,
 					    indx);
-	  
+
 	      if (*rend_ptr != NULL) return(TRUE);
-	    } 
-      
+	    }
+
 	  /* Didn't find a match.  See if tag is one of the defaults
 	     and search for the other. */
 	  if (_XmStringIsCurrentCharset(tag))
@@ -1013,24 +1013,24 @@ _XmRenderTableFindFallback(
 	      search_cset = XmFONTLIST_DEFAULT_TAG;
 
 	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, search_cset, TRUE, 
+		_XmRenderTableFindRendition(rendertable, search_cset, TRUE,
 					    TRUE, FALSE, indx);
-	  
+
 	      if (*rend_ptr != NULL) return(TRUE);
 	    }
 	  else if ((tag == XmFONTLIST_DEFAULT_TAG) ||
 		   (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0))
 	    {
 	      search_cset = _XmStringGetCurrentCharset();
-	
+
 	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, search_cset, FALSE, 
+		_XmRenderTableFindRendition(rendertable, search_cset, FALSE,
 					    TRUE, FALSE, indx);
-	  
+
 	      if (*rend_ptr != NULL) return(TRUE);
 	    }
 	}
-        
+
       /* Otherwise pick up first font(set) if tag a default value. */
       if ((tag == NULL) ||
 	  (tag == XmFONTLIST_DEFAULT_TAG) ||
@@ -1038,7 +1038,7 @@ _XmRenderTableFindFallback(
 	  _XmStringIsCurrentCharset(tag))
 	return(_XmRenderTableFindFirstFont(rendertable, indx, rend_ptr));
     }
-  *rend_ptr = NULL; 
+  *rend_ptr = NULL;
   *indx = -1;
   return(FALSE);
 }
@@ -1092,7 +1092,7 @@ _XmRenderTableFindFirstFont(XmRenderTable rendertable,
       return(FALSE);
     }
 
-  return(TRUE); 
+  return(TRUE);
 }
 
 /* Put value of every resource in fromRend into toRend, copying where */
@@ -1114,7 +1114,7 @@ CopyInto(XmRendition toRend,
   _XmRendLoadModel(toRend) = _XmRendLoadModel(fromRend);
   _XmRendFont(toRend) = _XmRendFont(fromRend);
   _XmRendDisplay(toRend) = _XmRendDisplay(fromRend);
-  
+
   if (!ListIsList(_XmRendTabs(fromRend)))
     _XmRendTabs(toRend) = NULL;
   else
@@ -1151,8 +1151,8 @@ MergeInto(XmRendition toRend,
     _XmRendLoadModel(toRend) = _XmRendLoadModel(fromRend);
   if (_XmRendFont(toRend) == NULL)
     _XmRendFont(toRend) = _XmRendFont(fromRend);
-  
-  if (!ListIsList(_XmRendTabs(toRend)) && 
+
+  if (!ListIsList(_XmRendTabs(toRend)) &&
       ListIsList(_XmRendTabs(fromRend)))
     _XmRendTabs(toRend) = XmTabListCopy(_XmRendTabs(fromRend), 0, 0);
 #if USE_XFT
@@ -1188,17 +1188,17 @@ CloneRendition(XmRendition rend)
 {
   _XmRendition 	copy;
   XmRendition	copy_handle;
-  
+
   if (rend == NULL) return(NULL);
-  
+
   copy = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
   bzero((char*)copy, sizeof(_XmRenditionRec));
   copy_handle = GetHandle(_XmRendition);
   SetPtr(copy_handle, copy);
-  
+
   _XmRendFontOnly(copy_handle) = FALSE;
   _XmRendRefcount(copy_handle) = 1;
-  
+
   CopyInto(copy_handle, rend);
   return(copy_handle);
 }
@@ -1208,16 +1208,16 @@ static XmRendition
 RenewRendition(XmRendition rend)
 {
   _XmRendition copy;
-  
+
   if (rend == NULL) return(NULL);
-  
+
   copy = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
   memcpy((char *)copy, (char *)GetPtr(rend), sizeof(_XmRenditionRec));
   SetPtr(rend, copy);
-  
+
   _XmRendFontOnly(rend) = FALSE;
   _XmRendRefcount(rend) = 1;
-  
+
   return(rend);
 }
 
@@ -1227,7 +1227,7 @@ static XmRendition
 CopyRendition(XmRendition rend)
 {
   XmRendition	copy;
-  
+
   if (rend == NULL) return(NULL);
 
   if (_XmRendRefcountInc(rend) == 0)
@@ -1235,7 +1235,7 @@ CopyRendition(XmRendition rend)
       _XmRendRefcountDec(rend);
       return(CloneRendition(rend));
     }
-  else 
+  else
     {
       copy = GetHandle(_XmRendition);
       SetPtr(copy, GetPtr(rend));
@@ -1254,7 +1254,7 @@ DuplicateRendition(XmRendition rend)
       _XmRendRefcountDec(rend);
       return(CloneRendition(rend));
     }
-  else 
+  else
     {
       return(rend);
     }
@@ -1287,14 +1287,14 @@ _XmRenditionCopy(XmRendition rend,
       for (i = 0; i < _XmRendTagCount(rend); i++)
 	_XmRendTags(toRend)[i] = _XmRendTags(rend)[i];
     }
-  
+
   return(toRend);
 }
 
 /* Creates new rendertable, adding any new renditions. */
 /* Mutate rendertable.  Copy renditions. */
 XmRenderTable
-XmRenderTableAddRenditions(XmRenderTable oldtable, 
+XmRenderTableAddRenditions(XmRenderTable oldtable,
 			   XmRendition *renditions,
 			   Cardinal rendition_count,
 			   XmMergeMode merge_mode)
@@ -1324,7 +1324,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
   if (oldtable == NULL)
     {
       /* Malloc new table */
-      table = 
+      table =
 	(_XmRenderTable)XtMalloc(sizeof(_XmRenderTableRec) +
 				(sizeof(XmRendition) *
 				 (rendition_count -
@@ -1335,7 +1335,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
       _XmRTCount(oldtable) = rendition_count;
       _XmRTDisplay(oldtable) = NULL;
       _XmRTRefcount(oldtable) = 1;
-      
+
       /* Copy renditions */
       for (i = 0; i < rendition_count; i++)
 	{
@@ -1349,7 +1349,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
       matches =
 	(Boolean *)ALLOCATE_LOCAL(rendition_count * sizeof(Boolean));
       bzero(matches, rendition_count * sizeof(Boolean));
-      
+
       /* May have to copy table if shared. */
       if (_XmRTRefcount(oldtable) > 1)
 	{
@@ -1376,12 +1376,12 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 	  tmptable = oldtable;
 	  oldtable = newtable;
 	}
-      
+
       /* Merge matching renditions */
       for (i = 0; i < rendition_count; i++)
 	{
 	  rend = renditions[i];
-	  
+
 	  match =
 	    _XmRenderTableFindRendition(oldtable, _XmRendTag(rend),
 					TRUE, FALSE, FALSE, &idx);
@@ -1392,29 +1392,29 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 		{
 		case XmMERGE_REPLACE:
 		  if (FreeRendition(match)) FreeHandle(match);
-		  _XmRTRenditions(oldtable)[idx] = 
+		  _XmRTRenditions(oldtable)[idx] =
 		    CopyRendition(rend);
 		  break;
-		  
+
 		case XmSKIP:
 		  break;
-		  
+
 		case XmMERGE_OLD:
-		  if (_XmRendRefcount(match) > 1) 
+		  if (_XmRendRefcount(match) > 1)
 		    {
 		      match = CloneRendition(match);
 		      _XmRTRenditions(oldtable)[idx] = match;
-		    }		      
+		    }
 		  MergeInto(match, rend);
 		  break;
-		  
+
 		case XmMERGE_NEW:
 		  rend = CloneRendition(rend);
 		  MergeInto(rend, match);
 		  _XmRTRenditions(oldtable)[idx] = rend;
 		  if (FreeRendition(match)) FreeHandle(match);
 		  break;
-		  
+
 		default:
 		  printf("NYI");
 		  break;
@@ -1424,7 +1424,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 	      --count;
 	    }
 	}
-      
+
       if (count > 0)				  /* Allocate new table */
 	{
 	  table = (_XmRenderTable)
@@ -1436,14 +1436,14 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 
 	  _XmRTDisplay(newtable) = _XmRTDisplay(oldtable);
 	  _XmRTRefcount(newtable) = 1;
-      
+
 	  /* Move old Renditions. */
 	  for (i = 0; i < _XmRTCount(oldtable); i++)
 	    _XmRTRenditions(newtable)[i] = _XmRTRenditions(oldtable)[i];
 
 	  /* Copy new renditions. */
 	  next = _XmRTCount(oldtable);
-      
+
 	  for (i = 0; i < rendition_count; i++)
 	    {
 	      if (!matches[i])
@@ -1455,22 +1455,22 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 		  ++next;
 		}
 	    }
-	    
+
 	  _XmRTCount(newtable) = _XmRTCount(oldtable) + count;
-	  
+
 	  /* Deallocate oldtable */
 	  XtFree((char *)GetPtr(oldtable));
 	  FreeHandle(oldtable);
 	}
       /* Otherwise just return newhandle to oldtable */
-      else					  
+      else
 	{
 	  table = GetPtr(oldtable);
 	  newtable = GetHandle(_XmRenderTable);
 	  SetPtr(newtable, table);
 	  FreeHandle(oldtable);
 	}
-      
+
       DEALLOCATE_LOCAL((char *)matches);
 
       oldtable = newtable;
@@ -1543,9 +1543,9 @@ _XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 
   if ((oldtable == NULL) || (tags == NULL) || (tag_count == 0))
     return(oldtable);
-  
+
   count = 0;
-  
+
   if (_XmRTRefcount(oldtable) > 1)
     {
       /* Allocate new table */
@@ -1564,11 +1564,11 @@ _XmRenderTableRemoveRenditions(XmRenderTable oldtable,
       for (i = 0; i < _XmRTCount(oldtable); i++)
 	_XmRTRenditions(newtable)[i] = _XmRTRenditions(oldtable)[i];
       _XmRTCount(newtable) = _XmRTCount(oldtable);
-      
+
       if (_XmRTRefcountDec(oldtable) == 0)
 	XtFree((char *)GetPtr(oldtable));
       FreeHandle(oldtable);
-      
+
       oldtable = newtable;
     }
   /* Iterate over renditions */
@@ -1589,7 +1589,7 @@ _XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 	      break;
 	    }
 	}
-      if (_XmRTRenditions(oldtable)[i] != NULL) 
+      if (_XmRTRenditions(oldtable)[i] != NULL)
 	{
 	  if (count != i)
 	    _XmRTRenditions(oldtable)[count] = _XmRTRenditions(oldtable)[i];
@@ -1610,15 +1610,15 @@ _XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 					sizeof(_XmRenderTableRec) +
 					(sizeof(XmRendition) *
 					 (count - RENDITIONS_IN_STRUCT)));
-      if (newtable == NULL) 
+      if (newtable == NULL)
 	{
 	  newtable = GetHandle(_XmRenderTable);
 	  FreeHandle(oldtable);
-	}      
+	}
       SetPtr(newtable, table);
 
       _XmRTCount(newtable) = count;
-  
+
       return(newtable);
     }
   return(oldtable);
@@ -1721,13 +1721,13 @@ XmRenderTableCopy(XmRenderTable table,
     {
       /* Malloc new table */
       _XmRTRefcountDec(table);
-      
+
       if (tag_count > 0)
 	size = (sizeof(_XmRendition) * (tag_count - RENDITIONS_IN_STRUCT));
-      else 
+      else
 	size = (sizeof(_XmRendition) *
 		(_XmRTCount(table) - RENDITIONS_IN_STRUCT));
-  
+
       size = (size < 0) ? 0 : size;
 
       t = (_XmRenderTable)XtMalloc(sizeof(_XmRenderTableRec) + size);
@@ -1735,7 +1735,7 @@ XmRenderTableCopy(XmRenderTable table,
       SetPtr(rt, t);
       _XmRTRefcount(rt) = 1;
     }
-  
+
   if (tags == NULL)
     {
       /* Increment renditions. */
@@ -1745,7 +1745,7 @@ XmRenderTableCopy(XmRenderTable table,
 	  /* Check for overflow. */
 	  if (rend != _XmRTRenditions(table)[i]) break;
 	}
-      
+
       if (i < _XmRTCount(table))		  /* Overflow! */
 	{
 	  /* Malloc new table. */
@@ -1755,7 +1755,7 @@ XmRenderTableCopy(XmRenderTable table,
 	  rt = GetHandle(_XmRenderTable);
 	  SetPtr(rt, t);
 	  _XmRTRefcount(rt) = 1;
-	    
+
 	  _XmRTCount(rt) = _XmRTCount(table);
 
 	  /* Move renditions done already. */
@@ -1778,7 +1778,7 @@ XmRenderTableCopy(XmRenderTable table,
       for (i = 0; i < tag_count; i++)
 	{
 	  XmRendition match;
-	  
+
 	  match = XmRenderTableGetRendition(table, tags[i]);
 
 	  if (match != NULL)
@@ -1789,7 +1789,7 @@ XmRenderTableCopy(XmRenderTable table,
 	}
 
       /* Realloc table */
-      t = (_XmRenderTable)XtRealloc((char *)t, 
+      t = (_XmRenderTable)XtRealloc((char *)t,
 				     sizeof(_XmRenderTableRec) +
 				     (sizeof(XmRendition) *
 				      (count - RENDITIONS_IN_STRUCT)));
@@ -1821,7 +1821,7 @@ XmRenderTableFree(XmRenderTable table)
   for (i = 0; i < _XmRTCount(table); i++)
     if (FreeRendition(_XmRTRenditions(table)[i]))
       FreeHandle(_XmRTRenditions(table)[i]);
-  
+
   if (_XmRTRefcountDec(table) == 0)
     XtFree((char *)GetPtr(table));
 
@@ -1831,7 +1831,7 @@ XmRenderTableFree(XmRenderTable table)
 
 /* Get list of tags of all renditions in table. */
 int
-XmRenderTableGetTags(XmRenderTable table, 
+XmRenderTableGetTags(XmRenderTable table,
 		     XmStringTag **tag_list)
 {
   int i, ret_val;
@@ -1845,13 +1845,13 @@ XmRenderTableGetTags(XmRenderTable table,
 
   app = XtDisplayToApplicationContext(_XmRTDisplay(table));
   _XmAppLock(app);
-  *tag_list = 
+  *tag_list =
     (XmStringTag *)XtMalloc(sizeof(XmStringTag) * _XmRTCount(table));
 
   for (i = 0; i < _XmRTCount(table); i++)
-      (*tag_list)[i] = 
+      (*tag_list)[i] =
 	XtNewString(_XmRendTag(_XmRTRenditions(table)[i]));
-      
+
   ret_val = _XmRTCount(table);
   _XmAppUnlock(app);
   return ret_val;
@@ -1884,7 +1884,7 @@ XmRenderTableGetRenditions(XmRenderTable table,
 
   if ((table == NULL) || (tags == NULL) || (tag_count == 0))
       return(NULL);
- 
+
 #ifdef XTHREADS
   if (_XmRTDisplay(table))
   {
@@ -1893,7 +1893,7 @@ XmRenderTableGetRenditions(XmRenderTable table,
   }
 #endif
   rends = (XmRendition *)XtMalloc(tag_count * sizeof(XmRendition));
-  
+
   count = 0;
   for (i = 0; i < tag_count; i++)
     {
@@ -1905,10 +1905,10 @@ XmRenderTableGetRenditions(XmRenderTable table,
 	  count++;
 	}
     }
-  
+
   if (count < tag_count)
     rends = (XmRendition *)XtRealloc((char *)rends, count * sizeof(XmRendition));
-  
+
 #ifdef XTHREADS
   if (app) {
      _XmAppUnlock(app);
@@ -1938,7 +1938,7 @@ RenditionWarning(char *tag,
      d = _XmGetDefaultDisplay();
   if (d)
     XtAppWarningMsg (XtDisplayToApplicationContext(d),
-		     tag, type, "XmRendition", 
+		     tag, type, "XmRendition",
 		     message, params, &num_params);
   else XtWarning(message);
 }
@@ -1948,7 +1948,7 @@ static void
 CleanupResources(XmRendition rend,
 		 Boolean copy)
 {
-  if ((unsigned int)(unsigned long)_XmRendFont(rend) == XmAS_IS) 
+  if ((unsigned int)(unsigned long)_XmRendFont(rend) == XmAS_IS)
     _XmRendFont(rend) = NULL;
   else if (_XmRendFontType(rend) == XmAS_IS)
     _XmRendFontType(rend) = XmFONT_IS_FONT;
@@ -1963,7 +1963,7 @@ CleanupResources(XmRendition rend,
     _XmRendFontName(rend) = NULL;
   else if (copy)
     _XmRendFontName(rend) = XtNewString(_XmRendFontName(rend));
-  
+
   if ((unsigned int)(unsigned long)_XmRendTabs(rend) == XmAS_IS)
     _XmRendTabs(rend) = NULL;
   else if (copy)
@@ -2032,7 +2032,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
   Boolean		result = False;
 
   _XmRendDisplay(rend) = display;
-  
+
   if (_XmRendLoadModel(rend) != XmLOAD_DEFERRED)
     {
       XmDisplay			dsp = NULL;
@@ -2052,7 +2052,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 				   NULL_DISPLAY_MSG, NULL);
 		  return;
 		}
-	      
+
 	      args[0].addr = (XPointer) &display;
 	      args[0].size = sizeof(Display*);
 	      num_args++;
@@ -2066,12 +2066,12 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 	      switch (_XmRendFontType(rend))
 		{
 		case XmFONT_IS_FONT:
-		  result = 
+		  result =
 		    XtCallConverter(display, XtCvtStringToFontStruct,
 				    args, num_args, &fromVal, &toVal, NULL);
 		  break;
 		case XmFONT_IS_FONTSET:
-		  locale = 
+		  locale =
 		    XrmQuarkToString(XrmStringToQuark(setlocale(LC_ALL, NULL)));
 		  args[1].addr = (XPointer) &locale;
 		  args[1].size = sizeof(XrmString);
@@ -2085,7 +2085,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		  {
 		    FcResult res;
 		    FcPattern *p;
-		    
+
 #ifdef FIX_1414
 						  static XmRendition *rend_cache;
 						  static int count_rend=0, num_rend;
@@ -2126,7 +2126,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
                     p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
 #ifdef FIX_1414
                     _XmRendXftFont(rend) = XftFontOpenPattern(display, p);
-					    		  rend_cache = (XmRendition *) XtRealloc((char *)rend_cache, 
+					    		  rend_cache = (XmRendition *) XtRealloc((char *)rend_cache,
 					    		    (Cardinal)(sizeof(XmRendition) * (count_rend + 1)));
 							  rend_cache[count_rend] =_XmRenditionCopy(rend, TRUE);
 							  count_rend++;
@@ -2149,26 +2149,26 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 	      /* NoFontCallback. */
 	      if (!result)
 		{
-		  if (display != NULL) 
+		  if (display != NULL)
 		    {
 		      dsp = (XmDisplay) XmGetXmDisplay(display);
 		      cb.reason = XmCR_NO_FONT;
 		      cb.event = NULL;
 		      cb.rendition = rend;
 		      cb.font_name = _XmRendFontName(rend);
-      
+
 		      /* We must know for sure whether there are any */
 		      /* callbacks, so we have to use XtHasCallbacks. */
 		      if (XtHasCallbacks((Widget)dsp, XmNnoFontCallback) ==
 			  XtCallbackHasSome)
 			{
 			  XtCallCallbackList((Widget)dsp,
-					     dsp->display.noFontCallback, 
+					     dsp->display.noFontCallback,
 					     &cb);
 			  return;
 			}
 		    }
-	  
+
 		  RenditionWarning(_XmRendTag(rend), "CONVERSION_FAILED",
 				   CONVERSION_FAILED_MSG,
 				   _XmRendDisplay(rend));
@@ -2250,7 +2250,7 @@ _XmRenditionCreate(Display *display,
   XmRendition	rend;
   _XmRendition	rend_int;
   Boolean 	result;
-  
+
   if ((display == NULL) && (widget != NULL))
     display = XtDisplayOfObject(widget);
 
@@ -2264,9 +2264,9 @@ _XmRenditionCreate(Display *display,
   bzero((char*)rend_int, sizeof(_XmRenditionRec));
   rend = GetHandle(_XmRendition);
   SetPtr(rend, rend_int);
-  
+
   _XmRendRefcount(rend) = 1;
-  
+
   /* For now, FontOnly renditions aren't implemented. */
   _XmRendFontOnly(rend) = FALSE;
 
@@ -2274,9 +2274,9 @@ _XmRenditionCreate(Display *display,
   result =
     GetResources(rend, display, widget, resname, resclass, tag,
 		 arglist, argcount);
-  
+
   if (in_db != NULL) *in_db = result;
-  
+
   if (tag == NULL)
     {
       if (result == FALSE)
@@ -2287,15 +2287,15 @@ _XmRenditionCreate(Display *display,
 	}
       else tag = _MOTIF_DEFAULT_LOCALE;
     }
-  
+
   _XmRendTag(rend) = _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN);
-  
+
   /* Cleanup and validate resources. */
 
   CleanupResources(rend, TRUE);
 
   ValidateTag(rend, XmS);
-  
+
   ValidateAndLoadFont(rend, display);
 
   return(rend);
@@ -2311,7 +2311,7 @@ _XmCreateRenderTable(Widget parent,
 {
   XmRenderTable 	newtable;
   _XmRenderTable	table;
-  
+
   /* Malloc new table */
   table = (_XmRenderTable)XtMalloc(sizeof(_XmRenderTableRec));
   newtable = GetHandle(_XmRenderTable);
@@ -2319,7 +2319,7 @@ _XmCreateRenderTable(Widget parent,
   _XmRTCount(newtable) = 0;
   _XmRTRefcount(newtable) = 1;
   _XmRTDisplay(newtable) = XtDisplay(parent);
-  
+
   return((Widget)newtable);
 }
 
@@ -2333,21 +2333,21 @@ _XmCreateRendition(Widget parent,
   XmRenderTable		rt = (XmRenderTable)parent;
   _XmRenderTable	table;
   XmRendition		rend;
-  
+
   table = GetPtr(rt);
-  
+
   rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS, XmCRenderTable,
 			    name, arglist, argcount, NULL);
-  
+
   /* Ignore repeats */
   if (_XmRenderTableFindRendition(rt, _XmRendTag(rend),
-				  TRUE, FALSE, FALSE, NULL) 
+				  TRUE, FALSE, FALSE, NULL)
       != NULL)
     {
       if (FreeRendition(rend)) FreeHandle(rend);
       return((Widget)NULL);
     }
-  
+
   table = (_XmRenderTable)
     XtRealloc((char *)table,
 	      sizeof(_XmRenderTableRec) +
@@ -2368,7 +2368,7 @@ static Boolean
 FreeRendition(XmRendition rendition)
 {
   if (rendition == NULL) return(FALSE);
-  
+
   if (_XmRendRefcountDec(rendition) == 0)
     {
       /* CR 7890 - the fontName might be XmAS_IS here */
@@ -2391,7 +2391,7 @@ FreeRendition(XmRendition rendition)
           _XmRendPattern(rendition) = NULL;
         }
 #endif
-  
+
       XtFree((char *)GetPtr(rendition));
       return(TRUE);
     }
@@ -2419,7 +2419,7 @@ XmRenditionRetrieve(XmRendition rendition,
   Arg			*arg;
   XtResource		*res;
   char			*as_is = (char *)XmAS_IS;
-  
+
   if (rendition == NULL) return;
 
   _XmProcessLock();
@@ -2427,16 +2427,16 @@ XmRenditionRetrieve(XmRendition rendition,
   for (i = 0; i < argcount; i++)
     {
       arg = &(arglist[i]);
-      
+
       for (j = 0; j < _XmNumRenditionResources; j++)
 	{
 	  res = &(_XmRenditionResources[j]);
 
 	  if (strcmp(res->resource_name, arg->name) == 0)
 	    {
-	      /* CR 7890: Font hook - if there's a fontName but the 
-	      ** font hasn't been fetched yet, now's a good time to 
-	      ** get it - if the caller wants to use the font to, say, 
+	      /* CR 7890: Font hook - if there's a fontName but the
+	      ** font hasn't been fetched yet, now's a good time to
+	      ** get it - if the caller wants to use the font to, say,
 	      ** compute font metrics for layout (as CSText does), it won't
 	      ** like to get NULL back
 	      */
@@ -2458,7 +2458,7 @@ XmRenditionRetrieve(XmRendition rendition,
 #endif
 		     )
 		    CopyToArg((char*)&as_is, &(arg->value), sizeof(char*));
-		  else CopyToArg(((char *)GetPtr(rendition) + 
+		  else CopyToArg(((char *)GetPtr(rendition) +
 				  res->resource_offset),
 				 &(arg->value),
 				 res->resource_size);
@@ -2495,9 +2495,9 @@ XmRenditionUpdate(XmRendition rendition,
   Display	*display = _XmGetDefaultDisplay();
   Boolean	can_free;
   XtAppContext	app = NULL;
-  
+
   if (rendition == NULL) return;
-  
+
 #ifdef XTHREADS
   if (_XmRendDisplay(rendition))
   {
@@ -2514,7 +2514,7 @@ XmRenditionUpdate(XmRendition rendition,
   oldfont = _XmRendFont(rendition);
   oldtabs = _XmRendTabs(rendition);
   can_free = TRUE;
-  
+
   /* New memory if needed. */
   if (_XmRendRefcount(rendition) > 1)
     {
@@ -2522,11 +2522,11 @@ XmRenditionUpdate(XmRendition rendition,
       RenewRendition(rendition);
       can_free = FALSE;
     }
-      
+
   for (i = 0; i < argcount; i++)
     {
       arg = &(arglist[i]);
-      
+
       for (j = 0; j < _XmNumRenditionResources; j++)
 	{
 	  res = &(_XmRenditionResources[j]);
@@ -2540,14 +2540,14 @@ XmRenditionUpdate(XmRendition rendition,
 	    }
 	}
     }
-  
+
   CopyInto(rendition, rendition);
 
   /** Validate resources **/
 
   /* CR 7890 - handle cases of fontName == NULL and fontName == XmAS_IS */
 
-  /* If fontName changed but not font, NULL font so it's updated. 
+  /* If fontName changed but not font, NULL font so it's updated.
    ** (first make sure we won't crash on the strcmp) */
 
   if (NameIsString(oldname) && NameIsString(_XmRendFontName(rendition)))    {
@@ -2570,9 +2570,9 @@ XmRenditionUpdate(XmRendition rendition,
     _XmRendFont(rendition) = NULL;
 
   if ((oldtabs != _XmRendTabs(rendition)) && can_free) XmTabListFree(oldtabs);
-  
+
   ValidateTag(rendition, oldtag);
-  
+
   ValidateAndLoadFont(rendition, display);
 #ifdef XTHREADS
   if (app) {
@@ -2647,6 +2647,9 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
   int chars_used = 0, size;
   char *buffer;
   char *str;
+  char temp[2048];
+  char temp2[1024];
+
   XmRendition rendition;
   _XmWidgetToAppContext(widget);
 
@@ -2663,7 +2666,7 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
     }
     strcat(CVTtransfervector, "\n");
   }
-  
+
   /* Copy the transfer vector into the output buffer. */
   strcpy(buffer, CVTtransfervector);
   chars_used = strlen(buffer);
@@ -2671,17 +2674,15 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
 
   /* Now iterate over the list of renditions */
   for(i = 0; i < _XmRTCount(table); i++) {
-    char temp[2048];
-
     rendition = _XmRTRenditions(table)[i];
-    sprintf(temp, "\"%s\", ", _XmRendTag(rendition));
+    snprintf(temp, sizeof temp, "\"%s\", ", _XmRendTag(rendition));
     size = strlen(temp);
     CVTaddString(buffer, temp, size);
 
     if (_XmRendFontType(rendition) == XmAS_IS)
       str = "-1, ";
     else {
-      sprintf(temp, "%d \"%s\" %d,", _XmRendFontType(rendition),
+      snprintf(temp, sizeof temp, "%d \"%s\" %d,", _XmRendFontType(rendition),
 	      _XmRendFontName(rendition), _XmRendLoadModel(rendition));
       str = temp;
     }
@@ -2700,7 +2701,6 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
       number = tlist -> count;
       tab = (_XmTab) tlist -> start;
 
-      char temp2[2044];
       while(number > 0) {
         strcpy(temp2, temp);
         snprintf(temp, sizeof(temp) - 5, "%s %f %d %d %d, ", temp2, tab -> value,
@@ -2760,7 +2760,7 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
   return(chars_used + 1);
 }
 
-typedef enum {   T_NL, T_INT, T_FLOAT, T_SEP, 
+typedef enum {   T_NL, T_INT, T_FLOAT, T_SEP,
 		 T_OPEN, T_CLOSE, T_STR, T_EOF } TokenType;
 
 typedef struct _TokenRec {
@@ -2787,7 +2787,7 @@ ReadToken(char *string, int *position, Token reusetoken)
   case '\0':
     new_token -> type = T_EOF;
     break;
-  case '\n': 
+  case '\n':
     new_token -> type = T_NL;
     pos++;
     break;
@@ -2822,8 +2822,7 @@ ReadToken(char *string, int *position, Token reusetoken)
     if (isalpha(string[pos])) /* String result */
       {
 	char temp[80];
-	int count;
-	for(count = 0; 
+	for(count = 0;
 	    isalpha(string[pos + count]) && count < 79;
 	    count++) temp[count] = string[pos + count];
 	temp[count] = 0;
@@ -2869,7 +2868,7 @@ static int _XmXftDrawCacheSize = 0;
 static XErrorHandler           oldErrorHandler;
 static int xft_error;
 
-static int 
+static int
 _XmXftErrorHandler(
         Display *display,
         XErrorEvent *error )
@@ -2903,10 +2902,10 @@ _XmXftDrawCreate(Display *display, Window window)
 #ifdef FIX_1444
 	if (!(draw = XftDrawCreate(display, window,
 	    DefaultVisual(display, DefaultScreen(display)),
-	    DefaultColormap(display, DefaultScreen(display))))) 
+	    DefaultColormap(display, DefaultScreen(display)))))
             	draw = XftDrawCreateBitmap(display, window);
 #else
-	oldErrorHandler = XSetErrorHandler (_XmXftErrorHandler);	
+	oldErrorHandler = XSetErrorHandler (_XmXftErrorHandler);
 	xft_error = 0;
 	XGetWindowAttributes(display, window, &wa);
 	XSetErrorHandler(oldErrorHandler);
@@ -2938,7 +2937,7 @@ _XmXftDrawCreate(Display *display, Window window)
 	_XmXftDrawCache[i].display = display;
 	_XmXftDrawCache[i].draw = draw;
 	_XmXftDrawCache[i].window = window;
-	
+
 	return draw;
 }
 
@@ -2972,7 +2971,7 @@ _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc
     XGCValues gc_val;
     XColor xcol;
     XftColor xftcol;
-    
+
     XGetGCValues(display, gc, GCForeground, &gc_val);
 
     xcol.pixel = gc_val.foreground;
@@ -3025,7 +3024,7 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
         XftColor bg_color = _XmRendXftBG(rend);
 	XGlyphInfo ext;
 	ext.xOff = 0;
-	
+
 	switch (bpc)
 	{
 	    case 1:
@@ -3041,7 +3040,7 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 		                 (FcChar32*)s, len, &ext);
 		break;
 	}
-	
+
 	if (_XmRendBG(rend) == XmUNSPECIFIED_PIXEL)
 	{
 	    XGCValues gc_val;
@@ -3166,7 +3165,7 @@ _XmXftGetXftColor(Display *display, Pixel color)
 #else
     XColor xcol;
     XftColor xftcol;
-    
+
     xcol.pixel = color;
     XQueryColor(display, DefaultColormap(display,
         DefaultScreen(display)), &xcol);
@@ -3188,7 +3187,7 @@ void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width)
 	XGlyphInfo	ext;
 
 	XftTextExtents8(XtDisplay(w), fp, (unsigned char *)s, l, &ext);
-    if (width) 
+    if (width)
     	*width = ext.width / l;
 }
 #endif
@@ -3197,7 +3196,7 @@ void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width)
 
 /*ARGSUSED*/
 XmRenderTable
-XmRenderTableCvtFromProp(Widget w, 
+XmRenderTableCvtFromProp(Widget w,
 			 char *prop,
 			 unsigned int len) /* unused */
 {
@@ -3235,7 +3234,7 @@ XmRenderTableCvtFromProp(Widget w,
       j++;
     }
   }
-  
+
   j = -1;
   count = 0;
   freecount = 0;
@@ -3247,7 +3246,7 @@ XmRenderTableCvtFromProp(Widget w,
     if (token -> type == T_EOF) goto finish;
 
     j++; /* Go to next item in items array */
-	  
+
     if (items[j] == NULL) {
       /* End of line processing.  Scan for NewLine */
       while(token -> type != T_NL &&
@@ -3266,7 +3265,7 @@ XmRenderTableCvtFromProp(Widget w,
       if (rarray_count >= rarray_max) {
 	/* Extend array if necessary */
 	rarray_max += 10;
-	rarray = (XmRendition *) XtRealloc((char*) rarray, 
+	rarray = (XmRendition *) XtRealloc((char*) rarray,
 					   sizeof(XmRendition) * rarray_max);
       }
       if (token -> type == T_EOF) goto finish;
@@ -3285,7 +3284,7 @@ XmRenderTableCvtFromProp(Widget w,
       /* If the next item is a number then we have a font
 	 id,  otherwise we are reading in a fontset */
       if (token -> type != T_INT) goto error;
-      if (token -> integer != -1) { /* AS IS */ 
+      if (token -> integer != -1) { /* AS IS */
 	XtSetArg(args[count], XmNfontType, token -> integer); count++;
     token = ReadToken(prop, &scanpointer, &reusetoken);
 	if (token -> type != T_STR) goto error;
@@ -3329,13 +3328,13 @@ XmRenderTableCvtFromProp(Widget w,
 	  tablist = XmTabListInsertTabs(tablist, tabs, 1, 1000);
 	  XtFree((char*) tabs[0]);
 	  /* Go to next separator to skip unknown future values */
-	  while(token -> type != T_SEP) 
+	  while(token -> type != T_SEP)
         token = ReadToken(prop, &scanpointer, &reusetoken);
 	  if (token -> type == T_SEP)
         token = ReadToken(prop, &scanpointer, &reusetoken);
 	}
 	XtSetArg(args[count], XmNtabList, tablist); count++;
-      } else 
+      } else
 	goto error;
     } else if (strcmp(items[j], XmNbackground) == 0) {
       if (token -> type != T_INT) goto error;
@@ -3384,7 +3383,7 @@ XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
     Boolean         success;
     short           indx;
     int             h,a,d;
-  
+
 #ifdef XTHREADS
   XtAppContext	       app=NULL;
 

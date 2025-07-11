@@ -128,7 +128,7 @@ char	*c_text;	/* text of the name */
 {
     sym_name_entry_type	*az_current_name;
     int			l_hash_code;
-    int			l_compare_result;
+    int			lstrcmp_result;
 
     /* obtain the hash code of for the name */
 
@@ -145,16 +145,16 @@ char	*c_text;	/* text of the name */
 	 az_current_name != NULL;
 	 az_current_name = az_current_name->az_next_name_entry)
     {
-	l_compare_result = _compare(c_text, az_current_name->c_text);
+	lstrcmp_result = strcmp(c_text, az_current_name->c_text);
 
-	if (l_compare_result == 0)	/* c_text = current name */
+	if (lstrcmp_result == 0)	/* c_text = current name */
 	{
 	    /* found the name we are looking for */
 
 	    return az_current_name;
 	}
 
-	if (l_compare_result > 0)	/* c_text > current name */
+	if (lstrcmp_result > 0)	/* c_text > current name */
 	{
 	    /* return NULL - name should be before this spot in list */
 
@@ -223,7 +223,7 @@ char	*c_text;	/* text of the name */
     sym_name_entry_type	*az_current_name;
     sym_name_entry_type	*az_new_name;
     int			l_hash_code;
-    int			l_compare_result;
+    int			lstrcmp_result;
 
     /*
     **  algorithm keeps 2 pointers, one for the previous name and one
@@ -250,16 +250,16 @@ char	*c_text;	/* text of the name */
 	 az_previous_name = az_current_name,
 	 az_current_name = az_current_name->az_next_name_entry)
     {
-	l_compare_result = _compare(c_text, az_current_name->c_text);
+	lstrcmp_result = strcmp(c_text, az_current_name->c_text);
 
-	if (l_compare_result == 0)	/* c_text = current name */
+	if (lstrcmp_result == 0)	/* c_text = current name */
 	{
 	    /* found the name we are looking for */
 
 	    return az_current_name;
 	}
 
-	if (l_compare_result > 0)	/* c_text > current name */
+	if (lstrcmp_result > 0)	/* c_text > current name */
 	{
 	    /* exit the loop to insert just prior to current name */
 
@@ -285,7 +285,7 @@ insert_name:
     az_new_name->az_object = NULL;
     az_new_name->az_cycle_id = 0;
 
-    _move( az_new_name->c_text, c_text, l_length+1 );
+    memmove( az_new_name->c_text, c_text, l_length+1 );
 
     /*
     **  link the name entry into the hash table

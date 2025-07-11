@@ -38,12 +38,13 @@
 #ifndef UilDefI_h
 #define UilDefI_h
 
-
 /*
 **
 **  INCLUDE FILES
 **
 **/
+#include <string.h>
+#include <X11/Intrinsic.h>
 
 #define X_INCLUDE_TIME_H
 #define XOS_USE_XT_LOCKING
@@ -181,46 +182,6 @@ typedef int boolean;
 
 #define _success( __status )	\
 	((__status & 1)==1)
-
-
-/*
-**
-**  Memory allocation definitions
-**
-*/
-
-#define _get_memory XtMalloc
-
-#define _free_memory XtFree
-
-/*
-**
-**  Move macro
-**
-*/
-
-#define _move memmove
-
-/*
-**
-**  Compare macro
-**
-*/
-
-#define _compare strcmp
-
-/*
-**
-**  Fill macro
-**
-*/
-
-#define _fill( __string, __char, __len )	\
-    {						\
-      register int i = __len; 			\
-      while (--i >= 0)				\
-	(__string)[i] = __char;			\
-    }
 
 /*
 **

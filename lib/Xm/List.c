@@ -2718,7 +2718,7 @@ SetDefaultSize(XmListWidget lw,
 	       Boolean reset_max_width,
 	       Boolean reset_max_height)
 {
-  int visheight, wideborder, viz;
+  int visheight, wideborder, viz, max_height = 0;
   XFontStruct *fs = (XFontStruct *)NULL;
 
   wideborder = 2 * (lw->primitive.shadow_thickness +
@@ -2735,14 +2735,13 @@ SetDefaultSize(XmListWidget lw,
   if (lw->list.itemCount == 0)
     {
 #if USE_XFT
-      int height = 0;
+      XmRenderTableGetDefaultFontExtents(lw->list.font, &max_height, NULL, NULL);
 
-      XmRenderTableGetDefaultFontExtents(lw->list.font, &height, NULL, NULL);
-
-      lw->list.MaxItemHeight = (Dimension)height;
+      lw->list.MaxItemHeight = (Dimension)max_height;
       if (lw->list.MaxItemHeight == 0)
         lw->list.MaxItemHeight = 1;
 #else
+      (void)max_height;
       if (XmeRenderTableGetDefaultFont(lw->list.font, &fs))
 	lw->list.MaxItemHeight = fs->ascent + fs->descent;
       else

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSarVal.c /main/13 1997/12/06 16:14:16 cshi $"
@@ -156,11 +156,11 @@ yystype	    *keyword_frame;
     target_frame->b_tag = sar_k_token_frame;
     target_frame->b_type = NAME;
 
-    /* 
+    /*
     ** insert the keyword name into the symbol table
     */
 
-    name_entry = 
+    name_entry =
 	sym_insert_name
 	    ( keyword_frame->value.az_keyword_entry->b_length,
 	      keyword_frame->value.az_keyword_entry->at_name );
@@ -231,7 +231,7 @@ yystype	    *id_frame;
 
     if (id_frame->b_type != NAME)
     {
-	name_entry = 
+	name_entry =
 	    sym_find_name
 		( id_frame->value.az_keyword_entry->b_length,
 		  id_frame->value.az_keyword_entry->at_name );
@@ -256,7 +256,7 @@ yystype	    *id_frame;
 		source_type = sym_k_argument_value;
 
 		/*
-		** Indicate that this argument is used so we can later 
+		** Indicate that this argument is used so we can later
 		** generate appropriate compression code for it.
 		** If this argument has a related argument, also mark it as
 		** being used so we can later generate its comprssion code.
@@ -275,7 +275,7 @@ yystype	    *id_frame;
 
 	    case REASON_NAME:
 		source_type = sym_k_reason_value;
-		uil_reas_compr[id_frame->value.az_keyword_entry->b_subclass] 
+		uil_reas_compr[id_frame->value.az_keyword_entry->b_subclass]
 		    = 1;
 		break;
 
@@ -288,7 +288,7 @@ yystype	    *id_frame;
 		_assert( FALSE, "unexpected token" );
 	    }
 
-	    value_entry = 
+	    value_entry =
 		sem_create_value_entry
 		    ( (char*)&(id_frame->value.az_keyword_entry), sizeof(long),
 		     source_type );
@@ -297,7 +297,7 @@ yystype	    *id_frame;
 		value_entry->b_enumeration_value_code = enum_code;
 		_assert (( (enum_code > 0) && (enum_code <= uil_max_enumval) ),
 			"Enumeration code out of range");
-		value_entry->value.l_integer = 
+		value_entry->value.l_integer =
 		    enumval_values_table[enum_code];
 	    }
 
@@ -312,7 +312,7 @@ yystype	    *id_frame;
 	id_frame->value.az_symbol_entry = (sym_entry_type *) name_entry;
     }
 
-    /* 
+    /*
     ** first check if the name entry points to a value.
     ** If the value_entry is NULL, this is a forward reference.
     */
@@ -331,7 +331,7 @@ yystype	    *id_frame;
 	return;
     }
 
-    if (value_entry->header.b_tag != sym_k_value_entry && 
+    if (value_entry->header.b_tag != sym_k_value_entry &&
 	value_entry->header.b_tag != sym_k_widget_entry)
     {
 	diag_issue_diagnostic
@@ -342,7 +342,7 @@ yystype	    *id_frame;
 	goto error_path;
     }
 
-    /* 
+    /*
     ** set up the target frame
     */
 
@@ -409,7 +409,7 @@ yystype	    * id_frame;
 	case NAME:
 	    return;
 
-    /* 
+    /*
     ** make the keyword into a name and insert it into the symbol table
     */
 
@@ -418,7 +418,7 @@ yystype	    * id_frame;
 	case COLOR_NAME:
 	case REASON_NAME:
 	case CHILD_NAME:
-	    
+
 	    id_frame->b_type = NAME;
 
 	    id_frame->value.az_symbol_entry =
@@ -461,7 +461,7 @@ yystype	    * id_frame;
 **
 **  SIDE EFFECTS:
 **
-**      
+**
 **
 **--
 **/
@@ -503,7 +503,7 @@ yystype	    *parse_frame;
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function takes a token frame for a value and converts it 
+**      This function takes a token frame for a value and converts it
 **	into a value frame.
 **
 **  FORMAL PARAMETERS:
@@ -528,7 +528,7 @@ yystype	    *parse_frame;
 **
 **  SIDE EFFECTS:
 **
-**      
+**
 **
 **--
 **/
@@ -589,7 +589,7 @@ int	    arg_type;
     case sym_k_xbitmapfile_value:
     case sym_k_keysym_value:
     case sym_k_class_rec_name_value:
-	/* 
+	/*
 	** transform the char 8 value entry into one for this
 	** special type.  Before doing this, we need to insure
 	** that the char 8 value is not in error or non private.
@@ -622,10 +622,10 @@ int	    arg_type;
 	    value_entry->obj_header.b_flags = sym_m_private;
 
 	    /* save the arg type for arguments */
-	    if (value_type == sym_k_argument_value) 
+	    if (value_type == sym_k_argument_value)
 		value_entry->b_arg_type = arg_type;
 	    }
-	
+
 	break;
 
     case sym_k_bool_value:
@@ -642,7 +642,7 @@ int	    arg_type;
     case sym_k_integer_table_value:
     case sym_k_asciz_table_value:
     case sym_k_trans_table_value:
-    case sym_k_string_table_value: 
+    case sym_k_string_table_value:
     case sym_k_rgb_value:
 
     {
@@ -657,7 +657,7 @@ int	    arg_type;
 	    sem_create_value_entry
 		(0, 0, value_type );
 	value_entry->az_first_table_value = table_entry;
-	
+
 
 	/*  Get the count of elements in the table. Resets table_entry */
 
@@ -740,7 +740,7 @@ int         arg_type;
 **
 **  SIDE EFFECTS:
 **
-**      
+**
 **
 **--
 **/
@@ -806,11 +806,11 @@ yystype	    *comma_frame;
 	    if (value_entry->obj_header.az_name != NULL)
 		{
 		sym_value_entry_type	*value_save;
-		
+
 		if ( (value_frame->b_flags & sym_m_forward_ref) != 0)
 		    {
 		    value_entry->obj_header.b_flags = sym_m_private;
-		    value_entry->b_expr_opr = sym_k_valref_op;	
+		    value_entry->b_expr_opr = sym_k_valref_op;
 		    sym_make_value_forward_ref
 			(value_frame,
 			 (char*)&(value_entry->az_exp_op1),
@@ -838,12 +838,12 @@ yystype	    *comma_frame;
 	    if (value_entry->obj_header.az_name != NULL)
 		{
 		sym_value_entry_type	*value_save;
-		
+
 		if ( (value_frame->b_flags & sym_m_forward_ref) != 0)
 		    {
 		    value_entry->obj_header.b_flags = sym_m_private;
 		    value_entry->b_type = sym_k_compound_string_value;
-		    value_entry->b_expr_opr = sym_k_coerce_op;	
+		    value_entry->b_expr_opr = sym_k_coerce_op;
 		    sym_make_value_forward_ref
 			(value_frame,
 			 (char*)&(value_entry->az_exp_op1),
@@ -863,14 +863,14 @@ yystype	    *comma_frame;
 		    }
 		}
 	    break;
-	    
+
 	default:
 	    _assert ( FALSE, "unknown table type found");
 	}
 
-    /*	
+    /*
     ** Prepend the value to the table.  The table elements will be
-    ** in reverse order.  
+    ** in reverse order.
     */
     value_entry->b_aux_flags |= sym_m_table_entry;
     value_entry->az_next_table_value = table_entry;
@@ -881,7 +881,7 @@ yystype	    *comma_frame;
     _sar_save_source_info ( &value_entry->header, comma_frame, value_frame);
 
     value_entry->header.b_type = value_frame->b_source_pos;
-	
+
     /*
     ** make the target frame a value frame
     */
@@ -960,8 +960,8 @@ char	    *error_text;
 **  FORMAL PARAMETERS:
 **
 **      operator_frame	[in/out] pointer to resultant value stack frame
-**      op1_frame	[in] pointer to operand 1 value frame 
-**      op2_frame	[in] pointer to operand 2 value frame 
+**      op1_frame	[in] pointer to operand 1 value frame
+**      op2_frame	[in] pointer to operand 2 value frame
 **
 **  IMPLICIT INPUTS:
 **
@@ -1074,7 +1074,7 @@ yystype	    *op2_frame;
     **	Verify that both operands are private values
     */
 
-    if ((op1_frame->b_flags & sym_m_private) == 0) 
+    if ((op1_frame->b_flags & sym_m_private) == 0)
 	{
 	op1_state = k_op_state_error;
 	diag_issue_diagnostic
@@ -1082,14 +1082,14 @@ yystype	    *op2_frame;
 		_sar_source_position (op1_frame),
 		value1_entry->obj_header.az_name->c_text );
 	}
-    if ((op2_frame->b_flags & sym_m_private) == 0) 
+    if ((op2_frame->b_flags & sym_m_private) == 0)
 	{
 	op2_state = k_op_state_error;
 	diag_issue_diagnostic
 		(d_nonpvt,
 		_sar_source_position (op2_frame),
 		value2_entry->obj_header.az_name->c_text );
-	}	
+	}
 
     switch (op1_state + (op2_state<<2))
     {
@@ -1099,10 +1099,10 @@ yystype	    *op2_frame;
     **	attribute.
     */
     case k_op_state_simple + (k_op_state_simple<<2):
-	if ((value1_entry->b_charset == value2_entry->b_charset) 
+	if ((value1_entry->b_charset == value2_entry->b_charset)
 	    &&
 	    ((value1_entry->b_direction) == (value2_entry->b_direction))
-	    && 
+	    &&
 	    ((value1_entry->b_aux_flags & sym_m_separate) == 0))
 	    {
 	    target_entry = (sym_value_entry_type *)
@@ -1115,10 +1115,10 @@ yystype	    *op2_frame;
 	    {
 	    target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	    sem_append_str_to_cstr
-		(target_entry, 
+		(target_entry,
 		 value1_entry, (value1_entry->obj_header.az_name==NULL));
 	    sem_append_str_to_cstr
-		(target_entry, 
+		(target_entry,
 		 value2_entry, (value2_entry->obj_header.az_name==NULL));
 	    target_type  = sym_k_compound_string_value;
 	    }
@@ -1132,10 +1132,10 @@ yystype	    *op2_frame;
     case k_op_state_simple + (k_op_state_compound<<2):
 	target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	sem_append_str_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value1_entry, (value1_entry->obj_header.az_name==NULL));
 	sem_append_cstr_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value2_entry, (value2_entry->obj_header.az_name==NULL));
 	target_type  = sym_k_compound_string_value;
 	break;
@@ -1148,10 +1148,10 @@ yystype	    *op2_frame;
     case k_op_state_compound + (k_op_state_simple<<2):
 	target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	sem_append_cstr_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value1_entry, (value1_entry->obj_header.az_name==NULL));
 	sem_append_str_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value2_entry, (value2_entry->obj_header.az_name==NULL));
 	target_type  = sym_k_compound_string_value;
 	break;
@@ -1163,10 +1163,10 @@ yystype	    *op2_frame;
     case k_op_state_compound + (k_op_state_compound<<2):
 	target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	sem_append_cstr_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value1_entry, (value1_entry->obj_header.az_name==NULL));
 	sem_append_cstr_to_cstr
-	    (target_entry, 
+	    (target_entry,
 	     value2_entry, (value2_entry->obj_header.az_name==NULL));
 	target_type  = sym_k_compound_string_value;
 	break;
@@ -1307,14 +1307,14 @@ sym_value_entry_type	*value_entry;
     case SEPARATE:
     {
 	/*
-	**  If the value is a boolean, then just set the corresponding mask 
+	**  If the value is a boolean, then just set the corresponding mask
 	**  accordingly.
 	*/
 	if (value_entry->b_type == sym_k_bool_value)
 	  { if (value_entry->value.l_integer == TRUE)
-		target_frame->b_type |= sym_m_separate; 
+		target_frame->b_type |= sym_m_separate;
 	    else
-		target_frame->b_type &= ~sym_m_separate; 
+		target_frame->b_type &= ~sym_m_separate;
 	  }
 	break;
     }
@@ -1326,7 +1326,7 @@ sym_value_entry_type	*value_entry;
 	**  token frame, the other is a value frame which points to a
 	**  char8 string value in the symbol table that represents the charset.
 	*/
-	switch (value_frame->b_tag) 
+	switch (value_frame->b_tag)
 	{
 	    /*
 	    **  For token frames, acquire the charset from the keytable entry
@@ -1336,7 +1336,7 @@ sym_value_entry_type	*value_entry;
 	    case sar_k_token_frame:
 	        {
 		key_keytable_entry_type	*keyword_entry;
-		
+
 		keyword_entry = (key_keytable_entry_type *)
 		    value_frame->value.az_keyword_entry;
 		target_frame->b_tag = sar_k_token_frame;
@@ -1445,7 +1445,7 @@ yystype	    *keyword_frame;
 	*/
 	cstr_entry->b_direction = attr_frame->b_direction;
 	cstr_entry->b_aux_flags |= (attr_frame->b_type & sym_m_separate);
-	    
+
 	/*
 	**  If the symbol_entry pointer is not null then a charset was
 	**  specified for this CS,  just copy the b_charset and
@@ -1454,7 +1454,7 @@ yystype	    *keyword_frame;
 	if ((attr_frame->value.az_symbol_entry) != 0)
 	    {
 	    sym_value_entry_type	* az_value_entry;
-	    
+
 	    az_value_entry = (sym_value_entry_type *)
 	        attr_frame->value.az_symbol_entry;
 	    cstr_entry->b_charset = az_value_entry->b_charset;
@@ -1467,7 +1467,7 @@ yystype	    *keyword_frame;
 
     case sar_k_token_frame:
 	if ((attr_frame->b_charset) != 0)
-	    cstr_entry->b_charset = 
+	    cstr_entry->b_charset =
 	        sem_map_subclass_to_charset (attr_frame->b_charset);
 	cstr_entry->b_direction = attr_frame->b_direction;
 	cstr_entry->b_aux_flags |= (attr_frame->b_type & sym_m_separate);
@@ -1547,12 +1547,12 @@ yystype	    *keyword_frame;
   XmStringDirection		dir;
   XmDirection			lay_dir;
   XmString			cstr_r = NULL;
-  
+
   _assert(type_frame->b_tag == sar_k_token_frame,
 	  "value frame missing from stack" );
 
   /*
-   ** Make a compound string component. 
+   ** Make a compound string component.
    */
 
   cstr_entry = (sym_value_entry_type *) sem_create_cstr();
@@ -1562,26 +1562,26 @@ yystype	    *keyword_frame;
 
   enumval_code = type_entry->b_subclass;
   enumset_code = argument_enumset_table[sym_k_XmStringComponent_arg];
-  found = FALSE; 
+  found = FALSE;
   for (i = 0; i < enum_set_table[enumset_code].values_cnt; i++)
     if (enum_set_table[enumset_code].values[i] == enumval_code)
       {
 	found = TRUE;
 	break;
       }
-  
+
   if (found) type = enumval_values_table[enumval_code];
-  else 
+  else
     {
       diag_issue_diagnostic(d_arg_type,
 			    _sar_source_position(type_frame),
 			    uil_enumval_names[enumval_code],
 			    "compound_string_component",
 			    "XmStringComponentType");
-      
+
       type = XmSTRING_COMPONENT_UNKNOWN;
     }
-  
+
   switch (type)
     {
     case XmSTRING_COMPONENT_UNKNOWN:
@@ -1607,7 +1607,7 @@ yystype	    *keyword_frame;
 			      "non-NULL",
 			      "compound_string_component",
 			      "NULL or _MOTIF_DEFAULT_LOCALE");
-      else if (value_frame->b_type == CHARSET_NAME) 
+      else if (value_frame->b_type == CHARSET_NAME)
 	{
 	  cset_name =
 	    sem_charset_name((value_frame->value.az_keyword_entry)->b_subclass,
@@ -1632,7 +1632,7 @@ yystype	    *keyword_frame;
     case XmSTRING_COMPONENT_RENDITION_BEGIN:
     case XmSTRING_COMPONENT_RENDITION_END:
       str = "";
-      
+
       if (value_frame->b_tag == sar_k_null_frame)
 	diag_issue_diagnostic(d_arg_type,
 			      type_frame->az_source_record,
@@ -1649,7 +1649,7 @@ yystype	    *keyword_frame;
 			      tok_token_name_table[value_frame->b_type],
 			      "compound_string_component",
 			      diag_value_text(sym_k_char_8_value));
-      else 
+      else
 	{
 	  if (value_frame->b_type == CHARSET_NAME)
 	    {
@@ -1666,7 +1666,7 @@ yystype	    *keyword_frame;
 	    str = ((sym_value_entry_type *)
 		   (value_frame->value.az_symbol_entry))->value.c_value;
 	}
-      
+
       cstr_r = XmStringComponentCreate(type, strlen(str), (XtPointer)str);
       break;
 
@@ -1691,14 +1691,14 @@ yystype	    *keyword_frame;
 
 	  enumval_code = value_entry->b_subclass;
 	  enumset_code = argument_enumset_table[sym_k_XmNstringDirection_arg];
-	  found = FALSE; 
+	  found = FALSE;
 	  for (i = 0; i < enum_set_table[enumset_code].values_cnt; i++)
 	    if (enum_set_table[enumset_code].values[i] == enumval_code)
 	      {
 		found = TRUE;
 		break;
 	      }
-  
+
 	  if (found) dir = enumval_values_table[enumval_code];
 	  else
 	    {
@@ -1707,7 +1707,7 @@ yystype	    *keyword_frame;
 				    uil_enumval_names[enumval_code],
 				    "compound_string_component",
 				    "XmStringDirection");
-      
+
 	      dir = XmSTRING_DIRECTION_L_TO_R;
 	    }
 	}
@@ -1736,14 +1736,14 @@ yystype	    *keyword_frame;
 
 	  enumval_code = value_entry->b_subclass;
 	  enumset_code = argument_enumset_table[sym_k_XmNlayoutDirection_arg];
-	  found = FALSE; 
+	  found = FALSE;
 	  for (i = 0; i < enum_set_table[enumset_code].values_cnt; i++)
 	    if (enum_set_table[enumset_code].values[i] == enumval_code)
 	      {
 		found = TRUE;
 		break;
 	      }
-  
+
 	  if (found) lay_dir = enumval_values_table[enumval_code];
 	  else
 	    {
@@ -1752,7 +1752,7 @@ yystype	    *keyword_frame;
 				    uil_enumval_names[enumval_code],
 				    "compound_string_component",
 				    "XmDirection");
-      
+
 	      lay_dir = XmLEFT_TO_RIGHT;
 	    }
 	}
@@ -2030,7 +2030,7 @@ yystype	    *token_frame;
 
     _assert( token_frame->b_tag == sar_k_token_frame, "token frame missing" );
 
-    /* 
+    /*
     ** Need to create a value entry and mark it as imported.
     ** The b_type field of the token has been set to the type of value
     ** by a prior grammar reduction
@@ -2045,7 +2045,7 @@ yystype	    *token_frame;
     value_entry->b_type = token_frame->b_type;
     value_entry->obj_header.b_flags = sym_m_imported;
 
-    /* 
+    /*
     ** set up the target frame
     */
 
@@ -2104,7 +2104,7 @@ yystype	    *semi_frame;
     _assert( id_frame->b_tag == sar_k_token_frame, "id frame missing" );
     _assert( value_frame->b_tag == sar_k_value_frame, "value frame missing" );
 
-    /* 
+    /*
     ** First we check on the name to see if it has been previously used.
     ** This function returns NULL if name cannot be used, in which case
     ** processing is over.
@@ -2137,7 +2137,7 @@ yystype	    *semi_frame;
 
 	    saved_value_entry_ptr = value_entry;
 
-	    value_entry = 
+	    value_entry =
 		    sem_create_value_entry ("",0,sym_k_any_value);
 
 	    value_entry->b_expr_opr = sym_k_valref_op;
@@ -2149,10 +2149,10 @@ yystype	    *semi_frame;
 	    */
 
     	    if ((value_frame->b_flags & sym_m_forward_ref) != 0)
-		sym_make_value_forward_ref (value_frame, 
+		sym_make_value_forward_ref (value_frame,
 		(char*)&(value_entry->az_exp_op1), sym_k_patch_add);
 	    else
-	        value_entry->az_exp_op1 = 
+	        value_entry->az_exp_op1 =
 		    saved_value_entry_ptr;
 	}
 
@@ -2166,7 +2166,7 @@ yystype	    *semi_frame;
     */
 
     value_entry->obj_header.az_name = name_entry;
-    value_entry->obj_header.b_flags = 
+    value_entry->obj_header.b_flags =
       (value_entry->obj_header.b_flags & clear_class_mask) | flags;
 
     name_entry->az_object = (sym_entry_type *) value_entry;
@@ -2235,7 +2235,7 @@ XmConst yystype	    *id_frame;
 
     _assert( id_frame->b_tag == sar_k_token_frame, "arg1 not id frame" );
 
-    /* 
+    /*
     ** The id frame may hold a name or the keyword for a font name, color
     ** name, reason name etc.  If it is one of these special name, then
     ** we insert the special name in the symbol table as a name.  This has
@@ -2249,8 +2249,8 @@ XmConst yystype	    *id_frame;
 	( d_override_builtin,
 	 _sar_source_position( id_frame ),
 	 id_frame->value.az_keyword_entry->at_name);
-      
-      name_entry = 
+
+      name_entry =
 	sym_insert_name
 	  ( id_frame->value.az_keyword_entry->b_length,
 	   id_frame->value.az_keyword_entry->at_name );
@@ -2299,7 +2299,7 @@ XmConst yystype	    *id_frame;
 **
 **      value		pointer to value
 **      length		length of the value in bytes
-**      value_type	type of value to create 
+**      value_type	type of value to create
 **
 **  IMPLICIT INPUTS:
 **
@@ -2365,7 +2365,7 @@ int	    value_type;
     value_entry->az_charset_value = NULL;
     value_entry->az_next_table_value = NULL;
     value_entry->value.l_integer = 0;
-    if ((value_type == sym_k_char_8_value || 
+    if ((value_type == sym_k_char_8_value ||
 	value_type == sym_k_font_value ||
 	value_type == sym_k_fontset_value ||
 	value_type == sym_k_keysym_value ||
@@ -2375,22 +2375,22 @@ int	    value_type;
 	(length > 0))
 	{
 	value_entry->value.c_value = (char *) XtCalloc(1,length);
-	_move( value_entry->value.c_value, value, length );
+	memmove( value_entry->value.c_value, value, length );
 	}
     else if (value_type == sym_k_compound_string_value  && (length > 0))
       {
 	value_entry->value.xms_value = (XmString) XtCalloc(1,length);
-	_move( value_entry->value.xms_value, value, length );
+	memmove( value_entry->value.xms_value, value, length );
       }
     else
 	if ( length > 0 )
-	    _move( &(value_entry->value.c_value), value, length );
+	    memmove( &(value_entry->value.c_value), value, length );
 
     /* For enumerations which accept boolean values */
     if (value_type == sym_k_bool_value)
       value_entry->b_enumeration_value_code =
 	(*value) ? sym_k_TRUE_enumval : sym_k_FALSE_enumval;
-	
+
     return value_entry;
 }
 
@@ -2457,7 +2457,7 @@ XmConst yystype	    *semi_frame;
 
     value_entry = sem_create_value_entry ( ptr, len, sym_k_identifier_value );
 
-    _move (value_entry->value.c_value, ptr, len);
+    memmove (value_entry->value.c_value, ptr, len);
 
     value_entry->obj_header.b_flags |= sym_m_private;
 
@@ -2543,7 +2543,7 @@ yystype	    *keyword_frame;
     switch (prior_target_frame->b_tag)
     {
     case sar_k_null_frame:
-	font_table_entry = 
+	font_table_entry =
 	    sem_create_value_entry ((char*)&font_item, sizeof(long),
 				    sym_k_font_table_value);
 	font_table_entry->b_table_count = 1;
@@ -2563,7 +2563,7 @@ yystype	    *keyword_frame;
 	    font_item->b_expr_opr = sym_k_valref_op;
 	    font_item->az_exp_op1 = font_save;
 	  }
-	
+
 	font_table_entry->az_first_table_value = font_item;
 
 	break;
@@ -2576,9 +2576,9 @@ yystype	    *keyword_frame;
 	font_table_entry = (sym_value_entry_type *)
 	    prior_target_frame->value.az_symbol_entry;
 	for (count = 0,
-	     last_font_item = font_table_entry->az_first_table_value;  
+	     last_font_item = font_table_entry->az_first_table_value;
 
-	     last_font_item->az_next_table_value != NULL;  
+	     last_font_item->az_next_table_value != NULL;
 
 	     last_font_item =
 	         last_font_item->az_next_table_value)
@@ -2701,7 +2701,7 @@ yystype	    *font_frame;
     case sym_k_fontset_value:
     {
 	int	charset;
-	
+
 	charset = font_value_entry->b_charset;
 
 	/*
@@ -2728,7 +2728,7 @@ yystype	    *font_frame;
 
 	    keyword_entry = (key_keytable_entry_type *)
 				charset_frame->value.az_keyword_entry;
-	    font_value_entry->b_charset = 
+	    font_value_entry->b_charset =
 		sem_map_subclass_to_charset( keyword_entry->b_subclass );
 	    break;
 	    }
@@ -2768,7 +2768,7 @@ yystype	    *font_frame;
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function builds a font value.  
+**      This function builds a font value.
 **
 **  FORMAL PARAMETERS:
 **
@@ -2816,7 +2816,7 @@ yystype	    *keyword_frame;
 
         if ((value_frame->b_flags & sym_m_forward_ref) != 0)
 	    sym_make_value_forward_ref (value_frame,
-	        (char*)&(font_value_entry->az_exp_op1), 
+	        (char*)&(font_value_entry->az_exp_op1),
 		sym_k_patch_add);
         else
 	    {
@@ -2824,7 +2824,7 @@ yystype	    *keyword_frame;
 	        (sym_value_entry_type *) value_frame->value.az_symbol_entry;
 	    font_value_entry->az_exp_op1 = value_entry;
 	    }
-	
+
 
 	/*
 	**  If the attr_frame is not null, it must be a value frame with contains
@@ -2853,7 +2853,7 @@ yystype	    *keyword_frame;
 
 	    keyword_entry = (key_keytable_entry_type *)
 		charset_frame->value.az_keyword_entry;
-	    font_value_entry->b_charset = 
+	    font_value_entry->b_charset =
 		sem_map_subclass_to_charset( keyword_entry->b_subclass );
 	    break;
 	    }
@@ -2881,7 +2881,7 @@ yystype	    *keyword_frame;
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function builds a fontset value.  
+**      This function builds a fontset value.
 **
 **  FORMAL PARAMETERS:
 **
@@ -2929,7 +2929,7 @@ yystype	    *keyword_frame;
 
         if ((value_frame->b_flags & sym_m_forward_ref) != 0)
 	    sym_make_value_forward_ref (value_frame,
-	        (char*)&(font_value_entry->az_exp_op1), 
+	        (char*)&(font_value_entry->az_exp_op1),
 		sym_k_patch_add);
         else
 	    {
@@ -2937,7 +2937,7 @@ yystype	    *keyword_frame;
 	        (sym_value_entry_type *) value_frame->value.az_symbol_entry;
 	    font_value_entry->az_exp_op1 = value_entry;
 	    }
-	
+
 
 	/*
 	**  If the attr_frame is not null, it must be a value frame with contains
@@ -2966,7 +2966,7 @@ yystype	    *keyword_frame;
 
 	    keyword_entry = (key_keytable_entry_type *)
 		charset_frame->value.az_keyword_entry;
-	    font_value_entry->b_charset = 
+	    font_value_entry->b_charset =
 		sem_map_subclass_to_charset( keyword_entry->b_subclass );
 	    break;
 	    }
@@ -2996,7 +2996,7 @@ yystype	    *keyword_frame;
 **
 **      This function builds a color item which is a temporary respository
 **	to hold data for a single color to be placed in a color table.  The
-**	color item is deleted when the color table is built by 
+**	color item is deleted when the color table is built by
 **	sar_make_color_table.
 **
 **  FORMAL PARAMETERS:
@@ -3238,7 +3238,7 @@ yystype	    *prior_target_frame;
 
     /*
     **	Need to verify that the letter associated with the current color
-    **	item is unique. 
+    **	item is unique.
     */
 
     switch (item_frame->b_tag)
@@ -3250,15 +3250,15 @@ yystype	    *prior_target_frame;
 	item_entry =
 	    (sym_color_item_entry_type *) item_frame->value.az_symbol_entry;
 
-	for (next_item_entry = prior_item_entry;  
-	     next_item_entry != NULL;  
+	for (next_item_entry = prior_item_entry;
+	     next_item_entry != NULL;
 	     next_item_entry = next_item_entry->az_next)
 	    if (next_item_entry->b_letter == item_entry->b_letter)
 	    {
 	    	diag_issue_diagnostic
 		    ( d_dup_letter,
 		      _sar_source_position( item_frame ) );
-	    
+
 		return;
 	    }
 
@@ -3342,8 +3342,8 @@ yystype	    *keyword_frame;
 	index = 1;
 
 	for (next_item_entry =
-	     (sym_color_item_entry_type *) list_frame->value.az_symbol_entry;  
-	     next_item_entry != NULL;  
+	     (sym_color_item_entry_type *) list_frame->value.az_symbol_entry;
+	     next_item_entry != NULL;
 	     next_item_entry = next_item_entry->az_next)
 	{
 	    count++;
@@ -3360,7 +3360,7 @@ yystype	    *keyword_frame;
 		break;
 	    }
 	}
-	
+
 	if (index >= sym_k_max_color_count)
 	{
 	   diag_issue_diagnostic
@@ -3387,19 +3387,19 @@ yystype	    *keyword_frame;
 
 	for (index = 0,
 	     next_item_entry = (sym_color_item_entry_type *)
-	         list_frame->value.az_symbol_entry;  
-	     next_item_entry != NULL;  
+	         list_frame->value.az_symbol_entry;
+	     next_item_entry != NULL;
 	     index++ )
 	    {
 	    sym_color_item_entry_type	*temp;
-	    
+
 	    color_table_entry->value.z_color[index].b_index =
-		next_item_entry->b_index;	    
+		next_item_entry->b_index;
 	    color_table_entry->value.z_color[index].b_letter =
-		next_item_entry->b_letter;	    
+		next_item_entry->b_letter;
 	    color_table_entry->value.z_color[index].az_color =
-		next_item_entry->az_color;	    
-	    
+		next_item_entry->az_color;
+
 	    temp = next_item_entry;
 	    next_item_entry = next_item_entry->az_next;
 	    sem_free_node(( sym_entry_type *) temp );
@@ -3506,7 +3506,7 @@ yystype	    *keyword_frame;
 	_assert( FALSE, "monochrome info missing" );
     }
 
-    /* 
+    /*
     ** Transform the char 8 value entry into a color value.
     ** Before doing this, we need to insure that the string
     ** is not in error or named.
@@ -3514,8 +3514,8 @@ yystype	    *keyword_frame;
 
     _assert( color_frame->b_tag == sar_k_value_frame, "value missing" );
 
-	color_entry = 
-	    sem_create_value_entry 
+	color_entry =
+	    sem_create_value_entry
 		( "",
 		  0,
 		  sym_k_color_value );
@@ -3526,7 +3526,7 @@ yystype	    *keyword_frame;
 
         if ((color_frame->b_flags & sym_m_forward_ref) != 0)
 	    sym_make_value_forward_ref (color_frame,
-	        (char*)&(color_entry->az_exp_op1), 
+	        (char*)&(color_entry->az_exp_op1),
 		sym_k_patch_add);
         else
 	    {
@@ -3639,8 +3639,8 @@ yystype	    *keyword_frame;
 		     */
                     diag_issue_diagnostic
                         ( d_wrong_type,
-                          _sar_source_position(table_frame),  
-                          diag_value_text(table_entry->b_type), 
+                          _sar_source_position(table_frame),
+                          diag_value_text(table_entry->b_type),
                           diag_value_text(sym_k_color_table_value) );
 /* END OSF Fix CR 5421 */
 
@@ -3681,8 +3681,8 @@ yystype	    *keyword_frame;
 		(sym_value_entry_type *) list_frame->value.az_symbol_entry,
 	     head_row_entry = NULL;
 
-	     row_entry != NULL;  
-	    
+	     row_entry != NULL;
+
 	     temp_row_entry = row_entry,
 	     row_entry = row_entry->az_next_table_value,
 	     temp_row_entry->az_next_table_value =
@@ -3693,8 +3693,8 @@ yystype	    *keyword_frame;
 	for (row_entry = head_row_entry,
 	     width = row_entry->w_length;
 
-	     row_entry != NULL;  
-	    
+	     row_entry != NULL;
+
 	     row_entry = row_entry->az_next_table_value)
 	{
 /* BEGIN OSF Fix CR 5420 */
@@ -3729,7 +3729,7 @@ yystype	    *keyword_frame;
 	}
 	break;
     }
-	
+
     default:
 	_assert( FALSE, "row list missing" );
     }
@@ -3744,7 +3744,7 @@ yystype	    *keyword_frame;
 
 	target_type = sym_k_error_value;
     }
-   
+
     if (height > sym_k_max_list_count)
     {
 	diag_issue_diagnostic
@@ -3755,7 +3755,7 @@ yystype	    *keyword_frame;
 
 	target_type = sym_k_error_value;
     }
-   
+
 
     /*
     **	If we have no errors, allocate the icon
@@ -3850,7 +3850,7 @@ static sym_value_entry_type	*standard_color_table()
 	color_table->value.z_color[0].b_letter = ' ';
 	color_table->value.z_color[0].az_color =
 	    (sym_value_entry_type *) URMColorTableBG;
-	    
+
 	color_table->value.z_color[1].b_index = URMColorTableFG;
 	color_table->value.z_color[1].b_letter = '*';
 	color_table->value.z_color[1].az_color =

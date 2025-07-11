@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -33,7 +33,7 @@
 #include <Xm/IconButton.h>
 
 /*
- * The bits for the default folder images. 
+ * The bits for the default folder images.
  */
 
 #define open_file_width 12
@@ -94,7 +94,7 @@ static void ToggleNodeState(Widget, XtPointer, XtPointer);
  * Type Converters
  ******************/
 
-static Boolean CvtStringToNodeState(Display *, XrmValuePtr, Cardinal *, 
+static Boolean CvtStringToNodeState(Display *, XrmValuePtr, Cardinal *,
 				    XrmValuePtr, XrmValuePtr, XtPointer *);
 
 /*********************
@@ -269,7 +269,7 @@ static XtResource resources[] =
     /* destroy			*/	Destroy,
     /* resize			*/	NULL,
     /* expose			*/	NULL,
-    /* set_values		*/	SetValues,  
+    /* set_values		*/	SetValues,
     /* set_values_hook		*/	NULL,
     /* set_values_almost	*/	XtInheritSetValuesAlmost,
     /* get_values_hook		*/	NULL,
@@ -286,25 +286,25 @@ static XtResource resources[] =
     /* change_managed     */      XtInheritChangeManaged,
     /* insert_child       */      InsertChild,
     /* delete_child       */      XtInheritDeleteChild,
-    /* extension          */      NULL,                                     
+    /* extension          */      NULL,
    },
    {		/* constraint_class fields */
     /* resource list        */         (XtResource*)constraints,
-    /* num resources        */         XtNumber(constraints),	
+    /* num resources        */         XtNumber(constraints),
     /* constraint size      */         sizeof(XmHierarchyConstraintRec),
     /* init proc            */         ConstraintInitialize,
     /* destroy proc         */         ConstraintDestroy,
     /* set values proc      */         ConstraintSetValues,
-    /* extension            */         NULL, 
+    /* extension            */         NULL,
    },
    {		/* manager_class fields */
-    /* default translations   */      XtInheritTranslations,	
+    /* default translations   */      XtInheritTranslations,
     /* syn_resources          */      get_resources,
     /* num_syn_resources      */      XtNumber(get_resources),
     /* syn_cont_resources     */      NULL,
     /* num_syn_cont_resources */      0,
     /* parent_process         */      XmInheritParentProcess,
-    /* extension	      */      NULL,	
+    /* extension	      */      NULL,
    },
   { /* Hierarchy fields */
       ChangeNodeState,		/* The function for changing the node state. */
@@ -332,7 +332,7 @@ WidgetClass xmHierarchyWidgetClass = (WidgetClass) &xmHierarchyClassRec;
  */
 
 /*ARGSUSED*/
-static void 
+static void
 ClassInit()
 {
     XmHierarchyClassRec* wc = &xmHierarchyClassRec;
@@ -351,25 +351,25 @@ static void
 ClassPartInitialize(WidgetClass class)
 {
     XmHierarchyWidgetClass superC, wc = (XmHierarchyWidgetClass) class;
-    
+
     _XmProcessLock();
     superC = (XmHierarchyWidgetClass)wc->core_class.superclass;
 
-/* 
+/*
  * We don't need to check for NULL super since we'll get to The functions
  * defined by the Hierarchy class eventually.
  */
 
-    if (wc->hierarchy_class.change_node_state == XtInheritChangeNodeState) 
+    if (wc->hierarchy_class.change_node_state == XtInheritChangeNodeState)
     {
 	wc->hierarchy_class.change_node_state =
 	                            superC->hierarchy_class.change_node_state;
     }
 
-    if (wc->hierarchy_class.map_node == XtInheritMapNode) 
+    if (wc->hierarchy_class.map_node == XtInheritMapNode)
 	wc->hierarchy_class.map_node = superC->hierarchy_class.map_node;
 
-    if (wc->hierarchy_class.unmap_node == XtInheritUnmapNode) 
+    if (wc->hierarchy_class.unmap_node == XtInheritUnmapNode)
 	wc->hierarchy_class.unmap_node = superC->hierarchy_class.unmap_node;
 
     if (wc->hierarchy_class.unmap_all_extra_nodes==XtInheritUnmapAllExtraNodes)
@@ -385,15 +385,15 @@ ClassPartInitialize(WidgetClass class)
     }
 
     if (wc->hierarchy_class.reset_open_close_button ==
-	XtInheritResetOpenCloseButton) 
+	XtInheritResetOpenCloseButton)
     {
-	wc->hierarchy_class.reset_open_close_button = 
+	wc->hierarchy_class.reset_open_close_button =
 	                      superC->hierarchy_class.reset_open_close_button;
     }
 
     if (wc->hierarchy_class.toggle_node_state == XtInheritToggleNodeState) {
 
-	wc->hierarchy_class.toggle_node_state = 
+	wc->hierarchy_class.toggle_node_state =
 	                            superC->hierarchy_class.toggle_node_state;
     }
     _XmProcessUnlock();
@@ -405,20 +405,20 @@ ClassPartInitialize(WidgetClass class)
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
     XmHierarchyWidget hw = (XmHierarchyWidget) set;
     HierarchyConstraints top_node;
     Window root = RootWindowOfScreen(XtScreen(set));
 
-    top_node = ((HierarchyConstraints) 
+    top_node = ((HierarchyConstraints)
 		XtMalloc(sizeof(HierarchyConstraintRec)));
 
     XmHierarchy_work_proc_id(hw) = (XtWorkProcId) NULL;
@@ -429,11 +429,11 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 
     /* make default folder button images */
 
-    XmHierarchy_def_open_folder(hw) = 
-      XCreateBitmapFromData(XtDisplay(set),root, (char *)open_file_bits, 
+    XmHierarchy_def_open_folder(hw) =
+      XCreateBitmapFromData(XtDisplay(set),root, (char *)open_file_bits,
 			    open_file_width, open_file_height);
-    
-    XmHierarchy_def_close_folder(hw) = 
+
+    XmHierarchy_def_close_folder(hw) =
       XCreateBitmapFromData(XtDisplay(set), root,(char *)close_file_bits,
 			    close_file_width, close_file_height);
 
@@ -457,7 +457,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  * This overrides the Manager's frobbing with various values.
  */
 
-static void 
+static void
 Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
 {
     XtCreateWindow (w, InputOutput, CopyFromParent, *valueMask, attributes);
@@ -472,7 +472,7 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
 static void
 Destroy(Widget w)
 {
-    XmHierarchyWidget hw = (XmHierarchyWidget) w;    
+    XmHierarchyWidget hw = (XmHierarchyWidget) w;
 
     if( XmHierarchy_work_proc_id(hw) != (XtWorkProcId) NULL )
     {
@@ -497,7 +497,7 @@ Destroy(Widget w)
  * This routine simply makes sure that no gadgets are added.
  */
 
-static void 
+static void
 InsertChild(Widget w)
 {
 
@@ -508,12 +508,12 @@ XtWidgetProc insert_child;
     _XmProcessLock();
     insert_child = ((CompositeWidgetClass) SUPERCLASS)->composite_class.insert_child;
     _XmProcessUnlock();
-    
+
    (*insert_child)(w);
 }
 
 /************************************************************
- * 
+ *
  * Functions for handling the Constraint resources.
  *
  ************************************************************/
@@ -530,7 +530,7 @@ XtWidgetProc insert_child;
 static void
 ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
-    XmHierarchyWidget hw = (XmHierarchyWidget) XtParent(set);    
+    XmHierarchyWidget hw = (XmHierarchyWidget) XtParent(set);
     XmHierarchyWidgetClass hc = (XmHierarchyWidgetClass) XtClass(hw);
     HierarchyConstraints node = GetNodeInfo(set);
 
@@ -562,7 +562,7 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 
         (*reset_open_close_button)((Widget) hw, node);
 
-	if (XmHierarchyC_parent(node) == NULL) 
+	if (XmHierarchyC_parent(node) == NULL)
 	    AddChild(XmHierarchy_top_node(hw), node);
 	else
 	    AddChild(GetNodeInfo(XmHierarchyC_parent(node)), node);
@@ -570,7 +570,7 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 }
 
 /*	Function Name: ConstraintDestroy
- *	Description:   Destroys all data allocated by the constriaint 
+ *	Description:   Destroys all data allocated by the constriaint
  *                     record.
  *	Arguments:     w - the widget.
  *	Returns:       none.
@@ -580,8 +580,8 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * DANGER DANGER DANGER
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * 
- * This code exercises a bug in the MIT R4 Xt Intrinsics 
+ *
+ * This code exercises a bug in the MIT R4 Xt Intrinsics
  * that will occur if a large number of widgets deleted from within
  * a ConstraintDestroy procedure or a Destroy Proceedure.
  *
@@ -593,7 +593,7 @@ ConstraintDestroy(Widget w)
     HierarchyConstraints node = GetNodeInfo(w);
     XmHierarchyWidget hw = (XmHierarchyWidget) XtParent(w);
 
-    if (XmHierarchyC_state(node) == XmNotInHierarchy) 
+    if (XmHierarchyC_state(node) == XmNotInHierarchy)
 	return;
 
     /*
@@ -629,10 +629,10 @@ ConstraintDestroy(Widget w)
 
     XtFree((char *) XmHierarchyC_children(node));
 }
-    
+
 /*	Function Name: RecursiveChildSetValues
- *	Description:   Gets the id of the old pixmap and then sets the 
- *                     folder buttons 
+ *	Description:   Gets the id of the old pixmap and then sets the
+ *                     folder buttons
  *	Arguments:     HierarchyConstraints node - current node
  *                     Pixmap open_folder - new open folder image
  *		       Pixmap close_folder - new close folder image
@@ -643,25 +643,25 @@ SetChildValues( HierarchyConstraints node, Pixmap open_folder,
 	       Pixmap close_folder )
 {
   Arg args[1];
-  Pixmap which = None;	
+  Pixmap which = None;
 
-  if (XmHierarchyC_state(node) == XmOpen) 
+  if (XmHierarchyC_state(node) == XmOpen)
   {
 	if ( (XmUNSPECIFIED_PIXMAP != XmHierarchyC_open_folder(node)) && XmHierarchyC_open_folder(node))
 		which = XmHierarchyC_open_folder(node);
-	else 
+	else
 		which = open_folder;	/* can be None */
-	XtSetArg(args[0], XmNpixmap, which ); 
+	XtSetArg(args[0], XmNpixmap, which );
 	XtSetValues(XmHierarchyC_open_close_button(node), args, 1 );
   }
-  else 
-  if (XmHierarchyC_state(node) == XmClosed) 
+  else
+  if (XmHierarchyC_state(node) == XmClosed)
   {
 	if ( (XmUNSPECIFIED_PIXMAP != XmHierarchyC_close_folder(node)) && XmHierarchyC_close_folder(node))
 		which = XmHierarchyC_close_folder(node);
-	else 
+	else
 		which = close_folder;	/* can be None */
-	XtSetArg(args[0], XmNpixmap, which ); 
+	XtSetArg(args[0], XmNpixmap, which );
 	XtSetValues(XmHierarchyC_open_close_button(node), args, 1 );
   }
 }
@@ -669,7 +669,7 @@ SetChildValues( HierarchyConstraints node, Pixmap open_folder,
 
 /*	Function Name: RecursiveChildSetValues
  *	Description:   Traverses the tree, and calls SetChildValues on each
- *                     node 
+ *                     node
  *	Arguments:     HierarchyConstraints curr_node
  *                     Pixmap open_folder
  *		       Pixmap close_folder
@@ -681,10 +681,10 @@ RecursiveSetChildValues( HierarchyConstraints curr_node, Pixmap open_folder,
 {
   HierarchyConstraints *curr_child;
   Cardinal num=0, i;
-  
+
   if (XmHierarchyC_widget(curr_node) != NULL)
     SetChildValues( curr_node, open_folder, close_folder );
-  
+
   if (XmHierarchyC_num_children(curr_node) == 0) return;
 
   curr_child = XmHierarchyC_children(curr_node);
@@ -698,24 +698,24 @@ RecursiveSetChildValues( HierarchyConstraints curr_node, Pixmap open_folder,
 
 
 /*	Function Name: SetValues
- *	Description:   Called when XtSetValues is called 
+ *	Description:   Called when XtSetValues is called
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       Boolean
  */
 /*ARGSUSED*/
-static Boolean 
-SetValues(Widget w, Widget request, Widget set, ArgList args, 
+static Boolean
+SetValues(Widget w, Widget request, Widget set, ArgList args,
 	  Cardinal *num_args)
 {
   XmHierarchyWidget setw = (XmHierarchyWidget)set;
 
   if (!LoadFolderImages( w, set )) return(False);
-  
-  RecursiveSetChildValues(XmHierarchy_top_node(setw), 
-			  XmHierarchy_open_folder(setw), 
+
+  RecursiveSetChildValues(XmHierarchy_top_node(setw),
+			  XmHierarchy_open_folder(setw),
 			  XmHierarchy_close_folder(setw));
   return(True);
 }
@@ -725,13 +725,13 @@ SetValues(Widget w, Widget request, Widget set, ArgList args,
  *	Description:   Called a constraint is changed on my children.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
 {
@@ -742,7 +742,7 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     Boolean insert_change = False;
     int i;
 
-    for (i = 0; i < *num_args; i++) 
+    for (i = 0; i < *num_args; i++)
 	if (streq(args[i].name, XmNinsertBefore)) {
 	    insert_change = True;
 	    break;
@@ -754,10 +754,10 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 	(insert_change))
     {
 	Widget parent = XmHierarchyC_parent(new_node);
-	
+
 	if (XmHierarchyC_parent(new_node) == set) {
 	    XmeWarning(set, XmNnodeParentIsSelfMsg);
-	    
+
 	    XmHierarchyC_parent(new_node) = XmHierarchyC_parent(old_node);
 	}
 	else {
@@ -766,18 +766,15 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 	     * the widget and our compare to see if exists in the parent
 	     * will fail.  So we store the new parent in a temp variable.
 	     * reset parent to the old one, then remove it from the old parent,
-	     * and finnally add it to the new parent.
+	     * and finally add it to the new parent.
 	     */
-	    
 	    XmHierarchyC_parent(new_node) = XmHierarchyC_parent(old_node);
 	    RemoveNodeFromParent(new_node);
 	    XmHierarchyC_parent(new_node) = parent;
 	    if (parent == NULL) {
-		XmHierarchyWidget hw = (XmHierarchyWidget) XtParent(set);
-		
 		AddChild(XmHierarchy_top_node(hw), new_node);
 	    }
-	    else 
+	    else
 		AddChild(GetNodeInfo(XmHierarchyC_parent(new_node)), new_node);
 	}
     }
@@ -793,7 +790,7 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
         _XmProcessLock();
         change_node_state = hc->hierarchy_class.change_node_state;
         _XmProcessUnlock();
-        
+
     	(*change_node_state)(new_node);
     }
 
@@ -807,8 +804,8 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     if ((XmHierarchyC_open_folder(new_node) != XmHierarchyC_open_folder(old_node))
 	|| (XmHierarchyC_close_folder(new_node) != XmHierarchyC_close_folder(old_node)) )
     		SetChildValues(new_node, XmHierarchy_open_folder(hw), XmHierarchy_close_folder(hw));
-	
-    return(False);   
+
+    return(False);
 }
 
 /*	Function Name: Change node state
@@ -829,7 +826,7 @@ ChangeNodeState(HierarchyConstraints node)
 	                   XtParent(XmHierarchyC_widget(node));
     XmHierarchyWidgetClass hc = (XmHierarchyWidgetClass) XtClass(hw);
     XmHierarchyNodeStateData node_data;
-    
+
     XmHierarchyNodeProc change_node_state;
     XmHierarchyResetButtonProc reset_open_close_button;
 
@@ -837,7 +834,7 @@ ChangeNodeState(HierarchyConstraints node)
     change_node_state = hc->hierarchy_class.change_node_state;
     reset_open_close_button = hc->hierarchy_class.reset_open_close_button;
     _XmProcessUnlock();
-    
+
 
     (*reset_open_close_button) (XtParent(XmHierarchyC_widget(node)), node);
 
@@ -863,7 +860,7 @@ ChangeNodeState(HierarchyConstraints node)
 }
 
 /*	Function Name: AncestorClosed
- *	Description: Returns true if the first non-hidden ancestor of 
+ *	Description: Returns true if the first non-hidden ancestor of
  *                   this widget is closed.
  *	Arguments: node - node to check.
  *	Returns: A Boolean
@@ -873,7 +870,7 @@ static Boolean
 AncestorClosed(HierarchyConstraints node)
 {
     while ((XmHierarchyC_parent(node) != NULL) &&
-	   (XmHierarchyC_state(node) == XmHidden)) 
+	   (XmHierarchyC_state(node) == XmHidden))
     {
 	node = GetNodeInfo(XmHierarchyC_parent(node));
     }
@@ -882,7 +879,7 @@ AncestorClosed(HierarchyConstraints node)
 }
 
 /*	Function Name: UnmapAllExtraNodes
- *	Description:   Correctly unmaps each node in the hierarchy that is 
+ *	Description:   Correctly unmaps each node in the hierarchy that is
  *                     currently compresed out.
  *	Arguments:     w - the ow.
  *                     node - node to work one.
@@ -907,9 +904,9 @@ UnmapAllExtraNodes(Widget w, HierarchyConstraints node)
 
     if (XmHierarchyC_status(node) & IS_COMPRESSED)
 	(*unmap_node)(node);
-	
+
     ptr = XmHierarchyC_children(node);
-    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, ptr++) 
+    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, ptr++)
 	(*unmap_extra)(w, *ptr);
 }
 
@@ -951,12 +948,12 @@ UnmapNode(HierarchyConstraints node)
 	XtSetMappedWhenManaged(XmHierarchyC_widget(node), False);
     }
 
-    if (XmHierarchyC_open_close_button(node) != NULL) 
+    if (XmHierarchyC_open_close_button(node) != NULL)
 	XtSetMappedWhenManaged(XmHierarchyC_open_close_button(node), False);
 }
-    
+
 /*	Function Name: _BuildNodeTable
- *	Description:   Recursive part of code that builds the table of 
+ *	Description:   Recursive part of code that builds the table of
  *                     nodes to display.
  *	Arguments:     w - the hw widget.
  *                     node - node to add.
@@ -969,8 +966,8 @@ _BuildNodeTable(Widget w, HierarchyConstraints node, Cardinal * current_index)
 {
     XmHierarchyWidget hw = (XmHierarchyWidget) w;
     register int i;
-    
-    if ((node == NULL) || ((XmHierarchyC_widget(node) != NULL) && 
+
+    if ((node == NULL) || ((XmHierarchyC_widget(node) != NULL) &&
 			   !XtIsManaged(XmHierarchyC_widget(node))))
     {
 	return;
@@ -978,15 +975,15 @@ _BuildNodeTable(Widget w, HierarchyConstraints node, Cardinal * current_index)
 
     if (XmHierarchyC_state(node) != XmHidden) {
 	XmHierarchyC_status(node) &= ~(IS_COMPRESSED); /* No longer compressed. */
-	
+
 	XmHierarchy_node_table(hw)[*current_index] = node;
 	(*current_index)++;
     }
 
     if (XmHierarchyC_state(node) == XmClosed)
 	return;
-	
-    for (i = 0; i < XmHierarchyC_num_children(node); i++) 
+
+    for (i = 0; i < XmHierarchyC_num_children(node); i++)
 	_BuildNodeTable(w, XmHierarchyC_children(node)[i], current_index);
 }
 
@@ -1003,7 +1000,7 @@ BuildNodeTable(Widget w, HierarchyConstraints node, Cardinal * current_index)
 {
     XmHierarchyWidget hw = (XmHierarchyWidget) w;
 
-    if ((XmHierarchy_node_table(hw) == NULL) || 
+    if ((XmHierarchy_node_table(hw) == NULL) ||
 	(XmHierarchy_alloc_nodes(hw) < hw->composite.num_children))
     {
 	/*
@@ -1020,7 +1017,7 @@ BuildNodeTable(Widget w, HierarchyConstraints node, Cardinal * current_index)
 
     _BuildNodeTable(w, node, current_index);
 }
- 
+
 /*	Function Name: ResetOpenCloseButton
  *	Description:   Creates or Destroys the Open/Close button
  *                     as appropriate.
@@ -1061,7 +1058,7 @@ ResetOpenCloseButton(Widget w, HierarchyConstraints node)
 		image = XmHierarchy_close_folder(hw);
 	break;
     }
-    
+
     num_args = 0;
     XtSetArg(args[num_args], XmNpixmap, image); num_args++;
 
@@ -1077,7 +1074,7 @@ ResetOpenCloseButton(Widget w, HierarchyConstraints node)
         XtSetArg(args[num_args], XmNnodeState, XmNotInHierarchy); num_args++;
 	XtSetArg(args[num_args], XmNiconPlacement, XmIconOnly); num_args++;
 
-	XmHierarchyC_open_close_button(node) = 
+	XmHierarchyC_open_close_button(node) =
 	    XtCreateManagedWidget("openAndClose", xmIconButtonWidgetClass,
 				  w, args, num_args);
 
@@ -1122,7 +1119,7 @@ ToggleNodeState ( Widget w,
 
     XmHierarchyNodeProc change_node_state;
 
-    _XmProcessLock();    
+    _XmProcessLock();
     change_node_state = hc->hierarchy_class.change_node_state;
     _XmProcessUnlock();
 	/*
@@ -1153,7 +1150,7 @@ ToggleNodeState ( Widget w,
 		XmHierarchyC_state ( node ) = XmOpen;
 
 		(*change_node_state) ( (HierarchyConstraints) node );
-        
+
 	}
 	else
 		return;
@@ -1185,12 +1182,12 @@ ToggleNodeState ( Widget w,
  *                     fromVal - contains the string to convert.
  *                     toVal - contains the converted node state.
  *                     junk - *** UNUSED ***.
- *	Returns:       
+ *	Returns:
  */
 
 /*ARGSUSED*/
 static Boolean
-CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args, 
+CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 		     XrmValuePtr fromVal, XrmValuePtr toVal, XtPointer *junk)
 {
     static XmHierarchyNodeState type;
@@ -1199,7 +1196,7 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
     char lowerName[BUFSIZ];
-    
+
     if (!haveQuarks) {
 	XtQEAlwaysOpen = XrmStringToQuark("alwaysopen");
 	XtQEOpen = XrmStringToQuark("open");
@@ -1208,17 +1205,17 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 	XtQENotInHierarchy = XrmStringToQuark("notinhierarchy");
 	haveQuarks = TRUE;
     }
-    
+
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
-    
-    if (q == XtQEAlwaysOpen) 
+
+    if (q == XtQEAlwaysOpen)
 	type = XmAlwaysOpen;
-    else if (q == XtQEOpen) 
+    else if (q == XtQEOpen)
 	type = XmOpen;
-    else if (q == XtQEClosed) 
+    else if (q == XtQEClosed)
 	type = XmClosed;
-    else if (q == XtQEHidden) 
+    else if (q == XtQEHidden)
 	type = XmHidden;
     else if (q == XtQENotInHierarchy) 	/* note! shouldn't ever be needed */
 	type = XmNotInHierarchy;
@@ -1229,7 +1226,7 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     }
 
     toVal->size = sizeof(XmHierarchyNodeState);
-    
+
     if (toVal->addr == NULL) {
 	toVal->addr = (XtPointer) &type;
 	return(TRUE);
@@ -1259,7 +1256,7 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  *	Description: Loads the folder images.
  *	Arguments: w - the hierarchy widget.
  *	Returns: none.
- *     
+ *
  *      If the new image resource value is XmUNSPECIFIED_PIXMAP,
  *      the image is given the default value. If the image has
  *      changed return True, otherwise return False
@@ -1338,14 +1335,14 @@ AddChild(HierarchyConstraints parent, HierarchyConstraints child)
     if (parent == NULL)
 	return;
 
-    AddChildToList(&(XmHierarchyC_children(parent)), 
-		   &(XmHierarchyC_num_children(parent)), 
+    AddChildToList(&(XmHierarchyC_children(parent)),
+		   &(XmHierarchyC_num_children(parent)),
 		   &(XmHierarchyC_alloc(parent)), child);
 }
 
 /*	Function Name: AddChildToList
  *	Description: Adds a child the the specified list.
- *	Arguments: 
+ *	Arguments:
  * IN/OUT         list - pointer to the list of children to add child to.
  * IN/OUT         num - pointer to the number of children.
  * IN/OUT         alloc - the amount of space allocated for children.
@@ -1361,28 +1358,28 @@ AddChildToList(HierarchyConstraints ** list, Cardinal * num, Cardinal * alloc,
     HierarchyConstraints *l_child;
     SuccessType success = DONT_CARE;
     Widget insert_before = XmHierarchyC_insert_before(child);
-    
+
     if (*alloc <= *num) {
 	Cardinal size;
-	
+
 	(*alloc) += ALLOC_INC;
 	size = sizeof(HierarchyConstraints) * (*alloc);
 	*list = (HierarchyConstraints *) XtRealloc((XtPointer)*list, size);
     }
-    
+
     if (insert_before != NULL) {
 	success = NO;
-	
+
 	/*
 	 * Hunt for the sibling that matches the insert_before widget.
 	 */
-	
+
 	for (l_child = (*list) + (i = (*num - 1)); i >= 0; i--, l_child--)
 	    if (XmHierarchyC_widget(*l_child) == insert_before) {
 		/*
 		 * Bump each child down and then insert the new child.
 		 */
-		for (j = (*num - 1); j >= i; j--) 
+		for (j = (*num - 1); j >= i; j--)
 		    (*list)[j + 1] = (*list)[j];
 		(*list)[i] = child;
 
@@ -1390,19 +1387,17 @@ AddChildToList(HierarchyConstraints ** list, Cardinal * num, Cardinal * alloc,
 		break;
 	    }
     }
-    
+
     if (success == NO) {
 	String params[1];
-	Cardinal num = 1;
-
 	params[0] = XtName(XmHierarchyC_widget(child));
 	_XmWarningMsg(XmHierarchyC_widget(child), XmNinsertBeforeNotSibling,
-		XmNinsertBeforeNotSiblingMsg, params, num);
+		XmNinsertBeforeNotSiblingMsg, params, 1);
     }
-    
+
     if (success != YES)		/* Stick it on the end of the list. */
 	(*list)[*num] = child;
-    
+
     (*num)++; /* It always goes somewhere. */
 }
 
@@ -1435,7 +1430,7 @@ RemoveNodeFromParent(HierarchyConstraints node)
 
     if (XmHierarchyC_parent(node) == NULL) {
 	XmHierarchyWidget hw;
-	
+
 	hw = (XmHierarchyWidget) XtParent(XmHierarchyC_widget(node));
 	pnode = XmHierarchy_top_node(hw);
     }
@@ -1502,7 +1497,7 @@ XmHierarchyOpenAllAncestors(Widget nw)
     while ((parent = XmHierarchyC_parent(node)) != NULL) {
 	node = GetNodeInfo(parent);
 
-	if (XmHierarchyC_state(node) == XmClosed) 
+	if (XmHierarchyC_state(node) == XmClosed)
 	    XtSetValues(XmHierarchyC_widget(node), args, XtNumber(args));
     }
 

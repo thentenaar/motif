@@ -57,7 +57,7 @@ static void Resize(Widget), Destroy(Widget w);
 static Boolean SetValues(Widget, Widget, Widget, ArgList, Cardinal *);
 static void GetValuesHook(Widget, ArgList, Cardinal *);
 
-static XtGeometryResult GeometryManager(Widget, XtWidgetGeometry *, 
+static XtGeometryResult GeometryManager(Widget, XtWidgetGeometry *,
 					XtWidgetGeometry *);
 
 static XtResource resources[] =
@@ -225,7 +225,7 @@ static XtResource resources[] =
 
   {
     XmNselectionPolicy, XmCSelectionPolicy, XmRSelectionPolicy,
-    sizeof(unsigned char), 0, 
+    sizeof(unsigned char), 0,
     NULL, (XtPointer) NULL
   }
 #endif
@@ -252,13 +252,13 @@ XmMultiListClassRec xmMultiListClassRec = {
     /* class_name		*/	"XmMultiList",
     /* widget_size		*/	sizeof(XmMultiListRec),
     /* class_initialize		*/	ClassInitialize,
-    /* class_part_initialize */         ClassPartInitialize,	
+    /* class_part_initialize */         ClassPartInitialize,
     /* class_inited		*/	FALSE,
     /* initialize		*/	Initialize,
     /* initialize_hook		*/	NULL,
     /* realize			*/	XtInheritRealize,
-    /* actions			*/      NULL,	
-    /* num_actions		*/      (Cardinal)0,	
+    /* actions			*/      NULL,
+    /* num_actions		*/      (Cardinal)0,
     /* resources		*/	(XtResource*)resources,
     /* num_resources		*/	XtNumber(resources),
     /* xrm_class		*/	NULLQUARK,
@@ -284,27 +284,27 @@ XmMultiListClassRec xmMultiListClassRec = {
    {		/* composite_class fields */
     /* geometry_manager   */      GeometryManager,
     /* change_managed     */      ChangeManaged,
-    /* insert_child       */      XtInheritInsertChild,			
-    /* delete_child       */      XtInheritDeleteChild,			
-    /* extension          */      NULL,                                     
+    /* insert_child       */      XtInheritInsertChild,
+    /* delete_child       */      XtInheritDeleteChild,
+    /* extension          */      NULL,
    },
    {		/* constraint_class fields */
     /* resource list        */         NULL,
-    /* num resources        */         0,	
-    /* constraint size      */         0,	
+    /* num resources        */         0,
+    /* constraint size      */         0,
     /* destroy proc         */         NULL,
-    /* init proc            */         NULL,				    
-    /* set values proc      */         NULL,				       
-    /* extension            */         NULL, 
+    /* init proc            */         NULL,
+    /* set values proc      */         NULL,
+    /* extension            */         NULL,
    },
    {		/* manager_class fields */
-    /* default translations   */      XtInheritTranslations,	
+    /* default translations   */      XtInheritTranslations,
     /* syn_resources          */      syn_resources,
     /* num_syn_resources      */      XtNumber(syn_resources),
     /* syn_cont_resources     */      NULL,
     /* num_syn_cont_resources */      0,
     /* parent_process         */      NULL,
-    /* extension	      */      NULL,	
+    /* extension	      */      NULL,
    },
   { /* Extended List fields */
       NULL                      /* extension          */
@@ -330,13 +330,13 @@ ClassInitialize()
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /*ARGSUSED*/
-static void Initialize(Widget req, Widget set, 
+static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
     ArgList f_args;
@@ -346,28 +346,28 @@ static void Initialize(Widget req, Widget set,
     /*
      * Pass filtered setvalues requests down to all children.
      */
-    
+
     _XmFilterArgs(args, *num_args, xm_std_filter, &f_args, &f_num_args);
 
 	XmMultiList_last_search(elist) = NULL;
     XmMultiList_ilist(elist) = NULL;
 
-    if (XmMultiList_title(elist) != NULL) 
+    if (XmMultiList_title(elist) != NULL)
 	XmMultiList_title(elist) = XmStringCopy(XmMultiList_title(elist));
 
-    if (XmMultiList_title_string(elist) != NULL) 
+    if (XmMultiList_title_string(elist) != NULL)
 	XmMultiList_title_string(elist) =
 	    XmStringCopy(XmMultiList_title_string(elist));
 
-    if (XmMultiList_find_label(elist) != NULL) 
+    if (XmMultiList_find_label(elist) != NULL)
 	XmMultiList_find_label(elist) = XmStringCopy(XmMultiList_find_label(elist));
-	else 
-	XmMultiList_find_label(elist) = 
+	else
+	XmMultiList_find_label(elist) =
 		XmStringGenerate(FIND_STRING, NULL, XmCHARSET_TEXT, NULL);
 
-    XmMultiList_title_wid(elist) = CreateTitle(set, 
-					    (XmMultiList_title_string(elist) ? 
-					     XmMultiList_title_string(elist) : 
+    XmMultiList_title_wid(elist) = CreateTitle(set,
+					    (XmMultiList_title_string(elist) ?
+					     XmMultiList_title_string(elist) :
 					     XmMultiList_title(elist)),
 					    f_args, f_num_args);
 
@@ -395,7 +395,7 @@ static void Initialize(Widget req, Widget set,
 	if (XmMultiList_show_find(elist))
 	    XtHeight(set) = XmMultiList_h_bar(elist)->core.height +
 		XmMultiList_frame(elist)->core.height + title_height +
-		XmMultiList_find(elist)->core.height + 2 * 
+		XmMultiList_find(elist)->core.height + 2 *
 		(V_MARGIN + elist->core.border_width +
 		 XmMultiList_h_bar(elist)->core.border_width +
 		 XmMultiList_frame(elist)->core.border_width +
@@ -415,7 +415,7 @@ static void Initialize(Widget req, Widget set,
 	    XmMultiList_v_bar(elist)->core.width + (5 * H_MARGIN) +
 	    (2 * elist->core.border_width);
     }
-    
+
     XtFree((XtPointer) f_args);
 }
 
@@ -423,7 +423,7 @@ static void Initialize(Widget req, Widget set,
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
+static void
 ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmEXT18LIST_BIT);
@@ -457,7 +457,7 @@ Destroy(Widget w)
  *	Returns:       none.
  */
 
-static void 
+static void
 Resize(Widget w)
 {
     LayoutChildren(w);
@@ -483,7 +483,7 @@ ChangeManaged(Widget w)
  *      Arguments:     w - the extended list widget.
  *                     args, num_args - the argument list.
  *	Returns:       none
- *    
+ *
  *      Added:         04/09/92 beth
  */
 
@@ -499,7 +499,7 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
      * Get the correct args to pass to the I18List widget
      */
     for (i=0; i < j; i++) {
-        if (streq(args[i].name, XmNnumColumns)           || 
+        if (streq(args[i].name, XmNnumColumns)           ||
             streq(args[i].name, XmNnumRows)              ||
             streq(args[i].name, XmNselectedColumn)       ||
             streq(args[i].name, XmNcolumnTitles)         ||
@@ -514,15 +514,15 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
             streq(args[i].name, XmNfirstColumn)          ||
             streq(args[i].name, XmNsortFunctions)        ||
             streq(args[i].name, XmNselectionPolicy))  {
-        
+
      	    XtSetArg(i_args[num], args[i].name, args[i].value);
             num++;
         }
-	else if (streq(args[i].name, XmNtitle)) 
+	else if (streq(args[i].name, XmNtitle))
 			*(XmString*)args[i].value = XmStringCopy(XmMultiList_title(elist));
-	else if (streq(args[i].name, XmNtitleString)) 
+	else if (streq(args[i].name, XmNtitleString))
 			*(XmString*)args[i].value = XmStringCopy(XmMultiList_title_string(elist));
-	else if (streq(args[i].name, XmNfindLabel)) 
+	else if (streq(args[i].name, XmNfindLabel))
 			*(XmString*)args[i].value = XmStringCopy(XmMultiList_find_label(elist));
     }
 
@@ -538,7 +538,7 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
  *                     the-fly.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
@@ -546,7 +546,7 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
 #define NUM_FIND_WIDGETS 2
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
 {
@@ -588,23 +588,23 @@ SetValues(Widget current, Widget request, Widget set,
 
     if (XmMultiList_find_label(e_old) != XmMultiList_find_label(e_set))
     {
-	Arg args[1];
+	Arg _args[1];
 
 	redisplay = True;
 	XmStringFree(XmMultiList_find_label(e_old));
 
-	if (XmMultiList_find_label(e_set) != NULL) 
-	    XmMultiList_find_label(e_set) = 
+	if (XmMultiList_find_label(e_set) != NULL)
+	    XmMultiList_find_label(e_set) =
 		XmStringCopy(XmMultiList_find_label(e_set));
-	else 
-	    XmMultiList_find_label(e_set) = 
+	else
+	    XmMultiList_find_label(e_set) =
 		XmStringCreateLocalized(FIND_STRING);
 
-	XtSetArg(args[0], XmNlabelString, XmMultiList_find_label(e_set));
-	XtSetValues(XmMultiList_find(e_set), args, 1);
+	XtSetArg(_args[0], XmNlabelString, XmMultiList_find_label(e_set));
+	XtSetValues(XmMultiList_find(e_set), _args, 1);
     }
 
-    /* 
+    /*
      * MultiList supports both XmNtitle (for backwards compatibility) and
      * XmNtitleString resources, so we must check for changes to both here
      */
@@ -628,14 +628,14 @@ SetValues(Widget current, Widget request, Widget set,
 
 	if ((*title == NULL) || (old_title == NULL))
 	{
-	    LayoutChildren(set);	
-	}    
-	
+	    LayoutChildren(set);
+	}
+
 	if (*title != NULL)
 	{
 	    Arg		zargs[2];
 	    Cardinal	znum_args = 0;
-	    
+
 	    *title = XmStringCopy(*title);
 
 	    XtSetArg(zargs[znum_args], XmNlabelString, *title); znum_args++;
@@ -645,7 +645,7 @@ SetValues(Widget current, Widget request, Widget set,
 	XmStringFree(old_title);
     }
 
-    return(redisplay);   
+    return(redisplay);
 }
 
 /*	Function Name: GeometryManager
@@ -662,7 +662,7 @@ SetValues(Widget current, Widget request, Widget set,
 
 /*ARGSUSED*/
 static XtGeometryResult
-GeometryManager(Widget w, XtWidgetGeometry * request, 
+GeometryManager(Widget w, XtWidgetGeometry * request,
 		XtWidgetGeometry * result)
 {
     XmMultiListWidget	elist = (XmMultiListWidget) XtParent(w);
@@ -681,7 +681,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
     if ((w != XmMultiList_title_wid(elist)) && (w != XmMultiList_find(elist)) &&
 	(w != XmMultiList_frame(elist)))
 	return(XtGeometryNo);
-    
+
     /*
      * Handle the request from the I18List (frame & ilist) child to resize...
      */
@@ -710,7 +710,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 
 	answer = XtMakeGeometryRequest(parent, &ext_request, &ext_reply);
 
-	if (answer == XtGeometryYes) 
+	if (answer == XtGeometryYes)
 	{
 	    if (request->request_mode & CWHeight)
 		elist->core.height = ext_request.height;
@@ -732,7 +732,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
     if (!(request->request_mode & CWHeight))
 	request->height = w->core.height;
 
-    if (!(request->request_mode & CWBorderWidth)) 
+    if (!(request->request_mode & CWBorderWidth))
 	request->border_width = w->core.border_width;
 
     *result = *request;
@@ -741,9 +741,9 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 	return(XtGeometryAlmost);
     }
 
-    if (request->request_mode & XtCWQueryOnly) 
+    if (request->request_mode & XtCWQueryOnly)
 	return(XtGeometryYes);
-    
+
     /*
      * A real allowed request, set the new dimensions
      */
@@ -824,11 +824,11 @@ ActivateTextSearch(Widget w, XtPointer elist_ptr, XtPointer client)
  *	Returns:       none.
  */
 
-static void LayoutChildren(Widget w) 
+static void LayoutChildren(Widget w)
 {
-    Arg args[1]; 
+    Arg args[1];
     XmMultiListWidget elist = (XmMultiListWidget) w;
-    
+
     Widget t_wid = XmMultiList_title_wid(elist);
     Widget frame = XmMultiList_frame(elist);
     Widget find_text = XmMultiList_find_text(elist);
@@ -846,7 +846,7 @@ static void LayoutChildren(Widget w)
      */
     PositionFindAndFindText(w);
 
-    if ((XmMultiList_title(elist) == NULL) && 
+    if ((XmMultiList_title(elist) == NULL) &&
 	(XmMultiList_title_string(elist) == NULL))
     {
 	scroll_top = V_MARGIN;
@@ -856,8 +856,8 @@ static void LayoutChildren(Widget w)
     }
     else
     {
-	/* 
-	 * Put the title widget in the top left corner 
+	/*
+	 * Put the title widget in the top left corner
 	 */
 	if (LayoutIsRtoLM(w))
 	    _XmMoveWidget(t_wid, (Position)(width - H_MARGIN - XtWidth(t_wid)),
@@ -869,7 +869,7 @@ static void LayoutChildren(Widget w)
 	XtSetValues(t_wid, args, (Cardinal) 1);
 
 	title_height = t_wid->core.height + 2 * t_wid->core.border_width;
-	
+
 	scroll_top = title_height + 2 * V_MARGIN;
     }
 
@@ -883,7 +883,7 @@ static void LayoutChildren(Widget w)
 
     scroll_left = H_MARGIN;
     scroll_right = width - H_MARGIN;
-    
+
     /*
      * Place the frame.
      *
@@ -918,7 +918,7 @@ static void LayoutChildren(Widget w)
 	height = 1;
     else
 	height = scroll_bottom - temp_val;
-    
+
     _XmConfigureWidget(vbar, scroll_right - v_thick, scroll_top,
 		       vbar->core.width, height, vbar->core.border_width);
 }
@@ -978,7 +978,7 @@ static void PositionFindAndFindText(Widget w)
 	x = H_MARGIN;
     else
 	x = (Dimension) find_x + find_width + H_MARGIN;
-    
+
     y = find_y - (int)(max_child_height - find_height)/2;
 
     temp_val = x + H_MARGIN;
@@ -995,20 +995,20 @@ static void PositionFindAndFindText(Widget w)
     }
 }
 /************************************************************
- * 
+ *
  * Functions that Create Widgets.
  *
  ************************************************************/
- 
+
 /*	Function Name: CreateTitle
  *	Description:   Creates the Title widget.
  *	Arguments:     parent - parent of the title widget.
- *                     label - The label string. 
+ *                     label - The label string.
  *                     args, num_args - arguments used to create ext list.
  *	Returns:       the title widget.
  */
 
-static Widget 
+static Widget
 CreateTitle(Widget parent, XmString label, ArgList args, Cardinal num_args)
 {
     Widget w;
@@ -1021,7 +1021,7 @@ CreateTitle(Widget parent, XmString label, ArgList args, Cardinal num_args)
     }
     new_args = XtMergeArgLists(args, num_args, largs, num_largs);
 
-    w = XtCreateManagedWidget("title", xmLabelWidgetClass, parent, 
+    w = XtCreateManagedWidget("title", xmLabelWidgetClass, parent,
 			      new_args, num_largs + num_args);
 
     XtFree((XtPointer) new_args);
@@ -1031,13 +1031,13 @@ CreateTitle(Widget parent, XmString label, ArgList args, Cardinal num_args)
 /*	Function Name: CreateScrollbar
  *	Description:   Creates a vert or horizontal scrollbar.
  *	Arguments:     parent - parent of the scrollbar widget.
- *                     is_vert - if true then create a vertical scrollbar, 
+ *                     is_vert - if true then create a vertical scrollbar,
  *                               else, create a horiz one.
  *                     args, num_args - arguments used to create ext list.
  *	Returns:       none
  */
 
-static Widget 
+static Widget
 CreateScrollbar(Widget parent, Boolean is_vert,ArgList args, Cardinal num_args)
 {
     Widget w;
@@ -1073,7 +1073,7 @@ CreateFindButton(Widget parent, ArgList args, Cardinal num_args)
     XmMultiListWidget elist = (XmMultiListWidget) parent;
 
     num_largs = 0;
-    XtSetArg(largs[num_largs], XmNlabelString, XmMultiList_find_label(elist)); 
+    XtSetArg(largs[num_largs], XmNlabelString, XmMultiList_find_label(elist));
                   num_largs++;
     new_args = XtMergeArgLists(args, num_args, largs, num_largs);
 
@@ -1120,7 +1120,7 @@ CreateFindText(Widget parent, ArgList args, Cardinal num_args)
  *	Returns:       none
  */
 
-static Widget 
+static Widget
 CreateFrame(Widget parent, ArgList args, Cardinal num_args)
 {
     XmMultiListWidget elist = (XmMultiListWidget) parent;
@@ -1134,19 +1134,19 @@ CreateFrame(Widget parent, ArgList args, Cardinal num_args)
 
     w = XtCreateWidget("frame", xmFrameWidgetClass, parent,
 		       new_args, num_args + num_largs);
-    
+
     XtFree((XtPointer) new_args);
 
     num_largs = 0;
     XtSetArg(largs[num_largs], XmNverticalScrollBar, XmMultiList_v_bar(elist));
-    num_largs++;    
+    num_largs++;
     XtSetArg(largs[num_largs], XmNhorizontalScrollBar, XmMultiList_h_bar(elist));
-    num_largs++;    
+    num_largs++;
 
     new_args = XtMergeArgLists(args, num_args, largs, num_largs);
-    
+
     XmMultiList_ilist(elist) = XtCreateManagedWidget("list", xmI18ListWidgetClass,
-						  w, new_args, 
+						  w, new_args,
 						  num_args + num_largs);
 
     XtFree((XtPointer) new_args);
@@ -1155,7 +1155,7 @@ CreateFrame(Widget parent, ArgList args, Cardinal num_args)
      *
      * Required to force geometry of frame here (it won't inherit child's size)
      */
-    w->core.width = XmMultiList_ilist(elist)->core.width + 
+    w->core.width = XmMultiList_ilist(elist)->core.width +
 	2 * w->core.border_width;
     w->core.height = XmMultiList_ilist(elist)->core.height +
 	2 * w->core.border_width;
@@ -1190,7 +1190,7 @@ XmMultiListGetSelectedRows(Widget w)
 
     ret_rows = XmI18ListGetSelectedRows(XmMultiList_ilist(elist));
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
     return ret_rows;
 }
 
@@ -1210,7 +1210,7 @@ XmCreateMultiList(Widget parent, String name,
 			   parent, args, num_args));
 }
 
-Widget 
+Widget
 XmVaCreateMultiList(
         Widget parent,
         char *name,
@@ -1219,18 +1219,18 @@ XmVaCreateMultiList(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmMultiListWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -1243,17 +1243,17 @@ XmVaCreateManagedMultiList(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmMultiListWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -1272,7 +1272,7 @@ XmMultiListUnselectAllItems(Widget w)
 
   Xm18IListUnselectAllItems( XmMultiList_ilist(elist) );
 
-  _XmAppUnlock(app); 
+  _XmAppUnlock(app);
 }
 
 
@@ -1289,10 +1289,10 @@ XmMultiListUnselectItem(Widget w, XmMultiListRowInfo *row_info)
 
     _XmWidgetToAppContext(w);
     _XmAppLock(app);
-  
+
   Xm18IListUnselectItem( XmMultiList_ilist(elist), row_info );
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListToggleRow
@@ -1310,7 +1310,7 @@ XmMultiListToggleRow(Widget w, short row)
 
     XmI18ListToggleRow(XmMultiList_ilist(elist), row);
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListSelectItems
@@ -1328,11 +1328,11 @@ void XmMultiListSelectItems(Widget w, XmString item,
 
     _XmWidgetToAppContext(w);
     _XmAppLock(app);
-    
+
     XmI18ListSelectItems((XmI18ListWidget)XmMultiList_ilist(elist),
 			 item, column, notify);
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListDeselectItems
@@ -1353,7 +1353,7 @@ XmMultiListDeselectItems(Widget w, XmString item, int column)
     XmI18ListDeselectItems((XmI18ListWidget)XmMultiList_ilist(elist),
 			   item, column);
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListSelectAllItems
@@ -1370,7 +1370,7 @@ void XmMultiListSelectAllItems(Widget w, Boolean notify)
     _XmAppLock(app);
 
     XmI18ListSelectAllItems((XmI18ListWidget)XmMultiList_ilist(elist), notify);
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListSelectRow
@@ -1389,7 +1389,7 @@ XmMultiListSelectRow(Widget w, int row, Boolean notify)
     _XmAppLock(app);
 
     XmI18ListSelectRow((XmI18ListWidget)XmMultiList_ilist(elist), row, notify);
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /*  Function Name: XmMultiListDeselectRow
@@ -1407,7 +1407,7 @@ XmMultiListDeselectRow(Widget w, int row)
     _XmAppLock(app);
 
     XmI18ListDeselectRow((XmI18ListWidget)XmMultiList_ilist(elist), row);
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 
@@ -1450,7 +1450,7 @@ XmMultiListMakeRowVisible(Widget w, int row)
 
     XmI18ListMakeRowVisible((XmI18ListWidget)XmMultiList_ilist(elist), row);
 
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
 }
 
 /* aliases of deprecated functiosn of XmExt18List */

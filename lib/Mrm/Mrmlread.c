@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -98,7 +98,7 @@ static char rcsid[] = "$XConsortium: Mrmlread.c /main/16 1996/11/13 14:02:28 drk
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 		   String			index,
 		   URMResourceContextPtr	context_id,
@@ -154,9 +154,9 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 	  XtFree((char *)val);
 	  UrmRCBuffer(context_id) = (char *)fontlist;
 	}
-      else 
-	Urm__CW_FixupValue (val, type, (XtPointer)val, file_id, &swap_needed); 
-      break; 
+      else
+	Urm__CW_FixupValue (val, type, (XtPointer)val, file_id, &swap_needed);
+      break;
     case MrmRtypeInteger:
     case MrmRtypeBoolean:
       if ( swap_needed )
@@ -164,7 +164,7 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 	  swapbytes( (*(int *)UrmRCBuffer (context_id)) );
 	  swap_needed = FALSE ;
 	}
-      break; 
+      break;
     case MrmRtypeSingleFloat:
       if ( swap_needed )
 	{
@@ -172,7 +172,7 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 	  swap_needed = FALSE ;
 	}
       _MrmOSIEEEFloatToHost( (float *)UrmRCBuffer (context_id));
-      break; 
+      break;
     case MrmRtypeFloat:
       if ( swap_needed )
 	{
@@ -180,7 +180,7 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 	  swap_needed = FALSE ;
 	}
       _MrmOSIEEEDoubleToHost( (double *)UrmRCBuffer (context_id));
-      break; 
+      break;
 
     default:
       Urm__CW_FixupValue (val, type, (XtPointer)val, file_id, &swap_needed);
@@ -292,10 +292,10 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
 	  */
 	  vec_size -= (sizeof ( RGMTextVector ) - sizeof ( RGMTextEntry ));
 	  vec_count = ((RGMTextVectorPtr)*value_return)->count;
-	  result = Urm__CW_ConvertValue (NULL, (long*)value_return, 
+	  result = Urm__CW_ConvertValue (NULL, (long*)value_return,
 					 (MrmType)*type_return, 0, display,
 					 hierarchy_id, NULL) ;
-	  if ( result != MrmSUCCESS ) 
+	  if ( result != MrmSUCCESS )
 	    {
 	      _MrmAppUnlock(app);
 	      _MrmProcessUnlock();
@@ -312,7 +312,7 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
 	  */
 	  vec_count = ((RGMIntegerVectorPtr)*value_return)->count;
 	  vec_size  = vec_count * sizeof ( int * );
-	  result = Urm__CW_ConvertValue (NULL, (long*)value_return, 
+	  result = Urm__CW_ConvertValue (NULL, (long*)value_return,
 					 (MrmType)*type_return, 0, display,
 					 hierarchy_id, NULL) ;
 	  if ( result != MrmSUCCESS )
@@ -330,7 +330,7 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
 	  /*
 	  **  Do necessary conversions (Fixups were done by Urm__FetchLiteral)
 	  */
-	  result = Urm__CW_ConvertValue (NULL, (long*)value_return, 
+	  result = Urm__CW_ConvertValue (NULL, (long*)value_return,
 					 (MrmType)*type_return, 0, display,
 					 hierarchy_id, NULL) ;
 
@@ -405,7 +405,7 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
  *--
  */
 
-Cardinal 
+Cardinal
 MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
 		     String                      index,
 		     Screen                      *screen,
@@ -461,7 +461,7 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
        fgpix, bgpix, pixmap_return, (Widget)NULL);
     break;
   case MrmRtypeXBitmapFile:
-    result = Urm__CW_ReadBitmapFile (UrmRCBuffer(context_id), screen, 
+    result = Urm__CW_ReadBitmapFile (UrmRCBuffer(context_id), screen,
 				     fgpix, bgpix, pixmap_return, (Widget)NULL);
     break;
   default:
@@ -471,7 +471,7 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
   if ( ctxlist != NULL )
     {
       for ( ndx=0 ; ndx<UrmPlistNum(ctxlist) ; ndx++ )
-	UrmFreeResourceContext 
+	UrmFreeResourceContext
 	  ((URMResourceContextPtr)UrmPlistPtrN(ctxlist,ndx)) ;
       UrmPlistFree (ctxlist) ;
     }
@@ -510,7 +510,7 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
  *--
  */
 
-Cardinal 
+Cardinal
 MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
 		       String                      index,
 		       Screen                      *screen,
@@ -547,7 +547,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
       if ( ctxlist != NULL )
 	{
 	  for ( ndx=0 ; ndx<UrmPlistNum(ctxlist) ; ndx++ )
-	    UrmFreeResourceContext 
+	    UrmFreeResourceContext
 	      ((URMResourceContextPtr)UrmPlistPtrN(ctxlist,ndx)) ;
 	  UrmPlistFree (ctxlist) ;
 	}
@@ -563,7 +563,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
   switch (type) {
   case MrmRtypeIconImage:
     icon = (RGMIconImagePtr)UrmRCBuffer(context_id);
-    result = UrmCreateBitmap 
+    result = UrmCreateBitmap
       (icon, screen, display,
        pixmap_return);
     *width = icon->width;
@@ -572,7 +572,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
     /*
       >>> Andy research here if we can do this for a depth of 1
       case MrmRtypeXBitmapFile:
-      result = Urm__CW_ReadBitmapFile (UrmRCBuffer(context_id), screen, 
+      result = Urm__CW_ReadBitmapFile (UrmRCBuffer(context_id), screen,
       fgpix, bgpix, pixmap_return);
       break;
       */
@@ -583,7 +583,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
   if ( ctxlist != NULL )
     {
       for ( ndx=0 ; ndx<UrmPlistNum(ctxlist) ; ndx++ )
-	UrmFreeResourceContext 
+	UrmFreeResourceContext
 	  ((URMResourceContextPtr)UrmPlistPtrN(ctxlist,ndx)) ;
       UrmPlistFree (ctxlist) ;
     }
@@ -622,7 +622,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
  *--
  */
 
-Cardinal 
+Cardinal
 MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
 		      String                      index,
 		      Display                     *display,
@@ -657,7 +657,7 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
       if ( ctxlist != NULL )
 	{
 	  for ( ndx=0 ; ndx<UrmPlistNum(ctxlist) ; ndx++ )
-	    UrmFreeResourceContext 
+	    UrmFreeResourceContext
 	      ((URMResourceContextPtr)UrmPlistPtrN(ctxlist,ndx)) ;
 	  UrmPlistFree (ctxlist) ;
 	}
@@ -676,7 +676,7 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
     {
     case URMColorDescTypeName:
       result = Urm__UT_GetNamedColorPixel
-	(display, cmap, colorptr, pixel_return, 
+	(display, cmap, colorptr, pixel_return,
 	 XBlackPixelOfScreen(XDefaultScreenOfDisplay(display)));
       break;
     case URMColorDescTypeRGB:
@@ -685,7 +685,7 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
 	 XBlackPixelOfScreen(XDefaultScreenOfDisplay(display)));
       break;
     default:
-      sprintf(err_msg, _MrmMMsg_0040);
+      strcpy(err_msg, _MrmMMsg_0040);
       result = Urm__UT_Error ("MrmFetchColorLiteral",
 			      err_msg, NULL, NULL, MrmFAILURE) ;
       _MrmAppUnlock(app);
@@ -760,7 +760,7 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmGetIndexedLiteral (IDBFile			file_id ,
 		      String			index ,
 		      URMResourceContextPtr	context_id )
@@ -815,7 +815,7 @@ UrmGetIndexedLiteral (IDBFile			file_id ,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmGetRIDLiteral (IDBFile			file_id ,
 		  MrmResource_id		resource_id ,
 		  URMResourceContextPtr	context_id )
@@ -872,7 +872,7 @@ UrmGetRIDLiteral (IDBFile			file_id ,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__HGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
 			 String			index ,
 			 URMResourceContextPtr	context_id ,
@@ -935,7 +935,7 @@ Urm__HGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmHGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
 		       String			index ,
 		       URMResourceContextPtr	context_id )

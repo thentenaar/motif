@@ -2052,7 +2052,6 @@ ClipboardDeleteItem(
 
     /* Cleanup any callback information for ByName */
     {
-      int i;
       Boolean found = False;
 
       _XmProcessLock();

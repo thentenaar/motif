@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -82,8 +82,8 @@ static char rcsid[] = "$TOG: Mrmwcrw.c /main/20 1999/05/19 15:26:23 mgreess $"
  */
 
 
-static void DisplayDestroyCallback (Widget w, 
-				    XtPointer client_data, 
+static void DisplayDestroyCallback (Widget w,
+				    XtPointer client_data,
 				    XtPointer call_data );
 
 /*
@@ -132,7 +132,7 @@ static void DisplayDestroyCallback (Widget w,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmCreateWidgetInstanceCleanup (URMResourceContextPtr	context_id,
 			      Widget			child,
 			      IDBFile			file_id)
@@ -229,7 +229,7 @@ UrmCreateWidgetInstanceCleanup (URMResourceContextPtr	context_id,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmCreateWidgetTree (URMResourceContextPtr	context_id,
 		     Widget			parent,
 		     MrmHierarchy		hierarchy_id,
@@ -264,7 +264,7 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
   /*
    * Create the widget instance.
    */
-  result = UrmCreateOrSetWidgetInstance (context_id, parent, hierarchy_id, 
+  result = UrmCreateOrSetWidgetInstance (context_id, parent, hierarchy_id,
 					 file_id, ov_name, ov_args, ov_num_args,
 					 keytype, kindex, krid, manage, svlist,
 					 wref_id, &widget_id,  &w_name) ;
@@ -273,14 +273,14 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
 
   /*
    * Initialize a context, and create all the children, Saving their ids.
-   * Note there are no interior returns from the processing loop, and that 
+   * Note there are no interior returns from the processing loop, and that
    * all locally acquired resources are returned at the routine exit.
    *
    * Initialize a sibling reference context for any class which allows
    * sibling widget references.
    */
   widgetrec = (RGMWidgetRecordPtr) UrmRCBuffer (context_id) ;
-  if ( widgetrec->children_offs > 0) 
+  if ( widgetrec->children_offs > 0)
     {
       UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &child_ctx);
       childrendesc =
@@ -329,11 +329,11 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
 	  /*
 	   * Create the child and its subtree.
 	   */
-	  result = UrmCreateWidgetTree (child_ctx, widget_id, hierarchy_id, 
+	  result = UrmCreateWidgetTree (child_ctx, widget_id, hierarchy_id,
 					loc_file_id, NULL, NULL, 0,
-					childptr->type, child_idx, 
-					childptr->key.id, 
-					((childptr->manage) ? 
+					childptr->type, child_idx,
+					childptr->key.id,
+					((childptr->manage) ?
 					 MrmManageManage : MrmManageUnmanage),
 					svlist, wref_id, &child_id)  ;
 	  UrmCreateWidgetInstanceCleanup(child_ctx, child_id, loc_file_id);
@@ -356,7 +356,7 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
   if ((w_name != NULL) && (*svlist != NULL))
     Urm__CW_ResolveSVWidgetRef(svlist, w_name, *w_return);
 
-  return MrmSUCCESS ;        
+  return MrmSUCCESS ;
 }
 
 
@@ -421,7 +421,7 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmCreateOrSetWidgetInstance (URMResourceContextPtr	context_id,
 			      Widget			parent,
 			      MrmHierarchy		hierarchy_id,
@@ -458,18 +458,18 @@ UrmCreateOrSetWidgetInstance (URMResourceContextPtr	context_id,
   if (widgetrec->variety == UilMrmWidgetVariety)
     {
       return UrmCreateWidgetInstance(context_id, parent, hierarchy_id, file_id,
-				     ov_name, ov_args, ov_num_args, keytype, 
-				     kindex, krid, manage, svlist, wref_id, 
+				     ov_name, ov_args, ov_num_args, keytype,
+				     kindex, krid, manage, svlist, wref_id,
 				     w_return, w_name);
     }
   else if (widgetrec->variety == UilMrmAutoChildVariety)
     {
       *w_name = NULL;
       return UrmSetWidgetInstance(context_id, parent, hierarchy_id, file_id,
-				  ov_args, ov_num_args, keytype, kindex, 
+				  ov_args, ov_num_args, keytype, kindex,
 				  krid, manage, svlist, wref_id, w_return);
     }
-  else 
+  else
     return Urm__UT_Error("UrmCreateOrSetWidgetInstance", _MrmMMsg_0055,
 			 NULL, context_id, MrmBAD_WIDGET_REC);
 }
@@ -543,7 +543,7 @@ UrmCreateOrSetWidgetInstance (URMResourceContextPtr	context_id,
  */
 
 /*ARGSUSED*/
-Cardinal 
+Cardinal
 UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
 			 Widget			parent,
 			 MrmHierarchy		hierarchy_id,
@@ -608,7 +608,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
    */
   if ( widgetrec->arglist_offs != 0)
     {
-      argdesc = (RGMArgListDescPtr) 
+      argdesc = (RGMArgListDescPtr)
 	((char *)widgetrec + widgetrec->arglist_offs) ;
       num_listent += argdesc->count + argdesc->extra ;
       UrmPlistInit (10, &ftllist) ;
@@ -663,16 +663,16 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
     {
       if (strcmp(file_id->db_version, URM1_1version) <= 0)
 	cbptr = Urm__CW_TranslateOldCallback((OldRGMCallbackDescPtr)
-					     ((char *)widgetrec + 
+					     ((char *)widgetrec +
 					      widgetrec->creation_offs));
-      else 
-	cbptr = (RGMCallbackDescPtr) ((char *)widgetrec + 
+      else
+	cbptr = (RGMCallbackDescPtr) ((char *)widgetrec +
 				      widgetrec->creation_offs) ;
 
       if ( ptrlist == NULL )
         UrmPlistInit (10, &ptrlist) ;
-      result = Urm__CW_FixupCallback (parent, (XtPointer)widgetrec, cbptr, 
-				      ptrlist, cblist, hierarchy_id, 
+      result = Urm__CW_FixupCallback (parent, (XtPointer)widgetrec, cbptr,
+				      ptrlist, cblist, hierarchy_id,
 				      file_id, wref_id) ;
       if ( result == MrmSUCCESS )
         for ( ndx=0 ; ndx<cbptr->count ; ndx++ )
@@ -685,7 +685,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
 	      {
 		cb_reason.reason = MrmCR_CREATE;
 		cb_reason.event = NULL;
-		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure, 
+		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure,
 			   &cb_reason) ;
 	      }
 	    /* END OSF Fix pir 2813 */
@@ -693,7 +693,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
       else if (result == MrmUNRESOLVED_REFS)
 	Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0056,
 		      NULL, NULL, MrmFAILURE) ;
-      else 
+      else
 	return Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0057,
 			     NULL, NULL, MrmFAILURE);
 
@@ -720,7 +720,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
    */
   if (cblist->num_ptrs > 0)
     {
-      XtAddCallback (*w_return, XmNdestroyCallback, 
+      XtAddCallback (*w_return, XmNdestroyCallback,
 		     (XtCallbackProc) UrmDestroyCallback, cblist);
     }
   else
@@ -737,7 +737,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
   if (ftllist != NULL)
     {
       if (UrmPlistNum(ftllist) > 0)
-	XtAddCallback(*w_return, XmNdestroyCallback, 
+	XtAddCallback(*w_return, XmNdestroyCallback,
 		      (XtCallbackProc) UrmDestroyCallback, ftllist);
       else
 	UrmPlistFree (ftllist) ;
@@ -815,7 +815,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
  */
 
 /*ARGSUSED*/
-Cardinal 
+Cardinal
 UrmSetWidgetInstance (URMResourceContextPtr	context_id,
 		      Widget			parent,
 		      MrmHierarchy		hierarchy_id,
@@ -871,7 +871,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   /* Find the widget */
   if (strcmp(c_name, "TearOffControl") == 0) /* Special case */
     *w_return = XmGetTearOffControl(parent);
-  else 
+  else
     {
       /* Need to add * for ScrolledText and ScrolledList */
       c_name_tmp = (String)ALLOCATE_LOCAL((strlen(c_name) + 2) * sizeof(char));
@@ -892,7 +892,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   if (*w_return == NULL)
     return Urm__UT_Error("UrmSetWidgetInstance", _MrmMMsg_0059,
 			 NULL, context_id, MrmFAILURE) ;
-  
+
   /*
    * Allocate the args list, big enough for all the arguments in the widget
    * record plus all the override arguments. Also initialize a pointer list
@@ -900,7 +900,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
    */
   if ( widgetrec->arglist_offs != 0)
     {
-      argdesc = (RGMArgListDescPtr) 
+      argdesc = (RGMArgListDescPtr)
 	((char *)widgetrec + widgetrec->arglist_offs) ;
       num_listent += argdesc->count + argdesc->extra ;
       UrmPlistInit (10, &ftllist) ;
@@ -942,7 +942,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   XtSetValues(*w_return, args, num_used) ;
 
   /*
-   * If the uil file said unmanaged, then unmanage the widget. 
+   * If the uil file said unmanaged, then unmanage the widget.
    */
   if ( manage==MrmManageUnmanage )XtUnmanageChild(*w_return);
 
@@ -953,16 +953,16 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
     {
       if (strcmp(file_id->db_version, URM1_1version) <= 0)
 	cbptr = Urm__CW_TranslateOldCallback((OldRGMCallbackDescPtr)
-					     ((char *)widgetrec + 
+					     ((char *)widgetrec +
 					      widgetrec->creation_offs));
-      else 
-	cbptr = (RGMCallbackDescPtr) ((char *)widgetrec + 
+      else
+	cbptr = (RGMCallbackDescPtr) ((char *)widgetrec +
 				      widgetrec->creation_offs) ;
 
       if ( ptrlist == NULL )
         UrmPlistInit (10, &ptrlist) ;
-      result = Urm__CW_FixupCallback (parent, (XtPointer)widgetrec, 
-				      cbptr, ptrlist, cblist, hierarchy_id, 
+      result = Urm__CW_FixupCallback (parent, (XtPointer)widgetrec,
+				      cbptr, ptrlist, cblist, hierarchy_id,
 				      file_id, wref_id) ;
       if ( result == MrmSUCCESS )
         for ( ndx=0 ; ndx<cbptr->count ; ndx++ )
@@ -975,7 +975,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
 	      {
 		cb_reason.reason = MrmCR_CREATE;
 		cb_reason.event = NULL;
-		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure, 
+		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure,
 			   &cb_reason) ;
 	      }
 	    /* END OSF Fix pir 2813 */
@@ -983,7 +983,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
       else if (result == MrmUNRESOLVED_REFS)
 	Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0056,
 		      NULL, NULL, MrmFAILURE) ;
-      else 
+      else
 	return Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0057,
 			     NULL, NULL, MrmFAILURE);
 
@@ -1010,7 +1010,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
    */
   if (cblist->num_ptrs > 0)
     {
-      XtAddCallback (*w_return, XmNdestroyCallback, 
+      XtAddCallback (*w_return, XmNdestroyCallback,
 		     (XtCallbackProc) UrmDestroyCallback, cblist);
     }
   else
@@ -1027,7 +1027,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   if (ftllist != NULL)
     {
       if (UrmPlistNum(ftllist) > 0)
-	XtAddCallback(*w_return, XmNdestroyCallback, 
+	XtAddCallback(*w_return, XmNdestroyCallback,
 		      (XtCallbackProc) UrmDestroyCallback, ftllist);
       else
 	UrmPlistFree (ftllist) ;
@@ -1080,7 +1080,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
  *--
  */
 
-void 
+void
 Urm__CW_CreateArglist (Widget			parent,
 		       RGMWidgetRecordPtr	widgetrec,
 		       RGMArgListDescPtr	argdesc,
@@ -1135,7 +1135,7 @@ Urm__CW_CreateArglist (Widget			parent,
   Pixel			bgint = (Pixel) -1 ; /* background for pixmaps */
   Pixmap		pixmap ;	/* result of icon conversion */
   Cardinal		uncmp_res ;	/* string uncompression result */
-  WCIClassDescPtr	class_desc ;	/* for URM__FindClassDescriptor  */ 
+  WCIClassDescPtr	class_desc ;	/* for URM__FindClassDescriptor  */
   String		resource_name ; /* resource name for comparison */
   int			vec_size ;
   RGMFontListPtr	fontlist;	/* for converting old style fontlist */
@@ -1175,7 +1175,7 @@ Urm__CW_CreateArglist (Widget			parent,
        * for processing after the widget is created.
        */
       argval = Urm__CW_EvaluateValOrOffset (reptype, (XtPointer)widgetrec,
-					    argptr->arg_val.datum.ival, 
+					    argptr->arg_val.datum.ival,
 					    argptr->arg_val.datum.offset) ;
       val = argval ;
       switch ( reptype )
@@ -1187,7 +1187,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	    cbptr = (RGMCallbackDescPtr)val;
 
 	  result = Urm__CW_FixupCallback(parent, (XtPointer)widgetrec, cbptr,
-					 ctxlist, cblist, hierarchy_id, 
+					 ctxlist, cblist, hierarchy_id,
 					 file_id, wref_id) ;
 	  switch (result)
 	    {
@@ -1195,7 +1195,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	      /* Move individual items so array functions as callback list */
 	      items = cbptr->item;
 	      callbacks = (XtCallbackRec *)((RGMCallbackDescPtr)val)->item;
-		
+
 	      for (cbndx = 0; cbndx <= cbptr->count; cbndx++)
 		/* <= so that null item is copied. */
 		{
@@ -1204,9 +1204,9 @@ Urm__CW_CreateArglist (Widget			parent,
 		  callbacks[cbndx].closure = (XtPointer)
 		    items[cbndx].runtime.callback.closure;
 		}
-		
+
 	      val = (long)callbacks;
-	      break; 
+	      break;
 	    case MrmUNRESOLVED_REFS:
 	      Urm__CW_AppendCBSVWidgetRef
 		(file_id, svlist, cbptr, argptr->tag_code,
@@ -1232,9 +1232,9 @@ Urm__CW_CreateArglist (Widget			parent,
 	      if ( ((unsigned char)resptr->cvt_type==RGMwrTypeSubTree) ||
 		   Urm__IsSubtreeResource(file_id,argptr->tag_code) )
 		{
-		  result = 
-		    Urm__CW_LoadWidgetResource (parent, widgetrec, resptr, 
-						ctxlist, hierarchy_id, file_id, 
+		  result =
+		    Urm__CW_LoadWidgetResource (parent, widgetrec, resptr,
+						ctxlist, hierarchy_id, file_id,
 						svlist, wref_id, &val) ;
 		  if ( result != MrmSUCCESS ) continue ;
 		}
@@ -1260,8 +1260,8 @@ Urm__CW_CreateArglist (Widget			parent,
 		}
 	      break ;
 	    case URMgLiteral:
-	      result = Urm__CW_ReadLiteral (resptr, hierarchy_id, file_id, 
-					    ctxlist, &reptype, &argval, 
+	      result = Urm__CW_ReadLiteral (resptr, hierarchy_id, file_id,
+					    ctxlist, &reptype, &argval,
 					    &vec_count, &act_file, &vec_size) ;
 	      val = argval ;
 	      if ( result != MrmSUCCESS ) continue ;
@@ -1296,14 +1296,14 @@ Urm__CW_CreateArglist (Widget			parent,
 		      fontlist = (RGMFontListPtr)
 			XtMalloc(sizeof(RGMFontList) +
 				 (sizeof(RGMFontItem) * (count - 1)));
-		      result = Urm__CW_FixupValue((long)fontlist, reptype, 
+		      result = Urm__CW_FixupValue((long)fontlist, reptype,
 						  (XtPointer)val, file_id,
 						  &swap_needed);
 		      val = (long)fontlist;
 		    }
 		  else
-		    result = Urm__CW_FixupValue(val, reptype, 
-						(XtPointer)val, 
+		    result = Urm__CW_FixupValue(val, reptype,
+						(XtPointer)val,
 						file_id, &swap_needed) ;
 		  break;
 		case MrmRtypeSingleFloat:
@@ -1323,7 +1323,7 @@ Urm__CW_CreateArglist (Widget			parent,
 		  _MrmOSIEEEDoubleToHost( (double *) val );
 		  break;
 		default:
-		  result = Urm__CW_FixupValue(val,reptype,(XtPointer)val, 
+		  result = Urm__CW_FixupValue(val,reptype,(XtPointer)val,
 					      file_id, &swap_needed) ;
 		}
 	      if ( result != MrmSUCCESS ) continue ;
@@ -1333,7 +1333,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	       *	because the parent's colormap should be used when
 	       *	allocating the colors which is currently impossible
 	       *	in ConvertValue.  Convert the colors separately.
-	       */ 
+	       */
 	      if (reptype == MrmRtypeColor)
 		{
 		  Pixel pix;
@@ -1354,7 +1354,7 @@ Urm__CW_CreateArglist (Widget			parent,
 		    display = XtDisplay(parent);
 		    cmap = parent->core.colormap;
 		  }
-                      
+
 		  colorptr = (RGMColorDescPtr) val;
 		  switch (colorptr->desc_type)
 		    {
@@ -1385,7 +1385,7 @@ Urm__CW_CreateArglist (Widget			parent,
 			}
 		      break;
 		    default:
-		      sprintf (err_msg, _MrmMMsg_0040);
+		      strcpy(err_msg, _MrmMMsg_0040);
 		      result = Urm__UT_Error ("Urm__CW_ConvertValue",
 					      err_msg, NULL, NULL, MrmFAILURE) ;
 		    };
@@ -1403,14 +1403,14 @@ Urm__CW_CreateArglist (Widget			parent,
 		  if ((uncmp_res == MrmSUCCESS) &&
 		      (class_desc->creator == _XmCreateRendition))
 		    display = _XmRenderTableDisplay((XmRenderTable)parent);
-		  else 
+		  else
 		    display = XtDisplay(parent);
-			    
-		  result = Urm__CW_ConvertValue (parent, &val, reptype, 
-						 resptr->cvt_type, display, 
+
+		  result = Urm__CW_ConvertValue (parent, &val, reptype,
+						 resptr->cvt_type, display,
 						 hierarchy_id, ftllist) ;
 		}
-		    
+
 	      if ( result != MrmSUCCESS ) continue ;
 	      if ( argptr->tag_code == UilMrmUnknownCode )
 		{
@@ -1436,13 +1436,13 @@ Urm__CW_CreateArglist (Widget			parent,
 		    {
 		    case MrmRtypeChar8Vector:
 		    case MrmRtypeCStringVector:
-		      vec_size -= (sizeof ( RGMTextVector ) - 
+		      vec_size -= (sizeof ( RGMTextVector ) -
 				   sizeof ( RGMTextEntry ));
 		      break;
 		    default:
 		      break;
 		    }
-		  Urm__CW_SafeCopyValue (&val, reptype, cblist, 
+		  Urm__CW_SafeCopyValue (&val, reptype, cblist,
 					 vec_count, vec_size);
 		}
 
@@ -1485,7 +1485,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	  pixargs_cnt += 1 ;
 	  continue ;
         default:
-	  result = Urm__CW_FixupValue (val, reptype, (XtPointer)widgetrec, 
+	  result = Urm__CW_FixupValue (val, reptype, (XtPointer)widgetrec,
 				       file_id, &swap_needed) ;
 	  if ( result != MrmSUCCESS ) continue ;
 	  uncmp_res = Urm__FindClassDescriptor
@@ -1534,14 +1534,14 @@ Urm__CW_CreateArglist (Widget			parent,
 	  else
 	    {
 	      sprintf (err_msg, _MrmMMsg_0062, argptr->tag_code) ;
-	      Urm__UT_Error ("Urm__CW_CreateArglist", err_msg, 
+	      Urm__UT_Error ("Urm__CW_CreateArglist", err_msg,
 			     NULL, NULL, uncmp_res) ;
 	    }
 	}
 
       /*
        * Special processing:
-       *	retain the value pointer for foreground or background. 
+       *	retain the value pointer for foreground or background.
        *	Note reference to name in arglist from previous operation.
        */
       /* Begin fixing OSF 5473 */
@@ -1565,9 +1565,9 @@ Urm__CW_CreateArglist (Widget			parent,
 	      case MrmRtypeChar8Vector:
 	      case MrmRtypeCStringVector:
 		/*
-		 * Fix for HaL DTS 10226 - If the type is Integer Vector 
-		 *	(used mainly in the XmNselectionArray resource on 
-		 *	the Text and TextField widgets), load in the count 
+		 * Fix for HaL DTS 10226 - If the type is Integer Vector
+		 *	(used mainly in the XmNselectionArray resource on
+		 *	the Text and TextField widgets), load in the count
 		 *	for the XmNselectionArrayCount resource.
 		 */
 	      case MrmRtypeIntegerVector:
@@ -1583,7 +1583,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	    else
 	      {
 		sprintf (err_msg, _MrmMMsg_0062, argptr->tag_code) ;
-		Urm__UT_Error ("Urm__CW_CreateArglist", err_msg, 
+		Urm__UT_Error ("Urm__CW_CreateArglist", err_msg,
 			       NULL, NULL, uncmp_res) ;
 	      }
 	  }
@@ -1603,7 +1603,7 @@ Urm__CW_CreateArglist (Widget			parent,
         {
 	  if ( savepix->pixtype == MrmRtypeXBitmapFile ) {
 	    result = Urm__CW_ReadBitmapFile
-	      (savepix->filename, screen, 
+	      (savepix->filename, screen,
 	       fgint, bgint, &pixmap, parent);
 	    if ( result != MrmSUCCESS ) continue ;
 	  }
@@ -1622,7 +1622,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	  args[*num_used].value = (XtArgVal) pixmap ;
 	  argptr = savepix->pixarg ;
 	  if ( argptr->tag_code == UilMrmUnknownCode )
-            args[*num_used].name = (char *) 
+            args[*num_used].name = (char *)
 	      (widgetrec+argptr->stg_or_relcode.tag_offs) ;
 	  else
             Urm__UncompressCode
@@ -1665,7 +1665,7 @@ Urm__CW_CreateArglist (Widget			parent,
  *--
  */
 
-long 
+long
 Urm__CW_EvaluateValOrOffset (MrmType			reptype,
 			     XtPointer			bufptr,
 			     long			ival,
@@ -1718,7 +1718,7 @@ Urm__CW_EvaluateValOrOffset (MrmType			reptype,
  */
 
 /*ARGSUSED*/
-Cardinal 
+Cardinal
 Urm__CW_FixupValue (long			val,
 		    MrmType			reptype,
 		    XtPointer			bufptr,
@@ -1745,14 +1745,14 @@ Urm__CW_FixupValue (long			val,
     case MrmRtypeChar8Vector:
     case MrmRtypeCStringVector:
       vecptr = (RGMTextVectorPtr) val ;
-      if ( *swap_needed ) 
+      if ( *swap_needed )
 	{
 	  swapbytes(vecptr->count);
 	  swapbytes(vecptr->validation);
 	}
-      for ( fixndx=0 ; fixndx<vecptr->count ; fixndx++ ) 
+      for ( fixndx=0 ; fixndx<vecptr->count ; fixndx++ )
 	{
-	  if ( *swap_needed ) 
+	  if ( *swap_needed )
 	    {
 #ifdef WORD64
 	      swap4bytes(vecptr->item[fixndx].text_item.rep_type);
@@ -1765,7 +1765,7 @@ Urm__CW_FixupValue (long			val,
 	  if (reptype == MrmRtypeChar8Vector)
 	    vecptr->item[fixndx].pointer = (XtPointer)
 	      ((char *)bufptr+vecptr->item[fixndx].text_item.offset) ;
-	  else 
+	  else
 	    vecptr->item[fixndx].pointer = (XtPointer)
 	      XmCvtByteStreamToXmString((unsigned char *)bufptr +
 					vecptr->item[fixndx].text_item.offset);
@@ -1781,7 +1781,7 @@ Urm__CW_FixupValue (long			val,
       /* Allocate memory */
       max_size = wcharentry->wchar_item.count;
       wcstr_r = (wchar_t *)XtMalloc(sizeof(wchar_t) * (max_size + 1));
-	
+
       /* Convert, realloc, store */
       str_size = mbstowcs(wcstr_r, wcharentry->wchar_item.bytes, max_size);
       if (str_size == -1)
@@ -1795,7 +1795,7 @@ Urm__CW_FixupValue (long			val,
       wcharentry->pointer = (XtPointer)wcstr_r;
       *swap_needed = FALSE;
       break;
-	
+
       /* END OSF Fix CR 4859 */
     case MrmRtypeFont:
     case MrmRtypeFontSet:
@@ -1818,19 +1818,19 @@ Urm__CW_FixupValue (long			val,
 	  oldlist = (OldRGMFontListPtr)bufptr;
 
 	  fontlist = (RGMFontListPtr)val;
-	    
+
 	  fontlist->validation = oldlist->validation;
 	  fontlist->count = oldlist->count;
-	    
+
 	  for ( fixndx=0 ; fixndx<oldlist->count ; fixndx++ )
 	    {
 	      olditem = &oldlist->item[fixndx];
 	      fontitem = &fontlist->item[fixndx];
-		
-	      fontitem->cset.charset = 
+
+	      fontitem->cset.charset =
 		XtNewString(( /*XmStringCharset*/String)
 			    bufptr+olditem->cset.cs_offs);
-	      fontitem->font.font = 
+	      fontitem->font.font =
 		XtNewString((String)bufptr+olditem->font.font_offs);
 	      fontitem->type = MrmRtypeFont;
 	    }
@@ -1864,7 +1864,7 @@ Urm__CW_FixupValue (long			val,
     case MrmRtypeVerticalInteger:
       {
 	RGMUnitsIntegerPtr unitsvalue;
-	    
+
 	unitsvalue = (RGMUnitsIntegerPtr) val;
 	if ( *swap_needed )
 	  {
@@ -1879,7 +1879,7 @@ Urm__CW_FixupValue (long			val,
       {
 	RGMUnitsFloatPtr unitsvalue;
 	double *floatval;
-	    
+
 	unitsvalue = (RGMUnitsFloatPtr) val;
 	floatval = (double *)(&unitsvalue->value[0]);
 	if ( *swap_needed )
@@ -1930,7 +1930,7 @@ Urm__CW_FixupValue (long			val,
  *--
  */
 
-String 
+String
 Urm__CW_DisplayToString (char                       *val,
 			 String                      add_string,
 			 int                         add_string_size)
@@ -1994,7 +1994,7 @@ Urm__CW_DisplayToString (char                       *val,
  *	cvttype		conversion destination type, from RGMrType...
  *	display		needed for font and pixel creation
  *	hierarchy_id	for name lookup
- *	ftllist		A pointer list to save fontlists and XmStrings created 
+ *	ftllist		A pointer list to save fontlists and XmStrings created
  *			for use as resource values, and which must be freed
  *
  *  IMPLICIT INPUTS:
@@ -2011,7 +2011,7 @@ Urm__CW_DisplayToString (char                       *val,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_ConvertValue (Widget			parent,
 		      long			*val,
 		      MrmType			reptype,
@@ -2047,7 +2047,7 @@ Urm__CW_ConvertValue (Widget			parent,
   RGMTextVectorPtr	vecptr ;	  /* val as text vector */
   int			vec_count;	  /* for moving strings */
   int			orientation = XmNO_ORIENTATION; /* for values w/units */
-  Screen		*screen; 
+  Screen		*screen;
   RGMUnitsIntegerPtr	unitsintvalue;
   RGMUnitsFloatPtr	unitsfloatvalue;
   Pixel			fgint = (Pixel) -1;
@@ -2056,8 +2056,8 @@ Urm__CW_ConvertValue (Widget			parent,
 
   /* BEGIN HAL Fix CR 5439 */
   /* If the cvttype is not zero, we should do some
-     type checking here to avoid the confusing error 
-     message issued like the bug CR 5439 case. The 
+     type checking here to avoid the confusing error
+     message issued like the bug CR 5439 case. The
      following is for fixing that defect.           */
 
   if(cvttype){/* If destination type is clear, definitly need conversion */
@@ -2069,13 +2069,13 @@ Urm__CW_ConvertValue (Widget			parent,
 	{
 	  sprintf(err_msg, _MrmMMsg_0111, (*val)) ;
 	  return Urm__UT_Error ("Urm__CW_ConvertValue",
-				err_msg, NULL, NULL, MrmFAILURE);  
+				err_msg, NULL, NULL, MrmFAILURE);
 	}
       break;
 
     default: /* The place to do other type checking in Mrm */
-      /*EMPTY*/;         
-    } 
+      /*EMPTY*/;
+    }
   }
   /* END HAL Fix CR 5439 */
   switch ( reptype )
@@ -2122,7 +2122,7 @@ Urm__CW_ConvertValue (Widget			parent,
     case MrmRtypeChar8Vector:
       {
 	String	*tbl;
-	  
+
 	vecptr = (RGMTextVectorPtr) (*val) ;
 	/* Have to pack vecptr */
 	vec_count = vecptr->count;
@@ -2135,7 +2135,7 @@ Urm__CW_ConvertValue (Widget			parent,
     case MrmRtypeCStringVector:
       {
 	XmStringTable	tbl;
-	
+
 	vecptr = (RGMTextVectorPtr) (*val) ;
 	/* Have to pack vecptr */
 	vec_count = vecptr->count;
@@ -2159,9 +2159,7 @@ Urm__CW_ConvertValue (Widget			parent,
       break;
     case MrmRtypeIntegerVector:
       {
-	RGMIntegerVectorPtr	vecptr ;	/* val as integer vector */
-
-        vecptr = (RGMIntegerVectorPtr) (*val) ;
+        vecptr = *(RGMTextVectorPtr *)val;
         *val = (long) vecptr->item ;
         break ;
       }
@@ -2187,7 +2185,7 @@ Urm__CW_ConvertValue (Widget			parent,
 
     case MrmRtypeXBitmapFile:
       Urm__CW_GetPixmapParms(parent, &screen, &display, &fgint, &bgint);
-      result = Urm__CW_ReadBitmapFile((char *)(*val), screen, 
+      result = Urm__CW_ReadBitmapFile((char *)(*val), screen,
 				      fgint, bgint, &pixmap, parent);
       if (result != MrmSUCCESS)
 	return (Urm__UT_Error("Urm__CW_ConvertValue", _MrmMMsg_0112,
@@ -2209,9 +2207,9 @@ Urm__CW_ConvertValue (Widget			parent,
       switch (reptype)
 	{
 	case MrmRtypeFont:
-	  result = 
+	  result =
 	    Urm__WCI_LookupRegisteredName(dpyandfontstr, (XtPointer *)&font);
-	    
+
 	  if ( result != MrmSUCCESS )
 	    {
 	      font = XLoadQueryFont (display, fontstg);
@@ -2230,12 +2228,12 @@ Urm__CW_ConvertValue (Widget			parent,
 				XtNewString(dpyandfontstr));
 	      }
 	    }
-	  break;	    
+	  break;
 
 	case MrmRtypeFontSet:
-	  result = Urm__WCI_LookupRegisteredName(dpyandfontstr, 
+	  result = Urm__WCI_LookupRegisteredName(dpyandfontstr,
 						 (XtPointer *)&fontset);
-	    
+
 	  if ( result != MrmSUCCESS )
 	    {
 	      fontset = XCreateFontSet(display, fontstg, &missing_csets,
@@ -2246,7 +2244,7 @@ Urm__CW_ConvertValue (Widget			parent,
 		  return Urm__UT_Error ("Urm__CW_ConvertValue",
 					err_msg, NULL, NULL, MrmNOT_FOUND) ;
 		}
-	      Urm__WCI_RegisterNames(&dpyandfontstr, 
+	      Urm__WCI_RegisterNames(&dpyandfontstr,
 				     (XtPointer *)&fontset, 1);
 	    }
 	  break;
@@ -2259,7 +2257,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	    case MrmRtypeFont:
 	      dfontlist = XmFontListCreate (font, fontptr->cset.charset) ;
 	      break;
-		  
+
 	    case MrmRtypeFontSet:
 	      fontset_entry = XmFontListEntryCreate(fontptr->cset.charset,
 						    XmFONT_IS_FONTSET,
@@ -2267,7 +2265,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
 	      break;
 	    }
-		  
+
 	  if ( ftllist != NULL )
 	    {
 	      UrmPlistAppendPointer (ftllist, (XtPointer)(long)reptype);
@@ -2285,7 +2283,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	{
 	  fontstg = fontlist->item[ndx].font.font;
 	  dpyandfontstr = Urm__CW_DisplayToString((char*)&display,
-						  fontstg, 
+						  fontstg,
 						  strlen(fontstg) + 1);
 	  if ( dpyandfontstr == NULL)
 	    {
@@ -2296,7 +2294,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	  switch (fontlist->item[ndx].type)
 	    {
 	    case MrmRtypeFont:
-	      result = Urm__WCI_LookupRegisteredName(dpyandfontstr, 
+	      result = Urm__WCI_LookupRegisteredName(dpyandfontstr,
 						     (XtPointer *)&font);
 	      if ( result != MrmSUCCESS )
 		{
@@ -2316,10 +2314,10 @@ Urm__CW_ConvertValue (Widget			parent,
 				    XtNewString(dpyandfontstr));
 		  }
 		}
-	      break;	    
+	      break;
 
 	    case MrmRtypeFontSet:
-	      result = Urm__WCI_LookupRegisteredName(dpyandfontstr, 
+	      result = Urm__WCI_LookupRegisteredName(dpyandfontstr,
 						     (XtPointer *)&fontset);
 	      if ( result != MrmSUCCESS )
 		{
@@ -2337,7 +2335,7 @@ Urm__CW_ConvertValue (Widget			parent,
 		      sprintf(err_msg, _MrmMMsg_0072, fontstg);
 		      XFreeStringList(missing_csets);
 		    }
-		  Urm__WCI_RegisterNames(&dpyandfontstr, 
+		  Urm__WCI_RegisterNames(&dpyandfontstr,
 					 (XtPointer *)&fontset, 1);
 		}
 	      break;
@@ -2359,10 +2357,10 @@ Urm__CW_ConvertValue (Widget			parent,
 			   fontlist->item[ndx].font.font) ;
 		  return Urm__UT_Error ("Urm__CW_ConvertValue",
 					err_msg, NULL, NULL, MrmFAILURE) ;
-		}	
+		}
 	      break;
 	    case MrmRtypeFontSet:
-	      fontset_entry = 
+	      fontset_entry =
 		XmFontListEntryCreate(fontlist->item[ndx].cset.charset,
 				      XmFONT_IS_FONTSET,
 				      fontset);
@@ -2373,11 +2371,11 @@ Urm__CW_ConvertValue (Widget			parent,
 			   fontlist->item[ndx].font.font) ;
 		  return Urm__UT_Error ("Urm__CW_ConvertValue",
 					err_msg, NULL, NULL, MrmFAILURE) ;
-		}	
+		}
 	      break;
 	    }
 	}
-	
+
       *val = (long) dfontlist ;
       /*
        * Save only the final fontlist to be freed later. All intermediate
@@ -2395,7 +2393,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	{
 	case URMColorDescTypeName:
 	  result = Urm__UT_GetNamedColorPixel
-	    (display, (Colormap)0, colorptr, &pix, 
+	    (display, (Colormap)0, colorptr, &pix,
 	     XBlackPixelOfScreen(XDefaultScreenOfDisplay(display))) ;
 	  if ( result != MrmSUCCESS )
 	    {
@@ -2413,15 +2411,15 @@ Urm__CW_ConvertValue (Widget			parent,
 	    {
 	      if (result == MrmPARTIAL_SUCCESS) result = MrmSUCCESS;
 	      sprintf (err_msg, _MrmMMsg_0039,
-		       colorptr->desc.rgb.red, 
-		       colorptr->desc.rgb.green, 
+		       colorptr->desc.rgb.red,
+		       colorptr->desc.rgb.green,
 		       colorptr->desc.rgb.blue) ;
 	      return Urm__UT_Error ("Urm__CW_ConvertValue",
 				    err_msg, NULL, NULL, MrmNOT_FOUND) ;
 	    }
 	  break;
 	default:
-	  sprintf(err_msg, _MrmMMsg_0040);
+	  strcpy(err_msg, _MrmMMsg_0040);
 	  return Urm__UT_Error ("Urm__CW_ConvertValue",
 				err_msg, NULL, NULL, MrmFAILURE) ;
 	};
@@ -2431,7 +2429,7 @@ Urm__CW_ConvertValue (Widget			parent,
     case MrmRtypeWideCharacter:
       {
 	RGMWCharEntryPtr	wcharentry;
-	  
+
 	wcharentry = (RGMWCharEntryPtr)*val;
 	*val = (long)wcharentry->pointer;
 	break;
@@ -2483,7 +2481,7 @@ Urm__CW_ConvertValue (Widget			parent,
       unitsintvalue = (RGMUnitsIntegerPtr) *val;
       if (unitsintvalue->value != 0)
 	{
-	  *val = _XmConvertUnits(screen, orientation, unitsintvalue->units, 
+	  *val = _XmConvertUnits(screen, orientation, unitsintvalue->units,
 				 unitsintvalue->value, XmPIXELS);
 	  if (*val == 0)
 	    {
@@ -2517,7 +2515,7 @@ Urm__CW_ConvertValue (Widget			parent,
 					       &int_units, &int_value,
 					       XmPIXELS) == False)
 	      {
-		return Urm__UT_Error ("Urm__CW_ConvertValue", _MrmMMsg_0116, 
+		return Urm__UT_Error ("Urm__CW_ConvertValue", _MrmMMsg_0116,
 				      NULL, NULL, MrmFAILURE);
 	      }
 	    *val = _XmConvertUnits(screen, orientation, int_units,
@@ -2544,7 +2542,7 @@ Urm__CW_ConvertValue (Widget			parent,
 ** error if the display is closed and reopened and the same value is fetched.
 */
 /*ARGSUSED*/
-static void 
+static void
 DisplayDestroyCallback ( Widget w,
 			 XtPointer client_data,
 			 XtPointer call_data )	/* unused */
@@ -2588,7 +2586,7 @@ DisplayDestroyCallback ( Widget w,
 
 static char* staticNull = NULL;
 
-void 
+void
 Urm__CW_SafeCopyValue (long				*val,
 		       MrmType				reptype,
 		       URMPointerListPtr		cblist,
@@ -2613,7 +2611,7 @@ Urm__CW_SafeCopyValue (long				*val,
   String		*char8_table_dst ;
   wchar_t		*wchar_src;	/* to copy wide character strings */
   wchar_t		*wchar_dst;
-  size_t		size;		
+  size_t		size;
   int			cnt ;
 
   /*
@@ -2661,9 +2659,9 @@ Urm__CW_SafeCopyValue (long				*val,
 	 instead of the source. */
       for (cnt=0; cnt<vec_count; cnt++)
 	{
-	  char8_table_dst[cnt] 
-	    = (String) ((char *) char8_table_dst + 
-			((unsigned long) char8_table_src[cnt] - 
+	  char8_table_dst[cnt]
+	    = (String) ((char *) char8_table_dst +
+			((unsigned long) char8_table_src[cnt] -
 			 (unsigned long) char8_table_src)) ;
 	}
       *val = (long) char8_table_dst ;
@@ -2744,7 +2742,7 @@ Urm__CW_SafeCopyValue (long				*val,
 
       for (cnt = 0; ; cnt++) if (wchar_src[cnt] == 0) break;
       size = (cnt+1) * sizeof(wchar_t);
-	
+
       wchar_dst = (wchar_t *) XtMalloc (size) ;
       memcpy(wchar_dst, wchar_src, size) ;
       *val = (long) wchar_dst ;
@@ -2801,7 +2799,7 @@ Urm__CW_SafeCopyValue (long				*val,
  */
 
 /*ARGSUSED*/
-void 
+void
 UrmDestroyCallback (Widget                     w, /* unused */
 		    URMPointerListPtr           list_id,
 		    XmAnyCallbackStruct         * reason) /* unused */
@@ -2886,7 +2884,7 @@ UrmDestroyCallback (Widget                     w, /* unused */
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_ReadLiteral (RGMResourceDescPtr		resptr ,
 		     MrmHierarchy		hierarchy_id ,
 		     IDBFile			file_id ,
@@ -2971,7 +2969,7 @@ Urm__CW_ReadLiteral (RGMResourceDescPtr		resptr ,
       break;
     case MrmRtypeIconImage:
       result = Urm__CW_LoadIconImage ((RGMIconImagePtr)*val,
-				      (XtPointer)*val, hierarchy_id, 
+				      (XtPointer)*val, hierarchy_id,
 				      *act_file_id, ctxlist) ;
       if ( result != MrmSUCCESS ) return result ;
       break ;
@@ -3015,7 +3013,7 @@ Urm__CW_ReadLiteral (RGMResourceDescPtr		resptr ,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
 		       XtPointer		bufptr ,
 		       MrmHierarchy		hierarchy_id ,
@@ -3039,12 +3037,12 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
   Boolean		swap_needed = FALSE ;
 
   /*
-   * Fixup pointers as required. Read the color table if it is a resource. 
+   * Fixup pointers as required. Read the color table if it is a resource.
    * Note that bufptr is reset to a color table resource read in in order
    * provide the correct relocation for color items.
    */
   if (iconptr->validation != URMIconImageValid)
-    { if ( Urm__SwapValidation(iconptr->validation) == URMIconImageValid ) 
+    { if ( Urm__SwapValidation(iconptr->validation) == URMIconImageValid )
        { swapbytes( iconptr->validation );
          swapbytes( iconptr->width );
          swapbytes( iconptr->height );
@@ -3058,7 +3056,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
         }
       else
         { /* CR9259 */
-          return Urm__UT_Error ("Urm__CW_LoadIconImage", 
+          return Urm__UT_Error ("Urm__CW_LoadIconImage",
 			    _MrmMMsg_0028, NULL, NULL, MrmNOT_VALID) ;
         }
     }
@@ -3085,7 +3083,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
 	  sprintf (err_msg, _MrmMMsg_0080, cttype) ;
 	  return Urm__UT_Error ("Urm__CW_LoadIconImage",
 				err_msg, NULL, NULL, MrmNOT_VALID) ;
-	}        
+	}
       ctbufptr = (XtPointer) iconptr->color_table.ctptr ;
       break ;
     }
@@ -3108,7 +3106,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
       else
         {
             /* CR9259 */
-            return Urm__UT_Error ("Urm__CW_LoadIconImage", 
+            return Urm__UT_Error ("Urm__CW_LoadIconImage",
 			    _MrmMMsg_0028, NULL, NULL, MrmNOT_VALID) ;
         }
     }
@@ -3144,7 +3142,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
 	      sprintf (err_msg, _MrmMMsg_0082, ctype) ;
 	      return Urm__UT_Error ("Urm__CW_LoadIconImage",
 				    err_msg, NULL, NULL, MrmNOT_VALID) ;
-	    }        
+	    }
 	  break ;
 	}
         default:
@@ -3197,7 +3195,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_FixupCallback (Widget			parent ,
 		       XtPointer		bufptr ,
 		       RGMCallbackDescPtr	cbdesc ,
@@ -3253,7 +3251,7 @@ Urm__CW_FixupCallback (Widget			parent ,
        */
       reptype = itmptr->cb_item.rep_type ;
       tag_val = Urm__CW_EvaluateValOrOffset (reptype, bufptr,
-					     itmptr->cb_item.datum.ival, 
+					     itmptr->cb_item.datum.ival,
 					     itmptr->cb_item.datum.offset) ;
       switch ( reptype )
         {
@@ -3280,7 +3278,7 @@ Urm__CW_FixupCallback (Widget			parent ,
 		unres_ref_count++;
 	      }
 	      break;
-		  
+
 	    case URMgLiteral:
 	      result = Urm__CW_ReadLiteral
 		(resptr, hierarchy_id, file_id, ctxlist,
@@ -3295,14 +3293,14 @@ Urm__CW_FixupCallback (Widget			parent ,
 		  fontlist = (RGMFontListPtr)
 		    XtMalloc(sizeof(RGMFontList) +
 			     (sizeof(RGMFontItem) * (count - 1)));
-		  result = Urm__CW_FixupValue((long)fontlist, reptype, 
+		  result = Urm__CW_FixupValue((long)fontlist, reptype,
 					      (XtPointer)tag_val, file_id,
 					      &swap_needed);
 		  XtFree((char *)tag_val);
 		  tag_val = (long)fontlist;
 		}
 	      else
-		result = Urm__CW_FixupValue (tag_val, reptype, 
+		result = Urm__CW_FixupValue (tag_val, reptype,
 					     (XtPointer)tag_val, file_id,
 					     &swap_needed) ;
 
@@ -3311,19 +3309,19 @@ Urm__CW_FixupCallback (Widget			parent ,
 		(parent, &tag_val, reptype, (MrmType)0, XtDisplay(parent),
 		 hierarchy_id, NULL) ;
 	      if ( result != MrmSUCCESS ) continue ;
-		  
+
 	      switch (reptype)
 		{
 		case MrmRtypeChar8Vector:
 		case MrmRtypeCStringVector:
-		  vec_size -= (sizeof ( RGMTextVector ) - 
+		  vec_size -= (sizeof ( RGMTextVector ) -
 			       sizeof ( RGMTextEntry ));
 		  break;
 		default:
 		  break;
 		}
-		  
-	      Urm__CW_SafeCopyValue (&tag_val, reptype, cblist, 
+
+	      Urm__CW_SafeCopyValue (&tag_val, reptype, cblist,
 				     vec_count, vec_size) ;
 	      itmptr->runtime.resolved = TRUE;
 	      break ;
@@ -3397,7 +3395,7 @@ Urm__CW_FixupCallback (Widget			parent ,
  */
 
 /*ARGSUSED*/
-Cardinal 
+Cardinal
 Urm__CW_LoadWidgetResource (Widget			parent ,
 			    RGMWidgetRecordPtr		widgetrec , /* unused */
 			    RGMResourceDescPtr		resptr ,
@@ -3512,9 +3510,9 @@ Urm__CW_LoadWidgetResource (Widget			parent ,
  *--
  */
 
-void 
+void
 Urm__CW_GetPixmapParms (Widget			w ,
-			Screen			**screen , 
+			Screen			**screen ,
 			Display			**display ,
 			Pixel			*fgint ,
 			Pixel			*bgint )
@@ -3602,7 +3600,7 @@ Urm__CW_GetPixmapParms (Widget			w ,
  *--
  */
 
-RGMCallbackDescPtr 
+RGMCallbackDescPtr
 Urm__CW_TranslateOldCallback (OldRGMCallbackDescPtr	oldptr)
 {
   /*
@@ -3612,10 +3610,10 @@ Urm__CW_TranslateOldCallback (OldRGMCallbackDescPtr	oldptr)
   RGMCallbackItemPtr	itmptr;	/* current callback item */
   OldRGMCallbackItemPtr	olditmptr;	/* callback item being converted */
   int			ndx;	/* loop index */
-  
+
   cbptr = (RGMCallbackDescPtr) XtMalloc(sizeof(RGMCallbackDesc) +
 					oldptr->count*sizeof(RGMCallbackItem));
-  
+
   cbptr->validation = oldptr->validation;
   cbptr->count = oldptr->count;
 
@@ -3625,12 +3623,12 @@ Urm__CW_TranslateOldCallback (OldRGMCallbackDescPtr	oldptr)
     {
       olditmptr = &oldptr->item[ndx];
       itmptr = &cbptr->item[ndx];
-      
+
       itmptr->cb_item.routine = olditmptr->cb_item.routine;
       itmptr->cb_item.rep_type = olditmptr->cb_item.rep_type;
       itmptr->cb_item.datum = olditmptr->cb_item.datum;
     }
-  
+
   return cbptr;
 }
 

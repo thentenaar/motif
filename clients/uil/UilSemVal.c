@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
@@ -101,7 +101,7 @@ static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
 #define font_table_arg_type 		18
 #define wcstr_arg_type			19
 #define fontset_arg_type		20
-/*  BEGIN HaL fix CR 5429 */ 
+/*  BEGIN HaL fix CR 5429 */
 #define classrec_arg_type     		21
 /* END HaL Fix CR 5429 */
 
@@ -146,28 +146,28 @@ static int ( * numeric_convert_table[])() = {
 	    sem_convert_to_error };
 
 /*
- * The next two definitions must match value sets defining 
+ * The next two definitions must match value sets defining
  * expression operators in UilSymDef.h
  */
 
 static unsigned int legal_operand_type[ ] = {
     /* unused */	0,
-    /* not */		1 << sym_k_bool_value | 1 << sym_k_integer_value, 
+    /* not */		1 << sym_k_bool_value | 1 << sym_k_integer_value,
     /* unary plus */	1 << sym_k_integer_value |
       			1 << sym_k_horizontal_integer_value |
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
+			1 << sym_k_vertical_float_value |
                         1 << sym_k_single_float_value,
     /* unary minus */	1 << sym_k_integer_value |
       			1 << sym_k_horizontal_integer_value |
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
-                        1 << sym_k_single_float_value, 
-    /* comp_str */	1 << sym_k_char_8_value | 
+			1 << sym_k_vertical_float_value |
+                        1 << sym_k_single_float_value,
+    /* comp_str */	1 << sym_k_char_8_value |
 			1 << sym_k_localized_string_value |
 			1 << sym_k_compound_string_value,
     /* wchar_str */	1 << sym_k_localized_string_value,
@@ -176,40 +176,40 @@ static unsigned int legal_operand_type[ ] = {
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
-                        1 << sym_k_single_float_value, 
+			1 << sym_k_vertical_float_value |
+                        1 << sym_k_single_float_value,
     /* divide */	1 << sym_k_integer_value |
       			1 << sym_k_horizontal_integer_value |
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
+			1 << sym_k_vertical_float_value |
                         1 << sym_k_single_float_value,
     /* add */		1 << sym_k_integer_value |
       			1 << sym_k_horizontal_integer_value |
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
-                        1 << sym_k_single_float_value, 
+			1 << sym_k_vertical_float_value |
+                        1 << sym_k_single_float_value,
     /* subtract */	1 << sym_k_integer_value |
       			1 << sym_k_horizontal_integer_value |
       			1 << sym_k_vertical_integer_value |
       			1 << sym_k_float_value |
 			1 << sym_k_horizontal_float_value |
-			1 << sym_k_vertical_float_value | 
-                        1 << sym_k_single_float_value, 
+			1 << sym_k_vertical_float_value |
+                        1 << sym_k_single_float_value,
     /* left shift */	1 << sym_k_integer_value,
     /* right shift */	1 << sym_k_integer_value,
     /* and */		1 << sym_k_bool_value |
                         1 << sym_k_integer_value |
-			1 << sym_k_char_8_value | 
-			1 << sym_k_localized_string_value | 
+			1 << sym_k_char_8_value |
+			1 << sym_k_localized_string_value |
 			1 << sym_k_compound_string_value |
-			1 << sym_k_localized_string_value, 
-    /* xor */		1 << sym_k_bool_value | 1 << sym_k_integer_value, 
-    /* or */		1 << sym_k_bool_value | 1 << sym_k_integer_value, 
-    /* cat */		1 << sym_k_char_8_value | 
+			1 << sym_k_localized_string_value,
+    /* xor */		1 << sym_k_bool_value | 1 << sym_k_integer_value,
+    /* or */		1 << sym_k_bool_value | 1 << sym_k_integer_value,
+    /* cat */		1 << sym_k_char_8_value |
 			1 << sym_k_compound_string_value |
 			1 << sym_k_localized_string_value,
     /* valref */	0xFFFFFFFF,
@@ -542,7 +542,7 @@ if ( widget_node->az_arguments != NULL )
     sem_validate_argument_list (widget_node, widget_type,
 				widget_node->az_arguments, arg_seen);
     }
-	
+
 /*
  * Validate the callbacks. Each callback is validated by a validation
  * routine
@@ -619,7 +619,7 @@ sym_obj_entry_type		*list_member;
 sym_nested_list_entry_type	*nested_list_entry;
 sym_argument_entry_type		*argument_entry;
 /* For fixing DTS 9540 */
-static    int nest_count=0; 
+static    int nest_count=0;
 static    sym_list_entry_type *nest_head = NULL;
 
 
@@ -846,17 +846,15 @@ if ( (argname_value_entry->obj_header.b_flags&sym_m_builtin) &&
 **  proper enumeration set match
 */
 if ( (argname_value_entry->obj_header.b_flags & sym_m_builtin) &&
-     (argname_value_entry->obj_header.az_name == NULL) ) 
+     (argname_value_entry->obj_header.az_name == NULL) )
     {
-    key_keytable_entry_type		* keytable_entry;
-
     keytable_entry =
 	(key_keytable_entry_type *) argname_value_entry->value.az_data;
     _assert (keytable_entry->b_class==tkn_k_class_argument,
 	     "name is not an argument");
     expected_type = argument_type_table[keytable_entry->b_subclass];
     }
-else 
+else
     expected_type = argname_value_entry->b_arg_type;
 
 /*
@@ -880,7 +878,7 @@ switch ( actual_tag )
 	actual_type = sym_k_widget_ref_value;
 	break;
     default:
-	_assert (FALSE, "value entry missing");    
+	_assert (FALSE, "value entry missing");
 	break;
     }
 valid_value = (actual_type == expected_type);
@@ -907,13 +905,13 @@ if (( expected_type == sym_k_pixmap_value ) &&
 if (( expected_type == sym_k_color_value) &&      /* RAP rgb data type */
     ( actual_type == sym_k_rgb_value))
     valid_value = TRUE;
-/*  BEGIN HaL fix CR 5429 */ 
-if (( expected_type == sym_k_class_rec_name_value) &&      
+/*  BEGIN HaL fix CR 5429 */
+if (( expected_type == sym_k_class_rec_name_value) &&
     ( actual_type == sym_k_class_rec_name_value))
     valid_value = TRUE;
-/*  END HaL fix CR 5429 */ 
+/*  END HaL fix CR 5429 */
 /* For boolean values converted to enums */
-if ((expected_type == sym_k_integer_value) &&      
+if ((expected_type == sym_k_integer_value) &&
     (actual_type == sym_k_bool_value))
     valid_value = TRUE;
 if (( expected_type == sym_k_char_8_value ) &&
@@ -926,7 +924,7 @@ if (( expected_type == sym_k_compound_string_value ) &&
     if ( (argvalue_value_entry->obj_header.b_flags & sym_m_private) != 0)
 	{
 	sym_value_entry_type   *cstr_value;
-	
+
 	cstr_value = (sym_value_entry_type *) sem_create_cstr();
 	cstr_value->b_expr_opr = sym_k_coerce_op;
 	cstr_value->az_exp_op1 = argvalue_value_entry;
@@ -941,7 +939,7 @@ if (( expected_type == sym_k_compound_string_value ) &&
     if ( (argvalue_value_entry->obj_header.b_flags & sym_m_private) != 0)
 	{
 	sym_value_entry_type   *cstr_value;
-	
+
 	cstr_value = (sym_value_entry_type *) sem_create_cstr();
 	cstr_value->b_expr_opr = sym_k_coerce_op;
 	cstr_value->az_exp_op1 = argvalue_value_entry;
@@ -956,7 +954,7 @@ if (( expected_type == sym_k_wchar_string_value ) &&
     if ( (argvalue_value_entry->obj_header.b_flags & sym_m_private) != 0)
 	{
 	sym_value_entry_type   *wcstr_value;
-	
+
 	wcstr_value = (sym_value_entry_type *) sem_create_wchar_str();
 	wcstr_value->b_expr_opr = sym_k_coerce_op;
 	wcstr_value->az_exp_op1 = argvalue_value_entry;
@@ -973,7 +971,7 @@ if (( expected_type == sym_k_font_table_value ) &&
 	{
         sym_value_entry_type	*font_table;
 
-        font_table = 
+        font_table =
 	    sem_create_value_entry
 	        ((char*)&argvalue_value_entry, sizeof(long),
 		 sym_k_font_table_value);
@@ -989,8 +987,8 @@ if (( expected_type == sym_k_keysym_value ) &&
     ( actual_type == sym_k_integer_value ))
     {
 /*
- * If an integer is incountered when expecting a keysym then just make the 
- * integer into a keysym if the integer is private. If it isn't give an error 
+ * If an integer is incountered when expecting a keysym then just make the
+ * integer into a keysym if the integer is private. If it isn't give an error
  * message because Mrm won't be able to handle that problem.
  * When allocating the space for c_value the size of the string is one since an
  * integer can only be one character.
@@ -1002,12 +1000,12 @@ if (( expected_type == sym_k_keysym_value ) &&
 	valid_value = TRUE;
 	tmp = argument_entry->az_arg_value->value.l_integer;
 	argument_entry->az_arg_value->value.c_value = (char *) XtCalloc(1,2);
-	/* 
+	/*
 	 * This is a very strange move. While we Calloc 2 bytes we only need to move
-	 * one of those bytes. We calloc 2 bytes for a null termination so HP type 
+	 * one of those bytes. We calloc 2 bytes for a null termination so HP type
 	 * machines will work. It looks wierd but it works.
 	 */
-	_move (argument_entry->az_arg_value->value.c_value, &tmp, 1);
+	memmove (argument_entry->az_arg_value->value.c_value, &tmp, 1);
 	argument_entry->az_arg_value->b_type = sym_k_keysym_value;
 	argument_entry->az_arg_value->w_length = 1;
 	}
@@ -1440,7 +1438,7 @@ sym_value_entry_type		*reason_value_entry;
 key_keytable_entry_type		*keytable_entry;
 sym_callback_entry_type		**seen_entry;
 boolean				supported_flag;
-static sym_value_entry_type     *widget_az_arg_value = NULL; 
+static sym_value_entry_type     *widget_az_arg_value = NULL;
 
 
 /*
@@ -1531,9 +1529,9 @@ if ( (reason_value_entry->obj_header.b_flags&sym_m_builtin) &&
     if(callback_entry->az_call_proc_ref &&
       callback_entry->az_call_proc_ref->az_arg_value &&
       (callback_entry->az_call_proc_ref->az_arg_value->header.b_tag
-        == sym_k_widget_entry || 
+        == sym_k_widget_entry ||
         callback_entry->az_call_proc_ref->az_arg_value->header.b_tag
-        == sym_k_gadget_entry) && 
+        == sym_k_gadget_entry) &&
         widget_az_arg_value == callback_entry->az_call_proc_ref->az_arg_value){
            diag_issue_diagnostic
                         (d_circular_def,
@@ -1543,7 +1541,7 @@ if ( (reason_value_entry->obj_header.b_flags&sym_m_builtin) &&
         if(callback_entry->az_call_proc_ref &&
         callback_entry->az_call_proc_ref->az_arg_value &&
         (callback_entry->az_call_proc_ref->az_arg_value->header.b_tag
-           == sym_k_widget_entry || 
+           == sym_k_widget_entry ||
            callback_entry->az_call_proc_ref->az_arg_value->header.b_tag
            == sym_k_gadget_entry) && !widget_az_arg_value)
 	      widget_az_arg_value = callback_entry->az_call_proc_ref->az_arg_value;
@@ -1698,7 +1696,7 @@ if ( control_obj_entry->header.b_tag == sym_k_gadget_entry )
  */
 if (control_obj_entry->header.b_tag == sym_k_child_entry)
   {
-    supported_flag = 
+    supported_flag =
       sem_child_allowed(control_obj_entry->header.b_type, widget_type);
     if ( ! supported_flag )
       diag_issue_diagnostic
@@ -1708,9 +1706,9 @@ if (control_obj_entry->header.b_tag == sym_k_child_entry)
 	 "automatic child",
 	 diag_object_text(widget_type));
   }
-else 
+else
   {
-    supported_flag = 
+    supported_flag =
       sem_control_allowed(control_obj_entry->header.b_type, widget_type);
     if ( ! supported_flag )
       diag_issue_diagnostic
@@ -1921,7 +1919,7 @@ return FALSE;
 **	node is in a real cycle. If the cycle_obj is ever encountered in
 **	the pointer march, then there is a cycle. Otherwise, the march
 **	terminates.
-**	
+**
 **
 **  FORMAL PARAMETERS:
 **
@@ -1984,7 +1982,7 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 		return TRUE;
 	    if ( control_obj_entry->az_controls == NULL )
 		break;
-	    if ( sem_validate_verify_cycle 
+	    if ( sem_validate_verify_cycle
 		     (cycle_obj, control_obj_entry->az_controls) )
 		return TRUE;
 	    break;
@@ -2169,7 +2167,7 @@ _assert (procref_entry->header.b_tag==sym_k_proc_ref_entry,
 	if ((expected_arg_type == sym_k_char_8_value) &&
 	    (actual_arg_type == sym_k_localized_string_value))
 	  valid_arg = TRUE;
-	
+
 	if (( expected_arg_type == sym_k_compound_string_value ) &&
 	    ( actual_arg_type == sym_k_char_8_value ))
 	{
@@ -2224,7 +2222,7 @@ _assert (procref_entry->header.b_tag==sym_k_proc_ref_entry,
 	    {
 		sym_value_entry_type   *font_table;
 
-		font_table = 
+		font_table =
 		    sem_create_value_entry
 			( (char*)&value_entry, sizeof(long),
 			 sym_k_font_table_value );
@@ -2239,13 +2237,13 @@ _assert (procref_entry->header.b_tag==sym_k_proc_ref_entry,
 	  {
 	    expected_arg_type = proc_def_entry->b_widget_type;
 	    actual_arg_type = value_entry->header.b_type;
-	    
+
 	    if ((expected_arg_type > uil_max_object) ||
 		(actual_arg_type == expected_arg_type))
 	      {
 		valid_arg = TRUE;
 	      }
-	    else 
+	    else
 	      {
 		diag_issue_diagnostic
 		  (d_arg_type,
@@ -2257,7 +2255,7 @@ _assert (procref_entry->header.b_tag==sym_k_proc_ref_entry,
 		return;
 	      }
 	  }
-	
+
 	if (!valid_arg)
 	{
 	    diag_issue_diagnostic
@@ -2461,7 +2459,7 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
-**	
+**
 **	This function does evaluation and validation of value nodes. It
 **	guarantees that a value usable by the output routine or other consumers
 **	of values is available in the value union of the node, with
@@ -2501,9 +2499,9 @@ sym_value_entry_type *sem_evaluate_value (val_entry)
 sem_evaluate_value_expr (val_entry);
 
 /* BEGIN HAL Fix CR 4774 */
-/* 	Do not execute case statement if val_entry was previously 
+/* 	Do not execute case statement if val_entry was previously
  *      a sym_k_valref_op node type.  This can be determined by
- *      examining the state of the sym_m_exp_eval flag in the 
+ *      examining the state of the sym_m_exp_eval flag in the
  *      b_aux_flags field.
  */
 
@@ -2541,7 +2539,7 @@ if ((val_entry->b_aux_flags & sym_m_exp_eval) == 0)
 		save_next = (sym_value_entry_type *)
 		    (value_segment -> az_next_table_value);
 	        cstr = (sym_value_entry_type *) sem_create_cstr();
-	        sem_append_str_to_cstr( cstr, 
+	        sem_append_str_to_cstr( cstr,
 		    value_segment, FALSE);
 		_sym_copy_entry (value_segment,
 		    cstr,
@@ -2552,7 +2550,7 @@ if ((val_entry->b_aux_flags & sym_m_exp_eval) == 0)
 		cstr->az_first_table_value = NULL;
 		sem_free_node (( sym_entry_type *)cstr);
 		}
-	    if (value_segment->b_type != sym_k_compound_string_value) 
+	    if (value_segment->b_type != sym_k_compound_string_value)
 		diag_issue_diagnostic
 		    ( d_wrong_type,
 		      _sar_source_pos2( value_segment ),
@@ -2661,13 +2659,13 @@ if ((val_entry->b_aux_flags & sym_m_exp_eval) == 0)
 	for ( ndx=0 ; ndx<(int)val_entry->b_table_count ; ndx++ )
 	    if ( (int)colorVec[ndx].b_index > 1 )	/* omit FG, BG */
 /*
- * Fix for CR 5428 - check to make sure that the expression result is a 
+ * Fix for CR 5428 - check to make sure that the expression result is a
  *                   color value.  If not, print diagnostics.
  */
             {
 		sem_evaluate_value_expr (colorVec[ndx].az_color);
-                if ((colorVec[ndx].az_color->b_type != sym_k_color_value) && 
-		    ( colorVec[ndx].az_color->b_type != sym_k_rgb_value)) 
+                if ((colorVec[ndx].az_color->b_type != sym_k_color_value) &&
+		    ( colorVec[ndx].az_color->b_type != sym_k_rgb_value))
                   diag_issue_diagnostic
                     ( d_wrong_type,
                       _sar_source_pos2( colorVec[ndx].az_color ),
@@ -2705,7 +2703,7 @@ if ((val_entry->b_aux_flags & sym_m_exp_eval) == 0)
 		boolean			found;
 		char			*row;
 		sym_value_entry_type	*rowEntry;
-		
+
 		/*
 		 * Find each icon character in the table, and replace its
 		 * character by its index.
@@ -2813,7 +2811,7 @@ _assert( (csval_entry->header.b_tag == sym_k_value_entry) &&
 /*
  **	You can't do anyting about imported compound strings so return.
  */
-if ((csval_entry->obj_header.b_flags & sym_m_imported) != 0) 
+if ((csval_entry->obj_header.b_flags & sym_m_imported) != 0)
     return(csval_entry);
 
 /*
@@ -2866,8 +2864,8 @@ if (next_segment->b_aux_flags & sym_m_separate)
  **  Loop through the rest of the segments of the string and append
  **  them to the first segment of the string.
  */
-for (next_segment = next_segment->az_next_table_value;  
-     next_segment != NULL;  
+for (next_segment = next_segment->az_next_table_value;
+     next_segment != NULL;
      next_segment = next_segment->az_next_table_value)
     {
     /*
@@ -2877,7 +2875,7 @@ for (next_segment = next_segment->az_next_table_value;
     charset = sem_map_subclass_to_charset (next_segment->b_charset );
     csetptr = sem_charset_name
 	(charset, next_segment->az_charset_value);
-    
+
     /*
      **  Create this segment, then concatenate to the result string.
      **  Free the two inputs now that a concatenated result string
@@ -2891,7 +2889,7 @@ for (next_segment = next_segment->az_next_table_value;
     if (next_segment->b_aux_flags & sym_m_separate)
       cstr_1 = XmStringConcatAndFree(cstr_1,
 				     XmStringSeparatorCreate());
-    
+
     cstr_r = XmStringConcatAndFree(cstr_r, cstr_1);
     }
 
@@ -2902,8 +2900,8 @@ csval_entry->w_length = XmStringLength (cstr_r);
 ** Now deallocate the nodes for the compound string segments and put a null
 ** in az_first_table_value
 */
-for (next_segment = csval_entry->az_first_table_value;  
-     next_segment != NULL;  
+for (next_segment = csval_entry->az_first_table_value;
+     next_segment != NULL;
      next_segment = next_segment->az_next_table_value)
 	sem_free_node (( sym_entry_type *)next_segment);
 
@@ -2964,8 +2962,8 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
     data_value_type	    		*op2_ptr = NULL;
     data_value_type	    		res_data;
     sym_value_entry_type		*cat_str_entry;
-    
-    
+
+
     /*
      ** If this isn't an operation or if we've already evaluated it, just
      ** leave. Also, guard against attempting to deal with NULLs.
@@ -2976,23 +2974,23 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
       return value_entry;
     if ( value_entry->b_expr_opr == sym_k_unspecified_op )
       return value_entry;
-    
+
     /*
      ** If we're just beginning to evaluate a new expression, increment the
      ** value for checking circular references.
      */
-    
+
     if (!in_expr)
       ref_chk_value++;
     in_expr = TRUE;
-    
+
     /*
      ** Check for circular references.
      ** Place a value in each node of this expression.  If we see the same
      ** value again as we evaluate the expression, we've been here before
      ** (kind of like dropping bread crumbs).
      */
-    
+
     if (value_entry->l_circular_ref_chk == ref_chk_value)
     {
 	if ( value_entry->obj_header.az_name != NULL )
@@ -3008,7 +3006,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	return NULL;
     }
     value_entry->l_circular_ref_chk = ref_chk_value;
-    
+
     /*
      ** Validate the first argument for the expression. If it is NULL,
      ** then return with no further processing, since this is usually
@@ -3032,17 +3030,17 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	in_expr = TRUE;
 	op2_type = validate_arg (value_entry->az_exp_op2,
 				 value_entry->b_expr_opr);
-	
+
 	/*
-	 ** Perform conversions 
+	 ** Perform conversions
 	 */
-	
+
 	op2_entry = value_entry->az_exp_op2;
-	
+
         res_type = op1_type;
 	if (res_type < op2_type)
 	  res_type = op2_type;
-	
+
 	if (op1_type != res_type)
 	{
 	    op1_ptr  = &op1_data;
@@ -3065,8 +3063,8 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	{
 	    op1_ptr = (data_value_type *) &(op1_entry->value);
 	}
-	
-	
+
+
 	if (op2_type != res_type)
 	{
 	    op2_ptr  = &op2_data;
@@ -3090,11 +3088,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    op2_ptr = (data_value_type *) &(op2_entry->value);
 	}
     }
-    
+
     /*
      ** Perform the operation
      */
-    
+
     switch (value_entry->b_expr_opr)
     {
       case sym_k_unary_plus_op:
@@ -3106,21 +3104,21 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    value_entry->value.l_integer = op1_entry->value.l_integer;
 	    value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
 	    value_entry->value.d_real = op1_entry->value.d_real;
 	    value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case single_float_arg_type: /* single float data type RAP */
 	    value_entry->value.single_float = op1_entry->value.single_float;
 	    break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3130,7 +3128,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_unary_minus_op:
 	switch (op1_type)
 	{
@@ -3140,21 +3138,21 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    value_entry->value.l_integer = - op1_entry->value.l_integer;
 	    value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
 	    value_entry->value.d_real = - op1_entry->value.d_real;
 	    value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case single_float_arg_type: /* single float data type RAP */
 	    value_entry->value.single_float = - op1_entry->value.single_float;
 	    break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3164,21 +3162,21 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_not_op:
 	switch (op1_type)
 	{
 	  case boolean_arg_type:
 	    value_entry->value.l_integer = ! op1_entry->value.l_integer;
 	    break;
-	    
+
 	  case integer_arg_type:
 	    value_entry->value.l_integer = ~ op1_entry->value.l_integer;
 	    break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3188,7 +3186,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_comp_str_op:
 	switch (op1_type)
 	{
@@ -3216,10 +3214,10 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	  case cstr_arg_type:	/*  comp_str */;
 	  {
 	      XmString	cstr;
-	      
+
 	      /*
 	       * If we're dealing with a combination 1-byte, 2-byte
-	       * string, then we have to evaluate it first. (if not 
+	       * string, then we have to evaluate it first. (if not
 	       * already done)
 	       */
 	      if (value_entry->az_exp_op1->az_first_table_value != NULL)
@@ -3231,22 +3229,22 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	       * concatendated onto the end of the string.  Also free
 	       * up used memory.
 	       */
-	      if ((value_entry->b_aux_flags 
+	      if ((value_entry->b_aux_flags
 		   & sym_m_separate) != 0 )
 	      {
 		  cstr = XmStringSeparatorCreate();
-		  value_entry->value.l_integer = 
+		  value_entry->value.l_integer =
 		    (long)XmStringConcatAndFree((XmString)value_entry->az_exp_op1->
 						value.l_integer, cstr);
 	      }
 	      else
 	      {
-		  value_entry->value.l_integer = 
+		  value_entry->value.l_integer =
 		    value_entry->az_exp_op1->value.l_integer;
 	      }
-	      
+
 	      sem_evaluate_value_cs(value_entry);
-	      
+
 	      res_type = cstr_arg_type;
 	  };
 	    break;
@@ -3259,7 +3257,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
         break;
-	
+
       case sym_k_wchar_str_op:
 	switch (op1_type)
 	{
@@ -3280,7 +3278,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
         break;
-	
+
       case sym_k_coerce_op:
 	switch (value_entry->b_type)
 	{
@@ -3312,7 +3310,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		break;
 	    }
 	    break;
-	    
+
 	  case sym_k_wchar_string_value:
 	    switch (op1_entry->b_type)
 	    {
@@ -3335,7 +3333,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		break;
 	    }
 	    break;
-	    
+
 	  case sym_k_font_table_value:
 	    if ((op1_entry->b_type == sym_k_font_value) ||
 		(op1_entry->b_type == sym_k_fontset_value))
@@ -3354,7 +3352,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		res_type = error_arg_type;
 	    }
 	    break;
-	    
+
 	  case sym_k_font_value:
 	    if ((op1_entry->b_type == sym_k_char_8_value) ||
 		(op1_entry->b_type == sym_k_localized_string_value) ||
@@ -3374,7 +3372,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		res_type = error_arg_type;
 	    }
 	    break;
-	    
+
 	  case sym_k_fontset_value:
 	    if ((op1_entry->b_type == sym_k_char_8_value) ||
 		(op1_entry->b_type == sym_k_localized_string_value) ||
@@ -3393,7 +3391,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		   diag_value_text( value_entry->b_type ) );
 		res_type = error_arg_type;
 	    }
-	    
+
 	  case sym_k_color_value:
 	  case sym_k_xbitmapfile_value:
 	  case sym_k_reason_value:
@@ -3417,11 +3415,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      case sym_k_keysym_value:
 		res_type = keysym_arg_type;
 		break;
-		/*  Begin fixing CR 5429 */ 
+		/*  Begin fixing CR 5429 */
 	      case sym_k_class_rec_name_value:
 		res_type = classrec_arg_type;
 		break;
-		/*  End fixing CR 5429 */ 
+		/*  End fixing CR 5429 */
 	    }
 	    switch (op1_entry->b_type)
 	    {
@@ -3440,7 +3438,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		break;
 	    }
 	    break;
-	    
+
 	  case sym_k_integer_value:
 	  case sym_k_horizontal_integer_value:
 	  case sym_k_vertical_integer_value:
@@ -3534,12 +3532,12 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 		break;
 	    }
 	    break;
-	    
+
 	  case sym_k_error_value:
 	    break;
-	    
+
 	  default:
-	    /*  Begin fixing CR 5429 */ 
+	    /*  Begin fixing CR 5429 */
 	    if ((op1_entry->b_type != sym_k_char_8_value) &&
 		(op1_entry->b_type != sym_k_localized_string_value))
 	      diag_issue_diagnostic
@@ -3557,8 +3555,8 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	/*  End fixing CR 5429 */ 
-	
+	/*  End fixing CR 5429 */
+
       case sym_k_valref_op:
       {
 	  /*
@@ -3619,14 +3617,14 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	  }
 	  break;
       }
-	
+
       case sym_k_add_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case horizontal_integer_arg_type:
 	  case vertical_integer_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value + op2_ptr->integer_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3636,11 +3634,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
             break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
-            value_entry->value.d_real = 
+            value_entry->value.d_real =
 	      op1_ptr->real_value + op2_ptr->real_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3650,15 +3648,15 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
             break;
-	    
+
 	  case single_float_arg_type:
-            value_entry->value.single_float = 
+            value_entry->value.single_float =
 	      op1_ptr->single_float_value + op2_ptr->single_float_value;
             break;
-	    
+
 	  case error_arg_type:
             break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3668,14 +3666,14 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
         }
 	break;
-	
+
       case sym_k_subtract_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case horizontal_integer_arg_type:
 	  case vertical_integer_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value - op2_ptr->integer_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3685,11 +3683,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
-	    value_entry->value.d_real = 
+	    value_entry->value.d_real =
 	      op1_ptr->real_value - op2_ptr->real_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3699,15 +3697,15 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case single_float_arg_type:
-            value_entry->value.single_float = 
+            value_entry->value.single_float =
 	      op1_ptr->single_float_value - op2_ptr->single_float_value;
             break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3717,14 +3715,14 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_multiply_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case horizontal_integer_arg_type:
 	  case vertical_integer_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value * op2_ptr->integer_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3734,11 +3732,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
-	    value_entry->value.d_real = 
+	    value_entry->value.d_real =
 	      op1_ptr->real_value * op2_ptr->real_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3748,15 +3746,15 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case single_float_arg_type:
-            value_entry->value.single_float = 
+            value_entry->value.single_float =
 	      op1_ptr->single_float_value * op2_ptr->single_float_value;
             break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3766,14 +3764,14 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_divide_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case horizontal_integer_arg_type:
 	  case vertical_integer_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value / op2_ptr->integer_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3783,11 +3781,11 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case float_arg_type:
 	  case horizontal_float_arg_type:
 	  case vertical_float_arg_type:
-	    value_entry->value.d_real = 
+	    value_entry->value.d_real =
 	      op1_ptr->real_value / op2_ptr->real_value;
 	    if (op1_entry->b_arg_type != op2_entry->b_arg_type)
 	      {
@@ -3797,15 +3795,15 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	      }
 	    else value_entry->b_arg_type = op1_entry->b_arg_type;
 	    break;
-	    
+
 	  case single_float_arg_type:
-            value_entry->value.single_float = 
+            value_entry->value.single_float =
 	      op1_ptr->single_float_value / op2_ptr->single_float_value;
             break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3815,28 +3813,28 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_left_shift_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  {
 	      int	    shift_count;
-	      
+
 	      shift_count = op2_ptr->integer_value;
-	      
+
 	      if ((shift_count < 0) || (shift_count > 32))
 		goto error_occurred;
-	      
-	      value_entry->value.l_integer = 
+
+	      value_entry->value.l_integer =
 		op1_ptr->integer_value << op2_ptr->integer_value;
-	      
+
 	      break;
 	  }
-	  
+
 	case error_arg_type:
 	  break;
-	  
+
 	default:
 	  diag_issue_diagnostic
 	    ( d_cannot_convert,
@@ -3846,28 +3844,28 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	  res_type = error_arg_type;
       }
 	break;
-	
+
       case sym_k_right_shift_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  {
 	      int	    shift_count;
-	      
+
 	      shift_count = op2_ptr->integer_value;
-	      
+
 	      if ((shift_count < 0) || (shift_count > 32))
 		goto error_occurred;
-	      
-	      value_entry->value.l_integer = 
+
+	      value_entry->value.l_integer =
 		op1_ptr->integer_value >> op2_ptr->integer_value;
-	      
+
 	      break;
 	  }
-	  
+
 	case error_arg_type:
 	  break;
-	  
+
 	default:
 	  diag_issue_diagnostic
 	    ( d_cannot_convert,
@@ -3877,13 +3875,13 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	  res_type = error_arg_type;
       }
 	break;
-	
+
       case sym_k_and_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case boolean_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value & op2_ptr->integer_value;
 	    break;
 	  case char_arg_type:
@@ -3908,7 +3906,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    value_entry->b_charset = cat_str_entry->b_charset;
 	    value_entry->b_direction = cat_str_entry->b_direction;
 	    value_entry->value.xms_value = cat_str_entry->value.xms_value;
-	    value_entry->az_first_table_value = 
+	    value_entry->az_first_table_value =
 	      cat_str_entry->az_first_table_value;
 	    value_entry->w_length = cat_str_entry->w_length;
 	    sem_evaluate_value_cs (value_entry);
@@ -3917,7 +3915,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    break;
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3927,19 +3925,19 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_or_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case boolean_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value | op2_ptr->integer_value;
 	    break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3949,19 +3947,19 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
 	    res_type = error_arg_type;
 	}
 	break;
-	
+
       case sym_k_xor_op:
 	switch (res_type)
 	{
 	  case integer_arg_type:
 	  case boolean_arg_type:
-	    value_entry->value.l_integer = 
+	    value_entry->value.l_integer =
 	      op1_ptr->integer_value ^ op2_ptr->integer_value;
 	    break;
-	    
+
 	  case error_arg_type:
 	    break;
-	    
+
 	  default:
 	    diag_issue_diagnostic
 	      ( d_cannot_convert,
@@ -3974,17 +3972,17 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
       default:
 	_assert( FALSE, "unexpected operator" );
     }	/* End of switch statement */
-    
-    
+
+
   continue_after_error:
-    
+
     /*
      ** Set data type for expression value.  If binary operation, use res_type
      ** because conversions may have taken place.  Otherwise use b_type from
      ** the operand of the unary operator.
      */
-    
-    if (value_entry->b_expr_opr == sym_k_valref_op) 
+
+    if (value_entry->b_expr_opr == sym_k_valref_op)
       value_entry->b_type = op1_entry->b_type;
     else
       switch (res_type)
@@ -3992,108 +3990,108 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
         case boolean_arg_type:
 	  value_entry->b_type = sym_k_bool_value;
 	  break;
-	  
+
         case integer_arg_type:
 	  value_entry->b_type = sym_k_integer_value;
 	  break;
-	  
+
         case single_float_arg_type:
 	  value_entry->b_type = sym_k_single_float_value;
 	  break;
-	  
+
         case float_arg_type:
 	  value_entry->b_type = sym_k_float_value;
 	  break;
-	  
+
 	case horizontal_integer_arg_type:
 	  value_entry->b_type = sym_k_horizontal_integer_value;
 	  break;
-	  
+
 	case vertical_integer_arg_type:
 	  value_entry->b_type = sym_k_vertical_integer_value;
 	  break;
-	  
+
 	case horizontal_float_arg_type:
 	  value_entry->b_type = sym_k_horizontal_float_value;
 	  break;
-	  
+
 	case vertical_float_arg_type:
 	  value_entry->b_type = sym_k_vertical_float_value;
 	  break;
-	  
+
 	case keysym_arg_type:
 	  value_entry->b_type = sym_k_keysym_value;
 	  break;
-	  
+
         case char_arg_type:
 	case lstr_arg_type:
 	  value_entry->b_type = sym_k_char_8_value;
 	  break;
-	  
+
         case cstr_arg_type:
 	  value_entry->b_type = sym_k_compound_string_value;
 	  break;
-	  
+
         case wcstr_arg_type:
 	  value_entry->b_type = sym_k_wchar_string_value;
 	  break;
-	  
+
 	case font_arg_type:
 	  value_entry->b_type = sym_k_font_value;
 	  break;
-	  
+
 	case fontset_arg_type:
 	  value_entry->b_type = sym_k_fontset_value;
 	  break;
-	  
+
 	case color_arg_type:
 	  value_entry->b_type = sym_k_color_value;
 	  break;
-	  
-	  /*  Begin fixing CR 5429 */ 
+
+	  /*  Begin fixing CR 5429 */
 	case classrec_arg_type:
 	  value_entry->b_type = sym_k_class_rec_name_value;
 	  break;
-	  /*  End fixing CR 5429 */ 
-	  
+	  /*  End fixing CR 5429 */
+
 	case xbitmap_arg_type:
 	  value_entry->b_type = sym_k_xbitmapfile_value;
 	  break;
-	  
+
 	case reason_arg_type:
 	  value_entry->b_type = sym_k_reason_value;
 	  break;
-	  
+
 	case argument_arg_type:
 	  value_entry->b_type = sym_k_argument_value;
 	  break;
-	  
+
 	case font_table_arg_type:
 	  value_entry->b_type = sym_k_font_table_value;
 	  break;
-	  
+
 	case error_arg_type:
 	  value_entry->b_type = sym_k_error_value;
 	  break;
-	  
-        default:    
+
+        default:
 	  _assert( FALSE, "unexpected type" );
       }
-    
+
     /*
      ** indicate that this expression has been evaluated
      */
-    
+
     value_entry->b_aux_flags |= sym_m_exp_eval;
     in_expr = FALSE;
     return value_entry;
-    
+
     /*
      **	Point where errors are transferred
      */
-    
+
   error_occurred:
-    
+
     diag_issue_diagnostic
       ( d_out_range,
        _sar_source_pos2( value_entry ),
@@ -4102,7 +4100,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
        );
     res_type = error_arg_type;
     diag_reset_overflow_handler();
-    
+
     goto continue_after_error;
 }
 
@@ -4159,7 +4157,7 @@ int	    		operator;
 
     case sym_k_single_float_value:
 	return single_float_arg_type;
-	
+
     case sym_k_horizontal_integer_value:
 	return horizontal_integer_arg_type;
 
@@ -4300,8 +4298,8 @@ data_value_type	    	*data_value;
 {
     int			    res_type = 0;
 
-    uil_az_error_env_valid = TRUE; 
-    if (setjmp(uil_az_error_env_block) == 0 ) 
+    uil_az_error_env_valid = TRUE;
+    if (setjmp(uil_az_error_env_block) == 0 )
       {
 	switch (operand_entry->b_type)
 	  {
@@ -4325,7 +4323,7 @@ data_value_type	    	*data_value;
 	    break;
 
 	  case sym_k_single_float_value: /* single float data type RAP */
-	    data_value->integer_value = 
+	    data_value->integer_value =
 	      (int) operand_entry->value.single_float;
 	    res_type = integer_arg_type;
 	    break;
@@ -4460,8 +4458,8 @@ data_value_type	    	*data_value;
 **  FORMAL PARAMETERS:
 **
 **      operator_entry	[in/out] pointer to resultant value stack frame
-**      op1_entry	[in] pointer to operand 1 value frame 
-**      op2_entry	[in] pointer to operand 2 value frame 
+**      op1_entry	[in] pointer to operand 1 value frame
+**      op2_entry	[in] pointer to operand 2 value frame
 **
 **  IMPLICIT INPUTS:
 **
@@ -4495,7 +4493,7 @@ sym_value_entry_type	    *op2_entry;
 **
 **    enum op_state
 **    {
-**	error=0, simple, compound, 
+**	error=0, simple, compound,
 **    };
 */
 
@@ -4513,7 +4511,7 @@ sym_value_entry_type	    *op2_entry;
     /*
     **  The target type is dependent on the type of the sources.  If both
     **	operands are primitive and have the same writing direction and
-    **	charset, the result is still of that type.  If both operands are 
+    **	charset, the result is still of that type.  If both operands are
     **	localized strings, the result is a localized string. If not, the result
     **	is a compound string.
     */
@@ -4571,7 +4569,7 @@ sym_value_entry_type	    *op2_entry;
     **	Verify that both operands are private values
     */
     /* Begin fixing OSF CR 5509 */
-    if ((op1_entry->obj_header.b_flags & (sym_m_private|sym_m_exported)) == 0) 
+    if ((op1_entry->obj_header.b_flags & (sym_m_private|sym_m_exported)) == 0)
 	{
 	op1_state = k_op_state_error;
 	diag_issue_diagnostic
@@ -4579,19 +4577,19 @@ sym_value_entry_type	    *op2_entry;
 		_sar_source_pos2 (op1_entry),
 		value1_entry->obj_header.az_name->c_text );
 	}
-    if ((op2_entry->obj_header.b_flags & (sym_m_private|sym_m_exported)) == 0) 
+    if ((op2_entry->obj_header.b_flags & (sym_m_private|sym_m_exported)) == 0)
 	{
 	op2_state = k_op_state_error;
 	diag_issue_diagnostic
 		(d_nonpvt,
 		_sar_source_pos2 (op2_entry),
 		value2_entry->obj_header.az_name->c_text );
-	}	
+	}
     /* End fixing OSF CR 5509 */
     switch (op1_state + (op2_state<<3))
     {
     /*
-    **	This is the case of appending two simple strings or a simple string 
+    **	This is the case of appending two simple strings or a simple string
     **	and a localized	string.  Just append them
     **	unless they have different directions or the first one has the separate
     **	attribute.
@@ -4599,10 +4597,10 @@ sym_value_entry_type	    *op2_entry;
     case k_op_state_simple + (k_op_state_simple<<3):
     case k_op_state_simple + (k_op_state_localized<<3):
     case k_op_state_localized + (k_op_state_simple<<3):
-	if ((value1_entry->b_charset == value2_entry->b_charset) 
+	if ((value1_entry->b_charset == value2_entry->b_charset)
 	    &&
 	    ((value1_entry->b_direction) == (value2_entry->b_direction))
-	    && 
+	    &&
 	    ((value1_entry->b_aux_flags & sym_m_separate) == 0))
 	{
 	    *target_entry = (sym_value_entry_type *)
@@ -4615,10 +4613,10 @@ sym_value_entry_type	    *op2_entry;
 	{
 	    *target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	    sem_append_str_to_cstr
-		(*target_entry, 
+		(*target_entry,
 		 value1_entry, FALSE);
 	    sem_append_str_to_cstr
-		(*target_entry, 
+		(*target_entry,
 		 value2_entry, FALSE);
 	    sem_evaluate_value_cs(*target_entry);
 	    target_type  = sym_k_compound_string_value;
@@ -4626,7 +4624,7 @@ sym_value_entry_type	    *op2_entry;
 	break;
 
     /*
-    **	This is the case of one simple/localized and one compound string. 
+    **	This is the case of one simple/localized and one compound string.
     **	Change the
     **	simple/localized to a compound and append them together.  Depend on
     **	the append
@@ -4636,31 +4634,31 @@ sym_value_entry_type	    *op2_entry;
     case k_op_state_localized + (k_op_state_compound<<3):
 	*target_entry = (sym_value_entry_type *) sem_create_cstr( );
 	sem_append_str_to_cstr
-	    (*target_entry, 
+	    (*target_entry,
 	     value1_entry, FALSE);
 	sem_evaluate_value_cs(*target_entry);
 	/*
 	 * We must evaluate both  entries to the XmStringConcat routine so
 	 * that it will work properly.   However this MAY be a pointer to
-	 * a compound string, use that value instead or we will concat a 
+	 * a compound string, use that value instead or we will concat a
 	 * NULL value and lose part of the string.
 	 */
 	if ((value2_entry->az_first_table_value == NULL) &&
 	    (value2_entry->value.xms_value == NULL))
-	    value2_entry->value.xms_value = 
+	    value2_entry->value.xms_value =
 		value2_entry->az_exp_op1->value.xms_value;
 	else
 	    sem_evaluate_value_cs(value2_entry);
 
-	(*target_entry)->value.xms_value = 
+	(*target_entry)->value.xms_value =
 	    XmStringConcat((*target_entry)->value.xms_value,
 			   value2_entry->value.xms_value);
 	target_type  = sym_k_compound_string_value;
 	break;
 
     /*
-    **	This is the case of one simple/localized and one compound string.  
-    **  Append the simple/localized to the compound.  
+    **	This is the case of one simple/localized and one compound string.
+    **  Append the simple/localized to the compound.
     */
     case k_op_state_compound + (k_op_state_simple<<3):
     case k_op_state_compound + (k_op_state_localized<<3):
@@ -4673,18 +4671,18 @@ sym_value_entry_type	    *op2_entry;
 	/*
 	 * We must evaluate both  entries to the XmStringConcat routine so
 	 * that it will work properly.   However this MAY be a pointer to
-	 * a compound string, use that value instead or we will concat a 
+	 * a compound string, use that value instead or we will concat a
 	 * NULL value and lose part of the string.
 	 */
 	if ((value1_entry->az_first_table_value == NULL) &&
 	    (value1_entry->value.xms_value == NULL))
-	    value1_entry->value.xms_value = 
+	    value1_entry->value.xms_value =
 		value1_entry->az_exp_op1->value.xms_value;
 	else
 	    sem_evaluate_value_cs(value1_entry);
 
-	(*target_entry)->value.xms_value = 
-	    XmStringConcat (value1_entry->value.xms_value, 
+	(*target_entry)->value.xms_value =
+	    XmStringConcat (value1_entry->value.xms_value,
 			    (*target_entry)->value.xms_value);
 	target_type  = sym_k_compound_string_value;
 	break;
@@ -4698,24 +4696,24 @@ sym_value_entry_type	    *op2_entry;
 	/*
 	 * We must evaluate both  entries to the XmStringConcat routine so
 	 * that it will work properly.   However this MAY be a pointer to
-	 * a compound string, use that value instead or we will concat a 
+	 * a compound string, use that value instead or we will concat a
 	 * NULL value and lose part of the string.
 	 */
 	if ((value1_entry->az_first_table_value == NULL) &&
 	    (value1_entry->value.xms_value == NULL))
-	    value1_entry->value.xms_value = 
+	    value1_entry->value.xms_value =
 		value1_entry->az_exp_op1->value.xms_value;
 	else
 	    sem_evaluate_value_cs(value1_entry);
 
 	if ((value2_entry->az_first_table_value == NULL) &&
-	    (value2_entry->value.xms_value == NULL)) 
-	    value2_entry->value.xms_value = 
+	    (value2_entry->value.xms_value == NULL))
+	    value2_entry->value.xms_value =
 		value2_entry->az_exp_op1->value.xms_value;
 	else
 	    sem_evaluate_value_cs(value2_entry);
 
-	(*target_entry)->value.xms_value = 
+	(*target_entry)->value.xms_value =
 	    XmStringConcat(value1_entry->value.xms_value,
 			   value2_entry->value.xms_value);
 	target_type  = sym_k_compound_string_value;
@@ -4730,7 +4728,7 @@ sym_value_entry_type	    *op2_entry;
 	  (value1_entry, FALSE,
 	   value2_entry, FALSE);
 	target_type  = sym_k_localized_string_value;
-	
+
     default:   /* some form of error */
 	target_type = sym_k_error_value;
 	*target_entry = (sym_value_entry_type *) sym_az_error_value_entry;

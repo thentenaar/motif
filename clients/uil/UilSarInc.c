@@ -178,8 +178,8 @@ yystype	    * semi_frame;
     ** Open the include file.  Set up a null-terminated name string.
     */
 
-    buffer = (char *) _get_memory (value_entry -> w_length + 1);
-    _move (buffer, value_entry -> value . c_value,
+    buffer = (char *) XtMalloc (value_entry -> w_length + 1);
+    memmove (buffer, value_entry -> value . c_value,
 		   value_entry -> w_length);
     buffer [value_entry -> w_length] = 0 ;
 
@@ -215,7 +215,7 @@ yystype	    * semi_frame;
     **  Save the file name
     */
 
-    _move (include_entry->file_name, buffer, value_entry->w_length);
+    memmove (include_entry->file_name, buffer, value_entry->w_length);
     include_entry->file_name [value_entry->w_length] =  0;
 
     /*
@@ -234,6 +234,6 @@ yystype	    * semi_frame;
     section_tail_entry->prev_section = sym_az_current_section_entry;
     sym_az_current_section_entry = section_tail_entry;
 
-    _free_memory (buffer);
+    XtFree (buffer);
 
 }

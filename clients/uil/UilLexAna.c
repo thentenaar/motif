@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
@@ -109,7 +109,7 @@ static void dump_token  _ARGUMENTS(( lex_buffer_type *az_current_lex_buffer , in
 externaldef(uil_comp_glbl) int			Uil_lex_l_user_default_charset;
 externaldef(uil_comp_glbl) sym_value_entry_type *Uil_lex_az_charset_entry;
 externaldef(uil_comp_glbl) int 			Uil_lex_l_localized;
-     
+
 
 /*  This is the most recent character set recognized by the grammar.  It    */
 /*  allows the use of the CHARACTER_SET function to prefix general string   */
@@ -150,7 +150,7 @@ static int last_token_seen = 0;
 **
 **/
 
-/* 
+/*
 **  Each of the 256 possible input characters has an associated class.
 **  These defines gives names to the classes.
 */
@@ -177,7 +177,7 @@ static int last_token_seen = 0;
 #define	    class_langle    19		/* < */
 #define	    class_rangle    20		/* > */
 #define     class_highbit   21		/* high order bit set */
-#define     max_class	    21		
+#define     max_class	    21
 
 /*
 **   states within the token table
@@ -232,7 +232,7 @@ static int last_token_seen = 0;
 **  errors encoded in the token table
 */
 
-#define	    min_error	    0		
+#define	    min_error	    0
 #define	    bad_prefix      0		/* junk starts a token */
 #define	    error_max       0
 
@@ -284,7 +284,7 @@ static int last_token_seen = 0;
 #define	    backup_2	    2		/* 2 character backup needed */
 #define	    backup_3	    3		/* 3 character backup needed */
 
-/* 
+/*
 **  form of each cell in the token table
 */
 
@@ -315,7 +315,7 @@ static	lex_buffer_type  *az_first_lex_buffer;
 */
 
 static cell XmConst token_table[ max_state+1][ max_class+1] =
-  { 
+  {
     { /* state_initial */
 	/* class_blank   */ { reset,		state_initial,	    not_used },
 	/* class_punc    */ { move_final,	token_punc,	    backup_0 },
@@ -580,7 +580,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_special,	state_str_1,  missing_bslash },
 	/* class_highbit */ { move_special,	state_str_1,  missing_bslash },
     },
-    { /* state_comment_1 */ 
+    { /* state_comment_1 */
 	/* class_blank   */ { move_final,	token_punc,	    backup_0 },
 	/* class_punc    */ { move_final,	token_punc,	    backup_1 },
 	/* class_name    */ { move_final,	token_punc,	    backup_1 },
@@ -604,7 +604,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_final,	token_punc,	    backup_1 },
 	/* class_highbit */ { move_final,  	token_punc,    	    backup_1 },
     },
-    { /* state_comment_2 */ 
+    { /* state_comment_2 */
 	/* class_blank   */ { move_advance,	state_comment_2,    not_used },
 	/* class_punc    */ { move_advance,	state_comment_2,    not_used },
 	/* class_name    */ { move_advance,	state_comment_2,    not_used },
@@ -628,7 +628,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_advance,	state_comment_2,    not_used },
 	/* class_highbit */ { move_advance,	state_comment_2,    not_used },
     },
-    { /* state_comment_3 */ 
+    { /* state_comment_3 */
 	/* class_blank   */ { move_advance,	state_comment_2,    not_used },
 	/* class_punc    */ { move_advance,	state_comment_2,    not_used },
 	/* class_name    */ { move_advance,	state_comment_2,    not_used },
@@ -652,7 +652,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_advance,	state_comment_2,    not_used },
 	/* class_highbit */ { move_advance,	state_comment_2,    not_used },
     },
-    { /* state_comment_4 */ 
+    { /* state_comment_4 */
 	/* class_blank   */ { move_advance,	state_comment_4,    not_used },
 	/* class_punc    */ { move_advance,	state_comment_4,    not_used },
 	/* class_name    */ { move_advance,	state_comment_4,    not_used },
@@ -676,7 +676,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_advance,	state_comment_4,    not_used },
 	/* class_highbit */ { move_advance,	state_comment_4,    not_used },
     },
-    { /* state_eat_rest */ 
+    { /* state_eat_rest */
 	/* class_blank   */ { move_advance,	state_eat_rest,     not_used },
 	/* class_punc    */ { move_error,	bad_prefix,	    backup_1 },
 	/* class_name    */ { move_error,	bad_prefix,	    backup_1 },
@@ -700,7 +700,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_error,	bad_prefix,	    backup_1 },
 	/* class_highbit */ { move_advance,	state_eat_rest,     not_used },
     },
-    { /* state_gstr_1 */ 
+    { /* state_gstr_1 */
 	/* class_blank   */ { move_error,	bad_prefix,         backup_1 },
 	/* class_punc    */ { move_error,	bad_prefix,	    backup_1 },
 	/* class_name    */ { move_advance,	state_gstr_2,	    not_used },
@@ -724,7 +724,7 @@ static cell XmConst token_table[ max_state+1][ max_class+1] =
 	/* class_rangle  */ { move_error,	bad_prefix,	    backup_1 },
 	/* class_highbit */ { move_advance,	state_eat_rest,     not_used },
     },
-    { /* state_gstr_2 */ 
+    { /* state_gstr_2 */
 	/* class_blank   */ { move_error,	bad_prefix,         backup_1 },
 	/* class_punc    */ { move_error,	bad_prefix,	    backup_1 },
 	/* class_name    */ { move_advance,	state_gstr_2,	    not_used },
@@ -889,20 +889,20 @@ static char class_table[ 256 ] =
 /* 34 */    class_digit,    class_digit,    class_digit,    class_digit,
 /* 38 */    class_digit,    class_digit,    class_punc,     class_punc,
 /* 3C */    class_langle,   class_punc,     class_rangle,   class_rest,
-/* 40 */    class_rest,     class_name,     class_name,     class_name, 
-/* 44 */    class_name,     class_e,	    class_name,     class_name, 
-/* 48 */    class_name,     class_name,     class_name,     class_name, 
-/* 4C */    class_name,     class_name,     class_name,	    class_name, 
+/* 40 */    class_rest,     class_name,     class_name,     class_name,
+/* 44 */    class_name,     class_e,	    class_name,     class_name,
+/* 48 */    class_name,     class_name,     class_name,     class_name,
+/* 4C */    class_name,     class_name,     class_name,	    class_name,
 /* 50 */    class_name,     class_name,     class_name,     class_name,
-/* 54 */    class_name,     class_name,     class_name,     class_name, 
+/* 54 */    class_name,     class_name,     class_name,     class_name,
 /* 58 */    class_name,     class_name,     class_name,     class_rest,
 /* 5C */    class_bslash,   class_rest,     class_punc,     class_name,
-/* 60 */    class_rest,     class_name,     class_escape,   class_name, 
-/* 64 */    class_name,     class_e,        class_escape,   class_name, 
-/* 68 */    class_name,     class_name,     class_name,     class_name, 
-/* 6C */    class_name,     class_name,     class_escape,   class_name, 
+/* 60 */    class_rest,     class_name,     class_escape,   class_name,
+/* 64 */    class_name,     class_e,        class_escape,   class_name,
+/* 68 */    class_name,     class_name,     class_name,     class_name,
+/* 6C */    class_name,     class_name,     class_escape,   class_name,
 /* 70 */    class_name,     class_name,     class_escape,   class_name,
-/* 74 */    class_escape,   class_name,     class_escape,   class_name, 
+/* 74 */    class_escape,   class_name,     class_escape,   class_name,
 /* 78 */    class_name,     class_name,     class_name,     class_punc,
 /* 7C */    class_punc,	    class_punc,	    class_punc,     class_illegal,
 /* 80 */    class_illegal,  class_illegal,  class_illegal,  class_illegal,
@@ -946,7 +946,7 @@ static char class_table[ 256 ] =
 
 #define tok_punc_token_num	17
 static unsigned char	punc_char[tok_punc_token_num] = {
-			'{', '}', '=', ';', '(', ')', ':', '+', '-', 
+			'{', '}', '=', ';', '(', ')', ':', '+', '-',
 			',', '&', '~', '*', '/', '^', '|', '#'};
 static int	punc_token[tok_punc_token_num] =
 		    {	LEFT_BRACE,
@@ -961,7 +961,7 @@ static int	punc_token[tok_punc_token_num] =
 			COMMA,
 			AND,
 			NOT,
-			MULTIPLY, 
+			MULTIPLY,
 			DIVIDE,
 			XOR,
 			OR,
@@ -989,11 +989,11 @@ static int	punc2_token[2] =
 **
 **  IMPLICIT INPUTS:
 **
-**      
+**
 **
 **  IMPLICIT OUTPUTS:
 **
-**      
+**
 **
 **  FUNCTION VALUE:
 **
@@ -1001,7 +1001,7 @@ static int	punc2_token[2] =
 **
 **  SIDE EFFECTS:
 **
-**      
+**
 **
 **
 **--
@@ -1026,7 +1026,7 @@ int	yylex()
 				    /* processing only has 16-bit chars */
     src_source_record_type
 		*az_start_src_record;/* starting source record of a token */
-    lex_buffer_type  
+    lex_buffer_type
 		*az_current_lex_buffer; /* current lexical buffer */
 
 	az_charset_entry = (sym_value_entry_type *) 0;
@@ -1038,7 +1038,7 @@ int	yylex()
     Uil_percent_complete =
       CEIL((int)( .5 * ((float)Uil_characters_read/(float)Uil_file_size))*100, 50);
     if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
-	diag_report_status();    
+	diag_report_status();
 
 
 initialize_token_builder:
@@ -1056,7 +1056,7 @@ initialize_token_builder:
     l_charset = lex_k_default_charset;
     l_16bit_chars_only = FALSE;
     l_state = state_initial;
-    
+
     /* start looking for the token */
 
 continue_in_next_state:
@@ -1076,9 +1076,9 @@ continue_in_next_state:
 
 	/* pick up the next state, or terminal, or error */
 
-	l_state = z_cell.next_state;		    
+	l_state = z_cell.next_state;
 
-	/* l_state is negative for action states requiring the current 
+	/* l_state is negative for action states requiring the current
 	 * character be saved in the current lexical buffer */
 
 	if (z_cell.action & NEGATIVE)
@@ -1102,16 +1102,16 @@ continue_in_next_state:
 	    continue;
 
 	case reset:
-	    
+
 	    goto initialize_token_builder;
 
-	case move_final: 
+	case move_final:
 	case final:
         case final_comment:  /* RAP retain comments */
 
 	    goto found_token;
 
-	case move_error: 
+	case move_error:
 	case error:
 
 	    goto found_error;
@@ -1154,7 +1154,7 @@ special_processing:
 
 	if (l_bslash_value >= 256 )  /* issue a diagnostic */
 	{   diag_issue_diagnostic
-		( d_out_range, 
+		( d_out_range,
 		  src_az_current_source_record,
 		  src_az_current_source_buffer->w_current_position - 1,
 		  "\\digit...\\ sequence",
@@ -1179,7 +1179,7 @@ special_processing:
 
     case insert_char:		/* place special character in lex buffer */
     {
-	
+
 	static unsigned char c_bslash_char[10]  = {
 		'\\', '\'', 'n', 't', 'v', 'b', 'r', 'f', '"'};
 	static unsigned char ab_bslash_value[9] =
@@ -1190,7 +1190,7 @@ special_processing:
 	    az_current_lex_buffer = get_lex_buffer( az_current_lex_buffer );
 	    l_lex_pos = 0;
 	}
-	az_current_lex_buffer->c_text[ l_lex_pos++ ] = 
+	az_current_lex_buffer->c_text[ l_lex_pos++ ] =
 	    ab_bslash_value
 		[ _index( c_char, c_bslash_char, sizeof( c_bslash_char )-1 )];
 	break;
@@ -1199,7 +1199,7 @@ special_processing:
     case missing_bslash:	/* \digit...\ sequence not terminated */
 
 	diag_issue_diagnostic
-		( d_unterm_seq, 
+		( d_unterm_seq,
 		  src_az_current_source_record,
 		  src_az_current_source_buffer->w_current_position - 1,
 		  "\\digit...\\ sequence",
@@ -1209,7 +1209,7 @@ special_processing:
     case ignore_bslash:		/* \ not followed by valid character */
 
 	diag_issue_diagnostic
-		( d_backslash_ignored, 
+		( d_backslash_ignored,
 		  src_az_current_source_record,
 		  src_az_current_source_buffer->w_current_position - 1,
 		  c_char );
@@ -1220,7 +1220,7 @@ special_processing:
 	if (src_get_source_line( ) == src_k_end_source)
 	{
 	    diag_issue_diagnostic
-		    ( d_unterm_seq, 
+		    ( d_unterm_seq,
 		      src_az_current_source_record,
 		      src_az_current_source_buffer->w_current_position - 1,
 		      "character string",
@@ -1236,7 +1236,7 @@ special_processing:
 	if (src_get_source_line( ) == src_k_end_source)
 	{
 	    diag_issue_diagnostic
-		    ( d_unterm_seq, 
+		    ( d_unterm_seq,
 		      src_az_current_source_record,
 		      src_az_current_source_buffer->w_current_position - 1,
 		      "comment",
@@ -1253,7 +1253,7 @@ special_processing:
 found_16bit_char:
     {
 	unsigned char    next_char;
-	
+
 
 	/*
 	**  If the current character set allows 16-bit characters, then
@@ -1262,7 +1262,7 @@ found_16bit_char:
 	if ( l_charset_sixteen_bit )
 	{
 	    /* need to:
-	    **	1) get next input char and advance the source 
+	    **	1) get next input char and advance the source
 	    **	2) check that the next is not a control character
 	    **	3) place the next character in the lex buffer
 	    */
@@ -1308,7 +1308,7 @@ found_16bit_char:
 	    az_charset_entry = Uil_lex_az_literal_charset;
 	    }
 	else if (Uil_lex_l_localized) goto found_localized_string;
-	else {		
+	else {
 	    /* No charset specified, use the default */
 	    l_charset = Uil_lex_l_user_default_charset;
 	    az_charset_entry = Uil_lex_az_charset_entry;
@@ -1353,18 +1353,18 @@ found_localized_string:
       /* Local variables */
       int 		mb_len, i;
       unsigned char	mb_byte;
-      
+
       /* Should be looking at the first byte of the string. */
       /* Localize... */
       _MrmOSSetLocale("");
-    
+
       /* Parse the string. */
       while (TRUE)
 	{
 	  mb_len = mblen((char *)&src_az_current_source_buffer->c_text
 			 [src_az_current_source_buffer->w_current_position],
 			 MB_CUR_MAX);
-      
+
 	  mb_byte = src_az_current_source_buffer->c_text
 	    [src_az_current_source_buffer->w_current_position];
 
@@ -1377,7 +1377,7 @@ found_localized_string:
 
 		if (l_lex_pos > l_max_lex_buffer_pos )
 		  {
-		    az_current_lex_buffer = 
+		    az_current_lex_buffer =
 		      get_lex_buffer( az_current_lex_buffer );
 		    l_lex_pos = 0;
 		  }
@@ -1395,7 +1395,7 @@ found_localized_string:
 	      default:
 		break;
 	      }
-      
+
 	  if (l_lex_pos > l_max_lex_buffer_pos )
 	    {
 	      az_current_lex_buffer = get_lex_buffer( az_current_lex_buffer );
@@ -1409,13 +1409,13 @@ found_localized_string:
 		  az_current_lex_buffer = get_lex_buffer(az_current_lex_buffer);
 		  l_lex_pos = 0;
 		}
-	      az_current_lex_buffer->c_text[l_lex_pos++] = 
+	      az_current_lex_buffer->c_text[l_lex_pos++] =
 		src_az_current_source_buffer->c_text
 		  [src_az_current_source_buffer->w_current_position++];
 	    }
 	}
     }
-      
+
 found_token:
 
     /* do any backup of the source buffer position and lex buffer */
@@ -1438,7 +1438,7 @@ found_token:
 
 	/* check the case sensitivity flag and change case if necessary */
 
-	if (! uil_v_case_sensitive) 
+	if (! uil_v_case_sensitive)
 	{
 	    char	* ptr;
 	    for ( ptr = (char *)(az_current_lex_buffer->c_text);
@@ -1449,7 +1449,7 @@ found_token:
 
 	/* check if the name is a keyword */
 
-	az_keyword = 
+	az_keyword =
 	    key_find_keyword( l_lex_pos, (char *)az_current_lex_buffer->c_text );
 	if( az_keyword != NULL)
 	    {
@@ -1524,7 +1524,7 @@ found_token:
     }
 
     case token_eol:
-	
+
 	/* if there is no more source
 	 *   then return an end of file
 	 *   otherwise go look for the next token */
@@ -1550,22 +1550,22 @@ found_token:
 
 	if (errno != 0)
 	    diag_issue_diagnostic
-		( d_out_range, 
+		( d_out_range,
 		  az_start_src_record,
 		  l_start_src_pos,
 		  "integer",
 		  " " );
 
-	yylval.value.az_symbol_entry = 
+	yylval.value.az_symbol_entry =
 		(sym_entry_type *)sem_create_value_entry
 		    ( (char *)&l_integer, sizeof( long ), sym_k_integer_value );
 	break;
-    }	
+    }
 
     case token_ustring:
 
 	diag_issue_diagnostic
-		( d_unterm_seq, 
+		( d_unterm_seq,
 		  src_az_current_source_record,
 		  src_az_current_source_buffer->w_current_position - 1,
 		  "character string",
@@ -1584,7 +1584,7 @@ found_token:
 	  comment_text = XtRealloc(comment_text, INCR_COMMENT_SIZE + strlen(comment_text));
 	  comment_size = INCR_COMMENT_SIZE + strlen (comment_text);
 	}
-	  
+
       strcat (comment_text, (char *)az_current_lex_buffer->c_text);
       strcat (comment_text, "\n");
       last_token_seen = token_comment;
@@ -1598,28 +1598,28 @@ found_primitive_string:
 	int			l_length;
 	lex_buffer_type		*az_lex_buffer;
 	sym_value_entry_type	*az_value;
-	unsigned char		*c_char;
+	unsigned char		*pc_char;
 
 	l_length = l_lex_pos;
 
-	for (az_lex_buffer = az_first_lex_buffer;  
-	     az_lex_buffer != az_current_lex_buffer;  
+	for (az_lex_buffer = az_first_lex_buffer;
+	     az_lex_buffer != az_current_lex_buffer;
 	     az_lex_buffer = az_lex_buffer->az_next_buffer)
 	    l_length = l_length + l_max_lex_buffer_pos + 1;
 
 	az_value = create_str_entry( l_length, l_charset, az_charset_entry );
 
-	c_char = (unsigned char *)az_value->value.c_value;
+	pc_char = (unsigned char *)az_value->value.c_value;
 
 	for (az_lex_buffer = az_first_lex_buffer;
-	     az_lex_buffer != az_current_lex_buffer;  
+	     az_lex_buffer != az_current_lex_buffer;
 	     az_lex_buffer = az_lex_buffer->az_next_buffer)
 	{
-	    _move( c_char, az_lex_buffer->c_text, l_max_lex_buffer_pos + 1);
-	    c_char = c_char + l_max_lex_buffer_pos + 1;
+	    memmove( pc_char, az_lex_buffer->c_text, l_max_lex_buffer_pos + 1);
+	    pc_char = pc_char + l_max_lex_buffer_pos + 1;
 	}
 
-	_move( c_char, az_lex_buffer->c_text, l_lex_pos );
+	memmove( pc_char, az_lex_buffer->c_text, l_lex_pos );
 
     	yylval.value.az_symbol_entry = (sym_entry_type *) az_value;
     	yylval.b_type = CHAR_8_LITERAL;
@@ -1638,31 +1638,31 @@ found_primitive_string:
 
 	if (errno != 0)
 	    diag_issue_diagnostic
-		( d_out_range, 
+		( d_out_range,
 		  az_start_src_record,
 		  l_start_src_pos,
 		  "real",
 		  " " );
 
-	yylval.value.az_symbol_entry = 
+	yylval.value.az_symbol_entry =
 		(sym_entry_type *)sem_create_value_entry
 		    ( (char *)&d_real, sizeof( double ), sym_k_float_value );
 	break;
     }
-	
+
     case token_ff:
 
 	if (l_start_src_pos != 0)
 	    issue_control_char_diagnostic( c_char );
 
-        src_az_current_source_record->b_flags |= src_m_form_feed; 
+        src_az_current_source_record->b_flags |= src_m_form_feed;
 
 	goto initialize_token_builder;
 
     case token_ugstr:
 
 	diag_issue_diagnostic
-		( d_unterm_seq, 
+		( d_unterm_seq,
 		  src_az_current_source_record,
 		  src_az_current_source_buffer->w_current_position - 1,
 		  "character string",
@@ -1690,7 +1690,7 @@ found_primitive_string:
 		for (i=0, j=l_lex_pos-1;  i < (l_lex_pos>>1);  i++,j--)
 		{
 		    tmp1 = az_current_lex_buffer->c_text[ i ];
-		    az_current_lex_buffer->c_text[ i ] = 
+		    az_current_lex_buffer->c_text[ i ] =
 			az_current_lex_buffer->c_text[ j ];
 		    az_current_lex_buffer->c_text[ j ] = tmp1;
 		}
@@ -1710,9 +1710,9 @@ found_primitive_string:
 		{
 		    tmp1 = az_current_lex_buffer->c_text[ i ];
 		    tmp2 = az_current_lex_buffer->c_text[ i + 1 ];
-		    az_current_lex_buffer->c_text[ i ] = 
+		    az_current_lex_buffer->c_text[ i ] =
 			az_current_lex_buffer->c_text[ j - 1 ];
-		    az_current_lex_buffer->c_text[ i + 1 ] = 
+		    az_current_lex_buffer->c_text[ i + 1 ] =
 			az_current_lex_buffer->c_text[ j ];
 		    az_current_lex_buffer->c_text[ j ] = tmp2;
 		    az_current_lex_buffer->c_text[ j - 1 ] = tmp1;
@@ -1730,7 +1730,7 @@ found_primitive_string:
 	    goto found_primitive_string;
 	else
 	{
-	
+
 	    sym_value_entry_type    *cstr_entry;
 	    sym_value_entry_type    *str_entry;
 	    int			    a_off, off;
@@ -1745,7 +1745,7 @@ found_primitive_string:
 	    */
 
 	    /*
-	    **  For KANJI and HANZI treat 8-bit characters as ISO_LATIN1.  
+	    **  For KANJI and HANZI treat 8-bit characters as ISO_LATIN1.
 	    */
 	    if (l_16bit_char_count == 0)
 	    {
@@ -1790,7 +1790,7 @@ found_primitive_string:
 			 uil_sym_isolatin1_charset,
 			 az_charset_entry );
 
-		    _move( str_entry->value.c_value,
+		    memmove( str_entry->value.c_value,
 			   &az_current_lex_buffer->c_text[ a_off ],
 			   off-a_off );
 
@@ -1807,10 +1807,10 @@ found_primitive_string:
 
 		if (a_off > off)
 		{
-		    str_entry = 
+		    str_entry =
 			create_str_entry( a_off - off, l_charset, az_charset_entry );
 
-		    _move( str_entry->value.c_value,
+		    memmove( str_entry->value.c_value,
 			   &az_current_lex_buffer->c_text[ off ],
 			   a_off-off );
 
@@ -1830,30 +1830,30 @@ found_primitive_string:
       int			l_length = 0;
       lex_buffer_type		*az_lex_buffer;
       sym_value_entry_type	*str_entry;
-      unsigned char		*c_char;
+      unsigned char		*pc_char;
 
       l_length = l_lex_pos;
 
-      for (az_lex_buffer = az_first_lex_buffer;  
-	   az_lex_buffer != az_current_lex_buffer;  
+      for (az_lex_buffer = az_first_lex_buffer;
+	   az_lex_buffer != az_current_lex_buffer;
 	   az_lex_buffer = az_lex_buffer->az_next_buffer)
 	l_length = l_length + l_max_lex_buffer_pos + 1;
 
-      str_entry = create_str_entry(l_length, lex_k_fontlist_default_tag, 
+      str_entry = create_str_entry(l_length, lex_k_fontlist_default_tag,
 				  az_charset_entry );
 
-      c_char = (unsigned char *)str_entry->value.c_value;
+      pc_char = (unsigned char *)str_entry->value.c_value;
 
       for (az_lex_buffer = az_first_lex_buffer;
-	   az_lex_buffer != az_current_lex_buffer;  
+	   az_lex_buffer != az_current_lex_buffer;
 	   az_lex_buffer = az_lex_buffer->az_next_buffer)
 	{
-	  _move( c_char, az_lex_buffer->c_text, l_max_lex_buffer_pos + 1);
-	  c_char = c_char + l_max_lex_buffer_pos + 1;
+	  memmove( pc_char, az_lex_buffer->c_text, l_max_lex_buffer_pos + 1);
+	  pc_char = pc_char + l_max_lex_buffer_pos + 1;
 	}
 
-      _move( c_char, az_lex_buffer->c_text, l_lex_pos );
-      
+      memmove( pc_char, az_lex_buffer->c_text, l_lex_pos );
+
       yylval.value.az_symbol_entry = (sym_entry_type *)str_entry;
       yylval.b_type = LOC_STRING;
 
@@ -1911,7 +1911,7 @@ found_error:
 	/* printable characters that are not part of a token were found */
 
 	diag_issue_diagnostic
-		( d_unknown_seq, 
+		( d_unknown_seq,
 		  az_start_src_record,
 		  l_start_src_pos,
 		  az_current_lex_buffer->c_text );
@@ -1965,7 +1965,7 @@ void  lex_initialize_analyzer( )
 String language;
 
 /* RAP preserve comments */
-comment_text = (char *) _get_memory(INITIAL_COMMENT_SIZE);
+comment_text = (char *) XtMalloc(INITIAL_COMMENT_SIZE);
 comment_size = INITIAL_COMMENT_SIZE;
 
 comment_text[0] = '\0';
@@ -1975,8 +1975,8 @@ comment_text[0] = '\0';
  * into index l_max_lex_buffer_pos + 1, so allocate l_max_lex_buffer_pos
  * plus 2 positions in buffer.
  */
-az_first_lex_buffer = 
-    (lex_buffer_type *) _get_memory (l_max_lex_buffer_pos + 2 +
+az_first_lex_buffer =
+    (lex_buffer_type *) XtMalloc (l_max_lex_buffer_pos + 2 +
 				     sizeof(lex_buffer_type *));
 /* END OSF Fix CR 4749 */
 az_first_lex_buffer->az_next_buffer = NULL;
@@ -1996,11 +1996,11 @@ else
     if (Uil_lex_l_user_default_charset == sym_k_error_charset)
 	{
 	diag_issue_diagnostic
-	    ( d_bad_lang_value, 
+	    ( d_bad_lang_value,
 	     diag_k_no_source,
 	     diag_k_no_column);
 	Uil_lex_l_user_default_charset = lex_k_default_charset;
-	}		
+	}
     }
 Uil_lex_az_charset_entry = NULL;
 
@@ -2063,7 +2063,7 @@ void  Uil_lex_cleanup_analyzer( )
     while (az_first_lex_buffer != NULL) {
 	az_buffer_to_free = az_first_lex_buffer;
 	az_first_lex_buffer = az_first_lex_buffer->az_next_buffer;
-	_free_memory((char*)az_buffer_to_free);
+	XtFree((char*)az_buffer_to_free);
 	}
 }
 
@@ -2135,7 +2135,7 @@ int		restart_token;
 /*    Issue the error.    */
 
     diag_issue_diagnostic
-	(d_syntax, 
+	(d_syntax,
 	 yylval.az_source_record,
 	 yylval.b_source_pos,
 	 tok_name,
@@ -2188,12 +2188,12 @@ void issue_control_char_diagnostic
 {
 
     diag_issue_diagnostic
-	( d_control_char, 
+	( d_control_char,
 	  src_az_current_source_record,
 	  src_az_current_source_buffer->w_current_position - 1,
 	  c_char );
 
-    src_az_current_source_record->b_flags |= src_m_unprintable_chars; 
+    src_az_current_source_record->b_flags |= src_m_unprintable_chars;
 
     return;
 
@@ -2247,8 +2247,8 @@ lex_buffer_type *az_current_lex_buffer;
        * into index l_max_lex_buffer_pos + 1, so allocate l_max_lex_buffer_pos
        * plus 2 positions in buffer.
        */
-	az_lex_buffer = 
-	    (lex_buffer_type *)_get_memory( l_max_lex_buffer_pos + 2 +
+	az_lex_buffer =
+	    (lex_buffer_type *)XtMalloc( l_max_lex_buffer_pos + 2 +
 					   sizeof(lex_buffer_type *));
 /* END OSF Fix CR 4749 */
 	az_current_lex_buffer->az_next_buffer = az_lex_buffer;
@@ -2299,7 +2299,7 @@ void lex_filter_unprintable_chars
  unsigned long	flags )
 {
     int		    i;
-	
+
     for (i=0;  i<length;  i++)
     {
 	if ((class_table[ buffer[ i ] ] == class_illegal) ||
@@ -2351,15 +2351,15 @@ int		l_lex_pos;
 
 
     _debug_output
-	 ("token: %d start: %d, %d  end: %d, %d \n", 
+	 ("token: %d start: %d, %d  end: %d, %d \n",
 	   yylval.b_type,
 	   yylval.az_source_record->w_line_number,
 	   yylval.b_source_pos,
 	   src_az_current_source_record->w_line_number,
 	   src_az_current_source_buffer->w_current_position );
 
-    for (az_lex_buffer = az_first_lex_buffer;  
-	 ;  
+    for (az_lex_buffer = az_first_lex_buffer;
+	 ;
 	 az_lex_buffer = az_lex_buffer->az_next_buffer)
     {
 	last_buffer = ( az_lex_buffer == az_current_lex_buffer );
@@ -2368,13 +2368,13 @@ int		l_lex_pos;
 	else
 	    last = l_max_lex_buffer_pos+1;
 
-	_move( c_buffer, az_lex_buffer->c_text, last );
-	
+	memmove( c_buffer, az_lex_buffer->c_text, last );
+
 	lex_filter_unprintable_chars (c_buffer, last, 0);
 
 	c_buffer[ last ] = 0;
 	_debug_output("%s \n", c_buffer);
-    
+
         if (last_buffer)
 	    return;
     }
@@ -2385,10 +2385,10 @@ int		l_lex_pos;
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function converts a null terminated string to a 
+**      This function converts a null terminated string to a
 **	longword integer in the range 0..2**31-1.  If the ascii value is
 **	outside that range, the external variable errno is set to ERANGE
-**	and the value returned is 2**31-1 
+**	and the value returned is 2**31-1
 **
 **  FORMAL PARAMETERS:
 **
@@ -2487,7 +2487,7 @@ sym_value_entry_type *create_str_entry (l_size, l_charset, az_charset_entry)
     int				l_size;
     int				l_charset;
     sym_value_entry_type	*az_charset_entry;
-			
+
 
 {
 
@@ -2508,7 +2508,7 @@ sym_value_entry_type *create_str_entry (l_size, l_charset, az_charset_entry)
 	charset = sym_k_userdefined_charset;
 	direction = az_charset_entry->b_direction;
 	}
-	
+
 
     /* size of entry
      *	sym_k_value_entry for common part of a value entry

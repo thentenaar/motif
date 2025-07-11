@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.3
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -132,7 +132,7 @@ static void UnmapPulldownCallback (Widget w, XtPointer client_data,
  *  moreMenuItems  = additional menuitems for custom menu.
  *  fSystemMenu    = TRUE iff the menu is a client system menu.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to a MenuSpec structure with updated currentContext,
@@ -143,13 +143,13 @@ static void UnmapPulldownCallback (Widget w, XtPointer client_data,
  *  --------
  *  If moreMenuItems is nonNULL, a custom MenuSpec will be created, with
  *  menuItem member pointing to moreMenuItems.  The menuItems for the
- *  standard MenuSpec of the same name and the moreMenuItems list will be 
- *  used to create menubuttons, and the menu widget will be separate from 
+ *  standard MenuSpec of the same name and the moreMenuItems list will be
+ *  used to create menubuttons, and the menu widget will be separate from
  *  any existing standard menu widget.
  *
  *  When the client is destroyed, this custom MenuSpec, its menuItem and
  *  menuButton lists, and its menu widget should be freed.
- * 
+ *
  *************************************<->***********************************/
 MenuSpec *MakeMenu (WmScreenData *pSD,
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
@@ -164,7 +164,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
     MenuSpec     *newMenuSpec;
     MenuItem     *menuItem;
     KeySpec      *accelKeySpec;
-    
+
     if ((menuName == NULL) || (pSD == NULL))
     {
 	return (NULL);
@@ -184,7 +184,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
 	}
 	menuSpec = menuSpec->nextMenuSpec;
     }
-    
+
     if (menuSpec == NULL)
     /* the menuSpecs list is exhausted */
     {
@@ -208,7 +208,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
     }
 
     /*
-     * If making a custom menu, create a custom copy of the specification with 
+     * If making a custom menu, create a custom copy of the specification with
      *   which to build the custom menu.
      * Otherwise, if the menu widget exists, possibly modify the accelerator
      *   contexts and return the specification.
@@ -239,7 +239,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
     }
     else if (menuSpec->menuWidget)
     {
-	/* 
+	/*
 	 * OR the accelContext into the accelerators, if necessary.
 	 */
         if (accelContext != (menuSpec->accelContext & accelContext))
@@ -257,7 +257,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
 
     /*
      * We have a menu specification with which to build the menu.
-     * Set the initial and accelerator contexts -- they are needed within 
+     * Set the initial and accelerator contexts -- they are needed within
      *   CreateMenuWidget.
      */
 
@@ -313,7 +313,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
      * Fill the PopupMenu with the menu items.
      */
 
-    menuSpec->menuWidget = CREATE_MENU_WIDGET (pSD, pCD, menuName, 
+    menuSpec->menuWidget = CREATE_MENU_WIDGET (pSD, pCD, menuName,
 					     pSD->screenTopLevelW,
 					     TRUE, menuSpec, moreMenuItems);
     if (menuSpec->menuWidget == NULL)
@@ -324,7 +324,7 @@ MenuSpec *MakeMenu (WmScreenData *pSD,
 	return (NULL);
     }
 /*
-    _XmSetPopupMenuClick(menuSpec->menuWidget, False); 
+    _XmSetPopupMenuClick(menuSpec->menuWidget, False);
 */
     /* Return the top MenuSpec */
 
@@ -360,8 +360,8 @@ void CheckTerminalSeparator(menuSpec, buttonWidget, manage)
 	    break;
 	}
     }
-    
-    
+
+
     if(wPos > 0 &&
        XtClass((Widget) children[wPos -1]) == xmSeparatorGadgetClass)
     {
@@ -389,7 +389,7 @@ void CheckTerminalSeparator(menuSpec, buttonWidget, manage)
 /*************************************<->*************************************
  *
  *  MakeMenuSpec (menuName, commandID)
- *  
+ *
  *
  *
  *  Description:
@@ -403,7 +403,7 @@ void CheckTerminalSeparator(menuSpec, buttonWidget, manage)
  *  commandID      = client command id of the menu item to build.
  *                   0 if not for a client command.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to a MenuSpec structure with zero'ed fields.
@@ -412,15 +412,15 @@ void CheckTerminalSeparator(menuSpec, buttonWidget, manage)
  *  Comments:
  *  --------
  *  A new MenuSpec structure is allocated. The name is set to the
- *  menuName argument. The menuItems list, menuButtons list and 
- *  accelerator related fields are zero'ed out to NULL values. 
- * 
+ *  menuName argument. The menuItems list, menuButtons list and
+ *  accelerator related fields are zero'ed out to NULL values.
+ *
  *************************************<->***********************************/
 static MenuSpec *
 MakeMenuSpec (String menuName, CARD32 commandID)
 {
     MenuSpec *menuSpec;
-    
+
     if ((menuSpec = (MenuSpec *) XtMalloc (sizeof (MenuSpec))) == NULL)
       /* Handle insufficent memory */
     {
@@ -428,7 +428,7 @@ MakeMenuSpec (String menuName, CARD32 commandID)
 		 "Insufficient memory for menu %s\n")), menuName);
 	return (NULL);
     }
-    
+
     menuSpec->name = XtNewString(menuName);
     menuSpec->currentContext = F_CONTEXT_ALL;
     menuSpec->menuWidget = (Widget) NULL;
@@ -444,7 +444,7 @@ MakeMenuSpec (String menuName, CARD32 commandID)
     menuSpec->clientLocal = FALSE;
     menuSpec->commandID = commandID;
     menuSpec->nextMenuSpec = (MenuSpec *) NULL;
-    
+
     return(menuSpec);
 }
 #endif
@@ -452,7 +452,7 @@ MakeMenuSpec (String menuName, CARD32 commandID)
 /*************************************<->*************************************
  *
  *  DuplicateMenuItems (menuItems)
- *  
+ *
  *
  *
  *  Description:
@@ -465,7 +465,7 @@ MakeMenuSpec (String menuName, CARD32 commandID)
  *  ------
  *  menuItems = the linked list of menuItems to duplicate
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to a new MenuItems list, identical to the original
@@ -473,13 +473,13 @@ MakeMenuSpec (String menuName, CARD32 commandID)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static MenuItem *
 DuplicateMenuItems (MenuItem *menuItems)
 {
     MenuItem *newMenuItem = (MenuItem *) NULL, *returnMenuItem = NULL, *curMenuItem;
-    
+
     for (curMenuItem = menuItems;
 	 curMenuItem != (MenuItem *) NULL;
 	 curMenuItem = curMenuItem->nextMenuItem)
@@ -496,7 +496,7 @@ DuplicateMenuItems (MenuItem *menuItems)
 	      (MenuItem *)XtMalloc(sizeof(MenuItem));
 	    newMenuItem = newMenuItem->nextMenuItem;
 	}
-	
+
 	newMenuItem->labelType = curMenuItem->labelType;
 	if (curMenuItem->label != (String) NULL)
 	  newMenuItem->label = XtNewString(curMenuItem->label);
@@ -540,13 +540,13 @@ DuplicateMenuItems (MenuItem *menuItems)
 	newMenuItem->greyedContext = curMenuItem->greyedContext;
 	newMenuItem->mgtMask = curMenuItem->mgtMask;
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
-	newMenuItem->clientCommandName = 
+	newMenuItem->clientCommandName =
 	  XtNewString(curMenuItem->clientCommandName);
 	newMenuItem->clientCommandID = curMenuItem->clientCommandID;
 #endif
 	newMenuItem->nextMenuItem = (MenuItem *) NULL;
     }
-    
+
     return(returnMenuItem);
 }
 
@@ -555,7 +555,7 @@ DuplicateMenuItems (MenuItem *menuItems)
 /*************************************<->*************************************
  *
  *  DuplicateMenuExclusions (exclusions)
- *  
+ *
  *
  *
  *  Description:
@@ -568,7 +568,7 @@ DuplicateMenuItems (MenuItem *menuItems)
  *  ------
  *  exclusions = the linked list of menu exclusions to duplicate
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to a new MenuExclusion list, identical to the original
@@ -576,7 +576,7 @@ DuplicateMenuItems (MenuItem *menuItems)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static MenuExclusion *
 DuplicateMenuExclusions (MenuExclusion *exclusions)
@@ -584,7 +584,7 @@ DuplicateMenuExclusions (MenuExclusion *exclusions)
     MenuExclusion *newMenuExclusion = (MenuExclusion *) NULL;
     MenuExclusion *returnMenuExclusion = (MenuExclusion *) NULL;
     MenuExclusion *curMenuExclusion = (MenuExclusion *) NULL;
-    
+
     for (curMenuExclusion = exclusions;
 	 curMenuExclusion != (MenuExclusion *) NULL;
 	 curMenuExclusion = curMenuExclusion->nextExclusion)
@@ -610,7 +610,7 @@ DuplicateMenuExclusions (MenuExclusion *exclusions)
     /* Make sure we properly NULL terminate the list. */
     if (newMenuExclusion != (MenuExclusion *) NULL)
       newMenuExclusion->nextExclusion = (MenuExclusion *) NULL;
-    
+
     return(returnMenuExclusion);
 }
 #endif
@@ -618,20 +618,20 @@ DuplicateMenuExclusions (MenuExclusion *exclusions)
 /*************************************<->*************************************
  *
  *  DuplicateMenuSpec (menuSpec)
- *  
+ *
  *
  *
  *  Description:
  *  -----------
  *  This function creates an indentical duplicate of the given menuSpec.
- *  The menuItems list in the menuSpec is also duplicated. 
+ *  The menuItems list in the menuSpec is also duplicated.
  *
  *
  *  Inputs:
  *  ------
  *  menuSpec = the menuSpec to duplicate
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = pointer to a new MenuSpec structure with the same field
@@ -645,13 +645,13 @@ DuplicateMenuExclusions (MenuExclusion *exclusions)
  *  There are some differences between the two final structures.
  *  One difference: any fields related to push buttons and other
  *  widgets are left blank in the new MenuSpec to be filled in later.
- * 
+ *
  *************************************<->***********************************/
 MenuSpec *
 DuplicateMenuSpec (MenuSpec *menuSpec)
 {
     MenuSpec *newMenuSpec;
-    
+
     if ((newMenuSpec = (MenuSpec *) XtMalloc (sizeof (MenuSpec))) == NULL)
       /* Handle insufficent memory */
     {
@@ -676,7 +676,7 @@ DuplicateMenuSpec (MenuSpec *menuSpec)
     newMenuSpec->commandID = menuSpec->commandID;
 #endif
     newMenuSpec->nextMenuSpec = (MenuSpec *) NULL;
-    
+
     return(newMenuSpec);
 }
 
@@ -685,11 +685,11 @@ DuplicateMenuSpec (MenuSpec *menuSpec)
 /*************************************<->*************************************
  *
  *  MakeMenuItem (label, wmFunction, funcArgs, mnemonic, accelText)
- * 
+ *
  *
  *  Description:
  *  -----------
- *  This function creates and returns a MenuItem structure. 
+ *  This function creates and returns a MenuItem structure.
  *
  *
  *  Inputs:
@@ -708,8 +708,8 @@ DuplicateMenuSpec (MenuSpec *menuSpec)
  *
  *  Comments:
  *  --------
- *  This function is actually used as the underlying mechanism for 
- *  MenuItem creation by MakeMenuItemFromTemplate and 
+ *  This function is actually used as the underlying mechanism for
+ *  MenuItem creation by MakeMenuItemFromTemplate and
  *  MakeClientCommandMenuItem.
  *
  *  Assumptions:
@@ -718,7 +718,7 @@ DuplicateMenuSpec (MenuSpec *menuSpec)
  *  to a string and parses the accelerator found in it. If ParseWmAccelerator
  *  is ever modified to call GetString to get more text from the parse
  *  stream (as other parse functions do) then this code will break.
- * 
+ *
  *************************************<->***********************************/
 static MenuItem *
 MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
@@ -729,7 +729,7 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
 /*
     unsigned char *copy_of_accelText;
 */
-    
+
     if ((menuItem = (MenuItem *) XtMalloc (sizeof (MenuItem))) == NULL)
       /* Handle insufficent memory */
     {
@@ -737,7 +737,7 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
 		  "Insufficient memory for menu item %s\n")), label);
 	return (NULL);
     }
-    
+
     menuItem->labelType = XmSTRING;
     menuItem->label = XtNewString(label);
     menuItem->labelBitmapIndex = -1;
@@ -745,7 +745,7 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
     menuItem->clientCommandName = NULL;
     menuItem->clientCommandID = 0;
 
-/*     
+/*
     copy_of_accelText = (unsigned char *)XtNewString(accelText);
     ParseWmAccelerator(&copy_of_accelText, menuItem);
 */
@@ -758,7 +758,7 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
     menuItem->wmFuncArgs = XtNewString(funcArgs);
     SetGreyedContextAndMgtMask(menuItem, wmFunction);
     menuItem->nextMenuItem = (MenuItem *) NULL;
-    
+
     return(menuItem);
 }
 
@@ -766,11 +766,11 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
 /*************************************<->*************************************
  *
  *  MakeMenuItemFromTemplate (template, name, funcArgs)
- * 
+ *
  *
  *  Description:
  *  -----------
- *  This function creates and returns a MenuItem structure. 
+ *  This function creates and returns a MenuItem structure.
  *
  *
  *  Inputs:
@@ -790,7 +790,7 @@ MakeMenuItem (String label, WmFunction wmFunction, String funcArgs,
  *  --------
  *  This function uses the values in the template MenuItem to create
  *  a new copy of the template with the given funcArgs.
- * 
+ *
  *************************************<->***********************************/
 
 static MenuItem *MakeMenuItemFromTemplate (MenuItem *template, String name,
@@ -810,13 +810,13 @@ static MenuItem *MakeMenuItemFromTemplate (MenuItem *template, String name,
 /*************************************<->*************************************
  *
  *  MakeClientCommandMenuItem (label, funcArgs)
- * 
+ *
  *
  *  Description:
  *  -----------
  *  This function creates and returns a MenuItem structure filled as
  *  appropriate for client command menu items using the given label
- *  and funcArgs. 
+ *  and funcArgs.
  *
  *
  *  Inputs:
@@ -836,7 +836,7 @@ static MenuItem *MakeMenuItemFromTemplate (MenuItem *template, String name,
  *  client commands. This function is used when you want to insert a client
  *  command into a menu without using a MenuItem template constructed from
  *  mwmrc.
- * 
+ *
  *************************************<->***********************************/
 
 static MenuItem *MakeClientCommandMenuItem (String label, String funcArgs)
@@ -849,11 +849,11 @@ static MenuItem *MakeClientCommandMenuItem (String label, String funcArgs)
 /*************************************<->*************************************
  *
  *  PerformClientCommandMatch (clientCommand, menuItem, bestMatchSoFar)
- * 
+ *
  *
  *  Description:
  *  -----------
- *  This function determines whether the menuItemCommand specification 
+ *  This function determines whether the menuItemCommand specification
  *  matches the clientCommand.
  *
  *  Inputs:
@@ -883,7 +883,7 @@ static MenuItem *MakeClientCommandMenuItem (String label, String funcArgs)
  *	2. Given two specifications with the same number of wildcards,
  *	   the specification with its wildcards more towards the right
  *	   than the left is considered a better match.
- * 
+ *
  *************************************<->***********************************/
 
 /* @RGC: This is kind of arbitrary, but I can't imagine there being more
@@ -904,7 +904,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
     if (menuItem == (MenuItem *) NULL)
       return(bestMatchSoFar);
     menuItemCommand = menuItem->label;
-    
+
     /* Skip any modifier characters at the beginning of the
        menu items client command. */
     /* @RGC: This is kind of kludgy. We shouldn't have to know
@@ -917,11 +917,11 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
       ++menuItemCommand;
     else if (menuItemCommand[0] == '-' && menuItemCommand[1] == '>')
       menuItemCommand += 2;
-    
+
     /* If the menu item doesn't even contain a client command spec,
        then just return the existing best match. */
     if (*menuItemCommand != '<') return(bestMatchSoFar);
-    
+
     /* Run down the clientCommand and the menuItemCommand together,
        matching along the way. If matching fails at any point, then
        return the bestMatchSoFar.  */
@@ -934,7 +934,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	++menuItemCommand; ++clientCommand;
 	while (isspace(*menuItemCommand)) ++menuItemCommand;
 	while (isspace(*clientCommand)) ++clientCommand;
-	
+
 	/* First check whether the current menuItemCommand segment is
 	   a wildcard. */
 	if (*menuItemCommand == '*')
@@ -959,17 +959,17 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 		 menuItemCommand[seglength] != '\0';
 		 ++seglength)
 	      /*EMPTY*/;
-	    
+
 	    /* If we are pointing at '\0', then this isn't a match */
 	    if (menuItemCommand[seglength] == '\0') return(bestMatchSoFar);
-	    
+
 	    /* Get rid of trailing white space on the segment. */
 	    for (; seglength > 0; --seglength)
 	    {
 		if (!isspace(menuItemCommand[seglength - 1]))
 		  break;
 	    }
-	    
+
 	    /* Now string compare this segment with the clientCommand
 	       segment, up to the number of characters in the menu
 	       item segment. */
@@ -981,7 +981,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 		clientCommand += seglength;
 		while (isspace(*clientCommand)) ++clientCommand;
 		if (*clientCommand != '>') return(bestMatchSoFar);
-		
+
 		/* We have a match. Clear the foundWildcard since we
 		   have sync'ed up and keep trying to match. */
 		foundWildcard = FALSE;
@@ -990,13 +990,13 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	    }
 	    else if (foundWildcard == FALSE)
 	    {
-		/* We didn't match and there wasn't wildcard to 
+		/* We didn't match and there wasn't wildcard to
 		   swallow the discrepancy. Therefore, this is not
 		   a match. */
 		return(bestMatchSoFar);
 	    }
 	}
-	
+
 	/* We finished the current segments, we should be looking at
 	   a close bracket and a following period or a close bracket and
 	   a following NULL. Skip past the close brackets and optional
@@ -1008,7 +1008,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	}
 	else if (menuItemCommand[0] == '>' && menuItemCommand[1] == '.' &&
 		 clientCommand[0] == '>'   && clientCommand[1] == '.')
-	{	
+	{
 	    menuItemCommand += 2;
 	    clientCommand += 2;
 	}
@@ -1020,7 +1020,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
        best match so far. */
     if (*menuItemCommand != '\0' || *clientCommand != '\0')
       return(bestMatchSoFar);
-    
+
     /* So the menuItemCommand must have matched. If the current best
        match is NULL, then just return the menuItem. Otherwise calculate some
        matching quality metrics for the bestMatchSoFar and compare them
@@ -1028,9 +1028,9 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
        return. */
     if (bestMatchSoFar == (MenuItem *) NULL)
       return(menuItem);
-    
+
     bestMatchStr = bestMatchSoFar->label;
-    
+
     /* Skip any modifier characters at the beginning of the
        best match client command. */
     /* @RGC: This is kind of kludgy. We shouldn't have to know
@@ -1043,11 +1043,11 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
       ++bestMatchStr;
     else if (bestMatchStr[0] == '-' && bestMatchStr[1] == '>')
       bestMatchStr += 2;
-    
+
     /* If the best match  doesn't even contain a client command spec,
        then just return the new match as the best match. */
     if (*bestMatchStr != '<') return(menuItem);
-    
+
     for (bestSegments = 0;
 	 *bestMatchStr != '\0';
 	 ++bestSegments)
@@ -1056,7 +1056,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	   any whitespace. */
 	++bestMatchStr;
 	while (isspace(*bestMatchStr)) ++bestMatchStr;
-	
+
 	/* First check whether the current bestMatchStr segment is
 	   a wildcard. @RGC: We are assuming that there is nothing
 	   but possible whitespace after the *. */
@@ -1064,7 +1064,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	  bestWildcardPositions[bestWildcards++] = bestSegments;
 	while (*bestMatchStr != '>' && *bestMatchStr != '\0')
 	  ++bestMatchStr;
-	
+
 	/* Check for the closing > and .  or close > and NULL. If they
 	   do not both appear then the bestMatch is bad and we should
 	   return the menuItem. */
@@ -1074,7 +1074,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	  bestMatchStr += 2;
 	else return(menuItem);
     }
-    
+
     /* Now compare the best match metrics with the menu item metrics to
        determine who should be returned. */
     if (bestWildcards != wildcards)
@@ -1092,7 +1092,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 	      return(bestWildcardPositions[i] < wildcardPositions[i] ?
 		     bestMatchSoFar : menuItem);
 	  }
-	
+
 	/* If we got this far, then the two specifications are too
 	   close to call. Return bestMatchSoFar. */
 	return(bestMatchSoFar);
@@ -1103,7 +1103,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
 /*************************************<->*************************************
  *
  *  ExcludeClientCommand (menuSpec, clientCommand)
- * 
+ *
  *
  *  Description:
  *  -----------
@@ -1120,7 +1120,7 @@ static MenuItem *PerformClientCommandMatch (String clientCommand,
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static Boolean ExcludeClientCommand (MenuSpec *menuSpec, String clientCommand)
@@ -1138,7 +1138,7 @@ static Boolean ExcludeClientCommand (MenuSpec *menuSpec, String clientCommand)
 	   placeholder menu item with the label field set to the string
 	   found in the exclusion. */
 	placeholder.label = curExclusion->command_string;
-	
+
 	/* If we don't get NULL back, then this exclusion matches. */
 	if (PerformClientCommandMatch(clientCommand,
 				      &placeholder, NULL) != (MenuItem *) NULL)
@@ -1153,7 +1153,7 @@ static Boolean ExcludeClientCommand (MenuSpec *menuSpec, String clientCommand)
 /*************************************<->*************************************
  *
  *  ForceInLineToCascade (menuSpec, clientCommand, bestMatch)
- * 
+ *
  *
  *  Description:
  *  -----------
@@ -1167,11 +1167,11 @@ static Boolean ExcludeClientCommand (MenuSpec *menuSpec, String clientCommand)
  *  Outputs:
  *  -------
  *  Return = TRUE if the command set must be cascaded
- *	     FALSE if there is no forced cascade 
+ *	     FALSE if there is no forced cascade
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static Boolean ForceInLineToCascade (MenuSpec *menuSpec,
@@ -1201,7 +1201,7 @@ static Boolean ForceInLineToCascade (MenuSpec *menuSpec,
 /*************************************<->*************************************
  *
  *  FindClientCommandMatch (menuSpec, clientCommand, menuItem)
- * 
+ *
  *
  *  Description:
  *  -----------
@@ -1233,7 +1233,7 @@ static Boolean ForceInLineToCascade (MenuSpec *menuSpec,
  *	2. Given two specifications with the same number of wildcards,
  *	   the specification with its wildcards more towards the right
  *	   than the left is considered a better match.
- * 
+ *
  *************************************<->***********************************/
 
 static Boolean FindClientCommandMatch (MenuSpec *menuSpec,
@@ -1244,7 +1244,7 @@ static Boolean FindClientCommandMatch (MenuSpec *menuSpec,
     MenuItem *bestExclusionItem = (MenuItem *) NULL;
     MenuExclusion *curExclusion;
     String    bestExclusionStr = (String) NULL;
-    
+
     /* First search for a match in the menu items of the menu spec. */
     for (curMenuItem = menuSpec->menuItems;
 	 curMenuItem != (MenuItem *) NULL;
@@ -1307,22 +1307,22 @@ static Boolean FindClientCommandMatch (MenuSpec *menuSpec,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static void PerformInsertionsOnMatchList (MatchList **matchlist)
 {
     MatchList *curmatch;
     MenuItem *newMenuItem, *curitem;
-    
+
     if (*matchlist == (MatchList *) NULL)
       return;
 
@@ -1336,8 +1336,8 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
 	   be added which is far less disturbing than a dump. */
 	return;
       }
-       
-    
+
+
     for (curmatch = *matchlist;
 	 curmatch != (MatchList *) NULL;
 	 curmatch = curmatch->next)
@@ -1350,11 +1350,11 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
 	       curitem != (MenuItem *) NULL;
 	       curitem = curitem->nextMenuItem)
 	    /*EMPTY*/;
-	  
+
 	  /* If we didn't find the menuitem in the menuspec, then
 	     don't do this match. */
 	  if (curitem == (MenuItem *) NULL) continue;
-	  
+
 	  newMenuItem =
 	    MakeMenuItemFromTemplate(curmatch->menuitem,
 				     curmatch->treenode->defaultName,
@@ -1368,7 +1368,7 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
       else
 	{
 	  MenuItem *last = (MenuItem *) NULL;
-	  
+
 	  if (curmatch->menuspec != NULL)
 	    {
 	      /* Find the last menu item in the menuspec */
@@ -1385,7 +1385,7 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
 		    break;
 		}
 	    }
-	  
+
 	  /* Create a new client command menu item */
 	  newMenuItem =
 	    MakeClientCommandMenuItem
@@ -1394,7 +1394,7 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
 	  newMenuItem->wmFunction = curmatch->function;
 	  newMenuItem->greyedContext = curmatch->greyed_context;
 	  newMenuItem->clientCommandID = curmatch->treenode->commandID;
-	  
+
 	  /* Insert the new menu item at the end of the list */
 	  if (last == (MenuItem *) NULL)
 	    {
@@ -1431,7 +1431,7 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
  *  ------
  *  menuSpec = pointer to MenuSpec structure
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1439,7 +1439,7 @@ static void PerformInsertionsOnMatchList (MatchList **matchlist)
  *  --------
  *  Destroys all the menuspec widgets so that we can rebuild the menu from
  *  scratch.
- * 
+ *
  *************************************<->***********************************/
 
 void DestroyMenuSpecWidgets (MenuSpec *menuSpec)
@@ -1456,7 +1456,7 @@ void DestroyMenuSpecWidgets (MenuSpec *menuSpec)
 
     /* Destroy the menu buttons array */
     if (menuSpec->menuButtonSize != 0)
-    {  
+    {
       XtFree((char *)menuSpec->menuButtons);
       menuSpec->menuButtons = (MenuButton *) NULL;
     }
@@ -1490,7 +1490,7 @@ void DestroyMenuSpecWidgets (MenuSpec *menuSpec)
  *  pSD        = screen data pointer of screen with command to remove
  *  commandID  = command id of the menuspec to be removed.
  *               if no match is found, then no removal is done.
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1500,7 +1500,7 @@ void DestroyMenuSpecWidgets (MenuSpec *menuSpec)
  *  specified screen. Note, there may be more than one copy of the
  *  spec floating around since duplications may have been done for
  *  some clients.
- * 
+ *
  *************************************<->***********************************/
 
 void DestroyMenuSpec (WmScreenData *pSD, CARD32 commandID)
@@ -1600,7 +1600,7 @@ void DestroyMenuSpec (WmScreenData *pSD, CARD32 commandID)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = the duplicate menuspec
@@ -1608,7 +1608,7 @@ void DestroyMenuSpec (WmScreenData *pSD, CARD32 commandID)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static MenuSpec *ReplaceMenuSpecForClient (MenuSpec *menuSpec, ClientData *pCD)
@@ -1617,7 +1617,7 @@ static MenuSpec *ReplaceMenuSpecForClient (MenuSpec *menuSpec, ClientData *pCD)
 
     /* Duplicate the menu spec */
     newMenuSpec = DuplicateMenuSpec(menuSpec);
-    
+
     /* Try to find this menuspec in the list of client
        menuspecs. If we find it then we want to replace it with
        the new one. */
@@ -1670,7 +1670,7 @@ static MenuSpec *ReplaceMenuSpecForClient (MenuSpec *menuSpec, ClientData *pCD)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = the last menu spec that would be affected by modifications
@@ -1679,7 +1679,7 @@ static MenuSpec *ReplaceMenuSpecForClient (MenuSpec *menuSpec, ClientData *pCD)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static MenuSpec * FindLastMenuSpecToModify(MenuSpec *menuSpec,
@@ -1731,15 +1731,15 @@ static MenuSpec * FindLastMenuSpecToModify(MenuSpec *menuSpec,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static void RecreateMenuWidgets (WmScreenData *pSD, ClientData *pCD,
@@ -1812,15 +1812,15 @@ static void RecreateMenuWidgets (WmScreenData *pSD, ClientData *pCD,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static void FreeMatchList (MatchList **matchlist)
@@ -1828,7 +1828,7 @@ static void FreeMatchList (MatchList **matchlist)
     MatchList *current, *next;
 
     current = *matchlist;
-	
+
     while (current != (MatchList *) NULL)
     {
 	next = current->next;
@@ -1853,17 +1853,17 @@ static void FreeMatchList (MatchList **matchlist)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
  *  If the existing match has NULL for the menuitem, then get rid of
  *  it and replace with proposed match.
- * 
+ *
  *************************************<->***********************************/
 
 static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
@@ -1872,7 +1872,7 @@ static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
 				 String funcargs, Context greyed_context)
 {
     MatchList *current, *new;
-    
+
     /* If this entry does not already exist in the match list, then insert
        it. This implies that we first have to perform a search of the list.
        The search is very easy. We can simply compare the tuple of
@@ -1900,7 +1900,7 @@ static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
 	    else return;
 	}
     }
-    
+
     /* Well, we didn't find a match, so store the entry */
     new = (MatchList *)XtMalloc(sizeof(MatchList));
     new->menuspec = menuSpec;
@@ -1911,7 +1911,7 @@ static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
     new->funcargs = XtNewString(funcargs);
     new->greyed_context = greyed_context;
     new->next = (MatchList *) NULL;
-    
+
     /* Stick it at the head of the list. It's easier. */
     new->next = *matchlist;
     *matchlist = new;
@@ -1922,7 +1922,7 @@ static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
  *
  *  SearchForOtherMatches (pSD, pCD, treenode,
  *			   client_match_list, global_match_list,
- *			   menuSpec, command_string, 
+ *			   menuSpec, command_string,
  *			   function, funcargs, duplicate_globals, selection,
  *			   greyed_context)
  *
@@ -1933,15 +1933,15 @@ static void StoreMatchedCommand (MatchList **matchlist, MenuSpec *menuSpec,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static void SearchForOtherMatches (WmScreenData *pSD, ClientData *pCD,
@@ -2057,16 +2057,16 @@ static void SearchForOtherMatches (WmScreenData *pSD, ClientData *pCD,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
  *  If duplicate_globals is TRUE, then pCD cannot be NULL.
- * 
+ *
  *************************************<->***********************************/
 
 static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
@@ -2100,7 +2100,7 @@ static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
 	/* The "4" below is to allow for brackets to surround the
 	   tree->name, the period to separate it from the command
 	   so far and a NULL. */
-	length = (command_so_far != NULL ? strlen(command_so_far) : 0) + 
+	length = (command_so_far != NULL ? strlen(command_so_far) : 0) +
 	         (tree->name != NULL ? strlen(tree->name) : 0) + 4;
 	new_command_str = XtMalloc(sizeof(unsigned char) * length);
 	if (command_so_far != (String) NULL)
@@ -2108,7 +2108,7 @@ static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
 	else
 	  sprintf(new_command_str, "<%s>", tree->name);
 
-	/* If there is an exclusion preventing this command from being 
+	/* If there is an exclusion preventing this command from being
 	   inserted, then just continue the loop. @RGC: This is wrong.
 	   We still want to search for other matches if there is an
 	   exclusion. We just don't want to allow one of those other
@@ -2243,13 +2243,13 @@ static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
 				  F_Menu, funcarg_buf,
 				  duplicate_globals, selection,
 				  greyed_context, inLine);
-	    
+
 	}
 	else /* the tree is a simple command */
 	{
-	    /* Store away the push button information so it can be 
+	    /* Store away the push button information so it can be
 	       created later. */
-	    sprintf(funcarg_buf, "%d %ld %ld", (int)tree->commandID, 
+	    sprintf(funcarg_buf, "%d %ld %ld", (int)tree->commandID,
 		    (pCD == NULL ? None : pCD->client), selection);
 
 	    /* If the menuSpec is global and we are supposed to be
@@ -2269,7 +2269,7 @@ static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
 
 	    /* Search for any other matches in the existing menu specs
 	       for this command, excluding newMenuSpec. */
-	    
+
 	    SearchForOtherMatches(pSD, pCD, tree,
 				  client_match_list, global_match_list,
 				  dupMenuSpec, new_command_str,
@@ -2300,15 +2300,15 @@ static void InsertTreeOnClient (WmScreenData *pSD, ClientData *pCD,
  *  pSD       = per screen data
  *  tree      = command tree
  *  selection = owned by inserting client
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void InsertTreeOnAllClients (WmScreenData *pSD, CmdTree *tree, Atom selection,
 			     Context active_context, Boolean inLine)
@@ -2337,7 +2337,7 @@ void InsertTreeOnAllClients (WmScreenData *pSD, CmdTree *tree, Atom selection,
 	  continue;
 	InsertTreeOnClient(pSD, current->pCD, tree, &client_matchlist,
 			   &global_matchlist, current->pCD->systemMenuSpec,
-			   NULL, NULL, FALSE, 
+			   NULL, NULL, FALSE,
 			   selection, greyed_context, inLine);
 	PerformInsertionsOnMatchList(&client_matchlist);
 	RecreateMenuWidgets(pSD, current->pCD, &client_matchlist);
@@ -2363,15 +2363,15 @@ void InsertTreeOnAllClients (WmScreenData *pSD, CmdTree *tree, Atom selection,
  *  tree      = command tree
  *  selection = owned by inserting client
  *
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void InsertTreeOnSingleClient (WmScreenData *pSD, ClientData *pCD,
 			       CmdTree *tree, Atom selection,
@@ -2414,15 +2414,15 @@ void InsertTreeOnSingleClient (WmScreenData *pSD, ClientData *pCD,
  *  tree      = command tree
  *  selection = owned by inserting client
  *
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = 
+ *  Return =
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void InsertTreeOnRootMenu (WmScreenData *pSD, CmdTree *tree, Atom selection,
 			   Boolean inLine)
@@ -2440,10 +2440,10 @@ void InsertTreeOnRootMenu (WmScreenData *pSD, CmdTree *tree, Atom selection,
 	if (strcmp(rootMenu->name, pSD->rootMenu) == 0)
 	  break;
     }
-    
+
     /* If we couldn't find the root menu, then do nothing. */
     if (rootMenu == (MenuSpec *) NULL) return;
-    
+
     InsertTreeOnClient(pSD, NULL, tree, &client_matchlist,
 		       &global_matchlist, rootMenu,
 		       NULL, NULL, FALSE, selection, greyed_context, inLine);
@@ -2466,13 +2466,13 @@ void InsertTreeOnRootMenu (WmScreenData *pSD, CmdTree *tree, Atom selection,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static Boolean RemoveClientCommandFromMenuSpec (MenuSpec *menuSpec,
 						CARD32 id)
@@ -2515,13 +2515,13 @@ static Boolean RemoveClientCommandFromMenuSpec (MenuSpec *menuSpec,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static Boolean ModifyClientCommandForMenuSpec (MenuSpec *menuSpec,
 					       CARD32 id,
@@ -2590,7 +2590,7 @@ static Boolean ModifyClientCommandForMenuSpec (MenuSpec *menuSpec,
 		  /* Give the menu item the new name */
 		  curMenuItem->label = XtNewString(newname);
 		  was_changed = False;  /*  all taken care of here. */
-		  
+
 		  /* This is needed when changing the label since
 		   * mwm will wait for a geometry reply from itself which
 		   * it can never service. CR 9719
@@ -2599,7 +2599,7 @@ static Boolean ModifyClientCommandForMenuSpec (MenuSpec *menuSpec,
 				XmNuseAsyncGeometry, TRUE, NULL);
 
 		  labelString = XmStringGenerate(curMenuItem->label,
-						 XmFONTLIST_DEFAULT_TAG, 
+						 XmFONTLIST_DEFAULT_TAG,
 						 XmCHARSET_TEXT, NULL);
 		  XtVaSetValues(menuSpec->menuButtons[i].buttonWidget,
 				XmNlabelString, labelString,
@@ -2633,9 +2633,9 @@ static Boolean ModifyClientCommandForMenuSpec (MenuSpec *menuSpec,
 	    --menuSpec->menuButtonCount;
 	else
 	{
-	    menuSpec->menuButtons[freebutton].menuItem = 
+	    menuSpec->menuButtons[freebutton].menuItem =
 	      menuSpec->menuButtons[i].menuItem;
-	    menuSpec->menuButtons[freebutton].buttonWidget = 
+	    menuSpec->menuButtons[freebutton].buttonWidget =
 	      menuSpec->menuButtons[i].buttonWidget;
 	    menuSpec->menuButtons[freebutton].managed =
 	      menuSpec->menuButtons[i].managed;
@@ -2656,13 +2656,13 @@ static Boolean ModifyClientCommandForMenuSpec (MenuSpec *menuSpec,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static void ModifyClientCommandID (WmScreenData *pSD,
 				   ClientData *pCD,
@@ -2729,9 +2729,6 @@ static void ModifyClientCommandID (WmScreenData *pSD,
 	     * other menus specified in the .mwmrc file using the f.cci command.
 	     */
 
-
-	    MenuSpec *curMenuSpec;
-
 	    /* Search through all the global menu specs. */
 	    for (curMenuSpec = pSD->menuSpecs;
 		 curMenuSpec != (MenuSpec *) NULL;
@@ -2753,9 +2750,9 @@ static void ModifyClientCommandID (WmScreenData *pSD,
 	/* If we weren't passed a valid pCD, then just return. */
 	if (pCD == (ClientData *) NULL) return;
 
-	/* Search through the clients menu specs. If we find one that 
+	/* Search through the clients menu specs. If we find one that
 	   is global then stop search if we are ENABLING or DISABLING.
-	   If we are REMOVING and we find a global, we may need to 
+	   If we are REMOVING and we find a global, we may need to
 	   perform some menu spec replacing to make the menu spec that
 	   needs modification local to the client. */
 	for (curMenuSpec = pCD->systemMenuSpec;
@@ -2783,7 +2780,7 @@ static void ModifyClientCommandID (WmScreenData *pSD,
 		    MenuSpec *firstMenuSpec = (MenuSpec *) NULL;
 		    MenuSpec *lastMenuSpec = (MenuSpec *) NULL;
 
-		    /* Replace all the global menu specs with local 
+		    /* Replace all the global menu specs with local
 		       ones. */
 		    for (cur = curMenuSpec;
 			 cur != (MenuSpec *) NULL && cur != last->nextMenuSpec;
@@ -2798,7 +2795,7 @@ static void ModifyClientCommandID (WmScreenData *pSD,
 			  lastMenuSpec = newMenuSpec;
 		    }
 
-		    /* Now that we have replaced all the menu specs, 
+		    /* Now that we have replaced all the menu specs,
 		       recreate all the widgets for the new menu specs. */
 		    for (cur = firstMenuSpec;
 			 cur != (MenuSpec *) NULL &&
@@ -2806,7 +2803,7 @@ static void ModifyClientCommandID (WmScreenData *pSD,
 			 cur = cur->nextMenuSpec)
 		    {
 			DestroyMenuSpecWidgets(newMenuSpec);
-			newMenuSpec->menuWidget = 
+			newMenuSpec->menuWidget =
 			  CreateMenuWidget(pSD, pCD, newMenuSpec->name,
 					   pSD->screenTopLevelW,
 					   TRUE, newMenuSpec, NULL);
@@ -2841,13 +2838,13 @@ static void ModifyClientCommandID (WmScreenData *pSD,
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void ModifyClientCommandTree (WmScreenData *pSD,
 			      ClientData *pCD,
@@ -2891,7 +2888,7 @@ void ModifyClientCommandTree (WmScreenData *pSD,
  *  pCD =         client data
  *  newContext =  context that the menu is to be posted under.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  menuSpec =      menu specification with modifications
@@ -2902,7 +2899,7 @@ void ModifyClientCommandTree (WmScreenData *pSD,
  *  --------
  *  Adjusts PushButton sensitivity according to context and function type.
  *  Manages/Unmanages PushButtons according to clientFunction resource.
- * 
+ *
  *************************************<->***********************************/
 static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
 			  Context newContext)
@@ -2917,7 +2914,7 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
 
     /*
      *  Set PushButton sensitivity.
-     *  Set f.send_msg button sensitivity according to context and client 
+     *  Set f.send_msg button sensitivity according to context and client
      *  message list.  Adjust other button sensitivities only for context.
      */
 
@@ -2939,9 +2936,9 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
 	        XtSetSensitive (menuButton->buttonWidget, FALSE);
 	    }
 	    else
-            /* 
-             * Have a context sensitive f.send_msg item and a client with a 
-	     * nonempty message list.  Set sensitive only if the message is 
+            /*
+             * Have a context sensitive f.send_msg item and a client with a
+	     * nonempty message list.  Set sensitive only if the message is
 	     * supported by this client.  Otherwise set insensitive.
              */
             {
@@ -3018,13 +3015,13 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
                         fChangeManaged = TRUE;
 			if (n == menuSpec->menuButtonCount - 1)
 			{
-			    /* 
+			    /*
 			     * last item, if it has a separator before
 			     * it, manage the separator
 			     */
-			    
-			    CheckTerminalSeparator(menuSpec, 
-						   menuButton->buttonWidget, 
+
+			    CheckTerminalSeparator(menuSpec,
+						   menuButton->buttonWidget,
 						   True);
 			}
 	            }
@@ -3041,12 +3038,12 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
 
 			if (n == menuSpec->menuButtonCount - 1)
 			{
-			    /* 
+			    /*
 			     * last item, if it has a separator before
 			     * it, unmanage the separator
 			     */
-			    CheckTerminalSeparator(menuSpec, 
-						   menuButton->buttonWidget, 
+			    CheckTerminalSeparator(menuSpec,
+						   menuButton->buttonWidget,
 						   False);
 			}
 
@@ -3091,7 +3088,7 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
  *  topMenuSpec->menuButtonSize
  *  topMenuSpec->menuButtonCount
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = FALSE iff insufficient memory for malloc or realloc
@@ -3104,7 +3101,7 @@ static Boolean AdjustPBs (MenuSpec *menuSpec, ClientData  *pCD,
  *  Comments:
  *  --------
  *  The initial managed status of PushButtons is TRUE.
- * 
+ *
  *************************************<->***********************************/
 static Boolean SavePBInfo (MenuSpec *topMenuSpec, MenuItem *menuItem,
 			     Widget itemW)
@@ -3126,7 +3123,7 @@ static Boolean SavePBInfo (MenuSpec *topMenuSpec, MenuItem *menuItem,
     /* need larger array */
     {
         topMenuSpec->menuButtonSize += MENU_BUTTON_INC;
-        topMenuSpec->menuButtons = (MenuButton *) 
+        topMenuSpec->menuButtons = (MenuButton *)
 	    XtRealloc ((char*)topMenuSpec->menuButtons,
 		     topMenuSpec->menuButtonSize * sizeof(MenuButton));
     }
@@ -3154,9 +3151,9 @@ static Boolean SavePBInfo (MenuSpec *topMenuSpec, MenuItem *menuItem,
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
- * AdjustTearOffControl (cascade, closure, cbackdata) 
- *  
- * 
+ * AdjustTearOffControl (cascade, closure, cbackdata)
+ *
+ *
  *
  *
  *  Description:
@@ -3165,7 +3162,7 @@ static Boolean SavePBInfo (MenuSpec *topMenuSpec, MenuItem *menuItem,
  *  Inputs:
  *  ------
  *
- * 
+ *
  *  Outputs:
  *  -------
  *     returns true iff the tearoff control was enabled or diabled
@@ -3173,7 +3170,7 @@ static Boolean SavePBInfo (MenuSpec *topMenuSpec, MenuItem *menuItem,
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static Boolean
 AdjustTearOffControl (Widget cascade,
@@ -3271,13 +3268,13 @@ AdjustTearOffControl (Widget cascade,
  *  Inputs:
  *  ------
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 static Boolean CreateClientCommandSeparator (MenuItem *menuItem,
 					     int       child_position,
@@ -3315,7 +3312,7 @@ static Boolean CreateClientCommandSeparator (MenuItem *menuItem,
       return(FALSE);
 
     /* Make sure that the client command this separator surrounds actually
-       matches something. We only do this check if the separator is the 
+       matches something. We only do this check if the separator is the
        TOP separator in the separator pair. If we are looking at a bottom
        separator then we can safely assume something matched, otherwise
        we would have passed over it when we look at the corresponding top
@@ -3356,13 +3353,13 @@ static Boolean CreateClientCommandSeparator (MenuItem *menuItem,
 
 /*************************************<->*************************************
  *
- *  CreateMenuWidget (pSD, menuName, parent, fTopLevelPane, topMenuSpec, 
+ *  CreateMenuWidget (pSD, menuName, parent, fTopLevelPane, topMenuSpec,
  *                    moreMenuItems)
  *
  *
  *  Description:
  *  -----------
- *  Creates a MenuShell as a child of the specified parent widget, and a 
+ *  Creates a MenuShell as a child of the specified parent widget, and a
  *  PopupMenu or PulldownMenu as a child of the shell.  Fill the menu with
  *  the named menupane items.
  *
@@ -3376,8 +3373,8 @@ static Boolean CreateClientCommandSeparator (MenuItem *menuItem,
  *  fTopLevelPane - TRUE iff the menupane is a top level one
  *  topMenuSpec --- pointer to the top menu specification.
  *  moreMenuItems - pointer to additional menu items for custom menu.
- * 
- * 
+ *
+ *
  *  Outputs:
  *  -------
  *  Return = created PopupMenu or PulldownMenu widget, or NULL.
@@ -3386,9 +3383,9 @@ static Boolean CreateClientCommandSeparator (MenuItem *menuItem,
  *  Comments:
  *  --------
  *  We attach a popdowncallback to the menu to set wmGD.menuActive to NULL,
- *  allowing us to not dispatch key events separately from the toolkit 
+ *  allowing us to not dispatch key events separately from the toolkit
  *  dispatcher.
- * 
+ *
  *************************************<->***********************************/
 
 typedef struct _StrList
@@ -3479,7 +3476,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 
     /*
      * Create a PopupShell widget.
-     * If the parent of the specified parent ("grandparent") is a MenuShell 
+     * If the parent of the specified parent ("grandparent") is a MenuShell
      * widget, then use the grandparent as the parent of the PopupShell.
      * Otherwise, use the specified parent.
      */
@@ -3488,9 +3485,9 @@ Widget CreateMenuWidget (WmScreenData *pSD,
     XtSetArg (args[i], XmNheight, (XtArgVal) 5); i++;
     XtSetArg (args[i], XmNallowShellResize, (XtArgVal) TRUE); i++;
     XtSetArg (args[i], XtNoverrideRedirect, (XtArgVal) TRUE); i++;
-    XtSetArg (args[i], XtNdepth, 
+    XtSetArg (args[i], XtNdepth,
 	      (XtArgVal) DefaultDepth(XtDisplay(parent), pSD->screen)); i++;
-    XtSetArg (args[i], XtNscreen, 
+    XtSetArg (args[i], XtNscreen,
 	      (XtArgVal) ScreenOfDisplay(XtDisplay(parent), pSD->screen)); i++;
 
     if ((XtParent (parent) != NULL) && XmIsMenuShell (XtParent (parent)))
@@ -3503,7 +3500,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 
     /*
      * Create a RowColumn widget as a child of the shell for the menu pane.
-     * If the menu pane is top-level, create a popup menu for it and attach 
+     * If the menu pane is top-level, create a popup menu for it and attach
      *   the unmap callback to it.
      * Otherwise, create a pulldown menu for it.
      */
@@ -3519,7 +3516,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
         XtSetArg (args[i], XmNpopupEnabled, (XtArgVal) TRUE); i++;
         menuW = XtCreateWidget (menuName, xmRowColumnWidgetClass, menuShellW,
 				(ArgList) args, i);
-	XtAddCallback (menuW, XmNunmapCallback, UnmapCallback, 
+	XtAddCallback (menuW, XmNunmapCallback, UnmapCallback,
 				(XtPointer) menuSpec);
     }
     else
@@ -3534,7 +3531,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
      * Menus may contain the following widgets:
      *
      *   Label
-     *   Separator 
+     *   Separator
      *   CascadeButton
      *   PushButton
      *
@@ -3560,7 +3557,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
 	if (menuItem->wmFunction == F_Separator)
-	/* 
+	/*
 	 * Add a Separator gadget for a menu separator.
 	 * An immediately following title will not have a top separator.
 	 */
@@ -3579,12 +3576,12 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 						 (n > 0 ? children[n - 1] :
 						  (Widget) NULL),
 						 &menuItem))
-		{    
+		{
 		    /* Increment the counter here because we only increment
 		       at the end of the loop if the item is not a client
 		       command item (i.e. labelIsClientCommand == FALSE) */
 		    children[n++] =
-		      XmCreateSeparatorGadget (menuW, SEPARATOR_NAME, 
+		      XmCreateSeparatorGadget (menuW, SEPARATOR_NAME,
 					       (ArgList)NULL, 0);
 		    fUseTitleSep = FALSE;
 		}
@@ -3593,7 +3590,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 	    {
 		children[n] =
-		  XmCreateSeparatorGadget (menuW, SEPARATOR_NAME, 
+		  XmCreateSeparatorGadget (menuW, SEPARATOR_NAME,
 					   (ArgList)NULL, 0);
 		fUseTitleSep = FALSE;
 	    }
@@ -3644,7 +3641,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
             }
 
 	    if (menuItem->wmFunction == F_Title)
-	    /* 
+	    /*
 	     * Add a centered Label gadget for a menu title.
 	     * Include separators above and below the title.
 	     * Don't include the top one if the title is the first pane item
@@ -3658,11 +3655,11 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 					         sepArgs, 1); n++;
 		}
 
-                XtSetArg (args[i], XmNalignment, XmALIGNMENT_CENTER); i++; 
+                XtSetArg (args[i], XmNalignment, XmALIGNMENT_CENTER); i++;
 	        children[n] = XmCreateLabelGadget (menuW, TITLE_NAME,
 					           (ArgList) args, i); n++;
                 children[n] = XmCreateSeparatorGadget (menuW, SEPARATOR_NAME,
-					  sepArgs, 1); 
+					  sepArgs, 1);
 
                 /*
 		 * A following title will have both separators.
@@ -3689,28 +3686,28 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 
                 if (menuItem->mnemonic)
                 {
-                    XtSetArg (args[i], XmNmnemonic, 
+                    XtSetArg (args[i], XmNmnemonic,
 			       (XtArgVal) menuItem->mnemonic); i++;
                 }
 
 	        if (menuItem->wmFunction == F_Menu)
-	        /* 
-	         * Create a PopupShell and PulldownMenu for a submenu (the 
+	        /*
+	         * Create a PopupShell and PulldownMenu for a submenu (the
 		 *   menushells are linked together).
-	         * Create a CascadeButton Widget 
+	         * Create a CascadeButton Widget
 	         * The submenu widget is attached to the CascadeButton gadget
 		 *   using the subMenuId resource.
-	         * Make the CascadeButton insensitive if the submenu cannot be 
+	         * Make the CascadeButton insensitive if the submenu cannot be
 	         *   created.
 	         */
 	        {
 		    subMenuW = CREATE_MENU_WIDGET (pSD, pCD,
 						 menuItem->wmFuncArgs, menuW,
-						 FALSE, topMenuSpec, 
+						 FALSE, topMenuSpec,
 						 (MenuItem *)NULL);
                     if (subMenuW)
 		    /*
-		     * Attach submenu to cascade button. 
+		     * Attach submenu to cascade button.
 		     */
 		    {
                         XtSetArg (args[i], XmNsubMenuId, (XtArgVal) subMenuW);
@@ -3740,8 +3737,8 @@ Widget CreateMenuWidget (WmScreenData *pSD,
                     fUseTitleSep = TRUE;
 	        }
 
-	        else 
-	        /* 
+	        else
+	        /*
 	         * Create a PushButton gadget.
 	         */
 	        {
@@ -3787,10 +3784,10 @@ Widget CreateMenuWidget (WmScreenData *pSD,
                         topMenuSpec->accelKeySpecs = accelKeySpec;
                     }
 
-	            children[n] = XmCreatePushButtonGadget (menuW, 
+	            children[n] = XmCreatePushButtonGadget (menuW,
 				      PUSH_BTN_NAME, (ArgList) args, i);
 
-	            /* 
+	            /*
 		     * Set sensitivity.  Initially we only consider the context
 		     * of the top level menupane.
 		     */
@@ -3807,7 +3804,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 	            }
 
 		    /*
-		     * If necessary, fill a menuButtons element for this 
+		     * If necessary, fill a menuButtons element for this
 		     * PushButton.  Malloc or Realloc the array if necessary.
 		     */
                     if ((menuItem->greyedContext) || (menuItem->mgtMask))
@@ -3827,7 +3824,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 	             */
 
 	            XtAddCallback (children[n], XmNactivateCallback,
-			    (XtCallbackProc)ActivateCallback, 
+			    (XtCallbackProc)ActivateCallback,
 			    (XtPointer) menuItem);
 
                     fUseTitleSep = TRUE;
@@ -3845,7 +3842,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
 	    n++;
 
 	/*
-	 * Next menu item:  handle custom items and full children[]. 
+	 * Next menu item:  handle custom items and full children[].
 	 */
 	menuItem = menuItem->nextMenuItem;
         if ((menuItem == NULL) && (moreMenuItems != NULL))
@@ -3935,7 +3932,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
  *  newContext =    context that the menu is to be posted under.
  *  flags =         POST_AT_XY bit set iff x,y are valid, else compute from pCD
  *                  POST_TRAVERSAL_ON bit set if set traversal on
- * 
+ *
  *  Outputs:
  *  -------
  *  menuSpec =        menu specification with modifications
@@ -3949,7 +3946,7 @@ Widget CreateMenuWidget (WmScreenData *pSD,
  *  Adjusts PushButton sensitivity according to context and function type.
  *  Manages/Unmanages PushButtons according to clientFunction resource.
  *  Sets traversal on if button==NoButton or POST_TRAVERSAL_ON flag bit set.
- * 
+ *
  *************************************<->***********************************/
 
 void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int button, Context newContext, long flags, XEvent *passedInEvent)
@@ -3964,14 +3961,14 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
     Boolean          menuAdjusted;
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
-    
+
     if ((menuSpec == NULL) || (menuSpec->menuWidget == NULL))
     {
 	return;
     }
 
 
-    /* 
+    /*
      * Don't post a menu from an icon in the iconbox if the
      * icon is not visible
      */
@@ -3984,17 +3981,17 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
 
     /*
      * Set grabContext to be used in GrabWin when no event is passed
-     * to GrabWin. 
+     * to GrabWin.
      */
 
     wmGD.grabContext = newContext;
 
     /*
      *  Adjust PushButton sensitivity and manage/unmanage status.
-     *  If the manage status of the system menu has changed, 
+     *  If the manage status of the system menu has changed,
      *  then get the height of the top level menu pane shell and
      *  cache it in its MenuSpec.
-     * 
+     *
      *  Also...
      *  Adjust the tear off control. If we are posting this menu from
      *  a client then force the tear off to be disabled. NOTE: This must
@@ -4002,7 +3999,7 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
      *  Since turning off the tear-off control could result in a height
      *  change, we may need to remeasure things. (CR 9316)
      */
-    
+
 #ifdef WSM
     if(pCD && pCD->clientFlags & ICON_BOX)
     {
@@ -4060,7 +4057,7 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
     wmGD.menuClient = pCD;
     wmGD.menuActive = menuSpec;   /* set to NULL within UnmapCallback() */
 
-    /* 
+    /*
      * Post the menu by managing its top-level RowColumn.
      *
      * First dispatch the event to set the time stamp in the toolkit
@@ -4083,7 +4080,7 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
 	    XUngrabPointer(passedInEvent->xany.display,
 			   passedInEvent->xbutton.time);
     }
-    
+
 #ifndef ALTERNATE_POSTMENU
 
     XtManageChild (menuSpec->menuWidget);
@@ -4098,7 +4095,7 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
 	_XmSetPopupMenuClick(menuSpec->menuWidget, False);
     }
 
-    /* 
+    /*
      * Post the menu by calling the convenience routine that verifies
      * the button event, updates the Xt timestamp, and finally manages
      * the pane.
@@ -4140,7 +4137,7 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
  *  Inputs:
  *  ------
  *  menuSpec =      menu specification
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -4148,15 +4145,15 @@ void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, unsigned int b
  *
  *  Comments:
  *  --------
- *  wmGD.menuActive and wmGD.menuUnpostKey are set to NULL within 
+ *  wmGD.menuActive and wmGD.menuUnpostKey are set to NULL within
  *  UnmapCallback.
- * 
+ *
  *************************************<->***********************************/
 
 void UnpostMenu (MenuSpec *menuSpec)
 {
     if (menuSpec && (menuSpec->menuWidget))
-    /* 
+    /*
      * Unpost the menu by unmanaging its top-level RowColumn.
      */
     {
@@ -4187,7 +4184,7 @@ void UnpostMenu (MenuSpec *menuSpec)
  *  call_data =       not used
  *  wmGD.menuClient = pointer to client's ClientData structure
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -4196,7 +4193,7 @@ void UnpostMenu (MenuSpec *menuSpec)
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 void ActivateCallback (Widget w, caddr_t client_data, caddr_t call_data)
@@ -4231,7 +4228,7 @@ void ActivateCallback (Widget w, caddr_t client_data, caddr_t call_data)
  *  call_data =         not used
  *  wmGD.gadgetClient = last client with depressed client
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD.menuActive = NULL
@@ -4242,7 +4239,7 @@ void ActivateCallback (Widget w, caddr_t client_data, caddr_t call_data)
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 static void UnmapCallback (Widget w, XtPointer client_data,
@@ -4252,7 +4249,7 @@ static void UnmapCallback (Widget w, XtPointer client_data,
     wmGD.menuUnpostKeySpec = NULL;
     wmGD.checkHotspot = FALSE;
 
-    if (wmGD.gadgetClient) 
+    if (wmGD.gadgetClient)
     {
 	PopGadgetOut(wmGD.gadgetClient, FRAME_SYSTEM);
     }
@@ -4279,7 +4276,7 @@ static void UnmapCallback (Widget w, XtPointer client_data,
  *  ------
  *  format  = pointer to a format string
  *  message = pointer to a message string
- * 
+ *
  *************************************<->***********************************/
 
 void MWarning (char *format, char *message)
@@ -4309,13 +4306,13 @@ void MWarning (char *format, char *message)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 static void UnmapPulldownCallback (Widget w, XtPointer client_data,
@@ -4340,7 +4337,7 @@ static void UnmapPulldownCallback (Widget w, XtPointer client_data,
  *  ------
  *  menuSpec = menu specification
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -4349,7 +4346,7 @@ static void UnmapPulldownCallback (Widget w, XtPointer client_data,
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 void TraversalOff (MenuSpec *menuSpec)
@@ -4358,7 +4355,7 @@ void TraversalOff (MenuSpec *menuSpec)
     {
 	/* function pointer */
 	(*((XmRowColumnWidgetClass) XtClass (menuSpec->menuWidget))
-				       ->row_column_class.menuProcedures) 
+				       ->row_column_class.menuProcedures)
 		/* argument list */
 	       (XmMENU_TRAVERSAL, menuSpec->menuWidget, False, NULL, NULL);
     }
@@ -4381,7 +4378,7 @@ void TraversalOff (MenuSpec *menuSpec)
  *  ------
  *  menuSpec = menu specification
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -4390,7 +4387,7 @@ void TraversalOff (MenuSpec *menuSpec)
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 void TraversalOn (MenuSpec *menuSpec)
@@ -4400,7 +4397,7 @@ void TraversalOn (MenuSpec *menuSpec)
     {
 	/* function pointer */
 	(*((XmRowColumnWidgetClass) XtClass (menuSpec->menuWidget))
-				   ->row_column_class.menuProcedures) 
+				   ->row_column_class.menuProcedures)
 		/*argument list */
 	       (XmMENU_TRAVERSAL, menuSpec->menuWidget, True, NULL, NULL);
     }
@@ -4416,7 +4413,7 @@ void TraversalOn (MenuSpec *menuSpec)
  *
  *  Description:
  *  -----------
- *  This procedure destroys a custom MenuSpec structure and its associated 
+ *  This procedure destroys a custom MenuSpec structure and its associated
  *  menu widget, menuItems list, menuButtons array, and menu accelerator list.
  *
  *
@@ -4424,7 +4421,7 @@ void TraversalOn (MenuSpec *menuSpec)
  *  ------
  *  menuSpec = MenuSpec structure
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None.
@@ -4437,7 +4434,7 @@ void TraversalOn (MenuSpec *menuSpec)
  *  Assumes that ParseWmFuncStr() has parsed a menu item's function
  *  argument only for F_Exec and F_Menu.  If it is used for other functions,
  *  be sure to include them here!
- * 
+ *
  *************************************<->***********************************/
 
 void FreeCustomMenuSpec (MenuSpec *menuSpec)
@@ -4455,7 +4452,7 @@ void FreeCustomMenuSpec (MenuSpec *menuSpec)
     {
 	return;
     }
-  
+
     /*
      * Fix for CR 5450 - If the custom menu is the same as wmGD.menuActive, call
      *                   the UnmapCallback directly to clean things up.  Since
@@ -4467,7 +4464,7 @@ void FreeCustomMenuSpec (MenuSpec *menuSpec)
     /*
      * End fix for CR 5450
      */
- 
+
     if (menuSpec->name != NULL)
         XtFree(menuSpec->name);
 

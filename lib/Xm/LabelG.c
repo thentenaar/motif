@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
@@ -309,13 +309,13 @@ static XtResource resources[] =
         sizeof(Dimension), XtOffsetOf(XmGadgetRec, gadget.highlight_thickness),
         XmRImmediate, (XtPointer) 0
     },
-    
+
     {
         XmNpixmapPlacement, XmCPixmapPlacement, XmRPixmapPlacement,
         sizeof(XmPixmapPlacement), XtOffsetOf(XmLabelGadgetRec, label.pixmap_placement),
         XmRImmediate, (XtPointer) XmPIXMAP_LEFT
     },
-    
+
     {
         XmNpixmapTextPadding, XmCSpace, XmRVerticalDimension,
         sizeof(Dimension), XtOffsetOf(XmLabelGadgetRec, label.pixmap_text_padding),
@@ -508,7 +508,7 @@ static XmSyntheticResource syn_resources[] =
         sizeof(XmStringCharSet), XtOffsetOf(XmLabelGadgetRec,label.mnemonicCharset),
         GetMnemonicCharset, NULL
     },
-    
+
     {
         XmNpixmapTextPadding,
 	sizeof(Dimension), XtOffsetOf(XmLabelGadgetRec, label.pixmap_text_padding),
@@ -1248,7 +1248,7 @@ SetNormalGC(XmLabelGadget lw)
     values.background = LabG_Background(lw);
 #else
     valueMask |= GCFillStyle | GCStipple;
-    values.foreground = LabG_Background(lw); 
+    values.foreground = LabG_Background(lw);
     values.background = LabG_Foreground(lw);
     values.fill_style = FillOpaqueStippled;
     values.stipple = _XmGetInsensitiveStippleBitmap((Widget) lw);
@@ -1343,7 +1343,8 @@ void
 _XmCalcLabelGDimensions(Widget wid)
 {
     XmLabelGadget newlw = (XmLabelGadget) wid;
-    unsigned int  w = 0 , h = 0;
+    Dimension dw, dh;
+    unsigned int w = 0 , h = 0;
 
     /* initialize TextRect width and height to 0, reset if needed */
 
@@ -1390,43 +1391,39 @@ _XmCalcLabelGDimensions(Widget wid)
             }
         }
     }
-	
+
     if (LabG_IsText (newlw) || LabG_IsPixmapAndText(newlw))
     {
-        Dimension w, h;
-
         /* If we have a string then size it.  */
         if (!XmStringEmpty (LabG__label(newlw)))
         {
-            XmStringExtent (LabG_Font(newlw), LabG__label(newlw), &w, &h);
-            LabG_StringRect(newlw).width = (unsigned short)w;
-            LabG_StringRect(newlw).height = (unsigned short)h;
+            XmStringExtent (LabG_Font(newlw), LabG__label(newlw), &dw, &dh);
+            LabG_StringRect(newlw).width = (unsigned short)dw;
+            LabG_StringRect(newlw).height = (unsigned short)dh;
         }
     }
-    
+
     _XmLabelGCalcTextRect(wid);
-    
+
     if (LabG__acceleratorText(newlw) != NULL)
     {
         /* If we have a string then size it. */
-        Dimension w,h;
-
         if (!XmStringEmpty (LabG__acceleratorText(newlw)))
         {
             XmStringExtent(LabG_Font(newlw),
-                    LabG__acceleratorText(newlw), &w, &h);
-            LabG_AccTextRect(newlw).width = (unsigned short)w;
-            LabG_AccTextRect(newlw).height = (unsigned short)h;
+                    LabG__acceleratorText(newlw), &dw, &dh);
+            LabG_AccTextRect(newlw).width = (unsigned short)dw;
+            LabG_AccTextRect(newlw).height = (unsigned short)dh;
         }
     }
 }
 
-void 
+void
 _XmLabelGCalcTextRect(Widget wid)
 {
   LabG_TextRect(wid).width = 0;
   LabG_TextRect(wid).height = 0;
-  
+
   if (LabG_IsPixmap(wid))
     {
       LabG_TextRect(wid).width = LabG_PixmapRect(wid).width;
@@ -1455,7 +1452,7 @@ _XmLabelGCalcTextRect(Widget wid)
           LabG_TextRect(wid).height =
           	MAX(LabG_StringRect(wid).height, LabG_PixmapRect(wid).height);
         }
-	  
+
       if (LabG_PixmapPlacement(wid) == XmPIXMAP_TOP)
         {
 	  LabG_PixmapRect(wid).y = 0;
@@ -1486,7 +1483,7 @@ _XmLabelGCalcTextRect(Widget wid)
 	   LabG_PixmapRect(wid).x =
            	LabG_StringRect(wid).width + LabG_PixmapTextPadding(wid);
 	}
-	    
+
       if (LabG_PixmapPlacement(wid) == XmPIXMAP_RIGHT ||
 	  LabG_PixmapPlacement(wid) == XmPIXMAP_LEFT)
         {
@@ -1744,7 +1741,7 @@ Cardinal *num_args)
 
     if (!XmRepTypeValidValue(XmRID_PIXMAP_PLACEMENT, LabG_PixmapPlacement(new_w), new_w))
         LabG_PixmapPlacement(new_w) = XmPIXMAP_LEFT;
-	
+
     #ifndef NO_XM_1_2_BC
     /*
      * Some pre-Motif 2.0 XmManager subclasses may be bypassing the
@@ -2329,7 +2326,7 @@ LRectangle *background_box)
     } else
     {
     XSetClipMask (XtDisplay (lw), clipgc, None);
-#ifdef FIX_1521    
+#ifdef FIX_1521
 #if USE_XFT
 	XftDraw	*draw = _XmXftDrawCreate(XtDisplay(lw), XtWindow(lw));
 	XftDrawSetClip(draw, NULL);
@@ -2341,10 +2338,10 @@ LRectangle *background_box)
 #if USE_XFT
     {
     int width, height;
-    
+
     int x = lw->rectangle.x + LabG_TextRect(lw).x + LabG_StringRect(lw).x;
     int y = lw->rectangle.y + LabG_TextRect(lw).y + LabG_StringRect(lw).y;
-    
+
     if (LabG_StringRect(lw).width < availW - marginal_width)
     	width = LabG_StringRect(lw).width;
     else
@@ -2362,7 +2359,7 @@ LRectangle *background_box)
 #else
     	height = availH - marginal_height - y;
 #endif
-    
+
     XFillRectangle(XtDisplay(lw), XtWindow(lw), LabG_BackgroundGC(lw),
 		x, y, width, height);
     }
@@ -2412,7 +2409,7 @@ LRectangle *background_box)
 #ifdef FIX_1381
 		Pix_insen(lw) = pix_use = _XmConvertToBW(wid, Pix(lw));
 #else
-		pix_use = Pix(lw);				
+		pix_use = Pix(lw);
 #endif
             if (pix_use != XmUNSPECIFIED_PIXMAP)
             {
@@ -2475,7 +2472,7 @@ LRectangle *background_box)
     {
         /* TODO this clears the pixmap, but this is needed to draw background */
         /* LabelDrawBackground((Widget)lw, event, region, background_box); */
-	
+
         if (LabG_Mnemonic(lw) != XK_VoidSymbol)
         {
             /* CR 5181: Convert the mnemonic keysym to a character string. */
@@ -3620,7 +3617,7 @@ Cardinal argCount)
 {
     return XtCreateWidget(name, xmLabelGadgetClass, parent, arglist, argCount);
 }
-Widget 
+Widget
 XmVaCreateLabelGadget(
         Widget parent,
         char *name,
@@ -3629,22 +3626,22 @@ XmVaCreateLabelGadget(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmLabelGadgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmLabelGadgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
+Widget
 XmVaCreateManagedLabelGadget(
         Widget parent,
         char *name,
@@ -3653,19 +3650,19 @@ XmVaCreateManagedLabelGadget(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmLabelGadgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmLabelGadgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
 
 /*
@@ -4005,7 +4002,7 @@ XrmValue *value)
  *  widget - the icon button widget.
  *  offset, value - passed to correct function based on orientation.
  **************************************************************************/
-  
+
 static void
 FromPaddingPixels(Widget widget, int offset, XtArgVal *value)
 {
@@ -4019,7 +4016,7 @@ FromPaddingPixels(Widget widget, int offset, XtArgVal *value)
 	break;
     }
 }
-    
+
 /**************************************************************************
  * ToPaddingPixels
  *
@@ -4041,7 +4038,7 @@ ToPaddingPixels(Widget widget, int offset, XtArgVal *value)
 	return(XmeToHorizontalPixels(widget, offset, value));
     }
 }
-    
+
 
 static char*
 GetLabelGadgetAccelerator(Widget w)
@@ -4065,13 +4062,13 @@ GetLabelGadgetMnemonic(Widget w)
 
 void
 _XmQualifyLabelLocalCache(
-XmLabelGCacheObjPart *local_cache,
+XmLabelGCacheObjPart *_local_cache,
 XmLabelGadget w)
 {
     _XmProcessLock();
         ClassCacheCopy(LabG_ClassCachePart(w))
         (LabG_Cache(w),
-        local_cache,
+        _local_cache,
         sizeof(XmLabelGCacheObjPart)
         );
         _XmProcessUnlock();
@@ -4079,16 +4076,17 @@ XmLabelGadget w)
 
 
 void
-_XmReCacheLabG_r(XmLabelGCacheObjPart *local_cache, XmLabelGadget w)
+_XmReCacheLabG_r(XmLabelGCacheObjPart *_local_cache, XmLabelGadget w)
 {
     _XmProcessLock();
-        if (!_XmLabelCacheCompare(local_cache, (XtPointer)LabG_Cache(w)))
+        if (!_XmLabelCacheCompare(_local_cache, (XtPointer)LabG_Cache(w)))
     {
         _XmCacheDelete((XtPointer)LabG_Cache(w));
             LabG_Cache(w) = (XmLabelGCacheObjPart *)_XmCachePart(
             LabG_ClassCachePart(w),
-            local_cache,
+            _local_cache,
             sizeof(XmLabelGCacheObjPart));
     }
     _XmProcessUnlock();
 }
+

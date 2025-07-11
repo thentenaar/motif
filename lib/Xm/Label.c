@@ -727,6 +727,7 @@ _XmCalcLabelDimensions(Widget wid)
 {
   XmLabelWidget newlw = (XmLabelWidget) wid;
   XmLabelPart  *lp = &(newlw->label);
+  Dimension dw, dh;
   unsigned int  w = 0, h = 0;
 
 
@@ -784,14 +785,12 @@ _XmCalcLabelDimensions(Widget wid)
 
   if (Lab_IsText(newlw) || Lab_IsPixmapAndText(newlw))
     {
-      Dimension w, h;
-
       if (!XmStringEmpty (lp->_label))
 	{
 	  /* If we have a string then size it. */
-	  XmStringExtent(lp->font, lp->_label, &w, &h);
-	  lp->StringRect.width = (unsigned short)w;
-	  lp->StringRect.height = (unsigned short)h;
+	  XmStringExtent(lp->font, lp->_label, &dw, &dh);
+	  lp->StringRect.width = (unsigned short)dw;
+	  lp->StringRect.height = (unsigned short)dh;
 	}
     }
 
@@ -799,14 +798,12 @@ _XmCalcLabelDimensions(Widget wid)
 
  if (lp->_acc_text != NULL)
    {
-     Dimension w, h;
-
      /* If we have a string then size it. */
      if (!XmStringEmpty (lp->_acc_text))
        {
-         XmStringExtent(lp->font, lp->_acc_text, &w, &h);
-         lp->acc_TextRect.width = (unsigned short)w;
-         lp->acc_TextRect.height = (unsigned short)h;
+         XmStringExtent(lp->font, lp->_acc_text, &dw, &dh);
+         lp->acc_TextRect.width = (unsigned short)dw;
+         lp->acc_TextRect.height = (unsigned short)dh;
        }
    }
 }

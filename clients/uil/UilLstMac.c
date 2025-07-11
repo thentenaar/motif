@@ -1287,7 +1287,7 @@ void	off_put
 	}
     }
 
-    _move ( & off_info_ptr [1], off_info_ptr,
+    memmove ( & off_info_ptr [1], off_info_ptr,
 	    (off_info_cnt - i) * sizeof (off_info_type) );
 
     (* off_info_ptr) = off_info;

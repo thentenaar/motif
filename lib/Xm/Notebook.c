@@ -168,13 +168,13 @@
 				/* Fixed placement of non-top minor tabs */
 #define NB_MINOR_TAB_STEP(x) ((x) /2)
 
-				/* Max dimension of major tab area, i.e., 
+				/* Max dimension of major tab area, i.e.,
 				   max of tab and tab scroller dimension */
 #define NB_MAJOR_MAX(n,x,y) (MAX((x), (y)))
  /* MAX(0, (n)->notebook.shadow_thickness - (n)->notebook.back_page_size)) */
 
-				/* Max dimension of minor tab area, i.e., 
-				   max of tab (minus fixed placement) and 
+				/* Max dimension of minor tab area, i.e.,
+				   max of tab (minus fixed placement) and
 				   tab scroller dimension */
 #define NB_MINOR_MAX(n,x,y) \
  (MAX((int)((x) - NB_MINOR_TAB_STEP((n)->notebook.back_page_size)),(int)(y)))
@@ -264,11 +264,11 @@ static XtAccelerators TabAcceleratorsParsed;
 
 
 /* synthetic hook */
-static void GetDefaultFrameBackground( 
+static void GetDefaultFrameBackground(
                         Widget g,
                         int offset,
                         XrmValue *value) ;
-static void GetDefaultBackPageBackground( 
+static void GetDefaultBackPageBackground(
                         Widget g,
                         int offset,
                         XrmValue *value) ;
@@ -564,7 +564,7 @@ static XtResource resources[]  =
 	XmRPixel,
 	sizeof(Pixel),
 	XtOffsetOf(XmNotebookRec, notebook.frame_background),
-	XmRCallProc, 
+	XmRCallProc,
 	(XtPointer) GetDefaultFrameBackground
     },
     {
@@ -1022,7 +1022,7 @@ Initialize (
     new_w->notebook.first_change_managed = True;
 
     /* initialize the scrollFrame with move callback (subclass trait check) */
-    
+
     if (((scroll_frameT=NB_SCROLL_FRAME(nw)) != NULL)
 	&& (scroll_frameT->init != NULL) )
 	scroll_frameT->init(nw, PageMove, nw);
@@ -1153,7 +1153,7 @@ Redisplay (
     /* display gadgets */
     XmeRedisplayGadgets(w,e,region);
 
-    /* Work-around due to PushBG not updating border highlight 
+    /* Work-around due to PushBG not updating border highlight
        -- to be removed when PushBG is fixed, see CR9805 */
     for (i=0; i < nb->composite.num_children; i++)
 	{
@@ -1216,7 +1216,7 @@ SetValues (
 
     /* XmNcurrentPageNumber */
     /* current page must be in the page number range */
-    ASSIGN_MAX(new_w->notebook.current_page_number, 
+    ASSIGN_MAX(new_w->notebook.current_page_number,
 		new_w->notebook.first_page_number);
     ASSIGN_MIN(new_w->notebook.current_page_number,
 		new_w->notebook.last_page_number);
@@ -1271,7 +1271,7 @@ SetValues (
     	/* set the real back page number */
     	new_w->notebook.real_back_page_number =
 					new_w->notebook.back_page_number;
-	ASSIGN_MIN(new_w->notebook.real_back_page_number, 
+	ASSIGN_MIN(new_w->notebook.real_back_page_number,
 		   (Dimension)(new_w->notebook.back_page_size /2));
 	ASSIGN_MAX(new_w->notebook.real_back_page_number, 1);
 	if (new_w->notebook.real_back_page_number !=
@@ -1378,8 +1378,8 @@ SetValues (
 /*- QueryGeometry -----------------------------------------------------------
 
         Method for the composite widget's QueryGeometry
-	
-	Returns: 
+
+	Returns:
 	    preferred size if realized, else user/application w/h values
 
 -----------------------------------------------------------------------------*/
@@ -1849,9 +1849,9 @@ ConstraintSetValues (
 	/* check for last page number change */
 	if (nb->notebook.dynamic_last_page_num)
 	    {
-	    if (new_nc->page_number > nb->notebook.last_page_number 
+	    if (new_nc->page_number > nb->notebook.last_page_number
 	    && XtIsManaged(new_w)
-	    && (NB_IS_CHILD_PAGE(new_nc->child_type) 
+	    && (NB_IS_CHILD_PAGE(new_nc->child_type)
 		|| NB_IS_CHILD_TAB(new_nc->child_type)
 		|| NB_IS_CHILD_STATUS(new_nc->child_type)))
 		need_reset = SetLastPageNumber(nb, new_nc->page_number);
@@ -1873,7 +1873,7 @@ ConstraintSetValues (
 		if (nb->notebook.current_page_number == old_nc->page_number
 		|| nb->notebook.current_page_number == new_nc->page_number)
 		    {
-		    if (need_reset) 
+		    if (need_reset)
 			ResetTopPointers(nb, XmNONE, 0);
 		    nb->notebook.constraint_child = new_w;
 		    LayoutPages(nb, NULL);
@@ -1980,7 +1980,7 @@ GetDefaultBackPagePos (
     value->addr = (XPointer) &back_page_pos;
 }
 
-/* Same logic as the GetDefaultBackPagePos default proc ... rewritten 
+/* Same logic as the GetDefaultBackPagePos default proc ... rewritten
  * without the static variable - for use from the Initialize proc .
  */
 static unsigned char
@@ -2382,7 +2382,7 @@ LayoutChildren (
 
 	Uses instance state:
 		current_page_number,
-		orientation, and 
+		orientation, and
 		precalculated sizes of each child type.
 
         Called from:
@@ -2541,7 +2541,7 @@ LayoutMajorTabs (
 	y = nb->notebook.back_page_size;
 	fixed = x + nb->notebook.back_page_size;
 	limit = nb->notebook.frame_height -
-		nb->notebook.major_height - 
+		nb->notebook.major_height -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2550,7 +2550,7 @@ LayoutMajorTabs (
             sy2 = sy1 + nb->notebook.frame_height -
 		  nb->notebook.major_scroller_height;
 	    limit = nb->notebook.frame_height -
-		    MAX(0, (int)(nb->notebook.major_scroller_height - 
+		    MAX(0, (int)(nb->notebook.major_scroller_height -
 			   nb->notebook.back_page_size)) -
 		    nb->notebook.major_height -
 		    nb->notebook.shadow_thickness;
@@ -2570,8 +2570,8 @@ LayoutMajorTabs (
         x = nb->notebook.back_page_size;
         y = nb->notebook.real_binding_width + nb->notebook.frame_height;
         fixed = y + nb->notebook.back_page_size;
-        limit = nb->notebook.frame_width - 
-                nb->notebook.major_width - 
+        limit = nb->notebook.frame_width -
+                nb->notebook.major_width -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2582,7 +2582,7 @@ LayoutMajorTabs (
             limit = nb->notebook.frame_width -
 		    MAX(0, (int)(nb->notebook.major_scroller_width -
 			   nb->notebook.back_page_size)) -
-		    nb->notebook.major_width - 
+		    nb->notebook.major_width -
 		    nb->notebook.shadow_thickness;
             x += nb->notebook.major_scroller_width + spacing;
 	    }
@@ -2602,8 +2602,8 @@ LayoutMajorTabs (
         x = margin_w + nb->notebook.back_page_size - nb->notebook.major_width;
         y = nb->notebook.back_page_size;
         fixed = x - nb->notebook.back_page_size;
-        limit = nb->notebook.frame_height - 
-                nb->notebook.major_height - 
+        limit = nb->notebook.frame_height -
+                nb->notebook.major_height -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2614,7 +2614,7 @@ LayoutMajorTabs (
             limit = nb->notebook.frame_height -
 		    MAX(0, (int)(nb->notebook.major_scroller_height -
 			   nb->notebook.back_page_size)) -
-		    nb->notebook.major_height - 
+		    nb->notebook.major_height -
 		    nb->notebook.shadow_thickness;
             y += nb->notebook.major_scroller_height + spacing;
 	    }
@@ -2634,7 +2634,7 @@ LayoutMajorTabs (
         x = margin_w + nb->notebook.frame_width - nb->notebook.major_width;
         y = nb->notebook.real_binding_width + nb->notebook.frame_height;
         fixed = y + nb->notebook.back_page_size;
-        limit = margin_w + nb->notebook.back_page_size + 
+        limit = margin_w + nb->notebook.back_page_size +
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2642,7 +2642,7 @@ LayoutMajorTabs (
 	    sx1 = margin_w + nb->notebook.frame_width -
 		  nb->notebook.major_scroller_width;
 	    sx2 = margin_w;
-            limit = margin_w + 
+            limit = margin_w +
 		    MAX(nb->notebook.back_page_size,
 		        nb->notebook.major_scroller_width) +
 		    nb->notebook.shadow_thickness;
@@ -2664,7 +2664,7 @@ LayoutMajorTabs (
         x = nb->notebook.real_binding_width + nb->notebook.frame_width;
         y = margin_h + nb->notebook.frame_height - nb->notebook.major_height;
         fixed = x + nb->notebook.back_page_size;
-        limit = margin_h + nb->notebook.back_page_size + 
+        limit = margin_h + nb->notebook.back_page_size +
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2672,7 +2672,7 @@ LayoutMajorTabs (
             sy1 = margin_h + nb->notebook.frame_height -
 		  nb->notebook.minor_scroller_height;
             sy2 = margin_h;
-            limit = margin_h + 
+            limit = margin_h +
 		    MAX(nb->notebook.back_page_size,
 		        nb->notebook.major_scroller_height) +
 		    nb->notebook.shadow_thickness;
@@ -2694,8 +2694,8 @@ LayoutMajorTabs (
         x = nb->notebook.back_page_size;
         y = margin_h + nb->notebook.back_page_size - nb->notebook.major_height;
         fixed = margin_h - nb->notebook.major_height;
-        limit = nb->notebook.frame_width - 
-		nb->notebook.major_width - 
+        limit = nb->notebook.frame_width -
+		nb->notebook.major_width -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2729,8 +2729,8 @@ LayoutMajorTabs (
         x = margin_w + nb->notebook.back_page_size - nb->notebook.major_width;
         y = margin_h + nb->notebook.frame_height - nb->notebook.major_height;
         fixed = x - nb->notebook.back_page_size;
-        limit = margin_h + 
-		nb->notebook.back_page_size + 
+        limit = margin_h +
+		nb->notebook.back_page_size +
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MAJOR_SCROLLER(nb->notebook.need_scroller))
 	    {
@@ -2738,9 +2738,9 @@ LayoutMajorTabs (
             sy1 = margin_h + nb->notebook.frame_height -
 		nb->notebook.major_scroller_height;
             sy2 = margin_h;
-            limit = margin_h + 
+            limit = margin_h +
 		    MAX(nb->notebook.back_page_size,
-		        nb->notebook.major_scroller_height) + 
+		        nb->notebook.major_scroller_height) +
 		    nb->notebook.shadow_thickness;
             y -= nb->notebook.major_scroller_height + spacing;
 	    }
@@ -2769,7 +2769,7 @@ LayoutMajorTabs (
 	    sx1 = margin_w + nb->notebook.frame_width -
 		nb->notebook.major_scroller_width;
             sx2 = margin_w;
-            limit = margin_w + 
+            limit = margin_w +
 		    MAX(nb->notebook.back_page_size,
 		        nb->notebook.major_scroller_width) +
 		    nb->notebook.shadow_thickness;
@@ -2797,7 +2797,7 @@ LayoutMajorTabs (
 	nb->notebook.in_setshadow = True;
 
 	/* Inform join-aware tab else restore shadow thickness */
-	if (!UpdateJoinSide(nb, nb->notebook.old_top_major, 
+	if (!UpdateJoinSide(nb, nb->notebook.old_top_major,
 			    XmMAJOR_TAB, (Dimension)0))
 	    {
 	    /* Hide the old top major shadow */
@@ -2916,7 +2916,7 @@ LayoutMajorTabs (
                  /*
                   * FIX for CDExc23791
                   */
-                 if (nb->notebook.orientation == XmHORIZONTAL) 
+                 if (nb->notebook.orientation == XmHORIZONTAL)
                    {
                    if (nb->notebook.major_pos == RIGHT)
                      tmpx = x + ( total_major_tabs + 1 - top_tab_count + current_tab) * delta;
@@ -2956,7 +2956,7 @@ LayoutMajorTabs (
 
 		/* move joinSide top tab over to align with frame */
 		if ((join_child && (join_child == child))
-		||  (nb->notebook.top_major 
+		||  (nb->notebook.top_major
 			&& (nb->notebook.top_major == child)))
 		    {
 		    if (nb->notebook.major_pos == LEFT)
@@ -3111,21 +3111,21 @@ LayoutMinorTabs (
 		nb->notebook.back_page_size);
 	y = nb->notebook.frame_height;
 	fixed = y + NB_MINOR_TAB_STEP(nb->notebook.back_page_size);
-	limit = nb->notebook.real_binding_width + 
-		nb->notebook.frame_width - 
-		nb->notebook.minor_width - 
+	limit = nb->notebook.real_binding_width +
+		nb->notebook.frame_width -
+		nb->notebook.minor_width -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
 	    sy1 = sy2 = y + nb->notebook.back_page_size;
 	    sx1 = x;
 	    sx2 = nb->notebook.real_binding_width +
-		  nb->notebook.frame_width + 
-		  nb->notebook.back_page_size - 
+		  nb->notebook.frame_width +
+		  nb->notebook.back_page_size -
 		  nb->notebook.minor_scroller_width;
 	    limit = nb->notebook.real_binding_width +
-		    nb->notebook.frame_width - 
-		    nb->notebook.minor_width - 
+		    nb->notebook.frame_width -
+		    nb->notebook.minor_width -
 		    nb->notebook.shadow_thickness -
 		    MAX(0, (int)(nb->notebook.minor_scroller_width -
 			   nb->notebook.back_page_size));
@@ -3144,28 +3144,28 @@ LayoutMinorTabs (
         /* set starting position */
 	backpage_h = 1;
 	if (nb->notebook.back_page_size > nb->notebook.real_binding_width)
-	    backpage_h = nb->notebook.back_page_size - 
+	    backpage_h = nb->notebook.back_page_size -
 			 nb->notebook.real_binding_width;
         x = nb->notebook.frame_width;
         y = nb->notebook.real_binding_width + backpage_h + offset;
         fixed = x + NB_MINOR_TAB_STEP(nb->notebook.back_page_size);
         limit = nb->notebook.real_binding_width +
-		nb->notebook.frame_height - 
-		nb->notebook.minor_height - 
+		nb->notebook.frame_height -
+		nb->notebook.minor_height -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
             sx1 = sx2 = x + nb->notebook.back_page_size;
             sy1 = y;
-            sy2 = nb->notebook.real_binding_width + 
-		  nb->notebook.frame_height + 
-		  nb->notebook.back_page_size - 
+            sy2 = nb->notebook.real_binding_width +
+		  nb->notebook.frame_height +
+		  nb->notebook.back_page_size -
 		  nb->notebook.minor_scroller_height;
             limit = nb->notebook.real_binding_width +
-		    nb->notebook.frame_height - 
-		    MAX(0, (int)(nb->notebook.minor_scroller_height - 
+		    nb->notebook.frame_height -
+		    MAX(0, (int)(nb->notebook.minor_scroller_height -
 			   nb->notebook.back_page_size)) -
-		    nb->notebook.minor_height - 
+		    nb->notebook.minor_height -
 		    nb->notebook.shadow_thickness;
             y += nb->notebook.minor_scroller_height + spacing;
 	    }
@@ -3182,21 +3182,21 @@ LayoutMinorTabs (
         /* set starting position */
 	margin_w = NB_MAJOR_MAX(nb, nb->notebook.major_width,
 				nb->notebook.major_scroller_width);
-        x = margin_w + 
-	    nb->notebook.back_page_size + 
-	    nb->notebook.frame_width - 
+        x = margin_w +
+	    nb->notebook.back_page_size +
+	    nb->notebook.frame_width -
 	    MAX(0, (int)(nb->notebook.back_page_size -
 		   nb->notebook.real_binding_width)) -
 	    nb->notebook.minor_width - offset;
         y = nb->notebook.frame_height;
         fixed = y + NB_MINOR_TAB_STEP(nb->notebook.back_page_size);
-	limit = margin_w + 
+	limit = margin_w +
 		nb->notebook.back_page_size +
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
             sy1 = sy2 = y + nb->notebook.back_page_size;
-            sx1 = margin_w + nb->notebook.back_page_size + 
+            sx1 = margin_w + nb->notebook.back_page_size +
 	 	  nb->notebook.frame_width -
 		  MAX(0, (int)(nb->notebook.back_page_size -
 		         nb->notebook.real_binding_width)) -
@@ -3224,11 +3224,11 @@ LayoutMinorTabs (
 	x = margin_w + nb->notebook.back_page_size - nb->notebook.minor_width;
         y = MAX((nb->notebook.real_binding_width + 1 + offset),
 		nb->notebook.back_page_size);
-	fixed = margin_w + 
-		NB_MINOR_TAB_STEP(nb->notebook.back_page_size) - 
+	fixed = margin_w +
+		NB_MINOR_TAB_STEP(nb->notebook.back_page_size) -
 		nb->notebook.minor_width;
         limit = nb->notebook.real_binding_width +
-		nb->notebook.frame_height - 
+		nb->notebook.frame_height -
 		nb->notebook.minor_height -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
@@ -3237,13 +3237,13 @@ LayoutMinorTabs (
             sy1 = y;
             sy2 = nb->notebook.real_binding_width +
 		  nb->notebook.frame_height +
-		  nb->notebook.back_page_size - 
+		  nb->notebook.back_page_size -
 		  nb->notebook.minor_scroller_height;
             limit = nb->notebook.real_binding_width +
-		    nb->notebook.frame_height - 
+		    nb->notebook.frame_height -
 		    MAX(0, (int)(nb->notebook.minor_scroller_height -
 			   nb->notebook.back_page_size)) -
-		    nb->notebook.minor_height - 
+		    nb->notebook.minor_height -
 		    nb->notebook.shadow_thickness;
             y += nb->notebook.minor_scroller_height + spacing;
 	    }
@@ -3260,28 +3260,28 @@ LayoutMinorTabs (
         /* set starting position */
         margin_h = NB_MINOR_MAX(nb, nb->notebook.minor_height,
 				nb->notebook.minor_scroller_height) + 1;
-        x = MAX((nb->notebook.real_binding_width + 1 + offset), 
+        x = MAX((nb->notebook.real_binding_width + 1 + offset),
 		nb->notebook.back_page_size);
         y = margin_h + nb->notebook.back_page_size - nb->notebook.minor_height;
-        fixed = margin_h + NB_MINOR_TAB_STEP(nb->notebook.back_page_size) - 
+        fixed = margin_h + NB_MINOR_TAB_STEP(nb->notebook.back_page_size) -
 		nb->notebook.minor_height;
-        limit = nb->notebook.real_binding_width + 
-		nb->notebook.frame_width - 
-		nb->notebook.minor_width - 
+        limit = nb->notebook.real_binding_width +
+		nb->notebook.frame_width -
+		nb->notebook.minor_width -
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
             sy1 = sy2 = margin_h - nb->notebook.minor_scroller_height;
             sx1 = x;
-            sx2 = nb->notebook.real_binding_width + 
-		  nb->notebook.frame_width + 
-		  nb->notebook.back_page_size - 
+            sx2 = nb->notebook.real_binding_width +
+		  nb->notebook.frame_width +
+		  nb->notebook.back_page_size -
 		  nb->notebook.minor_scroller_width;
-            limit = nb->notebook.real_binding_width + 
-		    nb->notebook.frame_width - 
+            limit = nb->notebook.real_binding_width +
+		    nb->notebook.frame_width -
 		    MAX(0, (int)(nb->notebook.minor_scroller_width -
 			   nb->notebook.back_page_size)) -
-		    nb->notebook.minor_width - 
+		    nb->notebook.minor_width -
 		    nb->notebook.shadow_thickness;
 	    x += nb->notebook.minor_scroller_width + spacing;
 	    }
@@ -3298,13 +3298,13 @@ LayoutMinorTabs (
         /* set starting position */
 	backpage_h = 0;
 	if (nb->notebook.back_page_size > nb->notebook.real_binding_width)
-	    backpage_h = nb->notebook.back_page_size - 
+	    backpage_h = nb->notebook.back_page_size -
 			 nb->notebook.real_binding_width;
 	margin_h = NB_MAJOR_MAX(nb, nb->notebook.major_height,
 				nb->notebook.major_scroller_height);
         x = nb->notebook.frame_width;
-        y = margin_h + nb->notebook.back_page_size + 
-		nb->notebook.frame_height - 
+        y = margin_h + nb->notebook.back_page_size +
+		nb->notebook.frame_height -
 		nb->notebook.minor_height - backpage_h - offset;
         fixed = x + NB_MINOR_TAB_STEP(nb->notebook.back_page_size);
         limit = margin_h + nb->notebook.back_page_size +
@@ -3312,11 +3312,11 @@ LayoutMinorTabs (
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
             sx1 = sx2 = x + nb->notebook.back_page_size;
-            sy1 = margin_h + nb->notebook.back_page_size + 
-		  nb->notebook.frame_height - 
+            sy1 = margin_h + nb->notebook.back_page_size +
+		  nb->notebook.frame_height -
 		  nb->notebook.minor_scroller_height - backpage_h;
             sy2 = margin_h;
-            limit = margin_h + 
+            limit = margin_h +
 		    MAX(nb->notebook.back_page_size,
 		        nb->notebook.minor_scroller_height) +
 		    nb->notebook.shadow_thickness;
@@ -3337,28 +3337,28 @@ LayoutMinorTabs (
 				nb->notebook.major_scroller_width);
         margin_h = NB_MINOR_MAX(nb, nb->notebook.minor_height,
 				    nb->notebook.minor_scroller_height) +1;
-        x = margin_w + 
+        x = margin_w +
 	    nb->notebook.back_page_size +
 	    nb->notebook.frame_width -
-	    MAX(0, (int)(nb->notebook.back_page_size - 
+	    MAX(0, (int)(nb->notebook.back_page_size -
 		   nb->notebook.real_binding_width)) -
 	    nb->notebook.minor_width - offset;
         y = margin_h + nb->notebook.back_page_size - nb->notebook.minor_height;
         fixed = y - NB_MINOR_TAB_STEP(nb->notebook.back_page_size);
-        limit = margin_w + 
+        limit = margin_w +
 		nb->notebook.back_page_size +
 		nb->notebook.shadow_thickness;
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
         {
             sy1 = sy2 = margin_h - nb->notebook.minor_scroller_height;
-            sx1 = margin_w + 
+            sx1 = margin_w +
 		  nb->notebook.back_page_size +
-		  nb->notebook.frame_width - 
-		  MAX(0, (int)(nb->notebook.back_page_size - 
+		  nb->notebook.frame_width -
+		  MAX(0, (int)(nb->notebook.back_page_size -
 		         nb->notebook.real_binding_width)) -
 		  nb->notebook.minor_scroller_width;
 	    sx2 = margin_w;
-	    limit = margin_w + 
+	    limit = margin_w +
 		    MAX(nb->notebook.minor_scroller_width,
 			   nb->notebook.back_page_size) +
 		    nb->notebook.shadow_thickness;
@@ -3380,9 +3380,9 @@ LayoutMinorTabs (
         margin_h = NB_MAJOR_MAX(nb, nb->notebook.major_height,
 				nb->notebook.major_scroller_height);
         x = margin_w + nb->notebook.back_page_size - nb->notebook.minor_width;
-        y = margin_h + 
+        y = margin_h +
 	    nb->notebook.back_page_size +
-	    nb->notebook.frame_height - 
+	    nb->notebook.frame_height -
 	    nb->notebook.minor_height -
 	    MAX(0, (int)(nb->notebook.back_page_size -
 		   nb->notebook.real_binding_width)) - offset;
@@ -3392,14 +3392,14 @@ LayoutMinorTabs (
         if (NB_IS_CHILD_MINOR_SCROLLER(nb->notebook.need_scroller))
 	    {
             sx1 = sx2 = margin_w - nb->notebook.minor_scroller_width;
-            sy1 = margin_h + 
+            sy1 = margin_h +
 		  nb->notebook.back_page_size +
-		  nb->notebook.frame_height - 
+		  nb->notebook.frame_height -
 		  MAX(0, (int)(nb->notebook.back_page_size -
 		         nb->notebook.real_binding_width)) -
 		  nb->notebook.minor_scroller_height;
             sy2 = margin_h;
-            limit = margin_h + 
+            limit = margin_h +
 		    MAX(nb->notebook.back_page_size,
 		        nb->notebook.minor_scroller_height) +
 		    nb->notebook.shadow_thickness;
@@ -3425,7 +3425,7 @@ LayoutMinorTabs (
         nb->notebook.in_setshadow = True;
 
         /* Inform join-aware tab else restore shadow thickness */
-        if (!UpdateJoinSide(nb, nb->notebook.old_top_minor, 
+        if (!UpdateJoinSide(nb, nb->notebook.old_top_minor,
 				XmMINOR_TAB, (Dimension)0))
 	    {
 	    /* Hide the old top minor shadow */
@@ -3539,7 +3539,7 @@ LayoutMinorTabs (
 
 		/* move joinSide top tab over to align with frame */
 		if ((join_child && (join_child == child))
-		||  (nb->notebook.top_minor 
+		||  (nb->notebook.top_minor
 			&& (nb->notebook.top_minor == child)))
 		    {
 		    if (nb->notebook.minor_pos == LEFT)
@@ -3617,7 +3617,7 @@ LayoutMinorTabs (
 
 /*- ResetTopPointers --------------------------------------------------------
 
-    Function to calculate and update needed information to perform 
+    Function to calculate and update needed information to perform
     layout for major and minor tabs, and the tab scroller.
 
     Uses instance state:
@@ -3640,7 +3640,7 @@ LayoutMinorTabs (
 	GotoPage(), when changing the top pages
 	FlipTabs(), when tab scrolling are activated
 	TraverseTab(), when tab traverse actions are activated
-	    
+
 
     Parameters:
 	IN reason 		- Why was this routine called?
@@ -3675,8 +3675,8 @@ ResetTopPointers (
     int spacing;			/* tab spacing */
     int half;
     int count;				/* temporary counting */
-    Dimension frame_dim, 
-	      tab_dim, 
+    Dimension frame_dim,
+	      tab_dim,
 	      scroller_dim; 		/* temporary w/h */
 
     /* major tab information */
@@ -3823,7 +3823,7 @@ ResetTopPointers (
 		    /* Count of tabs after the current page */
 		    num_next_minor++;
 		    }
-		
+
 		end_minor_idx = i;
 		num_minor++;
 		}
@@ -3853,7 +3853,7 @@ ResetTopPointers (
     spacing = MAX(nb->notebook.major_spacing, nb->notebook.shadow_thickness);
     num_visible_major = (int)(frame_dim -
 			 nb->notebook.back_page_size -
-			 nb->notebook.shadow_thickness) / 
+			 nb->notebook.shadow_thickness) /
 			 (int)(tab_dim + spacing);
     if (num_visible_major < num_major)
 	{
@@ -3881,10 +3881,10 @@ ResetTopPointers (
 	scroller_dim 	= nb->notebook.minor_scroller_height;
 	}
     spacing = MAX(nb->notebook.minor_spacing, nb->notebook.shadow_thickness);
-    num_visible_minor 	= (int)(frame_dim - 
+    num_visible_minor 	= (int)(frame_dim -
 			 MAX(0, (int)(nb->notebook.back_page_size -
 				nb->notebook.real_binding_width)) -
-			 nb->notebook.shadow_thickness) / 
+			 nb->notebook.shadow_thickness) /
 			 (int)(tab_dim + spacing);
     if (num_visible_minor < num_minor)
 	{
@@ -3893,8 +3893,8 @@ ResetTopPointers (
 	else
 	    nb->notebook.need_scroller = XmMINOR_TAB_SCROLLER;
 	num_visible_minor = (int)(frame_dim -
-			     MAX(0, (int)(nb->notebook.back_page_size - 
-				    nb->notebook.real_binding_width)) - 
+			     MAX(0, (int)(nb->notebook.back_page_size -
+				    nb->notebook.real_binding_width)) -
 			     scroller_dim -
 			     MAX(0, (int)(scroller_dim -
 				 nb->notebook.back_page_size)) -
@@ -4353,7 +4353,7 @@ MakeSpiralPixmap (
     /*
      * Create spiral pixmap, if previous one exists destroy it
      */
-    if (nb->notebook.spiral_pixmap != XmUNSPECIFIED_PIXMAP 
+    if (nb->notebook.spiral_pixmap != XmUNSPECIFIED_PIXMAP
     &&  nb->notebook.spiral_pixmap != XmNONE)
             XFreePixmap(XtDisplay(nb), nb->notebook.spiral_pixmap);
 
@@ -4383,7 +4383,7 @@ MakeSpiralPixmap (
     /* draw hole in binding surface with top/bottom shadows */
     XFillArc(XtDisplay(nb), pixmap, nb->manager.background_GC,
                 hx, hy, hd, hd, 0, 360 * 64);
-    XDrawArc(XtDisplay(nb), pixmap, nb->manager.bottom_shadow_GC, 
+    XDrawArc(XtDisplay(nb), pixmap, nb->manager.bottom_shadow_GC,
                 hx, hy, hd, hd, 225 * 64, -180 * 64);
     XDrawArc(XtDisplay(nb), pixmap, nb->manager.top_shadow_GC,
                 hx, hy, hd, hd,  45 * 64, -180 * 64);
@@ -4531,9 +4531,9 @@ DrawPixmapBinding (
 	values.tile = pixmap;
 	}
     XChangeGC(XtDisplay(nb), nb->notebook.binding_gc, mask, &values);
-    
+
     /*
-     * set TSOrigin 
+     * set TSOrigin
      */
     if (nb->notebook.binding_pos == LEFT || nb->notebook.binding_pos == TOP)
         x_origin = x, y_origin = y;
@@ -4597,7 +4597,7 @@ DrawFrameShadow (
 	/* draw the shadow */
 	/* creating the shadow region */
 	shadow_region = XCreateRegion();
-	
+
 	/* adding the frame area to the shadow region */
 	rect.x = x;
 	rect.y = y;
@@ -4703,7 +4703,7 @@ DrawFrameShadow (
                 rect.height -= rect.y;
                 rect.y = 0;
                 }
-	
+
 	XDrawRectangle(XtDisplay(nb), XtWindow(nb), nb->notebook.frame_gc,
 			rect.x, rect.y, rect.width, rect.height);
 	}
@@ -4761,11 +4761,11 @@ DrawBackPages (
 
 
     /*
-     * initialize 
+     * initialize
      */
     delta = nb->notebook.back_page_size / nb->notebook.real_back_page_number;
 
-    /* draw backpages on the frame, which is not necessarily along the 
+    /* draw backpages on the frame, which is not necessarily along the
        entire binding */
     if (nb->notebook.binding_type == XmPIXMAP)
 	binding_width = MAX(nb->notebook.real_binding_width,
@@ -4964,8 +4964,6 @@ DrawBackPages (
 	nb->notebook.binding_type == XmPIXMAP_OVERLAP_ONLY)
     {
 	Dimension width, height;
-	Position x, y;
-	
 	/* We can't pass a negative width or height to the draw call.
 	   Since it appears that draw functions later in the code need
 	   the p values set as above, let's check whether the height and
@@ -5136,23 +5134,23 @@ DrawBackPages (
     Calculate Notebook's preferred geometry.
 
     Updates instance state:
-	page_width 
-	page_height 
-	status_width 
-	status_height 
-	major_width 
-	major_height 
-	minor_width 
-	minor_height 
-	scroller_width 
-	scroller_height 
-	major_scroller_width 
-	major_scroller_height 
-	minor_scroller_width 
-	minor_scroller_height 
-	frame_width 
-	frame_height 
-	real_binding_width 
+	page_width
+	page_height
+	status_width
+	status_height
+	major_width
+	major_height
+	minor_width
+	minor_height
+	scroller_width
+	scroller_height
+	major_scroller_width
+	major_scroller_height
+	minor_scroller_width
+	minor_scroller_height
+	frame_width
+	frame_height
+	real_binding_width
 	real_back_page_number,	if adjust is True
 
     Parameters:
@@ -5359,7 +5357,7 @@ CalcGeoInfo (
 	nb->notebook.frame_height = frame_height;
 	nb->notebook.real_binding_width = real_binding_width;
 	nb->notebook.real_back_page_number = real_back_page_number;
-    }	
+    }
 }
 
 
@@ -5544,7 +5542,7 @@ AdjustGeometry (
 
 }
 
-	
+
 
 /*****************************************************************************
  *                                                                           *
@@ -5556,7 +5554,7 @@ AdjustGeometry (
 /*- SetLastPageNumber ----------------------------------------------------
 
     Sets XmNlastPageNumber if no explicit last page number was set,
-    and updates navigators.  
+    and updates navigators.
 
     Uses instance state:
 	dynamic_last_page_num		,True, if no explicit setting
@@ -5665,7 +5663,7 @@ AssignDefaultPageNumber (
 
 /*- SetActiveChildren ------------------------------------------------------
 
-    Determine which children should be active.  
+    Determine which children should be active.
 
     Active children are all managed scrollers and managed pages, status
     areas, and tabs which are within the page number range and not
@@ -5775,7 +5773,7 @@ SortChildren (
 /*- RepositionChild ---------------------------------------------------------
 
         Repositions a childs position in composite array using an
-        insertion method. 
+        insertion method.
 
 -----------------------------------------------------------------------------*/
 static void
@@ -6150,7 +6148,7 @@ FlipTabs (
     XmNotebookWidget nb = (XmNotebookWidget)XtParent(w);
     Widget old_first_major, old_first_minor;
     Widget cfw = XmGetFocusWidget((Widget)nb);
-    
+
     /* save tab pointers */
     old_first_major = nb->notebook.first_major;
     old_first_minor = nb->notebook.first_minor;
@@ -6173,12 +6171,12 @@ FlipTabs (
 
     /*
      * If focus was a tab widget that is now hidden due to tab scrolling then
-     * move focus to the next visible tab 
+     * move focus to the next visible tab
      */
     if (cfw && XtParent(cfw) == (Widget)nb)
 	{
 	unsigned char ct = NotebookConstraint(cfw)->child_type;
-	
+
 	if (NB_IS_HIDDEN(cfw) && NB_IS_CHILD_TAB(ct))
 	    {
 	    if ((w == nb->notebook.next_major) && NB_IS_CHILD_MAJOR(ct))
@@ -6270,7 +6268,7 @@ TraverseTab (
 
     /* Only valid for major or minor tabs */
     if (!(nc = NotebookConstraint(child))
-	|| !(NB_IS_CHILD_MAJOR(nc->child_type) 
+	|| !(NB_IS_CHILD_MAJOR(nc->child_type)
 	   || NB_IS_CHILD_MINOR(nc->child_type)))
         return;
 
@@ -6369,7 +6367,7 @@ TraverseTab (
 /*- RedirectTraversal -------------------------------------------------------
 
         redirect traversal control trait
-	
+
 			Focus From      Focus To        Focus Request
 	NEXT_TAB_GROUP  <anything>      MINOR           _CURRENT_VISIBLE MAJOR
 			MAJOR           <anything>      _CURRENT_VISIBLE MINOR
@@ -6394,7 +6392,7 @@ RedirectTraversal(
     Widget new_focus_widget;
 
     /* If we're in pointer focus mode there's nothing to be done. */
-    if ((focus_policy != XmEXPLICIT) 
+    if ((focus_policy != XmEXPLICIT)
      || ((direction != XmTRAVERSE_NEXT_TAB_GROUP) &&
 	 (direction != XmTRAVERSE_PREV_TAB_GROUP)))
     return new_focus;
@@ -6436,7 +6434,7 @@ RedirectTraversal(
 	from_type = NotebookConstraint(from_child)->child_type;
 
     /*
-     * Determine if we need to force traversal between major and 
+     * Determine if we need to force traversal between major and
      * minor tabs (traverse to nearest tab to the current page)
      *
      * Note: If TO is NULL, then it is assumed that there is only
@@ -6491,7 +6489,7 @@ RedirectTraversal(
 
     if (new_focus_widget && XmIsTraversable(new_focus_widget))
 	return new_focus_widget;
-    
+
     return new_focus;
 }
 
@@ -6553,7 +6551,7 @@ GetNextTab (
 	    if ( (nb->notebook.top_major != NULL)
 	      && (NB_IS_VISIBLE(nb->notebook.top_major)))
 		return nb->notebook.top_major;
-	    else 
+	    else
 		target_dir = _FIRST_VISIBLE;
 	    }
 	else if (NB_IS_CHILD_MINOR(child_type))
@@ -6561,10 +6559,10 @@ GetNextTab (
 	    if (  (nb->notebook.top_minor != NULL)
 	       && (NB_IS_VISIBLE(nb->notebook.top_minor)))
 		return nb->notebook.top_minor;
-	    else 
+	    else
 		target_dir = _FIRST_VISIBLE;
 	    }
-	} 
+	}
 
     i = 0;
     target = NULL;
@@ -6624,7 +6622,7 @@ GetNextTab (
           {
           child = nb->composite.children[i];
           nc = NotebookConstraint(child);
-	  if (NB_IS_CHILD_MAJOR(nc->child_type) 
+	  if (NB_IS_CHILD_MAJOR(nc->child_type)
 	  && (nc->page_number > top_major_page))
 	    target_found = True;
 	  else
@@ -7058,7 +7056,7 @@ XmCreateNotebook(
    return(XtCreateWidget(name,xmNotebookWidgetClass,parent,arglist,argcount));
 }
 
-Widget 
+Widget
 XmVaCreateNotebook(
         Widget parent,
         char *name,
@@ -7067,18 +7065,18 @@ XmVaCreateNotebook(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmNotebookWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -7091,17 +7089,17 @@ XmVaCreateManagedNotebook(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmNotebookWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 

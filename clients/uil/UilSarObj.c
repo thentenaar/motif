@@ -152,7 +152,7 @@ void		sar_assoc_comment( object )
 sym_obj_entry_type    *object;
 {
 
-  object->obj_header.az_comment = (char *)_get_memory(strlen(comment_text)+1);
+  object->obj_header.az_comment = (char *)XtMalloc(strlen(comment_text)+1);
   strcpy(object->obj_header.az_comment, comment_text);
   comment_text[0] = '\0';
 

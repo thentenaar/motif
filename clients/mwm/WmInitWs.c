@@ -2436,7 +2436,7 @@ void
 InitWmDisplayEnv (void)
 {
     char *pDisplayName;
-    char buffer[256];
+    char buffer[512];
     char displayName[256];
 
     pDisplayName = DisplayString (DISPLAY);
@@ -2445,7 +2445,7 @@ InitWmDisplayEnv (void)
      * Construct displayString for this string.
      */
     strcpy(displayName, pDisplayName);
-    sprintf(buffer, "DISPLAY=%s",displayName);
+    snprintf(buffer, sizeof buffer, "DISPLAY=%s",displayName);
 
     /*
      * Allocate space for the display string

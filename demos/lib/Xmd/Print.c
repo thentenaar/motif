@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -49,7 +49,7 @@ static void Initialize(
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args );
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
 static Boolean SetValues (
                         Widget old_w,
@@ -60,14 +60,14 @@ static Boolean SetValues (
 static void process_printer_list(Widget);
 static void from_all_change_cb(Widget toggle, XtPointer parent,
 			       XmToggleButtonCallbackStruct *cb);
-static void numeric_only_cb(Widget textf, XtPointer, 
+static void numeric_only_cb(Widget textf, XtPointer,
 			    XmTextVerifyCallbackStruct *cb);
 static void do_print_cb(Widget, Widget, XtPointer);
 static void do_help_cb(Widget, Widget, XtPointer);
 static void unmanage_cb(Widget, Widget, XtPointer);
-static void post_add_printer(Widget, Widget, 
+static void post_add_printer(Widget, Widget,
 			     XmPushButtonCallbackStruct *cb);
-static void post_add_pathname(Widget, Widget, 
+static void post_add_pathname(Widget, Widget,
 			      XmPushButtonCallbackStruct *cb);
 static void add_printer_cb(Widget, XtPointer,
 			   XmSelectionBoxCallbackStruct *cb);
@@ -76,7 +76,7 @@ static void cancel_printer_cb(Widget, XtPointer,
 
 /* No translations and no actions. */
 
-/* Define the resources for the XmdPrint widget. */ 
+/* Define the resources for the XmdPrint widget. */
 static XtResource resources[] =
 {
   { XmdNprinterList, XmdCPrinterList, XmRString, sizeof(String),
@@ -100,17 +100,17 @@ static XtResource resources[] =
   { XmdNnumberOfCopies, XmdCNumberOfCopies, XmRInt, sizeof(int),
       XtOffsetOf( XmdPrintRec, print.number_of_copies ),
       XmRImmediate, (XtPointer) 1 },
-  { XmdNprintCallback, XmCCallback, XmRCallback, 
+  { XmdNprintCallback, XmCCallback, XmRCallback,
       sizeof(XtCallbackList),
       XtOffsetOf( XmdPrintRec, print.print_callback ),
       XmRPointer, (XtPointer) NULL }
 };
 
-/* Define the widget class record.  See Chapter 4 of the 
-   "OSF/Motif Widget Writer's Guide" for details. */ 
-externaldef(Xmdprintclassrec) XmdPrintClassRec xmdPrintClassRec = 
-{ 
-  { /* Here is the Core class record. */ 
+/* Define the widget class record.  See Chapter 4 of the
+   "OSF/Motif Widget Writer's Guide" for details. */
+externaldef(Xmdprintclassrec) XmdPrintClassRec xmdPrintClassRec =
+{
+  { /* Here is the Core class record. */
     /* superclass */                 (WidgetClass) &xmFormClassRec,
     /* class_name */                 "XmdPrint",
     /* widget_size */                sizeof(XmdPrintRec),
@@ -143,24 +143,24 @@ externaldef(Xmdprintclassrec) XmdPrintClassRec xmdPrintClassRec =
     /* query_geometry */             XtInheritQueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
-  { /* Here is the Composite class record. */ 
+  },
+  { /* Here is the Composite class record. */
     /* geometry_manager */           XtInheritGeometryManager,
     /* change_managed */             XtInheritChangeManaged,
     /* insert_child */               XtInheritInsertChild,
     /* delete_child */               XtInheritDeleteChild,
     /* extension */                  NULL,
-  },    
-  { /* Here is the Constaint class record. */ 
+  },
+  { /* Here is the Constaint class record. */
     /* constraint_resources */       NULL,
     /* constraint_num_resources */   0,
-    /* constraint_size */            sizeof(XmdPrintConstraintRec), 
+    /* constraint_size */            sizeof(XmdPrintConstraintRec),
     /* constraint_initialize */      NULL,
     /* constraint_destroy */         NULL,
     /* constraint_set_values */      NULL,
     /* extension */                  NULL,
-  },    
-  { /* Here is the XmManager class record. */ 
+  },
+  { /* Here is the XmManager class record. */
     /* translations */               XtInheritTranslations,
     /* syn_resources */              NULL,
     /* num_syn_resources */          0,
@@ -168,7 +168,7 @@ externaldef(Xmdprintclassrec) XmdPrintClassRec xmdPrintClassRec =
     /* num_syn_constraint_resources */ 0,
     /* parent_process */             XmInheritParentProcess,
     /* extension */                  NULL,
-  },    
+  },
   {                        /* bulletin_board_class fields */
     FALSE,                                /* always_install_accelerators */
     (XmGeoCreateProc)NULL,                /* geo_matrix_create  */
@@ -178,10 +178,10 @@ externaldef(Xmdprintclassrec) XmdPrintClassRec xmdPrintClassRec =
   {                        /* form_class fields  */
     (XtPointer) NULL,                     /* extension          */
   },
-  { /* Here is the XmdPrint class record. */ 
-      (XtPointer) NULL, 		    /* extension */ 
-  }    
-};    
+  { /* Here is the XmdPrint class record. */
+      (XtPointer) NULL, 		    /* extension */
+  }
+};
 
 /* Establish the widget class name as an externally accessible symbol.
    Use the "externaldef" macro rather than the "extern" keyword. */
@@ -194,7 +194,7 @@ externaldef(Xmdprintwidgetclass) WidgetClass xmdPrintWidgetClass =
  *      Called when this widget is first instantiated.
  *
  ***************************************************************************/
-static void 
+static void
 Initialize(Widget request_w,
 	   Widget new_w,
 	   ArgList p_args,
@@ -248,7 +248,7 @@ Initialize(Widget request_w,
   XtManageChild(nw -> print.copies_tf);
   XtAddCallback(nw -> print.copies_tf, XmNmodifyVerifyCallback,
 		(XtCallbackProc) numeric_only_cb, NULL);
-  
+
   /* Create Manager for each line of widgets.  This will make them
      baseline aligned,  which is much more attractive */
   n = 0;
@@ -267,7 +267,7 @@ Initialize(Widget request_w,
   n = 0;
   str = XmStringCreateLocalized("2 sided");
   XtSetArg(args[n], XmNlabelString, str); n++;
-  nw -> print.two_sided_toggle = 
+  nw -> print.two_sided_toggle =
     XmCreateToggleButtonGadget(rc_tmp2, "two_sided_toggle", args, n);
   XtManageChild(nw -> print.two_sided_toggle);
   XmStringFree(str);
@@ -276,7 +276,7 @@ Initialize(Widget request_w,
   n = 0;
   str = XmStringCreateLocalized("Reverse Order");
   XtSetArg(args[n], XmNlabelString, str); n++;
-  nw -> print.reverse_order_toggle = 
+  nw -> print.reverse_order_toggle =
     XmCreateToggleButtonGadget(rc_tmp2, "reverse_order_toggle", args, n);
   XtManageChild(nw -> print.reverse_order_toggle);
   XmStringFree(str);
@@ -300,7 +300,7 @@ Initialize(Widget request_w,
   n = 0;
   str = XmStringCreateLocalized("All");
   XtSetArg(args[n], XmNlabelString, str); n++;
-  nw -> print.all_toggle = 
+  nw -> print.all_toggle =
     XmCreateToggleButtonGadget(nw -> print.from_all_rc, "all_toggle", args, n);
   XtManageChild(nw -> print.all_toggle);
   XmStringFree(str);
@@ -309,12 +309,12 @@ Initialize(Widget request_w,
   n = 0;
   str = XmStringCreateLocalized("From");
   XtSetArg(args[n], XmNlabelString, str); n++;
-  nw -> print.from_toggle = 
-    XmCreateToggleButtonGadget(nw -> print.from_all_rc, "from_toggle", 
+  nw -> print.from_toggle =
+    XmCreateToggleButtonGadget(nw -> print.from_all_rc, "from_toggle",
 			       args, n);
   XtManageChild(nw -> print.from_toggle);
   XmStringFree(str);
-  
+
   /* from text field */
   n = 0;
   XtSetArg(args[n], XmNcolumns, 3); n++;
@@ -359,7 +359,7 @@ Initialize(Widget request_w,
   str2 = XmStringCreateLocalized("Add");
   XtSetArg(args[n], XmNselectionLabelString, str); n++;
   XtSetArg(args[n], XmNokLabelString, str2); n++;
-  nw -> print.new_printer_dialog = 
+  nw -> print.new_printer_dialog =
     XmCreatePromptDialog(new_w, "QueryDestination", args, n);
   XmStringFree(str);
   XmStringFree(str2);
@@ -373,13 +373,13 @@ Initialize(Widget request_w,
   tmp = XmCreatePushButtonGadget(nw -> print.destination_pd,
 				 "Other Printer...", NULL, 0);
   XtManageChild(tmp);
-  XtAddCallback(tmp, XmNactivateCallback, 
+  XtAddCallback(tmp, XmNactivateCallback,
 		(XtCallbackProc) post_add_printer, (XtPointer) new_w);
 
   tmp = XmCreatePushButtonGadget(nw -> print.destination_pd,
 				 "Other File...", NULL, 0);
   XtManageChild(tmp);
-  XtAddCallback(tmp, XmNactivateCallback, 
+  XtAddCallback(tmp, XmNactivateCallback,
 		(XtCallbackProc) post_add_pathname, (XtPointer) new_w);
 
   process_printer_list(new_w);
@@ -418,15 +418,15 @@ Initialize(Widget request_w,
   n = 0;
   XtSetArg(args[n], XmNmarginWidth, 20); n++;
   printb = XmCreatePushButtonGadget(rc_tmp2, "Print", args, n);
-  XtAddCallback(printb, XmNactivateCallback, 
+  XtAddCallback(printb, XmNactivateCallback,
 		(XtCallbackProc) do_print_cb, (XtPointer) new_w);
   XtManageChild(printb);
   cancelb = XmCreatePushButtonGadget(rc_tmp2, "Cancel", args, n);
-  XtAddCallback(cancelb, XmNactivateCallback, 
+  XtAddCallback(cancelb, XmNactivateCallback,
 		(XtCallbackProc) unmanage_cb, (XtPointer) new_w);
   XtManageChild(cancelb);
   helpb = XmCreatePushButtonGadget(rc_tmp2, "Help", args, n);
-  XtAddCallback(helpb, XmNactivateCallback, 
+  XtAddCallback(helpb, XmNactivateCallback,
 		(XtCallbackProc) do_help_cb, (XtPointer) new_w);
   XtManageChild(helpb);
 
@@ -464,10 +464,10 @@ Initialize(Widget request_w,
  *      Called when the widget is destroyed.
  *
  ****************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
-{   
+{
   XmdPrintWidget print = (XmdPrintWidget) wid;
   char** strings;
   int count;
@@ -492,13 +492,13 @@ Destroy(
  *      Called by the Intrinsics whenever any of the resource values change.
  *
  ****************************************************************************/
-static Boolean 
+static Boolean
 SetValues (
         Widget old_w,
         Widget request_w,
         Widget new_w,
         ArgList args,
-        Cardinal *num_args 
+        Cardinal *num_args
           )
 {
   XmdPrintWidget cw = (XmdPrintWidget)old_w;
@@ -542,11 +542,12 @@ SetValues (
 				 nw -> print.reverse_order, False);
 
   return(False);
-}	    
+}
 
-static void 
+static void
 process_printer_list(Widget w)
 {
+  XmString xstr;
   XmdPrintWidget pw = (XmdPrintWidget)w;
   char *str = pw -> print.printer_list;
   char c;
@@ -583,9 +584,9 @@ process_printer_list(Widget w)
     buf[count++] = 0;
     /* Make sure printer lists are big enough */
     pw -> print.printers = (char**) XtRealloc((char*) pw -> print.printers,
-					      sizeof(char*) * 
+					      sizeof(char*) *
 					      pw -> print.num_printers + 1);
-    pw -> print.is_printer = 
+    pw -> print.is_printer =
       (Boolean*) XtRealloc((char*) pw -> print.is_printer,
 			   sizeof(Boolean) * pw -> print.num_printers + 1);
     pw -> print.printers[pw -> print.num_printers] = XtNewString(buf);
@@ -599,31 +600,29 @@ process_printer_list(Widget w)
     n = pw -> print.num_om_items;
     pw -> print.num_om_items = pw -> print.num_printers;
     pw -> print.om_items = (WidgetList) XtRealloc((char*) pw -> print.om_items,
-						  sizeof(Widget) * 
+						  sizeof(Widget) *
 						  pw -> print.num_om_items);
     /* zero out new ones */
-    while(n < pw -> print.num_om_items) 
+    while(n < pw -> print.num_om_items)
       pw -> print.om_items[n++] = (Widget) 0;
   }
 
   /* Now put new strings in */
   for(count = 0; count < pw -> print.num_printers; count++) {
-    XmString str;
-
-    str = XmStringCreateLocalized(pw -> print.printers[count]);
-    if (pw -> print.om_items[count] != (Widget) 0) 
+    xstr = XmStringCreateLocalized(pw -> print.printers[count]);
+    if (pw -> print.om_items[count] != (Widget) 0)
       XtVaSetValues(pw -> print.om_items[count],
-		    XmNlabelString, str, 
+		    XmNlabelString, xstr,
 		    NULL, NULL);
     else {
       Arg args[2];
-      XtSetArg(args[0], XmNlabelString, str);
+      XtSetArg(args[0], XmNlabelString, xstr);
       pw -> print.om_items[count] =
-	XmCreatePushButtonGadget(pw -> print.destination_pd, "button", 
+	XmCreatePushButtonGadget(pw -> print.destination_pd, "button",
 				 args, 1);
     }
     XtManageChild(pw -> print.om_items[count]);
-    XmStringFree(str);
+    XmStringFree(xstr);
   }
 
   /* Fix the position of the widgets in the list */
@@ -644,8 +643,8 @@ from_all_change_cb(Widget toggle, XtPointer parent,
   XtSetSensitive(pw -> print.to_tf, state);
 }
 
-static void 
-numeric_only_cb(Widget textf, XtPointer ignore, 
+static void
+numeric_only_cb(Widget textf, XtPointer ignore,
 		XmTextVerifyCallbackStruct *cb)
 {
   if (cb -> text -> length > 0 &&
@@ -653,7 +652,7 @@ numeric_only_cb(Widget textf, XtPointer ignore,
     cb -> doit = False;
 }
 
-static void 
+static void
 do_print_cb(Widget button, Widget pw, XtPointer ignore)
 {
   XmdPrintWidget print = (XmdPrintWidget) pw;
@@ -664,9 +663,9 @@ do_print_cb(Widget button, Widget pw, XtPointer ignore)
 
   cbstruct.reason = XmCR_OK;
   cbstruct.event = NULL;
-  cbstruct.two_sided = 
+  cbstruct.two_sided =
     XmToggleButtonGetState(print -> print.two_sided_toggle);
-  cbstruct.reverse_order = 
+  cbstruct.reverse_order =
     XmToggleButtonGetState(print -> print.reverse_order_toggle);
   temp = XmTextFieldGetString(print -> print.copies_tf);
   cbstruct.copies = atol(temp);
@@ -689,14 +688,14 @@ do_print_cb(Widget button, Widget pw, XtPointer ignore)
 		XmNmenuHistory, &history,
 		NULL, NULL);
   /* Find the right widget.  This will tell us the value */
-  for(i = 0; i < print -> print.num_om_items; i++) 
+  for(i = 0; i < print -> print.num_om_items; i++)
     if (print -> print.om_items[i] == history) break;
 
   cbstruct.printer = NULL; /* Error case */
   if (i < print -> print.num_printers) {
     cbstruct.printer = print -> print.printers[i];
     cbstruct.to_printer = print -> print.is_printer[i];
-  } 
+  }
 
   /* Call the printer callbacks */
   XtCallCallbackList(pw, print -> print.print_callback,
@@ -705,7 +704,7 @@ do_print_cb(Widget button, Widget pw, XtPointer ignore)
   XtUnmanageChild(pw);
 }
 
-static void 
+static void
 do_help_cb(Widget button, Widget pw, XtPointer ignore)
 {
   XmdPrintWidget print = (XmdPrintWidget) pw;
@@ -719,13 +718,13 @@ do_help_cb(Widget button, Widget pw, XtPointer ignore)
   XtUnmanageChild(pw);
 }
 
-static void 
+static void
 unmanage_cb(Widget button, Widget pw, XtPointer ignore)
 {
   XtUnmanageChild(pw);
 }
 
-static void 
+static void
 post_add_printer(Widget w, Widget pw,
 		 XmPushButtonCallbackStruct *cb)
 {
@@ -735,7 +734,7 @@ post_add_printer(Widget w, Widget pw,
   XtManageChild(print -> print.new_printer_dialog);
 }
 
-static void 
+static void
 post_add_pathname(Widget w, Widget pw,
 		  XmPushButtonCallbackStruct *cb)
 {
@@ -755,9 +754,9 @@ add_printer_cb(Widget w, XtPointer pw,
   Arg args[10];
   char *value;
   Widget button;
-  
-  /* Put the new value in the printer list and fix the 
-     option menu.  Put the new value at the head of 
+
+  /* Put the new value in the printer list and fix the
+     option menu.  Put the new value at the head of
      the menu */
   XmStringGetLtoR(cb -> value, XmFONTLIST_DEFAULT_TAG, &value);
 
@@ -765,7 +764,7 @@ add_printer_cb(Widget w, XtPointer pw,
      for all the items */
   i = print -> print.num_om_items;
   print -> print.num_om_items++;
-  print -> print.om_items = 
+  print -> print.om_items =
     (WidgetList) XtRealloc((char*) print -> print.om_items,
 			   sizeof(Widget) * (i + 1));
 
@@ -781,17 +780,17 @@ add_printer_cb(Widget w, XtPointer pw,
   /* New printer */
   i = print -> print.num_printers;
   print -> print.num_printers++;
-  print -> print.printers = 
+  print -> print.printers =
     (char**) XtRealloc((char*) print -> print.printers,
 		       sizeof(char*) * (i + 1));
-  print -> print.is_printer = 
+  print -> print.is_printer =
     (Boolean*) XtRealloc((char*) print -> print.is_printer,
 			 sizeof(Boolean) * (i + 1));
   print -> print.printers[i] = value;
   print -> print.is_printer[i] = print -> print.adding_printer;
 
   XtVaSetValues(print -> print.destination_om,
-		XmNmenuHistory, button, 
+		XmNmenuHistory, button,
 		NULL, NULL);
 }
 
@@ -813,26 +812,26 @@ cancel_printer_cb(Widget w, XtPointer pw,
 		NULL, NULL);
 }
 
-/* 
+/*
  * External functions
  */
 
 /******************************************************************************
  *
  *  XmdCreatePrint:
- *      Called by an application. 
+ *      Called by an application.
  *
  *****************************************************************************/
-Widget 
+Widget
 XmdCreatePrint (
         Widget parent,
         char *name,
-        ArgList arglist, 
+        ArgList arglist,
         Cardinal argcount
               )
 {
   /* This is a convenience function to instantiate an XmdPrint widget. */
-  return (XtCreateWidget (name, xmdPrintWidgetClass, parent, 
+  return (XtCreateWidget (name, xmdPrintWidgetClass, parent,
 			  arglist, argcount));
 }
 
@@ -840,18 +839,18 @@ XmdCreatePrint (
  *
  *  XmdCreatePrintDialog
  *      Called by an application to create an XmdPrint managed by a
- *      DialogShell. 
+ *      DialogShell.
  *
  *****************************************************************************/
-Widget 
+Widget
 XmdCreatePrintDialog (
         Widget parent,
         char *name,
-        ArgList arglist, 
+        ArgList arglist,
         Cardinal argcount
               )
 {
-  return(XmeCreateClassDialog(xmdPrintWidgetClass, 
+  return(XmeCreateClassDialog(xmdPrintWidgetClass,
 			      parent, name, arglist, argcount));
 }
 
@@ -868,12 +867,12 @@ XmdPrintDocument(char* pathname,
   if (cb -> to_printer) {
 #ifdef SYSV
     sprintf(command, "lp -d%s -n%d %s",
-	    cb -> printer, 
+	    cb -> printer,
 	    cb -> copies,
 	    pathname);
 #else /* Berk */
     sprintf(command, "lpr -P%s -#%d %s",
-	    cb -> printer, 
+	    cb -> printer,
 	    cb -> copies,
 	    pathname);
 #endif /* SYSV */

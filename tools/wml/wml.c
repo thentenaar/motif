@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wml.c /main/8 1999/04/16 09:41:47 mgreess $"
@@ -201,7 +201,7 @@ if ( argc > 1 )
 done = 0;
 while (!done)
     {
-    
+
     /*
      * Parse the input stream
      */
@@ -209,21 +209,21 @@ while (!done)
     yyparse ();
     if ( wml_err_count > 0 ) break;
     printf ("\nParse of WML input complete");
-    
+
     /*
      * Perform semantic validation, and construct resolved data structures
      */
     wmlResolveDescriptors ();
     if ( wml_err_count > 0 ) break;
     printf ("\nSemantic validation and resolution complete");
-    
+
     /*
-     * Output 
+     * Output
      */
     wmlOutput ();
     if ( wml_err_count > 0 ) break;
-    printf ("\nWML Uil*.h and wml-uil.mm file creation complete\n");
-    
+    puts("WML Uil*.h and wml-uil.mm file creation complete");
+
     done = 1;
     }
 

@@ -9014,7 +9014,7 @@ DragStart(
       Pixmap cross_m;
       GC tempgc;
       Arg args[10];
-      int n, midpoint = DRAG_STATE_SIZE / 2, farpoint = DRAG_STATE_SIZE;
+      int midpoint = DRAG_STATE_SIZE / 2, farpoint = DRAG_STATE_SIZE;
 
       dragIconInfo = (DragIconInfo) XtMalloc(sizeof(DragIconInfoRec));
       XSaveContext(XtDisplay(cw), None, dragIconInfoContext,

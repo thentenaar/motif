@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 drk $"
@@ -29,7 +29,6 @@ static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 dr
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
  * This module contains all routines which perform semantic analysis of
@@ -44,15 +43,10 @@ static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 dr
  * Output:
  *
  */
-
-
-#include "wml.h"
-
-#if defined(__STDC__)
-#include <stdlib.h>
-#endif
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "wml.h"
 
 /*
  * Routines used only in this module
@@ -227,7 +221,7 @@ for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
  *
  * - Generate the wml_obj_child... vector of resolved child objects,
  *   ordered lexicographically.  Assign sym_k_... values while doing so.
- *   Link child to its class. 
+ *   Link child to its class.
  */
 
 void wmlResolveSymKChild ()
@@ -626,7 +620,7 @@ for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
     }
 }
 
- 
+
 
 /*
  * Routine to linearize and assign sym_k values to classes
@@ -709,7 +703,7 @@ for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
 	    sprintf (errmsg, "Class %s does not have a convenience function",
 		     cursyn->name);
 	    wmlIssueError (errmsg);
-	    }	
+	    }
 
 /*
  * Validate any object references in the syntactic object
@@ -854,7 +848,7 @@ for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
 	sprintf (errmsg, "CharacterSet %s does not have a StandardsName",
 		 cursyn->name);
 	wmlIssueError (errmsg);
-	}	
+	}
 
     }
 
@@ -883,7 +877,7 @@ for ( ndx=0 ; ndx<wml_obj_charset_ptr->cnt ; ndx++ )
  *	  controls list.
  *	- Perform inheritance of resources, partitioning them into
  *	  into arguments and reasons. When complete, the class has
- *	  a list of all its resources, including copies from a 
+ *	  a list of all its resources, including copies from a
  *	  superclass and possibly a parentclass.
  *	  Excluded resources remain in the list, and are simply marked.
  */
@@ -1053,9 +1047,9 @@ for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
  * been inited. It then makes a copy of the superclass lists. It repeats this
  * procedure for the parentclass (if any.) Finally, it
  * merges in the resources from the syntactic object. It uses the
- * resolved resource or child object to point to the matching reference object 
+ * resolved resource or child object to point to the matching reference object
  * in the list being created as an aid to search doing overrides. This also
- * detects whether a resource or child is already in the list (if so, it is 
+ * detects whether a resource or child is already in the list (if so, it is
  * assumed to be inherited).
  */
 
@@ -1215,7 +1209,7 @@ for ( refptr=synobj->resources ; refptr!=NULL ; refptr=refptr->next )
     }
 
 /*
- * Process the children belonging to this class. 
+ * Process the children belonging to this class.
  */
 for ( crefptr = synobj->children ; crefptr!=NULL ; crefptr = crefptr->next )
   {
@@ -1311,7 +1305,7 @@ WmlClassDefPtr		clsobj;		/* current class */
 /*
  * Open the output file.
  */
-outfil = fopen ( "wml.report", "w");
+outfil = fopen ( "wml.report", "w+");
 if ( outfil == NULL )
     {
     printf ("\nCouldn't open wml.report");
@@ -1499,7 +1493,7 @@ for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
 	fprintf (outfil, "\n    %s argument set:", synobj->name);
 	prthdr = FALSE;
 	}
-	
+
     fprintf (outfil, "\n      %s", synres->name);
     fprintf (outfil, "\n\tType = %s", resobj->dtype_def->syndef->name);
     if ( strcmp(synres->name,synres->resliteral) != 0 )

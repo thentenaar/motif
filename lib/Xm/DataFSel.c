@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 #ifdef REV_INFO
 #ifndef lint
@@ -46,7 +46,7 @@ static void HandleInsertTargets() ;
 
 #else
 
-static void InsertSelection( 
+static void InsertSelection(
                         Widget w,
                         XtPointer closure,
                         Atom *seltype,
@@ -54,7 +54,7 @@ static void InsertSelection(
                         XtPointer value,
                         unsigned long *length,
                         int *format) ;
-static Boolean ConvertInsertSelection( 
+static Boolean ConvertInsertSelection(
                         Widget w,
                         Atom *selection,
                         Atom *type,
@@ -159,7 +159,7 @@ InsertSelection(
           insert_select->done_status = True;
           insert_select->success_status = False;
           return;
-       } 
+       }
     } else if (insert_select->select_type == XmDEST_SELECT) {
       if (XmDataFieldGetSelectionPosition (w, &left, &right) && left != right) {
          if ( TextF_CursorPosition(tf) < left ||
@@ -179,7 +179,7 @@ InsertSelection(
        tmp_prop.format = *format;
        tmp_prop.nitems = *length;
        num_vals = 0;
-       status = XmbTextPropertyToTextList(XtDisplay(w), &tmp_prop, &tmp_value, 
+       status = XmbTextPropertyToTextList(XtDisplay(w), &tmp_prop, &tmp_value,
 					  &num_vals);
       /* if no conversion, num_vals won't change */
       /* status >0 if some characters can't be converted; continue anyway */
@@ -196,12 +196,12 @@ InsertSelection(
 
 
        if (XmTextF_max_char_size(tf) == 1) {
-          replace_res = _XmDataFieldReplaceText(tf, 
+          replace_res = _XmDataFieldReplaceText(tf,
                                                 (XEvent *) insert_select->event,
-					        left, right, total_tmp_value, 
+					        left, right, total_tmp_value,
                                                 malloc_size, True);
        } else { /* must convert to wchar_t before passing to Replace */
-          wc_value = (wchar_t *)XtMalloc((unsigned) 
+          wc_value = (wchar_t *)XtMalloc((unsigned)
                                (1 + malloc_size) * sizeof(wchar_t));
           num_chars = mbstowcs(wc_value, total_tmp_value, 1 + malloc_size);
           replace_res = _XmDataFieldReplaceText(tf,
@@ -214,7 +214,7 @@ InsertSelection(
     } else { /* it must be either TEXT or codeset of the locale */
        if (XmTextF_max_char_size(tf) == 1) {
          /* NOTE: casting *length could result in a truncated long. */
-          replace_res = _XmDataFieldReplaceText(tf, 
+          replace_res = _XmDataFieldReplaceText(tf,
 					        (XEvent *)insert_select->event,
 						left, right, (char *)value,
 					        (unsigned)*length, True);
@@ -225,10 +225,10 @@ InsertSelection(
           temp[*length] = '\0';
           wc_value = (wchar_t*)XtMalloc((unsigned)
                                                (*length + 1) * sizeof(wchar_t));
-      
+
          /* NOTE: casting *length could result in a truncated long. */
           num_chars = mbstowcs(wc_value, temp, (unsigned)*length + 1);
-          replace_res = _XmDataFieldReplaceText(tf, 
+          replace_res = _XmDataFieldReplaceText(tf,
                                                 (XEvent *) insert_select->event,
 					        left, right, (char*) wc_value,
 					        num_chars, True);
@@ -253,7 +253,7 @@ InsertSelection(
        }
        else
        {
-         _XmDataFielddf_SetCursorPosition(tf, NULL, left + num_chars, 
+         _XmDataFielddf_SetCursorPosition(tf, NULL, left + num_chars,
 				       False, True);
        }
        (void) _XmDataFielddf_SetDestination(w, TextF_CursorPosition(tf),
@@ -597,7 +597,7 @@ _XmDataFieldConvert(
 	  int stat ;
 
 	/* NOTE: casting (right - left) could result in a truncated long. */
-         *length = _XmDataFieldCountBytes(tf, TextF_WcValue(tf) + left, 
+         *length = _XmDataFieldCountBytes(tf, TextF_WcValue(tf) + left,
                                           (int)(right - left));
          tmp_value = XtMalloc((unsigned) *length + 1);
          stat = wcstombs(tmp_value, TextF_WcValue(tf) + left,
@@ -610,13 +610,13 @@ _XmDataFieldConvert(
          *length = right - left;
          tmp_value = XtMalloc((unsigned) *length + 1);
         /* get the selection value */
-         (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left), 
+         (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left),
 		      (unsigned)*length); /* NOTE: casting *length could result
 				             in a truncated long. */
       }
       tmp_value[*length] = '\0';
       /* convert tmp_value to 8859.1 */
-      ret_status = XmbTextListToTextProperty(XtDisplay(w), &tmp_value, 1, 
+      ret_status = XmbTextListToTextProperty(XtDisplay(w), &tmp_value, 1,
                                              (XICCEncodingStyle)XStringStyle,
                                              &tmp_prop);
       XtFree(tmp_value);
@@ -658,7 +658,7 @@ _XmDataFieldConvert(
       *type = COMPOUND_TEXT;
       *format = 8;
       if (is_destination || !has_selection) return False;
-      if (XmTextF_max_char_size(tf) != 1) { 
+      if (XmTextF_max_char_size(tf) != 1) {
 	int stat ;
 
 	/* convert to char* before converting to CT.  NOTE: casting
@@ -677,7 +677,7 @@ _XmDataFieldConvert(
          *length = right - left;
          tmp_value = XtMalloc((unsigned) *length + 1);
         /* get the selection value */
-         (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left), 
+         (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left),
 		      (unsigned)*length); /* NOTE: casting *length could result
 				             in a truncated long. */
       }
@@ -707,7 +707,6 @@ _XmDataFieldConvert(
 
   /* Delete the selection */
     } else if (*target == DELETE) {
-      XmTextPosition left, right;
       Boolean move_cursor = True;
 
       if (!(is_primary || is_drop)) return False;
@@ -759,9 +758,9 @@ _XmDataFieldConvert(
 	long *len = (long*)XtMalloc(sizeof(long));
 
 	if (right > left)
-	    *len = right - left; 
+	    *len = right - left;
 	else
-	    *len = left - right; 
+	    *len = left - right;
 
 	*value = (XtPointer)len;
 	*type = XA_INTEGER;
@@ -794,7 +793,7 @@ _XmDataFieldLoseSelection(
         _XmDataFieldDeselectSelection(w, False,
 				      XtLastTimestampProcessed(XtDisplay(w)));
 #else
-        _XmDataFieldDeselectSelection(w, False, 0, 
+        _XmDataFieldDeselectSelection(w, False, 0,
 				      XtLastTimestampProcessed(XtDisplay(w)));
 #endif
 
@@ -816,7 +815,7 @@ _XmDataFieldLoseSelection(
 	_XmDataFieldDrawInsertionPoint(tf, True);
 /* Losing Secondary Selection */
     } else if (*selection == XA_SECONDARY && XmTextF_has_secondary(tf)){
-        _XmDataFieldSetSel2(w, 0, 0, True, 
+        _XmDataFieldSetSel2(w, 0, 0, True,
 			    XtLastTimestampProcessed(XtDisplay(w)));
     }
 }

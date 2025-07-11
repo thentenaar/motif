@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 drk $"
@@ -258,7 +258,7 @@ boolean			op2_temporary;
     /*
     **	A couple of points:
     **	1) if op2_temporary = FALSE - we must make a copy
-    **	   of it 
+    **	   of it
     **	2) if the last string of the compound string has the same attributes
     **     as the string being appended, the strings are merged into 1
     */
@@ -272,9 +272,9 @@ boolean			op2_temporary;
     if (last_str_entry != NULL)
     {
 	for (  ;
-	     last_str_entry->az_next_table_value != NULL;  
+	     last_str_entry->az_next_table_value != NULL;
 
-	     ptr = (sym_value_entry_type * *) 
+	     ptr = (sym_value_entry_type * *)
 	         &(last_str_entry->az_next_table_value),
 	     last_str_entry = *ptr);
 
@@ -291,8 +291,8 @@ boolean			op2_temporary;
 
     if (merge)
     {
-	new_str_entry = 
-	    sem_cat_str_to_str( last_str_entry, TRUE, 
+	new_str_entry =
+	    sem_cat_str_to_str( last_str_entry, TRUE,
 				az_str_entry, op2_temporary );
     }
     else
@@ -306,14 +306,14 @@ boolean			op2_temporary;
 	    unsigned short	old_size;
 
 	    /* must make a copy since user has access to string via name */
-	    
-	    new_str_entry = (sym_value_entry_type *) 
+
+	    new_str_entry = (sym_value_entry_type *)
 		sem_allocate_node( sym_k_value_entry,
 				   az_str_entry->header.w_node_size<<2 );
 
 	    old_size = new_str_entry->header.w_node_size;
 
-	    _sym_copy_entry( new_str_entry, 
+	    _sym_copy_entry( new_str_entry,
 		   az_str_entry,
 		   az_str_entry->header.w_node_size );
 
@@ -381,7 +381,7 @@ boolean			op2_temporary;
     **	1) if op2_temporary = FALSE - we must make a copy of 2nd compound
     **	   string
     **	2) if the last string of 1st compound string has the same attributes
-    **     as the 1st string of the 2nd compound string being appended, 
+    **     as the 1st string of the 2nd compound string being appended,
     **	   the strings are merged into 1
     */
 
@@ -401,7 +401,7 @@ boolean			op2_temporary;
     if (last_str_entry != NULL)
     {
 	for (  ;
-	     last_str_entry->az_next_table_value != NULL;  
+	     last_str_entry->az_next_table_value != NULL;
 
 	     ptr = (sym_value_entry_type * *)
 	         &(last_str_entry->az_next_table_value),
@@ -413,7 +413,7 @@ boolean			op2_temporary;
     	    &&
 	    ((last_str_entry->b_aux_flags & sym_m_separate) == 0 ))
 	{
-	    last_str_entry = 
+	    last_str_entry =
 		sem_cat_str_to_str( last_str_entry, TRUE,
 				    next_str_entry, op2_temporary );
 	    last_str_entry->b_aux_flags |= sym_m_table_entry;
@@ -432,7 +432,7 @@ boolean			op2_temporary;
 	return;
     }
 
-    for ( ; 
+    for ( ;
 	 next_str_entry != NULL;
 	 next_str_entry = (sym_value_entry_type *)
 	     next_str_entry->az_next_table_value )
@@ -440,16 +440,16 @@ boolean			op2_temporary;
 	sym_value_entry_type	*new_str_entry;
 	unsigned short		old_size;
 
-	new_str_entry = (sym_value_entry_type *) 
+	new_str_entry = (sym_value_entry_type *)
 	    sem_allocate_node( sym_k_value_entry,
 			       next_str_entry->header.w_node_size<<2 );
 
 	old_size = new_str_entry->header.w_node_size;
 
-	_sym_copy_entry( new_str_entry, 
+	_sym_copy_entry( new_str_entry,
 	       next_str_entry,
 	       next_str_entry->header.w_node_size );
-	
+
 	new_str_entry->header.w_node_size = old_size;
 	new_str_entry->obj_header.b_flags = sym_m_private | sym_m_builtin;
 	new_str_entry->obj_header.az_name = NULL;
@@ -526,7 +526,7 @@ boolean			op2_temporary;
 
     /* extra 1 is for terminating null */
 
-    new_str_entry = (sym_value_entry_type *) 
+    new_str_entry = (sym_value_entry_type *)
 	sem_allocate_node( sym_k_value_entry,
 			   sym_k_value_entry_size );
     new_str_entry->value.c_value = XtCalloc(1, l1 + l2 + 1);
@@ -542,26 +542,26 @@ boolean			op2_temporary;
     new_str_entry->b_type = sym_k_char_8_value;
     new_str_entry->w_length = l1 + l2;
 
-    _move( new_str_entry->value.c_value, 
+    memmove( new_str_entry->value.c_value,
 	   az_str1_entry->value.c_value, l1 );
 
-    _move( &new_str_entry->value.c_value[ l1 ],
+    memmove( &new_str_entry->value.c_value[ l1 ],
 	   az_str2_entry->value.c_value,
 	   l2+1 );
 
-    /* 
-    **	if either of the operands is unnamed - free the node 
+    /*
+    **	if either of the operands is unnamed - free the node
     */
 
     if (op1_temporary)
 	{
-	_free_memory( az_str1_entry->value.c_value );
+	XtFree( az_str1_entry->value.c_value );
 	sem_free_node(( sym_entry_type *) az_str1_entry );
 	}
 
     if (op2_temporary)
 	{
-	_free_memory( az_str2_entry->value.c_value );
+	XtFree( az_str2_entry->value.c_value );
 	sem_free_node(( sym_entry_type *) az_str2_entry );
 	}
 
@@ -680,7 +680,7 @@ yystype           *charset_frame;
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function converts a random NAME into a CHARSET_NAME 
+**      This function converts a random NAME into a CHARSET_NAME
 **	with the default charset.
 **
 **  FORMAL PARAMETERS:
@@ -718,7 +718,7 @@ void sar_make_fallback_charset(name_frame)
 
   /* Get symbol and check if already used as charset. */
   symbol_entry = (sym_name_entry_type *)name_frame->value.az_symbol_entry;
-  
+
   if ((symbol_entry->b_flags & sym_m_charset) == 0)
     {
       symbol_entry->b_flags |= sym_m_charset;
@@ -727,11 +727,11 @@ void sar_make_fallback_charset(name_frame)
 			    symbol_entry->c_text,
 			    DEFAULT_TAG);
     }
-  
+
   /* Get the default charset keyword entry. */
   if (az_keyword_entry == NULL)
     az_keyword_entry = key_find_keyword(strlen(DEFAULT_TAG), DEFAULT_TAG);
-  
+
   _assert((az_keyword_entry !=NULL), "default charset keyword missing");
 
   /* Change NAME to CHARSET_NAME */
@@ -831,7 +831,7 @@ yystype	    *prior_value_frame;
 		(sym_value_entry_type *) value_frame->value.az_symbol_entry;
 
 	/*
-	**  If the value is a boolean, then just set the corresponding mask 
+	**  If the value is a boolean, then just set the corresponding mask
 	**  accordingly.
 	*/
 	if (value_entry->b_type == sym_k_bool_value)
@@ -852,15 +852,15 @@ yystype	    *prior_value_frame;
 		(sym_value_entry_type *) value_frame->value.az_symbol_entry;
 
 	/*
-	**  If the value is a boolean, then just set the corresponding mask 
+	**  If the value is a boolean, then just set the corresponding mask
 	**  accordingly.
 	*/
 	if (value_entry->b_type == sym_k_bool_value)
         {
 	    if (value_entry->value.l_integer == TRUE)
-		target_frame->b_type |= sym_m_sixteen_bit; 
+		target_frame->b_type |= sym_m_sixteen_bit;
 	    else
-		target_frame->b_type &= ~sym_m_sixteen_bit; 
+		target_frame->b_type &= ~sym_m_sixteen_bit;
         }
 	break;
     }
@@ -926,9 +926,9 @@ yystype	    *keyword_frame;
     value_entry =
 	(sym_value_entry_type *) value_frame->value.az_symbol_entry;
     value_entry->b_charset = sym_k_userdefined_charset;
- 
+
 /* BEGIN HaL fix CR 5547 */
-    sem_evaluate_value (value_entry); 
+    sem_evaluate_value (value_entry);
     if (value_entry->b_type != sym_k_char_8_value)
         diag_issue_diagnostic
             (d_wrong_type,
@@ -936,8 +936,8 @@ yystype	    *keyword_frame;
              diag_value_text( value_entry->b_type ),
              "null-terminated string");
 /* END HaL fix CR 5547 */
-  
- 
+
+
     /*
     **  If the attr_frame is not null, it must be a value frame with contains
     **  a pointer to the attributes frame for this userdefined charset.

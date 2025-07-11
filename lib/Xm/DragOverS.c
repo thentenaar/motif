@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DragOverS.c /main/18 1999/08/11 15:53:11 mgreess $"
@@ -82,7 +82,7 @@ static char rcsid[] = "$TOG: DragOverS.c /main/18 1999/08/11 15:53:11 mgreess $"
  *		and one of {XmVALID_DROP_SITE, XmINVALID_DROP_SITE,
  *		XmNO_DROP_SITE}, indicates the status of the current
  *		dropsite.
- *		
+ *
  *	Pixel cursorForeground, cursorBackground -- indicates the current
  *		foreground and background colors of the dragover visual.
  *		Can depend on the cursorState and the screen's default
@@ -173,13 +173,13 @@ static char rcsid[] = "$TOG: DragOverS.c /main/18 1999/08/11 15:53:11 mgreess $"
 
 /********    Static Function Declarations    ********/
 
-static void DoZapEffect( 
+static void DoZapEffect(
                         XtPointer clientData,
                         XtIntervalId *id) ;
-static void DoMeltEffect( 
+static void DoMeltEffect(
                         XtPointer clientData,
                         XtIntervalId *id) ;
-static void GetIconPosition( 
+static void GetIconPosition(
                         XmDragOverShellWidget dos,
                         XmDragIconObject icon,
                         XmDragIconObject sourceIcon,
@@ -197,17 +197,17 @@ static void BlendIcon(  XmDragOverShellWidget dos,
 #endif /* NeedWidePrototypes */
                         GC maskGC,
                         GC pixmapGC) ;
-static void MixedIconSize( 
+static void MixedIconSize(
                         XmDragOverShellWidget dos,
                         XmDragIconObject sourceIcon,
                         XmDragIconObject stateIcon,
                         XmDragIconObject opIcon,
                         Dimension *width,
                         Dimension *height) ;
-static void DestroyMixedIcon( 
+static void DestroyMixedIcon(
                         XmDragOverShellWidget dos,
                         XmDragIconObject mixedIcon) ;
-static void MixIcons( 
+static void MixIcons(
                         XmDragOverShellWidget dos,
                         XmDragIconObject sourceIcon,
                         XmDragIconObject stateIcon,
@@ -218,14 +218,14 @@ static void MixIcons(
 #else
                         Boolean clip) ;
 #endif /* NeedWidePrototypes */
-static Boolean FitsInCursor( 
+static Boolean FitsInCursor(
                         XmDragOverShellWidget dos,
                         XmDragIconObject sourceIcon,
                         XmDragIconObject stateIcon,
                         XmDragIconObject opIcon) ;
-static Boolean GetDragIconColors( 
+static Boolean GetDragIconColors(
                         XmDragOverShellWidget dos) ;
-static Cursor GetDragIconCursor( 
+static Cursor GetDragIconCursor(
                         XmDragOverShellWidget dos,
                         XmDragIconObject sourceIcon,
                         XmDragIconObject stateIcon,
@@ -237,18 +237,18 @@ static Cursor GetDragIconCursor(
                         Boolean clip,
                         Boolean dirty) ;
 #endif /* NeedWidePrototypes */
-static void Initialize( 
+static void Initialize(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *numArgs) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget current,
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void DrawIcon( 
+static void DrawIcon(
                         XmDragOverShellWidget dos,
                         XmDragIconObject icon,
                         Window window,
@@ -259,13 +259,13 @@ static void DrawIcon(
                         Position x,
                         Position y) ;
 #endif /* NeedWidePrototypes */
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void Destroy( 
+static void Destroy(
                         Widget w) ;
-static void ChangeActiveMode( 
+static void ChangeActiveMode(
                         XmDragOverShellWidget dos,
 #if NeedWidePrototypes
                         unsigned int newActiveMode) ;
@@ -292,7 +292,7 @@ static XtResource resources[]=
 	XtRImmediate, (XtPointer)True,
     },
     {
-        XmNsaveUnder, XmCSaveUnder, 
+        XmNsaveUnder, XmCSaveUnder,
 	XmRBoolean, sizeof(Boolean), Offset(shell.save_under),
 	XtRImmediate, (XtPointer)True,
     },
@@ -317,7 +317,7 @@ static XtResource resources[]=
         XmRImmediate, (XtPointer)XmCURSOR,
     },
     {
-	XmNinstallColormap, XmCInstallColormap,	XmRBoolean, 
+	XmNinstallColormap, XmCInstallColormap,	XmRBoolean,
 	sizeof(Boolean), Offset(drag.installColormap),
 	XmRImmediate, (XtPointer)FALSE,
     },
@@ -389,7 +389,7 @@ XmDragOverShellClassRec xmDragOverShellClassRec = {
 	NULL,				/* extension record      */
     },
 };
-externaldef(xmDragOvershellwidgetclass) WidgetClass xmDragOverShellWidgetClass = 
+externaldef(xmDragOvershellwidgetclass) WidgetClass xmDragOverShellWidgetClass =
 	(WidgetClass) (&xmDragOverShellClassRec);
 
 typedef struct _MixedIconCache
@@ -414,7 +414,7 @@ typedef struct _MixedIconCache
 	XmDragIconObject        mixedIcon;
 	struct _MixedIconCache *next;
 } MixedIconCache;
- 
+
 static MixedIconCache * mixed_cache = NULL;
 
 static Boolean
@@ -497,7 +497,7 @@ GetMixedIcon(
     register MixedIconCache * cache_ptr;
 
     for (cache_ptr = mixed_cache; cache_ptr; cache_ptr = cache_ptr->next)
-    {       
+    {
 	if (cache_ptr->depth == depth &&
 	    cache_ptr->width == width &&
 	    cache_ptr->height == height &&
@@ -562,12 +562,12 @@ DoZapEffect(
   segments[2].y2 = dos->core.y + dos->core.height;
   segments[3].x2 = dos->core.x + dos->core.width;
   segments[3].y2 = dos->core.y;
-    
+
   centerX = dos->core.x + dos->core.width/2;
   centerY = dos->core.y + dos->core.height/2;
   rise = (dos->drag.initialY - centerY) / 5;
   run = (dos->drag.initialX - centerX) / 5;
-    
+
   /*
    *  Draw the lines and add the timeout.
    */
@@ -578,25 +578,25 @@ DoZapEffect(
   XChangeGC (display, draw_gc, vmask, &v);
   XDrawSegments (display, root, draw_gc, segments, 4);
   XFlush(display);
-    
+
   /*
    * Do an abbreviated zap effect if the rise and run are both small.
    */
   if (((rise <= 3) && (rise >= -3)) && ((run <= 3) && (run >= -3))) {
     i = 5;
   }
-    
+
   for (; ; i++ )
     {
       /* wait */
       XmeMicroSleep (ZAP_TIME);
-	
+
       /*
        *  Erase the previously drawn lines and restore the root.
        */
-	
+
       XDrawSegments (display, root, draw_gc, segments, 4);
-	
+
       if (dos->drag.activeMode != XmDRAG_WINDOW) {
 	v.foreground = dos->drag.cursorForeground;
 	v.function = GXcopy;
@@ -607,7 +607,7 @@ DoZapEffect(
 		   0, 0, dos->core.width, dos->core.height,
 		   segments[0].x2, segments[0].y2);
       }
-	
+
       /* Here is where we always leave the loop */
       if (i == 5) break;
 
@@ -616,7 +616,7 @@ DoZapEffect(
        *  Save the root.
        *  Draw the pixmap (mixedIcon exists) and new lines.
        */
-	
+
       segments[0].x2 += run;
       segments[0].y2 += rise;
       segments[1].x2 += run;
@@ -625,12 +625,12 @@ DoZapEffect(
       segments[2].y2 += rise;
       segments[3].x2 += run;
       segments[3].y2 += rise;
-	
+
       if (dos->drag.activeMode == XmDRAG_WINDOW) {
 	XtMoveWidget((Widget) dos, segments[0].x2, segments[0].y2);
       } else {
 	XCopyArea (display, root, BackingPixmap(dos), draw_gc,
-		   segments[0].x2, segments[0].y2, 
+		   segments[0].x2, segments[0].y2,
 		   dos->core.width, dos->core.height, 0, 0);
 	DrawIcon (dos,
 		  (dos->drag.rootBlend.mixedIcon ?
@@ -656,7 +656,7 @@ DoZapEffect(
  *   This function is responsible for restoring the display after a
  *   drop has occurred in a receptive area.  It uses a timeout to create
  *   a venetian blind effect as it removes the drag pixmap, and restores
- *   the original root window contents.  
+ *   the original root window contents.
  ***********************************************************************/
 
 /*ARGSUSED*/
@@ -671,7 +671,7 @@ DoMeltEffect(
   int 			xClipOffset;
   int 			yClipOffset;
   XRectangle 		rects[4];
-  
+
   if (dos->drag.activeMode == XmDRAG_WINDOW) {
     XRectangle 			rect;
     Dimension			width = XtWidth(dos);
@@ -686,9 +686,9 @@ DoMeltEffect(
     if ((yClipOffset = (height / 16)) <= 0) {
 	yClipOffset = 1;
     }
-      
+
     iterations = MIN(width/(2*xClipOffset), height/(2*yClipOffset));
-    /* 
+    /*
      *  Generate the clipping rectangles.
      *  We converge on the center of the cursor.
      */
@@ -697,7 +697,7 @@ DoMeltEffect(
     rect.y = 0;
     rect.width = width;
     rect.height = height;
-      
+
     for (i = 0; i < iterations; i++)
     {
 	XShapeCombineRectangles(XtDisplay(dos), XtWindow(dos),
@@ -717,7 +717,7 @@ DoMeltEffect(
     XmDragIconObject    	sourceIcon;
     XmDragOverBlend		blend;
     GC 				draw_gc = dos->drag.rootBlend.gc;
-  
+
     /*
      *  Blend a new mixedIcon using only the source icon.
      *  Place the new mixedIcon to preserve the source icon location.
@@ -730,50 +730,50 @@ DoMeltEffect(
       sourceIcon = dos->drag.cursorBlend.sourceIcon;
       blend = &dos->drag.cursorBlend;
     }
-    
+
     /*
      *  Determine how much to shrink on each pass.
      */
-    
+
     if ((xClipOffset = (sourceIcon->drag.width / 16)) <= 0) {
       xClipOffset = 1;
     }
     if ((yClipOffset = (sourceIcon->drag.height / 16)) <= 0) {
       yClipOffset = 1;
     }
-    
+
     iterations = MIN(sourceIcon->drag.width/(2*xClipOffset),
 		     sourceIcon->drag.height/(2*yClipOffset));
-    /* 
+    /*
      *  Generate the clipping rectangles.
      *  We converge on the center of the cursor.
      */
-    
+
     rects[0].x = dos->core.x;
     rects[0].y = dos->core.y;
     rects[0].width = dos->core.width;
     rects[0].height = blend->sourceY + yClipOffset;
-    
+
     rects[1].x = rects[0].x + blend->sourceX + sourceIcon->drag.width -
       xClipOffset;
     rects[1].y = rects[0].y + yClipOffset + blend->sourceY;
     rects[1].width = dos->core.width - (rects[1].x - rects[0].x);
     rects[1].height = dos->core.height - ((yClipOffset * 2) + blend->sourceY);
-    
+
     rects[2].x = rects[0].x;
     rects[2].y = rects[0].y + blend->sourceY + sourceIcon->drag.height -
       yClipOffset;
     rects[2].width = rects[0].width;
     rects[2].height = dos->core.height - (rects[2].y - rects[0].y);
-    
+
     rects[3].x = rects[0].x;
     rects[3].y = rects[0].y + yClipOffset + blend->sourceY;
     rects[3].width = xClipOffset + blend->sourceX;
     rects[3].height = rects[1].height;
-    
+
     for (i = 0; i < iterations; i++)
       {
-	XSetClipRectangles (XtDisplay((Widget)dos), 
+	XSetClipRectangles (XtDisplay((Widget)dos),
 			    draw_gc, 0, 0, rects, 4, Unsorted);
 	XCopyArea (XtDisplay((Widget)dos),
 		   BackingPixmap(dos),
@@ -782,18 +782,18 @@ DoMeltEffect(
 		   0, 0, dos->core.width, dos->core.height,
 		   dos->core.x, dos->core.y);
 	XFlush (XtDisplay((Widget)dos));
-	
+
 	rects[0].height += yClipOffset;
 	rects[1].x -= xClipOffset;
 	rects[1].width += xClipOffset;
 	rects[2].y -= yClipOffset;
 	rects[2].height += yClipOffset;
 	rects[3].width += xClipOffset;
-	
+
 	/* wait */
 	XmeMicroSleep (MELT_TIME);
       }
-    
+
     XSetClipMask (XtDisplay((Widget)dos), draw_gc, None);
     XCopyArea (XtDisplay((Widget)dos),
 	       BackingPixmap(dos),
@@ -801,7 +801,7 @@ DoMeltEffect(
 	       draw_gc,
 	       0, 0, dos->core.width, dos->core.height,
 	       dos->core.x, dos->core.y);
-    
+
     XFlush (XtDisplay((Widget)dos));
   }
 }
@@ -896,8 +896,8 @@ GetIconPosition(
 		     *  be placed at the stateIcon's hotspot.
 		     *
 		     *  If this is the first time we are blending the
-		     *  stateIcon, we will place its hotspot at the 
-		     *  same source icon position as the pointer's 
+		     *  stateIcon, we will place its hotspot at the
+		     *  same source icon position as the pointer's
 		     *  position within the reference widget.
 		     *
 		     *  Otherwise, we want to keep the icon fixed relative
@@ -970,7 +970,7 @@ GetIconPosition(
  *  Blend the icon mask and pixmap into mixedIcon.
  ***********************************************************************/
 
-static void 
+static void
 BlendIcon(
     XmDragOverShellWidget dos,
     XmDragIconObject	icon,
@@ -1039,7 +1039,7 @@ BlendIcon(
       XCopyArea(display, icon->drag.mask,
 		mixedIcon->drag.mask, maskGC,
 		sourceX, sourceY,
-		mixedIcon->drag.width, 
+		mixedIcon->drag.width,
 		mixedIcon->drag.height,
 		destX, destY);
       v.clip_mask = icon->drag.mask;
@@ -1057,14 +1057,14 @@ BlendIcon(
 			destX, destY, destWidth, destHeight);
       }
     }
-    
-    /* Join the regions if they both have them,  otherwise, 
+
+    /* Join the regions if they both have them,  otherwise,
        remove the region */
     if (icon->drag.region != NULL && mixedIcon->drag.region != NULL) {
       if (icon->drag.x_offset || icon->drag.y_offset)
 	XOffsetRegion(icon->drag.region, -icon->drag.x_offset,
 		      -icon->drag.y_offset);
-      
+
       XOffsetRegion(icon->drag.region, destX, destY);
       icon->drag.x_offset = destX;
       icon->drag.y_offset = destY;
@@ -1072,7 +1072,7 @@ BlendIcon(
       XUnionRegion(mixedIcon->drag.region, icon->drag.region,
 		   mixedIcon->drag.region);
     } else {
-      if (mixedIcon->drag.region != NULL) 
+      if (mixedIcon->drag.region != NULL)
 	XDestroyRegion(mixedIcon->drag.region);
       mixedIcon->drag.region = NULL;
     }
@@ -1096,7 +1096,7 @@ BlendIcon(
       XCopyPlane (display, icon->drag.pixmap,
 		  mixedIcon->drag.pixmap, pixmapGC,
 		  sourceX, sourceY,
-		  icon->drag.width, 
+		  icon->drag.width,
 		  icon->drag.height,
 		  destX, destY,
 		  1L);
@@ -1104,7 +1104,7 @@ BlendIcon(
       XCopyArea (display, icon->drag.pixmap,
 		 mixedIcon->drag.pixmap, pixmapGC,
 		 sourceX, sourceY,
-		 icon->drag.width, 
+		 icon->drag.width,
 		 icon->drag.height,
 		 destX, destY);
     } else {
@@ -1208,7 +1208,7 @@ DestroyMixedIcon(
     _XmProcessLock();
     cache_ptr = mixed_cache;
 
-    while(cache_ptr) {       
+    while(cache_ptr) {
       MixedIconCache *next_cache_ptr = cache_ptr -> next;
 
       if (cache_ptr->mixedIcon == mixedIcon) {
@@ -1270,7 +1270,7 @@ MixIcons(
 
     dos->drag.holePunched = False; /* Force update */
 
-    /* 
+    /*
      *  Determine the dimensions of the blended icon and the positions
      *  of each component within it.
      */
@@ -1365,7 +1365,7 @@ MixIcons(
 
      mixedIcon = GetMixedIcon(dos, depth, width, height, sourceIcon, stateIcon,
 			    opIcon, sourceX, sourceY, stateX, stateY, opX, opY);
-    /* 
+    /*
      *  Create the blended XmDragIcon object or use the current one
      *  if it is the correct size and depth.
      */
@@ -1425,13 +1425,13 @@ MixIcons(
 
 	XDestroyRegion (source);
 	XDestroyRegion (dest);
-    }	
+    }
 
     if (mixedIcon == NULL) {
 	pixmap = _XmAllocScratchPixmap (xmScreen, depth, width, height);
 
         mask = XmUNSPECIFIED_PIXMAP;
-	
+
 	ac = 0;
 	XtSetArg(al[ac], XmNpixmap, pixmap); ac++;
 	XtSetArg(al[ac], XmNmask, mask); ac++;
@@ -1440,13 +1440,13 @@ MixIcons(
 	XtSetArg(al[ac], XmNheight, height); ac++;
 	XtSetArg(al[ac], XmNhotX, hotX); ac++;
 	XtSetArg(al[ac], XmNhotY, hotY); ac++;
-	mixedIcon = blendPtr->mixedIcon = (XmDragIconObject) 
+	mixedIcon = blendPtr->mixedIcon = (XmDragIconObject)
 	        XmCreateDragIcon ((Widget) xmScreen, "mixedIcon", al, ac);
 
 	if (need_mask) {
 	   mask = mixedIcon->drag.mask = _XmAllocScratchPixmap (xmScreen, 1,
 							        width, height);
-	}	
+	}
     }
     else {
 	pixmap = mixedIcon->drag.pixmap;
@@ -1510,7 +1510,7 @@ MixIcons(
 	    vmask = GCBackground|GCForeground|GCFunction|
 	            GCClipXOrigin|GCClipYOrigin|GCClipMask|
 		    GCGraphicsExposures|GCSubwindowMode;
-	    cursorBlend->gc = XtAllocateGC((Widget) dos, 1, 
+	    cursorBlend->gc = XtAllocateGC((Widget) dos, 1,
 					   vmask, &v, vmask, 0L);
 	}
 	else {
@@ -1564,7 +1564,7 @@ MixIcons(
        XSubtractRegion(mixedIcon->drag.restore_region, mixedIcon->drag.region,
                        mixedIcon->drag.restore_region);
     }
-    
+
     if (do_cache) {
       CacheMixedIcon(dos, depth, width, height, sourceIcon, stateIcon, opIcon,
 		     sourceX, sourceY, stateX, stateY, opX, opY, mixedIcon);
@@ -1587,11 +1587,11 @@ FitsInCursor(
     Dimension		maxWidth, maxHeight;
     Dimension		width, height;
 
-    if (((sourceIcon->drag.depth != 1) || 
+    if (((sourceIcon->drag.depth != 1) ||
 	 (sourceIcon->drag.pixmap == XmUNSPECIFIED_PIXMAP))) {
 	return False;
     }
-    
+
     MixedIconSize (dos, sourceIcon, stateIcon, opIcon, &width, &height);
     XmeQueryBestCursorSize((Widget)dos, &maxWidth, &maxHeight);
 
@@ -1683,7 +1683,7 @@ GetDragIconColors(
 	vmask = GCBackground|GCForeground|
 	        GCClipXOrigin|GCClipYOrigin|GCClipMask|
 	        GCGraphicsExposures|GCSubwindowMode;
-	dos->drag.rootBlend.gc = XtAllocateGC ((Widget) dos, 
+	dos->drag.rootBlend.gc = XtAllocateGC ((Widget) dos,
 					       DefaultDepthOfScreen(screen),
 					       vmask, &v, vmask, 0L);
     }
@@ -1736,7 +1736,7 @@ GetDragIconCursor(
      *  Don't look in the cursorCache -- the cursor would only be there
      *    if clipping were allowed.
      */
-    
+
     if (!clip && !FitsInCursor (dos, sourceIcon, stateIcon, opIcon)) {
 	return None;
     }
@@ -1765,7 +1765,7 @@ GetDragIconCursor(
 	  dirtystateIcon = stateIcon;
 	if (opIcon && (opIcon->drag.isDirty))
 	  dirtyopIcon = opIcon;
-	
+
 	while (cursorCache)
 	  {
 	    if ((dirtystateIcon && (cursorCache->stateIcon == dirtystateIcon)) ||
@@ -1778,7 +1778,7 @@ GetDragIconCursor(
     /*
      * End Fix for CR 4817
      */
-    
+
     if (stateIcon && stateIcon->drag.attachment == XmATTACH_HOT) {
 	useCache = False;
     }
@@ -1804,7 +1804,7 @@ GetDragIconCursor(
 
 	        /* recolor the cursor */
 	        XRecolorCursor (display, cursorCache->cursor,
-			        &colors[0], /* foreground_color */ 
+			        &colors[0], /* foreground_color */
 			        &colors[1]  /* background_color */);
 	        return cursorCache->cursor;
 	    }
@@ -1892,7 +1892,7 @@ Initialize(
 		dos->drag.rootBlend.mixedIcon = NULL;
     dos->drag.backing.pixmap = dos->drag.tmpPix =
 	dos->drag.tmpBit = XmUNSPECIFIED_PIXMAP;
-    
+
     dos->drag.initialX = dos->drag.hotX;
     dos->drag.initialY = dos->drag.hotY;
     dos->drag.ncCursor = None;
@@ -1908,7 +1908,7 @@ Initialize(
 
     dos->drag.activeMode = XmCURSOR;
 
-    /* 
+    /*
      * Get the DragOverShell out of the business of adding and removing
      * grabs for shell modality.
      */
@@ -1957,7 +1957,7 @@ SetValues(
      *  try XmCURSOR active mode.
      */
 
-    if (oldDos->drag.mode != dos->drag.mode && 
+    if (oldDos->drag.mode != dos->drag.mode &&
 	dc->drag.blendModel != XmBLEND_NONE) {
 	if ((dos->drag.mode == XmPIXMAP ||
 	     dos->drag.mode == XmDRAG_WINDOW) &&
@@ -2074,7 +2074,7 @@ Redisplay(
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget)wid;
 
-    DrawIcon (dos, 
+    DrawIcon (dos,
 	      (dos->drag.rootBlend.mixedIcon ?
 	       dos->drag.rootBlend.mixedIcon :
                dos->drag.cursorBlend.mixedIcon),
@@ -2136,7 +2136,7 @@ _XmDragOverHide(
 	  }
 
 	  if (clipped) {
-            XSetClipMask (XtDisplay(w), 
+            XSetClipMask (XtDisplay(w),
 		          dos->drag.rootBlend.gc, None);
 	  }
 	}
@@ -2215,7 +2215,7 @@ _XmDragOverShow(
 	      DragOverShellPunchHole(w);
 	    if (dos->drag.installColormap)
 	      InstallColormap(dos);
-	    XtSetArg(args[0], XmNbackgroundPixmap, 
+	    XtSetArg(args[0], XmNbackgroundPixmap,
 		     dos->drag.rootBlend.mixedIcon->drag.pixmap);
 	    XtSetValues((Widget) dos, args, 1);
 	  } else {
@@ -2279,7 +2279,7 @@ Destroy(
  *
  ***********************************************************************/
 
-static void 
+static void
 ChangeActiveMode(
     XmDragOverShellWidget	dos,
 #if NeedWidePrototypes
@@ -2291,11 +2291,11 @@ ChangeActiveMode(
   Display		*display = XtDisplay((Widget)dos);
   XmDragContext	dc = (XmDragContext)XtParent(dos);
   GC			draw_gc = dos->drag.rootBlend.gc;
-  
+
   /*
    *  Remove the effects of the current active mode.
    */
-  
+
   if (dos->drag.activeMode == XmCURSOR) {
     if (newActiveMode != XmCURSOR) {
       dos->drag.activeCursor = XmeGetNullCursor((Widget)dos);
@@ -2310,7 +2310,7 @@ ChangeActiveMode(
      *  BackingPixmap was created and core.width/height were set
      *  the first time we entered XmPIXMAP or XmWINDOW active mode.
      */
-    
+
     if (dos->drag.activeMode == XmWINDOW ||
 	dos->drag.activeMode == XmDRAG_WINDOW) {
       XtPopdown((Widget)dos);
@@ -2325,7 +2325,7 @@ ChangeActiveMode(
     }
   }
   dos->drag.isVisible = False;
-  
+
   /*
    *  Add the effects of the new active mode.
    */
@@ -2336,14 +2336,14 @@ ChangeActiveMode(
       XmGetXmScreen(XtScreen(dos));
     XmDragIconObject	sourceIcon;
     XmDragOverBlend		blend;
-    
+
     /*
      *  (Re)generate a mixedIcon, in case we have a state
      *  change, or we have used the cursor cache up to this
      *  point.  Place the new mixedIcon so as to preserve the
      *  hotspot location.
      */
-    
+
     if (dos->drag.rootBlend.sourceIcon) {
       sourceIcon = dos->drag.rootBlend.sourceIcon;
       blend = &dos->drag.rootBlend;
@@ -2353,16 +2353,16 @@ ChangeActiveMode(
     }
     MixIcons (dos, sourceIcon, dos->drag.stateIcon, dos->drag.opIcon,
 	      blend, False);
-    
+
     /*
      *  Compute the new location and handle an icon size change.
      */
-    
+
     BackingX(dos) = dos->core.x =
       dos->drag.hotX - blend->mixedIcon->drag.hot_x;
     BackingY(dos) = dos->core.y =
       dos->drag.hotY - blend->mixedIcon->drag.hot_y;
-    
+
     if (dos->core.width != blend->mixedIcon->drag.width ||
 	dos->core.height != blend->mixedIcon->drag.height) {
       dos->core.width = blend->mixedIcon->drag.width;
@@ -2387,18 +2387,18 @@ ChangeActiveMode(
       BackingPixmap(dos) = XmUNSPECIFIED_PIXMAP;
     }
 
-    
+
     /*
      *  Save the obscured root in backing.
      */
-    
+
     if (dos->drag.activeMode == XmPIXMAP) {
       if (BackingPixmap(dos) == XmUNSPECIFIED_PIXMAP) {
 	BackingPixmap(dos) =
 	  _XmAllocScratchPixmap (xmScreen, dos->core.depth,
 				 dos->core.width, dos->core.height);
       }
-    
+
       XSetClipMask (display, draw_gc, None);
       XCopyArea (display, RootWindowOfScreen(XtScreen(dos)),
 		 BackingPixmap(dos), draw_gc,
@@ -2431,7 +2431,7 @@ ChangeActiveMode(
 	  DragOverShellPunchHole((Widget) dos);
 	if (dos->drag.installColormap)
 	  InstallColormap(dos);
-	XtSetArg(args[0], XmNbackgroundPixmap, 
+	XtSetArg(args[0], XmNbackgroundPixmap,
 		 dos->drag.rootBlend.mixedIcon->drag.pixmap);
 	XtSetValues((Widget) dos, args, 1);
       } else {
@@ -2448,7 +2448,7 @@ ChangeActiveMode(
  *
  ***********************************************************************/
 
-static void 
+static void
 ChangeDragWindow(XmDragOverShellWidget	dos)
 {
   Display		*display = XtDisplay((Widget)dos);
@@ -2461,13 +2461,13 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
   XmDragOverBlendRec	*cursorBlend = &dos->drag.cursorBlend;
   XGCValues           v;
   unsigned long       vmask;
-  
+
     /*
      *  Blend a new mixedIcon using only the source icon.
      *  Place the new mixedIcon to preserve the source icon location.
      *  The current mixedIcon data is valid.
      */
-  
+
   if (dos->drag.rootBlend.sourceIcon) {
     sourceIcon = dos->drag.rootBlend.sourceIcon;
     blend = &dos->drag.rootBlend;
@@ -2476,11 +2476,11 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
     blend = &dos->drag.cursorBlend;
   }
   mixedIcon = blend->mixedIcon;
-  
+
   XSetFunction (display, blend->gc, GXset);
   XFillRectangle (display, mixedIcon->drag.pixmap, blend->gc,
 		  0, 0, mixedIcon->drag.width, mixedIcon->drag.height);
-  
+
   if (mixedIcon->drag.mask != XmUNSPECIFIED_PIXMAP) {
     if (cursorBlend->gc == NULL) {
       v.background = 0;
@@ -2505,10 +2505,10 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
     XFillRectangle (display, mixedIcon->drag.mask, cursorBlend->gc,
 		    0, 0, mixedIcon->drag.width, mixedIcon->drag.height);
   }
-  
+
   BlendIcon (dos, sourceIcon, mixedIcon, blend->sourceX,
 	     blend->sourceY, cursorBlend->gc, blend->gc);
-  
+
   /*
    *  Remove the current drag window.
    */
@@ -2517,7 +2517,7 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
   /*
    *  Handle an icon size change.
    */
-  
+
   if (dos->core.width != blend->mixedIcon->drag.width ||
       dos->core.height != blend->mixedIcon->drag.height) {
     if (BackingPixmap(dos) != XmUNSPECIFIED_PIXMAP) {
@@ -2533,11 +2533,11 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
       dos->drag.tmpBit = XmUNSPECIFIED_PIXMAP;
     }
   }
-  
+
   /*
    *  Save the obscured root in backing.
    */
-  
+
   if (BackingPixmap(dos) == XmUNSPECIFIED_PIXMAP) {
     BackingPixmap(dos) =
       _XmAllocScratchPixmap (xmScreen, dos->core.depth,
@@ -2545,13 +2545,13 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
   }
   BackingX(dos) = dos->core.x;
   BackingY(dos) = dos->core.y;
-  
+
   XSetClipMask (display, draw_gc, None);
   XCopyArea (display, RootWindowOfScreen(XtScreen(dos)),
 	     BackingPixmap(dos), draw_gc,
 	     BackingX(dos), BackingY(dos),
 	     dos->core.width, dos->core.height, 0, 0);
-  
+
   /*
    *  Move, resize, and remap the drag window.
    *  This is an override_redirect window.
@@ -2559,7 +2559,7 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
   XMoveResizeWindow(display, win, dos->core.x, dos->core.y,
 		    dos->core.width, dos->core.height);
   XMapWindow(display, win);
-  
+
   /*
    * don't call thru class record since VendorS bug may be
    * causing override
@@ -2639,17 +2639,17 @@ _XmDragOverMove(
     /*
      *  Save the area where the new icon is to go.
      */
-    
+
     v.clip_mask = None;
     v.function = GXcopy;
     vmask = GCClipMask|GCFunction;
     XChangeGC (display, draw_gc, vmask, &v);
     XCopyArea (display, root, new_backing, draw_gc,
 	       x, y, dos->core.width, dos->core.height, 0, 0);
-    
+
     if (x + ((Position) dos->core.width) > BackingX(dos) &&
 	x < BackingX(dos) + ((Position) dos->core.width) &&
-	y + ((Position) dos->core.height) > BackingY(dos) && 
+	y + ((Position) dos->core.height) > BackingY(dos) &&
 	y < BackingY(dos) + ((Position) dos->core.height)) {
 
 	XRectangle 	rect, rect1, rect2;
@@ -2658,14 +2658,14 @@ _XmDragOverMove(
 	/*
 	 *  Have overlap:
 	 *
-	 *  Calculate the intersection between the 2 areas and 
+	 *  Calculate the intersection between the 2 areas and
 	 *  copy the non-overlapping old area in the window.
 	 *
          *  If the icon has a mask, create a mask through which we will
 	 *  copy the old backing to the root.
 	 *  Otherwise, use one or two rectangles.
 	 */
-    
+
         if (mixedIcon->drag.region == NULL &&
 	    mixedIcon->drag.mask != XmUNSPECIFIED_PIXMAP) {
 
@@ -2690,11 +2690,11 @@ _XmDragOverMove(
             XCopyArea (display, mixedIcon->drag.mask, root_mask, mask_gc,
 	               0, 0, mixedIcon->drag.width, mixedIcon->drag.height,
 	               x - BackingX(dos), y - BackingY(dos));
-    
+
 	    /*
 	     *  Copy the icon into the new area and refresh the root.
 	     */
-    
+
 	    DrawIcon (dos, mixedIcon, root, x, y);
 
     	    v.clip_mask = root_mask;
@@ -2708,18 +2708,18 @@ _XmDragOverMove(
 	    XSetClipMask (display, draw_gc, None);
 	}
 	else {
-    
+
 	    /*
 	     *  Copy the icon into the new area.
 	     */
-    
+
 	    DrawIcon (dos, mixedIcon, root, x, y);
 
 	    /*
 	     *  Use rectangles to refresh exposed root.
 	     *  The first rectangle (horizontal movement).
 	     */
-	
+
 	    if (x > BackingX(dos)) {
 	        rect1.x = 0;
 	        rect1.width = x - BackingX(dos);
@@ -2728,22 +2728,22 @@ _XmDragOverMove(
 	        rect1.width = BackingX(dos) - x;
 	        rect1.x = dos->core.width - rect1.width;
 	    }
-	
+
 	    rect1.y = 0;
 	    rect1.height = dos->core.height;
 	    pt.x = BackingX(dos) + rect1.x;
 	    pt.y = BackingY(dos);
-	
+
 	    if (rect1.width > 0) {
                 XCopyArea (display, old_backing, root, draw_gc,
 	                   rect1.x, rect1.y, rect1.width, rect1.height,
 		           pt.x, pt.y);
 	    }
-	
+
 	    /*
 	     *  The second rectangle (vertical movement).
 	     */
-	
+
 	    if (y > BackingY(dos)) {
 	        rect2.y = 0;
 	        rect2.height = y - BackingY(dos);
@@ -2752,12 +2752,12 @@ _XmDragOverMove(
 	        rect2.height = BackingY(dos) - y;
 	        rect2.y = dos->core.height - rect2.height;
 	    }
-	
+
 	    rect2.x = 0;
 	    rect2.width = dos->core.width;
 	    pt.x = BackingX(dos);
 	    pt.y = BackingY(dos) + rect2.y;
-	
+
 	    if (rect2.height > 0) {
                 XCopyArea (display, old_backing, root, draw_gc,
 	                   rect2.x, rect2.y, rect2.width, rect2.height,
@@ -2770,7 +2770,7 @@ _XmDragOverMove(
 	 *  new_backing into new_backing to be used for the
 	 *  next cursor move.
 	 */
-	
+
 	if (x > BackingX(dos)) {
 	    rect.x = x - BackingX(dos);
 	    pt.x = 0;
@@ -2781,7 +2781,7 @@ _XmDragOverMove(
 	    pt.x = BackingX(dos) - x;
 	    rect.width = dos->core.width - pt.x;
 	}
-	
+
 	if (y > BackingY(dos)) {
 	    rect.y = y - BackingY(dos);
 	    pt.y = 0;
@@ -2792,7 +2792,7 @@ _XmDragOverMove(
 	    pt.y = BackingY(dos) - y;
 	    rect.height = dos->core.height - pt.y;
 	}
-	
+
 	XCopyArea (display, old_backing, new_backing, draw_gc,
 		   rect.x, rect.y, rect.width, rect.height, pt.x, pt.y);
 
@@ -2815,12 +2815,12 @@ _XmDragOverMove(
         XCopyArea (display, old_backing, root, draw_gc,
 	           0, 0, dos->core.width, dos->core.height,
 	           BackingX(dos), BackingY(dos));
-    
+
 	DrawIcon (dos, mixedIcon, root, x, y);
     }
-    
+
     /*  Update the variables needed for the next loop  */
-    
+
     BackingX(dos) = x;
     BackingY(dos) = y;
     BackingPixmap(dos) = new_backing;
@@ -2850,7 +2850,7 @@ _XmDragOverChange(
     XmDragIconObject	stateIcon = NULL;
     Boolean		doChange, dirty = False;
     Boolean		usedSrcPixIcon = True;
-    
+
     dos->drag.cursorState = dropSiteStatus;
 
     if (dos->drag.mode == XmWINDOW) {
@@ -2878,7 +2878,7 @@ _XmDragOverChange(
 	dos->drag.mode == XmDRAG_WINDOW ||
 	dos->drag.mode == XmWINDOW) {
       sourceIcon = dc->drag.sourcePixmapIcon;
-    } 
+    }
 
     if (sourceIcon == NULL ||
         XtScreenOfObject(XtParent(sourceIcon)) != XtScreen(w) ||
@@ -2960,7 +2960,7 @@ _XmDragOverChange(
 
     /*
      *  If we are not using the XmNsourcePixmapIcon, then try to create
-     *  a cursor from the specified icons.  If we are successful, we will 
+     *  a cursor from the specified icons.  If we are successful, we will
      *  use the cursor in both cursor and pixmap mode.
      *  Remember:  XmNsourcePixmapIcon is only used in XmPIXMAP mode.
      */
@@ -2984,7 +2984,7 @@ _XmDragOverChange(
 	    _XmDragOverHide (w, 0, 0, None);
 	    dos->drag.activeMode = XmCURSOR;
 	}
-	XChangeActivePointerGrab (XtDisplay(w), 
+	XChangeActivePointerGrab (XtDisplay(w),
 				  (unsigned int) _XmDRAG_EVENT_MASK(dc),
 				  dos->drag.activeCursor,
 				  dc->drag.lastChangeTime);
@@ -3016,7 +3016,7 @@ _XmDragOverChange(
 	 *  it to the maximum hardware cursor size.
 	 */
 
-	dos->drag.activeCursor = 
+	dos->drag.activeCursor =
 	    GetDragIconCursor (dos, sourceIcon, stateIcon, opIcon,
 				True /* clip */, dirty);
 
@@ -3025,7 +3025,7 @@ _XmDragOverChange(
 	    _XmDragOverHide (w, 0, 0, None);
 	    dos->drag.activeMode = XmCURSOR;
 	}
-	XChangeActivePointerGrab (XtDisplay(w), 
+	XChangeActivePointerGrab (XtDisplay(w),
 				  (unsigned int) _XmDRAG_EVENT_MASK(dc),
 				  dos->drag.activeCursor,
 				  dc->drag.lastChangeTime);
@@ -3091,7 +3091,7 @@ _XmDragOverFinish(
 */
 	XGrabServer(XtDisplay(w));
 
-	/* 
+	/*
 	 *  Create and draw a source-only mixedIcon.
 	 *  Do not recolor it, even though the state is no longer used.
 	 *  Place the source-only mixedIcon so the source doesn't move.
@@ -3160,7 +3160,7 @@ _XmDragOverSetInitialPosition(
  * is a child widget. This is the shell on which the colormap is to be
  * installed.
  */
-static void 
+static void
 FindColormapShell(XmDragOverShellWidget dw)
 {
     Widget cw = dw->drag.colormapWidget;
@@ -3184,7 +3184,7 @@ InstallColormap(XmDragOverShellWidget dw)
     Status status;
     Window *windowsReturn;
     int countReturn;
-    
+
     if (!dw->drag.colormapShell)
 	FindColormapShell(dw);
     if (dw->drag.colormapShell)
@@ -3247,7 +3247,7 @@ UninstallColormap(XmDragOverShellWidget dos)
     Window *windowsReturn;
     int countReturn;
     register int i;
-    
+
     if (!dos->drag.colormapShell)
 	FindColormapShell(dos);
     if (dos->drag.colormapShell)
@@ -3282,8 +3282,6 @@ UninstallColormap(XmDragOverShellWidget dos)
 	 */
 	if (dos->drag.colormapOverride)
 	{
-	    register int i;
-
 	    for (i=0; i<dos->drag.numSavedColormaps; i++)
 		XInstallColormap(XtDisplay(dos),
 				 dos->drag.savedColormaps[i]);
@@ -3302,7 +3300,7 @@ DragOverShellPunchHole(Widget w)
     XmDragIconObject icon = (dos->drag.rootBlend.mixedIcon ?
 			     dos->drag.rootBlend.mixedIcon :
 			     dos->drag.cursorBlend.mixedIcon);
-    
+
     /* The following code requires an XtWindow, so we force the widget
      * to be realized if it isn't already
      */
@@ -3318,14 +3316,14 @@ DragOverShellPunchHole(Widget w)
     {
         if (icon -> drag.mask)
             XShapeCombineMask (XtDisplay(dos), XtWindow(dos),
-			 ShapeBounding, 0, 0, 
+			 ShapeBounding, 0, 0,
 			 icon -> drag.mask, ShapeSet);
 
         /* punch a hole in the window */
         XShapeCombineRectangles (XtDisplay(dos), XtWindow(dos),
 			     ShapeBounding,
 			     icon->drag.hot_x, icon->drag.hot_y,
-			     (XRectangle*)&pixelPunch, 1, 
+			     (XRectangle*)&pixelPunch, 1,
 			     ShapeSubtract, YXBanded);
 
         dos->drag.holePunched = TRUE;

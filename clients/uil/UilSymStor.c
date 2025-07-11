@@ -1698,7 +1698,7 @@ output_text(XmConst int length, XmConst char *text)
 
 	last = ( l_length > 70)? 70: l_length;
 
-	_move( c_buffer, c_ptr, last );
+	memmove( c_buffer, c_ptr, last );
 
 	for (i=0;  i<last;  i++)
 	{

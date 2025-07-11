@@ -259,10 +259,10 @@ Urm__OpenHierarchy (MrmCount			num_files,
 	    case MrmSUCCESS:
 	      break;
 	    case MrmNOT_VALID:
-	      sprintf (err_stg, _MrmMMsg_0113);
+	      strcpy(err_stg, _MrmMMsg_0113);
 	      break;
 	    default:
-	      sprintf (err_stg, _MrmMMsg_0114);
+	      strcpy(err_stg, _MrmMMsg_0114);
 	      break;
 	    }
 	}

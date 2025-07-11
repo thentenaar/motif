@@ -936,10 +936,10 @@ ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
     }
 
     if (event->type != ButtonPress) {
-        static String params[] = { "BtnDown" };
+        static String _params[] = { "BtnDown" };
 
         _XmWarningMsg(w, XmNunexpectedEvent,
-                XmNunexpectedEventMsg, params, 1);
+                XmNunexpectedEventMsg, _params, 1);
 
 	return;
     }
@@ -1002,10 +1002,10 @@ ButtonUpOrLeaveAction(Widget w, XEvent *event,
     XmI18ListWidget ilist = (XmI18ListWidget) w;
 
     if (event->type != ButtonRelease) {
-	static String params[] = { "BtnUp or BtnLeave" };
+	static String _params[] = { "BtnUp or BtnLeave" };
 
 	_XmWarningMsg(w, XmNunexpectedEvent,
-		XmNunexpectedEventMsg, params, 1);
+		XmNunexpectedEventMsg, _params, 1);
 
 	return;
     }
@@ -1776,7 +1776,6 @@ DisplayList(Widget w, short start_row, short num_rows, Boolean redraw_headers)
 
     if (XmI18List_entry_background_use(ilist))
     {
-	Dimension height = ilist->core.height;
     	if(XmI18List_new_visual_style(ilist))
 		height -= ilist->primitive.shadow_thickness;
 	    else

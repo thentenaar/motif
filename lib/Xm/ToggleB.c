@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -92,119 +92,119 @@ static char rcsid[] = "$TOG: ToggleB.c /main/43 1999/12/06 18:09:38 samborn $"
 /********    Static Function Declarations    ********/
 
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void InitializePrehook( 
+static void InitializePrehook(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void InitializePosthook( 
+static void InitializePosthook(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void SetAndDisplayPixmap( 
+static void SetAndDisplayPixmap(
                         XmToggleButtonWidget tb,
                         XEvent *event,
                         Region region) ;
-static void Help( 
+static void Help(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void ToggleButtonCallback( 
+static void ToggleButtonCallback(
                         XmToggleButtonWidget data,
                         unsigned int reason,
                         unsigned int value,
                         XEvent *event) ;
-static void Leave( 
+static void Leave(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Enter( 
+static void Enter(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Arm( 
+static void Arm(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Select( 
+static void Select(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Disarm( 
+static void Disarm(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void ArmAndActivate( 
+static void ArmAndActivate(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void BtnDown( 
+static void BtnDown(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void BtnUp( 
+static void BtnUp(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void GetGC( 
+static void GetGC(
                         XmToggleButtonWidget tw) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static void DrawToggle( 
+static void DrawToggle(
                         XmToggleButtonWidget w) ;
-static void BorderHighlight( 
+static void BorderHighlight(
                         Widget wid) ;
-static void BorderUnhighlight( 
+static void BorderUnhighlight(
                         Widget wid) ;
-static void KeySelect( 
+static void KeySelect(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-static void ComputeSpace( 
+static void ComputeSpace(
                         XmToggleButtonWidget tb) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget w,
                         XEvent *event,
                         Region region) ;
-static void Resize( 
+static void Resize(
                         Widget w) ;
-static Boolean SetValuesPrehook( 
+static Boolean SetValuesPrehook(
                         Widget current,
                         Widget request,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget current,
                         Widget request,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void DrawToggleShadow( 
+static void DrawToggleShadow(
                         XmToggleButtonWidget tb) ;
-static void DrawToggleLabel( 
+static void DrawToggleLabel(
                         XmToggleButtonWidget tb) ;
-static void DrawEtchedInMenu( 
+static void DrawEtchedInMenu(
                         XmToggleButtonWidget tb) ;
-static void SetToggleSize( 
+static void SetToggleSize(
                         XmToggleButtonWidget newtb) ;
 static void NextState(unsigned char *state);
 static void DrawBox(
@@ -215,7 +215,7 @@ static void DrawBox(
 		    int x, int y, int edge,
 		    Dimension margin
 		    );
-	  
+
 static void DefaultSelectColor(Widget    widget,
 			       int       offset,
 			       XrmValue *value);
@@ -292,7 +292,7 @@ static XtActionsRec actionsList[] =
 
 static XtResource resources[] = {
   {
-    XmNindicatorSize, XmCIndicatorSize, XmRVerticalDimension, 
+    XmNindicatorSize, XmCIndicatorSize, XmRVerticalDimension,
     sizeof(Dimension), Offset(toggle.indicator_dim),
     XmRImmediate, (XtPointer) XmINVALID_DIMENSION
   },
@@ -304,49 +304,49 @@ static XtResource resources[] = {
   },
 
   {
-    XmNvisibleWhenOff, XmCVisibleWhenOff, XmRBoolean, 
+    XmNvisibleWhenOff, XmCVisibleWhenOff, XmRBoolean,
     sizeof(Boolean), Offset(toggle.visible),
     XmRImmediate, (XtPointer) XmINVALID_BOOLEAN
   },
 
   {
-    XmNspacing, XmCSpacing, XmRHorizontalDimension, 
+    XmNspacing, XmCSpacing, XmRHorizontalDimension,
     sizeof(Dimension), Offset(toggle.spacing),
     XmRImmediate, (XtPointer) 4
   },
 
   {
-    XmNselectPixmap, XmCSelectPixmap, XmRDynamicPixmap, 
+    XmNselectPixmap, XmCSelectPixmap, XmRDynamicPixmap,
     sizeof(Pixmap), Offset(toggle.on_pixmap),
-    XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP 
+    XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
   },
 
   {
-    XmNselectInsensitivePixmap, XmCSelectInsensitivePixmap, XmRDynamicPixmap, 
+    XmNselectInsensitivePixmap, XmCSelectInsensitivePixmap, XmRDynamicPixmap,
     sizeof(Pixmap), Offset(toggle.insen_pixmap),
     XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
   },
 
   {
-    XmNset, XmCSet, XmRSet, 
+    XmNset, XmCSet, XmRSet,
     sizeof(unsigned char), Offset(toggle.set),
     XmRImmediate, (XtPointer) XmUNSET
   },
 
   {
-    XmNindicatorOn, XmCIndicatorOn, XmRIndicatorOn, 
+    XmNindicatorOn, XmCIndicatorOn, XmRIndicatorOn,
     sizeof (unsigned char), Offset(toggle.ind_on),
     XmRImmediate, (XtPointer) XmINDICATOR_FILL
   },
 
   {
-    XmNfillOnSelect, XmCFillOnSelect, XmRBoolean, 
+    XmNfillOnSelect, XmCFillOnSelect, XmRBoolean,
     sizeof(Boolean), Offset(toggle.fill_on_select),
     XmRImmediate, (XtPointer) XmINVALID_BOOLEAN
   },
 
   {
-    XmNselectColor, XmCSelectColor, XmRSelectColor, 
+    XmNselectColor, XmCSelectColor, XmRSelectColor,
     sizeof(Pixel), Offset(toggle.select_color),
     XmRCallProc, (XtPointer) DefaultSelectColor
   },
@@ -354,19 +354,19 @@ static XtResource resources[] = {
   {
     XmNvalueChangedCallback, XmCValueChangedCallback, XmRCallback,
     sizeof (XtCallbackList), Offset(toggle.value_changed_CB),
-    XmRPointer, (XtPointer)NULL 
+    XmRPointer, (XtPointer)NULL
   },
 
   {
     XmNarmCallback, XmCArmCallback, XmRCallback,
     sizeof(XtCallbackList), Offset(toggle.arm_CB),
-    XmRPointer, (XtPointer)NULL 
+    XmRPointer, (XtPointer)NULL
   },
 
   {
     XmNdisarmCallback, XmCDisarmCallback, XmRCallback,
     sizeof (XtCallbackList), Offset(toggle.disarm_CB),
-    XmRPointer, (XtPointer)NULL 
+    XmRPointer, (XtPointer)NULL
   },
 
   {
@@ -382,7 +382,7 @@ static XtResource resources[] = {
   },
 
   {
-    XmNtoggleMode, XmCToggleMode, XmRToggleMode, 
+    XmNtoggleMode, XmCToggleMode, XmRToggleMode,
     sizeof(unsigned char), Offset(toggle.toggle_mode),
     XmRImmediate, (XtPointer) XmTOGGLE_BOOLEAN
   },
@@ -394,8 +394,8 @@ static XtResource resources[] = {
   },
 
   {
-    XmNindeterminateInsensitivePixmap, XmCIndeterminateInsensitivePixmap, 
-    XmRDynamicPixmap, 
+    XmNindeterminateInsensitivePixmap, XmCIndeterminateInsensitivePixmap,
+    XmRDynamicPixmap,
     sizeof(Pixmap), Offset(toggle.indeterminate_insensitive_pixmap),
     XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
   },
@@ -420,10 +420,10 @@ static XmSyntheticResource syn_resources[] =
    {
      XmNspacing,
      sizeof(Dimension), Offset(toggle.spacing),
-     XmeFromHorizontalPixels, XmeToHorizontalPixels 
+     XmeFromHorizontalPixels, XmeToHorizontalPixels
    },
 
-   { 
+   {
      XmNindicatorSize,
      sizeof(Dimension), Offset(toggle.indicator_dim),
      XmeFromVerticalPixels, XmeToVerticalPixels
@@ -473,14 +473,14 @@ static XmBaseClassExtRec       toggleBBaseClassExtRec = {
   };
 
 
-externaldef(xmtogglebuttonclassrec) 
+externaldef(xmtogglebuttonclassrec)
 	XmToggleButtonClassRec xmToggleButtonClassRec = {
    {
     /* superclass	  */	(WidgetClass) &xmLabelClassRec,
     /* class_name	  */	"XmToggleButton",
     /* widget_size	  */	sizeof(XmToggleButtonRec),
     /* class_initialize   */    ClassInitialize,
-    /* class_part_init    */    ClassPartInitialize, 
+    /* class_part_init    */    ClassPartInitialize,
     /* class_inited       */	FALSE,
     /* initialize	  */	Initialize,
     /* initialize_hook    */    (XtArgsProc)NULL,
@@ -505,7 +505,7 @@ externaldef(xmtogglebuttonclassrec)
     /* version            */	XtVersion,
     /* callback_private   */    NULL,
     /* tm_table           */    NULL,
-    /* query_geometry     */	XtInheritQueryGeometry, 
+    /* query_geometry     */	XtInheritQueryGeometry,
     /* display_accelerator*/    (XtStringProc)NULL,
     /* extension record   */    (XtPointer)&toggleBBaseClassExtRec,
    },
@@ -515,8 +515,8 @@ externaldef(xmtogglebuttonclassrec)
     /* Primitive border_unhighlight */  BorderUnhighlight,
     /* translations                 */ 	XtInheritTranslations,
     /* arm_and_activate             */  ArmAndActivate,
-    /* syn resources                */  syn_resources,         
-    /* num syn_resources            */  XtNumber(syn_resources),    
+    /* syn resources                */  syn_resources,
+    /* num syn_resources            */  XtNumber(syn_resources),
     /* extension                    */  NULL,
    },
 
@@ -550,7 +550,7 @@ static XmMenuSavvyTraitRec MenuSavvyRecord = {
  *  ClassInitialize
  *
  *************************************<->***********************************/
-static void 
+static void
 ClassInitialize( void )
 {
   /* Parse the various translation tables. */
@@ -567,7 +567,7 @@ ClassInitialize( void )
  *   Set up fast subclassing for the widget.
  *
  ****************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -597,7 +597,7 @@ InitializePrehook(
   XmMenuSystemTrait menuSTrait;
   XmToggleButtonWidget bw = (XmToggleButtonWidget) new_w ;
 
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(new_w)), XmQTmenuSystem);
 
   _XmSaveCoreClassTranslations (new_w);
@@ -646,12 +646,12 @@ InitializePosthook(
  *
  * This routine was added to fix CR 4839 and CR 4838
  * D. Rand 7/6/92
- * 
+ *
  ***********************************************************************/
 
 static void
-redisplayPixmap(XmToggleButtonWidget tb, 
-		XEvent *event, 
+redisplayPixmap(XmToggleButtonWidget tb,
+		XEvent *event,
 		Region region)
 {
   Pixmap todo;
@@ -660,7 +660,7 @@ redisplayPixmap(XmToggleButtonWidget tb,
   int x, y, offset;
   short saveY;
   unsigned short saveWidth, saveHeight;
-  
+
   offset = tb->primitive.highlight_thickness + tb->primitive.shadow_thickness;
 
   x = offset + tb->label.margin_width + tb->label.margin_left;
@@ -683,9 +683,9 @@ redisplayPixmap(XmToggleButtonWidget tb,
 
   if ((! XtIsSensitive((Widget) tb)) && tb->label.pixmap_insen)
     todo = tb->label.pixmap_insen;
-      
+
   if (! IsNull(todo))
-    XmeGetPixmapData(XtScreen(tb), todo, 
+    XmeGetPixmapData(XtScreen(tb), todo,
 		     NULL, NULL, NULL, NULL, NULL, NULL,
 		     &onW, &onH);
 
@@ -711,8 +711,8 @@ redisplayPixmap(XmToggleButtonWidget tb,
 }
 
 static void
-HandlePixmap(XmToggleButtonWidget tb, 
-	     Pixmap pix, 
+HandlePixmap(XmToggleButtonWidget tb,
+	     Pixmap pix,
 	     Pixmap insen_pix,
 	     XEvent * event,
 	     Region region)
@@ -744,7 +744,7 @@ HandlePixmap(XmToggleButtonWidget tb,
 	redisplayPixmap(tb, event, region);
     }
 }
-    
+
 /***********************************************************************
  *
  * SetAndDisplayPixmap
@@ -752,7 +752,7 @@ HandlePixmap(XmToggleButtonWidget tb,
  *   calls redisplayPixmap
  *
  ***********************************************************************/
-static void 
+static void
 SetAndDisplayPixmap(
         XmToggleButtonWidget tb,
         XEvent *event,
@@ -783,7 +783,7 @@ SetAndDisplayPixmap(
  *     on the widget.
  *
  ************************************************************************/
-static void 
+static void
 Help(
         Widget wid,
         XEvent *event,
@@ -794,7 +794,7 @@ Help(
    Boolean is_menupane = Lab_IsMenupane(tb);
    XmMenuSystemTrait menuSTrait;
 
-   menuSTrait = (XmMenuSystemTrait) 
+   menuSTrait = (XmMenuSystemTrait)
      XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
 
    if (is_menupane && menuSTrait != NULL)
@@ -812,7 +812,7 @@ Help(
  *   This is the widget's application callback routine
  *
  *************************************************************************/
-static void 
+static void
 ToggleButtonCallback(
         XmToggleButtonWidget data,
         unsigned int reason,
@@ -820,21 +820,21 @@ ToggleButtonCallback(
         XEvent *event )
 {
   XmToggleButtonCallbackStruct temp;
-  
+
   temp.reason = reason;
   temp.set = value;
   temp.event = event;
-  
+
   switch (reason)
     {
     case XmCR_VALUE_CHANGED:
       XtCallCallbackList ((Widget) data, data->toggle.value_changed_CB, &temp);
       break;
-      
+
     case XmCR_ARM:
       XtCallCallbackList ((Widget) data, data->toggle.arm_CB, &temp);
       break;
-      
+
     case XmCR_DISARM:
       XtCallCallbackList ((Widget) data, data->toggle.disarm_CB, &temp);
       break;
@@ -842,7 +842,7 @@ ToggleButtonCallback(
 }
 
 /* Update the toggle after an Enter or Leave action. */
-static void 
+static void
 ActionDraw(XmToggleButtonWidget w,
 	   XEvent              *event,
 	   Boolean              leave)
@@ -856,7 +856,7 @@ ActionDraw(XmToggleButtonWidget w,
 	NextState(&w->toggle.visual_set);
       else
 	IsOn(w) = (w->toggle.set == XmSET)? XmUNSET : XmSET;
-      
+
       if (w->toggle.ind_on)
 	DrawToggle(w);
       else
@@ -880,7 +880,7 @@ ActionDraw(XmToggleButtonWidget w,
  *  to change the visuals.
  *
 *************************************************************************/
-static void 
+static void
 Leave(
         Widget wid,
         XEvent *event,
@@ -888,7 +888,7 @@ Leave(
         Cardinal *num_params )
 {
   XmToggleButtonWidget w = (XmToggleButtonWidget) wid;
-  
+
   if (Lab_IsMenupane(w))
     {
       if (_XmGetInDragMode((Widget)w) && w->toggle.Armed &&
@@ -898,25 +898,25 @@ Leave(
 	  Boolean etched_in = dpy->display.enable_etched_in_menu;
 
 	  w->toggle.Armed = FALSE;
-	  
+
 	  ((XmManagerWidget) XtParent(wid))->manager.active_child = NULL;
 
-	  if ((etched_in) && 
-	      ((w->toggle.ind_on) || 
+	  if ((etched_in) &&
+	      ((w->toggle.ind_on) ||
 	       (!(w->toggle.ind_on) && !(w->toggle.fill_on_select))))
 	    {
 		DrawEtchedInMenu(w);
 		if (w->toggle.ind_on)
 		    DrawToggle(w);
 	    }
-			
+
 	  XmeClearBorder(XtDisplay (w), XtWindow (w),
 			 w->primitive.highlight_thickness,
 			 w->primitive.highlight_thickness,
 			 w->core.width - 2 * w->primitive.highlight_thickness,
 			 w->core.height - 2 * w->primitive.highlight_thickness,
 			 w->primitive.shadow_thickness);
-	  
+
 	  if (w->toggle.disarm_CB)
 	    {
 	      XFlush (XtDisplay (w));
@@ -939,7 +939,7 @@ Leave(
  *   accordingly.
  *
  **************************************************************************/
-static void 
+static void
 Enter(
         Widget wid,
         XEvent *event,
@@ -966,10 +966,10 @@ Enter(
 
 	 ((XmManagerWidget) XtParent(wid))->manager.active_child = wid;
 
-	 w->toggle.Armed = TRUE; 
+	 w->toggle.Armed = TRUE;
 
-	 if ((etched_in) && 
-	     ((w->toggle.ind_on) || 
+	 if ((etched_in) &&
+	     ((w->toggle.ind_on) ||
 	      (!(w->toggle.ind_on) && !(w->toggle.fill_on_select))))
 	   {
 	       DrawEtchedInMenu(w);
@@ -1029,7 +1029,7 @@ NextState(
  ***************************************************************************/
 
 /* ARGSUSED */
-static void 
+static void
 Arm(
         Widget wid,
         XEvent *event,
@@ -1037,9 +1037,9 @@ Arm(
         Cardinal *num_params )
 {
   XmToggleButtonWidget tb = (XmToggleButtonWidget) wid ;
-  
+
   (void)XmProcessTraversal( (Widget) tb, XmTRAVERSE_CURRENT);
-  
+
   if (tb->toggle.toggle_mode == XmTOGGLE_INDETERMINATE)
     NextState(&tb->toggle.visual_set);
   else
@@ -1051,33 +1051,33 @@ Arm(
     DrawToggle(tb);
   else
     {
-      if (tb->primitive.shadow_thickness > 0) 
+      if (tb->primitive.shadow_thickness > 0)
 	DrawToggleShadow (tb);
-      if (tb->toggle.fill_on_select && !Lab_IsPixmap(tb)) 
+      if (tb->toggle.fill_on_select && !Lab_IsPixmap(tb))
 	DrawToggleLabel(tb);
     }
-  
+
   if (Lab_IsPixmap(tb) || Lab_IsPixmapAndText(tb))
     SetAndDisplayPixmap(tb, event, NULL);
-  
+
   if (tb->toggle.arm_CB)
     {
       XFlush(XtDisplay(tb));
-     
+
       ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
     }
 }
 
 /************************************************************************
  *
- *     Select 
+ *     Select
  *       Mark the togglebutton as unarmed (i.e. inactive).
  *       If the button release occurs inside of the ToggleButton, the
  *       callbacks for XmNvalueChangedCallback are called.
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 Select(
         Widget wid,
         XEvent *event,
@@ -1089,10 +1089,10 @@ Select(
   Boolean hit;
   XmMenuSystemTrait menuSTrait;
   Boolean radio = TRUE, always = TRUE;
-  
+
   if (tb->toggle.Armed == FALSE)
     return;
-  
+
   tb->toggle.Armed = FALSE;
 
   if (XmIsRowColumn(XtParent(tb))) {
@@ -1105,12 +1105,12 @@ Select(
   /* CR 8068: Verify that this is in fact a button event. */
   /* CR 9181: Consider clipping when testing visibility. */
   /* Check to see if BtnUp is inside the widget */
-  hit = ((event->xany.type == ButtonPress || 
+  hit = ((event->xany.type == ButtonPress ||
 	  event->xany.type == ButtonRelease) &&
-	 _XmGetPointVisibility(wid, 
-			       event->xbutton.x_root, 
+	 _XmGetPointVisibility(wid,
+			       event->xbutton.x_root,
 			       event->xbutton.y_root));
-  
+
   if (hit)
     {
       if (tb->toggle.toggle_mode == XmTOGGLE_INDETERMINATE)
@@ -1118,7 +1118,7 @@ Select(
       else
 	tb->toggle.set = !tb->toggle.set;
     }
-  
+
   /* CR 7803: Suppress redundant redraws. */
   if (tb->toggle.set != tb->toggle.visual_set)
     {
@@ -1126,18 +1126,18 @@ Select(
       XtExposeProc expose;
       _XmProcessLock();
       expose = ((WidgetClass)XtClass(tb))->core_class.expose;
-      _XmProcessUnlock();	
+      _XmProcessUnlock();
       (* (expose)) (wid, event, NULL);
     }
-  
+
   if (hit)
     {
       /* UNDOING this fix .... */
       /* CR 8904: Notify value_changed before entry so that state is */
       /*	reported correctly even if the entry callback resets it. */
-      menuSTrait = (XmMenuSystemTrait) 
+      menuSTrait = (XmMenuSystemTrait)
 	XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
-      
+
       if (menuSTrait != NULL)
 	{
 	  call_value.reason = XmCR_VALUE_CHANGED;
@@ -1163,13 +1163,13 @@ Select(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 Disarm(
         Widget wid,
         XEvent *event,
         String *params,
         Cardinal *num_params )
-{ 
+{
   XmToggleButtonWidget tb = (XmToggleButtonWidget) wid ;
 
   if (tb->toggle.disarm_CB)
@@ -1184,17 +1184,17 @@ Disarm(
 /* END OSF Fix pir 2826 */
 }
 
-static void 
-TB_FixTearoff( XmToggleButtonWidget tb)	
+static void
+TB_FixTearoff( XmToggleButtonWidget tb)
 {
 	 if  (XmMENU_PULLDOWN == tb->label.menu_type)
-	 {							
-		Widget mwid = XmGetPostedFromWidget(XtParent(tb));	
+	 {
+		Widget mwid = XmGetPostedFromWidget(XtParent(tb));
 		if (mwid && XmIsRowColumn(mwid)
-			&& (XmMENU_OPTION == RC_Type(mwid)) 
-			&& _XmIsActiveTearOff(XtParent(tb))) 
+			&& (XmMENU_OPTION == RC_Type(mwid))
+			&& _XmIsActiveTearOff(XtParent(tb)))
 			XmProcessTraversal((Widget) tb, XmTRAVERSE_CURRENT);
-	 }							
+	 }
 }
 
 /************************************************************************
@@ -1206,7 +1206,7 @@ TB_FixTearoff( XmToggleButtonWidget tb)
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
@@ -1229,10 +1229,10 @@ ArmAndActivate(
   }
 
   no_change = False;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
-  
+
   if (is_menupane && !XmIsMenuShell(XtParent(XtParent(tb))))
     {
       if (XmeFocusIsInShell((Widget)tb))
@@ -1243,9 +1243,9 @@ ArmAndActivate(
 	  torn_has_focus = TRUE;
 	}
     }
-  
+
   tb->toggle.Armed = FALSE;
-  
+
   if (!no_change) /* skip toggle for buttons already turned on */
     {
       if (tb->toggle.toggle_mode == XmTOGGLE_INDETERMINATE)
@@ -1259,7 +1259,7 @@ ArmAndActivate(
           IsOn(tb) = tb->toggle.set;
         }
     }
-  
+
   if (is_menupane && menuSTrait != NULL)
     {
       /* CR 7799: Torn off menus shouldn't be shared, so don't reparent. */
@@ -1267,10 +1267,10 @@ ArmAndActivate(
 	menuSTrait->popdown(XtParent(tb), event);
       else
 	menuSTrait->buttonPopdown(XtParent(tb), event);
-      
+
       if (torn_has_focus)
 	XmProcessTraversal((Widget) tb, XmTRAVERSE_CURRENT);
-      
+
       /* Draw the toggle indicator in case of tear off */
       if (tb->toggle.ind_on)
 	DrawToggle(tb);
@@ -1281,12 +1281,12 @@ ArmAndActivate(
 	SetAndDisplayPixmap( tb, event, NULL);
     }
   else
-    { 
-      if (tb->toggle.ind_on) 
+    {
+      if (tb->toggle.ind_on)
 	DrawToggle(tb);
       else
 	{
-	  if (tb->primitive.shadow_thickness > 0) 
+	  if (tb->primitive.shadow_thickness > 0)
 	    DrawToggleShadow (tb);
 	  if (tb->toggle.fill_on_select && !Lab_IsPixmap(tb))
 	    DrawToggleLabel (tb);
@@ -1294,19 +1294,19 @@ ArmAndActivate(
       if (Lab_IsPixmap(tb) || Lab_IsPixmapAndText(tb))
 	SetAndDisplayPixmap( tb, event, NULL);
     }
-  
+
   /* If the parent is menu system able, set the lastSelectToplevel before
    * the arm. It's ok if this is recalled later.
    */
   if (menuSTrait != NULL)
     menuSTrait->getLastSelectToplevel(XtParent(tb));
-  
+
   if (tb->toggle.arm_CB && !already_armed)
     {
       XFlush(XtDisplay(tb));
       ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
     }
-  
+
   if (!no_change)
   {
   /* UNDOING this fix .... */
@@ -1321,7 +1321,7 @@ ArmAndActivate(
       call_value.set = tb->toggle.set;
       menuSTrait->entryCallback(XtParent(tb), (Widget) tb, &call_value);
     }
-  
+
   if ((! tb->label.skipCallback) &&
       (tb->toggle.value_changed_CB))
     {
@@ -1329,24 +1329,24 @@ ArmAndActivate(
       ToggleButtonCallback(tb, XmCR_VALUE_CHANGED, tb->toggle.set, event);
     }
   }
-  
+
   if (tb->toggle.disarm_CB)
     {
       XFlush(XtDisplay(tb));
       ToggleButtonCallback(tb, XmCR_DISARM, tb->toggle.set, event);
     }
-  
+
   if (is_menupane)
     {
       if (torn_has_focus && XtIsSensitive(wid))
 	{
 	  tb->toggle.Armed = TRUE;
-	  if (tb->toggle.arm_CB) 
+	  if (tb->toggle.arm_CB)
 	    {
 	      XFlush(XtDisplay(tb));
 	      ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
 	    }
-	} 
+	}
       else if (menuSTrait != NULL)
 	{
 	  menuSTrait->reparentToTearOffShell(XtParent(tb), event);
@@ -1367,7 +1367,7 @@ ArmAndActivate(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 BtnDown(
         Widget wid,
         XEvent *event,
@@ -1379,26 +1379,26 @@ BtnDown(
   Boolean already_armed;
   ShellWidget popup;
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
-  
+
   if (menuSTrait == NULL) return;
-  
+
   /* Support menu replay, free server input queue until next button event */
   XAllowEvents(XtDisplay(tb), SyncPointer, CurrentTime);
-  
+
   already_armed = tb->toggle.Armed;
-  
+
   tb->toggle.Armed = TRUE;
-  
+
   if (event && (event->type == ButtonPress))
     {
 	XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
 	Boolean etched_in = dpy->display.enable_etched_in_menu;
 
-	if ((etched_in)  && 
-	    ((tb->toggle.ind_on) || 
+	if ((etched_in)  &&
+	    ((tb->toggle.ind_on) ||
 	     (!(tb->toggle.ind_on) && !(tb->toggle.fill_on_select))))
           {
 	      DrawEtchedInMenu(tb);
@@ -1407,13 +1407,13 @@ BtnDown(
 	  }
 
 	validButton = menuSTrait->verifyButton(XtParent(tb), event);
-    }  
+    }
 
   if (!validButton)
     return;
-  
+
   _XmSetInDragMode((Widget)tb, True);
-  
+
   /* Popdown other popups that may be up */
   if (!(popup = (ShellWidget)_XmGetRC_PopupPosted(XtParent(tb))))
     {
@@ -1425,14 +1425,14 @@ BtnDown(
 	  menuSTrait->tearOffArm(XtParent(tb));
 	}
     }
-  
+
   if  (popup)
     {
       /* Widget w; */
-      
+
       if (popup->shell.popped_up)
 	menuSTrait->popdownEveryone((Widget) popup, event);
-      
+
       /* If the active_child is a cascade (highlighted), then unhighlight it.*/
       /*
        * w = ((XmManagerWidget)XtParent(tb))->manager.active_child;
@@ -1440,20 +1440,20 @@ BtnDown(
        *   XmCascadeButtonHighlight (w, FALSE);
        */
     }
-  
+
   /* Set focus to this button.  This must follow the possible
    * unhighlighting of the CascadeButton else it'll screw up active_child.
    */
   (void)XmProcessTraversal( (Widget) tb, XmTRAVERSE_CURRENT);
   /* get the location cursor - get consistent with Gadgets */
-  
+
   if (tb->toggle.arm_CB && !already_armed)
     {
       XFlush (XtDisplay (tb));
-      
+
       ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
     }
-  
+
   _XmRecordEvent(event);
 }
 
@@ -1468,7 +1468,7 @@ BtnDown(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 BtnUp(
         Widget wid,
         XEvent *event,
@@ -1482,30 +1482,30 @@ BtnUp(
   Boolean is_menupane = Lab_IsMenupane(tb);
   Widget shell = XtParent(XtParent(tb));
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
-  
+
   if (menuSTrait == NULL) return;
-  
+
   if (event && (event->type == ButtonRelease))
     validButton = menuSTrait->verifyButton(XtParent(tb), event);
-  
+
   if (!validButton || (tb->toggle.Armed == FALSE))
     return;
-  
+
   tb->toggle.Armed = FALSE;
-  
+
   if (is_menupane && !XmIsMenuShell(shell))
     popped_up = menuSTrait->popdown((Widget) tb, event);
   else
     popped_up = menuSTrait->buttonPopdown((Widget) tb, event);
-  
+
   _XmRecordEvent(event);
-  
+
   if (popped_up)
     return;
-  
+
   /* Check to see if BtnUp is inside the widget */
   /* CR 9181: Consider clipping when testing visibility. */
   if ((event->xany.type == ButtonPress || event->xany.type == ButtonRelease) &&
@@ -1533,17 +1533,17 @@ BtnUp(
 	  call_value.set = tb->toggle.set;
 	  menuSTrait->entryCallback(XtParent(tb), (Widget) tb, &call_value);
 	}
-      
+
       if ((! tb->label.skipCallback) &&
 	  (tb->toggle.value_changed_CB))
 	{
 	  XFlush(XtDisplay(tb));
 	  ToggleButtonCallback(tb, XmCR_VALUE_CHANGED, tb->toggle.set, event);
 	}
-      
+
       if (tb->toggle.disarm_CB)
 	ToggleButtonCallback(tb, XmCR_DISARM, tb->toggle.set, event);
-      
+
       if (is_menupane)
 	{
 	  if (!XmIsMenuShell(shell))
@@ -1560,7 +1560,7 @@ BtnUp(
 		  if (Lab_IsPixmap(tb) || Lab_IsPixmapAndText(tb))
 		    SetAndDisplayPixmap( tb, event, NULL);
 
-		  if (tb->toggle.arm_CB) 
+		  if (tb->toggle.arm_CB)
 		    {
 		      XFlush(XtDisplay(tb));
 		      ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
@@ -1571,10 +1571,10 @@ BtnUp(
 	    menuSTrait->reparentToTearOffShell(XtParent(tb), event);
 	}
     }
-  
+
   _XmSetInDragMode((Widget)tb, False);
-  
-  /* For the benefit of tear off menus, we must set the focus item 
+
+  /* For the benefit of tear off menus, we must set the focus item
    * to this button.  In normal menus, this would not be a problem
    * because the focus is cleared when the menu is unposted.
    */
@@ -1590,19 +1590,19 @@ BtnUp(
  *	a square or diamond when unselected.
  *
  ************************************************************************/
-static void 
+static void
 GetUnselectGC(
         XmToggleButtonWidget tw )
 {
   XGCValues values;
   XtGCMask  valueMask;
-  
+
   valueMask = GCForeground | GCBackground | GCFillStyle | GCGraphicsExposures;
   values.foreground = tw->toggle.unselect_color;
   values.background = tw->core.background_pixel;
   values.fill_style = FillSolid;
   values.graphics_exposures = FALSE;
-  
+
   tw->toggle.unselect_GC = XtGetGC((Widget) tw, valueMask, &values);
 }
 
@@ -1615,7 +1615,7 @@ GetUnselectGC(
  *
  ************************************************************************/
 
-static void 
+static void
 GetGC(
         XmToggleButtonWidget tw )
 {
@@ -1639,15 +1639,15 @@ GetGC(
   valueMask |= GCBackground, values.background = tw->core.background_pixel;
   valueMask |= GCFillStyle, values.fill_style = FillSolid;
   valueMask |= GCGraphicsExposures, values.graphics_exposures = FALSE;
-  
+
   tw->toggle.select_GC = XtAllocateGC((Widget)tw, 0, valueMask, &values, 0, 0);
-  
+
   /* When foreground and select colors coincide, this GC is used
    * by XmLabel to draw the text.  It requires a font to pacify
    * the XmString draw functions.
    */
   valueMask = 0;
-  
+
   if (XmeRenderTableGetDefaultFont(tw->label.font, &fs))
     valueMask |= GCFont, values.font = fs->fid;
 
@@ -1656,16 +1656,16 @@ GetGC(
   valueMask |= GCFillStyle, values.fill_style = FillSolid;
   valueMask |= GCGraphicsExposures, values.graphics_exposures = FALSE;
   valueMask |= GCLineWidth, values.line_width = 1;
-  
+
   tw->toggle.background_gc = XtGetGC((Widget) tw, valueMask, &values);
-  
+
   valueMask = 0;
   valueMask |= GCFillStyle, values.fill_style = FillOpaqueStippled;
   valueMask |= GCGraphicsExposures, values.graphics_exposures = FALSE;
-  valueMask |= GCStipple, values.stipple = 
+  valueMask |= GCStipple, values.stipple =
     XmGetPixmapByDepth(XtScreen((Widget)(tw)), XmS50_foreground, 1, 0, 1);
   valueMask |= GCLineWidth, values.line_width = 1;
-  
+
   tw->toggle.indeterminate_GC = XtAllocateGC((Widget)tw, 0, valueMask, &values,
 					     GCForeground | GCBackground, 0);
 
@@ -1681,7 +1681,7 @@ GetGC(
   if ((Lab_IsMenupane(tw)) && etched_in) {
       XmGetColors(XtScreen(tw), tw->core.colormap, tw->core.background_pixel,
 		  NULL, NULL, NULL, &select_pixel);
-      
+
       valueMask = 0;
       valueMask |= GCForeground, values.foreground = select_pixel;
       valueMask |= GCBackground, values.background = tw->primitive.foreground;
@@ -1702,7 +1702,7 @@ GetGC(
  *************************************<->***********************************/
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -1715,14 +1715,14 @@ Initialize(
 
 
   new_w->toggle.Armed = FALSE;
-  
+
   /* if menuProcs is not set up yet, try again */
   _XmProcessLock();
   resize = xmLabelClassRec.core_class.resize;
   if (xmLabelClassRec.label_class.menuProcs == (XmMenuProc)NULL)
     xmLabelClassRec.label_class.menuProcs = (XmMenuProc)_XmGetMenuProcContext();
   _XmProcessUnlock();
-  
+
   if (Lab_IsMenupane(new_w))
     {
 	/* If the shadow thickness hasn't been set yet, inherit it
@@ -1736,16 +1736,16 @@ Initialize(
 	  XtVaGetValues(XtParent(nw), XmNshadowThickness, &parent_st, NULL);
 	  new_w->primitive.shadow_thickness = parent_st;
       }
-      
+
       if (new_w->toggle.visible == XmINVALID_BOOLEAN)
 	new_w->toggle.visible = FALSE;
-      
+
       new_w->primitive.traversal_on = TRUE;
     }
   else if (new_w->toggle.visible == XmINVALID_BOOLEAN)
     new_w->toggle.visible = TRUE;
-  
-  
+
+
   /*
    * If the indicatorType has not been set, then
    * find out if radio behavior is set for RowColumn parents and
@@ -1767,10 +1767,10 @@ Initialize(
 
       if (radio)
 	new_w->toggle.ind_type = XmONE_OF_MANY;
-      else 
+      else
 	new_w->toggle.ind_type = XmN_OF_MANY;
     }
-  
+
   /*
    * This resource defaults to true if an indicator box is drawn.
    */
@@ -1784,12 +1784,12 @@ Initialize(
       else
 	new_w->toggle.fill_on_select = False;
     }
-  
+
   /* Tristate buttons ain't allowed in one-of-many land. */
   if (IsOneOfMany(new_w->toggle.ind_type))
     new_w->toggle.toggle_mode = XmTOGGLE_BOOLEAN;
-  
-  
+
+
   /* If necessary use the On pixmaps in place of the Indeterminate ones. */
   if (IsNull(PixmapInd(new_w)) && !IsNull(PixmapOn(new_w)))
     PixmapInd(new_w) = PixmapOn(new_w);
@@ -1804,11 +1804,11 @@ Initialize(
 	new_w->core.width = 0;
       if (request->core.height == 0)
 	new_w->core.height = 0;
-      
+
       _XmCalcLabelDimensions((Widget) new_w);
       (* resize)( (Widget) new_w);
     }
-    
+
   /* If necessary use PixmapInsenOn in place of PixmapInsenOff. */
   if (IsNull(PixmapInsenOff(new_w)) && !IsNull(PixmapInsenOn(new_w)))
     {
@@ -1817,11 +1817,11 @@ Initialize(
 	new_w->core.width = 0;
       if (request->core.height == 0)
 	new_w->core.height = 0;
-      
+
       _XmCalcLabelDimensions((Widget) new_w);
       (* resize)( (Widget) new_w);
     }
-  
+
 
   /* BEGIN OSF Fix pir 1778 */
   if (Lab_IsPixmap(new_w) &&
@@ -1836,7 +1836,7 @@ Initialize(
       SetToggleSize(new_w);
     }
   /* END OSF Fix pir 1778 */
-  
+
   if (new_w->toggle.indicator_dim == XmINVALID_DIMENSION)  {
     if (new_w->toggle.ind_on)
       {
@@ -1860,18 +1860,18 @@ Initialize(
 	    /* Set indicator size proportional to size of font. */
 	    Dimension height;
 	    int line_count;
-	    
+
 	    height = XmStringHeight (new_w->label.font, new_w->label._label);
 	    if ((line_count = XmStringLineCount (new_w->label._label)) < 1)
 	      line_count = 1;
 
 	    /* Shiz recommends toggles in menus have smaller indicators */
 	    if (Lab_IsMenupane(new_w))
-	      new_w->toggle.indicator_dim = 
-		MAX(XmDEFAULT_INDICATOR_DIM, 
+	      new_w->toggle.indicator_dim =
+		MAX(XmDEFAULT_INDICATOR_DIM,
 		    (height / ((Dimension)line_count))*2/3);
 	    else
-	      new_w->toggle.indicator_dim = 
+	      new_w->toggle.indicator_dim =
 		MAX(XmDEFAULT_INDICATOR_DIM, height / ((Dimension)line_count));
 	  }
       } else {
@@ -1882,7 +1882,7 @@ Initialize(
   } else {
     new_w->toggle.indicator_set = TRUE;
   }
-  
+
   /* CR 2337: Maintain original margin values. */
   new_w->toggle.ind_left_delta = 0;
   new_w->toggle.ind_right_delta = 0;
@@ -1906,24 +1906,24 @@ Initialize(
       else
 	maxIndicatorSize = new_w->toggle.indicator_dim;
       /* END OSF Fix pir 2480 */
-      
+
       boxSize = ((int) new_w->label.TextRect.height  +
-		 (int) new_w->label.margin_top + 
-		 (int) new_w->label.margin_bottom); 
-      
+		 (int) new_w->label.margin_top +
+		 (int) new_w->label.margin_bottom);
+
       if (maxIndicatorSize > boxSize)
-	{ 
+	{
 	  delta = (maxIndicatorSize - boxSize) / 2;
 	  new_w->toggle.ind_top_delta = delta;
 	  new_w->label.margin_top += new_w->toggle.ind_top_delta;
 	  new_w->toggle.ind_bottom_delta = delta;
 	  new_w->label.margin_bottom += new_w->toggle.ind_bottom_delta;
 	}
-      
+
       /* CR 2337: Make room for toggle indicator and spacing */
       if (LayoutIsRtoLP(new_w))
 	{
-	  delta = (new_w->toggle.indicator_dim + new_w->toggle.spacing - 
+	  delta = (new_w->toggle.indicator_dim + new_w->toggle.spacing -
 		   new_w->label.margin_right);
 	  if (delta > 0)
 	    {
@@ -1933,7 +1933,7 @@ Initialize(
 	}
       else
 	{
-	  delta = (new_w->toggle.indicator_dim + new_w->toggle.spacing - 
+	  delta = (new_w->toggle.indicator_dim + new_w->toggle.spacing -
 		   new_w->label.margin_left);
 	  if (delta > 0)
 	    {
@@ -1949,11 +1949,11 @@ Initialize(
 	2 * new_w->label.margin_width + new_w->label.margin_right +
 	    new_w->label.margin_left +
 	      2 * (new_w->primitive.highlight_thickness +
-		   new_w->primitive.shadow_thickness); 
-      
+		   new_w->primitive.shadow_thickness);
+
       if (new_w->core.width == 0)
-	new_w->core.width = 1; 
-      
+	new_w->core.width = 1;
+
       if ((new_w->label._acc_text != NULL) && (new_w->toggle.ind_on))
       {
 	if (LayoutIsRtoLP(new_w))
@@ -1970,58 +1970,57 @@ Initialize(
       }
     }
     }
-  
+
   if (request->core.height == 0)
-    new_w->core.height = 
+    new_w->core.height =
       MAX(new_w->toggle.indicator_dim,
-	  new_w->label.TextRect.height + 2 * new_w->label.margin_height + 
-	  new_w->label.margin_top + new_w->label.margin_bottom)  + 
+	  new_w->label.TextRect.height + 2 * new_w->label.margin_height +
+	  new_w->label.margin_top + new_w->label.margin_bottom)  +
 	    2 * (new_w->primitive.highlight_thickness +
 		 new_w->primitive.shadow_thickness);
-  
+
   new_w->label.TextRect.y =  (short) new_w->primitive.highlight_thickness
     + new_w->primitive.shadow_thickness + new_w->label.margin_height +
-      new_w->label.margin_top + 
+      new_w->label.margin_top +
 	((new_w->core.height - new_w->label.margin_top
 	  - new_w->label.margin_bottom
 	  - (2 * (new_w->label.margin_height
 		  + new_w->primitive.highlight_thickness
 		  + new_w->primitive.shadow_thickness))
 	  - new_w->label.TextRect.height) / 2);
-  
+
   if (new_w->core.height == 0)
     new_w->core.height = 1;
-  
+
   new_w->toggle.visual_set = new_w->toggle.set;
-  
+
   /* Display as set if XmNset is TRUE when the toggle first comes up. */
   if (XmSET == new_w->toggle.set)
     IsOn(new_w) = XmSET;
   else
     IsOn(new_w) = XmUNSET;
-  
+
   {
-       XtWidgetProc resize;
        _XmProcessLock();
        resize = new_w->core.widget_class->core_class.resize;
        _XmProcessUnlock();
 
       (* (resize)) ((Widget) new_w);
   }
-  
+
   /* unselect same as background unless set. */
   if (new_w->toggle.unselect_color == XmINVALID_PIXEL)
     new_w->toggle.unselect_color = new_w->core.background_pixel;
-  
+
   /* Deal with selectColor */
-  new_w->toggle.reversed_select = 
+  new_w->toggle.reversed_select =
     (new_w->toggle.select_color == XmREVERSED_GROUND_COLORS);
   if (new_w->toggle.select_color == XmDEFAULT_SELECT_COLOR)
     {
       /* CR 9923: Copy all bytes of the resulting pixel. */
       XrmValue value;
       _XmSelectColorDefault((Widget)new_w,
-			    XtOffsetOf(XmToggleButtonRec, 
+			    XtOffsetOf(XmToggleButtonRec,
 				       toggle.select_color),
 			    &value);
       assert(value.size == sizeof(Pixel));
@@ -2035,10 +2034,10 @@ Initialize(
     {
       new_w->toggle.select_color = new_w->primitive.highlight_color;
     }
-  
+
   GetGC (new_w);
   GetUnselectGC(new_w);
-}   
+}
 
 /************************************************************************
  *
@@ -2046,7 +2045,7 @@ Initialize(
  *	Free toggleButton's graphic context.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -2074,15 +2073,15 @@ DrawBox(XmToggleButtonWidget w,
 		 XtWindow ((Widget) w),
 		 top_gc,
 		 bot_gc,
-		 x, y, edge, edge, 
+		 x, y, edge, edge,
 		 shadow, XmSHADOW_OUT);
-  
+
   /* Don't fill the background on mono screens if we're going to */
   /* draw a glyph */
-  
+
   if ((DefaultDepthOfScreen(XtScreen(w)) == 1) && DRAWGLYPH(NormalizeIndOn(w)))
     return;
-  
+
   shadow += margin;
 
   if (edge > (shadow * 2))
@@ -2102,7 +2101,7 @@ DrawBox(XmToggleButtonWidget w,
  *     That is draw the True/False indicator next to the label.
  *
  *************************************<->***********************************/
-static void 
+static void
 DrawToggle
         (XmToggleButtonWidget w )
 {
@@ -2118,13 +2117,13 @@ DrawToggle
   if (Lab_IsPixmap(w) || XmStringEmpty(w->label._label))
     edge = w->toggle.indicator_dim;
   else
-    edge = MIN((int)w->toggle.indicator_dim, 
+    edge = MIN((int)w->toggle.indicator_dim,
 	       MAX(0,
 		   ((int)w->core.height - 2*(w->primitive.highlight_thickness +
 					     w->primitive.shadow_thickness +
 					     (int)w->label.margin_height) +
 		    w->label.margin_top + w->label.margin_bottom)));
-  
+
   /* Touch up the appearance of filled background. */
   if ((DefaultDepthOfScreen(XtScreen(w)) > 1) &&
       (w->primitive.top_shadow_color != w->toggle.select_color) &&
@@ -2132,7 +2131,7 @@ DrawToggle
     margin = 0;
   else
     margin = 1;
-  
+
   if (LayoutIsRtoLP(w))
     x = (int)w->core.width - w->primitive.highlight_thickness -
       w->primitive.shadow_thickness - w->label.margin_width -
@@ -2140,7 +2139,7 @@ DrawToggle
   else
     x = w->primitive.highlight_thickness + w->primitive.shadow_thickness +
       w->label.margin_width;
-  
+
   if (Lab_IsPixmap(w)  || XmStringEmpty(w->label._label))
     y = (int)((w->core.height - w->toggle.indicator_dim))/2;
   else
@@ -2153,12 +2152,12 @@ DrawToggle
       text_height = XmStringHeight(w->label.font, w->label._label);
       if ((line_count = XmStringLineCount(w->label._label)) < 1)
 	line_count = 1;
-      
+
       height_diff = ((int)text_height / line_count) -
                     (int)w->toggle.indicator_dim;
       if (height_diff < 0)
 	height_diff = 0;
-      
+
       y = w->label.TextRect.y + (height_diff / 2);
 
       /* CR 2337: Keep large indicators inside the toggle. */
@@ -2166,7 +2165,7 @@ DrawToggle
       if (w->toggle.ind_top_delta > fudge)
 	y -= (w->toggle.ind_top_delta - fudge);
     }
-  
+
   if (w->toggle.visible || (w->toggle.visual_set != XmUNSET))
     {
       /* The toggle indicator should be visible. */
@@ -2193,10 +2192,10 @@ DrawToggle
 	  bot_gc = w->primitive.top_shadow_GC;
 	  /* use the arm GC in a menu if armed and enableEtchedInMenu is set */
 	  if (Lab_IsMenupane(w) && etched_in && w->toggle.Armed)
-	      fill_gc = (w->toggle.fill_on_select ? 
+	      fill_gc = (w->toggle.fill_on_select ?
 			 w->toggle.select_GC : w->toggle.arm_GC);
 	  else
-	      fill_gc = (w->toggle.fill_on_select ? 
+	      fill_gc = (w->toggle.fill_on_select ?
 			 w->toggle.select_GC : w->toggle.background_gc);
 	  glyph_gc = ((w->toggle.reversed_select && DRAWBOX(normal_ind_on)) ?
 		      w->toggle.background_gc : w->label.normal_GC);
@@ -2210,10 +2209,10 @@ DrawToggle
 	  top_gc = bot_gc = w->toggle.indeterminate_box_GC;
 	  /* use the arm GC in a menu if armed and enableEtchedInMenu is set */
 	  if (Lab_IsMenupane(w) && etched_in && w->toggle.Armed)
-	      fill_gc = (w->toggle.fill_on_select ? 
+	      fill_gc = (w->toggle.fill_on_select ?
 			 w->toggle.indeterminate_GC : w->toggle.arm_GC);
 	  else
-	      fill_gc = (w->toggle.fill_on_select ? 
+	      fill_gc = (w->toggle.fill_on_select ?
 			 w->toggle.indeterminate_GC : w->toggle.background_gc);
 	  glyph_gc = w->toggle.indeterminate_GC;
 	  break;
@@ -2232,14 +2231,14 @@ DrawToggle
 	     * to a diamond shaped indicator of the same width and height
 	     */
 	    int new_edge;
-	    Dimension box_margin = (DRAWBOX(normal_ind_on) ? 
+	    Dimension box_margin = (DRAWBOX(normal_ind_on) ?
 				    w->toggle.detail_shadow_thickness : 0);
 
 	    /* Subtract 3 pixels + 10% from the width and height. */
 	    new_edge = edge - 3 - ((edge - 10)/10);
 
 	    /* Adjust x,y to center the indicator relative to the label */
-	    y = y + ((edge - new_edge) / 2); 
+	    y = y + ((edge - new_edge) / 2);
 	    x = x + ((edge - new_edge) / 2);
 	    edge = new_edge;
 
@@ -2261,7 +2260,7 @@ DrawToggle
 		  DrawBox(w, top_gc, top_gc, fill_gc, x, y, edge, margin);
 		else if (edge > 0)
 		  XFillRectangle(dpy, drawable, fill_gc, x, y, edge, edge);
-	      
+
 		if (!DRAWBOX(normal_ind_on) ||
 		    ((edge - 2 * box_margin) >= MIN_GLYPH_SIZE))
 		  {
@@ -2277,14 +2276,14 @@ DrawToggle
 		break;
 
 	      case XmINDETERMINATE:
-		if (w->toggle.fill_on_select) 
+		if (w->toggle.fill_on_select)
 		  {
 		    /* Fetch the select_color GetGC() actually used. */
 		    XGetGCValues(dpy, w->toggle.select_GC,
 				 GCForeground, &values);
 		    values.background = values.foreground;
 		    values.foreground = w->toggle.unselect_color;
-		    XChangeGC(dpy, fill_gc, 
+		    XChangeGC(dpy, fill_gc,
 			      GCForeground|GCBackground, &values);
 		  }
 		else if (DRAWBOX(normal_ind_on))
@@ -2308,21 +2307,21 @@ DrawToggle
 		    values.foreground = w->primitive.foreground;
 		    values.background = w->core.background_pixel;
 		  }
-		
+
 		if (!DRAWBOX(normal_ind_on) ||
 		    ((edge - 2 * box_margin) >= MIN_GLYPH_SIZE))
 		  {
 		    if (DRAWCHECK(normal_ind_on))
 		      {
-			XChangeGC(dpy, glyph_gc, 
+			XChangeGC(dpy, glyph_gc,
 				  GCForeground|GCBackground, &values);
 			XmeDrawIndicator(dpy, drawable, glyph_gc, x, y,
 					 edge, edge, box_margin,
-					 normal_ind_on); 
+					 normal_ind_on);
 		      }
-		    else if (DRAWCROSS(normal_ind_on)) 
+		    else if (DRAWCROSS(normal_ind_on))
 		      {
-			XChangeGC(dpy, glyph_gc, 
+			XChangeGC(dpy, glyph_gc,
 				  GCForeground|GCBackground, &values);
 			XmeDrawIndicator(dpy, drawable, glyph_gc, x, y,
 					 edge, edge, box_margin,
@@ -2357,17 +2356,17 @@ DrawToggle
   else
     {
       /* The toggle indicator should be invisible. */
-      if (edge > 0) 
+      if (edge > 0)
 	{
 	  /* use the arm GC in a menu if armed and enableEtchedInMenu is set */
 	  if (Lab_IsMenupane(w) && etched_in && w->toggle.Armed)
-	      XFillRectangle(dpy, drawable, w->toggle.arm_GC, 
-			     x, y, edge + 4, edge + 2); 
+	      XFillRectangle(dpy, drawable, w->toggle.arm_GC,
+			     x, y, edge + 4, edge + 2);
 	  else
-	      XFillRectangle(dpy, drawable, w->toggle.background_gc, 
-			     x, y, edge + 4, edge + 2); 
+	      XFillRectangle(dpy, drawable, w->toggle.background_gc,
+			     x, y, edge + 4, edge + 2);
       }
-    } 
+    }
 }
 
 /*************************************<->*************************************
@@ -2375,7 +2374,7 @@ DrawToggle
  *  BorderHighlight
  *
  *************************************<->***********************************/
-static void 
+static void
 BorderHighlight(
         Widget wid )
 {
@@ -2390,8 +2389,8 @@ BorderHighlight(
 
       tb->toggle.Armed = True;
 
-      if ((etched_in) && 
-	  ((tb->toggle.ind_on) || 
+      if ((etched_in) &&
+	  ((tb->toggle.ind_on) ||
 	   (!(tb->toggle.ind_on) && !(tb->toggle.fill_on_select))))
         {
 	    DrawEtchedInMenu(tb);
@@ -2406,16 +2405,16 @@ BorderHighlight(
 		      tb->primitive.highlight_thickness,
 		      tb->core.width - 2 * tb->primitive.highlight_thickness,
 		      tb->core.height - 2 * tb->primitive.highlight_thickness,
-		      tb->primitive.shadow_thickness, 
+		      tb->primitive.shadow_thickness,
 		      etched_in ? XmSHADOW_IN : XmSHADOW_OUT);
-      
+
       if (!already_armed &&  tb->toggle.arm_CB)
 	{
 	  XFlush (XtDisplay (tb));
 	  ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
 	}
     }
-  else 
+  else
     {
       (*(xmLabelClassRec.primitive_class.border_highlight))((Widget) tb) ;
     }
@@ -2426,13 +2425,13 @@ BorderHighlight(
  *  BorderUnhighlight
  *
  *************************************<->***********************************/
-static void 
+static void
 BorderUnhighlight(
         Widget wid )
 {
   XmToggleButtonWidget tb = (XmToggleButtonWidget) wid ;
   XEvent * event = NULL;
-  
+
   if (Lab_IsMenupane(tb))
     {
       XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
@@ -2441,8 +2440,8 @@ BorderUnhighlight(
 
       tb -> toggle.Armed = FALSE;
 
-      if ((etched_in) && 
-	      ((tb->toggle.ind_on) || 
+      if ((etched_in) &&
+	      ((tb->toggle.ind_on) ||
 	       (!(tb->toggle.ind_on) && !(tb->toggle.fill_on_select))))
         {
 	  DrawEtchedInMenu(tb);
@@ -2456,17 +2455,17 @@ BorderUnhighlight(
 		      tb->core.width - 2 * tb->primitive.highlight_thickness,
 		      tb->core.height - 2 * tb->primitive.highlight_thickness,
 		      tb->primitive.shadow_thickness);
-      
+
       if (tb->toggle.Armed && tb->toggle.disarm_CB)
 	{
 	  XFlush (XtDisplay (tb));
 	  ToggleButtonCallback(tb, XmCR_DISARM, tb->toggle.set, event);
 	}
     }
-  else 
+  else
     {
       (*(xmLabelClassRec.primitive_class.border_unhighlight))((Widget) tb) ;
-    } 
+    }
 }
 
 /*  spb This action does not seem to be used anywhere */
@@ -2478,7 +2477,7 @@ BorderUnhighlight(
  *
  *************************************<->***********************************/
 /* ARGSUSED */
-static void 
+static void
 KeySelect(
         Widget wid,
         XEvent *event,
@@ -2488,15 +2487,15 @@ KeySelect(
   XmToggleButtonWidget tb = (XmToggleButtonWidget) wid ;
   XmToggleButtonCallbackStruct call_value;
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(tb)), XmQTmenuSystem);
-  
+
   if (menuSTrait == NULL) return;
-  
+
   if (!_XmIsEventUnique(event))
     return;
-  
+
   if (!_XmGetInDragMode((Widget)tb))
     {
       if (tb->toggle.ind_on)
@@ -2509,16 +2508,16 @@ KeySelect(
 
       tb->toggle.Armed = FALSE;
       tb->toggle.set = (tb->toggle.set == TRUE) ? FALSE : TRUE;
-      
+
       if (menuSTrait != NULL)
 	menuSTrait->buttonPopdown(XtParent(tb), event);
-      
+
       _XmRecordEvent(event);
-      
+
       /* UNDOING this fix ... */
       /* CR 8904: Notify value_changed before entry so that state is */
       /* 	reported correctly even if the entry callback resets it. */
-      
+
       /* If the parent is menu system able, notify it about the select. */
       if (menuSTrait != NULL)
 	{
@@ -2527,7 +2526,7 @@ KeySelect(
 	  call_value.set = tb->toggle.set;
 	  menuSTrait->entryCallback(XtParent(tb), (Widget) tb, &call_value);
 	}
-      
+
       if (menuSTrait != NULL)
 	menuSTrait->reparentToTearOffShell(XtParent(tb), event);
 
@@ -2545,27 +2544,27 @@ KeySelect(
  * Compute Space
  *
  ***********************************************************************/
-static void 
+static void
 ComputeSpace(
         XmToggleButtonWidget tb )
 {
   int needed_width;
   int needed_height;
-  
+
   /* Compute space for drawing toggle. */
-  
+
   needed_width = tb->label.TextRect.width +
     tb->label.margin_left + tb->label.margin_right +
       (2 * (tb->primitive.shadow_thickness +
 	    tb->primitive.highlight_thickness +
 	    tb->label.margin_width));
-  
+
   needed_height = tb->label.TextRect.height +
     tb->label.margin_top + tb->label.margin_bottom +
       (2 * (tb->primitive.shadow_thickness +
 	    tb->primitive.highlight_thickness +
 	    tb->label.margin_height));
-  
+
   if (needed_height > tb->core.height)
     if (tb->toggle.ind_on)
       tb->label.TextRect.y = tb->primitive.shadow_thickness +
@@ -2578,7 +2577,7 @@ ComputeSpace(
 			+ tb->primitive.highlight_thickness
 			+ tb->primitive.shadow_thickness))
 		- tb->label.TextRect.height) / 2);
-  
+
   if (LayoutIsRtoLP(tb))
     {
       if ((needed_width > tb->core.width) ||
@@ -2601,10 +2600,10 @@ ComputeSpace(
   else
     {
       if ((needed_width > tb->core.width) ||
-	  ((tb->label.alignment == XmALIGNMENT_BEGINNING) 
+	  ((tb->label.alignment == XmALIGNMENT_BEGINNING)
 	   && (needed_width < tb->core.width)) ||
 	  ((tb->label.alignment == XmALIGNMENT_CENTER)
-	   && (needed_width < tb->core.width) 
+	   && (needed_width < tb->core.width)
 	   && (tb->core.width - needed_width < tb->label.margin_left)) ||
 	  (needed_width == tb->core.width))
 	{
@@ -2624,18 +2623,18 @@ ComputeSpace(
  *
  *************************************<->***********************************/
 /*ARGUSED*/
-static void 
+static void
 Redisplay(
         Widget w,
         XEvent *event,
         Region region )
 {
   register XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
-  
+
   if (! XtIsRealized(w) ) return;    /* Fix CR #4884, D. Rand 6/4/92 */
-  
+
   ComputeSpace (tb);
-  
+
   if (Lab_IsPixmap(tb) || Lab_IsPixmapAndText(tb))
     SetAndDisplayPixmap(tb, event, region);
   else
@@ -2649,20 +2648,20 @@ Redisplay(
     _XmProcessUnlock();
     (* expose) (w, event, region);
   }
-  
+
   if (tb->toggle.ind_on)
     {
       if (!(tb->toggle.Armed))
 	IsOn(tb) = tb->toggle.set;
       DrawToggle(tb);
     }
-  
+
   if (Lab_IsMenupane(tb))
     {
       XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(w));
       Boolean etched_in = dpy -> display.enable_etched_in_menu;
 
-      if ((tb->toggle.Armed) && 
+      if ((tb->toggle.Armed) &&
 	  (tb->primitive.shadow_thickness > 0))
 	XmeDrawShadows (XtDisplay (tb), XtWindow (tb),
 			tb->primitive.top_shadow_GC,
@@ -2671,10 +2670,10 @@ Redisplay(
 			tb ->primitive.highlight_thickness,
 			(int)tb->core.width-2*tb->primitive.highlight_thickness,
 			(int)tb->core.height-2*tb->primitive.highlight_thickness,
-			tb->primitive.shadow_thickness, 
+			tb->primitive.shadow_thickness,
 			etched_in ? XmSHADOW_IN : XmSHADOW_OUT);
     }
-  
+
   else
     {
       DrawToggleShadow (tb);
@@ -2686,14 +2685,14 @@ Redisplay(
  * Resize(w, event)
  *
  **************************************************************************/
-static void 
+static void
 Resize(
         Widget w )
 {
   register XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
 
   /* BEGIN OSF Fix pir 1778 */
-  if (Lab_IsPixmap(w)) 
+  if (Lab_IsPixmap(w))
     SetToggleSize(tb);
   else {
     XtWidgetProc resize;
@@ -2712,7 +2711,7 @@ Resize(
  ************************************************************************/
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValuesPrehook(
         Widget cw,		/* unused */
         Widget rw,		/* unused */
@@ -2738,7 +2737,7 @@ SetValuesPrehook(
  *
  *************************************<->***********************************/
 /* ARGSUSED */
-static Boolean 
+static Boolean
 SetValues(
         Widget current,
         Widget request,
@@ -2771,10 +2770,10 @@ SetValues(
    * the new and current do have different width/heights then leave them
    * alone because that's what the user wants.
    *********************************************************************/
-  
+
   _XmProcessLock();
   resize = xmLabelClassRec.core_class.resize;
-  _XmProcessUnlock();  
+  _XmProcessUnlock();
 
   /* Use the On pixmaps if no Indeterminate pixmaps are found. */
   if (IsNull(PixmapInd(newcbox)) && !IsNull(PixmapOn(newcbox)))
@@ -2792,11 +2791,11 @@ SetValues(
       if ((newcbox->label.recompute_size) &&
 	  (request->core.height == current->core.height))
 	new_w->core.height = 0;
-      
+
       _XmCalcLabelDimensions(new_w);
       (* resize)( (Widget) new_w);
     }
-  
+
   /* Use the insensitive On pixmap if no insensitive Off pixmap is found. */
   if (IsNull(PixmapInsenOff(newcbox)) && !IsNull(PixmapInsenOn(newcbox)))
     {
@@ -2807,11 +2806,11 @@ SetValues(
       if ((newcbox->label.recompute_size) &&
 	  (request->core.height == current->core.height))
 	new_w->core.height = 0;
-      
+
       _XmCalcLabelDimensions(new_w);
       (* resize)( (Widget) new_w);
     }
-  
+
   /* BEGIN OSF Fix pir 1778 */
   /* Have to reset the TextRect width because label's resize will have
    * mucked with it. */
@@ -2827,11 +2826,11 @@ SetValues(
 	  if (request->core.height == current->core.height)
 	    new_w->core.height = 0;
 	}
-      
+
       SetToggleSize(newcbox);
     }
   /* END OSF Fix pir 1778 */
-  
+
   /* CR 9922: Changing fillOnSelect requires a redraw. */
   if (newcbox->toggle.fill_on_select != curcbox->toggle.fill_on_select)
     {
@@ -2848,7 +2847,7 @@ SetValues(
       (PixmapInsenInd(newcbox) != PixmapInsenInd(curcbox)) ||
       (newcbox->toggle.ind_on != curcbox->toggle.ind_on) ||
       (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim) ||
-      (Lab_IsPixmap(newcbox) != Lab_IsPixmap(curcbox)) || 
+      (Lab_IsPixmap(newcbox) != Lab_IsPixmap(curcbox)) ||
       (Lab_IsPixmapAndText(newcbox) != Lab_IsPixmapAndText(curcbox)))
     {
       int right_delta = 0;	/* Our desired margin adjustments. */
@@ -2863,8 +2862,8 @@ SetValues(
 	  if (request->core.height == current->core.height)
             new_w->core.height = 0;
 	}
-      
-      if (Lab_IsPixmap(newcbox) && 
+
+      if (Lab_IsPixmap(newcbox) &&
 	  ((PixmapOn(newcbox) != PixmapOn(curcbox)) ||
 	  (PixmapInsenOn(newcbox) != PixmapInsenOn(curcbox)) ||
 	  (PixmapInd(newcbox) != PixmapInd(curcbox)) ||
@@ -2875,7 +2874,7 @@ SetValues(
 	  /* OSF Fix pir 1778 */
 	  SetToggleSize(newcbox);
 	}
-      
+
 	newcbox->toggle.indicator_set = curcbox->toggle.indicator_set;
 
 if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
@@ -2883,7 +2882,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	newcbox->toggle.indicator_set = TRUE;
 	}
 
-      
+
       /* CR 8415: Honor explicit requests for XmNindicatorSize. */
       if (!(newcbox->toggle.indicator_set) &&
 	  (newcbox->toggle.indicator_dim == curcbox->toggle.indicator_dim))
@@ -2893,7 +2892,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	      (newcbox->label._label != curcbox->label._label) ||
 	      (PixmapOff(newcbox) != PixmapOff(curcbox)) ||
 	      (newcbox->label.font != curcbox->label.font) ||
-	      (newcbox->toggle.ind_on != curcbox->toggle.ind_on)) 
+	      (newcbox->toggle.ind_on != curcbox->toggle.ind_on))
 	    {
 	      if (Lab_IsPixmap(new_w) || Lab_IsPixmapAndText(new_w))
 		{
@@ -2913,12 +2912,12 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 		{
 		  Dimension height;
 		  int line_count;
-		  
+
 		  height = XmStringHeight (newcbox->label.font,
 					    newcbox->label._label);
 		  line_count = XmStringLineCount (newcbox->label._label);
 
-		  /* 
+		  /*
 		   * CR 5203 - Make the calculation for the
 		   *     indicator_dim be the same as in the Initialize
 		   *     procedure, i.e. Popup and Pulldown menus should
@@ -2927,18 +2926,18 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 		  if (line_count < 1)
 		    line_count = 1;
 		  if (Lab_IsMenupane(newcbox))
-		    newcbox->toggle.indicator_dim = 
+		    newcbox->toggle.indicator_dim =
 		      MAX(XmDEFAULT_INDICATOR_DIM,
 			  (height / ((Dimension)line_count)) * 2/3);
 		  else
-		    newcbox->toggle.indicator_dim = 
+		    newcbox->toggle.indicator_dim =
 		      MAX(XmDEFAULT_INDICATOR_DIM,
 			  height / ((Dimension)line_count));
 		  /* End 5203 Fix */
 		}
 	    }
-	} 
-      
+	}
+
       if (newcbox->toggle.ind_on)
 	{
 	  /*
@@ -2957,10 +2956,10 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	   *    }
 	   */
 	  if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
-	    { 
-	      int maxIndicatorSize = 
+	    {
+	      int maxIndicatorSize =
 		(int) (newcbox->toggle.indicator_dim) + 2*Xm3D_ENHANCE_PIXEL;
-	      
+
 	      int boxSize = ((int) newcbox->label.TextRect.height +
 			     (int) newcbox->label.margin_top +
 			     (int) newcbox->label.margin_bottom);
@@ -2971,11 +2970,11 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 
           if (LayoutIsRtoLP(newcbox))
 	    right_delta = (newcbox->toggle.indicator_dim +
-			   newcbox->toggle.spacing - 
+			   newcbox->toggle.spacing -
 			   newcbox->label.margin_right);
           else
 	    left_delta = (newcbox->toggle.indicator_dim +
-			  newcbox->toggle.spacing - 
+			  newcbox->toggle.spacing -
 			  newcbox->label.margin_left);
 	}
       else if (curcbox->toggle.ind_on)
@@ -3050,10 +3049,10 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	    }
 
 	  /* Realign the label. */
-	  if (!newcbox->label.recompute_size) 
+	  if (!newcbox->label.recompute_size)
 	    (* resize) ((Widget) new_w);
 	}
-      
+
       if (newcbox->label.recompute_size)
 	{
 	  if (request->core.width == current->core.width)
@@ -3061,39 +3060,39 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	  if (request->core.height == current->core.height)
             new_w->core.height = 0;
 	}
-      
+
       if (new_w->core.width == 0)
 	{
 	  newcbox->core.width =
-	    newcbox->label.TextRect.width + 
+	    newcbox->label.TextRect.width +
 	      newcbox->label.margin_left + newcbox->label.margin_right +
 		2 * (newcbox->primitive.highlight_thickness +
 		     newcbox->primitive.shadow_thickness +
 		     newcbox->label.margin_width);
-	  
+
 	  if (newcbox->core.width == 0)
 	    newcbox->core.width = 1;
-	  
+
 	  flag = TRUE;
 	}
-      
+
       if (new_w->core.height == 0)
 	{
-	  newcbox->core.height = 
+	  newcbox->core.height =
 	    MAX(newcbox->toggle.indicator_dim,
-		newcbox->label.TextRect.height + 
+		newcbox->label.TextRect.height +
 		2 * newcbox->label.margin_height +
 		newcbox->label.margin_top + newcbox->label.margin_bottom) +
 		  2 * (newcbox->primitive.highlight_thickness +
 		       newcbox->primitive.shadow_thickness);
-	  
+
 	  if (newcbox->core.height == 0)
 	    newcbox->core.height = 1;
-	  
+
 	  flag = TRUE;
 	}
     }
-  
+
   if ((newcbox->primitive.foreground != curcbox->primitive.foreground) ||
       (newcbox->core.background_pixel != curcbox->core.background_pixel) ||
       (newcbox->toggle.select_color != curcbox->toggle.select_color))
@@ -3103,7 +3102,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
       XtReleaseGC( (Widget) curcbox, curcbox->toggle.indeterminate_GC);
       XtReleaseGC( (Widget) curcbox, curcbox->toggle.indeterminate_box_GC);
 
-      newcbox->toggle.reversed_select = 
+      newcbox->toggle.reversed_select =
 	(newcbox->toggle.select_color == XmREVERSED_GROUND_COLORS);
       if (newcbox->toggle.select_color == XmDEFAULT_SELECT_COLOR)
 	{
@@ -3127,23 +3126,23 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
       GetGC(newcbox);
       flag = TRUE;
     }
-  
+
   if (newcbox->toggle.unselect_color != curcbox->toggle.unselect_color)
     {
       XtReleaseGC ((Widget) curcbox, curcbox->toggle.unselect_GC);
       GetUnselectGC(newcbox);
       flag = TRUE;
     }
-  
-  
+
+
   if ((curcbox->toggle.ind_type != newcbox->toggle.ind_type) &&
       (!XmRepTypeValidValue(XmRID_INDICATOR_TYPE,
 			    newcbox->toggle.ind_type, (Widget) newcbox)))
     {
       newcbox->toggle.ind_type = curcbox->toggle.ind_type;
     }
-  
-  if (curcbox->toggle.set != newcbox->toggle.set) 
+
+  if (curcbox->toggle.set != newcbox->toggle.set)
     {
       if ((newcbox->toggle.toggle_mode == XmTOGGLE_BOOLEAN) &&
 	  (newcbox->toggle.set == XmINDETERMINATE))
@@ -3152,7 +3151,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 	}
       else
 	{
-	  IsOn(newcbox) = newcbox->toggle.set;	
+	  IsOn(newcbox) = newcbox->toggle.set;
 	  if (flag == False && XtIsRealized((Widget)newcbox))
 	    {
 	      if (newcbox->toggle.ind_on)
@@ -3163,7 +3162,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 		}
 	      else
 		{
-		  /* Begin fixing OSF 5946 */ 
+		  /* Begin fixing OSF 5946 */
 		  if (newcbox->primitive.shadow_thickness > 0)
 		    DrawToggleShadow (newcbox);
 		  if (newcbox->toggle.fill_on_select && !Lab_IsPixmap(newcbox))
@@ -3171,20 +3170,20 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 		  if (Lab_IsPixmap(newcbox) || Lab_IsPixmapAndText(newcbox))
 		    {
 		    SetAndDisplayPixmap(newcbox, NULL, NULL);
-		    flag = True; 
+		    flag = True;
 		    }
-		  /* End fixing OSF 5946 */ 
+		  /* End fixing OSF 5946 */
 		}
 	    }
 	}
     }
 
   if ((curcbox->toggle.ind_type != newcbox->toggle.ind_type) ||
-      ( (curcbox->toggle.visible != newcbox->toggle.visible) && (XmUNSET == newcbox->toggle.set)) ) 
+      ( (curcbox->toggle.visible != newcbox->toggle.visible) && (XmUNSET == newcbox->toggle.set)) )
     {
       flag = True;
     }
-  
+
   /* One-of-many forces boolean mode. */
   if (IsOneOfMany(newcbox->toggle.ind_type) &&
       (newcbox->toggle.toggle_mode == XmTOGGLE_INDETERMINATE))
@@ -3203,7 +3202,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
       newcbox->toggle.visual_set = newcbox->toggle.set = XmUNSET;
       flag =  True;
     }
-  
+
   return(flag);
 }
 
@@ -3213,7 +3212,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
  *   This function gets the state of the toggle widget.
  *
  ***************************************************************/
-Boolean 
+Boolean
 XmToggleButtonGetState(
         Widget w )
 {
@@ -3223,7 +3222,7 @@ XmToggleButtonGetState(
 
   if (XmIsGadget(w))
     return XmToggleButtonGadgetGetState(w);
-    
+
   _XmAppLock(app);
   ret_val = tw->toggle.set;
   _XmAppUnlock(app);
@@ -3237,7 +3236,7 @@ XmToggleButtonGetState(
  *   This function sets the state of the toggle widget.
  *
  ****************************************************************/
-void 
+void
 XmToggleButtonSetState(
         Widget w,
 #if NeedWidePrototypes
@@ -3252,7 +3251,7 @@ XmToggleButtonSetState(
   XmMenuSystemTrait menuSTrait;
   XtAppContext app = XtWidgetToApplicationContext(w);
   XmToggleButtonState newstate;
-  
+
   if (XmIsGadget(w)) {
     XmToggleButtonGadgetSetState(w, bnewstate, notify);
     return;
@@ -3288,17 +3287,17 @@ XmToggleButtonSetState(
 	  /* UNDOING this fix ... */
 	  /* CR 8904: Notify value_changed before entry so that state is */
 	  /* 	reported correctly even if the entry callback resets it. */
-	  menuSTrait = (XmMenuSystemTrait) 
+	  menuSTrait = (XmMenuSystemTrait)
 	    XmeTraitGet((XtPointer) XtClass(XtParent(tw)), XmQTmenuSystem);
-	  
+
           if (menuSTrait != NULL)
 	    {
 	      XmToggleButtonCallbackStruct call_value;
-	      
+
 	      call_value.reason = XmCR_VALUE_CHANGED;
 	      call_value.event = NULL;
 	      call_value.set = tw->toggle.set;
-	      
+
 	      menuSTrait->entryCallback(XtParent(tw), (Widget)tw, &call_value);
 	    }
 
@@ -3313,15 +3312,15 @@ XmToggleButtonSetState(
 	}
     }
   _XmAppUnlock(app);
-} 
-  
+}
+
 /****************************************************************
  *
  * XmToggleButtonSetValue
  *   This function sets the state of the toggle widget.
  *
  ****************************************************************/
-Boolean 
+Boolean
 XmToggleButtonSetValue(
         Widget w,
 #if NeedWidePrototypes
@@ -3334,10 +3333,10 @@ XmToggleButtonSetValue(
 {
   XmToggleButtonWidget tw = (XmToggleButtonWidget) w;
   XtAppContext app = XtWidgetToApplicationContext(w);
-  
+
   if (XmIsGadget(w))
     return XmToggleButtonGadgetSetValue(w, newstate, notify);
-  
+
   _XmAppLock(app);
 
   /* Can't set third state if we aren't in three state mode. */
@@ -3346,7 +3345,7 @@ XmToggleButtonSetValue(
     _XmAppUnlock(app);
     return False;
   }
-  
+
   if (tw->toggle.set != newstate)
     {
       tw->toggle.set = tw->toggle.visual_set = newstate;
@@ -3374,10 +3373,10 @@ XmToggleButtonSetValue(
 	      call_value.reason = XmCR_VALUE_CHANGED;
 	      call_value.event = NULL;
 	      call_value.set = tw->toggle.set;
-	      (* xmLabelClassRec.label_class.menuProcs) 
+	      (* xmLabelClassRec.label_class.menuProcs)
 		(XmMENU_CALLBACK, XtParent(tw), FALSE, tw, &call_value);
 	    }
-	  
+
           if ((! tw->label.skipCallback) &&
               (tw->toggle.value_changed_CB))
 	    {
@@ -3390,15 +3389,15 @@ XmToggleButtonSetValue(
 
   _XmAppUnlock(app);
   return True;
-} 
-  
+}
+
 /***********************************************************************
  *
  * XmCreateToggleButton
  *   Creates an instance of a togglebutton and returns the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateToggleButton(
         Widget parent,
         char *name,
@@ -3409,7 +3408,7 @@ XmCreateToggleButton(
 			arglist, argCount);
 }
 
-Widget 
+Widget
 XmVaCreateToggleButton(
         Widget parent,
         char *name,
@@ -3418,22 +3417,22 @@ XmVaCreateToggleButton(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmToggleButtonWidgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmToggleButtonWidgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
+Widget
 XmVaCreateManagedToggleButton(
         Widget parent,
         char *name,
@@ -3442,19 +3441,19 @@ XmVaCreateManagedToggleButton(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmToggleButtonWidgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmToggleButtonWidgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
 
 /*
@@ -3465,16 +3464,16 @@ XmVaCreateManagedToggleButton(
  *	unselected.
  *   No need to call the routine if shadow_thickness is 0.
  */
-static void 
+static void
 DrawToggleShadow(
         XmToggleButtonWidget tb )
-{   
+{
   GC top_gc, bot_gc;
   int width, height;
   int hilite_thickness;
-  
+
   if (tb->toggle.ind_on || (IsOn(tb) == XmUNSET))
-    { 
+    {
       top_gc = tb->primitive.top_shadow_GC;
       bot_gc = tb->primitive.bottom_shadow_GC;
     }
@@ -3482,16 +3481,16 @@ DrawToggleShadow(
     {
       top_gc = bot_gc = tb->toggle.indeterminate_box_GC;
     }
-  else 
-    { 
+  else
+    {
       top_gc = tb->primitive.bottom_shadow_GC;
       bot_gc = tb->primitive.top_shadow_GC;
     }
-  
+
   hilite_thickness = tb->primitive.highlight_thickness;
   width = (int) (tb->core.width - (hilite_thickness << 1));
   height = (int) (tb->core.height - (hilite_thickness << 1));
-  
+
   XmeDrawShadows (XtDisplay (tb), XtWindow (tb), top_gc, bot_gc,
 		  hilite_thickness, hilite_thickness, width, height,
 		  tb->primitive.shadow_thickness, XmSHADOW_OUT);
@@ -3501,9 +3500,9 @@ DrawToggleShadow(
  * DrawToggleLabel (tb)
  *    Called when XmNindicatorOn is FALSE and XmNfillOnSelect is TRUE.
  *    Fill toggle with selectColor or background depending on toggle
- *    value, and draw label. 
+ *    value, and draw label.
  */
-static void 
+static void
 DrawToggleLabel(
         XmToggleButtonWidget tb )
 {
@@ -3515,7 +3514,7 @@ DrawToggleLabel(
   int fh = tb->core.height - 2 * margin;
   Boolean restore_gc = False;
   GC tmp_gc = None, fill_gc;
-  
+
   if (tb->primitive.top_shadow_color == tb->toggle.select_color ||
       tb->primitive.bottom_shadow_color == tb->toggle.select_color)
     {
@@ -3524,7 +3523,7 @@ DrawToggleLabel(
       fw -= 2;
       fh -= 2;
     }
-  
+
   if (fw < 0 || fh < 0)
     return;
 
@@ -3539,12 +3538,12 @@ DrawToggleLabel(
     case XmINDETERMINATE:
       {
 	XGCValues values;
-	
+
 	/* Fetch the select_color GetGC() actually used. */
-	XGetGCValues(XtDisplay(tb), tb->toggle.select_GC, 
+	XGetGCValues(XtDisplay(tb), tb->toggle.select_GC,
 		     GCForeground, &values);
 	values.background = tb->toggle.unselect_color;
-	XChangeGC(XtDisplay((Widget)tb), tb->toggle.indeterminate_GC, 
+	XChangeGC(XtDisplay((Widget)tb), tb->toggle.indeterminate_GC,
 		  GCForeground|GCBackground, &values);
 	fill_gc = tb->toggle.indeterminate_GC;
 	break;
@@ -3555,8 +3554,8 @@ DrawToggleLabel(
     }
 
   XFillRectangle (XtDisplay(tb), XtWindow(tb), fill_gc, fx, fy, fw, fh);
-  
-  
+
+
   if ((tb->primitive.foreground == tb->toggle.select_color) &&
       (IsOn(tb) == XmSET))
     {
@@ -3564,13 +3563,13 @@ DrawToggleLabel(
       tb->label.normal_GC = tb->toggle.background_gc;
       restore_gc = True;
     }
-  
+
   {
 
 	XtExposeProc expose;
 #ifdef FIX_1395
        Pixel tmpc = tb->core.background_pixel; /* Save bg color */
-       
+
        /* Changing label background color if button toggled */
        if (tb->toggle.visual_set == XmSET && !Lab_IsMenupane(tb))
         XSetWindowBackground(XtDisplay(tb), XtWindow(tb), tb->toggle.select_color);
@@ -3585,7 +3584,7 @@ DrawToggleLabel(
 	    XSetWindowBackground(XtDisplay(tb), XtWindow(tb), tmpc);
 #endif
    }
-  
+
   if (restore_gc)
     {
       /* CR 9791: Label's normal_gc has a dynamic clip_mask. */
@@ -3599,9 +3598,9 @@ DrawToggleLabel(
  *    Called when in a Menu and EtchedInMenu is TRUE.
  *    And when XmNindicatorOn is FALSE and XmNfillOnSelect is FALSE;
  *    or when XmNindicatorOn is TRUE.
- *    Fill background with the arm_gc and draw label. 
+ *    Fill background with the arm_gc and draw label.
  */
-static void 
+static void
 DrawEtchedInMenu(
         XmToggleButtonWidget tb )
 {
@@ -3616,7 +3615,7 @@ DrawEtchedInMenu(
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(tb));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
   Pixel select_pix, tmpc;
-  
+
   if (tb->primitive.top_shadow_color == tb->toggle.select_color ||
       tb->primitive.bottom_shadow_color == tb->toggle.select_color)
     {
@@ -3625,19 +3624,19 @@ DrawEtchedInMenu(
       fw -= 2;
       fh -= 2;
     }
-  
+
   if (fw < 0 || fh < 0)
     return;
 
-  XFillRectangle (XtDisplay(tb), XtWindow(tb), 
-		  tb->toggle.Armed ? tb->toggle.arm_GC : 
-		                     tb->toggle.background_gc, 
+  XFillRectangle (XtDisplay(tb), XtWindow(tb),
+		  tb->toggle.Armed ? tb->toggle.arm_GC :
+		                     tb->toggle.background_gc,
 		  fx, fy, fw, fh);
-  
-  if (tb->toggle.Armed) 
+
+  if (tb->toggle.Armed)
     {
 	tmpc = tb->core.background_pixel;
-	
+
 	XmGetColors(XtScreen(tb), tb->core.colormap,
 		    tb->core.background_pixel,
 		    NULL, NULL, NULL, &select_pix);
@@ -3659,7 +3658,7 @@ DrawEtchedInMenu(
 	}
 	else
 	{
-	    XSetWindowBackground(XtDisplay(tb), XtWindow(tb), tb->core.background_pixel); 
+	    XSetWindowBackground(XtDisplay(tb), XtWindow(tb), tb->core.background_pixel);
 	}
 #endif
 	_XmProcessLock();
@@ -3667,7 +3666,7 @@ DrawEtchedInMenu(
 	_XmProcessUnlock();
 	(* expose) ((Widget) tb, NULL, NULL);
    }
-  
+
   if (restore_gc)
     {
       XSetClipMask(XtDisplay(tb), tb->toggle.background_gc, None);
@@ -3691,7 +3690,7 @@ SetToggleSize(
 {
   unsigned int maxW, maxH;
   unsigned int tmpW, tmpH;
-  
+
   maxW = maxH = tmpW = tmpH = 0;
 
   /* We know it's a pixmap so find out how how big it is */
@@ -3701,11 +3700,11 @@ SetToggleSize(
 	{
 	  XmeGetPixmapData(XtScreen(newtb), PixmapOn(newtb),
 			   NULL, NULL, NULL, NULL, NULL, NULL,
-			   &tmpW, &tmpH); 
+			   &tmpW, &tmpH);
 	  ASSIGN_MAX(maxW, tmpW);
 	  ASSIGN_MAX(maxH, tmpH);
 	}
-      
+
       if (!IsNull(PixmapOff(newtb)))
 	{
 	  XmeGetPixmapData(XtScreen(newtb), PixmapOff(newtb),
@@ -3730,16 +3729,16 @@ SetToggleSize(
 	{
 	  XmeGetPixmapData(XtScreen(newtb), PixmapInsenOn(newtb),
 			   NULL, NULL, NULL, NULL, NULL, NULL,
-			   &tmpW, &tmpH); 
+			   &tmpW, &tmpH);
 	  ASSIGN_MAX(maxW, tmpW);
 	  ASSIGN_MAX(maxH, tmpH);
 	}
-      
+
       if (!IsNull(PixmapInsenOff(newtb)))
 	{
 	  XmeGetPixmapData(XtScreen(newtb), PixmapInsenOff(newtb),
 			   NULL, NULL, NULL, NULL, NULL, NULL,
-			   &tmpW, &tmpH); 
+			   &tmpW, &tmpH);
 	  ASSIGN_MAX(maxW, tmpW);
 	  ASSIGN_MAX(maxH, tmpH);
 	}
@@ -3748,7 +3747,7 @@ SetToggleSize(
 	{
 	  XmeGetPixmapData(XtScreen(newtb), PixmapInsenInd(newtb),
 			   NULL, NULL, NULL, NULL, NULL, NULL,
-			   &tmpW, &tmpH); 
+			   &tmpW, &tmpH);
 	  ASSIGN_MAX(maxW, tmpW);
 	  ASSIGN_MAX(maxH, tmpH);
 	}
@@ -3756,7 +3755,7 @@ SetToggleSize(
 
   newtb->label.TextRect.width = (unsigned short) maxW;
   newtb->label.TextRect.height = (unsigned short) maxH;
-  
+
   /* Invoke Label's SetSize procedure. */
   {
       XtWidgetProc resize;
@@ -3774,9 +3773,9 @@ SetToggleSize(
  *	default select color.  This may require examining the
  *	XmNindicatorType and XmNhighlightColor resources, which will
  *	happen to have real values only because they appear before
- *	XmNselectColor in the resource list. 
+ *	XmNselectColor in the resource list.
  */
-static void 
+static void
 DefaultSelectColor(Widget widget,
 		   int offset,
 		   XrmValue *value)
@@ -3816,7 +3815,7 @@ DefaultSelectColor(Widget widget,
  *	replacing XmINDICATOR_FILL and XmINDICATOR_BOX with the proper
  *	absolute values.
  */
-static unsigned char 
+static unsigned char
 NormalizeIndOn(XmToggleButtonWidget tb)
 {
   unsigned char value = tb->toggle.ind_on;
@@ -3845,7 +3844,7 @@ NormalizeIndOn(XmToggleButtonWidget tb)
  * NormalizeIndType - return the normalized value of XmNindicatorType,
  *	replacing XmONE_OF_MANY with the proper absolute value.
  */
-static unsigned char 
+static unsigned char
 NormalizeIndType(XmToggleButtonWidget tb)
 {
   unsigned char value = tb->toggle.ind_type;

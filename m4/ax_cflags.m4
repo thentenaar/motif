@@ -52,6 +52,10 @@ AC_DEFUN([AX_CFLAGS],[
 		AX_APPEND_COMPILE_FLAGS([ dnl
 			-fno-strict-aliasing dnl
 			-Wall dnl
+			-Wshadow dnl
+			-Wwrite-strings dnl
+			-Wcast-align dnl
+			-Wformat-security dnl
 			-Wno-unused dnl
 			-Wno-comment dnl
 			-Wno-unused-result dnl
@@ -65,17 +69,11 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wno-missing-prototypes dnl
 			-Wno-missing-declarations dnl
 			-Wno-nested-externs dnl
-			-Wno-shadow dnl
-			-Wcast-align dnl
-			-Wwrite-strings dnl
 			-Wno-cast-qual dnl
 			-Wno-redundant-decls dnl
 			-Wno-bad-function-cast dnl
 			-Wno-variadic-macros dnl
 		])
-
-		dnl -Wformat-security was included in gcc 3.0.4
-		AX_APPEND_COMPILE_FLAGS([-Wformat-security])
 	])
 
 	AC_SUBST([ax_cc_gcov_command])

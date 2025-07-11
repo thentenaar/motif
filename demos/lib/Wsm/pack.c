@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -76,7 +76,7 @@ static int WinDataSizePacked(Display *, int,
 				     WSMWinInfo *);
    static    MessageData PackWinEntry(Display *, int, MessageData,
 				      WSMWinEntry *);
-   static    MessageData PackWinData(Display *, int, MessageData, 
+   static    MessageData PackWinData(Display *, int, MessageData,
 			       WSMWinData *, int, WSMConfigFormatType);
 /* public */ MessageData PackCARD16(MessageData, CARD16);
 /* public */ MessageData PackCARD8(MessageData, CARD8);
@@ -87,7 +87,7 @@ static int WinDataSizePacked(Display *, int,
  * Routines for unpacking protocol data stream.
  */
 
-static void UnpackWinData(MessageData *, Display *, 
+static void UnpackWinData(MessageData *, Display *,
 			  int, WSMConfigFormatType, WSMWinData **, int *);
 static void UnpackSingleWinDataRec(MessageData *, WSMAttribute *,WSMWinData *);
 static void UnpackWinInfo(MessageData *, Display *, int, WSMWinInfo *);
@@ -116,16 +116,16 @@ static void UnpackWinEntry(MessageData *, Display *, int, WSMWinEntry *);
  * RETURNED        msg_data_len - The length of the message data.
  * RETURNED        error - An error code if something went wrong.
  *	Returns: A pointer to a message data struct.
- * 
+ *
  * NOTE: The message data struct must be freed by the calling routine.
  */
 
-MessageData 
+MessageData
 _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
 		unsigned long *msg_data_len, WSMErrorCode *error)
 {
     MessageData data, save;
-    int i;
+    int i,j;
     long size;
     WSMWinInfo *win_info;
     WSMConfigFormatData *global_attrs, *win_attrs, *icon_attrs;
@@ -138,8 +138,8 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
 
     *error = WSM_SUCCESS;
 
-    if (_WSMRequiresConfigFormat(request->any.type) && 
-	(global_attrs->num_attrs == 0) && 
+    if (_WSMRequiresConfigFormat(request->any.type) &&
+	(global_attrs->num_attrs == 0) &&
 	(win_attrs->num_attrs == 0) && (icon_attrs->num_attrs == 0))
     {
 	*error = WSM_ERROR_NO_CONFIG_FORMAT;
@@ -157,7 +157,7 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
     /* before sending extensions make sure screen_info config format
        is cleared */
     /* may want to remove this and leave it up to application writer */
-    if ((request->any.type == WSM_EXTENSIONS) && 
+    if ((request->any.type == WSM_EXTENSIONS) &&
 	((global_attrs->num_attrs != 0) ||
 	 (win_attrs->num_attrs != 0) || (icon_attrs->num_attrs != 0)))
       {
@@ -230,12 +230,12 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
     switch (request->any.type) {
     case WSM_CONNECT:
 	data = PackListNum(data, request->connect.num_versions);
-	for (i = 0; i < request->connect.num_versions; i++) 
+	for (i = 0; i < request->connect.num_versions; i++)
 	    data = PackCARD8(data, (CARD8) request->connect.known_versions[i]);
 	break;
     case WSM_EXTENSIONS:
 	data = PackListNum(data, request->extensions.num_extensions);
-	for (i = 0; i < request->extensions.num_extensions; i++) 
+	for (i = 0; i < request->extensions.num_extensions; i++)
 	    data=PackString(data,request->extensions.extension_suggestions[i]);
 	break;
     case WSM_CONFIG_FMT:
@@ -261,8 +261,6 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
 	break;
     case WSM_WM_WINDOWS:
 	{
-	  int i, j;
-
 	  data = PackCARD32(data, request->wm_windows.location_flag);
 	  data = PackListNum(data, request->wm_windows.num_window_properties);
 	  for (i=0; i<request->wm_windows.num_window_properties; i++)
@@ -291,7 +289,7 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
     default:
 	break;
     }
-    
+
     *msg_data_len = size;
     return(save);
 } /* _WSMPackRequest */
@@ -304,11 +302,11 @@ _WSMPackRequest(Display *dpy, int screen_num, WSMRequest *request,
  *                 reply - reply to send.
  * RETURNED        msg_data_len - The length of the message data.
  *	Returns: A pointer to a message data struct.
- * 
+ *
  * NOTE: The message data struct must be freed by the calling routine.
  */
 
-MessageData 
+MessageData
 _WSMPackReply(Display *dpy, int screen_num,
 	      WSMReply *reply, unsigned long *msg_data_len)
 {
@@ -343,7 +341,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 	    /*
 	     * len of string + size + is_list.
 	     */
-	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE; 
+	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE;
 	}
 	size += COUNT_SIZE;	/* The count of window attributes. */
 	attr = reply->config_format.window_formats;
@@ -355,7 +353,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 	    /*
 	     * len of string + size + is_list.
 	     */
-	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE; 
+	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE;
 	}
 	size += COUNT_SIZE;	/* The count of icon attributes. */
 	attr = reply->config_format.icon_formats;
@@ -367,7 +365,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 	    /*
 	     * len of string + size + is_list.
 	     */
-	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE; 
+	    size += COUNT_SIZE + sizeof(CARD8) + BOOL_SIZE;
 	}
 	break;
     case WSM_GET_STATE:
@@ -380,7 +378,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 	size = 0;
 	break;
     case WSM_REG_WINDOW:
-	size = WinDataSizePacked(dpy, screen_num, 
+	size = WinDataSizePacked(dpy, screen_num,
 				 reply->register_window.window_data,
 				 reply->register_window.num_window_data,
 				 WSM_WINDOW_FMT);
@@ -419,7 +417,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 	break;
     case WSM_EXTENSIONS:
 	data = PackListNum(data, reply->extensions.num_extensions);
-	for (i = 0; i < reply->extensions.num_extensions; i++) 
+	for (i = 0; i < reply->extensions.num_extensions; i++)
 	    data = PackString(data, reply->extensions.extensions[i]);
 	break;
     case WSM_CONFIG_FMT:
@@ -434,7 +432,7 @@ _WSMPackReply(Display *dpy, int screen_num,
     case WSM_SET_STATE:
 	break;
     case WSM_REG_WINDOW:
-	data = PackWinData(dpy, screen_num, data, 
+	data = PackWinData(dpy, screen_num, data,
 			   reply->register_window.window_data,
 			   reply->register_window.num_window_data,
 			   WSM_WINDOW_FMT);
@@ -461,7 +459,7 @@ _WSMPackReply(Display *dpy, int screen_num,
     default:
 	break;
     }
-    
+
     *msg_data_len = size;
     return(save);
 }/* _WSMPackReply */
@@ -489,7 +487,7 @@ _WSMPackReply(Display *dpy, int screen_num,
 
 /*ARGSUSED*/
 void
-_WSMUnpackRequest(Display *dpy, int screen_num, MessageData data, 
+_WSMUnpackRequest(Display *dpy, int screen_num, MessageData data,
 		  unsigned long len, WSMRequestType type, WSMRequest *request)
 {
     register int i;
@@ -502,7 +500,7 @@ _WSMUnpackRequest(Display *dpy, int screen_num, MessageData data,
 	request->connect.known_versions =
 	    (short *) XtMalloc(sizeof(short) * request->connect.num_versions);
 	request->connect.allocated = True;
-	for (i = 0; i < request->connect.num_versions; i++) 
+	for (i = 0; i < request->connect.num_versions; i++)
 	    request->connect.known_versions[i] = (short) UnpackCARD8(&data);
 	break;
     case WSM_EXTENSIONS:
@@ -514,7 +512,7 @@ _WSMUnpackRequest(Display *dpy, int screen_num, MessageData data,
 	    ptr = (String *) XtMalloc(sizeof(String) * num);
 	    request->extensions.extension_suggestions = ptr;
 	    request->extensions.allocated = True;
-	    for (i = 0; i < num; i++, ptr++) 
+	    for (i = 0; i < num; i++, ptr++)
 		*ptr = UnpackString(&data);
 	}
 	break;
@@ -527,20 +525,20 @@ _WSMUnpackRequest(Display *dpy, int screen_num, MessageData data,
     case WSM_SET_STATE:
         {
 	    int num = UnpackListNum(&data);
-	    
+
 	    request->set_state.num_win_info_list = num;
-	    request->set_state.win_info_list = 
+	    request->set_state.win_info_list =
 		(WSMWinInfo *) XtMalloc(sizeof(WSMWinInfo) * num);
 	    request->extensions.allocated = True;
 
 	    for (i = 0; i < num; i++) {
-		UnpackWinInfo(&data, dpy, screen_num, 
+		UnpackWinInfo(&data, dpy, screen_num,
 			      request->set_state.win_info_list + i);
 	    }
 	}
 	break;
     case WSM_REG_WINDOW:
-	request->register_window.window = UnpackWindow(&data);	
+	request->register_window.window = UnpackWindow(&data);
 	break;
     case WSM_WM_GET_BACKGROUND_WINDOW:
 	request->get_background.screen = (int)UnpackCARD16(&data);
@@ -612,7 +610,7 @@ _WSMUnpackRequest(Display *dpy, int screen_num, MessageData data,
 
 /*ARGSUSED*/
 void
-_WSMUnpackReply(Display *dpy, int screen_num, MessageData data, 
+_WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 		unsigned long len, WSMRequestType type, WSMReply *reply)
 {
     register int i;
@@ -632,7 +630,7 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 	    ptr = (String *) XtMalloc(sizeof(String) * num);
 	    reply->extensions.allocated = True;
 	    reply->extensions.extensions = ptr;
-	    for (i = 0; i < num; i++, ptr++) 
+	    for (i = 0; i < num; i++, ptr++)
 		*ptr = UnpackString(&data);
 	}
 	break;
@@ -643,7 +641,7 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 	    WSMConfigFormatReply * config_format = &(reply->config_format);
 	    WSMConfigFormatData *fmt;
 	    WSMScreenInfo *scr_info = _WSMGetScreenInfo(dpy, screen_num);
-	    
+
 	    config_format->accepts_diffs = UnpackBoolean(&data);
 
 	    for (types = 0; types < 3; types++) {
@@ -660,7 +658,7 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 		}
 
 		fmt->num_attrs = UnpackListNum(&data);
-		fmt->attr_list = (WSMAttribute *) 
+		fmt->attr_list = (WSMAttribute *)
 		    XtMalloc(sizeof(WSMAttribute) * fmt->num_attrs);
 
 		for (i = 0; i < fmt->num_attrs; i++) {
@@ -688,12 +686,12 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
     case WSM_GET_STATE:
 	{
 	    int num =reply->get_state.num_win_info_list = UnpackListNum(&data);
-	    reply->get_state.win_info_list = 
+	    reply->get_state.win_info_list =
 		(WSMWinInfo *) XtMalloc(sizeof(WSMWinInfo) * num);
 	    reply->get_state.allocated = True;
 
-	    for (i = 0; i < num; i++) 
-		UnpackWinInfo(&data, dpy, screen_num, 
+	    for (i = 0; i < num; i++)
+		UnpackWinInfo(&data, dpy, screen_num,
 			      reply->get_state.win_info_list + i);
 	}
 	break;
@@ -716,12 +714,12 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 	  int num;
 
 	  num = reply->wm_windows.num_win_entry_list = UnpackListNum(&data);
-	  reply->wm_windows.win_entry_list = 
+	  reply->wm_windows.win_entry_list =
 	    (WSMWinEntry *) XtMalloc(sizeof(WSMWinEntry) * num);
 	  reply->wm_windows.allocated = True;
 
-	  for (i = 0; i < num; i++) 
-	    UnpackWinEntry(&data, dpy, screen_num, 
+	  for (i = 0; i < num; i++)
+	    UnpackWinEntry(&data, dpy, screen_num,
 			   reply->wm_windows.win_entry_list + i);
 	}
 	break;
@@ -745,17 +743,17 @@ _WSMUnpackReply(Display *dpy, int screen_num, MessageData data,
 /*	Function Name: WinInfoSizePacked
  *	Description: Returns the size this window structure will take
  *                   when packed into a protocol data stream.
- *	Arguments: dpy, screen_num - The display and screen of the client we 
+ *	Arguments: dpy, screen_num - The display and screen of the client we
  *                                   are talking to.
  *                 win_info - The window info whose size me are checking.
  *	Returns: the size (in bytes)
  */
 
-static int 
+static int
 WinInfoSizePacked(Display *dpy, int screen_num, WSMWinInfo *win_info)
 {
     int size = sizeof(CARD32);
-    size += WinDataSizePacked(dpy, screen_num, 
+    size += WinDataSizePacked(dpy, screen_num,
 			      win_info->data_list, win_info->num_data_list,
 			      _WSMGetConfigFormatType(win_info->window));
     return(size);
@@ -764,13 +762,13 @@ WinInfoSizePacked(Display *dpy, int screen_num, WSMWinInfo *win_info)
 /*	Function Name: WinEntrySizePacked
  *	Description: Returns the size this window structure will take
  *                   when packed into a protocol data stream.
- *	Arguments: dpy, screen_num - The display and screen of the client we 
+ *	Arguments: dpy, screen_num - The display and screen of the client we
  *                                   are talking to.
  *                 win_entry - The window entry whose size we are checking.
  *	Returns: the size (in bytes)
  */
 
-static int 
+static int
 WinEntrySizePacked(Display *dpy, int screen_num, WSMWinEntry *win_entry)
 {
     int size;
@@ -794,8 +792,8 @@ WinEntrySizePacked(Display *dpy, int screen_num, WSMWinEntry *win_entry)
  *	Returns: The size.
  */
 
-static int 
-WinDataSizePacked(Display *dpy, int screen_num, 
+static int
+WinDataSizePacked(Display *dpy, int screen_num,
 		  WSMWinData *win_data, int num, WSMConfigFormatType fmt)
 {
     register int i, size;
@@ -845,7 +843,7 @@ PackString(MessageData data, String str)
     register int i, len = strlen(str);
 
     data = PackListNum(data, len);
-    for (i = 0; i < len; i++, str++) 
+    for (i = 0; i < len; i++, str++)
 	data = PackCARD8(data, *str);
 
     return(data);
@@ -859,7 +857,7 @@ PackString(MessageData data, String str)
  *                      data stream.
  */
 
-static MessageData 
+static MessageData
 PackConfigFormat(MessageData data, WSMConfigFormatReply *config)
 {
     data = PackBoolean(data, config->accepts_diffs);
@@ -881,7 +879,7 @@ PackConfigFormat(MessageData data, WSMConfigFormatReply *config)
  *                      data stream.
  */
 
-static MessageData 
+static MessageData
 PackSingleAttribute(MessageData data, WSMAttribute *attr_list, int num)
 {
     register int i;
@@ -906,12 +904,12 @@ PackSingleAttribute(MessageData data, WSMAttribute *attr_list, int num)
  */
 
 static MessageData
-PackWinInfo(Display *dpy, 
+PackWinInfo(Display *dpy,
 	    int screen_num, MessageData data, WSMWinInfo *win_info)
 {
     data = PackWindow(data, win_info->window);
     return(PackWinData(dpy, screen_num, data,
-		       win_info->data_list, win_info->num_data_list, 
+		       win_info->data_list, win_info->num_data_list,
 		       _WSMGetConfigFormatType(win_info->window)));
 }
 
@@ -926,7 +924,7 @@ PackWinInfo(Display *dpy,
  */
 
 static MessageData
-PackWinEntry(Display *dpy, 
+PackWinEntry(Display *dpy,
 	    int screen_num, MessageData data, WSMWinEntry *win_entry)
 {
     int i;
@@ -955,7 +953,7 @@ PackWinEntry(Display *dpy,
  */
 
 static MessageData
-PackWinData(Display *dpy, int screen_num, MessageData data, 
+PackWinData(Display *dpy, int screen_num, MessageData data,
 	    WSMWinData *win_data, int num, WSMConfigFormatType fmt)
 {
     WSMConfigFormatData *conf_fmt = _WSMGetConfigFormat(dpy, screen_num, fmt);
@@ -972,8 +970,8 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
 
 	this_data = _WSMGetMatchingWinData(win_data, num, attr->nameq);
 	if (this_data != NULL) {
-	    if (this_data->type != WSM_VALUE_DATA) 
-		data = PackListNum(data, this_data->data_len); 
+	    if (this_data->type != WSM_VALUE_DATA)
+		data = PackListNum(data, this_data->data_len);
 
 	    switch(this_data->type) {
 	    case WSM_CHAR_LIST_DATA:
@@ -996,7 +994,7 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
 	        {
 		    register int j;
 		    long * ptr = this_data->data.long_ptr;
-		    for (j = 0 ; j < this_data->data_len; j++, ptr++) 
+		    for (j = 0 ; j < this_data->data_len; j++, ptr++)
 			data = PackCARD32(data, (CARD32) *ptr);
 		    break;
 		}
@@ -1010,7 +1008,7 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
 		    break;
 		case 32:
 		    data = PackCARD32(data, (CARD32) this_data->data.value);
-		    break;			
+		    break;
 		}
 		break;
 	    case WSM_NONE:
@@ -1031,7 +1029,7 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
 	 * When we get to the end of a char, move to the next one.
 	 */
 
-	if ((i % 8) == 7)	
+	if ((i % 8) == 7)
 	    mask_pos = ((char *)mask_pos + 1);
     }
 
@@ -1045,7 +1043,7 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
  *	Returns: data - A pointer into the next empty location in the
  *                      data stream.
  */
-    
+
 MessageData
 PackCARD32(MessageData data, CARD32 val)
 {
@@ -1064,7 +1062,7 @@ PackCARD32(MessageData data, CARD32 val)
  *	Returns: data - A pointer into the next empty location in the
  *                      data stream.
  */
-    
+
 MessageData
 PackCARD16(MessageData data, CARD16 val)
 {
@@ -1083,7 +1081,7 @@ PackCARD16(MessageData data, CARD16 val)
  *	Returns: data - A pointer into the next empty location in the
  *                      data stream.
  */
-    
+
 MessageData
 PackCARD8(MessageData data, CARD8 val)
 {
@@ -1097,7 +1095,7 @@ PackCARD8(MessageData data, CARD8 val)
 
 /************************************************************
  *
- *  Internal routines for unpacking the data from the 
+ *  Internal routines for unpacking the data from the
  *  protocol stream.
  *
  ************************************************************/
@@ -1123,7 +1121,7 @@ UnpackWinData(MessageData *data_ptr, Display *dpy, int screen_num,
     unsigned char *bit_mask, *current_mask, check_mask;
     WSMAttribute *attr;
     WSMWinData *ptr;
-    
+
     /*
      * Figure out how many values have been specified so we know how much
      * memory to allocate.
@@ -1135,13 +1133,13 @@ UnpackWinData(MessageData *data_ptr, Display *dpy, int screen_num,
     /*
      * Unpack the bits from the wire.
      */
-    for (i = 0; i < size; i++, current_mask++) 
+    for (i = 0; i < size; i++, current_mask++)
 	*current_mask = UnpackCARD8(data_ptr);
 
     current_mask = bit_mask;
     check_mask = START_CHECK_MASK;
     for (*num = 0, i = 0; i < conf_fmt->num_attrs; i++) {
-	if (*current_mask & check_mask) 
+	if (*current_mask & check_mask)
 	    (*num)++;
 
 	check_mask >>= 1;
@@ -1162,7 +1160,7 @@ UnpackWinData(MessageData *data_ptr, Display *dpy, int screen_num,
     check_mask = START_CHECK_MASK;
     attr = conf_fmt->attr_list;
     for (i = 0; i < conf_fmt->num_attrs; i++, attr++) {
-	if (*current_mask & check_mask) 
+	if (*current_mask & check_mask)
 	    UnpackSingleWinDataRec(data_ptr, attr, ptr++);
 
 	check_mask >>= 1;
@@ -1213,11 +1211,11 @@ UnpackSingleWinDataRec(MessageData *data_ptr,
     case 8:
 	if (attr->is_list) {
 	    char *local;
-	    
+
 	    win_data->type = WSM_CHAR_LIST_DATA;
-	    local = win_data->data.char_ptr = 
+	    local = win_data->data.char_ptr =
 		(char *) XtMalloc(sizeof(char) * win_data->data_len);
-	    for (i = 0; i < win_data->data_len; i++, local++) 
+	    for (i = 0; i < win_data->data_len; i++, local++)
 		*local = UnpackCARD8(data_ptr);
 	}
 	else
@@ -1227,11 +1225,11 @@ UnpackSingleWinDataRec(MessageData *data_ptr,
     case 16:
 	if (attr->is_list) {
 	    short *local;
-	    
+
 	    win_data->type = WSM_SHORT_LIST_DATA;
-	    local = win_data->data.short_ptr = 
+	    local = win_data->data.short_ptr =
 		(short *) XtMalloc(sizeof(short) * win_data->data_len);
-	    for (i = 0; i < win_data->data_len; i++, local++) 
+	    for (i = 0; i < win_data->data_len; i++, local++)
 		*local = UnpackCARD16(data_ptr);
 	}
 	else
@@ -1241,11 +1239,11 @@ UnpackSingleWinDataRec(MessageData *data_ptr,
     case 32:
 	if (attr->is_list) {
 	    long *local;
-	    
+
 	    win_data->type = WSM_LONG_LIST_DATA;
-	    local = win_data->data.long_ptr = 
+	    local = win_data->data.long_ptr =
 		(long *) XtMalloc(sizeof(long) * win_data->data_len);
-	    for (i = 0; i < win_data->data_len; i++, local++) 
+	    for (i = 0; i < win_data->data_len; i++, local++)
 		*local = UnpackCARD32(data_ptr);
 	}
 	else
@@ -1318,7 +1316,7 @@ UnpackString(MessageData *data_ptr)
     register int i;
     int len = UnpackListNum(data_ptr);
     char *str, *top = XtMalloc((len + 1) * sizeof(char));
-    
+
     for (str = top, i = 0; i < len; i++, str++) {
 	*str = (char) UnpackCARD8(data_ptr);
     }

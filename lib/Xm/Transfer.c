@@ -759,8 +759,6 @@ XmeClipboardSource(Widget w, XtEnum op, Time time)
      code. */
   clipboard_owner = XGetSelectionOwner(display, atoms[XmACLIPBOARD_MANAGER]);
   if (clipboard_owner != None) {
-    int status;
-
     if (op == XmMOVE) {
       /* We call a special lose proc for move which will call
 	 _XmConvertHandler to delete the selection */

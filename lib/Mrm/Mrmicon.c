@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -91,7 +91,7 @@ static char rcsid[] = "$XConsortium: Mrmicon.c /main/14 1996/11/13 14:01:43 drk 
  *--
  */
 
-Cardinal 
+Cardinal
 UrmCreatePixmap (RGMIconImagePtr	icon,
 		 Screen			*screen,
 		 Display		*display,
@@ -114,7 +114,7 @@ UrmCreatePixmap (RGMIconImagePtr	icon,
    * Convert the color table colors to pixels.
    */
   ctable = icon->color_table.ctptr;
-  result = 
+  result =
     Urm__RealizeColorTable (screen, display, fgpix, bgpix, ctable, parent);
   if ( result != MrmSUCCESS ) return result;
 
@@ -126,11 +126,11 @@ UrmCreatePixmap (RGMIconImagePtr	icon,
   if (parent) dds = parent->core.depth;
   else dds = DefaultDepthOfScreen(screen) ;
 
-  if (dds == 1) 
+  if (dds == 1)
     maxbits = 1;
-  else if (dds <= 8) 
+  else if (dds <= 8)
     maxbits = 8;
-  else if (dds <= 16) 
+  else if (dds <= 16)
     maxbits = 16;
   else
     maxbits = 32;
@@ -217,7 +217,7 @@ UrmCreatePixmap (RGMIconImagePtr	icon,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmCreateBitmap (RGMIconImagePtr	icon,
 		 Screen			*screen,
 		 Display		*display,
@@ -254,7 +254,7 @@ UrmCreateBitmap (RGMIconImagePtr	icon,
  *
  *	This routine creates and returns an X pixmap from the X bitmap file
  *	name specified.  It uses the foreground and background as needed.
- *	
+ *
  *
  *  FORMAL PARAMETERS:
  *
@@ -278,7 +278,7 @@ UrmCreateBitmap (RGMIconImagePtr	icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_ReadBitmapFile (String			filename,
 			Screen			*screen,
 			Pixel			fgint,
@@ -293,14 +293,14 @@ Urm__CW_ReadBitmapFile (String			filename,
   **  Create a pixmap from a X bitmap file specification
   */
   depth = parent ? parent->core.depth : DefaultDepthOfScreen(screen);
-  
+
   *pixmap = XmGetPixmapByDepth(screen, filename, fgint, bgint, depth);
 
   if (*pixmap == XmUNSPECIFIED_PIXMAP)
     {
       pixmap = 0;
       sprintf (err_msg, _MrmMMsg_0033, filename);
-      return Urm__UT_Error ("UrmReadBitmapFile", err_msg, 
+      return Urm__UT_Error ("UrmReadBitmapFile", err_msg,
 			    NULL, NULL, MrmFAILURE);
     }
 
@@ -339,7 +339,7 @@ Urm__CW_ReadBitmapFile (String			filename,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__MapIconBitmap(RGMIconImagePtr		icon,
 		   int				srcpix,
 		   RGMColorTablePtr		ctable,
@@ -367,7 +367,7 @@ Urm__MapIconBitmap(RGMIconImagePtr		icon,
   GC			gc;
   XGCValues		gcValues;
   int			endian;		/* to determine which endian. */
- 
+
   /*
    * Overwrite the icon data with a bitmap. Use 0 for background, 1 for
    * foreground.
@@ -514,7 +514,7 @@ Urm__MapIconBitmap(RGMIconImagePtr		icon,
   gcValues.fill_style = FillTiled;
   gcValues.tile       = *pixmap;
 
-  gc = XCreateGC (display, 
+  gc = XCreateGC (display,
 		  RootWindowOfScreen (screen),
 		  GCForeground | GCBackground | GCFillStyle | GCTile,
 		  &gcValues);
@@ -525,13 +525,13 @@ Urm__MapIconBitmap(RGMIconImagePtr		icon,
   /*
    * Put bits into the pixmap
    */
-  XPutImage (display, 
-	     *pixmap, 
-	     gc, 
-	     imagep, 
+  XPutImage (display,
+	     *pixmap,
+	     gc,
+	     imagep,
 	     0, 0,				/* source x, y */
 	     0, 0, icon->width, icon->height);	/* dest, loc & size */
- 
+
   XFreeGC (display, gc);
   XFree ((char*)imagep);
 
@@ -571,7 +571,7 @@ Urm__MapIconBitmap(RGMIconImagePtr		icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__MapIconBitmapDepth1 (RGMIconImagePtr	icon,
 			  int			srcpix,
 			  Screen		*screen,
@@ -689,7 +689,7 @@ Urm__MapIconBitmapDepth1 (RGMIconImagePtr	icon,
   gcValues.fill_style = FillTiled;
   gcValues.tile       = *pixmap;
 
-  gc = XCreateGC (display, 
+  gc = XCreateGC (display,
 		  *pixmap,
 		  GCForeground | GCBackground | GCFillStyle | GCTile,
 		  &gcValues);
@@ -701,13 +701,13 @@ Urm__MapIconBitmapDepth1 (RGMIconImagePtr	icon,
   /*
    * Put bits into the pixmap
    */
-  XPutImage (display, 
-	     *pixmap, 
-	     gc, 
-	     imagep, 
+  XPutImage (display,
+	     *pixmap,
+	     gc,
+	     imagep,
 	     0, 0,				/* source x, y */
 	     0, 0, icon->width, icon->height);	/* dest, loc & size */
- 
+
 
   XFreeGC (display, gc);
   XFree ((char *)imagep);
@@ -750,7 +750,7 @@ Urm__MapIconBitmapDepth1 (RGMIconImagePtr	icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__MapIconReplace (RGMIconImagePtr		icon,
 		     int			srcpix,
 		     RGMColorTablePtr		ctable,
@@ -833,7 +833,7 @@ Urm__MapIconReplace (RGMIconImagePtr		icon,
   gcValues.fill_style = FillTiled;
   gcValues.tile       = *pixmap;
 
-  gc = XCreateGC (display, 
+  gc = XCreateGC (display,
 		  RootWindowOfScreen (screen),
 		  GCForeground | GCBackground | GCFillStyle | GCTile,
 		  &gcValues);
@@ -844,10 +844,10 @@ Urm__MapIconReplace (RGMIconImagePtr		icon,
   /*
    * Put bits into the pixmap
    */
-  XPutImage (display, 
-	     *pixmap, 
-	     gc, 
-	     imagep, 
+  XPutImage (display,
+	     *pixmap,
+	     gc,
+	     imagep,
 	     0, 0,				/* source x, y */
 	     0, 0, icon->width, icon->height);	/* dest, loc & size */
 
@@ -894,7 +894,7 @@ Urm__MapIconReplace (RGMIconImagePtr		icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__MapIconAllocate (RGMIconImagePtr		icon,
 		      int			srcpix,
 		      int			dstpix,
@@ -928,7 +928,7 @@ Urm__MapIconAllocate (RGMIconImagePtr		icon,
   int			depth;		/* depth of screen */
 
   /*
-   * Allocate a new pixmap image. 
+   * Allocate a new pixmap image.
    */
   iconwid = icon->width;
   iconhgt = icon->height;
@@ -1008,7 +1008,7 @@ Urm__MapIconAllocate (RGMIconImagePtr		icon,
   gcValues.fill_style = FillTiled;
   gcValues.tile       = *pixmap;
 
-  gc = XCreateGC (display, 
+  gc = XCreateGC (display,
 		  RootWindowOfScreen (screen),
 		  GCForeground | GCBackground | GCFillStyle | GCTile,
 		  &gcValues);
@@ -1022,10 +1022,10 @@ Urm__MapIconAllocate (RGMIconImagePtr		icon,
   /*
    * Put bits into the pixmap
    */
-  XPutImage (display, 
-	     *pixmap, 
-	     gc, 
-	     imagep, 
+  XPutImage (display,
+	     *pixmap,
+	     gc,
+	     imagep,
 	     0, 0,				/* source x, y */
 	     0, 0, iconwid, iconhgt);		/* dest, loc & size */
 
@@ -1076,7 +1076,7 @@ Urm__MapIconAllocate (RGMIconImagePtr		icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__RealizeColorTable (Screen			*screen,
 			Display			*display,
 			Pixel			fgpix,
@@ -1127,7 +1127,7 @@ Urm__RealizeColorTable (Screen			*screen,
 		   ctable->item[URMColorTableBG].color_pixel);
 		if ( result != MrmSUCCESS) {
 		  /* we use PARTIAL_SUCCESS only to indicate
-		     the color allocation failed and we've 
+		     the color allocation failed and we've
 		     substituted the fallback color. We still
 		     want a warning, though */
 		  if (result == MrmPARTIAL_SUCCESS) {
@@ -1150,7 +1150,7 @@ Urm__RealizeColorTable (Screen			*screen,
 		   ctable->item[URMColorTableBG].color_pixel);
 		if ( result != MrmSUCCESS ) {
 		  /* we use PARTIAL_SUCCESS only to indicate
-		     the color allocation failed and we've 
+		     the color allocation failed and we've
 		     substituted the fallback color. We still
 		     want a warning, though */
 		  if (result == MrmPARTIAL_SUCCESS) {
@@ -1170,7 +1170,7 @@ Urm__RealizeColorTable (Screen			*screen,
 		}
 		break;
 	      default:
-		sprintf(err_msg, _MrmMMsg_0040);
+		strcpy(err_msg, _MrmMMsg_0040);
 		return Urm__UT_Error ("Urm__RelizeColorTable",
 				      err_msg, NULL, NULL, MrmFAILURE) ;
 	      }
@@ -1196,13 +1196,13 @@ Urm__RealizeColorTable (Screen			*screen,
 	    case URMColorDescTypeName:
 	      result = Urm__UT_GetNamedColorPixel
 		(display, cmap, citem->color_item.cptr, &citem->color_pixel,
-		 ((citem->color_item.cptr->mono_state == 
-		   URMColorMonochromeForeground) ? 
+		 ((citem->color_item.cptr->mono_state ==
+		   URMColorMonochromeForeground) ?
 		  ctable->item[URMColorTableFG].color_pixel :
 		  ctable->item[URMColorTableBG].color_pixel));
 	      if (result != MrmSUCCESS) {
 		/* we use PARTIAL_SUCCESS only to indicate
-		   the color allocation failed and we've 
+		   the color allocation failed and we've
 		   substituted the fallback color. We still
 		   want a warning, though */
 		if (result == MrmPARTIAL_SUCCESS) {
@@ -1225,7 +1225,7 @@ Urm__RealizeColorTable (Screen			*screen,
 		 ctable->item[URMColorTableBG].color_pixel);
 	      if (result != MrmSUCCESS) {
 		/* we use PARTIAL_SUCCESS only to indicate
-		   the color allocation failed and we've 
+		   the color allocation failed and we've
 		   substituted the fallback color. We still
 		   want a warning, though */
 		if (result == MrmPARTIAL_SUCCESS) {
@@ -1246,7 +1246,7 @@ Urm__RealizeColorTable (Screen			*screen,
 	      break;
 	    default:
 	      result = MrmFAILURE;
-	      sprintf (err_msg, _MrmMMsg_0040);
+	      strcpy(err_msg, _MrmMMsg_0040);
 	      Urm__UT_Error ("Urm__RelizeColorTable",
 			     err_msg, NULL, NULL, MrmFAILURE) ;
 	    }
@@ -1298,7 +1298,7 @@ Urm__RealizeColorTable (Screen			*screen,
  */
 
 
-RGMIconImagePtr 
+RGMIconImagePtr
 UrmCopyAllocatedIconImage (RGMIconImagePtr	dst_icon,
 			   RGMIconImagePtr	src_icon)
 {
@@ -1363,7 +1363,7 @@ UrmCopyAllocatedIconImage (RGMIconImagePtr	dst_icon,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__UT_GetNamedColorPixel (Display		*display,
 			    Colormap		cmap,
 			    RGMColorDescPtr	colorptr,
@@ -1403,8 +1403,8 @@ Urm__UT_GetNamedColorPixel (Display		*display,
     (display, cmap, colorptr->desc.name, &screen_def, &exact_def);
 
   if ( status == 0) {
-    if (fallback) { 
-      *pixel_return = fallback; 
+    if (fallback) {
+      *pixel_return = fallback;
       return MrmPARTIAL_SUCCESS;
     }
     else
@@ -1452,7 +1452,7 @@ Urm__UT_GetNamedColorPixel (Display		*display,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__UT_GetColorPixel (Display			*display,
 		       Colormap			cmap,
 		       RGMColorDescPtr		colorptr,
@@ -1476,7 +1476,7 @@ Urm__UT_GetColorPixel (Display			*display,
 
   if ( status == 0) {
     if (fallback) {
-      *pixel_return = fallback; 
+      *pixel_return = fallback;
       return MrmPARTIAL_SUCCESS;
     } else
       return MrmFAILURE;
@@ -1512,7 +1512,7 @@ Urm__UT_GetColorPixel (Display			*display,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmIconImageSize (RGMIconImagePtr	icon)
 {
 
@@ -1558,7 +1558,7 @@ UrmIconImageSize (RGMIconImagePtr	icon)
  */
 
 /*ARGSUSED*/
-Cardinal 
+Cardinal
 UrmColorTableSize (RGMColorTablePtr	ctable)	/* unused */
 {
 

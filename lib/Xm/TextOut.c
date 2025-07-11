@@ -1880,7 +1880,7 @@ TextFindNewHeight(XmTextWidget tw,
   OutputData data = tw->text.output->data;
   XmTextPosition first_position, start;
   LineTableExtra extra;
-
+  LineNum l;
   Dimension newheight = 0;
 
   if(XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -1914,8 +1914,6 @@ TextFindNewHeight(XmTextWidget tw,
       text_height += data->bottommargin;
       if (text_height > newheight) newheight = text_height;
     } else {
-      LineNum l;
-      LineTableExtra extra;
 
       for (l = 0; l < data->number_lines; l++) {
 	_XmTextLineInfo(tw, l, &start, &extra);
@@ -1924,7 +1922,6 @@ TextFindNewHeight(XmTextWidget tw,
     }
     *heightRtn = newheight;
   } else {
-
   *heightRtn = tw->text.total_lines * data->lineheight +
     data->topmargin + data->bottommargin;
 
@@ -1940,7 +1937,6 @@ TextFindNewHeight(XmTextWidget tw,
     }
   }
   }
-
 }
 
 

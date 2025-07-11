@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.3
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -68,11 +68,11 @@ static Bool ProcessEvents(Display *dpy, XEvent *Event, char *c_pCD);
  *  Inputs:
  *  -------
  *  pSD = ptr to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD = (workspaceColormap)
- * 
+ *
  *************************************<->***********************************/
 
 void InitWorkspaceColormap (WmScreenData *pSD)
@@ -108,7 +108,7 @@ void InitWorkspaceColormap (WmScreenData *pSD)
  *  Outputs:
  *  -------
  *  *pSD = (colormapFocus)
- * 
+ *
  *************************************<->***********************************/
 
 void InitColormapFocus (WmScreenData *pSD)
@@ -469,7 +469,7 @@ void RemoveColormapWindowReference (ClientData *pCD, Window window)
     Boolean     context_exists;
     int         i;
     int         reference_idx = -1;
-    ClientData  **new_cmap_window_data;
+    ClientData  **new_cmap_window_data = NULL;
 
     context_exists = (!XFindContext (DISPLAY, window,
                         wmGD.cmapWindowContextType,
@@ -572,7 +572,7 @@ ProcessColormapList (WmScreenData *pSD, ClientData *pCD)
     /*
      * If window is iconified, return.
      */
-	if (   (pCD->clientState != NORMAL_STATE) 
+	if (   (pCD->clientState != NORMAL_STATE)
 	    && (pCD->clientState != MAXIMIZED_STATE)
 	   ) return;
 
@@ -605,7 +605,7 @@ ProcessColormapList (WmScreenData *pSD, ClientData *pCD)
 				WmInstallColormap (pSD, pCD->clientCmapList[i]);
 			   }
 		};
-	
+
 	    /* Do the part from the end of the list to the index */
 		for (i=pCD->clientCmapCount; --i>= pCD->clientCmapIndex; ) {
 			if (pCD->clientCmapFlags[i] == ColormapInstalled) {

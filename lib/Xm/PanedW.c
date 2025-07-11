@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: PanedW.c /main/24 1999/07/13 07:46:01 mgreess $"
@@ -62,7 +62,7 @@ typedef enum {FirstPane='U', LastPane='L'} Direction;
 #define Horizontal(pw) ((pw)->paned_window.orientation == XmHORIZONTAL)
 
 
-/* since we cannot change the instance record field name, for binary 
+/* since we cannot change the instance record field name, for binary
    compatibility,  we have to macro those as well */
 #define PaneDMajor(w)	(PaneInfo(w)->panedw.dheight)
 #define PaneDPos(w)	(PaneInfo(w)->panedw.dy)
@@ -105,7 +105,7 @@ typedef enum {FirstPane='U', LastPane='L'} Direction;
 /*****************************************************************/
 
 
-  
+
 #define XmBLOCK	10  /* used for the list of managed children */
 
 #define DEFAULT_SASH_INDENT_LTOR       -10
@@ -119,11 +119,11 @@ enum { _UP, _DOWN, _RIGHT, _LEFT, _FIRST, _LAST };
 
 /********    Static Function Declarations    ********/
 
-static void ReManageChildren( 
+static void ReManageChildren(
                         XmPanedWindowWidget pw) ;
-static int NeedsAdjusting( 
+static int NeedsAdjusting(
                         register XmPanedWindowWidget pw) ;
-static XtGeometryResult AdjustPanedWindowMajor( 
+static XtGeometryResult AdjustPanedWindowMajor(
                         XmPanedWindowWidget pw,
 #if NeedWidePrototypes
                         int newdim,
@@ -131,9 +131,9 @@ static XtGeometryResult AdjustPanedWindowMajor(
                         Dimension newdim,
 #endif /* NeedWidePrototypes */
                         Dimension *reply_dim) ;
-static void ResetDMajors( 
+static void ResetDMajors(
                         XmPanedWindowWidget pw) ;
-static void RefigureLocations( 
+static void RefigureLocations(
                         register XmPanedWindowWidget pw,
                         int c_index,
                         Direction dir,
@@ -144,10 +144,10 @@ static void RefigureLocations(
                         Boolean rflag,
                         Boolean sflag) ;
 #endif /* NeedWidePrototypes */
-static void CommitNewLocations( 
+static void CommitNewLocations(
                         XmPanedWindowWidget pw,
                         Widget instigator) ;
-static void RefigureLocationsAndCommit( 
+static void RefigureLocationsAndCommit(
                         XmPanedWindowWidget pw,
                         int c_index,
                         Direction dir,
@@ -156,67 +156,67 @@ static void RefigureLocationsAndCommit(
 #else
                         Boolean rflag) ;
 #endif /* NeedWidePrototypes */
-static void DrawTrackLines( 
+static void DrawTrackLines(
                         XmPanedWindowWidget pw) ;
-static void EraseTrackLines( 
+static void EraseTrackLines(
                         XmPanedWindowWidget pw) ;
-static void ProcessKeyEvent( 
+static void ProcessKeyEvent(
                         XtPointer client_data,
                         XtIntervalId *id) ;
-static void HandleSash( 
+static void HandleSash(
                         Widget w,
                         XtPointer closure,
                         XtPointer callData) ;
-static XtGeometryResult GeometryManager( 
+static XtGeometryResult GeometryManager(
                         Widget w,
                         XtWidgetGeometry *request,
                         XtWidgetGeometry *reply) ;
 static void SashIndentDefault(Widget widget,
 			      int offset,
 			      XrmValue *value );
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void Initialize( 
+static void Initialize(
                         Widget request,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void ConstraintInit( 
+static void ConstraintInit(
                         Widget request,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Realize( 
+static void Realize(
                         Widget w,
                         XtValueMask *p_valueMask,
                         XSetWindowAttributes *attributes) ;
-static void Destroy( 
+static void Destroy(
                         Widget w) ;
-static Cardinal InsertOrder( 
+static Cardinal InsertOrder(
                         Widget w) ;
-static void InsertChild( 
+static void InsertChild(
                         register Widget w) ;
-static void ChangeManaged( 
+static void ChangeManaged(
                         Widget w) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean PaneSetValues( 
+static Boolean PaneSetValues(
                         Widget old,
                         Widget request,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void ConstraintDestroy( 
+static void ConstraintDestroy(
                         Widget w) ;
-static void AdjustGC( 
+static void AdjustGC(
                         XmPanedWindowWidget pw) ;
-static void GetFlipGC( 
+static void GetFlipGC(
                         XmPanedWindowWidget pw) ;
 
 /********    End Static Function Declarations    ********/
@@ -265,8 +265,8 @@ static XtResource resources[] = {
        XtOffsetOf(XmPanedWindowRec, composite.insert_position),
        XtRImmediate, (XtPointer) InsertOrder},
 
-    {XmNorientation, XmCOrientation, XmROrientation, 
-       sizeof(unsigned char),  Offset(orientation), 
+    {XmNorientation, XmCOrientation, XmROrientation,
+       sizeof(unsigned char),  Offset(orientation),
        XmRImmediate, (XtPointer) XmVERTICAL
     },
 };
@@ -275,7 +275,7 @@ static XtResource resources[] = {
 
 static XmSyntheticResource get_resources[] =
 {
-   { XmNmarginWidth, 
+   { XmNmarginWidth,
      sizeof(Dimension),
      Offset(margin_width),
      XmeFromHorizontalPixels,
@@ -441,7 +441,7 @@ externaldef(xmpanedwindowclassrec) XmPanedWindowClassRec xmPanedWindowClassRec =
       ConstraintDestroy,			/* destroy                 */
       PaneSetValues,				/* set_values              */
       NULL,					/* extension               */
-  }, 
+  },
 
   {						/* manager_class fields   */
       XtInheritTranslations,	 		/* translations      	  */
@@ -451,7 +451,7 @@ externaldef(xmpanedwindowclassrec) XmPanedWindowClassRec xmPanedWindowClassRec =
       XtNumber(get_constraint_resources),	/* num_get_cont_resources */
       XmInheritParentProcess,                   /* parent_process         */
       NULL, 					/* extension              */
-  }, 
+  },
 
   {						/* paned_window_class fields */
       NULL, 					/* extension                 */
@@ -468,7 +468,7 @@ externaldef(xmpanedwindowwidgetclass) WidgetClass xmPanedWindowWidgetClass =
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 SashIndentDefault(Widget widget,
 		  int offset,	/* unused */
 		  XrmValue *value )
@@ -490,7 +490,7 @@ SashIndentDefault(Widget widget,
  *     Set up the fast subclassing for the widget.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -506,7 +506,7 @@ ClassPartInitialize(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 Initialize(
         Widget request,
         Widget new_w,
@@ -532,19 +532,19 @@ Initialize(
 /*************************************************************
  * NOTE: that sash_indent is made to conform to a correct size
  * during changed managed time/layout time.  Since the size of
- * the window may change we won't require that 
+ * the window may change we won't require that
  * abs(sash_indent) <= width of a pane.
  ************************************************************/
 
   pw -> paned_window.recursively_called = FALSE;
 
   /* DON'T ALLOW HEIGHT/WIDTH TO BE 0, OR X DOESN'T HANDLE THIS WELL */
- 
+
   if (pw->core.width == 0) pw->core.width = 10;
   if (pw->core.height == 0) pw->core.height = 10;
 
   /* Check orientation value */
-  if(!XmRepTypeValidValue(XmRID_ORIENTATION, 
+  if(!XmRepTypeValidValue(XmRID_ORIENTATION,
 			  pw->paned_window.orientation, (Widget) pw)) {
       pw->paned_window.orientation = XmVERTICAL;
   }
@@ -562,7 +562,7 @@ Initialize(
  *
  *
  *************************************<->***********************************/
-static void 
+static void
 Realize(
         Widget w,
         XtValueMask *p_valueMask,
@@ -584,7 +584,7 @@ Realize(
     GetFlipGC(pw);
 
     /* one last time, in case we grew to try to return an
-     * XtGeometryAlmost for a child, but the child decided not to grow 
+     * XtGeometryAlmost for a child, but the child decided not to grow
      * or in case some child grew itself and we didn't hear about it.
      */
     if (pw->paned_window.resize_at_realize) {
@@ -618,7 +618,7 @@ Realize(
  *  Destroy
  *
  *************************************<->***********************************/
-static void 
+static void
 Destroy(
         Widget w )
 {
@@ -642,12 +642,12 @@ Destroy(
  *  Resize
  *
  *************************************<->***********************************/
-static void 
+static void
 Resize(
         Widget wid )
 {
     XmPanedWindowWidget pw = (XmPanedWindowWidget) wid ;
-    RefigureLocationsAndCommit( pw, pw->paned_window.pane_count - 1, 
+    RefigureLocationsAndCommit( pw, pw->paned_window.pane_count - 1,
 			       LastPane, True);
 } /* Resize */
 
@@ -663,13 +663,13 @@ Resize(
  *
  *
  *************************************<->***********************************/
-static void 
+static void
 ConstraintDestroy(
         Widget w )
 {
    if (!XtIsRectObj(w)) return;
 
-   /* 
+   /*
     * If this is an ordinary pane,  delete its sash (if it has one)
     * and separator (if it has one) and then invoke the standard
     * inherited delete child routines.
@@ -684,17 +684,17 @@ ConstraintDestroy(
 
  	/* the destroyed child has already been removed from the list of
  	** children, so update the other panes so that their positions match
- 	** their positionIndex values (no need to be clever and update only 
+ 	** their positionIndex values (no need to be clever and update only
  	** those that change)
  	*/
  	{
  	XmPanedWindowWidget pw = (XmPanedWindowWidget)w->core.parent;
 	if (!(pw->core.being_destroyed))
- 	  { 	
+ 	  {
 	      int i;
-	      for (i = 0; 
-		   (i < pw->composite.num_children) 
-		       && IsPane(pw->composite.children[i]); 
+	      for (i = 0;
+		   (i < pw->composite.num_children)
+		       && IsPane(pw->composite.children[i]);
 		   i++)
 		  PanePosIndex(pw->composite.children[i]) = i;
 	  }
@@ -715,7 +715,7 @@ ConstraintDestroy(
  *   top of the sashes.
  *
  *************************************<->***********************************/
-static void 
+static void
 AdjustGC(
         XmPanedWindowWidget pw )
 {
@@ -748,7 +748,7 @@ AdjustGC(
 
     	/* remove the sash regions from the clip region */
     	XSubtractRegion(clip_region, sash_region, clip_region);
-	
+
     	/* set the clip region, so the track
 	   lines won't be draw on the sashes */
     	XSetRegion(XtDisplay(pw), pw->paned_window.flipgc, clip_region);
@@ -771,7 +771,7 @@ AdjustGC(
  *   the size of the panes is being changed.
  *
  *************************************<->***********************************/
-static void 
+static void
 GetFlipGC(
         XmPanedWindowWidget pw )
 {
@@ -790,12 +790,12 @@ GetFlipGC(
 /**********************************************************************
  *
  *  ReManageChildren
- *	This procedure will be called by the ChangeManged procedure 
- *	It will reassemble the currently managed children into the 
+ *	This procedure will be called by the ChangeManged procedure
+ *	It will reassemble the currently managed children into the
  *      "paned_window.managed_children" list.
  *  One day I think I'm gonna remove this stuff... dd
  ********************************************************************/
-static void 
+static void
 ReManageChildren(
         XmPanedWindowWidget pw )
 {
@@ -831,7 +831,7 @@ ReManageChildren(
  *     Calculate the major size needed to fully display this paned window.
  *
  *************************************<->***********************************/
-static int 
+static int
 NeedsAdjusting(
         register XmPanedWindowWidget pw )
 {
@@ -865,7 +865,7 @@ NeedsAdjusting(
  *     If the requested new dim is less than 1, then ask for size of 1.
  *
  *************************************<->***********************************/
-static XtGeometryResult 
+static XtGeometryResult
 AdjustPanedWindowMajor(
         XmPanedWindowWidget pw,
 #if NeedWidePrototypes
@@ -879,7 +879,7 @@ AdjustPanedWindowMajor(
     XtGeometryResult result = XtGeometryNo;
 
     if (newdim < 1) newdim = 1;
-    switch (XtMakeResizeRequest((Widget)pw, 
+    switch (XtMakeResizeRequest((Widget)pw,
 				Major(pw, newdim, pw->core.width),
 				Major(pw, pw->core.height, newdim),
  			        &replyWidth, &replyHeight))
@@ -915,14 +915,14 @@ AdjustPanedWindowMajor(
  *     pane.
  *
  *************************************<->***********************************/
-static void 
+static void
 ResetDMajors(
         XmPanedWindowWidget pw )
 {
     Widget *childP;
     int i;
 
-    for (i=0, childP = pw->paned_window.managed_children; 
+    for (i=0, childP = pw->paned_window.managed_children;
           i < pw->paned_window.pane_count;  childP++, i++)
              PaneDMajor(*childP) = MajorChildSize(pw, *childP);
 }
@@ -939,7 +939,7 @@ ResetDMajors(
  *   pane as well as honoring the direction to do the refiguring.
  *
  *************************************<->***********************************/
-static void 
+static void
 RefigureLocations(
         register XmPanedWindowWidget pw,
         int c_index,
@@ -969,12 +969,12 @@ RefigureLocations(
     spacing = pw->paned_window.spacing;
 
    /*
-    * ENFORCE THE MIN/MAX CONSTRAINTS; ALSO KEEP TRACK OF THE 
-    * TOTAL SIZE NEEDED TO DISPLAY VPANED WINDOW BASED ON 
+    * ENFORCE THE MIN/MAX CONSTRAINTS; ALSO KEEP TRACK OF THE
+    * TOTAL SIZE NEEDED TO DISPLAY VPANED WINDOW BASED ON
     * DESIRED SIZES OF PANES.
     */
    sizeused = 0;
-   for (childP = children, i = 0; i < num_panes; childP++, i++) 
+   for (childP = children, i = 0; i < num_panes; childP++, i++)
      {
        pane = &(PaneInfo(*childP)->panedw);
 
@@ -1029,18 +1029,18 @@ RefigureLocations(
                              2 * (*childP)->core.border_width;
     		}
     		pos += MajorMargin(pw) - spacing;
-                /* if not resizing, make sure the sum of the pane 
+                /* if not resizing, make sure the sum of the pane
                    heights are not greater than the vpane height */
                 if (!rflag){
                    if (pos > MajorSize(pw)) {
                        childP = children + c_index;
                        pane = &(PaneInfo(*childP)->panedw);
                        if (PaneDMajor(*childP) > (pos - MajorSize(pw)))
-                         PaneDMajor(*childP) = (PaneDMajor(*childP) - 
-                                               (pos - MajorSize(pw))); 
+                         PaneDMajor(*childP) = (PaneDMajor(*childP) -
+                                               (pos - MajorSize(pw)));
                        else
                          PaneDMajor(*childP) = 1;
-                        
+
                    } else {
                        return;
                    }
@@ -1073,7 +1073,7 @@ RefigureLocations(
  *    pane, and prevents the sash from disappearing from the screen.
  *
  *************************************<->***********************************/
-static void 
+static void
 CommitNewLocations(
         XmPanedWindowWidget pw,
 	Widget instigator)
@@ -1102,7 +1102,7 @@ CommitNewLocations(
 	     if (tmp <= 0) tmp = 1;
 
 	     if (*childP != instigator) {
-		 XmeConfigureObject(*childP, 
+		 XmeConfigureObject(*childP,
 				    Major(pw, PaneDPos(*childP), offset),
 				    Major(pw, offset, PaneDPos(*childP)),
 				    Major(pw, PaneDMajor(*childP), tmp),
@@ -1111,13 +1111,13 @@ CommitNewLocations(
 	     }
 	     if (separator)
 	     {
-		 sepPos = MajorChildPos(pw, *childP) + MajorChildSize(pw, *childP) + 
+		 sepPos = MajorChildPos(pw, *childP) + MajorChildSize(pw, *childP) +
 		   2 * (*childP)->core.border_width +
 		     pw->paned_window.spacing/2 - MajorChildSize(pw, separator)/2 -
 		       separator->core.border_width;
 
-		 XmeConfigureObject(separator, 
-				    Major(pw, sepPos, separator->core.x), 
+		 XmeConfigureObject(separator,
+				    Major(pw, sepPos, separator->core.x),
 				    Major(pw, separator->core.y,  sepPos),
 				    Major(pw, separator->core.width, pw->core.width),
 				    Major(pw, pw->core.height, separator->core.height),
@@ -1133,13 +1133,13 @@ CommitNewLocations(
 
 
             /* PREVENT SASH FROM DISAPPEARING FROM SCREEN */
-           if ((minor_dim > (MinorSize(pw) - MinorChildSize(pw, sash))) || 
+           if ((minor_dim > (MinorSize(pw) - MinorChildSize(pw, sash))) ||
               (minor_dim < 0))
                 minor_dim = 0;
-   
-           major_dim = MajorChildPos(pw, *childP) + MajorChildSize(pw, *childP) + 
+
+           major_dim = MajorChildPos(pw, *childP) + MajorChildSize(pw, *childP) +
                        2 * (*childP)->core.border_width +
-                       pw->paned_window.spacing/2 - MajorChildSize(pw, sash)/2 - 
+                       pw->paned_window.spacing/2 - MajorChildSize(pw, sash)/2 -
 		       sash->core.border_width;
 
 	   /* This should match XmeConfigureObject, except that we're
@@ -1156,11 +1156,11 @@ CommitNewLocations(
 		int tmp = MinorSize(pw) - 2*(pw->core.border_width +
 					   MinorMargin(pw)) ;
 		if (tmp <= 0) tmp = 1;
-		XmeConfigureObject( *childP, 
+		XmeConfigureObject( *childP,
 				   Major(pw, PaneDPos(*childP), offset),
 				   Major(pw, offset, PaneDPos(*childP)),
-				   Major(pw, PaneDMajor(*childP), tmp), 
-				   Major(pw, tmp, PaneDMajor(*childP)), 
+				   Major(pw, PaneDMajor(*childP), tmp),
+				   Major(pw, tmp, PaneDMajor(*childP)),
 				   (*childP)->core.border_width);
 	   }
          }
@@ -1170,15 +1170,15 @@ CommitNewLocations(
 
 /*************************************<->*************************************
  *
- *  RefigureLocationsAndCommit 
+ *  RefigureLocationsAndCommit
  *
  *   Description:
  *   -----------
- *    A utility call that does the call to calculate the pane layout 
+ *    A utility call that does the call to calculate the pane layout
  *    and then move the panes to their new locations.
  *
  *************************************<->***********************************/
-static void 
+static void
 RefigureLocationsAndCommit(
         XmPanedWindowWidget pw,
         int c_index,
@@ -1204,12 +1204,12 @@ RefigureLocationsAndCommit(
  *   -----------
  *     Erase any old track lines (point are kept in the pane's constraint
  *     record--olddPos field) and then draw new track lines across the top
- *     of all panes (except the first).  These lines will be interactively 
- *     moved (by other routines) to respond to the user's request to resize 
+ *     of all panes (except the first).  These lines will be interactively
+ *     moved (by other routines) to respond to the user's request to resize
  *     panes within the VPane Manager.
  *
  *************************************<->***********************************/
-static void 
+static void
 DrawTrackLines(
         XmPanedWindowWidget pw )
 {
@@ -1228,15 +1228,15 @@ DrawTrackLines(
 	if (PaneOldDPos(*childP) != PaneDPos(*childP)) {
 	    offset =  PaneOldDPos(*childP) - (pw->paned_window.spacing +
                       sep_size) / 2;
-            XDrawLine(XtDisplay(pw), XtWindow(pw), pw->paned_window.flipgc, 
-		      Major(pw, offset, 0), 
+            XDrawLine(XtDisplay(pw), XtWindow(pw), pw->paned_window.flipgc,
+		      Major(pw, offset, 0),
 		      Major(pw, 0, offset),
 		      Major(pw, offset, pw->core.width),
 		      Major(pw, pw->core.height, offset));
 	    offset = PaneDPos(*childP) - (pw->paned_window.spacing +
                       sep_size) / 2;
             XDrawLine(XtDisplay(pw), XtWindow(pw), pw->paned_window.flipgc,
-		      Major(pw, offset, 0), 
+		      Major(pw, offset, 0),
 		      Major(pw, 0, offset),
 		      Major(pw, offset, pw->core.width),
 		      Major(pw, pw->core.height, offset));
@@ -1256,7 +1256,7 @@ DrawTrackLines(
  *   lines before drawing new ones).
  *
  *************************************<->***********************************/
-static void 
+static void
 EraseTrackLines(
         XmPanedWindowWidget pw )
 {
@@ -1272,7 +1272,7 @@ EraseTrackLines(
         sep_size = pane->separator ? MajorChildSize(pw, pane->separator): 2;
 	offset = PaneOldDPos(*childP) - (pw->paned_window.spacing +
                   sep_size) / 2;
-	XDrawLine(XtDisplay(pw), XtWindow(pw), pw->paned_window.flipgc, 
+	XDrawLine(XtDisplay(pw), XtWindow(pw), pw->paned_window.flipgc,
 		  Major(pw, offset, 0), Major(pw, 0, offset),
 		  Major(pw, offset, pw->core.width),
 		  Major(pw, pw->core.height, offset));
@@ -1288,11 +1288,11 @@ EraseTrackLines(
  *   -----------
  *    This function processes a batch of key pressed events
  *    so that a sash movement action via the keyboard doesn't
- *    get too far behind the key event actions. 
+ *    get too far behind the key event actions.
  *
  *************************************<->***********************************/
 /* ARGSUSED */
-static void 
+static void
 ProcessKeyEvent(
         XtPointer client_data,
         XtIntervalId *id )
@@ -1368,9 +1368,9 @@ ProcessKeyEvent(
  *
  *   Description:
  *   -----------
- *    Selection Events on the sashes invoke this routine through 
+ *    Selection Events on the sashes invoke this routine through
  *    callbacks.  An adjustment of the size of the panes always involves
- *    2 panes (one to shrink and one to grow) if the type of sash grab is 
+ *    2 panes (one to shrink and one to grow) if the type of sash grab is
  *    "This Window Only" then both a top and bottom pane are selected (these
  *    are the panes which will be adjusted); if the grab type is "Upper Pane"
  *    then only a "top" pane is chosen and the correct "bottom"
@@ -1380,7 +1380,7 @@ ProcessKeyEvent(
  *
  *************************************<->***********************************/
 /* ARGSUSED */
-static void 
+static void
 HandleSash(
         Widget w,
         XtPointer closure,
@@ -1395,13 +1395,13 @@ HandleSash(
     int diff, pos, action_param, increment_param, direction_param;
     Widget *childP;
     XmPanedWindowConstraintPart * pane;
-    
+
     if (call_data->num_params == 0)
     {
         XmeWarning( (Widget) pw, MESSAGE8);
         return;
     }
-    
+
     _XmConvertActionParamToRepTypeId((Widget) pw,
 				     XmRID_PANED_WINDOW_SASH_ACTION_PARAMS,
 				     call_data->params[0],
@@ -1414,17 +1414,17 @@ HandleSash(
 	pos = Major(pw, call_data->event->xbutton.x_root,
 		    call_data->event->xbutton.y_root);
 	break;
-	
+
       case KeyRelease:
 	return;
-	
+
       case KeyPress:
 	if (call_data->num_params < 3)
 	{
 	    XmeWarning( (Widget) pw, MESSAGE8);
 	    return;
 	}
-	
+
 	/* Verify that we have a KEY action */
 	if (action_param == _KEY)
 	{
@@ -1438,7 +1438,7 @@ HandleSash(
 			     call_data->params[2],
 			     False, &direction_param) == False))
 	      return;
-	    
+
 	    /* Have to track Up or Left */
 	    if (direction_param == _UP || direction_param == _LEFT)
 	    {
@@ -1465,50 +1465,50 @@ HandleSash(
 	    else pw->paned_window.increment_count += increment;
 	}
 	return;
-	
+
       case MotionNotify:
 	pos = Major(pw, call_data->event->xmotion.x_root,
 		    call_data->event->xmotion.y_root);
 	break;
-	
+
       default:
 	pos = PaneStartPos(pw);
     }
-    
+
     switch (action_param)
     {
       case _START:	/* Start adjustment */
 	PaneFirst(pw) = PaneLast(pw) = NULL;
-	
+
 	/* NOTE THAT w IS A SASH, TO GET POSITION WE HAVE
 	   TO GET INDEX OF PANE ASSOCIATED WITH THIS SASH */
 	c_index = PaneIndex(PaneInfo(w)->panedw.sash);
 	if (c_index < (num_panes-1)) c_index++;
-	
+
 	pane = &(PaneInfo(children[c_index])->panedw);
 	while (pane->max == pane->min && c_index < num_panes - 1)
 	  pane = &(PaneInfo(children[++c_index])->panedw);
 	PaneLast(pw) = PaneInfo(children[c_index]);
-	
+
 	/* NOTE THAT w IS A SASH, TO GET POSITION WE HAVE
 	   TO GET INDEX OF PANE ASSOCIATED WITH THIS SASH */
 	c_index = PaneIndex(PaneInfo(w)->panedw.sash);
-	
+
 	pane = &(PaneInfo(children[c_index])->panedw);
 	while (pane->max == pane->min && c_index > 0)
 	  pane = &(PaneInfo(children[--c_index])->panedw);
 	PaneFirst(pw) = PaneInfo(children[c_index]);
-	
+
 	PaneStartPos(pw) = pos;
-	
+
 	for (childP = children; childP - children < num_panes; childP++)
 	  PaneOldDPos(*childP) = -99;
 
 	if (pw->paned_window.flipgc)
 	  AdjustGC(pw);
 	break;
-	
-      case _MOVE: 
+
+      case _MOVE:
 	ResetDMajors( pw );
 	diff = pos - PaneStartPos(pw);
 	if (diff > 0 && PaneFirst(pw)) {
@@ -1534,16 +1534,16 @@ HandleSash(
 	    RefigureLocations(pw, PaneIndex(PaneInfo(w)->panedw.sash),
 			      LastPane, False, True);
 	}
-	
+
 	DrawTrackLines(pw);
 	break;
-	
-	
+
+
       case _COMMIT:
 	EraseTrackLines(pw);
 	CommitNewLocations(pw, NULL);
 	break;
-	
+
       default:
 	XmeWarning( (Widget) pw, MESSAGE9);
     }
@@ -1566,7 +1566,7 @@ HandleSash(
  *  of the desired geometry.
  *
  *************************************<->***********************************/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager(
         Widget w,
         XtWidgetGeometry *request,
@@ -1584,15 +1584,13 @@ GeometryManager(
     register Widget *childP;
 
     /* First treat the special case resulting from a change in positionIndex */
-    if (PanePosIndex(w) == XmLAST_POSITION) { 
+    if (PanePosIndex(w) == XmLAST_POSITION) {
                     /* as set in ConstraintSetValues */
-       int i ;
-
        /* first reset the value of positionIndex to its real value */
        for (i = 0 ; i < pw->composite.num_children; i++)
          if (pw->composite.children[i] == w) {
              PanePosIndex(w) = i ;
-             break ; 
+             break ;
          }
 
        /* then accept the desired change */
@@ -1602,7 +1600,7 @@ GeometryManager(
          w->core.height = request->height;
        if (IsWidth(request) && request->width > 0)
          w->core.width = request->width;
-      return XtGeometryYes; 
+      return XtGeometryYes;
     }
 
        /* yes for an internal kid */
@@ -1613,7 +1611,7 @@ GeometryManager(
 	   w->core.height = request->height;
         if ((mask & CWWidth) && request->width > 0)
 	   w->core.width = request->width;
-	return XtGeometryYes; 
+	return XtGeometryYes;
     }
 
     old_dmajor = PaneDMajor(w);
@@ -1628,19 +1626,19 @@ GeometryManager(
     if (!(mask & (CWWidth | CWHeight)))
 	return XtGeometryNo;
 
-	/* mark with almost request that attemps to change position *and* 
+	/* mark with almost request that attemps to change position *and*
        size (since we've already pass the previous test) */
-    if (mask & (CWX | CWY)) is_almost = TRUE ; 
-    
+    if (mask & (CWX | CWY)) is_almost = TRUE ;
+
     /* check for queryonly */
     if ((mask & XtCWQueryOnly) || is_almost)
 	geo_desired.request_mode = XtCWQueryOnly;
-    else 
+    else
 	geo_desired.request_mode = 0 ;
-    
+
 
     if ((mask & Minor(pw, CWWidth, CWHeight))) {
-      /* 
+      /*
        * NOW RECOMPUTE THE LIST OF MANAGED CHILDREN.
        */
 	ReManageChildren(pw);
@@ -1660,7 +1658,7 @@ GeometryManager(
 
 	pw->paned_window.pane_count = num_panes;
 
-      /* 
+      /*
        * SET WIDTH OF PANED WINDOW EQUAL TO THAT OF WIDEST CHILD
        * seems useless...
        */
@@ -1675,7 +1673,7 @@ GeometryManager(
 		}
 	    }
 	if (childMinor < 1) childMinor = 1;
-	
+
 	/* only allowed to grow */
 	if (MinorReq(pw, request) >= childMinor) {
 
@@ -1683,17 +1681,17 @@ GeometryManager(
 			2 * (childBorderWidth + MinorMargin(pw))) ;
 	    geo_desired.request_mode |= Minor(pw, CWWidth, CWHeight);
 
-	    switch (XtMakeGeometryRequest((Widget) pw, &geo_desired, 
+	    switch (XtMakeGeometryRequest((Widget) pw, &geo_desired,
 					 &geo_reply))
 	       {
-	       case XtGeometryYes:           
+	       case XtGeometryYes:
 		   MinorAssign(pw, allowed, MinorReq(pw, request)) ;
 		   break;
 
 	       case XtGeometryAlmost:
-		   if (MinorReq(pw, &geo_reply) > 
+		   if (MinorReq(pw, &geo_reply) >
 		       2*(childBorderWidth + MinorMargin(pw)))
-		       tmp = MinorReq(pw, &geo_reply) - 
+		       tmp = MinorReq(pw, &geo_reply) -
 			   2*(childBorderWidth + MinorMargin(pw));
 		   else tmp = 1;
 		   MinorAssign(pw, allowed, tmp);
@@ -1714,13 +1712,13 @@ GeometryManager(
 	    MinorAssign(pw, allowed, childMinor) ;
 	    is_almost = TRUE ;
 	}
-		   
-    } else { 
+
+    } else {
 	/* kid not interested by Width, take its current size */
 	MinorAssign(pw, allowed, MinorChildSize(pw, w));
     }
 
-    /* the whole stuff of individual requests, first Width and then Height 
+    /* the whole stuff of individual requests, first Width and then Height
        doesn't look correct in my opinion (what if parent has a
        constrainted ratio?), but I think we can live with it for now */
 
@@ -1731,15 +1729,15 @@ GeometryManager(
     if (mask & Major(pw, CWWidth, CWHeight)) {
 	/* try to almost the sucker */
 	if (MajorReq(pw, request) < pane->min) {
-	    MajorAssign(pw, allowed, pane->min); 
-	    MajorAssign(pw, *request, pane->min); 
+	    MajorAssign(pw, allowed, pane->min);
+	    MajorAssign(pw, *request, pane->min);
 	    is_almost = TRUE ;
 	    geo_desired.request_mode = XtCWQueryOnly;
 	}
 
 	if (MajorReq(pw, request) > pane->max)  {
-	    MajorAssign(pw, allowed, pane->max); 
-	    MajorAssign(pw, *request, pane->max); 
+	    MajorAssign(pw, allowed, pane->max);
+	    MajorAssign(pw, *request, pane->max);
 	    is_almost = TRUE ;
 	    geo_desired.request_mode = XtCWQueryOnly;
 	}
@@ -1754,25 +1752,25 @@ GeometryManager(
 	    MajorAssign(pw, geo_desired, new_major);
 	    geo_desired.request_mode |= Major(pw, CWWidth, CWHeight);
 
-	    switch(XtMakeGeometryRequest((Widget) pw, &geo_desired, 
+	    switch(XtMakeGeometryRequest((Widget) pw, &geo_desired,
 					 &geo_reply)) {
-		case XtGeometryYes:           
+		case XtGeometryYes:
 		    MajorAssign(pw, allowed, MajorReq(pw, request));
 		    break;
 
 		case XtGeometryAlmost:
 		    if ((new_major > MajorReq(pw, &geo_reply)) &&
 			MajorReq(pw, request) > (new_major - MajorReq(pw, &geo_reply)))
-			tmp = MajorReq(pw, request) - 
+			tmp = MajorReq(pw, request) -
 			    (new_major - MajorReq(pw, &geo_reply));
-		    else 
+		    else
 			tmp = 1 ;
-		    MajorAssign(pw, allowed, tmp); 
+		    MajorAssign(pw, allowed, tmp);
 		    if (MajorReq(pw, &allowed) < pane->min) {
 			MajorAssign(pw, allowed, pane->min);
 		    }
 		    if (MajorReq(pw, &allowed) > pane->max) {
-			MajorAssign(pw, allowed, pane->max); 
+			MajorAssign(pw, allowed, pane->max);
 		    }
 		    is_almost = TRUE ;
 		    break;
@@ -1792,14 +1790,14 @@ GeometryManager(
     }
 
     /* now the conclusion:
-       If it's not almosted yet (due to a position request) and if I got 
-       what I've asked for or if I didn't ask anything in this dimension, 
-       then it's a Yes. 
-       If queryonly was specified, don't forget to just undo the change made. 
+       If it's not almosted yet (due to a position request) and if I got
+       what I've asked for or if I didn't ask anything in this dimension,
+       then it's a Yes.
+       If queryonly was specified, don't forget to just undo the change made.
     */
     if ((!is_almost) &&
 	(((mask & CWWidth) && (allowed.width == request->width)) ||
-	 (!(mask & CWWidth))) && 
+	 (!(mask & CWWidth))) &&
 	(((mask & CWHeight) && (allowed.height == request->height)) ||
 	 (!(mask & CWHeight)))) {
 
@@ -1814,7 +1812,7 @@ GeometryManager(
 	    } else {
 		w->core.y = PaneDPos(w) ;
 		w->core.x = pw->paned_window.margin_width ;
-	    }		
+	    }
 
 	    /* relayout all kids except instigator */
 	    CommitNewLocations(pw, w );
@@ -1824,7 +1822,7 @@ GeometryManager(
 
 	return XtGeometryYes ;
     }
-	
+
     /* else we decide to reply Almost, so undo the change made
        and reply allowed */
 
@@ -1844,7 +1842,7 @@ GeometryManager(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 ConstraintInit(
         Widget request,
         Widget new_w,
@@ -1856,7 +1854,7 @@ ConstraintInit(
   int size;
 
   if (!XtIsRectObj(new_w)) return;
-  
+
   /* don't let sashes or separators get a non default position - which could
      easily happen with resource like  XmPanedWindow*kid*positionIndex: 0 */
   if (pw->paned_window.recursively_called)
@@ -1887,10 +1885,10 @@ ConstraintInit(
   if (size > pane->max) size = pane->max;
 
   if (XtIsManaged(new_w))
-    XmeConfigureObject(new_w, 
+    XmeConfigureObject(new_w,
 		       new_w->core.x, new_w->core.y,
-		       Major(pw, size, new_w->core.width), 
-		       Major(pw, new_w->core.height, size), 
+		       Major(pw, size, new_w->core.width),
+		       Major(pw, new_w->core.height, size),
 		       new_w->core.border_width);
 }
 
@@ -1905,14 +1903,14 @@ ConstraintInit(
  *   to find the correct insertion position for the new child.  If the
  *   new child is an ordinary child (not a subclass of XmSashWidget)
  *   the position returned will cause it to be inserted after the other
- *   ordinary children but before any Sashs; if the new child is a 
+ *   ordinary children but before any Sashs; if the new child is a
  *   sash the position returned will cause it to be inserted after
- *   the regular panes.  
+ *   the regular panes.
  *
  *   This procedure also handles the positionIndex constraint resource.
  *
  ************************************************************************/
-static Cardinal 
+static Cardinal
 InsertOrder(
         Widget w )
 {
@@ -1920,7 +1918,7 @@ InsertOrder(
    Cardinal i=0 ;
 
    /* find the number of regular children */
-   while ((i < pw->composite.num_children) && 
+   while ((i < pw->composite.num_children) &&
 		IsPane(pw->composite.children[i]))
                 i++;
 
@@ -1944,7 +1942,7 @@ InsertOrder(
  *  InsertChild()
  *
  *************************************<->***********************************/
-static void 
+static void
 InsertChild(
         register Widget w )
 {
@@ -1958,12 +1956,12 @@ InsertChild(
 
    if (!XtIsRectObj(w)) return;
 
-   /* 
+   /*
     * Insert the child widget in the composite children list with an
     * insertion procedure exported from Manager.c, it, in turn, will
     * make use of the special insert procedure, InsertOrder, defined
     * above.  Essentially, ordinary panes are grouped together at the
-    * beginning of the list of composite children, sashs are always 
+    * beginning of the list of composite children, sashs are always
     * put at the end of the list.
     */
 
@@ -1976,7 +1974,7 @@ InsertChild(
   /*
    * If we are creating a sash for an ordinary pane, then just
    * return here. However, before we do, set its "isPane" flag
-   * to false, meaning that this is NOT a pane; if it is a 
+   * to false, meaning that this is NOT a pane; if it is a
    * pane then set its "isPane" flag to TRUE.
    */
    if (pw->paned_window.recursively_called)
@@ -1994,7 +1992,7 @@ InsertChild(
     XtSetArg(args[n], XmNhighlightThickness, 0); n++;
     XtSetArg(args[n], XmNseparatorType, XmSHADOW_ETCHED_IN); n++;
     XtSetArg(args[n], XmNmargin, 0); n++;
-    XtSetArg(args[n], XmNorientation,  
+    XtSetArg(args[n], XmNorientation,
                       Minor(pw, XmHORIZONTAL, XmVERTICAL)); n++;
     XtSetArg(args[n], XmNnavigationType, (XtArgVal) XmNONE); n++;
     pw->paned_window.recursively_called = True;
@@ -2004,14 +2002,14 @@ InsertChild(
     PaneInfo(pane->separator)->panedw.separator = w;
 
    /* If we create a sash then have the pane's constraint rec point
-    * to the sash, ignore the constraint rec of the sash (Yes, it 
+    * to the sash, ignore the constraint rec of the sash (Yes, it
     * gets one).  If we don't create a sash for the pane, just set
-    * that field to NULL.   
+    * that field to NULL.
     */
     n = 0;
     XtSetArg(args[n], XmNwidth, pw->paned_window.sash_width); n++;
     XtSetArg(args[n], XmNheight, pw->paned_window.sash_height); n++;
-    XtSetArg(args[n], XmNshadowThickness, 
+    XtSetArg(args[n], XmNshadowThickness,
                 pw->paned_window.sash_shadow_thickness); n++;
     XtSetArg(args[n], XmNunitType, (XtArgVal) XmPIXELS); n++;
     pw->paned_window.recursively_called = True;
@@ -2028,11 +2026,11 @@ InsertChild(
 
     PaneInfo(pane->sash)->panedw.sash = w;
 
-    /* re-set the correct positionIndex values for everybody if 
-     * the new kid has been inserted in the list instead of put at the end 
+    /* re-set the correct positionIndex values for everybody if
+     * the new kid has been inserted in the list instead of put at the end
      */
     if (PanePosIndex(w) != pw->composite.num_children)
-	for (i = 0, p = pw->composite.children; 
+	for (i = 0, p = pw->composite.children;
 	     i < pw->composite.num_children; i++, p++) {
             PanePosIndex(*p) = i ;
         }
@@ -2047,7 +2045,7 @@ InsertChild(
  * ChangeManaged
  *
  *************************************<->***********************************/
-static void 
+static void
 ChangeManaged(
         Widget w )
 {
@@ -2064,13 +2062,13 @@ ChangeManaged(
    XmPanedWindowConstraintPart * pane;
    XtGeometryResult result;
 
-  /* 
+  /*
    * THIS PREVENTS US FROM RE-ENTERING THIS CODE AS WE MANAGE/UNMANAGE
    * THE SASHES
    */
    if (pw->paned_window.recursively_called++)  return;
 
-  /* 
+  /*
    * NOW RECOMPUTE THE LIST OF MANAGED CHILDREN.
    */
    ReManageChildren(pw);
@@ -2091,7 +2089,7 @@ ChangeManaged(
    pw->paned_window.pane_count = num_panes;
 
 
-  /* 
+  /*
    * SET WIDTH OF PANED WINDOW EQUAL TO THAT OF WIDEST CHILD
    */
 
@@ -2101,23 +2099,23 @@ ChangeManaged(
    for (childP = children, i = 0; i < num_panes; childP++, i++)
    {
        pane = &(PaneInfo(*childP)->panedw);
-       if (MinorChildSize(pw, *childP) + (*childP)->core.border_width > 
+       if (MinorChildSize(pw, *childP) + (*childP)->core.border_width >
             childMinor + childBorderWidth) {
 	   childMinor = MinorChildSize(pw, *childP);
 	   childBorderWidth = (*childP)->core.border_width;
        }
 
        if (MajorChildSize(pw, *childP) < pane->min)
-	 XmeConfigureObject(*childP, 
+	 XmeConfigureObject(*childP,
 			    (*childP)->core.x, (*childP)->core.y,
-			    Major(pw, pane->min, (*childP)->core.width), 
-			    Major(pw, (*childP)->core.height, pane->min), 
+			    Major(pw, pane->min, (*childP)->core.width),
+			    Major(pw, (*childP)->core.height, pane->min),
 			    (*childP)->core.border_width);
        if (MajorChildSize(pw, *childP) > pane->max)
 	 XmeConfigureObject(*childP,
 			    (*childP)->core.x, (*childP)->core.y,
-			    Major(pw, pane->max, (*childP)->core.width), 
-			    Major(pw, (*childP)->core.height, pane->max), 
+			    Major(pw, pane->max, (*childP)->core.width),
+			    Major(pw, (*childP)->core.height, pane->max),
 			    (*childP)->core.border_width);
        major_dim += MajorChildSize(pw, *childP) + 2*(*childP)->core.border_width;
    }
@@ -2129,14 +2127,14 @@ ChangeManaged(
    * THAT THEIR MANAGEMENT SETTING REFLECTS THAT OF THEIR PANE.
    */
 
-   for (childP = pw->composite.children, i = 0; 
-                     i < num_children; childP++, i++) 
+   for (childP = pw->composite.children, i = 0;
+                     i < num_children; childP++, i++)
     {
       if (! IsPane(*childP)) break;  /* jump out of loop */
       sash = PaneInfo(*childP)->panedw.sash;
       separator = PaneInfo(*childP)->panedw.separator;
 
-      /* Realize child now so it won't get realized and put on the 
+      /* Realize child now so it won't get realized and put on the
          top of the stack, above the sash, when it is realized later */
       if (XtIsRealized((Widget)pw) && XtIsManaged(*childP))
           XtRealizeWidget(*childP);
@@ -2147,10 +2145,10 @@ ChangeManaged(
       newMinor = childMinor + 2*(childBorderWidth -
                                  (*childP)->core.border_width);
 
-      if (XtIsManaged(*childP)) 
+      if (XtIsManaged(*childP))
 	XmeConfigureObject( *childP,
 			   (*childP)->core.x, (*childP)->core.y,
-			   Major(pw, (*childP)->core.width, newMinor), 
+			   Major(pw, (*childP)->core.width, newMinor),
 			   Major(pw, newMinor, (*childP)->core.height),
 			   (*childP)->core.border_width);
        if ((XtIsManaged(*childP)) && (*childP != children[num_panes-1])) {
@@ -2184,7 +2182,7 @@ ChangeManaged(
     * TRAVERSE MANAGED PANES AND SET THE POSITION FIELD IN THE CONSTRAINT
     * RECORD TO 0, 1, 2, 3, 4 ETC.
     */
-   
+
    childP = pw->paned_window.managed_children;
    for (i = 0; i < pw->paned_window.pane_count; childP++)
       (PaneInfo(*childP))->panedw.position = i++;
@@ -2197,11 +2195,11 @@ ChangeManaged(
    major_dim += pw->paned_window.spacing*((num_panes)?num_panes-1:0) +
              2*MajorMargin(pw);
 
-   while ((result = XtMakeResizeRequest(w, 
+   while ((result = XtMakeResizeRequest(w,
 					Major(pw, major_dim, minor_dim),
 					Major(pw, minor_dim, major_dim),
 					Major(pw, &major_dim, &minor_dim),
-					Major(pw, &minor_dim, &major_dim))) 
+					Major(pw, &minor_dim, &major_dim)))
 	  == XtGeometryAlmost) /*EMPTY*/;
 
    if (result == XtGeometryYes || result == XtGeometryAlmost ||
@@ -2215,7 +2213,7 @@ ChangeManaged(
    }
 
    ResetDMajors( pw );
-   
+
    if (XtIsRealized((Widget)pw))
       RefigureLocationsAndCommit(pw, 0, FirstPane, False);
 
@@ -2232,7 +2230,7 @@ ChangeManaged(
  *
  *************************************<->***********************************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -2258,7 +2256,7 @@ SetValues(
        }
        GetFlipGC(newpw);
        returnFlag = True;
-     }        
+     }
 
    if (newpw->paned_window.sash_width == 0)
       newpw->paned_window.sash_width = oldpw->paned_window.sash_width;
@@ -2276,10 +2274,10 @@ SetValues(
        XtSetArg(sashargs[n], XmNheight, newpw->paned_window.sash_height); n++;
     }
 
-   if (oldpw->paned_window.sash_shadow_thickness != 
+   if (oldpw->paned_window.sash_shadow_thickness !=
            newpw->paned_window.sash_shadow_thickness)
     {
-       XtSetArg(sashargs[n], XmNshadowThickness, 
+       XtSetArg(sashargs[n], XmNshadowThickness,
                 newpw->paned_window.sash_shadow_thickness); n++;
     }
 
@@ -2306,7 +2304,7 @@ SetValues(
          else
             XtUnmanageChildren((WidgetList) sep_children, num_separators);
       }
-         
+
       XtFree((char *)sep_children);
    }
 
@@ -2320,7 +2318,7 @@ SetValues(
       returnFlag = True;
    }
 
-	
+
    if (oldpw->paned_window.sash_indent != newpw->paned_window.sash_indent ||
        oldpw->paned_window.margin_width != newpw->paned_window.margin_width ||
        oldpw->paned_window.margin_height != newpw->paned_window.margin_height ||
@@ -2338,31 +2336,31 @@ SetValues(
 
              if (sash)  /* IF THIS IS NOT NULL */
              {
-                /* Send Down Changes to Sash */ 
+                /* Send Down Changes to Sash */
 	        assert(n <= XtNumber(sashargs));
                 if (n != 0)  /* something is in the arglist */
-                   XtSetValues((Widget)sash, sashargs, n); 
+                   XtSetValues((Widget)sash, sashargs, n);
 
 	        /* Move and Display the Sash */
                 if (newpw->paned_window.sash_indent < 0)
-  	           minor_dim = MinorSize(newpw) + 
-		       newpw->paned_window.sash_indent - 
+  	           minor_dim = MinorSize(newpw) +
+		       newpw->paned_window.sash_indent -
 			   MinorChildSize(newpw, sash) - sash->core.border_width*2;
                  else
                    minor_dim = newpw->paned_window.sash_indent;
 
 
                  /* PREVENT SASH FROM DISAPPEARING FROM SCREEN */
-                 if ((minor_dim > (MinorSize(newpw) - 
+                 if ((minor_dim > (MinorSize(newpw) -
 			       MinorChildSize(newpw, sash))) || (minor_dim < 0))
                     minor_dim= 0;
-   
+
 	         major_dim = MajorChildPos(newpw, *childP) + MajorChildSize(newpw, *childP) +
 	             2 * (*childP)->core.border_width +
 		     newpw->paned_window.spacing/2 - MajorChildSize(newpw, sash)/2 -
 		     sash->core.border_width;
 
-		 XmeConfigureObject(sash, 
+		 XmeConfigureObject(sash,
 				    Minor(newpw, minor_dim,major_dim),
 				    Major(newpw, minor_dim,major_dim),
 				    sash->core.width,
@@ -2375,7 +2373,7 @@ SetValues(
 	CommitNewLocations(newpw,NULL);
    }
    if (oldpw->paned_window.margin_width != newpw->paned_window.margin_width) {
-      newpw->core.width = newpw->core.width + 
+      newpw->core.width = newpw->core.width +
                           ((2 * newpw->paned_window.margin_width) -
                            (2 * oldpw->paned_window.margin_width));
       returnFlag = True;
@@ -2391,7 +2389,7 @@ SetValues(
       if ((needed = NeedsAdjusting(newpw)) != 0) {
          newpw->core.height = needed;
          returnFlag = True;
-      } 
+      }
    }
 
    return(returnFlag);
@@ -2406,7 +2404,7 @@ SetValues(
  *
  *************************************<->***********************************/
 /* ARGSUSED */
-static Boolean 
+static Boolean
 PaneSetValues(
         Widget old,
         Widget request,
@@ -2430,7 +2428,7 @@ PaneSetValues(
        /* count the number of pane children : not sash and separator */
        i = 0 ;
        while ((i < pw->composite.num_children) &&
-		IsPane(pw->composite.children[i])) 
+		IsPane(pw->composite.children[i]))
 		i++;
 
        /* special public value */
@@ -2445,13 +2443,13 @@ PaneSetValues(
              shift the others as needed (2 cases here) */
           tmp = pw->composite.children[PanePosIndex(old)] ;
           if (PanePosIndex(new_w) < PanePosIndex(old)) inc = -1 ; else inc = 1 ;
-          
+
           for (i = PanePosIndex(old)  ; i != PanePosIndex(new_w) ; i+=inc) {
               pw->composite.children[i] = pw->composite.children[i+inc];
               PanePosIndex(pw->composite.children[i]) = i ;
           }
           pw->composite.children[PanePosIndex(new_w)] = tmp ;
-          
+
 	  /* save the current geometry of the child */
 	  current.x = XtX(new_w) ;
 	  current.y = XtY(new_w) ;
@@ -2482,7 +2480,7 @@ PaneSetValues(
 
    if (old_pane->min != new_pane->min || old_pane->max != new_pane->max)
     {
-        
+
        if (new_pane->min < 1)
 	{
            XmeWarning( (Widget) pw, MESSAGE4);
@@ -2502,24 +2500,24 @@ PaneSetValues(
 	   new_pane->max = old_pane->max;
 	}
 
-       if ((new_pane->min == new_pane->max) && 
+       if ((new_pane->min == new_pane->max) &&
             (new_pane->sash != NULL))
       	{
            XtUnmanageChild(new_pane->sash);
-      	} 
+      	}
        else
       	{
            count =pw->paned_window.pane_count -1;
-           if (new_pane->position != count) { 
+           if (new_pane->position != count) {
               if (new_pane->separator == NULL) {
    		 pw->paned_window.recursively_called = True;
-	         new_pane->separator = XtCreateWidget("separator", 
+	         new_pane->separator = XtCreateWidget("separator",
                                                      xmSeparatorGadgetClass,
                                                      (Widget)pw, NULL, 0);
    		 pw->paned_window.recursively_called = False;
 
                  if (XtIsRealized(new_w)) XtRealizeWidget(new_pane->separator);
-         
+
 	      }
               if (pw->paned_window.separator_on)
                        XtManageChild(new_pane->separator);
@@ -2531,34 +2529,34 @@ PaneSetValues(
 			     pw->paned_window.sash_width), nargs++;
                     XtSetArg(sashargs[nargs], XmNheight,
 			     pw->paned_window.sash_height), nargs++;
-                    XtSetArg(sashargs[nargs], XmNshadowThickness, 
+                    XtSetArg(sashargs[nargs], XmNshadowThickness,
                              pw->paned_window.sash_shadow_thickness), nargs++;
-                    XtSetArg(sashargs[nargs], XmNunitType, 
+                    XtSetArg(sashargs[nargs], XmNunitType,
 			     (XtArgVal) XmPIXELS), nargs++;
 		    assert(nargs <= XtNumber(sashargs));
    		    pw->paned_window.recursively_called = True;
-	            new_pane->sash = 
-		      XtCreateManagedWidget("sash", 
+	            new_pane->sash =
+		      XtCreateManagedWidget("sash",
 					    xmSashWidgetClass, (Widget)pw,
 					    sashargs, nargs);
-		    XtAddCallback(new_pane->sash, XmNcallback, 
+		    XtAddCallback(new_pane->sash, XmNcallback,
 				  HandleSash, (XtPointer)new_w);
    		    pw->paned_window.recursively_called = False;
 
                     if (XtIsRealized(new_w))  XtRealizeWidget(new_pane->sash);
-          
-	          } 
+
+	          }
                }
 	    }
 	}
 
        if (XtIsManaged(new_w) && XtIsRealized((Widget)pw))
        {
-	  if (new_pane->min > MajorChildSize(pw, new_w)) 
+	  if (new_pane->min > MajorChildSize(pw, new_w))
           {
 	      MajorAssign(pw, new_w->core, new_pane->min);
           }
-	  if (new_pane->max < MajorChildSize(pw, new_w)) 
+	  if (new_pane->max < MajorChildSize(pw, new_w))
           {
 	      MajorAssign(pw, new_w->core, new_pane->max);
           }
@@ -2582,13 +2580,13 @@ PaneSetValues(
 	   (current.height != XtHeight(new_w)) ||
 	   (current.border_width != XtBorderWidth(new_w)))
 	   /* see above comment on LAST_POSITION */
-	   PanePosIndex(new_w) = XmLAST_POSITION ; 
+	   PanePosIndex(new_w) = XmLAST_POSITION ;
 
        return(True);
    }
 
    return False;
-} 
+}
 
 
 /*************************************<->*************************************
@@ -2605,7 +2603,7 @@ PaneSetValues(
  *   manager widget.
  *
  *************************************<->***********************************/
-Widget 
+Widget
 XmCreatePanedWindow(
         Widget parent,
         char *name,
@@ -2616,7 +2614,7 @@ XmCreatePanedWindow(
                                    parent, args, argCount));
 }
 
-Widget 
+Widget
 XmVaCreatePanedWindow(
         Widget parent,
         char *name,
@@ -2625,18 +2623,18 @@ XmVaCreatePanedWindow(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmPanedWindowWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -2649,16 +2647,16 @@ XmVaCreateManagedPanedWindow(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmPanedWindowWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }

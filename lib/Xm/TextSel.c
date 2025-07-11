@@ -194,7 +194,7 @@ InsertSelection(
         int *format,
 	XtPointer tid)
 {
-  _XmInsertSelect *insert_select = (_XmInsertSelect *)closure;
+  _XmInsertSelect *_insert_select = (_XmInsertSelect *)closure;
   XmTextWidget tw = (XmTextWidget) w;
   XmTextPosition left = 0;
   XmTextPosition right = 0;
@@ -209,7 +209,7 @@ InsertSelection(
   Boolean freeBlock;
 
   if (!value) {
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return;
   }
 
@@ -217,21 +217,21 @@ InsertSelection(
   if (*(char *)value == '\0' || *length == 0){
     XtFree((char*)value);
     value = NULL;
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return;
   }
 
-  if (insert_select->select_type == XmPRIM_SELECT) {
+  if (_insert_select->select_type == XmPRIM_SELECT) {
     if (!(*tw->text.source->GetSelection)(tw->text.source, &left, &right) ||
 	left == right) {
       XBell(XtDisplay(w), 0);
       XtFree((char*)value);
       value = NULL;
-      insert_select->done_status = True;
-      insert_select->success_status = False;
+      _insert_select->done_status = True;
+      _insert_select->success_status = False;
       return;
     }
-  } else if (insert_select->select_type == XmDEST_SELECT) {
+  } else if (_insert_select->select_type == XmDEST_SELECT) {
     if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right) &&
 	left != right) {
       if (tw->text.cursor_position < left ||
@@ -259,8 +259,8 @@ InsertSelection(
       block.ptr = total_value;
       block.length = strlen(block.ptr);
     } else {
-      insert_select->done_status = True;
-      insert_select->success_status = False;
+      _insert_select->done_status = True;
+      _insert_select->success_status = False;
       (*tw->text.output->DrawInsertionPoint)(tw, tw->text.cursor_position, on);
       return;
     }
@@ -271,15 +271,15 @@ InsertSelection(
     block.format = XmFMT_8_BIT;
   }
 
-  if (_XmTextModifyVerify(tw, (XEvent *)insert_select->event, &left, &right,
+  if (_XmTextModifyVerify(tw, (XEvent *)_insert_select->event, &left, &right,
 			  &cursorPos, &block, &newblock, &freeBlock)) {
-    if ((*tw->text.source->Replace)(tw, (XEvent *)insert_select->event,
+    if ((*tw->text.source->Replace)(tw, (XEvent *)_insert_select->event,
 				    &left, &right,
 				    &newblock, False) != EditDone) {
       if (tw->text.verify_bell) XBell(XtDisplay(w), 0);
-      insert_select->success_status = False;
+      _insert_select->success_status = False;
     } else {
-      insert_select->success_status = True;
+      _insert_select->success_status = True;
 
       if (!tw->text.add_mode) tw->text.input->data->anchor = left;
 
@@ -290,19 +290,19 @@ InsertSelection(
 
       _XmTextSetCursorPosition(w, cursorPos);
       _XmTextSetDestinationSelection(w, tw->text.cursor_position, False,
-				     insert_select->event->time);
+				     _insert_select->event->time);
 
-      if (insert_select->select_type == XmDEST_SELECT) {
+      if (_insert_select->select_type == XmDEST_SELECT) {
 	if (left != right) {
 	  if (!dest_disjoint || !tw->text.add_mode) {
 	    (*tw->text.source->SetSelection)(tw->text.source,
 					     tw->text.cursor_position,
 					     tw->text.cursor_position,
-					     insert_select->event->time);
+					     _insert_select->event->time);
 	  }
 	}
       }
-      _XmTextValueChanged(tw, (XEvent *)insert_select->event);
+      _XmTextValueChanged(tw, (XEvent *)_insert_select->event);
     }
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   }
@@ -311,7 +311,7 @@ InsertSelection(
   if (total_value) XtFree(total_value);
   XtFree((char*)value);
   value = NULL;
-  insert_select->done_status = True;
+  _insert_select->done_status = True;
 }
 
 /* ARGSUSED */
@@ -337,7 +337,7 @@ HandleInsertTargets(
 #endif
       };
 
-  _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
+  _XmInsertSelect *_insert_select = (_XmInsertSelect *) closure;
   Atom atoms[XtNumber(atom_names)];
   Atom CS_OF_ENCODING = XmeGetEncodingAtom(w);
   Atom target;
@@ -350,7 +350,7 @@ HandleInsertTargets(
 
   if (0 == *length) {
     XtFree((char *)value);
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return; /* Supports no targets, so don't bother sending anything */
   }
 
@@ -390,7 +390,7 @@ HandleInsertTargets(
 
   XmTransferValue(tid, target,
 		  (XtCallbackProc) TextSecondaryWrapper,
-		  closure, insert_select -> event -> time);
+		  closure, _insert_select -> event -> time);
 }
 
 /* ARGSUSED */
@@ -955,7 +955,7 @@ DoStuff(Widget w,
   XmTextBlockRec block, newblock;
   XmTextPosition cursorPos = tw->text.cursor_position;
   XmTextPosition right, left, replace_from, replace_to;
-  _XmTextPrimSelect *prim_select = (_XmTextPrimSelect *) closure;
+  _XmTextPrimSelect *_prim_select = (_XmTextPrimSelect *) closure;
   char * total_value = NULL;
   Boolean freeBlock;
 
@@ -969,10 +969,10 @@ DoStuff(Widget w,
       !(ds->length) && ds->type != atoms[XmANULL]) {
     /* Backwards compatibility for 1.0 Selections */
     _XmProcessLock();
-    if (prim_select->target == atoms[XmATEXT]) {
-      prim_select->target = XA_STRING;
+    if (_prim_select->target == atoms[XmATEXT]) {
+      _prim_select->target = XA_STRING;
       XmTransferValue(ds->transfer_id, XA_STRING, (XtCallbackProc) DoStuff,
-		      (XtPointer) prim_select, prim_select->time);
+		      (XtPointer)_prim_select, _prim_select->time);
     }
     _XmProcessUnlock();
     XtFree((char *)ds->value);
@@ -985,15 +985,15 @@ DoStuff(Widget w,
    */
   if (ds->type == atoms[XmANULL]) {
     _XmProcessLock();
-    if (prim_select->num_chars > 0 && data->selectionMove) {
-      data->anchor = prim_select->position;
-      cursorPos = prim_select->position + prim_select->num_chars;
+    if (_prim_select->num_chars > 0 && data->selectionMove) {
+      data->anchor = _prim_select->position;
+      cursorPos = _prim_select->position + _prim_select->num_chars;
       _XmTextSetCursorPosition(w, cursorPos);
       _XmTextSetDestinationSelection(w, tw->text.cursor_position,
-				     False, prim_select->time);
+				     False, _prim_select->time);
       (*tw->text.source->SetSelection)(tw->text.source, data->anchor,
 				       tw->text.cursor_position,
-				       prim_select->time);
+				       _prim_select->time);
     }
     _XmProcessUnlock();
   } else {
@@ -1031,7 +1031,7 @@ DoStuff(Widget w,
       _XmStringSourceSetMaxLength(source, INT_MAX);
     }
 
-    replace_from = replace_to = prim_select->position;
+    replace_from = replace_to = _prim_select->position;
     pendingoff = _XmStringSourceGetPending(tw);
 
     if (ds->selection == atoms[XmACLIPBOARD]) {
@@ -1054,7 +1054,7 @@ DoStuff(Widget w,
     if (_XmTextModifyVerify(tw, ds->event, &replace_from, &replace_to,
 			    &cursorPos, &block, &newblock, &freeBlock)) {
       _XmProcessLock();
-      prim_select->num_chars = _XmTextCountCharacters(newblock.ptr,
+      _prim_select->num_chars = _XmTextCountCharacters(newblock.ptr,
 						      newblock.length);
       _XmProcessUnlock();
       if ((*tw->text.source->Replace)(tw, ds->event,
@@ -1062,7 +1062,7 @@ DoStuff(Widget w,
 				      &newblock, False) != EditDone) {
 	XtCallActionProc(w, "beep", NULL, (String *) NULL, (Cardinal) 0);
 	_XmProcessLock();
-	prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
+	_prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
 				       anything */
 	_XmProcessUnlock();
 	_XmStringSourceSetPending(tw, pendingoff);
@@ -1071,7 +1071,7 @@ DoStuff(Widget w,
 	    ds->selection == atoms[XmACLIPBOARD]) {
 	  _XmTextSetCursorPosition(w, cursorPos);
 	  _XmTextSetDestinationSelection(w, tw->text.cursor_position,
-					 False, prim_select->time);
+					 False, _prim_select->time);
 	}
 	if ((*tw->text.source->GetSelection)(tw->text.source, &left, &right)) {
 	  if (ds->selection == atoms[XmACLIPBOARD]) {
@@ -1079,15 +1079,15 @@ DoStuff(Widget w,
 	    if (left != right && (!dest_disjoint || !tw->text.add_mode))
 	      (*source->SetSelection)(source, tw->text.cursor_position,
 				      tw->text.cursor_position,
-				      prim_select->time);
+				      _prim_select->time);
 	  } else {
 	    if (data->selectionMove) {
 	      _XmProcessLock();
 	      if (left < replace_from) {
-		prim_select->position = replace_from -
-		  prim_select->num_chars;
+		_prim_select->position = replace_from -
+		  _prim_select->num_chars;
 	      } else {
-		prim_select->position = replace_from;
+		_prim_select->position = replace_from;
 	      }
 	      _XmProcessUnlock();
 	    }
@@ -1101,8 +1101,8 @@ DoStuff(Widget w,
 	  if (ds->selection == atoms[XmACLIPBOARD])
 	    data->anchor = replace_from;
 	  else if (!data->selectionMove && !tw->text.add_mode &&
-	      prim_select->num_chars != 0)
-	    data->anchor = prim_select->position;
+	      _prim_select->num_chars != 0)
+	    data->anchor = _prim_select->position;
 	  _XmProcessUnlock();
 	}
 	_XmTextValueChanged(tw, ds->event);
@@ -1111,7 +1111,7 @@ DoStuff(Widget w,
     } else {
       XtCallActionProc(w, "beep", NULL, (String *) NULL, (Cardinal) 0);
       _XmProcessLock();
-      prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
+      _prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
 				     anything */
       _XmProcessUnlock();
       _XmStringSourceSetPending(tw, pendingoff);

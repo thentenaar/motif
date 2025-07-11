@@ -193,7 +193,7 @@ InsertSelection(
         int *format,
 	XtPointer tid)
 {
-  _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
+  _XmInsertSelect *_insert_select = (_XmInsertSelect *) closure;
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   XmTextPosition left = 0;
   XmTextPosition right = 0;
@@ -208,27 +208,27 @@ InsertSelection(
   XmAnyCallbackStruct cb;
 
   if (!value) {
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return;
   }
 
   /* Don't do replace if there is not text to add */
   if (*(char *) value == (char)'\0' || *length == 0){
     XtFree((char *)value);
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return;
   }
 
-  if (insert_select->select_type == XmPRIM_SELECT) {
+  if (_insert_select->select_type == XmPRIM_SELECT) {
     if (!tf->text.has_primary ||
 	tf->text.prim_pos_left == tf->text.prim_pos_right) {
       XBell(XtDisplay(w), 0);
       XtFree((char *)value);
-      insert_select->done_status = True;
-      insert_select->success_status = False;
+      _insert_select->done_status = True;
+      _insert_select->success_status = False;
       return;
     }
-  } else if (insert_select->select_type == XmDEST_SELECT) {
+  } else if (_insert_select->select_type == XmDEST_SELECT) {
     if (tf->text.has_primary &&
 	(left = tf->text.prim_pos_left) != (right = tf->text.prim_pos_right)) {
       if ( TextF_CursorPosition(tf) < left ||
@@ -249,7 +249,7 @@ InsertSelection(
       if (tf->text.max_char_size == 1) {
 	num_chars = strlen(total_value);
 	replace_res = _XmTextFieldReplaceText(tf,
-					      (XEvent *)insert_select->event,
+					      (XEvent *)_insert_select->event,
 					      left, right, total_value,
 					      num_chars, True);
       } else { /* must convert to wchar_t before passing to Replace */
@@ -260,7 +260,7 @@ InsertSelection(
 	  num_chars = 0;
 	else
 	  replace_res = _XmTextFieldReplaceText(tf,
-                                                (XEvent *)insert_select->event,
+                                                (XEvent *)_insert_select->event,
                                                 left, right, (char*) wc_value,
                                                 num_chars, True);
 	XtFree((char *)wc_value);
@@ -272,7 +272,7 @@ InsertSelection(
       /* NOTE: casting *length could result in a truncated long. */
       num_chars = *length;
       replace_res = _XmTextFieldReplaceText(tf,
-					    (XEvent *)insert_select->event,
+					    (XEvent *)_insert_select->event,
 					    left, right, (char *)value,
 					    (unsigned)*length, True);
     } else {
@@ -289,7 +289,7 @@ InsertSelection(
 	num_chars = 0;
       else
 	replace_res = _XmTextFieldReplaceText(tf,
-					      (XEvent *)insert_select->event,
+					      (XEvent *)_insert_select->event,
 					      left, right, (char*) wc_value,
 					      num_chars, True);
       XtFree(temp);
@@ -298,34 +298,34 @@ InsertSelection(
   }
 
   if (!replace_res) {
-    insert_select->success_status = False;
+    _insert_select->success_status = False;
   } else {
-    insert_select->success_status = True;
+    _insert_select->success_status = True;
 
     if (!tf->text.add_mode) tf->text.prim_anchor = left;
 
     tf->text.pending_off = True;
     _XmTextFieldSetCursorPosition(tf, NULL, left + num_chars, False, True);
     (void) _XmTextFieldSetDestination(w, TextF_CursorPosition(tf),
-				      insert_select->event->time);
-    if (insert_select->select_type == XmDEST_SELECT) {
+				      _insert_select->event->time);
+    if (_insert_select->select_type == XmDEST_SELECT) {
       if (left != right) {
 	if (!dest_disjoint || !tf->text.add_mode) {
 	  _XmTextFieldStartSelection(tf, TextF_CursorPosition(tf),
 				     TextF_CursorPosition(tf),
-				     insert_select->event->time);
+				     _insert_select->event->time);
 	}
       }
     }
     cb.reason = XmCR_VALUE_CHANGED;
-    cb.event = (XEvent *)insert_select->event;
+    cb.event = (XEvent *)_insert_select->event;
     XtCallCallbackList((Widget) tf, TextF_ValueChangedCallback(tf),
 		       (XtPointer) &cb);
   }
 
   XtFree((char *)value);
   value = NULL;
-  insert_select->done_status = True;
+  _insert_select->done_status = True;
 }
 
 /* ARGSUSED */
@@ -343,7 +343,7 @@ HandleInsertTargets(
   enum { XmATEXT, XmACOMPOUND_TEXT, XmAUTF8_STRING, NUM_ATOMS };
   static char *atom_names[] = { XmSTEXT, XmSCOMPOUND_TEXT, XmSUTF8_STRING };
 
-  _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
+  _XmInsertSelect *_insert_select = (_XmInsertSelect *) closure;
   Atom atoms[XtNumber(atom_names)];
   Atom CS_OF_ENCODING = XmeGetEncodingAtom(w);
   Atom target;
@@ -356,7 +356,7 @@ HandleInsertTargets(
 
   if (0 == *length) {
     XtFree((char *)value);
-    insert_select->done_status = True;
+    _insert_select->done_status = True;
     return; /* Supports no targets, so don't bother sending anything */
   }
 
@@ -396,7 +396,7 @@ HandleInsertTargets(
 
   XmTransferValue(tid, target,
 		  (XtCallbackProc) TextFieldSecondaryWrapper,
-		  closure, insert_select -> event -> time);
+		  closure, _insert_select -> event -> time);
 }
 
 
@@ -682,7 +682,6 @@ _XmTextFieldConvert(
       return True;
     /* Delete the selection */
   } else if (*target == atoms[XmADELETE]) {
-    XmTextPosition left, right;
     Boolean move_cursor = True;
 
     if (!(is_primary || is_drop)) return False;
@@ -1008,15 +1007,10 @@ DropTransferProc(Widget w, XtPointer closure,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-#define CR1228
 /*ARGSUSED*/
 static void
 DoStuff(Widget w,
-#ifdef CR1228
 	XtPointer closure,
-#else
-	XtPointer closure,	/* unused */
-#endif
 	XmSelectionCallbackStruct *ds)
 {
   enum { XmANULL, XmACLIPBOARD, XmATEXT, XmACOMPOUND_TEXT,
@@ -1037,9 +1031,7 @@ DoStuff(Widget w,
   Boolean replace_res = False;
   XmAnyCallbackStruct cb;
   Atom atoms[XtNumber(atom_names)];
-#ifdef CR1228
-  _XmTextPrimSelect *prim_select = (_XmTextPrimSelect *) closure;
-#endif
+  _XmTextPrimSelect *_prim_select = (_XmTextPrimSelect *) closure;
 
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
@@ -1052,10 +1044,10 @@ DoStuff(Widget w,
       ds->type != atoms[XmANULL]) {
     /* Backwards compatibility for 1.0 Selections */
     _XmProcessLock();
-    if (prim_select->target == atoms[XmATEXT]) {
-      prim_select->target = XA_STRING;
+    if (_prim_select->target == atoms[XmATEXT]) {
+      _prim_select->target = XA_STRING;
       XmTransferValue(ds->transfer_id, XA_STRING, (XtCallbackProc) DoStuff,
-		      (XtPointer) prim_select, prim_select->time);
+		      (XtPointer) _prim_select, _prim_select->time);
     }
     _XmProcessUnlock();
     XtFree((char *)ds->value);
@@ -1068,18 +1060,18 @@ DoStuff(Widget w,
    */
   if (ds->type == atoms[XmANULL]) {
     _XmProcessLock();
-    if (prim_select->num_chars > 0 && tf->text.selection_move) {
-      prim_char_length = prim_select->num_chars;
-      _XmTextFieldStartSelection(tf, prim_select->position,
-				 prim_select->position + prim_char_length,
-				 prim_select->time);
+    if (_prim_select->num_chars > 0 && tf->text.selection_move) {
+      prim_char_length = _prim_select->num_chars;
+      _XmTextFieldStartSelection(tf, _prim_select->position,
+				 _prim_select->position + prim_char_length,
+				 _prim_select->time);
       tf->text.pending_off = False;
       _XmTextFieldSetCursorPosition(tf, NULL,
-				    prim_select->position + prim_char_length,
+				    _prim_select->position + prim_char_length,
 				    True, True);
-      tf->text.prim_anchor = prim_select->position;
+      tf->text.prim_anchor = _prim_select->position;
     }
-    _XmProcessUnlock(); /* for prim_select */
+    _XmProcessUnlock(); /* for _prim_select */
   } else {
     int max_length = 0;
     Boolean local = tf->text.has_primary;
@@ -1090,7 +1082,7 @@ DoStuff(Widget w,
       TextF_MaxLength(tf) = INT_MAX;
     }
     _XmProcessLock();
-    replace_from = replace_to = prim_select->position;
+    replace_from = replace_to = _prim_select->position;
     _XmProcessUnlock();
     if (ds->selection == atoms[XmACLIPBOARD]) {
       if (tf->text.has_primary) {
@@ -1118,13 +1110,13 @@ DoStuff(Widget w,
 	  != NULL) {
 	if (tf->text.max_char_size == 1) {
 	  _XmProcessLock();
-	  prim_select->num_chars = strlen(total_value);
+	  _prim_select->num_chars = strlen(total_value);
 	  replace_res =
 	    _XmTextFieldReplaceText (tf, ds->event,
 				     replace_from,
 				     replace_to,
 				     total_value,
-				     prim_select->num_chars,
+				     _prim_select->num_chars,
 				     ds->selection == atoms[XmACLIPBOARD]);
 	  _XmProcessUnlock();
 	  XtFree(total_value);
@@ -1133,39 +1125,39 @@ DoStuff(Widget w,
 	  int tmp_len = strlen(total_value) + 1;
 
 	  _XmProcessLock();
-	  prim_select->num_chars = 0;
+	  _prim_select->num_chars = 0;
 	  wc_value = (wchar_t*)XtMalloc ((unsigned) tmp_len * sizeof(wchar_t));
-	  prim_select->num_chars = mbstowcs(wc_value, total_value, tmp_len);
-	  if (prim_select->num_chars < 0)
-	    prim_select->num_chars = 0;
+	  _prim_select->num_chars = mbstowcs(wc_value, total_value, tmp_len);
+	  if (_prim_select->num_chars < 0)
+	    _prim_select->num_chars = 0;
 	  else
 	    replace_res =
 	      _XmTextFieldReplaceText(tf, ds->event,
 				      replace_from,
 				      replace_to,
 				      (char*)wc_value,
-				      prim_select->num_chars,
+				      _prim_select->num_chars,
 				      ds->selection == atoms[XmACLIPBOARD]);
 	  _XmProcessUnlock();
 	  XtFree((char*)wc_value);
 	  XtFree(total_value);
 	}
-      } else { /* initialize prim_select values for possible delete oper */
+      } else { /* initialize _prim_select values for possible delete oper */
 	_XmProcessLock();
-	prim_select->num_chars = 0;
+	_prim_select->num_chars = 0;
 	_XmProcessUnlock();
       }
     } else {
       if (tf->text.max_char_size == 1) {
 	/* Note: length may be truncated during cast to int */
 	_XmProcessLock();
-	prim_select->num_chars = (int) ds->length;
+	_prim_select->num_chars = (int) ds->length;
 	replace_res =
 	  _XmTextFieldReplaceText(tf, ds->event,
 				  replace_from,
 				  replace_to,
 				  (char *) ds->value,
-				  prim_select->num_chars,
+				  _prim_select->num_chars,
 				  ds->selection == atoms[XmACLIPBOARD]);
 	_XmProcessUnlock();
       } else {
@@ -1180,19 +1172,19 @@ DoStuff(Widget w,
 				       ((ds->length + 1) * sizeof(wchar_t)));
 	_XmProcessLock();
 
-	prim_select->num_chars = mbstowcs(wc_value, (char *) temp,
+	_prim_select->num_chars = mbstowcs(wc_value, (char *) temp,
 					  (size_t) ds->length+1);
 
-	if (prim_select->num_chars < 0)
-	  prim_select->num_chars = 0;
+	if (_prim_select->num_chars < 0)
+	  _prim_select->num_chars = 0;
 	else {
-	  wc_value[prim_select->num_chars] = 0;
+	  wc_value[_prim_select->num_chars] = 0;
 	  replace_res =
 	    _XmTextFieldReplaceText(tf, ds->event,
 				    replace_from,
 				    replace_to,
 				    (char*)wc_value,
-				    prim_select->num_chars,
+				    _prim_select->num_chars,
 				    ds->selection == atoms[XmACLIPBOARD]);
 	}
 	_XmProcessUnlock();
@@ -1207,17 +1199,17 @@ DoStuff(Widget w,
       if (ds->selection != atoms[XmACLIPBOARD]) {
 	tf->text.pending_off = FALSE;
 	_XmProcessLock();
-	cursorPos = replace_from + prim_select->num_chars;
-	if (prim_select->num_chars > 0 && !tf->text.selection_move) {
+	cursorPos = replace_from + _prim_select->num_chars;
+	if (_prim_select->num_chars > 0 && !tf->text.selection_move) {
 	  _XmTextFieldSetCursorPosition(tf, NULL, cursorPos,
 					True, True);
-	  (void) _XmTextFieldSetDestination(w, cursorPos, prim_select->time);
+	  (void) _XmTextFieldSetDestination(w, cursorPos, _prim_select->time);
 	_XmProcessUnlock();
 	}
       } else {
 	_XmProcessLock();
 	(void) _XmTextFieldSetDestination(w, TextF_CursorPosition(tf),
-					  prim_select->time);
+					  _prim_select->time);
 	_XmProcessUnlock();
       }
       left = tf->text.prim_pos_left;
@@ -1228,12 +1220,12 @@ DoStuff(Widget w,
 	    _XmProcessLock();
 	    _XmTextFieldStartSelection(tf, TextF_CursorPosition(tf),
 				       TextF_CursorPosition(tf),
-				       prim_select->time);
+				       _prim_select->time);
 	    _XmProcessUnlock();
 	} else {
 	  _XmProcessLock();
-	  if (tf->text.selection_move && left < prim_select->position)
-	    prim_select->position -= prim_select->num_chars;
+	  if (tf->text.selection_move && left < _prim_select->position)
+	    _prim_select->position -= _prim_select->num_chars;
 	  if (left <= cursorPos && right >= cursorPos)
 	    tf->text.pending_off = TRUE;
 	  _XmProcessUnlock();
@@ -1243,8 +1235,8 @@ DoStuff(Widget w,
 	if (ds->selection == atoms[XmACLIPBOARD])
 	  tf->text.prim_anchor = replace_from;
 	else if (!tf->text.selection_move && !tf->text.add_mode &&
-		 prim_select->num_chars != 0)
-	  tf->text.prim_anchor = prim_select->position;
+		 _prim_select->num_chars != 0)
+	  tf->text.prim_anchor = _prim_select->position;
 	_XmProcessUnlock();
       }
       cb.reason = XmCR_VALUE_CHANGED;
@@ -1253,7 +1245,7 @@ DoStuff(Widget w,
 			 (XtPointer) &cb);
     } else {
       _XmProcessLock();
-      prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
+      _prim_select->num_chars = 0; /* Stop SetPrimarySelection from doing
 				     anything */
       _XmProcessUnlock();
     }

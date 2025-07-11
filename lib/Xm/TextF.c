@@ -80,8 +80,6 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #endif
 #include <Xm/XmP.h>
 
-#define FIX_1409
-
 #if (defined(__FreeBSD__) && (__FreeBSD__ < 4)) || \
     (defined(__APPLE__) || defined(__NetBSD__) || defined(__OpenBSD__))
 /*
@@ -6975,10 +6973,13 @@ ValidateString(XmTextFieldWidget tf,
   int str_len = 0;
   int i, j;
   char stack_cache[400];
+  char *params[1], *err_str;
+  char *temp_str, *curr_str, *start_temp;
+  wchar_t tmp;
+  int num_conv;
+  Boolean printable;
 
   if (!is_wchar) {
-    char *temp_str, *curr_str, *start_temp;
-
     str_len = strlen(value);
     temp_str = (char*)XmStackAlloc((Cardinal)str_len + 1, stack_cache);
     start_temp = temp_str;
@@ -6990,18 +6991,15 @@ ValidateString(XmTextFieldWidget tf,
 	  *temp_str = *curr_str;
 	  temp_str++;
 	} else {
-	  char *params[1], err_str[5];
+	  err_str = XmStackAlloc(6, stack_cache);
 	  sprintf(err_str, "\\%o", (unsigned char) *curr_str);
 	  params[0] = err_str;
-	  _XmWarningMsg ((Widget)tf, "Unsupported char", MSG5, params, 1);
+	  _XmWarningMsg((Widget)tf, "Unsupported char", MSG5, params, 1);
+	  XmStackFree(err_str, stack_cache);
 	}
 	curr_str++;
 	i++;
       } else {
-	wchar_t tmp;
-	int num_conv;
-        Boolean printable;
-
 #if USE_XFT
         if (TextF_UseXft(tf)) {
           num_conv = strlen(curr_str);
@@ -7022,14 +7020,10 @@ ValidateString(XmTextFieldWidget tf,
 	    i++;
 	  }
 	} else {
-	  char *params[1], *err_str;
-
 	  if (num_conv >= 0) {
-	    int i;
-
 	    err_str = XtMalloc((4 * num_conv) + 1);
-	    for (i = 0; i < num_conv; i++) {
-	      sprintf(err_str + (i * 4), "\\%o", (unsigned char) curr_str[i]);
+	    for (j = 0; j < num_conv; j++) {
+	      sprintf(err_str + (j * 4), "\\%o", (unsigned char) curr_str[j]);
 	    }
 	  }
 	  else {
@@ -7099,14 +7093,10 @@ ValidateString(XmTextFieldWidget tf,
 	  wcs_temp_str++;
 	  new_len++;
 	} else {
-	  char *params[1];
-          char *err_str;
 	  if (csize >= 0) {
-	      int i;
-
 	      err_str = XtMalloc((4 * csize) + 1);
-	      for (i = 0; i < csize; i++) {
-                sprintf(err_str + (i * 4), "\\%o", (unsigned char) scratch[i]);
+	      for (j = 0; j < csize; j++) {
+                sprintf(err_str + (j * 4), "\\%o", (unsigned char) scratch[j]);
 	      }
 	  }
 	  else {
@@ -7123,15 +7113,11 @@ ValidateString(XmTextFieldWidget tf,
 	  wcs_temp_str++;
 	  new_len++;
 	} else {
-	  char *params[1];
-          char *err_str;
 	  csize = wctomb(scratch, *wcs_curr_str);
 	  if (csize >= 0) {
-	      int i;
-
 	      err_str = XtMalloc((4 * csize) + 1);
-	      for (i = 0; i < csize; i++) {
-                sprintf(err_str + (i * 4), "\\%o", (unsigned char) scratch[i]);
+	      for (j = 0; j < csize; j++) {
+                sprintf(err_str + (j * 4), "\\%o", (unsigned char) scratch[j]);
 	      }
 	  }
 	  else {
@@ -8194,7 +8180,7 @@ SetValues(Widget old,
       /* If the function ModifyVerify() returns false then don't
        * continue with the action.
        */
-      char *temp, *old;
+      char *temp, *old_s;
       int free_insert = (int)False;
       XmTextPosition fromPos = 0, toPos;
       int ret_val = 0;
@@ -8206,30 +8192,17 @@ SetValues(Widget old,
 				   &temp, &new_tf->text.string_length,
 				   &newInsert, &free_insert);
       } else {
-	old = temp = XtMalloc((unsigned)((new_tf->text.string_length + 1) *
+	old_s = temp = XtMalloc((unsigned)((new_tf->text.string_length + 1) *
 					 new_tf->text.max_char_size));
 	ret_val = wcstombs(temp, TextF_WcValue(new_tf),
 			   (new_tf->text.string_length + 1) *
 			   new_tf->text.max_char_size);
 	if (ret_val < 0) temp[0] = '\0';
 
-/* Fixed bug #1214. ModifyVerify needs wchar_t*, not char*. */
-/* old code:
-	mod_ver_ret = ModifyVerify(new_tf, NULL, &fromPos, &toPos, &temp,
-				   &new_tf->text.string_length, &newInsert,
-				   &free_insert);
-*/
-#ifdef FIX_1409
 	mod_ver_ret = ModifyVerify(new_tf, NULL, &fromPos, &toPos,
 	                           &temp, &ret_val, &newInsert, &free_insert);
-#else
-	mod_ver_ret = ModifyVerify(new_tf, NULL, &fromPos, &toPos,
-	                           (char**)&TextF_WcValue(new_tf),
-				   &ret_val, &newInsert, &free_insert);
-#endif
-/* end if fix of bug #1214 */
 
-	if (old != temp) XtFree (old);
+	if (old_s != temp) XtFree(old_s);
       }
       if (free_insert) XtFree(temp);
       if (!mod_ver_ret) {

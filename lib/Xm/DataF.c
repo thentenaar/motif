@@ -10682,7 +10682,7 @@ df_SetValues(
          /* If the function df_ModifyVerify() returns false then don't
           * continue with the action.
           */
-	  char *temp, *old;
+	  char *temp, *s_old;
 	  int free_insert;
           XmTextPosition fromPos = 0, toPos;
           toPos = XmTextF_string_length(old_tf);
@@ -10692,14 +10692,14 @@ df_SetValues(
 					&temp, &XmTextF_string_length(new_tf),
 					&newInsert, &free_insert);
 	  } else {
-	     old = temp = XtMalloc((unsigned)((XmTextF_string_length(new_tf) + 1) *
+	     s_old = temp = XtMalloc((unsigned)((XmTextF_string_length(new_tf) + 1) *
 					      XmTextF_max_char_size(new_tf)));
 	     (void)wcstombs(temp, XmTextF_wc_value(new_tf),
 	         (XmTextF_string_length(new_tf) + 1) * XmTextF_max_char_size(new_tf));
 	     mod_ver_ret = df_ModifyVerify(new_tf, NULL, &fromPos, &toPos, &temp,
 					&XmTextF_string_length(new_tf), &newInsert,
 					&free_insert);
-	     if (old != temp) XtFree (old);
+	     if (s_old != temp) XtFree(s_old);
           }
 	  if (free_insert) XtFree(temp);
           if (!mod_ver_ret) {

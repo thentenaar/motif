@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
 **++
@@ -45,6 +45,7 @@
 
 #include <Mrm/MrmPublic.h>
 #include <Xm/Xm.h>
+#include <string.h>
 
 /*
 **  constraint check access macro
@@ -58,7 +59,7 @@
 
 /* MOVED TO DBDef.h */
 
-/* 
+/*
 **  Symbol tags.  These values are used in the tag field of every object header
 **  to identify the type of the entry.
 */
@@ -91,9 +92,9 @@
 */
 /* MOVED TO DBDef.h */
 
- 
+
 
-/* 
+/*
 **  Header for each symbol entry
 */
 
@@ -143,7 +144,7 @@ typedef struct
 **  Common view of a symbol entry
 */
 
-typedef struct  
+typedef struct
 {
     sym_entry_header_type   header;
 	/* common part of all symbol entries.				    */
@@ -154,7 +155,7 @@ typedef struct
 
 
 /*
-**  Name entry 
+**  Name entry
 */
 
 /*	Flags for name entries						    */
@@ -197,7 +198,7 @@ typedef struct _sym_name_entry_type
 
 
 /*
-**  Value entry 
+**  Value entry
 */
 
 /*
@@ -210,7 +211,7 @@ typedef struct _sym_name_entry_type
 
 
 
-/* 
+/*
 **  Common header for each "object" entry.  This header is shared by all
 **  widget, gadget, list, argument, callback, and control node types.  It
 **  always appears immediately following the standard entry header field.  Also
@@ -247,7 +248,7 @@ typedef struct
 **  an array of such elements.
 */
 
-typedef struct	
+typedef struct
 {
     unsigned char	b_letter;
 	/* letter for this color					  */
@@ -265,7 +266,7 @@ typedef struct
 **  This structure defines the data for an icon.
 */
 
-typedef struct	
+typedef struct
 {
     unsigned short	w_height;
 	/* height in pixels of the icon					  */
@@ -353,8 +354,8 @@ typedef struct _sym_value_entry_type
     unsigned short int	    b_enumeration_value_code;
         /* if non-0, the node takes its value from the value of the       */
         /* sym_k_..._enumval code in this field (currently integer)       */
-    MrmResource_id    	resource_id; 
-	/* 
+    MrmResource_id    	resource_id;
+	/*
 resource id for private values.				  */
 
 /* Structure for different kinds of nodes pointing to other value nodes	  */
@@ -386,7 +387,7 @@ resource id for private values.				  */
 	   /* value of XmString						*/
 	float           single_float;
 	    /* value if a single float					*/
-	sym_color_element	*z_color;	
+	sym_color_element	*z_color;
 	    /* value if color table.					*/
 	sym_icon_element	*z_icon;
 	    /* value if icon						*/
@@ -398,7 +399,7 @@ resource id for private values.				  */
 
 /*
 **  Define the fixed size of the value entry structure
-*/   
+*/
 
 #define sym_k_value_entry_size (sizeof(sym_value_entry_type))
 
@@ -431,7 +432,7 @@ typedef struct _sym_list_entry_type
 
 /*
 **  Define the size of the list structure
-*/   
+*/
 
 #define sym_k_list_entry_size (sizeof(sym_list_entry_type))
 
@@ -462,7 +463,7 @@ typedef struct _sym_nested_list_entry_type
 
 /*
 **  Define the size of the nested_list structure
-*/   
+*/
 
 #define sym_k_nested_list_entry_size (sizeof(sym_nested_list_entry_type))
 
@@ -648,7 +649,7 @@ typedef struct _sym_widget_entry_type
 **  Control flags -- These are additional values that may occur in the b_flags
 **  field for control entries. NOTE: Must not overlap common flags defined
 **  above.
-*/	
+*/
 
 #define	sym_m_def_in_progress	(1 << 6)
     /*	used in all lists.						    */
@@ -683,7 +684,7 @@ typedef struct _sym_control_entry_type
 
 typedef struct _sym_external_def_entry_type
 {
-    sym_entry_header_type	header;	
+    sym_entry_header_type	header;
 	/* common header						    */
     struct _sym_external_def_entry_type	*az_next_object;
 	/* pointer next external definition entry.			    */
@@ -883,7 +884,7 @@ typedef struct _sym_root_entry_type
 	/* pointer to section list entry.				    */
     sym_module_entry_type	*module_hdr;
 	/* pointer to module header entry.				    */
-    
+
 } sym_root_entry_type;
 
 #define sym_k_root_entry_size (sizeof( sym_root_entry_type))
@@ -906,7 +907,7 @@ typedef struct _sym_color_item_entry_type
     unsigned char		b_spare1;
     sym_value_entry_type	*az_color;
 	/* name or value entry for the color.				    */
-	
+
 } sym_color_item_entry_type;
 
 #define sym_k_color_item_entry_size (sizeof( sym_color_item_entry_type))
@@ -917,7 +918,7 @@ typedef struct _sym_color_item_entry_type
 **  This macro copies the contents of one entry to another without disturbing
 **  the the linked list of entries used to connect all symbol table entries.
 */
-#define _sym_copy_entry(__dest, __src, __size) _move (__dest, __src, __size)
+#define _sym_copy_entry(__dest, __src, __size) memmove(__dest, __src, __size)
 
 
 #endif /* UilSymDef_h */

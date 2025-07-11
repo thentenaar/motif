@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
@@ -29,7 +29,6 @@ static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifndef X_NOT_STDC_ENV
 #include <stdlib.h>		/* for abs, float operation... */
@@ -50,7 +49,7 @@ static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
 #define MESSAGE1	_XmMMsgForm_0000
 #define MESSAGE5	_XmMMsgForm_0002
 #define MESSAGE7 	_XmMMsgForm_0003
-	
+
 
 /*  Useful macros  */
 
@@ -73,7 +72,7 @@ static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
 #ifdef FIX_1299
 #define ATTACHED_WIDGET(cons, j) \
   (cons->att[j].w)
-  
+
 #define IS_ATTACHED_WIDGET(cons, j) \
   ((cons->att[j].type == XmATTACH_WIDGET || cons->att[j].type == XmATTACH_OPPOSITE_WIDGET) \
   && cons->att[j].w != (Widget) NULL)
@@ -88,64 +87,64 @@ static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
 #define TOP	_XmFORM_TOP
 #define BOTTOM	_XmFORM_BOTTOM
 #define FIRST_ATTACHMENT  LEFT
-#define LAST_ATTACHMENT   BOTTOM	
+#define LAST_ATTACHMENT   BOTTOM
 
 /********    Static Function Declarations    ********/
 
-static void FromTopOffset( 
+static void FromTopOffset(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void FromBottomOffset( 
+static void FromBottomOffset(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void FromLeftOffset( 
+static void FromLeftOffset(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void FromRightOffset( 
+static void FromRightOffset(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void MarginWidthOut( 
+static void MarginWidthOut(
                         Widget wid,
                         int offset,
                         XtArgVal *value) ;
-static void MarginHeightOut( 
+static void MarginHeightOut(
                         Widget wid,
                         int offset,
                         XtArgVal *value) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static Boolean SyncEdges( 
+static Boolean SyncEdges(
                         XmFormWidget fw,
                         Widget last_child,
                         Dimension *form_width,
                         Dimension *form_height,
                         Widget instigator,
                         XtWidgetGeometry *geometry) ;
-static Boolean CalcFormSizeWithChange( 
+static Boolean CalcFormSizeWithChange(
                         XmFormWidget fw,
                         Dimension *w,
                         Dimension *h,
                         Widget c,
                         XtWidgetGeometry *g) ;
-static void CalcFormSize( 
+static void CalcFormSize(
                         XmFormWidget fw,
                         Dimension *w,
                         Dimension *h) ;
-static XtGeometryResult GeometryManager( 
+static XtGeometryResult GeometryManager(
                         Widget w,
                         XtWidgetGeometry *desired,
                         XtWidgetGeometry *allowed) ;
-static XtGeometryResult QueryGeometry( 
+static XtGeometryResult QueryGeometry(
                         Widget wid,
                         XtWidgetGeometry *req,
                         XtWidgetGeometry *ret) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget fw,
                         XEvent *event,
                         Region region) ;
@@ -161,55 +160,55 @@ static void PlaceChild(
                         Widget instigator,
                         XtWidgetGeometry* inst_geometry);
 #endif /* FIX_1299 */
-static void PlaceChildren( 
+static void PlaceChildren(
                         XmFormWidget fw,
                         Widget instigator,
                         XtWidgetGeometry *inst_geometry) ;
-static void ChangeManaged( 
+static void ChangeManaged(
                         Widget wid) ;
-static void GetSize( 
+static void GetSize(
                         XmFormWidget fw,
 		        XtWidgetGeometry *g,
                         Widget w,
                         XtWidgetGeometry *desired) ;
-static void ChangeIfNeeded( 
+static void ChangeIfNeeded(
                         XmFormWidget fw,
                         Widget w,
                         XtWidgetGeometry *desired) ;
-static void DeleteChild( 
+static void DeleteChild(
                         Widget child) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void SetValuesAlmost( 
+static void SetValuesAlmost(
                         Widget cw,
                         Widget nw,
                         XtWidgetGeometry *req,
                         XtWidgetGeometry *rep) ;
-static Boolean ConstraintSetValues( 
+static Boolean ConstraintSetValues(
                         register Widget old,
                         register Widget ref,
                         register Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void ConstraintInitialize( 
+static void ConstraintInitialize(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void CheckConstraints( 
+static void CheckConstraints(
                         Widget w) ;
-static void SortChildren( 
+static void SortChildren(
                         register XmFormWidget fw) ;
-static void CalcEdgeValues( 
+static void CalcEdgeValues(
                         Widget w,
 #if NeedWidePrototypes
                         int really,
@@ -220,28 +219,28 @@ static void CalcEdgeValues(
                         XtWidgetGeometry *inst_geometry,
                         Dimension *form_width,
                         Dimension *form_height) ;
-static float CheckBottomBase( 
+static float CheckBottomBase(
                         Widget sibling,
 #if NeedWidePrototypes
                         int opposite) ;
 #else
                         Boolean opposite) ;
 #endif /* NeedWidePrototypes */
-static float CheckRightBase( 
+static float CheckRightBase(
                         Widget sibling,
 #if NeedWidePrototypes
                         int opposite) ;
 #else
                         Boolean opposite) ;
 #endif /* NeedWidePrototypes */
-static float CheckLeftBase( 
+static float CheckLeftBase(
                         Widget sibling,
 #if NeedWidePrototypes
                         int opposite) ;
 #else
                         Boolean opposite) ;
 #endif /* NeedWidePrototypes */
-static void CalcEdgeValue( 
+static void CalcEdgeValue(
                         XmFormWidget fw,
                         Widget w,
 #if NeedWidePrototypes
@@ -259,7 +258,7 @@ static void CalcEdgeValue(
 #endif /* NeedWidePrototypes */
                         Dimension *fwidth,
                         Dimension *fheight) ;
-static void ComputeAttachment( 
+static void ComputeAttachment(
 			XmFormWidget fw,
                         Widget w,
 #if NeedWidePrototypes
@@ -277,11 +276,11 @@ static void ComputeAttachment(
 #endif /* NeedWidePrototypes */
                         Dimension *fwidth,
                         Dimension *fheight) ;
-static int GetFormOffset( 
+static int GetFormOffset(
                         XmFormWidget fw,
                         int which,
                         XmFormAttachment a) ;
-#ifdef FIX_1612                        
+#ifdef FIX_1612
 static Boolean IsWidgetAttachedOneHorizontalSide(
                         Widget w);
 static Boolean IsWidgetAttachedOneVerticalSide(
@@ -291,7 +290,7 @@ static Boolean IsWidgetAttachedOneVerticalSide(
 /********    End Static Function Declarations    ********/
 
 
-static XtResource resources[] = 
+static XtResource resources[] =
 {
    {
        XmNmarginWidth, XmCMarginWidth, XmRHorizontalDimension,
@@ -308,26 +307,26 @@ static XtResource resources[] =
    {
        XmNhorizontalSpacing, XmCSpacing, XmRHorizontalDimension,
        sizeof(Dimension),
-       XtOffsetOf( struct _XmFormRec, form.horizontal_spacing), 
+       XtOffsetOf( struct _XmFormRec, form.horizontal_spacing),
        XmRImmediate, (XtPointer) 0
    },
    {
        XmNverticalSpacing, XmCSpacing, XmRVerticalDimension,
        sizeof(Dimension),
-       XtOffsetOf( struct _XmFormRec, form.vertical_spacing), 
+       XtOffsetOf( struct _XmFormRec, form.vertical_spacing),
        XmRImmediate, (XtPointer) 0
    },
 
    {
        XmNfractionBase, XmCMaxValue, XmRInt, sizeof(int),
-       XtOffsetOf( struct _XmFormRec, form.fraction_base), 
+       XtOffsetOf( struct _XmFormRec, form.fraction_base),
        XmRImmediate, (XtPointer) 100
    },
 
    {
-       XmNrubberPositioning, XmCRubberPositioning, XmRBoolean, 
+       XmNrubberPositioning, XmCRubberPositioning, XmRBoolean,
        sizeof(Boolean),
-       XtOffsetOf( struct _XmFormRec, form.rubber_positioning), 
+       XtOffsetOf( struct _XmFormRec, form.rubber_positioning),
        XmRImmediate, (XtPointer) False
    },
 
@@ -340,25 +339,25 @@ static XmSyntheticResource syn_resources[] =
 {
    { XmNmarginWidth,
      sizeof (Dimension),
-     XtOffsetOf( struct _XmFormRec, bulletin_board.margin_width), 
+     XtOffsetOf( struct _XmFormRec, bulletin_board.margin_width),
 	 MarginWidthOut,
 	 XmeToHorizontalPixels },
 
    { XmNmarginHeight,
      sizeof (Dimension),
-     XtOffsetOf( struct _XmFormRec, bulletin_board.margin_height), 
+     XtOffsetOf( struct _XmFormRec, bulletin_board.margin_height),
 	 MarginHeightOut,
 	 XmeToVerticalPixels },
 
    { XmNhorizontalSpacing,
      sizeof (Dimension),
-     XtOffsetOf( struct _XmFormRec, form.horizontal_spacing), 
+     XtOffsetOf( struct _XmFormRec, form.horizontal_spacing),
      XmeFromHorizontalPixels,
 	 XmeToHorizontalPixels },
 
    { XmNverticalSpacing,
      sizeof (Dimension),
-     XtOffsetOf( struct _XmFormRec, form.vertical_spacing), 
+     XtOffsetOf( struct _XmFormRec, form.vertical_spacing),
      XmeFromVerticalPixels,
 	 XmeToVerticalPixels },
 };
@@ -544,7 +543,7 @@ externaldef(xmformclassrec) XmFormClassRec xmFormClassRec =
       XtInheritTranslations,    /* tm_table             */
       QueryGeometry,            /* Query Geometry proc  */
       (XtStringProc)NULL,       /* disp accelerator     */
-      NULL,                     /* extension            */    
+      NULL,                     /* extension            */
    },
 
    {                    /* composite_class fields */
@@ -588,7 +587,7 @@ externaldef(xmformclassrec) XmFormClassRec xmFormClassRec =
 };
 
 
-externaldef(xmformwidgetclass) WidgetClass 
+externaldef(xmformwidgetclass) WidgetClass
 	xmFormWidgetClass = (WidgetClass) &xmFormClassRec;
 
 static void
@@ -645,7 +644,7 @@ FromRightOffset(
 
 
 
-static void 
+static void
 MarginWidthOut(
         Widget wid,
         int offset,
@@ -659,7 +658,7 @@ MarginWidthOut(
 		XmeFromHorizontalPixels((Widget) fw, offset, value);
 }
 
-static void 
+static void
 MarginHeightOut(
         Widget wid,
         int offset,
@@ -679,7 +678,7 @@ MarginHeightOut(
  *	Set up the fast subclassing.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -692,11 +691,11 @@ ClassPartInitialize(
 /************************************************************************
  *
  *  CalcFormSizeWithChange
- *	Find size of a bounding box which will include all of the 
+ *	Find size of a bounding box which will include all of the
  *	children, including the child which may change
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 SyncEdges(
         XmFormWidget fw,
         Widget last_child,
@@ -748,14 +747,14 @@ SyncEdges(
 
 		for (child = fw->form.first_child;
 			child != NULL;
-			child = c->next_sibling) 
+			child = c->next_sibling)
 		{
 			if (!XtIsManaged (child))
 				break;
 
 			c = GetFormConstraint(child);
 
-			CalcEdgeValues(child, FALSE, instigator, geometry, 
+			CalcEdgeValues(child, FALSE, instigator, geometry,
 				&tmp_w, &tmp_h);
 
 			if (child == last_child)
@@ -784,7 +783,7 @@ SyncEdges(
 	return(finished);
 }
 
-static Boolean 
+static Boolean
 CalcFormSizeWithChange(
         XmFormWidget fw,
         Dimension *w,
@@ -803,7 +802,7 @@ CalcFormSizeWithChange(
 
 	/* Place children, but don't do it for real--just get new size */
 
-	for(child = fw->form.first_child; 
+	for(child = fw->form.first_child;
 		child != NULL;
 		child = fc->next_sibling)
 	{
@@ -817,11 +816,11 @@ CalcFormSizeWithChange(
 			return(False);
 	}
 
-	for(child = fw->form.first_child; 
+	for(child = fw->form.first_child;
 		child != NULL;
 		child = fc->next_sibling)
 	{
-		if (!XtIsManaged (child)) 
+		if (!XtIsManaged (child))
 			break;
 
 		fc = GetFormConstraint(child);
@@ -829,13 +828,13 @@ CalcFormSizeWithChange(
 		tmp = fc->att[RIGHT].tempValue;
 		if (fc->att[RIGHT].type == XmATTACH_FORM)
 			tmp += GetFormOffset(fw, RIGHT, fc->att);
-		if (tmp > 0) 
+		if (tmp > 0)
 			ASSIGN_MAX(*w, tmp);
-		
+
 		tmp = fc->att[BOTTOM].tempValue ;
 		if (fc->att[BOTTOM].type == XmATTACH_FORM)
 			tmp += GetFormOffset(fw, BOTTOM, fc->att);
-		if (tmp > 0) 
+		if (tmp > 0)
 			ASSIGN_MAX (*h, tmp);
 	}
 
@@ -844,7 +843,7 @@ CalcFormSizeWithChange(
 	if (!(*h))
 		*h = 1;
 
-	if (*w != XtWidth(fw) || *h != XtHeight(fw)) 
+	if (*w != XtWidth(fw) || *h != XtHeight(fw))
 		return True;
 	else
 		return False;
@@ -859,7 +858,7 @@ CalcFormSizeWithChange(
  *	Find size of a bounding box which will include all of the children.
  *
  ************************************************************************/
-static void 
+static void
 CalcFormSize(
         XmFormWidget fw,
         Dimension *w,
@@ -888,11 +887,11 @@ CalcFormSize(
 			break;
 	}
 
-	for(child = fw->form.first_child; 
+	for(child = fw->form.first_child;
 		child != NULL;
 		child = fc->next_sibling)
 	{
-		if (!XtIsManaged (child)) 
+		if (!XtIsManaged (child))
 			break;
 
 		fc = GetFormConstraint(child);
@@ -900,13 +899,13 @@ CalcFormSize(
 		tmp = fc->att[RIGHT].tempValue;
 		if (fc->att[RIGHT].type == XmATTACH_FORM)
 			tmp += GetFormOffset(fw, RIGHT, fc->att);
-		if (tmp > 0) 
+		if (tmp > 0)
 			ASSIGN_MAX(*w, tmp);
-		
+
 		tmp = fc->att[BOTTOM].tempValue ;
 		if (fc->att[BOTTOM].type == XmATTACH_FORM)
 			tmp += GetFormOffset(fw, BOTTOM, fc->att);
-		if (tmp > 0) 
+		if (tmp > 0)
 			ASSIGN_MAX(*h, tmp);
 	}
 
@@ -923,7 +922,7 @@ CalcFormSize(
  *  GeometryManager
  *
  ************************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager(
         Widget w,
         XtWidgetGeometry *desired,
@@ -934,14 +933,14 @@ GeometryManager(
     XtGeometryResult reply = XtGeometryNo;
     XmFormWidget fw = (XmFormWidget) XtParent(w);
     XmFormConstraint c = GetFormConstraint(w);
-    
+
     /* sooo confusing... */
     if (fw->form.processing_constraints) {
 	fw->form.processing_constraints = FALSE;
 	PlaceChildren (fw, NULL, NULL);
 	return(XtGeometryNo);
     }
-    
+
     /*
      * Fix for 4854 - If the widget is not resizable, do not set the
      *                preferred_width or the preferred_height.
@@ -962,70 +961,70 @@ GeometryManager(
     original.border_width = w->core.border_width;
     original.request_mode = (CWX | CWY | CWWidth | CWHeight | CWBorderWidth);
 
-    size_req = desired->request_mode & 
+    size_req = desired->request_mode &
 	              (CWX | CWY | CWWidth | CWHeight | CWBorderWidth);
     if (size_req && c->resizable) {
 	XtWidgetGeometry g, r;
 	XtGeometryResult res ;
-	
+
 	/* get the size the Form wants to be */
 	GetSize(fw, &g, w, desired);
-	
+
 	/* GetSize takes care of the resizePolicy resource as well
 	   and returns the desired change in g if any.
-	   g.request_mode might be 0 at this point, which means the 
+	   g.request_mode might be 0 at this point, which means the
 	   Form doesn't want to change, but we still want to
 	   see if the child request can be accomodated into
 	   the current Form size, so we move forward with the
 	   0 in request mode.  */
-	
+
 	/* if the child requesed query only, propagate */
-	if (desired->request_mode & XtCWQueryOnly) 
+	if (desired->request_mode & XtCWQueryOnly)
 	    g.request_mode |= XtCWQueryOnly;
-	
+
 	/* Let's make a request to the parent.
 	   At this point, we do not want to accept any compromise
-	   because we're not sure our kid will accept it in turn. 
+	   because we're not sure our kid will accept it in turn.
 	   So use the Xt API, no _XmMakeGeometryRequest.
 	   If g.request_mode is 0, nothing will happen, yes
 	   will be returned */
 	res = XtMakeGeometryRequest((Widget)fw, &g, &r);
-	
+
 	/* check that a real request has failed or that if request_mode was 0,
 	   consider that a No */
 	if (!g.request_mode || (res != XtGeometryYes)) {
 	    Dimension orig_form_width, orig_form_height  ;
-	    
+
 	    /* let's save the original form size first */
 	    orig_form_width = fw->core.width ;
 	    orig_form_height = fw->core.height ;
-	    
+
 	    if (res == XtGeometryAlmost) {
-		/* let's try the proposal. Stuff the Form with it so that 
+		/* let's try the proposal. Stuff the Form with it so that
 		   PlaceChildren does the layout base on it */
 		if (r.request_mode | CWWidth) fw->core.width = r.width ;
 		if (r.request_mode | CWHeight) fw->core.height = r.height ;
 	    }
 	    /* else it's No and we keep the same size */
-	    
-	    /* let's see if there is a chance that the child request 
+
+	    /* let's see if there is a chance that the child request
 	       be honored: the needed form overall size is smaller than
 	       the current or proposed size (now in the core field) */
-	    
+
 	    if ((g.width <= fw->core.width) &&
 		(g.height <= fw->core.height)) {
-		/* ok, now we'are going to try to place the kid 
+		/* ok, now we'are going to try to place the kid
 		   using the new Form size for the layout */
 		PlaceChildren (fw, w, desired);
-		
+
 		/* now, we check if the requestor has gotten
 		   what it asked for.  The logic is that:
-		   width = req_width iff req_width 
+		   width = req_width iff req_width
 		   height = req_height iff req_height */
-		if (((desired->request_mode & CWWidth && 
+		if (((desired->request_mode & CWWidth &&
 		      desired->width == w->core.width) ||
 		     ! (desired->request_mode & CWWidth)) &&
-		    ((desired->request_mode & CWHeight && 
+		    ((desired->request_mode & CWHeight &&
 		      desired->height == w->core.height) ||
 		     ! (desired->request_mode & CWHeight))) {
 		    /* ok, the kid request has been honored, although the
@@ -1036,14 +1035,14 @@ GeometryManager(
 			/* let's backup the original Form size first */
 			fw->core.width = orig_form_width  ;
 			fw->core.height = orig_form_height;
-			
+
 			/* success guaranteed */
 			XtMakeGeometryRequest((Widget)fw, &r, NULL);
-			
-			/* no need to do the layout PlaceCHildren, it 
+
+			/* no need to do the layout PlaceCHildren, it
 			   has already been done using the correct size */
 		    }
-		    
+
 		    /* simply return Yes, since PlaceChildren already
 		       change the kid core fields */
 		    reply = XtGeometryYes ;
@@ -1053,10 +1052,10 @@ GeometryManager(
 		       current Form geometry, we have to backup
 		       everything and return either No or Almost
 		       to the kid */
-		    
+
 		    if ((w->core.width != original.width) ||
 			(w->core.height != original.height)) {
-			
+
 			allowed->request_mode = desired->request_mode;
 			allowed->sibling = desired->sibling;
 			allowed->stack_mode = desired->stack_mode;
@@ -1066,59 +1065,59 @@ GeometryManager(
 			allowed->height = w->core.height;
 			allowed->border_width = w->core.border_width;
 			reply = XtGeometryAlmost;
-			
+
 		    } else reply = XtGeometryNo;
-		    
+
 		    /* backup the kid geometry */
 		    w->core.x = original.x;
 		    w->core.y = original.y;
 		    w->core.width = original.width;
 		    w->core.height = original.height;
 		    w->core.border_width = original.border_width;
-		    
+
 		    /* backup the Form and the layout too */
 		    fw->core.width = orig_form_width  ;
 		    fw->core.height = orig_form_height;
-		    
-		    PlaceChildren (fw, w, &original); 
+
+		    PlaceChildren (fw, w, &original);
 		}
 	    } else {
-		/* the size the Form wants for the kid request is bigger than 
+		/* the size the Form wants for the kid request is bigger than
 		   its current or proposed size, return No to the kid */
 		/* backup the original Form size first */
 		fw->core.width = orig_form_width  ;
 		fw->core.height = orig_form_height;
 		/* we haden't changed anything else, just return No */
 		reply = XtGeometryNo;
-		
+
 #ifdef FIX_1612
-                if (((IsWidgetAttachedOneHorizontalSide(w)) && 
+                if (((IsWidgetAttachedOneHorizontalSide(w)) &&
                      (desired->request_mode & CWWidth)) ||
-                    ((IsWidgetAttachedOneVerticalSide(w)) && 
+                    ((IsWidgetAttachedOneVerticalSide(w)) &&
                      (desired->request_mode & CWHeight)))
 		  { PlaceChildren (fw, w, desired);
-		    reply = XtGeometryYes; 
+		    reply = XtGeometryYes;
 		  }
 #endif
 	    }
 	} else {
 	    /* ok, we got a Yes form the Form's parent, let's relayout
 	       using the new size, except if query only was specified */
-	    
+
 	    if (!(desired->request_mode & XtCWQueryOnly)) {
 		/* Reposition the widget only if not QueryOnly */
 		PlaceChildren (fw, w, desired);
 	    }
 	    reply = XtGeometryYes;
 	}
-    } 
+    }
 
     /* let's deal with stacking order */
 
     if (desired->request_mode & (CWSibling | CWStackMode)) {
 	/* always honor stand alone stack requests */
 	if (!size_req) reply = XtGeometryYes;
-	else 
+	else
 	    /* the request concerned size as well, see if it was denied.
 	       if so, propose the stack request alone */
 	    if (reply != XtGeometryYes) {
@@ -1143,7 +1142,7 @@ GeometryManager(
 				fw->bulletin_board.old_height,
 				fw->bulletin_board.old_shadow_thickness, 0);
 	}
-    
+
     fw->bulletin_board.old_width = fw->core.width;
     fw->bulletin_board.old_height = fw->core.height;
     fw->bulletin_board.old_shadow_thickness = fw->manager.shadow_thickness;
@@ -1158,7 +1157,7 @@ GeometryManager(
  *  QueryGeometry
  *
  ************************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 QueryGeometry(
         Widget widget,
         XtWidgetGeometry *intended,
@@ -1166,7 +1165,7 @@ QueryGeometry(
 {
     Dimension width = 0, height = 0 ;
     XmFormWidget fw = (XmFormWidget) widget ;
-    
+
     /* first determine what is the desired size, using the resize_policy. */
     if (fw->bulletin_board.resize_policy == XmRESIZE_NONE) {
 	desired->width = XtWidth(widget) ;
@@ -1207,7 +1206,7 @@ QueryGeometry(
     if (!XtIsRealized(widget))  {
 	if (XtWidth(widget) != 0) desired->width = XtWidth(widget) ;
 	if (XtHeight(widget) != 0) desired->height = XtHeight(widget) ;
-    }	    
+    }
 
     return XmeReplyToQueryGeometry(widget, intended, desired) ;
 }
@@ -1219,11 +1218,11 @@ QueryGeometry(
  *
  *  Resize
  *	This routine is called by the parent's geometry manager after it
- *	has ok'd the resize request AND resized the form window.  This 
+ *	has ok'd the resize request AND resized the form window.  This
  *	routine is responsible for implementing the size given.
  *
  ************************************************************************/
-static void 
+static void
 Resize(
         Widget wid )
 {
@@ -1243,10 +1242,10 @@ Resize(
 	(fw->bulletin_board.old_width > fw->core.width))
 	draw_shadow = True;
 
-    
+
     fw->bulletin_board.old_width = fw->core.width;
     fw->bulletin_board.old_height = fw->core.height;
-    fw->bulletin_board.old_shadow_thickness = 
+    fw->bulletin_board.old_shadow_thickness =
 	fw->manager.shadow_thickness;
 
 
@@ -1262,7 +1261,7 @@ Resize(
 }
 
 
-static void 
+static void
 Redisplay(
         Widget fw,
         XEvent *event,
@@ -1270,13 +1269,13 @@ Redisplay(
 {
     XmeRedisplayGadgets( fw, event, region);
 
-    XmeDrawShadows (XtDisplay((Widget)fw), 
-		    XtWindow((Widget)fw), 
+    XmeDrawShadows (XtDisplay((Widget)fw),
+		    XtWindow((Widget)fw),
 		    ((XmFormWidget) fw)->manager.top_shadow_GC,
 		    ((XmFormWidget) fw)->manager.bottom_shadow_GC,
 		    0, 0,
 		    XtWidth(fw), XtHeight(fw),
-		    ((XmFormWidget) fw)->manager.shadow_thickness, 
+		    ((XmFormWidget) fw)->manager.shadow_thickness,
 		    ((XmFormWidget) fw)->bulletin_board.shadow_type);
 }
 
@@ -1285,18 +1284,18 @@ Redisplay(
 /************************************************************************
  *
  *  PlaceChildren
- *	Position all children according to their constraints.  
+ *	Position all children according to their constraints.
  *      Return desired width and height.
  *
  ************************************************************************/
-static void 
+static void
 PlaceChildren(
         XmFormWidget fw,
         Widget instigator,
         XtWidgetGeometry *inst_geometry )
 {
     Widget child;
-    
+
 #ifdef FIX_1299
     for (child = fw->form.first_child;
         child != NULL;
@@ -1304,7 +1303,7 @@ PlaceChildren(
       /* Place child itself */
       PlaceChild(fw, child, instigator, inst_geometry);
 
-      /* Update all attached widgets 
+      /* Update all attached widgets
        * according to the placement of a child */
       UpdateAttachments(fw, child, instigator, inst_geometry);
     }
@@ -1321,8 +1320,8 @@ PlaceChildren(
 	    break;
 
 	c = GetFormConstraint(child);
-	
-	CalcEdgeValues(child, TRUE, instigator, inst_geometry, 
+
+	CalcEdgeValues(child, TRUE, instigator, inst_geometry,
 		       NULL, NULL);
 
 	if ((child == instigator) &&
@@ -1347,21 +1346,21 @@ PlaceChildren(
 
 	if ((c->att[near_edge].value != ((RectObj) child)->rectangle.x) ||
 	    (c->att[TOP].value != ((RectObj) child)->rectangle.y)  ||
-	    (width != ((RectObj) child)->rectangle.width)          || 
+	    (width != ((RectObj) child)->rectangle.width)          ||
 	    (height != ((RectObj) child)->rectangle.height)        ||
 	    (border_width != ((RectObj) child)->rectangle.border_width)) {
-	  
+
 	  /* Yes policy everywhere, so don't resize the instigator */
 	  if (child != instigator) {
 	    XmeConfigureObject(child,
-			       c->att[near_edge].value, 
+			       c->att[near_edge].value,
 			       c->att[TOP].value,
 			       width, height, border_width);
 	  } else {
 	    XmeConfigureObject(child,
-			       c->att[near_edge].value, 
+			       c->att[near_edge].value,
 			       c->att[TOP].value,
-			       child->core.width, child->core.height, 
+			       child->core.width, child->core.height,
 			       child->core.border_width);
 	    child->core.width = width ;
 	    child->core.height = height ;
@@ -1382,7 +1381,7 @@ UpdateAttachments(
 {
   register XmFormConstraint c;
   c = GetFormConstraint(wid);
-  
+
   if (IS_ATTACHED_WIDGET(c, LEFT))
       PlaceChild(fw, ATTACHED_WIDGET(c, LEFT), instigator, inst_geometry);
   if (IS_ATTACHED_WIDGET(c, RIGHT))
@@ -1409,8 +1408,8 @@ PlaceChild(
 	    return;
 
 	c = GetFormConstraint(child);
-	
-	CalcEdgeValues(child, TRUE, instigator, inst_geometry, 
+
+	CalcEdgeValues(child, TRUE, instigator, inst_geometry,
 		       NULL, NULL);
 
 	if ((child == instigator) &&
@@ -1435,21 +1434,21 @@ PlaceChild(
 
 	if ((c->att[near_edge].value != ((RectObj) child)->rectangle.x) ||
 	    (c->att[TOP].value != ((RectObj) child)->rectangle.y)  ||
-	    (width != ((RectObj) child)->rectangle.width)          || 
+	    (width != ((RectObj) child)->rectangle.width)          ||
 	    (height != ((RectObj) child)->rectangle.height)        ||
 	    (border_width != ((RectObj) child)->rectangle.border_width)) {
-	  
+
 	  /* Yes policy everywhere, so don't resize the instigator */
 	  if (child != instigator) {
 	    XmeConfigureObject(child,
-			       c->att[near_edge].value, 
+			       c->att[near_edge].value,
 			       c->att[TOP].value,
 			       width, height, border_width);
 	  } else {
 	    XmeConfigureObject(child,
-			       c->att[near_edge].value, 
+			       c->att[near_edge].value,
 			       c->att[TOP].value,
-			       child->core.width, child->core.height, 
+			       child->core.width, child->core.height,
 			       child->core.border_width);
 	    child->core.width = width ;
 	    child->core.height = height ;
@@ -1462,12 +1461,12 @@ PlaceChild(
 /************************************************************************
  *
  *  ChangeManaged
- *	Something changed in the set of managed children, so place 
- *	the children and change the form widget size to reflect new size, 
+ *	Something changed in the set of managed children, so place
+ *	the children and change the form widget size to reflect new size,
  *	if possible.
  *
  ************************************************************************/
-static void 
+static void
 ChangeManaged(
         Widget wid )
 {
@@ -1476,7 +1475,7 @@ ChangeManaged(
     int i, j, k;
     register XmFormConstraint c;
     register Widget w, child;
-    
+
     /*
      * The following code works around a bug in the intrinsics
      * destroy processing.  The child is unmanaged before anything
@@ -1485,16 +1484,16 @@ ChangeManaged(
      */
     for (k = 0; k < fw->composite.num_children; k++) {
 	child = fw->composite.children[k];
-	
+
 	if (child->core.being_destroyed) {
 	    /*  If anyone depends on this child,
 		make into a dependency on form  */
-	    
-	    
+
+
 	    for (i = 0; i < fw->composite.num_children; i++) {
 		w = fw->composite.children[i];
 		c = GetFormConstraint(w);
-		
+
 		for (j = FIRST_ATTACHMENT; j < (LAST_ATTACHMENT + 1); j++)  {
 		    if (((c->att[j].type == XmATTACH_WIDGET) &&
 			 (c->att[j].w == child))
@@ -1521,37 +1520,37 @@ ChangeManaged(
 	    }
 	}
     }
-    
+
     SortChildren (fw);
-    
+
     /* Don't use XtRealizedWidget(form) as a test to initialize the
        preferred geometry, since when you realize the form before its
        kid, everything goes to the ground.
        Here we initialize a field if it hasn't been done already,
        the XmINVALID_DIMENSION has been set in ConstraintInitialize */
-    
+
     for (i = 0; i < fw->composite.num_children; i++) {
 	child = fw->composite.children[i];
 	c = GetFormConstraint(child);
-	if (c->preferred_width == XmINVALID_DIMENSION)  
+	if (c->preferred_width == XmINVALID_DIMENSION)
 	    c->preferred_width = XtWidth(child);
-	if (c->preferred_height == XmINVALID_DIMENSION) 
+	if (c->preferred_height == XmINVALID_DIMENSION)
 	    c->preferred_height = XtHeight(child);
     }
-    
+
     if (!XtIsRealized((Widget)fw))
 	{
 	    /* First time through */
-	    Dimension w = 0, h = 0;
-	    
+	    Dimension x = 0, h = 0;
+
 	    g.request_mode = 0;
 	    g.width = (fw->core.width ? fw->core.width : 1);
 	    g.height = (fw->core.height ? fw->core.height : 1);
-	    
+
 	    if (!XtWidth(fw) && XtHeight(fw))
 		{
-		    CalcFormSize(fw, &w, NULL);
-		    g.width = w;
+		    CalcFormSize(fw, &x, NULL);
+		    g.width = x;
 		    g.request_mode |= CWWidth;
 		}
 	    else if (XtWidth(fw) && !XtHeight(fw))
@@ -1562,15 +1561,15 @@ ChangeManaged(
 		}
 	    else if (!XtWidth(fw) && !XtHeight(fw))
 		{
-		    CalcFormSize(fw, &w, &h);
-		    g.width = w;
+		    CalcFormSize(fw, &x, &h);
+		    g.width = x;
 		    g.height = h;
 		    g.request_mode |= (CWWidth | CWHeight);
 		}
 
-	    if (g.request_mode != 0) 
+	    if (g.request_mode != 0)
 		_XmMakeGeometryRequest((Widget) fw, &g);
-	    
+
 	    PlaceChildren (fw, NULL, NULL);
 	}
     else
@@ -1578,14 +1577,14 @@ ChangeManaged(
 	    ChangeIfNeeded(fw, NULL, NULL);
 	    PlaceChildren (fw, NULL, NULL);
 	}
-    
+
     fw->bulletin_board.old_width = fw->core.width;
     fw->bulletin_board.old_height = fw->core.height;
     fw->bulletin_board.old_shadow_thickness =
 	fw->manager.shadow_thickness;
-    
+
     XmeNavigChangeManaged((Widget) fw);
-}                       
+}
 
 
 
@@ -1593,10 +1592,10 @@ ChangeManaged(
 /************************************************************************
  *
  *  GetSize
- *	
+ *
  *
  ************************************************************************/
-static void 
+static void
 GetSize(
         XmFormWidget fw,
 	XtWidgetGeometry * g,
@@ -1605,11 +1604,11 @@ GetSize(
 {
     Boolean grow_ok = fw->bulletin_board.resize_policy != XmRESIZE_NONE,
             shrink_ok = fw->bulletin_board.resize_policy == XmRESIZE_ANY;
-    
+
     g->request_mode = 0;
     g->width = 0;
     g->height = 0;
-    
+
     /* Compute the desired size of the form */
     if (CalcFormSizeWithChange(fw, &g->width, &g->height, w, desired)) {
 
@@ -1619,9 +1618,9 @@ GetSize(
 	    (g->height > fw->core.height && !grow_ok) ||
 	    (g->height < fw->core.height && !shrink_ok))
 	    return ; /* exit with request_mode = 0 */
-	
+
 	if (g->width != fw->core.width) g->request_mode |= CWWidth;
-	if (g->height != fw->core.height) g->request_mode |= CWHeight; 
+	if (g->height != fw->core.height) g->request_mode |= CWHeight;
     }
 
 }
@@ -1629,7 +1628,7 @@ GetSize(
 /************************************************************************
  *
  *  ChangeIfNeeded
- *	Returns whether to honor widget w's resize request; only returns 
+ *	Returns whether to honor widget w's resize request; only returns
  *      False if resize would require form to change size but it cannot.
  *	Form changes size as a side effect.
  *
@@ -1642,12 +1641,12 @@ ChangeIfNeeded(
 {
     XtWidgetGeometry g;
 
-    /* find out the desired size of the form, using the 
+    /* find out the desired size of the form, using the
        children attachment and the resizePolicy */
     GetSize(fw, &g, w, desired);
-    
+
     _XmMakeGeometryRequest((Widget)fw, &g) ;
-    
+
     if ( fw->bulletin_board.old_shadow_thickness &&
 	(fw->bulletin_board.old_width != fw->core.width ||
 	 fw->bulletin_board.old_height != fw->core.height) )
@@ -1656,7 +1655,7 @@ ChangeIfNeeded(
 				fw->bulletin_board.old_height,
 				fw->bulletin_board.old_shadow_thickness, 0);
 	}
-    
+
     fw->bulletin_board.old_width = fw->core.width;
     fw->bulletin_board.old_height = fw->core.height;
     fw->bulletin_board.old_shadow_thickness = fw->manager.shadow_thickness;
@@ -1670,7 +1669,7 @@ ChangeIfNeeded(
  *	Delete a single widget from a parent widget
  *
  ************************************************************************/
-static void 
+static void
 DeleteChild(
         Widget child )
 {
@@ -1697,7 +1696,7 @@ DeleteChild(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -1727,7 +1726,7 @@ SetValues(
 	    /* recompute its bounding box and grow if it needs.           */
 
 		if ((XtWidth(new_w) != XtWidth(old)) ||
-			(XtHeight(new_w) != XtHeight(old))) 
+			(XtHeight(new_w) != XtHeight(old)))
 		{
 			if ((XtWidth(new_w) == 0) || (XtHeight(new_w) == 0))
 			{
@@ -1735,7 +1734,7 @@ SetValues(
 				if (XtWidth(new_w) == 0) XtWidth(new_w) = w;
 				if (XtHeight(new_w) == 0) XtHeight(new_w) = h;
 
-			} 
+			}
 			else
 			{
 				w = XtWidth(new_w);
@@ -1749,13 +1748,13 @@ SetValues(
 
 		if ((new_w->form.horizontal_spacing !=
 				old->form.horizontal_spacing)   ||
-			(new_w->bulletin_board.margin_width != 
+			(new_w->bulletin_board.margin_width !=
 				old->bulletin_board.margin_width)     ||
-			(new_w->form.vertical_spacing != 
+			(new_w->form.vertical_spacing !=
 				old->form.vertical_spacing)     ||
-			(new_w->bulletin_board.margin_height != 
+			(new_w->bulletin_board.margin_height !=
 				old->bulletin_board.margin_height)     ||
-			(new_w->form.fraction_base != 
+			(new_w->form.fraction_base !=
 				old->form.fraction_base))
 		{
 			CalcFormSize(new_w, &w, &h);
@@ -1763,12 +1762,12 @@ SetValues(
 			XtHeight(new_w) = h;
 		}
 	}
-	
+
 	return(returnFlag);
 }
 
 /*ARGSUSED*/
-static void 
+static void
 SetValuesAlmost(
         Widget cw,		/* unused */
         Widget nw,
@@ -1793,7 +1792,7 @@ SetValuesAlmost(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 ConstraintSetValues(
         register Widget old,
         register Widget ref,	/* unused */
@@ -1804,13 +1803,13 @@ ConstraintSetValues(
     XmFormWidget fw = (XmFormWidget) XtParent(new_w);
     register XmFormConstraint oldc, newc;
     register int i;
-    
+
     if (!XtIsRectObj(new_w))
 	return(FALSE);
-    
+
     oldc = GetFormConstraint(old),
     newc = GetFormConstraint(new_w);
-   
+
    /* This fragment has been removed in order to fix bug #1298
     if (XtWidth(new_w) != XtWidth(old))
 	newc->preferred_width = XtWidth(new_w);
@@ -1819,7 +1818,7 @@ ConstraintSetValues(
     */
 
     /*  Validate the attachement type.  */
-    
+
     for (i = FIRST_ATTACHMENT; i < (LAST_ATTACHMENT + 1); i++) {
 	if (newc->att[i].type != oldc->att[i].type) {
 	    if(    !XmRepTypeValidValue( XmRID_ATTACHMENT,
@@ -1836,33 +1835,33 @@ ConstraintSetValues(
 	    }
 	}
     }
-    
+
     /* Re do the layout only if we have to */
     if ((XtIsRealized((Widget)fw)) && (XtIsManaged(new_w)) &&
 	(ANY(type) || ANY(w) || ANY(percent) || ANY(offset)))
 	{
 	    XtWidgetGeometry g;
-	    
+
 	    g.request_mode = 0;
-	    
+
 	    if (XtWidth(new_w) != XtWidth(old))
 		{
 		    g.request_mode |= CWWidth;
 		    g.width = XtWidth(new_w);
 		}
-	    
+
 	    if (XtHeight(new_w) != XtHeight(old))
 		{
 		    g.request_mode |= CWHeight;
 		    g.height = XtHeight(new_w);
 		}
-	    
+
 	    if (XtBorderWidth(new_w) != XtBorderWidth(old))
 		{
 		    g.request_mode |= CWBorderWidth;
 		    g.border_width = XtBorderWidth(new_w);
 		}
-	    
+
 	    fw->form.processing_constraints = TRUE;
 	    SortChildren(fw);
 	    ChangeIfNeeded(fw, new_w, &g);
@@ -1870,14 +1869,14 @@ ConstraintSetValues(
 	    new_w->core.x ++ ; /* Force a call to the GeometryManager.
 				  There are cases where a change in
 				  constraints does not result in a change
-				  in the geometry of new_w. As a result, 
+				  in the geometry of new_w. As a result,
 				  processing_constraint stays True and
-				  everything is screwed up... 
+				  everything is screwed up...
 				  Note that this change in x is only
 				  temporary since Xt will reset it to
 				  its old value before calling the GM */
 	}
-    
+
     return (False);
 }
 
@@ -1891,7 +1890,7 @@ ConstraintSetValues(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,		/* unused */
         Widget nw,
@@ -1925,7 +1924,7 @@ Initialize(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 ConstraintInitialize(
         Widget req,		/* unused */
         Widget new_w,
@@ -1934,13 +1933,13 @@ ConstraintInitialize(
 {
     XmFormConstraint nc;
     register int i;
-    
+
     if (!XtIsRectObj(new_w)) return;
-    
+
     nc = GetFormConstraint(new_w);
-    
+
     /*  Validate the attachement type.  */
-    
+
     for (i = FIRST_ATTACHMENT; i < (LAST_ATTACHMENT + 1); i++){
 	if(!XmRepTypeValidValue( XmRID_ATTACHMENT, nc->att[i].type, new_w))
 	    {
@@ -1948,19 +1947,19 @@ ConstraintInitialize(
 	    }
 	if ((nc->att[i].type == XmATTACH_WIDGET) ||
 	    (nc->att[i].type == XmATTACH_OPPOSITE_WIDGET)) {
-	    
+
 	    while ((nc->att[i].w) && !SIBLINGS(nc->att[i].w, new_w)) {
 		nc->att[i].w = XtParent(nc->att[i].w);
 	    }
 	}
 	nc->att[i].value = nc->att[i].tempValue = 0 ;
     }
-    
+
     /* set the preferred geometry to some magic value that will help
        us find in ChangeManaged that it's the first time this kid is
        going thru layout */
-    /* this code used to set the current geometry as preferred, 
-       I don't see why it was needed, since the preferred field are 
+    /* this code used to set the current geometry as preferred,
+       I don't see why it was needed, since the preferred field are
        always used after the changemanaged is called */
     nc->preferred_width = XmINVALID_DIMENSION;
     nc->preferred_height = XmINVALID_DIMENSION;
@@ -1974,7 +1973,7 @@ ConstraintInitialize(
  *  CheckConstraints
  *
  ************************************************************************/
-static void 
+static void
 CheckConstraints(
         Widget w )
 {
@@ -1985,10 +1984,10 @@ CheckConstraints(
   XmFormAttachment a;
   int which;
   int wid, ht;
-  
-  if (left->type == XmATTACH_NONE && right->type == XmATTACH_NONE) 
+
+  if (left->type == XmATTACH_NONE && right->type == XmATTACH_NONE)
     {
-      if (fw->form.rubber_positioning) 
+      if (fw->form.rubber_positioning)
 	left->type = right->type = XmATTACH_SELF;
       else
 	{
@@ -1996,23 +1995,23 @@ CheckConstraints(
 	  left->offset = w->core.x;
 	}
     }
-  
+
   if (top->type == XmATTACH_NONE && bottom->type == XmATTACH_NONE)
     {
-      if (fw->form.rubber_positioning) 
+      if (fw->form.rubber_positioning)
 	top->type = bottom->type = XmATTACH_SELF;
-      else 
+      else
 	{
 	  top->type = XmATTACH_FORM;
 	  top->offset = w->core.y;
 	}
     }
-  
-  for (which = FIRST_ATTACHMENT; which < (LAST_ATTACHMENT + 1); which++) 
+
+  for (which = FIRST_ATTACHMENT; which < (LAST_ATTACHMENT + 1); which++)
     {
       a = &c->att[which];
-      
-      switch (a->type) 
+
+      switch (a->type)
 	{
 	case XmATTACH_NONE:
 	case XmATTACH_FORM:
@@ -2020,24 +2019,24 @@ CheckConstraints(
 	  a->w = NULL;
 	  a->percent = 0;
 	  break;
-	  
+
 	case XmATTACH_SELF:
 	  a->offset = 0;
 	  a->w = NULL;
 	  a->type = XmATTACH_POSITION;
-	  a->percent = 0;	/* default in case wid or ht are 0, although 
+	  a->percent = 0;	/* default in case wid or ht are 0, although
 				   behavior in that case is poorly defined */
-  	  
+
 	  wid = w->core.x + w->core.width
 	    + (2 * w->core.border_width);
 	  ht = w->core.y + w->core.height
 	    + (2 * w->core.border_width);
-	  
+
 	  if (wid < fw->core.width)
 	    wid = fw->core.width;
 	  if (ht  < fw->core.height)
 	    ht  = fw->core.height;
-	  
+
 	  switch (which)
 	    {
 	    case LEFT:
@@ -2045,20 +2044,20 @@ CheckConstraints(
 		    a->percent = (w->core.x
 				  * fw->form.fraction_base) / wid;
 		break;
-	      
+
 	    case TOP:
 		if (ht != 0)
 		    a->percent = (w->core.y
 				  * fw->form.fraction_base) / ht;
 		break;
-	      
+
 	    case RIGHT:
 		if (wid != 0)
 		    a->percent = ((w->core.x + w->core.width +
 				   2 * w->core.border_width) *
 				  fw->form.fraction_base) / wid;
 		break;
-	      
+
 	    case BOTTOM:
 		if (ht != 0)
 		    a->percent = ((w->core.y + w->core.height +
@@ -2067,11 +2066,11 @@ CheckConstraints(
 		break;
 	    }
 	  break;
-	  
+
 	case XmATTACH_POSITION:
 	  a->w = NULL;
 	  break;
-	  
+
 	case XmATTACH_WIDGET:
 	case XmATTACH_OPPOSITE_WIDGET:
 	  a->percent = 0;
@@ -2088,7 +2087,7 @@ CheckConstraints(
  *  SortChildren
  *
  ************************************************************************/
-static void 
+static void
 SortChildren(
         register XmFormWidget fw )
 {
@@ -2115,7 +2114,7 @@ SortChildren(
 			c->next_sibling = NULL;
 		}
 		else
-		{	
+		{
 			c->next_sibling = fw->form.first_child;
 			fw->form.first_child = child;
 			c->sorted = True;
@@ -2136,11 +2135,11 @@ SortChildren(
 
 	last_child = NULL;
 
-	for ( ; sortedCount != fw->composite.num_children; sortedCount++) 
+	for ( ; sortedCount != fw->composite.num_children; sortedCount++)
 	{
 		sortable = False;
 
-		for (i = 0; !sortable && i < fw->composite.num_children; i++) 
+		for (i = 0; !sortable && i < fw->composite.num_children; i++)
 		{
 			child = fw->composite.children[i];
 			if (!XtIsRectObj(child))
@@ -2152,18 +2151,18 @@ SortChildren(
 
 			sortable = True;
 
-			for (j = FIRST_ATTACHMENT; j < (LAST_ATTACHMENT + 1); j++) 
+			for (j = FIRST_ATTACHMENT; j < (LAST_ATTACHMENT + 1); j++)
 			{
 				if ((c->att[j].type == XmATTACH_WIDGET) ||
 				(c->att[j].type == XmATTACH_OPPOSITE_WIDGET))
-				{	
+				{
 					att_widget = c->att[j].w;
 
 					if ((SIBLINGS(att_widget, child)) &&
 						(XtIsRectObj(att_widget)))
 					{
 						c1 = GetFormConstraint (att_widget);
-						
+
 						if (!c1->sorted)
 							sortable = False;
 					}
@@ -2175,7 +2174,7 @@ SortChildren(
 		{
 			/*  We have found a sortable child...add to sorted list.  */
 
-			if (last_child == NULL) 
+			if (last_child == NULL)
 			{
 				c->next_sibling = fw->form.first_child;
 				fw->form.first_child = child;
@@ -2195,7 +2194,7 @@ SortChildren(
 		else
 		{
 			/*  We failed to find a sortable child, there must be  */
-			/*  a circular dependency.                             */ 
+			/*  a circular dependency.                             */
 
 			XmeWarning( (Widget) fw, MESSAGE5);
 			return;
@@ -2210,12 +2209,12 @@ SortChildren(
 		child = fw->composite.children[i];
 
     c = GetFormConstraint(child);
-    
+
     if (!XtIsRectObj(child) || c->sorted)
 			continue;
-		
+
     if(!c->sorted) {
-			if (last_child == NULL) 
+			if (last_child == NULL)
 			{
 				c->next_sibling = fw->form.first_child;
 				fw->form.first_child = child;
@@ -2243,7 +2242,7 @@ SortChildren(
  *  CalcEdgeValues
  *
  ************************************************************************/
-static void 
+static void
 CalcEdgeValues(
         Widget w,
 #if NeedWidePrototypes
@@ -2262,14 +2261,14 @@ CalcEdgeValues(
 		top = &c->att[TOP], bottom = &c->att[BOTTOM] ;
 	Dimension width, height, border_width;
 
-	if (w == instigator) 
-	{ 
+	if (w == instigator)
+	{
 		if (inst_geometry->request_mode & CWWidth)
-			width = inst_geometry->width; 
+			width = inst_geometry->width;
 		else
 			width = w->core.width;
 		if (inst_geometry->request_mode & CWHeight)
-			height = inst_geometry->height; 
+			height = inst_geometry->height;
 		else
 			height = w->core.height;
 		if (inst_geometry->request_mode & CWBorderWidth)
@@ -2308,45 +2307,45 @@ CalcEdgeValues(
 	{
 		if (right->type != XmATTACH_NONE)	    /* LEFT and right are attached */
 		{
-			CalcEdgeValue(fw, w, width, border_width, 
+			CalcEdgeValue(fw, w, width, border_width,
 				LEFT, really, form_width, form_height);
-			CalcEdgeValue(fw, w, width, border_width, 
+			CalcEdgeValue(fw, w, width, border_width,
 				RIGHT, really, form_width, form_height);
 		}
 
 		else 	/*  LEFT attached, compute right  */
 		{
-			CalcEdgeValue(fw, w, width, border_width, 
+			CalcEdgeValue(fw, w, width, border_width,
 				LEFT, really, form_width, form_height);
 			ComputeAttachment(fw, w, width, border_width, RIGHT, really,
 			form_width, form_height);
 		}
-	} 
+	}
 	else
 	{
 		if (right->type != XmATTACH_NONE)    /* RIGHT attached, compute left */
 		{
-		CalcEdgeValue(fw, w, width, border_width, 
+		CalcEdgeValue(fw, w, width, border_width,
 			RIGHT, really, form_width, form_height);
-		ComputeAttachment(fw, w, width, border_width, 
+		ComputeAttachment(fw, w, width, border_width,
 			LEFT, really, form_width, form_height);
 		}
 	}
 
-	if (top->type != XmATTACH_NONE) 
+	if (top->type != XmATTACH_NONE)
 	{
 		if (bottom->type != XmATTACH_NONE)   /* TOP and bottom are attached */
 		{
-			CalcEdgeValue(fw, w, height, border_width, 
+			CalcEdgeValue(fw, w, height, border_width,
 				TOP, really, form_width, form_height);
-			CalcEdgeValue(fw, w, height, border_width, 
+			CalcEdgeValue(fw, w, height, border_width,
 				BOTTOM, really, form_width, form_height);
 		}
 		else	/* TOP attached, compute bottom */
 		{
-			CalcEdgeValue(fw, w, height, border_width, 
+			CalcEdgeValue(fw, w, height, border_width,
 				TOP, really, form_width, form_height);
-			ComputeAttachment(fw, w, height, border_width, 
+			ComputeAttachment(fw, w, height, border_width,
 				BOTTOM, really, form_width, form_height);
 		}
 	}
@@ -2354,11 +2353,11 @@ CalcEdgeValues(
 	{
 		if (bottom->type != XmATTACH_NONE)   /* BOTTOM attached, compute top */
 		{
-			CalcEdgeValue(fw, w, height, border_width, 
+			CalcEdgeValue(fw, w, height, border_width,
 				BOTTOM, really, form_width, form_height);
-			ComputeAttachment(fw, w, height, border_width, 
+			ComputeAttachment(fw, w, height, border_width,
 				TOP, really, form_width, form_height);
-		} 
+		}
 	}
 }
 
@@ -2369,7 +2368,7 @@ CalcEdgeValues(
  * CheckBottomBase
  *
  *********************************************************************/
-static float 
+static float
 CheckBottomBase(
         Widget sibling,
 #if NeedWidePrototypes
@@ -2405,7 +2404,7 @@ CheckBottomBase(
 						flag = TRUE;
 					case XmATTACH_WIDGET:
 						if (SIBLINGS(c->att[BOTTOM].w, sibling))
-							return_val = 
+							return_val =
 								CheckBottomBase(c->att[BOTTOM].w, flag);
 						else
 						{
@@ -2447,7 +2446,7 @@ CheckBottomBase(
 				flag = TRUE;
 			case XmATTACH_WIDGET:
 				if (SIBLINGS(c->att[BOTTOM].w, sibling))
-					return_val = 
+					return_val =
 						CheckBottomBase(c->att[BOTTOM].w, flag);
 				else
 				{
@@ -2475,7 +2474,7 @@ CheckBottomBase(
  * CheckRightBase
  *
  *********************************************************************/
-static float 
+static float
 CheckRightBase(
         Widget sibling,
 #if NeedWidePrototypes
@@ -2511,7 +2510,7 @@ CheckRightBase(
 						flag = TRUE;
 					case XmATTACH_WIDGET:
 						if (SIBLINGS(c->att[RIGHT].w, sibling))
-							return_val = 
+							return_val =
 								CheckRightBase(c->att[RIGHT].w, flag);
 						else
 						{
@@ -2553,7 +2552,7 @@ CheckRightBase(
 				flag = TRUE;
 			case XmATTACH_WIDGET:
 				if (SIBLINGS(c->att[RIGHT].w, sibling))
-					return_val = 
+					return_val =
 						CheckRightBase(c->att[RIGHT].w, flag);
 				else
 				{
@@ -2580,7 +2579,7 @@ CheckRightBase(
  * CheckLeftBase
  *
  *********************************************************************/
-static float 
+static float
 CheckLeftBase(
         Widget sibling,
 #if NeedWidePrototypes
@@ -2616,7 +2615,7 @@ CheckLeftBase(
 						flag = TRUE;
 					case XmATTACH_WIDGET:
 						if (SIBLINGS(c->att[LEFT].w, sibling))
-							return_val = 
+							return_val =
 								CheckLeftBase(c->att[LEFT].w, flag);
 						else
 						{
@@ -2658,7 +2657,7 @@ CheckLeftBase(
 				flag = TRUE;
 			case XmATTACH_WIDGET:
 				if (SIBLINGS(c->att[LEFT].w, sibling))
-					return_val = 
+					return_val =
 						CheckLeftBase(c->att[LEFT].w, flag);
 				else
 				{
@@ -2683,13 +2682,13 @@ CheckLeftBase(
 /*********************************************************************
  *
  *  CalcEdgeValue
- *     Note that Left attachment apply to the right side in a 
+ *     Note that Left attachment apply to the right side in a
  *     Right-to-Left environment. Slightly confusing, but it is more a
  *     matter of switching right and left in the computing.
  *
  *********************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 CalcEdgeValue(
         XmFormWidget fw,
         Widget w,
@@ -2717,30 +2716,30 @@ CalcEdgeValue(
   float factor;
   int temp1, temp2, temp3;
   int ctype;
-  
-  
+
+
   ctype = a->type;
-  
+
   if ((ctype == XmATTACH_WIDGET) && !(SIBLINGS(a->w, w)))
     ctype = XmATTACH_FORM;
-  
+
   if ((ctype == XmATTACH_OPPOSITE_WIDGET) && !(SIBLINGS(a->w, w)))
     ctype = XmATTACH_OPPOSITE_FORM;
-  
-  if (LayoutIsRtoLM(fw)) 
-    switch (ctype) 
+
+  if (LayoutIsRtoLM(fw))
+    switch (ctype)
       {
       case XmATTACH_FORM:
 	a->w = NULL;
 	a->percent = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case RIGHT:
 	  case TOP:
 	    AssignValue(a, GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case LEFT:
 	    if (fwidth != NULL) {
 	      if ((att + RIGHT)->type == XmATTACH_NONE) {
@@ -2789,12 +2788,12 @@ CalcEdgeValue(
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_OPPOSITE_FORM:
 	a->w = NULL;
 	a->percent = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case RIGHT:
 	    if (fwidth) {
@@ -2807,7 +2806,7 @@ CalcEdgeValue(
 	    } else
 	      AssignValue(a, fw->core.width + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    if (fheight) {
 	      temp1 = *fheight + GetFormOffset(fw, which, att);
@@ -2819,24 +2818,24 @@ CalcEdgeValue(
 	    } else
 	      AssignValue(a, fw->core.height + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case LEFT:
 	  case BOTTOM:
 	    AssignValue(a, -(GetFormOffset(fw, which, att)));
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_POSITION:
 	scale = ((float) a->percent) / fw->form.fraction_base;
 	a->w = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case RIGHT:
 	    scale = 1.0 - scale;
 	    if (fwidth != NULL)
-	      AssignValue(a, (*fwidth * scale + 0.5) + 
+	      AssignValue(a, (*fwidth * scale + 0.5) +
 			  GetFormOffset(fw, which, att));
 	    else
 	      AssignValue(a, (fw->core.width * scale + 0.5) +
@@ -2844,17 +2843,17 @@ CalcEdgeValue(
 	    break;
 	  case TOP:
 	    if (fheight != NULL)
-	      AssignValue(a, (*fheight * scale + 0.5) + 
+	      AssignValue(a, (*fheight * scale + 0.5) +
 			  GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.height * scale + 0.5) + 
+	      AssignValue(a, (fw->core.height * scale + 0.5) +
 			  GetFormOffset(fw, which, att));
 	    break;
 	  case LEFT:
 	    scale = 1.0 - scale;
 	    if (fwidth != NULL)
 	      if ((att + RIGHT)->type != XmATTACH_NONE) {
-		temp1 = (int) (((*fwidth  * scale) + 0.5) - 
+		temp1 = (int) (((*fwidth  * scale) + 0.5) -
 			       GetFormOffset(fw, which, att));
 		temp2 = Value(att + RIGHT);
 		temp3 = temp1 - temp2 - size;
@@ -2866,51 +2865,51 @@ CalcEdgeValue(
 		}
 		AssignValue(a, (temp2 + size));
 	      } else
-		AssignValue(a, (*fwidth * scale + 0.5) - 
+		AssignValue(a, (*fwidth * scale + 0.5) -
 			    GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.width * scale + 0.5) - 
+	      AssignValue(a, (fw->core.width * scale + 0.5) -
 			  GetFormOffset(fw, which, att));
 	    break;
 	  case BOTTOM:
 	    if (fheight != NULL)
 	      if ((att + TOP)->type != XmATTACH_NONE) {
-		temp1 = (int) (((*fheight  * scale) + 0.5) 
+		temp1 = (int) (((*fheight  * scale) + 0.5)
 			       - GetFormOffset(fw, which, att));
 		temp2 = Value(att + TOP);
 		temp3 = temp1 - temp2 - size;
 		if (temp3 < 0) {
 		  if (!scale)
 		    scale = 1.0;
-		  
+
 		  *fheight += (Dimension) (((1.0 / scale) * abs(temp3)) + 0.5);
 		}
 		AssignValue(a, (temp2 + size));
 	      } else
-		AssignValue(a, (*fheight * scale + 0.5) - 
+		AssignValue(a, (*fheight * scale + 0.5) -
 			    GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.height * scale + 0.5) - 
+	      AssignValue(a, (fw->core.height * scale + 0.5) -
 			  GetFormOffset(fw, which, att));
 	  }
 	return;
-	
+
       case XmATTACH_WIDGET:
 	a->percent = 0;
 	c = GetFormConstraint(a->w);
-	
+
 	switch (which)
 	  {
 	  case RIGHT:
 	    ref = &c->att[LEFT];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    ref = &c->att[BOTTOM];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case LEFT:
 	    ref = &c->att[RIGHT];
 	    if (att[RIGHT].type != XmATTACH_NONE) {
@@ -2928,7 +2927,7 @@ CalcEdgeValue(
 	      AssignValue(a, temp1);
 	    }
 	    break;
-	    
+
 	  case BOTTOM:
 	    ref = &c->att[TOP];
 	    if (att[TOP].type != XmATTACH_NONE) {
@@ -2948,49 +2947,49 @@ CalcEdgeValue(
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_OPPOSITE_WIDGET:
 	a->percent = 0;
 	c = GetFormConstraint(a->w);
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case RIGHT:
 	    ref = &c->att[RIGHT];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    ref = &c->att[TOP];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case LEFT:
 	    ref = &c->att[LEFT];
 	    AssignValue(a, Value(ref) - GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case BOTTOM:
 	    ref = &c->att[BOTTOM];
 	    AssignValue(a, Value(ref) - GetFormOffset(fw, which, att));
 	    break;
 	  }
 	return;
-      }      
+      }
   else /* Left to Right environment */
-    switch (ctype) 
+    switch (ctype)
       {
       case XmATTACH_FORM:
 	a->w = NULL;
 	a->percent = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case LEFT:
 	  case TOP:
 	    AssignValue(a, GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case RIGHT:
 	    if (fwidth != NULL) {
 	      if ((att + LEFT)->type == XmATTACH_NONE) {
@@ -3039,12 +3038,12 @@ CalcEdgeValue(
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_OPPOSITE_FORM:
 	a->w = NULL;
 	a->percent = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case LEFT:
 	    if (fwidth) {
@@ -3057,7 +3056,7 @@ CalcEdgeValue(
 	    } else
 	      AssignValue(a, fw->core.width + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    if (fheight) {
 	      temp1 = *fheight + GetFormOffset(fw, which, att);
@@ -3069,19 +3068,19 @@ CalcEdgeValue(
 	    } else
 	      AssignValue(a, fw->core.height + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case RIGHT:
 	  case BOTTOM:
 	    AssignValue(a, -(GetFormOffset(fw, which, att)));
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_POSITION:
 	scale = ((float) a->percent) / fw->form.fraction_base;
 	a->w = 0;
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case LEFT:
 	    if (fwidth != NULL)
@@ -3092,16 +3091,16 @@ CalcEdgeValue(
 	    break;
 	  case TOP:
 	    if (fheight != NULL)
-	      AssignValue(a, (*fheight * scale + 0.5) + 
+	      AssignValue(a, (*fheight * scale + 0.5) +
 			  GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.height * scale + 0.5) + 
+	      AssignValue(a, (fw->core.height * scale + 0.5) +
 			  GetFormOffset(fw, which, att));
 	    break;
 	  case RIGHT:
 	    if (fwidth != NULL)
 	      if ((att + LEFT)->type != XmATTACH_NONE) {
-		temp1 = (int) (((*fwidth  * scale) + 0.5) - 
+		temp1 = (int) (((*fwidth  * scale) + 0.5) -
 			       GetFormOffset(fw, which, att));
 		temp2 = Value(att + LEFT);
 		temp3 = temp1 - temp2 - size;
@@ -3113,51 +3112,51 @@ CalcEdgeValue(
 		}
 		AssignValue(a, (temp2 + size));
 	      } else
-		AssignValue(a, (*fwidth * scale + 0.5) - 
+		AssignValue(a, (*fwidth * scale + 0.5) -
 			    GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.width * scale + 0.5) - 
+	      AssignValue(a, (fw->core.width * scale + 0.5) -
 			  GetFormOffset(fw, which, att));
 	    break;
 	  case BOTTOM:
 	    if (fheight != NULL)
 	      if ((att + TOP)->type != XmATTACH_NONE) {
-		temp1 = (int) (((*fheight  * scale) + 0.5) 
+		temp1 = (int) (((*fheight  * scale) + 0.5)
 			       - GetFormOffset(fw, which, att));
 		temp2 = Value(att + TOP);
 		temp3 = temp1 - temp2 - size;
 		if (temp3 < 0) {
 		  if (!scale)
 		    scale = 1.0;
-		  
+
 		  *fheight += (Dimension) (((1.0 / scale) * abs(temp3)) + 0.5);
 		}
 		AssignValue(a, (temp2 + size));
 	      } else
-		AssignValue(a, (*fheight * scale + 0.5) - 
+		AssignValue(a, (*fheight * scale + 0.5) -
 			    GetFormOffset(fw, which, att));
 	    else
-	      AssignValue(a, (fw->core.height * scale + 0.5) - 
+	      AssignValue(a, (fw->core.height * scale + 0.5) -
 			  GetFormOffset(fw, which, att));
 	  }
 	return;
-	
+
       case XmATTACH_WIDGET:
 	a->percent = 0;
 	c = GetFormConstraint(a->w);
-	
+
 	switch (which)
 	  {
 	  case LEFT:
 	    ref = &c->att[RIGHT];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    ref = &c->att[BOTTOM];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case RIGHT:
 	    ref = &c->att[LEFT];
 	    if (att[LEFT].type != XmATTACH_NONE) {
@@ -3175,7 +3174,7 @@ CalcEdgeValue(
 	      AssignValue(a, temp1);
 	    }
 	    break;
-	    
+
 	  case BOTTOM:
 	    ref = &c->att[TOP];
 	    if (att[TOP].type != XmATTACH_NONE) {
@@ -3195,36 +3194,36 @@ CalcEdgeValue(
 	    break;
 	  }
 	return;
-	
+
       case XmATTACH_OPPOSITE_WIDGET:
 	a->percent = 0;
 	c = GetFormConstraint(a->w);
-	
-	switch (which) 
+
+	switch (which)
 	  {
 	  case LEFT:
 	    ref = &c->att[LEFT];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case TOP:
 	    ref = &c->att[TOP];
 	    AssignValue(a, Value(ref) + GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case RIGHT:
 	    ref = &c->att[RIGHT];
 	    AssignValue(a, Value(ref) - GetFormOffset(fw, which, att));
 	    break;
-	    
+
 	  case BOTTOM:
 	    ref = &c->att[BOTTOM];
 	    AssignValue(a, Value(ref) - GetFormOffset(fw, which, att));
 	    break;
 	  }
 	return;
-      }      
-  
+      }
+
 }
 
 
@@ -3233,13 +3232,13 @@ CalcEdgeValue(
 /************************************************************************
  *
  *  ComputeAttachment
- *     Note that Left attachment apply to the right side in a 
+ *     Note that Left attachment apply to the right side in a
  *     Right-to-Left environment. Slightly confusing, but it is more a
  *     matter of switching right and left in the computing.
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 ComputeAttachment(
         XmFormWidget fw,
         Widget w,
@@ -3264,7 +3263,7 @@ ComputeAttachment(
    int temp;
 
    if (LayoutIsRtoLM(fw))
-     switch (which) 
+     switch (which)
        {
        case RIGHT:
 	 temp =  Value(&c->att[LEFT]) - size;
@@ -3275,14 +3274,14 @@ ComputeAttachment(
 	   }
          AssignValue(a,temp);
 	 break;
-	 
+
        case LEFT:
 	 temp = Value(&c->att[RIGHT]) + size;
 	 if ((fwidth != NULL) && (temp > 0) && (temp > *fwidth))
 	   *fwidth += (temp - *fwidth);
          AssignValue(a,temp);
 	 break;
-	 
+
        case TOP:
 	 temp = Value(&c->att[BOTTOM]) - size;
 	 if ((fheight != NULL) && (temp < 0))
@@ -3292,7 +3291,7 @@ ComputeAttachment(
 	   }
          AssignValue(a, temp);
 	 break;
-	 
+
        case BOTTOM:
 	 temp = Value(&c->att[TOP]) + size;
 	 if ((fheight != NULL) && (temp > 0) && (temp > *fheight))
@@ -3301,7 +3300,7 @@ ComputeAttachment(
 	 break;
        }
    else /* Left to right */
-     switch (which) 
+     switch (which)
        {
        case LEFT:
 	 temp =  Value(&c->att[RIGHT]) - size;
@@ -3312,14 +3311,14 @@ ComputeAttachment(
 	   }
 	 AssignValue(a,temp);
 	 break;
-	 
+
        case RIGHT:
 	 temp = Value(&c->att[LEFT]) + size;
 	 if ((fwidth != NULL) && (temp > 0) && (temp > *fwidth))
 	   *fwidth += (temp - *fwidth);
 	 AssignValue(a,temp);
 	 break;
-	 
+
        case TOP:
 	 temp = Value(&c->att[BOTTOM]) - size;
 	 if ((fheight != NULL) && (temp < 0))
@@ -3329,7 +3328,7 @@ ComputeAttachment(
 	   }
 	 AssignValue(a, temp);
 	 break;
-	 
+
        case BOTTOM:
 	 temp = Value(&c->att[TOP]) + size;
 	 if ((fheight != NULL) && (temp > 0) && (temp > *fheight))
@@ -3347,16 +3346,16 @@ ComputeAttachment(
  *  GetFormOffset
  *
  ************************************************************************/
-static int 
+static int
 GetFormOffset(
         XmFormWidget fw,
         int which,
         XmFormAttachment att )
 {
     int o;
-    
+
     o = att[which].offset;
-    
+
     if (o == XmINVALID_DIMENSION) {
 	switch (att[which].type) {
 	case XmATTACH_NONE:
@@ -3364,7 +3363,7 @@ GetFormOffset(
 	case XmATTACH_POSITION:
 	    o = 0;
 	    break;
-	    
+
 	case XmATTACH_FORM:
 	case XmATTACH_OPPOSITE_FORM:
 	    if ((which == LEFT) || (which == RIGHT))
@@ -3377,14 +3376,14 @@ GetFormOffset(
 		}
 	    else
 		{
-		    if (fw->bulletin_board.margin_height 
+		    if (fw->bulletin_board.margin_height
 			== XmINVALID_DIMENSION)
 			o = fw->form.vertical_spacing;
 		    else
 			o = fw->bulletin_board.margin_height;
 		}
 	    break;
-	    
+
 	case XmATTACH_WIDGET:
 	case XmATTACH_OPPOSITE_WIDGET:
 	    if ((which == LEFT) || (which == RIGHT))
@@ -3394,7 +3393,7 @@ GetFormOffset(
 	    break;
 	}
     }
-    
+
     return o;
 }
 
@@ -3414,7 +3413,7 @@ GetFormOffset(
  *	Create an instance of a form and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateForm(
         Widget parent,
         char *name,
@@ -3424,7 +3423,7 @@ XmCreateForm(
    return(XtCreateWidget(name, xmFormWidgetClass, parent, arglist, argcount));
 }
 
-Widget 
+Widget
 XmVaCreateForm(
         Widget parent,
         char *name,
@@ -3433,18 +3432,18 @@ XmVaCreateForm(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmFormWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -3457,17 +3456,17 @@ XmVaCreateManagedForm(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmFormWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -3477,7 +3476,7 @@ XmVaCreateManagedForm(
  *	Create an instance of a form dialog and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateFormDialog(
         Widget parent,
         char *name,
@@ -3501,28 +3500,28 @@ XmCreateFormDialog(
 static Boolean IsWidgetAttachedOneHorizontalSide(Widget w)
   { if (w != NULL)
       { XmFormConstraint c = GetFormConstraint(w);
-        if (((c->att[LEFT].type == XmATTACH_NONE) && 
+        if (((c->att[LEFT].type == XmATTACH_NONE) &&
              (c->att[RIGHT].type != XmATTACH_NONE)) ||
-            ((c->att[LEFT].type != XmATTACH_NONE) && 
+            ((c->att[LEFT].type != XmATTACH_NONE) &&
              (c->att[RIGHT].type == XmATTACH_NONE)))
           return True;
-          
+
       }
     return False;
-  }    
+  }
 
-  
+
 static Boolean IsWidgetAttachedOneVerticalSide(Widget w)
   { if (w != NULL)
       { XmFormConstraint c = GetFormConstraint(w);
-        if (((c->att[TOP].type == XmATTACH_NONE) && 
+        if (((c->att[TOP].type == XmATTACH_NONE) &&
              (c->att[BOTTOM].type != XmATTACH_NONE)) ||
-            ((c->att[TOP].type != XmATTACH_NONE) && 
+            ((c->att[TOP].type != XmATTACH_NONE) &&
              (c->att[BOTTOM].type == XmATTACH_NONE)))
           return True;
-          
+
       }
     return False;
-  }    
-  
+  }
+
 #endif
