@@ -34,7 +34,7 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wno-comment dnl
 			-Wno-unused-result dnl
 			-Wno-misleading-indentation dnl
-			-Wno-deprecated-declarations dnl
+			dnl -Wno-deprecated-declarations dnl
 			-Wno-implicit-fallthrough dnl
 			-Wno-int-in-bool-context dnl
 			-Wno-padded dnl
@@ -60,7 +60,7 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wno-comment dnl
 			-Wno-unused-result dnl
 			-Wno-misleading-indentation dnl
-			-Wno-deprecated-declarations dnl
+			dnl -Wno-deprecated-declarations dnl
 			-Wno-implicit-fallthrough dnl
 			-Wno-int-in-bool-context dnl
 			-Wno-conversion dnl

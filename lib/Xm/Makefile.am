@@ -210,7 +210,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         UnitTypeT.h     TxtPropCv.h     MenuProcP.h     MenuStateP.h\
         ColorObjP.h     TravConT.h      UnhighlightT.h  PointInT.h \
         Print.h         PrintSP.h       XpmP.h		Xmfuncs.h \
-        ${SLIDE_HDRS}	${EXTRA_HDRS}
+        deprecated.h version.h ${SLIDE_HDRS} ${EXTRA_HDRS}
 
 nodist_xm_HEADERS = Xm.h
 
