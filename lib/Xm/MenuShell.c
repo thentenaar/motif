@@ -791,7 +791,7 @@ DeleteChild(
    XmMenuShellWidget parent = (XmMenuShellWidget)XtParent(widget);
 
    /* Remove the child as our tab group */
-   XmRemoveTabGroup(widget);
+   XtVaSetValues(widget, XmNnavigationType, XmNONE, NULL);
 
    /* Let composite class finish the work */
    (*(((CompositeWidgetClass)compositeWidgetClass)->composite_class.
