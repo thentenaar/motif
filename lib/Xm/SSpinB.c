@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 
 /******************************************************************************
  *
@@ -56,8 +56,6 @@
 #include "XmI.h"
 
 #include <Xm/SSpinBP.h>
-
-#define FIX_1530
 
 static void	Initialize(
 			Widget		req,
@@ -104,37 +102,37 @@ static XtResource resources[] = {
 
   {
     XmNcolumns, XmCColumns, XmRShort,
-    sizeof(short), Offset(columns), 
+    sizeof(short), Offset(columns),
     XmRImmediate, (XtPointer) 20
   },
 
   {
     XmNdecimalPoints, XmCDecimalPoints, XmRShort,
-    sizeof(short), Offset(decimal_points), 
+    sizeof(short), Offset(decimal_points),
     XmRImmediate, (XtPointer) 0
   },
 
   {
     XmNeditable, XmCEditable, XmRBoolean,
-    sizeof(Boolean), Offset(editable), 
+    sizeof(Boolean), Offset(editable),
     XmRImmediate, (XtPointer) True
   },
 
   {
-    XmNincrementValue, XmCIncrementValue, XmRInt, 
-    sizeof(int), Offset(increment_value), 
+    XmNincrementValue, XmCIncrementValue, XmRInt,
+    sizeof(int), Offset(increment_value),
     XmRImmediate, (XtPointer) 1
   },
 
   {
-    XmNmaximumValue, XmCMaximumValue, XmRInt, 
-    sizeof(int), Offset(maximum_value), 
+    XmNmaximumValue, XmCMaximumValue, XmRInt,
+    sizeof(int), Offset(maximum_value),
     XmRImmediate, (XtPointer) 10
   },
 
   {
-    XmNminimumValue, XmCMinimumValue, XmRInt, 
-    sizeof(int), Offset(minimum_value), 
+    XmNminimumValue, XmCMinimumValue, XmRInt,
+    sizeof(int), Offset(minimum_value),
     XmRImmediate, (XtPointer) 0
   },
 
@@ -169,8 +167,8 @@ static XtResource resources[] = {
   },
 
   {
-    XmNvalues, XmCValues, XmRXmStringTable, 
-    sizeof(XmStringTable), Offset(values), 
+    XmNvalues, XmCValues, XmRXmStringTable,
+    sizeof(XmStringTable), Offset(values),
     XmRStringTable, NULL
   },
 
@@ -182,7 +180,7 @@ static XtResource resources[] = {
 
 };
 
-static XmSyntheticResource syn_resources[] = 
+static XmSyntheticResource syn_resources[] =
 {
   {
     XmNarrowSensitivity, sizeof(unsigned char), Offset(arrow_sensitivity),
@@ -190,32 +188,32 @@ static XmSyntheticResource syn_resources[] =
   },
 
   {
-    XmNcolumns, sizeof(short), Offset(columns), 
+    XmNcolumns, sizeof(short), Offset(columns),
     SyntheticGetValue, NULL
   },
 
   {
-    XmNdecimalPoints, sizeof(short), Offset(decimal_points), 
+    XmNdecimalPoints, sizeof(short), Offset(decimal_points),
     SyntheticGetValue, NULL
   },
 
   {
-    XmNeditable, sizeof(Boolean), Offset(editable), 
+    XmNeditable, sizeof(Boolean), Offset(editable),
     SyntheticGetValue, NULL
   },
 
   {
-    XmNincrementValue, sizeof(int), Offset(increment_value), 
+    XmNincrementValue, sizeof(int), Offset(increment_value),
     SyntheticGetValue, NULL
   },
 
   {
-    XmNmaximumValue, sizeof(int), Offset(maximum_value), 
+    XmNmaximumValue, sizeof(int), Offset(maximum_value),
     SyntheticGetValue, NULL
   },
 
   {
-    XmNminimumValue, sizeof(int), Offset(minimum_value), 
+    XmNminimumValue, sizeof(int), Offset(minimum_value),
     SyntheticGetValue, NULL
   },
 
@@ -240,7 +238,7 @@ static XmSyntheticResource syn_resources[] =
   },
 
   {
-    XmNvalues, sizeof(XmStringTable), Offset(values), 
+    XmNvalues, sizeof(XmStringTable), Offset(values),
     SyntheticGetValue, NULL
   },
 
@@ -253,32 +251,32 @@ static XmSyntheticResource syn_resources[] =
 /*  The Spin class record definition  */
 externaldef (xmspinboxclassrec) XmSimpleSpinBoxClassRec xmSimpleSpinBoxClassRec= {
   {
-    (WidgetClass)&xmSpinBoxClassRec,    /* superclass */   
-    "XmSimpleSpinBox",                  /* class_name */	
-    sizeof(XmSimpleSpinBoxRec),         /* widget_size */	
-    (XtProc) NULL,		    	/* class_initialize */    
+    (WidgetClass)&xmSpinBoxClassRec,    /* superclass */
+    "XmSimpleSpinBox",                  /* class_name */
+    sizeof(XmSimpleSpinBoxRec),         /* widget_size */
+    (XtProc) NULL,		    	/* class_initialize */
     (XtWidgetClassProc) NULL,		/* class_part_initialize */
-    FALSE,    		                /* class_inited */	
-    Initialize,    	                /* initialize */	
+    FALSE,    		                /* class_inited */
+    Initialize,    	                /* initialize */
     NULL,    		                /* initialize_hook */
-    XtInheritRealize,		        /* realize */	
+    XtInheritRealize,		        /* realize */
     NULL, 	     	                /* actions */
-    0,					/* num_actions */	
+    0,					/* num_actions */
     resources,    	                /* resources */
     XtNumber(resources),                /* num_resources */
-    NULLQUARK,    	                /* xrm_class */	
-    TRUE,    		                /* compress_motion */	
-    XtExposeCompressMaximal,           	/* compress_exposure */	
+    NULLQUARK,    	                /* xrm_class */
+    TRUE,    		                /* compress_motion */
+    XtExposeCompressMaximal,           	/* compress_exposure */
     TRUE,    		              	/* compress_enterleave */
-    FALSE,    		              	/* visible_interest */	
-    (XtWidgetProc) NULL,		/* destroy */	
+    FALSE,    		              	/* visible_interest */
+    (XtWidgetProc) NULL,		/* destroy */
     XtInheritResize,		      	/* resize */
-    XtInheritExpose,   	              	/* expose */	
-    SetValues,    	              	/* set_values */	
+    XtInheritExpose,   	              	/* expose */
+    SetValues,    	              	/* set_values */
     (XtArgsFunc) NULL,			/* set_values_hook */
     XtInheritSetValuesAlmost,          	/* set_values_almost */
     (XtArgsProc) NULL,			/* get_values_hook */
-    XtInheritAcceptFocus,	      	/* accept_focus */	
+    XtInheritAcceptFocus,	      	/* accept_focus */
     XtVersion,    	              	/* version */
     (XtPointer) NULL,			/* callback proc list */
     XtInheritTranslations,	        /* tm_table */
@@ -286,7 +284,7 @@ externaldef (xmspinboxclassrec) XmSimpleSpinBoxClassRec xmSimpleSpinBoxClassRec=
     (XtStringProc) NULL,		/* display_accelerator */
     (XtPointer) NULL,			/* extension */
   },
-  
+
   {    /* composite_class fields */
     XtInheritGeometryManager,          	/* geometry_manager */
     XtInheritChangeManaged,            	/* change_managed */
@@ -294,7 +292,7 @@ externaldef (xmspinboxclassrec) XmSimpleSpinBoxClassRec xmSimpleSpinBoxClassRec=
     XtInheritDeleteChild,	        /* delete_child */
     (XtPointer) NULL,			/* extension */
   },
-  
+
   {    /* constraint_class fields */
     (XtResourceList) NULL,     		/* resource_list */
     (Cardinal) 0,		      	/* num_resources */
@@ -325,12 +323,12 @@ externaldef (xmspinboxclassrec) XmSimpleSpinBoxClassRec xmSimpleSpinBoxClassRec=
   {
     (XtPointer) NULL,			/* extension */
   }
-  
+
 };
 
 externaldef(xmsimplespinboxwidgetclass) WidgetClass xmSimpleSpinBoxWidgetClass =
        (WidgetClass) &xmSimpleSpinBoxClassRec;
-     
+
 
 #define BAD_SSPIN_SET_TEXT_FIELD	_XmMMsgSSpinB_0001
 #define BAD_SSPIN_SET_POSITION_TYPE	_XmMMsgSSpinB_0002
@@ -352,10 +350,9 @@ externaldef(xmsimplespinboxwidgetclass) WidgetClass xmSimpleSpinBoxWidgetClass =
  **
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
 Initialize(Widget	request,	/* unused */
-	   Widget	new, 
+	   Widget	new,
 	   ArgList	user_args,	/* unused */
 	   Cardinal	*n_user_args)	/* unused */
 {
@@ -376,7 +373,7 @@ Initialize(Widget	request,	/* unused */
      */
     widget_name = XtMalloc(strlen(XtName(new)) + 10);
     sprintf(widget_name, SSB_TEXTFIELD_NAME_FORMAT, XtName(new));
-    
+
     /*
      * Collect all the resources that apply to the TextField child,
      * and push include them in the creation call.
@@ -427,18 +424,17 @@ Initialize(Widget	request,	/* unused */
     XtFree(widget_name);
 }
 
-/*ARGSUSED*/
 static Boolean
-SetValues(Widget	current, 
+SetValues(Widget	current,
 	  Widget	request, 	/* unused */
-	  Widget	new, 
+	  Widget	new,
 	  ArgList	args,		/* unused */
 	  Cardinal	*num_args)	/* unused */
 {
     XmSimpleSpinBoxPart	*cur_ssbp = SSB_SIMPLE_SPIN_BOX_PART(current);
     XmSimpleSpinBoxPart	*new_ssbp = SSB_SIMPLE_SPIN_BOX_PART(new);
     XmSpinBoxConstraint	textf_c;
-  
+
     /*
      * These resources have CG permissions only:
      *	XmNpositionType, XmNspinBoxChildType, XmNtextField
@@ -481,7 +477,7 @@ SetValues(Widget	current,
 		  XmNeditable, new_ssbp->editable,
 		  XmNcolumns, new_ssbp->columns,
 		  NULL);
-    
+
     textf_c = SB_GetConstraintRec(new_ssbp->text_field);
     new_ssbp->arrow_sensitivity = textf_c->arrow_sensitivity;
     new_ssbp->decimal_points = textf_c->decimal_points;
@@ -503,13 +499,12 @@ SetValues(Widget	current,
 }
 
 
-/*ARGSUSED*/
 static void
 InsertChild(Widget newChild)
 {
     XmSimpleSpinBoxWidget	ssb_w;
     XtWidgetProc 		insert_child;
-  
+
     ssb_w = (XmSimpleSpinBoxWidget) XtParent(newChild);
     if (ssb_w->composite.num_children != 0) {
 	XmeWarning((Widget) ssb_w, BAD_SSPIN_SET_TEXT_FIELD);
@@ -524,16 +519,14 @@ InsertChild(Widget newChild)
     (*insert_child)(newChild);
 }
 
-/*ARGSUSED*/
 static Widget
 GetCallbackWidget(Widget widget)
 {
     XmSimpleSpinBoxWidget	ssb_w;
-  
+
     ssb_w = (XmSimpleSpinBoxWidget) widget;
     return((Widget) ssb_w->simpleSpinBox.text_field);
 }
-
 
 /******************************************************************************
  * SyntheticGetValue
@@ -541,219 +534,56 @@ GetCallbackWidget(Widget widget)
  *	Used to retrieve constraint resources from the spinbox for the
  *	textfield child.
  *****************************************************************************/
-
-/*ARGSUSED*/
-static void
-SyntheticGetValue(Widget widget, int offset, XtArgVal *value)
+static void SyntheticGetValue(Widget widget, int offset, XtArgVal *value)
 {
-  XmSimpleSpinBoxWidget	ssb_w = (XmSimpleSpinBoxWidget) widget;
-  
-  switch (offset)
-   {
-     case Offset(arrow_sensitivity):
-#ifdef FIX_1530
-      {
-        unsigned char new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNarrowSensitivity, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNarrowSensitivity, (unsigned char *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(columns):
-#ifdef FIX_1530
-      {
-        short new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNcolumns, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNcolumns, (short *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(decimal_points):
-#ifdef FIX_1530
-      {
-        short new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNdecimalPoints, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNdecimalPoints, (short *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(editable):
-#ifdef FIX_1530
-      {
-        Boolean new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNeditable, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNeditable, (Boolean *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(increment_value):
-#ifdef FIX_1530
-      {
-        short new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNincrementValue, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNincrementValue, (short *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(minimum_value):
-#ifdef FIX_1530
-      {
-        int new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNminimumValue, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNminimumValue, (int *) value,
-		     NULL);
-#endif
+	XmSimpleSpinBoxWidget ssb_w = (XmSimpleSpinBoxWidget)widget;
 
-       break;
-     case Offset(maximum_value):
-#ifdef FIX_1530
-      {
-        int new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNmaximumValue, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNmaximumValue, (int *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(num_values):
-#ifdef FIX_1530
-      {
-        int new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNnumValues, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNnumValues, (int *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(position):
-#ifdef FIX_1530
-      {
-        int new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNposition, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNposition, (int *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(position_type):
-#ifdef FIX_1530
-      {
-        unsigned char new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNpositionType, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNpositionType, (unsigned char *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(sb_child_type):
-#ifdef FIX_1530
-      {
-        unsigned char new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNspinBoxChildType, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNspinBoxChildType, (unsigned char *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(values):
-#ifdef FIX_1530
-      {
-        XmStringTable new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNvalues, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNvalues, (XmStringTable *) value,
-		     NULL);
-#endif
-       break;
-     case Offset(wrap):
-#ifdef FIX_1530
-      {
-        Boolean new_value;
-        XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		      XmNwrap, &new_value,
-		      NULL);
-        *value = (XtArgVal)new_value;
-      }
-#else
-       XtVaGetValues(ssb_w->simpleSpinBox.text_field,
-		     XmNwrap, (Boolean *) value,
-		     NULL);
-#endif
-       break;
-     default:
-       fprintf(stderr,
-	       "SimpleSpinBox ERROR:  Invalid synthetic resource offset  %d\n",
-	       offset);
-       break;
+	switch (offset) {
+	case Offset(arrow_sensitivity):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNarrowSensitivity, value, NULL);
+		break;
+	case Offset(columns):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNcolumns, value, NULL);
+		break;
+	case Offset(decimal_points):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNdecimalPoints, value, NULL);
+		break;
+	case Offset(editable):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNeditable, value, NULL);
+		break;
+	case Offset(increment_value):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNincrementValue, value, NULL);
+		break;
+	case Offset(minimum_value):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNminimumValue, value, NULL);
+		break;
+	case Offset(maximum_value):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNmaximumValue, value, NULL);
+		break;
+	case Offset(num_values):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNnumValues, value, NULL);
+		break;
+	case Offset(position):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNposition, value, NULL);
+		break;
+	case Offset(position_type):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNpositionType, value, NULL);
+		break;
+	case Offset(sb_child_type):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNspinBoxChildType, value, NULL);
+		break;
+	case Offset(values):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNvalues, value, NULL);
+		break;
+	case Offset(wrap):
+		XtVaGetValues(ssb_w->simpleSpinBox.text_field, XmNwrap, value, NULL);
+		break;
+	default:
+		fprintf(stderr,
+		        "SimpleSpinBox ERROR:  Invalid synthetic resource offset  %d\n",
+		        offset);
    }
 }
-
 
 /******************************************************************************
  **
@@ -776,7 +606,6 @@ SyntheticGetValue(Widget widget, int offset, XtArgVal *value)
  *****************************************************************************/
 
 
-
 /*
  * Public API
  */
@@ -785,9 +614,9 @@ SyntheticGetValue(Widget widget, int offset, XtArgVal *value)
  *  XmCreateSimpleSpinBox
  *	Create an instance of a Spin widget and return the widget id.
  ************************************************************************/
-Widget 
+Widget
 XmCreateSimpleSpinBox(	Widget		parent,
-			String		name, 
+			String		name,
 			ArgList		arglist,
 			Cardinal	argcount)
 {
@@ -795,7 +624,7 @@ XmCreateSimpleSpinBox(	Widget		parent,
 			  arglist, argcount));
 }
 
-Widget 
+Widget
 XmVaCreateSimpleSpinBox(
         Widget parent,
         char *name,
@@ -804,18 +633,18 @@ XmVaCreateSimpleSpinBox(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmSimpleSpinBoxWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -828,17 +657,17 @@ XmVaCreateManagedSimpleSpinBox(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmSimpleSpinBoxWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -846,9 +675,9 @@ XmVaCreateManagedSimpleSpinBox(
  *  XmSimpleSpinBoxAddItem
  *	Add an item to the list of strings at the specified position.
  ************************************************************************/
-void 
+void
 XmSimpleSpinBoxAddItem(	Widget		ssb_w,
-			XmString	item, 
+			XmString	item,
 			int	 	pos)
 {
     XmSimpleSpinBoxPart	*ssb_p = SSB_SIMPLE_SPIN_BOX_PART(ssb_w);
@@ -859,7 +688,7 @@ XmSimpleSpinBoxAddItem(	Widget		ssb_w,
     _XmWidgetToAppContext(ssb_w);
 
     _XmAppLock(app);
-  
+
     /*
      * Get the latest resource values for the SimpleSpinBox child.
      * These may have been changed either by internal operation
@@ -881,7 +710,7 @@ XmSimpleSpinBoxAddItem(	Widget		ssb_w,
 		  XmNeditable, &ssb_p->editable,
 		  XmNcolumns, &ssb_p->columns,
 		  NULL);
-    
+
     /*
      * Error checking.
      */
@@ -898,7 +727,7 @@ XmSimpleSpinBoxAddItem(	Widget		ssb_w,
     /*
      * BINARY COMPATIBILITY with DTSPINBOX
      *
-     * User gives pos starting at 1 (0 means end of list) 
+     * User gives pos starting at 1 (0 means end of list)
      */
     pos--;
     if ((pos < 0) || (pos > ssb_p->num_values))
@@ -940,7 +769,7 @@ XmSimpleSpinBoxAddItem(	Widget		ssb_w,
     ssb_p->values = textf_c->values;
     ssb_p->num_values = textf_c->num_values;
     ssb_p->position = textf_c->position;
-  
+
    /*
     * Free up the memory in the values array.
     */
@@ -956,7 +785,7 @@ XmSimpleSpinBoxAddItem(	Widget		ssb_w,
  *  XmSimpleSpinBoxDeletePos
  *	Delete the item at the specified position from the list of strings.
  ************************************************************************/
-void 
+void
 XmSimpleSpinBoxDeletePos(
 			Widget		ssb_w,
 			int	 	pos)
@@ -969,7 +798,7 @@ XmSimpleSpinBoxDeletePos(
     _XmWidgetToAppContext(ssb_w);
 
     _XmAppLock(app);
-  
+
     /*
      * Get the latest resource values for the SimpleSpinBox child.
      * These may have been changed either by internal operation
@@ -991,21 +820,21 @@ XmSimpleSpinBoxDeletePos(
 		  XmNeditable, &ssb_p->editable,
 		  XmNcolumns, &ssb_p->columns,
 		  NULL);
-    
+
     /*
-     * Error checking. 
+     * Error checking.
      */
     if ((ssb_p->sb_child_type != XmSTRING) || (ssb_p->num_values < 1)) {
       _XmAppUnlock(app);
       return;
     }
-    
+
     /*
      * BINARY COMPATIBILITY with DTSPINBOX
      *
-     * User gives pos starting at 1 (0 means end of list) 
+     * User gives pos starting at 1 (0 means end of list)
      */
-    pos--; 
+    pos--;
     if ((pos < 0) || (pos > ssb_p->num_values))
       pos = ssb_p->num_values - 1;
 
@@ -1036,7 +865,7 @@ XmSimpleSpinBoxDeletePos(
     /*
      * Set the values array in the parent and save the XmStringTable.
      */
-    XtVaSetValues(ssb_p->text_field, 
+    XtVaSetValues(ssb_p->text_field,
     		  XmNvalues, values,
     		  XmNnumValues, new_nvalues,
     		  XmNposition, ssb_p->position,
@@ -1045,7 +874,7 @@ XmSimpleSpinBoxDeletePos(
     ssb_p->values = textf_c->values;
     ssb_p->num_values = textf_c->num_values;
     ssb_p->position = textf_c->position;
-  
+
    /*
     * Free up the memory in the values array.
     */
@@ -1062,7 +891,7 @@ XmSimpleSpinBoxDeletePos(
  *	Make the given item the currently visible item in the text-field
  *	or label.
  ************************************************************************/
-void 
+void
 XmSimpleSpinBoxSetItem(	Widget		ssb_w,
 			XmString 	item)
 {
@@ -1073,7 +902,7 @@ XmSimpleSpinBoxSetItem(	Widget		ssb_w,
     _XmWidgetToAppContext(ssb_w);
 
     _XmAppLock(app);
-  
+
     /*
      * Get the latest resource values for the SimpleSpinBox child.
      * These may have been changed either by internal operation
@@ -1095,7 +924,7 @@ XmSimpleSpinBoxSetItem(	Widget		ssb_w,
 		  XmNeditable, &ssb_p->editable,
 		  XmNcolumns, &ssb_p->columns,
 		  NULL);
-    
+
     if (item && ssb_p->num_values > 0) {
 	for (pos=0; pos<ssb_p->num_values; pos++)
 	  if (XmStringCompare(item, ssb_p->values[pos]))
