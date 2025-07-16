@@ -1216,11 +1216,7 @@ _XmGetUnpostBehavior(
  *    then be used later to process the font unit conversions.
  *
  **********************************************************************/
-void
-XmSetFontUnits(
-        Display *display,
-        int h_value,
-        int v_value )
+static void _XmSetFontUnits(Display *display, int h_value, int v_value)
 {
     XmScreen          xmScreen;
     Screen            *scr;
@@ -1246,15 +1242,19 @@ XmSetFontUnits(
 }
 
 /* DEPRECATED */
+void XmSetFontUnits(Display *display, int h_value, int v_value)
+{
+	_XmSetFontUnits(display, h_value, v_value);
+}
+
+/* DEPRECATED */
 void
 XmSetFontUnit(
         Display *display,
         int value )
 {
-    XmSetFontUnits(display, value, value);
+    _XmSetFontUnits(display, value, value);
 }
-
-
 
 /**********************************************************************
  *
