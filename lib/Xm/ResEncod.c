@@ -2092,7 +2092,7 @@ cvtXmStringToUTF8String(
 	    }
 	  break;
 
-	case XmSTRING_COMPONENT_CHARSET:
+	case XmSTRING_COMPONENT_TAG:
 	  cset_save = (XmStringCharSet)val;
 	  break;
 
@@ -2255,7 +2255,7 @@ cvtXmStringToText(
 	    }
 	  break;
 
-	case XmSTRING_COMPONENT_CHARSET:
+	case XmSTRING_COMPONENT_TAG:
 	  cset_save = (XmStringCharSet)val;
 	  break;
 

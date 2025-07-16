@@ -7015,7 +7015,7 @@ _Xm_dump_stream(
 
 	switch (*c)
 	{
-	    case XmSTRING_COMPONENT_CHARSET:
+	    case XmSTRING_COMPONENT_TAG:
 	    case XmSTRING_COMPONENT_LOCALE:
                 if (*c ==  XmSTRING_COMPONENT_LOCALE)
 		  printf ("\tLocale name component\n");
@@ -7680,7 +7680,7 @@ XmStringParseText(XtPointer    text,
     case XmCHARSET_TEXT:
       if (tag == NULL)
 	tag = XmFONTLIST_DEFAULT_TAG;
-      tag_type = XmSTRING_COMPONENT_CHARSET;
+      tag_type = XmSTRING_COMPONENT_TAG;
       break;
 
     case XmWIDECHAR_TEXT:
@@ -8215,7 +8215,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
   /* Modify a proto-segment appropriately or return a special value. */
   switch (c_type)
     {
-    case XmSTRING_COMPONENT_CHARSET:
+    case XmSTRING_COMPONENT_TAG:
       if (!value || (length != strlen((char*) value))) {
         _XmProcessUnlock();
 	return NULL;
@@ -8693,7 +8693,7 @@ XmeStringGetComponent(_XmStringContext context,
 
 	      _XmProcessUnlock();
 	      return ((text_type == XmCHARSET_TEXT) ?
-		      XmSTRING_COMPONENT_CHARSET : XmSTRING_COMPONENT_LOCALE);
+		      XmSTRING_COMPONENT_TAG : XmSTRING_COMPONENT_LOCALE);
 	    }
 	}
       /* Fall through if no tag set. */

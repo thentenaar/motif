@@ -18,7 +18,7 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 ! HISTORY
 
 !
@@ -215,7 +215,7 @@ EnumerationSet
           XmATTACH_WIDGET;  XmATTACH_OPPOSITE_WIDGET;
           XmATTACH_POSITION; XmATTACH_SELF; };
     ColorModeType : integer
-        { XmListMode; XmScaleMode;  };    
+        { XmListMode; XmScaleMode;  };
     EListSelectionsType : integer
         { XmSINGLE_SELECT; XmEXTENDED_SELECT;  };
     FillOptionType : integer
@@ -452,17 +452,17 @@ EnumerationSet
     OffsetModel : integer
         { XmABSOLUTE; XmRELATIVE; };
     CompoundStringComponent : integer
-        { XmSTRING_COMPONENT_UNKNOWN;      
-          XmSTRING_COMPONENT_CHARSET;
-          XmSTRING_COMPONENT_TEXT;      
+        { XmSTRING_COMPONENT_UNKNOWN;
+          XmSTRING_COMPONENT_TAG;
+          XmSTRING_COMPONENT_TEXT;
           XmSTRING_COMPONENT_DIRECTION;
-          XmSTRING_COMPONENT_SEPARATOR;   
+          XmSTRING_COMPONENT_SEPARATOR;
           XmSTRING_COMPONENT_LOCALE_TEXT;
-          XmSTRING_COMPONENT_LOCALE;      
+          XmSTRING_COMPONENT_LOCALE;
           XmSTRING_COMPONENT_WIDECHAR_TEXT;
-          XmSTRING_COMPONENT_LAYOUT_PUSH; 
+          XmSTRING_COMPONENT_LAYOUT_PUSH;
           XmSTRING_COMPONENT_LAYOUT_POP;
-          XmSTRING_COMPONENT_RENDITION_BEGIN; 
+          XmSTRING_COMPONENT_RENDITION_BEGIN;
           XmSTRING_COMPONENT_RENDITION_END;
           XmSTRING_COMPONENT_TAB; };
     AutomaticSelection : integer
@@ -474,9 +474,9 @@ EnumerationSet
         { XmFILL_UNSPECIFIED; XmFILL_FLUSH; XmFILL_RAGGED;};
     XmDistribution : integer
         { XmDISTRIBUTE_TIGHT; XmDISTRIBUTE_SPREAD;};
-    XmTreeCompressStyle : integer 
+    XmTreeCompressStyle : integer
         { XmTreeCompressNone; XmTreeCompressLeaves; XmTreeCompressLeaves;};
-    XmTreeLineStyle : integer 
+    XmTreeLineStyle : integer
         { LineSolid; LineOnOffDash; LineDoubleDash;};
 
 ! Define controls list of common aggregates of widgets
@@ -704,7 +704,7 @@ ControlList
         XmMessageBox;
         XmSelectionBox;
         XmFileSelectionBox;
-        
+
         };
 
 
@@ -5401,7 +5401,7 @@ Resource
         { Type = integer;
           EnumerationSet = DtWorkAreaLocation;
           Default = "DtWORK_AREA_BOTTOM"; };
-! 
+!
 ! Motif 2.2 widgets and resources
 !
 ! --- XmColumn Resources
@@ -5716,7 +5716,7 @@ Class XmIconBox : Widget {
   ConvenienceFunction = XmCreateIconBox;
   Resources {
     XmNhorizontalMargin;
-    XmNverticalMargin;    
+    XmNverticalMargin;
     XmNminimumHorizontalCells;
     XmNminimumVerticalCells;
     XmNminimumCellWidth;
@@ -6240,7 +6240,7 @@ Resource
   XmNitemFoundCallback : Reason {
   };
   XmNitemNotFoundCallback : Reason {
-  }; 
+  };
   XmNselectCallback : Reason {
   };
 !  XmNvisibleItemCount : Argument {

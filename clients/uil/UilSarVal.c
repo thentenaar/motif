@@ -1625,7 +1625,7 @@ yystype	    *keyword_frame;
 				       _MOTIF_DEFAULT_LOCALE);
       break;
 
-    case XmSTRING_COMPONENT_CHARSET:
+    case XmSTRING_COMPONENT_TAG:
     case XmSTRING_COMPONENT_TEXT:
     case XmSTRING_COMPONENT_LOCALE_TEXT:
     case XmSTRING_COMPONENT_WIDECHAR_TEXT:
@@ -1643,7 +1643,7 @@ yystype	    *keyword_frame;
       else if ((value_frame->b_type != CHAR_8_LITERAL) &&
 	       (value_frame->b_type != LOC_STRING) &&
 	       ((value_frame->b_type != CHARSET_NAME) ||
-		(type != XmSTRING_COMPONENT_CHARSET)))
+		(type != XmSTRING_COMPONENT_TAG)))
 	diag_issue_diagnostic(d_arg_type,
 			      _sar_source_position(value_frame),
 			      tok_token_name_table[value_frame->b_type],

@@ -431,7 +431,7 @@ _XmStringGetSegment(_XmStringContext   context,
 	    new_renditions = TRUE;
 	  break;
 
-	case XmSTRING_COMPONENT_CHARSET:
+	case XmSTRING_COMPONENT_TAG:
 	case XmSTRING_COMPONENT_LOCALE:
 	  if (*text)
 	    done = TRUE;
