@@ -73,10 +73,10 @@ extern "C" {
 #define XmComboBox2_inValueChanged(w) (((XmCombinationBox2Widget)(w))->combo.inValueChanged)
 
 /* Should return True to ignore invalid entry warning. Combination Box
- *  does not currently use this. Presumes do it in subclasses 
+ *  does not currently use this. Presumes do it in subclasses
  */
 typedef Boolean (*XmCombinationBox2TextProc)(
-    Widget,	
+    Widget,
     char *text
 );
 
@@ -90,15 +90,10 @@ typedef Boolean (*XmCombinationBox2TextListMapProc)(
 #define XmCombinationBox2ExtensionVersion 2
 
 typedef XmDropDownClassPart XmCombinationBox2ClassPartExtension;
-
 typedef XmDropDownClassPart XmCombinationBox2ClassPart;
-
 typedef XmDropDownClassRec  XmCombinationBox2ClassRec;
-
 typedef XmDropDownPart      XmCombinationBox2Part;
-
 typedef XmDropDownRec       XmCombinationBox2Rec;
-
 extern XmCombinationBox2ClassRec xmCombinationBox2ClassRec XM_DEPRECATED;
 
 #ifdef __cplusplus

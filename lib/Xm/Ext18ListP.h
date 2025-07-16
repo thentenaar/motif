@@ -31,7 +31,6 @@
 #define XmIsExt18List(w)  \
   (_XmIsFastSubclass(XtClass(w), XmEXT18LIST_BIT))
 
-
 #include <Xm/ManagerP.h>
 #include <Xm/PrimitiveP.h>
 
@@ -65,20 +64,15 @@ extern "C" {
 #define XmExt18List_title_string(w) (((XmExt18ListWidget)(w))->ext_list.title_string)
 
 typedef XmMultiListClassPart XmExt18ListClassPart;
-
 typedef XmMultiListClassRec XmExt18ListClassRec;
-
 typedef XmMultiListPart XmExt18ListPart;
-
 typedef XmMultiListRec XmExt18ListRec;
 
 extern XmExt18ListClassRec xmExt18ListClassRec XM_DEPRECATED;
-
 extern XmI18ListClassRec xiI18ListClassRec;
 extern WidgetClass xmI18ListWidgetClass;
 
 #if defined(__cplusplus)
 }
 #endif
-
 #endif /* _XmExt18ListP_h_ */
