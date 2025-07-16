@@ -46,6 +46,7 @@ static char rcsid[] = "$TOG: MenuUtil.c /main/16 1999/05/13 15:57:21 mgreess $"
 #include "MenuUtilI.h"
 #include "MessagesI.h"
 #include "RCMenuI.h"
+#include "ScreenI.h"
 #include "TravActI.h"
 #include "TraversalI.h"
 #include "UniqueEvnI.h"
@@ -1040,7 +1041,7 @@ _XmMenuGrabKeyboardAndPointer(
       return(status);
 
    status = _XmGrabPointer(widget, True, EVENTS, GrabModeSync,
-       GrabModeAsync, None, XmGetMenuCursor(XtDisplay(widget)), time) !=
+       GrabModeAsync, None, _XmGetMenuCursorByScreen(XtScreen(widget)), time) !=
          GrabSuccess;
 
    if (status)

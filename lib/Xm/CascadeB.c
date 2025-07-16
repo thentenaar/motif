@@ -56,6 +56,7 @@ static char rcsid[] = "$TOG: CascadeB.c /main/27 1999/08/11 14:26:35 mgreess $"
 #include "MessagesI.h"
 #include "PrimitiveI.h"
 #include "RCMenuI.h"
+#include "ScreenI.h"
 #include "TearOffI.h"
 #include "TraversalI.h"
 #include "UniqueEvnI.h"
@@ -1305,7 +1306,7 @@ MenuBarSelect(
 
                _XmGrabPointer(XtParent(cb), True, EVENTS,
                   GrabModeAsync, GrabModeAsync, None,
-		  XmGetMenuCursor(XtDisplay(cb)), _time);
+		  _XmGetMenuCursorByScreen(XtScreen(cb)), _time);
 
 	       RC_SetBeingArmed(XtParent(cb), False);
 	    }

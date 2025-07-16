@@ -30,9 +30,7 @@ static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
 #include <config.h>
 #endif
 
-
 #include <X11/cursorfont.h>
-
 #include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/DisplayP.h>
@@ -335,7 +333,7 @@ GetTearOffCursor(
         	TearOffCursor =
 			XCreateFontCursor(XtDisplay(wid), XC_fleur);
 		if (0L == TearOffCursor)
-			TearOffCursor = XmGetMenuCursor(XtDisplay(wid));
+			TearOffCursor = _XmGetMenuCursorByScreen(XtScreen(wid));
 		else
 			XtAddCallback((Widget)dd, XtNdestroyCallback,
 			  DisplayDestroyCallback,(XtPointer)TearOffCursor);
@@ -559,7 +557,7 @@ _XmAddTearOffEventHandlers(
     XmRowColumnWidget rc = (XmRowColumnWidget) wid;
     Widget child;
     int i;
-    Cursor cursor = XmGetMenuCursor(XtDisplay(wid));
+    Cursor cursor = _XmGetMenuCursorByScreen(XtScreen(wid));
     XmMenuSavvyTrait	mtrait;
 
     for (i=0; i < rc->composite.num_children; i++)
@@ -832,7 +830,7 @@ _XmTearOffInitiate(
             (unsigned int)(ButtonPressMask | ButtonReleaseMask |
             EnterWindowMask | LeaveWindowMask),
             GrabModeSync, GrabModeAsync, None,
-            XmGetMenuCursor(XtDisplay(rc)), CurrentTime);
+            _XmGetMenuCursorByScreen(XtScreen(rc)), CurrentTime);
 
          _XmGrabKeyboard((Widget)rc, True, GrabModeSync, GrabModeSync,
             CurrentTime);

@@ -59,6 +59,7 @@ static char rcsid[] = "$TOG: CascadeBG.c /main/28 1999/02/01 18:47:11 mgreess $"
 #include "MenuStateI.h"
 #include "MenuUtilI.h"
 #include "RCMenuI.h"
+#include "ScreenI.h"
 #include "SyntheticI.h"
 #include "TravActI.h"
 #include "TraversalI.h"
@@ -1846,7 +1847,7 @@ MenuBarSelect(
 	    {
 	       Cursor cursor;
 
-	       cursor = XmGetMenuCursor(XtDisplay(cb));
+	       cursor = _XmGetMenuCursorByScreen(XtScreen(cb));
 
                _XmGrabPointer(XtParent(cb), True, EVENTS,
                   GrabModeAsync, GrabModeAsync, None, cursor, _time);
