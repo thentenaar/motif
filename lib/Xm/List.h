@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmList_h
 #define _XmList_h
 
@@ -44,28 +44,28 @@ typedef struct _XmListRec      * XmListWidget;
 
 /********    Public Function Declarations    ********/
 
-extern void XmListAddItem( 
+extern void XmListAddItem(
                         Widget w,
                         XmString item,
                         int pos) ;
-extern void XmListAddItems( 
+extern void XmListAddItems(
                         Widget w,
                         XmString *items,
                         int item_count,
                         int pos) ;
-extern void XmListAddItemsUnselected( 
+extern void XmListAddItemsUnselected(
                         Widget w,
                         XmString *items,
                         int item_count,
                         int pos) ;
-extern void XmListAddItemUnselected( 
+extern void XmListAddItemUnselected(
                         Widget w,
                         XmString item,
                         int pos) ;
-extern void XmListDeleteItem( 
+extern void XmListDeleteItem(
                         Widget w,
                         XmString item) ;
-extern void XmListDeleteItems( 
+extern void XmListDeleteItems(
                         Widget w,
                         XmString *items,
                         int item_count) ;
@@ -73,31 +73,31 @@ extern void XmListDeletePositions(
                         Widget    w,
                         int      *position_list,
                         int       position_count ) ;
-extern void XmListDeletePos( 
+extern void XmListDeletePos(
                         Widget w,
                         int pos) ;
-extern void XmListDeleteItemsPos( 
+extern void XmListDeleteItemsPos(
                         Widget w,
                         int item_count,
                         int pos) ;
-extern void XmListDeleteAllItems( 
+extern void XmListDeleteAllItems(
                         Widget w) ;
-extern void XmListReplaceItems( 
+extern void XmListReplaceItems(
                         Widget w,
                         XmString *old_items,
                         int item_count,
                         XmString *new_items) ;
-extern void XmListReplaceItemsPos( 
+extern void XmListReplaceItemsPos(
                         Widget w,
                         XmString *new_items,
                         int item_count,
                         int position) ;
-extern void XmListReplaceItemsUnselected( 
+extern void XmListReplaceItemsUnselected(
                         Widget w,
                         XmString *old_items,
                         int item_count,
                         XmString *new_items) ;
-extern void XmListReplaceItemsPosUnselected( 
+extern void XmListReplaceItemsPosUnselected(
                         Widget w,
                         XmString *new_items,
                         int item_count,
@@ -107,53 +107,41 @@ extern void XmListReplacePositions(
                         int      *position_list,
                         XmString *item_list,
                         int       item_count ) ;
-extern void XmListSelectItem( 
+extern void XmListSelectItem(
                         Widget w,
                         XmString item,
-#if NeedWidePrototypes
-                        int notify) ;
-#else
                         Boolean notify) ;
-#endif /* NeedWidePrototypes */
-extern void XmListSelectPos( 
+extern void XmListSelectPos(
                         Widget w,
                         int pos,
-#if NeedWidePrototypes
-                        int notify) ;
-#else
                         Boolean notify) ;
-#endif /* NeedWidePrototypes */
-extern void XmListDeselectItem( 
+extern void XmListDeselectItem(
                         Widget w,
                         XmString item) ;
-extern void XmListDeselectPos( 
+extern void XmListDeselectPos(
                         Widget w,
                         int pos) ;
-extern void XmListDeselectAllItems( 
+extern void XmListDeselectAllItems(
                         Widget w) ;
-extern void XmListSetPos( 
+extern void XmListSetPos(
                         Widget w,
                         int pos) ;
-extern void XmListSetBottomPos( 
+extern void XmListSetBottomPos(
                         Widget w,
                         int pos) ;
-extern void XmListSetItem( 
+extern void XmListSetItem(
                         Widget w,
                         XmString item) ;
-extern void XmListSetBottomItem( 
+extern void XmListSetBottomItem(
                         Widget w,
                         XmString item) ;
-extern void XmListSetAddMode( 
+extern void XmListSetAddMode(
                         Widget w,
-#if NeedWidePrototypes
-                        int add_mode) ;
-#else
                         Boolean add_mode) ;
-#endif /* NeedWidePrototypes */
-extern Boolean XmListItemExists( 
+extern Boolean XmListItemExists(
                         Widget w,
                         XmString item) ;
-extern int XmListItemPos( 
+extern int XmListItemPos(
                         Widget w,
                         XmString item) ;
 extern int XmListGetKbdItemPos(
@@ -161,9 +149,9 @@ extern int XmListGetKbdItemPos(
 extern Boolean XmListSetKbdItemPos(
                         Widget w,
                         int    pos ) ;
-extern int XmListYToPos( 
+extern int XmListYToPos(
                         Widget w,
-                        Position y) ; /* NeedWidePrototypes ????? */
+                        Position y) ;
 extern Boolean XmListPosToBounds(
                         Widget w,
                         int         position,
@@ -171,29 +159,29 @@ extern Boolean XmListPosToBounds(
                         Position   *y,
                         Dimension  *width,
                         Dimension  *height) ;
-extern Boolean XmListGetMatchPos( 
+extern Boolean XmListGetMatchPos(
                         Widget w,
                         XmString item,
                         int **pos_list,
                         int *pos_count) ;
-extern Boolean XmListGetSelectedPos( 
+extern Boolean XmListGetSelectedPos(
                         Widget w,
                         int **pos_list,
                         int *pos_count) ;
-extern void XmListSetHorizPos( 
+extern void XmListSetHorizPos(
                         Widget w,
                         int position) ;
-extern void XmListUpdateSelectedList( 
+extern void XmListUpdateSelectedList(
                         Widget w) ;
 extern Boolean XmListPosSelected(
 			Widget 	w,
 			int 	pos);
-extern Widget XmCreateList( 
+extern Widget XmCreateList(
                         Widget parent,
                         char *name,
                         ArgList args,
                         Cardinal argCount) ;
-extern Widget XmCreateScrolledList( 
+extern Widget XmCreateScrolledList(
                         Widget parent,
                         char *name,
                         ArgList args,
@@ -214,4 +202,3 @@ extern Widget XmVaCreateManagedList(
 #endif
 
 #endif /* _XmList_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

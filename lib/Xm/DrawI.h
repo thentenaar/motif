@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,23 +37,15 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern void _XmDrawHighlight( 
+extern void _XmDrawHighlight(
                         Display *display,
                         Drawable d,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        int height,
-                        int highlight_thick,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         Dimension height,
                         Dimension highlight_thick,
-#endif /* NeedWidePrototypes */
                         int line_style) ;
 
 /********    End Private Function Declarations    ********/
@@ -64,4 +56,3 @@ extern void _XmDrawHighlight(
 #endif
 
 #endif /* _XmDrawI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

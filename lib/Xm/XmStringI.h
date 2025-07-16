@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 /*   $TOG: XmStringI.h /main/7 1999/09/01 17:15:15 mgreess $ */
 
 #ifndef _XmStringI_h
@@ -83,9 +83,9 @@ typedef struct _XmFontListContextRec
 /*
  * internal context data block, for read-out
  */
-enum 
+enum
 {
-  PUSH_STATE, BEGIN_REND_STATE, TAG_STATE, TAB_STATE, DIR_STATE,  
+  PUSH_STATE, BEGIN_REND_STATE, TAG_STATE, TAB_STATE, DIR_STATE,
   TEXT_STATE, END_REND_STATE, POP_STATE, SEP_STATE
 };
 
@@ -120,7 +120,7 @@ typedef struct __XmParseMappingRec {
   XmIncludeStatus	include_status;
   unsigned char		internal_flags;	/* reserved for unparse data */
 } _XmParseMappingRec, *_XmParseMapping;
-
+
 /****************************************************************
  * Symbolic values
  ****************************************************************/
@@ -142,14 +142,14 @@ typedef struct __XmParseMappingRec {
 /****************************************************************
 
   XmStringOpt is an optimized string containing text of less than
-  256 bytes with an associated string direction and up to three 
+  256 bytes with an associated string direction and up to three
   implicit tabs.
-  
+
   The text is stored immediately after the header within the string.
 
  ****************************************************************/
 
-typedef struct __XmStringOptHeader {	
+typedef struct __XmStringOptHeader {
   unsigned int type        : 2;	     /* XmSTRING_OPTIMIZED */
   unsigned int text_type   : 2;	     /* MB, WC, locale or charset text.*/
   unsigned int tag_index   : TAG_INDEX_BITS;	/* index into charset cache */
@@ -160,10 +160,10 @@ typedef struct __XmStringOptHeader {
   unsigned int str_dir     : 2;      /* string direction set by app */
   unsigned int flipped     : 1;      /* whether the text has been flipped */
   unsigned int tabs	   : 2;	     /* number of tabs preceding the text */
-  unsigned int refcount    : 6;      /* reference count */ 
+  unsigned int refcount    : 6;      /* reference count */
 } _XmStringOptHeader;
 
-typedef struct __XmStringOpt {	
+typedef struct __XmStringOpt {
   _XmStringOptHeader header;
   char               text[TEXT_BYTES_IN_STRUCT];
 } _XmStringOptRec, *_XmStringOpt;
@@ -173,13 +173,13 @@ typedef struct __XmStringOpt {
   XmStringMulti specifies a string consisting of multiple entries.
   Each entry is a segment, either an optimized single segment, an
   unoptimized segment, or an array of segments.
-  
+
   If implicit_line is 1, each entry is treated as a single line for
   display and other purposes.
-  
+
   If implicit_line is 0, the string is a sequence of entries, treated as
   being on one line.
-  
+
  ****************************************************************/
 
 /* Forward definitions */
@@ -189,20 +189,20 @@ typedef union __XmStringNREntryRec *_XmStringNREntry;
 typedef struct __XmStringMultiHeader {
   unsigned int	type          : 2;	/* XmSTRING_MULTIPLE_ENTRY */
   unsigned int	implicit_line : 1;	/* 1 => linefeed at end */
-  unsigned int	entry_count   : 21;	
-  unsigned char	refcount;		
+  unsigned int	entry_count   : 21;
+  unsigned char	refcount;
 } _XmStringMultiHeader;
 
-typedef struct __XmStringMulti{	
+typedef struct __XmStringMulti{
   _XmStringMultiHeader	header;
   _XmStringEntry      * entry;	/* pointer to array of pointers to entries */
 } _XmStringMultiRec, *_XmStringMulti;
 
 typedef struct __XmStringEmptyHeader {
-  unsigned int	type          : 2;	
+  unsigned int	type          : 2;
 } _XmStringEmptyHeader;
 
-typedef union __XmStringRec {	
+typedef union __XmStringRec {
   _XmStringEmptyHeader  empty;
   _XmStringOptHeader	opt_str;	/* XmSTRING_OPTIMIZED */
   XtPointer		component;	/* unused */
@@ -251,7 +251,7 @@ typedef struct __XmStringScanning {
 typedef struct __XmStringRendering {
   _XmStringCacheHeader header;           /* cache_type == _XmRENDERING_CACHE */
   /* Matching fields */
-  XmRenderTable        rt;  
+  XmRenderTable        rt;
 
   /* Cached data */
   int  	               x;	         /* x pos of segment */
@@ -268,11 +268,11 @@ typedef struct __XmStringRendering {
 
 /****************************************************************
 
-  Optimized segment definition. 
+  Optimized segment definition.
 
  ****************************************************************/
 
-typedef struct __XmStringOptSegHdrRec {	
+typedef struct __XmStringOptSegHdrRec {
   unsigned int type            : 2;  /* XmSTRING_ENTRY_OPTIMIZED */
   unsigned int text_type       : 2;  /* MB, WC, locale or charset */
   unsigned int tag_index       : TAG_INDEX_BITS; /* index into charset cache */
@@ -282,7 +282,7 @@ typedef struct __XmStringOptSegHdrRec {
   unsigned int rend_index : REND_INDEX_BITS; /* index in rendition tag cache */
   unsigned int str_dir         : 2;  /* Direction of text in segment */
   unsigned int flipped         : 1;  /* 1 => data is character-flipped */
-  unsigned int tabs_before     : 3;  /* number of preceding tabs */    
+  unsigned int tabs_before     : 3;  /* number of preceding tabs */
   unsigned int permanent       : 1;  /* 0 => Pointer data can be freed */
   unsigned int soft_line_break : 1;  /* linebreak before is soft */
   unsigned int immediate       : 1;  /* 0 => data is immediate */
@@ -291,7 +291,7 @@ typedef struct __XmStringOptSegHdrRec {
 
 typedef struct __XmStringOptSegRec {
   _XmStringOptSegHdrRec header;
-  union {	
+  union {
     wchar_t		wchars[1];
     unsigned char	chars[1];
     XtPointer	        text;
@@ -300,19 +300,19 @@ typedef struct __XmStringOptSegRec {
 
 /****************************************************************
 
-  Array 'segment' definition. 
+  Array 'segment' definition.
 
  ****************************************************************/
 
-typedef struct __XmStringArraySegHdrRec {	
+typedef struct __XmStringArraySegHdrRec {
   unsigned int type            : 2;  /* XmSTRING_ENTRY_ARRAY */
   unsigned int soft_line_break : 1;  /* linebreak before is soft */
-  unsigned int pad             : 5; 
+  unsigned int pad             : 5;
   unsigned int segment_count   : 8;  /* 256 segments per line */
   unsigned char pad2byte[2];
 } _XmStringArraySegHdrRec;
 
-typedef struct __XmStringArraySegRec {	
+typedef struct __XmStringArraySegRec {
   _XmStringArraySegHdrRec header;
   _XmStringNREntry	* seg;	      /* array of pointers to segments */
 } _XmStringArraySegRec, *_XmStringArraySeg;
@@ -320,7 +320,7 @@ typedef struct __XmStringArraySegRec {
 
 /****************************************************************
 
-  Unoptimized segment definition. 
+  Unoptimized segment definition.
 
  ****************************************************************/
 
@@ -355,15 +355,15 @@ typedef struct __XmStringUnoptSegRec {
 
 /****************************************************************
 
-  XmStringEntry specifies the different 'segments' that can be part 
-  of a multiple-entry XmString. 
+  XmStringEntry specifies the different 'segments' that can be part
+  of a multiple-entry XmString.
 
   These entries can be an optimized segment, an segment with cache,
-  also optimized, an unoptimized segment or an array of segments. 
+  also optimized, an unoptimized segment or an array of segments.
 
-  The array entry type can contain any of the three other entry types, 
-  but not an array entry. This is because we do not want to handle 
-  recursive XmStrings.  
+  The array entry type can contain any of the three other entry types,
+  but not an array entry. This is because we do not want to handle
+  recursive XmStrings.
 
  ****************************************************************/
 
@@ -372,7 +372,7 @@ typedef struct __XmStringUnoptSegRec {
 /* #define XmSTRING_ENTRY_OPTIMIZED_CACHE  	0x2 */
 #define XmSTRING_ENTRY_ARRAY			0x3
 
-typedef union __XmStringEntryRec {	
+typedef union __XmStringEntryRec {
   _XmStringEmptyHeader         empty;
   _XmStringOptSegHdrRec	       single;	       /* XmSTRING_ENTRY_OPTIMIZED */
   _XmStringUnoptSegHdrRec      unopt_single;   /* XmSTRING_ENTRY_UNOPTIMIZED */
@@ -381,13 +381,13 @@ typedef union __XmStringEntryRec {
 
 /***************************************************************
 
-  _XmStringNREntry: 
-  Used in the XmStringArraySeg, to prevent recursive 
+  _XmStringNREntry:
+  Used in the XmStringArraySeg, to prevent recursive
   definitions of XmStrings.
 
  ****************************************************************/
 
-typedef union __XmStringNREntryRec {	
+typedef union __XmStringNREntryRec {
   _XmStringEmptyHeader         empty;
   _XmStringOptSegHdrRec	       single;		/* XmSTRING_ENTRY_OPTIMIZED */
   _XmStringUnoptSegHdrRec      unopt_single; 	/* XmSTRING_ENTRY_UNOPTIMIZED */
@@ -395,7 +395,7 @@ typedef union __XmStringNREntryRec {
 
 /****************************************************************
  *
- * Typedefs for old structures 
+ * Typedefs for old structures
  *
  ****************************************************************/
 
@@ -407,7 +407,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 
 /****************************************************************
  *
- * Macros 
+ * Macros
  *
  ****************************************************************/
 
@@ -439,7 +439,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
     --((str)->opt_str.refcount) : 0))
 
 /* Optimized, one-segment XmStrings */
-#define _XmStrTextType(str)   ((str)->opt_str.text_type) 
+#define _XmStrTextType(str)   ((str)->opt_str.text_type)
 #define _XmStrTagIndex(str)   ((str)->opt_str.tag_index)
 #define _XmStrTagGet(str)     (_XmStrTagIndex(str) == TAG_INDEX_UNSET ?    \
 			       NULL :                                      \
@@ -461,7 +461,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 #define _XmStrText(str)       (((_XmStringOpt)(str))->text)
 
 /* Multi-segment XmStrings */
-#define _XmStrImplicitLine(str) (str)->multi_str.implicit_line 
+#define _XmStrImplicitLine(str) (str)->multi_str.implicit_line
 #define _XmStrAddNewline(str)   (_XmStrMultiple(str) ? 		           \
 			         _XmStrImplicitLine(str) : False)
 #define _XmStrEntryCount(str)	(str)->multi_str.entry_count
@@ -626,7 +626,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 	 (((_XmStringUnoptSeg)(entry))->cache = (val)) :		   \
 	 NULL)
 
-	 
+
 /* Array entry specific macros */
 #define _XmEntrySegmentCount(entry) 					   \
   (((_XmStringEntry)(entry))->multiple.segment_count)
@@ -664,7 +664,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
   if (type != XmSTRING_ENTRY_ARRAY)                                        \
     _XmEntryDirectionSet(entry, XmSTRING_DIRECTION_UNSET);		   \
 }
-        
+
 #define _XmEntryCreate(entry, type)					   \
 {									   \
   switch (type) { 							   \
@@ -717,7 +717,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 			 (XmRenderTable)(long)data, \
 			 _XmCACHE_DIRTY, (XtPointer)(long)val) : \
        (void)NULL))
-	
+
 /* Scanning cache */
 #define _XmCACHE_SCAN_LEFT    1
 #define _XmCACHE_SCAN_RIGHT   2
@@ -841,127 +841,95 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 
 /**** Private Defines, Typedefs, and Function Declarations for XmString.c ****/
 
-extern XFontStruct * _XmGetFirstFont( 
+extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;
-extern Boolean _XmFontListSearch( 
+extern Boolean _XmFontListSearch(
                         XmFontList fontlist,
                         XmStringCharSet charset,
                         short *indx,
                         XFontStruct **font_struct) ;
 
-extern int _XmStringIndexCacheTag( 
+extern int _XmStringIndexCacheTag(
                         XmStringTag tag,
                         int length) ;
-extern XmStringTag _XmStringCacheTag( 
+extern XmStringTag _XmStringCacheTag(
                         XmStringTag tag,
                         int length) ;
 
 
-extern Boolean _XmStringInitContext( 
+extern Boolean _XmStringInitContext(
                         _XmStringContext *context,
                         _XmString string) ;
-extern Boolean _XmStringGetNextSegment( 
+extern Boolean _XmStringGetNextSegment(
                         _XmStringContext context,
                         XmStringCharSet *charset,
                         XmStringDirection *direction,
                         char **text,
                         short *char_count,
                         Boolean *separator) ;
-extern void _XmStringFreeContext( 
+extern void _XmStringFreeContext(
                         _XmStringContext context) ;
-extern Dimension _XmStringWidth( 
+extern Dimension _XmStringWidth(
                         XmFontList fontlist,
                         _XmString string) ;
-extern Dimension _XmStringHeight( 
+extern Dimension _XmStringHeight(
                         XmFontList fontlist,
                         _XmString string) ;
-extern void _XmStringExtent( 
+extern void _XmStringExtent(
                         XmFontList fontlist,
                         _XmString string,
                         Dimension *width,
                         Dimension *height) ;
-extern Boolean _XmStringEmpty( 
+extern Boolean _XmStringEmpty(
                         _XmString string) ;
-extern void _XmStringDraw( 
+extern void _XmStringDraw(
                         Display *d,
                         Window w,
                         XmFontList fontlist,
                         _XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
-extern void _XmStringDrawImage( 
+extern void _XmStringDrawImage(
                         Display *d,
                         Window w,
                         XmFontList fontlist,
                         _XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
-extern void _XmStringDrawUnderline( 
+extern void _XmStringDrawUnderline(
                         Display *d,
                         Window w,
                         XmFontList f,
                         _XmString s,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip,
                         _XmString u) ;
-extern void _XmStringDrawMnemonic( 
+extern void _XmStringDrawMnemonic(
                         Display *d,
                         Window w,
                         XmFontList fontlist,
                         _XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip,
                         String mnemonic,
                         XmStringCharSet charset) ;
@@ -970,48 +938,40 @@ extern void _XmStringRender(Display *d,
                             XmRenderTable rendertable,
                             XmRendition rend,
                             _XmString string,
-#if NeedWidePrototypes
-                            int x,
-                            int y,
-                            int width,
-                            unsigned int align,
-                            unsigned int lay_dir
-#else
                             Position x,
                             Position y,
                             Dimension width,
                             unsigned char align,
                             unsigned char lay_dir
-#endif	/* NeedWidePrototypes */
                             ) ;
-extern _XmString _XmStringCreate( 
+extern _XmString _XmStringCreate(
                         XmString cs) ;
-extern void _XmStringFree( 
+extern void _XmStringFree(
                         _XmString string) ;
 extern char * _XmStringGetCurrentCharset( void ) ;
-extern char * _XmCharsetCanonicalize( 
+extern char * _XmCharsetCanonicalize(
                         String charset) ;
-extern _XmString _XmStringCopy( 
+extern _XmString _XmStringCopy(
                         _XmString string) ;
-extern Boolean _XmStringByteCompare( 
+extern Boolean _XmStringByteCompare(
                         _XmString a,
                         _XmString b) ;
-extern Boolean _XmStringHasSubstring( 
+extern Boolean _XmStringHasSubstring(
                         _XmString string,
                         _XmString substring) ;
-extern XmString _XmStringCreateExternal( 
+extern XmString _XmStringCreateExternal(
                         XmFontList fontlist,
                         _XmString cs) ;
-extern Dimension _XmStringBaseline( 
+extern Dimension _XmStringBaseline(
                         XmFontList fontlist,
                         _XmString string) ;
 extern void _XmStringGetBaselines(XmRenderTable rendertable,
                                   _XmString string,
                                   Dimension **baselines,
                                   Cardinal *line_count);
-extern int _XmStringLineCount( 
+extern int _XmStringLineCount(
                         _XmString string) ;
-extern char * _XmStringGetTextConcat( 
+extern char * _XmStringGetTextConcat(
                         XmString string) ;
 extern Boolean _XmStringIsCurrentCharset(
 			XmStringCharSet c) ;
@@ -1024,40 +984,25 @@ extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
                                 unsigned char units,
                                 XmRenderTable rt,
 				float *width,
-				XmRendition *rend); 
+				XmRendition *rend);
 extern XtPointer _XmStringUngenerate (XmString string,
 			XmStringTag tag,
 			XmTextType tag_type,
 			XmTextType output_type);
 
 extern void _XmStringDrawSegment(Display *d,
-				 Drawable w, 
-#if NeedWidePrototypes
-				 int x,
-				 int y,
-				 int width,
-				 int height,
-#else
+				 Drawable w,
 				 Position x,
 				 Position y,
 				 Dimension width,
 				 Dimension height,
-#endif /* NeedWidePrototypes */
-				 _XmStringNREntry seg, 
-				 XmRendition rend, 
+				 _XmStringNREntry seg,
+				 XmRendition rend,
 				 XmRenderTable rendertable,
-#if NeedWidePrototypes 
-				 int image,
-#else
-				 Boolean image, 
-#endif /* NeedWidePrototypes */
-				 XmString *underline, 
-#if NeedWidePrototypes
-				 unsigned int descender
-#else 
+				 Boolean image,
+				 XmString *underline,
 				 Dimension descender
-#endif /* NeedWidePrototypes */
-				 ); 
+				 );
 extern void _XmStringDrawLining(Display *d,
 				Drawable w,
 				Position x,
@@ -1071,25 +1016,21 @@ extern void _XmStringDrawLining(Display *d,
 				Boolean colors_set);
 
 extern Boolean _XmStringSegmentExtents(_XmStringEntry entry,
-				       XmRenderTable rendertable, 
+				       XmRenderTable rendertable,
 				       XmRendition *rend_in_out,
 				       XmRendition base,
 				       Dimension *width,
 				       Dimension *height,
 				       Dimension *ascent,
-				       Dimension *descent); 
+				       Dimension *descent);
 
 extern void _XmStringLayout(_XmString string,
-#if NeedWidePrototypes
-			    int direction
-#else
                             XmDirection direction
-#endif /* NeedWidePrototypes */
 			    );
 extern _XmString _XmStringOptToNonOpt(_XmStringOpt string);
 extern XmString _XmStringCvtOptToMulti(XmString str);
 extern XmString _XmStringOptimize(XmString str);
-extern XmString _XmStringMakeXmString(_XmStringEntry **entries, 
+extern XmString _XmStringMakeXmString(_XmStringEntry **entries,
 				      int count);
 extern void _XmStringEntryFree(_XmStringEntry entry);
 extern _XmStringEntry _XmStringEntryCopy(_XmStringEntry entry);
@@ -1097,60 +1038,52 @@ extern unsigned char _XmStringCharacterCount(XtPointer text,
 					     XmTextType text_type,
 					     int byte_count,
 					     XFontStruct *font);
-extern unsigned char _XmEntryCharCountGet(_XmStringEntry entry, 
+extern unsigned char _XmEntryCharCountGet(_XmStringEntry entry,
 					  XmRenderTable rt);
-extern _XmStringCache _XmStringCacheGet(_XmStringCache caches, 
+extern _XmStringCache _XmStringCacheGet(_XmStringCache caches,
 					int type);
 extern void _XmStringCacheFree(_XmStringCache caches);
-extern XtPointer _XmScanningCacheGet(_XmStringNREntry entry, 
-#if NeedWidePrototypes
-				     int d,
-#else				     
-				     XmDirection d, 
-#endif /* NeedWidePrototypes */
+extern XtPointer _XmScanningCacheGet(_XmStringNREntry entry,
+				     XmDirection d,
 				     int field);
-extern void      _XmScanningCacheSet(_XmStringNREntry entry, 
-#if NeedWidePrototypes
-				     int d,
-#else				     
-				     XmDirection d, 
-#endif /* NeedWidePrototypes */
+extern void      _XmScanningCacheSet(_XmStringNREntry entry,
+				     XmDirection d,
 				     int field,
 				     XtPointer value);
 /* Rendering cache */
 extern XtPointer _XmRenderCacheGet(_XmStringEntry entry,
-				   XmRenderTable rt, 
+				   XmRenderTable rt,
 				   int field);
-extern void      _XmRenderCacheSet(_XmStringEntry entry, 
-				   XmRenderTable rt, 
-				   int field, 
+extern void      _XmRenderCacheSet(_XmStringEntry entry,
+				   XmRenderTable rt,
+				   int field,
 				   XtPointer value);
 
 extern XmStringTag _XmStringIndexGetTag(int index);
 
-extern Boolean _XmStringGetSegment(_XmStringContext   context, 
+extern Boolean _XmStringGetSegment(_XmStringContext   context,
 				   Boolean	      update_context,
 				   Boolean	      copy_data,
-				   XtPointer         *text, 
-				   XmStringTag       *tag, 
-				   XmTextType        *type, 
-				   XmStringTag      **rendition_tags, 
+				   XtPointer         *text,
+				   XmStringTag       *tag,
+				   XmTextType        *type,
+				   XmStringTag      **rendition_tags,
 				   unsigned int      *tag_count,
 				   XmStringDirection *direction,
-				   Boolean           *separator, 
+				   Boolean           *separator,
 				   unsigned char     *tabs,
 				   short             *char_count,
 				   XmDirection       *push_before,
 				   Boolean	     *pop_after);
 
 /* Declarations for macro to function switchover. */
-extern _XmStringCache _XmEntryCacheGet(_XmStringEntry entry); 
-extern XmStringTag _XmEntryTag(_XmStringEntry entry); 
-extern void _XmEntryTagSet(_XmStringEntry entry, XmStringTag tag); 
-extern XtPointer _XmEntryTextGet(_XmStringEntry entry); 
-extern XmDirection _XmEntryPushGet(_XmStringEntry entry); 
-extern Boolean _XmEntryPopGet(_XmStringEntry entry); 
-extern unsigned int _XmEntryByteCountGet(_XmStringEntry entry); 
+extern _XmStringCache _XmEntryCacheGet(_XmStringEntry entry);
+extern XmStringTag _XmEntryTag(_XmStringEntry entry);
+extern void _XmEntryTagSet(_XmStringEntry entry, XmStringTag tag);
+extern XtPointer _XmEntryTextGet(_XmStringEntry entry);
+extern XmDirection _XmEntryPushGet(_XmStringEntry entry);
+extern Boolean _XmEntryPopGet(_XmStringEntry entry);
+extern unsigned int _XmEntryByteCountGet(_XmStringEntry entry);
 extern unsigned int _XmEntryDirectionGet(_XmStringEntry entry);
 extern void _XmEntryDirectionSet(_XmStringEntry entry, XmDirection val);
 extern unsigned char _XmEntryRendEndCountGet(_XmStringEntry entry);
@@ -1166,10 +1099,10 @@ extern void _XmEntryRendBeginSet(_XmStringEntry entry,
 				 XmStringTag tag,
 				 int n);
 extern unsigned char _XmEntryTabsGet(_XmStringEntry entry);
-extern unsigned int _XmEntryTextTypeGet(_XmStringEntry entry); 
+extern unsigned int _XmEntryTextTypeGet(_XmStringEntry entry);
 extern void _XmEntryTextSet(_XmStringEntry entry, XtPointer val);
 
-extern unsigned char *_XmStringTruncateASN1(unsigned char *str, int n); 
+extern unsigned char *_XmStringTruncateASN1(unsigned char *str, int n);
 extern void _XmStringContextCopy(_XmStringContext target,
 				 _XmStringContext source);
 extern void _XmStringContextFree(_XmStringContext target);
@@ -1198,4 +1131,3 @@ extern void _Xm_dump_internal(_XmString string) ;
 #endif
 
 #endif /* _XmStringI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

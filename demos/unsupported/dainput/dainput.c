@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -33,10 +33,7 @@
 #include <locale.h>
 
 #include <X11/Intrinsic.h>
-#include <Xm/Xm.h>          /* to get _NO_PROTO */
-
 #include "dainput.h"
-
 
 /****************************************************************
  * base:

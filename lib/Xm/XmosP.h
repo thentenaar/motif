@@ -24,7 +24,7 @@
 #define _XmosP_h
 
 /* Some SVR4 systems don't have bzero. */
-#include <Xm/Xmfuncs.h>		/* for bzero et al */
+#include <X11/Xfuncs.h>
 
 /*
  * Fix for 8975 - using LOGNAME instead of USER on SYSV and SVR4
@@ -38,9 +38,7 @@
 #endif
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h> /* Needed for MB_CUR_MAX, mbtowc, mbstowcs and mblen */
-#endif
 
 /* On Sun systems, mblen is broken. It doesn't return 0 when the
    string is empty. Here's a patch. NOTE: On Sun systems, mblen

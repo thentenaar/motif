@@ -27,17 +27,13 @@
 #include <config.h>
 #endif
 
-#define FIX_1152
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #endif
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
@@ -84,11 +80,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
   (((tablist) != NULL) && \
    ((unsigned int)(unsigned long)(tablist) != XmAS_IS))
 
-#define  FIX_1414
-#define  FIX_1449
-#define  FIX_1444
-#define FIX_1451
-#define FIX_1536
 /**********************************************************************
  *	      IMPORTANT NOTE: IMPLEMENTATION OF SHARING
  *
@@ -174,13 +165,11 @@ static Boolean GetResources(XmRendition rend,
 			    Cardinal argcount);
 static void SetDefault(XmRendition rend);
 #if USE_XFT
-#ifdef FIX_1536
 static XftColor GetCachedXftColor(Display *display, Pixel color);
-#endif
 #endif
 
 /********    End Static Function Declarations    ********/
-
+
 /* Resource List. */
 
 /************************************************************************/
@@ -308,7 +297,7 @@ static XtResource _XmRenditionResources[] = {
     XmRImmediate, (XtPointer) DEFAULT_backgroundState
   },
 };
-
+
 static XmConst Cardinal _XmNumRenditionResources =
 	XtNumber(_XmRenditionResources);
 
@@ -600,7 +589,7 @@ GetResources(XmRendition rend,
 #endif
   return(got_one);
 }
-
+
 /* Sets all resources to defaults from resource list. */
 static void
 SetDefault(XmRendition rend)
@@ -612,7 +601,7 @@ SetDefault(XmRendition rend)
 
   if (rend == NULL) return;
 
-#ifdef	USE_XFT
+#if USE_XFT
   memset (&(_XmRendXftFG(rend)), 0, sizeof (XftColor));
   memset (&(_XmRendXftBG(rend)), 0, sizeof (XftColor));
 #endif
@@ -637,7 +626,7 @@ SetDefault(XmRendition rend)
   _XmRendBGState(rend)	      = DEFAULT_backgroundState;
   _XmRendFGState(rend)	      = DEFAULT_foregroundState;
 
-#ifdef	USE_XFT
+#if USE_XFT
   _XmRendXftFG (rend).color.alpha = 0xFFFF; /*TODO: it is really needed? (yura)*/
   _XmRendXftBG (rend).color.alpha = 0xFFFF; /*TODO: it is really needed? (yura)*/
   _XmRendXftFont(rend) = DEFAULT_xftFont;
@@ -652,7 +641,7 @@ SetDefault(XmRendition rend)
   _XmRendFontWeight(rend) = 0;
 #endif
 }
-
+
 /* Extern function to pick out display from rendertable. */
 Display *
 _XmRenderTableDisplay(XmRenderTable table)
@@ -666,15 +655,9 @@ _XmRenderTableDisplay(XmRenderTable table)
 XmRendition
 _XmRenderTableFindRendition(XmRenderTable table,
 			    XmStringTag tag,
-#if NeedWidePrototypes
-			    int cached_tag,
-			    int need_font,
-			    int call,
-#else
 			    Boolean cached_tag,
 			    Boolean need_font,
 			    Boolean call,
-#endif /* NeedWidePrototypes */
 			    short *index)
 {
   int				i, j;
@@ -793,40 +776,14 @@ SetRend(XmRendition to,
   if ((_XmRendFG(from) != XmUNSPECIFIED_PIXEL) &&
       (_XmRendFG(to) == XmUNSPECIFIED_PIXEL))
     {
-#ifdef FIX_1536
       _XmRendFG(to) = _XmRendFG(from);
       _XmRendXftFG(to) = GetCachedXftColor(_XmRendDisplay(to), _XmRendFG(to));
-#else
-      XColor xcolor;
-      _XmRendFG(to) = _XmRendFG(from);
-      xcolor.pixel = _XmRendFG(to);
-      XQueryColor(_XmRendDisplay(to), DefaultColormapOfScreen(
-                  DefaultScreenOfDisplay(_XmRendDisplay(to))), &xcolor);
-      /* doesn't needed  (_XmRendXftFG (to)).pixel = xcolor.pixel; */
-      (_XmRendXftFG(to)).color.red = xcolor.red;
-      (_XmRendXftFG(to)).color.green = xcolor.green;
-      (_XmRendXftFG(to)).color.blue = xcolor.blue;
-      (_XmRendXftFG(to)).color.alpha = 0xFFFF;
-#endif
     }
   if ((_XmRendBG(from) != XmUNSPECIFIED_PIXEL) &&
       (_XmRendBG(to) == XmUNSPECIFIED_PIXEL))
     {
-#ifdef FIX_1536
       _XmRendBG(to) = _XmRendBG (from);
       _XmRendXftBG(to) = GetCachedXftColor(_XmRendDisplay(to), _XmRendBG(to));
-#else
-      XColor xcolor;
-      _XmRendBG(to) = _XmRendBG (from);
-      xcolor.pixel = _XmRendBG (to);
-      XQueryColor(_XmRendDisplay(to), DefaultColormapOfScreen(
-                  DefaultScreenOfDisplay(_XmRendDisplay(to))), &xcolor);
-      /* doesn't needed  (_XmRendXftBG (to)).pixel = xcolor.pixel; */
-      (_XmRendXftBG(to)).color.red = xcolor.red;
-      (_XmRendXftBG(to)).color.green = xcolor.green;
-      (_XmRendXftBG(to)).color.blue = xcolor.blue;
-      (_XmRendXftBG(to)).color.alpha = 0xFFFF;
-#endif
     }
   if ((_XmRendXftFont (from) != NULL) &&
       ((unsigned int) (unsigned long) _XmRendXftFont (to) == XmAS_IS))
@@ -877,7 +834,6 @@ RendComplete(XmRendition rend)
 
 /* Search rt for all renditions matching tags, successively merging */
 /* resource values in scr rendition. */
-/*ARGSUSED*/
 XmRendition
 _XmRenditionMerge(Display *d,	/* unused */
 		  XmRendition *scr,
@@ -885,13 +841,8 @@ _XmRenditionMerge(Display *d,	/* unused */
 		  XmRenderTable rt,
 		  XmStringTag base_tag,
 		  XmStringTag *tags,
-#if NeedWidePrototypes
-		  unsigned int tag_count,
-		  unsigned int copy
-#else
 		  unsigned short tag_count,
 		  Boolean copy
-#endif /* NeedWidePrototypes */
 		  )
 {
   XmRendition 	rend, tmp;
@@ -962,11 +913,7 @@ extern Boolean
 _XmRenderTableFindFallback(
         XmRenderTable rendertable,
         XmStringTag tag,
-#if NeedWidePrototypes
-        int cached_tag,
-#else
         Boolean cached_tag,
-#endif /* NeedWidePrototypes */
         short *indx,
 	XmRendition *rend_ptr )
 {
@@ -1528,11 +1475,7 @@ XmRenderTable
 _XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 			       XmStringTag *tags,
 			       int tag_count,
-#if NeedWidePrototypes
-			       int chk_font,
-#else
 			       Boolean chk_font,
-#endif /* NeedWidePrototypes */
 			       XmFontType type,
 			       XtPointer font)
 {
@@ -1632,9 +1575,7 @@ CopyFromArg(XtArgVal src, char *dst, unsigned int size)
   else {
     union {
       long	longval;
-#ifdef FIX_1152
       int	intval;
-#endif
       short	shortval;
       char	charval;
       char*	charptr;
@@ -1642,9 +1583,7 @@ CopyFromArg(XtArgVal src, char *dst, unsigned int size)
     } u;
     char *p = (char*)&u;
     if      (size == sizeof(long))	    u.longval = (long)src;
-#ifdef FIX_1152
     else if (size == sizeof(int))	    u.intval = (int) src;
-#endif
     else if (size == sizeof(short))	    u.shortval = (short)src;
     else if (size == sizeof(char))	    u.charval = (char)src;
     else if (size == sizeof(XtPointer))	    u.ptr = (XtPointer)src;
@@ -1663,9 +1602,7 @@ CopyToArg(char *src, XtArgVal *dst, unsigned int size)
      * but preserve for compatibility as long as arglist contains NULL.
      */
     if	    (size == sizeof(long))	   *dst = (XtArgVal)*(long*)src;
-#ifdef FIX_1152
     else if (size == sizeof(int))	   *dst = (XtArgVal)*(int*)src;
-#endif
     else if (size == sizeof(short))    *dst = (XtArgVal)*(short*)src;
     else if (size == sizeof(char))	   *dst = (XtArgVal)*(char*)src;
     else if (size == sizeof(XtPointer)) *dst = (XtArgVal)*(XtPointer*)src;
@@ -1676,9 +1613,7 @@ CopyToArg(char *src, XtArgVal *dst, unsigned int size)
   else {
     /* proper GetValues semantics: argval is pointer to destination */
     if	(size == sizeof(long))	   *((long*)*dst) = *(long*)src;
-#ifdef FIX_1152
     else if (size == sizeof(int))	*((int*)*dst) = *(int*)src;
-#endif
     else if (size == sizeof(short))    *((short*)*dst) = *(short*)src;
     else if (size == sizeof(char))	   *((char*)*dst) = *(char*)src;
     else if (size == sizeof(XtPointer)) *((XtPointer*)*dst) = *(XtPointer*)src;
@@ -1984,7 +1919,6 @@ ValidateTag(XmRendition rend,
     }
 }
 
-#ifdef FIX_1414
 #if USE_XFT
 static int
 GetSameRenditions(XmRendition *rend_cache, XmRendition rend, int count_rend)
@@ -2015,7 +1949,6 @@ GetSameRenditions(XmRendition *rend_cache, XmRendition rend, int count_rend)
 	return -1;
 
 }
-#endif
 #endif
 
 /* Make sure all the font related resources make sense together and */
@@ -2086,7 +2019,6 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		    FcResult res;
 		    FcPattern *p;
 
-#ifdef FIX_1414
 						  static XmRendition *rend_cache;
 						  static int count_rend=0, num_rend;
 						  num_rend = GetSameRenditions(rend_cache, rend, count_rend);
@@ -2094,7 +2026,6 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 						  if(num_rend >= 0 && (display == _XmRendDisplay(rend_cache[num_rend]))) {
 							  _XmRendXftFont(rend) = _XmRendXftFont(rend_cache[num_rend]);
 						  } else {
-#endif
 		    _XmRendPattern(rend) = FcPatternCreate();
 		    if (_XmRendFontName(rend))
 		      FcPatternAddString(_XmRendPattern(rend), FC_FAMILY,
@@ -2124,7 +2055,6 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		      FcPatternAddInteger(_XmRendPattern(rend), FC_SPACING,
 		                         _XmRendFontSpacing(rend));
                     p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
-#ifdef FIX_1414
                     _XmRendXftFont(rend) = XftFontOpenPattern(display, p);
 					    		  rend_cache = (XmRendition *) XtRealloc((char *)rend_cache,
 					    		    (Cardinal)(sizeof(XmRendition) * (count_rend + 1)));
@@ -2132,9 +2062,6 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 							  count_rend++;
 						  }
 
-#else
-						  _XmRendXftFont(rend) = XftFontOpenPattern(display, p);
-#endif
 		  }
 		  result = _XmRendXftFont(rend) != NULL;
 		  break;
@@ -2302,7 +2229,6 @@ _XmRenditionCreate(Display *display,
 }
 
 /* Mrm create function for rendertables. */
-/*ARGSUSED*/
 Widget
 _XmCreateRenderTable(Widget parent,
 		     String name, /* unused */
@@ -2636,7 +2562,6 @@ static int CVTtvinited = 0;
    chars_used += srcsize;\
 }
 
-/*ARGSUSED*/
 unsigned int
 XmRenderTableCvtToProp(Widget widget, /* unused */
 		       XmRenderTable table,
@@ -2857,7 +2782,7 @@ ReadToken(char *string, int *position, Token reusetoken)
   return(new_token);
 }
 
-#ifdef	USE_XFT
+#if USE_XFT
 static struct _XmXftDrawCacheStruct {
 	Display	*display;
 	Window	window;
@@ -2899,24 +2824,10 @@ _XmXftDrawCreate(Display *display, Window window)
 		}
 	}
 
-#ifdef FIX_1444
 	if (!(draw = XftDrawCreate(display, window,
 	    DefaultVisual(display, DefaultScreen(display)),
 	    DefaultColormap(display, DefaultScreen(display)))))
             	draw = XftDrawCreateBitmap(display, window);
-#else
-	oldErrorHandler = XSetErrorHandler (_XmXftErrorHandler);
-	xft_error = 0;
-	XGetWindowAttributes(display, window, &wa);
-	XSetErrorHandler(oldErrorHandler);
-	if (xft_error != BadWindow) {
-	    draw = XftDrawCreate(display, window,
-	        DefaultVisual(display, DefaultScreen(display)),
-	        DefaultColormap(display, DefaultScreen(display)));
-	} else {
-            draw = XftDrawCreateBitmap(display, window);
-        }
-#endif
 	/* Store it in the cache. Look for an empty slot first */
 	for (i=0; i<_XmXftDrawCacheSize; i++)
 		if (_XmXftDrawCache[i].display == NULL) {
@@ -2930,9 +2841,7 @@ _XmXftDrawCreate(Display *display, Window window)
 	_XmXftDrawCache = (struct _XmXftDrawCacheStruct *)
 		XtRealloc((char *)_XmXftDrawCache,
 		sizeof(struct _XmXftDrawCacheStruct) * _XmXftDrawCacheSize);
-#ifdef FIX_1449
 	memset(_XmXftDrawCache + i, 0, (_XmXftDrawCacheSize - i) * sizeof(*_XmXftDrawCache));
-#endif
 
 	_XmXftDrawCache[i].display = display;
 	_XmXftDrawCache[i].draw = draw;
@@ -2960,11 +2869,7 @@ _XmXftDrawDestroy(Display *display, Window window, XftDraw *draw)
 
 void
 _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc,
-#if NeedWidePrototypes
-                int x, int y,
-#else
                 Position x, Position y,
-#endif
                 char *s, int len)
 {
     XftDraw	*draw = _XmXftDrawCreate(display, window);
@@ -3003,17 +2908,8 @@ _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc
 
 void
 _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
-#if NeedWidePrototypes
-                int x, int y,
-#else
                 Position x, Position y,
-#endif
-                char *s, int len,
-#if NeedWidePrototypes
-		int image
-#else
-		Boolean image
-#endif
+                char *s, int len, Boolean image
 		)
 {
     XftDraw	*draw = _XmXftDrawCreate(display, window);
@@ -3056,17 +2952,10 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 	    bg_color.color.blue = xcol.blue;
 	    bg_color.color.alpha = 0xFFFF;
 	}
-#ifdef FIX_1451
         XftDrawRect(draw, &bg_color, x, y - _XmRendXftFont(rend)->ascent,
 	            ext.xOff,
 		    _XmRendXftFont(rend)->ascent +
 		    _XmRendXftFont(rend)->descent);
-#else
-        XftDrawRect(draw, &bg_color, x - 10, y - _XmRendXftFont(rend)->ascent - 10,
-	            ext.xOff +20,
-		    _XmRendXftFont(rend)->ascent +
-		    _XmRendXftFont(rend)->descent + 20);
-#endif
     }
 
     if (_XmRendFG(rend) == XmUNSPECIFIED_PIXEL)
@@ -3111,7 +3000,6 @@ _XmXftSetClipRectangles(Display *display, Window window, Position x, Position y,
 	XftDrawSetClipRectangles(d, x, y, rects, n);
 }
 
-#ifdef FIX_1536
 static XftColor
 GetCachedXftColor(Display *display, Pixel color)
 {
@@ -3155,30 +3043,13 @@ GetCachedXftColor(Display *display, Pixel color)
 
   return xftcol;
 }
-#endif
 
 XftColor
 _XmXftGetXftColor(Display *display, Pixel color)
 {
-#ifdef FIX_1536
     return GetCachedXftColor(display, color);
-#else
-    XColor xcol;
-    XftColor xftcol;
-
-    xcol.pixel = color;
-    XQueryColor(display, DefaultColormap(display,
-        DefaultScreen(display)), &xcol);
-    xftcol.pixel = color;
-    xftcol.color.red = xcol.red;
-    xftcol.color.blue = xcol.blue;
-    xftcol.color.green = xcol.green;
-    xftcol.color.alpha = 0xFFFF;
-    return xftcol;
-#endif
 }
 
-#ifdef FIX_1415
 void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width)
 {
 	XftFont *fp = (XftFont *)f;
@@ -3192,9 +3063,6 @@ void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width)
 }
 #endif
 
-#endif
-
-/*ARGSUSED*/
 XmRenderTable
 XmRenderTableCvtFromProp(Widget w,
 			 char *prop,

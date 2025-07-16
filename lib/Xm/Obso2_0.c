@@ -31,12 +31,9 @@
 #include <config.h>
 #endif
 
-
 #include <ctype.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
 #include <unistd.h>
-#endif
 
 #include <X11/Intrinsic.h>
 #include <Xm/BaseClassP.h>
@@ -118,7 +115,7 @@ XmGadgetClassExtRec _XmToggleBGadClassExtRec = {
   NULL, NULLQUARK, 1L, sizeof(XmGadgetClassExtRec),
   XmInheritBaselineProc, XmInheritDisplayRectProc
 };
-
+
 /* XmWorld is defunct. */
 
 typedef struct _XmWorldClassPart {
@@ -194,7 +191,7 @@ externaldef(worldobjectclass) XmWorldClassRec xmWorldClassRec =
 
 externaldef(worldobjectclass) WidgetClass
      xmWorldClass = (WidgetClass) &xmWorldClassRec;
-
+
 /************************************************************************
  *                                                                      *
  * _XmGetRealXlations - was global in ScrolledW.c, is now static.       *
@@ -754,7 +751,7 @@ _XmClearBGCompatibility(
 
 
 
-
+
 /****************************************************************/
 void
 _XmBulletinBoardSetDefaultShadow(
@@ -794,7 +791,7 @@ _XmBulletinBoardSetDefaultShadow(
         }
     return ;
     }
-
+
 
 static Widget
 GetBBWithDB(
@@ -1090,7 +1087,7 @@ _XmGetDefaultColors(
 
 	return (default_set[default_set_count - 1]);
 }
-
+
 
 
 static int
@@ -1136,11 +1133,7 @@ _XmBrightness(
 Pixel
 _XmAccessColorData(
         XmColorData *cd,
-#if NeedWidePrototypes
-        unsigned int which )
-#else
         unsigned char which )
-#endif /* NeedWidePrototypes */
 {
     Pixel p;
 
@@ -1254,7 +1247,7 @@ _XmAccessColorData(
     return(p);
 }
 
-
+
 /* OBSOLETE: Replaced by _XmMapKeyEvents. */
 Boolean
 _XmMapKeyEvent(
@@ -1737,7 +1730,7 @@ _XmGetWorldObject(
     return
       worldObject;
 }
-
+
 /************************************************************************
  *
  *  _XmVirtKeysHandler
@@ -1758,46 +1751,24 @@ _XmVirtKeysHandler(Widget    widget,
     }
 }
 
-
-
 /****************************************************************
  *
  *  TextOut.c functions
  *
  ****************************************************************/
 
-/* ARGSUSED */
-void
-_XmTextDrawDestination(XmTextWidget tw)
+void _XmTextDrawDestination(XmTextWidget tw)
 {
-  /* DEPRECATED */
 }
 
-/* ARGSUSED */
-void
-_XmTextClearDestination(XmTextWidget tw,
-#if NeedWidePrototypes
-        int ignore_sens)
-#else
-        Boolean ignore_sens)
-#endif /* NeedWidePrototypes */
+void _XmTextClearDestination(XmTextWidget tw, Boolean ignore_sens)
 {
-  /* DEPRECATED */
 }
 
-/* ARGSUSED */
-void
-_XmTextDestinationVisible(Widget w,
-#if NeedWidePrototypes
-        int turn_on)
-#else
-        Boolean turn_on)
-#endif /* NeedWidePrototypes */
+void _XmTextDestinationVisible(Widget w, Boolean turn_on)
 {
-  /* DEPRECATED */
 }
 
-
 /****************************************************************
  *
  *  TextStrSo.c functions
@@ -1812,7 +1783,7 @@ _XmStringSourceFindString(Widget w,
 {
   return(XmTextFindString(w, start, string, XmTEXT_FORWARD, position));
 }
-
+
 /****************************************************************
  *
  *  TextIn.c functions
@@ -1826,7 +1797,7 @@ _XmTextGetAnchor(XmTextWidget tw)
 
   return(data->anchor);
 }
-
+
 /****************************************************************
  *
  *  Traversal.c functions
@@ -1845,16 +1816,11 @@ _XmGrabTheFocus(
 }
 
 
-/*ARGSUSED*/
 void
 _XmProcessTraversal(
         Widget w,
         XmTraversalDirection dir,
-#if NeedWidePrototypes
-        int check )		/* unused */
-#else
         Boolean check )		/* unused */
-#endif /* NeedWidePrototypes */
 {
   _XmMgrTraversal( w, dir ) ;
 }
@@ -1882,7 +1848,7 @@ _XmCreateVisibilityRect(Widget w,
 {
   return _XmComputeVisibilityRect(w, rectPtr, FALSE, TRUE);
 }
-
+
 /****************************************************************
  *
  *  MenuShell.c functions
@@ -1896,7 +1862,7 @@ _XmSetLastManagedMenuTime (
    _XmGetMenuState((Widget)wid)->MS_LastManagedMenuTime = newTime;
 }
 
-
+
 /****************************************************************
  *
  *  XmString.c functions
@@ -1999,19 +1965,11 @@ _XmStringDraw(
         XmRenderTable rendertable,
         _XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
     XmStringDraw(d, w, rendertable, string, gc, x, y, width,
@@ -2025,19 +1983,11 @@ _XmStringDrawImage(
         XmRenderTable rendertable,
         _XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
     XmStringDrawImage(d, w, rendertable, string, gc, x, y, width,
@@ -2051,19 +2001,11 @@ _XmStringDrawUnderline(
         XmRenderTable f,
         _XmString s,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip,
         _XmString u )
 {
@@ -2078,19 +2020,11 @@ _XmStringDrawMnemonic(
         XmRenderTable rendertable,
         _XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip,
         String mnemonic,
         XmStringTag tag )
@@ -2210,7 +2144,7 @@ XmTextFieldGetCursorPosition(Widget w)
   return XmTextFieldGetInsertionPosition(w);
 }
 
-
+
 /****************************************************************
  *
  *  TravAct.c functions
@@ -2236,51 +2170,31 @@ _XmGetFocusResetFlag(
 void
 _XmSetFocusResetFlag(
         Widget w,
-#if NeedWidePrototypes
-        int value )
-#else
         Boolean value )
-#endif /* NeedWidePrototypes */
 {
    _XmSetFocusFlag(w, XmFOCUS_RESET, value);
 }
 
 /********************************************************************/
 
-/*ARGSUSED*/
 void
 _XmStringUpdate(XmFontList fontlist, /* unused */
 		_XmString string ) /* unused */
 {
-  /*EMPTY*/
 }
-
-
 
 /* From BaseClass.c */
 
-/*ARGSUSED*/
-void
-_XmFreeWidgetExtData(
-        Widget widget )		/* unused */
+void _XmFreeWidgetExtData(Widget widget)		/* unused */
 {
-  /*EMPTY*/
 }
 
-
-/*ARGSUSED*/
-void
-_XmBaseClassPartInitialize(
-        WidgetClass wc )	/* unused */
+
+void _XmBaseClassPartInitialize(WidgetClass wc)	/* unused */
 {
-  /*EMPTY*/
 }
 
-
-Boolean
-_XmIsSlowSubclass(
-        WidgetClass wc,
-        unsigned int bit )
+Boolean _XmIsSlowSubclass(WidgetClass wc, unsigned int bit)
 {
   XmBaseClassExt *wcePtr = _XmGetBaseClassExtPtr(wc, XmQmotif);
 
@@ -2293,7 +2207,7 @@ _XmIsSlowSubclass(
     return False;
 }
 
-
+
 Boolean
 _XmIsStandardMotifWidgetClass(
         WidgetClass wc)
@@ -2339,8 +2253,6 @@ _XmIsStandardMotifWidgetClass(
   return FALSE;
 }
 
-
-
 /** Obsolete from ImageCache.c */
 
 Pixmap
@@ -2355,7 +2267,6 @@ _XmGetPixmap(
 			      foreground, background, depth));
 }
 
-
 Boolean
 _XmInstallPixmap(
         Pixmap pixmap,
@@ -2367,7 +2278,4 @@ _XmInstallPixmap(
   return _XmCachePixmap(pixmap, screen, image_name,
 			foreground, background, 0, 0, 0);
 }
-
-
-
 

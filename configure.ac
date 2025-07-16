@@ -56,8 +56,6 @@ AC_CHECK_HEADERS([alloca.h iconv.h wctype.h sys/poll.h sys/time.h X11/Xos_r.h X1
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
-AC_DEFINE_UNQUOTED([HAS_WIDECHAR_FUNCTIONS], $(test "x$ac_cv_header_wctype_h" == "x" ; echo $?),
-                   [True if we have wctype.h])
 
 dnl Image formats
 AC_ARG_WITH([jpeg],

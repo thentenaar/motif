@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -98,7 +98,7 @@ static XtResource resources[] =
     XmRImmediate, (XtPointer) 2
   },
   {
-    XmNminimumHorizontalCells, XmCDefaultCells, XmRHorizontalDimension, 
+    XmNminimumHorizontalCells, XmCDefaultCells, XmRHorizontalDimension,
     sizeof(Dimension), XtOffsetOf(XmIconBoxRec, box.min_h_cells),
     XmRImmediate, (XtPointer) 2
   },
@@ -120,7 +120,7 @@ static XtResource resources[] =
     sizeof(Dimension), XtOffsetOf(XmIconBoxRec, box.v_margin),
     XmRImmediate, (XtPointer) 4
   },
-  
+
   {
     XmNhorizontalMargin, XmCMargin, XmRHorizontalDimension,
     sizeof(Dimension), XtOffsetOf(XmIconBoxRec, box.h_margin),
@@ -171,7 +171,7 @@ static XtResource constraints[] =
     XmRShort, (XtPointer) &G_any_cell
   }
 };
- 
+
 XmIconBoxClassRec xmIconBoxClassRec = {
   { /* core fields */
     /* superclass		*/	SUPERCLASS,
@@ -210,27 +210,27 @@ XmIconBoxClassRec xmIconBoxClassRec = {
    {		/* composite_class fields */
     /* geometry_manager   */      GeometryManager,
     /* change_managed     */      ChangeManaged,
-    /* insert_child       */      InsertChild,			
-    /* delete_child       */      XtInheritDeleteChild,			
-    /* extension          */      NULL,                                     
+    /* insert_child       */      InsertChild,
+    /* delete_child       */      XtInheritDeleteChild,
+    /* extension          */      NULL,
    },
    {		/* constraint_class fields */
     /* resource list        */         (XtResource*)constraints,
-    /* num resources        */         XtNumber(constraints),	
+    /* num resources        */         XtNumber(constraints),
     /* constraint size      */         sizeof(XmIconBoxConstraintsRec),
     /* init proc            */         ConstraintInitialize,
     /* destroy proc         */         NULL,
     /* set values proc      */         ConstraintSetValues,
-    /* extension            */         NULL, 
+    /* extension            */         NULL,
    },
    {		/* manager_class fields */
-    /* default translations   */      XtInheritTranslations,	
+    /* default translations   */      XtInheritTranslations,
     /* syn_resources          */      get_resources,
     /* num_syn_resources      */      XtNumber(get_resources),
     /* syn_cont_resources     */      NULL,
     /* num_syn_cont_resources */      0,
     /* parent_process         */      XmInheritParentProcess,
-    /* extension	      */      NULL,	
+    /* extension	      */      NULL,
    },
   { /* Icon Box fields */
       NULL                      /* extension          */
@@ -249,7 +249,7 @@ WidgetClass xmIconBoxWidgetClass = (WidgetClass)&xmIconBoxClassRec;
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
@@ -261,18 +261,17 @@ ClassInitialize()
   /* do nothing */
 }
 
-/*ARGSUSED*/
-static void 
+static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
     XmIconBoxWidget ibw = (XmIconBoxWidget) set;
 
     /*
-     * This is needed so that the right thing happens if an icon box is 
+     * This is needed so that the right thing happens if an icon box is
      * created w/o any children.
      */
 
-    CalcCellSizes(set, NULL, FALSE, FALSE, 
+    CalcCellSizes(set, NULL, FALSE, FALSE,
 		  &(XmIconBox_cell_width(ibw)), &(XmIconBox_cell_height(ibw)));
 }
 
@@ -286,7 +285,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  * This overrides the Manager's frobbing with various values.
  */
 
-static void 
+static void
 Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
 {
     XtCreateWindow (w, InputOutput, CopyFromParent, *valueMask, attributes);
@@ -294,16 +293,16 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
 
 /*	Function Name: Resize
  *	Description:   Called when this widget has been resized.
- *	Arguments:     w - the widget to resize. 
+ *	Arguments:     w - the widget to resize.
  *	Returns:       none.
  */
 
-static void 
+static void
 Resize(Widget w)
 {
     XmIconBoxWidget ibw = (XmIconBoxWidget) w;
 
-    CalcCellSizes(w, NULL, TRUE, FALSE, 
+    CalcCellSizes(w, NULL, TRUE, FALSE,
 		  &(XmIconBox_cell_width(ibw)), &(XmIconBox_cell_height(ibw)));
     PlaceChildren(w, NULL);
 }
@@ -313,13 +312,12 @@ Resize(Widget w)
  *                     the-fly.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the set values. 
+ *                     set - what will acutally be the set values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
 {
@@ -331,9 +329,9 @@ SetValues(Widget current, Widget request, Widget set,
 	(XmIconBox_min_cell_width(old_ibw) != XmIconBox_min_cell_width(set_ibw))     ||
 	(XmIconBox_min_cell_height(old_ibw) != XmIconBox_min_cell_height(set_ibw))   ||
 	(XmIconBox_v_margin(old_ibw) != XmIconBox_v_margin(set_ibw))                 ||
-	(XmIconBox_h_margin(old_ibw) != XmIconBox_h_margin(set_ibw)) ) 
+	(XmIconBox_h_margin(old_ibw) != XmIconBox_h_margin(set_ibw)) )
     {
-	CalcCellSizes(set, NULL, FALSE, FALSE, 
+	CalcCellSizes(set, NULL, FALSE, FALSE,
 		      &(XmIconBox_cell_width(set_ibw)), &(XmIconBox_cell_height(set_ibw)));
 	PlaceChildren(set, NULL);
     }
@@ -349,8 +347,8 @@ SetValues(Widget current, Widget request, Widget set,
  *                     preferred - what I would like.
  *	Returns:       See Xt Manual.
  */
-    
-static XtGeometryResult 
+
+static XtGeometryResult
 QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 {
     XmIconBoxWidget ibw = (XmIconBoxWidget) w;
@@ -383,9 +381,8 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
  *	Returns:       status.
  */
 
-/*ARGSUSED*/
 static XtGeometryResult
-GeometryManager(Widget w, XtWidgetGeometry * request, 
+GeometryManager(Widget w, XtWidgetGeometry * request,
 		XtWidgetGeometry * result)
 {
     Dimension cwidth, cheight;
@@ -398,7 +395,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 
     if (!(request->request_mode & (CWWidth | CWHeight | CWX | CWY)))
 	return(XtGeometryNo);
-    
+
     result->request_mode = 0;
 
     if (w_req || h_req) {
@@ -408,7 +405,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 	    ASSIGN_MAX(cwidth, request->width);
 	else
 	    ASSIGN_MAX(cwidth, w->core.width);
-	
+
 	if(h_req)
 	    ASSIGN_MAX(cheight, request->height);
 	else
@@ -432,7 +429,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 	Position x, y;
 	short cell_x, cell_y;
 
-	if (x_req) 
+	if (x_req)
 	    x = request->x;
 	else
 	    x = w->core.x;
@@ -459,17 +456,17 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 	((request->width == result->width) || !w_req) &&
 	((request->height == result->height) || !h_req))
     {
-	if (request->request_mode & 
-	    (CWBorderWidth | CWStackMode | CWSibling)) 
+	if (request->request_mode &
+	    (CWBorderWidth | CWStackMode | CWSibling))
 	{
 	    return(XtGeometryAlmost);
 	}
 
-	if (request->request_mode & XtCWQueryOnly) 
+	if (request->request_mode & XtCWQueryOnly)
 	    return(XtGeometryYes);
 
 	if (w_req || h_req) {
-	    if (w_req) 
+	    if (w_req)
 		info->pref_width = w->core.width = request->width;
 
 	    if (h_req)
@@ -482,11 +479,11 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 	     * only executed if w_req and h_req are false.
 	     */
 
-	    GetCellFromXY((Widget) ibw, result->x, result->y, 
+	    GetCellFromXY((Widget) ibw, result->x, result->y,
 			  &(info->cell_x), &(info->cell_y));
 	}
-	    
-	CalcCellSizes((Widget) ibw, NULL, FALSE, FALSE, 
+
+	CalcCellSizes((Widget) ibw, NULL, FALSE, FALSE,
 		      &(XmIconBox_cell_width(ibw)), &(XmIconBox_cell_height(ibw)));
 
 	PlaceChildren((Widget) ibw, w);
@@ -502,7 +499,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
     {
 	return(XtGeometryAlmost);
     }
-    else 
+    else
 	return(XtGeometryNo);
 }
 
@@ -514,7 +511,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
  * This routine simply makes sure that no gadgets are added.
  */
 
-static void 
+static void
 InsertChild(Widget w)
 {
    if (_XmGadgetWarning(w))
@@ -543,48 +540,48 @@ ChangeManaged(Widget w)
     XmIconBoxWidget ibw = (XmIconBoxWidget) w;
     Widget * childp;
 
-    CalcCellSizes(w, NULL, FALSE, TRUE, 
+    CalcCellSizes(w, NULL, FALSE, TRUE,
 		  &(XmIconBox_cell_width(ibw)), &(XmIconBox_cell_height(ibw)));
 
-    ForAllChildren(ibw, childp) {   
+    ForAllChildren(ibw, childp) {
 	IconInfo * info = GetIconInfo(*childp);
 
-	if ((info->cell_x != XmIconBoxAnyCell) && 
+	if ((info->cell_x != XmIconBoxAnyCell) &&
 	    (info->cell_y != XmIconBoxAnyCell) &&
-	    !XmIconBoxIsCellEmpty((Widget) ibw, 
+	    !XmIconBoxIsCellEmpty((Widget) ibw,
 				  info->cell_x, info->cell_y, *childp))
 	{
 	    static String params[1];
 	    Cardinal num = 1;
 	    char buf[BUFSIZ];
-	    
+
 	    params[0] = buf;
 	    snprintf(buf, BUFSIZ, "(%d, %d)", info->cell_x, info->cell_y);
-	    
+
 	    _XmWarningMsg(w, XmNcellNotEmpty,
 		    XmNcellNotEmptyMsg, params, num);
 	    /*
 	     * tell it to reset this to an empty cell.
 	     */
-	    
-	    info->cell_y = XmIconBoxAnyCell; 
+
+	    info->cell_y = XmIconBoxAnyCell;
 	}
 
-	if ((info->cell_x == XmIconBoxAnyCell) || 
+	if ((info->cell_x == XmIconBoxAnyCell) ||
 	    (info->cell_y == XmIconBoxAnyCell))
 	{
 	    Position x = (*childp)->core.x;
 	    Position y = (*childp)->core.y;
 	    Position cell_x, cell_y;
-	    
+
 	    /*
 	     * If the cell location is not specified try to find the
 	     * cell nearest the X and Y coords specified.
 	     */
-	    
+
 	    FindNearestCellLocation((Widget) ibw, &x, &y);
 	    GetCellFromXY((Widget) ibw, x, y, &cell_x, &cell_y);
-	    
+
 	    if (XmIconBoxIsCellEmpty((Widget) ibw, cell_x, cell_y, w))
 	    {
 		info->cell_x = cell_x;
@@ -599,7 +596,7 @@ ChangeManaged(Widget w)
 	}
     }
 
-    CalcCellSizes(w, NULL, FALSE, FALSE, 
+    CalcCellSizes(w, NULL, FALSE, FALSE,
 		  &(XmIconBox_cell_width(ibw)), &(XmIconBox_cell_height(ibw)));
 
     PlaceChildren(w, NULL);
@@ -610,17 +607,10 @@ ChangeManaged(Widget w)
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmICONBOX_BIT);
 }
-
 
 /*	Function Name: ConstraintInitialize
  *	Description:   Called when a childs constriaints need initializing.
@@ -630,7 +620,6 @@ ClassPartInitialize(WidgetClass w_class)
  *	Returns:       none.
  */
 
-/*ARGSUSED*/
 static void
 ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -641,17 +630,16 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 }
 
 /*	Function Name: ConstraintSetValues
- *	Description:   Called when some constraint data needs to be modified 
+ *	Description:   Called when some constraint data needs to be modified
  *                     on-the-fly.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
 {
@@ -665,19 +653,19 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 	set_info->pref_height = 0;
 
     if ((set_info->cell_x != old_info->cell_x) ||
-	(set_info->cell_y != old_info->cell_y)) 
+	(set_info->cell_y != old_info->cell_y))
     {
-	if ( XmIconBoxIsCellEmpty(XtParent(set), 
-				  set_info->cell_x, set_info->cell_y, set)) 
+	if ( XmIconBoxIsCellEmpty(XtParent(set),
+				  set_info->cell_x, set_info->cell_y, set))
 	{
-	    GetXYFromCell(XtParent(set), 
+	    GetXYFromCell(XtParent(set),
 			  set_info, &(set->core.x), &(set->core.y));
 	}
 	else {
 	    static String params[1];
 	    Cardinal num = 1;
 	    char buf[BUFSIZ];
-	    
+
 	    params[0] = buf;
 	    snprintf(buf, BUFSIZ, "(%d, %d)", set_info->cell_x, set_info->cell_y);
 
@@ -686,9 +674,9 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 
 	    set_info->cell_x = old_info->cell_x;
 	    set_info->cell_y = old_info->cell_y;
-	}			 
+	}
     }
-    
+
     return(False);
 }
 
@@ -713,11 +701,11 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
  */
 
 static void
-GetCellFromXY(Widget w, 
+GetCellFromXY(Widget w,
 	      Position x, Position y, Position * cell_x, Position * cell_y)
 {
     XmIconBoxWidget ibw = (XmIconBoxWidget) w;
-    
+
     *cell_x = (int)x / (int)(XmIconBox_cell_width(ibw) + XmIconBox_h_margin(ibw));
     *cell_y = (int)y / (int)(XmIconBox_cell_height(ibw) + XmIconBox_v_margin(ibw));
 }
@@ -740,9 +728,9 @@ FindNearestCellLocation(Widget w, Position *x, Position *y)
     width = XmIconBox_cell_width(ibw);
     height = XmIconBox_cell_height(ibw);
 
-    GetCellFromXY(w, *x + width/2, 
+    GetCellFromXY(w, *x + width/2,
 		  *y + height/2, &(temp.cell_x), &(temp.cell_y));
-    
+
     GetXYFromCell(w, &temp, x, y);
 }
 
@@ -760,10 +748,10 @@ GetXYFromCell(Widget w, IconInfo * info, Position * x, Position * y)
     Position x_temp = (info->cell_x < 0) ? 0 : info->cell_x;
     Position y_temp = (info->cell_y < 0) ? 0 : info->cell_y;
 
-    *x = XmIconBox_h_margin(ibw) + 
+    *x = XmIconBox_h_margin(ibw) +
 	 x_temp * (XmIconBox_cell_width(ibw) + XmIconBox_h_margin(ibw));
-    
-    *y = XmIconBox_v_margin(ibw) + 
+
+    *y = XmIconBox_v_margin(ibw) +
 	 y_temp * (XmIconBox_cell_height(ibw) + XmIconBox_v_margin(ibw));
 }
 
@@ -774,7 +762,7 @@ GetXYFromCell(Widget w, IconInfo * info, Position * x, Position * y)
  *	Returns:       none.
  */
 
-static void 
+static void
 PlaceChildren(Widget w, Widget child)
 {
     Widget * childp;
@@ -794,10 +782,10 @@ PlaceChildren(Widget w, Widget child)
 	    child->core.height = XmIconBox_cell_height(ibw);
 	}
 	else {
-	    _XmConfigureWidget(*childp, x, y, 
+	    _XmConfigureWidget(*childp, x, y,
 			       XmIconBox_cell_width(ibw), XmIconBox_cell_height(ibw),
 			       (*childp)->core.border_width);
-	}	
+	}
     }
 }
 
@@ -812,14 +800,14 @@ PlaceChildren(Widget w, Widget child)
  */
 
 static void
-CalcCellSizes(Widget w, Widget ignore, Boolean noresize, Boolean query_only, 
+CalcCellSizes(Widget w, Widget ignore, Boolean noresize, Boolean query_only,
 	      Dimension * cell_width, Dimension * cell_height)
 {
     XmIconBoxWidget ibw = (XmIconBoxWidget) w;
 
     Cardinal min_x, min_y;
     Dimension max_w, max_h, d_width, d_height, width, height;
-    
+
     GetMinCells(w, &min_x, &min_y);
     GetMaxCellSize(w, ignore, &max_w, &max_h);
 
@@ -830,7 +818,7 @@ CalcCellSizes(Widget w, Widget ignore, Boolean noresize, Boolean query_only,
     d_height = XmIconBox_v_margin(ibw) + min_y * (max_h + XmIconBox_v_margin(ibw));
 
     if (noresize ||
-	(_XmRequestNewSize(w, query_only, d_width, d_height, 
+	(_XmRequestNewSize(w, query_only, d_width, d_height,
 			   &width, &height) != XtGeometryYes))
     {
 	if (noresize) {
@@ -841,11 +829,11 @@ CalcCellSizes(Widget w, Widget ignore, Boolean noresize, Boolean query_only,
 	/*
 	 * We may need to adjust the cell size.
 	 */
-	
+
 	if (width < d_width)
-	    max_w = (width - XmIconBox_h_margin(ibw))/ min_x - XmIconBox_h_margin(ibw); 
+	    max_w = (width - XmIconBox_h_margin(ibw))/ min_x - XmIconBox_h_margin(ibw);
 	if (height < d_height)
-	    max_h = (height - XmIconBox_v_margin(ibw))/ min_y - XmIconBox_v_margin(ibw); 
+	    max_h = (height - XmIconBox_v_margin(ibw))/ min_y - XmIconBox_v_margin(ibw);
     }
 
     *cell_width = max_w;
@@ -858,8 +846,8 @@ CalcCellSizes(Widget w, Widget ignore, Boolean noresize, Boolean query_only,
  *	Arguments:     w - the Icon Box widget.
  * RETURN              min_x, min_y - minimum number of cells needed
  *                                    in each direction.
- *                     
- *	Returns:       
+ *
+ *	Returns:
  */
 
 static void
@@ -956,7 +944,7 @@ SetToEmptyCell(Widget child)
     cur_x = cur_y = XmIconBoxAnyCell;
     cur_square = max_x * max_x + max_y * max_y;
 
-    for (y = 0; y <= max_y; y++) 
+    for (y = 0; y <= max_y; y++)
 	for (x = 0; x <= max_x; x++) {
 	    square = x * x + y * y;
 
@@ -1010,10 +998,10 @@ XmIconBoxIsCellEmpty(Widget w, Position x, Position y, Widget ignore)
     _XmWidgetToAppContext(w);
     _XmAppLock(app);
 
-    ForAllChildren(ibw, childp) {   
+    ForAllChildren(ibw, childp) {
 	IconInfo * info;
 
-	if (!XtIsManaged(*childp) || 
+	if (!XtIsManaged(*childp) ||
 	    (*childp == ignore) || (*childp)->core.being_destroyed)
 	{
 	    continue;

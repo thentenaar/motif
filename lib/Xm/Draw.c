@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Draw.c /main/12 1995/10/25 20:02:15 cde-sun $"
@@ -58,17 +58,17 @@ static void DrawSimpleShadow(Display *display,
 
 /*-------------------- Private functions ----------------------*/
 /*-------------------------------------------------------------*/
-
+
 static void
-DrawSimpleShadow (Display *display, 
-		  Drawable d, 
-		  GC top_gc, 
-		  GC bottom_gc, 
-		  Position x, 
-		  Position y, 
-		  Dimension width, 
-		  Dimension height, 
-		  Dimension shadow_thick, 
+DrawSimpleShadow (Display *display,
+		  Drawable d,
+		  GC top_gc,
+		  GC bottom_gc,
+		  Position x,
+		  Position y,
+		  Dimension width,
+		  Dimension height,
+		  Dimension shadow_thick,
 		  Dimension cor)
 /* New implementation (1.2 vs 1.1) uses XSegments instead of XRectangles. */
 /* Used for the simple shadow, the etched shadow and the separators */
@@ -79,22 +79,22 @@ DrawSimpleShadow (Display *display,
   static int segm_count = 0;
 
   register int i, size2, size3;
-  
+
   if (!d) return;
   ASSIGN_MIN(shadow_thick, (width >> 1));
   ASSIGN_MIN(shadow_thick, (height >> 1));
   if (shadow_thick <= 0) return;
-  
+
   size2 = (shadow_thick << 1);
   size3 = size2 + shadow_thick;
-  
+
   _XmProcessLock();
   if (segm_count < shadow_thick) {
-    segms = (XSegment *) XtRealloc((char*)segms, 
+    segms = (XSegment *) XtRealloc((char*)segms,
 				   sizeof (XSegment) * (size2 << 1));
     segm_count = shadow_thick;
   }
-  
+
   for (i = 0; i < shadow_thick; i++) {
     /*  Top segments  */
     segms[i].x1 = x;
@@ -104,7 +104,7 @@ DrawSimpleShadow (Display *display,
     segms[i + shadow_thick].x2 = segms[i + shadow_thick].x1 = x + i;
     segms[i + shadow_thick].y1 = y + shadow_thick;
     segms[i + shadow_thick].y2 = y + height - i - 1;
-    
+
     /*  Bottom segments  */
     segms[i + size2].x1 = x + i + ((cor)?0:1) ;
     segms[i + size2].y2 = segms[i + size2].y1 = y + height - i - 1;
@@ -114,26 +114,20 @@ DrawSimpleShadow (Display *display,
     segms[i + size3].y1 = y + i + 1 - cor;
     segms[i + size3].y2 = y + height - 1 ;
   }
-  
+
   XDrawSegments (display, d, top_gc, &segms[0], size2);
   XDrawSegments (display, d, bottom_gc, &segms[size2], size2);
   _XmProcessUnlock();
 }
 
-    
 /**************************** Public functions *************************/
 /***********************************************************************/
 
 /****************************XmeDrawShadows****************************/
-void XmeDrawShadows(Display *display, Drawable d, 
-                  GC top_gc, GC bottom_gc, 
-#if NeedWidePrototypes
-                                           int x, int y, 
-                  int width, int height, int shad_thick, 
-#else
-                                           Position x, Position y, 
-                  Dimension width, Dimension height, Dimension shad_thick, 
-#endif
+void XmeDrawShadows(Display *display, Drawable d,
+                  GC top_gc, GC bottom_gc,
+                                           Position x, Position y,
+                  Dimension width, Dimension height, Dimension shad_thick,
                   unsigned int shad_type)
 {
     GC  tmp_gc ;
@@ -151,30 +145,25 @@ void XmeDrawShadows(Display *display, Drawable d,
         bottom_gc = tmp_gc ;
     }
 
-    if ((shad_type == XmSHADOW_ETCHED_IN || 
+    if ((shad_type == XmSHADOW_ETCHED_IN ||
          shad_type == XmSHADOW_ETCHED_OUT) && (shad_thick != 1)) {
-        DrawSimpleShadow (display, d, top_gc, bottom_gc, x, y, 
+        DrawSimpleShadow (display, d, top_gc, bottom_gc, x, y,
                             width, height, shad_thick/2, 1);
-        DrawSimpleShadow (display, d, bottom_gc, top_gc, 
-                            x + shad_thick/2, y + shad_thick/2, 
-                            width - (shad_thick/2)*2, 
+        DrawSimpleShadow (display, d, bottom_gc, top_gc,
+                            x + shad_thick/2, y + shad_thick/2,
+                            width - (shad_thick/2)*2,
                             height - (shad_thick/2)*2, shad_thick/2, 1);
     } else
-        DrawSimpleShadow (display, d, top_gc, bottom_gc, x, y, 
+        DrawSimpleShadow (display, d, top_gc, bottom_gc, x, y,
                             width, height, shad_thick, 0);
     _XmAppUnlock(app);
-} 
+}
 
 
 /*****************************XmeClearBorder*********************************/
-void XmeClearBorder (Display *display, Window w, 
-#if NeedWidePrototypes
-                                                 int x, int y, 
-                    int width, int height, int shadow_thick)
-#else
-                                                 Position x, Position y, 
+void XmeClearBorder (Display *display, Window w,
+                                                 Position x, Position y,
                     Dimension width, Dimension height, Dimension shadow_thick)
-#endif /* NeedWidePrototypes */
 {
     XtAppContext app;
 
@@ -184,10 +173,10 @@ void XmeClearBorder (Display *display, Window w,
     _XmAppLock(app);
 
     XClearArea (display, w, x, y, width, shadow_thick, FALSE);
-    XClearArea (display, w, x, y + height - shadow_thick, width, 
+    XClearArea (display, w, x, y + height - shadow_thick, width,
                 shadow_thick, FALSE);
     XClearArea (display, w, x, y, shadow_thick, height, FALSE);
-    XClearArea (display, w, x + width - shadow_thick, y, shadow_thick, 
+    XClearArea (display, w, x + width - shadow_thick, y, shadow_thick,
                 height, FALSE);
     _XmAppUnlock(app);
 }
@@ -197,17 +186,11 @@ void XmeClearBorder (Display *display, Window w,
 
 
 /****************************XmeDrawHighlight*************************/
-void XmeDrawHighlight(Display *display, Drawable d, 
-			    GC gc, 
-#if NeedWidePrototypes
-			    int x, int y, 
-			    int width, int height,
-			    int highlight_thickness)
-#else
-                            Position x, Position y, 
+void XmeDrawHighlight(Display *display, Drawable d,
+			    GC gc,
+                            Position x, Position y,
                             Dimension width, Dimension height,
                             Dimension highlight_thickness)
-#endif /* NeedWidePrototypes */
 {
     XRectangle rect[4] ;
     XtAppContext app;
@@ -226,32 +209,23 @@ void XmeDrawHighlight(Display *display, Drawable d,
     rect[2].width = rect[3].width = highlight_thickness ;
     rect[0].height = rect[1].height = highlight_thickness ;
     rect[2].height = rect[3].height = height ;
-    
+
     XFillRectangles (display, d, gc, rect, 4);
 
     _XmAppUnlock(app);
 
 }
 
- 
+
 
 /******************************XmeDrawSeparator**********************/
-void XmeDrawSeparator(Display *display, Drawable d, 
-                     GC top_gc, GC bottom_gc, GC separator_gc, 
-#if NeedWidePrototypes
-                     int x, int y, 
-                     int width, int height, 
-                     int shadow_thick, 
-                     int margin, unsigned int orientation, 
-                     unsigned int separator_type)
-#else
-                     Position x, Position y, 
-                     Dimension width, Dimension height, 
-                     Dimension shadow_thick, 
-                     Dimension margin, unsigned char orientation, 
+void XmeDrawSeparator(Display *display, Drawable d,
+                     GC top_gc, GC bottom_gc, GC separator_gc,
+                     Position x, Position y,
+                     Dimension width, Dimension height,
+                     Dimension shadow_thick,
+                     Dimension margin, unsigned char orientation,
                      unsigned char separator_type)
-#endif /* NeedWidePrototypes */
-
 {
    Position center;
    XSegment segs[2];
@@ -269,7 +243,7 @@ void XmeDrawSeparator(Display *display, Drawable d,
    } else {
        center = x + width / 2;
    }
-           
+
    if (separator_type == XmSINGLE_LINE ||
        separator_type == XmSINGLE_DASHED_LINE) {
        if (orientation == XmHORIZONTAL) {
@@ -307,9 +281,9 @@ void XmeDrawSeparator(Display *display, Drawable d,
    /* only shadowed stuff in the following, so shadowThickness has to be
       something real */
    if (!shadow_thick) { _XmAppUnlock(app); return ; }
-   
+
    /* do the in/out effect now */
-   if (separator_type == XmSHADOW_ETCHED_IN || 
+   if (separator_type == XmSHADOW_ETCHED_IN ||
        separator_type == XmSHADOW_ETCHED_IN_DASH) {
        tmp_gc = top_gc ;
        top_gc = bottom_gc ;
@@ -317,7 +291,7 @@ void XmeDrawSeparator(Display *display, Drawable d,
    }
 
    /* In the following, we need to special case the shadow_thick = 2 or 3 case,
-      since : it's the default and we don't like changes in visual here, 
+      since : it's the default and we don't like changes in visual here,
       and also it looks non symetrical the way it is without special code:
                                     ......
 	                            .,,,,,
@@ -328,12 +302,12 @@ void XmeDrawSeparator(Display *display, Drawable d,
    */
 
 
-   /* Now the regular shadowed cases, in one pass with one looong dash 
+   /* Now the regular shadowed cases, in one pass with one looong dash
       for the non dashed case */
 
    if (separator_type == XmSHADOW_ETCHED_IN_DASH ||
        separator_type == XmSHADOW_ETCHED_OUT_DASH)
-   /* for now, shadowed dash use three time the shadow thickness as a 
+   /* for now, shadowed dash use three time the shadow thickness as a
       dash size, and worried about the shadow_thick odd values as well */
        shadow_dash_size = (shadow_thick/2)*2*3 ;
    else
@@ -347,51 +321,51 @@ void XmeDrawSeparator(Display *display, Drawable d,
 
    /* ndash value will be 1 for the regular shadow case (not dashed) */
    if (orientation == XmHORIZONTAL) {
-       ndash = ((width - 2*margin)/shadow_dash_size + 1)/2 ;       
+       ndash = ((width - 2*margin)/shadow_dash_size + 1)/2 ;
        for (i=0; i<ndash; i++)
            if (shadow_thick < 4) {
-	       XDrawLine(display, d, top_gc, 
-			 x + margin + 2*i*shadow_dash_size, 
-			 center - shadow_thick/2, 
-			 x + margin + (2*i + 1)*shadow_dash_size -1, 
-			 center - shadow_thick/2); 
+	       XDrawLine(display, d, top_gc,
+			 x + margin + 2*i*shadow_dash_size,
+			 center - shadow_thick/2,
+			 x + margin + (2*i + 1)*shadow_dash_size -1,
+			 center - shadow_thick/2);
 	       if (shadow_thick > 1)
-		   XDrawLine(display, d, bottom_gc, 
-			 x + margin + 2*i*shadow_dash_size, 
-			 center, 
-			 x + margin + (2*i + 1)*shadow_dash_size -1, 
-			 center); 
+		   XDrawLine(display, d, bottom_gc,
+			 x + margin + 2*i*shadow_dash_size,
+			 center,
+			 x + margin + (2*i + 1)*shadow_dash_size -1,
+			 center);
 	   } else {
-	       DrawSimpleShadow(display, d, top_gc, bottom_gc, 
-				  x + margin + i*2*shadow_dash_size, 
-				  center - shadow_thick/2, 
-				  shadow_dash_size, (shadow_thick/2)*2, 
+	       DrawSimpleShadow(display, d, top_gc, bottom_gc,
+				  x + margin + i*2*shadow_dash_size,
+				  center - shadow_thick/2,
+				  shadow_dash_size, (shadow_thick/2)*2,
 				  shadow_thick/2, 0);
 	   }
        /* draw the last dash, with possibly a different size */
        if (i*2*shadow_dash_size < (width - 2*margin))
        {
-           if (shadow_thick < 4) 
+           if (shadow_thick < 4)
            {
-	       XDrawLine(display, d, top_gc, 
-			 x + margin + 2*i*shadow_dash_size, 
-			 center - shadow_thick/2, 
-			 x + (width - 2*margin), 
-			 center - shadow_thick/2); 
+	       XDrawLine(display, d, top_gc,
+			 x + margin + 2*i*shadow_dash_size,
+			 center - shadow_thick/2,
+			 x + (width - 2*margin),
+			 center - shadow_thick/2);
 	       if (shadow_thick > 1)
                {
-		   XDrawLine(display, d, bottom_gc, 
-			 x + margin + 2*i*shadow_dash_size, 
-			 center, 
-			 x + (width - 2*margin), 
-			 center); 
+		   XDrawLine(display, d, bottom_gc,
+			 x + margin + 2*i*shadow_dash_size,
+			 center,
+			 x + (width - 2*margin),
+			 center);
                }
 	   } else {
-	       DrawSimpleShadow(display, d, top_gc, bottom_gc, 
-				  x + margin + i*2*shadow_dash_size, 
-				  center - shadow_thick/2, 
-				  (width - 2*margin) - i*2*shadow_dash_size, 
-				  (shadow_thick/2)*2, 
+	       DrawSimpleShadow(display, d, top_gc, bottom_gc,
+				  x + margin + i*2*shadow_dash_size,
+				  center - shadow_thick/2,
+				  (width - 2*margin) - i*2*shadow_dash_size,
+				  (shadow_thick/2)*2,
 				  shadow_thick/2, 0);
 	   }
        }
@@ -399,45 +373,45 @@ void XmeDrawSeparator(Display *display, Drawable d,
        ndash = ((height - 2*margin)/shadow_dash_size + 1)/2 ;
        for (i=0; i<ndash; i++)
            if (shadow_thick < 4) {
-	       XDrawLine(display, d, top_gc, 
-			 center - shadow_thick/2, 
-			 y + margin + 2*i*shadow_dash_size, 
+	       XDrawLine(display, d, top_gc,
 			 center - shadow_thick/2,
-			 y + margin + (2*i + 1)*shadow_dash_size -1); 
+			 y + margin + 2*i*shadow_dash_size,
+			 center - shadow_thick/2,
+			 y + margin + (2*i + 1)*shadow_dash_size -1);
 	       if (shadow_thick > 1)
-		   XDrawLine(display, d, bottom_gc, 
-			 center, 
-			 y + margin + 2*i*shadow_dash_size, 
-			 center, 
-			 y + margin + (2*i + 1)*shadow_dash_size -1); 
+		   XDrawLine(display, d, bottom_gc,
+			 center,
+			 y + margin + 2*i*shadow_dash_size,
+			 center,
+			 y + margin + (2*i + 1)*shadow_dash_size -1);
 	   } else {
-	       DrawSimpleShadow(display, d, top_gc, bottom_gc, 
-				  center - shadow_thick/2, 
-				  y + margin + i*2*shadow_dash_size, 
-				  (shadow_thick/2)*2, shadow_dash_size, 
+	       DrawSimpleShadow(display, d, top_gc, bottom_gc,
+				  center - shadow_thick/2,
+				  y + margin + i*2*shadow_dash_size,
+				  (shadow_thick/2)*2, shadow_dash_size,
 				  shadow_thick/2, 0);
 	   }
        if (i*2*shadow_dash_size < (height - 2*margin))
        {
-           if (shadow_thick < 4) 
+           if (shadow_thick < 4)
            {
-	       XDrawLine(display, d, top_gc, 
-			 center - shadow_thick/2, 
-			 y + margin + 2*i*shadow_dash_size, 
+	       XDrawLine(display, d, top_gc,
 			 center - shadow_thick/2,
-			 y + (height - 2*margin)); 
+			 y + margin + 2*i*shadow_dash_size,
+			 center - shadow_thick/2,
+			 y + (height - 2*margin));
 	       if (shadow_thick > 1)
-		   XDrawLine(display, d, bottom_gc, 
-			 center, 
-			 y + margin + 2*i*shadow_dash_size, 
-			 center, 
-			 y + (height - 2*margin)); 
+		   XDrawLine(display, d, bottom_gc,
+			 center,
+			 y + margin + 2*i*shadow_dash_size,
+			 center,
+			 y + (height - 2*margin));
 	   } else {
-	       DrawSimpleShadow(display, d, top_gc, bottom_gc, 
-				  center - shadow_thick/2, 
-				  y + margin + i*2*shadow_dash_size, 
-				  (shadow_thick/2)*2, 
-				  (height - 2*margin) - i*2*shadow_dash_size, 
+	       DrawSimpleShadow(display, d, top_gc, bottom_gc,
+				  center - shadow_thick/2,
+				  y + margin + i*2*shadow_dash_size,
+				  (shadow_thick/2)*2,
+				  (height - 2*margin) - i*2*shadow_dash_size,
 				  shadow_thick/2, 0);
            }
         }

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmScrollBar_h
 #define _XmScrollBar_h
 
@@ -47,28 +47,24 @@ typedef struct _XmScrollBarRec      * XmScrollBarWidget;
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmCreateScrollBar( 
+extern Widget XmCreateScrollBar(
                         Widget parent,
                         char *name,
                         ArgList arglist,
                         Cardinal argcount) ;
-extern void XmScrollBarGetValues( 
+extern void XmScrollBarGetValues(
                         Widget w,
                         int *value,
                         int *slider_size,
                         int *increment,
                         int *page_increment) ;
-extern void XmScrollBarSetValues( 
+extern void XmScrollBarSetValues(
                         Widget w,
                         int value,
                         int slider_size,
                         int increment,
                         int page_increment,
-#if NeedWidePrototypes
-                        int notify) ;
-#else
                         Boolean notify) ;
-#endif /* NeedWidePrototypes */
 
 /*
  * Variable argument list functions
@@ -90,4 +86,3 @@ extern Widget XmVaCreateManagedScrollBar(
 #endif
 
 #endif /* _XmScrollBar_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

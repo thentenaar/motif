@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,19 +37,15 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern void _XmCBHelp( 
+extern void _XmCBHelp(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmCascadingPopup( 
+extern void _XmCascadingPopup(
                         Widget cb,
                         XEvent *event,
-#if NeedWidePrototypes
-                        int doCascade) ;
-#else
                         Boolean doCascade) ;
-#endif /* NeedWidePrototypes */
 
 /********    End Private Function Declarations    ********/
 
@@ -59,4 +55,3 @@ extern void _XmCascadingPopup(
 #endif
 
 #endif /* _XmCascadeBI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

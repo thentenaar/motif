@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -43,7 +43,7 @@ extern void _XmMenuHelp(
                         Cardinal *num_params) ;
 extern Boolean _XmIsActiveTearOff (
                          Widget w) ;
-extern int _XmGrabPointer( 
+extern int _XmGrabPointer(
                         Widget widget,
                         int owner_events,
                         unsigned int event_mask,
@@ -52,7 +52,7 @@ extern int _XmGrabPointer(
                         Window confine_to,
                         Cursor cursor,
                         Time time) ;
-extern int _XmGrabKeyboard( 
+extern int _XmGrabKeyboard(
                         Widget widget,
                         int owner_events,
                         int pointer_mode,
@@ -60,69 +60,61 @@ extern int _XmGrabKeyboard(
                         Time time) ;
 extern int _XmMenuGrabKeyboardAndPointer(
                         Widget widget,
-			Time time) ; 
-extern void _XmMenuSetInPMMode( 
+			Time time) ;
+extern void _XmMenuSetInPMMode(
 			Widget wid,
-#if NeedWidePrototypes
-                        int flag) ;
-#else
                         Boolean flag) ;
-#endif /* NeedWidePrototypes */
-extern void _XmSetMenuTraversal( 
+extern void _XmSetMenuTraversal(
                         Widget wid,
-#if NeedWidePrototypes
-                        int traversalOn) ;
-#else
                         Boolean traversalOn) ;
-#endif /* NeedWidePrototypes */
-extern void _XmLeafPaneFocusOut( 
+extern void _XmLeafPaneFocusOut(
                         Widget wid) ;
-extern void _XmMenuTraverseLeft( 
+extern void _XmMenuTraverseLeft(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmMenuTraverseRight( 
+extern void _XmMenuTraverseRight(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmMenuTraverseUp( 
+extern void _XmMenuTraverseUp(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmMenuTraverseDown( 
+extern void _XmMenuTraverseDown(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmMenuEscape( 
+extern void _XmMenuEscape(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmRC_GadgetTraverseDown( 
+extern void _XmRC_GadgetTraverseDown(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmRC_GadgetTraverseUp( 
+extern void _XmRC_GadgetTraverseUp(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmRC_GadgetTraverseLeft( 
+extern void _XmRC_GadgetTraverseLeft(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmRC_GadgetTraverseRight( 
+extern void _XmRC_GadgetTraverseRight(
                         Widget wid,
                         XEvent *event,
                         String *param,
                         Cardinal *num_param) ;
-extern void _XmMenuTraversalHandler( 
+extern void _XmMenuTraversalHandler(
                         Widget w,
                         Widget pw,
                         XmTraversalDirection direction) ;
@@ -133,4 +125,3 @@ extern void _XmMenuTraversalHandler(
 #endif
 
 #endif /* _XmMenuUtilI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

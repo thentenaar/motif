@@ -52,18 +52,12 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include <sys/time.h>
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
 #include <unistd.h>
-#endif
-
 #include <ctype.h>		/* for isspace() */
 
 #if HAVE_REGEX && !HAVE_REGCOMP
-# ifdef __sgi
-extern char *regcmp();
-extern int regex();
-# elif defined(SVR4)
+# if defined(SVR4)
 #  include <libgen.h>
 # elif defined(SYSV)
 extern char *regcmp();
@@ -124,7 +118,7 @@ externaldef(xmos) char _XmSDEFAULT_FONT[] = "fixed";
 externaldef(xmos) char _XmSDEFAULT_BACKGROUND[] = "#c4c4c4";
 
 /**************** end of vendor dependant defaults ********/
-
+
 /********    Static Function Declarations    ********/
 
 static String GetCurrentDir(String buf);
@@ -136,13 +130,13 @@ static unsigned char AddEntryToCache(char *entryName, unsigned entryNameLen);
 static int Wcslen(wchar_t *wcs);
 
 /********    End Static Function Declarations    ********/
-
+
 static char *dirCacheName;
 static unsigned dirCacheNameLen;
 static XmDirCache dirCache;
 static unsigned numCacheAlloc;
 static unsigned numCacheEntries;
-
+
 static void
 FreeDirCache(void)
 {
@@ -156,7 +150,7 @@ FreeDirCache(void)
 	XtFree((char *) dirCache[--numCacheEntries]);
     }
 }
-
+
 static void
 ResetCache(char *qDirName)
 {
@@ -166,7 +160,7 @@ ResetCache(char *qDirName)
   dirCacheName = XtMalloc(dirCacheNameLen + MAX_USER_NAME_LEN + 1);
   strcpy(dirCacheName, qDirName);
 }
-
+
 static unsigned char
 AddEntryToCache(char *entryName,
 		unsigned entryNameLen)
@@ -202,7 +196,7 @@ AddEntryToCache(char *entryName,
   dirCache[numCacheEntries++]->type = result;
   return result;
 }
-
+
 /****************************************************************/
 static String
 GetQualifiedDir(String dirSpec)
@@ -372,7 +366,7 @@ GetQualifiedDir(String dirSpec)
 
   return outputBuf;
 }
-
+
 /****************************************************************/
 String
 _XmOSFindPatternPart(String fileSpec)
@@ -413,12 +407,8 @@ _XmOSFindPatternPart(String fileSpec)
 	  }
 	prev2Char = prevChar;
 	prevChar = *lookAheadPtr;
-#ifndef NO_MULTIBYTE
 	lookAheadPtr += ((MB_CUR_MAX > 1) ?
 			 abs(mblen(lookAheadPtr, MB_CUR_MAX)) : 1);
-#else
-	lookAheadPtr++;
-#endif
       }
   } while (!hasWildcards  &&  *lookAheadPtr++);
 
@@ -427,7 +417,7 @@ _XmOSFindPatternPart(String fileSpec)
 
   return(maskPtr);
 }
-
+
 /****************************************************************/
 void
 _XmOSQualifyFileSpec(String  dirSpec,
@@ -534,7 +524,7 @@ _XmOSQualifyFileSpec(String  dirSpec,
   *pQualifiedPattern = fSpec;
   XtFree(dSpec);
 }
-
+
 /****************************************************************/
 static String
 GetFixedMatchPattern(String pattern)
@@ -559,11 +549,7 @@ GetFixedMatchPattern(String pattern)
   bufPtr = outputBuf;
   *bufPtr++ = '^';
 
-#ifndef NO_MULTIBYTE
   while ((len = mblen(pattern, MB_CUR_MAX)) > 0)
-#else
-  while ((len = *pattern ? 1 : 0))
-#endif
     {
       if (len <= 1)
 	{
@@ -612,20 +598,14 @@ GetFixedMatchPattern(String pattern)
 
   return outputBuf;
 }
-
+
 /****************************************************************/
 void
      _XmOSGetDirEntries(String          qualifiedDir,
 			String          matchPattern,
-#if NeedWidePrototypes
-			unsigned int fileType,
-			int matchDotsLiterally,
-			int listWithFullPath,
-#else
 			unsigned char fileType,
 			Boolean matchDotsLiterally,
 			Boolean listWithFullPath,
-#endif /* NeedWidePrototypes */
 			String * *      pEntries, /* Cannot be NULL. */
 			unsigned int *  pNumEntries, /* Cannot be NULL. */
 			unsigned int *  pNumAlloc) /* Cannot be NULL. */
@@ -905,7 +885,7 @@ void
     FreeDirCache();
   _XmProcessUnlock();
 }
-
+
 /****************************************************************
  * _XmOSBuildFileList:
  *
@@ -921,11 +901,7 @@ void
 void
 _XmOSBuildFileList(String          dirPath,
 		   String          pattern,
-#if NeedWidePrototypes
-		   unsigned int typeMask,
-#else
 		   unsigned char typeMask,
-#endif /* NeedWidePrototypes */
 		   String * *      pEntries,       /* Cannot be NULL. */
 		   unsigned int *  pNumEntries,    /* Cannot be NULL. */
 		   unsigned int *  pNumAlloc)      /* Cannot be NULL. */
@@ -966,7 +942,7 @@ _XmOSBuildFileList(String          dirPath,
     }
   XtFree(qualifiedDir);
 }
-
+
 /****************************************************************
  * GENERAL:
  * The routine must return an integer less than, equal to, or
@@ -980,7 +956,7 @@ _XmOSFileCompare(XmConst void *sp1,
 {
   return strcmp(*((XmConst String *) sp1), *((XmConst String *) sp2));
 }
-
+
 /*************************************************************************
  *
  *   Path code, used in Mwm and Xm.
@@ -1032,7 +1008,7 @@ XmeGetHomeDirName(void)
   _XmProcessUnlock();
   return homeDir;
 }
-
+
 #ifndef LIBDIR
 #define LIBDIR "/usr/lib/X11"
 #endif
@@ -1270,7 +1246,7 @@ _XmOSInitPath(String   file_name,
 
   return path;
 }
-
+
 int
 XmeMicroSleep(long usecs)
 {
@@ -1290,7 +1266,7 @@ XmeMicroSleep(long usecs)
   return Select(0, NULL, NULL, NULL, &timeoutVal);
 #endif
 }
-
+
 /************************************************************************
  *
  *	XmeGetLocalizedString	Map an X11 R5 XPCS string in a locale
@@ -1303,7 +1279,6 @@ XmeMicroSleep(long usecs)
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 XmString
 XmeGetLocalizedString(char *reserved,		/* unused */
 		      Widget widget,		/* unused */
@@ -1312,7 +1287,7 @@ XmeGetLocalizedString(char *reserved,		/* unused */
 {
   return XmStringCreateLocalized(string);
 }
-
+
 /************************************************************************
  *									*
  *    _XmOSBuildFileName						*
@@ -1346,7 +1321,7 @@ _XmOSBuildFileName(String path,
 }
 
 
-
+
 /************************************************************
  *
  *  return poiinter to the file and the suffix
@@ -1396,7 +1371,7 @@ _XmOSFindPathParts(String  path,
 }
 
 
-
+
 /************************************************************
  *
  *  Add _m to the imageName:
@@ -1429,8 +1404,7 @@ _XmOSGenerateMaskName(
 }
 
 
-
-/*ARGSUSED*/
+
 Status
 _XmOSGetInitialCharsDirection(XtPointer     characters,
 			      XmTextType    type,
@@ -1458,8 +1432,7 @@ _XmOSGetInitialCharsDirection(XtPointer     characters,
       return ~Success;
     }
 }
-
-/*ARGSUSED*/
+
 XmDirection
 _XmOSGetCharDirection(XtPointer   character, /* unused */
 		      XmTextType  type,
@@ -1477,7 +1450,7 @@ _XmOSGetCharDirection(XtPointer   character, /* unused */
       return XmDEFAULT_DIRECTION;
     }
 }
-
+
 static int
 Wcslen(wchar_t *wcs)
 {
@@ -1489,7 +1462,7 @@ Wcslen(wchar_t *wcs)
 
   return (ptr - wcs);
 }
-
+
 typedef struct XmOSMethodEntryRec {
   String    method_id;
   XtPointer method;
@@ -1513,13 +1486,12 @@ static XmOSMethodEntry method_table[] = {
 
   { NULL, NULL, NULL, NULL}
 };
-
+
 /****************************************************************
  * XmOSGetMethod:
  *   get the function that implements the requested method.
  ****************************************************************/
 
-/*ARGSUSED*/
 XmOSMethodStatus
 XmOSGetMethod(Widget w,		/* unused */
 	      String method_id,
@@ -1567,7 +1539,7 @@ XmOSGetMethod(Widget w,		/* unused */
 
   return XmOS_METHOD_DEFAULTED;
 }
-
+
 /*
  * This routine is used by Label (and LabelG) to determine which
  * character in the label string matches the Mnemonic keysym, and
@@ -1583,7 +1555,6 @@ XmOSGetMethod(Widget w,		/* unused */
  *	The number of bytes written into the buffer.
  */
 
-/*ARGSUSED*/
 int
 _XmOSKeySymToCharacter(KeySym keysym,
 		       char  *locale,

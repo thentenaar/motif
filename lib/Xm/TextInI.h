@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -36,29 +36,25 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern Boolean _XmTextHasDestination( 
+extern Boolean _XmTextHasDestination(
                         Widget w) ;
-extern Boolean _XmTextSetDestinationSelection( 
+extern Boolean _XmTextSetDestinationSelection(
                         Widget w,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int disown,
-#else
                         Boolean disown,
-#endif /* NeedWidePrototypes */
                         Time set_time) ;
-extern Boolean _XmTextSetSel2( 
+extern Boolean _XmTextSetSel2(
                         XmTextWidget tw,
                         XmTextPosition left,
                         XmTextPosition right,
                         Time set_time) ;
-extern Boolean _XmTextGetSel2( 
+extern Boolean _XmTextGetSel2(
                         XmTextWidget tw,
                         XmTextPosition *left,
                         XmTextPosition *right) ;
-extern void _XmTextInputGetSecResData( 
+extern void _XmTextInputGetSecResData(
                         XmSecondaryResourceData *secResDataRtn) ;
-extern void _XmTextInputCreate( 
+extern void _XmTextInputCreate(
                         Widget wid,
                         ArgList args,
                         Cardinal num_args) ;
@@ -74,4 +70,3 @@ extern void _XmTextHandleSecondaryFinished(Widget w,
 #endif
 
 #endif /* _XmTextInI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -36,61 +36,33 @@ extern "C" {
 
 /********    Private Function Declarations for DragOverS.c    ********/
 
-extern void _XmDragOverHide( 
+extern void _XmDragOverHide(
                         Widget w,
-#if NeedWidePrototypes
-                        int clipOriginX,
-                        int clipOriginY,
-#else
                         Position clipOriginX,
                         Position clipOriginY,
-#endif /* NeedWidePrototypes */
                         XmRegion clipRegion) ;
-extern void _XmDragOverShow( 
+extern void _XmDragOverShow(
                         Widget w,
-#if NeedWidePrototypes
-                        int clipOriginX,
-                        int clipOriginY,
-#else
                         Position clipOriginX,
                         Position clipOriginY,
-#endif /* NeedWidePrototypes */
                         XmRegion clipRegion) ;
-extern void _XmDragOverMove( 
+extern void _XmDragOverMove(
                         Widget w,
-#if NeedWidePrototypes
-                        int x,
-                        int y) ;
-#else
                         Position x,
                         Position y) ;
-#endif /* NeedWidePrototypes */
-extern void _XmDragOverChange( 
+extern void _XmDragOverChange(
                         Widget w,
-#if NeedWidePrototypes
-                        unsigned int dropSiteStatus) ;
-#else
                         unsigned char dropSiteStatus) ;
-#endif /* NeedWidePrototypes */
-extern void _XmDragOverFinish( 
+extern void _XmDragOverFinish(
                         Widget w,
-#if NeedWidePrototypes
-                        unsigned int completionStatus) ;
-#else
                         unsigned char completionStatus) ;
-#endif /* NeedWidePrototypes */
 
 extern Cursor _XmDragOverGetActiveCursor(
 			Widget w) ;
 extern void _XmDragOverSetInitialPosition(
 			Widget w,
-#if NeedWidePrototypes
-			int initialX,
-			int initialY) ;
-#else
 			Position initialX,
 			Position initialY) ;
-#endif /* NeedWidePrototypes */
 
 /********    End Private Function Declarations    ********/
 
@@ -99,4 +71,3 @@ extern void _XmDragOverSetInitialPosition(
 #endif
 
 #endif /* _XmDragOverSI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

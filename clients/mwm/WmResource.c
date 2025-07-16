@@ -4437,14 +4437,11 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
 	ExitWM(WM_ERROR_EXIT_VALUE);
     }
 
-#ifndef NO_MULTIBYTE
     /*
      *  Calculate title bar's height and store it in pAData.
      */
     pAData->titleHeight = (pAData->font)->ascent + (pAData->font)->descent
         + WM_TITLE_BAR_PADDING;
-#endif
-
 
     /*
      * Make standard (inactive) appearance resources.

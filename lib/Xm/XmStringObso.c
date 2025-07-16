@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -42,7 +42,7 @@ static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 
  * as close as we can come to Latin1Create without knowing the charset of
  * Latin1.  This imposes the semantic of \n meaning separator.
  */
-XmString 
+XmString
 XmStringLtoRCreate(
         char *text,
         XmStringTag tag )
@@ -62,7 +62,7 @@ XmStringLtoRCreate(
 
   /* Set the direction once only at the beginning. */
   string = XmStringDirectionCreate(XmSTRING_DIRECTION_L_TO_R);
-    
+
   while ( ! done)		/* loop thu local copy */
     {				/* looking for \n */
       end = start;
@@ -75,10 +75,10 @@ XmStringLtoRCreate(
       /* Don't convert empty string unless it's an initial newline. */
       /* Done so StringHeight has clue to size of empty lines. */
       if ((start != end) || (start == text))
-        string = XmStringConcatAndFree (string, 
-					_XmStringNCreate(start, tag, 
+        string = XmStringConcatAndFree (string,
+					_XmStringNCreate(start, tag,
 							 end - start));
-      
+
       /* Make a separator if this isn't the last segment. */
       if (!done) {
         string = XmStringConcatAndFree(string, XmStringSeparatorCreate());
@@ -90,7 +90,7 @@ XmStringLtoRCreate(
   return (string);
 }
 
-XmString 
+XmString
 XmStringCreateLtoR(
         char *text,
         XmStringTag tag )
@@ -98,21 +98,15 @@ XmStringCreateLtoR(
   return (XmStringLtoRCreate (text, tag));
 }
 
-
 /*
  * build an external TCS 'segment', just a high level create
  */
-XmString 
+XmString
 XmStringSegmentCreate(
         char *text,
         XmStringTag tag,
-#if NeedWidePrototypes
-        int direction,
-        int separator )
-#else
         XmStringDirection direction,
         Boolean separator )
-#endif /* NeedWidePrototypes */
 {
   XmString result;
 
@@ -128,7 +122,7 @@ XmStringSegmentCreate(
 /*
  * Convenience routine to create an XmString from a NULL terminated string.
  */
-XmString 
+XmString
 XmStringCreateSimple(
         char *text )
 {
@@ -138,20 +132,20 @@ XmStringCreateSimple(
  * concat two external strings.  Only concat a component at a time
  * so that we always wind up with a meaningful string
  */
-XmString 
+XmString
 XmStringNConcat(XmString first,
 		XmString second,
 		int n )
 {
   XmString	tmp, ret_val;
-  
+
   _XmProcessLock();
   tmp = XmStringConcat(first, second);
-  
+
   ret_val = XmStringNCopy(tmp, XmStringLength(first) + n);
-  
+
   XmStringFree(tmp);
-  
+
   _XmProcessUnlock();
   return(ret_val);
 }
@@ -161,7 +155,7 @@ XmStringNConcat(XmString first,
  * has <= n bytes.  Only copy a component at a time
  * so that we always wind up with a meaningful string
  */
-XmString 
+XmString
 XmStringNCopy(
         XmString str,
         int n )
@@ -169,10 +163,10 @@ XmStringNCopy(
   unsigned char	*tmp;
   unsigned int	len;
   XmString	ret_val;
-  
+
   _XmProcessLock();
   len = XmCvtXmStringToByteStream(str, &tmp);
-  
+
   if (n >= len) /* No need to truncate */
     {
       ret_val = XmStringCopy(str);
@@ -182,15 +176,15 @@ XmStringNCopy(
       tmp = _XmStringTruncateASN1(tmp, n);
       ret_val = XmCvtByteStreamToXmString(tmp);
     }
-  
+
   XtFree((char *)tmp);
-  
+
   _XmProcessUnlock();
   return(ret_val);
 }
 
 /* Compare ASN.1 form of strings. */
-Boolean 
+Boolean
 XmStringByteCompare(
         XmString a1,
         XmString b1 )

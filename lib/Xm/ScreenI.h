@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -46,50 +46,36 @@ externalref XrmQuark _XmLinkCursorIconQuark ;
 
 /********    Private Function Declarations    ********/
 
-extern XmDragIconObject _XmScreenGetOperationIcon( 
+extern XmDragIconObject _XmScreenGetOperationIcon(
                         Widget w,
-#if NeedWidePrototypes
-                        unsigned int operation) ;
-#else
                         unsigned char operation) ;
-#endif /* NeedWidePrototypes */
-extern XmDragIconObject _XmScreenGetStateIcon( 
+extern XmDragIconObject _XmScreenGetStateIcon(
                         Widget w,
-#if NeedWidePrototypes
-                        unsigned int state) ;
-#else
                         unsigned char state) ;
-#endif /* NeedWidePrototypes */
-extern XmDragIconObject _XmScreenGetSourceIcon( 
+extern XmDragIconObject _XmScreenGetSourceIcon(
                         Widget w) ;
-extern Pixmap _XmAllocScratchPixmap( 
+extern Pixmap _XmAllocScratchPixmap(
                         XmScreen xmScreen,
-#if NeedWidePrototypes
-                        unsigned int depth,
-                        int width,
-                        int height) ;
-#else
                         Cardinal depth,
                         Dimension width,
                         Dimension height) ;
-#endif /* NeedWidePrototypes */
-extern void _XmFreeScratchPixmap( 
+extern void _XmFreeScratchPixmap(
                         XmScreen xmScreen,
                         Pixmap pixmap) ;
-extern XmDragCursorCache * _XmGetDragCursorCachePtr( 
+extern XmDragCursorCache * _XmGetDragCursorCachePtr(
                         XmScreen xmScreen) ;
-extern Cursor _XmGetMenuCursorByScreen( 
+extern Cursor _XmGetMenuCursorByScreen(
                         Screen *screen) ;
-extern Boolean _XmGetMoveOpaqueByScreen( 
+extern Boolean _XmGetMoveOpaqueByScreen(
                         Screen *screen) ;
-extern unsigned char _XmGetUnpostBehavior( 
+extern unsigned char _XmGetUnpostBehavior(
                         Widget wid) ;
-extern int _XmGetFontUnit( 
+extern int _XmGetFontUnit(
                         Screen *screen,
                         int dimension) ;
 extern void _XmScreenRemoveFromCursorCache(
 			XmDragIconObject icon) ;
-extern XmScreenColorProc _XmGetColorCalculationProc( 
+extern XmScreenColorProc _XmGetColorCalculationProc(
                         Screen *screen) ;
 extern XmAllocColorProc _XmGetColorAllocationProc(
 			Screen *screen) ;
@@ -106,4 +92,3 @@ extern XtEnum _XmGetBitmapConversionModel(
 #endif
 
 #endif /* _XmScreenI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -69,7 +69,7 @@ static void DispatchGadgetInput(XmGadget g, XEvent *event, Mask mask);
  */
 
 unsigned short
-_XmGetFocusFlag(Widget w, 
+_XmGetFocusFlag(Widget w,
 		unsigned int mask)
 {
   XmDisplay dd = (XmDisplay)XmGetXmDisplay(XtDisplay(w));
@@ -78,15 +78,11 @@ _XmGetFocusFlag(Widget w,
 	   (dd->display.displayInfo))->resetFocusFlag & mask);
 }
 
-
-void 
+
+void
 _XmSetFocusFlag(Widget w,
 		unsigned int mask,
-#if NeedWidePrototypes
-		int value)
-#else
      		Boolean value)
-#endif /* NeedWidePrototypes */
 {
   XmDisplay dd = (XmDisplay)XmGetXmDisplay(XtDisplay(w));
 
@@ -97,20 +93,20 @@ _XmSetFocusFlag(Widget w,
      ((XmDisplayInfo *)
 	 (dd->display.displayInfo))->resetFocusFlag &= ~mask;
 }
-     
-
-static Boolean 
+
+
+static Boolean
 UpdatePointerData(Widget w,
 		  XEvent *event)
 {
   XmFocusData focusData;
-  
+
   if ((focusData = _XmGetFocusData(w)) != NULL)
     {
       XCrossingEvent *lastEvent = &(focusData->lastCrossingEvent);
-      
+
       focusData->needToFlush = TRUE;
-      
+
       if (!EVENTS_EQ(lastEvent, (XCrossingEvent *)event))
 	{
 	  focusData->old_pointer_item = focusData->pointer_item;
@@ -122,28 +118,28 @@ UpdatePointerData(Widget w,
 
   return FALSE;
 }
-
-static void 
+
+static void
 FlushPointerData(Widget w,
 		 XEvent *event)
 {
   XmFocusData focusData = _XmGetFocusData(w);
-  
+
   if (focusData && focusData->needToFlush)
     {
       XCrossingEvent	lastEvent;
-      
+
       lastEvent = focusData->lastCrossingEvent;
-      
+
       focusData->needToFlush = FALSE;
-      /* 
+      /*
        * We are munging data into the event to fake out the focus
        * code when Mwm is trying to catch up with the pointer.
        * This event that we are munging might already have been
        * munged by XmDispatchGadgetInput from a motion event to a
        * crossing event !!!!!
        */
-      
+
       lastEvent.serial = event->xany.serial;
       if ( (LeaveNotify == event->type) || (EnterNotify == event->type) )
 	      lastEvent.time = event->xcrossing.time;
@@ -158,17 +154,17 @@ FlushPointerData(Widget w,
       XtDispatchEvent((XEvent *) &lastEvent);
     }
 }
-
+
 /************************************************************************
  *
  *  _XmTrackShellFocus
  *
  *  This handler is added by ShellExt initialize to the front of the
  * queue
- *     
+ *
  ************************************************************************/
 
-void 
+void
 _XmTrackShellFocus(Widget widget,
 		   XtPointer client_data,
 		   XEvent *event,
@@ -178,7 +174,7 @@ _XmTrackShellFocus(Widget widget,
   XmFocusData		 focusData;
   XmGeneology		 oldFocalPoint;
   XmGeneology		 newFocalPoint;
-  
+
   if (widget->core.being_destroyed)
     {
       *dontSwallow = False;
@@ -189,7 +185,7 @@ _XmTrackShellFocus(Widget widget,
     return;
 
   oldFocalPoint = newFocalPoint = focusData->focalPoint;
-  
+
   switch(event->type)
     {
     case EnterNotify:
@@ -200,7 +196,7 @@ _XmTrackShellFocus(Widget widget,
        */
       if ((event->xcrossing.detail != NotifyInferior) &&
 	  (event->xcrossing.focus))
-	{	      
+	{
 	  switch (oldFocalPoint)
 	    {
 	    case XmUnrelated:
@@ -216,7 +212,7 @@ _XmTrackShellFocus(Widget widget,
 	    case XmMySelf:
 	    default:
 	      break;
-	    }	
+	    }
 	}
       break;
 
@@ -257,7 +253,7 @@ _XmTrackShellFocus(Widget widget,
   if (newFocalPoint == XmUnrelated)
     {
       focusData->old_focus_item = NULL;
-      
+
       if (focusData->trav_graph.num_alloc)
 	{
 	  /* Free traversal graph, since focus is leaving hierarchy. */
@@ -277,7 +273,7 @@ _XmTrackShellFocus(Widget widget,
 
   focusData->focalPoint = newFocalPoint;
 }
-
+
 /************************************************************************
  *
  *  Enter & Leave
@@ -285,18 +281,17 @@ _XmTrackShellFocus(Widget widget,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmPrimitiveEnter(Widget wid,
 		  XEvent *event,
 		  String *params,	/* unused */
 		  Cardinal *num_params)	/* unused */
-{   
+{
   _XmToolTipEnter(wid, event, params, num_params);
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       if (event->xcrossing.focus)
-        {   
+        {
 	  _XmCallFocusMoved(XtParent(wid), wid, event);
 	  _XmWidgetFocusChange(wid, XmENTER);
 	}
@@ -304,50 +299,48 @@ _XmPrimitiveEnter(Widget wid,
       UpdatePointerData(wid, event);
     }
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmPrimitiveLeave(Widget wid,
 		  XEvent *event,
 		  String *params,	/* unused */
 		  Cardinal *num_params)	/* unused */
-{   
+{
   _XmToolTipLeave(wid, event, params, num_params);
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       if (event->xcrossing.focus)
-        {   
+        {
 	  _XmCallFocusMoved(wid, XtParent(wid), event);
 	  _XmWidgetFocusChange(wid, XmLEAVE);
 	}
-    }	
+    }
 }
-
+
 /************************************************************************
  *
  *  Focus In & Out
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmPrimitiveFocusInInternal(Widget wid,
 			    XEvent *event,
 			    String *params,		/* unused */
 			    Cardinal *num_params)	/* unused */
-{   
+{
   if (!(event->xfocus.send_event) ||
       _XmGetFocusFlag(wid, XmFOCUS_IGNORE))
     return;
 
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       /* Maybe Mwm trying to catch up with us. */
       if (XtIsShell(XtParent(wid)))
 	FlushPointerData(wid, event);
     }
-  else 
-    {   
+  else
+    {
       /* We should only be recieving the focus from a traversal request. */
       if (!_XmGetActiveTabGroup(wid))
 	_XmMgrTraversal(_XmFindTopMostShell(wid), XmTRAVERSE_NEXT_TAB_GROUP);
@@ -355,23 +348,22 @@ _XmPrimitiveFocusInInternal(Widget wid,
 	_XmWidgetFocusChange(wid, XmFOCUS_IN);
     }
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmPrimitiveFocusOut(Widget wid,
 		     XEvent *event,
 		     String *params,		/* unused */
 		     Cardinal *num_params)	/* unused */
-{   
+{
   if (event->xfocus.send_event &&
       !(wid->core.being_destroyed) &&
       (_XmGetFocusPolicy(wid) == XmEXPLICIT))
-    {   
+    {
       _XmWidgetFocusChange(wid, XmFOCUS_OUT);
     }
 }
-
-void 
+
+void
 _XmPrimitiveFocusIn(Widget pw,
 		    XEvent *event,
 		    String *params,
@@ -379,7 +371,7 @@ _XmPrimitiveFocusIn(Widget pw,
 {
   _XmPrimitiveFocusInInternal(pw, event, params, num_params);
 }
-
+
 /************************************************************************
  *
  *  _XmEnterGadget
@@ -387,33 +379,32 @@ _XmPrimitiveFocusIn(Widget pw,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmEnterGadget(Widget wid,
 	       XEvent *event,
 	       String *params,		/* unused */
 	       Cardinal *num_params)	/* unused */
-{   
+{
   if (XmIsGadget(wid) && ((XmGadget)wid)->gadget.traversal_on)
   {
       _XmToolTipEnter(wid, event, params, num_params);
   }
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       XmFocusData focusData = _XmGetFocusData(wid);
-      
+
       /* We may be getting called as a result of Mwm catching up
        * with the pointer and setting input focus to the shell
        * which then gets forwarded to us.
        */
       if (focusData && (focusData->focalPoint != XmUnrelated))
-        {   
+        {
 	  _XmCallFocusMoved(XtParent(wid), wid, event);
 	  _XmWidgetFocusChange(wid, XmENTER);
         }
     }
 }
-
+
 /************************************************************************
  *
  *  DispatchGadgetInput
@@ -421,7 +412,7 @@ _XmEnterGadget(Widget wid,
  *	the fact that it needs to dispatch to unmanaged gadgets
  *
  ************************************************************************/
-static void 
+static void
 DispatchGadgetInput(XmGadget g,
 		    XEvent *event,
 		    Mask mask)
@@ -432,7 +423,7 @@ DispatchGadgetInput(XmGadget g,
 	  gadget_class.input_dispatch)) ((Widget) g, event, mask);
      }
 }
-
+
 /************************************************************************
  *
  *  _XmLeaveGadget
@@ -440,25 +431,24 @@ DispatchGadgetInput(XmGadget g,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmLeaveGadget(Widget wid,
 	       XEvent *event,
 	       String *params,		/* unused */
 	       Cardinal *num_params)	/* unused */
-{   
+{
   if (XmIsGadget(wid) && ((XmGadget)wid)->gadget.traversal_on)
   {
       _XmToolTipLeave(wid, event, params, num_params);
   }
 
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       _XmCallFocusMoved(wid, XtParent(wid), event);
       _XmWidgetFocusChange(wid, XmLEAVE);
     }
 }
-
+
 /************************************************************************
  *
  *  _XmFocusInGadget
@@ -466,8 +456,7 @@ _XmLeaveGadget(Widget wid,
  *
 
  ************************************************************************/
-/*ARGSUSED*/
-void 
+void
 _XmFocusInGadget(Widget wid,
 		 XEvent *event,		/* unused */
 		 String *params,	/* unused */
@@ -476,7 +465,7 @@ _XmFocusInGadget(Widget wid,
   if (_XmGetFocusPolicy(wid) == XmEXPLICIT)
     _XmWidgetFocusChange(wid, XmFOCUS_IN);
 }
-
+
 /************************************************************************
  *
  *  _XmFocusOutGadget
@@ -484,8 +473,7 @@ _XmFocusInGadget(Widget wid,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmFocusOutGadget(Widget wid,
 		  XEvent *event,	/* unused */
 		  String *params,	/* unused */
@@ -494,7 +482,7 @@ _XmFocusOutGadget(Widget wid,
   if (_XmGetFocusPolicy(wid) == XmEXPLICIT)
     _XmWidgetFocusChange(wid, XmFOCUS_OUT);
 }
-
+
 /************************************************************************
  *
  *  Enter, FocusIn and Leave Window procs
@@ -513,8 +501,7 @@ _XmFocusOutGadget(Widget wid,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-void 
+void
 _XmManagerEnter(Widget wid,
 		XEvent *event_in,
 		String *params,		/* unused */
@@ -522,13 +509,13 @@ _XmManagerEnter(Widget wid,
 {
   XmManagerWidget mw = (XmManagerWidget) wid;
   XCrossingEvent *event = (XCrossingEvent *) event_in;
-  
+
   if (_XmGetFocusPolicy((Widget) mw) == XmPOINTER)
     {
       if (UpdatePointerData((Widget) mw, event_in) && event->focus)
 	{
 	  Widget old;
-	  
+
 	  if (event->detail == NotifyInferior)
 	    old = XtWindowToWidget(event->display, event->subwindow);
 	  else
@@ -539,9 +526,8 @@ _XmManagerEnter(Widget wid,
 	}
     }
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmManagerLeave(Widget wid,
 		XEvent *event,
 		String *params,		/* unused */
@@ -556,11 +542,11 @@ _XmManagerLeave(Widget wid,
       if (_XmGetFocusPolicy(wid) == XmPOINTER)
 	{
 	  Widget new_wid;
-	  
+
 	  if (event->xcrossing.detail == NotifyInferior)
-	    new_wid = XtWindowToWidget(event->xcrossing.display, 
+	    new_wid = XtWindowToWidget(event->xcrossing.display,
 				       event->xcrossing.subwindow);
-	  else 
+	  else
 	    new_wid = XtParent(wid);
 
 	  if (UpdatePointerData(wid, event) && event->xcrossing.focus)
@@ -571,14 +557,13 @@ _XmManagerLeave(Widget wid,
 	}
     }
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmManagerFocusInInternal(Widget wid,
 			  XEvent *event,
 			  String *params,	/* unused */
 			  Cardinal *num_params)	/* unused */
-{   
+{
   Widget child;
 
   /*
@@ -592,17 +577,17 @@ _XmManagerFocusInInternal(Widget wid,
     return;
 
   if (_XmGetFocusPolicy(wid) == XmPOINTER)
-    {   
+    {
       FlushPointerData(wid, event);
-    } 
+    }
   else if (!_XmGetActiveTabGroup(wid))
-    {   
+    {
       /* If the heirarchy doesn't have an active tab group give it one. */
       _XmMgrTraversal(_XmFindTopMostShell(wid), XmTRAVERSE_NEXT_TAB_GROUP);
-    } 
-  else if ((child = ((XmManagerWidget) wid)->manager.active_child) && 
+    }
+  else if ((child = ((XmManagerWidget) wid)->manager.active_child) &&
 	   XmIsGadget(child))
-    {   
+    {
       /* If focus went to a gadget, then force it to highlight */
       DispatchGadgetInput((XmGadget) child, event, XmFOCUS_IN_EVENT);
     }
@@ -611,12 +596,12 @@ _XmManagerFocusInInternal(Widget wid,
       _XmWidgetFocusChange(wid, XmFOCUS_IN);
     }
 }
-
+
 /*
  * Non-menu widgets use this entry point, so that they will ignore focus
  * events during menu activities.
  */
-void 
+void
 _XmManagerFocusIn(Widget mw,
 		  XEvent *event,
 		  String *params,
@@ -624,7 +609,7 @@ _XmManagerFocusIn(Widget mw,
 {
   _XmManagerFocusInInternal(mw, event, params, num_params);
 }
-
+
 /*
  * If the manager widget received a FocusOut while it is processing its
  * FocusIn event, then it knows that the focus has been successfully moved
@@ -632,24 +617,23 @@ _XmManagerFocusIn(Widget mw,
  * manager widget must manually force the child to take the focus.
  */
 
-/*ARGSUSED*/
-void 
+void
 _XmManagerFocusOut(Widget wid,
 		   XEvent *event,
 		   String *params,		/* unused */
 		   Cardinal *num_params)	/* unused */
-{   
+{
   Widget child;
-  
+
   if (!event->xfocus.send_event)
     return;
 
   if (_XmGetFocusPolicy(wid) == XmEXPLICIT)
-    {   
+    {
       /* If focus is in a gadget, then force it to unhighlight. */
       if ((child = ((XmManagerWidget) wid)->manager.active_child) &&
 	  XmIsGadget(child))
-        {   
+        {
 	  DispatchGadgetInput((XmGadget) child, event, XmFOCUS_OUT_EVENT);
 	}
       else
@@ -658,9 +642,8 @@ _XmManagerFocusOut(Widget wid,
 	}
     }
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmManagerUnmap(Widget mw,
 		XEvent *event,		/* unused */
 		String *params,		/* unused */
@@ -680,9 +663,8 @@ _XmManagerUnmap(Widget mw,
    */
   _XmValidateFocus(mw);
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmPrimitiveUnmap(Widget pw,
 		  XEvent *event,	/* unused */
 		  String *params,	/* unused */

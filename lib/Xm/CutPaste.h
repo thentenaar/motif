@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmCutPaste_h
 #define _XmCutPaste_h
 
@@ -43,7 +43,7 @@ typedef enum {
 /* XmClipboard pre-1.2 definitions */
 
 #define ClipboardFail     	0
-#define ClipboardSuccess  	1 
+#define ClipboardSuccess  	1
 #define ClipboardTruncate 	2
 #define ClipboardLocked   	4
 #define ClipboardBadFormat   	5
@@ -62,14 +62,14 @@ typedef void (*VoidProc)( Widget w, int * data_id, int * private_id,
 
 /********    Public Function Declarations    ********/
 
-extern int XmClipboardBeginCopy( 
+extern int XmClipboardBeginCopy(
                         Display *display,
                         Window window,
                         XmString label,
                         Widget widget,
                         VoidProc callback,
                         long *itemid) ;
-extern int XmClipboardStartCopy( 
+extern int XmClipboardStartCopy(
                         Display *display,
                         Window window,
                         XmString label,
@@ -77,7 +77,7 @@ extern int XmClipboardStartCopy(
                         Widget widget,
                         XmCutPasteProc callback,
                         long *itemid) ;
-extern int XmClipboardCopy( 
+extern int XmClipboardCopy(
                         Display *display,
                         Window window,
                         long itemid,
@@ -86,47 +86,43 @@ extern int XmClipboardCopy(
                         unsigned long length,
                         long private_id,
                         long *dataid) ;
-extern int XmClipboardEndCopy( 
+extern int XmClipboardEndCopy(
                         Display *display,
                         Window window,
                         long itemid) ;
-extern int XmClipboardCancelCopy( 
+extern int XmClipboardCancelCopy(
                         Display *display,
                         Window window,
                         long itemid) ;
-extern int XmClipboardWithdrawFormat( 
+extern int XmClipboardWithdrawFormat(
                         Display *display,
                         Window window,
                         long data) ;
-extern int XmClipboardCopyByName( 
+extern int XmClipboardCopyByName(
                         Display *display,
                         Window window,
                         long data,
                         XtPointer buffer,
                         unsigned long length,
                         long private_id) ;
-extern int XmClipboardUndoCopy( 
+extern int XmClipboardUndoCopy(
                         Display *display,
                         Window window) ;
-extern int XmClipboardLock( 
+extern int XmClipboardLock(
                         Display *display,
                         Window window) ;
-extern int XmClipboardUnlock( 
+extern int XmClipboardUnlock(
                         Display *display,
                         Window window,
-#if NeedWidePrototypes
-                        int all_levels) ;
-#else
                         Boolean all_levels) ;
-#endif /* NeedWidePrototypes */
-extern int XmClipboardStartRetrieve( 
+extern int XmClipboardStartRetrieve(
                         Display *display,
                         Window window,
                         Time timestamp) ;
-extern int XmClipboardEndRetrieve( 
+extern int XmClipboardEndRetrieve(
                         Display *display,
                         Window window) ;
-extern int XmClipboardRetrieve( 
+extern int XmClipboardRetrieve(
                         Display *display,
                         Window window,
                         char *format,
@@ -134,30 +130,30 @@ extern int XmClipboardRetrieve(
                         unsigned long length,
                         unsigned long *outlength,
                         long *private_id) ;
-extern int XmClipboardInquireCount( 
+extern int XmClipboardInquireCount(
                         Display *display,
                         Window window,
                         int *count,
                         unsigned long *maxlength) ;
-extern int XmClipboardInquireFormat( 
+extern int XmClipboardInquireFormat(
                         Display *display,
                         Window window,
                         int n,
                         XtPointer buffer,
                         unsigned long bufferlength,
                         unsigned long *outlength) ;
-extern int XmClipboardInquireLength( 
+extern int XmClipboardInquireLength(
                         Display *display,
                         Window window,
                         char *format,
                         unsigned long *length) ;
-extern int XmClipboardInquirePendingItems( 
+extern int XmClipboardInquirePendingItems(
                         Display *display,
                         Window window,
                         char *format,
                         XmClipboardPendingList *list,
                         unsigned long *count) ;
-extern int XmClipboardRegisterFormat( 
+extern int XmClipboardRegisterFormat(
                         Display *display,
                         char *format_name,
                         int format_length) ;
@@ -168,6 +164,4 @@ extern int XmClipboardRegisterFormat(
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
-
 #endif /* _XmCutPaste_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

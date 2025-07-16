@@ -111,21 +111,12 @@ static void SetMwmStuff(
 static void AddGrab(
                         XmVendorShellExtObject ve,
                         Widget shell,
-#if NeedWidePrototypes
-                        int exclusive,
-                        int springLoaded,
-#else
                         Boolean exclusive,
                         Boolean springLoaded,
-#endif /* NeedWidePrototypes */
                         XmVendorShellExtObject origKid) ;
 static void RemoveGrab(
                         XmVendorShellExtObject ve,
-#if NeedWidePrototypes
-                        int being_destroyed,
-#else
                         Boolean being_destroyed,
-#endif /* NeedWidePrototypes */
                         Widget shell) ;
 static void RemoveGrabCallback(
                         Widget w,
@@ -908,13 +899,8 @@ SetMwmStuff(
 void
 _XmAddGrab(
         Widget wid,
-#if NeedWidePrototypes
-        int exclusive,
-        int spring_loaded)
-#else
         Boolean exclusive,
         Boolean spring_loaded)
-#endif /* NeedWidePrototypes */
 {
   AddGrab( NULL, wid, exclusive, spring_loaded, NULL) ;
 }
@@ -930,13 +916,8 @@ static void
 AddGrab(
         XmVendorShellExtObject ve,
         Widget shell,
-#if NeedWidePrototypes
-        int exclusive,
-        int springLoaded,
-#else
         Boolean exclusive,
         Boolean springLoaded,
-#endif /* NeedWidePrototypes */
         XmVendorShellExtObject origKid )
 {
     Cardinal		     	position;
@@ -992,11 +973,7 @@ AddGrab(
 static void
 RemoveGrab(
         XmVendorShellExtObject ve,
-#if NeedWidePrototypes
-        int being_destroyed,
-#else
 	Boolean being_destroyed,
-#endif /* NeedWidePrototypes */
 	Widget shell)
 {
     XmDisplay			xmDisplay;
@@ -2941,7 +2918,6 @@ Destroy(
 	 XtFree((char *) ext);
     }
 
-#ifdef FIX_1388
     {
         XmToolTipConfigTrait        ttp;           /* ToolTip pointer */
 
@@ -2951,7 +2927,6 @@ Destroy(
             XtFree((char *)ttp);
         }
     }
-#endif
 
     /*
      * If all VendorShells have been destroyed, destroy the XmDisplay object

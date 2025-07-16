@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmLabelP_h_
 #define _XmLabelP_h_
 
@@ -75,37 +75,37 @@ typedef struct _XmLabelPart
   unsigned char	  alignment;
   unsigned char	  string_direction;
   XmFontList	  font;
-	
+
   Dimension	  margin_height;  /* margin around widget */
   Dimension	  margin_width;
-  
+
   Dimension 	  margin_left;    /* additional margins on */
   Dimension	  margin_right;   /* each side of widget */
   Dimension	  margin_top;     /* text (or pixmap) is placed */
   Dimension	  margin_bottom;  /* inside the margins */
-  
+
   Boolean	  recompute_size;
-  
-  Pixmap	  pixmap; 
-  Pixmap	  pixmap_insen; 
-  
+
+  Pixmap	  pixmap;
+  Pixmap	  pixmap_insen;
+
   /* PRIVATE members -- values computed by LabelWidgetClass methods */
-  
-  GC		  normal_GC;   /* GC for text */	
+
+  GC		  normal_GC;   /* GC for text */
   GC		  insensitive_GC;
   XRectangle	  TextRect;	/* The bounding box of the text or clip */
   XRectangle	  acc_TextRect; /* rectangle of the window; whichever is */
 				/* smaller */
-  
+
   Boolean	  skipCallback; /* set by RowColumn with entryCallback. */
   unsigned char   menu_type;
   Boolean	  computing_size; /* suppresses DrawnB resize callbacks. */
-  
+
   Dimension	  acc_left_delta;  /* Amount we increased the margins */
   Dimension	  acc_right_delta; /* to accomodate accelerator text. */
 
   Dimension	* baselines;	/* Cached baseline information */
-  
+
   Boolean	  check_set_render_table;
 
   XmPixmapPlacement pixmap_placement; /* Where to place the icon label. */
@@ -113,9 +113,7 @@ typedef struct _XmLabelPart
 
   XRectangle	  PixmapRect;   /* The bounding box of the pixmap in TextRect */
   XRectangle	  StringRect;   /* The bounding box of the string in TextRect */
-#ifdef FIX_1381
   GC		  shadow_GC;
-#endif
 } XmLabelPart;
 
 

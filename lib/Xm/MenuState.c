@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -38,9 +38,9 @@
 
 /********    Static Function Declarations    ********/
 
-static void ScreenDestroyCallback ( 
-			Widget w, 
-			XtPointer client_data, 
+static void ScreenDestroyCallback (
+			Widget w,
+			XtPointer client_data,
 			XtPointer call_data );
 
 /********    End Static Function Declarations    ********/
@@ -70,11 +70,7 @@ _XmGetInDragMode (
 void
 _XmSetInDragMode(
         Widget widget,
-#if NeedWidePrototypes
-        int mode )
-#else
         Boolean mode )
-#endif
 {
   (_XmGetMenuState(widget))->MU_InDragMode = mode;
 }
@@ -94,15 +90,15 @@ _XmGetMenuState(
 
    if ((XmScreen)NULL != scrn)
    {
-     menu_state  = 
+     menu_state  =
 	(XmMenuState)((XmScreenInfo *)(scrn->screen.screenInfo))->menu_state;
 
      if ((XmMenuState)NULL == menu_state)
      {
       menu_state = (XmMenuState)XtMalloc(sizeof(XmMenuStateRec));
-      ((XmScreenInfo *)(scrn->screen.screenInfo))->menu_state = 
+      ((XmScreenInfo *)(scrn->screen.screenInfo))->menu_state =
 		(XtPointer)menu_state;
-      XtAddCallback((Widget)scrn, XtNdestroyCallback, 
+      XtAddCallback((Widget)scrn, XtNdestroyCallback,
 		    ScreenDestroyCallback, (XtPointer) NULL);
 
       menu_state->RC_LastSelectToplevel = NULL;
@@ -129,8 +125,7 @@ _XmGetMenuState(
    return menu_state;
 }
 
-/*ARGSUSED*/
-static void 
+static void
 ScreenDestroyCallback
 	( Widget w,
         XtPointer client_data,
@@ -138,7 +133,7 @@ ScreenDestroyCallback
 {
    XmScreen scrn = (XmScreen) XmGetXmScreen(XtScreen(w));
    if ((XmScreen)NULL != scrn) {
-       XmMenuState menu_state = 
+       XmMenuState menu_state =
 	   (XmMenuState)((XmScreenInfo *)
 			 (scrn->screen.screenInfo))->menu_state;
 	if ((XmMenuState)NULL != menu_state) {

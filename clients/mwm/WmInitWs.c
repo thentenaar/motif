@@ -392,7 +392,7 @@ MappingEventHandler(
                 SetupLockingModifierMask();
 }
 
-
+
 /******************************<->*************************************
  *
  *  InitWmGlobal (argc, argv, environ)
@@ -759,11 +759,9 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 #ifndef NO_OL_COMPAT
 		    InitOLCompat();
 #endif /* NO_OL_COMPAT */
-#ifndef NO_SHAPE
 		    wmGD.hasShape = XShapeQueryExtension (DISPLAY,
 							  &wmGD.shapeEventBase,
 							  &wmGD.shapeErrorBase);
-#endif /*  NO_SHAPE  */
 
                     wmGD.replayEnterEvent = False;
 		    wmGD.menuActive = NULL;
@@ -1292,7 +1290,7 @@ XFlush (DISPLAY);
 } /* END OF FUNCTION InitWmGlobal */
 
 
-
+
 /******************************<->*************************************
  *
  *  InitWmScreen
@@ -1655,7 +1653,7 @@ InitWmScreen (WmScreenData *pSD, int sNum)
 
 } /* END OF FUNCTION  InitWmScreen */
 
-
+
 /*************************************<->*************************************
  *
  *  InitWmWorkspace
@@ -1743,7 +1741,7 @@ void InitWmWorkspace (WmWorkspaceData *pWS, WmScreenData *pSD)
 } /* END OF FUNCTION  InitWmWorkspace */
 
 #ifdef WSM
-
+
 /******************************<->*************************************
  *
  *  InsureDefaultBackdropDir(char **ppchBackdropDirs)
@@ -1869,7 +1867,7 @@ InsureDefaultBackdropDir(char **ppchBackdropDirs)
 } /* END OF FUNCTION InsureDefaultBackdropDirs */
 #endif /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  ProcessMotifWmInfo (rootWindowOfScreen)
@@ -1912,7 +1910,7 @@ void ProcessMotifWmInfo (Window rootWindowOfScreen)
 } /* END OF FUNCTION ProcessMotifWmInfo */
 
 
-
+
 /*************************************<->*************************************
  *
  *  SetupWmWorkspaceWindows ()
@@ -1965,7 +1963,7 @@ void SetupWmWorkspaceWindows (void)
 } /* END OF FUNCTION SetupWmWorkspaceWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  MakeWorkspaceCursors ()
@@ -2019,7 +2017,7 @@ void MakeWorkspaceCursors (void)
 } /* END OF FUNCTION MakeWorkspaceCursors */
 
 
-
+
 /*************************************<->*************************************
  *
  *  MakeWmFunctionResources (pSD)
@@ -2147,7 +2145,7 @@ void MakeWmFunctionResources (WmScreenData *pSD)
 } /* END OF FUNCTION MakeWmFunctionResources */
 
 
-
+
 /*************************************<->*************************************
  *
  *  MakeXorGC (pSD)
@@ -2197,7 +2195,7 @@ void MakeXorGC (WmScreenData *pSD)
 } /* END OF FUNCTION MakeXorGC */
 
 
-
+
 /*************************************<->*************************************
  *
  *  CopyArgv (argc, argv)
@@ -2264,7 +2262,7 @@ void CopyArgv (int argc, char *argv [])
 
 } /* END OF FUNCTION CopyArgv */
 
-
+
 /*************************************<->*************************************
  *
  *  InitScreenNames ()
@@ -2415,7 +2413,6 @@ void InitNlsStrings (void)
 #endif /* XM_MSGCAT */
 
 
-
 /******************************<->*************************************
  *
  *  InitWmDisplayEnv

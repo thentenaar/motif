@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -36,13 +36,12 @@
 #include "ToolTipI.h"
 #include "XmI.h"
 
-#ifdef FIX_1388
 static void ToolTipLabelDestroyCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
     XmToolTipConfigTrait ttcp;
-    
+
     ttcp = (XmToolTipConfigTrait) XmeTraitGet(w, XmQTtoolTipConfig);
-    
+
     if (ttcp != NULL)
 	if (ttcp->label != NULL) {
 	    Widget shell = XtParent(ttcp->label);
@@ -51,7 +50,6 @@ static void ToolTipLabelDestroyCallback(Widget w, XtPointer client_data, XtPoint
 	    XtDestroyWidget(shell);
 	}
 }
-#endif /* FIX_1388 */
 
 static XmToolTipConfigTrait
 ToolTipGetData (Widget w)
@@ -76,9 +74,7 @@ ToolTipGetData (Widget w)
 
       ttp->label = XmCreateLabel (shell, "TipLabel", NULL, 0);
       XtManageChild (ttp->label);
-#ifdef FIX_1388
-      XtAddCallback(top, XmNdestroyCallback, (XtCallbackProc) ToolTipLabelDestroyCallback, (XtPointer) NULL);
-#endif
+      XtAddCallback(top, XmNdestroyCallback, (XtCallbackProc) ToolTipLabelDestroyCallback, NULL);
    }
    return ttp;
 }
@@ -304,26 +300,24 @@ _XmToolTipLeave (Widget w,
 
 }
 
-#ifdef FIX_1388
 void _XmToolTipRemove(Widget w)
 {
     XmToolTipTrait ttp;
-    
+
     _XmToolTipLeave(w, NULL, NULL, NULL);
     ttp = (XmToolTipTrait) XmeTraitGet(w, XmQTtoolTip);
     if (ttp != NULL) {
-	XmStringFree(ttp->tool_tip_string); 
-	XmeTraitSet(w, XmQTtoolTip, (XtPointer) NULL); 
+	XmStringFree(ttp->tool_tip_string);
+	XmeTraitSet(w, XmQTtoolTip, (XtPointer) NULL);
 	XtFree((char*)ttp);
     }
 }
-#endif /* FIX_1388 */
 
-Widget 
+Widget
 XmToolTipGetLabel(Widget wid)
 {
     XmToolTipConfigTrait TipData = ToolTipGetData(wid);
-    
+
 #ifdef BUG1232
 /* rws 25 Sep 2003
    protect against NULL TipData
@@ -337,7 +331,7 @@ XmGetToolTipString (Widget w)
 {
     XmToolTipTrait ttp;
     ttp = (XmToolTipTrait)XmeTraitGet(w, XmQTtoolTip);
-    return ttp ? ttp->tool_tip_string : NULL;    
+    return ttp ? ttp->tool_tip_string : NULL;
 }
 
 void

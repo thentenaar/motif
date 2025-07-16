@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -51,7 +51,6 @@ static char rcsid[] = "$XConsortium: MrmIfile.c /main/13 1996/11/13 13:56:30 drk
  *  INCLUDE FILES
  *
  */
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 #include <Mrm/IDB.h>
@@ -59,21 +58,16 @@ static char rcsid[] = "$XConsortium: MrmIfile.c /main/13 1996/11/13 13:56:30 drk
 #include <stdio.h>		/* Standard IO definitions		*/
 #include <errno.h>
 #include <fcntl.h>
-
-#ifndef X_NOT_STDC_ENV
 #include <unistd.h>
-#endif
-
 
 /*
  *
  *  DEFINE and MACRO DEFINITIONS
  *
  */
-
 #define	PMODE	0666	/* Default protection mode before umask		*/
 #define FAILURE	-1	/* creat/stat returns this			*/
-
+
 /*
  *++
  *
@@ -119,7 +113,7 @@ static char rcsid[] = "$XConsortium: MrmIfile.c /main/13 1996/11/13 13:56:30 drk
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__FU_OpenFile (char 			*name,
 		  MrmCode 		access,
 		  MrmOsOpenParamPtr 	os_ext,
@@ -217,7 +211,7 @@ Idb__FU_OpenFile (char 			*name,
 }
 
 
-
+
 /*
  *++
  *
@@ -251,7 +245,7 @@ Idb__FU_OpenFile (char 			*name,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__FU_CloseFile (IDBLowLevelFile	*file_id ,
 		   int			delete)
 {
@@ -274,7 +268,7 @@ Idb__FU_CloseFile (IDBLowLevelFile	*file_id ,
   return MrmSUCCESS;
 
 }
-
+
 /*
  *++
  *
@@ -311,7 +305,7 @@ Idb__FU_CloseFile (IDBLowLevelFile	*file_id ,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__FU_GetBlock (IDBLowLevelFile	*file_id,
 		  IDBRecordNumber	block_num,
 		  char			*buffer)
@@ -327,13 +321,12 @@ Idb__FU_GetBlock (IDBLowLevelFile	*file_id,
   lseek (fdesc, (block_num-1)*IDBRecordSize, 0);
   number_read = read (file_id->file_desc, buffer, IDBRecordSize);
 
-  if (number_read != IDBRecordSize) 
+  if (number_read != IDBRecordSize)
     return MrmFAILURE;
   else
     return MrmSUCCESS;
 }
 
-
 /*
  *++
  *
@@ -370,7 +363,7 @@ Idb__FU_GetBlock (IDBLowLevelFile	*file_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__FU_PutBlock (IDBLowLevelFile	*file_id,
 		  IDBRecordNumber	block_num,
 		  char			*buffer)

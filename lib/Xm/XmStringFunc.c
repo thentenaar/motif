@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -27,7 +27,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -48,7 +47,7 @@ static void new_line(_XmString string) ;
 
 /********    End Static Function Declarations    ********/
 
-
+
 XmStringComponentType
 XmStringPeekNextTriple(XmStringContext context)
 {
@@ -58,7 +57,7 @@ XmStringPeekNextTriple(XmStringContext context)
   return XmeStringGetComponent((_XmStringContext) context, False, False, &len, &val);
 }
 
-Boolean 
+Boolean
 XmStringHasSubstring(
         XmString string,
         XmString substring )
@@ -74,7 +73,7 @@ XmStringHasSubstring(
   XmStringComponentType type;
   unsigned int        len;
   XtPointer	      val;
-    
+
   _XmProcessLock();
   if ((string == NULL) || (substring == NULL) || (XmStringEmpty(substring))) {
     _XmProcessUnlock();
@@ -84,13 +83,13 @@ XmStringHasSubstring(
   /*
    * The substring must be a one line/one segment string.
    */
-  
+
   if (_XmStrEntryCountGet(substring) != 1) {
     _XmProcessUnlock();
     return (FALSE);
   }
 
-  if (((entry = _XmStrEntryGet(substring)) != NULL) && 
+  if (((entry = _XmStrEntryGet(substring)) != NULL) &&
       _XmEntrySegmentCountGet(entry[0]) > 1) {
     _XmProcessUnlock();
     return (FALSE);
@@ -108,11 +107,11 @@ XmStringHasSubstring(
   else if (_XmStrMultiple(substring))
     {
       line = entry[0];
-      
+
       if (_XmEntryMultiple(line))
 	{
 	  seg = (_XmStringEntry)_XmEntrySegmentGet(line)[0];
-	  
+
 	  subchar_count = (short)_XmEntryByteCountGet(seg);
 	  subtext = (char*) _XmEntryTextGet(seg);
 	}
@@ -126,8 +125,8 @@ XmStringHasSubstring(
     _XmProcessUnlock();
     return (FALSE);
   }
-  
-    
+
+
   if ((subchar_count == 0) || (subtext == NULL)) {
     _XmProcessUnlock();
     return (FALSE);
@@ -136,11 +135,11 @@ XmStringHasSubstring(
   /** Find a text component that matches. **/
   if (string) {
     _XmStringContextReInit(&stack_context, string);
-    while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE, 
-					 &len, &val)) != 
+    while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
+					 &len, &val)) !=
 	   XmSTRING_COMPONENT_END)
       {
-	switch(type) 
+	switch(type)
 	  {
 	  case XmSTRING_COMPONENT_TEXT:
 	  case XmSTRING_COMPONENT_LOCALE_TEXT:
@@ -148,12 +147,12 @@ XmStringHasSubstring(
 
 	    char_count = len;
 	    text = (char *)val;
-	      
+
 	    if (char_count >= subchar_count) {
 	      max = char_count - subchar_count;
 	      for (i = 0; i <= max; i++) {
 		found = TRUE;
-	      
+
 		for (j = 0; j < subchar_count; j++) {
 		  if (text[i+j] != subtext[j])  {
 		    found = FALSE;
@@ -177,13 +176,13 @@ XmStringHasSubstring(
   _XmProcessUnlock();
   return (FALSE);
 }
-
+
 XmStringTable
 XmStringTableParseStringArray(XtPointer   *strings,
 			      Cardinal     count,
-			      XmStringTag  tag, 
-			      XmTextType   type, 
-			      XmParseTable parse, 
+			      XmStringTag  tag,
+			      XmTextType   type,
+			      XmParseTable parse,
 			      Cardinal     parse_count,
 			      XtPointer    call_data)
 {
@@ -195,12 +194,12 @@ XmStringTableParseStringArray(XtPointer   *strings,
     _XmProcessUnlock();
     return(NULL);
   }
-  
+
   strs = (XmStringTable)XtMalloc(count * sizeof(XmString));
-  
+
   for (i = 0; i < count; i++)
     {
-      strs[i] = XmStringParseText(strings[i], NULL, tag, type, 
+      strs[i] = XmStringParseText(strings[i], NULL, tag, type,
 				  parse, parse_count, call_data);
     }
 
@@ -211,24 +210,24 @@ XmStringTableParseStringArray(XtPointer   *strings,
 XtPointer *
 XmStringTableUnparse(XmStringTable     table,
 		     Cardinal	       count,
-		     XmStringTag       tag, 
-		     XmTextType        tag_type, 
-		     XmTextType        output_type, 
-		     XmParseTable      parse, 
-		     Cardinal          parse_count, 
+		     XmStringTag       tag,
+		     XmTextType        tag_type,
+		     XmTextType        output_type,
+		     XmParseTable      parse,
+		     Cardinal          parse_count,
 		     XmParseModel      parse_model)
 {
   XtPointer	*strs;
   int		i;
-  
+
   _XmProcessLock();
   if ((table == NULL) || (count == 0)) {
     _XmProcessUnlock();
     return(NULL);
   }
-  
+
   strs = (XtPointer *)XtMalloc(count * sizeof(XtPointer));
-  
+
   for (i = 0; i < count; i++)
     strs[i] = XmStringUnparse(table[i], tag, tag_type, output_type,
 			      parse, parse_count, parse_model);
@@ -255,18 +254,18 @@ XmStringTableToXmString(XmStringTable  table,
 
       tmp1 = str;
     }
-  
+
   _XmProcessUnlock();
   return(str);
 }
-
+
 XmString
 XmStringPutRendition(XmString string,
 		     XmStringTag rendition)
 {
   /* Quick and dirty.  Fix for beta! */
   XmString	str, tmp1, tmp2;
-  
+
   tmp1 = XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN,
 				 strlen(rendition), (XtPointer)rendition);
   tmp2 = XmStringConcatAndFree(tmp1, XmStringCopy(string));
@@ -274,11 +273,11 @@ XmStringPutRendition(XmString string,
   tmp1 = XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END,
 				 strlen(rendition), (XtPointer)rendition);
   str = XmStringConcatAndFree(tmp2, tmp1);
-  
+
   return(str);
 }
-
-void 
+
+void
 XmParseMappingGetValues(XmParseMapping mapping,
 			ArgList        arg_list,
 			Cardinal       arg_count)
@@ -319,8 +318,8 @@ XmParseMappingGetValues(XmParseMapping mapping,
     }
   _XmProcessUnlock();
 }
-
-void 
+
+void
 XmParseMappingFree(XmParseMapping mapping)
 {
   _XmProcessLock();
@@ -334,8 +333,8 @@ XmParseMappingFree(XmParseMapping mapping)
     }
   _XmProcessUnlock();
 }
-
-void 
+
+void
 XmParseTableFree(XmParseTable parse_table,
 		 Cardinal     parse_count)
 {
@@ -350,17 +349,16 @@ XmParseTableFree(XmParseTable parse_table,
   XtFree((char*) parse_table);
   _XmProcessUnlock();
 }
-
+
 /*
  * XmeGetNextCharacter: An XmParseProc to consume the triggering
  *	character and insert the following character.
  */
-/*ARGSUSED*/
 XmIncludeStatus
-XmeGetNextCharacter(XtPointer     *in_out, 
+XmeGetNextCharacter(XtPointer     *in_out,
 		    XtPointer      text_end,
-		    XmTextType     type, 
-		    XmStringTag    tag, 
+		    XmTextType     type,
+		    XmStringTag    tag,
 		    XmParseMapping entry, /* unused */
 		    int		   pattern_length,
 		    XmString      *str_include,
@@ -387,22 +385,14 @@ XmeGetNextCharacter(XtPointer     *in_out,
       else
 	comp_type = XmSTRING_COMPONENT_TEXT;
       if ((text_end == NULL) || (ptr < (char*) text_end))
-#ifndef NO_MULTIBYTE
 	len = mblen(ptr, MB_CUR_MAX);
-#else
-        len = *ptr ? 1 : 0;
-#endif
       break;
 
     case XmMULTIBYTE_TEXT:
       /* In Motif 2.0 dynamic switching of locales isn't supported. */
       comp_type = XmSTRING_COMPONENT_LOCALE_TEXT;
       if ((text_end == NULL) || (ptr < (char*) text_end))
-#ifndef NO_MULTIBYTE
 	len = mblen(ptr, MB_CUR_MAX);
-#else
-        len = *ptr ? 1 : 0;
-#endif
       break;
 
     case XmWIDECHAR_TEXT:
@@ -428,24 +418,24 @@ XmeGetNextCharacter(XtPointer     *in_out,
   *str_include = XmStringComponentCreate(comp_type, len, ptr);
   ptr += len;
   *in_out = (XtPointer) ptr;
-  
+
   _XmProcessUnlock();
   return XmINSERT;
 }
-
-static void 
+
+static void
 new_line(
         _XmString string )
 {
     int lc = _XmStrEntryCount(string);
     _XmStringEntry line;
-    
+
     _XmStrImplicitLine(string) = TRUE;
 
-    _XmStrEntry(string) = (_XmStringEntry *) 
-      XtRealloc((char *) _XmStrEntry(string), 
+    _XmStrEntry(string) = (_XmStringEntry *)
+      XtRealloc((char *) _XmStrEntry(string),
 		sizeof(_XmStringEntry) * (lc + 1));
-    
+
     _XmEntryCreate(line, XmSTRING_ENTRY_ARRAY);
     _XmStrEntry(string)[lc] = line;
 
@@ -461,29 +451,29 @@ MakeStrFromSeg(XmStringContext start)
   _XmStringEntry	*line;
   _XmStringEntry	*segs, seg;
   _XmString		str;
-  
+
   if (_XmStrContOpt(start)) {
     _XmStrContError(start) = TRUE;
     return(XmStringCopy(_XmStrContString(start)));
   } else {
     /* get segment */
     line = _XmStrEntry(_XmStrContString(start));
-    
+
     /* Create XmString structure */
     _XmStrCreate(str, XmSTRING_MULTIPLE_ENTRY, 0);
-    
+
     if (_XmEntryMultiple(line[_XmStrContCurrLine(start)])) {
       segs = (_XmStringEntry*)_XmEntrySegment(line[_XmStrContCurrLine(start)]);
-      
+
       new_line(str);
-    
+
       if (_XmStrContCurrSeg(start) < _XmEntrySegmentCount(line)) {
 	seg = segs[_XmStrContCurrSeg(start)];
-	
+
 	_XmStringSegmentNew(str, 0, seg, True);
-	
+
 	_XmStrContCurrSeg(start)++;
-	
+
 	_XmStrContDir(start)     = _XmEntryDirectionGet(seg);
 	_XmStrContTag(start)     = _XmEntryTag(seg);
 	_XmStrContTagType(start) = (XmTextType) _XmEntryTextTypeGet(seg);
@@ -495,10 +485,10 @@ MakeStrFromSeg(XmStringContext start)
     } else {
       seg = line[_XmStrContCurrLine(start)];
       _XmStringSegmentNew(str, 0, seg, True);
-      
+
       _XmStrContCurrSeg(start) = 0;
       _XmStrContCurrLine(start)++;
-      
+
       _XmStrContDir(start)     = _XmEntryDirectionGet(seg);
       _XmStrContTag(start)     = _XmEntryTag(seg);
       _XmStrContTagType(start) = (XmTextType) _XmEntryTextTypeGet(seg);
@@ -512,13 +502,13 @@ static Boolean
 LastSeg(XmStringContext start)
 {
   _XmStringEntry	*line;
-  
-  if (_XmStrContOpt(start)) 
+
+  if (_XmStrContOpt(start))
     {
       return(TRUE);
     } else {
       line = _XmStrEntry(_XmStrContString(start));
-    
+
       if (_XmEntryMultiple(line[_XmStrContCurrLine(start)]))
 	return(_XmStrContCurrSeg(start) == _XmEntrySegmentCount(line));
       else return(TRUE);
@@ -554,11 +544,11 @@ MakeStr(XmStringContext start,
   unsigned int		len;
   XtPointer		val;
   XmString		str;
-  
+
 
   /* Next component over start until at segment break */
   str = NULL;
-  
+
   while (_XmStrContState(start) != PUSH_STATE)
     {
       type = XmeStringGetComponent(start, TRUE, FALSE, &len, &val);
@@ -568,7 +558,7 @@ MakeStr(XmStringContext start,
       str = XmStringConcatAndFree(str,
 				  XmStringComponentCreate(type, len, val));
     }
-       
+
   /* Next segment over start incrementing until one segment before context */
   while ((_XmStrContCurrLine(start) < (_XmStrContCurrLine(end) - 1)) ||
 	 ((_XmStrContCurrLine(start) == _XmStrContCurrLine(end)) &&
@@ -585,12 +575,12 @@ MakeStr(XmStringContext start,
       str = XmStringConcatAndFree(str, XmStringComponentCreate(type, len, val));
       type = XmeStringGetComponent(start, TRUE, FALSE, &len, &val);
   }
-    
+
   return(str);
 }
-
+
 Cardinal
-XmStringToXmStringTable(XmString string, 
+XmStringToXmStringTable(XmString string,
 			XmString break_component,
 			XmStringTable *table)
 {
@@ -600,13 +590,13 @@ XmStringToXmStringTable(XmString string,
   unsigned int		len, b_len;
   XtPointer		val, b_val;
   int			i, count;
-  
+
   _XmProcessLock();
   /* Get triple for first component of break_component */
   if (break_component)
     {
       _XmStringContextReInit(&stack_context, break_component);
-      b_type = XmeStringGetComponent(&stack_context, TRUE, FALSE, 
+      b_type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
 				     &b_len, &b_val);
       _XmStringContextFree(&stack_context);
     }
@@ -630,11 +620,11 @@ XmStringToXmStringTable(XmString string,
       return(0);
     }
   _XmStringContextReInit(&stack_context, string);
-  
+
   /* Count number of entries for table */
   count = 0;
-  while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE, 
-				       &len, &val)) != 
+  while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
+				       &len, &val)) !=
 	 XmSTRING_COMPONENT_END)
     {
       if ((type == b_type) && (len == b_len) &&
@@ -646,14 +636,14 @@ XmStringToXmStringTable(XmString string,
   if (table != NULL)
     {
       *table = (XmStringTable)XtMalloc(count * sizeof(XmString));
-      
+
       _XmStringContextReInit(&stack_context, string);
       _XmStringContextReInit(&stack_start, string);
-      
+
       i = 0;
-      
-      while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE, 
-					   &len, &val)) != 
+
+      while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
+					   &len, &val)) !=
 	     XmSTRING_COMPONENT_END)
 	{
 	  if ((type == b_type) && (len == b_len) &&
@@ -663,7 +653,7 @@ XmStringToXmStringTable(XmString string,
 	      (*table)[i] = MakeStr(&stack_start, &stack_context);
 	      i++;
 	    }
-	} 
+	}
 
       _XmStringContextFree(&stack_start);
     }
@@ -672,7 +662,7 @@ XmStringToXmStringTable(XmString string,
   _XmProcessUnlock();
   return(count);
 }
-
+
 
 
 XmTabList
@@ -695,17 +685,17 @@ XmStringTableProposeTablist(XmStringTable strings,
   _XmRendition		tmp;
   XmRenderTable		rt;
   NextTabResult		ret_val;
-  
+
   _XmProcessLock();
   if ((strings == NULL) || (num_strings == 0)) {
     _XmProcessUnlock();
     return ((XmTabList)NULL);
   }
-  
+
   bzero((char*) &scratch, sizeof(_XmRenditionRec));
   tmp = &scratch;
   rend = &tmp;
-  
+
   _XmRendDisplay(rend) = XtDisplayOfObject(widget);
 
   n = 0;
@@ -722,9 +712,9 @@ XmStringTableProposeTablist(XmStringTable strings,
   tab = XmTabCreate(0.0, units, offset_model, XmALIGNMENT_BEGINNING, ".");
 
   tl = XmTabListInsertTabs(NULL, &tab, 1, 0);
-  
+
   XmTabFree(tab);
-  
+
   for (i = 0; i < num_strings; i++)
     {
       if (!strings[i])
@@ -734,27 +724,27 @@ XmStringTableProposeTablist(XmStringTable strings,
 	  _XmProcessUnlock();
 	  return((XmTabList)NULL);
 	}
-      _XmStringContextReInit(&stack_ctx, strings[i]);      
+      _XmStringContextReInit(&stack_ctx, strings[i]);
 
       tab = _XmTabLStart(tl);
       val = 0.0;
-      
+
       /* Scan str for tabs, update tl if necessary. */
       j = 0;
-      
-      while ((ret_val = _XmStringGetNextTabWidth(&stack_ctx, widget, units, 
-						 rt, &width, &rend)) != 
+
+      while ((ret_val = _XmStringGetNextTabWidth(&stack_ctx, widget, units,
+						 rt, &width, &rend)) !=
 	     XmTAB_EOS)
 	{
-	  if (ret_val == XmTAB_NEWLINE) 
+	  if (ret_val == XmTAB_NEWLINE)
 	    {
 	      tab = _XmTabLStart(tl);
 	      j = 0;
 	      continue;
 	    }
-	  
+
 	  val = width + pad_value;
-	  
+
 	  if (j >= _XmTabLCount(tl))
 	    /* Need to add a tab */
 	    {
@@ -762,7 +752,7 @@ XmStringTableProposeTablist(XmStringTable strings,
 				XmALIGNMENT_BEGINNING, ".");
 	      start = _XmTabLStart(tl);
 	      prev = _XmTabPrev(start);
-	      
+
 	      _XmTabNext(prev) = tab;
 	      _XmTabPrev(tab) = prev;
 	      _XmTabNext(tab) = start;
@@ -778,22 +768,22 @@ XmStringTableProposeTablist(XmStringTable strings,
 	  else val = _XmTabValue(tab);
 	  j++;
 	}
-      
+
       _XmStringContextFree(&stack_ctx);
     }
-  
+
   if (offset_model == XmABSOLUTE)
     {
       start = _XmTabLStart(tl);
       val = _XmTabValue(start);
-      
+
       for (tab = _XmTabNext(start); tab != start; tab = _XmTabNext(tab))
 	{
 	  val += _XmTabValue(tab);
 	  XmTabSetValue(tab, val);
 	}
     }
-  
+
   _XmProcessUnlock();
   return(tl);
 }
@@ -802,8 +792,8 @@ XmStringTableProposeTablist(XmStringTable strings,
  * Helper function for XmTabList.c
  * This routine performs successive reads on an XmStringContext
  * and returns the width (in units of XmNunitType of widget) of
- * the text segments between the previous and next tab or end of line.  
- * It uses the XmNrenderTable from widget to calculate the width.  It 
+ * the text segments between the previous and next tab or end of line.
+ * It uses the XmNrenderTable from widget to calculate the width.  It
  * returns XmTAB_EOS if the end of the string has been reached, XmTAB_NEWLINE
  * if the end of line is reached and XmTAB_NEXT if a tab is encountered.
  */
@@ -818,26 +808,26 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
   float 	divisor;
   int		toType;			  /*  passed to XmConvertUnits */
   Dimension	w_sum, w_cur;
-  
+
   if (_XmStrContError(ctx))
     {
       *width = 0.0;
       return(XmTAB_EOS);
     }
-  
+
   w_sum = 0;
   *width = 0.0;
 
   /* Big units need to be converted to small ones. */
   toType = _XmConvertFactor(units, &divisor);
-      
+
   /* Calculate the width to the next tab. */
   if (_XmStrContOpt(ctx))
     {
       _XmStrContError(ctx) = True;
       return(XmTAB_EOS);
-    } 
-  else 
+    }
+  else
     {
       _XmString 		str = _XmStrContString(ctx);
       _XmStringEntry 		line;
@@ -845,11 +835,11 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
       _XmStringEntry 		seg;
       int			seg_count;
       _XmStringArraySegRec	array_seg;
-      
+
       line_count = _XmStrLineCountGet(str);
-      
+
       /* Keep checking lines and segments until we run out or hit a tab. */
-      if (_XmStrContCurrLine(ctx) < line_count) 
+      if (_XmStrContCurrLine(ctx) < line_count)
 	{
 	  if (_XmStrImplicitLine(str))
 	    {
@@ -862,10 +852,10 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
 	      _XmEntrySegment(&array_seg) = (_XmStringNREntry *)_XmStrEntry(str);
 	      line = (_XmStringEntry)&array_seg;
 	    }
-      
-	  if (_XmEntryMultiple(line)) 
+
+	  if (_XmEntryMultiple(line))
 	    seg_count = _XmEntrySegmentCount(line);
-	  else 
+	  else
 	    seg_count = 1;
 
 	  if (seg_count == 0) {
@@ -877,13 +867,13 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
 
 	  while (_XmStrContCurrSeg(ctx) < seg_count)
 	    {
-	      if (_XmEntryMultiple(line)) 
+	      if (_XmEntryMultiple(line))
 		seg = (_XmStringEntry)_XmEntrySegment(line)[_XmStrContCurrSeg(ctx)];
 	      else
 		seg = line;
 
 	      w_cur = 0;
-	
+
 	      if (_XmStrContTabCount(ctx) < _XmEntryTabsGet(seg)) {
 		_XmStrContTabCount(ctx)++;
 		*width = (XmConvertUnits(widget, XmHORIZONTAL,
@@ -894,7 +884,7 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
 	      (void)_XmStringSegmentExtents(seg, rt, rend, NULL,
 					    &w_cur, NULL, NULL, NULL);
 	      w_sum += w_cur;
-	
+
 	      _XmStrContCurrSeg(ctx)++;
 	      _XmStrContTabCount(ctx) = 0;
 	    }
@@ -902,7 +892,7 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
 	  _XmStrContCurrLine(ctx)++;
 	  _XmStrContCurrSeg(ctx) = 0;
 	  _XmStrContTabCount(ctx) = 0;
-	  
+
 	  return(XmTAB_NEWLINE);
 	}
 
@@ -910,4 +900,4 @@ _XmStringGetNextTabWidth(XmStringContext ctx,
       return(XmTAB_EOS);
     }
 }
-
+

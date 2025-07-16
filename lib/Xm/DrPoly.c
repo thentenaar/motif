@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -36,7 +36,7 @@
 #include "XmI.h"
 
 /****************************XmeDrawPolygonShadow***************************/
-void 
+void
 XmeDrawPolygonShadow (
 		      Display *dpy,
 		      Drawable d,
@@ -44,13 +44,8 @@ XmeDrawPolygonShadow (
 		      GC bottomGC,
 		      XPoint *points,
 		      int n_points,
-#if NeedWidePrototypes
-		      int shadowThickness,
-		      unsigned int shadowType)
-#else
 		      Dimension shadowThickness,
 		      unsigned char shadowType)
-#endif /* NeedWidePrototypes */
 {
     Region  xregion;
     XtAppContext app;

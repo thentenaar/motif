@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * Resources:
@@ -27,15 +27,15 @@
  * ---------------------------------------------------------------------------
  * Name            Class             Type              InitialValue
  * ---------------------------------------------------------------------------
- * 
+ *
  * equalSize       EqualSize         Boolean           False
  * fillOption      FillOption        XmFillOption     XmFillNone
  * marginHeight    Margin            Dimension         0
  * marginWidth     Margin            Dimension         0
  * orientation     Orientation       unsigned char     XmHORIZONTAL
- * 
+ *
  * ---------------------------------------------------------------------------
- * 
+ *
  */
 #ifndef _XmButtonBox_h
 #define _XmButtonBox_h
@@ -82,11 +82,7 @@ typedef struct _XmButtonBoxRec	       *XmButtonBoxWidget;
  *	Returns: The Widget created.
  */
 
-Widget XmCreateButtonBox(
-#ifndef _NO_PROTO
-Widget, String, ArgList, Cardinal
-#endif
-);
+Widget XmCreateButtonBox(Widget, String, ArgList, Cardinal);
 
 /*
  * Variable argument list functions

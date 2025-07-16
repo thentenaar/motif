@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,8 +40,6 @@
 # include "WmWrkspace.h"
 # include <Dt/Session.h>
 #endif
-
-#define FIX_1193
 
 typedef struct _ProxyClientInfo
 {
@@ -199,7 +196,7 @@ smSaveYourselfCallback(Widget w, XtPointer clientData, XtPointer callData)
 	if (wmGD.Screens[scr].managed)
 	{
 	    /*
-	     * Write out current workspace, frontpanel 
+	     * Write out current workspace, frontpanel
 	     * position and iconbox position and size.
 	     */
 	    SaveResources(&wmGD.Screens[scr]);
@@ -460,7 +457,6 @@ getNewRestartCmd(void)
 static void
 freeNewRestartCmd(char **restartCmd)
 {
-#ifdef FIX_1193
     if(restartCmd)
     {
 	char **tmp = restartCmd;
@@ -469,12 +465,6 @@ freeNewRestartCmd(char **restartCmd)
 
 	XtFree((char *)tmp);
     }
-#else
-    while (*restartCmd != (char *)NULL)
-	XtFree(*(restartCmd++));
-
-    XtFree((char *)restartCmd);
-#endif
 }
 
 #endif /* ! WSM */

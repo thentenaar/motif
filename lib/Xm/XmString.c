@@ -32,11 +32,10 @@ static char rcsid[] = "$TOG: XmString.c /main/34 1998/04/16 14:35:32 mgreess $"
 #endif
 
 #include <stdio.h>
-#include <limits.h>		/* for MB_LEN_MAX */
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
+#include <stdarg.h>
+#include <limits.h>		/* for MB_LEN_MAX */
 #include <ctype.h>
 
 #ifdef __cplusplus
@@ -58,14 +57,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 #include "XmTabListI.h"
-
-# include <stdarg.h>
-
-#define FIX_1434
-#define FIX_1488
-#define FIX_1532
-
-# define Va_start(a,b) va_start(a,b)
 
 /* Warning Messages */
 #define NO_FONT_MSG	_XmMMsgXmString_0000
@@ -240,18 +231,10 @@ static Boolean _is_short_length(
                         unsigned char *p) ;
 static void _write_long_length(
                         unsigned char *p,
-#if NeedWidePrototypes
-                        unsigned int length) ;
-#else
                         unsigned short length) ;
-#endif /* NeedWidePrototypes */
 static unsigned char * _write_header(
                         unsigned char *p,
-#if NeedWidePrototypes
-                        unsigned int length) ;
-#else
                         unsigned short length) ;
-#endif /* NeedWidePrototypes */
 static unsigned char * _read_header(
                         unsigned char *p) ;
 static unsigned short _read_header_length(
@@ -262,19 +245,10 @@ static unsigned short _read_string_length(
                         unsigned char *p) ;
 static unsigned char * _write_component(
                         unsigned char *p,
-#if NeedWidePrototypes
-                        unsigned int tag,
-                        unsigned int length,
-#else
                         unsigned char tag,
                         unsigned short length,
-#endif /* NeedWidePrototypes */
                         unsigned char *value,
-#if NeedWidePrototypes
-                        int move_by_length) ;
-#else
                         Boolean move_by_length) ;
-#endif /* NeedWidePrototypes */
 static unsigned char * _read_component(
                         unsigned char *p,
                         unsigned char *tag,
@@ -309,32 +283,19 @@ static void LineMetrics(_XmStringEntry line,
 			Dimension *ascender,
 			Dimension *descender);
 static void SubStringPosition(
-#if NeedWidePrototypes
-                        int one_byte,
-#else
                         Boolean one_byte,
-#endif /* NeedWidePrototypes */
 			XmRenderTable rt,
                         XmRendition entry,
                         _XmStringEntry seg,
                         _XmStringEntry under_seg,
-#if NeedWidePrototypes
-                        int x,
-#else
                         Position x,
-#endif /* NeedWidePrototypes */
                         Dimension *under_begin,
                         Dimension *under_end) ;
 static void recursive_layout(_XmString string,
 			     int *line_index,
 			     int *seg_index,
-#if NeedWidePrototypes
-			     int direction,
-			     int p_direction,
-#else
                              XmDirection direction,
                              XmDirection p_direction,
-#endif /* NeedWidePrototypes */
 			     int depth);
 static void last_direction(_XmStringEntry line,
 			   int *index,
@@ -349,51 +310,25 @@ static void DrawLine(Display *d,
 		     XmRendition base,
 		     XmRenderTable rendertable,
 		     XmDirection prim_dir,
-#if NeedWidePrototypes
-		     int image,
-#else
 		     Boolean image,
-#endif /* NeedWidePrototypes */
 		     _XmString *underline,
-#if NeedWidePrototypes
-		     int descender,
-		     int opt,
-		     int opt_width,
-		     int opt_height
-#else
 		     Dimension descender,
                      Boolean opt,
 		     Dimension opt_width,
 		     Dimension opt_height
-#endif /* NeedWidePrototypes */
 		     );
 static void _calc_align_and_clip(
                         Display *d,
 			Window w,
                         GC gc,
                         Position *x,
-#if NeedWidePrototypes
-                        int y,
-                        int width,
-#else
                         Position y,
                         Dimension width,
-#endif /* NeedWidePrototypes */
                         int line_width,
-#ifdef FIX_1488
                         int line_height,
-#endif
-#if NeedWidePrototypes
-                        unsigned int lay_dir,
-#else
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip,
-#if NeedWidePrototypes
-                        unsigned int align,
-#else
                         unsigned char align,
-#endif /* NeedWidePrototypes */
                         int descender,
                         int *restore,
 			XmFontType font_type) ;
@@ -403,59 +338,33 @@ static void _draw(
                         XmRenderTable rendertable,
                         _XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip,
-#if NeedWidePrototypes
-                        int image,
-#else
                         Boolean image,
-#endif /* NeedWidePrototypes */
                         _XmString underline) ;
 static void _render(Display *d,
 		    Drawable w,
 		    XmRenderTable rendertable,
 		    XmRendition rend,
 		    _XmString string,
-#if NeedWidePrototypes
-		    int x,
-		    int y,
-		    int width,
-		    unsigned int align,
-		    unsigned int lay_dir,
-		    int image,
-#else
 		    Position x,
 		    Position y,
 		    Dimension width,
 		    unsigned char align,
 		    unsigned char lay_dir,
 		    Boolean image,
-#endif						  /* NeedWidePrototypes */
 		    _XmString underline,
 		    XRectangle *clip);
 
 static _XmString _XmStringOptCreate(
                         unsigned char *c,
                         unsigned char *end,
-#if NeedWidePrototypes
-                        unsigned int textlen,
-                        int havetag,
-#else
                         unsigned short textlen,
                         Boolean havetag,
-#endif /* NeedWidePrototypes */
                         unsigned int tag_index) ;
 static void finish_segment(_XmString str,
 			   _XmStringUnoptSeg seg,
@@ -466,11 +375,7 @@ static void finish_segment(_XmString str,
 static _XmString _XmStringNonOptCreate(
                         unsigned char *c,
                         unsigned char *end,
-#if NeedWidePrototypes
-                        int havetag) ;
-#else
                         Boolean havetag) ;
-#endif /* NeedWidePrototypes */
 static Boolean SpecifiedSegmentExtents(_XmStringEntry entry,
 				       XmRenderTable rendertable,
 				       XmRendition *rend_in_out,
@@ -589,11 +494,7 @@ _is_short_length(
 static void
 _write_long_length(
         unsigned char *p,
-#if NeedWidePrototypes
-        unsigned int length )
-#else
         unsigned short length )
-#endif /* NeedWidePrototypes */
 {
 
   unsigned char   * uchar_p = (unsigned char *) p;
@@ -622,11 +523,7 @@ _write_long_length(
 static unsigned char *
 _write_header(
         unsigned char *p,
-#if NeedWidePrototypes
-        unsigned int length )
-#else
         unsigned short length )
-#endif /* NeedWidePrototypes */
 {
 
   unsigned char * uchar_p = p;
@@ -785,19 +682,10 @@ _read_length(
 static unsigned char *
 _write_component(
         unsigned char *p,
-#if NeedWidePrototypes
-        unsigned int tag,
-        unsigned int length,
-#else
         unsigned char tag,
         unsigned short length,
-#endif /* NeedWidePrototypes */
         unsigned char *value,
-#if NeedWidePrototypes
-        int move_by_length )
-#else
         Boolean move_by_length )
-#endif /* NeedWidePrototypes */
 {
   unsigned char * uchar_p = p;
 
@@ -844,7 +732,7 @@ _read_component(
   return (uchar_p + *length);
 
 }
-
+
 /* Create a new XmString */
 XmString
 XmStringCreate(
@@ -919,7 +807,7 @@ _XmStringNCreate(char *text,
       return(str);
     }
 }
-
+
 /*
  * Convenience routine creating localized XmString from NULL terminated string.
  */
@@ -929,15 +817,11 @@ XmStringCreateLocalized(
 {
   return (XmStringGenerate(text, NULL, XmCHARSET_TEXT, NULL));
 }
-
+
 /* Create an optimized _XmString with only direction set. */
 XmString
 XmStringDirectionCreate(
-#if NeedWidePrototypes
-        int direction )
-#else
         XmStringDirection direction )
-#endif /* NeedWidePrototypes */
 {
   /* Maintain a static cache of the common results. */
   static XmConst XmStringDirection dir_index[] =
@@ -984,7 +868,7 @@ XmStringDirectionCreate(
   _XmProcessUnlock();
   return (XmString) opt_str;
 }
-
+
 /* Create an empty non-optimized _XmString containing a single newline */
 XmString
 XmStringSeparatorCreate( void )
@@ -1022,7 +906,7 @@ XmStringSeparatorCreate( void )
   _XmProcessUnlock();
   return (XmString)ret_val;
 }
-
+
 /* Create an empty optimized _XmString containing a single tab. */
 static XmString
 StringTabCreate( void )
@@ -1046,7 +930,7 @@ StringTabCreate( void )
 
   return (XmString)opt_str;
 }
-
+
 /* Create an empty optimized _XmString. */
 static XmString
 StringEmptyCreate( void )
@@ -1069,7 +953,7 @@ StringEmptyCreate( void )
 
   return (XmString)opt_str;
 }
-
+
 /*
  * this set provides access to the internal components of XmStrings
  */
@@ -1209,7 +1093,7 @@ _XmStringCacheTag(XmStringTag tag,
   _XmProcessUnlock();
   return ret_val;
 }
-
+
 static Boolean
 RenditionsCompatible(_XmStringEntry seg1,
 		     _XmStringEntry seg2)
@@ -1247,7 +1131,7 @@ RenditionsCompatible(_XmStringEntry seg1,
 
   return(FALSE);
 }
-
+
 static void
 MergeEnds(_XmStringEntry a,
 	  _XmStringEntry b)
@@ -1316,7 +1200,7 @@ MergeBegins(_XmStringEntry a,
 
   _XmEntryRendBeginCountSet(a, (a_b_cnt + b_b_cnt));
 }
-
+
 /*
  * general external TCS utilties
  */
@@ -1389,7 +1273,7 @@ Unoptimize(_XmStringEntry entry, int free)
   return new_entry;
 }
 
-
+
 XmString
 XmStringConcat(XmString a,
 	       XmString b )
@@ -1932,7 +1816,7 @@ XmStringConcatAndFree(XmString a,
   _XmProcessUnlock();
   return (XmString)a_str;
 }
-
+
 /************************************************************************
  *									*
  * XmStringCompare - compare two strings.  				*
@@ -2135,7 +2019,7 @@ XmStringCompare(
   _XmProcessUnlock();
   return (TRUE);
 }
-
+
 int
 XmStringLength(
         XmString string )
@@ -2713,19 +2597,11 @@ _XmStringCharacterCount(XtPointer text,
 	else {
 	  int cnt = 0;
 	  int len;
-#ifndef NO_MULTIBYTE
 	  while (byte_count > 0 && (len = mblen(s, MB_CUR_MAX)) > 0) {
 	    cnt++;
 	    s += len;
 	    byte_count -= len;
 	  }
-#else
-	  while (byte_count > 0 && *s) {
-	    cnt++;
-	    s++;
-	    byte_count--;
-	  }
-#endif
 	  return cnt;
 	}
       }
@@ -2743,7 +2619,7 @@ _XmStringCharacterCount(XtPointer text,
       return byte_count;
     }
 }
-
+
 unsigned char
 _XmEntryCharCountGet(_XmStringEntry entry,
 		     XmRenderTable rt)
@@ -2774,7 +2650,7 @@ _XmEntryCharCountGet(_XmStringEntry entry,
   return(0);
 }
 
-
+
 _XmStringCache
 _XmStringCacheGet(_XmStringCache caches,
 		  int type)
@@ -2880,11 +2756,7 @@ CacheGet(_XmStringEntry entry,
 
 XtPointer
 _XmScanningCacheGet(_XmStringNREntry entry,
-#if NeedWidePrototypes
-		    int d,
-#else
 		    XmDirection d,
-#endif /* NeedWidePrototypes */
 		    int field)
 {
   _XmStringScanningCache cache;
@@ -2920,11 +2792,7 @@ _XmScanningCacheGet(_XmStringNREntry entry,
 
 void
 _XmScanningCacheSet(_XmStringNREntry entry,
-#if NeedWidePrototypes
-		    int d,
-#else
 		    XmDirection d,
-#endif /* NeedWidePrototypes */
 		    int field,
 		    XtPointer value)
 {
@@ -3428,7 +3296,7 @@ _XmStringOptToNonOpt(_XmStringOpt string)
   _XmStringSegmentNew(str, 0, (_XmStringEntry)&seg, True);
    return str;
 }
-
+
 /*
  * figure out if there is sub string match, and if so the begining
  * and end of the match section in pixels.  Don't touch anything if
@@ -3436,20 +3304,12 @@ _XmStringOptToNonOpt(_XmStringOpt string)
  */
 static void
 SubStringPosition(
-#if NeedWidePrototypes
-        int one_byte,
-#else
         Boolean one_byte,
-#endif /* NeedWidePrototypes */
 	XmRenderTable rt,
 	XmRendition entry,
         _XmStringEntry seg,
         _XmStringEntry under_seg,
-#if NeedWidePrototypes
-        int x,
-#else
         Position x,
-#endif /* NeedWidePrototypes */
         Dimension *under_begin,
         Dimension *under_end )
 {
@@ -3611,20 +3471,12 @@ SubStringPosition(
 	    break;
 	  }
       } else {
-#ifndef NO_MULTIBYTE
 	len_a = mblen(&a[i], MB_CUR_MAX);
-#else
-	len_a = a[i] ? 1 : 0;
-#endif
 	if (len_a < 1) return;
 	len_a1 = len_a;
 
 	for (j = 0; j < under_seg_len; j += len_b) {
-#ifndef NO_MULTIBYTE
 	  len_b = mblen(&b[j], MB_CUR_MAX);
-#else
-	  len_b = b[j] ? 1 : 0;
-#endif
 	  if (len_b < 1) return;
 
 	  if (len_b == len_a1) {
@@ -3695,8 +3547,7 @@ SubStringPosition(
     }
   }
 }
-
-/*ARGSUSED*/
+
 extern void
 _XmStringDrawLining(Display *d,
 		    Drawable w,
@@ -3869,35 +3720,20 @@ _XmStringDrawLining(Display *d,
 	}
     }
 }
-
+
 extern void
 _XmStringDrawSegment(Display *d,
 		     Drawable w,
-#if NeedWidePrototypes
-		     int x,
-		     int y,
-		     int width,
-		     int height,
-#else
 		     Position x,
 		     Position y,
 		     Dimension width,
 		     Dimension height,
-#endif /* NeedWidePrototypes */
 		     _XmStringNREntry seg,
 		     XmRendition rend,
 		     XmRenderTable rendertable,
-#if NeedWidePrototypes
-		     int image,
-#else
 		     Boolean image,
-#endif /* NeedWidePrototypes */
 		     XmString *underline,
-#if NeedWidePrototypes
-		     unsigned int descender
-#else
 		     Dimension descender
-#endif /* NeedWidePrototypes */
 		     )
 {
   Boolean 		text16 = False, multibyte, widechar, utf8;
@@ -4014,11 +3850,7 @@ _XmStringDrawSegment(Display *d,
 	      p += seg_len;
 	      for (i = 0; i < seg_len; i += len)
 		{
-#ifndef NO_MULTIBYTE
 		  len = mblen(q, MB_CUR_MAX);
-#else
-		  len = *q ? 1 : 0;
-#endif
 		  if (len < 1) /* Something went wrong, just return for now. */
 		    return;
 
@@ -4229,7 +4061,7 @@ _XmStringDrawSegment(Display *d,
 	}
     }
 }
-
+
 /****************************************************************
  * recursive_layout:
  *    This (partly) recursive function sets up the left/right
@@ -4240,13 +4072,8 @@ static void
 recursive_layout(_XmString string,
 		 int *line_index,
 		 int *seg_index,
-#if NeedWidePrototypes
-		 int direction,
-		 int p_direction,
-#else
 		 XmDirection direction,
 		 XmDirection p_direction,
-#endif
 		 int depth)
 {
   _XmStringEntry        line;
@@ -4510,11 +4337,7 @@ recursive_layout(_XmString string,
 
 void
 _XmStringLayout(_XmString string,
-#if NeedWidePrototypes
-		int direction)
-#else
                 XmDirection direction)
-#endif
 {
   int seg_index=0, line_index=0;
   _XmStringEntry        line;
@@ -4613,23 +4436,12 @@ DrawLine(
 	 XmRendition base,
 	 XmRenderTable rendertable,
 	 XmDirection prim_dir,
-#if NeedWidePrototypes
-	 int image,
-#else
 	 Boolean image,
-#endif /* NeedWidePrototypes */
 	 _XmString *underline,
-#if NeedWidePrototypes
-	 int descender,
-	 int opt,
-	 int opt_width,
-	 int opt_height
-#else
 	 Dimension descender,
 	 Boolean opt,
 	 Dimension opt_width,
 	 Dimension opt_height
-#endif /* NeedWidePrototypes */
 	 )
 {
   int				i, prev_val, val, offset;
@@ -4905,28 +4717,13 @@ _calc_align_and_clip(
 	Window w,
         GC gc,
         Position *x,
-#if NeedWidePrototypes
-        int y,
-        int width,
-#else
         Position y,
         Dimension width,
-#endif /* NeedWidePrototypes */
         int line_width,
-#ifdef FIX_1488
         int line_height,
-#endif
-#if NeedWidePrototypes
-        unsigned int lay_dir,
-#else
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip,
-#if NeedWidePrototypes
-        unsigned int align,
-#else
         unsigned char align,
-#endif /* NeedWidePrototypes */
         int descender,
         int *restore,
 	XmFontType font_type)
@@ -4953,29 +4750,18 @@ _calc_align_and_clip(
 
     if ((clip != NULL) && ( ! *restore))
 
-#ifdef FIX_1488
         if (((*x) <= clip->x + clip->width) &&
             (clip->x <= (*x) + line_width) &&
             (y - line_height + descender <= clip->y + clip->height) &&
             (clip->y <= y + descender))
-#else
-/* BEGIN OSF Fix CR 5106 */
-        if ((line_width > clip->width) ||
-/* END OSF Fix CR 5106 */
-	     (y + descender) > (clip->y + clip->height))
-#endif
 	{
 	    *restore = TRUE;
 #if USE_XFT
             if (font_type == XmFONT_IS_XFT)
 	      _XmXftSetClipRectangles(d, w, 0, 0, clip, 1);
-#ifndef FIX_1532
-	    else
-#endif
 #endif
             XSetClipRectangles (d, gc, 0, 0, clip, 1, YXBanded);
 	}
-
 }
 
 /*
@@ -4988,25 +4774,13 @@ _draw(
         XmRenderTable rendertable,
         _XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip,
-#if NeedWidePrototypes
-        int image,
-#else
         Boolean image,
-#endif /* NeedWidePrototypes */
         _XmString underline )
 {
   static XmRendition	rend = NULL;
@@ -5035,21 +4809,12 @@ _render(Display *d,
         XmRenderTable rendertable,
 	XmRendition rend,
         _XmString string,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-        int image,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
         Boolean image,
-#endif /* NeedWidePrototypes */
 	_XmString underline,
         XRectangle *clip)
 {
@@ -5091,16 +4856,8 @@ _render(Display *d,
           {
             draw_x = base_x ; /* most left position */
             _calc_align_and_clip( d, w, gc, &draw_x, y, width, line_width,
-#ifdef FIX_1488
                                 line_height, lay_dir, clip, align, descender,
-#else
-                                lay_dir, clip, align, descender,
-#endif
-#ifdef FIX_1521
                                 &restore_clip, _XmRendFontType(rend2));
-#else
-                                &restore_clip, _XmRendFontType(rend));
-#endif
 
             DrawLine(d, w, &screen, draw_x, y, (_XmStringEntry)string,
 		     &rend2, rend, rendertable, lay_dir, image,
@@ -5130,11 +4887,7 @@ _render(Display *d,
 	  }
 
 	/* width, height, ascent, descent of this line */
-#ifdef FIX_1521
 	LineMetrics(line, rendertable, &rend1, rend, lay_dir,
-#else
-	LineMetrics(line, rendertable, &rend2, rend, lay_dir,
-#endif
 		    &line_width, &line_height, &ascender, &descender);
 
 	y += ascender;
@@ -5144,16 +4897,8 @@ _render(Display *d,
 	    draw_x = base_x;			  /* most left position */
 
 	    _calc_align_and_clip(d, w, gc, &draw_x, y, width, line_width,
-#ifdef FIX_1488
 	            line_height, direction, clip, align, descender,
-#else
-				 direction, clip, align, descender,
-#endif
-#ifdef FIX_1521
 				 &restore_clip, _XmRendFontType(rend1));
-#else
-				 &restore_clip, _XmRendFontType(rend));
-#endif
 
 	    DrawLine(d, w, &screen, draw_x, y, line, &rend1, rend,
 		     rendertable, lay_dir, image, &underline,
@@ -5169,13 +4914,11 @@ _render(Display *d,
       }
   }
   if (restore_clip) {
-#ifdef FIX_1521
 #if USE_XFT
 	  if (_XmRendFontType((_XmStrOptimized(string)) ? rend2 : rend1) == XmFONT_IS_XFT) {
 		  XftDraw *draw = _XmXftDrawCreate(d, w);
 		  XftDrawSetClip(draw, NULL);
 	  } else
-#endif
 #endif
 		  XSetClipMask (d, gc, None);
   }
@@ -5190,19 +4933,11 @@ _XmStringRender(Display *d,
 		XmRenderTable rendertable,
 		XmRendition rend,
 		_XmString string,
-#if NeedWidePrototypes
-		int x,
-		int y,
-		int width,
-		unsigned int align,
-		unsigned int lay_dir
-#else
 		Position x,
 		Position y,
 		Dimension width,
 		unsigned char align,
 		unsigned char lay_dir
-#endif						  /* NeedWidePrototypes */
 		)
 {
   _render(d, w, rendertable, rend, string, x, y, width,
@@ -5266,13 +5001,8 @@ static _XmString
 _XmStringOptCreate(
         unsigned char *c,
         unsigned char *end,
-#if NeedWidePrototypes
-        unsigned int textlen,
-        int havetag,
-#else
         unsigned short textlen,
         Boolean havetag,
-#endif /* NeedWidePrototypes */
         unsigned int tag_index )
 {
   _XmString      string;
@@ -5384,11 +5114,7 @@ static _XmString
 _XmStringNonOptCreate(
         unsigned char *c,
         unsigned char *end,
-#if NeedWidePrototypes
-        int havetag )
-#else
         Boolean havetag )
-#endif /* NeedWidePrototypes */
 {
   int lc, sc;
   _XmStringUnoptSegRec seg;
@@ -5611,7 +5337,6 @@ _XmStringNonOptCreate(
 /*
  * Converts from ASN.1 formatted byte stream to XmString.
  */
-/*ARGSUSED*/
 XmString
 XmCvtByteStreamToXmString(unsigned char *property)
 {
@@ -5779,7 +5504,7 @@ XmCvtByteStreamToXmString(unsigned char *property)
   _XmProcessUnlock();
   return (string);
 }
-
+
 _XmStringEntry
 _XmStringEntryCopy(_XmStringEntry entry)
 {
@@ -5870,7 +5595,7 @@ _XmStringEntryCopy(_XmStringEntry entry)
   }
   return(new_entry);
 }
-
+
 /** Begin macros converted to functions. **/
 
 XmStringTag
@@ -6255,11 +5980,7 @@ ComputeMetrics(XmRendition rend,
 
       if (two_byte_font(font_struct))
 	{
-#ifdef FIX_1434
 	  if (byte_count >= 2 || utf8)
-#else
-	  if (byte_count >= 2)
-#endif
 	    {
 	      if (utf8)
 		{
@@ -6437,7 +6158,7 @@ _XmStringSegmentExtents(_XmStringEntry entry,
 				 XmSTRING_MIDDLE_SEG,
 				 width, height, ascent, descent));
 }
-
+
 static Boolean
 SpecifiedSegmentExtents(_XmStringEntry entry,
 			XmRenderTable    rendertable,
@@ -6752,7 +6473,7 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 
   return(can_do);
 }
-
+
 static void
 _parse_locale(
         char *str,
@@ -7094,7 +6815,7 @@ XmStringBaseline(
       return (OptLineAscender(rendertable, (_XmStringOpt)string));
     }
 }
-
+
 void
 _XmStringGetBaselines(XmRenderTable rendertable,
 		      _XmString string,
@@ -7162,7 +6883,7 @@ _XmStringGetBaselines(XmRenderTable rendertable,
 	}
     }
 }
-
+
 /*
  * count the number of lines in an XmString.
  */
@@ -7198,19 +6919,11 @@ XmStringDraw(
         XmRenderTable rendertable,
         XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
   _XmDisplayToAppContext(d);
@@ -7230,19 +6943,11 @@ XmStringDrawImage(
         XmRenderTable rendertable,
         XmString string,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip )
 {
   _XmDisplayToAppContext(d);
@@ -7262,19 +6967,11 @@ XmStringDrawUnderline(
         XmRenderTable fntlst,
         XmString str,
         GC gc,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        unsigned int align,
-        unsigned int lay_dir,
-#else
         Position x,
         Position y,
         Dimension width,
         unsigned char align,
         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
         XRectangle *clip,
         XmString under )
 {
@@ -7748,12 +7445,11 @@ XmeSetWMShellTitle(
     }
     _XmAppUnlock(app);
 }
-
+
 /*
  * XmeGetDirection: An XmParseProc to insert a direction component.
  *	Does not consume the triggering character.
  */
-/*ARGSUSED*/
 XmIncludeStatus
 XmeGetDirection(XtPointer     *in_out,
 		XtPointer      text_end, /* unused */
@@ -7777,12 +7473,11 @@ XmeGetDirection(XtPointer     *in_out,
   /* Don't consume the triggering character. */
   return XmINSERT;
 }
-
+
 /*
  * match_pattern: A helper for XmStringParseText.  Determine whether
  *	the text matches a XmParseMapping pattern.
  */
-/*ARGSUSED*/
 static Boolean
 match_pattern(XtPointer      text,
 	      XmStringTag    tag, /* unused */
@@ -7829,7 +7524,7 @@ match_pattern(XtPointer      text,
 
   return False;
 }
-
+
 /*
  * parse_unmatched: A Helper routine for XmStringParseText.  Produce
  *	a component for characters that weren't matched by any pattern.
@@ -7874,7 +7569,7 @@ parse_unmatched(XmString  *result,
   *result = XmStringConcatAndFree(tmp_1, tmp_2);
   *ptr += length;
 }
-
+
 /*
  * parse_pattern: A helper routine for XmStringParseText.  Process a
  *	pattern that has matched.
@@ -7938,7 +7633,7 @@ parse_pattern(XmString      *result,
   /* Advancing the pointer prevents multiple matches. */
   return (*ptr != orig_ptr);
 }
-
+
 XmString
 XmStringParseText(XtPointer    text,
 		  XtPointer   *text_end,
@@ -8040,11 +7735,7 @@ XmStringParseText(XtPointer    text,
   halt = (end_ptr && (ptr >= (char*) end_ptr));
   while (!halt && (wide_char ? *((wchar_t*) ptr) : *ptr))
     {
-#ifndef NO_MULTIBYTE
       int len = (wide_char ? sizeof(wchar_t) : mblen(ptr, MB_CUR_MAX));
-#else
-      int len = (wide_char ? sizeof(wchar_t) : 1);
-#endif
       advanced = False;
 
       /* If we have an invalid character, treat it as a single byte. */
@@ -8078,10 +7769,9 @@ XmStringParseText(XtPointer    text,
 	      parse_unmatched(&result, &prev_ptr, type, ptr - prev_ptr);
 	      advanced = parse_pattern(&result, &ptr, end_ptr, tag,
 				       type, pat, len, call_data, &halt);
-#ifdef FIX_1398
+
 	      /* Insert the charset component after pattern insertion */
 	      result = XmStringConcatAndFree(result, XmStringComponentCreate(tag_type, strlen(tag), (XtPointer) tag));
-#endif
 	    }
 	}
 
@@ -8111,7 +7801,7 @@ XmStringParseText(XtPointer    text,
   _XmProcessUnlock();
   return result;
 }
-
+
 /*
  * check_unparse_models: A helper for XmStringUnparse.  Invoked
  *	after a text component is processed, this routine determines
@@ -8197,7 +7887,7 @@ check_unparse_models(XmStringContext context,
       break;
     }
 }
-
+
 /*
  * unparse_text: A helper for XmStringUnparse.  Output a matched text
  *	component.
@@ -8255,7 +7945,7 @@ unparse_text(char                **result,
       XtFree(null_text);
     }
 }
-
+
 /*
  * unparse_is_plausible: A helper routine for unparse_components.
  *	Decided whether a pattern is even eligible for unparsing.
@@ -8296,7 +7986,7 @@ unparse_is_plausible(XmParseMapping pattern)
       return True;
     }
 }
-
+
 /*
  * unparse_components: A helper for XmStringUnparse.  Compare
  *	components against the parse table.
@@ -8371,11 +8061,7 @@ unparse_components(char          **result,
 	      else
 		unparse_text(result, length, output_type,
 			     XmSTRING_COMPONENT_TEXT,
-#ifndef NO_MULTIBYTE
 			     mblen((char*) pat->pattern, MB_CUR_MAX),
-#else
-			     *((char *) pat->pattern) ? 1: 0,
-#endif
 			     pat->pattern);
 
 	      /* Skip all but the last matched component. */
@@ -8393,7 +8079,7 @@ unparse_components(char          **result,
 	}
     }
 }
-
+
 XtPointer
 XmStringUnparse(XmString          string,
 		XmStringTag       tag,
@@ -8501,7 +8187,7 @@ XmStringUnparse(XmString          string,
   _XmProcessUnlock();
   return (XtPointer) result;
 }
-
+
 XmString
 XmStringComponentCreate(XmStringComponentType c_type,
 			unsigned int          length,
@@ -8764,7 +8450,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
   _XmProcessUnlock();
   return (XmString) str;
 }
-
+
 XmStringComponentType
 XmStringGetNextTriple(XmStringContext context,
 		      unsigned int   *length,
@@ -8772,7 +8458,7 @@ XmStringGetNextTriple(XmStringContext context,
 {
   return XmeStringGetComponent((_XmStringContext) context, True, True, length, value);
 }
-
+
 /*
  * XmeStringGetComponent: A generalized implementation of XmStringGetNextTriple.
  */
@@ -9233,7 +8919,7 @@ XmeStringGetComponent(_XmStringContext context,
       return XmSTRING_COMPONENT_END;
     }
 }
-
+
 /*
  * _XmStringContextReInit: Initialize an allocated _XmStringContext.
  */
@@ -9248,7 +8934,7 @@ _XmStringContextReInit(_XmStringContext context,
   _XmStrContOpt(context)    = _XmStrOptimized(string);
   _XmStrContDir(context)    = XmSTRING_DIRECTION_UNSET;
 }
-
+
 /*
  * _XmStringContextCopy: Copy allocated _XmStringContexts.  The active
  *	rendition list is always copied because expanding it to
@@ -9272,7 +8958,7 @@ _XmStringContextCopy(_XmStringContext target,
      memcpy(_XmStrContRendTags(target), _XmStrContRendTags(source), size);
   }
 }
-
+
 /*
  * _XmStringContextFree: Deallocate an _XmStringContext's internal storage.
  */
@@ -9287,7 +8973,7 @@ _XmStringContextFree(_XmStringContext context)
   }
   _XmStrContRendTags(context) = NULL;
 }
-
+
 /*
  * begin_context_rends: Update an _XmStringContext to reflect some
  *	newly active renditions.
@@ -9310,7 +8996,7 @@ begin_context_rends(_XmStringContext context,
   if (update_context)
     _XmStrContRendCount(context) += count;
 }
-
+
 /*
  * end_context_rends: Remove some renditions from an _XmStringContext's
  *	list of active renditions.
@@ -9345,7 +9031,7 @@ end_context_rends(_XmStringContext context,
 	  }
     }
 }
-
+
 XmString
 XmStringGenerate(XtPointer   text,
 		 XmStringTag tag,
@@ -9525,7 +9211,7 @@ XmStringGenerate(XtPointer   text,
   _XmProcessUnlock();
   return result;
 }
-
+
 XtPointer
 _XmStringUngenerate(XmString    string,
 		    XmStringTag tag,
@@ -9554,7 +9240,7 @@ _XmStringUngenerate(XmString    string,
   return result;
 
 }
-
+
 XmParseMapping
 XmParseMappingCreate(ArgList  arg_list,
 		     Cardinal arg_count)
@@ -9579,7 +9265,7 @@ XmParseMappingCreate(ArgList  arg_list,
 
   return result;
 }
-
+
 void
 XmParseMappingSetValues(XmParseMapping mapping,
 			ArgList        arg_list,
@@ -9628,9 +9314,7 @@ XmParseMappingSetValues(XmParseMapping mapping,
     mapping->internal_flags = XmSTRING_UNPARSE_UNKNOWN;
   _XmProcessUnlock();
 }
-
 
-
 static int
 _get_generate_parse_table (XmParseTable *gen_table)
 /*

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /************************************<+>*************************************
  ****************************************************************************
@@ -28,7 +28,7 @@
  **
  **   Description: This include file contains the class and instance record
  **                definitions for all meta classes.  It also contains externs
- **                for internally shared functions and defines for internally 
+ **                for internally shared functions and defines for internally
  **                shared values.
  **
  ****************************************************************************
@@ -42,7 +42,7 @@
 #include <X11/ObjectP.h>
 #include <Xm/ColorP.h>
 #include <Xm/AccColorT.h>
-
+#include <Xm/deprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +52,7 @@ extern "C" {
 /***************************************************************************
  *
  *  Macros replacing toolkit macros so that gadgets are handled properly.
- * 
+ *
  ***************************************************************************/
 
 /* Temporary hack until we can clean up our own code. ??? */
@@ -62,8 +62,8 @@ extern "C" {
 
 #ifdef XM_1_2_XTMACROS
 
-/* XtClass is a macro in IntrinsicP.h, but it does no casting 
-   so removing this one would certainly generate warnings everywhere, 
+/* XtClass is a macro in IntrinsicP.h, but it does no casting
+   so removing this one would certainly generate warnings everywhere,
    we can keep it */
 #ifdef XtClass
 #undef XtClass
@@ -151,7 +151,7 @@ extern "C" {
         }						\
       to_rtn->size = sizeof(type);			\
       return TRUE;					\
-    } 
+    }
 
 
 
@@ -284,7 +284,7 @@ typedef struct
    } XmParentProcessAnyRec ;
 
 typedef struct
-{ 
+{
    int          process_type ;  /* Common to all parent process records. */
    XEvent *     event ;
    int          action ;
@@ -349,13 +349,7 @@ typedef void (*XmWidgetDispatchProc)( Widget, XEvent *, Mask) ;
 typedef void (*XmGrabShellPopupProc)( Widget, Widget, XEvent *) ;
 typedef void (*XmMenuPopupProc)( Widget, Widget, XEvent *) ;
 typedef void (*XmMenuTraversalProc)( Widget, Widget, XmTraversalDirection) ;
-typedef void (*XmResizeFlagProc)(
-			Widget,
-#if NeedWidePrototypes
-			int) ;
-#else
-			Boolean) ;
-#endif /* NeedWidePrototypes */
+typedef void (*XmResizeFlagProc)(Widget, Boolean) ;
 typedef void (*XmRealizeOutProc)( Widget, Mask *, XSetWindowAttributes *) ;
 typedef Boolean (*XmVisualChangeProc)( Widget, Widget, Widget) ;
 typedef void (*XmTraversalProc)( Widget, XtPointer, XtPointer, int) ;
@@ -375,7 +369,7 @@ typedef Boolean (*XmSpatialTestFitProc)(Widget, Widget, Position, Position);
 
 /****************
  *
- * Data structure for building a real translation table out of a 
+ * Data structure for building a real translation table out of a
  * virtual string.
  *
  ****************/
@@ -385,7 +379,7 @@ typedef struct {
   char      *key;
   char      *action;
 } _XmBuildVirtualKeyStruct;
-              
+
 typedef struct _XmKeyBindingRec
 {
   KeySym	keysym;
@@ -500,11 +494,7 @@ typedef struct _XmKidGeometryRec
 } XmKidGeometryRec, *XmKidGeometry;
 
 typedef void (*XmGeoArrangeProc)( XmGeoMatrix,
-#if NeedWidePrototypes
-				 int, int,
-#else
 				 Position, Position,
-#endif /* NeedWidePrototypes */
 				 Dimension *, Dimension *) ;
 typedef Boolean (*XmGeoExceptProc)( XmGeoMatrix ) ;
 typedef void (*XmGeoExtDestructorProc)( XtPointer ) ;
@@ -672,8 +662,8 @@ enum{	XmCASCADE_BUTTON_BIT = 1,	XmCASCADE_BUTTON_GADGET_BIT,
 	XmDRAG_CONTEXT_BIT,		XmCONTAINER_BIT,
 	XmICONGADGET_BIT,		XmNOTEBOOK_BIT,
 	XmCSTEXT_BIT,		        XmGRAB_SHELL_BIT,
-	XmCOMBO_BOX_BIT,		XmSPINBOX_BIT,		
-	XmICONHEADER_BIT,	
+	XmCOMBO_BOX_BIT,		XmSPINBOX_BIT,
+	XmICONHEADER_BIT,
 
     XmBUTTONBOX_BIT,
     XmDATAFIELD_BIT,
@@ -691,11 +681,11 @@ enum{	XmCASCADE_BUTTON_BIT = 1,	XmCASCADE_BUTTON_GADGET_BIT,
     XmFONTSELECTOR_BIT,
     XmCOMBINATION_BOX_2_BIT,
     XmDROP_DOWN_BIT = XmCOMBINATION_BOX_2_BIT,
-    
+
 	XmFAST_SUBCLASS_TAIL_BIT /* New entries precede this. */
 	} ;
 
-#define XmLAST_FAST_SUBCLASS_BIT (XmFAST_SUBCLASS_TAIL_BIT - 1) 
+#define XmLAST_FAST_SUBCLASS_BIT (XmFAST_SUBCLASS_TAIL_BIT - 1)
 
 
 #undef XmIsCascadeButton
@@ -1046,9 +1036,9 @@ enum{	XmCASCADE_BUTTON_BIT = 1,	XmCASCADE_BUTTON_GADGET_BIT,
 #define XmDragOverShellIndex	(XmVendorShellIndex + 1)
 #define XmDragContextIndex	(XmCoreIndex + 1)
 
-/* 
+/*
  * XmOFFSETBITS is the number of bits used for the part offset within the
- * resource_offset field in the XmPartResource struct.  XmOFFSETMASK is the 
+ * resource_offset field in the XmPartResource struct.  XmOFFSETMASK is the
  * bitmask to mask for the part offset.
  */
 #define XmOFFSETBITS (sizeof(Cardinal)*8/2)
@@ -1143,8 +1133,8 @@ enum {
 #define XmSTRING_TAG_STRLEN		-1
 
 /* For _XmStringGetNextTabWidth.  EOS = End Of String. */
-typedef enum { XmTAB_NEXT, XmTAB_NEWLINE, XmTAB_EOS } NextTabResult; 
-  
+typedef enum { XmTAB_NEXT, XmTAB_NEWLINE, XmTAB_EOS } NextTabResult;
+
 /********    End Private Function Declarations    ********/
 
 /********    Traversal.c    ********/
@@ -1159,7 +1149,7 @@ typedef struct _XmFocusMovedCallbackStruct{
     Widget		 old_focus;
     Widget		 new_focus;
     unsigned char	 focus_policy;
-    XmTraversalDirection direction; 
+    XmTraversalDirection direction;
 } XmFocusMovedCallbackStruct, *XmFocusMovedCallback;
 
 typedef struct _XmFocusDataRec *XmFocusData;
@@ -1167,8 +1157,8 @@ typedef struct _XmFocusDataRec *XmFocusData;
 
 /********    ResInd.c    ********/
 
-typedef enum { 
-  XmPARSE_ERROR, XmPARSE_NO_UNITS, XmPARSE_UNITS_OK 
+typedef enum {
+  XmPARSE_ERROR, XmPARSE_NO_UNITS, XmPARSE_UNITS_OK
 } XmParseResult;
 
 
@@ -1176,44 +1166,36 @@ typedef enum {
 /********    Function Declarations for Xme        ********/
 
     /* GadgetUtil.c */
-extern void XmeRedisplayGadgets( 
+extern void XmeRedisplayGadgets(
                         Widget w,
                         register XEvent *event,
                         Region region) ;
-extern void XmeConfigureObject( 
+extern void XmeConfigureObject(
                         Widget g,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        int height,
-                        int border_width) ;
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         Dimension height,
                         Dimension border_width) ;
-#endif /* NeedWidePrototypes */
     /* Traversal.c */
-extern void XmeNavigChangeManaged( 
+extern void XmeNavigChangeManaged(
                         Widget wid) ;
-extern Boolean XmeFocusIsInShell( 
+extern Boolean XmeFocusIsInShell(
                         Widget wid) ;
     /* ResInd.c */
-extern XmImportOperator XmeToHorizontalPixels( 
+extern XmImportOperator XmeToHorizontalPixels(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
-extern XmImportOperator XmeToVerticalPixels( 
+extern XmImportOperator XmeToVerticalPixels(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
-extern void XmeFromHorizontalPixels( 
+extern void XmeFromHorizontalPixels(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
-extern void XmeFromVerticalPixels( 
+extern void XmeFromVerticalPixels(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
@@ -1228,7 +1210,7 @@ extern Widget XmeCreateClassDialog(
                         ArgList bb_args,
                         Cardinal bb_n ) ;
     /* ImageCache.c */
-extern Boolean XmeGetPixmapData( 
+extern Boolean XmeGetPixmapData(
                         Screen *screen,
                         Pixmap pixmap,
                         char **image_name,
@@ -1245,11 +1227,11 @@ extern Pixmap XmeGetMask(
     /* VaSimple.c */
 extern int XmeCountVaListSimple(va_list al);
 extern Widget XmeVLCreateWidget(
-                        char *name, 
-                        WidgetClass wc, 
-                        Widget parent, 
+                        char *name,
+                        WidgetClass wc,
+                        Widget parent,
                         Boolean managed,
-                        va_list al, 
+                        va_list al,
                         int count);
     /* VirtKeys.c */
 extern int XmeVirtualToActualKeysyms(
@@ -1267,11 +1249,7 @@ extern void XmeWarning( Widget w, char *message ) ;
     /* ResConvert.c */
 extern XmFontList XmeGetDefaultRenderTable(
         Widget w,
-#if NeedWidePrototypes
-        unsigned int fontListType );
-#else
         unsigned char fontListType );
-#endif /* NeedWidePrototypes */
 extern Boolean XmeNamesAreEqual(
         register char *in_str,
         register char *test_str );
@@ -1301,7 +1279,7 @@ extern XmIncludeStatus XmeGetNextCharacter(XtPointer *in_out,
 					   int pattern_length,
 					   XmString *str_include,
 					   XtPointer call_data);
-extern XmStringComponentType XmeStringGetComponent(_XmStringContext context, 
+extern XmStringComponentType XmeStringGetComponent(_XmStringContext context,
 						   Boolean	    update_context,
 						   Boolean	    copy_data,
 						   unsigned int    *length,
@@ -1323,9 +1301,9 @@ extern void XmeGetDefaultPixel(
                         XrmValue *value) ;
     /* Xmos.c */
 extern String XmeGetHomeDirName(void) ;
-extern int XmeMicroSleep( 
+extern int XmeMicroSleep(
                         long secs) ;
-extern XmString XmeGetLocalizedString( 
+extern XmString XmeGetLocalizedString(
                         char *reserved,
                         Widget widget,
                         char *resource,
@@ -1347,7 +1325,7 @@ extern void XmRenderTableGetDefaultFontExtents(
 
 
 
-#include <Xm/BaseClassP.h>       
+#include <Xm/BaseClassP.h>
 
 
 /***********************************************************************
@@ -1404,7 +1382,7 @@ extern void XmRenderTableGetDefaultFontExtents(
  * compatibility.
  */
 
-extern void _XmDestroyParentCallback( 
+extern void _XmDestroyParentCallback(
                         Widget w,
                         XtPointer client_data,
                         XtPointer call_data) ;
@@ -1437,19 +1415,15 @@ extern void _XmDestroyParentCallback(
 
 #endif /* NO_XM_1_2_BC */
 
-#if __GNUC__
-#  define XM_DEPRECATED  __attribute__((__deprecated__))
+#if defined(__GNUC__) || defined(__clang__)
 #  ifdef NO_WEAK_ALIASES
 #    define XM_ALIAS(sym)
 #  else
 #    define XM_ALIAS(sym)  __attribute__((__weak__,alias(#sym)))
 #  endif
 #else
-#  define XM_DEPRECATED
-#  define XM_ALIAS(sym)
-#endif
-
-#define FIX_1381
+#define XM_ALIAS(sym)
+#endif /* __GNUC__ || __clang__ */
 
 #endif /* _XmP_h */
 /* DON'T ADD STUFF AFTER THIS #endif */

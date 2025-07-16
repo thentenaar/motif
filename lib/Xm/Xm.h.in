@@ -51,12 +51,6 @@
  */
 #undef XM_PRINTING
 
-#if    !defined(__STDC__) \
-    && !defined(__cplusplus) && !defined(c_plusplus) \
-    && !defined(FUNCPROTO) && !defined(XTFUNCPROTO) && !defined(XMFUNCPROTO)
-#define _NO_PROTO
-#endif /* __STDC__ */
-
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>
 #include <X11/Xatom.h>
@@ -76,6 +70,7 @@
 extern "C" {
 #endif
 
+#include <Xm/deprecated.h>
 #include <Xm/version.h>
 externalref int xmUseVersion;
 
@@ -1622,20 +1617,12 @@ extern Widget XmVaCreateSimpleCheckBox(
 extern Widget XmTrackingEvent(
                         Widget widget,
                         Cursor cursor,
-#if NeedWidePrototypes
-                        int confineTo,
-#else
                         Boolean confineTo,
-#endif /* NeedWidePrototypes */
                         XEvent *pev) ;
 extern Widget XmTrackingLocate(
                         Widget widget,
                         Cursor cursor,
-#if NeedWidePrototypes
-                        int confineTo) ;
-#else
                         Boolean confineTo) ;
-#endif /* NeedWidePrototypes */
 
 /********    End Public Function Declarations    ********/
 
@@ -1672,22 +1659,13 @@ extern XmString XmStringCreateSimple(
 extern XmString XmStringCreateLocalized(
                         String text) ;
 extern XmString XmStringDirectionCreate(
-#if NeedWidePrototypes
-                        int direction) ;
-#else
                         XmStringDirection direction) ;
-#endif /* NeedWidePrototypes */
 extern XmString XmStringSeparatorCreate( void ) ;
 extern XmString XmStringSegmentCreate(
                         char *text,
                         XmStringCharSet charset,
-#if NeedWidePrototypes
-                        int direction,
-                        int separator) ;
-#else
                         XmStringDirection direction,
                         Boolean separator) ;
-#endif /* NeedWidePrototypes */
 extern XmString XmStringLtoRCreate(
                         char *text,
                         XmStringCharSet charset) ;
@@ -1832,19 +1810,11 @@ extern void XmStringDraw(
                         XmFontList fontlist,
                         XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
 extern void XmStringDrawImage(
                         Display *d,
@@ -1852,19 +1822,11 @@ extern void XmStringDrawImage(
                         XmFontList fontlist,
                         XmString string,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip) ;
 extern void XmStringDrawUnderline(
                         Display *d,
@@ -1872,19 +1834,11 @@ extern void XmStringDrawUnderline(
                         XmFontList fntlst,
                         XmString str,
                         GC gc,
-#if NeedWidePrototypes
-                        int x,
-                        int y,
-                        int width,
-                        unsigned int align,
-                        unsigned int lay_dir,
-#else
                         Position x,
                         Position y,
                         Dimension width,
                         unsigned char align,
                         unsigned char lay_dir,
-#endif /* NeedWidePrototypes */
                         XRectangle *clip,
                         XmString under) ;
 extern unsigned int XmCvtXmStringToByteStream(

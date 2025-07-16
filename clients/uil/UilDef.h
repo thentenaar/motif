@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
 **++
@@ -38,12 +38,6 @@
 #ifndef UilDef_h
 #define UilDef_h
 
-#if    !defined(__STDC__) && !defined(__cplusplus) && !defined(c_plusplus) \
-    && !defined(FUNCPROTO) && !defined(XTFUNCPROTO) && !defined(XMFUNCPROTO)
-#define _NO_PROTO
-#endif /* __STDC__ */
-
-
 /*
 **
 **  INCLUDE FILES
@@ -53,7 +47,7 @@
 /*
 ** Includes needed by other include files.
 */
-#include <X11/Intrinsic.h>	
+#include <X11/Intrinsic.h>
 
 /*
 **

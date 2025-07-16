@@ -66,11 +66,7 @@ static XmTextStatus Replace(XmTextWidget initiator,
 			    XmTextPosition *start,
 			    XmTextPosition *end,
 			    XmTextBlock block,
-#if NeedWidePrototypes
-			    int call_callbacks);
-#else
                             Boolean call_callbacks);
-#endif /* NeedsWidePrototypes */
 static void ScanParagraph(XmSourceData data,
 			  XmTextPosition *new_position,
 			  XmTextScanDirection dir,
@@ -81,11 +77,7 @@ static XmTextPosition Scan(XmTextSource source,
 			   XmTextScanType sType,
 			   XmTextScanDirection dir,
 			   int count,
-#if NeedWidePrototypes
-			   int include);
-#else
                            Boolean include);
-#endif /* NeedWidePrototypes */
 static Boolean GetSelection(XmTextSource source,
 			    XmTextPosition *left,
 			    XmTextPosition *right);
@@ -110,16 +102,11 @@ static void SetSelection(XmTextSource source,
  * the routine must be modified if these assumptions are incorrect.
  */
 
-/* ARGSUSED */
 int
 _XmTextBytesToCharacters(char * characters,
 			 char * bytes,
 			 int num_chars,
-#if NeedWidePrototypes
-			 int add_null_terminator,
-#else
 			 Boolean add_null_terminator,
-#endif /* NeedWidePrototypes */
 			 int max_char_size)
 {
   unsigned char * tmp_bytes;
@@ -145,19 +132,11 @@ _XmTextBytesToCharacters(char * characters,
     bits16_ptr = (BITS16 *) characters;
     tmp_bytes = (unsigned char*) bytes;
     for (
-#ifndef NO_MULTIBYTE
 	 num_bytes = mblen((char*)tmp_bytes, max_char_size),
-#else
-	 num_bytes = *tmp_bytes ? 1 : 0,
-#endif
 	 temp_bits16 = 0;
 	 num_chars > 0 && num_bytes > 0;
 	 num_chars--,
-#ifndef NO_MULTIBYTE
 	 num_bytes = mblen((char*)tmp_bytes, max_char_size),
-#else
-	 num_bytes = *tmp_bytes ? 1 : 0,
-#endif
 	 temp_bits16 = 0, bits16_ptr ++) {
       if (num_bytes == 1) {
 	temp_bits16 = (BITS16) *tmp_bytes++;
@@ -192,7 +171,6 @@ _XmTextBytesToCharacters(char * characters,
  * Null terminate the byte stream - caller better have alloc'ed enough space!
  */
 
-/* ARGSUSED */
 int
 _XmTextCharactersToBytes(char * bytes,
 			 char * characters,
@@ -264,11 +242,7 @@ char *
 _XmStringSourceGetString(XmTextWidget tw,
 			 XmTextPosition from,
 			 XmTextPosition to,
-#if NeedWidePrototypes
-			 int want_wchar)
-#else
                          Boolean want_wchar)
-#endif /* NeedWidePrototypes */
 {
   char *buf;
   wchar_t *wc_buf;
@@ -930,18 +904,13 @@ _XmTextModifyVerify(XmTextWidget initiator,
   return True;
 }
 
-/*ARGSUSED*/
 static XmTextStatus
 Replace(XmTextWidget initiator,
         XEvent * event,		/* unused */
         XmTextPosition *start,
         XmTextPosition *end,
         XmTextBlock block,
-#if NeedWidePrototypes
-        int call_callbacks)	/* unused */
-#else
         Boolean call_callbacks)	/* unused */
-#endif
 {
   register XmSourceData data = initiator->text.source->data;
   register int i;
@@ -1182,11 +1151,7 @@ Scan(XmTextSource source,
      XmTextScanType sType,
      XmTextScanDirection dir,
      int count,
-#if NeedWidePrototypes
-     int include)
-#else
      Boolean include)
-#endif /* NeedWidePrototypes */
 {
   register long whiteSpace = -1;
   register XmTextPosition position = pos;
@@ -1474,11 +1439,7 @@ _XmTextValueChanged(XmTextWidget initiator,
 
 XmTextSource
 _XmStringSourceCreate(char *value,
-#if NeedWidePrototypes
-		      int is_wchar)
-#else
                       Boolean is_wchar)
-#endif /* NeedWidePrototypes */
 {
   XmTextSource source;
   XmSourceData data;
@@ -1594,11 +1555,7 @@ _XmStringSourceDestroy(XmTextSource source)
 
 char *
 _XmStringSourceGetValue(XmTextSource source,
-#if NeedWidePrototypes
-			int want_wchar)
-#else
                         Boolean want_wchar)
-#endif /* NeedWidePrototypes */
 {
   XmSourceData data = source->data;
   XmTextWidget tw = (XmTextWidget) data->widgets[0];
@@ -1709,11 +1666,7 @@ _XmStringSourceGetEditable(XmTextSource source)
 
 void
 _XmStringSourceSetEditable(XmTextSource source,
-#if NeedWidePrototypes
-			   int editable)
-#else
                            Boolean editable)
-#endif /* NeedWidePrototypes */
 {
   source->data->editable = editable;
 }
@@ -1730,6 +1683,4 @@ _XmStringSourceSetMaxLength(XmTextSource source,
 {
   source->data->maxallowed = max;
 }
-
-
 

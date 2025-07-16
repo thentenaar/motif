@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmTextF_h
 #define _XmTextF_h
 
@@ -55,137 +55,124 @@ externalref WidgetClass       xmTextFieldWidgetClass;
 
 /********    Public Function Declarations    ********/
 
-char * XmTextFieldGetString( 
+char * XmTextFieldGetString(
                  Widget w);
-int XmTextFieldGetSubstring( 
+int XmTextFieldGetSubstring(
                  Widget widget,
                  XmTextPosition start,
                  int num_chars,
                  int buf_size,
                  char *buffer);
-wchar_t * XmTextFieldGetStringWcs( 
+wchar_t * XmTextFieldGetStringWcs(
                  Widget w);
-int XmTextFieldGetSubstringWcs( 
+int XmTextFieldGetSubstringWcs(
                  Widget widget,
                  XmTextPosition start,
                  int num_chars,
                  int buf_size,
                  wchar_t *buffer);
-XmTextPosition XmTextFieldGetLastPosition( 
+XmTextPosition XmTextFieldGetLastPosition(
                  Widget w);
-void XmTextFieldSetString( 
+void XmTextFieldSetString(
                  Widget w,
                  char *value);
-void XmTextFieldSetStringWcs( 
+void XmTextFieldSetStringWcs(
                  Widget w,
                  wchar_t *wc_value);
-void XmTextFieldReplace( 
+void XmTextFieldReplace(
                  Widget w,
                  XmTextPosition from_pos,
                  XmTextPosition to_pos,
                  char *value);
-void XmTextFieldReplaceWcs( 
+void XmTextFieldReplaceWcs(
                  Widget w,
                  XmTextPosition from_pos,
                  XmTextPosition to_pos,
                  wchar_t *wc_value);
-void XmTextFieldInsert( 
+void XmTextFieldInsert(
                  Widget w,
                  XmTextPosition position,
                  char *value);
-void XmTextFieldInsertWcs( 
+void XmTextFieldInsertWcs(
                  Widget w,
                  XmTextPosition position,
                  wchar_t *wcstring);
-void XmTextFieldSetAddMode( 
+void XmTextFieldSetAddMode(
                         Widget w,
-#if NeedWidePrototypes
-                        int state);
-#else
                         Boolean state);
-#endif /* NeedWidePrototypes */
-Boolean XmTextFieldGetAddMode( 
+Boolean XmTextFieldGetAddMode(
                  Widget w);
-Boolean XmTextFieldGetEditable( 
+Boolean XmTextFieldGetEditable(
                  Widget w);
-void XmTextFieldSetEditable( 
+void XmTextFieldSetEditable(
                         Widget w,
-#if NeedWidePrototypes
-                        int editable);
-#else
                         Boolean editable);
-#endif /* NeedWidePrototypes */
-int XmTextFieldGetMaxLength( 
+int XmTextFieldGetMaxLength(
                  Widget w);
-void XmTextFieldSetMaxLength( 
+void XmTextFieldSetMaxLength(
                  Widget w,
                  int max_length);
-XmTextPosition XmTextFieldGetCursorPosition( 
+XmTextPosition XmTextFieldGetCursorPosition(
                  Widget w);
-XmTextPosition XmTextFieldGetInsertionPosition( 
+XmTextPosition XmTextFieldGetInsertionPosition(
                  Widget w);
-void XmTextFieldSetCursorPosition( 
+void XmTextFieldSetCursorPosition(
                  Widget w,
                  XmTextPosition position);
-void XmTextFieldSetInsertionPosition( 
+void XmTextFieldSetInsertionPosition(
                  Widget w,
                  XmTextPosition position);
-Boolean XmTextFieldGetSelectionPosition( 
+Boolean XmTextFieldGetSelectionPosition(
                  Widget w,
                  XmTextPosition *left,
                  XmTextPosition *right);
-char * XmTextFieldGetSelection( 
+char * XmTextFieldGetSelection(
                  Widget w);
-wchar_t * XmTextFieldGetSelectionWcs( 
+wchar_t * XmTextFieldGetSelectionWcs(
                  Widget w);
-Boolean XmTextFieldRemove( 
+Boolean XmTextFieldRemove(
                  Widget w);
-Boolean XmTextFieldCopy( 
+Boolean XmTextFieldCopy(
                  Widget w,
                  Time clip_time);
-Boolean XmTextFieldCopyLink( 
+Boolean XmTextFieldCopyLink(
                  Widget w,
                  Time clip_time);
-Boolean XmTextFieldCut( 
+Boolean XmTextFieldCut(
                  Widget w,
                  Time clip_time);
-Boolean XmTextFieldPaste( 
+Boolean XmTextFieldPaste(
                  Widget w);
-Boolean XmTextFieldPasteLink( 
+Boolean XmTextFieldPasteLink(
                  Widget w);
-void XmTextFieldClearSelection( 
+void XmTextFieldClearSelection(
                  Widget w,
                  Time sel_time);
-void XmTextFieldSetSelection( 
+void XmTextFieldSetSelection(
                  Widget w,
                  XmTextPosition first,
                  XmTextPosition last,
                  Time sel_time);
-XmTextPosition XmTextFieldXYToPos( 
+XmTextPosition XmTextFieldXYToPos(
                         Widget w,
-#if NeedWidePrototypes
-                        int x,
-                        int y);
-#else
                         Position x,
                         Position y);
-#endif /* NeedWidePrototypes */
-Boolean XmTextFieldPosToXY( 
+Boolean XmTextFieldPosToXY(
                  Widget w,
                  XmTextPosition position,
                  Position *x,
                  Position *y);
-void XmTextFieldShowPosition( 
+void XmTextFieldShowPosition(
                  Widget w,
                  XmTextPosition position);
-void XmTextFieldSetHighlight( 
+void XmTextFieldSetHighlight(
                  Widget w,
                  XmTextPosition left,
                  XmTextPosition right,
                  XmHighlightMode mode);
-int XmTextFieldGetBaseline( 
+int XmTextFieldGetBaseline(
                  Widget w);
-Widget XmCreateTextField( 
+Widget XmCreateTextField(
                         Widget parent,
                         char *name,
                         ArgList arglist,
@@ -207,4 +194,3 @@ Widget XmVaCreateManagedTextField(
 #endif
 
 #endif /* _XmTextF_h */
-/* DON'T ADD STUFF AFTER THIS #endif */

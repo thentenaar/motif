@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
@@ -73,71 +73,63 @@ static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
 #define OUTLINE_WIDTH	2
 #define SEGS_PER_DRAW	(4*OUTLINE_WIDTH)
 
-
+
 /********    Static Function Declarations    ********/
 
-static GC InitXmTearOffXorGC( 
+static GC InitXmTearOffXorGC(
                         Widget wid) ;
-static void SetupOutline( 
+static void SetupOutline(
                         Widget wid,
 			GC gc,
                         XSegment pOutline[],
                         XEvent *event,
-			Dimension delta_x, 
+			Dimension delta_x,
 			Dimension delta_y ) ;
-static void EraseOutline( 
+static void EraseOutline(
                         Widget wid,
 			GC gc,
                         XSegment *pOutline) ;
-static void MoveOutline( 
+static void MoveOutline(
                         Widget wid,
 			GC gc,
                         XSegment *pOutline,
                         XEvent *event,
-			Dimension delta_x, 
+			Dimension delta_x,
 			Dimension delta_y ) ;
-static void PullExposureEvents( 
+static void PullExposureEvents(
                         Widget wid ) ;
-static void MoveOpaque( 
+static void MoveOpaque(
                         Widget wid,
                         XEvent *event,
-			Dimension delta_x, 
+			Dimension delta_x,
 			Dimension delta_y ) ;
-static void GetConfigEvent( 
+static void GetConfigEvent(
                         Display *display,
                         Window window,
                         unsigned long mask,
                         XEvent *event) ;
-static Cursor GetTearOffCursor( 
+static Cursor GetTearOffCursor(
                         Widget wid) ;
-static Boolean DoPlacement( 
+static Boolean DoPlacement(
                         Widget wid,
                         XEvent *event) ;
-static void CallTearOffMenuActivateCallback( 
+static void CallTearOffMenuActivateCallback(
                         Widget wid,
                         XEvent *event,
-#if NeedWidePrototypes
-			int origin) ;
-#else
 			unsigned short origin) ;
-#endif	/*NeedWidePrototypes */
-static void CallTearOffMenuDeactivateCallback( 
+static void CallTearOffMenuDeactivateCallback(
                         Widget wid,
                         XEvent *event,
-#if NeedWidePrototypes
-			int origin) ;
-#else
 			unsigned short origin) ;
-#endif	/*NeedWidePrototypes */
 static void RemoveTearOffEventHandlers(
 			Widget wid ) ;
 static void DismissOnPostedFromDestroy(
 			Widget w,
 			XtPointer clientData,
 			XtPointer callData ) ;
-static void DisplayDestroyCallback ( 
-			Widget w, 
-			XtPointer client_data, 
+static void DisplayDestroyCallback (
+			Widget w,
+			XtPointer client_data,
 			XtPointer call_data );
 /********    End Static Function Declarations    ********/
 
@@ -165,8 +157,8 @@ SetupOutline(
 	GC gc,
 	XSegment pOutline[],
 	XEvent *event,
-	Dimension delta_x, 
-	Dimension delta_y) 
+	Dimension delta_x,
+	Dimension delta_y)
 {
    Position x, y;
    Dimension w, h;
@@ -206,7 +198,7 @@ SetupOutline(
       h -= 2;
    }
 
-   XDrawSegments(XtDisplay(wid), wid->core.screen->root, gc, 
+   XDrawSegments(XtDisplay(wid), wid->core.screen->root, gc,
 		 pOutline, SEGS_PER_DRAW);
 }
 
@@ -226,7 +218,7 @@ MoveOutline(
 	GC gc,
 	XSegment *pOutline,
 	XEvent *event,
-	Dimension delta_x, 
+	Dimension delta_x,
 	Dimension delta_y )
 {
    EraseOutline(wid, gc, pOutline);
@@ -259,11 +251,11 @@ static void
 MoveOpaque(
 	Widget wid,
 	XEvent *event,
-	Dimension delta_x, 
+	Dimension delta_x,
 	Dimension delta_y )
 {
    /* Move the MenuShell */
-   XMoveWindow(XtDisplay(wid), XtWindow(XtParent(wid)), 
+   XMoveWindow(XtDisplay(wid), XtWindow(XtParent(wid)),
       event->xbutton.x_root - delta_x, event->xbutton.y_root - delta_y);
 
    /* cleanup exposed frame parts */
@@ -317,9 +309,8 @@ GetConfigEvent(
    }
 }
 
-/*ARGSUSED*/
-static void 
-DisplayDestroyCallback 
+static void
+DisplayDestroyCallback
 	( Widget w,
         XtPointer client_data,
         XtPointer call_data )	/* unused */
@@ -332,31 +323,31 @@ GetTearOffCursor(
        Widget wid )
 {
 	XmDisplay   dd = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
-	Cursor TearOffCursor = 
+	Cursor TearOffCursor =
 		((XmDisplayInfo *)(dd->display.displayInfo))->TearOffCursor;
-	
+
 	if (0L == TearOffCursor)
 		{
-		/* create some data shared among all instances on this 
-		** display; the first one along can create it, and 
+		/* create some data shared among all instances on this
+		** display; the first one along can create it, and
 		** any one can remove it; note no reference count
 		*/
-        	TearOffCursor = 
+        	TearOffCursor =
 			XCreateFontCursor(XtDisplay(wid), XC_fleur);
 		if (0L == TearOffCursor)
 			TearOffCursor = XmGetMenuCursor(XtDisplay(wid));
 		else
-			XtAddCallback((Widget)dd, XtNdestroyCallback, 
+			XtAddCallback((Widget)dd, XtNdestroyCallback,
 			  DisplayDestroyCallback,(XtPointer)TearOffCursor);
-		((XmDisplayInfo *)(dd->display.displayInfo))->TearOffCursor = 
+		((XmDisplayInfo *)(dd->display.displayInfo))->TearOffCursor =
 			TearOffCursor;
 		}
 
    return TearOffCursor;
 }
-
+
 static Boolean
-DoPlacement( 
+DoPlacement(
        Widget wid,
        XEvent *event )
 {
@@ -438,7 +429,7 @@ DoPlacement(
 	    if (moveOpaque)
 	       MoveOpaque((Widget)rc, event, delta_x, delta_y);
 	    else
-               MoveOutline((Widget)rc, tearoffGC, outline, event, 
+               MoveOutline((Widget)rc, tearoffGC, outline, event,
 			   delta_x, delta_y);
             break;
 
@@ -471,16 +462,12 @@ DoPlacement(
 
    return (TRUE);
 }
-
+
 static void
 CallTearOffMenuActivateCallback(
 	Widget wid,
 	XEvent *event,
-#if NeedWidePrototypes
-	int origin )
-#else
 	unsigned short origin )
-#endif	/*NeedWidePrototypes */
 {
    XmRowColumnWidget rc = (XmRowColumnWidget) wid;
    XmRowColumnCallbackStruct callback;
@@ -489,11 +476,11 @@ CallTearOffMenuActivateCallback(
       return;
 
    callback.reason = XmCR_TEAR_OFF_ACTIVATE;
-   callback.event  = event;	
+   callback.event  = event;
    callback.widget = NULL;	/* these next two fields are spec'd NULL */
    callback.data   = (char *)(unsigned long) origin;
    callback.callbackstruct = NULL;
-   XtCallCallbackList ((Widget)rc, rc->row_column.tear_off_activated_callback, 
+   XtCallCallbackList ((Widget)rc, rc->row_column.tear_off_activated_callback,
       &callback);
 }
 
@@ -501,11 +488,7 @@ static void
 CallTearOffMenuDeactivateCallback(
 	Widget wid,
 	XEvent *event,
-#if NeedWidePrototypes
-	int origin )
-#else
 	unsigned short origin )
-#endif	/*NeedWidePrototypes */
 {
    XmRowColumnWidget rc = (XmRowColumnWidget) wid;
    XmRowColumnCallbackStruct callback;
@@ -518,7 +501,7 @@ CallTearOffMenuDeactivateCallback(
    callback.widget = NULL;	/* these next two fields are spec'd NULL */
    callback.data   = (char *)(unsigned long) origin;
    callback.callbackstruct = NULL;
-   XtCallCallbackList ((Widget) rc, 
+   XtCallCallbackList ((Widget) rc,
       rc->row_column.tear_off_deactivated_callback, &callback);
 }
 
@@ -527,8 +510,7 @@ CallTearOffMenuDeactivateCallback(
  * a tearoff menu pane.  This enables the RowColumn to watch for the button
  * presses inside these widgets and to 'do the right thing'.
  */
-/*ARGSUSED*/
-void 
+void
 _XmTearOffBtnDownEventHandler(
         Widget reportingWidget,
         XtPointer data,		/* unused */
@@ -549,8 +531,7 @@ _XmTearOffBtnDownEventHandler(
     *cont = True;
 }
 
-/*ARGSUSED*/
-void 
+void
 _XmTearOffBtnUpEventHandler(
         Widget reportingWidget,
         XtPointer data,		/* unused */
@@ -592,14 +573,14 @@ _XmAddTearOffEventHandlers(
 	 * button presses.  Add an event handler for these widgets
 	 * so that the tearoff RowColumn is alerted about presses in
 	 * these widgets.
-	 * 
+	 *
 	 * This now determines the right widgets to install the
-	 * handlers on by using the MenuSavvy trait.  If the 
+	 * handlers on by using the MenuSavvy trait.  If the
 	 * widget can't supply an activateCB name,  then it is
 	 * assumed that the widget isn't activatable.
-	 * 
+	 *
 	 */
-	if (! XmIsGadget(child) && 
+	if (! XmIsGadget(child) &&
 	    (mtrait == (XmMenuSavvyTrait) NULL ||
 	     mtrait -> getActivateCBName ==
 	     (XmMenuSavvyGetActivateCBNameProc) NULL))
@@ -611,8 +592,8 @@ _XmAddTearOffEventHandlers(
 	  }
 
 	if (XtIsWidget(child))
-	   XtGrabButton (child, (int)AnyButton, AnyModifier, TRUE, 
-	      (unsigned int)ButtonPressMask, GrabModeAsync, GrabModeAsync, 
+	   XtGrabButton (child, (int)AnyButton, AnyModifier, TRUE,
+	      (unsigned int)ButtonPressMask, GrabModeAsync, GrabModeAsync,
 	      None, cursor);
     }
 }
@@ -636,7 +617,7 @@ RemoveTearOffEventHandlers(
 	if ((XtClass(child) == xmLabelWidgetClass) ||
 	    _XmIsFastSubclass(XtClass(child), XmSEPARATOR_BIT))
 	{
-    
+
 	    XtRemoveEventHandler(child, ButtonPressMask, False,
 				 _XmTearOffBtnDownEventHandler,  NULL);
 	    XtRemoveEventHandler(child, ButtonReleaseMask, False,
@@ -655,7 +636,7 @@ _XmDestroyTearOffShell(
    TopLevelShellWidget to_shell = (TopLevelShellWidget)wid;
 
    to_shell->composite.num_children = 0;
-   
+
    if (to_shell->core.being_destroyed)
      return;
 
@@ -675,7 +656,6 @@ _XmDestroyTearOffShell(
    XtDestroyWidget((Widget)to_shell);
 }
 
-/*ARGSUSED*/
 void
 _XmDismissTearOff(
 	Widget shell,
@@ -688,14 +668,14 @@ _XmDismissTearOff(
     */
    if (!shell ||
        !(((ShellWidget)shell)->composite.num_children) ||
-       !(submenu = 
+       !(submenu =
 	 (XmRowColumnWidget)(((ShellWidget)shell)->composite.children[0])) ||
        !RC_TornOff(submenu))
       return;
 
    RC_SetTornOff(submenu, FALSE);
    RC_SetTearOffActive(submenu, FALSE);
-   
+
    /* Unhighlight the active child and clear the focus for the next post */
    if (submenu->manager.active_child)
    {
@@ -733,9 +713,9 @@ _XmDismissTearOff(
 
       /* remove orphan destroy callback from postFromWidget */
       XtRemoveCallback(submenu->row_column.tear_off_lastSelectToplevel,
-	 XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy, 
+	 XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy,
 	 (XtPointer) RC_ParentShell(submenu));
-   } 
+   }
    else	/* toplevel shell! */
    {
       /* Shared menupanes require extra manipulation.  We gotta be able
@@ -749,7 +729,7 @@ _XmDismissTearOff(
       if (submenu)
       {
 	 XtParent(submenu) = RC_ParentShell(submenu);
-         XReparentWindow(XtDisplay(submenu), XtWindow(submenu), 
+         XReparentWindow(XtDisplay(submenu), XtWindow(submenu),
 	    XtWindow(XtParent(submenu)), XtX(submenu), XtY(submenu));
          submenu->core.mapped_when_managed = False;
          submenu->core.managed = False;
@@ -768,13 +748,12 @@ _XmDismissTearOff(
 
       /* remove orphan destroy callback from postFromWidget */
       XtRemoveCallback(submenu->row_column.tear_off_lastSelectToplevel,
-	 XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy, 
+	 XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy,
 	 (XtPointer) shell);
    }
 }
 
-/*ARGSUSED*/
-static void 
+static void
 DismissOnPostedFromDestroy(
 	Widget w,		/* unused */
 	XtPointer clientData,
@@ -865,13 +844,13 @@ _XmTearOffInitiate(
          _XmMenuFocus(XtParent(submenu), XmMENU_MIDDLE, CurrentTime);
          return;
       }
-   } 
+   }
    else
    {
       newEvent.xbutton.x_root = XtX(XtParent(submenu));
       newEvent.xbutton.y_root = XtY(XtParent(submenu));
    }
-	  
+
 
    /* If the submenu already exists, take it down for a retear */
    _XmDismissTearOff(XtParent(submenu), (XtPointer)event, NULL);
@@ -927,8 +906,8 @@ _XmTearOffInitiate(
    XtUnmanageChild(RC_TearOffControl(submenu));
 
    /* Use the toplevel application shell for the parent of the new transient
-    * shell.  This way, the submenu won't inadvertently be destroyed on 
-    * associated-widget's shell destruction.  We'll make the connection to 
+    * shell.  This way, the submenu won't inadvertently be destroyed on
+    * associated-widget's shell destruction.  We'll make the connection to
     * associate-widget with XmNtransientFor.
     */
    for (toplevel = wid; XtParent(toplevel); )
@@ -936,7 +915,7 @@ _XmTearOffInitiate(
 
    XtSetArg(args[0], XmNdeleteResponse, XmDO_NOTHING);
    /* system & title */
-   XtSetArg(args[1], XmNmwmDecorations, 
+   XtSetArg(args[1], XmNmwmDecorations,
       MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MENU);
    XtSetArg(args[2], XmNmwmFunctions, MWM_FUNC_MOVE | MWM_FUNC_CLOSE);
    /* need shell resize for pulldown to resize correctly when reparenting
@@ -946,12 +925,12 @@ _XmTearOffInitiate(
    if (XmIsRowColumn(submenu->row_column.tear_off_lastSelectToplevel) &&
        IsPopup(submenu->row_column.tear_off_lastSelectToplevel))
    {
-      XtSetArg(args[4], XmNtransientFor, 
+      XtSetArg(args[4], XmNtransientFor,
 	 _XmFindTopMostShell(RC_CascadeBtn(
 	    submenu->row_column.tear_off_lastSelectToplevel)));
    }
    else
-      XtSetArg(args[4], XmNtransientFor, 
+      XtSetArg(args[4], XmNtransientFor,
 	 _XmFindTopMostShell(submenu->row_column.tear_off_lastSelectToplevel));
    /* Sorry, still a menu - explicit mode only so focus doesn't screw up */
    XtSetArg(args[5], XmNkeyboardFocusPolicy, XmEXPLICIT);
@@ -986,7 +965,7 @@ _XmTearOffInitiate(
      else
        lwid = cb;
 
-     XtSetArg(args[0], XmNlabelType, &label_type); 
+     XtSetArg(args[0], XmNlabelType, &label_type);
      XtGetValues((Widget)lwid, args, 1);
 
      /* better be a compound string! */
@@ -994,7 +973,7 @@ _XmTearOffInitiate(
        {
 	 XmString title_xms, suffix_xms;
 
-	 XtSetArg(args[0], XmNlabelString, &label_xms); 
+	 XtSetArg(args[0], XmNlabelString, &label_xms);
 	 XtGetValues((Widget)lwid, args, 1);
 
  	 suffix_xms = XmStringCreate(TEAR_OFF_TITLE_SUFFIX, TEAR_OFF_CHARSET);
@@ -1004,10 +983,10 @@ _XmTearOffInitiate(
 
  	 XmStringFree(title_xms);
        }
-   } 
+   }
 
    assert(XtNumber(atom_names) == NUM_ATOMS);
-   XInternAtoms(XtDisplay(to_shell), atom_names, XtNumber(atom_names), FALSE, 
+   XInternAtoms(XtDisplay(to_shell), atom_names, XtNumber(atom_names), FALSE,
 		atoms);
 
    XmAddWMProtocolCallback((Widget)to_shell, atoms[XmAWM_DELETE_WINDOW],
@@ -1017,7 +996,7 @@ _XmTearOffInitiate(
     * off menus.
     */
    XtAddCallback(submenu->row_column.tear_off_lastSelectToplevel,
-      XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy, 
+      XtNdestroyCallback, (XtCallbackProc)DismissOnPostedFromDestroy,
       (XtPointer) to_shell);
 
    RC_ParentShell(submenu) = XtParent(submenu);
@@ -1065,7 +1044,7 @@ _XmTearOffInitiate(
    XGetWindowProperty(XtDisplay(to_shell), XtWindow(to_shell),
 		      atoms[XmA_MOTIF_WM_HINTS], 0,
 		      PROP_MWM_HINTS_ELEMENTS, False,
-		      atoms[XmA_MOTIF_WM_HINTS], 
+		      atoms[XmA_MOTIF_WM_HINTS],
 		      &actual_type, &actual_format, &num_items, &bytes_after,
 		      (unsigned char **)&rprop);
 
@@ -1087,7 +1066,7 @@ _XmTearOffInitiate(
       sprop.status |= MWM_TEAROFF_WINDOW;
       XChangeProperty(XtDisplay(to_shell), XtWindow(to_shell),
 		      atoms[XmA_MOTIF_WM_HINTS], atoms[XmA_MOTIF_WM_HINTS], 32,
-		      PropModeReplace, 
+		      PropModeReplace,
 		      (unsigned char *) &sprop, PROP_MWM_HINTS_ELEMENTS);
    }
 
@@ -1115,7 +1094,7 @@ _XmIsTearOffShellDescendant(
          return(True);
 
       /* Popup is the top! "cascadeBtn" is postFromWidget! */
-      if (IsPopup(rc))	
+      if (IsPopup(rc))
 	 break;
 
       if (!(cb = RC_CascadeBtn(rc)))
@@ -1128,7 +1107,7 @@ _XmIsTearOffShellDescendant(
 
 void
 _XmLowerTearOffObscuringPoppingDownPanes(
-        Widget ancestor, 
+        Widget ancestor,
 	Widget tearOff )
 {
    XRectangle tearOff_rect, intersect_rect;
@@ -1157,7 +1136,6 @@ _XmLowerTearOffObscuringPoppingDownPanes(
       XFlush(XtDisplay(ancestor));
 }
 
-/*ARGSUSED*/
 void
 _XmRestoreExcludedTearOffToToplevelShell(
         Widget wid,
@@ -1166,7 +1144,7 @@ _XmRestoreExcludedTearOffToToplevelShell(
    int i;
    Widget pane;
    XmDisplay dd = (XmDisplay)XmGetXmDisplay(XtDisplay(wid));
-   XmExcludedParentPaneRec *excPP = 
+   XmExcludedParentPaneRec *excPP =
 	&(((XmDisplayInfo *)(dd->display.displayInfo))->excParentPane);
 
    for(i=0; i < excPP->num_panes; i++)
@@ -1191,7 +1169,7 @@ _XmRestoreExcludedTearOffToToplevelShell(
  */
 void
 _XmRestoreTearOffToToplevelShell(
-        Widget wid, 
+        Widget wid,
 	XEvent *event )
 {
    XmRowColumnWidget rowcol = (XmRowColumnWidget)wid;
@@ -1199,7 +1177,7 @@ _XmRestoreTearOffToToplevelShell(
    Dimension almostWidth, almostHeight;
    int i;
    XmDisplay dd = (XmDisplay)XmGetXmDisplay(XtDisplay(wid));
-   XmExcludedParentPaneRec *excPP = 
+   XmExcludedParentPaneRec *excPP =
 	&(((XmDisplayInfo *)(dd->display.displayInfo))->excParentPane);
 
    for(i=0; i < excPP->num_panes; i++)
@@ -1256,7 +1234,7 @@ _XmRestoreTearOffToToplevelShell(
 	 RC_CascadeBtn(rowcol) =
 	    rowcol->row_column.tear_off_lastSelectToplevel;
 
-      CallTearOffMenuActivateCallback((Widget)rowcol, event, 
+      CallTearOffMenuActivateCallback((Widget)rowcol, event,
 	 RESTORE_TEAR_OFF_TO_TOPLEVEL_SHELL);
       _XmCallRowColumnMapCallback((Widget)rowcol, event);
 
@@ -1273,9 +1251,9 @@ _XmRestoreTearOffToToplevelShell(
       if (answer == XtGeometryAlmost)
 	  answer = XtMakeResizeRequest (XtParent(rowcol), almostWidth,
 					almostHeight, NULL, NULL);
-	  
-				    
-      
+
+
+
       /* As in _XmTearOffInitiate(), To get Traversal: _XmGetManagedInfo()
        * to work correctly.
        */
@@ -1283,7 +1261,7 @@ _XmRestoreTearOffToToplevelShell(
       XtManageChild((Widget)rowcol);
 
       /* rehighlight the previous focus item */
-      XmProcessTraversal(rowcol->row_column.tear_off_focus_item, 
+      XmProcessTraversal(rowcol->row_column.tear_off_focus_item,
 	 XmTRAVERSE_CURRENT);
    }
 }
@@ -1312,14 +1290,14 @@ _XmRestoreTearOffToMenuShell(
        *   to this submenu.
        */
       if (RC_TearOffDirty(submenu) ||
-	  (event && (event->type == ButtonPress) && 
+	  (event && (event->type == ButtonPress) &&
 	   (event->xbutton.time == mst->RC_ReplayInfo.time) &&
 	   (mst->RC_ReplayInfo.toplevel_menu == (Widget)submenu)) ||
 	  XmeFocusIsInShell((Widget)submenu))
       {
 	 RC_SetTearOffDirty(submenu, False);
          wasDirty = True;
-	 
+
 	 /* First make sure that the previous active child is unhighlighted.
 	  * In the tear off's inactive state, no children should be
 	  * highlighted.
@@ -1363,7 +1341,7 @@ _XmRestoreTearOffToMenuShell(
        * the XmProcessTraversal() in _XmRestoreTOToTopLevelShell() re-
        * highlights the focus_item.
        */
-      submenu->row_column.tear_off_focus_item = 
+      submenu->row_column.tear_off_focus_item =
 	 XmGetFocusWidget((Widget)submenu);
       _XmClearFocusPath((Widget) submenu);
 

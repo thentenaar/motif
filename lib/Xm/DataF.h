@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 #ifndef _XmDataF_h
 #define _XmDataF_h
@@ -42,12 +42,7 @@ typedef struct _XmDataFieldRec         *XmDataFieldWidget;
  *                 args, num_args - the number and list of args.
  *      Returns: The Widget created.
  */
-
-Widget XmCreateDataField(
-#ifndef _NO_PROTO
-Widget, String, ArgList, Cardinal
-#endif
-);
+Widget XmCreateDataField(Widget, String, ArgList, Cardinal);
 
 /*
  * Variable argument list functions
@@ -62,119 +57,43 @@ extern Widget XmVaCreateManagedDataField(
                         char *name,
                         ...);
 
-Boolean _XmDataFieldReplaceText(
-#ifndef _NO_PROTO
-XmDataFieldWidget, XEvent*, XmTextPosition, XmTextPosition, char*, int, Boolean
-#endif
-);
+Boolean _XmDataFieldReplaceText(XmDataFieldWidget, XEvent*, XmTextPosition, XmTextPosition, char*, int, Boolean);
 
-void XmDataFieldSetString(
-#ifndef _NO_PROTO
-Widget, char*
-#endif
-);
+extern void XmDataFieldSetString(Widget, char *);
 
-extern char * XmDataFieldGetString(
-#ifndef _NO_PROTO
-Widget
-#endif
-);
+extern char * XmDataFieldGetString(Widget);
 
-extern wchar_t * XmDataFieldGetStringWcs(
-#ifndef _NO_PROTO
-Widget
-#endif
-);
+extern wchar_t * XmDataFieldGetStringWcs(Widget);
 
-void _XmDataFieldSetClipRect(
-#ifndef _NO_PROTO
-XmDataFieldWidget
-#endif
-);
+void _XmDataFieldSetClipRect(XmDataFieldWidget);
 
-void _XmDataFieldDrawInsertionPoint(
-#ifndef _NO_PROTO
-XmDataFieldWidget, Boolean
-#endif
-);
+void _XmDataFieldDrawInsertionPoint(XmDataFieldWidget, Boolean);
 
-void XmDataFieldSetHighlight(
-#ifndef _NO_PROTO
-Widget, XmTextPosition, XmTextPosition, XmHighlightMode
-#endif
-);
+void XmDataFieldSetHighlight(Widget, XmTextPosition, XmTextPosition, XmHighlightMode);
 
-void XmDataFieldSetAddMode(
-#ifndef _NO_PROTO
-Widget, Boolean
-#endif
-);
+void XmDataFieldSetAddMode(Widget, Boolean);
 
-char * XmDataFieldGetSelection(
-#ifndef _NO_PROTO
-Widget
-#endif
-);
+char * XmDataFieldGetSelection(Widget);
 
-void XmDataFieldSetSelection(
-#ifndef _NO_PROTO
-Widget, XmTextPosition, XmTextPosition, Time
-#endif
-);
+void XmDataFieldSetSelection(Widget, XmTextPosition, XmTextPosition, Time);
 
-void _XmDataFieldSetSel2(
-#ifndef _NO_PROTO
-Widget, XmTextPosition, XmTextPosition, Boolean, Time
-#endif
-);
+void _XmDataFieldSetSel2(Widget, XmTextPosition, XmTextPosition, Boolean, Time);
 
-Boolean XmDataFieldGetSelectionPosition(
-#ifndef _NO_PROTO
-Widget, XmTextPosition *, XmTextPosition *
-#endif
-);
+Boolean XmDataFieldGetSelectionPosition(Widget, XmTextPosition *, XmTextPosition *);
 
-XmTextPosition XmDataFieldXYToPos(
-#ifndef _NO_PROTO
-Widget, Position, Position
-#endif
-);
+XmTextPosition XmDataFieldXYToPos(Widget, Position, Position);
 
-void XmDataFieldShowPosition(
-#ifndef _NO_PROTO
-Widget, XmTextPosition
-#endif
-);
+void XmDataFieldShowPosition(Widget, XmTextPosition);
 
-Boolean XmDataFieldCut(
-#ifndef _NO_PROTO
-Widget, Time
-#endif
-);
+Boolean XmDataFieldCut(Widget, Time);
 
-Boolean XmDataFieldCopy(
-#ifndef _NO_PROTO
-Widget, Time
-#endif
-);
+Boolean XmDataFieldCopy(Widget, Time);
 
-Boolean XmDataFieldPaste(
-#ifndef _NO_PROTO
-Widget
-#endif
-);
+Boolean XmDataFieldPaste(Widget);
 
-void XmDataFieldSetEditable(
-#ifndef _NO_PROTO
-Widget, Boolean
-#endif
-);
+void XmDataFieldSetEditable(Widget, Boolean);
 
-void XmDataFieldSetInsertionPosition(
-#ifndef _NO_PROTO
-Widget, XmTextPosition
-#endif
-);
+void XmDataFieldSetInsertionPosition(Widget, XmTextPosition);
 
 extern WidgetClass xmDataFieldWidgetClass;
 

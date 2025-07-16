@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: file.c /main/7 1996/10/29 14:29:18 drk $"
@@ -33,13 +33,11 @@ static char rcsid[] = "$XConsortium: file.c /main/7 1996/10/29 14:29:18 drk $"
  *     file.c -- Code for dealing with files and filenames
  *
  *  Contains code to read, write, copy, move & remove files
- *     
+ *
  ************************************************************/
 
 #include <limits.h>
 #include <stdio.h>
-
-#include <Xm/Xm.h>				  /* for _NO_PROTO */
 
 #include "basic.h"
 
@@ -57,11 +55,11 @@ FileRemove(char *filnam)
  * Save Text to File
  ************************************************************/
 
-void 
+void
 FileSaveText(FILE *fil, char *textchars, size_t numchars)
 {
   size_t wrote;
-  
+
     rewind(fil);
   wrote = fwrite(textchars, 1, numchars, fil);
     fflush(fil);
@@ -115,7 +113,7 @@ FileSaveTemp(char *txt)
   static char tmp_nam[L_tmpnam + 1];
 
   (void) tmpnam(tmp_nam);
-  
+
   temp = fopen(tmp_nam, "w");
   fprintf(temp, "%s", txt);
   fclose(temp);

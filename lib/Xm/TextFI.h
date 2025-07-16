@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,70 +37,49 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern int _XmTextFieldCountBytes( 
+extern int _XmTextFieldCountBytes(
                         XmTextFieldWidget tf,
                         wchar_t *wc_value,
                         int num_chars) ;
-extern void _XmTextFToggleCursorGC( 
+extern void _XmTextFToggleCursorGC(
                         Widget widget) ;
-extern void _XmTextFieldDrawInsertionPoint( 
+extern void _XmTextFieldDrawInsertionPoint(
                         XmTextFieldWidget tf,
-#if NeedWidePrototypes
-                        int turn_on) ;
-#else
                         Boolean turn_on) ;
-#endif /* NeedWidePrototypes */
-extern void _XmTextFieldSetClipRect( 
+extern void _XmTextFieldSetClipRect(
                         XmTextFieldWidget tf) ;
-extern void _XmTextFieldSetCursorPosition( 
+extern void _XmTextFieldSetCursorPosition(
                         XmTextFieldWidget tf,
                         XEvent *event,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int adjust_flag,
-                        int call_cb) ;
-#else
                         Boolean adjust_flag,
                         Boolean call_cb) ;
-#endif /* NeedWidePrototypes */
-extern Boolean _XmTextFieldReplaceText( 
+extern Boolean _XmTextFieldReplaceText(
                         XmTextFieldWidget tf,
                         XEvent *event,
                         XmTextPosition replace_prev,
                         XmTextPosition replace_next,
                         char *insert,
                         int insert_length,
-#if NeedWidePrototypes
-                        int move_cursor) ;
-#else
                         Boolean move_cursor) ;
-#endif /* NeedWidePrototypes */
-extern void _XmTextFieldDeselectSelection( 
+extern void _XmTextFieldDeselectSelection(
                         Widget w,
-#if NeedWidePrototypes
-                        int disown,
-#else
                         Boolean disown,
-#endif /* NeedWidePrototypes */
                         Time sel_time) ;
-extern Boolean _XmTextFieldSetDestination( 
+extern Boolean _XmTextFieldSetDestination(
                         Widget w,
                         XmTextPosition position,
                         Time set_time) ;
-extern void _XmTextFieldStartSelection( 
+extern void _XmTextFieldStartSelection(
                         XmTextFieldWidget tf,
                         XmTextPosition left,
                         XmTextPosition right,
                         Time sel_time) ;
-extern void _XmTextFieldSetSel2( 
+extern void _XmTextFieldSetSel2(
                         Widget w,
                         XmTextPosition left,
                         XmTextPosition right,
-#if NeedWidePrototypes
-                        int disown,
-#else
                         Boolean disown,
-#endif /* NeedWidePrototypes */
                         Time sel_time) ;
 extern void _XmTextFieldHandleSecondaryFinished(Widget w,
 						XEvent *event);
@@ -116,4 +95,3 @@ extern int _XmTextFieldCountCharacters(XmTextFieldWidget tf,
 #endif
 
 #endif /* _XmTextFI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

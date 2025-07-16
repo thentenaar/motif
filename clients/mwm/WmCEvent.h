@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,57 +19,55 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2
-*/ 
+*/
 
 
-extern void CheckButtonPressBuiltin (XButtonEvent *buttonEvent, 
-				     Context context, Context subContext, 
+extern void CheckButtonPressBuiltin (XButtonEvent *buttonEvent,
+				     Context context, Context subContext,
 				     int partContext, ClientData *pCD);
-extern void CheckButtonReleaseBuiltin (XButtonEvent *buttonEvent, 
-				       Context context, Context subContext, 
+extern void CheckButtonReleaseBuiltin (XButtonEvent *buttonEvent,
+				       Context context, Context subContext,
 				       ClientData *pCD);
 extern Window GetParentWindow (Window window);
 extern WmScreenData *GetScreenForWindow (Window win);
 extern Boolean HandleCButtonPress (ClientData *pCD, XButtonEvent *buttonEvent);
 extern void HandleCButtonRelease (ClientData *pCD, XButtonEvent *buttonEvent);
-extern void HandleCColormapNotify (ClientData *pCD, 
+extern void HandleCColormapNotify (ClientData *pCD,
 				   XColormapEvent *colorEvent);
-extern void HandleCConfigureRequest (ClientData *pCD, 
+extern void HandleCConfigureRequest (ClientData *pCD,
 				     XConfigureRequestEvent *configureRequest);
-extern void HandleCEnterNotify (ClientData *pCD, 
+extern void HandleCEnterNotify (ClientData *pCD,
 				XEnterWindowEvent *enterEvent);
-extern void HandleCLeaveNotify (ClientData *pCD, 
+extern void HandleCLeaveNotify (ClientData *pCD,
 				XLeaveWindowEvent *leaveEvent);
-extern Boolean HandleCFocusIn (ClientData *pCD, 
+extern Boolean HandleCFocusIn (ClientData *pCD,
 			       XFocusChangeEvent *focusChangeEvent);
-extern Boolean HandleCFocusOut (ClientData *pCD, 
+extern Boolean HandleCFocusOut (ClientData *pCD,
 				XFocusChangeEvent *focusChangeEvent);
 extern Boolean HandleCKeyPress (ClientData *pCD, XKeyEvent *keyEvent);
-extern void HandleClientMessage (ClientData *pCD, 
+extern void HandleClientMessage (ClientData *pCD,
 				 XClientMessageEvent *clientEvent);
 extern void HandleCMotionNotify (ClientData *pCD, XMotionEvent *motionEvent);
-extern void HandleCPropertyNotify (ClientData *pCD, 
+extern void HandleCPropertyNotify (ClientData *pCD,
 				   XPropertyEvent *propertyEvent);
-#ifndef NO_SHAPE
 extern void HandleCShapeNotify (ClientData *pCD,  XShapeEvent *shapeEvent);
-#endif /* NO_SHAPE */
 extern Boolean HandleEventsOnClientWindow (ClientData *pCD, XEvent *pEvent);
 extern Boolean HandleEventsOnSpecialWindows (XEvent *pEvent);
 
 
 extern void SetupCButtonBindings (Window window, ButtonSpec *buttonSpecs);
 extern Boolean WmDispatchClientEvent (XEvent *event);
-extern void HandleIconBoxButtonPress (ClientData *pCD, 
-				      XButtonEvent *buttonEvent, 
+extern void HandleIconBoxButtonPress (ClientData *pCD,
+				      XButtonEvent *buttonEvent,
 				      Context subContext);
 extern void HandleIconButtonPress (ClientData *pCD, XButtonEvent *buttonEvent);
 
 
-extern void ProcessButtonGrabOnClient (ClientData *pCD, 
-				       XButtonEvent *buttonEvent, 
+extern void ProcessButtonGrabOnClient (ClientData *pCD,
+				       XButtonEvent *buttonEvent,
 				       Boolean replayEvent);
 extern void DetermineActiveScreen (XEvent *pEvent);
 extern Boolean WmDispatchClientEvent (XEvent *event);

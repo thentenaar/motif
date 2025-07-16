@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -46,8 +45,6 @@ static char rcsid[] = "$TOG: Transltns.c /main/24 1999/08/09 18:34:51 mgreess $"
 #include <Xm/XmP.h>
 #include <Xm/TransltnsP.h>
 
-#define FIX_1300
-
 /* This is the new-style translation table, which is used with
  * versions of libXt that have the :-production translation fix
  * (fix-trackers seq 2797, or MIT public patch 24).
@@ -62,7 +59,7 @@ static char rcsid[] = "$TOG: Transltns.c /main/24 1999/08/09 18:34:51 mgreess $"
  */
 
 
-/*** ArrowB.c ***/ 
+/*** ArrowB.c ***/
 externaldef(translations) _XmConst char _XmArrowB_defaultTranslations[] = "\
 <EnterWindow>:			Enter()\n\
 <LeaveWindow>:			Leave()\n\
@@ -406,7 +403,7 @@ s ~m ~a <KeyUp>space:		ListKbdEndExtend()\n\
 <Btn5Down>,<Btn5Up>:		ListScrollDown() ListScrollDown() ListScrollDown() ListScrollDown() ListScrollDown() ListScrollDown()";
 
 /*** Manager.c ***/
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmManager_managerTraversalTranslations[] = "\
 <EnterWindow>:			ManagerEnter()\n\
 <LeaveWindow>:			ManagerLeave()\n\
@@ -615,7 +612,7 @@ s ~m ~a <Key>Tab:		PrimitivePrevTabGroup()\n\
 <Btn5Down>,<Btn5Up>:		IncrementDownOrRight(0) IncrementDownOrRight(0) IncrementDownOrRight(0) IncrementDownOrRight(0) IncrementDownOrRight(0) IncrementDownOrRight(0) IncrementDownOrRight(1) IncrementDownOrRight(1) IncrementDownOrRight(1) IncrementDownOrRight(1) IncrementDownOrRight(1)IncrementDownOrRight(1)";
 
 /*** ScrolledW.c ***/
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmScrolledW_ScrolledWindowXlations[] = "\
 <EnterWindow>:		ManagerEnter()\n\
 <FocusOut>:		ManagerFocusOut()\n\
@@ -657,7 +654,7 @@ externaldef(translations) _XmConst char _XmClipWindowTranslationTable[] = "\
 
 
 /*** SelectioB.c ***/
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmSelectioB_defaultTextAccelerators[] = "\
 \043override\n\
 :<Key>osfUp:		SelectionBoxUpOrDown(0)\n\
@@ -945,7 +942,6 @@ c<Btn1Up>:		MenuButtonTakeFocusUp()\n\
 /*** VirtKeys.c ***/
 
 /* Do not abbreviate meta, ctrl, shift, lock, alt, etc. */
-#ifdef FIX_1300
 externaldef(translations) _XmConst char _XmVirtKeys_fallbackBindingString[] = "\
 osfCancel:<Key>Escape,<Key>Cancel\n\
 osfLeft:<Key>Left,<Key>KP_Left\n\
@@ -968,30 +964,6 @@ osfActivate:<Key>KP_Enter,<Key>Execute\n\
 osfClear:<Key>Clear\n\
 osfUndo:<Key>Undo\n\
 osfSwitchDirection:Alt<Key>Return,Alt<Key>KP_Enter";
-#else
-externaldef(translations) _XmConst char _XmVirtKeys_fallbackBindingString[] = "\
-osfCancel:<Key>Escape,<Key>Cancel\n\
-osfLeft:<Key>Left\n\
-osfUp:<Key>Up\n\
-osfRight:<Key>Right\n\
-osfDown:<Key>Down\n\
-osfEndLine:<Key>End\n\
-osfBeginLine:<Key>Home,<Key>Begin\n\
-osfPageUp:<Key>Prior\n\
-osfPageDown:<Key>Next\n\
-osfBackSpace:<Key>BackSpace\n\
-osfDelete:<Key>Delete\n\
-osfInsert:<Key>Insert\n\
-osfAddMode:Shift<Key>F8\n\
-osfHelp:<Key>F1,<Key>Help\n\
-osfMenu:Shift<Key>F10,<Key>Menu\n\
-osfMenuBar:<Key>F10,Shift<Key>Menu\n\
-osfSelect:<Key>Select\n\
-osfActivate:<Key>KP_Enter,<Key>Execute\n\
-osfClear:<Key>Clear\n\
-osfUndo:<Key>Undo\n\
-osfSwitchDirection:Alt<Key>Return,Alt<Key>KP_Enter";
-#endif
 
 /*"Acorn Computers Ltd"
 * Acorn RISC iX versions 1.0->1.2 running on Acorn R140, R225, R260
@@ -1347,5 +1319,4 @@ osfAddMode:Shift <Key>F8\n\
 osfHelp:<Key>F1\n\
 osfMenu:Shift<Key>F10\n\
 osfMenuBar:<Key>F10";
-
 

@@ -58,9 +58,6 @@
 #include "XmI.h"
 #include "XmStringI.h"
 
-#define FIX_1250
-#define FIX_1473
-
 #define	NOKIDS		_XmMMsgComboBox_0000
 #define	TYPEWARNING	_XmMMsgComboBox_0001
 #define	MISSINGKID	_XmMMsgComboBox_0004
@@ -132,7 +129,7 @@ static void CBActivate (Widget, XEvent *, String *, Cardinal *);
 static void CBListAction (Widget, XEvent *, String *, Cardinal *);
 static void CBTextFocusOut (Widget, XEvent *, String *, Cardinal *);
 
-/** Default resource value call procs. **/ 
+/** Default resource value call procs. **/
 static void CheckSetRenderTable (Widget, int, XrmValue *);
 
 /** Synthetic Resource access methods **/
@@ -216,7 +213,7 @@ static void SetEditBoxValue (Widget cb, XmString value);
 #define CBS_VisibleItemCount(w)		\
 	(((XmComboBoxWidget)(w))->combo_box.visible_item_count)
 
-
+
 #define	Offset(field) XtOffsetOf(XmComboBoxRec, field)
 
 static XtResource resources[] =
@@ -235,7 +232,7 @@ static XtResource resources[] =
     XmNhighlightThickness, XmCHighlightThickness, XmRHorizontalDimension,
     sizeof(Dimension), Offset(combo_box.highlight_thickness),
     XmRCallProc, (XtPointer) _XmSetThickness
-  }, 
+  },
   {
     XmNmarginHeight, XmCMarginHeight, XmRVerticalDimension,
     sizeof(Dimension), Offset(combo_box.margin_height),
@@ -282,7 +279,7 @@ static XtResource resources[] =
     XtRImmediate, (XtPointer)XmCOMBO_BOX
   },
 /* Borrow the "text_changed" instance field .. ! */
-  {       
+  {
     "pri.vate", "Pri.vate", XmRBoolean,
     sizeof(Boolean), Offset(combo_box.text_changed),
     XmRImmediate, (XtPointer) False
@@ -333,7 +330,7 @@ static XtResource resources[] =
     XmRImmediate, (XtPointer)XmZERO_BASED
   }
 };
-
+
 /*
  * Resolution independent resources and resources needing special processing.
  */
@@ -374,24 +371,24 @@ static XmSyntheticResource syn_resources[] =
     XmeFromHorizontalPixels, XmeToHorizontalPixels
   },
   {
-    XmNcolumns, sizeof(short), Offset(combo_box.columns), 
+    XmNcolumns, sizeof(short), Offset(combo_box.columns),
     CBGetColumns, NULL
-  }, 
+  },
   {
     XmNitems, sizeof(XmStringTable), Offset(combo_box.items),
     CBGetItems, NULL
-  },                                        
+  },
   {
-    XmNitemCount, sizeof(int), Offset(combo_box.item_count), 
+    XmNitemCount, sizeof(int), Offset(combo_box.item_count),
     CBGetItemCount, NULL
-  }, 
+  },
   {
-    XmNvisibleItemCount, sizeof(int), Offset(combo_box.visible_item_count), 
+    XmNvisibleItemCount, sizeof(int), Offset(combo_box.visible_item_count),
     CBGetVisibleItemCount, NULL
   }
 };
 #undef Offset
-
+
 static XtAccelerators parsed_accelerators;
 static XtAccelerators parsed_list_accelerators;
 static XtTranslations parsed_list_translations;
@@ -408,7 +405,7 @@ static XtActionsRec actionsList[] = {
   { "CBListAction",		CBListAction		},
   { "CBTextFocusOut",		CBTextFocusOut		}
 };
-
+
 /* Class Record Initialization */
 externaldef(xmcomboboxclassrec) XmComboBoxClassRec xmComboBoxClassRec =
 {
@@ -485,7 +482,7 @@ externaldef(xmcomboboxclassrec) XmComboBoxClassRec xmComboBoxClassRec =
 
 externaldef(xmcomboboxwidgetclass) WidgetClass xmComboBoxWidgetClass =
        (WidgetClass) &xmComboBoxClassRec;
-
+
 
 /* ------------- WIDGET CLASS METHODS ---------- */
 
@@ -494,8 +491,6 @@ externaldef(xmcomboboxwidgetclass) WidgetClass xmComboBoxWidgetClass =
  * Initialize()
  *	Called by the Intrinsics when a new ComboBox is created.
  */
-
-/*ARGSUSED*/
 static void
 Initialize(Widget    request,	/* unused */
 	   Widget    new_w,
@@ -504,11 +499,9 @@ Initialize(Widget    request,	/* unused */
 {
   XmComboBoxWidget newcb = (XmComboBoxWidget)new_w;
   Widget	   ancestor;
-  int i; 
-#ifdef FIX_1473
+  int i;
   Cardinal num_child_args;
   ArgList child_args;
-#endif
 
   /* Setup internal state. */
   CB_ShellState(newcb) = POPPED_DOWN;
@@ -581,11 +574,10 @@ Initialize(Widget    request,	/* unused */
     CB_RenderTable(newcb) = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
   CB_RenderTable(newcb) = XmFontListCopy(CB_RenderTable(newcb));
 
-#ifdef FIX_1473
   /* Ignore XmNheight resource value for descedants */
   num_child_args = 0;
   child_args = (ArgList) XtMalloc(sizeof(Arg) * *num_args);
-  for (i = 0; i < *num_args; i++) 
+  for (i = 0; i < *num_args; i++)
 	  if (strcmp(args[i].name, "height")) {
 		  child_args[num_child_args] = args[i];
 	  	  num_child_args++;
@@ -593,10 +585,6 @@ Initialize(Widget    request,	/* unused */
   /* Create the widgets that make up a ComboBox. */
   CreateChildren(new_w, child_args, &num_child_args);
   XtFree((char *) child_args);
-#else
-  /* Create the widgets that make up a ComboBox. */
-  CreateChildren(new_w, args, num_args);
-#endif
 
   /* Walk up hierarchy to find vendor shell. */
   ancestor = XtParent(new_w);
@@ -622,7 +610,7 @@ Initialize(Widget    request,	/* unused */
   CBS_SelectedPosition(newcb) = XmINVALID_POSITION;
   CBS_SelectedItem(newcb) = NULL;
 }
-
+
 /*
  * ClassInitialize()
  *	This routine is invoked only once.
@@ -641,23 +629,23 @@ ClassInitialize(void)
   parsed_text_focus_translations =
     XtParseTranslationTable(_XmComboBox_textFocusTranslations);
 }
-
+
 /*
  * ClassPartInitialize()
  *	Set up the fast subclassing.  Invoked for every (sub)class of
- * ComboBox. 
+ * ComboBox.
  */
 static void
 ClassPartInitialize(WidgetClass wc)
 {
   _XmFastSubclassInit (wc, XmCOMBO_BOX_BIT);
 }
-
+
 /*
  * InsertChild()
  *	Called by the intrinsics when a new child is added to a ComboBox.
  * Generate an error message if an application tries to insert widgets
- * into the ComboBox. 
+ * into the ComboBox.
  */
 
 static void
@@ -682,14 +670,12 @@ InsertChild(Widget child)
   (*insert_child)(child);
   }
 }
-
+
 
 /*
  * SetValues()
  *	Called by Intrinsics when XtSetValues is called on the ComboBox.
  */
-
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget    current,
 	  Widget    request,	/* unused */
@@ -757,7 +743,7 @@ SetValues(Widget    current,
   /* Propagate XmNcolumns to the edit box. */
   if (CBS_Columns(newcb) != XmUNSPECIFIED_COLUMNS)
     {
-      XtSetArg(editbox_args[neditbox], XmNcolumns, CBS_Columns(newcb)), 
+      XtSetArg(editbox_args[neditbox], XmNcolumns, CBS_Columns(newcb)),
         neditbox++;
       CBS_Columns(newcb) = XmUNSPECIFIED_COLUMNS;
       resize = dolayout = redisplay = TRUE;
@@ -780,12 +766,9 @@ SetValues(Widget    current,
   /* Propagate XmNvisibleItemCount to the list. */
   if (CBS_VisibleItemCount(newcb) != XmUNSPECIFIED_COUNT)
     {
-      XtSetArg(list_args[nlist], XmNvisibleItemCount, 
+      XtSetArg(list_args[nlist], XmNvisibleItemCount,
 	       CBS_VisibleItemCount(newcb)), nlist++;
       CBS_VisibleItemCount(newcb) = XmUNSPECIFIED_COUNT;
-#ifndef FIX_1250
-      resize = dolayout = redisplay = TRUE;
-#endif
     }
 
   /* Propagate our XmNborderWidth to the popup list shell. */
@@ -793,7 +776,7 @@ SetValues(Widget    current,
     {
       if (CB_Type(curcb) != XmCOMBO_BOX)
 	{
-	  XtSetArg(shell_args[nshell], XmNborderWidth, XtBorderWidth(newcb)), 
+	  XtSetArg(shell_args[nshell], XmNborderWidth, XtBorderWidth(newcb)),
 	    nshell++;
 
 	  redisplay = TRUE;
@@ -804,13 +787,13 @@ SetValues(Widget    current,
   if (CB_RenderTable(curcb) != CB_RenderTable(newcb))
     {
       if (CB_RenderTable(newcb) == NULL)
-	CB_RenderTable(newcb) = XmeGetDefaultRenderTable(new_w, 
+	CB_RenderTable(newcb) = XmeGetDefaultRenderTable(new_w,
 							 XmTEXT_FONTLIST);
       CB_RenderTable(newcb) = XmFontListCopy(CB_RenderTable(newcb));
 
-      XtSetArg(editbox_args[neditbox], XmNrenderTable, CB_RenderTable(newcb)), 
+      XtSetArg(editbox_args[neditbox], XmNrenderTable, CB_RenderTable(newcb)),
         neditbox++;
-      XtSetArg(list_args[nlist], XmNrenderTable, CB_RenderTable(newcb)), 
+      XtSetArg(list_args[nlist], XmNrenderTable, CB_RenderTable(newcb)),
         nlist++;
 
       /* Free the old render table after we update the children. */
@@ -832,13 +815,13 @@ SetValues(Widget    current,
 
       if (CB_Type(newcb) != XmDROP_DOWN_LIST)
 	{
-	  XtSetArg(editbox_args[neditbox], XmNshadowThickness, 
+	  XtSetArg(editbox_args[neditbox], XmNshadowThickness,
 		   MGR_ShadowThickness(newcb)), neditbox++;
 	}
 
       if (CB_Type(curcb) != XmCOMBO_BOX)
 	{
-	  XtSetArg(shell_args[nshell], XmNshadowThickness, 
+	  XtSetArg(shell_args[nshell], XmNshadowThickness,
 		   MGR_ShadowThickness(newcb)), nshell++;
 	}
     }
@@ -922,7 +905,7 @@ SetValues(Widget    current,
     }
 
   /*
-   * Recompute our layout, if realized. 
+   * Recompute our layout, if realized.
    * We could check and not resize and add a SetValuesAlmost (like the
    * one in Label) that would call Resize if the parent denies the request.
    */
@@ -931,13 +914,11 @@ SetValues(Widget    current,
 
   return redisplay;
 }
-
+
 /* ReduceResources()
  *	Called from ChangeManaged when some resources need to be
  * diminished in order to satisfy a resource request.
  */
-
-/*ARGSUSED*/
 static Boolean
 ReduceResources(Widget     widget,
 		Dimension *width,
@@ -948,7 +929,7 @@ ReduceResources(Widget     widget,
   int delta;
 
   /* Space is stolen from resources in this order:
-   *	MarginHeight, MarginWidth, ArrowSpacing, 
+   *	MarginHeight, MarginWidth, ArrowSpacing,
    *	ShadowThickness, HighlightThickness
    */
 
@@ -1027,7 +1008,7 @@ ReduceResources(Widget     widget,
 
   return (!*width && !*height);
 }
-
+
 /*
  * Reduce()
  *	A helper for ReduceResources, this routine will decrement a
@@ -1049,7 +1030,7 @@ Reduce(Dimension *size,
 
   return change;
 }
-
+
 /*
  * Resize()
  *	Sizes and places the children of the ComboBox depending on its
@@ -1067,7 +1048,7 @@ Resize(Widget widget)
 
   DoLayout(widget);
 }
-
+
 
 static void
 CheckMinimalSize(
@@ -1125,7 +1106,7 @@ ChangeManaged(Widget widget)
    */
   if (desired.width == 0 || desired.height == 0)
       ComputeSize((Widget)cb, 0, 0, &desired.width, &desired.height);
-  else 
+  else
       CheckMinimalSize((Widget)cb, &desired.width, &desired.height);
 
   /* Make request to parent*/
@@ -1158,7 +1139,7 @@ ChangeManaged(Widget widget)
   /* Layout the widget */
   DoLayout(widget);
 }
-
+
 /*
  * GeometryManager()
  *	Handle geometry change requests from our children.
@@ -1179,7 +1160,7 @@ GeometryManager(Widget		  mychild,
      * Reject anything requests a change of position.  We don't even
      * consider "almosting" what goes with it, i.e. a size request.
      */
-    if (request->request_mode & (CWX | CWY)) 
+    if (request->request_mode & (CWX | CWY))
 	return XtGeometryNo ;
 
     my_request.request_mode = 0;
@@ -1194,14 +1175,14 @@ GeometryManager(Widget		  mychild,
 
     if (request->request_mode & XtCWQueryOnly)
 	my_request.request_mode |= XtCWQueryOnly;
-    
+
     if (request->request_mode & CWWidth) {
 	my_request.request_mode |= CWWidth;
 	width += (int)request->width - (int)XtWidth(mychild);
 	if (mychild == CB_EditBox(cb))
-	    cb->combo_box.ideal_ebwidth = request->width;  
+	    cb->combo_box.ideal_ebwidth = request->width;
 	else {
-	    /* 
+	    /*
 	     * Compromise rather than letting the list shrink smaller
 	     * than the Text's preferred width.
 	     */
@@ -1209,23 +1190,23 @@ GeometryManager(Widget		  mychild,
 
 	    GetThickness((Widget)cb, &thickW, &thickH);
 	    if (!cb->combo_box.ideal_ebwidth)
-		GetIdealTextSize((Widget)cb, &cb->combo_box.ideal_ebwidth, 
+		GetIdealTextSize((Widget)cb, &cb->combo_box.ideal_ebwidth,
 				 NULL);
-	    if (width < cb->combo_box.ideal_ebwidth 
+	    if (width < cb->combo_box.ideal_ebwidth
 		+ 2 * (thickW + XtBorderWidth(CB_EditBox(cb)))) {
-		width = cb->combo_box.ideal_ebwidth 
+		width = cb->combo_box.ideal_ebwidth
 		    + 2 * (thickW + XtBorderWidth(CB_EditBox(cb))) ;
 		almost_list_width = cb->combo_box.ideal_ebwidth ;
 		my_request.request_mode |= XtCWQueryOnly;
 	    }
 	}
     }
-    
+
     if (request->request_mode & CWHeight) {
 	my_request.request_mode |= CWHeight;
 	height += (int)request->height - (int)XtHeight(mychild);
 	if (mychild == CB_EditBox(cb))
-	    cb->combo_box.ideal_ebheight = request->height;  
+	    cb->combo_box.ideal_ebheight = request->height;
     }
 
     if (request->request_mode & CWBorderWidth) {
@@ -1236,7 +1217,7 @@ GeometryManager(Widget		  mychild,
 
     if (width > 0) my_request.width = (Dimension) width ;
     if (height > 0) my_request.height = (Dimension) height ;
-      
+
     CheckMinimalSize((Widget)cb, &my_request.width, &my_request.height);
 
     res = XtMakeGeometryRequest((Widget)cb, &my_request, NULL);
@@ -1268,13 +1249,11 @@ GeometryManager(Widget		  mychild,
 }
 
 
-
+
 /*
  * Redisplay()
  *	General redisplay function called on exposure events.
  */
-
-/*ARGSUSED*/
 static void
 Redisplay(Widget widget,
 	  XEvent *event,	/* unused */
@@ -1295,7 +1274,7 @@ Redisplay(Widget widget,
 	UnhighlightBorder(widget);
     }
 }
-
+
 /*
  * Destroy()
  *	Called by the Intrinsics when a ComboBox widget is destroyed.
@@ -1308,7 +1287,7 @@ Destroy(Widget widget)
   Widget           ancestor;
 
   if (CB_Type(widget) != XmCOMBO_BOX)
-    XtRemoveEventHandler(widget, POPUP_EVENT_MASK, FALSE, 
+    XtRemoveEventHandler(widget, POPUP_EVENT_MASK, FALSE,
 			 PopupEH, (XtPointer)widget);
 
   /* The remove focus moved callback from the vendor shell. */
@@ -1324,7 +1303,7 @@ Destroy(Widget widget)
 
   XmFontListFree(CB_RenderTable(cb));
 }
-
+
 /*
  * QueryGeometry()
  */
@@ -1339,9 +1318,9 @@ QueryGeometry(Widget		widget,
     {
       desired->width = XtWidth(widget);    /* might be 0 */
       desired->height = XtHeight(widget);  /* might be 0 */
-    } 
+    }
   else
-    {	
+    {
       /* Always computes natural size afterwards. */
       desired->width = 0;
       desired->height = 0;
@@ -1352,7 +1331,7 @@ QueryGeometry(Widget		widget,
   /* This function will set CWidth and CHeight. */
   return XmeReplyToQueryGeometry(widget, intended, desired);
 }
-
+
 /*
  * ConstraintDestroy()
  */
@@ -1387,7 +1366,7 @@ ConstraintDestroy(Widget child)
       cb->combo_box.hsb = NULL;
     }
 }
-
+
 /*
  * ComboBoxParentProcess()
  */
@@ -1441,7 +1420,7 @@ ComboBoxParentProcess(Widget		  wid,
 	  if (((CB_Type(cb) == XmCOMBO_BOX) || !cont) && count)
 	    {
 	      XmListCallbackStruct call_data;
-	
+
 	      bzero((char*) &call_data, sizeof(XmListCallbackStruct));
 	      if (pos)
 		{
@@ -1479,7 +1458,7 @@ ComboBoxParentProcess(Widget		  wid,
   else
     return True;
 }
-
+
 /* ------------- CALLBACKS ---------- */
 
 
@@ -1487,8 +1466,6 @@ ComboBoxParentProcess(Widget		  wid,
  * TextChangedCB()
  *	Callback function invoked when the edit box value is changed.
  */
-
-/*ARGSUSED*/
 static void
 TextChangedCB(Widget    widget,	/* unused */
 	      XtPointer client_data,
@@ -1499,13 +1476,11 @@ TextChangedCB(Widget    widget,	/* unused */
   /* Remember to generate a selection callback when focus moves. */
   CB_TextChanged(cb) = TRUE;
 }
-
+
 /*
  * ListSelectionCB()
  *	Callback function called when an item is selected from the list.
  */
-
-/*ARGSUSED*/
 static void
 ListSelectionCB(Widget widget,	/* unused */
 		XtPointer client_data,
@@ -1557,13 +1532,11 @@ ListSelectionCB(Widget widget,	/* unused */
 	}
     }
 }
-
+
 /*
  * ShellPopupCB()
  *	Called when the grab shell is posted.  Fixup focus.
  */
-
-/*ARGSUSED*/
 static void
 ShellPopupCB(Widget    widget,	/* unused */
 	     XtPointer client_data,
@@ -1575,13 +1548,11 @@ ShellPopupCB(Widget    widget,	/* unused */
 
   (void) XmProcessTraversal(CB_List(cb), XmTRAVERSE_CURRENT);
 }
-
+
 /*
  * ShellPopdownCB()
  *	Called when the grab shell is unposted.
  */
-
-/*ARGSUSED*/
 static void
 ShellPopdownCB(Widget    widget,    /* unused */
 	       XtPointer client_data,
@@ -1609,7 +1580,7 @@ ShellPopdownCB(Widget    widget,    /* unused */
       CBFocusOut((Widget)cb, NULL, NULL, NULL);
 
       /* CR 7122: Tell the edit box to stop blinking now. */
-      if (CB_Type(cb) == XmDROP_DOWN_COMBO_BOX) 
+      if (CB_Type(cb) == XmDROP_DOWN_COMBO_BOX)
 	{
 	  XEvent focus_event;
 
@@ -1619,13 +1590,11 @@ ShellPopdownCB(Widget    widget,    /* unused */
 	}
     }
 }
-
+
 /*
  * FocusMovedCB()
  *	Called from VendorShell every time focus moves.
  */
-
-/*ARGSUSED*/
 static void
 FocusMovedCB(Widget    widget,	/* unused */
 	     XtPointer client_data,
@@ -1662,7 +1631,7 @@ FocusMovedCB(Widget    widget,	/* unused */
       if (CB_ShellState(cb) == POPPED_UP)
 	getting_focus = TRUE;
       else if ((callback->new_focus == XtParent(cb)) &&
-	       XQueryPointer(XtDisplay(cb), XtWindow(cb), &root, &child, 
+	       XQueryPointer(XtDisplay(cb), XtWindow(cb), &root, &child,
 			     &root_x, &root_y, &win_x, &win_y, &mod_mask) &&
 	       (win_x >= 0) && (win_x < XtWidth(cb)) &&
 	       (win_y >= 0) && (win_y < XtHeight(cb)))
@@ -1685,7 +1654,7 @@ FocusMovedCB(Widget    widget,	/* unused */
       CBFocusIn((Widget)cb, callback->event, NULL, NULL);
     }
 }
-
+
 /* ------------- ACTION ROUTINES ---------- */
 
 
@@ -1695,8 +1664,6 @@ FocusMovedCB(Widget    widget,	/* unused */
  * is in an arrow, otherwise ignore the event.  If it is in an arrow,
  * then supply visual feedback and perform the appropriate action.
  */
-
-/*ARGSUSED*/
 static void
 CBArmAndDropDownList(Widget widget,
 		     XEvent *event,
@@ -1711,7 +1678,7 @@ CBArmAndDropDownList(Widget widget,
     return;
 
   /* Ignore the event if this is a replay */
-  if (! _XmIsEventUnique(event)) 
+  if (! _XmIsEventUnique(event))
     return;
 
   if (!cb)
@@ -1731,13 +1698,11 @@ CBArmAndDropDownList(Widget widget,
       CBDropDownList((Widget)cb, event, NULL, NULL);
     }
 }
-
+
 /*
  * CBDisarm()
  *	Handle button up action and undo CBArmAndDropDownList.
  */
-
-/*ARGSUSED*/
 static void
 CBDisarm(Widget widget,
 	 XEvent *event,		/* unused */
@@ -1761,7 +1726,7 @@ CBDisarm(Widget widget,
 	}
     }
 }
-
+
 /*
  * CBDropDownList()
  *	Action to post/unpost the drop down list.
@@ -1794,12 +1759,12 @@ CBDropDownList(Widget    widget,
 	  Dimension shell_width;
 
 	  XtTranslateCoords((Widget)cb, XtX(cb), XtY(cb), &root_x, &root_y);
-	
+
 	  shell_x = root_x - XtX(cb) + CB_HighlightThickness(cb) -
-	    XtBorderWidth(CB_ListShell(cb)); 
+	    XtBorderWidth(CB_ListShell(cb));
 	  shell_y = root_y + XtHeight(cb) - CB_HighlightThickness(cb) -
-	    XtY(cb); 
-	
+	    XtY(cb);
+
 	  /* Try to position the shell on the screen. */
 	  tmp = WidthOfScreen(XtScreen(cb)) - XtWidth(CB_ListShell(cb));
 	  tmp = MIN(tmp, shell_x);
@@ -1838,13 +1803,11 @@ CBDropDownList(Widget    widget,
 	}
     }
 }
-
+
 /*
  * CBFocusIn()
  *	Action routine to draw focus highlighting.
  */
-
-/*ARGSUSED*/
 static void
 CBFocusIn(Widget    widget,
 	  XEvent   *event,	/* unused */
@@ -1861,13 +1824,11 @@ CBFocusIn(Widget    widget,
 
   HighlightBorder((Widget)cb);
 }
-
+
 /*
  * CBFocusOut()
  *	Action routine to erase focus highlighting.
  */
-
-/*ARGSUSED*/
 static void
 CBFocusOut(Widget    widget,
 	   XEvent   *event,
@@ -1887,13 +1848,11 @@ CBFocusOut(Widget    widget,
   if (CB_TextChanged(cb))
     CallSelectionCallbacks((Widget)cb, event);
 }
-
+
 /*
  * CBTextFocusOut()
  *	Action routine to fake the text field cursor into blinking.
  */
-
-/*ARGSUSED*/
 static void
 CBTextFocusOut(Widget    widget,
 	       XEvent   *event,
@@ -1917,7 +1876,7 @@ CBTextFocusOut(Widget    widget,
 		       (num_params ? *num_params : 0));
     }
 }
-
+
 /*
  * CBActivate()
  *	Action routine called when the list is activated.
@@ -1946,7 +1905,7 @@ CBActivate(Widget    widget,
 
   ComboBoxParentProcess((Widget)cb, (XmParentProcessData) &p_event);
 }
-
+
 /*
  * CBCancel()
  *	Action invoked from the drop down list.
@@ -1975,7 +1934,7 @@ CBCancel(Widget    widget,
 
   ComboBoxParentProcess((Widget)cb, (XmParentProcessData) &p_event);
 }
-
+
 /*
  * CBListAction()
  *	Generic action to perform operations on the list.
@@ -2038,14 +1997,14 @@ CBListAction(Widget    widget,
 		if (*pos >= 1)
 		  XmListSelectPos(CB_List(cb), *pos - 1, TRUE);
 		break;
-	
+
 	      case DOWN:
 		if (*pos < num_items)
 		  XmListSelectPos(CB_List(cb), *pos + 1, TRUE);
 		else if (*pos == num_items)
 		  XmListSelectPos(CB_List(cb), 1, TRUE);
 		break;
-	
+
 	      default:
 		assert(FALSE);
 	      }
@@ -2081,7 +2040,7 @@ CBListAction(Widget    widget,
       assert(FALSE);
     }
 }
-
+
 /*
  * PopdownList()
  *	Internal utility to unpost the grabshell.
@@ -2104,7 +2063,7 @@ PopdownList(Widget cb,
 
   return FALSE;
 }
-
+
 /* ------------- EVENT HANDLERS ---------- */
 
 
@@ -2112,8 +2071,6 @@ PopdownList(Widget cb,
  * PopupEH()
  *	An XtEventHandler for the popup shell (the drop-down list).
  */
-
-/*ARGSUSED*/
 static void
 PopupEH(Widget    widget,	/* unused */
 	XtPointer client_data,
@@ -2154,24 +2111,22 @@ PopupEH(Widget    widget,	/* unused */
       break;
     }
 }
-
+
 /*
  * CR 6925: The following two event handlers are used to coordinate
  * grabs between the scrollbar and the grab shell in dropdown lists.
  * In this case the existing active grab started by the grab shell
  * will interfere with the passive grab started by X when the user
- * presses a button within the scrollbar.  
+ * presses a button within the scrollbar.
  *
  * To deal with the problem, SBBtnDownEH will do an XtGrabPointer
  * to transfer the grab to the scrollbar and SBBtnUpEH will cause
  * the grab to return to the grab shell.
  */
-
-/*ARGSUSED*/
 static void
-SBBtnDownEH(Widget    w, 
-	    XtPointer client_data, 
-	    XEvent   *event, 
+SBBtnDownEH(Widget    w,
+	    XtPointer client_data,
+	    XEvent   *event,
 	    Boolean  *cont)	/* unused */
 {
   XmGrabShellWidget shell = (XmGrabShellWidget) client_data;
@@ -2180,12 +2135,11 @@ SBBtnDownEH(Widget    w,
 		GrabModeAsync, GrabModeAsync,
 		None, shell->grab_shell.cursor, event->xbutton.time);
 }
-
-/*ARGSUSED*/
+
 static void
 SBBtnUpEH(Widget    w,		/* unused */
-	  XtPointer client_data, 
-	  XEvent   *event, 
+	  XtPointer client_data,
+	  XEvent   *event,
 	  Boolean  *cont)	/* unused */
 {
   XmGrabShellWidget shell = (XmGrabShellWidget) client_data;
@@ -2193,14 +2147,14 @@ SBBtnUpEH(Widget    w,		/* unused */
   /* Note that this regrab to the grab shell will need to be changed
    * if the kind of grab that the grabshell imposes changes.
    */
-  XtGrabPointer((Widget) shell, shell->grab_shell.owner_events, 
+  XtGrabPointer((Widget) shell, shell->grab_shell.owner_events,
 		Events,
 		shell->grab_shell.grab_style, GrabModeAsync,
 		None, shell->grab_shell.cursor, event->xbutton.time);
   if (shell->grab_shell.grab_style == GrabModeSync)
     XAllowEvents(XtDisplay(shell), SyncPointer, event->xbutton.time);
 }
-
+
 /*
  * FindComboBox()
  *	An internal utility routine to traverse up the widget
@@ -2217,7 +2171,7 @@ FindComboBox(Widget widget)
 
   return (XmComboBoxWidget) cb;
 }
-
+
 /*
  * CallSelectionCallbacks()
  *	Utility routine to invoke the ComboBox selection callback.
@@ -2251,7 +2205,7 @@ CallSelectionCallbacks(Widget  widget,
 
   XmStringFree(item);
 }
-
+
 /* ------------- DEFAULT RESOURCE VALUE CALLPROCS ---------- */
 
 /*
@@ -2261,9 +2215,7 @@ CallSelectionCallbacks(Widget  widget,
  * this function has been called twice on same widget -> implying that
  * resource needs to be set NULL, otherwise leave it alone.
  */
-
-/*ARGSUSED*/
-static void 
+static void
 CheckSetRenderTable(Widget wid,
 		    int offset,
 		    XrmValue *value)
@@ -2277,7 +2229,7 @@ CheckSetRenderTable(Widget wid,
   }
 }
 
-
+
 /* ------------- SYNTHETIC RESOURCE ACCESS METHODS ------------- */
 
 
@@ -2288,8 +2240,6 @@ CheckSetRenderTable(Widget wid,
  * called and children have been created.  Make sure children have
  * been created before doing anything.
  */
-
-/*ARGSUSED*/
 static XmImportOperator
 CBSetSelectedItem(Widget    widget,
 		  int       offset, /* unused */
@@ -2320,13 +2270,11 @@ CBSetSelectedItem(Widget    widget,
 
   return XmSYNTHETIC_NONE;
 }
-
+
 /*
  * CBGetSelectedItem()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetSelectedItem(Widget    widget,
 		  int       offset, /* unused */
@@ -2334,13 +2282,11 @@ CBGetSelectedItem(Widget    widget,
 {
   *value = (XtArgVal) GetEditBoxValue(widget);
 }
-
+
 /*
  * CBSetSelectedPos()
  *	A synthetic resource import procedure.
  */
-
-/*ARGSUSED*/
 static XmImportOperator
 CBSetSelectedPos(Widget    widget,
 		 int       offset, /* unused */
@@ -2352,10 +2298,10 @@ CBSetSelectedPos(Widget    widget,
   Arg args[3];
   int new_pos;
 
-  /* 
+  /*
    * This procedure can get called at create time BEFORE ComboBox's
    * Initialize() has been called and children have been created.
-   * Make sure children have been created before doing anything. 
+   * Make sure children have been created before doing anything.
    */
   if (!cb->composite.num_children)
     return XmSYNTHETIC_NONE;
@@ -2378,13 +2324,11 @@ CBSetSelectedPos(Widget    widget,
 
   return XmSYNTHETIC_NONE;
 }
-
+
 /*
  * CBGetSelectedPos()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetSelectedPos(Widget    widget,
 		 int       offset, /* unused */
@@ -2410,13 +2354,11 @@ CBGetSelectedPos(Widget    widget,
 
   *value = result;
 }
-
+
 /*
  * CBGetColumns()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetColumns(Widget    widget,
 	     int       offset,	/* unused */
@@ -2438,13 +2380,11 @@ CBGetColumns(Widget    widget,
 
   *value = (XtArgVal)columns;
 }
-
+
 /*
  * CBGetItems()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetItems(Widget    widget,
 	   int       offset,	/* unused */
@@ -2466,13 +2406,11 @@ CBGetItems(Widget    widget,
 
   *value = (XtArgVal)items;
 }
-
+
 /*
  * CBGetItemCount()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetItemCount(Widget    widget,
 	       int       offset, /* unused */
@@ -2494,13 +2432,11 @@ CBGetItemCount(Widget    widget,
 
   *value = (XtArgVal)count;
 }
-
+
 /*
  * CBGetVisibleItemCount()
  *	A synthetic resource export procedure.
  */
-
-/*ARGSUSED*/
 static void
 CBGetVisibleItemCount(Widget    widget,
 		      int       offset, /* unused */
@@ -2522,7 +2458,7 @@ CBGetVisibleItemCount(Widget    widget,
 
   *value = (XtArgVal)viz_count;
 }
-
+
 /* ------------- ADDITIONAL FUNCTIONS ---------- */
 
 
@@ -2545,7 +2481,7 @@ HighlightBorder(Widget w)
   XmeDrawHighlight(XtDisplay(cb), XtWindow(cb), cb->manager.highlight_GC, 0, 0,
 		   XtWidth(cb), XtHeight(cb), CB_HighlightThickness(cb));
 }
-
+
 /*
  * UnhighlightBorder()
  */
@@ -2565,7 +2501,7 @@ UnhighlightBorder(Widget w)
   XmeDrawHighlight(XtDisplay(cb), XtWindow(cb), cb->manager.background_GC,
 		   0, 0, XtWidth(w), XtHeight(w), CB_HighlightThickness(cb));
 }
-
+
 /*
  * DoLayout()
  *	Computes layout and sizes of children given a size for their
@@ -2705,7 +2641,7 @@ DoLayout(Widget widg)
 		       ebW, ebH, XtBorderWidth(CB_EditBox(cb)));
   }
 }
-
+
 /*
  * ComputeSize()
  *	Determines the width and height of a ComboBox.
@@ -2771,7 +2707,7 @@ ComputeSize(Widget w,
   if (! *height)
     *height = MAX(cbHeight, 1);
 }
-
+
 /*
  * GetIdealTextSize()
  */
@@ -2795,7 +2731,7 @@ GetIdealTextSize(Widget w,
   if (height)
     *height = text_pref.height;
 }
-
+
 /*
  * GetDefaultArrowSize()
  */
@@ -2810,7 +2746,7 @@ GetDefaultArrowSize(Widget w)
 
   return((int) ((float) cb->combo_box.ideal_ebheight * DEFAULT_ARROW_SCALING));
 }
-
+
 /*
  * SetHitArea()
  *	Sets hit area for arrow.
@@ -2843,7 +2779,7 @@ SetHitArea(Widget w)
       CB_HitRect(cb).y = thickH;
     }
 }
-
+
 /*
  * GetThickness()
  *	Gets "thickness" resources, i.e. shadow thickness, marginW, etc.
@@ -2855,15 +2791,15 @@ GetThickness(Widget widg,
 	     Dimension *height)
 {
   XmComboBoxWidget cb = (XmComboBoxWidget)widg;
- 
+
   if (width)
-    *width = cb->combo_box.margin_width + cb->combo_box.highlight_thickness + 
+    *width = cb->combo_box.margin_width + cb->combo_box.highlight_thickness +
 	cb->manager.shadow_thickness;
   if (height)
-    *height = cb->combo_box.margin_height + 
+    *height = cb->combo_box.margin_height +
 	cb->combo_box.highlight_thickness + cb->manager.shadow_thickness;
 }
-
+
 /*
  * GetArrowGC()
  *	Create the GC for drawing sensitive arrows.
@@ -2889,7 +2825,7 @@ GetArrowGC(Widget widget)
       cb->combo_box.arrow_GC = NULL;
     }
 }
-
+
 /*
  * DrawArrow()
  */
@@ -2908,7 +2844,7 @@ DrawArrow(Widget widget,
     CB_ArrowSize(cb) = GetDefaultArrowSize((Widget) cb);
 
   /* CR 6912: Reduce size to fit the actual space available. */
-  max_height = XtHeight(cb) - 
+  max_height = XtHeight(cb) -
     2 * (CB_MarginHeight(cb) + CB_HighlightThickness(cb) +
 	 cb->manager.shadow_thickness  + XtBorderWidth(CB_EditBox(cb)));
   if (CB_ArrowSize(cb) > max_height)
@@ -2944,7 +2880,7 @@ DrawArrow(Widget widget,
 		 cb->manager.top_shadow_GC, cb->manager.bottom_shadow_GC,
 		 x, y, w, h, cb->combo_box.arrow_shadow_width, XmSHADOW_OUT);
 }
-
+
 /*
  * DrawShadows()
  */
@@ -2964,7 +2900,7 @@ DrawShadows(Widget widget)
 		 MGR_ShadowThickness(cb),
 		 XmSHADOW_OUT);
 }
-
+
 /*
  * CreateChildren()
  *	Called by the ComboBox Widget's Initialize proc. to create
@@ -3002,13 +2938,13 @@ CreateChildren(Widget    widget,
 		    (XtPointer) cb);
 
       /* Add Event Handler for pointer events in the popup */
-      XtAddEventHandler(CB_ListShell(cb), POPUP_EVENT_MASK, FALSE, 
+      XtAddEventHandler(CB_ListShell(cb), POPUP_EVENT_MASK, FALSE,
 			PopupEH, (XtPointer)cb);
     }
 
   /* Create the list. */
   CB_List(cb) =
-    CreateScrolledList(CB_ListShell(cb) ? CB_ListShell(cb) : widget, 
+    CreateScrolledList(CB_ListShell(cb) ? CB_ListShell(cb) : widget,
 		       LIST_CHILD_NAME, widget, arglist, num_args);
   XtAddCallback(CB_List(cb), XmNbrowseSelectionCallback,
 		(XtCallbackProc)ListSelectionCB, (XtPointer)cb);
@@ -3051,12 +2987,12 @@ CreateChildren(Widget    widget,
   XtInstallAccelerators(CB_EditBox(cb), (Widget) cb);
 
   /* Add event handlers to the scrollbar in the scrolled list widget */
-  if (CB_Type(cb) != XmCOMBO_BOX) 
+  if (CB_Type(cb) != XmCOMBO_BOX)
     {
       Widget sb;
 
       sb = cb->combo_box.vsb;
-      if (sb != (Widget) NULL) 
+      if (sb != (Widget) NULL)
 	{
 	  XtInsertEventHandler(sb, ButtonPressMask, False, SBBtnDownEH,
 			       (XtPointer) CB_ListShell(cb), XtListHead);
@@ -3065,7 +3001,7 @@ CreateChildren(Widget    widget,
 	}
 
       sb = cb->combo_box.hsb;
-      if (sb != (Widget) NULL) 
+      if (sb != (Widget) NULL)
 	{
 	  XtInsertEventHandler(sb, ButtonPressMask, False, SBBtnDownEH,
 			       (XtPointer) CB_ListShell(cb), XtListHead);
@@ -3074,7 +3010,7 @@ CreateChildren(Widget    widget,
 	}
     }
 }
-
+
 /*
  * CreateEditBox()
  *	Creates the EditBox child of the ComboBox.
@@ -3145,14 +3081,12 @@ CreateEditBox(Widget    parent,
 
   return text_widget;
 }
-
+
 /*
  * CreatePulldown()
  *	Creates the pulldown shell for the list if the ComboBox is
  * a XmDROP_DOWN_COMBO_BOX or a XmDROP_DOWN_LIST.
  */
-
-/*ARGSUSED*/
 static Widget
 CreatePulldown(Widget    parent,
 	       String    name,
@@ -3177,7 +3111,7 @@ CreatePulldown(Widget    parent,
 
   return shell;
 }
-
+
 /*
  * CreateScrolledList()
  *	Creates the Scrolled List child of the ComboBox.  If the
@@ -3286,7 +3220,7 @@ CreateScrolledList(Widget    parent,
 
   return list;
 }
-
+
 /*
  * Hit()
  *	Decide whether a button event happened within a particular XRectangle.
@@ -3302,7 +3236,7 @@ Hit(XButtonEvent* event,
     return ((r.x <= event->x) && (event->x <= (r.x + r.width)) &&
 	    (r.y <= event->y) && (event->y <= (r.y + r.height)));
 }
-
+
 /*
  * GetEditBoxValue()
  *	Retrieve the XmString value of the edit box.
@@ -3322,7 +3256,7 @@ GetEditBoxValue(Widget cb)
   else
     return NULL;
 }
-
+
 /*
  * SetEditBoxValue()
  *	Set the XmString value of the edit box.
@@ -3340,7 +3274,7 @@ SetEditBoxValue(Widget   cb,
 
   textTrait->setValue(edit_box, value, XmFORMAT_XmSTRING);
 }
-
+
 /* ------------- CONVENIENCE FUNCTIONS ---------- */
 
 
@@ -3352,7 +3286,7 @@ XmCreateComboBox(Widget   parent,
 {
   return XtCreateWidget(name, xmComboBoxWidgetClass, parent, args, num_args);
 }
-
+
 Widget
 XmCreateDropDownComboBox(Widget   parent,
 			 char    *name,
@@ -3375,7 +3309,7 @@ XmCreateDropDownComboBox(Widget   parent,
 
   return result;
 }
-
+
 Widget
 XmCreateDropDownList(Widget   parent,
 		     char    *name,
@@ -3398,8 +3332,8 @@ XmCreateDropDownList(Widget   parent,
 
   return result;
 }
-
-Widget 
+
+Widget
 XmVaCreateComboBox(
         Widget parent,
         char *name,
@@ -3408,21 +3342,21 @@ XmVaCreateComboBox(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmComboBoxWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
-
+
 Widget
 XmVaCreateManagedComboBox(
         Widget parent,
@@ -3432,20 +3366,20 @@ XmVaCreateManagedComboBox(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmComboBoxWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
-
+
 /*
  * XmComboBoxAddItem
  *	Convenience function added for CDE compatibility.  Add an item
@@ -3485,7 +3419,7 @@ XmComboBoxAddItem(Widget   widget,
   XmComboBoxUpdate(widget);
   _XmAppUnlock(app);
 }
-
+
 /*
  * XmComboBoxDeletePos
  *	Convenience function added for CDE compatibility.  Delete the
@@ -3562,14 +3496,14 @@ XmComboBoxDeletePos(Widget widget,
 
   _XmAppUnlock(app);
 }
-
+
 /*
  * XmComboBoxSelectItem
  *	Convenience function added for CDE compatibility.  Select the
  * indicated item.  Do not invoke the callbacks or scroll the list.
  */
 
-void 
+void
 XmComboBoxSelectItem(Widget   widget,
 		     XmString item)
 {
@@ -3589,7 +3523,7 @@ XmComboBoxSelectItem(Widget   widget,
     _XmAppUnlock(app);
     return;
   }
-     
+
 
   /* Calculate the position of this item. */
   pos = XmListItemPos(CB_List(cb), item);
@@ -3610,14 +3544,14 @@ XmComboBoxSelectItem(Widget   widget,
 
   _XmAppUnlock(app);
 }
-
+
 /*
  * XmComboBoxSetItem
  *	Convenience function added for CDE compatibility.  Select the
  * indicated item and force it to be visible.  Do not invoke the callbacks.
  */
 
-void 
+void
 XmComboBoxSetItem(Widget   widget,
 		  XmString item)
 {
@@ -3664,7 +3598,7 @@ XmCombinationBoxGetValue(Widget widget)
 {
     return (GetEditBoxValue(widget));
 }
-
+
 /*
  * XmComboBoxUpdate()
  *	Resynchronize internal data structures after an application

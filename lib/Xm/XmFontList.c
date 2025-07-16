@@ -29,11 +29,8 @@
 #include <config.h>
 #endif
 
-
 #include <stdio.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 
@@ -51,9 +48,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 
-
-#define FIX_1252
-
 /*
  * Data structure macros for fontlist access
  */
@@ -70,14 +64,14 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 
 /* NOTE - this function XmFontListEntryCreate is NOT MT-safe if the
    application is using threads with multiple application contexts
- 
+
    to use Font lists in threaded code with multiple application contexts
    it is necessary to use the new API XmFontListEntryCreate_r function
    which passes in an additional widget parameter ... this widget
    MUST be for the display that font will be used in
- 
+
     Font should not be shared between displays in an MT environment */
- 
+
 XmFontListEntry
 XmFontListEntryCreate(
         char *tag,
@@ -95,7 +89,7 @@ XmFontListEntryCreate(
 	 _XmProcessUnlock();
          return (NULL);
     }
-  
+
     if ((tag != XmFONTLIST_DEFAULT_TAG) &&
 	(strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
       derived_tag = _XmStringGetCurrentCharset();
@@ -103,9 +97,9 @@ XmFontListEntryCreate(
 
     n = 0;
     XtSetArg(args[n], XmNfontType, type); n++;
-    XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++; 
+    XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
     XtSetArg(args[n], XmNfont, font); n++;
-  
+
     ret_val =
       XmRenditionCreate(NULL,
 		_XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN),
@@ -119,13 +113,13 @@ XmFontListEntryCreate(
  *
  *  A display variable is necessary to create a render table in an
  *  MT safe environment
- * 
+ *
  *  the widget passed in DOES NOT need to be the widget which uses the
  *  font however it MUST be on the same display
  *
  *  Fonts can not be shared among displays in an MT environment
  */
- 
+
 XmFontListEntry
 XmFontListEntryCreate_r(char *tag,
 			XmFontType type,
@@ -136,7 +130,7 @@ XmFontListEntryCreate_r(char *tag,
   Cardinal    n;
   Arg         args[4];
   XmFontListEntry ret_val;
- 
+
   _XmWidgetToAppContext(wid);
   _XmAppLock(app);
   if ((font == NULL) || (tag == NULL) ||
@@ -145,19 +139,19 @@ XmFontListEntryCreate_r(char *tag,
       _XmAppUnlock(app);
       return (NULL);
     }
- 
+
   if ((tag != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
     derived_tag = _XmStringGetCurrentCharset();
-  else 
+  else
     derived_tag = tag;
- 
+
   n = 0;
   XtSetArg(args[n], XmNfontType, type); n++;
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
   XtSetArg(args[n], XmNfont, font); n++;
- 
-  ret_val = 
+
+  ret_val =
       XmRenditionCreate(wid,
 			_XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN),
 			args, n);
@@ -185,7 +179,7 @@ XmFontListEntryGetFont(
   Cardinal	n;
   XtAppContext  app=NULL;
 
-  if (entry == NULL) 
+  if (entry == NULL)
       return (NULL);
 
 #ifdef XTHREADS
@@ -200,18 +194,18 @@ XmFontListEntryGetFont(
 
   n = 0;
   XtSetArg(args[n], XmNfontType, typeReturn); n++;
-  XtSetArg(args[n], XmNfont, &ret_val); n++; 
+  XtSetArg(args[n], XmNfont, &ret_val); n++;
 #if USE_XFT
-  XtSetArg(args[n], XmNxftFont, &ret_val2); n++; 
+  XtSetArg(args[n], XmNxftFont, &ret_val2); n++;
 #endif
   XmRenditionRetrieve(entry, args, n);
 
 #if USE_XFT
-  if (*typeReturn == XmFONT_IS_XFT) 
+  if (*typeReturn == XmFONT_IS_XFT)
       ret_val = ret_val2;
 #endif
-  
-  if (*typeReturn == XmAS_IS) 
+
+  if (*typeReturn == XmAS_IS)
       *typeReturn = XmFONT_IS_FONT;
 
   if (ret_val == (char *)XmAS_IS)
@@ -241,7 +235,7 @@ XmFontListEntryGetTag(
         XmFontListEntry entry )
 {
   Cardinal	n;
-  Arg		args[1]; 
+  Arg		args[1];
   char		*tag;
   char		*ret_val;
 #ifdef XTHREADS
@@ -264,7 +258,7 @@ XmFontListEntryGetTag(
   n = 0;
   XtSetArg(args[n], XmNtag, &tag); n++;
   XmRenditionRetrieve(entry, args, n);
-  
+
   ret_val = XtNewString(tag);
 
 #ifdef XTHREADS
@@ -277,7 +271,7 @@ XmFontListEntryGetTag(
   return ret_val;
 }
 
-XmFontList 
+XmFontList
 XmFontListAppendEntry(
         XmFontList old ,
         XmFontListEntry entry )
@@ -342,7 +336,7 @@ XmFontListNextEntry(
     return((XmFontListEntry)entry);
 }
 
-XmFontList 
+XmFontList
 XmFontListRemoveEntry(
         XmFontList old ,
         XmFontListEntry entry )
@@ -372,7 +366,7 @@ XmFontListRemoveEntry(
   n = 0;
   XtSetArg(args[n], XmNtag, &tags[0]); n++;
   XtSetArg(args[n], XmNfontType, &type1); n++;
-  XtSetArg(args[n], XmNfont, &font1); n++; 
+  XtSetArg(args[n], XmNfont, &font1); n++;
   XmRenditionRetrieve(entry, args, n);
 
   old = _XmRenderTableRemoveRenditions(old, tags, 1, TRUE, type1, font1);
@@ -398,13 +392,13 @@ XmFontListEntryLoad(
   Arg		args[4];
   XmFontListEntry ret_val;
   _XmDisplayToAppContext(display);
-  
+
   _XmAppLock(app);
-  n = 0; 
+  n = 0;
   XtSetArg(args[n], XmNfontName, fontName); n++;
   XtSetArg(args[n], XmNfontType, type); n++;
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
-  
+
   ret_val = _XmRenditionCreate(display, NULL, XmS, XmCFontList,
 		    _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN),
 			    args, n, NULL);
@@ -414,15 +408,15 @@ XmFontListEntryLoad(
 
 /* NOTE - this function XmFontListCreate is NOT MT-safe if the
    application is using threads with multiple application contexts
- 
+
    to use Font lists in threaded code with multiple application contexts
    it is necessary to use the new API XmFontListCreate_r function
    which passes in an additional widget parameter ... this widget
    MUST be for the display that font will be used in
- 
+
     Font should not be shared between displays in an MT environment */
 
-XmFontList 
+XmFontList
 XmFontListCreate(
         XFontStruct *font,
         XmStringCharSet charset )
@@ -443,17 +437,17 @@ XmFontListCreate(
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
     curcharset = _XmStringGetCurrentCharset();
   else curcharset = charset;
-    
-  n = 0; 
+
+  n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-  XtSetArg(args[n], XmNfont, (XtPointer)font); n++; 
+  XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   rends[0] =
     XmRenditionCreate(NULL,
 		      _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
 		      args, n);
-  
+
   _XmProcessUnlock();
   ret_val = XmRenderTableAddRenditions(NULL, rends, 1, XmDUPLICATE);
 
@@ -463,16 +457,16 @@ XmFontListCreate(
 }
 
 /* MT safe version of XmFontListCreate - requires widget parameter
- 
+
    A display variable is necessary to create a render table in an
    MT safe environment
- 
+
    the widget passed in DOES NOT need to be the widget which uses the
    font however it MUST be on the same display
- 
+
    Fonts can not be shared among displays in an MT environment
 */
- 
+
 XmFontList
 XmFontListCreate_r(
         XFontStruct *font,
@@ -484,49 +478,49 @@ XmFontListCreate_r(
   XmRendition           rends[1];
   XmStringCharSet       curcharset;
   XmRenderTable         ret_val;
- 
- 
+
+
   _XmWidgetToAppContext(wid);
   _XmAppLock(app);
   if ((font == NULL) || (charset == NULL)) {
         _XmAppUnlock(app);
         return (NULL);
   }
- 
+
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
     curcharset = _XmStringGetCurrentCharset();
   else curcharset = charset;
- 
+
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
   XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
- 
+
   rends[0] =
     XmRenditionCreate(wid,
                       _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
                       args, n);
- 
+
   ret_val = XmRenderTableAddRenditions(NULL, rends, 1, XmDUPLICATE);
- 
+
   XmRenditionFree(rends[0]);
- 
+
   _XmAppUnlock(app);
   return(ret_val);
 }
 
 /* NOTE - this function XmStringCreateFontList is NOT MT-safe if the
    application is using threads with multiple application contexts
- 
+
    to use Font lists in threaded code with multiple application contexts
    it is necessary to use the new API XmFontListCreate_r function
    which passes in an additional widget parameter ... this widget
    MUST be for the display that font will be used in
- 
+
     Font should not be shared between displays in an MT environment */
- 
-XmFontList 
+
+XmFontList
 XmStringCreateFontList(
         XFontStruct *font,
         XmStringCharSet charset )
@@ -536,13 +530,13 @@ XmStringCreateFontList(
 
 
 /* MT safe version of XmStringCreateFontList - requires widget parameter
- 
+
    A display variable is necessary to create a render table in an
    MT safe environment
- 
+
    the widget passed in DOES NOT need to be the widget which uses the
    font however it MUST be on the same display
- 
+
    Fonts can not be shared among displays in an MT environment
 */
 XmFontList
@@ -558,7 +552,7 @@ XmStringCreateFontList_r(
 /*
  * dump a font list
  */
-void 
+void
 XmFontListFree (
     XmFontList      fontlist)
 {
@@ -568,13 +562,13 @@ XmFontListFree (
 /*
  * extent a font list by one element, the old font list is gone
  */
-XmFontList 
+XmFontList
 XmFontListAdd(
         XmFontList old,
         XFontStruct *font,
         XmStringCharSet charset )
 {
-  XmStringCharSet	curcharset; 
+  XmStringCharSet	curcharset;
   Cardinal		n;
   Arg			args[4];
   XmRendition		rends[1];
@@ -601,19 +595,19 @@ XmFontListAdd(
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
     curcharset = _XmStringGetCurrentCharset();
-  else 
+  else
     curcharset = charset;
-    
-  n = 0; 
+
+  n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-  XtSetArg(args[n], XmNfont, (XtPointer)font); n++; 
+  XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   rends[0] =
     XmRenditionCreate(NULL,
 		      _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
 		      args, n);
-  
+
   ret_val = XmRenderTableAddRenditions(old, rends, 1, XmDUPLICATE);
 
 #ifdef XTHREADS
@@ -629,7 +623,7 @@ XmFontListAdd(
 /*
  * replicate a font list
  */
-XmFontList 
+XmFontList
 XmFontListCopy(
         XmFontList fontlist )
 {
@@ -642,11 +636,11 @@ _XmGetFirstFont(
 {
   XFontStruct	*font_struct;
   Cardinal	n;
-  Arg		args[2]; 
+  Arg		args[2];
   XmFontType	type;
   XtPointer	font;
-  
-  n = 0; 
+
+  n = 0;
   XtSetArg(args[n], XmNfontType, &type); n++;
   XtSetArg(args[n], XmNfont, &font); n++;
   XmRenditionRetrieve(entry, args, n);
@@ -660,14 +654,9 @@ _XmGetFirstFont(
       XFontStruct **font_struct_list;
       char **font_name_list;
 
-#ifdef FIX_1252
       if (XFontsOfFontSet((XFontSet)font,
 			  &font_struct_list, &font_name_list)
 	  && font_struct_list[0]->fid != 0)
-#else
-      if (XFontsOfFontSet((XFontSet)font,
-			  &font_struct_list, &font_name_list))
-#endif
 	font_struct = font_struct_list[0];
       else
 	font_struct = NULL;
@@ -682,7 +671,7 @@ _XmGetFirstFont(
  * Find an entry in the fontlist which matches the current charset or
  * return the first font if none match.
  */
-Boolean 
+Boolean
 XmeRenderTableGetDefaultFont(
         XmFontList fontlist,
         XFontStruct **font_struct )
@@ -718,7 +707,7 @@ XmeRenderTableGetDefaultFont(
  * find an entry in the font list which matches, return index (or -1) and
  * font stuct ptr (or first in list).
  */
-Boolean 
+Boolean
 _XmFontListSearch(
         XmFontList fontlist,
         XmStringCharSet charset,
@@ -727,8 +716,8 @@ _XmFontListSearch(
 {
     XmFontListEntry    entry;
     Boolean            success;
-  
-    success = _XmRenderTableFindFallback(fontlist, charset, 
+
+    success = _XmRenderTableFindFallback(fontlist, charset,
 					 FALSE, indx, &entry);
 
     /* For backward compatibility we must try to return something for */
@@ -747,7 +736,7 @@ _XmFontListSearch(
 /*
  * Fontlist access routines
  */
-Boolean 
+Boolean
 XmFontListInitFontContext(
         XmFontContext *context,
         XmFontList fontlist )
@@ -770,7 +759,7 @@ XmFontListInitFontContext(
   return (TRUE);
 }
 
-Boolean 
+Boolean
 XmFontListGetNextFont(
         XmFontContext context,
         XmStringCharSet *charset,
@@ -799,16 +788,16 @@ XmFontListGetNextFont(
     }
 
   rend = _XmRTRenditions(table)[FLContextIndex(context)];
-  
+
   *font = _XmGetFirstFont(rend);
-  
+
   _XmProcessUnlock();
-  n = 0; 
+  n = 0;
   XtSetArg(args[n], XmNtag, &tag); n++;
   XmRenditionRetrieve(rend, args, n);
 
   *charset = XtNewString(tag);
-  
+
   FLContextIndex(context)++;
   return (TRUE);
 }
@@ -824,7 +813,7 @@ XmFontListFreeFontContext(
 
 #ifdef _XmDEBUG_XMSTRING
 
-void 
+void
 _Xm_dump_fontlist(
         XmFontList f )
 {
@@ -839,7 +828,7 @@ _Xm_dump_fontlist(
     }
 }
 
-void 
+void
 _Xm_dump_fontlist_cache( void )
 {
     FontlistEntry *cache;

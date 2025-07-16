@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: GMUtils.c /main/11 1995/09/19 23:03:32 cde-sun $"
@@ -51,20 +51,15 @@ static char rcsid[] = "$XConsortium: GMUtils.c /main/11 1995/09/19 23:03:32 cde-
 /*******************************************************************
  * Figure out how much size we need. Shrink wrap around the children.
  ****************/
-void 
+void
 _XmGMCalcSize(XmManagerWidget manager,
-#if NeedWidePrototypes
-            int margin_width,
-            int margin_height,        
-#else
             Dimension margin_width,
-            Dimension margin_height,        
-#endif /* NeedWidePrototypes */
+            Dimension margin_height,
             Dimension *replyWidth,
             Dimension *replyHeight )
 {
     register int i ;
-    register Widget child ;   
+    register Widget child ;
     int right, bottom ;
 
     *replyWidth = *replyHeight = 0 ;
@@ -92,32 +87,23 @@ _XmGMCalcSize(XmManagerWidget manager,
  * Calculate the size needed for the Manager
  * Request a change in size from parent if needed.
  ****************/
-Boolean 
+Boolean
 _XmGMDoLayout(XmManagerWidget manager,
-#if NeedWidePrototypes
-            int margin_width,
-            int margin_height,        
-#else
             Dimension margin_width,
-            Dimension margin_height,        
-#endif /* NeedWidePrototypes */
+            Dimension margin_height,
             int resize_policy,
-#if NeedWidePrototypes
-            int queryonly
-#else
             Boolean queryonly
-#endif /* NeedWidePrototypes */
 )
 {
     /* return:
          True means that the layout is accepted, either with no request
-       to the parent, or with a successfull serie of requests. 
+       to the parent, or with a successfull serie of requests.
        No means that the layout is denied, without request (NONE
        policy for instance) or with request (parent does not accept the
        change in size or proposes something unacceptable).
        Note that when the parent returns almost, since this function returns
-       either true or false (see below), we don't handle almost reply 
-       to the instigator. 
+       either true or false (see below), we don't handle almost reply
+       to the instigator.
        The queryonly flag just controls the "reality" of the parent request
        and the call to resize.
     */
@@ -130,70 +116,70 @@ _XmGMDoLayout(XmManagerWidget manager,
     request.request_mode = CWWidth|CWHeight ;
     if (queryonly) request.request_mode |= XtCWQueryOnly ;
 
-    _XmGMCalcSize(manager, margin_width, margin_height, 
+    _XmGMCalcSize(manager, margin_width, margin_height,
                 &request.width, &request.height);
-    
+
     /* no change, just accept it */
-    if ((XtWidth(manager) == request.width) && 
-      (XtHeight(manager) == request.height)) 
-      return (True);   
+    if ((XtWidth(manager) == request.width) &&
+      (XtHeight(manager) == request.height))
+      return (True);
 
     /* the current manager sizes are bigger than the new ones and
        we don't want to strink, just accept the layout as is, since
        it already fits */
     if ((resize_policy == XmRESIZE_GROW ||
        resize_policy == XmRESIZE_NONE) &&
-      ((XtWidth(manager) >= request.width) && 
+      ((XtWidth(manager) >= request.width) &&
        (XtHeight(manager) >= request.height)) )
       return (True);
 
-    /* the previous test passes over, so one of the needed sizes must be 
+    /* the previous test passes over, so one of the needed sizes must be
        bigger than one of the current, and we can't do that with NONE */
     if (resize_policy == XmRESIZE_NONE )
       return (False);
 
     /* we can't shrink on one side while growing on the other, just
        overwrite the shrinking side */
-    if(resize_policy == XmRESIZE_GROW    ) {   
-      if(request.width < XtWidth(manager)) 
+    if(resize_policy == XmRESIZE_GROW    ) {
+      if(request.width < XtWidth(manager))
           request.width = XtWidth(manager) ;
-        if(request.height < XtHeight(manager)) 
+        if(request.height < XtHeight(manager))
           request.height = XtHeight(manager) ;
-    } 
+    }
 
     _XmProcessLock();
     resize = XtCoreProc(manager,resize);
     _XmProcessUnlock();
-    
+
     /* now the request */
-    switch(XtMakeGeometryRequest((Widget)manager, 
+    switch(XtMakeGeometryRequest((Widget)manager,
                                &request,
                                &reply)) {
     case XtGeometryYes:
-      if (!queryonly) 
+      if (!queryonly)
              /* call the resize proc, since the widget set has now
                 a Yes policy */
           (*resize)((Widget)manager) ;
       return(True) ;
-    case XtGeometryAlmost:  
+    case XtGeometryAlmost:
          /* The following behavior is based on the shrink wrapper
             behavior of this manager. What we have asked is the minimum.
-            If the almost returned size is smaller than the 
+            If the almost returned size is smaller than the
             requested one, refuse, since it will always clip something */
-      if ((reply.width < request.width) || 
-          (reply.height < request.height)) {   
+      if ((reply.width < request.width) ||
+          (reply.height < request.height)) {
           return( False) ;
       } else {
-         /* if almost returned a bigger size than requested, 
+         /* if almost returned a bigger size than requested,
             accept it since it cannot hurt the shrink wrap behavior,
             neither the Grow policy (requested always > current).
-            Apply it if not queryonly. If queryonly, we don't 
-            have to re-request something, since no change is needed 
+            Apply it if not queryonly. If queryonly, we don't
+            have to re-request something, since no change is needed
             and we already know it's OK */
           if (!queryonly) {
-              (void) XtMakeResizeRequest((Widget)manager, 
-                                        reply.width, 
-                                        reply.height, 
+              (void) XtMakeResizeRequest((Widget)manager,
+                                        reply.width,
+                                        reply.height,
                                         NULL, NULL) ;
               (*resize)((Widget)manager) ;
           }
@@ -207,36 +193,30 @@ _XmGMDoLayout(XmManagerWidget manager,
 }
 
 /* Enforce margins for children if margins are non-zero */
-void 
+void
 _XmGMEnforceMargin(XmManagerWidget manager,
-#if NeedWidePrototypes
-                 int margin_width,
-                 int margin_height, 
-                 int setvalue
-#else
                  Dimension margin_width,
-                 Dimension margin_height,        
+                 Dimension margin_height,
                  Boolean setvalue
-#endif /* NeedWidePrototypes */
 )
 {
     int i ;
     register Widget child ;
     register Boolean do_move ;
     Position newx, newy ;
-           
-    for(i = 0 ; i < manager->composite.num_children ; i++) {   
+
+    for(i = 0 ; i < manager->composite.num_children ; i++) {
         do_move = False ;
         child = (Widget) manager->composite.children[i] ;
-        if(XtIsManaged (child)) {   
-            if ((margin_width != 0) && 
-              (XtX(child) < (int) margin_width )) {   
+        if(XtIsManaged (child)) {
+            if ((margin_width != 0) &&
+              (XtX(child) < (int) margin_width )) {
               do_move = True ;
               newx = margin_width ;
-          } else 
+          } else
               newx = XtX(child) ;
-          if ((margin_height != 0) && 
-              (XtY(child) < (int) margin_height )) {   
+          if ((margin_height != 0) &&
+              (XtY(child) < (int) margin_height )) {
               do_move = True ;
                 newy = margin_height  ;
           } else
@@ -244,7 +224,7 @@ _XmGMEnforceMargin(XmManagerWidget manager,
           if(do_move) {
               if (setvalue) {
                   Arg args[2] ;
-                  XtSetArg(args[0], XmNx, newx); 
+                  XtSetArg(args[0], XmNx, newx);
                   XtSetArg(args[1], XmNy, newy);
                   XtSetValues(child, args, 2);
               } else
@@ -255,7 +235,7 @@ _XmGMEnforceMargin(XmManagerWidget manager,
         }
     }
 }
-             
+
 
 /****************************************************************
  * Handle query geometry requests for both BB and DA.
@@ -264,17 +244,12 @@ XtGeometryResult
 _XmGMHandleQueryGeometry(Widget widget,
                        XtWidgetGeometry * intended,
                        XtWidgetGeometry * desired,
-#if NeedWidePrototypes
-                       int margin_width,
-                       int margin_height,        
-#else
                        Dimension margin_width,
-                       Dimension margin_height,    
-#endif /* NeedWidePrototypes */
+                       Dimension margin_height,
                        int resize_policy)
 {
     Dimension width, height ;
-    
+
     /* first determine what is the desired size, using the resize_policy. */
     if (resize_policy == XmRESIZE_NONE) {
 	desired->width = XtWidth(widget) ;
@@ -282,8 +257,8 @@ _XmGMHandleQueryGeometry(Widget widget,
     } else {
 	if (GMode( intended) & CWWidth) width = intended->width;
 	if (GMode( intended) & CWHeight) height = intended->height;
-	
-	_XmGMCalcSize ((XmManagerWidget)widget, 
+
+	_XmGMCalcSize ((XmManagerWidget)widget,
 		       margin_width, margin_height, &width, &height);
 	if ((resize_policy == XmRESIZE_GROW) &&
 	    ((width < XtWidth(widget)) ||
@@ -295,12 +270,12 @@ _XmGMHandleQueryGeometry(Widget widget,
 	    desired->height = height ;
 	}
     }
-    
+
     /* deal with user initial size setting */
     if (!XtIsRealized(widget))  {
 	if (XtWidth(widget) != 0) desired->width = XtWidth(widget) ;
 	if (XtHeight(widget) != 0) desired->height = XtHeight(widget) ;
-    }	    
+    }
 
     return XmeReplyToQueryGeometry(widget, intended, desired) ;
 }
@@ -341,7 +316,7 @@ XmeReplyToQueryGeometry(Widget widget,
       (intended->height == desired->height)) {
       return XtGeometryYes ;
     }
-    
+
     _XmAppLock(app);
     if ((desired->width == XtWidth(widget)) &&
       (desired->height == XtHeight(widget))) {
@@ -360,7 +335,7 @@ XmeReplyToQueryGeometry(Widget widget,
 Boolean
 _XmGMOverlap(XmManagerWidget manager,
            Widget w)
-{   
+{
     register int      i ;
     Position  left1 = XtX(w) ;
     Position  top1 = XtY(w) ;
@@ -368,21 +343,21 @@ _XmGMOverlap(XmManagerWidget manager,
     Dimension bottom1 = XtY(w) + 2*XtBorderWidth(w) + XtHeight(w);
 
 /****************/
-    for(i=0 ; i<manager->composite.num_children ; i++) {   
+    for(i=0 ; i<manager->composite.num_children ; i++) {
       Widget          kid = manager->composite.children[i] ;
       Position        left2 = XtX(kid) ;
       Position        top2 = XtY(kid) ;
-      Dimension       right2 = XtX(kid) + 2*XtBorderWidth(kid) + 
+      Dimension       right2 = XtX(kid) + 2*XtBorderWidth(kid) +
                                XtWidth(kid);
-      Dimension       bottom2 = XtY(kid) + 2*XtBorderWidth(kid) + 
+      Dimension       bottom2 = XtY(kid) + 2*XtBorderWidth(kid) +
                                 XtHeight(kid) ;
-        if(w != kid && 
+        if(w != kid &&
          (((left1 >= left2) && ((Dimension)left1 <= right2)) ||
           ((left2 >= left1) && ((Dimension)left2 <= right1))) &&
          (((top1 >= top2) && ((Dimension)top1 <= bottom2)) ||
           ((top2 >= top1) && ((Dimension)top2 <= bottom1)))    )
           {   return( True) ;
-            } 
+            }
     }
     return( False) ;
 }
@@ -395,23 +370,18 @@ XtGeometryResult
 _XmGMHandleGeometryManager(Widget parent, Widget w,
                          XtWidgetGeometry * request,
                          XtWidgetGeometry * reply,
-#if NeedWidePrototypes
-                         int margin_width,
-                         int margin_height,        
-#else
                          Dimension margin_width,
-                         Dimension margin_height,    
-#endif /* NeedWidePrototypes */
+                         Dimension margin_height,
                          int resize_policy,
                          int allow_overlap)
 {
 
     /* Policy: Yes
-         if margin is non null requests inside the margin or negative 
+         if margin is non null requests inside the margin or negative
        are a priori almosted (or denied if the resizepolicy does not
        authorize it).
          That's the only case where almost is returned, no management
-         of a limit position or size is done 
+         of a limit position or size is done
     */
 
 
@@ -434,13 +404,13 @@ _XmGMHandleGeometryManager(Widget parent, Widget w,
     /*  check for x less than margin width
     */
     if(IsX(request) && (margin_width != 0)
-       && (request->x < (int)margin_width)) {   
+       && (request->x < (int)margin_width)) {
         localReply.x = (Position) margin_width ;
         returnCode = XtGeometryAlmost ;
     }
     /*  check for y less than margin height  */
     if(IsY(request) && (margin_height != 0)
-       && (request->y < (int)margin_height)) {   
+       && (request->y < (int)margin_height)) {
         localReply.y = (Position) margin_height ;
         returnCode = XtGeometryAlmost ;
     }
@@ -459,16 +429,16 @@ _XmGMHandleGeometryManager(Widget parent, Widget w,
     XtHeight(w) = localReply.height ;
     XtBorderWidth(w) = localReply.border_width ;
 
-    if(!allow_overlap && _XmGMOverlap (manager, w)) {   
+    if(!allow_overlap && _XmGMOverlap (manager, w)) {
         returnCode = XtGeometryNo ;
-    } else  {   
+    } else  {
       /* if we already know that we are not gonna change anything */
-      if ((returnCode == XtGeometryAlmost) || IsQueryOnly(request)) 
+      if ((returnCode == XtGeometryAlmost) || IsQueryOnly(request))
           queryonly = True ;
 
       /* see if the new layout is OK */
-      geoFlag = _XmGMDoLayout(manager, 
-                              margin_width, margin_height, 
+      geoFlag = _XmGMDoLayout(manager,
+                              margin_width, margin_height,
                               resize_policy, queryonly) ;
       /* if we cannot adapt the new size but the child is still inside
 	 go for it */
@@ -485,21 +455,21 @@ _XmGMHandleGeometryManager(Widget parent, Widget w,
               returnCode = XtGeometryYes ;
         } else
           returnCode = XtGeometryNo ;
-            
+
       if  (returnCode == XtGeometryAlmost){
           if (reply) *reply = localReply ;
           else returnCode = XtGeometryNo ;
-            } 
+            }
     }
 
-    if ((returnCode != XtGeometryYes) || queryonly) {   
+    if ((returnCode != XtGeometryYes) || queryonly) {
 	/* Can't oblige, so restore previous values. */
 	XtX(w) = x ;
 	XtY(w) = y ;
 	XtWidth(w) = width ;
 	XtHeight(w) = height ;
 	XtBorderWidth(w) = borderWidth ;
-      } 
+      }
 
     return returnCode ;
 }

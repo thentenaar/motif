@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,48 +37,40 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern void _XmRCDoMarginAdjustment( 
+extern void _XmRCDoMarginAdjustment(
                         XmRowColumnWidget m) ;
-extern void _XmRCThinkAboutSize( 
+extern void _XmRCThinkAboutSize(
                         register XmRowColumnWidget m,
                         Dimension *w,
                         Dimension *h,
                         Widget instigator,
                         XtWidgetGeometry *request) ;
-extern void _XmRCPreferredSize( 
+extern void _XmRCPreferredSize(
                         XmRowColumnWidget m,
                         Dimension *w,
                         Dimension *h) ;
-extern void _XmRCAdaptToSize( 
+extern void _XmRCAdaptToSize(
                         XmRowColumnWidget m,
                         Widget instigator,
                         XtWidgetGeometry *request) ;
-extern XmRCKidGeometry _XmRCGetKidGeo( 
+extern XmRCKidGeometry _XmRCGetKidGeo(
                         Widget wid,
                         Widget instigator,
                         XtWidgetGeometry *request,
                         int uniform_border,
-#if NeedWidePrototypes
-                        int border,
-#else
                         Dimension border,
-#endif /* NeedWidePrototypes */
                         int uniform_width_margins,
                         int uniform_height_margins,
                         Widget help,
 			Widget toc,
                         int geo_type) ;
-extern void _XmRCSetKidGeo( 
+extern void _XmRCSetKidGeo(
                         XmRCKidGeometry kg,
                         Widget instigator) ;
 
-extern void _XmRC_SetOrGetTextMargins( 
+extern void _XmRC_SetOrGetTextMargins(
                         Widget wid,
-#if NeedWidePrototypes
-                        unsigned int op,
-#else
                         unsigned char op,
-#endif /* NeedWidePrototypes */
                         XmBaselineMargins *textMargins) ;
 
 /********    End Private Function Declarations    ********/
@@ -89,4 +81,3 @@ extern void _XmRC_SetOrGetTextMargins(
 #endif
 
 #endif /* _XmRCLayoutI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

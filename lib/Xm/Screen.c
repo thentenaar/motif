@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
@@ -54,30 +54,30 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 
 /********    Static Function Declarations    ********/
 
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
 static void ClassInitialize( void ) ;
-static void GetUnitFromFont( 
+static void GetUnitFromFont(
                         Display *display,
                         XFontStruct *fst,
                         int *ph_unit,
                         int *pv_unit) ;
-static void Initialize( 
+static void Initialize(
                         Widget requested_widget,
                         Widget new_widget,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget current,
                         Widget requested,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget widget) ;
-static void InsertChild( 
+static void InsertChild(
                         Widget wid) ;
-static void DeleteChild( 
+static void DeleteChild(
                         Widget wid) ;
 static Boolean MatchPixmap(XmHashKey, XmHashKey) ;
 static XmHashValue HashPixmap(XmHashKey) ;
@@ -90,54 +90,54 @@ static Boolean FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data) ;
 static XtResource resources[] = {
     {
 	XmNdarkThreshold, XmCDarkThreshold, XmRInt,
-	sizeof(int), Offset(screen.darkThreshold), 
-	XmRImmediate, (XtPointer)NULL, 
+	sizeof(int), Offset(screen.darkThreshold),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNlightThreshold, XmCLightThreshold, XmRInt,
-	sizeof(int), Offset(screen.lightThreshold), 
-	XmRImmediate, (XtPointer)NULL, 
+	sizeof(int), Offset(screen.lightThreshold),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNforegroundThreshold, XmCForegroundThreshold, XmRInt,
-	sizeof(int), Offset(screen.foregroundThreshold), 
-	XmRImmediate, (XtPointer)NULL, 
+	sizeof(int), Offset(screen.foregroundThreshold),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNdefaultNoneCursorIcon, XmCDefaultNoneCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultNoneCursorIcon), 
-	XmRImmediate, (XtPointer)NULL, 
+	sizeof(Widget), Offset(screen.defaultNoneCursorIcon),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNdefaultValidCursorIcon, XmCDefaultValidCursorIcon,
-	XmRWidget, sizeof(Widget), Offset(screen.defaultValidCursorIcon), 
-	XmRImmediate, (XtPointer)NULL, 
+	XmRWidget, sizeof(Widget), Offset(screen.defaultValidCursorIcon),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNdefaultInvalidCursorIcon, XmCDefaultInvalidCursorIcon, XmRWidget,
 	sizeof(Widget), Offset(screen.defaultInvalidCursorIcon),
-	XmRImmediate, (XtPointer)NULL, 
-    },   
+	XmRImmediate, (XtPointer)NULL,
+    },
     {
 	XmNdefaultMoveCursorIcon, XmCDefaultMoveCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultMoveCursorIcon), 
-	XmRImmediate, (XtPointer)NULL, 
+	sizeof(Widget), Offset(screen.defaultMoveCursorIcon),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNdefaultLinkCursorIcon, XmCDefaultLinkCursorIcon,
-	XmRWidget, sizeof(Widget), Offset(screen.defaultLinkCursorIcon), 
-	XmRImmediate, (XtPointer)NULL, 
+	XmRWidget, sizeof(Widget), Offset(screen.defaultLinkCursorIcon),
+	XmRImmediate, (XtPointer)NULL,
     },
     {
 	XmNdefaultCopyCursorIcon, XmCDefaultCopyCursorIcon, XmRWidget,
 	sizeof(Widget), Offset(screen.defaultCopyCursorIcon),
-	XmRImmediate, (XtPointer)NULL, 
-    },   
+	XmRImmediate, (XtPointer)NULL,
+    },
     {
 	XmNdefaultSourceCursorIcon, XmCDefaultSourceCursorIcon, XmRWidget,
 	sizeof(Widget), Offset(screen.defaultSourceCursorIcon),
-	XmRImmediate, (XtPointer)NULL, 
-    },   
+	XmRImmediate, (XtPointer)NULL,
+    },
     {
 	XmNmenuCursor, XmCCursor, XmRCursor,
 	sizeof(Cursor), Offset(screen.menuCursor),
@@ -179,13 +179,13 @@ static XtResource resources[] = {
         XmRImmediate, (XtPointer) NULL,
     },
     {
-        XmNbitmapConversionModel, XmCBitmapConversionModel, 
+        XmNbitmapConversionModel, XmCBitmapConversionModel,
         XmRBitmapConversionModel,
         sizeof(XtEnum), Offset(screen.bitmap_conversion_model),
         XmRImmediate, (XtPointer) XmMATCH_DEPTH,
     },
     {
-        XmNuserData, XmCUserData, XmRPointer, 
+        XmNuserData, XmCUserData, XmRPointer,
         sizeof(XtPointer), Offset(screen.user_data),
         XmRPointer, (XtPointer) NULL
     },
@@ -199,14 +199,14 @@ static XtResource resources[] = {
     {
         XmNdefaultGlyphPixmap, XmCDefaultGlyphPixmap,
 	/* if you move this one as a real pixmap,
-	   change the code in the buttons as well, 
+	   change the code in the buttons as well,
 	   move the copyplane into a copyarea */
 	XmRBitmap,
 	sizeof (Pixmap), Offset(screen.default_glyph_pixmap),
 	XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
      },
 #endif
-		
+
 };
 
 #undef Offset
@@ -252,52 +252,52 @@ static XmBaseClassExtRec baseClassExtRec = {
 
 externaldef(xmscreenclassrec)
 XmScreenClassRec xmScreenClassRec = {
-    {	
-	(WidgetClass) &coreClassRec, /* superclass		*/   
-	"XmScreen",			/* class_name 		*/   
-	sizeof(XmScreenRec), 		/* size 		*/   
-	ClassInitialize,		/* Class Initializer 	*/   
-	ClassPartInitialize,		/* class_part_init 	*/ 
-	FALSE, 				/* Class init'ed ? 	*/   
-	Initialize,		        /* initialize         	*/   
-	NULL, 				/* initialize_notify    */ 
-	NULL,	 			/* realize            	*/   
-	NULL,	 			/* actions            	*/   
-	0,				/* num_actions        	*/   
-	resources,			/* resources          	*/   
-	XtNumber(resources),		/* resource_count     	*/   
-	NULLQUARK, 			/* xrm_class          	*/   
-	FALSE, 				/* compress_motion    	*/   
-	FALSE, 				/* compress_exposure  	*/   
-	FALSE, 				/* compress_enterleave	*/   
-	FALSE, 				/* visible_interest   	*/   
-	Destroy,			/* destroy            	*/   
-	NULL,		 		/* resize             	*/   
-	NULL, 				/* expose             	*/   
-	SetValues, 		        /* set_values         	*/   
-	NULL, 				/* set_values_hook      */ 
-	NULL,			 	/* set_values_almost    */ 
-	NULL,				/* get_values_hook      */ 
-	NULL, 				/* accept_focus       	*/   
-	XtVersion, 			/* intrinsics version 	*/   
-	NULL, 				/* callback offsets   	*/   
-	NULL,				/* tm_table           	*/   
-	NULL, 				/* query_geometry       */ 
-	NULL, 				/* screen_accelerator  */ 
-	(XtPointer)&baseClassExtRec,	/* extension            */ 
-    },	
+    {
+	(WidgetClass) &coreClassRec, /* superclass		*/
+	"XmScreen",			/* class_name 		*/
+	sizeof(XmScreenRec), 		/* size 		*/
+	ClassInitialize,		/* Class Initializer 	*/
+	ClassPartInitialize,		/* class_part_init 	*/
+	FALSE, 				/* Class init'ed ? 	*/
+	Initialize,		        /* initialize         	*/
+	NULL, 				/* initialize_notify    */
+	NULL,	 			/* realize            	*/
+	NULL,	 			/* actions            	*/
+	0,				/* num_actions        	*/
+	resources,			/* resources          	*/
+	XtNumber(resources),		/* resource_count     	*/
+	NULLQUARK, 			/* xrm_class          	*/
+	FALSE, 				/* compress_motion    	*/
+	FALSE, 				/* compress_exposure  	*/
+	FALSE, 				/* compress_enterleave	*/
+	FALSE, 				/* visible_interest   	*/
+	Destroy,			/* destroy            	*/
+	NULL,		 		/* resize             	*/
+	NULL, 				/* expose             	*/
+	SetValues, 		        /* set_values         	*/
+	NULL, 				/* set_values_hook      */
+	NULL,			 	/* set_values_almost    */
+	NULL,				/* get_values_hook      */
+	NULL, 				/* accept_focus       	*/
+	XtVersion, 			/* intrinsics version 	*/
+	NULL, 				/* callback offsets   	*/
+	NULL,				/* tm_table           	*/
+	NULL, 				/* query_geometry       */
+	NULL, 				/* screen_accelerator  */
+	(XtPointer)&baseClassExtRec,	/* extension            */
+    },
     {					/* desktop		*/
 	NULL,				/* child_class		*/
 	InsertChild,		        /* insert_child		*/
 	DeleteChild,		        /* delete_child		*/
 	NULL,				/* extension		*/
     },
-    {	
+    {
 	NULL,
     },
 };
 
-externaldef(xmscreenclass) WidgetClass 
+externaldef(xmscreenclass) WidgetClass
       xmScreenClass = (WidgetClass) (&xmScreenClassRec);
 
 
@@ -310,7 +310,7 @@ externaldef(xmscreenquark) XrmQuark	_XmMoveCursorIconQuark = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark	_XmCopyCursorIconQuark = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark	_XmLinkCursorIconQuark = NULLQUARK;
 
-static void 
+static void
 ClassInitialize( void )
 {
   baseClassExtRec.record_type = XmQmotif;
@@ -318,27 +318,27 @@ ClassInitialize( void )
   _XmInvalidCursorIconQuark = XrmPermStringToQuark("defaultInvalidCursorIcon");
   _XmValidCursorIconQuark = XrmPermStringToQuark("defaultValidCursorIcon");
   _XmNoneCursorIconQuark = XrmPermStringToQuark("defaultNoneCursorIcon");
-  _XmDefaultDragIconQuark = XrmPermStringToQuark("defaultSourceCursorIcon"); 
-  _XmMoveCursorIconQuark = XrmPermStringToQuark("defaultMoveCursorIcon"); 
-  _XmCopyCursorIconQuark = XrmPermStringToQuark("defaultCopyCursorIcon"); 
-  _XmLinkCursorIconQuark = XrmPermStringToQuark("defaultLinkCursorIcon"); 
-}    
+  _XmDefaultDragIconQuark = XrmPermStringToQuark("defaultSourceCursorIcon");
+  _XmMoveCursorIconQuark = XrmPermStringToQuark("defaultMoveCursorIcon");
+  _XmCopyCursorIconQuark = XrmPermStringToQuark("defaultCopyCursorIcon");
+  _XmLinkCursorIconQuark = XrmPermStringToQuark("defaultLinkCursorIcon");
+}
 
 
-static void 
-ClassPartInitialize( 
+static void
+ClassPartInitialize(
 	WidgetClass wc )
 {
     _XmFastSubclassInit(wc, XmSCREEN_BIT);
- 
-}    
+
+}
 
 /************************************************************************
  *
  *  GetUnitFromFont
  *
  ************************************************************************/
-static void 
+static void
 GetUnitFromFont(
 	Display * display,
 	XFontStruct * fst,
@@ -346,7 +346,7 @@ GetUnitFromFont(
 	int * pv_unit)
 {
     enum { XmAAVERAGE_WIDTH, XmAPIXEL_SIZE, XmARESOLUTION_Y, NUM_ATOMS };
-    static char *atom_names[] = { 
+    static char *atom_names[] = {
       XmIAVERAGE_WIDTH, XmIPIXEL_SIZE, XmIRESOLUTION_Y };
     Atom atoms[XtNumber(atom_names)];
     unsigned long pixel_s, avg_w, point_s, resolution_y;
@@ -358,13 +358,13 @@ GetUnitFromFont(
 
               /* Horizontal units */
       if (ph_unit) {
-	  if (atoms[XmAAVERAGE_WIDTH] && 
+	  if (atoms[XmAAVERAGE_WIDTH] &&
 	      XGetFontProperty(fst, atoms[XmAAVERAGE_WIDTH], &avg_w)) {
 	      *ph_unit = (int) ((float) (avg_w / 10) + 0.5) ;
 	  } else if (XGetFontProperty (fst, XA_QUAD_WIDTH, &font_unit_return)){
 	      *ph_unit = font_unit_return ;
 	  } else {
-	      *ph_unit = (int) ((fst->min_bounds.width + 
+	      *ph_unit = (int) ((fst->min_bounds.width +
 				 fst-> max_bounds.width) / 2.3) + 0.5;
 	  }
       }
@@ -374,7 +374,7 @@ GetUnitFromFont(
 	  if (XGetFontProperty(fst, atoms[XmAPIXEL_SIZE], &pixel_s)) {
 	      *pv_unit = (int) (((float) pixel_s) / 1.8) + 0.5;
 	  } else if ((XGetFontProperty(fst, XA_POINT_SIZE, &point_s)) &&
-		     (XGetFontProperty(fst, atoms[XmARESOLUTION_Y], 
+		     (XGetFontProperty(fst, atoms[XmARESOLUTION_Y],
 				       &resolution_y))) {
 	      float ps, ry, tmp;
 
@@ -385,7 +385,7 @@ GetUnitFromFont(
 
 	      *pv_unit = (int) (tmp + 0.5) ;
 	  } else {
-	      *pv_unit = (int) ((float) (fst->max_bounds.ascent + 
+	      *pv_unit = (int) ((float) (fst->max_bounds.ascent +
 					 fst->max_bounds.descent) / 2.2) + 0.5;
 	  }
       }
@@ -403,8 +403,7 @@ GetUnitFromFont(
  *  ScreenInitialize
  *
  ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 Initialize(
         Widget requested_widget,
         Widget new_widget,
@@ -419,14 +418,14 @@ Initialize(
     XQueryBestCursor(display,
 		     RootWindowOfScreen(XtScreen(xmScreen)),
 		     1024, 1024,
-		     &xmScreen->screen.maxCursorWidth, 
+		     &xmScreen->screen.maxCursorWidth,
 		     &xmScreen->screen.maxCursorHeight);
 
     xmScreen->screen.nullCursor = None;
     xmScreen->screen.cursorCache = NULL;
     xmScreen->screen.scratchPixmaps = (XtPointer)
       _XmAllocHashTable(20, MatchPixmap, HashPixmap);
-    xmScreen->screen.inUsePixmaps = (XtPointer) 
+    xmScreen->screen.inUsePixmaps = (XtPointer)
       _XmAllocHashTable(20, NULL, NULL);
     xmScreen->screen.xmStateCursorIcon = NULL;
     xmScreen->screen.xmMoveCursorIcon = NULL;
@@ -448,28 +447,28 @@ Initialize(
     /* font unit stuff, priority to actual unit values, if they haven't
      been set yet, compute from the font, otherwise, stay unchanged */
 
-    if (xmScreen->screen.h_unit == RESOURCE_DEFAULT) 
-	GetUnitFromFont(display, xmScreen->screen.font_struct, 
+    if (xmScreen->screen.h_unit == RESOURCE_DEFAULT)
+	GetUnitFromFont(display, xmScreen->screen.font_struct,
 			&xmScreen->screen.h_unit, NULL);
 
     if (xmScreen->screen.v_unit == RESOURCE_DEFAULT)
-	GetUnitFromFont(display, xmScreen->screen.font_struct, 
+	GetUnitFromFont(display, xmScreen->screen.font_struct,
 			NULL, &xmScreen->screen.v_unit);
 
     xmScreen->screen.screenInfo = (XtPointer) XtNew(XmScreenInfo);
 
-    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->menu_state = 
+    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->menu_state =
 		(XtPointer)NULL;
-    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->destroyCallbackAdded = 
+    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->destroyCallbackAdded =
 		False;
 
-    
+
 #ifdef DEFAULT_GLYPH_PIXMAP
     if (xmScreen->screen.default_glyph_pixmap != XmUNSPECIFIED_PIXMAP) {
 	(void) XmeGetPixmapData(XtScreen(new_widget),
 			 xmScreen->screen.default_glyph_pixmap,
-			 NULL, NULL, NULL, NULL, NULL, NULL, 
-			 &(xmScreen->screen.default_glyph_pixmap_width), 
+			 NULL, NULL, NULL, NULL, NULL, NULL,
+			 &(xmScreen->screen.default_glyph_pixmap_width),
 			 &(xmScreen->screen.default_glyph_pixmap_height));
     }
 #endif
@@ -481,7 +480,6 @@ Initialize(
  *  SetValues
  *
  ************************************************************************/
-/* ARGSUSED */
 static Boolean
 SetValues(
         Widget current,
@@ -506,7 +504,7 @@ SetValues(
 
     /* defaultNoneCursorIcon */
 
-    if (newScr->screen.defaultNoneCursorIcon != 
+    if (newScr->screen.defaultNoneCursorIcon !=
 	    oldScr->screen.defaultNoneCursorIcon &&
 	newScr->screen.defaultNoneCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultNoneCursorIcon)) !=
@@ -519,7 +517,7 @@ SetValues(
 
     /* defaultValidCursorIcon */
 
-    if (newScr->screen.defaultValidCursorIcon != 
+    if (newScr->screen.defaultValidCursorIcon !=
 	    oldScr->screen.defaultValidCursorIcon &&
 	newScr->screen.defaultValidCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultValidCursorIcon)) !=
@@ -532,7 +530,7 @@ SetValues(
 
     /* defaultInvalidCursorIcon */
 
-    if (newScr->screen.defaultInvalidCursorIcon != 
+    if (newScr->screen.defaultInvalidCursorIcon !=
 	    oldScr->screen.defaultInvalidCursorIcon &&
 	newScr->screen.defaultInvalidCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultInvalidCursorIcon)) !=
@@ -545,7 +543,7 @@ SetValues(
 
     /* defaultMoveCursorIcon */
 
-    if (newScr->screen.defaultMoveCursorIcon != 
+    if (newScr->screen.defaultMoveCursorIcon !=
 	    oldScr->screen.defaultMoveCursorIcon &&
 	newScr->screen.defaultMoveCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultMoveCursorIcon)) !=
@@ -558,7 +556,7 @@ SetValues(
 
     /* defaultCopyCursorIcon */
 
-    if (newScr->screen.defaultCopyCursorIcon != 
+    if (newScr->screen.defaultCopyCursorIcon !=
 	    oldScr->screen.defaultCopyCursorIcon &&
 	newScr->screen.defaultCopyCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultCopyCursorIcon)) !=
@@ -571,7 +569,7 @@ SetValues(
 
     /* defaultLinkCursorIcon */
 
-    if (newScr->screen.defaultLinkCursorIcon != 
+    if (newScr->screen.defaultLinkCursorIcon !=
 	    oldScr->screen.defaultLinkCursorIcon &&
 	newScr->screen.defaultLinkCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultLinkCursorIcon)) !=
@@ -584,7 +582,7 @@ SetValues(
 
     /* defaultSourceCursorIcon */
 
-    if (newScr->screen.defaultSourceCursorIcon != 
+    if (newScr->screen.defaultSourceCursorIcon !=
 	    oldScr->screen.defaultSourceCursorIcon &&
 	newScr->screen.defaultSourceCursorIcon != NULL &&
 	XtScreenOfObject (XtParent (newScr->screen.defaultSourceCursorIcon)) !=
@@ -599,20 +597,20 @@ SetValues(
        font has changed but not the unit values, report the change,
        otherwise, use the unit value - i.e do nothing */
 
-    if (newScr->screen.font_struct->fid != 
+    if (newScr->screen.font_struct->fid !=
 	oldScr->screen.font_struct->fid) {
-	
+
 	if (newScr->screen.h_unit == oldScr->screen.h_unit) {
-	    GetUnitFromFont(display, newScr->screen.font_struct, 
+	    GetUnitFromFont(display, newScr->screen.font_struct,
 			    &newScr->screen.h_unit, NULL);
 	}
 
 	if (newScr->screen.v_unit == oldScr->screen.v_unit) {
-	    GetUnitFromFont(display, newScr->screen.font_struct, 
+	    GetUnitFromFont(display, newScr->screen.font_struct,
 			    NULL, &newScr->screen.v_unit);
 	}
-    }    
-	
+    }
+
     return FALSE ;
 }
 
@@ -622,8 +620,7 @@ SetValues(
  *  Destroy
  *
  ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 Destroy(
         Widget widget )
 {
@@ -674,7 +671,7 @@ Destroy(
     _XmCleanPixmapCache (XtScreen(widget), NULL);
 }
 
-static void 
+static void
 InsertChild(
         Widget wid )
 {
@@ -683,16 +680,16 @@ InsertChild(
     register Cardinal        	i;
     register XmScreen 	cw;
     register WidgetList      	children;
-    
+
     cw = (XmScreen) w->desktop.parent;
     children = cw->desktop.children;
-    
+
     position = cw->desktop.num_children;
-    
+
     if (cw->desktop.num_children == cw->desktop.num_slots) {
 	/* Allocate more space */
 	cw->desktop.num_slots +=  (cw->desktop.num_slots / 2) + 2;
-	cw->desktop.children = children = 
+	cw->desktop.children = children =
 	  (WidgetList) XtRealloc((char *) children,
 		(unsigned) (cw->desktop.num_slots) * sizeof(Widget));
     }
@@ -704,7 +701,7 @@ InsertChild(
     cw->desktop.num_children++;
 }
 
-static void 
+static void
 DeleteChild(
         Widget wid )
 {
@@ -712,16 +709,16 @@ DeleteChild(
     register Cardinal	     	position;
     register Cardinal	     	i;
     register XmScreen 	cw;
-    
+
     cw = (XmScreen) w->desktop.parent;
-    
+
     for (position = 0; position < cw->desktop.num_children; position++) {
         if (cw->desktop.children[position] == (Widget)w) {
 	    break;
 	}
     }
     if (position == cw->desktop.num_children) return;
-    
+
     /* Ripple children down one space from "position" */
     cw->desktop.num_children--;
     for (i = position; i < cw->desktop.num_children; i++) {
@@ -736,7 +733,7 @@ DeleteChild(
  *  Mark any cursor cache reference to the specified icon as deallocated.
  ************************************************************************/
 
-void 
+void
 _XmScreenRemoveFromCursorCache(
     XmDragIconObject	icon )
 {
@@ -770,7 +767,7 @@ _XmScreenRemoveFromCursorCache(
 }
 
 static Boolean
-FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data) 
+FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data)
 {
   XmScreen	xmScreen = (XmScreen) client_data;
 
@@ -793,14 +790,10 @@ FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data)
  *  to get loaded in (if not specified in the resource file).
  ************************************************************************/
 
-XmDragIconObject 
+XmDragIconObject
 _XmScreenGetOperationIcon(
         Widget w,
-#if NeedWidePrototypes
-        unsigned int operation )
-#else
         unsigned char operation )
-#endif /* NeedWidePrototypes */
 {
     XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
     XrmQuark		nameQuark = NULLQUARK;
@@ -852,14 +845,10 @@ _XmScreenGetOperationIcon(
  *  The default state cursors are the same XmDragIcon object.
  ************************************************************************/
 
-XmDragIconObject 
+XmDragIconObject
 _XmScreenGetStateIcon(
         Widget w,
-#if NeedWidePrototypes
-        unsigned int state )
-#else
         unsigned char state )
-#endif /* NeedWidePrototypes */
 {
     XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
     XrmQuark		nameQuark = NULLQUARK;
@@ -919,7 +908,7 @@ _XmScreenGetStateIcon(
  *  (a drag is in process) then we create our own.
  ************************************************************************/
 
-XmDragIconObject 
+XmDragIconObject
 _XmScreenGetSourceIcon(
         Widget w )
 {
@@ -933,7 +922,7 @@ _XmScreenGetSourceIcon(
 			          XrmQuarkToString(_XmDefaultDragIconQuark),
 			          NULL, 0);
 	}
-	xmScreen->screen.defaultSourceCursorIcon = 
+	xmScreen->screen.defaultSourceCursorIcon =
 	    xmScreen->screen.xmSourceCursorIcon;
     }
     return xmScreen->screen.defaultSourceCursorIcon;
@@ -945,7 +934,7 @@ _XmScreenGetSourceIcon(
  *
  ************************************************************************/
 
-static Boolean 
+static Boolean
 MatchPixmap(XmHashKey k1, XmHashKey k2)
 {
   XmScratchPixmapKey key1 = (XmScratchPixmapKey) k1;
@@ -956,7 +945,7 @@ MatchPixmap(XmHashKey k1, XmHashKey k2)
 	 key1 -> depth == key2 -> depth);
 }
 
-static XmHashValue 
+static XmHashValue
 HashPixmap(XmHashKey k)
 {
   XmScratchPixmapKey key = (XmScratchPixmapKey) k;
@@ -964,22 +953,16 @@ HashPixmap(XmHashKey k)
   return(key -> height + key -> width + key -> depth);
 }
 
-Pixmap 
+Pixmap
 _XmAllocScratchPixmap(
         XmScreen xmScreen,
-#if NeedWidePrototypes
-        unsigned int depth,
-        int width,
-        int height )
-#else
         Cardinal depth,
         Dimension width,
         Dimension height )
-#endif /* NeedWidePrototypes */
 {
     XmHashTable		scratchTable =
       (XmHashTable) xmScreen->screen.scratchPixmaps;
-    XmHashTable		inUseTable = 
+    XmHashTable		inUseTable =
       (XmHashTable) xmScreen->screen.inUsePixmaps;
     Pixmap		scratchPixmap = None;
     XmScratchPixmapKeyRec	key;
@@ -994,7 +977,7 @@ _XmAllocScratchPixmap(
 
     if (scratchPixmap != None) {
       /* remove from free table */
-      returned_key = (XmScratchPixmapKey) 
+      returned_key = (XmScratchPixmapKey)
 	_XmRemoveHashEntry(scratchTable, &key);
     } else {
       returned_key = XtNew(XmScratchPixmapKeyRec);
@@ -1020,7 +1003,7 @@ _XmAllocScratchPixmap(
  *
  ************************************************************************/
 
-void 
+void
 _XmFreeScratchPixmap(
         XmScreen xmScreen,
         Pixmap pixmap )
@@ -1030,7 +1013,7 @@ _XmFreeScratchPixmap(
     XmScratchPixmapKey returned_key;
 
     _XmProcessLock();
-    returned_key = (XmScratchPixmapKey) 
+    returned_key = (XmScratchPixmapKey)
       _XmGetHashEntry(inUseTable, (XmHashKey) pixmap);
 
     if (returned_key == NULL) {
@@ -1052,7 +1035,7 @@ _XmFreeScratchPixmap(
  *
  ************************************************************************/
 
-XmDragCursorCache * 
+XmDragCursorCache *
 _XmGetDragCursorCachePtr(
         XmScreen xmScreen )
 {
@@ -1065,7 +1048,7 @@ _XmGetDragCursorCachePtr(
  *
  ************************************************************************/
 
-void 
+void
 XmeQueryBestCursorSize(
         Widget w,
         Dimension *width,
@@ -1082,8 +1065,8 @@ XmeQueryBestCursorSize(
     return;
 }
 
-static XmConst char nullBits[] = 
-{ 
+static XmConst char nullBits[] =
+{
     0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
@@ -1096,7 +1079,7 @@ static XmConst char nullBits[] =
  *
  ************************************************************************/
 
-Cursor 
+Cursor
 XmeGetNullCursor(
         Widget w )
 {
@@ -1110,13 +1093,13 @@ XmeGetNullCursor(
     _XmAppLock(app);
     xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
     if (xmScreen->screen.nullCursor == None) {
-	foreground.pixel =  
+	foreground.pixel =
 	  background.pixel = 0;
 	pixmap =
-	  XCreatePixmapFromBitmapData(XtDisplayOfObject(w), 
+	  XCreatePixmapFromBitmapData(XtDisplayOfObject(w),
 				      RootWindowOfScreen(XtScreenOfObject(w)),
 				      (char*)nullBits,
-				      4, 4,  
+				      4, 4,
 				      0, 0,
 				      1);
 	cursor =
@@ -1392,11 +1375,10 @@ _XmGetDefaultGlyphPixmap(
  *
  *********************************************************************/
 
-/* ARGSUSED */
-Widget 
+Widget
 XmGetXmScreen(
         Screen *screen )
-{ 
+{
     XmDisplay	xmDisplay;
     WidgetList	children;
     Widget 	widget;
@@ -1408,7 +1390,7 @@ XmGetXmScreen(
     _XmDisplayToAppContext(DisplayOfScreen(screen));
 
     _XmAppLock(app);
-    if ((xmDisplay = (XmDisplay) 
+    if ((xmDisplay = (XmDisplay)
 	 XmGetXmDisplay(DisplayOfScreen(screen))) == NULL)
 	{
 		XmeWarning(NULL, MESSAGE2);

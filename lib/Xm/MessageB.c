@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -66,7 +66,7 @@ static char rcsid[] = "$TOG: MessageB.c /main/18 1999/10/13 16:17:09 mgreess $"
 
 #define IsButton(w) \
 (((XtPointer) XmeTraitGet((XtPointer) XtClass(w), XmQTactivatable) != NULL))
-      
+
 #define IsAutoChild(mb, w) ( \
       (w) == mb->message_box.symbol_wid || \
       (w) == mb->message_box.message_wid || \
@@ -86,69 +86,65 @@ static char rcsid[] = "$TOG: MessageB.c /main/18 1999/10/13 16:17:09 mgreess $"
 
 /********    Static Function Declarations    ********/
 
-static XImage * CreateDefaultImage( 
+static XImage * CreateDefaultImage(
                         char *bits,
                         unsigned int width,
                         unsigned int height) ;
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static void DeleteChild( 
+static void DeleteChild(
                         Widget child) ;
-static void MessageCallback( 
+static void MessageCallback(
                         Widget w,
                         XtPointer closure,
                         XtPointer call_data) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void SetUpSymbol( 
+static void SetUpSymbol(
                         XmMessageBoxWidget w) ;
-static void SetUpMessage( 
+static void SetUpMessage(
                         XmMessageBoxWidget w) ;
-static void CreateWidgets( 
+static void CreateWidgets(
                         XmMessageBoxWidget w) ;
-static Widget CreateDialog( 
+static Widget CreateDialog(
                         Widget parent,
                         char *name,
                         ArgList al,
                         int ac,
-#if NeedWidePrototypes
-                        unsigned int type) ;
-#else
                         unsigned char type) ;
-#endif /* NeedWidePrototypes */
-static void GetMessageString( 
+static void GetMessageString(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
-static void GetSymbolPixmap( 
+static void GetSymbolPixmap(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
-static void GetOkLabelString( 
+static void GetOkLabelString(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
-static void GetCancelLabelString( 
+static void GetCancelLabelString(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
-static void GetHelpLabelString( 
+static void GetHelpLabelString(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
-static void GetMsgBoxPixmap( 
+static void GetMsgBoxPixmap(
                         XmMessageBoxWidget mBox) ;
 
 /********    End Static Function Declarations    ********/
@@ -336,12 +332,12 @@ externaldef( xmmessageboxclassrec) XmMessageBoxClassRec xmMessageBoxClassRec =
    },
 
    {                                            /* constraint_class fields */
-      NULL,                                     /* resource list        */   
-      0,                                        /* num resources        */   
-      sizeof(XmManagerConstraintRec),           /* constraint size      */   
-      NULL,                                     /* init proc            */   
-      NULL,                                     /* destroy proc         */   
-      NULL,                                     /* set values proc      */   
+      NULL,                                     /* resource list        */
+      0,                                        /* num resources        */
+      sizeof(XmManagerConstraintRec),           /* constraint size      */
+      NULL,                                     /* init proc            */
+      NULL,                                     /* destroy proc         */
+      NULL,                                     /* set values proc      */
       NULL,                                     /* extension            */
    },
 
@@ -360,11 +356,11 @@ externaldef( xmmessageboxclassrec) XmMessageBoxClassRec xmMessageBoxClassRec =
       _XmMessageBoxGeoMatrixCreate,             /* geo__matrix_create */
       XmInheritFocusMovedProc,                  /* focus_moved_proc */
       NULL                                      /* extension */
-   },   
+   },
 
    {                                            /* messageBox class */
       (XtPointer) NULL                          /* extension */
-   }    
+   }
 };
 
 externaldef( xmmessageboxwidgetclass) WidgetClass xmMessageBoxWidgetClass
@@ -411,11 +407,11 @@ static XmConst unsigned char workingBits[] = {
    0xfe, 0xff, 0x0f, 0x56, 0x55, 0x05, 0x00, 0x00, 0x00};
 
 
-
+
 /****************************************************************
  * Create a default images for symbol... used in ClassInitialize.
  ****************/
-static XImage * 
+static XImage *
 CreateDefaultImage(
         char *bits,
         unsigned int width,
@@ -429,7 +425,7 @@ CreateDefaultImage(
     return( image) ;
 }
 /****************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
     XImage *image;
@@ -455,7 +451,7 @@ ClassInitialize( void )
     return ;
 }
 /****************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -468,8 +464,7 @@ ClassPartInitialize(
 /****************************************************************
  * MessageBox widget specific initialization
  ****************/
-/*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,		/* unused */
         Widget nw,
@@ -492,37 +487,37 @@ Initialize(
     if(    !XmRepTypeValidValue( XmRID_DIALOG_TYPE,
                                new_w->message_box.dialog_type, (Widget) new_w)    )
     {   new_w->message_box.dialog_type = XmDIALOG_MESSAGE ;
-        } 
+        }
 
     if(    !XmRepTypeValidValue( XmRID_ALIGNMENT,
                          new_w->message_box.message_alignment, (Widget) new_w)    )
     {   new_w->message_box.message_alignment = XmALIGNMENT_BEGINNING ;
-        } 
+        }
 
     CreateWidgets( new_w) ;
 
     if(    !XmRepTypeValidValue( XmRID_DEFAULT_BUTTON_TYPE,
                               new_w->message_box.default_type, (Widget) new_w)    )
     {   new_w->message_box.default_type = XmDIALOG_OK_BUTTON ;
-        } 
+        }
     switch(    new_w->message_box.default_type    )
-    {   
+    {
         case XmDIALOG_CANCEL_BUTTON:
         {   defaultButton = new_w->bulletin_board.cancel_button ;
             break ;
-            } 
+            }
         case XmDIALOG_HELP_BUTTON:
         {   defaultButton = new_w->message_box.help_button ;
             break ;
-            } 
+            }
         case XmDIALOG_OK_BUTTON:
         {   defaultButton = new_w->message_box.ok_button ;
             break ;
-            } 
+            }
         default:
 	{   defaultButton = NULL ;
 	    }
-        } 
+        }
       if(    defaultButton    )
       {
           BB_DefaultButton( new_w) = defaultButton ;
@@ -534,7 +529,7 @@ Initialize(
 /****************************************************************
  * Destroy the widget specific data structs
  ****************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -543,51 +538,51 @@ Destroy(
 
     if(    (d->message_box.symbol_pixmap != XmUNSPECIFIED_PIXMAP)
         && d->message_box.internal_pixmap    )
-    {   
+    {
         XmDestroyPixmap( d->core.screen, d->message_box.symbol_pixmap) ;
-        } 
+        }
     return ;
     }
-
+
 /****************************************************************
  * Set the widget id to NULL for the child widget being destroyed.
  ****************/
-static void 
+static void
 DeleteChild(
         Widget child )
-{   
+{
             XmMessageBoxWidget mbox ;
 	    XtWidgetProc      delete_child;
 /****************/
 
     if(    XtIsRectObj( child)    )
-    {   
+    {
         mbox = (XmMessageBoxWidget) XtParent( child) ;
 
         /* Check for which child is getting destroyed and set to NULL.
         */
         if(    child == mbox->message_box.message_wid    )
         {   mbox->message_box.message_wid = NULL ;
-            } 
+            }
         else
         {   if(    child == mbox->message_box.symbol_wid    )
             {   mbox->message_box.symbol_wid = NULL ;
-                } 
+                }
             else
             {   if(    child == mbox->message_box.ok_button    )
                 {   mbox->message_box.ok_button = NULL ;
-                    } 
+                    }
                 else
                 {   if(    child == mbox->message_box.help_button    )
                     {   mbox->message_box.help_button = NULL ;
-                        } 
+                        }
                     else
                     {   if(    child == mbox->message_box.separator    )
                         {   mbox->message_box.separator = NULL ;
-                            } 
-                        } 
-                    } 
-                } 
+                            }
+                        }
+                    }
+                }
             }
         }
     _XmProcessLock();
@@ -597,9 +592,9 @@ DeleteChild(
     (*delete_child)(child) ;
     return ;
     }
-
+
 /****************************************************************/
-static void 
+static void
 MessageCallback(
         Widget w,
         XtPointer closure,
@@ -633,12 +628,11 @@ MessageCallback(
     }
     return ;
 }
-
+
 /****************************************************************
  * Set attributes of a message widget
  ****************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,		/* unused */
@@ -663,7 +657,7 @@ SetValues(
 	    /* fix for CR 5895 */
     if(    !new_w->message_box.symbol_pixmap    )
     {   new_w->message_box.symbol_pixmap = XmUNSPECIFIED_PIXMAP ;
-        } 
+        }
 
     /* Over-ride BBoard to disallow a direct change of button id's
      * unless it's a template dialog.  For those, if you can't set it
@@ -673,7 +667,7 @@ SetValues(
          ( current->bulletin_board.cancel_button !=
                                         new_w->bulletin_board.cancel_button ) )
     {
-        new_w->bulletin_board.cancel_button 
+        new_w->bulletin_board.cancel_button
                                        = current->bulletin_board.cancel_button;
         XmeWarning( (Widget) new_w, WARNING5);
     }
@@ -681,7 +675,7 @@ SetValues(
     if(    (current->message_box.dialog_type != new_w->message_box.dialog_type)
         && !XmRepTypeValidValue( XmRID_DIALOG_TYPE,
                                new_w->message_box.dialog_type, (Widget) new_w)    )
-    {   
+    {
         new_w->message_box.dialog_type = current->message_box.dialog_type ;
         }
 
@@ -692,11 +686,11 @@ SetValues(
 
         if(    (current->message_box.symbol_pixmap != XmUNSPECIFIED_PIXMAP)
             && current->message_box.internal_pixmap    )
-        {   
+        {
             XmDestroyPixmap( current->core.screen,
                                           current->message_box.symbol_pixmap) ;
-            } 
-        } 
+            }
+        }
     else
     {   /* If symbol pixmap is unchanged and a new dialog type is specified,
         *   then set to default pixmap.
@@ -709,14 +703,14 @@ SetValues(
 
             if(    (current->message_box.symbol_pixmap != XmUNSPECIFIED_PIXMAP)
                 && current->message_box.internal_pixmap    )
-            {   
-                XmDestroyPixmap( current->core.screen, 
+            {
+                XmDestroyPixmap( current->core.screen,
                                           current->message_box.symbol_pixmap) ;
-                } 
+                }
             }
-        } 
+        }
     if(    newPixmap    )
-    {   
+    {
       need_layout = TRUE ;
 
       /* CR 7596,  create child widget if needed */
@@ -726,7 +720,7 @@ SetValues(
       }
 
       ac = 0 ;
-      XtSetArg( al[ac], XmNlabelPixmap, 
+      XtSetArg( al[ac], XmNlabelPixmap,
 	       new_w->message_box.symbol_pixmap) ; ++ac ;
       XtSetValues( new_w->message_box.symbol_wid, al, ac) ;
     }
@@ -735,8 +729,8 @@ SetValues(
     */
     ac = 0 ;
     if(    new_w->message_box.message_string    )
-    {   
-        XtSetArg( al[ac], XmNlabelString, 
+    {
+        XtSetArg( al[ac], XmNlabelString,
                                       new_w->message_box.message_string) ; ++ac ;
         XtSetArg( al[ac], XmNstringDirection,
                                              BB_StringDirection( new_w)) ; ++ac ;
@@ -745,19 +739,19 @@ SetValues(
         }
     if(    current->message_box.message_alignment
                                      != new_w->message_box.message_alignment    )
-    {   if(    !XmRepTypeValidValue( XmRID_ALIGNMENT, 
+    {   if(    !XmRepTypeValidValue( XmRID_ALIGNMENT,
                          new_w->message_box.message_alignment, (Widget) new_w)    )
         {   new_w->message_box.message_alignment
                                      = current->message_box.message_alignment ;
-            } 
+            }
         else
-        {   XtSetArg( al[ac], XmNalignment, 
+        {   XtSetArg( al[ac], XmNalignment,
                                    new_w->message_box.message_alignment) ; ++ac ;
             need_layout = TRUE ;
-            } 
+            }
         }
     if( ac )
-    {   
+    {
       /* CR 7596,  create message widget if not there */
       if ( ! new_w->message_box.message_wid ) {
 	SetUpMessage(new_w);
@@ -765,47 +759,47 @@ SetValues(
       }
 
       XtSetValues( new_w->message_box.message_wid, al, ac) ;
-    } 
+    }
 
     if(    new_w->message_box.ok_label_string    )
-    {   
+    {
         if(    new_w->message_box.ok_button    )
         {   ac = 0 ;
-            XtSetArg( al[ac], XmNlabelString, 
+            XtSetArg( al[ac], XmNlabelString,
                                      new_w->message_box.ok_label_string) ; ++ac ;
             XtSetArg( al[ac], XmNstringDirection,
                                              BB_StringDirection( new_w)) ; ++ac ;
             XtSetValues( new_w->message_box.ok_button, al, ac) ;
-            } 
+            }
         new_w->message_box.ok_label_string = NULL ;
         need_layout = TRUE ;
-        } 
+        }
     if(    new_w->message_box.cancel_label_string    )
-    {   
+    {
         if(    new_w->bulletin_board.cancel_button    )
         {   ac = 0 ;
-            XtSetArg( al[ac], XmNlabelString, 
+            XtSetArg( al[ac], XmNlabelString,
                                  new_w->message_box.cancel_label_string) ; ++ac ;
             XtSetArg( al[ac], XmNstringDirection,
                                              BB_StringDirection( new_w)) ; ++ac ;
             XtSetValues( new_w->bulletin_board.cancel_button, al, ac) ;
-            } 
+            }
         new_w->message_box.cancel_label_string = NULL ;
         need_layout = TRUE ;
-        } 
+        }
     if(    new_w->message_box.help_label_string    )
-    {   
+    {
         if(    new_w->message_box.help_button    )
         {   ac = 0 ;
-            XtSetArg( al[ac], XmNlabelString, 
+            XtSetArg( al[ac], XmNlabelString,
                                    new_w->message_box.help_label_string) ; ++ac ;
             XtSetArg( al[ac], XmNstringDirection,
                                              BB_StringDirection( new_w)) ; ++ac ;
             XtSetValues( new_w->message_box.help_button, al, ac) ;
-            } 
+            }
         new_w->message_box.help_label_string = NULL ;
         need_layout = TRUE ;
-        } 
+        }
 
     /* If Default Pushbutton changes, reset showAsDefault.
     */
@@ -815,18 +809,18 @@ SetValues(
                           new_w->message_box.default_type, (Widget) new_w)    )
         {   new_w->message_box.default_type
 	                                  = current->message_box.default_type ;
-            } 
+            }
         else
         {   switch(    new_w->message_box.default_type    )
-            {   
+            {
                 case XmDIALOG_CANCEL_BUTTON:
                 {   defaultButton = new_w->bulletin_board.cancel_button ;
                     break ;
-                    } 
+                    }
                 case XmDIALOG_HELP_BUTTON:
                 {   defaultButton = new_w->message_box.help_button ;
                     break ;
-                    } 
+                    }
                 case XmDIALOG_OK_BUTTON:
                 {   defaultButton = new_w->message_box.ok_button ;
                     break ;
@@ -858,11 +852,11 @@ SetValues(
         }
     return( FALSE) ;
     }
-
+
 /****************************************************************
  * Set up the icon (pixmap label widget) and the label widget itself.
  ****************/
-static void 
+static void
 SetUpSymbol(
         XmMessageBoxWidget w )
 {
@@ -878,7 +872,7 @@ SetUpSymbol(
 
     if(    !w->message_box.symbol_pixmap    )
     {   w->message_box.symbol_pixmap = XmUNSPECIFIED_PIXMAP ;
-        } 
+        }
 
     /* Create symbol label even if no pixmap specified; allows SetValues
     *   on dialogType to make pixmap appear in what starts as message box.
@@ -886,7 +880,7 @@ SetUpSymbol(
     ac = 0;
     XtSetArg (al[ac], XmNwidth, 0);                                    ac++;
     XtSetArg (al[ac], XmNheight, 0);                                   ac++;
-    XtSetArg (al[ac], XmNlabelType, XmPIXMAP);                         ac++; 
+    XtSetArg (al[ac], XmNlabelType, XmPIXMAP);                         ac++;
     XtSetArg (al[ac], XmNlabelPixmap, w->message_box.symbol_pixmap);   ac++;
     XtSetArg (al[ac], XmNtraversalOn, False);                          ac++;
 
@@ -894,11 +888,11 @@ SetUpSymbol(
                                                                        al, ac);
     return ;
     }
-
+
 /****************************************************************
  * Set up the message label (assumes none set yet).
  ****************/
-static void 
+static void
 SetUpMessage(
         XmMessageBoxWidget w )
 {
@@ -935,9 +929,9 @@ SetUpMessage(
 
     return ;
 }
-
+
 /****************************************************************/
-XmGeoMatrix 
+XmGeoMatrix
 _XmMessageBoxGeoMatrixCreate(
         Widget wid,
         Widget instigator,
@@ -968,8 +962,8 @@ _XmMessageBoxGeoMatrixCreate(
 
     for (i=0; i < nchildren; i++)
     {   register Widget w = mb->composite.children[i];
-  
-        if( menubar == NULL   
+
+        if( menubar == NULL
             && XmIsRowColumn(w)
             && ((XmRowColumnWidget)w)->row_column.type == XmMENU_BAR)
         {   menubar = w;
@@ -983,7 +977,7 @@ _XmMessageBoxGeoMatrixCreate(
              {   if (workarea == NULL && !IsAutoChild(mb,w))
                 {   workarea = w;
                     nrows += 1;
-                    } 
+                    }
                 }
              }
          }
@@ -1003,7 +997,7 @@ _XmMessageBoxGeoMatrixCreate(
     boxPtr = geoSpec->boxes ;
 
     /* menu bar */
- 
+
     if(    menubar && _XmGeoSetupKid( boxPtr, menubar)    )
     {   layoutPtr->fix_up = _XmMenuBarFix ;
         menubar_adjust = True ;
@@ -1031,24 +1025,24 @@ _XmMessageBoxGeoMatrixCreate(
       if(    (mb->message_box.symbol_pixmap != XmUNSPECIFIED_PIXMAP)
 	 && _XmGeoSetupKid( boxPtr, mb->message_box.symbol_wid)    )
 	{   ++boxPtr ;
-	  } 
+	  }
       if(    _XmGeoSetupKid( boxPtr, mb->message_box.message_wid)    )
 	{   has_message = True ;
 	    ++boxPtr ;
-	  } 
+	  }
     }
     if(    boxPtr != firstBoxInRow && (workarea == NULL || has_message)    )
     {   if(    menubar_adjust    )
         {   menubar_adjust = False ;
-            } 
+            }
         else
         {   layoutPtr->space_above = BB_MarginHeight( mb) ;
-            } 
+            }
         layoutPtr->space_between = BB_MarginWidth( mb) ;
         ++boxPtr ;
         ++layoutPtr ;
         firstBoxInRow = boxPtr ;
-        } 
+        }
 
     /* work area */
 
@@ -1056,16 +1050,16 @@ _XmMessageBoxGeoMatrixCreate(
     {   --boxPtr; /* we want the workarea to the left of the pixmap */
 	add_pixmap = True;
         }
-      
+
     if(    workarea && _XmGeoSetupKid( boxPtr, workarea)    )
     {   ++boxPtr ;
-        } 
+        }
 
     if (add_pixmap)
       if(    (mb->message_box.symbol_pixmap != XmUNSPECIFIED_PIXMAP)
 	 && _XmGeoSetupKid( boxPtr, mb->message_box.symbol_wid)    )
 	{   ++boxPtr ;
-	  } 
+	  }
 
     if(    boxPtr != firstBoxInRow    )
     {   layoutPtr->fill_mode = XmGEO_EXPAND;
@@ -1090,7 +1084,7 @@ _XmMessageBoxGeoMatrixCreate(
         layoutPtr->space_above = BB_MarginHeight( mb) ;
         boxPtr += 2 ;
         ++layoutPtr ;
-        } 
+        }
 
     /* buttons */
 
@@ -1098,16 +1092,16 @@ _XmMessageBoxGeoMatrixCreate(
     {
 	if(    _XmGeoSetupKid( boxPtr, mb->message_box.help_button)    )
 	{   ++boxPtr ;
-	    } 
+	    }
 
 	if(    _XmGeoSetupKid( boxPtr, mb->bulletin_board.cancel_button)    )
 	{   ++boxPtr ;
-	    } 
+	    }
 
 	for (i = 0; i < nchildren; i++)
 	{
 	    register Widget w = mb->composite.children[nchildren-i-1];
- 
+
 	    if(   !IsAutoChild(mb,w) && IsButton(w) && _XmGeoSetupKid(boxPtr, w)  )
 	    {   ++boxPtr;
 		}
@@ -1115,27 +1109,27 @@ _XmMessageBoxGeoMatrixCreate(
 
 	if(    _XmGeoSetupKid( boxPtr, mb->message_box.ok_button)    )
 	{   ++boxPtr ;
-	    } 
+	    }
     }
     else
     {
       if(    _XmGeoSetupKid( boxPtr, mb->message_box.ok_button)    )
 	{   ++boxPtr ;
-	  } 
+	  }
       for (i = 0; i < nchildren; i++)
 	{
 	  register Widget w = mb->composite.children[i];
-	  
+
 	  if(   !IsAutoChild(mb,w) && IsButton(w) && _XmGeoSetupKid(boxPtr, w)  )
 	    {   ++boxPtr;
 	      }
         }
       if(    _XmGeoSetupKid( boxPtr, mb->bulletin_board.cancel_button)    )
 	{   ++boxPtr ;
-	  } 
+	  }
       if(    _XmGeoSetupKid( boxPtr, mb->message_box.help_button)    )
 	{   ++boxPtr ;
-	  } 
+	  }
     }
 
     if(    has_buttons    )
@@ -1143,11 +1137,11 @@ _XmMessageBoxGeoMatrixCreate(
         layoutPtr->fit_mode = XmGEO_WRAP ;
         if(    !mb->message_box.minimize_buttons    )
         {   layoutPtr->even_width = 1 ;
-            } 
+            }
         layoutPtr->even_height = 1 ;
         layoutPtr->space_above = BB_MarginHeight( mb) ;
 	++layoutPtr ;
-        } 
+        }
 
     /* end */
 
@@ -1156,7 +1150,7 @@ _XmMessageBoxGeoMatrixCreate(
     return( geoSpec) ;
     }
 /****************************************************************/
-Boolean 
+Boolean
 _XmMessageBoxNoGeoRequest(
         XmGeoMatrix geoSpec )
 {
@@ -1164,19 +1158,19 @@ _XmMessageBoxNoGeoRequest(
 
     if(    BB_InSetValues( geoSpec->composite)
         && (XtClass( geoSpec->composite) == xmMessageBoxWidgetClass)    )
-    {   
+    {
         return( TRUE) ;
-        } 
+        }
     return( FALSE) ;
     }
-
+
 
 
 /****************************************************************
  * Construct the required captive widgets for the box.  Don't worry about
  *   positioning since a layout will happen later on.
  ****************/
-static void 
+static void
 CreateWidgets(
         XmMessageBoxWidget w )
 {
@@ -1198,10 +1192,10 @@ CreateWidgets(
     XtSetArg (al[0], XmNhighlightThickness, 0);
     w->message_box.separator = XmCreateSeparatorGadget( (Widget) w,
                                                            "Separator", al, 1);
-    
+
     /* create all pushbuttons, user can unmanage if they don't want them */
 
-    /* "Ok" button... if no label, use default localized "OK" string from 
+    /* "Ok" button... if no label, use default localized "OK" string from
        message catalog, or "OK" if no message catatlog, for label */
     if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
 	w->message_box.ok_label_string == NULL &&
@@ -1211,23 +1205,23 @@ CreateWidgets(
                                         w->message_box.ok_label_string, "OK",
 					XmOkStringLoc) ;
 	w->message_box.ok_label_string = NULL;
-	XtAddCallback( w->message_box.ok_button, XmNactivateCallback, 
+	XtAddCallback( w->message_box.ok_button, XmNactivateCallback,
                                               MessageCallback, (XtPointer) w) ;
     }
-    /* "Cancel" button... if no label, use default localized "Cancel" string from 
+    /* "Cancel" button... if no label, use default localized "Cancel" string from
        message catalog, or "Cancel" if no message catalog, for label */
     if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
 	w->message_box.cancel_label_string == NULL &&
 	w->message_box.cancel_callback == NULL))
     {
 	w->bulletin_board.cancel_button = _XmBB_CreateButtonG( (Widget) w,
-                                w->message_box.cancel_label_string, "Cancel", 
+                                w->message_box.cancel_label_string, "Cancel",
 				XmCancelStringLoc) ;
 	w->message_box.cancel_label_string = NULL;
-	XtAddCallback( w->bulletin_board.cancel_button, XmNactivateCallback, 
+	XtAddCallback( w->bulletin_board.cancel_button, XmNactivateCallback,
                                               MessageCallback, (XtPointer) w) ;
     }
-    /* "Help" button... if no label, use default localized "Help" string from 
+    /* "Help" button... if no label, use default localized "Help" string from
        message catalog, or "Help" if no message catalog, for label */
     if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
 	w->message_box.help_label_string == NULL &&
@@ -1241,7 +1235,7 @@ CreateWidgets(
 	/* Remove BulletinBoard Unmanage callback from help button.
 	*/
 	XtRemoveAllCallbacks( w->message_box.help_button, XmNactivateCallback) ;
-	XtAddCallback( w->message_box.help_button, XmNactivateCallback, 
+	XtAddCallback( w->message_box.help_button, XmNactivateCallback,
                                               MessageCallback, (XtPointer) w) ;
     }
     /* Now manage all my children.
@@ -1251,23 +1245,19 @@ CreateWidgets(
 }
 
 
-
+
 /****************************************************************
  * Common create routine for message dialogs...
  *   it will create the shell and widgets, and set the dialog_type to
  *   whatever has been passed in...
  ****************/
-static Widget 
+static Widget
 CreateDialog(
         Widget parent,
         char *name,
         ArgList al,
         int ac,
-#if NeedWidePrototypes
-        unsigned int type )
-#else
         unsigned char type )        /* type of dialog being created */
-#endif /* NeedWidePrototypes */
 {
     Widget w;
     ArgList  argsNew;
@@ -1286,9 +1276,9 @@ CreateDialog(
     XtFree((char*)argsNew);
     return w ;
 }
-
+
 /****************************************************************/
-Widget 
+Widget
 XmCreateMessageBox(
         Widget parent,
         char *name,
@@ -1297,8 +1287,8 @@ XmCreateMessageBox(
 {
     return XtCreateWidget (name, xmMessageBoxWidgetClass, parent, al, ac);
 }
-
-Widget 
+
+Widget
 XmVaCreateMessageBox(
         Widget parent,
         char *name,
@@ -1307,21 +1297,21 @@ XmVaCreateMessageBox(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmMessageBoxWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
-
+
 Widget
 XmVaCreateManagedMessageBox(
         Widget parent,
@@ -1331,22 +1321,22 @@ XmVaCreateManagedMessageBox(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmMessageBoxWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
-
+
 /****************************************************************/
-Widget 
+Widget
 XmCreateMessageDialog(
         Widget parent,
         char *name,
@@ -1356,7 +1346,7 @@ XmCreateMessageDialog(
     return CreateDialog (parent, name, al, ac, XmDIALOG_MESSAGE);
 }
 /****************************************************************/
-Widget 
+Widget
 XmCreateErrorDialog(
         Widget parent,
         char *name,
@@ -1366,7 +1356,7 @@ XmCreateErrorDialog(
     return CreateDialog (parent, name, al, ac, XmDIALOG_ERROR);
 }
 /****************************************************************/
-Widget 
+Widget
 XmCreateInformationDialog(
         Widget parent,
         char *name,
@@ -1376,7 +1366,7 @@ XmCreateInformationDialog(
     return CreateDialog (parent, name, al, ac, XmDIALOG_INFORMATION);
 }
 /****************************************************************/
-Widget 
+Widget
 XmCreateQuestionDialog(
         Widget parent,
         char *name,
@@ -1386,7 +1376,7 @@ XmCreateQuestionDialog(
     return CreateDialog (parent, name, al, ac, XmDIALOG_QUESTION);
 }
 /****************************************************************/
-Widget 
+Widget
 XmCreateWarningDialog(
         Widget parent,
         char *name,
@@ -1396,7 +1386,7 @@ XmCreateWarningDialog(
     return CreateDialog (parent, name, al, ac, XmDIALOG_WARNING);
 }
 /****************************************************************/
-Widget 
+Widget
 XmCreateWorkingDialog(
         Widget parent,
         char *name,
@@ -1405,9 +1395,9 @@ XmCreateWorkingDialog(
 {
     return CreateDialog (parent, name, al, ac, XmDIALOG_WORKING);
 }
-
+
 /****************************************************************/
-Widget 
+Widget
 XmCreateTemplateDialog(
         Widget parent,
         char *name,
@@ -1416,16 +1406,12 @@ XmCreateTemplateDialog(
 {
     return CreateDialog (parent, name, al, ac, XmDIALOG_TEMPLATE);
 }
-
+
 /****************************************************************/
-Widget 
+Widget
 XmMessageBoxGetChild(
         Widget widget,
-#if NeedWidePrototypes
-        unsigned int child )
-#else
         unsigned char child )
-#endif /* NeedWidePrototypes */
 {
     XmMessageBoxWidget  w = (XmMessageBoxWidget)widget;
     Widget child_widget = NULL;
@@ -1434,28 +1420,28 @@ XmMessageBoxGetChild(
 
     _XmAppLock(app);
     switch (child) {
-        case XmDIALOG_DEFAULT_BUTTON: 
+        case XmDIALOG_DEFAULT_BUTTON:
 		child_widget =  w->bulletin_board.default_button;
 		break;
-        case XmDIALOG_SYMBOL_LABEL:   
+        case XmDIALOG_SYMBOL_LABEL:
 		child_widget = w->message_box.symbol_wid;
 		break;
-        case XmDIALOG_MESSAGE_LABEL:  
+        case XmDIALOG_MESSAGE_LABEL:
 		child_widget = w->message_box.message_wid;
 		break;
-        case XmDIALOG_OK_BUTTON:      
+        case XmDIALOG_OK_BUTTON:
 		child_widget = w->message_box.ok_button;
 		break;
-        case XmDIALOG_CANCEL_BUTTON:  
+        case XmDIALOG_CANCEL_BUTTON:
 		child_widget = w->bulletin_board.cancel_button;
 		break;
-        case XmDIALOG_HELP_BUTTON:    
+        case XmDIALOG_HELP_BUTTON:
 		child_widget = w->message_box.help_button;
 		break;
-        case XmDIALOG_SEPARATOR:      
+        case XmDIALOG_SEPARATOR:
 		child_widget = w->message_box.separator;
 		break;
-        default: 
+        default:
 		XmeWarning( (Widget) w, WARNING4); break ;
 		break;
     }
@@ -1463,8 +1449,7 @@ XmMessageBoxGetChild(
     return child_widget ;
 }
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetMessageString(
         Widget wid,
         int resource_offset,	/* unused */
@@ -1484,8 +1469,7 @@ GetMessageString(
     return ;
 }
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetSymbolPixmap(
         Widget wid,
         int resource_offset,	/* unused */
@@ -1505,8 +1489,7 @@ GetSymbolPixmap(
     return ;
 }
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetOkLabelString(
         Widget wid,
         int resource_offset,	/* unused */
@@ -1526,8 +1509,7 @@ GetOkLabelString(
     return ;
 }
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetCancelLabelString(
         Widget wid,
         int resource_offset,	/* unused */
@@ -1547,8 +1529,7 @@ GetCancelLabelString(
     return ;
 }
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetHelpLabelString(
         Widget wid,
         int resource_offset,	/* unused */
@@ -1568,7 +1549,7 @@ GetHelpLabelString(
     return ;
 }
 /****************************************************************/
-static void 
+static void
 GetMsgBoxPixmap(
         XmMessageBoxWidget mBox )
 {
@@ -1576,15 +1557,15 @@ GetMsgBoxPixmap(
     char *          fileName ;
     char *          defaultName ;
     XmAccessColorDataRec acc_color_rec;
-   
+
     /* Try to get pixmap from bitmap file or default.
     */
-    switch(    mBox->message_box.dialog_type    ) {   
-        case XmDIALOG_ERROR: 
-        {   fileName = "xm_error" ; 
+    switch(    mBox->message_box.dialog_type    ) {
+        case XmDIALOG_ERROR:
+        {   fileName = "xm_error" ;
             defaultName = "default_xm_error" ;
             break ;
-            } 
+            }
         case XmDIALOG_INFORMATION:
         {   fileName = "xm_information" ;
             defaultName = "default_xm_information" ;
@@ -1605,7 +1586,7 @@ GetMsgBoxPixmap(
             defaultName = "default_xm_working" ;
             break ;
             }
-        default: 
+        default:
         {   fileName = NULL ;
             defaultName = NULL ;
             break ;
@@ -1622,7 +1603,7 @@ GetMsgBoxPixmap(
 	else
 	    /* we want bitmap out of xbm, use the private convention */
 	    depth = -mBox->core.depth ;
-    
+
 
     /* use full color spec, so that one can take advantage of
 	   symbolic shadow in the symbol pixmap */
@@ -1632,15 +1613,15 @@ GetMsgBoxPixmap(
 	acc_color_rec.bottom_shadow_color = mBox->manager.bottom_shadow_color ;
 	acc_color_rec.highlight_color = mBox->manager.highlight_color ;
 	acc_color_rec.select_color = XmUNSPECIFIED_PIXEL ;
-					
+
 	tmpPix = _XmGetScaledPixmap(mBox->core.screen, (Widget)mBox,
-				    fileName, 
+				    fileName,
 				    &acc_color_rec, depth, FALSE, 0) ;
- 	if(    tmpPix == XmUNSPECIFIED_PIXMAP    ) {   
+ 	if(    tmpPix == XmUNSPECIFIED_PIXMAP    ) {
 	    tmpPix = _XmGetScaledPixmap(mBox->core.screen,  (Widget)mBox,
 					 defaultName,
 					 &acc_color_rec, depth, FALSE, 0) ;
-	} 
+	}
     }
 
     mBox->message_box.symbol_pixmap = tmpPix ;

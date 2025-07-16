@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 #ifndef _XmRegionI_h
 #define _XmRegionI_h
@@ -34,7 +34,7 @@ extern "C" {
 
 /*  1 if two Boxs overlap.
  *  0 if two Boxs do not overlap.
- *  Remember, x2 and y2 are not in the region 
+ *  Remember, x2 and y2 are not in the region
  */
 #define EXTENTCHECK(r1, r2) \
 	((r1)->x2 > (r2)->x1 && \
@@ -152,53 +152,53 @@ extern XmRegion _XmRegionCreateSize(
 			long size) ;
 extern void _XmRegionComputeExtents(
 			XmRegion r) ;
-extern void _XmRegionGetExtents( 
+extern void _XmRegionGetExtents(
                         XmRegion r,
                         XRectangle *rect) ;
-extern void _XmRegionUnionRectWithRegion( 
+extern void _XmRegionUnionRectWithRegion(
                         XRectangle *rect,
                         XmRegion source,
                         XmRegion dest) ;
-extern void _XmRegionIntersectRectWithRegion( 
+extern void _XmRegionIntersectRectWithRegion(
                         XRectangle *rect,
                         XmRegion source,
                         XmRegion dest) ;
 extern long _XmRegionGetNumRectangles(
 			XmRegion r) ;
-extern void _XmRegionGetRectangles( 
+extern void _XmRegionGetRectangles(
                         XmRegion r,
                         XRectangle **rects,
                         long *nrects) ;
-extern void _XmRegionSetGCRegion( 
+extern void _XmRegionSetGCRegion(
                         Display *dpy,
                         GC gc,
 			int x_origin,
 			int y_origin,
                         XmRegion r) ;
-extern void _XmRegionDestroy( 
+extern void _XmRegionDestroy(
                         XmRegion r) ;
-extern void _XmRegionOffset( 
+extern void _XmRegionOffset(
                         XmRegion pRegion,
                         int x,
                         int y) ;
-extern void _XmRegionIntersect( 
+extern void _XmRegionIntersect(
                         XmRegion reg1,
                         XmRegion reg2,
                         XmRegion newReg) ;
-extern void _XmRegionUnion( 
+extern void _XmRegionUnion(
                         XmRegion reg1,
                         XmRegion reg2,
                         XmRegion newReg) ;
-extern void _XmRegionSubtract( 
+extern void _XmRegionSubtract(
                         XmRegion regM,
                         XmRegion regS,
                         XmRegion regD) ;
-extern Boolean _XmRegionIsEmpty( 
+extern Boolean _XmRegionIsEmpty(
                         XmRegion r) ;
-extern Boolean _XmRegionEqual( 
+extern Boolean _XmRegionEqual(
                         XmRegion r1,
                         XmRegion r2) ;
-extern Boolean _XmRegionPointInRegion( 
+extern Boolean _XmRegionPointInRegion(
                         XmRegion pRegion,
                         int x,
                         int y) ;
@@ -214,13 +214,8 @@ extern void _XmRegionDrawShadow(
 			GC top_gc,
 			GC bottom_gc,
 			XmRegion region,
-#if NeedWidePrototypes
-			int border_thick,
-			int shadow_thick,
-#else
 			Dimension border_thick,
 			Dimension shadow_thick,
-#endif /* NeedWidePrototypes */
 			unsigned int shadow_type ) ;
 
 extern XmRegion _XmRegionFromImage(
@@ -233,4 +228,3 @@ extern XmRegion _XmRegionFromImage(
 #endif
 
 #endif /* _XmRegionI_h */
-/* DON'T ADD STUFF AFTER THIS #endif */

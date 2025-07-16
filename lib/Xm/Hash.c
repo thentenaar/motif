@@ -33,8 +33,6 @@
 #include "XmI.h"
 #include "HashI.h"
 
-#define FIX_1264
-
 /* Private data structures */
 
 typedef struct _XmHashBucketRec {
@@ -62,7 +60,7 @@ static XmHashBucket FreeBucketList = NULL;
 
 /* Dumb default hash functions */
 
-static Boolean 
+static Boolean
 Compare(XmHashKey x, XmHashKey y)
 {
   return(x == y);
@@ -76,11 +74,11 @@ Hash(XmHashKey x)
 
 /* Available table sizes,  should be prime numbers */
 
-static XmConst int size_table[] = 
+static XmConst int size_table[] =
 	{ 17, 31, 67, 131, 257, 521, 1031, 2053, 4099, 8209, 0 };
 
 XmHashTable
-_XmAllocHashTable(Cardinal size_hint, XmHashCompareProc cproc, 
+_XmAllocHashTable(Cardinal size_hint, XmHashCompareProc cproc,
 		  XmHashFunction hproc)
 {
   XmHashTable   table;
@@ -97,7 +95,7 @@ _XmAllocHashTable(Cardinal size_hint, XmHashCompareProc cproc,
     table -> compare = cproc;
   else
     table -> compare = Compare;
-  
+
   i = 0;
 
   /* Search size_table for size which is bigger than size_hint */
@@ -155,8 +153,8 @@ _XmResizeHashTable(XmHashTable table, Cardinal new_size)
   /* Realloc table */
   oldsize = table -> size;
   table -> size = size_table[i];
-  table -> buckets = 
-    (XmHashBucket*) XtRealloc((char*) table -> buckets, 
+  table -> buckets =
+    (XmHashBucket*) XtRealloc((char*) table -> buckets,
 			      table -> size * sizeof(XmHashBucket));
   /* NULL new array entries */
   for(i = oldsize; i < table -> size; i++) table -> buckets[i] = NULL;
@@ -167,7 +165,7 @@ _XmResizeHashTable(XmHashTable table, Cardinal new_size)
     last = NULL;
     current = table -> buckets[i];
     while(current) {
-      /* If this bucket goes somewhere else,  remove 
+      /* If this bucket goes somewhere else,  remove
 	 from this chain and reinstall */
       next = current -> next;
       index = current -> hashed_key % table -> size;
@@ -181,16 +179,14 @@ _XmResizeHashTable(XmHashTable table, Cardinal new_size)
 	current -> next = NULL;
 	new_h = table -> buckets[index];
 	if (new_h != NULL) {
-	  while(new_h -> next != NULL) 
+	  while(new_h -> next != NULL)
 	    new_h = new_h -> next;
 	  new_h -> next = current;
 	} else {
 	  table -> buckets[index] = current;
 	}
       }
-#ifdef FIX_1264
       else last = current;
-#endif
       current = next;
     }
   }
@@ -206,7 +202,7 @@ _XmGetHashEntryIterate(XmHashTable table, XmHashKey key, XtPointer *iterator)
     /* If iterating over a number of matching entries */
     entry = (XmHashBucket) *iterator;
     entry = entry -> next;
-  } else { 
+  } else {
     /* Normal case */
     index = (table -> hasher(key)) % table -> size;
     entry = table -> buckets[index];
@@ -224,7 +220,7 @@ _XmGetHashEntryIterate(XmHashTable table, XmHashKey key, XtPointer *iterator)
   return(NULL);
 }
 
-void 
+void
 _XmAddHashEntry(XmHashTable table, XmHashKey key, XtPointer value)
 {
   int hash;
@@ -271,7 +267,7 @@ _XmRemoveHashEntry(XmHashTable table, XmHashKey key)
   return(NULL);
 }
 
-XtPointer 
+XtPointer
 _XmRemoveHashIterator(XmHashTable table, XtPointer *iterator)
 {
   XmHashValue index;
@@ -322,7 +318,7 @@ _XmHashTableSize(XmHashTable table)
 /* code using hash tables.					*/
 /****************************************************************/
 
-void 
+void
 _XmMapHashTable(XmHashTable table, XmHashMapProc proc, XtPointer client_data)
 {
   int i;
@@ -346,7 +342,7 @@ _XmMapHashTable(XmHashTable table, XmHashMapProc proc, XtPointer client_data)
 /* Bucket management */
 #define NUMBUCKETS 256
 
-static XmHashBucket 
+static XmHashBucket
 NewBucket(void)
 {
   XmHashBucket rbucket;
@@ -393,7 +389,7 @@ _XmPrintHashTable(XmHashTable table)
   total_in_use = 0;
 
   printf("size %d hash function %lx compare function %lx\n",
-	 table->size, (unsigned long) table->hasher, 
+	 table->size, (unsigned long) table->hasher,
 	 (unsigned long) table->compare);
 
   for (i = 0; i < table -> size; i++) {

@@ -59,8 +59,6 @@
 
 #include <Xm/SpinBP.h>
 
-#define FIX_1519
-
 static void ClassInitialize(void);
 static void ClassPartInitialize(WidgetClass classPart);
 static void Initialize(Widget req, Widget w,
@@ -100,7 +98,7 @@ static void SpinBNext(Widget   nextWidget, XEvent   *nextEvent,
 		      String   *nextParams, Cardinal *nextCount );
 static void SpinBPrior(Widget   priorWidget, XEvent   *priorEvent,
 		       String   *priorParams, Cardinal *priorCount );
-static void SpinBRight(Widget   rightWidget, XEvent   *rightEvent, 
+static void SpinBRight(Widget   rightWidget, XEvent   *rightEvent,
 		       String   *rightParams, Cardinal *rightCount );
 static void SpinBEnter(Widget, XEvent*, String*, Cardinal*);
 static void SpinBLeave(Widget, XEvent*, String*, Cardinal*);
@@ -136,7 +134,7 @@ static void ArrowSpinDown(Widget w, XEvent *callEvent);
 static void GetSpinSize(Widget w, Dimension *wide, Dimension *high);
 static void SpinNChangeMoveCB(Widget nav, XtCallbackProc moveCB,
 			      XtPointer closure, Boolean setunset );
-static void SpinNSetValue(Widget nav, XmNavigatorData nav_data, 
+static void SpinNSetValue(Widget nav, XmNavigatorData nav_data,
 			  Boolean notify );
 static void SpinNGetValue(Widget nav, XmNavigatorData nav_data );
 static void GetPositionValue(Widget w, int offset, XtArgVal *value);
@@ -230,7 +228,7 @@ static XtResource resources[] = {
     sizeof(unsigned int), Offset(repeat_delay),
     XmRImmediate, (XtPointer) 200
   },
-  { XmNdefaultArrowSensitivity, XmCDefaultArrowSensitivity, 
+  { XmNdefaultArrowSensitivity, XmCDefaultArrowSensitivity,
     XmRArrowSensitivity,
     sizeof(unsigned char), Offset(default_arrow_sensitivity),
     XmRImmediate, (XtPointer) XmARROWS_SENSITIVE
@@ -239,9 +237,9 @@ static XtResource resources[] = {
     sizeof(XtCallbackList), Offset(modify_verify_cb),
     XmRPointer, NULL
   },
-  { XmNvalueChangedCallback, XmCCallback, XmRCallback, 
-    sizeof(XtCallbackList), Offset(value_changed_cb), 
-    XmRPointer, NULL, 
+  { XmNvalueChangedCallback, XmCCallback, XmRCallback,
+    sizeof(XtCallbackList), Offset(value_changed_cb),
+    XmRPointer, NULL,
   },
   { XmNdetailShadowThickness, XmCShadowThickness, XmRHorizontalDimension,
     sizeof(Dimension), Offset(detail_shadow_thickness),
@@ -267,32 +265,32 @@ static XtResource constraints[] = {
     sizeof(int), ConstraintOffset(num_values),
     XmRImmediate, (XtPointer) 0
   },
-  { XmNvalues, XmCValues, XmRXmStringTable, 
-    sizeof(XmStringTable), ConstraintOffset(values), 
+  { XmNvalues, XmCValues, XmRXmStringTable,
+    sizeof(XmStringTable), ConstraintOffset(values),
     XmRStringTable, NULL
   },
-  { XmNminimumValue, XmCMinimumValue, XmRInt, 
-    sizeof(int), ConstraintOffset(minimum_value), 
+  { XmNminimumValue, XmCMinimumValue, XmRInt,
+    sizeof(int), ConstraintOffset(minimum_value),
     XmRImmediate, (XtPointer) 0
   },
-  { XmNmaximumValue, XmCMaximumValue, XmRInt, 
-    sizeof(int), ConstraintOffset(maximum_value), 
+  { XmNmaximumValue, XmCMaximumValue, XmRInt,
+    sizeof(int), ConstraintOffset(maximum_value),
     XmRImmediate, (XtPointer) 10
   },
-  { XmNincrementValue, XmCIncrementValue, XmRInt, 
-    sizeof(int), ConstraintOffset(increment_value), 
+  { XmNincrementValue, XmCIncrementValue, XmRInt,
+    sizeof(int), ConstraintOffset(increment_value),
     XmRImmediate, (XtPointer) 1
   },
   { XmNdecimalPoints, XmCDecimalPoints, XmRShort,
-    sizeof(short), ConstraintOffset(decimal_points), 
+    sizeof(short), ConstraintOffset(decimal_points),
     XmRImmediate, (XtPointer) 0
   },
   { XmNarrowSensitivity, XmCArrowSensitivity, XmRArrowSensitivity,
-    sizeof(unsigned char), ConstraintOffset(arrow_sensitivity), 
+    sizeof(unsigned char), ConstraintOffset(arrow_sensitivity),
     XmRImmediate, (XtPointer) XmARROWS_DEFAULT_SENSITIVITY
   },
   { XmNwrap, XmCWrap, XmRBoolean,
-    sizeof(Boolean), ConstraintOffset(wrap), 
+    sizeof(Boolean), ConstraintOffset(wrap),
     XmRImmediate, (XtPointer) True
   },
   { XmNposition, XmCPosition, XmRPositionValue,
@@ -301,7 +299,7 @@ static XtResource constraints[] = {
   }
 };
 
-static XmSyntheticResource syn_resources[] = 
+static XmSyntheticResource syn_resources[] =
 {
   { XmNspacing, sizeof(Dimension),
     Offset(spacing),
@@ -314,20 +312,20 @@ static XmSyntheticResource syn_resources[] =
     XmeToVerticalPixels
   },
   { XmNmarginWidth, sizeof(Dimension),
-    Offset(margin_width), 
+    Offset(margin_width),
     XmeFromHorizontalPixels,
     XmeToHorizontalPixels
   },
-  { XmNdetailShadowThickness, sizeof(Dimension), 
+  { XmNdetailShadowThickness, sizeof(Dimension),
     Offset(detail_shadow_thickness),
     XmeFromHorizontalPixels,
     XmeToHorizontalPixels
   }
 };
 
-static XmSyntheticResource syn_constraints[] = 
+static XmSyntheticResource syn_constraints[] =
 {
-  { XmNposition, sizeof(int), 
+  { XmNposition, sizeof(int),
     ConstraintOffset(position),
     GetPositionValue,
     SetPositionValue
@@ -365,33 +363,33 @@ static XmBaseClassExtRec spinBoxBaseClassExtRec = {
 
 externaldef (xmspinboxclassrec) XmSpinBoxClassRec xmSpinBoxClassRec= {
   {
-    (WidgetClass)&xmManagerClassRec,    /* superclass */   
-    "XmSpinBox",                        /* class_name */	
-    sizeof(XmSpinBoxRec),               /* widget_size */	
-    ClassInitialize,    		/* class_initialize */    
+    (WidgetClass)&xmManagerClassRec,    /* superclass */
+    "XmSpinBox",                        /* class_name */
+    sizeof(XmSpinBoxRec),               /* widget_size */
+    ClassInitialize,    		/* class_initialize */
     ClassPartInitialize,                /* class_part_initialize */
-    FALSE,    		                /* class_inited */	
-    Initialize,    	                /* initialize */	
+    FALSE,    		                /* class_inited */
+    Initialize,    	                /* initialize */
     NULL,    		                /* initialize_hook */
-    XtInheritRealize,		        /* realize */	
+    XtInheritRealize,		        /* realize */
     actionsTable,      	                /* actions */
-    XtNumber(actionsTable),             /* num_actions */	
+    XtNumber(actionsTable),             /* num_actions */
     resources,    	                /* resources */
     XtNumber(resources),                /* num_resources */
-    NULLQUARK,    	                /* xrm_class */	
-    TRUE,    		                /* compress_motion */	
-    XtExposeCompressMaximal |          	/* compress_exposure */	
+    NULLQUARK,    	                /* xrm_class */
+    TRUE,    		                /* compress_motion */
+    XtExposeCompressMaximal |          	/* compress_exposure */
 	XtExposeNoRegion,
     TRUE,    		              	/* compress_enterleave */
-    FALSE,    		              	/* visible_interest */	
-    Destroy,    		      	/* destroy */	
+    FALSE,    		              	/* visible_interest */
+    Destroy,    		      	/* destroy */
     Resize,			      	/* resize */
-    Redisplay,    	              	/* expose */	
-    SetValues,    	              	/* set_values */	
+    Redisplay,    	              	/* expose */
+    SetValues,    	              	/* set_values */
     NULL,    		              	/* set_values_hook */
     XtInheritSetValuesAlmost,          	/* set_values_almost */
     NULL,    		              	/* get_values_hook */
-    XtInheritAcceptFocus,	      	/* accept_focus */	
+    XtInheritAcceptFocus,	      	/* accept_focus */
     XtVersion,    	              	/* version */
     NULL,    		              	/* callback private */
     defaultTranslations,	        /* tm_table */
@@ -399,7 +397,7 @@ externaldef (xmspinboxclassrec) XmSpinBoxClassRec xmSpinBoxClassRec= {
     NULL,    		              	/* display_accelerator */
     (XtPointer)&spinBoxBaseClassExtRec,	/* extension */
   },
-  
+
   {    /* composite_class fields */
     GeometryManager,                	/* geometry_manager */
     ChangeManaged,    	              	/* change_managed */
@@ -407,7 +405,7 @@ externaldef (xmspinboxclassrec) XmSpinBoxClassRec xmSpinBoxClassRec= {
     XtInheritDeleteChild,	        /* delete_child */
     NULL,    		                /* extension */
   },
-  
+
   {    /* constraint_class fields */
     constraints,    		      	/* resource list */
     XtNumber(constraints),	      	/* num resources */
@@ -432,12 +430,12 @@ externaldef (xmspinboxclassrec) XmSpinBoxClassRec xmSpinBoxClassRec= {
     NULL,    		              	/* get_callback_widget */
     NULL    		              	/* extension */
   }
-  
+
 };
 
 externaldef(xmspinboxwidgetclass) WidgetClass xmSpinBoxWidgetClass =
        (WidgetClass)&xmSpinBoxClassRec;
-     
+
 static XmConst XmNavigatorTraitRec spinBoxNT =
 {
   0,
@@ -456,7 +454,7 @@ static XtConvertArgRec selfConvertArgs[] = {
  **
  *****************************************************************************/
 
-static void 
+static void
 ClassInitialize(void)
 {
   spinAccel = XtParseAcceleratorTable(_XmSpinB_defaultAccelerators);
@@ -469,11 +467,11 @@ static void
 ClassPartInitialize(WidgetClass classPart)
 {
   XmSpinBoxWidgetClass spinC;
-  
+
   spinC = (XmSpinBoxWidgetClass) classPart;
-  
+
   _XmFastSubclassInit(classPart, XmSPINBOX_BIT);
-  
+
   /* Install the navigator trait for all subclasses */
   XmeTraitSet((XtPointer)spinC, XmQTnavigator, (XtPointer) &spinBoxNT);
 
@@ -483,10 +481,9 @@ ClassPartInitialize(WidgetClass classPart)
 
 }
 
-/*ARGSUSED*/
 static void
 Initialize(Widget req,		/* unused */
-	   Widget new_w, 
+	   Widget new_w,
 	   ArgList args,	/* unused */
 	   Cardinal *num_args)	/* unused */
 {
@@ -499,12 +496,12 @@ Initialize(Widget req,		/* unused */
   spinW->spinBox.last_hit = 0;
   spinW->spinBox.spin_timer = 0;
   spinW->spinBox.make_change = 0;
-  
+
   spinW->spinBox.boundary = 0;
 
   spinW->spinBox.ideal_height = 0;
   spinW->spinBox.ideal_width = 0;
-  
+
   spinW->spinBox.up_arrow_pressed = False;
   spinW->spinBox.down_arrow_pressed = False;
 
@@ -517,23 +514,23 @@ Initialize(Widget req,		/* unused */
   spinW->spinBox.down_arrow_rect.y = 0;
   spinW->spinBox.down_arrow_rect.width = 0;
   spinW->spinBox.down_arrow_rect.height = 0;
-  
+
   if (!spinW->core.accelerators)
     spinW->core.accelerators = spinAccel;
-  
+
   if (spinW->spinBox.initial_delay < 1)
     spinW->spinBox.initial_delay = spinW->spinBox.repeat_delay;
-  
+
   /* Get arrow GC */
   GCmask = GCForeground | GCBackground | GCGraphicsExposures;
   GCvalues.foreground = spinW->core.background_pixel;
   GCvalues.background = spinW->manager.foreground;
   GCvalues.graphics_exposures = False;
-  
+
   /* Share gc with scrollbar */
-  spinW->spinBox.arrow_gc = XtAllocateGC(new_w, 0, GCmask, &GCvalues, 
+  spinW->spinBox.arrow_gc = XtAllocateGC(new_w, 0, GCmask, &GCvalues,
 					 0, GCFont);
-  
+
   GCmask |= GCFillStyle | GCStipple;
   unusedMask = GCClipXOrigin | GCClipYOrigin | GCFont;
 
@@ -541,9 +538,9 @@ Initialize(Widget req,		/* unused */
   GCvalues.foreground = spinW->manager.foreground;
   GCvalues.fill_style = FillOpaqueStippled;
   GCvalues.stipple = _XmGetInsensitiveStippleBitmap(new_w);
-  
+
   /* share GC with ArrowButton */
-  spinW->spinBox.insensitive_gc = XtAllocateGC(new_w, 0, GCmask, &GCvalues, 
+  spinW->spinBox.insensitive_gc = XtAllocateGC(new_w, 0, GCmask, &GCvalues,
 					       GCClipMask, unusedMask);
 }
 
@@ -551,13 +548,13 @@ static void
 Destroy(Widget w)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)w;
-  
+
   if (spinW->spinBox.arrow_gc != NULL)
     {
       XtReleaseGC(w, spinW->spinBox.arrow_gc);
       spinW->spinBox.arrow_gc = NULL;
     }
-  
+
   if (spinW->spinBox.insensitive_gc != NULL)
     {
       XtReleaseGC(w, spinW->spinBox.insensitive_gc);
@@ -569,38 +566,37 @@ static void
 Resize(Widget w)
 {
   XtWidgetGeometry spinG;
-  
+
   spinG.width = XtWidth(w);
   spinG.height = XtHeight(w);
-  
+
   LayoutSpinBox(w, &spinG, NULL);
 
   if (XtIsRealized(w))
      XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);			/*  Force Redisplay */
 }
 
-/*ARGSUSED*/
 static void
-Redisplay(Widget w, 
+Redisplay(Widget w,
 	  XEvent *event,	/* unused */
 	  Region region)	/* unused */
 {
 
   XmSpinBoxWidget	spinW = (XmSpinBoxWidget) w;
-  
+
   if (XtIsRealized(w))
     {
       ClearArrows(w);
-      
+
       if (spinW->manager.shadow_thickness > 0)
 	{
 	  int	width, height;
 
-	  width = (spinW->spinBox.ideal_width < XtWidth(spinW)) ? 
+	  width = (spinW->spinBox.ideal_width < XtWidth(spinW)) ?
 		  spinW->spinBox.ideal_width :
 		  XtWidth(spinW);
 
-	  height = (spinW->spinBox.ideal_height < XtHeight(spinW)) ? 
+	  height = (spinW->spinBox.ideal_height < XtHeight(spinW)) ?
 		  spinW->spinBox.ideal_height :
 		  XtHeight(spinW);
 
@@ -613,20 +609,19 @@ Redisplay(Widget w,
 			 XmSHADOW_OUT
 		        );
 	}
-      
+
       _XmSetFocusFlag(w,XmFOCUS_IGNORE, False);
-      
+
       DrawSpinArrow(w, XmARROW_UP);
       DrawSpinArrow(w, XmARROW_DOWN);
     }
 
 }
 
-/*ARGSUSED*/
 static Boolean
-SetValues(Widget old, 
-	  Widget req, 
-	  Widget new_w, 
+SetValues(Widget old,
+	  Widget req,
+	  Widget new_w,
 	  ArgList args,		/* unused */
 	  Cardinal *num_args )	/* unused */
 {
@@ -635,16 +630,16 @@ SetValues(Widget old,
   XmSpinBoxWidget	 reqW = (XmSpinBoxWidget)req;
   XmSpinBoxWidget	 newW = (XmSpinBoxWidget)new_w;
   Boolean		 displayFlag;
-  
+
   displayFlag = False;
-  
+
   /*  Initial delay must be positive	*/
   if (newW->spinBox.initial_delay < 1)
     newW->spinBox.initial_delay = newW->spinBox.repeat_delay;
 
   if ((newW->core.sensitive != oldW->core.sensitive) ||
       (newW->core.ancestor_sensitive != oldW->core.ancestor_sensitive))
-    displayFlag = True;				
+    displayFlag = True;
 
   /*  Check for geo changes, if realized	*/
   if (XtIsRealized(new_w) &&
@@ -656,18 +651,18 @@ SetValues(Widget old,
     {
       spinG.width = 0;
       spinG.height = 0;
-      
+
       GetSpinSize(new_w, &spinG.width, &spinG.height);
       XtWidth(new_w) = spinG.width;
       XtHeight(new_w) = spinG.height;
-      
+
       if (XtIsRealized(old))
         ClearArrows(old);
-      
+
       LayoutSpinBox(new_w, &spinG, NULL);
       displayFlag = True;
     }
-  
+
   if (reqW->spinBox.default_arrow_sensitivity
       !=  oldW->spinBox.default_arrow_sensitivity ||
       reqW->spinBox.detail_shadow_thickness
@@ -681,7 +676,7 @@ static XtGeometryResult
 QueryGeometry(Widget w, XtWidgetGeometry *req, XtWidgetGeometry *rep)
 {
   XmSpinBoxWidget	 spinW = (XmSpinBoxWidget)w;
-  
+
   if (!XtIsRealized((Widget)spinW))
     {
       rep->width = XtWidth(w);
@@ -692,48 +687,47 @@ QueryGeometry(Widget w, XtWidgetGeometry *req, XtWidgetGeometry *rep)
       rep->width = 0;
       rep->height = 0;
     }
-  
+
   GetSpinSize(w, &rep->width, &rep->height);
-  
+
   return(XmeReplyToQueryGeometry(w, req, rep));
 }
 
-/*ARGSUSED*/
 static XtGeometryResult
-GeometryManager(Widget w, 
-		XtWidgetGeometry *req, 
+GeometryManager(Widget w,
+		XtWidgetGeometry *req,
 		XtWidgetGeometry *rep) /* unused */
 {
   XtGeometryResult spinResult;
   XtWidgetGeometry spinG;
   XtWidgetGeometry origG;
- 
+
   if (IsX(req))
     if (w->core.x != req->x)
       return(XtGeometryNo);
- 
+
   if (IsY(req))
     if (w->core.y != req->y)
       return(XtGeometryNo);
 
   origG.width = w->core.width;
   origG.height = w->core.height;
-  
+
   if (IsWidth(req))
     w->core.width = req->width;
 
   if (IsHeight(req))
     w->core.height = req->height;
-  
+
   spinG.width = 0;
   spinG.height = 0;
 
   GetSpinSize(XtParent(w), &spinG.width, &spinG.height);
 
   spinG.request_mode = (CWWidth | CWHeight);
-  
+
   spinResult = _XmMakeGeometryRequest(XtParent(w), &spinG);
-  
+
   if (spinResult == XtGeometryYes)
    {
      LayoutSpinBox(XtParent(w), &spinG, w);
@@ -746,10 +740,10 @@ GeometryManager(Widget w,
     {
       w->core.width = origG.width;
       w->core.height = origG.height;
-      
+
       spinResult = XtGeometryNo;
     }
-  
+
   return(spinResult);
 }
 
@@ -759,10 +753,10 @@ ChangeManaged(Widget w)
   XtWidgetGeometry spinG;
   XmSpinBoxWidget	 spinW = (XmSpinBoxWidget) w;
   int		 i;
-  
+
   if (XtIsRealized(w))
     {
-      spinG.width = 0; 
+      spinG.width = 0;
       spinG.height =  0;
     }
   else
@@ -770,20 +764,20 @@ ChangeManaged(Widget w)
       spinG.width = XtWidth(w);
       spinG.height = XtHeight(w);
     }
-  
+
   GetSpinSize(w, &spinG.width, &spinG.height);
 
   spinG.request_mode = CWWidth | CWHeight;
-  
+
   _XmMakeGeometryRequest(w, &spinG);
-  
+
   LayoutSpinBox(w, &spinG, NULL);
 
   /* Update managed children */
   /* Also make sure that focus is on the last created and managed
-   * text/text_field child. If the last text/text_field child is not managed, 
-   * focus should be on the one previous to that. XmQTaccessTextual trait can 
-   * not be used to confirm the child to be text or text_field as this trait 
+   * text/text_field child. If the last text/text_field child is not managed,
+   * focus should be on the one previous to that. XmQTaccessTextual trait can
+   * not be used to confirm the child to be text or text_field as this trait
    * is held by other widgets such as label as well.
    */
   for (i = 0; i < SB_ChildCount(spinW); i++) {
@@ -802,18 +796,18 @@ InsertChild(Widget newChild)
 {
   XmSpinBoxWidget      spinW = (XmSpinBoxWidget)XtParent(newChild);
   XtWidgetProc insert_child;
-  
+
   /* call manager's InsertChild method */
   _XmProcessLock();
   insert_child = ((XmManagerWidgetClass)xmManagerWidgetClass)
      			->composite_class.insert_child;
   _XmProcessUnlock();
   (*insert_child)(newChild);
-  
+
   if (XmeTraitGet((XtPointer)XtClass(newChild), XmQTaccessTextual) != NULL)
     {
       spinW->spinBox.textw  = newChild;
-      
+
       XtInsertEventHandler(
 			   newChild,
 			   FocusChangeMask,
@@ -835,15 +829,14 @@ InsertChild(Widget newChild)
 			   XtListHead
 			   );
     }
-  
+
   XtInstallAccelerators(newChild, (Widget)spinW);
 }
 
-/*ARGSUSED*/
 
 static void
-ConstraintInitialize(Widget req, 
-		     Widget new_w, 
+ConstraintInitialize(Widget req,
+		     Widget new_w,
 		     ArgList args, /* unused */
 		     Cardinal *num_args) /* unused */
 {
@@ -852,9 +845,9 @@ ConstraintInitialize(Widget req,
   XmSpinBoxWidget	spinW;
   int			valLoop;
   char			*error = (char *) NULL;
-  
+
   spinW = (XmSpinBoxWidget)XtParent(new_w);
-  
+
   /* Numeric Child*/
   if (SB_ChildIsNumeric(newC))
     {
@@ -864,10 +857,10 @@ ConstraintInitialize(Widget req,
 	  XmeWarning(new_w, BAD_SPIN_INCREMENT);
 	  newC->increment_value = 1;
 	}
-      
+
       if ((newC->minimum_value < newC->maximum_value
 	  && newC->increment_value < 0)
-      ||  (newC->minimum_value > newC->maximum_value 
+      ||  (newC->minimum_value > newC->maximum_value
 	  && newC->increment_value > 0))
 	{
 	  XmeWarning(new_w, BAD_SPIN_DIRECTION);
@@ -881,7 +874,7 @@ ConstraintInitialize(Widget req,
       {
   /* buffer the values XmStringTable */
       newC->values = (XmString *)XtMalloc(reqC->num_values * sizeof(XmString));
-      
+
       if (newC->values != NULL)
 	for (valLoop = 0; valLoop < reqC->num_values; valLoop++)
 	  newC->values[valLoop] = XmStringCopy(reqC->values[valLoop]);
@@ -897,7 +890,7 @@ ConstraintInitialize(Widget req,
           XmeWarning(new_w, BAD_SPIN_VALUES);
 #endif
     }
-  
+
   if (newC->position_type != XmPOSITION_VALUE &&
       newC->position_type != XmPOSITION_INDEX)
     {
@@ -911,36 +904,35 @@ ConstraintInitialize(Widget req,
 
   spinW->spinBox.up_arrow_pressed = False;
   spinW->spinBox.down_arrow_pressed = False;
-  
+
   /* No reason to do the work until the child is managed */
   if (XtIsManaged(new_w))
     UpdateChildText(new_w);
 }
 
-static void 
+static void
 ConstraintDestroy(
         Widget w )
 {
   XmSpinBoxConstraint	spinC = SB_GetConstraintRec(w);
   int			itemLoop;
-      
+
       /* give back the old values XmStringTable */
   if (spinC->values != NULL)
     {
       for (itemLoop = 0; itemLoop < spinC->num_values; itemLoop++)
 	XmStringFree(spinC->values[itemLoop]);
-	  
+
       XtFree((char*)spinC->values);
-	  
+
       spinC->values = NULL;
       spinC->num_values = 0;
     }
 }
 
-/*ARGSUSED*/
 static Boolean
-ConstraintSetValues(Widget   old, 
-		    Widget   req, 
+ConstraintSetValues(Widget   old,
+		    Widget   req,
 		    Widget   new_w,
 		    ArgList  args, /* unused */
 		    Cardinal *num_args ) /* unused */
@@ -954,7 +946,7 @@ ConstraintSetValues(Widget   old,
   int		       valLoop;
   char		       *error = (char *) NULL;
 
-  
+
   /*
    * These resources have CG permissions only:
    *	XmNspinBoxChildType XmNpositionType
@@ -973,7 +965,7 @@ ConstraintSetValues(Widget   old,
    */
   if (newC->sb_child_type != oldC->sb_child_type)
     redisplayText = True;
-  
+
   /**** Numeric Child ****/
   if (SB_ChildIsNumeric(newC))
     {
@@ -983,9 +975,9 @@ ConstraintSetValues(Widget   old,
           XmeWarning(new_w, BAD_SPIN_INCREMENT);
 	  newC->increment_value = 1;
 	}
-      
+
       /* if something has changed ... */
-      if (newC->minimum_value  != oldC->minimum_value 
+      if (newC->minimum_value  != oldC->minimum_value
 	  ||  newC->maximum_value  != oldC->maximum_value
 	  ||  newC->increment_value != oldC->increment_value
 	  ||  newC->decimal_points != oldC->decimal_points
@@ -1002,7 +994,7 @@ ConstraintSetValues(Widget   old,
 	        XmeWarning(new_w, BAD_SPIN_DIRECTION);
 	        newC->increment_value *= -1;
 	      }
-	  
+
 	  error = ValidatePositionValue(newC, &newC->position);
 	  if (error)
  	    XmeWarning(new_w, error);
@@ -1018,12 +1010,12 @@ ConstraintSetValues(Widget   old,
 	{
 	  newC->values =
 	   (XmString *)XtMalloc(reqC->num_values * sizeof(XmString));
-	  
+
 	  if (newC->values != NULL)
 	    for (valLoop = 0; valLoop < reqC->num_values; valLoop++)
 	      newC->values[valLoop] = XmStringCopy(reqC->values[valLoop]);
 	}
-      
+
       error = ValidatePositionValue(newC, &newC->position);
       if (error)
  	XmeWarning(new_w, error);
@@ -1039,19 +1031,19 @@ ConstraintSetValues(Widget   old,
       ||  (newC->num_values < oldC->num_values
 	   && newC->position > newC->num_values))
 	redisplayText = True;
-  
+
     /* give back the old values XmStringTable */
     if (reqC->values != oldC->values) {
         if (oldC->values != NULL)
 	  for (nvi = 0; nvi < oldC->num_values; nvi++)
 	    XmStringFree(oldC->values[nvi]);
-      
+
         XtFree((char*)oldC->values);
-      
+
         oldC->values = NULL;
     }
    }
-  
+
   /* If the current focus child is the one requesting the change */
   if (XtIsRealized((Widget)spinW) && spinW->spinBox.textw == new_w)
     {
@@ -1061,7 +1053,7 @@ ConstraintSetValues(Widget   old,
       DrawSpinArrow((Widget) spinW, XmARROW_DOWN);
       }
     }
-  
+
   if (redisplayText)
     UpdateChildText(new_w);
 
@@ -1079,15 +1071,14 @@ ConstraintSetValues(Widget   old,
  *   Event Handler for Focus Change.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinChildFocusChange(Widget focusWidget, 
+SpinChildFocusChange(Widget focusWidget,
 		     XtPointer focusClient,
-		     XEvent *focusEvent, 
+		     XEvent *focusEvent,
 		     Boolean *focusContinue) /* unused */
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)focusClient;
-  
+
   if (_XmGetFocusPolicy((Widget) focusClient) == XmEXPLICIT) {
     if (focusEvent->type == FocusIn) {
       if (spinW->spinBox.textw != focusWidget)
@@ -1097,13 +1088,13 @@ SpinChildFocusChange(Widget focusWidget,
     }
   } else {
     /* Only care if this is BSelect */
-    if (focusEvent->type == ButtonPress && 
+    if (focusEvent->type == ButtonPress &&
 	focusEvent->xbutton.button == Button1) {
       if (spinW->spinBox.textw != (Widget) NULL) {
 	Widget child = spinW->spinBox.textw;
 	WidgetClass wc = XtClass(child);
 
-	if (XmIsPrimitive(child)) {   
+	if (XmIsPrimitive(child)) {
 	  (*(((XmPrimitiveWidgetClass) wc)
 	     ->primitive_class.border_unhighlight))(child) ;
 	}
@@ -1113,7 +1104,7 @@ SpinChildFocusChange(Widget focusWidget,
 	Widget child = spinW->spinBox.textw;
       	WidgetClass wc = XtClass(child);
 
-	if (XmIsPrimitive(child)) {   
+	if (XmIsPrimitive(child)) {
 	  (*(((XmPrimitiveWidgetClass) wc)
 	     ->primitive_class.border_highlight))(child) ;
 	}
@@ -1135,11 +1126,11 @@ SpinChildFocusChange(Widget focusWidget,
  *****************************************************************************/
 
 /*****************************************************************************
- * The Enter and Leave actions deal with implicit mode 
+ * The Enter and Leave actions deal with implicit mode
  * (keyboardFocusPolicy == POINTER),  where we need to indicate to the user
- * which child widget is to be updated on a mouse action.  
+ * which child widget is to be updated on a mouse action.
  *****************************************************************************/
-static void 
+static void
 SpinBEnter(Widget widget, XEvent *event, String *params, Cardinal *num_params)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)widget;
@@ -1151,14 +1142,14 @@ SpinBEnter(Widget widget, XEvent *event, String *params, Cardinal *num_params)
   if (child != (Widget) NULL) {
     WidgetClass wc = XtClass(child);
 
-    if (XmIsPrimitive(child)) {   
+    if (XmIsPrimitive(child)) {
       (*(((XmPrimitiveWidgetClass) wc)
 	 ->primitive_class.border_highlight))(child) ;
     }
   }
 }
 
-static void 
+static void
 SpinBLeave(Widget widget, XEvent *event, String *params, Cardinal *num_params)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)widget;
@@ -1182,10 +1173,9 @@ SpinBLeave(Widget widget, XEvent *event, String *params, Cardinal *num_params)
  *	Action for BSelect Down.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBArm(Widget armWidget, 
-	 XEvent *armEvent, 
+SpinBArm(Widget armWidget,
+	 XEvent *armEvent,
 	 String *armParams,	/* unused */
 	 Cardinal *armCount)	/* unused */
 {
@@ -1203,27 +1193,26 @@ SpinBArm(Widget armWidget,
  *	Action for BSelect Up.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBDisarm(Widget   disarmWidget, 
+SpinBDisarm(Widget   disarmWidget,
 	    XEvent   *disarmEvent,
 	    String   *disarmParams, /* unused */
 	    Cardinal *disarmCount) /* unused */
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)disarmWidget;
-  
+
   if (spinW->spinBox.up_arrow_pressed || spinW->spinBox.down_arrow_pressed)
     {
       if (spinW->spinBox.initial_delay > 0 && spinW->spinBox.repeat_delay > 0)
 	if (spinW->spinBox.spin_timer)
 	  XtRemoveTimeOut(spinW->spinBox.spin_timer);
-      
+
       spinW->spinBox.up_arrow_pressed = False;
       spinW->spinBox.down_arrow_pressed = False;
-      
+
       DrawSpinArrow(disarmWidget, XmARROW_UP);
       DrawSpinArrow(disarmWidget, XmARROW_DOWN);
-      
+
       if (spinW->spinBox.make_change)
 	{
 	  if (spinW->spinBox.last_hit == XmARROW_UP)
@@ -1231,10 +1220,10 @@ SpinBDisarm(Widget   disarmWidget,
 	  else if (spinW->spinBox.last_hit == XmARROW_DOWN)
 	    ArrowSpinDown(disarmWidget, disarmEvent);
 	}
-      
+
       ArrowCallback(disarmWidget, disarmEvent, XmCR_OK);
     }
-  
+
   spinW->spinBox.make_change = False;
 }
 
@@ -1243,10 +1232,9 @@ SpinBDisarm(Widget   disarmWidget,
  *	Action for BeginData Key.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBFirst(Widget   firstWidget, 
-	   XEvent   *firstEvent, 
+SpinBFirst(Widget   firstWidget,
+	   XEvent   *firstEvent,
 	   String   *firstParams, /* unused */
 	   Cardinal *firstCount) /* unused */
 {
@@ -1254,20 +1242,20 @@ SpinBFirst(Widget   firstWidget,
   XmSpinBoxWidget	  spinW = (XmSpinBoxWidget)firstWidget;
   Widget		  child;
   int		  savePosition;
-  
+
   child = XtWindowToWidget(XtDisplay(firstWidget), firstEvent->xany.window);
-  
+
   child = spinW->spinBox.textw;
-  
+
   if (WidgetIsChild(spinW, child) && DownArrowSensitive(spinW))
     {
       spinW->spinBox.textw = child;
-      
+
       spinC = SB_GetConstraintRec(child);
-      
+
       savePosition = spinC->position;
       spinC->position = SB_ChildMinimumPositionValue(spinC);
-      
+
       if (ArrowVerify((Widget)spinW, firstEvent, XmCR_SPIN_FIRST))
 	{
 	  UpdateChildText(spinW->spinBox.textw);
@@ -1284,10 +1272,9 @@ SpinBFirst(Widget   firstWidget,
  *	Action for EndOfData Key.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBLast(Widget lastWidget, 
-	  XEvent *lastEvent, 
+SpinBLast(Widget lastWidget,
+	  XEvent *lastEvent,
 	  String *lastParams,	/* unused */
 	  Cardinal *lastCount)	/* unused */
 {
@@ -1295,18 +1282,18 @@ SpinBLast(Widget lastWidget,
   XmSpinBoxWidget 	  spinW = (XmSpinBoxWidget)lastWidget;
   Widget		  child;
   int 		  savePosition;
-  
+
   child = XtWindowToWidget(XtDisplay(lastWidget), lastEvent->xany.window);
   child = spinW->spinBox.textw;
-  
+
   if (WidgetIsChild(spinW, child) && UpArrowSensitive(spinW))
     {
       spinW->spinBox.textw = child;
       spinC = SB_GetConstraintRec(child);
-      
+
       savePosition = spinC->position;
       spinC->position = SB_ChildMaximumPositionValue(spinC);
-      
+
       if (ArrowVerify((Widget)spinW, lastEvent, XmCR_SPIN_LAST))
 	{
 	  UpdateChildText(spinW->spinBox.textw);
@@ -1328,7 +1315,7 @@ SpinBLeft(Widget   leftWidget, XEvent   *leftEvent,
 	  String   *leftParams, Cardinal *leftCount)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)leftWidget;
-  
+
   if (LayoutIsRtoLM(spinW))
     SpinBNext(leftWidget, leftEvent, leftParams, leftCount);
   else
@@ -1340,9 +1327,8 @@ SpinBLeft(Widget   leftWidget, XEvent   *leftEvent,
  *	Action for UpArrow Key.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBNext(Widget nextWidget, 
+SpinBNext(Widget nextWidget,
 	  XEvent *nextEvent,	/* unused */
 	  String *nextParams,	/* unused */
 	  Cardinal *nextCount)	/* unused */
@@ -1355,9 +1341,8 @@ SpinBNext(Widget nextWidget,
  *	Action for DownArrow Key.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBPrior(Widget   priorWidget, 
+SpinBPrior(Widget   priorWidget,
 	   XEvent   *priorEvent, /* unused */
 	   String   *priorParams, /* unused */
 	   Cardinal *priorCount ) /* unused */
@@ -1374,7 +1359,7 @@ SpinBRight(Widget   rightWidget, XEvent   *rightEvent,
 	   String   *rightParams, Cardinal *rightCount)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)rightWidget;
-  
+
   if (LayoutIsRtoLM(spinW))
     SpinBPrior(rightWidget, rightEvent, rightParams, rightCount);
   else
@@ -1413,12 +1398,12 @@ UpArrowSensitive(XmSpinBoxWidget spinW)
   else if (SB_ChildCount(spinW) && SB_WithChild(spinW))
     {
       spinC = SB_GetConstraintRec(spinW->spinBox.textw);
-      
+
       upState = spinC->arrow_sensitivity;
     }
   else
     upState = (unsigned char)XmARROWS_DEFAULT_SENSITIVITY;
-  
+
   if (upState == (unsigned char)XmARROWS_DEFAULT_SENSITIVITY)
     upState = spinW->spinBox.default_arrow_sensitivity;
 
@@ -1434,21 +1419,21 @@ DownArrowSensitive(XmSpinBoxWidget spinW)
 {
   XmSpinBoxConstraint spinC;
   unsigned char	  downState;
-  
+
   if (XtIsSensitive((Widget) spinW) != True)
     downState = (unsigned char)XmARROWS_INSENSITIVE;
   else if (SB_ChildCount(spinW) && SB_WithChild(spinW))
     {
       spinC = SB_GetConstraintRec(spinW->spinBox.textw);
-      
+
       downState = spinC->arrow_sensitivity;
     }
   else
     downState = (unsigned char)XmARROWS_DEFAULT_SENSITIVITY;
-  
+
   if (downState == (unsigned char)XmARROWS_DEFAULT_SENSITIVITY)
     downState = spinW->spinBox.default_arrow_sensitivity;
-  
+
   return(downState & (unsigned char)XmARROWS_DECREMENT_SENSITIVE);
 }
 
@@ -1463,18 +1448,18 @@ NumericChildCount(XmSpinBoxWidget spinW)
   XmSpinBoxConstraint  spinC;
   int		   i;
   int		   childCount;
-  
+
   childCount = 0;
-  
+
   if (SB_WithChild(spinW))
     for (i = 0; i < SB_ChildCount(spinW); i++)
       {
 	spinC = SB_GetConstraintRec(spinW->composite.children[i]);
-	
+
 	if (SB_ChildIsNumeric(spinC))
 	  childCount++;
       }
-  
+
   return(childCount);
 }
 
@@ -1487,9 +1472,9 @@ WidgetIsChild(XmSpinBoxWidget spinW, Widget child)
 {
   Boolean childFlag;
   int     i;
-  
+
   childFlag = False;
-  
+
   if (SB_WithChild(spinW))
     for (i = 0; i < SB_ChildCount(spinW); i++)
       if (spinW->composite.children[i] == child)
@@ -1497,7 +1482,7 @@ WidgetIsChild(XmSpinBoxWidget spinW, Widget child)
 	  childFlag = True;
 	  break;
 	}
-  
+
   return(childFlag);
 }
 
@@ -1565,31 +1550,30 @@ GetArrowDirection(Widget w, int spinDir)
 /******************************************************************************
  * LayoutSpinBox
  *	Position Children and Arrows.
- * 
+ *
  * The ideal layout of the children and arrows have the centerline of
  * the arrow layout running through the center of the median child
  * position.  The median child position is roughly at the center of the
  * widget,  modified by the baseline positions.
- * 
+ *
  * Degradation behavior will first sacrifice the margins if the widget
  * isn't given enough room.  Following this will be the spacing between
  * widgets,  then finally the children will be shrunk (although the arrows
  * will not be).
- * 
+ *
  * At beta,  this code will use the approximation of the centerline
  * of the widget for the center of the child position and will not
  * perform the widget shrinking part of the graceful degradation of
  * layout.
- * 
+ *
  * At final,  this should be updated.
  *****************************************************************************/
 
 typedef XmSpinBoxRec MySpinBoxRec;
 
-/*ARGSUSED*/
 static void
-LayoutSpinBox(Widget w, 
-	      XtWidgetGeometry *spinG, 
+LayoutSpinBox(Widget w,
+	      XtWidgetGeometry *spinG,
 	      Widget child)	/* unused */
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget) w;
@@ -1640,10 +1624,10 @@ LayoutSpinBox(Widget w,
 	    spacingX = 0;
 	}
     }
-  
+
   /*
    * Figure the starting position of the arrows and children
-   * in the Y direction.  Use the same algorithm as for the 
+   * in the Y direction.  Use the same algorithm as for the
    * X direction with the following addition:
    *
    *	1a. If there is more room than required for our ideal width,
@@ -1673,7 +1657,7 @@ LayoutSpinBox(Widget w,
 			 ((numArrowsY - 1) * spinW->spinBox.spacing));
       marginY = (spinG->height - arrowsSpace) / 2;
     }
-  
+
   /*
    * Get the starting position of the first SpinBox child in the X direction.
    */
@@ -1696,34 +1680,34 @@ LayoutSpinBox(Widget w,
       default:
         break;
     }
-  
+
   /*
    * Now position the managed children of the SpinBox.
    */
   for (i = 0; i < SB_ChildCount(spinW); i++)
     {
       Widget	childW = spinW->composite.children[i];
-      
+
       if (w != childW && XtIsManaged(childW))
 	{
 	  posY = (spinG->height - XtHeight(childW)) / 2;
 	  XmeConfigureObject(childW, posX, posY,
-			     ((Widget)childW)->core.width,	
+			     ((Widget)childW)->core.width,
 			     ((Widget)childW)->core.height,
 			     ((Widget)childW)->core.border_width
 			     );
-	  
+
 	  posX += XtWidth(childW) + spacingX;
-	} 
-    } 
+	}
+    }
 
   /*
    * Save the dimensions of the up and down arrows
    * for use by the arrow drawing procedure.
    */
   spinW->spinBox.up_arrow_rect.width =
-    spinW->spinBox.up_arrow_rect.height = 
-      spinW->spinBox.down_arrow_rect.width = 
+    spinW->spinBox.up_arrow_rect.height =
+      spinW->spinBox.down_arrow_rect.width =
 	spinW->spinBox.down_arrow_rect.height = arrowSize;
 
   /*
@@ -1736,13 +1720,13 @@ LayoutSpinBox(Widget w,
   spinW->spinBox.up_arrow_rect.y = marginY;
   spinW->spinBox.down_arrow_rect.y =
     marginY + ((numArrowsY - 1) * (spacingY + arrowSize));
-  
-  if (LayoutIsRtoLM(w)) 
+
+  if (LayoutIsRtoLM(w))
     {
       Xposition = marginX;
       Xmargin   = posX;
     }
-  else 
+  else
     {
       Xposition = posX;
       Xmargin   = marginX;
@@ -1761,7 +1745,7 @@ LayoutSpinBox(Widget w,
 	else
 	  {
 	    upX   = Xmargin + spacingX + arrowSize;
-	    downX = Xmargin;	
+	    downX = Xmargin;
 	  }
 	break;
       case XmARROWS_SPLIT:
@@ -1795,19 +1779,18 @@ LayoutSpinBox(Widget w,
  *   Convert Number to String to Be Displayed in Child
  *****************************************************************************/
 
-/* ARGSUSED */
 static void
 NumToString(char **buffer, int min, int max, int decimal, int value)
 {
   float result;
   int   digits;
   int   test;
-  
+
   digits = 0;
 
   if (decimal < 1)
     decimal = 0;
-  
+
   /*
    * BINARY COMPATIBILITY with DTSPINBOX
    *
@@ -1875,18 +1858,18 @@ DrawSpinArrow(Widget arrowWidget, int arrowFlag)
   Boolean	arrowPressed;
   int		arrowDirection;
   GC		arrowGC;
-  
+
   if (XtIsRealized((Widget)spinW))
     {
       arrowPressed = False;
-      
+
       if (arrowFlag == XmARROW_UP)
 	{
 	  arrowX = spinW->spinBox.up_arrow_rect.x;
 	  arrowY = spinW->spinBox.up_arrow_rect.y;
 	  arrowWidth = spinW->spinBox.up_arrow_rect.width;
 	  arrowHeight = spinW->spinBox.up_arrow_rect.height;
-	  
+
 	  if (UpArrowSensitive(spinW))
 	    {
 	      arrowGC = spinW->spinBox.arrow_gc;
@@ -1903,7 +1886,7 @@ DrawSpinArrow(Widget arrowWidget, int arrowFlag)
 	  arrowY = spinW->spinBox.down_arrow_rect.y;
 	  arrowWidth = spinW->spinBox.down_arrow_rect.width;
 	  arrowHeight = spinW->spinBox.down_arrow_rect.height;
-	  
+
 	  if (DownArrowSensitive(spinW))
 	    {
 	      arrowGC = spinW->spinBox.arrow_gc;
@@ -1914,11 +1897,11 @@ DrawSpinArrow(Widget arrowWidget, int arrowFlag)
 	    XSetClipMask(XtDisplay(arrowWidget), arrowGC, None);
 	  }
 	}
- 
+
       arrowWidth  = (arrowWidth  > 1) ? arrowWidth  - 1 : 0;
       arrowHeight = (arrowHeight > 1) ? arrowHeight - 1 : 0;
       arrowDirection = GetArrowDirection(arrowWidget, arrowFlag);
-      
+
       XmeDrawArrow(
 		   XtDisplay(arrowWidget),
 		   XtWindow(arrowWidget),
@@ -1945,7 +1928,7 @@ static void
 SpinTimeOut(Widget w, int spinDelay)
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)w;
-  
+
   if (spinW->spinBox.initial_delay > 0 && spinW->spinBox.repeat_delay > 0)
     spinW->spinBox.spin_timer = XtAppAddTimeOut(
 					       XtWidgetToApplicationContext(w),
@@ -1965,17 +1948,17 @@ UpdateChildText(Widget textW)
   XmAccessTextualTrait  textT;
   XmSpinBoxConstraint   textC;
   char                 *buffer = NULL;
-  
+
   textT = (XmAccessTextualTrait)
     XmeTraitGet((XtPointer)XtClass(textW), XmQTaccessTextual);
-  
+
   if (textT == NULL)
     return;
-  
+
   if (textW)
     {
       textC = SB_GetConstraintRec(textW);
-      
+
       if (SB_ChildIsNumeric(textC))
 	{
 	  NumToString(&buffer,
@@ -1983,7 +1966,7 @@ UpdateChildText(Widget textW)
 		      textC->maximum_value,
 		      textC->decimal_points,
 		      textC->position );
-	  
+
 	  textT->setValue(textW, (XtPointer) buffer, XmFORMAT_MBYTE);
 
 	  if (buffer)
@@ -2013,30 +1996,30 @@ ArrowWasHit(Widget arrowW, int arrowType, XEvent *arrowEvent)
   int          arrowHit;
   int	     hitX;
   int	     hitY;
-  
+
   arrowHit = False;
-  
+
   if (arrowEvent->type == ButtonPress)
     {
       spinW = (XmSpinBoxWidget)arrowW;
-      
+
       hitEvent = (XButtonEvent *)arrowEvent;
-      
+
       if (arrowType == XmARROW_UP)
 	arrowArea = spinW->spinBox.up_arrow_rect;
       else
 	arrowArea = spinW->spinBox.down_arrow_rect;
-      
+
       hitX = hitEvent->x - arrowArea.x;		/* Normalize Event Position */
       hitY = hitEvent->y - arrowArea.y;
-      
+
       if (hitX < 0 || hitX > arrowArea.width
 	  ||  hitY < 0 || hitY > arrowArea.height)
 	arrowHit = False;
       else
 	arrowHit = True;
     }
-  
+
   return(arrowHit);
 }
 
@@ -2045,15 +2028,14 @@ ArrowWasHit(Widget arrowW, int arrowType, XEvent *arrowEvent)
  *	Function Called by TimeOut.
  *****************************************************************************/
 
-/*ARGSUSED*/
 static void
-SpinBArrow(XtPointer spinData, 
+SpinBArrow(XtPointer spinData,
 	   XtIntervalId *spinInterval) /* unused */
 {
   XmSpinBoxWidget spinW = (XmSpinBoxWidget)spinData;
-  
+
   spinW->spinBox.make_change = False;
-  
+
   if (spinW->spinBox.up_arrow_pressed)
     {
       if (UpArrowSensitive(spinW))
@@ -2064,8 +2046,8 @@ SpinBArrow(XtPointer spinData,
 	}
       else
 	{
-	  spinW->spinBox.up_arrow_pressed = False; 
-	  
+	  spinW->spinBox.up_arrow_pressed = False;
+
 	  DrawSpinArrow((Widget) spinData, XmARROW_UP);
 	}
     }
@@ -2079,8 +2061,8 @@ SpinBArrow(XtPointer spinData,
 	}
       else
 	{
-	  spinW->spinBox.down_arrow_pressed = False; 
-	  
+	  spinW->spinBox.down_arrow_pressed = False;
+
 	  DrawSpinArrow((Widget)spinData, XmARROW_DOWN);
 	}
     }
@@ -2096,19 +2078,19 @@ SpinBAction(Widget   actionWidget, short    arrowHit)
   XmSpinBoxWidget	spinW = (XmSpinBoxWidget)actionWidget;
   Boolean		upHit;
   Boolean		downHit;
-  
+
   upHit = (arrowHit == XmARROW_UP);
   downHit = (arrowHit == XmARROW_DOWN);
-  
+
   if ((upHit && UpArrowSensitive(spinW))
       || (downHit && DownArrowSensitive(spinW)))
     {
       spinW->spinBox.make_change = True;
       spinW->spinBox.last_hit = arrowHit;
-      
+
       if (SB_ChildCount(spinW) && SB_WithChild(spinW))
 	XmProcessTraversal(spinW->spinBox.textw, XmTRAVERSE_CURRENT);
-      
+
       if (upHit)
 	{
 	  spinW->spinBox.up_arrow_pressed = True;
@@ -2119,7 +2101,7 @@ SpinBAction(Widget   actionWidget, short    arrowHit)
 	  spinW->spinBox.down_arrow_pressed = True;
 	  DrawSpinArrow(actionWidget, XmARROW_DOWN);
 	}
-      
+
       if (spinW->spinBox.initial_delay)
 	SpinTimeOut(actionWidget, spinW->spinBox.initial_delay);
     }
@@ -2142,10 +2124,10 @@ FireCallbacks(XmSpinBoxCallbackStruct	*spinBoxCallData,
   XmSpinBoxWidget               spinW;
   XmSpinBoxWidgetClass          spinWC;
   XmString			xmString = (XmString) NULL;
-  
+
   spinW = (XmSpinBoxWidget) arrowWidget;
   spinWC = (XmSpinBoxWidgetClass) XtClass(arrowWidget);
-  
+
   spinBoxCallData->reason = arrowReason;
   spinBoxCallData->event  = arrowEvent;
   spinBoxCallData->widget =
@@ -2157,7 +2139,7 @@ FireCallbacks(XmSpinBoxCallbackStruct	*spinBoxCallData,
     {
       XtArgVal position;
       spinC = SB_GetConstraintRec(spinW->spinBox.textw);
-      
+
       spinBoxCallData->doit = True;
       position = spinC->position;
       GetPositionValue( (Widget) spinW->spinBox.textw,
@@ -2188,7 +2170,7 @@ FireCallbacks(XmSpinBoxCallbackStruct	*spinBoxCallData,
           if (buffer)
 	    XtFree(buffer);
         }
-      
+
       if (arrowReason == XmCR_SPIN_NEXT
 	  ||  arrowReason == XmCR_SPIN_PRIOR)
 	spinBoxCallData->crossed_boundary = spinW->spinBox.boundary;
@@ -2239,7 +2221,7 @@ ArrowVerify(Widget arrowWidget, XEvent *arrowEvent, int arrowReason)
 {
   XmSpinBoxWidget		spinW = (XmSpinBoxWidget) arrowWidget;
   XmSpinBoxCallbackStruct	spinBoxCallData;
-  
+
   FireCallbacks(&spinBoxCallData,
 	        spinW->spinBox.modify_verify_cb,
 	        arrowWidget,
@@ -2278,18 +2260,18 @@ ArrowSpinUp(Widget w, XEvent *callEvent)
   XmSpinBoxConstraint  spinC;
   XmSpinBoxWidget	 spinW;
   int              inPosition;
-  
+
   spinW = (XmSpinBoxWidget)w;
-  
+
   if (SB_ChildCount(spinW) && SB_WithChild(spinW))
     {
       spinC = SB_GetConstraintRec(spinW->spinBox.textw);
-      
+
       inPosition = spinC->position;
       spinW->spinBox.boundary = False;
       spinC->position += (SB_ChildIsNumeric(spinC) ?
 			  spinC->increment_value : 1);
-      
+
       if (spinC->position > SB_ChildMaximumPositionValue(spinC))
 	{
 	  if (spinC->wrap)
@@ -2304,7 +2286,7 @@ ArrowSpinUp(Widget w, XEvent *callEvent)
             }
         }
 
-      
+
       /* Update the Text Widget */
       if (inPosition != spinC->position)
       {
@@ -2333,18 +2315,18 @@ ArrowSpinDown(Widget w, XEvent *callEvent)
   XmSpinBoxConstraint  spinC;
   XmSpinBoxWidget	 spinW;
   int              inPosition;
-  
+
   spinW = (XmSpinBoxWidget)w;
-  
+
   if (SB_ChildCount(spinW) && SB_WithChild(spinW))
     {
       spinC = SB_GetConstraintRec(spinW->spinBox.textw);
-      
+
       inPosition = spinC->position;
       spinW->spinBox.boundary = False;
       spinC->position -= (SB_ChildIsNumeric(spinC) ?
 			  spinC->increment_value : 1);
-      
+
       if (spinC->position < SB_ChildMinimumPositionValue(spinC))
 	{
 	  if (spinC->wrap)
@@ -2358,7 +2340,7 @@ ArrowSpinDown(Widget w, XEvent *callEvent)
 	      XBell(XtDisplay(spinW), 0);
             }
         }
-      
+
       /* Update the Text Widget */
       if (inPosition != spinC->position)
       {
@@ -2393,16 +2375,16 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
   int            arrowsWide;
   int            arrowsHigh;
   int            spacing;
-  
+
   spinW = (XmSpinBoxWidget)w;
-  
+
   saveWide = XtWidth(spinW);
   saveHigh = XtHeight(spinW);
-  
+
   XtWidth(spinW) = *wide;
   XtHeight(spinW) = *high;
-  
-  
+
+
   arrowSize = spinW->spinBox.arrow_size;
   arrowsWide = SB_NumArrowsWide(spinW);
   arrowsHigh = SB_NumArrowsHigh(spinW);
@@ -2414,12 +2396,12 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
       *wide += (arrowsWide - 1) * spacing;
       *wide += 2 * spinW->spinBox.margin_width;
       *wide += 2 * SB_ShadowPixels(spinW);
-      
+
       if (SB_WithChild(spinW))
 	for (i = 0; i < SB_ChildCount(spinW); i++)
 	  {
 	    childW = spinW->composite.children[i];
-	    
+
 	    if (XtIsManaged(childW))
 	      *wide += XtWidth(childW) + spinW->spinBox.spacing;
 	  }
@@ -2427,7 +2409,7 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
       /* Remember our best width */
       spinW->spinBox.ideal_width = *wide;
     }
-  
+
   if (!*high)
     {
       *high = arrowsHigh * arrowSize;
@@ -2438,7 +2420,7 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
 	for (i = 0; i < SB_ChildCount(spinW); i++)
 	  {
 	    childW = spinW->composite.children[i];
-	    
+
 	    if (XtIsManaged(childW))
 	      {
 		childHeight = XtHeight(childW);
@@ -2450,13 +2432,13 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
       *high += 2 * SB_ShadowPixels(spinW);
       spinW->spinBox.ideal_height = *high;
     }
-  
+
   if (*wide == 0)
     *wide = 1;
-  
+
   if (*high == 0)
     *high = 1;
-  
+
   XtWidth(spinW) = saveWide;
   XtHeight(spinW) = saveHigh;
 }
@@ -2492,15 +2474,15 @@ SpinNSetValue(Widget nav, XmNavigatorData nav_data, Boolean notify)
   int		minimum;
   int		increment;
   Mask mask ;
- 
+
   if (nav_data->valueMask & NavDimMask)
       spinW->spinBox.dim_mask = nav_data->dimMask ;
-  
+
   if (!(numericCount = NumericChildCount(spinW))) return;
 
   if (!(spinW->spinBox.dim_mask & nav_data->dimMask))
     return ;
-  
+
   /* Spin box can be a 2d dimensional navigator at most.
      If there is only one dimension set, the following loop is only
      rnu once since the mask is update at the end of it */
@@ -2512,18 +2494,18 @@ SpinNSetValue(Widget nav, XmNavigatorData nav_data, Boolean notify)
        i++)
     {
       spinC = SB_GetConstraintRec(spinW->composite.children[i]);
-      
+
       if (SB_ChildIsNumeric(spinC))
 	{
 	  argCount = 0;
 	  numericCount++;
-	  
+
 	  lastValue = spinC->position;
 	  minimum=spinC->minimum_value;
 	  increment=spinC->increment_value;
-	  
+
 	  if ((nav_data->valueMask & NavMinimum)
-	      && (spinC->minimum_value != 
+	      && (spinC->minimum_value !=
 		  ACCESS_DIM(mask, nav_data->minimum)))
 	    {
 	      XtSetArg (arglist[argCount], XmNminimumValue,
@@ -2531,9 +2513,9 @@ SpinNSetValue(Widget nav, XmNavigatorData nav_data, Boolean notify)
 	      minimum = ACCESS_DIM(mask, nav_data->minimum);
 	      argCount++;
 	    }
-	  
+
 	  if ((nav_data->valueMask & NavIncrement)
-	      && (spinC->increment_value != 
+	      && (spinC->increment_value !=
 		  ACCESS_DIM(mask, nav_data->increment)))
 	    {
 	      XtSetArg (arglist[argCount], XmNincrementValue,
@@ -2541,7 +2523,7 @@ SpinNSetValue(Widget nav, XmNavigatorData nav_data, Boolean notify)
 	      increment = ACCESS_DIM(mask, nav_data->increment);
 	      argCount++;
 	    }
-	  
+
 	  /* Process value if different from current value or either
 	     increment or minimumValue changed (which will change the
 	     calculation */
@@ -2560,21 +2542,21 @@ SpinNSetValue(Widget nav, XmNavigatorData nav_data, Boolean notify)
 	      XtSetArg (arglist[argCount], XmNposition, ((int)position));
 	      argCount++;
 	    }
-	  
+
 	  if ((nav_data->valueMask & NavMaximum)
-	      && (spinC->maximum_value !=  
+	      && (spinC->maximum_value !=
 		  ACCESS_DIM(mask, nav_data->maximum)))
 	    {
 	      XtSetArg (arglist[argCount], XmNmaximumValue,
 			ACCESS_DIM(mask, nav_data->maximum) - 1);
 	      argCount++;
 	    }
-	  
+
 	  if (argCount)
 	    XtSetValues (spinW->composite.children[i],
 			 arglist, argCount);
-	  
-	  if (notify && 
+
+	  if (notify &&
 	      ACCESS_DIM(mask, nav_data->value) != lastValue)
 	    ArrowCallback((Widget)spinW, NULL, XmCR_OK);
 
@@ -2599,24 +2581,24 @@ SpinNGetValue(Widget nav, XmNavigatorData nav_data)
   XmSpinBoxWidget	spinW;
   int		i;
   int		numericCount;
-  Mask mask ; 
+  Mask mask ;
 
   spinW = (XmSpinBoxWidget) nav;
-  
+
   if (!(numericCount = NumericChildCount(spinW))) return;
-  
+
   mask = nav_data->dimMask =  spinW->spinBox.dim_mask;
-  
+
   if (nav_data->valueMask & (NavValue|NavMinimum|NavMaximum|NavIncrement)) {
       /* get the value out of the numeric children, in order  */
-      for (numericCount = 0, i = 0; 
+      for (numericCount = 0, i = 0;
 	   i < SB_ChildCount(spinW) && numericCount < 2 && mask;
 	   i++)
 	{
 	  spinC = SB_GetConstraintRec(spinW->composite.children[i]);
 	  if (SB_ChildIsNumeric(spinC)) {
 	      numericCount++;
-	      
+
 	      ASSIGN_DIM(mask, nav_data->value, spinC->position);
 	      ASSIGN_DIM(mask, nav_data->minimum, spinC->minimum_value);
 	      ASSIGN_DIM(mask, nav_data->maximum, spinC->maximum_value + 1);
@@ -2625,7 +2607,7 @@ SpinNGetValue(Widget nav, XmNavigatorData nav_data)
 	      mask &= ~NavigDimensionX ;
 	    }
 	}
-      
+
     }
 }
 
@@ -2642,7 +2624,7 @@ static void
 GetPositionValue(Widget w, int offset, XtArgVal *value)
 {
   XmSpinBoxConstraint	wc = SB_GetConstraintRec(w);
-  
+
   if (SB_ChildIsNumeric(wc) && (!SB_ChildPositionTypeIsValue(wc)))
       *value = (*value - wc->minimum_value) / wc->increment_value;
 }
@@ -2659,7 +2641,7 @@ static XmImportOperator
 SetPositionValue(Widget w, int offset, XtArgVal *value)
 {
   XmSpinBoxConstraint	wc = SB_GetConstraintRec(w);
-  
+
   if (SB_ChildIsNumeric(wc) && (!SB_ChildPositionTypeIsValue(wc)))
       *value = wc->minimum_value + (*value * wc->increment_value);
 
@@ -2674,7 +2656,7 @@ static int
 GetMaximumPositionValue(XmSpinBoxConstraint sc)
 {
   int	max;
-      
+
   if (sc == (XmSpinBoxConstraint) NULL)
     max = 0;
   else if (SB_ChildIsNumeric(sc))
@@ -2693,7 +2675,7 @@ static int
 GetMinimumPositionValue(XmSpinBoxConstraint sc)
 {
   int	min;
-      
+
   if (sc == (XmSpinBoxConstraint) NULL)
     min = 0;
   else if (SB_ChildIsNumeric(sc))
@@ -2729,8 +2711,6 @@ ValidatePositionValue(XmSpinBoxConstraint sc, int *position)
   return(err);
 }
 
-
-/*ARGSUSED*/
 static Boolean
 CvtStringToPositionValue(
         Display *display,
@@ -2757,7 +2737,6 @@ CvtStringToPositionValue(
 }
 
 
-
 /*
  *
  * Public API
@@ -2770,65 +2749,59 @@ CvtStringToPositionValue(
  *  XmVaCreateManagedSpinBox()
  *	Create an instance of a Spin widget and return the widget id.
  ************************************************************************/
-Widget 
-XmCreateSpinBox(Widget parent, String name, 
+Widget
+XmCreateSpinBox(Widget parent, String name,
 		ArgList arglist, Cardinal argcount)
 {
   return(XtCreateWidget(name, xmSpinBoxWidgetClass, parent,
 			arglist, argcount));
 }
-Widget 
-XmVaCreateSpinBox(
-        Widget parent,
-        char *name,
-        ...)
+
+Widget XmVaCreateSpinBox(Widget parent, char *name, ...)
 {
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSpinBoxWidgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmSpinBoxWidgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
-XmVaCreateManagedSpinBox(
-        Widget parent,
-        char *name,
-        ...)
+
+Widget XmVaCreateManagedSpinBox(Widget parent, char *name, ...)
 {
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSpinBoxWidgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmSpinBoxWidgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
 }
+
 /************************************************************************
  *  XmSpinBoxValidatePosition
  *	Validate the position value specified in string.
  ************************************************************************/
-int 
+int
 XmSpinBoxValidatePosition(Widget text_field, int *position)
 {
   int			i;
@@ -2836,14 +2809,12 @@ XmSpinBoxValidatePosition(Widget text_field, int *position)
   int			iPosition;
   int			positionOffset =
 				XtOffset(XmSpinBoxConstraint, position);
-#ifdef FIX_1519
   int           iOffset;
-#endif
   String		string;
   XmAccessTextualTrait  textT;
   XmSpinBoxConstraint	wc;
   XtAppContext 		app;
-  
+
   if (text_field == (Widget) NULL)
     return(XmCURRENT_VALUE);
 
@@ -2856,7 +2827,7 @@ XmSpinBoxValidatePosition(Widget text_field, int *position)
     _XmAppUnlock(app);
     return(XmCURRENT_VALUE);
   }
-  
+
   wc = SB_GetConstraintRec(text_field);
   if ((wc == (XmSpinBoxConstraint) NULL) || (! SB_ChildIsNumeric(wc)))
     {
@@ -2912,23 +2883,14 @@ XmSpinBoxValidatePosition(Widget text_field, int *position)
       return(XmMAXIMUM_VALUE);
     }
 
-#ifdef FIX_1519
   iOffset = iPosition - SB_ChildMinimumPositionValue(wc);
-
   if ((iOffset % wc->increment_value) != 0)
-#else
-  if ((iPosition % wc->increment_value) != 0)
-#endif
     {
       int	iValue = wc->increment_value;
 
       if (position)
 	{
-#ifdef FIX_1519
 	  XtArgVal external_position = SB_ChildMinimumPositionValue(wc) + (iOffset / iValue) * iValue;
-#else
-	  XtArgVal external_position = (iPosition / iValue) * iValue;
-#endif
           GetPositionValue(text_field, positionOffset, &external_position);
           *position = (int)external_position;
 	}
@@ -2936,7 +2898,7 @@ XmSpinBoxValidatePosition(Widget text_field, int *position)
       _XmAppUnlock(app);
       return(XmINCREMENT_VALUE);
     }
-  
+
   if (position)
     {
       XtArgVal external_position = iPosition;

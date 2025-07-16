@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 #ifndef _Xm_TabList_h_
 #define _Xm_TabList_h_
@@ -66,105 +66,40 @@ typedef struct _XmTabAttributeRec {
 
 typedef struct _XmTabbedStackListRec *XmTabbedStackList;
 
-XmTabbedStackList XmTabbedStackListCreate(
-#ifndef _NO_PROTO
-void
-#endif
-);
+XmTabbedStackList XmTabbedStackListCreate(void);
 
-XmTabbedStackList XmTabbedStackListCopy(
-#ifndef _NO_PROTO
-XmTabbedStackList
-#endif
-);
+XmTabbedStackList XmTabbedStackListCopy(XmTabbedStackList);
 
-void XmTabbedStackListFree(
-#ifndef _NO_PROTO
-XmTabbedStackList
-#endif
-);
+void XmTabbedStackListFree(XmTabbedStackList);
 
-void XmTabbedStackListRemove(
-#ifndef _NO_PROTO
-XmTabbedStackList, int
-#endif
-);
+void XmTabbedStackListRemove(XmTabbedStackList, int);
 
-int XmTabbedStackListInsert(
-#ifndef _NO_PROTO
-XmTabbedStackList, int, XtValueMask, XmTabAttributes
-#endif
-);
+int XmTabbedStackListInsert(XmTabbedStackList, int, XtValueMask, XmTabAttributes);
 
-int XmTabbedStackListAppend(
-#ifndef _NO_PROTO
-XmTabbedStackList, XtValueMask, XmTabAttributes
-#endif
-);
+int XmTabbedStackListAppend(XmTabbedStackList, XtValueMask, XmTabAttributes);
 
-void XmTabbedStackListModify(
-#ifndef _NO_PROTO
-XmTabbedStackList, int, XtValueMask, XmTabAttributes
-#endif
-);
+void XmTabbedStackListModify(XmTabbedStackList, int, XtValueMask, XmTabAttributes);
 
-void XmTabbedStackListQuery(
-#ifndef _NO_PROTO
-XmTabbedStackList, int, XmTabAttributes
-#endif
-);
+void XmTabbedStackListQuery(XmTabbedStackList, int, XmTabAttributes);
 
-int XmTabbedStackListFind(
-#ifndef _NO_PROTO
-XmTabbedStackList, XmString
-#endif
-);
+int XmTabbedStackListFind(XmTabbedStackList, XmString);
 
-void XmTabbedStackListSimpleRemove(
-#ifndef _NO_PROTO
-XmTabbedStackList, XmString
-#endif
-);
+void XmTabbedStackListSimpleRemove(XmTabbedStackList, XmString);
 
-int XmTabbedStackListSimpleInsert(
-#ifndef _NO_PROTO
-XmTabbedStackList, int, XmString
-#endif
-);
+int XmTabbedStackListSimpleInsert(XmTabbedStackList, int, XmString);
 
-int XmTabbedStackListSimpleAppend(
-#ifndef _NO_PROTO
-XmTabbedStackList, XmString
-#endif
-);
+int XmTabbedStackListSimpleAppend(XmTabbedStackList, XmString);
 
-void XmTabbedStackListSimpleModify(
-#ifndef _NO_PROTO
-XmTabbedStackList, int, XmString
-#endif
-);
+void XmTabbedStackListSimpleModify(XmTabbedStackList, int, XmString);
 
-XmString XmTabbedStackListSimpleQuery(
-#ifndef _NO_PROTO
-XmTabbedStackList, int
-#endif
-);
+XmString XmTabbedStackListSimpleQuery(XmTabbedStackList, int);
 
-XmTabResult XmTabbedStackListCompare(
-#ifndef _NO_PROTO
-XmTabbedStackList, XmTabbedStackList
-#endif
-);
+XmTabResult XmTabbedStackListCompare(XmTabbedStackList, XmTabbedStackList);
 
-void XmTabAttibutesFree(
-#ifndef _NO_PROTO
-XmTabAttributes
-#endif
-);
+void XmTabAttibutesFree(XmTabAttributes);
 
 #ifdef __cplusplus
 }	/* Closes scope of 'extern "C"' declaration */
 #endif
 
-
-#endif 
+#endif /* _Xm_TabList_h_ */

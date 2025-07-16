@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -59,11 +59,11 @@ typedef struct _PixmapCache {
 
 
 String xm_std_filter[] = { XmNx, XmNy, XmNwidth, XmNheight,
-			   XmNdestroyCallback, XmNsensitive, XmNuserData, 
+			   XmNdestroyCallback, XmNsensitive, XmNuserData,
 			   XmNnavigationType, NULL };
 
-String xm_std_constraint_filter[] = { XmNx, XmNy, XmNwidth, XmNheight, 
-			   XmNdestroyCallback, XmNsensitive, XmNuserData, 
+String xm_std_constraint_filter[] = { XmNx, XmNy, XmNwidth, XmNheight,
+			   XmNdestroyCallback, XmNsensitive, XmNuserData,
 			   XmNnavigationType, XmNbottomAttachment,
 			   XmNbottomOffset, XmNbottomPosition, XmNbottomWidget,
 			   XmNbottomAttachment, XmNtopAttachment,
@@ -71,8 +71,8 @@ String xm_std_constraint_filter[] = { XmNx, XmNy, XmNwidth, XmNheight,
 			   XmNtopOffset, XmNtopPosition, XmNtopWidget,
 			   XmNrightOffset, XmNrightPosition, XmNrightWidget,
 			   XmNrightAttachment, XmNleftAttachment,
-			   XmNallowResize, XmNpaneMinimum, XmNshowSash, 
-			   XmNpaneMaximum, XmNpreferredPaneSize, 
+			   XmNallowResize, XmNpaneMinimum, XmNshowSash,
+			   XmNpaneMaximum, XmNpreferredPaneSize,
 			   XmNresizeToPreferred, XmNskipAdjust,
 			   XmNdFieldPrefHeight, XmNdFieldMaxHeight,
 			   XmNdFieldPrefWidth, XmNdFieldMaxWidth,
@@ -97,7 +97,7 @@ static CacheEntry *pixmapCache = NULL;
 /*	Function Name: _XmRequestNewSize
  *	Description:   Asks our parent for a new size.
  *	Arguments:     w - the data request tree widget.
- *                     query_only - only ask what would happen, don't 
+ *                     query_only - only ask what would happen, don't
  *                                  change anything.
  *                     width, height - size to request.
  *                     r_width, r_height - allowed size.
@@ -105,7 +105,7 @@ static CacheEntry *pixmapCache = NULL;
  */
 
 XtGeometryResult
-_XmRequestNewSize(Widget w, Boolean query_only, 
+_XmRequestNewSize(Widget w, Boolean query_only,
 		  Dimension width, Dimension height,
 		  Dimension * r_width, Dimension * r_height)
 {
@@ -141,12 +141,12 @@ _XmRequestNewSize(Widget w, Boolean query_only,
 }
 
 /*	Function Name: _XmHWQuery
- *	Description:   Handles much of the generic height and width query 
+ *	Description:   Handles much of the generic height and width query
  *                     geometry processing.
  *	Arguments:     w - the widget to process.
  *                     intended, preferred - The values from the real query
  *                                           procedure.  It is assumed
- *                                           that preferred is already 
+ *                                           that preferred is already
  *                                           filled with the correct desired
  *                                           size.
  *	Returns:       an XtGeometryResult.
@@ -195,8 +195,8 @@ _XmGadgetWarning(Widget w)
 	return(False);
 
     XmeWarning(XtParent(w), XmNnoGadgetSupportMsg);
-    
-    return(True); 
+
+    return(True);
 }
 
 /*	Function Name: _XmGetFocus
@@ -207,7 +207,6 @@ _XmGadgetWarning(Widget w)
  *	Returns:       none.
  */
 
-/* ARGSUSED */
 void
 _XmGetFocus(Widget w, XEvent * event, String * params, Cardinal * num_params)
 {
@@ -254,7 +253,7 @@ _XmFilterArgs(ArgList args, Cardinal num_args, String *filter,
 }
 
 /*	Function Name: _XmSetValuesOnChildren
- *	Description: Calls setvalues on all children of this widget, 
+ *	Description: Calls setvalues on all children of this widget,
  *                   and then recurses.
  *	Arguments: w - the widget to set.
  *                 args, num_args - arguments to set.
@@ -302,7 +301,7 @@ _XmUtilIsSubclassByNameQ(Widget w, XrmQuark nameq)
         }
     }
     _XmProcessUnlock();
-    
+
     return(returnValue);
 }
 
@@ -336,7 +335,7 @@ _XmGetMBStringFromXmString(XmString xmstr)
     /*
      * First path to get length.
      */
-    length = 0; 
+    length = 0;
     if ( XmStringPeekNextComponent(context) == XmSTRING_COMPONENT_UNKNOWN ) {
       XmStringFree(xmstr);
       XmStringFreeContext(context);
@@ -344,13 +343,13 @@ _XmGetMBStringFromXmString(XmString xmstr)
     }
 
     done = False;
-    while( !done ) 
+    while( !done )
     {
 	newText = NULL;		/* By source code inspection I have */
 	charset = NULL;		/* Determined that this will make sure */
 	u_value = NULL;		/* that no memory is leaked (I hope). */
 
-	type = XmStringGetNextComponent( context, &newText, &charset, 
+	type = XmStringGetNextComponent( context, &newText, &charset,
 		&direction, &u_tag, &u_length, &u_value );
 
         switch( type )
@@ -412,30 +411,30 @@ _XmGetMBStringFromXmString(XmString xmstr)
      * Failed to obtain any compound string, return with NULL pointer.
      */
     if(length == 0) return(NULL);
-    
+
     XmStringFreeContext( context );
     text = XtMalloc( length + 1 );
     text[0] = '\0';
 
     /*
      * Fill in the string.
-     */ 
+     */
     XmStringInitContext(&context, xmstr);
 
     done = False;
-    while( !done ) 
+    while( !done )
     {
 	newText = NULL;		/* By source code inspection I have */
 	charset = NULL;		/* Determined that this will make sure */
 	u_value = NULL;		/* that no memory is leaked (I hope). */
 
-	type = XmStringGetNextComponent( context, &newText, &charset, 
+	type = XmStringGetNextComponent( context, &newText, &charset,
 		&direction, &u_tag, &u_length, &u_value );
         switch( type )
 	{
     	case XmSTRING_COMPONENT_TEXT:
 	case XmSTRING_COMPONENT_LOCALE_TEXT:
-	    strcat(text, newText); 
+	    strcat(text, newText);
 	    break;
  	case XmSTRING_COMPONENT_SEPARATOR:
 	    strcat(text, "\n");
@@ -454,7 +453,7 @@ _XmGetMBStringFromXmString(XmString xmstr)
 	XtFree((XtPointer) charset);
 	XtFree((XtPointer) u_value);
    }
- 
+
     XmStringFreeContext(context);
     return(text);
 }
@@ -467,7 +466,7 @@ _XmGetMBStringFromXmString(XmString xmstr)
  *	Returns: none.
  */
 
-void 
+void
 _XmMoveWidget(Widget w, Position x, Position y)
 {
     XmDropSiteStartUpdate(w);
@@ -483,7 +482,7 @@ _XmMoveWidget(Widget w, Position x, Position y)
  *	Returns: none.
  */
 
-void 
+void
 _XmResizeWidget(Widget w, Dimension width, Dimension height, Dimension bw)
 {
     XmDropSiteStartUpdate(w);
@@ -500,7 +499,7 @@ _XmResizeWidget(Widget w, Dimension width, Dimension height, Dimension bw)
  *	Returns: none.
  */
 
-void 
+void
 _XmConfigureWidget(Widget w, Position x, Position y,
 		   Dimension width, Dimension height, Dimension bw)
 {
@@ -516,7 +515,7 @@ _XmConfigureWidget(Widget w, Position x, Position y,
 
 /************************************************************
  *
- *  This code is taken from the MIT X Consortium's Xmu 
+ *  This code is taken from the MIT X Consortium's Xmu
  *  Utility Library.
  *
  ************************************************************/
@@ -543,12 +542,8 @@ _XmConfigureWidget(Widget w, Position x, Position y,
  *            ( 1) -> first > second
  */
 int
-#ifndef _NO_PROTO
-XmCompareISOLatin1(char *first, char *second)
-#else
 XmCompareISOLatin1(first, second)
     char *first, *second;
-#endif
 {
     register unsigned char *ap, *bp;
 
@@ -609,8 +604,8 @@ XmCopyISOLatin1Lowered(dst, src)
 #define pixmap_width 2
 #define pixmap_height 2
 
-Pixmap 
-XiCreateStippledPixmap(Screen *screen, 
+Pixmap
+XiCreateStippledPixmap(Screen *screen,
 		       Pixel fore, Pixel back, unsigned int depth)
 {
     register Display *display = DisplayOfScreen(screen);
@@ -628,7 +623,7 @@ XiCreateStippledPixmap(Screen *screen,
     }
 
     stippled_pixmap = XCreatePixmapFromBitmapData (display,
-			RootWindowOfScreen(screen), (char *)pixmap_bits, 
+			RootWindowOfScreen(screen), (char *)pixmap_bits,
 			pixmap_width, pixmap_height, fore, back, depth);
 
     /* and insert it at the head of the cache */
@@ -647,7 +642,7 @@ XiCreateStippledPixmap(Screen *screen,
     return( stippled_pixmap );
 }
 
-void 
+void
 XiReleaseStippledPixmap(Screen *screen, Pixmap pixmap)
 {
     register Display *display = DisplayOfScreen(screen);
@@ -746,7 +741,7 @@ XmCompareXtWidgetGeometry(XtWidgetGeometry *geom1, XtWidgetGeometry *geom2)
 /* to get correct behavior.                                              */
 /*************************************************************************/
 /* and now there's a fix added; refer to OSF contact number 24617 for
-** details 
+** details
 */
 /* And rewritten to support manual alignment.  HP/UX aligns doubles to
 ** 8 bytes, but everthing else to 4.  There is NO WAY to discover at
@@ -769,7 +764,7 @@ XmCompareXtWidgetGeometry(XtWidgetGeometry *geom1, XtWidgetGeometry *geom2)
 #endif
 
 /*
- *  FIX for 5178: remove dependency on Xt private data 
+ *  FIX for 5178: remove dependency on Xt private data
  */
 static Boolean
 IsSubclassOf(
@@ -791,7 +786,7 @@ IsSubclassOf(
  *  end FIX for 5178.
  */
 
-void 
+void
 _XiResolveAllPartOffsets(
         WidgetClass w_class,
         XmOffsetPtr *offset,
@@ -802,13 +797,13 @@ _XiResolveAllPartOffsets(
     ConstraintWidgetClass cc = NULL, scc = NULL;
     int i, classcount = 0;
     XmPartResource *pr;
-    
+
     Boolean do_align = False;
-    
+
     _XmProcessLock();
     if (sizeof(int) != sizeof(void*))
 	do_align = True;
-    
+
     /*
      *  Set up constraint class pointers
      */
@@ -817,11 +812,11 @@ _XiResolveAllPartOffsets(
 	cc = (ConstraintWidgetClass)w_class;
 	scc = (ConstraintWidgetClass)super;
     }
-    
+
     /*
      *  Update the part size value (initially, it is the size of this part)
      */
-    
+
     if (do_align)
     {
 	w_class->core_class.widget_size =
@@ -870,14 +865,14 @@ _XiResolveAllPartOffsets(
      *  Count the number of superclasses and allocate the offset record(s)
      */
     for (c = w_class; c != NULL; c = c->core_class.superclass) classcount++;
-    
+
     *offset = (XmOffsetPtr) XtMalloc(classcount * sizeof(XmOffset));
     if (cc)
-	*constraint_offset = (XmOffsetPtr) XtMalloc(classcount 
+	*constraint_offset = (XmOffsetPtr) XtMalloc(classcount
 						    * sizeof(XmOffset));
-    else 
+    else
 	if(constraint_offset != NULL) *constraint_offset = NULL;
-    
+
     /*
      *  Fill in the offset table(s) with the offset of all parts
      */
@@ -892,58 +887,58 @@ _XiResolveAllPartOffsets(
 	 */
 	if (do_align ||
 	    (c == super && align64))
-	    (*offset)[i] = (long)_ALIGN((c->core_class.widget_size));	
+	    (*offset)[i] = (long)_ALIGN((c->core_class.widget_size));
 	else
 	    (*offset)[i] = (long)(c->core_class.widget_size);
     }
-    
+
     (*offset)[0] = 0;
-    
+
     if (constraint_offset != NULL && *constraint_offset != NULL) {
-	for (i = classcount-1, scc = (ConstraintWidgetClass) super; i > 0; 
+	for (i = classcount-1, scc = (ConstraintWidgetClass) super; i > 0;
 	     scc = (ConstraintWidgetClass)(scc->core_class.superclass), i--)
 	    if (XtIsConstraintClass((WidgetClass)scc))
 	    {
 		if (do_align)
-		    (*constraint_offset)[i] = 
+		    (*constraint_offset)[i] =
 			(long)_ALIGN((scc->constraint_class.constraint_size));
 		else
-		    (*constraint_offset)[i] = 
+		    (*constraint_offset)[i] =
 			(long)(scc->constraint_class.constraint_size);
 	    }
 	    else
 		(*constraint_offset)[i] = 0;
-	
+
 	(*constraint_offset)[0] = 0;
     }
-    
+
     /*
      *  Update the resource list(s) offsets in place
      */
-    for (i = 0; i < w_class->core_class.num_resources; i++) 
+    for (i = 0; i < w_class->core_class.num_resources; i++)
     {
 	pr = (XmPartResource *) &w_class->core_class.resources[i];
-	
+
 	/* The next line updates this in place--be careful */
-	
+
 	w_class->core_class.resources[i].resource_offset =
 	    XmGetPartOffset(pr, offset);
     }
-    
+
     if (cc)
-	for (i = 0; i < cc->constraint_class.num_resources; i++) 
+	for (i = 0; i < cc->constraint_class.num_resources; i++)
 	{
 	    pr = (XmPartResource *) &cc->constraint_class.resources[i];
-	    
+
 	    /* The next line updates this in place--be careful */
-	    
+
 	    cc->constraint_class.resources[i].resource_offset =
 		XmGetPartOffset(pr, constraint_offset);
 	}
     _XmProcessUnlock();
 }
 
-void 
+void
 XiResolveAllPartOffsets(
         WidgetClass w_class,
         XmOffsetPtr *offset,
@@ -952,7 +947,7 @@ XiResolveAllPartOffsets(
     _XiResolveAllPartOffsets( w_class, offset, constraint_offset, False );
 }
 
-void 
+void
 XmResolveAllPartOffsets64(
         WidgetClass w_class,
         XmOffsetPtr *offset,
@@ -967,7 +962,7 @@ XmResolveAllPartOffsets64(
 
 
 /* -------------------------------------------------------------------------- */
- 
+
 
 
 
@@ -979,7 +974,7 @@ XmResolveAllPartOffsets64(
  *
  ************************************************************************/
 
-void 
+void
 _XmExtHighlightBorder(Widget w )
 {
 XtWidgetProc border_highlight;
@@ -1001,32 +996,32 @@ XtWidgetProc border_highlight;
 
             (*border_highlight) (w);
 	    }
-    } 
+    }
     return ;
-} 
+}
 
 
-void 
+void
 _XmExtUnhighlightBorder(Widget w)
 {
 XtWidgetProc border_unhighlight;
 
     if( XmIsPrimitive(w))
-    {   
+    {
         _XmProcessLock();
         border_unhighlight = xmPrimitiveClassRec.primitive_class.border_unhighlight;
         _XmProcessUnlock();
         (*border_unhighlight)(w) ;
-    } 
+    }
     else
     {
         if(XmIsGadget(w))
-        {   
+        {
             _XmProcessLock();
             border_unhighlight = xmGadgetClassRec.gadget_class.border_unhighlight;
             _XmProcessUnlock();
             (*border_unhighlight)(w);
-        } 
-    } 
+        }
+    }
     return ;
 }

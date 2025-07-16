@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #include <Xm/Xm.h>
@@ -50,12 +50,7 @@ typedef struct _XmTabbedStackListRec {
  * Output:
  *      XmTabbedStackList - an empty allocated XiTablist
  */
-XmTabbedStackList
-#ifndef _NO_PROTO
-XmTabbedStackListCreate(void)
-#else
-XmTabbedStackListCreate()
-#endif
+XmTabbedStackList XmTabbedStackListCreate(void)
 {
     XmTabbedStackList tabList;
 
@@ -81,13 +76,7 @@ XmTabbedStackListCreate()
  * Output:
  *      XmTabbedStackList - the copy of the given list
  */
-XmTabbedStackList
-#ifndef _NO_PROTO
-XmTabbedStackListCopy(XmTabbedStackList tab_list)
-#else
-XmTabbedStackListCopy(tab_list)
-    XmTabbedStackList tab_list;
-#endif
+XmTabbedStackList XmTabbedStackListCopy(XmTabbedStackList tab_list)
 {
     XmTabbedStackList newList;
     int       i;
@@ -155,13 +144,7 @@ XmTabbedStackListCopy(tab_list)
  * Output:
  *      None.
  */
-void
-#ifndef _NO_PROTO
-XmTabbedStackListFree(XmTabbedStackList tab_list)
-#else
-XmTabbedStackListFree(tab_list)
-    XmTabbedStackList tab_list;
-#endif
+void XmTabbedStackListFree(XmTabbedStackList tab_list)
 {
     int i;
 
@@ -180,7 +163,7 @@ XmTabbedStackListFree(tab_list)
         for( i = 0; i < tab_list->used; ++i )
         {
             if( tab_list->tabs[i].value_mode == XmTAB_VALUE_SHARE ) continue;
-            
+
             XiXmStringFree(tab_list->tabs[i].label_string);
         }
     }
@@ -208,14 +191,7 @@ XmTabbedStackListFree(tab_list)
  * Output:
  *      None.
  */
-void
-#ifndef _NO_PROTO
-XmTabbedStackListRemove(XmTabbedStackList tab_list, int position)
-#else
-XmTabbedStackListRemove(tab_list, position)
-    XmTabbedStackList tab_list;
-    int       position;
-#endif
+void XmTabbedStackListRemove(XmTabbedStackList tab_list, int position)
 {
     XmTabAttributes to, from;
     int             count;
@@ -230,7 +206,7 @@ XmTabbedStackListRemove(tab_list, position)
     /*
      * Now deallocate the data associated with this tab, if needed.
      */
-    if( to->value_mode == XmTAB_VALUE_COPY ) 
+    if( to->value_mode == XmTAB_VALUE_COPY )
     {
         XmStringFree(to->label_string);
     }
@@ -266,16 +242,8 @@ XmTabbedStackListRemove(tab_list, position)
  *      int - the position of the new tab in the list
  */
 int
-#ifndef _NO_PROTO
 XmTabbedStackListInsert(XmTabbedStackList tab_list, int position, XtValueMask mask,
                 XmTabAttributes attributes)
-#else
-XmTabbedStackListInsert(tab_list, position, mask, attributes)
-    XmTabbedStackList       tab_list;
-    int             position;
-    XtValueMask     mask;
-    XmTabAttributes attributes;
-#endif
 {
     XmTabAttributes newTab;
 
@@ -288,7 +256,7 @@ XmTabbedStackListInsert(tab_list, position, mask, attributes)
 
     /*
      * Now lets add our new tab to the list in the correct position.
-     * If the list is not large enough to hold our new tab we will 
+     * If the list is not large enough to hold our new tab we will
      * grow the list.
      */
     if( tab_list->allocated == tab_list->used )
@@ -357,7 +325,7 @@ XmTabbedStackListInsert(tab_list, position, mask, attributes)
 	    newTab->label_string = attributes->label_string;
 	}
     }
-    
+
     if( mask & XmTAB_STRING_DIRECTION )
     {
 	newTab->string_direction = attributes->string_direction;
@@ -392,7 +360,7 @@ XmTabbedStackListInsert(tab_list, position, mask, attributes)
     {
 	newTab->foreground = attributes->foreground;
     }
-    
+
     if( mask & XmTAB_LABEL_ALIGNMENT )
     {
 	newTab->label_alignment = attributes->label_alignment;
@@ -416,15 +384,8 @@ XmTabbedStackListInsert(tab_list, position, mask, attributes)
  *	int - the position of the new tab
  */
 int
-#ifndef _NO_PROTO
 XmTabbedStackListAppend(XmTabbedStackList tab_list, XtValueMask mask,
                 XmTabAttributes attributes)
-#else
-XmTabbedStackListAppend(tab_list, mask, attributes)
-    XmTabbedStackList       tab_list;
-    XtValueMask     mask;
-    XmTabAttributes attributes;
-#endif
 {
     /*
      * So we cheat a little here.  All we need to do is call insert and
@@ -449,16 +410,8 @@ XmTabbedStackListAppend(tab_list, mask, attributes)
  *	None.
  */
 void
-#ifndef _NO_PROTO
 XmTabbedStackListModify(XmTabbedStackList tab_list, int position, XtValueMask mask,
                 XmTabAttributes attributes)
-#else
-XmTabbedStackListModify(tab_list, position, mask, attributes)
-    XmTabbedStackList       tab_list;
-    int             position;
-    XtValueMask     mask;
-    XmTabAttributes attributes;
-#endif
 {
     XmTabAttributes tab;
 
@@ -474,7 +427,7 @@ XmTabbedStackListModify(tab_list, position, mask, attributes)
     tab = &(tab_list->tabs[position]);
 
     /*
-     * Now lets check the various flags and see what we need to 
+     * Now lets check the various flags and see what we need to
      * change.
      */
     if( mask & XmTAB_VALUE_MODE && tab->value_mode != attributes->value_mode &&
@@ -487,7 +440,7 @@ XmTabbedStackListModify(tab_list, position, mask, attributes)
 	tab->value_mode = attributes->value_mode;
 	tab->label_string = XiXmStringCopy(attributes->label_string);
     }
-    
+
     if( mask & XmTAB_LABEL_STRING )
     {
 	if( tab->value_mode == XmTAB_VALUE_COPY )
@@ -546,7 +499,7 @@ XmTabbedStackListModify(tab_list, position, mask, attributes)
  * Function:
  *	XmTabbedStackListQuery(tab_list, position, mask, attributes)
  * Description:
- *	Retrieve attributes from the specified tab. (NOTE: This may be 
+ *	Retrieve attributes from the specified tab. (NOTE: This may be
  *	a copy out, depends on value_mode, so be sure to free
  *	this when done.)
  * Input:
@@ -557,14 +510,7 @@ XmTabbedStackListModify(tab_list, position, mask, attributes)
  *	None.
  */
 void
-#ifndef _NO_PROTO
 XmTabbedStackListQuery(XmTabbedStackList tab_list, int position, XmTabAttributes attributes)
-#else
-XmTabbedStackListQuery(tab_list, position, attributes)
-    XmTabbedStackList       tab_list;
-    int             position;
-    XmTabAttributes attributes;
-#endif
 {
     XmTabAttributes tab;
 
@@ -609,17 +555,11 @@ XmTabbedStackListQuery(tab_list, position, attributes)
  *	tab_list     : XmTabbedStackList - the XmTabbedStackList to search
  *	label_string : XmString  - the label_string to search for
  * Output:
- *	int - the index of the tab found, or XmTAB_NOT_FOUND if 
+ *	int - the index of the tab found, or XmTAB_NOT_FOUND if
  *	      a match is not found.
  */
 int
-#ifndef _NO_PROTO
 XmTabbedStackListFind(XmTabbedStackList tab_list, XmString label_string)
-#else
-XmTabbedStackListFind(tab_list, label_string)
-    XmTabbedStackList tab_list;
-    XmString  label_string;
-#endif
 {
     int i;
 
@@ -632,7 +572,7 @@ XmTabbedStackListFind(tab_list, label_string)
 	    return( i );
 	}
     }
-    
+
     return( XmTAB_NOT_FOUND );
 }
 
@@ -649,13 +589,7 @@ XmTabbedStackListFind(tab_list, label_string)
  *	None.
  */
 void
-#ifndef _NO_PROTO
 XmTabbedStackListSimpleRemove(XmTabbedStackList tab_list, XmString label_string)
-#else
-XmTabbedStackListSimpleRemove(tab_list, label_string)
-    XmTabbedStackList tab_list;
-    XmString  label_string;
-#endif
 {
     int position = XmTabbedStackListFind(tab_list, label_string);
 
@@ -676,19 +610,12 @@ XmTabbedStackListSimpleRemove(tab_list, label_string)
  *	int - the position of the new tab
  */
 int
-#ifndef _NO_PROTO
 XmTabbedStackListSimpleInsert(XmTabbedStackList tab_list, int position, XmString label_string)
-#else
-XmTabbedStackListSimpleInsert(tab_list, position, label_string)
-    XmTabbedStackList tab_list;
-    int       position;
-    XmString  label_string;
-#endif
 {
     XmTabAttributeRec attributes;
 
     attributes.label_string = label_string;
-    
+
     return( XmTabbedStackListInsert(tab_list, position, XmTAB_LABEL_STRING,
 			    &attributes) );
 }
@@ -706,18 +633,12 @@ XmTabbedStackListSimpleInsert(tab_list, position, label_string)
  *	int - the position of the new tab
  */
 int
-#ifndef _NO_PROTO
 XmTabbedStackListSimpleAppend(XmTabbedStackList tab_list, XmString label_string)
-#else
-XmTabbedStackListSimpleAppend(tab_list, label_string)
-    XmTabbedStackList tab_list;
-    XmString  label_string;
-#endif
 {
     XmTabAttributeRec attributes;
 
     attributes.label_string = label_string;
-    
+
     return( XmTabbedStackListAppend(tab_list, XmTAB_LABEL_STRING,
 			    &attributes) );
 }
@@ -735,16 +656,8 @@ XmTabbedStackListSimpleAppend(tab_list, label_string)
  * Output:
  *	None.
  */
-/* ARGSUSED */
 void
-#ifndef _NO_PROTO
 XmTabbedStackListSimpleModify(XmTabbedStackList tab_list, int position, XmString label_string)
-#else
-XmTabbedStackListSimpleModify(tab_list, position, label_string)
-    XmTabbedStackList tab_list;
-    int       position;
-    XmString  label_string;
-#endif
 {
     XmTabAttributeRec attributes;
 
@@ -764,13 +677,7 @@ XmTabbedStackListSimpleModify(tab_list, position, label_string)
  *	           so please free when you are done)
  */
 XmString
-#ifndef _NO_PROTO
 XmTabbedStackListSimpleQuery(XmTabbedStackList tab_list, int position)
-#else
-XmTabbedStackListSimpleQuery(tab_list, position)
-    XmTabbedStackList tab_list;
-    int       position;
-#endif
 {
     XmTabAttributeRec attributes;
 
@@ -797,12 +704,7 @@ XmTabbedStackListSimpleQuery(tab_list, position)
  *	None.
  */
 void
-#ifndef _NO_PROTO
 XmTabAttributesFree(XmTabAttributes attributes)
-#else
-XmTabAttributesFree(attributes)
-    XmTabAttributes attributes;
-#endif
 {
     if( attributes->value_mode == XmTAB_VALUE_COPY )
     {
@@ -821,12 +723,7 @@ XmTabAttributesFree(attributes)
  *	int - the number of items in the given XmTabbedStackList
  */
 int
-#ifndef _NO_PROTO
 _XmTabbedStackListCount(XmTabbedStackList tab_list)
-#else
-_XmTabbedStackListCount(tab_list)
-    XmTabbedStackList tab_list;
-#endif
 {
     if( tab_list == NULL ) return( 0 );
 
@@ -846,13 +743,7 @@ _XmTabbedStackListCount(tab_list)
  *	XmTabAttributes - a pointer to the specified tab
  */
 XmTabAttributes
-#ifndef _NO_PROTO
 _XmTabbedStackListGet(XmTabbedStackList tab_list, int position)
-#else
-_XmTabbedStackListGet(tab_list, position)
-    XmTabbedStackList tab_list;
-    int       position;
-#endif
 {
     XmTabAttributes tab;
 
@@ -870,13 +761,7 @@ _XmTabbedStackListGet(tab_list, position)
     return( tab );
 }
 
-XmTabAttributes
-#ifndef _NO_PROTO
-_XmTabbedStackListArray(XmTabbedStackList tab_list)
-#else
-_XmTabbedStackListArray(tab_list)
-    XmTabbedStackList tab_list;
-#endif
+XmTabAttributes _XmTabbedStackListArray(XmTabbedStackList tab_list)
 {
     /*
      * Make sure that we have valid data and if not "asta la vesta, baby"
@@ -894,7 +779,7 @@ _XmTabbedStackListArray(tab_list)
  * Function:
  *	XmTabbedStackListCompare(XmTabbedStackList list1, XmTabbedStackList list2)
  * Description:
- *	Compares to tab lists to see if they are logically 
+ *	Compares to tab lists to see if they are logically
  *	equivalent.
  * Input:
  *	list1 : XmTabbedStackList - tab list to compare
@@ -902,13 +787,7 @@ _XmTabbedStackListArray(tab_list)
  * Output:
  *	XmTabResult - indicates the differences it any
  */
-XmTabResult
-#ifndef _NO_PROTO
-XmTabbedStackListCompare(XmTabbedStackList list1, XmTabbedStackList list2)
-#else
-XmTabbedStackListCompare(list1, list2)
-    XmTabbedStackList list1, list2;
-#endif
+XmTabResult XmTabbedStackListCompare(XmTabbedStackList list1, XmTabbedStackList list2)
 {
     XmTabResult result = XmTAB_CMP_EQUAL;
     int         i;
@@ -920,7 +799,7 @@ XmTabbedStackListCompare(list1, list2)
     for( i = 0; i < list1->used; ++i )
     {
 	if( list1->tabs[i].label_pixmap != list2->tabs[i].label_pixmap ||
-	    !XiXmStringCompare(list1->tabs[i].label_string, 
+	    !XiXmStringCompare(list1->tabs[i].label_string,
 			       list2->tabs[i].label_string) ||
  	    list1->tabs[i].pixmap_placement !=
 	    list2->tabs[i].pixmap_placement )
@@ -933,7 +812,7 @@ XmTabbedStackListCompare(list1, list2)
 	    list1->tabs[i].foreground != list2->tabs[i].foreground ||
 	    list1->tabs[i].background != list2->tabs[i].background ||
 	    list1->tabs[i].sensitive != list2->tabs[i].sensitive ||
-	    list1->tabs[i].background_pixmap != 
+	    list1->tabs[i].background_pixmap !=
 	    list2->tabs[i].background_pixmap )
 	{
 	    result = XmTAB_CMP_VISUAL;

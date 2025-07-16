@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmI_h
 #define _XmI_h
 
@@ -36,9 +36,6 @@
 extern "C" {
 #endif
 
-#define FIX_345
-
-#ifdef FIX_345
 extern Boolean _init_modifiers;
 extern unsigned int NumLockMask;
 extern unsigned int ScrollLockMask;
@@ -52,7 +49,6 @@ void _XmInitModifiers (void);
 	    _init_modifiers = FALSE; 					\
 	}								\
     }
-#endif
 
 #ifndef DEBUG
 # define assert(assert_exp)
@@ -113,8 +109,8 @@ void _XmInitModifiers (void);
 /* The _XmCreateImage macro is used to create XImage with client
    specific data for the bit and byte order.
    We still have to do the following because XCreateImage
-   will stuff here display specific data and we want 
-   client specific values (i.e the bit orders we used for 
+   will stuff here display specific data and we want
+   client specific values (i.e the bit orders we used for
    creating the bitmap data in Motif) -- BUG 4262 */
 /* Used in Motif 1.2 in DragIcon.c, MessageB.c, ReadImage.c and
    ImageCache.c */
@@ -169,12 +165,12 @@ void _XmInitModifiers (void);
 extern void _XmDirectionDefault(Widget widget,
   			        int offset,
   			        XrmValue *value );
-extern void _XmFromLayoutDirection( 
+extern void _XmFromLayoutDirection(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
 
-extern XmImportOperator _XmToLayoutDirection( 
+extern XmImportOperator _XmToLayoutDirection(
                         Widget widget,
                         int offset,
                         XtArgVal *value) ;
@@ -182,44 +178,37 @@ extern XmDirection _XmGetLayoutDirection(Widget w);
 
 
 /********    Private Function Declarations for thickness  ********/
-extern void _XmSetThickness( 
+extern void _XmSetThickness(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmSetThicknessDefault0( 
+extern void _XmSetThicknessDefault0(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
 
 /********    Private Function Declarations for Xm.c    ********/
 
-extern void _XmReOrderResourceList( 
+extern void _XmReOrderResourceList(
 			WidgetClass widget_class,
 			String res_name,
                         String insert_after) ;
-extern void _XmSocorro( 
+extern void _XmSocorro(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern Boolean _XmParentProcess( 
+extern Boolean _XmParentProcess(
                         Widget widget,
                         XmParentProcessData data) ;
-extern void _XmClearShadowType( 
+extern void _XmClearShadowType(
                         Widget w,
-#if NeedWidePrototypes
-                        int old_width,
-                        int old_height,
-                        int old_shadow_thickness,
-                        int old_highlight_thickness) ;
-#else
                         Dimension old_width,
                         Dimension old_height,
                         Dimension old_shadow_thickness,
                         Dimension old_highlight_thickness) ;
-#endif /* NeedWidePrototypes */
 #ifdef NO_XM_1_2_BC
-extern void _XmDestroyParentCallback( 
+extern void _XmDestroyParentCallback(
                         Widget w,
                         XtPointer client_data,
                         XtPointer call_data) ;
@@ -237,6 +226,7 @@ extern Boolean _XmIsISO10646(Display *dpy,
 extern XChar2b* _XmUtf8ToUcs2(char *draw_text,
                               size_t seg_len,
 			      size_t *ret_str_len);
+extern Pixel _XmAssignInsensitiveColor(Widget w);
 
 /********    End Private Function Declarations    ********/
 
@@ -275,22 +265,6 @@ extern void (*_XtProcessLock)();
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
 
-#define FIX_1396
-
-#ifdef FIX_1381
-extern Pixel _XmAssignInsensitiveColor(Widget w);
-#endif
-
-#define FIX_1375
-#define FIX_1395
-#define FIX_1388
-#define FIX_1398
-#define FIX_1402
-#define FIX_1445
-#define FIX_1474
-#define FIX_1501
-#define FIX_1521
-#define FIX_1505
 
 #endif /* _XmI_h */
 /* DON'T ADD ANYTHING AFTER THIS #endif */

@@ -54,12 +54,10 @@
 		 ButtonPressMask | ButtonReleaseMask)
 
 /********    Static Function Declarations    ********/
-#ifdef FIX_1445
 static void MouseWheel (Widget grabshell,
 		     XEvent *event,
 		     String *params,
 		     Cardinal *num_params);
-#endif
 static void BtnUp (Widget grabshell,
 		     XEvent *event,
 		     String *params,
@@ -84,7 +82,7 @@ static Boolean SetValues (Widget cw,
 			  Cardinal *num_args);
 static void Resize (Widget wid);
 static void ChangeManaged (Widget w);
-static XtGeometryResult GeometryManager( 
+static XtGeometryResult GeometryManager(
                         Widget wid,
                         XtWidgetGeometry *request,
                         XtWidgetGeometry *reply) ;
@@ -101,59 +99,55 @@ static int IgnoreXErrors(Display *, XErrorEvent *);
 
 /********    End Static Function Declarations    ********/
 
-static XtActionsRec actionsList[] = 
+static XtActionsRec actionsList[] =
 {
   { "GrabShellBtnDown", BtnDown },
   { "GrabShellBtnUp",   BtnUp },
-  { "GrabShellPopdown", Popdown }
-#ifdef FIX_1445
-  ,
+  { "GrabShellPopdown", Popdown },
   { "GrabShellMouseWheel", MouseWheel }
-#endif
 };
-
 
 #define Offset(field) (XtOffsetOf(XmGrabShellRec, field))
 
 static XtResource resources[] =
 {
   {
-    XmNallowShellResize, XmCAllowShellResize, XmRBoolean, 
-    sizeof(Boolean), Offset(shell.allow_shell_resize), 
+    XmNallowShellResize, XmCAllowShellResize, XmRBoolean,
+    sizeof(Boolean), Offset(shell.allow_shell_resize),
     XtRImmediate, (XtPointer)TRUE
   },
   {
-    XmNbackground, XmCBackground, XmRPixel, 
+    XmNbackground, XmCBackground, XmRPixel,
     sizeof (Pixel), Offset(core.background_pixel),
     XmRCallProc, (XtPointer) _XmBackgroundColorDefault
   },
   {
-    XmNoverrideRedirect, XmCOverrideRedirect, XmRBoolean, 
-    sizeof(Boolean), Offset(shell.override_redirect), 
+    XmNoverrideRedirect, XmCOverrideRedirect, XmRBoolean,
+    sizeof(Boolean), Offset(shell.override_redirect),
     XtRImmediate, (XtPointer)TRUE
   },
   {
-    XmNsaveUnder, XmCSaveUnder, XmRBoolean, 
-    sizeof(Boolean), Offset(shell.save_under), 
+    XmNsaveUnder, XmCSaveUnder, XmRBoolean,
+    sizeof(Boolean), Offset(shell.save_under),
     XtRImmediate, (XtPointer)FALSE
   },
   {
-    XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension, 
-    sizeof(Dimension), Offset(grab_shell.shadow_thickness), 
+    XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension,
+    sizeof(Dimension), Offset(grab_shell.shadow_thickness),
     XmRImmediate, (XtPointer)2
   },
   {
-    XmNtransient, XmCTransient, XmRBoolean, 
-    sizeof(Boolean), Offset(wm_shell.transient), 
+    XmNtransient, XmCTransient, XmRBoolean,
+    sizeof(Boolean), Offset(wm_shell.transient),
     XtRImmediate, (XtPointer)TRUE
   },
   {
-    XmNwaitForWm, XmCWaitForWm, XmRBoolean, 
-    sizeof(Boolean), Offset(wm_shell.wait_for_wm), 
+    XmNwaitForWm, XmCWaitForWm, XmRBoolean,
+    sizeof(Boolean), Offset(wm_shell.wait_for_wm),
     XtRImmediate, (XtPointer)FALSE
   },
   {
-    XmNtopShadowColor, XmCTopShadowColor, XmRPixel, 
+    XmNtopShadowColor, XmCTopShadowColor, XmRPixel,
     sizeof(Pixel), Offset(grab_shell.top_shadow_color),
     XmRCallProc, (XtPointer) _XmTopShadowColorDefault
   },
@@ -163,7 +157,7 @@ static XtResource resources[] =
     XmRCallProc, (XtPointer) _XmTopShadowPixmapDefault
   },
   {
-    XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel, 
+    XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel,
     sizeof(Pixel), Offset(grab_shell.bottom_shadow_color),
     XmRCallProc, (XtPointer) _XmBottomShadowColorDefault
   },
@@ -185,7 +179,7 @@ static XtResource resources[] =
 };
 #undef Offset
 
-externaldef(xmgrabshellclassrec) XmGrabShellClassRec xmGrabShellClassRec = 
+externaldef(xmgrabshellclassrec) XmGrabShellClassRec xmGrabShellClassRec =
 {
   { /* core class fields */
     (WidgetClass) &vendorShellClassRec,	/* superclass		 */
@@ -238,12 +232,12 @@ externaldef(xmgrabshellclassrec) XmGrabShellClassRec xmGrabShellClassRec =
     NULL,				/* extension		 */
   },
   { /* grabshell class fields */
-    NULL,				/* extension		 */ 
+    NULL,				/* extension		 */
   },
 };
 
 
-externaldef(xmgrabshellwidgetclass) WidgetClass xmGrabShellWidgetClass = 
+externaldef(xmgrabshellwidgetclass) WidgetClass xmGrabShellWidgetClass =
    (WidgetClass) &xmGrabShellClassRec;
 
 /* ------------- WIDGET CLASS METHODS ---------- */
@@ -253,27 +247,27 @@ externaldef(xmgrabshellwidgetclass) WidgetClass xmGrabShellWidgetClass =
  */
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(Widget req,		/* unused */
 	   Widget new_w,
 	   ArgList args,	/* unused */
 	   Cardinal *num_args)	/* unused */
 {
   XmGrabShellWidget grabsh = (XmGrabShellWidget)new_w;
-  
+
   XtAddEventHandler(new_w, StructureNotifyMask, False, MapNotifyHandler, NULL);
-  
+
   grabsh->grab_shell.unpost_time = (Time) -1;
   grabsh->grab_shell.cursor = None;
 
-  grabsh->grab_shell.top_shadow_GC = 
-    _XmGetPixmapBasedGC (new_w, 
+  grabsh->grab_shell.top_shadow_GC =
+    _XmGetPixmapBasedGC (new_w,
 			 grabsh->grab_shell.top_shadow_color,
 			 grabsh->core.background_pixel,
 			 grabsh->grab_shell.top_shadow_pixmap);
 
-  grabsh->grab_shell.bottom_shadow_GC = 
-    _XmGetPixmapBasedGC (new_w, 
+  grabsh->grab_shell.bottom_shadow_GC =
+    _XmGetPixmapBasedGC (new_w,
 			 grabsh->grab_shell.bottom_shadow_color,
 			 grabsh->core.background_pixel,
 			 grabsh->grab_shell.bottom_shadow_pixmap);
@@ -291,7 +285,7 @@ Initialize(Widget req,		/* unused */
  *	Set up the fast subclassing.
  */
 
-static void 
+static void
 ClassPartInitialize(WidgetClass wc)
 {
   _XmFastSubclassInit (wc, XmGRAB_SHELL_BIT);
@@ -302,7 +296,7 @@ ClassPartInitialize(WidgetClass wc)
  */
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(Widget cw,
 	  Widget rw,		/* unused */
 	  Widget nw,
@@ -312,7 +306,7 @@ SetValues(Widget cw,
   XmGrabShellWidget new_w = (XmGrabShellWidget) nw;
   XmGrabShellWidget old_w = (XmGrabShellWidget) cw;
   Boolean redisplay = FALSE;
-  
+
   if (old_w->grab_shell.shadow_thickness != new_w->grab_shell.shadow_thickness)
     {
       if (XtIsRealized(nw)) {
@@ -320,36 +314,36 @@ SetValues(Widget cw,
 	redisplay = TRUE;
       }
     }
-  
-  if ((old_w->grab_shell.top_shadow_color != 
+
+  if ((old_w->grab_shell.top_shadow_color !=
        new_w->grab_shell.top_shadow_color) ||
-      (old_w->grab_shell.top_shadow_pixmap != 
+      (old_w->grab_shell.top_shadow_pixmap !=
        new_w->grab_shell.top_shadow_pixmap))
     {
       XtReleaseGC (nw, new_w->grab_shell.top_shadow_GC);
-      new_w->grab_shell.top_shadow_GC = 
-	_XmGetPixmapBasedGC (nw, 
+      new_w->grab_shell.top_shadow_GC =
+	_XmGetPixmapBasedGC (nw,
 			     new_w->grab_shell.top_shadow_color,
 			     new_w->core.background_pixel,
 			     new_w->grab_shell.top_shadow_pixmap);
       redisplay = TRUE;
     }
-  
-  if ((old_w->grab_shell.bottom_shadow_color != 
+
+  if ((old_w->grab_shell.bottom_shadow_color !=
        new_w->grab_shell.bottom_shadow_color) ||
-      (old_w->grab_shell.bottom_shadow_pixmap != 
+      (old_w->grab_shell.bottom_shadow_pixmap !=
        new_w->grab_shell.bottom_shadow_pixmap))
     {
       XtReleaseGC (nw, new_w->grab_shell.bottom_shadow_GC);
-      new_w->grab_shell.bottom_shadow_GC = 
-	_XmGetPixmapBasedGC (nw, 
+      new_w->grab_shell.bottom_shadow_GC =
+	_XmGetPixmapBasedGC (nw,
 			     new_w->grab_shell.bottom_shadow_color,
 			     new_w->core.background_pixel,
 			     new_w->grab_shell.bottom_shadow_pixmap);
       redisplay = TRUE;
     }
 
-  return redisplay; 
+  return redisplay;
 }
 
 /*
@@ -358,38 +352,38 @@ SetValues(Widget cw,
  */
 
 /*ARGSUSED*/
-static void 
+static void
 MapNotifyHandler(Widget shell, XtPointer client_data,
 		 XEvent *event, Boolean *cont)
 {
-  XmGrabShellWidget grabshell = (XmGrabShellWidget)shell; 
+  XmGrabShellWidget grabshell = (XmGrabShellWidget)shell;
   Time time;
   XErrorHandler old_handler;
 
   /* Only handles map events */
   if (event -> type != MapNotify) return;
-  
+
   /* CR 9920:  Popdown may be called before MapNotify. */
   grabshell->grab_shell.mapped = True;
 
   if (!(time = XtLastTimestampProcessed(XtDisplay(shell))))
     time = CurrentTime;
   if (grabshell->grab_shell.cursor == None)
-    grabshell->grab_shell.cursor = 
+    grabshell->grab_shell.cursor =
       XCreateFontCursor (XtDisplay(grabshell), XC_arrow);
-  
+
   _XmFastExpose(shell);
-  
-  (void) XtGrabKeyboard(shell, grabshell -> grab_shell.owner_events, 
+
+  (void) XtGrabKeyboard(shell, grabshell -> grab_shell.owner_events,
 			grabshell -> grab_shell.grab_style,
 			GrabModeAsync, time);
 
-  (void) XtGrabPointer(shell, grabshell -> grab_shell.owner_events, 
+  (void) XtGrabPointer(shell, grabshell -> grab_shell.owner_events,
 		       Events,
 		       grabshell -> grab_shell.grab_style,
-		       GrabModeAsync, None, 
+		       GrabModeAsync, None,
 		       grabshell->grab_shell.cursor, time);
-  
+
   GSAllowEvents(shell, SyncPointer, time);
 
   /* Fix focus to shell */
@@ -401,18 +395,16 @@ MapNotifyHandler(Widget shell, XtPointer client_data,
   XSetErrorHandler(old_handler);
 }
 
-#ifdef FIX_1445
 static void MouseWheel (Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
 	XmGrabShellWidget grabshell = (XmGrabShellWidget) w;
 	GSAllowEvents(w, SyncPointer, event -> xbutton.time);
 }
-#endif
 
-/* 
+/*
  * For BtnUp and BtnDown events we need to decide whether to
  * popdown the grabshell.  We "see" these if the user presses
- * outside the shell.  
+ * outside the shell.
  *
  * To decide,  we call the XmNhasInterestCB to see if our poster
  * wants to handle the event.  If our poster does,  we call
@@ -421,7 +413,7 @@ static void MouseWheel (Widget w, XEvent *event, String *params, Cardinal *num_p
  *
  */
 
-static void 
+static void
 BtnUp (Widget w,
        XEvent *event,
        String *params,
@@ -430,8 +422,8 @@ BtnUp (Widget w,
   XmGrabShellWidget grabshell = (XmGrabShellWidget) w;
   int delta;
 
-  /* Handle click to post 
-     we then ignore the event if it occured within the 
+  /* Handle click to post
+     we then ignore the event if it occured within the
      click to post time */
   delta = event -> xbutton.time - grabshell -> grab_shell.post_time;
   if (delta <= XtGetMultiClickTime(XtDisplay(w))) {
@@ -456,12 +448,12 @@ BtnDown (Widget grabshell,
 
   /* Move to grabshell's coordinate system */
   XTranslateCoordinates(XtDisplay(grabshell), event -> xbutton.window,
-			XtWindow(grabshell), 
+			XtWindow(grabshell),
 			event -> xbutton.x, event -> xbutton.y,
 			&x, &y, &win);
 
   /* Popdown if outside the shell */
-  if (x >= 0 && y >= 0 && 
+  if (x >= 0 && y >= 0 &&
       x <= XtWidth(grabshell) && y <= XtHeight(grabshell)) {
     GSAllowEvents(grabshell, SyncPointer, event -> xbutton.time);
   } else {
@@ -475,7 +467,7 @@ BtnDown (Widget grabshell,
  */
 
 /*ARGSUSED*/
-static void 
+static void
 Popdown(Widget shell,
         XEvent *event,		/* unused */
 	String *params,
@@ -484,7 +476,7 @@ Popdown(Widget shell,
   XmScreen screen = (XmScreen) XmGetXmScreen(XtScreen(shell));
   XmGrabShellWidget grabshell = (XmGrabShellWidget)shell;
   Time time;
-  
+
   /* Record for replay detection */
   if (event && (event->type == ButtonPress || event->type == ButtonRelease)) {
     grabshell->grab_shell.unpost_time = event->xbutton.time;
@@ -519,7 +511,7 @@ Popdown(Widget shell,
 /*
  * This only calls allow events if we have a sync grab.
  */
-static void 
+static void
 GSAllowEvents(Widget gs, int mode, Time time)
 {
   XmGrabShellWidget grabshell = (XmGrabShellWidget) gs;
@@ -534,11 +526,11 @@ GSAllowEvents(Widget gs, int mode, Time time)
  * Destroy()
  */
 
-static void 
+static void
 Destroy(Widget widg)
 {
   XmGrabShellWidget grabshell = (XmGrabShellWidget) widg;
-  
+
   if (grabshell->grab_shell.cursor != None)
     XFreeCursor(XtDisplay(widg), grabshell->grab_shell.cursor);
 }
@@ -547,15 +539,15 @@ Destroy(Widget widg)
  * DoLayout()
  */
 
-static void 
+static void
 DoLayout(Widget wid)
 {
   XmGrabShellWidget gs = (XmGrabShellWidget)wid;
-  
-  if (XtIsManaged(gs->composite.children[0])) 
+
+  if (XtIsManaged(gs->composite.children[0]))
     {
       Widget childwid = gs->composite.children[0];
-      Position offset = (gs->grab_shell.shadow_thickness + 
+      Position offset = (gs->grab_shell.shadow_thickness +
 			 childwid->core.border_width);
       int cw = ((int) gs->core.width) - 2 * offset;
       int ch = ((int) gs->core.height) - 2 * offset;
@@ -566,14 +558,14 @@ DoLayout(Widget wid)
 			  childW, childH, childwid->core.border_width);
     }
 }
-	
+
 /************************************************************************
  *
  *  GeometryManager
  *
  ************************************************************************/
 /*ARGSUSED*/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager(
 	 Widget wid,
 	 XtWidgetGeometry *request,
@@ -595,7 +587,7 @@ GeometryManager(
 
   _XmProcessLock();
   /* Send to vendor shell for final */
-  ret_val = ((VendorShellClassRec *) vendorShellWidgetClass) -> 
+  ret_val = ((VendorShellClassRec *) vendorShellWidgetClass) ->
 	 composite_class.geometry_manager(wid,&modified,reply);
   _XmProcessUnlock();
   return ret_val;
@@ -606,7 +598,7 @@ GeometryManager(
  * ChangeManaged()
  */
 
-static void 
+static void
 ChangeManaged(Widget wid)
 {
   XmGrabShellWidget gs = (XmGrabShellWidget)wid;
@@ -615,7 +607,7 @@ ChangeManaged(Widget wid)
   XtWidgetGeometry  pref, mygeom, replygeom;
   XtGeometryResult  result;
   Widget	    child;
-  
+
   mygeom.request_mode = 0;
   mygeom.width = 0;
   mygeom.height = 0;
@@ -626,11 +618,11 @@ ChangeManaged(Widget wid)
 	{
 	  /* Get child's preferred size */
 	  result = XtQueryGeometry(child, NULL, &pref);
-	  
+
 	  /* Take whatever they want */
 	  if (pref.request_mode & CWWidth)
 	    {
-	      mygeom.width = pref.width; 
+	      mygeom.width = pref.width;
 	      mygeom.request_mode |=  CWWidth;
 	    }
 
@@ -646,10 +638,10 @@ ChangeManaged(Widget wid)
 	    bw = child->core.border_width;
 	}
     }
-  
+
   mygeom.width += 2*bw + 2*gs->grab_shell.shadow_thickness;
   mygeom.height += 2*bw + 2*gs->grab_shell.shadow_thickness;
-  
+
   result = XtMakeGeometryRequest((Widget)shell, &mygeom, &replygeom);
   switch (result)
     {
@@ -669,7 +661,7 @@ ChangeManaged(Widget wid)
  * Resize()
  */
 
-static void 
+static void
 Resize(Widget w)
 {
   DoLayout(w);
@@ -683,7 +675,7 @@ Resize(Widget w)
  * later.
  */
 
-static void 
+static void
 _XmFastExpose(Widget widg)
 {
   register int i;
@@ -693,19 +685,19 @@ _XmFastExpose(Widget widg)
   _XmProcessLock();
   (*(XtClass(widg)->core_class.expose)) (widg, NULL, NULL);
   _XmProcessUnlock();
-  
+
   /* Process each windowed child */
   for (i = 0; i < gs->composite.num_children; i++)
     {
       child = gs->composite.children[i];
-      
+
       if (XtIsWidget(child) && XtIsManaged(child)) {
         _XmProcessLock();
 	(*(XtClass(child)->core_class.expose)) (child, NULL, NULL);
 	_XmProcessUnlock();
       }
     }
-  
+
   XFlush(XtDisplay(widg));
   DrawBorder(widg);
 }
@@ -715,11 +707,11 @@ _XmFastExpose(Widget widg)
  */
 
 static void
-DrawBorder(Widget widg) 
+DrawBorder(Widget widg)
 {
   XmGrabShellWidget gs = (XmGrabShellWidget)widg;
   int offset = 0;
-  
+
   XmeDrawShadows(XtDisplay(widg), XtWindow(widg),
 		 gs->grab_shell.top_shadow_GC,
 		 gs->grab_shell.bottom_shadow_GC,
@@ -730,7 +722,7 @@ DrawBorder(Widget widg)
 		 XmSHADOW_OUT);
 }
 
-/* 
+/*
  * IgnoreXErrors()
  *	An XErrorHandler that smothers errors.
  */
@@ -747,7 +739,7 @@ IgnoreXErrors(Display *dpy,	/* unused */
  * Public Routines *
  *******************/
 
-Widget 
+Widget
 XmCreateGrabShell(Widget parent,
 		  char *name,
 		  ArgList al,

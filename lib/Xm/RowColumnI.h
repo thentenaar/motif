@@ -162,7 +162,7 @@ extern "C" {
 
 #define RCIndex(w)    (((XmRowColumnConstraintRec *)(w)->core.constraints)\
                        ->row_column.position_index)
-  
+
 
 /********    Private Function Declarations    ********/
 
@@ -173,18 +173,14 @@ extern void _XmRC_KeyboardInputHandler(
 				       Boolean *cont );
 extern void _XmAllowAcceleratedInsensitiveUnmanagedMenuItems(
 							     Widget wid,
-#if NeedWidePrototypes
-							     int allowed);
-#else
 							     Boolean allowed);
-#endif /* NeedWidePrototypes */
-extern void _XmPostPopupMenu( 
+extern void _XmPostPopupMenu(
                         Widget wid,
                         XEvent *event) ;
-extern void _XmCallRowColumnMapCallback( 
+extern void _XmCallRowColumnMapCallback(
                         Widget wid,
                         XEvent *event) ;
-extern void _XmCallRowColumnUnmapCallback( 
+extern void _XmCallRowColumnUnmapCallback(
                         Widget wid,
                         XEvent *event) ;
 extern void _XmRC_RemoveFromPostFromListOnDestroyCB (

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: GadgetUtil.c /main/16 1996/10/23 15:00:52 cde-osf $"
@@ -57,7 +57,7 @@ static char rcsid[] = "$XConsortium: GadgetUtil.c /main/16 1996/10/23 15:00:52 c
  *      gadget or NULL if XmbjectAtPoint is not sensitive.
  *
  ************************************************************************/
-XmGadget 
+XmGadget
 _XmInputForGadget(
         Widget wid,
         int x,
@@ -82,22 +82,14 @@ _XmInputForGadget(
  *	Wrapper around Xt equivalent + DropSite update.
  *
  ************************************************************************/
-void 
+void
 XmeConfigureObject(
         Widget wid,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        int height,
-        int border_width )
-#else
         Position x,
         Position y,
         Dimension width,
         Dimension height,
         Dimension border_width )
-#endif /* NeedWidePrototypes */
 {
     _XmWidgetToAppContext(wid);
     XmDropSiteStartUpdate(wid);
@@ -111,7 +103,7 @@ XmeConfigureObject(
 	width = preferred.width;
         height = preferred.height;
     }
-    if (!width)  width++;                
+    if (!width)  width++;
     if (!height) height++;
     XtConfigureWidget(wid, x, y, width, height, border_width);
 
@@ -129,7 +121,7 @@ XmeConfigureObject(
  *	are intersected by the region.
  *
  ************************************************************************/
-void 
+void
 XmeRedisplayGadgets(
         Widget w,
         register XEvent *event,
@@ -139,7 +131,7 @@ XmeRedisplayGadgets(
    register int i;
    register Widget child;
    XtExposeProc expose;
-  
+
    _XmWidgetToAppContext(w);
 
    _XmAppLock(app);
@@ -155,7 +147,7 @@ XmeRedisplayGadgets(
                 child->core.y < event->xexpose.y + event->xexpose.height     &&
                 child->core.y + child->core.height > event->xexpose.y)
             {
-		
+
 	       _XmProcessLock();
 	       expose = child->core.widget_class->core_class.expose;
 	       _XmProcessUnlock();
@@ -193,17 +185,17 @@ XmeRedisplayGadgets(
  *	Call the gadgets class function and send the desired data to it.
  *
  ************************************************************************/
-void 
+void
 _XmDispatchGadgetInput(
         Widget wid,
         XEvent *event,
         Mask mask )
 {
         XmGadget g = (XmGadget) wid ;
-   if ((g->gadget.event_mask & mask) && 
+   if ((g->gadget.event_mask & mask) &&
        XtIsSensitive ((Widget)g) && XtIsManaged ((Widget)g))
    {
-      if (event != NULL) 
+      if (event != NULL)
       {
          XEvent synth_event;
 
@@ -273,11 +265,11 @@ _XmDispatchGadgetInput(
 		      (size_t)sizeof(synth_event));
 		   break;
          }
-   
+
          (*(((XmGadgetClass) (g->object.widget_class))->
-             gadget_class.input_dispatch)) ((Widget) g, 
+             gadget_class.input_dispatch)) ((Widget) g,
                                                (XEvent *) &synth_event, mask) ;
-      } 
+      }
       else
       {
          (*(((XmGadgetClass) (g->object.widget_class))->

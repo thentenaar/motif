@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 #ifndef _XmTextOutI_h
 #define _XmTextOutI_h
@@ -33,63 +33,55 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern void _XmTextFreeContextData( 
+extern void _XmTextFreeContextData(
                         Widget w,
                         XtPointer clientData,
                         XtPointer callData) ;
-extern void _XmTextResetClipOrigin( 
+extern void _XmTextResetClipOrigin(
                         XmTextWidget tw,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int clip_mask_reset) ;
-#else
                         Boolean clip_mask_reset) ;
-#endif /* NeedWidePrototypes */
-extern void _XmTextAdjustGC( 
+extern void _XmTextAdjustGC(
                         XmTextWidget tw) ;
-extern Boolean _XmTextShouldWordWrap( 
+extern Boolean _XmTextShouldWordWrap(
                         XmTextWidget widget) ;
-extern Boolean _XmTextScrollable( 
+extern Boolean _XmTextScrollable(
                         XmTextWidget widget) ;
-extern XmTextPosition _XmTextFindLineEnd( 
+extern XmTextPosition _XmTextFindLineEnd(
                         XmTextWidget widget,
                         XmTextPosition position,
                         LineTableExtra *extra) ;
-extern void _XmTextOutputGetSecResData( 
+extern void _XmTextOutputGetSecResData(
                         XmSecondaryResourceData *secResDataRtn) ;
-extern int _XmTextGetNumberLines( 
+extern int _XmTextGetNumberLines(
                         XmTextWidget widget) ;
-extern void _XmTextMovingCursorPosition( 
+extern void _XmTextMovingCursorPosition(
                         XmTextWidget tw,
                         XmTextPosition position) ;
-extern void _XmTextChangeBlinkBehavior( 
+extern void _XmTextChangeBlinkBehavior(
                         XmTextWidget widget,
-#if NeedWidePrototypes
-                        int newvalue) ;
-#else
                         Boolean newvalue) ;
-#endif /* NeedWidePrototypes */
-extern void _XmTextOutputCreate( 
+extern void _XmTextOutputCreate(
                         Widget wid,
                         ArgList args,
                         Cardinal num_args) ;
-extern Boolean _XmTextGetBaselines( 
+extern Boolean _XmTextGetBaselines(
                         Widget widget,
                         Dimension **baselines,
                         int *line_count) ;
-extern Boolean _XmTextGetDisplayRect( 
+extern Boolean _XmTextGetDisplayRect(
                         Widget w,
                         XRectangle *display_rect) ;
-extern void _XmTextMarginsProc( 
+extern void _XmTextMarginsProc(
                         Widget w,
                         XmBaselineMargins *margins_rec) ;
-extern void _XmTextChangeHOffset( 
+extern void _XmTextChangeHOffset(
                         XmTextWidget widget,
                         int length) ;
-extern void _XmTextChangeVOffset( 
+extern void _XmTextChangeVOffset(
                         XmTextWidget widget,
                         int length) ;
-extern void _XmTextToggleCursorGC( 
+extern void _XmTextToggleCursorGC(
                         Widget widget) ;
 
 /********    End Private Function Declarations    ********/
@@ -100,4 +92,3 @@ extern void _XmTextToggleCursorGC(
 #endif
 
 #endif /* _XmTextOutI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

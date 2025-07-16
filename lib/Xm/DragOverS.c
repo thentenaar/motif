@@ -188,13 +188,8 @@ static void GetIconPosition(
 static void BlendIcon(  XmDragOverShellWidget dos,
                         XmDragIconObject icon,
                         XmDragIconObject mixedIcon,
-#if NeedWidePrototypes
-                        int iconX,
-                        int iconY,
-#else
                         Position iconX,
                         Position iconY,
-#endif /* NeedWidePrototypes */
                         GC maskGC,
                         GC pixmapGC) ;
 static void MixedIconSize(
@@ -213,11 +208,7 @@ static void MixIcons(
                         XmDragIconObject stateIcon,
                         XmDragIconObject opIcon,
                         XmDragOverBlendRec *blendPtr,
-#if NeedWidePrototypes
-                        int clip) ;
-#else
                         Boolean clip) ;
-#endif /* NeedWidePrototypes */
 static Boolean FitsInCursor(
                         XmDragOverShellWidget dos,
                         XmDragIconObject sourceIcon,
@@ -230,13 +221,8 @@ static Cursor GetDragIconCursor(
                         XmDragIconObject sourceIcon,
                         XmDragIconObject stateIcon,
                         XmDragIconObject opIcon,
-#if NeedWidePrototypes
-			int clip,
-                        int dirty) ;
-#else
                         Boolean clip,
                         Boolean dirty) ;
-#endif /* NeedWidePrototypes */
 static void Initialize(
                         Widget req,
                         Widget new_w,
@@ -252,13 +238,8 @@ static void DrawIcon(
                         XmDragOverShellWidget dos,
                         XmDragIconObject icon,
                         Window window,
-#if NeedWidePrototypes
-                        int x,
-                        int y) ;
-#else
                         Position x,
                         Position y) ;
-#endif /* NeedWidePrototypes */
 static void Redisplay(
                         Widget wid,
                         XEvent *event,
@@ -267,11 +248,7 @@ static void Destroy(
                         Widget w) ;
 static void ChangeActiveMode(
                         XmDragOverShellWidget dos,
-#if NeedWidePrototypes
-                        unsigned int newActiveMode) ;
-#else
                         unsigned char newActiveMode) ;
-#endif /* NeedWidePrototypes */
 static void ChangeDragWindow(
 			XmDragOverShellWidget dos) ;
 static void FindColormapShell(XmDragOverShellWidget dw) ;
@@ -531,7 +508,6 @@ GetMixedIcon(
  *
  ***********************************************************************/
 
-/*ARGSUSED*/
 static void
 DoZapEffect(
     XtPointer		clientData,
@@ -659,7 +635,6 @@ DoZapEffect(
  *   the original root window contents.
  ***********************************************************************/
 
-/*ARGSUSED*/
 static void
 DoMeltEffect(
     XtPointer		clientData,
@@ -975,13 +950,8 @@ BlendIcon(
     XmDragOverShellWidget dos,
     XmDragIconObject	icon,
     XmDragIconObject	mixedIcon,
-#if NeedWidePrototypes
-    int			iconX,
-    int			iconY,
-#else
     Position		iconX,
     Position		iconY,
-#endif /* NeedWidePrototypes */
     GC			maskGC,
     GC			pixmapGC)
 {
@@ -1242,11 +1212,7 @@ MixIcons(
     XmDragIconObject		stateIcon,
     XmDragIconObject		opIcon,
     XmDragOverBlendRec		*blendPtr,
-#if NeedWidePrototypes
-    int				clip)
-#else
     Boolean			clip)
-#endif /* NeedWidePrototypes */
 {
     Display		*display = XtDisplay(dos);
     XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreen(dos));
@@ -1712,13 +1678,8 @@ GetDragIconCursor(
     XmDragIconObject		sourceIcon,
     XmDragIconObject		stateIcon,
     XmDragIconObject		opIcon,
-#if NeedWidePrototypes
-    int				clip,
-    int				dirty)
-#else
     Boolean			clip,
     Boolean			dirty)
-#endif /* NeedWidePrototypes */
 {
     Screen			*screen = XtScreen(dos);
     Display			*display = XtDisplay(dos);
@@ -1870,7 +1831,6 @@ GetDragIconCursor(
  *
  ***********************************************************************/
 
-/*ARGSUSED*/
 static void
 Initialize(
     Widget	req,		/* unused */
@@ -1930,7 +1890,6 @@ Initialize(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 static Boolean
 SetValues(
     Widget	current,
@@ -1986,13 +1945,8 @@ DrawIcon(
     XmDragOverShellWidget	dos,
     XmDragIconObject		icon,
     Window			window,
-#if NeedWidePrototypes
-    int				x,
-    int				y)
-#else
     Position			x,
     Position			y)
-#endif /* NeedWidePrototypes */
 {
     GC		draw_gc = dos->drag.rootBlend.gc;
     Boolean	clipped = False;
@@ -2065,7 +2019,6 @@ DrawIcon(
  *  Called in XmWINDOW mode only.
  ***********************************************************************/
 
-/*ARGSUSED*/
 static void
 Redisplay(
     Widget wid,
@@ -2090,13 +2043,8 @@ Redisplay(
 void
 _XmDragOverHide(
     Widget	w,
-#if NeedWidePrototypes
-    int		clipOriginX,
-    int		clipOriginY,
-#else
     Position	clipOriginX,
     Position	clipOriginY,
-#endif /* NeedWidePrototypes */
     XmRegion	clipRegion )
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
@@ -2154,13 +2102,8 @@ _XmDragOverHide(
 void
 _XmDragOverShow(
     Widget w,
-#if NeedWidePrototypes
-    int clipOriginX,
-    int clipOriginY,
-#else
     Position clipOriginX,
     Position clipOriginY,
-#endif /* NeedWidePrototypes */
     XmRegion			clipRegion )
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
@@ -2282,11 +2225,7 @@ Destroy(
 static void
 ChangeActiveMode(
     XmDragOverShellWidget	dos,
-#if NeedWidePrototypes
-    unsigned int		newActiveMode)
-#else
     unsigned char		newActiveMode)
-#endif /* NeedWidePrototypes */
 {
   Display		*display = XtDisplay((Widget)dos);
   XmDragContext	dc = (XmDragContext)XtParent(dos);
@@ -2580,13 +2519,8 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
 void
 _XmDragOverMove(
     Widget	w,
-#if NeedWidePrototypes
-    int		x,
-    int		y)
-#else
     Position	x,
     Position	y)
-#endif /* NeedWidePrototypes */
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
     XmDragContext	dc = (XmDragContext)XtParent(dos);
@@ -2837,11 +2771,7 @@ _XmDragOverMove(
 void
 _XmDragOverChange(
     Widget		w,
-#if NeedWidePrototypes
-    unsigned int	dropSiteStatus)
-#else
     unsigned char	dropSiteStatus)
-#endif /* NeedWidePrototypes */
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
     XmDragContext	dc = (XmDragContext)XtParent(dos);
@@ -3057,11 +2987,7 @@ _XmDragOverChange(
 void
 _XmDragOverFinish(
     Widget		w,
-#if NeedWidePrototypes
-    unsigned int	completionStatus)
-#else
     unsigned char	completionStatus)
-#endif /* NeedWidePrototypes */
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
     XmDragContext	dc = (XmDragContext)XtParent(dos);
@@ -3143,13 +3069,8 @@ _XmDragOverGetActiveCursor(
 void
 _XmDragOverSetInitialPosition(
     Widget	w,
-#if NeedWidePrototypes
-    int		initialX,
-    int		initialY)
-#else
     Position	initialX,
     Position	initialY)
-#endif /* NeedWidePrototypes */
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
     dos->drag.initialX = initialX;

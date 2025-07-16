@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmSelectionBox_h
 #define _XmSelectionBox_h
 
@@ -45,24 +45,20 @@ typedef struct _XmSelectionBoxRec      * XmSelectionBoxWidget;
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmSelectionBoxGetChild( 
+extern Widget XmSelectionBoxGetChild(
                         Widget sb,
-#if NeedWidePrototypes
-                        unsigned int which) ;
-#else
                         unsigned char which) ;
-#endif /* NeedWidePrototypes */
-extern Widget XmCreateSelectionBox( 
+extern Widget XmCreateSelectionBox(
                         Widget p,
                         String name,
                         ArgList args,
                         Cardinal n) ;
-extern Widget XmCreateSelectionDialog( 
+extern Widget XmCreateSelectionDialog(
                         Widget ds_p,
                         String name,
                         ArgList sb_args,
                         Cardinal sb_n) ;
-extern Widget XmCreatePromptDialog( 
+extern Widget XmCreatePromptDialog(
                         Widget ds_p,
                         String name,
                         ArgList sb_args,
@@ -89,4 +85,3 @@ extern Widget XmVaCreateManagedSelectionBox(
 #endif
 
 #endif /* _XmSelectionBox_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

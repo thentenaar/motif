@@ -212,13 +212,8 @@ static void BlinkInsertionPoint(XmTextFieldWidget tf);
 static void HandleTimer(XtPointer closure,
                         XtIntervalId *id);
 
-static void ChangeBlinkBehavior(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-				int turn_on);
+static void ChangeBlinkBehavior(XmTextFieldWidget tf, Boolean turn_on);
 
-#else
-                                Boolean turn_on);
-#endif /* NeedWidePrototypes */
 static void GetRect(XmTextFieldWidget tf,
                     XRectangle *rect);
 
@@ -230,18 +225,11 @@ static void SetMarginGC(XmTextFieldWidget tf,
 
 static void SetNormGC(XmTextFieldWidget tf,
                         GC gc,
-#if NeedWidePrototypes
-                        int change_stipple,
-                        int stipple);
-#else
                         Boolean change_stipple,
                         Boolean stipple);
-#endif /* NeedWidePrototypes */
 
-#ifdef FIX_1381
 static void SetShadowGC(XmTextFieldWidget tf,
                         GC gc);
-#endif
 
 static void SetInvGC(XmTextFieldWidget tf,
 		       GC gc);
@@ -263,11 +251,7 @@ static void DrawTextSegment(XmTextFieldWidget tf,
 			    XmTextPosition seg_start,
 			    XmTextPosition seg_end,
 			    XmTextPosition next_seg,
-#if NeedWidePrototypes
-			    int stipple,
-#else
 			    Boolean stipple,
-#endif /* NeedWidePrototypes */
 			    int y,
 			    int *x);
 
@@ -280,21 +264,12 @@ static void ComputeSize(XmTextFieldWidget tf,
                         Dimension *height);
 
 static XtGeometryResult TryResize(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-				  int width,
-				  int height);
-#else
                                   Dimension width,
                                   Dimension height);
-#endif /* NeedWidePrototypes */
 
 static Boolean AdjustText(XmTextFieldWidget tf,
 			  XmTextPosition position,
-#if NeedWidePrototypes
-			  int flag);
-#else
                           Boolean flag);
-#endif /* NeedWidePrototypes */
 
 static void AdjustSize(XmTextFieldWidget tf);
 
@@ -317,15 +292,9 @@ typedef enum { ForceTrue, DontCare } PassDisown;
 static void SetCursorPosition(XmTextFieldWidget tf,
 			      XEvent *event,
 			      XmTextPosition position,
-#if NeedWidePrototypes
-			      int adjust_flag,
-			      int call_cb,
-			      int set_dest,
-#else
                               Boolean adjust_flag,
                               Boolean call_cb,
                               Boolean set_dest,
-#endif /* NeedWidePrototypes */
 			      PassDisown passDisown);
 
 static void VerifyBounds(XmTextFieldWidget tf,
@@ -333,19 +302,11 @@ static void VerifyBounds(XmTextFieldWidget tf,
 			 XmTextPosition *to);
 
 static XmTextPosition GetPosFromX(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-				  int x);
-#else
                                   Position x);
-#endif /* NeedWidePrototypes */
 
 static Boolean SetDestination(Widget w,
 			      XmTextPosition position,
-#if NeedWidePrototypes
-			      int disown,
-#else
 			      Boolean disown,
-#endif /* NeedWidePrototypes */
 			      Time set_time);
 
 static Boolean VerifyLeave(XmTextFieldWidget tf,
@@ -427,21 +388,13 @@ static void SetAnchorBalancing(XmTextFieldWidget tf,
 static void SetNavigationAnchor(XmTextFieldWidget tf,
 				XmTextPosition old_position,
 				XmTextPosition new_position,
-#if NeedWidePrototypes
-				int extend);
-#else
                                 Boolean extend);
-#endif /* NeedWidePrototypes */
 
 static void CompleteNavigation(XmTextFieldWidget tf,
 			       XEvent *event,
 			       XmTextPosition position,
 			       Time time,
-#if NeedWidePrototypes
-			       int extend);
-#else
                                Boolean extend);
-#endif /* NeedWidePrototypes */
 
 static void SimpleMovement(Widget w,
 			   XEvent *event,
@@ -483,11 +436,7 @@ static void BeginningOfLine(Widget w,
 static void SetSelection(XmTextFieldWidget tf,
 			 XmTextPosition left,
 			 XmTextPosition right,
-#if NeedWidePrototypes
-			 int redisplay);
-#else
                          Boolean redisplay);
-#endif /* NeedWidePrototypes */
 
 static void ProcessHorizontalParams(Widget w,
 				    XEvent *event,
@@ -759,11 +708,7 @@ static Boolean LoadFontMetrics(XmTextFieldWidget tf);
 
 static void ValidateString(XmTextFieldWidget tf,
 			   char *value,
-#if NeedWidePrototypes
-			   int is_wchar);
-#else
                            Boolean is_wchar);
-#endif /* NeedWidePrototypes */
 
 static void InitializeTextStruct(XmTextFieldWidget tf);
 
@@ -772,13 +717,8 @@ static void LoadGCs(XmTextFieldWidget tf,
 		    Pixel foreground);
 
 static void MakeIBeamOffArea(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-			     int width,
-			     int height);
-#else
                              Dimension width,
                              Dimension height);
-#endif /* NeedWidePrototypes */
 
 static Pixmap FindPixmap(Screen *screen,
 			 char *image_name,
@@ -1284,7 +1224,6 @@ ClassInitialize(void)
  *
  *
  *********************************************************************/
-/*ARGSUSED*/
 static void
 CursorPosVisDefault(
         Widget widget,
@@ -1309,7 +1248,6 @@ CursorPosVisDefault(
  * BY n_bytes BYTES POINTED TO BY ptr, a pointer to char*.
  * n_bytes does not include NULL terminator (if any), nor does return.
  */
-/* ARGSUSED */
 int
 _XmTextFieldCountCharacters(XmTextFieldWidget tf,
 			    char *ptr,
@@ -1317,11 +1255,7 @@ _XmTextFieldCountCharacters(XmTextFieldWidget tf,
 {
   char * bptr;
   int count = 0;
-#ifndef NO_MULTIBYTE
   int char_size = 0;
-#else
-  int char_size = 1;
-#endif
 
   if (n_bytes <= 0 || ptr == NULL || *ptr == '\0')
     return 0;
@@ -1331,16 +1265,11 @@ _XmTextFieldCountCharacters(XmTextFieldWidget tf,
 
   bptr = ptr;
 
-#ifndef NO_MULTIBYTE
   for (bptr = ptr; n_bytes > 0; count++, bptr+= char_size) {
     char_size = mblen(bptr, tf->text.max_char_size);
     if (char_size <= 0) break; /* error */
     n_bytes -= char_size;
   }
-#else
-  while (*bptr++ && n_bytes--)
-    count++;
-#endif
   return count;
 }
 
@@ -1349,7 +1278,6 @@ _XmTextFieldCountCharacters(XmTextFieldWidget tf,
  * COUNT TERMINATED IF NULL ENCOUNTERED IN THE STRING.
  * NUMBER OF BYTES IS RETURNED.
  */
-/* ARGSUSED */
 int
 _XmTextFieldCountBytes(XmTextFieldWidget tf,
 		       wchar_t * wc_value,
@@ -1377,7 +1305,6 @@ _XmTextFieldCountBytes(XmTextFieldWidget tf,
   return n_bytes;
 }
 
-/*ARGSUSED*/
 static void
 MakeCopy(Widget w,
 	 int n,
@@ -1386,7 +1313,6 @@ MakeCopy(Widget w,
   (*value) = (XtArgVal) XmTextFieldGetString (w);
 }
 
-/*ARGSUSED*/
 static void
 WcsMakeCopy(Widget w,
 	    int n,
@@ -1395,7 +1321,6 @@ WcsMakeCopy(Widget w,
   (*value) = (XtArgVal) XmTextFieldGetStringWcs (w);
 }
 
-/*ARGSUSED*/
 static void
 FreeContextData(Widget w,		/* unused */
 		XtPointer clientData,
@@ -1470,7 +1395,6 @@ _XmTextFToggleCursorGC(Widget widget)
 
   if (!XtIsRealized(widget)) return;
 
-#ifdef FIX_1501
   if (!XtIsSensitive((Widget)tf)) {
     valueMask = GCForeground|GCBackground|GCFillStyle|GCStipple|GCFunction;
     values.foreground = _XmAssignInsensitiveColor((Widget)tf);
@@ -1487,7 +1411,6 @@ _XmTextFToggleCursorGC(Widget widget)
       values.function = GXcopy;
     }
   } else {
-#endif
   if (tf->text.overstrike) {
     valueMask = GCFillStyle|GCFunction|GCForeground|GCBackground;
     if (!tf->text.add_mode && XtIsSensitive(widget) &&
@@ -1531,9 +1454,8 @@ _XmTextFToggleCursorGC(Widget widget)
       values.background = tf->core.background_pixel;
     }
   }
-#ifdef FIX_1501
   }
-#endif
+
   XSetClipMask(XtDisplay(widget), tf->text.save_gc, None);
   XChangeGC(XtDisplay(widget), tf->text.image_gc, valueMask, &values);
 }
@@ -1718,7 +1640,6 @@ PaintCursor(XmTextFieldWidget tf)
           cursor_width = (tf->core.width -
                                  (tf->primitive.shadow_thickness +
                                  tf->primitive.highlight_thickness)) - x;
-#ifdef FIX_1501
         if (cursor_width > 0 && cursor_height > 0) {
           if (!XtIsSensitive((Widget) tf)) {
             SetShadowGC(tf, tf->text.image_gc);
@@ -1726,14 +1647,9 @@ PaintCursor(XmTextFieldWidget tf)
                            (unsigned int) cursor_width, (unsigned int) cursor_height);
           }
           _XmTextFToggleCursorGC((Widget) tf);
-#else
-           if ( cursor_width > 0 && cursor_height > 0 )
-#endif
     		XFillRectangle(XtDisplay(tf), XtWindow(tf), tf->text.image_gc, x, y,
 		   cursor_width, cursor_height);
-#ifdef FIX_1501
 	    }
-#endif
   } else {
         Position src_x = 0;
         if ((int)(x + tf->text.cursor_width) > (int)(tf->core.width -
@@ -1771,11 +1687,7 @@ PaintCursor(XmTextFieldWidget tf)
 
 void
 _XmTextFieldDrawInsertionPoint(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-			       int turn_on)
-#else
                                Boolean turn_on)
-#endif /* NeedWidePrototypes */
 {
 
   if (turn_on == True) {
@@ -1814,7 +1726,6 @@ BlinkInsertionPoint(XmTextFieldWidget tf)
 /*
  * Handle blink on and off
  */
-/* ARGSUSED */
 static void
 HandleTimer(XtPointer closure,
 	    XtIntervalId *id)
@@ -1836,11 +1747,7 @@ HandleTimer(XtPointer closure,
  */
 static void
 ChangeBlinkBehavior(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-		    int turn_on)
-#else
                     Boolean turn_on)
-#endif /* NeedWidePrototypes */
 {
 
   if (turn_on) {
@@ -1962,13 +1869,8 @@ _XmTextFieldSetClipRect(XmTextFieldWidget tf)
 static void
 SetNormGC(XmTextFieldWidget tf,
 	    GC gc,
-#if NeedWidePrototypes
-	    int change_stipple,
-	    int stipple)
-#else
             Boolean change_stipple,
             Boolean stipple)
-#endif /* NeedWidePrototypes */
 {
   unsigned long valueMask = (GCForeground | GCBackground);
   XGCValues values;
@@ -1980,15 +1882,9 @@ SetNormGC(XmTextFieldWidget tf,
   if (change_stipple) {
     valueMask |= GCFillStyle;
     if (stipple) {
-#ifdef FIX_1381
       /*generally gray insensitive foreground (instead stipple)*/
 		  values.foreground = _XmAssignInsensitiveColor((Widget)tf);
     	  values.fill_style = FillSolid;
-#else
-      values.fill_style = FillStippled;
-      valueMask |= GCStipple;
-      values.stipple = tf->text.stipple_tile;
-#endif
     } else
       values.fill_style = FillSolid;
   }
@@ -1996,7 +1892,6 @@ SetNormGC(XmTextFieldWidget tf,
   XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
 
-#ifdef FIX_1381
 static void
 SetShadowGC(XmTextFieldWidget tf, GC gc)
 {
@@ -2008,7 +1903,6 @@ SetShadowGC(XmTextFieldWidget tf, GC gc)
 
   XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
-#endif
 
 static void
 SetInvGC(XmTextFieldWidget tf,
@@ -2166,11 +2060,7 @@ DrawTextSegment(XmTextFieldWidget tf,
 		XmTextPosition seg_start,
 		XmTextPosition seg_end,
 		XmTextPosition next_seg,
-#if NeedWidePrototypes
-		int stipple,
-#else
 		Boolean stipple,
-#endif /* NeedWidePrototypes */
 		int y,
 		int *x)
 {
@@ -2203,7 +2093,6 @@ DrawTextSegment(XmTextFieldWidget tf,
 		   TextF_FontAscent(tf) + TextF_FontDescent(tf));
     SetNormGC(tf, tf->text.gc, True, stipple);
   }
-#ifdef FIX_1381
 if (stipple){
     /*Draw shadow for insensitive text*/
     SetShadowGC(tf, tf->text.gc);
@@ -2216,7 +2105,6 @@ if (stipple){
     }
     SetNormGC(tf, tf->text.gc, True, stipple);
 }
-#endif
 
 
   if (tf->text.max_char_size != 1) {
@@ -2390,13 +2278,8 @@ ComputeSize(XmTextFieldWidget tf,
  */
 static XtGeometryResult
 TryResize(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-	  int width,
-	  int height)
-#else
           Dimension width,
           Dimension height)
-#endif /* NeedWidePrototypes */
 {
   Dimension reswidth, resheight;
   Dimension origwidth = tf->core.width;
@@ -2437,11 +2320,7 @@ TryResize(XmTextFieldWidget tf,
 static Boolean
 AdjustText(XmTextFieldWidget tf,
 	   XmTextPosition position,
-#if NeedWidePrototypes
-	   int flag)
-#else
            Boolean flag)
-#endif /* NeedWidePrototypes */
 {
   int left_edge = 0;
   int diff;
@@ -2852,13 +2731,8 @@ void
 _XmTextFieldSetCursorPosition(XmTextFieldWidget tf,
 			      XEvent *event,
 			      XmTextPosition position,
-#if NeedWidePrototypes
-			      int adjust_flag,
-			      int call_cb)
-#else
                               Boolean adjust_flag,
                               Boolean call_cb)
-#endif /* NeedWidePrototypes */
 {
   SetCursorPosition(tf, event, position, adjust_flag, call_cb, True,DontCare);
 }
@@ -2867,15 +2741,9 @@ static void
 SetCursorPosition(XmTextFieldWidget tf,
 		  XEvent *event,
 		  XmTextPosition position,
-#if NeedWidePrototypes
-		  int adjust_flag,
-		  int call_cb,
-		  int set_dest,
-#else
                   Boolean adjust_flag,
                   Boolean call_cb,
                   Boolean set_dest,
-#endif /* NeedWidePrototypes */
 		  PassDisown passDisown)
 {
   XmTextVerifyCallbackStruct cb;
@@ -3007,11 +2875,7 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
 			XmTextPosition replace_next,
 			char *insert,
 			int insert_length,
-#if NeedWidePrototypes
-			int move_cursor)
-#else
                         Boolean move_cursor)
-#endif /* NeedWidePrototypes */
 {
   int replace_length, i;
   char *src, *dst;
@@ -3294,11 +3158,7 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
  */
 void
 _XmTextFieldDeselectSelection(Widget w,
-#if NeedWidePrototypes
-			      int disown,
-#else
 			      Boolean disown,
-#endif /* NeedWidePrototypes */
 			      Time sel_time)
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
@@ -3334,11 +3194,7 @@ _XmTextFieldDeselectSelection(Widget w,
  */
 static XmTextPosition
 GetPosFromX(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-	    int x)
-#else
             Position x)
-#endif /* NeedWidePrototypes */
 {
   XmTextPosition position;
   int temp_x = 0;
@@ -3389,16 +3245,10 @@ GetPosFromX(XmTextFieldWidget tf,
   return position;
 }
 
-
-/* ARGSUSED */
 static Boolean
 SetDestination(Widget w,
 	       XmTextPosition position,
-#if NeedWidePrototypes
-	       int disown,
-#else
 	       Boolean disown,
-#endif /* NeedWidePrototypes */
 	       Time set_time)
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
@@ -3477,7 +3327,6 @@ VerifyLeave(XmTextFieldWidget tf,
 
 /* This routine is used to determine if two adjacent wchar_t characters
  * constitute a word boundary */
-/* ARGSUSED */
 static Boolean
 _XmTextFieldIsWordBoundary(XmTextFieldWidget tf,
 			   XmTextPosition pos1 ,
@@ -3695,7 +3544,6 @@ NeedsPendingDeleteDisjoint(XmTextFieldWidget tf)
 }
 
 
-/*ARGSUSED*/
 static Boolean
 PrintableString(XmTextFieldWidget tf,
 		char* str,
@@ -3729,7 +3577,6 @@ PrintableString(XmTextFieldWidget tf,
     return True;
   } else {
     /* tf->text.max_char_size > 1 */
-#ifdef HAS_WIDECHAR_FUNCTIONS
     if (use_wchar) {
       int i;
       wchar_t *ws = (wchar_t *) str;
@@ -3742,14 +3589,9 @@ PrintableString(XmTextFieldWidget tf,
     } else {
       int i, csize;
       wchar_t wc;
-#ifndef NO_MULTIBYTE
       for (i = 0, csize = mblen(str, tf->text.max_char_size);
 	   i < n;
 	   i += csize, csize=mblen(&(str[i]), tf->text.max_char_size))
-#else
-      for (i = 0, csize = *str ? 1 : 0; i < n;
-	   i += csize, csize = str[i] ? 1 : 0)
-#endif
 	{
 	  if (csize < 0)
 	    return False;
@@ -3760,40 +3602,6 @@ PrintableString(XmTextFieldWidget tf,
 	  }
 	}
     }
-#else /* HAS_WIDECHAR_FUNCTIONS */
-    /*
-     * This will only check if any single-byte characters are non-
-     * printable. Better than nothing...
-     */
-    int i, csize;
-    if (!use_wchar) {
-#ifndef NO_MULTIBYTE
-      for (i = 0, csize = mblen(str, tf->text.max_char_size);
-	   i < n;
-	   i += csize, csize=mblen(&(str[i]), tf->text.max_char_size))
-#else
-      for (i = 0, csize = *str ? 1 : 0; i < n;
-	   i += csize, csize = str[i] ? 1 : 0)
-#endif
-	{
-	  if (csize < 0)
-	    return False;
-	  if (csize == 1 && !isprint((unsigned char)str[i])) {
-	    return False;
-	  }
-	}
-    } else {
-      char scratch[8];
-      wchar_t *ws = (wchar_t *) str;
-      for (i = 0; i < n; i++) {
-	if ((csize = wctomb(scratch, ws[i])) <= 0)
-	  return False;
-	if (csize == 1 && !isprint((unsigned char)scratch[0])) {
-	  return False;
-	}
-      }
-    }
-#endif /* HAS_WIDECHAR_FUNCTIONS */
     return True;
   }
 #else /* SUPPORT_ZERO_WIDTH */
@@ -3851,7 +3659,6 @@ PrintableString(XmTextFieldWidget tf,
  *
  ****************************************************************/
 
-/* ARGSUSED */
 static void
 InsertChar(Widget w,
 	   XEvent *event,
@@ -3953,7 +3760,6 @@ InsertChar(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 DeletePrevChar(Widget w,
 	       XEvent *event,
@@ -3999,7 +3805,6 @@ DeletePrevChar(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 DeleteNextChar(Widget w,
 	       XEvent *event,
@@ -4047,7 +3852,6 @@ DeleteNextChar(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 DeletePrevWord(Widget w,
 	       XEvent *event,
@@ -4094,7 +3898,6 @@ DeletePrevWord(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 DeleteNextWord(Widget w,
 	       XEvent *event,
@@ -4142,7 +3945,6 @@ DeleteNextWord(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 DeleteToEndOfLine(Widget w,
 		  XEvent *event,
@@ -4171,8 +3973,6 @@ DeleteToEndOfLine(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
 static void
 DeleteToStartOfLine(Widget w,
 		    XEvent *event,
@@ -4201,7 +4001,6 @@ DeleteToStartOfLine(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 ProcessCancel(Widget w,
 	      XEvent *event,
@@ -4246,7 +4045,6 @@ ProcessCancel(Widget w,
 
 }
 
-/* ARGSUSED */
 static void
 Activate(Widget w,
 	 XEvent *event,
@@ -4296,11 +4094,7 @@ static void
 SetNavigationAnchor(XmTextFieldWidget tf,
 		    XmTextPosition old_position,
 		    XmTextPosition new_position,
-#if NeedWidePrototypes
-		    int extend)
-#else
                     Boolean extend)
-#endif /* NeedWidePrototypes */
 {
   XmTextPosition left = tf->text.prim_pos_left,
                  right = tf->text.prim_pos_right;
@@ -4355,11 +4149,7 @@ CompleteNavigation(XmTextFieldWidget tf,
 		   XEvent *event,
 		   XmTextPosition position,
 		   Time time,
-#if NeedWidePrototypes
-		   int extend)
-#else
                    Boolean extend)
-#endif /* NeedWidePrototypes */
 {
   XmTextPosition left = tf->text.prim_pos_left, right = tf->text.prim_pos_right;
 
@@ -4388,7 +4178,6 @@ CompleteNavigation(XmTextFieldWidget tf,
   }
 }
 
-/* ARGSUSED */
 static void
 SimpleMovement(Widget w,
 	       XEvent *event,
@@ -4419,7 +4208,6 @@ SimpleMovement(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 BackwardChar(Widget w,
 	     XEvent *event,
@@ -4440,7 +4228,6 @@ BackwardChar(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 ForwardChar(Widget w,
 	    XEvent *event,
@@ -4461,7 +4248,6 @@ ForwardChar(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 BackwardWord(Widget w,
 	     XEvent *event,
@@ -4482,7 +4268,6 @@ BackwardWord(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 ForwardWord(Widget w,
 	    XEvent *event,
@@ -4526,7 +4311,6 @@ ForwardWord(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 EndOfLine(Widget w,
 	  XEvent *event,
@@ -4548,7 +4332,6 @@ EndOfLine(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 BeginningOfLine(Widget w,
 		XEvent *event,
@@ -4573,11 +4356,7 @@ static void
 SetSelection(XmTextFieldWidget tf,
 	     XmTextPosition left,
 	     XmTextPosition right,
-#if NeedWidePrototypes
-	     int redisplay)
-#else
              Boolean redisplay)
-#endif /* NeedWidePrototypes */
 {
   XmTextPosition display_left, display_right;
   XmTextPosition old_prim_left, old_prim_right;
@@ -4711,7 +4490,6 @@ _XmTextFieldStartSelection(XmTextFieldWidget tf,
   }
 }
 
-/* ARGSUSED */
 static void
 ProcessHorizontalParams(Widget w,
 			XEvent *event,
@@ -4754,7 +4532,6 @@ ProcessHorizontalParams(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 ProcessSelectParams(Widget w,
 		    XEvent *event,
@@ -4779,7 +4556,6 @@ ProcessSelectParams(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 KeySelection(Widget w,
 	     XEvent *event,
@@ -4874,7 +4650,6 @@ KeySelection(Widget w,
 
 }
 
-/* ARGSUSED */
 static void
 TextFocusIn(Widget w,
 	    XEvent *event,
@@ -4919,7 +4694,6 @@ TextFocusIn(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TextFocusOut(Widget w,
 	     XEvent *event,
@@ -5144,7 +4918,6 @@ SetScanSelection(XmTextFieldWidget tf,
 }
 
 
-/* ARGSUSED */
 static void
 StartPrimary(Widget w,
 	     XEvent *event,
@@ -5164,7 +4937,6 @@ StartPrimary(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 MoveDestination(Widget w,
 		XEvent *event,
@@ -5210,8 +4982,6 @@ MoveDestination(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
 static void
 ExtendPrimary(Widget w,
 	      XEvent *event,
@@ -5241,8 +5011,6 @@ ExtendPrimary(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
 static void
 ExtendEnd(Widget w,
 	  XEvent *event,
@@ -5268,7 +5036,6 @@ ExtendEnd(Widget w,
   tf->text.extending = False;
 }
 
-/* ARGSUSED */
 static void
 DoExtendedSelection(Widget w,
 		    Time time)
@@ -5365,7 +5132,6 @@ DoExtendedSelection(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 DoSecondaryExtend(Widget w,
 		  Time ev_time)
@@ -5402,7 +5168,6 @@ DoSecondaryExtend(Widget w,
  *              released, call the standard click stuff.                *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 BrowseScroll(XtPointer closure,
 	     XtIntervalId *id)
@@ -5433,7 +5198,6 @@ BrowseScroll(XtPointer closure,
 }
 
 
-/* ARGSUSED */
 static Boolean
 CheckTimerScrolling(Widget w,
 		    XEvent *event)
@@ -5533,11 +5297,7 @@ void
 _XmTextFieldSetSel2(Widget w,
 		    XmTextPosition left,
 		    XmTextPosition right,
-#if NeedWidePrototypes
-		    int disown,
-#else
 		    Boolean disown,
-#endif /* NeedWidePrototypes */
 		    Time sel_time)
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
@@ -5593,7 +5353,6 @@ _XmTextFieldSetSel2(Widget w,
   RedisplayText(tf, 0, tf->text.string_length);
 }
 
-/* ARGSUSED */
 static void
 StartDrag(Widget w,
 	  XEvent *event,
@@ -5619,7 +5378,6 @@ StartDrag(Widget w,
   (void) XmeDragSource(w, (XtPointer) w, event, args, n);
 }
 
-/*ARGSUSED*/
 static	void
 DragStart(XtPointer data,
 	  XtIntervalId *id)	/* unused */
@@ -5632,7 +5390,6 @@ DragStart(XtPointer data,
 	    tf->text.transfer_action->num_params);
 }
 
-/* ARGSUSED */
 static void
 StartSecondary(Widget w,
 	       XEvent *event,
@@ -5657,7 +5414,6 @@ StartSecondary(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 ProcessBDrag(Widget w,
 	     XEvent *event,
@@ -5704,7 +5460,6 @@ ProcessBDragEvent(Widget w,
     XtCallActionProc(w, params[1], event, NULL, 0);
 }
 
-/* ARGSUSED */
 static Boolean
 InSelection(Widget w,
 	    XEvent *event)
@@ -5728,7 +5483,6 @@ InSelection(Widget w,
 	      event->xbutton.x < right_x)));
 }
 
-/* ARGSUSED */
 static void
 ProcessBSelect(Widget w,
 	       XEvent *event,
@@ -5828,7 +5582,6 @@ ProcessBSelectEvent(Widget w,
     XtCallActionProc(w, params[1], event, NULL, 0);
 }
 
-/* ARGSUSED */
 static void
 ExtendSecondary(Widget w,
 		XEvent *event,
@@ -5863,7 +5616,6 @@ ExtendSecondary(Widget w,
 
 
 
-/* ARGSUSED */
 static void
 Stuff(Widget w,
       XEvent *event,
@@ -5898,7 +5650,6 @@ Stuff(Widget w,
 		   event->xbutton.time);
 }
 
-/* ARGSUSED */
 void
 _XmTextFieldHandleSecondaryFinished(Widget w,
 			 XEvent *event)
@@ -5985,7 +5736,6 @@ _XmTextFieldHandleSecondaryFinished(Widget w,
     * TELLING THE RECEIVER WHAT TO REQUEST AS THE SELECTION VALUE.
     * THIS WILL GUARANTEE THE BEST CHANCE AT A SUCCESSFUL EXCHANGE.
     */
-/* ARGSUSED */
 static void
 SecondaryNotify(Widget w,
 		XEvent *event,
@@ -6143,7 +5893,6 @@ ProcessMove(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 DeleteSelection(Widget w,
 		XEvent *event,
@@ -6153,7 +5902,6 @@ DeleteSelection(Widget w,
   (void) TextFieldRemove(w, event);
 }
 
-/* ARGSUSED */
 static void
 ClearSelection(Widget w,
 	       XEvent *event,
@@ -6217,7 +5965,6 @@ ClearSelection(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 PageRight(Widget w,
 	  XEvent *event,
@@ -6284,7 +6031,6 @@ PageRight(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 PageLeft(Widget w,
 	 XEvent *event,
@@ -6390,7 +6136,6 @@ LinkPrimary(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 SetAnchor(Widget w,
 	  XEvent *event,
@@ -6412,7 +6157,6 @@ SetAnchor(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 ToggleOverstrike(Widget w,
 		 XEvent *event,
@@ -6435,7 +6179,6 @@ ToggleOverstrike(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 ToggleAddMode(Widget w,
 	      XEvent *event,
@@ -6455,7 +6198,6 @@ ToggleAddMode(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 SelectAll(Widget w,
 	  XEvent *event,
@@ -6486,7 +6228,6 @@ SelectAll(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 DeselectAll(Widget w,
 	    XEvent *event,
@@ -6506,7 +6247,6 @@ DeselectAll(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 VoidAction(Widget w,
 	   XEvent *event,
@@ -6516,7 +6256,6 @@ VoidAction(Widget w,
   /* Do Nothing */
 }
 
-/* ARGSUSED */
 static void
 CutClipboard(Widget w,
 	     XEvent *event,
@@ -6531,7 +6270,6 @@ CutClipboard(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 CopyClipboard(Widget w,
 	      XEvent *event,
@@ -6547,7 +6285,6 @@ CopyClipboard(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
 static void
 PasteClipboard(Widget w,
 	       XEvent *event,
@@ -6592,7 +6329,6 @@ XmTextFieldPasteLink(Widget w)
   return(status);
 }
 
-/* ARGSUSED */
 static void
 TraverseDown(Widget w,
 	     XEvent *event,
@@ -6609,7 +6345,6 @@ TraverseDown(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TraverseUp(Widget w,
 	   XEvent *event,
@@ -6625,7 +6360,6 @@ TraverseUp(Widget w,
   }
 }
 
-/* ARGSUSED */
 static void
 TraverseHome(Widget w,
 	     XEvent *event,
@@ -6643,7 +6377,6 @@ TraverseHome(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TraverseNextTabGroup(Widget w,
 		     XEvent *event,
@@ -6668,7 +6401,6 @@ TraverseNextTabGroup(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TraversePrevTabGroup(Widget w,
 		     XEvent *event,
@@ -6693,7 +6425,6 @@ TraversePrevTabGroup(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TextEnter(Widget w,
 	  XEvent *event,
@@ -6731,7 +6462,6 @@ TextEnter(Widget w,
 }
 
 
-/* ARGSUSED */
 static void
 TextLeave(Widget w,
 	  XEvent *event,
@@ -6922,11 +6652,7 @@ LoadFontMetrics(XmTextFieldWidget tf)
       fs_extents->max_logical_extent.y;
 #if USE_XFT
   } else if (TextF_UseXft(tf)) {
-#ifdef FIX_1415
-	  _XmXftFontAverageWidth((Widget) tf, TextF_XftFont(tf), (int *)&charwidth);
-#else
-    charwidth = TextF_XftFont(tf)->max_advance_width;
-#endif
+	_XmXftFontAverageWidth((Widget) tf, TextF_XftFont(tf), (int *)&charwidth);
     TextF_FontAscent(tf) = TextF_XftFont(tf)->ascent;
     TextF_FontDescent(tf) = TextF_XftFont(tf)->descent;
 #endif
@@ -6962,11 +6688,7 @@ LoadFontMetrics(XmTextFieldWidget tf)
 static void
 ValidateString(XmTextFieldWidget tf,
 	       char *value,
-#if NeedWidePrototypes
-	       int is_wchar)
-#else
                Boolean is_wchar)
-#endif /* NeedWidePrototypes */
 {
   /* if value is wchar_t *, must count the characters; else use strlen */
 
@@ -7390,13 +7112,8 @@ LoadGCs(XmTextFieldWidget tf,
 
 static void
 MakeIBeamOffArea(XmTextFieldWidget tf,
-#if NeedWidePrototypes
-		 int width,
-		 int height)
-#else
                  Dimension width,
                  Dimension height)
-#endif /* NeedWidePrototypes */
 {
   Display *dpy = XtDisplay(tf);
   Screen  *screen = XtScreen(tf);
@@ -7634,7 +7351,6 @@ MakeCursors(XmTextFieldWidget tf)
     tf->text.cursor_width = tf->text.cursor_height >> 1;
 }
 
-/* ARGSUSED */
 static void
 DragProcCallback(Widget w,
 		 XtPointer client,
@@ -7725,7 +7441,6 @@ RegisterDropSite(Widget w)
  * is valid.
  */
 
-/* ARGSUSED */
 static void
 Initialize(Widget request,
 	   Widget new_w,
@@ -7925,7 +7640,6 @@ QueryGeometry(Widget widget,
 /*
  * Redisplay will redraw shadows, borders, and text.
  */
-/* ARGSUSED */
 static void
 TextFieldExpose(Widget w,
 		XEvent *event,
@@ -8005,7 +7719,6 @@ TextFieldExpose(Widget w,
  * values.
  *
  */
-/* ARGSUSED */
 static Boolean
 SetValues(Widget old,
 	  Widget request,
@@ -8463,7 +8176,6 @@ TextFieldSetValue(Widget w, XtPointer s, int format)
   }
 }
 
-/*ARGSUSED*/
 static int
 TextFieldPreferredValue(Widget w) /* unused */
 {
@@ -8477,7 +8189,6 @@ TextFieldPreferredValue(Widget w) /* unused */
  * on same widget, thus resource needs to be set NULL, otherwise leave it
  * alone.
  */
-/* ARGSUSED */
 static void
 CheckSetRenderTable(Widget wid,
 		    int offset,
@@ -8526,7 +8237,6 @@ TextFieldRemove(Widget w,
   return True;
 }
 
-/* ARGSUSED */
 static Boolean
 TextFieldGetBaselines(Widget w,
 		      Dimension ** baselines,
@@ -8568,8 +8278,6 @@ TextFieldGetDisplayRect(Widget w,
   return(TRUE);
 }
 
-
-/* ARGSUSED */
 static void
 TextFieldMarginsProc(Widget w,
 		     XmBaselineMargins *margins_rec)
@@ -9986,11 +9694,7 @@ XmTextFieldInsertWcs(Widget w,
 
 void
 XmTextFieldSetAddMode(Widget w,
-#if NeedWidePrototypes
-		      int state)
-#else
                       Boolean state)
-#endif /* NeedWidePrototypes */
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   _XmWidgetToAppContext(w);
@@ -10035,11 +9739,7 @@ XmTextFieldGetEditable(Widget w)
 
 void
 XmTextFieldSetEditable(Widget w,
-#if NeedWidePrototypes
-		       int editable)
-#else
                        Boolean editable)
-#endif /* NeedWidePrototypes */
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   XPoint xmim_point;
@@ -10206,11 +9906,7 @@ XmTextFieldGetSelection(Widget w)
       length = 0;
     } else {
       for(length = 0;num_chars > 0; num_chars--)
-#ifndef NO_MULTIBYTE
 	length += mblen(&value[length], tf->text.max_char_size);
-#else
-        length += value[length] ? 1 : 0;
-#endif
     }
   }
   value[length] = (char)'\0';
@@ -10362,16 +10058,10 @@ XmTextFieldSetSelection(Widget w,
   _XmAppUnlock(app);
 }
 
-/* ARGSUSED */
 XmTextPosition
 XmTextFieldXYToPos(Widget w,
-#if NeedWidePrototypes
-		   int x,
-		   int y)
-#else
                    Position x,
                    Position y)
-#endif /* NeedWidePrototypes */
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   XmTextPosition ret_val;
@@ -10421,7 +10111,6 @@ XmTextFieldShowPosition(Widget w,
   _XmAppUnlock(app);
 }
 
-/* ARGSUSED */
 void
 XmTextFieldSetHighlight(Widget w,
 			XmTextPosition left,
@@ -10495,7 +10184,6 @@ TrimHighlights(XmTextFieldWidget tf, int *low, int *high)
  	return changed;
 }
 
-/* ARGSUSED */
 static void
 doSetHighlight(Widget w, XmTextPosition left, XmTextPosition right,
 			XmHighlightMode mode)

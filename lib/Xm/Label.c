@@ -69,22 +69,11 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #include <Xm/XpmP.h>
 #include <string.h>
 #include <Xm/XmP.h>
-#ifdef FIX_1381
 #include <Xm/ColorI.h>
-#endif
-#ifdef FIX_1521
+
 #if USE_XFT
 #include "XmRenderTI.h"
 #include <X11/Xft/Xft.h>
-#endif
-#endif
-
-#define FIX_1442
-#define FIX_1484
-#define FIX_1504
-
-#ifdef FIX_1504
-#define FIX_1639
 #endif
 
 #define Pix(w)			((w)->label.pixmap)
@@ -690,27 +679,17 @@ SetNormalGC(XmLabelWidget lw)
   lw->label.normal_GC = XtAllocateGC((Widget) lw, 0, valueMask, &values,
 				     dynamicMask, 0);
 
-#ifdef FIX_1381
   /*generally gray insensitive foreground (instead stipple)*/
   values.foreground =  _XmAssignInsensitiveColor((Widget)lw);
   values.background = lw->core.background_pixel;
-#else
-  valueMask |= GCFillStyle | GCStipple;
-  values.foreground = lw->core.background_pixel;
-  values.background = lw->primitive.foreground;
-  values.fill_style = FillOpaqueStippled;
-  values.stipple = _XmGetInsensitiveStippleBitmap((Widget) lw);
-#endif
 
   lw->label.insensitive_GC = XtAllocateGC((Widget) lw, 0, valueMask, &values,
 					  dynamicMask, 0);
-#ifdef FIX_1381
+
   /*light shadow for insensitive text (instead stipple)*/
   values.foreground = lw->primitive.top_shadow_color;
   lw->label.shadow_GC = XtAllocateGC((Widget) lw, 0, valueMask, &values,
 					  dynamicMask, 0);
-#endif
-
 }
 
 /************************************************************************
@@ -1378,9 +1357,7 @@ Destroy(
 
   XtReleaseGC ((Widget) lw, lw->label.normal_GC);
   XtReleaseGC ((Widget) lw, lw->label.insensitive_GC);
-#ifdef FIX_1381
   XtReleaseGC ((Widget) lw, lw->label.shadow_GC);
-#endif
 }
 
 /************************************************************************
@@ -1451,19 +1428,15 @@ Redisplay(
 	clip_rect.height = 0;
 
       XSetClipRectangles(XtDisplay(lw), clipgc, 0,0, &clip_rect, 1, Unsorted);
-#ifdef FIX_1521
 #if USE_XFT
       _XmXftSetClipRectangles(XtDisplay(lw), XtWindow(lw), 0, 0, &clip_rect, 1);
-#endif
 #endif
     } else
     {
       XSetClipMask (XtDisplay (lw), clipgc, None);
-#ifdef FIX_1521
 #if USE_XFT
       XftDraw* draw = _XmXftDrawCreate(XtDisplay(lw), XtWindow(lw));
       XftDrawSetClip(draw, NULL);
-#endif
 #endif
     }
 
@@ -1512,11 +1485,7 @@ Redisplay(
 	  Pixmap pix_use = Pix_insen (lw) ;
 
 	  if (pix_use == XmUNSPECIFIED_PIXMAP)
-#ifdef FIX_1381
 		Pix_insen(lw) = pix_use = _XmConvertToBW(wid, Pix(lw));
-#else
-		pix_use = Pix(lw);
-#endif
 	  if (pix_use != XmUNSPECIFIED_PIXMAP)
 	    {
 	      gc = lp->insensitive_GC;
@@ -1540,22 +1509,6 @@ Redisplay(
 			    lp->TextRect.y + lp->PixmapRect.y,
 			    1);
 
-#ifndef FIX_1381
-	      /* if no insensitive pixmap but a regular one, we need
- 		 to do the stipple manually, since copyarea doesn't */
- 	      if (pix_use == Pix(lw)) {
- 		  /* need fill stipple, not opaque */
- 		  XSetFillStyle(XtDisplay(lw), gc, FillStippled);
- 		  XFillRectangle(XtDisplay(lw), XtWindow(lw), gc,
-			lp->TextRect.x + lp->PixmapRect.x,
-			lp->TextRect.y + lp->PixmapRect.y,
- 			lp->PixmapRect.width,
-			lp->PixmapRect.height);
- 		  XSetFillStyle(XtDisplay(lw), gc, FillOpaqueStippled);
-
- 	      }
-#endif
-#ifdef FIX_1505
 	      if (pix_use == Pix(lw)) {
 		  XSetFillStyle(XtDisplay(lw), gc, FillStippled);
 		  XSetStipple(XtDisplay(lw), gc, _XmGetInsensitiveStippleBitmap((Widget)lw));
@@ -1567,7 +1520,6 @@ Redisplay(
 		  XSetFillStyle(XtDisplay(lw), gc, FillSolid);
 
 	      }
-#endif
 	    }
 	}
     }
@@ -1583,7 +1535,6 @@ Redisplay(
  	  tmp[_XmOSKeySymToCharacter(lp->mnemonic, NULL, tmp)] = '\0';
 	  underline = XmStringCreate(tmp, lp->mnemonicCharset);
 
-#ifdef FIX_1381
 	  if (XtIsSensitive(wid) )
 	  {
 		  /*Draw normal text*/
@@ -1621,22 +1572,9 @@ Redisplay(
 				  underline);
 
 	  }
-#else
-	  XmStringDrawUnderline(XtDisplay(lw), XtWindow(lw),
-				lp->font, lp->_label,
-				(XtIsSensitive(wid) ?
-				 lp->normal_GC : lp->insensitive_GC),
-				lp->TextRect.x + lp->StringRect.x,
-				lp->TextRect.y + lp->StringRect.y,
-				lp->StringRect.width,
-				lp->alignment,
-				XmPrim_layout_direction(lw), NULL,
-				underline);
-#endif
 	  XmStringFree(underline);
 	}
       else
-#ifdef FIX_1381
 	{
 	  if (XtIsSensitive(wid) )
 	  {
@@ -1672,33 +1610,6 @@ Redisplay(
 			  XmPrim_layout_direction(lw), NULL);
 	  }
 	}
-#else
-	XmStringDraw (XtDisplay(lw), XtWindow(lw),
-		       lp->font, lp->_label,
-		       (XtIsSensitive(wid) ?
-			lp->normal_GC : lp->insensitive_GC),
-		       lp->TextRect.x + lp->StringRect.x,
-		       lp->TextRect.y + lp->StringRect.y,
-		       lp->StringRect.width,
-		       lp->alignment,
-		       XmPrim_layout_direction(lw), NULL);
-#endif
-
-#ifndef FIX_1381
-#if USE_XFT
-      if (!XtIsSensitive(wid))
-        {
-          XSetFillStyle(XtDisplay(lw), lp->insensitive_GC, FillStippled);
-          XFillRectangle(XtDisplay(lw), XtWindow(lw), lp->insensitive_GC,
-			lp->TextRect.x + lp->StringRect.x,
-			lp->TextRect.y + lp->StringRect.y,
- 			lp->StringRect.width,
-			lp->StringRect.height);
-          XSetFillStyle(XtDisplay(lw), lp->insensitive_GC, FillOpaqueStippled);
-        }
-#endif
-#endif
-
     }
 
   if (lp->_acc_text != NULL)
@@ -1715,7 +1626,6 @@ Redisplay(
 		lp->margin_width) +
 	   lp->margin_left + lp->TextRect.width + lp->margin_right))
 	     {
-#ifdef FIX_1381
 		  if (XtIsSensitive(wid) )
 		  {
 			  /*Draw normal text*/
@@ -1743,15 +1653,6 @@ Redisplay(
 					  lp->acc_TextRect.width, XmALIGNMENT_END,
 					  XmPrim_layout_direction(lw), NULL);
 		  }
-#else
-	XmStringDraw (XtDisplay(lw), XtWindow(lw),
-		       lp->font, lp->_acc_text,
-		       (XtIsSensitive(wid) ?
-			lp->normal_GC : lp->insensitive_GC),
-		       lp->acc_TextRect.x, lp->acc_TextRect.y,
-		       lp->acc_TextRect.width, XmALIGNMENT_END,
-		       XmPrim_layout_direction(lw), NULL);
-#endif
 	     }
     }
 
@@ -1953,11 +1854,8 @@ SetValues(Widget cw,
     {
       new_w->label.label_type = current->label.label_type;
     }
-#ifdef FIX_1484
+
   if (!XmRepTypeValidValue(XmRID_PIXMAP_PLACEMENT, new_w->label.pixmap_placement,
-#else
-  if (!XmRepTypeValidValue(XmRID_LABEL_TYPE, new_w->label.pixmap_placement,
-#endif
 			   (Widget) new_w))
     {
       new_w->label.pixmap_placement = current->label.pixmap_placement;
@@ -1976,13 +1874,10 @@ SetValues(Widget cw,
       flag = TRUE;
     }
 
-  /* ValidateInputs(new_w); */
-#ifdef FIX_1504
   _XmCalcLabelDimensions((Widget) new_w);
   Boolean pixmap_size_changed = ((newlp->PixmapRect.width
       != curlp->PixmapRect.width) || (newlp->PixmapRect.height
       != curlp->PixmapRect.height));
-#endif
 
   if (((Lab_IsText(new_w) || Lab_IsPixmapAndText(new_w)) &&
        ((newstring) ||
@@ -1990,20 +1885,11 @@ SetValues(Widget cw,
       ((Lab_IsPixmap(new_w) || Lab_IsPixmapAndText(new_w)) &&
        ((newlp->pixmap != curlp->pixmap) ||
 	(newlp->pixmap_insen  != curlp->pixmap_insen) ||
-	/* When you have different sized pixmaps for sensitive and */
-	/* insensitive states and sensitivity changes, */
-	/* the right size is chosen. (osfP2560) */
-#ifdef FIX_1504
 	(XtIsSensitive(nw) != XtIsSensitive(cw))) && pixmap_size_changed) ||
-#else
-	(XtIsSensitive(nw) != XtIsSensitive(cw)))) ||
-#endif
       (Lab_IsPixmapAndText(new_w) &&
 	(newlp->pixmap_placement != curlp->pixmap_placement)) ||
       (newlp->label_type != curlp->label_type))
     {
-      /* CR 9179: Redo CR 5419 changes. */
-
       if (newlp->recompute_size)
 	{
 	  if (req->core.width == current->core.width)
@@ -2012,15 +1898,9 @@ SetValues(Widget cw,
 	    new_w->core.height = 0;
 	}
 
-#ifndef FIX_1504
-      _XmCalcLabelDimensions((Widget) new_w);
-#endif
-
       Call_Resize = True;
-
       flag = True;
     }
-#ifdef FIX_1639
     /* Consider a case when new Pixmap has same size */
     else if ((Lab_IsPixmap(new_w) || Lab_IsPixmapAndText(new_w)) &&
              ((newlp->pixmap != curlp->pixmap) ||
@@ -2029,8 +1909,6 @@ SetValues(Widget cw,
     {
       flag = True;
     }
-#endif
-
 
   if ((newlp->alignment != curlp->alignment) ||
       (XmPrim_layout_direction(new_w) !=
@@ -3019,11 +2897,7 @@ ConvertToEncoding(Widget w, char* str, Atom encoding,
     /* Fix for Bug 1117 - if str is null then a SEGVIOLATION occures
      * in strlen.
      */
-#ifdef FIX_1442
     *length = str ? strlen(str) : 0;
-#else
-    *length = str ? strlen(rval) : 0;
-#endif
 
     rval = _XmTextToLocaleText(w, (XtPointer) str,
 			       COMPOUND_TEXT, 8,

@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -34,19 +34,12 @@
 #include "XmI.h"
 #include <Xm/DrawP.h>
 
-
 /****************************XmeDrawArrow**********************************/
-void XmeDrawArrow(Display *display, Drawable d, 
-                  GC top_gc, GC bot_gc, GC cent_gc, 
-#if NeedWidePrototypes
-                  int x, int y, 
-                  int width, int height, int shadow_thick, 
-                  unsigned int direction)
-#else
-                  Position x, Position y, 
-                  Dimension width, Dimension height, Dimension shadow_thick, 
+void XmeDrawArrow(Display *display, Drawable d,
+                  GC top_gc, GC bot_gc, GC cent_gc,
+                  Position x, Position y,
+                  Dimension width, Dimension height, Dimension shadow_thick,
                   unsigned char direction)
-#endif /* NeedWidePrototypes */
 {
    /* cent_gc might be NULL, which means don't draw anything on the center,
       but if shadow_thick is 1, then center is not NULL, see in ArrowB */
@@ -66,7 +59,7 @@ void XmeDrawArrow(Display *display, Drawable d,
 
    app = XtDisplayToApplicationContext(display);
    _XmAppLock(app);
- 
+
    /*  Get the size and the position and allocate the rectangle lists  */
 
    if (width > height) {
@@ -79,11 +72,11 @@ void XmeDrawArrow(Display *display, Drawable d,
    if (size < 1) { _XmAppUnlock(app); return; }
    if (allocated < size) {
       _XmProcessLock();
-      top  = (XRectangle *) XtRealloc ((char*)top, 
+      top  = (XRectangle *) XtRealloc ((char*)top,
                                        sizeof (XRectangle) * (size/2+6));
-      cent = (XRectangle *) XtRealloc ((char*)cent, 
+      cent = (XRectangle *) XtRealloc ((char*)cent,
                                        sizeof (XRectangle) * (size/2+6));
-      bot  = (XRectangle *) XtRealloc ((char*)bot, 
+      bot  = (XRectangle *) XtRealloc ((char*)bot,
                                        sizeof (XRectangle) * (size/2+6));
       allocated = size;
       _XmProcessUnlock();
@@ -109,7 +102,7 @@ void XmeDrawArrow(Display *display, Drawable d,
            t++;
        }
        else if (wwidth == 2) {
-           if (size == 2 || (direction == XmARROW_UP || 
+           if (size == 2 || (direction == XmARROW_UP ||
                              direction == XmARROW_LEFT)) {
                top[t].x = start; top[t].y = yy;
                top[t].width = 2; top[t].height = 1;
@@ -179,7 +172,7 @@ void XmeDrawArrow(Display *display, Drawable d,
        SWAP(t, b);
    }
 
-  
+
    /*  Transform the "up" pointing arrow to the correct direction  */
 
    switch (direction) {
@@ -190,38 +183,38 @@ void XmeDrawArrow(Display *display, Drawable d,
            if (i < t) {
                SWAP(top[i].y, top[i].x);
                SWAP(top[i].width, top[i].height);
-           }             
+           }
            if (i < b) {
                SWAP(bot[i].y, bot[i].x);
                SWAP(bot[i].width, bot[i].height);
-           }             
+           }
            if (i < c) {
                SWAP(cent[i].y, cent[i].x);
                SWAP(cent[i].width, cent[i].height);
-           }             
+           }
        } while (i < t || i < b || i < c);
        break;
 
-   case XmARROW_RIGHT: 
+   case XmARROW_RIGHT:
        h = height - 2;
        w = width - 2;
        i = -1;
        do {
            i++;
            if (i < t) {
-               SWAP(top[i].y, top[i].x); 
+               SWAP(top[i].y, top[i].x);
                SWAP(top[i].width, top[i].height);
                top[i].x = w - top[i].x - top[i].width + 2;
                top[i].y = h - top[i].y - top[i].height + 2;
-           }             
+           }
            if (i < b) {
-               SWAP(bot[i].y, bot[i].x); 
+               SWAP(bot[i].y, bot[i].x);
                SWAP(bot[i].width, bot[i].height);
                bot[i].x = w - bot[i].x - bot[i].width + 2;
                bot[i].y = h - bot[i].y - bot[i].height + 2;
-           }             
+           }
            if (i < c) {
-               SWAP(cent[i].y, cent[i].x); 
+               SWAP(cent[i].y, cent[i].x);
                SWAP(cent[i].width, cent[i].height);
                cent[i].x = w - cent[i].x - cent[i].width + 2;
                cent[i].y = h - cent[i].y - cent[i].height + 2;
@@ -264,9 +257,9 @@ void XmeDrawArrow(Display *display, Drawable d,
            bot[i].x += x;
            bot[i].y += y;
        }
-   } 
+   }
 
-   if (shadow_thick) {  /* 1 or 2 shadow thickness: always draw 
+   if (shadow_thick) {  /* 1 or 2 shadow thickness: always draw
 			   2 thickness at that point, we'll correct it
 			   later */
        XFillRectangles (display, d, top_gc, top, t);
@@ -278,13 +271,13 @@ void XmeDrawArrow(Display *display, Drawable d,
            XFillRectangles (display, d, cent_gc, top, t);
            XFillRectangles (display, d, cent_gc, bot, b);
        }
-   } 
+   }
 
    if (shadow_thick == 1) {
        /* we already drawn the shadow of 2, now let's draw a
 	  bigger center area: ask for a smaller arrow with
 	  flat look */
-       XmeDrawArrow(display, d, top_gc, bot_gc, cent_gc, 
+       XmeDrawArrow(display, d, top_gc, bot_gc, cent_gc,
 		    x+1, y+1, width-2, height-2, 0, direction) ;
    } else
    if (cent_gc) XFillRectangles (display, d, cent_gc, cent, c);

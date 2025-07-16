@@ -43,11 +43,7 @@
 #include "MessagesI.h"
 #include "ScreenI.h"
 #include "XmI.h"
-#ifdef FIX_1381
 #include <Xm/XpmP.h>
-#endif
-
-#define FIX_1500
 
 /* Warning and Error messages */
 
@@ -58,62 +54,58 @@
 
 /********    Static Function Declarations    ********/
 
-static void GetDefaultThresholdsForScreen( 
+static void GetDefaultThresholdsForScreen(
                         Screen *screen) ;
-static XmColorData * GetDefaultColors( 
+static XmColorData * GetDefaultColors(
                         Screen *screen,
                         Colormap color_map) ;
-static Pixel GetBlackPixel( 
+static Pixel GetBlackPixel(
                         Screen *screen,
                         Colormap colormap,
                         XColor blackcolor) ;
-static Pixel GetWhitePixel( 
+static Pixel GetWhitePixel(
                         Screen *screen,
                         Colormap colormap,
                         XColor whitecolor) ;
-static void SetMonochromeColors( 
+static void SetMonochromeColors(
                         XmColorData *colors) ;
-static int Brightness( 
+static int Brightness(
                         XColor *color) ;
-static void CalculateColorsForLightBackground( 
+static void CalculateColorsForLightBackground(
                         XColor *bg_color,
                         XColor *fg_color,
                         XColor *sel_color,
                         XColor *ts_color,
                         XColor *bs_color) ;
-static void CalculateColorsForDarkBackground( 
+static void CalculateColorsForDarkBackground(
                         XColor *bg_color,
                         XColor *fg_color,
                         XColor *sel_color,
                         XColor *ts_color,
                         XColor *bs_color) ;
-static void CalculateColorsForMediumBackground( 
+static void CalculateColorsForMediumBackground(
                         XColor *bg_color,
                         XColor *fg_color,
                         XColor *sel_color,
                         XColor *ts_color,
                         XColor *bs_color) ;
-static void CalculateColorsRGB( 
+static void CalculateColorsRGB(
                         XColor *bg_color,
                         XColor *fg_color,
                         XColor *sel_color,
                         XColor *ts_color,
                         XColor *bs_color) ;
-static Pixel AccessColorData( 
+static Pixel AccessColorData(
                         XmColorData *cd,
                         unsigned char which) ;
-static XmColorData * GetColors( 
+static XmColorData * GetColors(
                         Screen *screen,
                         Colormap color_map,
                         Pixel background) ;
-#ifdef FIX_1381
-static unsigned int FromColorToBlackAndWhite(
-                        char *col) ;
-#endif
-
+static unsigned int FromColorToBlackAndWhite(char *col) ;
 
 /********    End Static Function Declarations    ********/
-	
+
 
 
 /*
@@ -159,15 +151,15 @@ GetDefaultThresholdsForScreen( Screen *screen )
   default_dark_threshold_spec = xmScreen->screen.darkThreshold;
   default_foreground_threshold_spec = xmScreen->screen.foregroundThreshold;
 
-  if ((default_light_threshold_spec <= 0) || 
+  if ((default_light_threshold_spec <= 0) ||
       (default_light_threshold_spec > 100))
     default_light_threshold_spec = XmDEFAULT_LIGHT_THRESHOLD;
-  
-  if ((default_dark_threshold_spec <= 0) || 
+
+  if ((default_dark_threshold_spec <= 0) ||
       (default_dark_threshold_spec > 100))
     default_dark_threshold_spec = XmDEFAULT_DARK_THRESHOLD;
-  
-  if ((default_foreground_threshold_spec <= 0) || 
+
+  if ((default_foreground_threshold_spec <= 0) ||
       (default_foreground_threshold_spec > 100))
     default_foreground_threshold_spec = XmDEFAULT_FOREGROUND_THRESHOLD;
 
@@ -188,12 +180,12 @@ static XColor *GetDefaultBackgroundColor(Screen *screen, Colormap color_map)
 
   names[0] = XrmPermStringToQuark(XmNbackground);
   names[1] = NULLQUARK;
-      
+
   classes[0] = XrmPermStringToQuark(XmCBackground);
   classes[1] = NULLQUARK;
-	 
+
   if (XrmQGetResource(XtScreenDatabase(screen), names, classes,
-		      &rep, &db_value)) 
+		      &rep, &db_value))
      {
        if (rep == XrmPermStringToQuark(XmRString)) {
 	 if (!XParseColor(DisplayOfScreen(screen), color_map, db_value.addr,
@@ -213,7 +205,7 @@ static XColor *GetDefaultBackgroundColor(Screen *screen, Colormap color_map)
   return &color;
 }
 
-static XmColorData * 
+static XmColorData *
 GetDefaultColors(
         Screen *screen,
         Colormap color_map )
@@ -248,18 +240,18 @@ GetDefaultColors(
 	}
 
 	/*  See if more space is needed in the array  */
-  
+
 	if (default_set == NULL)
 	{
 		default_set_size = 10;
-		default_set = (XmColorData *) XtRealloc((char *) default_set, 
+		default_set = (XmColorData *) XtRealloc((char *) default_set,
 			(sizeof(XmColorData) * default_set_size));
-		
+
 	}
 	else if (default_set_count == default_set_size)
 	{
 		default_set_size += 10;
-		default_set = (XmColorData *) XtRealloc((char *) default_set, 
+		default_set = (XmColorData *) XtRealloc((char *) default_set,
 			sizeof(XmColorData) * default_set_size);
 	}
 
@@ -278,14 +270,14 @@ GetDefaultColors(
 	  args[1].addr = (XPointer) &color_map;
 	  args[1].size = sizeof(Colormap);
 	  num_args = 2;
-	  
+
 	  fromVal.addr = default_string;
 	  fromVal.size = strlen(default_string);
-	  
+
 	  toVal.addr = (XPointer) &background;
 	  toVal.size = sizeof(Pixel);
-	  
-	  if(!XtCallConverter(DisplayOfScreen(screen),XtCvtStringToPixel, 
+
+	  if(!XtCallConverter(DisplayOfScreen(screen),XtCvtStringToPixel,
 			      args, num_args, &fromVal, &toVal, NULL))
 	    background = WhitePixelOfScreen(screen);
         }
@@ -294,7 +286,7 @@ GetDefaultColors(
 	{
 		/*  Parse out a color for the default background  */
 
-		if ((color_def = GetDefaultBackgroundColor(screen, 
+		if ((color_def = GetDefaultBackgroundColor(screen,
 							   color_map)) !=
 		    NULL)
 		{
@@ -327,7 +319,7 @@ GetDefaultColors(
 	 * of the data pointed to by color_set (defined in GetColors).
 	 */
 
-	default_set[default_set_count] = 
+	default_set[default_set_count] =
 		*GetColors(screen, color_map, background);
 	default_set_count++;
 
@@ -338,20 +330,20 @@ GetDefaultColors(
 
 
 
-Boolean 
+Boolean
 _XmSearchColorCache(
         unsigned int which,
         XmColorData *values,
         XmColorData **ret )
 {
     register int i;
-    
-    /* 
-     * Look through  a set of screen, color_map, background triplets 
+
+    /*
+     * Look through  a set of screen, color_map, background triplets
      * to see if these colors have already been generated.
      */
 
-    _XmProcessLock();   
+    _XmProcessLock();
     for (i = 0; i < Set_Count; i++) {
 	if ( (!(which & XmLOOK_AT_SCREEN) ||
 	      ((Color_Set + i)->screen == values->screen))
@@ -361,7 +353,7 @@ _XmSearchColorCache(
 	    &&
 	    (!(which & XmLOOK_AT_BACKGROUND) ||
 	     (((Color_Set + i)->allocated & XmBACKGROUND) &&
-	      ((Color_Set + i)->background.pixel == 
+	      ((Color_Set + i)->background.pixel ==
 	       values->background.pixel)))
 	    &&
 	    (!(which & XmLOOK_AT_FOREGROUND) ||
@@ -371,12 +363,12 @@ _XmSearchColorCache(
 	    &&
 	    (!(which & XmLOOK_AT_TOP_SHADOW) ||
 	     (((Color_Set + i)->allocated & XmTOP_SHADOW) &&
-	      ((Color_Set + i)->top_shadow.pixel == 
+	      ((Color_Set + i)->top_shadow.pixel ==
 	       values->top_shadow.pixel)))
 	    &&
 	    (!(which & XmLOOK_AT_BOTTOM_SHADOW) ||
 	     (((Color_Set + i)->allocated & XmBOTTOM_SHADOW) &&
-	      ((Color_Set+ i)->bottom_shadow.pixel == 
+	      ((Color_Set+ i)->bottom_shadow.pixel ==
 	       values->bottom_shadow.pixel)))
 	    &&
 	    (!(which & XmLOOK_AT_SELECT) ||
@@ -389,13 +381,13 @@ _XmSearchColorCache(
 		return (TRUE);
 	    }
     }
-    
+
     *ret = NULL;
     _XmProcessUnlock();
     return (FALSE);
 }
 
-XmColorData * 
+XmColorData *
 _XmAddToColorCache(
         XmColorData *new_rec )
 {
@@ -406,7 +398,7 @@ _XmAddToColorCache(
 	if (Set_Count == Set_Size)
 	{
 		Set_Size += 10;
-		Color_Set = (XmColorData *)XtRealloc((char *) Color_Set, 
+		Color_Set = (XmColorData *)XtRealloc((char *) Color_Set,
 			sizeof(XmColorData) * Set_Size);
 	}
 
@@ -431,7 +423,7 @@ GetBlackPixel(
 
   if (aproc == NULL)
       aproc = DEFAULT_ALLOCCOLOR_PROC;
-  
+
   blackcolor.red = 0;
   blackcolor.green = 0;
   blackcolor.blue = 0;
@@ -442,7 +434,7 @@ GetBlackPixel(
     p = blackcolor.pixel;
   else
     p = blackcolor.pixel = BlackPixelOfScreen(screen); /* fallback pixel */
-  
+
   return (p);
 }
 
@@ -462,7 +454,7 @@ GetWhitePixel(
   whitecolor.red = XmMAX_SHORT;
   whitecolor.green = XmMAX_SHORT;
   whitecolor.blue = XmMAX_SHORT;
- 
+
   if (colormap == DefaultColormapOfScreen(screen))
     p = whitecolor.pixel = WhitePixelOfScreen(screen);
   else if ((*aproc)(screen->display, colormap, &whitecolor))
@@ -471,33 +463,33 @@ GetWhitePixel(
     p = whitecolor.pixel = WhitePixelOfScreen(screen); /* fallback pixel */
   return (p);
 }
-  
-static Pixel 
+
+static Pixel
 AccessColorData(
         XmColorData *cd,
         unsigned char which )
 {
     Pixel p;
     XmAllocColorProc aproc = _XmGetColorAllocationProc(cd->screen);
-    
+
     if (aproc == NULL)
 	aproc = DEFAULT_ALLOCCOLOR_PROC;
-    
+
     switch(which) {
     case XmBACKGROUND:
-	if (!(cd->allocated & which) && 
+	if (!(cd->allocated & which) &&
 	    ((*aproc)(cd->screen->display,
 		      cd->color_map, &(cd->background)) == 0)) {
 	    if (Brightness(&(cd->background))
 		< XmFOREGROUND_THRESHOLD )
-		cd->background.pixel = GetBlackPixel(cd->screen, 
+		cd->background.pixel = GetBlackPixel(cd->screen,
 						     cd->color_map,
 						     cd->background);
-	    else 
-		cd->background.pixel = GetWhitePixel(cd->screen, 
+	    else
+		cd->background.pixel = GetWhitePixel(cd->screen,
 						     cd->color_map,
-						     cd->background);				    
-	    XQueryColor(cd->screen->display, cd->color_map, 
+						     cd->background);
+	    XQueryColor(cd->screen->display, cd->color_map,
 			&(cd->background));
 	}
 	p = cd->background.pixel;
@@ -506,21 +498,21 @@ AccessColorData(
     case XmFOREGROUND:
 	if (!(cd->allocated & which) &&
 	    ((*aproc)(cd->screen->display,
-		      cd->color_map, &(cd->foreground)) == 0 )) 
+		      cd->color_map, &(cd->foreground)) == 0 ))
 	    {
 		if (Brightness(&(cd->background))
 		    < XmFOREGROUND_THRESHOLD )
-		    cd->foreground.pixel = GetWhitePixel(cd->screen, 
+		    cd->foreground.pixel = GetWhitePixel(cd->screen,
 							 cd->color_map,
 							 cd->foreground);
-		else 
-		    cd->foreground.pixel = GetBlackPixel(cd->screen, 
+		else
+		    cd->foreground.pixel = GetBlackPixel(cd->screen,
 							 cd->color_map,
 							 cd->foreground);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->foreground));
 	    }
-	p =  cd->foreground.pixel;	
+	p =  cd->foreground.pixel;
 	cd->allocated |= which;
 	break;
     case XmTOP_SHADOW:
@@ -530,16 +522,16 @@ AccessColorData(
 	    {
 		if (Brightness(&(cd->background))
 		    > XmCOLOR_LITE_THRESHOLD)
-		    cd->top_shadow.pixel = 
+		    cd->top_shadow.pixel =
 			GetBlackPixel(cd->screen, cd->color_map,
 				      cd->top_shadow);
 		else
 		    cd->top_shadow.pixel =
 			GetWhitePixel(cd->screen, cd->color_map,
 				      cd->top_shadow);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->top_shadow));
-		
+
 	    }
 	p = cd->top_shadow.pixel;
 	cd->allocated |= which;
@@ -551,14 +543,14 @@ AccessColorData(
 	    {
 		if (Brightness(&(cd->background))
 		    < XmCOLOR_DARK_THRESHOLD)
-		    cd->bottom_shadow.pixel =  
+		    cd->bottom_shadow.pixel =
 			GetWhitePixel(cd->screen, cd->color_map,
 				      cd->bottom_shadow);
 		else
-		    cd->bottom_shadow.pixel = 
+		    cd->bottom_shadow.pixel =
 			GetBlackPixel(cd->screen, cd->color_map,
 				      cd->bottom_shadow);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->bottom_shadow));
 	    }
 	p = cd->bottom_shadow.pixel;
@@ -569,16 +561,16 @@ AccessColorData(
 	    ((*aproc)(cd->screen->display,
 		      cd->color_map, &(cd->select)) == 0))
 	    {
-		if (Brightness(&(cd->background)) 
+		if (Brightness(&(cd->background))
 		    < XmFOREGROUND_THRESHOLD)
-		    cd->select.pixel = GetWhitePixel(cd->screen, 
-						     cd->color_map, 
+		    cd->select.pixel = GetWhitePixel(cd->screen,
+						     cd->color_map,
 						     cd->select);
 		else
-		    cd->select.pixel = GetBlackPixel(cd->screen, 
-						     cd->color_map, 
+		    cd->select.pixel = GetBlackPixel(cd->screen,
+						     cd->color_map,
 						     cd->select);
-		XQueryColor(cd->screen->display, cd->color_map, 
+		XQueryColor(cd->screen->display, cd->color_map,
 			    &(cd->select));
 	    }
 	p = cd->select.pixel;
@@ -589,11 +581,11 @@ AccessColorData(
 	p = GetBlackPixel(cd->screen, cd->color_map, cd->background);
 	break;
     }
-    
+
     return(p);
 }
 
-static void 
+static void
 SetMonochromeColors(
         XmColorData *colors )
 {
@@ -603,45 +595,45 @@ SetMonochromeColors(
 	if (background == BlackPixelOfScreen(screen))
 	{
 		colors->foreground.pixel = WhitePixelOfScreen (screen);
-		colors->foreground.red = colors->foreground.green = 
+		colors->foreground.red = colors->foreground.green =
 			colors->foreground.blue = XmMAX_SHORT;
 
 		colors->bottom_shadow.pixel = WhitePixelOfScreen(screen);
-		colors->bottom_shadow.red = colors->bottom_shadow.green = 
+		colors->bottom_shadow.red = colors->bottom_shadow.green =
 			colors->bottom_shadow.blue = XmMAX_SHORT;
 
 		colors->select.pixel = WhitePixelOfScreen(screen);
-		colors->select.red = colors->select.green = 
+		colors->select.red = colors->select.green =
 			colors->select.blue = XmMAX_SHORT;
 
 		colors->top_shadow.pixel = BlackPixelOfScreen(screen);
-		colors->top_shadow.red = colors->top_shadow.green = 
+		colors->top_shadow.red = colors->top_shadow.green =
 			colors->top_shadow.blue = 0;
 	}
 	else if (background == WhitePixelOfScreen(screen))
 	{
 		colors->foreground.pixel = BlackPixelOfScreen(screen);
-		colors->foreground.red = colors->foreground.green = 
+		colors->foreground.red = colors->foreground.green =
 			colors->foreground.blue = 0;
 
 		colors->top_shadow.pixel = WhitePixelOfScreen(screen);
-		colors->top_shadow.red = colors->top_shadow.green = 
+		colors->top_shadow.red = colors->top_shadow.green =
 			colors->top_shadow.blue = XmMAX_SHORT;
 
 		colors->bottom_shadow.pixel = BlackPixelOfScreen(screen);
-		colors->bottom_shadow.red = colors->bottom_shadow.green = 
+		colors->bottom_shadow.red = colors->bottom_shadow.green =
 			colors->bottom_shadow.blue = 0;
 
 		colors->select.pixel = BlackPixelOfScreen(screen);
-		colors->select.red = colors->select.green = 
+		colors->select.red = colors->select.green =
 			colors->select.blue = 0;
 	}
 
-	colors->allocated |= (XmFOREGROUND | XmTOP_SHADOW 
+	colors->allocated |= (XmFOREGROUND | XmTOP_SHADOW
 		| XmBOTTOM_SHADOW | XmSELECT);
 }
 
-static int 
+static int
 Brightness(
         XColor *color )
 {
@@ -655,7 +647,7 @@ Brightness(
 
 	intensity = (red + green + blue) / 3;
 
-	/* 
+	/*
 	 * The casting nonsense below is to try to control the point at
 	 * the truncation occurs.
 	 */
@@ -680,7 +672,7 @@ Brightness(
 	return(brightness);
 }
 
-static void 
+static void
 CalculateColorsForLightBackground(
         XColor *bg_color,
         XColor *fg_color,
@@ -760,8 +752,8 @@ CalculateColorsForLightBackground(
 		ts_color->blue = color_value;
 	}
 }
-	
-static void 
+
+static void
 CalculateColorsForDarkBackground(
         XColor *bg_color,
         XColor *fg_color,
@@ -851,7 +843,7 @@ CalculateColorsForDarkBackground(
 	}
 }
 
-static void 
+static void
 CalculateColorsForMediumBackground(
         XColor *bg_color,
         XColor *fg_color,
@@ -896,7 +888,7 @@ CalculateColorsForMediumBackground(
 
 	if (bs_color)
 	{
-		f = XmCOLOR_LO_BS_FACTOR + (brightness 
+		f = XmCOLOR_LO_BS_FACTOR + (brightness
 			* ( XmCOLOR_HI_BS_FACTOR - XmCOLOR_LO_BS_FACTOR )
 			/ XmMAX_SHORT);
 
@@ -933,7 +925,7 @@ CalculateColorsForMediumBackground(
 	}
 }
 
-static void 
+static void
 CalculateColorsRGB(
         XColor *bg_color,
         XColor *fg_color,
@@ -965,7 +957,7 @@ CalculateColorsRGB(
  *  GetColors
  *
  *********************************************************************/
-static XmColorData * 
+static XmColorData *
 GetColors(
         Screen *screen,
         Colormap color_map,
@@ -1002,10 +994,10 @@ GetColors(
 	 * implementations of X).
 	 */
 	new_colors.foreground.pixel = 0;
-	new_colors.top_shadow.pixel = 0; 
-	new_colors.top_shadow.pixel = 0; 
+	new_colors.top_shadow.pixel = 0;
+	new_colors.top_shadow.pixel = 0;
 	new_colors.select.pixel = 0;
-    
+
 	/*  Generate the foreground, top_shadow, and bottom_shadow based  */
 	/*  on the background                                             */
 
@@ -1023,17 +1015,17 @@ GetColors(
 	      if (!screen_color_proc) {
 		  /* no new color proc set, use the old one */
 		  (*ColorRGBCalcProc)(&(new_colors.background),
-				      &(new_colors.foreground), 
+				      &(new_colors.foreground),
 				      &(new_colors.select),
-				      &(new_colors.top_shadow), 
+				      &(new_colors.top_shadow),
 				      &(new_colors.bottom_shadow));
 	      } else {
 		  /* call the application */
 		  (*screen_color_proc)(screen,
 				       &(new_colors.background),
-				       &(new_colors.foreground), 
+				       &(new_colors.foreground),
 				       &(new_colors.select),
-				       &(new_colors.top_shadow), 
+				       &(new_colors.top_shadow),
 				       &(new_colors.bottom_shadow));
 	      }
 	  }
@@ -1049,7 +1041,7 @@ GetColors(
 
 /* DEPRECATED in favor of the Screen resource XmNcolorcalculationProc
    that takes a Screen in argument (while colorProc doesn't) */
-XmColorProc 
+XmColorProc
 XmSetColorCalculation(
         XmColorProc proc )
 {
@@ -1060,13 +1052,13 @@ XmSetColorCalculation(
 		ColorRGBCalcProc = proc;
 	else
 		ColorRGBCalcProc = CalculateColorsRGB;
-	
+
 	_XmProcessUnlock();
 	return(a);
 }
 
 /* DEPRECATED */
-XmColorProc 
+XmColorProc
 XmGetColorCalculation( void )
 {
 	return(ColorRGBCalcProc);
@@ -1075,7 +1067,7 @@ XmGetColorCalculation( void )
 
 
 
-void 
+void
 XmGetColors(
         Screen *screen,
         Colormap color_map,
@@ -1113,7 +1105,7 @@ XmGetColors(
  *
  *********************************************************************/
 /*ARGSUSED*/
-void 
+void
 XmeGetDefaultPixel(
         Widget widget,
         int type,
@@ -1126,24 +1118,24 @@ XmeGetDefaultPixel(
     XmColorData *color_data;
     Pixel background = 0 ;
     Widget parent;
-    
+
     _XmWidgetToAppContext(widget);
 
     _XmAppLock(app);
     value->size = sizeof(new_value);
     value->addr = (char *) &new_value;
-    
+
     if (!XtIsWidget(widget))
 	{
 	parent = widget->core.parent;
 	color_map = parent->core.colormap;
-	
+
 	/*
 	 *  Skip this for the background case.  The background
 	 * field hasn't been inited yet but for the background
 	 * case it isn't needed.
 	 */
-	 
+
 	if (type != XmBACKGROUND)
 	    {
 	    if ((XmIsLabelGadget(widget)) ||
@@ -1166,10 +1158,10 @@ XmeGetDefaultPixel(
 	if(type != XmBACKGROUND)
 	    background = widget->core.background_pixel;
 	}
-    
-    
+
+
     screen = XtScreen(widget);
-    
+
     if (type == XmBACKGROUND)
 	{
 	color_data = GetDefaultColors(screen, color_map);
@@ -1178,7 +1170,7 @@ XmeGetDefaultPixel(
 	{
 	color_data = GetColors(screen, color_map, background);
 	}
-    
+
     new_value = AccessColorData(color_data, type);
     _XmAppUnlock(app);
 }
@@ -1189,7 +1181,7 @@ XmeGetDefaultPixel(
  *
  ************************************************************************/
 
-void 
+void
 _XmForegroundColorDefault(
         Widget widget,
         int offset,
@@ -1198,7 +1190,7 @@ _XmForegroundColorDefault(
    XmeGetDefaultPixel (widget, XmFOREGROUND, offset, value);
 }
 
-void 
+void
 _XmHighlightColorDefault(
         Widget widget,
         int offset,
@@ -1207,7 +1199,7 @@ _XmHighlightColorDefault(
    XmeGetDefaultPixel (widget, XmFOREGROUND, offset, value);
 }
 
-void 
+void
 _XmBackgroundColorDefault(
         Widget widget,
         int offset,
@@ -1216,7 +1208,7 @@ _XmBackgroundColorDefault(
    XmeGetDefaultPixel (widget, XmBACKGROUND, offset, value);
 }
 
-void 
+void
 _XmTopShadowColorDefault(
         Widget widget,
         int offset,
@@ -1225,7 +1217,7 @@ _XmTopShadowColorDefault(
    XmeGetDefaultPixel (widget, XmTOP_SHADOW, offset, value);
 }
 
-void 
+void
 _XmBottomShadowColorDefault(
         Widget widget,
         int offset,
@@ -1234,7 +1226,7 @@ _XmBottomShadowColorDefault(
    XmeGetDefaultPixel (widget, XmBOTTOM_SHADOW, offset, value);
 }
 
-void 
+void
 _XmSelectColorDefault(
         Widget widget,
         int offset,
@@ -1243,7 +1235,6 @@ _XmSelectColorDefault(
    XmeGetDefaultPixel (widget, XmSELECT, offset, value);
 }
 
-#ifdef FIX_1381
 static
 unsigned int
 FromColorToBlackAndWhite(char *col)
@@ -1251,7 +1242,7 @@ FromColorToBlackAndWhite(char *col)
    unsigned long r, g, b, bw;
    char k[5];
    k[4] = '\0';
-    
+
    memcpy(k, col, 4);
    r = strtoul(k, NULL, 16);
    memcpy(k, col + 4, 4);
@@ -1269,16 +1260,12 @@ _XmConvertToBW(Widget w, Pixmap pm)
    unsigned int bw = 0, bw2 = 0;
    char *col = NULL, *col2 = NULL;
    Pixmap bw_pixmap = XmUNSPECIFIED_PIXMAP;
-#ifdef FIX_1500
    char *data_before = NULL, *data_after = NULL;
-#endif
 
    if (pm == XmUNSPECIFIED_PIXMAP)
 	   return bw_pixmap;
-    
-#ifdef FIX_1500
+
    XpmCreateBufferFromPixmap(XtDisplay(w), &data_before, pm, 0, NULL);
-#endif
    XpmCreateXpmImageFromPixmap(XtDisplay(w), pm, 0, &im, NULL);
    if (im.ncolors > 0) {
 	   if (im.ncolors <= 2) {
@@ -1288,7 +1275,7 @@ _XmConvertToBW(Widget w, Pixmap pm)
 				   bw = (FromColorToBlackAndWhite(col + 1) * 0.65);
 				   sprintf(im.colorTable[0].c_color, "#%04x%04x%04x", bw, bw, bw);
 			   }
-			   if (col) 
+			   if (col)
 				   free(col);
 		   } else {
 			   col = im.colorTable[0].c_color;
@@ -1311,7 +1298,7 @@ _XmConvertToBW(Widget w, Pixmap pm)
 			   col = im.colorTable[i].c_color;
 			   if (col[0] == '#') {
 				   bw = FromColorToBlackAndWhite(col + 1);
-				   /* could be					
+				   /* could be
 					sprintf(im.colorTable[i].c_color, "#%04x%04x%04x", bw, bw, bw);
 					Four lower lines is sprintf optimized version */
 				   sprintf(e, "%04x", bw);
@@ -1323,7 +1310,6 @@ _XmConvertToBW(Widget w, Pixmap pm)
 	   }
    }
    XpmCreatePixmapFromXpmImage(XtDisplay(w), pm, &im, &bw_pixmap, 0, NULL);
-#ifdef FIX_1500
    if (bw_pixmap)
 	   XpmCreateBufferFromPixmap(XtDisplay(w), &data_after, bw_pixmap, 0, NULL);
 
@@ -1334,14 +1320,8 @@ _XmConvertToBW(Widget w, Pixmap pm)
 	   XpmFree(data_before);
    if (data_after)
 	   XpmFree(data_after);
-#endif
    XpmFreeXpmImage(&im);
-    
-#ifdef FIX_1505
+
    return (bw_pixmap) ? bw_pixmap : pm;
-#else
-   return bw_pixmap;
-#endif
 }
-#endif
 

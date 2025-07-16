@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmTravActI_h
 #define _XmTravActI_h
 
@@ -40,92 +40,88 @@ extern unsigned short _XmGetFocusFlag(
 extern void _XmSetFocusFlag(
 			Widget w,
 			unsigned int mask,
-#if NeedWidePrototypes
-        		int value ) ;
-#else
         		Boolean value ) ;
-#endif /* NeedWidePrototypes */
-extern void _XmTrackShellFocus( 
+extern void _XmTrackShellFocus(
                         Widget widget,
                         XtPointer client_data,
                         XEvent *event,
                         Boolean *dontSwallow) ;
-extern void _XmPrimitiveEnter( 
+extern void _XmPrimitiveEnter(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmPrimitiveLeave( 
+extern void _XmPrimitiveLeave(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmPrimitiveUnmap( 
+extern void _XmPrimitiveUnmap(
                         Widget pw,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmPrimitiveFocusInInternal( 
+extern void _XmPrimitiveFocusInInternal(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmPrimitiveFocusOut( 
+extern void _XmPrimitiveFocusOut(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmPrimitiveFocusIn( 
+extern void _XmPrimitiveFocusIn(
                         Widget pw,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmEnterGadget( 
+extern void _XmEnterGadget(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmLeaveGadget( 
+extern void _XmLeaveGadget(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmFocusInGadget( 
+extern void _XmFocusInGadget(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmFocusOutGadget( 
+extern void _XmFocusOutGadget(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerEnter( 
+extern void _XmManagerEnter(
                         Widget wid,
                         XEvent *event_in,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerLeave( 
+extern void _XmManagerLeave(
                         Widget wid,
                         XEvent *event_in,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerFocusInInternal( 
+extern void _XmManagerFocusInInternal(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerFocusIn( 
+extern void _XmManagerFocusIn(
                         Widget mw,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerFocusOut( 
+extern void _XmManagerFocusOut(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern void _XmManagerUnmap( 
+extern void _XmManagerUnmap(
                         Widget mw,
                         XEvent *event,
                         String *params,

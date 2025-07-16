@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
@@ -39,7 +39,7 @@ static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
  *  override-redirect, InputOnly child window of the display's default root
  *  window.  A client looks for the motifWindow id on the "_MOTIF_DRAG_WINDOW"
  *  property of the display's default root window.  If it finds the id, the
- *  client saves it in its displayToMotifWindowContext.  Otherwise, the 
+ *  client saves it in its displayToMotifWindowContext.  Otherwise, the
  *  client creates the motifWindow and stores its id on that root property
  *  and saves the id in its displayToMotifWindowContext.  MotifWindow is
  *  mapped but is not visible on the screen.
@@ -52,7 +52,7 @@ static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
  *  The "_MOTIF_DRAG_ATOMS" property on motifWindow contains an atoms table,
  *  consisting of pairs of atoms and timestamps.  The atoms are interned
  *  once and are available for clients to use without repeated roundtrip
- *  server requests to intern them.  A timestamp of 0 indicates that the 
+ *  server requests to intern them.  A timestamp of 0 indicates that the
  *  atom is available.  A nonzero timestamp indicates when the atom was last
  *  allocated to a client.  The atoms table initially contains only atom
  *  "_MOTIF_ATOM_0" with timestamp 0.  A client requests an atom by calling
@@ -65,7 +65,7 @@ static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
  *  "_MOTIF_ATOM_n" where n is 1, 2, 3, ... .  The routine _XmGetMotifAtom()
  *  returns the atom from the atoms table with nonzero timestamp less than
  *  but closest to a specified value.  It does not change the atoms table.
- *  A client frees an atom by calling _XmFreeMotifAtom(), which sets the 
+ *  A client frees an atom by calling _XmFreeMotifAtom(), which sets the
  *  atom's timestamp to 0 and updates the "_MOTIF_DRAG_ATOMS" property on
  *  motifWindow.  To minimize property access, the client saves the address
  *  of its current atoms table on the displayToAtomsContext context.
@@ -80,7 +80,7 @@ static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
  *  table on the "_MOTIF_DRAG_TARGETS" property to contain only two lists:
  *
  *		{ 0,		}, and
- *		{ XA_STRING,	} 
+ *		{ XA_STRING,	}
  *
  *  A client adds a target list to the targets table by passing the target
  *  list to _XmTargetsToIndex().  _XmTargetsToIndex() first sorts the target
@@ -109,10 +109,7 @@ static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
 #include <X11/Xresource.h>
 
 #include <stdio.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
-
 
 #undef _XmIndexToTargets
 #undef _XmTargetsToIndex
@@ -141,53 +138,53 @@ typedef struct {
 
 /********    Static Function Declarations    ********/
 
-static int LocalErrorHandler( 
+static int LocalErrorHandler(
                         Display *display,
                         XErrorEvent *error) ;
-static void StartProtectedSection( 
+static void StartProtectedSection(
                         Display *display,
                         Window window) ;
-static void EndProtectedSection( 
+static void EndProtectedSection(
                         Display *display) ;
-static Window GetMotifWindow( 
+static Window GetMotifWindow(
                         Display *display) ;
-static void SetMotifWindow( 
+static void SetMotifWindow(
                         Display *display,
                         Window motifWindow) ;
-static xmTargetsTable GetTargetsTable( 
+static xmTargetsTable GetTargetsTable(
                         Display *display) ;
-static void SetTargetsTable( 
+static void SetTargetsTable(
                         Display *display,
                         xmTargetsTable targetsTable) ;
-static xmAtomsTable GetAtomsTable( 
+static xmAtomsTable GetAtomsTable(
                         Display *display) ;
-static void SetAtomsTable( 
+static void SetAtomsTable(
                         Display *display,
                         xmAtomsTable atomsTable) ;
-static Window ReadMotifWindow( 
+static Window ReadMotifWindow(
                         Display *display) ;
-static Window CreateMotifWindow( 
+static Window CreateMotifWindow(
                         Display *display) ;
-static void WriteMotifWindow( 
+static void WriteMotifWindow(
                         Display *display,
                         Window *motifWindow) ;
-static void WriteAtomsTable( 
+static void WriteAtomsTable(
                         Display *display,
                         xmAtomsTable atomsTable) ;
-static Boolean ReadAtomsTable( 
+static Boolean ReadAtomsTable(
                         Display *display,
                         xmAtomsTable atomsTable) ;
-static void WriteTargetsTable( 
+static void WriteTargetsTable(
                         Display *display,
                         xmTargetsTable targetsTable) ;
-static Boolean ReadTargetsTable( 
+static Boolean ReadTargetsTable(
                         Display *display,
                         xmTargetsTable targetsTable) ;
-static xmTargetsTable CreateDefaultTargetsTable( 
+static xmTargetsTable CreateDefaultTargetsTable(
                         Display *display) ;
-static xmAtomsTable CreateDefaultAtomsTable( 
+static xmAtomsTable CreateDefaultAtomsTable(
                         Display *display) ;
-static int AtomCompare( 
+static int AtomCompare(
                         XmConst void *atom1,
                         XmConst void *atom2) ;
 
@@ -209,7 +206,7 @@ static XContext		displayToAtomsContext = 0;
  *
  ***************************************************************************/
 
-static int 
+static int
 LocalErrorHandler(
         Display *display,
         XErrorEvent *error )
@@ -243,7 +240,7 @@ LocalErrorHandler(
  *  been destroyed.
  ***************************************************************************/
 
-static void 
+static void
 StartProtectedSection(
         Display *display,
         Window window )
@@ -261,7 +258,7 @@ StartProtectedSection(
  *  Flushes any generated errors on and restores the original error handler.
  ***************************************************************************/
 
-static void 
+static void
 EndProtectedSection(
         Display *display )
 {
@@ -277,7 +274,7 @@ EndProtectedSection(
  *  Get the motifWindow id from the displayToMotifWindowContext.
  ***************************************************************************/
 
-static Window 
+static Window
 GetMotifWindow(
         Display *display )
 {
@@ -290,10 +287,10 @@ GetMotifWindow(
 
     loc_context = displayToMotifWindowContext;
     _XmProcessUnlock();
-    
-    if (XFindContext(display, 
+
+    if (XFindContext(display,
                      DefaultRootWindow (display),
-		     loc_context, 
+		     loc_context,
 		     (char **)&motifWindow)) {
         motifWindow = None;
     }
@@ -307,7 +304,7 @@ GetMotifWindow(
  *  Set the motifWindow id into the displayToMotifWindowContext.
  ***************************************************************************/
 
-static void 
+static void
 SetMotifWindow(
         Display *display,
         Window motifWindow )
@@ -329,17 +326,17 @@ SetMotifWindow(
     if (XFindContext (display, DefaultRootWindow (display),
 			loc_context,
 			(char **) &oldMotifWindow)) {
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
-			loc_context, 
+			loc_context,
 			(char *) motifWindow);
     }
     else if (oldMotifWindow != motifWindow) {
 	XDeleteContext (display, DefaultRootWindow (display),
 			loc_context);
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
-			loc_context, 
+			loc_context,
 			(char *) motifWindow);
     }
 }
@@ -351,7 +348,7 @@ SetMotifWindow(
  *  Get the targets table address from the displayToTargetsContext.
  ***************************************************************************/
 
-static xmTargetsTable 
+static xmTargetsTable
 GetTargetsTable(
         Display *display )
 {
@@ -364,10 +361,10 @@ GetTargetsTable(
 
     loc_context = displayToTargetsContext;
     _XmProcessUnlock();
-    
-    if (XFindContext(display, 
+
+    if (XFindContext(display,
                      DefaultRootWindow (display),
-		     loc_context, 
+		     loc_context,
 		     (char **)&targetsTable)) {
         targetsTable = NULL;
     }
@@ -381,7 +378,7 @@ GetTargetsTable(
  *  Set the targets table address into the displayToTargetsContext.
  ***************************************************************************/
 
-static void 
+static void
 SetTargetsTable(
         Display *display,
         xmTargetsTable targetsTable )
@@ -404,9 +401,9 @@ SetTargetsTable(
 			loc_context,
 			(char **) &oldTargetsTable)) {
 	if (targetsTable)
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
-			loc_context, 
+			loc_context,
 			(char *) targetsTable);
     }
     else if (oldTargetsTable != targetsTable) {
@@ -423,9 +420,9 @@ SetTargetsTable(
         }
 
 	if (targetsTable)
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
-			loc_context, 
+			loc_context,
 			(char *) targetsTable);
     }
 }
@@ -437,7 +434,7 @@ SetTargetsTable(
  *  Get the atomsTable address from the displayToAtomsContext.
  ***************************************************************************/
 
-static xmAtomsTable 
+static xmAtomsTable
 GetAtomsTable(
         Display *display )
 {
@@ -450,8 +447,8 @@ GetAtomsTable(
 
     loc_context = displayToAtomsContext;
     _XmProcessUnlock();
-    
-    if (XFindContext (display, 
+
+    if (XFindContext (display,
                       DefaultRootWindow (display),
 		      loc_context,
 		      (XPointer *)&atomsTable)) {
@@ -467,7 +464,7 @@ GetAtomsTable(
  *  Set the atoms table address into the displayToAtomsContext.
  ***************************************************************************/
 
-static void 
+static void
 SetAtomsTable(
         Display *display,
         xmAtomsTable atomsTable )
@@ -490,7 +487,7 @@ SetAtomsTable(
 			loc_context,
 			(char **) &oldAtomsTable)) {
 	if (atomsTable)
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
 	                loc_context,
 			(char *) atomsTable);
@@ -501,7 +498,7 @@ SetAtomsTable(
         XtFree( (char *) (oldAtomsTable->entries)) ;
         XtFree( (char *) oldAtomsTable) ;
 	if (atomsTable)
-	XSaveContext(display, 
+	XSaveContext(display,
                         DefaultRootWindow (display),
 	                loc_context,
 			(char *) atomsTable);
@@ -516,7 +513,6 @@ SetAtomsTable(
 
 static Boolean RMW_ErrorFlag;
 
-/*ARGSUSED*/
 static int
 RMW_ErrorHandler(Display *display, /* unused */
 		 XErrorEvent* event) /* unused */
@@ -527,7 +523,7 @@ RMW_ErrorHandler(Display *display, /* unused */
     return 0 ; /* unused */
 }
 
-static Window 
+static Window
 ReadMotifWindow(
         Display *display )
 {
@@ -557,7 +553,7 @@ ReadMotifWindow(
                              &type,
 			     &format,
 			     &lengthRtn,
-			     &bytesafter, 
+			     &bytesafter,
 			     (unsigned char **) &property) == Success) &&
          (type == XA_WINDOW) &&
 	 (format == 32) &&
@@ -586,7 +582,7 @@ ReadMotifWindow(
  *
  ***************************************************************************/
 
-static Window 
+static Window
 CreateMotifWindow(
         Display *display )
 {
@@ -627,7 +623,7 @@ CreateMotifWindow(
  *
  ***************************************************************************/
 
-static void 
+static void
 WriteMotifWindow(
         Display *display,
         Window *motifWindow )
@@ -652,7 +648,7 @@ WriteMotifWindow(
  *
  ***************************************************************************/
 
-static void 
+static void
 WriteAtomsTable(
         Display *display,
         xmAtomsTable atomsTable )
@@ -673,10 +669,10 @@ WriteAtomsTable(
 	return;
     }
 
-    /* If the data is bigger than the default stack allocation, then 
+    /* If the data is bigger than the default stack allocation, then
      * allocate heap storage, else use automatic storage.
      */
-    dataSize = sizeof(xmMotifAtomsPropertyRec) + 
+    dataSize = sizeof(xmMotifAtomsPropertyRec) +
       atomsTable->numEntries * sizeof(xmMotifAtomsTableRec) ;
 
     if ( dataSize > MAXSTACK ) {
@@ -705,12 +701,12 @@ WriteAtomsTable(
     motifWindow = GetMotifWindow (display);
     _XmProcessLock();
     StartProtectedSection (display, motifWindow);
-    XChangeProperty (display, 
+    XChangeProperty (display,
                      motifWindow,
 		     atomsTableAtom,
 		     atomsTableAtom,
 		     8,
-		     PropModeReplace, 
+		     PropModeReplace,
 		     (unsigned char *)propertyRecPtr,
 		     dataSize );
 
@@ -731,18 +727,18 @@ WriteAtomsTable(
  *
  ***************************************************************************/
 
-static Boolean 
+static Boolean
 ReadAtomsTable(
         Display *display,
         xmAtomsTable atomsTable )
 {
-    struct { 
+    struct {
 	xmMotifAtomsPropertyRec info;
 	xmMotifAtomsTableRec	entry[1];
     } *propertyRecPtr = NULL;
     Atom                        atomsTableAtom;
     int				format;
-    unsigned long 		bytesafter, lengthRtn; 
+    unsigned long 		bytesafter, lengthRtn;
     Atom			type;
     int				i;
     Boolean			ret;
@@ -770,7 +766,7 @@ ReadAtomsTable(
 
     if (bad_window) {
 	static Boolean first_time = True;
-	
+
 	/*
 	 * Try to recreate the motifWindow. We could have gotten an invalid
 	 * window id from the _MOTIF_DRAG_WINDOW property.
@@ -787,7 +783,7 @@ ReadAtomsTable(
     _XmProcessUnlock();
 
     if (ret) {
-	if (propertyRecPtr->info.protocol_version != 
+	if (propertyRecPtr->info.protocol_version !=
 	    _MOTIF_DRAG_PROTOCOL_VERSION) {
 	    XmeWarning( (Widget) XmGetXmDisplay (display), MESSAGE2);
 	}
@@ -831,7 +827,7 @@ ReadAtomsTable(
             atomsTable->entries[i].time = (Time) propertyRecPtr->entry[i].time;
 	}
         atomsTable->numEntries = propertyRecPtr->info.num_atoms;
-    }      
+    }
 
     /*
      *  Free any memory that Xlib passed us.
@@ -849,7 +845,7 @@ ReadAtomsTable(
  *
  ***************************************************************************/
 
-static void 
+static void
 WriteTargetsTable(
         Display *display,
         xmTargetsTable targetsTable )
@@ -879,7 +875,7 @@ WriteTargetsTable(
     }
 
     /* If size needed is bigger than the pre-allocated space, allocate a
-     * bigger buffer. 
+     * bigger buffer.
      */
     if ( dataSize > MAXSTACK ){
 	propertyRecPtr = (struct _propertyRec *)XtMalloc( dataSize );
@@ -919,12 +915,12 @@ WriteTargetsTable(
     motifWindow = GetMotifWindow (display);
     _XmProcessLock();
     StartProtectedSection (display, motifWindow);
-    XChangeProperty (display, 
+    XChangeProperty (display,
                      motifWindow,
 		     targetsTableAtom,
 		     targetsTableAtom,
 		     8,
-		     PropModeReplace, 
+		     PropModeReplace,
 		     (unsigned char *)propertyRecPtr,
 		     dataSize);
 
@@ -945,7 +941,7 @@ WriteTargetsTable(
  *
  ***************************************************************************/
 
-static Boolean 
+static Boolean
 ReadTargetsTable(
         Display *display,
         xmTargetsTable targetsTable )
@@ -958,7 +954,7 @@ ReadTargetsTable(
     short			num_targets;
     Atom                        targetsTableAtom;
     int				format;
-    unsigned long 		bytesafter, lengthRtn; 
+    unsigned long 		bytesafter, lengthRtn;
     Atom			type;
     int				i, j;
     Atom		        *targets;
@@ -971,7 +967,7 @@ ReadTargetsTable(
     motifWindow = GetMotifWindow (display);
     _XmProcessLock();
     StartProtectedSection (display, motifWindow);
-    ret = ((XGetWindowProperty (display, 
+    ret = ((XGetWindowProperty (display,
     				motifWindow,
 			        targetsTableAtom,
 			        0L, MAXPROPLEN,
@@ -991,7 +987,7 @@ ReadTargetsTable(
     _XmProcessUnlock();
 
     if (ret) {
-	if (propertyRecPtr->info.protocol_version != 
+	if (propertyRecPtr->info.protocol_version !=
 	    _MOTIF_DRAG_PROTOCOL_VERSION) {
 	    XmeWarning( (Widget) XmGetXmDisplay (display), MESSAGE2);
 	}
@@ -1016,10 +1012,10 @@ ReadTargetsTable(
 	     *  expand the target table
 	     */
 
-            targetsTable->entries = (xmTargetsTableEntry) 
+            targetsTable->entries = (xmTargetsTableEntry)
 	      XtRealloc(
 			(char *)targetsTable->entries,	/* NULL ok */
-			sizeof(xmTargetsTableEntryRec) * 
+			sizeof(xmTargetsTableEntryRec) *
 			propertyRecPtr->info.num_target_lists);
 
 	    /*
@@ -1069,7 +1065,7 @@ ReadTargetsTable(
                 targetsTable->entries[i].targets = targets;
 	    }
 	}
-    }      
+    }
 
     /*
      *  Free any memory that Xlib passed us.
@@ -1091,7 +1087,7 @@ ReadTargetsTable(
 static Atom nullTargets[] = 	{ 0,		};
 static Atom stringTargets[] = 	{ XA_STRING,	};
 
-static xmTargetsTable 
+static xmTargetsTable
 CreateDefaultTargetsTable(
         Display *display )
 {
@@ -1104,17 +1100,17 @@ CreateDefaultTargetsTable(
     targetsTable->entries =
 	(xmTargetsTableEntry) XtMalloc(sizeof(xmTargetsTableEntryRec) * 2);
 
-/* According to specs and man pages, default values of XmNimportTargets 
- * and XmNnumImportTargets should be NULL and zero respectively. The 
- * corresponding record in default targets table is entries[0]. The original 
+/* According to specs and man pages, default values of XmNimportTargets
+ * and XmNnumImportTargets should be NULL and zero respectively. The
+ * corresponding record in default targets table is entries[0]. The original
  * setting of entries[0] (commented out below) was resulting in to default
- * values of non NULL pointer pointing to target list with NULL entry and 
- * 1 for XmNimportTargets and XmNnumImportTargets respectively. 
+ * values of non NULL pointer pointing to target list with NULL entry and
+ * 1 for XmNimportTargets and XmNnumImportTargets respectively.
  *
  * The changed code set the XmNnumImportTargets to 0 and XmNimportTargets to
- * NULL. This change may cause problem in code where importTarget 
- * is dereferanced twice without checking for possible NULL value. It that 
- * happens, and there is no easy way to fix it, change entries[0].targets to 
+ * NULL. This change may cause problem in code where importTarget
+ * is dereferanced twice without checking for possible NULL value. It that
+ * happens, and there is no easy way to fix it, change entries[0].targets to
  * nullTargets, but leave entries[0].numTargets to 0.
  */
 
@@ -1143,7 +1139,7 @@ CreateDefaultTargetsTable(
  *  Create the default atoms table.
  ***************************************************************************/
 
-static xmAtomsTable 
+static xmAtomsTable
 CreateDefaultAtomsTable(
         Display *display )
 {
@@ -1169,7 +1165,7 @@ CreateDefaultAtomsTable(
  *
  ***************************************************************************/
 
-void 
+void
 _XmInitTargetsTable(
         Display *display )
 {
@@ -1191,7 +1187,7 @@ _XmInitTargetsTable(
 
     SetMotifWindow (display, motifWindow);
 
-    /* 
+    /*
      * At this time, we are not sure the motifWindow id is valid,
      * but we will find out in the ReadAtomsTable. We will try to
      * recreate it there.
@@ -1238,7 +1234,7 @@ void _XmClearDisplayTables (Display *display)
  *
  ***************************************************************************/
 
-Cardinal 
+Cardinal
 _XmIndexToTargets(
         Widget shell,
         Cardinal t_index,
@@ -1283,7 +1279,7 @@ _XmIndexToTargets(
  *  than, equal to, or greater than the second.
  ***************************************************************************/
 
-static int 
+static int
 AtomCompare(
         XmConst void *atom1,
         XmConst void *atom2 )
@@ -1297,7 +1293,7 @@ AtomCompare(
  *
  ***************************************************************************/
 
-Cardinal 
+Cardinal
 _XmTargetsToIndex(
         Widget shell,
         Atom *targets,
@@ -1401,7 +1397,7 @@ _XmTargetsToIndex(
  *  Allocate an atom in the atoms table with the specified time stamp.
  ***************************************************************************/
 
-Atom 
+Atom
 _XmAllocMotifAtom(
         Widget shell,
         Time time )
@@ -1470,7 +1466,7 @@ _XmAllocMotifAtom(
  *  closest to the specified value.
  ***************************************************************************/
 
-Atom 
+Atom
 _XmGetMotifAtom(
         Widget shell,
         Time time )
@@ -1538,7 +1534,7 @@ _XmGetMotifAtom(
  *  Free an atom in the atoms table by giving it a zero timestamp.
  ***************************************************************************/
 
-void 
+void
 _XmFreeMotifAtom(
         Widget shell,
         Atom atom )
@@ -1596,7 +1592,7 @@ _XmFreeMotifAtom(
  *
  ***************************************************************************/
 
-void 
+void
 _XmDestroyMotifWindow(
         Display  *display )
 {
@@ -1648,17 +1644,17 @@ _XmGetDragProxyWindow(
                                  &type,
 			         &format,
 			         &lengthRtn,
-			         &bytesafter, 
+			         &bytesafter,
 			         (unsigned char **) &property) == Success) &&
              (type == XA_WINDOW) &&
 	     (format == 32) &&
 	     (lengthRtn == 1)) {
 	    motifProxyWindow = *property;
 	}
-	
+
 	EndProtectedSection (display);
 	_XmProcessUnlock();
-	
+
 	if (property) {
 	    XFree ((char *)property);
 	}

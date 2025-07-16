@@ -38,14 +38,6 @@ static char rcsid[] = "$RCSfile: DataFSel.c,v $ $Revision: 1.6 $ $Date: 2003/10/
 
 
 /********    Static Function Declarations    ********/
-#ifdef _NO_PROTO
-
-static void InsertSelection() ;
-static Boolean ConvertInsertSelection() ;
-static void HandleInsertTargets() ;
-
-#else
-
 static void InsertSelection(
                         Widget w,
                         XtPointer closure,
@@ -70,47 +62,19 @@ static void HandleInsertTargets(
                         XtPointer value,
                         unsigned long *length,
                         int *format );
-#endif /* _NO_PROTO */
+
 /********    End Static Function Declarations    ********/
 
-#ifdef _NO_PROTO
-extern void _XmDataFieldDeselectSelection();
-extern void _XmDataFieldStartSelection();
-extern int _XmDataFieldCountBytes();
-extern Boolean _XmDataFielddf_SetDestination();
-extern void _XmDataFielddf_SetCursorPosition();
-#else
-#if NeedWidePrototypes
-#define WIDE_PROTOTYPE		int
-#else
-#define WIDE_PROTOTYPE		Boolean
-#endif
-
-extern void _XmDataFieldDeselectSelection(Widget, int, WIDE_PROTOTYPE, Time);
+extern void _XmDataFieldDeselectSelection(Widget, int, Boolean, Time);
 extern void _XmDataFieldStartSelection(XmDataFieldWidget, XmTextPosition,
 				       XmTextPosition, Time);
 extern int _XmDataFieldCountBytes(XmDataFieldWidget, wchar_t *, int);
 extern Boolean _XmDataFielddf_SetDestination(Widget, XmTextPosition, Time);
 extern void _XmDataFielddf_SetCursorPosition(XmDataFieldWidget, XEvent *,
-					     XmTextPosition, WIDE_PROTOTYPE,
-					     WIDE_PROTOTYPE);
+					     XmTextPosition, Boolean,
+					     Boolean);
 
-#undef WIDE_PROTOTYPE
-#endif /* _NO_PROTO */
-
-
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-InsertSelection( w, closure, seltype, type, value, length, format )
-        Widget w ;
-        XtPointer closure ;
-        Atom *seltype ;
-        Atom *type ;
-        XtPointer value ;
-        unsigned long *length ;
-        int *format ;
-#else
 InsertSelection(
         Widget w,
         XtPointer closure,
@@ -119,7 +83,6 @@ InsertSelection(
         XtPointer value,
         unsigned long *length,
         int *format )
-#endif /* _NO_PROTO */
 {
     _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
@@ -284,18 +247,7 @@ InsertSelection(
     insert_select->done_status = True;
 }
 
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-HandleInsertTargets( w, closure, seltype, type, value, length, format )
-        Widget w ;
-        XtPointer closure ;
-        Atom *seltype ;
-        Atom *type ;
-        XtPointer value ;
-        unsigned long *length ;
-        int *format ;
-#else
 HandleInsertTargets(
         Widget w,
         XtPointer closure,
@@ -304,7 +256,6 @@ HandleInsertTargets(
         XtPointer value,
         unsigned long *length,
         int *format )
-#endif /* _NO_PROTO */
 {
    _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
    Atom TEXT = XmInternAtom(XtDisplay(w), "TEXT", False);
@@ -341,16 +292,6 @@ HandleInsertTargets(
  */
 /*--------------------------------------------------------------------------+*/
 static Boolean
-#ifdef _NO_PROTO
-ConvertInsertSelection( w, selection, type, value, length, format, locale_atom )
-        Widget w ;
-        Atom *selection ;
-        Atom *type ;
-        XtPointer *value ;
-        unsigned long *length ;
-        int *format ;
-	Atom locale_atom;
-#else
 ConvertInsertSelection(
         Widget w,
         Atom *selection,
@@ -359,7 +300,6 @@ ConvertInsertSelection(
         unsigned long *length,
         int *format,
 	Atom locale_atom)
-#endif /* _NO_PROTO */
 {
    XtAppContext app = XtWidgetToApplicationContext(w);
    XSelectionRequestEvent * req_event;
@@ -446,18 +386,7 @@ ConvertInsertSelection(
    return (insert_select.success_status);
 }
 
-/* ARGSUSED */
 Boolean
-#ifdef _NO_PROTO
-_XmDataFieldConvert( w, selection, target, type, value, length, format )
-        Widget w ;
-        Atom *selection ;
-        Atom *target ;
-        Atom *type ;
-        XtPointer *value ;
-        unsigned long *length ;
-        int *format ;
-#else
 _XmDataFieldConvert(
         Widget w,
         Atom *selection,
@@ -466,7 +395,6 @@ _XmDataFieldConvert(
         XtPointer *value,
         unsigned long *length,
         int *format )
-#endif /* _NO_PROTO */
 {
     XmDataFieldWidget tf;
     Atom MOTIF_DESTINATION = XmInternAtom(XtDisplay(w),
@@ -771,17 +699,10 @@ _XmDataFieldConvert(
     return TRUE;
 }
 
-/* ARGSUSED */
 void
-#ifdef _NO_PROTO
-_XmDataFieldLoseSelection( w, selection )
-        Widget w ;
-        Atom *selection ;
-#else
 _XmDataFieldLoseSelection(
         Widget w,
         Atom *selection )
-#endif /* _NO_PROTO */
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Atom MOTIF_DESTINATION = XmInternAtom(XtDisplay(w),
@@ -789,13 +710,8 @@ _XmDataFieldLoseSelection(
 /* Losing Primary Selection */
     if (*selection == XA_PRIMARY && XmTextF_has_primary(tf)) {
         XmAnyCallbackStruct cb;
-#ifdef _NO_PROTO
-        _XmDataFieldDeselectSelection(w, False,
-				      XtLastTimestampProcessed(XtDisplay(w)));
-#else
         _XmDataFieldDeselectSelection(w, False, 0,
 				      XtLastTimestampProcessed(XtDisplay(w)));
-#endif
 
         cb.reason = XmCR_LOSE_PRIMARY;
         cb.event = NULL;
@@ -819,3 +735,4 @@ _XmDataFieldLoseSelection(
 			    XtLastTimestampProcessed(XtDisplay(w)));
     }
 }
+

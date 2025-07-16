@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,22 +19,18 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TraversalI.c /main/13 1997/10/13 11:28:33 cshi $"
 #endif
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
-
 #include <Xm/BaseClassP.h>
 #include <Xm/ClipWindowP.h>
 #include <Xm/GadgetP.h>
@@ -48,16 +44,12 @@ static char rcsid[] = "$TOG: TraversalI.c /main/13 1997/10/13 11:28:33 cshi $"
 #include "TraversalI.h"
 #include "XmI.h"
 
-#define FIX_1272
-
 #define XmTRAV_LIST_ALLOC_INCREMENT	 16
 #define XmTAB_LIST_ALLOC_INCREMENT	  8
 #define STACK_SORT_LIMIT		128
 
-
 /* Type of sort comparison function. */
 typedef int (*Comparator)(XmConst void *, XmConst void *);
-
 
 /********    Static Function Declarations    ********/
 
@@ -107,7 +99,7 @@ static Boolean NodeDominates(XmTraversalNode node_1,
 			     Boolean	     horizontal,
 			     XmDirection     layout);
 static void Sort(XmTraversalNode *nodes,
-		 size_t           n_mem, 
+		 size_t           n_mem,
 		 Boolean          horizontal,
 		 XmDirection      layout);
 static int CompareExclusive(XmConst void *A, XmConst void *B);
@@ -133,7 +125,7 @@ static Boolean SetInitialNode(XmGraphNode graph,
 static void SetInitialWidgets(XmTravGraph trav_list);
 static void GetRectRelativeToShell(Widget wid,
 				   XRectangle *rect);
-static int SearchTabList(XmTravGraph graph, 
+static int SearchTabList(XmTravGraph graph,
 			 Widget wid);
 static void DeleteFromTabList(XmTravGraph graph,
 			      int indx);
@@ -156,20 +148,20 @@ static void PrintNodeList(XmTravGraph list);
 
 
 static XmTravGraph SortReferenceGraph;
-
+
 XmNavigability
 _XmGetNavigability(Widget wid)
-{   
+{
   if (XtIsRectObj(wid) &&
       !wid->core.being_destroyed)
-    {   
+    {
       XmBaseClassExt *er;
 
       if ((er = _XmGetBaseClassExtPtr(XtClass(wid), XmQmotif)) &&
 	  (*er) &&
 	  ((*er)->version >= XmBaseClassExtVersion) &&
 	  (*er)->widgetNavigable)
-        {   
+        {
 	  return (*((*er)->widgetNavigable))(wid);
 	}
       else
@@ -186,23 +178,23 @@ _XmGetNavigability(Widget wid)
 	  else
 	    wc = NULL;
 
-	  if (wc &&  
+	  if (wc &&
 	      (er = _XmGetBaseClassExtPtr(wc, XmQmotif)) &&
 	      (*er) &&
 	      ((*er)->version >= XmBaseClassExtVersion) &&
 	      (*er)->widgetNavigable)
-            {   
+            {
 	      return (*((*er)->widgetNavigable))(wid);
-	    } 
+	    }
 	}
     }
 
   return XmNOT_NAVIGABLE;
 }
-
+
 Boolean
 _XmIsViewable(Widget wid)
-{   
+{
   /* This routine returns TRUE is the widget is realized, managed
    * and, for window objects, mapped; returns FALSE otherwise.
    * A realized RowColumn with a MenuShell parent is always considered
@@ -211,13 +203,13 @@ _XmIsViewable(Widget wid)
   XWindowAttributes xwa;
 
   if (!wid->core.being_destroyed && XtIsRealized(wid))
-    {   
+    {
       /* Treat menupanes specially. */
       if (XmIsRowColumn(wid) && XmIsMenuShell(XtParent(wid)))
 	return TRUE;
 
       if (XtIsManaged(wid))
-        {   
+        {
 	  /* CR 5593:  Trust mapped_when_managed even though the spec */
 	  /*	hasn't yet been updated to allow it. */
 	  if (XmIsGadget(wid) || wid->core.mapped_when_managed)
@@ -228,17 +220,17 @@ _XmIsViewable(Widget wid)
 
 	  if (xwa.map_state == IsViewable)
 	    return TRUE;
-	} 
-    } 
+	}
+    }
 
   return FALSE;
 }
-
+
 Widget
 _XmIsScrollableClipWidget(Widget child,
 			  Boolean scrollable,
 			  XRectangle *visRect)
-{   
+{
   Widget wid = XtParent(child);
   XmScrolledWindowWidget sw;
 
@@ -248,7 +240,7 @@ _XmIsScrollableClipWidget(Widget child,
       XmIsScrolledWindow(sw) &&
       ((Widget) sw->swindow.ClipWindow == wid) &&
       (!scrollable || sw->swindow.traverseObscuredCallback))
-    {   
+    {
       if (visRect)
 	{
 	  if (!child || !_XmSWGetClipArea(child, visRect))
@@ -259,50 +251,50 @@ _XmIsScrollableClipWidget(Widget child,
     }
 
   return NULL;
-} 
-
+}
+
 Boolean
 _XmGetEffectiveView(Widget wid,
 		    XRectangle *visRect)
-{   
+{
   /* This function will generate a rectangle describing the portion of the
    * specified widget or its scrolling area (for non-null
    * XmNtraverseObscuredCallback) which is not clipped by any of its
    * ancestors.  It also verifies that the ancestors are viewable.
    *
    * It will return TRUE if the visibility rectangle returned in visRect
-   * has a non-zero area, FALSE if the visibility area is zero or one 
+   * has a non-zero area, FALSE if the visibility area is zero or one
    * of its ancestors is not viewable.
    */
   Widget prev;
   XRectangle tmpRect, widRect;
   Boolean acceptClipping = TRUE;
-  
+
   if (!_XmIsViewable(wid))
-    {   
+    {
       _XmClearRect(visRect);
       return FALSE;
     }
   _XmSetRect(visRect, wid);
-  
+
   /* Process all widgets, excluding the shell widget */
   for (prev = wid;
        ((wid = XtParent(wid)) != NULL) && !XtIsShell(wid);
        prev = wid)
-    {   
+    {
       if (!_XmIsViewable(wid))
-        {   
+        {
 	  _XmClearRect(visRect);
 	  return FALSE;
-	} 
+	}
 
       if (_XmIsScrollableClipWidget(prev, True, visRect))
-        {   
+        {
 	  /* This wid is the clip window for a Scrolled Window. */
 	  acceptClipping = FALSE;
-	} 
+	}
       else
-	{   
+	{
 	  /* CR 9705: Special case overlapping work windows. */
 	  if (!_XmIsScrollableClipWidget(prev, False, &widRect))
 	    _XmSetRect(&widRect, wid);
@@ -313,26 +305,26 @@ _XmGetEffectiveView(Widget wid,
 		return FALSE;
 	    }
 	  else
-	    {           
+	    {
 	      if (!_XmIntersectionOf(visRect, &widRect, &tmpRect) ||
 		  (visRect->width != tmpRect.width) ||
 		  (visRect->height != tmpRect.height))
-		{   
+		{
 		  _XmClearRect(visRect);
 		  return FALSE;
-		} 
-	    } 
+		}
+	    }
 	}
     }
 
   return TRUE;
 }
-
+
 Boolean
 _XmIntersectionOf(register XRectangle *srcRectA,
 		  register XRectangle *srcRectB,
 		  register XRectangle *destRect)
-{   
+{
   /* Returns TRUE if there is a non-zero area at the intersection of the
    *   two source rectangles, FALSE otherwise.  The destRect receives
    *   the rectangle of intersection (is cleared if no intersection).
@@ -340,24 +332,24 @@ _XmIntersectionOf(register XRectangle *srcRectA,
   int srcABot, srcBBot;
   int srcARight, srcBRight;
   int newHeight, newWidth;
-  
+
   srcABot = srcRectA->y + srcRectA->height - 1;
   srcBBot = srcRectB->y + srcRectB->height - 1;
   srcARight = srcRectA->x + srcRectA->width - 1;
   srcBRight = srcRectB->x + srcRectB->width - 1;
-  
-  if (srcRectA->x >= srcRectB->x) 
+
+  if (srcRectA->x >= srcRectB->x)
     destRect->x = srcRectA->x;
-  else 
+  else
     destRect->x = srcRectB->x;
 
-  if (srcRectA->y > srcRectB->y) 
+  if (srcRectA->y > srcRectB->y)
     destRect->y = srcRectA->y;
-  else 
+  else
     destRect->y = srcRectB->y;
 
   if (srcARight >= srcBRight)
-    {   
+    {
       newWidth = srcBRight - destRect->x + 1;
       destRect->width = (newWidth > 0) ? newWidth : 0;
     }
@@ -367,36 +359,36 @@ _XmIntersectionOf(register XRectangle *srcRectA,
       destRect->width = (newWidth > 0) ? newWidth : 0;
     }
 
-  if (srcABot > srcBBot) 
-    {   
-      newHeight = srcBBot - destRect->y + 1; 
+  if (srcABot > srcBBot)
+    {
+      newHeight = srcBBot - destRect->y + 1;
       destRect->height = (newHeight > 0) ? newHeight : 0;
     }
-  else 
+  else
     {
       newHeight = srcABot - destRect->y + 1;
       destRect->height = (newHeight > 0) ? newHeight : 0;
     }
 
   return (destRect->width && destRect->height);
-} 
-
+}
+
 XmNavigationType
 _XmGetNavigationType(Widget widget)
-{   
+{
   if (XmIsPrimitive(widget))
     return ((XmPrimitiveWidget) widget)->primitive.navigation_type;
   else if (XmIsGadget(widget))
-    return ((XmGadget) widget)->gadget.navigation_type;	  
+    return ((XmGadget) widget)->gadget.navigation_type;
   else if (XmIsManager(widget))
     return ((XmManagerWidget) widget)->manager.navigation_type;
   else
     return XmNONE;
 }
-  
+
 Widget
 _XmGetActiveTabGroup(Widget wid)
-{   
+{
   /* Return the active tab group for the specified widget hierarchy */
   XmFocusData focus_data = _XmGetFocusData(wid);
 
@@ -405,7 +397,7 @@ _XmGetActiveTabGroup(Widget wid)
   else
     return NULL;
 }
-
+
 static Boolean
 NodeIsTraversable(XmTraversalNode node)
 {
@@ -415,8 +407,8 @@ NodeIsTraversable(XmTraversalNode node)
 	  (node->any.type != XmCONTROL_GRAPH_NODE) &&
 	  XmIsTraversable(node->any.widget));
 }
-
-static XmTraversalNode 
+
+static XmTraversalNode
 TraverseControl(XmTraversalNode cur_node,
 		XmTraversalDirection action)
 {
@@ -501,7 +493,7 @@ TraverseControl(XmTraversalNode cur_node,
 
   return NULL;
 }
-
+
 static XmTraversalNode
 NextControl(XmTraversalNode ctl_node)
 {
@@ -525,7 +517,7 @@ NextControl(XmTraversalNode ctl_node)
 
   return next;
 }
-
+
 static XmTraversalNode
 PrevControl(XmTraversalNode ctl_node)
 {
@@ -549,15 +541,15 @@ PrevControl(XmTraversalNode ctl_node)
 
   return prev;
 }
-
-static Boolean 
+
+static Boolean
 InitializeCurrent(XmTravGraph list,
 		  Widget wid,
 		  Boolean renew_list_if_needed)
 {
   /* Returns TRUE if the current node has been initialized
    * to a non-NULL value.
-   * 
+   *
    * This routine first tries a linear search for the first
    * node in the node list.  If it fails to get a match, it
    * will do a linear search successively on each ancestor of
@@ -589,7 +581,7 @@ InitializeCurrent(XmTravGraph list,
 	return _XmNewTravGraph(list, list->top, wid);
 
       while ((wid = XtParent(wid)) &&
-	     !XtIsShell(wid) &&  
+	     !XtIsShell(wid) &&
 	     !(cur_node = GetNodeOfWidget(list, wid)))
 	/*EMPTY*/;
     }
@@ -604,15 +596,11 @@ InitializeCurrent(XmTravGraph list,
 
   return TRUE;
 }
-
-Widget 
+
+Widget
 _XmTraverseAway(XmTravGraph list,
 		Widget wid,
-#if NeedWidePrototypes
-		int wid_is_control)
-#else
 		Boolean wid_is_control)
-#endif /* NeedWidePrototypes */
 {
   /* This routine traverses away from the reference widget.  The routine
    * tries to return the widget that would be the next one traversed due
@@ -645,10 +633,10 @@ _XmTraverseAway(XmTravGraph list,
 	  list->current = list->current + 1;
 	}
       GetRectRelativeToShell(wid, &wid_rect);
-      
-      if ((nearest_node = 
-	   GetNextNearestNode((XmGraphNode) list->current, 
-			      &wid_rect, 
+
+      if ((nearest_node =
+	   GetNextNearestNode((XmGraphNode) list->current,
+			      &wid_rect,
 			      GetLayout(list->current->any.widget))) != NULL)
 	{
 	  list->current = nearest_node;
@@ -679,7 +667,7 @@ _XmTraverseAway(XmTravGraph list,
   else
     return NULL;
 }
-
+
 static XmTraversalNode
 GetNextNearestNode(XmGraphNode graph,
 		   XRectangle *rect,
@@ -745,8 +733,8 @@ GetNextNearestNode(XmGraphNode graph,
 
   return node;
 }
-
-Widget 
+
+Widget
 _XmTraverse(XmTravGraph list,
 	    XmTraversalDirection action,
 	    XmTraversalDirection *local_dir,
@@ -842,7 +830,7 @@ _XmTraverse(XmTravGraph list,
       if (traverse_control)
 	*local_dir = LocalDirection(reference_wid, action);
       else
-	*local_dir = (action == XmTRAVERSE_GLOBALLY_FORWARD ? 
+	*local_dir = (action == XmTRAVERSE_GLOBALLY_FORWARD ?
 		      XmTRAVERSE_NEXT_TAB_GROUP : XmTRAVERSE_PREV_TAB_GROUP);
       break;
 
@@ -874,8 +862,8 @@ _XmTraverse(XmTravGraph list,
   else
     return NULL;
 }
-
-static XmTraversalNode 
+
+static XmTraversalNode
 TraverseTab(XmTraversalNode cur_node,
 	    XmTraversalDirection action)
 {
@@ -936,7 +924,7 @@ TraverseTab(XmTraversalNode cur_node,
 	     */
 	    XmTraversalNode top_node = new_tab;
 
-	    while (((new_tab = (XmTraversalNode) 
+	    while (((new_tab = (XmTraversalNode)
 		     new_tab->any.tab_parent.link) != NULL) &&
 		   ((action != XmTRAVERSE_CURRENT) || (new_tab != cur_node)) &&
 		   !(new_tab->any.next))
@@ -1021,8 +1009,8 @@ TraverseTab(XmTraversalNode cur_node,
 
   return new_tab;
 }
-
-void 
+
+void
 _XmFreeTravGraph(XmTravGraph trav_list)
 {
   if (trav_list->num_alloc)
@@ -1036,8 +1024,8 @@ _XmFreeTravGraph(XmTravGraph trav_list)
       trav_list->top = NULL;
     }
 }
-
-void 
+
+void
 _XmTravGraphRemove(XmTravGraph tgraph,
 		   Widget wid)
 {
@@ -1049,25 +1037,24 @@ _XmTravGraphRemove(XmTravGraph tgraph,
 	node->any.widget = NULL;
     }
 }
-
-void 
+
+void
 _XmTravGraphAdd(XmTravGraph tgraph,
 		Widget wid)
 {
-  if (tgraph->num_entries && 
+  if (tgraph->num_entries &&
       !GetNodeOfWidget(tgraph, wid))
     _XmFreeTravGraph(tgraph);
 }
-
-/*ARGSUSED*/
-void 
+
+void
 _XmTravGraphUpdate(XmTravGraph tgraph,
 		   Widget wid)	/* unused */
 {
   _XmFreeTravGraph(tgraph);
 }
-
-Boolean 
+
+Boolean
 _XmNewTravGraph(XmTravGraph trav_list,
 		Widget top_wid,
 		Widget init_current)
@@ -1142,10 +1129,10 @@ _XmNewTravGraph(XmTravGraph trav_list,
 
   return TRUE;
 }
-
+
 #define UnallocLastListEntry(list) (--(list->num_entries))
 
-static XmTraversalNode 
+static XmTraversalNode
 AllocListEntry(
         XmTravGraph list)
 {
@@ -1159,25 +1146,25 @@ AllocListEntry(
       else
 	list->num_alloc = XmTRAV_LIST_ALLOC_INCREMENT;
 
-      list->head = (XmTraversalNode) 
+      list->head = (XmTraversalNode)
 	XtMalloc(list->num_alloc * sizeof(XmTraversalNodeRec));
     }
   else
     {
       if (list->num_entries == list->num_alloc)
-	{   
+	{
 	  list->num_alloc += XmTRAV_LIST_ALLOC_INCREMENT;
 
-	  list->head = (XmTraversalNode) 
+	  list->head = (XmTraversalNode)
 	    XtRealloc((char *) list->head,
 		      list->num_alloc * sizeof(XmTraversalNodeRec));
-	} 
+	}
     }
 
   return &(list->head[list->num_entries++]);
 }
-
-static Boolean 
+
+static Boolean
 GetChildList(Widget composite,
 	     Widget **widget_list,
 	     Cardinal *num_in_list)
@@ -1188,25 +1175,25 @@ GetChildList(Widget composite,
       (mext = (XmManagerClassExt *)
        _XmGetClassExtensionPtr((XmGenericClassExt *)
 			       &(((XmManagerWidgetClass) XtClass(composite))
-				 ->manager_class.extension), NULLQUARK)) && 
+				 ->manager_class.extension), NULLQUARK)) &&
       *mext &&
       (*mext)->traversal_children)
     {
-      return (*((*mext)->traversal_children))(composite, 
-					      widget_list, 
+      return (*((*mext)->traversal_children))(composite,
+					      widget_list,
 					      num_in_list);
     }
 
   return FALSE;
 }
-
-static void 
+
+static void
 GetNodeList(Widget wid,
 	    XRectangle *parent_rect,
 	    XmTravGraph trav_list,
 	    int tab_parent,
 	    int control_parent)
-{   
+{
   /* This routine returns a node list of all navigable widgets in
    * a sub-hierarchy.  The order of the list is such that the node
    * of widget's parent is guaranteed to precede the child widget's
@@ -1239,7 +1226,7 @@ GetNodeList(Widget wid,
   list_entry->any.rect.width = XtWidth(wid);
   list_entry->any.rect.height = XtHeight(wid);
   /* Bootstrap: first entry must behave like a tab group. */
-  list_entry->any.nav_type = (list_entry_offset ? 
+  list_entry->any.nav_type = (list_entry_offset ?
 			      _XmGetNavigationType(wid) : XmSTICKY_TAB_GROUP);
 
   if (node_type == XmCONTROL_NAVIGABLE)
@@ -1305,15 +1292,15 @@ GetNodeList(Widget wid,
 	}
 
       for (i = 0; i < num_trav_children; i++)
-	GetNodeList(trav_children[i], list_entry_rect, trav_list, 
+	GetNodeList(trav_children[i], list_entry_rect, trav_list,
 		    list_entry_offset, controls_graph_offset);
 
       if (free_child_list)
 	XtFree((char *) trav_children);
     }
 }
-
-static XmTraversalNode 
+
+static XmTraversalNode
 GetNodeFromGraph(XmGraphNode graph,
 		 Widget wid)
 {
@@ -1329,8 +1316,8 @@ GetNodeFromGraph(XmGraphNode graph,
 
   return NULL;
 }
-
-static XmTraversalNode 
+
+static XmTraversalNode
 GetNodeOfWidget(XmTravGraph trav_list,
 		Widget wid)
 {
@@ -1354,7 +1341,7 @@ GetNodeOfWidget(XmTravGraph trav_list,
     {
       unsigned cnt = 0;
       XmTraversalNode list_ptr = trav_list->head;
-      
+
       while (cnt++ < trav_list->num_entries)
 	{
 	  if (list_ptr->any.widget == wid)
@@ -1366,8 +1353,8 @@ GetNodeOfWidget(XmTravGraph trav_list,
 
   return NULL;
 }
-
-static void 
+
+static void
 LinkNodeList(XmTravGraph list)
 {
   XmTraversalNode head = list->head;
@@ -1405,12 +1392,12 @@ LinkNodeList(XmTravGraph list)
       ++entry;
     }
 }
-
+
 /*
  * A helper for Sort().  Determine whether two nodes overlap enough to
  * be considered part of the same row.
  */
-static Boolean 
+static Boolean
 NodesOverlap(XmTraversalNode nodeA,
 	     XmTraversalNode nodeB,
 	     Boolean 	     horizontal)
@@ -1433,7 +1420,7 @@ NodesOverlap(XmTraversalNode nodeA,
     {
       Acent = nodeA->any.rect.x + ((nodeA->any.rect.width) >> 1);
       Bcent = nodeB->any.rect.x + ((nodeB->any.rect.width) >> 1);
-      
+
       if (((nodeA->any.rect.x + nodeA->any.rect.width) < Bcent) &&
 	  (Acent < (Dimension) nodeB->any.rect.x))
 	return False;
@@ -1444,7 +1431,7 @@ NodesOverlap(XmTraversalNode nodeA,
 
   return True;
 }
-
+
 /*
  * A helper for Sort().  Truncate a row to a given length, putting
  * orphaned items back into the free list in order.
@@ -1491,7 +1478,7 @@ TruncateRow(XmTraversalRow  *row,
 	}
     }
 }
-
+
 /* A helper for Sort().  Append a node to a row. */
 static void
 AppendToRow(XmTraversalNode item,
@@ -1543,7 +1530,7 @@ AppendToRow(XmTraversalNode item,
 	}
     }
 }
-
+
 /*
  * A helper for Sort().  Test whether a node dominates another node
  * in the same row.  A dominant node may force itself into an existing
@@ -1572,10 +1559,10 @@ NodeDominates(XmTraversalNode node_1,
 		(node_2->any.rect.x + node_2->any.rect.width));
     }
 }
-
-static void 
+
+static void
 Sort(XmTraversalNode *list,
-     size_t           n_mem, 
+     size_t           n_mem,
      Boolean	      horizontal,
      XmDirection      layout)
 {
@@ -1632,7 +1619,7 @@ Sort(XmTraversalNode *list,
 	  /* Append this node if it overlaps the end of the row. */
 	  if (NodesOverlap(node, rows[row].items[row_len - 1], horizontal))
 	    {
-	      TruncateRow(rows + row, row_len, list, &first_free, n_mem, 
+	      TruncateRow(rows + row, row_len, list, &first_free, n_mem,
 			  horizontal, layout);
 	      AppendToRow(node, rows + row, horizontal, layout);
 	      done = True;
@@ -1640,12 +1627,7 @@ Sort(XmTraversalNode *list,
 
 	  /* Else if this node is dominant backtrack and try again. */
 	  else if ((row_len > 1) && might_overlap &&
-#ifdef FIX_1272
-		   NodeDominates(node, rows[row].items[row_len-1],
-#else
-		   NodeDominates(node, rows[row].items[rows[row].num_items-1], 
-#endif
-				 horizontal, layout))
+		   NodeDominates(node, rows[row].items[row_len-1], horizontal, layout))
 	    row_len--;
 
 	  /* Try the next row. */
@@ -1677,11 +1659,11 @@ Sort(XmTraversalNode *list,
 	      new_data.min_hint = node->any.rect.x;
 	      new_data.max_hint = node->any.rect.x + node->any.rect.width;
 	    }
-	  
+
 	  num_rows++;
-	  rows = (XmTraversalRow *) 
+	  rows = (XmTraversalRow *)
 	    XtRealloc((char*) rows, num_rows * sizeof(XmTraversalRow));
-	  
+
 	  /* Keep rows sorted by initial element. */
 	  for (row = new_index; row > 0; row--)
 	    {
@@ -1701,7 +1683,7 @@ Sort(XmTraversalNode *list,
 
   /* Copy nodes out of rows and into the final order. */
   first_free = 0;
-  if ((horizontal && 
+  if ((horizontal &&
        XmDirectionMatchPartial(layout, XmLEFT_TO_RIGHT, XmHORIZONTAL_MASK)) ||
       (!horizontal &&
        XmDirectionMatchPartial(layout, XmTOP_TO_BOTTOM, XmVERTICAL_MASK)))
@@ -1731,8 +1713,8 @@ Sort(XmTraversalNode *list,
   assert(first_free == n_mem);
   XtFree((char*) rows);
 }
-
-static int 
+
+static int
 CompareExclusive(XmConst void *A,
 		 XmConst void *B)
 {
@@ -1746,9 +1728,9 @@ CompareExclusive(XmConst void *A,
   else if (PositionA > PositionB)
     return 1;
   else
-    return 0;  
+    return 0;
 }
-
+
 /* Select a horizontal comparator for this layout direction. */
 static Comparator
 HorizNodeComparator(XmDirection layout)
@@ -1768,9 +1750,9 @@ HorizNodeComparator(XmDirection layout)
 	return CompareNodesHorizRB;
     }
 }
-
+
 /* Compare nodes horizontally in a Left-to-Right, Top-to-Bottom layout. */
-static int 
+static int
 CompareNodesHorizLT(XmConst void *A,
 		    XmConst void *B)
 {
@@ -1787,13 +1769,13 @@ CompareNodesHorizLT(XmConst void *A,
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes horizontally in a Right-to-Left, Top-to-Bottom layout. */
-static int 
+static int
 CompareNodesHorizRT(XmConst void *A,
 		    XmConst void *B)
 {
@@ -1812,13 +1794,13 @@ CompareNodesHorizRT(XmConst void *A,
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes horizontally in a Left-to-Right, Bottom-to-Top layout. */
-static int 
+static int
 CompareNodesHorizLB(XmConst void *A,
 		    XmConst void *B)
 {
@@ -1837,13 +1819,13 @@ CompareNodesHorizLB(XmConst void *A,
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes horizontally in a Right-to-Left, Bottom-to-Top layout. */
-static int 
+static int
 CompareNodesHorizRB(XmConst void *A,
 		    XmConst void *B)
 {
@@ -1855,7 +1837,7 @@ CompareNodesHorizRB(XmConst void *A,
     return ((nodeA->any.rect.x + nodeA->any.rect.width) >
 	    (nodeB->any.rect.x + nodeB->any.rect.width)) ? -1 : 1;
 
-  if ((nodeA->any.rect.y + nodeA->any.rect.height) != 
+  if ((nodeA->any.rect.y + nodeA->any.rect.height) !=
       (nodeB->any.rect.y + nodeB->any.rect.height))
     return ((nodeA->any.rect.y + nodeA->any.rect.height) >
 	    (nodeB->any.rect.y + nodeB->any.rect.height)) ? -1 : 1;
@@ -1864,11 +1846,11 @@ CompareNodesHorizRB(XmConst void *A,
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Select a vertical comparator for this layout direction. */
 static Comparator
 VertNodeComparator(XmDirection layout)
@@ -1888,9 +1870,9 @@ VertNodeComparator(XmDirection layout)
 	return CompareNodesVertRB;
     }
 }
-
+
 /* Compare nodes vertically in a Left-to-Right, Top-to-Bottom layout. */
-static int 
+static int
 CompareNodesVertLT(XmConst void *A,
 		   XmConst void *B)
 {
@@ -1904,16 +1886,16 @@ CompareNodesVertLT(XmConst void *A,
     return (nodeA->any.rect.x < nodeB->any.rect.x) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
   if (nodeA->any.rect.height != nodeB->any.rect.height)
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes vertically in a Right-to-Left, Top-to-Bottom layout. */
-static int 
+static int
 CompareNodesVertRT(XmConst void *A,
 		   XmConst void *B)
 {
@@ -1923,29 +1905,29 @@ CompareNodesVertRT(XmConst void *A,
   if (nodeA->any.rect.y != nodeB->any.rect.y)
     return (nodeA->any.rect.y < nodeB->any.rect.y) ? -1 : 1;
 
-  if ((nodeA->any.rect.x + nodeA->any.rect.width) != 
+  if ((nodeA->any.rect.x + nodeA->any.rect.width) !=
       (nodeB->any.rect.x + nodeB->any.rect.width))
     return ((nodeA->any.rect.x + nodeA->any.rect.width) >
 	    (nodeB->any.rect.x + nodeB->any.rect.width)) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
   if (nodeA->any.rect.height != nodeB->any.rect.height)
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes vertically in a Left-to-Right, Bottom-to-Top layout. */
-static int 
+static int
 CompareNodesVertLB(XmConst void *A,
 		   XmConst void *B)
 {
   register XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
   register XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
 
-  if ((nodeA->any.rect.y + nodeA->any.rect.height) != 
+  if ((nodeA->any.rect.y + nodeA->any.rect.height) !=
       (nodeB->any.rect.y + nodeB->any.rect.height))
     return ((nodeA->any.rect.y + nodeA->any.rect.height) >
 	    (nodeB->any.rect.y + nodeB->any.rect.height)) ? -1 : 1;
@@ -1954,44 +1936,44 @@ CompareNodesVertLB(XmConst void *A,
     return (nodeA->any.rect.x < nodeB->any.rect.x) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
   if (nodeA->any.rect.height != nodeB->any.rect.height)
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Compare nodes vertically in a Right-to-Left, Bottom-to-Top layout. */
-static int 
+static int
 CompareNodesVertRB(XmConst void *A,
 		   XmConst void *B)
 {
   register XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
   register XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
 
-  if ((nodeA->any.rect.y + nodeA->any.rect.height) != 
+  if ((nodeA->any.rect.y + nodeA->any.rect.height) !=
       (nodeB->any.rect.y + nodeB->any.rect.height))
     return ((nodeA->any.rect.y + nodeA->any.rect.height) >
 	    (nodeB->any.rect.y + nodeB->any.rect.height)) ? -1 : 1;
 
-  if ((nodeA->any.rect.x + nodeA->any.rect.width) != 
+  if ((nodeA->any.rect.x + nodeA->any.rect.width) !=
       (nodeB->any.rect.x + nodeB->any.rect.width))
     return ((nodeA->any.rect.x + nodeA->any.rect.width) >
 	    (nodeB->any.rect.x + nodeB->any.rect.width)) ? -1 : 1;
 
   if (nodeA->any.rect.width != nodeB->any.rect.width)
-    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;	      
+    return (nodeA->any.rect.width < nodeB->any.rect.width) ? -1 : 1;
 
   if (nodeA->any.rect.height != nodeB->any.rect.height)
     return (nodeA->any.rect.height < nodeB->any.rect.height) ? -1 : 1;
 
-  return 0;  
+  return 0;
 }
-
+
 /* Tab groups are sorted by "forward" direction. */
 
-static void 
+static void
 SortTabGraph(XmGraphNode graph,
 	     Boolean exclusive,
 	     XmDirection layout)
@@ -2010,7 +1992,7 @@ SortTabGraph(XmGraphNode graph,
       while ((node = node->any.next) != NULL)
 	++num_nodes;
 
-      node_list = (XmTraversalNode*) 
+      node_list = (XmTraversalNode*)
 	XmStackAlloc(num_nodes * sizeof(XmTraversalNode), storage);
 
       /* Now copy nodes onto node list for sorting. */
@@ -2036,13 +2018,13 @@ SortTabGraph(XmGraphNode graph,
 	      Boolean reverse;
 
 	      /* Sort axis depends on layout precedence. */
-	      horizontal = XmDirectionMatchPartial(layout, 
+	      horizontal = XmDirectionMatchPartial(layout,
 						   XmPRECEDENCE_HORIZ_MASK,
 						   XmPRECEDENCE_MASK);
-	      reverse = (horizontal ? 
-			 !XmDirectionMatchPartial(layout, XmLEFT_TO_RIGHT, 
+	      reverse = (horizontal ?
+			 !XmDirectionMatchPartial(layout, XmLEFT_TO_RIGHT,
 						  XmHORIZONTAL_MASK) :
-			 !XmDirectionMatchPartial(layout, XmTOP_TO_BOTTOM, 
+			 !XmDirectionMatchPartial(layout, XmTOP_TO_BOTTOM,
 						  XmVERTICAL_MASK));
 
 	      Sort((node_list + 1), (num_nodes - 1), horizontal, layout);
@@ -2054,14 +2036,14 @@ SortTabGraph(XmGraphNode graph,
 		  /* If right/down is not forward reverse the list. */
 		  for (idx = 0; idx < ((num_nodes - 1) / 2); idx++)
 		    {
-		      memcpy((char*) &tmp, 
+		      memcpy((char*) &tmp,
 			     (char*) (node_list + idx + 1),
 			     sizeof(XmTraversalNode));
 		      memcpy((char*) (node_list + idx + 1),
 			     (char*) (node_list + num_nodes - idx - 1),
 			     sizeof(XmTraversalNode));
 		      memcpy((char*) (node_list + num_nodes - idx - 1),
-			     (char*) &tmp, 
+			     (char*) &tmp,
 			     sizeof(XmTraversalNode));
 		    }
 
@@ -2100,10 +2082,10 @@ SortTabGraph(XmGraphNode graph,
       XmStackFree((char*) node_list, storage);
     }
 }
-
+
 /* Controls are sorted by absolute direction. */
 
-static void 
+static void
 SortControlGraph(XmGraphNode graph,
 		 Boolean exclusive,
 		 XmDirection layout)
@@ -2122,7 +2104,7 @@ SortControlGraph(XmGraphNode graph,
       while ((node = node->any.next) != NULL)
 	++num_nodes;
 
-      node_list = (XmTraversalNode*) 
+      node_list = (XmTraversalNode*)
 	XmStackAlloc(num_nodes * sizeof(XmTraversalNode), storage);
 
       /* Now copy nodes onto node list for sorting. */
@@ -2171,7 +2153,7 @@ SortControlGraph(XmGraphNode graph,
 	  (*list_ptr)->control.up = *(list_ptr - 1);
 	}
       (*list_ptr)->control.down = *node_list;
-	  
+
       /* If vertical precedence is required set initial focus on */
       /* the first column instead of the first row. */
       if (! XmDirectionMatchPartial(layout, XmPRECEDENCE_HORIZ_MASK,
@@ -2184,11 +2166,11 @@ SortControlGraph(XmGraphNode graph,
       XmStackFree((char*) node_list, storage);
     }
 }
-
-static void 
+
+static void
 SortNodeList(XmTravGraph trav_list)
 {
-  XmTraversalNode ptr = trav_list->head;  
+  XmTraversalNode ptr = trav_list->head;
   unsigned cnt = 0;
 
   _XmProcessLock();
@@ -2211,7 +2193,7 @@ SortNodeList(XmTravGraph trav_list)
     }
     _XmProcessUnlock();
 }
-
+
 Boolean
 _XmSetInitialOfTabGraph(XmTravGraph trav_graph,
 			Widget tab_group,
@@ -2225,9 +2207,9 @@ _XmSetInitialOfTabGraph(XmTravGraph trav_graph,
        (tab_node->any.type == XmCONTROL_GRAPH_NODE)))
     {
       if (SetInitialNode((XmGraphNode) tab_node,
-		         GetNodeFromGraph((XmGraphNode) tab_node, 
+		         GetNodeFromGraph((XmGraphNode) tab_node,
 					  init_focus)) ||
-	  ((control_graph_node = (XmGraphNode) 
+	  ((control_graph_node = (XmGraphNode)
 	    GetNodeFromGraph((XmGraphNode) tab_node, tab_group)) &&
 	   SetInitialNode(control_graph_node,
 			  GetNodeFromGraph(control_graph_node, init_focus)) &&
@@ -2240,7 +2222,7 @@ _XmSetInitialOfTabGraph(XmTravGraph trav_graph,
 
   return FALSE;
 }
-
+
 static Boolean
 SetInitialNode(XmGraphNode graph,
 	       XmTraversalNode init_node)
@@ -2274,12 +2256,12 @@ SetInitialNode(XmGraphNode graph,
 
   return FALSE;
 }
-
-static void 
+
+static void
 SetInitialWidgets(XmTravGraph trav_list)
 {
   Widget init_focus;
-  XmTraversalNode ptr = trav_list->head;  
+  XmTraversalNode ptr = trav_list->head;
   XmTraversalNode init_node;
   unsigned cnt = 0;
 
@@ -2291,7 +2273,7 @@ SetInitialWidgets(XmTravGraph trav_list)
 	{
 	  if (ptr->any.widget &&
 	      XmIsManager(ptr->any.widget) &&
-	      (init_focus = 
+	      (init_focus =
 	       ((XmManagerWidget) ptr->any.widget)->manager.initial_focus) &&
 	      (init_node = GetNodeFromGraph((XmGraphNode) ptr, init_focus)))
 	    {
@@ -2317,8 +2299,8 @@ SetInitialWidgets(XmTravGraph trav_list)
       ++cnt;
     }
 }
-
-static void 
+
+static void
 GetRectRelativeToShell(Widget wid,
 		       XRectangle *rect)
 {
@@ -2339,7 +2321,7 @@ GetRectRelativeToShell(Widget wid,
   rect->x = x;
   rect->y = y;
 }
-
+
 void
 _XmTabListAdd(XmTravGraph graph,
 	      Widget wid)
@@ -2351,7 +2333,7 @@ _XmTabListAdd(XmTravGraph graph,
 	  Widget shell = _XmFindTopMostShell(wid);
 
 	  graph->tab_list_alloc = XmTAB_LIST_ALLOC_INCREMENT;
-	  graph->excl_tab_list = (Widget *) 
+	  graph->excl_tab_list = (Widget *)
 	    XtMalloc(graph->tab_list_alloc * sizeof(Widget));
 	  graph->excl_tab_list[graph->num_tab_list++] = shell;
 	}
@@ -2359,7 +2341,7 @@ _XmTabListAdd(XmTravGraph graph,
       if (graph->num_tab_list >= graph->tab_list_alloc)
 	{
 	  graph->tab_list_alloc += XmTAB_LIST_ALLOC_INCREMENT;
-	  graph->excl_tab_list = (Widget *) 
+	  graph->excl_tab_list = (Widget *)
 	    XtRealloc((char *) graph->excl_tab_list,
 		      graph->tab_list_alloc * sizeof(Widget));
 	}
@@ -2367,7 +2349,7 @@ _XmTabListAdd(XmTravGraph graph,
       graph->excl_tab_list[graph->num_tab_list++] = wid;
     }
 }
-
+
 void
 _XmTabListDelete(XmTravGraph graph,
 		 Widget wid)
@@ -2378,12 +2360,12 @@ _XmTabListDelete(XmTravGraph graph,
       graph->tab_list_alloc)
     {
       graph->tab_list_alloc -= XmTAB_LIST_ALLOC_INCREMENT;
-      graph->excl_tab_list = (Widget *) 
+      graph->excl_tab_list = (Widget *)
 	XtRealloc((char *) graph->excl_tab_list,
 		  graph->tab_list_alloc * sizeof(Widget));
     }
 }
-
+
 static int
 SearchTabList(XmTravGraph graph,
 	      Widget wid)
@@ -2398,7 +2380,7 @@ SearchTabList(XmTravGraph graph,
 
   return -1;
 }
-
+
 static void
 DeleteFromTabList(XmTravGraph graph,
 		  int indx)
@@ -2414,7 +2396,7 @@ DeleteFromTabList(XmTravGraph graph,
       --(graph->num_tab_list);
     }
 }
-
+
 static Boolean
 LastControl(Widget w,
 	    XmTraversalDirection dir,
@@ -2426,7 +2408,7 @@ LastControl(Widget w,
   if (!cur_node)
     return False;
 
-  if (cur_node->any.type == XmCONTROL_GRAPH_NODE) 
+  if (cur_node->any.type == XmCONTROL_GRAPH_NODE)
     {
       /* This is only true on composites. */
       cur_node = cur_node->graph.sub_head;
@@ -2441,11 +2423,11 @@ LastControl(Widget w,
 
   new_ctl = cur_node;
   do {
-    switch(dir) 
+    switch(dir)
       {
       case XmTRAVERSE_GLOBALLY_FORWARD:
 	/* The action will cause wrapping when the new_ctrl matches the
-         * last item on the tab_parent's list.  
+         * last item on the tab_parent's list.
 	 */
 	if (new_ctl == new_ctl->any.tab_parent.link->sub_head->any.prev)
 	  return True;
@@ -2455,7 +2437,7 @@ LastControl(Widget w,
 
       case XmTRAVERSE_GLOBALLY_BACKWARD:
 	/* Moving backward will cause wrapping when the new control is the
-	 * first item in the tab group.  
+	 * first item in the tab group.
 	 */
 	if (new_ctl == new_ctl->any.tab_parent.link->sub_head)
 	  return True;
@@ -2472,7 +2454,7 @@ LastControl(Widget w,
 
   return False;
 }
-
+
 static XmTraversalDirection
 LocalDirection(Widget w,
 	       XmTraversalDirection direction)
@@ -2505,8 +2487,8 @@ LocalDirection(Widget w,
   else
     layout = _XmGetLayoutDirection(w);
 
-  if (XmDirectionMatchPartial(layout, 
-			      XmPRECEDENCE_HORIZ_MASK, 
+  if (XmDirectionMatchPartial(layout,
+			      XmPRECEDENCE_HORIZ_MASK,
 			      XmPRECEDENCE_MASK))
     {
       /* Horizontal precendence. */
@@ -2524,7 +2506,7 @@ LocalDirection(Widget w,
 	return (forward ? XmTRAVERSE_UP : XmTRAVERSE_DOWN);
     }
 }
-
+
 #ifdef DEBUG_TRAVERSAL
 
 #define WNAME(node) (XtName(node->any.widget))
@@ -2568,7 +2550,7 @@ PrintGraph(XmTraversalNode node)
 static void
 PrintNodeList(XmTravGraph list)
 {
-  XmTraversalNode ptr = list->head;  
+  XmTraversalNode ptr = list->head;
   unsigned idx;
 
   for (idx = 0; idx < list->num_entries; idx++)

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,13 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.4
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -34,28 +33,16 @@ static char rcsid[] = "$TOG: WmFunction.c /main/19 1998/04/20 13:00:48 mgreess $
 #endif
 #endif
 
-#define FIX_1350    1
-
 /*
  * Included Files:
  */
 
 #include "WmGlobal.h"
 #include <sys/types.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#else
-extern int putenv();
-extern char *getenv();
-extern int atoi();
-extern pid_t wait();
 
-#ifndef PORT_NOVFORK
-extern pid_t vfork();
-#endif /* PORT_NOVFORK */
-#endif
 #ifndef WSM
 #include <signal.h>
 #endif
@@ -134,7 +121,7 @@ static ClientData *dirtyStackEntry = NULL;
 static ClientData *dirtyLeader = NULL;
 
 #ifdef WSM
-
+
 /***********************<->*************************************
  *
  *  F_Action (args, pCD, event)
@@ -183,13 +170,13 @@ F_Action (String actionName, ClientData *pCD, XEvent *event)
 	WmFrontPanelSetBusy (True);
     }
 
-    
+
     DtActionInvoke (wmGD.pActiveSD->screenTopLevelW1,
 		    pAP->actionName, pAP->aap, pAP->numArgs,
                     pAP->szExecParms, NULL, NULL, 1, NULL, NULL);
-    
+
     /*
-     * Restore original DISPLAY environment variable 
+     * Restore original DISPLAY environment variable
      */
     if(wmGD.pActiveSD->displayString && wmGD.displayString)
     {
@@ -197,11 +184,11 @@ F_Action (String actionName, ClientData *pCD, XEvent *event)
     }
 
     return (True);
-    
+
 } /* END OF FUNCTION F_Action */
 #endif /* WSM */
 
-
+
 /******************************<->*************************************
  *
  *  F_Beep (args, pCD, event)
@@ -240,7 +227,7 @@ Boolean F_Beep (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Beep */
 
 
-
+
 /*
  * Handle Special case where the dirty window is the top most
  * transient window.  When this is the case, raising the window
@@ -278,7 +265,7 @@ ClientData *pcd;
 } /* END OF FUNCTION */
 
 
-
+
 Boolean ForceLowerWindow (ClientData *pcd)
 {
 #if 0
@@ -293,7 +280,7 @@ Boolean ForceLowerWindow (ClientData *pcd)
     unsigned int mask;
     ClientListEntry 	*pCLE;
 
-    /* 
+    /*
      * Find lowest window in this workspace. We'll stack this transient
      * below it.
      */
@@ -356,7 +343,7 @@ Boolean ForceLowerWindow (ClientData *pcd)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Lower (args, pCD, event)
@@ -478,7 +465,7 @@ Boolean F_Lower (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Lower */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Lower (pCD, pStackEntry)
@@ -494,8 +481,8 @@ Boolean F_Lower (String args, ClientData *pCD, XEvent *event)
  *  Inputs:
  *  ------
  *  pCD = pointer to the client data of the window (or icon) to be lowered.
- * 
- *  pStackEntry = pointer to client list entry for window that is to be 
+ *
+ *  pStackEntry = pointer to client list entry for window that is to be
  *	below the lowered window (if NULL, window is lowered to the bottom
  *	of the	stack).
  *
@@ -514,19 +501,19 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
     if (pCD->pECD)
     {
 	/*
-	 * Window has been reparented into the front panel. 
+	 * Window has been reparented into the front panel.
 	 * Don't follow through on window stacking change.
 	 */
 	return;
     }
-    else 
+    else
 #else /* PANELIST */
 #endif /* PANELIST */
 #ifdef WSM
-    if (ClientInWorkspace(pWS, pCD)  && 
+    if (ClientInWorkspace(pWS, pCD)  &&
 	(!pStackEntry || ClientInWorkspace (pWS, pStackEntry->pCD)))
     {
-	/* 
+	/*
 	 * Both clients are in the current workspace. Set
 	 * client indices so that the access macros work.
 	 */
@@ -551,7 +538,7 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
     if ((pcdLeader->clientState == MINIMIZED_STATE) && !P_ICON_BOX(pcdLeader))
     {
         /*
-         * If a dirtyStackEntry exists, return it to its original place 
+         * If a dirtyStackEntry exists, return it to its original place
          * in the stack (for all stacking types)
          */
         if (dirtyStackEntry)
@@ -581,9 +568,9 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 	{
 	    if (ACTIVE_PSD->lastClient != &pcdLeader->iconEntry)
 	    {
-		StackWindow (pWS, &pcdLeader->iconEntry, 
+		StackWindow (pWS, &pcdLeader->iconEntry,
 			     False /*on bottom*/, (ClientListEntry *) NULL);
-		MoveEntryInList (pWS, &pcdLeader->iconEntry, 
+		MoveEntryInList (pWS, &pcdLeader->iconEntry,
 			     False /*on bottom*/, (ClientListEntry *) NULL);
 	    }
 	}
@@ -627,7 +614,7 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 		 * of their respective transient subtrees.
 		 */
 		for (pcdLdr = pCD->transientLeader;
-			pcdLdr; 
+			pcdLdr;
 				pcdLdr = pcdLdr->transientLeader)
 		{
 		    bLeaderRestacked |= BumpPrimaryToBottom (pcdLdr);
@@ -682,7 +669,7 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 
 	if (dirtyStackEntry)
 	{
-	    /* 
+	    /*
 	     * If lowering a window in the same family as the dirty
 	     * transient window, then just restack before lowering.
 	     * Else, restore the dirty transient in place before
@@ -752,7 +739,7 @@ void Do_Lower (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 } /* END OF FUNCTION Do_Lower */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_CircleDown (args, pCD, event)
@@ -848,7 +835,7 @@ Boolean F_Circle_Down (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Circle_Down */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Circle_Up (args, pCD, event)
@@ -945,7 +932,7 @@ Boolean F_Circle_Up (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Circle_Up */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Focus_Color (args, pCD, event)
@@ -986,7 +973,7 @@ Boolean F_Focus_Color (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Focus_Color */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Exec (args, pCD, event)
@@ -1018,7 +1005,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
       {
 	putenv(wmGD.pActiveSD->displayString);
       }
-    
+
 #ifdef PANELIST
     if (wmGD.dtSD)
     {
@@ -1040,7 +1027,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
      * Moved before fork() to avoid race condition.
      * Change handler to SIG_DFL, SIG_IGN causes bug. paulsh@sequent 31-08-95.
      */
-    chldStat = (void (*)())signal (SIGCHLD, SIG_DFL); 
+    chldStat = (void (*)())signal (SIGCHLD, SIG_DFL);
 #endif
 
     /*
@@ -1068,7 +1055,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
 #endif /* SYSV */
 #endif /* SVR4 */
 #endif /* NO_SETPGRP */
-#ifdef WSM 
+#ifdef WSM
 	/*
 	 * Clean up window manager resources.
 	 * The X file descriptor should be automatically closed.
@@ -1090,7 +1077,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
 #endif /* WSM */
 
 	/*
-	 * Exec the command using $MWMSHELL if set or 
+	 * Exec the command using $MWMSHELL if set or
 	 * $SHELL if set and $MWMSHELL not set or sh.
 	 */
 
@@ -1190,7 +1177,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Exec */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Quit_Mwm (args, pCD, event)
@@ -1213,13 +1200,13 @@ Boolean F_Quit_Mwm (String args, ClientData *pCD, XEvent *event)
     {
 	Do_Quit_Mwm(False);
     }
-    
+
     return (False);
 
 } /* END OF FUNCTION F_Quit_Mwm */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Quit_Mwm (diedOnRestart)
@@ -1259,7 +1246,7 @@ void Do_Quit_Mwm (Boolean diedOnRestart)
 		{
 		    if (pNextEntry->type == NORMAL_STATE)
 		    {
-			if (!(pNextEntry->pCD->clientFlags & 
+			if (!(pNextEntry->pCD->clientFlags &
 			      CLIENT_WM_CLIENTS))
 			{
 			    ReBorderClient (pNextEntry->pCD, diedOnRestart);
@@ -1285,7 +1272,7 @@ void Do_Quit_Mwm (Boolean diedOnRestart)
         XSync (DISPLAY, False);
         XCloseDisplay (DISPLAY);
     }
-    
+
     if(diedOnRestart)
     {
 	exit (WM_ERROR_EXIT_VALUE);
@@ -1297,7 +1284,7 @@ void Do_Quit_Mwm (Boolean diedOnRestart)
 
 } /* END OF FUNCTION Do_Quit_Mwm */
 
-
+
 /*************************************<->*************************************
  *
  *  ReBorderClient (pCD, reMapClient)
@@ -1328,11 +1315,11 @@ void ReBorderClient (ClientData *pCD, Boolean reMapClient)
         {
 	    XUnmapWindow (DISPLAY, pCD->iconWindow);
 #ifdef WSM
-	    XReparentWindow (DISPLAY, pCD->iconWindow, 
-		ROOT_FOR_CLIENT(pCD), pCD->pWsList->iconX, 
+	    XReparentWindow (DISPLAY, pCD->iconWindow,
+		ROOT_FOR_CLIENT(pCD), pCD->pWsList->iconX,
 		pCD->pWsList->iconY);
 #else /* WSM */
-	    XReparentWindow (DISPLAY, pCD->iconWindow, 
+	    XReparentWindow (DISPLAY, pCD->iconWindow,
 		ROOT_FOR_CLIENT(pCD), pCD->iconX, pCD->iconY);
 #endif /* WSM */
         }
@@ -1359,7 +1346,7 @@ void ReBorderClient (ClientData *pCD, Boolean reMapClient)
 		}
 	    }
 	    XUnmapWindow(DISPLAY, pCD->clientFrameWin);
-	    XReparentWindow (DISPLAY, pCD->client, 
+	    XReparentWindow (DISPLAY, pCD->client,
 			     ROOT_FOR_CLIENT(pCD), x, y);
 	}
 	else
@@ -1380,7 +1367,7 @@ void ReBorderClient (ClientData *pCD, Boolean reMapClient)
 	    windowChanges.x = x;
 	    windowChanges.y = y;
 	    windowChanges.border_width = pCD->xBorderWidth;
-	    XConfigureWindow (DISPLAY, pCD->client, 
+	    XConfigureWindow (DISPLAY, pCD->client,
 			      CWBorderWidth | CWX | CWY, &windowChanges);
 	}
 
@@ -1397,7 +1384,7 @@ void ReBorderClient (ClientData *pCD, Boolean reMapClient)
 } /* END OF FUNCTION ReBorderClient */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Focus_Key (args, pCD, event)
@@ -1434,7 +1421,7 @@ Boolean F_Focus_Key (String args, ClientData *pCD, XEvent *event)
 
 } /* END OF FUNCTION F_Focus_Key */
 
-
+
 /*************************************<->*************************************
  *
  *  FindSomeReasonableClient
@@ -1442,8 +1429,8 @@ Boolean F_Focus_Key (String args, ClientData *pCD, XEvent *event)
  *  Description:
  *  -----------
  *  Find a client, any client to set the focus to, return client or NULL.
- *  This code is ripped off from AutoResetKeyFocus(). 
- *  
+ *  This code is ripped off from AutoResetKeyFocus().
+ *
  *************************************<->***********************************/
 
 static Window FindSomeReasonableClient(void)
@@ -1499,7 +1486,7 @@ static Window FindSomeReasonableClient(void)
      */
 
 #ifdef WSM
-    if (pcdLastFocus && 
+    if (pcdLastFocus &&
 	ClientInWorkspace (ACTIVE_WS, pcdLastFocus))
 #else /* WSM */
     if (pcdLastFocus)
@@ -1542,7 +1529,7 @@ static Window FindSomeReasonableClient(void)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Focus_Key (pCD, focusTime, flags)
@@ -1575,7 +1562,7 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 
     pcdFocus = pCD;
 #ifdef WSM
-    /* 
+    /*
      * Make sure the client is in the current workspace
      */
     if ((pCD) &&
@@ -1638,11 +1625,11 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 	    }
 
 	    /*
-	     * !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  
+	     * !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!
 	     * We must look at why FindTransientFocus is
 	     * returning a NULL pcd.  The old code simply set
 	     *	focusWindow = pcdFocus->client;
-	     * !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  
+	     * !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!
 	     *
 	     * 11/26/96 rswiston - In tracking down CDExc22816, we
 	     * discovered that pCD could get tricked into thinking
@@ -1744,9 +1731,9 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 
 	      /* this window has WM_TAKE_FOCUS set and InputField false. */
 	      /* just send a message.                                    */
-	      SendClientMsg (pcdFocus->client, 
+	      SendClientMsg (pcdFocus->client,
 			     (long) wmGD.xa_WM_PROTOCOLS,
-			     (long) wmGD.xa_WM_TAKE_FOCUS, 
+			     (long) wmGD.xa_WM_TAKE_FOCUS,
 			     focusTime, NULL, 0);
 	    }
 	    else
@@ -1758,9 +1745,9 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 		   * Locally Active Input Model - Send a take focus message to the client.
 		   */
 
-		  SendClientMsg (pcdFocus->client, 
+		  SendClientMsg (pcdFocus->client,
 				 (long) wmGD.xa_WM_PROTOCOLS,
-				 (long) wmGD.xa_WM_TAKE_FOCUS, 
+				 (long) wmGD.xa_WM_TAKE_FOCUS,
 				 focusTime, NULL, 0);
 	        }
 
@@ -1791,16 +1778,6 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 		   XSetInputFocus (DISPLAY, pcdFocus->clientBaseWin,
 				RevertToPointerRoot, CurrentTime);
 		  }
-#ifndef FIX_1350
-                  else if ( !(flags & CLIENT_AREA_FOCUS)                   &&
-		       !(pcdFocus->protocolFlags & PROTOCOL_WM_TAKE_FOCUS) &&
-		        pcdFocus->inputFocusModel
-		     )
-		  {
-		    XSetInputFocus (DISPLAY, focusWindow,
-				    RevertToPointerRoot, CurrentTime);
-		  }
-#endif
                   else
 		  {
 		    XSetInputFocus (DISPLAY, focusWindow,
@@ -1831,7 +1808,7 @@ void Do_Focus_Key (ClientData *pCD, Time focusTime, long flags)
 
 
 #ifdef WSM
-
+
 /***********************<->*************************************
  *
  *  F_Goto_Workspace (args, pCD, event)
@@ -1863,8 +1840,8 @@ F_Goto_Workspace (String args, ClientData *pCD, XEvent *event)
     int iwsx;
     XmString xms;
 
-    /* 
-     * Compare argument against both resource name 
+    /*
+     * Compare argument against both resource name
      * and workspace title, take the first match.
      */
     xms = XmStringCreate (args, XmFONTLIST_DEFAULT_TAG);
@@ -1882,7 +1859,7 @@ F_Goto_Workspace (String args, ClientData *pCD, XEvent *event)
     /* check bounds */
     if (iwsx >= pSD->numWorkspaces)
     {
-	Warning (((char *)GETMESSAGE(26, 4, 
+	Warning (((char *)GETMESSAGE(26, 4,
 		"Invalid workspace name specified for f.goto_workspace")));
     }
     else
@@ -1897,7 +1874,7 @@ F_Goto_Workspace (String args, ClientData *pCD, XEvent *event)
 #endif /* WSM */
 
 #ifdef WSM
-
+
 /******************************<->*************************************
  *
  *  Boolean F_Help (String args, ClientData *pCD, XEvent *event)
@@ -1911,7 +1888,7 @@ F_Goto_Workspace (String args, ClientData *pCD, XEvent *event)
  *  args - incoming values
  *  pCD  - associated client data structure
  *  event - what triggered this call
- * 
+ *
  *  Outputs:
  *  -------
  *  Return - True if the call occurs; false otherwise.
@@ -1928,12 +1905,12 @@ F_Help (String args, ClientData *pCD, XEvent *event)
 
     rval = WmDtHelp(args);
     return (rval);
-#endif /* PANELIST */    
-    
+#endif /* PANELIST */
+
 
 }  /* END OF FUNCTION F_Help */
 
-
+
 /******************************<->*************************************
  *
  *  Boolean F_Help_Mode (String args, ClientData *pCD, XEvent *event)
@@ -1947,7 +1924,7 @@ F_Help (String args, ClientData *pCD, XEvent *event)
  *  args - NULL
  *  pCD  - associated client data structure ??
  *  event - what triggered this call
- * 
+ *
  *  Outputs:
  *  -------
  *  Return - True if the call occurs; false otherwise.
@@ -1970,12 +1947,12 @@ F_Help_Mode (String args, ClientData *pCD, XEvent *event)
 	(void) WmDtHelpMode();
     }
     return (False);
-#endif /* PANELIST */    
+#endif /* PANELIST */
 
 }  /* END OF FUNCTION F_Help_Mode */
 
 #endif /* WSM */
-
+
 /******************************<->*************************************
  *
  *  F_Next_Key (args, pCD, event)
@@ -2005,7 +1982,7 @@ Boolean F_Next_Key (String args, ClientData *pCD, XEvent *event)
     if (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT)
     {
 #ifdef ROOT_ICON_MENU
-	focused = 
+	focused =
 #endif /*  ROOT_ICON_MENU */
 	FocusNextWindow ((unsigned long)args,
 			 GetFunctionTimestamp ((XButtonEvent *)event));
@@ -2030,7 +2007,7 @@ Boolean F_Next_Key (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Next_Key */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Prev_Cmap (args, pCD, event)
@@ -2079,7 +2056,7 @@ Boolean F_Prev_Cmap (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Prev_Cmap */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Prev_Key (args, pCD, event)
@@ -2109,7 +2086,7 @@ Boolean F_Prev_Key (String args, ClientData *pCD, XEvent *event)
     if (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT)
     {
 #ifdef ROOT_ICON_MENU
-	focused = 
+	focused =
 #endif /*  ROOT_ICON_MENU */
 	FocusPrevWindow ((unsigned long)args,
 			    GetFunctionTimestamp ((XButtonEvent *)event));
@@ -2135,7 +2112,7 @@ Boolean F_Prev_Key (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Prev_Key */
 
 #ifdef PANELIST
-
+
 /***********************<->*************************************
  *
  *  F_Post_FpMenu (args, pCD, event)
@@ -2212,7 +2189,7 @@ F_Post_FpMenu (String args, ClientData *pCD, XEvent *event)
     return False;
 }
 
-
+
 /***********************<->*************************************
  *
  *  F_Push_Recall (args, pCD, event)
@@ -2228,7 +2205,7 @@ F_Post_FpMenu (String args, ClientData *pCD, XEvent *event)
  *  ------
  *  args = arguments
  *
- *  pCD = pointer to the ClientData 
+ *  pCD = pointer to the ClientData
  *
  *  event = X event that invoked the function (key, button, or menu/NULL)
  *
@@ -2263,23 +2240,23 @@ F_Push_Recall (String args, ClientData *pCD, XEvent *event)
 	 */
 	if (pPRCD->pCD)
 	{
-	    /* Client is managed already. */ 
+	    /* Client is managed already. */
 	    if (!(ClientInWorkspace (pSD->pActiveWS, pPRCD->pCD)))
 	    {
 		WorkspaceID *wsRemoveList;
 		int sizeRemoveList;
 
-		/* 
-		 * Move client to current workspace 
+		/*
+		 * Move client to current workspace
 		 */
-	        wsRemoveList = GetListOfOccupiedWorkspaces (pPRCD->pCD, 
+	        wsRemoveList = GetListOfOccupiedWorkspaces (pPRCD->pCD,
 					&sizeRemoveList);
 		RemoveClientFromWorkspaces (pPRCD->pCD, wsRemoveList,
                                         sizeRemoveList);
 		XtFree ((char *)wsRemoveList);
 		AddClientToWorkspaces (pPRCD->pCD, &(pSD->pActiveWS->id), 1);
 		SetClientWsIndex(pPRCD->pCD);
-		SetClientState(pPRCD->pCD, 
+		SetClientState(pPRCD->pCD,
 	            pPRCD->pCD->clientState & ~UNSEEN_STATE, CurrentTime);
 	    }
 
@@ -2292,7 +2269,7 @@ F_Push_Recall (String args, ClientData *pCD, XEvent *event)
 		    wmGD.bSuspendSecondaryRestack = False;
 #endif /* WSM */
 	}
-	else 
+	else
 	{
 	    struct timeval tvNow;
 	    struct timezone tz;
@@ -2327,8 +2304,8 @@ F_Push_Recall (String args, ClientData *pCD, XEvent *event)
 		{
 		    /* set timeout value */
 		    ac = 0;
-		    XtSetArg (al[ac], 
-			XmNclientTimeoutInterval, &clientTimeout);	ac++; 
+		    XtSetArg (al[ac],
+			XmNclientTimeoutInterval, &clientTimeout);	ac++;
 		    XtGetValues (panel.busy_light_data->icon, (ArgList)al, ac);
 		}
 
@@ -2339,7 +2316,7 @@ F_Push_Recall (String args, ClientData *pCD, XEvent *event)
 		gettimeofday (&(pPRCD->tvTimeout), &tz);
 
 		pPRCD->tvTimeout.tv_sec += clientTimeout / 1000;
-		pPRCD->tvTimeout.tv_usec += 
+		pPRCD->tvTimeout.tv_usec +=
 		    (clientTimeout % 1000) * 1000;
 
 		pPRCD->tvTimeout.tv_sec += pPRCD->tvTimeout.tv_usec / 1000000;
@@ -2353,7 +2330,7 @@ F_Push_Recall (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Push_Recall */
 #endif /* PANELIST */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Pass_Key (args, pCD, event)
@@ -2403,7 +2380,7 @@ Boolean F_Pass_Key (args, pCD, event)
 } /* END OF FUNCTION F_Pass_Key */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Maximize (args, pCD, event)
@@ -2430,7 +2407,7 @@ Boolean F_Maximize (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Maximize */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Menu (args, pCD, event)
@@ -2456,7 +2433,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
     WmScreenData *pSD;
 
 
-    if (event && 
+    if (event &&
 	((event->type == ButtonPress) || (event->type == ButtonRelease)))
     {
         button = event->xbutton.button;
@@ -2468,7 +2445,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
 	}
 #ifdef WSM
 	/*
-	 * Root menu, if posted with button press, then 
+	 * Root menu, if posted with button press, then
 	 * set up to handle root menu click to make the menu
 	 * sticky.
 	 */
@@ -2488,7 +2465,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
 	}
 #endif /* WSM */
     }
-    else if (event && 
+    else if (event &&
 	((event->type == KeyPress) || (event->type == KeyRelease)))
     {
         button = NoButton;
@@ -2498,7 +2475,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
     else
     {
 	/*
-	 * A button or key event must be used to post a menu using this 
+	 * A button or key event must be used to post a menu using this
 	 * function.
 	 */
 
@@ -2515,7 +2492,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
 	{
 	    menuContext = F_CONTEXT_MAXIMIZE;
 	}
-	else 
+	else
 	{
 	    menuContext = F_CONTEXT_ICON;
 	}
@@ -2543,7 +2520,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
      */
 
     pSD = (pCD) ? PSD_FOR_CLIENT(pCD) : ACTIVE_PSD;
-    if ((menuSpec = MAKE_MENU (pSD, pCD, args, menuContext, 
+    if ((menuSpec = MAKE_MENU (pSD, pCD, args, menuContext,
 			      menuContext, (MenuItem *) NULL, FALSE)) != NULL)
     {
         PostMenu (menuSpec, pCD, x, y, button, menuContext, flags, event);
@@ -2553,7 +2530,7 @@ Boolean F_Menu (String args, ClientData *pCD, XEvent *event)
 
 } /* END OF FUNCTION F_Menu */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Minimize (args, pCD, event)
@@ -2577,7 +2554,7 @@ Boolean F_Minimize (String args, ClientData *pCD, XEvent *event)
 	 * If the window is a transient then minimize the entire transient
 	 * tree including the transient leader.
 	 */
-	
+
 	pcdLeader = (pCD->transientLeader) ?
 					FindTransientTreeLeader (pCD) : pCD;
 	if (pcdLeader->clientFunctions & MWM_FUNC_MINIMIZE)
@@ -2593,7 +2570,7 @@ Boolean F_Minimize (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Minimize */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Move (args, pCD, event)
@@ -2619,7 +2596,7 @@ Boolean F_Move (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Move */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Next_Cmap (args, pCD, event)
@@ -2668,7 +2645,7 @@ Boolean F_Next_Cmap (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Next_Cmap */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Nop (args, pCD, event)
@@ -2688,7 +2665,7 @@ Boolean F_Nop (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Nop */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Normalize (args, pCD, event)
@@ -2716,7 +2693,7 @@ Boolean F_Normalize (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Normalize */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Normalize_And_Raise (args, pCD, event)
@@ -2737,20 +2714,20 @@ Boolean F_Normalize_And_Raise (String args, ClientData *pCD, XEvent *event)
 
     if (args)
     {
-	if (pCD) 
+	if (pCD)
 	    pSD = PSD_FOR_CLIENT (pCD);
 	else
 	    pSD = ACTIVE_PSD;
 
 	pWS =  pSD->pActiveWS;
 
-	if (pSD->useIconBox && 
-	    wmGD.useFrontPanel && 
+	if (pSD->useIconBox &&
+	    wmGD.useFrontPanel &&
 	    pSD->iconBoxControl &&
 	    (!strcmp(args, WmNiconBox)))
 	{
-	    /* 
-	     * There's an icon box in the front panel and this is a 
+	    /*
+	     * There's an icon box in the front panel and this is a
 	     * request to pop up the icon box.
 	     */
 	    IconBoxPopUp (pWS, True);
@@ -2788,7 +2765,7 @@ Boolean F_Normalize_And_Raise (String args, ClientData *pCD, XEvent *event)
 	    if (wmGD.raiseKeyFocus)
 	    {
 		F_Focus_Key (NULL, pCD,
-			     (event 
+			     (event
 			      ? ((XEvent *)event)
 			      : ((XEvent *)NULL)));
 	    }
@@ -2802,7 +2779,7 @@ Boolean F_Normalize_And_Raise (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Normalize_And_Raise */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Restore (args, pCD, event)
@@ -2854,7 +2831,7 @@ Boolean F_Restore (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Restore */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Restore_And_Raise (args, pCD, event)
@@ -2870,7 +2847,7 @@ Boolean F_Restore (String args, ClientData *pCD, XEvent *event)
 Boolean F_Restore_And_Raise (String args, ClientData *pCD, XEvent *event)
 {
     int newState;
-    
+
     if (pCD)
     {
         if (pCD->clientState == MINIMIZED_STATE)
@@ -2908,7 +2885,7 @@ Boolean F_Restore_And_Raise (String args, ClientData *pCD, XEvent *event)
 	    if (wmGD.raiseKeyFocus)
 	    {
 		F_Focus_Key (NULL, pCD,
-			     (event 
+			     (event
 			      ? ((XEvent *)event)
 			      : ((XEvent *)NULL)));
 	    }
@@ -2922,7 +2899,7 @@ Boolean F_Restore_And_Raise (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Restore_And_Raise */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Pack_Icons (args, pCD, event)
@@ -2937,7 +2914,7 @@ Boolean F_Restore_And_Raise (String args, ClientData *pCD, XEvent *event)
 
 Boolean F_Pack_Icons (String args, ClientData *pCD, XEvent *event)
 {
-    
+
     IconBoxData *pIBD;
 
     if (ACTIVE_PSD->useIconBox)
@@ -2977,7 +2954,7 @@ Boolean F_Pack_Icons (String args, ClientData *pCD, XEvent *event)
 
 } /* END OF FUNCTION F_Pack_Icons */
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -3014,7 +2991,7 @@ Boolean F_Post_RMenu (String args, ClientData *pCD, XEvent *event)
 	    if (strcmp(rootMenu->name, ACTIVE_PSD->rootMenu) == 0)
 	      break;
 	  }
-    
+
 	/* If we couldn't find the root menu, then do nothing. */
 	if (rootMenu == (MenuSpec *) NULL)
 	  return (False);
@@ -3034,7 +3011,7 @@ Boolean F_Post_RMenu (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Post_RMenu */
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Post_SMenu (args, pCD, event)
@@ -3074,7 +3051,7 @@ Boolean F_Post_SMenu (String args, ClientData *pCD, XEvent *event)
 	{
 	    menuContext = F_CONTEXT_MAXIMIZE;
 	}
-	else 
+	else
 	{
 	    menuContext = F_CONTEXT_ICON;
 	}
@@ -3117,28 +3094,28 @@ Boolean F_Post_SMenu (String args, ClientData *pCD, XEvent *event)
 	{
 #ifdef WSM
 	    /*
-	     * Root menu, if posted with button press, then 
+	     * Root menu, if posted with button press, then
 	     * set up to handle root menu click to make the menu
 	     * sticky.
 	     */
 	    if (wmGD.rootButtonClick && (!wmGD.checkHotspot))
 	    {
 		wmGD.checkHotspot = True;
-		wmGD.hotspotRectangle.x = 
+		wmGD.hotspotRectangle.x =
 			    event->xbutton.x_root - wmGD.moveThreshold/2;
-		wmGD.hotspotRectangle.y = 
+		wmGD.hotspotRectangle.y =
 			    event->xbutton.y_root - wmGD.moveThreshold/2;
 		wmGD.hotspotRectangle.width = wmGD.moveThreshold;
 		wmGD.hotspotRectangle.height = wmGD.moveThreshold;
 	    }
 #endif /* WSM */
-	    PostMenu (pCD->systemMenuSpec, pCD, 
+	    PostMenu (pCD->systemMenuSpec, pCD,
 		event->xbutton.x_root, event->xbutton.y_root,
 	  	event->xbutton.button, menuContext, POST_AT_XY, event);
 	}
 	else if (event->type == ButtonRelease)
 	{
-	    PostMenu (pCD->systemMenuSpec, pCD, 
+	    PostMenu (pCD->systemMenuSpec, pCD,
 		event->xbutton.x_root, event->xbutton.y_root,
 	  	event->xbutton.button, menuContext,
 		POST_AT_XY | POST_TRAVERSAL_ON, event);
@@ -3150,7 +3127,7 @@ Boolean F_Post_SMenu (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_PostSMenu */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Kill (args, pCD, event)
@@ -3176,7 +3153,7 @@ Boolean F_Kill (String args, ClientData *pCD, XEvent *event)
 	if (pCD->dtwmBehaviors & DtWM_BEHAVIOR_SUBPANEL)
 	{
 	    Widget 		wPanel;
-	    
+
 	    /*
 	     * Get the widget for the subpanel
 	     * (Should be only child of the shell!)
@@ -3236,7 +3213,7 @@ Boolean F_Kill (String args, ClientData *pCD, XEvent *event)
 		 * !!! button and key input should be kept from the window !!!
 		 */
 
-		if (AddWmTimer (TIMER_QUIT, 
+		if (AddWmTimer (TIMER_QUIT,
 		    (unsigned long) wmGD.quitTimeout, pCD))
 		{
 		    SendClientMsg (pCD->client, (long) wmGD.xa_WM_PROTOCOLS,
@@ -3257,7 +3234,7 @@ Boolean F_Kill (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Kill */
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  F_Marquee_Selection (args, pCD, event)
@@ -3265,7 +3242,7 @@ Boolean F_Kill (String args, ClientData *pCD, XEvent *event)
  *
  *  Description:
  *  -----------
- *  This is the window manager function handler for selecting 
+ *  This is the window manager function handler for selecting
  *  non-window manager objects on the root window.
  *
  *************************************<->***********************************/
@@ -3314,19 +3291,19 @@ RefreshByClearing (Window win)
     if (status != 0)
     {
 	/* recurse for each child window */
-	for (i=0; i<nchildren; ++i) 
+	for (i=0; i<nchildren; ++i)
         {
 	    RefreshByClearing(winChildren[i]);
 	}
 
 	/* clean up */
-	if (nchildren > 0) 
+	if (nchildren > 0)
 	    XFree((char *)winChildren);
     }
 }
 #endif /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Refresh (args, pCD, event)
@@ -3354,20 +3331,20 @@ Boolean F_Refresh (String args, ClientData *pCD, XEvent *event)
 			 /* default background_pixmap is None */
     win = XCreateWindow (DISPLAY,
 			 ACTIVE_ROOT, 0, 0,
-	                 (unsigned int) DisplayWidth (DISPLAY, 
+	                 (unsigned int) DisplayWidth (DISPLAY,
 			     ACTIVE_SCREEN),
-	                 (unsigned int) DisplayHeight (DISPLAY, 
+	                 (unsigned int) DisplayHeight (DISPLAY,
 			     ACTIVE_SCREEN),
-	                 0, 
+	                 0,
                          0,
 	                 InputOutput,
                          CopyFromParent,
-	                 0, 
-			 (XSetWindowAttributes *)NULL);   
+	                 0,
+			 (XSetWindowAttributes *)NULL);
 
     XMapWindow (DISPLAY, win);
     XDestroyWindow (DISPLAY, win);
-#ifdef WSM 
+#ifdef WSM
     }
 #endif /* WSM */
     XFlush (DISPLAY);
@@ -3377,7 +3354,7 @@ Boolean F_Refresh (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Refresh */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Resize (args, pCD, event)
@@ -3404,7 +3381,7 @@ Boolean F_Resize (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Resize */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Restart (args, pCD, event)
@@ -3439,7 +3416,7 @@ Boolean F_Restart (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Restart */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Restart (dummy)
@@ -3458,7 +3435,7 @@ void Do_Restart (Boolean dummy)
 } /* END OF FUNCTION Do_Restart */
 
 
-
+
 /*************************************<->*************************************
  *
  *  RestartWm (startupFlags)
@@ -3485,12 +3462,12 @@ void RestartWm (long startupFlags)
     {
 	if(wmGD.Screens[scr].managed)
 	{
-	    
+
 	    /*
-	     * Set up the _MOTIF_WM_INFO property on the root window 
+	     * Set up the _MOTIF_WM_INFO property on the root window
 	     * to indicate a restart.
 	     */
-	    
+
 	    SetMwmInfo (wmGD.Screens[scr].rootWindow, startupFlags, 0);
 #ifdef WSM
 	    SaveResources(&wmGD.Screens[scr]);
@@ -3498,7 +3475,7 @@ void RestartWm (long startupFlags)
 	    /*
 	     * Unmap client windows and reparent them to the root window.
 	     */
-	    
+
 	    pNextEntry = wmGD.Screens[scr].lastClient;
 	    while (pNextEntry)
 	    {
@@ -3508,7 +3485,7 @@ void RestartWm (long startupFlags)
 		    {
 			if (pNextEntry->pCD->clientState != MINIMIZED_STATE)
 			{
-			    XUnmapWindow (DISPLAY, 
+			    XUnmapWindow (DISPLAY,
 					  pNextEntry->pCD->clientFrameWin);
 			}
 		    }
@@ -3523,9 +3500,9 @@ void RestartWm (long startupFlags)
 	    UnParentControls (&wmGD.Screens[scr], True);
 #endif /* PANELIST */
 	}
-	
+
     }
-    
+
 #ifdef WSM
     /* shut down the messaging connection */
     dtCloseIPC();
@@ -3544,7 +3521,7 @@ void RestartWm (long startupFlags)
 
 #ifdef WSM
     CLOSE_FILES_ON_EXEC();
-    _DtEnvControl(DT_ENV_RESTORE_PRE_DT); 
+    _DtEnvControl(DT_ENV_RESTORE_PRE_DT);
 #endif /* WSM */
     /*
      * Restart the window manager with the initial arguments plus
@@ -3554,7 +3531,7 @@ void RestartWm (long startupFlags)
     execvp (*(wmGD.argv), wmGD.argv);
 
 #ifdef WSM
-    Warning (((char *)GETMESSAGE(26, 1, 
+    Warning (((char *)GETMESSAGE(26, 1,
 "The window manager restart failed. The window manager program could not \
 be found or could not be executed.")));
 #else /* WSM */
@@ -3566,7 +3543,7 @@ be found or could not be executed.")));
 
 } /* END OF FUNCTION RestartWm */
 
-
+
 /*************************************<->*************************************
  *
  *  DeFrameClient (pCD)
@@ -3602,11 +3579,11 @@ void DeFrameClient (ClientData *pCD)
 	    XUnmapWindow (DISPLAY, pCD->iconWindow);
 	    XRemoveFromSaveSet (DISPLAY, pCD->iconWindow);
 #ifdef WSM
-	    XReparentWindow (DISPLAY, pCD->iconWindow, 
-		ROOT_FOR_CLIENT(pCD), pCD->pWsList->iconX, 
+	    XReparentWindow (DISPLAY, pCD->iconWindow,
+		ROOT_FOR_CLIENT(pCD), pCD->pWsList->iconX,
 		pCD->pWsList->iconY);
 #else /* WSM */
-	    XReparentWindow (DISPLAY, pCD->iconWindow, 
+	    XReparentWindow (DISPLAY, pCD->iconWindow,
 		ROOT_FOR_CLIENT(pCD), pCD->iconX, pCD->iconY);
 #endif /* WSM */
         }
@@ -3640,7 +3617,7 @@ void DeFrameClient (ClientData *pCD)
 	XUnmapWindow (DISPLAY, pCD->client);
 #endif
 	XRemoveFromSaveSet (DISPLAY, pCD->client);
-        XReparentWindow (DISPLAY, pCD->client, 
+        XReparentWindow (DISPLAY, pCD->client,
 	    ROOT_FOR_CLIENT(pCD), x, y);
 
 	if (pCD->transientChildren)
@@ -3670,7 +3647,7 @@ void DeFrameClient (ClientData *pCD)
 } /* END OF FUNCTION DeFrameClient */
 
 #if defined(PANELIST)
-
+
 /******************************<->*************************************
  *
  *  F_Toggle_Front_Panel (args, pCD, event)
@@ -3709,12 +3686,12 @@ F_Toggle_Front_Panel (String args, ClientData *pCD, XEvent *event)
     {
 	if (pCD->clientState & MINIMIZED_STATE)
 	{
-	    SetClientState (pCD, NORMAL_STATE, 
+	    SetClientState (pCD, NORMAL_STATE,
 		    GetFunctionTimestamp ((XButtonEvent *)event));
 	}
 	else
 	{
-	    SetClientState (pCD, MINIMIZED_STATE, 
+	    SetClientState (pCD, MINIMIZED_STATE,
 		    GetFunctionTimestamp ((XButtonEvent *)event));
 	}
     }
@@ -3722,7 +3699,7 @@ F_Toggle_Front_Panel (String args, ClientData *pCD, XEvent *event)
     return(True);
 } /* END OF FUNCTION F_Toggle_Front_Panel */
 
-
+
 /******************************<->*************************************
  *
  *  Boolean F_Version (String args, ClientData *pCD, XEvent *event)
@@ -3736,7 +3713,7 @@ F_Toggle_Front_Panel (String args, ClientData *pCD, XEvent *event)
  *  args - incoming values
  *  pCD  - associated client data structure
  *  event - what triggered this call
- * 
+ *
  *  Outputs:
  *  -------
  *  Return - True if the call occurs; false otherwise.
@@ -3770,7 +3747,7 @@ F_Version (String args, ClientData *pCD, XEvent *event)
 }  /* END OF FUNCTION F_Version */
 #endif /* PANELIST */
 
-
+
 /******************************<->*************************************
  *
  *  F_Send_Msg (args, pCD, event)
@@ -3809,7 +3786,7 @@ Boolean F_Send_Msg (String args, ClientData *pCD, XEvent *event)
 	{
 	    if (pCD->mwmMessages[i] == (long)args)
 	    {
-		SendClientMsg (pCD->client, (long) wmGD.xa_MWM_MESSAGES, 
+		SendClientMsg (pCD->client, (long) wmGD.xa_MWM_MESSAGES,
 		    (long)args, CurrentTime, NULL, 0);
 		return (True);
 	    }
@@ -3821,7 +3798,7 @@ Boolean F_Send_Msg (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Send_Msg */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Separator (args, pCD, event)
@@ -3873,7 +3850,7 @@ Boolean ForceRaiseWindow (ClientData *pcd)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Raise (args, pCD, event)
@@ -3971,7 +3948,7 @@ Boolean F_Raise (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Raise */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Raise (pCD, pStackEntry)
@@ -3986,8 +3963,8 @@ Boolean F_Raise (String args, ClientData *pCD, XEvent *event)
  *  Inputs:
  *  ------
  *  pCD = pointer to the client data of the window (or icon) to be raised.
- * 
- *  pStackEntry = pointer to client list entry for window that is to be 
+ *
+ *  pStackEntry = pointer to client list entry for window that is to be
  *	above the raised window (if NULL window is raised to the top of the
  *	stack).
  *
@@ -4006,19 +3983,19 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
     if (pCD->pECD)
     {
 	/*
-	 * Window has been reparented into the front panel. 
+	 * Window has been reparented into the front panel.
 	 * Don't follow through on window stacking change.
 	 */
 	return;
     }
-    else 
+    else
 #else /* PANELIST */
 #endif /* PANELIST */
 #ifdef WSM
-    if (ClientInWorkspace(pWS, pCD)  && 
+    if (ClientInWorkspace(pWS, pCD)  &&
 	(!pStackEntry || ClientInWorkspace (pWS, pStackEntry->pCD)))
     {
-	/* 
+	/*
 	 * Both clients are in the current workspace. Set
 	 * client indices so that the access macros work.
 	 */
@@ -4050,7 +4027,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 	     !P_ICON_BOX(pcdLeader))
     {
         /*
-         * If a dirtyStackEntry exists, return it to its original place 
+         * If a dirtyStackEntry exists, return it to its original place
          * in the stack (for all stacking types)
          */
         if (dirtyStackEntry)
@@ -4080,9 +4057,9 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 	{
 	    if (ACTIVE_PSD->clientList != &pcdLeader->iconEntry)
 	    {
-	        StackWindow (pWS, &pcdLeader->iconEntry, 
+	        StackWindow (pWS, &pcdLeader->iconEntry,
 		    True /*on top*/, (ClientListEntry *) NULL);
-	        MoveEntryInList (pWS, &pcdLeader->iconEntry, 
+	        MoveEntryInList (pWS, &pcdLeader->iconEntry,
 		    True /*on top*/, (ClientListEntry *) NULL);
 	    }
 	}
@@ -4103,7 +4080,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 	{
 	    if (pCD != pcdLeader)
 	    {
-		/* 
+		/*
 		 * This is not the transient leader, make sure
 		 * the transient leader isn't on top.
 		 * (Brute force solution)
@@ -4113,14 +4090,14 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 		if (pCD->transientChildren)
 		{
 		    /*
-		     * This isn't the overall leader of the transient 
+		     * This isn't the overall leader of the transient
 		     * tree, but it does have transient's of its own.
 		     * Move it to the top of its own transient sub-tree.
 		     */
 		    bLeaderRestacked |= BumpPrimaryToTop (pCD);
 		}
 	    }
-	    else 
+	    else
 	    {
 		/*
 		 * This is the transient leader, move it to the
@@ -4157,7 +4134,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
  *                return
  */
         /*
-         * If a dirtyStackEntry exists, return it to its original place 
+         * If a dirtyStackEntry exists, return it to its original place
          * in the stack (for all stacking types)
          */
         if (dirtyStackEntry)
@@ -4185,9 +4162,9 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
             {
                 if (pStackEntry->nextSibling != &pcdLeader->clientEntry)
                 {
-                    StackWindow (pWS, &pcdLeader->clientEntry, 
+                    StackWindow (pWS, &pcdLeader->clientEntry,
                         False /*below*/, pStackEntry);
-                    MoveEntryInList (pWS, &pcdLeader->clientEntry, 
+                    MoveEntryInList (pWS, &pcdLeader->clientEntry,
                         False /*below*/, pStackEntry);
                 }
             }
@@ -4202,7 +4179,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
                 }
             }
         }
-  
+
         /*
          * If freeFamily stacking is requested, check to make sure that
          * the window has either a transientChild or Leader.  This will
@@ -4215,10 +4192,10 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
         {
             dirtyStackEntry = pCD;
 	    dirtyLeader = pcdLeader;
-  
+
             restackTransients = ForceRaiseWindow (pCD);
         }
-  
+
         /*
          * If withinFamily stacking is requested, put the current transient
          * on top of its sibling transient windows.
@@ -4227,14 +4204,14 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
         {
   	    restackTransients = PutTransientOnTop (pCD);
   	}
-  
+
         /* At this point, if doing a regular f.raise the window family has
          * already been brought to the top of the stack, so nothing further
          * needs to be done for it.
          */
-  
+
         /* Restack the transients if needed */
-  
+
 #ifdef WSM
         if ((restackTransients) || (bLeaderRestacked))
 #else /* WSM */
@@ -4248,7 +4225,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
 } /* END OF FUNCTION Do_Raise */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Raise_Lower (args, pCD, event)
@@ -4256,7 +4233,7 @@ void Do_Raise (ClientData *pCD, ClientListEntry *pStackEntry, int flags)
  *
  *  Description:
  *  -----------
- *  This window manager function tops an obscured window or icon and bottoms 
+ *  This window manager function tops an obscured window or icon and bottoms
  *  a window or icon that is on top of the window stack.
  *
  *************************************<->***********************************/
@@ -4336,7 +4313,7 @@ Boolean F_Raise_Lower (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Raise_Lower */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Refresh_Win (args, pCD, event)
@@ -4382,12 +4359,12 @@ Boolean F_Refresh_Win (String args, ClientData *pCD, XEvent *event)
 		         pCD->matteWidth,
 		         pCD->matteWidth,
 		         w, h,
-	                 0, 
+	                 0,
 	                 0,
 	                 InputOutput,
                          CopyFromParent,
-	                 0, 
-			 (XSetWindowAttributes *)NULL);  
+	                 0,
+			 (XSetWindowAttributes *)NULL);
 
         XMapWindow (DISPLAY, win);
         XDestroyWindow (DISPLAY, win);
@@ -4402,7 +4379,7 @@ Boolean F_Refresh_Win (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Refresh_Win */
 
 
-
+
 /*************************************<->*************************************
  *
  *  F_Set_Behavior (args, pCD, event)
@@ -4445,7 +4422,7 @@ Boolean F_Set_Behavior (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Set_Behavior */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Do_Set_Behavior (dummy)
@@ -4465,7 +4442,7 @@ void Do_Set_Behavior (Boolean dummy)
 } /* END OF FUNCTION Do_Set_Behavior */
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  F_Set_Context (args, pCD, event)
@@ -4480,14 +4457,14 @@ void Do_Set_Behavior (Boolean dummy)
 
 Boolean F_Set_Context (String args, ClientData *pCD, XEvent *event)
 {
- 
+
     wmGD.requestContextWin = (Window) args;
     return (True);
 
 } /* END OF FUNCTION F_Set_Context */
 #endif /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Title (args, pCD, event)
@@ -4507,7 +4484,7 @@ Boolean F_Title (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Title */
 
 
-
+
 /******************************<->*************************************
  *
  *  F_Screen (args, pCD, event)
@@ -4545,7 +4522,7 @@ Boolean F_Screen (String args, ClientData *pCD, XEvent *event)
     int scr, inc;
     static int PreviousScreen = -1;
     char pch[80];
-    
+
 
     if (PreviousScreen == -1)
     {
@@ -4575,7 +4552,7 @@ Boolean F_Screen (String args, ClientData *pCD, XEvent *event)
 
     while (!newscr) {
 					/* wrap around */
-	if (scr < 0) 
+	if (scr < 0)
 	  scr = wmGD.numScreens - 1;
 	else if (scr >= wmGD.numScreens)
 	  scr = 0;
@@ -4586,7 +4563,7 @@ Boolean F_Screen (String args, ClientData *pCD, XEvent *event)
 		scr += inc;
 		continue;
 	    }
-	    sprintf(pch, 
+	    sprintf(pch,
 		    "Unable to warp to unmanaged screen %d\n", scr);
 	    Warning (&pch[0]);
 	    XBell (DISPLAY, 0);
@@ -4605,7 +4582,7 @@ Boolean F_Screen (String args, ClientData *pCD, XEvent *event)
     if (newscr && (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT))
     {
 	/*
-	 * Set the ACTIVE_PSD to the new screen so that Do_Focus_Key can 
+	 * Set the ACTIVE_PSD to the new screen so that Do_Focus_Key can
 	 * uses the new screen instead of the old screen.  Then call
 	 * Do_Focus_Key with a NULL pCD to find a reasonable client to
 	 * set focus to.
@@ -4619,7 +4596,7 @@ Boolean F_Screen (String args, ClientData *pCD, XEvent *event)
 }
 
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -4653,7 +4630,7 @@ Boolean F_InvokeCommand (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_InvokeCommand */
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  GetFunctionTimestamp (pEvent)
@@ -4698,7 +4675,7 @@ Time GetFunctionTimestamp (XButtonEvent *pEvent)
 
 
 /*
-** name the event mask we need for a grab in order to find the matching 
+** name the event mask we need for a grab in order to find the matching
 ** event for an event; right now handle only button-presses
 */
 static unsigned int GetEventInverseMask(XEvent *event)
@@ -4710,7 +4687,7 @@ static unsigned int GetEventInverseMask(XEvent *event)
 	/*
 	expansion further here
 	*/
-	else 
+	else
 		return 0;
 }
 
@@ -4724,7 +4701,7 @@ static unsigned int GetEventInverseMask(XEvent *event)
  *  Description:
  *  -----------
  *  This function is used to clear the static dirtyStackEntry structure and
- *  the dirtyLeader static variable when a pCD is destroyed.  This 
+ *  the dirtyLeader static variable when a pCD is destroyed.  This
  *  guarantees that freed memory will not be accessed.
  *
  *
@@ -4748,7 +4725,7 @@ void ClearDirtyStackEntry (ClientData *pCD)
     }
 }
 #if defined(DEBUG) && defined(WSM)
-
+
 /***********************<->*************************************
  *
  *  F_ZZ_Debug (args, pCD, event)
@@ -4800,7 +4777,7 @@ F_ZZ_Debug (String subFcn, ClientData *pCD, XEvent *event)
 		sprintf (szRes, "/tmp/dtwm.resources.%d", scr);
 
 		XrmPutFileDatabase(XtScreenDatabase(
-				       XScreenOfDisplay(DISPLAY, scr)), 
+				       XScreenOfDisplay(DISPLAY, scr)),
 				   szRes);
 	    }
 	}
@@ -4810,7 +4787,7 @@ F_ZZ_Debug (String subFcn, ClientData *pCD, XEvent *event)
 #endif /* DEBUG */
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  F_Next_Workspace (args, pCD, event)
@@ -4847,7 +4824,7 @@ Boolean F_Next_Workspace (String args, ClientData *pCD, XEvent *event)
 
 } /* END OF FUNCTION F_Next_Workspace */
 
-
+
 /*************************************<->*************************************
  *
  *  F_Prev_Workspace (args, pCD, event)
@@ -4885,7 +4862,6 @@ Boolean F_Prev_Workspace (String args, ClientData *pCD, XEvent *event)
 } /* END OF FUNCTION F_Prev_Workspace */
 
 
-
 /*************************************<->*************************************
  *
  *  F_Workspace_Presence (args, pCD, event)
@@ -4911,7 +4887,7 @@ Boolean F_Workspace_Presence (String args, ClientData *pCD, XEvent *event)
 	{
 	    wsContext = F_CONTEXT_MAXIMIZE;
 	}
-	else 
+	else
 	{
 	    wsContext = F_CONTEXT_ICON;
 /*	    return (False); */
@@ -4938,7 +4914,7 @@ DumpWindowList ()
 	else
 	    fprintf (stdout, "  ");
 
-	fprintf (stdout, "%08lx\t%s\n", 
+	fprintf (stdout, "%08lx\t%s\n",
 	    pCLE->pCD->client,
 	    pCLE->pCD->clientName);
 
@@ -4946,8 +4922,5 @@ DumpWindowList ()
     }
 }
 #endif /* DEBUG */
-
 #endif /* WSM */
-
-
 

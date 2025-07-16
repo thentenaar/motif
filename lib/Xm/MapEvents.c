@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -39,7 +39,7 @@ static char rcsid[] = "$XConsortium: MapEvents.c /main/12 1995/09/19 23:05:22 cd
 #include "XmI.h"
 #include "MapEventsI.h"
 
-typedef String (*XmEventParseProc)(String str, 
+typedef String (*XmEventParseProc)(String str,
 				   unsigned int closure,
 				   unsigned long *detail,
 				   Boolean *status);
@@ -54,42 +54,42 @@ typedef struct {
 
 /********    Static Function Declarations    ********/
 
-static int StrToHex( 
+static int StrToHex(
                         String str) ;
-static int StrToOct( 
+static int StrToOct(
                         String str) ;
-static int StrToNum( 
+static int StrToNum(
                         String str) ;
-static void FillInQuarks( 
+static void FillInQuarks(
                         EventKey *table) ;
-static Boolean LookupModifier( 
+static Boolean LookupModifier(
                         String name,
                         Modifiers *valueP) ;
-static String ScanAlphanumeric( 
+static String ScanAlphanumeric(
                         register String str) ;
-static String ScanWhitespace( 
+static String ScanWhitespace(
                         register String str) ;
-static String ParseImmed( 
+static String ParseImmed(
                         String str,
                         unsigned int closure,
                         unsigned long *detail,
 			Boolean *status) ;
-static String ParseKeySym( 
+static String ParseKeySym(
                         String str,
                         unsigned int closure,
                         unsigned long *detail,
 			Boolean *status) ;
-static String ParseModifiers( 
+static String ParseModifiers(
                         register String str,
                         Modifiers *modifiers,
                         Boolean *status) ;
-static String ParseEventType( 
+static String ParseEventType(
                         register String str,
                         EventKey *table,
                         int *eventType,
                         Cardinal *_index,
                         Boolean *status) ;
-static String _MapEvent( 
+static String _MapEvent(
                         register String str,
                         EventKey *table,
                         int *eventType,
@@ -175,7 +175,7 @@ static Boolean initialized = FALSE;
  *     str = A null-terminated span of digits.
  *         StrToNum handles C prefix conventions (0d = octal, 0xd = hex),
  *	   but no other non-digits are allowed.
- * 
+ *
  *   Outputs:
  *   -------
  *     Returns -1 if conversion fails, otherwise the numeric value.
@@ -186,7 +186,7 @@ static Boolean initialized = FALSE;
  *     None.
  *
  *************************************<->***********************************/
-static int 
+static int
 StrToHex(
         String str )
 {
@@ -204,7 +204,7 @@ StrToHex(
     return val;
 }
 
-static int 
+static int
 StrToOct(
         String str )
 {
@@ -219,7 +219,7 @@ StrToOct(
     return val;
 }
 
-static int 
+static int
 StrToNum(
         String str )
 {
@@ -255,7 +255,7 @@ StrToNum(
  *   Inputs:
  *   ------
  *     table[*].event = strings to be converted (NULL at end of table).
- * 
+ *
  *   Outputs:
  *   -------
  *     table[*].signature = quarks for each string.
@@ -265,7 +265,7 @@ StrToNum(
  *     XrmStringToQuark.
  *
  *************************************<->***********************************/
-static void 
+static void
 FillInQuarks(
         EventKey *table )
 {
@@ -289,7 +289,7 @@ FillInQuarks(
  *   ------
  *     name = string to be located in the global modiferStrings table.
  *     (modiferStrings = global table of valid modifiers).
- * 
+ *
  *   Outputs:
  *   -------
  *     *valueP = closure of modifierString with a matching signature.
@@ -300,7 +300,7 @@ FillInQuarks(
  *     XrmStringToQuark.
  *
  *************************************<->***********************************/
-static Boolean 
+static Boolean
 LookupModifier(
         String name,
         Modifiers *valueP )
@@ -330,7 +330,7 @@ LookupModifier(
  *   Inputs:
  *   ------
  *     str = string to be scanned.
- * 
+ *
  *   Outputs:
  *   -------
  *     Return value points to the first non-alphanumeric character in str.
@@ -339,7 +339,7 @@ LookupModifier(
  *   -----------------
  *
  *************************************<->***********************************/
-static String 
+static String
 ScanAlphanumeric(
         register String str )
 {
@@ -363,7 +363,7 @@ ScanAlphanumeric(
  *   Inputs:
  *   ------
  *     str = the string to be scanned.
- * 
+ *
  *   Outputs:
  *   -------
  *     Return value points to the first non-whitespace character in str.
@@ -372,7 +372,7 @@ ScanAlphanumeric(
  *   -----------------
  *
  *************************************<->***********************************/
-static String 
+static String
 ScanWhitespace(
         register String str )
 {
@@ -428,7 +428,7 @@ ParseImmed(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -447,13 +447,13 @@ ParseKeySym(
 {
   char keySymName[100];
   char *start = str;
-  
+
   /* Initialize the return values. */
   *detail = NoSymbol;
   *status = FALSE;
 
   str = ScanWhitespace(str);
-  
+
   if (*str == '\\') {
     /* "\x"; interpret "x" as a Keysym. */
     str++;
@@ -474,13 +474,13 @@ ParseKeySym(
     keySymName[str-start] = '\0';
     *detail = XStringToKeysym(keySymName);
   }
-  
+
   if (*detail == NoSymbol)
     {
       if (( '0' <= keySymName[0]) && (keySymName[0] <= '9'))
 	{
 	  int retval = StrToNum(keySymName);
-	  if (-1 == retval) 
+	  if (-1 == retval)
 	    {
               *detail = 0;
               return str;
@@ -513,7 +513,7 @@ ParseKeySym(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -522,7 +522,7 @@ ParseKeySym(
  *   -----------------
  *
  *************************************<->***********************************/
-static String 
+static String
 ParseModifiers(
         register String str,
         Modifiers *modifiers,
@@ -536,7 +536,7 @@ ParseModifiers(
     /* Initially assume all is going to go well */
     *status = TRUE;
     *modifiers = 0;
- 
+
     /* Attempt to parse the first button modifier */
     str = ScanWhitespace(str);
     start = str;
@@ -555,13 +555,13 @@ ParseModifiers(
          str = start;
     }
 
-   
+
     /* Keep parsing modifiers, until the event specifier is encountered */
     while ((*str != '<') && (*str != '\0')) {
         if (*str == '~') {
              notFlag = TRUE;
              str++;
-          } else 
+          } else
               notFlag = FALSE;
 
 	start = str;
@@ -581,9 +581,9 @@ ParseModifiers(
            return str;
         }
 
-	if (notFlag) 
+	if (notFlag)
            *modifiers &= ~maskBit;
-	else 
+	else
            *modifiers |= maskBit;
         str = ScanWhitespace(str);
     }
@@ -604,7 +604,7 @@ ParseModifiers(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -613,7 +613,7 @@ ParseModifiers(
  *   -----------------
  *
  *************************************<->***********************************/
-static String 
+static String
 ParseEventType(
         register String str,
         EventKey *table,
@@ -640,7 +640,7 @@ ParseEventType(
            *eventType = table[*_index].eventType;
 
            *status = TRUE;
-           return str; 
+           return str;
         }
 
     /* Unknown event specified */
@@ -661,7 +661,7 @@ ParseEventType(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -680,7 +680,7 @@ _MapEvent(
 	Boolean *status)
 {
   Cardinal index=0;
-  
+
   /* Initialize, if first time called */
   _XmProcessLock();
   if (!initialized)
@@ -691,7 +691,7 @@ _MapEvent(
       FillInQuarks (keyEvents);
     }
   _XmProcessUnlock();
-  
+
   /* Parse the modifiers and the '<' */
   str = ParseModifiers(str, modifiers, status);
   if (*str != '<')
@@ -699,7 +699,7 @@ _MapEvent(
   if (*status == FALSE)
     return str;
   str++;
-  
+
   /* Parse the event type and detail and the '>' */
   str = ParseEventType(str, table, eventType, &index, status);
   if (*str != '>')
@@ -707,7 +707,7 @@ _MapEvent(
   if (*status == FALSE)
     return str;
   str++;
-  
+
   /* Save the detail */
   return ((*(table[index].parseProc))(str, table[index].closure,
 				       detail, status));
@@ -734,7 +734,7 @@ _MapEvent(
  *   -----------------
  *
  *************************************<->***********************************/
-Boolean 
+Boolean
 _XmMapBtnEvent(
         register String str,
         int *eventType,
@@ -757,7 +757,7 @@ _XmMapBtnEvent(
       /* the button that is going up will always be in the modifiers... */
       *modifiers |= buttonModifierMasks[*button];
     }
-  
+
   return (TRUE);
 }
 
@@ -773,7 +773,7 @@ _XmMapBtnEvent(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -866,15 +866,15 @@ _XmMapKeyEvents(String      str,
  *   -----------------
  *
  *************************************<->***********************************/
-Boolean 
+Boolean
 _XmMatchBtnEvent(
         XEvent *event,
         int eventType,
         unsigned int button,
         Modifiers modifiers )
 {
-   register Modifiers state = 
-     event->xbutton.state & (ShiftMask | LockMask | ControlMask | Mod1Mask | 
+   register Modifiers state =
+     event->xbutton.state & (ShiftMask | LockMask | ControlMask | Mod1Mask |
 			     Mod2Mask | Mod3Mask | Mod4Mask | Mod5Mask);
    if (((eventType == XmIGNORE_EVENTTYPE)||(event->type == eventType)) &&
        (event->xbutton.button == button) &&
@@ -899,7 +899,7 @@ _XmMatchBtnEvent(
  *   Inputs:
  *   ------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
- * 
+ *
  *   Outputs:
  *   -------
  *     xxxxxxxxxxxx = xxxxxxxxxxxxx
@@ -908,28 +908,23 @@ _XmMatchBtnEvent(
  *   -----------------
  *
  *************************************<->***********************************/
-Boolean 
+Boolean
 _XmMatchKeyEvent(
         XEvent *event,
         int eventType,
         unsigned int key,
         Modifiers modifiers )
 {
-#ifdef FIX_345
-   register Modifiers state, mods; 
-   
+   register Modifiers state, mods;
+
    _XmCheckInitModifiers();
 
    state = event->xkey.state & ~(LockMask|ScrollLockMask|NumLockMask);
    mods  = modifiers & ~(LockMask|ScrollLockMask|NumLockMask);
-#endif   
+
    if ((event->type == eventType) &&
        (event->xkey.keycode == key) &&
-#ifdef FIX_345
        (state == mods))
-#else
-       (event->xkey.state == modifiers))
-#endif
       return (TRUE);
    else
       return (FALSE);

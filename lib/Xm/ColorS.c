@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -75,7 +75,7 @@ static void ClassInitialize(void), Destroy(Widget), Resize(Widget);
 static void ClassPartInitialize(WidgetClass w_class);
 static void Initialize(Widget, Widget, ArgList, Cardinal *);
 static Boolean SetValues(Widget, Widget, Widget, ArgList, Cardinal *);
-static XtGeometryResult GeometryHandler(Widget, XtWidgetGeometry *, 
+static XtGeometryResult GeometryHandler(Widget, XtWidgetGeometry *,
 					XtWidgetGeometry *);
 static XtGeometryResult QueryGeometry(Widget, XtWidgetGeometry *,
 				      XtWidgetGeometry *);
@@ -83,7 +83,7 @@ static XtGeometryResult QueryGeometry(Widget, XtWidgetGeometry *,
 static Boolean UpdateColorWindow(XmColorSelectorWidget, Boolean);
 static Boolean color_name_changed(XmColorSelectorWidget, char *);
 static Boolean FindColor(XmColorSelectorWidget, int *);
-static Boolean CvtStringToColorMode(Display *, XrmValuePtr, Cardinal, 
+static Boolean CvtStringToColorMode(Display *, XrmValuePtr, Cardinal,
 				    XrmValuePtr, XrmValuePtr, XtPointer *);
 static Boolean DefaultVisualDisplay(XmColorSelectorWidget, Pixel, XColor, char *);
 
@@ -136,7 +136,7 @@ static XtResource resources[] =
     sizeof(String), XtOffsetOf(XmColorSelectorRec, cs.color_name),
     XmRString, "White"
   },
-#ifdef VMS    
+#ifdef VMS
   {
     XmNrgbFile, XmCString, XmRString,
     sizeof(String), XtOffsetOf(XmColorSelectorRec, cs.rgb_file),
@@ -202,7 +202,7 @@ static XtResource resources[] =
     sizeof(XmString), XtOffsetOf(XmColorSelectorRec, cs.strings.file_read_error),
     XmRString, (XtPointer)"Could not read rgb.txt file:"
   }
-};	
+};
 
 static XmSyntheticResource get_resources[] =
 {
@@ -220,7 +220,7 @@ static XmSyntheticResource get_resources[] =
 
   {
     XmNredSliderLabel, sizeof(XmString),
-    XtOffsetOf(XmColorSelectorRec, cs.strings.slider_labels[0]), 
+    XtOffsetOf(XmColorSelectorRec, cs.strings.slider_labels[0]),
     GetValues_XmNredSliderLabel, NULL
   },
 
@@ -232,13 +232,13 @@ static XmSyntheticResource get_resources[] =
 
   {
     XmNblueSliderLabel, sizeof(XmString),
-    XtOffsetOf(XmColorSelectorRec, cs.strings.slider_labels[2]), 
+    XtOffsetOf(XmColorSelectorRec, cs.strings.slider_labels[2]),
     GetValues_XmNblueSliderLabel, NULL
   },
 
   {
     XmNcolorListTogLabel, sizeof(XmString),
-    XtOffsetOf(XmColorSelectorRec, cs.strings.tog_labels[0]), 
+    XtOffsetOf(XmColorSelectorRec, cs.strings.tog_labels[0]),
     GetValues_XmNcolorListTogLabel, NULL
   },
 
@@ -338,31 +338,23 @@ WidgetClass xmColorSelectorWidgetClass = (WidgetClass)&xmColorSelectorClassRec;
  *      Returns:       none.
  */
 
-static void 
+static void
 ClassInitialize(void)
 {
     XmColorSelectorClassRec *wc = &xmColorSelectorClassRec;
 
-    XtSetTypeConverter(XmRString, XmRXmColorMode, 
-		       (XtTypeConverter) CvtStringToColorMode, 
+    XtSetTypeConverter(XmRString, XmRXmColorMode,
+		       (XtTypeConverter) CvtStringToColorMode,
 		       NULL, (Cardinal) 0, XtCacheAll, NULL);
 }
 
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmCOLORSELECTOR_BIT);
 }
-
-
 
 /*      Function Name: Initialize
  *      Description:   Called to initialize information specific
@@ -375,8 +367,7 @@ ClassPartInitialize(WidgetClass w_class)
  *      Returns:       none.
  */
 
-/* ARGSUSED */
-static void 
+static void
 Initialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
 {
     XmColorSelectorWidget	csw = (XmColorSelectorWidget)set;
@@ -392,7 +383,7 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
     /*
      * Initialize important values.
      */
-    
+
     XmColorS_good_cell(csw) = False;
 
     temp = XmColorS_color_name(csw);
@@ -417,7 +408,7 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
     slider_changed(NULL, (XtPointer) csw, NULL);
 
     CalcPreferredSize(csw, &width, &height);
-    
+
     if ( csw->core.width < 1 )
 	csw->core.width = width;
 
@@ -434,10 +425,10 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
     int i;
     for( i = 0; i < 3; i++ )
     	XmColorS_strings(csw).slider_labels[i] = XmStringCopy(XmColorS_strings(csw).slider_labels[i]);
-    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++) 
+    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++)
 	XmColorS_strings(csw).tog_labels[i] = XmStringCopy(XmColorS_strings(csw).tog_labels[i]);
     XmColorS_strings(csw).file_read_error = XmStringCopy(XmColorS_strings(csw).file_read_error);
-    XmColorS_strings(csw).no_cell_error = XmStringCopy(XmColorS_strings(csw).no_cell_error); 
+    XmColorS_strings(csw).no_cell_error = XmStringCopy(XmColorS_strings(csw).no_cell_error);
     }
 
 }
@@ -448,8 +439,7 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
  *      Returns:       none.
  */
 
-/* ARGSUSED */
-static void	
+static void
 Destroy(Widget w)
 {
     XmColorSelectorWidget	csw = (XmColorSelectorWidget)w;
@@ -465,12 +455,12 @@ Destroy(Widget w)
 
     {
     int i;
-    for( i = 0; i < 3; i++ ) 
+    for( i = 0; i < 3; i++ )
     	XmStringFree(XmColorS_strings(csw).slider_labels[i]);
-    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++) 
+    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++)
 	XmStringFree(XmColorS_strings(csw).tog_labels[i]);
     XmStringFree(XmColorS_strings(csw).file_read_error);
-    XmStringFree(XmColorS_strings(csw).no_cell_error); 
+    XmStringFree(XmColorS_strings(csw).no_cell_error);
     }
 }
 
@@ -480,8 +470,7 @@ Destroy(Widget w)
  *      Returns:       none.
  */
 
-/* ARGSUSED */
-static void	
+static void
 Resize(Widget w)
 {
     compute_size((XmColorSelectorWidget)w);
@@ -506,9 +495,8 @@ static Boolean AreDiff(char *s1, char *s2)
  *      Returns:       none
  */
 
-/* ARGSUSED */
-static Boolean 
-SetValues(Widget current, Widget request, Widget set, 
+static Boolean
+SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal *num_args)
 {
     XmColorSelectorWidget	csw = (XmColorSelectorWidget)set;
@@ -517,7 +505,7 @@ SetValues(Widget current, Widget request, Widget set,
     /*
      * Pass argument list through to all children.
      */
-    
+
     {
 	ArgList f_args;
 	Cardinal f_num_args;
@@ -526,7 +514,7 @@ SetValues(Widget current, Widget request, Widget set,
 	_XmSetValuesOnChildren(set, f_args, f_num_args);
 	XtFree((XtPointer) f_args);
     }
-    
+
     if (XmColorS_color_mode(curr) != XmColorS_color_mode(csw))
     {
 	new_mode(csw, XmColorS_color_mode(csw));
@@ -534,9 +522,9 @@ SetValues(Widget current, Widget request, Widget set,
 			       True, True);
     }
 
-    /* 
+    /*
     ** Don't compare pointers; they are allocated, so passing the same file
-    ** in twice will trip this expensive function unless we compare the 
+    ** in twice will trip this expensive function unless we compare the
     ** values of the strings (when they exist)
     */
     if (AreDiff(XmColorS_rgb_file(curr), XmColorS_rgb_file(csw)))
@@ -560,14 +548,14 @@ SetValues(Widget current, Widget request, Widget set,
 	String		oldValue;	/* old color name, will free. */
 	String		newValue;	/* new color name, allocate   */
 	char            string_buffer[BUFSIZ];
-	
+
 	oldValue = XmColorS_color_name(curr);
 	newValue = XmColorS_color_name(csw);
-	
-	if (!streq(newValue, oldValue)) 
+
+	if (!streq(newValue, oldValue))
 	{
 	    /*
-	     * Color name changed will automatically free the old 
+	     * Color name changed will automatically free the old
 	     * value on success...
 	     */
 
@@ -593,10 +581,10 @@ SetValues(Widget current, Widget request, Widget set,
 		{
 		XmStringFree(XmColorS_strings(curr).slider_labels[i]);
     		XmColorS_strings(csw).slider_labels[i] = XmStringCopy(XmColorS_strings(csw).slider_labels[i]);
-		XtVaSetValues(XmColorS_sliders(csw)[i], XmNtitleString, XmColorS_strings(csw).slider_labels[i], NULL); 
+		XtVaSetValues(XmColorS_sliders(csw)[i], XmNtitleString, XmColorS_strings(csw).slider_labels[i], NULL);
 		}
 	}
-    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++) 
+    for (i = 0; i< XmColorSelector_NUM_TOGGLES; i++)
 	{
 	if (XmColorS_strings(curr).tog_labels[i] != XmColorS_strings(csw).tog_labels[i])
 		{
@@ -629,7 +617,6 @@ SetValues(Widget current, Widget request, Widget set,
  *      Returns:       status.
  */
 
-/* ARGSUSED */
 static XtGeometryResult
 GeometryHandler(Widget w, XtWidgetGeometry *request, XtWidgetGeometry *result)
 {
@@ -644,11 +631,11 @@ GeometryHandler(Widget w, XtWidgetGeometry *request, XtWidgetGeometry *result)
  *                     preferred - what I would like.
  *	Returns:       See Xt Manual.
  */
-    
-static XtGeometryResult 
+
+static XtGeometryResult
 QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 {
-    CalcPreferredSize((XmColorSelectorWidget) w, 
+    CalcPreferredSize((XmColorSelectorWidget) w,
 		      &(preferred->width), &(preferred->height));
 
     return(_XmHWQuery(w, intended, preferred));
@@ -679,19 +666,18 @@ ChangeManaged(Widget w)
  *                     	from - contains the string to convert.
  *                     	to - contains the converted node state.
  *                      junk - *** NOT USED *** .
- *      Returns:       	
+ *      Returns:
  */
 
-/* ARGSUSED */
 static Boolean
-CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args, 
+CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args,
 		     XrmValuePtr from, XrmValuePtr to, XtPointer * junk)
 {
     static XmColorMode	mode;
     char		lowerName[BUFSIZ];
 
     XmCopyISOLatin1Lowered(lowerName, (char *)from->addr);
-    
+
     if (streq(lowerName, "listmode"))
 	mode = XmListMode;
     else if (streq(lowerName, "scalemode"))
@@ -708,7 +694,7 @@ CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args,
     }
     else if ( to->size >= sizeof(XmColorMode) ) {
 	XmColorMode *state = (XmColorMode *) to->addr;
-	
+
 	*state = mode;
 	return(True);
     }
@@ -727,26 +713,26 @@ CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args,
  *	Returns: none.
  */
 
-static void 
-CalcPreferredSize(XmColorSelectorWidget csw, 
+static void
+CalcPreferredSize(XmColorSelectorWidget csw,
 		  Dimension *width, Dimension *height)
 {
     XtWidgetGeometry geo;
     Widget *childP;
-	
+
     *height = *width = 0;
-    ForAllChildren(csw, childP) {	
+    ForAllChildren(csw, childP) {
 	if (*childP == XmColorS_bb(csw))
 	    continue;
 
 	(void)XtQueryGeometry(*childP, NULL, &geo);
-	
+
 	ASSIGN_MAX(*width, (geo.width + (2 * geo.border_width)));
-	
+
 	geo.height += 2 * geo.border_width;
 	if ( *childP == XtParent(XmColorS_color_window(csw)) )
 	    continue;
-	else if ( *childP == XmColorS_scrolled_list(csw) )	
+	else if ( *childP == XmColorS_scrolled_list(csw) )
 	    *height += (int)(4 * geo.height)/3;
 	else
 	    *height += geo.height;
@@ -765,7 +751,6 @@ CalcPreferredSize(XmColorSelectorWidget csw,
  *      Returns:       	True if successful
  */
 
-/* ARGSUSED */
 static Boolean
 color_name_changed(XmColorSelectorWidget csw, char *name)
 {
@@ -784,7 +769,7 @@ color_name_changed(XmColorSelectorWidget csw, char *name)
 	XmColorS_color_name(csw) = old_val;
 	return(False);
     }
-    
+
     SetSliders(csw);
     SelectColor(csw);
     XtFree((XtPointer) old_val);
@@ -821,7 +806,7 @@ SetSliders(XmColorSelectorWidget csw)
  *	Returns: none.
  */
 
-static void 
+static void
 SelectColor(XmColorSelectorWidget csw)
 {
     int color_num;
@@ -846,9 +831,9 @@ EndsInDigits(char *str)
     register char *c = str;
     while(*c != '\0') c++;	/* advance to end of string marker */
     c--;			/* back to the last character */
-    if(c >= str && isascii(*c) && isdigit(*c)) 
+    if(c >= str && isascii(*c) && isdigit(*c))
 	return True;
-    
+
     return False;
 }
 
@@ -857,7 +842,7 @@ EndsInDigits(char *str)
  *                   the current slider values.  Attempts to find the slot
  *		     with a the best matching name.
  *	Arguments: csw - The color selector widget.
- * RETURNED        color_num - The color index that was found. 
+ * RETURNED        color_num - The color index that was found.
  *	Returns: True if color was found, false otherwise.
  *
  * NOTE: if False is returned then color_num has an undefined value.
@@ -868,7 +853,7 @@ FindColor(XmColorSelectorWidget csw, int *color_num)
 {
     register ColorInfo *ptr;
     register int i, red, green, blue;
-    
+
     /*
      * Obtain the color settings from the ColorSelector
      * data structure
@@ -877,34 +862,34 @@ FindColor(XmColorSelectorWidget csw, int *color_num)
     green = XmColorS_slider_green(csw);
     blue = XmColorS_slider_blue(csw);
     ptr = XmColorS_colors(csw);
-    
+
     /*
      * Flag for finding color value
      */
     *color_num = -1;
-    
+
     /*
      * Find color within the exisiting colormap assigned to
      * ColorSelector
      */
-    for (i = 0; i < XmColorS_num_colors(csw); i++, ptr++) 
+    for (i = 0; i < XmColorS_num_colors(csw); i++, ptr++)
     {
 	if ((ptr->red == red) && (ptr->green == green) && (ptr->blue == blue))
 	{
-	    if( *color_num < 0 ) 
+	    if( *color_num < 0 )
 		*color_num = i;
-	    
+
 	    /* Only change the selected color if it is better in some way */
 	    if(XmColorS_color_name(csw)) {
 		if(XmColorS_color_name(csw)[0] == '#')
 		    *color_num = i;
 
 		if(streq(XmColorS_color_name(csw), ptr->name) ||
-		   streq(XmColorS_color_name(csw), ptr->no_space_lower_name)) 
-		{	
+		   streq(XmColorS_color_name(csw), ptr->no_space_lower_name))
+		{
 		    *color_num = i;
 		    return(True);
-		}	
+		}
 	    }
 	    if(! EndsInDigits(ptr->name)) {
 	        *color_num = i;
@@ -924,7 +909,6 @@ FindColor(XmColorSelectorWidget csw, int *color_num)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 slider_changed(Widget w, XtPointer csw_ptr, XtPointer scale_ptr)
 {
@@ -960,20 +944,20 @@ UpdateColorWindow(XmColorSelectorWidget csw, Boolean use_name)
     char buf[XmColorSelector_COLOR_NAME_SIZE], new_label[BUFSIZ];
 
     if (!use_name) /* Update color names */
-    {	
+    {
 	char	*freeMe;
-	
+
 	freeMe = XmColorS_color_name(csw);
-	sprintf(buf, "#%02x%02x%02x", XmColorS_slider_red(csw), 
+	sprintf(buf, "#%02x%02x%02x", XmColorS_slider_red(csw),
 		XmColorS_slider_green(csw), XmColorS_slider_blue(csw));
 
-	if (FindColor(csw, &index)) 
+	if (FindColor(csw, &index))
 	{
 	    XmColorS_color_name(csw) = XtNewString(XmColorS_colors(csw)[index].name);
 	    sprintf(new_label, "%s (%s)", XmColorS_color_name(csw), buf);
-	}	
-	else 	
-	{	
+	}
+	else
+	{
 	    XmColorS_color_name(csw) = XtNewString(buf);
 	    sprintf(new_label, "%s", buf);
 	}
@@ -987,8 +971,8 @@ UpdateColorWindow(XmColorSelectorWidget csw, Boolean use_name)
     {
 	if(XParseColor(XtDisplay(csw), csw->core.colormap,
 		       XmColorS_color_name(csw), &color) == 0)
-	{	
-	    return(False);	
+	{
+	    return(False);
 	}
 
 	XmColorS_slider_red(csw) = color.red / 256;
@@ -1000,7 +984,7 @@ UpdateColorWindow(XmColorSelectorWidget csw, Boolean use_name)
 	 * name.
 	 */
 
-	if ((XmColorS_color_name(csw)[0] == '#') && FindColor(csw, &index)) 
+	if ((XmColorS_color_name(csw)[0] == '#') && FindColor(csw, &index))
 	{
 	    XtFree(XmColorS_color_name(csw));
 	    XmColorS_color_name(csw) = XtNewString(XmColorS_colors(csw)[index].name);
@@ -1027,13 +1011,13 @@ UpdateColorWindow(XmColorSelectorWidget csw, Boolean use_name)
     /*
      * Check on the default visual
      */
-    if (DefaultVisualDisplay(csw, foreground, color, (char *)new_label)) 
+    if (DefaultVisualDisplay(csw, foreground, color, (char *)new_label))
     {
 	return True;
-    } else 
+    } else
     {
 	return False;
-    }    
+    }
 }
 
 
@@ -1045,7 +1029,6 @@ UpdateColorWindow(XmColorSelectorWidget csw, Boolean use_name)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 list_selected(Widget w, XtPointer csw_ptr, XtPointer list_ptr)
 {
@@ -1057,10 +1040,10 @@ list_selected(Widget w, XtPointer csw_ptr, XtPointer list_ptr)
   XmColorS_color_name(csw) =
     XmStringUnparse(list->item,
         NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
-  
+
 /* deprecated
-  XmStringGetLtoR(list->item, XmFONTLIST_DEFAULT_TAG, 
-		  &(XmColorS_color_name(csw))); 
+  XmStringGetLtoR(list->item, XmFONTLIST_DEFAULT_TAG,
+		  &(XmColorS_color_name(csw)));
 */
 
   UpdateColorWindow(csw, True);
@@ -1074,28 +1057,27 @@ list_selected(Widget w, XtPointer csw_ptr, XtPointer list_ptr)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 change_mode(Widget w, XtPointer csw_ptr, XtPointer tp)
 {
   XmColorSelectorWidget csw = (XmColorSelectorWidget) csw_ptr;
   XmToggleButtonCallbackStruct *toggle = (XmToggleButtonCallbackStruct *) tp;
-  
+
   /*
    * Ignore unsets.
    */
-  
+
   if (toggle->reason == XmCR_VALUE_CHANGED && toggle->set) {
     /*
      * Change the mode if it is different.
      */
-    
-    if ((w == XmColorS_chose_mode(csw)[XmListMode]) && 
+
+    if ((w == XmColorS_chose_mode(csw)[XmListMode]) &&
 	(XmColorS_color_mode(csw) != XmListMode))
       {
 	new_mode(csw, XmListMode);
       }
-    else if ((w == XmColorS_chose_mode(csw)[XmScaleMode]) && 
+    else if ((w == XmColorS_chose_mode(csw)[XmScaleMode]) &&
 	     (XmColorS_color_mode(csw) != XmScaleMode))
       {
 	new_mode(csw, XmScaleMode);
@@ -1110,15 +1092,14 @@ change_mode(Widget w, XtPointer csw_ptr, XtPointer tp)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 new_mode(XmColorSelectorWidget csw, XmColorMode mode)
 {
   XmColorS_color_mode(csw) = mode;
-  
+
   if (mode == XmScaleMode) {
     SetSliders(csw);
-    
+
     XtUnmanageChild(XmColorS_scrolled_list(csw));
     XtManageChild(XmColorS_bb(csw));
   }
@@ -1136,7 +1117,6 @@ new_mode(XmColorSelectorWidget csw, XmColorMode mode)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 compute_size(XmColorSelectorWidget csw)
 {
@@ -1147,7 +1127,7 @@ compute_size(XmColorSelectorWidget csw)
     /*
      * First size and place the button box and scrolled list.
      */
-    
+
     y = XmColorS_margin_height(csw);
     x = XmColorS_margin_width(csw);
     width = csw->core.width - (2 * XmColorS_margin_width(csw));
@@ -1157,8 +1137,8 @@ compute_size(XmColorSelectorWidget csw)
 
     (void) XtQueryGeometry(XmColorS_chose_radio(csw), NULL, &radio_geom);
     (void) XtQueryGeometry(XmColorS_color_window(csw), &input, &color_geom);
-	
-    height = (csw->core.height - 4 * XmColorS_margin_height(csw) - 
+
+    height = (csw->core.height - 4 * XmColorS_margin_height(csw) -
 	      (radio_geom.height + 2 * radio_geom.border_width));
 
     /*
@@ -1172,23 +1152,23 @@ compute_size(XmColorSelectorWidget csw)
 
     _XmConfigureWidget(XmColorS_bb(csw), x, y, width, height, 0);
     _XmConfigureWidget(XmColorS_scrolled_list(csw), x, y, width, height, 0);
-    
+
     y += height + XmColorS_margin_height(csw);
-    
+
     /*
      * Place the radio box.
      */
-    
+
     if ( radio_geom.width < csw->core.width )
 	x = (int)(csw->core.width - radio_geom.width) / 2;
     else
 	x = XmColorS_margin_width(csw);
 
-    _XmConfigureWidget(XmColorS_chose_radio(csw), x, y, radio_geom.width, 
+    _XmConfigureWidget(XmColorS_chose_radio(csw), x, y, radio_geom.width,
 		       radio_geom.height, radio_geom.border_width);
 
     y += radio_geom.height + XmColorS_margin_height(csw);
-    
+
     /*
      * Lastly, place the color window
      */
@@ -1205,7 +1185,6 @@ compute_size(XmColorSelectorWidget csw)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Boolean initial)
 {
@@ -1216,17 +1195,17 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
     ColorInfo * color_info = NULL;
     register int i;
     Arg	*margs, args[20];
- 
+
     /*
      * Create new list if needed, or delete any old list items.
-     */ 
-    if (XmColorS_list(csw) == NULL) 
+     */
+    if (XmColorS_list(csw) == NULL)
     {
 	i = 0;
 	XtSetArg(args[i], XmNlistSizePolicy, XmCONSTANT); i++;
 	XtSetArg(args[i], XmNvisibleItemCount, 15); i++;
 	margs = XtMergeArgLists(args, i, cargs, cnum_args);
-	XmColorS_list(csw) = XmCreateScrolledList((Widget) csw, "list", 
+	XmColorS_list(csw) = XmCreateScrolledList((Widget) csw, "list",
 					    margs, i + cnum_args);
 
 	XtManageChild(XmColorS_list(csw));
@@ -1245,7 +1224,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 	XmListDeleteAllItems(XmColorS_list(csw));
     }
 
-    /* 
+    /*
     ** Because of the internal functioning of the XmList, it is better to
     ** zero out the selected item list rather than to let the item currently
     ** selected be re-selected by the XmList when the new list of colors is
@@ -1273,7 +1252,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 	     * Skip any comment lines in the file
 	     */
 	    if ( buf[0] == '!' ) continue;
-	    
+
 	    if (count >= alloc) {
 		if (0 == alloc)
 			alloc = 755;	/* rather than stat the file and determine a good value to use, just use enough for X11R5, X11R6, and OpenWindows3 */
@@ -1335,7 +1314,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 	    count++;
 	}
 	fclose(file);
-	    
+
 	qsort(color_info, count, sizeof(ColorInfo), CmpColors);
 
 	/*
@@ -1374,13 +1353,13 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 
 	{
 		XmString *strs = (XmString*)XtMalloc(sizeof(XmString)*count);
-		for (i = 0; i < count; i++) 
+		for (i = 0; i < count; i++)
 			strs[i] = XmStringCreateLocalized(color_info[i].name);
 		XtVaSetValues(XmColorS_list(csw),
 			XmNitems, strs,
-			XmNitemCount, count, 
+			XmNitemCount, count,
 			NULL);
-		for (i = 0; i < count; i++) 
+		for (i = 0; i < count; i++)
 			XmStringFree(strs[i]);
 	        XtFree((char*)strs);
 	}
@@ -1390,7 +1369,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
 	XmColorS_num_colors(csw) = count;
 
 	/* It would be better if we had cached the current index number so
-	** we could just reset the list to the string corresponding to that 
+	** we could just reset the list to the string corresponding to that
 	** value, but instead wind up going through FindColor to reestablish
 	** the selected string
 	*/
@@ -1412,9 +1391,9 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
     }
 
     XtAddCallback(XmColorS_list(csw), XmNsingleSelectionCallback,
-		  list_selected, csw);	
+		  list_selected, csw);
     XtAddCallback(XmColorS_list(csw), XmNbrowseSelectionCallback,
-		  list_selected, csw);	
+		  list_selected, csw);
 }
 
 /*	Function Name: CmpColors
@@ -1424,7 +1403,7 @@ read_rgb_file(XmColorSelectorWidget csw, ArgList cargs, Cardinal cnum_args, Bool
  */
 
 static int
-CmpColors(const void * ptr_1, const void * ptr_2) 
+CmpColors(const void * ptr_1, const void * ptr_2)
 {
     ColorInfo *color1, *color2;
 
@@ -1435,8 +1414,8 @@ CmpColors(const void * ptr_1, const void * ptr_2)
 }
 
 /*      Function Name: 	find_name
- *      Description:   	Go through the buffer for looking for the name 
- *			of a color string.  
+ *      Description:   	Go through the buffer for looking for the name
+ *			of a color string.
  *      Arguments: 	buffer - list of color names.
  *      Returns:       	pointer in the buffer where the string begins.
  */
@@ -1450,7 +1429,7 @@ find_name(char *buffer)
 	/*
 	 * Look for first non number, non space or tab.
 	 */
-    
+
 	if (isascii(*curr) && (isdigit(*curr) || isspace(*curr)))
 	    continue;
 
@@ -1470,21 +1449,20 @@ find_name(char *buffer)
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
-CreateColorSliders(XmColorSelectorWidget csw, 
+CreateColorSliders(XmColorSelectorWidget csw,
 		   ArgList cargs, Cardinal cnum_args)
 {
     register int i;
     Cardinal	num_args, title;
     Arg		*margs, args[10];
-    
+
     num_args = 0;
     XtSetArg(args[num_args], XmNborderWidth, 0); num_args++;
     XtSetArg(args[num_args], XmNorientation, XmVERTICAL); num_args++;
     XtSetArg(args[num_args], XmNfillOption, XmFillMinor); num_args++;
     margs = XtMergeArgLists(args, num_args, cargs, cnum_args);
-    XmColorS_bb(csw) = XtCreateManagedWidget("buttonBox", xmButtonBoxWidgetClass, 
+    XmColorS_bb(csw) = XtCreateManagedWidget("buttonBox", xmButtonBoxWidgetClass,
 				       (Widget) csw,
 				       margs, cnum_args + num_args);
     XtFree((XtPointer) margs);
@@ -1501,14 +1479,14 @@ CreateColorSliders(XmColorSelectorWidget csw,
 
     for( i = 0; i < 3; i++ ) {
 	margs[title].value = (XtArgVal) XmColorS_strings(csw).slider_labels[i];
-	XmColorS_sliders(csw)[i] = XtCreateManagedWidget("scale", 
+	XmColorS_sliders(csw)[i] = XtCreateManagedWidget("scale",
 						   xmScaleWidgetClass,
 						   XmColorS_bb(csw), margs,
 						   num_args + cnum_args);
-    
+
 	XtAddCallback(XmColorS_sliders(csw)[i], XmNdragCallback,
 		      slider_changed, csw);
-	XtAddCallback(XmColorS_sliders(csw)[i], XmNvalueChangedCallback, 
+	XtAddCallback(XmColorS_sliders(csw)[i], XmNvalueChangedCallback,
 		      slider_changed, csw);
     }
     XtFree((XtPointer) margs);
@@ -1523,9 +1501,8 @@ CreateColorSliders(XmColorSelectorWidget csw,
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
-CreateSelectorRadio(XmColorSelectorWidget csw, 
+CreateSelectorRadio(XmColorSelectorWidget csw,
 		    ArgList cargs, Cardinal cnum_args)
 {
     Widget w;
@@ -1533,7 +1510,7 @@ CreateSelectorRadio(XmColorSelectorWidget csw,
     Arg		*margs, args[5];
     int count;
     static String names[] = { "colorListToggle", "colorSlidersToggle" };
-    
+
     i = 0;
     XtSetArg(args[i], XmNradioBehavior, True); i++;
     XtSetArg(args[i], XmNpacking, XmPACK_COLUMN); i++;
@@ -1542,7 +1519,7 @@ CreateSelectorRadio(XmColorSelectorWidget csw,
     w = XtCreateManagedWidget("radioBox", xmRowColumnWidgetClass,
 			      (Widget) csw, margs, i + cnum_args);
     XmColorS_chose_radio(csw) = w;
-    XtFree((XtPointer) margs);    
+    XtFree((XtPointer) margs);
 
     i = 0;
     XtSetArg(args[i], XmNlabelString, NULL); label = i++;
@@ -1558,11 +1535,11 @@ CreateSelectorRadio(XmColorSelectorWidget csw,
 	XtAddCallback(w, XmNvalueChangedCallback, change_mode, csw);
     }
 
-    XtFree((XtPointer) margs);    
+    XtFree((XtPointer) margs);
 }
 
 /*      Function Name: 	CreateColorWindow
- *      Description:   	creates a label in a frame to display the 
+ *      Description:   	creates a label in a frame to display the
  *			currently selected color.
  *      Arguments: 	csw - the color selector widget.
  *                      cargs, cnum_args - a filtered arg list that was
@@ -1570,7 +1547,6 @@ CreateSelectorRadio(XmColorSelectorWidget csw,
  *      Returns:       	none.
  */
 
-/* ARGSUSED */
 static void
 CreateColorWindow(XmColorSelectorWidget csw,ArgList cargs, Cardinal cnum_args)
 {
@@ -1584,44 +1560,43 @@ CreateColorWindow(XmColorSelectorWidget csw,ArgList cargs, Cardinal cnum_args)
     n = 0;
     XtSetArg(args[n], XmNrecomputeSize, False); n++;
     margs = XtMergeArgLists(args, n, cargs, cnum_args);
-    XmColorS_color_window(csw) = XtCreateManagedWidget("colorWindow", 
-						       xmLabelWidgetClass, 
+    XmColorS_color_window(csw) = XtCreateManagedWidget("colorWindow",
+						       xmLabelWidgetClass,
 						       fr, margs, n + cnum_args);
-    XtFree((XtPointer) margs);    
+    XtFree((XtPointer) margs);
 }
 
-/* ARGSUSED */
-static void GetValues_XmNredSliderLabel ( Widget w, int n, XtArgVal *value) 
+static void GetValues_XmNredSliderLabel ( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).slider_labels[0]);
 }
-/* ARGSUSED */
-static void GetValues_XmNgreenSliderLabel( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNgreenSliderLabel( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).slider_labels[1]);
 }
-/* ARGSUSED */
-static void GetValues_XmNblueSliderLabel( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNblueSliderLabel( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).slider_labels[2]);
 }
-/* ARGSUSED */
-static void GetValues_XmNcolorListTogLabel( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNcolorListTogLabel( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).tog_labels[0]);
 }
-/* ARGSUSED */
-static void GetValues_XmNsliderTogLabel( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNsliderTogLabel( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).tog_labels[1]);
 }
-/* ARGSUSED */
-static void GetValues_XmNnoCellError( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNnoCellError( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).no_cell_error);
 }
-/* ARGSUSED */
-static void GetValues_XmNfileReadError( Widget w, int n, XtArgVal *value) 
+
+static void GetValues_XmNfileReadError( Widget w, int n, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XmColorS_strings(w).file_read_error);
 }
@@ -1632,16 +1607,15 @@ static void GetValues_XmNfileReadError( Widget w, int n, XtArgVal *value)
  *      Returns:       	Visual id.
  */
 
-/* ARGSUSED */
 static int
 GetVisual(XmColorSelectorWidget csw)
 {
     Visual * vis;
     int visual;
-    
+
     vis = DefaultVisual(XtDisplay(csw), XDefaultScreen(XtDisplay(csw)));
     visual = vis->class;
-    
+
     return visual;
 }
 
@@ -1654,45 +1628,44 @@ GetVisual(XmColorSelectorWidget csw)
  *      Returns:       	None.
  */
 
-/* ARGSUSED */
 static void
-NoPrivateColormaps(XmColorSelectorWidget csw, Pixel foreground, 
+NoPrivateColormaps(XmColorSelectorWidget csw, Pixel foreground,
 		     XColor color, char *str)
 {
     Arg args[5];
-    XmString xm_str;    
+    XmString xm_str;
     Cardinal num_args;
 
     xm_str = XmStringCreateLocalized(str);
     num_args = 0;
-    
-    if (!XmColorS_good_cell(csw)) 
+
+    if (!XmColorS_good_cell(csw))
     {
 	if(XAllocColor(XtDisplay(csw), csw->core.colormap, &color) )
-	{	
+	{
 	    XmColorS_color_pixel(csw) = color.pixel;
 	    XmColorS_good_cell(csw) = True;
-	}	
+	}
     } else {
 	if (XAllocColor(XtDisplay(csw), csw->core.colormap, &color) )
-	{	
+	{
 	    XmColorS_color_pixel(csw) = color.pixel;
 	    XmColorS_good_cell(csw) = True;
-	} 
-	else 
+	}
+	else
 	{
 	    XmString out;
 	    out = XmStringConcatAndFree(xm_str, XmColorS_strings(csw).no_cell_error);
-	    xm_str = out;    
+	    xm_str = out;
 	}
     }
-    
-    if (XmColorS_good_cell(csw)) 
+
+    if (XmColorS_good_cell(csw))
     {
 	color.flags = DoRed | DoGreen | DoBlue;
 	color.pixel = XmColorS_color_pixel(csw);
 	XtSetArg(args[num_args], XmNforeground, foreground); num_args++;
-	XtSetArg(args[num_args], XmNbackground, XmColorS_color_pixel(csw)); 
+	XtSetArg(args[num_args], XmNbackground, XmColorS_color_pixel(csw));
 	num_args++;
 	XtSetValues(XmColorS_color_window(csw), args, num_args);
     }
@@ -1711,12 +1684,11 @@ NoPrivateColormaps(XmColorSelectorWidget csw, Pixel foreground,
  *      Returns:       	None.
  */
 
-/* ARGSUSED */
 static void
 PrivateColormaps(XmColorSelectorWidget csw, Pixel foreground, XColor color, char *str)
 {
     Arg args[5];
-    XmString xm_str;    
+    XmString xm_str;
     Cardinal num_args;
 
     xm_str = XmStringCreateLocalized(str);
@@ -1725,7 +1697,7 @@ PrivateColormaps(XmColorSelectorWidget csw, Pixel foreground, XColor color, char
     if (!XmColorS_good_cell(csw)) {
         if(XAllocColorCells(XtDisplay(csw), csw->core.colormap,
                             0, 0, 0, &(XmColorS_color_pixel(csw)), 1))
-        {	
+        {
             XmColorS_good_cell(csw) = True;
         }
         else {
@@ -1762,27 +1734,26 @@ PrivateColormaps(XmColorSelectorWidget csw, Pixel foreground, XColor color, char
  *			False otherwise.
  */
 
-/* ARGSUSED */
 static Boolean
 DefaultVisualDisplay(XmColorSelectorWidget csw, Pixel foreground, XColor color, char *str)
 {
     int visual = 0;
     visual = GetVisual(csw);
-    
+
     /*
      * Obtain a valid color cell. In case, if one not available
      */
     if ( visual == StaticColor || visual == TrueColor || \
-	 visual == StaticGray ) 
-    {	
+	 visual == StaticGray )
+    {
 	NoPrivateColormaps(csw, foreground, color, str);
 	return True;
     } else if ( visual == PseudoColor || visual == DirectColor || \
-		visual == GrayScale ) 
-    {		
+		visual == GrayScale )
+    {
 	PrivateColormaps(csw, foreground, color, str);
 	return True;
-    } else 
+    } else
     {
 	return False;
     }
@@ -1810,7 +1781,7 @@ XmCreateColorSelector(Widget parent, String name,
 			  parent, args, num_args));
 }
 
-Widget 
+Widget
 XmVaCreateColorSelector(
         Widget parent,
         char *name,
@@ -1819,18 +1790,18 @@ XmVaCreateColorSelector(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmColorSelectorWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -1843,16 +1814,16 @@ XmVaCreateManagedColorSelector(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmColorSelectorWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }

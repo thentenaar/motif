@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 #ifndef _XmDropSMgrI_h
 #define _XmDropSMgrI_h
@@ -33,19 +33,19 @@ extern "C" {
 
 /********    Private Function Declarations for DropSMgr.c    ********/
 
-extern void _XmDSMUpdate( 
+extern void _XmDSMUpdate(
                         XmDropSiteManagerObject dsm,
                         XtPointer clientData,
                         XtPointer callData) ;
-extern int _XmDSMGetTreeFromDSM( 
+extern int _XmDSMGetTreeFromDSM(
                         XmDropSiteManagerObject dsm,
                         Widget shell,
                         XtPointer dataPtr) ;
-extern Boolean _XmDropSiteShell( 
+extern Boolean _XmDropSiteShell(
                         Widget widget) ;
-extern Boolean _XmDropSiteWrapperCandidate( 
+extern Boolean _XmDropSiteWrapperCandidate(
                         Widget widget) ;
-extern Widget _XmGetActiveDropSite( 
+extern Widget _XmGetActiveDropSite(
                         Widget widget) ;
 extern void _XmSyncDropSiteTree(
 				Widget shell) ;
@@ -406,7 +406,7 @@ typedef union _XmDSInfoRec {
  			(((XmDSLocalNoneNode)(ds))->info.client_data) \
  		: \
  			(((XmDSLocalNoneLeaf)(ds))->info.client_data)))
- 
+
 #define GetDSWidget(ds) \
 	((GetDSRemote(ds)) ? \
 		(Widget)NULL \
@@ -579,31 +579,27 @@ typedef union _XmDSInfoRec {
 
 /********    Private Function Declarations    ********/
 
-extern void _XmDSIAddChild( 
+extern void _XmDSIAddChild(
                         XmDSInfo parentInfo,
                         XmDSInfo childInfo,
                         Cardinal childPosition) ;
-extern void _XmDSIRemoveChild( 
+extern void _XmDSIRemoveChild(
                         XmDSInfo parentInfo,
                         XmDSInfo childInfo) ;
-extern Cardinal _XmDSIGetChildPosition( 
+extern Cardinal _XmDSIGetChildPosition(
                         XmDSInfo parentInfo,
                         XmDSInfo childInfo) ;
-extern void _XmDSIReplaceChild( 
+extern void _XmDSIReplaceChild(
                         XmDSInfo oldChildInfo,
                         XmDSInfo newChildInfo) ;
-extern void _XmDSISwapChildren( 
+extern void _XmDSISwapChildren(
                         XmDSInfo parentInfo,
                         Cardinal position1,
                         Cardinal position2) ;
-extern void _XmDSIDestroy( 
+extern void _XmDSIDestroy(
                         XmDSInfo info,
-#if NeedWidePrototypes
-                        int substructures) ;
-#else
                         Boolean substructures) ;
-#endif /* NeedWidePrototypes */
-extern Dimension _XmDSIGetBorderWidth( 
+extern Dimension _XmDSIGetBorderWidth(
                         XmDSInfo info) ;
 
 /********    End Private Function Declarations    ********/
@@ -624,4 +620,3 @@ externalref Cardinal _XmNumDSResources;
 #endif
 
 #endif /* _XmDropSMgrI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

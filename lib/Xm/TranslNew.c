@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -58,12 +58,12 @@
  *	to remove ~mod.
  */
 /*** ComboBox.c ***/
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmComboBox_defaultTranslations[] = "\
 <Btn1Down>:		CBArmAndDropDownList()\n\
 <Btn1Up>:		CBDisarm()";
 
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmComboBox_defaultAccelerators[] = "\
 \043override\n\
 :c <Key>osfUp:		CBDropDownList()\n\
@@ -76,7 +76,7 @@ _XmConst char _XmComboBox_defaultAccelerators[] = "\
 :<Key>osfPageDown:	CBListAction(ListNextPage)\n";
 
 /* TextF translations except for misc, Btn, osf*Data, osf*Up, and osf*Down. */
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmComboBox_dropDownComboBoxAccelerators[] = "\
 \043override\n\
 :m <Key>osfPrimaryPaste:cut-primary()\n\
@@ -134,7 +134,7 @@ c s ~m ~a <Key>space:	key-select()\n\
 s ~c ~m ~a <Key>space:	self-insert()\n\
 <Key>:			self-insert()";
 
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmComboBox_dropDownListTranslations[] = "\
 \043override\n\
 :c <Key>osfDown:	CBDropDownList()\n\
@@ -143,7 +143,7 @@ _XmConst char _XmComboBox_dropDownListTranslations[] = "\
 :<Key>osfActivate:	CBActivate()\n\
 ~s ~m ~a<Key>Return:	CBActivate()";
 
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmComboBox_textFocusTranslations[] = "\
 \043override\n\
 <FocusOut>:		CBTextFocusOut()";
@@ -185,7 +185,7 @@ externaldef(translations) _XmConst char _XmContainer_defaultTranslations[] = "\
 ~s  c ~m ~a <Key>slash:		ContainerSelectAll()\n\
 ~s  c ~m ~a <Key>backslash:	ContainerDeselectAll()";
 
-externaldef(translations) 
+externaldef(translations)
 _XmConst char _XmContainer_traversalTranslations[] = "\
 <FocusOut>:		ManagerFocusOut()\n\
 <FocusIn>:		ManagerFocusIn()\n\
@@ -207,7 +207,6 @@ _XmConst char _XmContainer_traversalTranslations[] = "\
 ~s ~m ~a <Key>Tab:	ManagerGadgetNextTabGroup()";
 
 /*** GrabShell.c ***/
-#ifdef FIX_1445
 externaldef(translations) _XmConst char _XmGrabShell_translations [] = "\
 <Btn4Down>:		GrabShellMouseWheel()\n\
 <Btn4Up>:		GrabShellMouseWheel()\n\
@@ -215,12 +214,6 @@ externaldef(translations) _XmConst char _XmGrabShell_translations [] = "\
 <Btn5Up>:		GrabShellMouseWheel()\n\
 <BtnUp>:		GrabShellBtnUp()\n\
 <BtnDown>:		GrabShellBtnDown()";
-#else
-externaldef(translations) _XmConst char _XmGrabShell_translations [] = "\
-<BtnUp>:		GrabShellBtnUp()\n\
-<BtnDown>:		GrabShellBtnDown()";
-#endif
-
 
 /*** Notebook.c ***/
 externaldef(translations) _XmConst char _XmNotebook_TabAccelerators[] = "\

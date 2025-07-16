@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -72,7 +72,7 @@ static char rcsid[] = "$TOG: Mrmwci.c /main/16 1999/05/19 15:25:58 mgreess $"
 static int hash_function ( int l_length , char *c_value );
 
 
-
+
 /*
  *
  *  GLOBAL VARIABLE DECLARATIONS
@@ -102,7 +102,7 @@ static Boolean			cldesc_hash_inited = FALSE;
 static URMHashTableEntryPtr	cldesc_hash_table [k_hash_table_size];
 
 
-
+
 /*
  *++
  *
@@ -110,7 +110,7 @@ static URMHashTableEntryPtr	cldesc_hash_table [k_hash_table_size];
  *  PROCEDURE DESCRIPTION:
  *
  *	MrmRegisterClass saves the information needed to access the widget
- *	creation routine using the information in URM databases. 
+ *	creation routine using the information in URM databases.
  *	type conversion of arglists.
  *
  *  FORMAL PARAMETERS:
@@ -139,14 +139,9 @@ static URMHashTableEntryPtr	cldesc_hash_table [k_hash_table_size];
  *--
  */
 
-/*ARGSUSED*/
-Cardinal 
+Cardinal
 MrmRegisterClass (
-#if NeedWidePrototypes
-		  int			class_code, /* unused */
-#else
 		  MrmType		class_code, /* unused */
-#endif 
 		  String		class_name, /* unused */
 		  String		create_name,
 		  Widget		(* creator) (),
@@ -159,14 +154,9 @@ MrmRegisterClass (
   return status;
 }
 
-/*ARGSUSED*/
-Cardinal 
+Cardinal
 MrmRegisterClassWithCleanup (
-#if NeedWidePrototypes
-		  int			class_code, /* unused */
-#else
 		  MrmType		class_code, /* unused */
-#endif 
 		  String		class_name, /* unused */
 		  String		create_name,
 		  Widget		(* creator) (),
@@ -184,7 +174,7 @@ MrmRegisterClassWithCleanup (
   /*
    * Allocate and fill in a new descriptor
    */
-  if (create_name == NULL) 
+  if (create_name == NULL)
     {
       _MrmProcessUnlock();
       return MrmFAILURE;
@@ -222,8 +212,8 @@ MrmRegisterClassWithCleanup (
 
 }
 
-
-Cardinal 
+
+Cardinal
 Urm__WCI_UnregisterName (String			name)
 {
   /*
@@ -235,7 +225,7 @@ Urm__WCI_UnregisterName (String			name)
   return MrmSUCCESS;	/* in any case */
 }
 
-
+
 /*
  *++
  *
@@ -264,7 +254,7 @@ Urm__WCI_UnregisterName (String			name)
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__WCI_RegisterNames (String			*names,
 			XtPointer		*values,
 			MrmCount		num_cb)
@@ -298,7 +288,7 @@ Urm__WCI_RegisterNames (String			*names,
 }
 
 
-
+
 /*
  *++
  *
@@ -326,7 +316,7 @@ Urm__WCI_RegisterNames (String			*names,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__WCI_LookupClassDescriptor (String		class_name,
 				WCIClassDescPtr	*class_return)
 {
@@ -355,7 +345,7 @@ Urm__WCI_LookupClassDescriptor (String		class_name,
 }
 
 
-
+
 /*
  *++
  *
@@ -383,7 +373,7 @@ Urm__WCI_LookupClassDescriptor (String		class_name,
  *--
  */
 
-WidgetClass 
+WidgetClass
 Urm__WCI_GetClRecOfName (String		clname)
 {
   /*
@@ -408,7 +398,7 @@ Urm__WCI_GetClRecOfName (String		clname)
 }
 
 
-
+
 /*
  *++
  *
@@ -436,7 +426,7 @@ Urm__WCI_GetClRecOfName (String		clname)
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__WCI_LookupRegisteredName (String		name,
 			       XtPointer	*value_return)
 {
@@ -461,7 +451,7 @@ Urm__WCI_LookupRegisteredName (String		name,
 }
 
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -488,7 +478,7 @@ Urm__WCI_LookupRegisteredName (String		name,
 **--
 **/
 
-void 
+void
 hash_initialize (URMHashTableEntryPtr	*htable,
 		 Boolean		*initflag)
 {
@@ -507,7 +497,7 @@ hash_initialize (URMHashTableEntryPtr	*htable,
 }
 
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -539,7 +529,7 @@ hash_initialize (URMHashTableEntryPtr	*htable,
 **--
 **/
 
-URMHashTableEntryPtr 
+URMHashTableEntryPtr
 hash_find_name (URMHashTableEntryPtr	*htable,
 		char			*c_text)
 {
@@ -590,14 +580,14 @@ hash_find_name (URMHashTableEntryPtr	*htable,
 }
 
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **  This routine searches for a name entry of the same name as its parameters.
-**  If the entry is found, a pointer to that entry node is 
-**  returned as the value of the function.  If no entry is found, one is 
+**  If the entry is found, a pointer to that entry node is
+**  returned as the value of the function.  If no entry is found, one is
 **  allocated and inserted.  In this case the value of the function is
 **  a pointer to the name entry created.
 **
@@ -633,7 +623,7 @@ hash_find_name (URMHashTableEntryPtr	*htable,
 **--
 **/
 
-URMHashTableEntryPtr 
+URMHashTableEntryPtr
 hash_insert_name (URMHashTableEntryPtr	*htable,
 		  char			*c_text)
 {
@@ -646,7 +636,7 @@ hash_insert_name (URMHashTableEntryPtr	*htable,
 
   /*
   **  algorithm keeps 2 pointers, one for the previous name and one
-  **  for the current name.  This permits easy insertion of a new name 
+  **  for the current name.  This permits easy insertion of a new name
   */
 
 
@@ -671,55 +661,55 @@ hash_insert_name (URMHashTableEntryPtr	*htable,
 	 az_current_name = az_current_name->az_next_entry)
     {
       l_compare_result = strcmp (c_text, az_current_name->c_text);
-	
+
       if (l_compare_result == 0)	/* c_text = current name */
 	{
 	  /* found the name we are looking for */
-	    
+
 	  return az_current_name;
 	}
-	
+
       if (l_compare_result > 0)	/* c_text > current name */
 	{
 	  /* exit the loop to insert just prior to current name */
-	    
+
 	  goto insert_name;
 	}
-	
+
     }
-    
+
 insert_name:
-    
+
   /*
   **	name is not in the table so it must be inserted between the
   **  az_previous_name and az_current_name entries.
   */
-    
+
   /* allocate and initialize the name entry, including the null */
   az_new_name = (URMHashTableEntryPtr)
     XtMalloc (sizeof(URMHashTableEntry)+l_length+1);
-    
+
   az_new_name -> az_value = (char *) NULL;
   UrmBCopy (c_text, az_new_name -> c_text, l_length + 1);
-    
+
   /*
   **  link the name entry into the hash table
   */
-    
+
   az_new_name->az_next_entry = az_current_name;
-    
+
   if (az_previous_name == (URMHashTableEntryPtr) NULL)
     htable[ l_hash_code ] = az_new_name;
   else
-    az_previous_name->az_next_entry = az_new_name;    
-    
+    az_previous_name->az_next_entry = az_new_name;
+
   return az_new_name;
 
 }
 
 
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -728,7 +718,7 @@ insert_name:
 **--
 */
 
-URMHashTableEntryPtr 
+URMHashTableEntryPtr
 hash_delete_name (URMHashTableEntryPtr	*htable,
 		  char			*c_text)
 {
@@ -740,7 +730,7 @@ hash_delete_name (URMHashTableEntryPtr	*htable,
 
   /*
   **  algorithm keeps 2 pointers, one for the previous name and one
-  **  for the current name.  This permits easy deletion of a name 
+  **  for the current name.  This permits easy deletion of a name
   */
 
 
@@ -765,43 +755,39 @@ hash_delete_name (URMHashTableEntryPtr	*htable,
 	 az_current_name = az_current_name->az_next_entry)
     {
       l_compare_result = strcmp (c_text, az_current_name->c_text);
-	
+
       if (l_compare_result == 0)	/* c_text = current name */
 	{
 	  /* found the name we are looking for */
 	  goto delete_name;
 	}
-	
+
       if (l_compare_result > 0)	/* c_text > current name */
 	{
 	  /* return NULL - name should be before this spot in list */
 	  return (URMHashTableEntryPtr) NULL;
 	}
-	
+
     }
   /* came to end of the list without finding the name */
   return (URMHashTableEntryPtr) NULL;
-    
+
 delete_name:
-    
+
   /*
   **  remove the name entry from the hash table
   */
-    
+
   if (az_previous_name == (URMHashTableEntryPtr) NULL)
     htable[ l_hash_code ] = az_current_name->az_next_entry;
   else
-    az_previous_name->az_next_entry = az_current_name->az_next_entry;    
+    az_previous_name->az_next_entry = az_current_name->az_next_entry;
 
   XtFree((char*)az_current_name);
-    
+
   return (URMHashTableEntryPtr) NULL;
 }
 
-
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -813,7 +799,7 @@ delete_name:
 **  FORMAL PARAMETERS:
 **
 **      l_length	    length of the value in bytes not including null
-**	c_value		    a null terminated string 
+**	c_value		    a null terminated string
 **
 **  IMPLICIT INPUTS:
 **
@@ -834,7 +820,7 @@ delete_name:
 **--
 **/
 
-static int 
+static int
 hash_function(int	l_length,
 	      char	*c_value)
 {
@@ -846,8 +832,8 @@ hash_function(int	l_length,
     0x00000000FFFFFFFF, 0x0000FFFFFFFFFFFF,
     0x00FFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, };
 #else
-#define _shift 2      
-  static unsigned int XmConst	mask[ 4 ] = 
+#define _shift 2
+  static unsigned int XmConst	mask[ 4 ] =
   { 0x000000FF, 0x0000FFFF, 0x00FFFFFF, 0xFFFFFFFF };
 #endif
   unsigned int    	l_hash_code;

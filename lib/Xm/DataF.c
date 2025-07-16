@@ -73,7 +73,6 @@
 
 #include "MessagesI.h"
 
-#define FIX_1531
 /*
  * Stuff from various internal motif headers that we need to declare
  */
@@ -104,18 +103,6 @@
        #define _XmConst
 #endif
 
-#ifdef _NO_PROTO
-extern Boolean _XmParentProcess();
-extern Boolean _XmMgrTraversal();
-extern unsigned char _XmGetFocusPolicy();
-extern void _XmPrimitiveFocusIn();
-extern void _XmPrimitiveEnter();
-extern void _XmPrimitiveLeave();
-extern Boolean _XmGetImage();
-extern Boolean _XmGetIconControlInfo();
-extern unsigned char _XmGetAudibleWarning();
-extern void _XmSetDestination();
-#else
 extern Boolean _XmParentProcess(Widget, XmParentProcessData);
 extern Boolean _XmMgrTraversal(Widget, XmTraversalDirection);
 extern unsigned char _XmGetFocusPolicy(Widget);
@@ -130,7 +117,6 @@ extern Boolean _XmGetIconControlInfo(
                         Boolean *useIconFileCacheRtn) ;
 extern unsigned char _XmGetAudibleWarning(Widget);
 extern void _XmSetDestination(Display *, Widget);
-#endif
 
 /*
  * Back to the original XmTextField code
@@ -158,168 +144,6 @@ typedef struct {
 
 
 /********    Static Function Declarations    ********/
-#ifdef _NO_PROTO
-
-static void df_ValidateAndMove() ;
-static int _XmDataFieldCountCharacters() ;
-static void df_MakeCopy() ;
-static void df_WcsMakeCopy() ;
-static void df_FreeContextData() ;
-static TextFDestData df_GetTextFDestData() ;
-static void df_SetDropContext() ;
-static void df_DeleteDropContext() ;
-static TextFGCData df_GetTextFGCData() ;
-static _XmHighlightRec * df_FindHighlight() ;
-static void df_InsertHighlight() ;
-static void DataFieldSetHighlight() ;
-static Boolean df_GetXYFromPos() ;
-static Boolean df_CurrentCursorState() ;
-static void df_PaintCursor() ;
-static int _XmGetImage();
-static void df_BlinkInsertionPoint() ;
-static void df_HandleTimer() ;
-static void df_ChangeBlinkBehavior() ;
-static void df_GetRect() ;
-static void df_CheckHasRect() ;
-static void df_XmSetFullGC() ;
-static void df_XmSetMarginGC() ;
-static void df_XmResetSaveGC() ;
-static void df_XmSetNormGC() ;
-#ifdef FIX_1381
-static void df_XmSetShadowGC() ;
-#endif
-static void df_XmSetInvGC() ;
-static void df_DrawText() ;
-static int df_FindPixelLength() ;
-static void df_DrawTextSegment() ;
-static void df_RedisplayText() ;
-static void df_ComputeSize() ;
-static XtGeometryResult df_TryResize() ;
-static Boolean df_AdjustText() ;
-static void df_AdjustSize() ;
-static Boolean df_ModifyVerify() ;
-static void df_ResetClipOrigin() ;
-static void df_InvertImageGC() ;
-static void df_ResetImageGC() ;
-static void df_SetCursorPosition() ;
-static void df_VerifyBounds() ;
-static XmTextPosition df_GetPosFromX() ;
-static XmTextPosition RightAlignedGetPosFromX() ;
-static Boolean df_SetDestination() ;
-static Boolean df_VerifyLeave() ;
-static Boolean _XmDataFieldIsWordBoundary() ;
-static int _XmGetImage(Screen *, char *, XImage **);
-static void df_FindWord() ;
-static void df_FindPrevWord() ;
-static void df_FindNextWord() ;
-static void df_CheckDisjointSelection() ;
-static Boolean df_NeedsPendingDelete() ;
-static Boolean df_NeedsPendingDeleteDisjoint() ;
-static Time df_GetServerTime() ;
-static void df_InsertChar() ;
-static void df_InsertString() ;
-static void df_DeletePrevChar() ;
-static void df_DeleteNextChar() ;
-static void df_DeletePrevWord() ;
-static void df_DeleteNextWord() ;
-static void df_DeleteToEndOfLine() ;
-static void df_DeleteToStartOfLine() ;
-static void df_ProcessCancel() ;
-static void df_Activate() ;
-static void df_SetAnchorBalancing() ;
-static void df_SetNavigationAnchor() ;
-static void df_CompleteNavigation() ;
-static void df_SimpleMovement() ;
-static void df_BackwardChar() ;
-static void df_ForwardChar() ;
-static void df_BackwardWord() ;
-static void df_ForwardWord() ;
-static void df_EndOfLine() ;
-static void df_BeginningOfLine() ;
-static void df_SetSelection() ;
-static void df_ProcessHorizontalParams() ;
-static void df_ProcessSelectParams() ;
-static void df_KeySelection() ;
-static void df_TextFocusIn() ;
-static void df_TextFocusOut() ;
-static void df_SetScanIndex() ;
-static void df_ExtendScanSelection() ;
-static void df_SetScanSelection() ;
-static void df_StartPrimary() ;
-static void df_MoveDestination() ;
-static void df_ExtendPrimary() ;
-static void df_ExtendEnd() ;
-static void df_DoExtendedSelection() ;
-static void df_DoSecondaryExtend() ;
-static void df_BrowseScroll() ;
-static Boolean df_CheckTimerScrolling() ;
-static void df_RestorePrimaryHighlight() ;
-static void df_StartDrag() ;
-static void df_StartSecondary() ;
-static void df_ProcessBDrag() ;
-static void df_ExtendSecondary() ;
-static void df_DoStuff() ;
-static void df_Stuff() ;
-static void df_HandleSelectionReplies() ;
-static void df_SecondaryNotify() ;
-static void df_HandleTargets() ;
-static void df_ProcessBDragRelease() ;
-static void df_ProcessCopy() ;
-static void df_ProcessMove() ;
-static void df_DeleteSelection() ;
-static void df_ClearSelection() ;
-static void df_PageRight() ;
-static void df_PageLeft() ;
-static void df_CopyPrimary() ;
-static void df_CutPrimary() ;
-static void df_SetAnchor() ;
-static void df_ToggleOverstrike() ;
-static void df_ToggleAddMode() ;
-static void df_SelectAll() ;
-static void df_DeselectAll() ;
-static void df_VoidAction() ;
-static void df_CutClipboard() ;
-static void df_CopyClipboard() ;
-static void df_PasteClipboard() ;
-static void df_TraverseDown() ;
-static void df_TraverseUp() ;
-static void df_TraverseHome() ;
-static void df_TraverseNextTabGroup() ;
-static void df_TraversePrevTabGroup() ;
-static void df_TextEnter() ;
-static void df_TextLeave() ;
-static void df_ClassPartInitialize() ;
-static void df_Validates() ;
-static Boolean df_LoadFontMetrics() ;
-static void df_ValidateString() ;
-static void df_InitializeTextStruct() ;
-static Pixmap df_GetClipMask() ;
-static void df_LoadGCs() ;
-static void df_MakeIBeamOffArea() ;
-static void df_MakeIBeamStencil() ;
-static void df_MakeAddModeCursor() ;
-static void df_MakeCursors() ;
-static void df_DropDestroyCB() ;
-static void df_DropTransferCallback() ;
-static void df_HandleDrop() ;
-static void df_DragProcCallback() ;
-static void df_DropProcCallback() ;
-static void df_RegisterDropSite() ;
-static void df_Initialize() ;
-static void df_Realize() ;
-static void df_Destroy() ;
-static void df_Resize() ;
-static XtGeometryResult df_QueryGeometry() ;
-static void DataFieldExpose() ;
-static Boolean df_SetValues() ;
-static Boolean DataFieldGetBaselines() ;
-static Boolean DataFieldGetDisplayRect() ;
-static void DataFieldMarginsProc() ;
-static Boolean DataFieldRemove();
-static void PictureVerifyCallback();
-static void ClassInit();
-static void XmDataFieldSetStringWcs();
-#else
 static void df_ValidateAndMove(
 			       Widget w,
 			       XEvent *ev,
@@ -378,11 +202,7 @@ static void df_HandleTimer(
 
 static void df_ChangeBlinkBehavior(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int turn_on) ;
-#else
                         Boolean turn_on) ;
-#endif /* NeedWidePrototypes */
 
 static void df_GetRect(
                         XmDataFieldWidget tf,
@@ -401,19 +221,12 @@ static void df_XmResetSaveGC(
 static void df_XmSetNormGC(
                         XmDataFieldWidget tf,
                         GC gc,
-#if NeedWidePrototypes
-                        int change_stipple,
-                        int stipple) ;
-#else
                         Boolean change_stipple,
                         Boolean stipple) ;
-#endif /* NeedWidePrototypes */
 
-#ifdef FIX_1381
 static void df_XmSetShadowGC(
                         XmDataFieldWidget tf,
                         GC gc);
-#endif
 
 static void df_XmSetInvGC(
                         XmDataFieldWidget tf,
@@ -437,11 +250,7 @@ static void df_DrawTextSegment(
                         XmTextPosition seg_start,
                         XmTextPosition seg_end,
                         XmTextPosition next_seg,
-#if NeedWidePrototypes
-                        int stipple,
-#else
                         Boolean stipple,
-#endif /* NeedWidePrototypes */
                         int y,
                         int *x) ;
 
@@ -456,22 +265,13 @@ static void df_ComputeSize(
 
 static XtGeometryResult df_TryResize(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int width,
-                        int height) ;
-#else
                         Dimension width,
                         Dimension height) ;
-#endif /* NeedWidePrototypes */
 
 static Boolean df_AdjustText(
                         XmDataFieldWidget tf,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int flag) ;
-#else
                         Boolean flag) ;
-#endif /* NeedWidePrototypes */
 
 static void df_AdjustSize(
                         XmDataFieldWidget tf) ;
@@ -487,11 +287,7 @@ static Boolean df_ModifyVerify(
 
 static void df_ResetClipOrigin(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int clip_mask_reset) ;
-#else
                         Boolean clip_mask_reset) ;
-#endif /* NeedWidePrototypes */
 
 static void df_InvertImageGC(
                         XmDataFieldWidget tf) ;
@@ -501,15 +297,9 @@ static void df_SetCursorPosition(
                         XmDataFieldWidget tf,
                         XEvent *event,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int adjust_flag,
-                        int call_cb,
-			int set_dest) ;
-#else
                         Boolean adjust_flag,
                         Boolean call_cb,
                         Boolean set_dest) ;
-#endif /* NeedWidePrototypes */
 
 static void df_VerifyBounds(
                         XmDataFieldWidget tf,
@@ -517,29 +307,16 @@ static void df_VerifyBounds(
                         XmTextPosition *to) ;
 static XmTextPosition df_GetPosFromX(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int x) ;
-#else
                         Position x) ;
-#endif /* NeedWidePrototypes */
 
 static XmTextPosition RightAlignedGetPosFromX(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int x) ;
-#else
                         Position x) ;
-#endif /* NeedWidePrototypes */
 
 static Boolean df_SetDestination(
                         Widget w,
                         XmTextPosition position,
-
-#if NeedWidePrototypes
-                        int disown,
-#else
                         Boolean disown,
-#endif /* NeedWidePrototypes */
                         Time set_time) ;
 
 static Boolean df_VerifyLeave(
@@ -629,22 +406,14 @@ static void df_SetAnchorBalancing(
 static void df_SetNavigationAnchor(
                         XmDataFieldWidget tf,
                         XmTextPosition position,
-#if NeedWidePrototypes
-                        int extend) ;
-#else
                         Boolean extend) ;
-#endif /* NeedWidePrototypes */
 
 static void df_CompleteNavigation(
                         XmDataFieldWidget tf,
                         XEvent *event,
                         XmTextPosition position,
                         Time time,
-#if NeedWidePrototypes
-                        int extend) ;
-#else
                         Boolean extend) ;
-#endif /* NeedWidePrototypes */
 
 static void df_SimpleMovement(
                         Widget w,
@@ -688,11 +457,7 @@ static void df_SetSelection(
                         XmDataFieldWidget tf,
                         XmTextPosition left,
                         XmTextPosition right,
-#if NeedWidePrototypes
-                        int redisplay) ;
-#else
                         Boolean redisplay) ;
-#endif /* NeedWidePrototypes */
 
 static void df_ProcessHorizontalParams(
                         Widget w,
@@ -954,11 +719,7 @@ static Boolean df_LoadFontMetrics(
 static void df_ValidateString(
                         XmDataFieldWidget tf,
                         char *value,
-#if NeedWidePrototypes
-                        int is_wchar) ;
-#else
                         Boolean is_wchar) ;
-#endif /* NeedWidePrototypes */
 
 static void df_InitializeTextStruct(
                         XmDataFieldWidget tf) ;
@@ -972,13 +733,8 @@ static void df_LoadGCs(
 
 static void df_MakeIBeamOffArea(
                         XmDataFieldWidget tf,
-#if NeedWidePrototypes
-                        int width,
-                        int height) ;
-#else
                         Dimension width,
                         Dimension height) ;
-#endif /* NeedWidePrototypes */
 
 static void df_MakeIBeamStencil(
                         XmDataFieldWidget tf,
@@ -1071,8 +827,6 @@ static void ClassInit(void);
 
 
 static void XmDataFieldSetStringWcs(Widget w, wchar_t *wc_value);
-
-#endif /* _NO_PROTO */
 
 /***************** End Static Function Declarations  ************/
 
@@ -1456,12 +1210,7 @@ static XmConst XmAccessTextualTraitRec dataFieldCS = {
   DataFieldPreferredValue,
 };
 
-static void
-#ifdef _NO_PROTO
-ClassInit()
-#else
-ClassInit(void)
-#endif
+static void ClassInit(void)
 {
     XmDataFieldClassRec* wc = &xmDataFieldClassRec;
     XmTransferTrait tt;
@@ -1477,21 +1226,12 @@ ClassInit(void)
 		(XtPointer) &dataFieldCS);
 }
 
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-df_ValidateAndMove(w, ev, args, nargs)
-     Widget w;
-     XEvent *ev;
-     String *args;
-     Cardinal *nargs;
-#else
 df_ValidateAndMove(
     Widget w,
     XEvent *ev,
     String *args,
     Cardinal *nargs)
-#endif
 {
     XmDataFieldCallbackStruct cbs;
 
@@ -1527,19 +1267,11 @@ df_ValidateAndMove(
 
 
 
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-PictureVerifyCallback(w, client_d, call_d)
-    Widget w;
-    XtPointer client_d;
-    XtPointer call_d;
-#else
 PictureVerifyCallback(
     Widget w,
     XtPointer client_d,
     XtPointer call_d )
-#endif /* _NO_PROTO */
 {
     XmTextVerifyCallbackStruct *cbs =
 	(XmTextVerifyCallbackStruct*) call_d;
@@ -1629,19 +1361,11 @@ PictureVerifyCallback(
  * n_bytes does not include NULL terminator (if any), nor does return.
  */
 
-/* ARGSUSED */
 static int
-#ifdef _NO_PROTO
-_XmDataFieldCountCharacters( tf, ptr, n_bytes )
-        XmDataFieldWidget tf ;
-        char *ptr ;
-        int n_bytes ;
-#else
 _XmDataFieldCountCharacters(
         XmDataFieldWidget tf,
         char *ptr,
         int n_bytes )
-#endif /* _NO_PROTO */
 {
    char * bptr;
    int count = 0;
@@ -1669,19 +1393,11 @@ _XmDataFieldCountCharacters(
  * NUMBER OF BYTES IS RETURNED.
  */
 
-/* ARGSUSED */
 int
-#ifdef _NO_PROTO
-_XmDataFieldCountBytes( tf, wc_value, num_chars )
-	XmDataFieldWidget tf;
-	wchar_t * wc_value;
-	int num_chars;
-#else /* _NO_PROTO */
 _XmDataFieldCountBytes(
 	XmDataFieldWidget tf,
 	wchar_t * wc_value,
 	int num_chars)
-#endif /* _NO_PROTO */
 {
    wchar_t 	* wc_ptr;
    char 	tmp[MB_LEN_MAX];  /* defined in limits.h: max in any locale */
@@ -1702,53 +1418,29 @@ _XmDataFieldCountBytes(
    return n_bytes;
 }
 
-/*ARGSUSED*/
 static void
-#ifdef _NO_PROTO
-df_MakeCopy( w, n, value )
-        Widget w ;
-	int n;
-        XtArgVal *value ;
-#else
 df_MakeCopy(
         Widget w,
 	int n,
         XtArgVal *value )
-#endif /* _NO_PROTO */
 {
     (*value) = (XtArgVal) XmDataFieldGetString (w);
 }
 
-/*ARGSUSED*/
 static void
-#ifdef _NO_PROTO
-df_WcsMakeCopy( w, n, value )
-        Widget w ;
-	int n;
-        XtArgVal *value ;
-#else
 df_WcsMakeCopy(
         Widget w,
 	int n,
         XtArgVal *value )
-#endif /* _NO_PROTO */
 {
     (*value) = (XtArgVal) XmDataFieldGetStringWcs (w);
 }
 
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-df_FreeContextData(w, clientData, callData)
-    Widget w;
-    XtPointer clientData;
-    XtPointer callData;
-#else
 df_FreeContextData(
 	Widget w,
 	XtPointer clientData,
 	XtPointer callData )
-#endif /* _NO_PROTO */
 {
     XmTextContextData ctx_data = (XmTextContextData) clientData;
     Display *display = DisplayOfScreen(ctx_data->screen);
@@ -1771,13 +1463,8 @@ df_FreeContextData(
 }
 
 static TextFDestData
-#ifdef _NO_PROTO
-df_GetTextFDestData( w )
-        Widget w ;
-#else
 df_GetTextFDestData(
         Widget w )
-#endif /* _NO_PROTO */
 {
    static TextFDestData dest_data;
    Display *display = XtDisplay(w);
@@ -1810,13 +1497,8 @@ df_GetTextFDestData(
 }
 
 static void
-#ifdef _NO_PROTO
-df_SetDropContext( w )
-        Widget w ;
-#else
 df_SetDropContext(
         Widget w )
-#endif /* _NO_PROTO */
 {
    Display *display = XtDisplay(w);
    Screen *screen = XtScreen(w);
@@ -1830,13 +1512,8 @@ df_SetDropContext(
 
 
 static void
-#ifdef _NO_PROTO
-df_DeleteDropContext( w )
-        Widget w ;
-#else
 df_DeleteDropContext(
         Widget w )
-#endif /* _NO_PROTO */
 {
    Display *display = XtDisplay(w);
    Screen *screen = XtScreen(w);
@@ -1846,13 +1523,8 @@ df_DeleteDropContext(
 
 
 Widget
-#ifdef _NO_PROTO
-_XmDataFieldGetDropReciever( w )
-        Widget w ;
-#else
 _XmDataFieldGetDropReciever(
         Widget w )
-#endif /* _NO_PROTO */
 {
    Widget widget;
 
@@ -1869,13 +1541,8 @@ _XmDataFieldGetDropReciever(
 
 
 static TextFGCData
-#ifdef _NO_PROTO
-df_GetTextFGCData( w )
-        Widget w ;
-#else
 df_GetTextFGCData(
         Widget w )
-#endif /* _NO_PROTO */
 {
    static TextFGCData gc_data;
    Display *display = XtDisplay(w);
@@ -1911,13 +1578,8 @@ df_GetTextFGCData(
 }
 
 void
-#ifdef _NO_PROTO
-_XmDataFToggleCursorGC( widget )
-        Widget widget;
-#else
 _XmDataFToggleCursorGC(
         Widget widget )
-#endif /* _NO_PROTO */
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) widget;
     XGCValues values;
@@ -1927,7 +1589,6 @@ _XmDataFToggleCursorGC(
 
     if (!XmTextF_has_rect(tf)) _XmDataFieldSetClipRect(tf);
 
-#ifdef FIX_1501
     if (!XtIsSensitive(widget)) {
       valuemask = GCForeground|GCBackground|GCFillStyle|GCStipple|GCFunction;
       values.foreground = _XmAssignInsensitiveColor((Widget)tf);
@@ -1944,7 +1605,6 @@ _XmDataFToggleCursorGC(
         values.function = GXcopy;
       }
     } else {
-#endif
     if (XmTextF_overstrike(tf)) {
       if (!XmTextF_add_mode(tf) && XtIsSensitive(widget) &&
 	  (XmTextF_has_focus(tf) || XmTextF_has_destination(tf))) {
@@ -1975,9 +1635,7 @@ _XmDataFToggleCursorGC(
       }
       valuemask |= GCStipple;
     }
-#ifdef FIX_1501
     }
-#endif
     XChangeGC(XtDisplay(widget), XmTextF_image_gc(tf), valuemask, &values);
 }
 
@@ -1987,15 +1645,9 @@ _XmDataFToggleCursorGC(
  * the left or right edge of a highlighting range.
  */
 static _XmHighlightRec *
-#ifdef _NO_PROTO
-df_FindHighlight( w, position )
-        XmDataFieldWidget w ;
-        XmTextPosition position ;
-#else
 df_FindHighlight(
         XmDataFieldWidget w,
         XmTextPosition position )
-#endif /* _NO_PROTO */
 {
     _XmHighlightRec *l = XmTextF_highlight(w).list;
     int i;
@@ -2010,17 +1662,10 @@ df_FindHighlight(
 }
 
 static void
-#ifdef _NO_PROTO
-df_InsertHighlight( w, position, mode )
-        XmDataFieldWidget w ;
-        XmTextPosition position ;
-        XmHighlightMode mode ;
-#else
 df_InsertHighlight(
         XmDataFieldWidget w,
         XmTextPosition position,
         XmHighlightMode mode )
-#endif /* _NO_PROTO */
 {
     _XmHighlightRec *l1;
     _XmHighlightRec *l = XmTextF_highlight(w).list;
@@ -2045,19 +1690,11 @@ df_InsertHighlight(
 }
 
 static void
-#ifdef _NO_PROTO
-DataFieldSetHighlight( tf, left, right, mode )
-        XmDataFieldWidget tf ;
-        XmTextPosition left ;
-        XmTextPosition right ;
-        XmHighlightMode mode ;
-#else
 DataFieldSetHighlight(
         XmDataFieldWidget tf,
         XmTextPosition left,
         XmTextPosition right,
         XmHighlightMode mode )
-#endif /* _NO_PROTO */
 {
     _XmHighlightRec *l;
     XmHighlightMode endmode;
@@ -2095,19 +1732,11 @@ DataFieldSetHighlight(
  * Get x and y based on position.
  */
 static Boolean
-#ifdef _NO_PROTO
-df_GetXYFromPos( tf, position, x, y )
-        XmDataFieldWidget tf ;
-        XmTextPosition position ;
-        Position *x ;
-        Position *y ;
-#else
 df_GetXYFromPos(
         XmDataFieldWidget tf,
         XmTextPosition position,
         Position *x,
         Position *y )
-#endif /* _NO_PROTO */
 {
     int	x1, x2;
 
@@ -2163,13 +1792,8 @@ df_GetXYFromPos(
 }
 
 static Boolean
-#ifdef _NO_PROTO
-df_CurrentCursorState( tf )
-        XmDataFieldWidget tf ;
-#else
 df_CurrentCursorState(
         XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
 {
     if (XmTextF_cursor_on(tf) < 0) return False;
     if (XmTextF_blink_on(tf) || !XtIsSensitive((Widget)tf))
@@ -2181,13 +1805,8 @@ df_CurrentCursorState(
  * Paint insert cursor
  */
 static void
-#ifdef _NO_PROTO
-df_PaintCursor( tf )
-        XmDataFieldWidget tf ;
-#else
 df_PaintCursor(
         XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
 {
     Position x, y;
     XmTextPosition position;
@@ -2228,14 +1847,12 @@ df_PaintCursor(
     }
 
     if ((XmTextF_cursor_on(tf) >= 0) && XmTextF_blink_on(tf)) {
-#ifdef FIX_1501
        if (!XtIsSensitive((Widget) tf)) {
           df_XmSetShadowGC(tf, XmTextF_image_gc(tf));
           XFillRectangle(XtDisplay(tf), XtWindow(tf), XmTextF_image_gc(tf), x + 1, y + 1,
                          XmTextF_cursor_width(tf), XmTextF_cursor_height(tf));
        }
        _XmDataFToggleCursorGC((Widget) tf);
-#endif
        XFillRectangle(XtDisplay(tf), XtWindow(tf), XmTextF_image_gc(tf), x, y,
 		      XmTextF_cursor_width(tf), XmTextF_cursor_height(tf));
     } else {
@@ -2246,15 +1863,9 @@ df_PaintCursor(
 }
 
 void
-#ifdef _NO_PROTO
-_XmDataFieldDrawInsertionPoint( tf, turn_on )
-        XmDataFieldWidget tf ;
-        Boolean turn_on ;
-#else
 _XmDataFieldDrawInsertionPoint(
         XmDataFieldWidget tf,
         Boolean turn_on )
-#endif /* _NO_PROTO */
 {
 
     if (turn_on == True) {
@@ -2278,13 +1889,8 @@ _XmDataFieldDrawInsertionPoint(
 }
 
 static void
-#ifdef _NO_PROTO
-df_BlinkInsertionPoint( tf )
-        XmDataFieldWidget tf ;
-#else
 df_BlinkInsertionPoint(
         XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
 {
     if ((XmTextF_cursor_on(tf) >= 0) &&
 	XmTextF_blink_on(tf) == df_CurrentCursorState(tf) &&
@@ -2299,17 +1905,10 @@ df_BlinkInsertionPoint(
 /*
  * Handle blink on and off
  */
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-df_HandleTimer( closure, id )
-        XtPointer closure ;
-        XtIntervalId *id ;
-#else
 df_HandleTimer(
         XtPointer closure,
         XtIntervalId *id )
-#endif /* _NO_PROTO */
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) closure;
 
@@ -2327,22 +1926,8 @@ df_HandleTimer(
 /*
  * Change state of blinking insert cursor on and off
  */
-static void
-#ifdef _NO_PROTO
-df_ChangeBlinkBehavior( tf, turn_on )
-        XmDataFieldWidget tf ;
-        Boolean turn_on ;
-#else
-df_ChangeBlinkBehavior(
-        XmDataFieldWidget tf,
-#if NeedWidePrototypes
-        int turn_on )
-#else
-        Boolean turn_on )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_ChangeBlinkBehavior(XmDataFieldWidget tf, Boolean turn_on)
 {
-
     if (turn_on) {
         if (XmTextF_blink_rate(tf) != 0 && XmTextF_timer_id(tf) == (XtIntervalId)0)
             XmTextF_timer_id(tf) =
@@ -2358,16 +1943,7 @@ df_ChangeBlinkBehavior(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_GetRect( tf, rect )
-        XmDataFieldWidget tf ;
-        XRectangle *rect ;
-#else
-df_GetRect(
-        XmDataFieldWidget tf,
-        XRectangle *rect )
-#endif /* _NO_PROTO */
+static void df_GetRect(XmDataFieldWidget tf, XRectangle *rect)
 {
   Dimension margin_width = XmTextF_margin_width(tf) +
 	                   tf->primitive.shadow_thickness +
@@ -2399,14 +1975,7 @@ df_GetRect(
      rect->height = 0;
 }
 
-static void
-#ifdef _NO_PROTO
-df_CheckHasRect( tf )
-        XmDataFieldWidget tf ;
-#else
-df_CheckHasRect(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_CheckHasRect(XmDataFieldWidget tf)
 {
  /*
   * Make sure the cached GC has the clipping rectangle
@@ -2420,16 +1989,7 @@ df_CheckHasRect(
   }
 }
 
-static void
-#ifdef _NO_PROTO
-df_XmSetFullGC( tf, gc )
-        XmDataFieldWidget tf ;
-        GC gc ;
-#else
-df_XmSetFullGC(
-        XmDataFieldWidget tf,
-        GC gc )
-#endif /* _NO_PROTO */
+static void df_XmSetFullGC(XmDataFieldWidget tf, GC gc)
 {
   XRectangle ClipRect;
 
@@ -2447,16 +2007,7 @@ df_XmSetFullGC(
                      Unsorted);
 }
 
-static void
-#ifdef _NO_PROTO
-df_XmSetMarginGC( tf, gc )
-        XmDataFieldWidget tf ;
-        GC gc ;
-#else
-df_XmSetMarginGC(
-        XmDataFieldWidget tf,
-        GC gc )
-#endif /* _NO_PROTO */
+static void df_XmSetMarginGC(XmDataFieldWidget tf, GC gc)
 {
   XRectangle ClipRect;
 
@@ -2469,17 +2020,7 @@ df_XmSetMarginGC(
                      Unsorted);
 }
 
-
-static void
-#ifdef _NO_PROTO
-df_XmResetSaveGC( tf, gc )
-        XmDataFieldWidget tf ;
-        GC gc ;
-#else
-df_XmResetSaveGC(
-        XmDataFieldWidget tf,
-        GC gc )
-#endif /* _NO_PROTO */
+static void df_XmResetSaveGC(XmDataFieldWidget tf, GC gc)
 {
   XSetClipMask(XtDisplay(tf), gc, None);
 }
@@ -2489,28 +2030,18 @@ df_XmResetSaveGC(
  * done on each focus in event since the text field widgets
  * share the same GC.
  */
-void
-#ifdef _NO_PROTO
-_XmDataFieldSetClipRect( tf )
-        XmDataFieldWidget tf ;
-#else
-_XmDataFieldSetClipRect(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+void _XmDataFieldSetClipRect(XmDataFieldWidget tf)
 {
   XGCValues values;
   unsigned long valuemask = (unsigned long) 0;
-
 
  /*
   * Make sure the cached GC has the clipping rectangle
   * set to the current widget.
   */
   df_CheckHasRect(tf);
-
   df_XmSetMarginGC(tf, XmTextF_gc(tf));
   df_XmSetFullGC(tf, XmTextF_image_gc(tf));
-
   df_ResetClipOrigin(tf, False);
 
 
@@ -2524,7 +2055,6 @@ _XmDataFieldSetClipRect(
   }
 
  /* Restore cached text gc to state correct for this instantiation */
-
   if (XmTextF_gc(tf)){
 #if USE_XFT
      if (!XmTextF_have_fontset(tf) && !XmTextF_use_xft(tf)
@@ -2561,25 +2091,8 @@ _XmDataFieldSetClipRect(
   _XmDataFToggleCursorGC((Widget)tf);
 }
 
-static void
-#ifdef _NO_PROTO
-df_XmSetNormGC( tf, gc, change_stipple, stipple )
-        XmDataFieldWidget tf ;
-        GC gc ;
-	Boolean change_stipple;
-	Boolean stipple;
-#else
-df_XmSetNormGC(
-        XmDataFieldWidget tf,
-        GC gc,
-#if NeedWidePrototypes
-	int change_stipple,
-        int stipple)
-#else
-	Boolean change_stipple,
-        Boolean stipple)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_XmSetNormGC(XmDataFieldWidget tf, GC gc,
+                           Boolean change_stipple, Boolean stipple)
 {
     unsigned long valueMask = (GCForeground | GCBackground);
     XGCValues values;
@@ -2588,35 +2101,18 @@ df_XmSetNormGC(
     values.foreground = tf->primitive.foreground;
     values.background = tf->core.background_pixel;
     if (change_stipple) {
-#ifdef FIX_1381
        valueMask |= GCFillStyle;
        if (stipple) {
           /*generally gray insensitive foreground (instead stipple)*/
           values.foreground = _XmAssignInsensitiveColor((Widget)tf);
           values.fill_style = FillSolid;
        } else values.fill_style = FillSolid;
-#else
-       valueMask |= GCTile | GCFillStyle;
-       values.tile = XmTextF_stipple_tile(tf);
-       if (stipple) values.fill_style = FillTiled;
-       else values.fill_style = FillSolid;
-#endif
     }
 
     XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
 
-#ifdef FIX_1381
-static void
-#ifdef _NO_PROTO
-df_XmSetShadowGC( tf, gc )
-        XmDataFieldWidget tf ;
-        GC gc ;
-#else
-df_XmSetShadowGC(
-        XmDataFieldWidget tf,
-        GC gc )
-#endif /* _NO_PROTO */
+static void df_XmSetShadowGC(XmDataFieldWidget tf, GC gc)
 {
     unsigned long valueMask = (GCForeground | GCBackground);
     XGCValues values;
@@ -2626,18 +2122,8 @@ df_XmSetShadowGC(
 
     XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
-#endif
 
-static void
-#ifdef _NO_PROTO
-df_XmSetInvGC( tf, gc )
-        XmDataFieldWidget tf ;
-        GC gc ;
-#else
-df_XmSetInvGC(
-        XmDataFieldWidget tf,
-        GC gc )
-#endif /* _NO_PROTO */
+static void df_XmSetInvGC(XmDataFieldWidget tf, GC gc)
 {
     unsigned long valueMask = (GCForeground | GCBackground);
     XGCValues values;
@@ -2649,24 +2135,8 @@ df_XmSetInvGC(
     XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
 
-static void
-#ifdef _NO_PROTO
-df_DrawText( tf, gc, x, y, string, length )
-        XmDataFieldWidget tf ;
-        GC gc ;
-        int x ;
-        int y ;
-        char * string ;
-        int length ;
-#else
-df_DrawText(
-        XmDataFieldWidget tf,
-        GC  gc,
-        int x,
-        int y,
-        char * string,
-        int length )
-#endif /* _NO_PROTO */
+static void df_DrawText(XmDataFieldWidget tf, GC  gc, int x, int y,
+                        char * string, int length)
 {
    if (XmTextF_have_fontset(tf)){
       if (XmTextF_max_char_size(tf) != 1)
@@ -2731,18 +2201,7 @@ df_DrawText(
    }
 }
 
-static int
-#ifdef _NO_PROTO
-df_FindPixelLength( tf, string, length)
-        XmDataFieldWidget tf ;
-        char * string ;
-        int length ;
-#else
-df_FindPixelLength(
-        XmDataFieldWidget tf,
-        char * string,
-        int length )
-#endif /* _NO_PROTO */
+static int df_FindPixelLength(XmDataFieldWidget tf, char * string, int length)
 {
    if (XmTextF_have_fontset(tf)) {
       if (XmTextF_max_char_size(tf) != 1)
@@ -2803,35 +2262,15 @@ df_FindPixelLength(
    }
 }
 
-static void
-#ifdef _NO_PROTO
-df_DrawTextSegment( tf, mode, prev_seg_start, seg_start, seg_end, next_seg,
-		 stipple, y, x)
-        XmDataFieldWidget tf ;
-        XmHighlightMode mode;
-	XmTextPosition prev_seg_start;
-	XmTextPosition seg_start;
-	XmTextPosition seg_end;
-	XmTextPosition next_seg;
-	Boolean stipple;
-        int y ;
-        int *x ;
-#else
-df_DrawTextSegment(
-        XmDataFieldWidget tf,
-        XmHighlightMode mode,
+static void df_DrawTextSegment(
+	XmDataFieldWidget tf,
+	XmHighlightMode mode,
 	XmTextPosition prev_seg_start,
 	XmTextPosition seg_start,
 	XmTextPosition seg_end,
 	XmTextPosition next_seg,
-#if NeedWidePrototypes
-        int stipple,
-#else
-        Boolean stipple,
-#endif /* NeedWidePrototypes */
-        int y,
-        int *x)
-#endif /* _NO_PROTO */
+	Boolean stipple,
+	int y, int *x)
 {
     int x_seg_len;
 
@@ -2878,7 +2317,6 @@ df_DrawTextSegment(
        df_XmSetNormGC(tf, XmTextF_gc(tf), True, stipple);
     }
 
-#ifdef FIX_1381
     if (stipple) {
        /*Draw shadow for insensitive text*/
        df_XmSetShadowGC(tf, XmTextF_gc(tf));
@@ -2891,7 +2329,6 @@ df_DrawTextSegment(
        }
        df_XmSetNormGC(tf, XmTextF_gc(tf), True, stipple);
     }
-#endif
 
     if (XmTextF_max_char_size(tf) != 1) {
        df_DrawText(tf, XmTextF_gc(tf), *x, y, (char*) (XmTextF_wc_value(tf) + seg_start),
@@ -2920,18 +2357,7 @@ df_DrawTextSegment(
  * Redisplay the new adjustments that have been made the the text
  * field widget.
  */
-static void
-#ifdef _NO_PROTO
-df_RedisplayText( tf, start, end )
-        XmDataFieldWidget tf ;
-        XmTextPosition start ;
-        XmTextPosition end ;
-#else
-df_RedisplayText(
-        XmDataFieldWidget tf,
-        XmTextPosition start,
-        XmTextPosition end )
-#endif /* _NO_PROTO */
+static void df_RedisplayText(XmDataFieldWidget tf, XmTextPosition start, XmTextPosition end)
 {
   _XmHighlightRec *l = XmTextF_highlight(tf).list;
   XRectangle rect;
@@ -3063,23 +2489,11 @@ df_RedisplayText(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
 /*
  * Use the font along with the resources that have been set
  * to determine the height and width of the text field widget.
  */
-static void
-#ifdef _NO_PROTO
-df_ComputeSize( tf, width, height )
-        XmDataFieldWidget tf ;
-        Dimension *width ;
-        Dimension *height ;
-#else
-df_ComputeSize(
-        XmDataFieldWidget tf,
-        Dimension *width,
-        Dimension *height )
-#endif /* _NO_PROTO */
+static void df_ComputeSize(XmDataFieldWidget tf, Dimension *width, Dimension *height)
 {
     Dimension tmp = 0;
 
@@ -3108,28 +2522,11 @@ df_ComputeSize(
 		 tf->primitive.highlight_thickness);
 }
 
-
 /*
  * df_TryResize - Attempts to resize the width of the text field widget.
  * If the attempt fails or is ineffective, return GeometryNo.
  */
-static XtGeometryResult
-#ifdef _NO_PROTO
-df_TryResize( tf, width, height )
-        XmDataFieldWidget tf ;
-        Dimension width ;
-        Dimension height ;
-#else
-df_TryResize(
-        XmDataFieldWidget tf,
-#if NeedWidePrototypes
-        int width,
-        int height )
-#else
-        Dimension width,
-        Dimension height )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static XtGeometryResult df_TryResize(XmDataFieldWidget tf, Dimension width, Dimension height)
 {
     Dimension reswidth, resheight;
     Dimension origwidth = tf->core.width;
@@ -3157,7 +2554,6 @@ df_TryResize(
     return result;
 }
 
-
 /*
  * Function df_AdjustText
  *
@@ -3168,21 +2564,7 @@ df_TryResize(
  *
  */
 static Boolean
-#ifdef _NO_PROTO
-df_AdjustText( tf, position, flag )
-        XmDataFieldWidget tf ;
-        XmTextPosition position ;
-        Boolean flag ;
-#else
-df_AdjustText(
-        XmDataFieldWidget tf,
-        XmTextPosition position,
-#if NeedWidePrototypes
-        int flag )
-#else
-        Boolean flag )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+df_AdjustText(XmDataFieldWidget tf, XmTextPosition position, Boolean flag)
 {
   int left_edge = 0;
   int diff;
@@ -3292,14 +2674,7 @@ df_AdjustText(
  * It will also adjust text that is shrunk.  Shrinkage is limited to the
  * size determined by the XmNcolumns resource.
  */
-static void
-#ifdef _NO_PROTO
-df_AdjustSize( tf )
-        XmDataFieldWidget tf ;
-#else
-df_AdjustSize(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_AdjustSize(XmDataFieldWidget tf)
 {
   XtGeometryResult result = XtGeometryYes;
   int left_edge = 0;
@@ -3383,29 +2758,15 @@ df_AdjustSize(
  * is the number of characters, not the number of bytes pointed to by
  * insert
  */
-static Boolean
-#ifdef _NO_PROTO
-df_ModifyVerify( tf, event, replace_prev, replace_next,
-	      insert, insert_length, newInsert, free_insert )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-        XmTextPosition *replace_prev ;
-        XmTextPosition *replace_next ;
-        char **insert ;
-        int *insert_length ;
-        XmTextPosition *newInsert ;
-        int *free_insert ;
-#else
-df_ModifyVerify(
-        XmDataFieldWidget tf,
-        XEvent *event,
-        XmTextPosition *replace_prev,
-        XmTextPosition *replace_next,
-        char **insert,
-        int *insert_length,
-        XmTextPosition *newInsert,
-	int *free_insert )
-#endif /* _NO_PROTO */
+static Boolean df_ModifyVerify(
+	XmDataFieldWidget tf,
+	XEvent *event,
+	XmTextPosition *replace_prev,
+	XmTextPosition *replace_next,
+	char **insert,
+	int *insert_length,
+	XmTextPosition *newInsert,
+	int *free_insert)
 {
      XmTextVerifyCallbackStruct vcb;
      XmTextVerifyCallbackStructWcs wcs_vcb;
@@ -3620,20 +2981,7 @@ df_ModifyVerify(
         return vcb.doit;
 }
 
-static void
-#ifdef _NO_PROTO
-df_ResetClipOrigin(tf, clip_mask_reset)
-	XmDataFieldWidget tf;
-	Boolean clip_mask_reset;
-#else /* _NO_PROTO */
-df_ResetClipOrigin(
-	XmDataFieldWidget tf,
-#if NeedWidePrototypes
-        int clip_mask_reset)
-#else
-        Boolean clip_mask_reset)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_ResetClipOrigin(XmDataFieldWidget tf, Boolean clip_mask_reset)
 {
    unsigned long valuemask = (GCTileStipXOrigin | GCTileStipYOrigin |
 			     GCClipXOrigin | GCClipYOrigin);
@@ -3669,14 +3017,7 @@ df_ResetClipOrigin(
       XSetTSOrigin(XtDisplay(tf), XmTextF_image_gc(tf), x, y);
 }
 
-static void
-#ifdef _NO_PROTO
-df_InvertImageGC (tf)
-	XmDataFieldWidget tf ;
-#else
-df_InvertImageGC (
-	XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_InvertImageGC(XmDataFieldWidget tf)
 {
    unsigned long valuemask = (GCForeground | GCBackground);
    XGCValues values;
@@ -3696,14 +3037,7 @@ df_InvertImageGC (
    XmTextF_have_inverted_image_gc(tf) = True;
 }
 
-static void
-#ifdef _NO_PROTO
-df_ResetImageGC (tf)
-        XmDataFieldWidget tf ;
-#else
-df_ResetImageGC (
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_ResetImageGC(XmDataFieldWidget tf)
 {
    unsigned long valuemask = (GCForeground | GCBackground);
    XGCValues values;
@@ -3733,57 +3067,23 @@ df_ResetImageGC (
  * move the text if need be.
  */
 
-void
-#ifdef _NO_PROTO
-_XmDataFielddf_SetCursorPosition( tf, event, position,
-			      adjust_flag, call_cb)
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-        XmTextPosition position ;
-        Boolean adjust_flag ;
-        Boolean call_cb ;
-#else
-_XmDataFielddf_SetCursorPosition(
-        XmDataFieldWidget tf,
-        XEvent *event,
-        XmTextPosition position,
-#if NeedWidePrototypes
-        int adjust_flag,
-        int call_cb)
-#else
-        Boolean adjust_flag,
-        Boolean call_cb)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+void _XmDataFielddf_SetCursorPosition(
+	XmDataFieldWidget tf,
+	XEvent *event,
+	XmTextPosition position,
+	Boolean adjust_flag,
+	Boolean call_cb)
 {
   df_SetCursorPosition(tf, event, position, adjust_flag, call_cb, True);
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetCursorPosition( tf, event, position,
-		  adjust_flag, call_cb, set_dest)
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-        XmTextPosition position ;
-        Boolean adjust_flag ;
-        Boolean call_cb ;
-        Boolean set_dest;
-#else
-df_SetCursorPosition(
-        XmDataFieldWidget tf,
-        XEvent *event,
-        XmTextPosition position,
-#if NeedWidePrototypes
-        int adjust_flag,
-        int call_cb,
-	int set_dest)
-#else
-        Boolean adjust_flag,
-        Boolean call_cb,
-        Boolean set_dest)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_SetCursorPosition(
+	XmDataFieldWidget tf,
+	XEvent *event,
+	XmTextPosition position,
+	Boolean adjust_flag,
+	Boolean call_cb,
+	Boolean set_dest)
 {
     XmTextVerifyCallbackStruct cb;
     Boolean flag = False;
@@ -3855,24 +3155,14 @@ df_SetCursorPosition(
 			    XtLastTimestampProcessed(XtDisplay((Widget)tf)));
 }
 
-
 /*
  * This routine is used to verify that the positions are within the bounds
  * of the current DataField widgets value.  Also, it ensures that left is
  * less than right.
  */
-static void
-#ifdef _NO_PROTO
-df_VerifyBounds( tf, from, to )
-        XmDataFieldWidget tf ;
-        XmTextPosition *from ;
-        XmTextPosition *to ;
-#else
-df_VerifyBounds(
-        XmDataFieldWidget tf,
-        XmTextPosition *from,
-        XmTextPosition *to )
-#endif /* _NO_PROTO */
+static void df_VerifyBounds(XmDataFieldWidget tf,
+                            XmTextPosition *from,
+                            XmTextPosition *to)
 {
   XmTextPosition tmp;
 
@@ -3913,27 +3203,14 @@ df_VerifyBounds(
  * the appropriate cast.  In all cases, insert_length is the number of
  * characters (not bytes) to be inserted.
  */
-Boolean
-#ifdef _NO_PROTO
-_XmDataFieldReplaceText( tf, event, replace_prev, replace_next,
-		         insert, insert_length, move_cursor )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-        XmTextPosition replace_prev ;
-        XmTextPosition replace_next ;
-        char *insert ;
-        int insert_length ;
-	Boolean move_cursor ;
-#else
-_XmDataFieldReplaceText(
-        XmDataFieldWidget tf,
-        XEvent *event,
-        XmTextPosition replace_prev,
-        XmTextPosition replace_next,
-        char *insert,
-        int insert_length,
-	Boolean move_cursor )
-#endif /* _NO_PROTO */
+Boolean _XmDataFieldReplaceText(
+	XmDataFieldWidget tf,
+	XEvent *event,
+	XmTextPosition replace_prev,
+	XmTextPosition replace_next,
+	char *insert,
+	int insert_length,
+	Boolean move_cursor)
 {
   int replace_length, i;
   char *src, *dst;
@@ -4200,27 +3477,11 @@ _XmDataFieldReplaceText(
   return True;
 }
 
-
 /*
  * Reset selection flag and selection positions and then display
  * the new settings.
  */
-void
-#ifdef _NO_PROTO
-_XmDataFieldDeselectSelection( w, disown, sel_time )
-        Widget w ;
-        Boolean disown ;
-        Time sel_time ;
-#else
-_XmDataFieldDeselectSelection(
-        Widget w,
-#if NeedWidePrototypes
-        int disown,
-#else
-        Boolean disown,
-#endif /* NeedWidePrototypes */
-        Time sel_time )
-#endif /* _NO_PROTO */
+void _XmDataFieldDeselectSelection(Widget w, Boolean disown, Time sel_time)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -4253,20 +3514,7 @@ _XmDataFieldDeselectSelection(
 /*
  * Finds the cursor position from the given X value.
  */
-static XmTextPosition
-#ifdef _NO_PROTO
-df_GetPosFromX( tf, x )
-        XmDataFieldWidget tf ;
-        Position x ;
-#else
-df_GetPosFromX(
-        XmDataFieldWidget tf,
-#if NeedWidePrototypes
-        int x )
-#else
-        Position x )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static XmTextPosition df_GetPosFromX(XmDataFieldWidget tf, Position x)
 {
     XmTextPosition position;
     int temp_x = 0;
@@ -4323,19 +3571,7 @@ df_GetPosFromX(
 /*
  * Finds the cursor position from the given X value.
  */
-static XmTextPosition
-#ifdef _NO_PROTO
-RightAlignedGetPosFromX( tf, x )
-    XmDataFieldWidget tf ;
-    Position x ;
-#else
-RightAlignedGetPosFromX( XmDataFieldWidget tf,
-#if NeedWidePrototypes
-    int x )
-#else
-    Position x )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static XmTextPosition RightAlignedGetPosFromX(XmDataFieldWidget tf, Position x)
 {
     XmTextPosition position;
     int margin_width = XmTextF_margin_width(tf) +
@@ -4390,25 +3626,8 @@ RightAlignedGetPosFromX( XmDataFieldWidget tf,
     return position;
 }
 
-/* ARGSUSED */
-static Boolean
-#ifdef _NO_PROTO
-df_SetDestination( w, position, disown, set_time )
-        Widget w ;
-        XmTextPosition position ;
-        Boolean disown ;
-        Time set_time ;
-#else
-df_SetDestination(
-        Widget w,
-        XmTextPosition position,
-#if NeedWidePrototypes
-        int disown,
-#else
-        Boolean disown,
-#endif /* NeedWidePrototypes */
-        Time set_time )
-#endif /* _NO_PROTO */
+static Boolean df_SetDestination(Widget w, XmTextPosition position,
+                                 Boolean disown, Time set_time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Boolean result = TRUE;
@@ -4447,45 +3666,19 @@ df_SetDestination(
     }
 
     _XmDataFieldDrawInsertionPoint(tf, True);
-
     return result;
 }
 
-Boolean
-#ifdef _NO_PROTO
-_XmDataFielddf_SetDestination( w, position, set_time )
-        Widget w ;
-        XmTextPosition position ;
-        Time set_time ;
-#else
-_XmDataFielddf_SetDestination(
-        Widget w,
-        XmTextPosition position,
-        Time set_time )
-#endif /* _NO_PROTO */
+Boolean _XmDataFielddf_SetDestination(Widget w, XmTextPosition position, Time set_time)
 {
-   Boolean result;
-
-   result = df_SetDestination(w, position, False, set_time);
-
-   return result;
+   return df_SetDestination(w, position, False, set_time);
 }
-
 
 /*
  * Calls the losing focus verify callback to verify that the application
  * want to traverse out of the text field widget.  Returns the result.
  */
-static Boolean
-#ifdef _NO_PROTO
-df_VerifyLeave( tf, event )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-#else
-df_VerifyLeave(
-        XmDataFieldWidget tf,
-        XEvent *event )
-#endif /* _NO_PROTO */
+static Boolean df_VerifyLeave(XmDataFieldWidget tf, XEvent *event)
 {
     XmTextVerifyCallbackStruct  cbdata;
 
@@ -4504,19 +3697,9 @@ df_VerifyLeave(
 
 /* This routine is used to determine if two adjacent wchar_t characters
  * constitute a word boundary */
-/* ARGSUSED */
-static Boolean
-#ifdef _NO_PROTO
-_XmDataFieldIsWordBoundary( tf, pos1, pos2 )
-	XmDataFieldWidget tf ;
-	XmTextPosition pos1 ;
-	XmTextPosition pos2 ;
-#else
-_XmDataFieldIsWordBoundary(
-	XmDataFieldWidget tf,
-	XmTextPosition pos1 ,
-	XmTextPosition pos2 )
-#endif /* _NO_PROTO */
+static Boolean _XmDataFieldIsWordBoundary(XmDataFieldWidget tf,
+                                          XmTextPosition pos1,
+                                          XmTextPosition pos2)
 {
    int size_pos1 = 0;
    int size_pos2 = 0;
@@ -4530,48 +3713,36 @@ _XmDataFieldIsWordBoundary(
       return False;
 
    if (XmTextF_max_char_size(tf) == 1) { /* data is char* and one-byte per char */
-      if (isspace((int)(unsigned char)XmTextF_value(tf)[pos1]) ||
-	  isspace((int)(unsigned char)XmTextF_value(tf)[pos2])) return True;
+      if (isspace(XmTextF_value(tf)[pos1]) ||
+	  isspace(XmTextF_value(tf)[pos2])) return True;
    } else {
       size_pos1 = wctomb(s1, XmTextF_wc_value(tf)[pos1]);
       size_pos2 = wctomb(s2, XmTextF_wc_value(tf)[pos2]);
       if (size_pos1 == 1 && (size_pos2 != 1 ||
-			     isspace((int)(unsigned char)*s1)))
+			     isspace(*s1)))
 	return True;
       if (size_pos2 == 1 && (size_pos1 != 1 ||
-			     isspace((int)(unsigned char)*s2)))
+			     isspace(*s2)))
 	return True;
    }
    return False;
 }
 
-static void
-#ifdef _NO_PROTO
-df_FindWord( tf, begin, left, right )
-        XmDataFieldWidget tf ;
-        XmTextPosition begin ;
-        XmTextPosition *left ;
-        XmTextPosition *right ;
-#else
-df_FindWord(
-        XmDataFieldWidget tf,
-        XmTextPosition begin,
-        XmTextPosition *left,
-        XmTextPosition *right )
-#endif /* _NO_PROTO */
+static void df_FindWord(XmDataFieldWidget tf, XmTextPosition begin,
+                        XmTextPosition *left, XmTextPosition *right)
 {
     XmTextPosition start, end;
 
     if (XmTextF_max_char_size(tf) == 1) {
        for (start = begin; start > 0; start--) {
-          if (isspace((int)(unsigned char)XmTextF_value(tf)[start - 1])) {
+          if (isspace(XmTextF_value(tf)[start - 1])) {
 	     break;
           }
        }
        *left = start;
 
        for (end = begin; end <= XmTextF_string_length(tf); end++) {
-          if (isspace((int)(unsigned char)XmTextF_value(tf)[end])) {
+          if (isspace(XmTextF_value(tf)[end])) {
              end++;
              break;
           }
@@ -4602,27 +3773,16 @@ df_FindWord(
    }
 }
 
-static void
-#ifdef _NO_PROTO
-df_FindPrevWord( tf, left, right )
-        XmDataFieldWidget tf ;
-        XmTextPosition *left ;
-        XmTextPosition *right ;
-#else
-df_FindPrevWord(
-        XmDataFieldWidget tf,
-        XmTextPosition *left,
-        XmTextPosition *right )
-#endif /* _NO_PROTO */
+static void df_FindPrevWord(XmDataFieldWidget tf, XmTextPosition *left,
+                            XmTextPosition *right)
 {
-
     XmTextPosition start = XmTextF_cursor_position(tf);
 
     if (XmTextF_max_char_size(tf) == 1) {
        if ((start > 0) &&
-	   (isspace((int)(unsigned char)XmTextF_value(tf)[start - 1]))) {
+	   (isspace(XmTextF_value(tf)[start - 1]))) {
            for (; start > 0; start--) {
-               if (!isspace((int)(unsigned char)XmTextF_value(tf)[start - 1])) {
+               if (!isspace(XmTextF_value(tf)[start - 1])) {
                   start--;
                   break;
                }
@@ -4646,38 +3806,28 @@ df_FindPrevWord(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_FindNextWord( tf, left, right )
-        XmDataFieldWidget tf ;
-        XmTextPosition *left ;
-        XmTextPosition *right ;
-#else
-df_FindNextWord(
-        XmDataFieldWidget tf,
-        XmTextPosition *left,
-        XmTextPosition *right )
-#endif /* _NO_PROTO */
+static void df_FindNextWord(XmDataFieldWidget tf, XmTextPosition *left,
+                            XmTextPosition *right)
 {
-
     XmTextPosition end = XmTextF_cursor_position(tf);
 
     if(XmTextF_max_char_size(tf) == 1) {
-       if (isspace((int)(unsigned char)XmTextF_value(tf)[end])) {
+       if (isspace(XmTextF_value(tf)[end])) {
            for (end = XmTextF_cursor_position(tf);
                 end < XmTextF_string_length(tf); end++) {
-               if (!isspace((int)(unsigned char)XmTextF_value(tf)[end])) {
+               if (!isspace(XmTextF_value(tf)[end])) {
                   break;
                }
            }
        }
        df_FindWord(tf, end, left, right);
+
       /*
        * Set right to the last whitespace following the end of the
        * current word.
        */
        while (*right < XmTextF_string_length(tf) &&
-              isspace((int)(unsigned char)XmTextF_value(tf)[(int)*right]))
+              isspace(XmTextF_value(tf)[(int)*right]))
              *right = *right + 1;
        if (*right < XmTextF_string_length(tf))
           *right = *right - 1;
@@ -4694,6 +3844,7 @@ df_FindNextWord(
 	      end++;
       }
       df_FindWord(tf, end, left, right);
+
       /*
        * If word boundary caused by whitespace, set right to the last
        * whitespace following the end of the current word.
@@ -4709,18 +3860,7 @@ df_FindNextWord(
    }
 }
 
-static void
-#ifdef _NO_PROTO
-df_CheckDisjointSelection( w, position, sel_time )
-        Widget w ;
-        XmTextPosition position ;
-        Time sel_time ;
-#else
-df_CheckDisjointSelection(
-        Widget w,
-        XmTextPosition position,
-        Time sel_time )
-#endif /* _NO_PROTO */
+static void df_CheckDisjointSelection(Widget w, XmTextPosition position, Time sel_time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition left = 0, right = 0;
@@ -4741,14 +3881,7 @@ df_CheckDisjointSelection(
     }
 }
 
-static Boolean
-#ifdef _NO_PROTO
-df_NeedsPendingDelete( tf )
-        XmDataFieldWidget tf ;
-#else
-df_NeedsPendingDelete(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static Boolean df_NeedsPendingDelete(XmDataFieldWidget tf)
 {
    return (XmTextF_add_mode(tf) ?
 	   (XmTextF_pending_delete(tf) &&
@@ -4760,14 +3893,7 @@ df_NeedsPendingDelete(
 	    XmTextF_prim_pos_left(tf) != XmTextF_prim_pos_right(tf)));
 }
 
-static Boolean
-#ifdef _NO_PROTO
-df_NeedsPendingDeleteDisjoint( tf )
-        XmDataFieldWidget tf ;
-#else
-df_NeedsPendingDeleteDisjoint(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static Boolean df_NeedsPendingDeleteDisjoint(XmDataFieldWidget tf)
 {
   return (XmTextF_pending_delete(tf) &&
 	  XmTextF_has_primary(tf) &&
@@ -4776,14 +3902,7 @@ df_NeedsPendingDeleteDisjoint(
 	  XmTextF_prim_pos_right(tf) >= XmTextF_cursor_position(tf));
 }
 
-static Time
-#ifdef _NO_PROTO
-df_GetServerTime( w )
-        Widget w ;
-#else
-df_GetServerTime(
-        Widget w )
-#endif /* _NO_PROTO */
+static Time df_GetServerTime(Widget w)
 {
   XEvent event;
   EventMask shellMask;
@@ -4808,11 +3927,7 @@ df_GetServerTime(
   return (event.xproperty.time);
 }
 
-static Boolean
-PrintableString(XmDataFieldWidget tf,
-		char* str,
-		int n,
-		Boolean use_wchar) /* sometimes unused */
+static Boolean PrintableString(XmDataFieldWidget tf, char *str, int n, Boolean use_wchar) /* sometimes unused */
 {
 #ifdef SUPPORT_ZERO_WIDTH
   /* some locales (such as Thai) have characters that are
@@ -4841,7 +3956,6 @@ PrintableString(XmDataFieldWidget tf,
     return True;
   } else {
     /* tf->text.max_char_size > 1 */
-#ifdef HAS_WIDECHAR_FUNCTIONS
     if (use_wchar) {
       int i;
       wchar_t *ws = (wchar_t *) str;
@@ -4854,14 +3968,9 @@ PrintableString(XmDataFieldWidget tf,
     } else {
       int i, csize;
       wchar_t wc;
-#ifndef NO_MULTIBYTE
       for (i = 0, csize = mblen(str, tf->text.max_char_size);
 	   i < n;
 	   i += csize, csize=mblen(&(str[i]), tf->text.max_char_size))
-#else
-      for (i = 0, csize = *str ? 1 : 0; i < n;
-	   i += csize, csize = str[i] ? 1 : 0)
-#endif
 	{
 	  if (csize < 0)
 	    return False;
@@ -4872,21 +3981,15 @@ PrintableString(XmDataFieldWidget tf,
 	  }
 	}
     }
-#else /* HAS_WIDECHAR_FUNCTIONS */
     /*
      * This will only check if any single-byte characters are non-
      * printable. Better than nothing...
      */
     int i, csize;
     if (!use_wchar) {
-#ifndef NO_MULTIBYTE
       for (i = 0, csize = mblen(str, tf->text.max_char_size);
 	   i < n;
 	   i += csize, csize=mblen(&(str[i]), tf->text.max_char_size))
-#else
-      for (i = 0, csize = *str ? 1 : 0; i < n;
-	   i += csize, csize = str[i] ? 1 : 0)
-#endif
 	{
 	  if (csize < 0)
 	    return False;
@@ -4905,7 +4008,6 @@ PrintableString(XmDataFieldWidget tf,
 	}
       }
     }
-#endif /* HAS_WIDECHAR_FUNCTIONS */
     return True;
   }
 #else /* SUPPORT_ZERO_WIDTH */
@@ -4962,22 +4064,7 @@ PrintableString(XmDataFieldWidget tf,
  * Input functions defined in the action table.
  *
  ****************************************************************/
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_InsertChar( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_InsertChar(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_InsertChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   char insert_string[TEXT_MAX_INSERT_SIZE];
@@ -5072,21 +4159,7 @@ df_InsertChar(
   }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_InsertString( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_InsertString(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_InsertString(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   char insert_string[TEXT_MAX_INSERT_SIZE];
@@ -5099,7 +4172,8 @@ df_InsertString(
   register int i;
 
   if (!XmTextF_editable(tf)) {
-     if (XmTextF_verify_bell(tf)) XBell(XtDisplay((Widget)tf), 0);
+     if (XmTextF_verify_bell(tf))
+     	XBell(XtDisplay((Widget)tf), 0);
   }
 
   for (i = 0; i < *num_params; i++)  {
@@ -5142,7 +4216,7 @@ df_InsertString(
 					  True);
 	  } else {
 	      insert_string[insert_length] = '\0'; /* NULL terminate for mbstowcs */
-	      wc_insert_string = (wchar_t*)XtMalloc((unsigned)(insert_length+1) *						     sizeof(wchar_t));
+	      wc_insert_string = (wchar_t *)XtMalloc((unsigned)(insert_length+1) * sizeof(wchar_t));
 	      num_chars = mbstowcs( wc_insert_string, insert_string, insert_length+1);
 	      replace_res = _XmDataFieldReplaceText(tf, (XEvent *) event, cursorPos,
 						    nextPos, (char*) wc_insert_string,
@@ -5165,21 +4239,7 @@ df_InsertString(
   }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeletePrevChar( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeletePrevChar(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeletePrevChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmAnyCallbackStruct cb;
@@ -5220,21 +4280,7 @@ df_DeletePrevChar(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeleteNextChar( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeleteNextChar(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeleteNextChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmAnyCallbackStruct cb;
@@ -5277,21 +4323,7 @@ df_DeleteNextChar(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeletePrevWord( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeletePrevWord(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeletePrevWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmTextPosition left, right;
@@ -5336,21 +4368,7 @@ df_DeletePrevWord(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeleteNextWord( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeleteNextWord(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeleteNextWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmTextPosition left, right;
@@ -5392,22 +4410,7 @@ df_DeleteNextWord(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeleteToEndOfLine( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeleteToEndOfLine(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeleteToEndOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmAnyCallbackStruct cb;
@@ -5431,22 +4434,7 @@ df_DeleteToEndOfLine(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeleteToStartOfLine( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeleteToStartOfLine(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeleteToStartOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmAnyCallbackStruct cb;
@@ -5470,21 +4458,7 @@ df_DeleteToStartOfLine(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ProcessCancel( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ProcessCancel(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ProcessCancel(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -5522,21 +4496,7 @@ df_ProcessCancel(
 
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_Activate( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_Activate(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_Activate(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmAnyCallbackStruct cb;
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
@@ -5551,20 +4511,10 @@ df_Activate(
     cb.reason = XmCR_ACTIVATE;
     cb.event  = event;
     XtCallCallbackList(w, XmTextF_activate_callback(tf), (XtPointer) &cb);
-
-    (void) _XmParentProcess(XtParent(w), (XmParentProcessData) &p_event);
+    (void)_XmParentProcess(XtParent(w), (XmParentProcessData) &p_event);
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetAnchorBalancing(tf, position)
-XmDataFieldWidget tf;
-XmTextPosition position;
-#else
-df_SetAnchorBalancing(
-        XmDataFieldWidget tf,
-        XmTextPosition position)
-#endif /* _NO_PROTO */
+static void df_SetAnchorBalancing(XmDataFieldWidget tf, XmTextPosition position)
 {
     XmTextPosition left, right;
     float bal_point;
@@ -5584,22 +4534,7 @@ df_SetAnchorBalancing(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetNavigationAnchor(tf, position, extend)
-XmDataFieldWidget tf;
-XmTextPosition position;
-Boolean extend;
-#else
-df_SetNavigationAnchor(
-        XmDataFieldWidget tf,
-        XmTextPosition position,
-#if NeedWidePrototypes
-        int extend )
-#else
-        Boolean extend )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_SetNavigationAnchor(XmDataFieldWidget tf, XmTextPosition position, Boolean extend)
 {
     XmTextPosition left, right;
 
@@ -5618,26 +4553,9 @@ df_SetNavigationAnchor(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_CompleteNavigation(tf, event, position, time, extend)
-XmDataFieldWidget tf;
-XEvent *event;
-XmTextPosition position;
-Time time;
-Boolean extend;
-#else
-df_CompleteNavigation(
-        XmDataFieldWidget tf,
-	XEvent *event,
-        XmTextPosition position,
-        Time time,
-#if NeedWidePrototypes
-        int extend )
-#else
-        Boolean extend )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_CompleteNavigation(XmDataFieldWidget tf, XEvent *event,
+                                  XmTextPosition position, Time time,
+                                  Boolean extend)
 {
     XmTextPosition left, right;
     Boolean     backward = False;
@@ -5672,25 +4590,9 @@ df_CompleteNavigation(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_SimpleMovement( w, event, params, num_params, cursorPos, position )
-        Widget w ;
-        XEvent *event ;
-        String *params ;
-        Cardinal *num_params ;
-        XmTextPosition cursorPos ;
-        XmTextPosition position ;
-#else
-df_SimpleMovement(
-        Widget w,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params,
-        XmTextPosition cursorPos,
-        XmTextPosition position )
-#endif /* _NO_PROTO */
+static void df_SimpleMovement(Widget w, XEvent *event, String *params,
+                              Cardinal *num_params, XmTextPosition cursorPos,
+                              XmTextPosition position)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   Boolean extend = False;
@@ -5703,21 +4605,7 @@ df_SimpleMovement(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_BackwardChar( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_BackwardChar(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_BackwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition cursorPos, position;
@@ -5733,21 +4621,7 @@ df_BackwardChar(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ForwardChar( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ForwardChar(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ForwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition cursorPos, position;
@@ -5763,21 +4637,7 @@ df_ForwardChar(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_BackwardWord( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_BackwardWord(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_BackwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmTextPosition cursorPos, position, dummy;
@@ -5793,21 +4653,7 @@ df_BackwardWord(
    }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ForwardWord( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ForwardWord(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ForwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition cursorPos, position, dummy;
@@ -5817,13 +4663,13 @@ df_ForwardWord(
     _XmDataFieldDrawInsertionPoint(tf, False);
     if (cursorPos < XmTextF_string_length(tf)) {
        if (XmTextF_max_char_size(tf) == 1) {
-         if (isspace((int)(unsigned char)XmTextF_value(tf)[cursorPos]))
+         if (isspace(XmTextF_value(tf)[cursorPos]))
 	    df_FindWord(tf, cursorPos, &dummy, &position);
          else
             df_FindNextWord(tf, &dummy, &position);
-          if(isspace((int)(unsigned char)XmTextF_value(tf)[position])){
+          if(isspace(XmTextF_value(tf)[position])){
 	     for (;position < XmTextF_string_length(tf); position++){
-	        if (!isspace((int)(unsigned char)XmTextF_value(tf)[position]))
+	        if (!isspace(XmTextF_value(tf)[position]))
 	   	break;
              }
           }
@@ -5845,22 +4691,7 @@ df_ForwardWord(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_EndOfLine( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_EndOfLine(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_EndOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmTextPosition cursorPos, position;
@@ -5876,22 +4707,7 @@ df_EndOfLine(
    }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_BeginningOfLine( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_BeginningOfLine(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_BeginningOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmTextPosition cursorPos, position;
@@ -5907,24 +4723,8 @@ df_BeginningOfLine(
    }
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetSelection( tf, left, right, redisplay )
-        XmDataFieldWidget tf ;
-        XmTextPosition left ;
-        XmTextPosition right ;
-        Boolean redisplay ;
-#else
-df_SetSelection(
-        XmDataFieldWidget tf,
-        XmTextPosition left,
-        XmTextPosition right,
-#if NeedWidePrototypes
-        int redisplay )
-#else
-        Boolean redisplay )
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_SetSelection(XmDataFieldWidget tf, XmTextPosition left,
+                            XmTextPosition right, Boolean redisplay)
 {
    XmTextPosition display_left, display_right;
    XmTextPosition old_prim_left, old_prim_right;
@@ -5981,25 +4781,12 @@ df_SetSelection(
    XmTextF_refresh_ibeam_off(tf) = True;
 }
 
-
 /*
  * Begin the selection by gaining ownership of the selection
  * and setting the selection parameters.
  */
-void
-#ifdef _NO_PROTO
-_XmDataFieldStartSelection( tf, left, right, sel_time )
-        XmDataFieldWidget tf ;
-        XmTextPosition left ;
-        XmTextPosition right ;
-        Time sel_time ;
-#else
-_XmDataFieldStartSelection(
-        XmDataFieldWidget tf,
-        XmTextPosition left,
-        XmTextPosition right,
-        Time sel_time )
-#endif /* _NO_PROTO */
+void _XmDataFieldStartSelection(XmDataFieldWidget tf, XmTextPosition left,
+                                XmTextPosition right, Time sel_time)
 {
   if (!XtIsRealized((Widget)tf)) return;
 
@@ -6055,27 +4842,9 @@ _XmDataFieldStartSelection(
   }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ProcessHorizontalParams( w, event, params, num_params, left, right, position )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-	Cardinal *num_params;
-	XmTextPosition *left ;
-	XmTextPosition *right ;
-	XmTextPosition *position ;
-#else
-df_ProcessHorizontalParams(
-        Widget w,
-        XEvent *event,
-        char **params,
-	Cardinal *num_params,
-	XmTextPosition *left,
-	XmTextPosition *right,
-        XmTextPosition *position )
-#endif /* _NO_PROTO */
+static void df_ProcessHorizontalParams(Widget w, XEvent *event, char **params,
+                                       Cardinal *num_params, XmTextPosition *left,
+                                       XmTextPosition *right, XmTextPosition *position)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition old_cursorPos = XmTextF_cursor_position(tf);
@@ -6096,24 +4865,8 @@ df_ProcessHorizontalParams(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ProcessSelectParams( w, event, left, right, position )
-        Widget w ;
-        XEvent *event ;
-        XmTextPosition *left ;
-        XmTextPosition *right ;
-        XmTextPosition *position ;
-#else
-df_ProcessSelectParams(
-        Widget w,
-        XEvent *event,
-        XmTextPosition *left,
-        XmTextPosition *right,
-        XmTextPosition *position )
-#endif /* _NO_PROTO */
+static void df_ProcessSelectParams(Widget w, XEvent *event, XmTextPosition *left,
+                                   XmTextPosition *right, XmTextPosition *position)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -6130,22 +4883,7 @@ df_ProcessSelectParams(
    }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_KeySelection( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_KeySelection(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_KeySelection(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmTextPosition position = 0, left, right;
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
@@ -6213,21 +4951,7 @@ df_KeySelection(
 
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TextFocusIn( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TextFocusIn(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TextFocusIn(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmAnyCallbackStruct cb;
@@ -6274,22 +4998,7 @@ df_TextFocusIn(
    _XmPrimitiveFocusIn(w, event, params, num_params);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TextFocusOut( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TextFocusOut(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TextFocusOut(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XtWidgetProc buhl;
@@ -6327,16 +5036,7 @@ df_TextFocusOut(
         }
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetScanIndex( tf, event )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-#else
-df_SetScanIndex(
-        XmDataFieldWidget tf,
-        XEvent *event )
-#endif /* _NO_PROTO */
+static void df_SetScanIndex(XmDataFieldWidget tf, XEvent *event)
 {
    Time sel_time;
 
@@ -6364,16 +5064,7 @@ df_SetScanIndex(
     XmTextF_last_time(tf) = sel_time;
 }
 
-static void
-#ifdef _NO_PROTO
-df_ExtendScanSelection( tf, event )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-#else
-df_ExtendScanSelection(
-        XmDataFieldWidget tf,
-        XEvent *event )
-#endif /* _NO_PROTO */
+static void df_ExtendScanSelection(XmDataFieldWidget tf, XEvent *event)
 {
    XmTextPosition pivot_left, pivot_right;
    XmTextPosition left, right;
@@ -6450,16 +5141,7 @@ df_ExtendScanSelection(
    }
 }
 
-static void
-#ifdef _NO_PROTO
-df_SetScanSelection( tf, event )
-        XmDataFieldWidget tf ;
-        XEvent *event ;
-#else
-df_SetScanSelection(
-        XmDataFieldWidget tf,
-        XEvent *event )
-#endif /* _NO_PROTO */
+static void df_SetScanSelection(XmDataFieldWidget tf, XEvent *event)
 {
    XmTextPosition left, right;
    XmTextPosition new_position = 0;
@@ -6529,22 +5211,7 @@ df_SetScanSelection(
    _XmDataFieldDrawInsertionPoint(tf,True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_StartPrimary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_StartPrimary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_StartPrimary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -6556,22 +5223,7 @@ df_StartPrimary(
   _XmDataFieldDrawInsertionPoint(tf,True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_MoveDestination( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_MoveDestination(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_MoveDestination(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmTextPosition left, right;
@@ -6610,21 +5262,7 @@ df_MoveDestination(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ExtendPrimary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ExtendPrimary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ExtendPrimary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -6644,25 +5282,9 @@ df_ExtendPrimary(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ExtendEnd( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ExtendEnd(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ExtendEnd(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
-
 
   if (XmTextF_prim_pos_left(tf) == 0 && XmTextF_prim_pos_right(tf) == 0)
      XmTextF_orig_left(tf) = XmTextF_orig_right(tf) = XmTextF_cursor_position(tf);
@@ -6680,17 +5302,7 @@ df_ExtendEnd(
     XmTextF_extending(tf) = False;
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DoExtendedSelection(w, time)
-        Widget w;
-        Time time;
-#else
-df_DoExtendedSelection(
-        Widget w,
-        Time time )
-#endif /* _NO_PROTO */
+static void df_DoExtendedSelection(Widget w, Time time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition position, left, right, cursorPos;
@@ -6779,17 +5391,7 @@ df_DoExtendedSelection(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DoSecondaryExtend(w, ev_time)
-        Widget w;
-        Time ev_time;
-#else
-df_DoSecondaryExtend(
-        Widget w,
-        Time ev_time )
-#endif /* _NO_PROTO */
+static void df_DoSecondaryExtend(Widget w, Time ev_time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -6814,8 +5416,6 @@ df_DoSecondaryExtend(
     XmTextF_sec_extending(tf) = True;
 }
 
-
-
 /************************************************************************
  *                                                                      *
  * df_BrowseScroll - timer proc that scrolls the list if the user has left *
@@ -6823,17 +5423,7 @@ df_DoSecondaryExtend(
  *              released, call the standard click stuff.                *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_BrowseScroll( closure, id )
-        XtPointer closure ;
-        XtIntervalId *id ;
-#else
-df_BrowseScroll(
-        XtPointer closure,
-        XtIntervalId *id )
-#endif /* _NO_PROTO */
+static void df_BrowseScroll(XtPointer closure, XtIntervalId *id)
 {
     Widget w = (Widget) closure ;
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
@@ -6860,18 +5450,7 @@ df_BrowseScroll(
                                  df_BrowseScroll, (XtPointer) w);
 }
 
-
-/* ARGSUSED */
-static Boolean
-#ifdef _NO_PROTO
-df_CheckTimerScrolling( w, event )
-        Widget w ;
-        XEvent *event ;
-#else
-df_CheckTimerScrolling(
-        Widget w,
-        XEvent *event )
-#endif /* _NO_PROTO */
+static Boolean df_CheckTimerScrolling(Widget w, XEvent *event)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Dimension margin_size = XmTextF_margin_width(tf) +
@@ -6911,18 +5490,7 @@ df_CheckTimerScrolling(
     return False;
 }
 
-static void
-#ifdef _NO_PROTO
-df_RestorePrimaryHighlight( tf, prim_left, prim_right )
-        XmDataFieldWidget tf ;
-        XmTextPosition prim_left ;
-        XmTextPosition prim_right ;
-#else
-df_RestorePrimaryHighlight(
-        XmDataFieldWidget tf,
-        XmTextPosition prim_left,
-        XmTextPosition prim_right )
-#endif /* _NO_PROTO */
+static void df_RestorePrimaryHighlight(XmDataFieldWidget tf, XmTextPosition prim_left, XmTextPosition prim_right)
 {
    if (XmTextF_sec_pos_right(tf) >= prim_left &&
        XmTextF_sec_pos_right(tf) <= prim_right) {
@@ -6972,22 +5540,8 @@ df_RestorePrimaryHighlight(
    }
 }
 
-void
-#ifdef _NO_PROTO
-_XmDataFieldSetSel2( w, left, right, disown, sel_time )
-        Widget w ;
-        XmTextPosition left ;
-        XmTextPosition right ;
-        Boolean disown ;
-        Time sel_time ;
-#else
-_XmDataFieldSetSel2(
-        Widget w,
-        XmTextPosition left,
-        XmTextPosition right,
-        Boolean disown,
-        Time sel_time )
-#endif /* _NO_PROTO */
+void _XmDataFieldSetSel2(Widget w, XmTextPosition left,
+                         XmTextPosition right, Boolean disown, Time sel_time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Boolean result;
@@ -7041,21 +5595,7 @@ _XmDataFieldSetSel2(
     df_RedisplayText(tf, 0, XmTextF_string_length(tf));
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_StartDrag( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        String *params ;
-        Cardinal *num_params ;
-#else
-df_StartDrag(
-        Widget w,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_StartDrag(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Atom targets[5];
@@ -7105,21 +5645,7 @@ df_StartDrag(
     (void) XmDragStart(w, event, args, n);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_StartSecondary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_StartSecondary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_StartSecondary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmTextPosition position = df_GetPosFromX(tf, (Position) event->xbutton.x);
@@ -7135,22 +5661,7 @@ df_StartSecondary(
      XmeWarning(w, GRABKBDERROR);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ProcessBDrag( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ProcessBDrag(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ProcessBDrag(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition position, left, right;
@@ -7186,21 +5697,7 @@ df_ProcessBDrag(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ExtendSecondary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ExtendSecondary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ExtendSecondary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XmTextPosition position = df_GetPosFromX(tf, (Position) event->xbutton.x);
@@ -7226,28 +5723,9 @@ df_ExtendSecondary(
   _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DoStuff( w, closure, seltype, type, value, length, format )
-        Widget w ;
-        XtPointer closure ;
-        Atom *seltype ;
-        Atom *type ;
-        XtPointer value ;
-        unsigned long *length ;
-        int *format ;
-#else
-df_DoStuff(
-        Widget w,
-        XtPointer closure,
-        Atom *seltype,
-        Atom *type,
-        XtPointer value,
-        unsigned long *length,
-        int *format )
-#endif /* _NO_PROTO */
+static void df_DoStuff(Widget w, XtPointer closure, Atom *seltype,
+                       Atom *type, XtPointer value, unsigned long *length,
+                       int *format)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     _XmTextPrimSelect *prim_select = (_XmTextPrimSelect *) closure;
@@ -7427,23 +5905,7 @@ df_DoStuff(
        XtFree((char*)prim_select);
 }
 
-
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_Stuff( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_Stuff(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_Stuff(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   _XmTextActionRec *tmp = (_XmTextActionRec*)XtMalloc(sizeof(_XmTextActionRec));
 
@@ -7464,22 +5926,7 @@ df_Stuff(
 		      (XtPointer)tmp, event->xbutton.time);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_HandleSelectionReplies( w, closure, event, cont )
-        Widget w ;
-        XtPointer closure ;
-        XEvent *event ;
-        Boolean *cont ;
-#else
-df_HandleSelectionReplies(
-        Widget w,
-        XtPointer closure,
-        XEvent *event,
-        Boolean *cont )
-#endif /* _NO_PROTO */
+static void df_HandleSelectionReplies(Widget w, XtPointer closure, XEvent *event, Boolean *cont)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    Atom property = (Atom) closure;
@@ -7549,7 +5996,6 @@ df_HandleSelectionReplies(
    XDeleteProperty(XtDisplay(w), event->xselection.requestor, property);
 }
 
-
 /*
  * Notify the primary selection that the secondary selection
  * wants to insert it's selection data into the primary selection.
@@ -7560,21 +6006,8 @@ df_HandleSelectionReplies(
     * TELLING THE RECEIVER WHAT TO REQUEST AS THE SELECTION VALUE.
     * THIS WILL GUARANTEE THE BEST CHANCE AT A SUCCESSFUL EXCHANGE.
     */
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_SecondaryNotify( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_SecondaryNotify(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_SecondaryNotify(Widget w, XEvent *event, char **params,
+                               Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Atom XM_TEXT_PROP = XmInternAtom(XtDisplay(w), "_XM_TEXT_I_S_PROP", False);
@@ -7654,27 +6087,9 @@ df_SecondaryNotify(
     * THIS WILL GUARANTEE THE BEST CHANCE AT A SUCCESSFUL EXCHANGE.
     */
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_HandleTargets( w, closure, seltype, type, value, length, format )
-        Widget w ;
-        XtPointer closure ;
-        Atom *seltype ;
-        Atom *type ;
-        XtPointer value ;
-        unsigned long *length ;
-        int *format ;
-#else
-df_HandleTargets(
-        Widget w,
-        XtPointer closure,
-        Atom *seltype,
-        Atom *type,
-        XtPointer value,
-        unsigned long *length,
-        int *format )
-#endif /* _NO_PROTO */
+static void df_HandleTargets(Widget w, XtPointer closure, Atom *seltype,
+                             Atom *type, XtPointer value, unsigned long *length,
+                             int *format)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Atom CS_OF_LOCALE; /* to be initialized by XmbTextListToTextProperty */
@@ -7731,7 +6146,6 @@ df_HandleTargets(
 #endif
     }
 
-
   /*
    * Set stuff position to the x and y position of
    * the button pressed event for primary pastes.
@@ -7751,18 +6165,15 @@ df_HandleTargets(
       return;
    }
 
-   prim_select = (_XmTextPrimSelect *)
-		  XtMalloc((unsigned) sizeof(_XmTextPrimSelect));
-
+   prim_select = (_XmTextPrimSelect *)XtMalloc(sizeof(_XmTextPrimSelect));
    prim_select->position = select_pos;
+   prim_select->num_chars = 0;
 
    if (tmp_action->event->type == ButtonRelease) {
       prim_select->time = tmp_action->event->xbutton.time;
    } else {
       prim_select->time = tmp_action->event->xkey.time;
    }
-
-   prim_select->num_chars = 0;
 
    if (supports_locale_data)
       prim_select->target = targets[0] = XmInternAtom(XtDisplay(w), "TEXT",
@@ -7783,25 +6194,12 @@ df_HandleTargets(
 			  tmp_action->event->xbutton.time);
 
    XtFree((char *)value);
-   value = NULL;
    XtFree((char *)tmp_action->event);
    XtFree((char *)tmp_action);
 }
 
-static void
-#ifdef _NO_PROTO
-df_ProcessBDragRelease( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        String *params ;
-        Cardinal *num_params ;
-#else
-df_ProcessBDragRelease(
-        Widget w,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ProcessBDragRelease(Widget w, XEvent *event, String *params,
+                                   Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XButtonEvent      *ev = (XButtonEvent *) event;
@@ -7841,27 +6239,13 @@ df_ProcessBDragRelease(
     }
 
     XmTextF_sec_extending(tf) = False;
-
     XmTextF_sec_drag(tf) = False;
     XmTextF_sel_start(tf) = False;
     XmTextF_cancel(tf) = False;
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-#ifdef _NO_PROTO
-df_ProcessCopy( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ProcessCopy(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ProcessCopy(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -7871,20 +6255,7 @@ df_ProcessCopy(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-#ifdef _NO_PROTO
-df_ProcessMove( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ProcessMove(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ProcessMove(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -7894,41 +6265,12 @@ df_ProcessMove(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeleteSelection( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeleteSelection(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeleteSelection(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-    (void) DataFieldRemove(w, event);
+    (void)DataFieldRemove(w, event);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ClearSelection( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ClearSelection(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ClearSelection(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition left = XmTextF_prim_pos_left(tf);
@@ -7966,12 +6308,9 @@ df_ClearSelection(
           wchar_t *wc_spaces;
           int i;
 
-          wc_spaces = (wchar_t *)XtMalloc((unsigned)
-                                          (num_spaces + 1) * sizeof(wchar_t));
-
-          for (i = 0; i < num_spaces; i++){
+          wc_spaces = (wchar_t *)XtMalloc((num_spaces + 1) * sizeof(wchar_t));
+          for (i = 0; i < num_spaces; i++)
              (void)mbtowc(&wc_spaces[i], " ", 1);
-          }
 
 	  rep_result = _XmDataFieldReplaceText(tf, (XEvent *)event, left, right,
 					       (char*)wc_spaces, num_spaces,
@@ -7991,21 +6330,7 @@ df_ClearSelection(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_PageRight( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_PageRight(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_PageRight(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     Position x, y;
     int length = 0;
@@ -8044,21 +6369,7 @@ df_PageRight(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_PageLeft( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_PageLeft(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_PageLeft(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     Position x, y;
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
@@ -8088,20 +6399,7 @@ df_PageLeft(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-#ifdef _NO_PROTO
-df_CopyPrimary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_CopyPrimary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_CopyPrimary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8113,20 +6411,7 @@ df_CopyPrimary(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-#ifdef _NO_PROTO
-df_CutPrimary( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_CutPrimary(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_CutPrimary(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8136,21 +6421,7 @@ df_CutPrimary(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_SetAnchor( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_SetAnchor(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_SetAnchor(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition left, right;
@@ -8164,21 +6435,7 @@ df_SetAnchor(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ToggleOverstrike( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ToggleOverstrike(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ToggleOverstrike(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8197,21 +6454,7 @@ df_ToggleOverstrike(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_ToggleAddMode( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_ToggleAddMode(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_ToggleAddMode(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition left, right;
@@ -8227,21 +6470,7 @@ df_ToggleAddMode(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_SelectAll( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_SelectAll(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_SelectAll(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8266,21 +6495,7 @@ df_SelectAll(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DeselectAll( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_DeselectAll(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_DeselectAll(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8295,61 +6510,19 @@ df_DeselectAll(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_VoidAction( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_VoidAction(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_VoidAction(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
   /* Do Nothing */
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_CutClipboard( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_CutClipboard(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_CutClipboard(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     _XmDataFieldDrawInsertionPoint((XmDataFieldWidget)w, False);
     (void) XmDataFieldCut(w, event->xkey.time);
     _XmDataFieldDrawInsertionPoint((XmDataFieldWidget)w, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_CopyClipboard( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_CopyClipboard(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_CopyClipboard(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8359,42 +6532,14 @@ df_CopyClipboard(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_PasteClipboard( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_PasteClipboard(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_PasteClipboard(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     _XmDataFieldDrawInsertionPoint((XmDataFieldWidget)w, False);
     (void) XmDataFieldPaste(w);
     _XmDataFieldDrawInsertionPoint((XmDataFieldWidget)w, True);
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TraverseDown( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TraverseDown(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TraverseDown(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8405,22 +6550,7 @@ df_TraverseDown(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TraverseUp( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TraverseUp(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TraverseUp(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8431,21 +6561,7 @@ df_TraverseUp(
     }
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TraverseHome( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TraverseHome(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TraverseHome(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8457,22 +6573,7 @@ df_TraverseHome(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TraverseNextTabGroup( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TraverseNextTabGroup(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TraverseNextTabGroup(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8484,22 +6585,7 @@ df_TraverseNextTabGroup(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TraversePrevTabGroup( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        char **params ;
-        Cardinal *num_params ;
-#else
-df_TraversePrevTabGroup(
-        Widget w,
-        XEvent *event,
-        char **params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TraversePrevTabGroup(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8511,22 +6597,7 @@ df_TraversePrevTabGroup(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TextEnter( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        String *params ;
-        Cardinal *num_params ;
-#else
-df_TextEnter(
-        Widget w,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TextEnter(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmAnyCallbackStruct cb;
@@ -8557,22 +6628,7 @@ df_TextEnter(
     _XmPrimitiveEnter(w, event, params, num_params);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_TextLeave( w, event, params, num_params )
-        Widget w ;
-        XEvent *event ;
-        String *params ;
-        Cardinal *num_params ;
-#else
-df_TextLeave(
-        Widget w,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
-#endif /* _NO_PROTO */
+static void df_TextLeave(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -8605,14 +6661,7 @@ df_TextLeave(
  * df_ClassPartInitialize sets up the fast subclassing for the widget.i
  * It also merges translation tables.
  */
-static void
-#ifdef _NO_PROTO
-df_ClassPartInitialize( w_class )
-        WidgetClass w_class ;
-#else
-df_ClassPartInitialize(
-        WidgetClass w_class )
-#endif /* _NO_PROTO */
+static void df_ClassPartInitialize(WidgetClass w_class)
 {
     char *event_bindings;
 
@@ -8621,10 +6670,10 @@ df_ClassPartInitialize(
   /* Install traits */
   XmeTraitSet((XtPointer) w_class, XmQTaccessTextual, (XtPointer) &dataFieldCS);
 
-    event_bindings = (char *)XtMalloc((unsigned) (strlen(EventBindings1) +
-                                      strlen(EventBindings2) +
-                                      strlen(EventBindings3) + strlen("\n") +
-				      strlen(EventBindings4) + 1));
+    event_bindings = XtMalloc((strlen(EventBindings1) +
+                               strlen(EventBindings2) +
+                               strlen(EventBindings3) + strlen("\n") +
+				               strlen(EventBindings4) + 1));
 
     strcpy(event_bindings, EventBindings4);
     strcat(event_bindings, "\n");
@@ -8649,14 +6698,7 @@ df_ClassPartInitialize(
  * Verify that the resource settings are valid.  Print a warning
  * message and reset the s if the are invalid.
  */
-static void
-#ifdef _NO_PROTO
-df_Validates( tf )
-        XmDataFieldWidget tf ;
-#else
-df_Validates(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_Validates(XmDataFieldWidget tf)
 {
     XtPointer temp_ptr;
 
@@ -8691,14 +6733,7 @@ df_Validates(
  */
 }
 
-static Boolean
-#ifdef _NO_PROTO
-df_LoadFontMetrics( tf )
-        XmDataFieldWidget tf ;
-#else
-df_LoadFontMetrics(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static Boolean df_LoadFontMetrics(XmDataFieldWidget tf)
 {
     XmFontContext context;
     XmFontListEntry next_entry;
@@ -8795,15 +6830,9 @@ df_LoadFontMetrics(
                                fs_extents->max_ink_extent.y;
 #if USE_XFT
     } else if (XmTextF_use_xft(tf)) {
-#ifdef FIX_1415
 	  _XmXftFontAverageWidth((Widget) tf, TextF_XftFont(tf), (int *)&charwidth);
-#else
-        charwidth = XmTextF_xft_font(tf)->max_advance_width;
-#endif
-#ifdef FIX_1531
         XmTextF_font_ascent(tf) = TextF_XftFont(tf)->ascent;
         XmTextF_font_descent(tf) = TextF_XftFont(tf)->descent;
-#endif /* FIX_1531 */
 #endif
     } else {
        font = XmTextF_font(tf);
@@ -8822,7 +6851,6 @@ df_LoadFontMetrics(
     return (return_val);
 }
 
-
 /* df_ValidateString makes the following assumption:  if MB_CUR_MAX == 1, value
  * is a char*, otherwise value is a wchar_t*.  The Boolean "is_wchar" indicates
  * if value points to char* or wchar_t* data.
@@ -8834,22 +6862,7 @@ df_LoadFontMetrics(
  * pointer to NULL.  It is the callers responsibility to free data before
  * calling df_ValidateString.
  */
-static void
-#ifdef _NO_PROTO
-df_ValidateString( tf, value, is_wchar )
-        XmDataFieldWidget tf ;
-        char *value ;
-	Boolean is_wchar;
-#else
-df_ValidateString(
-        XmDataFieldWidget tf,
-        char *value,
-#if NeedWidePrototypes
-	int is_wchar)
-#else
-	Boolean is_wchar)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_ValidateString(XmDataFieldWidget tf, char *value, Boolean is_wchar)
 {
    /* if value is wchar_t *, must count the characters; else use strlen */
 
@@ -8904,8 +6917,8 @@ df_ValidateString(
       if (XmTextF_max_char_size(tf) == 1) {
          XmTextF_string_length(tf) = strlen(start_temp);
         /* malloc the space for the text value */
-         XmTextF_value(tf) = (char *) memcpy(
-			     XtMalloc((unsigned)(XmTextF_string_length(tf) + 30)),
+         XmTextF_value(tf) = memcpy(
+			     XtMalloc(XmTextF_string_length(tf) + 30),
 			       (void *)start_temp, XmTextF_string_length(tf) + 1);
          XmTextF_size_allocd(tf) = XmTextF_string_length(tf) + 30;
          XmTextF_wc_value(tf) = NULL;
@@ -8914,8 +6927,8 @@ df_ValidateString(
          str_len = strlen(start_temp);
          XmTextF_string_length(tf) = str_len;
 
-         XmTextF_size_allocd(tf) = (XmTextF_string_length(tf) + 30)*sizeof(wchar_t);
-         XmTextF_wc_value(tf) = (wchar_t*)XtMalloc((unsigned)XmTextF_size_allocd(tf));
+         XmTextF_size_allocd(tf) = (XmTextF_string_length(tf) + 30) * sizeof(wchar_t);
+         XmTextF_wc_value(tf) = (wchar_t *)XtMalloc(XmTextF_size_allocd(tf));
          XmTextF_string_length(tf) = mbstowcs(XmTextF_wc_value(tf), start_temp,
                                            XmTextF_string_length(tf) + 30);
          XmTextF_value(tf) = NULL;
@@ -8927,14 +6940,12 @@ df_ValidateString(
       int new_len = 0;
       int csize = 1;
 
-      wc_value = (wchar_t *) value;
-      for (str_len = 0, i = 0; *wc_value != (wchar_t)0L; str_len++)
+      wc_value = (wchar_t *)value;
+      for (str_len = 0, i = 0; *wc_value; str_len++)
           wc_value++; /* count number of wchars */
-      wcs_temp_str=(wchar_t *)XmStackAlloc((Cardinal)
-					   ((str_len+1) * sizeof(wchar_t)),
-					   stack_cache);
+      wcs_temp_str = (wchar_t *)XmStackAlloc(((str_len+1) * sizeof(wchar_t)), stack_cache);
       wcs_start_temp = wcs_temp_str;
-      wcs_curr_str = (wchar_t *) value;
+      wcs_curr_str = (wchar_t *)value;
 
       for (i = 0; i < str_len; i++, wcs_curr_str++) {
 	 if (XmTextF_max_char_size(tf) == 1){
@@ -8980,50 +6991,19 @@ df_ValidateString(
          (void)wcstombs(XmTextF_value(tf), wcs_start_temp, XmTextF_size_allocd(tf));
          XmTextF_wc_value(tf) = NULL;
       } else { /* Need to store data as wchar_t* */
-         XmTextF_wc_value(tf) = (wchar_t*)memcpy(XtMalloc((unsigned)
-						       XmTextF_size_allocd(tf)),
-                                              	       (void*)wcs_start_temp,
-                                                       (1 + str_len) *
-						       sizeof(wchar_t));
+         XmTextF_wc_value(tf) = memcpy(XtMalloc(XmTextF_size_allocd(tf)),
+                                       (void*)wcs_start_temp,
+                                       (1 + str_len) * sizeof(wchar_t));
          XmTextF_value(tf) = NULL;
       }
       XmStackFree((char *)wcs_start_temp, stack_cache);
    }
 }
 
-/* The following is a hack to overcome the buggy Motif from SGI on IM */
-#if defined(__sgi)
-static void /* CR03685 */
-#ifdef _NO_PROTO
-SGI_hack_XmImRegister(w)
-  Widget w;
-#else
-SGI_hack_XmImRegister(
-  Widget w )
-#endif /* _NO_PROTO */
-{
-  _XmProcessLock();
-  w->core.widget_class = xmTextFieldWidgetClass;
-  _XmProcessUnlock();
-
-  XmImRegister(w, NULL);
-
-  _XmProcessLock();
-  w->core.widget_class = xmDataFieldWidgetClass;
-  _XmProcessUnlock();
-}
-#endif
 /*
  * df_Initialize the s in the text fields instance record.
  */
-static void
-#ifdef _NO_PROTO
-df_InitializeTextStruct( tf )
-        XmDataFieldWidget tf ;
-#else
-df_InitializeTextStruct(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_InitializeTextStruct(XmDataFieldWidget tf)
 {
    /* Flag used in losing focus verification to indicate that a traversal
     * key was pressed.  Must be initialized to False.
@@ -9033,7 +7013,6 @@ df_InitializeTextStruct(
     XPoint xmim_point;
 
     XmTextF_traversed(tf) = False;
-
     XmTextF_add_mode(tf) = False;
     XmTextF_has_focus(tf) = False;
     XmTextF_blink_on(tf) = True;
@@ -9118,7 +7097,6 @@ df_InitializeTextStruct(
     XmTextF_image_clip(tf) = XmUNSPECIFIED_PIXMAP;
 
     XmTextF_last_time(tf) = 0;
-
     XmTextF_sarray_index(tf) = 0;
 
    /* df_Initialize highlight elements */
@@ -9143,12 +7121,7 @@ df_InitializeTextStruct(
     XmDataFieldSetEditable((Widget)tf, XmTextF_editable(tf));
 
     if (XmTextF_editable(tf)){
-#if defined(__sgi)
-      /* CR03685 */
-      SGI_hack_XmImRegister((Widget)tf);
-#else
       XmImRegister((Widget)tf, 0);
-#endif
       df_GetXYFromPos(tf, XmTextF_cursor_position(tf), &xmim_point.x, &xmim_point.y);
       n = 0;
       XtSetArg(args[n], XmNfontList, XmTextF_font_list(tf)); n++;
@@ -9162,16 +7135,7 @@ df_InitializeTextStruct(
     }
 }
 
-static Pixmap
-#ifdef _NO_PROTO
-df_GetClipMask( tf, pixmap_name)
-        XmDataFieldWidget tf ;
-        char *pixmap_name ;
-#else
-df_GetClipMask(
-        XmDataFieldWidget tf,
-        char *pixmap_name)
-#endif /* _NO_PROTO */
+static Pixmap df_GetClipMask(XmDataFieldWidget tf, char *pixmap_name)
 {
    Display *dpy = XtDisplay(tf);
    Screen *screen = XtScreen(tf);
@@ -9193,8 +7157,7 @@ df_GetClipMask(
    (void) _XmCachePixmap(clip_mask, screen, pixmap_name, 1, 0, 0, 0, 0);
 
    XFreeGC(XtDisplay(tf), fillGC);
-
-   return(clip_mask);
+   return clip_mask;
 }
 
 /*
@@ -9202,18 +7165,7 @@ df_GetClipMask(
  * and inverting text.  Used a unique pixmap so all text field widgets
  * share common GCs.
  */
-static void
-#ifdef _NO_PROTO
-df_LoadGCs( tf, background, foreground )
-        XmDataFieldWidget tf ;
-        Pixel background ;
-        Pixel foreground ;
-#else
-df_LoadGCs(
-        XmDataFieldWidget tf,
-        Pixel background,
-        Pixel foreground )
-#endif /* _NO_PROTO */
+static void df_LoadGCs(XmDataFieldWidget tf, Pixel background, Pixel foreground)
 {
    Display *display = XtDisplay((Widget)tf);
    Screen *screen = XtScreen((Widget)tf);
@@ -9250,9 +7202,7 @@ df_LoadGCs(
     /* GC's.  We never actually use this Pixmap; just so long as it's */
     /* a unique identifier. */
      tf_cache_pixmap =  XCreatePixmap(display,
-				     (Drawable) RootWindowOfScreen(screen),
-				     (unsigned int) 1, (unsigned int) 1,
-				     (unsigned int) 1);
+				     (Drawable)RootWindowOfScreen(screen), 1, 1, 1);
 
      XtAddCallback(xm_display, XmNdestroyCallback,
                    (XtCallbackProc) df_FreeContextData, (XtPointer) ctx_data);
@@ -9323,23 +7273,7 @@ df_LoadGCs(
 
 }
 
-static void
-#ifdef _NO_PROTO
-df_MakeIBeamOffArea( tf, width, height )
-        XmDataFieldWidget tf ;
-        Dimension width ;
-        Dimension height ;
-#else
-df_MakeIBeamOffArea(
-        XmDataFieldWidget tf,
-#if NeedWidePrototypes
-        int width,
-        int height)
-#else
-        Dimension width,
-        Dimension height)
-#endif /* NeedWidePrototypes */
-#endif /* _NO_PROTO */
+static void df_MakeIBeamOffArea(XmDataFieldWidget tf, Dimension width, Dimension height)
 {
    Display *dpy = XtDisplay(tf);
    Screen  *screen = XtScreen(tf);
@@ -9352,7 +7286,7 @@ df_MakeIBeamOffArea(
 				      height, tf->core.depth);
 
   /* Create a GC for drawing 0's into the pixmap */
-   fillGC = XCreateGC(dpy, XmTextF_ibeam_off(tf), 0, (XGCValues *) NULL);
+   fillGC = XCreateGC(dpy, XmTextF_ibeam_off(tf), 0, NULL);
 
   /* df_Initialize the pixmap to 0's */
    XFillRectangle(dpy, XmTextF_ibeam_off(tf), fillGC, 0, 0, width, height);
@@ -9361,16 +7295,7 @@ df_MakeIBeamOffArea(
    XFreeGC(XtDisplay(tf), fillGC);
 }
 
-static void
-#ifdef _NO_PROTO
-df_MakeIBeamStencil( tf, line_width )
-        XmDataFieldWidget tf ;
-        int line_width ;
-#else
-df_MakeIBeamStencil(
-        XmDataFieldWidget tf,
-        int line_width )
-#endif /* _NO_PROTO */
+static void df_MakeIBeamStencil(XmDataFieldWidget tf, int line_width)
 {
    Screen *screen = XtScreen(tf);
    char pixmap_name[17];
@@ -9379,7 +7304,7 @@ df_MakeIBeamStencil(
 
    if (!XmTextF_has_rect(tf)) _XmDataFieldSetClipRect(tf);
    sprintf(pixmap_name, "_XmDataF_%d_%d", XmTextF_cursor_height(tf), line_width);
-   XmTextF_cursor(tf) = (Pixmap) XmGetPixmapByDepth(screen, pixmap_name, 1, 0, 1);
+   XmTextF_cursor(tf) = (Pixmap)XmGetPixmapByDepth(screen, pixmap_name, 1, 0, 1);
 
    if (XmTextF_cursor(tf) == XmUNSPECIFIED_PIXMAP) {
       Display *dpy = XtDisplay(tf);
@@ -9464,24 +7389,12 @@ df_MakeIBeamStencil(
     values.stipple = XmTextF_cursor(tf);
     values.fill_style = FillStippled;
     XChangeGC(XtDisplay(tf), XmTextF_image_gc(tf), valuemask, &values);
-
 }
-
 
 /* The IBeam Stencil must have already been created before this routine
  * is called.
  */
-
-static void
-#ifdef _NO_PROTO
-df_MakeAddModeCursor( tf, line_width )
-        XmDataFieldWidget tf ;
-        int line_width ;
-#else
-df_MakeAddModeCursor(
-        XmDataFieldWidget tf,
-        int line_width )
-#endif /* _NO_PROTO */
+static void df_MakeAddModeCursor(XmDataFieldWidget tf, int line_width)
 {
    Screen *screen = XtScreen(tf);
    char pixmap_name[25];
@@ -9560,14 +7473,7 @@ df_MakeAddModeCursor(
   }
 }
 
-static void
-#ifdef _NO_PROTO
-df_MakeCursors( tf )
-        XmDataFieldWidget tf ;
-#else
-df_MakeCursors(
-        XmDataFieldWidget tf )
-#endif /* _NO_PROTO */
+static void df_MakeCursors(XmDataFieldWidget tf)
 {
    Screen *screen = XtScreen(tf);
    int line_width = 1;
@@ -9621,46 +7527,15 @@ df_MakeCursors(
      XmTextF_cursor_width(tf) = XmTextF_cursor_height(tf) >> 1;
 }
 
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DropDestroyCB(w, clientData, callData)
-    Widget      w;
-    XtPointer   clientData;
-    XtPointer   callData;
-#else
-df_DropDestroyCB(
-    Widget      w,
-    XtPointer   clientData,
-    XtPointer   callData )
-#endif /* NO_PROTO */
+static void df_DropDestroyCB(Widget w, XtPointer clientData, XtPointer callData)
 {
     df_DeleteDropContext(w);
     XtFree((char *)clientData);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DropTransferCallback( w, closure, seltype, type, value, length, format )
-        Widget w ;
-        XtPointer closure ;
-        Atom *seltype ;
-        Atom *type ;
-        XtPointer value ;
-        unsigned long *length ;
-        int *format ;
-#else
-df_DropTransferCallback(
-        Widget w,
-        XtPointer closure,
-        Atom *seltype,
-        Atom *type,
-        XtPointer value,
-        unsigned long *length,
-        int *format )
-#endif /* _NO_PROTO */
+static void df_DropTransferCallback(Widget w, XtPointer closure,
+                                    Atom *seltype, Atom *type, XtPointer value,
+                                    unsigned long *length, int *format)
 {
     _XmTextDropTransferRec *transfer_rec = (_XmTextDropTransferRec *) closure;
     XmDataFieldWidget tf = (XmDataFieldWidget) transfer_rec->widget;
@@ -9798,8 +7673,7 @@ df_DropTransferCallback(
 				   (int)total_length, False))
 	  replace = True;
     } else {
-       wc_total_tmp_value = (wchar_t*)XtMalloc((unsigned)
-					       total_length * sizeof(wchar_t));
+       wc_total_tmp_value = (wchar_t *)XtMalloc(total_length * sizeof(wchar_t));
       /* Note: casting total_length to an int may result in a truncation. */
        total_length = mbstowcs(wc_total_tmp_value, total_tmp_value,
 			       (int)total_length);
@@ -9838,7 +7712,7 @@ df_DropTransferCallback(
           XmDropTransferAdd(w, transferEntries, 1);
        }
        cb.reason = XmCR_VALUE_CHANGED;
-       cb.event = (XEvent *)NULL;
+       cb.event = NULL;
        XtCallCallbackList((Widget) tf, XmTextF_value_changed_callback(tf),
 		          (XtPointer) &cb);
     }
@@ -9851,17 +7725,7 @@ df_DropTransferCallback(
     _XmDataFieldDrawInsertionPoint(tf, True);
 }
 
-
-static void
-#ifdef _NO_PROTO
-df_HandleDrop(w, cb)
-        Widget w;
-        XmDropProcCallbackStruct *cb;
-#else
-df_HandleDrop(
-        Widget w,
-        XmDropProcCallbackStruct *cb )
-#endif /* _NO_PROTO */
+static void df_HandleDrop(Widget w, XmDropProcCallbackStruct *cb)
 {
     static XtCallbackRec dropdf_DestroyCB[] = { {df_DropDestroyCB, NULL},
                                              {(XtCallbackProc)NULL, NULL} };
@@ -9989,20 +7853,7 @@ df_HandleDrop(
     XmDropTransferStart(drag_cont, args, n);
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DragProcCallback(w, client, call)
-        Widget w;
-        XtPointer client;
-        XtPointer call;
-#else
-df_DragProcCallback(
-        Widget w,
-        XtPointer client,
-        XtPointer call )
-#endif /* _NO_PROTO */
+static void df_DragProcCallback(Widget w, XtPointer client, XtPointer call)
 {
     XmDragProcCallbackStruct *cb = (XmDragProcCallbackStruct *)call;
     Widget drag_cont;
@@ -10063,20 +7914,7 @@ df_DragProcCallback(
     }
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_DropProcCallback(w, client, call)
-        Widget w;
-        XtPointer client;
-        XtPointer call;
-#else
-df_DropProcCallback(
-        Widget w,
-        XtPointer client,
-        XtPointer call )
-#endif /* _NO_PROTO */
+static void df_DropProcCallback(Widget w, XtPointer client, XtPointer call)
 {
     XmDropProcCallbackStruct *cb = (XmDropProcCallbackStruct *) call;
 
@@ -10091,14 +7929,7 @@ df_DropProcCallback(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_RegisterDropSite(w)
-        Widget w ;
-#else
-df_RegisterDropSite(
-        Widget w )
-#endif /* _NO_PROTO */
+static void df_RegisterDropSite(Widget w)
 {
     Atom targets[5];
     Arg args[10];
@@ -10142,30 +7973,15 @@ df_RegisterDropSite(
  *    Intializes the text data and ensures that the data in new
  * is valid.
  */
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-df_Initialize( request, new_w, args, num_args )
-        Widget request ;
-        Widget new_w ;
-        ArgList args ;
-        Cardinal *num_args ;
-#else
-df_Initialize(
-        Widget request,
-        Widget new_w,
-        ArgList args,
-        Cardinal *num_args )
-#endif /* _NO_PROTO */
+static void df_Initialize(Widget request, Widget new_w, ArgList args,
+                          Cardinal *num_args)
 {
     XmDataFieldWidget req_tf = (XmDataFieldWidget) request;
     XmDataFieldWidget new_tf = (XmDataFieldWidget) new_w;
     Dimension width, height;
 
     df_Validates(new_tf);
-
     df_InitializeTextStruct(new_tf);
-
     df_LoadGCs(new_tf, new_tf->core.background_pixel,
 	    new_tf->primitive.foreground );
 
@@ -10187,18 +8003,8 @@ df_Initialize(
     }
 }
 
-static void
-#ifdef _NO_PROTO
-df_Realize( w, valueMask, attributes )
-        Widget w ;
-        XtValueMask *valueMask ;
-        XSetWindowAttributes *attributes ;
-#else
-df_Realize(
-        Widget w,
-        XtValueMask *valueMask,
-        XSetWindowAttributes *attributes )
-#endif /* _NO_PROTO */
+static void df_Realize(Widget w, XtValueMask *valueMask,
+                       XSetWindowAttributes *attributes)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -10208,14 +8014,7 @@ df_Realize(
    _XmDataFieldSetClipRect(tf);
 }
 
-static void
-#ifdef _NO_PROTO
-df_Destroy( wid )
-        Widget wid ;
-#else
-df_Destroy(
-        Widget wid )
-#endif /* _NO_PROTO */
+static void df_Destroy(Widget wid)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) wid ;
     Widget dest = XmGetDestination(XtDisplay(wid));
@@ -10280,14 +8079,7 @@ df_Destroy(
 	    XmPictureDelete(XmDataField_picture(tf));
 }
 
-static void
-#ifdef _NO_PROTO
-df_Resize( w )
-        Widget w ;
-#else
-df_Resize(
-        Widget w )
-#endif /* _NO_PROTO */
+static void df_Resize(Widget w)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -10314,18 +8106,9 @@ df_Resize(
  *  df_QueryGeometry
  *
  ************************************************************************/
-static XtGeometryResult
-#ifdef _NO_PROTO
-df_QueryGeometry( widget, intended, desired )
-        Widget widget ;
-        XtWidgetGeometry *intended ;
-        XtWidgetGeometry *desired ;
-#else
-df_QueryGeometry(
-        Widget widget,
-        XtWidgetGeometry *intended,
-        XtWidgetGeometry *desired )
-#endif /* _NO_PROTO */
+static XtGeometryResult df_QueryGeometry(Widget widget,
+                                         XtWidgetGeometry *intended,
+                                         XtWidgetGeometry *desired)
 {
     /* this function deals with resizeWidth False */
     df_ComputeSize((XmDataFieldWidget) widget,
@@ -10334,32 +8117,18 @@ df_QueryGeometry(
     return XmeReplyToQueryGeometry(widget, intended, desired) ;
 }
 
-
 /*
  * Redisplay will redraw shadows, borders, and text.
  */
-/* ARGSUSED */
 static void
-#ifdef _NO_PROTO
-DataFieldExpose( w, event, region )
-        Widget w ;
-        XEvent *event ;
-        Region region ;
-#else
-DataFieldExpose(
-        Widget w,
-        XEvent *event,
-        Region region )
-#endif /* _NO_PROTO */
+DataFieldExpose(Widget w, XEvent *event, Region region)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   XGCValues values;
 
-
   if (event->xany.type != Expose) return;
 
   XmTextF_do_resize(tf) = False;
-
   if (!XmTextF_has_rect(tf)) _XmDataFieldSetClipRect(tf);
 
   /* I can get here even though the widget isn't visible (i.e. my parent is
@@ -10439,23 +8208,8 @@ DataFieldExpose(
  * values.
  *
  */
-/* ARGSUSED */
-static Boolean
-#ifdef _NO_PROTO
-df_SetValues( old, request, new_w, args, num_args )
-        Widget old ;
-        Widget request ;
-        Widget new_w ;
-        ArgList args ;
-        Cardinal *num_args ;
-#else
-df_SetValues(
-        Widget old,
-        Widget request,
-        Widget new_w,
-        ArgList args,
-        Cardinal *num_args )
-#endif /* _NO_PROTO */
+static Boolean df_SetValues(Widget old, Widget request, Widget new_w,
+                            ArgList args, Cardinal *num_args)
 {
     XmDataFieldWidget new_tf = (XmDataFieldWidget) new_w;
     XmDataFieldWidget old_tf = (XmDataFieldWidget) old;
@@ -10657,7 +8411,7 @@ df_SetValues(
         if (XmTextF_wc_value(new_tf) != XmTextF_wc_value(old_tf)) {
            diff_values = True;
            if (XmTextF_wc_value(new_tf) == NULL) {
-              XmTextF_wc_value(new_tf) = (wchar_t*) XtMalloc(sizeof(wchar_t));
+              XmTextF_wc_value(new_tf)  = (wchar_t *)XtMalloc(sizeof(wchar_t));
               *XmTextF_wc_value(new_tf) = (wchar_t)0;
            }
            df_ValidateString(new_tf, (char*)XmTextF_wc_value(new_tf), True);
@@ -10705,7 +8459,7 @@ df_SetValues(
           if (!mod_ver_ret) {
              if (XmTextF_verify_bell(new_tf)) XBell(XtDisplay(new_w), 0);
 	     if (XmTextF_max_char_size(new_tf) == 1) {
-                XmTextF_value(new_tf) = (char *) memcpy(
+                XmTextF_value(new_tf) = memcpy(
 					   XtRealloc(XmTextF_value(new_tf),
                                            (unsigned)XmTextF_size_allocd(old_tf)),
                                            (void*)XmTextF_value(old_tf),
@@ -10715,8 +8469,8 @@ df_SetValues(
                 XtFree(XmTextF_value(old_tf));
              } else {
 		/* realloc to old size, cast to wchar_t*, and copy the data */
-		XmTextF_wc_value(new_tf) = (wchar_t*)memcpy(
-		       XtRealloc((char *)XmTextF_wc_value(new_tf),
+		XmTextF_wc_value(new_tf) = memcpy(
+		       XtRealloc((void *)XmTextF_wc_value(new_tf),
                        (unsigned)XmTextF_size_allocd(old_tf)),
                        (void*)XmTextF_wc_value(old_tf),
 		       (unsigned) XmTextF_size_allocd(old_tf));
@@ -10728,7 +8482,6 @@ df_SetValues(
              do_it = False;
           }
        }
-
 
        if (do_it) {
           XmAnyCallbackStruct cb;
@@ -10932,16 +8685,7 @@ df_SetValues(
     return redisplay;
 }
 
-static Boolean
-#ifdef _NO_PROTO
-DataFieldRemove( w, event)
-        Widget w ;
-        XEvent *event ;
-#else
-DataFieldRemove(
-        Widget w,
-	XEvent *event)
-#endif /* _NO_PROTO */
+static Boolean DataFieldRemove(Widget w, XEvent *event)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmTextPosition left, right;
@@ -10973,8 +8717,7 @@ DataFieldRemove(
  * AccessTextual trait method implementation
  ********************************************/
 
-static XtPointer
-DataFieldGetValue(Widget w, int format)
+static XtPointer DataFieldGetValue(Widget w, int format)
 {
   char *str;
   XmString tmp;
@@ -10994,8 +8737,7 @@ DataFieldGetValue(Widget w, int format)
   return(NULL);
 }
 
-static void
-DataFieldSetValue(Widget w, XtPointer s, int format)
+static void DataFieldSetValue(Widget w, XtPointer s, int format)
 {
   char *str;
 
@@ -11014,11 +8756,9 @@ DataFieldSetValue(Widget w, XtPointer s, int format)
     }
 }
 
-/*ARGSUSED*/
-static int
-DataFieldPreferredValue(Widget w) /* unused */
+static int DataFieldPreferredValue(Widget w) /* unused */
 {
-  return(XmFORMAT_MBYTE);
+  return XmFORMAT_MBYTE;
 }
 
 /*
@@ -11028,9 +8768,7 @@ DataFieldPreferredValue(Widget w) /* unused */
  * on same widget, thus resource needs to be set NULL, otherwise leave it
  * alone.
  */
-/* ARGSUSED */
-static void
-CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
+static void CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
 {
   XmDataFieldWidget df = (XmDataFieldWidget)wid;
 
@@ -11046,14 +8784,7 @@ CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
  *                              Public Functions                             *
  ***********************************<->***************************************/
 
-char *
-#ifdef _NO_PROTO
-XmDataFieldGetString( w )
-        Widget w ;
-#else
-XmDataFieldGetString(
-        Widget w )
-#endif /* _NO_PROTO */
+char *XmDataFieldGetString(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     char *temp_str;
@@ -11072,7 +8803,7 @@ XmDataFieldGetString(
 	}
 	else
 	{
-	    temp_str = (char *) XtMalloc((unsigned) XmTextF_max_char_size(tf) *
+	    temp_str = XtMalloc((unsigned) XmTextF_max_char_size(tf) *
 					 (XmTextF_string_length(tf) + 1));
 	    ret_val = wcstombs(temp_str, XmTextF_wc_value(tf),
 			       (XmTextF_string_length(tf) + 1) *
@@ -11092,22 +8823,8 @@ XmDataFieldGetString(
     }
 }
 
-int
-#ifdef _NO_PROTO
-XmDataFieldGetSubstring( widget, start, num_chars, buf_size, buffer )
-        Widget widget;
-        XmTextPosition start;
-        int num_chars;
-        int buf_size;
-        char *buffer;
-#else
-XmDataFieldGetSubstring(
-	Widget widget,
-        XmTextPosition start,
-        int num_chars,
-        int buf_size,
-        char *buffer )
-#endif /* _NO_PROTO */
+int XmDataFieldGetSubstring(Widget widget, XmTextPosition start,
+                            int num_chars, int buf_size, char *buffer)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) widget;
     int ret_value = XmCOPY_SUCCEEDED;
@@ -11150,7 +8867,7 @@ XmDataFieldGetSubstring(
     if (num_chars > 0) {
 	if (XmTextF_max_char_size(tf) == 1)
 	{
-	    (void)memcpy((void*)buffer, (void*)&XmTextF_value(tf)[start], num_chars);
+	    memcpy(buffer, &XmTextF_value(tf)[start], num_chars);
 	}
 	else
 	{
@@ -11170,14 +8887,7 @@ XmDataFieldGetSubstring(
 }
 
 
-wchar_t *
-#ifdef _NO_PROTO
-XmDataFieldGetStringWcs( w )
-        Widget w ;
-#else
-XmDataFieldGetStringWcs(
-        Widget w )
-#endif /* _NO_PROTO */
+wchar_t *XmDataFieldGetStringWcs(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     wchar_t *temp_wcs;
@@ -11188,11 +8898,11 @@ XmDataFieldGetStringWcs(
 
     if (XmTextF_string_length(tf) > 0)
     {
-	temp_wcs = (wchar_t*) XtMalloc((unsigned) sizeof(wchar_t) *
+	temp_wcs = (wchar_t *)XtMalloc(sizeof(wchar_t) *
 				       (XmTextF_string_length(tf) + 1));
 	if (XmTextF_max_char_size(tf) != 1)
 	{
-	    (void)memcpy((void*)temp_wcs, (void*)XmTextF_wc_value(tf),
+	    memcpy(temp_wcs, XmTextF_wc_value(tf),
 			 sizeof(wchar_t) * (XmTextF_string_length(tf) + 1));
 	}
 	else
@@ -11206,7 +8916,7 @@ XmDataFieldGetStringWcs(
     }
     else
       {
-	temp_wcs = (wchar_t*) XtMalloc((unsigned) sizeof(wchar_t));
+	temp_wcs    = (wchar_t *)XtMalloc(sizeof(wchar_t));
 	temp_wcs[0] = (wchar_t)0L; /* put a wchar_t NULL in position 0 */
 
 	_XmAppUnlock(app);
@@ -11214,22 +8924,8 @@ XmDataFieldGetStringWcs(
       }
 }
 
-int
-#ifdef _NO_PROTO
-XmDataFieldGetSubstringWcs( widget, start, num_chars, buf_size, buffer )
-        Widget widget;
-        XmTextPosition start;
-        int num_chars;
-        int buf_size;
-        wchar_t *buffer;
-#else
-XmDataFieldGetSubstringWcs(
-	Widget widget,
-        XmTextPosition start,
-        int num_chars,
-        int buf_size,
-        wchar_t *buffer )
-#endif /* _NO_PROTO */
+int XmDataFieldGetSubstringWcs(Widget widget, XmTextPosition start,
+                               int num_chars, int buf_size, wchar_t *buffer)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) widget;
     int ret_value = XmCOPY_SUCCEEDED;
@@ -11259,8 +8955,7 @@ XmDataFieldGetSubstringWcs(
 	}
 	else
 	{
-	    (void)memcpy((void*)buffer, (void*)&XmTextF_wc_value(tf)[start],
-			 (size_t) num_chars * sizeof(wchar_t));
+	    memcpy(buffer, &XmTextF_wc_value(tf)[start], num_chars * sizeof(wchar_t));
 	}
 	buffer[num_chars] = '\0';
     } else if (num_chars == 0) {
@@ -11276,14 +8971,7 @@ XmDataFieldGetSubstringWcs(
 }
 
 
-XmTextPosition
-#ifdef _NO_PROTO
-XmDataFieldGetLastPosition( w )
-        Widget w ;
-#else
-XmDataFieldGetLastPosition(
-        Widget w )
-#endif /* _NO_PROTO */
+XmTextPosition XmDataFieldGetLastPosition(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition ret_val;
@@ -11294,19 +8982,10 @@ XmDataFieldGetLastPosition(
     ret_val = XmTextF_string_length(tf);
 
     _XmAppUnlock(app);
-    return(ret_val);
+    return ret_val;
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFieldSetString( w, value )
-        Widget w ;
-        char *value ;
-#else
-XmDataFieldSetString(
-        Widget w,
-        char *value )
-#endif /* _NO_PROTO */
+void XmDataFieldSetString(Widget w, char *value)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmAnyCallbackStruct cb;
@@ -11412,18 +9091,8 @@ XmDataFieldSetString(
     _XmAppUnlock(app);
 }
 
-static void
-#ifdef _NO_PROTO
-XmDataFieldSetStringWcs( w, wc_value )
-        Widget w;
-        wchar_t *wc_value;
-#else
-XmDataFieldSetStringWcs(
-        Widget w,
-        wchar_t *wc_value )
-#endif /* _NO_PROTO */
+static void XmDataFieldSetStringWcs(Widget w, wchar_t *wc_value)
 {
-
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    char * tmp;
    wchar_t *tmp_wc;
@@ -11449,20 +9118,8 @@ XmDataFieldSetStringWcs(
 }
 
 
-void
-#ifdef _NO_PROTO
-XmDataFieldReplace( w, from_pos, to_pos, value )
-        Widget w ;
-        XmTextPosition from_pos ;
-        XmTextPosition to_pos ;
-        char *value ;
-#else
-XmDataFieldReplace(
-        Widget w,
-        XmTextPosition from_pos,
-        XmTextPosition to_pos,
-        char *value )
-#endif /* _NO_PROTO */
+void XmDataFieldReplace(Widget w, XmTextPosition from_pos,
+                        XmTextPosition to_pos, char *value)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -11501,9 +9158,8 @@ XmDataFieldReplace(
        rep_result = _XmDataFieldReplaceText(tf, NULL, from_pos,
 				            to_pos, value, length, False);
     } else { /* need to convert to wchar_t* before calling Replace */
-       wc_value = (wchar_t *) XtMalloc((unsigned) sizeof(wchar_t) *
-				       (1 + strlen(value)));
-       length = mbstowcs(wc_value, value, (unsigned) (strlen(value) + 1));
+       wc_value = (wchar_t *)XtMalloc(sizeof(wchar_t) * (1 + strlen(value)));
+       length = mbstowcs(wc_value, value, strlen(value) + 1);
        rep_result = _XmDataFieldReplaceText(tf, NULL, from_pos, to_pos,
 				      (char*)wc_value, length, False);
        XtFree((char *)wc_value);
@@ -11538,7 +9194,7 @@ XmDataFieldReplace(
 			  XtLastTimestampProcessed(XtDisplay(w)));
     if (rep_result) {
        cb.reason = XmCR_VALUE_CHANGED;
-       cb.event = (XEvent *)NULL;
+       cb.event  = NULL;
        XtCallCallbackList((Widget) tf, XmTextF_value_changed_callback(tf),
 		          (XtPointer) &cb);
     }
@@ -11547,20 +9203,8 @@ XmDataFieldReplace(
 }
 
 /* TOM - XmDataFieldReplaceWcs not converted */
-void
-#ifdef _NO_PROTO
-XmDataFieldReplaceWcs( w, from_pos, to_pos, wc_value )
-        Widget w ;
-        XmTextPosition from_pos ;
-        XmTextPosition to_pos ;
-        wchar_t *wc_value ;
-#else
-XmDataFieldReplaceWcs(
-        Widget w,
-        XmTextPosition from_pos,
-        XmTextPosition to_pos,
-        wchar_t *wc_value )
-#endif /* _NO_PROTO */
+void XmDataFieldReplaceWcs(Widget w, XmTextPosition from_pos,
+                           XmTextPosition to_pos, wchar_t *wc_value)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     int save_maxlength = XmTextF_max_length(tf);
@@ -11616,7 +9260,7 @@ XmDataFieldReplaceWcs(
           wc_length = 0;
        }
        rep_result = _XmDataFieldReplaceText(tf, NULL, from_pos, to_pos,
-                                            (char*)tmp, wc_length, False);
+                                            tmp, wc_length, False);
        XtFree(tmp);
     }
     if (from_pos <= XmTextF_cursor_position(tf)) {
@@ -11649,7 +9293,7 @@ XmDataFieldReplaceWcs(
 			  XtLastTimestampProcessed(XtDisplay(w)));
     if (rep_result) {
        cb.reason = XmCR_VALUE_CHANGED;
-       cb.event = (XEvent *)NULL;
+       cb.event  = NULL;
        XtCallCallbackList((Widget) tf, XmTextF_value_changed_callback(tf),
 		          (XtPointer) &cb);
     }
@@ -11657,19 +9301,7 @@ XmDataFieldReplaceWcs(
     _XmAppUnlock(app);
 }
 
-
-void
-#ifdef _NO_PROTO
-XmDataFieldInsert( w, position, value )
-        Widget w ;
-        XmTextPosition position ;
-        char *value ;
-#else
-XmDataFieldInsert(
-        Widget w,
-        XmTextPosition position,
-        char *value )
-#endif /* _NO_PROTO */
+void XmDataFieldInsert(Widget w, XmTextPosition position, char *value)
 {
   _XmWidgetToAppContext(w);
   _XmAppLock(app);
@@ -11680,18 +9312,7 @@ XmDataFieldInsert(
   _XmAppUnlock(app);
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFieldInsertWcs( w, position, wcstring )
-        Widget w ;
-        XmTextPosition position ;
-        wchar_t *wcstring ;
-#else
-XmDataFieldInsertWcs(
-        Widget w,
-        XmTextPosition position,
-        wchar_t *wcstring )
-#endif /* _NO_PROTO */
+void XmDataFieldInsertWcs(Widget w, XmTextPosition position, wchar_t *wcstring)
 {
   _XmWidgetToAppContext(w);
   _XmAppLock(app);
@@ -11702,16 +9323,7 @@ XmDataFieldInsertWcs(
   _XmAppUnlock(app);
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFieldSetAddMode( w, state )
-        Widget w ;
-        Boolean state ;
-#else
-XmDataFieldSetAddMode(
-        Widget w,
-        Boolean state )
-#endif /* _NO_PROTO */
+void XmDataFieldSetAddMode(Widget w, Boolean state)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -11732,14 +9344,7 @@ XmDataFieldSetAddMode(
    _XmAppUnlock(app);
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldGetAddMode( w )
-        Widget w ;
-#else
-XmDataFieldGetAddMode(
-        Widget w )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldGetAddMode(Widget w)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    Boolean ret_val;
@@ -11753,14 +9358,7 @@ XmDataFieldGetAddMode(
    return (ret_val);
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldGetEditable( w )
-        Widget w ;
-#else
-XmDataFieldGetEditable(
-        Widget w )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldGetEditable(Widget w)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    Boolean ret_val;
@@ -11774,16 +9372,7 @@ XmDataFieldGetEditable(
    return ret_val;
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFieldSetEditable( w, editable )
-        Widget w ;
-        Boolean editable ;
-#else
-XmDataFieldSetEditable(
-        Widget w,
-        Boolean editable )
-#endif /* _NO_PROTO */
+void XmDataFieldSetEditable(Widget w, Boolean editable)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XPoint xmim_point;
@@ -11799,12 +9388,7 @@ XmDataFieldSetEditable(
 
    if (!XmTextF_editable(tf) && editable)
      {
-#if defined(__sgi)
-       /* CR03685 */
-       SGI_hack_XmImRegister((Widget)tf);
-#else
        XmImRegister((Widget)tf, 0);
-#endif
        df_GetXYFromPos(tf, XmTextF_cursor_position(tf), &xmim_point.x,
 		       &xmim_point.y);
        n = 0;
@@ -11833,14 +9417,7 @@ XmDataFieldSetEditable(
     _XmAppUnlock(app);
 }
 
-int
-#ifdef _NO_PROTO
-XmDataFieldGetMaxLength( w )
-        Widget w ;
-#else
-XmDataFieldGetMaxLength(
-        Widget w )
-#endif /* _NO_PROTO */
+int XmDataFieldGetMaxLength(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     int ret_val;
@@ -11854,16 +9431,7 @@ XmDataFieldGetMaxLength(
     return ret_val;
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFieldSetMaxLength( w, max_length )
-        Widget w ;
-        int max_length ;
-#else
-XmDataFieldSetMaxLength(
-        Widget w,
-        int max_length )
-#endif /* _NO_PROTO */
+void XmDataFieldSetMaxLength(Widget w, int max_length)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -11875,14 +9443,7 @@ XmDataFieldSetMaxLength(
    _XmAppUnlock(app);
 }
 
-XmTextPosition
-#ifdef _NO_PROTO
-XmDataFieldGetCursorPosition( w )
-        Widget w ;
-#else
-XmDataFieldGetCursorPosition(
-        Widget w )
-#endif /* _NO_PROTO */
+XmTextPosition XmDataFieldGetCursorPosition(Widget w)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    XmTextPosition ret_val;
@@ -11896,14 +9457,7 @@ XmDataFieldGetCursorPosition(
    return ret_val;
 }
 
-XmTextPosition
-#ifdef _NO_PROTO
-XmDataFieldGetInsertionPosition( w )
-        Widget w ;
-#else
-XmDataFieldGetInsertionPosition(
-        Widget w )
-#endif /* _NO_PROTO */
+XmTextPosition XmDataFieldGetInsertionPosition(Widget w)
 {
     XmTextPosition ret_val;
 
@@ -11916,37 +9470,7 @@ XmDataFieldGetInsertionPosition(
     return ret_val;
 }
 
-/* Obsolete - shouldn't be here ! */
-void
-#ifdef _NO_PROTO
-XmDataFielddf_SetCursorPosition( w, position )
-        Widget w ;
-        XmTextPosition position ;
-#else
-XmDataFielddf_SetCursorPosition(
-        Widget w,
-        XmTextPosition position )
-#endif /* _NO_PROTO */
-{
-    XmDataFieldWidget tf = (XmDataFieldWidget) w;
-
-   _XmWidgetToAppContext(w);
-   _XmAppLock(app);
-
-    df_SetCursorPosition(tf, NULL, position, True, False, False);
-    _XmAppUnlock(app);
-}
-
-void
-#ifdef _NO_PROTO
-XmDataFieldSetInsertionPosition( w, position )
-        Widget w ;
-        XmTextPosition position ;
-#else
-XmDataFieldSetInsertionPosition(
-        Widget w,
-        XmTextPosition position )
-#endif /* _NO_PROTO */
+void XmDataFieldSetInsertionPosition(Widget w, XmTextPosition position)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -11958,18 +9482,8 @@ XmDataFieldSetInsertionPosition(
    _XmAppUnlock(app);
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldGetSelectionPosition( w, left, right )
-        Widget w ;
-        XmTextPosition *left ;
-        XmTextPosition *right ;
-#else
-XmDataFieldGetSelectionPosition(
-        Widget w,
-        XmTextPosition *left,
-        XmTextPosition *right )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldGetSelectionPosition(Widget w, XmTextPosition *left,
+                                        XmTextPosition *right)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -11988,14 +9502,7 @@ XmDataFieldGetSelectionPosition(
    return True;
 }
 
-char *
-#ifdef _NO_PROTO
-XmDataFieldGetSelection( w )
-        Widget w ;
-#else
-XmDataFieldGetSelection(
-        Widget w )
-#endif /* _NO_PROTO */
+char *XmDataFieldGetSelection(Widget w)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    size_t length, num_chars;
@@ -12017,9 +9524,7 @@ XmDataFieldGetSelection(
     if (XmTextF_max_char_size(tf) == 1)
     {
 	value = XtMalloc((unsigned) num_chars + 1);
-	(void) memcpy((void*)value,
-		      (void*)(XmTextF_value(tf) +
-			      XmTextF_prim_pos_left(tf)), num_chars);
+	memcpy(value, (XmTextF_value(tf) + XmTextF_prim_pos_left(tf)), num_chars);
     }
     else
     {
@@ -12038,20 +9543,13 @@ XmDataFieldGetSelection(
 	    }
 	}
     }
-    value[length] = (char)'\0';
+    value[length] = '\0';
 
     _XmAppUnlock(app);
     return value;
 }
 
-wchar_t *
-#ifdef _NO_PROTO
-XmDataFieldGetSelectionWcs( w )
-        Widget w ;
-#else
-XmDataFieldGetSelectionWcs(
-        Widget w )
-#endif /* _NO_PROTO */
+wchar_t *XmDataFieldGetSelectionWcs(Widget w)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
    size_t length;
@@ -12070,7 +9568,7 @@ XmDataFieldGetSelectionWcs(
    length = (size_t)(XmTextF_prim_pos_right(tf) -
 		     XmTextF_prim_pos_left(tf));
 
-   wc_value = (wchar_t*)XtMalloc((unsigned) (length + 1) * sizeof(wchar_t));
+   wc_value = (wchar_t *)XtMalloc((length + 1) * sizeof(wchar_t));
 
    if (XmTextF_max_char_size(tf) == 1)
    {
@@ -12080,8 +9578,8 @@ XmDataFieldGetSelectionWcs(
    }
    else
    {
-      (void)memcpy((void*)wc_value,
-		   (void*)(XmTextF_wc_value(tf) + XmTextF_prim_pos_left(tf)),
+      memcpy(wc_value,
+		   (XmTextF_wc_value(tf) + XmTextF_prim_pos_left(tf)),
 		   length * sizeof(wchar_t));
    }
    wc_value[length] = (wchar_t)0L;
@@ -12090,15 +9588,7 @@ XmDataFieldGetSelectionWcs(
    return (wc_value);
 }
 
-
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldRemove( w )
-        Widget w ;
-#else
-XmDataFieldRemove(
-        Widget w )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldRemove(Widget w)
 {
     Boolean ret_val;
 
@@ -12111,16 +9601,7 @@ XmDataFieldRemove(
     return ret_val;
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldCopy( w, clip_time )
-        Widget w ;
-        Time clip_time ;
-#else
-XmDataFieldCopy(
-        Widget w,
-        Time clip_time )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldCopy(Widget w, Time clip_time)
 {
     /* XmDataFieldGetSelection gets char* rep of data, so no special handling
      * needed
@@ -12216,16 +9697,7 @@ XmDataFieldCopy(
     return True;
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldCut( w, clip_time )
-        Widget w ;
-        Time clip_time ;
-#else
-XmDataFieldCut(
-        Widget w,
-        Time clip_time )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldCut(Widget w, Time clip_time)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Boolean success = False;
@@ -12251,19 +9723,11 @@ XmDataFieldCut(
     return success;
 }
 
-
 /*
  * Retrieves the current data from the clipboard
  * and paste it at the current cursor position
  */
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldPaste( w )
-        Widget w ;
-#else
-XmDataFieldPaste(
-        Widget w )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldPaste(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition sel_left = 0;
@@ -12410,7 +9874,7 @@ XmDataFieldPaste(
 	 {
 	     malloc_size += strlen(tmp_value[i]);
 	 }
-	 wc_value = (wchar_t*)XtMalloc((unsigned)malloc_size * sizeof(wchar_t));
+	 wc_value = (wchar_t *)XtMalloc(malloc_size * sizeof(wchar_t));
 	 /* change malloc_size to the number of wchars available in wc_value */
 	 for (i = 0; i < num_vals ; i++)
 	     num_chars +=
@@ -12438,7 +9902,7 @@ XmDataFieldPaste(
            }
        }
        cb.reason = XmCR_VALUE_CHANGED;
-       cb.event = (XEvent *)NULL;
+       cb.event  = NULL;
        XtCallCallbackList((Widget) tf, XmTextF_value_changed_callback(tf),
      		          (XtPointer) &cb);
    }
@@ -12448,39 +9912,8 @@ XmDataFieldPaste(
    return True;
 }
 
-void
-#ifdef _NO_PROTO
-XmDataFielddf_ClearSelection( w, sel_time )
-        Widget w ;
-        Time sel_time ;
-#else
-XmDataFielddf_ClearSelection(
-        Widget w,
-        Time sel_time )
-#endif /* _NO_PROTO */
-{
-  _XmWidgetToAppContext(w);
-  _XmAppLock(app);
-
-  _XmDataFieldDeselectSelection(w, False, sel_time);
-
-  _XmAppUnlock(app);
-}
-
-void
-#ifdef _NO_PROTO
-XmDataFieldSetSelection( w, first, last, sel_time )
-        Widget w ;
-        XmTextPosition first ;
-        XmTextPosition last ;
-        Time sel_time ;
-#else
-XmDataFieldSetSelection(
-        Widget w,
-        XmTextPosition first,
-        XmTextPosition last,
-        Time sel_time )
-#endif /* _NO_PROTO */
+void XmDataFieldSetSelection(Widget w, XmTextPosition first,
+                             XmTextPosition last, Time sel_time)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -12494,19 +9927,7 @@ XmDataFieldSetSelection(
   _XmAppUnlock(app);
 }
 
-/* ARGSUSED */
-XmTextPosition
-#ifdef _NO_PROTO
-XmDataFieldXYToPos( w, x, y )
-        Widget w ;
-        Position x ;
-        Position y ;
-#else
-XmDataFieldXYToPos(
-        Widget w,
-        Position x,
-        Position y )
-#endif /* _NO_PROTO */
+XmTextPosition XmDataFieldXYToPos(Widget w, Position x, Position y)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmTextPosition ret_val;
@@ -12520,20 +9941,8 @@ XmDataFieldXYToPos(
     return(ret_val);
 }
 
-Boolean
-#ifdef _NO_PROTO
-XmDataFieldPosToXY( w, position, x, y )
-     Widget w ;
-     XmTextPosition position ;
-     Position *x ;
-     Position *y ;
-#else
-XmDataFieldPosToXY(
-		   Widget w,
-		   XmTextPosition position,
-		   Position *x,
-		   Position *y )
-#endif /* _NO_PROTO */
+Boolean XmDataFieldPosToXY(Widget w, XmTextPosition position, Position *x,
+                           Position *y)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
   Boolean ret_val;
@@ -12551,16 +9960,7 @@ XmDataFieldPosToXY(
  * Force the given position to be displayed.  If position < 0, then don't force
  * any position to be displayed.
  */
-void
-#ifdef _NO_PROTO
-XmDataFieldShowPosition( w, position )
-        Widget w ;
-        XmTextPosition position ;
-#else
-XmDataFieldShowPosition(
-        Widget w,
-        XmTextPosition position )
-#endif /* _NO_PROTO */
+void XmDataFieldShowPosition(Widget w, XmTextPosition position)
 {
   XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -12577,21 +9977,8 @@ XmDataFieldShowPosition(
   _XmAppUnlock(app);
 }
 
-/* ARGSUSED */
-void
-#ifdef _NO_PROTO
-XmDataFieldSetHighlight( w, left, right, mode )
-        Widget w ;
-        XmTextPosition left ;
-        XmTextPosition right ;
-        XmHighlightMode mode ;
-#else
-XmDataFieldSetHighlight(
-        Widget w,
-        XmTextPosition left,
-        XmTextPosition right,
-        XmHighlightMode mode )
-#endif /* _NO_PROTO */
+void XmDataFieldSetHighlight(Widget w, XmTextPosition left,
+                             XmTextPosition right, XmHighlightMode mode)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -12616,19 +10003,8 @@ XmDataFieldSetHighlight(
     _XmAppUnlock(app);
 }
 
-/* ARGSUSED */
-static Boolean
-#ifdef _NO_PROTO
-DataFieldGetBaselines( w, baselines, line_count )
-        Widget w ;
-        Dimension ** baselines;
-        int *line_count;
-#else
-DataFieldGetBaselines(
-        Widget w,
-        Dimension ** baselines,
-        int *line_count )
-#endif /* _NO_PROTO */
+static Boolean DataFieldGetBaselines(Widget w, Dimension ** baselines,
+                                     int *line_count)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Dimension *base_array;
@@ -12637,24 +10013,17 @@ DataFieldGetBaselines(
     _XmAppLock(app);
 
     *line_count = 1;
-    base_array = (Dimension *) XtMalloc(sizeof(Dimension));
+    base_array = (Dimension *)XtMalloc(sizeof(Dimension));
     base_array[0] = XmTextF_margin_top(tf) + tf->primitive.shadow_thickness +
 	tf->primitive.highlight_thickness + XmTextF_font_ascent(tf);
 
     *baselines = base_array;
 
     _XmAppUnlock(app);
-    return (TRUE);
+    return TRUE;
 }
 
-int
-#ifdef _NO_PROTO
-XmDataFieldGetBaseline( w )
-        Widget w ;
-#else
-XmDataFieldGetBaseline(
-        Widget w )
-#endif /* _NO_PROTO */
+int XmDataFieldGetBaseline(Widget w)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     Dimension margin_top;
@@ -12670,19 +10039,10 @@ XmDataFieldGetBaseline(
     ret_val = (int) margin_top + (int) XmTextF_font_ascent(tf);
 
     _XmAppUnlock(app);
-    return(ret_val);
+    return ret_val;
 }
 
-static Boolean
-#ifdef _NO_PROTO
-DataFieldGetDisplayRect( w, display_rect )
-        Widget w;
-        XRectangle * display_rect;
-#else
-DataFieldGetDisplayRect(
-        Widget w,
-        XRectangle * display_rect )
-#endif /* _NO_PROTO */
+static Boolean DataFieldGetDisplayRect(Widget w, XRectangle *display_rect)
 {
    XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -12699,21 +10059,10 @@ DataFieldGetDisplayRect(
    (*display_rect).width = tf->core.width - (2 * margin_width);
    (*display_rect).height = tf->core.height - (margin_top + margin_bottom);
 
-   return(TRUE);
+   return TRUE;
 }
 
-
-/* ARGSUSED */
-static void
-#ifdef _NO_PROTO
-DataFieldMarginsProc( w, margins_rec )
-        Widget w ;
-        XmBaselineMargins *margins_rec;
-#else
-DataFieldMarginsProc(
-        Widget w,
-        XmBaselineMargins *margins_rec )
-#endif /* _NO_PROTO */
+static void DataFieldMarginsProc(Widget w, XmBaselineMargins *margins_rec)
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
 
@@ -12732,31 +10081,14 @@ DataFieldMarginsProc(
 /*
  * Text Field w creation convienence routine.
  */
-
-Widget
-#ifdef _NO_PROTO
-XmCreateDataField( parent, name, arglist, argcount )
-        Widget parent ;
-        char *name ;
-        ArgList arglist ;
-        Cardinal argcount ;
-#else
-XmCreateDataField(
-        Widget parent,
-        char *name,
-        ArgList arglist,
-        Cardinal argcount )
-#endif /* _NO_PROTO */
+Widget XmCreateDataField(Widget parent, char *name, ArgList arglist,
+                         Cardinal argcount)
 {
-    return (XtCreateWidget(name, xmDataFieldWidgetClass,
-                           parent, arglist, argcount));
+    return XtCreateWidget(name, xmDataFieldWidgetClass,
+                          parent, arglist, argcount);
 }
 
-Widget
-XmVaCreateDataField(
-        Widget parent,
-        char *name,
-        ...)
+Widget XmVaCreateDataField(Widget parent, char *name, ...)
 {
     register Widget w;
     va_list var;
@@ -12776,11 +10108,7 @@ XmVaCreateDataField(
     return w;
 }
 
-Widget
-XmVaCreateManagedDataField(
-        Widget parent,
-        char *name,
-        ...)
+Widget XmVaCreateManagedDataField(Widget parent, char *name, ...)
 {
     Widget w = NULL;
     va_list var;
@@ -12798,3 +10126,4 @@ XmVaCreateManagedDataField(
     va_end(var);
     return w;
 }
+

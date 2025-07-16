@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DragICC.c /main/14 1997/06/18 17:38:07 samborn $"
@@ -63,13 +63,13 @@ static char rcsid[] = "$TOG: DragICC.c /main/14 1997/06/18 17:38:07 samborn $"
  * message and the callback reasons
  */
 typedef struct _ReasonTable {
-    int			reason;	
+    int			reason;
     unsigned char	messageType;
 } ReasonTable;
 
 /***************************************************************
 
-For improving response time in a Drag operation, OSF/Motif allows clients 
+For improving response time in a Drag operation, OSF/Motif allows clients
 to cache frequently needed data on window properties to reduce roundtrip
 X server requests.
 
@@ -92,7 +92,7 @@ name/value pairs from the "_MOTIF_DRAG_ATOM_PAIRS" property on
 motifDragWindow. If the property does not exist on motifDragWindow, a
 client may create the list of atom name/value pairs and store it on the
 property. The list created by the OSF/Motif toolkit includes most of the
-atoms used by Xm. 
+atoms used by Xm.
 
 If a client finds the "_MOTIF_DRAG_ATOM_PAIRS" property, it may read
 that property and cache the atoms, avoiding multiple roundtrip
@@ -123,10 +123,10 @@ list index in the protocol messages.
 
 The targets table on the "_MOTIF_DRAG_TARGETS" property initially
 contain only two lists:
- 
+
  		{ 0,		}, and
- 		{ XA_STRING,	} 
- 
+ 		{ XA_STRING,	}
+
 To add a target list to the table, a client must first sorts the
 target list into ascending order, then search the targets table for a
 match. If it finds a match, it may use the index of the matching
@@ -140,11 +140,11 @@ table entry.
 
 /********    Static Function Declarations    ********/
 
-static XmICCEventType GetMessageData( 
+static XmICCEventType GetMessageData(
                         Display *display,
                         xmICCMessageStruct *xmessage,
                         XmICCCallbackStruct *callback) ;
-static void SwapMessageData( 
+static void SwapMessageData(
                         xmICCMessageStruct *xmessage) ;
 #ifdef DEBUG
 static void PrintMessage(char, xmICCMessageStruct *);
@@ -185,12 +185,12 @@ static XmConst int	messageTable[] = {
  *
  ***********************************************************************/
 
-unsigned char 
+unsigned char
 _XmReasonToMessageType(
         int reason )
 {
     int	i;
-    
+
     for (i = 0; i < XtNumber(reasonTable); i++)
       if (reasonTable[i].reason == reason)
 	return((unsigned char)i);
@@ -203,13 +203,9 @@ _XmReasonToMessageType(
  *
  ***********************************************************************/
 
-unsigned int 
+unsigned int
 _XmMessageTypeToReason(
-#if NeedWidePrototypes
-        unsigned int messageType )
-#else
         unsigned char messageType )
-#endif /* NeedWidePrototypes */
 {
     return(messageTable[messageType]);
 }
@@ -221,7 +217,7 @@ _XmMessageTypeToReason(
  *  Reformat a motif callback into a client message
  ***********************************************************************/
 
-void 
+void
 _XmICCCallbackToICCEvent(
         Display *display,
         Window window,
@@ -240,11 +236,11 @@ _XmICCCallbackToICCEvent(
     cmev->message_type = XInternAtom(display,
 		_Xm_MOTIF_DRAG_AND_DROP_MESSAGE, False);
 
-    
+
     xmessage->any.byte_order = (BYTE) _XmByteOrderChar;
     xmessage->any.message_type = (BYTE)
       _XmReasonToMessageType(callback->any.reason);
-    
+
     switch (callback->any.reason) {
       case XmCR_TOP_LEVEL_ENTER:
 	/*
@@ -253,7 +249,7 @@ _XmICCCallbackToICCEvent(
 	{
 	    register XmTopLevelEnterCallback cb =
 	      (XmTopLevelEnterCallback)callback;
-	    
+
 	    xmessage->topLevelEnter.flags = 0;
 	    xmessage->topLevelEnter.time  = cb->timeStamp;
 	    xmessage->topLevelEnter.src_window = cb->window;
@@ -268,7 +264,7 @@ _XmICCCallbackToICCEvent(
 	{
 	    register XmTopLevelLeaveCallback cb =
 	      (XmTopLevelLeaveCallback)callback;
-	    
+
 	    xmessage->topLevelLeave.flags = 0;
 	    xmessage->topLevelLeave.time  = cb->timeStamp;
 	    xmessage->topLevelLeave.src_window = cb->window;
@@ -281,7 +277,7 @@ _XmICCCallbackToICCEvent(
 	{
 	    register XmDragMotionCallback	cb =
 	      (XmDragMotionCallback)callback;
-	    
+
 	    xmessage->dragMotion.flags = 0;
 	    xmessage->dragMotion.flags |= PUT_SITE_STATUS(cb->dropSiteStatus);
 	    xmessage->dragMotion.flags |= PUT_OPERATION(cb->operation);
@@ -298,7 +294,7 @@ _XmICCCallbackToICCEvent(
 	{
 	    register XmOperationChangedCallback	cb =
 	      (XmOperationChangedCallback)callback;
-	    
+
 	    xmessage->operationChanged.flags = 0;
 	    xmessage->operationChanged.flags |=
 			PUT_OPERATION(cb->operation);
@@ -348,7 +344,7 @@ _XmICCCallbackToICCEvent(
 	{
 	    register XmDropStartCallback	cb =
 	      (XmDropStartCallback)callback;
-	    
+
 	    xmessage->drop.flags = 0;
 	    xmessage->drop.flags |= PUT_SITE_STATUS(cb->dropSiteStatus);
 	    xmessage->drop.flags |= PUT_COMPLETION(cb->dropAction);
@@ -379,7 +375,7 @@ _XmICCCallbackToICCEvent(
  *
  ***********************************************************************/
 
-void 
+void
 _XmSendICCCallback(
         Display *display,
         Window window,
@@ -399,7 +395,7 @@ _XmSendICCCallback(
 	  receiverWindow = window;
 
 	XSendEvent(display, receiverWindow, False, 0,
-		(XEvent *) &msgEvent); 
+		(XEvent *) &msgEvent);
 }
 
 /************************************************************************
@@ -433,7 +429,7 @@ GetMessageData(
 	{
 	    register XmTopLevelEnterCallback	cb =
 	      (XmTopLevelEnterCallback)callback;
-	    
+
 	    cb->window = (Window) xmessage->topLevelEnter.src_window;
 	    cb->iccHandle = (Atom) xmessage->topLevelEnter.icc_handle;
 	}
@@ -443,7 +439,7 @@ GetMessageData(
 	{
 	    register XmTopLevelLeaveCallback	cb =
 	      (XmTopLevelLeaveCallback)callback;
-	    
+
 	    cb->window = (Window) xmessage->topLevelLeave.src_window;
 	}
 	break;
@@ -452,7 +448,7 @@ GetMessageData(
 	{
 	    register XmDragMotionCallback	cb =
 	      (XmDragMotionCallback)callback;
-	    
+
 	    cb->x = (Position) cvtINT16toShort(xmessage->dragMotion.x);
 	    cb->y = (Position) cvtINT16toShort(xmessage->dragMotion.y);
 	    cb->operation = (unsigned char)
@@ -484,7 +480,7 @@ GetMessageData(
 	{
 	    register XmDropSiteEnterCallback	cb =
 	      (XmDropSiteEnterCallback)callback;
-	    
+
 	    cb->x = (Position) cvtINT16toShort(xmessage->dropSiteEnter.x);
 	    cb->y = (Position) cvtINT16toShort(xmessage->dropSiteEnter.y);
 
@@ -540,7 +536,7 @@ GetMessageData(
  *
  ***********************************************************************/
 
-static void 
+static void
 SwapMessageData(
         xmICCMessageStruct *xmessage )
 {
@@ -596,7 +592,7 @@ SwapMessageData(
  *
  ***********************************************************************/
 
-Boolean 
+Boolean
 _XmICCEventToICCCallback(
         XClientMessageEvent *msgEv,
         XmICCCallback callback,
@@ -615,7 +611,7 @@ _XmICCEventToICCCallback(
       return (False);
 
     xmessage = (xmICCMessage)&msgEv->data.b[0];
-    
+
     if (xmessage->any.byte_order != _XmByteOrderChar) {
 	/*
 	 * swap it inplace and update the byte_order field so no one
@@ -626,7 +622,7 @@ _XmICCEventToICCCallback(
 	xmessage->any.byte_order = _XmByteOrderChar;
     }
 
-	    
+
 
 #ifdef DEBUG
     /* Print data */
@@ -645,14 +641,10 @@ _XmICCEventToICCCallback(
  *
  ***********************************************************************/
 
-CARD16 
+CARD16
 _XmReadDragBuffer(
         xmPropertyBuffer propBuf,
-#if NeedWidePrototypes
-        int which,
-#else
         BYTE which,
-#endif /* NeedWidePrototypes */
         BYTE *ptr,
         CARD32 size )
 {
@@ -663,7 +655,7 @@ _XmReadDragBuffer(
       buf = &propBuf->data;
     else
       buf = &propBuf->heap;
-    
+
     numCurr = buf->curr - buf->bytes;
     if (numCurr + size > buf->size) {
 	size = buf->size - numCurr;
@@ -679,14 +671,10 @@ _XmReadDragBuffer(
  *
  ***********************************************************************/
 
-CARD16 
+CARD16
 _XmWriteDragBuffer(
         xmPropertyBuffer propBuf,
-#if NeedWidePrototypes
-        int which,
-#else
         BYTE which,
-#endif /* NeedWidePrototypes */
         BYTE *ptr,
         CARD32 size )
 {
@@ -720,7 +708,7 @@ _XmWriteDragBuffer(
  *
  ***********************************************************************/
 
-void 
+void
 _XmWriteInitiatorInfo(
         Widget dc )
 {
@@ -742,7 +730,7 @@ _XmWriteInitiatorInfo(
 
     infoRec.byte_order = _XmByteOrderChar;
     infoRec.protocol_version = _MOTIF_DRAG_PROTOCOL_VERSION;
-    infoRec.targets_index = 
+    infoRec.targets_index =
       _XmTargetsToIndex((Widget)xmDisplay, exportTargets, numExportTargets);
     infoRec.icc_handle = iccHandle;
 
@@ -751,10 +739,10 @@ _XmWriteInitiatorInfo(
 				 False);
 
     /* write the buffer to the property */
-    XChangeProperty (XtDisplayOfObject(dc), 
+    XChangeProperty (XtDisplayOfObject(dc),
 		     srcWindow,
 		     iccHandle, initiatorAtom,
-		     8, PropModeReplace, 
+		     8, PropModeReplace,
 		     (unsigned char *)&infoRec,
 		     sizeof(xmDragInitiatorInfoStruct));
 
@@ -768,7 +756,7 @@ _XmWriteInitiatorInfo(
  *  source window field set.
  ***********************************************************************/
 
-void 
+void
 _XmReadInitiatorInfo(
         Widget dc )
 {
@@ -776,7 +764,7 @@ _XmReadInitiatorInfo(
     Atom			initiatorAtom;
     int				format;
     unsigned long 		bytesafter, lengthRtn;
-    long 			length; 
+    long 			length;
     Atom			type;
     Arg				args[4];
     int				i;
@@ -784,19 +772,19 @@ _XmReadInitiatorInfo(
     Atom			iccHandle;
     Atom			*exportTargets;
     Cardinal			numExportTargets;
-    
-    
+
+
     i = 0;
     XtSetArg(args[i], XmNsourceWindow, &srcWindow);i++;
     XtSetArg(args[i], XmNiccHandle, &iccHandle);i++;
-    
+
     XtGetValues(dc, args, i);
-    
+
     initiatorAtom = XInternAtom(XtDisplayOfObject(dc),
 				 XmI_MOTIF_DRAG_INITIATOR_INFO,
 				 FALSE);
     length = 100000L;
-    if (XGetWindowProperty (XtDisplayOfObject(dc), 
+    if (XGetWindowProperty (XtDisplayOfObject(dc),
 			     srcWindow,
 			     iccHandle,
 			     0L,
@@ -815,9 +803,9 @@ _XmReadInitiatorInfo(
 	      swap2bytes(info->targets_index);
 	      swap4bytes(info->icc_handle);
 	    }
-	    numExportTargets = 
+	    numExportTargets =
 	      _XmIndexToTargets(dc, info->targets_index, &exportTargets);
-	
+
 	    i = 0;
 	    XtSetArg(args[i], XmNexportTargets, exportTargets);i++;
 	    XtSetArg(args[i], XmNnumExportTargets, numExportTargets);i++;
@@ -839,7 +827,7 @@ _XmReadInitiatorInfo(
  *  pointer that passes thru the memory allocated by XGetWindowProperty.
  ***********************************************************************/
 
-Boolean 
+Boolean
 _XmGetDragReceiverInfo(
         Display *display,
         Window window,
@@ -848,13 +836,13 @@ _XmGetDragReceiverInfo(
     xmDragReceiverInfoStruct	*iccInfo = NULL ;
     Atom			drag_hints_atom;
     int				format;
-    unsigned long 		bytesafter, lengthRtn, length; 
+    unsigned long 		bytesafter, lengthRtn, length;
     Atom			type;
     XmReceiverDSTreeStruct	*dsmInfo;
     Window			root;
     unsigned int		bw;
     XmDisplay           dd = (XmDisplay) XmGetXmDisplay(display);
-    
+
     drag_hints_atom = XInternAtom(display,
 				   XmI_MOTIF_DRAG_RECEIVER_INFO,
 				   FALSE);
@@ -884,28 +872,28 @@ _XmGetDragReceiverInfo(
 	  }
 
 	  dd->display.proxyWindow = iccInfo->proxy_window;
-	
+
 	  (receiverInfoRtn)->dragProtocolStyle = iccInfo->drag_protocol_style;
-	
+
 	  dsmInfo = XtNew(XmReceiverDSTreeStruct);
 	  dsmInfo->byteOrder = iccInfo->byte_order;
 	  dsmInfo->numDropSites = iccInfo->num_drop_sites;
 	  dsmInfo->currDropSite = 0;
 	  dsmInfo->propBufRec.data.bytes = (BYTE*)iccInfo;
 	  dsmInfo->propBufRec.data.size = (size_t) iccInfo->heap_offset;
-	  dsmInfo->propBufRec.heap.bytes = 
+	  dsmInfo->propBufRec.heap.bytes =
 	    (BYTE*)iccInfo + iccInfo->heap_offset;
 	  dsmInfo->propBufRec.heap.size = (size_t)
 	    (lengthRtn - iccInfo->heap_offset);
-	  /* 
+	  /*
 	   * skip over the info that we've already got
 	   */
-	  dsmInfo->propBufRec.data.curr = 	
+	  dsmInfo->propBufRec.data.curr =
 	    (BYTE*)iccInfo + sizeof(xmDragReceiverInfoStruct);
 	  /*
 	   * now get their geometry
 	   */
-	  XGetGeometry(display, 
+	  XGetGeometry(display,
 		       window,
 		       &root,
 		       &(receiverInfoRtn->xOrigin),
@@ -919,8 +907,8 @@ _XmGetDragReceiverInfo(
 				     root,
 				     (int) -bw,
 				     (int) -bw,
-				     &(receiverInfoRtn->xOrigin), 
-				     &(receiverInfoRtn->yOrigin), 
+				     &(receiverInfoRtn->xOrigin),
+				     &(receiverInfoRtn->yOrigin),
 				     &root);
 	  (receiverInfoRtn)->iccInfo = (XtPointer) dsmInfo;
 	  return True;
@@ -932,7 +920,7 @@ _XmGetDragReceiverInfo(
 	  return False;
 	}
       }
-      else 
+      else
 	return False;
   }
 
@@ -941,8 +929,7 @@ _XmGetDragReceiverInfo(
  *  _XmReadDSFromStream()
  *
  ***********************************************************************/
-/*ARGSUSED*/
-Boolean 
+Boolean
 _XmReadDSFromStream(
         XmDropSiteManagerObject dsm,
         XtPointer iccInfo,
@@ -957,7 +944,7 @@ _XmReadDSFromStream(
 
     _XmReadDragBuffer (propBuf, BUFFER_DATA,
 		       (BYTE*)&dsHeader, sizeof(xmDSHeaderStruct));
-    
+
     if (dsmInfo->byteOrder != _XmByteOrderChar) {
 	swap2bytes(dsHeader.flags);
 	swap2bytes(dsHeader.import_targets_id);
@@ -1151,8 +1138,7 @@ _XmReadDSFromStream(
  *  _XmWriteDSToStream()
  *
  ***********************************************************************/
-/*ARGSUSED*/
-void 
+void
 _XmWriteDSToStream(
         XmDropSiteManagerObject dsm,
         XtPointer stream,
@@ -1173,7 +1159,7 @@ _XmWriteDSToStream(
     dsHeader.flags |= PUT_ANIMATION_STYLE(dropSiteInfo->header.animationStyle);
     dsHeader.import_targets_id = dropSiteInfo->header.importTargetsID;
     dsHeader.dsRegionNumBoxes =  region->numRects;
-    
+
     _XmWriteDragBuffer(propBuf, BUFFER_DATA, (BYTE*)&dsHeader,
 		       sizeof(xmDSHeaderStruct));
 
@@ -1194,9 +1180,9 @@ _XmWriteDSToStream(
 		     info->animation_data.background;
                 dsHighlight.highlightColor =
 		     info->animation_data.highlightColor;
-                dsHighlight.highlightPixmap = 
+                dsHighlight.highlightPixmap =
 		     info->animation_data.highlightPixmap;
-    
+
 		_XmWriteDragBuffer (propBuf, BUFFER_DATA,
 				    (BYTE*)&dsHighlight,
 		                    sizeof(xmDSHighlightDataStruct));
@@ -1223,11 +1209,11 @@ _XmWriteDSToStream(
 		     info->animation_data.topShadowColor;
                 dsShadow.bottomShadowColor =
 		     info->animation_data.bottomShadowColor;
-                dsShadow.topShadowPixmap = 
+                dsShadow.topShadowPixmap =
 		     info->animation_data.topShadowPixmap;
-                dsShadow.bottomShadowPixmap = 
+                dsShadow.bottomShadowPixmap =
 		     info->animation_data.bottomShadowPixmap;
-    
+
 		_XmWriteDragBuffer (propBuf, BUFFER_DATA,
 				    (BYTE*)&dsShadow,
 		                    sizeof(xmDSShadowDataStruct));
@@ -1246,18 +1232,18 @@ _XmWriteDSToStream(
 		     info->animation_data.highlightThickness;
                 dsPixmap.shadowThickness =
 		     info->animation_data.shadowThickness;
-                dsPixmap.animationPixmapDepth = 
+                dsPixmap.animationPixmapDepth =
 		     info->animation_data.animationPixmapDepth;
 
                 dsPixmap.foreground =
 		     info->animation_data.foreground;
                 dsPixmap.background =
 		     info->animation_data.background;
-                dsPixmap.animationPixmap = 
+                dsPixmap.animationPixmap =
 		     info->animation_data.animationPixmap;
-                dsPixmap.animationMask = 
+                dsPixmap.animationMask =
 		     info->animation_data.animationMask;
-    
+
 		_XmWriteDragBuffer (propBuf, BUFFER_DATA,
 				    (BYTE*)&dsPixmap,
 		                    sizeof(xmDSPixmapDataStruct));
@@ -1300,10 +1286,10 @@ _XmWriteDSToStream(
  *
  ***********************************************************************/
 
-void 
+void
 _XmFreeDragReceiverInfo(
         XtPointer info )
-{	
+{
     XmReceiverDSTreeStruct	*dsmInfo = (XmReceiverDSTreeStruct *)info;
 
     if (dsmInfo) {
@@ -1320,7 +1306,7 @@ _XmFreeDragReceiverInfo(
  *  our windows.
  ***********************************************************************/
 
-void 
+void
 _XmClearDragReceiverInfo(
         Widget shell )
 {
@@ -1344,8 +1330,8 @@ _XmClearDragReceiverInfo(
  *  with a protocol style of NONE, because such receivers should not
  *  have any visible receiver info.
  ***********************************************************************/
- 
-void 
+
+void
 _XmSetDragReceiverInfo(
         XmDisplay dd,
         Widget shell )
@@ -1364,20 +1350,20 @@ _XmSetDragReceiverInfo(
     receiverAtom = XInternAtom(XtDisplayOfObject(shell),
 				XmI_MOTIF_DRAG_RECEIVER_INFO,
 				False);
-    
+
     dsmInfoRec.numDropSites = 0;
     dsmInfoRec.currDropSite = 0;
-    
+
     propBuf = &dsmInfoRec.propBufRec;
-    propBuf->data.stack = 
+    propBuf->data.stack =
       propBuf->data.bytes = stackData;
     propBuf->data.size = 0;
     propBuf->data.max = MAXSTACK;
-    propBuf->heap.stack = 
+    propBuf->heap.stack =
       propBuf->heap.bytes = stackHeap;
     propBuf->heap.size = 0;
     propBuf->heap.max = MAXSTACK;
-    
+
     infoRec.byte_order = _XmByteOrderChar;
     infoRec.protocol_version = _MOTIF_DRAG_PROTOCOL_VERSION;
 
@@ -1402,7 +1388,7 @@ _XmSetDragReceiverInfo(
       {
 	/*
 	 * However, this procedure is called on the realize of the
-	 * shell, and the drop site manager is counting on having a 
+	 * shell, and the drop site manager is counting on having a
 	 * chance to synchronize the drop site db with the actual
 	 * widget information.
 	 */
@@ -1415,28 +1401,28 @@ _XmSetDragReceiverInfo(
     infoRecPtr->num_drop_sites = numDropSites;
 
     infoRecPtr->heap_offset = propBuf->data.size;
-    
+
     /* write the buffer to the property */
-    XChangeProperty (XtDisplayOfObject(shell), 
+    XChangeProperty (XtDisplayOfObject(shell),
 		     XtWindow(shell),
 		     receiverAtom, receiverAtom,
-		     8, 
+		     8,
 		     PropModeReplace,
 		     (unsigned char *)propBuf->data.bytes,
 		     propBuf->data.size);
     if (propBuf->data.bytes != propBuf->data.stack)
       XtFree((char *)propBuf->data.bytes);
-    
+
     if (propBuf->heap.size) {
 	XChangeProperty (XtDisplayOfObject(shell),
 			 XtWindow(shell),
 			 receiverAtom, receiverAtom,
-			 8, PropModeAppend, 
+			 8, PropModeAppend,
 			 (unsigned char *)propBuf->heap.bytes,
 			 propBuf->heap.size);
 	if (propBuf->heap.bytes != propBuf->heap.stack)
 	  XtFree((char *)propBuf->heap.bytes);
-	
+
     }
 }
 
@@ -1446,7 +1432,7 @@ _XmSetDragReceiverInfo(
  *
  ***********************************************************************/
 
-void 
+void
 _XmInitByteOrderChar( void )
 {
     _XmProcessLock();
@@ -1465,7 +1451,7 @@ _XmInitByteOrderChar( void )
 }
 
 #ifdef DEBUG
-static void 
+static void
 PrintMessage(char c, xmICCMessageStruct *xmessage)
 {
   int message_type = xmessage->any.message_type;

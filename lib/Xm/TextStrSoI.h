@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 #ifndef _XmTextStrSoI_h
 #define _XmTextStrSoI_h
@@ -35,11 +35,7 @@ extern "C" {
 extern char  * _XmStringSourceGetString(XmTextWidget tw,
 				        XmTextPosition from,
 				        XmTextPosition to,
-#if NeedWidePrototypes
-				        int want_wchar);
-#else
                                         Boolean want_wchar);
-#endif /* NeedWidePrototypes */
 extern Boolean _XmTextFindStringBackwards(Widget w,
 					  XmTextPosition start,
 					  char *search_string,
@@ -59,39 +55,23 @@ extern Boolean _XmTextModifyVerify(XmTextWidget initiator,
 				   XmTextBlock newblock,
 				   Boolean *freeBlock);
 extern XmTextSource _XmStringSourceCreate(char *value,
-#if NeedWidePrototypes
-					  int is_wchar);
-#else
                                           Boolean is_wchar);
-#endif /* NeedWidePrototypes */
 extern void    _XmStringSourceDestroy(XmTextSource source);
 extern char  * _XmStringSourceGetValue(XmTextSource source,
-#if NeedWidePrototypes
-				       int want_wchar);
-#else
                                        Boolean want_wchar);
-#endif /* NeedWidePrototypes */
 extern void    _XmStringSourceSetValue(XmTextWidget widget,
 				       char *value);
 extern Boolean _XmStringSourceHasSelection(XmTextSource source);
 extern Boolean _XmStringSourceGetEditable(XmTextSource source);
 extern void    _XmStringSourceSetEditable(XmTextSource source,
-#if NeedWidePrototypes
-					  int editable);
-#else
                                          Boolean editable);
-#endif /* NeedWidePrototypes */
 extern int     _XmStringSourceGetMaxLength(XmTextSource source);
 extern void    _XmStringSourceSetMaxLength(XmTextSource source,
 					   int max);
 extern int _XmTextBytesToCharacters(char *characters,
 				    char *bytes,
 				    int num_chars,
-#if NeedWidePrototypes
-				    int add_null_terminator,
-#else
 				    Boolean add_null_terminator,
-#endif /* NeedWidePrototypes */
 				    int max_char_size);
 extern int _XmTextCharactersToBytes(char *bytes,
 				    char *characters,
@@ -111,4 +91,3 @@ extern void    _XmStringSourceSetPending(XmTextWidget widget,
 #endif
 
 #endif /*  _XmTextStrSoI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

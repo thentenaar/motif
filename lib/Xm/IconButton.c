@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -115,7 +115,7 @@ static void ButtonUp(Widget, XEvent *, String *, Cardinal *);
 static XmListElem * GetCacheElem(Display *, Pixmap);
 static Boolean CheckPixCache(Display *, Pixmap,
 			     unsigned int *, unsigned int *, unsigned int *);
-static void AddPixCache(Display *, Pixmap, 
+static void AddPixCache(Display *, Pixmap,
 			unsigned int, unsigned int, unsigned int);
 static void IncPixCache(Display *, Pixmap);
 static void DecPixCache(Display *, Pixmap);
@@ -129,13 +129,13 @@ static void CreateGCs(Widget), DestroyGCs(Widget w);
 static void FromPaddingPixels(Widget, int, XtArgVal *);
 static XmImportOperator ToPaddingPixels(Widget, int, XtArgVal *);
 static XmString CreateXmString(Widget, String);
-static void CheckSetRenderTable(Widget wid, int offs, XrmValue *value); 
+static void CheckSetRenderTable(Widget wid, int offs, XrmValue *value);
 
 /******************
  * Type Converters
  ******************/
 
-static Boolean CvtStringToIconPlacement(Display *, XrmValuePtr, Cardinal *, 
+static Boolean CvtStringToIconPlacement(Display *, XrmValuePtr, Cardinal *,
 					XrmValuePtr, XrmValuePtr);
 
 /************************************************************
@@ -145,9 +145,9 @@ static Boolean CvtStringToIconPlacement(Display *, XrmValuePtr, Cardinal *,
 /*
  * It seems redundant to have both Btn1Up and BtnUp bound to
  * EndDrag, but for some reason BtnUp does not cause the event to
- * fire on button 1, must be some Translations magic that I don't 
+ * fire on button 1, must be some Translations magic that I don't
  * understand.
- * 
+ *
  * CDP - 5/11/91.
  */
 
@@ -158,7 +158,7 @@ typedef struct _StippleInfo {
     Screen *screen;
 } StippleInfo;
 
-/* 
+/*
  * ||| It would be nice to put this in the widget class.
  */
 
@@ -178,7 +178,7 @@ static char defaultTranslations[] =
  * adds enter and leave to the primitive defaults.
  */
 
-static char traverseTranslations[] = 
+static char traverseTranslations[] =
 "<Key>osfBeginLine: PrimitiveTraverseHome()\n\
  <Key>osfHelp:	PrimitiveHelp()\n\
  <Key>osfUp:	PrimitiveTraverseUp()\n\
@@ -199,10 +199,10 @@ static XtActionsRec actionsList[] =
     {"XiToggle",			ToggleState},
     {"XmNotify",			Notify},
     {"XiGetFocus",			_XmGetFocus},
-    {"XiDoubleNotify",			DoubleNotify}, 
+    {"XiDoubleNotify",			DoubleNotify},
     {"XiButtonUp",			ButtonUp},
     /*
-     * Why aren't these in primitive? 
+     * Why aren't these in primitive?
      */
     { "PrimitiveEnter",		(XtActionProc) _XmPrimitiveEnter },
     { "PrimitiveLeave",		(XtActionProc) _XmPrimitiveLeave },
@@ -407,7 +407,7 @@ XmIconButtonClassRec xmIconButtonClassRec = {
 WidgetClass xmIconButtonWidgetClass = (WidgetClass)&xmIconButtonClassRec;
 
 /* Trait record for iconButton */
-static XmConst XmActivatableTraitRec iconButtonAT = 
+static XmConst XmActivatableTraitRec iconButtonAT =
 {
   0,				/* version	*/
   ChangeCB			/* changeCB	*/
@@ -425,7 +425,7 @@ static XmConst XmActivatableTraitRec iconButtonAT =
  */
 
 /*ARGSUSED*/
-static void 
+static void
 ClassInit()
 {
     XmIconButtonClassRec *wc = &xmIconButtonClassRec;
@@ -438,13 +438,7 @@ ClassInit()
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmICONBUTTON_BIT );
 
@@ -459,13 +453,13 @@ ClassPartInitialize(WidgetClass w_class)
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
     XmIconButtonWidget iw = (XmIconButtonWidget) set;
@@ -488,7 +482,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 	    XmIconButton_label_from_name(iw) = True;
 	}
 	else {
-	    if ((XmIconButton_label_string(iw) = 
+	    if ((XmIconButton_label_string(iw) =
 		 CreateXmString(set, XmIconButton_label(iw))) == NULL)
 	    {
 		XmIconButton_label_string(iw) = CreateXmString(set, XtName(set));
@@ -523,7 +517,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 	/* we have a validPixmap and valid values */
 	AddPixCache(XtDisplay(set), XmIconButton_pixmap(iw),
 		    XmIconButton_pix_width(iw),
-		    XmIconButton_pix_height(iw), 
+		    XmIconButton_pix_height(iw),
 		    XmIconButton_pix_depth(iw));
         IncPixCache(XtDisplay(set), XmIconButton_pixmap(iw));
     }
@@ -531,10 +525,10 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
     /* If layout_direction is set, it overrides string_direction.
      * If string_direction is set, but not layout_direction, use
      *	string_direction value.
-     * If neither is set, get from parent 
+     * If neither is set, get from parent
      */
     if (XmPrim_layout_direction(iw) != XmDEFAULT_DIRECTION) {
-	if (XmIconButton_string_direction(iw) == XmDEFAULT_DIRECTION) 
+	if (XmIconButton_string_direction(iw) == XmDEFAULT_DIRECTION)
 	    XmIconButton_string_direction(iw) =
 		XmDirectionToStringDirection(XmPrim_layout_direction(iw));
     } else if (XmIconButton_string_direction(iw) != XmDEFAULT_DIRECTION) {
@@ -545,7 +539,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 	XmIconButton_string_direction(iw) =
 	    XmDirectionToStringDirection(XmPrim_layout_direction(iw));
     }
-  
+
     if (!XmRepTypeValidValue(XmRID_STRING_DIRECTION,
 	    XmIconButton_string_direction(iw), (Widget) iw))
     {
@@ -576,11 +570,11 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 
 /*	Function Name: Resize
  *	Description:   Called when this widget has been resized.
- *	Arguments:     w - the widget to resize. 
+ *	Arguments:     w - the widget to resize.
  *	Returns:       none.
  */
 
-static void 
+static void
 Resize(Widget w)
 {
     CalcLocations(w);
@@ -618,7 +612,7 @@ Redisplay(Widget w, XEvent * event, Region region)
 
 	if ((int)iw->core.height > (int)(2 * V_SPACE(iw)))
 	    fill_height = iw->core.height - 2 * FILL_SPACE(iw);
-	else 
+	else
 	    fill_height = 0;
 
 	if ((fill_width != 0) && (fill_height != 0))
@@ -639,7 +633,7 @@ Redisplay(Widget w, XEvent * event, Region region)
     }
 
     if (XtIsSensitive(w)) {
-	if (XmIconButton_set(iw)) 
+	if (XmIconButton_set(iw))
 	    text_gc = XmIconButton_pixmap_fill_gc(iw);
 	else
 	    text_gc = XmIconButton_gc(iw);
@@ -656,7 +650,7 @@ Redisplay(Widget w, XEvent * event, Region region)
     DrawTextAndImage(w, text_gc, icon_gc, icon_stippled_gc);
 
     XmeDrawShadows(XtDisplay(w), XtWindow(w), topgc, bottomgc,
-		   dx, dy, width, height, iw->primitive.shadow_thickness, 
+		   dx, dy, width, height, iw->primitive.shadow_thickness,
 		   XmSHADOW_OUT);
 
     if (iw->primitive.highlighted)
@@ -674,8 +668,8 @@ Redisplay(Widget w, XEvent * event, Region region)
  *	Returns: none
  */
 /* ARGSUSED */
-static void 
-SetValuesAlmost(Widget old, Widget set, 
+static void
+SetValuesAlmost(Widget old, Widget set,
 		XtWidgetGeometry * request,  XtWidgetGeometry * reply)
 {
     if (request->request_mode != 0) /* XtGeometryAlmost, make new request */
@@ -689,13 +683,13 @@ SetValuesAlmost(Widget old, Widget set,
  *                     the-fly.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
 {
@@ -707,19 +701,19 @@ SetValues(Widget current, Widget request, Widget set,
     Boolean pixmapChanged = False;
     Boolean pixmapGeoChanged = False;
     Boolean resetPixmapValues = False;
-    
+
     reinit_l = reinit_ls = resetGCs = recalc = redisplay = False;
 
     for (i = 0; i < *num_args; i++) {
 	String name = args[i].name;
 
-	if (streq(XmNlabel, name)) 
+	if (streq(XmNlabel, name))
 	    reinit_l = resetGCs = recalc = redisplay = TRUE;
 
-	if (streq(XmNlabelString, name)) 
+	if (streq(XmNlabelString, name))
 	    reinit_ls = resetGCs = recalc = redisplay = TRUE;
 
-	if (streq(XmNpixmap, name)) 
+	if (streq(XmNpixmap, name))
 	{
 	    DecPixCache(XtDisplay(current), XmIconButton_pixmap(old_iw));
 	    recalc = redisplay = TRUE;
@@ -750,7 +744,7 @@ SetValues(Widget current, Widget request, Widget set,
     /* now make sense of the pixmap changes */
     if (pixmapChanged && !pixmapGeoChanged)
     {
-	/* for backward compatibility, reset values and fall through to 
+	/* for backward compatibility, reset values and fall through to
 	** GetDesiredSize
 	*/
 	resetPixmapValues = True;
@@ -776,12 +770,12 @@ SetValues(Widget current, Widget request, Widget set,
     ** can change without sizes changing when recomputeSize is not set, in
     ** which case we restore the values rather than use the new ones
     */
-    if (resetPixmapValues) 
+    if (resetPixmapValues)
     {
     	if (XmIconButton_recompute(set_iw))
 	{
 		XmIconButton_pix_width(set_iw) = 0;
-		XmIconButton_pix_height(set_iw) = 
+		XmIconButton_pix_height(set_iw) =
 		XmIconButton_pix_depth(set_iw) = 0;
 	}
 	else
@@ -796,7 +790,7 @@ SetValues(Widget current, Widget request, Widget set,
 
     if ((old_iw->primitive.foreground != set_iw->primitive.foreground) ||
 	(old_iw->core.background_pixel != set_iw->core.background_pixel) ||
-	(XmIconButton_arm_color(old_iw) != XmIconButton_arm_color(set_iw))) 
+	(XmIconButton_arm_color(old_iw) != XmIconButton_arm_color(set_iw)))
     {
 	resetGCs = redisplay = True;
     }
@@ -807,7 +801,7 @@ SetValues(Widget current, Widget request, Widget set,
     }
 
     if( XmIconButton_font_list(old_iw) != XmIconButton_font_list(set_iw) ) {
-	if( XmIconButton_font_list(old_iw)  != NULL ) 
+	if( XmIconButton_font_list(old_iw)  != NULL )
 	{
 	    XmFontListFree (XmIconButton_font_list(old_iw));
 	}
@@ -832,7 +826,7 @@ SetValues(Widget current, Widget request, Widget set,
 	(XmIconButton_alignment(old_iw) != XmIconButton_alignment(set_iw)) ||
 	(XmIconButton_string_direction(old_iw) != XmIconButton_string_direction(set_iw)) ||
         (XmPrim_layout_direction(old_iw) != XmPrim_layout_direction(set_iw)))
-    {	    
+    {
 	redisplay = TRUE;
     }
 
@@ -845,14 +839,14 @@ SetValues(Widget current, Widget request, Widget set,
     {
 	/*
 	 * The order here makes sure that label string overrides label
-	 * when both are set. Fix up data first, then check what we 
+	 * when both are set. Fix up data first, then check what we
 	 * should be displaying. If both have changed, deal only with
 	 * the label string case.
 	 */
 
 	/* this has the desired behavior, except in this case: only
-	 * XmNlabel is set at the beginning, then it migrates to 
-	 * XmNlabelString; then XmNlabel is reset to NULL. What value 
+	 * XmNlabel is set at the beginning, then it migrates to
+	 * XmNlabelString; then XmNlabel is reset to NULL. What value
 	 * should be used?
 	*/
 	/* Boolean	was_from_name; */
@@ -877,7 +871,7 @@ SetValues(Widget current, Widget request, Widget set,
 		    }
 		    else
 		    {
-			if ((XmIconButton_label_string(set_iw) = 
+			if ((XmIconButton_label_string(set_iw) =
 			     CreateXmString(set, XmIconButton_label(set_iw))) == NULL)
 			{
 			    XmIconButton_label_string(set_iw) =
@@ -889,7 +883,7 @@ SetValues(Widget current, Widget request, Widget set,
 	    }
 	    else
 	    if (reinit_l) {
-		/* spec says, if labelString is set it is used, which 
+		/* spec says, if labelString is set it is used, which
 		 * isn't enough to really work with; I think it really
 		 * means that if both are set, XmNlabelString is used,
 		 * which is a much different thing
@@ -905,7 +899,7 @@ SetValues(Widget current, Widget request, Widget set,
 			}
 			else
 			{
-				if ((XmIconButton_label_string(set_iw) = 
+				if ((XmIconButton_label_string(set_iw) =
 					 CreateXmString(set, XmIconButton_label(set_iw))) == NULL)
 				{
 					XmIconButton_label_string(set_iw) =
@@ -973,8 +967,8 @@ Destroy(Widget w)
  *                     preferred - what I would like.
  *	Returns:       See Xt Manual.
  */
-    
-static XtGeometryResult 
+
+static XtGeometryResult
 QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 {
     XmIconButtonWidget iw = (XmIconButtonWidget) w;
@@ -1006,7 +1000,7 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 
 /*ARGSUSED*/
 static Boolean
-CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args, 
+CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 			 XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static XmIconPlacement type;
@@ -1019,7 +1013,7 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
     char lowerName[BUFSIZ];
-    
+
     if (!haveQuarks) {
 	XtQETop = XrmStringToQuark("top");
 	XtQELeft = XrmStringToQuark("left");
@@ -1029,10 +1023,10 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 	XtQEIconNone = XrmStringToQuark("none");
 	haveQuarks = TRUE;
     }
-    
+
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
-    
+
     if ( (q == XtQETop) || streq(lowerName, "icontop") )
 	type = XmIconTop;
     else if ( (q == XtQELeft) || streq(lowerName, "iconleft") )
@@ -1046,11 +1040,11 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     else if ( (q == XtQEIconNone) || streq(lowerName, "iconnone") )
 	type = XmIconNone;
     else {
-	XtDisplayStringConversionWarning(dpy, 
+	XtDisplayStringConversionWarning(dpy,
 					 fromVal->addr, XmRXmIconPlacement);
 	return(FALSE);		/* Conversion failed. */
     }
-    
+
     if (toVal->addr == NULL) {
 	toVal->size = sizeof(XmIconPlacement);
 	toVal->addr = (XtPointer) &type;
@@ -1059,7 +1053,7 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     if (toVal->size >= sizeof(XmIconPlacement)) {
 	XmIconPlacement *loc = (XmIconPlacement *)toVal->addr;
-	
+
 	*loc = type;
 	return(TRUE);
     }
@@ -1094,7 +1088,7 @@ ToggleState(Widget w, XEvent * event, String * params, Cardinal * num_params)
 }
 
 /*	Function Name: DoubleNotify
- *	Description:   Calls all functions on the icon button's 
+ *	Description:   Calls all functions on the icon button's
  *                     doubleClickCallback list
  *	Arguments:     w - the icon button widget.
  *                     event - the event that caused this action.
@@ -1116,7 +1110,7 @@ DoubleNotify(Widget w, XEvent * event, String * params, Cardinal * num_params)
 }
 
 /*	Function Name: Notify
- *	Description:   Calls all functions on the icon button's 
+ *	Description:   Calls all functions on the icon button's
  *                     activateCallback list
  *	Arguments:     w - the icon button widget.
  *                     event - the event that caused this action.
@@ -1158,7 +1152,7 @@ Notify(Widget w, XEvent * event, String * params, Cardinal * num_params)
 
 /*ARGSUSED*/
 static void
-ArmAndActivate(Widget w, 
+ArmAndActivate(Widget w,
 	       XEvent * event, String * params, Cardinal * num_params)
 {
     XmIconButtonWidget iw = (XmIconButtonWidget) w;
@@ -1170,7 +1164,7 @@ ArmAndActivate(Widget w,
     }
 
     XmIconButton_unset_timer(iw) = XtAppAddTimeOut(XtWidgetToApplicationContext(w),
-					   (unsigned long) DELAY, 
+					   (unsigned long) DELAY,
 					   Deactivate, (XtPointer) w);
 
     Notify(w, event, params, num_params);
@@ -1208,7 +1202,7 @@ Deactivate(XtPointer data, XtIntervalId *timer)
 
 /*ARGSUSED*/
 static void
-ButtonUp(Widget w, 
+ButtonUp(Widget w,
 	       XEvent * event, String * params, Cardinal * num_params)
 {
     XmIconButtonWidget iw = (XmIconButtonWidget) w;
@@ -1228,7 +1222,7 @@ ButtonUp(Widget w,
  *	Returns: elem - The list elem for this element.
  */
 
-static XmListElem * 
+static XmListElem *
 GetCacheElem(Display *disp, Pixmap pix)
 {
     register XmListElem *elem;
@@ -1264,7 +1258,7 @@ CheckPixCache(Display *disp, Pixmap pixmap,
     XmListElem * elem = GetCacheElem(disp, pixmap);
     PixCacheEntry * entry;
 
-    if (elem == NULL) 
+    if (elem == NULL)
 	return(False);
 
     entry = (PixCacheEntry *) XmListElemData(elem);
@@ -1290,7 +1284,7 @@ AddPixCache(Display *disp, Pixmap pixmap,
     XmListElem * elem = GetCacheElem(disp, pixmap);
     PixCacheEntry * entry;
 
-    if (elem == NULL) 
+    if (elem == NULL)
     {
 	entry = (PixCacheEntry *) XtCalloc(sizeof(PixCacheEntry), 1);
 	entry->display = disp;
@@ -1315,7 +1309,7 @@ AddPixCache(Display *disp, Pixmap pixmap,
  *	Returns: none.
  */
 
-static void 
+static void
 IncPixCache(Display *disp, Pixmap pix)
 {
     XmListElem * elem = GetCacheElem(disp, pix);
@@ -1331,13 +1325,13 @@ IncPixCache(Display *disp, Pixmap pix)
  *	Returns: none.
  */
 
-static void 
+static void
 DecPixCache(Display *disp, Pixmap pix)
 {
     XmListElem * elem = GetCacheElem(disp, pix);
     PixCacheEntry * entry;
 
-    if (elem == NULL) 
+    if (elem == NULL)
 	return;
 
     entry = (PixCacheEntry *) XmListElemData(elem);
@@ -1428,17 +1422,17 @@ GetDesiredSize(Widget w, Dimension * width, Dimension * height)
 	unsigned int local_width, local_height, bw, depth;
 
 	/*
-	 * If we have an icon of unknown size then ask the server, 
+	 * If we have an icon of unknown size then ask the server,
 	 * be sure to not make a round trip if not needed.
 	 */
 
 	if ((XmIconButton_pix_width(iw) == 0) || (XmIconButton_pix_height(iw) == 0) ||
 	    (XmIconButton_pix_depth(iw) == 0))
 	{
-	    if (!CheckPixCache(XtDisplay(w), XmIconButton_pixmap(iw), 
+	    if (!CheckPixCache(XtDisplay(w), XmIconButton_pixmap(iw),
 			       &local_width, &local_height, &depth))
 	    {
-		XGetGeometry(XtDisplay(w), XmIconButton_pixmap(iw), &root, &x, &y, 
+		XGetGeometry(XtDisplay(w), XmIconButton_pixmap(iw), &root, &x, &y,
 			     &local_width, &local_height, &bw, &depth);
 
 		AddPixCache(XtDisplay(w), XmIconButton_pixmap(iw),
@@ -1456,12 +1450,12 @@ GetDesiredSize(Widget w, Dimension * width, Dimension * height)
 	    local_height = XmIconButton_pix_height(iw);
 	    depth = XmIconButton_pix_depth(iw);
 	}
-	
+
 	switch (XmIconButton_icon_placement(iw)) {
 	case XmIconTop:
 	case XmIconBottom:
 	    total_height += local_height + XmIconButton_icon_text_padding(iw);
-	    
+
 	    if ( local_width > total_width )
 		total_width = local_width;
 
@@ -1487,7 +1481,7 @@ GetDesiredSize(Widget w, Dimension * width, Dimension * height)
 	XmIconButton_pix_depth(iw) = 0;
     }
 
-    
+
     *height = total_height + 2 * V_SPACE(iw);
     *width = total_width + 2 * H_SPACE(iw);
 }
@@ -1507,14 +1501,14 @@ RequestNewSize(Widget w, Dimension width, Dimension height)
 
     ret_val = XtMakeResizeRequest(w, width, height, &w_ret, &h_ret);
 
-    if (ret_val == XtGeometryAlmost) 
+    if (ret_val == XtGeometryAlmost)
 	(void) XtMakeResizeRequest(w, w_ret, h_ret, NULL, NULL);
 
     Resize(w);			/* May not have been called. */
 }
 
 /*	Function Name: CalcLocations
- *	Description:   Calculates where the icon and strings should be 
+ *	Description:   Calculates where the icon and strings should be
  *                     painted.
  *	Arguments:     w - the icon button widget.
  *	Returns:       none.
@@ -1563,7 +1557,7 @@ CalcLocations(Widget w)
 			      (Position) XmIconButton_pix_width(iw))/2;
 	    break;
 	}
-	
+
 	/*
 	 * Now lets deside on the the vertical position
 	 */
@@ -1572,18 +1566,18 @@ CalcLocations(Widget w)
 	    XmIconButton_pix_y(iw) = V_SPACE(iw) + extra_y_space;
 	    break;
 	case XmIconBottom: /* Centered at the bottom */
-	    XmIconButton_pix_y(iw) = ((Position) height - 
-			      ((Position) V_SPACE(iw) + 
+	    XmIconButton_pix_y(iw) = ((Position) height -
+			      ((Position) V_SPACE(iw) +
 			       (Position) extra_y_space +
 			       (Position) XmIconButton_pix_height(iw)));
 	    break;
 	default: /* Centered */
-	    XmIconButton_pix_y(iw) = ((Position) height - 
+	    XmIconButton_pix_y(iw) = ((Position) height -
 			      (Position) XmIconButton_pix_height(iw))/2;
 	    break;
 	}
     }
-    else 
+    else
     {
 	/*
 	 * If we get here that means that we do not have a pixmap
@@ -1608,11 +1602,11 @@ CalcLocations(Widget w)
 	XmStringExtent(XmIconButton_font_list(iw), XmIconButton_label_string(iw),
 		       &text_width, &text_height);
 	XmIconButton_max_text_height(iw) = text_height;
-	
+
 	switch (XmIconButton_icon_placement(iw)) {
 	case XmIconLeft: /* Aligned to Right of Icon. */
 	    /*
-	     * If the pixmap is to our left then we can use all the 
+	     * If the pixmap is to our left then we can use all the
 	     * space to the right of the pixmap.
 	     */
 	    if( have_pixmap )
@@ -1679,13 +1673,13 @@ CalcLocations(Widget w)
      * Text_x and Text_y are garbage, but never used.
      */
 }
-    
+
 /*	Function Name: DrawTextAndImage
  *	Description:   Renders the Text and the image.
  *	Arguments:     w - the icon button widget.
  *                     text_gc - gc to use when drawing the text.
  *                     icon_gc - gc to use when drawing the icon.
- *                     icon_stippled_gc - gc to use to fake a stipple 
+ *                     icon_stippled_gc - gc to use to fake a stipple
  *                                       on the image.
  *	Returns:       none.
  */
@@ -1711,7 +1705,7 @@ static void
 	}
 
 	/*
-	 * Stipple the background color over the top of the image 
+	 * Stipple the background color over the top of the image
 	 * since XCopyPlace and Area do not use the tile or stipple.
 	 */
 
@@ -1760,7 +1754,7 @@ static void
 	     */
 	    XSetClipRectangles(XtDisplay(w), text_gc,
 			       0, 0, &clip, 1, Unsorted);
-#ifdef FIX_1381
+
 		/*Draw shadow for insensitive text*/
 		if (!XtIsSensitive(w)) {
 			XmStringDraw(XtDisplay(w), XtWindow(w), XmIconButton_font_list(iw),
@@ -1769,9 +1763,9 @@ static void
 				XmIconButton_max_text_width(iw), XmIconButton_alignment(iw),
 				XmPrim_layout_direction(iw), NULL);
 		}
-#endif
+
 	    XmStringDraw(XtDisplay(w), XtWindow(w), XmIconButton_font_list(iw),
-			 XmIconButton_label_string(iw), text_gc, 
+			 XmIconButton_label_string(iw), text_gc,
 			 XmIconButton_text_x(iw), XmIconButton_text_y(iw),
 			 XmIconButton_max_text_width(iw), XmIconButton_alignment(iw),
 			 XmPrim_layout_direction(iw), NULL);
@@ -1792,7 +1786,7 @@ static Pixmap
 GetGreyStipple(Widget w)
 {
   StippleInfo *set, *ptr;
-  
+
   for (ptr = stipple_cache; ptr != NULL; ptr = ptr->next) {
     /* Check for both screen and display, such that it displays */
     /* correctly on multi-headed X-servers.                     */
@@ -1801,24 +1795,24 @@ GetGreyStipple(Widget w)
       return (ptr->stipple);
     }
   }
-  
+
   set = (StippleInfo *) XtMalloc(sizeof(StippleInfo));
-  set->stipple = XCreateBitmapFromData(XtDisplay(w), 
-				       RootWindowOfScreen(XtScreen(w)), 
+  set->stipple = XCreateBitmapFromData(XtDisplay(w),
+				       RootWindowOfScreen(XtScreen(w)),
 				       gray_bits, gray_width, gray_height);
   set->disp = XtDisplay(w);
   set->screen = XtScreen(w);
   set->next = NULL;
-  
-  if (stipple_cache == NULL) 
+
+  if (stipple_cache == NULL)
     stipple_cache = set;
-  else 
-    for (ptr = stipple_cache; ptr != NULL; ptr = ptr->next) 
+  else
+    for (ptr = stipple_cache; ptr != NULL; ptr = ptr->next)
       if (ptr->next == NULL) {
 	ptr->next = set;
 	break;
       }
-    
+
   return(set->stipple);
 }
 
@@ -1837,7 +1831,7 @@ CreateGCs(Widget w)
     Pixel fg, bg;
     Pixmap stipple;
     Arg args[2];
-    Cardinal num_args = 0;                
+    Cardinal num_args = 0;
     XFontStruct *fs = NULL;
 
     XtSetArg(args[num_args], XmNforeground, &fg); num_args++;
@@ -1855,11 +1849,7 @@ CreateGCs(Widget w)
     values.fill_style = FillStippled;
 
     mask = GCForeground | GCBackground | GCGraphicsExposures;
-#ifdef FIX_1381
 	smask = mask | GCFillStyle;
-#else
-    smask = mask | GCStipple | GCFillStyle;
-#endif
 
     if (fs) {
         values.font = fs->fid;
@@ -1868,19 +1858,13 @@ CreateGCs(Widget w)
 
     XmIconButton_gc(iw) = XtGetGC(w, mask, &values);
 
-#ifdef FIX_1381
     /*generally gray insensitive foreground (instead stipple)*/
     values.foreground = _XmAssignInsensitiveColor((Widget)iw);
     XmIconButton_insensitive_text_gc(iw) = XtGetGC(w, smask, &values);
-#else 
-    XmIconButton_stippled_text_gc(iw) = XtGetGC(w, smask, &values);
-#endif
 
-#ifdef FIX_1381
     /*light shadow for insensitive text (instead stipple)*/
     values.foreground = iw->primitive.top_shadow_color;
     XmIconButton_shadow_gc(iw) = XtGetGC(w, smask, &values);
-#endif
 
     /*
      * HACK ALERT: !!! Motif hack for monochrome displays. !!!
@@ -1888,14 +1872,14 @@ CreateGCs(Widget w)
      *             with bg color.
      */
 
-    if (values.foreground == XmIconButton_arm_color(iw)) 
+    if (values.foreground == XmIconButton_arm_color(iw))
 	values.foreground = bg;
 
     /*
      * else just use the same fg color we used to be using.
      */
 
-    values.background = XmIconButton_arm_color(iw); 
+    values.background = XmIconButton_arm_color(iw);
     XmIconButton_pixmap_fill_gc(iw) = XtGetGC(w, mask, &values);
     XmIconButton_stippled_set_text_gc(iw) = XtGetGC(w, smask, &values);
 
@@ -1928,12 +1912,8 @@ DestroyGCs(Widget w)
     XtReleaseGC(w, XmIconButton_pixmap_fill_gc(iw));
     XtReleaseGC(w, XmIconButton_stippled_set_gc(iw));
     XtReleaseGC(w, XmIconButton_stippled_unset_gc(iw));
-#ifdef FIX_1381
     XtReleaseGC(w, XmIconButton_shadow_gc(iw));
     XtReleaseGC(w, XmIconButton_insensitive_text_gc(iw));
-#else 
-    XtReleaseGC(w, XmIconButton_stippled_text_gc(iw));
-#endif
     XtReleaseGC(w, XmIconButton_stippled_set_text_gc(iw));
 }
 
@@ -1947,9 +1927,9 @@ DestroyGCs(Widget w)
 static XmString
 CreateXmString(Widget w, String str)
 {
-    XrmValue		fromVal, toVal;	
+    XrmValue		fromVal, toVal;
     XmString xmstr;
-    
+
     fromVal.size = strlen(str) + 1; /* space for NULL. */
     fromVal.addr = str;
 
@@ -1961,17 +1941,17 @@ CreateXmString(Widget w, String str)
 	return(xmstr);
     }
     return(NULL);
-}	   
+}
 
 /*
  * XmRCallProc routine for checking font_list before setting it to NULL
- * If "check_set_render_table" is True, then function has 
- * been called twice on same widget, thus resource needs to be set NULL, 
+ * If "check_set_render_table" is True, then function has
+ * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
 
 /*ARGSUSED*/
-static void 
+static void
 CheckSetRenderTable(Widget wid,
 		    int offs,
 		    XrmValue *value)
@@ -1997,9 +1977,9 @@ CheckSetRenderTable(Widget wid,
  *	Returns: none
  */
 
-static void 
+static void
 ChangeCB(
-	 Widget w, 
+	 Widget w,
 	 XtCallbackProc activCB,
 	 XtPointer closure,
 	 Boolean setunset)

@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -42,16 +42,16 @@ extern "C" {
 
 /********    Private Function Declarations for ImageCache.c    ********/
 
-extern Boolean _XmInstallImage( 
+extern Boolean _XmInstallImage(
                         XImage *image,
                         char *image_name,
                         int hot_x,
                         int hot_y) ;
-extern Boolean _XmGetImage( 
+extern Boolean _XmGetImage(
                         Screen *screen,
                         char *image_name,
                         XImage **image) ;
-extern Boolean _XmCachePixmap( 
+extern Boolean _XmCachePixmap(
 			      Pixmap pixmap,
 			      Screen *screen,
 			      char *image_name,
@@ -64,11 +64,7 @@ extern Pixmap _XmGetColoredPixmap(Screen *screen,
 				  char *image_name,
 				  XmAccessColorData acc_color,
 				  int depth,
-#if NeedWidePrototypes
-				  int only_if_exists) ;
-#else
 				  Boolean only_if_exists) ;
-#endif /* NeedWidePrototypes */
 
 extern Boolean _XmGetPixmapData(
 		   Screen *screen,
@@ -90,24 +86,20 @@ extern Pixmap _XmGetScaledPixmap(
     char *image_name,
     XmAccessColorData acc_color,
     int depth,
-#if NeedWidePrototypes
-    int only_if_exists,
-#else
     Boolean only_if_exists,
-#endif /* NeedWidePrototypes */
     double scaling_ratio);
 
-extern void _XmPutScaledImage (    
-    Display*		 display ,
+extern void _XmPutScaledImage (
+    Display		 *display ,
     Drawable		 d ,
     GC			 gc ,
-    XImage*		 src_image ,
+    XImage		 *src_image ,
     int			 src_x ,
     int			 src_y ,
     int			 dest_x ,
     int			 dest_y ,
     unsigned int	 src_width ,
-    unsigned int	 src_height, 
+    unsigned int	 src_height,
     unsigned int	 dest_width ,
     unsigned int	 dest_height);
 
@@ -129,4 +121,3 @@ extern Pixmap XmGetScaledPixmap(
 #endif
 
 #endif /* _XmImageCacheI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

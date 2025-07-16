@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
@@ -38,7 +38,7 @@ static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #include <X11/X.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/DisplayP.h>
-#include <Xm/DrawP.h>   
+#include <Xm/DrawP.h>
 #include <Xm/DrawnBP.h>
 #include <Xm/LabelP.h>
 #include <Xm/ManagerP.h>
@@ -59,36 +59,36 @@ static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #include "UniqueEvnI.h"
 
 
-#define DELAY_DEFAULT 100	
+#define DELAY_DEFAULT 100
 
 /********    Static Function Declarations    ********/
 
-static void Arm( 
+static void Arm(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void MultiArm( 
+static void MultiArm(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Activate( 
+static void Activate(
                         Widget wid,
                         XEvent *buttonEvent,
                         String *params,
                         Cardinal *num_params) ;
-static void MultiActivate( 
+static void MultiActivate(
                         Widget wid,
                         XEvent *buttonEvent,
                         String *params,
                         Cardinal *num_params) ;
-static void ActivateCommon( 
+static void ActivateCommon(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void ArmAndActivate( 
+static void ArmAndActivate(
                         Widget wid,
                         XEvent *event,
                         String *params,
@@ -96,86 +96,82 @@ static void ArmAndActivate(
 static void ArmTimeout (
         		XtPointer closure,
         		XtIntervalId *id ) ;
-static void Disarm( 
+static void Disarm(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void BtnDown( 
+static void BtnDown(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void BtnUp( 
+static void BtnUp(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Enter( 
+static void Enter(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Leave( 
+static void Leave(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void BorderHighlight( 
+static void BorderHighlight(
                         Widget wid) ;
-static void BorderUnhighlight( 
+static void BorderUnhighlight(
                         Widget wid) ;
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void InitializePrehook( 
+static void InitializePrehook(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void InitializePosthook( 
+static void InitializePosthook(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void DrawPushButton( 
+static void DrawPushButton(
                         XmDrawnButtonWidget db,
-#if NeedWidePrototypes
-                        int armed) ;
-#else
                         Boolean armed) ;
-#endif /* NeedWidePrototypes */
-static Boolean SetValuesPrehook( 
+static Boolean SetValuesPrehook(
 			Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Realize( 
+static void Realize(
                         Widget w,
                         XtValueMask *p_valueMask,
                         XSetWindowAttributes *attributes) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
 
-static void ChangeCB(Widget w, 
+static void ChangeCB(Widget w,
 		     XtCallbackProc activCB,
 		     XtPointer closure,
 		     Boolean setunset) ;
@@ -202,7 +198,7 @@ static XtTranslations menu_parsed;
 
 #define menuTranslations	_XmDrawnB_menuTranslations
 
-
+
 /*************************************<->*************************************
  *
  *
@@ -235,8 +231,8 @@ static XtActionsRec actionsList[] =
 
 /*  The resource list for Drawn Button  */
 
-static XtResource resources[] = 
-{     
+static XtResource resources[] =
+{
    {
      XmNmultiClick, XmCMultiClick, XmRMultiClick, sizeof (unsigned char),
      XtOffsetOf( struct _XmDrawnButtonRec, drawnbutton.multiClick),
@@ -272,7 +268,7 @@ static XtResource resources[] =
      XtOffsetOf( struct _XmDrawnButtonRec, drawnbutton.disarm_callback),
      XmRPointer, (XtPointer) NULL
    },
-   
+
    {
      XmNexposeCallback, XmCCallback, XmRCallback, sizeof(XtCallbackList),
      XtOffsetOf( struct _XmDrawnButtonRec, drawnbutton.expose_callback),
@@ -284,15 +280,15 @@ static XtResource resources[] =
      XtOffsetOf( struct _XmDrawnButtonRec, drawnbutton.resize_callback),
      XmRPointer, (XtPointer) NULL
    },
-   
+
    {
-     XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension, 
+     XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension,
      sizeof(Dimension),
      XtOffsetOf( struct _XmDrawnButtonRec, primitive.shadow_thickness),
      XmRCallProc, (XtPointer) _XmSetThickness
    },
 
-   {    
+   {
      XmNlabelString, XmCXmString, XmRXmString, sizeof(XmString),
      XtOffsetOf( struct _XmDrawnButtonRec, label._label),
      XmRImmediate, (XtPointer) XmUNSPECIFIED
@@ -344,7 +340,7 @@ static XmBaseClassExtRec       drawnBBaseClassExtRec = {
 };
 
 
-
+
 /*************************************<->*************************************
  *
  *
@@ -357,7 +353,7 @@ static XmBaseClassExtRec       drawnBBaseClassExtRec = {
 
 externaldef(xmdrawnbuttonclassrec) XmDrawnButtonClassRec xmDrawnButtonClassRec ={
   {
-/* core_class record */	
+/* core_class record */
     /* superclass	  */	(WidgetClass) &xmLabelClassRec,
     /* class_name	  */	"XmDrawnButton",
     /* widget_size	  */	sizeof(XmDrawnButtonRec),
@@ -387,7 +383,7 @@ externaldef(xmdrawnbuttonclassrec) XmDrawnButtonClassRec xmDrawnButtonClassRec =
     /* version            */	XtVersion,
     /* callback_private   */    NULL,
     /* tm_table           */    defaultTranslations,
-    /* query_geometry     */	NULL, 
+    /* query_geometry     */	NULL,
     /* display_accelerator */   NULL,
     /* extension          */    (XtPointer) &drawnBBaseClassExtRec,
   },
@@ -404,7 +400,7 @@ externaldef(xmdrawnbuttonclassrec) XmDrawnButtonClassRec xmDrawnButtonClassRec =
   },
 
   { /* label_class record */
- 
+
     /* setOverrideCallback*/    XmInheritWidgetProc,
     /* Menu procedures    */    XmInheritMenuProc,
     /* menu trav xlations */	XtInheritTranslations,
@@ -413,7 +409,7 @@ externaldef(xmdrawnbuttonclassrec) XmDrawnButtonClassRec xmDrawnButtonClassRec =
 
   { /* drawnbutton_class record */
 
-    /* extension	  */    NULL,	
+    /* extension	  */    NULL,
   }
 
 };
@@ -437,7 +433,7 @@ static XmMenuSavvyTraitRec MenuSavvyRecord = {
     _XmCBNameActivate,
 };
 
-
+
 /************************************************************************
  *
  *     Arm
@@ -447,8 +443,7 @@ static XmMenuSavvyTraitRec MenuSavvyRecord = {
  *     The callbacks for XmNarmCallback are called.
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Arm(
         Widget wid,
         XEvent *event,
@@ -458,13 +453,13 @@ Arm(
     XmDrawnButtonWidget db = (XmDrawnButtonWidget) wid ;
     XButtonEvent *buttonEvent = (XButtonEvent *) event;
     XmDrawnButtonCallbackStruct call_value;
-   
+
     (void) XmProcessTraversal((Widget) db, XmTRAVERSE_CURRENT);
 
     db -> drawnbutton.armed = TRUE;
     if (event && (event->type == ButtonPress))
 	db -> drawnbutton.armTimeStamp = buttonEvent->time;
-    
+
     if (db->drawnbutton.pushbutton_enabled)
 	DrawPushButton(db, db->drawnbutton.armed);
 
@@ -474,14 +469,13 @@ Arm(
 	call_value.reason = XmCR_ARM;
 	call_value.event = event;
 	call_value.window = XtWindow (db);
-	XtCallCallbackList ((Widget) db, db->drawnbutton.arm_callback, 
+	XtCallCallbackList ((Widget) db, db->drawnbutton.arm_callback,
 			    &call_value);
     }
 }
 
 
-/*ARGSUSED*/
-static void 
+static void
 MultiArm(
         Widget wid,
         XEvent *event,
@@ -497,13 +491,13 @@ MultiArm(
  *     Activate
  *
  *     Mark the drawnbutton as unarmed (i.e. inactive).
- *     The foreground and background colors will revert to the 
+ *     The foreground and background colors will revert to the
  *     unarmed state if XmNinvertOnArm is set to TRUE.
- *     If the button release occurs inside of the DrawnButton, the 
+ *     If the button release occurs inside of the DrawnButton, the
  *     callbacks for XmNactivateCallback are called.
  *
  ************************************************************************/
-static void 
+static void
 Activate(
         Widget wid,
         XEvent *buttonEvent,
@@ -519,7 +513,7 @@ Activate(
 
 }
 
-static void 
+static void
 MultiActivate(
         Widget wid,
         XEvent *buttonEvent,
@@ -531,7 +525,7 @@ MultiActivate(
     * holds for a length of time, the final release should look like a
     * new/separate activate.
     */
-  if (db->drawnbutton.multiClick == XmMULTICLICK_KEEP)  
+  if (db->drawnbutton.multiClick == XmMULTICLICK_KEEP)
   { if ((buttonEvent->xbutton.time - db->drawnbutton.armTimeStamp) >
 	   XtGetMultiClickTime(XtDisplay(db)))
      db->drawnbutton.click_count = 1;
@@ -542,8 +536,7 @@ MultiActivate(
  }
 }
 
-/*ARGSUSED*/
-static void 
+static void
 ActivateCommon(
         Widget wid,
         XEvent *event,
@@ -554,12 +547,12 @@ ActivateCommon(
    XmDrawnButtonCallbackStruct call_value;
    XmMenuSystemTrait menuSTrait;
 
-   menuSTrait = (XmMenuSystemTrait) 
+   menuSTrait = (XmMenuSystemTrait)
      XmeTraitGet((XtPointer) XtClass(XtParent(wid)), XmQTmenuSystem);
-      
+
    if (event && (event->xbutton.type != ButtonRelease))
        return;
-      
+
    db -> drawnbutton.armed = FALSE;
    if (db->drawnbutton.pushbutton_enabled)
 	DrawPushButton(db, db->drawnbutton.armed);
@@ -567,7 +560,7 @@ ActivateCommon(
 
   /* CR 9181: Consider clipping when testing visibility. */
   if ((db->drawnbutton.activate_callback) &&
-      ((event->xany.type == ButtonPress) || 
+      ((event->xany.type == ButtonPress) ||
        (event->xany.type == ButtonRelease)) &&
       _XmGetPointVisibility(wid, event->xbutton.x_root, event->xbutton.y_root))
    {
@@ -586,7 +579,7 @@ ActivateCommon(
 
       if (menuSTrait != NULL)
       {
-	menuSTrait->entryCallback(XtParent(db), (Widget) db, 
+	menuSTrait->entryCallback(XtParent(db), (Widget) db,
 					   &call_value);
       }
 
@@ -598,28 +591,27 @@ ActivateCommon(
       }
    }
 }
-
 
 
-static void 
-DB_FixTearoff( XmDrawnButtonWidget db)	
+
+static void
+DB_FixTearoff( XmDrawnButtonWidget db)
 {
-	 if  (XmMENU_PULLDOWN == db->label.menu_type) 
-	 {							
-		Widget mwid = XmGetPostedFromWidget(XtParent(db));	
+	 if  (XmMENU_PULLDOWN == db->label.menu_type)
+	 {
+		Widget mwid = XmGetPostedFromWidget(XtParent(db));
 		if (mwid && XmIsRowColumn(mwid)
-			&& (XmMENU_OPTION == RC_Type(mwid)) 
-			&& _XmIsActiveTearOff(XtParent(db))) 
+			&& (XmMENU_OPTION == RC_Type(mwid))
+			&& _XmIsActiveTearOff(XtParent(db)))
 			XmProcessTraversal((Widget) db, XmTRAVERSE_CURRENT);
-	 }							
+	 }
 }
 /************************************************************************
  *
  *     ArmAndActivate
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
@@ -630,7 +622,7 @@ ArmAndActivate(
    XmDrawnButtonCallbackStruct call_value;
    XmMenuSystemTrait menuSTrait;
 
-   menuSTrait = (XmMenuSystemTrait) 
+   menuSTrait = (XmMenuSystemTrait)
      XmeTraitGet((XtPointer) XtClass(XtParent(wid)), XmQTmenuSystem);
 
    db -> drawnbutton.armed = TRUE;
@@ -654,7 +646,7 @@ ArmAndActivate(
 
    if (menuSTrait != NULL)
    {
-     menuSTrait->entryCallback(XtParent(db), (Widget) db, 
+     menuSTrait->entryCallback(XtParent(db), (Widget) db,
 					&call_value);
    }
 
@@ -666,7 +658,7 @@ ArmAndActivate(
    }
 
    db->drawnbutton.armed = FALSE;
-   
+
    if (db->drawnbutton.disarm_callback)
    {
       call_value.reason = XmCR_DISARM;
@@ -685,8 +677,7 @@ ArmAndActivate(
    }
 }
 
-/*ARGSUSED*/
-static void 
+static void
 ArmTimeout (
 	XtPointer closure,
 	XtIntervalId *id )
@@ -710,14 +701,13 @@ ArmTimeout (
  *    Disarm
  *
  *     Mark the drawnbutton as unarmed (i.e. active).
- *     The foreground and background colors will revert to the 
+ *     The foreground and background colors will revert to the
  *     unarmed state if XmNinvertOnSelect is set to TRUE and the
  *     drawnbutton is not in a menu.
  *     The callbacks for XmNdisarmCallback are called..
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Disarm(
         Widget wid,
         XEvent *event,
@@ -741,7 +731,7 @@ Disarm(
 }
 
 
-
+
 /************************************************************************
  *
  *     BtnDown
@@ -755,8 +745,7 @@ Disarm(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-static void 
+static void
 BtnDown(
         Widget wid,
         XEvent *event,
@@ -769,24 +758,24 @@ BtnDown(
   Boolean already_armed;
   ShellWidget popup;
   XmMenuSystemTrait menuSTrait;
-  
+
   /* Support menu replay, free server input queue until next button event */
   XAllowEvents(XtDisplay(db), SyncPointer, CurrentTime);
-  
+
   /* If no menu system trait then parent isn't a menu as it should be. */
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(db)), XmQTmenuSystem);
-  if (menuSTrait == NULL) 
+  if (menuSTrait == NULL)
     return;
-  
+
   if (event && (event->type == ButtonPress))
     validButton = menuSTrait->verifyButton(XtParent(db), event);
-  
+
   if (!validButton)
     return;
-  
+
   _XmSetInDragMode((Widget)db, True);
-  
+
   /* Popdown other popus that may be up */
   if (!(popup = (ShellWidget)_XmGetRC_PopupPosted(XtParent(db))))
     {
@@ -798,33 +787,33 @@ BtnDown(
 	  menuSTrait->tearOffArm(XtParent(db));
 	}
     }
-  
+
   if (popup)
     {
       if (popup->shell.popped_up)
 	menuSTrait->popdownEveryone((Widget) popup, event);
-    } 
-  
+    }
+
   /* Set focus to this drawnbutton.  This must follow the possible
    * unhighlighting of the CascadeButton else it'll screw up active_child.
    */
   (void)XmProcessTraversal ((Widget) db, XmTRAVERSE_CURRENT);
   /* get the location cursor - get consistent with Gadgets */
-  
+
   already_armed = db->drawnbutton.armed;
   db->drawnbutton.armed = TRUE;
-  
+
   if (db->drawnbutton.arm_callback && !already_armed)
     {
       XFlush (XtDisplay (db));
-      
+
       call_value.reason = XmCR_ARM;
       call_value.event = event;
       XtCallCallbackList((Widget) db, db->drawnbutton.arm_callback, &call_value);
     }
   _XmRecordEvent (event);
 }
-
+
 /************************************************************************
  *
  *     BtnUp
@@ -837,8 +826,7 @@ BtnDown(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-static void 
+static void
 BtnUp(
         Widget wid,
         XEvent *event,
@@ -854,35 +842,35 @@ BtnUp(
   Boolean is_menupane = Lab_IsMenupane(db);
   Widget shell = XtParent(XtParent(db));
   XmMenuSystemTrait menuSTrait;
-  
+
   /* If no menu system trait then parent isn't a menu as it should be. */
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(db)), XmQTmenuSystem);
-  if (menuSTrait == NULL) 
+  if (menuSTrait == NULL)
     return;
-  
+
   if (event && (event->type == ButtonRelease))
     validButton = menuSTrait->verifyButton(parent, event);
-  
+
   if (!validButton || (db->drawnbutton.armed == FALSE))
     return;
-  
+
   db->drawnbutton.armed = FALSE;
-  
+
   if (is_menupane && !XmIsMenuShell(shell))
     popped_up = menuSTrait->popdown((Widget) db, event);
   else
     popped_up = menuSTrait->buttonPopdown((Widget) db, event);
-  
+
   _XmRecordEvent(event);
-  
+
   /* XmMENU_POPDOWN left the menu posted on button click - don't activate! */
   if (popped_up)
     return;
-  
+
   call_value.reason = XmCR_ACTIVATE;
   call_value.event = event;
-  call_value.click_count = 1;  
+  call_value.click_count = 1;
 
   /* if the parent is menu system able, notify it about the select */
   if (menuSTrait != NULL)
@@ -890,7 +878,7 @@ BtnUp(
       menuSTrait->entryCallback(parent, (Widget) db, &call_value);
       flushDone = True;
     }
-  
+
   if ((! db->label.skipCallback) &&
       (db->drawnbutton.activate_callback))
     {
@@ -908,13 +896,13 @@ BtnUp(
       XtCallCallbackList ((Widget) db, db->drawnbutton.disarm_callback,
 			  &call_value);
     }
-  
+
   /* If the original shell does not indicate an active menu, but rather a
    * tear off pane, leave the button in an armed state.  Also, briefly
    * display the button as depressed to give the user some feedback of
    * the selection.
    */
-  
+
   if (is_menupane) /* necessary check? */
     {
       if (!XmIsMenuShell(shell))
@@ -923,7 +911,7 @@ BtnUp(
 	    {
 	      XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(db));
 	      Boolean etched_in = dpy->display.enable_etched_in_menu;
-	      
+
 	      if ((db->core.width > 2 * db->primitive.highlight_thickness) &&
 		  (db->core.height > 2 * db->primitive.highlight_thickness))
 		XmeDrawShadows
@@ -934,9 +922,9 @@ BtnUp(
 		   db->primitive.highlight_thickness,
 		   db->core.width - 2 * db->primitive.highlight_thickness,
 		   db->core.height - 2 * db->primitive.highlight_thickness,
-		   db->primitive.shadow_thickness, 
+		   db->primitive.shadow_thickness,
 		   etched_in ? XmSHADOW_IN : XmSHADOW_OUT);
-	      
+
 	      XFlush (XtDisplay (db));
 
 	      if (db->core.being_destroyed == False)
@@ -948,7 +936,7 @@ BtnUp(
 				      ArmTimeout,
 				      (XtPointer)(db));
 		}
-	      
+
 	      db->drawnbutton.armed = TRUE;
 	      if (db->drawnbutton.arm_callback)
 		{
@@ -962,9 +950,9 @@ BtnUp(
       else
 	menuSTrait->reparentToTearOffShell(XtParent(db), event);
     }
-  
+
   _XmSetInDragMode((Widget)db, False);
-  
+
   /* For the benefit of tear off menus, we must set the focus item
    * to this button.  In normal menus, this would not be a problem
    * because the focus is cleared when the menu is unposted.
@@ -973,13 +961,13 @@ BtnUp(
     XmProcessTraversal((Widget) db, XmTRAVERSE_CURRENT);
   DB_FixTearoff(db);
 }
-
+
 /************************************************************************
  *
  *  Enter
  *
  ************************************************************************/
-static void 
+static void
 Enter(
         Widget wid,
         XEvent *event,
@@ -997,7 +985,7 @@ Enter(
 
 	 if (db->drawnbutton.armed)
 	   return;
-	  
+
 	 /* So KHelp event is delivered correctly */
 	 _XmSetFocusFlag (XtParent(XtParent(db)), XmFOCUS_IGNORE, TRUE);
 	 XtSetKeyboardFocus(XtParent(XtParent(db)), (Widget)db);
@@ -1013,7 +1001,7 @@ Enter(
 	 if (db->drawnbutton.arm_callback)
 	   {
 	     XFlush (XtDisplay (db));
-	      
+
 	     call_value.reason = XmCR_ARM;
 	     call_value.event = event;
 	     XtCallCallbackList ((Widget) db,
@@ -1036,7 +1024,7 @@ Enter(
  *  Leave
  *
  ************************************************************************/
-static void 
+static void
 Leave(
       Widget wid,
       XEvent *event,
@@ -1053,7 +1041,7 @@ Leave(
 	XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
 
 	db->drawnbutton.armed = FALSE;
-  
+
 	((XmManagerWidget) XtParent(wid))->manager.active_child = NULL;
 
 	if (db->drawnbutton.pushbutton_enabled) {
@@ -1069,10 +1057,10 @@ Leave(
 	if (db->drawnbutton.disarm_callback)
 	  {
 	    XFlush (XtDisplay (db));
-	      
+
 	    call_value.reason = XmCR_DISARM;
 	    call_value.event = event;
-	    XtCallCallbackList ((Widget) db, 
+	    XtCallCallbackList ((Widget) db,
 				db->drawnbutton.disarm_callback, &call_value);
 	  }
       }
@@ -1085,21 +1073,21 @@ Leave(
       DrawPushButton(db, FALSE);
   }
 }
-
+
 /*************************************<->*************************************
  *
- *  BorderHighlight 
+ *  BorderHighlight
  *
  *************************************<->***********************************/
 
-static void 
+static void
 BorderHighlight(
         Widget wid )
 {
   XmDrawnButtonWidget db = (XmDrawnButtonWidget) wid ;
   XmDrawnButtonCallbackStruct call_value;
   XEvent * event = NULL;
-  
+
   if (Lab_IsMenupane(db)) {
     XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
     Boolean already_armed = db->drawnbutton.armed;
@@ -1108,14 +1096,14 @@ BorderHighlight(
 
     if (db->drawnbutton.pushbutton_enabled)
       DrawPushButton(db, db->drawnbutton.armed);
-      
-    if (!already_armed && db->drawnbutton.arm_callback) 
+
+    if (!already_armed && db->drawnbutton.arm_callback)
       {
 	XFlush (XtDisplay (db));
-	  
+
 	call_value.reason = XmCR_ARM;
 	call_value.event = event;
-	XtCallCallbackList ((Widget) db, db->drawnbutton.arm_callback, 
+	XtCallCallbackList ((Widget) db, db->drawnbutton.arm_callback,
 			    &call_value);
       }
   }
@@ -1129,14 +1117,14 @@ BorderHighlight(
   }
 
 }
-
+
 /*************************************<->*************************************
  *
  *  BorderUnhighlight
  *
  *************************************<->***********************************/
 
-static void 
+static void
 BorderUnhighlight(
 		  Widget wid )
 {
@@ -1164,10 +1152,10 @@ BorderUnhighlight(
       if (already_armed && db->drawnbutton.disarm_callback)
 	{
 	  XFlush (XtDisplay (db));
-	  
+
 	  call_value.reason = XmCR_DISARM;
 	  call_value.event = event;
-	  XtCallCallbackList ((Widget) db, db->drawnbutton.disarm_callback, 
+	  XtCallCallbackList ((Widget) db, db->drawnbutton.disarm_callback,
 			      &call_value);
 	}
     }
@@ -1180,7 +1168,7 @@ BorderUnhighlight(
     (*border_unhighlight)(wid);
   }
 }
-
+
 
 
 /************************************************************************
@@ -1189,13 +1177,13 @@ BorderUnhighlight(
  *     Set up the base class extension record.
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
   /* parse the various translation tables */
   menu_parsed    = XtParseTranslationTable(menuTranslations);
   default_parsed = XtParseTranslationTable(defaultTranslations);
-  
+
    /* set up base class extension quark */
    drawnBBaseClassExtRec.record_type = XmQmotif;
 }
@@ -1206,7 +1194,7 @@ ClassInitialize( void )
  *     Set up the fast subclassing for the widget
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -1218,7 +1206,7 @@ ClassPartInitialize(
   /* Install the activatable trait for all subclasses */
   XmeTraitSet((XtPointer)wc, XmQTactivatable, (XtPointer) &drawnButtonAT);
 }
-     
+
 /************************************************************
  *
  * InitializePrehook
@@ -1228,7 +1216,6 @@ ClassPartInitialize(
  *
  ************************************************************/
 
-/*ARGSUSED*/
 static void
 InitializePrehook(
         Widget rw,		/* unused */
@@ -1239,30 +1226,30 @@ InitializePrehook(
   XmDrawnButtonWidget bw = (XmDrawnButtonWidget) nw ;
   unsigned char type;
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(nw)), XmQTmenuSystem);
-  
+
   _XmSaveCoreClassTranslations (nw);
-  
+
   if (menuSTrait != NULL)
     type = menuSTrait->type(XtParent(nw));
-  else 
+  else
     type = XmWORK_AREA;
-  
+
   _XmProcessLock();
   if (type == XmMENU_PULLDOWN ||
       type == XmMENU_POPUP)
     nw->core.widget_class->core_class.tm_table = (String) menu_parsed;
-  else 
+  else
     nw->core.widget_class->core_class.tm_table = (String) default_parsed;
-  
+
   /* CR 2990: Use XmNbuttonFontList as the default font. */
   if (bw->label.font == NULL)
     bw->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
   _XmProcessUnlock();
 }
-
+
 /************************************************************
  *
  * InitializePosthook
@@ -1271,7 +1258,6 @@ InitializePrehook(
  *
  ************************************************************/
 
-/*ARGSUSED*/
 static void
 InitializePosthook(
         Widget rw,		/* unused */
@@ -1281,14 +1267,13 @@ InitializePosthook(
 {
   _XmRestoreCoreClassTranslations (nw);
 }
-
+
 /*************************************<->*************************************
  *
- *  Initialize 
+ *  Initialize
  *
  *************************************<->***********************************/
-/*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -1327,7 +1312,7 @@ Initialize(
  *  Resize (db)
  *
  *************************************<->***********************************/
-static void 
+static void
 Resize(
         Widget wid )
 {
@@ -1340,7 +1325,7 @@ Resize(
    _XmProcessUnlock();
 
   (* resize) ((Widget) db);
- 
+
    /* CR 5419: Suppress redundant calls to the resize callbacks. */
    if (db->drawnbutton.resize_callback &&
        !Lab_ComputingSize(db))
@@ -1359,8 +1344,7 @@ Resize(
  *  Redisplay (db, event, region)
  *
  *************************************<->***********************************/
-/*ARGSUSED*/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -1369,7 +1353,7 @@ Redisplay(
    XmDrawnButtonWidget db = (XmDrawnButtonWidget) wid ;
    XmDrawnButtonCallbackStruct call_value;
 
-   if (XtIsRealized((Widget)db)) 
+   if (XtIsRealized((Widget)db))
    {
         if (event) {
 	 XtExposeProc expose;
@@ -1383,7 +1367,7 @@ Redisplay(
 
  	if (db->drawnbutton.pushbutton_enabled)
  	    DrawPushButton(db, db->drawnbutton.armed);
-  
+
  	else
  	    XmeDrawShadows(XtDisplay((Widget) db),
  			    XtWindow((Widget) db),
@@ -1394,10 +1378,10 @@ Redisplay(
  			    db -> core.width - 2 *
  			       db -> primitive.highlight_thickness,
  			    db -> core.height - 2 *
- 			       db -> primitive.highlight_thickness,	
+ 			       db -> primitive.highlight_thickness,
 			    db -> primitive.shadow_thickness,
  			    db->drawnbutton.shadow_type);
- 			   
+
       if (db->drawnbutton.expose_callback)
       {
          XFlush(XtDisplay (db));
@@ -1412,14 +1396,10 @@ Redisplay(
 }
 
 
-static void 
+static void
 DrawPushButton(
         XmDrawnButtonWidget db,
-#if NeedWidePrototypes
-        int armed )
-#else
         Boolean armed )
-#endif /* NeedWidePrototypes */
 {
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay((Widget) db));
   Boolean etched_in = dpy -> display.enable_etched_in_menu;
@@ -1435,28 +1415,27 @@ DrawPushButton(
     type = armed ? XmSHADOW_IN : XmSHADOW_OUT;
 
   if (do_draw)
-    XmeDrawShadows (XtDisplay (db), XtWindow (db), 
+    XmeDrawShadows (XtDisplay (db), XtWindow (db),
 		    db -> primitive.top_shadow_GC,
-		    db -> primitive.bottom_shadow_GC, 
+		    db -> primitive.bottom_shadow_GC,
 		    db -> primitive.highlight_thickness,
 		    db -> primitive.highlight_thickness,
-		    db -> core.width - 2 * 
+		    db -> core.width - 2 *
 		    db->primitive.highlight_thickness,
-		    db -> core.height - 2 * 
+		    db -> core.height - 2 *
 		    db->primitive.highlight_thickness,
 		    db -> primitive.shadow_thickness,
 		    type);
 }
 
-
+
 /************************************************************************
  *
  *  SetValuesPrehook
  *
  ************************************************************************/
 
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValuesPrehook(
         Widget cw,		/* unused */
         Widget rw,		/* unused */
@@ -1472,7 +1451,7 @@ SetValuesPrehook(
 
   return False;
 }
-
+
 /*************************************<->*************************************
  *
  *  SetValues(current, request, new_w)
@@ -1491,7 +1470,7 @@ SetValuesPrehook(
  *    new_w = copy of request which reflects changes made to it by
  *          set values procedures of its superclasses;
  *    last = TRUE if this is the last set values procedure to be called.
- * 
+ *
  *   Outputs:
  *   -------
  *
@@ -1499,8 +1478,7 @@ SetValuesPrehook(
  *   -----------------
  *
  *************************************<->***********************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -1523,7 +1501,7 @@ SetValues(
    if (new_w -> drawnbutton.shadow_type != current-> drawnbutton.shadow_type ||
        new_w -> primitive.foreground != current -> primitive.foreground    ||
        new_w -> core.background_pixel != current -> core.background_pixel  ||
-       new_w -> primitive.highlight_thickness != 
+       new_w -> primitive.highlight_thickness !=
        current -> primitive.highlight_thickness                          ||
        new_w -> primitive.shadow_thickness !=
        current -> primitive.shadow_thickness)
@@ -1543,7 +1521,7 @@ SetValues(
  *	This function sets the bit gravity to forget.
  *
  *************************************************************************/
-static void 
+static void
 Realize(
         Widget w,
         XtValueMask *p_valueMask,
@@ -1568,7 +1546,7 @@ Realize(
  *	Clean up allocated resources when the widget is destroyed.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -1581,11 +1559,11 @@ Destroy(
  *
  *  ChangeCB
  *	add or remove the activate callback list.
- *      
+ *
  ************************************************************************/
-static void 
+static void
 ChangeCB(
-	 Widget w, 
+	 Widget w,
 	 XtCallbackProc activCB,
 	 XtPointer closure,
 	 Boolean setunset)
@@ -1611,18 +1589,18 @@ ChangeCB(
  *	Create an instance of a drawnbutton and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateDrawnButton(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount )
 {
-   return (XtCreateWidget (name, xmDrawnButtonWidgetClass, 
+   return (XtCreateWidget (name, xmDrawnButtonWidgetClass,
                            parent, arglist, argcount));
 }
 
-Widget 
+Widget
 XmVaCreateDrawnButton(
         Widget parent,
         char *name,
@@ -1631,18 +1609,18 @@ XmVaCreateDrawnButton(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmDrawnButtonWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -1655,16 +1633,16 @@ XmVaCreateManagedDrawnButton(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmDrawnButtonWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }

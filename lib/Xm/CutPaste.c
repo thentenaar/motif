@@ -30,18 +30,16 @@ static char rcsid[] = "$TOG: CutPaste.c /main/27 1999/05/26 17:42:48 samborn $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "XmI.h"		/* for MAX */
 #include <Xm/CutPaste.h>
 #include "MessagesI.h"
 #include "CutPasteI.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define FIX_1529
-#ifdef FIX_1529
 #include <X11/Xmd.h>		/* for CARD32 */
-#endif
 
 #define XMERROR(key, message)                                            \
     XtErrorMsg (key, "xmClipboardError", "XmToolkitError", message, NULL, NULL)
@@ -268,7 +266,7 @@ typedef union {
 } ClipboardUnionRec, *ClipboardPointer;
 
 /*---------------------------------------------*/
-
+
 /********    Static Function Declarations    ********/
 
 static Time ClipboardGetCurrentTime(
@@ -323,11 +321,7 @@ static int GetWindowProperty(
                         unsigned long *outlength,
                         Atom *type,
                         int *format,
-#if NeedWidePrototypes
-                        int delete_flag) ;
-#else
                         Boolean delete_flag) ;
-#endif /* NeedWidePrototypes */
 static int ClipboardRetrieveItem(
                         Display *display,
                         itemId itemid,
@@ -346,11 +340,7 @@ static void ClipboardReplaceItem(
                         unsigned long length,
                         int mode,
                         int format,
-#if NeedWidePrototypes
-                        int free_flag,
-#else
                         Boolean free_flag,
-#endif /* NeedWidePrototypes */
   			Atom type);
 static Atom ClipboardGetAtomFromId(
                         Display *display,
@@ -447,11 +437,7 @@ static int ClipboardLock(
 static int ClipboardUnlock(
                         Display *display,
                         Window window,
-#if NeedWidePrototypes
-                        int all_levels) ;
-#else
                         Boolean all_levels) ;
-#endif /* NeedWidePrototypes */
 static int ClipboardSearchForWindow(
                         Display *display,
                         Window parentwindow,
@@ -482,7 +468,7 @@ static XmCutPasteProc	*cbProcTable = NULL;
 static long		*cbIdTable = NULL;
 static int		maxCbProcs = 0;
 
-
+
 /*---------------------------------------------*/
 /* internal routines			       */
 /*---------------------------------------------*/
@@ -543,7 +529,7 @@ ClipboardSetNextItemId(
 			PropModeReplace, 32, True, XA_INTEGER);
 }
 
-
+
 /***********************************************************************
  * WeOwnSelection
  *
@@ -566,7 +552,7 @@ WeOwnSelection(
 
     return ( selectionwindow == header->ownSelection );
 }
-
+
 static void
 AssertClipboardSelection(
         Display *display,
@@ -641,8 +627,6 @@ ClipboardGetByNameItem(Display* dpy, Window win,
   return(dataok != 0);
 }
 
-
-/*ARGSUSED*/
 static Boolean
 ClipboardConvertProc(Widget wid,
 		     Atom *selection, /* unused */
@@ -786,7 +770,7 @@ ClipboardConvertProc(Widget wid,
   return(rval);
 }
 
-
+
 static Window
 InitializeSelection(
         Display *display,
@@ -825,7 +809,7 @@ InitializeSelection(
     return (selectionwindow);
 }
 
-
+
 static int
 RegIfMatch(
         Display *display,
@@ -840,7 +824,7 @@ RegIfMatch(
 	}
     return 0;
 }
-
+
 static int
 RegisterFormat(
         Display *display,       /* Display id of application passing data */
@@ -882,7 +866,7 @@ RegisterFormat(
 
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 static void
 CleanupHeader(
@@ -894,7 +878,7 @@ CleanupHeader(
 
    XFlush(display);
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardError(
@@ -905,9 +889,8 @@ ClipboardError(
 
     exit(1);
 }
-
+
 /*---------------------------------------------*/
-/* ARGSUSED */
 static void
 ClipboardEventHandler(
         Widget widget,
@@ -1005,7 +988,7 @@ ClipboardEventHandler(
 
     return ;
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardFindItem(
@@ -1052,16 +1035,14 @@ ClipboardFindItem(
     	return ClipboardFail;
     }
 
-#ifdef FIX_1529
     if( itemid == XM_HEADER_ID && ptr )
     {
     	ptr->header.selectionTimestamp = (CARD32)ptr->header.selectionTimestamp;
     }
-#endif
+
     return ClipboardSuccess;
 }
 
-
 /*---------------------------------------------*/
 static int
 GetWindowProperty(
@@ -1072,11 +1053,7 @@ GetWindowProperty(
         unsigned long *outlength,
         Atom *type,
         int *format,
-#if NeedWidePrototypes
-        int delete_flag )
-#else
         Boolean delete_flag )
-#endif /* NeedWidePrototypes */
 {
 
     int ret_value;
@@ -1190,7 +1167,7 @@ GetWindowProperty(
 
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardRetrieveItem(
@@ -1252,7 +1229,7 @@ ClipboardRetrieveItem(
     return ret_value;
 
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardReplaceItem(
@@ -1262,11 +1239,7 @@ ClipboardReplaceItem(
         unsigned long length,
         int mode,
         int format,
-#if NeedWidePrototypes
-        int free_flag,
-#else
         Boolean free_flag,
-#endif /* NeedWidePrototypes */
         Atom type)
 {
     Window rootwindow;
@@ -1326,7 +1299,7 @@ ClipboardReplaceItem(
         XtFree( (char *) pointer );
     }
 }
-
+
 /*---------------------------------------------*/
 static Atom
 ClipboardGetAtomFromId(
@@ -1425,7 +1398,7 @@ ClipboardGetLenFromFormat(
 
     return ret_value;
 }
-
+
 /*---------------------------------------------*/
 static ClipboardHeader
 ClipboardOpen(
@@ -1524,7 +1497,7 @@ ClipboardOpen(
 
     return root_clipboard_header;
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardClose(
@@ -1546,7 +1519,7 @@ ClipboardClose(
 			 True,
 			 XA_INTEGER );
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardDeleteId(
@@ -1564,7 +1537,7 @@ ClipboardDeleteId(
 
 }
 
-
+
 /*---------------------------------------------*/
 static ClipboardFormatItem
 ClipboardFindFormat(
@@ -1694,7 +1667,7 @@ ClipboardFindFormat(
 
     return matchformat;
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardDeleteFormat(
@@ -1781,7 +1754,7 @@ ClipboardDeleteFormat(
 			 XA_INTEGER);
 
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardDeleteFormats(
@@ -1856,9 +1829,8 @@ ClipboardDeleteFormats(
 
     XtFree( (char *) datalist );
 }
-
+
 /*---------------------------------------------*/
-/* ARGSUSED */
  static void
 ClipboardDeleteItemLabel(
         Display *display,
@@ -1889,9 +1861,8 @@ ClipboardDeleteItemLabel(
 
      XtFree( (char *) datalist );
  }
-
+
 /*---------------------------------------------*/
-/* ARGSUSED */
 static unsigned long
 ClipboardIsMarkedForDelete(
         Display *display,
@@ -1931,7 +1902,7 @@ ClipboardIsMarkedForDelete(
 
     return return_value;
 }
-
+
 /*---------------------------------------------*/
 static void
 ClipboardDeleteItem(
@@ -2069,7 +2040,7 @@ ClipboardDeleteItem(
     }
 }
 
-
+
 /*---------------------------------------------*/
 static void
 ClipboardDeleteMarked(
@@ -2104,7 +2075,6 @@ ClipboardDeleteMarked(
     }
 }
 /*---------------------------------------------*/
-/* ARGSUSED */
 static void
 ClipboardMarkItem(
         Display *display,
@@ -2143,7 +2113,7 @@ ClipboardMarkItem(
 			 XA_INTEGER );
 
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardSendMessage(
@@ -2235,7 +2205,7 @@ ClipboardSendMessage(
 
     return 1;
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardDataIsReady(
@@ -2292,12 +2262,11 @@ ClipboardDataIsReady(
 
 }
 
-
+
 #if 0
 /* This function is currently unused. */
 
 /*---------------------------------------------*/
-/* ARGSUSED */
 static int
 ClipboardRequestorIsReady(
         Display *display,
@@ -2337,7 +2306,7 @@ ClipboardRequestorIsReady(
     return 0;
  }
 #endif
-
+
 /*---------------------------------------------*/
 static int
 ClipboardGetSelection(Display *display,
@@ -2415,7 +2384,6 @@ ClipboardGetSelection(Display *display,
     return TRUE;
 }
 
-/*ARGSUSED*/
 static void
 ClipboardReceiveData(Widget dest, /* unused */
 		     XtPointer client_data,
@@ -2559,7 +2527,6 @@ ClipboardRequestDataAndWait(
     return 1;
 }
 
-/*ARGSUSED*/
 static void
 ClipboardTimeout(XtPointer client_data,
 		 XtIntervalId* timer) /* unused */
@@ -2569,7 +2536,7 @@ ClipboardTimeout(XtPointer client_data,
   *flag = True;
 }
 
-
+
 /*---------------------------------------------*/
 static itemId
 ClipboardGetNewItemId(
@@ -2591,7 +2558,7 @@ ClipboardGetNewItemId(
     return loc_id;
 }
 
-
+
 /*---------------------------------------------*/
 static void
 ClipboardSetAccess(
@@ -2612,7 +2579,7 @@ ClipboardSetAccess(
 		     (unsigned char*)"yes",
 		     3 );
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardLock(
@@ -2726,17 +2693,13 @@ ClipboardLock(
     _XmAppUnlock(app);
     return (ClipboardSuccess);
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardUnlock(
         Display *display,
         Window window,
-#if NeedWidePrototypes
-        int all_levels )
-#else
         Boolean all_levels )
-#endif /* NeedWidePrototypes */
 {
     unsigned long length;
     ClipboardLockPtr lockptr;
@@ -2791,7 +2754,7 @@ ClipboardUnlock(
 
     return (ClipboardSuccess);
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardSearchForWindow(
@@ -2832,7 +2795,7 @@ ClipboardSearchForWindow(
 
     return found;
 }
-
+
 /*---------------------------------------------*/
 static int
 ClipboardWindowExists(
@@ -2891,7 +2854,7 @@ ClipboardWindowExists(
 /* external routines			       */
 /*---------------------------------------------*/
 
-
+
 /*---------------------------------------------*/
 int
 XmClipboardBeginCopy(
@@ -2905,7 +2868,7 @@ XmClipboardBeginCopy(
     return(XmClipboardStartCopy( display, window, label, CurrentTime,
 				widget, (XmCutPasteProc)callback, itemid ));
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardStartCopy(
@@ -3045,7 +3008,7 @@ XmClipboardStartCopy(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /* The following code is a workaround for UTM to pass in the type of the
    to be copied data.  It is a bug in the clipboard interface that the
    type information cannot be passed in.  Note that when Motif goes to
@@ -3266,7 +3229,7 @@ XmClipboardCopy(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardEndCopy(
@@ -3372,7 +3335,7 @@ XmClipboardEndCopy(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardCancelCopy(
@@ -3440,7 +3403,7 @@ XmClipboardCancelCopy(
     _XmAppUnlock(app);
     return(ClipboardSuccess);
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardWithdrawFormat(
@@ -3465,7 +3428,7 @@ XmClipboardWithdrawFormat(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardCopyByName(
@@ -3609,7 +3572,6 @@ XmClipboardCopyByName(
     return ClipboardSuccess;
 }
 
-
 /*---------------------------------------------*/
 int
 XmClipboardUndoCopy(
@@ -3700,7 +3662,7 @@ XmClipboardUndoCopy(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardLock(
@@ -3715,17 +3677,12 @@ XmClipboardLock(
     return ret_val;
 }
 
-
 /*---------------------------------------------*/
 int
 XmClipboardUnlock(
         Display *display,
         Window window,  /* specifies window owning lock, must match window */
-#if NeedWidePrototypes  /* passed to clipboardlock */
-        int all_levels )
-#else
         Boolean all_levels )
-#endif /* NeedWidePrototypes */
 {
     int ret_val;
     _XmDisplayToAppContext(display);
@@ -3735,7 +3692,7 @@ XmClipboardUnlock(
     return ret_val;
 }
 
-
+
 /*---------------------------------------------*/
 int
 XmClipboardStartRetrieve(
@@ -3767,7 +3724,7 @@ XmClipboardStartRetrieve(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardEndRetrieve(
@@ -3790,7 +3747,7 @@ XmClipboardEndRetrieve(
     _XmAppUnlock(app);
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardRetrieve(
@@ -4035,7 +3992,7 @@ ClipboardRetrieve(Display *display, Window window,
 
     return ClipboardSuccess;
 }
-
+
 /*---------------------------------------------*/
 int
 XmClipboardInquireCount(
@@ -4158,7 +4115,7 @@ XmClipboardInquireCount(
     return ClipboardSuccess;
 }
 
-
+
 /*---------------------------------------------*/
 int
 XmClipboardInquireFormat(
@@ -4275,7 +4232,7 @@ XmClipboardInquireFormat(
     return status;
 }
 
-
+
 /*---------------------------------------------*/
 int
 XmClipboardInquireLength(
@@ -4368,7 +4325,7 @@ XmClipboardInquireLength(
     return status;
 }
 
-
+
 /*---------------------------------------------*/
 int
 XmClipboardInquirePendingItems(
@@ -4468,7 +4425,6 @@ XmClipboardInquirePendingItems(
     return status;
 }
 
-
 /*---------------------------------------------*/
 int
 XmClipboardRegisterFormat(

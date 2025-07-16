@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: app.c /main/6 1995/07/14 09:43:21 drk $"
@@ -33,13 +33,12 @@ static char rcsid[] = "$XConsortium: app.c /main/6 1995/07/14 09:43:21 drk $"
  *     app.c -- toolkit-independent code
  *
  *  Contains code to read, write, copy, move & remove files
- *     
+ *
  ************************************************************/
 
 #include <limits.h>
 #include <stdio.h>
 
-#include <Xm/Xm.h>				  /* for _NO_PROTO */
 #include "basic.h"
 #include "file.h"
 
@@ -90,7 +89,7 @@ void
  * Transfer File
  ************************************************************/
 
-void 
+void
 AppTransferFile(char *textchars, size_t numchars)
 {
     if (! open_to_transfer ) return;

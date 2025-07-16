@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmDragICCI_h
 #define _XmDragICCI_h
 
@@ -35,12 +35,12 @@ extern "C" {
 
 
 /*
- *  Xm ICC internal definitions 
+ *  Xm ICC internal definitions
  *
  */
 
 #define MAXSHORT 32767
-#define MINSHORT -MAXSHORT 
+#define MINSHORT -MAXSHORT
 
 /*
  *  Swap the byte order of 4- and 2- byte quantities.
@@ -182,7 +182,7 @@ typedef struct _xmByteBufRec{
     BYTE	*curr;
     size_t	size;
     Cardinal	max;
-}xmByteBufRec; 
+}xmByteBufRec;
 
 typedef struct _xmPropertyBufferRec{
     xmByteBufRec	data;
@@ -216,7 +216,7 @@ typedef struct _XmICCDropSiteHighlightDataRec {
 typedef struct _XmICCDropSiteShadowDataRec {
     Dimension		borderWidth;
     Dimension		highlightThickness;
-    Dimension		shadowThickness;	
+    Dimension		shadowThickness;
     Pixel		foreground;
     Pixel		topShadowColor;
     Pixmap		topShadowPixmap;
@@ -227,7 +227,7 @@ typedef struct _XmICCDropSiteShadowDataRec {
 typedef struct _XmICCDropSitePixmapDataRec {
     Dimension		borderWidth;
     Dimension		highlightThickness;
-    Dimension		shadowThickness;	
+    Dimension		shadowThickness;
     Pixel		foreground;
     Pixel		background;
     Pixmap		animationPixmap;
@@ -483,68 +483,56 @@ externalref unsigned char _XmByteOrderChar;
 
 /********    Private Function Declarations    ********/
 
-extern unsigned char _XmReasonToMessageType( 
+extern unsigned char _XmReasonToMessageType(
                         int reason) ;
-extern unsigned int _XmMessageTypeToReason( 
-#if NeedWidePrototypes
-                        unsigned int messageType) ;
-#else
+extern unsigned int _XmMessageTypeToReason(
                         unsigned char messageType) ;
-#endif /* NeedWidePrototypes */
-extern void _XmICCCallbackToICCEvent( 
+extern void _XmICCCallbackToICCEvent(
                         Display *display,
                         Window window,
                         XmICCCallback callback,
                         XClientMessageEvent *cmev,
                         XmICCEventType type) ;
-extern void _XmSendICCCallback( 
+extern void _XmSendICCCallback(
                         Display *display,
                         Window window,
                         XmICCCallback callback,
                         XmICCEventType type) ;
-extern Boolean _XmICCEventToICCCallback( 
+extern Boolean _XmICCEventToICCCallback(
                         XClientMessageEvent *msgEv,
                         XmICCCallback callback,
                         XmICCEventType type) ;
-extern CARD16 _XmReadDragBuffer( 
+extern CARD16 _XmReadDragBuffer(
                         xmPropertyBuffer propBuf,
-#if NeedWidePrototypes
-                        int which,
-#else
                         BYTE which,
-#endif /* NeedWidePrototypes */
                         BYTE *ptr,
                         CARD32 size) ;
-extern CARD16 _XmWriteDragBuffer( 
+extern CARD16 _XmWriteDragBuffer(
                         xmPropertyBuffer propBuf,
-#if NeedWidePrototypes
-                        int which,
-#else
                         BYTE which,
-#endif /* NeedWidePrototypes */
                         BYTE *ptr,
                         CARD32 size) ;
-extern void _XmWriteInitiatorInfo( 
+extern void _XmWriteInitiatorInfo(
                         Widget dc) ;
-extern void _XmReadInitiatorInfo( 
+extern void _XmReadInitiatorInfo(
                         Widget dc) ;
-extern Boolean _XmGetDragReceiverInfo( 
+extern Boolean _XmGetDragReceiverInfo(
                         Display *display,
                         Window window,
                         XmDragReceiverInfoStruct *receiverInfoRtn) ;
-extern Boolean _XmReadDSFromStream( 
+extern Boolean _XmReadDSFromStream(
                         XmDropSiteManagerObject dsm,
                         XtPointer iccInfo,
                         XmICCDropSiteInfo dropSiteInfoRtn) ;
-extern void _XmWriteDSToStream( 
+extern void _XmWriteDSToStream(
                         XmDropSiteManagerObject dsm,
                         XtPointer stream,
                         XmICCDropSiteInfo dropSiteInfo) ;
-extern void _XmFreeDragReceiverInfo( 
+extern void _XmFreeDragReceiverInfo(
                         XtPointer info) ;
-extern void _XmClearDragReceiverInfo( 
+extern void _XmClearDragReceiverInfo(
                         Widget shell) ;
-extern void _XmSetDragReceiverInfo( 
+extern void _XmSetDragReceiverInfo(
                         XmDisplay dd,
                         Widget shell) ;
 extern void _XmInitByteOrderChar( void ) ;
@@ -557,5 +545,4 @@ extern void _XmInitByteOrderChar( void ) ;
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
-
 #endif /* _XmDragICCI_h */

@@ -30,11 +30,8 @@
 #include <config.h>
 #endif
 
-
 #include <stdio.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 #if XM_UTF8
@@ -337,22 +334,14 @@ static SegmentEncoding * FindEncoding(
                         char *fontlist_tag) ;
 static Boolean processCharsetAndText(XmStringCharSet tag,
 				     OctetPtr	ctext,
-#if NeedWidePrototypes
-				     int 	separator,
-#else
 				     Boolean	separator,
-#endif /* NeedWidePrototypes */
 				     OctetPtr	*outc,
 				     unsigned int	*outlen,
 				     ct_Charset	*prev);
 #if XM_UTF8
 static Boolean processCharsetAndTextUtf8(XmStringCharSet tag,
 				     OctetPtr	ctext,
-#if NeedWidePrototypes
-				     int 	separator,
-#else
 				     Boolean	separator,
-#endif /* NeedWidePrototypes */
 				     OctetPtr	*outc,
 				     unsigned int	*outlen,
 				     ct_Charset	*prev);
@@ -360,89 +349,44 @@ static Boolean processCharsetAndTextUtf8(XmStringCharSet tag,
 
 static Boolean processESCHack(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean processExtendedSegmentsHack(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean cvtTextToXmString(
                         XrmValue *from,
                         XrmValue *to) ;
 static void outputXmString(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int separator) ;
-#else
                         Boolean separator) ;
-#endif /* NeedWidePrototypes */
 static XmString concatStringToXmString(
                         XmString compoundstring,
                         char *textstring,
 			int textlen,
                         char *charset,
-#if NeedWidePrototypes
-                        int direction,
-                        int separator) ;
-#else
                         XmStringDirection direction,
                         Boolean separator) ;
-#endif /* NeedWidePrototypes */
 static Boolean processESC(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean processCSI(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean processExtendedSegments(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean process94n(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean process94GL(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean process94GR(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean process96GR(
                         ct_context *ctx,
-#if NeedWidePrototypes
-                        int final) ;
-#else
                         Octet final) ;
-#endif /* NeedWidePrototypes */
 static Boolean cvtXmStringToText(
                         XrmValue *from,
                         XrmValue *to) ;
@@ -650,7 +594,7 @@ XmMapSegmentEncoding(char        *fontlist_tag)
   return(ret_val);
 }
 
-
+
 /************************************************************************
  *
  *  XmCvtCTToXmString
@@ -907,7 +851,7 @@ XmCvtCTToXmString(
 
 }
 
-
+
 /***********************************************************************
  *
  * Hacked procedures to work with XmCvtCTToXmString.
@@ -918,11 +862,7 @@ XmCvtCTToXmString(
 static Boolean
 processESCHack(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     Boolean	    ok;
 
@@ -954,15 +894,11 @@ processESCHack(
     return(ok);
 }
 
-
+
 static Boolean
 processExtendedSegmentsHack(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     OctetPtr	    esptr;			/* ptr into ext seg */
     unsigned int    seglen;			/* length of ext seg */
@@ -1072,14 +1008,13 @@ processExtendedSegmentsHack(
     return(ok);
 }
 
-
+
 /************************************************************************
  *
  *  XmCvtTextToXmString
  *	Convert a compound text string to a XmString.
  *
  ************************************************************************/
-/*ARGSUSED*/
 Boolean
 XmCvtTextToXmString(
         Display *display,
@@ -1106,7 +1041,7 @@ XmCvtTextToXmString(
     }
     return(ok);
 }
-
+
 
 static Boolean
 cvtTextToXmString(
@@ -1359,7 +1294,7 @@ cvtTextToXmString(
 
     return (ok);
 }
-
+
 
 static char **
 cvtCTsegment(ct_context *ctx,
@@ -1411,11 +1346,7 @@ cvtCTsegment(ct_context *ctx,
 static void
 outputXmString(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int separator )
-#else
         Boolean separator )
-#endif /* NeedWidePrototypes */
 {
   char **strings = NULL;
 
@@ -1586,20 +1517,15 @@ outputXmString(
 	};
     }; /* end if paired */
 }
-
+
 static XmString
 concatStringToXmString(
         XmString compoundstring,
         char *textstring,
 	int textlen,
         char *charset,
-#if NeedWidePrototypes
-        int direction,
-        int separator )
-#else
         XmStringDirection direction,
         Boolean separator )
-#endif /* NeedWidePrototypes */
 {
     XmString	tempxm1;
 
@@ -1615,16 +1541,12 @@ concatStringToXmString(
     return (compoundstring);
 }
 
-
+
 /* processESC - handle valid ESC sequences */
 static Boolean
 processESC(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     Boolean	    ok;
 
@@ -1656,7 +1578,7 @@ processESC(
     return(ok);
 }
 
-
+
 /*
 **  processCSI - handle valid CSI sequences
 **	CSI sequences
@@ -1668,11 +1590,7 @@ processESC(
 static Boolean
 processCSI(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     Boolean	    ok = True;
 
@@ -1714,15 +1632,11 @@ processCSI(
 }
 
 
-
+
 static Boolean
 processExtendedSegments(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     OctetPtr	    esptr;			/* ptr into ext seg */
     unsigned int    seglen;			/* length of ext seg */
@@ -1816,15 +1730,11 @@ processExtendedSegments(
     return(ok);
 }
 
-
+
 static Boolean
 process94n(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     if (ctx->itemlen > 3) {
 	switch (ctx->item[2]) {
@@ -1875,15 +1785,11 @@ process94n(
 }
 
 
-
+
 static Boolean
 process94GL(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     switch (final) {
     case 0x42:				/* 04/02 - Left half, ISO8859* (ASCII) */
@@ -1899,15 +1805,11 @@ process94GL(
     return(True);
 }
 
-
+
 static Boolean
 process94GR(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     switch (final) {
     case 0x49:				/* 04/09 - Right half, Katakana */
@@ -1921,15 +1823,11 @@ process94GR(
 }
 
 
-
+
 static Boolean
 process96GR(
         ct_context *ctx,
-#if NeedWidePrototypes
-        int final )
-#else
         Octet final )
-#endif /* NeedWidePrototypes */
 {
     switch (final) {
     case 0x40:				/* 04/00 - Right half, IR-111 */
@@ -1969,7 +1867,7 @@ process96GR(
     return(True);
 }
 
-
+
 /************************************************************************
  *
  *  XmCvtXmStringToCT
@@ -2044,7 +1942,6 @@ XmCvtXmStringToUTF8String(
  *   STRING if it can be fully converted.  Otherwise returns NULL.       *
  *                                                                       *
  ***************************************************************************/
-/*ARGSUSED*/
 char *
 _XmConvertCSToString(XmString cs) /* unused */
 {
@@ -2052,7 +1949,7 @@ _XmConvertCSToString(XmString cs) /* unused */
 
 }
 
-
+
 /***************************************************************************
  *									   *
  * _XmCvtXmStringToCT - public wrapper for the widgets to use.	  	   *
@@ -2089,7 +1986,6 @@ _XmCvtXmStringToUTF8String(
  *	Convert an XmString to an ASCII string.
  *
  ************************************************************************/
-/*ARGSUSED*/
 Boolean
 XmCvtXmStringToText(
         Display *display,
@@ -2114,7 +2010,7 @@ XmCvtXmStringToText(
     }
     return(ok);
 }
-
+
 #if XM_UTF8
 /************************************************************************
  *
@@ -2267,7 +2163,7 @@ cvtXmStringToUTF8String(
   return(True);
 }
 #endif
-
+
 /************************************************************************
  *
  *  cvtXmStringToText
@@ -2429,16 +2325,12 @@ cvtXmStringToText(
 
   return(True);
 }
-
+
 #if XM_UTF8
 static Boolean
 processCharsetAndTextUtf8(XmStringCharSet tag,
 		      OctetPtr		ctext,
-#if NeedWidePrototypes
-		      int		separator,
-#else
 		      Boolean		separator,
-#endif /* NeedWidePrototypes */
 		      OctetPtr		*outc,
 		      unsigned int	*outlen,
 		      ct_Charset	*prev)
@@ -2531,15 +2423,11 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 }
 #endif
 
-
+
 static Boolean
 processCharsetAndText(XmStringCharSet tag,
 		      OctetPtr		ctext,
-#if NeedWidePrototypes
-		      int		separator,
-#else
 		      Boolean		separator,
-#endif /* NeedWidePrototypes */
 		      OctetPtr		*outc,
 		      unsigned int	*outlen,
 		      ct_Charset	*prev)
@@ -2788,7 +2676,7 @@ processCharsetAndText(XmStringCharSet tag,
   return(True);
 }
 
-
+
 static OctetPtr
 ctextConcat(
         OctetPtr str1,

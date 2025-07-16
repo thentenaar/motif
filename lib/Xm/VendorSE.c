@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -36,10 +36,7 @@ static char rcsid[] = "$TOG: VendorSE.c /main/21 1997/10/13 14:58:18 cshi $"
 
 /* Make sure all wm properties can make it out of the resource manager */
 
-
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
 #include <X11/IntrinsicP.h>
@@ -67,14 +64,14 @@ static char rcsid[] = "$TOG: VendorSE.c /main/21 1997/10/13 14:58:18 cshi $"
 
 /********    Static Function Declarations    ********/
 
-static Boolean CvtStringToHorizontalInt( 
+static Boolean CvtStringToHorizontalInt(
                         Display *dpy,
                         XrmValue *args,
                         Cardinal *num_args,
                         XrmValue *from_val,
                         XrmValue *toVal,
                         XtPointer *data) ;
-static Boolean CvtStringToVerticalInt( 
+static Boolean CvtStringToVerticalInt(
                         Display *dpy,
                         XrmValue *args,
                         Cardinal *num_args,
@@ -82,30 +79,30 @@ static Boolean CvtStringToVerticalInt(
                         XrmValue *toVal,
                         XtPointer *data) ;
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass w) ;
-static void DeleteWindowHandler( 
+static void DeleteWindowHandler(
                         Widget wid,
                         XtPointer closure,
                         XtPointer call_data) ;
-static void OffsetHandler( 
+static void OffsetHandler(
                         Widget shell,
                         XtPointer clientData,
                         XtPointer cd) ;
-static void InitializePrehook( 
+static void InitializePrehook(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static void GetMWMFunctionsFromProperty( 
+static void GetMWMFunctionsFromProperty(
                         Widget wid,
                         int resource_offset,
                         XtArgVal *value) ;
 static void CheckSetRenderTables(Widget wid,
 				int offset,
-				XrmValue *value); 
+				XrmValue *value);
 
 /********    End Static Function Declarations    ********/
 
@@ -136,7 +133,7 @@ static XtResource extResources[] =
 	XmNdefaultFontList,
 	XmCDefaultFontList, XmRFontList, sizeof (XmFontList),
 	Offset (default_font_list),
-	XmRImmediate, (XtPointer) NULL, 
+	XmRImmediate, (XtPointer) NULL,
     },
     {
         "pri.vate",
@@ -148,104 +145,104 @@ static XtResource extResources[] =
         XmNbuttonFontList,
         XmCButtonFontList, XmRButtonFontList, sizeof (XmFontList),
         Offset (button_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNlabelFontList,
         XmCLabelFontList, XmRLabelFontList, sizeof (XmFontList),
         Offset (label_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNtextFontList,
         XmCTextFontList, XmRTextFontList, sizeof (XmFontList),
         Offset (text_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNbuttonRenderTable,
         XmCButtonRenderTable, XmRButtonRenderTable, sizeof (XmRenderTable),
         Offset (button_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNlabelRenderTable,
         XmCLabelRenderTable, XmRLabelRenderTable, sizeof (XmRenderTable),
         Offset (label_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNtextRenderTable,
         XmCTextRenderTable, XmRTextRenderTable, sizeof (XmRenderTable),
         Offset (text_font_list),
-	XmRCallProc, (XtPointer)CheckSetRenderTables, 
+	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
 	XmNaudibleWarning, XmCAudibleWarning, XmRAudibleWarning,
 	sizeof (Boolean), Offset (audible_warning),
 	XmRImmediate, (XtPointer) XmBELL,
-    },    
+    },
     {
-	XmNshellUnitType, XmCShellUnitType, XmRUnitType, 
+	XmNshellUnitType, XmCShellUnitType, XmRUnitType,
 	sizeof (unsigned char), Offset (unit_type),
 	XmRImmediate, (XtPointer) XmPIXELS,
-    },	
+    },
     {
-	XmNdeleteResponse, XmCDeleteResponse, 
+	XmNdeleteResponse, XmCDeleteResponse,
 	XmRDeleteResponse, sizeof(unsigned char),
-	Offset(delete_response), 
+	Offset(delete_response),
 	XmRImmediate, (XtPointer) XmDESTROY,
     },
     {
-	XmNinputPolicy, XmCInputPolicy, 
+	XmNinputPolicy, XmCInputPolicy,
 	XmRInputPolicy, sizeof(XmInputPolicy),
-	Offset(input_policy), 
+	Offset(input_policy),
 	XmRImmediate, (XtPointer) XmPER_SHELL,
-    },    
+    },
     {
-	XmNkeyboardFocusPolicy, XmCKeyboardFocusPolicy, XmRKeyboardFocusPolicy, 
+	XmNkeyboardFocusPolicy, XmCKeyboardFocusPolicy, XmRKeyboardFocusPolicy,
 	sizeof(unsigned char),
-	Offset(focus_policy), 
+	Offset(focus_policy),
 	XmRImmediate, (XtPointer)XmEXPLICIT,
     },
-    { 
-	XmNmwmDecorations, XmCMwmDecorations, XmRInt, 
-	sizeof(int), Offset(mwm_hints.decorations), 
+    {
+	XmNmwmDecorations, XmCMwmDecorations, XmRInt,
+	sizeof(int), Offset(mwm_hints.decorations),
 	XmRImmediate, (XtPointer) DONT_CARE,
     },
-    { 
-	XmNmwmFunctions, XmCMwmFunctions, XmRInt, 
-	sizeof(int), Offset(mwm_hints.functions), 
+    {
+	XmNmwmFunctions, XmCMwmFunctions, XmRInt,
+	sizeof(int), Offset(mwm_hints.functions),
 	XmRImmediate, (XtPointer) DONT_CARE,
     },
-    { 
-	XmNmwmInputMode, XmCMwmInputMode, XmRInt, 
-	sizeof(int), Offset(mwm_hints.input_mode), 
+    {
+	XmNmwmInputMode, XmCMwmInputMode, XmRInt,
+	sizeof(int), Offset(mwm_hints.input_mode),
 	XmRImmediate, (XtPointer) DONT_CARE,
     },
-    { 
-	XmNmwmMenu, XmCMwmMenu, XmRString, 
-	sizeof(String), Offset(mwm_menu), 
-	XmRImmediate, (XtPointer) NULL, 
+    {
+	XmNmwmMenu, XmCMwmMenu, XmRString,
+	sizeof(String), Offset(mwm_menu),
+	XmRImmediate, (XtPointer) NULL,
     },
-    { 
-	XmNfocusMovedCallback, XmCCallback, XmRCallback, 
-	sizeof(XtCallbackList), Offset(focus_moved_callback), 
+    {
+	XmNfocusMovedCallback, XmCCallback, XmRCallback,
+	sizeof(XtCallbackList), Offset(focus_moved_callback),
 	XmRImmediate, NULL,
     },
-    { 
-	XmNrealizeCallback, XmCCallback, XmRCallback, 
-	sizeof(XtCallbackList), Offset(realize_callback), 
+    {
+	XmNrealizeCallback, XmCCallback, XmRCallback,
+	sizeof(XtCallbackList), Offset(realize_callback),
 	XmRImmediate, NULL,
     },
-    { 
-	XmNinputMethod, XmCInputMethod, XmRString, 
-	sizeof(String), Offset(input_method_string), 
+    {
+	XmNinputMethod, XmCInputMethod, XmRString,
+	sizeof(String), Offset(input_method_string),
 	XmRImmediate, NULL,
     },
-    { 
-	XmNpreeditType, XmCPreeditType, XmRString, 
-	sizeof(String), Offset(preedit_type_string), 
+    {
+	XmNpreeditType, XmCPreeditType, XmRString,
+	sizeof(String), Offset(preedit_type_string),
 	XmRImmediate, "OverTheSpot,OffTheSpot,Root,OnTheSpot",
     },
     {
@@ -270,10 +267,10 @@ static XtResource extResources[] =
     },
     /* add a synonym to ShellUnitType */
     {
-	XmNunitType, XmCUnitType, XmRUnitType, 
+	XmNunitType, XmCUnitType, XmRUnitType,
 	sizeof (unsigned char), Offset (unit_type),
 	XmRImmediate, (XtPointer) XmPIXELS,
-    },	
+    },
     {
         XmNverifyPreedit, XmCVerifyPreedit, XmRBoolean,
         sizeof (Boolean), Offset (verify_preedit),
@@ -290,58 +287,58 @@ static XtResource extResources[] =
 
 static XmSyntheticResource synResources[] =
 {
-    { 
+    {
 	XmNx, sizeof (Position),
-	ParentOffset (core.x), 
+	ParentOffset (core.x),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
     },
     {
 	XmNy, sizeof (Position),
-	ParentOffset (core.y), 
+	ParentOffset (core.y),
 	XmeFromVerticalPixels,
 	XmeToVerticalPixels,
     },
     {
 	XmNwidth, sizeof (Dimension),
-	ParentOffset (core.width), 
+	ParentOffset (core.width),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
     },
-    { 
+    {
 	XmNheight, sizeof (Dimension),
-	ParentOffset (core.height), 
+	ParentOffset (core.height),
 	XmeFromVerticalPixels,
 	XmeToVerticalPixels,
     },
     {
 	XmNborderWidth, sizeof (Dimension),
-	ParentOffset (core.border_width), 
+	ParentOffset (core.border_width),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
     },
 
 /* size_hints minus things stored in core */
 
-    { 
+    {
 	XmNminWidth, sizeof(int),
-	ParentOffset(wm.size_hints.min_width), 
+	ParentOffset(wm.size_hints.min_width),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
-    },	
-    { 
+    },
+    {
 	XmNminHeight, sizeof(int),
-	ParentOffset(wm.size_hints.min_height), 
+	ParentOffset(wm.size_hints.min_height),
 	XmeFromVerticalPixels,
 	XmeToVerticalPixels,
     },
-    { 
+    {
 	XmNmaxWidth, sizeof(int),
-	ParentOffset(wm.size_hints.max_width), 
+	ParentOffset(wm.size_hints.max_width),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
-    },	
-    { 	
+    },
+    {
 	XmNmaxHeight,sizeof(int),
 	ParentOffset(wm.size_hints.max_height),
 	XmeFromVerticalPixels,
@@ -350,19 +347,19 @@ static XmSyntheticResource synResources[] =
 
 /* wm_hints */
 
-    { 
+    {
 	XmNiconX, sizeof(int),
-	ParentOffset(wm.wm_hints.icon_x), 
+	ParentOffset(wm.wm_hints.icon_x),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels,
     },
-    { 
+    {
 	XmNiconY, sizeof(int),
-	ParentOffset(wm.wm_hints.icon_y),  
+	ParentOffset(wm.wm_hints.icon_y),
 	XmeFromVerticalPixels,
 	XmeToVerticalPixels,
     },
-    { 
+    {
 	XmNmwmFunctions, sizeof(int),
 	ExtOffset(vendor.mwm_hints.functions),
 	GetMWMFunctionsFromProperty,
@@ -390,48 +387,48 @@ static XmBaseClassExtRec myBaseClassExtRec = {
     (XtArgsProc)NULL,		        /* get_values posthook    */
     XmInheritClassPartInitPrehook,	/* class_part_prehook     */
     XmInheritClassPartInitPosthook,     /* class_part_posthook    */
-    NULL,	 			/* compiled_ext_resources */   
-    NULL,	 			/* ext_resources       	  */   
-    0,					/* resource_count     	  */   
+    NULL,	 			/* compiled_ext_resources */
+    NULL,	 			/* ext_resources       	  */
+    0,					/* resource_count     	  */
     TRUE,				/* use_sub_resources	  */
 };
 
 externaldef(xmvendorshellextclassrec)
 XmVendorShellExtClassRec xmVendorShellExtClassRec = {
-    {	
-	(WidgetClass) &xmShellExtClassRec,/* superclass		*/   
-	"VendorShell",			/* class_name 		*/   
-	sizeof(XmVendorShellExtRec), 	/* size 		*/   
-	ClassInitialize, 		/* Class Initializer 	*/   
-	ClassPartInitialize,	        /* class_part_init 	*/ 
-	FALSE, 				/* Class init'ed ? 	*/   
-	(XtInitProc)NULL,		/* initialize         	*/   
-	(XtArgsProc)NULL, 		/* initialize_notify    */ 
-	NULL,	 			/* realize            	*/   
-	NULL,		 		/* actions            	*/   
-	0,				/* num_actions        	*/   
-	extResources, 			/* resources          	*/   
-	XtNumber(extResources),		/* resource_count     	*/   
-	NULLQUARK, 			/* xrm_class          	*/   
-	FALSE, 				/* compress_motion    	*/   
-	FALSE, 				/* compress_exposure  	*/   
-	FALSE, 				/* compress_enterleave	*/   
-	FALSE, 				/* visible_interest   	*/   
-	Destroy,			/* destroy            	*/   
-	NULL,	 			/* resize             	*/   
-	NULL, 				/* expose             	*/   
-	(XtSetValuesFunc)NULL,		/* set_values         	*/   
-	(XtArgsFunc)NULL, 		/* set_values_hook      */ 
-	NULL,	 			/* set_values_almost    */ 
-	(XtArgsProc)NULL,		/* get_values_hook      */ 
-	NULL,				/* accept_focus       	*/   
-	XtVersion, 			/* intrinsics version 	*/   
-	NULL, 				/* callback offsets   	*/   
-	NULL,				/* tm_table           	*/   
-	NULL, 				/* query_geometry       */ 
-	NULL,				/* display_accelerator  */ 
-	(XtPointer)&myBaseClassExtRec,	/* extension            */ 
-    },	
+    {
+	(WidgetClass) &xmShellExtClassRec,/* superclass		*/
+	"VendorShell",			/* class_name 		*/
+	sizeof(XmVendorShellExtRec), 	/* size 		*/
+	ClassInitialize, 		/* Class Initializer 	*/
+	ClassPartInitialize,	        /* class_part_init 	*/
+	FALSE, 				/* Class init'ed ? 	*/
+	(XtInitProc)NULL,		/* initialize         	*/
+	(XtArgsProc)NULL, 		/* initialize_notify    */
+	NULL,	 			/* realize            	*/
+	NULL,		 		/* actions            	*/
+	0,				/* num_actions        	*/
+	extResources, 			/* resources          	*/
+	XtNumber(extResources),		/* resource_count     	*/
+	NULLQUARK, 			/* xrm_class          	*/
+	FALSE, 				/* compress_motion    	*/
+	FALSE, 				/* compress_exposure  	*/
+	FALSE, 				/* compress_enterleave	*/
+	FALSE, 				/* visible_interest   	*/
+	Destroy,			/* destroy            	*/
+	NULL,	 			/* resize             	*/
+	NULL, 				/* expose             	*/
+	(XtSetValuesFunc)NULL,		/* set_values         	*/
+	(XtArgsFunc)NULL, 		/* set_values_hook      */
+	NULL,	 			/* set_values_almost    */
+	(XtArgsProc)NULL,		/* get_values_hook      */
+	NULL,				/* accept_focus       	*/
+	XtVersion, 			/* intrinsics version 	*/
+	NULL, 				/* callback offsets   	*/
+	NULL,				/* tm_table           	*/
+	NULL, 				/* query_geometry       */
+	NULL,				/* display_accelerator  */
+	(XtPointer)&myBaseClassExtRec,	/* extension            */
+    },
     {					/* ext			*/
 	synResources,			/* synthetic resources	*/
 	XtNumber(synResources),		/* num syn resources	*/
@@ -454,15 +451,12 @@ XmVendorShellExtClassRec xmVendorShellExtClassRec = {
     },
 };
 
-externaldef(xmVendorShellExtobjectclass) WidgetClass 
+externaldef(xmVendorShellExtobjectclass) WidgetClass
        xmVendorShellExtObjectClass = (WidgetClass) (&xmVendorShellExtClassRec);
 
-
-
-/* ARGSUSED */
-static Boolean 
+static Boolean
 CvtStringToHorizontalInt(
-        Display *display,	
+        Display *display,
         XrmValue *args,
         Cardinal *num_args,	/* unused */
         XrmValue *from,
@@ -474,13 +468,13 @@ CvtStringToHorizontalInt(
     unsigned char defaultFromType = _XmGetUnitType(widget) ;
     int tmpPix;
     Boolean parseError;
- 
+
     tmpPix = (int)
       _XmConvertStringToUnits (screen, from->addr, (int) defaultFromType,
 			       XmHORIZONTAL, XmPIXELS, (XtEnum*) &parseError);
     if (parseError)
         {
-        XtDisplayStringConversionWarning(display, (char *)from->addr, 
+        XtDisplayStringConversionWarning(display, (char *)from->addr,
 					 XmRHorizontalDimension);
         return False;
         }
@@ -488,10 +482,9 @@ CvtStringToHorizontalInt(
         _XM_CONVERTER_DONE( to, int, tmpPix, ; )
 }
 
-/* ARGSUSED */
-static Boolean 
+static Boolean
 CvtStringToVerticalInt(
-        Display *display,	
+        Display *display,
         XrmValue *args,
         Cardinal *num_args,	/* unused */
         XrmValue *from,
@@ -503,13 +496,13 @@ CvtStringToVerticalInt(
     unsigned char defaultFromType = _XmGetUnitType(widget) ;
     int tmpPix;
     Boolean parseError;
- 
+
     tmpPix = (int)
 	_XmConvertStringToUnits(screen, from->addr, (int) defaultFromType,
 				XmVERTICAL, XmPIXELS, (XtEnum*) &parseError);
     if (parseError)
 	{
-            XtDisplayStringConversionWarning(display, (char *)from->addr, 
+            XtDisplayStringConversionWarning(display, (char *)from->addr,
 					     XmRVerticalPosition);
             return False;
 	}
@@ -526,19 +519,19 @@ CvtStringToVerticalInt(
  *    Set up the converters for VendorShell int pixels
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
-    XtSetTypeConverter(XmRString, 
-		       XmRHorizontalInt, 
-		       CvtStringToHorizontalInt, 
-		       selfConvertArgs, 
+    XtSetTypeConverter(XmRString,
+		       XmRHorizontalInt,
+		       CvtStringToHorizontalInt,
+		       selfConvertArgs,
 		       XtNumber(selfConvertArgs),
 		       XtCacheNone, (XtDestructor)NULL);
-    XtSetTypeConverter(XmRString, 
-		       XmRVerticalInt, 
-		       CvtStringToVerticalInt, 
-		       selfConvertArgs, 
+    XtSetTypeConverter(XmRString,
+		       XmRVerticalInt,
+		       CvtStringToVerticalInt,
+		       selfConvertArgs,
 		       XtNumber(selfConvertArgs),
 		       XtCacheNone, (XtDestructor)NULL);
 
@@ -552,23 +545,23 @@ ClassInitialize( void )
  *    vendorShells class part.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass w )
 {
     XmVendorShellExtObjectClass wc = (XmVendorShellExtObjectClass) w;
     XmVendorShellExtObjectClass sc =
       (XmVendorShellExtObjectClass) wc->object_class.superclass;
-    
+
     if (wc == (XmVendorShellExtObjectClass)xmVendorShellExtObjectClass)
       return;
 
     if (wc->vendor_class.delete_window_handler == XmInheritProtocolHandler)
-      wc->vendor_class.delete_window_handler = 
+      wc->vendor_class.delete_window_handler =
 	sc->vendor_class.delete_window_handler;
 
     if (wc->vendor_class.offset_handler == XmInheritProtocolHandler)
-      wc->vendor_class.offset_handler = 
+      wc->vendor_class.offset_handler =
 	sc->vendor_class.offset_handler;
 }
 
@@ -578,7 +571,6 @@ ClassPartInitialize(
  *  DeleteWindowHandler
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 DeleteWindowHandler(
         Widget wid,
@@ -596,7 +588,7 @@ DeleteWindowHandler(
 	  else
 	    XtUnmapWidget((Widget) w);
 	  break;
-	  
+
 	case XmDESTROY:
 	  if (XtIsApplicationShell((Widget) w))
 	    {
@@ -607,12 +599,12 @@ DeleteWindowHandler(
 	  else
 	    XtDestroyWidget((Widget) w);
 	  break;
-	  
+
 	case XmDO_NOTHING:
 	default:
 	  break;
       }
-}    
+}
 
 
 /************************************************************************
@@ -620,7 +612,6 @@ DeleteWindowHandler(
  *     OffsetHandler
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 OffsetHandler(
         Widget shell,		/* unused */
@@ -644,7 +635,7 @@ OffsetHandler(
  *     InitializePrehook
  *
  ************************************************************************/
-static void 
+static void
 InitializePrehook(
         Widget req,
         Widget new_w,
@@ -676,7 +667,7 @@ InitializePrehook(
 	    {
 		ec->object_class.resources =
 		  (*wcePtr)->compiled_ext_resources;
-		ec->object_class.num_resources =		
+		ec->object_class.num_resources =
 		  (*wcePtr)->num_ext_resources;
 
 		XtGetResourceList((WidgetClass) ec,
@@ -699,13 +690,13 @@ InitializePrehook(
 
 	  extData = (XmWidgetExtData) XtCalloc(1, sizeof(XmWidgetExtDataRec));
 	  _XmPushWidgetExtData(parent, extData, ne->ext.extensionType);
-	  
+
 	  extData->widget = new_w;
 	  extData->reqWidget = (Widget)
 	    XtMalloc(XtClass(new_w)->core_class.widget_size);
 	  memcpy( extData->reqWidget, req,
 		XtClass(new_w)->core_class.widget_size);
-	  
+
 	  /*  Convert the fields from unit values to pixel values  */
 
 	  XtGetSubresources(parent,
@@ -730,7 +721,7 @@ InitializePrehook(
  *    we'd have it in the primary.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -760,8 +751,7 @@ Destroy(
  * function has been called twice on same widget and resource offset, thus
  * resource needs to be set NULL, otherwise leave it alone.
  */
-/* ARGSUSED */
-static void 
+static void
 CheckSetRenderTables(Widget wid,
 		     int offset,
 		     XrmValue *value )
@@ -775,7 +765,7 @@ CheckSetRenderTables(Widget wid,
 #define IS_SET_LFL(state) (state & 0x02)
 #define SET_TFL(state) (state |= 0x04)
 #define IS_SET_TFL(state) (state & 0x04)
-  
+
   extData = _XmGetWidgetExtData(wid, XmSHELL_EXTENSION);
 
 if(extData == NULL)
@@ -818,9 +808,9 @@ if(extData == NULL)
  *
  *  _XmGetAudibleWarning
  *       This function is called by a widget to get the audibleWarning
- *   value. This is done by checking to see if any of the widgets, 
- *   in the widget's parent hierarchy is a subclass of VendorShell widget 
- *   class, and if it is, returning the  VendorShell resource value. 
+ *   value. This is done by checking to see if any of the widgets,
+ *   in the widget's parent hierarchy is a subclass of VendorShell widget
+ *   class, and if it is, returning the  VendorShell resource value.
  *   If no VendorShell is found, returns XmBELL, since it is the default
  *   value for this resource.
  *************************************************************************/
@@ -833,7 +823,7 @@ _XmGetAudibleWarning(Widget w)
   while (w) {
     if (XmIsVendorShell (w))
       {
-	extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION); 
+	extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION);
 
         if(extData == NULL)
           {
@@ -851,11 +841,10 @@ _XmGetAudibleWarning(Widget w)
       w = XtParent(w);
   }
   return (XmBELL);
-} 
+}
 
 /****************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 GetMWMFunctionsFromProperty(
         Widget wid,
         int resource_offset,	/* unused */
@@ -870,10 +859,10 @@ GetMWMFunctionsFromProperty(
   Atom mwm_hints_atom ;
 
   if(    !XtIsRealized( shell)    )
-    {   
+    {
       *value = (XtArgVal) ve->vendor.mwm_hints.functions ;
       return ;
-    } 
+    }
   mwm_hints_atom = XInternAtom( XtDisplay( shell), _XA_MWM_HINTS, FALSE);
   XGetWindowProperty( XtDisplay( shell), XtWindow( shell), mwm_hints_atom, 0,
 		     (long) PROP_MWM_HINTS_ELEMENTS, FALSE, mwm_hints_atom,
@@ -899,8 +888,8 @@ GetMWMFunctionsFromProperty(
 /******* XmeFunctions ********/
 
 void
-XmeAddFocusChangeCallback(Widget w, 
-			  XtCallbackProc proc, 
+XmeAddFocusChangeCallback(Widget w,
+			  XtCallbackProc proc,
 			  XtPointer data)
 {
   XmWidgetExtData extData ;
@@ -915,7 +904,7 @@ XmeAddFocusChangeCallback(Widget w,
     return;
   }
 
-  extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION); 
+  extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION);
 
   if(extData == NULL)
   {
@@ -928,14 +917,14 @@ XmeAddFocusChangeCallback(Widget w,
 
   vendorExt = (XmVendorShellExtObject) extData->widget;
 
-  _XmAddCallback((InternalCallbackList *) 
+  _XmAddCallback((InternalCallbackList *)
 		 &(vendorExt->vendor.focus_moved_callback), proc, data);
   _XmAppUnlock(app);
 }
 
 void
-XmeRemoveFocusChangeCallback(Widget w, 
-			     XtCallbackProc proc, 
+XmeRemoveFocusChangeCallback(Widget w,
+			     XtCallbackProc proc,
 			     XtPointer data)
 {
   XmWidgetExtData extData ;
@@ -950,7 +939,7 @@ XmeRemoveFocusChangeCallback(Widget w,
     return;
   }
 
-  extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION); 
+  extData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION);
 
   if(extData == NULL)
   {
@@ -963,7 +952,7 @@ XmeRemoveFocusChangeCallback(Widget w,
 
   vendorExt = (XmVendorShellExtObject) extData->widget;
 
-  _XmRemoveCallback((InternalCallbackList *) 
+  _XmRemoveCallback((InternalCallbackList *)
 		    &(vendorExt->vendor.focus_moved_callback), proc, data);
   _XmAppUnlock(app);
 }

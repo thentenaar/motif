@@ -1353,7 +1353,6 @@ DisplayCurrentFont(XmFontSelectorWidget fsw, String font)
  *	Returns: the font string (same as buf).
  */
 
-/* ARGSUSED */
 static String
 BuildFontString(XmFontSelectorWidget fsw, FontData *cf, String buf, int size)
 {
@@ -2851,7 +2850,6 @@ CheckEncoding(XmFontSelectorWidget fsw, FamilyInfo *fam)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 FamilyChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
 {
@@ -2888,7 +2886,6 @@ FamilyChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 SizeChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
 {
@@ -2920,7 +2917,6 @@ SizeChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ChangeEncoding(Widget w, XtPointer data, XtPointer junk)
 {
@@ -2955,7 +2951,6 @@ ChangeEncoding(Widget w, XtPointer data, XtPointer junk)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ToggleScaling(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3009,7 +3004,6 @@ ToggleScaling(Widget w, XtPointer fsw_ptr, XtPointer data)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ToggleBold(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3052,7 +3046,6 @@ ToggleBold(Widget w, XtPointer fsw_ptr, XtPointer data)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ToggleItalic(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3093,7 +3086,6 @@ ToggleItalic(Widget w, XtPointer fsw_ptr, XtPointer data)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ToggleMiddlePane(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3116,7 +3108,6 @@ ToggleMiddlePane(Widget w, XtPointer fsw_ptr, XtPointer data)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 ToggleNameWindow(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3394,7 +3385,6 @@ OtherMode(Widget w, XtPointer fsw_ptr, XtPointer data)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static void
 RemoveUserError(Widget w, XtPointer fsw_ptr, XtPointer data)
 {
@@ -3427,17 +3417,10 @@ ClassInitialize()
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmFONTSELECTOR_BIT);
 }
-
 
 /*	Function Name: Initialize
  *	Description:   Called to initialize information specific
@@ -3450,7 +3433,6 @@ ClassPartInitialize(WidgetClass w_class)
  *	Returns:       none.
  */
 
-/* ARGSUSED */
 static void
 Initialize(Widget request, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -3605,7 +3587,6 @@ Destroy(Widget w)
  *	Returns:       none
  */
 
-/* ARGSUSED */
 static Boolean
 SetValues(Widget old, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
@@ -3755,7 +3736,6 @@ SetValues(Widget old, Widget request, Widget set,
  *	Returns:       none
  */
 
-/* ARGSUSED */
 static void
 GetValuesHook(Widget w, ArgList args, Cardinal * num_args)
 {

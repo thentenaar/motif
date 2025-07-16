@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ScrolledW.c /main/16 1997/07/25 16:49:57 samborn $"
@@ -30,10 +30,7 @@ static char rcsid[] = "$TOG: ScrolledW.c /main/16 1997/07/25 16:49:57 samborn $"
 #include <config.h>
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>                               /* for abs, float operation... */
-#endif
-
 #include <Xm/ClipWindowP.h>
 #include <Xm/DragDrop.h>
 #include <Xm/DrawP.h>
@@ -554,7 +551,6 @@ static XmConst XmScrollFrameTraitRec scrolledWindowSFT =
  *
  *********************************************************************/
 
-/*ARGSUSED*/
 static void
 ScrollBarPlacementDefault (Widget widget,
 int offset,                                       /* unused */
@@ -581,7 +577,6 @@ XrmValue *value)
  *    checks that this default hasn't changed.
  *
  *********************************************************************/
-/*ARGSUSED*/
 static void
 VisualPolicyDefault(
 Widget widget,
@@ -610,7 +605,6 @@ XrmValue *value )
  *   move depending on the child_type resource.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 SliderMove(
 Widget w,
@@ -770,7 +764,6 @@ unsigned char orientation)
  * LeftEdge - move the view to the left edge                            *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 LeftEdge(
 Widget wid,
@@ -792,7 +785,6 @@ Cardinal *num_params )
  * RightEdge - move the view to the Right edge                          *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 RightEdge(
 Widget wid,
@@ -814,7 +806,6 @@ Cardinal *num_params )
  * TopEdge - move the view to the Top edge                              *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 TopEdge(
 Widget wid,
@@ -836,7 +827,6 @@ Cardinal *num_params )
  * BottomEdge - move the view to the Bottom edge                        *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 BottomEdge(
 Widget wid,
@@ -858,7 +848,6 @@ Cardinal *num_params )
  * PageLeft - Scroll left a page                                        *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 PageLeft(
 Widget wid,
@@ -889,7 +878,6 @@ Cardinal *num_params )
  * PageRight - Scroll Right a page                                      *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 PageRight(
 Widget wid,
@@ -920,7 +908,6 @@ Cardinal *num_params )
  * PageUp - Scroll up a page                                            *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 PageUp(
 Widget wid,
@@ -950,7 +937,6 @@ Cardinal *num_params )
  * PageDown - Scroll Down a page                                        *
  *                                                                      *
  ************************************************************************/
-/* ARGSUSED */
 static void
 PageDown(
 Widget wid,
@@ -1020,7 +1006,6 @@ WidgetClass wc )
  *  Initialize								*
  *									*
  ************************************************************************/
-/* ARGSUSED */
 static void
 Initialize(
 Widget rw,
@@ -2252,7 +2237,6 @@ XmScrolledWindowWidget sw )
  * HandleDrop:	does nothing special                    	        *
  *									*
  ************************************************************************/
-/*ARGSUSED*/
 static void
 HandleDrop(
 Widget    w,                                      /* unused */
@@ -2270,7 +2254,6 @@ XtPointer call_data)
 }
 
 
-/*ARGSUSED*/
 static void
 TimerEvent(
 XtPointer closure,
@@ -2350,7 +2333,6 @@ XtIntervalId *id)                                 /* unused */
 }
 
 
-/*ARGSUSED*/
 static void
 HandleDrag(
 Widget   w,
@@ -2968,12 +2950,11 @@ XtWidgetGeometry *reply )
         /* else it's for real */
         retval = _XmMakeGeometryRequest((Widget) sw, &parent_request);
 
-#ifdef FIX_1474
         if (retval == XtGeometryNo && !(request->request_mode & CWWidth)) {
             parent_request.request_mode = CWHeight;
             retval = _XmMakeGeometryRequest((Widget) sw, &parent_request);
         }
-#endif
+
         if (retval == XtGeometryYes)
         {
             XtWidgetProc resize;
@@ -3093,18 +3074,12 @@ Widget wid )
             desired.height = 0 ;
         }
 
-#ifdef FIX_1474
         GetVariableSize(sw, &desired.width, &desired.height);
         desired.request_mode = CWWidth;
         (void) _XmMakeGeometryRequest(wid, &desired);
 
         desired.request_mode = CWHeight;
         (void) _XmMakeGeometryRequest(wid, &desired);
-#else
-        GetVariableSize(sw, &desired.width, &desired.height);
-        desired.request_mode = (CWWidth | CWHeight);
-        (void) _XmMakeGeometryRequest(wid, &desired);
-#endif
     }
 
     _XmProcessLock();
@@ -3314,7 +3289,6 @@ XtWidgetGeometry *ret )
  *  SetValues								*
  *									*
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
 Widget cw,
@@ -3487,7 +3461,6 @@ Cardinal *num_args )                              /* unused */
  *  Constraint Initialize
  *
  *************************************<->***********************************/
-/*ARGSUSED*/
 static void
 ConstraintInitialize(
 Widget rw,                                        /* unused */
@@ -3771,7 +3744,7 @@ Cardinal argCount )
         parent, args, argCount ));
 }
 
-Widget 
+Widget
 XmVaCreateScrolledWindow(
         Widget parent,
         char *name,
@@ -3780,18 +3753,18 @@ XmVaCreateScrolledWindow(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmScrolledWindowWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -3804,17 +3777,17 @@ XmVaCreateManagedScrolledWindow(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmScrolledWindowWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 

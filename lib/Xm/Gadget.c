@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Gadget.c /main/17 1997/07/07 11:38:57 cshi $"
@@ -66,51 +66,51 @@ static char rcsid[] = "$TOG: Gadget.c /main/17 1997/07/07 11:38:57 cshi $"
 
 /********    Static Function Declarations    ********/
 
-static void GetHighlightColor( 
+static void GetHighlightColor(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void GetTopShadowColor( 
+static void GetTopShadowColor(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
-static void GetBottomShadowColor( 
+static void GetBottomShadowColor(
                         Widget w,
                         int offset,
                         XtArgVal *value) ;
 static void ClassInitialize( void ) ;
-static void ClassPartInit( 
+static void ClassPartInit(
                         WidgetClass g) ;
-static void SecondaryObjectCreate( 
+static void SecondaryObjectCreate(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget w) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void BorderHighlight( 
+static void BorderHighlight(
                         Widget w) ;
-static void BorderUnhighlight( 
+static void BorderUnhighlight(
                         Widget w) ;
-static void FocusChange( 
+static void FocusChange(
                         Widget wid,
                         XmFocusChange change) ;
-static XmNavigability WidgetNavigable( 
+static XmNavigability WidgetNavigable(
                         Widget wid) ;
 
 static XmDirection GetDirection(Widget);
-static void GetColors(Widget widget, 
+static void GetColors(Widget widget,
 		      XmAccessColorData color_data);
 static unsigned char GetUnitType(Widget widget);
 
@@ -174,7 +174,7 @@ static XtResource resources[] =
    },
 
    {
-     XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension, 
+     XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension,
      sizeof (Dimension), XtOffsetOf( struct _XmGadgetRec, gadget.shadow_thickness),
      XmRCallProc, (XtPointer) _XmSetThickness
    },
@@ -204,7 +204,7 @@ static XtResource resources[] =
    },
    {
      XmNlayoutDirection, XmCLayoutDirection, XmRDirection,
-     sizeof(XmDirection), 
+     sizeof(XmDirection),
      XtOffsetOf(XmGadgetRec, gadget.layout_direction),
      XmRCallProc, (XtPointer) _XmDirectionDefault
    },
@@ -314,32 +314,32 @@ static XmGadgetClassExtRec  _XmGadClassExtRec = {
 externaldef(xmgadgetclassrec) XmGadgetClassRec xmGadgetClassRec =
 {
    {
-      (WidgetClass) &rectObjClassRec,   /* superclass	         */	
-      "XmGadget",                       /* class_name	         */	
-      sizeof(XmGadgetRec),              /* widget_size	         */	
+      (WidgetClass) &rectObjClassRec,   /* superclass	         */
+      "XmGadget",                       /* class_name	         */
+      sizeof(XmGadgetRec),              /* widget_size	         */
       ClassInitialize,                  /* class_initialize      */
       ClassPartInit,                    /* class part initialize */
-      False,                            /* class_inited          */	
-      Initialize,                       /* initialize	         */	
+      False,                            /* class_inited          */
+      Initialize,                       /* initialize	         */
       NULL,                             /* initialize_hook       */
-      NULL,	                        /* realize	         */	
-      NULL,				/* actions               */	
-      0,				/* num_actions	         */	
-      resources,                        /* resources	         */	
-      XtNumber(resources),              /* num_resources         */	
-      NULLQUARK,                        /* xrm_class	         */	
+      NULL,	                        /* realize	         */
+      NULL,				/* actions               */
+      0,				/* num_actions	         */
+      resources,                        /* resources	         */
+      XtNumber(resources),              /* num_resources         */
+      NULLQUARK,                        /* xrm_class	         */
       True,                             /* compress_motion       */
-      True,                             /* compress_exposure     */	
+      True,                             /* compress_exposure     */
       True,                             /* compress_enterleave   */
       False,                            /* visible_interest      */
-      Destroy,                          /* destroy               */	
-      NULL,                             /* resize                */	
-      NULL,				/* expose                */	
-      SetValues,                        /* set_values	         */	
+      Destroy,                          /* destroy               */
+      NULL,                             /* resize                */
+      NULL,				/* expose                */
+      SetValues,                        /* set_values	         */
       NULL,                             /* set_values_hook       */
       XtInheritSetValuesAlmost,         /* set_values_almost     */
       _XmGadgetGetValuesHook,           /* get_values_hook       */
-      NULL,                             /* accept_focus	         */	
+      NULL,                             /* accept_focus	         */
       XtVersion,                        /* version               */
       NULL,                             /* callback private      */
       NULL,                             /* tm_table              */
@@ -361,7 +361,7 @@ externaldef(xmgadgetclassrec) XmGadgetClassRec xmGadgetClassRec =
    }
 };
 
-externaldef(xmgadgetclass) WidgetClass xmGadgetClass = 
+externaldef(xmgadgetclass) WidgetClass xmGadgetClass =
 		           (WidgetClass) &xmGadgetClassRec;
 
 
@@ -391,7 +391,7 @@ static XmConst XmSpecifyLayoutDirectionTraitRec gadLDT = {
  ************************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 GetHighlightColor(
         Widget w,
 	int offset,		/* unused */
@@ -403,7 +403,7 @@ GetHighlightColor(
 }
 
 /*ARGSUSED*/
-static void 
+static void
 GetTopShadowColor(
         Widget w,
 	int offset,		/* unused */
@@ -415,7 +415,7 @@ GetTopShadowColor(
 }
 
 /*ARGSUSED*/
-static void 
+static void
 GetBottomShadowColor(
         Widget w,
 	int offset,		/* unused */
@@ -431,7 +431,7 @@ GetBottomShadowColor(
  *  ClassInitialize
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
    _XmInitializeExtensions();
@@ -446,7 +446,7 @@ ClassInitialize( void )
  *	Used by subclasses of gadget to inherit class record procedures.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInit(
         WidgetClass g )
 {
@@ -474,7 +474,7 @@ ClassPartInit(
    }
 
     if (wc->gadget_class.border_highlight == XmInheritWidgetProc)
-	wc->gadget_class.border_highlight = 
+	wc->gadget_class.border_highlight =
            super->gadget_class.border_highlight;
 
     if (wc->gadget_class.border_unhighlight == XmInheritWidgetProc)
@@ -519,7 +519,7 @@ ClassPartInit(
 *
 ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 SecondaryObjectCreate(
         Widget req,
         Widget new_w,
@@ -555,7 +555,7 @@ SecondaryObjectCreate(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -601,17 +601,17 @@ Initialize(
 	 args, *num_args);
 
     XmSetToolTipString(nw, tool_tip_string);
-   
+
    gw->gadget.event_mask = 0;
    gw->gadget.have_traversal = FALSE ;
    gw->gadget.highlighted = FALSE ;
    gw->gadget.highlight_drawn = FALSE ;
 
    if(    (gw->gadget.navigation_type != XmDYNAMIC_DEFAULT_TAB_GROUP)
-       && !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE, 
+       && !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE,
                                   gw->gadget.navigation_type, (Widget) gw)    )
    {   gw->gadget.navigation_type = XmNONE ;
-       } 
+       }
 
    _XmNavigInitialize ((Widget) request, (Widget) gw, args, num_args);
 
@@ -624,7 +624,7 @@ Initialize(
                              gw->gadget.shadow_thickness * 2;
 
    if (request->rectangle.height == 0)
-      gw->rectangle.height += gw->gadget.highlight_thickness * 2 + 
+      gw->rectangle.height += gw->gadget.highlight_thickness * 2 +
                               gw->gadget.shadow_thickness * 2;
 
 
@@ -644,22 +644,13 @@ Initialize(
  *	Clean up allocated resources when the widget is destroyed.
  *
  ************************************************************************/
-static void 
-Destroy(
-        Widget w )
+static void Destroy(Widget w)
 {
    XmGadget g = (XmGadget)w;
 
    _XmNavigDestroy(w);
-#ifdef FIX_1388
    _XmToolTipRemove(w);
-#else   
-   _XmToolTipLeave(w, NULL, NULL, NULL);
-#endif
 }
-
-
-
 
 /************************************************************************
  *
@@ -667,7 +658,7 @@ Destroy(
  *     Perform and updating necessary for a set values call.
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -702,11 +693,11 @@ SetValues(
 
    if(    cur->gadget.navigation_type != new_w->gadget.navigation_type    )
      {
-       if(    !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE, 
+       if(    !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE,
 			        new_w->gadget.navigation_type, (Widget) new_w)    )
 	 {
 	   new_w->gadget.navigation_type = cur->gadget.navigation_type ;
-	 } 
+	 }
      }
    returnFlag = _XmNavigSetValues ((Widget) cur, (Widget) req, (Widget) new_w,
 				                               args, num_args);
@@ -728,7 +719,7 @@ SetValues(
    if (cur->gadget.shadow_thickness != new_w->gadget.shadow_thickness ||
        cur->gadget.highlight_thickness != new_w->gadget.highlight_thickness)
       returnFlag = True;
-   
+
 
    /*  Force the border width to 0  */
 
@@ -749,7 +740,7 @@ SetValues(
      }
 
    /*  Return a flag which may indicate that a redraw needs to occur.  */
-   
+
    return (returnFlag);
 }
 
@@ -757,11 +748,11 @@ SetValues(
 /**********************************************************************
  *
  *  _XmBuildGadgetResources
- *	Build up the gadget's synthetic resource processing list 
+ *	Build up the gadget's synthetic resource processing list
  *	by combining the super classes with this class.
  *
  **********************************************************************/
-void 
+void
 _XmBuildGadgetResources(
         WidgetClass c )
 {
@@ -824,13 +815,13 @@ _XmBuildGadgetResources(
 			((XmExtClassRec *)secObjSuperClass)
 				->ext_class.num_syn_resources);
 	}
-	_XmProcessUnlock();	
+	_XmProcessUnlock();
 }
 
-static void 
+static void
 BorderHighlight(
         Widget w )
-{   
+{
     XmGadget g ;
 
     g = (XmGadget) w ;
@@ -840,21 +831,21 @@ BorderHighlight(
 
     if(    g->rectangle.width == 0 || g->rectangle.height == 0
         || g->gadget.highlight_thickness == 0    )
-    {   
+    {
         return ;
-        } 
+        }
 
-    XmeDrawHighlight( XtDisplay( (Widget) g), XtWindow( (Widget) g), 
+    XmeDrawHighlight( XtDisplay( (Widget) g), XtWindow( (Widget) g),
            ((XmManagerWidget)(g->object.parent))->manager.highlight_GC,
              g->rectangle.x, g->rectangle.y, g->rectangle.width,
                g->rectangle.height, g->gadget.highlight_thickness) ;
     return ;
     }
 
-static void 
+static void
 BorderUnhighlight(
         Widget w )
-{   
+{
     XmGadget g = (XmGadget) w ;
     XmSpecifyUnhighlightTrait UnhighlightT;
     GC manager_background_GC;
@@ -865,9 +856,9 @@ BorderUnhighlight(
     if ( g->rectangle.width == 0
 	|| g->rectangle.height == 0
         || g->gadget.highlight_thickness == 0)
-	{   
+	{
         return ;
-        } 
+        }
 
     /* If unhighlight trait in parent use specified GC, else just clear area */
     if ( XmIsManager(g->object.parent)
@@ -886,8 +877,8 @@ BorderUnhighlight(
 	}
     else
 	{
-	XmeClearBorder( XtDisplay( g), XtWindow( g), 
-			g->rectangle.x, g->rectangle.y, 
+	XmeClearBorder( XtDisplay( g), XtWindow( g),
+			g->rectangle.x, g->rectangle.y,
 			g->rectangle.width, g->rectangle.height,
 			g->gadget.highlight_thickness) ;
 	}
@@ -899,7 +890,7 @@ static void
 FocusChange(
         Widget wid,
         XmFocusChange change)
-{   
+{
   /* Enter/Leave is called only in pointer mode,
    * Focus in/out only called in explicit mode.
    */
@@ -918,10 +909,10 @@ FocusChange(
 	}
       if(    ((XmGadgetClass) XtClass( wid))
                                            ->gadget_class.border_highlight    )
-        {   
+        {
 	  (*(((XmGadgetClass) XtClass( wid))
                                       ->gadget_class.border_highlight))( wid) ;
-	} 
+	}
       break ;
     case XmLEAVE:
       if(    !(((XmGadget) wid)->gadget.highlight_on_enter)    )
@@ -936,10 +927,10 @@ FocusChange(
 	}
       if(    ((XmGadgetClass) XtClass( wid))
                                          ->gadget_class.border_unhighlight    )
-        {   
+        {
 	  (*(((XmGadgetClass) XtClass( wid))
                                     ->gadget_class.border_unhighlight))( wid) ;
-	} 
+	}
       break ;
     }
   return ;
@@ -948,10 +939,10 @@ FocusChange(
 static XmNavigability
 WidgetNavigable(
         Widget wid)
-{   
+{
   if(    XtIsSensitive(wid)
      &&  ((XmGadget) wid)->gadget.traversal_on    )
-    {   
+    {
       XmNavigationType nav_type = ((XmGadget) wid)->gadget.navigation_type ;
 
       if(    (nav_type == XmSTICKY_TAB_GROUP)
@@ -969,7 +960,7 @@ WidgetNavigable(
 
 
 static void
-GetColors(Widget w, 
+GetColors(Widget w,
 	  XmAccessColorData color_data)
 {
     XmManagerWidget parent = (XmManagerWidget) XtParent(w);
@@ -989,7 +980,7 @@ GetUnitType(Widget w)
     return ((XmGadget) w)->gadget.unit_type ;
 }
 
-static XmDirection 
+static XmDirection
 GetDirection(Widget w)
 {
   return ((XmGadget)(w))->gadget.layout_direction;
@@ -1004,7 +995,7 @@ GetToolTipString(Widget wid,
     *value = (XtArgVal) string;
 }
 
-XmImportOperator 
+XmImportOperator
 SetToolTipString(Widget wid,
                  int resource, /* unused */
                  XtArgVal * value)

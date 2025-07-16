@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
@@ -30,10 +30,7 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 #include <config.h>
 #endif
 
-
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 
 #include <Xm/DisplayP.h>        /* for enableThinThickness */
 #include <Xm/DrawP.h>
@@ -89,164 +86,164 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 
 /********    Static Function Declarations    ********/
 
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void ProcessingDirectionDefault( 
+static void ProcessingDirectionDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void BackgroundPixelDefault( 
+static void BackgroundPixelDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void TraversalDefault( 
+static void TraversalDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void HighlightDefault( 
+static void HighlightDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void SliderVisualDefault( 
+static void SliderVisualDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void SliderMarkDefault( 
+static void SliderMarkDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void EditableDefault( 
+static void EditableDefault(
                         XmScrollBarWidget widget,
                         int offset,
                         XrmValue *value) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void GetForegroundGC( 
+static void GetForegroundGC(
                         XmScrollBarWidget sbw) ;
-static void GetUnavailableGC( 
+static void GetUnavailableGC(
                         XmScrollBarWidget sbw) ;
-static void GetFlatSliderGC( 
+static void GetFlatSliderGC(
                         XmScrollBarWidget sbw) ;
-static void GetSliderPixmap( 
+static void GetSliderPixmap(
                         XmScrollBarWidget sbw) ;
-static void CalcSliderRect( 
+static void CalcSliderRect(
                         XmScrollBarWidget sbw,
                         short *slider_x,
                         short *slider_y,
                         short *slider_width,
                         short *slider_height) ;
-static void DrawSliderPixmap( 
+static void DrawSliderPixmap(
                         XmScrollBarWidget sbw) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static void Realize( 
+static void Realize(
                         Widget sbw,
                         XtValueMask *window_mask,
                         XSetWindowAttributes *window_attributes) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static Boolean ValidateInputs( 
+static Boolean ValidateInputs(
                         XmScrollBarWidget current,
                         XmScrollBarWidget request,
                         XmScrollBarWidget new_w) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static int CalcSliderVal( 
+static int CalcSliderVal(
                         XmScrollBarWidget sbw,
                         int x,
                         int y) ;
-static void Select( 
+static void Select(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Release( 
+static void Release(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void Moved( 
+static void Moved(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void TopOrBottom( 
+static void TopOrBottom(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void IncrementUpOrLeft( 
+static void IncrementUpOrLeft(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void IncrementDownOrRight( 
+static void IncrementDownOrRight(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void PageUpOrLeft( 
+static void PageUpOrLeft(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void PageDownOrRight( 
+static void PageDownOrRight(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void CancelDrag( 
+static void CancelDrag(
                         Widget wid,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static void MoveSlider( 
+static void MoveSlider(
                         XmScrollBarWidget sbw,
                         int currentX,
                         int currentY) ;
-static void RedrawSliderWindow( 
+static void RedrawSliderWindow(
                         XmScrollBarWidget sbw) ;
-static Boolean ChangeScrollBarValue( 
+static Boolean ChangeScrollBarValue(
                         XmScrollBarWidget sbw) ;
-static void TimerEvent( 
+static void TimerEvent(
                         XtPointer closure,
                         XtIntervalId *id) ;
-static void ScrollCallback( 
+static void ScrollCallback(
                         XmScrollBarWidget sbw,
                         int reason,
                         int value,
                         int xpixel,
                         int ypixel,
                         XEvent *event) ;
-static void ExportScrollBarValue( 
+static void ExportScrollBarValue(
                         Widget wid,
                         int offset,
                         XtArgVal *value) ;
-static XmImportOperator ImportScrollBarValue( 
+static XmImportOperator ImportScrollBarValue(
                         Widget wid,
                         int offset,
                         XtArgVal *value) ;
 
 
-static void NavigChangeMoveCB(Widget nav, 
+static void NavigChangeMoveCB(Widget nav,
 			      XtCallbackProc moveProc,
 			      XtPointer closure,
 			      Boolean setunset) ;
-static void NavigSetValue(Widget nav, 
-			  XmNavigatorData nav_data, 
+static void NavigSetValue(Widget nav,
+			  XmNavigatorData nav_data,
 			  Boolean notify) ;
-static void NavigGetValue(Widget nav, 
+static void NavigGetValue(Widget nav,
 			  XmNavigatorData nav_data) ;
 
 /********    End Static Function Declarations    ********/
@@ -271,7 +268,7 @@ static XtActionsRec actions[] =
 
 /*  Resource list for ScrollBar  */
 
-static XtResource resources[] = 
+static XtResource resources[] =
 {
 	{ XmNnavigationType, XmCNavigationType, XmRNavigationType,
 	  sizeof(unsigned char),
@@ -306,13 +303,13 @@ static XtResource resources[] =
 	  XtOffsetOf(XmScrollBarRec, scrollBar.show_arrows),
 	  XmRImmediate, (XtPointer) XmEACH_SIDE
 	},
-	{ XmNorientation, XmCOrientation, 
+	{ XmNorientation, XmCOrientation,
 	  XmROrientation, sizeof (unsigned char),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.orientation),
 	  XmRImmediate, (XtPointer) XmVERTICAL
 	},
-	{ XmNprocessingDirection, XmCProcessingDirection, 
-	  XmRProcessingDirection, sizeof (unsigned char), 
+	{ XmNprocessingDirection, XmCProcessingDirection,
+	  XmRProcessingDirection, sizeof (unsigned char),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.processing_direction),
 	  XmRCallProc, (XtPointer) ProcessingDirectionDefault
 	},
@@ -332,17 +329,17 @@ static XtResource resources[] =
 	  XtOffsetOf(XmScrollBarRec, scrollBar.repeat_delay),
 	  XmRImmediate, (XtPointer) 50
 	},
-	{ XmNvalueChangedCallback, XmCCallback, 
+	{ XmNvalueChangedCallback, XmCCallback,
 	  XmRCallback, sizeof(XtCallbackList),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.value_changed_callback),
 	  XmRPointer, (XtPointer) NULL
 	},
-	{ XmNincrementCallback, XmCCallback, 
+	{ XmNincrementCallback, XmCCallback,
 	  XmRCallback, sizeof(XtCallbackList),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.increment_callback),
 	  XmRPointer, (XtPointer) NULL
 	},
-	{ XmNdecrementCallback, XmCCallback, 
+	{ XmNdecrementCallback, XmCCallback,
 	  XmRCallback, sizeof(XtCallbackList),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.decrement_callback),
 	  XmRPointer, (XtPointer) NULL
@@ -352,7 +349,7 @@ static XtResource resources[] =
 	  XtOffsetOf(XmScrollBarRec, scrollBar.page_increment_callback),
 	  XmRPointer, (XtPointer) NULL
 	},
-	{ XmNpageDecrementCallback, XmCCallback, 
+	{ XmNpageDecrementCallback, XmCCallback,
 	  XmRCallback, sizeof (XtCallbackList),
 	  XtOffsetOf(XmScrollBarRec, scrollBar.page_decrement_callback),
 	  XmRPointer, (XtPointer) NULL
@@ -378,7 +375,7 @@ static XtResource resources[] =
           XmRCallProc, (XtPointer) TraversalDefault
         },
         {
-          XmNhighlightThickness, XmCHighlightThickness, 
+          XmNhighlightThickness, XmCHighlightThickness,
 	  XmRHorizontalDimension, sizeof (Dimension),
           XtOffsetOf(XmPrimitiveRec, primitive.highlight_thickness),
           XmRCallProc, (XtPointer) HighlightDefault
@@ -388,15 +385,15 @@ static XtResource resources[] =
           sizeof (unsigned short),
           XtOffsetOf(XmScrollBarRec, scrollBar.snap_back_multiple),
           XmRImmediate, (XtPointer) MAXDIMENSION
-        },   
+        },
         {
-          XmNslidingMode, XmCSlidingMode, XmRSlidingMode, 
-	  sizeof(XtEnum), XtOffsetOf(XmScrollBarRec, scrollBar.sliding_mode), 
+          XmNslidingMode, XmCSlidingMode, XmRSlidingMode,
+	  sizeof(XtEnum), XtOffsetOf(XmScrollBarRec, scrollBar.sliding_mode),
 	  XmRImmediate, (XtPointer) XmSLIDER
         },
 	{
-          XmNeditable, XmCEditable, XmRBoolean, 
-          sizeof(XtEnum), XtOffsetOf(XmScrollBarRec,scrollBar.editable), 
+          XmNeditable, XmCEditable, XmRBoolean,
+          sizeof(XtEnum), XtOffsetOf(XmScrollBarRec,scrollBar.editable),
           XmRCallProc, (XtPointer) EditableDefault
         },
         {
@@ -420,7 +417,7 @@ static XmSyntheticResource syn_resources[] =
 {
 	{ XmNvalue,
 	  sizeof (int),
-	  XtOffsetOf(XmScrollBarRec, scrollBar.value), 
+	  XtOffsetOf(XmScrollBarRec, scrollBar.value),
 	  ExportScrollBarValue,
 	  ImportScrollBarValue
 	},
@@ -438,24 +435,24 @@ externaldef(xmscrollbarclassrec) XmScrollBarClassRec xmScrollBarClassRec =
       FALSE,                            /* class_inited          */
       Initialize,                       /* initialize	         */
       (XtArgsProc)NULL,                 /* initialize_hook       */
-      Realize,                          /* realize	         */	
-      actions,                          /* actions               */	
-      XtNumber(actions),                /* num_actions	         */	
-      resources,                        /* resources	         */	
-      XtNumber(resources),              /* num_resources         */	
-      NULLQUARK,                        /* xrm_class	         */	
-      TRUE,                             /* compress_motion       */	
-      XtExposeCompressMaximal,          /* compress_exposure     */	
+      Realize,                          /* realize	         */
+      actions,                          /* actions               */
+      XtNumber(actions),                /* num_actions	         */
+      resources,                        /* resources	         */
+      XtNumber(resources),              /* num_resources         */
+      NULLQUARK,                        /* xrm_class	         */
+      TRUE,                             /* compress_motion       */
+      XtExposeCompressMaximal,          /* compress_exposure     */
       TRUE,                             /* compress_enterleave   */
-      FALSE,                            /* visible_interest      */	
-      Destroy,                          /* destroy               */	
-      Resize,                           /* resize                */	
-      Redisplay,                        /* expose                */	
-      SetValues,                        /* set_values    	 */	
+      FALSE,                            /* visible_interest      */
+      Destroy,                          /* destroy               */
+      Resize,                           /* resize                */
+      Redisplay,                        /* expose                */
+      SetValues,                        /* set_values    	 */
       (XtArgsFunc)NULL,                 /* set_values_hook       */
       XtInheritSetValuesAlmost,         /* set_values_almost     */
       (XtArgsProc)NULL,			/* get_values_hook       */
-      (XtAcceptFocusProc)NULL,          /* accept_focus	         */	
+      (XtAcceptFocusProc)NULL,          /* accept_focus	         */
       XtVersion,                        /* version               */
       NULL,                             /* callback private      */
       defaultTranslations,              /* tm_table              */
@@ -479,7 +476,7 @@ externaldef(xmscrollbarclassrec) XmScrollBarClassRec xmScrollBarClassRec =
    },
 };
 
-externaldef(xmscrollbarwidgetclass) WidgetClass xmScrollBarWidgetClass = 
+externaldef(xmscrollbarwidgetclass) WidgetClass xmScrollBarWidgetClass =
      (WidgetClass) &xmScrollBarClassRec;
 
 
@@ -499,8 +496,7 @@ static XmConst XmNavigatorTraitRec scrollBarNT = {
  *	to reverse processing if needed.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 ExportScrollBarValue(
         Widget wid,
         int offset,		/* unused */
@@ -519,8 +515,7 @@ ExportScrollBarValue(
  *  Indicate that the value did indeed change.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static XmImportOperator 
+static XmImportOperator
 ImportScrollBarValue(
         Widget wid,
         int offset,		/* unused */
@@ -537,12 +532,11 @@ ImportScrollBarValue(
 /*********************************************************************
  *
  * ProcessingDirectionDefault
- *    This procedure provides the dynamic default behavior for 
+ *    This procedure provides the dynamic default behavior for
  *    the processing direction resource dependent on the orientation.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 ProcessingDirectionDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -568,7 +562,7 @@ ProcessingDirectionDefault(
 /*********************************************************************
  *
  * BackgroundPixelDefault
- *    This procedure provides the dynamic default behavior for 
+ *    This procedure provides the dynamic default behavior for
  *    the background color. It looks to see if the parent is a
  *    ScrolledWindow, and if so, it uses the parent background.
  *    This is mostly for compatibility with 1.1 where the scrolledwindow
@@ -577,7 +571,7 @@ ProcessingDirectionDefault(
  *    which is a new feature for non automatic.
  *
  *********************************************************************/
-static void 
+static void
 BackgroundPixelDefault(
         XmScrollBarWidget widget,
         int offset,
@@ -600,7 +594,7 @@ BackgroundPixelDefault(
 /*********************************************************************
  *
  * TraversalDefault
- *    This procedure provides the dynamic default behavior for 
+ *    This procedure provides the dynamic default behavior for
  *    the traversal. It looks to see if the parent is a
  *    ScrolledWindow, and if so, it sets it to On.
  *    This is mostly for compatibility with 1.1 where the scrolledwindow
@@ -608,8 +602,7 @@ BackgroundPixelDefault(
  *    Note that it works only for automatic.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 TraversalDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -622,7 +615,7 @@ TraversalDefault(
 
       traversal = False ;
       value->addr = (XPointer) &traversal;
-              
+
       if (XmIsScrolledWindow(parent)) {
           XtSetArg(al[0], XmNscrollingPolicy, &sp);
           XtGetValues(parent, al, 1);
@@ -638,11 +631,10 @@ TraversalDefault(
 /*********************************************************************
  *
  * SliderVisualDefault
- *    
+ *
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 SliderVisualDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -651,13 +643,13 @@ SliderVisualDefault(
       static XtEnum slider_visual ;
 
       value->addr = (XPointer) &slider_visual;
-              
+
       if (widget->scrollBar.sliding_mode == XmTHERMOMETER) {
           slider_visual = XmTROUGH_COLOR ;
       } else {
 	  slider_visual = XmSHADOWED_BACKGROUND ;
       }
-      
+
 }
 
 
@@ -665,11 +657,10 @@ SliderVisualDefault(
 /*********************************************************************
  *
  * SliderMarkDefault
- *    
+ *
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 SliderMarkDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -678,7 +669,7 @@ SliderMarkDefault(
       static XtEnum slider_mark ;
 
       value->addr = (XPointer) &slider_mark;
-              
+
       if ((widget->scrollBar.sliding_mode == XmTHERMOMETER) &&
 	  (widget->scrollBar.editable))
 	  slider_mark = XmROUND_MARK ;
@@ -691,11 +682,10 @@ SliderMarkDefault(
 /*********************************************************************
  *
  * EditableDefault
- *    
+ *
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 EditableDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -704,27 +694,26 @@ EditableDefault(
       static XtEnum editable ;
 
       value->addr = (XPointer) &editable;
-              
+
       if (widget->scrollBar.sliding_mode == XmTHERMOMETER) {
           editable = False ;
       } else {
 	  editable = True ;
       }
-      
+
 }
 
 /*********************************************************************
  *
  * HighlightDefault
- *    This procedure provides the dynamic default behavior for 
+ *    This procedure provides the dynamic default behavior for
  *    the highlight. It looks to see if the parent is a
- *    ScrolledWindow, and if so, it sets it to 2 or 1 depending on 
+ *    ScrolledWindow, and if so, it sets it to 2 or 1 depending on
  *    the enableThinThickness resource, otherwise, 0.
  *    Note that it works only for automatic.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 HighlightDefault(
         XmScrollBarWidget widget,
         int offset,		/* unused */
@@ -735,10 +724,10 @@ HighlightDefault(
     Arg al[1] ;
     unsigned char sp ;
     Boolean thinthickness = False;
-    
+
     highlight = 0 ;
     value->addr = (XPointer) &highlight;
-    
+
     if (XmIsScrolledWindow(parent)) {
 	XtSetArg(al[0], XmNscrollingPolicy, &sp);
 	XtGetValues(parent, al, 1);
@@ -766,7 +755,7 @@ HighlightDefault(
  *     Initialize the fast subclassing.
  *
  *********************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -787,8 +776,7 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -797,48 +785,48 @@ Initialize(
 {
     XmScrollBarWidget request = (XmScrollBarWidget) rw ;
     XmScrollBarWidget new_w = (XmScrollBarWidget) nw ;
-    
+
     Boolean default_value = FALSE;
-    
+
     if(!XmRepTypeValidValue( XmRID_SHOW_ARROWS,
 			    new_w->scrollBar.show_arrows, (Widget) new_w) )
 	{
 	    new_w->scrollBar.show_arrows = XmEACH_SIDE;
 	}
-    
+
     if(!XmRepTypeValidValue( XmRID_SLIDER_VISUAL,
 			    new_w->scrollBar.slider_visual, (Widget) new_w) )
 	{
 	    new_w->scrollBar.slider_visual = XmSHADOWED_BACKGROUND;
 	}
-    
+
     if(!XmRepTypeValidValue( XmRID_SLIDER_MARK,
 			    new_w->scrollBar.slider_mark, (Widget) new_w) )
 	{
 	    new_w->scrollBar.slider_mark = XmNONE;
 	}
-    
+
     if(!XmRepTypeValidValue( XmRID_SLIDING_MODE,
 			    new_w->scrollBar.sliding_mode, (Widget) new_w) )
 	{
 	    new_w->scrollBar.sliding_mode = XmSLIDER;
 	}
-    
+
      if (new_w->scrollBar.value == XmINVALID_DIMENSION)
 	{
 	    new_w->scrollBar.value = 0;
 	    default_value = True;
 	}
-    
-    /* Validate the incoming data  */                      
-    
+
+    /* Validate the incoming data  */
+
     if (new_w->scrollBar.minimum >= new_w->scrollBar.maximum)
 	{
 	    new_w->scrollBar.minimum = 0;
 	    new_w->scrollBar.maximum = 100;
 	    XmeWarning( (Widget) new_w, MESSAGE1);
 	}
-    
+
     if (new_w->scrollBar.slider_size == XmINVALID_DIMENSION)
 	{
 	    new_w->scrollBar.slider_size = (new_w->scrollBar.maximum
@@ -846,21 +834,21 @@ Initialize(
 	    if (new_w->scrollBar.slider_size < 1)
 		new_w->scrollBar.slider_size = 1;
 	}
-    
+
     if (new_w->scrollBar.slider_size < 1)
 	{
 	    new_w->scrollBar.slider_size = 1;
 	    XmeWarning( (Widget) new_w, MESSAGE2);
 	}
 
-    if (new_w->scrollBar.slider_size > 
+    if (new_w->scrollBar.slider_size >
 	(new_w->scrollBar.maximum - new_w->scrollBar.minimum))
 	{
 	    new_w->scrollBar.slider_size = new_w->scrollBar.maximum
 		- new_w->scrollBar.minimum;
 	    XmeWarning( (Widget) new_w, MESSAGE13);
 	}
-    
+
     /* in thermo, slider_size is forced to be 0 */
     if (new_w->scrollBar.sliding_mode == XmTHERMOMETER)
 	new_w->scrollBar.slider_size = 0 ;
@@ -870,25 +858,25 @@ Initialize(
 	    new_w->scrollBar.value = new_w->scrollBar.minimum;
 	    if (!default_value) XmeWarning( (Widget) new_w, MESSAGE3);
 	}
-    
-    if (new_w->scrollBar.value > 
+
+    if (new_w->scrollBar.value >
 	new_w->scrollBar.maximum - new_w->scrollBar.slider_size)
 	{
 	    new_w->scrollBar.value = new_w->scrollBar.minimum;
 	    if (!default_value) XmeWarning( (Widget) new_w, MESSAGE4);
 	}
-    
-    if(    !XmRepTypeValidValue(XmRID_ORIENTATION, 
+
+    if(    !XmRepTypeValidValue(XmRID_ORIENTATION,
 				new_w->scrollBar.orientation, (Widget) new_w))
 	{
 	    new_w->scrollBar.orientation = XmVERTICAL;
 	}
-    
+
     if (new_w->scrollBar.orientation == XmHORIZONTAL)
 	{
 	    if ((new_w->scrollBar.processing_direction != XmMAX_ON_RIGHT) &&
 		(new_w->scrollBar.processing_direction != XmMAX_ON_LEFT))
-		
+
 		{
 		    new_w->scrollBar.processing_direction = XmMAX_ON_RIGHT;
 		    XmeWarning( (Widget) new_w, MESSAGE6);
@@ -903,33 +891,33 @@ Initialize(
 		    XmeWarning( (Widget) new_w, MESSAGE6);
 		}
 	}
-    
+
     if (new_w->scrollBar.increment <= 0)
 	{
 	    new_w->scrollBar.increment = 1;
 	    XmeWarning( (Widget) new_w, MESSAGE7);
 	}
-    
+
     if (new_w->scrollBar.page_increment <= 0)
 	{
 	    new_w->scrollBar.page_increment = 10;
 	    XmeWarning( (Widget) new_w, MESSAGE8);
 	}
-    
+
     if (new_w->scrollBar.initial_delay <= 0)
 	{
 	    new_w->scrollBar.initial_delay = 250;
 	    XmeWarning( (Widget) new_w, MESSAGE9);
 	}
-    
+
     if (new_w->scrollBar.repeat_delay <= 0)
 	{
 	    new_w->scrollBar.repeat_delay = 75;
 	    XmeWarning( (Widget) new_w, MESSAGE10);
 	}
-    
+
     /*  Set up a geometry for the widget if it is currently 0.  */
-    
+
     if (request->core.width == 0)
 	{
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
@@ -944,20 +932,20 @@ Initialize(
 	    else
 		new_w->core.height += 100;
 	}
-    
+
     /*  Reverse the value for reverse processing.  */
-    
+
     if (PROCESS_DIR_INVERSED(new_w))
 	new_w->scrollBar.value = INVERSED_VALUE(new_w);
-    
+
     /*  Set the internally used variables.  */
-    
+
     new_w->scrollBar.flags = 0;
     if (new_w->scrollBar.slider_size < (new_w->scrollBar.maximum
 					- new_w->scrollBar.minimum))
 	{
 	    new_w->scrollBar.flags |= SLIDER_AVAILABLE;
-	    
+
 	    if (new_w->scrollBar.value > new_w->scrollBar.minimum)
 		new_w->scrollBar.flags |= ARROW1_AVAILABLE;
 	    if (new_w->scrollBar.value < (new_w->scrollBar.maximum
@@ -973,34 +961,34 @@ Initialize(
 	    new_w->scrollBar.flags |= ARROW1_AVAILABLE;
 	    new_w->scrollBar.flags |= ARROW2_AVAILABLE;
 	}
-    
+
     new_w->scrollBar.pixmap = 0;
     new_w->scrollBar.sliding_on = FALSE;
     new_w->scrollBar.timer = 0;
     new_w->scrollBar.add_flags = 0 ;
-    
+
     new_w->scrollBar.arrow_width = 0;
     new_w->scrollBar.arrow_height = 0;
-    
+
     new_w->scrollBar.arrow1_x = 0;
     new_w->scrollBar.arrow1_y = 0;
     new_w->scrollBar.arrow1_selected = FALSE;
-    
+
     new_w->scrollBar.arrow2_x = 0;
     new_w->scrollBar.arrow2_y = 0;
     new_w->scrollBar.arrow2_selected = FALSE;
-    
+
     new_w->scrollBar.saved_value = new_w->scrollBar.value;
-    
+
     if (LayoutIsRtoLP(new_w))
 	new_w->scrollBar.flags &= ~VALUE_SET_FLAG;
-    
+
     /*  Get the drawing graphics contexts.  */
-    
+
     GetForegroundGC(new_w);
     GetUnavailableGC(new_w);
     GetFlatSliderGC(new_w);
-    
+
     /* call the resize method to get an initial size */
 
     {
@@ -1023,7 +1011,7 @@ Initialize(
  *     Get the graphics context used for drawing the slider and arrows.
  *
  ************************************************************************/
-static void 
+static void
 GetForegroundGC(
         XmScrollBarWidget sbw )
 {
@@ -1035,7 +1023,7 @@ GetForegroundGC(
     values.background = sbw->primitive.foreground;
     values.graphics_exposures = False;
 
-    sbw->scrollBar.foreground_GC = XtAllocateGC ((Widget) sbw, 0, valueMask, 
+    sbw->scrollBar.foreground_GC = XtAllocateGC ((Widget) sbw, 0, valueMask,
 						 &values, 0, GCFont);
 }
 
@@ -1045,7 +1033,7 @@ GetForegroundGC(
  *     Get the graphics context used for drawing the flat slider
  *
  ************************************************************************/
-static void 
+static void
 GetFlatSliderGC(
         XmScrollBarWidget sbw )
 {
@@ -1056,13 +1044,13 @@ GetFlatSliderGC(
     unusedMask = GCFont | GCClipXOrigin | GCClipYOrigin;
     if (sbw->scrollBar.slider_visual == XmTROUGH_COLOR)
 	values.foreground = sbw->scrollBar.trough_color;
-    else 
+    else
 	values.foreground = sbw->primitive.foreground;
     values.background = sbw->core.background_pixel;
     values.graphics_exposures = False;
 
-    sbw->scrollBar.flat_slider_GC = XtAllocateGC ((Widget) sbw, 0, valueMask, 
-						  &values, GCClipMask, 
+    sbw->scrollBar.flat_slider_GC = XtAllocateGC ((Widget) sbw, 0, valueMask,
+						  &values, GCClipMask,
 						  unusedMask);
 }
 
@@ -1075,14 +1063,14 @@ GetFlatSliderGC(
  *     as being unavailable.
  *
  ************************************************************************/
-static void 
+static void
 GetUnavailableGC(
         XmScrollBarWidget sbw )
 {
     XGCValues values;
     XtGCMask  valueMask, unusedMask;
-    
-    valueMask = GCForeground | GCBackground | GCGraphicsExposures | 
+
+    valueMask = GCForeground | GCBackground | GCGraphicsExposures |
 	        GCFillStyle | GCStipple;
     unusedMask = GCClipXOrigin | GCClipYOrigin | GCFont;
     values.graphics_exposures = False;
@@ -1093,7 +1081,7 @@ GetUnavailableGC(
     values.stipple = _XmGetInsensitiveStippleBitmap((Widget) sbw);
 
     sbw->scrollBar.unavailable_GC = XtAllocateGC((Widget) sbw, 0, valueMask,
-						 &values, GCClipMask, 
+						 &values, GCClipMask,
 						 unusedMask);
 }
 
@@ -1113,11 +1101,11 @@ GetUnavailableGC(
  *         the pixmap is free upon destruction of the widget.
  *         the field pixmap == 0 means there is no pixmap to freed.
  *         Is called from Resize method.
- *     DrawSliderPixmap: 
+ *     DrawSliderPixmap:
  *         draws the slider graphics (sized shadowed rectangle) in the pixmap.
  *         the fields slider_width and height must have been calculated.
  *         Is called from Resize, after the pixmap has been created,
- *           and from SetValues, if something has changed in the visual 
+ *           and from SetValues, if something has changed in the visual
  *           of the slider.
  *     RedrawSliderWindow:
  *         clears the current scrollbar slider area, computes the
@@ -1139,7 +1127,7 @@ GetUnavailableGC(
  *     This pixmap is the size of the widget minus the arrows.
  *
  ************************************************************************/
-static void 
+static void
 GetSliderPixmap(
         XmScrollBarWidget sbw )
 {
@@ -1147,10 +1135,10 @@ GetSliderPixmap(
    if (sbw->scrollBar.pixmap)
       XFreePixmap (XtDisplay (sbw), sbw->scrollBar.pixmap);
 
-   sbw->scrollBar.pixmap = 
+   sbw->scrollBar.pixmap =
       XCreatePixmap (XtDisplay(sbw), RootWindowOfScreen(XtScreen(sbw)),
-                     sbw->scrollBar.slider_area_width, 
-		     sbw->scrollBar.slider_area_height, 
+                     sbw->scrollBar.slider_area_width,
+		     sbw->scrollBar.slider_area_height,
 		     sbw->core.depth);
 }
 
@@ -1162,11 +1150,11 @@ GetSliderPixmap(
  *
  *  DrawSliderPixmap
  *     Draw the slider graphic into the pixmap.
- *     Draw the rectangle with a shadow or not and a mark in 
+ *     Draw the rectangle with a shadow or not and a mark in
  *     the middle or the side.
  *
  ************************************************************************/
-static void 
+static void
 DrawSliderPixmap(
         XmScrollBarWidget sbw )
 {
@@ -1175,35 +1163,35 @@ DrawSliderPixmap(
    register Drawable slider = sbw->scrollBar.pixmap;
 
    if ((sbw->scrollBar.slider_visual ==  XmFOREGROUND_COLOR) ||
-       (sbw->scrollBar.slider_visual ==  XmTROUGH_COLOR)) {   
-	   /* we use the same GC, previously filled with either the 
+       (sbw->scrollBar.slider_visual ==  XmTROUGH_COLOR)) {
+	   /* we use the same GC, previously filled with either the
 	      foreground or the trough_color pixel */
 	   /* The trough area itself has been set, as the window background,
 	      to either the trough color (not in that case) or the background
-	      pixel */ 
-	   XSetClipMask(XtDisplay((Widget) sbw), 
-			sbw->scrollBar.flat_slider_GC, 
+	      pixel */
+	   XSetClipMask(XtDisplay((Widget) sbw),
+			sbw->scrollBar.flat_slider_GC,
 			None);
 	   XFillRectangle (XtDisplay ((Widget) sbw), slider,
 			   sbw->scrollBar.flat_slider_GC,
 			   0, 0, slider_width, slider_height);
-   } else 
+   } else
    if ((sbw->scrollBar.slider_visual == XmBACKGROUND_COLOR) ||
        (sbw->scrollBar.slider_visual == XmSHADOWED_BACKGROUND)) {
-   
+
        /* in all other case, draw the shadow */
        XFillRectangle (XtDisplay ((Widget) sbw), slider,
 		       sbw->scrollBar.foreground_GC,
 		       0, 0, slider_width, slider_height);
-   
+
        if (sbw->scrollBar.slider_visual == XmSHADOWED_BACKGROUND)
 	   XmeDrawShadows (XtDisplay (sbw), slider,
 			   sbw->primitive.top_shadow_GC,
-			   sbw->primitive.bottom_shadow_GC, 
+			   sbw->primitive.bottom_shadow_GC,
 			   0, 0, slider_width, slider_height,
 			   sbw->primitive.shadow_thickness,
 			   XmSHADOW_OUT);
-   } 
+   }
 
 
    if (sbw->scrollBar.sliding_mode == XmTHERMOMETER) {
@@ -1231,11 +1219,11 @@ DrawSliderPixmap(
       if (sbw->scrollBar.orientation == XmHORIZONTAL) {
          XDrawLine (XtDisplay (sbw), slider,
                     sbw->primitive.bottom_shadow_GC,
-                    slider_width / 2 - 1, 1, 
+                    slider_width / 2 - 1, 1,
                     slider_width / 2 - 1, slider_height - 2);
          XDrawLine (XtDisplay (sbw), slider,
                     sbw->primitive.top_shadow_GC,
-                    slider_width / 2, 1, 
+                    slider_width / 2, 1,
                     slider_width / 2, slider_height - 2);
       } else {
          XDrawLine (XtDisplay (sbw), slider,
@@ -1251,7 +1239,7 @@ DrawSliderPixmap(
 
    if (sbw->scrollBar.slider_mark == XmTHUMB_MARK) {
        Dimension thumb_spacing = 4, margin = 2 ;
-       
+
        if (sbw->scrollBar.orientation == XmHORIZONTAL) {
          XmeDrawSeparator (XtDisplay (sbw), slider,
 			   sbw->primitive.top_shadow_GC,
@@ -1292,23 +1280,23 @@ DrawSliderPixmap(
 			   0, slider_height / 2 + thumb_spacing,
 			   slider_width, 2, 2, margin,
 			   XmHORIZONTAL, XmSHADOW_ETCHED_OUT);
-         
+
       }
-   } 
+   }
 
    if (sbw->scrollBar.slider_mark == XmROUND_MARK) {
        Dimension radius = DEFAULT_ROUND_MARK_RADIUS ;
 
-       XmeDrawCircle(XtDisplay (sbw), slider, 
+       XmeDrawCircle(XtDisplay (sbw), slider,
 		     sbw->primitive.top_shadow_GC,
-		     sbw->primitive.bottom_shadow_GC, 
+		     sbw->primitive.bottom_shadow_GC,
 		     NULL,
-		     slider_width / 2 - radius, 
-		     slider_height / 2 - radius, 
-		     2*radius, 2*radius, 
+		     slider_width / 2 - radius,
+		     slider_height / 2 - radius,
+		     2*radius, 2*radius,
 		     sbw->primitive.shadow_thickness, 0);
    }
-     
+
 }
 
 /************************************************************************
@@ -1317,7 +1305,7 @@ DrawSliderPixmap(
  *	Dump the slider pixmap into the window using CopyArea.
  *
  ************************************************************************/
-static void 
+static void
 CopySliderInWindow(
         XmScrollBarWidget sbw )
 {
@@ -1340,13 +1328,13 @@ CopySliderInWindow(
  *      copying from the pixmap graphics.
  *
  ************************************************************************/
-static void 
+static void
 RedrawSliderWindow(
         XmScrollBarWidget sbw )
 {
     short old_slider_width = sbw->scrollBar.slider_width ;
     short old_slider_height = sbw->scrollBar.slider_height ;
-    
+
     if (XtIsRealized((Widget)sbw))
 	XClearArea(XtDisplay ((Widget) sbw), XtWindow ((Widget) sbw),
 		   (int) sbw->scrollBar.slider_area_x,
@@ -1357,7 +1345,7 @@ RedrawSliderWindow(
 
     CalcSliderRect(sbw,
 		   &(sbw->scrollBar.slider_x),
-		   &(sbw->scrollBar.slider_y), 
+		   &(sbw->scrollBar.slider_y),
 		   &(sbw->scrollBar.slider_width),
 		   &(sbw->scrollBar.slider_height));
 
@@ -1381,7 +1369,7 @@ RedrawSliderWindow(
  *         this routine is often use for one _or_ the other case.
  *
  ************************************************************************/
-static void 
+static void
 CalcSliderRect(
         XmScrollBarWidget sbw,
         short *slider_x,
@@ -1406,7 +1394,7 @@ CalcSliderRect(
 		if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 		    minSliderWidth = 1;
 		minSliderHeight = MIN_SLIDER_THICKNESS;
-		
+
 	}
 	else /* orientation == XmVERTICAL */
 	{
@@ -1434,7 +1422,7 @@ CalcSliderRect(
 	    slideSize = (float) value * factor;
 	else
 	    slideSize = (float) (sbw->scrollBar.slider_size) * factor;
-	    
+
 
 
 	/* NOTE SIDE EFFECT */
@@ -1502,7 +1490,7 @@ CalcSliderRect(
 		    } else {
 			*slider_y = sbw->scrollBar.slider_area_y ;
 		    }
-		} else 
+		} else
 		    *slider_y = ((int) (((((float) sbw->scrollBar.value)
 			- ((float) sbw->scrollBar.minimum)) * factor) + 0.5))
 			+ sbw->scrollBar.slider_area_y;
@@ -1539,7 +1527,7 @@ CalcSliderRect(
  *     General redisplay function called on exposure events.
  *
  ************************************************************************/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -1549,14 +1537,14 @@ Redisplay(
 
 
     if (sbw->primitive.shadow_thickness > 0)
-	XmeDrawShadows (XtDisplay (sbw), XtWindow (sbw), 
-		      sbw->primitive.bottom_shadow_GC, 
+	XmeDrawShadows (XtDisplay (sbw), XtWindow (sbw),
+		      sbw->primitive.bottom_shadow_GC,
 		      sbw->primitive.top_shadow_GC,
 		      sbw->primitive.highlight_thickness,
 		      sbw->primitive.highlight_thickness,
-		      sbw->core.width-2 * 
+		      sbw->core.width-2 *
 		        sbw->primitive.highlight_thickness,
-		      sbw->core.height-2 * 
+		      sbw->core.height-2 *
 		        sbw->primitive.highlight_thickness,
 		      sbw->primitive.shadow_thickness,
 		      XmSHADOW_OUT);
@@ -1581,7 +1569,7 @@ Redisplay(
 		((sbw->scrollBar.arrow2_selected)?
 		 sbw -> primitive.top_shadow_GC :
 		 sbw -> primitive.bottom_shadow_GC),
-		sbw->scrollBar.arrow2_x, 
+		sbw->scrollBar.arrow2_x,
 		sbw->scrollBar.arrow2_y,
 		sbw->scrollBar.arrow2_orientation);
   }
@@ -1635,7 +1623,7 @@ Redisplay(
 
 	(*(expose))(wid, event, region) ;
     }
-   
+
 }
 
 
@@ -1650,7 +1638,7 @@ Redisplay(
  *     Also draw the correct sized slider onto this pixmap.
  *
  ************************************************************************/
-static void 
+static void
 Resize(
         Widget wid )
 {
@@ -1658,7 +1646,7 @@ Resize(
     register int ht = sbw->primitive.highlight_thickness;
     register int st = sbw->primitive.shadow_thickness;
 
-#define CHECK(x) if (x <= 0) x = 1 
+#define CHECK(x) if (x <= 0) x = 1
 
 #define BOTH_ARROWS_NEAR_SIDE(sbw) \
 	    (((sbw->scrollBar.show_arrows == XmMIN_SIDE) &&\
@@ -1693,38 +1681,38 @@ Resize(
 
 	    sbw->scrollBar.arrow1_y = ht + st;
 
-	    sbw->scrollBar.arrow_width = 
+	    sbw->scrollBar.arrow_width =
 		sbw->scrollBar.arrow_height = sbw->core.height
 		    - 2 * (ht + st);
 
 	    if (ARROW1_NEAR_SIDE (sbw)) {
 		 sbw->scrollBar.arrow1_x = ht + st;
 	     } else {
-		 sbw->scrollBar.arrow1_x = sbw->core.width -ht -st 
+		 sbw->scrollBar.arrow1_x = sbw->core.width -ht -st
 		     - 2 * sbw->scrollBar.arrow_width;
 	     }
-	
-	    if (sbw->core.width < 
+
+	    if (sbw->core.width <
 		2 * (sbw->scrollBar.arrow_width + ht + st)
 		+ MIN_SLIDER_LENGTH + 2)
-		sbw->scrollBar.arrow_width = (sbw->core.width 
+		sbw->scrollBar.arrow_width = (sbw->core.width
 			 - (MIN_SLIDER_LENGTH + 2 + 2 * (ht + st))) / 2;
 
 	    /*  slide area position and size  */
 
 	    if (sbw->scrollBar.show_arrows == XmEACH_SIDE) {
-		sbw->scrollBar.slider_area_x = 
+		sbw->scrollBar.slider_area_x =
 		    ht + st + sbw->scrollBar.arrow_width + 1;
-	    } else 
+	    } else
 	    if (BOTH_ARROWS_NEAR_SIDE (sbw)) {
-		sbw->scrollBar.slider_area_x = 
+		sbw->scrollBar.slider_area_x =
 		    ht + st + 2 * sbw->scrollBar.arrow_width + 2;
 	    } else {
 		sbw->scrollBar.slider_area_x = ht + st ;
 	    }
 
 	    sbw->scrollBar.slider_area_width =
-		sbw->core.width 
+		sbw->core.width
 		    - 2 * (ht + st + sbw->scrollBar.arrow_width + 1);
 
 	    if ((2*(ht+st)) > XtHeight(sbw))
@@ -1746,7 +1734,7 @@ Resize(
 		sbw->scrollBar.arrow2_x = ht + st
 		    + sbw->scrollBar.arrow_width ;
 	    }
-	    
+
 	    sbw->scrollBar.arrow2_y = ht + st;
 
 	} else { /* VERTICAL */
@@ -1764,11 +1752,11 @@ Resize(
 	    if (ARROW1_NEAR_SIDE(sbw)) {
 		sbw->scrollBar.arrow1_y = ht + st;
 	    } else {
-		sbw->scrollBar.arrow1_y = sbw->core.height -ht -st 
+		sbw->scrollBar.arrow1_y = sbw->core.height -ht -st
 		    - 2 * sbw->scrollBar.arrow_height;
 	    }
 
-	    if (sbw->core.height < 
+	    if (sbw->core.height <
 		2 * (sbw->scrollBar.arrow_height + ht + st)
 		+ MIN_SLIDER_LENGTH +2)
 		sbw->scrollBar.arrow_height = (sbw->core.height
@@ -1777,11 +1765,11 @@ Resize(
 	    /*  slide area position and size  */
 
 	    if (sbw->scrollBar.show_arrows == XmEACH_SIDE) {
-		sbw->scrollBar.slider_area_y = 
+		sbw->scrollBar.slider_area_y =
 		    ht + st + sbw->scrollBar.arrow_height + 1;
-	    } else 
+	    } else
 	    if (BOTH_ARROWS_NEAR_SIDE (sbw)) {
-		sbw->scrollBar.slider_area_y = 
+		sbw->scrollBar.slider_area_y =
 		    ht + st + 2 * sbw->scrollBar.arrow_height + 2 ;
 	    } else {
 		sbw->scrollBar.slider_area_y = ht + st ;
@@ -1807,8 +1795,8 @@ Resize(
 	    } else {
 		sbw->scrollBar.arrow2_y = ht + st
 		    + sbw->scrollBar.arrow_height ;
-	    } 
-	    
+	    }
+
 	    sbw->scrollBar.arrow2_x = ht + st;
 	}
 
@@ -1854,11 +1842,11 @@ Resize(
 
     CalcSliderRect(sbw,
 		   &(sbw->scrollBar.slider_x),
-		   &(sbw->scrollBar.slider_y), 
+		   &(sbw->scrollBar.slider_y),
 		   &(sbw->scrollBar.slider_width),
 		   &(sbw->scrollBar.slider_height));
-	
-    DrawSliderPixmap (sbw); 
+
+    DrawSliderPixmap (sbw);
 }
 
 
@@ -1869,7 +1857,7 @@ Resize(
  * Realize
  *
  ********************************************************************/
-static void 
+static void
 Realize(
         Widget wid,
         XtValueMask *window_mask,
@@ -1879,14 +1867,14 @@ Realize(
 
     *window_mask |= CWBitGravity;
     window_attributes->bit_gravity = ForgetGravity;
-    
+
     /* if we are in the slider color = trough color case, we need to
        get the regular background as the trough (= window) color,
        otherwise, we need to get the trough color */
     if (sbw->scrollBar.slider_visual != XmTROUGH_COLOR) {
 	*window_mask |= CWBackPixel ;
 	window_attributes->background_pixel = sbw->scrollBar.trough_color;
-    }    
+    }
 
     XtCreateWindow (wid, InputOutput, CopyFromParent, *window_mask,
 		    window_attributes);
@@ -1901,7 +1889,7 @@ Realize(
  *	Clean up allocated resources when the widget is destroyed.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -1929,8 +1917,7 @@ Destroy(
  *  ValidateInputs
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 ValidateInputs(
 	       XmScrollBarWidget current,
 	       XmScrollBarWidget request, /* unused */
@@ -1939,8 +1926,8 @@ ValidateInputs(
     Boolean returnFlag = TRUE;
     int value ;
 
-    /* Validate the incoming data  */                      
-    
+    /* Validate the incoming data  */
+
     if (new_w->scrollBar.minimum >= new_w->scrollBar.maximum)
 	{
 	    new_w->scrollBar.minimum = current->scrollBar.minimum;
@@ -1955,7 +1942,7 @@ ValidateInputs(
 					    - new_w->scrollBar.minimum) / 10;
 	    if (new_w->scrollBar.slider_size < 1)
 		new_w->scrollBar.slider_size = 1;
-	} else 
+	} else
 	    new_w->scrollBar.slider_size = 0 ;
     }
 
@@ -1971,8 +1958,8 @@ ValidateInputs(
 	    XmeWarning( (Widget) new_w, MESSAGE2);
 	    returnFlag = FALSE;
 	}
-    
-	if ((new_w->scrollBar.slider_size > 
+
+	if ((new_w->scrollBar.slider_size >
 	     new_w->scrollBar.maximum - new_w->scrollBar.minimum)) {
 	    if ((new_w->scrollBar.maximum - new_w->scrollBar.minimum) <
 		current->scrollBar.slider_size)
@@ -1983,7 +1970,7 @@ ValidateInputs(
 	    XmeWarning( (Widget) new_w, MESSAGE13);
 	    returnFlag = FALSE;
 	}
-    } else 
+    } else
 	new_w->scrollBar.slider_size = 0 ;
 
     if (new_w->scrollBar.value < new_w->scrollBar.minimum)
@@ -1992,24 +1979,20 @@ ValidateInputs(
 	    XmeWarning( (Widget) new_w, MESSAGE3);
 	    returnFlag = FALSE;
 	}
-    
+
     /* do the checking on the real user value */
     if (new_w->scrollBar.value == current->scrollBar.value) {
 	if (PROCESS_DIR_INVERSED(new_w))
 	    /* use new for value since that's the one getting changed below */
-#ifdef FIX_1396
 	    value = INVERSED_VALUE(new_w);
-#else
-	    value = INVERSED_VALUE(current);
-#endif	    
-	else 
+	else
 	    value = new_w->scrollBar.value ;
     } else
 	value = new_w->scrollBar.value ;
 
     if (value > new_w->scrollBar.maximum - new_w->scrollBar.slider_size)
 	{
-	    new_w->scrollBar.value = 
+	    new_w->scrollBar.value =
 		new_w->scrollBar.maximum - new_w->scrollBar.slider_size;
 	    new_w->scrollBar.flags |= VALUE_SET_FLAG;
 	    XmeWarning( (Widget) new_w, MESSAGE4);
@@ -2021,13 +2004,13 @@ ValidateInputs(
 	    new_w->scrollBar.orientation = current->scrollBar.orientation;
 	    returnFlag = FALSE;
 	}
-    
+
     if (new_w->scrollBar.orientation == XmHORIZONTAL)
 	{
 	    if ((new_w->scrollBar.processing_direction != XmMAX_ON_LEFT) &&
 		(new_w->scrollBar.processing_direction != XmMAX_ON_RIGHT))
 		{
-		    new_w->scrollBar.processing_direction = 
+		    new_w->scrollBar.processing_direction =
 			current->scrollBar.processing_direction;
 		    XmeWarning( (Widget) new_w, MESSAGE6);
 		    returnFlag = FALSE;
@@ -2044,36 +2027,36 @@ ValidateInputs(
 		    returnFlag = FALSE;
 		}
 	}
-    
+
     if (new_w->scrollBar.increment <= 0)
 	{
 	    new_w->scrollBar.increment = current->scrollBar.increment;
 	    XmeWarning( (Widget) new_w, MESSAGE7);
 	    returnFlag = FALSE;
 	}
-    
+
     if (new_w->scrollBar.page_increment <= 0)
 	{
-	    new_w->scrollBar.page_increment = 
+	    new_w->scrollBar.page_increment =
 		current->scrollBar.page_increment;
 	    XmeWarning( (Widget) new_w,  MESSAGE8);
 	    returnFlag = FALSE;
 	}
-    
+
     if (new_w->scrollBar.initial_delay <= 0)
 	{
 	    new_w->scrollBar.initial_delay = current->scrollBar.initial_delay;
 	    XmeWarning( (Widget) new_w, MESSAGE9);
 	    returnFlag = FALSE;
 	}
-    
+
     if (new_w->scrollBar.repeat_delay <= 0)
 	{
 	    new_w->scrollBar.repeat_delay = current->scrollBar.repeat_delay;
 	    XmeWarning( (Widget) new_w, MESSAGE10);
 	    returnFlag = FALSE;
 	}
-    
+
     if (new_w->core.width == 0)
 	{
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
@@ -2081,7 +2064,7 @@ ValidateInputs(
 	    else
 		new_w->core.width += 11;
 	}
-    
+
     if (new_w->core.height == 0)
 	{
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
@@ -2089,7 +2072,7 @@ ValidateInputs(
 	    else
 		new_w->core.height += 100;
 	}
-    
+
     return(returnFlag);
 }
 
@@ -2098,8 +2081,7 @@ ValidateInputs(
  *  SetValues
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -2114,7 +2096,7 @@ SetValues(
     Boolean current_backwards = PROCESS_DIR_INVERSED(current);
     Boolean new_backwards = PROCESS_DIR_INVERSED(new_w);
 
-    
+
 
     if(!XmRepTypeValidValue( XmRID_SHOW_ARROWS,
 			    new_w->scrollBar.show_arrows, (Widget) new_w) )
@@ -2147,7 +2129,7 @@ SetValues(
 	    ((new_w->scrollBar.slider_size != current->scrollBar.slider_size) ||
 	     (new_w->scrollBar.maximum != current->scrollBar.maximum) ||
 	     (new_w->scrollBar.minimum != current->scrollBar.minimum) ))
-	  
+
 	  {
 	    new_w->scrollBar.value = (new_w->scrollBar.maximum
 				      + new_w->scrollBar.minimum
@@ -2160,7 +2142,7 @@ SetValues(
 
 
     /* Make sure that processing direction tracks orientation */
-    
+
     if ((new_w->scrollBar.orientation != current->scrollBar.orientation)
 	&&
 	(new_w->scrollBar.processing_direction ==
@@ -2180,9 +2162,9 @@ SetValues(
 		     (current->scrollBar.processing_direction == XmMAX_ON_RIGHT))
 		new_w->scrollBar.processing_direction = XmMAX_ON_BOTTOM;
 	}
-    
+
     while (!ValidateInputs(current, request, new_w)) /*EMPTY*/;
-    
+
     /*
      * Because someone somewhere originally thought that it was clever
      * for the scrollbar widget to do all of its internal processing in
@@ -2208,12 +2190,12 @@ SetValues(
 		(new_backwards))
 		new_w->scrollBar.value = INVERSED_VALUE(new_w);
 	}
-    
+
     if (new_w->scrollBar.flags & VALUE_SET_FLAG)
 	new_w->scrollBar.flags &= ~VALUE_SET_FLAG;
-    
+
     /*  See if the GC needs to be regenerated  */
-    
+
     if (new_w->core.background_pixel != current->core.background_pixel)
 	{
 	    XtReleaseGC((Widget) new_w, new_w->scrollBar.foreground_GC);
@@ -2228,7 +2210,7 @@ SetValues(
 	    XtReleaseGC((Widget) new_w, new_w->scrollBar.flat_slider_GC);
 	    GetFlatSliderGC(new_w);
 	}
-    
+
     /*
      * See if the trough (a.k.a the window background) needs to be
      * changed to use a different pixel.
@@ -2241,7 +2223,7 @@ SetValues(
 
 	if ((new_w->scrollBar.slider_visual == XmTROUGH_COLOR) &&
 	    (current->scrollBar.slider_visual != XmTROUGH_COLOR)) {
-	    /* no need to care for background change since Core did it */ 
+	    /* no need to care for background change since Core did it */
 	    change_to = new_w->core.background_pixel;
 	}
 	if ((new_w->scrollBar.slider_visual != XmTROUGH_COLOR) &&
@@ -2260,23 +2242,23 @@ SetValues(
 				 XtWindow((Widget)new_w), change_to);
 	}
     }
-    
+
     /*
      * See if the widget needs to be redrawn.  Minimize the amount
      * of redraw by having specific checks.
      */
-    
-    if ((new_w->scrollBar.orientation != 
+
+    if ((new_w->scrollBar.orientation !=
 	 current->scrollBar.orientation)         ||
 	(new_w->primitive.shadow_thickness !=
-	 current->primitive.shadow_thickness)    || 
+	 current->primitive.shadow_thickness)    ||
 	(new_w->primitive.highlight_thickness !=
-	 current->primitive.highlight_thickness) || 
-	(new_w->scrollBar.show_arrows != 
+	 current->primitive.highlight_thickness) ||
+	(new_w->scrollBar.show_arrows !=
 	 current->scrollBar.show_arrows))
 	{
 	    /* call Resize method, that will have the effect of
-	       recomputing all the internal variables (arrow size, 
+	       recomputing all the internal variables (arrow size,
 	       trough are) and recreating the slider pixmap. */
 	    XtWidgetProc resize;
 	    _XmProcessLock();
@@ -2286,8 +2268,8 @@ SetValues(
 	    (* (resize)) ((Widget) new_w);
 	    returnFlag = TRUE;
 	}
-    
-    if ((new_w->primitive.foreground != 
+
+    if ((new_w->primitive.foreground !=
 	 current->primitive.foreground)
 	||
 	(new_w->core.background_pixel != current->core.background_pixel)
@@ -2309,51 +2291,51 @@ SetValues(
 	{
 	    returnFlag = TRUE;
 	    /* only draw the slider graphics, no need to change the
-	       pixmap (call to GetSliderPixmap) nor the slider size 
+	       pixmap (call to GetSliderPixmap) nor the slider size
 	       (call to CalcSliderRect). */
 	    DrawSliderPixmap(new_w);
-	    
+
 	}
-    
-    if ((new_w->scrollBar.slider_size != 
+
+    if ((new_w->scrollBar.slider_size !=
 	 current->scrollBar.slider_size)                    ||
 	(new_w->scrollBar.minimum != current->scrollBar.minimum) ||
 	(new_w->scrollBar.maximum != current->scrollBar.maximum) ||
-	(new_w->scrollBar.processing_direction != 
+	(new_w->scrollBar.processing_direction !=
 	 current->scrollBar.processing_direction)) {
-	
+
 	/* have to clear the current slider before setting the
 	   new slider position and size */
 	if (XtIsRealized(nw))
-	    XClearArea(XtDisplay((Widget)new_w), 
+	    XClearArea(XtDisplay((Widget)new_w),
 		       XtWindow((Widget)new_w),
-		       new_w->scrollBar.slider_x, 
+		       new_w->scrollBar.slider_x,
 		       new_w->scrollBar.slider_y,
 		       new_w->scrollBar.slider_width,
 		       new_w->scrollBar.slider_height, False);
-	    
+
 	/* recompute the slider size and draw in the pixmap */
 	CalcSliderRect(new_w,
 		       &(new_w->scrollBar.slider_x),
-		       &(new_w->scrollBar.slider_y), 
+		       &(new_w->scrollBar.slider_y),
 		       &(new_w->scrollBar.slider_width),
 		       &(new_w->scrollBar.slider_height));
-	
+
 	/* redraw the slider in the pixmap */
-	DrawSliderPixmap (new_w); 
+	DrawSliderPixmap (new_w);
 
 	if (new_w->scrollBar.slider_size >= (new_w->scrollBar.maximum
 					     - new_w->scrollBar.minimum))
 	    {
 		new_w->scrollBar.flags &= ~SLIDER_AVAILABLE;
 		/*
-		 * Disabling the slider enables the arrows.  This 
+		 * Disabling the slider enables the arrows.  This
 		 * leaves the scrollbar in a state amenable to reenabling
 		 * the slider.
 		 */
 		new_w->scrollBar.flags |= ARROW1_AVAILABLE;
 		new_w->scrollBar.flags |= ARROW2_AVAILABLE;
-		returnFlag = TRUE;	
+		returnFlag = TRUE;
 	    }
 	else
 	    {
@@ -2361,15 +2343,15 @@ SetValues(
 		    returnFlag = TRUE;
 		    new_w->scrollBar.flags |= SLIDER_AVAILABLE;
 		} else {
-		    /* directly use the pixmap that contains the slider 
+		    /* directly use the pixmap that contains the slider
 		       graphics, no need to call RedrawSliderWindow since the
 		       cleararea and the calcrect have already been made */
 		    CopySliderInWindow(new_w);
 		}
 	    }
     }
-    
-    
+
+
     if (new_w->scrollBar.value != current->scrollBar.value) {
 	/* the value has changed, the slider needs to move. */
 	RedrawSliderWindow (new_w);
@@ -2378,7 +2360,7 @@ SetValues(
 	{
 	/* Following lines taken from Redisplay code; the XmNvalue can change
         ** even when the widget is insensitive. Other paths through the code
-	** involve user interaction and so sensitivity doesn't need to be 
+	** involve user interaction and so sensitivity doesn't need to be
 	** considered.
 	** NOTE! doesn't deal with FUNKY_INSENSITIVE_VISUAL
 	*/
@@ -2398,10 +2380,10 @@ SetValues(
 	    }
 	}
     }
-    
+
     if (XtIsSensitive(nw) != XtIsSensitive(cw))
 	returnFlag = TRUE;
-    
+
     return(returnFlag);
 }
 
@@ -2415,7 +2397,7 @@ SetValues(
  *     the input x and y.
  *
  ************************************************************************/
-static int 
+static int
 CalcSliderVal(
         XmScrollBarWidget sbw,
         int x,
@@ -2447,24 +2429,24 @@ CalcSliderVal(
 	}
 
 	if (trueSize > 0)
-		
+
 	    /* figure the proportion of slider area between the origin
 	       of the slider area and the origin of the slider. */
 	    proportion = (referencePoint - slider_area_origin
 		 + (((sbw->scrollBar.show_arrows == XmEACH_SIDE) &&
-		    (sbw->scrollBar.sliding_mode != XmTHERMOMETER))?1:0)) / 
+		    (sbw->scrollBar.sliding_mode != XmTHERMOMETER))?1:0)) /
 			      trueSize;
 	else
 		/*
 		 * We've got an interesting problem here.  There isn't any
 		 * slider area available to slide in.  What should the value
-		 * of the scrollbar be when the user tries to drag the slider?  
+		 * of the scrollbar be when the user tries to drag the slider?
 		 *
 		 * Setting proportion to 1 snaps to maximum.  Setting
 		 * proportion to the reciprocal of "range" will cause the
 		 * slider to snap to the minimum.
 		 *
-		 */ 
+		 */
 		proportion = 1;
 
 	/* Actual range displayed */
@@ -2474,7 +2456,7 @@ CalcSliderVal(
 	/* Now scale the proportion in pixels to user units */
 	proportion = (proportion * range)
 		+ ((float) sbw->scrollBar.minimum);
-	
+
 	/* Round off appropriately */
 	if (proportion > 0)
 		proportion += 0.5;
@@ -2502,7 +2484,7 @@ CalcSliderVal(
  *     This function processes selections occuring on the scrollBar.
  *
  ************************************************************************/
-static void 
+static void
 Select(
         Widget wid,
         XEvent *event,
@@ -2516,7 +2498,7 @@ Select(
     int slider_width = sbw->scrollBar.slider_width;
     int slider_height = sbw->scrollBar.slider_height;
     Boolean slider_moved;
-     
+
     if (!sbw->scrollBar.editable) return ;
 
 
@@ -2524,9 +2506,9 @@ Select(
        so that scrollbar moves generating widget
        configurations be bracketed for dropsite update.
        The endupdate is done in Release */
-	       
+
     XmDropSiteStartUpdate(wid);
-    
+
     sbw->scrollBar.flags &=  ~OPERATION_CANCELLED ;
 
 #ifndef DEBUG_NO_SB_GRAB
@@ -2537,13 +2519,13 @@ Select(
 
     XAllowEvents(XtDisplay(wid), AsyncPointer, CurrentTime);
     XAllowEvents(XtDisplay(wid), AsyncKeyboard, CurrentTime);
-    
+
     if (!(sbw->scrollBar.flags & SLIDER_AVAILABLE))
 	return;
     if ((buttonEvent->button == Button1) &&
 	(!XmIsScrolledWindow(XtParent(wid))))
 	(void) XmProcessTraversal( (Widget) sbw, XmTRAVERSE_CURRENT);
-    
+
     sbw->scrollBar.separation_x = 0;
     sbw->scrollBar.separation_y = 0;
 
@@ -2561,7 +2543,7 @@ Select(
 	  (buttonEvent->x >= slider_x + slider_width - THERMO_MARK_OFFSET))))
 	/* hack */
 	buttonEvent->button = Button2 ;
-	
+
     if ((sbw->scrollBar.orientation == XmVERTICAL) &&
 	(buttonEvent->x >= slider_x) &&
 	(buttonEvent->x <= slider_x + slider_width)   &&
@@ -2575,7 +2557,7 @@ Select(
 	  (buttonEvent->y <= slider_y + slider_height))))
 	/* hack */
 	buttonEvent->button = Button2 ;
-	
+
     /*  Calculate whether the selection point is in the slider  */
     if ((buttonEvent->x >= slider_x)                 &&
 	(buttonEvent->x <= slider_x + slider_width)   &&
@@ -2602,10 +2584,10 @@ Select(
 		    /* Warp the slider to the cursor, and then drag */
 		    if  (sbw->scrollBar.sliding_mode != XmTHERMOMETER) {
 			if (sbw->scrollBar.orientation == XmHORIZONTAL)
-			    sbw->scrollBar.separation_x = 
+			    sbw->scrollBar.separation_x =
 				sbw->scrollBar.slider_width / 2;
 			else
-			    sbw->scrollBar.separation_y = 
+			    sbw->scrollBar.separation_y =
 				sbw->scrollBar.slider_height / 2;
 		    } else {
 			sbw->scrollBar.separation_x = 0 ;
@@ -2614,22 +2596,22 @@ Select(
 		    Moved ((Widget) sbw, (XEvent *) buttonEvent,
 			   params, num_params);
 		}
-	    
+
 	    return;
 	}
-    
+
     /* ... in the trough (i.e. slider area)... */
     else if ((buttonEvent->x >= sbw->scrollBar.slider_area_x)   &&
 	     (buttonEvent->y >= sbw->scrollBar.slider_area_y)        &&
-	     (buttonEvent->x <= sbw->scrollBar.slider_area_x 
+	     (buttonEvent->x <= sbw->scrollBar.slider_area_x
 	      + sbw->scrollBar.slider_area_width)                 &&
-	     (buttonEvent->y <= sbw->scrollBar.slider_area_y 
+	     (buttonEvent->y <= sbw->scrollBar.slider_area_y
 	      + sbw->scrollBar.slider_area_height)) {
 
 	sbw->scrollBar.arrow1_selected = FALSE;
 	sbw->scrollBar.arrow2_selected = FALSE;
 	sbw->scrollBar.saved_value = sbw->scrollBar.value;
-	
+
 	if (buttonEvent->button == Button1) {
 	    Position limit_x, limit_y ;
 
@@ -2667,19 +2649,19 @@ Select(
 	}
 	else  /* Button2 */ {
 		/* Warp the slider to the cursor, and then drag */
-		
+
 		 if  (sbw->scrollBar.sliding_mode != XmTHERMOMETER) {
 			if (sbw->scrollBar.orientation == XmHORIZONTAL)
-			    sbw->scrollBar.separation_x = 
+			    sbw->scrollBar.separation_x =
 				sbw->scrollBar.slider_width / 2;
 			else
-			    sbw->scrollBar.separation_y = 
+			    sbw->scrollBar.separation_y =
 				sbw->scrollBar.slider_height / 2;
 		    } else {
 			sbw->scrollBar.separation_x = 0 ;
 			sbw->scrollBar.separation_y = 0 ;
 		    }
-		
+
 		sbw->scrollBar.initial_x = slider_x;
 		sbw->scrollBar.initial_y = slider_y;
 		sbw->scrollBar.sliding_on = True;
@@ -2689,19 +2671,19 @@ Select(
 		return;
 	    }
     }
-    
+
     /* ... in arrow 1 */
     else if ((buttonEvent->x >= sbw->scrollBar.arrow1_x)  &&
 	     (buttonEvent->y >= sbw->scrollBar.arrow1_y)       &&
-	     (buttonEvent->x <= sbw->scrollBar.arrow1_x 
+	     (buttonEvent->x <= sbw->scrollBar.arrow1_x
 	      + sbw->scrollBar.arrow_width)                 &&
-	     (buttonEvent->y <= sbw->scrollBar.arrow1_y 
+	     (buttonEvent->y <= sbw->scrollBar.arrow1_y
 	      + sbw->scrollBar.arrow_height))
-	{   
+	{
 	    sbw->scrollBar.change_type = XmCR_DECREMENT;
 	    sbw->scrollBar.saved_value = sbw->scrollBar.value;
 	    sbw->scrollBar.arrow1_selected = True;
-	    
+
 	    slider_moved = ChangeScrollBarValue(sbw) ;
 	    DRAWARROW(sbw, sbw->primitive.bottom_shadow_GC,
 		      sbw -> primitive.top_shadow_GC,
@@ -2709,19 +2691,19 @@ Select(
 		      sbw->scrollBar.arrow1_y,
 		      sbw->scrollBar.arrow1_orientation);
 	}
-    
+
     /* ... in arrow 2 */
     else if ((buttonEvent->x >= sbw->scrollBar.arrow2_x)      &&
 	     (buttonEvent->y >= sbw->scrollBar.arrow2_y)           &&
-	     (buttonEvent->x <= sbw->scrollBar.arrow2_x 
+	     (buttonEvent->x <= sbw->scrollBar.arrow2_x
 	      + sbw->scrollBar.arrow_width)                     &&
-	     (buttonEvent->y <= sbw->scrollBar.arrow2_y 
+	     (buttonEvent->y <= sbw->scrollBar.arrow2_y
 	      + sbw->scrollBar.arrow_height))
 	{
 	    sbw->scrollBar.change_type = XmCR_INCREMENT;
 	    sbw->scrollBar.saved_value = sbw->scrollBar.value;
 	    sbw->scrollBar.arrow2_selected = True;
-	    
+
 	    slider_moved = ChangeScrollBarValue(sbw) ;
 	    DRAWARROW(sbw, sbw->primitive.bottom_shadow_GC,
 		      sbw -> primitive.top_shadow_GC,
@@ -2732,18 +2714,18 @@ Select(
     else
 	/* ... in the highlight area.  */
 	return;
-    
+
     if (slider_moved) {
-	    
-	ScrollCallback (sbw, sbw->scrollBar.change_type, 
+
+	ScrollCallback (sbw, sbw->scrollBar.change_type,
 			sbw->scrollBar.value, 0, 0, (XEvent *) buttonEvent);
-	    
+
 	XSync (XtDisplay((Widget)sbw), False);
-	    
+
 	sbw->scrollBar.flags |= FIRST_SCROLL_FLAG ;
 	sbw->scrollBar.flags &= ~END_TIMER;
-	    
-	    
+
+
 	if (!sbw->scrollBar.timer)
 	    sbw->scrollBar.timer = XtAppAddTimeOut
 		(XtWidgetToApplicationContext((Widget) sbw),
@@ -2761,8 +2743,7 @@ Select(
  *     This function processes releases occuring on the scrollBar.
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Release(
         Widget wid,
         XEvent *event,
@@ -2780,13 +2761,13 @@ Release(
     XmDropSiteEndUpdate(wid);
 
     sbw->scrollBar.flags &=  ~OPERATION_CANCELLED ;
-    
+
     if (sbw->scrollBar.flags & KEYBOARD_GRABBED)
 	{
 	    XtUngrabKeyboard(wid, ((XButtonPressedEvent *)event)->time);
 	    sbw->scrollBar.flags &= ~KEYBOARD_GRABBED;
 	}
-    
+
 #ifdef FUNKY_INSENSITIVE_VISUAL
     if ( (!(sbw->scrollBar.flags & ARROW1_AVAILABLE)) &&
 	(sbw->scrollBar.value > sbw->scrollBar.minimum))
@@ -2797,18 +2778,18 @@ Release(
 		       sbw->scrollBar.arrow_width,
 		       sbw->scrollBar.arrow_height,
 		       FALSE);
-	    
+
 	    DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 		       sbw->primitive.bottom_shadow_GC,
 		       sbw->scrollBar.arrow1_x,
 		       sbw->scrollBar.arrow1_y,
 		       sbw->scrollBar.arrow1_orientation);
-	    
+
 	    sbw->scrollBar.flags |= ARROW1_AVAILABLE;
 	}
     else if (sbw->scrollBar.value == sbw->scrollBar.minimum)
 	sbw->scrollBar.flags &= ~ARROW1_AVAILABLE;
-    
+
     if ( (!(sbw->scrollBar.flags & ARROW2_AVAILABLE)) &&
 	(sbw->scrollBar.value < (sbw->scrollBar.maximum
 				 - sbw->scrollBar.slider_size)))
@@ -2819,13 +2800,13 @@ Release(
 		       sbw->scrollBar.arrow_width,
 		       sbw->scrollBar.arrow_height,
 		       FALSE);
-	    
+
 	    DRAWARROW (sbw, sbw->primitive.top_shadow_GC,
 		       sbw -> primitive.bottom_shadow_GC,
 		       sbw->scrollBar.arrow2_x,
 		       sbw->scrollBar.arrow2_y,
 		       sbw->scrollBar.arrow2_orientation);
-	    
+
 	    sbw->scrollBar.flags |= ARROW2_AVAILABLE;
 	}
     else if (sbw->scrollBar.value == (sbw->scrollBar.maximum
@@ -2835,25 +2816,25 @@ Release(
     if (sbw->scrollBar.arrow1_selected)
 	{
 	    sbw->scrollBar.arrow1_selected = False;
-	    
+
 	    DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 		       sbw->primitive.bottom_shadow_GC,
 		       sbw->scrollBar.arrow1_x,
 		       sbw->scrollBar.arrow1_y,
 		       sbw->scrollBar.arrow1_orientation);
 	}
-    
+
     if (sbw->scrollBar.arrow2_selected)
 	{
 	    sbw->scrollBar.arrow2_selected = False;
-	    
+
 	    DRAWARROW (sbw, sbw->primitive.top_shadow_GC,
 		       sbw -> primitive.bottom_shadow_GC,
 		       sbw->scrollBar.arrow2_x,
 		       sbw->scrollBar.arrow2_y,
 		       sbw->scrollBar.arrow2_orientation);
 	}
-    
+
     if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
         return;
 
@@ -2861,14 +2842,14 @@ Release(
 	{
 	    sbw->scrollBar.flags |= END_TIMER;
 	}
-    
+
     if (sbw->scrollBar.sliding_on == True)
 	{
 	    sbw->scrollBar.sliding_on = False;
-	    ScrollCallback (sbw, XmCR_VALUE_CHANGED, sbw->scrollBar.value, 
+	    ScrollCallback (sbw, XmCR_VALUE_CHANGED, sbw->scrollBar.value,
 			    event->xbutton.x, event->xbutton.y, event);
 	}
-    
+
 #ifdef FUNKY_INSENSITIVE_VISUAL
     XSetClipMask(XtDisplay(sbw), sbw->scrollBar.unavailable_GC, None);
     if (! (sbw->scrollBar.flags & ARROW1_AVAILABLE))
@@ -2902,8 +2883,7 @@ Release(
  *     slider moves.
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Moved(
         Widget wid,
         XEvent *event,
@@ -2917,24 +2897,24 @@ Moved(
     int slideVal;
     int button_x;
     int button_y;
-    int real_width_limit = 
-	(sbw->scrollBar.snap_back_multiple + 
+    int real_width_limit =
+	(sbw->scrollBar.snap_back_multiple +
 	 (buttonEvent->x > 0)) * XtWidth(wid);
-    int real_height_limit = 
-	(sbw->scrollBar.snap_back_multiple + 
+    int real_height_limit =
+	(sbw->scrollBar.snap_back_multiple +
 	 (buttonEvent->y > 0)) * XtHeight(wid) ;
 
     if (!sbw->scrollBar.editable) return ;
 
     if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE)) return;
-    
+
     /* operation was cancelled, so don't restart the move
        as it could happen with the snapBack stuff */
     if (sbw->scrollBar.flags & OPERATION_CANCELLED) return;
-    
+
     if (!sbw->scrollBar.sliding_on) return;
-    
-    /* Only deal with snap_back if operation was started by a 
+
+    /* Only deal with snap_back if operation was started by a
        click in the slider. */
     if (((sbw->scrollBar.orientation == XmVERTICAL) &&
 	 ((buttonEvent->x > real_width_limit) ||
@@ -2943,10 +2923,10 @@ Moved(
 	 ((buttonEvent->y > real_height_limit) ||
 	  (-buttonEvent->y > real_height_limit)))) {
 	/* going out of the snap back area */
-	
+
 	if (!(sbw->scrollBar.add_flags & SNAPPED_OUT)) {
 	    short savedX, savedY, j1, j2;
-	    
+
 	    /* get the saved value, also used by the Cancel action */
 	    sbw->scrollBar.value = sbw->scrollBar.saved_value;
 	    CalcSliderRect(sbw, &savedX, &savedY, &j1, &j2);
@@ -2954,9 +2934,9 @@ Moved(
 	    if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 		    RedrawSliderWindow (sbw);
 	    ScrollCallback (sbw, XmCR_VALUE_CHANGED,
-			    sbw->scrollBar.value, savedX, savedY, 
+			    sbw->scrollBar.value, savedX, savedY,
 			    (XEvent *) buttonEvent);
-	    
+
 	    sbw->scrollBar.add_flags |= SNAPPED_OUT ;
 	}
 	return ;
@@ -2964,45 +2944,45 @@ Moved(
 	/* moving in the snap back area */
 	sbw->scrollBar.add_flags &= ~SNAPPED_OUT ; ;
     }
-    
+
     button_x = buttonEvent->x;
     button_y = buttonEvent->y;
-    
+
     /*
      * Force button_x and button_y to be within the slider_area.
      */
     if (button_x < sbw->scrollBar.slider_area_x)
 	button_x = sbw->scrollBar.slider_area_x;
-    
-    if (button_x > 
+
+    if (button_x >
 	sbw->scrollBar.slider_area_x + sbw->scrollBar.slider_area_width)
-	button_x = sbw->scrollBar.slider_area_x 
+	button_x = sbw->scrollBar.slider_area_x
 	    + sbw->scrollBar.slider_area_width;
-    
+
     if (button_y < sbw->scrollBar.slider_area_y)
 	button_y = sbw->scrollBar.slider_area_y;
-    
-    if (button_y > 
-	sbw->scrollBar.slider_area_y 
+
+    if (button_y >
+	sbw->scrollBar.slider_area_y
 	+ sbw->scrollBar.slider_area_height)
-	button_y = sbw->scrollBar.slider_area_y 
+	button_y = sbw->scrollBar.slider_area_y
 	    + sbw->scrollBar.slider_area_height;
-    
-    
+
+
     /*
-     * Calculate the new origin of the slider.  
+     * Calculate the new origin of the slider.
      * Bound the values with the slider area.
      */
     if (sbw->scrollBar.orientation == XmHORIZONTAL)
 	{
 	    newX = realX = button_x - sbw->scrollBar.separation_x;
 	    newY = realY = sbw->scrollBar.slider_y;
-	    
+
 	    if (newX < sbw->scrollBar.slider_area_x)
 		newX = sbw->scrollBar.slider_area_x;
-	    
-	    if ((newX + sbw->scrollBar.slider_width > 
-		sbw->scrollBar.slider_area_x 
+
+	    if ((newX + sbw->scrollBar.slider_width >
+		sbw->scrollBar.slider_area_x
 		+ sbw->scrollBar.slider_area_width) &&
 		    (sbw->scrollBar.sliding_mode != XmTHERMOMETER))
 		newX = sbw->scrollBar.slider_area_x
@@ -3013,52 +2993,52 @@ Moved(
 	{
 	    newX = realX = sbw->scrollBar.slider_x;
 	    newY = realY = button_y - sbw->scrollBar.separation_y;
-	    
-	    
+
+
 	    if (newY < sbw->scrollBar.slider_area_y)
 		newY = sbw->scrollBar.slider_area_y;
-	    
-	    if ((newY + sbw->scrollBar.slider_height > 
-		sbw->scrollBar.slider_area_y 
+
+	    if ((newY + sbw->scrollBar.slider_height >
+		sbw->scrollBar.slider_area_y
 		+ sbw->scrollBar.slider_area_height) &&
 		    (sbw->scrollBar.sliding_mode != XmTHERMOMETER))
-		newY = sbw->scrollBar.slider_area_y 
+		newY = sbw->scrollBar.slider_area_y
 		    + sbw->scrollBar.slider_area_height
 			- sbw->scrollBar.slider_height;
 	}
-    
-    
-    if (((sbw->scrollBar.orientation == XmHORIZONTAL) && 
+
+
+    if (((sbw->scrollBar.orientation == XmHORIZONTAL) &&
 	 (realX != sbw->scrollBar.initial_x))
 	||
 	((sbw->scrollBar.orientation == XmVERTICAL)   &&
 	 (realY != sbw->scrollBar.initial_y)))
 	{
 	    slideVal = CalcSliderVal (sbw, button_x, button_y);
-	    
-	    if ((newX != sbw->scrollBar.initial_x) || 
+
+	    if ((newX != sbw->scrollBar.initial_x) ||
 		(newY != sbw->scrollBar.initial_y))
 		{
 		    MoveSlider (sbw, newX, newY);
 		    sbw->scrollBar.initial_x = newX;
 		    sbw->scrollBar.initial_y = newY;
 		}
-	    
+
 	    if (slideVal != sbw->scrollBar.value)
 		{
 		    sbw->scrollBar.value = slideVal;
-		    
+
 		    if (slideVal >= (sbw->scrollBar.maximum
 				     - sbw->scrollBar.slider_size))
 			slideVal = sbw->scrollBar.maximum
 			    - sbw->scrollBar.slider_size;
-		    
+
 		    if (slideVal <= sbw->scrollBar.minimum)
 			slideVal = sbw->scrollBar.minimum;
 		    if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 			RedrawSliderWindow (sbw);
-		    ScrollCallback(sbw, XmCR_DRAG, 
-				   sbw->scrollBar.value = slideVal, 
+		    ScrollCallback(sbw, XmCR_DRAG,
+				   sbw->scrollBar.value = slideVal,
 				   buttonEvent->x, buttonEvent->y,
 				   (XEvent *) buttonEvent);
 		}
@@ -3074,8 +3054,7 @@ Moved(
  *	Issue the to top or bottom callbacks.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 TopOrBottom(
         Widget wid,
         XEvent *event,
@@ -3088,24 +3067,24 @@ TopOrBottom(
     if (!sbw->scrollBar.editable) return ;
 
     sbw->scrollBar.flags &=  ~OPERATION_CANCELLED ;
-    
+
     if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 	return;
-    
+
     if (event->type == KeyPress) {
 	Modifiers junk;
 	KeySym key_sym;
 	XKeyPressedEvent *keyEvent = (XKeyPressedEvent *) event;
-	
+
 	key_sym = XtGetActionKeysym(event, &junk);
-	
+
 	if (key_sym == osfXK_BeginLine) {
 	    if (sbp->orientation == XmVERTICAL) {
 		if (sbp->processing_direction == XmMAX_ON_BOTTOM)
 		    MoveSlider(sbw, sbp->slider_x, sbp->slider_area_y);
 		else
 		    MoveSlider(sbw,
-			       sbp->slider_x, 
+			       sbp->slider_x,
 			       sbp->slider_area_y + sbp->slider_area_height
 			       - sbp->slider_height);
 	    } else {
@@ -3119,7 +3098,7 @@ TopOrBottom(
 	    }
 	    /*
 	     * The following grevious bogosity is due to the fact
-	     * that the key behavior was implemented long after 
+	     * that the key behavior was implemented long after
 	     * the rest of this code, and so we have to work around
 	     * currently operating nonsense.
 	     *
@@ -3150,7 +3129,7 @@ TopOrBottom(
 	    if (sbp->orientation == XmVERTICAL) {
 		if (sbp->processing_direction == XmMAX_ON_BOTTOM)
 		    MoveSlider(sbw,
-			       sbp->slider_x, 
+			       sbp->slider_x,
 			       sbp->slider_area_y + sbp->slider_area_height
 			       - sbp->slider_height);
 		else
@@ -3164,7 +3143,7 @@ TopOrBottom(
 		else
 		    MoveSlider(sbw, sbp->slider_area_x, sbp->slider_y);
 	    }
-	    
+
 	    /* See above for explanation of this nonsense */
 	    if (!PROCESS_DIR_INVERSED(sbw)) {
 		sbp->value = sbp->maximum - sbp->slider_size;
@@ -3185,9 +3164,9 @@ TopOrBottom(
     } else  /* event->type == ButtonPress */ {
 	XButtonPressedEvent *buttonEvent =
 	    (XButtonPressedEvent *) event;
-	
+
 	XmDropSiteStartUpdate(wid);
-	
+
 	if /* In arrow1... */
 	    ((buttonEvent->x >= sbp->arrow1_x)                   &&
 	     (buttonEvent->y >= sbp->arrow1_y)                    &&
@@ -3195,13 +3174,13 @@ TopOrBottom(
 	     (buttonEvent->y <= sbp->arrow1_y + sbp->arrow_height)) {
 		sbp->change_type = XmCR_DECREMENT;
 		sbp->arrow1_selected = True;
-		
+
 		DRAWARROW(sbw, sbw->primitive.bottom_shadow_GC,
 			  sbw -> primitive.top_shadow_GC,
 			  sbw->scrollBar.arrow1_x,
 			  sbw->scrollBar.arrow1_y,
 			  sbw->scrollBar.arrow1_orientation);
-		
+
 		if (sbp->orientation == XmVERTICAL)
 		    MoveSlider(sbw, sbp->slider_x, sbp->slider_area_y);
 		else
@@ -3214,18 +3193,18 @@ TopOrBottom(
 				buttonEvent->x, buttonEvent->y,
 				(XEvent *) buttonEvent);
 	    }
-	
+
 	else if /* In arrow2... */
 	    ((buttonEvent->x >= sbp->arrow2_x)  &&
 	     (buttonEvent->y >= sbp->arrow2_y)   &&
-	     (buttonEvent->x <= sbp->arrow2_x 
+	     (buttonEvent->x <= sbp->arrow2_x
 	      + sbp->arrow_width)             &&
-	     (buttonEvent->y <= sbp->arrow2_y 
+	     (buttonEvent->y <= sbp->arrow2_y
 	      + sbp->arrow_height))
 		{
 		    sbp->change_type = XmCR_INCREMENT;
 		    sbp->arrow2_selected = True;
-		    
+
 		    DRAWARROW (sbw, sbw->primitive.bottom_shadow_GC,
 			       sbw -> primitive.top_shadow_GC,
 			       sbw->scrollBar.arrow2_x,
@@ -3233,7 +3212,7 @@ TopOrBottom(
 			       sbw->scrollBar.arrow2_orientation);
 		    if (sbp->orientation == XmVERTICAL)
 			MoveSlider(sbw,
-				   sbp->slider_x, 
+				   sbp->slider_x,
 				   sbp->slider_area_y + sbp->slider_area_height
 				   - sbp->slider_height);
 		    else
@@ -3244,10 +3223,10 @@ TopOrBottom(
 		    sbp->value = sbp->maximum - sbp->slider_size;
 		    if (sbp->sliding_mode == XmTHERMOMETER)
 			RedrawSliderWindow (sbw);
-		    ScrollCallback (sbw, XmCR_TO_BOTTOM, 
+		    ScrollCallback (sbw, XmCR_TO_BOTTOM,
 				    sbp->value, buttonEvent->x, buttonEvent->y,
 				    (XEvent *) buttonEvent);
-		} 
+		}
 	else if /* in the trough between arrow2 and the slider... */
 	    (((sbp->sliding_mode != XmTHERMOMETER) &&
 	      (((sbp->orientation == XmHORIZONTAL)       &&
@@ -3291,7 +3270,7 @@ TopOrBottom(
 				    buttonEvent->x, buttonEvent->y,
 				    (XEvent *) buttonEvent);
 		}
-	else if 
+	else if
 		/* in the trough between arrow1 and the slider... */
 	    (((sbp->orientation == XmHORIZONTAL)                     &&
 	      (buttonEvent->x > sbp->slider_x + sbp->slider_width) &&
@@ -3302,17 +3281,17 @@ TopOrBottom(
 	       + sbp->slider_area_height))
 	     ||
 	     ((sbp->orientation == XmVERTICAL)           &&
-	      (buttonEvent->y > sbp->slider_y 
+	      (buttonEvent->y > sbp->slider_y
 	       + sbp->slider_height)               &&
 	      (buttonEvent->y <= sbp->slider_area_y
 	       + sbp->slider_area_height)          &&
 	      (buttonEvent->x >= sbp->slider_area_x)  &&
-	      (buttonEvent->x <= sbp->slider_area_x 
+	      (buttonEvent->x <= sbp->slider_area_x
 	       + sbp->slider_area_width))
 	     || (sbp->sliding_mode == XmTHERMOMETER)) {
 		if (sbp->orientation == XmVERTICAL)
 		    MoveSlider(sbw,
-			       sbp->slider_x, 
+			       sbp->slider_x,
 			       sbp->slider_area_y + sbp->slider_area_height
 			       - sbp->slider_height);
 		else
@@ -3323,11 +3302,11 @@ TopOrBottom(
 		sbp->value = sbp->maximum - sbp->slider_size;
 		if (sbp->sliding_mode == XmTHERMOMETER)
 			RedrawSliderWindow (sbw);
-		ScrollCallback (sbw, XmCR_TO_BOTTOM, 
+		ScrollCallback (sbw, XmCR_TO_BOTTOM,
 				sbp->value, buttonEvent->x, buttonEvent->y,
 				(XEvent *) buttonEvent);
-	    } 
-		
+	    }
+
     }
 #ifdef FUNKY_INSENSITIVE_VISUAL
     XSetClipMask(XtDisplay(sbw), sbw->scrollBar.unavailable_GC, None);
@@ -3338,9 +3317,9 @@ TopOrBottom(
 		       sbw->scrollBar.arrow1_y,
 		       sbw->scrollBar.arrow_width,
 		       sbw->scrollBar.arrow_height);
-	
+
 	sbw->scrollBar.flags &= ~ARROW1_AVAILABLE;
-	
+
 	if (! (sbw->scrollBar.flags & ARROW2_AVAILABLE)) {
 	    XClearArea(XtDisplay(sbw), XtWindow(sbw),
 		       sbw->scrollBar.arrow2_x,
@@ -3348,13 +3327,13 @@ TopOrBottom(
 		       sbw->scrollBar.arrow_width,
 		       sbw->scrollBar.arrow_height,
 		       FALSE);
-	    
+
 	    DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 		       sbw->primitive.bottom_shadow_GC,
 		       sbw->scrollBar.arrow2_x,
 		       sbw->scrollBar.arrow2_y,
 		       sbw->scrollBar.arrow2_orientation);
-	    
+
 	    sbw->scrollBar.flags |= ARROW2_AVAILABLE;
 	}
     }
@@ -3368,7 +3347,7 @@ TopOrBottom(
 			sbw->scrollBar.arrow_height);
 			*/
 	    sbw->scrollBar.flags &= ~ARROW2_AVAILABLE;
-	    
+
 	    if (! (sbw->scrollBar.flags & ARROW1_AVAILABLE)) {
 		XClearArea(XtDisplay(sbw), XtWindow(sbw),
 			   sbw->scrollBar.arrow1_x,
@@ -3376,13 +3355,13 @@ TopOrBottom(
 			   sbw->scrollBar.arrow_width,
 			   sbw->scrollBar.arrow_height,
 			   FALSE);
-		
+
 		DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 			   sbw->primitive.bottom_shadow_GC,
 			   sbw->scrollBar.arrow1_x,
 			   sbw->scrollBar.arrow1_y,
 			   sbw->scrollBar.arrow1_orientation);
-		
+
 		sbw->scrollBar.flags |= ARROW1_AVAILABLE;
 	    }
 	}
@@ -3395,12 +3374,11 @@ TopOrBottom(
 /*********************************************************************
  *
  *  IncrementUpOrLeft
- *	The up or left key was pressed, decrease the value by 
+ *	The up or left key was pressed, decrease the value by
  *	one increment.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 IncrementUpOrLeft(
         Widget wid,
         XEvent *event,
@@ -3426,7 +3404,7 @@ IncrementUpOrLeft(
 	if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 		return;
 
-	/* 
+	/*
  	 * arg value passed in will either be "up" for the up key or
 	 * "left" for the left arrow key (or for compatibility 0 -> up
 	 * key or 1 -> left key. The key needs to be compared with the
@@ -3442,10 +3420,10 @@ IncrementUpOrLeft(
 	    key_pressed = 0;
 	}
 
-	if (((key_pressed == 0) && 
-		(sbw->scrollBar.orientation == XmHORIZONTAL)) 
+	if (((key_pressed == 0) &&
+		(sbw->scrollBar.orientation == XmHORIZONTAL))
 		||
-		((key_pressed == 1) && 
+		((key_pressed == 1) &&
 		(sbw->scrollBar.orientation == XmVERTICAL)))
 		return;
 
@@ -3461,7 +3439,7 @@ IncrementUpOrLeft(
 		if ((sbw->scrollBar.value = new_value)
 			== sbw->scrollBar.minimum)
 		{
-		        XSetClipMask(XtDisplay(sbw), 
+		        XSetClipMask(XtDisplay(sbw),
 				     sbw->scrollBar.unavailable_GC, None);
 			XFillRectangle(XtDisplay(sbw), XtWindow(sbw),
 				sbw->scrollBar.unavailable_GC,
@@ -3482,7 +3460,7 @@ IncrementUpOrLeft(
 				sbw->scrollBar.arrow_width,
 				sbw->scrollBar.arrow_height,
 				FALSE);
-			
+
 			DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 				sbw->primitive.bottom_shadow_GC,
 				sbw->scrollBar.arrow2_x,
@@ -3505,12 +3483,11 @@ IncrementUpOrLeft(
 /*********************************************************************
  *
  *  IncrementDownOrRight
- *	The down or right key was pressed, increase the value by 
+ *	The down or right key was pressed, increase the value by
  *	one increment.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 IncrementDownOrRight(
         Widget wid,
         XEvent *event,
@@ -3534,7 +3511,7 @@ IncrementDownOrRight(
 	if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 		return;
 
-	/* 
+	/*
  	 * arg value passed in will either be "down" for the down key or
 	 * "right" for the right arrow key (or for compatibility 0 -> down
 	 * key or 1 -> right key. The key needs to be compared with the
@@ -3549,11 +3526,11 @@ IncrementDownOrRight(
 	    /* We couldn't convert the value. Just assume a value of 0. */
 	    key_pressed = 0;
 	}
-	
-	if (((key_pressed == 0) && 
+
+	if (((key_pressed == 0) &&
 		(sbw->scrollBar.orientation == XmHORIZONTAL))
 		||
-		((key_pressed == 1) && 
+		((key_pressed == 1) &&
 		(sbw->scrollBar.orientation == XmVERTICAL)))
 		return;
 
@@ -3569,7 +3546,7 @@ IncrementDownOrRight(
 		if ((sbw->scrollBar.value = new_value)
 			== (sbw->scrollBar.maximum - sbw->scrollBar.slider_size))
 		{
-		        XSetClipMask(XtDisplay(sbw), 
+		        XSetClipMask(XtDisplay(sbw),
 				     sbw->scrollBar.unavailable_GC, None);
 			XFillRectangle(XtDisplay(sbw), XtWindow(sbw),
 				sbw->scrollBar.unavailable_GC,
@@ -3591,7 +3568,7 @@ IncrementDownOrRight(
 				sbw->scrollBar.arrow_width,
 				sbw->scrollBar.arrow_height,
 				FALSE);
-			
+
 			DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 				sbw->primitive.bottom_shadow_GC,
 				sbw->scrollBar.arrow1_x,
@@ -3614,12 +3591,11 @@ IncrementDownOrRight(
 /*********************************************************************
  *
  *  PageUpOrLeft
- *	The up or left key was pressed, decrease the value by 
+ *	The up or left key was pressed, decrease the value by
  *	one increment.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 PageUpOrLeft(
         Widget wid,
         XEvent *event,
@@ -3642,7 +3618,7 @@ PageUpOrLeft(
 
 	if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 		return;
-	/* 
+	/*
  	 * arg value passed in will either be "up" for the up key or
 	 * "left" for the left arrow key (or for compatibility 0 -> up
 	 * key or 1 -> left key. The key needs to be compared with the
@@ -3658,10 +3634,10 @@ PageUpOrLeft(
 	    key_pressed = 0;
 	}
 
-	if (((key_pressed == 0) && 
-		(sbw->scrollBar.orientation == XmHORIZONTAL)) 
+	if (((key_pressed == 0) &&
+		(sbw->scrollBar.orientation == XmHORIZONTAL))
 		||
-		((key_pressed == 1) && 
+		((key_pressed == 1) &&
 		(sbw->scrollBar.orientation == XmVERTICAL)))
 		return;
 
@@ -3677,7 +3653,7 @@ PageUpOrLeft(
 		if ((sbw->scrollBar.value = new_value)
 			== sbw->scrollBar.minimum)
 		{
-		        XSetClipMask(XtDisplay(sbw), 
+		        XSetClipMask(XtDisplay(sbw),
 				     sbw->scrollBar.unavailable_GC, None);
 			XFillRectangle(XtDisplay(sbw), XtWindow(sbw),
 				sbw->scrollBar.unavailable_GC,
@@ -3698,7 +3674,7 @@ PageUpOrLeft(
 				sbw->scrollBar.arrow_width,
 				sbw->scrollBar.arrow_height,
 				FALSE);
-			
+
 			DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 				sbw->primitive.bottom_shadow_GC,
 				sbw->scrollBar.arrow2_x,
@@ -3710,7 +3686,7 @@ PageUpOrLeft(
 
 		RedrawSliderWindow (sbw);
 
-		ScrollCallback (sbw, XmCR_PAGE_DECREMENT, 
+		ScrollCallback (sbw, XmCR_PAGE_DECREMENT,
 				sbw->scrollBar.value,
 				event->xbutton.x, event->xbutton.y, event);
 	}
@@ -3722,12 +3698,11 @@ PageUpOrLeft(
 /*********************************************************************
  *
  *  PageDownOrRight
- *	The down or right key was pressed, increase the value by 
+ *	The down or right key was pressed, increase the value by
  *	one increment.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 PageDownOrRight(
         Widget wid,
         XEvent *event,
@@ -3751,7 +3726,7 @@ PageDownOrRight(
 	if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 		return;
 
-	/* 
+	/*
  	 * arg value passed in will either be "down" for the down key or
 	 * "right" for the right arrow key (or for compatibility 0 -> down
 	 * key or 1 -> right key. The key needs to be compared with the
@@ -3767,10 +3742,10 @@ PageDownOrRight(
 	    key_pressed = 0;
 	}
 
-	if (((key_pressed == 0) && 
+	if (((key_pressed == 0) &&
 		(sbw->scrollBar.orientation == XmHORIZONTAL))
 		||
-		((key_pressed == 1) && 
+		((key_pressed == 1) &&
 		(sbw->scrollBar.orientation == XmVERTICAL)))
 		return;
 
@@ -3786,7 +3761,7 @@ PageDownOrRight(
 		if ((sbw->scrollBar.value = new_value)
 			== (sbw->scrollBar.maximum - sbw->scrollBar.slider_size))
 		{
-		        XSetClipMask(XtDisplay(sbw), 
+		        XSetClipMask(XtDisplay(sbw),
 				     sbw->scrollBar.unavailable_GC, None);
 			XFillRectangle(XtDisplay(sbw), XtWindow(sbw),
 				sbw->scrollBar.unavailable_GC,
@@ -3807,7 +3782,7 @@ PageDownOrRight(
 				sbw->scrollBar.arrow_width,
 				sbw->scrollBar.arrow_height,
 				FALSE);
-			
+
 			DRAWARROW (sbw, sbw -> primitive.top_shadow_GC,
 				sbw->primitive.bottom_shadow_GC,
 				sbw->scrollBar.arrow1_x,
@@ -3824,8 +3799,7 @@ PageDownOrRight(
 	}
 }
 
-/*ARGSUSED*/
-static void 
+static void
 CancelDrag(
         Widget wid,
         XEvent *event,
@@ -3852,7 +3826,7 @@ CancelDrag(
 		if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 		    RedrawSliderWindow (sbw);
 		ScrollCallback (sbw, XmCR_VALUE_CHANGED,
-		                sbw->scrollBar.value, savedX, savedY, 
+		                sbw->scrollBar.value, savedX, savedY,
 				(XEvent *) event);
 
 		if (sbw->scrollBar.timer != 0)
@@ -3883,7 +3857,7 @@ CancelDrag(
  *	moved out of.
  *
  *********************************************************************/
-static void 
+static void
 MoveSlider(
         XmScrollBarWidget sbw,
         int currentX,
@@ -3893,16 +3867,16 @@ MoveSlider(
     int oldY = sbw->scrollBar.slider_y;
     int width = sbw->scrollBar.slider_width;
     int height = sbw->scrollBar.slider_height;
-    
+
     XSegment seg[2];
-    
+
     if ((currentX == oldX) && (currentY == oldY))
 	return;
-    
+
     if (sbw->scrollBar.sliding_mode == XmTHERMOMETER) {
 	if (sbw->scrollBar.orientation == XmHORIZONTAL)
 	    sbw->scrollBar.slider_x = currentX;
-	else 
+	else
 	    sbw->scrollBar.slider_y = currentY;
 	return ;
     }
@@ -3910,10 +3884,10 @@ MoveSlider(
     if (sbw->scrollBar.orientation == XmHORIZONTAL)
 	{
 	    sbw->scrollBar.slider_x = currentX;
-	    
+
 	    seg[0].y1 = seg[0].y2 = oldY + 2;
 	    seg[1].y1 = seg[1].y2 = oldY + height - 3;
-	    
+
 	    if (oldX < currentX)
 		{
 		    seg[0].x1 = seg[1].x1 = oldX;
@@ -3924,25 +3898,25 @@ MoveSlider(
 		    seg[0].x1 = seg[1].x1 = currentX + width;
 		    seg[0].x2 = seg[1].x2 = seg[0].x1 + oldX - currentX - 1;
 		}
-	    
-	    
+
+
 	    if (sbw->scrollBar.pixmap != 0)
 		{
 		    CopySliderInWindow(sbw);
-		    XClearArea (XtDisplay((Widget)sbw), 
+		    XClearArea (XtDisplay((Widget)sbw),
 				XtWindow((Widget)sbw),
-				seg[0].x1, oldY, 
-				seg[0].x2 - seg[0].x1 + 1, 
+				seg[0].x1, oldY,
+				seg[0].x2 - seg[0].x1 + 1,
 				height, False);
 		}
-	} 
+	}
     else /* sbw->scrollBar.orientation == XmVERTICAL */
 	{
 	    sbw->scrollBar.slider_y = currentY;
-	    
+
 	    seg[0].x1 = seg[0].x2 = oldX + 2;
 	    seg[1].x1 = seg[1].x2 = oldX + width - 3;
-	    
+
 	    if (oldY < currentY)
 		{
 		    seg[0].y1 = seg[1].y1 = oldY;
@@ -3953,11 +3927,11 @@ MoveSlider(
 		    seg[0].y1 = seg[1].y1 = currentY + height;
 		    seg[0].y2 = seg[1].y2 = seg[0].y1 + oldY - currentY - 1;
 		}
-	    
+
 	    if (sbw->scrollBar.pixmap != 0)
 		{
 		    CopySliderInWindow(sbw);
-		    XClearArea (XtDisplay((Widget)sbw), 
+		    XClearArea (XtDisplay((Widget)sbw),
 				XtWindow((Widget)sbw),
 				oldX, seg[0].y1, width,
 				seg[0].y2 - seg[0].y1 + 1, False);
@@ -3975,7 +3949,7 @@ MoveSlider(
  *	True if the value changes, False otherwise.
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 ChangeScrollBarValue(
         XmScrollBarWidget sbw )
 {
@@ -3983,12 +3957,12 @@ ChangeScrollBarValue(
     register int change_amount = 0;
     register Boolean returnFlag = TRUE;
     register int old_value = sbw->scrollBar.value;
-    
+
     if (! (sbw->scrollBar.flags & SLIDER_AVAILABLE))
 	return(FALSE);
     /*  Get the amount to change the scroll bar value based on  */
     /*  the type of change occuring.                            */
-    
+
     if (change_type == XmCR_INCREMENT)
 	change_amount = sbw->scrollBar.increment;
     else if (change_type == XmCR_PAGE_INCREMENT)
@@ -3997,24 +3971,24 @@ ChangeScrollBarValue(
 	change_amount = -sbw->scrollBar.increment;
     else if (change_type == XmCR_PAGE_DECREMENT)
 	change_amount = -sbw->scrollBar.page_increment;
-    
+
     /* Change the value */
     sbw->scrollBar.value += change_amount;
-    
+
     /* Truncate and set flags as appropriate */
     if (sbw->scrollBar.value >= (sbw->scrollBar.maximum
 				 - sbw->scrollBar.slider_size))
 	sbw->scrollBar.value = sbw->scrollBar.maximum
 	    - sbw->scrollBar.slider_size;
-    
+
     if (sbw->scrollBar.value <= sbw->scrollBar.minimum)
 	sbw->scrollBar.value = sbw->scrollBar.minimum;
-    
+
     if ((returnFlag = (sbw->scrollBar.value != old_value)) != False) {
 	RedrawSliderWindow (sbw);
     }
-    
-    
+
+
     return (returnFlag);
 }
 
@@ -4028,8 +4002,7 @@ ChangeScrollBarValue(
  *	event evoked because of arrow selection.
  *
  *********************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 TimerEvent(
         XtPointer closure,
         XtIntervalId *id )	/* unused */
@@ -4051,7 +4024,7 @@ TimerEvent(
 
 		sbw->scrollBar.flags &= ~FIRST_SCROLL_FLAG;
 
-		sbw->scrollBar.timer = 
+		sbw->scrollBar.timer =
 		XtAppAddTimeOut (XtWidgetToApplicationContext((Widget) sbw),
                                    (unsigned long) sbw->scrollBar.repeat_delay,
                                                   TimerEvent, (XtPointer) sbw);
@@ -4067,7 +4040,7 @@ TimerEvent(
 	/*  slider moved callbacks                                    */
 
 	if (flag)
-		ScrollCallback (sbw, sbw->scrollBar.change_type, 
+		ScrollCallback (sbw, sbw->scrollBar.change_type,
 			sbw->scrollBar.value, 0, 0, NULL);
 
 	/*
@@ -4080,12 +4053,12 @@ TimerEvent(
 
 	XSync (XtDisplay (sbw), False);
 
-	/*  Add the repeat timer and check that the scrollbar hasn't been set 
+	/*  Add the repeat timer and check that the scrollbar hasn't been set
 	    insensitive by some callbacks */
 
 	if (flag)
 	{
-		sbw->scrollBar.timer = 
+		sbw->scrollBar.timer =
 		    XtAppAddTimeOut (XtWidgetToApplicationContext((Widget) sbw),
 				     (unsigned long) sbw->scrollBar.repeat_delay,
 				     TimerEvent, (XtPointer) sbw);
@@ -4099,11 +4072,11 @@ TimerEvent(
  *
  *  ScrollCallback
  *	This routine services the widget's callbacks.  It calls the
- *	specific callback if it is not empty.  If it is empty then the 
+ *	specific callback if it is not empty.  If it is empty then the
  *	main callback is called.
  *
  ************************************************************************/
-static void 
+static void
 ScrollCallback(
         XmScrollBarWidget sbw,
         int reason,
@@ -4116,7 +4089,7 @@ ScrollCallback(
 
    call_value.reason = reason;
    call_value.event  = event;
-    
+
    if (PROCESS_DIR_INVERSED(sbw)) {
        switch (reason) {
        case XmCR_INCREMENT:
@@ -4143,7 +4116,7 @@ ScrollCallback(
    }
    else
        call_value.value = value;
-   
+
 
    if (sbw->scrollBar.orientation == XmHORIZONTAL)
       call_value.pixel = xpixel;
@@ -4156,79 +4129,79 @@ ScrollCallback(
        XtCallCallbackList ((Widget) sbw, sbw->scrollBar.value_changed_callback,
 			   &call_value);
        break;
-       
+
    case XmCR_INCREMENT:
        if  (sbw->scrollBar.increment_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.increment_callback, &call_value);
        else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				 sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_DECREMENT:
        if  (sbw->scrollBar.decrement_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.decrement_callback, &call_value);
        else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_PAGE_INCREMENT:
        if  (sbw->scrollBar.page_increment_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.page_increment_callback, &call_value);
-       else 
+       else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_PAGE_DECREMENT:
        if  (sbw->scrollBar.page_decrement_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.page_decrement_callback, &call_value);
        else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				 sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_TO_TOP:
        if (sbw->scrollBar.to_top_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.to_top_callback, &call_value);
-       else 
+       else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_TO_BOTTOM:
        if (sbw->scrollBar.to_bottom_callback)
-	   XtCallCallbackList ((Widget) sbw, 
+	   XtCallCallbackList ((Widget) sbw,
 			       sbw->scrollBar.to_bottom_callback, &call_value);
        else
 	   {
 	       call_value.reason = XmCR_VALUE_CHANGED;
-	       XtCallCallbackList ((Widget) sbw, 
+	       XtCallCallbackList ((Widget) sbw,
 				 sbw->scrollBar.value_changed_callback, &call_value);
 	   }
        break;
-       
+
    case XmCR_DRAG:
        if (sbw->scrollBar.drag_callback)
 	   XtCallCallbackList ((Widget) sbw,
@@ -4246,11 +4219,11 @@ ScrollCallback(
  *	add or remove the callback list to be called on any move.
  *      Since valueChangedCallback is not called on increment (& co)
  *      if an increment callback is present, we have to set them all.
- *      
+ *
  ************************************************************************/
-static void 
+static void
 NavigChangeMoveCB(
-           Widget nav, 
+           Widget nav,
 	   XtCallbackProc moveCB,
            XtPointer closure,
            Boolean setunset)
@@ -4286,9 +4259,9 @@ NavigChangeMoveCB(
  *	change the value and possibly call the callbacks
  *
  ************************************************************************/
-static void 
+static void
 NavigSetValue(
-           Widget nav, 
+           Widget nav,
 	   XmNavigatorData nav_data,
            Boolean notify)
 {
@@ -4308,7 +4281,7 @@ NavigSetValue(
 
     if (!(sbw->scrollBar.dimMask & nav_data->dimMask)) return ;
 
-    /* we need to fetch either the x or y values out of the 
+    /* we need to fetch either the x or y values out of the
        passed nav_data record, depending on the dimmask.
        scrollbar is only interested in one value */
 
@@ -4320,59 +4293,59 @@ NavigSetValue(
       if ((PROCESS_DIR_INVERSED(sbw) ?
 	   INVERSED_VALUE(sbw) : sbw->scrollBar.value) !=
 	  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->value)) {
-	XtSetArg (arglist[n], XmNvalue, 
+	XtSetArg (arglist[n], XmNvalue,
 		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->value));n++;
       }
     }
 
 
     if ((nav_data->valueMask & NavMinimum) &&
-	(sbw->scrollBar.minimum != 
+	(sbw->scrollBar.minimum !=
 	 ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->minimum))) {
-	XtSetArg (arglist[n], XmNminimum, 
+	XtSetArg (arglist[n], XmNminimum,
 		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->minimum));n++;
     }
 
     if ((nav_data->valueMask & NavMaximum) &&
-	(sbw->scrollBar.maximum != 
+	(sbw->scrollBar.maximum !=
 	 ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->maximum))) {
-	XtSetArg (arglist[n], XmNmaximum, 
+	XtSetArg (arglist[n], XmNmaximum,
 		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->maximum));n++;
     }
-    
+
     if (sbw->scrollBar.sliding_mode != XmTHERMOMETER) {
 	if ((nav_data->valueMask & NavSliderSize) &&
-	    (sbw->scrollBar.slider_size != 
+	    (sbw->scrollBar.slider_size !=
 	     ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->slider_size)) &&
 	    (ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->slider_size) != 0)) {
-	    XtSetArg (arglist[n], XmNsliderSize, 
-		      ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->slider_size)); 
+	    XtSetArg (arglist[n], XmNsliderSize,
+		      ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->slider_size));
 	    n++;
 	}
     }
-    
+
     if ((nav_data->valueMask & NavIncrement) &&
-	(sbw->scrollBar.increment != 
+	(sbw->scrollBar.increment !=
 	 ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->increment)) &&
 	(ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->increment) != 0)) {
-	XtSetArg (arglist[n], XmNincrement, 
+	XtSetArg (arglist[n], XmNincrement,
 		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->increment)); n++;
     }
-    
+
     if ((nav_data->valueMask & NavPageIncrement) &&
-	(sbw->scrollBar.page_increment != 
+	(sbw->scrollBar.page_increment !=
 	 ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->page_increment)) &&
 	(ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->page_increment) != 0)) {
-	XtSetArg (arglist[n], XmNpageIncrement, 
-		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->page_increment)); 
+	XtSetArg (arglist[n], XmNpageIncrement,
+		  ACCESS_DIM(sbw->scrollBar.dimMask, nav_data->page_increment));
 	n++;
     }
-    
+
     if (n) XtSetValues (nav, arglist, n);
 
     if (notify && sbw->scrollBar.value != save_value)
-	ScrollCallback (sbw, XmCR_VALUE_CHANGED, 
-			sbw->scrollBar.value, 0, 0, NULL); 
+	ScrollCallback (sbw, XmCR_VALUE_CHANGED,
+			sbw->scrollBar.value, 0, 0, NULL);
 
 }
 
@@ -4404,9 +4377,9 @@ NavigGetValue(
     }
 
     if (nav_data->valueMask & NavMinimum)
-	ASSIGN_DIM(nav_data->dimMask, nav_data->minimum, 
+	ASSIGN_DIM(nav_data->dimMask, nav_data->minimum,
 		   sbw->scrollBar.minimum) ;
-	
+
 
     if (nav_data->valueMask & NavMaximum)
 	ASSIGN_DIM(nav_data->dimMask, nav_data->maximum,
@@ -4416,15 +4389,15 @@ NavigGetValue(
     if (nav_data->valueMask & NavSliderSize)
 	ASSIGN_DIM(nav_data->dimMask, nav_data->slider_size,
 		   sbw->scrollBar.slider_size) ;
-	
+
     if (nav_data->valueMask & NavIncrement)
 	ASSIGN_DIM(nav_data->dimMask, nav_data->increment,
 		   sbw->scrollBar.increment) ;
 
-    if (nav_data->valueMask & NavPageIncrement) 
+    if (nav_data->valueMask & NavPageIncrement)
 	ASSIGN_DIM(nav_data->dimMask, nav_data->page_increment,
 		   sbw->scrollBar.page_increment) ;
-    
+
 }
 
 
@@ -4443,18 +4416,18 @@ NavigGetValue(
  *	Create an instance of a scrollbar and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateScrollBar(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount )
 {
-   return (XtCreateWidget (name, xmScrollBarWidgetClass, 
+   return (XtCreateWidget (name, xmScrollBarWidgetClass,
                            parent, arglist, argcount));
 }
 
-Widget 
+Widget
 XmVaCreateScrollBar(
         Widget parent,
         char *name,
@@ -4463,18 +4436,18 @@ XmVaCreateScrollBar(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmScrollBarWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -4487,17 +4460,17 @@ XmVaCreateManagedScrollBar(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmScrollBarWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -4507,7 +4480,7 @@ XmVaCreateManagedScrollBar(
  *	Return some scrollbar values.
  *
  ************************************************************************/
-void 
+void
 XmScrollBarGetValues(
         Widget w,
         int *value,
@@ -4517,7 +4490,7 @@ XmScrollBarGetValues(
 {
    XmScrollBarWidget sbw = (XmScrollBarWidget) w;
    XtAppContext app = XtWidgetToApplicationContext(w);
-    
+
    _XmAppLock(app);
 
    if (PROCESS_DIR_INVERSED(sbw)) {
@@ -4540,25 +4513,21 @@ XmScrollBarGetValues(
  *	Set some scrollbar values.
  *
  ************************************************************************/
-void 
+void
 XmScrollBarSetValues(
         Widget w,
         int value,
         int slider_size,
         int increment,
         int page_increment,
-#if NeedWidePrototypes
-        int notify )
-#else
         Boolean notify )
-#endif /* NeedWidePrototypes */
 {
    XmScrollBarWidget sbw = (XmScrollBarWidget) w;
    int save_value;
    Arg arglist[4];
    Cardinal n;
    XtAppContext app = XtWidgetToApplicationContext(w);
-    
+
    _XmAppLock(app);
 
 
@@ -4584,8 +4553,8 @@ XmScrollBarSetValues(
    XtSetValues ((Widget) sbw, arglist, n);
 
    if (notify && sbw->scrollBar.value != save_value)
-      ScrollCallback (sbw, XmCR_VALUE_CHANGED, 
-                      sbw->scrollBar.value, 0, 0, NULL); 
+      ScrollCallback (sbw, XmCR_VALUE_CHANGED,
+                      sbw->scrollBar.value, 0, 0, NULL);
    _XmAppUnlock(app);
 }
 

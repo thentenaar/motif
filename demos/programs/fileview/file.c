@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: file.c /main/6 1995/07/14 10:02:30 drk $"
@@ -31,14 +31,11 @@ static char rcsid[] = "$XConsortium: file.c /main/6 1995/07/14 10:02:30 drk $"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "file.h"
 
-#ifndef X_NOT_STDC_ENV
-#include <unistd.h>
-#endif
-
 /* =====================================================================
- * Open File 
+ * Open File
  */
 
 FILE * OpenFile(char *path)

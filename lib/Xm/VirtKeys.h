@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmVirtKeys_h
 #define _XmVirtKeys_h
 
@@ -85,13 +85,9 @@ extern "C" {
 
 /********    Public Function Declarations    ********/
 
-extern void XmTranslateKey( 
+extern void XmTranslateKey(
                         Display *dpy,
-#if NeedWidePrototypes
-                        unsigned int keycode,
-#else
                         KeyCode keycode,
-#endif /* NeedWidePrototypes */
                         Modifiers modifiers,
                         Modifiers *modifiers_return,
                         KeySym *keysym_return) ;

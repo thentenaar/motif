@@ -30,19 +30,13 @@
 #include <config.h>
 #endif
 
-
-
 #include <stdio.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 #include <Xm/XmosP.h>
 #include "XmI.h"
 #include "XmStringI.h"
-
-
 
 static Atom
 GetLocaleEncodingAtom(Display *dpy)
@@ -139,7 +133,6 @@ enum { _VALID_SEGMENT, _INVALID_SEGMENT, _NO_MORE_SEGMENTS };
 /* Valid text types */
 enum { _LOCALE_TEXT, _STRING_TEXT };
 
-/*ARGSUSED*/
 static unsigned char
 GetTextSegment(Display *display, /* unused */
 	       XmStringContext xmcontext,
@@ -376,7 +369,7 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
     _XmStringContextFree(&stack_context);
     return(Success);
 }
-
+
 /************************************************************************
  *
  *  XmCvtXmStringTableToTextProperty
@@ -565,7 +558,7 @@ XmCvtXmStringTableToTextProperty(Display *display,
       return(XLocaleNotSupported);
     }
 }
-
+
 /************************************************************************
  *
  *  XmCvtTextPropertyToXmStringTable

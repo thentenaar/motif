@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -30,7 +30,7 @@
 ** This file contains the _Xm routines replaced by Xme functions
 ** in 2.0. We do not want to mix them with other _Xm in Obso2_0.c
 ** since there is a higher probability that these have been used
-** by programs (that's why they are Xme now) 
+** by programs (that's why they are Xme now)
 */
 
 #ifdef HAVE_CONFIG_H
@@ -48,110 +48,73 @@
 #include <Xm/DropSMgr.h>
 
 /****************************_XmDrawShadows****************************/
-void _XmDrawShadows(Display *display, Drawable d, 
-		    GC top_gc, GC bottom_gc, 
-#if NeedWidePrototypes
-		    int x, int y, 
-		    int width, int height, int shad_thick, 
-#else
-		    Position x, Position y, 
-		    Dimension width, Dimension height, Dimension shad_thick, 
-#endif
+void _XmDrawShadows(Display *display, Drawable d,
+		    GC top_gc, GC bottom_gc,
+		    Position x, Position y,
+		    Dimension width, Dimension height, Dimension shad_thick,
 		    unsigned int shad_type)
 {
     XmeDrawShadows(display, d, top_gc, bottom_gc, x, y, width, height,
 		   shad_thick, shad_type);
-} 
+}
 
 
 /*****************************_XmClearBorder*********************************/
-void _XmClearBorder (Display *display, Window w, 
-#if NeedWidePrototypes
-		     int x, int y, 
-		     int width, int height, int shadow_thick)
-#else
-                     Position x, Position y, 
+void _XmClearBorder (Display *display, Window w,
+                     Position x, Position y,
                      Dimension width, Dimension height,
                      Dimension shadow_thick)
-#endif /* NeedWidePrototypes */
 {
     XmeClearBorder (display, w, x, y, width, height, shadow_thick);
 }
 
 /******************************_XmDrawSeparator**********************/
-void _XmDrawSeparator(Display *display, Drawable d, 
-		      GC top_gc, GC bottom_gc, GC separator_gc, 
-#if NeedWidePrototypes
-		      int x, int y, 
-		      int width, int height, 
-		      int shadow_thick, 
-		      int margin, unsigned int orientation, 
-		      unsigned int separator_type)
-#else
-                      Position x, Position y, 
-                      Dimension width, Dimension height, 
-                      Dimension shadow_thick, 
-                      Dimension margin, unsigned char orientation, 
+void _XmDrawSeparator(Display *display, Drawable d,
+		      GC top_gc, GC bottom_gc, GC separator_gc,
+                      Position x, Position y,
+                      Dimension width, Dimension height,
+                      Dimension shadow_thick,
+                      Dimension margin, unsigned char orientation,
                       unsigned char separator_type)
-#endif /* NeedWidePrototypes */
-
 {
     XmeDrawSeparator(display, d, top_gc, bottom_gc, separator_gc,
-		     x, y, width, height, shadow_thick, margin, 
+		     x, y, width, height, shadow_thick, margin,
 		     orientation, separator_type);
 }
 
 
 /***********************_XmDrawDiamond**********************************/
-void _XmDrawDiamond(Display *display, Drawable d, 
-                    GC top_gc, GC bottom_gc, GC center_gc, 
-#if NeedWidePrototypes
-                    int x, int y, 
-                    int width, int height, 
-                    int shadow_thick, int fill)
-#else
-                    Position x, Position y, 
-                    Dimension width, Dimension height, 
+void _XmDrawDiamond(Display *display, Drawable d,
+                    GC top_gc, GC bottom_gc, GC center_gc,
+                    Position x, Position y,
+                    Dimension width, Dimension height,
                     Dimension shadow_thick, Dimension fill)
-#endif /* NeedWidePrototypes */
 {
-    XmeDrawDiamond (display, d, top_gc, bottom_gc, center_gc, 
+    XmeDrawDiamond (display, d, top_gc, bottom_gc, center_gc,
 		    x, y, width, height, shadow_thick, fill);
 }
 
 
 /****************************_XmDrawSimpleHighlight************************/
 
-void _XmDrawSimpleHighlight(Display *display, Drawable d, 
-		      GC gc, 
-#if NeedWidePrototypes
-		      int x, int y, 
-		      int width, int height,
-		      int highlight_thickness)
-#else
-		      Position x, Position y, 
+void _XmDrawSimpleHighlight(Display *display, Drawable d,
+		      GC gc,
+		      Position x, Position y,
 		      Dimension width, Dimension height,
 		      Dimension highlight_thickness)
-#endif /* NeedWidePrototypes */
 {
-    XmeDrawHighlight(display, d, gc, x, y, width, height, 
+    XmeDrawHighlight(display, d, gc, x, y, width, height,
 		     highlight_thickness);
 }
 
 /****************************_XmDrawArrow**********************************/
-void _XmDrawArrow(Display *display, Drawable d, 
-                  GC top_gc, GC bot_gc, GC cent_gc, 
-#if NeedWidePrototypes
-                  int x, int y, 
-                  int width, int height, int shadow_thick, 
-                  unsigned int direction)
-#else
-                  Position x, Position y, 
-                  Dimension width, Dimension height, Dimension shadow_thick, 
+void _XmDrawArrow(Display *display, Drawable d,
+                  GC top_gc, GC bot_gc, GC cent_gc,
+                  Position x, Position y,
+                  Dimension width, Dimension height, Dimension shadow_thick,
                   unsigned char direction)
-#endif /* NeedWidePrototypes */
 {
-    XmeDrawArrow(display, d, top_gc, bot_gc, cent_gc, 
+    XmeDrawArrow(display, d, top_gc, bot_gc, cent_gc,
 		 x, y, width, height, shadow_thick, direction);
 }
 
@@ -159,7 +122,7 @@ void _XmDrawArrow(Display *display, Drawable d,
 
 /**********************************************************************/
 
-void 
+void
 _XmFromHorizontalPixels(
         Widget widget,
         int offset,
@@ -170,7 +133,7 @@ _XmFromHorizontalPixels(
 
 /**********************************************************************/
 
-void 
+void
 _XmFromVerticalPixels(
         Widget widget,
         int offset,
@@ -181,7 +144,7 @@ _XmFromVerticalPixels(
 
 /**********************************************************************/
 
-XmImportOperator 
+XmImportOperator
 _XmToHorizontalPixels(
         Widget widget,
         int offset,
@@ -192,7 +155,7 @@ _XmToHorizontalPixels(
 
 /********************************************************************/
 
-XmImportOperator 
+XmImportOperator
 _XmToVerticalPixels(
         Widget widget,
         int offset,
@@ -203,16 +166,16 @@ _XmToVerticalPixels(
 
 /********************************************************************/
 
-void 
+void
 _XmNavigChangeManaged(
         Widget wid )
-{   
+{
     XmeNavigChangeManaged(wid);
 }
 
 /********************************************************************/
 
-void 
+void
 _XmRedisplayGadgets(
         Widget w,
         register XEvent *event,
@@ -233,7 +196,7 @@ _XmGetTextualDragIcon(
 
 /********************************************************************/
 
-void 
+void
 _XmVirtualToActualKeysym(
         Display *dpy,
         KeySym virtKeysym,
@@ -259,7 +222,7 @@ _XmVirtualToActualKeysym(
 
 /********************************************************************/
 
-Cursor 
+Cursor
 _XmGetNullCursor(
         Widget w )
 {
@@ -268,7 +231,7 @@ _XmGetNullCursor(
 
 /********************************************************************/
 
-void 
+void
 _XmWarning(
         Widget w,
         char *message )
@@ -279,21 +242,17 @@ _XmWarning(
 
 /********************************************************************/
 
-XmFontList 
+XmFontList
 _XmGetDefaultFontList(
         Widget w,
-#if NeedWidePrototypes
-        unsigned int fontListType )
-#else
         unsigned char fontListType )
-#endif /* NeedWidePrototypes */
 {
     return XmeGetDefaultRenderTable( w, fontListType );
 }
 
 /********************************************************************/
 
-Boolean 
+Boolean
 _XmFontListGetDefaultFont(
         XmFontList fontlist,
         XFontStruct **font_struct )
@@ -313,7 +272,7 @@ _XmGMReplyToQueryGeometry(Widget widget,
 
 /********************************************************************/
 
-Boolean 
+Boolean
 _XmStringsAreEqual(
         register char *in_str,
         register char *test_str )
@@ -323,7 +282,7 @@ _XmStringsAreEqual(
 
 /********************************************************************/
 
-void 
+void
 _XmGetMaxCursorSize(
         Widget w,
         Dimension *width,
@@ -334,7 +293,7 @@ _XmGetMaxCursorSize(
 
 /********************************************************************/
 
-Boolean 
+Boolean
 _XmStringIsXmString(
         XmString string )
 {
@@ -343,7 +302,7 @@ _XmStringIsXmString(
 
 /********************************************************************/
 
-XmGadget 
+XmGadget
 _XmInputInGadget(
         Widget wid,
         register int x,
@@ -384,10 +343,10 @@ _XmOSGetHomeDirName()
 
 /********************************************************************/
 
-void 
+void
 _XmStringUpdateWMShellTitle(
 	XmString xmstr,
-	Widget shell) 
+	Widget shell)
 {
     XmeSetWMShellTitle(xmstr, shell);
 }
@@ -398,25 +357,19 @@ _XmStringUpdateWMShellTitle(
  *	Change the width or height of a widget or gadget.
  *
  ************************************************************************/
-void 
+void
 _XmResizeObject(
         Widget wid,
-#if NeedWidePrototypes
-        int width,
-        int height,
-        int border_width )
-#else
         Dimension width,
         Dimension height,
         Dimension border_width )
-#endif /* NeedWidePrototypes */
 {
     RectObj g = (RectObj) wid ;
     XmDropSiteStartUpdate(wid);
     if (XtIsWidget (g))
 	XtResizeWidget ((Widget) g, width, height, border_width);
     else
-	XmeConfigureObject((Widget) g, g->rectangle.x, g->rectangle.y, 
+	XmeConfigureObject((Widget) g, g->rectangle.x, g->rectangle.y,
 			   width, height, 0);
     XmDropSiteEndUpdate(wid);
 }
@@ -430,16 +383,11 @@ _XmResizeObject(
  *	Change the origin of a widget or gadget.
  *
  ************************************************************************/
-void 
+void
 _XmMoveObject(
         Widget wid,
-#if NeedWidePrototypes
-        int x,
-        int y )
-#else
         Position x,
         Position y )
-#endif /* NeedWidePrototypes */
 {
     RectObj g = (RectObj) wid ;
 
@@ -459,22 +407,14 @@ _XmMoveObject(
  *	Change the dimensional aspects of a widget or gadget.
  *
  ************************************************************************/
-void 
+void
 _XmConfigureObject(
         Widget wid,
-#if NeedWidePrototypes
-        int x,
-        int y,
-        int width,
-        int height,
-        int border_width )
-#else
         Position x,
         Position y,
         Dimension width,
         Dimension height,
         Dimension border_width )
-#endif /* NeedWidePrototypes */
 {
     XmeConfigureObject( wid, x, y, width, height, border_width );
 }

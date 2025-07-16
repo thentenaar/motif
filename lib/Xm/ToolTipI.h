@@ -31,26 +31,24 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-void _XmToolTipEnter(Widget wid, 
-                     XEvent *event, 
-                     String *params, 
+
+void _XmToolTipEnter(Widget wid,
+                     XEvent *event,
+                     String *params,
                      Cardinal *num_params);
 
-void _XmToolTipLeave(Widget wid, 
-                     XEvent *event, 
-                     String *params, 
+void _XmToolTipLeave(Widget wid,
+                     XEvent *event,
+                     String *params,
                      Cardinal *num_params);
 
-#ifdef FIX_1388                     
 void _XmToolTipRemove(Widget wid);
-#endif
 
 XmString XmGetToolTipString (Widget w);
 
 void XmSetToolTipString (Widget w,
                          XmString s);
-    
+
 #ifdef __cplusplus
 }
 #endif

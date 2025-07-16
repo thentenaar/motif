@@ -27,7 +27,6 @@
 #include <config.h>
 #endif
 
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: WmResParse.c /main/9 1996/11/01 10:17:34 drk $"
@@ -37,6 +36,8 @@ static char rcsid[] = "$XConsortium: WmResParse.c /main/9 1996/11/01 10:17:34 dr
 /*
  * Included Files:
  */
+#include <stdlib.h>
+#include <ctype.h>
 
 #include "WmGlobal.h"
 #include "WmResNames.h"
@@ -59,13 +60,7 @@ static char rcsid[] = "$XConsortium: WmResParse.c /main/9 1996/11/01 10:17:34 dr
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
-#include <ctype.h>
-
 #include <X11/Xlocale.h>
-
-#ifndef NO_MULTIBYTE
-#include <stdlib.h>
-#endif
 
 #ifdef MOTIF_ONE_DOT_ONE
 #include <stdio.h>
@@ -76,8 +71,6 @@ static char rcsid[] = "$XConsortium: WmResParse.c /main/9 1996/11/01 10:17:34 dr
 #ifdef WSM
 #include <signal.h>
 #endif /* WSM */
-
-#define FIX_1127
 
 /* maximum string lengths */
 
@@ -119,9 +112,6 @@ extern char   *getenv ();
 #endif
 #ifdef PANELIST
 # include <errno.h>
-# ifdef X_NOT_STDC_ENV
-extern int errno;
-# endif
 # define HOME_DT_WMRC    "/.dt/dtwmrc"
 # define LANG_DT_WMRC    "/dtwmrc"
 # define SYS_DT_WMRC     CDE_CONFIGURATION_TOP "/sys.dtwmrc"
@@ -764,7 +754,7 @@ int F_NOP_INDEX;
 # endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 #endif /* WSM */
 #ifdef WSM
-
+
 /******************************<->*************************************
  *
  *  void GetFunctionTableValues (int *execIndex, int *nopIndex,
@@ -804,7 +794,7 @@ GetFunctionTableValues (int *execIndex, int *nopIndex,
 } /* END OF FUNCTION GetFunctionTableValues */
 
 
-
+
 /******************************<->*************************************
  *
 
@@ -843,7 +833,7 @@ GetExecIndex (int tableSize, int *execIndex)
 	}
 } /* END OF FUNCTION GetExecIndex */
 
-
+
 /******************************<->*************************************
  *
 
@@ -884,7 +874,7 @@ GetActionIndex (int tableSize, int *actionIndex)
 } /* END OF FUNCTION GetActionIndex */
 
 
-
+
 /******************************<->*************************************
  *
 
@@ -924,7 +914,7 @@ GetNopIndex (int tableSize, int *nopIndex)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  void
@@ -984,7 +974,7 @@ WmDtGetHelpArgs(char *args,
 
 
 
-
+
 /******************************<->*************************************
  *
  *  void
@@ -1028,7 +1018,7 @@ ParseDtSessionHints (WmScreenData *pSD, unsigned char *property)
 
 } /* END OF FUNCTION ParseDtSessionHints */
 
-
+
 /*************************************<->*************************************
  *
  *  FindDtSessionMatch(commandArgc, commandArgv, pCD, pSD, pWorkSpaceList,
@@ -1211,7 +1201,7 @@ Boolean FindDtSessionMatch(int commandArgc, char **commandArgv,
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  void
@@ -1339,7 +1329,7 @@ ParseSessionItems (WmScreenData *pSD)
 } /* END OF FUNCTION ParseSessionItems */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseSessionClientState (pSD, count, string);
@@ -1373,7 +1363,7 @@ void ParseSessionClientState (WmScreenData *pSD, int count,
 
 } /* END OF FUNCTION ParseSessionClientState */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseSessionGeometry (pSD, count, string)
@@ -1428,7 +1418,7 @@ void ParseSessionGeometry (WmScreenData *pSD, int count,
 
 } /* END OF FUNCTION  ParseSessionGeometry */
 
-
+
 /*************************************<->*************************************
  *
  * void
@@ -1466,7 +1456,7 @@ void ParseSessionWorkspaces (WmScreenData *pSD,  int count,
 } /* END OF FUNCTION ParseSessionWorkspaces */
 
 
-
+
 /*************************************<->*************************************
  *
  * void
@@ -1547,7 +1537,7 @@ void ParseSessionCommand (WmScreenData *pSD,  int count,
 } /* END OF FUNCTION ParseSessionCommand */
 
 
-
+
 /*************************************<->*************************************
  *
  * void
@@ -1586,7 +1576,7 @@ void ParseSessionHost (WmScreenData *pSD,  int count,
 } /* END OF FUNCTION ParseSessionHost */
 
 
-
+
 /*************************************<->*************************************
  *
  *  GetSessionHintsInfo (pSD, numItems)
@@ -1623,7 +1613,7 @@ Boolean GetSessionHintsInfo (WmScreenData *pSD, long numItems)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  PeekAhead (currentChar, currentLev)
@@ -1657,7 +1647,6 @@ unsigned int PeekAhead(unsigned char *currentChar,
 {
     Boolean		done = False;
     unsigned int 	tmpLev = 1;
-#ifndef NO_MULTIBYTE
     unsigned int	chlen;
 
     while (((chlen = mblen ((char *)currentChar, MB_CUR_MAX)) > 0) &&
@@ -1680,26 +1669,6 @@ unsigned int PeekAhead(unsigned char *currentChar,
 	    }
 	}
     }
-#else
-    while((*currentChar != NULL) && (done == False) &&
-	  ((*currentChar == '"') || (*currentChar == '\\')))
-    {
-	currentChar++;
-	if((*currentChar != NULL) &&
-	   ((*currentChar == '"') || (*currentChar == '\\')))
-	{
-	    tmpLev++;
-	    if(*currentChar == '"')
-	    {
-		done = True;
-	    }
-	    else
-	    {
-		currentChar++;
-	    }
-	}
-    }
-#endif /*NO_MULTIBYTE*/
 
     /*
      * Figure out if this is truly a new level of nesting - else ignore it
@@ -1720,7 +1689,7 @@ unsigned int PeekAhead(unsigned char *currentChar,
 #endif /* WSM */
 
 
-
+
 #ifdef MOTIF_ONE_DOT_ONE
 /*************************************<->*************************************
  *
@@ -1774,7 +1743,7 @@ void GetHomeDirName(String  fileName)
 }
 #endif
 
-
+
 /*************************************<->*************************************
  *
  *  SyncModifierStrings (fileName)
@@ -1809,11 +1778,7 @@ void SyncModifierStrings(void)
 	{
 	    if (map->modifiermap[k])
 	    {
-#ifdef FIX_1611
 		KeySym ks = WmKeycodeToKeysym(DISPLAY, map->modifiermap[k]);
-#else
-		KeySym ks = XKeycodeToKeysym(DISPLAY, map->modifiermap[k], 0);
-#endif
 		char *nm = XKeysymToString(ks);
 
 		/* Compare, ignoring the trailing '_L' or '_R' in keysym */
@@ -1834,7 +1799,7 @@ void SyncModifierStrings(void)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  ProcessWmFile ()
@@ -2066,7 +2031,7 @@ static char *ExtractLocaleName(lang)
 #define RC_CONFIG_SUBDIR		"/config/"
 #define RC_DEFAULT_CONFIG_SUBDIR	"/config/C"
 #endif /* WSM */
-
+
 /*************************************<->*************************************
  *
  *  FopenConfigFile ()
@@ -2529,7 +2494,7 @@ FILE *FopenConfigFile (void)
 
 } /* END OF FUNCTION FopenConfigFile */
 
-
+
 /*************************************<->*************************************
  *
  *  SaveMenuAccelerators (pSD, newMenuSpec)
@@ -2582,7 +2547,7 @@ void SaveMenuAccelerators (WmScreenData *pSD, MenuSpec *newMenuSpec)
 
 } /* END OF FUNCTION SaveMenuAccelerators */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseMenuSet (pSD, lineP)
@@ -2720,7 +2685,7 @@ static void ParseMenuSet (WmScreenData *pSD, unsigned char *lineP)
 
 } /* END OF FUNCTION ParseMenuSet */
 
-
+
 /*************************************<->*************************************
  *
  *  MenuItem *
@@ -2769,7 +2734,7 @@ MenuItem *ParseMwmMenuStr (WmScreenData *pSD, unsigned char *menuStr)
 
 } /* END OF FUNCTION ParseMwmMenuStr */
 
-
+
 /*************************************<->*************************************
  *
  *  static MenuItem *
@@ -3040,7 +3005,7 @@ static MenuItem *ParseMenuItems (WmScreenData *pSD
 } /* END OF FUNCTION ParseMenuItems */
 
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -3081,7 +3046,7 @@ static void StoreExclusion (MenuSpec *menuSpec, String string)
     menuSpec->exclusions = exclusion;
 }
 
-
+
 /*************************************<->*************************************
  *
  *  IsClientCommand (string)
@@ -3128,9 +3093,7 @@ static void StoreExclusion (MenuSpec *menuSpec, String string)
 Boolean IsClientCommand (String string)
 {
     if ((
-#ifndef NO_MULTIBYTE
 	 mblen ((char *)string, MB_CUR_MAX) == 1 &&
-#endif
 	 *string == '<') ||
 	(strncmp(string, "-><", 3) == 0) ||
 	(strncmp(string, "=<", 2) == 0)  ||
@@ -3141,7 +3104,7 @@ Boolean IsClientCommand (String string)
     return(FALSE);
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ParseClientCommand (linePP, menuSpec, menuitem, string, use_separators)
@@ -3241,12 +3204,10 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 	token = PRS_NO_STATE;
 	while (token == PRS_NO_STATE)
 	{
-#ifndef NO_MULTIBYTE
 	    if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 	      token = PRS_ERROR;
 	      continue;
 	    }
-#endif
 
 	    switch (*stream)
 	    {
@@ -3259,12 +3220,11 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 	      case '-':
 		/* This should be a cascade-force modifier */
 		++stream;
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
+
 		if (*stream == '>')
 		{
 		    ++stream; token = PRS_MODIFIER;
@@ -3276,12 +3236,11 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 		   a combination separators and cascade-force
 		   modifier */
 		++stream;
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
+
 		if (*stream == '>') ++stream;
 		token = PRS_MODIFIER;
 		*use_separators = TRUE;
@@ -3300,25 +3259,21 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 
 		/* This should be the beginning of a reference. First
 		   skip any leading whitespace. */
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
+
 		while (
-#ifndef NO_MULTIBYTE
 		       mblen ((char *)stream, MB_CUR_MAX) == 1 &&
-#endif
 		       (*stream == ' ' || *stream == '\t'))
 		  ++stream;
 
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
+
 		/* Now check for a reference name wild card or a
 		   full reference name */
 		if (*stream == '*')
@@ -3326,35 +3281,28 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 		else
 		{
 		    while (
-#ifndef NO_MULTIBYTE
 			   mblen ((char *)stream, MB_CUR_MAX) == 1 &&
-#endif
 			   (isalnum(*stream) || *stream == ' ' ||
 			    *stream == '\t'  || *stream == '_' ))
 		      ++stream;
 		}
 
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
 
 		/* Now skip past any trailing white space */
 		while (
-#ifndef NO_MULTIBYTE
 		       mblen ((char *)stream, MB_CUR_MAX) == 1 &&
-#endif
 		       (*stream == ' ' || *stream == '\t'))
 		  ++stream;
 
-#ifndef NO_MULTIBYTE
 		if (mblen ((char *)stream, MB_CUR_MAX) > 1) {
 		  token = PRS_ERROR;
 		  continue;
 		}
-#endif
+
 		/* At this point, we should be looking at the close
 		   of the reference */
 		if (*stream == '>')
@@ -3460,7 +3408,7 @@ static Boolean ParseClientCommand (unsigned char **linePP, MenuSpec *menuSpec,
 }
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmLabel (pSD, menuItem, string)
@@ -3538,7 +3486,7 @@ static Boolean ParseWmLabel (WmScreenData *pSD, MenuItem *menuItem,
 } /* END OF FUNCTION ParseWmLabel */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmMnemonic (linePP, menuItem)
@@ -3591,7 +3539,6 @@ static void ParseWmMnemonic (unsigned char **linePP, MenuItem *menuItem)
         lineP++;
         mnemonic = GetString(&lineP);
 
-#ifndef NO_MULTIBYTE
 	if (menuItem->labelType == XmSTRING &&
 	    mnemonic != NULL &&
 	    (ks = XStringToKeysym((char *)mnemonic)) != NoSymbol &&
@@ -3599,16 +3546,6 @@ static void ParseWmMnemonic (unsigned char **linePP, MenuItem *menuItem)
 	{
 	    menuItem->mnemonic = ks;
 	}
-#else
-        if ((mnemonic != NULL) &&
-            (*mnemonic != '\0') &&
-            (menuItem->labelType == XmSTRING) &&
-	    (strchr (menuItem->label, *mnemonic) != NULL))
-        /* valid mnemonic */
-        {
-            menuItem->mnemonic = *mnemonic;
-        }
-#endif
 	else
 	{
             PWarning (((char *)GETMESSAGE(60, 14, "Invalid mnemonic specification")));
@@ -3619,7 +3556,7 @@ static void ParseWmMnemonic (unsigned char **linePP, MenuItem *menuItem)
 
 } /* END OF FUNCTION ParseWmMnemonic */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmAccelerator (linePP, menuItem)
@@ -3720,7 +3657,7 @@ static Boolean ParseWmAccelerator (unsigned char **linePP, MenuItem *menuItem)
 
 } /* END OF FUNCTION ParseWmAccelerator */
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -3755,9 +3692,7 @@ static Boolean ParseWmAccelerator (unsigned char **linePP, MenuItem *menuItem)
 static void ParseMenuItemName (unsigned char **linePP, MenuItem *menuItem)
 {
     unsigned char *lineP, *endquote;
-#ifndef NO_MULTIBYTE
     int chlen = -1;
-#endif
 
     /* Skip past any whitespace */
     ScanWhitespace (linePP);
@@ -3765,9 +3700,7 @@ static void ParseMenuItemName (unsigned char **linePP, MenuItem *menuItem)
 
     /* Look for a double quote */
     if (
-#ifndef NO_MULTIBYTE
 	mblen ((char *)lineP, MB_CUR_MAX) == 1 &&
-#endif
 	*lineP == '"')
     {
 	/* Move past the first quote. */
@@ -3776,7 +3709,6 @@ static void ParseMenuItemName (unsigned char **linePP, MenuItem *menuItem)
 	endquote = lineP;
 
 	/* Search for closing quote */
-#ifndef NO_MULTIBYTE
 	while (*endquote != '\0' &&
 	       (chlen = mblen ((char *)endquote, MB_CUR_MAX)) > 0 &&
 	       (chlen > 1 || *endquote != '"'))
@@ -3787,12 +3719,6 @@ static void ParseMenuItemName (unsigned char **linePP, MenuItem *menuItem)
 	    endquote += chlen;
 	}
 	if (chlen < 0) return; /* invalid character */
-#else
-	while (*endquote != '\0' && *endquote != '"') {
-	  if (*endquote == '\n' || *endquote == '\0') return;
-	  endquote++;
-	}
-#endif
 
 	/* Well, we have a valid menu item name. Store it in the
 	   client command name field. Don't include the double quotes. */
@@ -3806,21 +3732,16 @@ static void ParseMenuItemName (unsigned char **linePP, MenuItem *menuItem)
     {
 	/* If there was no double quote, then just advance to the end
 	   of the line. */
-#ifndef NO_MULTIBYTE
 	while (*lineP != '\0' &&
 	       ((chlen = mblen ((char *)lineP, MB_CUR_MAX)) > 1 ||
 		*lineP != '\n'))
 	  lineP += chlen > 0 ? chlen : 1;
-#else
-	while (*lineP != '\0' && *lineP != '\n')
-	  lineP++;
-#endif
 	*linePP = lineP;
     }
 }
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  int
@@ -3937,7 +3858,7 @@ int ParseWmFunction (unsigned char **linePP, unsigned int res_spec,
 
 } /* END OF FUNCTION ParseWmFunction */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncMaybeStrArg (linePP, wmFunction, pArgs)
@@ -4016,7 +3937,7 @@ Boolean ParseWmFuncMaybeStrArg (unsigned char **linePP,
 
 } /* END OF FUNCTION ParseWmFuncMaybeStrArg */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncNoArg (linePP, wmFunction, pArgs)
@@ -4056,7 +3977,7 @@ static Boolean ParseWmFuncNoArg (unsigned char **linePP, WmFunction wmFunction,
 
 } /* END OF FUNCTION ParseWmFuncNoArg */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncStrArg (linePP, wmFunction, pArgs)
@@ -4098,13 +4019,11 @@ Boolean ParseWmFuncStrArg (unsigned char **linePP,
 {
     unsigned char *string;
     unsigned int  len;
-#ifndef NO_MULTIBYTE
     char *p;
     wchar_t last;
     char delim;
     wchar_t wdelim;
     int lastlen;
-#endif
 
     if ((string = GetString (linePP)) != NULL)
     /* nonNULL string argument */
@@ -4121,7 +4040,6 @@ Boolean ParseWmFuncStrArg (unsigned char **linePP,
          *  Insure that an argument for F_Exec ends in '&' .
          */
 
-#ifndef NO_MULTIBYTE
 	if ((wmFunction == F_Exec))
 	{
 	    lastlen = 0;
@@ -4141,13 +4059,6 @@ Boolean ParseWmFuncStrArg (unsigned char **linePP,
 		*p   = '\0';
 	    }
 	}
-#else
-        if ((wmFunction == F_Exec) && ((*pArgs)[len - 1] != '&'))
-        {
-	    (*pArgs)[len] = '&';
-	    (*pArgs)[len + 1] = '\0';
-        }
-#endif
     }
     else
     /* NULL string argument */
@@ -4159,7 +4070,7 @@ Boolean ParseWmFuncStrArg (unsigned char **linePP,
 
 } /* END OF FUNCTION ParseWmFuncStrArg */
 
-
+
 /*************************************<->*************************************
  *
  *  FreeMenuItem (menuItem)
@@ -4225,7 +4136,7 @@ void FreeMenuItem (MenuItem *menuItem)
 } /* END OF FUNCTION FreeMenuItem */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncGrpArg (linePP, wmFunction, pGroup)
@@ -4345,7 +4256,7 @@ static Boolean ParseWmFuncGrpArg (unsigned char **linePP,
 } /* END OF FUNCTION ParseWmFuncGrpArg */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncNbrArg (linePP, wmFunction, pNumber)
@@ -4395,7 +4306,7 @@ static Boolean ParseWmFuncNbrArg (unsigned char **linePP,
 
 } /* END OF FUNCTION ParseWmFuncNbrArg */
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -4499,7 +4410,7 @@ static Boolean ParseWmFuncCCIArgs (unsigned char **linePP,
 } /* END OF FUNCTION ParseWmFuncCCIArgs */
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseButtonStr ()
@@ -4550,7 +4461,7 @@ void ParseButtonStr (WmScreenData *pSD, unsigned char *buttonStr)
 
 } /* END OF FUNCTION ParseButtonStr */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseButtonSet (pSD, lineP)
@@ -4771,7 +4682,7 @@ static void ParseButtonSet (WmScreenData *pSD, unsigned char *lineP)
 } /* END OF FUNCTION ParseButtonSet */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseContext (linePP, context, subContext)
@@ -4903,7 +4814,7 @@ static Boolean ParseContext (unsigned char **linePP, Context *context,
 
 } /* END OF FUNCTION ParseContext */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseKeyStr ()
@@ -4955,7 +4866,7 @@ ParseKeyStr (WmScreenData *pSD, unsigned char *keyStr)
 } /* END OF FUNCTION ParseKeyStr */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseKeySet (pSD, lineP)
@@ -5200,7 +5111,7 @@ static void ParseKeySet (WmScreenData *pSD, unsigned char *lineP)
 } /* END OF FUNCTION ParseKeySet */
 
 #ifndef WSM
-
+
 /*************************************<->*************************************
  *
  *  GetNextLine ()
@@ -5241,14 +5152,11 @@ GetNextLine (void)
 {
     register unsigned char	*string;
     int				len;
-
-#ifndef NO_MULTIBYTE
     int   chlen;
     wchar_t last;
     wchar_t wdelim;
     char delim;
     int lastlen;
-#endif
 
     if (cfileP != NULL)
     /* read fopened file */
@@ -5256,8 +5164,6 @@ GetNextLine (void)
 	if ((string = (unsigned char *)
 		      fgets ((char *)line, MAXLINE, cfileP)) != NULL)
 	{
-#ifndef NO_MULTIBYTE
-
 	    lastlen = 0;
 	    while (*string &&
 		   ((len = mblen((char *)string, MB_CUR_MAX)) > 0))
@@ -5288,32 +5194,14 @@ GetNextLine (void)
 		while (lastlen == 1 && last == wdelim);
 	    }
 	    string = line;
-#else
-	    len = strlen((char *)string) - 2;
-	    if ((len > 0) && string[len] == '\\')
-	    {
-		do {
-		    string = &string[len];
-		    if (fgets((char *)string,
-		 	      MAXLINE - (string-line), cfileP) == NULL)
-		       break;
-		    len = strlen((char *)string) - 2;
-		    linec++;
-		} while ((len >= 0) && string[len] == '\\');
-		string = line;
-	    }
-#endif
 	}
     }
     else if ((parseP != NULL) && (*parseP != '\0'))
     /* read parse string */
     {
 	string = line;
-#ifndef NO_MULTIBYTE
-#ifdef FIX_1127
 	chlen = mblen((char *)parseP, MB_CUR_MAX);
 	if(chlen==-1) string = NULL;
-#endif
 
 	while ((*parseP != '\0') &&
                ((chlen = mblen ((char *)parseP, MB_CUR_MAX)) > 0) &&
@@ -5325,13 +5213,6 @@ GetNextLine (void)
 	        *(string++) = *(parseP++);
 	    }
         }
-#else
-	while ((*parseP != '\0') && (*parseP != '\n'))
-	/* copy all but end-of-line and newlines to line buffer */
-	{
-	    *(string++) = *(parseP++);
-    }
-#endif
 	if (string)
 	    *string = '\0';
 	if (*parseP == '\n')
@@ -5351,7 +5232,7 @@ GetNextLine (void)
 #endif /* WSM */
 
 #ifndef PANELIST
-
+
 #ifdef WSM
 /*************************************<->*************************************
  *
@@ -5435,7 +5316,6 @@ unsigned char *GetString (unsigned char **linePP)
 #ifdef WSM
     unsigned int  level = 0, checkLev, i, quoteLevel[10];
 #endif /* WSM */
-#ifndef NO_MULTIBYTE
     int            chlen;
 
     /* get rid of leading white space */
@@ -5563,101 +5443,6 @@ unsigned char *GetString (unsigned char **linePP)
 		}
 	    }
         }
-#else
-
-    /* get rid of leading white space */
-    ScanWhitespace (&lineP);
-
-#ifdef WSM
-    /* Return NULL if line is empty, whitespace, or begins with a comment. */
-    if ((lineP == NULL || *lineP == '\0') ||
-	(!SmBehavior && (*lineP == '#')))
-#else /* WSM */
-    /* Return NULL if line is empty, whitespace, or begins with a comment. */
-    if ((lineP == NULL) || (*lineP == '\0') || (*lineP == '#'))
-#endif /* WSM */
-    {
-        *linePP = lineP;
-        return (NULL);
-    }
-
-    if (*lineP == '"')
-    /* Quoted string */
-    {
-#ifdef WSM
-	quoteLevel[level] = 1;
-#endif /* WSM */
-	/*
-	 * Start beyond double quote and find the end of the quoted string.
-	 * '\' quotes the next character.
-	 * Otherwise,  matching double quote or NULL terminates the string.
-	 *
-	 * We use lnwsP to point to the last non-whitespace character in the
-	 * quoted string.  When we have found the end of the quoted string,
-	 * increment lnwsP and if lnwsP < endP, write NULL into *lnwsP.
-	 * This removes any trailing whitespace without overwriting the
-	 * matching quote, needed later.  If the quoted string was all
-	 * whitespace, then this will write a NULL at the beginning of the
-	 * string that will be returned -- OK.
-	 */
-	lnwsP = lineP++;                /* lnwsP points to first '"' */
-	curP = endP = lineP;            /* other pointers point beyond */
-
-        while ((*endP = *curP) && (*endP != '"'))
-	/* haven't found matching quote yet */
-        {
-	    /* point curP to next character */
-	    curP++;
-	    if ((*endP == '\\') && (*curP != '\0'))
-	    /* shift quoted nonNULL character down and curP ahead */
-	    {
-#ifdef WSM
-		if (SmBehavior)
-		{
-		    /*
-		     * Check to see if this is a quoted quote - if it is
-		     * strip off a level - if not - it's sacred leave it alone
-		     */
-		    checkLev = PeekAhead((curP - 1), quoteLevel[level]);
-		    if(checkLev > 0)
-		    {
-			if(quoteLevel[level] <= checkLev)
-			{
-			    level--;
-			}
-			else
-			{
-			    level++;
-			    quoteLevel[level] = checkLev;
-			}
-
-			for(i = 0;i < (checkLev - 2);i++)
-			{
-			    *endP++ = *curP++;curP++;
-			}
-			*endP = *curP++;
-		    }
-		}
-		else
-		{
-#endif /* WSM */
-		*endP = *curP++;
-#ifdef WSM
-		}
-#endif /* WSM */
-            }
-	    if (isspace (*endP))
-	    /* whitespace character:  leave lnwsP unchanged. */
-	    {
-	        endP++;
-	    }
-	    else
-	    /* non-whitespace character:  point lnwsP to it. */
-	    {
-	        lnwsP = endP++;
-	    }
-        }
-#endif
 
 	/*
 	 *  Found matching quote or NULL.
@@ -5681,7 +5466,6 @@ unsigned char *GetString (unsigned char **linePP)
 	 */
         curP = endP = lineP;
 
-#ifndef NO_MULTIBYTE
 #ifdef WSM
         while ((*endP = *curP) &&
                ((chlen = mblen ((char *)curP, MB_CUR_MAX)) > 0) &&
@@ -5716,24 +5500,6 @@ unsigned char *GetString (unsigned char **linePP)
 		}
 	    }
         }
-#else
-#ifdef WSM
-        while ((*endP = *curP) && !isspace (*endP) &&
-					(SmBehavior || (*endP != '#')))
-#else /* WSM */
-        while ((*endP = *curP) && !isspace (*endP) && (*endP != '#'))
-#endif /* WSM */
-        {
-	    /* point curP to next character */
-	    curP++;
-	    if ((*endP == '\\') && (*curP != '\0'))
-	    /* shift quoted nonNULL character down and curP ahead */
-	    {
-		*endP = *curP++;
-            }
-	    endP++;
-        }
-#endif
     }
 
     /*
@@ -5768,7 +5534,7 @@ unsigned char *GetString (unsigned char **linePP)
 #endif /* PANELIST */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseBtnEvent (linePP, eventType, button, state, fClick)
@@ -5829,7 +5595,7 @@ Boolean ParseBtnEvent (unsigned char  **linePP,
 } /* END OF FUNCTION ParseBtnEvent */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseKeyEvent (linePP, eventType, keyCode, state)
@@ -5909,7 +5675,7 @@ Boolean ParseKeyEvent (unsigned char **linePP, unsigned int *eventType,
 
 } /* END OF FUNCTION ParseKeyEvent */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseEvent (linePP, table, eventType, detail, state, fClick)
@@ -5981,7 +5747,7 @@ static Boolean ParseEvent (unsigned char **linePP, EventTableEntry *table,
 } /* END OF FUNCTION ParseEvent */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ParseModifiers(linePP, state)
@@ -6072,7 +5838,7 @@ static Boolean ParseModifiers(unsigned char **linePP, unsigned int *state)
 
 } /* END OF FUNCTION ParseModifiers */
 
-
+
 /*************************************<->*************************************
  *
  *  LookupModifier (name, valueP)
@@ -6122,7 +5888,7 @@ static Boolean LookupModifier (unsigned char *name, unsigned int *valueP)
 
 } /* END OF FUNCTION LookupModifier */
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -6173,7 +5939,7 @@ static Boolean GetCCIModifier (String modString, CCIEntryModifier *mod)
 
 } /* END OF FUNCTION GetCCIModifier */
 
-
+
 /*************************************<->*************************************
  *
  *  FixMenuItem (menuSpec, menuItem)
@@ -6268,7 +6034,7 @@ static void FixMenuItem (MenuSpec *menuSpec, MenuItem *menuItem)
 }
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseEventType(linePP, table, eventType, ix)
@@ -6337,7 +6103,7 @@ static Boolean ParseEventType (unsigned char **linePP, EventTableEntry *table,
 
 } /* END OF FUNCTION ParseEventType */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseImmed (linePP, closure, detail)
@@ -6375,7 +6141,7 @@ static Boolean ParseImmed (unsigned char **linePP, unsigned int closure,
 
 } /* END OF FUNCTION ParseImmed */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseKeySym (linePP, closure, detail)
@@ -6414,14 +6180,11 @@ static Boolean ParseKeySym (unsigned char **linePP, unsigned int closure,
     unsigned char *startP;
     char           keySymName[MAX_KEYSYM_STRLEN+1];
     int            len;
-#ifndef NO_MULTIBYTE
     int            chlen;
-#endif
 
     ScanWhitespace (&lineP);
     startP = lineP;
 
-#ifndef NO_MULTIBYTE
     while (*lineP &&
 	   ((chlen = mblen ((char *)lineP, MB_CUR_MAX)) > 0) &&
            ((chlen > 1) ||
@@ -6430,24 +6193,13 @@ static Boolean ParseKeySym (unsigned char **linePP, unsigned int closure,
 	/* Skip next character */
         lineP += chlen;
     }
-#else
-    while (*lineP && !isspace (*lineP) && *lineP != ',' && *lineP != ':' )
-    {
-	/* Skip next character */
-        lineP++;
-    }
-#endif
 
     len = min (lineP - startP, MAX_KEYSYM_STRLEN);
     (void) strncpy (keySymName, (char *)startP, len);
     keySymName[len] = '\0';
 
-#ifndef NO_MULTIBYTE
     if ((*detail = XStringToKeysym(keySymName)) == NoSymbol &&
 	 (mblen (keySymName, MB_CUR_MAX) == 1))
-#else
-    if ((*detail = XStringToKeysym(keySymName)) == NoSymbol)
-#endif
     {
         if (!isdigit (keySymName[0]) ||
             ((*detail = StrToNum ((unsigned char *)&keySymName[0])) == -1))
@@ -6462,7 +6214,7 @@ static Boolean ParseKeySym (unsigned char **linePP, unsigned int closure,
 } /* END OF FUNCTION ParseKeySym */
 
 
-
+
 /*************************************<->*************************************
  *
  *  StrToNum(str)
@@ -6522,7 +6274,7 @@ static unsigned int StrToNum(unsigned char *str)
 } /* END OF FUNCTION StrToNum */
 
 
-
+
 /*************************************<->*************************************
  *
 
@@ -6575,7 +6327,7 @@ static unsigned int StrToHex(unsigned char *str)
 } /* END OF FUNCTION StrToHex */
 
 
-
+
 /*************************************<->*************************************
  *
 
@@ -6620,7 +6372,7 @@ static unsigned int StrToOct(unsigned char *str)
 } /* END OF FUNCTION StrToOct */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ScanAlphanumeric (linePP)
@@ -6649,7 +6401,6 @@ static unsigned int StrToOct(unsigned char *str)
 
 void ScanAlphanumeric (unsigned char **linePP)
 {
-#ifndef NO_MULTIBYTE
     int            chlen;
 
     while (*linePP &&
@@ -6658,18 +6409,11 @@ void ScanAlphanumeric (unsigned char **linePP)
     {
         (*linePP) += chlen;
     }
-#else
-    while (*linePP && isalnum (**linePP))
-    {
-        (*linePP)++;
-    }
-#endif
-
 } /* END OF FUNCTION ScanAlphanumeric */
 
 
 #ifndef WSM
-
+
 /*************************************<->*************************************
  *
  *  ScanWhitespace(linePP)
@@ -6698,11 +6442,7 @@ void ScanAlphanumeric (unsigned char **linePP)
 
 void ScanWhitespace(unsigned char  **linePP)
 {
-#ifndef NO_MULTIBYTE
     while (*linePP && (mblen ((char *)*linePP, MB_CUR_MAX) == 1) && isspace (**linePP))
-#else
-    while (*linePP && isspace (**linePP))
-#endif
     {
         (*linePP)++;
     }
@@ -6711,7 +6451,7 @@ void ScanWhitespace(unsigned char  **linePP)
 #endif /* not WSM */
 
 #ifndef WSM
-
+
 /*************************************<->*************************************
  *
  *  ToLower (string)
@@ -6741,7 +6481,6 @@ void ScanWhitespace(unsigned char  **linePP)
 void ToLower (unsigned char  *string)
 {
     unsigned char *pch = string;
-#ifndef NO_MULTIBYTE
     int            chlen;
 
     while (*pch && ((chlen = mblen ((char *)pch, MB_CUR_MAX)) > 0))
@@ -6752,21 +6491,10 @@ void ToLower (unsigned char  *string)
 	}
 	pch += chlen;
     }
-#else
-    while (*pch != '\0')
-    {
-        if (isupper (*pch))
-	{
-	    *pch = tolower(*pch);
-	}
-	pch++;
-    }
-#endif
-
 } /* END OF FUNCTION ToLower */
 #endif  /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  PWarning (message)
@@ -6848,7 +6576,7 @@ typedef struct _keySubs
     unsigned char *	pchTo;
 } KeySub;
 
-
+
 /*************************************<->*************************************
  *
  *  InitKeySubs (ppKeySubs, pNumKeySubs)
@@ -6888,9 +6616,7 @@ static void InitKeySubs (
     unsigned char *pch0;
     unsigned char *pch1;
     int len;
-#ifndef NO_MULTIBYTE
     int		chlen;
-#endif
 
     pch0 = (unsigned char *)GETMESSAGE(60, 40, "");
 
@@ -6925,7 +6651,6 @@ static void InitKeySubs (
 
 	/* get "from" string */
 	pch1 = pch0;
-#ifndef NO_MULTIBYTE
         while (*pch1 && ((chlen = mblen ((char *)pch1, MB_CUR_MAX)) > 0))
 	{
 	    if ((chlen == 1) && (*pch1 == ' '))
@@ -6934,9 +6659,6 @@ static void InitKeySubs (
 	    }
 	    pch1 += chlen;
 	}
-#else /* NO_MULTIBYTE */
-	while (*pch1 && (*pch1 != ' ')) pch1++;
-#endif /* NO_MULTIBYTE */
 	pKS->lenFrom = pch1 - pch0;
 	if (pKS->lenFrom < 1)
 	{
@@ -6953,7 +6675,6 @@ static void InitKeySubs (
 	ScanWhitespace (&pch1);
 	pch0 = pch1;
 
-#ifndef NO_MULTIBYTE
         while (*pch1 && ((chlen = mblen ((char *)pch1, MB_CUR_MAX)) > 0))
 	{
 	    if ((chlen == 1) && (*pch1 == ' '))
@@ -6962,9 +6683,6 @@ static void InitKeySubs (
 	    }
 	    pch1 += chlen;
 	}
-#else /* NO_MULTIBYTE */
-	while (*pch1 && (*pch1 != ' ')) pch1++;
-#endif /* NO_MULTIBYTE */
 
 	len = pch1 - pch0;
 	if (len < 1)
@@ -6990,7 +6708,7 @@ static void InitKeySubs (
 }
 
 #endif /* WSM */
-
+
 /*************************************<->*************************************
  *
  *  ProcessAccelText (startP, endP, destP)
@@ -7021,9 +6739,7 @@ static void InitKeySubs (
 static void ProcessAccelText (unsigned char *startP, unsigned char *endP,
 			      unsigned char *destP)
 {
-#ifndef NO_MULTIBYTE
     int   chlen;
-#endif
 #ifdef WSM
     static Boolean	bAccelInit = False;
     static KeySub	*pKeySub;
@@ -7056,7 +6772,6 @@ static void ProcessAccelText (unsigned char *startP, unsigned char *endP,
 	pchFirst = startP;
 #endif /* WSM */
 
-#ifndef NO_MULTIBYTE
         while (*startP &&
 	       (((chlen = mblen ((char *)startP, MB_CUR_MAX)) > 1)
 		|| isalnum (*startP)))
@@ -7071,16 +6786,6 @@ static void ProcessAccelText (unsigned char *startP, unsigned char *endP,
 #endif /* WSM */
 	    }
 	}
-#else
-        while (isalnum (*startP))
-        {
-#ifdef WSM
-	        startP++;
-#else /* WSM */
-	    *destP++ = *startP++;
-#endif /* WSM */
-	}
-#endif
 #ifdef WSM
 	/* find substitution */
 	pchSub = NULL;
@@ -7121,11 +6826,7 @@ static void ProcessAccelText (unsigned char *startP, unsigned char *endP,
     startP++;  /* skip '<' */
     while (*startP != '>')
     {
-#ifndef NO_MULTIBYTE
         startP += mblen ((char *)startP, MB_CUR_MAX);
-#else
-        startP++;
-#endif
     }
     startP++;  /* skip '>' */
 
@@ -7143,7 +6844,7 @@ static void ProcessAccelText (unsigned char *startP, unsigned char *endP,
 } /* END OF FUNCTION ProcessAccelText */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ProcessCommandLine (argc, argv)
@@ -7196,7 +6897,7 @@ void ProcessCommandLine (int argc,  char *argv[])
 
 } /* END OF FUNCTION ProcessCommandLine */
 
-
+
 /*************************************<->*************************************
  *
  *  ParseScreensArgument (argc, argv, pArgnum, lineP)
@@ -7296,7 +6997,7 @@ static void ParseScreensArgument (int argc, char *argv[], int *pArgnum,
 
 } /* END OF FUNCTION ParseScreensArgument */
 
-
+
 /*************************************<->*************************************
  *
  *  ProcessMotifBindings ()
@@ -7388,7 +7089,7 @@ void ProcessMotifBindings (void)
 } /* END OF FUNCTION ProcessMotifBindings */
 
 #ifdef PANELIST
-
+
 /*************************************<->*************************************
  *
  *  void
@@ -7526,7 +7227,7 @@ ParseWmFunctionArg (
 
 } /* END OF FUNCTION ParseWmFunctionArg */
 
-
+
 /*************************************<->*************************************
  *
  *  SystemCmd (pchCmd)
@@ -7571,7 +7272,7 @@ SystemCmd (char *pchCmd)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  DeleteTempConfigFileIfAny ()
@@ -7619,7 +7320,7 @@ DeleteTempConfigFileIfAny (void)
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ParseIncludeSet (pSD, lineP)
@@ -7709,7 +7410,7 @@ static void ParseIncludeSet (WmScreenData *pSD, unsigned char *lineP)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  ConfigStackInit (pchFileName)
@@ -7758,7 +7459,7 @@ static void ConfigStackInit (char *pchFileName)
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ConfigStackPush (pchFileName)
@@ -7833,7 +7534,7 @@ ConfigStackPush (unsigned char *pchFileName)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  ConfigStackPop ()
@@ -7920,7 +7621,7 @@ static void ConfigStackPop (void)
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ParseWmFuncActionArg (linePP, wmFunction, pArgs)
@@ -8046,7 +7747,7 @@ Boolean ParseWmFuncActionArg (unsigned char **linePP,
 
 #endif /* PANELIST */
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  PreprocessConfigFile (pSD)
@@ -8105,7 +7806,7 @@ PreprocessConfigFile (void)
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  GetNetworkFileName (char *pchFile)
@@ -8202,10 +7903,8 @@ GetNetworkFileName (char *pchFile)
 	    }
 
 	    if (
-#ifndef NO_MULTIBYTE
 	        (mblen(file_part, MB_CUR_MAX) == 1) &&
 		(mblen(file_part+1, MB_CUR_MAX) == 1) &&
-#endif
 		(*file_part == '~') &&
 		(*(file_part+1) == '/'))
 	    {
@@ -8265,10 +7964,8 @@ GetNetworkFileName (char *pchFile)
     if (sReturn == NULL)
     {
 	if (
-#ifndef NO_MULTIBYTE
 	    (mblen(pchFile, MB_CUR_MAX) == 1) &&
 	    (mblen(pchFile+1, MB_CUR_MAX) == 1) &&
-#endif
 	    (*pchFile == '~') &&
 	    (*(pchFile+1) == '/'))
 	{
@@ -8292,7 +7989,7 @@ GetNetworkFileName (char *pchFile)
 /****************************   eof    ***************************/
 #endif /* WSM */
 
-
+
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 /*************************************<->*************************************
  *
@@ -8345,7 +8042,6 @@ Boolean SetGreyedContextAndMgtMask (MenuItem *menuItem,
 }
 
 
-
 /*************************************<->*************************************
  *
  *  MakeSeparatorTemplate ()

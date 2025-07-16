@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wsmStruct.c /main/7 1997/05/02 10:04:46 dbl $"
@@ -103,7 +103,7 @@ Colormap default_cmap = 0;
                             CreateSpace
 
   ------------------------------------------------------------------*/
-Space* 
+Space*
 CreateSpace(XrmQuark name, char *str)
 {
   WorkWindowList *w_list;
@@ -114,14 +114,14 @@ CreateSpace(XrmQuark name, char *str)
   if (all_space->w_list != NULL)
     {
       w_list = all_space->w_list;
-      while (w_list != NULL)	
+      while (w_list != NULL)
 	{
 	  AddWindowToSpace(s,w_list->work_win);
 	  w_list = w_list->next;
-	}      
+	}
       }
   s->next = NULL;
-  strcpy(s->name, str);	
+  strcpy(s->name, str);
   strcpy(s->background,"None");
   strcpy(s->pixmap_name,"None");
   s->pixel = 0;
@@ -132,7 +132,7 @@ CreateSpace(XrmQuark name, char *str)
       current_space = s;
       space_list = s;
     }
-  else 
+  else
     {
       s2 = space_list;
       while (s2->next != NULL)
@@ -152,7 +152,7 @@ SetSpacePixel(Space *s, char *name)
   Boolean retval = True;
   XColor a_color;
   XColor def_color;
-  
+
   if (default_cmap == 0)
     default_cmap = DefaultColormap(dsp,0);
   if (XAllocNamedColor(dsp,default_cmap,name,&a_color, &def_color)==0)
@@ -176,7 +176,7 @@ SpacePixelSet(Space *s)
 {
   if (strcmp("None",s->background) == 0)
     return False;
-  if (s->pixmap != None) 
+  if (s->pixmap != None)
     return False;
   else return True;
 }
@@ -193,11 +193,11 @@ SetSpacePixmap(Space *s, char *name)
   unsigned int width, height;
   Window root = XRootWindowOfScreen(XtScreen(shell));
 
-  s -> pixmap = XmGetPixmapByDepth(XtScreen(shell), name, 
+  s -> pixmap = XmGetPixmapByDepth(XtScreen(shell), name,
 			      BlackPixel(XtDisplay(shell), 0),
 			      WhitePixel(XtDisplay(shell), 0),
 			      DefaultDepth(dsp, 0));
-  if (s -> pixmap == XmUNSPECIFIED_PIXMAP) 
+  if (s -> pixmap == XmUNSPECIFIED_PIXMAP)
     {
       fprintf(stderr, "can't get pixmap for %s\n", name);
       return False;
@@ -206,7 +206,7 @@ SetSpacePixmap(Space *s, char *name)
   s->background[0] = '"';
   s->background[1] = '\0';
   strcat(s->background,name);
-  PRINT("s->background is %s\n",name); 
+  PRINT("s->background is %s\n",name);
   return True;
 }
 
@@ -305,24 +305,24 @@ SpaceLabelPixmapSet(Space *s)
                             CreateInternalStructure
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 CreateInternalStructure(WorkWindow *w_window,XrmQuark *rooms_qlist)
 {
   Space *space;
   int j;
   Boolean in_current_space = False;
-  if (w_window->all_workspaces) 
+  if (w_window->all_workspaces)
     {
       /* create internal structures */
       for (j=0, space = space_list; space !=NULL; space = space->next, j++)
 	{
-	  if (space == current_space) 
+	  if (space == current_space)
 	    in_current_space = True;
 	  AddSpaceToWindow(space, w_window);
 	  AddWindowToSpace(space, w_window);
 	}
     }
-  else if (rooms_qlist == NULL) 
+  else if (rooms_qlist == NULL)
     {
       AddSpaceToWindow(current_space,w_window);
       AddWindowToSpace(current_space,w_window);
@@ -336,7 +336,7 @@ CreateInternalStructure(WorkWindow *w_window,XrmQuark *rooms_qlist)
 	  space = GetSpace(rooms_qlist[j]);
 	  if (space == NULL)
 	    space = CreateSpace(rooms_qlist[j], XrmQuarkToString(rooms_qlist[j]));
-	  if (space == current_space) 
+	  if (space == current_space)
 	    in_current_space = True;
 	  AddSpaceToWindow(space, w_window);
 	  AddWindowToSpace(space, w_window);
@@ -352,7 +352,7 @@ CreateInternalStructure(WorkWindow *w_window,XrmQuark *rooms_qlist)
                             CreateWorkWindow
 
   ------------------------------------------------------------------*/
-WorkWindow* 
+WorkWindow*
 CreateWorkWindow(Window window)
 {
   WorkWindow *w, *w2;
@@ -362,7 +362,7 @@ CreateWorkWindow(Window window)
 
   /* if wsm already knows about this window then just
      set mapped = True and return the window */
-  if (w != NULL) 
+  if (w != NULL)
     {
       w->mapped = True;
       return w;
@@ -382,7 +382,7 @@ CreateWorkWindow(Window window)
       w->specifier_qlist = GetSpecifierQList(0,False);
       w->name = GetWMName(0,False);
       break;
-      
+
     case WSM_WINDOW_FMT:
       w->attrib_qlist = window_attribq;
       w->attrib_list = window_attrib_list;
@@ -391,7 +391,7 @@ CreateWorkWindow(Window window)
       w->specifier_qlist = GetSpecifierQList(window,False);
       w->name = GetWMName(window,False);
       break;
-      
+
     case WSM_ICON_FMT:
       w->attrib_qlist = icon_attribq;
       w->attrib_list = icon_attrib_list;
@@ -404,7 +404,7 @@ CreateWorkWindow(Window window)
     default:
       break;
     }
-  
+
   w->next = NULL;
   w->prev = NULL;
   w->last_space = NULL;
@@ -451,14 +451,14 @@ CreateWorkWindow(Window window)
                             ReCreateWorkWindow
 
   ------------------------------------------------------------------*/
-WorkWindow* 
+WorkWindow*
 ReCreateWorkWindow(Window window)
 {
   WorkWindow *w;
   int i;
 
   w = GetWorkWindow(window);
-  
+
   if (w == NULL)
     return CreateWorkWindow(window);
 
@@ -469,13 +469,13 @@ ReCreateWorkWindow(Window window)
       w->attrib_list = global_attrib_list;
       w->num_attrib_list = num_global_attrib;
       break;
-      
+
     case WSM_WINDOW_FMT:
       w->attrib_qlist = window_attribq;
       w->attrib_list = window_attrib_list;
       w->num_attrib_list = num_window_attrib;
       break;
-      
+
     case WSM_ICON_FMT:
       w->attrib_qlist = icon_attribq;
       w->attrib_list = icon_attrib_list;
@@ -485,7 +485,7 @@ ReCreateWorkWindow(Window window)
     default:
       break;
     }
-  
+
   XtFree((XtPointer)w->win_data);
   w->win_data = (WSMWinData*)XtMalloc(w->num_attrib_list*sizeof(WSMWinData));
   for (i = 0; i < w->num_attrib_list; i++)
@@ -504,7 +504,7 @@ ReCreateWorkWindow(Window window)
                               GetSpace
 
   ------------------------------------------------------------------*/
-Space* 
+Space*
 GetSpace(XrmQuark name)
 {
   Space *s;
@@ -525,7 +525,7 @@ GetSpace(XrmQuark name)
                               GetSpaceFromName
 
   ------------------------------------------------------------------*/
-Space* 
+Space*
 GetSpaceFromName(char *name)
 {
   Space *s;
@@ -547,7 +547,7 @@ GetSpaceFromName(char *name)
                               GetNumberSpaces
 
   ------------------------------------------------------------------*/
-int 
+int
 GetNumberSpaces()
 {
   Space *s;
@@ -562,7 +562,7 @@ GetNumberSpaces()
                            GetWorkWindowID
 
   ------------------------------------------------------------------*/
-WorkWindow* 
+WorkWindow*
 GetWorkWindowID(Space *s,int wsm_index)
 {
   int j =0;
@@ -588,7 +588,7 @@ GetWorkWindowID(Space *s,int wsm_index)
                            GetSpaceFromID
 
   ------------------------------------------------------------------*/
-Space* 
+Space*
 GetSpaceFromID(int wsm_index)
 {
   int j;
@@ -598,7 +598,7 @@ GetSpaceFromID(int wsm_index)
 
   for (j = 0; j < wsm_index; j++)
     {
-      if (s == NULL) 
+      if (s == NULL)
 	return NULL;
       s = s->next;
     }
@@ -613,7 +613,7 @@ GetSpaceFromID(int wsm_index)
                            GetSpaceID
 
   ------------------------------------------------------------------*/
-int 
+int
 GetSpaceID(Space *space)
 {
   int j;
@@ -621,7 +621,7 @@ GetSpaceID(Space *space)
 
   for (j = 0, s = space_list; s != NULL; s = s->next, j++)
     {
-      if (s == space) 
+      if (s == space)
 	return j;
     }
  return -1;
@@ -634,7 +634,7 @@ GetSpaceID(Space *space)
                            GetWorkWindow
 
   ------------------------------------------------------------------*/
-WorkWindow* 
+WorkWindow*
 GetWorkWindow(Window window)
 {
   WorkWindow *w;
@@ -659,14 +659,7 @@ GetWorkWindow(Window window)
   ------------------------------------------------------------------*/
 /*
 Boolean
-#ifndef _NO_PROTO
 GetWorkWindowClient(Window window, WorkWindow*** w_windows, int *num_w_windows)
-#else
-GetWorkWindowClient(window)
-Window window;
-WorkWindow ***w_windows;
-int *num_w_windows;
-#endif
 {
   WorkWindow *w, *i_window;
   int num_w = 0;
@@ -678,7 +671,7 @@ int *num_w_windows;
     {
       if (w->window == window)
 	{
-	  main_w = w;	
+	  main_w = w;
 	  found = True;
 	  break;
 	}
@@ -693,7 +686,7 @@ int *num_w_windows;
     w_wins = (WorkWindow*) XtMalloc(sizeof(WorkWindow*));
   else
     w_wins = (WorkWindow*) XtMalloc(2*sizeof(WorkWindow*));
-    
+
   w_wins[num_w++] = main_w;
   if (i_window != NULL)
     w_wins[num_w++] = i_window;
@@ -703,7 +696,7 @@ int *num_w_windows;
 
   w = work_windows;
   while (w != NULL)
-    {	
+    {
       if (w->specifier_qlist[0] == client_id && w->specifier_qlist[2] == count)
 	{
 	  w_wins = (WorkWidnow*) XtRealloc(w_wins,(num_w+1) * sizeof(WorkWindow*));
@@ -746,7 +739,7 @@ GetWorkWindowClientIDs(int main_pos, Space *s, int **w_ids, int *num_wids)
 	{
 	  if (pos == main_pos)
 	    {
-	      main_w = w_list->work_win;	
+	      main_w = w_list->work_win;
 	      found = True;
 	      break;
 	    }
@@ -758,7 +751,7 @@ GetWorkWindowClientIDs(int main_pos, Space *s, int **w_ids, int *num_wids)
   if (!found) return False;
 
   wids = (int*) XtMalloc(sizeof(int));
-    
+
   wids[num_w++] = main_pos;
 
   client_id = main_w->specifier_qlist[0];
@@ -767,11 +760,11 @@ GetWorkWindowClientIDs(int main_pos, Space *s, int **w_ids, int *num_wids)
   w_list = s->w_list;
   pos = 0;
   while (w_list != NULL)
-    {	
+    {
       if (_WSMGetConfigFormatType(w_list->work_win->window) == WSM_WINDOW_FMT)
 	{
-	  if (w_list->work_win->specifier_qlist[0] == client_id 
-	      && w_list->work_win->specifier_qlist[2] == count 
+	  if (w_list->work_win->specifier_qlist[0] == client_id
+	      && w_list->work_win->specifier_qlist[2] == count
 	      && w_list->work_win != main_w)
 	    {
 	      wids = (int*) XtRealloc((char*)wids,(num_w+1) * sizeof(int));
@@ -779,10 +772,10 @@ GetWorkWindowClientIDs(int main_pos, Space *s, int **w_ids, int *num_wids)
 	      num_w++;
 	    }
 	  pos++;
-	}	
+	}
       w_list = w_list->next;
     }
-  
+
   *w_ids = wids;
   *num_wids = num_w;
 
@@ -796,7 +789,7 @@ GetWorkWindowClientIDs(int main_pos, Space *s, int **w_ids, int *num_wids)
                            GetIconWorkWindow
 
   ------------------------------------------------------------------*/
-WorkWindow* 
+WorkWindow*
 GetIconWorkWindow(Window window)
 {
   WorkWindow *w;
@@ -816,7 +809,7 @@ GetIconWorkWindow(Window window)
                             AddSpaceToWindow
 
   ------------------------------------------------------------------*/
-void 
+void
 AddSpaceToWindow(Space *s,
 		 WorkWindow *w_window)
 {
@@ -829,7 +822,7 @@ AddSpaceToWindow(Space *s,
     {
       w_window->s_list = s_list;
     }
-  else 
+  else
     {
       s_list2 = w_window->s_list;
       if (s_list2->space == s)
@@ -855,7 +848,7 @@ AddSpaceToWindow(Space *s,
   {
       EnableDeleteCommand(w_window->window);
   }
-  
+
   UpdateButtons(w_window);
 }
 
@@ -864,7 +857,7 @@ AddSpaceToWindow(Space *s,
                             AddWindowToSpace
 
   ------------------------------------------------------------------*/
-void 
+void
 AddWindowToSpace(Space *s,
 		 WorkWindow *w_window)
 {
@@ -885,14 +878,14 @@ AddWindowToSpace(Space *s,
 	  return;
 	}
       while (w_list2->next != NULL)
-	{	
+	{
 	  w_list2 = w_list2->next;
 	  if (w_list2->work_win == w_window)
 	    {
 	      XtFree((char*)w_list);
 	      return;
 	    }
-	}	
+	}
       w_list2->next = w_list;
     }
   UpdateBothList(s);
@@ -903,12 +896,12 @@ AddWindowToSpace(Space *s,
                           RemoveWorkWindowFromSpace
 
   ------------------------------------------------------------------*/
-void 
+void
 RemoveWorkWindowFromSpace(Space *s,
 			  WorkWindow *w_window)
 {
   WorkWindowList *w_list,*pw_list;
-  
+
   w_list = s->w_list;
   pw_list = w_list;
   while (w_list !=NULL)
@@ -938,12 +931,12 @@ RemoveWorkWindowFromSpace(Space *s,
                             RemoveSpaceFromWindow
 
   ------------------------------------------------------------------*/
-void 
+void
 RemoveSpaceFromWindow(Space *s,
 		      WorkWindow *w_window)
 {
   SpaceList *s_list,*ps_list;
-  
+
   s_list = w_window->s_list;
   ps_list = s_list;
   while (s_list !=NULL)
@@ -977,7 +970,7 @@ RemoveSpaceFromWindow(Space *s,
                           RemoveWorkWindow
 
   ------------------------------------------------------------------*/
-void 
+void
 RemoveWorkWindow(WorkWindow *w_window, Boolean purge)
 {
   SpaceList *s_list;
@@ -991,7 +984,7 @@ RemoveWorkWindow(WorkWindow *w_window, Boolean purge)
       s_list = s_list->next;
     }
 
-  if (w_window->all_workspaces) 
+  if (w_window->all_workspaces)
     RemoveWorkWindowFromSpace(all_space,w_window);
 
   if (work_windows == w_window)
@@ -1016,12 +1009,12 @@ RemoveWorkWindow(WorkWindow *w_window, Boolean purge)
 
   ------------------------------------------------------------------*/
 /* not tested */
-void 
+void
 RemoveSpace(Space *space)
 {
   WorkWindowList *w_list, *destroy_list;
   Space *s, *p;
-  
+
   w_list = space->w_list;
   while (w_list != NULL)
     {
@@ -1053,7 +1046,7 @@ RemoveSpace(Space *space)
                             IsWorkWindowInSpace
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 IsWorkWindowInSpace(WorkWindow *w,Space *s)
 {
   WorkWindowList *w_list;
@@ -1074,7 +1067,7 @@ IsWorkWindowInSpace(WorkWindow *w,Space *s)
                            IsSpaceInWorkWindow
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 IsSpaceInWorkWindow(Space *s, WorkWindow *w)
 {
   SpaceList *s_list;
@@ -1102,12 +1095,12 @@ void InitializeWsm()
   atoms.sm_client_id_property = XmInternAtom(XtDisplay(shell),"_MOTIF_SM_CLIENT_ID",False);
   atoms.wm_role_property = XmInternAtom(XtDisplay(shell),"_MOTIF_WM_WINDOW_ROLE",False);
   atoms.wm_client_leader = XmInternAtom(XtDisplay(shell),"WM_CLIENT_LEADER",False);
-  
+
   all_space = (Space *)XtMalloc(sizeof(Space));
   all_space->nameq = XrmStringToQuark("all");
   all_space->w_list = NULL;
   all_space->next = NULL;
-  
+
   current_space = NULL;
 }
 
@@ -1139,10 +1132,10 @@ void CompleteRestartWSM()
       s->w_list = NULL;
       s = s->next;
     }
-  
+
   w_list = all_space->w_list;
   while (w_list != NULL)
-    {	
+    {
       destroy_w_list=w_list;
       w_list = w_list->next;
       XtFree((XtPointer)destroy_w_list);
@@ -1204,7 +1197,7 @@ GetWSMWindow(WorkWindow *w_window)
 {
 
   return (w_window->window);
-   
+
 }
 
 
@@ -1213,12 +1206,12 @@ GetWSMWindow(WorkWindow *w_window)
                             SetWorkWindowValues
 
   ------------------------------------------------------------------*/
-void 
+void
 SetWorkWindowValues(WorkWindow *w, Boolean all_workspaces, Boolean linked)
 {
   if (all_workspaces && !(w->all_workspaces))
       {
-	AddWindowToSpace(all_space,w);	
+	AddWindowToSpace(all_space,w);
 	UpdateBothList(all_space);
 	UpdateButtons(w);
       }
@@ -1231,7 +1224,7 @@ SetWorkWindowValues(WorkWindow *w, Boolean all_workspaces, Boolean linked)
   w->all_workspaces = all_workspaces;
   w->linked = linked;
 
-      
+
 }
 
 
@@ -1239,7 +1232,7 @@ SetWorkWindowValues(WorkWindow *w, Boolean all_workspaces, Boolean linked)
                             UnmapCurrentSpace
 
   ------------------------------------------------------------------*/
-void 
+void
 UnmapCurrentSpace()
 {
   WorkWindowList *w_list = current_space->w_list;
@@ -1254,7 +1247,7 @@ UnmapCurrentSpace()
                             UnmapWorkWindow
 
   ------------------------------------------------------------------*/
-void 
+void
 UnmapWorkWindow(WorkWindow *w_window)
 {
   w_window->mapped = False;
@@ -1264,7 +1257,7 @@ UnmapWorkWindow(WorkWindow *w_window)
                             MapWorkWindow
 
   ------------------------------------------------------------------*/
-void 
+void
 MapWorkWindow(WorkWindow *w_window)
 {
   w_window->mapped = True;
@@ -1306,15 +1299,15 @@ translate_for_database(char *s)
     }
 }
 
-static char* 
+static char*
 GetWMName(Window window, Boolean is_icon)
 {
   XTextProperty   textProperty;
   char *str = NULL;
 
-  if (window == 0) 
+  if (window == 0)
     {
-      str = (char*) XtMalloc((strlen("Global") +1) * sizeof(char));	
+      str = (char*) XtMalloc((strlen("Global") +1) * sizeof(char));
       strcpy(str,"Global");
       return str;
     }
@@ -1323,7 +1316,7 @@ GetWMName(Window window, Boolean is_icon)
       if (textProperty.value) {
 	str = (String)textProperty.value;
 	trimblanks(str);
-	if(str[0]) 
+	if(str[0])
 	  {
 	    if (is_icon)
 	      {
@@ -1335,7 +1328,7 @@ GetWMName(Window window, Boolean is_icon)
       }
     }
   }
-  
+
   strcpy(str, "");
   return str;
 }
@@ -1343,7 +1336,7 @@ GetWMName(Window window, Boolean is_icon)
 
 
 
-static char * 
+static char *
 GetWMClient(Window window, Boolean is_icon)
 {
   int format;
@@ -1352,18 +1345,18 @@ GetWMClient(Window window, Boolean is_icon)
   Atom type = None;
   char *str;
 
-  status = XGetWindowProperty(dsp, 
-			      (window & WIN_MASK), 
+  status = XGetWindowProperty(dsp,
+			      (window & WIN_MASK),
 			      atoms.sm_client_id_property,
 			      0L,(long)1000,
-			      False,	
+			      False,
 			      XA_STRING,
 			      &type,
 			      &format,
 			      &nitems,
 			      &after,
 			      (unsigned char **)&str);
-  
+
   if (status == Success)
     {
       if (str == NULL) return (NULL);
@@ -1386,8 +1379,8 @@ GetWMClient(Window window, Boolean is_icon)
       Window leader;
 
       /* check for CLIENT_LEADER property. */
-      status = XGetWindowProperty(dsp, 
-				  (window & WIN_MASK), 
+      status = XGetWindowProperty(dsp,
+				  (window & WIN_MASK),
 				  atoms.wm_client_leader,
 				  0L,(long)1000,
 				  False,
@@ -1417,8 +1410,8 @@ GetWMClient(Window window, Boolean is_icon)
 
 
 
-static 
-char * 
+static
+char *
 GetWMRole(Window window, Boolean is_icon)
 {
   int format;
@@ -1427,11 +1420,11 @@ GetWMRole(Window window, Boolean is_icon)
   Atom type = None;
   char *str;
 
-  status = XGetWindowProperty(dsp, 
-			      (window & WIN_MASK), 
+  status = XGetWindowProperty(dsp,
+			      (window & WIN_MASK),
 			      atoms.wm_role_property,
 			      0L,(long)1000,
-			      False,	
+			      False,
 			      XA_STRING,
 			      &type,
 			      &format,
@@ -1465,7 +1458,7 @@ GetWMCount(XrmQuark client, XrmQuark role)
   WorkWindow *w;
   char *str;
   int count;
-  
+
   count = 0;
   for (w = work_windows; w!= NULL; w = w->next)
     {
@@ -1481,7 +1474,7 @@ GetWMCount(XrmQuark client, XrmQuark role)
 }
 
 
-XrmQuarkList 
+XrmQuarkList
 GetSpecifierQList(Window window, Boolean is_icon)
 {
   XrmQuark *specifier;

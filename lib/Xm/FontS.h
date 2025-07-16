@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmFontSelector_h
@@ -66,11 +66,7 @@ typedef struct _XmFontSelectorRec *XmFontSelectorWidget;
  *	Returns: The Widget created.
  */
 
-Widget XmCreateFontSelector(
-#ifndef _NO_PROTO
-Widget, String, ArgList, Cardinal
-#endif
-);
+Widget XmCreateFontSelector(Widget, String, ArgList, Cardinal);
 
 extern WidgetClass xmFontSelectorWidgetClass;
 
@@ -82,4 +78,4 @@ extern WidgetClass xmFontSelectorWidgetClass;
 #include <X11/apienvrst.h>
 #endif
 
-#endif /* _XmFontSelector_h - DON'T ADD STUFF AFTER THIS #endif */
+#endif /* _XmFontSelector_h */

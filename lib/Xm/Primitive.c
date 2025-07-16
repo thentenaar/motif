@@ -1,4 +1,4 @@
- /* 
+ /*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Primitive.c /main/25 1999/01/27 16:08:04 mgreess $"
@@ -65,11 +65,11 @@ static char rcsid[] = "$TOG: Primitive.c /main/25 1999/01/27 16:08:04 mgreess $"
 
 /********    Static Function Declarations    ********/
 
-static void GetXFromShell( 
+static void GetXFromShell(
 			 Widget wid,
 			 int resource_offset,
 			 XtArgVal *value) ;
-static void GetYFromShell( 
+static void GetYFromShell(
 			 Widget wid,
 			 int resource_offset,
 			 XtArgVal *value) ;
@@ -77,44 +77,44 @@ static void GetYFromShell(
 static void ClassInitialize( void ) ;
 static void BuildPrimitiveResources(
 			 WidgetClass c ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
 			 WidgetClass w) ;
-static void Initialize( 
+static void Initialize(
 			 Widget rw,
 			 Widget nw,
 			 ArgList args,
 			 Cardinal *num_args) ;
-static void Realize( 
+static void Realize(
 			 register Widget w,
 			 XtValueMask *p_valueMask,
 			 XSetWindowAttributes *attributes) ;
-static void Destroy( 
+static void Destroy(
 			 Widget w) ;
 static void Redisplay (
 			 Widget w,
 			 XEvent *event,
 			 Region region);
-static Boolean SetValues( 
+static Boolean SetValues(
 			 Widget current,
 			 Widget request,
 			 Widget new_w,
 			 ArgList args,
 			 Cardinal *num_args) ;
-static void HighlightBorder( 
+static void HighlightBorder(
 			 Widget w) ;
-static void UnhighlightBorder( 
+static void UnhighlightBorder(
 			 Widget w) ;
-static XmNavigability WidgetNavigable( 
+static XmNavigability WidgetNavigable(
 			 Widget wid) ;
-static void FocusChange( 
+static void FocusChange(
 			 Widget wid,
 			 XmFocusChange change) ;
-static Boolean Redraw (Widget kid, 
+static Boolean Redraw (Widget kid,
 			Widget cur_parent,
 			Widget new_parent,
 			Mask visual_flag);
 static XmDirection GetDirection(Widget);
-static void GetColors(Widget widget, 
+static void GetColors(Widget widget,
 		       XmAccessColorData color_data);
 static unsigned char GetUnitType(Widget);
 static void GetToolTipString(
@@ -185,69 +185,69 @@ static XtActionsRec actions[] =
 static XtResource resources[] =
 {
    {
-     XmNunitType, XmCUnitType, XmRUnitType, 
+     XmNunitType, XmCUnitType, XmRUnitType,
      sizeof (unsigned char), XtOffsetOf(XmPrimitiveRec, primitive.unit_type),
      XmRCallProc, (XtPointer) _XmUnitTypeDefault
    },
 
    {
-     XmNx, XmCPosition, XmRHorizontalPosition, 
-     sizeof(Position), XtOffsetOf(WidgetRec, core.x), 
+     XmNx, XmCPosition, XmRHorizontalPosition,
+     sizeof(Position), XtOffsetOf(WidgetRec, core.x),
      XmRImmediate, (XtPointer) 0
    },
 
    {
-     XmNy, XmCPosition, XmRVerticalPosition, 
-     sizeof(Position), XtOffsetOf(WidgetRec, core.y), 
+     XmNy, XmCPosition, XmRVerticalPosition,
+     sizeof(Position), XtOffsetOf(WidgetRec, core.y),
      XmRImmediate, (XtPointer) 0
    },
 
    {
-     XmNwidth, XmCDimension, XmRHorizontalDimension, 
-     sizeof(Dimension), XtOffsetOf(WidgetRec, core.width), 
+     XmNwidth, XmCDimension, XmRHorizontalDimension,
+     sizeof(Dimension), XtOffsetOf(WidgetRec, core.width),
      XmRImmediate, (XtPointer) 0
    },
 
    {
-     XmNheight, XmCDimension, XmRVerticalDimension, 
-     sizeof(Dimension), XtOffsetOf(WidgetRec, core.height), 
+     XmNheight, XmCDimension, XmRVerticalDimension,
+     sizeof(Dimension), XtOffsetOf(WidgetRec, core.height),
      XmRImmediate, (XtPointer) 0
    },
 
    {
-     XmNborderWidth, XmCBorderWidth, XmRHorizontalDimension, 
-     sizeof(Dimension), XtOffsetOf(WidgetRec, core.border_width), 
+     XmNborderWidth, XmCBorderWidth, XmRHorizontalDimension,
+     sizeof(Dimension), XtOffsetOf(WidgetRec, core.border_width),
      XmRImmediate, (XtPointer) 0
    },
 
    {
-     XmNforeground, XmCForeground, XmRPixel, 
+     XmNforeground, XmCForeground, XmRPixel,
      sizeof (Pixel), XtOffsetOf(XmPrimitiveRec, primitive.foreground),
      XmRCallProc, (XtPointer) _XmForegroundColorDefault
    },
 
    {
-     XmNbackground, XmCBackground, XmRPixel, 
+     XmNbackground, XmCBackground, XmRPixel,
      sizeof (Pixel), XtOffsetOf(WidgetRec, core.background_pixel),
      XmRCallProc, (XtPointer) _XmBackgroundColorDefault
    },
 
    {
-     XmNtraversalOn, XmCTraversalOn, XmRBoolean, 
+     XmNtraversalOn, XmCTraversalOn, XmRBoolean,
      sizeof (Boolean), XtOffsetOf(XmPrimitiveRec, primitive.traversal_on),
      XmRImmediate, (XtPointer) True
    },
 
    {
-     XmNhighlightOnEnter, XmCHighlightOnEnter, XmRBoolean, 
-     sizeof(Boolean), 
+     XmNhighlightOnEnter, XmCHighlightOnEnter, XmRBoolean,
+     sizeof(Boolean),
      XtOffsetOf(XmPrimitiveRec, primitive.highlight_on_enter),
      XmRImmediate, (XtPointer) False
    },
 
    {
-     XmNnavigationType, XmCNavigationType, XmRNavigationType, 
-     sizeof (unsigned char), 
+     XmNnavigationType, XmCNavigationType, XmRNavigationType,
+     sizeof (unsigned char),
      XtOffsetOf(XmPrimitiveRec, primitive.navigation_type),
      XmRImmediate, (XtPointer) XmNONE
    },
@@ -260,34 +260,34 @@ static XtResource resources[] =
    },
 
    {
-     XmNhighlightColor, XmCHighlightColor, XmRPixel, 
+     XmNhighlightColor, XmCHighlightColor, XmRPixel,
      sizeof (Pixel), XtOffsetOf(XmPrimitiveRec, primitive.highlight_color),
      XmRCallProc, (XtPointer) _XmHighlightColorDefault
    },
 
    {
      XmNshadowThickness, XmCShadowThickness, XmRHorizontalDimension,
-     sizeof (Dimension), 
+     sizeof (Dimension),
      XtOffsetOf(XmPrimitiveRec, primitive.shadow_thickness),
      XmRCallProc, (XtPointer) _XmSetThickness
    },
 
    {
-     XmNtopShadowColor, XmCTopShadowColor, XmRPixel, 
+     XmNtopShadowColor, XmCTopShadowColor, XmRPixel,
      sizeof (Pixel),
      XtOffsetOf(XmPrimitiveRec, primitive.top_shadow_color),
      XmRCallProc, (XtPointer) _XmTopShadowColorDefault
    },
 
    {
-     XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel, 
+     XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel,
      sizeof (Pixel),
      XtOffsetOf(XmPrimitiveRec, primitive.bottom_shadow_color),
      XmRCallProc, (XtPointer) _XmBottomShadowColorDefault
    },
 
    {
-     XmNbackgroundPixmap, XmCPixmap, XmRPixmap, 
+     XmNbackgroundPixmap, XmCPixmap, XmRPixmap,
      sizeof (Pixmap), XtOffsetOf(WidgetRec, core.background_pixmap),
      XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
    },
@@ -313,14 +313,14 @@ static XtResource resources[] =
    },
 
    {
-     XmNhelpCallback, XmCCallback, XmRCallback, 
+     XmNhelpCallback, XmCCallback, XmRCallback,
      sizeof(XtCallbackList),
      XtOffsetOf(XmPrimitiveRec, primitive.help_callback),
      XmRPointer, (XtPointer) NULL
    },
 
    {
-     XmNuserData, XmCUserData, XmRPointer, 
+     XmNuserData, XmCUserData, XmRPointer,
      sizeof(XtPointer),
      XtOffsetOf(XmPrimitiveRec, primitive.user_data),
      XmRImmediate, (XtPointer) NULL
@@ -328,7 +328,7 @@ static XtResource resources[] =
 
 #ifndef XM_PART_BC
    {
-     XmNpopupHandlerCallback, XmCCallback, XmRCallback, 
+     XmNpopupHandlerCallback, XmCCallback, XmRCallback,
      sizeof(XtCallbackList),
      XtOffsetOf(XmPrimitiveRec, primitive.popup_handler_callback),
      XmRPointer, (XtPointer) NULL
@@ -341,7 +341,7 @@ static XtResource resources[] =
    },
    {
      XmNlayoutDirection, XmCLayoutDirection, XmRDirection,
-     sizeof(XmDirection), 
+     sizeof(XmDirection),
      XtOffsetOf(XmPrimitiveRec, primitive.layout_direction),
      XmRCallProc, (XtPointer) _XmDirectionDefault
    },
@@ -359,11 +359,11 @@ XmDirection XmPrimLayoutDir = XmDEFAULT_DIRECTION ;
 static XmSyntheticResource syn_resources[] =
 {
    { XmNx,
-     sizeof (Position), XtOffsetOf(WidgetRec, core.x), 
+     sizeof (Position), XtOffsetOf(WidgetRec, core.x),
      GetXFromShell, XmeToHorizontalPixels },
 
-   { XmNy, 
-     sizeof (Position), XtOffsetOf(WidgetRec, core.y), 
+   { XmNy,
+     sizeof (Position), XtOffsetOf(WidgetRec, core.y),
      GetYFromShell, XmeToVerticalPixels },
 
    { XmNwidth,
@@ -371,21 +371,21 @@ static XmSyntheticResource syn_resources[] =
      XmeFromHorizontalPixels, XmeToHorizontalPixels },
 
    { XmNheight,
-     sizeof (Dimension), XtOffsetOf(WidgetRec, core.height), 
+     sizeof (Dimension), XtOffsetOf(WidgetRec, core.height),
      XmeFromVerticalPixels, XmeToVerticalPixels },
 
-   { XmNborderWidth, 
-     sizeof (Dimension), XtOffsetOf(WidgetRec, core.border_width), 
+   { XmNborderWidth,
+     sizeof (Dimension), XtOffsetOf(WidgetRec, core.border_width),
      XmeFromHorizontalPixels, XmeToHorizontalPixels },
 
-   { XmNhighlightThickness, 
-     sizeof (Dimension), 
-     XtOffsetOf(XmPrimitiveRec, primitive.highlight_thickness), 
-     XmeFromHorizontalPixels, XmeToHorizontalPixels },
-
-   { XmNshadowThickness, 
+   { XmNhighlightThickness,
      sizeof (Dimension),
-     XtOffsetOf(XmPrimitiveRec, primitive.shadow_thickness), 
+     XtOffsetOf(XmPrimitiveRec, primitive.highlight_thickness),
+     XmeFromHorizontalPixels, XmeToHorizontalPixels },
+
+   { XmNshadowThickness,
+     sizeof (Dimension),
+     XtOffsetOf(XmPrimitiveRec, primitive.shadow_thickness),
      XmeFromHorizontalPixels, XmeToHorizontalPixels },
 
    { XmNtoolTipString,
@@ -440,33 +440,33 @@ static XmPrimitiveClassExtRec primClassExtRec = {
 externaldef(xmprimitiveclassrec) XmPrimitiveClassRec xmPrimitiveClassRec =
 {
    {
-      (WidgetClass) &widgetClassRec,    /* superclass	         */	
-      "XmPrimitive",                    /* class_name	         */	
-      sizeof(XmPrimitiveRec),           /* widget_size	         */	
-      ClassInitialize,                  /* class_initialize      */    
+      (WidgetClass) &widgetClassRec,    /* superclass	         */
+      "XmPrimitive",                    /* class_name	         */
+      sizeof(XmPrimitiveRec),           /* widget_size	         */
+      ClassInitialize,                  /* class_initialize      */
       ClassPartInitialize,              /* class_part_initialize */
-      False,                            /* class_inited          */	
-      Initialize,                       /* initialize	         */	
+      False,                            /* class_inited          */
+      Initialize,                       /* initialize	         */
       NULL,                             /* initialize_hook       */
-      Realize,                          /* realize	         */	
-      actions,                          /* actions               */	
-      XtNumber(actions),                /* num_actions	         */	
-      resources,                        /* resources	         */	
-      XtNumber(resources),              /* num_resources         */	
-      NULLQUARK,                        /* xrm_class	         */	
+      Realize,                          /* realize	         */
+      actions,                          /* actions               */
+      XtNumber(actions),                /* num_actions	         */
+      resources,                        /* resources	         */
+      XtNumber(resources),              /* num_resources         */
+      NULLQUARK,                        /* xrm_class	         */
       True,                             /* compress_motion       */
-      XtExposeCompressMaximal |		/* compress_exposure     */	
+      XtExposeCompressMaximal |		/* compress_exposure     */
 	  XtExposeNoRegion,
       True,                             /* compress_enterleave   */
       False,                            /* visible_interest      */
-      Destroy,                          /* destroy               */	
-      NULL,                             /* resize                */	
-      Redisplay,                        /* expose                */	
-      SetValues,                        /* set_values	         */	
+      Destroy,                          /* destroy               */
+      NULL,                             /* resize                */
+      Redisplay,                        /* expose                */
+      SetValues,                        /* set_values	         */
       NULL,                             /* set_values_hook       */
       XtInheritSetValuesAlmost,         /* set_values_almost     */
       _XmPrimitiveGetValuesHook,        /* get_values_hook       */
-      NULL,                             /* accept_focus	         */	
+      NULL,                             /* accept_focus	         */
       XtVersion,                        /* version               */
       NULL,                             /* callback private      */
       NULL,                             /* tm_table              */
@@ -486,7 +486,7 @@ externaldef(xmprimitiveclassrec) XmPrimitiveClassRec xmPrimitiveClassRec =
    }
 };
 
-externaldef(xmprimitivewidgetclass) WidgetClass xmPrimitiveWidgetClass = 
+externaldef(xmprimitivewidgetclass) WidgetClass xmPrimitiveWidgetClass =
 				     (WidgetClass) &xmPrimitiveClassRec;
 
 
@@ -525,12 +525,12 @@ static XmConst XmSpecUnitTypeTraitRec primUTT = {
 **
 **************************************************************************/
 
-static void 
+static void
 GetXFromShell(
 	 Widget wid,
 	 int resource_offset,
 	 XtArgVal *value )
-{   
+{
     /* return the x in the child's unit type; for children of shell, return
      ** the parent's x relative to the origin, in pixels
      */
@@ -539,8 +539,8 @@ GetXFromShell(
     Widget parent = XtParent(wid);
 
     if (XtIsShell(parent))
-    {   
-	 XtTranslateCoords( (Widget) wid, 
+    {
+	 XtTranslateCoords( (Widget) wid,
 		 (Position) 0, (Position) 0, &rootx, &rooty) ;
 	 *value = (XtArgVal) rootx;
     }
@@ -551,12 +551,12 @@ GetXFromShell(
     }
 }
 
-static void 
+static void
 GetYFromShell(
 	 Widget wid,
 	 int resource_offset,
 	 XtArgVal *value )
-{   
+{
     /* return the y in the child's unit type; for children of shell, return
      ** the parent's y relative to the origin, in pixels
      */
@@ -565,8 +565,8 @@ GetYFromShell(
     Widget parent = XtParent(wid);
 
     if (XtIsShell(parent))
-    {   
-	 XtTranslateCoords( (Widget) wid, 
+    {
+	 XtTranslateCoords( (Widget) wid,
 		 (Position) 0, (Position) 0, &rootx, &rooty) ;
 	 *value = (XtArgVal) rooty;
     }
@@ -582,7 +582,7 @@ GetYFromShell(
  *  ClassInitialize
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
    /* These routines are called for each base classes,
@@ -600,17 +600,17 @@ ClassInitialize( void )
 /**********************************************************************
  *
  *  BuildPrimitiveResources
- *	Build up the primitive's synthetic resource processing 
+ *	Build up the primitive's synthetic resource processing
  *      list by combining the super classes with this class.
  *
  **********************************************************************/
 
-static void 
+static void
 BuildPrimitiveResources(
 	 WidgetClass c )
 {
     XmPrimitiveWidgetClass wc = (XmPrimitiveWidgetClass) c ;
-    XmPrimitiveWidgetClass sc = (XmPrimitiveWidgetClass) 
+    XmPrimitiveWidgetClass sc = (XmPrimitiveWidgetClass)
 	 wc->core_class.superclass;
 
     _XmInitializeSyntheticResources(wc->primitive_class.syn_resources,
@@ -633,7 +633,7 @@ BuildPrimitiveResources(
  *    primitives class part.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
 	 WidgetClass w )
 {
@@ -642,42 +642,42 @@ ClassPartInitialize(
     XmPrimitiveWidgetClass super =
 	(XmPrimitiveWidgetClass) wc->core_class.superclass;
     XmPrimitiveClassExt              *wcePtr, *scePtr;
-    
+
 
     _XmFastSubclassInit (w, XmPRIMITIVE_BIT);
-    
+
     /*** first deal with inheritance of regular class method */
-    
+
     if (wc->primitive_class.border_highlight == XmInheritWidgetProc)
 	wc->primitive_class.border_highlight =
 	    super->primitive_class.border_highlight;
-    
+
     if (wc->primitive_class.border_unhighlight == XmInheritWidgetProc)
 	wc->primitive_class.border_unhighlight =
 	    super->primitive_class.border_unhighlight;
-    
+
     if (wc->primitive_class.translations == XtInheritTranslations)
-	wc->primitive_class.translations = 
+	wc->primitive_class.translations =
 	    super->primitive_class.translations;
     else if (wc->primitive_class.translations)
 	wc->primitive_class.translations = (String)
 	    XtParseTranslationTable(wc->primitive_class.translations);
-    
+
     if (wc->primitive_class.arm_and_activate == XmInheritArmAndActivate)
         wc->primitive_class.arm_and_activate =
 	    super->primitive_class.arm_and_activate;
-    
+
     /* synthetic resource management */
     BuildPrimitiveResources((WidgetClass) wc);
-    
+
     /*** then look at the extension.
       if it's NULL, create a new one with inherit everywhere,
       then do the inheritance. */
-    
+
     wcePtr = _XmGetPrimitiveClassExtPtr(wc, NULLQUARK);
-    
+
     if (*wcePtr == NULL) {
-	*wcePtr = (XmPrimitiveClassExt) XtCalloc(1, 
+	*wcePtr = (XmPrimitiveClassExt) XtCalloc(1,
 					 sizeof(XmPrimitiveClassExtRec)) ;
 	(*wcePtr)->next_extension = NULL;
 	(*wcePtr)->record_type 	= NULLQUARK;
@@ -687,33 +687,33 @@ ClassPartInitialize(
 	(*wcePtr)->widget_display_rect  = XmInheritDisplayRectProc ;
 	(*wcePtr)->widget_margins = XmInheritMarginsProc ;
     }
-    
+
     if ((WidgetClass)wc != xmPrimitiveWidgetClass) {
-	
+
 	scePtr = _XmGetPrimitiveClassExtPtr(super, NULLQUARK);
-	
+
 	if ((*wcePtr)->widget_baseline == XmInheritBaselineProc)
 	    (*wcePtr)->widget_baseline = (*scePtr)->widget_baseline;
-	
+
 	if ((*wcePtr)->widget_display_rect == XmInheritDisplayRectProc)
 	    (*wcePtr)->widget_display_rect  = (*scePtr)->widget_display_rect;
-	
+
 	if ((*wcePtr)->widget_margins == XmInheritMarginsProc)
 	    (*wcePtr)->widget_margins  = (*scePtr)->widget_margins;
     }
-    
+
     /*** Carry this ugly non portable code that deal with Xt internals.
-       Maintain first_time because we want to do that only once 
+       Maintain first_time because we want to do that only once
        Object ClassPartInit has been called */
     if (first_time) {
         _XmReOrderResourceList(xmPrimitiveWidgetClass, XmNunitType, NULL);
-        _XmReOrderResourceList(xmPrimitiveWidgetClass, 
+        _XmReOrderResourceList(xmPrimitiveWidgetClass,
 			       XmNforeground, XmNbackground);
         first_time = FALSE;
     }
-    
-    
-    
+
+
+
     /*** setting up traits for all subclasses as well.*/
 
     XmeTraitSet((XtPointer)wc, XmQTspecifyLayoutDirection,(XtPointer)&primLDT);
@@ -732,7 +732,7 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -767,7 +767,7 @@ Initialize(
     if(    pw->primitive.traversal_on
        && translations  &&  pw->core.tm.translations
        && !XmIsLabel( pw)    )
-	{   
+	{
 	    /*  If this widget is requesting traversal then augment its
 	     * translation table with some additional events.
 	     * We will only augment translations for a widget which
@@ -778,59 +778,59 @@ Initialize(
 	     * are handled by those classes.
 	     */
 	    XtOverrideTranslations( (Widget) pw, translations) ;
-	} 
-    
+	}
+
     pw->primitive.have_traversal = FALSE ;
     pw->primitive.highlighted = FALSE ;
     pw->primitive.highlight_drawn = FALSE ;
-    
+
     if((pw->primitive.navigation_type != XmDYNAMIC_DEFAULT_TAB_GROUP)
-       && !XmRepTypeValidValue(XmRID_NAVIGATION_TYPE, 
-                               pw->primitive.navigation_type, 
+       && !XmRepTypeValidValue(XmRID_NAVIGATION_TYPE,
+                               pw->primitive.navigation_type,
 			       (Widget) pw))
 	{   pw->primitive.navigation_type = XmNONE ;
-	} 
+	}
     _XmNavigInitialize( (Widget) request, (Widget) pw, args, num_args);
-    
+
     if(    !XmRepTypeValidValue( XmRID_UNIT_TYPE,
 				pw->primitive.unit_type, (Widget) pw)    )
 	{
 	    pw->primitive.unit_type = XmPIXELS;
 	}
-    
-    
+
+
     /*  Convert the fields from unit values to pixel values  */
-    
+
     _XmPrimitiveImportArgs( (Widget) pw, args, num_args);
-    
+
     /*  Check the geometry information for the widget  */
-    
+
     if (request->core.width == 0)
 	pw->core.width += pw->primitive.highlight_thickness * 2 +
 	    pw->primitive.shadow_thickness * 2;
-    
+
     if (request->core.height == 0)
-	pw->core.height += pw->primitive.highlight_thickness * 2 + 
+	pw->core.height += pw->primitive.highlight_thickness * 2 +
 	    pw->primitive.shadow_thickness * 2;
-    
+
     /*  Get the graphics contexts for the border drawing  */
-    
-    pw->primitive.highlight_GC = 
-	_XmGetPixmapBasedGC (nw, 
+
+    pw->primitive.highlight_GC =
+	_XmGetPixmapBasedGC (nw,
 			     pw->primitive.highlight_color,
 			     pw->core.background_pixel,
 			     pw->primitive.highlight_pixmap);
-    pw->primitive.top_shadow_GC = 
-	_XmGetPixmapBasedGC (nw, 
+    pw->primitive.top_shadow_GC =
+	_XmGetPixmapBasedGC (nw,
 			     pw->primitive.top_shadow_color,
 			     pw->core.background_pixel,
 			     pw->primitive.top_shadow_pixmap);
-    pw->primitive.bottom_shadow_GC = 
-	_XmGetPixmapBasedGC (nw, 
+    pw->primitive.bottom_shadow_GC =
+	_XmGetPixmapBasedGC (nw,
 			     pw->primitive.bottom_shadow_color,
 			     pw->core.background_pixel,
 			     pw->primitive.bottom_shadow_pixmap);
-    
+
 }
 
 
@@ -843,7 +843,7 @@ Initialize(
  *	gravity default to Forget.
  *
  ************************************************************************/
-static void 
+static void
 Realize(
         register Widget w,
         XtValueMask *p_valueMask,
@@ -855,7 +855,7 @@ Realize(
    attributes->do_not_propagate_mask =
       ButtonPressMask | ButtonReleaseMask |
       KeyPressMask | KeyReleaseMask | PointerMotionMask;
-        
+
    XtCreateWindow (w, InputOutput, CopyFromParent, valueMask, attributes);
 }
 
@@ -867,7 +867,7 @@ Realize(
  *
  ************************************************************************/
 /* ARGSUSED */
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -875,13 +875,13 @@ Redisplay(
 {
     XmPrimitiveWidget pw = (XmPrimitiveWidget) wid ;
 
-    if (pw->primitive.highlighted) {   
+    if (pw->primitive.highlighted) {
 	(*(((XmPrimitiveWidgetClass) XtClass(wid))
 	   ->primitive_class.border_highlight))(wid) ;
-    } else {   
+    } else {
 	(*(((XmPrimitiveWidgetClass) XtClass(wid))
 	   ->primitive_class.border_unhighlight))(wid) ;
-    } 
+    }
 }
 
 
@@ -891,26 +891,16 @@ Redisplay(
  *	Clean up allocated resources when the widget is destroyed.
  *
  ************************************************************************/
-static void 
-Destroy(
-        Widget w )
+static void Destroy(Widget w)
 {
    XmPrimitiveWidget pw = (XmPrimitiveWidget) w ;
 
    _XmNavigDestroy(w);
-#ifdef FIX_1388
    _XmToolTipRemove(w);
-#else
-   _XmToolTipLeave(w, NULL, NULL, NULL);
-#endif   
    XtReleaseGC( w, pw->primitive.top_shadow_GC);
    XtReleaseGC( w, pw->primitive.bottom_shadow_GC);
    XtReleaseGC( w, pw->primitive.highlight_GC);
-
 }
-
-
-
 
 /************************************************************************
  *
@@ -918,7 +908,7 @@ Destroy(
  *     Perform and updating necessary for a set values call.
  *
  ************************************************************************/
-static Boolean 
+static Boolean
 SetValues(
         Widget current,
         Widget request,
@@ -957,7 +947,7 @@ SetValues(
                                             ->primitive_class.translations
        && !XmIsLabel(newpw)    ) {
        _XmProcessLock();
-       XtOverrideTranslations( (Widget) newpw, (XtTranslations) 
+       XtOverrideTranslations( (Widget) newpw, (XtTranslations)
 			      ((XmPrimitiveClassRec *) XtClass( newpw))
 			      ->primitive_class.translations) ;
        _XmProcessUnlock();
@@ -965,20 +955,20 @@ SetValues(
    if(    curpw->primitive.navigation_type
       != newpw->primitive.navigation_type    )
      {
-	 if(    !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE, 
-				     newpw->primitive.navigation_type, 
+	 if(    !XmRepTypeValidValue( XmRID_NAVIGATION_TYPE,
+				     newpw->primitive.navigation_type,
 				     (Widget) newpw)    )
 	 {
 	     newpw->primitive.navigation_type
 		 = curpw->primitive.navigation_type ;
-	 } 
+	 }
      }
    returnFlag = _XmNavigSetValues( current, request, new_w, args, num_args);
 
    /*  Validate changed data.  */
 
    if(    !XmRepTypeValidValue( XmRID_UNIT_TYPE,
-                               newpw->primitive.unit_type, 
+                               newpw->primitive.unit_type,
 			       (Widget) newpw)    )
        {
        newpw->primitive.unit_type = curpw->primitive.unit_type;
@@ -1001,36 +991,36 @@ SetValues(
        curpw->primitive.highlight_pixmap != newpw->primitive.highlight_pixmap)
    {
        XtReleaseGC ((Widget) newpw, newpw->primitive.highlight_GC);
-       newpw->primitive.highlight_GC = 
-	   _XmGetPixmapBasedGC (new_w, 
+       newpw->primitive.highlight_GC =
+	   _XmGetPixmapBasedGC (new_w,
 				newpw->primitive.highlight_color,
 				newpw->core.background_pixel,
 				newpw->primitive.highlight_pixmap);
        returnFlag = True;
    }
 
-   if (curpw->primitive.top_shadow_color != 
+   if (curpw->primitive.top_shadow_color !=
        newpw->primitive.top_shadow_color ||
-       curpw->primitive.top_shadow_pixmap != 
+       curpw->primitive.top_shadow_pixmap !=
        newpw->primitive.top_shadow_pixmap)
        {
        XtReleaseGC ((Widget) newpw, newpw->primitive.top_shadow_GC);
-       newpw->primitive.top_shadow_GC = 
-	   _XmGetPixmapBasedGC (new_w, 
+       newpw->primitive.top_shadow_GC =
+	   _XmGetPixmapBasedGC (new_w,
 				newpw->primitive.top_shadow_color,
 				newpw->core.background_pixel,
 				newpw->primitive.top_shadow_pixmap);
        returnFlag = True;
    }
-   
-   if (curpw->primitive.bottom_shadow_color != 
+
+   if (curpw->primitive.bottom_shadow_color !=
        newpw->primitive.bottom_shadow_color ||
-       curpw->primitive.bottom_shadow_pixmap != 
+       curpw->primitive.bottom_shadow_pixmap !=
        newpw->primitive.bottom_shadow_pixmap)
    {
       XtReleaseGC( (Widget) newpw, newpw->primitive.bottom_shadow_GC);
-      newpw->primitive.bottom_shadow_GC = 
-	  _XmGetPixmapBasedGC (new_w, 
+      newpw->primitive.bottom_shadow_GC =
+	  _XmGetPixmapBasedGC (new_w,
 			       newpw->primitive.bottom_shadow_color,
 			       newpw->core.background_pixel,
 			       newpw->primitive.bottom_shadow_pixmap);
@@ -1052,7 +1042,7 @@ SetValues(
      }
 
    /*  Return a flag which may indicate that a redraw needs to occur.  */
-   
+
    return (returnFlag);
 }
 
@@ -1062,10 +1052,10 @@ SetValues(
  *  HighlightBorder
  *
  ************************************************************************/
-static void 
+static void
 HighlightBorder(
         Widget w )
-{   
+{
     XmPrimitiveWidget pw = (XmPrimitiveWidget) w ;
 
     pw->primitive.highlighted = True ;
@@ -1075,8 +1065,8 @@ HighlightBorder(
        || pw->primitive.highlight_thickness == 0) return ;
 
 
-    XmeDrawHighlight( XtDisplay( pw), XtWindow( pw), 
-		     pw->primitive.highlight_GC, 0, 0, 
+    XmeDrawHighlight( XtDisplay( pw), XtWindow( pw),
+		     pw->primitive.highlight_GC, 0, 0,
 		     XtWidth( pw), XtHeight( pw),
 		     pw->primitive.highlight_thickness) ;
 }
@@ -1087,10 +1077,10 @@ HighlightBorder(
  *  UnhighlightBorder
  *
  ************************************************************************/
-static void 
+static void
 UnhighlightBorder(
         Widget w )
-{   
+{
     XmPrimitiveWidget pw = (XmPrimitiveWidget) w ;
     XmSpecifyUnhighlightTrait UnhighlightT;
     GC manager_background_GC;
@@ -1100,7 +1090,7 @@ UnhighlightBorder(
 
     if ( XtWidth( w) == 0
 	|| XtHeight( w) == 0
-        || pw->primitive.highlight_thickness == 0) 
+        || pw->primitive.highlight_thickness == 0)
 	{
 	return ;
 	}
@@ -1113,7 +1103,7 @@ UnhighlightBorder(
 		XtClass(pw->core.parent), XmQTspecifyUnhighlight)) != NULL)
 	    && (UnhighlightT->getUnhighlightGC != NULL))
 	    {
-	    manager_background_GC = 
+	    manager_background_GC =
 			    UnhighlightT->getUnhighlightGC( pw->core.parent, w);
 	    }
 	/* otherwise, use parent's background GC */
@@ -1122,12 +1112,12 @@ UnhighlightBorder(
 	    manager_background_GC = ((XmManagerWidget)(pw->core.parent))
 			    ->manager.background_GC;
 	    }
-	XmeDrawHighlight( XtDisplay( pw), XtWindow( pw), 
+	XmeDrawHighlight( XtDisplay( pw), XtWindow( pw),
 			    manager_background_GC,
 			    0, 0, XtWidth( w), XtHeight( w),
 			    pw->primitive.highlight_thickness) ;
 	}
-    else 
+    else
 	XmeClearBorder( XtDisplay (pw), XtWindow (pw), 0, 0, XtWidth( w),
 		       XtHeight( w) , pw->primitive.highlight_thickness) ;
 }
@@ -1141,10 +1131,10 @@ UnhighlightBorder(
 static XmNavigability
 WidgetNavigable(
         Widget wid)
-{   
+{
     if(    XtIsSensitive(wid)
        &&  ((XmPrimitiveWidget) wid)->primitive.traversal_on    )
-	{   
+	{
 	    XmNavigationType nav_type = ((XmPrimitiveWidget) wid)
 		->primitive.navigation_type ;
 	    if(    (nav_type == XmSTICKY_TAB_GROUP)
@@ -1169,7 +1159,7 @@ static void
 FocusChange(
         Widget wid,
         XmFocusChange change)
-{   
+{
     /* Enter/Leave is called only in pointer mode,
      * Focus in/out only called in explicit mode.
      */
@@ -1187,10 +1177,10 @@ FocusChange(
 	    }
 	    if(    ((XmPrimitiveWidgetClass) XtClass( wid))
 	       ->primitive_class.border_highlight    )
-		{   
+		{
 		    (*(((XmPrimitiveWidgetClass) XtClass( wid))
 		       ->primitive_class.border_highlight))( wid) ;
-		} 
+		}
 	    break ;
 	case XmLEAVE:
 	    if(!(((XmPrimitiveWidget) wid)->primitive.highlight_on_enter))
@@ -1200,15 +1190,15 @@ FocusChange(
 	    /* Drop through. */
 	case XmFOCUS_OUT:
 	    if(change == XmFOCUS_OUT    ) /* Because of drop-though. */{
-		
+
 		((XmPrimitiveWidget) wid)->primitive.have_traversal = FALSE ;
 	    }
 	    if(    ((XmPrimitiveWidgetClass) XtClass( wid))
 	       ->primitive_class.border_unhighlight    )
-		{   
+		{
 		    (*(((XmPrimitiveWidgetClass) XtClass( wid))
 		       ->primitive_class.border_unhighlight))( wid) ;
-		} 
+		}
 	    break ;
 	}
     return ;
@@ -1221,7 +1211,7 @@ FocusChange(
 
 
 
-static XmDirection 
+static XmDirection
 GetDirection(Widget w)
 {
   return XmPrim_layout_direction(((XmPrimitiveWidget)(w)));
@@ -1230,9 +1220,9 @@ GetDirection(Widget w)
 
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 Redraw (
-	Widget kid, 	       
+	Widget kid,
 	Widget cur_parent,	/* unused */
 	Widget new_parent,	/* unused */
 	Mask visual_flag)
@@ -1263,7 +1253,7 @@ Redraw (
 }
 
 static void
-GetColors(Widget w, 
+GetColors(Widget w,
 	  XmAccessColorData color_data)
 {
     XmPrimitiveWidget pw = (XmPrimitiveWidget) w ;
@@ -1306,7 +1296,7 @@ GetUnitType(Widget w)
  *
  ************************************************************************/
 /*ARGSUSED*/
-void 
+void
 _XmTraverseLeft(
         Widget w,
         XEvent *event,		/* unused */
@@ -1317,7 +1307,7 @@ _XmTraverseLeft(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseRight(
         Widget w,
         XEvent *event,		/* unused */
@@ -1328,7 +1318,7 @@ _XmTraverseRight(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseUp(
         Widget w,
         XEvent *event,		/* unused */
@@ -1339,7 +1329,7 @@ _XmTraverseUp(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseDown(
         Widget w,
         XEvent *event,		/* unused */
@@ -1350,7 +1340,7 @@ _XmTraverseDown(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseNext(
         Widget w,
         XEvent *event,		/* unused */
@@ -1361,7 +1351,7 @@ _XmTraverseNext(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraversePrev(
         Widget w,
         XEvent *event,		/* unused */
@@ -1372,7 +1362,7 @@ _XmTraversePrev(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseHome(
         Widget w,
         XEvent *event,		/* unused */
@@ -1383,7 +1373,7 @@ _XmTraverseHome(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraverseNextTabGroup(
         Widget w,
         XEvent *event,		/* unused */
@@ -1400,7 +1390,7 @@ _XmTraverseNextTabGroup(
 }
 
 /*ARGSUSED*/
-void 
+void
 _XmTraversePrevTabGroup(
         Widget w,
         XEvent *event,		/* unused */
@@ -1419,7 +1409,7 @@ _XmTraversePrevTabGroup(
 
 
 /*ARGSUSED*/
-void 
+void
 _XmPrimitiveHelp(
         Widget wid,
         XEvent *event,
@@ -1430,19 +1420,19 @@ _XmPrimitiveHelp(
       return;
 
    _XmSocorro( wid, event, NULL, NULL);
-   
+
    _XmRecordEvent(event);
 }
 
 
 
-void 
-_XmPrimitiveParentActivate( 
+void
+_XmPrimitiveParentActivate(
         Widget pw,
         XEvent *event,
         String *params,
         Cardinal *num_params )
-{   
+{
     XmParentInputActionRec  pp_data ;
 
     pp_data.process_type = XmINPUT_ACTION ;
@@ -1454,13 +1444,13 @@ _XmPrimitiveParentActivate(
     _XmParentProcess( XtParent( pw), (XmParentProcessData) &pp_data) ;
 }
 
-void 
-_XmPrimitiveParentCancel( 
+void
+_XmPrimitiveParentCancel(
         Widget pw,
         XEvent *event,
         String *params,
         Cardinal *num_params )
-{   
+{
     XmParentInputActionRec  pp_data ;
 
     pp_data.process_type = XmINPUT_ACTION ;
@@ -1478,7 +1468,7 @@ _XmPrimitiveParentCancel(
  *
  *********************************************************************/
 /*ARGSUSED*/
-void 
+void
 _XmButtonTakeFocus(
         Widget wid,
         XEvent *event,		/* unused */
@@ -1497,7 +1487,7 @@ GetToolTipString(Widget wid,
     *value = (XtArgVal) string;
 }
 
-XmImportOperator 
+XmImportOperator
 SetToolTipString(Widget wid,
                  int resource, /* unused */
                  XtArgVal * value)

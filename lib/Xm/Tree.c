@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -67,13 +67,13 @@ static void ConstraintDestroy(Widget);
 static void TreeDestroy(Widget);
 static void ToggleNodeState(Widget, XtPointer, XtPointer);
 
-static XtGeometryResult QueryGeometry(Widget, 
+static XtGeometryResult QueryGeometry(Widget,
 				      XtWidgetGeometry *, XtWidgetGeometry *);
 
 static Boolean ConstraintSetValues(Widget, Widget, Widget, ArgList, Cardinal*);
 static Boolean SetValues(Widget, Widget, Widget, ArgList, Cardinal*);
 
-static XtGeometryResult GeometryManager(Widget, 
+static XtGeometryResult GeometryManager(Widget,
 				      XtWidgetGeometry *, XtWidgetGeometry *);
 
 /************************
@@ -84,11 +84,11 @@ static XtGeometryResult GeometryManager(Widget,
  * Internal Routines.
  *********************/
 
-static Boolean CvtStringToConnectStyle(Display *, XrmValuePtr, Cardinal *, 
+static Boolean CvtStringToConnectStyle(Display *, XrmValuePtr, Cardinal *,
 				       XrmValuePtr, XrmValuePtr);
-static Boolean CvtStringToCompressStyle(Display *, XrmValuePtr, Cardinal *, 
+static Boolean CvtStringToCompressStyle(Display *, XrmValuePtr, Cardinal *,
 				       XrmValuePtr, XrmValuePtr);
-static Boolean CvtStringToLineStyle(Display *, XrmValuePtr, Cardinal *, 
+static Boolean CvtStringToLineStyle(Display *, XrmValuePtr, Cardinal *,
 				       XrmValuePtr, XrmValuePtr);
 
 static void ReleaseNodeGCs(Widget), GetNodeGCs(Widget);
@@ -217,25 +217,25 @@ static XtResource constraints[] =
     sizeof(int), XtOffsetOf(XmTreeConstraintRec, tree.open_close_padding),
     XmRImmediate, (XtPointer) 0
   },
-  
+
   {
     XmNlineColor, XmCForeground, XmRPixel,
     sizeof(Pixel), XtOffsetOf(XmTreeConstraintRec, tree.color),
     XmRCallProc, (XtPointer) LineColorDefault
   },
-  
+
   {
     XmNlineBackgroundColor, XmCBackground, XmRPixel,
     sizeof(Pixel), XtOffsetOf(XmTreeConstraintRec, tree.background_color),
     XmRCallProc, (XtPointer) LineBackgroundColorDefault
   },
-  
+
   {
     XmNlineWidth, XmCLineWidth, XmRInt,
     sizeof(int), XtOffsetOf(XmTreeConstraintRec, tree.line_width),
     XmRImmediate, (XtPointer) 0
   },
-  
+
   {
     XmNlineStyle, XmCLineStyle, XmRXmLineStyle,
     sizeof(int), XtOffsetOf(XmTreeConstraintRec, tree.line_style),
@@ -294,7 +294,7 @@ XmTreeClassRec xmTreeClassRec = {
     /* change_managed     */      ChangeManaged,
     /* insert_child       */      XtInheritInsertChild,
     /* delete_child       */      XtInheritDeleteChild,
-    /* extension          */      NULL,                                     
+    /* extension          */      NULL,
    },
    {		/* constraint_class fields */
     /* resource list        */         (XtResource*)constraints,
@@ -303,16 +303,16 @@ XmTreeClassRec xmTreeClassRec = {
     /* init proc            */         ConstraintInitialize,
     /* destroy proc         */         ConstraintDestroy,
     /* set values proc      */         ConstraintSetValues,
-    /* extension            */         NULL, 
+    /* extension            */         NULL,
    },
    {		/* manager_class fields */
-    /* default translations   */      XtInheritTranslations,	
+    /* default translations   */      XtInheritTranslations,
     /* syn_resources          */      get_resources,
     /* num_syn_resources      */      XtNumber(get_resources),
     /* syn_cont_resources     */      get_cons_resources,
     /* num_syn_cont_resources */      XtNumber(get_cons_resources),
     /* parent_process         */      XmInheritParentProcess,
-    /* extension	      */      NULL,	
+    /* extension	      */      NULL,
    },
    { /* Hierarchy fields */
       XtInheritChangeNodeState,	/* The function for changing the node state. */
@@ -341,13 +341,8 @@ WidgetClass xmTreeWidgetClass = (WidgetClass) &xmTreeClassRec;
  *	Arguments:     none.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
-static void 
-ClassInit(void)
+static void ClassInit(void)
 {
-    XmTreeClassRec* wc = &xmTreeClassRec;
-
     XtSetTypeConverter(XmRString, XmRXmConnectStyle,
 		       (XtTypeConverter) CvtStringToConnectStyle,
 		       NULL, (Cardinal) 0, XtCacheAll, (XtDestructor) NULL);
@@ -362,17 +357,10 @@ ClassInit(void)
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmTREE_BIT);
 }
-
 
 /*	Function Name: Initialize
  *	Description:   Called to initialize information specific
@@ -380,19 +368,18 @@ ClassPartInitialize(WidgetClass w_class)
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
-/* ARGSUSED */
-static void 
+static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
     XmTreeWidget tw = (XmTreeWidget) set;
     TreeConstraints top_node;
 
-    top_node = ((TreeConstraints) 
+    top_node = ((TreeConstraints)
 		XtRealloc((XtPointer) XmHierarchy_top_node(tw),
 			  sizeof(TreeConstraintRec)));
 
@@ -400,18 +387,18 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 
     XmTree_ul_point(tw).x = XmTree_ul_point(tw).y = 0;
     XmTree_lr_point(tw).x = XmTree_lr_point(tw).y = 0;
-    
+
     XmTreeC_box_x(top_node) = XmTreeC_box_y(top_node) = 0;
     XmTreeC_bb_width(top_node) = XmTreeC_bb_height(top_node) = 0;
     XmTreeC_placed(top_node) = False;
 
     XmTree_child_op_list(tw) = _XmListInit();
 
-    /* 
+    /*
      * Set the initial values for XmTreeC_max_width(tw) and XmTreeC_max_height(tw).
      */
-    
-    CalcMaxSize(set);    
+
+    CalcMaxSize(set);
 }
 
 /*	Function Name: Realize
@@ -424,7 +411,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  * This overrides the Manager's frobbing with various values.
  */
 
-static void 
+static void
 Realize(Widget w, Mask *valueMask, XSetWindowAttributes * attributes)
 {
    XtCreateWindow (w, InputOutput, CopyFromParent, *valueMask, attributes);
@@ -443,7 +430,6 @@ typedef struct _RedispInfo {
     Boolean found;
 } RedispInfo;
 
-/* ARGSUSED */
 static void
 Redisplay(Widget w, XEvent * event, Region region)
 {
@@ -463,22 +449,22 @@ Redisplay(Widget w, XEvent * event, Region region)
     info.found = False;
     XCheckIfEvent(XtDisplay(w), &junk, CheckExpose, (char *) &info);
 
-    /* 
+    /*
      * Compute the maximum bounding rectangle for all expose events
      * that have yet to be processed.
      */
 
-    if (event->xexpose.x < XmTree_ul_point(tw).x) 
+    if (event->xexpose.x < XmTree_ul_point(tw).x)
 	XmTree_ul_point(tw).x = event->xexpose.x;
-    if (event->xexpose.y < XmTree_ul_point(tw).y) 
+    if (event->xexpose.y < XmTree_ul_point(tw).y)
 	XmTree_ul_point(tw).y = event->xexpose.y;
 
     lrx = event->xexpose.x + event->xexpose.width;
     lry = event->xexpose.y + event->xexpose.height;
 
-    if (lrx > XmTree_lr_point(tw).x) 
+    if (lrx > XmTree_lr_point(tw).x)
 	XmTree_lr_point(tw).x = lrx;
-    if (lry > XmTree_lr_point(tw).y) 
+    if (lry > XmTree_lr_point(tw).y)
 	XmTree_lr_point(tw).y = lry;
 
     if (!info.found) {	/* No more expose events waiting - process these. */
@@ -491,7 +477,7 @@ Redisplay(Widget w, XEvent * event, Region region)
 
 	ProcessChildQueue((XmTreeWidget) w, &rect);
 	RedrawTreeLines(w, &rect);
-	
+
 	/*
 	 * Reset upper right and lower left points.
 	 */
@@ -512,7 +498,6 @@ Redisplay(Widget w, XEvent * event, Region region)
  *	Returns: Always False.
  */
 
-/* ARGSUSED */
 static Bool
 CheckExpose(Display *disp, XEvent *event, char *info_ptr)
 {
@@ -533,7 +518,7 @@ CheckExpose(Display *disp, XEvent *event, char *info_ptr)
  *	Returns:       none.
  */
 
-static void 
+static void
 Resize(Widget w)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
@@ -555,8 +540,8 @@ Resize(Widget w)
  *                     preferred - what I would like.
  *	Returns:       See Xt Manual.
  */
-    
-static XtGeometryResult 
+
+static XtGeometryResult
 QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 {
     GetDesiredSize(w, &(preferred->width), &(preferred->height), True);
@@ -567,13 +552,12 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
  *	Description:   Called a resources is changed.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
-/* ARGSUSED */
-static Boolean 
+static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
 {
@@ -608,7 +592,7 @@ SetValues(Widget current, Widget request, Widget set,
 	GetDesiredSize(set, &(set->core.width), &(set->core.height), False);
 	redisplay = True;
     }
-    
+
     return(redisplay);
 }
 
@@ -622,7 +606,7 @@ static void TreeDestroy (Widget widget)
 {
   XmTreeWidget tree = (XmTreeWidget) widget;
 
-    _XmListFree(XmTree_child_op_list(tree)); 
+    _XmListFree(XmTree_child_op_list(tree));
 }
 
 
@@ -663,16 +647,15 @@ ChangeManaged(Widget w)
  *	Returns:       status.
  */
 
-/* ARGSUSED */
 static XtGeometryResult
-GeometryManager(Widget w, XtWidgetGeometry * request, 
+GeometryManager(Widget w, XtWidgetGeometry * request,
 		XtWidgetGeometry * result)
 {
     Widget tw = XtParent(w);
 
     if (!(request->request_mode & (CWWidth | CWHeight | CWBorderWidth)))
 	return(XtGeometryNo);
-    
+
     if (!(request->request_mode & CWWidth)) {
 	request->width = w->core.width;
 	request->request_mode |= CWWidth;
@@ -697,12 +680,12 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
     /*
      * Any width or height request is allowed, but others will be disallowed
      * or result in an almost that states only the width and height can
-     * change. 
+     * change.
      */
 
-    if (request->request_mode & XtCWQueryOnly) 
+    if (request->request_mode & XtCWQueryOnly)
 	return(XtGeometryYes);
-	
+
     /*
      * A real allowed request, make the change.
      */
@@ -722,7 +705,7 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
 }
 
 /************************************************************
- * 
+ *
  * Constraint widget class procedures.
  *
  ************************************************************/
@@ -735,7 +718,6 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
  *	Returns:       none.
  */
 
-/* ARGSUSED */
 static void
 ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -747,7 +729,7 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
     XmTreeC_is_compressed(node) = False;
 
     LineStyle_confirm(set, LineSolid);
-    
+
     if (XmHierarchyC_state(node) != XmNotInHierarchy)
 	GetNodeGCs(set);
     else
@@ -755,7 +737,7 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 }
 
 /*	Function Name: ConstraintDestroy
- *	Description:   Destroys all data allocated by the constraint 
+ *	Description:   Destroys all data allocated by the constraint
  *                     record.
  *	Arguments:     w - the widget.
  *	Returns:       none.
@@ -771,13 +753,13 @@ ConstraintDestroy(Widget w)
     XmListElem *elem, *next;
     XmTreeWidget tw;
 
-    if (XmHierarchyC_state(node) == XmNotInHierarchy) 
+    if (XmHierarchyC_state(node) == XmNotInHierarchy)
     {
       return;
     }
 
     tw = (XmTreeWidget) XtParent(w);
-    elem = XmListFirst(XmTree_child_op_list(tw)); 
+    elem = XmListFirst(XmTree_child_op_list(tw));
     while(elem != NULL) {
 	TreeConstraints info = (TreeConstraints) XmListElemData(elem);
 
@@ -838,13 +820,12 @@ ReleaseNodeGCs(Widget w)
  *	Description:   Called a constraint is changed on my children.
  *	Arguments:     current - the current (old) widget values.
  *                     request - before superclassed have changed things.
- *                     set - what will acutally be the new values. 
+ *                     set - what will acutally be the new values.
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
 
-/* ARGSUSED */
-static Boolean 
+static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
 {
@@ -855,7 +836,7 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     Boolean insert_change = False;
     int i;
 
-    for (i = 0; i < *num_args; i++) 
+    for (i = 0; i < *num_args; i++)
 	if (streq(args[i].name, XmNinsertBefore)) {
 	    insert_change = True;
 	    break;
@@ -881,11 +862,11 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 
     if ((XmHierarchyC_parent(set_node) != XmHierarchyC_parent(old_node)) ||
 	(XmHierarchyC_state(set_node) != XmHierarchyC_state(old_node)) ||
-	(insert_change) || (XmTreeC_open_close_padding(set_node) != 
+	(insert_change) || (XmTreeC_open_close_padding(set_node) !=
 			    XmTreeC_open_close_padding(old_node)))
     {
 	 /*
-	  * Other operations have already been performed by my superclass. 
+	  * Other operations have already been performed by my superclass.
 	  */
 
         if (XmHierarchy_refigure_mode((XmTreeWidget)tw)) {
@@ -893,7 +874,7 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 	    LayoutChildren(tw, NULL);
 	    redisplay = True;
 	}
-	 
+
 	 /*
 	  * Since Layout children has (possibily) moved this widget
 	  * to a new location.  The current state of the widget
@@ -913,14 +894,14 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 	 redisplay = True;
      }
 
-    if (XtIsRealized(tw) && redisplay && 
+    if (XtIsRealized(tw) && redisplay &&
 	(XmHierarchy_refigure_mode((XmTreeWidget)tw)))
     {
 	XClearArea(XtDisplay(tw), XtWindow(tw),
 		   0, 0, tw->core.width, tw->core.height, True);
     }
-	
-    return(False);   
+
+    return(False);
 }
 
 /************************************************************
@@ -937,19 +918,18 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
  *	Returns:       none.
  */
 
-/* ARGSUSED */
 static void
 ToggleNodeState(Widget w, XtPointer node_ptr, XtPointer call_data)
 {
     Widget tw = XtParent(w);
     XtCallbackProc toggle_node_state;
-    
+
     _XmProcessLock();
     toggle_node_state = (SUPERCLASS->hierarchy_class.toggle_node_state);
     _XmProcessUnlock();
 
     (*toggle_node_state)(w, node_ptr, call_data);
-    
+
     CalcLocations(tw, True);
     LayoutChildren(tw, NULL);
 
@@ -979,9 +959,8 @@ ToggleNodeState(Widget w, XtPointer node_ptr, XtPointer call_data)
  *	Returns:       True if the SetValues succeeds.
  */
 
-/*ARGSUSED*/
 static Boolean
-CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args, 
+CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 			XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static XmTreeConnectStyle connect;
@@ -990,16 +969,16 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
     char lowerName[BUFSIZ];
-    
+
     if (!haveQuarks) {
 	XtQELadder = XrmStringToQuark("ladder");
 	XtQEDirect = XrmStringToQuark("direct");
 	haveQuarks = TRUE;
     }
-    
+
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
-    
+
     if ( (q == XtQELadder) || streq(lowerName,"treeladder") )
 	connect = XmTreeLadder;
     else if ( (q == XtQEDirect) || streq(lowerName,"treedirect") )
@@ -1008,7 +987,7 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmConnectStyle);
 	return(FALSE);		/* Conversion failed. */
     }
-    
+
     if (toVal->addr == NULL) {
 	toVal->size = sizeof(XmTreeConnectStyle);
 	toVal->addr = (XtPointer) &connect;
@@ -1017,7 +996,7 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     if (toVal->size >= sizeof(XmTreeConnectStyle)) {
 	XmTreeConnectStyle *loc = (XmTreeConnectStyle *)toVal->addr;
-	
+
 	*loc = connect;
 	return(TRUE);
     }
@@ -1035,7 +1014,6 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  *      Returns:       True if the SetValues succeeds.
  */
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
                         XrmValuePtr fromVal, XrmValuePtr toVal)
@@ -1057,7 +1035,7 @@ CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
-   
+
     if ((q == XtQECompressNone) || streq(lowerName,"none") || streq(lowerName,"treecompressnone") )
         compress = XmTreeCompressNone;
     else if ((q == XtQECompressLeaves) || streq(lowerName,"leaves") || streq(lowerName,"treecompressleaves") )
@@ -1086,16 +1064,15 @@ CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     return(FALSE);
 }
 
-/* ARGSUSED */
 static Boolean
-CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args, 
+CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 			XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static int lineStyle = LineSolid;
     char lowerName[BUFSIZ];
-    
+
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
-    
+
     if ( streq(lowerName, "linesolid") || streq(lowerName,"solid") )
 	lineStyle = LineSolid;
     else if ( streq(lowerName, "lineonoffdash") || streq(lowerName,"onoffdash") )
@@ -1106,7 +1083,7 @@ CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmLineStyle);
 	return(FALSE);		/* Conversion failed. */
     }
-    
+
     if (toVal->addr == NULL) {
 	toVal->size = sizeof(int);
 	toVal->addr = (XtPointer) &lineStyle;
@@ -1115,7 +1092,7 @@ CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     if (toVal->size >= sizeof(int)) {
 	int *loc = (int*)toVal->addr;
-	
+
 	*loc = lineStyle;
 	return(TRUE);
     }
@@ -1146,8 +1123,7 @@ CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  *	Returns: none.
  */
 
-/* ARGSUSED */
-static void 
+static void
 HorizontalNodeSpaceDefault(Widget widget, int offset, XrmValue *value)
 {
     XmTreeWidget tw = (XmTreeWidget) widget;
@@ -1171,8 +1147,7 @@ HorizontalNodeSpaceDefault(Widget widget, int offset, XrmValue *value)
  *	Returns: none.
  */
 
-/* ARGSUSED */
-static void 
+static void
 VerticalNodeSpaceDefault(Widget widget, int offset, XrmValue *value)
 {
     XmTreeWidget tw = (XmTreeWidget) widget;
@@ -1187,7 +1162,7 @@ VerticalNodeSpaceDefault(Widget widget, int offset, XrmValue *value)
 }
 
 /*	Function Name: LineColorDefault
- *	Description: Sets the default line color to the parent's 
+ *	Description: Sets the default line color to the parent's
  *                   foreground color.
  *	Arguments: w - the widget to set the line color on.
  *                 offset - offset of the field in the widget record.
@@ -1195,8 +1170,7 @@ VerticalNodeSpaceDefault(Widget widget, int offset, XrmValue *value)
  *	Returns: none.
  */
 
-/* ARGSUSED */
-static void 
+static void
 LineColorDefault(Widget widget, int offset, XrmValue *value)
 {
     XmTreeWidget tw = (XmTreeWidget) XtParent(widget);
@@ -1204,8 +1178,7 @@ LineColorDefault(Widget widget, int offset, XrmValue *value)
     value->addr = (XtPointer) &(tw->manager.foreground);
 }
 
-/* ARGSUSED */
-static void 
+static void
 LineBackgroundColorDefault(Widget widget, int offset, XrmValue *value)
 {
     XmTreeWidget tw = (XmTreeWidget) XtParent(widget);
@@ -1213,8 +1186,8 @@ LineBackgroundColorDefault(Widget widget, int offset, XrmValue *value)
     value->addr = (XtPointer) &(tw->core.background_pixel);
 }
 
-/*	Function Name: DrawExtraLadderLines 
- *	Description: Draws the extra horizontal and vertical ladder lines 
+/*	Function Name: DrawExtraLadderLines
+ *	Description: Draws the extra horizontal and vertical ladder lines
  *                   that connect elements of the tree.
  *	Arguments: w - the tree widget.
  *                 gc - gc of the parent node
@@ -1223,16 +1196,15 @@ LineBackgroundColorDefault(Widget widget, int offset, XrmValue *value)
  *                 parent_point - supplies y end points for horizontal line
  *	Returns: none
  */
-/* ARGSUSED */
 static void
 DrawExtraLadderLines( Widget w, GC gc, LadderPoint first_kid,
 		      LadderPoint last_kid, LadderPoint parent_point )
 {
   XmTreeWidget tw = (XmTreeWidget)w;
-  
+
   if (XmTree_connect_style(tw) == XmTreeLadder)
     {
-      
+
       /* First draw the line that starts at parent midpoint and goes
        *    to the ladder line connecting the children. Then draw the
        *    line connecting the children.
@@ -1241,19 +1213,19 @@ DrawExtraLadderLines( Widget w, GC gc, LadderPoint first_kid,
       if (XmTree_orientation(tw) == XmHORIZONTAL)
       {
           XDrawLine(XtDisplay(w), XtWindow(w), gc, parent_point.x,
-		parent_point.y, first_kid.x, parent_point.y ); 
+		parent_point.y, first_kid.x, parent_point.y );
           XDrawLine(XtDisplay(w), XtWindow(w), gc, first_kid.x, first_kid.y,
 		first_kid.x, last_kid.y );
       }
       else    /* orientation == XmVERTICAL */
       {
           XDrawLine(XtDisplay(w), XtWindow(w), gc, parent_point.x,
-		parent_point.y, parent_point.x, first_kid.y ); 
+		parent_point.y, parent_point.x, first_kid.y );
           XDrawLine(XtDisplay(w), XtWindow(w), gc, first_kid.x, first_kid.y,
 		last_kid.x, first_kid.y );
       }
     }
-  
+
 }
 
 
@@ -1277,7 +1249,7 @@ RedrawTreeLines(Widget w, XRectangle * rect)
  *	Description: Calculates the x and y origin of the
  *                   part of the ladder line that comes out of the
  *                   parent node
- *	Arguments: 
+ *	Arguments:
  *                 node - The node to calculate points for
  *                 w - the tree widget
  *                 ret_point - return values for calculated points
@@ -1295,21 +1267,21 @@ _CalcNodeMidPoint( TreeConstraints node, Widget w,
   if (XmTree_orientation(tw) == XmHORIZONTAL)
   {
     ret_point->x = (XmTreeC_box_x(node) + XmTreeC_widget_offset(node) +
-		  (XmHierarchyC_widget(node))->core.width + 
+		  (XmHierarchyC_widget(node))->core.width +
 		  XmHierarchy_h_margin(tw));
-  
+
     extra_space = GetExtraVertSpace(w);
-  
+
     ret_point->y = XmTreeC_box_y(node)+(int)(XmTreeC_bb_height(node)+extra_space)/2;
   }
   else    /* orientation == XmVERTICAL */
   {
     ret_point->y = (XmTreeC_box_y(node) + XmTreeC_widget_offset(node) +
-		  (XmHierarchyC_widget(node))->core.height + 
+		  (XmHierarchyC_widget(node))->core.height +
 		  XmHierarchy_v_margin(tw));
-  
+
     extra_space = GetExtraHorizSpace(w);
-  
+
     ret_point->x = XmTreeC_box_x(node)+(int)(XmTreeC_bb_width(node)+extra_space)/2;
   }
 }
@@ -1342,7 +1314,7 @@ DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
      * node.
      */
 
-    while ((XmHierarchyC_parent(from_node) != NULL) && 
+    while ((XmHierarchyC_parent(from_node) != NULL) &&
 	   (XmHierarchyC_state(from_node) == XmHidden))
     {
 	from_node = GetNodeInfo(XmHierarchyC_parent(from_node));
@@ -1356,7 +1328,7 @@ DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
      */
 
     if (XmHierarchyC_state(from_node) == XmHidden) {
-	for (i = 0; i < num_kids; i++, kids++) 
+	for (i = 0; i < num_kids; i++, kids++)
 	    DrawTreeLine(w, rect, *kids);	/* recurse to descendants. */
 	return;
     }
@@ -1376,7 +1348,7 @@ DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
 	  if (XmTree_connect_style(tw) == XmTreeLadder) {
 	    last_kid_point.x = kid_point.x;
 	    last_kid_point.y = kid_point.y;
-	    
+
 	    if (first_time ){
 	      first_kid_point.x = last_kid_point.x;
 	      first_kid_point.y = last_kid_point.y;
@@ -1401,9 +1373,9 @@ DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
 /*	Function Name: _DrawLine
  *	Description: Draw a tree line between two nodes in the tree. If
  *                 child is an only child in XmTreeLadder, then draw a line
- *                 directly to it. 
+ *                 directly to it.
  *	Arguments: w - the tree.
- *                 rect - the rectangle to clip to. 
+ *                 rect - the rectangle to clip to.
  *                 parent - The parent.
  *                 child - The child to draw the line to.
  *                 from_ladder_point - The midpoint of parent where all
@@ -1414,10 +1386,10 @@ DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
  */
 
 static void
-_DrawLine(Widget w, XRectangle *rect, TreeConstraints parent, 
+_DrawLine(Widget w, XRectangle *rect, TreeConstraints parent,
 	  TreeConstraints child, LadderPoint from_ladder_point,
 	  LadderPoint *to_ladder_point )
-	  
+
 {
     GC gc;
     XmTreeWidget tw = (XmTreeWidget) w;
@@ -1429,8 +1401,8 @@ _DrawLine(Widget w, XRectangle *rect, TreeConstraints parent,
      *     of the parent's midpoint
      * (x2, y2) are the coordinates of the child midpoint
      *
-     * We will end up drawing either a partial ladder line from 
-     *     (cx1, cy1) to (cx2, cy2) or a full line from 
+     * We will end up drawing either a partial ladder line from
+     *     (cx1, cy1) to (cx2, cy2) or a full line from
      *     (from_ladder_point.x, from_ladder_point.y) to (x2, y2)
      *
      * (rx2, ry2) are the coordinates of the lower right of clip rectangle
@@ -1441,15 +1413,15 @@ _DrawLine(Widget w, XRectangle *rect, TreeConstraints parent,
      * of the ladder.
      */
 
-    if (child != (TreeConstraints) XmHierarchyC_children(parent)[0] && 
-	(!(XmHierarchyC_status(child) & IS_MAPPED) || 
+    if (child != (TreeConstraints) XmHierarchyC_children(parent)[0] &&
+	(!(XmHierarchyC_status(child) & IS_MAPPED) ||
 	 (XmHierarchyC_status(child) & IS_COMPRESSED)))
     {
 	return;
     }
 
     gc = XmTreeC_gc(child);
-	
+
     if (XmTree_orientation(tw) == XmHORIZONTAL)
     {
       extra_space = GetExtraVertSpace(w);
@@ -1564,7 +1536,7 @@ CalcLocations(Widget w, Boolean resize_it)
     CalcMaxSize(w);
     FindNodeLocations(w);		/* Finds the location for each node. */
 
-    if (resize_it) 
+    if (resize_it)
 	RequestNewSize(w);
 
 }
@@ -1583,8 +1555,8 @@ RequestNewSize(Widget w)
 
     GetDesiredSize(w, &width, &height, False);
     ret_val = XtMakeResizeRequest(w, width, height, &rwidth, &rheight);
-    
-    if (ret_val == XtGeometryAlmost) 
+
+    if (ret_val == XtGeometryAlmost)
 	ret_val = XtMakeResizeRequest(w, rwidth, rheight, NULL, NULL);
 
     return(ret_val == XtGeometryYes);
@@ -1645,7 +1617,7 @@ LayoutChildren(Widget w, Widget assign_child)
 	XmTree_child_op_list(tw) = _XmListInit();
 	register_workproc = False;
     }
-    
+
     /*
      * Unmap all nodes that no longer are visible.
      */
@@ -1672,45 +1644,45 @@ LayoutChildren(Widget w, Widget assign_child)
 
 	c_width = child->core.width + 2 * child->core.border_width;
 	c_height = child->core.height + 2 * child->core.border_width;
-	
+
 	if (XmTree_orientation(tw) == XmHORIZONTAL) /* DMS */
 	{
 		/*
 		 * Nodes and open close buttons are centered vertically
 		 * in the box that contains them.
 		 */
-		
+
     		extra_space = GetExtraVertSpace(w);
-		y_loc = (XmTreeC_box_y(t_node) + 
+		y_loc = (XmTreeC_box_y(t_node) +
 			 (int)(XmTreeC_bb_height(t_node) + extra_space - c_height) / 2);
-	
+
 		if (open_close != NULL) {
 		    Dimension oc_height = (open_close->core.height +
 					   2 * open_close->core.border_width);
-	
+
 		    oc_y_loc = y_loc + (int)(c_height - oc_height)/2;
 		}
-	
+
 		oc_x_loc = XmTreeC_box_x(t_node) + XmHierarchy_h_margin(tw);
 
 		x_loc = oc_x_loc + XmTreeC_widget_offset(t_node);
-	
+
 	} else /* orientation == XmVERTICAL */
 	{
 		/*
 		 * Nodes and open close buttons are centered horizontally
 		 * in the box that contains them.
 		 */
-		
+
     		extra_space = GetExtraHorizSpace(w);
-	
-		x_loc = (XmTreeC_box_x(t_node) + 
+
+		x_loc = (XmTreeC_box_x(t_node) +
 			(int)(XmTreeC_bb_width(t_node) + extra_space - c_width) / 2);
-	
+
 		if (open_close != NULL) {
 		    Dimension oc_width = (open_close->core.width +
 					   2 * open_close->core.border_width);
-	
+
 		    oc_x_loc = x_loc + (int)(c_width - oc_width)/2;
 		}
 
@@ -1727,8 +1699,8 @@ LayoutChildren(Widget w, Widget assign_child)
     }
 
     if (register_workproc) {
-	XmHierarchy_work_proc_id(tw) = 
-	    XtAppAddWorkProc(XtWidgetToApplicationContext(w), 
+	XmHierarchy_work_proc_id(tw) =
+	    XtAppAddWorkProc(XtWidgetToApplicationContext(w),
 			     MoveNodesTimer, (XtPointer) w);
     }
 
@@ -1776,12 +1748,12 @@ GetExtraHorizSpace(Widget w)
 }
 
 /*	Function Name: FindNodeLocations
- *	Description: Finds the location each node in the node table 
+ *	Description: Finds the location each node in the node table
  *                   should be placed at.
  *	Arguments:   w - the tree widget.
  *	Returns: none.
  */
-    
+
 static void
 FindNodeLocations(Widget w)
 {
@@ -1792,21 +1764,21 @@ FindNodeLocations(Widget w)
 
     _ResetPlacedFlag((TreeConstraints) XmHierarchy_top_node(tw));
 
-    ForAllChildren(tw, childP) 
+    ForAllChildren(tw, childP)
 	_ResetPlacedFlag(GetNodeInfo(*childP));
-	
+
     num_nodes = XmHierarchy_num_nodes(tw);
     node = (TreeConstraints *) XmHierarchy_node_table(tw);
-    for (i = 0; i < num_nodes; i++, node++) 
+    for (i = 0; i < num_nodes; i++, node++)
 	_PlaceNode(w, *node);
 }
- 
+
 /*	Function Name: _ResetPlacedFlag
  *	Description: Resets the placed flag on all notes.
  *	Arguments: node - the node to place.
  *	Returns: none.
  */
-   
+
 static void
 _ResetPlacedFlag(TreeConstraints node)
 {
@@ -1819,7 +1791,7 @@ _ResetPlacedFlag(TreeConstraints node)
     XmTreeC_placed(node) = False;
 
     child = (TreeConstraints *) XmHierarchyC_children(node);
-    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, child++) 
+    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, child++)
 	_ResetPlacedFlag(*child);
 }
 
@@ -1829,7 +1801,7 @@ _ResetPlacedFlag(TreeConstraints node)
  *                 node - the node to place.
  *	Returns: none.
  */
-   
+
 static void
 _PlaceNode(Widget w, TreeConstraints node)
 {
@@ -1837,10 +1809,10 @@ _PlaceNode(Widget w, TreeConstraints node)
   register TreeConstraints *child, prev_child, parent;
   register Widget pw = XmHierarchyC_parent(node);
   register int i, num, x_loc, y_loc, box_amount, boxy, boxx;
-  
+
   if ((node == NULL) || XmTreeC_placed(node))	/* Already placed. */
     return;
-  
+
   if (pw == NULL) {
     if (node == (TreeConstraints) XmHierarchy_top_node(tw)) {
       XmTreeC_placed(node) = TRUE;
@@ -1853,18 +1825,18 @@ _PlaceNode(Widget w, TreeConstraints node)
   }
   else
     parent = GetNodeInfo(pw);
-  
+
   if (!XmTreeC_placed(parent))
     _PlaceNode(w, parent);
-  
+
   /*
    * Place all the children of this node.
    */
-  
+
   num = XmHierarchyC_num_children(parent);
-  
-  /* 
-   * Calculate how much room the children take up in the box 
+
+  /*
+   * Calculate how much room the children take up in the box
    */
 
   child = (TreeConstraints * )XmHierarchyC_children(parent);
@@ -1884,21 +1856,21 @@ _PlaceNode(Widget w, TreeConstraints node)
     /* center in parent's bounding box */
     boxy = XmTreeC_box_y(parent)+((int)(XmTreeC_bb_height(parent)-box_amount)/2);
 
-    /* 
-     * Calculate the positions of all the child bounding boxes 
+    /*
+     * Calculate the positions of all the child bounding boxes
      */
 
     child = (TreeConstraints *) XmHierarchyC_children(parent);
     prev_child = NULL;
-  
+
     x_loc = XmTreeC_box_x(parent);
-  
+
     if (XmHierarchyC_state(parent) != XmHidden)
-      x_loc += (pw->core.width + XmTreeC_widget_offset(parent) + 
+      x_loc += (pw->core.width + XmTreeC_widget_offset(parent) +
 	      2 * pw->core.border_width + XmTree_h_node_space(tw));
 
-  
-    for (i = 0; i < num; i++, child++) 
+
+    for (i = 0; i < num; i++, child++)
     {
       XmTreeC_placed(*child) = TRUE;
       XmTreeC_box_x(*child) = x_loc;
@@ -1911,7 +1883,7 @@ _PlaceNode(Widget w, TreeConstraints node)
 	  if (prev_child == NULL)
 	    XmTreeC_box_y(*child) = boxy;
 	  else
-	    XmTreeC_box_y(*child) = (XmTreeC_box_y(prev_child) + 
+	    XmTreeC_box_y(*child) = (XmTreeC_box_y(prev_child) +
 				    XmTreeC_bb_height(prev_child) +
 				    XmTree_v_node_space(tw));
 	  prev_child = *child;
@@ -1933,20 +1905,20 @@ _PlaceNode(Widget w, TreeConstraints node)
     /* center in parent's bounding box */
     boxx = XmTreeC_box_x(parent)+((int)(XmTreeC_bb_width(parent)-box_amount)/2);
 
-    /* 
-     * Calculate the positions of all the child bounding boxes 
+    /*
+     * Calculate the positions of all the child bounding boxes
      */
 
     child = (TreeConstraints *) XmHierarchyC_children(parent);
     prev_child = NULL;
-  
+
     y_loc = XmTreeC_box_y(parent);
-  
+
     if (XmHierarchyC_state(parent) != XmHidden)
-      y_loc += (pw->core.height + XmTreeC_widget_offset(parent) + 
+      y_loc += (pw->core.height + XmTreeC_widget_offset(parent) +
 	      2 * pw->core.border_width + XmTree_v_node_space(tw));
 
-  for (i = 0; i < num; i++, child++) 
+  for (i = 0; i < num; i++, child++)
     {
       XmTreeC_placed(*child) = TRUE;
       XmTreeC_box_y(*child) = y_loc;
@@ -1959,7 +1931,7 @@ _PlaceNode(Widget w, TreeConstraints node)
 	  if (prev_child == NULL)
 	    XmTreeC_box_x(*child) = boxx;
 	  else
-	    XmTreeC_box_x(*child) = (XmTreeC_box_x(prev_child) + 
+	    XmTreeC_box_x(*child) = (XmTreeC_box_x(prev_child) +
 				    XmTreeC_bb_width(prev_child) +
 				    XmTree_h_node_space(tw));
 
@@ -1967,7 +1939,7 @@ _PlaceNode(Widget w, TreeConstraints node)
            * If we are doing tree compression, we may have to move this
            * widget down. If the compress_style is CompressAll
            * then we should compress every other node no matter what.
-           * If the compress_style == CompressLeaves then we only compress 
+           * If the compress_style == CompressLeaves then we only compress
            * alternating nodes if they have no children.
            */
 
@@ -1986,20 +1958,20 @@ _PlaceNode(Widget w, TreeConstraints node)
   }
 
 }
-    
+
 /*	Function Name: GetNodeHeightAndWidth
  *	Description:   Gets the size of each node.
  *	Arguments:     w - the drt widget.
  *                     node - the node to get the height and width of.
  *                     tree_depth - depth of the tree at this node.
  * IN/OUT              num - number of nodes.
- *                     sib_index - index of this node with relation 
+ *                     sib_index - index of this node with relation
  *                          to siblings. Used for vertical compression.
  *	Returns:       none
  */
 
 static Boolean
-GetNodeHeightAndWidth(Widget w, TreeConstraints node, 
+GetNodeHeightAndWidth(Widget w, TreeConstraints node,
         Cardinal * num, Cardinal sib_index)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
@@ -2013,7 +1985,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
     XmTreeC_bb_width(node) = XmTreeC_bb_height(node) = 0;
 
     if ((node == NULL) || ((XmHierarchyC_widget(node) != NULL) &&
-			   !XtIsManaged(XmHierarchyC_widget(node)))) 
+			   !XtIsManaged(XmHierarchyC_widget(node))))
     {
 	return(False);
     }
@@ -2045,7 +2017,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
 
 	        XmTreeC_bb_width(node) += width;
 	        XmTreeC_widget_offset(node) = width;
-	        if (height > XmTreeC_bb_height(node)) 
+	        if (height > XmTreeC_bb_height(node))
 		    XmTreeC_bb_height(node) = height;
 	    }
 	    else /* orientation == XmVERTICAL */
@@ -2054,7 +2026,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
 
 	        XmTreeC_bb_height(node) += height;
 	        XmTreeC_widget_offset(node) = height;
-	        if (width > XmTreeC_bb_width(node)) 
+	        if (width > XmTreeC_bb_width(node))
 		    XmTreeC_bb_width(node) = width;
 	    }
 
@@ -2073,7 +2045,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
 	register int num_managed=0;
 
  	child = (TreeConstraints *) XmHierarchyC_children(node);
-	
+
 	for(i = 0; i < num_kids; i++, child++) {
 
 	  /* If node values were calculated for this child,
@@ -2091,10 +2063,10 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
 	    if (num_managed > 1)
 	      l_height += XmTree_v_node_space(tw);
 	  }
-	  
+
 	  if ((int)l_width < (int)XmTreeC_bb_width(*child))
 	    l_width = XmTreeC_bb_width(*child);
-	  
+
 	  l_height += XmTreeC_bb_height(*child);
 
 	}
@@ -2103,10 +2075,10 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
       }
 
       XmTreeC_bb_width(node) += l_width;
-    
+
       if ((int)XmTreeC_bb_height(node) < (int)l_height)
         XmTreeC_bb_height(node) = l_height;
-    } 
+    }
     else /* orientation == XmVERTICAL */
     {
       num_kids = XmHierarchyC_num_children(node);
@@ -2116,7 +2088,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
   	register int num_managed=0;
 
  	child = (TreeConstraints *) XmHierarchyC_children(node);
-	
+
 	for(i = 0; i < num_kids; i++) {
 
 	  /* If node values were calculated for this child,
@@ -2129,7 +2101,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
 	    if (num_managed > 1)
 	      l_width += XmTree_h_node_space(tw);
 	  }
-	  
+
           /*
            * If this child is compressed, add the verticalDelta to
            * it's height for purposes of calculating our own height
@@ -2141,7 +2113,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
            */
           if (XmTreeC_is_compressed(*child))
           {
-	    if ((int)l_height < (int)XmTreeC_bb_height(*child) 
+	    if ((int)l_height < (int)XmTreeC_bb_height(*child)
                                 + (int)XmTree_vertical_delta(tw))
 	      l_height = XmTreeC_bb_height(*child) + XmTree_vertical_delta(tw);
 	    l_width += XmTreeC_bb_width(*child) - XmTree_horizontal_delta(tw);
@@ -2156,7 +2128,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
             else
 	        l_width += XmTreeC_bb_width(*child);
           }
-	  
+
           prev_child = *child;
           child++;
 	}
@@ -2166,7 +2138,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
       }
 
       XmTreeC_bb_height(node) += l_height;
-    
+
       if ((int)XmTreeC_bb_width(node) < (int)l_width)
         XmTreeC_bb_width(node) = l_width;
 
@@ -2213,7 +2185,7 @@ CalcMaxSize(Widget w)
     XmTreeWidget tw = (XmTreeWidget) w;
     register TreeConstraints node = (TreeConstraints) XmHierarchy_top_node(tw);
 
-    XmTree_max_width(tw) = XmTreeC_bb_width(node) + 2 * XmHierarchy_h_margin(tw); 
+    XmTree_max_width(tw) = XmTreeC_bb_width(node) + 2 * XmHierarchy_h_margin(tw);
     XmTree_max_height(tw) = XmTreeC_bb_height(node) + 2 * XmHierarchy_v_margin(tw);
 }
 
@@ -2224,7 +2196,7 @@ CalcMaxSize(Widget w)
  ************************************************************/
 
 /*	Function Name: UnmapAllExtraNodes
- *	Description:   Correctly unmaps each node in the hierarchy that is 
+ *	Description:   Correctly unmaps each node in the hierarchy that is
  *                     currently compresed out.
  *	Arguments:     w - the ow.
  *                     node - node to work one.
@@ -2237,14 +2209,14 @@ UnmapAllExtraNodes(Widget w, HierarchyConstraints node)
     register int i, num;
     register HierarchyConstraints * ptr;
 
-    if ((XmHierarchyC_status(node) & IS_COMPRESSED) && 
+    if ((XmHierarchyC_status(node) & IS_COMPRESSED) &&
 	(XmHierarchyC_status(node) & IS_MAPPED))
     {
 	UnmapNode((XmTreeWidget) w, (TreeConstraints) node);
     }
-	
+
     ptr = XmHierarchyC_children(node);
-    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, ptr++) 
+    for (num = XmHierarchyC_num_children(node), i = 0; i < num; i++, ptr++)
 	UnmapAllExtraNodes(w, *ptr);
 }
 
@@ -2269,7 +2241,7 @@ MoveNode(XmTreeWidget tw, TreeConstraints node, Position x, Position y,
     XmTreeC_oc_new_y(node) = oc_y;
     XmTreeC_map(node) = map;
     XmTreeC_move(node) = True;
-    XmTreeC_unmap(node) = False;	
+    XmTreeC_unmap(node) = False;
 
     _XmListAddBefore(XmTree_child_op_list(tw), NULL, (XtPointer) node);
 }
@@ -2287,7 +2259,7 @@ UnmapNode(XmTreeWidget tw, TreeConstraints node)
 {
     XmTreeC_map(node) = False;
     XmTreeC_move(node) = False;
-    XmTreeC_unmap(node) = True;	
+    XmTreeC_unmap(node) = True;
 
     _XmListAddBefore(XmTree_child_op_list(tw), NULL, (XtPointer) node);
 }
@@ -2304,7 +2276,7 @@ ProcessChildQueue(XmTreeWidget tw, XRectangle *vis)
 {
     XmListElem *elem, *next;
 
-    elem = XmListFirst(XmTree_child_op_list(tw)); 
+    elem = XmListFirst(XmTree_child_op_list(tw));
     while(elem != NULL) {
 	TreeConstraints info = (TreeConstraints) XmListElemData(elem);
 
@@ -2323,8 +2295,8 @@ ProcessChildQueue(XmTreeWidget tw, XRectangle *vis)
  *	Arguments:  visible - visible rect.
  *                  info - the child op info.
  *	Returns: True if operation complete.
- * 
- * NOTES: A widget will need to be operated on if it is mapped an will show 
+ *
+ * NOTES: A widget will need to be operated on if it is mapped an will show
  *        on the screen, or if the new location is on the screen
  *        OR if the node's parent is on the screen
  */
@@ -2363,17 +2335,17 @@ ProcessNode(TreeConstraints node)
 	return;
 
     tc = (XmTreeWidgetClass) XtClass(XtParent(w));
-    
+
     if (XmTreeC_move(node)) {
-	_XmMoveWidget(XmHierarchyC_widget(node), 
+	_XmMoveWidget(XmHierarchyC_widget(node),
 		      XmTreeC_new_x(node), XmTreeC_new_y(node));
-	
-	if (XmHierarchyC_open_close_button(node) != NULL) 
+
+	if (XmHierarchyC_open_close_button(node) != NULL)
 	    _XmMoveWidget(XmHierarchyC_open_close_button(node),
 			  XmTreeC_oc_new_x(node), XmTreeC_oc_new_y(node));
 	XmTreeC_move(node) = False;
     }
-    
+
     if (XmTreeC_map(node)) {
         XmHierarchyNodeProc map_node;
 
@@ -2381,10 +2353,10 @@ ProcessNode(TreeConstraints node)
         map_node = tc->hierarchy_class.map_node;
         _XmProcessUnlock();
 
-	    (*map_node)((HierarchyConstraints) node); 
+	    (*map_node)((HierarchyConstraints) node);
     	XmTreeC_map(node) = False;
     }
-    
+
     if (XmTreeC_unmap(node)) {
     XmHierarchyNodeProc unmap_node;
 
@@ -2392,7 +2364,7 @@ ProcessNode(TreeConstraints node)
     unmap_node = tc->hierarchy_class.unmap_node;
     _XmProcessUnlock();
 
-	(*unmap_node)((HierarchyConstraints) node); 
+	(*unmap_node)((HierarchyConstraints) node);
 	XmTreeC_unmap(node) = False;
     }
 }
@@ -2424,7 +2396,7 @@ WidgetInRect(XRectangle *rect, Widget w)
 
 static Boolean
 LocInRect(XRectangle *rect, Widget w, Position x, Position y)
-{ 
+{
     register int x1, x2;
     register int y1, y2;
 
@@ -2447,14 +2419,13 @@ LocInRect(XRectangle *rect, Widget w, Position x, Position y)
  *	Returns: none
  */
 
-/* ARGSUSED */
 static Boolean
 MoveNodesTimer(XtPointer data)
 {
     XmTreeWidget tw = (XmTreeWidget) data;
     XmListElem *elem = XmListFirst(XmTree_child_op_list(tw));
 
-    if (elem != NULL) { 
+    if (elem != NULL) {
 	TreeConstraints node = (TreeConstraints) XmListElemData(elem);
 	ProcessNode(node);
 	_XmListRemove(XmTree_child_op_list(tw), elem);

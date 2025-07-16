@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmOutline_h
@@ -62,12 +62,7 @@ typedef struct _XmOutlineRec		*XmOutlineWidget;
  *                 args, num_args - the number and list of args.
  *	Returns: The Widget created.
  */
-
-Widget XmCreateOutline(
-#ifndef _NO_PROTO
-Widget, String, ArgList, Cardinal
-#endif
-);
+Widget XmCreateOutline(Widget, String, ArgList, Cardinal);
 
 extern WidgetClass xmOutlineWidgetClass;
 

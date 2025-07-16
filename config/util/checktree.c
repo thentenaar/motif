@@ -29,7 +29,6 @@
 #include <config.h>
 #endif
 
-
 #include <X11/Xos.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -66,10 +65,6 @@
 #define fmode_bits_maxset 0777
 #define fmode_bits_write  0222
 #define dmode_bits_minset 0775
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 int dorcs = 1;			/* check RCS file */
 int do83 = 1;			/* check for 8+3 clash */

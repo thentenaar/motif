@@ -20,15 +20,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
-#define FIX_1400
-#define FIX_1181
 
 #include "XmI.h"
 #include "ColorObjI.h"
@@ -36,9 +33,7 @@
 #include "CallbackI.h"
 #include "ColorI.h"
 #include "MessagesI.h"
-#ifdef FIX_1400
 #include <X11/Xlibint.h>
-#endif
 
 #if defined(__cplusplus) || defined(c_plusplus)
 #define  OBJ_CLASS(w)   (((ApplicationShellWidget)(w))->application.c_class)
@@ -49,9 +44,7 @@
 #define WARNING1	_XmMMsgColObj_0001
 #define WARNING2	_XmMMsgColObj_0002
 
-#ifdef FIX_1400
 static int trap_XCloseDisplay(Display *disp, XExtCodes *codes);
-#endif
 
 /** default should not be killed unless application is dying **/
 externaldef (colorobj) XmColorObj _XmDefaultColorObj = NULL;
@@ -61,18 +54,18 @@ externaldef (colorobj) Display  *_XmColorObjCacheDisplay = NULL;
 
 /********    Static Function Declarations    ********/
 
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static void DisplayDestroy( 
+static void DisplayDestroy(
                         Widget wid,
 			XtPointer clientData,
 			XtPointer callData) ;
-static void Initialize( 
+static void Initialize(
                         Widget rq,
                         Widget nw,
                         ArgList Args,
                         Cardinal *numArgs) ;
-static void GetSelection( 
+static void GetSelection(
                         Widget w,
                         XtPointer client_data,
                         Atom *selection,
@@ -80,10 +73,10 @@ static void GetSelection(
                         XtPointer val,
                         unsigned long *length,
                         int *format) ;
-static void UpdatePixelSet( 
+static void UpdatePixelSet(
                         XmPixelSet *toSet,
                         XmPixelSet *fromSet) ;
-static void UpdateXrm( 
+static void UpdateXrm(
                         Colors colors,
                         int screen,
                         XmColorObj tmpColorObj);
@@ -101,7 +94,7 @@ static Boolean ColorCachePropertyExists(
 #define UNSPECIFIED_USE_MULTI_COLOR_ICONS 2
 
 static XtResource resources[] = {
-    {  
+    {
 	XmNprimaryColorSetId,
 	XmCPrimaryColorSetId,
 	XmRInt,
@@ -110,7 +103,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) 5,
     },
-    { 
+    {
 	XmNsecondaryColorSetId,
 	XmCSecondaryColorSetId,
 	XmRInt,
@@ -119,7 +112,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) 6,
     },
-    { 
+    {
 	XmNtextColorSetId,
 	XmCTextColorSetId,
 	XmRInt,
@@ -128,7 +121,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) 4,
     },
-    { 
+    {
 	XmNuseTextColor,
 	XmCUseTextColor,
 	XmRBoolean,
@@ -137,7 +130,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) True,
     },
-    { 
+    {
 	XmNuseTextColorForList,
 	XmCUseTextColorForList,
 	XmRBoolean,
@@ -146,7 +139,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) True,
     },
-    {  
+    {
 	XmNactiveColorSetId,
 	XmCActiveColorSetId,
 	XmRInt,
@@ -155,7 +148,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) 1,
     },
-    {  
+    {
 	XmNinactiveColorSetId,
 	XmCInactiveColorSetId,
 	XmRInt,
@@ -164,7 +157,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) 2,
     },
-    {  
+    {
 	XmNuseColorObj,
 	XmCUseColorObj,
 	XmRBoolean,
@@ -173,7 +166,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) True,
     },
-    {  
+    {
 	XmNuseMask,
 	XmCUseMask,
 	XmRBoolean,
@@ -182,7 +175,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) True,
     },
-    {  
+    {
 	XmNuseMultiColorIcons,
 	XmCUseMultiColorIcons,
 	XmRBoolean,
@@ -191,7 +184,7 @@ static XtResource resources[] = {
 	XmRImmediate,
 	(XtPointer) UNSPECIFIED_USE_MULTI_COLOR_ICONS,
     },
-    {  
+    {
 	XmNuseIconFileCache,
 	XmCUseIconFileCache,
 	XmRBoolean,
@@ -204,7 +197,7 @@ static XtResource resources[] = {
 
 
 externaldef(xmcolorobjclassrec)
-XmColorObjClassRec xmColorObjClassRec = 
+XmColorObjClassRec xmColorObjClassRec =
 {
     {
 	/*
@@ -263,7 +256,7 @@ XmColorObjClassRec xmColorObjClassRec =
     },
 };
 
-externaldef(xmcolorobjclass) WidgetClass 
+externaldef(xmcolorobjclass) WidgetClass
     xmColorObjClass = (WidgetClass)&xmColorObjClassRec;
 
 
@@ -280,7 +273,7 @@ externaldef(xmcolorobjclass) WidgetClass
 /**                                                                  **/
 /**********************************************************************/
 /*ARGSUSED*/
-void 
+void
 _XmColorObjCreate(
         Widget w,
         ArgList al,
@@ -294,7 +287,7 @@ _XmColorObjCreate(
             if ( strcmp(OBJ_CLASS(w), XmSCOLOR_SRV_NAME) == 0 ) {
 		return;
 	    }
-    
+
     /** this is really gross but it makes the resources work right **/
     XtGetApplicationNameAndClass(XtDisplay(w), &name, &obj_class);
     _XmProcessLock();
@@ -314,7 +307,7 @@ _XmColorObjCreate(
 /**                                                                  **/
 /**********************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 DisplayDestroy( Widget wid, XtPointer clientData, XtPointer callData )
 {
     XmColorObj tmpColorObj=NULL;
@@ -342,7 +335,7 @@ DisplayDestroy( Widget wid, XtPointer clientData, XtPointer callData )
 /**                                                                  **/
 /**********************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 Destroy( Widget wid )
 {
     XmColorObj tmpColorObj = (XmColorObj)wid;
@@ -360,15 +353,15 @@ Destroy( Widget wid )
        XtFree ((char *) tmpColorObj->color_obj.colorUse);
 
     if (_XmColorObjCacheDisplay)
-	XDeleteContext(_XmColorObjCacheDisplay, 
-	               (XID)tmpColorObj->color_obj.display, 
+	XDeleteContext(_XmColorObjCacheDisplay,
+	               (XID)tmpColorObj->color_obj.display,
 	               context);
 
      _XmProcessLock();
 
     /* we're destory the "default" color obj, which shouldn't
        be use anyway, set it to null. A better solution would be
-       to look for a new default, but XmeGetPixelData is obsolete 
+       to look for a new default, but XmeGetPixelData is obsolete
        API anyway */
     if (tmpColorObj == _XmDefaultColorObj) {
 	_XmDefaultColorObj = NULL;
@@ -386,7 +379,7 @@ Destroy( Widget wid )
 /**********************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rq,		/* unused */
         Widget nw,
@@ -395,17 +388,13 @@ Initialize(
 {
     XmColorObj new_obj = (XmColorObj) nw ;
     int      i, nscreens;
-#ifdef FIX_1181
     Boolean  init_first_time = False;
-#endif
     Atom     tmpAtom = 0;
     unsigned long savetimeout = (unsigned long)-1 ;
     /* window id of the selection owner */
     Window SelectionOwner ;
     int result, isNotNews ;
-#ifdef FIX_1400
     XExtCodes *xExt;
-#endif
 
     /* Ideally, we'd like check if we have a visual (like TrueColor)
        or colormap (non default) that would invalidate the use of
@@ -425,81 +414,76 @@ Initialize(
     new_obj->color_obj.display = XtDisplay(new_obj);
     new_obj->color_obj.numScreens = nscreens =
       ScreenCount(new_obj->color_obj.display);
-	
+
     /** initialize default colorObj and context if needed **/
     _XmProcessLock();
     if (!_XmColorObjCache) _XmColorObjCache = XUniqueContext();
 
-#ifdef FIX_1400
     if (_XmColorObjCacheDisplay == NULL) {
         _XmColorObjCacheDisplay = new_obj->color_obj.display;
         xExt = XAddExtension(_XmColorObjCacheDisplay);
         XESetCloseDisplay(_XmColorObjCacheDisplay, xExt->extension, trap_XCloseDisplay);
     }
-#else
-    if (_XmColorObjCacheDisplay == NULL)
-        _XmColorObjCacheDisplay = new_obj->color_obj.display;
-#endif
 
     if (_XmDefaultColorObj == NULL)
         _XmDefaultColorObj = new_obj;
 
     /** add new colorObj to the cache **/
-    XSaveContext(_XmColorObjCacheDisplay, (XID)new_obj->color_obj.display, 
+    XSaveContext(_XmColorObjCacheDisplay, (XID)new_obj->color_obj.display,
 		 _XmColorObjCache, (XPointer)new_obj);
     _XmProcessUnlock();
-    
+
     /** if useColorObj = False, don't initialize or allocate color data **/
-    if (new_obj->color_obj.useColorObj) 
+    if (new_obj->color_obj.useColorObj)
     {
-	
+
         /** get screen info and allocate space for colors per screen **/
-	new_obj->color_obj.colors = 
+	new_obj->color_obj.colors =
 	  (Colors *)XtCalloc(nscreens, sizeof(Colors));
 	new_obj->color_obj.atoms = (Atom *)XtCalloc(nscreens, sizeof(Atom));
 	new_obj->color_obj.colorUse = (int *)XtCalloc(nscreens, sizeof(int));
-	
-	if ( !new_obj->color_obj.colors || !new_obj->color_obj.atoms || 
+
+	if ( !new_obj->color_obj.colors || !new_obj->color_obj.atoms ||
 	    !new_obj->color_obj.colorUse )
 	{
-	      XmeWarning(nw, WARNING1); 
+	      XmeWarning(nw, WARNING1);
 	      /* couldn't allocate memory */
 	      new_obj->color_obj.colorIsRunning = False;
 	      return;
 	}
-	
+
 	/** set screen and color info for this application **/
-	
-	new_obj->color_obj.myScreen = 
+
+	new_obj->color_obj.myScreen =
 	  XScreenNumberOfScreen(XtScreen(new_obj));
-	new_obj->color_obj.myColors = 
+	new_obj->color_obj.myColors =
 	  new_obj->color_obj.colors[new_obj->color_obj.myScreen];
-	
-	
+
+
 	/* check valid value, then -1 from colors, to index arrays */
-	
-	if (new_obj->color_obj.primary < 1 || 
+
+	if (new_obj->color_obj.primary < 1 ||
 	    new_obj->color_obj.primary > XmCO_NUM_COLORS)
 	  new_obj->color_obj.primary = 1;
 	if (new_obj->color_obj.secondary < 1 ||
 	    new_obj->color_obj.secondary > XmCO_NUM_COLORS)
 	  new_obj->color_obj.secondary = 1;
-	if (new_obj->color_obj.active < 1 || 
+	if (new_obj->color_obj.active < 1 ||
 	    new_obj->color_obj.active > XmCO_NUM_COLORS)
 	  new_obj->color_obj.active = 1;
-	if (new_obj->color_obj.inactive < 1 || 
+	if (new_obj->color_obj.inactive < 1 ||
 	    new_obj->color_obj.inactive > XmCO_NUM_COLORS)
 	  new_obj->color_obj.inactive = 1;
-	if (new_obj->color_obj.text < 1 || 
+	if (new_obj->color_obj.text < 1 ||
 	    new_obj->color_obj.text > XmCO_NUM_COLORS)
 	  new_obj->color_obj.text = 1;
-		
-	new_obj->color_obj.primary   = new_obj->color_obj.primary   - 1; 
-	new_obj->color_obj.secondary = new_obj->color_obj.secondary - 1; 
-	new_obj->color_obj.active    = new_obj->color_obj.active    - 1; 
-	new_obj->color_obj.inactive  = new_obj->color_obj.inactive  - 1; 
-	new_obj->color_obj.text      = new_obj->color_obj.text  - 1; 
-		
+
+	new_obj->color_obj.primary   = new_obj->color_obj.primary   - 1;
+	new_obj->color_obj.secondary = new_obj->color_obj.secondary - 1;
+	new_obj->color_obj.active    = new_obj->color_obj.active    - 1;
+	new_obj->color_obj.inactive  = new_obj->color_obj.inactive  - 1;
+	new_obj->color_obj.text      = new_obj->color_obj.text  - 1;
+
 	/* we're going to realize it */
 	new_obj->core.mapped_when_managed = False;
 	new_obj->core.width = 1;
@@ -507,7 +491,7 @@ Initialize(
 
 	/*****
 	 * Since dtsession's idea of the PIXEL_SET is pretty much constant
-	 * it makes more sense to have a permanent property in the 
+	 * it makes more sense to have a permanent property in the
 	 * server that stored the information.  This means that the
 	 * starting application can get the PIXEL_SET directly from
 	 * the server without ever waking up dtsession.
@@ -533,7 +517,7 @@ Initialize(
 	    names = (char**) XmStackAlloc(nscreens * sizeof(char *), name_buf);
 	    for (i = 0; i < nscreens; i++) {
 	      names[i] = ((nscreens <= MAX_SCREENS) ?
-			  &buf[i * MAX_ATOM_LENGTH] : 
+			  &buf[i * MAX_ATOM_LENGTH] :
 			  XtMalloc(MAX_ATOM_LENGTH));
 	      sprintf(names[i], "%s%d", XmSCUSTOMIZE_DATA, i);
 	    }
@@ -561,12 +545,12 @@ Initialize(
 	      if (isNotNews || SelectionOwner) {
 
 		  /* check if color cache properties have been
-		     hung as property on selection owner window. 
+		     hung as property on selection owner window.
 		     If so, get them.
 		     */
 		  result = ColorCachePropertyExists(XtDisplay(nw),
-						    SelectionOwner, 
-						    nw, i);	
+						    SelectionOwner,
+						    nw, i);
 		  if ( ! result ) {
 		      /*
 		       * we have to fall back to the selection way.
@@ -577,23 +561,19 @@ Initialize(
 		       */
 
 		      /* certain thing we have to do only once for all screens */
-#ifdef FIX_1181
 		      if (init_first_time == False) {
 			  init_first_time = True;
-#else
-		      if (i == 0) {
-#endif
-                          
+
 			  if(!XtIsRealized((Widget) new_obj))
 			      XtRealizeWidget((Widget) new_obj);
-	
-			  tmpAtom = XInternAtom(new_obj->color_obj.display, 
+
+			  tmpAtom = XInternAtom(new_obj->color_obj.display,
 						XmSPIXEL_SET, True);
 			  /* if noone has created this one, no need to go on */
 			  if (tmpAtom == None) break ;
 
 			  /* Remember the original timeout */
-			  savetimeout = 
+			  savetimeout =
 			      XtAppGetSelectionTimeout(
 					    XtWidgetToApplicationContext(nw));
 
@@ -605,7 +585,7 @@ Initialize(
 
 		      new_obj->color_obj.done = FALSE;
 
-		      XtGetSelectionValue((Widget) new_obj, 
+		      XtGetSelectionValue((Widget) new_obj,
 					  new_obj->color_obj.atoms[i],
 					  tmpAtom, GetSelection,
 					  (XtPointer) 1, CurrentTime);
@@ -617,7 +597,7 @@ Initialize(
 			      (XtWidgetToApplicationContext((Widget) new_obj),
 			       XtIMAll);
 
-		      if (!new_obj->color_obj.colorIsRunning) 
+		      if (!new_obj->color_obj.colorIsRunning)
 			  break; /* don't bother with rest of screen */
 		  }
 	      }
@@ -629,7 +609,7 @@ Initialize(
     }
 
 
-    if (new_obj->color_obj.useMultiColorIcons == 
+    if (new_obj->color_obj.useMultiColorIcons ==
 	UNSPECIFIED_USE_MULTI_COLOR_ICONS)  {
 	  if (new_obj->color_obj.colorUse) {
 	      if (new_obj->color_obj.colorUse[0] == XmCO_HIGH_COLOR
@@ -647,7 +627,7 @@ Initialize(
 
 static void
 FetchPixelData(Widget w, char * value, int screen)
-{    
+{
     int      i, count, colorUse;
     char     tmp[256];
     XmColorObj tmpColorObj = (XmColorObj)w;
@@ -659,7 +639,7 @@ FetchPixelData(Widget w, char * value, int screen)
     sprintf(tmp, "%x_", colorUse);
     count += strlen(tmp);
     tmpColorObj->color_obj.colorUse[screen] = colorUse;
- 
+
     for (i = 0; i < XmCO_NUM_COLORS; i++) {
 	/* read data into PixelSet */
 	sscanf (&(value[count]), "%lx_%lx_%lx_%lx_%lx_", &(colors[i].bg),
@@ -685,11 +665,11 @@ ColorCachePropertyExists(
     unsigned long bytesafter, length;
     char *value = NULL ;
     int format = 0 ;
-    Atom target; 
+    Atom target;
     int result = False ;
 
     if (!SelOwner)
-	return False ; 
+	return False ;
 
     /* try to get the property if it exist only */
     if ((pixel_set_atom = XInternAtom(dpy, XmSPIXEL_SET_PROP, TRUE)) == None)
@@ -697,7 +677,7 @@ ColorCachePropertyExists(
 
     /* get the content of the property */
     result = XGetWindowProperty(dpy, SelOwner, pixel_set_atom, 0L, 1000000,
-		    False, (Atom)AnyPropertyType, &target, &format, 
+		    False, (Atom)AnyPropertyType, &target, &format,
 		    &length, &bytesafter, (unsigned char **) &value);
 
    if ((result != Success) || (format == 0) || (target == None))
@@ -710,8 +690,8 @@ ColorCachePropertyExists(
 
         FetchPixelData(w, value, screen);
     }
- 
-    return True ; 
+
+    return True ;
 }
 
 /**********************************************************************/
@@ -722,7 +702,7 @@ ColorCachePropertyExists(
 /**********************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 GetSelection(
         Widget w,
         XtPointer client_data,	/* unused */
@@ -748,7 +728,7 @@ GetSelection(
             break;
         }
     }
-    if (screen == -1) 
+    if (screen == -1)
     {
         XmeWarning( w, WARNING2);   /* bad screen number */
         return;
@@ -765,7 +745,7 @@ GetSelection(
 /** UpdatePixelSet()                                                 **/
 /**       just a convenience routine                                 **/
 /**********************************************************************/
-static void 
+static void
 UpdatePixelSet(
         XmPixelSet *toSet,
         XmPixelSet *fromSet )
@@ -783,8 +763,8 @@ UpdatePixelSet(
             correct pixels                                           **/
 /**********************************************************************/
 static void
-UpdateColorCache (Screen * screen, 
-		  Colormap colormap, 
+UpdateColorCache (Screen * screen,
+		  Colormap colormap,
 		  XmPixelSet * pset)
 {
     XmColorData     cacheRec;
@@ -797,9 +777,9 @@ UpdateColorCache (Screen * screen,
     cacheRec.top_shadow.pixel = pset->ts;
     cacheRec.bottom_shadow.pixel = pset->bs;
     cacheRec.select.pixel = pset->sc;
-    cacheRec.allocated = XmBACKGROUND | XmFOREGROUND | XmTOP_SHADOW | 
+    cacheRec.allocated = XmBACKGROUND | XmFOREGROUND | XmTOP_SHADOW |
                          XmBOTTOM_SHADOW | XmSELECT;
-    _XmAddToColorCache (&cacheRec);    
+    _XmAddToColorCache (&cacheRec);
 }
 
 
@@ -807,17 +787,17 @@ UpdateColorCache (Screen * screen,
 /** UpdateXrm()                                                      **/
 /**                                                                  **/
 /**********************************************************************/
-static void 
+static void
 UpdateXrm(
         Colors colors,
-        int screen , 
+        int screen ,
 	XmColorObj tmpColorObj)
 {
     XrmDatabase     db;
     XrmValue        value;
     int             i;
     int             doList;
-        
+
     /** update the internal color information **/
     for (i = 0; i < XmCO_NUM_COLORS; i++)
         UpdatePixelSet (&(tmpColorObj->color_obj.colors[screen][i]),&colors[i]);
@@ -860,11 +840,11 @@ UpdateXrm(
     XrmPutResource (&db, "*foreground", "Pixel", &value);
 
 
-    if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, &colors[i])) 
+    if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
         XrmPutStringResource (&db, "*topShadowPixmap", XmCO_DITHER);
-    else 
+    else
         XrmPutStringResource (&db, "*topShadowPixmap", XmCO_NO_DITHER);
-    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i])) 
+    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
         XrmPutStringResource (&db, "*bottomShadowPixmap", XmCO_DITHER);
 
     /** update the secondary color set information **/
@@ -889,29 +869,29 @@ UpdateXrm(
 
     if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
     {
-        XrmPutStringResource (&db, "*XmDialogShell*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmCascadeButton*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*topShadowPixmap",
                               XmCO_DITHER);
         XrmPutStringResource (&db,"*XmCascadeButtonGadget*topShadowPixmap",
                               XmCO_DITHER);
     }
-    else if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.primary]))) 
+    else if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.primary])))
     {
-        XrmPutStringResource (&db, "*XmDialogShell*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmCascadeButton*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*topShadowPixmap",
                               XmCO_NO_DITHER);
         XrmPutStringResource (&db,"*XmCascadeButtonGadget*topShadowPixmap",
                               XmCO_NO_DITHER);
     }
 
-    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i])) 
+    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
     {
         XrmPutStringResource (&db, "*XmDialogShell*bottomShadowPixmap",
                               XmCO_DITHER);
@@ -922,8 +902,8 @@ UpdateXrm(
         XrmPutStringResource (&db, "*XmCascadeButtonGadget*bottomShadowPixmap",
                               XmCO_DITHER);
     }
-    else if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.primary]))) 
+    else if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.primary])))
     {
         XrmPutStringResource (&db, "*XmDialogShell*bottomShadowPixmap",
                               XmCO_NO_DITHER);
@@ -955,14 +935,14 @@ UpdateXrm(
     XrmPutResource (&db, "*XmText*background", "Pixel", &value);
     XrmPutResource (&db, "*XmTextField*background", "Pixel", &value);
     XrmPutResource (&db, "*DtTerm*background", "Pixel", &value);
-    if (doList) 
+    if (doList)
       XrmPutResource (&db, "*XmList*background", "Pixel", &value);
 
     value.addr = (char*) &(colors[i].fg);
     XrmPutResource (&db, "*XmText*foreground", "Pixel", &value);
     XrmPutResource (&db, "*XmTextField*foreground", "Pixel", &value);
     XrmPutResource (&db, "*DtTerm*foreground", "Pixel", &value);
-    if (doList) 
+    if (doList)
       XrmPutResource (&db, "*XmList*foreground", "Pixel", &value);
 
     /** set for all secondary color areas **/
@@ -970,21 +950,21 @@ UpdateXrm(
     value.addr = (char*) &(colors[i].bg);  /* do background first */
 
     XrmPutResource (&db, "*XmDialogShell*XmText*background", "Pixel", &value);
-    XrmPutResource (&db, "*XmDialogShell*XmTextField*background", "Pixel", 
+    XrmPutResource (&db, "*XmDialogShell*XmTextField*background", "Pixel",
 		    &value);
     XrmPutResource (&db, "*XmDialogShell*DtTerm*background", "Pixel", &value);
     XrmPutResource (&db, "*XmMenuShell*XmText*background", "Pixel", &value);
     XrmPutResource (&db, "*XmMenuShell*XmTextField*background", "Pixel",&value);
     XrmPutResource (&db, "*XmMenuShell*DtTerm*background", "Pixel", &value);
     XrmPutResource (&db, "*XmCascadeButton*XmText*background", "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButton*XmTextField*background", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButton*XmTextField*background", "Pixel",
 		    &value);
     XrmPutResource (&db, "*XmCascadeButton*DtTerm*background", "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*XmText*background", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*XmText*background", "Pixel",
 		    &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*XmTextField*background", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*XmTextField*background",
 		    "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*DtTerm*background", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*DtTerm*background", "Pixel",
 		    &value);
     if (doList) {
       XrmPutResource (&db, "*XmDialogShell*XmList*background", "Pixel", &value);
@@ -994,21 +974,21 @@ UpdateXrm(
     value.addr = (char*) &(colors[i].fg);  /* now do foreground */
 
     XrmPutResource (&db, "*XmDialogShell*XmText*foreground", "Pixel", &value);
-    XrmPutResource (&db, "*XmDialogShell*XmTextField*foreground", "Pixel", 
+    XrmPutResource (&db, "*XmDialogShell*XmTextField*foreground", "Pixel",
 		    &value);
     XrmPutResource (&db, "*XmDialogShell*DtTerm*foreground", "Pixel", &value);
     XrmPutResource (&db, "*XmMenuShell*XmText*foreground", "Pixel", &value);
     XrmPutResource (&db, "*XmMenuShell*XmTextField*foreground", "Pixel",&value);
     XrmPutResource (&db, "*XmMenuShell*DtTerm*foreground", "Pixel", &value);
     XrmPutResource (&db, "*XmCascadeButton*XmText*foreground", "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButton*XmTextField*foreground", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButton*XmTextField*foreground", "Pixel",
 		    &value);
     XrmPutResource (&db, "*XmCascadeButton*DtTerm*foreground", "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*XmText*foreground", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*XmText*foreground", "Pixel",
 		    &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*XmTextField*foreground", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*XmTextField*foreground",
 		    "Pixel", &value);
-    XrmPutResource (&db, "*XmCascadeButtonGadget*DtTerm*foreground", "Pixel", 
+    XrmPutResource (&db, "*XmCascadeButtonGadget*DtTerm*foreground", "Pixel",
 		    &value);
     if (doList) {
       XrmPutResource (&db, "*XmDialogShell*XmList*foreground", "Pixel", &value);
@@ -1017,111 +997,111 @@ UpdateXrm(
 
     /** dither (or "undither") top shadow if needed **/
 
-    if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, &colors[i])) 
+    if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
     {
         XrmPutStringResource (&db, "*XmText*topShadowPixmap", XmCO_DITHER);
         XrmPutStringResource (&db, "*XmTextField*topShadowPixmap", XmCO_DITHER);
         XrmPutStringResource (&db, "*DtTerm*topShadowPixmap", XmCO_DITHER);
-        if (doList) 
+        if (doList)
 	  XrmPutStringResource (&db, "*XmList*topShadowPixmap", XmCO_DITHER);
 
-        XrmPutStringResource (&db, "*XmDialogShell*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*XmText*topShadowPixmap",
 			      XmCO_DITHER);
         XrmPutStringResource (&db, "*XmDialogShell*XmTextField*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*topShadowPixmap",
 			      XmCO_DITHER);
-        if (doList) 
-	  XrmPutStringResource (&db, "*XmDialogShell*XmList*topShadowPixmap", 
+        if (doList)
+	  XrmPutStringResource (&db, "*XmDialogShell*XmList*topShadowPixmap",
 				XmCO_DITHER);
 
-        XrmPutStringResource (&db, "*XmMenuShell*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*XmText*topShadowPixmap",
 			      XmCO_DITHER);
         XrmPutStringResource (&db, "*XmMenuShell*XmTextField*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*topShadowPixmap",
 			      XmCO_DITHER);
-        if (doList) 
-	  XrmPutStringResource (&db, "*XmMenuShell*XmList*topShadowPixmap", 
+        if (doList)
+	  XrmPutStringResource (&db, "*XmMenuShell*XmList*topShadowPixmap",
 				XmCO_DITHER);
 
-        XrmPutStringResource (&db, "*XmCascadeButton*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*XmText*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmCascadeButton*XmTextField*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*topShadowPixmap",
 			      XmCO_DITHER);
 
-        XrmPutStringResource (&db, 
-			      "*XmCascadeButtonGadget*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db,
+			      "*XmCascadeButtonGadget*XmText*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			   "*XmCascadeButtonGadget*XmTextField*topShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
-			      "*XmCascadeButtonGadget*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db,
+			      "*XmCascadeButtonGadget*DtTerm*topShadowPixmap",
 		              XmCO_DITHER);
     }
     else  /** undo dithers set for primary and secondary if needed **/
     {
-      if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.primary]))) 
+      if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.primary])))
       {
         XrmPutStringResource (&db, "*XmText*topShadowPixmap", XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmTextField*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmTextField*topShadowPixmap",
 			      XmCO_NO_DITHER);
         XrmPutStringResource (&db, "*DtTerm*topShadowPixmap", XmCO_NO_DITHER);
         if (doList)
 	  XrmPutStringResource (&db, "*XmList*topShadowPixmap", XmCO_NO_DITHER);
       }
-      if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.secondary]))) 
+      if (XmCO_DitherTopShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.secondary])))
       {
 
-        XrmPutStringResource (&db, "*XmDialogShell*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*XmText*topShadowPixmap",
 			      XmCO_NO_DITHER);
         XrmPutStringResource (&db, "*XmDialogShell*XmTextField*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*topShadowPixmap",
 			      XmCO_NO_DITHER);
         if (doList)
-	  XrmPutStringResource (&db, "*XmDialogShell*XmList*topShadowPixmap", 
+	  XrmPutStringResource (&db, "*XmDialogShell*XmList*topShadowPixmap",
 				XmCO_NO_DITHER);
 
-        XrmPutStringResource (&db, "*XmMenuShell*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*XmText*topShadowPixmap",
 			      XmCO_NO_DITHER);
         XrmPutStringResource (&db, "*XmMenuShell*XmTextField*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*topShadowPixmap",
 			      XmCO_NO_DITHER);
         if (doList)
-	  XrmPutStringResource (&db, "*XmMenuShell*XmList*topShadowPixmap", 
+	  XrmPutStringResource (&db, "*XmMenuShell*XmList*topShadowPixmap",
 				XmCO_NO_DITHER);
 
-        XrmPutStringResource (&db, "*XmCascadeButton*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*XmText*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmCascadeButton*XmTextField*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*topShadowPixmap",
 			      XmCO_NO_DITHER);
 
-        XrmPutStringResource (&db, 
-			      "*XmCascadeButtonGadget*XmText*topShadowPixmap", 
+        XrmPutStringResource (&db,
+			      "*XmCascadeButtonGadget*XmText*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			   "*XmCascadeButtonGadget*XmTextField*topShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
-			      "*XmCascadeButtonGadget*DtTerm*topShadowPixmap", 
+        XrmPutStringResource (&db,
+			      "*XmCascadeButtonGadget*DtTerm*topShadowPixmap",
 		              XmCO_NO_DITHER);
       }
     }
 
     /** dither (or "undither") bottom shadow if needed **/
 
-    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i])) 
+    if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, &colors[i]))
     {
         XrmPutStringResource (&db, "*XmText*bottomShadowPixmap", XmCO_DITHER);
         XrmPutStringResource (&db, "*XmTextField*bottomShadowPixmap", XmCO_DITHER);
@@ -1129,22 +1109,22 @@ UpdateXrm(
         if (doList)
 	  XrmPutStringResource (&db, "*XmList*bottomShadowPixmap", XmCO_DITHER);
 
-        XrmPutStringResource (&db, "*XmDialogShell*XmText*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*XmText*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmDialogShell*XmTextField*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*bottomShadowPixmap",
 			      XmCO_DITHER);
         if (doList)
 	  XrmPutStringResource (&db, "*XmDialogShell*XmList*bottomShadowPixmap",
 			      XmCO_DITHER);
 
-        XrmPutStringResource (&db, "*XmMenuShell*XmText*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*XmText*bottomShadowPixmap",
 			      XmCO_DITHER);
         XrmPutStringResource (&db,"*XmMenuShell*XmTextField*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*bottomShadowPixmap",
 			      XmCO_DITHER);
         if (doList)
 	  XrmPutStringResource (&db, "*XmMenuShell*XmList*bottomShadowPixmap",
@@ -1152,26 +1132,26 @@ UpdateXrm(
 
         XrmPutStringResource (&db, "*XmCascadeButton*XmText*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmCascadeButton*XmTextField*bottomShadowPixmap",
 			      XmCO_DITHER);
         XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*bottomShadowPixmap",
 			      XmCO_DITHER);
 
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			     "*XmCascadeButtonGadget*XmText*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			"*XmCascadeButtonGadget*XmTextField*bottomShadowPixmap",
 			      XmCO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			     "*XmCascadeButtonGadget*DtTerm*bottomShadowPixmap",
 		              XmCO_DITHER);
     }
     else  /** undo dithers set for primary and secondary if needed **/
     {
-      if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.primary]))) 
+      if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.primary])))
       {
         XrmPutStringResource (&db, "*XmText*bottomShadowPixmap", XmCO_NO_DITHER);
         XrmPutStringResource (&db, "*XmTextField*bottomShadowPixmap",XmCO_NO_DITHER);
@@ -1179,46 +1159,46 @@ UpdateXrm(
         if (doList)
 	  XrmPutStringResource (&db, "*XmList*bottomShadowPixmap", XmCO_NO_DITHER);
       }
-      if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen, 
-                             &(colors[tmpColorObj->color_obj.secondary]))) 
+      if (XmCO_DitherBottomShadow(tmpColorObj->color_obj.display, screen,
+                             &(colors[tmpColorObj->color_obj.secondary])))
       {
 
-        XrmPutStringResource (&db, "*XmDialogShell*XmText*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*XmText*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmDialogShell*XmTextField*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmDialogShell*DtTerm*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
         if (doList)
 	  XrmPutStringResource (&db, "*XmDialogShell*XmList*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
 
-        XrmPutStringResource (&db, "*XmMenuShell*XmText*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*XmText*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
         XrmPutStringResource (&db,"*XmMenuShell*XmTextField*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*bottomShadowPixmap", 
+        XrmPutStringResource (&db, "*XmMenuShell*DtTerm*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        if (doList) 
-	  XrmPutStringResource (&db, "*XmMenuShell*XmList*bottomShadowPixmap", 
+        if (doList)
+	  XrmPutStringResource (&db, "*XmMenuShell*XmList*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
 
         XrmPutStringResource (&db, "*XmCascadeButton*XmText*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			      "*XmCascadeButton*XmTextField*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
         XrmPutStringResource (&db, "*XmCascadeButton*DtTerm*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
 
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			     "*XmCascadeButtonGadget*XmText*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			"*XmCascadeButtonGadget*XmTextField*bottomShadowPixmap",
 			      XmCO_NO_DITHER);
-        XrmPutStringResource (&db, 
+        XrmPutStringResource (&db,
 			     "*XmCascadeButtonGadget*DtTerm*bottomShadowPixmap",
 		              XmCO_NO_DITHER);
       }
@@ -1232,7 +1212,7 @@ UpdateXrm(
 /**********************************************************************/
 
 /*ARGSUSED*/
-Boolean 
+Boolean
 XmeGetIconControlInfo(
         Screen  *screen,	/* unused */
 	Boolean *useMaskRtn,
@@ -1244,7 +1224,7 @@ XmeGetIconControlInfo(
     _XmProcessLock();
     /* return False if color srv is not running, or color obj not used */
     if (!tmpColorObj || !tmpColorObj->color_obj.colorIsRunning ||
-	!tmpColorObj->color_obj.useColorObj) 
+	!tmpColorObj->color_obj.useColorObj)
     {
 	*useMaskRtn = *useMultiColorIconsRtn = *useIconFileCacheRtn = True ;
 	_XmProcessUnlock();
@@ -1267,7 +1247,7 @@ XmeGetIconControlInfo(
 /**  for instance, to access the primary background, use
              primary_background = pixelSet[primary_id].bg ;          */
 /**********************************************************************/
-Boolean 
+Boolean
 XmeGetColorObjData(Screen * screen,
 		   int *colorUse,
 		   XmPixelSet *pixelSet,
@@ -1282,8 +1262,8 @@ XmeGetColorObjData(Screen * screen,
     int screen_num, k ;
 
     /* find the color obj for this screen's display */
-    if ((!_XmColorObjCacheDisplay) || (XFindContext(_XmColorObjCacheDisplay, 
-	             (XID)XDisplayOfScreen(screen), 
+    if ((!_XmColorObjCacheDisplay) || (XFindContext(_XmColorObjCacheDisplay,
+	             (XID)XDisplayOfScreen(screen),
 	             _XmColorObjCache,
 	             (XPointer *)&tmpColorObj) != 0)) {
         /* no color obj for this display */
@@ -1293,7 +1273,7 @@ XmeGetColorObjData(Screen * screen,
     /* return False if color srv is not running, or color obj not used */
     _XmProcessLock();
     if (!tmpColorObj ||
-	!tmpColorObj->color_obj.useColorObj || 
+	!tmpColorObj->color_obj.useColorObj ||
 	!tmpColorObj->color_obj.colorIsRunning) {
       _XmProcessUnlock();
       return False;
@@ -1334,10 +1314,10 @@ XmeGetColorObjData(Screen * screen,
 /**              pixelSet should be an array of XmCO_NUM_COLORS      **/
 /**              XmPixelSets, ie. XmPixelSet pixelSet[XmCO_NUM_COLORS]; **/
 /**                                                                  **/
-/**      Obsolete: doesn't always use the correct display in a 
+/**      Obsolete: doesn't always use the correct display in a
                    multi display app...  */
 /**********************************************************************/
-Boolean 
+Boolean
 XmeGetPixelData(
         int screen_number,
         int *colorUse,
@@ -1348,17 +1328,17 @@ XmeGetPixelData(
         short *s )
 {
     Display * display ;
-    
+
     _XmProcessLock();
     if (_XmDefaultColorObj)
 	display = XtDisplay(_XmDefaultColorObj) ;
-    else 
+    else
 	return False ;
     _XmProcessUnlock();
 
     return XmeGetColorObjData(XScreenOfDisplay(display, screen_number),
 			  colorUse,
-			  pixelSet, XmCO_NUM_COLORS, 
+			  pixelSet, XmCO_NUM_COLORS,
 			  a, i, p, s, NULL);
 
 }
@@ -1368,9 +1348,9 @@ XmeGetPixelData(
 static
 Boolean NotBW(Screen* screen, Pixel pixel)
 {
-    return ((pixel != BlackPixel(DisplayOfScreen(screen), 
+    return ((pixel != BlackPixel(DisplayOfScreen(screen),
 				 XScreenNumberOfScreen(screen)))
-	&&  (pixel != WhitePixel(DisplayOfScreen(screen), 
+	&&  (pixel != WhitePixel(DisplayOfScreen(screen),
 				 XScreenNumberOfScreen(screen))));
 }
 
@@ -1393,18 +1373,18 @@ static String IconColorNames[] = {
 
 /**********************************************************************/
 /** XmeGetDesktopColorCells                                          **/
-/**              Get information needed for application using 
+/**              Get information needed for application using
                  private colormap       **/
 /**********************************************************************/
 Boolean
-XmeGetDesktopColorCells (Screen * screen, 
+XmeGetDesktopColorCells (Screen * screen,
 			 Colormap colormap, /* to update the color cache */
 			 XColor * colors,  /* allocated by the caller */
 			 int n_colors,     /* size available */
 			 int * ncolors_returns) /* <= max_color */
 {
     int colorUse ;
-    XmPixelSet pixelSet[XmCO_NUM_COLORS] ; 
+    XmPixelSet pixelSet[XmCO_NUM_COLORS] ;
     int i, k, num_icon_colors ;
     short primary, secondary, text, active, inactive;
     int reorder[XmCO_NUM_COLORS] ;
@@ -1414,7 +1394,7 @@ XmeGetDesktopColorCells (Screen * screen,
     /* get the pixel out of the color obj for this screen */
     if (!(XmeGetColorObjData(screen,
 		       &colorUse,
-		       pixelSet, XmCO_NUM_COLORS, 
+		       pixelSet, XmCO_NUM_COLORS,
 		       &active, &inactive, &primary, &secondary, &text)))
 	return False ;
 
@@ -1422,7 +1402,7 @@ XmeGetDesktopColorCells (Screen * screen,
     if (colorUse == XmCO_BLACK_WHITE)
 	return False ;
 
-	
+
 /* only report pixels if not black or white, which is what ts and bs
    are when usePixmap is On or fg is when dynamicForeground is off */
 /* try also to be smart about not returning duplicate pixel id by
@@ -1430,12 +1410,12 @@ XmeGetDesktopColorCells (Screen * screen,
    bit expensive */
 
 #define OKPixel(pixel) (\
-	 NotBW(screen, pixel) && !DupPixel(pixel, colors, i)) 
+	 NotBW(screen, pixel) && !DupPixel(pixel, colors, i))
     i = 0 ;
 
     /* start with foreground are background for all palettes.
        These are the most important pixels by far. let's even
-       reorder them as we go to get more important palette first: 
+       reorder them as we go to get more important palette first:
        primary, secondary, text, active, inactive, frontpanel, wsbuttons */
 
     reorder[0] = primary ;
@@ -1449,17 +1429,17 @@ XmeGetDesktopColorCells (Screen * screen,
 
     for (k = 0; k < XmCO_NUM_COLORS; k++) {
 	/* update the color cache for the pixels used in widgets */
-	if (reorder[k] == primary || 
-	    reorder[k] == secondary || 
+	if (reorder[k] == primary ||
+	    reorder[k] == secondary ||
 	    reorder[k] == text) {
-	    UpdateColorCache(screen, colormap, &(pixelSet[reorder[k]]));	
+	    UpdateColorCache(screen, colormap, &(pixelSet[reorder[k]]));
 	}
 	if (OKPixel(pixelSet[reorder[k]].fg)) {
-	    colors[i++].pixel = pixelSet[reorder[k]].fg ; 
+	    colors[i++].pixel = pixelSet[reorder[k]].fg ;
 	    if (i == n_colors) break ;
 	}
 	if (OKPixel(pixelSet[reorder[k]].bg)) {
-	    colors[i++].pixel = pixelSet[reorder[k]].bg ; 
+	    colors[i++].pixel = pixelSet[reorder[k]].bg ;
 	    if (i == n_colors) break ;
 	}
     }
@@ -1481,47 +1461,47 @@ XmeGetDesktopColorCells (Screen * screen,
 	num_icon_colors = 2 ;
 
     for(k=0; k<num_icon_colors && i < n_colors; k++) {
-	/* here we get the rgb value first 
-	   and then the pixel in the default colormap. 
+	/* here we get the rgb value first
+	   and then the pixel in the default colormap.
 	   The query color below will get the rgb again for nothing,
 	   no big deal */
 	XParseColor(DisplayOfScreen(screen),
-		    DefaultColormapOfScreen(screen), 
+		    DefaultColormapOfScreen(screen),
 		    IconColorNames[k],
-		    &(colors[i])); 
+		    &(colors[i]));
 	XAllocColor(DisplayOfScreen(screen),
 		    DefaultColormapOfScreen(screen),
-		    &(colors[i++])); 
+		    &(colors[i++]));
     }
-   
+
     /* now the shadows */
     for (k = 0; k < XmCO_NUM_COLORS && i < n_colors; k++) {
 	if (OKPixel(pixelSet[reorder[k]].ts)) {
-	    colors[i++].pixel = pixelSet[reorder[k]].ts ; 
+	    colors[i++].pixel = pixelSet[reorder[k]].ts ;
 	}
     }
     for (k = 0; k < XmCO_NUM_COLORS && i < n_colors; k++) {
 	if (OKPixel(pixelSet[reorder[k]].bs)) {
-	    colors[i++].pixel = pixelSet[reorder[k]].bs ; 
+	    colors[i++].pixel = pixelSet[reorder[k]].bs ;
 	}
     }
     /* finish with remaining select color
        DupPixel will take care of the primary/secondary already there */
     for (k = 0; k < XmCO_NUM_COLORS && i < n_colors; k++) {
 	if (OKPixel(pixelSet[reorder[k]].sc)) {
-	    colors[i++].pixel = pixelSet[reorder[k]].sc ; 
+	    colors[i++].pixel = pixelSet[reorder[k]].sc ;
 	}
     }
 
 
     /* now get the rgb for the color obj pixels on the default
        colormap, i.e. the one the color server uses. note that
-       for the icon colors, we already have them, but that will 
+       for the icon colors, we already have them, but that will
        save us a request */
     XQueryColors (DisplayOfScreen(screen),
 		  DefaultColormapOfScreen(screen),
 		  colors, i);
-		  
+
     /* as a service to the app, add flags to all colors */
     for (k=0; k<i; k++) colors[k].flags = DoRed | DoGreen | DoBlue;
 
@@ -1529,11 +1509,10 @@ XmeGetDesktopColorCells (Screen * screen,
 	return True;
 }
 
-#ifdef FIX_1400
 static int trap_XCloseDisplay(Display *disp, XExtCodes *codes)
 {
     if (disp == _XmColorObjCacheDisplay)
     	_XmColorObjCacheDisplay = NULL;
     return 0;
 }
-#endif
+

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -46,18 +46,8 @@
  *	None.
  */
 void
-#ifndef _NO_PROTO
 XmDrawBevel(Display *dpy, Drawable d, GC top_gc, GC bottom_gc,
 	    int x, int y, unsigned int size, XmBevelOption option)
-#else
-XmDrawBevel(dpy, d, top_gc, bottom_gc, x, y, size, option)
-    Display       *dpy;
-    Drawable      d;
-    GC            top_gc, bottom_gc;
-    int           x, y;
-    unsigned int  size;
-    XmBevelOption option;
-#endif
 {
     static     XRectangle saved[STATIC_RECTS], *alloced = NULL;
     static int numAlloced = 0;

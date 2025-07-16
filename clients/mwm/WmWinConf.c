@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.2
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: WmWinConf.c /main/8 1996/10/30 11:15:17 drk $"
@@ -98,7 +98,7 @@ static char rcsid[] = "$XConsortium: WmWinConf.c /main/8 1996/10/30 11:15:17 drk
 /*
  * Global Variables:
  *
- * These statics are set up at the initiation of a configuration 
+ * These statics are set up at the initiation of a configuration
  * operation and used for succeeding events.
  */
 
@@ -111,7 +111,7 @@ static int offsetY = 0;
 static int resizeX, resizeY;	/* root coords of UL corner of frame */
 static unsigned int resizeWidth, resizeHeight;	/* size of frame */
 static unsigned int resizeBigWidthInc, resizeBigHeightInc;
-static int startX, startY; 
+static int startX, startY;
 static unsigned int startWidth, startHeight;
 static unsigned int minWidth, minHeight, maxHeight, maxWidth;
 #ifdef WSM
@@ -158,7 +158,7 @@ Position clipY = 0;
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -190,8 +190,8 @@ void GetClipDimensions (ClientData *pCD, Boolean fromRoot)
     else
     {
 	clipX = tmpX;
-	clipY = tmpY;      
-    }			
+	clipY = tmpY;
+    }
 
 } /* END OF FUNCTION GetClipDimensions */
 
@@ -212,7 +212,7 @@ void GetClipDimensions (ClientData *pCD, Boolean fromRoot)
  *  pcd		- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -254,14 +254,14 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 
     grab_win = GrabWin (pcd, pev);
 
-    
+
     if (pcd->pSD->useIconBox && P_ICON_BOX(pcd))
     {
 	GetClipDimensions (pcd, True);
     }
 
     moveDone = False;
-    while (!moveDone) 
+    while (!moveDone)
     {
 	tmpX = tmpY = 0;
 
@@ -269,28 +269,25 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 	    /* handle the event we were called with first */
 	    firstTime = False;
 	}
-	else 
+	else
 	{
 	    pev = &event;
-	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK, 
+	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK,
 		moveLastPointerX, moveLastPointerY, moveX, moveY,
 		moveWidth, moveHeight, &event);
 	}
 
-	if (pev->type == KeyPress) 
+	if (pev->type == KeyPress)
 	{
 	    keyMultiplier = 1;
-	    while (keyMultiplier <= big_inc && 
-		      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent, 
+	    while (keyMultiplier <= big_inc &&
+		      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent,
 		      (char *) pev))
 	    {
 		  keyMultiplier++;
 	    }
-#ifdef FIX_1611
+
 	    keysym = WmKeycodeToKeysym (DISPLAY, pev->xkey.keycode);
-#else
-	    keysym = XKeycodeToKeysym (DISPLAY, pev->xkey.keycode, 0);
-#endif
 	    control = (pev->xkey.state & ControlMask) != 0;
 	    tmpX = tmpY = 0;
 
@@ -341,7 +338,7 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 		    moveX += tmpX;
 		    moveY += tmpY;
 		}
-		else 
+		else
 		{
 		    /*
 		     * make like motion event and move frame.
@@ -351,7 +348,7 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 		}
 	    }
 	}
-	else if (pev->type == ButtonRelease) 
+	else if (pev->type == ButtonRelease)
 	{
 	    /*
 	     *  Update (x,y) to the location of the button release
@@ -362,8 +359,8 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 	    CompleteFrameConfig (pcd, pev);
 	    moveDone = True;
 	}
-	else if (pev->type == MotionNotify) 
-	{	
+	else if (pev->type == MotionNotify)
+	{
 	    tmpX = pev->xmotion.x_root - moveLastPointerX;
 	    tmpY = pev->xmotion.y_root - moveLastPointerY;
 	    moveLastPointerX = pev->xmotion.x_root;
@@ -385,11 +382,11 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 	    {
 		MoveOutline(moveX, moveY, moveWidth, moveHeight);
 	    }
-	    
+
 	    if ( !wmGD.movingIcon &&
 		 (wmGD.showFeedback & WM_SHOW_FB_MOVE))
 	    {
-		DoFeedback (pcd, moveX, moveY, moveWidth, moveHeight, 
+		DoFeedback (pcd, moveX, moveY, moveWidth, moveHeight,
 			    (unsigned long) 0, FALSE /* no size checks */);
 	    }
 	}
@@ -410,7 +407,7 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -421,14 +418,14 @@ void HandleClientFrameMove (ClientData *pcd, XEvent *pev)
 void UpdateAndDrawResize (ClientData *pcd)
 {
     int tmpHeight, tmpWidth;
-    
-    /* 
-     * Handle a motion event or a keypress that's like a motion 
+
+    /*
+     * Handle a motion event or a keypress that's like a motion
      * event
      */
-    
+
     /* set height */
-    
+
     switch (wmGD.configPart) {
       case FRAME_RESIZE_NW:
       case FRAME_RESIZE_N:
@@ -439,7 +436,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeHeight = minHeight;
 	    resizeY = startY + startHeight - minHeight;
 	}
-	else if (pcd->pSD->limitResize 
+	else if (pcd->pSD->limitResize
 		 && (tmpHeight > (int) maxHeight)
 		 && (!(pcd->clientFlags & ICON_BOX)))
 	{
@@ -452,7 +449,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeY = pointerY;
 	}
 	break;
-	
+
       case FRAME_RESIZE_SW:
       case FRAME_RESIZE_S:
       case FRAME_RESIZE_SE:
@@ -462,7 +459,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	{
 	    resizeHeight = minHeight;
 	}
-	else if (pcd->pSD->limitResize 
+	else if (pcd->pSD->limitResize
 		 && (tmpHeight > (int) maxHeight)
 		 && (!(pcd->clientFlags & ICON_BOX)))
 	{
@@ -473,16 +470,16 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeHeight = (unsigned int) tmpHeight;
 	}
 	break;
-	
+
       default:
 	resizeY = startY;
 	resizeHeight = startHeight;
 	break;
-	
+
     }
-    
+
     /* set width */
-    
+
     switch (wmGD.configPart) {
       case FRAME_RESIZE_NW:
       case FRAME_RESIZE_W:
@@ -493,7 +490,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeWidth = minWidth;
 	    resizeX = startX + startWidth - minWidth;
 	}
-	else if (pcd->pSD->limitResize 
+	else if (pcd->pSD->limitResize
 		 && (tmpWidth > (int) maxWidth)
 		 && (!(pcd->clientFlags & ICON_BOX)))
 	{
@@ -506,7 +503,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeX = pointerX;
 	}
 	break;
-	
+
       case FRAME_RESIZE_NE:
       case FRAME_RESIZE_E:
       case FRAME_RESIZE_SE:
@@ -516,7 +513,7 @@ void UpdateAndDrawResize (ClientData *pcd)
 	{
 	    resizeWidth = minWidth;
 	}
-	else if (pcd->pSD->limitResize 
+	else if (pcd->pSD->limitResize
 		 && (tmpWidth > (int) maxWidth)
 		 && (!(pcd->clientFlags & ICON_BOX)))
 	{
@@ -527,14 +524,14 @@ void UpdateAndDrawResize (ClientData *pcd)
 	    resizeWidth = (unsigned int) tmpWidth;
 	}
 	break;
-	
+
       default:
 	resizeX = startX;
 	resizeWidth = startWidth;
 	break;
     }
-    
-    FixFrameValues (pcd, &resizeX, &resizeY, &resizeWidth, 
+
+    FixFrameValues (pcd, &resizeX, &resizeY, &resizeWidth,
 		    &resizeHeight, TRUE /* do size checks */);
     MoveOutline (resizeX, resizeY, resizeWidth, resizeHeight);
     if (wmGD.showFeedback & WM_SHOW_FB_RESIZE)
@@ -560,7 +557,7 @@ void UpdateAndDrawResize (ClientData *pcd)
  *  pcd		- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -568,7 +565,7 @@ void UpdateAndDrawResize (ClientData *pcd)
  *  Comments:
  *  --------
  *  o The window sizes refer to the frame, not the client window.
- * 
+ *
  *************************************<->***********************************/
 void HandleClientFrameResize (ClientData *pcd, XEvent *pev)
 {
@@ -595,13 +592,13 @@ void HandleClientFrameResize (ClientData *pcd, XEvent *pev)
     grab_win = GrabWin (pcd, pev);
 
     resizeDone = False;
-    while (!resizeDone) 
+    while (!resizeDone)
     {
 	if (!pev) 	/* first time through will already have event */
 	{
 	    pev = &event;
 
-	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK, 
+	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK,
 		pointerX, pointerY, resizeX, resizeY,
 		resizeWidth, resizeHeight, &event);
 	}
@@ -623,8 +620,8 @@ void HandleClientFrameResize (ClientData *pcd, XEvent *pev)
 	}
 	else if (pev->type == KeyPress) {
 
-	    /* 
-	     * Handle key event. 
+	    /*
+	     * Handle key event.
 	     */
 	    resizeDone = HandleResizeKeyPress (pcd, pev);
 	}
@@ -673,15 +670,15 @@ void HandleClientFrameResize (ClientData *pcd, XEvent *pev)
  *  pcd 	- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
- *  Return	- True if this event completes (or cancels) resizing 
- * 
+ *  Return	- True if this event completes (or cancels) resizing
+ *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 {
@@ -693,21 +690,17 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
     XEvent KeyEvent;
 
     /*
-     * Compress repeated keys 
+     * Compress repeated keys
      */
     keyMult = 1;
-    while (keyMult <= 10 && 
-	      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent, 
+    while (keyMult <= 10 &&
+	      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent,
 	      (char *) pev))
     {
 	  keyMult++;
     }
 
-#ifdef FIX_1611
     keysym = WmKeycodeToKeysym (DISPLAY, pev->xkey.keycode);
-#else
-    keysym = XKeycodeToKeysym (DISPLAY, pev->xkey.keycode, 0);
-#endif
     control = (pev->xkey.state & ControlMask) != 0;
 
     switch (keysym) {
@@ -717,16 +710,16 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		    wmGD.configPart = FRAME_RESIZE_W;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    warpY = resizeY + resizeHeight/2;
-		    warpX = resizeX + ((control) ? 
-					  (-resizeBigWidthInc) : 
+		    warpX = resizeX + ((control) ?
+					  (-resizeBigWidthInc) :
 					  (-pcd->widthInc));
 		    break;
 
 		case FRAME_RESIZE_N:
 		    wmGD.configPart = FRAME_RESIZE_NW;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
-		    warpX = resizeX + ((control) ? 
-					  (-resizeBigWidthInc) : 
+		    warpX = resizeX + ((control) ?
+					  (-resizeBigWidthInc) :
 					  (-pcd->widthInc));
 		    warpY = pointerY;
 		    break;
@@ -734,15 +727,15 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_RESIZE_S:
 		    wmGD.configPart = FRAME_RESIZE_SW;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
-		    warpX = resizeX + ((control) ? 
-					  (-resizeBigWidthInc) : 
+		    warpX = resizeX + ((control) ?
+					  (-resizeBigWidthInc) :
 					  (-pcd->widthInc));
 		    warpY = pointerY;
 		    break;
-		
+
 		default:
-		    warpX = pointerX + ((control) ? 
-					(-resizeBigWidthInc * keyMult) : 
+		    warpX = pointerX + ((control) ?
+					(-resizeBigWidthInc * keyMult) :
 					(-pcd->widthInc * keyMult));
 		    warpY = pointerY;
 		    break;
@@ -754,8 +747,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_NONE:
 		    wmGD.configPart = FRAME_RESIZE_N;
 		    warpX = resizeX + resizeWidth/2;
-		    warpY = resizeY + ((control) ? 
-					  (-resizeBigHeightInc) : 
+		    warpY = resizeY + ((control) ?
+					  (-resizeBigHeightInc) :
 					  (-pcd->heightInc));
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    break;
@@ -764,8 +757,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		    wmGD.configPart = FRAME_RESIZE_NW;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    warpX = pointerX;
-		    warpY = resizeY + ((control) ? 
-					  (-resizeBigHeightInc) : 
+		    warpY = resizeY + ((control) ?
+					  (-resizeBigHeightInc) :
 					  (-pcd->heightInc));
 		    break;
 
@@ -773,15 +766,15 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		    wmGD.configPart = FRAME_RESIZE_NE;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    warpX = pointerX;
-		    warpY = resizeY + ((control) ? 
-					      (-resizeBigHeightInc) : 
+		    warpY = resizeY + ((control) ?
+					      (-resizeBigHeightInc) :
 					      (-pcd->heightInc));
 		    break;
 
-		default: 
+		default:
 		    warpX = pointerX;
-		    warpY = pointerY + ((control) ? 
-					(-resizeBigHeightInc * keyMult) : 
+		    warpY = pointerY + ((control) ?
+					(-resizeBigHeightInc * keyMult) :
 					(-pcd->heightInc * keyMult));
 		    break;
 	    }
@@ -792,8 +785,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_NONE:
 		    wmGD.configPart = FRAME_RESIZE_E;
 		    warpY = resizeY + resizeHeight/2;
-		    warpX = resizeX + resizeWidth - 1 + 
-			       ((control) ? resizeBigWidthInc : 
+		    warpX = resizeX + resizeWidth - 1 +
+			       ((control) ? resizeBigWidthInc :
 					    pcd->widthInc);
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    break;
@@ -801,8 +794,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_RESIZE_N:
 		    wmGD.configPart = FRAME_RESIZE_NE;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
-		    warpX = resizeX + resizeWidth - 1 + 
-			       ((control) ? resizeBigWidthInc : 
+		    warpX = resizeX + resizeWidth - 1 +
+			       ((control) ? resizeBigWidthInc :
 					    pcd->widthInc);
 		    warpY = pointerY;
 		    break;
@@ -810,15 +803,15 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_RESIZE_S:
 		    wmGD.configPart = FRAME_RESIZE_SE;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
-		    warpX = resizeX + resizeWidth - 1 + 
-			       ((control) ? resizeBigWidthInc : 
+		    warpX = resizeX + resizeWidth - 1 +
+			       ((control) ? resizeBigWidthInc :
 					    pcd->widthInc);
 		    warpY = pointerY;
 		    break;
 
 		default:
-		    warpX = pointerX + ((control) ? 
-				 	(resizeBigWidthInc * keyMult) : 
+		    warpX = pointerX + ((control) ?
+				 	(resizeBigWidthInc * keyMult) :
 				  	(pcd->widthInc * keyMult));
 		    warpY = pointerY;
 		    break;
@@ -830,8 +823,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		case FRAME_NONE:
 		    wmGD.configPart = FRAME_RESIZE_S;
 		    warpX = resizeX + resizeWidth/2;
-		    warpY = resizeY + resizeHeight - 1 + 
-			       ((control) ? resizeBigHeightInc : 
+		    warpY = resizeY + resizeHeight - 1 +
+			       ((control) ? resizeBigHeightInc :
 					    pcd->heightInc);
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    break;
@@ -840,8 +833,8 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		    wmGD.configPart = FRAME_RESIZE_SE;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    warpX = pointerX;
-		    warpY = resizeY + resizeHeight - 1 + 
-			       ((control) ? resizeBigHeightInc : 
+		    warpY = resizeY + resizeHeight - 1 +
+			       ((control) ? resizeBigHeightInc :
 					    pcd->heightInc);
 		    break;
 
@@ -849,15 +842,15 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 		    wmGD.configPart = FRAME_RESIZE_SW;
 		    ReGrabPointer(pcd->clientFrameWin, pev->xkey.time);
 		    warpX = pointerX;
-		    warpY = resizeY + resizeHeight - 1 + 
-			       ((control) ? resizeBigHeightInc : 
+		    warpY = resizeY + resizeHeight - 1 +
+			       ((control) ? resizeBigHeightInc :
 					    pcd->heightInc);
 		    break;
 
 		default:
 		    warpX = pointerX;
-		    warpY = pointerY + ((control) ? 
-					(resizeBigHeightInc * keyMult) : 
+		    warpY = pointerY + ((control) ?
+					(resizeBigHeightInc * keyMult) :
 					(pcd->heightInc * keyMult));
 		    break;
 	    }
@@ -893,7 +886,7 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
 	XQueryPointer (DISPLAY, ROOT_FOR_CLIENT(pcd), &junk_win, &junk_win,
 	       &currentX, &currentY, &junk, &junk, (unsigned int *)&junk))
     {
-	if ( (warpX != currentX) || (warpY != currentY) ) 
+	if ( (warpX != currentX) || (warpY != currentY) )
 	{
 	    SetPointerPosition (warpX, warpY, &newX, &newY);
 	    return (False);
@@ -919,12 +912,12 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
  *  pcd		- pointer to client data
  *  x		-
  *  y		-
- *  width	- 
+ *  width	-
  *  height	-
- *  newStyle	- style flags. 
+ *  newStyle	- style flags.
  *  resizing    - check size constraints iff TRUE
- *  
- * 
+ *
+ *
  *  Outputs:
  *  -------
  *
@@ -936,7 +929,7 @@ Boolean HandleResizeKeyPress (ClientData *pcd, XEvent *pev)
  *    desired style should be popped up. If newStyle is zero, then it
  *    is assumed that the feedback window is already up and the values
  *    passed in are updates.
- * 
+ *
  *************************************<->***********************************/
 void DoFeedback (ClientData *pcd, int x, int y, unsigned int width, unsigned int height, unsigned long newStyle, Boolean resizing)
 {
@@ -957,7 +950,7 @@ void DoFeedback (ClientData *pcd, int x, int y, unsigned int width, unsigned int
     if (resizing)
     {
         FixWindowConfiguration (pcd, &width, &height,
-				 (unsigned int) pcd->widthInc, 
+				 (unsigned int) pcd->widthInc,
 				 (unsigned int) pcd->heightInc);
     }
 
@@ -995,14 +988,14 @@ void DoFeedback (ClientData *pcd, int x, int y, unsigned int width, unsigned int
  *  pcd		- pointer to client data
 
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean CheckVisualPlace (ClientData *pCD, int tmpX, int tmpY)
@@ -1011,45 +1004,45 @@ Boolean CheckVisualPlace (ClientData *pCD, int tmpX, int tmpY)
     Window child;
     int newX;
     int newY;
-    
+
     GetClipDimensions(pCD, True);
 
 
-    /* 
+    /*
      * Get root coordinates of X and Y for icon.
      * We use root coordinates of clip window since clipX and
      * clipY are not 0, but the icon X and Y may be 0 in
      * local coordinates
      */
-     
+
     XTranslateCoordinates(DISPLAY, XtWindow(P_ICON_BOX(pCD)->bBoardWidget),
     			  ROOT_FOR_CLIENT(pCD), tmpX, tmpY,
 			  &newX, &newY, &child);
 
 
-    if (newX < clipX) 
+    if (newX < clipX)
     {
         return(False);
     }
-    if (newY < clipY) 
+    if (newY < clipY)
     {
         return(False);
     }
 
 
-    if (((int)newX) > ((int)clipX + 
-    	(int)clipWidth - ((int)ICON_WIDTH(pCD)))) 
+    if (((int)newX) > ((int)clipX +
+    	(int)clipWidth - ((int)ICON_WIDTH(pCD))))
     {
         return(False);
     }
-    if (((int)newY) > ((int)clipY + 
+    if (((int)newY) > ((int)clipY +
     	(int)clipHeight - ((int)ICON_HEIGHT(pCD))))
     {
         return(False);
     }
-    
+
     return (rval);
- 
+
 } /* END OF FUNCTION CheckVisualPlace */
 
 
@@ -1069,7 +1062,7 @@ Boolean CheckVisualPlace (ClientData *pCD, int tmpX, int tmpY)
  *  pcd		- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1078,22 +1071,22 @@ Boolean CheckVisualPlace (ClientData *pCD, int tmpX, int tmpY)
  *  --------
  *  o This routine assumes that it is called in response to a button release
  *    event.
- * 
+ *
  *************************************<->***********************************/
 void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 {
     unsigned int tmpWidth, tmpHeight;
     int tmpX, tmpY;
     Boolean inIconBox;
-    
-    
+
+
     if (wmGD.configAction == RESIZE_CLIENT) {
 	/* release the grabs */
 	UndoGrabs();
 
 	/*
 	 * Honor the implied constrained anchor points on the window
-	 * so that the resize doesn't cause the window to move 
+	 * so that the resize doesn't cause the window to move
 	 * unexpectedly.
 	 */
 
@@ -1112,14 +1105,14 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 	tmpHeight = resizeHeight;
 
 	FixWindowConfiguration (pcd, &tmpWidth, &tmpHeight,
-				     (unsigned int) pcd->widthInc, 
+				     (unsigned int) pcd->widthInc,
 				     (unsigned int) pcd->heightInc);
 
         AdjustPos (&resizeX, &resizeY,
 		   resizeWidth, resizeHeight, tmpWidth, tmpHeight);
 
 	/* reconfigure the window(s) */
-	ProcessNewConfiguration (pcd, resizeX, resizeY, 
+	ProcessNewConfiguration (pcd, resizeX, resizeY,
 				 resizeWidth, resizeHeight, FALSE);
 
     }
@@ -1130,7 +1123,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 
 	/* make sure title bar is popped out */
 	if ((wmGD.configAction == MOVE_CLIENT) &&
-	    (wmGD.gadgetClient == pcd) && 
+	    (wmGD.gadgetClient == pcd) &&
 	    (wmGD.gadgetDepressed == FRAME_TITLE))
 	{
 	    PopGadgetOut (pcd, FRAME_TITLE);
@@ -1151,10 +1144,10 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 		int place;
 		IconPlacementData *pIPD;
 
-		/* 
+		/*
 		 * Get correct icon placement data
 		 */
-		if (inIconBox) 
+		if (inIconBox)
 		{
 		    pIPD = &P_ICON_BOX(pcd)->IPD;
 		    moveX -= moveIBbbX;
@@ -1198,10 +1191,10 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 				 * Replace icon into same place - as if it
 				 * didn't move.
 				 */
-				
+
 				XMoveWindow (DISPLAY, ICON_FRAME_WIN(pcd),
 					     ICON_X(pcd), ICON_Y(pcd));
-				if ((ICON_DECORATION(pcd) & 
+				if ((ICON_DECORATION(pcd) &
 				     ICON_ACTIVE_LABEL_PART) &&
 				    (wmGD.keyboardFocus == pcd))
 				{
@@ -1211,7 +1204,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 			    }
 			}
 		    }
-		    if ((place != NO_ICON_PLACE) && 
+		    if ((place != NO_ICON_PLACE) &&
 			(place != ICON_PLACE(pcd)))
 		    {
 			if (inIconBox)
@@ -1226,7 +1219,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 				 */
 
 				MoveIconInfo (pIPD, ICON_PLACE(pcd), place);
-				CvtIconPlaceToPosition (pIPD, place, 
+				CvtIconPlaceToPosition (pIPD, place,
 						&ICON_X(pcd), &ICON_Y(pcd));
 
 
@@ -1246,20 +1239,20 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 				F_Beep (NULL, pcd, (XEvent *)NULL);
 			    }
 			}
-			else 
+			else
 			{
 			    /*
 			     * Move the icon to the new place.
 			     */
 			    MoveIconInfo (pIPD, ICON_PLACE(pcd), place);
-			    CvtIconPlaceToPosition (pIPD, place, &ICON_X(pcd), 
+			    CvtIconPlaceToPosition (pIPD, place, &ICON_X(pcd),
 						    &ICON_Y(pcd));
 
-			    XMoveWindow (DISPLAY, ICON_FRAME_WIN(pcd), 
+			    XMoveWindow (DISPLAY, ICON_FRAME_WIN(pcd),
 					 ICON_X(pcd), ICON_Y(pcd));
 
 			    if (pcd->pSD->moveOpaque &&
-				(ICON_DECORATION(pcd) & 
+				(ICON_DECORATION(pcd) &
 				 ICON_ACTIVE_LABEL_PART) &&
 				(wmGD.keyboardFocus == pcd))
 			    {
@@ -1277,7 +1270,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 		     */
 		    XMoveWindow (DISPLAY, ICON_FRAME_WIN(pcd),
 				 ICON_X(pcd), ICON_Y(pcd));
-		    if ((ICON_DECORATION(pcd) & 
+		    if ((ICON_DECORATION(pcd) &
 			 ICON_ACTIVE_LABEL_PART) &&
 			(wmGD.keyboardFocus == pcd))
 		    {
@@ -1300,7 +1293,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 	}
 	else {	/* assume normal window frame */
 	    /* reconfigure the window(s) */
-	    ProcessNewConfiguration (pcd, 
+	    ProcessNewConfiguration (pcd,
 #ifndef CONFIG_RELATIVE_TO_CLIENT
 				     moveX,
 				     moveY,
@@ -1308,9 +1301,9 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 				     moveX + offsetX,
 				     moveY + offsetY,
 #endif
-				     (unsigned int) 
+				     (unsigned int)
 					 (moveWidth - 2*offsetX),
-				     (unsigned int) 
+				     (unsigned int)
 					 (moveHeight - offsetX - offsetY),
 				     FALSE);
 	}
@@ -1324,7 +1317,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
 
 	pSD = pcd ? pcd->pSD : ACTIVE_PSD;
 
-	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_END, 
+	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_END,
 			marqueeX, marqueeY, marqueeWidth, marqueeHeight);
     }
 #endif /* WSM */
@@ -1350,7 +1343,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
     /*
      * Set the focus back to something reasonable
      */
-    RepairFocus ();	
+    RepairFocus ();
 #ifdef WSM
     }
 #endif /* WSM */
@@ -1375,7 +1368,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
  *  y		- y coordinate (on root)
  *  width	- pixel width of frame
  *  height	- pixel height of frame
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1383,7 +1376,7 @@ void CompleteFrameConfig (ClientData *pcd, XEvent *pev)
  *  Comments:
  *  --------
  *  o use MoveOutline() for icons in an icon box.
- *  
+ *
  *************************************<->***********************************/
 void MoveOpaque (ClientData *pcd, int x, int y,
 		 unsigned int width, unsigned int height)
@@ -1398,8 +1391,8 @@ void MoveOpaque (ClientData *pcd, int x, int y,
 	    /*
 	     * For now just fall back to move outline when the
 	     * icon is in the icon box
-	     */   
-	    
+	     */
+
 	    MoveOutline (x, y, width, height);
 	}
 	else
@@ -1411,12 +1404,12 @@ void MoveOpaque (ClientData *pcd, int x, int y,
     {
 	/* This is a window */
 	XMoveWindow (DISPLAY, pcd->clientFrameWin, x, y);
-	
+
     }
-    
+
     /* cleanup exposed frame parts */
     PullExposureEvents ();
-    
+
 } /* END OF FUNCTION MoveOpaque */
 
 
@@ -1449,7 +1442,7 @@ void MoveOpaque (ClientData *pcd, int x, int y,
  *  gc		- the gc to use, typically whose function is GXxor
  *  outline	- array of segments
  *  nsegs	- number of segments in the outline array
- * 
+ *
  *  Outputs:
  *  -------
  *  (none)
@@ -1458,7 +1451,7 @@ void MoveOpaque (ClientData *pcd, int x, int y,
  *  --------
  *  Note: no GC is used when drawing with the ALLPLANES extension;
  *  therefore, the GC parameter is ignored in that case.
- * 
+ *
  *************************************<->***********************************/
 
 
@@ -1490,15 +1483,15 @@ DrawSegments (Display *dpy, Window win, GC gc, XSegment *outline, int nsegs)
  *  y		- y coordinate (on root)
  *  width	- pixel width of frame
  *  height	- pixel height of frame
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- *  o get display, root window ID, and xorGC out of global data.  
- * 
+ *  o get display, root window ID, and xorGC out of global data.
+ *
  *************************************<->***********************************/
 void MoveOutline (int x, int y, unsigned int width, unsigned int height)
 {
@@ -1535,23 +1528,23 @@ void MoveOutline (int x, int y, unsigned int width, unsigned int height)
  *  y		- y coordinate (on root)
  *  width	- pixel width of frame
  *  height	- pixel height of frame
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- *  o get display, root window ID, and xorGC out of global data.  
+ *  o get display, root window ID, and xorGC out of global data.
  *  o draw on root and erase "atomically"
- * 
+ *
  *************************************<->***********************************/
 void FlashOutline (int x, int y, unsigned int width, unsigned int height)
 {
     static XSegment  outline[SEGS_PER_FLASH];
 
     /*
-     * Do nothing if no box to draw 
+     * Do nothing if no box to draw
      */
     if (x == 0 && y == 0 &&
 	width == 0 && height == 0)
@@ -1561,11 +1554,11 @@ void FlashOutline (int x, int y, unsigned int width, unsigned int height)
      * Draw outline an even number of times (draw then erase)
      */
     SetOutline (outline, x, y, width, height, OUTLINE_WIDTH);
-    memcpy ( (char *) &outline[SEGS_PER_DRAW], (char *) &outline[0], 
+    memcpy ( (char *) &outline[SEGS_PER_DRAW], (char *) &outline[0],
 	SEGS_PER_DRAW*sizeof(XSegment));
 
     /*
-     * Flash the outline at least once, then as long as there's 
+     * Flash the outline at least once, then as long as there's
      * nothing else going on
      */
     DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC,
@@ -1573,7 +1566,7 @@ void FlashOutline (int x, int y, unsigned int width, unsigned int height)
     XSync(DISPLAY, FALSE);
 
     while (!XtAppPending(wmGD.mwmAppContext)) {
-    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC, 
+    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC,
 			outline, SEGS_PER_FLASH);
 	XSync(DISPLAY, FALSE);
     }
@@ -1593,7 +1586,7 @@ void FlashOutline (int x, int y, unsigned int width, unsigned int height)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1604,9 +1597,9 @@ void FlashOutline (int x, int y, unsigned int width, unsigned int height)
  *      woS
  *      woE
  *      woW
- * 
+ *
  *************************************<->***********************************/
-static void 
+static void
 CreateOutlineWindows (WmScreenData *pSD)
 {
     XSetWindowAttributes xswa;
@@ -1619,54 +1612,54 @@ CreateOutlineWindows (WmScreenData *pSD)
     width = OUTLINE_WIDTH;
     height = OUTLINE_WIDTH;
 
-    xswa.override_redirect = True;    
+    xswa.override_redirect = True;
     xswa.backing_store = NotUseful;
     xswa.save_under = True;
     xswa.background_pixmap = XmGetPixmap(
 				XtScreen(pSD->screenTopLevelW),
-				"50_foreground", 
+				"50_foreground",
 				pSD->clientAppearance.foreground,
 				pSD->clientAppearance.background);
 
-    xswamask = (CWOverrideRedirect | 
-		CWBackingStore | 
+    xswamask = (CWOverrideRedirect |
+		CWBackingStore |
 		CWBackPixmap |
 		CWSaveUnder);
-    
-    pSD->woN = XCreateWindow(DISPLAY, pSD->rootWindow, 
+
+    pSD->woN = XCreateWindow(DISPLAY, pSD->rootWindow,
 		       x, y, width, height,
-		       0, 
-		       XDefaultDepth(DISPLAY,pSD->screen), 
+		       0,
+		       XDefaultDepth(DISPLAY,pSD->screen),
 		       CopyFromParent,
-		       CopyFromParent, 
-		       xswamask, 
+		       CopyFromParent,
+		       xswamask,
 		       &xswa);
 
-    pSD->woS = XCreateWindow(DISPLAY, pSD->rootWindow, 
+    pSD->woS = XCreateWindow(DISPLAY, pSD->rootWindow,
 		       x, y, width, height,
-		       0, 
-		       XDefaultDepth(DISPLAY,pSD->screen), 
+		       0,
+		       XDefaultDepth(DISPLAY,pSD->screen),
 		       CopyFromParent,
-		       CopyFromParent, 
-		       xswamask, 
+		       CopyFromParent,
+		       xswamask,
 		       &xswa);
 
-    pSD->woE = XCreateWindow(DISPLAY, pSD->rootWindow, 
+    pSD->woE = XCreateWindow(DISPLAY, pSD->rootWindow,
 		       x, y, width, height,
-		       0, 
-		       XDefaultDepth(DISPLAY,pSD->screen), 
+		       0,
+		       XDefaultDepth(DISPLAY,pSD->screen),
 		       CopyFromParent,
-		       CopyFromParent, 
-		       xswamask, 
+		       CopyFromParent,
+		       xswamask,
 		       &xswa);
 
-    pSD->woW = XCreateWindow(DISPLAY, pSD->rootWindow, 
+    pSD->woW = XCreateWindow(DISPLAY, pSD->rootWindow,
 		       x, y, width, height,
-		       0, 
-		       XDefaultDepth(DISPLAY,pSD->screen), 
+		       0,
+		       XDefaultDepth(DISPLAY,pSD->screen),
 		       CopyFromParent,
-		       CopyFromParent, 
-		       xswamask, 
+		       CopyFromParent,
+		       xswamask,
 		       &xswa);
 
 } /* END OF FUNCTION  CreateOutlineWindows */
@@ -1688,7 +1681,7 @@ CreateOutlineWindows (WmScreenData *pSD)
  *  y		- y coordinate (on root)
  *  width	- pixel width of frame
  *  height	- pixel height of frame
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1698,7 +1691,7 @@ CreateOutlineWindows (WmScreenData *pSD)
  *  Always unmap during move/resize of outline windows to let saveunder
  *  stuff work. HP server's toss saveunder stuff for windows that
  *  configure themselves while mapped.
- * 
+ *
  *************************************<->***********************************/
 void WindowOutline (int x, int y, unsigned int width, unsigned int height)
 {
@@ -1715,7 +1708,7 @@ void WindowOutline (int x, int y, unsigned int width, unsigned int height)
 	CreateOutlineWindows(pSD);
     }
 
-    if (x == lastOutlineX && y == lastOutlineY && 
+    if (x == lastOutlineX && y == lastOutlineY &&
 	width == lastOutlineWidth && height == lastOutlineHeight)
     {
 	return;		/* no change */
@@ -1800,15 +1793,15 @@ void WindowOutline (int x, int y, unsigned int width, unsigned int height)
  *  y		- y coordinate (on root)
  *  width	- pixel width of frame
  *  height	- pixel height of frame
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- *  o get display, root window ID, and xorGC out of global data.  
- * 
+ *  o get display, root window ID, and xorGC out of global data.
+ *
  *************************************<->***********************************/
 void DrawOutline (int x, int y, unsigned int width, unsigned int height)
 {
@@ -1819,7 +1812,7 @@ void DrawOutline (int x, int y, unsigned int width, unsigned int height)
     XSegment  outline[SEGS_PER_DRAW];
 
 
-    if (x == lastOutlineX && y == lastOutlineY && 
+    if (x == lastOutlineX && y == lastOutlineY &&
 	width == lastOutlineWidth && height == lastOutlineHeight)
     {
 	return;		/* no change */
@@ -1829,7 +1822,7 @@ void DrawOutline (int x, int y, unsigned int width, unsigned int height)
 	SetOutline (outline, lastOutlineX, lastOutlineY, lastOutlineWidth,
 	    lastOutlineHeight, OUTLINE_WIDTH);
 
-    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC, 
+    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC,
 			outline, SEGS_PER_DRAW);
     }
 
@@ -1843,7 +1836,7 @@ void DrawOutline (int x, int y, unsigned int width, unsigned int height)
 	SetOutline (outline, lastOutlineX, lastOutlineY, lastOutlineWidth,
 	    lastOutlineHeight, OUTLINE_WIDTH);
 
-    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC, 
+    	DrawSegments(DISPLAY, ACTIVE_ROOT, ACTIVE_PSD->xorGC,
 			outline, SEGS_PER_DRAW);
     }
 } /* END OF FUNCTION  DrawOutline */
@@ -1867,7 +1860,7 @@ void DrawOutline (int x, int y, unsigned int width, unsigned int height)
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  dx		- minimum x distance to move the window back to the screen
@@ -1881,7 +1874,7 @@ void DrawOutline (int x, int y, unsigned int width, unsigned int height)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean WindowIsOnScreen (ClientData *pCD, int *dx, int *dy)
@@ -1894,17 +1887,17 @@ Boolean WindowIsOnScreen (ClientData *pCD, int *dx, int *dy)
   int screenH = DisplayHeight(DISPLAY, SCREEN_FOR_CLIENT(pCD));
 
   *dx = *dy = 0;
-  
+
   if (x2 < 0)			/* right frame border off left side of screen. */
     *dx =  -x2;
   else if (x1 > screenW)	/* left frame border off right side of screen. */
     *dx = screenW - x1;
-  
+
   if (y2 < 0)			/* bottom frame border off top of screen. */
     *dy = -y2;
   else if (y1 > screenH)	/* top frame border off bottom of screen. */
     *dy = screenH - y1;
-  
+
   return ((*dx == 0) && (*dy == 0));
 }
 
@@ -1930,14 +1923,14 @@ Boolean WindowIsOnScreen (ClientData *pCD, int *dx, int *dy)
  *  height	- height of client window
  *  clientRequest	- true if configuration requested by client program
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width, unsigned int height, Boolean clientRequest)
@@ -1954,10 +1947,10 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
      * constraints for this class of windows.
      */
 
-    
+
 
     FixWindowConfiguration (pCD, &width, &height,
-				 (unsigned int) pCD->widthInc, 
+				 (unsigned int) pCD->widthInc,
 				 (unsigned int) pCD->heightInc);
 
     if ((pCD->maxWidth != pCD->oldMaxWidth) ||
@@ -1971,11 +1964,11 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
 
     /*
      * If the configuration has changed, update client data
-     * 
+     *
      * Changes in width or height cause maximized windows to return to
      * normal state and update normal geometry (x, y, width, height)
      */
-    if (pCD->maxConfig) 
+    if (pCD->maxConfig)
     {
 	if (newMax &&
 	    (pCD->maxWidth == width) &&
@@ -2085,7 +2078,7 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
 	    else
 		pCD->maxY = y + yoff;
 	}
-	else if (!toNewMax && (changedValues & (CWWidth | CWHeight))) 
+	else if (!toNewMax && (changedValues & (CWWidth | CWHeight)))
 	{
 	    pCD->clientY = pCD->maxY;
 	}
@@ -2125,7 +2118,7 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
 
     if (changedValues & (CWWidth | CWHeight))
     {
-	if (pCD->maxConfig) 
+	if (pCD->maxConfig)
 	{
 	    if (!toNewMax)
 	    {
@@ -2153,13 +2146,13 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
 	    }
 	  else
 	    {
-	      XMoveWindow (DISPLAY, pCD->clientFrameWin, 
+	      XMoveWindow (DISPLAY, pCD->clientFrameWin,
 			   pCD->maxX - offsetX,
 			   pCD->maxY - offsetY);
 	    }
 	  /* End fix 5217 */
 	}
-	else 
+	else
 	{
             if (clientRequest)
             {
@@ -2187,7 +2180,7 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
     /*
      * Send a configure notify  message if appropriate:
      *   1. rejected client configuration request.
-     *   2. client request and move without resize 
+     *   2. client request and move without resize
      */
 
 
@@ -2202,7 +2195,7 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
      * has changed size
      */
 
-    if ((pCD->clientFlags & ICON_BOX) && 
+    if ((pCD->clientFlags & ICON_BOX) &&
 	(changedValues & (CWWidth | CWHeight)))
     {
 	CheckIconBoxResize(pCD, changedValues, width, height);
@@ -2219,14 +2212,14 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
  *
  *  Description:
  *  -----------
- *  Start resize of client window 
+ *  Start resize of client window
  *
  *
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data
  *  pev		- pointer to event
- * 
+ *
  *  Outputs:
  *  -------
  *  return	- true if configuration can begin, else false
@@ -2234,7 +2227,7 @@ void ProcessNewConfiguration (ClientData *pCD, int x, int y, unsigned int width,
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
@@ -2245,7 +2238,7 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
     int junk, junkX, junkY;
 
     /*
-     *	Do our grabs 
+     *	Do our grabs
      */
     if (!configGrab)
     {
@@ -2253,12 +2246,12 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
 
 	if (pev)
 	{
-	    grabbed = DoGrabs (grab_win, ConfigCursor((int) wmGD.configPart), 
+	    grabbed = DoGrabs (grab_win, ConfigCursor((int) wmGD.configPart),
 			PGRAB_MASK, pev->xbutton.time, pcd, True);
 	}
 	else
 	{
-	    grabbed = DoGrabs (grab_win, ConfigCursor((int) wmGD.configPart), 
+	    grabbed = DoGrabs (grab_win, ConfigCursor((int) wmGD.configPart),
 			PGRAB_MASK, CurrentTime, pcd, True);
 	}
 	if (!grabbed)
@@ -2273,8 +2266,8 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
 	return (True);
     }
 
-    /* 
-     * Set up static variables for succeeding events 
+    /*
+     * Set up static variables for succeeding events
      */
     if (!XQueryPointer (DISPLAY, ROOT_FOR_CLIENT(pcd), &junk_win, &junk_win,
 		   &pointerX, &pointerY, &junk, &junk, (unsigned int *)&junk))
@@ -2289,7 +2282,7 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
     offsetX = pcd->clientOffset.x;
     offsetY = pcd->clientOffset.y;
 
-    /* 
+    /*
      * get window geometry information and convert to frame coordinates
      */
     if (pcd->maxConfig) {
@@ -2334,19 +2327,19 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
     tmp_inc = big_inc - big_inc%pcd->widthInc;
     if (tmp_inc > 5*pcd->widthInc)
 	resizeBigWidthInc = tmp_inc;
-    else 
+    else
 	resizeBigWidthInc = 5*pcd->widthInc;
 
     tmp_inc = big_inc - big_inc%pcd->heightInc;
     if (tmp_inc > 5*pcd->heightInc)
 	resizeBigHeightInc = tmp_inc;
-    else 
+    else
 	resizeBigHeightInc = 5*pcd->heightInc;
 
     /* pop up feedback window */
     if (wmGD.showFeedback & WM_SHOW_FB_RESIZE)
     {
-	DoFeedback (pcd, resizeX, resizeY, resizeWidth, resizeHeight, 
+	DoFeedback (pcd, resizeX, resizeY, resizeWidth, resizeHeight,
 		    FB_SIZE, TRUE /* do size checks */);
     }
 
@@ -2374,16 +2367,16 @@ Boolean StartResizeConfig (ClientData *pcd, XEvent *pev)
  *  ------
  *  pcd		- pointer to client data
  *  pev		- pointer to event
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- *  o This should only be called as the result of a Resize function 
+ *  o This should only be called as the result of a Resize function
  *    being selected from the system menu.
- * 
+ *
  *************************************<->***********************************/
 void StartClientResize (ClientData *pcd, XEvent *pev)
 {
@@ -2410,7 +2403,7 @@ void StartClientResize (ClientData *pcd, XEvent *pev)
 	ForceOnScreen(SCREEN_FOR_CLIENT(pcd), &pointerX, &pointerY);
 	if (wmGD.enableWarp)
 	{
-	    XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd), 
+	    XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd),
 		     0, 0, 0, 0, pointerX, pointerY);
 	}
     }
@@ -2432,7 +2425,7 @@ void StartClientResize (ClientData *pcd, XEvent *pev)
  *  ------
  *  pcd		- pointer to client data
  *  pev		- pointer to event
- * 
+ *
  *  Outputs:
  *  -------
  *  Return	- True if configuration was initiated, else False
@@ -2440,9 +2433,9 @@ void StartClientResize (ClientData *pcd, XEvent *pev)
  *
  *  Comments:
  *  --------
- *  o This should only be called as the result of a Move function 
+ *  o This should only be called as the result of a Move function
  *    being selected from the system menu.
- * 
+ *
  *************************************<->***********************************/
 Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 {
@@ -2464,12 +2457,12 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 
 	if (pev)
 	{
-	    grabbed = DoGrabs (grab_win, wmGD.configCursor, 
+	    grabbed = DoGrabs (grab_win, wmGD.configCursor,
 			PGRAB_MASK, pev->xbutton.time, pcd, False);
 	}
 	else
 	{
-	    grabbed = DoGrabs (grab_win, wmGD.configCursor, 
+	    grabbed = DoGrabs (grab_win, wmGD.configCursor,
 			PGRAB_MASK, CurrentTime, pcd, False);
 	}
 	if (!grabbed)
@@ -2480,8 +2473,8 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 	configGrab = TRUE;
     }
 
-    /* 
-     * Set up static variables for succeeding events if we're not 
+    /*
+     * Set up static variables for succeeding events if we're not
      * entering with a motion event. If we are, we assume that the
      * preMove variables have been setup.
      */
@@ -2492,7 +2485,7 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
     }
     else if ((pev && (pev->type != MotionNotify)) || !pev)
     {
-	if (!XQueryPointer (DISPLAY, ROOT_FOR_CLIENT(pcd), 
+	if (!XQueryPointer (DISPLAY, ROOT_FOR_CLIENT(pcd),
 		   &junk_win, &junk_win,
 		   &(wmGD.preMoveX), &(wmGD.preMoveY),
 		   &junk, &junk, (unsigned int *)&junk))
@@ -2521,8 +2514,8 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 	if (pcd->pSD->useIconBox && P_ICON_BOX(pcd))
 	{
 	    /* get root coords of icon box bulletin board */
-	    XTranslateCoordinates(DISPLAY, 
-	        XtWindow(P_ICON_BOX(pcd)->bBoardWidget), ROOT_FOR_CLIENT(pcd), 
+	    XTranslateCoordinates(DISPLAY,
+	        XtWindow(P_ICON_BOX(pcd)->bBoardWidget), ROOT_FOR_CLIENT(pcd),
 	        0, 0, &moveIBbbX, &moveIBbbY, &child);
 
 	    moveX += moveIBbbX;
@@ -2535,7 +2528,7 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 	    HideActiveIconText ((WmScreenData *)NULL);
 	}
     }
-    else 
+    else
     {
 	if (pcd->maxConfig) {	/* maximized */
 	    moveWidth = pcd->maxWidth;
@@ -2566,11 +2559,11 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
 	moveLastPointerX = moveX + moveWidth/2;
 	moveLastPointerY = moveY + moveHeight/2;
 
-	ForceOnScreen (SCREEN_FOR_CLIENT(pcd), 
+	ForceOnScreen (SCREEN_FOR_CLIENT(pcd),
 		       &moveLastPointerX, &moveLastPointerY);
 	if (wmGD.enableWarp)
 	{
-	    XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd), 0, 0, 0, 0, 
+	    XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd), 0, 0, 0, 0,
 		moveLastPointerX, moveLastPointerY);
 	}
     }
@@ -2578,15 +2571,15 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
     /* pop up feedback window */
     if ( !wmGD.movingIcon && (wmGD.showFeedback & WM_SHOW_FB_MOVE))
     {
-	DoFeedback (pcd, moveX, moveY, moveWidth, moveHeight, 
+	DoFeedback (pcd, moveX, moveY, moveWidth, moveHeight,
 		    FB_POSITION, FALSE /* no size checks */);
     }
-    
+
     /* set configuring data */
     wmGD.configAction = MOVE_CLIENT;
     if (pev && pev->type != KeyPress)
 	wmGD.configButton = pev->xbutton.button;
-    else 
+    else
 	wmGD.configButton = 0;
 
 
@@ -2609,17 +2602,17 @@ Boolean StartClientMove (ClientData *pcd, XEvent *pev)
  *  Inputs:
  *  ------
  *  None
- *  
+ *
  *  Outputs:
  *  -------
  *  None
- *  
+ *
  *  Comments
  *  -------
  *  This will only get called when an automated test is running. The
  *  purpose of this is to prevent mwm from grbbing the server, since
  *  this confuses the automation input synthesis code
- *  
+ *
  *************************************<->***********************************/
 void SetGrabServer (void)
 {
@@ -2644,15 +2637,15 @@ void SetGrabServer (void)
  *  cursor	- cursor shape to attach to the pointer
  *  pmask	-
  *  grabTime	- time stamp
- *  alwaysGrab  - 
+ *  alwaysGrab  -
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTime, ClientData *pCD, Boolean alwaysGrab)
 {
@@ -2673,7 +2666,7 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
 	/*
 	 * Confine the pointer to the icon box clip window
 	 */
-	if (XGrabPointer(DISPLAY, 
+	if (XGrabPointer(DISPLAY,
 			 grab_win,
 			 FALSE,			/* owner_events */
 			 pmask,
@@ -2683,7 +2676,7 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
 			 XtWindow(P_ICON_BOX(pCD)->clipWidget),
 			 cursor,
 			 grabTime) != GrabSuccess)
-	{	
+	{
 	    return(FALSE);
 	}
     }
@@ -2692,7 +2685,7 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
 	/*
 	 * Just confine the pointer to the root window
 	 */
-	if (XGrabPointer(DISPLAY, 
+	if (XGrabPointer(DISPLAY,
 			 grab_win,
 			 FALSE,			/* owner_events */
 			 pmask,
@@ -2711,12 +2704,12 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
     }
 
     /*
-     * Don't grab keyboard away from menu widget to prevent 
+     * Don't grab keyboard away from menu widget to prevent
      * hosing of traversal.
      */
-    if (!wmGD.menuActive) 
+    if (!wmGD.menuActive)
     {
-	if ((XGrabKeyboard(DISPLAY, 
+	if ((XGrabKeyboard(DISPLAY,
 			   grab_win,
 			   FALSE,			/* owner_events */
 			   GrabModeAsync,		/* pointer_mode */
@@ -2727,9 +2720,9 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
 	    return(FALSE);
 	}
     }
-    
-    
-	/* 
+
+
+	/*
 	 * If running automation version of mwm, do not grab the server, since
 	 * this will confuse the automation input synthesis code.
 	 */
@@ -2737,8 +2730,8 @@ Boolean DoGrabs (Window grab_win, Cursor cursor, unsigned int pmask, Time grabTi
 if (grabServer == TRUE)
 # endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-    if (wmGD.freezeOnConfig) 
-	
+    if (wmGD.freezeOnConfig)
+
     {
 #ifdef WSM
 	if (!pCD || ((pCD->pSD->moveOpaque && alwaysGrab) ||
@@ -2751,7 +2744,7 @@ if (grabServer == TRUE)
 	    XGrabServer(DISPLAY);
         }
     }
-    
+
     return(TRUE);
 } /* END OF FUNCTION DoGrabs   */
 
@@ -2769,13 +2762,13 @@ if (grabServer == TRUE)
  *  Inputs:
  *  ------
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void UndoGrabs (void)
 {
@@ -2789,7 +2782,7 @@ void UndoGrabs (void)
     }
 
     /*
-     * Don't Ungrab keyboard away from menu widget to prevent 
+     * Don't Ungrab keyboard away from menu widget to prevent
      * hosing of traversal.
      */
     if (!wmGD.menuActive)
@@ -2816,14 +2809,14 @@ void UndoGrabs (void)
  *  ------
  *  pcd 	- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void CancelFrameConfig (ClientData *pcd)
 {
@@ -2847,7 +2840,7 @@ void CancelFrameConfig (ClientData *pcd)
     }
     if ((pcd->pSD->moveOpaque) &&
 	(wmGD.configAction == MOVE_CLIENT))
-	
+
     {
 	if ((pcd->clientState == MINIMIZED_STATE) &&
 	    (!(pcd->pSD->useIconBox && P_ICON_BOX(pcd))))
@@ -2865,7 +2858,7 @@ void CancelFrameConfig (ClientData *pcd)
 	}
 	else if (! wmGD.movingIcon) /* we are not moving in the iconbox */
 	{
-	    XMoveWindow (DISPLAY, pcd->clientFrameWin, 
+	    XMoveWindow (DISPLAY, pcd->clientFrameWin,
 			 opaqueMoveX, opaqueMoveY);
 	}
     }
@@ -2873,7 +2866,7 @@ void CancelFrameConfig (ClientData *pcd)
     }
     if (wmGD.configAction == MARQUEE_SELECT)
     {
-       dtSendMarqueeSelectionNotification(ACTIVE_PSD, DT_MARQUEE_SELECT_CANCEL, 
+       dtSendMarqueeSelectionNotification(ACTIVE_PSD, DT_MARQUEE_SELECT_CANCEL,
 			    marqueeX, marqueeY, 0, 0);
     }
 #endif /* WSM */
@@ -2883,7 +2876,7 @@ void CancelFrameConfig (ClientData *pcd)
     if (pcd)
 #endif /* WSM */
     if (!anyMotion && wmGD.enableWarp) {
-	XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd), 
+	XWarpPointer(DISPLAY, None, ROOT_FOR_CLIENT(pcd),
 			 0, 0, 0, 0, wmGD.preMoveX, wmGD.preMoveY);
     }
     anyMotion = FALSE;
@@ -2894,9 +2887,9 @@ void CancelFrameConfig (ClientData *pcd)
     wmGD.configSet = False;
     configGrab = FALSE;
     wmGD.movingIcon = FALSE;
-    
+
     /* set the focus back to a reasonable window */
-    RepairFocus ();	
+    RepairFocus ();
 } /* END OF FUNCTION  CancelFrameConfig */
 
 
@@ -2915,7 +2908,7 @@ void CancelFrameConfig (ClientData *pcd)
  *  ------
  *  pcd  - pointer to client data
  *  pev	 - pointer to key event that caused cancel
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -2923,7 +2916,7 @@ void CancelFrameConfig (ClientData *pcd)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void
 CheckEatButtonRelease (ClientData *pcd, XEvent *pev)
@@ -2949,10 +2942,10 @@ CheckEatButtonRelease (ClientData *pcd, XEvent *pev)
 	(pev->xbutton.state & ButtonMask))
     {
 	/*
-	 * Some buttons are down... 
+	 * Some buttons are down...
 	 * Set up conditions to wait for these buttons to go up.
 	 */
-	if (XGrabPointer(DISPLAY, 
+	if (XGrabPointer(DISPLAY,
 			 grab_win,
 			 False,			/* owner_events */
 			 ButtonReleaseMask,
@@ -2985,7 +2978,7 @@ CheckEatButtonRelease (ClientData *pcd, XEvent *pev)
  *  Inputs:
  *  ------
  *  releaseButtons = button mask of button releases to eat
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -2993,7 +2986,7 @@ CheckEatButtonRelease (ClientData *pcd, XEvent *pev)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void
 EatButtonRelease (unsigned int releaseButtons)
@@ -3011,7 +3004,7 @@ EatButtonRelease (unsigned int releaseButtons)
 	if (event.type == ButtonRelease)
 	{
 	    /* look at the state after this button is released */
-	    new_state = 
+	    new_state =
 		event.xbutton.state & ~ButtonStateBit(event.xbutton.button);
 
 	    if (!(new_state & releaseButtons))
@@ -3042,17 +3035,17 @@ EatButtonRelease (unsigned int releaseButtons)
  *  Inputs:
  *  ------
  *  button = button number (Button1, Button2, etc.)
- * 
+ *
  *  Outputs:
  *  -------
- *  Return = bit used in xbutton state field 
+ *  Return = bit used in xbutton state field
  *		(Button1Mask, Button2Mask,...)
  *
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 unsigned int
 ButtonStateBit (unsigned int button)
@@ -3100,15 +3093,15 @@ ButtonStateBit (unsigned int button)
  *  Inputs:
  *  ------
  *  frame_part	- frame part id
- * 
+ *
  *  Outputs:
  *  -------
- *  return	- cursor to use 
+ *  return	- cursor to use
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Cursor ConfigCursor (int frame_part)
 {
@@ -3160,20 +3153,20 @@ Cursor ConfigCursor (int frame_part)
  *
  *  Inputs:
  *  ------
- *  grab_win	- 
+ *  grab_win	-
  *  grabTime	- time stamp
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void ReGrabPointer (Window grab_win, Time grabTime)
 {
-    XGrabPointer(DISPLAY, 
+    XGrabPointer(DISPLAY,
 		 grab_win,
 		 FALSE,			/* owner_events */
 		 PGRAB_MASK,
@@ -3203,7 +3196,7 @@ void ReGrabPointer (Window grab_win, Time grabTime)
  *  pcd 	- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return	- TRUE if wmGD.configPart is a valid resize part
@@ -3327,7 +3320,7 @@ Boolean SetPointerResizePart (ClientData *pcd, XEvent *pev)
  *
  *  Description:
  *  -----------
- *  Returns a resize part ID for an event outside of the current 
+ *  Returns a resize part ID for an event outside of the current
  *  resize area.
  *
  *
@@ -3336,7 +3329,7 @@ Boolean SetPointerResizePart (ClientData *pcd, XEvent *pev)
  *  pcd 	- pointer to client data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -3369,9 +3362,9 @@ int ResizeType (ClientData *pcd, XEvent *pev)
 	    return (FRAME_RESIZE_NW);
 	else if (y >= resizeY + resizeHeight -(int)pcd->frameInfo.cornerHeight)
 	    return (FRAME_RESIZE_SW);
-	else 
+	else
 	    return (FRAME_RESIZE_W);
-    } 
+    }
 
     /* right side */
     if (x >= resizeX + resizeWidth - 1) {
@@ -3379,9 +3372,9 @@ int ResizeType (ClientData *pcd, XEvent *pev)
 	    return (FRAME_RESIZE_NE);
 	else if (y >= resizeY + resizeHeight -(int)pcd->frameInfo.cornerHeight)
 	    return (FRAME_RESIZE_SE);
-	else 
+	else
 	    return (FRAME_RESIZE_E);
-    } 
+    }
 
     /* top side */
     if (y <= resizeY) {
@@ -3389,9 +3382,9 @@ int ResizeType (ClientData *pcd, XEvent *pev)
 	    return (FRAME_RESIZE_NW);
 	else if (x >= resizeX + resizeWidth - (int)pcd->frameInfo.cornerWidth)
 	    return (FRAME_RESIZE_NE);
-	else 
+	else
 	    return (FRAME_RESIZE_N);
-    } 
+    }
 
     /* bottom side */
     if (y >= resizeY + resizeHeight - 1) {
@@ -3399,9 +3392,9 @@ int ResizeType (ClientData *pcd, XEvent *pev)
 	    return (FRAME_RESIZE_SW);
 	else if (x >= resizeX + resizeWidth - (int)pcd->frameInfo.cornerWidth)
 	    return (FRAME_RESIZE_SE);
-	else 
+	else
 	    return (FRAME_RESIZE_S);
-    } 
+    }
 
     return(FRAME_NONE);
 
@@ -3429,7 +3422,7 @@ int ResizeType (ClientData *pcd, XEvent *pev)
  *  pfHeight	- pointer to frame height
  *  resizing      - check size constraints iff TRUE
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *pfX	- fixed up frame x-coord
@@ -3442,9 +3435,9 @@ int ResizeType (ClientData *pcd, XEvent *pev)
  *  --------
  *  1. This could be more efficient
  *  2. Interactive resize with aspect ratio constraints may cause part of the
- *     outline to disappear off screen.  The critical case is when the title 
- *     bar disappears ABOVE the screen. 
- * 
+ *     outline to disappear off screen.  The critical case is when the title
+ *     bar disappears ABOVE the screen.
+ *
  *************************************<->***********************************/
 
 void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth, unsigned int *pfHeight, Boolean resizing)
@@ -3453,14 +3446,14 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
     unsigned int oWidth, oHeight;
 
 
-    /* 
+    /*
      * Fix size if resizing and not icon.
      */
 
     if (resizing && !wmGD.movingIcon)
     {
 	FrameToClient(pcd, pfX, pfY, pfWidth, pfHeight);
-    
+
 	oWidth = *pfWidth;
 	oHeight = *pfHeight;
 
@@ -3471,8 +3464,8 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
 	ClientToFrame(pcd, pfX, pfY, pfWidth, pfHeight);
     }
 
-    /* 
-     * Don't move if we'd end up totally offscreen 
+    /*
+     * Don't move if we'd end up totally offscreen
      */
 
     if (wmGD.movingIcon)
@@ -3487,7 +3480,7 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
 
     if (wmGD.movingIcon && P_ICON_BOX(pcd))
     {
-	/* 
+	/*
 	 *  Constrain outline to icon box
 	 */
 	/* left edge of outline */
@@ -3517,8 +3510,8 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
     }
     else
     {
-	/* 
-	 * keep outline on screen 
+	/*
+	 * keep outline on screen
 	 */
 
 
@@ -3535,18 +3528,18 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
 	}
 
 	/* keep left border on screen */
-	if (*pfX > (DisplayWidth(DISPLAY, SCREEN_FOR_CLIENT(pcd)) - 
+	if (*pfX > (DisplayWidth(DISPLAY, SCREEN_FOR_CLIENT(pcd)) -
 	    (int) lswidth))
 	{
-	    *pfX = DisplayWidth(DISPLAY, SCREEN_FOR_CLIENT(pcd)) - 
+	    *pfX = DisplayWidth(DISPLAY, SCREEN_FOR_CLIENT(pcd)) -
 		(int) lswidth;
 	}
 
 	/* keep top border on screen */
-	if (*pfY > (DisplayHeight(DISPLAY,SCREEN_FOR_CLIENT(pcd)) - 
+	if (*pfY > (DisplayHeight(DISPLAY,SCREEN_FOR_CLIENT(pcd)) -
 	    (int) lswidth))
 	{
-	    *pfY = DisplayHeight(DISPLAY, SCREEN_FOR_CLIENT(pcd)) - 
+	    *pfY = DisplayHeight(DISPLAY, SCREEN_FOR_CLIENT(pcd)) -
 		 (int) lswidth;
 	}
     }
@@ -3570,7 +3563,7 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
  *  screen	- screen number
  *  pX		- pointer to x-coord
  *  pY		- pointer to y-coord
- * 
+ *
  *  Outputs:
  *  -------
  *  *pX		- x-coord (on screen)
@@ -3580,7 +3573,7 @@ void FixFrameValues (ClientData *pcd, int *pfX, int *pfY, unsigned int *pfWidth,
  *  Comments:
  *  --------
  *  XXComments ...
- * 
+ *
  *************************************<->***********************************/
 void ForceOnScreen (int screen, int *pX, int *pY)
 {
@@ -3604,7 +3597,7 @@ void ForceOnScreen (int screen, int *pX, int *pY)
  *
  *  Description:
  *  -----------
- *  Attempt to set the pointer to position at newX, newY. 
+ *  Attempt to set the pointer to position at newX, newY.
  *
  *
  *  Inputs:
@@ -3612,7 +3605,7 @@ void ForceOnScreen (int screen, int *pX, int *pY)
  *  newX	- X-coordinate to set pointer at
  *  newY	- Y-coordinate to set pointer at
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *actualX	- actual X-coord of pointer on return
@@ -3620,7 +3613,7 @@ void ForceOnScreen (int screen, int *pX, int *pY)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void SetPointerPosition (int newX, int newY, int *actualX, int *actualY)
 {
@@ -3632,7 +3625,7 @@ void SetPointerPosition (int newX, int newY, int *actualX, int *actualY)
      */
     if (wmGD.enableWarp)
     {
-	XWarpPointer(DISPLAY, None, ACTIVE_ROOT, 
+	XWarpPointer(DISPLAY, None, ACTIVE_ROOT,
 	     0, 0, 0, 0, newX, newY);
     }
 
@@ -3642,8 +3635,8 @@ void SetPointerPosition (int newX, int newY, int *actualX, int *actualY)
      * NOTE: if we are not warping, we don't want to do the Query pointer,
      *       hence enableWarp is tested first.
      */
-    if (!wmGD.enableWarp || 
-        !XQueryPointer (DISPLAY, ACTIVE_ROOT, &junk_win, &junk_win, 
+    if (!wmGD.enableWarp ||
+        !XQueryPointer (DISPLAY, ACTIVE_ROOT, &junk_win, &junk_win,
 		actualX, actualY, &junk, &junk, (unsigned int *)&junk))
 
     {
@@ -3658,7 +3651,7 @@ void SetPointerPosition (int newX, int newY, int *actualX, int *actualY)
 
 /*************************************<->*************************************
  *
- *  GetConfigEvent (display, window, mask, curX, curY, oX, oY, 
+ *  GetConfigEvent (display, window, mask, curX, curY, oX, oY,
  *     oWidth, oHeight, pev,)
  *
  *
@@ -3679,14 +3672,14 @@ void SetPointerPosition (int newX, int newY, int *actualX, int *actualY)
  *  oY		- Y value of outline
  *  oWidth	- width of outline
  *  oHeight	- height of outline
- * 
+ *
  *  Outputs:
  *  -------
  *  *pev	- event returned.
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void GetConfigEvent (Display *display, Window window, unsigned long mask, int curX, int curY, int oX, int oY, unsigned oWidth, unsigned oHeight, XEvent *pev)
 {
@@ -3700,8 +3693,8 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 
     while (!eventToReturn)
     {
-	/* 
-	 * Suck up pointer motion events 
+	/*
+	 * Suck up pointer motion events
 	 */
 	gotEvent = False;
 	while (XCheckWindowEvent(display, window, mask, pev))
@@ -3712,7 +3705,7 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 	}
 
 	/*
-	 * Only poll if we are warping the pointer. 
+	 * Only poll if we are warping the pointer.
 	 * (uses PointerMotionHints exclusively).
 	 */
 	polling = wmGD.enableWarp;
@@ -3721,26 +3714,26 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 	if (!gotEvent && (polling || !wmGD.freezeOnConfig))
 	{
 	    /*
-             * poll for events and flash the frame outline 
+             * poll for events and flash the frame outline
 	     * if not move opaque
 	     */
 
 	    while (True)
 	    {
-		if (XCheckWindowEvent(display, window, 
+		if (XCheckWindowEvent(display, window,
 				      (mask & ~PointerMotionMask), pev))
 		{
 		    gotEvent = True;
 		    break;
 		}
-		
+
 		if (!wmGD.freezeOnConfig && !wmGD.pActiveSD->moveOpaque)
 		{
                     /* flash the outline if server is not grabbed */
 		    MoveOutline (oX, oY, oWidth, oHeight);
 		}
 
-		if (!XQueryPointer (display, window, &root_ret, &child_ret, 
+		if (!XQueryPointer (display, window, &root_ret, &child_ret,
 			&root_x, &root_y, &win_x, &win_y, &mask_ret))
 		{
 		    continue;	/* query failed, try again */
@@ -3748,10 +3741,10 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 
 		if ((root_x != curX) || (root_y != curY))
 		{
-		    /* 
+		    /*
 		     * Pointer moved to a new position.
-		     * Cobble a motion event together. 
-		     * NOTE: SOME FIELDS NOT SET !!! 
+		     * Cobble a motion event together.
+		     * NOTE: SOME FIELDS NOT SET !!!
 		     */
 
 		    pev->type = MotionNotify;
@@ -3776,21 +3769,21 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 		{
 		    if (!(--pollCount))
 		    {
-			/* 
+			/*
 			 * No pointer motion in some time. Stop polling
 			 * and wait for next event.
 			 */
 			polling = False;
-			break; /* from while loop */ 
+			break; /* from while loop */
 		    }
 		}
 	    }  /* end while */
 	}
 
-	if (!gotEvent && !polling && wmGD.freezeOnConfig) 
+	if (!gotEvent && !polling && wmGD.freezeOnConfig)
 	{
-	    /* 
-	     * Wait for next event on window 
+	    /*
+	     * Wait for next event on window
 	     */
 
 	    XWindowEvent (display, window, mask, pev);
@@ -3803,11 +3796,11 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
 	    if (pev->type == MotionNotify &&
 		pev->xmotion.is_hint == NotifyHint)
 	    {
-		/* 
-		 * "Ack" the motion notify hint 
+		/*
+		 * "Ack" the motion notify hint
 		 */
-		if ((XQueryPointer (display, window, &root_ret, 
-			&child_ret, &root_x, &root_y, &win_x, 
+		if ((XQueryPointer (display, window, &root_ret,
+			&child_ret, &root_x, &root_y, &win_x,
 			&win_y, &mask_ret)) &&
 		    ((root_x != curX) ||
 		     (root_y != curY)))
@@ -3857,15 +3850,15 @@ void GetConfigEvent (Display *display, Window window, unsigned long mask, int cu
  *  width	- width of outline.
  *  height	- height of outline.
  *  fatness	- pixel-width of outline
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *  o Be sure that pOutline points to a big enough area of memory 
+ *  o Be sure that pOutline points to a big enough area of memory
  *    for the outline to be set!
- * 
+ *
  *************************************<->***********************************/
 
 void SetOutline (XSegment *pOutline, int x, int y, unsigned int width, unsigned int height, int fatness)
@@ -3924,19 +3917,19 @@ void SetOutline (XSegment *pOutline, int x, int y, unsigned int width, unsigned 
  *  oWidth, oHeight -- original dimensions
  *  nWidth, nHeight -- new dimensions
  *  wmGD.configPart
- * 
+ *
  *  Outputs:
  *  -------
  *  pX, pY -- pointers to adjusted positions
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void AdjustPos (int *pX, int *pY, unsigned int oWidth, unsigned int oHeight, unsigned int nWidth, unsigned int nHeight)
 {
-    switch (wmGD.configPart) 
+    switch (wmGD.configPart)
     {
         case FRAME_RESIZE_NW:
 	    /* anchor lower right corner */
@@ -4001,17 +3994,17 @@ void AdjustPos (int *pX, int *pY, unsigned int oWidth, unsigned int oHeight, uns
  *
  *  Outputs:
  *  -------
- *  Return 	- window 
+ *  Return 	- window
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Window GrabWin (ClientData *pcd, XEvent *pev)
 {
     Window grab_win;
-    
+
     /*
      * The grab window is the icon if the client is minimized
      * or if the event was on a "normalized" icon in the icon box.
@@ -4066,7 +4059,7 @@ Window GrabWin (ClientData *pcd, XEvent *pev)
  *  --------
  *  Selection info is dumped into a root window property:
  *    _DT_MARQUEE_SELECTION
- * 
+ *
  *************************************<->***********************************/
 void
 HandleMarqueeSelect (WmScreenData *pSD, XEvent *pev)
@@ -4084,7 +4077,7 @@ HandleMarqueeSelect (WmScreenData *pSD, XEvent *pev)
 	{
 	    pev = &event;
 
-	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK, 
+	    GetConfigEvent(DISPLAY, grab_win, CONFIG_MASK,
 		pointerX, pointerY, resizeX, resizeY,
 		resizeWidth, resizeHeight, &event);
 	}
@@ -4097,8 +4090,8 @@ HandleMarqueeSelect (WmScreenData *pSD, XEvent *pev)
 	}
 	else if (pev->type == KeyPress) {
 
-	    /* 
-	     * Handle key event. 
+	    /*
+	     * Handle key event.
 	     */
 	    bDone = HandleMarqueeKeyPress (pSD, pev);
 	}
@@ -4142,14 +4135,14 @@ HandleMarqueeSelect (WmScreenData *pSD, XEvent *pev)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void
 StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
@@ -4161,20 +4154,20 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
 
     if (!pSD->bMarqueeSelectionInitialized)
     {
-	/* 
+	/*
 	 * If we haven't initialized the marquee selection messaging
 	 * then do so here before we do any grabs. Sending a dummy
 	 * message will do.
 	 *
 	 * (If we move off of ICCCM messaging, then this can go away.)
 	 */
-	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_END, 
+	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_END,
 				0, 0, 0, 0);
 	pSD->bMarqueeSelectionInitialized = True;
     }
 
     /*
-     *	Do our grabs 
+     *	Do our grabs
      */
     if (!configGrab)
     {
@@ -4182,12 +4175,12 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
 
 	if (pev)
 	{
-	    grabbed = DoGrabs (grab_win, wmGD.configCursor, 
+	    grabbed = DoGrabs (grab_win, wmGD.configCursor,
 			PGRAB_MASK, pev->xbutton.time, NULL, True);
 	}
 	else
 	{
-	    grabbed = DoGrabs (grab_win, wmGD.configCursor, 
+	    grabbed = DoGrabs (grab_win, wmGD.configCursor,
 			PGRAB_MASK, CurrentTime, NULL, True);
 	}
 	if (!grabbed)
@@ -4202,8 +4195,8 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
 	return;
     }
 
-    /* 
-     * Set up static variables for succeeding events 
+    /*
+     * Set up static variables for succeeding events
      */
     if ((pev->type == ButtonPress) || (pev->type == ButtonRelease))
     {
@@ -4212,7 +4205,7 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
     }
     else if (!XQueryPointer (DISPLAY, pSD->rootWindow,
 			&junk_win, &junk_win,
-		   	&pointerX, &pointerY, 
+		   	&pointerX, &pointerY,
 			&junk, &junk, (unsigned int *)&junk))
     {
 	CancelFrameConfig ((ClientData *)NULL);	/* release grabs */
@@ -4233,7 +4226,7 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
     wmGD.configAction = MARQUEE_SELECT;
     wmGD.configButton = pev ? pev->xbutton.button: 0;
 
-    dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_BEGIN, 
+    dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_BEGIN,
 	    marqueeX, marqueeY, marqueeWidth, marqueeHeight);
 
 } /* END OF FUNCTION StartMarqueeSelect  */
@@ -4250,7 +4243,7 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
  *  Inputs:
  *  ------
  *  pSD		- pointer to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -4261,8 +4254,8 @@ StartMarqueeSelect(WmScreenData *pSD, XEvent *pev)
 void UpdateMarqueeSelectData (WmScreenData *pSD)
 {
     /* validate and update anchor point and marquee data */
-    
-    switch (marqueeAnchor) 
+
+    switch (marqueeAnchor)
     {
       case ANCHOR_NW:
 	marqueeWidth = pointerX - marqueeX;
@@ -4385,7 +4378,7 @@ void UpdateMarqueeSelectData (WmScreenData *pSD)
         ((ABS(marqueeWidth-marqueeWidth0) > wmGD.marqueeSelectGranularity) ||
 	 (ABS(marqueeHeight-marqueeHeight0)>wmGD.marqueeSelectGranularity)))
     {
-	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_CONTINUE, 
+	dtSendMarqueeSelectionNotification(pSD, DT_MARQUEE_SELECT_CONTINUE,
 		marqueeX, marqueeY, marqueeWidth, marqueeHeight);
 
 	marqueeWidth0 = marqueeWidth;
@@ -4409,15 +4402,15 @@ void UpdateMarqueeSelectData (WmScreenData *pSD)
  *  pSD 	- pointer to screen data
  *  pev		- pointer to event
  *
- * 
+ *
  *  Outputs:
  *  -------
- *  Return	- True if this event completes (or cancels) resizing 
- * 
- * 
- *  Comments: 
+ *  Return	- True if this event completes (or cancels) resizing
+ *
+ *
+ *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Boolean HandleMarqueeKeyPress (WmScreenData *pSD, XEvent *pev)
 {
@@ -4427,11 +4420,11 @@ Boolean HandleMarqueeKeyPress (WmScreenData *pSD, XEvent *pev)
     XEvent KeyEvent;
 
     /*
-     * Compress repeated keys 
+     * Compress repeated keys
      */
     keyMult = 1;
-    while (keyMult <= 10 && 
-	      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent, 
+    while (keyMult <= 10 &&
+	      XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent,
 	      (char *) pev))
     {
 	  keyMult++;
@@ -4469,7 +4462,6 @@ Boolean HandleMarqueeKeyPress (WmScreenData *pSD, XEvent *pev)
  *  Used insted of depricated function of Xlib XKeycodeToKeysym.
  *
  *************************************<->***********************************/
-#ifdef FIX_1611
 KeySym WmKeycodeToKeysym(Display *display, KeyCode keycode)
  { int keysyms_per_keycode = 0;
    int min_keycode = 0;
@@ -4477,8 +4469,8 @@ KeySym WmKeycodeToKeysym(Display *display, KeyCode keycode)
    /* Allowable keycodes range */
    XDisplayKeycodes(display, &min_keycode, &max_keycode);
    KeySym keysym = NoSymbol;
-    
-   if ((keycode >= min_keycode) && (keycode <= max_keycode)) 
+
+   if ((keycode >= min_keycode) && (keycode <= max_keycode))
      { KeySym *keysymTab = XGetKeyboardMapping(display, keycode, 1, &keysyms_per_keycode);
        if ((keysymTab != NULL) && (keysyms_per_keycode > 0))
          { keysym = keysymTab[0];
@@ -4487,5 +4479,4 @@ KeySym WmKeycodeToKeysym(Display *display, KeyCode keycode)
      }
    return keysym;
  }
-#endif /* FIX_1611 */
 

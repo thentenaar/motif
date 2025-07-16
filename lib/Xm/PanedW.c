@@ -125,11 +125,7 @@ static int NeedsAdjusting(
                         register XmPanedWindowWidget pw) ;
 static XtGeometryResult AdjustPanedWindowMajor(
                         XmPanedWindowWidget pw,
-#if NeedWidePrototypes
-                        int newdim,
-#else
                         Dimension newdim,
-#endif /* NeedWidePrototypes */
                         Dimension *reply_dim) ;
 static void ResetDMajors(
                         XmPanedWindowWidget pw) ;
@@ -137,13 +133,8 @@ static void RefigureLocations(
                         register XmPanedWindowWidget pw,
                         int c_index,
                         Direction dir,
-#if NeedWidePrototypes
-                        int rflag,
-			int sflag) ;
-#else
                         Boolean rflag,
                         Boolean sflag) ;
-#endif /* NeedWidePrototypes */
 static void CommitNewLocations(
                         XmPanedWindowWidget pw,
                         Widget instigator) ;
@@ -151,11 +142,7 @@ static void RefigureLocationsAndCommit(
                         XmPanedWindowWidget pw,
                         int c_index,
                         Direction dir,
-#if NeedWidePrototypes
-                        int rflag) ;
-#else
                         Boolean rflag) ;
-#endif /* NeedWidePrototypes */
 static void DrawTrackLines(
                         XmPanedWindowWidget pw) ;
 static void EraseTrackLines(
@@ -467,7 +454,6 @@ externaldef(xmpanedwindowwidgetclass) WidgetClass xmPanedWindowWidgetClass =
  *     Set up the default sash indentation
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 SashIndentDefault(Widget widget,
 		  int offset,	/* unused */
@@ -505,7 +491,6 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 Initialize(
         Widget request,
@@ -868,11 +853,7 @@ NeedsAdjusting(
 static XtGeometryResult
 AdjustPanedWindowMajor(
         XmPanedWindowWidget pw,
-#if NeedWidePrototypes
-        int newdim,
-#else
         Dimension newdim,
-#endif /* NeedWidePrototypes */
         Dimension *reply_dim )
 {
     Dimension replyWidth, replyHeight;
@@ -944,13 +925,8 @@ RefigureLocations(
         register XmPanedWindowWidget pw,
         int c_index,
         Direction dir,
-#if NeedWidePrototypes
-        int rflag,
-        int sflag )
-#else
         Boolean rflag,
         Boolean sflag )
-#endif /* NeedWidePrototypes */
 {
     WidgetList children = pw->paned_window.managed_children;
     int num_panes = pw->paned_window.pane_count;
@@ -1183,11 +1159,7 @@ RefigureLocationsAndCommit(
         XmPanedWindowWidget pw,
         int c_index,
         Direction dir,
-#if NeedWidePrototypes
-        int rflag )
-#else
         Boolean rflag )
-#endif /* NeedWidePrototypes */
 {
     if (pw->paned_window.refiguremode) {
 	RefigureLocations(pw, c_index, dir, rflag, False);
@@ -1291,7 +1263,6 @@ EraseTrackLines(
  *    get too far behind the key event actions.
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static void
 ProcessKeyEvent(
         XtPointer client_data,
@@ -1379,7 +1350,6 @@ ProcessKeyEvent(
  *    the correct "top" pane is found by the "RefigureLocations" routine.
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static void
 HandleSash(
         Widget w,
@@ -1841,7 +1811,6 @@ GeometryManager(
  *  every child inserted into the paned_window window.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 ConstraintInit(
         Widget request,
@@ -2229,7 +2198,6 @@ ChangeManaged(
  *   -----------------
  *
  *************************************<->***********************************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
@@ -2403,7 +2371,6 @@ SetValues(
  *
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static Boolean
 PaneSetValues(
         Widget old,

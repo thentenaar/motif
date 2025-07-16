@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -136,13 +136,13 @@ DrawCross(Display *display,
 
   XSegment segs[6];
   Cardinal nsegs = 0;
-    
+
   segs[nsegs].x1 = left;
   segs[nsegs].y1 = top + 1;
   segs[nsegs].x2 = right - 1;
   segs[nsegs].y2 = bottom;
   nsegs++;
-	    
+
   segs[nsegs].x1 = left;
   segs[nsegs].y1 = top;
   segs[nsegs].x2 = right;
@@ -154,7 +154,7 @@ DrawCross(Display *display,
   segs[nsegs].x2 = right;
   segs[nsegs].y2 = bottom - 1;
   nsegs++;
-	    
+
   segs[nsegs].x1 = left;
   segs[nsegs].y1 = bottom - 1;
   segs[nsegs].x2 = right - 1;
@@ -166,7 +166,7 @@ DrawCross(Display *display,
   segs[nsegs].x2 = right;
   segs[nsegs].y2 = top;
   nsegs++;
-	    
+
   segs[nsegs].x1 = left + 1;
   segs[nsegs].y1 = bottom;
   segs[nsegs].x2 = right;
@@ -181,21 +181,13 @@ DrawCross(Display *display,
 
 /***********************XmeDrawDiamond**********************************/
 /*ARGSUSED*/
-void XmeDrawDiamond(Display *display, Drawable d, 
-                    GC top_gc, GC bottom_gc, GC center_gc, 
-#if NeedWidePrototypes
-                    int x, int y, 
-                    int width, 
-		    int height, /* unused */
-                    int shadow_thick,
-		    int margin)
-#else
-                    Position x, Position y, 
-                    Dimension width, 
+void XmeDrawDiamond(Display *display, Drawable d,
+                    GC top_gc, GC bottom_gc, GC center_gc,
+                    Position x, Position y,
+                    Dimension width,
        		    Dimension height, /* unused */
                     Dimension shadow_thick,
 	            Dimension margin)
-#endif /* NeedWidePrototypes */
 {
    XSegment seg[12];
    XPoint   pt[4];
@@ -214,11 +206,11 @@ void XmeDrawDiamond(Display *display, Drawable d,
        return ;
    } else
    if (width == 3) {
-       seg[0].x1 = x;                   
+       seg[0].x1 = x;
        seg[0].y1 = seg[0].y2 = y + 1;
        seg[0].x2 = x + 2;
 
-       seg[1].x1 = seg[1].x2 = x + 1;           
+       seg[1].x1 = seg[1].x2 = x + 1;
        seg[1].y1 = y ;
        seg[1].y2 = y + 2;
        XDrawSegments (display, d, top_gc, seg, 2);
@@ -296,11 +288,11 @@ void XmeDrawDiamond(Display *display, Drawable d,
 
    if (width == 5 || !center_gc) { _XmAppUnlock(app); return ; }   /* <= 5 in fact */
 
-   if (shadow_thick == 0) 
+   if (shadow_thick == 0)
      delta = -3 ;
-   else if (shadow_thick == 1) 
+   else if (shadow_thick == 1)
      delta = -1 ;
-   else 
+   else
      delta = margin;
 
    pt[0].x = x + 3 + delta;
@@ -309,7 +301,7 @@ void XmeDrawDiamond(Display *display, Drawable d,
    pt[1].y = y + 2 + delta;
    pt[2].x = x + width - 3 - delta;
    pt[3].y = y + width - 3 - delta;
-   
+
    XFillPolygon (display, d, center_gc, pt, 4, Convex, CoordModeOrigin);
    _XmAppUnlock(app);
 }
@@ -317,21 +309,14 @@ void XmeDrawDiamond(Display *display, Drawable d,
 
 
 /******************************XmeDrawIndicator**********************/
-void 
-XmeDrawIndicator(Display *display, 
-		 Drawable d, 
-		 GC gc, 
-#if NeedWidePrototypes
-		 int x, int y, 
-		 int width, int height, 
-		 int margin,
-		 int type)
-#else
-                 Position x, Position y, 
-                 Dimension width, Dimension height, 
+void
+XmeDrawIndicator(Display *display,
+		 Drawable d,
+		 GC gc,
+                 Position x, Position y,
+                 Dimension width, Dimension height,
                  Dimension margin,
                  XtEnum type)
-#endif /* NeedWidePrototypes */
 {
   _XmDisplayToAppContext(display);
 
@@ -341,7 +326,7 @@ XmeDrawIndicator(Display *display,
     case XmINDICATOR_CHECK:
       DrawCheckMark(display, d, gc, x, y, width, height, margin);
       break;
-	    
+
     case XmINDICATOR_CROSS:
       DrawCross(display, d, gc, x, y, width, height, margin);
       break;
@@ -355,21 +340,12 @@ XmeDrawCircle(Display *display,
 	      GC top_gc,
 	      GC bottom_gc,
 	      GC center_gc,
-#if NeedWidePrototypes
-	      int x,
-	      int y,
-	      int width,
-	      int height,
-	      int shadow_thick,
-	      int margin)
-#else
 	      Position x,
 	      Position y,
 	      Dimension width,
 	      Dimension height,
 	      Dimension shadow_thick,
 	      Dimension margin)
-#endif /* NeedWidePrototypes */
 {
   int line_width = MIN(shadow_thick, MIN(width, height) / 2);
   _XmDisplayToAppContext(display);
@@ -393,54 +369,37 @@ XmeDrawCircle(Display *display,
       XChangeGC(display, top_gc, mask, &new_values);
       XChangeGC(display, bottom_gc, mask, &new_values);
 
-#ifdef FIX_1402
       if (center_gc != NULL) {
     	  int delta = MIN(line_width + margin, MIN(width, height) / 2) -1;
     	  XFillArc(display, d, center_gc,
     			  x + delta, y + delta,
-    			  MAX(width - 2 * delta, 1), 
+    			  MAX(width - 2 * delta, 1),
     			  MAX(height - 2 * delta, 1),
     			  0, 360 * 64);
       }
-#endif
-      
+
       XDrawArc(display, d, top_gc,
-	       x + line_width/2, y + line_width/2, 
+	       x + line_width/2, y + line_width/2,
 	       MAX(width - line_width, 1),
 	       MAX(height - line_width, 1),
 	       45 * 64, 180 * 64);
       XDrawArc(display, d, bottom_gc,
-	       x + line_width/2, y + line_width/2, 
+	       x + line_width/2, y + line_width/2,
 	       MAX(width - line_width, 1),
 	       MAX(height - line_width, 1),
 	       45 * 64, -180 * 64);
 
       XChangeGC(display, top_gc, mask, &top_values);
       XChangeGC(display, bottom_gc, mask, &bottom_values);
-    }
-
-#ifdef FIX_1402
-  else {
+    } else {
 	  if (center_gc != NULL) {
 		  int delta = MIN(line_width + margin, MIN(width, height) / 2);
 		  XFillArc(display, d, center_gc,
 				  x + delta, y + delta,
-				  MAX(width - 2 * delta, 1), 
+				  MAX(width - 2 * delta, 1),
 				  MAX(height - 2 * delta, 1),
 				  0, 360 * 64);
 	  }
   }
-#else
-  if (center_gc != NULL)
-    {
-      /* Fill the center of the circle. */
-      int delta = MIN(line_width + margin, MIN(width, height) / 2);
-      XFillArc(display, d, center_gc,
-	       x + delta, y + delta,
-	       MAX(width - 2 * delta, 1), 
-	       MAX(height - 2 * delta, 1),
-	       0, 360 * 64);
-    }
-#endif
   _XmAppUnlock(app);
 }

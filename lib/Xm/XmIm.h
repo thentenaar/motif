@@ -1,5 +1,5 @@
 /* $XConsortium: XmIm.h /main/7 1996/05/21 12:13:36 pascale $ */
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
-/* 
+ */
+/*
  * HISTORY
- */ 
+ */
 #ifndef _XmIm_h
 #define _XmIm_h
 
@@ -35,46 +35,42 @@ extern "C" {
 
 /********    Public Function Declarations    ********/
 
-extern void XmImRegister( 
+extern void XmImRegister(
                         Widget w,
 			unsigned int reserved) ;
-extern void XmImUnregister( 
+extern void XmImUnregister(
                         Widget w) ;
-extern void XmImSetFocusValues( 
+extern void XmImSetFocusValues(
                         Widget w,
                         ArgList args,
                         Cardinal num_args) ;
-extern void XmImSetValues( 
+extern void XmImSetValues(
                         Widget w,
                         ArgList args,
                         Cardinal num_args) ;
-extern void XmImUnsetFocus( 
+extern void XmImUnsetFocus(
                         Widget w) ;
-extern XIM XmImGetXIM( 
+extern XIM XmImGetXIM(
                         Widget w) ;
 extern void XmImCloseXIM(
                         Widget w) ;
 
-extern int XmImMbLookupString( 
+extern int XmImMbLookupString(
                         Widget w,
                         XKeyPressedEvent *event,
                         char *buf,
                         int nbytes,
                         KeySym *keysym,
                         int *status) ;
-extern void XmImVaSetFocusValues( 
+extern void XmImVaSetFocusValues(
                         Widget w,
                         ...) ;
-extern void XmImVaSetValues( 
+extern void XmImVaSetValues(
                         Widget w,
                         ...) ;
 extern XIC XmImGetXIC(
 		        Widget 		w,
-#if NeedWidePrototypes
-		        unsigned int 	input_policy,
-#else
 		        XmInputPolicy	input_policy,
-#endif /*NeedWidePrototypes*/
 		        ArgList		args,
 		        Cardinal	num_args) ;
 extern XIC XmImSetXIC(
@@ -98,4 +94,3 @@ extern XIMResetState XmImGetXICResetState(
 #endif
 
 #endif /* _XmIm_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

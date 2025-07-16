@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmTextOutP_h
 #define _XmTextOutP_h
 
@@ -48,7 +48,7 @@ typedef struct _LineTableExtraRec {
     Boolean wrappedbychar;
 } LineTableExtraRec, *LineTableExtra ;
 
-/*         
+/*
  * output.c  (part of stext)
  */
 
@@ -123,9 +123,9 @@ typedef struct _OutputDataRec {
     GC save_gc;                 /* GC for saving/resotring under IBeam */
     short columns_set, rows_set; /* history of previously set dimensions */
 /* New for 2.0 */
-    XmRenderTable rendertable;  /* Alias for fontlist - only for resource 
+    XmRenderTable rendertable;  /* Alias for fontlist - only for resource
 				   setting */
-    GC cursor_gc;               /* 1-bit depth GC for creating the I-beam 
+    GC cursor_gc;               /* 1-bit depth GC for creating the I-beam
 				   stipples (normal & add mode) */
     int scrollheight;		/* Total height of text we have to display. */
     int voffset;		/* How much we've scrolled off the top. */
@@ -154,13 +154,8 @@ typedef void (*OutputCreateProc)(
 
 typedef XmTextPosition (*XYToPosProc)(
 			XmTextWidget,
-#if NeedWidePrototypes
-			int,
-			int) ;
-#else
 			Position,	/* These are relative to the */
 			Position) ;	/* innerwindow returned above. */
-#endif
 
 /*
  * Return the (x,y) coordinate corresponing to the given position.  If this

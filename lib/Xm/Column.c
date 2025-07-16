@@ -19,13 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
+#include <stdarg.h>
 #include <Xm/ColumnP.h>
 #include <Xm/RowColumn.h>
 #include <Xm/Label.h>
@@ -42,9 +43,9 @@ static void ClassPartInitialize(WidgetClass w_class);
 static Boolean SetValues(Widget, Widget, Widget, ArgList, Cardinal*);
 static void Destroy(Widget);
 static void Resize(Widget);
-static XtGeometryResult QueryGeometry(Widget, 
+static XtGeometryResult QueryGeometry(Widget,
         XtWidgetGeometry*, XtWidgetGeometry*);
-static XtGeometryResult GeometryManager(Widget, 
+static XtGeometryResult GeometryManager(Widget,
         XtWidgetGeometry*, XtWidgetGeometry*);
 static void ChangeManaged(Widget);
 static void ConstraintInitialize(Widget, Widget, ArgList, Cardinal*);
@@ -90,8 +91,8 @@ static Boolean CompareGeometryToWidget(
 	XtWidgetGeometry*, Widget
 
 );
-static void CheckSetEntryLabelRenderTable(Widget wid, int offs, XrmValue *value); 
-static void CheckSetDefaultEntryLabelRenderTable(Widget wid, int offs, XrmValue *value); 
+static void CheckSetEntryLabelRenderTable(Widget wid, int offs, XrmValue *value);
+static void CheckSetDefaultEntryLabelRenderTable(Widget wid, int offs, XrmValue *value);
 static void XmColumnLabelDestroyedCallback(
 	Widget, XtPointer, XtPointer
 );
@@ -265,7 +266,7 @@ static XtResource constraint_resources[] =
     XmRImmediate, (XtPointer) XmFILL_UNSPECIFIED
   },
 
-  { 
+  {
     XmNentryLabelType, XmCLabelType, XmRLabelType,
     sizeof(unsigned char), XtOffsetOf(XmColumnConstraintRec, column.label_type),
     XmRImmediate, (XtPointer) XmSTRING
@@ -288,7 +289,7 @@ static XtResource constraint_resources[] =
       sizeof(Boolean), XtOffsetOf(XmColumnConstraintRec, column.show_label),
       XmRImmediate, (XtPointer) True
   },
-  
+
   {
       XmNstretchable, XmCStretchable, XmRBoolean,
       sizeof(Boolean), XtOffsetOf(XmColumnConstraintRec, column.stretchable),
@@ -323,45 +324,45 @@ XmColumnClassRec xmColumnClassRec = {
   {
     /* core_class members      */
     /* superclass         */	(WidgetClass) &xmBulletinBoardClassRec,
-    /* class_name         */	"XmColumn",                            
+    /* class_name         */	"XmColumn",
     /* widget_size        */	sizeof(XmColumnRec),
     /* class_initialize   */	ClassInitialize,
     /* class_part_init    */	ClassPartInitialize,
-    /* class_inited       */	False,                            	
-    /* initialize         */	Initialize, 
-    /* initialize_hook    */	NULL,                             	
+    /* class_inited       */	False,
+    /* initialize         */	Initialize,
+    /* initialize_hook    */	NULL,
     /* realize            */	XtInheritRealize,
     /* actions            */	NULL,
     /* num_actions        */	0,
     /* resources          */	(XtResource*)resources,
-    /* num_resources      */	XtNumber(resources), 
-    /* xrm_class          */	NULLQUARK,                        
-    /* compress_motion    */	True,                             	
-    /* compress_exposure  */	True,                             	
-    /* compress_enterleave*/	True,                             	
-    /* visible_interest   */	False,                            
+    /* num_resources      */	XtNumber(resources),
+    /* xrm_class          */	NULLQUARK,
+    /* compress_motion    */	True,
+    /* compress_exposure  */	True,
+    /* compress_enterleave*/	True,
+    /* visible_interest   */	False,
     /* destroy            */	Destroy,
-    /* resize             */	Resize,                           
+    /* resize             */	Resize,
     /* expose             */	XtInheritExpose,
-    /* set_values         */	SetValues,                             
-    /* set_values_hook    */	NULL,                             
-    /* set_values_almost  */	XtInheritSetValuesAlmost,         
-    /* get_values_hook    */	NULL,                             	
-    /* accept_focus       */	NULL,                             
+    /* set_values         */	SetValues,
+    /* set_values_hook    */	NULL,
+    /* set_values_almost  */	XtInheritSetValuesAlmost,
+    /* get_values_hook    */	NULL,
+    /* accept_focus       */	NULL,
     /* version            */	XtVersion,
-    /* callback_private   */	NULL,                             
+    /* callback_private   */	NULL,
     /* tm_table           */	XtInheritTranslations,
-    /* query_geometry     */	(XtGeometryHandler) QueryGeometry, 
-    /* display_accelerator*/	NULL,                             
-    /* extension          */	NULL,                             
+    /* query_geometry     */	(XtGeometryHandler) QueryGeometry,
+    /* display_accelerator*/	NULL,
+    /* extension          */	NULL,
   },
   {
     /* composite_class members */
     /* geometry_manager   */	GeometryManager,
-    /* change_managed     */	ChangeManaged,                    
+    /* change_managed     */	ChangeManaged,
     /* insert_child       */	XtInheritInsertChild,
     /* delete_child       */	XtInheritDeleteChild,
-    /* extension          */	NULL,                             
+    /* extension          */	NULL,
   },
   { /* constraint_class fields */
     /* resource list      */    (XtResource*)constraint_resources,
@@ -389,7 +390,7 @@ XmColumnClassRec xmColumnClassRec = {
   },
   {
     /* column class members */
-    /* extension            */	NULL,                                
+    /* extension            */	NULL,
   }
 };
 
@@ -431,18 +432,10 @@ ClassInitialize(void)
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void 
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmCOLUMN_BIT);
 }
-
-
 
 /*
  * Function:
@@ -459,13 +452,12 @@ ClassPartInitialize(WidgetClass w_class)
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 Initialize(Widget request, Widget set, ArgList arg_list, Cardinal *arg_cnt)
 {
     XmColumnWidget rc = (XmColumnWidget) request,
                    sc = (XmColumnWidget) set;
-    
+
     VerifyResources(rc, (XmColumnWidget) NULL, sc);
 
     if( rc->core.width == 0 )
@@ -492,7 +484,6 @@ Initialize(Widget request, Widget set, ArgList arg_list, Cardinal *arg_cnt)
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 Destroy(Widget widget)
 {
@@ -503,7 +494,7 @@ Destroy(Widget widget)
  * Function:
  *	Resize(widget)
  * Description:
- *	This function is called when an instance changes size.  This 
+ *	This function is called when an instance changes size.  This
  *	function needs to adjust the childrens sizes and positions
  *	appropriately for the new size.
  * Input:
@@ -518,8 +509,8 @@ Resize(Widget widget)
     XmColumnWidget cw = (XmColumnWidget) widget;
 
     XtWidgetProc resize;
-    
-    _XmProcessLock(); 
+
+    _XmProcessLock();
     resize = *sc->core_class.resize;
     _XmProcessUnlock();
     (* resize) (widget);
@@ -546,7 +537,6 @@ Resize(Widget widget)
  * Output:
  *	Boolean - True if the Column needs redisplayed, else False.
  */
-/* ARGSUSED */
 static Boolean
 SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 	  Cardinal *arg_cnt)
@@ -572,9 +562,9 @@ SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 	request_size = True;
     }
 
-    if( XmColumn_default_fill_style(cc) != XmColumn_default_fill_style(cs) 
+    if( XmColumn_default_fill_style(cc) != XmColumn_default_fill_style(cs)
 #if 0	/* POSITION HANDLING */
-	|| XmColumn_default_label_position(cc) != XmColumn_default_label_position(cs) 
+	|| XmColumn_default_label_position(cc) != XmColumn_default_label_position(cs)
 #endif
 	)
     {
@@ -647,7 +637,7 @@ SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 	    XmColumn_resize_done(cs) = False;
 	    XtMakeResizeRequest((Widget) cs, width, height, NULL, NULL);
 	}
-	
+
 	relayout = !XmColumn_resize_done(cs);
     }
 
@@ -777,12 +767,12 @@ GeometryManager(Widget widget, XtWidgetGeometry *request,
     Boolean          equal;
 
     /*
-     * Now being the mean manager that we are, we are only going to 
+     * Now being the mean manager that we are, we are only going to
      * allow our children to change geometry parts the affect their
      * size.  i.e. we will not even discuss with them their position,
      * this is mainly because we do not want to deal with it.
      */
-    
+
     *allowed = *request;
     allowed->request_mode = request->request_mode =
 	(request->request_mode & ~(CWX | CWY));
@@ -861,7 +851,7 @@ GeometryManager(Widget widget, XtWidgetGeometry *request,
 	XiC(widget)->request_width = allowed->width;
 	XiC(widget)->request_height = allowed->height;
 	XmColumn_resize_done(cw) = False;
-	
+
 	cur_width = XtWidth(cw);
 	cur_height = XtHeight(cw);
 	switch( XtMakeResizeRequest((Widget) cw, width, height,
@@ -869,7 +859,7 @@ GeometryManager(Widget widget, XtWidgetGeometry *request,
 	{
 	case XtGeometryYes:
 	    /*
-	     * It appears that our parent will has let us change to 
+	     * It appears that our parent will has let us change to
 	     * the size that we want to be, so lets see if we need to
 	     * call our resize procedure.
 	     */
@@ -947,7 +937,7 @@ ChangeManaged(Widget widget)
 
     for( i = 0; i < cw->composite.num_children; ++i, ++kid )
     {
-	if( !XiValidChild(*kid) ) 
+	if( !XiValidChild(*kid) )
 	{
 	  if( (*kid) != NULL && !XtIsManaged(*kid) )
 	    {	/* CR03731 */
@@ -957,9 +947,9 @@ ChangeManaged(Widget widget)
 	      XiC(*kid)->request_width = 0;
 	      XiC(*kid)->request_height = 0;
 	    }
-	    continue; 
+	    continue;
 	}
-	
+
 	label = XiC(*kid)->label_widget;
 	if( !XiC(*kid)->show_label )
 	{
@@ -972,7 +962,7 @@ ChangeManaged(Widget widget)
 		XtManageChild(label);
 	    }
 	    else
-	    {	
+	    {
 		XtUnmanageChild(label);
 	    }
 	}
@@ -994,10 +984,10 @@ ChangeManaged(Widget widget)
 		/* Unfortunately, XtWidth() and XtHeight() may not be valid in
 		** this case. The request_width and request_height values are
 		** used both to indicate real requested size and also, when 0,
-		** to indicate a label with particular geometry needs. 
+		** to indicate a label with particular geometry needs.
 		** However, if the code goes through ConstraintSetValues (in
 		** code generated by the Xcessory tools, constraint resources
-		** are set via set-values after widget creation) first, the 
+		** are set via set-values after widget creation) first, the
 		** sizes are 0 and are then set to 1 in VerticalLayout; then
 		** the code comes through here and updates the request values
 		** from the real widths -- 1 -- which are then set back on the
@@ -1007,12 +997,12 @@ ChangeManaged(Widget widget)
 		** Ideally we would cache the real initial requested value and
 		** update from that value.
 		**
-		** For now, rather than storing those values, query the 
+		** For now, rather than storing those values, query the
 		** label locally for its preferences and use those; the result
 		** should be that the size is set correctly (going through
 		** CalcSize and then VerticalLayout).
 		*/
-		
+
     		    XtWidgetGeometry wants;
 		    XtQueryGeometry(label, NULL, &wants);
 
@@ -1071,7 +1061,6 @@ ChangeManaged(Widget widget)
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 		     Cardinal *arg_cnt)
@@ -1088,7 +1077,7 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 	** revisiting; back out temporarily
 	*/
 	/*
-	** It is possible that the widget will have a constraint resource set 
+	** It is possible that the widget will have a constraint resource set
 	** on it before the XmColumn itself is realized (ChangeManaged is
 	** bypassed in that case), so that we enter the Layout code without
 	** having the values request_width and request_height set from the
@@ -1125,7 +1114,7 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 	XmFontList lfont;
 
 	VerifyConstraints(request, NULL, new_w);
-	
+
 	if( strlen(XtName(new_w)) > 240 )
 	{
 	    strncpy(buf, XtName(new_w), 240);
@@ -1200,7 +1189,6 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
  * Output:
  *	Boolean - True if the child needs to be redisplayed, else False.
  */
-/* ARGSUSED */
 static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget new_w,
 		    ArgList arg_list, Cardinal *arg_cnt)
@@ -1216,7 +1204,7 @@ ConstraintSetValues(Widget current, Widget request, Widget new_w,
 
     VerifyConstraints(request, current, new_w);
 
-    if( 
+    if(
 #if 0	/* POSITION HANDLING */
 	cc->label_position != sc->label_position ||
 #endif
@@ -1270,7 +1258,7 @@ ConstraintSetValues(Widget current, Widget request, Widget new_w,
 	    XtUnmanageChild(sc->label_widget);
 	}
     }
-    
+
     if( relayout && !XmColumn_resize_done(cw) )
     {
 	Layout(cw, NULL, NULL, -1, -1);
@@ -1307,7 +1295,7 @@ ConstraintDestroy(Widget widget)
  * Function:
  *      ConstraintGetValues
  * Description:
- *      The constraint get_values_hook method.  It makes copies of the 
+ *      The constraint get_values_hook method.  It makes copies of the
  *      XmNentryLabelString values to prevent returning internal
  *      XmString data.
  * Input:
@@ -1322,7 +1310,7 @@ ConstraintGetValues(Widget w, ArgList args, Cardinal *num_args)
 {
     XrmQuark                    quark;
     int                         i;
-    
+
     quark = XrmStringToQuark(XmNentryLabelString);
     for (i = 0; i < ((int) *num_args); i++)
     {
@@ -1475,7 +1463,6 @@ CvtStringToLabelPosition(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
  * Output:
  *	Boolean - True if the conversion was successful else False.
  */
-/* ARGSUSED */
 static Boolean
 CvtStringToXiAlignment(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
 		       XrmValue *from, XrmValue *to, XtPointer data)
@@ -1529,7 +1516,6 @@ CvtStringToXiAlignment(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
  * Output:
  *	Boolean - True if the conversion was successful else False.
  */
-/* ARGSUSED */
 static Boolean
 CvtStringToFillStyle(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
 		     XrmValue *from, XrmValue *to, XtPointer data)
@@ -1577,7 +1563,6 @@ CvtStringToFillStyle(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
  * Output:
  *	Boolean - True if the conversion was successful else False.
  */
-/* ARGSUSED */
 static Boolean
 CvtStringToDistribution(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
 			XrmValue *from, XrmValue *to, XtPointer data)
@@ -1618,9 +1603,8 @@ CvtStringToDistribution(Display *dpy, XrmValue *args, Cardinal *arg_cnt,
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
-VerifyResources(XmColumnWidget request, XmColumnWidget current, 
+VerifyResources(XmColumnWidget request, XmColumnWidget current,
 		XmColumnWidget new_w)
 {
     Boolean  reset;
@@ -1651,7 +1635,7 @@ VerifyResources(XmColumnWidget request, XmColumnWidget current,
 			"An illegal resource value was assigned to the resource XmNDefaultLabelPosition");
 	reset = True;
 	break;
-    }    
+    }
 
     if( reset )
     {
@@ -1768,14 +1752,14 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
     Dimension	fillHeight;
     int		ispace = (int)XmColumn_item_spacing(cw);
     int 	kidSpace;
-    
+
     if( col_width < 0 ) col_width = XtWidth(cw);
     if( col_height < 0 ) col_height = XtHeight(cw);
 
     fillHeight = col_height - 2 * (cw->manager.shadow_thickness +
 				   BBPart(cw)->margin_height);
 
-    
+
     for( i = 0, kid = kids, lWidth = 0, cbWidth = 0, valid = 0,
 	 space = 0, kidSpace = 0; i < kidCnt; ++i, ++kid )
     {
@@ -1829,7 +1813,7 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
 	{
 		if (0 != space)
 			space = kidSpace;
-	    	want = lWidth + space + ispace*(valid-1) + cbWidth;	
+	    	want = lWidth + space + ispace*(valid-1) + cbWidth;
 	    	diff = want - have;
 
 		if (ispace*(valid-1) - diff > 1)
@@ -1837,11 +1821,11 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
 		else
 		{
 			if (0 != ispace)
-				ispace = 1;	
+				ispace = 1;
 		}
 	}
     }
-    if (0==kidSpace) kidSpace = 1; 
+    if (0==kidSpace) kidSpace = 1;
     space /= kidSpace;
 
     /*
@@ -1852,7 +1836,7 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
     {
 	int mySpace;
 	if( !XiValidChild(*kid) ) continue;
-	
+
 	label = XiC(*kid)->label_widget;
 	XiC(label)->position.width = XtWidth(label);
         if( XiC(*kid)->show_label )
@@ -1860,7 +1844,7 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
 		lWidth = XtWidth(label);
 		mySpace = space;
 		}
-	else 
+	else
 		{
 		lWidth = 0;
 		mySpace = 0;
@@ -1883,7 +1867,7 @@ HorizontalLayout(XmColumnWidget cw, Widget child,
 	    cBorder = child_size->border_width;
 	else
 	    cBorder = XtBorderWidth(*kid);
-	x += lWidth + mySpace + cWidth + ispace + 2*cBorder; 
+	x += lWidth + mySpace + cWidth + ispace + 2*cBorder;
 
 	/* Now, let's calculate the kid's Y-position */
 	y = cw->manager.shadow_thickness + BBPart(cw)->margin_height;
@@ -1977,7 +1961,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	    cbWidth = child_size->width + 2*child_size->border_width;
 	}
 	else
-	{	
+	{
 	    cbWidth = XiC(*kid)->request_width + 2*XtBorderWidth(*kid);
 	}
 	if( cMinWidth == 0 )
@@ -2003,7 +1987,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 
 	space = XmColumn_label_spacing(cw);
 	label = XiC(*kid)->label_widget;
-	
+
 	if( child == label )
 	{
 	    if( (int)child_size->width > lWidth )
@@ -2059,7 +2043,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
     for( kid = kids, i = 0; i < kidCnt; ++i, ++kid )
     {
 	if( !XiValidChild(*kid) ) continue;
-	
+
 	label = XiC(*kid)->label_widget;
 	cBorder = XtBorderWidth(*kid);
 	if (LayoutIsRtoLM(cw))
@@ -2069,7 +2053,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	XiC(label)->position.width = lWidth;
 
 	/* cbWidth is whatever is left over */
-	cbWidth = col_width - 
+	cbWidth = col_width -
 		((int)cw->manager.shadow_thickness +
 		    (int)BBPart(cw)->margin_width +
 			x + lWidth + space);
@@ -2111,7 +2095,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
     space = XmColumn_item_spacing(cw);
     hExtra = col_height - height;
     /* but first make a quick check on reducing the itemSpacing */
-    if (hExtra < 0) 
+    if (hExtra < 0)
 	{
 	if (valid)
 		{
@@ -2149,10 +2133,10 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	    for( kid = kids, i = 0; i < kidCnt; ++i, ++kid )
 	    {
 		if( !XiValidChild(*kid) ) continue;
-		
+
 		label = XiC(*kid)->label_widget;
 		cHeight = XiC(*kid)->position.height;
-		
+
 		if( j == 0 || hExtra > 0 )
 		{
 		    stretch = XiC(*kid)->stretchable;
@@ -2183,7 +2167,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 				cHeight = 1;
 			    }
 			}
-			
+
 			if( hLeft != 0 && cHeight > 1 )
 			{
 			    change = True;
@@ -2336,7 +2320,7 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 				  XiC(label)->position.width,
 				  XiC(*kid)->position.height, 0);
 	    }
-	    
+
 	    XtConfigureWidget(*kid,  XiC(*kid)->position.x,
 			      XiC(*kid)->position.y,
 			      XiC(*kid)->position.width,
@@ -2360,7 +2344,6 @@ VerticalLayout(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 VerifyConstraints(Widget request, Widget current, Widget set)
 {
@@ -2464,37 +2447,37 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
   for (i = 0, kid = kids; i < kidCnt; ++i, ++kid)
     {
       if (!XiValidChild(*kid)) continue;
-      
+
       if (XiC(*kid)->show_label)
 	{
 	  space = XmColumn_label_spacing(cw);
 	  hSumSpace += XmColumn_label_spacing(cw);
 	}
-      
-      /* 
+
+      /*
        * Check for the child widgets preferred geometry.
        * if the prefered geometry is greater than the requested
        * geometry, then set the query geometry to "True".
-       * Doing this, column widget will take care of improper 
+       * Doing this, column widget will take care of improper
        * size settings on the compound children widgets (CR03821)
        */
       query = False;
       XtQueryGeometry(*kid, NULL, &wants);
       if (wants.width > XiC(*kid)->request_width || \
-	  wants.height >  XiC(*kid)->request_height) 
+	  wants.height >  XiC(*kid)->request_height)
 	{
 	  query = True;
 	}
-      
+
       if (*kid == child && child_size != NULL)
 	{
 	  cWidth = child_size->width;
 	  cHeight = child_size->height;
 	  cBorder = child_size->border_width;
-	} else if (query) 
+	} else if (query)
 	  {
 	    XtQueryGeometry(*kid, NULL, &wants);
-	    
+
 	    if (wants.request_mode & CWWidth)
 	      {
 		cWidth = wants.width;
@@ -2504,7 +2487,7 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	      {
 		cWidth = XiC(*kid)->request_width;
 	      }
-	    
+
 	    if (wants.request_mode & CWHeight)
 	      {
 		cHeight = wants.height;
@@ -2514,7 +2497,7 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	      {
 		cHeight = XiC(*kid)->request_height;
 	      }
-	    
+
 	    if (wants.request_mode & CWBorderWidth)
 	      {
 		cBorder = wants.border_width;
@@ -2530,7 +2513,7 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	  cHeight = XiC(*kid)->request_height;
 	  cBorder = XtBorderWidth(*kid);
 	}
-      
+
       cWidth += (2 * cBorder);
       cHeight += (2 * cBorder);
       if (XtIsManaged((label = XiC(*kid)->label_widget)))
@@ -2543,7 +2526,7 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	  else if (query)
 	    {
 	      XtQueryGeometry(label, NULL, &wants);
-	      
+
 	      if (wants.request_mode & CWWidth)
 		{
 		  lWidth = wants.width;
@@ -2552,7 +2535,7 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 		{
 		  lWidth = XiC(label)->request_width;
 		}
-	      
+
 	      if (wants.request_mode & CWHeight)
 		{
 		  lHeight = wants.height;
@@ -2572,12 +2555,12 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	{
 	  lWidth = lHeight = 0;
 	}
-      
+
       if (XmColumn_orientation(cw) == XmVERTICAL)
 	{
 	  if (lWidth > lSum) lSum = lWidth;
 	  if (cWidth > cSum) cSum = cWidth;
-	  
+
 	  _height += (lHeight > cHeight ? lHeight : cHeight);
 	}
       else	/* XmHORIZONTAL Layout */
@@ -2585,21 +2568,21 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
 	  /* Choose the maximum height */
 	  if (_height < (int)cHeight) _height = cHeight;
 	  if (_height < (int)lHeight) _height = lHeight;
-	  
+
 	  _width += lWidth + cWidth;
 	}
-      
+
       cnt++;
     }
-  
+
   if (cnt > 1) --cnt;
-  
+
   if (XmColumn_orientation(cw) == XmVERTICAL)
     {
       _width = lSum + cSum + space +
 	2 * (cw->manager.shadow_thickness +
 	     BBPart(cw)->margin_width);
-      
+
       _height += (cnt * XmColumn_item_spacing(cw) +
 		  2 * (cw->manager.shadow_thickness +
 		       BBPart(cw)->margin_height));
@@ -2609,14 +2592,14 @@ CalcSize(XmColumnWidget cw, Widget child, XtWidgetGeometry *child_size,
       _width += (hSumSpace +
 		 2 * (cw->manager.shadow_thickness +
 		      BBPart(cw)->margin_width)) + cnt*XmColumn_item_spacing(cw);
-      
+
       _height += 2 * (cw->manager.shadow_thickness +
 		      BBPart(cw)->margin_height);
     }
-  
+
   if (_width < 1) _width = 1;
   if (_height < 1) _height = 1;
-  
+
   if (width != NULL) *width = _width;
   if (height != NULL) *height = _height;
 }
@@ -2681,13 +2664,12 @@ CompareGeometryToWidget(XtWidgetGeometry *geom, Widget widget)
 
 /*
  * XmRCallProc routine for checking label_font_list before setting it to NULL
- * If constrainit's "check_set_render_table" is True, then function has 
- * been called twice on same widget, thus resource needs to be set NULL, 
+ * If constrainit's "check_set_render_table" is True, then function has
+ * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
 
-/*ARGSUSED*/
-static void 
+static void
 CheckSetEntryLabelRenderTable(Widget wid, int offs, XrmValue *value)
 {
   XmColumnConstraintPart* cc = XiC(wid);
@@ -2704,13 +2686,12 @@ CheckSetEntryLabelRenderTable(Widget wid, int offs, XrmValue *value)
 
 /*
  * XmRCallProc routine for checking label_font_list before setting it to NULL
- * If column's "check_set_render_table" is True, then function has 
- * been called twice on same widget, thus resource needs to be set NULL, 
+ * If column's "check_set_render_table" is True, then function has
+ * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
 
-/*ARGSUSED*/
-static void 
+static void
 CheckSetDefaultEntryLabelRenderTable(Widget wid, int offs, XrmValue *value)
 {
   XmBulletinBoardPart* bb = BBPart(wid);
@@ -2739,7 +2720,6 @@ CheckSetDefaultEntryLabelRenderTable(Widget wid, int offs, XrmValue *value)
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 XmColumnLabelDestroyedCallback(Widget widget, XtPointer client,
 			       XtPointer cbdata)
@@ -2749,7 +2729,6 @@ XmColumnLabelDestroyedCallback(Widget widget, XtPointer client,
     XiC(field)->label_widget = NULL;
 }
 
-/* ARGSUSED */
 static void Get_entryLabelString (Widget widget, int offset, XtArgVal *value)
 {
     (*value) = (XtArgVal) XmStringCopy(XiC(widget)->label_string);
@@ -2766,7 +2745,7 @@ static void Get_entryLabelString (Widget widget, int offset, XtArgVal *value)
  *	name     : String   - the name of the new instance.
  *	arg_list : ArgList  - the arguments to create the instance with.
  *	arg_cnt  : Cardinal - the number of arguments in the list
- *	
+ *
  * Output:
  *	Widget - the widget id of the new instance.
  */
@@ -2777,7 +2756,7 @@ XmCreateColumn(Widget parent, String name, ArgList arg_list, Cardinal arg_cnt)
 			   arg_cnt) );
 }
 
-Widget 
+Widget
 XmVaCreateColumn(
         Widget parent,
         char *name,
@@ -2786,18 +2765,18 @@ XmVaCreateColumn(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmColumnWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -2810,16 +2789,16 @@ XmVaCreateManagedColumn(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmColumnWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }

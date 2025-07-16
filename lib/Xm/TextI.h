@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -54,11 +54,7 @@ extern void _XmTextUpdateLineTable(Widget widget,
 				   XmTextPosition start,
 				   XmTextPosition end,
 				   XmTextBlock block,
-#if NeedWidePrototypes
-				   int update
-#else
 				   Boolean update
-#endif /* NeedWidePrototypes */
 				   );
 extern void _XmTextMarkRedraw(XmTextWidget widget,
 			      XmTextPosition left,
@@ -81,22 +77,14 @@ extern int _XmTextCountCharacters(char *str,
 extern void _XmTextSetCursorPosition(Widget widget,
 				     XmTextPosition position);
 extern void _XmTextDisableRedisplay(XmTextWidget widget,
-#if NeedWidePrototypes
-				    int losesbackingstore);
-#else
                                     Boolean losesbackingstore);
-#endif /* NeedWidePrototypes */
-extern void _XmTextEnableRedisplay(XmTextWidget widget);  
+extern void _XmTextEnableRedisplay(XmTextWidget widget);
 
 extern void _XmTextSetHighlight(Widget, XmTextPosition,
                                 XmTextPosition, XmHighlightMode);
 extern void _XmTextShowPosition(Widget, XmTextPosition);
 extern void _XmTextSetEditable(Widget widget,
-#if NeedWidePrototypes
-			       int editable);
-#else
                                Boolean editable);
-#endif /* NeedWidePrototypes */
 extern void _XmTextResetIC(Widget widget);
 extern Boolean _XmTextNeedsPendingDeleteDis(XmTextWidget tw,
                                             XmTextPosition *left,
@@ -105,12 +93,8 @@ extern Boolean _XmTextNeedsPendingDeleteDis(XmTextWidget tw,
 extern void _XmTextReplace(Widget widget,
                            XmTextPosition frompos,
                            XmTextPosition topos,
-	                   char *value, 
-#if NeedWidePrototypes
-                           int is_wchar);
-#else
+	                   char *value,
                            Boolean is_wchar);
-#endif /* NeedWidePrototypes */
 extern void _XmTextValidate(XmTextPosition *start,
 		            XmTextPosition *end,
 		            int maxsize);
@@ -125,4 +109,3 @@ extern XmTextPosition _XmTextSetPreeditPosition(Widget w,
 #endif
 
 #endif /* _XmTextI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

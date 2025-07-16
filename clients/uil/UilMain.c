@@ -58,9 +58,7 @@ static char rcsid[] = "$XConsortium: UilMain.c /main/14 1996/06/03 15:49:20 pasc
 #ifdef OFF
 #undef OFF
 #endif
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include "UilDefI.h"
 #include <setjmp.h>
 
@@ -117,7 +115,7 @@ static unsigned	   doing_exit = 0;
 
 #define     compiler_called (1 << 0)
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -221,7 +219,7 @@ static void	common_main()
 
 }
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -286,10 +284,10 @@ int	severity;
     exit(return_status);
 }
 
-
 
 
-
+
+
 
 #ifndef CALLABLE
 /*
@@ -341,7 +339,7 @@ char	*rac_argv[ ];
 #endif /* !CALLABLE */
 
 
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -393,7 +391,6 @@ static void	common_cleanup()
     return;
 }
 
-
 #ifdef CALLABLE
 /*
 **++
@@ -620,5 +617,4 @@ static void UilWrapup (compile_desc)
     Uil_sym_cleanup_storage (Uil_cmd_z_command.v_parse_tree!=1);
 
     }
-
 #endif	/* CALLABLE */

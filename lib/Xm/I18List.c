@@ -461,13 +461,7 @@ ClassInitialize()
 /*
  * ClassPartInitialize sets up the fast subclassing for the widget.
  */
-static void
-#ifdef _NO_PROTO
-ClassPartInitialize(w_class)
-        WidgetClass w_class ;
-#else
-ClassPartInitialize(WidgetClass w_class)
-#endif /* _NO_PROTO */
+static void ClassPartInitialize(WidgetClass w_class)
 {
     _XmFastSubclassInit (w_class, XmI18LIST_BIT);
 
@@ -2044,7 +2038,7 @@ static void
 CreateGCs(Widget w)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) w;
-    XtGCMask mask, smask;
+    XtGCMask mask, smask = GCBackground;
     XGCValues values;
     Arg args[2];
     Cardinal num_args = 0;
@@ -2067,14 +2061,7 @@ CreateGCs(Widget w)
     values.fill_style = FillStippled;
     values.graphics_exposures = False;
 
-    mask = GCForeground | GCBackground | GCFont | GCGraphicsExposures;
-
-#ifdef FIX_1381
-	smask = mask | GCFillStyle;
-#else
-    smask = mask | GCStipple | GCFillStyle;
-#endif
-
+    mask = GCForeground | GCBackground | GCFont | GCGraphicsExposures | GCFillStyle;
     XmI18List_gc(ilist) = XtGetGC(w, mask, &values);
 
     if (XmI18List_entry_background_use(ilist))
@@ -2104,12 +2091,9 @@ CreateGCs(Widget w)
     	XmI18List_entry_background_gc(ilist) = XtGetGC(w, mask, &values);
     }
 
-#ifdef FIX_1381
 	/*added for gray insensitive foreground (instead stipple)*/
 	temp = values.foreground;
     values.foreground=_XmAssignInsensitiveColor(w);
-#endif
-
     XmI18List_stippled_gc(ilist) = XtGetGC(w, smask, &values);
 
     if (XmI18List_entry_background_use(ilist))
@@ -2125,9 +2109,6 @@ CreateGCs(Widget w)
     	XmI18List_entry_background_stippled_gc(ilist) = XtGetGC(w, smask, &values);
     }
 
-#ifndef FIX_1381
-    temp = values.foreground;
-#endif
     values.foreground = values.background;
     values.background = temp;
     XmI18List_rev_gc(ilist) = XtGetGC(w, mask, &values);

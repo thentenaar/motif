@@ -86,7 +86,7 @@ typedef struct _XmIconGCacheObjPart
    XmRenderTable    render_table;		/* XmNrenderTable */
    GC               selected_GC;
    GC               inverse_GC;
- 	
+
    Pixel            background;
    Pixel            foreground;
    Pixel            top_shadow_color;
@@ -104,14 +104,12 @@ typedef struct _XmIconGCacheObjPart
    GC               top_shadow_GC;
    GC               bottom_shadow_GC;
    GC               highlight_GC;
-  
+
    unsigned char    alignment;
    Dimension        spacing;
    Dimension        margin_width;
    Dimension        margin_height;
-#ifdef FIX_1381
    GC               shadow_GC;
-#endif
 } XmIconGCacheObjPart;
 
 typedef struct _XmIconGCacheObjRec
@@ -186,7 +184,7 @@ typedef struct _XmIconGadgetRec
    code is already written, I'll keep it and force its value here.
    If it's ever wanted back, just replace that macro by:
  #define IG_RecomputeSize(w)	(((XmIconGadget)(w))->icong.recompute_size) */
-#define	IG_RecomputeSize(w)	(True) 
+#define	IG_RecomputeSize(w)	(True)
 
 #define	IG_LayoutDirection(w)	(((XmIconGadget)(w))->gadget.layout_direction)
 #define	IG_Highlighted(w)	(((XmIconGadget)(w))->gadget.highlighted)
@@ -234,10 +232,8 @@ typedef struct _XmIconGadgetRec
 				 icong.cache->background_GC)
 #define	IG_InsensitiveGC(w)	(((XmIconGadget)(w))-> \
 				 icong.cache->insensitive_GC)
-#ifdef FIX_1381
 #define	IG_ShadowGC(w)	(((XmIconGadget)(w))-> \
 				 icong.cache->shadow_GC)
-#endif
 #define	IG_TopShadowGC(w)	(((XmIconGadget)(w))-> \
 				 icong.cache->top_shadow_GC)
 #define	IG_BottomShadowGC(w)	(((XmIconGadget)(w))-> \

@@ -34,9 +34,7 @@ static char rcsid[] = "$TOG: XmTabList.c /main/9 1999/04/27 17:49:59 samborn $"
 #endif
 #endif
 
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 
@@ -56,14 +54,14 @@ static char rcsid[] = "$TOG: XmTabList.c /main/9 1999/04/27 17:49:59 samborn $"
 static XmTab GetNthTab(XmTabList tl,
 		       int pos,
 		       XmTab cur_tab,
-		       int cur_pos); 
+		       int cur_pos);
 
 
 /********    End Static Function Declarations    ********/
 
 /*
  * This function returns the tab in tl at position pos.  It starts searching
- * either from the start of the tablist or from cur_tab if cur_pos is closer to 
+ * either from the start of the tablist or from cur_tab if cur_pos is closer to
  * pos than zero and cur_tab is not NULL.
  */
 static XmTab
@@ -72,11 +70,11 @@ GetNthTab(XmTabList tl, int pos, XmTab cur_tab, int cur_pos)
   XmTab		prev_tab;
   unsigned int 	count;
   int		i;
-  
+
   if (pos == 0) return(_XmTabLStart(tl));
-  
+
   count = _XmTabLCount(tl);
-  
+
   if (abs(pos) >= count)
   {
     if (pos > 0) return(_XmTabPrev(_XmTabLStart(tl)));
@@ -87,7 +85,7 @@ GetNthTab(XmTabList tl, int pos, XmTab cur_tab, int cur_pos)
   if (pos < 0) pos += count;
   cur_pos %= count;
   if (cur_pos < 0) cur_pos += count;
-    
+
   if (pos == cur_pos) return(cur_tab);
 
   /* Is start or cur_tab closer? */
@@ -102,28 +100,28 @@ GetNthTab(XmTabList tl, int pos, XmTab cur_tab, int cur_pos)
       prev_tab = _XmTabLStart(tl);
       i = (pos < count/2) ? pos : pos - count;
     }
-  
+
   switch (i/abs(i))
     {
     case 1:
       for (; i > 0; i--)
 	prev_tab = _XmTabNext(prev_tab);
       break;
-	  
+
     case -1:
       for (; i < 0; i++)
 	prev_tab = _XmTabPrev(prev_tab);
       break;
     }
-  
+
   return(prev_tab);
 }
 
 /*
- * A tablist is a doubly linked ring of tabs. 
+ * A tablist is a doubly linked ring of tabs.
  */
 XmTabList
-XmTabListInsertTabs(XmTabList oldlist, 
+XmTabListInsertTabs(XmTabList oldlist,
 		    XmTab *tabs,
 		    Cardinal tab_count,
 		    int position)
@@ -141,9 +139,9 @@ XmTabListInsertTabs(XmTabList oldlist,
   if (oldlist == NULL)
     {
       tl = (XmTabList)XtMalloc(sizeof(_XmTabListRec));
-  
+
       _XmTabLCount(tl) = tab_count;
-      
+
       prev_tab = _XmTabCopy(tabs[0]);
 
       _XmTabLStart(tl) = prev_tab;
@@ -151,28 +149,28 @@ XmTabListInsertTabs(XmTabList oldlist,
       for (i = 1; i < tab_count; i++)
 	{
 	  tab = _XmTabCopy(tabs[i]);
-	  
+
 	  _XmTabPrev(tab) = prev_tab;
 	  _XmTabNext(prev_tab) = tab;
 	  prev_tab = tab;
 	}
-      
+
       _XmTabNext(prev_tab) = _XmTabLStart(tl);
       _XmTabPrev(_XmTabLStart(tl)) = prev_tab;
     }
   else
     {
       tl = XmTabListCopy(oldlist, 0, 0);
-      
+
       /* Hook in first tab */
       tab = _XmTabCopy(tabs[0]);
 
       prev_tab = GetNthTab(tl, position, NULL, 0);
-      
+
       if (position == 0) _XmTabLStart(tl) = tab;
 
       next_tab = _XmTabNext(prev_tab);
-      
+
       _XmTabNext(prev_tab) = tab;
       _XmTabPrev(tab) = prev_tab;
       prev_tab = tab;
@@ -184,8 +182,8 @@ XmTabListInsertTabs(XmTabList oldlist,
 	  _XmTabNext(prev_tab) = tab;
 	  _XmTabPrev(tab) = prev_tab;
 	  prev_tab = tab;
-	}	  
-      
+	}
+
       /* Complete circle */
       _XmTabNext(prev_tab) = next_tab;
       _XmTabPrev(next_tab) = prev_tab;
@@ -199,7 +197,6 @@ XmTabListInsertTabs(XmTabList oldlist,
   return(tl);
 }
 
-/*ARGSUSED*/
 Widget
 _XmCreateTabList(Widget parent,
 		 String name,	/* unused */
@@ -208,20 +205,20 @@ _XmCreateTabList(Widget parent,
 {
   XmRendition	rend = (XmRendition)parent;
   XmTabList	tl = NULL;
-  
-  if (_XmRendTabs(rend) == NULL) 
+
+  if (_XmRendTabs(rend) == NULL)
     {
       tl = (XmTabList)XtMalloc(sizeof(_XmTabListRec));
       bzero((char *)tl, sizeof(_XmTabListRec));
       _XmRendTabs(rend) = tl;
     }
-  
+
   return((Widget)tl);
 }
 
-/* 
+/*
  * This copying routine also works with the internal marking scheming used
- * by the insert and replace routines. 
+ * by the insert and replace routines.
  */
 XmTabList
 XmTabListCopy(XmTabList tablist,
@@ -231,25 +228,25 @@ XmTabListCopy(XmTabList tablist,
   XmTabList	tl;
   XmTab		old_tab, tab, next_tab;
   unsigned int	i;
-  
+
   _XmProcessLock();
   if (tablist == NULL) {
 	_XmProcessUnlock();
 	return(NULL);
   }
-  
+
   tl = (XmTabList)XtMalloc(sizeof(_XmTabListRec));
-  
+
   /* Zero count implies copy from offset to end/beginning */
   if (count == 0) count = (_XmTabLCount(tablist) - abs(offset));
 
   if (count > _XmTabLCount(tablist)) count = _XmTabLCount(tablist);
-  
+
   old_tab = GetNthTab(tablist, offset, NULL, 0);
 
   /* If marked, routine called by insert/replace. Don't copy. */
   tab = _XmTabMark(old_tab) ? old_tab : _XmTabCopy(old_tab);
-  
+
   /* Add first. */
   _XmTabLCount(tl) = count;
   _XmTabLStart(tl) = tab;
@@ -260,14 +257,14 @@ XmTabListCopy(XmTabList tablist,
       old_tab = (offset >= 0) ? _XmTabNext(old_tab) : _XmTabPrev(old_tab);
       /* See above.  Don't copy if marked. */
       next_tab = _XmTabMark(old_tab)? old_tab : _XmTabCopy(old_tab);
-  
+
       _XmTabNext(tab) = next_tab;
-	
+
       _XmTabPrev(next_tab) = tab;
-	
+
       tab = next_tab;
     }
-  
+
   /* Complete circle. */
   _XmTabNext(tab) = _XmTabLStart(tl);
   _XmTabPrev(_XmTabLStart(tl)) = tab;
@@ -276,7 +273,7 @@ XmTabListCopy(XmTabList tablist,
   return(tl);
 }
 
-/* 
+/*
  * Marked tabs have mark cleared but aren't actually freed.
  */
 void
@@ -290,19 +287,19 @@ XmTabListFree(XmTabList tablist)
 	_XmProcessUnlock();
 	return;
   }
-  
+
   tab = _XmTabLStart(tablist);
-  
+
   for (i = 1; i < _XmTabLCount(tablist); i++)
     {
       next = _XmTabNext(tab);
-      
+
       if (_XmTabMark(tab)) _XmTabMark(tab) = FALSE;
       else XmTabFree(tab);
 
       tab = next;
     }
-  
+
   if (_XmTabMark(tab)) _XmTabMark(tab) = FALSE;
   else XmTabFree(tab);
 
@@ -356,7 +353,7 @@ XmTabListReplacePositions(XmTabList oldlist,
   unsigned int	cur_pos;
   XmTab		cur_tab, tab, prev, next;
   XmTabList	tl;
-  
+
   _XmProcessLock();
   if ((oldlist == NULL) ||
       (position_list == NULL) ||
@@ -376,13 +373,13 @@ XmTabListReplacePositions(XmTabList oldlist,
       cur_tab = GetNthTab(tl, position_list[i],
 			  cur_tab, cur_pos);
       cur_pos = position_list[i];
-      
+
       prev = _XmTabPrev(cur_tab);
       next = _XmTabNext(cur_tab);
-      
+
       /* replace tab copying */
       tab = _XmTabCopy(tabs[i]);
-      
+
       if (prev == cur_tab) { /* only one tab in list */
 	_XmTabPrev(tab) = _XmTabNext(tab) = tab;
       } else {
@@ -427,7 +424,7 @@ XmTabListRemoveTabs(XmTabList oldlist,
     _XmProcessUnlock();
     return(oldlist);
   }
-  
+
   cur_tab = _XmTabLStart(oldlist);
   cur_pos = 0;
 
@@ -439,7 +436,7 @@ XmTabListRemoveTabs(XmTabList oldlist,
       cur_pos = position_list[i];
       _XmTabMark(cur_tab) = TRUE;
     }
-  
+
   /* Free marked tabs */
   for (tab = _XmTabNext(_XmTabLStart(oldlist));
        tab != _XmTabLStart(oldlist);
@@ -449,7 +446,7 @@ XmTabListRemoveTabs(XmTabList oldlist,
 	{
 	  prev = _XmTabPrev(tab);
 	  next = _XmTabNext(tab);
-	  
+
 	  _XmTabNext(prev) = next;
 	  _XmTabPrev(next) = prev;
 
@@ -459,7 +456,7 @@ XmTabListRemoveTabs(XmTabList oldlist,
       else
 	  next = _XmTabNext(tab);
     }
-  
+
   /* tab is now at start. */
   if (_XmTabMark(tab))
     {
@@ -472,22 +469,22 @@ XmTabListRemoveTabs(XmTabList oldlist,
 	  _XmProcessUnlock();
 	  return((XmTabList)NULL);
 	}
-      
+
       _XmTabLStart(oldlist) = _XmTabNext(tab);
 
       prev = _XmTabPrev(tab);
       next = _XmTabNext(tab);
-      
+
       _XmTabNext(prev) = next;
       _XmTabPrev(next) = prev;
-      
+
       XmTabFree(tab);
       _XmTabLCount(oldlist) --;
     }
 
   tl = XmTabListCopy(oldlist, 0, 0);
   XmTabListFree(oldlist);
-  
+
   _XmProcessUnlock();
   return(tl);
 }
@@ -503,13 +500,13 @@ XmTabCreate(float value,
 
   _XmProcessLock();
   tab = (XmTab)XtMalloc(sizeof(_XmTabRec));
-  
+
   _XmTabMark(tab) = FALSE;
-  if (value >= 0) 
+  if (value >= 0)
     {
       _XmTabValue(tab) = value;
     }
-  else 
+  else
     {
       _XmTabValue(tab) = 0.0;
       XmeWarning(NULL, NEGATIVE_VALUE_MSG);
@@ -523,7 +520,6 @@ XmTabCreate(float value,
   return(tab);
 }
 
-/*ARGSUSED*/
 Widget
 _XmCreateTab(Widget parent,
 	     String name,	/* unused */
@@ -541,7 +537,7 @@ _XmCreateTab(Widget parent,
   char 		*decimal = ".";
   XmTab		tab, start;
   int		i;
-  
+
   /* Init quark list */
   if (quarks[0] == 0)
     {
@@ -556,7 +552,7 @@ _XmCreateTab(Widget parent,
   for (i = 0; i < argcount; i++)
     {
       qarg = XrmStringToQuark(arglist[i].name);
-      
+
       if (qarg == quarks[0])
 	value = (float)arglist[i].value;
       else if (qarg == quarks[1])
@@ -568,9 +564,9 @@ _XmCreateTab(Widget parent,
       else if (qarg == quarks[4])
 	decimal = (char *)arglist[i].value;
     }
-  
+
   tab = XmTabCreate(value, units, model, alignment, decimal);
-  
+
   if (_XmTabLCount(tl) == 0)
     {
       _XmTabLStart(tl) = tab;
@@ -584,7 +580,7 @@ _XmCreateTab(Widget parent,
       _XmTabPrev(tab) = _XmTabPrev(start);
       _XmTabNext(_XmTabPrev(start)) = tab;
       _XmTabPrev(start) = tab;
-    }  
+    }
 
   _XmTabLCount(tl)++;
 
@@ -595,7 +591,7 @@ void
 XmTabFree(XmTab tab)
 {
   if (tab == NULL) return;
-  
+
   XtFree(_XmTabDecimal(tab));
   XtFree((char *)tab);
 }
@@ -613,7 +609,7 @@ XmTabGetValues(XmTab tab,
   if (offset != NULL) *offset = _XmTabModel(tab);
   if (alignment != NULL) *alignment = _XmTabAlign(tab);
   if (decimal != NULL) *decimal = _XmTabDecimal(tab);
-  
+
   ret_val = _XmTabValue(tab);
   _XmProcessUnlock();
   return ret_val;
@@ -633,19 +629,19 @@ XmTab
 _XmTabCopy(XmTab tab)
 {
   XmTab	new_tab;
-  
+
   new_tab = (XmTab)XtMalloc(sizeof(_XmTabRec));
-  
+
   memcpy((char *)new_tab, (char *)tab, sizeof(_XmTabRec));
-  
+
   _XmTabMark(new_tab) = FALSE;
   _XmTabDecimal(new_tab) = XtNewString(_XmTabDecimal(tab));
-  
+
   return(new_tab);
 }
 
 /***********
- * _XmTabListGetPosition 
+ * _XmTabListGetPosition
  * returns the x pixel coordinate of the specified tab.
  **********/
 Position
@@ -657,16 +653,16 @@ _XmTabListGetPosition(
 {
     XmTab tab ;
     Position xpos = 0 ;
-    unsigned char units; 
-    XmOffsetModel offset; 
+    unsigned char units;
+    XmOffsetModel offset;
 
     tab = XmTabListGetTab(tab_list, tab_position);
 
     if (tab) {
-	xpos = (Position) XmTabGetValues(tab, 
-					 &units, 
-					 &offset, 
-					 NULL, 
+	xpos = (Position) XmTabGetValues(tab,
+					 &units,
+					 &offset,
+					 NULL,
 					 NULL);
 	xpos = _XmConvertUnits(screen, XmHORIZONTAL, units, xpos, unit_type);
 	/* a little bit of recursivity here */
@@ -751,7 +747,7 @@ alignment_image(XtEnum alignment)
     }
 }
 
-void 
+void
 _Xm_dump_tab(XmTab tab)
 {
   unsigned int mark = _XmTabMark(tab);
@@ -765,8 +761,8 @@ _Xm_dump_tab(XmTab tab)
   XmTab prev = _XmTabPrev(tab);
 
   printf ("%p: %f %s, %s from %s '%s', %p %p, %d\n",
-	  tab, value, units_image(units), 
-	  model_image(model), alignment_image(alignment), 
+	  tab, value, units_image(units),
+	  model_image(model), alignment_image(alignment),
 	  decimal, next, prev, mark);
 }
 

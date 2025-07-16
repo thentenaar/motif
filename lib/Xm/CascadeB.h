@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmCascadeB_h
 #define _XmCascadeB_h
 
@@ -35,25 +35,21 @@ typedef struct _XmCascadeButtonRec      * XmCascadeButtonWidget;
 typedef struct _XmCascadeButtonClassRec * XmCascadeButtonWidgetClass;
 
 /* fast subclass define */
-#ifndef XmIsCascadeButton 
+#ifndef XmIsCascadeButton
 #define XmIsCascadeButton(w) XtIsSubclass(w, xmCascadeButtonWidgetClass)
 #endif /* XmIsCascadeButton */
 
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmCreateCascadeButton( 
+extern Widget XmCreateCascadeButton(
                         Widget parent,
                         char *name,
                         ArgList al,
                         Cardinal ac) ;
-extern void XmCascadeButtonHighlight( 
+extern void XmCascadeButtonHighlight(
                         Widget cb,
-#if NeedWidePrototypes
-                        int highlight) ;
-#else
                         Boolean highlight) ;
-#endif /* NeedWidePrototypes */
 
 /*
  * Variable argument list functions
@@ -73,6 +69,4 @@ extern Widget XmVaCreateManagedCascadeButton(
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
-
 #endif /* _XmCascadeB_h */
-/* DON'T ADD STUFF AFTER THIS #endif */

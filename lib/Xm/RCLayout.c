@@ -36,10 +36,8 @@ static char *rcsid = "$XConsortium: RCLayout.c /main/6 1995/10/25 20:14:15 cde-s
 #endif
 
 #include <stdio.h>
-#include <ctype.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
+#include <ctype.h>
 #include <Xm/CascadeBGP.h>
 #include <Xm/CascadeBP.h>
 #include <Xm/GadgetP.h>
@@ -61,30 +59,19 @@ static char *rcsid = "$XConsortium: RCLayout.c /main/6 1995/10/25 20:14:15 cde-s
 
 
 
-static void CalcHelp( 
+static void CalcHelp(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height,
-#if NeedWidePrototypes
-                        int b,
-                        int max_x,
-                        int max_y,
-#else
                         Dimension b,
                         Position max_x,
                         Position max_y,
-#endif /* NeedWidePrototypes */
                         Position *x,
                         Position *y,
-#if NeedWidePrototypes
-                        int w,
-                        int h) ;
-#else
                         Dimension w,
                         Dimension h) ;
-#endif /* NeedWidePrototypes */
 
-static void GetMaxValues( 
+static void GetMaxValues(
                         XmRowColumnWidget m,
                         Dimension *border,
                         Dimension *w,
@@ -97,29 +84,15 @@ static void GetMaxValues(
                         Dimension *margin_height,
                         Dimension *text_height) ;
 
-static void AdjustLast( 
+static void AdjustLast(
                         XmRowColumnWidget m,
                         int start_i,
-#if NeedWidePrototypes
-                        int w,
-                        int h) ;
-#else
                         Dimension w,
                         Dimension h) ;
-#endif /* NeedWidePrototypes */
-static void SetAsking( 
+static void SetAsking(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height,
-#if NeedWidePrototypes
-                        int b,
-                        int max_x,
-                        int max_y,
-                        int x,
-                        int y,
-                        int w,
-                        int h) ;
-#else
                         Dimension b,
                         Position max_x,
                         Position max_y,
@@ -127,22 +100,12 @@ static void SetAsking(
                         Position y,
                         Dimension w,
                         Dimension h) ;
-#endif /* NeedWidePrototypes */
-static void FindLargestOption( 
+static void FindLargestOption(
                         XmRowColumnWidget submenu,
                         Dimension *c_width,
                         Dimension *c_height) ;
-static void TopOrBottomAlignment( 
+static void TopOrBottomAlignment(
                         XmRowColumnWidget m,
-#if NeedWidePrototypes
-                        int h,
-                        int shadow,
-                        int highlight,
-                        int baseline,
-                        int margin_top,
-                        int margin_height,
-                        int text_height,
-#else
                         Dimension h,
                         Dimension shadow,
                         Dimension highlight,
@@ -150,70 +113,54 @@ static void TopOrBottomAlignment(
                         Dimension margin_top,
                         Dimension margin_height,
                         Dimension text_height,
-#endif /* NeedWidePrototypes */
                         Dimension *new_height,
                         int start_i,
                         int end_i) ;
-static void BaselineAlignment( 
+static void BaselineAlignment(
                         XmRowColumnWidget m,
-#if NeedWidePrototypes
-                        int h,
-                        int shadow,
-                        int highlight,
-                        int baseline,
-#else
                         Dimension h,
                         Dimension shadow,
                         Dimension highlight,
                         Dimension baseline,
-#endif /* NeedWidePrototypes */
                         Dimension *new_height,
                         int start_i,
                         int end_i) ;
-static void CenterAlignment( 
+static void CenterAlignment(
                         XmRowColumnWidget m,
-#if NeedWidePrototypes
-                        int h,
-#else
                         Dimension h,
-#endif /* NeedWidePrototypes */
                         int start_i,
                         int end_i) ;
 static void ComputeTearOffHeight(
 			XmRowColumnWidget m,
-			Dimension *toc_b, 
-                        Dimension *b, 
+			Dimension *toc_b,
+                        Dimension *b,
 	                Dimension *toc_height,
-                        int *start_i, 
+                        int *start_i,
                         int *child_i,
 			int r);
-static void LayoutColumn( 
+static void LayoutColumn(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height) ;
-static void LayoutVerticalTight( 
+static void LayoutVerticalTight(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height) ;
-static void LayoutHorizontaltight( 
+static void LayoutHorizontaltight(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height) ;
-static void LayoutNone( 
+static void LayoutNone(
                         XmRowColumnWidget m,
                         Dimension *m_width,
                         Dimension *m_height) ;
-static void LayoutOptionAndSize( 
+static void LayoutOptionAndSize(
                         register XmRowColumnWidget menu,
                         Dimension *width,
                         Dimension *height,
                         Widget instigator,
                         XtWidgetGeometry *request,
-#if NeedWidePrototypes
-                        int calcMenuDimension) ;
-#else
                         Boolean calcMenuDimension) ;
-#endif /* NeedWidePrototypes */
 static void GetMenuKidMargins(
 				 XmRowColumnWidget m,
 				 Dimension *width,
@@ -225,22 +172,22 @@ static void GetMenuKidMargins(
 
 
 
-
+
 /*************************************************************************
- * 
- * This section is all the layout stuff, the whole thing has to operate 
+ *
+ * This section is all the layout stuff, the whole thing has to operate
  * in two different modes, one: a read-only mode which
  * is nice for making decisions about the size of the row column vs. the size
  * of the children.  two: a change everything mode which implements the
  * change.
  *
  * further complicated by the xtoolkit restriction that a subwidget making
- * a geo request (referred to as the 'instigator') of the row column may not 
+ * a geo request (referred to as the 'instigator') of the row column may not
  * have his resize proc called but all other widget children must.
  *
  * this is done by building a set of XtWidgetGeometry request blocks, one
- * for each child (widget and gadget), which holds the changes we would like  
- * to make for this child.  If needed then another pass is made over the  
+ * for each child (widget and gadget), which holds the changes we would like
+ * to make for this child.  If needed then another pass is made over the
  * requests to actually implement the changes.
  *************************************************************************/
 
@@ -249,29 +196,18 @@ static void GetMenuKidMargins(
  * Decide where to put the help child.  He better be the last one
  * 'cuz we may trash the x, y's
  */
-static void 
+static void
 CalcHelp(
         XmRowColumnWidget m,
         Dimension *m_width,     /* if 0 then caller's asking */
         Dimension *m_height,    /* if 0 then caller's asking */
-#if NeedWidePrototypes
-        int b,
-        int max_x,
-        int max_y,
-#else
         Dimension b,
         Position max_x,
         Position max_y,
-#endif /* NeedWidePrototypes */
         Position *x,
         Position *y,
-#if NeedWidePrototypes
-        int w,
-        int h )
-#else
         Dimension w,
         Dimension h )
-#endif /* NeedWidePrototypes */
 {
    register Dimension subtrahend;
 
@@ -284,11 +220,11 @@ CalcHelp(
 	 else                /* go up from max_y */
 	 {
 	     subtrahend = RC_Spacing (m) + h + b;
-	     *y = (max_y > (int)subtrahend) ? max_y - subtrahend : 0; 
+	     *y = (max_y > (int)subtrahend) ? max_y - subtrahend : 0;
 	 }
       }
       else
-      {   
+      {
 	  subtrahend = MGR_ShadowThickness(m) + RC_MarginH (m) + h + b;
 	  *y = (*m_height > (int)subtrahend) ? *m_height - subtrahend : 0;
       }
@@ -318,7 +254,7 @@ CalcHelp(
  * count the widest & tallest entry dimensions
  * and compute entries per row/column
  */
-static void 
+static void
 GetMaxValues(
         XmRowColumnWidget m,
         Dimension *border,
@@ -336,17 +272,17 @@ GetMaxValues(
     Widget k ;
     int i, n ;
 
-    *border = *w = *h = *baseline = *shadow = *highlight = 
+    *border = *w = *h = *baseline = *shadow = *highlight =
 	*margin_top = *margin_height = *text_height = 0;
 
     /* skip the tearoff control */
-    for (i = (RC_TearOffControl(m) && 
-	      XtIsManaged(RC_TearOffControl(m)))? 1 : 0, n = 0; 
-	 RC_Boxes (m) [i].kid != NULL; 
+    for (i = (RC_TearOffControl(m) &&
+	      XtIsManaged(RC_TearOffControl(m)))? 1 : 0, n = 0;
+	 RC_Boxes (m) [i].kid != NULL;
 	 i++, n++) {
        b = &(RC_Boxes (m) [i].box);
        k = RC_Boxes (m) [i].kid ;
-       
+
        ASSIGN_MAX(*w, BWidth (b));
        ASSIGN_MAX(*h, BHeight (b));
 
@@ -357,7 +293,7 @@ GetMaxValues(
        }
 
        ASSIGN_MAX(*baseline, RC_Boxes (m) [i].baseline);
-         
+
        if (XmIsGadget (k) || XmIsPrimitive (k) ) {
          XmBaselineMargins textMargins;
 	 _XmRC_SetOrGetTextMargins(k, XmBASELINE_GET, &textMargins);
@@ -374,25 +310,20 @@ GetMaxValues(
                                                  /* add another row/col */
 }
 
-
+
 /*
- * Make sure that entries in the right most column/row extend all the 
- * way to the right/bottom edge of the row column widget.  This keeps 
- * 'dead space' in the row column widget to a minimum.  For single 
- * column widgets, the only column is the right most.  
+ * Make sure that entries in the right most column/row extend all the
+ * way to the right/bottom edge of the row column widget.  This keeps
+ * 'dead space' in the row column widget to a minimum.  For single
+ * column widgets, the only column is the right most.
  *
  */
-static void 
+static void
 AdjustLast(
         XmRowColumnWidget m,
         int start_i,
-#if NeedWidePrototypes
-        int w,
-        int h )
-#else
         Dimension w,
         Dimension h )
-#endif /* NeedWidePrototypes */
 {
    XmRCKidGeometry kg = RC_Boxes (m);
    XtWidgetGeometry *b;
@@ -410,7 +341,7 @@ AdjustLast(
 	 /* if w (rowcol width) is greater than subtrahend (the smallest
 	  * width of the child, we'll guarantee at least a width of 1.
 	  */
-	 if (w > subtrahend) 
+	 if (w > subtrahend)
 	     BWidth (b) = w-subtrahend;
       }
       else
@@ -423,7 +354,7 @@ AdjustLast(
          /* it on whereas label tries to center it in the extra space.      */
          /* In order to make the baselines align again as a result of the   */
          /* above behavior,  Text's margin top has to be adjusted. */
-	 if (h > subtrahend) 
+	 if (h > subtrahend)
          {
              Dimension m_top;
 
@@ -433,8 +364,8 @@ AdjustLast(
 		((h-subtrahend) - BHeight (b)) : 0 ;
 
 	     BHeight (b) = h-subtrahend;
-         
-	     if (m_top && (XmIsText(kg [start_i].kid) || 
+
+	     if (m_top && (XmIsText(kg [start_i].kid) ||
 			   XmIsTextField(kg [start_i].kid) ||
 			   XmIsCSText(kg [start_i].kid)))
              {
@@ -445,25 +376,16 @@ AdjustLast(
    }
 }
 
-
+
 /*
- * decide exactly the dimensions of the row column widget we will return to 
+ * decide exactly the dimensions of the row column widget we will return to
  * an asking caller based on the accumulated layout information.
  */
-static void 
+static void
 SetAsking(
         XmRowColumnWidget m,
         Dimension *m_width,     /* if 0 then caller's asking */
         Dimension *m_height,    /* if 0 then caller's asking */
-#if NeedWidePrototypes
-        int b,
-        int max_x,
-        int max_y,
-        int x,
-        int y,
-        int w,
-        int h )
-#else
         Dimension b,
         Position max_x,
         Position max_y,
@@ -471,7 +393,6 @@ SetAsking(
         Position y,
         Dimension w,
         Dimension h )
-#endif /* NeedWidePrototypes */
 {
     long iheight;
     long iwidth;
@@ -524,36 +445,36 @@ SetAsking(
 
 
 
-
+
 
 static void
-FindLargestOption( 
-	XmRowColumnWidget submenu, 
-	Dimension *c_width, 
+FindLargestOption(
+	XmRowColumnWidget submenu,
+	Dimension *c_width,
 	Dimension *c_height )
 {
     int i;
     Widget *child ;
 
     if (!submenu) return ;
-    
+
     ForManagedChildren (submenu, i, child) {
 	/* Is this recursivity wanted ? */
 	if (XmIsCascadeButton(*child))	{
 	    FindLargestOption((XmRowColumnWidget)
-			      CB_Submenu(*child), 
+			      CB_Submenu(*child),
 			      c_width, c_height);
 	}
 	else if (XmIsCascadeButtonGadget(*child))	       {
 	    FindLargestOption((XmRowColumnWidget)
-			      CBG_Submenu(*child), 
+			      CBG_Submenu(*child),
 			      c_width, c_height);
 	}
 	else {
 	    /* The entire size of the largest menu
 	     * item is used instead of only its TextRect.  This may
-	     * result in large expanses of label white space when items 
-	     * utilize left and right margins, shadow, or accelerator 
+	     * result in large expanses of label white space when items
+	     * utilize left and right margins, shadow, or accelerator
 	     * text - but the glyph will be visible when the submenu is
 	     * posted!
 	     */
@@ -561,7 +482,7 @@ FindLargestOption(
 		ASSIGN_MAX(*c_width, XtWidth(*child));
 		ASSIGN_MAX(*c_height, XtHeight(*child));
 	    }
-	    
+
 	    /*
 	     * must be a torn pane.  Don't rely on its dimensions
 	     * since it may be stretched in the tear off so that
@@ -569,18 +490,18 @@ FindLargestOption(
 	     */
 	    else {
 		XtWidgetGeometry preferred;
-		
+
 		XtQueryGeometry (*child, NULL, &preferred);
 		ASSIGN_MAX(*c_width, preferred.width);
 		ASSIGN_MAX(*c_height, preferred.height);
-		
+
 	    }
 	}
     }
 }
 
 
-
+
 void
 _XmRC_CheckAndSetOptionCascade(
       XmRowColumnWidget menu )
@@ -592,17 +513,17 @@ _XmRC_CheckAndSetOptionCascade(
 
    /*
     * if its is a pulldown menu, travel up the cascades to verify the
-    * option menus cascade button is sized large enough.  
+    * option menus cascade button is sized large enough.
     */
    if (IsPulldown(menu)) {
        for (i=0; i < menu->row_column.postFromCount; i++) {
 	   _XmRC_CheckAndSetOptionCascade((XmRowColumnWidget)
 				XtParent(menu->row_column.postFromList[i]));
        }
-   } 
+   }
 
    if (!IsOption(menu)  || RC_FromResize(menu)) return ;
-   
+
    if ((cb = XmOptionButtonGadget( (Widget) menu)) != NULL) {
        if (RC_OptionSubMenu(menu)) {
 	   FindLargestOption
@@ -612,20 +533,20 @@ _XmRC_CheckAndSetOptionCascade(
 	     width += Double(G_HighlightThickness(cb)) +
 	       G_ShadowThickness(cb) + LabG_MarginLeft(cb) +
 		 Double(MGR_ShadowThickness(RC_OptionSubMenu(menu))) - 2;
-	   else  
+	   else
 	     width += Double(G_HighlightThickness(cb)) +
 	       G_ShadowThickness(cb) + LabG_MarginRight(cb) +
 		 Double(MGR_ShadowThickness(RC_OptionSubMenu(menu))) - 2;
-	     
+
 	   height += Double(G_HighlightThickness(cb)) + LabG_MarginTop(cb)
 	       + LabG_MarginBottom(cb);
 
 	   /* change cb if needed */
 	   if ((width != XtWidth(cb)) || (height != XtHeight(cb))) {
 
-	       /* we have pixels, but the cascade unit type might not be 
+	       /* we have pixels, but the cascade unit type might not be
 		  pixel, so save it and restore it after the setvalues */
-	       unsigned char saved_unit_type = 
+	       unsigned char saved_unit_type =
 		   ((XmGadget)cb)->gadget.unit_type ;
 
 	       ((XmGadget)cb)->gadget.unit_type = XmPIXELS;
@@ -637,19 +558,9 @@ _XmRC_CheckAndSetOptionCascade(
 }
 
 
-/*ARGSUSED*/
 static void
 TopOrBottomAlignment(
 	XmRowColumnWidget m,
-#if NeedWidePrototypes
-	int h,
-	int shadow,
-	int highlight,
-	int baseline,		/* unused */
-	int margin_top,
-	int margin_height,
-	int text_height,
-#else
         Dimension h,
         Dimension shadow,
         Dimension highlight,
@@ -657,7 +568,6 @@ TopOrBottomAlignment(
         Dimension margin_top,
         Dimension margin_height,
         Dimension text_height,
-#endif /* NeedWidePrototypes */
 	Dimension *new_height,
         int start_i,
         int end_i)
@@ -673,7 +583,7 @@ TopOrBottomAlignment(
       _XmRC_SetOrGetTextMargins(kg[start_i].kid, XmBASELINE_GET, &textMargins);
       kg[start_i].margin_top = textMargins.margin_top;
       kg[start_i].margin_bottom = textMargins.margin_bottom;
-    
+
       if (textMargins.shadow < shadow)
       {
          kg[start_i].margin_top += shadow - textMargins.shadow;
@@ -713,21 +623,13 @@ TopOrBottomAlignment(
   }
 }
 
-/*ARGSUSED*/
 static void
 BaselineAlignment(
 	XmRowColumnWidget m,
-#if NeedWidePrototypes
-	int h,
-	int shadow,		/* unused */
-	int highlight,		/* unused */
-	int baseline,
-#else
         Dimension h,
         Dimension shadow,	/* unused */
         Dimension highlight,	/* unused */
         Dimension baseline,
-#endif /* NeedWidePrototypes */
 	Dimension *new_height,
         int start_i,
         int end_i)
@@ -783,11 +685,7 @@ BaselineAlignment(
 static void
 CenterAlignment(
         XmRowColumnWidget m,
-#if NeedWidePrototypes
-        int h,
-#else
         Dimension h,
-#endif /* NeedWidePrototypes */
         int start_i,
         int end_i)
 {
@@ -810,40 +708,40 @@ CenterAlignment(
 }
 
 
-static void 
+static void
 ComputeTearOffHeight(
         XmRowColumnWidget m,
-        Dimension *toc_b, 
-        Dimension *b, 
+        Dimension *toc_b,
+        Dimension *b,
 	Dimension *toc_height,
-        int *start_i, 
+        int *start_i,
         int *child_i,
         int r)
 
 {
     XmRCKidGeometry kg = RC_Boxes (m);
-    
+
     *toc_b = *b = Double (RC_EntryBorder (m));
-    
+
     if (RC_TearOffControl(m) && XtIsManaged(RC_TearOffControl(m))) {
 	XmTearOffButtonWidget tw = (XmTearOffButtonWidget)RC_TearOffControl(m);
-	
+
 	if (!RC_EntryBorder(m) && kg[0].kid && XtIsWidget(kg[0].kid))
 	    *toc_b = Double(kg[0].kid->core.border_width);
-	
+
 	*toc_height = 0;
-	
+
 	/* Remember!  If toc exists, it has the  first kid geo */
 	for (*start_i = 1;  kg[*start_i].kid != NULL; (*start_i)++)
 	    ASSIGN_MAX(*toc_height, kg[*start_i].box.height);
-	
+
 	*toc_height = *toc_height >> r;    /* r is 1 or 2 depending on the
 					    orientation. 1 makes the tear off
 					    half the highest, 2 makes 1/4 */
-	
+
 	ASSIGN_MAX(*toc_height, 2 + *toc_b +  2*
 	       ((XmPrimitiveWidget)kg[0].kid)->primitive.shadow_thickness);
-	
+
 	/* Sync up the kid geo */
 	/* Fix CR# 4778 */
 	if (tw -> label.recompute_size == True)
@@ -851,7 +749,7 @@ ComputeTearOffHeight(
 	else
 	    kg[0].box.height = *toc_height = XtHeight(tw);
 	kg[0].box.width = XtWidth(m);
-	
+
 	*start_i = *child_i = 1;
     }
     else
@@ -859,17 +757,17 @@ ComputeTearOffHeight(
 }
 
 
-
+
 /*
  * figure out where all the children of a column style widget go.  The
- * border widths are already set.  
+ * border widths are already set.
  *
  * In columnar mode, all heights and widths are identical.  They are the
  * size of the largest item.
  *
  * For vertical widgets the items are laid out in columns, going down the
  * first column and then down the second.  For horizonatal, think of the
- * columns as rows. 
+ * columns as rows.
  *
  * By convention incoming row column size can be zero, indicating a request
  * for preferred size, this means lay it out and record the needed size.
@@ -877,7 +775,7 @@ ComputeTearOffHeight(
  * NOTE: the layout is predicated on the help child being the last one since
  * it messes up the x, y for a following child.
  */
-static void 
+static void
 LayoutColumn(
         XmRowColumnWidget m,
         Dimension *m_width,     /* if 0 then caller's asking */
@@ -891,7 +789,7 @@ LayoutColumn(
         child_i,                    /* which child we are doing */
         col_c   = 0,                /* items in col being done */
         start_i = 0;                /* index of first item in col */
-    Dimension border, w, h, baseline, shadow, highlight, 
+    Dimension border, w, h, baseline, shadow, highlight,
               margin_top, margin_height, text_height;
     Dimension toc_height;
     Dimension new_height= 0;
@@ -904,9 +802,9 @@ LayoutColumn(
     x = MGR_ShadowThickness(m) + RC_MarginW (m);
     y = MGR_ShadowThickness(m) + RC_MarginH (m) + toc_height + toc_b;
 
-    GetMaxValues (m, &border, &w, &h, &items_per_column, &baseline, 
+    GetMaxValues (m, &border, &w, &h, &items_per_column, &baseline,
 	      &shadow, &highlight, &margin_top, &margin_height, &text_height);
- 
+
     if (!RC_EntryBorder(m) && kg[child_i].kid && XtIsWidget(kg[child_i].kid))
          b = Double(border);
 
@@ -919,22 +817,22 @@ LayoutColumn(
         kid_i = 0;
         while (kg [kid_i].kid != NULL)
 	  kid_i++;
-        BaselineAlignment(m, h, shadow, highlight, baseline, 
+        BaselineAlignment(m, h, shadow, highlight, baseline,
 			  &new_height, 0, kid_i);
 
     }
     else if (AlignmentTop(m) || AlignmentBottom(m))
     {
-        kid_i = 0; 
+        kid_i = 0;
 	while (kg [kid_i].kid != NULL)
 	  kid_i++;
-        TopOrBottomAlignment(m, h, shadow, highlight, 
+        TopOrBottomAlignment(m, h, shadow, highlight,
 			     baseline, margin_top, margin_height,
-			     text_height, &new_height, 0, kid_i);     
+			     text_height, &new_height, 0, kid_i);
     }
     else if (AlignmentCenter(m))
     {
-        kid_i = 0; 
+        kid_i = 0;
 	while (kg [kid_i].kid != NULL)
 	  kid_i++;
         CenterAlignment(m, h, start_i, kid_i);
@@ -950,7 +848,7 @@ LayoutColumn(
 
         if (AlignmentCenter(m))
          BHeight(bx) = h;
-        
+
         if (++col_c > items_per_column)     /* start a new column */
         {
 	   if (IsVertical (m))         /* calc loc of new column */
@@ -972,8 +870,8 @@ LayoutColumn(
 	   start_i = child_i;          /* record index */
         }
 
-        if (IsHelp (m, ((Widget) kg[child_i].kid))) 
-            CalcHelp (m, m_width, m_height, b, max_x, max_y, 
+        if (IsHelp (m, ((Widget) kg[child_i].kid)))
+            CalcHelp (m, m_width, m_height, b, max_x, max_y,
 		       &x, &y, w, new_height);
 
         SetPosition (bx, x, y);         /* plunk him down */
@@ -983,7 +881,7 @@ LayoutColumn(
         else
             x += w + b + RC_Spacing (m);
 
-        ASSIGN_MAX (max_y, y); 
+        ASSIGN_MAX (max_y, y);
 	ASSIGN_MAX (max_x, x); /* record for use later */
      }
 
@@ -996,7 +894,7 @@ LayoutColumn(
           }
         }
      }
-   
+
     SetAsking (m, m_width, m_height, b, max_x, max_y, x, y, w, new_height);
 
 
@@ -1024,14 +922,14 @@ LayoutColumn(
         }
 }
 
-
+
 /*
  * do a vertical tight (non-column) layout.
  *
  * In a tight layout one dimension of the items is left alone and the other
- * is kept uniform.  In a vertical row column widgets, the widths of each child 
- * are uniform for each column, the heights are never changed.  In a horiz 
- * row column widget, the widths are never changed and the heights are kept 
+ * is kept uniform.  In a vertical row column widgets, the widths of each child
+ * are uniform for each column, the heights are never changed.  In a horiz
+ * row column widget, the widths are never changed and the heights are kept
  * uniform for each row.
  *
  * It gets messy w.r.t. the help child because we don't know if there will
@@ -1041,7 +939,7 @@ LayoutColumn(
  * NOTE: the layout is predicated on the help child being the last one since
  * it messes up the x, y for a following child.
  */
-static void 
+static void
 LayoutVerticalTight(
         XmRowColumnWidget m,
         Dimension *m_width,     /* if 0 then caller's asking */
@@ -1056,7 +954,7 @@ LayoutVerticalTight(
     Dimension toc_height;
     Dimension toc_b, b;
     Dimension border = 0;
-    
+
     ComputeTearOffHeight(m, &toc_b, &b, &toc_height, &start_i, &child_i, 1);
 
     /* first item location */
@@ -1072,17 +970,17 @@ LayoutVerticalTight(
 
        h = BHeight (bx) + b;           /* calc this item's height */
 
-       if (((y + h) > *m_height) && 
+       if (((y + h) > *m_height) &&
 	   ( ! Asking (*m_height)) &&
 	   (child_i))
        {                   /* start new column */
 	  while (start_i < child_i)
 	      kg[start_i++].box.width = w;    /* set uniform width */
 
-	  x += w + Double(border) 
+	  x += w + Double(border)
 	      + MGR_ShadowThickness(m)
 		  + RC_MarginW (m);       /* go right and */
-            
+
 	  y = MGR_ShadowThickness(m)
 	      + RC_MarginH (m) + toc_height + toc_b;  /* back to top of menu */
 
@@ -1094,7 +992,7 @@ LayoutVerticalTight(
             border = ((XmGadget)kg[child_i].kid)->rectangle.border_width;
        }
 
-       if (IsHelp (m, ((Widget) kg[child_i].kid))) 
+       if (IsHelp (m, ((Widget) kg[child_i].kid)))
 	   CalcHelp (m, m_width, m_height, b, 0, max_y, &x, &y, w, h);
 
        SetPosition (bx, x, y);
@@ -1136,8 +1034,8 @@ LayoutVerticalTight(
         }
 }
 
-
-static void 
+
+static void
 LayoutHorizontaltight(
         XmRowColumnWidget m,
         Dimension *m_width,     /* if 0 then caller's asking */
@@ -1159,40 +1057,40 @@ LayoutHorizontaltight(
     int child_i, start_i;                /* index of first item in row */
     Dimension toc_height;
     Dimension toc_b, b;
-    
+
     ComputeTearOffHeight(m, &toc_b, &b, &toc_height, &start_i, &child_i, 2);
-    
+
     /* first item location */
     x = MGR_ShadowThickness(m) + RC_MarginW (m);
     y = MGR_ShadowThickness(m) + RC_MarginH (m) + toc_height + toc_b;
-    
+
     for (; kg [child_i].kid != NULL; child_i++) {
 	bx = &(kg[child_i].box);
 	if (!RC_EntryBorder(m) && kg[child_i].kid &&
 	    XtIsWidget(kg[child_i].kid))
 	    b = Double(kg[child_i].kid->core.border_width);
-	    
+
 	w = BWidth (bx) + b;            /* item's width */
-	    
-	if (((x + w) > *m_width) && 
+
+	if (((x + w) > *m_width) &&
 	    ( ! Asking (*m_width)) &&
 	    (child_i)) {                   /* start a new row */
-		    
+
 	    if (AlignmentBaselineTop(m) || AlignmentBaselineBottom(m))
-		BaselineAlignment(m, h, shadow, highlight, baseline, 
+		BaselineAlignment(m, h, shadow, highlight, baseline,
 				  &new_height, start_i, child_i);
 	    else if (AlignmentTop(m) || AlignmentBottom(m))
-		TopOrBottomAlignment(m, h, shadow, highlight, 
+		TopOrBottomAlignment(m, h, shadow, highlight,
 				     baseline, margin_top, margin_height,
-				     text_height, &new_height, 
+				     text_height, &new_height,
 				     start_i, child_i);
 	    else if (AlignmentCenter(m))
 		CenterAlignment(m, h, start_i, child_i);
-		    
+
 	    if (new_height > h) {
 		while (start_i < child_i) {
 		    if (kg[start_i].box.height != new_height) {
-		      kg[start_i].margin_bottom += 
+		      kg[start_i].margin_bottom +=
 			new_height - kg[start_i].box.height;
 		      kg[start_i].box.height = new_height;
 		    }
@@ -1200,15 +1098,15 @@ LayoutHorizontaltight(
 		}
 		h = new_height;
 	    }
-		    
+
 	    start_i = child_i;
-		    
-	    x = MGR_ShadowThickness(m) 
+
+	    x = MGR_ShadowThickness(m)
 		+ RC_MarginW (m);       /* left edge of menu */
-		    
-	    y += h + Double(border) + MGR_ShadowThickness(m) 
+
+	    y += h + Double(border) + MGR_ShadowThickness(m)
 		+ RC_MarginH (m);       /* down to top of next row */
-		    
+
 	    h = BHeight (bx);           /* reset for this row */
 	    new_height = 0;
 	    baseline = kg[child_i].baseline;
@@ -1216,12 +1114,12 @@ LayoutHorizontaltight(
 		border = kg[child_i].kid->core.border_width;
 	    else if (XmIsGadget (kg[child_i].kid))
 		border = ((XmGadget)kg[child_i].kid)->rectangle.border_width;
-		    
-	    if (XmIsGadget (kg[child_i].kid) || 
+
+	    if (XmIsGadget (kg[child_i].kid) ||
 		XmIsPrimitive (kg[child_i].kid)) {
 		XmBaselineMargins textMargins;
-		
-		_XmRC_SetOrGetTextMargins(kg[child_i].kid, XmBASELINE_GET, 
+
+		_XmRC_SetOrGetTextMargins(kg[child_i].kid, XmBASELINE_GET,
 					  &textMargins);
 		shadow = textMargins.shadow;
 		highlight = textMargins.highlight;
@@ -1230,29 +1128,29 @@ LayoutHorizontaltight(
 		margin_height = textMargins.margin_height;
 	    }
 	}
-	    
-	if (IsHelp (m, ((Widget) kg[child_i].kid))) 
+
+	if (IsHelp (m, ((Widget) kg[child_i].kid)))
 	    CalcHelp (m, m_width, m_height, b, max_x, 0, &x, &y, w, h);
-	
+
 	SetPosition (bx, x, y);
-	    
+
 	if (XmIsGadget (kg[child_i].kid) || XmIsPrimitive (kg[child_i].kid))
 	  ASSIGN_MAX(baseline, kg[child_i].baseline);
 
 	ASSIGN_MAX(h, BHeight (bx));
-	
+
 	if (kg[child_i].kid && XtIsWidget (kg[child_i].kid)) {
 	    ASSIGN_MAX(border, kg[child_i].kid->core.border_width);
 	} else if (XmIsGadget (kg[child_i].kid)) {
-	    ASSIGN_MAX(border, 
+	    ASSIGN_MAX(border,
 		      ((XmGadget)kg[child_i].kid)->rectangle.border_width);
 	}
-	
+
 	if (XmIsGadget (kg[child_i].kid) || XmIsPrimitive (kg[child_i].kid))
 	    {
 		XmBaselineMargins textMargins;
-		
-		_XmRC_SetOrGetTextMargins(kg[child_i].kid, XmBASELINE_GET, 
+
+		_XmRC_SetOrGetTextMargins(kg[child_i].kid, XmBASELINE_GET,
 					  &textMargins);
 		ASSIGN_MAX(shadow, textMargins.shadow);
 		ASSIGN_MAX(highlight, textMargins.highlight);
@@ -1260,46 +1158,45 @@ LayoutHorizontaltight(
 		ASSIGN_MAX(text_height, textMargins.text_height);
 		ASSIGN_MAX(margin_height, textMargins.margin_height);
 	    }
-	
+
 	x += w + RC_Spacing (m);        /* loc of next item */
-	
+
 	ASSIGN_MAX (max_x, x);      /* record for use later */
     }
-    
+
     /* Set toc width to the width of the pane */
     SET_TEAR_OFF_BOX(toc_height);
-    
-    
+
+
     if (AlignmentBaselineTop(m) || AlignmentBaselineBottom(m))
-	BaselineAlignment(m, h, shadow, highlight, baseline, 
+	BaselineAlignment(m, h, shadow, highlight, baseline,
 			  &new_height, start_i, child_i);
     else if (AlignmentTop(m) || AlignmentBottom(m))
-	TopOrBottomAlignment(m, h, shadow, highlight, 
+	TopOrBottomAlignment(m, h, shadow, highlight,
 			     baseline, margin_top, margin_height,
 			     text_height, &new_height, start_i, child_i);
     else if (AlignmentCenter(m))
 	CenterAlignment(m, h, start_i, child_i);
-    
+
     if (new_height > h){
 	while (start_i < child_i){
 		bx = &(kg[start_i].box);
 		if (BHeight(bx) != new_height) {
-		  kg[start_i].margin_bottom += 
+		  kg[start_i].margin_bottom +=
 		    new_height - kg [start_i].box.height;
 		  BHeight(bx) = new_height;
 		}
 		start_i++;
 	    }
     }
-    
+
     if (new_height > h)
-	SetAsking (m, m_width, m_height, Double(border), 
+	SetAsking (m, m_width, m_height, Double(border),
 		    max_x, 0, x, y, w, new_height);
     else
-	SetAsking (m, m_width, m_height, Double(border), 
+	SetAsking (m, m_width, m_height, Double(border),
 		    max_x, 0, x, y, w, h);
-    
-#ifdef FIX_1521
+
     for (child_i = 0; kg[child_i].kid != NULL; child_i++)
     {
         bx = &(kg[child_i].box);
@@ -1308,7 +1205,6 @@ LayoutHorizontaltight(
         if (IsHelp(m, ((Widget) kg[child_i].kid)))
             ASSIGN_MAX(BX(&(kg[child_i].box)), MGR_ShadowThickness(m) + RC_MarginW(m));
     }
-#endif
     if (RC_AdjLast(m))
 	AdjustLast (m, start_i, *m_width, *m_height);
     else
@@ -1326,14 +1222,14 @@ LayoutHorizontaltight(
 }
 
 
-
+
 /*
  * wrap a box around the entries, used with packing mode of none.
  *
  * we ignore negative positioning, ie. only worry about being wide enough
  * for the right edge of the rightmost entry (similarly for height)
  */
-static void 
+static void
 LayoutNone(
         XmRowColumnWidget m,
         Dimension *m_width,
@@ -1346,7 +1242,7 @@ LayoutNone(
     Dimension toc_height;
     Dimension toc_b, bw;
     short temp;
-    
+
     ComputeTearOffHeight(m, &toc_b, &bw, &toc_height, &dum, &i, 2);
 
     for (; kg [i].kid != NULL; i++)
@@ -1365,7 +1261,7 @@ LayoutNone(
             else
                 w = (Dimension) temp;
 
-            ASSIGN_MAX (max_w, w); 
+            ASSIGN_MAX (max_w, w);
         }
 
         if (Asking (*m_height))
@@ -1378,7 +1274,7 @@ LayoutNone(
             else
                 w = (Dimension) temp;
 
-            ASSIGN_MAX (max_h, w); 
+            ASSIGN_MAX (max_h, w);
         }
     }
 
@@ -1389,7 +1285,7 @@ LayoutNone(
     if (Asking (*m_height)) *m_height = max_h;
 }
 
-
+
 /*
  * Routine used to determine the size of the option menu or to layout
  * the option menu given the current size.  The boolean calcMenuDimension
@@ -1402,25 +1298,20 @@ LayoutNone(
  * If the instigator is the label or the cascabebuttongadget, then the
  * dimensions are honored if they are large enough.
  */
-/* ARGSUSED */
-static void 
+static void
 LayoutOptionAndSize (
         register XmRowColumnWidget menu,
         Dimension *width,
         Dimension *height,
         Widget instigator,
         XtWidgetGeometry *request,
-#if NeedWidePrototypes
-        int calcMenuDimension )
-#else
         Boolean calcMenuDimension )
-#endif /* NeedWidePrototypes */
 {
    XtWidgetGeometry    *label_box = NULL, *button_box = NULL;
-   Dimension c_width; 
+   Dimension c_width;
    Dimension c_height;
    register XmRowColumnWidget p = (XmRowColumnWidget) RC_OptionSubMenu(menu);
-   XmCascadeButtonGadget cb = 
+   XmCascadeButtonGadget cb =
       (XmCascadeButtonGadget)XmOptionButtonGadget( (Widget) menu);
 
    /*
@@ -1454,7 +1345,7 @@ LayoutOptionAndSize (
 
       FindLargestOption( p, &c_width, &c_height );
 
-      if (LayoutIsRtoLG(cb)) 
+      if (LayoutIsRtoLG(cb))
 	c_width += Double(G_HighlightThickness(cb)) + G_ShadowThickness(cb) +
 	           LabG_MarginLeft(cb) + Double(MGR_ShadowThickness(p))  -
 		   /* magic value */ 2;
@@ -1464,7 +1355,7 @@ LayoutOptionAndSize (
 		   /* magic value */ 2;
       c_height += Double(G_HighlightThickness(cb)) + LabG_MarginTop(cb)
 		 + LabG_MarginBottom(cb);
-      
+
       /* allow settings in cbg to be honored if greater than best size */
       if (instigator == (Widget) cb)
       {
@@ -1497,7 +1388,7 @@ LayoutOptionAndSize (
 
        if (!calcMenuDimension && c_width > XtWidth (menu))
 	   c_width = XtWidth(menu) - 2*RC_MarginW(menu);
-      
+
        BWidth(button_box) = c_width;
        BHeight(button_box) = c_height;
 
@@ -1544,9 +1435,9 @@ LayoutOptionAndSize (
 
       if (calcMenuDimension)
       {
-	if (LayoutIsRtoLM(menu)) 
+	if (LayoutIsRtoLM(menu))
 	  *width = BX(label_box) + BWidth(label_box) + RC_MarginW(menu);
-	else 
+	else
 	  *width = BX(button_box) + c_width + RC_MarginW(menu);
 	*height = c_height + 2*RC_MarginH(menu);
       }
@@ -1562,7 +1453,7 @@ LayoutOptionAndSize (
 
       if (!calcMenuDimension && c_width > XtWidth (menu))
 	  c_width = XtWidth(menu) - 2*RC_MarginW(menu);
-      
+
       BWidth(label_box) = c_width;
       BWidth(button_box) = c_width;
 
@@ -1583,7 +1474,7 @@ LayoutOptionAndSize (
 }
 
 
-void 
+void
 _XmRCThinkAboutSize(
         register XmRowColumnWidget m,
         Dimension *w,
@@ -1594,16 +1485,16 @@ _XmRCThinkAboutSize(
     if (!RC_ResizeWidth(m))  *w = XtWidth  (m);
     if (!RC_ResizeHeight(m)) *h = XtHeight (m);
 
-    if (IsOption(m)) 
+    if (IsOption(m))
 	LayoutOptionAndSize(m, w, h, instigator, request, TRUE);
     else if (PackNone (m))
         LayoutNone (m, w, h);
-    else if (PackColumn (m)) 
+    else if (PackColumn (m))
 	LayoutColumn (m, w, h);
     else {
-	if (IsVertical (m)) 
+	if (IsVertical (m))
 	    LayoutVerticalTight (m, w, h);
-	else 
+	else
 	    LayoutHorizontaltight (m, w, h);
     }
 
@@ -1616,7 +1507,7 @@ _XmRCThinkAboutSize(
 
 
 
-void 
+void
 _XmRCPreferredSize(
         XmRowColumnWidget m,
         Dimension *w,
@@ -1628,7 +1519,7 @@ _XmRCPreferredSize(
    int line_count;
    Dimension y;
 
-   if ((!IsOption(m)) && ((PackColumn(m) && (IsVertical(m) || 
+   if ((!IsOption(m)) && ((PackColumn(m) && (IsVertical(m) ||
 					     IsHorizontal(m))) ||
 			  (PackTight(m) && IsHorizontal(m))))
    {
@@ -1653,11 +1544,11 @@ _XmRCPreferredSize(
      }
 
    /*
-    * get array built for both widgets and gadgets layout is based only on 
+    * get array built for both widgets and gadgets layout is based only on
     * this array, adjust width margins &  adjust height margins
     */
      RC_Boxes(m)=
-       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, NULL, NULL, 
+       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, NULL, NULL,
 				    RC_EntryBorder(m),
 				    RC_EntryBorder (m),
 				    (IsVertical (m) && RC_DoMarginAdjust (m)),
@@ -1677,7 +1568,7 @@ _XmRCPreferredSize(
        if (XmIsGadget (rc_kid) || XmIsPrimitive (rc_kid))
        {
 	 XtVaGetValues(rc_kid, XmNlabelType, &label_type, NULL);
-	 
+
 	 if (label_type == XmSTRING)
 	 {
 	   if (XmIsLabel(rc_kid) || XmIsLabelGadget(rc_kid)) {
@@ -1686,17 +1577,17 @@ _XmRCPreferredSize(
 	     /* coordinate on the preferred size and add this in to the baseline */
 	     /* returned, after subtracting the y coordinate of the current widget */
 	     _XmRC_SetOrGetTextMargins(rc_kid, XmBASELINE_GET, &textMargins);
-	     y = (  textMargins.highlight + textMargins.shadow 
-		  + textMargins.margin_height + textMargins.margin_top 
-		  + ((  RC_Boxes(m) [i].box.height  
-		      - textMargins.margin_top  
-		      - textMargins.margin_bottom 
-		      - (2 * (  textMargins.margin_height  
+	     y = (  textMargins.highlight + textMargins.shadow
+		  + textMargins.margin_height + textMargins.margin_top
+		  + ((  RC_Boxes(m) [i].box.height
+		      - textMargins.margin_top
+		      - textMargins.margin_bottom
+		      - (2 * (  textMargins.margin_height
 			      + textMargins.shadow
-			      + textMargins.highlight)) 
+			      + textMargins.highlight))
 		      - textMargins.text_height) / 2));
 	     XmWidgetGetDisplayRect(rc_kid, &displayRect);
-	   } 
+	   }
 	   else {
 	     displayRect.y = y = 0;
 	   }
@@ -1706,11 +1597,11 @@ _XmRCPreferredSize(
 		if (AlignmentBaselineTop(m))
 		    RC_Boxes(m) [i].baseline = baselines[0] - displayRect.y + y;
 		else if (AlignmentBaselineBottom(m))
-		    RC_Boxes(m) [i].baseline = baselines[line_count - 1] - 
+		    RC_Boxes(m) [i].baseline = baselines[line_count - 1] -
 		                               displayRect.y + y;
 		XtFree((char *)baselines);
-	      } 
-	      else 
+	      }
+	      else
 	      {
 		RC_Boxes(m) [i].baseline = 0;
 	      }
@@ -1730,11 +1621,11 @@ _XmRCPreferredSize(
    else
    {
      /*
-      * get array built for both widgets and gadgets layout is based only on 
+      * get array built for both widgets and gadgets layout is based only on
       * this array, adjust width margins &  adjust height margins
       */
       RC_Boxes(m)=
-       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, NULL, NULL, 
+       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, NULL, NULL,
 				    RC_EntryBorder(m),
 				    RC_EntryBorder (m),
 				    (IsVertical (m) && RC_DoMarginAdjust (m)),
@@ -1751,12 +1642,12 @@ _XmRCPreferredSize(
 }
 
 /*
- * Layout the row column widget to fit it's current size; ignore possible 
+ * Layout the row column widget to fit it's current size; ignore possible
  * non-fitting of the entries into a too small row column widget.
  *
  * Don't forget the instigator.
  */
-void 
+void
 _XmRCAdaptToSize(
         XmRowColumnWidget m,
         Widget instigator,
@@ -1790,10 +1681,10 @@ _XmRCAdaptToSize(
     * adjust width margins and  adjust height margins
     */
    RC_Boxes(m) =
-       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, instigator, request, 
+       (XmRCKidGeometry)_XmRCGetKidGeo( (Widget) m, instigator, request,
 				       RC_EntryBorder(m),
 				       RC_EntryBorder (m),
-				       (IsVertical (m) && 
+				       (IsVertical (m) &&
 					RC_DoMarginAdjust (m)),
 				       (IsHorizontal (m) &&
 					RC_DoMarginAdjust (m)),
@@ -1801,7 +1692,7 @@ _XmRCAdaptToSize(
 				       RC_TearOffControl(m),
 				       XmGET_PREFERRED_SIZE);
 
-   if ((!IsOption(m)) && ((PackColumn(m) && (IsVertical(m) || 
+   if ((!IsOption(m)) && ((PackColumn(m) && (IsVertical(m) ||
 					     IsHorizontal(m))) ||
 			  (PackTight(m) && IsHorizontal(m))))
    {
@@ -1811,14 +1702,14 @@ _XmRCAdaptToSize(
        {
 	 unsigned char label_type = XmSTRING;
 	 RectObj ro = (RectObj) RC_Boxes(m) [i].kid;
-	 
+
 	 if (XtHeight (RC_Boxes(m) [i].kid) != RC_Boxes(m) [i].box.height)
          {
 	   XmeConfigureObject( (Widget) ro, ro->rectangle.x, ro->rectangle.y,
-			      ro->rectangle.width, RC_Boxes(m) [i].box.height, 
+			      ro->rectangle.width, RC_Boxes(m) [i].box.height,
 			      ro->rectangle.border_width);
 	 }
-	 
+
 	 XtVaGetValues(RC_Boxes(m) [i].kid, XmNlabelType, &label_type, NULL);
 
 	 if (label_type == XmSTRING &&
@@ -1826,7 +1717,7 @@ _XmRCAdaptToSize(
 	 {
 	   Dimension *baselines;
 	   int line_count;
-	   
+
 	   XmWidgetGetBaselines(RC_Boxes(m) [i].kid, &baselines, &line_count);
 	   if (AlignmentBaselineTop(m))
 	     RC_Boxes(m) [i].baseline = baselines[0];
@@ -1843,12 +1734,12 @@ _XmRCAdaptToSize(
 
    if (IsOption(m))
        LayoutOptionAndSize (m, &w, &h, instigator, request, FALSE);
-   else if (PackColumn (m)) 
+   else if (PackColumn (m))
        LayoutColumn (m, &w, &h);
    else if (!PackNone (m)) {
-       if (IsVertical (m)) 
+       if (IsVertical (m))
 	   LayoutVerticalTight (m, &w, &h);
-       else 
+       else
 	   LayoutHorizontaltight (m, &w, &h);
    }
 
@@ -1864,10 +1755,10 @@ _XmRCAdaptToSize(
          textMargins.margin_top = RC_Boxes(m) [i].margin_top;
          textMargins.margin_bottom = RC_Boxes(m) [i].margin_bottom;
          _XmRC_SetOrGetTextMargins(RC_Boxes(m) [i].kid, XmBASELINE_SET, &textMargins);
-      
+
        }
      }
-   }   
+   }
 
    if (instigator)
      {
@@ -1908,7 +1799,7 @@ _XmRCAdaptToSize(
    width and height label's resize needs to be called to calculate
    the x & y coordinates for the label text, with the new margins. */
 
-   if ((instigator) && 
+   if ((instigator) &&
        (instigator_w == XtWidth(instigator)) &&
        (instigator_h == XtHeight(instigator)) &&
        (XmIsLabel(instigator) || XmIsLabelGadget(instigator)))
@@ -1919,7 +1810,7 @@ _XmRCAdaptToSize(
      _XmProcessLock();
      resize = wc->core_class.resize;
      _XmProcessUnlock();
-     (*resize) ((Widget) instigator); 
+     (*resize) ((Widget) instigator);
    }
    /* Patch submitted by Kevin B. Hendrix of Java-Linux project. */
    if (RC_Boxes(m))
@@ -1933,11 +1824,7 @@ _XmRCAdaptToSize(
 void
 _XmRC_SetOrGetTextMargins(
         Widget wid,
-#if NeedWidePrototypes
-        unsigned int op,
-#else
         unsigned char op,
-#endif /* NeedWidePrototypes */
         XmBaselineMargins *textMargins )
 {
   WidgetClass wc = XtClass(wid);
@@ -1949,19 +1836,19 @@ _XmRC_SetOrGetTextMargins(
 
   textMargins->get_or_set = op;
 
-  if (XmIsGadget(wid)) 
+  if (XmIsGadget(wid))
     {
       XmGadgetClassExt     *wcePtr;
-      
+
       wcePtr = _XmGetGadgetClassExtPtr(wc, NULLQUARK);
       if (*wcePtr && (*wcePtr)->version == XmGadgetClassExtVersion &&
 	  (*wcePtr)->widget_margins)
 	(*((*wcePtr)->widget_margins)) (wid, textMargins) ;
-    } 
-  else if (XmIsPrimitive(wid)) 
+    }
+  else if (XmIsPrimitive(wid))
     {
       XmPrimitiveClassExt  *wcePtr;
-      
+
       wcePtr = _XmGetPrimitiveClassExtPtr(wc, NULLQUARK);
       if (*wcePtr && (*wcePtr)->widget_margins)
 	(*((*wcePtr)->widget_margins)) (wid, textMargins) ;
@@ -1969,24 +1856,19 @@ _XmRC_SetOrGetTextMargins(
 }
 
 
-/**************************************************************** 
+/****************************************************************
  * Assemble a kid box for each child widget and gadget, fill in data about
  *   each widget and optionally set up uniform border widths.
  * Returns a list of records, last one has a 'kid' field of NULL.  This memory
  *   for this list should eventually be freed with a call to XtFree().
  ****************/
-/*ARGSUSED*/
 XmRCKidGeometry
 _XmRCGetKidGeo(
         Widget wid,                     /* Widget w/ children. */
         Widget instigator,              /* May point to a child who */
         XtWidgetGeometry *request,      /*   is asking to change. */
         int uniform_border,             /* T/F, enforce it. */
-#if NeedWidePrototypes
-        int border,
-#else
         Dimension border,               /* Value to use if enforcing.*/
-#endif /* NeedWidePrototypes */
         int uniform_width_margins,      /* unused, T/F, enforce it. */
         int uniform_height_margins,     /* unused, T/F, enforce it. */
         Widget help,                    /* May point to a help kid. */
@@ -2003,7 +1885,7 @@ _XmRCGetKidGeo(
 
     tocFound = (toc && XtIsManaged(toc)) & 0x1;
 
-    geo = (XmRCKidGeometry) XtMalloc((_XmGeoCount_kids(c) + 1 + tocFound) * 
+    geo = (XmRCKidGeometry) XtMalloc((_XmGeoCount_kids(c) + 1 + tocFound) *
        sizeof (XmRCKidGeometryRec));
 
     i = 0;
@@ -2020,7 +1902,7 @@ _XmRCGetKidGeo(
 
 
        if (uniform_border)     /* if asked override border */
-       {   
+       {
 	  geo[j].box.border_width = border ;
        }
        j++ ;
@@ -2031,13 +1913,13 @@ _XmRCGetKidGeo(
     {
        kidWid = c->composite.children[i] ;
        if (XtIsManaged( kidWid))
-       {   
+       {
 	  if(    kidWid == help    )
           {  /* Save to put help widget at the end of the widget list.*/
              helpFound = TRUE ;
           }
           else
-	  {   
+	  {
 	     geo[j].kid = kidWid ;
 
 	     _XmGeoLoadValues( kidWid, geo_type, instigator, request,
@@ -2046,15 +1928,15 @@ _XmRCGetKidGeo(
              geo[j].margin_bottom = 0;
              geo[j].baseline = 0;
 
-	     /* Fix for CR 5598 - If the child is a separator widget 
-		or gadget, set the width in the geo box to 0.  This 
+	     /* Fix for CR 5598 - If the child is a separator widget
+		or gadget, set the width in the geo box to 0.  This
 		will take the separator out of the width consideration. */
 	     /* Fix for 8131: only does that to Separators when packing
                if not none: this is the only time when it matters, plus
                pack_none does not correct the setting to 0 and the
                rowcolumn dies in protocol error later when trying to
                configure the separator to its 0 box.width or height */
- 
+
 	     if ((XmIsSeparator(kidWid) || XmIsSeparatorGadget(kidWid)) &&
 		 (RC_Packing (c) != XmPACK_NONE)) {
 		 unsigned char orientation;
@@ -2070,9 +1952,9 @@ _XmRCGetKidGeo(
              }
 	     /* End fix for CR 5598 and 8131 */
 
-	     
+
 	     if (uniform_border)     /* if asked override border */
-	     {   
+	     {
 		geo[j].box.border_width = border ;
 	     }
 	     j++ ;
@@ -2092,7 +1974,7 @@ _XmRCGetKidGeo(
 
 
         if (uniform_border)         /* if asked override border */
-        {   
+        {
 	   geo[j].box.border_width = border ;
 	}
         j++ ;
@@ -2103,7 +1985,7 @@ _XmRCGetKidGeo(
 }
 
 
-/**************************************************************** ARGSUSED
+/****************************************************************
  * Take the kid geometry array and change each kid to match them.
  *   remember not to do the resize of the instigator.
  * The kid geometry "kg" is assumed to be fully specified.
@@ -2122,10 +2004,10 @@ _XmRCSetKidGeo(
         w = (Widget) kg[i].kid ;
         b = &(kg[i].box) ;
 
-	if(    w != instigator    ) { 
-	    XmeConfigureObject(w, b->x, b->y, b->width, b->height, 
+	if(    w != instigator    ) {
+	    XmeConfigureObject(w, b->x, b->y, b->width, b->height,
 			       b->border_width) ;
-	} else {   
+	} else {
 	    XtX( w) = b->x ;
 	    XtY( w) = b->y ;
 	    XtWidth( w) = b->width ;
@@ -2138,8 +2020,7 @@ _XmRCSetKidGeo(
 
 
 
-
-static void 
+static void
 GetMenuKidMargins(
         XmRowColumnWidget m,
         Dimension *width,
@@ -2188,15 +2069,15 @@ GetMenuKidMargins(
  * marginRight also.
  *
  * For generality's sake we should insure that all
- * of the current label subclass widgets in the menu have the 
- * margins set to the same value.  
+ * of the current label subclass widgets in the menu have the
+ * margins set to the same value.
  */
-void 
+void
 _XmRCDoMarginAdjustment(
         XmRowColumnWidget m )
 {
     register Widget *p;
-    register int i; 
+    register int i;
     Dimension m_w, m_h, m_l, m_r, m_t, m_b;
     Dimension w, h;
 
@@ -2212,7 +2093,7 @@ _XmRCDoMarginAdjustment(
           _XmRC_SetOrGetTextMargins(*p, XmBASELINE_GET, &textMargins);
           SavedMarginTop(*p) = textMargins.margin_top;
           SavedMarginBottom(*p) = textMargins.margin_bottom;
-          
+
         }
        }
        return;
@@ -2243,7 +2124,7 @@ _XmRCDoMarginAdjustment(
 
             q = (XmLabelGadget) (*p);
 
-            if (IsVertical (m)) 
+            if (IsVertical (m))
             {
 	       _XmQualifyLabelLocalCache(&localCache, q);
 
@@ -2267,7 +2148,7 @@ _XmRCDoMarginAdjustment(
 	       }
        	       _XmReCacheLabG_r(&localCache, q);
 
-	       if (q->rectangle.width != w) 
+	       if (q->rectangle.width != w)
 	       {
 		  XmeConfigureObject( (Widget) q, q->rectangle.x,
                                         q->rectangle.y, w, q->rectangle.height,
@@ -2291,16 +2172,16 @@ _XmRCDoMarginAdjustment(
 		  h += m_b - LabG_MarginBottom(q);
 		  _XmAssignLabG_MarginBottom_r((&localCache), m_b);
 	       }
-	       
+
 	       if (LabG_MarginHeight(q) != m_h)
 	       {
 		  h += m_h - LabG_MarginHeight(q);
 		  _XmAssignLabG_MarginHeight_r((&localCache), m_h);
 	       }
-	       
+
 	       _XmReCacheLabG_r(&localCache, q);
 
-	       if (q->rectangle.height != h) 
+	       if (q->rectangle.height != h)
 	       {
 		  XmeConfigureObject( (Widget) q, q->rectangle.x,
                                          q->rectangle.y, q->rectangle.width, h,
@@ -2332,7 +2213,7 @@ _XmRCDoMarginAdjustment(
                ChangeMargin (Lab_MarginRight (lw), m_r, w);
                ChangeMargin (Lab_MarginWidth (lw), m_w, w);
 
-               if (XtWidth (lw) != w) 
+               if (XtWidth (lw) != w)
                {
                     XmeConfigureObject( (Widget) lw, lw->core.x, lw->core.y,
                                     w, lw->core.height, lw->core.border_width);
@@ -2345,7 +2226,7 @@ _XmRCDoMarginAdjustment(
                 ChangeMargin (Lab_MarginBottom (lw), m_b, h);
                 ChangeMarginDouble (Lab_MarginHeight (lw), m_h, h);
 
-                if (XtHeight (lw) != h) 
+                if (XtHeight (lw) != h)
                 {
                     XmeConfigureObject( (Widget) lw, lw->core.x,lw->core.y,
                                      lw->core.width, h, lw->core.border_width);

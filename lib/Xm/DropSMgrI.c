@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DropSMgrI.c /main/11 1995/07/14 10:30:45 drk $"
@@ -124,7 +124,7 @@ XtResource _XmDSResources[] = {
 externaldef(xmnumdsresources)
 Cardinal _XmNumDSResources = XtNumber(_XmDSResources);
 
-void 
+void
 _XmDSIAddChild(
         XmDSInfo parentInfo,
         XmDSInfo childInfo,
@@ -159,7 +159,7 @@ _XmDSIAddChild(
 
 	for (i = num_children; i > childPosition; i--)
 		GetDSChildren(parentInfo)[i] = GetDSChildren(parentInfo)[i-1];
-	
+
 	GetDSChildren(parentInfo)[childPosition] = (XtPointer) childInfo;
 	SetDSNumChildren(parentInfo, (num_children + 1));
 	SetDSParent(childInfo, (XtPointer) parentInfo);
@@ -167,7 +167,7 @@ _XmDSIAddChild(
 	SetDSLeaf(parentInfo, False);
 }
 
-void 
+void
 _XmDSIRemoveChild(
         XmDSInfo parentInfo,
         XmDSInfo childInfo )
@@ -183,14 +183,14 @@ _XmDSIRemoveChild(
 
 	/* Find the child to be Removed */
 	position = _XmDSIGetChildPosition(parentInfo, childInfo);
-	
+
 	/*
 	 * Take it out of the list by writing over its location and
 	 * reducing the child count.
 	 */
 	for (i = position + 1; i < num_children; i++)
 		GetDSChildren(parentInfo)[i - 1] = GetDSChildren(parentInfo)[i];
-	
+
 	SetDSNumChildren(parentInfo, --num_children);
 
 	if (!num_children)
@@ -198,7 +198,7 @@ _XmDSIRemoveChild(
 }
 
 
-Cardinal 
+Cardinal
 _XmDSIGetChildPosition(
         XmDSInfo parentInfo,
         XmDSInfo childInfo )
@@ -233,11 +233,11 @@ _XmDSIGetChildPosition(
 			XrmQuarkToString(GetDSWidget(parentInfo)->core.xrm_name));
 		XmeWarning(GetDSWidget(parentInfo), buf);
 	}
-	
+
 	return(i);
 }
 
-void 
+void
 _XmDSIReplaceChild(
         XmDSInfo oldChildInfo,
         XmDSInfo newChildInfo )
@@ -249,7 +249,7 @@ _XmDSIReplaceChild(
 	if ((oldChildInfo == NULL) ||
 		(newChildInfo == NULL))
 		return;
-	
+
 	if ((parentInfo = (XmDSInfo) GetDSParent(oldChildInfo)) == NULL)
 		return;
 
@@ -271,7 +271,7 @@ _XmDSIReplaceChild(
 }
 
 
-void 
+void
 _XmDSISwapChildren(
         XmDSInfo parentInfo,
 		Cardinal position1,
@@ -295,14 +295,10 @@ _XmDSISwapChildren(
 	GetDSChildren(parentInfo)[position2] = (XtPointer) tmp_info;
 }
 
-void 
+void
 _XmDSIDestroy(
         XmDSInfo info,
-#if NeedWidePrototypes
-                        int substructures )
-#else
                         Boolean substructures )
-#endif /* NeedWidePrototypes */
 {
 	if (info != NULL)
 	{
@@ -335,7 +331,7 @@ _XmDSIGetBorderWidth(
 				XmDSRemoteNoneStyleRec *sr =
 					(XmDSRemoteNoneStyleRec *)
 						GetDSRemoteAnimationPart(info);
-				
+
 				return(sr->border_width);
 			}
 			case XmDRAG_UNDER_HIGHLIGHT:
@@ -343,7 +339,7 @@ _XmDSIGetBorderWidth(
 				XmDSRemoteHighlightStyleRec *sr =
 					(XmDSRemoteHighlightStyleRec *)
 						GetDSRemoteAnimationPart(info);
-				
+
 				return(sr->border_width);
 			}
 			case XmDRAG_UNDER_SHADOW_IN:
@@ -352,7 +348,7 @@ _XmDSIGetBorderWidth(
 				XmDSRemoteShadowStyleRec *sr =
 					(XmDSRemoteShadowStyleRec *)
 						GetDSRemoteAnimationPart(info);
-				
+
 				return(sr->border_width);
 			}
 			case XmDRAG_UNDER_PIXMAP:
@@ -360,7 +356,7 @@ _XmDSIGetBorderWidth(
 				XmDSRemotePixmapStyleRec *sr =
 					(XmDSRemotePixmapStyleRec *)
 						GetDSRemoteAnimationPart(info);
-				
+
 				return(sr->border_width);
 			}
 			default:

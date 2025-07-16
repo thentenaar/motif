@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: WmCPlace.c /main/5 1996/08/09 15:18:04 rswiston $"
@@ -55,7 +55,7 @@ static char rcsid[] = "$XConsortium: WmCPlace.c /main/5 1996/08/09 15:18:04 rswi
 #define NOFRZ_GRAB_MASK (KeyPressMask | ButtonPressMask |\
 			 ButtonReleaseMask)
 #define NOFRZ_PGRAB_MASK (ButtonPressMask | ButtonReleaseMask)
-		    	  
+
 /*
  * include extern functions
  */
@@ -96,7 +96,7 @@ static int placeOffsetY;
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -104,7 +104,7 @@ static int placeOffsetY;
  *  Comments:
  *  --------
  * o sets up global data and puts initial display on the screen
- * 
+ *
  *************************************<->***********************************/
 void SetupPlacement (ClientData *pcd)
 {
@@ -120,12 +120,12 @@ void SetupPlacement (ClientData *pcd)
 	PopGadgetOut(wmGD.gadgetClient, wmGD.gadgetDepressed);
 
     }
-	
+
     /* get offset of frame origin from window origin */
     placeOffsetX = pcd->clientOffset.x;
     placeOffsetY = pcd->clientOffset.y;
 
-    XQueryPointer (DISPLAY, ACTIVE_ROOT, 
+    XQueryPointer (DISPLAY, ACTIVE_ROOT,
 		   &junk_win, &junk_win,
 		   &cX, &cY, &junk, &junk, (unsigned int *)&junk);
 
@@ -145,7 +145,7 @@ void SetupPlacement (ClientData *pcd)
 
     if (wmGD.showFeedback & WM_SHOW_FB_PLACEMENT)
     {
-        DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight, 
+        DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight,
 		    (FB_SIZE | FB_POSITION), placeResize);
     }
 
@@ -172,16 +172,16 @@ void SetupPlacement (ClientData *pcd)
  *  pEvent	- pointer to this event
  *  pOldEvent	- pointer to previous event (cast to the correct type)
  *
- * 
+ *
  *  Outputs:
  *  -------
- *  IsRepeatedKeyEvent	- True if the events are "the same," 
+ *  IsRepeatedKeyEvent	- True if the events are "the same,"
  *			  False otherwise.
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Bool IsRepeatedKeyEvent (Display *dpy, XEvent *pEvent, char *pOldEvent)
 {
@@ -196,8 +196,8 @@ Bool IsRepeatedKeyEvent (Display *dpy, XEvent *pEvent, char *pOldEvent)
     {
 	return (True);
     }
-    else 
-    { 
+    else
+    {
 	return (False);
     }
 }
@@ -218,14 +218,14 @@ Bool IsRepeatedKeyEvent (Display *dpy, XEvent *pEvent, char *pOldEvent)
  *  pcd		- pointer to client data
  *  time	- time stamp of event for pointer regrab
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void StartInteractiveSizing (ClientData *pcd, Time time)
 {
@@ -233,13 +233,13 @@ void StartInteractiveSizing (ClientData *pcd, Time time)
 
     /* regrab pointer to change cursor */
     gmask = (wmGD.freezeOnConfig)? PGRAB_MASK : NOFRZ_PGRAB_MASK;
-    XChangeActivePointerGrab (DISPLAY, gmask, 
+    XChangeActivePointerGrab (DISPLAY, gmask,
 			      wmGD.sizePlacementCursor, time);
 
     /* put cursor at lower-right corner */
     if (wmGD.enableWarp)
     {
-	XWarpPointer (DISPLAY, None, ACTIVE_ROOT, 0, 0, 0, 0, 
+	XWarpPointer (DISPLAY, None, ACTIVE_ROOT, 0, 0, 0, 0,
 		  (int) (placeX+placeWidth-1), (int) (placeY+placeHeight-1));
     }
 
@@ -269,14 +269,14 @@ void StartInteractiveSizing (ClientData *pcd, Time time)
  *  ------
  *  pcd		- pointer to client data
  *  pev		- pointer to key press event
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
@@ -297,8 +297,8 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
     placeKeyMultiplier = 1;
     if (pev->type == KeyPress)
     {
-	while (placeKeyMultiplier <= 10 && 
-		  XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent, 
+	while (placeKeyMultiplier <= 10 &&
+		  XCheckIfEvent (DISPLAY, &KeyEvent, IsRepeatedKeyEvent,
 		  (char *) pev))
 	{
 	      placeKeyMultiplier++;
@@ -306,17 +306,13 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
     }
 
     /* convert event data to useful key data */
-#ifdef FIX_1611
     keysym = WmKeycodeToKeysym(DISPLAY, pev->keycode);
-#else 
-    keysym = XKeycodeToKeysym (DISPLAY, pev->keycode, 0);
-#endif    
     control = (pev->state & ControlMask) != 0;
     big_inc = DisplayWidth(DISPLAY, ACTIVE_PSD->screen) / 20;
 
     /* interpret key data */
     valid = FALSE;
-    switch (keysym) 
+    switch (keysym)
     {
 	case XK_Left:
 	    tmpX = (control) ? (-big_inc) : -1;
@@ -361,7 +357,7 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
 	    keyPlaceWidth += tmpX;		/* change size of outline */
 	    keyPlaceHeight += tmpY;
 
-	    FixFrameValues(pcd, &keyPlaceX, &keyPlaceY, &keyPlaceWidth, 
+	    FixFrameValues(pcd, &keyPlaceX, &keyPlaceY, &keyPlaceWidth,
 		           &keyPlaceHeight, placeResize);
 
 	    warpX = keyPlaceX+keyPlaceWidth-1;
@@ -374,18 +370,18 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
 		placeWidth = keyPlaceWidth;
 		placeHeight = keyPlaceHeight;
 	    }
-	    else 
+	    else
 	    {
 		placeWidth = newX - keyPlaceX + 1;
 		placeHeight = newY - keyPlaceY + 1;
 	    }
 	}
-	else 
+	else
 	{
 	    keyPlaceX += tmpX;		/* change position of outline */
 	    keyPlaceY += tmpY;
 
-	    FixFrameValues(pcd, &keyPlaceX, &keyPlaceY, &keyPlaceWidth, 
+	    FixFrameValues(pcd, &keyPlaceX, &keyPlaceY, &keyPlaceWidth,
 		           &keyPlaceHeight, placeResize);
 
 	    warpX = keyPlaceX;
@@ -406,7 +402,7 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
 
     if (wmGD.showFeedback & WM_SHOW_FB_PLACEMENT)
     {
-	DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight, 
+	DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight,
 	            0, placeResize);
     }
 } /* END OF FUNCTION HandlePlacementKeyEvent */
@@ -425,14 +421,14 @@ void HandlePlacementKeyEvent (ClientData *pcd, XKeyEvent *pev)
  *  Inputs:
  *  ------
  *  pev		- pointer to button event
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void HandlePlacementButtonEvent (XButtonEvent *pev)
@@ -442,15 +438,15 @@ void HandlePlacementButtonEvent (XButtonEvent *pev)
      */
     if (pev->button == 1)
     {
-	/* 
+	/*
 	 * Complete interactive placement on button release
 	 */
-	if (pev->type == ButtonRelease) 
+	if (pev->type == ButtonRelease)
 	{
 	    placementDone = TRUE;		/* global done flag */
 	}
 
-	else if (pev->type == ButtonPress) 
+	else if (pev->type == ButtonPress)
 	{
 
 	/*
@@ -480,14 +476,14 @@ void HandlePlacementButtonEvent (XButtonEvent *pev)
  *  pcd		- pointer to client data
  *  pev		- pointer to mouse motion event
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
@@ -495,7 +491,7 @@ void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
     int diffx, diffy;
 
     /*
-     * If in pre-resize mode, check for motion crossing threshhold before 
+     * If in pre-resize mode, check for motion crossing threshhold before
      * switching modes
      */
     if (wmGD.preMove) {
@@ -506,7 +502,7 @@ void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
 	{
 	    StartInteractiveSizing(pcd, pev->time);
 	}
-	return; 
+	return;
     }
 
     if (placeResize) {
@@ -536,7 +532,7 @@ void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
 
     if (wmGD.showFeedback & WM_SHOW_FB_PLACEMENT)
     {
-	DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight, 
+	DoFeedback (pcd, placeX, placeY, placeWidth, placeHeight,
 	            0, placeResize);
     }
 } /* END OF FUNCTION HandlePlacementMotionEvent */
@@ -557,7 +553,7 @@ void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- clientX, clientY, clientWidth, and clientHeight members
@@ -565,9 +561,9 @@ void HandlePlacementMotionEvent (ClientData *pcd, XMotionEvent *pev)
  *
  *  Comments:
  *  --------
- *  We try to be careful only to remove events that we need from the 
+ *  We try to be careful only to remove events that we need from the
  *  event queue while we're in our own event processing loop.
- * 
+ *
  *************************************<->***********************************/
 void DoPlacement (ClientData *pcd)
 {
@@ -585,7 +581,7 @@ void DoPlacement (ClientData *pcd)
     while (!placementDone)
     {
 	GetConfigEvent (DISPLAY, ACTIVE_ROOT, GRAB_MASK,
-		placePointerX, placePointerY, placeX, placeY, 
+		placePointerX, placePointerY, placeX, placeY,
 		placeWidth, placeHeight, &event);
 
 	switch (event.type) {
@@ -607,10 +603,10 @@ void DoPlacement (ClientData *pcd)
 
 	}
     }
-    
+
     /* copy back the configuration information */
     pcd->clientX = placeX + placeOffsetX;
-    pcd->clientY = placeY + placeOffsetY; 
+    pcd->clientY = placeY + placeOffsetY;
     pcd->clientWidth = placeWidth - 2*placeOffsetX;
     pcd->clientHeight = placeHeight - placeOffsetX - placeOffsetY;
 
@@ -637,14 +633,14 @@ void DoPlacement (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 void PlaceWindowInteractively (ClientData *pcd)
 {
@@ -655,7 +651,7 @@ void PlaceWindowInteractively (ClientData *pcd)
     /*
      * Return if config is in progress or if grabs fail
      */
-    if (!DoGrabs (ACTIVE_ROOT, wmGD.movePlacementCursor, 
+    if (!DoGrabs (ACTIVE_ROOT, wmGD.movePlacementCursor,
 	gmask, CurrentTime, pcd, True))
     {
 	return;

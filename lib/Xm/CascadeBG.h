@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmCascadeBG_h
 #define _XmCascadeBG_h
 
@@ -43,18 +43,14 @@ typedef struct _XmCascadeButtonGCacheObjRec      * XmCascadeButtonGCacheObject;
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmCreateCascadeButtonGadget( 
+extern Widget XmCreateCascadeButtonGadget(
                         Widget parent,
                         char *name,
                         ArgList al,
                         Cardinal ac) ;
-extern void XmCascadeButtonGadgetHighlight( 
+extern void XmCascadeButtonGadgetHighlight(
                         Widget wid,
-#if NeedWidePrototypes
-                        int highlight) ;
-#else
                         Boolean highlight) ;
-#endif /* NeedWidePrototypes */
 
 /*
  * Variable argument list functions
@@ -74,6 +70,4 @@ extern Widget XmVaCreateManagedCascadeButtonGadget(
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
-
 #endif /* _XmCascadeBG_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

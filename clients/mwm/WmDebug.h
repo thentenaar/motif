@@ -33,11 +33,7 @@
 #else
 
 # ifndef PRINT
-#   ifdef _NO_PROTO
-    static int noop () { return 0; }
-#   else
     static int noop (char *fmt, ...) { return 0; }
-#   endif
 #   define PRINT noop
 # endif
 

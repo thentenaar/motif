@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,63 +37,39 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern int _XmLabelCacheCompare( 
+extern int _XmLabelCacheCompare(
                         XtPointer A,
                         XtPointer B) ;
-extern void _XmCalcLabelGDimensions( 
+extern void _XmCalcLabelGDimensions(
                         Widget wid) ;
-extern void _XmReCacheLabG( 
+extern void _XmReCacheLabG(
                         Widget wid) ;
-extern void _XmAssignLabG_MarginHeight( 
+extern void _XmAssignLabG_MarginHeight(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmLabelGCalcTextRect( 
+extern void _XmLabelGCalcTextRect(
                         Widget wid) ;
-extern void _XmAssignLabG_MarginWidth( 
+extern void _XmAssignLabG_MarginWidth(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmAssignLabG_MarginLeft( 
+extern void _XmAssignLabG_MarginLeft(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmAssignLabG_MarginRight( 
+extern void _XmAssignLabG_MarginRight(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmAssignLabG_MarginTop( 
+extern void _XmAssignLabG_MarginTop(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmAssignLabG_MarginBottom( 
+extern void _XmAssignLabG_MarginBottom(
                         XmLabelGadget lw,
-#if NeedWidePrototypes
-                        int value) ;
-#else
                         Dimension value) ;
-#endif /* NeedWidePrototypes */
-extern void _XmProcessDrag( 
+extern void _XmProcessDrag(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-extern Boolean _XmLabelGCVTRedraw (Widget kid, 
+extern Boolean _XmLabelGCVTRedraw (Widget kid,
 				   Widget cur_parent,
 				   Widget new_parent,
 				   Mask visual_flag);
@@ -115,4 +91,3 @@ extern void _XmLabelGCalcTextRect(Widget wid);
 #endif
 
 #endif /* _XMLABELGI_H */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

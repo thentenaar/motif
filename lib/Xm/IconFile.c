@@ -64,23 +64,15 @@
 
 #include "ImageCachI.h"
 
-#define FIX_1427
-
 /**************** vendor dependant defaults ********/
 /* All this stuff (cached dir) should be moved and possibly merged
    in Xmos.c, where it belongs */
 
-
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
 #include <unistd.h>
-#endif
-
 #include <sys/types.h>
-
 #include <fcntl.h>
 #include <sys/stat.h>
-
 
 #if !HAVE_GETCWD && HAVE_GETWD
 #include <sys/param.h>
@@ -103,8 +95,8 @@
 /**************** Icon PATH defines ********/
 
 
-static XmConst char ABSOLUTE_IPATH[] = "%H%B";
-static XmConst char ABSOLUTE_PATH[] = "\
+static const char ABSOLUTE_IPATH[] = "%H%B";
+static const char ABSOLUTE_PATH[] = "\
 %P\
 %S";
 
@@ -448,21 +440,10 @@ find_slash(String str)
   if (MB_CUR_MAX == 1) {
       return strchr(str, '/');
   } else {
-#ifndef NO_MULTIBYTE
       while ((n = mblen(str, MB_CUR_MAX)) >0) {
-#else
-      if (!str) return NULL;
-      while ((n = *str ? 1 : 0) > 0) {
-#endif
-#ifndef NO_MULTIBYTE
         if (n == 1 && *str == '/')
             return str;
         str += n;
-#else
-	if (*str == '/')
-	    return str;
-	str++;
-#endif
       }
       return NULL;
   }
@@ -553,7 +534,7 @@ XmGetIconFileName(
     String		fileName = NULL;
     String		names[2];
     String		names_w_size[2];
-    XmConst char       *bPath, *iPath;
+    const char       *bPath, *iPath;
     Cardinal		i;
     Boolean		useColor;
     Boolean		useMask;
@@ -688,7 +669,6 @@ XmGetIconFileName(
 	if (_XmInImageCache(names[i]))
 	  fileName = XtNewString(names[i]);
 
-
 	/*
 	 * optimization to check all expansions in cache
 	 */
@@ -711,21 +691,17 @@ XmGetIconFileName(
 		memmove(&fileName[0],
 	      		iNameEntry->dirName,
 			dirLen);
-#ifdef FIX_1427
 		if (dirLen == 0) {
 			memmove(&fileName[dirLen], iNameEntry->leafName, leafLen);
 			fileName[dirLen + leafLen] = '\0';
 		} else {
-#endif
 		fileName[dirLen] = '/';
 		memmove(&fileName[dirLen + 1],
 	      		iNameEntry->leafName,
 			leafLen);
 
 		fileName[dirLen + leafLen + 1] = '\0';
-#ifdef FIX_1427
 		}
-#endif
 	    }
 	}
 

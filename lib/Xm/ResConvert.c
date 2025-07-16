@@ -39,11 +39,8 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 #include <Xm/Xmos_r.h>
 #endif
 
-
 #include <stdio.h>
-#ifndef X_NOT_STDC_ENV
 #include <stdlib.h>
-#endif
 #include <ctype.h>
 #include <Xm/SpecRenderT.h>
 #include <Xm/TraitP.h>
@@ -293,11 +290,7 @@ static void SimpleDestructor(
                         XrmValue *args,
                         Cardinal *num_args) ;
 static Boolean OneOf(
-#if NeedWidePrototypes
-                        int c,
-#else
                         char c,
-#endif /* NeedWidePrototypes */
                         char *set) ;
 static char * GetNextToken(
                         char *src,
@@ -638,7 +631,6 @@ XmeNamesAreEqual(
  *    Allow widget or window to be specified by name
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 StringToEntity(
         Display *disp,
@@ -733,7 +725,6 @@ CvtStringToWindow(
  *	Convert string to a single character (a mnemonic)
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToChar(
         Display *disp,		/* unused */
@@ -755,7 +746,6 @@ CvtStringToChar(
  *	Convert a string to a KeySym
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToKeySym(
         Display *display,
@@ -776,7 +766,6 @@ CvtStringToKeySym(
     return( FALSE) ;
     }
 
-/*ARGSUSED*/
 static void
 CvtStringToXmStringDestroy(
         XtAppContext app,	/* unused */
@@ -795,7 +784,6 @@ CvtStringToXmStringDestroy(
  *	Convert an ASCII string to a XmString.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToXmString(
         Display *display,
@@ -823,7 +811,6 @@ CvtStringToXmString(
     return( FALSE) ;
     }
 
-/*ARGSUSED*/
 static void
 CvtStringToXmFontListDestroy(
         XtAppContext app,	/* unused */
@@ -836,7 +823,7 @@ CvtStringToXmFontListDestroy(
 
     return ;
     }
-
+
 /************************************************************************
  *
  *  CvtStringToXmFontList
@@ -862,7 +849,6 @@ CvtStringToXmFontListDestroy(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToXmFontList(
         Display *dpy,
@@ -938,7 +924,6 @@ CvtStringToXmFontList(
 }
 
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToButtonFontList(Display *dpy,
 				XrmValue *args,
@@ -952,7 +937,6 @@ CvtStringToButtonFontList(Display *dpy,
 			       converter_data));
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToLabelFontList(Display *dpy,
 			       XrmValue *args,
@@ -966,7 +950,6 @@ CvtStringToLabelFontList(Display *dpy,
 			       converter_data));
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToTextFontList(Display *dpy,
 			       XrmValue *args,
@@ -978,7 +961,7 @@ CvtStringToTextFontList(Display *dpy,
   return(CvtStringToXmFontList(dpy, args, num_args, from, to,
 			       converter_data));
 }
-
+
 /************************************************************************
  *
  *  GetNextFontListEntry
@@ -1280,12 +1263,8 @@ GetNextXmString(
          else
          {
 	    if (MB_CUR_MAX > 1) {
-#ifndef NO_MULTIBYTE
 	      if ((csize = mblen(*s, MB_CUR_MAX)) < 0)
 	        break;
-#else
-	      csize = **s ? 1 : 0;
-#endif
 	      strncpy(tmp, *s, csize);
 	      tmp += csize;
 	      (*s) += csize;
@@ -1301,7 +1280,7 @@ GetNextXmString(
     *tmp = '\0';
     return(TRUE);
 }
-
+
 /************************************************************************
  *
  * CvtStringToXmStringTable
@@ -1313,7 +1292,6 @@ GetNextXmString(
  * The comma delimeter can be  quoted by a \
  *
  ************************************************************************/
-/* ARGSUSED */
 static Boolean
 CvtStringToXmStringTable(
         Display *dpy,
@@ -1369,13 +1347,12 @@ CvtStringToXmStringTable(
   to_val->size = sizeof(XtPointer);
   return TRUE;
 }
-
+
 /****************
  *
  * XmStringCvtDestroy - free up the space allocated by the converter
  *
  ****************/
-/*ARGSUSED*/
 static void
 XmStringCvtDestroy(
         XtAppContext app,	/* unused */
@@ -1391,7 +1368,6 @@ XmStringCvtDestroy(
    XtFree((char*)table);
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToStringTable(
         Display *dpy,		/* unused */
@@ -1437,12 +1413,8 @@ CvtStringToStringTable(
             if(    *p == '\\' && *(p + 1) == ','    )
             {   p++ ;
                 }
-#ifndef NO_MULTIBYTE
 	    if((csize = mblen(p, MB_CUR_MAX)) < 0)
  	      break;
-#else
-	    csize = *p ? 1 : 0;
-#endif
             }
         if(    i == size    )
         {
@@ -1476,7 +1448,6 @@ CvtStringToStringTable(
     return( True) ;
     }
 
-/*ARGSUSED*/
 static void
 StringCvtDestroy(
         XtAppContext app,	/* unused */
@@ -1496,7 +1467,6 @@ StringCvtDestroy(
     return ;
     }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToCardinalList(
     Display *dpy,		/* unused */
@@ -1544,7 +1514,6 @@ CvtStringToCardinalList(
         _XM_CONVERTER_DONE(to_val,Cardinal *,crd_array,;)
 }
 
-/*ARGSUSED*/
 static void
 CardinalListCvtDestroy(
         XtAppContext app,	/* unused */
@@ -1556,7 +1525,6 @@ CardinalListCvtDestroy(
         XtFree((XPointer)to->addr);
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToHorizontalPosition(
         Display *display,
@@ -1584,7 +1552,6 @@ CvtStringToHorizontalPosition(
         _XM_CONVERTER_DONE( to, Position, tmpPix, ; )
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToHorizontalDimension(
         Display *display,
@@ -1613,7 +1580,6 @@ CvtStringToHorizontalDimension(
         _XM_CONVERTER_DONE( to, Dimension, tmpPix, ; )
     }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToVerticalPosition(
         Display *display,
@@ -1642,7 +1608,6 @@ CvtStringToVerticalPosition(
             _XM_CONVERTER_DONE( to, Position, tmpPix, ; )
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToVerticalDimension(
         Display *display,
@@ -1734,11 +1699,7 @@ static XmFontList DefaultSystemFontList(Display *display, XmFontList fontlist)
 XmFontList
 XmeGetDefaultRenderTable(
         Widget w,
-#if NeedWidePrototypes
-        unsigned int fontListType )
-#else
         unsigned char fontListType )
-#endif /* NeedWidePrototypes */
 {
     XmFontList fontlist = NULL;
     static XmFontList sFontList = NULL;
@@ -1818,7 +1779,6 @@ XmeGetDefaultRenderTable(
     return (fontlist);
 }
 
-/*ARGSUSED*/
 static void
 ConvertStringToButtonTypeDestroy(
         XtAppContext app,	/* unused */
@@ -1832,7 +1792,6 @@ ConvertStringToButtonTypeDestroy(
     return ;
     }
 
-/*ARGSUSED*/
 static Boolean
 ConvertStringToButtonType(
         Display *display,
@@ -1897,7 +1856,6 @@ ConvertStringToButtonType(
     _XM_CONVERTER_DONE( to, XmButtonTypeTable, buttonTable, XtFree( (char *) buttonTable) ; )
     }
 
-/*ARGSUSED*/
 static void
 CvtStringToKeySymTableDestroy(
         XtAppContext app,	/* unused */
@@ -1910,8 +1868,7 @@ CvtStringToKeySymTableDestroy(
 
     return ;
     }
-
-/*ARGSUSED*/
+
 static Boolean
 CvtStringToKeySymTable(
         Display *display,
@@ -1965,8 +1922,7 @@ CvtStringToKeySymTable(
   _XM_CONVERTER_DONE(to, XmKeySymTable, keySymTable,
 		     XtFree((char*)keySymTable);)
 }
-
-/*ARGSUSED*/
+
 static void
 CvtStringToCharSetTableDestroy(
         XtAppContext app,	/* unused */
@@ -1979,8 +1935,7 @@ CvtStringToCharSetTableDestroy(
 
     return ;
     }
-
-/*ARGSUSED*/
+
 static Boolean
 CvtStringToCharSetTable(
         Display *display,	/* unused */
@@ -2036,13 +1991,12 @@ CvtStringToCharSetTable(
   _XM_CONVERTER_DONE(to, XmStringCharSetTable, charsetTable,
 		     XtFree((char *) charsetTable);)
 }
-
+
 /************************************************************************
  *
  *  CvtStringToBooleanDimension
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToBooleanDimension(
         Display *display,
@@ -2093,7 +2047,7 @@ CvtStringToBooleanDimension(
         }
     _XM_CONVERTER_DONE( to, Dimension, outVal, ; )
     }
-
+
 
 
 /************************************************************************
@@ -2104,7 +2058,6 @@ CvtStringToBooleanDimension(
  *  it is considered to be part of the atom.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToAtomList(
 	Display *dpy,
@@ -2182,7 +2135,6 @@ CvtStringToAtomList(
   }
 }
 
-/*ARGSUSED*/
 static void
 SimpleDestructor(
         XtAppContext app,	/* unused */
@@ -2231,11 +2183,7 @@ SimpleDestructor(
 
 static Boolean
 OneOf(
-#if NeedWidePrototypes
-        int c,
-#else
         char c,
-#endif /* NeedWidePrototypes */
 	char *set )
 {
 	char *p;
@@ -2333,7 +2281,6 @@ GetNextToken(
 	return(buf);
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToCardinal(
         Display *display,
@@ -2357,7 +2304,6 @@ CvtStringToCardinal(
 }
 
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToTextPosition(
         Display *display,
@@ -2381,7 +2327,6 @@ CvtStringToTextPosition(
 }
 
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToTopItemPosition(
         Display *display,
@@ -2500,7 +2445,6 @@ CvtStringToRenditionPixel(Display *disp,
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 static Boolean
 CvtPixelToRenditionPixel(Display *disp,
 			     XrmValuePtr args, /* unused */
@@ -2620,7 +2564,6 @@ GetNextTab(char **s,
 }
 
 
-/*ARGSUSED*/
 static void
 CvtStringToXmTabListDestroy(XtAppContext app, /* unused */
 			       XrmValue *to,
@@ -2648,7 +2591,6 @@ CvtStringToXmTabListDestroy(XtAppContext app, /* unused */
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToXmTabList(Display *dpy,
 			XrmValue *args,	/* unused */
@@ -2702,8 +2644,7 @@ CvtStringToXmTabList(Display *dpy,
   XtDisplayStringConversionWarning(dpy, (char *)from->addr, XmRTabList);
   return(FALSE);
 }
-
-/*ARGSUSED*/
+
 static Boolean
 cvtStringToXmRenderTable(Display *dpy,
 			 Widget widget,
@@ -2783,8 +2724,7 @@ cvtStringToXmRenderTable(Display *dpy,
 
   return FALSE;
 }
-
-/*ARGSUSED*/
+
 static Boolean
 CvtStringToRenderTable(Display *dpy,
 			  XrmValue *args,
@@ -2802,7 +2742,6 @@ CvtStringToRenderTable(Display *dpy,
 				  from, to));
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToButtonRenderTable(Display *dpy,
 				XrmValue *args,
@@ -2820,7 +2759,6 @@ CvtStringToButtonRenderTable(Display *dpy,
 				  from, to));
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToLabelRenderTable(Display *dpy,
 			       XrmValue *args,
@@ -2838,7 +2776,6 @@ CvtStringToLabelRenderTable(Display *dpy,
 				  from, to));
 }
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToTextRenderTable(Display *dpy,
 			      XrmValue *args,
@@ -2856,7 +2793,6 @@ CvtStringToTextRenderTable(Display *dpy,
 				  from, to));
 }
 
-/*ARGSUSED*/
 static void
 CvtStringToXmRenderTableDestroy(XtAppContext app, /* unused */
 				 XrmValue *to,

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmAtomMgr_h
 #define _XmAtomMgr_h
 
@@ -34,15 +34,10 @@ extern "C" {
 extern Atom XmInternAtom(
         		Display *display,
         		String name,
-#if NeedWidePrototypes
-        		int only_if_exists );
-#else
         		Boolean only_if_exists );
-#endif /* NeedWidePrototypes */
 
 /* X11r5's XGetAtomName equivalent */
 extern String XmGetAtomName( Display *display, Atom atom);
-
 
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */

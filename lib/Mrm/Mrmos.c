@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -45,7 +45,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
-#include <Xm/Xm.h>	/* For _NO_PROTO declaration. */
 #include "MrmosI.h"
 
 /************************************************************
@@ -84,10 +83,10 @@ void _MrmOSIEEEDoubleToHost(double *val)	/* unused */
 }
 
 /************************************************************************
- *  
- *    _MrmOSSetLocale   wrapper so vendor can disable call to set 
+ *
+ *    _MrmOSSetLocale   wrapper so vendor can disable call to set
  *                    if locale is superset of "C".
- *  
+ *
  ************************************************************************/
 
 String

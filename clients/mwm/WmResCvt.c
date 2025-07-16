@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,13 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.4
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -42,10 +41,7 @@ static char rcsid[] = "$XConsortium: WmResCvt.c /main/4 1995/11/01 11:49:54 rswi
 #include "WmResNames.h"
 #include <ctype.h>
 #include <stdio.h>
-
-#ifndef NO_MULTIBYTE
 #include <stdlib.h>
-#endif
 
 #ifndef MOTIF_ONE_DOT_ONE
 #include <Xm/XmosP.h>
@@ -66,9 +62,6 @@ long           DecStrToL ();
 
 #include "WmResCvt.h"
 
-
-
-
 /*************************************<->*************************************
  *
  *  AddWmResourceConverters (args)
@@ -86,7 +79,7 @@ long           DecStrToL ();
  *
  *  XXinput = ...
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  XXOutput = ...
@@ -95,40 +88,40 @@ long           DecStrToL ();
  *  Comments:
  *  --------
  *  XXComments ...
- * 
+ *
  *************************************<->***********************************/
 
 void AddWmResourceConverters (void)
 {
 #ifdef WSM
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRAbsentMapBehavior, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRAbsentMapBehavior,
 	(XtConverter)WmCvtStringToAMBehavior, NULL, 0);
 #endif /* WSM */
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRCFocusPolicy, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRCFocusPolicy,
 	(XtConverter)WmCvtStringToCFocus, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRClientDecor, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRClientDecor,
 	(XtConverter)WmCvtStringToCDecor, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRClientFunction, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRClientFunction,
 	(XtConverter)WmCvtStringToCFunc, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRFrameStyle, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRFrameStyle,
 	(XtConverter)WmCvtStringToFrameStyle, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRIconDecor, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRIconDecor,
 	(XtConverter)WmCvtStringToIDecor, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRIconPlacement, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRIconPlacement,
 	(XtConverter)WmCvtStringToIPlace, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRKFocusPolicy, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRKFocusPolicy,
 	(XtConverter)WmCvtStringToKFocus, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRSize, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRSize,
 	(XtConverter)WmCvtStringToSize, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRShowFeedback, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRShowFeedback,
 	(XtConverter)WmCvtStringToShowFeedback, NULL, 0);
-    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRUsePPosition, 
+    XtAppAddConverter (wmGD.mwmAppContext, XtRString, WmRUsePPosition,
 	(XtConverter)WmCvtStringToUsePPosition, NULL, 0);
 
 } /* END OF FUNCTION AddWmResourceConverters */
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToAMBehavior (args, numArgs, fromVal, toVal)
@@ -147,7 +140,7 @@ void AddWmResourceConverters (void)
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -216,7 +209,7 @@ void WmCvtStringToAMBehavior (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
 } /* END OF FUNCTION WmCvtStringToAMBehavior */
 #endif /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToCFocus (args, numArgs, fromVal, toVal)
@@ -235,7 +228,7 @@ void WmCvtStringToAMBehavior (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -306,7 +299,7 @@ void WmCvtStringToCFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 } /* END OF FUNCTION WmCvtStringToCFocus */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToCDecor (args, numArgs, fromVal, toVal)
@@ -326,7 +319,7 @@ void WmCvtStringToCFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -343,8 +336,8 @@ void WmCvtStringToCFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *    decor_spec ::= [sign] decor_name
  *
  *    decor_name ::=  "all" | "none" | "title" | "titlebar" |
- *                     "menu" | "minimize" | "maximize" | "resize" 
- * 
+ *                     "menu" | "minimize" | "maximize" | "resize"
+ *
  *************************************<->***********************************/
 
 void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, XrmValue *toVal)
@@ -374,11 +367,11 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
      * Check first token. If '-' we subtract from all decoration.
      * Otherwise, we start with no decoration and add things in.
      */
-    if (*pch && 
-	(NextToken (pch, &len, &pchNext)) && 
+    if (*pch &&
+	(NextToken (pch, &len, &pchNext)) &&
 	(*pch == '-'))
     {
-	cval = WM_DECOR_ALL;   
+	cval = WM_DECOR_ALL;
 	fHit = True;
     }
     else
@@ -387,7 +380,7 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
     }
 
 
-    while (*pch && NextToken(pch, &len, &pchNext)) 
+    while (*pch && NextToken(pch, &len, &pchNext))
     {
 	   /*
 	    * Strip off "sign" if prepended to another token, and process
@@ -405,7 +398,7 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 	else if (*pch == '-')
 	{
-	    if (len != 1) 
+	    if (len != 1)
 	    {
 	        pchNext = pch + 1;
 	    }
@@ -414,14 +407,14 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 	else if ((*pch == 'A') || (*pch == 'a'))
 	{
-	    if (StringsAreEqual(pch, WM_DECOR_ALL_STR,len))  
+	    if (StringsAreEqual(pch, WM_DECOR_ALL_STR,len))
 	    {
-	        cval = fAddNext ? (cval | WM_DECOR_ALL) : 
+	        cval = fAddNext ? (cval | WM_DECOR_ALL) :
 				 (cval & ~WM_DECOR_ALL);
 	        fHit = True;
 	    }
 	}
-	       
+
 	else if ((*pch == 'N') || (*pch == 'n'))
 	{
 	    if (StringsAreEqual(pch, WM_DECOR_NONE_STR,len))
@@ -435,35 +428,35 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 	{
 	    if (StringsAreEqual(pch, WM_DECOR_TITLE_STR,len))
 	    {
-	        cval = fAddNext ? (cval | WM_DECOR_TITLE) : 
+	        cval = fAddNext ? (cval | WM_DECOR_TITLE) :
 	    	                  (cval & ~WM_DECOR_TITLEBAR);
 		fHit = True;
     	    }
-	    else if (StringsAreEqual(pch, WM_DECOR_TITLEBAR_STR,len))  
+	    else if (StringsAreEqual(pch, WM_DECOR_TITLEBAR_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_TITLEBAR) : 
+		cval = fAddNext ? (cval | WM_DECOR_TITLEBAR) :
 		  	          (cval & ~WM_DECOR_TITLEBAR);
 		fHit = True;
 	    }
 	}
-	       
+
 	else if ((*pch == 'M') || (*pch == 'm'))
 	{
-	    if (StringsAreEqual(pch, WM_DECOR_MINIMIZE_STR,len)) 
+	    if (StringsAreEqual(pch, WM_DECOR_MINIMIZE_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_MINIMIZE) : 
+		cval = fAddNext ? (cval | WM_DECOR_MINIMIZE) :
 				  (cval & ~MWM_DECOR_MINIMIZE);
 		fHit = True;
 	    }
-	    else if (StringsAreEqual(pch, WM_DECOR_MAXIMIZE_STR,len))  
+	    else if (StringsAreEqual(pch, WM_DECOR_MAXIMIZE_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_MAXIMIZE) : 
+		cval = fAddNext ? (cval | WM_DECOR_MAXIMIZE) :
 				  (cval & ~MWM_DECOR_MAXIMIZE);
 		fHit = True;
 	    }
 	    else if (StringsAreEqual(pch, WM_DECOR_MENU_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_SYSTEM) : 
+		cval = fAddNext ? (cval | WM_DECOR_SYSTEM) :
 				  (cval & ~MWM_DECOR_MENU);
 		fHit = True;
 	    }
@@ -472,19 +465,19 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 	else if ((*pch == 'R') || (*pch == 'r'))
 	{
 	    if (StringsAreEqual(pch, WM_DECOR_RESIZE_STR,len) ||
-	        StringsAreEqual(pch, WM_DECOR_RESIZEH_STR,len)) 
+	        StringsAreEqual(pch, WM_DECOR_RESIZEH_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_RESIZEH) : 
+		cval = fAddNext ? (cval | WM_DECOR_RESIZEH) :
 				  (cval & ~MWM_DECOR_RESIZEH);
 		fHit = True;
 	    }
 	}
-	       
+
 	else if ((*pch == 'B') || (*pch == 'b'))
 	{
 	    if (StringsAreEqual(pch, WM_DECOR_BORDER_STR,len))
 	    {
-		cval = fAddNext ? (cval | WM_DECOR_BORDER) : 
+		cval = fAddNext ? (cval | WM_DECOR_BORDER) :
 				  (cval & ~WM_DECOR_BORDER);
 		fHit = True;
 	    }
@@ -501,7 +494,7 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 } /* END OF FUNCTION WmCvtStringToCDecor */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToCFunc (args, numArgs, fromVal, toVal)
@@ -521,7 +514,7 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -538,8 +531,8 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *    func_spec ::= [sign] func_name
  *
  *    func_name ::=  "all" | "none" | "resize" | "move" | "minimize" |
- *                   "maximize" | "close" 
- * 
+ *                   "maximize" | "close"
+ *
  *************************************<->***********************************/
 
 void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, XrmValue *toVal)
@@ -568,11 +561,11 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
      * Otherwise, we start with no functions and add things in.
      */
 
-    if (*pch && 
-	(NextToken (pch, &len, &pchNext)) && 
+    if (*pch &&
+	(NextToken (pch, &len, &pchNext)) &&
 	(*pch == '-'))
     {
-	cval = WM_FUNC_ALL;   
+	cval = WM_FUNC_ALL;
 	fHit = True;
     }
     else
@@ -581,7 +574,7 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
     }
 
 
-    while (*pch && NextToken(pch, &len, &pchNext)) 
+    while (*pch && NextToken(pch, &len, &pchNext))
     {
 	   /*
 	    * Strip off "sign" if prepended to another token, and process
@@ -599,7 +592,7 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
 
 	else if (*pch == '-')
 	{
-	    if (len != 1) 
+	    if (len != 1)
 	    {
 	        pchNext = pch + 1;
 	    }
@@ -608,14 +601,14 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
 
 	else if ((*pch == 'A') || (*pch == 'a'))
 	{
-	    if (StringsAreEqual(pch, WM_FUNC_ALL_STR,len))  
+	    if (StringsAreEqual(pch, WM_FUNC_ALL_STR,len))
 	    {
-	        cval = fAddNext ? (cval | WM_FUNC_ALL) : 
+	        cval = fAddNext ? (cval | WM_FUNC_ALL) :
 				  (cval & ~WM_FUNC_ALL);
 	        fHit = True;
 	    }
 	}
-	       
+
 	else if ((*pch == 'N') || (*pch == 'n'))
 	{
 	    if (StringsAreEqual(pch, WM_FUNC_NONE_STR,len))
@@ -629,39 +622,39 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
 	{
 	    if (StringsAreEqual(pch, WM_FUNC_RESIZE_STR,len))
 	    {
-	        cval = fAddNext ? (cval | MWM_FUNC_RESIZE) : 
+	        cval = fAddNext ? (cval | MWM_FUNC_RESIZE) :
 	    	                  (cval & ~MWM_FUNC_RESIZE);
 		fHit = True;
     	    }
 	}
-	       
+
 	else if ((*pch == 'M') || (*pch == 'm'))
 	{
-	    if (StringsAreEqual(pch, WM_FUNC_MINIMIZE_STR,len)) 
+	    if (StringsAreEqual(pch, WM_FUNC_MINIMIZE_STR,len))
 	    {
-		cval = fAddNext ? (cval | MWM_FUNC_MINIMIZE) : 
+		cval = fAddNext ? (cval | MWM_FUNC_MINIMIZE) :
 				  (cval & ~MWM_FUNC_MINIMIZE);
 		fHit = True;
 	    }
-	    else if (StringsAreEqual(pch, WM_FUNC_MAXIMIZE_STR,len))  
+	    else if (StringsAreEqual(pch, WM_FUNC_MAXIMIZE_STR,len))
 	    {
-		cval = fAddNext ? (cval | MWM_FUNC_MAXIMIZE) : 
+		cval = fAddNext ? (cval | MWM_FUNC_MAXIMIZE) :
 				  (cval & ~MWM_FUNC_MAXIMIZE);
 		fHit = True;
 	    }
-	    else if (StringsAreEqual(pch, WM_FUNC_MOVE_STR,len))  
+	    else if (StringsAreEqual(pch, WM_FUNC_MOVE_STR,len))
 	    {
-		cval = fAddNext ? (cval | MWM_FUNC_MOVE) : 
+		cval = fAddNext ? (cval | MWM_FUNC_MOVE) :
 				  (cval & ~MWM_FUNC_MOVE);
 		fHit = True;
 	    }
 	}
-	       
+
 	else if ((*pch == 'C') || (*pch == 'c'))
 	{
 	    if (StringsAreEqual(pch, WM_FUNC_CLOSE_STR,len))
 	    {
-		cval = fAddNext ? (cval | MWM_FUNC_CLOSE) : 
+		cval = fAddNext ? (cval | MWM_FUNC_CLOSE) :
 				  (cval & ~MWM_FUNC_CLOSE);
 		fHit = True;
 	    }
@@ -677,7 +670,7 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
 
 } /* END OF FUNCTION WmCvtStringToCFunc */
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToFrameStyle (args, numArgs, fromVal, toVal)
@@ -696,7 +689,7 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -748,7 +741,7 @@ void WmCvtStringToFrameStyle (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
 } /* END OF FUNCTION WmCvtStringToFrameStyle */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToIDecor (args, numArgs, fromVal, toVal)
@@ -767,7 +760,7 @@ void WmCvtStringToFrameStyle (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -845,7 +838,7 @@ void WmCvtStringToIDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 } /* END OF FUNCTION WmCvtStringToIDecor */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToIPlace (args, numArgs, fromVal, toVal)
@@ -864,7 +857,7 @@ void WmCvtStringToIDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -1013,7 +1006,7 @@ void WmCvtStringToIPlace (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 } /* END OF FUNCTION WmCvtStringToIPlace */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToKFocus (args, numArgs, fromVal, toVal)
@@ -1032,7 +1025,7 @@ void WmCvtStringToIPlace (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -1093,7 +1086,7 @@ void WmCvtStringToKFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 } /* END OF FUNCTION WmCvtStringToKFocus */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToSize (args, numArgs, fromVal, toVal)
@@ -1112,7 +1105,7 @@ void WmCvtStringToKFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -1195,7 +1188,7 @@ void WmCvtStringToSize (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xrm
 
 } /* END OF FUNCTION WmCvtStringToSize */
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToShowFeedback (args, numArgs, fromVal, toVal)
@@ -1214,7 +1207,7 @@ void WmCvtStringToSize (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xrm
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -1396,7 +1389,7 @@ void WmCvtStringToShowFeedback (XrmValue *args, Cardinal numArgs, XrmValue *from
 } /* END OF FUNCTION WmCvtStringToShowFeedback */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmCvtStringToUsePPosition (args, numArgs, fromVal, toVal)
@@ -1415,7 +1408,7 @@ void WmCvtStringToShowFeedback (XrmValue *args, Cardinal numArgs, XrmValue *from
  *
  *  fromVal = resource value to convert
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  toVal = descriptor to use to return converted value
@@ -1472,7 +1465,6 @@ void WmCvtStringToUsePPosition (XrmValue *args, Cardinal numArgs, XrmValue *from
 
 } /* END OF FUNCTION WmCvtStringToUsePPosition */
 
-
 /*************************************<->*************************************
  *
  *  NextToken (pchIn, pLen, ppchNext)
@@ -1487,7 +1479,7 @@ void WmCvtStringToUsePPosition (XrmValue *args, Cardinal numArgs, XrmValue *from
  *  ------
  *  pchIn = pointer to start of next token
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pLen  =    pointer to integer containing number of characters in next token
@@ -1499,16 +1491,14 @@ void WmCvtStringToUsePPosition (XrmValue *args, Cardinal numArgs, XrmValue *from
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
-unsigned char *NextToken (unsigned char *pchIn, int *pLen, 
+unsigned char *NextToken (unsigned char *pchIn, int *pLen,
 	unsigned char **ppchNext)
 {
     unsigned char *pchR = pchIn;
     register int   i;
-
-#ifndef NO_MULTIBYTE
     register int   chlen;
 
     for (i = 0;
@@ -1522,13 +1512,6 @@ unsigned char *NextToken (unsigned char *pchIn, int *pLen,
 	}
 	pchIn += chlen;
     }
-
-#else
-    for (i = 0; *pchIn && !isspace (*pchIn); i++, pchIn++)
-    /* find end of word */
-    {
-    }
-#endif
 
     /* skip to next word */
     ScanWhitespace (&pchIn);
@@ -1544,10 +1527,10 @@ unsigned char *NextToken (unsigned char *pchIn, int *pLen,
        return(NULL);
     }
 
-} /* END OF FUNCTION NextToken */   
+} /* END OF FUNCTION NextToken */
 
 
-
+
 /*************************************<->*************************************
  *
  *  StringsAreEqual (pch1, pch2, len)
@@ -1564,7 +1547,7 @@ unsigned char *NextToken (unsigned char *pchIn, int *pLen,
  *  pch2 =
  *  len  =
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = (Boolean) True iff strings match (case insensitive)
@@ -1573,18 +1556,17 @@ unsigned char *NextToken (unsigned char *pchIn, int *pLen,
  *  Comments:
  *  --------
  *  None.
- * 
+ *
  *************************************<->***********************************/
 
 Boolean StringsAreEqual (unsigned char *pch1, unsigned char *pch2, int len)
 {
-#ifndef NO_MULTIBYTE
     int       chlen1;
     int       chlen2;
     wchar_t   wch1;
     wchar_t   wch2;
 
-    while (len  && 
+    while (len  &&
 	   ((chlen1 = mbtowc (&wch1, (char *) pch1, MB_CUR_MAX)) > 0) &&
            ((chlen2 = mbtowc (&wch2, (char *) pch2, MB_CUR_MAX)) == chlen1) )
     {
@@ -1610,20 +1592,9 @@ Boolean StringsAreEqual (unsigned char *pch1, unsigned char *pch2, int len)
         len--;
     }
 
-#else
-    while (len  && *pch1 && *pch2 &&
-	   ((isupper (*pch1) ? tolower(*pch1++) : *pch1++) ==
-	    (isupper (*pch2) ? tolower(*pch2++) : *pch2++)))
-    {
-        len--;
-    }
-#endif
+    return !len;
+} /* END OF StringsAreEqual */
 
-    return (len == 0);
-
-} /* END OF StringsAreEqual */   
-
-
 /*************************************<->*************************************
  *
  *  long
@@ -1639,7 +1610,7 @@ Boolean StringsAreEqual (unsigned char *pch1, unsigned char *pch2, int len)
  *  ------
  *  str = character string
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *ptr = pointer to character terminating str or str
@@ -1652,7 +1623,7 @@ Boolean StringsAreEqual (unsigned char *pch1, unsigned char *pch2, int len)
  *  Returns long value with *ptr pointing at character terminating the decimal
  *    string.
  *  Returns 0 with *ptr == str if no integer can be formed.
- * 
+ *
  *************************************<->***********************************/
 
 long DecStrToL (unsigned char *str, unsigned char **ptr)
@@ -1660,26 +1631,16 @@ long DecStrToL (unsigned char *str, unsigned char **ptr)
     long  val = 0;
 
     *ptr = str;
-#ifndef NO_MULTIBYTE
-    while ((mblen ((char *)str, MB_CUR_MAX) == 1) && isspace (*str))
-#else
-    while (isspace (*str))
-#endif
+    while ((mblen((char *)str, MB_CUR_MAX) == 1) && isspace(*str))
     /* Ignore leading whitespace */
     {
         str++;
     }
 
     /* If we can start, we will reset *ptr */
-#ifndef NO_MULTIBYTE
     if ((mblen ((char *)str, MB_CUR_MAX) == 1) && isdigit (*str))
     {
         while ((mblen ((char *)str, MB_CUR_MAX) == 1) && isdigit (*str))
-#else
-    if (isdigit (*str))
-    {
-        while (isdigit (*str))
-#endif
         {
 	    val = val * 10 + (*str - '0');
 	    str++;

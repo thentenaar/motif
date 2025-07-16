@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -25,7 +25,6 @@
 #include <config.h>
 #endif
 
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: TrackLoc.c /main/12 1995/10/25 20:24:41 cde-sun $"
@@ -41,15 +40,10 @@ static char rcsid[] = "$XConsortium: TrackLoc.c /main/12 1995/10/25 20:24:41 cde
 
 /********    Static Function Declarations    ********/
 
-static Widget _XmInputInWidget( 
+static Widget _XmInputInWidget(
                         Widget w,
-#if NeedWidePrototypes
-                        int x,
-                        int y) ;
-#else
                         Position x,
                         Position y) ;
-#endif /* NeedWidePrototypes */
 
 /********    End Static Function Declarations    ********/
 
@@ -58,30 +52,25 @@ static Widget _XmInputInWidget(
 /******************************************************/
 /* copy from XmeGadgetAtPoint, buts works for widget too,
    only used in this module so far, so let it static */
-static Widget 
+static Widget
 _XmInputInWidget(
         Widget w,
-#if NeedWidePrototypes
-        int x,
-        int y)
-#else
         Position x,
         Position y)
-#endif /* NeedWidePrototypes */
 {
    int i;
    Widget child;
    CompositeWidget cw = (CompositeWidget) w;
-   
+
    /* loop over the child list to find if there is one at x,y */
    /* well, overlapping won't really work, since I have no standard way to
       check visibility */
    for (i = 0; i < cw->composite.num_children; i++) {
       child = cw->composite.children[i];
       if (XtIsManaged (child)) {
-         if (x >= child->core.x && y >= child->core.y && 
-             x < child->core.x + child->core.width    && 
-             y < child->core.y + child->core.height) 
+         if (x >= child->core.x && y >= child->core.y &&
+             x < child->core.x + child->core.width    &&
+             y < child->core.y + child->core.height)
             return (child);
       }
    }
@@ -97,15 +86,11 @@ _XmInputInWidget(
    which was only eating some events and thus causing problem when
    back to the application */
 
-Widget 
+Widget
 XmTrackingEvent(
         Widget widget,
         Cursor cursor,
-#if NeedWidePrototypes
-        int confineTo,
-#else
         Boolean confineTo,
-#endif /* NeedWidePrototypes */
 	XEvent * pev)
 {
     Window      w, confine_to = None;
@@ -115,7 +100,7 @@ XmTrackingEvent(
     Widget      target ;
     Position x, y ;
     XtAppContext app;
-    
+
     if (widget == NULL) return(NULL);
 
     app = XtWidgetToApplicationContext(widget);
@@ -125,12 +110,12 @@ XmTrackingEvent(
     if (confineTo) confine_to = w;
 
     lastTime = XtLastTimestampProcessed(XtDisplay(widget));
-    XmUpdateDisplay(widget);    
+    XmUpdateDisplay(widget);
 
-    if (XtGrabPointer(widget, True, 
+    if (XtGrabPointer(widget, True,
           /* The following truncation of masks is due to a bug in the Xt API.*/
-		      (unsigned int) (ButtonPressMask | ButtonReleaseMask), 
-		      GrabModeAsync, GrabModeAsync, 
+		      (unsigned int) (ButtonPressMask | ButtonReleaseMask),
+		      GrabModeAsync, GrabModeAsync,
 		      confine_to, cursor, lastTime) != GrabSuccess) {
 	XmeWarning(widget, GRABPTRERROR);
 	_XmAppUnlock(app);
@@ -141,8 +126,8 @@ XmTrackingEvent(
 	/* eat all events, not just button's */
         XNextEvent(XtDisplay(widget), pev);
 	/* track only button1release and non first keyrelease */
-        if (((pev->type == ButtonRelease) && 
-	     (pev->xbutton.button & Button1)) || 
+        if (((pev->type == ButtonRelease) &&
+	     (pev->xbutton.button & Button1)) ||
 	    ((pev->type == KeyRelease) && key_has_been_pressed)) {
 
             if ((!confineTo) && (pev->xbutton.window == w)) {
@@ -161,8 +146,8 @@ XmTrackingEvent(
 
 	    target = XtWindowToWidget(pev->xbutton.display,
 				      pev->xbutton.window);
-	    
-/* New algorithm that solves the problem of mouse insensitive widgets: 
+
+/* New algorithm that solves the problem of mouse insensitive widgets:
     ( i.e you can't get help on Label.)
    When we get the Btn1Up event with the window in which the event ocurred,
    and convert it to a widget.  If that widget is a primitive, return it.
@@ -206,15 +191,11 @@ XmTrackingEvent(
 
 
 /* reimplementation of the old function using the new one and a dummy event */
-Widget 
+Widget
 XmTrackingLocate(
         Widget widget,
         Cursor cursor,
-#if NeedWidePrototypes
-        int confineTo )
-#else
         Boolean confineTo )
-#endif /* NeedWidePrototypes */
 {
     XEvent ev ;
 
@@ -231,7 +212,7 @@ XmTrackingLocate(
  * them.
  ***********************************************************************/
 
-void 
+void
 XmUpdateDisplay(
         Widget w )
 {

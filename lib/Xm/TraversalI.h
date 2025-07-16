@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmTraversalI_h
 #define _XmTraversalI_h
 
@@ -45,7 +45,7 @@ typedef enum {
 } XmGeneology;
 
 typedef struct _XmTravGraphRec
-{   
+{
     union _XmTraversalNodeRec *head ;
     Widget top ;
     union _XmTraversalNodeRec *current ;
@@ -136,147 +136,143 @@ typedef struct
 /********    Private Function Declarations for Traversal.c    ********/
 
 extern XmFocusData _XmCreateFocusData( void ) ;
-extern void _XmDestroyFocusData( 
+extern void _XmDestroyFocusData(
                         XmFocusData focusData) ;
-extern void _XmSetActiveTabGroup( 
+extern void _XmSetActiveTabGroup(
                         XmFocusData focusData,
                         Widget tabGroup) ;
-extern Widget _XmGetActiveItem( 
+extern Widget _XmGetActiveItem(
                         Widget w) ;
-extern void _XmNavigInitialize( 
+extern void _XmNavigInitialize(
                         Widget request,
                         Widget new_wid,
                         ArgList args,
                         Cardinal *num_args) ;
-extern Boolean _XmNavigSetValues( 
+extern Boolean _XmNavigSetValues(
                         Widget current,
                         Widget request,
                         Widget new_wid,
                         ArgList args,
                         Cardinal *num_args) ;
-extern void _XmNavigResize( 
+extern void _XmNavigResize(
                         Widget wid) ;
-extern void _XmValidateFocus( 
+extern void _XmValidateFocus(
                         Widget wid) ;
-extern void _XmNavigDestroy( 
+extern void _XmNavigDestroy(
                         Widget wid) ;
-extern Boolean _XmCallFocusMoved( 
+extern Boolean _XmCallFocusMoved(
                         Widget old,
                         Widget new_wid,
                         XEvent *event) ;
-extern Boolean _XmMgrTraversal( 
+extern Boolean _XmMgrTraversal(
                         Widget wid,
                         XmTraversalDirection direction) ;
-extern void _XmClearFocusPath( 
+extern void _XmClearFocusPath(
                         Widget wid) ;
-extern Boolean _XmFocusIsHere( 
+extern Boolean _XmFocusIsHere(
                         Widget w) ;
-extern unsigned char _XmGetFocusPolicy( 
+extern unsigned char _XmGetFocusPolicy(
                         Widget w) ;
-extern Widget _XmFindTopMostShell( 
+extern Widget _XmFindTopMostShell(
                         Widget w) ;
-extern void _XmFocusModelChanged( 
+extern void _XmFocusModelChanged(
                         Widget wid,
                         XtPointer client_data,
                         XtPointer call_data) ;
-extern XmFocusData _XmGetFocusData( 
+extern XmFocusData _XmGetFocusData(
                         Widget wid) ;
-extern Boolean _XmComputeVisibilityRect( 
+extern Boolean _XmComputeVisibilityRect(
                         Widget w,
                         XRectangle *rectPtr,
 			Boolean include_initial_border,
 			Boolean allow_scrolling) ;
 extern Boolean _XmGetPointVisibility(Widget w,
-				     int root_x, 
+				     int root_x,
 				     int root_y);
-extern void _XmSetRect( 
+extern void _XmSetRect(
                         register XRectangle *rect,
                         Widget w) ;
-extern int _XmIntersectRect( 
+extern int _XmIntersectRect(
                         register XRectangle *srcRectA,
                         register Widget widget,
                         register XRectangle *dstRect) ;
-extern int _XmEmptyRect( 
+extern int _XmEmptyRect(
                         register XRectangle *r) ;
-extern void _XmClearRect( 
+extern void _XmClearRect(
                         register XRectangle *r) ;
-extern Boolean _XmIsNavigable( 
+extern Boolean _XmIsNavigable(
                         Widget wid) ;
-extern void _XmWidgetFocusChange( 
+extern void _XmWidgetFocusChange(
                         Widget wid,
                         XmFocusChange change) ;
-extern Widget _XmNavigate( 
+extern Widget _XmNavigate(
                         Widget wid,
                         XmTraversalDirection direction) ;
-extern void _XmSetInitialOfTabGroup( 
+extern void _XmSetInitialOfTabGroup(
                         Widget tab_group,
                         Widget init_focus) ;
-extern void _XmResetTravGraph( 
+extern void _XmResetTravGraph(
                         Widget wid) ;
-extern Boolean _XmShellIsExclusive( 
+extern Boolean _XmShellIsExclusive(
                         Widget wid) ;
-extern Widget _XmGetFirstFocus( 
+extern Widget _XmGetFirstFocus(
                         Widget wid) ;
 
 /********    End Private Function Declarations    ********/
 
 /********    Private Function Declarations for TraversalI.c    ********/
 
-extern XmNavigability _XmGetNavigability( 
+extern XmNavigability _XmGetNavigability(
                         Widget wid) ;
-extern Boolean _XmIsViewable( 
+extern Boolean _XmIsViewable(
                         Widget wid) ;
-extern Widget _XmIsScrollableClipWidget( 
+extern Widget _XmIsScrollableClipWidget(
                         Widget work_window,
 			Boolean scrollable,
                         XRectangle *visRect) ;
-extern Boolean _XmGetEffectiveView( 
+extern Boolean _XmGetEffectiveView(
                         Widget wid,
                         XRectangle *visRect) ;
-extern Boolean _XmIntersectionOf( 
+extern Boolean _XmIntersectionOf(
                         register XRectangle *srcRectA,
                         register XRectangle *srcRectB,
                         register XRectangle *destRect) ;
-extern XmNavigationType _XmGetNavigationType( 
+extern XmNavigationType _XmGetNavigationType(
                         Widget widget) ;
-extern Widget _XmGetActiveTabGroup( 
+extern Widget _XmGetActiveTabGroup(
                         Widget wid) ;
-extern Widget _XmTraverseAway( 
+extern Widget _XmTraverseAway(
                         XmTravGraph list,
                         Widget wid,
-#if NeedWidePrototypes
-                        int wid_is_control) ;
-#else
                         Boolean wid_is_control) ;
-#endif /* NeedWidePrototypes */
-extern Widget _XmTraverse( 
+extern Widget _XmTraverse(
                         XmTravGraph list,
                         XmTraversalDirection action,
                         XmTraversalDirection *local_dir,
                         Widget reference_wid) ;
-extern void _XmFreeTravGraph( 
+extern void _XmFreeTravGraph(
                         XmTravGraph trav_list) ;
-extern void _XmTravGraphRemove( 
+extern void _XmTravGraphRemove(
                         XmTravGraph tgraph,
                         Widget wid) ;
-extern void _XmTravGraphAdd( 
+extern void _XmTravGraphAdd(
                         XmTravGraph tgraph,
                         Widget wid) ;
-extern void _XmTravGraphUpdate( 
+extern void _XmTravGraphUpdate(
                         XmTravGraph tgraph,
                         Widget wid) ;
-extern Boolean _XmNewTravGraph( 
+extern Boolean _XmNewTravGraph(
                         XmTravGraph trav_list,
                         Widget top_wid,
                         Widget init_current) ;
-extern Boolean _XmSetInitialOfTabGraph( 
+extern Boolean _XmSetInitialOfTabGraph(
                         XmTravGraph trav_graph,
                         Widget tab_group,
                         Widget init_focus) ;
-extern void _XmTabListAdd( 
+extern void _XmTabListAdd(
                         XmTravGraph graph,
                         Widget wid) ;
-extern void _XmTabListDelete( 
+extern void _XmTabListDelete(
                         XmTravGraph graph,
                         Widget wid) ;
 

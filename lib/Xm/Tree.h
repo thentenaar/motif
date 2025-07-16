@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmTree_h
@@ -56,11 +56,7 @@ typedef struct _XmTreeRec		*XmTreeWidget;
  *	Returns: The Widget created.
  */
 
-Widget XmCreateTree(
-#ifndef _NO_PROTO
-Widget, String, ArgList, Cardinal
-#endif
-);
+Widget XmCreateTree(Widget, String, ArgList, Cardinal);
 
 extern WidgetClass xmTreeWidgetClass;
 

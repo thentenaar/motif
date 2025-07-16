@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.1
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -47,7 +47,7 @@ static char rcsid[] = "$XConsortium: WmCDecor.c /main/7 1996/06/20 09:38:16 rswi
 
 
 
-/* 
+/*
  * Definitions
  */
 
@@ -77,13 +77,13 @@ typedef struct {
     Single_Bevel_Count bottom;
 } Bevel_Count;
 
-/* 
- * "Worst case" bevel counts for frame pieces: this structure is 
+/*
+ * "Worst case" bevel counts for frame pieces: this structure is
  * indexed by definitions in WmGlobal.h. Edit if they change!
  *
  * These counts are multiplied by the internal, external,
  * and join bevel resources to determine the sizes of dynamic
- * data structures to allocate. 
+ * data structures to allocate.
  *
  */
 static Bevel_Count Bevels[] =
@@ -108,7 +108,7 @@ static Bevel_Count Bevels[] =
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  FrameWindow (pcd)
@@ -116,7 +116,7 @@ static Bevel_Count Bevels[] =
  *
  *  Description:
  *  -----------
- *  Build a decorated frame for a client window and reparent the client 
+ *  Build a decorated frame for a client window and reparent the client
  *  window to the frame.
  *
  *
@@ -135,17 +135,17 @@ static Bevel_Count Bevels[] =
  *		  clientWidth
  *		  clientHeight
  *		  fields from WM_NAME property
- * 
- * 
+ *
+ *
  *  Outputs:
  *  -------
  *
- * 
+ *
  *  Comments:
  *  --------
- *  This will create a top level shell (frame), fill in the appropriate 
+ *  This will create a top level shell (frame), fill in the appropriate
  *  decoration, and reparent the window (in *pcd) to the frame.
- * 
+ *
  *************************************<->***********************************/
 
 Boolean FrameWindow (ClientData *pcd)
@@ -159,20 +159,18 @@ Boolean FrameWindow (ClientData *pcd)
 
     AdoptClient(pcd);			/* reparent the window */
 
-#ifndef NO_SHAPE
     /* shape the frame */
     if (wmGD.hasShape && pcd->wShaped)
     {
         SetFrameShape (pcd);
     }
-#endif /* NO_SHAPE */
 
     return(TRUE);
 
 } /* END OF FUNCTION FrameWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  FrameExposureProc (pcd)
@@ -187,7 +185,7 @@ Boolean FrameWindow (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -196,7 +194,7 @@ Boolean FrameWindow (ClientData *pcd)
  *  --------
  *  Assumes that the display lists for the frame graphics are already
  *  set up.
- * 
+ *
  *************************************<->***********************************/
 
 void FrameExposureProc (ClientData *pcd)
@@ -218,14 +216,14 @@ void FrameExposureProc (ClientData *pcd)
     /* draw the frame decoration */
 
     if (pcd->pclientTopShadows)  {
-	XFillRectangles (DISPLAY, 
-			 win, 
+	XFillRectangles (DISPLAY,
+			 win,
 			 topGC,
 			 pcd->pclientTopShadows->prect,
 			 pcd->pclientTopShadows->used);
     }
 
-    if (pcd->pclientBottomShadows) { 
+    if (pcd->pclientBottomShadows) {
 	XFillRectangles (DISPLAY,
 			 win,
 			 botGC,
@@ -233,7 +231,7 @@ void FrameExposureProc (ClientData *pcd)
 			 pcd->pclientBottomShadows->used);
     }
 
-    if (DECOUPLE_TITLE_APPEARANCE(pcd) && 
+    if (DECOUPLE_TITLE_APPEARANCE(pcd) &&
 	(pcd->decor & MWM_DECOR_TITLE))
     {
 	if (pcd == wmGD.keyboardFocus) {
@@ -246,14 +244,14 @@ void FrameExposureProc (ClientData *pcd)
 	}
 
 	if (pcd->pclientTitleTopShadows)  {
-		XFillRectangles (DISPLAY, 
-			     pcd->clientTitleWin, 
+		XFillRectangles (DISPLAY,
+			     pcd->clientTitleWin,
 			     topGC,
 			     pcd->pclientTitleTopShadows->prect,
 			     pcd->pclientTitleTopShadows->used);
 	}
 
-	if (pcd->pclientTitleBottomShadows) { 
+	if (pcd->pclientTitleBottomShadows) {
 	    XFillRectangles (DISPLAY,
 			     pcd->clientTitleWin,
 			     botGC,
@@ -267,7 +265,7 @@ void FrameExposureProc (ClientData *pcd)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  BaseWinExposureProc (pcd)
@@ -282,7 +280,7 @@ void FrameExposureProc (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -291,7 +289,7 @@ void FrameExposureProc (ClientData *pcd)
  *  --------
  *  Assumes that the display lists for the matte graphics are already
  *  set up.
- * 
+ *
  *************************************<->***********************************/
 
 void BaseWinExposureProc (ClientData *pcd)
@@ -319,7 +317,7 @@ void BaseWinExposureProc (ClientData *pcd)
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  ConstructFrame (pcd)
@@ -333,7 +331,7 @@ void BaseWinExposureProc (ClientData *pcd)
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data record
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- modified
@@ -341,7 +339,7 @@ void BaseWinExposureProc (ClientData *pcd)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean ConstructFrame (ClientData *pcd)
@@ -364,7 +362,7 @@ Boolean ConstructFrame (ClientData *pcd)
 
     attr_mask =  CWEventMask;
     window_attribs.event_mask = (ButtonPressMask | ButtonReleaseMask |
-				 SELECT_BUTTON_MOTION_MASK | 
+				 SELECT_BUTTON_MOTION_MASK |
 				 DMANIP_BUTTON_MOTION_MASK |
 				 ExposureMask);
 
@@ -374,9 +372,9 @@ Boolean ConstructFrame (ClientData *pcd)
 	window_attribs.event_mask |= EnterWindowMask | LeaveWindowMask;
     }
 
-    /* 
+    /*
      * Use background pixmap if one is specified, otherwise set the
-     * appropriate background color. 
+     * appropriate background color.
      */
 
     if (CLIENT_APPEARANCE(pcd).backgroundPixmap)
@@ -405,13 +403,13 @@ Boolean ConstructFrame (ClientData *pcd)
 	window_attribs.save_under = True;
     }
 
-	    pcd->clientFrameWin = XCreateWindow(DISPLAY, 
+	    pcd->clientFrameWin = XCreateWindow(DISPLAY,
 				RootWindow (DISPLAY,
 				    SCREEN_FOR_CLIENT(pcd)),
-				frmX, 
-				frmY, 
-				pcd->frameInfo.width, 
-			pcd->frameInfo.height, 0, 
+				frmX,
+				frmY,
+				pcd->frameInfo.width,
+			pcd->frameInfo.height, 0,
 			CopyFromParent,InputOutput,CopyFromParent,
 			attr_mask, &window_attribs);
 
@@ -420,7 +418,7 @@ Boolean ConstructFrame (ClientData *pcd)
 	CreateStretcherWindows (pcd);
     }
 
-    /* 
+    /*
      * Create title bar window. If the title bar has its own appearance,
      * or if there is no border around the client area,
      * then we need to create an input/output window to draw in. Otherwise
@@ -431,7 +429,7 @@ Boolean ConstructFrame (ClientData *pcd)
 	attr_mask = CWCursor;
 	window_attribs.cursor = wmGD.workspaceCursor;
 
-	if (DECOUPLE_TITLE_APPEARANCE(pcd)) 
+	if (DECOUPLE_TITLE_APPEARANCE(pcd))
 	{
 	    /* title bar has a different appearance than rest of frame */
 	    wclass = InputOutput;
@@ -440,9 +438,9 @@ Boolean ConstructFrame (ClientData *pcd)
 	    attr_mask |= CWEventMask;
 	    window_attribs.event_mask = ExposureMask;
 
-	    /* 
+	    /*
 	     * Use background pixmap if one is specified, otherwise set the
-	     * appropriate background color. 
+	     * appropriate background color.
 	     */
 
 	    if (CLIENT_TITLE_APPEARANCE(pcd).backgroundPixmap)
@@ -454,23 +452,23 @@ Boolean ConstructFrame (ClientData *pcd)
 	    else
 	    {
 		attr_mask |= CWBackPixel;
-		window_attribs.background_pixel = 
+		window_attribs.background_pixel =
 			    CLIENT_TITLE_APPEARANCE(pcd).background;
 	    }
 	}
-	else 
+	else
 	{
 	    /* title bar has same appearance as rest of frame */
 	    wclass = InputOnly;
 	}
 
 	pcd->clientTitleWin = XCreateWindow(DISPLAY, pcd->clientFrameWin,
-				(int) pcd->frameInfo.upperBorderWidth, 
-				(int) pcd->frameInfo.upperBorderWidth, 
-				pcd->frameInfo.width - 
-				    2*pcd->frameInfo.upperBorderWidth, 
-				pcd->frameInfo.titleBarHeight, 
-				0, 
+				(int) pcd->frameInfo.upperBorderWidth,
+				(int) pcd->frameInfo.upperBorderWidth,
+				pcd->frameInfo.width -
+				    2*pcd->frameInfo.upperBorderWidth,
+				pcd->frameInfo.titleBarHeight,
+				0,
 				CopyFromParent,wclass,CopyFromParent,
 				attr_mask, &window_attribs);
     }
@@ -496,7 +494,7 @@ Boolean ConstructFrame (ClientData *pcd)
     }
     else
     {
-	window_attribs.background_pixel = 
+	window_attribs.background_pixel =
 	    CLIENT_TITLE_APPEARANCE(pcd).background;
     }
 
@@ -507,7 +505,7 @@ Boolean ConstructFrame (ClientData *pcd)
 				BaseWindowY (pcd),
 				BaseWindowWidth (pcd),
 				BaseWindowHeight (pcd),
-				0, 
+				0,
 				CopyFromParent,InputOutput,CopyFromParent,
 				attr_mask, &window_attribs);
 
@@ -519,7 +517,7 @@ Boolean ConstructFrame (ClientData *pcd)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  GenerateFrameDisplayLists (pcd)
@@ -534,7 +532,7 @@ Boolean ConstructFrame (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data record
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- modified
@@ -546,15 +544,15 @@ Boolean ConstructFrame (ClientData *pcd)
  *    for the rectangles has been allocated.
  *  o If cnum values for StretcherCorner change, also change
  *    StretcherCorner() in WmGraphics.c
- *  o The variable internalBevel sets the depth of shadowing from the 
+ *  o The variable internalBevel sets the depth of shadowing from the
  *    frame to the client area.
  *  o The variable insideBevel is used to decide how deep the bevel is
  *    immediately inside the frame. This may not be internalBevel if
  *    there's a matte, for example.
  *  o The variable diffBevel stores the difference between insideBevel
- *    and what's needed so the bottom of the title bar is correctly 
+ *    and what's needed so the bottom of the title bar is correctly
  *    beveled down to the client.
- * 
+ *
  *************************************<->***********************************/
 
 void GenerateFrameDisplayLists (ClientData *pcd)
@@ -571,7 +569,7 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
     int jX, jY;
     unsigned int jW, jH;
- 
+
     /* zero out part counts */
 
     if (pcd->pclientTopShadows)
@@ -597,7 +595,7 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
     diffBevel = insideBevel - 1;
 
-    if (decoration & MWM_DECOR_RESIZEH) 
+    if (decoration & MWM_DECOR_RESIZEH)
     {
 	/* adjust part width/heights if no title bar */
 	if ((pcd->internalBevel > 1) && !(decoration & MWM_DECOR_TITLE))
@@ -615,80 +613,80 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 	 */
 	GetFramePartInfo (pcd, FRAME_RESIZE_NW, &x, &y, &width, &height);
 	StretcherCorner (pcd->pclientTopShadows,	/* NW */
-		    pcd->pclientBottomShadows, 
-		    x, y, 
-		    STRETCH_NORTH_WEST, 
-		    pcd->frameInfo.upperBorderWidth - inset, 
+		    pcd->pclientBottomShadows,
+		    x, y,
+		    STRETCH_NORTH_WEST,
+		    pcd->frameInfo.upperBorderWidth - inset,
 		    width, height);
 
 	GetFramePartInfo (pcd, FRAME_RESIZE_N, &x, &y, &width, &height);
 	if ((int)width > 0)
 	    BevelRectangle (pcd->pclientTopShadows, 	/* N */
-		    pcd->pclientBottomShadows, 
-		    x, y, 
+		    pcd->pclientBottomShadows,
+		    x, y,
 		    width, height - inset,
 		    2, 1, ((wmGD.frameStyle == WmSLAB) ? 0 : 1), 1);
 
 	GetFramePartInfo (pcd, FRAME_RESIZE_NE, &x, &y, &width, &height);
-	StretcherCorner (pcd->pclientTopShadows, 
-		    pcd->pclientBottomShadows, 
+	StretcherCorner (pcd->pclientTopShadows,
+		    pcd->pclientBottomShadows,
 		    x, y,
-		    STRETCH_NORTH_EAST, 
+		    STRETCH_NORTH_EAST,
 		    pcd->frameInfo.upperBorderWidth - inset, width, height);
-  
+
 	GetFramePartInfo (pcd, FRAME_RESIZE_E, &x, &y, &width, &height);
-	if ((int)height > 0) 
+	if ((int)height > 0)
 	    BevelRectangle (pcd->pclientTopShadows, 	/* E */
-		    pcd->pclientBottomShadows, 
-		    x+diffBevel, y, 
+		    pcd->pclientBottomShadows,
+		    x+diffBevel, y,
 		    width-diffBevel, height,
 		    1, 2, 1, ((wmGD.frameStyle == WmSLAB) ? 0 : 1));
 
 	GetFramePartInfo (pcd, FRAME_RESIZE_SE, &x, &y, &width, &height);
 	StretcherCorner (pcd->pclientTopShadows, 	/* SE */
-                    pcd->pclientBottomShadows, 
-		    x, y, 
-		    STRETCH_SOUTH_EAST, 
+                    pcd->pclientBottomShadows,
+		    x, y,
+		    STRETCH_SOUTH_EAST,
 		    pcd->frameInfo.upperBorderWidth-inset, width, height);
 
 	GetFramePartInfo (pcd, FRAME_RESIZE_S, &x, &y, &width, &height);
 	if ((int) width > 0)
 	    BevelRectangle (pcd->pclientTopShadows, 	/* S */
-                    pcd->pclientBottomShadows, 
-		    x, y+diffBevel, 
+                    pcd->pclientBottomShadows,
+		    x, y+diffBevel,
 		    width, height-diffBevel,
 		    ((wmGD.frameStyle == WmSLAB) ? 0 : 1), 1, 2, 1);
 
 	GetFramePartInfo (pcd, FRAME_RESIZE_SW, &x, &y, &width, &height);
 	StretcherCorner (pcd->pclientTopShadows, 	/* SW */
-		    pcd->pclientBottomShadows, 
-		    x, y, 
-		    STRETCH_SOUTH_WEST, 
+		    pcd->pclientBottomShadows,
+		    x, y,
+		    STRETCH_SOUTH_WEST,
 		    pcd->frameInfo.upperBorderWidth-inset, width, height);
-  
+
 	GetFramePartInfo (pcd, FRAME_RESIZE_W, &x, &y, &width, &height);
 	if ((int) height > 0)
 	    BevelRectangle (pcd->pclientTopShadows, 	/* W */
-		    pcd->pclientBottomShadows, 
-		    x, y, 
+		    pcd->pclientBottomShadows,
+		    x, y,
 		    width-diffBevel, height,
 		    1, ((wmGD.frameStyle == WmSLAB) ? 0 : 1), 1, 2);
 
 	if (diffBevel)
 	{
 	    /*
-	     * Draw second inside bevel level. This goes just around the 
+	     * Draw second inside bevel level. This goes just around the
 	     * client area under the title bar.
 	     */
 	    BevelRectangle (pcd->pclientBottomShadows, 	/* inside */
-			    pcd->pclientTopShadows, 
-			    (int) (pcd->frameInfo.lowerBorderWidth-diffBevel), 
+			    pcd->pclientTopShadows,
+			    (int) (pcd->frameInfo.lowerBorderWidth-diffBevel),
 			    (int) (pcd->clientOffset.y - diffBevel),
-			    pcd->frameInfo.width - 
-				2*pcd->frameInfo.lowerBorderWidth + 
-				2*diffBevel, 
-			    pcd->frameInfo.height - pcd->clientOffset.y - 
-			        pcd->frameInfo.lowerBorderWidth + 
+			    pcd->frameInfo.width -
+				2*pcd->frameInfo.lowerBorderWidth +
+				2*diffBevel,
+			    pcd->frameInfo.height - pcd->clientOffset.y -
+			        pcd->frameInfo.lowerBorderWidth +
 			        2*diffBevel,
 			    (unsigned int) diffBevel, (unsigned int) diffBevel,
 			    (unsigned int) diffBevel, (unsigned int) diffBevel);
@@ -701,8 +699,8 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
 #ifdef WSM
 	BevelRectangle (pcd->pclientTopShadows, 	/* outside */
-		    pcd->pclientBottomShadows, 
-		    0, 0, 
+		    pcd->pclientBottomShadows,
+		    0, 0,
 		    pcd->frameInfo.width, pcd->frameInfo.height,
 		    FRAME_EXTERNAL_SHADOW_WIDTH,
 		    FRAME_EXTERNAL_SHADOW_WIDTH,
@@ -710,45 +708,45 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 		    FRAME_EXTERNAL_SHADOW_WIDTH);
 #else /* WSM */
 	BevelRectangle (pcd->pclientTopShadows, 	/* outside */
-		    pcd->pclientBottomShadows, 
-		    0, 0, 
+		    pcd->pclientBottomShadows,
+		    0, 0,
 		    pcd->frameInfo.width, pcd->frameInfo.height,
 		    2, 2, 2, 2);
 #endif /* WSM */
 
 	if ((pcd->internalBevel > 1) &&
-	    !matte_width && 
+	    !matte_width &&
 	    (decoration & MWM_DECOR_TITLE)) {
 	    /*
-	     * Need to do special beveling around the inside of the 
+	     * Need to do special beveling around the inside of the
 	     * client area separately from around title area.
 	     */
 	    GetFramePartInfo (pcd, FRAME_TITLE, &x, &y, &width, &height);
-	    inset = 1 + (pcd->frameInfo.lowerBorderWidth - 
+	    inset = 1 + (pcd->frameInfo.lowerBorderWidth -
 		         pcd->frameInfo.upperBorderWidth);
 	    BevelRectangle (pcd->pclientBottomShadows,
-			    pcd->pclientTopShadows, 
-			    (int) (pcd->frameInfo.lowerBorderWidth-inset), 
-			    (int) (pcd->frameInfo.lowerBorderWidth-inset), 
-			    pcd->frameInfo.width - 
-				2*pcd->frameInfo.lowerBorderWidth + 2*inset, 
-			    pcd->frameInfo.height - 
+			    pcd->pclientTopShadows,
+			    (int) (pcd->frameInfo.lowerBorderWidth-inset),
+			    (int) (pcd->frameInfo.lowerBorderWidth-inset),
+			    pcd->frameInfo.width -
+				2*pcd->frameInfo.lowerBorderWidth + 2*inset,
+			    pcd->frameInfo.height -
 				2*pcd->frameInfo.lowerBorderWidth + 2*inset,
 			    1, 1, 1, 1);
 
 	    BevelRectangle (pcd->pclientBottomShadows, 	/* inside */
-			    pcd->pclientTopShadows, 
-			    (int) (pcd->frameInfo.lowerBorderWidth-diffBevel), 
+			    pcd->pclientTopShadows,
+			    (int) (pcd->frameInfo.lowerBorderWidth-diffBevel),
 			    pcd->clientOffset.y - diffBevel,
-			    pcd->frameInfo.width - 
-				2*pcd->frameInfo.lowerBorderWidth + 
-				2*diffBevel, 
-			    pcd->frameInfo.height - pcd->clientOffset.y - 
+			    pcd->frameInfo.width -
+				2*pcd->frameInfo.lowerBorderWidth +
+				2*diffBevel,
+			    pcd->frameInfo.height - pcd->clientOffset.y -
 				pcd->frameInfo.lowerBorderWidth + 2*diffBevel,
 			    (unsigned int)diffBevel, (unsigned int)diffBevel,
 			    (unsigned int)diffBevel, (unsigned int)diffBevel);
 	}
-	else 
+	else
 	{
 #ifdef PANELIST
             if((pcd->dtwmBehaviors & DtWM_BEHAVIOR_PANEL) &&
@@ -758,18 +756,18 @@ void GenerateFrameDisplayLists (ClientData *pcd)
             }
 #endif /* PANELIST */
 	    BevelRectangle (pcd->pclientBottomShadows, 	/* inside */
-			    pcd->pclientTopShadows, 
-			    (int)(pcd->frameInfo.lowerBorderWidth-insideBevel), 
-			    (int)(pcd->frameInfo.lowerBorderWidth-insideBevel), 
-			    pcd->frameInfo.width - 
-				2*pcd->frameInfo.lowerBorderWidth + 
-				2*insideBevel, 
-			    pcd->frameInfo.height - 
-				2*pcd->frameInfo.lowerBorderWidth + 
+			    pcd->pclientTopShadows,
+			    (int)(pcd->frameInfo.lowerBorderWidth-insideBevel),
+			    (int)(pcd->frameInfo.lowerBorderWidth-insideBevel),
+			    pcd->frameInfo.width -
+				2*pcd->frameInfo.lowerBorderWidth +
 				2*insideBevel,
-			    (unsigned int)insideBevel, 
+			    pcd->frameInfo.height -
+				2*pcd->frameInfo.lowerBorderWidth +
+				2*insideBevel,
 			    (unsigned int)insideBevel,
-			    (unsigned int)insideBevel, 
+			    (unsigned int)insideBevel,
+			    (unsigned int)insideBevel,
 			    (unsigned int)insideBevel);
 	}
     }
@@ -777,8 +775,8 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
     /* draw title bar */
 
-    /* 
-     * set bevels for title bar and parts 
+    /*
+     * set bevels for title bar and parts
      */
     if (decoration & (MWM_DECOR_RESIZEH | MWM_DECOR_BORDER))
     {
@@ -795,14 +793,14 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 	wTitleBevel = JOIN_BEVEL(pcd);	/* west side of title */
 	meTitleBevel = JOIN_BEVEL(pcd);	/* btw Minimize, Maximize */
     }
-    else 
+    else
     {
 	/* borderless window */
 
 	nTitleBevel = EXTERNAL_BEVEL(pcd);
         if (wmGD.frameStyle == WmSLAB)
 	{
-	    sTitleBevel = (matte_width > 0) ? JOIN_BEVEL(pcd) : 
+	    sTitleBevel = (matte_width > 0) ? JOIN_BEVEL(pcd) :
 						EXTERNAL_BEVEL(pcd);
 	}
 	else
@@ -820,13 +818,13 @@ void GenerateFrameDisplayLists (ClientData *pcd)
     }
 
 
-    if (decoration & MWM_DECOR_TITLE) 
+    if (decoration & MWM_DECOR_TITLE)
     {
 	/*
 	 * Use a different set of rectangles if title appearance
 	 * is different from the rest of the frame.
 	 */
-	if (DECOUPLE_TITLE_APPEARANCE(pcd)) 
+	if (DECOUPLE_TITLE_APPEARANCE(pcd))
 	{
 	    prlTop = pcd->pclientTitleTopShadows;
 	    prlBot = pcd->pclientTitleBottomShadows;
@@ -843,18 +841,18 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 	GetFramePartInfo (pcd, FRAME_TITLE, &x, &y, &width, &height);
 	if (pcd->decorFlags & TITLE_DEPRESSED) {
 	    /* show depressed title gadget */
-	    GetDepressInfo (pcd, FRAME_TITLE, &jX, &jY, &jW, &jH, 
+	    GetDepressInfo (pcd, FRAME_TITLE, &jX, &jY, &jW, &jH,
 			    &inWidth);
-	    BevelDepressedRectangle (prlTop, prlBot, 
+	    BevelDepressedRectangle (prlTop, prlBot,
 			x-xAdj, y-yAdj, width, height,
-			nTitleBevel, eTitleBevel, 
+			nTitleBevel, eTitleBevel,
 			sTitleBevel, wTitleBevel, inWidth);
 	}
 	else {
 	    /* show normal title gadget */
-	    BevelRectangle (prlTop, prlBot, 
+	    BevelRectangle (prlTop, prlBot,
 			x-xAdj, y-yAdj, width, height,
-			nTitleBevel, eTitleBevel, 
+			nTitleBevel, eTitleBevel,
 			sTitleBevel, wTitleBevel);
 	}
     }
@@ -864,51 +862,51 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 	GetFramePartInfo (pcd, FRAME_SYSTEM, &x, &y, &width, &height);
 	if (pcd->decorFlags & SYSTEM_DEPRESSED) {
 	    /* show depressed system gadget */
-	    GetDepressInfo (pcd, FRAME_SYSTEM, &jX, &jY, &jW, &jH, 
+	    GetDepressInfo (pcd, FRAME_SYSTEM, &jX, &jY, &jW, &jH,
 			    &inWidth);
-	    BevelDepressedRectangle (prlTop, prlBot, 
+	    BevelDepressedRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, wTitleBevel, 
+			    nTitleBevel, wTitleBevel,
 			    sTitleBevel, nTitleBevel, inWidth);
 	}
 	else
 	{
 	    /* show normal system gadget */
-	    BevelRectangle (prlTop, prlBot, 
+	    BevelRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, wTitleBevel, 
+			    nTitleBevel, wTitleBevel,
 			    sTitleBevel, nTitleBevel);
 	}
 
 
 	/* system icon */
-	BevelSystemButton (prlTop, prlBot, 
+	BevelSystemButton (prlTop, prlBot,
 			   x-xAdj, y-yAdj, width, height);
     }
-		    
-    if (decoration & MWM_DECOR_MINIMIZE) { 
+
+    if (decoration & MWM_DECOR_MINIMIZE) {
 	GetFramePartInfo (pcd, FRAME_MINIMIZE, &x, &y, &width, &height);
 
 	if (pcd->decorFlags & MINIMIZE_DEPRESSED) {
 	    /* show depressed minimize gadget */
-	    GetDepressInfo (pcd, FRAME_MINIMIZE, &jX, &jY, &jW, &jH, 
+	    GetDepressInfo (pcd, FRAME_MINIMIZE, &jX, &jY, &jW, &jH,
 			    &inWidth);
-	    BevelDepressedRectangle (prlTop, prlBot, 
+	    BevelDepressedRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, meTitleBevel, 
+			    nTitleBevel, meTitleBevel,
 			    sTitleBevel, eTitleBevel, inWidth);
 	}
 	else {
 	    /* show normal minimize gadget */
-	    BevelRectangle (prlTop, prlBot, 
+	    BevelRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, meTitleBevel, 
+			    nTitleBevel, meTitleBevel,
 			    sTitleBevel, eTitleBevel);
 	}
 
 
 	BevelMinimizeButton(prlTop, 	/* minimize icon */
-			    prlBot, 
+			    prlBot,
 			    x-xAdj, y-yAdj, height);
     }
 
@@ -918,33 +916,33 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
 	if (pcd->decorFlags & MAXIMIZE_DEPRESSED) {
 	    /* show depressed maximize gadget */
-	    GetDepressInfo (pcd, FRAME_MAXIMIZE, &jX, &jY, &jW, &jH, 
+	    GetDepressInfo (pcd, FRAME_MAXIMIZE, &jX, &jY, &jW, &jH,
 			    &inWidth);
-	    BevelDepressedRectangle (prlTop, prlBot, 
+	    BevelDepressedRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, nTitleBevel, 
+			    nTitleBevel, nTitleBevel,
 			    sTitleBevel, eTitleBevel, inWidth);
 	}
 	else {
 	    /* show normal maximize gadget */
-	    BevelRectangle (prlTop, prlBot, 
+	    BevelRectangle (prlTop, prlBot,
 			    x-xAdj, y-yAdj, width, height,
-			    nTitleBevel, nTitleBevel, 
+			    nTitleBevel, nTitleBevel,
 			    sTitleBevel, eTitleBevel);
 	}
 
 	/* maximize icon - in or out depending on client state */
 	if (pcd->maxConfig) {
-	    BevelMaximizeButton(prlBot, 
+	    BevelMaximizeButton(prlBot,
 				prlTop,
 				x-xAdj, y-yAdj, height);
 	}
 	else {
 	    BevelMaximizeButton(prlTop,
-				prlBot, 
+				prlBot,
 				x-xAdj, y-yAdj, height);
 	}
-	
+
     }
 
     /* draw the client matte (this is in the base window!!!) */
@@ -960,7 +958,7 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 	    exMatteBevel = JOIN_BEVEL(pcd);
 	    tMatteBevel = JOIN_BEVEL(pcd);
 	}
-	else 
+	else
 	{
 	    exMatteBevel = EXTERNAL_BEVEL(pcd);
 	    tMatteBevel = (decoration & MWM_DECOR_TITLE) ?
@@ -971,29 +969,29 @@ void GenerateFrameDisplayLists (ClientData *pcd)
 
 	BevelRectangle (pcd->pclientMatteTopShadows,
 		    pcd->pclientMatteBottomShadows,
-		    0, 
+		    0,
 		    0,
 		    mWidth,
 		    mHeight,
-		    tMatteBevel, exMatteBevel, 
+		    tMatteBevel, exMatteBevel,
 		    exMatteBevel, exMatteBevel);
 
 	/* reversed beveling on inside rectange ! */
 
 	BevelRectangle ( pcd->pclientMatteBottomShadows,
 		    pcd->pclientMatteTopShadows,
-		    matte_width - pcd->internalBevel, 
 		    matte_width - pcd->internalBevel,
-		    mWidth - 2*matte_width + 2*pcd->internalBevel, 
+		    matte_width - pcd->internalBevel,
+		    mWidth - 2*matte_width + 2*pcd->internalBevel,
 		    mHeight - 2*matte_width + 2*pcd->internalBevel,
-		    (unsigned int) pcd->internalBevel, 
-		    (unsigned int) pcd->internalBevel, 
-		    (unsigned int) pcd->internalBevel, 
+		    (unsigned int) pcd->internalBevel,
+		    (unsigned int) pcd->internalBevel,
+		    (unsigned int) pcd->internalBevel,
 		    (unsigned int) pcd->internalBevel);
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  AdoptClient (pcd)
@@ -1008,7 +1006,7 @@ void GenerateFrameDisplayLists (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data record
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  None
@@ -1016,7 +1014,7 @@ void GenerateFrameDisplayLists (ClientData *pcd)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void AdoptClient (ClientData *pcd)
@@ -1033,7 +1031,7 @@ void AdoptClient (ClientData *pcd)
     }
 
     /*
-     * set window geometry to be consistent with what we believe 
+     * set window geometry to be consistent with what we believe
      */
     mask = CWWidth | CWHeight;
     windowChanges.width = pcd->clientWidth;
@@ -1052,32 +1050,30 @@ void AdoptClient (ClientData *pcd)
 
     XConfigureWindow (DISPLAY, pcd->client, mask, &windowChanges);
 
-#ifndef NO_SHAPE
     /* shape our frame to match that of the client's window */
     if (wmGD.hasShape)
     {
 	int xws, yws, xbs, ybs;
 	unsigned wws, hws, wbs, hbs;
 	int boundingShaped, clipShaped;
-	
+
 	XShapeSelectInput (DISPLAY, pcd->client, ShapeNotifyMask);
 	XShapeQueryExtents (DISPLAY, pcd->client,
 			    &boundingShaped, &xws, &yws, &wws, &hws,
 			    &clipShaped, &xbs, &ybs, &wbs, &hbs);
 	pcd->wShaped = boundingShaped;
     }
-#endif /* NO_SHAPE  */
     /* reparent the window to the base window */
 
-    XReparentWindow (DISPLAY, pcd->client, pcd->clientBaseWin, 
-			pcd->matteWidth, 
+    XReparentWindow (DISPLAY, pcd->client, pcd->clientBaseWin,
+			pcd->matteWidth,
 			pcd->matteWidth);
     pcd->clientFlags |= CLIENT_REPARENTED;
 
 } /* END OF FUNCTION AdoptClient */
 
 
-
+
 /*************************************<->*************************************
  *
  *  GetTextBox (pcd, pBox)
@@ -1092,14 +1088,14 @@ void AdoptClient (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *  pBox	- pointer to an XRectangle structure that gets return data
- * 
+ *
  *  Outputs:
  *  -------
  *  pBox	- data is returned here
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void GetTextBox (ClientData *pcd, XRectangle *pBox)
@@ -1138,7 +1134,7 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
     {
 	/*
 	 * We left justify the title in this style.
-	 * To keep it a little neat, we offset the title from 
+	 * To keep it a little neat, we offset the title from
 	 * the left edge just a little (half the title height).
 	 * See if we have room to do this.
 	 */
@@ -1179,7 +1175,7 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  DrawWindowTitle (pcd, eraseFirst)
@@ -1187,7 +1183,7 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
  *
  *  Description:
  *  -----------
- *  Overwrites or replaces the client's title text in the 
+ *  Overwrites or replaces the client's title text in the
  *  title bar of the frame.
  *
  *
@@ -1195,7 +1191,7 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
  *  ------
  *  pcd		- pointer to client data
  *  eraseFirst	- if true, then the old title is erased first
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -1203,8 +1199,8 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
  *  Comments:
  *  --------
  *  o Assumes 8-bit text for now.
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
@@ -1239,7 +1235,7 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
 	win = pcd->clientTitleWin;
 	fontList = CLIENT_TITLE_APPEARANCE(pcd).fontList;
     }
-    else 
+    else
     {
 	/* use "active" GC if we have keyboard focus */
 	if (pcd == wmGD.keyboardFocus) {
@@ -1257,8 +1253,8 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
 
     if (eraseFirst)
     {
-	XClearArea (DISPLAY, win, textBox.x, textBox.y, 
-		(unsigned int) textBox.width, (unsigned int) textBox.height, 
+	XClearArea (DISPLAY, win, textBox.x, textBox.y,
+		(unsigned int) textBox.width, (unsigned int) textBox.height,
 		FALSE);
     }
 
@@ -1276,13 +1272,13 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
 		   textBox.x, textBox.y, textBox.width, &textBox);
 #endif
 #endif /* DT_LEFT_JUSTIFIED_TITLE */
-		     
+
 
 
 } /* END OF FUNCTION DrawWindowTitle */
 
 
-
+
 /*************************************<->*************************************
  *
  *  CreateStretcherWindows (pcd)
@@ -1297,7 +1293,7 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
  *  ------
  *  pcd 	- pointer to client data.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- modified
@@ -1308,11 +1304,11 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
  *  Comments:
  *  --------
  *  o The windows are sized based upon resizeBorderWidth
- *  o This should be called before creating the title bar, 
- *    and reparenting window. Later windows should obscure parts of the 
+ *  o This should be called before creating the title bar,
+ *    and reparenting window. Later windows should obscure parts of the
  *    stretchers.
  *  o The stretchers are given special cursors.
- * 
+ *
  *************************************<->***********************************/
 
 void CreateStretcherWindows (ClientData *pcd)
@@ -1326,42 +1322,42 @@ void CreateStretcherWindows (ClientData *pcd)
     for (iWin = 0; iWin < STRETCH_COUNT; iWin++) {
 	switch (iWin) {
 	    case STRETCH_NORTH_WEST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_NW, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_NW,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_NORTH:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_N, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_N,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_NORTH_EAST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_NE, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_NE,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_EAST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_E, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_E,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_SOUTH_EAST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_SE, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_SE,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_SOUTH:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_S, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_S,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_SOUTH_WEST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_SW, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_SW,
 				      &x, &y, &width, &height);
 		    break;
 
 	    case STRETCH_WEST:
-		    GetFramePartInfo (pcd, FRAME_RESIZE_W, 
+		    GetFramePartInfo (pcd, FRAME_RESIZE_W,
 				      &x, &y, &width, &height);
 		    break;
 	}
@@ -1369,7 +1365,7 @@ void CreateStretcherWindows (ClientData *pcd)
 	attr_mask = CWCursor;
 	win_attribs.cursor = wmGD.stretchCursors[iWin];
 
-	pcd->clientStretchWin[iWin] = 
+	pcd->clientStretchWin[iWin] =
 		    XCreateWindow(DISPLAY, pcd->clientFrameWin,
 		    x, y, width, height, 0, CopyFromParent,
 		    InputOnly, CopyFromParent, attr_mask, &win_attribs);
@@ -1377,7 +1373,7 @@ void CreateStretcherWindows (ClientData *pcd)
 } /* END OF FUNCTION  CreateStretcherWindows  */
 
 
-
+
 /*************************************<->*************************************
  *
  *  CountFrameRectangles (pSD)
@@ -1391,14 +1387,14 @@ void CreateStretcherWindows (ClientData *pcd)
  *  Inputs:
  *  ------
  *  pWS		- pointer to workspace data
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 void CountFrameRectangles (WmScreenData *pSD)
@@ -1410,7 +1406,7 @@ void CountFrameRectangles (WmScreenData *pSD)
     /* count up rectangles for title bar */
     for (i = FRAME_SYSTEM; i <= FRAME_MAXIMIZE; i++)
     {
-	pSD->Num_Title_Ts_Elements += ((Bevels[i].top.external * 
+	pSD->Num_Title_Ts_Elements += ((Bevels[i].top.external *
 				 pSD->externalBevel) +
 			  (Bevels[i].top.internal * MAX_INTERNAL_BEVEL) +
 			  (Bevels[i].top.join * pSD->joinBevel));
@@ -1426,7 +1422,7 @@ void CountFrameRectangles (WmScreenData *pSD)
     /* count up rectangles for resize handles*/
     for (i = FRAME_RESIZE_NW; i <= FRAME_RESIZE_W; i++)
     {
-	pSD->Num_Resize_Ts_Elements += ((Bevels[i].top.external * 
+	pSD->Num_Resize_Ts_Elements += ((Bevels[i].top.external *
 				   pSD->externalBevel) +
 			  (Bevels[i].top.internal * MAX_INTERNAL_BEVEL) +
 			  (Bevels[i].top.join * pSD->joinBevel));
@@ -1439,7 +1435,7 @@ void CountFrameRectangles (WmScreenData *pSD)
 } /* END OF FUNCTION  CountFrameRectangles  */
 
 
-
+
 /*************************************<->*************************************
  *
  *  AllocateFrameDisplayLists (pcd)
@@ -1454,7 +1450,7 @@ void CountFrameRectangles (WmScreenData *pSD)
  *  ------
  *  pcd 	- pointer to the client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- fields modified
@@ -1464,8 +1460,8 @@ void CountFrameRectangles (WmScreenData *pSD)
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 Boolean AllocateFrameDisplayLists (ClientData *pcd)
@@ -1474,14 +1470,14 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
 
     /*
      *	If the title bar has it's own appearance, then allocate
-     *  separate display lists for it. 
+     *  separate display lists for it.
      */
-    if (DECOUPLE_TITLE_APPEARANCE(pcd) && 
+    if (DECOUPLE_TITLE_APPEARANCE(pcd) &&
 	(pcd->decor & MWM_DECOR_TITLE))
     {
-	if (((pcd->pclientTitleTopShadows = 
+	if (((pcd->pclientTitleTopShadows =
 	      AllocateRList ((unsigned)NUM_TITLE_TS_ELEMENTS(pcd))) == NULL) ||
-	    ((pcd->pclientTitleBottomShadows = 
+	    ((pcd->pclientTitleBottomShadows =
 	      AllocateRList ((unsigned)NUM_TITLE_BS_ELEMENTS(pcd))) == NULL))
 	{
 	    /* out of memory! */
@@ -1494,17 +1490,17 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
     }
     else
     {
-	frame_top_count = NUM_RESIZE_TS_ELEMENTS(pcd) + 
+	frame_top_count = NUM_RESIZE_TS_ELEMENTS(pcd) +
 	                  NUM_TITLE_TS_ELEMENTS(pcd);
-	frame_bottom_count = NUM_RESIZE_BS_ELEMENTS(pcd) + 
+	frame_bottom_count = NUM_RESIZE_BS_ELEMENTS(pcd) +
 			     NUM_RESIZE_BS_ELEMENTS(pcd);
     }
 
-    /* 
+    /*
      * Allocate the primary lists for the frame
      */
     if ( (pcd->pclientTopShadows == NULL) &&
-	 ((pcd->pclientTopShadows = 
+	 ((pcd->pclientTopShadows =
 		 AllocateRList ((unsigned)frame_top_count)) == NULL) )
     {
 	/* out of memory! */
@@ -1513,7 +1509,7 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
     }
 
     if ( (pcd->pclientBottomShadows == NULL) &&
-	 ((pcd->pclientBottomShadows = 
+	 ((pcd->pclientBottomShadows =
 		 AllocateRList ((unsigned)frame_bottom_count)) == NULL) )
     {
 	/* out of memory! */
@@ -1526,7 +1522,7 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
      */
     if ( (pcd->matteWidth) &&
 	 (pcd->pclientMatteTopShadows == NULL) &&
-	 ((pcd->pclientMatteTopShadows = 
+	 ((pcd->pclientMatteTopShadows =
 	     AllocateRList ((unsigned)NUM_MATTE_TS_RECTS)) == NULL))
     {
 	/* out of memory! */
@@ -1536,8 +1532,8 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
 
     if ( (pcd->matteWidth) &&
 	 (pcd->pclientMatteBottomShadows == NULL) &&
-	 ((pcd->pclientMatteBottomShadows = 
-		 AllocateRList ((unsigned)NUM_MATTE_BS_RECTS)) == NULL)) 
+	 ((pcd->pclientMatteBottomShadows =
+		 AllocateRList ((unsigned)NUM_MATTE_BS_RECTS)) == NULL))
     {
 	/* out of memory! */
 	Warning (((char *)GETMESSAGE(8, 5, "Insufficient memory for client window framing")));
@@ -1547,7 +1543,7 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
     return(TRUE);
 } /* END OF FUNCTION  AllocateFrameDisplayLists  */
 
-
+
 /*************************************<->*************************************
  *
  *  InitClientDecoration (pSD)
@@ -1561,7 +1557,7 @@ Boolean AllocateFrameDisplayLists (ClientData *pcd)
  *  Inputs:
  *  ------
  *  pSD		- pointer to screen data
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1577,7 +1573,7 @@ void InitClientDecoration (WmScreenData *pSD)
 } /* END OF FUNCTION   InitClientDecoration */
 
 
-
+
 /*************************************<->*************************************
  *
  *  AllocateGadgetRectangles (pcd)
@@ -1591,7 +1587,7 @@ void InitClientDecoration (WmScreenData *pSD)
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data structure
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- modified
@@ -1599,7 +1595,7 @@ void InitClientDecoration (WmScreenData *pSD)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean AllocateGadgetRectangles (ClientData *pcd)
@@ -1607,19 +1603,19 @@ Boolean AllocateGadgetRectangles (ClientData *pcd)
     int num_rects;
     unsigned long decor = pcd->decor;
     GadgetRectangle *pgr;
-    
+
     if (decor & MWM_DECOR_TITLE) {
 
 	/* count how many rectangles to allocate for titlebar */
-	num_rects = 1;		
+	num_rects = 1;
 	if (decor & MWM_DECOR_MENU)	num_rects += 1;
 	if (decor & MWM_DECOR_MINIMIZE)	num_rects += 1;
 	if (decor & MWM_DECOR_MAXIMIZE)	num_rects += 1;
-    
+
 	/* allocate memory if no memory is allocated */
 	if ( pcd->pTitleGadgets == NULL) {
 	    /* allocate memory for these guys */
-	    pgr = (GadgetRectangle *) 
+	    pgr = (GadgetRectangle *)
 		   XtMalloc (num_rects * sizeof(GadgetRectangle));
 	    if (pgr == NULL)
 	    {
@@ -1639,9 +1635,9 @@ Boolean AllocateGadgetRectangles (ClientData *pcd)
 	/* allocate memory if no memory is allocated */
 	if ( pcd->pResizeGadgets == NULL) {
 	    /* allocate memory for these guys */
-	    pgr = (GadgetRectangle *) 
+	    pgr = (GadgetRectangle *)
 		  XtMalloc (STRETCH_COUNT * sizeof(GadgetRectangle));
-	    if (pgr == NULL) 
+	    if (pgr == NULL)
 	    {
 		/* out of memory! */
 	        Warning (((char *)GETMESSAGE(8, 7, "Insufficient memory for client window framing")));
@@ -1655,7 +1651,7 @@ Boolean AllocateGadgetRectangles (ClientData *pcd)
     return(TRUE);
 } /* END OF FUNCTION  AllocateGadgetRectangles  */
 
-
+
 /*************************************<->*************************************
  *
  *  ComputeGadgetRectangles (pcd)
@@ -1670,7 +1666,7 @@ Boolean AllocateGadgetRectangles (ClientData *pcd)
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data structure
- * 
+ *
  *  Outputs:
  *  -------
  *  pcd		- modified
@@ -1679,7 +1675,7 @@ Boolean AllocateGadgetRectangles (ClientData *pcd)
  *  Comments:
  *  --------
  *  o assumes gadget rectangles are already allocated.
- * 
+ *
  *************************************<->***********************************/
 
 void ComputeGadgetRectangles (ClientData *pcd)
@@ -1690,7 +1686,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
     unsigned int fpWidth, fpHeight;
     int igr;
     int clientWidth = (pcd->maxConfig) ? pcd->maxWidth : pcd->clientWidth;
-    
+
 
     /* title bar */
 
@@ -1727,7 +1723,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 
 	if (decor & MWM_DECOR_MENU) {
 	    pgr[igr].id = FRAME_SYSTEM;
-	    GetFramePartInfo (pcd, FRAME_SYSTEM, &fpX, &fpY, &fpWidth, 
+	    GetFramePartInfo (pcd, FRAME_SYSTEM, &fpX, &fpY, &fpWidth,
 			      &fpHeight);
 
 	    /* copy in and convert to shorts */
@@ -1740,7 +1736,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 
 	if (decor & MWM_DECOR_MINIMIZE) {
 	    pgr[igr].id = FRAME_MINIMIZE;
-	    GetFramePartInfo (pcd, FRAME_MINIMIZE, 
+	    GetFramePartInfo (pcd, FRAME_MINIMIZE,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1752,7 +1748,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 
 	if (decor & MWM_DECOR_MAXIMIZE) {
 	    pgr[igr].id = FRAME_MAXIMIZE;
-	    GetFramePartInfo (pcd, FRAME_MAXIMIZE, 
+	    GetFramePartInfo (pcd, FRAME_MAXIMIZE,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1772,21 +1768,21 @@ void ComputeGadgetRectangles (ClientData *pcd)
     if (decor & (MWM_DECOR_RESIZEH | MWM_DECOR_BORDER))
     {
 	pcd->matteRectangle.x = pcd->frameInfo.lowerBorderWidth;
-	pcd->matteRectangle.y = pcd->frameInfo.upperBorderWidth + 
+	pcd->matteRectangle.y = pcd->frameInfo.upperBorderWidth +
 				    pcd->frameInfo.titleBarHeight;
-	pcd->matteRectangle.width = pcd->frameInfo.width - 
+	pcd->matteRectangle.width = pcd->frameInfo.width -
 				        (2 * pcd->frameInfo.lowerBorderWidth);
-	pcd->matteRectangle.height = pcd->frameInfo.height - 
-					 pcd->frameInfo.upperBorderWidth - 
-					 pcd->frameInfo.lowerBorderWidth - 
+	pcd->matteRectangle.height = pcd->frameInfo.height -
+					 pcd->frameInfo.upperBorderWidth -
+					 pcd->frameInfo.lowerBorderWidth -
 					 pcd->frameInfo.titleBarHeight;
     }
-    else 
+    else
     {
 	pcd->matteRectangle.x = 0;
 	pcd->matteRectangle.y = pcd->frameInfo.titleBarHeight;
 	pcd->matteRectangle.width = pcd->frameInfo.width;
-	pcd->matteRectangle.height = pcd->frameInfo.height - 
+	pcd->matteRectangle.height = pcd->frameInfo.height -
 					 pcd->frameInfo.titleBarHeight;
     }
 
@@ -1798,10 +1794,10 @@ void ComputeGadgetRectangles (ClientData *pcd)
 
 	/* fill in resize rectangles */
 	igr = 0;
-	if (decor & MWM_DECOR_RESIZEH) { 
+	if (decor & MWM_DECOR_RESIZEH) {
 
 	    pgr[igr].id = FRAME_RESIZE_NW;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_NW, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_NW,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1811,7 +1807,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    igr += 1;
 
 	    pgr[igr].id = FRAME_RESIZE_N;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_N, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_N,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    if ((int) fpWidth > 0)  {
 		/* copy in and convert to shorts */
@@ -1823,7 +1819,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    }
 
 	    pgr[igr].id = FRAME_RESIZE_NE;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_NE, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_NE,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1833,7 +1829,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    igr += 1;
 
 	    pgr[igr].id = FRAME_RESIZE_W;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_W, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_W,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    if ((int)fpHeight > 0) {
 		/* copy in and convert to shorts */
@@ -1845,7 +1841,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    }
 
 	    pgr[igr].id = FRAME_RESIZE_E;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_E, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_E,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    if ((int) fpHeight > 0) {
 		/* copy in and convert to shorts */
@@ -1857,7 +1853,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    }
 
 	    pgr[igr].id = FRAME_RESIZE_SW;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_SW, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_SW,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1867,7 +1863,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    igr += 1;
 
 	    pgr[igr].id = FRAME_RESIZE_S;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_S, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_S,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    if ((int) fpWidth > 0) {
 		/* copy in and convert to shorts */
@@ -1879,7 +1875,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 	    }
 
 	    pgr[igr].id = FRAME_RESIZE_SE;
-	    GetFramePartInfo (pcd, FRAME_RESIZE_SE, 
+	    GetFramePartInfo (pcd, FRAME_RESIZE_SE,
 	                      &fpX, &fpY, &fpWidth, &fpHeight);
 	    /* copy in and convert to shorts */
 	    pgr[igr].rect.x = fpX;
@@ -1895,7 +1891,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
 } /* END OF FUNCTION  ComputeGadgetRectangles   */
 
 
-
+
 /*************************************<->*************************************
  *
  *  GetSystemMenuPosition (pcd, px, py, height, context)
@@ -1931,7 +1927,7 @@ void ComputeGadgetRectangles (ClientData *pcd)
  *
  *************************************<->***********************************/
 
-void GetSystemMenuPosition (ClientData *pcd, int *px, int *py, 
+void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
 			    unsigned int height, Context context)
 {
 
@@ -1939,7 +1935,7 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
         ((pcd->clientState != MINIMIZED_STATE) &&
          (context == F_SUBCONTEXT_IB_WICON)))
     {
-	/* 
+	/*
 	 * Try to put the menu directly above the icon.
 	 * If it would hit the top of the screen then try to put it below
 	 *   the icon and label.
@@ -1960,7 +1956,7 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
             if (*py < 0)
             {
                 *py += height + ICON_HEIGHT(pcd);
-                if (*py + height >= DisplayHeight (DISPLAY, 
+                if (*py + height >= DisplayHeight (DISPLAY,
 						   SCREEN_FOR_CLIENT(pcd)))
                 {
                     wmGD.checkHotspot = FALSE;
@@ -1971,17 +1967,17 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
         {
 	    *px = ICON_X(pcd);
 	    *py = ICON_Y(pcd) - height;
-	    
+
 	    if (*py < 0)
 	    {
 		*py = ICON_Y(pcd) + ICON_HEIGHT(pcd);
-		if (*py + height >= DisplayHeight (DISPLAY, 
+		if (*py + height >= DisplayHeight (DISPLAY,
 						   SCREEN_FOR_CLIENT(pcd)))
 		{
 		    wmGD.checkHotspot = FALSE;
 		}
 	    }
-	    
+
 	    wmGD.hotspotRectangle.x = ICON_X(pcd);
 	    wmGD.hotspotRectangle.y = ICON_Y(pcd);
 	}
@@ -1993,8 +1989,8 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
     }
     else
     {
-	/* 
-	 * Try to put the menu directly below the SW corner of the 
+	/*
+	 * Try to put the menu directly below the SW corner of the
 	 *   titlebar/border.
 	 * If it would hit the bottom of the screen then try to put it directly
 	 *   above the NW corner of the titlebar/border.
@@ -2008,13 +2004,13 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
 	    *px = pcd->frameInfo.x;
 	    *py = pcd->frameInfo.y + pcd->frameInfo.titleBarHeight;
 	}
-	else 
+	else
 	{
 	    *px = pcd->frameInfo.x + pcd->frameInfo.lowerBorderWidth;
-	    *py = pcd->frameInfo.y + pcd->frameInfo.upperBorderWidth + 
+	    *py = pcd->frameInfo.y + pcd->frameInfo.upperBorderWidth +
 		  pcd->frameInfo.titleBarHeight;
 	}
-	if (*py + height >= DisplayHeight (DISPLAY, 
+	if (*py + height >= DisplayHeight (DISPLAY,
 		  SCREEN_FOR_CLIENT(pcd)))
 	{
 	    if ((pcd->decor & MWM_DECOR_TITLE) &&
@@ -2024,7 +2020,7 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
 	    }
 	    else
 	    {
-		*py = pcd->frameInfo.y + pcd->frameInfo.upperBorderWidth - 
+		*py = pcd->frameInfo.y + pcd->frameInfo.upperBorderWidth -
 		    height;
 	    }
 	    if (*py < 0)
@@ -2035,9 +2031,9 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
 
 	/* setup the hotspot rectangle data */
 
-	wmGD.hotspotRectangle.x = pcd->frameInfo.x + 
+	wmGD.hotspotRectangle.x = pcd->frameInfo.x +
 				  pcd->frameInfo.lowerBorderWidth;
-	wmGD.hotspotRectangle.y = pcd->frameInfo.y + 
+	wmGD.hotspotRectangle.y = pcd->frameInfo.y +
 	                          pcd->frameInfo.upperBorderWidth;
 
 	    /* assume square button */
@@ -2048,7 +2044,7 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
 } /* END OF FUNCTION GetSystemMenuPosition */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ShowActiveClientFrame (pcd)
@@ -2063,7 +2059,7 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2072,23 +2068,23 @@ void GetSystemMenuPosition (ClientData *pcd, int *px, int *py,
  *  --------
  *  o This calls the frame exposure procedure, which gets some GCs based
  *    on the current keyboard focus. Thus, wmGD.keyboardFocus == pcd
- *    must be TRUE when this is called for the correct highlighting to 
+ *    must be TRUE when this is called for the correct highlighting to
  *    occur.
- * 
+ *
  *************************************<->***********************************/
 
-void 
+void
 ShowActiveClientFrame (ClientData *pcd)
 {
     unsigned long attr_mask = 0;
     XSetWindowAttributes window_attribs;
 
-    if (DECOUPLE_TITLE_APPEARANCE(pcd) && 
+    if (DECOUPLE_TITLE_APPEARANCE(pcd) &&
 	 (pcd->decor & MWM_DECOR_TITLE))
     {
-	/* 
+	/*
 	 * Use background pixmap if one is specified, otherwise set the
-	 * appropriate background color. 
+	 * appropriate background color.
 	 */
 
 	if (CLIENT_TITLE_APPEARANCE(pcd).activeBackgroundPixmap)
@@ -2100,21 +2096,21 @@ ShowActiveClientFrame (ClientData *pcd)
 	else
 	{
 	    attr_mask |= CWBackPixel;
-	    window_attribs.background_pixel = 
+	    window_attribs.background_pixel =
 		CLIENT_TITLE_APPEARANCE(pcd).activeBackground;
 	}
 
 
-	XChangeWindowAttributes (DISPLAY, pcd->clientTitleWin, attr_mask, 
+	XChangeWindowAttributes (DISPLAY, pcd->clientTitleWin, attr_mask,
 				 &window_attribs);
 
 	/* clear the frame to the right background */
 	XClearWindow (DISPLAY, pcd->clientTitleWin);
     }
 
-    /* 
+    /*
      * Use background pixmap if one is specified, otherwise set the
-     * appropriate background color. 
+     * appropriate background color.
      */
 
     if (CLIENT_APPEARANCE(pcd).activeBackgroundPixmap)
@@ -2126,12 +2122,12 @@ ShowActiveClientFrame (ClientData *pcd)
     else
     {
 	attr_mask |= CWBackPixel;
-	window_attribs.background_pixel = 
+	window_attribs.background_pixel =
 		CLIENT_APPEARANCE(pcd).activeBackground;
     }
 
 
-    XChangeWindowAttributes (DISPLAY, pcd->clientFrameWin, attr_mask, 
+    XChangeWindowAttributes (DISPLAY, pcd->clientFrameWin, attr_mask,
 			     &window_attribs);
 
     /* clear the frame to the right background */
@@ -2144,7 +2140,7 @@ ShowActiveClientFrame (ClientData *pcd)
 } /* END OF FUNCTION ShowActiveClient */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ShowInactiveClientFrame (pcd)
@@ -2159,7 +2155,7 @@ ShowActiveClientFrame (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2168,24 +2164,24 @@ ShowActiveClientFrame (ClientData *pcd)
  *  --------
  *  o This calls the frame exposure procedure, which gets some GCs based
  *    on the current keyboard focus. Thus, wmGD.keyboardFocus == pcd
- *    must be FALSE when this is called for the correct highlighting to 
+ *    must be FALSE when this is called for the correct highlighting to
  *    occur.
- *  
- * 
+ *
+ *
  ******************************<->***********************************/
 
-void 
+void
 ShowInactiveClientFrame (ClientData *pcd)
 {
     unsigned long attr_mask = 0;
     XSetWindowAttributes window_attribs;
 
-    if (DECOUPLE_TITLE_APPEARANCE(pcd) && 
+    if (DECOUPLE_TITLE_APPEARANCE(pcd) &&
 	(pcd->decor & MWM_DECOR_TITLE))
     {
-	/* 
+	/*
 	 * Use background pixmap if one is specified, otherwise set the
-	 * appropriate background color. 
+	 * appropriate background color.
 	 */
 
 	if (CLIENT_TITLE_APPEARANCE(pcd).backgroundPixmap)
@@ -2197,27 +2193,27 @@ ShowInactiveClientFrame (ClientData *pcd)
 	else
 	{
 	    attr_mask |= CWBackPixel;
-	    window_attribs.background_pixel = 
+	    window_attribs.background_pixel =
 		    CLIENT_TITLE_APPEARANCE(pcd).background;
 	}
 
 
-	XChangeWindowAttributes (DISPLAY, pcd->clientTitleWin, attr_mask, 
+	XChangeWindowAttributes (DISPLAY, pcd->clientTitleWin, attr_mask,
 				 &window_attribs);
 
 	/* clear the frame to the right background */
 	XClearWindow (DISPLAY, pcd->clientTitleWin);
-  
+
         /*
          * attr_mask must be cleared because it is set if
          * DECOUPLE_TITLE_APPEARANCE(pcd) is true.
          */
         attr_mask = 0;
-  
+
     }
-    /* 
+    /*
      * Use background pixmap if one is specified, otherwise set the
-     * appropriate background color. 
+     * appropriate background color.
      */
 
     if (CLIENT_APPEARANCE(pcd).backgroundPixmap)
@@ -2229,13 +2225,13 @@ ShowInactiveClientFrame (ClientData *pcd)
     else
     {
 	attr_mask |= CWBackPixel;
-	window_attribs.background_pixel = 
+	window_attribs.background_pixel =
 		    CLIENT_APPEARANCE(pcd).background;
     }
 
 
     /* change window attribs so clear does the right thing */
-    XChangeWindowAttributes (DISPLAY, pcd->clientFrameWin, attr_mask, 
+    XChangeWindowAttributes (DISPLAY, pcd->clientFrameWin, attr_mask,
 			     &window_attribs);
 
     /* clear the frame to the right background */
@@ -2247,7 +2243,7 @@ ShowInactiveClientFrame (ClientData *pcd)
 } /* END OF FUNCTION ShowInactiveClientFrame */
 
 
-
+
 /*************************************<->*************************************
  *
  *  RegenerateClientFrame (pcd)
@@ -2262,21 +2258,21 @@ ShowInactiveClientFrame (ClientData *pcd)
  *  ------
  *  pcd		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 void RegenerateClientFrame (ClientData *pcd)
 {
     unsigned long decor = pcd->decor;
 #ifdef PANELIST
-    /* 
+    /*
      * If an embedded client, there is no frame.
      */
     if (pcd->pECD)
@@ -2292,68 +2288,68 @@ void RegenerateClientFrame (ClientData *pcd)
     SetFrameInfo (pcd);
 
     /* move & resize frame window */
-    XMoveResizeWindow (DISPLAY, pcd->clientFrameWin, pcd->frameInfo.x, 
+    XMoveResizeWindow (DISPLAY, pcd->clientFrameWin, pcd->frameInfo.x,
 	   pcd->frameInfo.y, pcd->frameInfo.width, pcd->frameInfo.height);
 
 
     /* resize title bar window */
     if (decor & MWM_DECOR_TITLE)
     {
-	XResizeWindow (DISPLAY, pcd->clientTitleWin, 
-	   pcd->frameInfo.width - 2*pcd->frameInfo.upperBorderWidth, 
+	XResizeWindow (DISPLAY, pcd->clientTitleWin,
+	   pcd->frameInfo.width - 2*pcd->frameInfo.upperBorderWidth,
 	   pcd->frameInfo.titleBarHeight);
     }
 
     /* resize base window */
     XResizeWindow (DISPLAY, pcd->clientBaseWin, BaseWindowWidth (pcd),
 	   BaseWindowHeight (pcd));
-    
+
     /* resize the stretcher windows */
     if (SHOW_RESIZE_CURSORS(pcd) && (decor & MWM_DECOR_RESIZEH)) {
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_NORTH_WEST], 
-	    0, 0, pcd->frameInfo.cornerWidth, 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_NORTH_WEST],
+	    0, 0, pcd->frameInfo.cornerWidth,
 	    pcd->frameInfo.cornerHeight);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_NORTH], 
-	    (int) pcd->frameInfo.cornerWidth, 0, 
-	    pcd->frameInfo.width - 2*pcd->frameInfo.cornerWidth, 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_NORTH],
+	    (int) pcd->frameInfo.cornerWidth, 0,
+	    pcd->frameInfo.width - 2*pcd->frameInfo.cornerWidth,
 	    pcd->frameInfo.upperBorderWidth);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_NORTH_EAST], 
-	    (int) (pcd->frameInfo.width - pcd->frameInfo.cornerWidth), 0, 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_NORTH_EAST],
+	    (int) (pcd->frameInfo.width - pcd->frameInfo.cornerWidth), 0,
 	    pcd->frameInfo.cornerWidth, pcd->frameInfo.cornerHeight);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_EAST], 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_EAST],
 	    (int) (pcd->frameInfo.width - pcd->frameInfo.lowerBorderWidth),
-	    (int) (pcd->frameInfo.cornerHeight), 
-	    pcd->frameInfo.lowerBorderWidth, 
+	    (int) (pcd->frameInfo.cornerHeight),
+	    pcd->frameInfo.lowerBorderWidth,
 	    pcd->frameInfo.height - 2*pcd->frameInfo.cornerHeight);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_SOUTH_EAST], 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_SOUTH_EAST],
 	    (int) (pcd->frameInfo.width - pcd->frameInfo.cornerWidth),
-	    (int) (pcd->frameInfo.height - pcd->frameInfo.cornerHeight), 
+	    (int) (pcd->frameInfo.height - pcd->frameInfo.cornerHeight),
 	    pcd->frameInfo.cornerWidth, pcd->frameInfo.cornerHeight);
-	
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_SOUTH], 
+
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_SOUTH],
 	    (int) pcd->frameInfo.cornerWidth,
-	    (int) (pcd->frameInfo.height - pcd->frameInfo.lowerBorderWidth), 
+	    (int) (pcd->frameInfo.height - pcd->frameInfo.lowerBorderWidth),
 	    pcd->frameInfo.width - 2*pcd->frameInfo.cornerWidth,
 	    pcd->frameInfo.lowerBorderWidth);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_SOUTH_WEST], 
-	    0, (int) (pcd->frameInfo.height - pcd->frameInfo.cornerHeight), 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_SOUTH_WEST],
+	    0, (int) (pcd->frameInfo.height - pcd->frameInfo.cornerHeight),
 	    pcd->frameInfo.cornerWidth, pcd->frameInfo.cornerHeight);
 
-	XMoveResizeWindow (DISPLAY, 
-	    pcd->clientStretchWin[STRETCH_WEST], 
-	    0, (int) pcd->frameInfo.cornerHeight, 
+	XMoveResizeWindow (DISPLAY,
+	    pcd->clientStretchWin[STRETCH_WEST],
+	    0, (int) pcd->frameInfo.cornerHeight,
 	    pcd->frameInfo.lowerBorderWidth,
 	    pcd->frameInfo.height - 2*pcd->frameInfo.cornerHeight);
     }
@@ -2364,18 +2360,13 @@ void RegenerateClientFrame (ClientData *pcd)
     /* regenerate the graphics */
     GenerateFrameDisplayLists (pcd);
 
-#ifndef NO_SHAPE
     if (wmGD.hasShape && pcd->wShaped)
     {
         SetFrameShape (pcd);
     }
-#endif /*  NO_SHAPE  */
-
 } /* END OF FUNCTION  RegenerateClientFrame  */
 
 
-
-
 /*************************************<->*************************************
  *
  *  BevelSystemButton (prTop, prBot, x, y, width, height)
@@ -2395,7 +2386,7 @@ void RegenerateClientFrame (ClientData *pcd)
  *  width	- width of maximize gadget
  *  height	- height of maximize gadget
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2406,7 +2397,7 @@ void RegenerateClientFrame (ClientData *pcd)
  *    Assumptions: the enclosing box is square (width == height)
  *************************************<->***********************************/
 
-void BevelSystemButton (RList *prTop, RList *prBot, int x, int y, 
+void BevelSystemButton (RList *prTop, RList *prBot, int x, int y,
 			unsigned int width, unsigned int height)
 {
     int offset1, offset2;
@@ -2424,7 +2415,7 @@ void BevelSystemButton (RList *prTop, RList *prBot, int x, int y,
 	    dim1 = 3;
 	    dim2 = 2;
 	    break;
-	
+
 	case 8:
 	case 9:
 	    offset1 = 2;
@@ -2468,7 +2459,7 @@ void BevelSystemButton (RList *prTop, RList *prBot, int x, int y,
 } /* END OF FUNCTION  BevelSystemButton   */
 
 
-
+
 /*************************************<->*************************************
  *
  *  BevelMinimizeButton (prTop, prBot, x, y, height)
@@ -2487,17 +2478,17 @@ void BevelSystemButton (RList *prTop, RList *prBot, int x, int y,
  *  y 		- y coord of maximize gadget
  *  height	- height of maximize gadget
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void BevelMinimizeButton (RList *prTop, RList *prBot, int x, int y, 
+void BevelMinimizeButton (RList *prTop, RList *prBot, int x, int y,
 			  unsigned int height)
 {
     int offset1, offset2;
@@ -2534,7 +2525,7 @@ void BevelMinimizeButton (RList *prTop, RList *prBot, int x, int y,
 } /* END OF FUNCTION  BevelMinimizeButton   */
 
 
-
+
 /*************************************<->*************************************
  *
  *  BevelMaximizeButton (prTop, prBot, x, y, height)
@@ -2553,17 +2544,17 @@ void BevelMinimizeButton (RList *prTop, RList *prBot, int x, int y,
  *  y 		- y coord of maximize gadget
  *  height	- height of maximize gadget
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
-void BevelMaximizeButton (RList *prTop, RList *prBot, int x, int y, 
+void BevelMaximizeButton (RList *prTop, RList *prBot, int x, int y,
 			  unsigned int height)
 {
     int offset1, offset2;
@@ -2602,7 +2593,7 @@ void BevelMaximizeButton (RList *prTop, RList *prBot, int x, int y,
 		    1, 1, 1, 1);
 } /* END OF FUNCTION  BevelMaximizeButton   */
 
-
+
 /*************************************<->*************************************
  *
  *  DepressGadget (pcd, gadget, depressed)
@@ -2620,7 +2611,7 @@ void BevelMaximizeButton (RList *prTop, RList *prBot, int x, int y,
  *  depressed	- if True, then gadget is shown depressed, if False it is
  *		  shown not depressed
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  return	- true if sucessful
@@ -2630,15 +2621,15 @@ void BevelMaximizeButton (RList *prTop, RList *prBot, int x, int y,
  *  --------
  *  o This assumes there is a one-pixel bevel around the gadget.
  *  o This only works on title bar gadgets.
- * 
+ *
  *************************************<->***********************************/
 
 Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
 {
-    int x, y; 
+    int x, y;
     unsigned int width, height, invertWidth;
-    static RList *pTopRect = NULL; 
-    static RList *pBotRect = NULL; 
+    static RList *pTopRect = NULL;
+    static RList *pBotRect = NULL;
     GC topGC, botGC;
     Window win;
 
@@ -2649,17 +2640,17 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
 	case FRAME_SYSTEM:
 	case FRAME_MINIMIZE:
 	case FRAME_MAXIMIZE:
-	    if (!GetDepressInfo (pcd, gadget, &x, &y, &width, 
+	    if (!GetDepressInfo (pcd, gadget, &x, &y, &width,
 				 &height, &invertWidth))
 		return(FALSE);
-	    
+
 	    break;
 
 	default:
 	    return(FALSE);	/* do nothing on non-title bar gagdets */
     }
 
-    if (DECOUPLE_TITLE_APPEARANCE(pcd) && 
+    if (DECOUPLE_TITLE_APPEARANCE(pcd) &&
 	 (pcd->decor & MWM_DECOR_TITLE))
     {
 	/* adjust position to be relative to titlebar window, not frame */
@@ -2673,14 +2664,14 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
 	}
 	else {
 	    topGC = CLIENT_TITLE_APPEARANCE(pcd).inactiveTopShadowGC;
-	    botGC = 
+	    botGC =
 		CLIENT_TITLE_APPEARANCE(pcd).inactiveBottomShadowGC;
 	}
 
 	/* draw into title bar window */
 	win = pcd->clientTitleWin;
     }
-    else 
+    else
     {
 	/* use "active" GCs if we have keyboard focus */
 	if (pcd == wmGD.keyboardFocus) {
@@ -2696,8 +2687,8 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
 	win = pcd->clientFrameWin;
     }
 
-    /* 
-     * Bevel a rectangle for the desired button effect 
+    /*
+     * Bevel a rectangle for the desired button effect
      * Allocate the rectangles if necessary.
      */
     if ( (pTopRect && pBotRect) ||
@@ -2706,9 +2697,9 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
     {
 	pTopRect->used = 0;
 	pBotRect->used = 0;
-	BevelRectangle (pTopRect, pBotRect, 
-		    x, y, width, height, 
-		    invertWidth, invertWidth, 
+	BevelRectangle (pTopRect, pBotRect,
+		    x, y, width, height,
+		    invertWidth, invertWidth,
 		    invertWidth, invertWidth);
     }
 
@@ -2725,7 +2716,7 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
     return(TRUE);
 } /* END OF FUNCTION  DepressGadget   */
 
-
+
 /*************************************<->*************************************
  *
  *  PushGadgetIn (pcd, gadget)
@@ -2740,13 +2731,13 @@ Boolean DepressGadget (ClientData *pcd, int gadget, Boolean depressed)
  *  ------
  *  pcd		- pointer to client data
  *  gadget	- gadget id
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void PushGadgetIn (ClientData *pcd, int gadget)
@@ -2777,7 +2768,7 @@ void PushGadgetIn (ClientData *pcd, int gadget)
     wmGD.gadgetDepressed =  gadget;
 } /* END OF FUNCTION  PushGadgetIn   */
 
-
+
 /*************************************<->*************************************
  *
  *  PopGadgetOut (pcd, gadget)
@@ -2792,13 +2783,13 @@ void PushGadgetIn (ClientData *pcd, int gadget)
  *  ------
  *  pcd		- pointer to client data
  *  gadget	- gadget id
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void PopGadgetOut (ClientData *pcd, int gadget)
@@ -2829,8 +2820,6 @@ void PopGadgetOut (ClientData *pcd, int gadget)
     wmGD.gadgetDepressed = 0;
 } /* END OF FUNCTION  PopGadgetOut   */
 
-#ifndef NO_SHAPE
-
 /*************************************<->*************************************
  *
  *  SetFrameShape (pcd)
@@ -2845,14 +2834,14 @@ void PopGadgetOut (ClientData *pcd, int gadget)
  *  Inputs:
  *  ------
  *  pcd		- pointer to client data
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
  *  o currently punt on resize handle around the frame.
- *  
+ *
  *************************************<->***********************************/
 void SetFrameShape (ClientData *pcd)
 {
@@ -2903,21 +2892,18 @@ void SetFrameShape (ClientData *pcd)
     }
     else
     {
-	 (void) XShapeCombineMask (DISPLAY, pcd->clientFrameWin, 
+	 (void) XShapeCombineMask (DISPLAY, pcd->clientFrameWin,
 				   ShapeBounding, 0, 0,
 				   None, ShapeSet);
-	 (void) XShapeCombineMask (DISPLAY, pcd->clientFrameWin, 
+	 (void) XShapeCombineMask (DISPLAY, pcd->clientFrameWin,
 				   ShapeClip, 0, 0,
 				   None, ShapeSet);
-	 (void) XShapeCombineMask (DISPLAY, pcd->clientBaseWin, 
+	 (void) XShapeCombineMask (DISPLAY, pcd->clientBaseWin,
 				   ShapeBounding, 0, 0,
 				   None, ShapeSet);
-	 (void) XShapeCombineMask (DISPLAY, pcd->clientBaseWin, 
+	 (void) XShapeCombineMask (DISPLAY, pcd->clientBaseWin,
 				   ShapeClip, 0, 0,
 				   None, ShapeSet);
     }
 } /* END OF FUNCTION  SetFrameShape  */
-#endif /* NO_SHAPE */
 
-
-

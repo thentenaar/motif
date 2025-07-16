@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmFSelect_h
 #define _XmFSelect_h
 
@@ -53,22 +53,18 @@ typedef struct _XmFileSelectionBoxRec      * XmFileSelectionBoxWidget;
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmFileSelectionBoxGetChild( 
+extern Widget XmFileSelectionBoxGetChild(
                         Widget fs,
-#if NeedWidePrototypes
-                        unsigned int which) ;
-#else
                         unsigned char which) ;
-#endif /* NeedWidePrototypes */
-extern void XmFileSelectionDoSearch( 
+extern void XmFileSelectionDoSearch(
                         Widget fs,
                         XmString dirmask) ;
-extern Widget XmCreateFileSelectionBox( 
+extern Widget XmCreateFileSelectionBox(
                         Widget p,
                         String name,
                         ArgList args,
                         Cardinal n) ;
-extern Widget XmCreateFileSelectionDialog( 
+extern Widget XmCreateFileSelectionDialog(
                         Widget ds_p,
                         String name,
                         ArgList fsb_args,
@@ -90,4 +86,3 @@ extern Widget XmVaCreateManagedFileSelectionBox(
 #endif
 
 #endif /* _XmFSelect_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

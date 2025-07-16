@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,27 +37,27 @@ extern "C" {
 
 /********    Private Function Declarations for Color.c    ********/
 
-extern void _XmForegroundColorDefault( 
+extern void _XmForegroundColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmHighlightColorDefault( 
+extern void _XmHighlightColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmBackgroundColorDefault( 
+extern void _XmBackgroundColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmTopShadowColorDefault( 
+extern void _XmTopShadowColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmBottomShadowColorDefault( 
+extern void _XmBottomShadowColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern void _XmSelectColorDefault( 
+extern void _XmSelectColorDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
@@ -65,13 +65,11 @@ extern Boolean _XmSearchColorCache(
                         unsigned int which,
                         XmColorData *values,
                         XmColorData **ret) ;
-extern XmColorData * _XmAddToColorCache( 
+extern XmColorData * _XmAddToColorCache(
                         XmColorData *new_rec) ;
-#ifdef FIX_1381
 extern Pixmap _XmConvertToBW(
-                        Widget w, 
+                        Widget w,
                         Pixmap pm) ;
-#endif
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus

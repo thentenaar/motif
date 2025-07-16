@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -42,7 +42,7 @@
  *
  ****************************************************************/
 
-XmTextPosition 
+XmTextPosition
 XmTextGetLastPosition(Widget widget)
 {
   XmTextPosition ret_val;
@@ -67,12 +67,8 @@ void
 _XmTextReplace(Widget widget,
 	       XmTextPosition frompos,
 	       XmTextPosition topos,
-	       char *value, 
-#if NeedWidePrototypes
-	       int is_wchar)
-#else
+	       char *value,
                Boolean is_wchar)
-#endif /* NeedWidePrototypes */
 {
   XmTextWidget tw = (XmTextWidget) widget;
   XmTextSource source;
@@ -84,13 +80,13 @@ _XmTextReplace(Widget widget,
   wchar_t * tmp_wc;
   XmTextPosition selleft, selright, cursorPos;
   char * tmp_block = NULL;
-  
+
   source = GetSrc(tw);
-  
+
   (*tw->text.output->DrawInsertionPoint)(tw, tw->text.cursor_position, off);
-  
+
   if ((*source->GetSelection)(tw->text.source, &selleft, &selright)) {
-    if ((selleft > frompos && selleft < topos)  || 
+    if ((selleft > frompos && selleft < topos)  ||
 	(selright >frompos && selright < topos) ||
 	(selleft <= frompos && selright >= topos)) {
       (*source->SetSelection)(tw->text.source, tw->text.cursor_position,
@@ -112,16 +108,16 @@ _XmTextReplace(Widget widget,
     if (value == NULL) {
       block.length = 0;
     } else {
-      for (tmp_wc = (wchar_t*)value, num_chars = 0; 
-	   *tmp_wc != (wchar_t)0L; 
+      for (tmp_wc = (wchar_t*)value, num_chars = 0;
+	   *tmp_wc != (wchar_t)0L;
 	   num_chars++) tmp_wc++;
-      tmp_block = XtMalloc((unsigned) 
+      tmp_block = XtMalloc((unsigned)
 			   (num_chars + 1) * (int)tw->text.char_size);
       block.ptr = tmp_block;
       need_free = True;
       tmp_wc = (wchar_t *) value;
       /* if successful, wcstombs returns number of bytes, else -1 */
-      block.length = wcstombs(block.ptr, tmp_wc, 
+      block.length = wcstombs(block.ptr, tmp_wc,
 			      (num_chars + 1) * (int)tw->text.char_size);
       if (block.length == -1) {
 	block.length = 0; /* if error, don't insert anything */
@@ -131,7 +127,7 @@ _XmTextReplace(Widget widget,
   }
   editable = _XmStringSourceGetEditable(source);
   max_length = _XmStringSourceGetMaxLength(source);
-  
+
   _XmStringSourceSetEditable(source, TRUE);
   _XmStringSourceSetMaxLength(source, INT_MAX);
   if (_XmTextModifyVerify(tw, NULL, &frompos, &topos,
@@ -143,25 +139,25 @@ _XmTextReplace(Widget widget,
     _XmTextValueChanged(tw, NULL);
     if (UnderVerifyPreedit(tw))
       if (newblock.length != block.length ||
-	strncmp(newblock.ptr, block.ptr, block.length) != 0) { 
-	VerifyCommitNeeded(tw) = True;	
+	strncmp(newblock.ptr, block.ptr, block.length) != 0) {
+	VerifyCommitNeeded(tw) = True;
 	PreEndTW(tw) += _XmTextCountCharacters(newblock.ptr, newblock.length)
 			- _XmTextCountCharacters(block.ptr, block.length);
       }
-      
+
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   }
-  else 
+  else
     if (UnderVerifyPreedit(tw)) {
       VerifyCommitNeeded(tw) = True;
       PreEndTW(tw) -= _XmTextCountCharacters(block.ptr, block.length);
     }
 
   if (need_free)
-    XtFree(tmp_block); 
+    XtFree(tmp_block);
   _XmStringSourceSetEditable(source, editable);
   _XmStringSourceSetMaxLength(source, max_length);
-  
+
   if (tw->text.input->data->has_destination)
     _XmTextSetDestinationSelection(widget, tw->text.cursor_position,
 			   False, XtLastTimestampProcessed(XtDisplay(widget)));
@@ -185,7 +181,7 @@ XmTextReplace(Widget widget,
     _XmAppUnlock(app);
   }
 }
-   
+
 void
 XmTextReplaceWcs(Widget widget,
 		 XmTextPosition frompos,
@@ -203,7 +199,7 @@ XmTextReplaceWcs(Widget widget,
   }
 }
 
-void 
+void
 XmTextInsert(Widget widget,
 	     XmTextPosition position,
 	     char *value)
@@ -211,7 +207,7 @@ XmTextInsert(Widget widget,
   XmTextReplace(widget, position, position, value);
 }
 
-   
+
 void
 XmTextInsertWcs(Widget widget,
 		XmTextPosition position,
@@ -221,13 +217,9 @@ XmTextInsertWcs(Widget widget,
 }
 
 
-void 
+void
 XmTextSetAddMode(Widget widget,
-#if NeedWidePrototypes
-		 int state)
-#else
                  Boolean state)
-#endif /* NeedWidePrototypes */
 {
   if (XmIsTextField(widget))
     XmTextFieldSetAddMode(widget, state);
@@ -248,7 +240,7 @@ XmTextSetAddMode(Widget widget,
   }
 }
 
-Boolean 
+Boolean
 XmTextGetAddMode(Widget widget)
 {
   Boolean ret_val;
@@ -266,7 +258,7 @@ XmTextGetAddMode(Widget widget)
   return ret_val;
 }
 
-Boolean 
+Boolean
 XmTextGetEditable(Widget widget)
 {
   Boolean ret_val;
@@ -282,13 +274,9 @@ XmTextGetEditable(Widget widget)
   return ret_val;
 }
 
-void 
+void
 XmTextSetEditable(Widget widget,
-#if NeedWidePrototypes
-		  int editable)
-#else
                   Boolean editable)
-#endif /* NeedWidePrototypes */
 {
   if (XmIsTextField(widget))
     XmTextFieldSetEditable(widget, editable);
@@ -301,7 +289,7 @@ XmTextSetEditable(Widget widget,
   }
 }
 
-int 
+int
 XmTextGetMaxLength(Widget widget)
 {
   int ret_val;
@@ -317,7 +305,7 @@ XmTextGetMaxLength(Widget widget)
   return ret_val;
 }
 
-void 
+void
 XmTextSetMaxLength(Widget widget,
 		   int max_length)
 {
@@ -328,7 +316,7 @@ XmTextSetMaxLength(Widget widget,
     TextF_MaxLength(widget) = max_length;
   else {
     XmTextWidget tw = (XmTextWidget) widget;
-    
+
     tw->text.max_length = max_length;
     _XmStringSourceSetMaxLength(GetSrc(tw), max_length);
   }
@@ -336,7 +324,7 @@ XmTextSetMaxLength(Widget widget,
 }
 
 
-XmTextPosition 
+XmTextPosition
 XmTextGetInsertionPosition(Widget widget)
 {
   XmTextPosition ret_val;
@@ -347,19 +335,19 @@ XmTextGetInsertionPosition(Widget widget)
     ret_val = TextF_CursorPosition(widget);
   else {
     XmTextWidget tw = (XmTextWidget) widget;
-    
+
     ret_val = tw->text.cursor_position;
   }
   _XmAppUnlock(app);
   return ret_val;
 }
 
-void 
+void
 XmTextSetInsertionPosition(Widget widget,
 			   XmTextPosition position)
 {
   XmTextWidget tw = (XmTextWidget) widget;
-  
+
   if (XmIsTextField(widget))
     XmTextFieldSetInsertionPosition(widget, position);
   else {
@@ -368,15 +356,14 @@ XmTextSetInsertionPosition(Widget widget,
     _XmAppLock(app);
     _XmTextResetIC(widget);
     _XmTextSetCursorPosition(widget, position);
-    
+
     _XmTextSetDestinationSelection(widget, tw->text.cursor_position,
 		False, XtLastTimestampProcessed(XtDisplay(widget)));
     _XmAppUnlock(app);
   }
 }
 
-
-Boolean 
+Boolean
 XmTextRemove(Widget widget)
 {
   if (XmIsTextField(widget))
@@ -390,7 +377,7 @@ XmTextRemove(Widget widget)
     _XmAppLock(app);
     if (tw->text.editable == False) {
       _XmAppUnlock(app);
-      return False; 
+      return False;
     }
 
     source = tw->text.source;
@@ -414,7 +401,7 @@ XmTextRemove(Widget widget)
   }
 }
 
-Boolean 
+Boolean
 XmTextCopy(Widget widget,
 	   Time copy_time)
 {
@@ -431,7 +418,7 @@ XmTextCopy(Widget widget,
   return result;
 }
 
-Boolean 
+Boolean
 XmTextCopyLink(Widget widget,
 	       Time copy_time)
 {
@@ -448,7 +435,7 @@ XmTextCopyLink(Widget widget,
   return result;
 }
 
-Boolean 
+Boolean
 XmTextCut(Widget widget,
 	  Time cut_time)
 {
@@ -459,7 +446,7 @@ XmTextCut(Widget widget,
   _XmAppLock(app);
   /* can't cut if you can't edit */
   if (XmTextGetEditable(widget) &&
-      XmTextGetSelectionPosition(widget, &left, &right) && 
+      XmTextGetSelectionPosition(widget, &left, &right) &&
       (right != left))
     /* start copy to clipboard */
     result = XmeClipboardSource(widget, XmMOVE, cut_time);
@@ -473,7 +460,7 @@ XmTextCut(Widget widget,
  * Retrieves the current data from the clipboard
  * and paste it at the current cursor position
  */
-Boolean 
+Boolean
 XmTextPaste(Widget widget)
 {
   Boolean status;
@@ -487,11 +474,11 @@ XmTextPaste(Widget widget)
   _XmAppLock(app);
   _XmTextResetIC(widget);
   data = ((XmTextWidget) widget)->text.input->data;
-  
+
   data->selectionMove = FALSE;
   data->selectionLink = FALSE;
   status = XmeClipboardSink(widget, XmCOPY, NULL);
-  _XmAppUnlock(app); 
+  _XmAppUnlock(app);
   return(status);
 }
 
@@ -499,25 +486,25 @@ XmTextPaste(Widget widget)
  * Retrieves the current data from the clipboard
  * and paste it at the current cursor position
  */
-Boolean 
+Boolean
 XmTextPasteLink(Widget widget)
 {
   Boolean status;
-  
+
   InputData data;
   _XmWidgetToAppContext(widget);
 
   _XmAppLock(app);
   data = ((XmTextWidget) widget)->text.input->data;
-  
+
   data->selectionMove = FALSE;
   data->selectionLink = True;
   status = XmeClipboardSink(widget, XmLINK, NULL);
-  _XmAppUnlock(app); 
+  _XmAppUnlock(app);
   return(status);
 }
 
-char * 
+char *
 XmTextGetSelection(Widget widget)
 {
   if (XmIsTextField(widget))
@@ -527,7 +514,7 @@ XmTextGetSelection(Widget widget)
     XmTextPosition left, right;
     char *ret_val;
     _XmWidgetToAppContext(widget);
-    
+
     _XmAppLock(app);
     source = GetSrc(widget);
     if ((!(*source->GetSelection)(source, &left, &right)) || right == left)
@@ -536,7 +523,7 @@ XmTextGetSelection(Widget widget)
 	return NULL;
     }
 
-    ret_val = _XmStringSourceGetString((XmTextWidget)widget, left, 
+    ret_val = _XmStringSourceGetString((XmTextWidget)widget, left,
 				    right, False);
     _XmAppUnlock(app);
     return ret_val;
@@ -547,7 +534,7 @@ wchar_t *
 XmTextGetSelectionWcs(Widget widget)
 {
   if (XmIsTextField(widget))
-    return(XmTextFieldGetSelectionWcs(widget)); 
+    return(XmTextFieldGetSelectionWcs(widget));
   else {
     XmTextSource source;
     XmTextPosition left, right;
@@ -563,14 +550,14 @@ XmTextGetSelectionWcs(Widget widget)
 
     ret_val = (wchar_t *)_XmStringSourceGetString((XmTextWidget)widget,
 		left, right, True);
-    _XmAppUnlock(app); 
+    _XmAppUnlock(app);
     return ret_val;
   }
 }
 
 
 
-void 
+void
 XmTextSetSelection(Widget widget,
 		   XmTextPosition first,
 		   XmTextPosition last,
@@ -589,7 +576,7 @@ XmTextSetSelection(Widget widget,
 	_XmAppUnlock(app);
 	return;
     }
-    
+
     source = GetSrc(widget);
     source->data->take_selection = True;
     (*source->SetSelection)(source, first, last, set_time);
@@ -601,7 +588,7 @@ XmTextSetSelection(Widget widget,
   }
 }
 
-void 
+void
 XmTextClearSelection(Widget widget,
 		     Time clear_time)
 {
@@ -621,7 +608,7 @@ XmTextClearSelection(Widget widget,
   }
 }
 
-Boolean 
+Boolean
 XmTextGetSelectionPosition(Widget widget,
 			   XmTextPosition *left,
 			   XmTextPosition *right)
@@ -632,7 +619,7 @@ XmTextGetSelectionPosition(Widget widget,
   _XmAppLock(app);
   if (XmIsTextField(widget)) {
     XmTextFieldWidget tf = (XmTextFieldWidget) widget;
-    
+
     if (!tf->text.has_primary) {
       ret_val = False;
     } else {
@@ -649,15 +636,10 @@ XmTextGetSelectionPosition(Widget widget,
   return ret_val;
 }
 
-XmTextPosition 
+XmTextPosition
 XmTextXYToPos(Widget widget,
-#if NeedWidePrototypes
-	      int x,
-	      int y)
-#else
               Position x,
               Position y)
-#endif /* NeedWidePrototypes */
 {
   if (XmIsTextField(widget))
     return(XmTextFieldXYToPos(widget, x, y));
@@ -673,7 +655,7 @@ XmTextXYToPos(Widget widget,
   }
 }
 
-Boolean 
+Boolean
 XmTextPosToXY(Widget widget,
 	      XmTextPosition position,
 	      Position *x,
@@ -697,8 +679,7 @@ XmTextPosToXY(Widget widget,
  * Force the given position to be displayed.  If position < 0, then don't force
  * any position to be displayed.
  */
-/* ARGSUSED */
-void 
+void
 XmTextShowPosition(Widget widget,
 		   XmTextPosition position)
 {
@@ -713,7 +694,7 @@ XmTextShowPosition(Widget widget,
   }
 }
 
-int 
+int
 XmTextGetBaseline(Widget widget)
 {
   _XmWidgetToAppContext(widget);
@@ -729,7 +710,7 @@ XmTextGetBaseline(Widget widget)
       _XmAppUnlock(app);
       return(0);
     }
-    
+
     margin_top = tf->text.margin_top +
         tf->primitive.shadow_thickness +
 	tf->primitive.highlight_thickness;
@@ -749,24 +730,24 @@ XmTextGetBaseline(Widget widget)
       _XmAppUnlock(app);
       return(0);
     }
-    
+
     wcePtr = _XmGetPrimitiveClassExtPtr(XtClass(widget), NULLQUARK);
-    
+
     if (*wcePtr && (*wcePtr)->widget_baseline)
       (void) (*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
-    
+
     if (line_count)
       temp_bl = (int) baselines[0];
     else
       temp_bl = 0;
-    
+
     XtFree((char *) baselines);
     _XmAppUnlock(app);
     return (temp_bl);
   }
 }
 
-int 
+int
 XmTextGetCenterline(Widget widget)
 {
   Dimension *baselines;
@@ -778,7 +759,7 @@ XmTextGetCenterline(Widget widget)
   _XmWidgetToAppContext(widget);
 
   _XmAppLock(app);
-    
+
   if (!XmDirectionMatch(XmPrim_layout_direction(tw),
 			XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
     _XmAppUnlock(app);
@@ -786,21 +767,21 @@ XmTextGetCenterline(Widget widget)
   }
 
   wcePtr = _XmGetPrimitiveClassExtPtr(XtClass(widget), NULLQUARK);
-    
+
   if (*wcePtr && (*wcePtr)->widget_baseline)
     (void) (*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
-    
+
   if (line_count)
     temp_bl = (int) baselines[0];
   else
     temp_bl = 0;
-    
+
   XtFree((char *) baselines);
   _XmAppUnlock(app);
   return (temp_bl);
 }
 
-void 
+void
 XmTextSetHighlight(Widget w,
 		   XmTextPosition left,
 		   XmTextPosition right,
@@ -823,36 +804,32 @@ _XmTextGetSubstring(Widget widget,
 		    int num_chars,
 		    int buf_size,
 		    char *buffer,
-#if NeedWidePrototypes
-		    int want_wchar)
-#else
                     Boolean want_wchar)
-#endif /* NeedWidePrototypes */
 {
   XmTextWidget tw = (XmTextWidget) widget;
   XmTextBlockRec block;
   XmTextPosition pos, end;
   wchar_t * wc_buffer = (wchar_t*)buffer;
   int destpos = 0;
-  
+
   end = start + num_chars;
-  
+
   num_chars = 0; /* We're done with the value passed in, so let's
 		  * re-use it when needed for the wchar functionality
 		  * instead of creating a local automatic variable.
 		  */
-  
+
   for (pos = start; pos < end;) {
     pos = (*tw->text.source->ReadSource)(tw->text.source, pos, end,
 					 &block);
     if (block.length == 0) {
       if (!want_wchar)
 	buffer[destpos] = '\0';
-      else 
+      else
 	wc_buffer[destpos] = (wchar_t)0L;
       return XmCOPY_TRUNCATED;
     }
-    
+
     if (!want_wchar) {
       if (((destpos + block.length) * sizeof(char)) >= buf_size)
 	return XmCOPY_FAILED;
@@ -861,9 +838,9 @@ _XmTextGetSubstring(Widget widget,
       if (((destpos + num_chars) * sizeof(char)) >= buf_size)
 	return XmCOPY_FAILED;
     }
-    
+
     if (!want_wchar) {
-      (void)memcpy((void*)&buffer[destpos], (void*)block.ptr, 
+      (void)memcpy((void*)&buffer[destpos], (void*)block.ptr,
 		   block.length);
       destpos += block.length;
     } else { /* want wchar_t* data */
@@ -872,12 +849,12 @@ _XmTextGetSubstring(Widget widget,
       destpos += num_chars;
     }
   }
-  
+
   if (!want_wchar)
     buffer[destpos] = '\0';
   else
     wc_buffer[destpos] = (wchar_t)0L;
-  
+
   return XmCOPY_SUCCEEDED;
 }
 
@@ -888,8 +865,8 @@ XmTextGetSubstring(Widget widget,
 		   int buf_size,
 		   char *buffer)
 {
-  if (XmIsTextField(widget)) 
-    return (XmTextFieldGetSubstring(widget, start, num_chars, 
+  if (XmIsTextField(widget))
+    return (XmTextFieldGetSubstring(widget, start, num_chars,
 				    buf_size, buffer));
   else {
     int ret_val;
@@ -910,8 +887,8 @@ XmTextGetSubstringWcs(Widget widget,
 		      int buf_size,
 		      wchar_t *buffer)
 {
-  if (XmIsTextField(widget)) 
-    return (XmTextFieldGetSubstringWcs(widget, start, num_chars, 
+  if (XmIsTextField(widget))
+    return (XmTextFieldGetSubstringWcs(widget, start, num_chars,
 				       buf_size, buffer));
   else {
     int ret_val;
