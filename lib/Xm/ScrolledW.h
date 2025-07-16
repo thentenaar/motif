@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmScrolledWindow_h
 #define _XmScrolledWindow_h
 
@@ -43,12 +43,14 @@ typedef struct _XmScrolledWindowRec      * XmScrolledWindowWidget;
 
 /********    Public Function Declarations    ********/
 
-extern void XmScrolledWindowSetAreas( 
+XM_ALTERNATIVE(Use the XmNscrolledWindowChildType resource of XmScrolledWindow instead)
+extern void XmScrolledWindowSetAreas(
                         Widget w,
                         Widget hscroll,
                         Widget vscroll,
-                        Widget wregion) ;
-extern Widget XmCreateScrolledWindow( 
+                        Widget wregion);
+
+extern Widget XmCreateScrolledWindow(
                         Widget parent,
                         char *name,
                         ArgList args,
@@ -56,7 +58,7 @@ extern Widget XmCreateScrolledWindow(
 extern void XmScrollVisible(
 			Widget      	scrw,
 			Widget          wid,
-			Dimension       hor_margin, 
+			Dimension       hor_margin,
 			Dimension       ver_margin) ;
 
 /*

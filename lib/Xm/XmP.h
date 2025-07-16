@@ -42,7 +42,6 @@
 #include <X11/ObjectP.h>
 #include <Xm/ColorP.h>
 #include <Xm/AccColorT.h>
-#include <Xm/deprecated.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -84,9 +84,11 @@ extern Widget XmCreateTemplateDialog(
                         char *name,
                         ArgList al,
                         Cardinal ac) ;
+
+XM_ALTERNATIVE(Use XtNameToWidget instead)
 extern Widget XmMessageBoxGetChild(
                         Widget widget,
-                        unsigned char child) ;
+                        unsigned char child);
 
 /*
  * Variable argument list functions

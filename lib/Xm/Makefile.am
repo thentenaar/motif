@@ -210,7 +210,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         UnitTypeT.h     TxtPropCv.h     MenuProcP.h     MenuStateP.h\
         ColorObjP.h     TravConT.h      UnhighlightT.h  PointInT.h \
         Print.h         PrintSP.h       XpmP.h		Xmfuncs.h \
-        deprecated.h version.h ${SLIDE_HDRS} ${EXTRA_HDRS}
+        deprecated.h obsolete.h version.h ${SLIDE_HDRS} ${EXTRA_HDRS}
 
 nodist_xm_HEADERS = Xm.h
 
@@ -244,7 +244,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         Hash.c          ScrollFrameT.c  \
         XmTabList.c     Resolve.c       XmStringFunc.c \
         XmRenderT.c     PixConv.c       Color.c         Xm.c \
-        CareVisualT.c   Direction.c     XmStringObso.c  XmStringGet.c \
+        CareVisualT.c   Direction.c     XmStringObso.c \
         IsMwmRun.c      MenuProc.c      MenuState.c     TextFind.c \
         TextFunc.c      ColorObj.c      IconFile.c      RCHook.c \
         GetRes.c        BBUtil.c        ChColor.c       ColObjFunc.c \
@@ -264,7 +264,7 @@ XPM_SRCS = \
 
 NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
         Notebook.c     ComboBox.c     GrabShell.c     SpinB.c  \
-        SSpinB.c       TxtPropCv.c    XmStringSeg.c   TranslNew.c
+        SSpinB.c       TxtPropCv.c    TranslNew.c
 
 libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(XPM_SRCS) $(NEW_WID_SRCS) $(SLIDE_SRCS) \
         $(TIP_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)

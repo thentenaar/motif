@@ -164,10 +164,6 @@ extern Boolean XmListGetMatchPos(
                         XmString item,
                         int **pos_list,
                         int *pos_count) ;
-extern Boolean XmListGetSelectedPos(
-                        Widget w,
-                        int **pos_list,
-                        int *pos_count) ;
 extern void XmListSetHorizPos(
                         Widget w,
                         int position) ;
@@ -194,6 +190,13 @@ extern Widget XmVaCreateManagedList(
                         Widget parent,
                         char *name,
                         ...);
+
+XM_ALTERNATIVE(Use XtGetValues for XmNselectedPositions and XmNselectedPositionCount instead)
+extern Boolean XmListGetSelectedPos(
+                        Widget w,
+                        int **pos_list,
+                        int *pos_count);
+
 /********    End Public Function Declarations    ********/
 
 

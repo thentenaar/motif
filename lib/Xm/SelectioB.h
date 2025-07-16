@@ -45,9 +45,9 @@ typedef struct _XmSelectionBoxRec      * XmSelectionBoxWidget;
 
 /********    Public Function Declarations    ********/
 
-extern Widget XmSelectionBoxGetChild(
-                        Widget sb,
-                        unsigned char which) ;
+XM_ALTERNATIVE(Use XtNameToWidget instead)
+extern Widget XmSelectionBoxGetChild(Widget sb, unsigned char which);
+
 extern Widget XmCreateSelectionBox(
                         Widget p,
                         String name,
