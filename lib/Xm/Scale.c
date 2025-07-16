@@ -1908,7 +1908,7 @@ ValueTroughWidth(
 	else\
 	    sprintf(buff, "%d", max_or_min_value);\
 	    \
-    tmp = XmStringWidth(sw->scale.font_list, tmp_str = XmStringCreateSimple(buff));\
+    tmp = XmStringWidth(sw->scale.font_list, tmp_str = XmStringCreateLocalized(buff));\
     XmStringFree(tmp_str);\
 }
 #else
@@ -2881,7 +2881,7 @@ ShowValue(
     /*  Calculate the x, y, width, and height of the string to display  */
 
 #if USE_XFT
-    XmStringExtent(sw->scale.font_list, tmp_str = XmStringCreateSimple(buffer),
+    XmStringExtent(sw->scale.font_list, tmp_str = XmStringCreateLocalized(buffer),
 		  &width, &height);
     XmStringFree(tmp_str);
     sw->scale.show_value_width = width;
@@ -2964,7 +2964,7 @@ ShowValue(
     XSetClipMask(XtDisplay(sw), sw->scale.foreground_GC, None);
 #if USE_XFT
     XmStringDraw(XtDisplay(sw), XtWindow(sw), sw->scale.font_list,
-                    tmp_str = XmStringCreateSimple(buffer),
+                    tmp_str = XmStringCreateLocalized(buffer),
 		    sw->scale.foreground_GC,
 		    x, y, width, XmALIGNMENT_CENTER,
 		    sw->manager.string_direction,
