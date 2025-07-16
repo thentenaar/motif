@@ -28,7 +28,6 @@
 #include <config.h>
 #endif
 
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 cde-sun $"
@@ -39,6 +38,13 @@ static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 
 #include "XmStringI.h"
 #include "XmI.h"
 #include "XmRenderTI.h"
+
+/* Since this stuff is obsolete, don't worry about deprecation */
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 /*
  * as close as we can come to Latin1Create without knowing the charset of

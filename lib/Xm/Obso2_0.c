@@ -25,8 +25,6 @@
 /*
  * HISTORY
  */
-
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -77,6 +75,13 @@
 #include "TravActI.h"
 #include "TraversalI.h"
 #include "XmI.h"
+
+/* Since this stuff is obsolete, don't worry about deprecation */
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 /********    Static Function Declarations    ********/
 
