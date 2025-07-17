@@ -3374,13 +3374,9 @@ FileSelectionPB(
  * This function returns the widget id of the
  *   specified SelectionBox child widget.
  ****************/
-Widget
-XmFileSelectionBoxGetChild(
-        Widget fs,
-        unsigned char which )
+Widget XmFileSelectionBoxGetChild(Widget fs, unsigned char which)
 {
-            Widget          child ;
-/****************/
+     Widget child ;
 
     _XmWidgetToAppContext(fs);
     _XmAppLock(app);
@@ -3404,12 +3400,11 @@ XmFileSelectionBoxGetChild(
             break ;
             }
         default:
-        {   child = XmSelectionBoxGetChild( fs, which) ;
+            child = _XmSelectionBoxGetChild(fs, which) ;
             break ;
-            }
         }
     _XmAppUnlock(app);
-    return( child) ;
+    return child;
     }
 
 /****************************************************************/

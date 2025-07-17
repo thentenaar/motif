@@ -1970,10 +1970,7 @@ _XmSelectionBoxRestore(
 /****************************************************************
  * This function returns the widget id of a SelectionBox child widget.
  ****************/
-Widget
-XmSelectionBoxGetChild(
-        Widget sb,
-        unsigned char which )
+Widget _XmSelectionBoxGetChild(Widget sb, unsigned char which)
 {
 /****************/
 	Widget	child = NULL;
@@ -2032,6 +2029,12 @@ XmSelectionBoxGetChild(
 	}
 	_XmAppUnlock(app);
 	return (child);
+}
+
+/* Deprecated */
+Widget XmSelectionBoxGetChild(Widget sb, unsigned char which)
+{
+	return _XmSelectionBoxGetChild(sb, which);
 }
 
 /****************************************************************
