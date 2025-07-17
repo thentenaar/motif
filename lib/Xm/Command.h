@@ -36,12 +36,9 @@ externalref WidgetClass xmCommandWidgetClass;
 typedef struct _XmCommandClassRec * XmCommandWidgetClass;
 typedef struct _XmCommandRec      * XmCommandWidget;
 
-
 #ifndef XmIsCommand
 #define XmIsCommand(w)  (XtIsSubclass (w, xmCommandWidgetClass))
 #endif
-
-
 
 /********    Public Function Declarations    ********/
 
@@ -58,9 +55,6 @@ extern Widget XmVaCreateManagedCommand(
                         Widget parent,
                         char *name,
                         ...);
-extern Widget XmCommandGetChild(
-                        Widget widget,
-                        unsigned char child) ;
 extern void XmCommandSetValue(
                         Widget widget,
                         XmString value) ;
@@ -76,6 +70,10 @@ extern Widget XmCreateCommandDialog(
                         ArgList fsb_args,
                         Cardinal fsb_n) ;
 
+XM_ALTERNATIVE(Use XtNameToWidget instead)
+extern Widget XmCommandGetChild(
+                        Widget widget,
+                        unsigned char child);
 
 /********    End Public Function Declarations    ********/
 

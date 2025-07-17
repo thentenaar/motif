@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmCommandGetChild" "library call"
 .SH "NAME"
 \fBXmCommandGetChild\fP \(em A Command function that is used to access a component
@@ -64,6 +64,11 @@
 \fBXmCommandGetChild\fP is used to access a component within a Command\&. The
 parameters given to the function are the Command widget and a value
 indicating which component to access\&.
+.PP
+NOTE: This routine is obsolete and exists for compatibility with previous
+releases\&. Instead of calling \fBXmCommandGetChild\fP, you should
+call \fBXtNameToWidget\fP as described in the \fBXmCommand\fP(3)
+reference page\&.
 .IP "\fIwidget\fP" 10
 Specifies the Command widget ID\&.
 .IP "\fIchild\fP" 10
