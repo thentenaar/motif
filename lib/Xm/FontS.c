@@ -1299,9 +1299,11 @@ DisplayCurrentFont(XmFontSelectorWidget fsw, String font)
     }
 
     if (!err) {
-	fl = XmFontListCreate(fontdata, XmFONTLIST_DEFAULT_TAG);
-
 	num_largs = 0;
+
+    fl = XmFontListAppendEntry(NULL, XmFontListEntryCreate(
+        XmSTRING_DEFAULT_CHARSET, XmFONT_IS_FONT, fontdata
+    ));
 	XtSetArg(largs[num_largs], XmNfontList, fl); num_largs++;
 	XtSetValues(XmFontS_text(fsw), largs, num_largs);
 

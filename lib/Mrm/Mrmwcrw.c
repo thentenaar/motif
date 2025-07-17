@@ -2255,13 +2255,13 @@ Urm__CW_ConvertValue (Widget			parent,
 	  switch(reptype)
 	    {
 	    case MrmRtypeFont:
-	      dfontlist = XmFontListCreate (font, fontptr->cset.charset) ;
+	      fontset_entry = XmFontListEntryCreate(fontptr->cset.charset,
+						    XmFONT_IS_FONT, font);
+	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
 	      break;
-
 	    case MrmRtypeFontSet:
 	      fontset_entry = XmFontListEntryCreate(fontptr->cset.charset,
-						    XmFONT_IS_FONTSET,
-						    fontset);
+						    XmFONT_IS_FONTSET, fontset);
 	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
 	      break;
 	    }
@@ -2345,12 +2345,10 @@ Urm__CW_ConvertValue (Widget			parent,
 	  switch(fontlist->item[ndx].type)
 	    {
 	    case MrmRtypeFont:
-	      if ( dfontlist == NULL )
-		dfontlist = XmFontListCreate
-		  (font, fontlist->item[ndx].cset.charset) ;
-	      else
-		dfontlist = XmFontListAdd
-		  (dfontlist, font, fontlist->item[ndx].cset.charset) ;
+	      dfontlist = XmFontListAppendEntry(dfontlist,
+	                      XmFontListEntryCreate(
+	                          fontlist->item[ndx].cset.charset,
+		                      XmFONT_IS_FONT, font));
 	      if ( dfontlist == NULL )
 		{
 		  sprintf (err_msg, _MrmMMsg_0073,

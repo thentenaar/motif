@@ -520,14 +520,10 @@ XmFontListCreate_r(
 
     Font should not be shared between displays in an MT environment */
 
-XmFontList
-XmStringCreateFontList(
-        XFontStruct *font,
-        XmStringCharSet charset )
-{
-    return (XmFontListCreate(font,charset));
+XmFontList XmStringCreateFontList(XFontStruct *font, XmStringCharSet charset)
+{ /* deprecated */
+    return XmFontListAppendEntry(NULL, XmFontListEntryCreate(charset, XmFONT_IS_FONT, font));
 }
-
 
 /* MT safe version of XmStringCreateFontList - requires widget parameter
 
@@ -539,14 +535,10 @@ XmStringCreateFontList(
 
    Fonts can not be shared among displays in an MT environment
 */
-XmFontList
-XmStringCreateFontList_r(
-        XFontStruct *font,
-        XmStringCharSet charset,
-        Widget wid )
-{
-        /* we dont need to lock since this is just a wrapper */
-    return (XmFontListCreate_r(font,charset, wid));
+XmFontList XmStringCreateFontList_r(XFontStruct *font, XmStringCharSet charset, Widget wid)
+{ /* deprecated */
+	(void)wid;
+    return XmFontListAppendEntry(NULL, XmFontListEntryCreate(charset, XmFONT_IS_FONT, font));
 }
 
 /*
