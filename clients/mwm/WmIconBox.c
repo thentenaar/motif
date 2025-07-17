@@ -3751,27 +3751,14 @@ Boolean IconVisible (ClientData *pCD)
 
 String WmXmStringToString (XmString xmString)
 {
-    XmStringContext       xmStrContext;
-    char                 *asciiString = NULL;
-    XmStringCharSet      ibTitleCharset;
-    XmStringDirection    ibTitleDirection;
-    Boolean              separator;
+    XmStringContext xmStrContext;
+    char *asciiString = NULL;
 
-    if (xmString)
-    {
-	XmStringInitContext (&xmStrContext, xmString);
+    if (!xmString)
+        return NULL;
 
-	XmStringGetNextSegment (xmStrContext, &asciiString,
-				&ibTitleCharset, &ibTitleDirection,
-				&separator);
-
-	if (ibTitleCharset != NULL)
-	{
-	    XtFree ((char *)ibTitleCharset);
-	}
-
-	XmStringFreeContext (xmStrContext);
-    }
-
-    return(asciiString);
+    XmStringInitContext (&xmStrContext, xmString);
+    XmStringGetNextTriple(xmStrContext, NULL, (XtPointer *)&asciiString);
+    XmStringFreeContext(xmStrContext);
+    return asciiString;
 } /* END OF FUNCTION WmXmStringToString */

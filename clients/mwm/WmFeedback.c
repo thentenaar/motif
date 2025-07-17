@@ -851,23 +851,19 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
 #if XM_MSGCAT
 	XtSetArg(args[n], XmNlabelString, wmGD.okLabel); n++;
 #endif
-        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr],
-			    XmDIALOG_OK_BUTTON), args, n);
+        XtSetValues(XtNameToWidget(pSD->confirmboxW[nbr], "OK"), args, n);
 #if XM_MSGCAT
 	n--;
 	XtSetArg(args[n], XmNlabelString, wmGD.cancelLabel); n++;
 #endif
-        XtSetValues ( XmMessageBoxGetChild (pSD->confirmboxW[nbr],
-			    XmDIALOG_CANCEL_BUTTON), args, n);
+        XtSetValues (XtNameToWidget(pSD->confirmboxW[nbr], "Cancel"),
+			    args, n);
         XtAddCallback (pSD->confirmboxW[nbr], XmNokCallback,
 	    (XtCallbackProc)OkCB, (XtPointer)pSD);
         XtAddCallback (pSD->confirmboxW[nbr], XmNcancelCallback,
 	    (XtCallbackProc)CancelCB, (XtPointer)NULL);
 
-        XtUnmanageChild
-	    (XmMessageBoxGetChild (pSD->confirmboxW[nbr],
-		XmDIALOG_HELP_BUTTON));
-
+        XtUnmanageChild(XtNameToWidget(pSD->confirmboxW[nbr], "Help"));
         XtRealizeWidget (dialogShellW);
 
         /*
