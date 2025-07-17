@@ -398,10 +398,7 @@ static void ComputeMetrics(XmRendition rend,
                            Boolean utf8);
 static Dimension ComputeWidth(unsigned char which,
 			      XCharStruct char_ret);
-static void _parse_locale(
-                        char *str,
-                        int *indx,
-                        int *len) ;
+static void _parse_locale(char *str, int *indx, int *len);
 static Boolean match_pattern(XtPointer      text,
 			     XmStringTag    tag,
 			     XmTextType     type,
@@ -6474,11 +6471,7 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
   return(can_do);
 }
 
-static void
-_parse_locale(
-        char *str,
-        int *indx,
-        int *len )
+static void _parse_locale(char *str, int *indx, int *len)
 {
     char     *temp;
     int      start;
@@ -6491,6 +6484,7 @@ _parse_locale(
 
     *indx = 0;
     *len = 0;
+    if (!str) return;
 
     /*
      *  The format of the locale string is:
@@ -6516,55 +6510,43 @@ _parse_locale(
  /* This function returns current default charset being used.  This is */
  /* determined from the value of the $LANG environment variable or */
  /* XmFALLBACK_CHARSET.  */
-char *
-_XmStringGetCurrentCharset( void )
+char *_XmStringGetCurrentCharset(void)
 {
-    char *str;
-    char *ptr;
-    int  chlen;
-    int  indx;
-    int  len;
-    char *ret_val;
+	char *ptr, *str, *ret_val;
+	int indx, len;
 
-    _XmProcessLock();
-    if (!locale.inited)
-    {
-        locale.tag = NULL;
-        locale.taglen = 0;
+	_XmProcessLock();
+	if (locale.inited)
+		goto out;
 
-        str = (char *)getenv(env_variable);
+	locale.tag    = NULL;
+	locale.taglen = 0;
+	ptr           = XmFALLBACK_CHARSET;
+	len           = strlen(XmFALLBACK_CHARSET);
+	str           = getenv(env_variable);
 
-        if (str)
-        {
-           _parse_locale(str, &indx, &chlen);
-           if (chlen > 0)
-           {
-               ptr = &str[indx];
-	       len = chlen;
-           }
-           else {
-               len = strlen(XmFALLBACK_CHARSET);
-               ptr = XmFALLBACK_CHARSET;
-           }
-        }
-        else {
-	  len = strlen(XmFALLBACK_CHARSET);
-	  ptr = XmFALLBACK_CHARSET;
-        }
-        locale.tag = (char *) XtMalloc(len + 1);
-        strncpy(locale.tag, ptr, len);
-        locale.tag[len] = '\0';
-        locale.taglen = len;
+	_parse_locale(str, &indx, &len);
+	if (len > 0) {
+		ptr = str + indx;
+		if (!strcmp(ptr, "UTF8")) {
+			ptr = "UTF-8";
+			len = 5;
+		}
+	}
+
+	locale.tag = (char *)XtMalloc(len + 1);
+	strncpy(locale.tag, ptr, len);
+	locale.tag[len] = '\0';
+	locale.taglen = len;
 
 	/* Register XmSTRING_DEFAULT_CHARSET for compound text conversion. */
-	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET,
-				  XmFONTLIST_DEFAULT_TAG);
+	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG);
+	locale.inited = TRUE;
 
-        locale.inited = TRUE;
-    }
-    ret_val = locale.tag;
-    _XmProcessUnlock();
-    return (ret_val);
+out:
+	ret_val = locale.tag;
+	_XmProcessUnlock();
+	return ret_val;
 }
 
  /* This function compares a given charset to the current default charset
