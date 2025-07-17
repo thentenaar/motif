@@ -57,10 +57,10 @@ GRA(char **, pixmapName);
 
 /*
  *
- * The following define is essentially to assist in the 
+ * The following define is essentially to assist in the
  * creation of properly formatted information dialogs.
  *
- * This is really a convenience thing which bears little 
+ * This is really a convenience thing which bears little
  * relevance to the actual working of the program.
  *
  */
@@ -76,7 +76,7 @@ name          = %s"
 
 /*
  *
- * These are fallbacks that are designed to ensure the 
+ * These are fallbacks that are designed to ensure the
  * program works properly in case the resource file is
  * not picked up.
  *
@@ -85,10 +85,10 @@ name          = %s"
 static String fallbacks[] = {
     /*
      * General fallback resources.
-     */ 
+     */
     "*bform.width: 1100",
     "*bform.height: 600",
-    "*background: grey", 
+    "*background: grey",
     "*iconBox*background: white",
     "*fontList: -*-helvetica-medium-r-*-*-*-140-*-*-*-*-*-*",
     "*infolabel*fontList: -*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*",
@@ -115,7 +115,7 @@ void Exit(Widget w, XtPointer client, XtPointer call)
  * The following function goes through a lot of contortions
  * to output user friendly information.
  *
- * The logical gymnastics undertaken, however, help in 
+ * The logical gymnastics undertaken, however, help in
  * describing the internals of the widgets used.
  *
  */
@@ -180,20 +180,16 @@ ShowThisButton(Widget w, XtPointer client, XtPointer call)
     sprintf(message_string, OUTPUT_CODE, class_name,
             place_str, x, y, XtName(w));
 
-    xmstring = XmStringCreateLtoR(message_string, XmSTRING_DEFAULT_CHARSET);
+    xmstring = XmStringLtoRCreate(message_string, XmSTRING_DEFAULT_CHARSET);
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Code Sample"); argcnt++;
     XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
     info = XmCreateInformationDialog(w, "showcode", args, argcnt);
-    
-    temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-    XtUnmanageChild(temp);
-    temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-    XtUnmanageChild(temp);
 
+    XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+    XtUnmanageChild(XtNameToWidget(info, "Help"));
     XtManageChild(info);
-    
     XmStringFree(xmstring);
 }
 
@@ -214,21 +210,17 @@ void Explain(Widget w, XtPointer client, XtPointer call)
     static Widget info = NULL;
 
     if (!info) {
-        Widget temp;
-
         argcnt = 0;
         XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
         info = (Widget)XmCreateInformationDialog(w, "explain", args, argcnt);
 
-        temp = (Widget)XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-        XtUnmanageChild(temp);
-        temp = (Widget)XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-        XtUnmanageChild(temp);
+        XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+        XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
 
     switch ((intptr_t)client) {
     case 1:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 " This is an IconButton resource. \n\
 \n\
  Specifies the location of the pixmap (icon) with respect \n\
@@ -239,7 +231,7 @@ to the displayed text.\n\
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 2:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 " This is an IconBox resource.\n\
 \n\
  It specifies the location of a particular button in cell space\n\
@@ -247,7 +239,7 @@ to the displayed text.\n\
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 3:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 " This is an IconBox resource.\n\
 \n\
  It specifies the location of a particular button in cell space\n\
@@ -273,13 +265,13 @@ main(int argc, char **argv)
 {
     Arg args[15];
     Cardinal argcnt;
-    Widget top, iconBoxframe, iconBox, infoframe, infolabel, 
+    Widget top, iconBoxframe, iconBox, infoframe, infolabel,
            big_pane, right_pane, placeRC, xRC, yRC,
            placeLabel, xLabel, yLabel,
            pushButton, pushButton1, pushButton2,
-           iconButton1, iconButton2, iconButton3, 
-           iconButton4, iconButton5, iconPushButton6, 
-           iconToggleButton7, iconLabel, 
+           iconButton1, iconButton2, iconButton3,
+           iconButton4, iconButton5, iconPushButton6,
+           iconToggleButton7, iconLabel,
            quitPB;
     Widget explain_scrolled, buttonBox;
     Pixmap icon_pixmap;
@@ -287,18 +279,18 @@ main(int argc, char **argv)
 
     XmString xmstring;
 
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Icon Box/Button Demo"); argcnt++;
     XtSetArg(args[argcnt], XmNallowShellResize, True); argcnt++;
     top = XtOpenApplication(
-            &app, 
-            "IconBox", 
-            NULL, 
+            &app,
+            "IconBox",
+            NULL,
             0,
-            &argc, 
-            argv, 
+            &argc,
+            argv,
             fallbacks,
             sessionShellWidgetClass,
             args,
@@ -310,13 +302,13 @@ main(int argc, char **argv)
     big_pane = XtCreateManagedWidget("bull",
 		xmPanedWidgetClass, top, args, argcnt);
 
-    iconBoxframe = XtVaCreateManagedWidget("inconBoxframe", xmFrameWidgetClass, 
+    iconBoxframe = XtVaCreateManagedWidget("inconBoxframe", xmFrameWidgetClass,
 					big_pane, NULL );
 
 
     argcnt = 0;
-    iconBox = XtVaCreateManagedWidget("iconBox", xmIconBoxWidgetClass, 
-				      iconBoxframe,		      
+    iconBox = XtVaCreateManagedWidget("iconBox", xmIconBoxWidgetClass,
+				      iconBoxframe,
 				      XmNallowResize, True,
 				      XmNresizeToPreferred, True,
 				      XmNpreferredPaneSize, 300,
@@ -326,7 +318,7 @@ main(int argc, char **argv)
     /* right pane */
     argcnt = 0;
     XtSetArg(args[argcnt], XmNshowSash, False); argcnt++;
-    XtSetArg(args[argcnt], XmNskipAdjust, False ); argcnt++;    
+    XtSetArg(args[argcnt], XmNskipAdjust, False ); argcnt++;
     XtSetArg(args[argcnt], XmNorientation, XmVERTICAL); argcnt++;
     right_pane = XtCreateManagedWidget("rightpane", xmPanedWidgetClass,
 				   big_pane, args,argcnt);
@@ -341,7 +333,7 @@ main(int argc, char **argv)
  */
 
 
-    xmstring = XmStringCreateLtoR(
+    xmstring = XmStringLtoRCreate(
 "This is a demo of two unique Motif Widgets: the Icon Button and Icon Box.\n\
 \n\
 Labels, Push Buttons, and Toggle Buttons are limited because these\n\
@@ -357,7 +349,7 @@ specify which cell in the Icon Box each child should go.\n\
 ",
 				  XmSTRING_DEFAULT_CHARSET);
 
-    infoframe = XtVaCreateManagedWidget("infoframe", xmFrameWidgetClass, 
+    infoframe = XtVaCreateManagedWidget("infoframe", xmFrameWidgetClass,
 					right_pane, NULL );
 
 
@@ -368,7 +360,7 @@ specify which cell in the Icon Box each child should go.\n\
     XtSetArg(args[argcnt], XmNpreferredPaneSize, 300); argcnt++;
     XtSetArg(args[argcnt], XmNallowResize, True); argcnt++;
     XtSetArg(args[argcnt], XmNscrollBarDisplayPolicy, XmAS_NEEDED ); argcnt++;
-    explain_scrolled = XtCreateManagedWidget( "scrollExplain", 
+    explain_scrolled = XtCreateManagedWidget( "scrollExplain",
 					     xmScrolledWindowWidgetClass,
 					     infoframe, args, argcnt );
 
@@ -445,7 +437,7 @@ specify which cell in the Icon Box each child should go.\n\
 				xmButtonBoxWidgetClass,
 				right_pane, args, argcnt);
 
-    quitPB = XtVaCreateManagedWidget("quitPB", xmPushButtonWidgetClass, 
+    quitPB = XtVaCreateManagedWidget("quitPB", xmPushButtonWidgetClass,
 				     buttonBox, NULL);
 
 /*
@@ -457,8 +449,8 @@ specify which cell in the Icon Box each child should go.\n\
     icon_pixmap = XPM_PIXMAP( iconBox, crab );
     iconButton1 = XtVaCreateManagedWidget("XmIconTop",
                 xmIconButtonWidgetClass, iconBox, XmNpixmap, icon_pixmap,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
 					  XmNiconPlacement, XmIconTop,
 					  NULL );
     XtAddCallback(iconButton1, XmNactivateCallback, ShowThisButton, NULL);
@@ -467,40 +459,38 @@ specify which cell in the Icon Box each child should go.\n\
     icon_pixmap = XPM_PIXMAP( iconBox, crab );
     iconButton2 = XtVaCreateManagedWidget("XmIconBottom",
                 xmIconButtonWidgetClass, iconBox,XmNpixmap, icon_pixmap,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
 					  XmNiconPlacement, XmIconBottom,
 					  NULL );
     XtAddCallback(iconButton2, XmNactivateCallback, ShowThisButton, NULL);
-    icon_pixmap = None;
-
-    iconButton3 = XtVaCreateManagedWidget("XmIconLeft",
-					  xmIconButtonWidgetClass, 
-					  iconBox,XmNpixmap, icon_pixmap, 
-					  XmNiconPlacement, XmIconLeft,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
-					  NULL );
-    XtAddCallback(iconButton3, XmNactivateCallback, ShowThisButton, NULL);
-
-
     icon_pixmap = XCreateBitmapFromData(XtDisplay(iconBox),
                                    RootWindowOfScreen(XtScreen(iconBox)),
                                    (char *)small_bits,
                                    small_width, small_height);
+
+    iconButton3 = XtVaCreateManagedWidget("XmIconLeft",
+					  xmIconButtonWidgetClass,
+					  iconBox,XmNpixmap, icon_pixmap,
+					  XmNiconPlacement, XmIconLeft,
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
+					  NULL );
+    XtAddCallback(iconButton3, XmNactivateCallback, ShowThisButton, NULL);
+
     iconButton4 = XtVaCreateManagedWidget("XmIconRight",
                 xmIconButtonWidgetClass, iconBox,XmNpixmap, icon_pixmap,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
-					  XmNiconPlacement, XmIconLeft,
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
+					  XmNiconPlacement, XmIconRight,
 					  NULL );
     XtAddCallback(iconButton4, XmNactivateCallback, ShowThisButton, NULL);
 
     icon_pixmap = XPM_PIXMAP( iconBox, stopsign );
     iconButton5 = XtVaCreateManagedWidget("stop",
                 xmIconButtonWidgetClass, iconBox,XmNpixmap, icon_pixmap,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
 					  XmNiconPlacement, XmIconOnly,
 					  NULL );
     XtAddCallback(iconButton5, XmNactivateCallback, ShowThisButton, NULL);
@@ -509,8 +499,8 @@ specify which cell in the Icon Box each child should go.\n\
 
     iconPushButton6 = XtVaCreateManagedWidget("Push",
                 xmPushButtonWidgetClass, iconBox,XmNpixmap, icon_pixmap,
-					  XmNcellX, XmIconBoxAnyCell, 
-					  XmNcellY, XmIconBoxAnyCell, 
+					  XmNcellX, XmIconBoxAnyCell,
+					  XmNcellY, XmIconBoxAnyCell,
 					  NULL );
 
     XtAddCallback(iconPushButton6, XmNactivateCallback, ShowThisButton, NULL);
@@ -518,11 +508,11 @@ specify which cell in the Icon Box each child should go.\n\
     iconToggleButton7 = XtVaCreateManagedWidget("PushMe!",
 						xmToggleButtonWidgetClass,
 						iconBox,
-						XmNcellX, XmIconBoxAnyCell, 
-						XmNcellY, XmIconBoxAnyCell, 
+						XmNcellX, XmIconBoxAnyCell,
+						XmNcellY, XmIconBoxAnyCell,
 						NULL );
 
-    XtAddCallback(iconToggleButton7, XmNvalueChangedCallback, 
+    XtAddCallback(iconToggleButton7, XmNvalueChangedCallback,
                                      ShowThisButton, NULL);
 
     XtAddCallback(quitPB, XmNactivateCallback, Exit, (XtPointer)0);
