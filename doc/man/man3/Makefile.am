@@ -271,6 +271,7 @@ man_MANS = ApplicationShell.3 \
     XmHierarchy.3 \
     XmHierarchyGetChildNodes.3 \
     XmHierarchyOpenAllAncestors.3 \
+    XmeResolvePartOffsets.3 \
     XmIconBox.3 \
     XmIconBoxIsCellEmpty.3 \
     XmIconButton.3 \
@@ -696,4 +697,4 @@ man_MANS = ApplicationShell.3 \
     XmVaCreateToggleButton.3 \
     XmVaCreateToggleButtonGadget.3 \
     XmWidgetGetBaselines.3 \
-    XmWidgetGetDisplayRect.3 
+    XmWidgetGetDisplayRect.3
