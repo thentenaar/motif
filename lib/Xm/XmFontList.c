@@ -391,6 +391,10 @@ XmFontListEntryLoad(
   Cardinal	n;
   Arg		args[4];
   XmFontListEntry ret_val;
+
+  if (!fontName || !*fontName)
+	return NULL;
+
   _XmDisplayToAppContext(display);
 
   _XmAppLock(app);
