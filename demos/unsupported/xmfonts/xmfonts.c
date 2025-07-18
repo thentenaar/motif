@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: xmfonts.c /main/5 1995/07/14 10:08:26 drk $"
@@ -27,7 +27,7 @@ static char rcsid[] = "$XConsortium: xmfonts.c /main/5 1995/07/14 10:08:26 drk $
 #endif
 
 /**---------------------------------------------------------------------
-***	
+***
 ***	file:		xmfonts.c
 ***
 ***
@@ -57,16 +57,14 @@ Xmfonts.ad:
 **	Forward Declarations
 */
 
-Widget CreateApplication ();	/*  create main window		*/
-Widget CreateFontSample ();	/*  create font display window	*/
-Widget CreateHelp ();		/*  create help window		*/
+static Widget CreateApplication(Widget); /* create main window */
+static Widget CreateFontSample(Widget);  /* create font display window */
+static Widget CreateHelp(Widget);        /* create help window */
 
-void SelectFontCB ();		/*  callback for font buttons	*/
-void CloseCB ();		/*  callback for close button	*/
-void HelpCB ();			/*  callback for help button	*/
-void QuitCB ();			/*  callback for quit button	*/
-
-
+static void SelectFontCB(Widget, XtPointer, XtPointer); /* callback for font buttons */
+static void CloseCB(Widget, XtPointer, XtPointer); /*  callback for close button */
+static void HelpCB(Widget, XtPointer, XtPointer); /*  callback for help button */
+static void QuitCB(Widget, XtPointer, XtPointer); /*  callback for quit button */
 
 /*-------------------------------------------------------------
 **	Global Variables
@@ -81,7 +79,7 @@ typedef struct {
   char *fontpattern;
   int   maxfont ;    /* number max of font to be displayed */
   int   maxlen ;     /* max length of font name to be displayed */
-  Boolean   usegadget ;  
+  Boolean   usegadget ;
 } ApplicationData, *ApplicationDataPtr;
 
 ApplicationData AppData;
@@ -106,23 +104,21 @@ static XtResource resources[] = {
     XtOffset(ApplicationDataPtr, usegadget), XmRImmediate, (caddr_t) TRUE }
 };
 
+static XtAppContext app_context;
+
 /*-------------------------------------------------------------
 **	main		- main logic for application
 */
-int main (argc,argv) 
-	int		argc;
-	char 		**argv;
+int main(int argc, char *argv[])
 {
 	Display		*display;	/*  Display		*/
 	Widget		app_shell;	/*  ApplicationShell	*/
 	Widget		main_window;	/*  MainWindow		*/
-	XtAppContext	app_context;
 
 	/*	Initialize toolkit and open the display.
 	*/
 	app_shell = XtAppInitialize(&app_context, "XMdemos", NULL, 0,
 			    &argc, argv, NULL, NULL, 0);
-
 
 	XtGetApplicationResources(app_shell,
 			      (XtPointer)&AppData,
@@ -137,37 +133,31 @@ int main (argc,argv)
 	/*	Get and dispatch events.
 	*/
 	XtAppMainLoop (app_context);
-
 	return 0;    /* make compiler happy */
 }
-
-
 
 /*-------------------------------------------------------------
 **	CreateApplication	- create main window
 */
-Widget CreateApplication (parent) 
-Widget		parent;		/*  parent widget	*/
+static Widget CreateApplication(Widget parent)
 {
-	Widget		main_window;	/*  MainWindow		*/
-	Widget		menu_bar;	/*  MenuBar		*/
-	Widget		menu_pane;	/*  MenuPane		*/
-	Widget		cascade;	/*  CascadeButton	*/
-	Widget		frame;		/*  Frame		*/
-	Widget		swindow;	/*  ScrolledWindow	*/
-	Widget		row_column;	/*  RowColumn		*/
-	Widget		button;		/*  PushButtonGadget	*/
-	Widget		hsb, vsb;	/*  ScrollBars		*/
+	Widget main_window;	/*  MainWindow		*/
+	Widget menu_bar;	/*  MenuBar		*/
+	Widget menu_pane;	/*  MenuPane		*/
+	Widget cascade;	/*  CascadeButton	*/
+	Widget frame;		/*  Frame		*/
+	Widget swindow;	/*  ScrolledWindow	*/
+	Widget row_column;	/*  RowColumn		*/
+	Widget button;		/*  PushButtonGadget	*/
+	Widget hsb, vsb;	/*  ScrollBars		*/
 
-	Arg		args[MAX_ARGS];	/*  arg list		*/
-	register int	n;		/*  arg count		*/
+	Arg args[MAX_ARGS];	/*  arg list		*/
+	register int n;		/*  arg count		*/
 
-	char *	name;	
-	int count, i  ;
-	char ** fontnamelist ;
-	
-	XmString	label_string;
-
+	char *name;
+	int count, i;
+	char **fontnamelist;
+	XmString label_string;
 
 	/*	Create MainWindow.
 	*/
@@ -178,7 +168,7 @@ Widget		parent;		/*  parent widget	*/
 	/*	Create MenuBar in MainWindow.
 	*/
 	n = 0;
-	menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n); 
+	menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n);
 	XtManageChild (menu_bar);
 
 	/*	Create "Exit" PulldownMenu.
@@ -236,12 +226,12 @@ Widget		parent;		/*  parent widget	*/
 
 	/*	Create a PushButton widget for each font.
 		Get the font list from the server and keep
-		only the font name whose length is less than 
+		only the font name whose length is less than
 		the given maxLen resource.
 	*/
-	
-	fontnamelist = XListFonts(XtDisplay(main_window), 
-				  AppData.fontpattern, 
+
+	fontnamelist = XListFonts(XtDisplay(main_window),
+				  AppData.fontpattern,
 				  AppData.maxfont, &count);
 	if (!fontnamelist) {
 	    fprintf(stderr,"No font on your server, exit\n");
@@ -249,20 +239,20 @@ Widget		parent;		/*  parent widget	*/
 	}
 
 	/*  read one entry each time through the loop  */
-	for (i = 0;  i < count;  i++ ) 
+	for (i = 0;  i < count;  i++ )
 	{
 		name = fontnamelist[i] ;
 		if (strlen(name) > AppData.maxlen) continue ;
 
 		/*  create PushButton in RowCol  */
 		n = 0;
-		label_string = XmStringCreateLtoR(name, charset);
+		label_string = XmStringLtoRCreate(name, charset);
 		XtSetArg (args[n], XmNlabelString, label_string);  n++;
-		if (AppData.usegadget) 
-		    button = XmCreatePushButtonGadget (row_column, name, 
+		if (AppData.usegadget)
+		    button = XmCreatePushButtonGadget (row_column, name,
 						       args, n);
-		else 
-		    button = XmCreatePushButton(row_column, name, 
+		else
+		    button = XmCreatePushButton(row_column, name,
 						args, n);
 		XtManageChild (button);
 		XtAddCallback (button, XmNarmCallback, SelectFontCB, NULL);
@@ -276,35 +266,29 @@ Widget		parent;		/*  parent widget	*/
 	return (main_window);
 }
 
-
-
 /*-------------------------------------------------------------
 **	CreateFontSample	- create font display window
 */
-Widget CreateFontSample (parent) 
-Widget		parent;		/*  parent widget	*/
+static Widget CreateFontSample(Widget parent)
 {
 	Widget		message_box;		/*  MessageBox Dialog	*/
 	Widget		button;
 	Arg		args[MAX_ARGS];		/*  arg list		*/
 	register int	n;			/*  arg count		*/
-	
 	char		*name = NULL;		/*  font name		*/
 	XFontStruct	*font = NULL;		/*  font pointer	*/
+	XmFontListEntry e;
 	XmFontList	fontlist = NULL;	/*  fontlist pointer	*/
 	static char	message[BUFSIZ];	/*  text sample		*/
 	XmString	name_string = NULL;
 	XmString	message_string = NULL;
 	XmString	button_string = NULL;
 
-	
-	/*	Get font name.
-	*/
+	/* Get font name. */
 	n = 0;
-	XtSetArg (args[n], XmNlabelString, &name_string); n++;
-	XtGetValues (parent, args, n);
-	XmStringGetLtoR (name_string, charset, &name);
-
+	XtSetArg(args[n], XmNlabelString, &name_string); n++;
+	XtGetValues(parent, args, n);
+	name = XmStringUnparse(name_string, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
 
 	/*	Load font and generate message to display. */
 	if (name)
@@ -313,14 +297,16 @@ Widget		parent;		/*  parent widget	*/
 		sprintf (message, "Unable to load font: %s", name);
 	else
 	{
-		fontlist = XmFontListCreate (font, charset);
+		fontlist = XmFontListAppendEntry(
+			NULL,
+			XmFontListEntryCreate(charset, XmFONT_IS_FONT, font)
+		);
 		sprintf (message, "\
 This is font %s.\n\
 The quick brown fox jumps over the lazy dog.", name);
 	}
-	message_string = XmStringCreateLtoR (message, charset);
-	button_string = XmStringCreateLtoR ("Close", charset);
-
+	message_string = XmStringLtoRCreate(message, charset);
+	button_string = XmStringLtoRCreate("Close", charset);
 
 	/*	Create MessageBox dialog.
 	*/
@@ -328,22 +314,20 @@ The quick brown fox jumps over the lazy dog.", name);
 	XtSetArg (args[n], XmNdialogTitle, name_string);  n++;
 	XtSetArg (args[n], XmNokLabelString, button_string);  n++;
 	XtSetArg (args[n], XmNmessageString, message_string);  n++;
-	message_box = XmCreateMessageDialog (XtParent (XtParent(parent)), 
+	message_box = XmCreateMessageDialog (XtParent (XtParent(parent)),
 					     "fontbox",
 					     args, n);
 
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_MESSAGE_LABEL);
-	if (fontlist) 
+	button = XtNameToWidget(message_box, "Message");
+	if (fontlist)
 	{
 		n = 0;
 		XtSetArg (args[n], XmNfontList, fontlist);  n++;
 		XtSetValues(button, args, n);
 	}
-	
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild (button);
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild (button);
+
+	XtUnmanageChild(XtNameToWidget(message_box, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(message_box, "Help"));
 
 	/*	Free strings and return MessageBox.
 	*/
@@ -354,13 +338,10 @@ The quick brown fox jumps over the lazy dog.", name);
 	return (message_box);
 }
 
-
-
 /*-------------------------------------------------------------
 **	CreateHelp		- create help window
 */
-Widget CreateHelp (parent) 
-	Widget		parent;		/*  parent widget	*/
+Widget CreateHelp(Widget parent)
 {
 	Widget		button;
 	Widget		message_box;	/*  Message Dialog 	*/
@@ -383,9 +364,9 @@ The button label is the name of the font.  When you select \n\
 a button, a small window will display a sample of the font.  \n\n\
 Press the 'close' button to close a font window.  \n\
 Select 'quit' from the 'exit' menu to exit this application.");
-	message_string = XmStringCreateLtoR (message, charset);
-	button_string = XmStringCreateLtoR ("Close", charset);
-	title_string = XmStringCreateLtoR ("xmfonts help", charset);
+	message_string = XmStringLtoRCreate (message, charset);
+	button_string = XmStringLtoRCreate ("Close", charset);
+	title_string = XmStringLtoRCreate ("xmfonts help", charset);
 
 
 	/*	Create MessageBox dialog.
@@ -395,12 +376,8 @@ Select 'quit' from the 'exit' menu to exit this application.");
 	XtSetArg (args[n], XmNokLabelString, button_string);  n++;
 	XtSetArg (args[n], XmNmessageString, message_string);  n++;
 	message_box = XmCreateMessageDialog (parent, "helpbox", args, n);
-
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild (button);
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild (button);
-
+	XtUnmanageChild(XtNameToWidget(message_box, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(message_box, "Help"));
 
 	/*	Free strings and return MessageBox.
 	*/
@@ -410,15 +387,10 @@ Select 'quit' from the 'exit' menu to exit this application.");
 	return (message_box);
 }
 
-
-
 /*-------------------------------------------------------------
 **	SelectFontCB		- callback for font buttons
 */
-void SelectFontCB (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  data from application   */
-caddr_t		call_data;	/*  data from widget class  */
+static void SelectFontCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
 	Widget		message_box;
 
@@ -433,68 +405,49 @@ caddr_t		call_data;	/*  data from widget class  */
 	XtManageChild (message_box);
 }
 
-
-
 /*-------------------------------------------------------------
 **	CloseCB			- callback for close button
 */
-void CloseCB  (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  font pointer	*/
-caddr_t		call_data;	/*  data from widget class  */
+static void CloseCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-	XFontStruct	*font	= (XFontStruct *) client_data;
-	Widget		message_box	= XtParent (w);
-	Widget		shell	= XtParent (message_box);
+	XFontStruct	*font  = (XFontStruct *)client_data;
+	Widget message_box = XtParent(w);
+	Widget shell       = XtParent(message_box);
 
+	(void)call_data;
 
-	/*	Free font.
-	*/
-	if (font) XFreeFont (XtDisplay (w), font);
+	/*	Free font. */
+	if (font) XFreeFont (XtDisplay(w), font);
 
-
-	/*	Unmanage and destroy widgets.
-	*/
-	XtUnmanageChild (message_box);
-	XtDestroyWidget (shell);
+	/*	Unmanage and destroy widgets. */
+	XtUnmanageChild(message_box);
+	XtDestroyWidget(shell);
 }
-
-
 
 /*-------------------------------------------------------------
 **	HelpCB			- callback for help button
 */
-void HelpCB (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  data from application   */
-caddr_t		call_data;	/*  data from widget class  */
+static void HelpCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-	Widget		message_box;		/*  MessageBox		*/
+	Widget message_box; /* MessageBox */
 
+	(void)client_data;
+	(void)call_data;
 
-	/*	Create help window.
-	*/
+	/*	Create help window. */
 	message_box = CreateHelp (w);
-
-
-	/*	Display help window.
-	*/
-	XtManageChild (message_box);
+	XtManageChild(message_box);
 }
-
-
 
 /*-------------------------------------------------------------
 **	QuitCB			- callback for quit button
 */
-void QuitCB (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  data from applicaiton   */
-caddr_t		call_data;	/*  data from widget class  */
+static void QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-
-
-	/*	Terminate the application.
-	*/
-	exit (0);
+	/*	Terminate the application. */
+	(void)w;
+	(void)client_data;
+	(void)call_data;
+	XtAppSetExitFlag(app_context);
 }
+

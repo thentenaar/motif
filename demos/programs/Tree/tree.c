@@ -142,7 +142,7 @@ CreateNode(Widget w_parent, Widget parent_node, char * name, \n\
     Widget w;\n\
     XmString xmstring;\n\
 \n\
-    xmstring = XmStringCreateSimple(name);\n\
+    xmstring = XmStringCreateLocalized(name);\n\
 \n\
     num_args = 0;\n\
     XtSetArg(args[num_args], XmNlabelString, xmstring); num_args++;\n\
@@ -167,7 +167,7 @@ static String fallbacks[] = {
     "*hypelabel*fontList: -*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*",
     "*show_code*fontList: -*-courier-*-r-normal-*-*-*-*-*-*-*-*-*",
     "*show_pb.labelString: Show Layout Code...",
-    "*explain_pb.labelString: Other Resources...", 
+    "*explain_pb.labelString: Other Resources...",
     "*ladder_lab.labelString: Connect Style",
     "*ladder.labelString: XmTreeLadder",
     "*direct.labelString: XmTreeDirect",
@@ -199,7 +199,7 @@ static String fallbacks[] = {
 
 /*
  * Function Name: main
- * Description:   
+ * Description:
  * Arguments:     the usual suspects
  * Returns:       nothing
  *
@@ -212,40 +212,40 @@ main(int argc, char **argv)
     Cardinal num_args;
     XtAppContext app_con;
     Widget scrolled, right_pane;
-    
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
     num_args = 0;
     XtSetArg(args[num_args], XmNtitle, "Tree Demo"); num_args++;
     XtSetArg(args[num_args], XmNallowShellResize, True); num_args++;
     top = XtOpenApplication(
-            &app_con, 
-            "Treedemo", 
-            NULL, 
-            0, 
-            &argc, 
+            &app_con,
+            "Treedemo",
+            NULL,
+            0,
+            &argc,
             argv,
-            fallbacks, 
-            sessionShellWidgetClass, 
-            args, 
+            fallbacks,
+            sessionShellWidgetClass,
+            args,
             num_args);
 
     num_args = 0;
-    big_pane = XtVaCreateManagedWidget("bigPane", xmPanedWidgetClass, 
-				   top, 
+    big_pane = XtVaCreateManagedWidget("bigPane", xmPanedWidgetClass,
+				   top,
 				   XmNorientation, XmHORIZONTAL,
-				   NULL); 
+				   NULL);
 
 #if 0
-    scrolled = XtVaCreateManagedWidget( "scrollTree", 
+    scrolled = XtVaCreateManagedWidget( "scrollTree",
 				       xmScrolledWindowWidgetClass,
-				       big_pane, 
+				       big_pane,
 				       XmNresizeToPreferred, True,
 				       XmNpreferredPaneSize, 500,
 				       XmNallowResize, True,
 				       XmNscrollingPolicy, XmAUTOMATIC,
 				       XmNshowSash, True,
-				       XmNscrollBarDisplayPolicy, 
+				       XmNscrollBarDisplayPolicy,
 				       XmAS_NEEDED,
 				       NULL );
 #else
@@ -256,17 +256,17 @@ main(int argc, char **argv)
 
     /* right pane */
     right_pane = XtVaCreateManagedWidget("rightPane", xmPanedWidgetClass,
-					 big_pane, 
+					 big_pane,
 					 XmNskipAdjust, False,
 					 XmNorientation, XmVERTICAL,
 					 NULL );
-    
 
-    scrolled = XtVaCreateManagedWidget( "scrollMessage", 
+
+    scrolled = XtVaCreateManagedWidget( "scrollMessage",
 				       xmScrolledWindowWidgetClass,
-				       right_pane, 
+				       right_pane,
 				       XmNscrollingPolicy, XmAUTOMATIC,
-				       XmNscrollBarDisplayPolicy, 
+				       XmNscrollBarDisplayPolicy,
 				       XmAS_NEEDED,
 				       XmNpaneMaximum, 200,
 				       XmNallowResize, True,
@@ -289,8 +289,8 @@ main(int argc, char **argv)
  **************************************************************/
 /*
  * Function Name: BuildHierarchy
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       Nothing
  *
  */
@@ -299,7 +299,7 @@ BuildHierarchy(Widget parent, WidgetClass class)
 {
     Widget tree, hierarchy;
 
-    G_tree = tree = XtCreateManagedWidget("treeWidget", class, 
+    G_tree = tree = XtCreateManagedWidget("treeWidget", class,
 					  parent, NULL, (Cardinal) 0);
     XtVaSetValues(G_tree, XmNunitType, XmPIXELS, NULL);
 
@@ -342,7 +342,7 @@ static void getNodesCB(Widget w, XtPointer client, XtPointer call)
 {
 	WidgetList list = XmHierarchyGetChildNodes(w);
 	int i;
-	
+
 	if (!list)
 		printf ("Widget '%s' has no node children.\n",XtName(w));
 	else
@@ -371,7 +371,7 @@ static unsigned char wingdogs_bits[] = {
    0x8f, 0x00, 0x6f, 0x00, 0xc7, 0x00, 0x6e, 0x80, 0x07, 0x00, 0x7c, 0x80,
    0x0d, 0x00, 0xf8, 0x80, 0x1f, 0x00, 0xf0, 0x01};
 	    Window root = RootWindowOfScreen(XtScreen(w));
-	Pixmap pixmap = 
+	Pixmap pixmap =
 		XCreateBitmapFromData(XtDisplay(w),root, (char *)wingdogs_bits,
                             wingdogs_width, wingdogs_height);
 	XtVaSetValues(w,XmNnodeCloseFolderPixmap, pixmap, NULL);
@@ -381,13 +381,13 @@ static unsigned char wingdogs_bits[] = {
 
 /*
  * Function Name: CreateNode
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       Widget
  *
  */
 static Widget
-CreateNode(Widget w_parent, Widget parent_node, char * name, 
+CreateNode(Widget w_parent, Widget parent_node, char * name,
 	   XmHierarchyNodeState state)
 {
     Arg args[10];
@@ -395,14 +395,14 @@ CreateNode(Widget w_parent, Widget parent_node, char * name,
     Widget w;
     XmString xmstring;
 
-    xmstring = XmStringCreateSimple(name);
-    
+    xmstring = XmStringCreateLocalized(name);
+
     num_args = 0;
     XtSetArg(args[num_args], XmNlabelString, xmstring); num_args++;
     XtSetArg(args[num_args], XmNnodeState, state); num_args++;
     XtSetArg(args[num_args], XmNparentNode, parent_node); num_args++;
     XtSetArg(args[num_args], XmNlineStyle, 99); num_args++;
-    
+
     w = XtCreateManagedWidget(name, xmPushButtonWidgetClass,
 			      w_parent, args, num_args);
 
@@ -425,8 +425,8 @@ void WriteUpHype(Widget parent)
     Cardinal argcnt;
     Widget w;
     XmString xmstring;
-    
-    xmstring = XmStringCreateLtoR(
+
+    xmstring = XmStringLtoRCreate(
 "The Motif Tree Widget displays hierarchical data in a tree layout with a Motif\n\
 look and feel. The Tree widget displayed below contains entries corresponding\n\
 to Motif widgets. The nodes are XmPushButtons, but the tree can accept any type of widget.\n\
@@ -466,7 +466,7 @@ echoed to standard output.\n\
 \n\
 Press \"Other Resources...\" to see the resources that manipulate the Tree's look and feel.",
 				  XmSTRING_DEFAULT_CHARSET);
-     
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginHeight, 10); argcnt++;
     XtSetArg(args[argcnt], XmNmarginWidth, 10); argcnt++;
@@ -474,14 +474,14 @@ Press \"Other Resources...\" to see the resources that manipulate the Tree's loo
     XtSetArg(args[argcnt], XmNlabelString, xmstring); argcnt++;
     w = XtCreateManagedWidget("hypelabel", xmLabelWidgetClass,
 			      parent, args, argcnt);
-    
+
     XmStringFree(xmstring);
-				  
+
 }
 
 /*
  * Function Name: ShowCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -495,7 +495,7 @@ static void ShowCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString ok_xmstring;
 
-	ok_xmstring = XmStringCreateSimple("OK");
+	ok_xmstring = XmStringCreateLocalized("OK");
 
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNtitle, "Show Code..."); argcnt++;
@@ -521,7 +521,7 @@ static void ShowCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: ExplainCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -535,7 +535,7 @@ static void ExplainCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringCreateLtoR(
+	xmstring = XmStringLtoRCreate(
 "The Motif Tree and Outline widget actually derive behavior from the\n\
 Hierarchy Widget. The Hierarchy widget provides resources that specify\n\
 the relationships between children.\n\
@@ -565,11 +565,8 @@ opened or closed. To use this callback, press the Node State Callback toggle.",
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
 	XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
 	info = XmCreateInformationDialog(G_tree, "explain", args, argcnt);
-
-	temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild(temp);
-	temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild(temp);
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
 	XmStringFree(xmstring);
     }
 
@@ -578,7 +575,7 @@ opened or closed. To use this callback, press the Node State Callback toggle.",
 
 /*
  * Function Name: ConnectStyleCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -591,7 +588,7 @@ static void ConnectStyleCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: CompressStyleCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -604,7 +601,7 @@ static void CompressStyleCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: NodeStateCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -621,8 +618,7 @@ void NodeStateCB(Widget w, XtPointer client, XtPointer call)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNlabelString, &xmstring); argcnt++;
     XtGetValues(node_data->widget, args, argcnt);
-
-    XmStringGetLtoR(xmstring, XmFONTLIST_DEFAULT_TAG, &name);
+    name = XmStringUnparse(xmstring, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
 
     if (node_data->state == XmOpen)
 	sprintf(buf, "%s has switched to the XmOpen state.", name);
@@ -635,21 +631,16 @@ void NodeStateCB(Widget w, XtPointer client, XtPointer call)
     else
 	sprintf(buf, "%s has switched node state.", name);
 
-    xmstring = XmStringCreateSimple(buf);
-    
+    xmstring = XmStringCreateLocalized(buf);
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Node State Changed"); argcnt++;
     XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
     info = XmCreateInformationDialog(w, "nodechange", args, argcnt);
-    
-    temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-    XtUnmanageChild(temp);
-    temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-    XtUnmanageChild(temp);
-
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
     XmStringFree(xmstring);
     XtFree(name);
-
     XtManageChild(info);
 }
 
@@ -662,14 +653,14 @@ static void ChangePixmap(Widget w, XtPointer client, XtPointer call)
   if (TreeUsingPixmaps){
     XtVaSetValues( G_tree, XmNopenFolderPixmap, XmUNSPECIFIED_PIXMAP,
 		  XmNcloseFolderPixmap, XmUNSPECIFIED_PIXMAP, NULL );
-    XtVaSetValues( label, XmNlabelString, XmStringCreateSimple("Default"),
+    XtVaSetValues( label, XmNlabelString, XmStringCreateLocalized("Default"),
 		  NULL);
   }
   else {
     XtVaSetValues( G_tree, XmNopenFolderPixmap, open_folder,
 		  XmNcloseFolderPixmap, close_folder, NULL );
     XtVaSetValues( label, XmNlabelString,
-		  XmStringCreateSimple("User Defined"), NULL);
+		  XmStringCreateLocalized("User Defined"), NULL);
   }
 
   TreeUsingPixmaps = !TreeUsingPixmaps;
@@ -678,7 +669,7 @@ static void ChangePixmap(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: CallbackTogCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -691,10 +682,10 @@ static void CallbackTogCB(Widget w, XtPointer client, XtPointer call)
 
     if (XmToggleButtonGetState(w)) {
 	XtAddCallback(G_tree, XmNnodeStateCallback, NodeStateCB, NULL);
-	xmstring = XmStringCreateSimple("Added");
+	xmstring = XmStringCreateLocalized("Added");
     } else {
 	XtRemoveAllCallbacks(G_tree, XmNnodeStateCallback);
-	xmstring = XmStringCreateSimple("Not Added");
+	xmstring = XmStringCreateLocalized("Not Added");
     }
 
     argcnt = 0;
@@ -705,7 +696,7 @@ static void CallbackTogCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: AutoCloseTogCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -725,7 +716,7 @@ static void AutoCloseTogCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: OrientationCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -740,7 +731,7 @@ OrientationCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: ScaleCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -767,8 +758,8 @@ QuitCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: MakeControlPanel
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       nothing
  */
 static
@@ -809,7 +800,7 @@ void MakeControlPanel(Widget right_pane)
 				xmButtonBoxWidgetClass,
 				bbox, args, argcnt);
 
-    XtVaCreateManagedWidget("ladder_lab", 
+    XtVaCreateManagedWidget("ladder_lab",
 				  xmLabelWidgetClass,
 				  leftBbox, NULL);
 
@@ -838,7 +829,7 @@ void MakeControlPanel(Widget right_pane)
 	}
 
 
-    XtVaCreateManagedWidget("compress_lab", 
+    XtVaCreateManagedWidget("compress_lab",
 				  xmLabelWidgetClass,
 				  leftBbox, NULL);
 
@@ -865,38 +856,38 @@ void MakeControlPanel(Widget right_pane)
 		XtVaSetValues(option,XmNmenuHistory,leaves,NULL);
 	else if (XmTreeCompressAll == compressStyle)
 		XtVaSetValues(option,XmNmenuHistory,all,NULL);
-	else 
+	else
 		XtVaSetValues(option,XmNmenuHistory,none,NULL);
 
 	XtManageChild(option);
 	}
 
 
-    tog = XtVaCreateManagedWidget("callback_tog", 
+    tog = XtVaCreateManagedWidget("callback_tog",
 				  xmToggleButtonWidgetClass,
 				  leftBbox, NULL);
-    
+
     lab = XtVaCreateManagedWidget("callback_lab",
 					   xmLabelWidgetClass,
 					   rightBbox, NULL);
 
-    XtAddCallback(tog, XmNvalueChangedCallback, 
+    XtAddCallback(tog, XmNvalueChangedCallback,
 		  CallbackTogCB, (XtPointer) lab);
 
 
-    tog = XtVaCreateManagedWidget("changePixTog", 
+    tog = XtVaCreateManagedWidget("changePixTog",
 				  xmToggleButtonWidgetClass,
 				  leftBbox, NULL);
-    
+
     lab = XtVaCreateManagedWidget("changePixLab",
 				  xmLabelWidgetClass,
 				  rightBbox, NULL);
-    
-    XtAddCallback(tog, XmNvalueChangedCallback, ChangePixmap, 
+
+    XtAddCallback(tog, XmNvalueChangedCallback, ChangePixmap,
 		  (XtPointer) lab);
 
 
-    tog = XtVaCreateManagedWidget("autoclose_tog", 
+    tog = XtVaCreateManagedWidget("autoclose_tog",
 				  xmToggleButtonWidgetClass,
 				  leftBbox, NULL);
 
@@ -906,16 +897,16 @@ void MakeControlPanel(Widget right_pane)
     	XtVaSetValues(tog, XmNset, set, NULL);
 	}
 
-    XtAddCallback(tog, XmNvalueChangedCallback, 
+    XtAddCallback(tog, XmNvalueChangedCallback,
 		  AutoCloseTogCB, NULL);
 
-    /* this is just to line things up nicely */ 
+    /* this is just to line things up nicely */
     (void)XtVaCreateManagedWidget("dummy", xmLabelWidgetClass,rightBbox,
-				  XmNlabelType, XmPIXMAP, 
-				  XmNlabelPixmap, XmUNSPECIFIED_PIXMAP, 
+				  XmNlabelType, XmPIXMAP,
+				  XmNlabelPixmap, XmUNSPECIFIED_PIXMAP,
 				  NULL);
 
-    XtVaCreateManagedWidget("orientation", 
+    XtVaCreateManagedWidget("orientation",
 				  xmLabelWidgetClass,
 				  leftBbox, NULL);
 
@@ -946,31 +937,30 @@ void MakeControlPanel(Widget right_pane)
 	int i;
 	for (i=0;i<XtNumber(resources);i++)
 		{
-		Arg args[8];
+		Arg xargs[8];
 		int n = 0;
 		Dimension val;
 		Widget scale;
 
     		XtVaCreateManagedWidget(resources[i], xmLabelWidgetClass,
 				  leftBbox, NULL);
-		XtSetArg(args[n], XmNminimum, 1); n++;
-		XtSetArg(args[n], XmNmaximum, 100); n++;
-		XtSetArg(args[n], XmNshowValue, True); n++;
-		XtSetArg(args[n], XmNorientation, XmHORIZONTAL); n++;
+		XtSetArg(xargs[n], XmNminimum, 1); n++;
+		XtSetArg(xargs[n], XmNmaximum, 100); n++;
+		XtSetArg(xargs[n], XmNshowValue, True); n++;
+		XtSetArg(xargs[n], XmNorientation, XmHORIZONTAL); n++;
 		XtVaGetValues(G_tree, resources[i], &val, NULL);
-		XtSetArg(args[n], XmNvalue, val); n++;
-		scale = XmCreateScale(rightBbox, resources[i], args, n);
+		XtSetArg(xargs[n], XmNvalue, val); n++;
+		scale = XmCreateScale(rightBbox, resources[i], xargs, n);
 		XtAddCallback(scale, XmNvalueChangedCallback, ScaleCB, (XtPointer)(intptr_t)i);
 		XtManageChild(scale);
 		}
 	}
 
-
     /* Second Row */
 
     bbox = XtVaCreateManagedWidget("buttonBox1",
 				   xmButtonBoxWidgetClass,
-				   right_pane, 
+				   right_pane,
 				   XmNequalSize, True,
 				   XmNfillOption, XmFillNone,
 				   XmNorientation, XmHORIZONTAL,
@@ -990,7 +980,7 @@ void MakeControlPanel(Widget right_pane)
 
     bbox = XtVaCreateManagedWidget("buttonBox1",
 				   xmButtonBoxWidgetClass,
-				   right_pane, 
+				   right_pane,
 				   XmNfillOption, XmFillNone,
 				   XmNorientation, XmHORIZONTAL,
 				   XmNshowSash, False,

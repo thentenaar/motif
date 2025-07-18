@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: text.c /main/7 1996/10/30 10:28:07 cde-osf $"
@@ -42,20 +42,16 @@ void FileOKCallback(Widget fsb, ViewPtr this,
    FILE * file;
    char * path;
    char *buffer;
+   unsigned int len;
    static char no_file[] = "no_file" ;
    static XmString no_file_msg = NULL;
    XmPushButtonCallbackStruct dummy;
    int filesize;
    XmStringContext ctxt;
-   XmStringCharSet charset;
-   XmStringDirection dir;
-   Boolean sep;
-	 
 
    XmStringInitContext(&ctxt, call_data->value);
-   XmStringGetNextSegment(ctxt, &path, &charset, &dir, &sep);
+   XmStringGetNextTriple(ctxt, &len, (XtPointer *)&path);
    XmStringFreeContext(ctxt);
-   XtFree((char *)charset);
    if (((file = OpenFile(path)) == NULL)
        || (buffer = ReadFile(file, &filesize)) == NULL)
      {
@@ -65,7 +61,7 @@ void FileOKCallback(Widget fsb, ViewPtr this,
       }
    else {
       PanePtr pane = this->panes, tmp;
-	
+
       XtPopdown(XtParent(fsb));
       while ( pane != NULL) { /* destroy all panes */
 	 XtDestroyWidget(pane->text);
@@ -77,7 +73,7 @@ void FileOKCallback(Widget fsb, ViewPtr this,
       this->panes = NULL;
       this->current_pane = NULL;
       /* Set the new source text */
-      XmTextSetString(this->text_source, buffer); 
+      XmTextSetString(this->text_source, buffer);
       XtFree(buffer);
       XtFree(path);
       CloseFile(file);
@@ -130,9 +126,9 @@ void NewPaneCallback(Widget widget, ViewPtr this,
    XtAddCallback(new->text,
 		 XmNmodifyVerifyCallback, (XtCallbackProc) NoInsert, this);
 */
-   XtAddCallback(new->text, 
+   XtAddCallback(new->text,
 		 XmNfocusCallback, (XtCallbackProc) ChangeCurrentPane, this);
-   XmTextSetSource(new->text, 
+   XmTextSetSource(new->text,
 		   XmTextGetSource(this->text_source), 0, 0);
    if (target != NULL) { /* this is not the first pane */
       n = 0;
@@ -174,7 +170,7 @@ void KillPaneCallback(Widget button, ViewPtr this,
  */
    for (pane = &this->panes; *pane != this->current_pane; )
      pane = &((*pane)->next);
-/* 
+/*
  * Destroy the old one, free memory.
  * Do not allow the last pane to be destroyed
  * Make destroy command unavailable if last pane.
@@ -196,7 +192,7 @@ void KillPaneCallback(Widget button, ViewPtr this,
  * Focus has moved. Change current pane.
  */
 
-static void ChangeCurrentPane(Widget text, ViewPtr this, 
+static void ChangeCurrentPane(Widget text, ViewPtr this,
 			      XmAnyCallbackStruct verify)
 {
    PanePtr pane = this->panes;
@@ -246,14 +242,14 @@ void FindCallback(Widget button, ViewPtr this,
      n = 0;
      template = XmCreateForm(this->search_box, "form", args, n);
      n = 0;
-     XtSetArg(args[n], XmNbottomAttachment, XmATTACH_FORM); n++; 
+     XtSetArg(args[n], XmNbottomAttachment, XmATTACH_FORM); n++;
      XtSetArg(args[n], XmNrightAttachment,  XmATTACH_FORM) ; n++;
      XtSetArg(args[n], XmNleftAttachment,  XmATTACH_FORM) ; n++;
      this->search_entry = XmCreateTextField(template, "entry", args, n);
      n = 0;
-     XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++; 
-     XtSetArg(args[n], XmNbottomAttachment,XmATTACH_WIDGET); n++; 
-     XtSetArg(args[n], XmNbottomWidget, this->search_entry); n++; 
+     XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++;
+     XtSetArg(args[n], XmNbottomAttachment,XmATTACH_WIDGET); n++;
+     XtSetArg(args[n], XmNbottomWidget, this->search_entry); n++;
      XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM) ; n++;
      XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM) ; n++;
      frame = XmCreateFrame(template, "dir_frame", args, n);
@@ -267,7 +263,7 @@ void FindCallback(Widget button, ViewPtr this,
      XtSetArg(args[n], XmNentryAlignment, XmALIGNMENT_END); n++;
      XtSetArg(args[n], XmNentryClass, xmToggleButtonWidgetClass); n++;
      XtSetArg(args[n], XmNorientation, XmVERTICAL); n++;
-     this->direction = 
+     this->direction =
        framed[1] = XmCreateRadioBox(frame, "direction", args, n);
      n = 0;
      XtSetArg(args[n], XmNuserData, XmTEXT_FORWARD); n++;
@@ -302,7 +298,7 @@ void FindCallback(Widget button, ViewPtr this,
 
 static void CancelSearch(Widget button, ViewPtr this,
 			    XmPushButtonCallbackStruct *call_data)
-{  
+{
    XtPopdown(XtParent(this->search_box));
 }
 
@@ -319,7 +315,7 @@ static void SearchSubstring(Widget button, ViewPtr this,
 /*   int status; */
    XmTextPosition pos;
 /*   int last = XmTextFieldGetLastPosition(this->search_entry); */
-   XmString search = NULL;
+   XmString s = NULL;
    XmTextDirection direction;
    Widget toggle;
 
@@ -355,9 +351,9 @@ static void SearchSubstring(Widget button, ViewPtr this,
    else {
       if (not_found_msg == NULL)
 	not_found_msg = FetchString(this, not_found);
-      search =  XmStringCreateLocalized(substring);
-      ViewWarning(this, not_found_msg, search);
-      XmStringFree(search);
+      s = XmStringCreateLocalized(substring);
+      ViewWarning(this, not_found_msg, s);
+      XmStringFree(s);
    }
    XtFree(substring);
 }
@@ -368,7 +364,7 @@ static void SearchSubstring(Widget button, ViewPtr this,
 
 static void NoInsert(Widget text, ViewPtr this, XmTextVerifyPtr verify)
 {
-/* 
+/*
  if (verify->startPos != verify->endPos)
      printf("deleting text %d %d\n", verify->startPos, verify->endPos);
    if (verify->text != NULL && verify->text->length > 0)

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DNDDemo.c /main/8 1996/10/10 16:32:41 drk $"
@@ -39,26 +39,26 @@ static char rcsid[] = "$XConsortium: DNDDemo.c /main/8 1996/10/10 16:32:41 drk $
  * dialogs.  For internationalization, message catalogs should
  * replace these static declarations.
  */
-char HELP_MSG1[] = 
+char HELP_MSG1[] =
 "This drop action will change the color\n\
 of the rectangle that the paint palette\n\
 icon is dropped on. To accept this drop\n\
 press the o.k. button, otherwise press\n\
 cancel";
 
-char HELP_MSG2[] = 
+char HELP_MSG2[] =
 "This drop action will move the rectangle\n\
 to the new position.  To accept this drop\n\
 press the o.k. button, otherwise press\n\
 cancel";
 
-char HELP_MSG3[] = 
+char HELP_MSG3[] =
 "This drop action will copy the rectangle\n\
 to the new position.  To accept this drop\n\
 press the o.k. button, otherwise press\n\
 cancel";
 
-char HELP_MSG4[] = 
+char HELP_MSG4[] =
 "This drop action can either copy or\n\
 move the rectangle to the new position.\n\
 Select the operation that you desire.\n\
@@ -68,7 +68,7 @@ operation is move.  To accept this drop\n\
 press the o.k. button, otherwise press\n\
 cancel";
 
-char HELP_MSG5[] = 
+char HELP_MSG5[] =
 "This drop action is at an Invalid drop\n\
 position.  Please cancel this drop \n\
 by pressing the cancel button.";
@@ -124,13 +124,13 @@ GetDragIconFromBits(Widget w, char *bits, char *mask, Dimension width,
     Pixmap     icon, iconMask;
     Display    *display = XtDisplay(w);
 
-    icon = XCreateBitmapFromData(display, DefaultRootWindow(display), bits, 
+    icon = XCreateBitmapFromData(display, DefaultRootWindow(display), bits,
                                  width, height);
 
     iconMask = XCreateBitmapFromData(display, DefaultRootWindow(display),
                                      mask, width, height);
 
-    return(GetDragIcon(w, icon, iconMask, width, height, 
+    return(GetDragIcon(w, icon, iconMask, width, height,
                        background, foreground));
 
 }
@@ -149,11 +149,11 @@ GetDragIconFromRect(Widget w, RectPtr rect, Pixel background)
     Dimension   width, height;
 
     /* Create a depth 1 pixmap (bitmap) for use with the drag icon */
-    icon = GetBitmapFromRect(w, rect, background, foreground, 
+    icon = GetBitmapFromRect(w, rect, background, foreground,
                                          &width, &height);
 
     /* use bitmap for both the bitmap and mask */
-    return(GetDragIcon(w, icon, None, width, height, 
+    return(GetDragIcon(w, icon, None, width, height,
                        background, foreground));
 
 }
@@ -163,7 +163,6 @@ GetDragIconFromRect(Widget w, RectPtr rect, Pixel background)
  * converting drag/drop export background color targets.
  * The return types follow ICCC statndards.
  */
-/* ARGSUSED */
 void
 ColorConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
 {
@@ -172,7 +171,7 @@ ColorConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
   Atom        BACKGROUND = XInternAtom(display, "BACKGROUND", False);
   Atom        PIXEL = XInternAtom(display, "PIXEL", False);
   Atom        TARGETS = XInternAtom(display, "TARGETS", False);
-  Atom	ME_TARGETS = 
+  Atom	ME_TARGETS =
     XInternAtom(display, XmS_MOTIF_EXPORT_TARGETS, False);
 
   if (cs -> target == BACKGROUND) {
@@ -193,12 +192,12 @@ ColorConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
       Atom *targs;
       int target_count = 0;
 
-      if (cs -> target == ME_TARGETS) 
+      if (cs -> target == ME_TARGETS)
 	targs = (Atom *)XtMalloc((unsigned) (1 * sizeof(Atom)));
       else
 	targs = XmeStandardTargets(widget, 1, &target_count);
 
-      targs[target_count++] = BACKGROUND; 
+      targs[target_count++] = BACKGROUND;
 
       cs -> value = (XtPointer) targs;
       cs -> length = target_count;
@@ -254,7 +253,6 @@ DragMotionCallback(Widget w, XtPointer client, XtPointer call)
  * state icon to become visible when a drop is at a valid
  * position for drag over effects.
  */
-/* ARGSUSED */
 static void
 DropSiteLeaveCallback(Widget w, XtPointer client, XtPointer call)
 {
@@ -268,7 +266,6 @@ DropSiteLeaveCallback(Widget w, XtPointer client, XtPointer call)
 
 
 /* This callback procedure removes the icons when the drop is complete */
-/* ARGSUSED */
 static void
 ColorDragDropFinishCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -287,24 +284,23 @@ ColorDragDropFinishCB(Widget w, XtPointer client, XtPointer call)
 
 
 /* This action procedure sets up the drag data and begins the drag operation */
-/* ARGSUSED */
 void
 ColorRect(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
 
-    static XtCallbackRec dragDropFinishCB[] = { 
+    static XtCallbackRec dragDropFinishCB[] = {
         {ColorDragDropFinishCB, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
-    static XtCallbackRec dragMotionCB[] = { 
+    static XtCallbackRec dragMotionCB[] = {
         {DragMotionCallback, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
-    static XtCallbackRec dropSiteLeaveCB[] = { 
+    static XtCallbackRec dropSiteLeaveCB[] = {
         {DropSiteLeaveCallback, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
     Atom        targets[1];
@@ -346,10 +342,10 @@ ColorRect(Widget w, XEvent *event, String *params, Cardinal *num_params)
     }
 
     /* Create the drag cursor icons */
-    sourceIcon = GetDragIconFromBits(w, source_bits, source_mask, width, 
+    sourceIcon = GetDragIconFromBits(w, source_bits, source_mask, width,
                                      height, background, foreground);
 
-    stateIcon = GetDragIconFromBits(w, state_bits, state_mask, width, 
+    stateIcon = GetDragIconFromBits(w, state_bits, state_mask, width,
                                     height, background, foreground);
 
     /* Setup the arglist for the drag context that is created at drag start */
@@ -358,7 +354,7 @@ ColorRect(Widget w, XEvent *event, String *params, Cardinal *num_params)
     XtSetArg(args[n], XmNblendModel, XmBLEND_JUST_SOURCE); n++;
 
     /* set cursor colors for the drag states */
-    XtSetArg(args[n], XmNvalidCursorForeground, 
+    XtSetArg(args[n], XmNvalidCursorForeground,
              GetColor(VALID_CURSOR_FG_COLOR)); n++;
     XtSetArg(args[n], XmNinvalidCursorForeground,
              GetColor(INVALID_CURSOR_FG_COLOR)); n++;
@@ -392,7 +388,6 @@ ColorRect(Widget w, XEvent *event, String *params, Cardinal *num_params)
  * converting requests for rectangle targets.  The return types follow
  * ICCCM standards.
  */
-/* ARGSUSED */
 void
 RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
 {
@@ -402,7 +397,7 @@ RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
     Atom            RECT_INFO = XmInternAtom(display, "RECT_INFO", False);
     Atom            DELETE = XmInternAtom(display, "DELETE", False);
     Atom            TARGETS = XmInternAtom(display, "TARGETS", False);
-    Atom	    ME_TARGETS = 
+    Atom	    ME_TARGETS =
       XmInternAtom(display, XmS_MOTIF_EXPORT_TARGETS, False);
     Atom            *targs;
     int             target_count;
@@ -445,10 +440,9 @@ RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
     }
     else if (cs -> target == TARGETS || cs -> target == ME_TARGETS) {
         /* This target is required by ICCCM */
-        Atom *targs;
-        int target_count = 0;
+        target_count = 0;
 
-	if (cs -> target == ME_TARGETS) 
+	if (cs -> target == ME_TARGETS)
 	  targs = (Atom *)XtMalloc((unsigned) (1 * sizeof(Atom)));
 	else
 	  targs = XmeStandardTargets(widget, 1, &target_count);
@@ -466,7 +460,6 @@ RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
 
 
 /* This callback procedure removes the old cursor icon */
-/* ARGSUSED */
 static void
 RectDragDropFinishCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -484,7 +477,6 @@ RectDragDropFinishCB(Widget w, XtPointer client, XtPointer call)
 
 
 /* This callback procedure redraws the rectangles once the drop is completed */
-/* ARGSUSED */
 static void
 RectDropFinishCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -502,7 +494,6 @@ RectDropFinishCB(Widget w, XtPointer client, XtPointer call)
  * rectangle depending of the dropSiteStatus for drag over
  * effects.
  */
-/* ARGSUSED */
 static void
 RectDragMotionCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -544,7 +535,6 @@ RectDragMotionCB(Widget w, XtPointer client, XtPointer call)
 /* This callback procedure handle the drawing of the target
  * rectangle When the operation changes.
  */
-/* ARGSUSED */
 static void
 RectOperationChangedCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -577,7 +567,6 @@ RectOperationChangedCB(Widget w, XtPointer client, XtPointer call)
 
 
 /* This action procedure sets up the drag data and begins the drag operation */
-/* ARGSUSED */
 static void
      StartMove(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -585,24 +574,24 @@ static void
     RectPtr     rect;
     Position    x = event->xbutton.x;
     Position    y = event->xbutton.y;
-    static XtCallbackRec dragDropFinishCB[] = { 
+    static XtCallbackRec dragDropFinishCB[] = {
         {RectDragDropFinishCB, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
-    static XtCallbackRec dropFinishCB[] = { 
+    static XtCallbackRec dropFinishCB[] = {
         {RectDropFinishCB, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
-    static XtCallbackRec dragMotionCB[] = { 
+    static XtCallbackRec dragMotionCB[] = {
         {RectDragMotionCB, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
-    static XtCallbackRec operationChangedCB[] = { 
+    static XtCallbackRec operationChangedCB[] = {
         {RectOperationChangedCB, NULL},
-        {NULL, NULL} 
+        {NULL, NULL}
     };
 
     Atom            targets[1];
@@ -676,7 +665,6 @@ static void
 /* This procedure searches through the export targets and
  * returns flags to indicate which targets were found
  */
-/* ARGSUSED */
 static void
 CheckTargets(Widget w, Display *display, Boolean *rectFound,
 	     Boolean *bgFound, Boolean *pixFound)
@@ -717,7 +705,6 @@ CheckTargets(Widget w, Display *display, Boolean *rectFound,
 /* This procedure handles drop site messages and performs the
  * appropriate drag under effects.
  */
-/* ARGSUSED */
 static void
 DragProcCallback(Widget w, XtPointer client, XtPointer call)
 {
@@ -741,7 +728,7 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
 
             rect = RectFind(cb->x, cb->y);
 
-            /* Remove any operations for the operations field which do not 
+            /* Remove any operations for the operations field which do not
              * apply to the simulated drop site.
              */
             if (rect) {
@@ -751,19 +738,19 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                     RectHighlight(w, rect);
                 }
                 else if (rectFound) {
-                    cb->operations = cb->operations & 
+                    cb->operations = cb->operations &
                                      (XmDROP_COPY | XmDROP_MOVE);
                     RectUnhighlight(w);
                 }
 
             }
             else {
-                cb->operations = initial_operations & 
+                cb->operations = initial_operations &
                                  (XmDROP_COPY | XmDROP_MOVE);
                 RectUnhighlight(w);
             }
 
-            /* Set operation to the valid operation preferred by the simulated 
+            /* Set operation to the valid operation preferred by the simulated
              * drop site or to XmDROP_NOOP if the operations list does not
              * contain the preferred operation.
              */
@@ -807,10 +794,10 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
             }
 
             /*
-             * Set dropSiteStatus to XmDROP_SITE_INVALID if the operation 
-             * field is XmDROP_NOOP, or if there are no common targets 
-             * between the source and the nested drop site.  Otherwise, set 
-             * dropSiteStatus to XmDROP_SITE_VALID. 
+             * Set dropSiteStatus to XmDROP_SITE_INVALID if the operation
+             * field is XmDROP_NOOP, or if there are no common targets
+             * between the source and the nested drop site.  Otherwise, set
+             * dropSiteStatus to XmDROP_SITE_VALID.
              */
             if (cb->operation == XmDROP_NOOP ||
                 (rect && (!rectFound && !bgFound && !pixFound)) ||
@@ -818,7 +805,7 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                 cb->dropSiteStatus = XmINVALID_DROP_SITE;
             else
                 cb->dropSiteStatus = XmVALID_DROP_SITE;
-    
+
             /*
              * Display appropriate drag under visuals.  Only highlight
              * the rectangle if we are changing rectangle attributes.
@@ -840,7 +827,7 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
             rect = RectFind(cb->x, cb->y);
 
             /*
-             * Remove any operations for the operations field which do not 
+             * Remove any operations for the operations field which do not
              * apply to the simulated drop site.
              */
             if (rect) {
@@ -850,20 +837,20 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                     RectHighlight(w, rect);
                 }
                 else if (rectFound) {
-                    cb->operations = cb->operations & 
+                    cb->operations = cb->operations &
                                      (XmDROP_COPY | XmDROP_MOVE);
                     RectUnhighlight(w);
                 }
 
             }
             else {
-                cb->operations = initial_operations & 
+                cb->operations = initial_operations &
                                  (XmDROP_COPY | XmDROP_MOVE);
                 RectUnhighlight(w);
             }
 
             /*
-             * Set operation to the valid operation preferred by the simulated 
+             * Set operation to the valid operation preferred by the simulated
              * drop site or to XmDROP_NOOP if the operations list does not
              * contain the preferred operation.
              */
@@ -893,9 +880,9 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                 if (rectFound) {
                     if (cb->operations & XmDROP_MOVE)
                         cb->operation = XmDROP_MOVE;
-                    else if (cb->operations & XmDROP_COPY) 
+                    else if (cb->operations & XmDROP_COPY)
                         cb->operation = XmDROP_COPY;
-                    else 
+                    else
                         cb->operation = XmDROP_NOOP;
 
                 }
@@ -903,11 +890,11 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                     cb->operation = initial_operation;
 
             }
-    
+
             /*
-             * Set dropSiteStatus to XmDROP_SITE_INVALID if the operation 
-             * field is XmDROP_NOOP, or if there are no common targets 
-             * between the source and the nested drop site.  Otherwise, 
+             * Set dropSiteStatus to XmDROP_SITE_INVALID if the operation
+             * field is XmDROP_NOOP, or if there are no common targets
+             * between the source and the nested drop site.  Otherwise,
              * set dropSiteStatus to XmDROP_SITE_VALID.
              */
             if (cb->operation == XmDROP_NOOP ||
@@ -916,7 +903,7 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
                 cb->dropSiteStatus = XmINVALID_DROP_SITE;
             else
                 cb->dropSiteStatus = XmVALID_DROP_SITE;
-    
+
             /*
              * Display appropriate drag under visuals.  Only highlight
              * the rectangle if we are changing rectangle attributes.
@@ -953,10 +940,9 @@ DragProcCallback(Widget w, XtPointer client, XtPointer call)
 
 
 /* This procedure handles the data that is being transfer */
-/* ARGSUSED */
 static void
-TransferProcCallback(Widget wid, 
-		     XtPointer closure, 
+TransferProcCallback(Widget wid,
+		     XtPointer closure,
 		     XtPointer call_data)
 {
     XmSelectionCallbackStruct *cs = (XmSelectionCallbackStruct *) call_data;
@@ -970,13 +956,13 @@ TransferProcCallback(Widget wid,
     int             n;
 
     /*
-     * The delete target returns a NULL_ATOM type and value equal to NULL 
-     * so it isn't a failure.  Otherwise, check for NULL value or targets 
+     * The delete target returns a NULL_ATOM type and value equal to NULL
+     * so it isn't a failure.  Otherwise, check for NULL value or targets
      * that wee don't support and set transfer failure.
      */
-    if (cs -> type != NULL_ATOM && 
-	(!cs -> value 
-	 || (cs -> type != RECT_INFO && 
+    if (cs -> type != NULL_ATOM &&
+	(!cs -> value
+	 || (cs -> type != RECT_INFO &&
 	     cs -> type != PIXEL &&
 	     cs -> type != XA_DRAWABLE))) {
       /* Free the value if there is one, or we would have a memory leak */
@@ -1010,7 +996,6 @@ TransferProcCallback(Widget wid,
 /* This procedure frees the data used the data transfer proc that
  * was passed from the drop procedure.
  */
-/* ARGSUSED */
 static void
 DropDestroyCB(Widget w, XtPointer clientData, XtPointer callData)
 {
@@ -1019,7 +1004,6 @@ DropDestroyCB(Widget w, XtPointer clientData, XtPointer callData)
 
 
 /* This procedure initiates the drop transfer. */
-/* ARGSUSED */
 static void
 HandleDrop(Widget w, XtPointer call, XtPointer call_data)
 {
@@ -1077,7 +1061,7 @@ HandleDrop(Widget w, XtPointer call, XtPointer call_data)
 
       XmTransferValue(cs -> transfer_id,
 		      XmInternAtom(display, "_MY_RECTANGLE", False),
-		      TransferProcCallback, 
+		      TransferProcCallback,
 		      (XtPointer) transferRec, CurrentTime);
       XmTransferValue(cs -> transfer_id,
 		      XmInternAtom(display, "BACKGROUND", False),
@@ -1085,13 +1069,13 @@ HandleDrop(Widget w, XtPointer call, XtPointer call_data)
 		      (XtPointer) transferRec, CurrentTime);
       XmTransferValue(cs -> transfer_id,
 		      XmInternAtom(display, "PIXMAP", False),
-		      TransferProcCallback, 
+		      TransferProcCallback,
 		      (XtPointer) transferRec, CurrentTime);
       /* Set up move targets */
       if (ds->operation == XmDROP_MOVE) {
 	XmTransferValue(cs -> transfer_id,
 			XmInternAtom(display, "DELETE", False),
-			TransferProcCallback, 
+			TransferProcCallback,
 			(XtPointer) transferRec, CurrentTime);
       }
     } else {
@@ -1101,7 +1085,6 @@ HandleDrop(Widget w, XtPointer call, XtPointer call_data)
 }
 
 /* This procedure is used with the drop help dialog to cancel the drop */
-/* ARGSUSED */
 static void
 CancelDrop(Widget w, XtPointer call, XtPointer ignore)
 {
@@ -1114,8 +1097,8 @@ CancelDrop(Widget w, XtPointer call, XtPointer ignore)
 }
 
 
-void 
-ChangeOperation(Widget widget, 
+void
+ChangeOperation(Widget widget,
 		caddr_t client_data,
 		XmAnyCallbackStruct *call_data)
 {
@@ -1131,12 +1114,11 @@ ChangeOperation(Widget widget,
  * message is displayed in the dialog depending on the position
  * and the type of drop.
  */
-/* ARGSUSED */
 static void
 HandleHelp(Widget w, XtPointer call, XtPointer ignore)
 {
     XmDestinationCallbackStruct *cs = (XmDestinationCallbackStruct *) call;
-    XmDropProcCallbackStruct *ds = 
+    XmDropProcCallbackStruct *ds =
     (XmDropProcCallbackStruct *) cs -> destination_data;
   Boolean                         rectFound, bgFound, pixFound;
   XmString                        helpStr = NULL;
@@ -1146,7 +1128,7 @@ HandleHelp(Widget w, XtPointer call, XtPointer ignore)
   int                             n = 0;
 
   savedCB = cs;
-  
+
   /* if we haven't created a help dialog, create one now */
   if (helpDialog == NULL) {
     XtSetArg(args[n], XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL); n++;
@@ -1154,13 +1136,13 @@ HandleHelp(Widget w, XtPointer call, XtPointer ignore)
     helpDialog = XmCreateMessageDialog(topLevel, "Help", args, n);
 
     n = 0;
-    buttonArray[0] = XmStringCreateSimple("Move");
-    buttonArray[1] = XmStringCreateSimple("Copy");
+    buttonArray[0] = XmStringCreateLocalized("Move");
+    buttonArray[1] = XmStringCreateLocalized("Copy");
     XtSetArg(args[n], XmNbuttons, buttonArray); n++;
     XtSetArg(args[n], XmNbuttonCount, 2); n++;
     XtSetArg(args[n], XmNbuttonSet, 0); n++;
     XtSetArg(args[n], XmNsimpleCallback, ChangeOperation); n++;
-    tempStr = XmStringCreateSimple("Operations:");
+    tempStr = XmStringCreateLocalized("Operations:");
     XtSetArg(args[n], XmNoptionLabel, tempStr); n++;
     helpMenu = XmCreateSimpleOptionMenu(helpDialog, "helpMenu", args, n);
     XmStringFree(tempStr);
@@ -1169,44 +1151,43 @@ HandleHelp(Widget w, XtPointer call, XtPointer ignore)
 
     XtAddCallback(helpDialog, XmNokCallback, HandleDrop, NULL);
     XtAddCallback(helpDialog, XmNcancelCallback, CancelDrop, NULL);
-    XtUnmanageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_HELP_BUTTON));
+    XtUnmanageChild(XtNameToWidget(helpDialog, "Help"));
     XtRealizeWidget(helpDialog);
   }
 
   /* find the valid targets */
-  CheckTargets(ds->dragContext, XtDisplay(w), &rectFound, 
+  CheckTargets(ds->dragContext, XtDisplay(w), &rectFound,
 	       &bgFound, &pixFound);
 
   /* determine the appropriate help message */
   if (rectFound) {
     if (ds->operations == (XmDROP_MOVE | XmDROP_COPY)) {
       XtManageChild(helpMenu);
-      helpStr = XmStringCreateLtoR(HELP_MSG4, XmFONTLIST_DEFAULT_TAG);
-      XtManageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_OK_BUTTON));
+      helpStr = XmStringLtoRCreate(HELP_MSG4, XmFONTLIST_DEFAULT_TAG);
+      XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else if (ds->operation == XmDROP_MOVE) {
       XtUnmanageChild(helpMenu);
-      helpStr = XmStringCreateLtoR(HELP_MSG2, XmFONTLIST_DEFAULT_TAG);
-      XtManageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_OK_BUTTON));
+      helpStr = XmStringLtoRCreate(HELP_MSG2, XmFONTLIST_DEFAULT_TAG);
+      XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else if (ds->operation == XmDROP_COPY) {
       XtUnmanageChild(helpMenu);
-      helpStr = XmStringCreateLtoR(HELP_MSG3, XmFONTLIST_DEFAULT_TAG);
-      XtManageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_OK_BUTTON));
+      helpStr = XmStringLtoRCreate(HELP_MSG3, XmFONTLIST_DEFAULT_TAG);
+      XtManageChild(XtNameToWidget(helpDialog, "OK"));
     }
   } else if (bgFound || (pixFound && ds->operation == XmDROP_COPY)) {
     XtUnmanageChild(helpMenu);
     rect = RectFind(ds->x, ds->y);
     if (rect) {
-      helpStr = XmStringCreateLtoR(HELP_MSG1, XmFONTLIST_DEFAULT_TAG);
-      XtManageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_OK_BUTTON));
+      helpStr = XmStringLtoRCreate(HELP_MSG1, XmFONTLIST_DEFAULT_TAG);
+      XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else {
-      helpStr = XmStringCreateLtoR(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
-      XtUnmanageChild(XmMessageBoxGetChild(helpDialog, 
-					   XmDIALOG_OK_BUTTON));
+      helpStr = XmStringLtoRCreate(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
+      XtUnmanageChild(XtNameToWidget(helpDialog, "OK"));
     }
   } else {
     XtUnmanageChild(helpMenu);
-    helpStr = XmStringCreateLtoR(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
-    XtUnmanageChild(XmMessageBoxGetChild(helpDialog, XmDIALOG_OK_BUTTON));
+    helpStr = XmStringLtoRCreate(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
+    XtUnmanageChild(XtNameToWidget(helpDialog, "OK"));
   }
 
   /* set the help message into the dialog */
@@ -1224,7 +1205,6 @@ HandleHelp(Widget w, XtPointer call, XtPointer ignore)
 /* The procedure either begins the drop of initiates the help dialog
  * depending on the dropAction.
  */
-/* ARGSUSED */
 void
 handleDestination(Widget w, XtPointer client, XtPointer call)
 {
@@ -1288,7 +1268,7 @@ SetInvalidIcon(Widget w)
         height = SMALL_ICON_HEIGHT;
     }
 
-    invalidIcon = GetDragIconFromBits(w, invalid_bits, invalid_bits, width, 
+    invalidIcon = GetDragIconFromBits(w, invalid_bits, invalid_bits, width,
                                       height, GetColor(DRAW_AREA_FG_COLOR),
                                       GetColor(DRAW_AREA_BG_COLOR));
 
@@ -1319,12 +1299,12 @@ InitializeApplication(int *argc, String *argv)
     /* Initialize Toolkit and create shell */
     XtSetArg(args[n], XmNwidth, 295); n++;
     XtSetArg(args[n], XmNheight, 270); n++;
-    topLevel = XtAppInitialize(&appContext, "DNDDemo", NULL, 0, 
+    topLevel = XtAppInitialize(&appContext, "DNDDemo", NULL, 0,
                                argc, argv, NULL, args, n);
 
     /* Set drag protocol styles */
     n = 0;
-    XtSetArg(args[n], XmNdragInitiatorProtocolStyle, 
+    XtSetArg(args[n], XmNdragInitiatorProtocolStyle,
              XmDRAG_PREFER_RECEIVER); n++;
     XtSetArg(args[n], XmNdragReceiverProtocolStyle, XmDRAG_DYNAMIC); n++;
     XtSetValues(XmGetXmDisplay(XtDisplay(topLevel)), args, n);
@@ -1336,8 +1316,8 @@ InitializeApplication(int *argc, String *argv)
     XtAppAddActions(appContext, new_actions, 5);
 
     /* Get the display server's best cursor size */
-    XQueryBestCursor(XtDisplay(topLevel), 
-                     RootWindowOfScreen(XtScreen(topLevel)), 64, 64, 
+    XQueryBestCursor(XtDisplay(topLevel),
+                     RootWindowOfScreen(XtScreen(topLevel)), 64, 64,
                      &appInfo->maxCursorWidth, &appInfo->maxCursorHeight);
 
 }
@@ -1368,5 +1348,5 @@ main (int argc, String *argv)
     XtAppMainLoop(appContext);
 
     /* Make compiler happy */
-    return 0; 
+    return 0;
 }

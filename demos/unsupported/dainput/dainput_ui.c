@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -75,7 +75,7 @@ Widget DaCreateGui(char    * name,
   XtSetArg(args[n], XtNargc, argc); n++;
   XtSetArg(args[n], XtNargv, argv); n++;
 
-  widget_array[WI_DAINPUT] = 
+  widget_array[WI_DAINPUT] =
     XtAppCreateShell(name, aclass, applicationShellWidgetClass,
 		     display, args, n);
 
@@ -95,7 +95,6 @@ Widget DaCreateGui(char    * name,
   widget_array[WI_FILEMENU] =
     XmCreatePulldownMenu(widget_array[WI_MENUBAR], "fileMenu", NULL, 0);
   {
-    Arg args[1];
     XtSetArg(args[0], XmNsubMenuId, widget_array[WI_FILEMENU]);
     XtSetValues(widget_array[WI_FILE], args, 1);
   }
@@ -104,7 +103,7 @@ Widget DaCreateGui(char    * name,
   widget_array[WI_EXIT] =
     XmCreatePushButton(widget_array[WI_FILEMENU], "Exit", NULL, 0);
 
-  XtAddCallback(widget_array[WI_EXIT], 
+  XtAddCallback(widget_array[WI_EXIT],
 		XmNactivateCallback, DaExit, NULL);
 
   /***************** Help : XmCascadeButton *****************/
@@ -115,7 +114,6 @@ Widget DaCreateGui(char    * name,
   widget_array[WI_HELPMENU] =
     XmCreatePulldownMenu(widget_array[WI_MENUBAR], "helpMenu", NULL, 0);
   {
-    Arg args[1];
     XtSetArg(args[0], XmNsubMenuId, widget_array[WI_HELPMENU]);
     XtSetValues(widget_array[WI_HELP], args, 1);
   }
@@ -124,7 +122,7 @@ Widget DaCreateGui(char    * name,
   widget_array[WI_OVERVIEW] =
     XmCreatePushButton(widget_array[WI_HELPMENU], "Overview", NULL, 0);
 
-  XtAddCallback(widget_array[WI_OVERVIEW], 
+  XtAddCallback(widget_array[WI_OVERVIEW],
 		XmNactivateCallback, DaOverView, NULL);
 
   /***************** workArea : XmDrawingArea *****************/
@@ -134,8 +132,8 @@ Widget DaCreateGui(char    * name,
   widget_array[WI_WORKAREA] =
     XmCreateDrawingArea(widget_array[WI_MAINWINDOW], "workArea", args, n);
 
-  /* 
-   * Register drawing area for input method support and set input 
+  /*
+   * Register drawing area for input method support and set input
    * context values.
    */
   XmImRegister(widget_array[WI_WORKAREA], 0);
@@ -154,12 +152,12 @@ Widget DaCreateGui(char    * name,
     XmImSetValues(widget_array[WI_WORKAREA], args, n);
   }
 
-  /* 
+  /*
    * Add event handler for focus events. This is needed for the
    * input method to correctly display the input area.
    */
-  XtAddEventHandler(widget_array[WI_WORKAREA], 
-		    EnterWindowMask|LeaveWindowMask|FocusChangeMask, 
+  XtAddEventHandler(widget_array[WI_WORKAREA],
+		    EnterWindowMask|LeaveWindowMask|FocusChangeMask,
 		    False, DaFocusHandler, NULL);
 
   XtAddCallback(widget_array[WI_WORKAREA],

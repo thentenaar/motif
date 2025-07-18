@@ -46,9 +46,9 @@ void Explain(Widget w, XtPointer client, XtPointer call);
 static String fallbacks[] = {
     /*
      * General fallback resources.
-     */ 
+     */
 
-    "*background: grey", 
+    "*background: grey",
     "*bbox*background: white",
     "*bform.height: 575",
     "*bbox.width: 450",
@@ -92,7 +92,7 @@ void Equal(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     Boolean equal;
 
-    if ((intptr_t)client == 1) 
+    if ((intptr_t)client == 1)
         equal = True;
     else
         equal = False;
@@ -223,28 +223,23 @@ void Explain(Widget w, XtPointer client, XtPointer call)
     intptr_t explain = (intptr_t)client;
 
     if (info == NULL) {
-        Widget temp;
-
         argcnt = 0;
         XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
         info = XmCreateInformationDialog(w, "explain", args, argcnt);
-
-        temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-        XtUnmanageChild(temp);
-        temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-        XtUnmanageChild(temp);
+        XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+        XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
 
     switch (explain) {
     case 1:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 "The equalSize resource specifies whether children of the Button\n\
 Box have equal heights and widths. The height and width chosen for\n\
 all the children is the height and width of the largest child.",
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 2:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 "The fillOption resource sets four kinds of fill options: FillNone,\n\
 FillMajor, FillMinor, and FillAll. Fill specifies how to use any extra\n\
 space left over once all children have been sized. This resource usually\n\
@@ -258,19 +253,19 @@ FillNone doesn't expand children.",
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 3:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 "marginWidth is the number of spacing pixels to the left and to the right\n\
 of the children in the Button Box.",
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 4:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 "marginHeight is the number of spacing pixels on top and on bottom of the \n\
 children in the Button Box.",
                                       XmSTRING_DEFAULT_CHARSET);
         break;
     case 5:
-        xmstring = XmStringCreateLtoR(
+        xmstring = XmStringLtoRCreate(
 "orientation specifies whether the children of the Button Box are placed\n\
 in a row or a column. HORIZONTAL places children in a row (major dimension\n\
 is width, minor dimension is height). VERTICAL places children in a column\n\
@@ -295,36 +290,36 @@ main(int argc, char **argv)
 {
     Arg args[5];
     Cardinal argcnt;
-    Widget top, bboxframe, infoframe, infolabel, resframe, resform, 
-           bboxSizeRC, boxSizeLabel, togl_btn1, togl_btn2, pushButton, radioRC, 
-           fillOptionRC, fillOptionLabel, fillOptionMenu, nonePB, minorPB, 
-           majorPB, allPB, menuShell, pulldownMenu, pushButton1,widRC, 
-           widLabel, widText, htRC, htLabel, htText, pushButton2, orientRC, 
-           orientLabel, pushButton3, pushButton4, quitPB, bbox_PB1, bbox_PB2, 
+    Widget top, bboxframe, infoframe, infolabel, resframe, resform,
+           bboxSizeRC, boxSizeLabel, togl_btn1, togl_btn2, pushButton, radioRC,
+           fillOptionRC, fillOptionLabel, fillOptionMenu, nonePB, minorPB,
+           majorPB, allPB, menuShell, pulldownMenu, pushButton1,widRC,
+           widLabel, widText, htRC, htLabel, htText, pushButton2, orientRC,
+           orientLabel, pushButton3, pushButton4, quitPB, bbox_PB1, bbox_PB2,
            bbox_PB3, bbox_PB4, togl_btn3, togl_btn4, orientRadio, bform;
 
     XtAppContext app;
 
     XmString xmstring;
-    
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Button Box Demo"); argcnt++;
     XtSetArg(args[argcnt], XmNallowShellResize, True); argcnt++;
     top = XtOpenApplication(
-            &app, 
-            "Buttonbox", 
-            NULL, 
-            0, 
-            &argc, 
-            argv, 
-            fallbacks, 
+            &app,
+            "Buttonbox",
+            NULL,
+            0,
+            &argc,
+            argv,
+            fallbacks,
             sessionShellWidgetClass,
-            args, 
+            args,
             argcnt);
 
-    bform = XtVaCreateManagedWidget("bform", xmFormWidgetClass, top, 
+    bform = XtVaCreateManagedWidget("bform", xmFormWidgetClass, top,
                           XmNresizePolicy, XmRESIZE_GROW, NULL);
 
     bboxframe = XtVaCreateManagedWidget("bboxframe", xmFrameWidgetClass,bform,
@@ -341,7 +336,7 @@ main(int argc, char **argv)
 /*
  *
  *  Take Note:
- * 
+ *
  *  Creation of the widget being demoed.
  *
  */
@@ -373,17 +368,17 @@ main(int argc, char **argv)
 
     bbox_PB2 = XmVaCreateManagedPushButton(bbox, "SecondButton",
                 NULL);
- 
+
     bbox_PB3 = XmVaCreateManagedPushButton(bbox, "ThirdButton",
                 NULL);
- 
+
     bbox_PB4 = XtCreateManagedWidget("LastButton",
                 xmPushButtonWidgetClass,
                 bbox,
                 NULL,
                 0);
 
-    xmstring = XmStringCreateLtoR(
+    xmstring = XmStringLtoRCreate(
 "The Motif Button Box widget can arrange buttons into single rows and columns\n\
 much more easily than the Motif Row Column or Motif Form!\n\
 (And two ButtonBoxes paired together do a great job of lining items up.)\n\
@@ -456,7 +451,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
                                XmNrowColumnType, XmWORK_AREA,
                                NULL);
 
-    fillOptionRC = XtVaCreateManagedWidget("fillOptionRC", 
+    fillOptionRC = XtVaCreateManagedWidget("fillOptionRC",
                                xmRowColumnWidgetClass, resform,
                                XmNorientation, XmHORIZONTAL,
                                XmNpacking, XmPACK_TIGHT,
@@ -496,7 +491,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
                                XmNrowColumnType, XmWORK_AREA,
                                NULL);
 
-    orientRC = XtVaCreateManagedWidget("orientRC", xmRowColumnWidgetClass, 
+    orientRC = XtVaCreateManagedWidget("orientRC", xmRowColumnWidgetClass,
                                resform,
                                XmNtopAttachment, XmATTACH_WIDGET,
                                XmNtopWidget, htRC,
@@ -534,7 +529,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
                                XmNx, 265, XmNy, 3,
                                NULL);
 
-    fillOptionLabel = XtVaCreateManagedWidget("fillOptionLabel", 
+    fillOptionLabel = XtVaCreateManagedWidget("fillOptionLabel",
                                xmLabelWidgetClass, fillOptionRC,
                                XmNx, 3, XmNy, 3,
                                NULL);
@@ -542,7 +537,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
     argcnt = 0;
     XtSetArg(args[argcnt], XmNx, 100); argcnt++;
     XtSetArg(args[argcnt], XmNy, 3); argcnt++;
-    fillOptionMenu = XmCreateOptionMenu(fillOptionRC, "fillOptionMenu", 
+    fillOptionMenu = XmCreateOptionMenu(fillOptionRC, "fillOptionMenu",
                                args, argcnt);
     XtManageChild(fillOptionMenu);
 
@@ -561,7 +556,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
     pulldownMenu = XtCreateWidget("pulldownMenu", xmRowColumnWidgetClass,
                 menuShell, args, argcnt);
 
-    nonePB = XtVaCreateManagedWidget("nonePB", xmPushButtonWidgetClass, 
+    nonePB = XtVaCreateManagedWidget("nonePB", xmPushButtonWidgetClass,
                 pulldownMenu, NULL);
 
     minorPB = XtVaCreateManagedWidget("minorPB", xmPushButtonWidgetClass,
@@ -638,7 +633,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
                                xmPushButtonWidgetClass, orientRC,
                                XmNx, 82, XmNy, 3,
                                NULL);
-                           
+
     XtAddCallback(quitPB, XmNactivateCallback, Exit, (XtPointer)0);
 
     XtAddCallback(pushButton, XmNactivateCallback, Explain, (XtPointer)1);
@@ -676,7 +671,7 @@ Press the \"Explain...\" button to find out more about a particular resource.",
     XtRealizeWidget(top);
 
     XtAppMainLoop(app);
-    
+
     /* appease compiler warning god */
-    return (0); 
+    return (0);
 }

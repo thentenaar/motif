@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DNDDraw.c /main/7 1997/03/31 13:33:37 dbl $"
@@ -137,7 +137,7 @@ AppInfo appInfo;
 
 
 /* This is a string to pixel conversion function. */
-Pixel 
+Pixel
 GetColor(char *colorstr)
 {
 
@@ -382,7 +382,7 @@ RectUnhighlight(Widget w)
 }
 
 /* This function creates and initialized a new rectangle */
-RectPtr 
+RectPtr
 RectCreate(Position x, Position y, Dimension width,
 Dimension height, Pixel color, Pixmap pixmap)
 {
@@ -483,9 +483,9 @@ RectRegister(RectPtr rect, Position x, Position y)
 
         /* grow geometrically */
         appInfo->rectsAllocd *= 2;
-        appInfo->rectDpyTable = (RectPtr *) 
+        appInfo->rectDpyTable = (RectPtr *)
                                  XtRealloc((char *) appInfo->rectDpyTable,
-                                           (unsigned) (sizeof(RectPtr) * 
+                                           (unsigned) (sizeof(RectPtr) *
                                            appInfo->rectsAllocd));
 
     }
@@ -497,7 +497,7 @@ RectRegister(RectPtr rect, Position x, Position y)
 
 
 /* This function find the top most rectangle at the given x,y position */
-RectPtr 
+RectPtr
 RectFind(Position x, Position y)
 {
 
@@ -863,7 +863,7 @@ SetupTranslations(Widget widget, char *new_translations)
 }
 
 
-/* This procedure handles exposure events and makes a call to 
+/* This procedure handles exposure events and makes a call to
  * RedrawRectangles() to redraw the rectangles
  * The rectangles at the top of the table are drawn first.
  */
@@ -880,7 +880,7 @@ static void
 CreateDrawingArea(Widget parent)
 {
 
-    static char da_translations[] = 
+    static char da_translations[] =
         "#replace <Btn2Down>: StartMove() \n\
         <Btn1Down>: StartRect() \n\
         <Btn1Motion>: ExtendRect() \n\
@@ -908,11 +908,11 @@ CreateDrawingArea(Widget parent)
     XtManageChild(drawingArea);
 
     /* add expose callback to redisplay rectangles */
-    XtAddCallback(drawingArea, XmNexposeCallback, HandleExpose, 
+    XtAddCallback(drawingArea, XmNexposeCallback, HandleExpose,
                   (XtPointer) NULL);
 
     /* add callbacks for UTM */
-    XtAddCallback(drawingArea, XmNdestinationCallback, 
+    XtAddCallback(drawingArea, XmNdestinationCallback,
 		  (XtCallbackProc) handleDestination, (XtPointer) NULL);
     XtAddCallback(drawingArea, XmNconvertCallback,
 		  (XtCallbackProc) RectConvert, (XtPointer) NULL);
@@ -932,7 +932,7 @@ CreateColorPushButtons(Widget parent, Widget separator)
     int         n = 0;
 
     /* Creating an empty compound string so the labels will have no text. */
-    csString = XmStringCreateSimple("");
+    csString = XmStringCreateLocalized("");
 
     /* Creating 6 color labels */
     n = 0;
@@ -1029,7 +1029,7 @@ CreateColorPushButtons(Widget parent, Widget separator)
 
     /* Add convert callbacks */
     for(n = 0; n < 6; n++)
-      XtAddCallback(children[n], XmNconvertCallback, 
+      XtAddCallback(children[n], XmNconvertCallback,
 		    (XtCallbackProc) ColorConvert, (XtPointer) NULL);
 
     /* Freeing compound string.  It is no longer necessary. */

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Square.c /main/6 1998/03/25 18:18:13 csn $"
@@ -34,7 +34,7 @@ static char rcsid[] = "$TOG: Square.c /main/6 1998/03/25 18:18:13 csn $"
 *  Square.c - widget source file
 *
 ******************************************************************************/
-	
+
 #include <stdio.h>
 #include <Xm/Xm.h>
 #include <Mrm/MrmPublic.h>
@@ -105,7 +105,7 @@ externaldef(squareclassrec) SquareClassRec squareClassRec =
       XtInheritTranslations,    /* tm_table             */
       XtInheritQueryGeometry,   /* Query Geometry proc  */
       NULL,                     /* disp accelerator     */
-      NULL,                     /* extension            */    
+      NULL,                     /* extension            */
    },
 
    {                    /* composite_class fields */
@@ -148,7 +148,7 @@ externaldef(squareclassrec) SquareClassRec squareClassRec =
    }
 };
 
-externaldef(squarewidgetclass) WidgetClass 
+externaldef(squarewidgetclass) WidgetClass
 	squareWidgetClass = (WidgetClass) &squareClassRec;
 
 static XmOffsetPtr square_offsets;		/* Part offsets table */
@@ -189,7 +189,7 @@ int SquareMrmInitialize()
 
 static void ClassInitialize()
 {
-    XmResolveAllPartOffsets(squareWidgetClass, &square_offsets,
+    XmeResolvePartOffsets(squareWidgetClass, &square_offsets,
 				&square_constraint_offsets);
 }
 

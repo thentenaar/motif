@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: periodic.c /main/8 1996/04/22 23:28:50 pascale $"
@@ -48,7 +48,6 @@ static char rcsid[] = "$XConsortium: periodic.c /main/8 1996/04/22 23:28:50 pasc
 #include <Xm/ScrolledW.h>
 #include <Xm/ToggleB.h>
 #include <Mrm/MrmPublic.h>
-
 
 typedef struct _DrawData {
 	GC gc;
@@ -210,32 +209,28 @@ static Widget shell;
 static unsigned setting_toggle = 0;
 
 int
-main(int argc, char *argv[] )
+main(int argc, char *argv[])
 {
     Widget appMain;
 
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+    XtSetLanguageProc(NULL, NULL, NULL);
+    MrmInitialize();
+    shell = XtVaOpenApplication( &appContext,
+                                 APP_CLASS,
+                                 NULL,
+                                 0,
+                                 &argc,
+                                 argv,
+                                 fallbackResources,
+                                 sessionShellWidgetClass,
+                                 NULL);
 
-    MrmInitialize ();
-    
-    shell = XtVaOpenApplication( &appContext, 
-                                 APP_CLASS, 
-                                 NULL, 
-                                 0, 
-                                 &argc, 
-                                 argv, 
-                                 fallbackResources, 
-                                 sessionShellWidgetClass, 
-                                 NULL );
-
-  
     if (MrmOpenHierarchy (1, mrmFile, NULL, &mrmId) != MrmSUCCESS) exit(0);
     MrmRegisterNames(mrmNames, XtNumber(mrmNames));
-    MrmFetchWidget (mrmId, "appMain", shell, &appMain, &mrmClass);
+    MrmFetchWidget(mrmId, "appMain", shell, &appMain, &mrmClass);
     XtManageChild(appMain);
     XtRealizeWidget(shell);
     XtAppMainLoop(appContext);
-
     return 0;    /* make compiler happy */
 }
 
@@ -733,31 +728,31 @@ ToggleValueChangedCb(Widget w,
  *****************************************************************/
 
 /* Resource lists for ToggleControlCb(). */
-static unsigned char toggle_ind_on[] = { 
-  XmINDICATOR_NONE, XmINDICATOR_FILL, XmINDICATOR_BOX, 
-  XmINDICATOR_CHECK, XmINDICATOR_CHECK_BOX, 
+static unsigned char toggle_ind_on[] = {
+  XmINDICATOR_NONE, XmINDICATOR_FILL, XmINDICATOR_BOX,
+  XmINDICATOR_CHECK, XmINDICATOR_CHECK_BOX,
   XmINDICATOR_CROSS, XmINDICATOR_CROSS_BOX
 };
-static unsigned char toggle_ind_type[] = { 
+static unsigned char toggle_ind_type[] = {
   XmN_OF_MANY, XmONE_OF_MANY, XmONE_OF_MANY_ROUND, XmONE_OF_MANY_DIAMOND
 };
-static Dimension toggle_ind_size[] = { 
-  10, 15, 20, 25, 30 
+static Dimension toggle_ind_size[] = {
+  10, 15, 20, 25, 30
 };
-static unsigned char toggle_toggle_mode[] = { 
-  XmTOGGLE_BOOLEAN, XmTOGGLE_INDETERMINATE 
+static unsigned char toggle_toggle_mode[] = {
+  XmTOGGLE_BOOLEAN, XmTOGGLE_INDETERMINATE
 };
-static unsigned char toggle_set[] = { 
-  XmUNSET, XmSET, XmINDETERMINATE 
+static unsigned char toggle_set[] = {
+  XmUNSET, XmSET, XmINDETERMINATE
 };
-static Pixel toggle_select_color[] = { 
-  XmDEFAULT_SELECT_COLOR, XmREVERSED_GROUND_COLORS, XmHIGHLIGHT_COLOR 
+static Pixel toggle_select_color[] = {
+  XmDEFAULT_SELECT_COLOR, XmREVERSED_GROUND_COLORS, XmHIGHLIGHT_COLOR
 };
-static Pixel toggle_unselect_color[] = { 
+static Pixel toggle_unselect_color[] = {
   XmUNSPECIFIED_PIXEL		/* initialized dynamically */
 };
-static Boolean toggle_boolean[] = { 
-  True, False 
+static Boolean toggle_boolean[] = {
+  True, False
 };
 
 #define RESET_VALUE(w, list, value)				\
@@ -780,8 +775,7 @@ get_color(Widget widget,
   Boolean result = False;
   char *text;
 
-  if (XmStringGetLtoR(name, XmFONTLIST_DEFAULT_TAG, &text))
-    {
+  if ((text = XmStringUnparse(name, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL))) {
       XrmValue from, to;
 
       from.size = sizeof(char*);
@@ -833,7 +827,7 @@ ToggleControlCb(Widget w,
 	  if (uchar_value != XmN_OF_MANY)
 	    {
 	      unsigned char toggle_mode, set;
-	      XtVaGetValues(tw, XmNtoggleMode, &toggle_mode, 
+	      XtVaGetValues(tw, XmNtoggleMode, &toggle_mode,
 			    XmNset, &set, NULL);
 	      RESET_VALUE(tog_mode_wid, toggle_toggle_mode, toggle_mode);
 	      RESET_VALUE(set_wid, toggle_set, set);
@@ -879,7 +873,7 @@ ToggleControlCb(Widget w,
 	  break;
 	case 9:
 	  if (item >= 0)
-	    XtVaSetValues(tw, XmNunselectColor, toggle_unselect_color[item], 
+	    XtVaSetValues(tw, XmNunselectColor, toggle_unselect_color[item],
 			  NULL);
 	  else
 	    {

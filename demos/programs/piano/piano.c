@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -165,7 +165,7 @@ typedef struct _AppData
 #define DEFAULT_KEY_WIDTH	20
 
 #define LOCAL_NAME		"local"       /* just used for a label */
-  
+
 #define EMSG1 "Fatal Error -- Cannot allocate memory for resources.\n"
 
 
@@ -178,23 +178,23 @@ XtResource appRes[] =
   {"baseDuration", "BaseDuration", XtRInt, sizeof(int),
      XtOffsetOf(AppData, baseDuration), XtRImmediate,
      (XtPointer)DEFAULT_BASE_DURATION},
-  
+
   {"baseFrequency", "BaseFrequency", XtRFloat, sizeof(float),
      XtOffsetOf(AppData, baseFrequency), XmRString,
      DEFAULT_BASE_FREQUENCY},
-  
+
   {"useKeyboard", "UseKeyboard", XtRBoolean, sizeof(Boolean),
      XtOffsetOf(AppData, useKeyboard), XmRImmediate,
      (XtPointer)TRUE},
-  
+
   {"wkeyCount", "WkeyCount", XtRInt, sizeof(int),
      XtOffsetOf(AppData, wkeyCount), XtRImmediate,
      (XtPointer)DEFAULT_WKEY_COUNT},
-  
+
   {"keyHeight", "KeyHeight", XtRInt, sizeof(int),
      XtOffsetOf(AppData, keyHeight), XtRImmediate,
      (XtPointer)DEFAULT_KEY_HEIGHT},
-  
+
   {"keyWidth", "KeyWidth", XtRInt, sizeof(int),
      XtOffsetOf(AppData, keyWidth), XtRImmediate,
      (XtPointer)DEFAULT_KEY_WIDTH},
@@ -240,8 +240,6 @@ void   CreateScore       (Widget);
 Widget CreateNotebook    (Widget);
 void   CvtStrToFloat     (XrmValue *, Cardinal *, XrmValue *, XrmValue *);
 
-
-
 /* Globals */
 AppData      *appData;
 XtAppContext  context;
@@ -270,14 +268,14 @@ String fallback[] = {
    "Piano*bKey.bottomShadowColor:     	grey20",
    "Piano*bKey.labelString:     		",
    "Piano*wKey.labelString:     		",
-   
+
    "Piano*keyboard.marginWidth:		10",
    "Piano*keyboard.marginHeight:		10",
-   
+
    "Piano*scoreWin.height:			111",
    "Piano*staff.width:			920",
    "Piano*staff.height:			100",
-   
+
    "Piano*popupBtn1.labelString:		Add Voice",
    "Piano*popupBtn2.labelString:		Remove Voice",
    "Piano*popupBtn3.labelString:		Clear Voice",
@@ -285,7 +283,7 @@ String fallback[] = {
    "Piano*popupBtn5.labelString:		Play All",
    "Piano*popupBtn6.labelString:		Save Voice",
    "Piano*popupBtn7.labelString:		Load Voice",
-   
+
    "Piano*cascade1.labelString:		File",
    "Piano*cascade2.labelString:		Help",
 
@@ -294,10 +292,10 @@ String fallback[] = {
    "Piano*notebook.orientation:		horizontal",
    "Piano*notebook.adjustLast:		false",
    "Piano*notebook*paneMaximum:		40",
-   
+
    "Piano*dspPromptDlog.labelString:		Enter name of display to connect to:",
    "Piano*warnDlog.messageString:		Error in connecting to display",
-   
+
    "Piano*helpDlog*messageString:\
 Piano Demo\\n\
 ----------\\n\
@@ -344,11 +342,10 @@ int MyErrorHandler (Display *display, XErrorEvent *errorEvent)
 /*----------------------------------------------------------------*
  |                             DoQuit                             |
  *----------------------------------------------------------------*/
-void DoQuit ()
+void DoQuit(void)
 {
-  exit(0);
+	XtAppSetExitFlag(context);
 }
-
 
 /*----------------------------------------------------------------*
  |                             DoHelp                             |
@@ -356,16 +353,14 @@ void DoQuit ()
 void DoHelp ()
 {
   static Widget dlog = NULL;
-  Arg           args[3];
-  int           n;
-  
+
   if (dlog == NULL)
     {
       dlog = XmCreateInformationDialog(appData->score, "helpDlog", NULL, 0);
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_HELP_BUTTON) );
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_CANCEL_BUTTON) );
+      XtUnmanageChild(XtNameToWidget(dlog, "Help"));
+      XtUnmanageChild(XtNameToWidget(dlog, "Cancel"));
     }
-  
+
   XtManageChild(dlog);
 }
 
@@ -395,13 +390,12 @@ void DoAddVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   static Widget dlog = NULL;
   int           n, argc = 0;
   Arg           args[5];
-  
-  
+
+
   XtGetApplicationNameAndClass(XtDisplay(w), &appName, &appClass);
-  XmStringGetLtoR(cb->value, XmSTRING_DEFAULT_CHARSET, &dspName);
-  
+  dspName = (char *)XmStringUnparse(cb->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
   newDisplay = XtOpenDisplay(context, dspName, appName, appClass, NULL, 0, &argc, NULL);
-  
+
   if (newDisplay != NULL)
     AddNewStaff(newDisplay, dspName);
   else
@@ -427,18 +421,18 @@ void AddVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   Cardinal      n;
   Arg           args[5];
   static Widget dlog = NULL;
-  
-  
+
+
   if (dlog == NULL)
     {
       n = 0;
       XtSetArg(args[n], XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL); n++;
       XtSetArg(args[n], XmNdialogType,  XmDIALOG_PROMPT);                 n++;
       dlog = XmCreatePromptDialog(appData->score, "dspPromptDlog", args, n);
-      
+
       XtAddCallback(dlog, XmNokCallback, DoAddVoiceCB, NULL);
     }
-  
+
   XtManageChild(dlog);
 }
 
@@ -450,21 +444,21 @@ void RemoveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 {
   Widget    staff = (Widget)clientData;
   StaffRec *staffData;
-  
+
   staffData = GetStaffData(staff);
 
   if (staffData->divider != NULL)
     XtDestroyWidget(staffData->divider);
   XtDestroyWidget(staff);
-  
+
   if (staffData->next != NULL)
     staffData->next->prev = staffData->prev;
-  
+
   if (staffData->prev != NULL)
     staffData->prev->next = staffData->next;
   else
     appData->staffList = staffData->next;
-  
+
   XtFree((char *)staffData);
 }
 
@@ -477,10 +471,10 @@ void ClearVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   Widget   staff = (Widget)clientData;
   StaffRec *staffData;
   NoteRec  *notes, *np;
-  
-  
+
+
   staffData = GetStaffData(staff);
-  
+
   if (staffData != NULL)
     {
       while (staffData->notes != NULL)
@@ -489,7 +483,7 @@ void ClearVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 	  staffData->notes = staffData->notes->next;
 	  XtFree((char *)np);
 	}
-      
+
       XClearArea(XtDisplay(staff), XtWindow(staff), 0, 0, 0, 0, TRUE);
     }
 }
@@ -500,28 +494,27 @@ void ClearVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
  *--------------------------------------------------------------------*/
 void ArmKey (XtPointer clientData, XtIntervalId *id)
 {
-  Widget key = (Widget) clientData;
+  Widget w = (Widget) clientData;
   XEvent event;
   XtCallbackList cbList;
-  
-  XtVaGetValues(key, XmNarmCallback, &cbList, NULL);
-  XtVaSetValues(key, XmNarmCallback, NULL, NULL);
-  XtCallActionProc(key, "Arm", &event, NULL, 0);
-  XtVaSetValues(key, XmNarmCallback, cbList, NULL);
-}
 
+  XtVaGetValues(w, XmNarmCallback, &cbList, NULL);
+  XtVaSetValues(w, XmNarmCallback, NULL, NULL);
+  XtCallActionProc(w, "Arm", &event, NULL, 0);
+  XtVaSetValues(w, XmNarmCallback, cbList, NULL);
+}
 
 /*--------------------------------------------------------------------*
  |                            DisarmKey                               |
  *--------------------------------------------------------------------*/
 void DisarmKey (XtPointer clientData, XtIntervalId *id)
 {
-  Widget key = (Widget) clientData;
+  Widget w = (Widget) clientData;
   XEvent event;
-   
-  XtCallActionProc(key, "Disarm", &event, NULL, 0);
-}
 
+  (void)id;
+  XtCallActionProc(w, "Disarm", &event, NULL, 0);
+}
 
 /*--------------------------------------------------------------------*
  |                             PlayNotes                              |
@@ -532,11 +525,9 @@ void DisarmKey (XtPointer clientData, XtIntervalId *id)
 void PlayNotes (XtPointer clientData, XtIntervalId *id)
 {
   NoteRec *note = (NoteRec *)clientData;
-  XEvent event;
-  XtCallbackList tempCallbackList;
   int dt = 0;
-  
 
+  (void)id;
   while (note != NULL)
     {
       if (note->noteType < REST)
@@ -564,14 +555,13 @@ void PlayVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 {
   Widget    staff = (Widget)clientData;
   StaffRec *staffData;
-  NoteRec  *notes;
-  
-  
+
+  (void)w;
+  (void)callData;
   staffData = GetStaffData(staff);
   if (staffData != NULL)
     XtAppAddTimeOut(context, 1, PlayNotes, staffData->notes);
 }
-
 
 /*--------------------------------------------------------------------*
  |                             PlayAllCB                              |
@@ -579,7 +569,8 @@ void PlayVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 void PlayAllCB (Widget staff, XtPointer clientData, XtPointer callData)
 {
   StaffRec *sPtr;
-  
+
+  (void)staff;
   for (sPtr = appData->staffList; sPtr != NULL; sPtr = sPtr->next)
     {
       XtAppAddTimeOut(context, 1, PlayNotes, sPtr->notes);
@@ -599,18 +590,16 @@ void DoSaveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   NoteRec  *note;
   FILE     *fp;
   char     *fileName;
-  static Widget errDlog = NULL;
-  
-  
+
+  (void)w;
   if (fdata->length > 0)
     {
-      XmStringGetLtoR(fdata->value, XmSTRING_DEFAULT_CHARSET, &fileName);
-      
+      fileName = (char *)XmStringUnparse(fdata->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
       staffData = GetStaffData(staff);
       if (staffData != NULL)
 	{
 	  fp = fopen(fileName, "w");
-	  
+
 	  for (note = staffData->notes;  note != NULL;  note = note->next)
 	    {
 	      fprintf(fp, "%d %d %d %d %d\n",
@@ -622,7 +611,7 @@ void DoSaveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 	    }
 	  fclose(fp);
 	}
-      
+
       if (fileName) XtFree(fileName);
     }
 }
@@ -637,8 +626,9 @@ void SaveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   Widget        staff = (Widget)clientData;
   static Widget fsdlog = NULL;
   static Widget oldStaff;
-  
-  
+
+  (void)w;
+  (void)callData;
   if (fsdlog == NULL)
     {
       fsdlog = XmCreateFileSelectionDialog(staff, "saveDlog", NULL, 0);
@@ -651,14 +641,11 @@ void SaveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
     {
       XtRemoveCallback(fsdlog, XmNokCallback, DoSaveVoiceCB, oldStaff);
     }
-  
+
   XtAddCallback(fsdlog, XmNokCallback, DoSaveVoiceCB, staff);
   oldStaff = staff;
-  
   XtManageChild(fsdlog);
 }
-
-
 
 /*--------------------------------------------------------------------*
  |                           DoLoadVoiceCB                            |
@@ -674,15 +661,13 @@ void DoLoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   Boolean   done = FALSE;
   int       noteOffset;
   char     *fileName;
-  
-  
+
   if (fdata->length > 0)
     {
-      XmStringGetLtoR(fdata->value, XmSTRING_DEFAULT_CHARSET, &fileName);
-      
+      fileName = (char *)XmStringUnparse(fdata->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
       fp = fopen(fileName, "r");
       if (fileName) XtFree(fileName);
-      
+
       if (fp != NULL)
 	{
 	  staffData = GetStaffData(staff);
@@ -695,7 +680,7 @@ void DoLoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 	    for (tail=staffData->notes, noteOffset = 1;
 		 tail->next != NULL;
 		 tail = tail->next, noteOffset++);
-	  
+
 	  while (!done)
 	    {
 	      note = (NoteRec *) XtMalloc(sizeof(NoteRec));
@@ -710,7 +695,7 @@ void DoLoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 		  note->noteIndex += noteOffset;
 		  note->display = staffData->display;
 		  note->next = NULL;
-		  
+
 		  if (tail == NULL)
 		    {
 		      staffData->notes = note;
@@ -730,7 +715,7 @@ void DoLoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
 	    }
 	  fclose(fp);
 	}
-      
+
       XClearArea(XtDisplay(w), XtWindow(staff), 0, 0, 0, 0, TRUE);
     }
 }
@@ -746,8 +731,8 @@ void LoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   Widget        staff = (Widget)clientData;
   static Widget fsdlog = NULL;
   static Widget oldStaff;
-  
-  
+
+
   if (fsdlog == NULL)
     {
       fsdlog = XmCreateFileSelectionDialog(staff, "loadDlog", NULL, 0);
@@ -760,10 +745,10 @@ void LoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
     {
       XtRemoveCallback(fsdlog, XmNokCallback, DoLoadVoiceCB, oldStaff);
     }
-  
+
   XtAddCallback(fsdlog, XmNokCallback, DoLoadVoiceCB, staff);
   oldStaff = staff;
-  
+
   XtManageChild(fsdlog);
 }
 
@@ -777,7 +762,7 @@ void DrawNotes (Widget staff, int x1, int x2)
 {
   StaffRec *staffData;
   NoteRec  *notes, *np;
-  
+
   staffData = GetStaffData(staff);
   if (staffData != NULL)
     for (np = staffData->notes;  np != NULL;  np = np->next)
@@ -802,7 +787,7 @@ void DrawStaffCB (Widget staff, XtPointer clientData, XtPointer callData)
 
   XtVaGetValues(XtParent(staff), XmNwidth, &width, NULL);
   XtVaGetValues(staff, XmNwidth, &width, XmNheight, &height, NULL);
-  
+
   for (i=4; i<=12; i+=2)
     {
       y = i*(int)height / 16;
@@ -810,7 +795,7 @@ void DrawStaffCB (Widget staff, XtPointer clientData, XtPointer callData)
 		DefaultGCOfScreen(XtScreen(staff)),
 		0, y, width, y);
     }
-  
+
   DrawNotes(staff, expEvt->x, expEvt->x + expEvt->width);
 }
 
@@ -823,10 +808,10 @@ void DrawStaffCB (Widget staff, XtPointer clientData, XtPointer callData)
 void SetAppIcon(Widget shell)
 {
   Pixmap  iconPixmap;
-  
+
   iconPixmap = XCreateBitmapFromData(XtDisplay(shell), XtScreen(shell)->root,
 				     (char*)piano_bits, piano_width, piano_height);
-  
+
   XtVaSetValues(shell, XmNiconPixmap, iconPixmap, NULL);
 }
 
@@ -838,9 +823,9 @@ void SetAppIcon(Widget shell)
 void GetBell(Display *dpy)
 {
   XKeyboardState stateValues;
-  
+
   XGetKeyboardControl(dpy, &stateValues);
-  
+
   orig_percent  = stateValues.bell_percent;
   orig_pitch    = stateValues.bell_pitch;
   orig_duration = stateValues.bell_duration;
@@ -855,11 +840,11 @@ void SetBell(Display *dpy, int pitch, int duration)
 {
   XKeyboardControl controlValues;
   unsigned long    valueMask = KBBellPercent | KBBellPitch | KBBellDuration;
-  
+
   controlValues.bell_percent  = orig_percent;
   controlValues.bell_pitch    = pitch;
   controlValues.bell_duration = duration;
-  
+
   XChangeKeyboardControl(dpy, valueMask, &controlValues);
 }
 
@@ -871,17 +856,17 @@ void SetBell(Display *dpy, int pitch, int duration)
 int Pitch (int note)
 {
   double x, m, n, f;
-  
+
   /* notes are calculated from the base frequency. */
   /* This is the first note on the keyboard.       */
   /* The frequency of a note = 2^(index / 12).     */
-  
+
   x = (double)2.0;
   m = (double)note;
   n = (double)12.0;
-  
+
   f = (double)appData->baseFrequency * pow(x, (m/n));
-  
+
   return((int)f);
 }
 
@@ -894,9 +879,9 @@ void PlayNote (XtPointer clientData, XtIntervalId *id)
   NoteRec *note = (NoteRec *)clientData;
 
   SetBell(note->display, Pitch(note->noteNumber), note->noteDuration);
-   
+
   XBell(note->display, 100);
-   
+
   SetBell(note->display, orig_pitch, orig_duration);
 }
 
@@ -936,8 +921,8 @@ void BuildKeys (Widget parent)
   Boolean  pixmapsSet = FALSE, easterEgg = False;
   int      noteCount = appData->wkeyCount;
   static Boolean firstTime = True;
-  
-  
+
+
   if (firstTime)
     {
       int          x, y, junk;
@@ -945,7 +930,7 @@ void BuildKeys (Widget parent)
       Window       wjunk;
 
       firstTime = False;
-	  
+
       /* dev team's signature... :-) */
       XQueryPointer(XtDisplay(parent), RootWindowOfScreen(XtScreen(parent)),
 		    &wjunk, &wjunk, &x, &y, &junk, &junk, &bjunk);
@@ -958,7 +943,7 @@ void BuildKeys (Widget parent)
 	  Window         win = RootWindowOfScreen(XtScreen(parent));
 	  Pixmap         shapemask;
 	  XpmAttributes  attributes;
-	    
+
 	  attributes.valuemask = 0;
 	  XmeXpmCreatePixmapFromData(dsp, win, none,     &(iconPixmaps[0]), &shapemask, &attributes);
 	  XmeXpmCreatePixmapFromData(dsp, win, andrew,   &(iconPixmaps[1]), &shapemask, &attributes);
@@ -979,7 +964,7 @@ void BuildKeys (Widget parent)
 
 
   XtVaSetValues(parent, XmNfractionBase, noteCount * 10, NULL);
-  
+
   j = 0;
   for (i=0; i<noteCount; i++)
     if ( !((i+1)%7) || !((i-2)%7) ) j++; /* handle 2 whitekeys in a row. ie: B-C, E-F. */
@@ -998,7 +983,7 @@ void BuildKeys (Widget parent)
 					 NULL);
 	XtAddCallback(key[j], XmNarmCallback, SoundCB, (XtPointer)(long)j);
       }
-  
+
   j = 0;
   for (i=0; i<noteCount; i++)
     {
@@ -1014,7 +999,7 @@ void BuildKeys (Widget parent)
 				       XmNbottomAttachment, XmATTACH_FORM,
 				       NULL);
       XtAddCallback(key[j], XmNarmCallback, SoundCB, (XtPointer)(long)j);
-      
+
       if (easterEgg)
 	{
 	  XtVaSetValues(key[j],
@@ -1037,11 +1022,11 @@ Widget CreateKeyboard(Widget parent)
 {
    int    i, j = 0;
    Widget keyBoard, wKey, bKey;
-   
-   
+
+
    keyBoard = XtVaCreateWidget("keyBoard", xmFormWidgetClass, parent, NULL);
    BuildKeys(keyBoard);
-   
+
    XtManageChild(keyBoard);
    return(keyBoard);
 }
@@ -1057,16 +1042,16 @@ void SetIcon (Widget w, Pixmap cursorPixmap)
    Cursor    cursor;
    XColor    xcolors[2];
    Display  *dsp = XtDisplay(w);
-   
-   
+
+
    xcolors[0].pixel = BlackPixelOfScreen(DefaultScreenOfDisplay(dsp));
    xcolors[1].pixel = WhitePixelOfScreen(DefaultScreenOfDisplay(dsp));
-   
+
    XQueryColors(dsp, DefaultColormapOfScreen(DefaultScreenOfDisplay(dsp)), xcolors, 2);
-   
+
    cursor = XCreatePixmapCursor(dsp, cursorPixmap, cursorPixmap,
 				&(xcolors[0]), &(xcolors[1]), note_x_hot, note_y_hot);
-   
+
    XDefineCursor(dsp, XtWindow(w), cursor);
 }
 
@@ -1099,20 +1084,20 @@ void DrawNote (Widget staff, NoteRec *note, int x1, int x2)
    Dimension  width, height;
    Pixmap     notePix, notePixMask;
    int        x, y;
-   
+
 
    notePix = appData->noteTable[note->noteType].image;
    notePixMask = appData->noteTable[note->noteType].mask;
 
    XtVaGetValues(staff, XmNwidth, &width, XmNheight, &height, NULL);
-   
+
    x = note->noteIndex * 15;
    y = (15 - note->ledgerLine) * (int)height / 16 - (note_height/2) - 4;
 
    /* if the position is off the right side of the staff, resize it. */
    if ((x + note_width) > (int)width)
      XtVaSetValues(staff, XmNwidth, x + 2*note_width, NULL);
-   
+
    if ((x1 != x2) && (x < x1-note_width || x > x2+note_width))
      return;
 
@@ -1157,7 +1142,7 @@ void SetNoteCB (Widget w, XtPointer clientData, XtPointer callData)
 int NoteNumber (int ledgerLine, Boolean isASharp)
 {
    int n = 0;
-   
+
    switch (ledgerLine)
      {
      case 1:  n = 1;  break;
@@ -1173,7 +1158,7 @@ int NoteNumber (int ledgerLine, Boolean isASharp)
      case 11: n = 18; break;
      case 12: n = 20; break;
      }
-   
+
    if (isASharp)
      return (n+1);
    else
@@ -1190,14 +1175,14 @@ void DeleteNoteAtPosn (Widget staff, int x, int y)
    Dimension  height;
    StaffRec  *staffData;
    NoteRec   *np, *npTemp;
-   
-   
+
+
    /* find the corresponding ledger line in the staff. */
    XtVaGetValues(staff, XmNheight, &height, NULL);
    ledgerLine = 15 - (16 * y / (int)height);
-   
+
    noteIndex = x / 15;
-   
+
    staffData = GetStaffData(staff);
    if ((staffData != NULL) && (staffData->notes != NULL))
      {
@@ -1242,17 +1227,17 @@ void AddNoteAtPosn (Widget staff, int y, NoteType noteType)
    StaffRec  *staffData;
    NoteRec   *noteList, *currentNoteList, *np;
    Boolean    isASharp = FALSE;
-   
-   
+
+
    /* find the corresponding ledger line in the staff. */
    XtVaGetValues(staff, XmNheight, &height, NULL);
    ledgerLine = 15 - (16 * y / (int)height);
-   
+
    /* round up to G and down to middle C. */
    if (ledgerLine <  1) ledgerLine = 1;
    else
      if (ledgerLine > 12) ledgerLine = 12;
-   
+
    switch (noteType)
      {
      case EIGHTH:	   noteDuration = appData->baseDuration;				break;
@@ -1271,10 +1256,10 @@ void AddNoteAtPosn (Widget staff, int y, NoteType noteType)
      case RESTDOT:	   noteDuration = appData->baseDuration*3/2;				break;
      default:              noteDuration = 0;
      }
-   
+
    /* get the staff info - this tells the display to use. */
    staffData = GetStaffData(staff);
-   
+
    noteList = (NoteRec *)XtMalloc(sizeof(NoteRec));
    noteList->display       = staffData->display;
    noteList->noteType      = noteType;
@@ -1282,16 +1267,16 @@ void AddNoteAtPosn (Widget staff, int y, NoteType noteType)
    noteList->noteNumber    = NoteNumber(ledgerLine, isASharp);
    noteList->ledgerLine    = ledgerLine;
    noteList->next          = NULL;
-   
+
    /* get the current list of notes. */
    currentNoteList = staffData->notes;
-   
+
    /* find out how many there are. */
    for (noteCount=1, np=currentNoteList;
 	((np != NULL) && (np->next != NULL));
 	np=np->next, noteCount++)
      ;
-   
+
    if (np == NULL)
      {
 	staffData->notes = noteList;
@@ -1302,7 +1287,7 @@ void AddNoteAtPosn (Widget staff, int y, NoteType noteType)
 	np->next = noteList;
 	noteList->noteIndex = noteCount+1;
      }
-   
+
    DrawNote(staff, noteList, 0, 0);
 }
 
@@ -1315,14 +1300,14 @@ void AddNoteToStaffCB (Widget staff, XtPointer clientData, XtPointer callData)
    XmDrawingAreaCallbackStruct *cb = (XmDrawingAreaCallbackStruct *)callData;
    XButtonEvent *btnEvent = (XButtonEvent *)cb->event;
    int           vposn, hposn;
-   
-   
+
+
    if ((btnEvent->button == Button1) && (btnEvent->type == ButtonPress))
      {
 	AddNoteAtPosn(staff, btnEvent->y, appData->activeNoteType);
      }
    else
-     
+
      if ((btnEvent->button == Button2) && (btnEvent->type == ButtonPress))
        {
 	  DeleteNoteAtPosn(staff, btnEvent->x, btnEvent->y);
@@ -1338,16 +1323,16 @@ void AddNoteToStaffCB (Widget staff, XtPointer clientData, XtPointer callData)
 void AddNewStaff (Display *newDisplay, char *dspName)
 {
    StaffRec *staffData;
-   
-   
+
+
    staffData = (StaffRec *) XtMalloc(sizeof(StaffRec));
    staffData->display       = newDisplay;
    staffData->notes         = NULL;
    staffData->next = staffData->prev = NULL;
-   
+
    /* if this is not the first staff, the add a seperator. */
    if (appData->staffList != NULL)
-     staffData->divider = 
+     staffData->divider =
        XtVaCreateManagedWidget("divider", xmSeparatorWidgetClass, appData->score, NULL);
    else
      staffData->divider = NULL;
@@ -1358,9 +1343,9 @@ void AddNewStaff (Display *newDisplay, char *dspName)
 			     NULL);
    XtAddCallback(staffData->staff, XmNexposeCallback, DrawStaffCB,      staffData);
    XtAddCallback(staffData->staff, XmNinputCallback,  AddNoteToStaffCB, staffData);
-   
+
    CreateStaffMenu(appData->score, staffData->staff, dspName);
-   
+
    /*
     * add the staff to the staff list.
     */
@@ -1380,8 +1365,8 @@ void PostStaffMenu (Widget w, XtPointer clientData, XEvent *event, Boolean *disp
    Widget        menu     = (Widget)clientData;
    XButtonEvent *btnEvent = (XButtonEvent *)event;
    int           button;
-   
-   
+
+
    XtVaGetValues(menu, XmNwhichButton, &button, NULL);
    if (btnEvent->button == button)
      {
@@ -1397,11 +1382,11 @@ void PostStaffMenu (Widget w, XtPointer clientData, XEvent *event, Boolean *disp
 void CreateStaffMenu (Widget score, Widget staff, char *dspName)
 {
    Widget popupMenu, popupBtn[8];
-   
-   
+
+
    popupMenu = XmCreatePopupMenu(staff, "popupMenu", NULL, 0);
    XtAddEventHandler(staff, ButtonPressMask, False, PostStaffMenu, popupMenu);
-   
+
    XtVaCreateManagedWidget(dspName, xmLabelWidgetClass,     popupMenu, NULL);
    XtVaCreateManagedWidget("line",  xmSeparatorWidgetClass, popupMenu, NULL);
    popupBtn[1] = XtVaCreateManagedWidget("popupBtn1", xmPushButtonWidgetClass, popupMenu, NULL);
@@ -1414,7 +1399,7 @@ void CreateStaffMenu (Widget score, Widget staff, char *dspName)
 
    /* if this is the first one, then don't allow it to be removed. */
    if (appData->staffList == NULL) XtVaSetValues(popupBtn[2], XmNsensitive, False, NULL);
-   
+
    XtAddCallback(popupBtn[1], XmNactivateCallback, AddVoiceCB,    NULL);
    XtAddCallback(popupBtn[2], XmNactivateCallback, RemoveVoiceCB, staff);
    XtAddCallback(popupBtn[3], XmNactivateCallback, ClearVoiceCB,  staff);
@@ -1422,7 +1407,7 @@ void CreateStaffMenu (Widget score, Widget staff, char *dspName)
    XtAddCallback(popupBtn[5], XmNactivateCallback, PlayAllCB,     NULL);
    XtAddCallback(popupBtn[6], XmNactivateCallback, SaveVoiceCB,   staff);
    XtAddCallback(popupBtn[7], XmNactivateCallback, LoadVoiceCB,   staff);
-   
+
 }
 
 
@@ -1436,7 +1421,7 @@ void CreateStaffMenu (Widget score, Widget staff, char *dspName)
 void CreateScore(Widget parent)
 {
    Widget scoreWin;
-   
+
    scoreWin = XtVaCreateManagedWidget("scoreWin", xmScrolledWindowWidgetClass, parent,
 				       XmNscrollingPolicy, XmAUTOMATIC, NULL);
    appData->score =
@@ -1461,8 +1446,8 @@ Widget CreateNotebook(Widget parent)
    Display *dsp = XtDisplay(parent);
    Window   win = RootWindowOfScreen(XtScreen(parent));
    int      d   = DefaultDepthOfScreen(XtScreen(parent));
-   
-   
+
+
    notebook  = XtVaCreateManagedWidget("notebook", xmRowColumnWidgetClass, parent, NULL);
 
    /*
@@ -1499,7 +1484,7 @@ void CvtStrToFloat (XrmValue *args, Cardinal *nargs, XrmValue *fromVal, XrmValue
   else
     XtStringConversionWarning((char *)fromVal->addr, "Float");
 }
-  
+
 /*----------------------------------------------------------------*
  |			  GetAppResources	 	          |
  | The following resources are supported in piano:                |
@@ -1514,22 +1499,20 @@ void CvtStrToFloat (XrmValue *args, Cardinal *nargs, XrmValue *fromVal, XrmValue
  | .keyWidth:      (int)                                          |
  |     -- white key pixel width. black keys are calculated.       |
  *----------------------------------------------------------------*/
-AppData *GetAppResources (Widget w)
+AppData *GetAppResources(Widget w)
 {
-   AppData *appData;
+   AppData *aData;
 
-   if ((appData = (AppData *) XtCalloc(1, sizeof(AppData))) == NULL)
+   if ((aData = (AppData *)XtCalloc(1, sizeof(AppData))) == NULL)
      {
 	printf(EMSG1);
-	exit(0);
+	XtAppSetExitFlag(context);
+	return NULL;
      }
 
-   XtGetApplicationResources(w, (XtPointer)appData,
-			     appRes, XtNumber(appRes), NULL, 0);
-
-   return (appData);
+   XtGetApplicationResources(w, (XtPointer)aData, appRes, XtNumber(appRes), NULL, 0);
+   return aData;
 }
-
 
 /*--------------------------------------------------------------------*
  |                         GetNoteImagePixmap                         |
@@ -1673,15 +1656,15 @@ main(int argc, char **argv)
    int              fn;
    Pixel            fg, bg;
    XGCValues        values;
-   
-   
+
+
    shell = XtVaAppInitialize(&context, APP_CLASS, NULL, 0, &argc, argv, fallback, NULL);
 
    XSetErrorHandler(MyErrorHandler);
 
    XtAddConverter(XtRString, XtRFloat, CvtStrToFloat, NULL, 0);
    appData   = GetAppResources(shell);
-   
+
    mainWin   = XmCreateMainWindow(shell, "mainWin", NULL, 0);
    XtManageChild(mainWin);
    CreateMenuBar(mainWin);
@@ -1710,9 +1693,7 @@ main(int argc, char **argv)
 
    /* save the old bell values so that they can be restored. */
    GetBell(XtDisplay(shell));
-   
    XtAppMainLoop(context);
-
    return 0;    /* make compiler happy */
 }
 

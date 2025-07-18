@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -30,10 +30,11 @@
 
 void   CreateComboBox(Widget);
 extern void CreateMenus(Widget);
-extern void SelectionCB(Widget, XtPointer, XtPointer); 
-extern void HelpCB(Widget, XtPointer, XtPointer); 
+extern void SelectionCB(Widget, XtPointer, XtPointer);
+extern void HelpCB(Widget, XtPointer, XtPointer);
 extern void QuitCB(Widget, XtPointer, XtPointer);
-Widget top_level; 
+Widget top_level;
+XtAppContext app_context;
 
 #define APP_CLASS "XmdComboBox"
 
@@ -47,16 +48,15 @@ int
 main(int    argc,
      char **argv)
 {
- XtAppContext app_context;
- Widget       main_window;
+   Widget main_window;
 
    XtSetLanguageProc(NULL, NULL, NULL);
-   top_level = XtVaOpenApplication(&app_context, APP_CLASS, 
-                                NULL, 0, &argc, argv, 
+   top_level = XtVaOpenApplication(&app_context, APP_CLASS,
+                                NULL, 0, &argc, argv,
                                 fallbacks,
-                                sessionShellWidgetClass, 
+                                sessionShellWidgetClass,
                                 NULL);
-   main_window = XtVaCreateManagedWidget("main_window", 
+   main_window = XtVaCreateManagedWidget("main_window",
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);
 
@@ -79,12 +79,12 @@ CreateComboBox(Widget parent_of_combo_box)
    Arg             args[10];
    Cardinal        n, i;
    XmString        ListItem[NUM_LIST_ITEMS];
-   static char    *ListString[] = { "kiwi", 
-                                    "raspberry", 
-                                    "carambola", 
+   static char    *ListString[] = { "kiwi",
+                                    "raspberry",
+                                    "carambola",
                                     "litchi",
                                     "coconut" };
-            
+
    /* Create a list of XmStrings for the ComboBox List child */
      for (i=0; i < NUM_LIST_ITEMS; i++)
        ListItem[i] = XmStringCreate (ListString[i], XmSTRING_DEFAULT_CHARSET);
@@ -95,28 +95,28 @@ CreateComboBox(Widget parent_of_combo_box)
     * children of ComboBox.  So, in the argument list
     * below, the resources, XmNitems, and XmNitemCount
     * will be passed on to the List child of ComboBox.  */
-   n=0; 
+   n=0;
    XtSetArg (args[n], XmNcomboBoxType, XmDROP_DOWN_COMBO_BOX); n++;
    XtSetArg (args[n], XmNarrowSpacing, 5); n++;
    XtSetArg (args[n], XmNitems, ListItem); n++;
    XtSetArg (args[n], XmNitemCount, NUM_LIST_ITEMS); n++;
    comboBox = XmCreateComboBox (parent_of_combo_box, "ComboBox", args, n);
    XtManageChild (comboBox);
-   XtAddCallback (comboBox, XmNselectionCallback, SelectionCB, 
+   XtAddCallback (comboBox, XmNselectionCallback, SelectionCB,
       (XtPointer)NULL);
 
    /* Example of manipulating a child widget directly to set the
     * visibleItemCount on the list.  */
    n=0;
    XtSetArg (args[n], XmNvisibleItemCount, 5); n++;
-   XtSetValues (XtNameToWidget (comboBox,"*List"), args, n);  
+   XtSetValues (XtNameToWidget (comboBox,"*List"), args, n);
 }
 
 
 
 void
-SelectionCB (Widget w, 
-                   XtPointer client_data, 
+SelectionCB (Widget w,
+                   XtPointer client_data,
                    XtPointer call_data)
 {
  XmComboBoxCallbackStruct *cb = (XmComboBoxCallbackStruct *)call_data;

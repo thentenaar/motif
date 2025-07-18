@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wsm_create.c /main/7 1996/10/30 10:23:18 cde-osf $"
@@ -133,7 +133,7 @@ CreateNameWorkspace(Widget parent, WSM_UI* wsm_ui)
     Widget      buttonForm;
     Widget      nameForm;
     Widget      pixForm;
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNresizePolicy, XmRESIZE_GROW); argcnt++;
     wsm_ui->name_form = XtCreateWidget("nameForm",
@@ -670,7 +670,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     XtAddCallback(dismissButton, XmNactivateCallback, DismissConfigureCB,
 		  (XtPointer)wsm_ui);
     XtManageChild(dismissButton);
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_NONE); argcnt++;
     XtSetArg(args[argcnt], XmNbottomAttachment, XmATTACH_WIDGET); argcnt++;
@@ -714,11 +714,11 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 		args,
 		argcnt);
     XtAddCallback(wsm_ui->window_toggle, XmNvalueChangedCallback,
-		  WindowModeCB, (XtPointer)wsm_ui); 
-#ifndef _NO_CLIENT_MODE   
+		  WindowModeCB, (XtPointer)wsm_ui);
+#ifndef _NO_CLIENT_MODE
     XtManageChild(wsm_ui->window_toggle);
 #endif
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNindicatorType, XmONE_OF_MANY); argcnt++;
     wsm_ui->client_toggle = XtCreateWidget("clientButton",
@@ -727,7 +727,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 		args,
 		argcnt);
     XtAddCallback(wsm_ui->client_toggle, XmNvalueChangedCallback,
-		  ClientModeCB, (XtPointer)wsm_ui);  
+		  ClientModeCB, (XtPointer)wsm_ui);
 #ifndef _NO_CLIENT_MODE
     XtManageChild(wsm_ui->client_toggle);
 #endif
@@ -736,7 +736,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     /*
      * The three container forms
      */
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNresizePolicy, XmRESIZE_GROW); argcnt++;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_WIDGET); argcnt++;
@@ -809,7 +809,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
 	XtSetArg(args[argcnt], XmNlabelString,
-		 (xmstr[0]=XmStringCreateLtoR(s->name,
+		 (xmstr[0]=XmStringLtoRCreate(s->name,
 					      XmSTRING_DEFAULT_CHARSET)));
 	argcnt++;
 	wsm_ui->to_option_button[i] = XtCreateWidget("toWorkspace1Button",
@@ -831,7 +831,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNuserData, 0); argcnt++;
     XtSetArg(args[argcnt], XmNlabelString,
-	     (xmstr[0]=XmStringCreateLtoR("All Workspaces",
+	     (xmstr[0]=XmStringLtoRCreate("All Workspaces",
 					  XmSTRING_DEFAULT_CHARSET)));
     argcnt++;
     wsm_ui->to_option_button[i] = XtCreateWidget("toAllWorkspaceButton",
@@ -849,7 +849,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginWidth, 0); argcnt++;
     XtSetArg(args[argcnt], XmNspacing, 0); argcnt++;
-    XtSetArg(args[argcnt], XmNlabelString,  (xmstr[0]=XmStringCreateLtoR(
+    XtSetArg(args[argcnt], XmNlabelString,  (xmstr[0]=XmStringLtoRCreate(
 		"", XmSTRING_DEFAULT_CHARSET))); argcnt++;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNleftAttachment, XmATTACH_NONE); argcnt++;
@@ -891,7 +891,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
 	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=
-	     XmStringCreateLtoR(s->name,XmSTRING_DEFAULT_CHARSET))); argcnt++;
+	     XmStringLtoRCreate(s->name,XmSTRING_DEFAULT_CHARSET))); argcnt++;
 	wsm_ui->from_option_button[i] = XtCreateWidget("fromWorkspace1Button",
 						       xmPushButtonWidgetClass,
 						       pulldownMenu1,
@@ -907,11 +907,11 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 	if (s == current_space)
 	  current_button = wsm_ui->to_option_button[i];
     }
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginWidth, 0); argcnt++;
     XtSetArg(args[argcnt], XmNspacing, 0); argcnt++;
-    XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringCreateLtoR(
+    XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringLtoRCreate(
 		"", XmSTRING_DEFAULT_CHARSET))); argcnt++;
     XtSetArg(args[argcnt], XmNleftAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_FORM); argcnt++;
@@ -1023,7 +1023,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 		args,
 		argcnt);
     XtManageChild(wsm_ui->copy_toggle);
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNindicatorType, XmONE_OF_MANY); argcnt++;
     wsm_ui->link_toggle = XtCreateWidget("linkButton",
@@ -1054,7 +1054,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_WIDGET); argcnt++;
-    XtSetArg(args[argcnt], XmNtopWidget, occupyButton); argcnt++; 
+    XtSetArg(args[argcnt], XmNtopWidget, occupyButton); argcnt++;
     XtSetArg(args[argcnt], XmNleftAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNrightAttachment, XmATTACH_FORM); argcnt++;
     wsm_ui->move_button = XtCreateWidget("moveButton",
@@ -1142,20 +1142,20 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 				 argcnt);
 	retval = menuBar;
 	XtManageChild(menuBar);
-	
+
 	argcnt = 0;
 	fileCascade = XtCreateWidget("fileCascade",
 				     xmCascadeButtonWidgetClass,
 				     menuBar,
 				     args,
 				     argcnt);
-	
+
 	XtManageChild(fileCascade);
-	
+
 	argcnt = 0;
 	pulldownMenu = XmCreatePulldownMenu(fileCascade, "pulldownMenu",
 					    args, argcnt);
-	
+
 	argcnt = 0;
 	saveButton = XtCreateWidget("saveButton",
 				    xmPushButtonWidgetClass,
@@ -1165,7 +1165,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(saveButton, XmNactivateCallback, SaveActivateCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(saveButton);
-	
+
 	argcnt = 0;
 	saveAsButton = XtCreateWidget("saveAsButton",
 				      xmPushButtonWidgetClass,
@@ -1175,7 +1175,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(saveAsButton, XmNactivateCallback, SaveAsCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(saveAsButton);
-	
+
 	argcnt = 0;
 	separator = XtCreateWidget("separator",
 				   xmSeparatorWidgetClass,
@@ -1183,7 +1183,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 				   args,
 				   argcnt);
 	XtManageChild(separator);
-	
+
 	argcnt = 0;
 	exitButton = XtCreateWidget("exitButton",
 				    xmPushButtonWidgetClass,
@@ -1193,24 +1193,24 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(exitButton, XmNactivateCallback, ExitCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(exitButton);
-	
+
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNsubMenuId, pulldownMenu); argcnt++;
 	XtSetValues(fileCascade, args, argcnt);
-	
+
 	argcnt = 0;
 	workspaceCascade = XtCreateWidget("workspaceCascade",
 					  xmCascadeButtonWidgetClass,
 					  menuBar,
 					  args,
 					  argcnt);
-	
+
 	XtManageChild(workspaceCascade);
-	
+
 	argcnt = 0;
 	pulldownMenu1 = XmCreatePulldownMenu(workspaceCascade, "pulldownMenu1",
 					     args, argcnt);
-	
+
 	argcnt = 0;
 	newButton = XtCreateWidget("newButton",
 				   xmPushButtonWidgetClass,
@@ -1220,7 +1220,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(newButton, XmNactivateCallback, NewActivateCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(newButton);
-	
+
 	argcnt = 0;
 	nameButton = XtCreateWidget("nameButton",
 				    xmPushButtonWidgetClass,
@@ -1230,7 +1230,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(nameButton, XmNactivateCallback, CreateNameCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(nameButton);
-	
+
 	argcnt = 0;
 	backgroundButton = XtCreateWidget("backgroundButton",
 					  xmPushButtonWidgetClass,
@@ -1250,7 +1250,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(configureButton, XmNactivateCallback, CreateConfigureCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(configureButton);
-	
+
 	argcnt = 0;
 	deleteButton = XtCreateWidget("deleteButton",
 				      xmPushButtonWidgetClass,
@@ -1260,24 +1260,24 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(deleteButton, XmNactivateCallback, CreateDeleteCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(deleteButton);
-	
+
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNsubMenuId, pulldownMenu1); argcnt++;
 	XtSetValues(workspaceCascade, args, argcnt);
-	
+
 	argcnt = 0;
 	viewCascade = XtCreateWidget("viewCascade",
 				     xmCascadeButtonWidgetClass,
 				     menuBar,
 				     args,
 				     argcnt);
-	
+
 	XtManageChild(viewCascade);
-	
+
 	argcnt = 0;
 	pulldownMenu2 = XmCreatePulldownMenu(viewCascade, "pulldownMenu2",
 					     args, argcnt);
-	
+
 	argcnt = 0;
 	hideButton = XtCreateWidget("hideButton",
 				    xmPushButtonWidgetClass,
@@ -1287,12 +1287,12 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtAddCallback(hideButton, XmNactivateCallback, HideActivateCB,
 		      (XtPointer)wsm_ui);
 	XtManageChild(hideButton);
-	
+
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNsubMenuId, pulldownMenu2); argcnt++;
 	XtSetValues(viewCascade, args, argcnt);
     }
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNresizeWidth, True); argcnt++;
     XtSetArg(args[argcnt], XmNresizeHeight, True); argcnt++;
@@ -1328,7 +1328,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtSetArg(args[argcnt], XmNindicatorSize, 20); argcnt++;
 	XtSetArg(args[argcnt], XmNspacing, 10); argcnt++;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
-	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringCreateLtoR(
+	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringLtoRCreate(
 	       s->name, XmSTRING_DEFAULT_CHARSET))); argcnt++;
 	XtSetArg(args[argcnt], XmNrecomputeSize, True); argcnt++;
 /* check between these lines...crashes in 2.0 not in 1.2.2 */
@@ -1346,7 +1346,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 						 wsm_ui->wsm_row_column,
 						 args,
 						 argcnt);
-	
+
 	XtAddCallback(wsm_ui->space_button[i], XmNvalueChangedCallback,
 		      SendLeaveRoomCB, (XtPointer)wsm_ui);
 	XtManageChild(wsm_ui->space_button[i]);
@@ -1357,7 +1357,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
     /*
      * Build the popup menu
      */
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNwidth, 1); argcnt++;
     XtSetArg(args[argcnt], XmNheight, 1); argcnt++;
@@ -1438,7 +1438,7 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 				 popupMenu,
 				 args,
 				 argcnt);
-    
+
     argcnt = 0;
     hideButton = XtCreateWidget("hideButton",
 		xmPushButtonWidgetClass,
@@ -1514,7 +1514,7 @@ CreateSaveAs(Widget parent, WSM_UI* wsm_ui)
     Widget	saveAsTitleLabel;
     Widget      dbForm;
     Widget      buttonForm;
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNresizePolicy, XmRESIZE_GROW); argcnt++;
     wsm_ui->save_as_form = XtCreateWidget("saveAsForm",
@@ -1573,7 +1573,7 @@ CreateSaveAs(Widget parent, WSM_UI* wsm_ui)
     XtAddCallback(wsm_ui->save_as_text, XmNactivateCallback, SaveAsOkCB,
 		  (XtPointer)wsm_ui);
     XtManageChild(wsm_ui->save_as_text);
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_WIDGET); argcnt++;
     XtSetArg(args[argcnt], XmNtopWidget, dbForm); argcnt++;
@@ -1748,9 +1748,9 @@ CreateOccupyWorkspace(Widget parent, WSM_UI* wsm_ui)
 		args,
 		argcnt);
     XtAddCallback(wsm_ui->copy_occupy_toggle, XmNvalueChangedCallback,
-		  CopyModeCB, (XtPointer)wsm_ui); 
+		  CopyModeCB, (XtPointer)wsm_ui);
     XtManageChild(wsm_ui->copy_occupy_toggle);
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNindicatorType, XmONE_OF_MANY); argcnt++;
     wsm_ui->link_occupy_toggle = XtCreateWidget("linkButton",
@@ -1759,7 +1759,7 @@ CreateOccupyWorkspace(Widget parent, WSM_UI* wsm_ui)
 		args,
 		argcnt);
     XtAddCallback(wsm_ui->link_occupy_toggle, XmNvalueChangedCallback,
-		  LinkModeCB, (XtPointer)wsm_ui); 
+		  LinkModeCB, (XtPointer)wsm_ui);
     XtManageChild(wsm_ui->link_occupy_toggle);
 
     argcnt = 0;

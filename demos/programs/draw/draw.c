@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <Xm/XmAll.h>
-#include <Xmd/Help.h>   
+#include <Xmd/Help.h>
 #include <X11/IntrinsicP.h>
 
 /*-------------------------------------------------------------
@@ -50,15 +50,15 @@
 /* very simple data struct, static size, etc...
 */
 #define MAX_POINT 100
-typedef struct { 
-    XPoint points[MAX_POINT] ; 
+typedef struct {
+    XPoint points[MAX_POINT] ;
     Cardinal num_points ;
 #define POLYLINE 1
     unsigned char type ;
 } GraphicUnit ;
 
 #define MAX_GRAPH 100
-typedef struct { 
+typedef struct {
      GraphicUnit graphics[MAX_GRAPH] ;
      Cardinal num_graphics ;
 
@@ -130,7 +130,7 @@ static String fallback_resources[] = {
 */
 static void CreateApplication (Widget parent, Graphic *graph);
 
-/*      Xt callbacks 
+/*      Xt callbacks
 */
 static void SaveCB (Widget w, XtPointer client_data, XtPointer call_data);
 static void OK_WriteCB (Widget w, XtPointer client_data, XtPointer call_data);
@@ -172,7 +172,7 @@ main(int argc, char	*argv[])
     CreateApplication (toplevel, &legraph);
 
     InitDraw(&legraph, &app_data);
-    
+
     XtRealizeWidget(toplevel);
     XtAppMainLoop(app_context);
 
@@ -187,7 +187,7 @@ main(int argc, char	*argv[])
 **      Also put in the graphic structure the workarea info and the
 **      textfield ids.
 */
-static void 
+static void
 CreateApplication (Widget parent, Graphic *	graph)
 {
     Widget main_window, menu_bar, menu_pane, cascade, button, comw, scale;
@@ -201,7 +201,7 @@ CreateApplication (Widget parent, Graphic *	graph)
     XtSetArg (args[n], XmNscrollingPolicy, XmAUTOMATIC);  n++;
     main_window = XmCreateMainWindow (parent, "main_window", args, n);
 
-    XtAddCallback (main_window, XmNtraverseObscuredCallback, TravCB, 
+    XtAddCallback (main_window, XmNtraverseObscuredCallback, TravCB,
 		   (XtPointer)graph);
 
     XtManageChild (main_window);
@@ -210,7 +210,7 @@ CreateApplication (Widget parent, Graphic *	graph)
     /*	Create MenuBar in MainWindow.
      */
     n = 0;
-    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n); 
+    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n);
     XtManageChild (menu_bar);
 
 
@@ -255,7 +255,7 @@ CreateApplication (Widget parent, Graphic *	graph)
     XtSetValues (menu_bar, args, n);
 
 
-    /*	Create work_area in MainWindow 
+    /*	Create work_area in MainWindow
      */
     n = 0;
     XtSetArg (args[n], XmNresizePolicy, XmRESIZE_NONE); n++ ;
@@ -265,16 +265,16 @@ CreateApplication (Widget parent, Graphic *	graph)
     xlations = XtParseTranslationTable(drawTranslations);
     XtSetArg (args[n], XmNtranslations, xlations); n++;
     graph->work_area = XmCreateDrawingArea(main_window, "work_area", args, n);
-    XtAddCallback (graph->work_area, XmNexposeCallback, DrawCB, 
+    XtAddCallback (graph->work_area, XmNexposeCallback, DrawCB,
 		   (XtPointer)graph);
-    XtAddCallback (graph->work_area, XmNresizeCallback, DrawCB, 
+    XtAddCallback (graph->work_area, XmNresizeCallback, DrawCB,
 		   (XtPointer)graph);
-    XtAddCallback (graph->work_area, XmNinputCallback, DrawCB, 
+    XtAddCallback (graph->work_area, XmNinputCallback, DrawCB,
 		   (XtPointer)graph);
     XtManageChild (graph->work_area);
 
 
-    /*	Create a commandWindow in MainWindow with text and scales 
+    /*	Create a commandWindow in MainWindow with text and scales
      */
     n = 0;
     comw = XmCreateRowColumn(main_window, "comw", args, n);
@@ -288,13 +288,13 @@ CreateApplication (Widget parent, Graphic *	graph)
     XtSetArg (args[n], XmNwidth, &graph->old_width);  n++;
     XtSetArg (args[n], XmNheight, &graph->old_height);  n++;
     XtGetValues (graph->work_area, args, n);
-	
+
     n = 0;
     XtSetArg (args[n], XmNorientation, XmHORIZONTAL);  n++;
     XtSetArg (args[n], XmNshowValue, True);  n++;
     XtSetArg (args[n], XmNvalue, graph->old_width);  n++;
     scale = XmCreateScale(comw, "scale_w", args, n); /* scale_w is the name */
-    XtAddCallback (scale, XmNvalueChangedCallback, ValueCB, 
+    XtAddCallback (scale, XmNvalueChangedCallback, ValueCB,
 		   (XtPointer)graph->work_area);
     XtManageChild (scale);
 
@@ -303,16 +303,16 @@ CreateApplication (Widget parent, Graphic *	graph)
     XtSetArg (args[n], XmNshowValue, True);  n++;
     XtSetArg (args[n], XmNvalue, graph->old_height);  n++;
     scale = XmCreateScale(comw, "scale_h", args, n);
-    XtAddCallback (scale, XmNvalueChangedCallback, ValueCB, 
+    XtAddCallback (scale, XmNvalueChangedCallback, ValueCB,
 		   (XtPointer)graph->work_area);
     XtManageChild (scale);
 
     n = 0;
     graph->textf = XmCreateTextField(comw, "textf", args, n);
     XtManageChild (graph->textf);
-    
 
-    /*	Set MainWindow areas 
+
+    /*	Set MainWindow areas
      */
     XmMainWindowSetAreas (main_window, menu_bar, comw, NULL, NULL,
 			  graph->work_area);
@@ -323,7 +323,7 @@ CreateApplication (Widget parent, Graphic *	graph)
 /*-------------------------------------------------------------
 **	PushCB		- callback for push button inside the workarea
 */
-static void 
+static void
 PushCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -334,14 +334,14 @@ PushCB (Widget		w,		/*  widget id		*/
     if ((pbcs->event->type == ButtonRelease) &&
 	(pbcs->event->xbutton.state & ShiftMask))
 	XtDestroyWidget(w);
-/*    else 
+/*    else
 	printf("Activate %s\n",XtName(w));*/
 }
 
 /*-------------------------------------------------------------
 **	TravCB		- callback for traverseObscure
 */
-static void 
+static void
 TravCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -351,20 +351,20 @@ TravCB (Widget		w,		/*  widget id		*/
     Graphic * graph = (Graphic *) client_data ;
 
     if (tocs->traversal_destination != graph->work_area)
-	XmScrollVisible(w, tocs->traversal_destination, 20, 20) ; 
+	XmScrollVisible(w, tocs->traversal_destination, 20, 20) ;
 }
 
 /*-------------------------------------------------------------
 **	ValueCB		- callback for scales
 */
-static void 
+static void
 ValueCB (Widget		w,		/*  widget id		*/
 	 XtPointer	client_data,	/*  data from application   */
 	 XtPointer	call_data)	/*  data from widget class  */
 {
-    
-    Arg args[5];	
-    int	n ;		   
+
+    Arg args[5];
+    int	n ;
     int value ;
     Widget workarea = (Widget) client_data ;
 
@@ -387,7 +387,7 @@ ValueCB (Widget		w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	SaveCB			- callback for Save button
 */
-static void 
+static void
 SaveCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -395,11 +395,11 @@ SaveCB (Widget		w,		/*  widget id		*/
 	static Widget fsb_box = NULL ;
 
 	if (!fsb_box) {
-	    fsb_box = XmCreateFileSelectionDialog (w, "Save graphics", 
+	    fsb_box = XmCreateFileSelectionDialog (w, "Save graphics",
 						   NULL, 0);
 	    /* just propagate the graphic information */
 	    XtAddCallback (fsb_box, XmNokCallback, OK_WriteCB, client_data);
-	}    
+	}
 
 
 	XtManageChild (fsb_box);
@@ -409,7 +409,7 @@ SaveCB (Widget		w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	QuitCB			- callback for quit button
 */
-static void 
+static void
 QuitCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from applicaiton   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -421,7 +421,7 @@ QuitCB (Widget		w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	HelpCB			- callback for help button
 */
-static void 
+static void
 HelpCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -431,13 +431,13 @@ HelpCB (Widget		w,		/*  widget id		*/
     if (!help_widget)
 	help_widget = XmdCreateHelpDialog(w, "help_manager", NULL, 0);
 
-    XtManageChild(help_widget);   
+    XtManageChild(help_widget);
 }
 
 /*-------------------------------------------------------------
 **	OK_WriteCB	- callback for saving the graphics in a file
 */
-static void 
+static void
 OK_WriteCB (Widget	w,		/*  widget id		*/
 	    XtPointer	client_data,	/*  data from application   */
 	    XtPointer	call_data)	/*  data from widget class  */
@@ -446,14 +446,14 @@ OK_WriteCB (Widget	w,		/*  widget id		*/
     char * filename ;
     FILE  *out_file ;
     Cardinal i,j ;
-    Arg args[5];	
-    int	n ;		   
+    Arg args[5];
+    int	n ;
     Widget * children ;
     Cardinal num_children ;
     Graphic * graph = (Graphic *) client_data ;
     Position x,y ;
 
-    text = XmFileSelectionBoxGetChild(w, XmDIALOG_TEXT);
+    text = XtNameToWidget(w, "Text");
     filename = XmTextGetString(text);
 
     if ((out_file=fopen(filename, "w")) == NULL) {
@@ -469,13 +469,13 @@ OK_WriteCB (Widget	w,		/*  widget id		*/
 	    if (j == graph->graphics[i].num_points - 1) {
 		if (i != graph->num_graphics - 1) fprintf(out_file, ". ") ;
 	    } else fprintf(out_file, ", ") ;
-	    
+
 	}
     }
 
     fprintf(out_file, "\n");
     fprintf(out_file, "draw.towns: ");
-    
+
     n = 0;
     XtSetArg (args[n], XmNnumChildren, &num_children);  n++;
     XtSetArg (args[n], XmNchildren, &children);  n++;
@@ -502,22 +502,22 @@ OK_WriteCB (Widget	w,		/*  widget id		*/
 }
 
 
- 
- 
+
+
 
 /*-------------------------------------------------------------
 **	DrawCB			- callback for drawing area
 */
-static void 
+static void
 DrawCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
 {
-    
+
     XmDrawingAreaCallbackStruct * dacs =
 	(XmDrawingAreaCallbackStruct *) call_data ;
-    Arg args[5];	
-    int	n ;	
+    Arg args[5];
+    int	n ;
     Dimension width, height ;
     String name ;
     Widget newpush ;
@@ -527,10 +527,10 @@ DrawCB (Widget		w,		/*  widget id		*/
     static Boolean first_time = True ;
 
     switch (dacs->reason) {
-    case XmCR_EXPOSE: 
+    case XmCR_EXPOSE:
 	if (first_time) {
 	    /* Change once the bit gravity of the Drawing Area; default
-	       is north west and we want forget, so that resize 
+	       is north west and we want forget, so that resize
 	       always generates exposure events */
 	    first_time = False ;
 	    xswa.bit_gravity = ForgetGravity ;
@@ -540,7 +540,7 @@ DrawCB (Widget		w,		/*  widget id		*/
 	ReDraw(graph, dacs->event) ;
 
 	break ;
-    case XmCR_RESIZE: 
+    case XmCR_RESIZE:
 	n = 0;
 	XtSetArg (args[n], XmNwidth, &width);  n++;
 	XtSetArg (args[n], XmNheight, &height);  n++;
@@ -558,8 +558,8 @@ DrawCB (Widget		w,		/*  widget id		*/
 		newpush = XmCreatePushButton(w, name, args, n);
 		XtAddCallback (newpush, XmNactivateCallback, PushCB, NULL);
 		XtManageChild (newpush);
-	    } else 
-	    if ((dacs->event->xbutton.state & ShiftMask) && 
+	    } else
+	    if ((dacs->event->xbutton.state & ShiftMask) &&
 		(!graph->in_drag)) {
 		DeleteUnit (graph, dacs->event->xbutton.x,
 			    dacs->event->xbutton.y);
@@ -588,13 +588,13 @@ DrawCB (Widget		w,		/*  widget id		*/
 
 /*************************** GRAPHICS **********************************/
 
-static void 
+static void
 InitDraw(Graphic * 	   graph,
 	 ApplicationData * app_data)
 {
     XGCValues val ;
-    Arg args[5];	
-    int	n ;		   
+    Arg args[5];
+    int	n ;
     Cardinal i ;
     Dimension width, height ;
     String pstr, wstr ;
@@ -606,30 +606,30 @@ InitDraw(Graphic * 	   graph,
     XtSetArg (args[n], XmNforeground, &val.foreground);  n++;
     XtSetArg (args[n], XmNbackground, &val.background);  n++;
     XtGetValues (graph->work_area, args, n);
-    
+
     val.foreground = val.foreground ^ val.background ;
     val.function = GXxor ;
-    graph->drag_gc = XtGetGC(graph->work_area, 
+    graph->drag_gc = XtGetGC(graph->work_area,
 			     GCForeground | GCBackground | GCFunction, &val);
 
     /* initialize the graphic stuff */
     graph->in_drag = False ;
-    
+
     graph->num_graphics = 0 ;
     for (i=0; i < MAX_GRAPH; i++) {
 	graph->graphics[i].num_points = 0 ;
     }
 
-    /* polylines syntax: 
+    /* polylines syntax:
          draw.lines: 10_10, 20_30, 28_139. 11_112, 145_60. 211_112, 45_60
        would be nice to use nested strtok but the sucker is not reentrant...
     */
     wstr = XtNewString(app_data->lines)  ;
-    for(pstr = (char *) strtok(wstr, ".,") ; pstr ;	
+    for(pstr = (char *) strtok(wstr, ".,") ; pstr ;
 	pstr = (char *) strtok( NULL, ".,")) {
 	while (*pstr && isspace(*pstr)) pstr++;
 	if (*pstr == '\0') break;
-	
+
 	sscanf(pstr, "%d_%d", &x, &y);
 	graph->graphics[graph->num_graphics].points
 	    [graph->graphics[graph->num_graphics].num_points].x = x ;
@@ -645,7 +645,7 @@ InitDraw(Graphic * 	   graph,
     XtFree(wstr);
 
     if (strlen(app_data->lines)) graph->num_graphics ++ ;
-   
+
     /* Towns syntax:
          draw.towns: Boston, Woburn, SanJose
          draw*Boston.x: 30
@@ -667,7 +667,7 @@ InitDraw(Graphic * 	   graph,
     XtFree(wstr);
 }
 
-static void 
+static void
 ReDraw(Graphic * graph,
        XEvent * event)
 {
@@ -677,15 +677,15 @@ ReDraw(Graphic * graph,
     /* the expose event region could be used for better performance */
     for (i=0; i < graph->num_graphics; i++) {
 	if (graph->graphics[i].type == POLYLINE)
-	    XDrawLines(XtDisplay(w), XtWindow(w), 
+	    XDrawLines(XtDisplay(w), XtWindow(w),
 		       XDefaultGC(XtDisplay(w),XDefaultScreen(XtDisplay(w))),
-		       graph->graphics[i].points, 
-		       graph->graphics[i].num_points, 
+		       graph->graphics[i].points,
+		       graph->graphics[i].num_points,
 		       CoordModeOrigin);
     }
 }
 
-static void 
+static void
 ReSize(Graphic * graph,
        Dimension width,
        Dimension height)
@@ -697,12 +697,12 @@ ReSize(Graphic * graph,
 
     Widget w = graph->work_area ;
     Cardinal i,j ;
-    Arg args[5];	
-    int	n ;		   
+    Arg args[5];
+    int	n ;
     Widget * children ;
     Cardinal num_children ;
     Position x,y ;
-    float xratio = (float) width / graph->old_width, 
+    float xratio = (float) width / graph->old_width,
           yratio = (float) height / graph->old_height ;
 
     /* reposition and resize the graphic units */
@@ -725,17 +725,17 @@ ReSize(Graphic * graph,
 	XtSetArg (args[n], XmNx, &x);  n++;
 	XtSetArg (args[n], XmNy, &y);  n++;
 	XtGetValues (children[i], args, n);
-	XtMoveWidget(children[i], 
+	XtMoveWidget(children[i],
 		     (Position) (x * xratio),
 		     (Position) (y * yratio));
     }
-    
+
     graph->old_width = width ;
     graph->old_height = height ;
 }
 
 
-static void 
+static void
 StartUnit(Graphic * graph,
 	  Position x,
 	  Position y)
@@ -745,22 +745,22 @@ StartUnit(Graphic * graph,
     graph->drag_point.x = graph->anchor_point.x = x ;
     graph->drag_point.y = graph->anchor_point.y = y ;
     graph->in_drag = True ;
-    XDrawLine(XtDisplay(w), XtWindow(w), 
+    XDrawLine(XtDisplay(w), XtWindow(w),
 	      graph->drag_gc,
 	      graph->anchor_point.x, graph->anchor_point.y,
 	      graph->drag_point.x, graph->drag_point.y);
 }
 
-static void 
+static void
 DragUnit(Graphic * graph,
-	 Position x, 
+	 Position x,
 	 Position y)
 {
     Widget w = graph->work_area ;
 
     if (!graph->in_drag) return ;
 
-    XDrawLine(XtDisplay(w), XtWindow(w), 
+    XDrawLine(XtDisplay(w), XtWindow(w),
 	      graph->drag_gc,
 	      graph->anchor_point.x, graph->anchor_point.y,
 	      graph->drag_point.x, graph->drag_point.y);
@@ -768,16 +768,16 @@ DragUnit(Graphic * graph,
     graph->drag_point.x = x ;
     graph->drag_point.y = y ;
 
-    XDrawLine(XtDisplay(w), XtWindow(w), 
+    XDrawLine(XtDisplay(w), XtWindow(w),
 	      graph->drag_gc,
 	      graph->anchor_point.x, graph->anchor_point.y,
 	      graph->drag_point.x, graph->drag_point.y);
 }
 
 
-static Boolean 
+static Boolean
 NearPoint (XPoint point,
-	   Position x, 
+	   Position x,
 	   Position y)
 {
 #define ERROR 5
@@ -789,22 +789,22 @@ NearPoint (XPoint point,
 }
 
 
-static void 
+static void
 EndUnit(Graphic * graph,
-	Position x, 
+	Position x,
 	Position y)
 {
     Widget w = graph->work_area ;
     Cardinal num_points ;
 
     /* no matter what happens, we need to remove the current rubber band */
-    XDrawLine(XtDisplay(w), XtWindow(w), 
+    XDrawLine(XtDisplay(w), XtWindow(w),
 	      graph->drag_gc,
 	      graph->anchor_point.x, graph->anchor_point.y,
 	      graph->drag_point.x, graph->drag_point.y);
 
     /* if the given point if the same as the anchor, we're done with
-       this polyline, exit drag mode and be ready for the next 
+       this polyline, exit drag mode and be ready for the next
        graphic unit, i.e increment num_graphics */
 
     if (NearPoint(graph->anchor_point, x, y)) {
@@ -818,7 +818,7 @@ EndUnit(Graphic * graph,
     } else {
 
 	/* draw the real line and store it in the structure */
-	XDrawLine(XtDisplay(w), XtWindow(w), 
+	XDrawLine(XtDisplay(w), XtWindow(w),
 		  XDefaultGC(XtDisplay(w),XDefaultScreen(XtDisplay(w))),
 		  graph->anchor_point.x, graph->anchor_point.y,
 		  x, y);
@@ -826,32 +826,32 @@ EndUnit(Graphic * graph,
 	/* first point in a unit is actually special */
 	num_points = graph->graphics[graph->num_graphics].num_points ;
 	if (num_points == 0) {
-	    graph->graphics[graph->num_graphics].points[num_points].x = 
+	    graph->graphics[graph->num_graphics].points[num_points].x =
 		graph->anchor_point.x ;
-	    graph->graphics[graph->num_graphics].points[num_points].y = 
+	    graph->graphics[graph->num_graphics].points[num_points].y =
 		graph->anchor_point.y ;
 	    graph->graphics[graph->num_graphics].num_points ++ ;
 	    num_points ++ ;
 	}
 	graph->graphics[graph->num_graphics].points[num_points].x = x ;
 	graph->graphics[graph->num_graphics].points[num_points].y = y ;
-	if (graph->graphics[graph->num_graphics].num_points < MAX_POINT) 
+	if (graph->graphics[graph->num_graphics].num_points < MAX_POINT)
 	    graph->graphics[graph->num_graphics].num_points ++ ;
 	else printf("The unit buffer is full, overwrite the last...\n");
 
 	/* now start the new unit */
 	graph->drag_point.x = graph->anchor_point.x = x ;
 	graph->drag_point.y = graph->anchor_point.y = y ;
-	XDrawLine(XtDisplay(w), XtWindow(w), 
+	XDrawLine(XtDisplay(w), XtWindow(w),
 		  graph->drag_gc,
 		  graph->anchor_point.x, graph->anchor_point.y,
 		  graph->drag_point.x, graph->drag_point.y);
     }
 }
 
-static void 
+static void
 DeleteUnit(Graphic * graph,
-	   Position x, 
+	   Position x,
 	   Position y)
 {
     Widget w = graph->work_area ;
@@ -868,14 +868,14 @@ DeleteUnit(Graphic * graph,
 	}
     }
 
-    if (a != -1) { 
+    if (a != -1) {
 	/* found a unit under the current point, delete and redisplay */
 	for (i = a ; i < graph->num_graphics ; i++) {
 	    graph->graphics[i] = graph->graphics[i+1] ;
 	}
 	graph->num_graphics -- ;
 
-	XClearArea(XtDisplay(w), XtWindow(w), 
+	XClearArea(XtDisplay(w), XtWindow(w),
 		   0, 0, graph->old_width, graph->old_height, True);
     }
 }

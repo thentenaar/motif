@@ -25,7 +25,7 @@
  * HISTORY
  */
 /*
-**  The demo code demonstrates how to use Form attachments and 
+**  The demo code demonstrates how to use Form attachments and
 **  the demo by itself illustrates the RowColumn layout resources.
 **
 */
@@ -46,50 +46,50 @@
 /*-------------------------------------------------------------
 **	forwarded functions
 */
-void CreateApplication (Widget parent); 
-void CreateForms (Widget parent); 
-void LateSelfAttach (Widget form); 
-void LateCenterAttach (Widget form); 
-Widget CreateHelp (Widget parent); 
-Widget CreateRC (Widget parent); 
-void ResizeHandler (Widget, XtPointer, XEvent *, Boolean *) ; 
-void SetSensitiveScaleScrollBar (Widget scale, Boolean sensitive); 
-void	CreateResDialog(void); 
-void UpdateResDialog(Widget widget); 
+void CreateApplication (Widget parent);
+void CreateForms (Widget parent);
+void LateSelfAttach (Widget form);
+void LateCenterAttach (Widget form);
+Widget CreateHelp (Widget parent);
+Widget CreateRC (Widget parent);
+void ResizeHandler (Widget, XtPointer, XEvent *, Boolean *) ;
+void SetSensitiveScaleScrollBar (Widget scale, Boolean sensitive);
+void	CreateResDialog(void);
+void UpdateResDialog(Widget widget);
 
-/*      Xt callbacks 
+/*      Xt callbacks
 */
-void QuitCB (Widget w, XtPointer client_data, XtPointer call_data); 
-void HelpCB (Widget w, XtPointer client_data, XtPointer call_data); 
+void QuitCB (Widget w, XtPointer client_data, XtPointer call_data);
+void HelpCB (Widget w, XtPointer client_data, XtPointer call_data);
 
-void TextFieldCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void PackingCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void EntryAlignmentCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void OrientationCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void NumColCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void WidthCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void ResizeWidthCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void ResizeHeightCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void HeightCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void AdjustLastCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void IsAlignedCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void AdjustMarginCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void NumChildCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
+void TextFieldCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void PackingCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void EntryAlignmentCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void OrientationCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void NumColCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void WidthCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void ResizeWidthCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void ResizeHeightCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void HeightCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void AdjustLastCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void IsAlignedCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void AdjustMarginCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void NumChildCB (Widget w, XtPointer client_data, XtPointer call_data) ;
 
-void EntryCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
-void ResOkCB (Widget w, XtPointer client_data, XtPointer call_data) ; 
+void EntryCB (Widget w, XtPointer client_data, XtPointer call_data) ;
+void ResOkCB (Widget w, XtPointer client_data, XtPointer call_data) ;
 
 /*-------------------------------------------------------------
 **	RowCol structure
 */
 
-typedef struct { 
+typedef struct {
     Widget rc ;
-    Cardinal num_children; 
+    Cardinal num_children;
 
     /* some widget ids to be kept around */
     Widget form, form1, scale_width, scale_height, entry_align_option ;
-    
+
     /* rowcol resources set by the user */
     unsigned char packing ;
     unsigned char orientation ;
@@ -105,15 +105,13 @@ typedef struct {
 } RC_Data ;
 
 static RC_Data rc_data ;
+static XtAppContext app_context;
 
 /*-------------------------------------------------------------
 **	    Main body
 */
-int
-main(int argc, 
-     char **argv)
+int main(int argc, char *argv[])
 {
-    XtAppContext app_context;
     Widget      toplevel ;
 
     toplevel = XtAppInitialize(&app_context, "XMdemos", NULL, 0,
@@ -129,23 +127,19 @@ main(int argc,
     /* have to do that because of scrollbar sensitivity always linked
        with scale one */
     SetSensitiveScaleScrollBar (rc_data.scale_width, !rc_data.resize_width);
-
     XtAppMainLoop(app_context);
-
-    /*NOTREACHED*/
-    exit(0);
+    return 0;
 }
-
 
 /*-------------------------------------------------------------
 **	Create a MainWindow with a Form in it.
 */
-void 
+void
 CreateApplication (Widget parent)
 {
     Widget main_window, menu_bar, menu_pane, cascade, button ;
-    Arg args[5];	
-    int	n ;		   
+    Arg args[5];
+    int	n ;
 
 
     /*	Create app_defined MainWindow.
@@ -159,7 +153,7 @@ CreateApplication (Widget parent)
     /*	Create MenuBar in MainWindow.
      */
     n = 0;
-    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n); 
+    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n);
     XtManageChild (menu_bar);
 
 
@@ -199,54 +193,54 @@ CreateApplication (Widget parent)
     XtSetValues (menu_bar, args, n);
 
 
-    /*	Create my complex forms in the MainWindow 
+    /*	Create my complex forms in the MainWindow
      */
     CreateForms(main_window) ;
 
 
-    /*	Set MainWindow areas 
+    /*	Set MainWindow areas
      */
     XmMainWindowSetAreas (main_window, menu_bar, NULL, NULL, NULL,
 			  rc_data.form);
 
-    
+
 }
 
 
 /*-------------------------------------------------------------
 **	CreateForms	- create forms and title in Frame
-**	
+**
 **	This form is built by lines. There are 5 lines, one line
 **      for the title, one line for the separator under the title, one
 **	for the option menus, one for the scale and one for 2 sub-forms.
-**	Within each line, the widgets are vertically attached to the 
+**	Within each line, the widgets are vertically attached to the
 **	first item in the line, using 2 opposite_widget attachment, which
 **	make the line totally driven by the first item.
 **	Vertical attachment between lines are thus made only using the
 **	first item in each line.
 **	Horizontal attachments within a line are made using attach widget
 **	(except for the third line where I use positionning). Now the problem
-**	with attach_widget is that only the last item in a line will be 
+**	with attach_widget is that only the last item in a line will be
 **	resized (and you can't use positionning since you don't know the
 **	relative sizes of each child in a line). So I'm gonna use late
-**      binding and attach_self: all the regular widget attachement that 
-**      I set here (not the opposite_widget ones) will be changed in   
+**      binding and attach_self: all the regular widget attachement that
+**      I set here (not the opposite_widget ones) will be changed in
 **      attach_self after the first layout has been done.
 **
-**      After the first layout (read: after XtRealizeWidget(topshell)), 
+**      After the first layout (read: after XtRealizeWidget(topshell)),
 **      I'm also going to do some centering that can't be done statically.
-**      
+**
 */
-void 
+void
 CreateForms (Widget parent)
 {
-    Widget title, sep, form2, 
+    Widget title, sep, form2,
            textfield1, textfield2, textfield3, textfield4,
-           label1, label2, label3, label4, 
-           option1, option2, button, pulldown, 
+           label1, label2, label3, label4,
+           option1, option2, button, pulldown,
            toggle1, toggle2, toggle3, scale1, scale2 ;
-    Arg args[20];	
-    int	n ;		   
+    Arg args[20];
+    int	n ;
 
     n = 0;
     rc_data.form = XmCreateForm(parent, "main_form", args, n);
@@ -271,20 +265,20 @@ CreateForms (Widget parent)
 
     n = 0;
     button = XmCreatePushButton(pulldown, "pack_tight", args, n);
-    XtAddCallback (button, XmNactivateCallback, PackingCB, 
+    XtAddCallback (button, XmNactivateCallback, PackingCB,
 		   (XtPointer) XmPACK_TIGHT);
     XtManageChild(button);
     rc_data.packing = XmPACK_TIGHT ;
 
     n = 0;
     button = XmCreatePushButton(pulldown, "pack_column", args, n);
-    XtAddCallback (button, XmNactivateCallback, PackingCB, 
+    XtAddCallback (button, XmNactivateCallback, PackingCB,
 		   (XtPointer) XmPACK_COLUMN);
     XtManageChild(button);
 
     n = 0;
     button = XmCreatePushButton(pulldown, "pack_none", args, n);
-    XtAddCallback (button, XmNactivateCallback, PackingCB, 
+    XtAddCallback (button, XmNactivateCallback, PackingCB,
 		   (XtPointer) XmPACK_NONE);
     XtManageChild(button);
 
@@ -298,23 +292,23 @@ CreateForms (Widget parent)
     XtManageChild (option1);
 
     n = 0;
-    pulldown = XmCreatePulldownMenu(rc_data.form, "orientation_pulldown", 
+    pulldown = XmCreatePulldownMenu(rc_data.form, "orientation_pulldown",
 				    args, n);
-    
+
     n = 0;
     button = XmCreatePushButton(pulldown, "vertical", args, n);
-    XtAddCallback (button, XmNactivateCallback, OrientationCB, 
+    XtAddCallback (button, XmNactivateCallback, OrientationCB,
 		   (XtPointer) XmVERTICAL);
     XtManageChild(button);
     rc_data.orientation = XmVERTICAL ;
 
     n = 0;
     button = XmCreatePushButton(pulldown, "horizontal", args, n);
-    XtAddCallback (button, XmNactivateCallback, OrientationCB, 
+    XtAddCallback (button, XmNactivateCallback, OrientationCB,
 		   (XtPointer) XmHORIZONTAL);
     XtManageChild(button);
 
-    
+
 #define XtSetArg_HorAlignWith(widget)    \
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET);  n++;\
     XtSetArg (args[n], XmNtopWidget, widget);  n++;\
@@ -341,7 +335,7 @@ CreateForms (Widget parent)
     scale1 = XmCreateScale(rc_data.form, "num_columns", args, n);
     XtAddCallback (scale1, XmNvalueChangedCallback, NumColCB, NULL);
     XtManageChild (scale1);
-    
+
     n = 0;
     label1 = XmCreateLabel(scale1, "num_column_label", args, n);
     XtManageChild (label1);
@@ -360,7 +354,7 @@ CreateForms (Widget parent)
     XtManageChild (scale2);
     /* num_children is used everywhere for checking existence
        of the rowcolumn */
-    
+
     n = 0;
     label1 = XmCreateLabel(scale2, "num_children_label", args, n);
     XtManageChild (label1);
@@ -373,12 +367,12 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNshowValue, True);  n++;
     XtSetArg (args[n], XmNminimum, 1);  n++;
     rc_data.scale_width = XmCreateScale(rc_data.form, "resize_width", args, n);
-    XtAddCallback (rc_data.scale_width, XmNvalueChangedCallback, 
+    XtAddCallback (rc_data.scale_width, XmNvalueChangedCallback,
 		   WidthCB, NULL);
     XtManageChild (rc_data.scale_width);
     /*  rc_data.width will be initialized with the first resize */
 
-    
+
     rc_data.resize_width = True ;
     n = 0;
     XtSetArg (args[n], XmNset, rc_data.resize_width);  n++;
@@ -396,9 +390,9 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNorientation, XmHORIZONTAL);  n++;
     XtSetArg (args[n], XmNshowValue, True);  n++;
     XtSetArg (args[n], XmNminimum, 1);  n++;
-    rc_data.scale_height = XmCreateScale(rc_data.form, "resize_height", 
+    rc_data.scale_height = XmCreateScale(rc_data.form, "resize_height",
 					 args, n);
-    XtAddCallback (rc_data.scale_height, XmNvalueChangedCallback, HeightCB, 
+    XtAddCallback (rc_data.scale_height, XmNvalueChangedCallback, HeightCB,
 		   NULL);
     XtManageChild (rc_data.scale_height);
     /*  rc_data.height will be initialized with the first resize */
@@ -407,7 +401,7 @@ CreateForms (Widget parent)
     rc_data.resize_height = True ;
     n = 0;
     XtSetArg (args[n], XmNset, rc_data.resize_height);  n++;
-    toggle1 = XmCreateToggleButton(rc_data.scale_height, 
+    toggle1 = XmCreateToggleButton(rc_data.scale_height,
 				   "resize_height_toggle", args, n);
     XtAddCallback (toggle1, XmNvalueChangedCallback, ResizeHeightCB, NULL);
     XtManageChild (toggle1);
@@ -426,52 +420,52 @@ CreateForms (Widget parent)
     n = 0;
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_FORM);  n++;
     XtSetArg (args[n], XmNset, rc_data.adjust_last);  n++;
-    toggle1 = XmCreateToggleButton(rc_data.form1, "adjust_last_toggle", 
+    toggle1 = XmCreateToggleButton(rc_data.form1, "adjust_last_toggle",
 				   args, n);
     XtAddCallback (toggle1, XmNvalueChangedCallback, AdjustLastCB, NULL);
     XtManageChild (toggle1);
-    
+
     rc_data.adjust_margin = True ;
     n = 0;
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_POSITION);  n++;
     XtSetArg (args[n], XmNtopPosition, 25);  n++;
     XtSetArg (args[n], XmNset, rc_data.adjust_margin);  n++;
-    toggle2 = XmCreateToggleButton(rc_data.form1, "adjust_margin_toggle", 
+    toggle2 = XmCreateToggleButton(rc_data.form1, "adjust_margin_toggle",
 				  args, n);
     XtAddCallback (toggle2, XmNvalueChangedCallback, AdjustMarginCB, NULL);
     XtManageChild (toggle2);
-    
+
     rc_data.is_aligned = True ;
     n = 0;
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_POSITION);  n++;
     XtSetArg (args[n], XmNtopPosition, 50);  n++;
     XtSetArg (args[n], XmNset, rc_data.is_aligned);  n++;
-    toggle3 = XmCreateToggleButton(rc_data.form1, "is_aligned_toggle", 
+    toggle3 = XmCreateToggleButton(rc_data.form1, "is_aligned_toggle",
 				   args, n);
     XtAddCallback (toggle3, XmNvalueChangedCallback, IsAlignedCB, NULL);
     XtManageChild (toggle3);
-    
-    
+
+
     n = 0;
-    pulldown = XmCreatePulldownMenu(rc_data.form1, "entry_align_pulldown", 
+    pulldown = XmCreatePulldownMenu(rc_data.form1, "entry_align_pulldown",
 				    args, n);
 
     n = 0;
     button = XmCreatePushButton(pulldown, "align_beginning", args, n);
-    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB, 
+    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB,
 		   (XtPointer) XmALIGNMENT_BEGINNING);
     XtManageChild(button);
     rc_data.entry_alignment = XmALIGNMENT_BEGINNING ;
 
     n = 0;
     button = XmCreatePushButton(pulldown, "align_center", args, n);
-    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB, 
+    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB,
 		   (XtPointer) XmALIGNMENT_CENTER);
     XtManageChild(button);
 
     n = 0;
     button = XmCreatePushButton(pulldown, "align_end", args, n);
-    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB, 
+    XtAddCallback (button, XmNactivateCallback, EntryAlignmentCB,
 		   (XtPointer) XmALIGNMENT_END);
     XtManageChild(button);
 
@@ -479,7 +473,7 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_POSITION);  n++;
     XtSetArg (args[n], XmNtopPosition, 77);  n++;
     XtSetArg (args[n], XmNsubMenuId, pulldown); n++;
-    rc_data.entry_align_option = XmCreateOptionMenu(rc_data.form1, 
+    rc_data.entry_align_option = XmCreateOptionMenu(rc_data.form1,
 				 "entry_alignment", args, n);
     XtManageChild (rc_data.entry_align_option);
 
@@ -495,11 +489,11 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNtopAttachment, XmATTACH_POSITION);  n++;
     XtSetArg (args[n], XmNtopPosition, 0);  n++;
     XtSetArg (args[n], XmNleftAttachment, XmATTACH_OPPOSITE_FORM);  n++;
-    XtSetArg (args[n], XmNleftOffset, -100);  n++; 
+    XtSetArg (args[n], XmNleftOffset, -100);  n++;
     XtSetArg (args[n], XmNcolumns, 4);  n++;
     XtSetArg (args[n], XmNvalue, "3");  n++;
     textfield1 = XmCreateTextField(form2, "margin_width_text", args, n);
-    XtAddCallback (textfield1, XmNactivateCallback, TextFieldCB, 
+    XtAddCallback (textfield1, XmNactivateCallback, TextFieldCB,
 		   XmNmarginWidth);
     XtManageChild (textfield1);
     rc_data.margin_width = 3 ;
@@ -512,7 +506,7 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNcolumns, 4);  n++;
     XtSetArg (args[n], XmNvalue, "3");  n++;
     textfield2 = XmCreateTextField(form2, "margin_height_text", args, n);
-    XtAddCallback (textfield2, XmNactivateCallback, TextFieldCB, 
+    XtAddCallback (textfield2, XmNactivateCallback, TextFieldCB,
 		   XmNmarginHeight);
     XtManageChild (textfield2);
     rc_data.margin_height = 3 ;
@@ -525,7 +519,7 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNcolumns, 4);  n++;
     XtSetArg (args[n], XmNvalue, "3");  n++;
     textfield3 = XmCreateTextField(form2, "spacing_text", args, n);
-    XtAddCallback (textfield3, XmNactivateCallback, TextFieldCB, 
+    XtAddCallback (textfield3, XmNactivateCallback, TextFieldCB,
 		   XmNspacing);
     XtManageChild (textfield3);
     rc_data.spacing = 3 ;
@@ -538,7 +532,7 @@ CreateForms (Widget parent)
     XtSetArg (args[n], XmNcolumns, 4);  n++;
     XtSetArg (args[n], XmNvalue, "0");  n++;
     textfield4 = XmCreateTextField(form2, "entry_border_text", args, n);
-    XtAddCallback (textfield4, XmNactivateCallback, TextFieldCB, 
+    XtAddCallback (textfield4, XmNactivateCallback, TextFieldCB,
 		   XmNentryBorder);
     XtManageChild (textfield4);
     rc_data.entry_border = 0 ;
@@ -578,18 +572,18 @@ CreateForms (Widget parent)
 
 
 /*-------------------------------------------------------------
-**	LateSelfAttach           
-**	
+**	LateSelfAttach
+**
 **	Run thru the child list of this form and
 **	change all the attach_widget target in attach_self, so that
 **	prorating happens on resize.
-**	
+**
 */
-void 
+void
 LateSelfAttach(Widget form)
 {
-    Arg args[5];	
-    int	n, i ;		   
+    Arg args[5];
+    int	n, i ;
     Widget * children, left_widget, top_widget ;
     Cardinal num_children ;
     unsigned char left_attach, top_attach ;
@@ -606,7 +600,7 @@ LateSelfAttach(Widget form)
 	XtSetArg (args[n], XmNtopAttachment, &top_attach);  n++;
 	XtSetArg (args[n], XmNtopWidget, &top_widget);  n++;
 	XtGetValues (children[i], args, n);
-	
+
 	if (left_attach == XmATTACH_WIDGET) {
 	    n = 0;
 	    XtSetArg (args[n], XmNrightAttachment, XmATTACH_SELF);  n++;
@@ -624,17 +618,17 @@ LateSelfAttach(Widget form)
 }
 
 /*-------------------------------------------------------------
-**	LateCenterAttach           
-**	
+**	LateCenterAttach
+**
 **	Run thru the child list of this form and
 **	center the children horizontally, using their current width.
-**	
+**
 */
-void 
+void
 LateCenterAttach(Widget form)
 {
-    Arg args[5];	
-    int	n, i ;		   
+    Arg args[5];
+    int	n, i ;
     Widget * children ;
     Cardinal num_children ;
     Dimension width ;
@@ -663,19 +657,22 @@ LateCenterAttach(Widget form)
 /*-------------------------------------------------------------
 **	QuitCB			- callback for cancel button
 */
-void 
+void
 QuitCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
 {
-    exit (0);
+	(void)w;
+	(void)client_data;
+	(void)call_data;
+	XtAppSetExitFlag(app_context);
 }
 
 
 /*-------------------------------------------------------------
 **	HelpCB			- callback for help button
 */
-void 
+void
 HelpCB (Widget		w,		/*  widget id		*/
 	XtPointer	client_data,	/*  data from application   */
 	XtPointer	call_data)	/*  data from widget class  */
@@ -691,10 +688,9 @@ HelpCB (Widget		w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	CreateHelp		- create help window
 */
-Widget 
+Widget
 CreateHelp (Widget parent)		/*  parent widget	*/
 {
-	Widget		button;
 	Widget		message_box;	/*  Message Dialog 	*/
 	Arg		args[20];	/*  arg list		*/
 	register int	n;		/*  arg count		*/
@@ -711,13 +707,9 @@ Use the numChildren resource to control the creation and destruction\n\
 of the RowColumn. Then use the other controls to manipulate the RowColumn\n\
 layout resources.");
 
-	message_string = XmStringCreateLtoR (message, 
-					     XmSTRING_DEFAULT_CHARSET);
-	button_string = XmStringCreateLtoR ("Close", 
-					    XmSTRING_DEFAULT_CHARSET);
-	title_string = XmStringCreateLtoR ("General Help", 
-					   XmSTRING_DEFAULT_CHARSET);
-
+	message_string = XmStringLtoRCreate(message, XmSTRING_DEFAULT_CHARSET);
+	button_string = XmStringLtoRCreate("Close", XmSTRING_DEFAULT_CHARSET);
+	title_string = XmStringLtoRCreate("General Help", XmSTRING_DEFAULT_CHARSET);
 
 	/*	Create MessageBox dialog.
 	*/
@@ -726,12 +718,8 @@ layout resources.");
 	XtSetArg (args[n], XmNokLabelString, button_string);  n++;
 	XtSetArg (args[n], XmNmessageString, message_string);  n++;
 	message_box = XmCreateMessageDialog (parent, "helpbox", args, n);
-
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild (button);
-	button = XmMessageBoxGetChild (message_box, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild (button);
-
+	XtUnmanageChild(XtNameToWidget(message_box, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(message_box, "Help"));
 
 	/*	Free strings and return MessageBox.
 	*/
@@ -744,9 +732,9 @@ layout resources.");
 
 
 /*-------------------------------------------------------------
-**	NumChildCB			
+**	NumChildCB
 */
-void 
+void
 NumChildCB (Widget	w,		/*  widget id		*/
 	    XtPointer	client_data,	/*  data from application   */
 	    XtPointer	call_data)	/*  data from widget class  */
@@ -761,7 +749,7 @@ NumChildCB (Widget	w,		/*  widget id		*/
     /* the valueChangeCallback might get called with the same value */
     if (rc_data.num_children == scb->value) return ;
 
-    if (scb->value == 0) {  
+    if (scb->value == 0) {
 	/* assert: rc already exists, since we moved from something
 	           not null to 0 */
 
@@ -769,7 +757,7 @@ NumChildCB (Widget	w,		/*  widget id		*/
 	rc_data.num_children = 0 ;
 	return ;
     }
-    
+
     /* assert: value != num_children  */
 
     if (scb->value > rc_data.num_children) {
@@ -784,7 +772,7 @@ NumChildCB (Widget	w,		/*  widget id		*/
 	    XtManageChild(new_child);
 	}
     } else {
-	XtSetArg (args[0], XmNchildren, &children);  
+	XtSetArg (args[0], XmNchildren, &children);
 	XtGetValues (rc_data.rc, args, 1);
 
 	for (i = rc_data.num_children ; i > scb->value; i--) {
@@ -798,9 +786,9 @@ NumChildCB (Widget	w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	HeightCB			
+**	HeightCB
 */
-void 
+void
 HeightCB (Widget	w,		/*  widget id		*/
 	  XtPointer	client_data,	/*  data from application   */
 	  XtPointer	call_data)	/*  data from widget class  */
@@ -818,15 +806,15 @@ HeightCB (Widget	w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	AdjustMarginCB			
+**	AdjustMarginCB
 */
-void 
+void
 AdjustMarginCB (Widget		w,		/*  widget id		*/
 		XtPointer	client_data,	/*  data from application   */
 		XtPointer	call_data)	/*  data from widget class  */
 {
     Arg args[1] ;
-    XmToggleButtonCallbackStruct * scb = 
+    XmToggleButtonCallbackStruct * scb =
 	(XmToggleButtonCallbackStruct *) call_data ;
 
     rc_data.adjust_margin = scb->set ;
@@ -838,15 +826,15 @@ AdjustMarginCB (Widget		w,		/*  widget id		*/
 }
 
 /*-------------------------------------------------------------
-**	IsAlignedCB			
+**	IsAlignedCB
 */
-void 
+void
 IsAlignedCB (Widget		w,		/*  widget id		*/
 	     XtPointer		client_data,	/*  data from application   */
 	     XtPointer		call_data)	/*  data from widget class  */
 {
     Arg args[1] ;
-    XmToggleButtonCallbackStruct * scb = 
+    XmToggleButtonCallbackStruct * scb =
 	(XmToggleButtonCallbackStruct *) call_data ;
 
     rc_data.is_aligned = scb->set ;
@@ -854,22 +842,22 @@ IsAlignedCB (Widget		w,		/*  widget id		*/
     if (rc_data.num_children) {
 	XtSetArg(args[0], XmNisAligned, scb->set);
 	XtSetValues(rc_data.rc, args, 1);
-    }    
+    }
 
 /*    XtSetSensitive(rc_data.entry_align_option, scb->set);*/
 
 }
 
 /*-------------------------------------------------------------
-**	AdjustLastCB			
+**	AdjustLastCB
 */
-void 
+void
 AdjustLastCB (Widget		w,		/*  widget id		*/
 	      XtPointer		client_data,	/*  data from application   */
 	      XtPointer		call_data)	/*  data from widget class  */
 {
     Arg args[1] ;
-    XmToggleButtonCallbackStruct * scb = 
+    XmToggleButtonCallbackStruct * scb =
 	(XmToggleButtonCallbackStruct *) call_data ;
 
     rc_data.adjust_last = scb->set ;
@@ -881,16 +869,16 @@ AdjustLastCB (Widget		w,		/*  widget id		*/
 }
 
 /*-------------------------------------------------------------
-**	ResizeWidthCB			
+**	ResizeWidthCB
 */
-void 
+void
 ResizeWidthCB (Widget		w,		/*  widget id		*/
 	       XtPointer	client_data,	/*  data from application   */
 	       XtPointer	call_data)	/*  data from widget class  */
 {
     Arg args[4] ;
     Cardinal n ;
-    XmToggleButtonCallbackStruct * scb = 
+    XmToggleButtonCallbackStruct * scb =
 	(XmToggleButtonCallbackStruct *) call_data ;
 
     rc_data.resize_width = scb->set ;
@@ -907,22 +895,22 @@ ResizeWidthCB (Widget		w,		/*  widget id		*/
 	XtSetArg(args[n], XmNwidth, rc_data.width + (int)scb->set); n++ ;
 	XtSetValues(rc_data.rc, args, n);
     }
-    
+
     SetSensitiveScaleScrollBar (rc_data.scale_width, !scb->set) ;
 }
 
 
 /*-------------------------------------------------------------
-**	ResizeHeightCB			
+**	ResizeHeightCB
 */
-void 
+void
 ResizeHeightCB (Widget		w,		/*  widget id		*/
 		XtPointer	client_data,	/*  data from application   */
 		XtPointer	call_data)	/*  data from widget class  */
 {
     Arg args[4] ;
     Cardinal n ;
-    XmToggleButtonCallbackStruct * scb = 
+    XmToggleButtonCallbackStruct * scb =
 	(XmToggleButtonCallbackStruct *) call_data ;
 
     rc_data.resize_height = scb->set ;
@@ -939,7 +927,7 @@ ResizeHeightCB (Widget		w,		/*  widget id		*/
 }
 
 /*-------------------------------------------------------------*/
-void 
+void
 SetSensitiveScaleScrollBar (Widget scale,
 			    Boolean sensitive)
 {
@@ -956,9 +944,9 @@ SetSensitiveScaleScrollBar (Widget scale,
 }
 
 /*-------------------------------------------------------------
-**	WidthCB			
+**	WidthCB
 */
-void 
+void
 WidthCB (Widget		w,		/*  widget id		*/
 	 XtPointer	client_data,	/*  data from application   */
 	 XtPointer	call_data)	/*  data from widget class  */
@@ -976,9 +964,9 @@ WidthCB (Widget		w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	NumColCB			
+**	NumColCB
 */
-void 
+void
 NumColCB (Widget	w,		/*  widget id		*/
 	  XtPointer	client_data,	/*  data from application   */
 	  XtPointer	call_data)	/*  data from widget class  */
@@ -998,9 +986,9 @@ NumColCB (Widget	w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	OrientationCB			
+**	OrientationCB
 */
-void 
+void
 OrientationCB (Widget		w,		/*  widget id		*/
 	       XtPointer	client_data,	/*  data from application   */
 	       XtPointer	call_data)	/*  data from widget class  */
@@ -1017,9 +1005,9 @@ OrientationCB (Widget		w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	EntryAlignmentCB			
+**	EntryAlignmentCB
 */
-void 
+void
 EntryAlignmentCB (Widget	w,		/*  widget id		*/
 		  XtPointer	client_data,	/*  data from application   */
 		  XtPointer	call_data)	/*  data from widget class  */
@@ -1038,7 +1026,7 @@ EntryAlignmentCB (Widget	w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	PackingCB		client_data = resource value
 */
-void 
+void
 PackingCB (Widget	w,		/*  widget id		*/
 	   XtPointer	client_data,	/*  data from application   */
 	   XtPointer	call_data)	/*  data from widget class  */
@@ -1055,9 +1043,9 @@ PackingCB (Widget	w,		/*  widget id		*/
 
 
 /*-------------------------------------------------------------
-**	TextFieldCB		client_data = resource name	
+**	TextFieldCB		client_data = resource name
 */
-void 
+void
 TextFieldCB (Widget	w,		/*  widget id		*/
 	     XtPointer	client_data,	/*  data from application   */
 	     XtPointer	call_data)	/*  data from widget class  */
@@ -1078,7 +1066,7 @@ TextFieldCB (Widget	w,		/*  widget id		*/
 	    rc_data.spacing = val ;
 	if (strcmp(client_data, XmNentryBorder))
 	    rc_data.entry_border = val ;
-	
+
 	if (rc_data.num_children) {
 	    XtSetArg(args[0], client_data, val);
 	    XtSetValues(rc_data.rc, args, 1);
@@ -1091,18 +1079,18 @@ TextFieldCB (Widget	w,		/*  widget id		*/
 /*-------------------------------------------------------------
 **	EntryCB		callback for buttons in the RC
 */
-void 
+void
 EntryCB (Widget		w,		/*  widget id		*/
 	 XtPointer	client_data,	/*  data from application   */
 	 XtPointer	call_data)	/*  data from widget class  */
 {
-    XmRowColumnCallbackStruct * rcCB = 
-	    (XmRowColumnCallbackStruct *) call_data ;	
+    XmRowColumnCallbackStruct * rcCB =
+	    (XmRowColumnCallbackStruct *) call_data ;
 
     rc_data.cur_button = rcCB->widget;
 
     if (!rc_data.res_dialog) CreateResDialog();
-   
+
     UpdateResDialog(rc_data.cur_button);
     XtManageChild (rc_data.res_dialog);
 
@@ -1116,18 +1104,18 @@ EntryCB (Widget		w,		/*  widget id		*/
 void
 CreateResDialog (void)
 {
-    Widget label1, label2, label3, label4, label5, 
+    Widget label1, label2, label3, label4, label5,
            textfield1, textfield2, textfield3, textfield4, textfield5 ;
     Arg args[20] ;
     Cardinal n ;
 
     n = 0 ;
-    rc_data.res_dialog = XmCreateMessageDialog(rc_data.rc, "res_dialog", 
+    rc_data.res_dialog = XmCreateMessageDialog(rc_data.rc, "res_dialog",
 					       args, n);
     XtAddCallback (rc_data.res_dialog, XmNokCallback, ResOkCB, NULL);
-    
+
     n = 0 ;
-    rc_data.res_form = XmCreateForm(rc_data.res_dialog, "res_form", 
+    rc_data.res_form = XmCreateForm(rc_data.res_dialog, "res_form",
 				    args, n);
     XtManageChild (rc_data.res_form);
 
@@ -1218,7 +1206,7 @@ CreateResDialog (void)
 /*-------------------------------------------------------------
 **	ResOkCB	     for buttons, called one each text return and OK
 */
-void 
+void
 ResOkCB (Widget		w,		/*  widget id		*/
 	 XtPointer	client_data,	/*  data from application   */
 	 XtPointer	call_data)	/*  data from widget class  */
@@ -1227,7 +1215,7 @@ ResOkCB (Widget		w,		/*  widget id		*/
     Cardinal n ;
     char * s_x, * s_y, * s_width, * s_height, *s_recomp_size ;
     Widget * children ;
-    
+
     /* following code based on the assumption that the children
        in the res_dialog form have a specific order */
 
@@ -1261,7 +1249,7 @@ ResOkCB (Widget		w,		/*  widget id		*/
 **	UpdateResDialog - update the dialog window used to change
 **                        this button resources.
 */
-void 
+void
 UpdateResDialog (Widget	widget)		/*  rc child widget	*/
 {
     Arg args[20] ;
@@ -1274,7 +1262,7 @@ UpdateResDialog (Widget	widget)		/*  rc child widget	*/
     XmString title ;
 
     /* first update the name of the dialog */
-    title = XmStringCreateLtoR (XtName(widget), XmSTRING_DEFAULT_CHARSET);
+    title = XmStringLtoRCreate (XtName(widget), XmSTRING_DEFAULT_CHARSET);
     n = 0;
     XtSetArg (args[n], XmNdialogTitle, title);  n++;
     XtSetValues (rc_data.res_dialog, args, n);
@@ -1327,7 +1315,7 @@ UpdateResDialog (Widget	widget)		/*  rc child widget	*/
 **	CreateRC	- create the rc in a dialog and fill it with
 **                        resource coming from rc_data.
 */
-Widget 
+Widget
 CreateRC (Widget parent)		/*  parent widget	*/
 {
     Widget dialog_shell, rc ;
@@ -1359,15 +1347,15 @@ CreateRC (Widget parent)		/*  parent widget	*/
     XtManageChild(rc);
 
     XtAddCallback (rc, XmNentryCallback, EntryCB, NULL);
-	    
+
     XtAddEventHandler(rc, StructureNotifyMask, False, ResizeHandler, NULL);
-	
+
     return rc ;
 }
 
 /*
-**        Get here whenever the rowcolumnis move, resize.. 
-**        Have to update the scale value 
+**        Get here whenever the rowcolumnis move, resize..
+**        Have to update the scale value
 */
 void
 ResizeHandler (Widget widget,
@@ -1386,13 +1374,13 @@ ResizeHandler (Widget widget,
     /* don't bother checking same value, scale will do it */
 
     XmScaleSetValue(rc_data.scale_width, rc_data.width);
-    XmScaleSetValue(rc_data.scale_height, rc_data.height);    
+    XmScaleSetValue(rc_data.scale_height, rc_data.height);
 
     /* have to do that because of scrollbar sensitivity always linked
        with scale one */
     SetSensitiveScaleScrollBar (rc_data.scale_width, !rc_data.resize_width);
     SetSensitiveScaleScrollBar (rc_data.scale_height, !rc_data.resize_height);
-    
+
 
 }
 

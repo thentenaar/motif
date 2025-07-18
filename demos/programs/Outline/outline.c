@@ -97,7 +97,7 @@ CreateNode(Widget w_parent, Widget parent_node, char * name, \n\
     Widget w;\n\
     XmString xmstring;\n\
 \n\
-    xmstring = XmStringCreateSimple(name);\n\
+    xmstring = XmStringCreateLocalized(name);\n\
     \n\
     num_args = 0;\n\
     XtSetArg(args[num_args], XmNlabelString, xmstring); num_args++;\n\
@@ -119,7 +119,7 @@ static String fallbacks[] = {
     "*hypelabel*fontList: -*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*",
     "*show_code*fontList: -*-courier-*-r-normal-*-*-*-*-*-*-*-*-*",
     "*show_pb.labelString: Show Layout Code...",
-    "*explain_pb.labelString: Other Resources...", 
+    "*explain_pb.labelString: Other Resources...",
     "*rc_1*XmSeparator*orientation: XmVERTICAL",
     "*ladder_tog.labelString: Connect Style:",
     "*callback_tog.labelString: Node State Callback:",
@@ -147,7 +147,7 @@ InitializePanel(Widget pane)
     XmString xmstring;
     XtCallbackStatus status;
     Widget lab_temp, tog_temp;
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNautoClose, &auto_close); argcnt++;
     XtSetArg(args[argcnt], XmNconnectNodes, &connect); argcnt++;
@@ -171,13 +171,13 @@ InitializePanel(Widget pane)
     switch(status) {
     case XtCallbackHasSome:
 	XmToggleButtonSetState(tog_temp, True, False);
-	xmstring = XmStringCreateSimple("Added");
+	xmstring = XmStringCreateLocalized("Added");
 	break;
     case XtCallbackNoList:
     case XtCallbackHasNone:
     default:
 	XmToggleButtonSetState(tog_temp, False, False);
-	xmstring = XmStringCreateSimple("Not Added");
+	xmstring = XmStringCreateLocalized("Not Added");
 	break;
     }
     argcnt = 0;
@@ -205,7 +205,7 @@ InitializePanel(Widget pane)
 
 /*
  * Function Name: main
- * Description:   
+ * Description:
  * Arguments:     the usual suspects
  * Returns:       nothing
  *
@@ -221,23 +221,23 @@ main(int argc, char **argv)
     num_args = 0;
     XtSetArg(args[num_args], XmNtitle, "Outline Demo"); num_args++;
     XtSetArg(args[num_args], XmNallowShellResize, True); num_args++;
-    top = XtAppInitialize(&app_con, "Treedemo", 
+    top = XtAppInitialize(&app_con, "Treedemo",
 			  NULL, 0, &argc, argv,
 			  fallbacks, args, num_args);
-	
-    { 
+
+    {
     Widget sw;
     num_args = 0;
-    pane = XtCreateManagedWidget("pane", xmPanedWindowWidgetClass, 
-				 top, args, num_args);    
+    pane = XtCreateManagedWidget("pane", xmPanedWindowWidgetClass,
+				 top, args, num_args);
     WriteUpHype(pane);
 
     num_args = 0;
     XtSetArg(args[num_args], XmNscrollingPolicy, XmAUTOMATIC); num_args++;
     XtSetArg(args[num_args], XmNheight, 500); num_args++;
-    sw = XtCreateManagedWidget("pane", xmScrolledWindowWidgetClass, 
-				 pane, args, num_args);    
-    
+    sw = XtCreateManagedWidget("pane", xmScrolledWindowWidgetClass,
+				 pane, args, num_args);
+
     BuildHierarchy(sw, xmOutlineWidgetClass);
     MakeControlPanel(pane);
 
@@ -264,8 +264,8 @@ main(int argc, char **argv)
  **************************************************************/
 /*
  * Function Name: BuildHierarchy
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       Nothing
  *
  */
@@ -274,7 +274,7 @@ BuildHierarchy(Widget parent, WidgetClass class)
 {
     Widget outline, hierarchy, w1, w2, w3;
 
-    G_outline = outline = XtCreateManagedWidget("outline_widget", class, 
+    G_outline = outline = XtCreateManagedWidget("outline_widget", class,
 					  parent, NULL, (Cardinal) 0);
 
     w1 = CreateNode(outline, NULL, "Widgets", XmOpen);
@@ -309,13 +309,13 @@ static void NewChildCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: CreateNode
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       Widget
  *
  */
 static Widget
-CreateNode(Widget w_parent, Widget parent_node, char * name, 
+CreateNode(Widget w_parent, Widget parent_node, char * name,
 	   XmHierarchyNodeState state)
 {
     Arg args[10];
@@ -323,13 +323,13 @@ CreateNode(Widget w_parent, Widget parent_node, char * name,
     Widget w;
     XmString xmstring;
 
-    xmstring = XmStringCreateSimple(name);
-    
+    xmstring = XmStringCreateLocalized(name);
+
     num_args = 0;
     XtSetArg(args[num_args], XmNlabelString, xmstring); num_args++;
     XtSetArg(args[num_args], XmNnodeState, state); num_args++;
     XtSetArg(args[num_args], XmNparentNode, parent_node); num_args++;
-    
+
     w = XtCreateManagedWidget(name, xmPushButtonWidgetClass,
 			      w_parent, args, num_args);
 
@@ -352,8 +352,8 @@ void WriteUpHype(Widget parent)
     Cardinal argcnt;
     Widget w;
     XmString xmstring;
-    
-    xmstring = XmStringCreateLtoR(
+
+    xmstring = XmStringLtoRCreate(
 "The Motif Outline Widget displays hierarchical data in an outline layout with a Motif\n\
 look and feel. The Outline widget displayed below has several Motif PushButtons (the\n\
 Outline can accept any type of widget); press one to add a new child.\n\
@@ -365,7 +365,7 @@ The toggles below set different resources on the Outline widget itself.\n\
 \n\
 Press \"Other Resources...\" for more information on the various resources.",
 				  XmSTRING_DEFAULT_CHARSET);
-     
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginHeight, 10); argcnt++;
     XtSetArg(args[argcnt], XmNmarginWidth, 10); argcnt++;
@@ -373,14 +373,14 @@ Press \"Other Resources...\" for more information on the various resources.",
     XtSetArg(args[argcnt], XmNlabelString, xmstring); argcnt++;
     w = XtCreateManagedWidget("hypelabel", xmLabelWidgetClass,
 			      parent, args, argcnt);
-    
+
     XmStringFree(xmstring);
-				  
+
 }
 
 /*
  * Function Name: ShowCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -394,7 +394,7 @@ static void ShowCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString ok_xmstring;
 
-	ok_xmstring = XmStringCreateSimple("OK");
+	ok_xmstring = XmStringCreateLocalized("OK");
 
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNtitle, "Show Code..."); argcnt++;
@@ -420,7 +420,7 @@ static void ShowCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: ExplainCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -434,7 +434,7 @@ static void ExplainCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringCreateLtoR(
+	xmstring = XmStringLtoRCreate(
 "The Motif Tree and Outline widget actually derive behavior from the\n\
 Hierarchy Widget. The Hierarchy widget provides resources that specify\n\
 the relationships between children.\n\
@@ -461,11 +461,8 @@ opened or closed. To use this callback, press the Node State Callback toggle.",
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
 	XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
 	info = XmCreateInformationDialog(G_outline, "explain", args, argcnt);
-
-	temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild(temp);
-	temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild(temp);
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
 	XmStringFree(xmstring);
     }
 
@@ -474,7 +471,7 @@ opened or closed. To use this callback, press the Node State Callback toggle.",
 
 /*
  * Function Name: NodeStateCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -492,8 +489,7 @@ void NodeStateCB(Widget w, XtPointer client, XtPointer call)
     XtSetArg(args[argcnt], XmNlabelString, &xmstring); argcnt++;
     XtGetValues(node_data->widget, args, argcnt);
 
-    XmStringGetLtoR(xmstring, XmFONTLIST_DEFAULT_TAG, &name);
-
+    name = XmStringUnparse(xmstring, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
     if (node_data->state == XmOpen)
 	sprintf(buf, "%s has switched to the XmOpen state.", name);
     else if (node_data->state == XmClosed)
@@ -505,27 +501,22 @@ void NodeStateCB(Widget w, XtPointer client, XtPointer call)
     else
 	sprintf(buf, "%s has switched node state.", name);
 
-    xmstring = XmStringCreateSimple(buf);
-    
+    xmstring = XmStringCreateLocalized(buf);
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Node State Changed"); argcnt++;
     XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
     info = XmCreateInformationDialog(w, "nodechange", args, argcnt);
-    
-    temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-    XtUnmanageChild(temp);
-    temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-    XtUnmanageChild(temp);
-
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
     XmStringFree(xmstring);
     XtFree(name);
-
     XtManageChild(info);
 }
 
 /*
  * Function Name: CallbackTogCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -538,10 +529,10 @@ static void CallbackTogCB(Widget w, XtPointer client, XtPointer call)
 
     if (XmToggleButtonGetState(w)) {
 	XtAddCallback(G_outline, XmNnodeStateCallback, NodeStateCB, NULL);
-	xmstring = XmStringCreateSimple("Added");
+	xmstring = XmStringCreateLocalized("Added");
     } else {
 	XtRemoveAllCallbacks(G_outline, XmNnodeStateCallback);
-	xmstring = XmStringCreateSimple("Not Added");
+	xmstring = XmStringCreateLocalized("Not Added");
     }
 
     argcnt = 0;
@@ -552,7 +543,7 @@ static void CallbackTogCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: AutoCloseTogCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -590,7 +581,7 @@ void MakeControlPanel(Widget parent)
 {
     Arg args[5];
     Cardinal argcnt;
-    Widget big_rc, rc_1, rc_2, show_pb, explain_pb, ladder_tog, ladder_lab, 
+    Widget big_rc, rc_1, rc_2, show_pb, explain_pb, ladder_tog, ladder_lab,
     callback_tog, callback_lab, quit_pb, autoclose_tog, sep, connect_tog;
 
     /* Big Vertical Row Column for the control panel */
@@ -608,13 +599,13 @@ void MakeControlPanel(Widget parent)
 				 big_rc, args, argcnt);
 
     argcnt = 0;
-    callback_tog = XtCreateManagedWidget("callback_tog", 
+    callback_tog = XtCreateManagedWidget("callback_tog",
 					 xmToggleButtonWidgetClass,
 					 rc_1, args, argcnt);
     argcnt = 0;
     callback_lab = XtCreateManagedWidget("callback_lab", xmLabelWidgetClass,
 					 rc_1, args, argcnt);
-    XtAddCallback(callback_tog, XmNvalueChangedCallback, 
+    XtAddCallback(callback_tog, XmNvalueChangedCallback,
 		  CallbackTogCB, (XtPointer) callback_lab);
 
     argcnt = 0;
@@ -622,10 +613,10 @@ void MakeControlPanel(Widget parent)
 				rc_1, args, argcnt);
 
     argcnt = 0;
-    autoclose_tog = XtCreateManagedWidget("autoclose_tog", 
+    autoclose_tog = XtCreateManagedWidget("autoclose_tog",
 					  xmToggleButtonWidgetClass,
 					  rc_1, args, argcnt);
-    XtAddCallback(autoclose_tog, XmNvalueChangedCallback, 
+    XtAddCallback(autoclose_tog, XmNvalueChangedCallback,
 		  AutoCloseTogCB, NULL);
 
     argcnt = 0;
@@ -633,10 +624,10 @@ void MakeControlPanel(Widget parent)
 				rc_1, args, argcnt);
 
     argcnt = 0;
-    connect_tog = XtCreateManagedWidget("connect_tog", 
+    connect_tog = XtCreateManagedWidget("connect_tog",
 					  xmToggleButtonWidgetClass,
 					  rc_1, args, argcnt);
-    XtAddCallback(connect_tog, XmNvalueChangedCallback, 
+    XtAddCallback(connect_tog, XmNvalueChangedCallback,
 		  ConnectTogCB, NULL);
 
 

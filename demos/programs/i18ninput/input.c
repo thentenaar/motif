@@ -1,5 +1,5 @@
 /* $XConsortium: input.c /main/5 1995/07/15 20:45:41 drk $ */
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -97,39 +97,39 @@ static ApplicationData app_resources;
 
 static XtResource resources[] = {
   {
-    "localeString", "LocaleString", 
+    "localeString", "LocaleString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, locale_string), 
+    XtOffset(ApplicationDataPtr, locale_string),
     XtRImmediate, "Locale:"
   },
   {
-    "preeditString", "PreeditString", 
+    "preeditString", "PreeditString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, preedit_string), 
+    XtOffset(ApplicationDataPtr, preedit_string),
     XtRImmediate, "Preedit style:"
   },
   {
-    "statusString", "StatusString", 
+    "statusString", "StatusString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, status_string), 
+    XtOffset(ApplicationDataPtr, status_string),
     XtRImmediate, "Status style:"
   },
   {
-    "noImString", "NoImString", 
+    "noImString", "NoImString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, no_im_string), 
+    XtOffset(ApplicationDataPtr, no_im_string),
     XtRImmediate, "No input method has been opened"
   },
   {
-    "noIcString", "NoIcString", 
+    "noIcString", "NoIcString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, no_ic_string), 
+    XtOffset(ApplicationDataPtr, no_ic_string),
     XtRImmediate, "No input context(s) created"
   },
   {
-    "imInfoString", "ImInfoString", 
+    "imInfoString", "ImInfoString",
     XtRString, sizeof (String),
-    XtOffset(ApplicationDataPtr, im_info_string), 
+    XtOffset(ApplicationDataPtr, im_info_string),
     XtRImmediate, "\n\
 See VendorShell documentation for more information\n\
 on preedit and status styles. For information on\n\
@@ -168,7 +168,7 @@ static void Overview(Widget widget,
 *
  ****************************************************************/
 static Widget
-get_constraint_widget(Widget child, 
+get_constraint_widget(Widget child,
 		      Widget parent)
 {
   Widget w;
@@ -189,7 +189,7 @@ get_constraint_widget(Widget child,
 
 /**************************************************************
  * form_widget:
- *   Create a form widget with two radio boxes inside a frame, 
+ *   Create a form widget with two radio boxes inside a frame,
  *   one for setting fonts and one for setting color.
  *
  **************************************************************/
@@ -213,7 +213,7 @@ form_widget(char    * name,
     XmCreateForm(parent, name, args, n);
 
   /***************** font : XmFrame *****************/
-  widget_array[WI_FONT] = 
+  widget_array[WI_FONT] =
     XmCreateFrame(widget_array[WI_FORM], "font", NULL, 0);
 
   /***************** radiobox : XmRadioBox *****************/
@@ -263,7 +263,7 @@ form_widget(char    * name,
     cbl->callback = NULL;
     XtSetArg(args[n], XmNentryCallback, cbs2); n++;
   }
-  
+
   widget_array[WI_RADIOBOX1] =
     XmCreateRadioBox(widget_array[WI_COLOR], "radiobox", args, n);
 
@@ -316,7 +316,7 @@ form_widget(char    * name,
   XtSetArg(args[n], XmNbottomAttachment, XmATTACH_FORM); n++;
   XtSetArg(args[n], XmNtopPosition, 5); n++;
   XtSetValues(widget_array[WI_COLOR], args, n);
-  
+
   XtManageChild(widget_array[WI_BUTTON4]);
   XtManageChild(widget_array[WI_BUTTON5]);
   XtManageChild(widget_array[WI_BUTTON6]);
@@ -330,7 +330,7 @@ form_widget(char    * name,
                   (char *)widget_array,
            sizeof(Widget)*13);
   }
-  
+
 }
 
 /**************************************************************
@@ -361,7 +361,7 @@ create_input_widget(char    * name,
 							change size when font
 							changes */
 
-  widget_array[WI_INPUT] = 
+  widget_array[WI_INPUT] =
     XtAppCreateShell(name, "I18ninput", applicationShellWidgetClass,
 		     display, args, n);
 
@@ -423,7 +423,7 @@ create_input_widget(char    * name,
 
   /***************** scrolledtext : XmForm *****************/
 
-  form_widget("scrolledtext", widget_array[WI_MAIN], 
+  form_widget("scrolledtext", widget_array[WI_MAIN],
 	      &(widget_array[WI_SCROLLEDTEXT]));
 
   /***************** scrolledText : XmScrolledText *****************/
@@ -432,7 +432,7 @@ create_input_widget(char    * name,
   XtSetArg(args[n], XmNrows, 8); n++;
   XtSetArg(args[n], XmNcolumns, 12); n++;
   widget_array[WI_SCROLLEDTEXT1] =
-    XmCreateScrolledText(widget_array[WI_SCROLLEDTEXT], "scrolledText", 
+    XmCreateScrolledText(widget_array[WI_SCROLLEDTEXT], "scrolledText",
 			 args, n);
 
   /***************** separator : XmSeparator *****************/
@@ -461,7 +461,7 @@ create_input_widget(char    * name,
 
   /***************** textfield : XmForm *****************/
 
-  form_widget("textfield", widget_array[WI_MAIN], 
+  form_widget("textfield", widget_array[WI_MAIN],
 	      &(widget_array[WI_TEXTFIELD]));
 
   /***************** textField : XmTextField *****************/
@@ -493,7 +493,7 @@ create_input_widget(char    * name,
   XtSetArg(pargs[pn], XmNtopAttachment, XmATTACH_FORM); pn++;
   XtSetArg(pargs[pn], XmNbottomAttachment, XmATTACH_WIDGET); pn++;
   XtSetArg(pargs[pn], XmNbottomWidget, widget_array[WI_STFONT]); pn++;
-  tmpw = get_constraint_widget(widget_array[WI_SCROLLEDTEXT1], 
+  tmpw = get_constraint_widget(widget_array[WI_SCROLLEDTEXT1],
 			       widget_array[WI_SCROLLEDTEXT]);
   if (tmpw)
     XtSetValues(tmpw, pargs, pn);
@@ -581,7 +581,7 @@ create_input_widget(char    * name,
 /****************************************************************
  * SelectFont:
  *   Set the font of the Text child of our parent form to the
- *   
+ *
  ****************************************************************/
 
 /*ARGSUSED*/
@@ -605,21 +605,21 @@ SelectFont(Widget widget,
   /* Find XmForm parent */
   while (form && !XmIsForm(form))
     form = XtParent(form);
-  
+
   if (form) {
     /* Find an XmText[Field] child and apply XmNfontList */
-    XtVaGetValues(form, XmNchildren, &children, 
+    XtVaGetValues(form, XmNchildren, &children,
 		  XmNnumChildren, &num_children, NULL);
     for (i = 0; i < num_children; i++) {
       if (XmIsText(children[i]) || XmIsTextField(children[i])) {
 	XtVaSetValues(children[i], XmNfontList, fontlist, NULL);
 	break;
       }
-      if (XmIsScrolledWindow(children[i])) { 
+      if (XmIsScrolledWindow(children[i])) {
 	/* This may be a scrolled text. Look for an XmText child */
-	XtVaGetValues(children[i], XmNchildren, &swchildren, 
+	XtVaGetValues(children[i], XmNchildren, &swchildren,
 		      XmNnumChildren, &num_swchildren, NULL);
-	for (j = 0; j < num_swchildren; j++) 
+	for (j = 0; j < num_swchildren; j++)
 	  if (XmIsText(swchildren[j])) {
 	    XtVaSetValues(swchildren[j], XmNfontList, fontlist, NULL);
 	    break;
@@ -644,7 +644,7 @@ SelectColor(Widget widget,
   Widget form = widget;
   Boolean set;
   int i, j;
-  
+
   XtVaGetValues(cbs->widget, XmNforeground, &color, XmNset, &set, NULL);
   if (!set)
     return; /* do not change color when toggle is unset */
@@ -652,11 +652,11 @@ SelectColor(Widget widget,
   /* Find XmForm parent */
   while (form && !XmIsForm(form))
     form = XtParent(form);
-  
+
   if (form) {
-    /* Find an XmText[Field] child and apply toggle's 
+    /* Find an XmText[Field] child and apply toggle's
        XmNforeground to text's XmNbackground */
-    XtVaGetValues(form, XmNchildren, &children, 
+    XtVaGetValues(form, XmNchildren, &children,
 		  XmNnumChildren, &num_children, NULL);
     for (i = 0; i < num_children; i++) {
       if (XmIsText(children[i]) || XmIsTextField(children[i]))
@@ -664,9 +664,9 @@ SelectColor(Widget widget,
 
       if (XmIsScrolledWindow(children[i])) {
 	/* This may be a scrolled text. Look for an XmText child */
-	XtVaGetValues(children[i], XmNchildren, &swchildren, 
+	XtVaGetValues(children[i], XmNchildren, &swchildren,
 		      XmNnumChildren, &num_swchildren, NULL);
-	for (j = 0; j < num_swchildren; j++) 
+	for (j = 0; j < num_swchildren; j++)
 	  if (XmIsText(swchildren[j])) {
 	    XtVaSetValues(swchildren[j], XmNbackground, color, NULL);
 	    break;
@@ -686,11 +686,11 @@ ShowIMStatus(Widget widget,
 {
   static Widget message_dialog = NULL;
   Widget toplevel;
-  Widget text_widget, tmp_w;
+  Widget text_widget;
   XIM xim;
   XIC xic = NULL;
   XIMStyle style;
-  char *locale; 
+  char *locale;
   char *preedit_style = "", *status_style = "";
   char *buf;
   XmString message_str;
@@ -740,30 +740,30 @@ ShowIMStatus(Widget widget,
 
   /* Create help text */
   buf = (char *)XtMalloc(strlen(app_resources.locale_string) + strlen(locale) +
-			 strlen(app_resources.preedit_string) + 
+			 strlen(app_resources.preedit_string) +
 			 strlen(preedit_style) +
 			 strlen(app_resources.status_string) +
 			 strlen(status_style) +
 			 strlen(app_resources.im_info_string) + 100);
   if (xim) {
     if (xic) {
-      sprintf(buf, 
+      sprintf(buf,
 	    "%s \t%s\n%s \t%s\n%s \t%s\n%s",
-	    app_resources.locale_string, locale, 
-	    app_resources.preedit_string, preedit_style, 
+	    app_resources.locale_string, locale,
+	    app_resources.preedit_string, preedit_style,
 	    app_resources.status_string, status_style,
 	    app_resources.im_info_string);
     } else {
-      sprintf(buf, 
+      sprintf(buf,
 	    "%s \t%s\n%s\n%s",
-	    app_resources.locale_string, locale, 
+	    app_resources.locale_string, locale,
 	    app_resources.no_ic_string,
 	    app_resources.im_info_string);
     }
   } else {
-    sprintf(buf, 
+    sprintf(buf,
 	    "%s \t%s\n%s",
-	    app_resources.locale_string, locale, 
+	    app_resources.locale_string, locale,
 	    app_resources.no_im_string);
   }
   message_str = XmStringGenerate(buf, NULL, XmCHARSET_TEXT, NULL);
@@ -775,10 +775,8 @@ ShowIMStatus(Widget widget,
   if (message_dialog == NULL) {
     message_dialog = XmCreateMessageDialog(toplevel, "im_info", args, n);
     /* Only keep OK button */
-    tmp_w = XmMessageBoxGetChild(message_dialog, XmDIALOG_CANCEL_BUTTON);
-    XtUnmanageChild(tmp_w);
-    tmp_w = XmMessageBoxGetChild(message_dialog, XmDIALOG_HELP_BUTTON);
-    XtUnmanageChild(tmp_w);
+    XtUnmanageChild(XtNameToWidget(message_dialog, "Cancel"));
+    XtUnmanageChild(XtNameToWidget(message_dialog, "Help"));
   } else {
     XtSetValues(message_dialog, args, n);
   }
@@ -827,7 +825,7 @@ Overview(Widget widget,
   } else {
     XtSetValues(XtParent(help_window), args, n);
   }
-  
+
   XtManageChild(help_window);
 }
 
@@ -840,7 +838,7 @@ Exit(Widget widget,
    exit(0);
 }
 
-int 
+int
 dialog_init(int *argc, char **argv, Display *dpy)
 {
   Widget appl_w;
@@ -849,7 +847,7 @@ dialog_init(int *argc, char **argv, Display *dpy)
   XtGetApplicationResources(appl_w,
 			    &app_resources,
 			    resources,
-			    XtNumber(resources), 
+			    XtNumber(resources),
 			    NULL, 0);
   XtRealizeWidget(appl_w);
   XtPopup(appl_w, XtGrabNone);

@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -38,7 +38,7 @@
 
 Pixmap fileIcon, dirIcon, fileMask, dirMask, execIcon, execMask,
        noneIcon, noneMask;
-Pixmap s_fileIcon, s_dirIcon, s_fileMask, s_dirMask, 
+Pixmap s_fileIcon, s_dirIcon, s_fileMask, s_dirMask,
   s_execIcon, s_execMask, s_noneIcon, s_noneMask;
 
 #define NDIRLEVELS 9
@@ -49,7 +49,7 @@ Boolean showHidden = False;
 
 char *currentdir = NULL;
 
-int  validFI = 0; 
+int  validFI = 0;
 int  maxFI = 0;
 FileInfoRec *FI = NULL;
 
@@ -59,13 +59,13 @@ WidgetList IconGadgets = NULL;
 
 static void doOptionMenu();
 
-static void getIcons(int ind, Pixmap *icon, Pixmap *mask, 
+static void getIcons(int ind, Pixmap *icon, Pixmap *mask,
 		     Pixmap *sicon, Pixmap *smask);
 static int GetNewEntry(int, char*, struct dirent*);
 static FileInfoRec *GetInfoFromWidget(Widget);
 typedef int (*qsProc)(const void *, const void *);
 
-static int 
+static int
 qsCompare(void *xx, void *yy)
 {
   FileInfoRec *x = (FileInfoRec *) xx;
@@ -82,15 +82,15 @@ static void SortChildren()
   qsort(FI, validFI, sizeof(FileInfoRec), (qsProc) qsCompare);
 
   /* Reorder the list of gadgets */
-  for(i = 0; i < validFI; i++) 
+  for(i = 0; i < validFI; i++)
     IconGadgets[i] = FI[i].icon;
 }
 
 
 /* Determine real full pathname */
 /* This code is UNIX pathname dependent */
-char* 
-expandPath(char *dirname) 
+char*
+expandPath(char *dirname)
 {
   char buf[1024];
   Boolean parentdir = False;
@@ -103,7 +103,7 @@ expandPath(char *dirname)
   if (strncmp(dirname, "..", 2) == 0) parentdir = True;
   if (! parentdir && strncmp(dirname, ".", 1) == 0) curdir = True;
 
-  if (! isroot && 
+  if (! isroot &&
       (curdir || parentdir)) {
     char *n;
     char *partial;
@@ -130,7 +130,7 @@ expandPath(char *dirname)
     if (partial != NULL) {
       strcat(dir, "/");
       strcat(dir, partial);
-    } 
+    }
 
     /* If we are empty here,  then we started with ../ */
     if (dir[0] == 0) strcpy(dir, "/");
@@ -141,14 +141,14 @@ expandPath(char *dirname)
   }
 }
 
-void 
+void
 readdirCB(Widget widget, char* dirname, XmAnyCallbackStruct *callback_data)
 {
   read_directory(NULL, dirname);
 }
 
-void 
-outlineCB(Widget widget, char* subdirname, 
+void
+outlineCB(Widget widget, char* subdirname,
 	  XmContainerOutlineCallbackStruct *callback_data)
 {
   if (callback_data -> new_outline_state == True) {
@@ -172,7 +172,7 @@ outlineCB(Widget widget, char* subdirname,
       XtVaGetValues(parent, XmNentryParent, &grandparent, NULL, NULL);
       names[level++] = f -> name;
       for(; grandparent != (Widget) NULL; level++) {
-	FileInfoRec *f = GetInfoFromWidget(grandparent);
+	f = GetInfoFromWidget(grandparent);
 	if (f) names[level] = f -> name;
 	/* Get the next parent */
 	XtVaGetValues(grandparent, XmNentryParent, &grandparent, NULL, NULL);
@@ -224,7 +224,7 @@ read_directory(Widget parent, char* dirname)
 
     /* Update last read time for current directory */
     stat(currentdir, &buf);
-    ltm = buf.st_ctime;    
+    ltm = buf.st_ctime;
   }
 
   while((info = readdir(thisdir))) {
@@ -264,7 +264,7 @@ read_directory(Widget parent, char* dirname)
   XtFree(tempdir);
 }
 
-int 
+int
 process_single_entry(Widget parent, char* dir, int ind,
 		     struct dirent *info)
 {
@@ -284,34 +284,34 @@ process_single_entry(Widget parent, char* dir, int ind,
     status = GetNewEntry(ind, dir, info);
   else
     status = GetNewEntry(ind, currentdir, info);
-  
+
   icon = mask = s_icon = s_mask = XmUNSPECIFIED_PIXMAP;
 
   if (status != -1)
     getIcons(ind, &icon, &mask, &s_icon, &s_mask);
   else
     getIcons(-1, &icon, &mask, &s_icon, &s_mask);
-  
+
   num_details = 0;
   /* Owner */
   if (status != -1)
     user = getpwuid(FI[ind].statbuf.st_uid);
   else
     user = NULL;
-  
+
   if (user != NULL)
     details[num_details++] = XmStringCreateLocalized(user->pw_name);
   else {
     sprintf(buf, "%d", FI[ind].statbuf.st_uid);
     details[num_details++] = XmStringCreateLocalized(buf);
   }
-  
+
   /* Permissions */
   if (status != -1)
     mode = FI[ind].statbuf.st_mode;
   else
     mode = 0;
-  sprintf(buf, "%c%c%c,%c%c%c,%c%c%c", 
+  sprintf(buf, "%c%c%c,%c%c%c,%c%c%c",
 	  (S_IRUSR & mode) ? 'r' : '-',
 	  (S_IWUSR & mode) ? 'w' : '-',
 	  (S_IXUSR & mode) ? 'x' : '-',
@@ -321,7 +321,7 @@ process_single_entry(Widget parent, char* dir, int ind,
 	  (S_IROTH & mode) ? 'r' : '-',
 	  (S_IWOTH & mode) ? 'w' : '-',
 	  (S_IXOTH & mode) ? 'x' : '-');
-  details[num_details++] = XmStringCreateLocalized(buf); 
+  details[num_details++] = XmStringCreateLocalized(buf);
   /* Size */
   if (status != -1)
     size = FI[ind].statbuf.st_size;
@@ -334,14 +334,14 @@ process_single_entry(Widget parent, char* dir, int ind,
     sprintf(buf, "%-.2fK", size/1.0e3);
   else
     sprintf(buf, "%-.2fM", size/1.0e6);
-  details[num_details++] = XmStringCreateLocalized(buf); 
+  details[num_details++] = XmStringCreateLocalized(buf);
 
   stemp = XmStringCreateLocalized(info -> d_name);
-  XtVaSetValues(IconGadgets[ind], 
-		XmNlabelString, stemp, 
-		XmNlargeIconPixmap, icon, 
+  XtVaSetValues(IconGadgets[ind],
+		XmNlabelString, stemp,
+		XmNlargeIconPixmap, icon,
 		XmNlargeIconMask, mask,
-		XmNsmallIconPixmap, s_icon, 
+		XmNsmallIconPixmap, s_icon,
 		XmNsmallIconMask, s_mask,
 		XmNdetail, details,
 		XmNentryParent, parent,
@@ -351,7 +351,7 @@ process_single_entry(Widget parent, char* dir, int ind,
   FI[ind].icon = IconGadgets[ind];
 
   XmStringFree(stemp);
-  
+
   if (S_ISDIR(FI[ind].statbuf.st_mode) &&
       strcmp(info -> d_name, ".") != 0 &&
       strcmp(info -> d_name, "..") != 0) {
@@ -360,11 +360,11 @@ process_single_entry(Widget parent, char* dir, int ind,
     /* Create "." child */
     GetNewEntry(ind, currentdir, info);
     stemp = XmStringCreateLocalized(".");
-    XtVaSetValues(IconGadgets[ind], 
-		  XmNlabelString, stemp, 
-		  XmNlargeIconPixmap, icon, 
+    XtVaSetValues(IconGadgets[ind],
+		  XmNlabelString, stemp,
+		  XmNlargeIconPixmap, icon,
 		  XmNlargeIconMask, mask,
-		  XmNsmallIconPixmap, s_icon, 
+		  XmNsmallIconPixmap, s_icon,
 		  XmNsmallIconMask, s_mask,
 		  XmNdetail, details,
 		  XmNdetailCount, num_details,
@@ -378,7 +378,7 @@ process_single_entry(Widget parent, char* dir, int ind,
     XmStringFree(details[i]);
 
   return(ind);
-}     
+}
 
 
 static int
@@ -414,12 +414,12 @@ GetNewEntry(int vFI, char* dir, struct dirent *info)
       IconGadgets = (Widget *) XtMalloc(sizeof(Widget) * newsize);
     } else {
       newsize = maxIcons * 2;
-      IconGadgets = (Widget *) XtRealloc((XtPointer) IconGadgets, 
+      IconGadgets = (Widget *) XtRealloc((XtPointer) IconGadgets,
 					 sizeof(Widget) * newsize);
     }
     maxIcons = newsize;
   }
-  
+
   if (vFI >= validIcons) {
     IconGadgets[vFI] = XmCreateIconGadget(fileviewer, "IG", NULL, 0);
     validIcons++;
@@ -437,7 +437,7 @@ find_suffix(char *filename)
 
   if (filename[i] == '.')
     return(&filename[i + 1]);
-  else 
+  else
     return(filename);
 }
 
@@ -466,7 +466,7 @@ static void readIcon(str, icon, mask, fg, bg)
   }
 }
 
-static void 
+static void
 getIcons(int ind, Pixmap *icon, Pixmap *mask, Pixmap *sicon, Pixmap *smask)
 {
   Boolean	isdir;
@@ -500,7 +500,7 @@ getIcons(int ind, Pixmap *icon, Pixmap *mask, Pixmap *sicon, Pixmap *smask)
   if (ind < 0) {
     default_type = "default_none";
   } else {
-    path[2] = XrmStringToQuark(find_suffix(info -> name)); 
+    path[2] = XrmStringToQuark(find_suffix(info -> name));
     path[3] = XrmStringToQuark("largeIcon");
     XrmQGetResource(db, path, classes, &type, &value);
     str = (char*) value.addr;
@@ -511,7 +511,7 @@ getIcons(int ind, Pixmap *icon, Pixmap *mask, Pixmap *sicon, Pixmap *smask)
     str = (char*) value.addr;
     readIcon(str, sicon, smask, fg, bg);
 
-    if (*icon != XmUNSPECIFIED_PIXMAP && 
+    if (*icon != XmUNSPECIFIED_PIXMAP &&
 	*sicon != XmUNSPECIFIED_PIXMAP) return;
   }
 
@@ -579,7 +579,7 @@ static void doOptionMenu()
       buf[n] = c[n];
     buf[n] = 0;
     c = &c[n];
-    
+
     rind = ndirLabel - i - 1;
     if (rind < 0) break;
 
@@ -589,13 +589,13 @@ static void doOptionMenu()
     strncpy(paths[i], currentdir, span);
     paths[i][span] = 0; /* Null terminate */
     stemp = XmStringCreateLocalized(buf);
-    XtVaSetValues(dirLabel[rind], 
-		  XmNlabelString, stemp, 
+    XtVaSetValues(dirLabel[rind],
+		  XmNlabelString, stemp,
 		  NULL, NULL);
     XmStringFree(stemp);
     XtManageChild(dirLabel[rind]);
     XtRemoveAllCallbacks(dirLabel[rind], XmNactivateCallback);
-    XtAddCallback(dirLabel[rind], XmNactivateCallback, 
+    XtAddCallback(dirLabel[rind], XmNactivateCallback,
 		  (XtCallbackProc) readdirCB, paths[i]);
     i++;
     while (*c == '/' && *c != 0)
@@ -614,10 +614,10 @@ static void doOptionMenu()
   XtVaSetValues(displayLabel, XmNlabelString, stemp, NULL, NULL);
 }
 
-void 
+void
 selectCB(Widget w, XtPointer ignore, XtPointer cb)
 {
-  XmContainerSelectCallbackStruct *cbstruct = 
+  XmContainerSelectCallbackStruct *cbstruct =
     (XmContainerSelectCallbackStruct *) cb;
   char *temp;
   Boolean found = False;
@@ -632,7 +632,7 @@ selectCB(Widget w, XtPointer ignore, XtPointer cb)
   if (! f) return;
 
   mode = f -> statbuf.st_mode;
-  
+
   if (S_ISDIR(mode)) {
     /* For directories,  navigate downward */
     if (strcmp(f -> name, "..") == 0 ||
@@ -659,7 +659,7 @@ selectCB(Widget w, XtPointer ignore, XtPointer cb)
 
     path[0] = app_quark;
     path[1] = XrmStringToQuark("types");
-    path[2] = XrmStringToQuark(find_suffix(f -> name)); 
+    path[2] = XrmStringToQuark(find_suffix(f -> name));
     path[3] = XrmStringToQuark("action");
     path[4] = NULLQUARK;
 

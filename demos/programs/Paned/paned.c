@@ -68,7 +68,7 @@ static String fallbacks[] = {
     "*XmPaned*XmForm*XmLabel.labelString: Motif Paned Widget",
     "*XmPaned*XmForm*XmToggleButton.labelString: Show Sash",
     "*XmPaned*XmForm*sash_three_tog.labelString: Pane Demo",
-    
+
     NULL,
 };
 
@@ -78,7 +78,7 @@ static String fallbacks[] = {
 
 /*
  * Function Name: InitControls
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -160,14 +160,14 @@ InitControls()
 
 /*
  * Function Name: SashValChCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
 void
 SashValChCB(Widget w, XtPointer client, XtPointer call)
 {
-    /* 
+    /*
      * BE CAREFUL...ASSUMES THIS WIDGET IS CHILD OF FORM, WHICH IS CHILD
      * OF A XI PANED
      */
@@ -181,7 +181,7 @@ SashValChCB(Widget w, XtPointer client, XtPointer call)
 }
 /*
  * Function Name: SepValChCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -194,7 +194,7 @@ SepValChCB(Widget w, XtPointer client, XtPointer call)
 
     if (!XmToggleButtonGetState(w))
 	return;
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNseparatorOn, val); argcnt++;
     XtSetValues(G_paned, args, argcnt);
@@ -202,7 +202,7 @@ SepValChCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: OrientChValCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -212,10 +212,10 @@ OrientChValCB(Widget w, XtPointer client, XtPointer call)
     Arg args[5];
     Cardinal argcnt;
     unsigned char orient = (uintptr_t)client & 0xff;
-    
+
     if (!XmToggleButtonGetState(w))
 	return;
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNorientation, orient); argcnt++;
     XtSetValues(G_paned, args, argcnt);
@@ -223,7 +223,7 @@ OrientChValCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: ConstraintResCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -238,7 +238,7 @@ ConstraintResCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringCreateLtoR(
+	xmstring = XmStringLtoRCreate(
 "The Motif Paned Widget adds \"constraint\" widgets to any children that are\n\
 inside it. Here's the list of available constraint resources:\n\
 \n\
@@ -255,11 +255,8 @@ inside it. Here's the list of available constraint resources:\n\
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
 	XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
 	info = XmCreateInformationDialog(w, "explain", args, argcnt);
-
-	temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild(temp);
-	temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild(temp);
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
 	XmStringFree(xmstring);
     }
     XtManageChild(info);
@@ -267,7 +264,7 @@ inside it. Here's the list of available constraint resources:\n\
 
 /*
  * Function Name: OtherResCB
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -279,10 +276,9 @@ OtherResCB(Widget w, XtPointer client, XtPointer call)
     if (info == NULL) {
 	Arg args[5];
 	Cardinal argcnt;
-	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringCreateLtoR(
+	xmstring = XmStringLtoRCreate(
 "The Motif Paned widget provides other resources. Here's a partial\n\
 list of available resources:\n\
 \n\
@@ -297,11 +293,8 @@ list of available resources:\n\
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
 	XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
 	info = XmCreateInformationDialog(w, "explain", args, argcnt);
-
-	temp = XmMessageBoxGetChild(info, XmDIALOG_CANCEL_BUTTON);
-	XtUnmanageChild(temp);
-	temp = XmMessageBoxGetChild(info, XmDIALOG_HELP_BUTTON);
-	XtUnmanageChild(temp);
+	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
+	XtUnmanageChild(XtNameToWidget(info, "Help"));
 	XmStringFree(xmstring);
     }
 
@@ -311,7 +304,7 @@ list of available resources:\n\
 
 /*
  * Function Name: CreateLabel
- * Description:   
+ * Description:
  * Arguments:     This is an XtCallback
  * Returns:       Nothing
  */
@@ -321,8 +314,8 @@ CreateLabel(Widget w, XtPointer client, XtPointer call)
     Arg args[5];
     Cardinal argcnt;
     XmString xmstring;
-    
-    xmstring = XmStringCreateLtoR(
+
+    xmstring = XmStringLtoRCreate(
 "The Motif Paned Widget extends the capabilities of the standard Paned\n\
 Window that comes with Motif.\n\
 \n\
@@ -334,14 +327,14 @@ The Motif Paned Widget can be used as a \"smarter\" Row Column widget, by\n\
 turning off the separators between panes. Press the True or False toggles\n\
 to see this behavior.",
 				  XmSTRING_DEFAULT_CHARSET);
-     
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginHeight, 10); argcnt++;
     XtSetArg(args[argcnt], XmNmarginWidth, 10); argcnt++;
     XtSetArg(args[argcnt], XmNalignment, XmALIGNMENT_BEGINNING); argcnt++;
     XtSetArg(args[argcnt], XmNlabelString, xmstring); argcnt++;
     XtSetValues(w, args, argcnt);
-    
+
     XmStringFree(xmstring);
 
 }
@@ -360,27 +353,27 @@ QuitCB(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Function Name: main
- * Description:   
+ * Description:
  * Arguments:     the usual suspects
  * Returns:       nothing
  *
  */
-int 
+int
 main(int argc, char **argv)
 {
     Arg args[5];
     Cardinal argcnt;
     Widget top, paned_top, w;
     XtAppContext app;
-    
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNallowShellResize, True); argcnt++;
     XtSetArg(args[argcnt], XmNtitle, "Motif Paned Widget Demo"); argcnt++;
     top = XtOpenApplication(&app, "Paned", NULL, 0,
-			    &argc, argv, fallbacks, 
-                            sessionShellWidgetClass, 
+			    &argc, argv, fallbacks,
+                            sessionShellWidgetClass,
                             args, argcnt);
 
     G_form = Createform(top);

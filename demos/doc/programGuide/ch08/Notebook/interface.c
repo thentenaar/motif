@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -40,65 +40,66 @@
 #endif
 
 void CreateMenus(Widget);
-void HelpCB(Widget, XtPointer, XtPointer); 
-void QuitCB(Widget, XtPointer, XtPointer); 
+void HelpCB(Widget, XtPointer, XtPointer);
+void QuitCB(Widget, XtPointer, XtPointer);
 extern Widget top_level;
+extern XtAppContext app_context;
 
 /**************************************************************************
-CreateMenus: This function generates the menu bar and the submenus. 
+CreateMenus: This function generates the menu bar and the submenus.
 **************************************************************************/
-void 
+void
 CreateMenus(Widget parent_of_menu_bar)
 {
  XmString   file, help;
  Widget     menubar, FilePullDown, HelpPullDown;
- Widget     overview, quit, Help1; 
+ Widget     overview, quit, Help1;
 
  /* Create the menubar itself. */
-   file = XmStringCreateSimple("File");
-   help = XmStringCreateSimple("Help");
-   
-   menubar      = (Widget)XmCreateMenuBar(parent_of_menu_bar, "menubar", 
+   file = XmStringCreateLocalized("File");
+   help = XmStringCreateLocalized("Help");
+
+   menubar      = (Widget)XmCreateMenuBar(parent_of_menu_bar, "menubar",
                                           NULL, 0);
-   FilePullDown = (Widget)XmCreatePulldownMenu(menubar, "FilePullDown", 
-                                               NULL, 0); 
-   HelpPullDown = (Widget)XmCreatePulldownMenu(menubar, "HelpPullDown", 
-                                                 NULL, 0); 
+   FilePullDown = (Widget)XmCreatePulldownMenu(menubar, "FilePullDown",
+                                               NULL, 0);
+   HelpPullDown = (Widget)XmCreatePulldownMenu(menubar, "HelpPullDown",
+                                                 NULL, 0);
 
  /******************************FILE*********************************/
     XtVaCreateManagedWidget("File", xmCascadeButtonWidgetClass, menubar,
                              XmNlabelString, file,
-                             XmNmnemonic, 'F', 
+                             XmNmnemonic, 'F',
                              XmNsubMenuId, FilePullDown,
                              NULL);
-    quit = XtVaCreateManagedWidget("Quit", xmPushButtonGadgetClass, 
+    quit = XtVaCreateManagedWidget("Quit", xmPushButtonGadgetClass,
                                     FilePullDown, NULL);
     XtAddCallback(quit, XmNactivateCallback, QuitCB, NULL);
 
 
  /******************************HELP*********************************/
-    Help1 = XtVaCreateManagedWidget("Help", xmCascadeButtonWidgetClass, 
+    Help1 = XtVaCreateManagedWidget("Help", xmCascadeButtonWidgetClass,
                              menubar,
                              XmNlabelString, help,
-                             XmNmnemonic, 'H', 
+                             XmNmnemonic, 'H',
                              XmNsubMenuId, HelpPullDown,
                              NULL);
     XtVaSetValues(menubar, XmNmenuHelpWidget, Help1, NULL);
-    overview = XtVaCreateManagedWidget("Overview", xmPushButtonGadgetClass, 
+    overview = XtVaCreateManagedWidget("Overview", xmPushButtonGadgetClass,
                                     HelpPullDown, NULL);
     XtAddCallback(overview, XmNactivateCallback, HelpCB, (XtPointer)1);
 
     XmStringFree(file);
     XmStringFree(help);
 
-    XtManageChild(menubar); 
+    XtManageChild(menubar);
 }
 
 
 
 /*********************************************************************
 HelpCB: This function is called when the user requests help.  This
-        function displays a Message DialogBox. 
+        function displays a Message DialogBox.
 *********************************************************************/
 void
 HelpCB(Widget   w,
@@ -106,12 +107,12 @@ HelpCB(Widget   w,
        XtPointer cb
       )
 {
- char      help_string[400]; 
- XmString  hs_as_cs; 
- Widget    dialog_general_help; 
+ char      help_string[400];
+ XmString  hs_as_cs;
+ Widget    dialog_general_help;
  Arg       arg[3];
 
- sprintf(help_string, 
+ sprintf(help_string,
 "This program demonstrates how to use an XmNotebook in an application.\n\
 You can turn the pages of the notebook by \n\
   * clicking on the page scroller arrows \n\
@@ -119,30 +120,34 @@ You can turn the pages of the notebook by \n\
   * clicking on one of the minor tab buttons (green or orange) \n\
 A status area appears when the current page number is 2.");
 
-   hs_as_cs = XmStringCreateLtoR(help_string, 
+   hs_as_cs = XmStringLtoRCreate(help_string,
                                  XmFONTLIST_DEFAULT_TAG);
-   
+
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
-   dialog_general_help = (Widget)XmCreateMessageDialog(top_level, 
+   dialog_general_help = (Widget)XmCreateMessageDialog(top_level,
                                              "message", arg, 1);
    XmStringFree(hs_as_cs);
- 
+
    switch ((intptr_t)cd)  {
      case 1: XtManageChild(dialog_general_help);
              break;
      default: /* no other help */
-             break; 
+             break;
    }
-          
+
 }
 
 
 
 /*******************************************************************************
-QuitCB: Exit 
+QuitCB: Exit
 *******************************************************************************/
 void
 QuitCB(Widget w, XtPointer cd, XtPointer cb)
 {
-  exit(1);
+	(void)w;
+	(void)cd;
+	(void)cb;
+	XtAppSetExitFlag(app_context);
 }
+

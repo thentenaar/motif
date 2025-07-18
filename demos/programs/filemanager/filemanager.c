@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -98,7 +98,6 @@ main(int argc, char* argv[])
   Arg		args[10];
   int 		n = 0;
   Pixel		fg, bg;
-  Display	*display;
   int		time;
   char		*str;
   int 		i;
@@ -142,10 +141,9 @@ main(int argc, char* argv[])
 
   fileviewer = XtNameToWidget(mainW, "*container");
   gotoDialog = XtNameToWidget(mainW, "*gotoDialog");
-  
   displayLabel = XtNameToWidget(mainW, "*Where");
 
-  XtVaGetValues(fileviewer, XmNforeground, &bg,	
+  XtVaGetValues(fileviewer, XmNforeground, &bg,
 		XmNbackground, &fg, NULL, NULL);
 
   XtManageChild(mainW);
@@ -154,9 +152,9 @@ main(int argc, char* argv[])
   XSetErrorHandler((XErrorHandler) ErrorHandler);
 
   /* Add the UTM callbacks on the container area */
-  XtAddCallback(fileviewer, XmNdestinationCallback, 
+  XtAddCallback(fileviewer, XmNdestinationCallback,
 		(XtCallbackProc) targetDestinationCallback, NULL);
-  XtAddCallback(fileviewer, XmNconvertCallback, 
+  XtAddCallback(fileviewer, XmNconvertCallback,
 		(XtCallbackProc) targetConvertCallback, NULL);
   XtAddCallback(XtParent(fileviewer), XmNresizeCallback,
 		fixViewerSize, NULL);
@@ -177,8 +175,8 @@ main(int argc, char* argv[])
 
 /* Adjust the size of the underlying container widget to be
    at least large enough to fit in the clipwindow */
-void 
-fixViewerSize(Widget w, XtPointer i1, XtPointer i2) 
+void
+fixViewerSize(Widget w, XtPointer i1, XtPointer i2)
 {
   Dimension width, height, container_w, container_h;
 
@@ -190,20 +188,17 @@ fixViewerSize(Widget w, XtPointer i1, XtPointer i2)
 		XtNheight, &container_h, NULL, NULL);
 
   XtVaSetValues(fileviewer, XtNwidth, width, NULL, NULL);
-  if (container_h < height) 
+  if (container_h < height)
     XtVaSetValues(fileviewer, XtNheight, height, NULL, NULL);
 }
 
 /* Error handler for X protocol errors.  Continue after error */
 
-static int 
-ErrorHandler(Display *display, XErrorEvent *event)
+static int ErrorHandler(Display *dpy, XErrorEvent *event)
 {
   char errortext[100];
-  XmString tmp;
 
-  XGetErrorText(display, event -> error_code, errortext, 100);
-
+  XGetErrorText(dpy, event -> error_code, errortext, 100);
   printf("X Protocol error: %s\n", errortext);
   printf("XID %ld serial %ld major %d minor %d\n",
 	 event -> resourceid,
@@ -216,12 +211,12 @@ ErrorHandler(Display *display, XErrorEvent *event)
 
 /* Check for modification of current directory.  We don't handle updates
    in subdirectories (at least yet),  but this *is* free software */
-static void 
-UpdateDir(XtPointer data, XtIntervalId *id) 
+static void
+UpdateDir(XtPointer data, XtIntervalId *id)
 {
   struct stat buf;
 
-  XtAppAddTimeOut(app_context, updateTime, 
+  XtAppAddTimeOut(app_context, updateTime,
 		  (XtTimerCallbackProc) UpdateDir, 0);
 
   if (stat(currentdir, &buf) != 0) {

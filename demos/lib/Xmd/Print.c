@@ -758,7 +758,8 @@ add_printer_cb(Widget w, XtPointer pw,
   /* Put the new value in the printer list and fix the
      option menu.  Put the new value at the head of
      the menu */
-  XmStringGetLtoR(cb -> value, XmFONTLIST_DEFAULT_TAG, &value);
+  value = XmStringUnparse(cb->value, NULL, XmCHARSET_TEXT,
+                          XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
 
   /* Make sure widget array is big enough
      for all the items */

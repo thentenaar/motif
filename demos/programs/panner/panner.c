@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -130,17 +130,14 @@ int            origX, origY;
 Boolean        LOCK = False;
 #endif
 
-
-
-
 static void      OpenNewDisplay(String, Widget, PannerInfoRec *);
 static void      UpdatePannerCB (Widget, XtPointer, XtPointer);
 static void      ChangePageCB (Widget, XtPointer, XtPointer);
 static void      DoAddDisplayCB (Widget, XtPointer, XtPointer);
 static void      DestinationCB (Widget, XtPointer, XtPointer);
 static void      DoneMoveScreenCB (Widget, XtPointer, XtPointer);
-static void      WatchForWindowPanning (Display *dsp);
-static void      HandlePropertyChange (XEvent *event);
+static void HandlePropertyChange(Widget w, XtPointer clientData,
+                                 XEvent *event, Boolean *cont);
 static void      UpdatePannerView (PannerInfoRec *pInfoList, int remoteDsp);
 static void      DrawWindows (PannerInfoRec *);
 static void      DrawThumb (PannerInfoRec *);
@@ -169,30 +166,23 @@ static void      CheckPinnedState ();
 static void      ShowPinStateWarning ();
 static void      HandleInitialExpose (Widget, XtPointer, XEvent *, Boolean *);
 
-
-
-
 /*----------------------------------------------------------------*
  |                             main                               |
  *----------------------------------------------------------------*/
-int
-main (int argc, char** argv)
+int main (int argc, char *argv[])
 {
   Widget mainWin, frame;
   XEvent event;
-  
 
   pInfoList = (PannerInfoRec *) XtMalloc(sizeof(PannerInfoRec) *
 					 MAX_DISPLAY_COUNT);
   for (DSP = 0;  DSP < MAX_DISPLAY_COUNT;  DSP++)
     pInfoList[DSP].display = NULL;
   DSP = LOCAL;
-    
-  XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
-    
 
+  XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
   pInfoList[LOCAL].shell   = XtVaOpenApplication(&app, "Panner", NULL, 0,
-					       &argc, argv, 
+					       &argc, argv,
                                                fallback,
                                                sessionShellWidgetClass, NULL);
   pInfoList[LOCAL].display = XtDisplay(pInfoList[LOCAL].shell);
@@ -211,78 +201,68 @@ main (int argc, char** argv)
 
   context  = XUniqueContext ();
   OpenNewDisplay(/*$DISPLAY*/NULL, notebook, pInfoList);
-
   SetupColorsAndGCs();
-
   XtAddCallback(notebook, XmNpageChangedCallback, ChangePageCB, pInfoList);
   XtAddEventHandler(notebook, ExposureMask, False, HandleInitialExpose, NULL);
 
+  /* Watch whenever the window manager's panning position changes. */
+  /* Mwm stores the position in properties on the root window.     */
+  /* This is stored in the _MOTIF_WM_PAN_POSITION property.        */
+  XtAddEventHandler(pInfoList[LOCAL].shell, PropertyNotify, False, HandlePropertyChange, NULL);
   XtMapWidget(pInfoList[LOCAL].shell);
-  
-  for (;;)
-    {
-      XtAppNextEvent(app, &event);
-
-      if (event.type == PropertyNotify)
-	HandlePropertyChange(&event);
-
-      XtDispatchEvent(&event);
-
-    }
+  XtAppMainLoop(app);
+  return 0;
 }
-
-
-
 
 /*----------------------------------------------------------------*
  |                        OpenNewDisplay                          |
  | - Get new display connection to named display.                 |
  | - If display name is not NULL, create shell on the display.    |
- | - Fill in correct record in pInfoList.                         |
+ | - Fill in correct record in infoList.                          |
  *----------------------------------------------------------------*/
 static void
 OpenNewDisplay(
      String         displayName,
-     Widget         notebook,
-     PannerInfoRec *pInfoList)
+     Widget         nb,
+     PannerInfoRec *infoList)
 {
   int             newDsp = 0;
   int             argc = 0;
   char          **argv = NULL;
   Dimension       canvasW, canvasH;
   char            selectionName[40];
-  PannerInfoRec  *pInfo;
-  Widget          tab;
   XmString        tabName;
   XtCallbackList  cbList;
-
 
   /*
    * If NULL, then the display's already been created.
    */
   if (displayName != NULL)
     {
-      XtVaGetValues(notebook, XmNlastPageNumber, &newDsp,
+      XtVaGetValues(nb, XmNlastPageNumber, &newDsp,
 		    XmNpageChangedCallback, &cbList, NULL);
       newDsp++;
 
 
-      if ((pInfoList[newDsp].display = XOpenDisplay(displayName)) == NULL)
+      if ((infoList[newDsp].display = XOpenDisplay(displayName)) == NULL)
 	{
 	  fprintf(stderr, "ERROR - Can't open display \"%s\".\n", displayName);
 	  return;
 	}
 
-      XtDisplayInitialize(app, pInfoList[newDsp].display, "panner", "Panner",
+      XtDisplayInitialize(app, infoList[newDsp].display, "panner", "Panner",
 			  NULL, 0, &argc, argv);
 
       /* create an unmapped shell on the remote display */
-      pInfoList[newDsp].shell =
+      infoList[newDsp].shell =
 	XtVaAppCreateShell( "panner", "Panner", applicationShellWidgetClass,
-			   pInfoList[newDsp].display,
+			   infoList[newDsp].display,
 			   XmNmappedWhenManaged, False, NULL);
 
-      XtRealizeWidget(pInfoList[newDsp].shell);
+      XtRealizeWidget(infoList[newDsp].shell);
+      XtRegisterDrawable(infoList[newDsp].display,
+                         DefaultRootWindow(infoList[newDsp].display),
+                         infoList[newDsp].shell);
     }
   /*
    * For UTM to work, there must be a drawing area or UTM saavy
@@ -291,86 +271,81 @@ OpenNewDisplay(
    *  We must set-up a destination callback function that
    *  does the actual transfer of the parameter info to Mwm.
    */
-  
-  pInfoList[newDsp].utmShell
+
+  infoList[newDsp].utmShell
     = XtVaCreateManagedWidget("utmShell", xmDrawingAreaWidgetClass,
-			      pInfoList[newDsp].shell,
+			      infoList[newDsp].shell,
 			      XmNmappedWhenManaged, False,
 			      NULL);
-  
-  XtAddCallback(pInfoList[newDsp].utmShell, XmNdestinationCallback,
-		DestinationCB, &(pInfoList[newDsp]));
+
+  XtAddCallback(infoList[newDsp].utmShell, XmNdestinationCallback,
+		DestinationCB, &(infoList[newDsp]));
 
   /*
-   * Initialize the correct record in the pInfoList.
+   * Initialize the correct record in the infoList.
    */
-  pInfoList[newDsp].screen = XtScreen(pInfoList[newDsp].shell);
-
+  infoList[newDsp].screen = XtScreen(infoList[newDsp].shell);
 
   /*
    * setup handler to watch when Mwm changes the root property.
    * first store some data on the root window.
    */
-  XSaveContext(pInfoList[newDsp].display,
-	       DefaultRootWindow(pInfoList[newDsp].display),
+  XSaveContext(infoList[newDsp].display,
+	       DefaultRootWindow(infoList[newDsp].display),
 	       context,
 	       (XPointer)(long)newDsp); /* store index into panner info. */
-  WatchForWindowPanning(pInfoList[newDsp].display);
-
 
   /*
    * Add another page to the notebook.
    * First must set size correctly.
    */
 
-  XtVaGetValues(pInfoList[LOCAL].shell,
+  XtVaGetValues(infoList[LOCAL].shell,
 		 XmNwidth, &canvasW, XmNheight, &canvasH, NULL);
-  pInfoList[newDsp].canvas
-    = XtVaCreateManagedWidget("canvas", xmDrawingAreaWidgetClass, notebook,
+  infoList[newDsp].canvas
+    = XtVaCreateManagedWidget("canvas", xmDrawingAreaWidgetClass, nb,
 			      XmNchildType, XmPAGE,
 			      XmNpageNumber, newDsp,
 			      XmNwidth, canvasW,
 			      XmNheight, canvasH,
 			      NULL);
-  XtAddCallback(pInfoList[newDsp].canvas, XmNexposeCallback, UpdatePannerCB,
-		pInfoList);
+  XtAddCallback(infoList[newDsp].canvas, XmNexposeCallback, UpdatePannerCB,
+		infoList);
 
   if (displayName == NULL)
     tabName = XmStringCreate("LOCAL",XmFONTLIST_DEFAULT_TAG);
   else
     tabName = XmStringCreate(displayName,XmFONTLIST_DEFAULT_TAG);
-  tab = XtVaCreateManagedWidget("tab", xmPushButtonWidgetClass, notebook,
+  XtVaCreateManagedWidget("tab", xmPushButtonWidgetClass, nb,
 				XmNlabelString, tabName,
 				XmNchildType, XmMAJOR_TAB, NULL);
   XmStringFree(tabName);
 
-  pInfoList[newDsp].thumbW = INIT_SCREEN_WIDTH;
-  pInfoList[newDsp].thumbH = pInfoList[newDsp].thumbW *
-                             HeightOfScreen(pInfoList[newDsp].screen) /
-			     WidthOfScreen(pInfoList[newDsp].screen);
-  XtVaGetValues(pInfoList[newDsp].canvas, XmNwidth,  &canvasW,
+  infoList[newDsp].thumbW = INIT_SCREEN_WIDTH;
+  infoList[newDsp].thumbH = infoList[newDsp].thumbW *
+                             HeightOfScreen(infoList[newDsp].screen) /
+			     WidthOfScreen(infoList[newDsp].screen);
+  XtVaGetValues(infoList[newDsp].canvas, XmNwidth,  &canvasW,
 		                          XmNheight, &canvasH, NULL);
-  pInfoList[newDsp].thumbX = (int)canvasW/2 - (int)pInfoList[newDsp].thumbW/2;
-  pInfoList[newDsp].thumbY = (int)canvasH/2 - (int)pInfoList[newDsp].thumbH/2;
-  
+  infoList[newDsp].thumbX = (int)canvasW/2 - (int)infoList[newDsp].thumbW/2;
+  infoList[newDsp].thumbY = (int)canvasH/2 - (int)infoList[newDsp].thumbH/2;
+
   /* Setup the atoms needed to communicate with Mwm. Check screen number! */
   sprintf(selectionName, WM_SELECTION_FORMAT,
-	  XScreenNumberOfScreen(pInfoList[newDsp].screen));
-  pInfoList[newDsp].WM         = XmInternAtom(pInfoList[newDsp].display,
+	  XScreenNumberOfScreen(infoList[newDsp].screen));
+  infoList[newDsp].WM         = XmInternAtom(infoList[newDsp].display,
 					      selectionName, False);
-  pInfoList[newDsp].WM_PAN     = XmInternAtom(pInfoList[newDsp].display,
+  infoList[newDsp].WM_PAN     = XmInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_PAN", False);
-  pInfoList[newDsp].WM_GOTO    = XmInternAtom(pInfoList[newDsp].display,
+  infoList[newDsp].WM_GOTO    = XmInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_GOTO", False);
-  pInfoList[newDsp].WM_PAN_POS = XmInternAtom(pInfoList[newDsp].display,
+  infoList[newDsp].WM_PAN_POS = XmInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_PAN_POSITION", False);
 
-  XtAddEventHandler(pInfoList[newDsp].canvas, ButtonPressMask, False,
-		    StartTracking, (XtPointer)&pInfoList[newDsp]);
+  XtAddEventHandler(infoList[newDsp].canvas, ButtonPressMask, False,
+		    StartTracking, (XtPointer)&infoList[newDsp]);
 }
 
-
-
 /*========================== CALLBACKS ==========================*/
 
 /*----------------------------------------------------------------*
@@ -383,24 +358,24 @@ UpdatePannerCB (
      XtPointer callData)
 {
   XmDrawingAreaCallbackStruct *cb = (XmDrawingAreaCallbackStruct *)callData;
-  PannerInfoRec *pInfoList = (PannerInfoRec *)clientData;
+  PannerInfoRec *infoList = (PannerInfoRec *)clientData;
 
+  (void)w;
   if (cb->reason == XmCR_EXPOSE)
     {
       XExposeEvent *event = (XExposeEvent *)cb->event;
 
       /* Last expose event received - do the drawing. */
       if (event->count == 0)
-	UpdatePannerView(pInfoList, DSP);
+	UpdatePannerView(infoList, DSP);
     }
 
   else
     /*
      * Update button pressed.
      */
-    UpdatePannerView(pInfoList, DSP);
+    UpdatePannerView(infoList, DSP);
 }
-
 
 /*----------------------------------------------------------------*
  |                         ChangePageCB                           |
@@ -413,13 +388,14 @@ ChangePageCB (
      XtPointer clientData,
      XtPointer callData)
 {
-  PannerInfoRec            *pInfoList = (PannerInfoRec *)clientData;
+  PannerInfoRec            *infoList = (PannerInfoRec *)clientData;
   XmNotebookCallbackStruct *nbData    = (XmNotebookCallbackStruct *)callData;
   int  pageNumber;
 
+  (void)w;
   pageNumber = nbData->page_number;
   if ((pageNumber >= MAX_DISPLAY_COUNT) ||
-      (pInfoList[pageNumber].display == NULL))
+      (infoList[pageNumber].display == NULL))
     {
       fprintf(stderr, "ERROR - bad display index. (%d).\n", pageNumber);
     }
@@ -428,7 +404,6 @@ ChangePageCB (
       DSP = pageNumber;
     }
 }
-
 
 /*----------------------------------------------------------------*
  |                        DoAddDisplayCB                          |
@@ -440,18 +415,16 @@ DoAddDisplayCB (
      XtPointer callData)
 {
   XmSelectionBoxCallbackStruct *cb = (XmSelectionBoxCallbackStruct *)callData;
-  PannerInfoRec *pInfoList = (PannerInfoRec *)clientData;
+  PannerInfoRec *infoList = (PannerInfoRec *)clientData;
   char          *dspName;           /* Free when done. */
   String         appName, appClass; /* Don't free - owned by Xt. */
 
-
-  XtGetApplicationNameAndClass(pInfoList[LOCAL].display, &appName, &appClass);
-  XmStringGetLtoR(cb->value, XmSTRING_DEFAULT_CHARSET, &dspName);
-
-  OpenNewDisplay(dspName, notebook, pInfoList);
+  (void)w;
+  XtGetApplicationNameAndClass(infoList[LOCAL].display, &appName, &appClass);
+  dspName = XmStringUnparse(cb->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+  OpenNewDisplay(dspName, notebook, infoList);
   if (dspName) XtFree(dspName);
 }
-
 
 /*----------------------------------------------------------------*
  |                         DestinationCB                          |
@@ -471,8 +444,6 @@ DestinationCB (
 {
   XmDestinationCallbackStruct *dcs = (XmDestinationCallbackStruct *)callData;
   PannerInfoRec *pInfo = (PannerInfoRec *)clientData;
-  Atom target;
-
 
   /*
    * Pass the data to free in the clientData field.
@@ -481,6 +452,7 @@ DestinationCB (
    */
 
   /* FIRST - setup the parameters to pass. */
+  (void)w;
   XmTransferSetParameters(dcs->transfer_id,
 			  dcs->location_data,   /* pointer to param data. */
 			  PAN_FORMAT,
@@ -495,8 +467,6 @@ DestinationCB (
 		  dcs->time);
 }
 
-
-
 /*----------------------------------------------------------------*
  |                       DoneMoveScreenCB                         |
  *----------------------------------------------------------------*/
@@ -509,55 +479,28 @@ DoneMoveScreenCB (
   /*
    * Conversion completed. Safe to free param data.
    */
-
+  (void)w;
+  (void)callData;
   XtFree((char *)clientData);
 }
 
-
-
-
-
-
 /*=========================== PAN-HANDLING ==========================*/
-
-
-/*----------------------------------------------------------------*
- |                     WatchForWindowPanning                      |
- *----------------------------------------------------------------*/
-static void
-WatchForWindowPanning (Display *dsp)
-{
-  XWindowAttributes attr;
-  Window rwin     = DefaultRootWindow(dsp);
-
-
-  /* Watch whenever the window manager's panning position changes. */
-  /* Mwm stores the position in properties on the root window.     */
-  /* This is stored in the _MOTIF_WM_PAN_POSITION property.        */
-
-  XGetWindowAttributes(dsp, rwin, &attr);
-
-  if (! (attr.your_event_mask & PropertyChangeMask))
-    XSelectInput(dsp, rwin, attr.your_event_mask | PropertyChangeMask);
-}
-
-
-
 /*----------------------------------------------------------------*
  |                     HandlePropertyChange                       |
  | This routine checks the property changed and if its the right  |
  | property, grab the new panning position.                       |
  *----------------------------------------------------------------*/
-static void
-HandlePropertyChange (XEvent *event)
+static void HandlePropertyChange(Widget w, XtPointer clientData,
+                                 XEvent *event, Boolean *cont)
 {
   XPropertyEvent *propEvent = (XPropertyEvent *)event;
   int             iDsp;
 
-
   /* Get the correct info record stored with the context manager. */
-  if (XFindContext(propEvent->display, propEvent->window, context,
-		   (XPointer*)&iDsp))
+  (void)w;
+  (void)clientData;
+  (void)cont;
+  if (XFindContext(propEvent->display, propEvent->window, context, (XPointer *)&iDsp))
     return;
 
   /* check if this is the right one. Othersize, we'll update when another
@@ -584,7 +527,7 @@ HandlePropertyChange (XEvent *event)
 	  XTranslateCoordinates(pInfoList[LOCAL].display,
 				XtWindow(pInfoList[LOCAL].shell),
 				rWin, x, y, &newX, &newY, &child);
-  
+
 	  if ((newX == origX) && (newY == origY))
 	    pinnedState = VERIFIED;
 	  else
@@ -597,8 +540,6 @@ HandlePropertyChange (XEvent *event)
 #endif
 }
 
-
-
 /*============================ DRAWING ===========================*/
 
 /*----------------------------------------------------------------*
@@ -606,15 +547,15 @@ HandlePropertyChange (XEvent *event)
  *----------------------------------------------------------------*/
 static void
 UpdatePannerView (
-     PannerInfoRec *pInfoList,
+     PannerInfoRec *infoList,
      int remoteDsp)
 {
-  XClearArea(pInfoList[LOCAL].display,
-	     XtWindow(pInfoList[remoteDsp].canvas),
+  XClearArea(infoList[LOCAL].display,
+	     XtWindow(infoList[remoteDsp].canvas),
 	     0, 0, 0, 0, False);
 
-  DrawWindows(pInfoList);
-  DrawThumb(&pInfoList[remoteDsp]);
+  DrawWindows(infoList);
+  DrawThumb(&infoList[remoteDsp]);
 }
 
 
@@ -622,18 +563,18 @@ UpdatePannerView (
  |                          DrawWindows                           |
  *----------------------------------------------------------------*/
 static void
-DrawWindows (PannerInfoRec *pInfoList)
+DrawWindows (PannerInfoRec *infoList)
 {
   Window        realRoot, root, parent, *child = NULL;
   int           i, x, y;
   unsigned int  childCount, width, height;
   int (*oldHandler)();
 
-  
-  realRoot = RootWindow(pInfoList[DSP].display,
-			XScreenNumberOfScreen(pInfoList[DSP].screen));
 
-  if (XQueryTree(pInfoList[DSP].display, realRoot,
+  realRoot = RootWindow(infoList[DSP].display,
+			XScreenNumberOfScreen(infoList[DSP].screen));
+
+  if (XQueryTree(infoList[DSP].display, realRoot,
 		 &root, &parent, &child, &childCount))
     {
       /*
@@ -644,18 +585,18 @@ DrawWindows (PannerInfoRec *pInfoList)
       for (i=0; i<childCount; i++)
 	{
 	  XWindowAttributes attr;
-	  
-	  XGetWindowAttributes(pInfoList[DSP].display, child[i], &attr);
-	  
+
+	  XGetWindowAttributes(infoList[DSP].display, child[i], &attr);
+
 	  if (attr.map_state == IsViewable)
 	    {
-	      TranslateCoordinates(&pInfoList[DSP],
+	      TranslateCoordinates(&infoList[DSP],
 				   attr.x, attr.y, attr.width, attr.height,
 				   &x, &y, &width, &height);
-	      
-	      SetWindowColor (&pInfoList[LOCAL], i);
-	      XFillRectangle(pInfoList[LOCAL].display,
-			     XtWindow(pInfoList[DSP].canvas),
+
+	      SetWindowColor (&infoList[LOCAL], i);
+	      XFillRectangle(infoList[LOCAL].display,
+			     XtWindow(infoList[DSP].canvas),
 			     canvasGC, x, y, width, height);
 	    }
 	}
@@ -665,7 +606,6 @@ DrawWindows (PannerInfoRec *pInfoList)
 	XFree((char*)child);
     }
 }
-
 
 /*----------------------------------------------------------------*
  |                          DrawThumb                             |
@@ -678,17 +618,15 @@ DrawThumb (PannerInfoRec *pInfo)
 		 pInfo->thumbW, pInfo->thumbH);
 }
 
-
 /*----------------------------------------------------------------*
  |                       SetupColorsAndGCs                        |
  | Called once at the beginning to setup some drawing stuff.      |
  *----------------------------------------------------------------*/
-static void
-SetupColorsAndGCs()
+static void SetupColorsAndGCs(void)
 {
   int i;
   XColor color;
-  Colormap cmap = DefaultColormapOfScreen(pInfoList[LOCAL].screen);    
+  Colormap cmap = DefaultColormapOfScreen(pInfoList[LOCAL].screen);
 
   /*
    * set-up the global GCs.
@@ -712,12 +650,10 @@ SetupColorsAndGCs()
       }
 }
 
-
 /*----------------------------------------------------------------*
  |                           GetXorGC                             |
  *----------------------------------------------------------------*/
-static GC
-GetXorGC (Widget w)
+static GC GetXorGC(Widget w)
 {
   GC        gc;
   XGCValues values;
@@ -733,19 +669,16 @@ GetXorGC (Widget w)
 	       GCForeground | GCBackground | GCFunction | GCLineStyle,
 	       &values);
 
-  return(gc);
+  return gc;
 }
-
 
 /*----------------------------------------------------------------*
  |                         GetCanvasGC                            |
  *----------------------------------------------------------------*/
-static GC
-GetCanvasGC (Widget w)
+static GC GetCanvasGC(Widget w)
 {
   GC        gc;
   XGCValues values;
-
 
   XtVaGetValues(w, XmNforeground, &values.foreground,
 		XmNbackground, &values.background, NULL);
@@ -756,9 +689,8 @@ GetCanvasGC (Widget w)
 	       GCForeground | GCBackground | GCFunction,
 	       &values);
 
-  return(gc);
+  return gc;
 }
-
 
 /*----------------------------------------------------------------*
  |                       SetWindowColor                           |
@@ -795,7 +727,7 @@ TranslateCoordinates (
 /*----------------------------------------------------------------*
  |                          IgnoreError                           |
  *----------------------------------------------------------------*/
-static int 
+static int
 IgnoreError (Display *dsp, XErrorEvent *event)
 {
   /*
@@ -805,13 +737,12 @@ IgnoreError (Display *dsp, XErrorEvent *event)
    * XQueryTree may not be valid for the entire loop where we get each
    * window's geometry.
    */
-	return 0; 	/* make compiler happy */
+  (void)dsp;
+  (void)event;
+  return 0;
 }
 
-
-
 /*======================= TRACKING HANDLERS ======================*/
-
 
 /*----------------------------------------------------------------*
  |                         StartTracking                          |
@@ -826,7 +757,7 @@ StartTracking (
   PannerInfoRec      *pInfo       = (PannerInfoRec *)clientData;
   XPointerMovedEvent *motionEvent = (XPointerMovedEvent *)event;
 
-
+  (void)dispatch;
   if ((pinnedState == VERIFIED) && (event->xbutton.button == Button1))
     {
       pInfo->lastEventX = event->xbutton.x;
@@ -834,7 +765,7 @@ StartTracking (
 
       if ((event->xbutton.x < pInfo->thumbX) ||
 	  (event->xbutton.y < pInfo->thumbY) ||
-	  (event->xbutton.x > pInfo->thumbX + (int)pInfo->thumbW) || 
+	  (event->xbutton.x > pInfo->thumbX + (int)pInfo->thumbW) ||
 	  (event->xbutton.y > pInfo->thumbY + (int)pInfo->thumbH))
 	{
 	  /*
@@ -854,7 +785,6 @@ StartTracking (
     CheckPinnedState ();
 }
 
-
 /*----------------------------------------------------------------*
  |                          DoTracking                            |
  *----------------------------------------------------------------*/
@@ -868,7 +798,7 @@ DoTracking (
   PannerInfoRec      *pInfo       = (PannerInfoRec *)clientData;
   XPointerMovedEvent *motionEvent = (XPointerMovedEvent *)event;
 
-
+  (void)w;
   MoveScreen(pInfo,
 	     pInfo->thumbX + event->xbutton.x - pInfo->lastEventX,
 	     pInfo->thumbY + event->xbutton.y - pInfo->lastEventY,
@@ -877,7 +807,6 @@ DoTracking (
   pInfo->lastEventX = event->xbutton.x;
   pInfo->lastEventY = event->xbutton.y;
 }
-
 
 /*----------------------------------------------------------------*
  |                         StopTracking                           |
@@ -889,6 +818,7 @@ StopTracking (
      XEvent    *event,
      Boolean   *dispatch)
 {
+  (void)dispatch;
   if (event->xbutton.button == Button1)
     {
       XtRemoveEventHandler(w, Button1MotionMask, False, DoTracking,
@@ -897,8 +827,6 @@ StopTracking (
 			   clientData);
     }
 }
-
-
 
 /*----------------------------------------------------------------*
  |                          MoveScreen                            |
@@ -914,17 +842,13 @@ MoveScreen (
   XtPointer     msg, fulldata;
   unsigned long size;
 
-  
   DrawThumb(pInfo);
-
   dx = newX - pInfo->thumbX;
   dy = newY - pInfo->thumbY;
 
   pInfo->thumbX = newX;
   pInfo->thumbY = newY;
-
   DrawThumb(pInfo);
-
 
   /*
    * Send Pan message to mwm.
@@ -940,10 +864,9 @@ MoveScreen (
   size += sizeof(CARD8);   /* config */
 
   msg = fulldata = (XtPointer) XtMalloc(sizeof(CARD8) * size);
-
   msg = PackCARD32(msg, panDx);
   msg = PackCARD32(msg, panDy);
-  msg = PackCARD8(msg, True);
+  (void)PackCARD8(msg, True);
 
 #ifdef X_ONLY
   {
@@ -954,7 +877,6 @@ MoveScreen (
 
     display = XtDisplay(notebook); /* notebook just happens to be a global. */
     window = XtWindow(notebook);
-    
     MY_PANNER_PROP = XInternAtom(display, "MY_PANNER_PROP", False);
 
 
@@ -991,8 +913,6 @@ MoveScreen (
 #endif /* X_ONLY */
 }
 
-
-
 /*----------------------------------------------------------------*
  |                      PACKING FUNCTIONS                         |
  *----------------------------------------------------------------*/
@@ -1031,7 +951,6 @@ PackCARD8 (XtPointer data, CARD8 val)
   return(data);
 }
 
-
 /*======================= USER INTERFACE ======================*/
 
 /*----------------------------------------------------------------*
@@ -1088,9 +1007,10 @@ CreateMenuBar (Widget parent)
  |                             MenuCB                             |
  *----------------------------------------------------------------*/
 static void
-MenuCB (Widget w, XtPointer clientData, XtPointer callData) 
+MenuCB (Widget w, XtPointer clientData, XtPointer callData)
 {
-
+  (void)w;
+  (void)callData;
   switch ((long)clientData)
     {
     case MENU_UPDATE: DoUpdatePanner();  break;
@@ -1100,13 +1020,10 @@ MenuCB (Widget w, XtPointer clientData, XtPointer callData)
     }
 }
 
-
-
 /*----------------------------------------------------------------*
  |                         DoUpdatePanner                         |
  *----------------------------------------------------------------*/
-static void
-DoUpdatePanner ()
+static void DoUpdatePanner(void)
 {
   XClearArea(pInfoList[LOCAL].display,
 	     XtWindow(pInfoList[DSP].canvas),
@@ -1116,12 +1033,10 @@ DoUpdatePanner ()
   DrawThumb(&pInfoList[DSP]);
 }
 
-
 /*----------------------------------------------------------------*
  |                          DoAddDisplay                          |
  *----------------------------------------------------------------*/
-static void
-DoAddDisplay ()
+static void DoAddDisplay(void)
 {
   static Widget dlog = NULL;
   Arg           args[3];
@@ -1135,80 +1050,61 @@ DoAddDisplay ()
 				  args, n);
 
       XtAddCallback(dlog, XmNokCallback, DoAddDisplayCB, pInfoList);
-      XtUnmanageChild( XmSelectionBoxGetChild (dlog, XmDIALOG_HELP_BUTTON) );
+      XtUnmanageChild(XtNameToWidget(dlog, "Help"));
     }
   XtManageChild(dlog);
 }
-
 
 /*----------------------------------------------------------------*
  |                              DoHelp                            |
  *----------------------------------------------------------------*/
-static void
-DoHelp ()
+static void DoHelp(void)
 {
-  static Widget dlog = NULL;
-  Arg           args[3];
-  int           n;
+	static Widget dlog = NULL;
 
-  if (dlog == NULL)
-    {
-      dlog = XmCreateInformationDialog(pInfoList[LOCAL].shell, "messageDlog",
-					NULL, 0);
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_HELP_BUTTON) );
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_CANCEL_BUTTON) );
-    }
+	if (!dlog) {
+		dlog = XmCreateInformationDialog(pInfoList[LOCAL].shell, "messageDlog", NULL, 0);
+		XtUnmanageChild(XtNameToWidget(dlog, "Help"));
+		XtUnmanageChild(XtNameToWidget(dlog, "Cancel"));
+	}
 
-  XtManageChild(dlog);
+	XtManageChild(dlog);
 }
-
 
 /*----------------------------------------------------------------*
  |                              DoQuit                            |
  *----------------------------------------------------------------*/
-static void
-DoQuit ()
+static void DoQuit(void)
 {
-  XSync (pInfoList[LOCAL].display, False);
-  XCloseDisplay (pInfoList[LOCAL].display);
-
-  exit(0);
+	XtAppSetExitFlag(app);
 }
-
-
 
 /*----------------------------------------------------------------*
  |                         GetTimeStamp                           |
  *----------------------------------------------------------------*/
-Time
-GetTimestamp (Display *dsp)
+Time GetTimestamp(Display *dsp)
 {
   XEvent            event;
   XWindowAttributes attr;
   Atom   timeProp = XInternAtom(dsp, "_MOTIF_CURRENT_TIME", False);
   Window rwin     = DefaultRootWindow(dsp);
 
-
   XGetWindowAttributes(dsp, rwin, &attr);
-
-  if (! (attr.your_event_mask & PropertyChangeMask))
+  if (!(attr.your_event_mask & PropertyChangeMask))
     XSelectInput(dsp, rwin, attr.your_event_mask | PropertyChangeMask);
-  
-  XChangeProperty(dsp, rwin, timeProp, timeProp, 8, PropModeAppend, NULL, 0);
-  
-  XWindowEvent(dsp, rwin, PropertyChangeMask, &event);
-  
-  if (! (attr.your_event_mask & PropertyChangeMask))
-    XSelectInput(dsp, rwin, attr.your_event_mask);
-  
-  return(event.xproperty.time);
-}
 
+  XChangeProperty(dsp, rwin, timeProp, timeProp, 8, PropModeAppend, NULL, 0);
+  XWindowEvent(dsp, rwin, PropertyChangeMask, &event);
+  if (!(attr.your_event_mask & PropertyChangeMask))
+    XSelectInput(dsp, rwin, attr.your_event_mask);
+
+  return event.xproperty.time;
+}
 
 /*----------------------------------------------------------------*
  |                      CheckPinnedState                          |
  *----------------------------------------------------------------*/
-static void CheckPinnedState ()
+static void CheckPinnedState(void)
 {
   static int    panDx=0, panDy=-1;
   XtPointer     msg, fulldata;
@@ -1231,16 +1127,14 @@ static void CheckPinnedState ()
 
   XTranslateCoordinates(pInfoList[LOCAL].display, XtWindow(pInfoList[LOCAL].shell),
 			rWin, x, y, &origX, &origY, &child);
-  
-  size  = sizeof(CARD32);  /* panDx */
-  size += sizeof(CARD32);  /* panDy */
-  size += sizeof(CARD8);   /* config */
 
-  msg = fulldata = (XtPointer) XtMalloc(sizeof(CARD8) * size);
+  /* panDx + panDy + config */
+  size  = sizeof(CARD32) + sizeof(CARD32) + sizeof(CARD8);
+  msg = fulldata = (XtPointer)XtMalloc(sizeof(CARD8) * size);
 
   msg = PackCARD32(msg, panDx);
   msg = PackCARD32(msg, panDy);
-  msg = PackCARD8(msg, True);
+  (void)PackCARD8(msg, True);
 
   if (! XmeNamedSink(pInfoList[LOCAL].utmShell,
 		     pInfoList[LOCAL].WM,
@@ -1254,24 +1148,18 @@ static void CheckPinnedState ()
 /*----------------------------------------------------------------*
  |                      ShowPinStateWarning                       |
  *----------------------------------------------------------------*/
-static void
-ShowPinStateWarning ()
+static void ShowPinStateWarning(void)
 {
-  static Widget dlog = NULL;
-  Arg           args[3];
-  int           n;
+	static Widget dlog = NULL;
 
-  if (dlog == NULL)
-    {
-      dlog = XmCreateWarningDialog(pInfoList[LOCAL].shell, "warningDlog",
-					NULL, 0);
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_HELP_BUTTON) );
-      XtUnmanageChild( XmMessageBoxGetChild (dlog, XmDIALOG_CANCEL_BUTTON) );
-    }
+	if (!dlog) {
+		dlog = XmCreateWarningDialog(pInfoList[LOCAL].shell, "warningDlog", NULL, 0);
+		XtUnmanageChild(XtNameToWidget(dlog, "Help"));
+		XtUnmanageChild(XtNameToWidget(dlog, "Cancel"));
+	}
 
-  XtManageChild(dlog);
+	XtManageChild(dlog);
 }
-
 
 /*----------------------------------------------------------------*
  |                       HandleInitialExpose                      |
@@ -1283,6 +1171,10 @@ HandleInitialExpose (
      XEvent *event,
      Boolean *cont)
 {
+  (void)clientData;
+  (void)event;
+  (void)cont;
   XtRemoveEventHandler(w, ExposureMask, False, HandleInitialExpose, NULL);
   CheckPinnedState();
 }
+

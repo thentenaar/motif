@@ -1098,7 +1098,7 @@ static Boolean CvtStringToXmString
     str = (char*)fromVal->addr;
     if (strncmp(str, "::", 2))
     {
-	resStr = XmStringCreateLtoR(fromVal->addr, XmSTRING_DEFAULT_CHARSET);
+	resStr = XmStringLtoRCreate(fromVal->addr, XmSTRING_DEFAULT_CHARSET);
     }
     else
     {
@@ -3786,8 +3786,9 @@ GRA(char*, inst_name)
        if (wclass == applicationShellWidgetClass) break;
 
        strcpy(buf, lineage);
-       sprintf(lineage, "*%s%s", XtName(parent), buf);
-
+       lineage[0] = '*';
+       strcpy(lineage + 1, XtName(parent));
+       strncat(lineage, buf, sizeof lineage - strlen(lineage));
        parent = XtParent(parent);
    }
 
@@ -3825,12 +3826,12 @@ GRA(char*, inst_name)
        }
        else if (*defs->wName != '\0')
        {
-	   sprintf(buf, "%s*%s.%s: %s",
+	   snprintf(buf, sizeof buf, "%s*%s.%s: %s",
 		   lineage, defs->wName, defs->wRsc, defs->value);
        }
        else
        {
-	   sprintf(buf, "%s.%s: %s", lineage, defs->wRsc, defs->value);
+	   snprintf(buf, sizeof buf, "%s.%s: %s", lineage, defs->wRsc, defs->value);
        }
 
        XrmPutLineResource( &rdb, buf );

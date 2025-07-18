@@ -64,7 +64,7 @@ static void Warning(Airport this, XmString s1, XmString s2);
  *    Main loop
  */
 
-int 
+int
 main(int argc, char *argv[])
 {
 #define MAIN_CHILDREN		3
@@ -98,25 +98,25 @@ main(int argc, char *argv[])
  */
    this = (Airport) XtCalloc(sizeof(AirportRec), 1);
 
-   XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+   XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
-   theWidgetRoot = XtVaOpenApplication( &this->context, 
-                                        myClass, 
-				        NULL, 
-                                        0, 
-                                        &argc, 
-                                        argv, 
+   theWidgetRoot = XtVaOpenApplication( &this->context,
+                                        myClass,
+				        NULL,
+                                        0,
+                                        &argc,
+                                        argv,
                                         NULL,
-                                        sessionShellWidgetClass, 
+                                        sessionShellWidgetClass,
 				        XmNallowShellResize, True,
                                         NULL);
-   
+
    this->display = XtDisplay(theWidgetRoot);
    FlightAtom = XmInternAtom(this->display, "FLIGHT", False);
    DeleteAtom = XmInternAtom(this->display, "DELETE", False);
 
    XtGetApplicationResources(theWidgetRoot, &AirportResources,
-			     AirportResourcesSpecs, 
+			     AirportResourcesSpecs,
 			     XtNumber(AirportResourcesSpecs),
 			     (ArgList) NULL, 0);
 
@@ -129,7 +129,7 @@ main(int argc, char *argv[])
    n = 0;
    main_tab[0] = XmCreateMenuBar(this->main, "menubar", args, n);
    n = 0;
-   SetMenuEntry(n, "Exit", 
+   SetMenuEntry(n, "Exit",
 		(XtCallbackProc) ExitCallback, (XtPointer) this ); n++;
    entry = MenuBarEntry(main_tab[0], "File", labels, procs, private, n);
    n = 0;
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 
 /*
  * Create the Airport widget structure.
- * Two framed radio boxes show state. 
+ * Two framed radio boxes show state.
  * A drawing area in the middle show track and planes
  */
 
@@ -154,50 +154,50 @@ main(int argc, char *argv[])
    main_tab[1] = XmCreateForm(this->main, "airport", args, n);
 
    n = 0;
-   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++; 
-   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++; 
+   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++;
+   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM) ; n++;
    form_tab[0] = XmCreateFrame(main_tab[1], "flight", args, n);
 
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_TITLE_CHILD); n++;
    framed[0] = XmCreateLabel(form_tab[0], "title", args, n);
-   
+
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_WORKAREA_CHILD); n++;
    XtSetArg(args[n], XmNresizePolicy, XmRESIZE_GROW); n++;
    XtSetArg(args[n], XmNradioBehavior, True); n++;
    framed[1] = XmCreateRadioBox(form_tab[0], "panel", args, n);
- 
+
    n = 0;
    XtSetArg(args[n], XmNset, True); n++;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
    this->from.departure =
-     from_tab[0] = XmCreateToggleButton(framed[1], 
+     from_tab[0] = XmCreateToggleButton(framed[1],
 					       "departure", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
    this->from.over_ocean =
-     from_tab[1] = XmCreateToggleButton(framed[1], 
+     from_tab[1] = XmCreateToggleButton(framed[1],
 					       "over_ocean", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
    this->from.over_land =
-     from_tab[2] = XmCreateToggleButton(framed[1], 
+     from_tab[2] = XmCreateToggleButton(framed[1],
 					       "over_land", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->from.over_site =     
+   this->from.over_site =
      from_tab[3] = XmCreateToggleButton(framed[1],
 					       "radar", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->from.landing =   
+   this->from.landing =
      from_tab[4] = XmCreateToggleButton(framed[1], "landing", args, n);
 
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->from.landed =     
+   this->from.landed =
      from_tab[5] = XmCreateToggleButton(framed[1], "landed", args, n);
    XtManageChildren(from_tab, PLANE_CHILDREN);
    XtManageChildren(framed, 2);
@@ -207,34 +207,34 @@ main(int argc, char *argv[])
  */
 
    n = 0;
-   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++; 
-   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++; 
+   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++;
+   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM) ; n++;
    form_tab[1] = XmCreateFrame(main_tab[1], "traffic", args, n);
 
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_TITLE_CHILD); n++;
    framed[0] = XmCreateLabel(form_tab[1], "title", args, n);
-   
+
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_WORKAREA_CHILD); n++;
    XtSetArg(args[n], XmNradioBehavior, True); n++;
    framed[1] = XmCreateRadioBox(form_tab[1], "traffic_box", args, n);
- 
+
    n = 0;
    XtSetArg(args[n], XmNset, True); n++;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->to.leave =     
+   this->to.leave =
      to_tab[1] = XmCreateToggleButton(framed[1],
 				      "no_traffic", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->to.enter =     
+   this->to.enter =
      to_tab[0] = XmCreateToggleButton(framed[1],
 				      "radar_echo", args, n);
    n = 0;
    XtSetArg(args[n], XmNvisibleWhenOff, False); n++;
-   this->to.landing =   
+   this->to.landing =
      to_tab[2] = XmCreateToggleButton(framed[1],
 				      "landing", args, n);
 
@@ -245,13 +245,13 @@ main(int argc, char *argv[])
  * Create the Airport picture
  */
    n = 0;
-   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++; 
-   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++; 
+   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++;
+   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_WIDGET) ; n++;
    XtSetArg(args[n], XmNleftWidget, form_tab[0]) ; n++;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_WIDGET) ; n++;
    XtSetArg(args[n], XmNrightWidget, form_tab[1]) ; n++;
-   this->airport = 
+   this->airport =
      form_tab[2] = XmCreateDrawingArea(main_tab[1], "da", args, n);
    XtAddCallback(this->airport, XmNexposeCallback,
 		 (XtCallbackProc) ShowAirport, (XtPointer) this);
@@ -262,14 +262,14 @@ main(int argc, char *argv[])
 /*
  * Create the Airport Message area
  */
-	
+
    n = 0;
    main_tab[2] = XmCreateFrame(this->main, "message", args, n);
 
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_TITLE_CHILD); n++;
    framed[0] = XmCreateLabel(main_tab[2], "title", args, n);
-   
+
    n = 0;
    XtSetArg(args[n], XmNchildType, XmFRAME_WORKAREA_CHILD); n++;
    XtSetArg(args[n], XmNvisibleItemCount, 4); n++;
@@ -288,8 +288,8 @@ main(int argc, char *argv[])
    XtManageChild(this->main);
 
    XtRealizeWidget(theWidgetRoot);
-   
-/* 
+
+/*
  * Create the drag icon
  */
 
@@ -298,16 +298,16 @@ main(int argc, char *argv[])
 			   plane_width, plane_height);
 
    flying = XCreateBitmapFromData(this->display,
-				  XtWindow(this->main), (char*)flying_bits, 
+				  XtWindow(this->main), (char*)flying_bits,
 				  flying_icon_width, flying_icon_height);
 
-   mask = XCreateBitmapFromData(this->display, 
-				XtWindow(this->main), (char*)flying_mask_bits, 
+   mask = XCreateBitmapFromData(this->display,
+				XtWindow(this->main), (char*)flying_mask_bits,
 				flying_mask_width, flying_mask_height);
    n = 0;
    XtSetArg(args[n], XmNpixmap, flying); n++;
    XtSetArg(args[n], XmNdepth, 1); n++;
-   XtSetArg(args[n], XmNmask, mask); n++; 
+   XtSetArg(args[n], XmNmask, mask); n++;
    XtSetArg(args[n], XmNwidth, flying_icon_width); n++;
    XtSetArg(args[n], XmNheight, flying_icon_height) ; n++;
    this->dragIcon = XmCreateDragIcon(form_tab[2], "drag", args, n);
@@ -319,19 +319,19 @@ main(int argc, char *argv[])
    gcv.function = GXcopy;
    gcv.fill_style = FillOpaqueStippled;
    gcv.stipple = parked;
-   gcv.foreground = AirportResources.spot_foreground; 
-   gcv.background = AirportResources.spot_background; 
-   this->park.gc = XCreateGC(this->display, XtWindow(this->main), 
+   gcv.foreground = AirportResources.spot_foreground;
+   gcv.background = AirportResources.spot_background;
+   this->park.gc = XCreateGC(this->display, XtWindow(this->main),
 			     GCFunction|GCStipple|GCFillStyle
 			     |GCForeground|GCBackground,
 			     &gcv);
-   
+
    gcv.line_style = LineDoubleDash;
    gcv.line_width = AirportResources.track_border_width;
    gcv.fill_style = FillSolid;
-   gcv.foreground = AirportResources.track_foreground; 
-   gcv.background = AirportResources.track_background; 
-   this->track.gc = XCreateGC(this->display, XtWindow(this->main), 
+   gcv.foreground = AirportResources.track_foreground;
+   gcv.background = AirportResources.track_background;
+   this->track.gc = XCreateGC(this->display, XtWindow(this->main),
 			      GCFunction|GCLineWidth|GCLineStyle
 			      |GCFillStyle|GCForeground|GCBackground,
 			      &gcv);
@@ -341,11 +341,11 @@ main(int argc, char *argv[])
 }
 
 /* ===============================================================
- *   Create a cascade and a pulldown entry into a menubar, 
+ *   Create a cascade and a pulldown entry into a menubar,
  * 	from a list of push button specs.
  *   If the label is NULL, create a separator instead of a push button.
  */
-   
+
 static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
 			   XtCallbackProc procs[], XtPointer private[],
 			   int count)
@@ -358,7 +358,7 @@ static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
    char name[128];
 
    n = 0;
-   menu = XmCreatePulldownMenu(menubar, 
+   menu = XmCreatePulldownMenu(menubar,
 			       strcat(strcpy(name, entry), "Menu"),
 			       args, n);
    for( i = 0; i < count; i++) {
@@ -374,7 +374,7 @@ static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
       XtManageChild(child);
    }
    n = 0;
-   XtSetArg(args[n], XmNlabelString, XmStringCreateSimple(entry)); n++;
+   XtSetArg(args[n], XmNlabelString, XmStringCreateLocalized(entry)); n++;
    XtSetArg(args[n], XmNsubMenuId, menu); n++;
    child = XmCreateCascadeButton(menubar, entry, args, n);
    XtManageChild(child);
@@ -414,7 +414,7 @@ static void HelpCallback(Widget button, Airport this, XtPointer cbs)
 
 /* ===============================================================
  * Create Airport tracks. Open airport to traffic.
- *  
+ *
  */
 
 static void ConfigureAirport(Widget area, Airport this)
@@ -429,27 +429,27 @@ static void ConfigureAirport(Widget area, Airport this)
 /*
  * Try to make the screen background window the ocean.
  * Be aware of running without a window manager,
- * or with a reparenting window manager 
+ * or with a reparenting window manager
  * or a window manager like HP VUEWM who have a background window
  */
- 
+
    this->ocean = (Window) NULL;
-   if (XQueryTree(this->display, XtWindow(XtParent(this->main)), 
+   if (XQueryTree(this->display, XtWindow(XtParent(this->main)),
 		  &root, &parent, &wlist, &count)  != 0) {
       Window current;
-      
+
       do {
 	 XWindowAttributes wa;
-	 
+
 	 current = this->ocean = parent;
 	 if (XQueryTree(this->display, current, &root, &parent,
 			&wlist, &count) == 0)
 	   break;
-	 
-	 if (current == root) 
+
+	 if (current == root)
 	   {
 	      /* beware of HP-VUE */
-	      
+
 	      XGetWindowAttributes(this->display, wlist[0], &wa);
 	      this->ocean = (wa.width >= this->screen_width
 			     && wa.height >= this->screen_height) ?
@@ -466,7 +466,7 @@ static void ConfigureAirport(Widget area, Airport this)
 	 }
       } while (root != current);
    }
-   
+
    n = 0;
    XtSetArg(args[n], XmNwidth, &width); n++;
    XtSetArg(args[n], XmNheight, &height); n++;
@@ -477,12 +477,12 @@ static void ConfigureAirport(Widget area, Airport this)
       XClearWindow(this->display, XtWindow(area) );
       this->park.spot_count = 0;
    }
-   min_height = AirportResources.track_margin * 4 + plane_height*2 
+   min_height = AirportResources.track_margin * 4 + plane_height*2
      		+ AirportResources.track_border_width*2 + MIN_TRACK_SIZE;
    min_width = AirportResources.track_margin*2 + plane_width ;
-   if ( min_height > (int) height || min_width > (int) width) 
+   if ( min_height > (int) height || min_width > (int) width)
      {
-	Warning(this, 
+	Warning(this,
 		XmStringCreateLocalized(AirportResources.too_small),
 		NULL);
 	this->state = closed;
@@ -490,16 +490,16 @@ static void ConfigureAirport(Widget area, Airport this)
    else
      {
 	Position x, y;
-	
+
 	this->track.bbox.x = (short) AirportResources.track_margin;
-	this->track.bbox.y = (short) AirportResources.track_margin*2 
+	this->track.bbox.y = (short) AirportResources.track_margin*2
 	  + plane_height;
 	this->track.bbox.width = width - AirportResources.track_margin*2;
 	this->track.bbox.height = height - 2*this->track.bbox.y;
 	this->park.plane_count = (int) this->track.bbox.width / plane_width;
 	this->park.spot_count = 2 * this->park.plane_count;
-	this->park.spots = (Spot) XtCalloc(sizeof(SpotRec), 
-					   this->park.spot_count); 
+	this->park.spots = (Spot) XtCalloc(sizeof(SpotRec),
+					   this->park.spot_count);
 	x = AirportResources.track_margin;
 	y = AirportResources.track_margin;
 	for (i = 0; i < this->park.plane_count ; i++) {
@@ -507,7 +507,7 @@ static void ConfigureAirport(Widget area, Airport this)
 	   this->park.spots[i].x = x ;
 	   this->park.spots[i].y = y ;
 	   x += plane_width;
-	   
+
 	}
 	x = AirportResources.track_margin;
 	y += this->track.bbox.y + this->track.bbox.height
@@ -560,19 +560,19 @@ static void AirportInput(Widget area, Airport this, XtPointer cbs)
    int i;
    XButtonEvent *evt;
    XmDrawingAreaCallbackStruct *call_data = (XmDrawingAreaCallbackStruct *)cbs;
-   
+
    if ((call_data->event->type != ButtonPress)
        && (call_data->event->type != ButtonRelease))
      return;
-   
+
    evt = (XButtonEvent *) call_data->event;
-   switch(evt->type) { 
-      
+   switch(evt->type) {
+
    case ButtonPress:
       switch (evt->button) {
 
       case Button2: /* start drag ?? */
-	
+
 	 for (i = 0; i < this->park.spot_count ; i++) {
 	    if (evt->x >= this->park.spots[i].x
 		&& evt->y >= this->park.spots[i].y
@@ -586,18 +586,18 @@ static void AirportInput(Widget area, Airport this, XtPointer cbs)
 	 }
 	 break;
 
-      default: 
+      default:
 	 return;
       }
       break;
-      
-   default: 
+
+   default:
       return;
    }
 }
 
 /* ===============================================================
- *   
+ *
  */
 void DrawAirport(Airport this, Window wd, Pixel bg, Pixel fg)
 {
@@ -610,7 +610,7 @@ void DrawAirport(Airport this, Window wd, Pixel bg, Pixel fg)
 		  this->track.bbox.x, this->track.bbox.y,
 		  this->track.bbox.width, this->track.bbox.height);
    XDrawLine(this->display, wd, this->track.gc,
-	     this->track.bbox.x, 
+	     this->track.bbox.x,
 	     this->track.bbox.y + AirportResources.track_border_width,
 	     this->track.bbox.x + this->track.bbox.width,
 	     this->track.bbox.y + AirportResources.track_border_width);
@@ -622,7 +622,7 @@ void DrawAirport(Airport this, Window wd, Pixel bg, Pixel fg)
 
    for (i = 0; i < this->park.spot_count ; i++) {
       if (this->park.spots[i].empty == False) {
-	 XSetTSOrigin(this->display, this->park.gc, 
+	 XSetTSOrigin(this->display, this->park.gc,
 		      this->park.spots[i].x, this->park.spots[i].y);
 	 XFillRectangle(this->display, wd, this->park.gc,
 			this->park.spots[i].x, this->park.spots[i].y,
@@ -656,17 +656,17 @@ static void Warning(Airport this, XmString s1, XmString s2)
      msg = s2;
    else if (s2 == NULL)
      msg = s1;
-   else 
+   else
      msg = XmStringConcat(s1, s2);
 
    if (this->warning_dialog == NULL) {
       Arg args[8];
       int n = 0;
 
-      XtSetArg(args[n], XmNdialogStyle, 
+      XtSetArg(args[n], XmNdialogStyle,
 	       XmDIALOG_FULL_APPLICATION_MODAL);
       n++;
-      this->warning_dialog = XmCreateWarningDialog(this->main, 
+      this->warning_dialog = XmCreateWarningDialog(this->main,
 						"warning", args, n);
    }
    XtVaSetValues(this->warning_dialog, XmNmessageString, msg, NULL);

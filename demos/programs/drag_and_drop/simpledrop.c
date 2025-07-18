@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -31,7 +31,7 @@
  *
  *    Created: Vania JOLOBOFF / January 1994
  * ======================================================================
- * 
+ *
  */
 
 /*
@@ -53,7 +53,7 @@ typedef enum {closed, open} State ;
  */
 
 typedef struct _Airport {
-   XtAppContext context; 
+   XtAppContext context;
    Display * display;
    int screen_width;
    int screen_height;
@@ -64,7 +64,7 @@ typedef struct _Airport {
    Widget error_dialog;
    Widget warning_dialog;
    Widget msg_area;
-   Position drop_x; 
+   Position drop_x;
    Position drop_y;
 } DropDemoRec, *DropDemo;
 
@@ -114,15 +114,15 @@ static void Warning(DropDemo this, String s1, String s2)
       strncat(strcpy(tmp, s1), s2, sizeof(tmp) - strlen(s1));
       msg = XmStringCreateLocalized(tmp);
    }
-   
+
    if (this->warning_dialog == NULL) {
       Arg args[8];
       int n = 0;
 
-      XtSetArg(args[n], XmNdialogStyle, 
+      XtSetArg(args[n], XmNdialogStyle,
 	       XmDIALOG_FULL_APPLICATION_MODAL);
       n++;
-      this->warning_dialog = XmCreateWarningDialog(this->main, 
+      this->warning_dialog = XmCreateWarningDialog(this->main,
 						"warning", args, n);
    }
    printf("warning %s\n", tmp);
@@ -131,13 +131,13 @@ static void Warning(DropDemo this, String s1, String s2)
    printf("managing dialog\n");
    XtManageChild(this->warning_dialog);
 }
- 
+
 /* ===============================================================
- *   Create a cascade and a pulldown entry into a menubar, 
+ *   Create a cascade and a pulldown entry into a menubar,
  * 	from a list of push button specs.
  *   If the label is NULL, create a separator instead of a push button.
  */
-   
+
 static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
 			   XtCallbackProc procs[], XtPointer private[],
 			   int count)
@@ -150,7 +150,7 @@ static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
    char name[128];
 
    n = 0;
-   menu = XmCreatePulldownMenu(menubar, 
+   menu = XmCreatePulldownMenu(menubar,
 			       strcat(strcpy(name, entry), "Menu"),
 			       args, n);
    for( i = 0; i < count; i++) {
@@ -166,7 +166,7 @@ static Widget MenuBarEntry(Widget menubar, String entry, String labels[],
       XtManageChild(kid);
    }
    n = 0;
-   XtSetArg(args[n], XmNlabelString, XmStringCreateSimple(entry)); n++;
+   XtSetArg(args[n], XmNlabelString, XmStringCreateLocalized(entry)); n++;
    XtSetArg(args[n], XmNsubMenuId, menu); n++;
    kid = XmCreateCascadeButton(menubar, entry, args, n);
    XtManageChild(kid);
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
    this = (DropDemo) XtCalloc(sizeof(DropDemoRec), 1);
    this->state = closed;
 
-   theWidgetRoot = XtVaAppInitialize(&this->context, myClass, 
+   theWidgetRoot = XtVaAppInitialize(&this->context, myClass,
 				     NULL, 0, &argc, argv, NULL, NULL,
 				     XmNallowShellResize, True,
 				     NULL);
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
    main_kid[1] = XmCreateForm(this->main, "work_area", args, n);
 
    n = 0;
-   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++; 
+   XtSetArg(args[n], XmNtopAttachment, XmATTACH_FORM); n++;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM) ; n++;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM) ; n++;
    XtSetArg(args[n], XmNorientation, XmHORIZONTAL); n++;
@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
    n = 0;
    XtSetArg(args[n], XmNtopAttachment, XmATTACH_WIDGET) ; n++;
    XtSetArg(args[n], XmNtopWidget, form_kid[0]) ; n++;
-   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++; 
+   XtSetArg(args[n], XmNbottomAttachment,XmATTACH_FORM); n++;
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM) ; n++;
    XtSetArg(args[n], XmNrightAttachment, XmATTACH_FORM) ; n++;
    form_kid[1] = XmCreateFrame(main_kid[1], "frame", args, n);
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
  * Create the dropping area
  */
    n = 0;
-   this->drop_area = 
+   this->drop_area =
      framed[1] = XmCreateBulletinBoard(form_kid[1], "da", args, n);
    XtVaSetValues(this->drop_area, XmNuserData, this, NULL);
    n = 0;
@@ -341,10 +341,10 @@ static void HelpCallback(Widget button, XtPointer client_data, XtPointer cbs)
  * Drop proc callback of the drop site.
  * If the drop site is invalid, issue a warning
  * If the drop site is valid, we know the target is at least one of
- * 	String, CT or Pixmap. 
+ * 	String, CT or Pixmap.
  * Pick one of them only in this order of preference.
  */
- 
+
 static void SomethingDropped(Widget dropSite, XtPointer client_data,
 			     XmDropProcCallbackStruct *call_data)
 {
@@ -360,7 +360,7 @@ static void SomethingDropped(Widget dropSite, XtPointer client_data,
    int i = 0;
    Cardinal num_targets = 0;
    Cardinal num_transfer = 0;
-    
+
    XtVaGetValues(dropSite, XmNuserData, &this, NULL);
    XtSetArg(get_args[i], XmNexportTargets, &exports);  i++;
    XtSetArg(get_args[i], XmNnumExportTargets, &num_targets); i++;
@@ -370,7 +370,7 @@ static void SomethingDropped(Widget dropSite, XtPointer client_data,
       this->drop_x = call_data->x;
       this->drop_y = call_data->y;
       for (i = 0; i < num_targets; i++ )
-	if (exports[i] == StringAtom 
+	if (exports[i] == StringAtom
 	    || exports[i] == CTAtom
 	    || exports[i] == PixmapAtom) {
 	   status = XmTRANSFER_SUCCESS;
@@ -383,7 +383,7 @@ static void SomethingDropped(Widget dropSite, XtPointer client_data,
 	}
    }
    else     {
-      Warning(this, "Non Identified Object is Dropped. ", 
+      Warning(this, "Non Identified Object is Dropped. ",
 	      num_targets > 0 ? XmGetAtomName(this->display,exports[0]) : "");
       status = XmTRANSFER_FAILURE;
    }
@@ -411,11 +411,11 @@ static void TransferDone(Widget transfer, XtPointer client_data,
    char msg[256];
 
 
-   if (*format == 8) 
+   if (*format == 8)
      {
 	if (*type == StringAtom)
-	  string = XmStringCreateSimple( (char *) value );
-	else if (*type == CTAtom) 
+	  string = XmStringCreateLocalized((char *)value);
+	else if (*type == CTAtom)
 	  string = XmCvtCTToXmString( (char *) value );
       XtSetArg(args[n], XmNlabelString, string); n++;
      }
@@ -428,7 +428,7 @@ static void TransferDone(Widget transfer, XtPointer client_data,
 		    XmNtransferStatus, XmTRANSFER_FAILURE,
 		    XmNnumDropTransfers, 0,
 		    NULL);
-      sprintf(msg, "Type %s format %d", 
+      sprintf(msg, "Type %s format %d",
 	      XmGetAtomName(this->display, *type), *format);
       Warning(this, "Dropped data is corrupted. ", msg);
       return;

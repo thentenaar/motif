@@ -366,14 +366,6 @@ XtPointer
 
 
 
-extern void SelectOccupyCB(
-Widget,
-XtPointer,
-XtPointer
-);
-
-
-
 extern void CopyModeCB(
 Widget,
 XtPointer,

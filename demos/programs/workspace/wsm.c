@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wsm.c /main/8 1997/05/02 10:08:35 dbl $"
@@ -108,7 +108,7 @@ typedef struct {
 
 typedef struct {
   Window window;
-  Space *from_space;	
+  Space *from_space;
   Space *to_space;
 } CopyStruct;
 
@@ -357,7 +357,7 @@ GetFileName(char **name)
 					 + strlen(app_data.file_name)+ 2));
 	  strcpy(*name,home_name);
 	  strcat(*name, "/");
-	  strcat(*name,app_data.file_name);	  
+	  strcat(*name,app_data.file_name);
 	}
       else
 	{
@@ -388,7 +388,7 @@ GetWorkspaces(String *str_table)
 	  sprintf(strq,"Room%d",i+1);
 	  str = (char*) XtMalloc((strlen(app_data.workspace_list[i]) +1)
 				 * sizeof(char));
-	  strcpy(str, app_data.workspace_list[i]);	
+	  strcpy(str, app_data.workspace_list[i]);
 	  CreateSpace(XrmStringToQuark(strq),str);
 	  XtFree(str);
 	}
@@ -399,12 +399,12 @@ GetWorkspaces(String *str_table)
 	{
 	  sprintf(strq,"Room%d",i+1);
 	  str = (char*) XtMalloc((strlen(str_table[i]) +1) * sizeof(char));
-	  strcpy(str, str_table[i]);	
+	  strcpy(str, str_table[i]);
 	  CreateSpace(XrmStringToQuark(strq),str);
 	  XtFree(str);
 	}
     }
-  else 
+  else
     {
       str = (char*) XtMalloc( 8* sizeof(char));
       for (i = 1; i < 5; i++)
@@ -413,7 +413,7 @@ GetWorkspaces(String *str_table)
 	  CreateSpace(XrmStringToQuark(str), str);
 	}
       XtFree(str);
-    }	
+    }
 }
 
 
@@ -460,7 +460,7 @@ GetBackgrounds(String *str_table)
 	    }
 	  XtFree((XtPointer)str_table[i]);
 	}
-    } 
+    }
 }
 
 
@@ -590,7 +590,7 @@ int main(argc, argv)
 #ifdef _ERROR_HANDLERS
   XSetErrorHandler(MyXErrorHandler);
   XtAppSetErrorHandler(app_con,MyXtErrorHandler);
-#endif 
+#endif
   dsp = XtDisplay(shell);
 
   XtVaSetValues(shell,XmNallowShellResize,True,NULL);
@@ -607,7 +607,7 @@ int main(argc, argv)
 
   GetFileName(&file_name);
   PRINT("FILE NAME %s\n", file_name);
-  InitializeXrm(file_name);	
+  InitializeXrm(file_name);
 
   GetSpaceListResources(shell,
 			&str_table,
@@ -615,7 +615,7 @@ int main(argc, argv)
 			&lp_str_table,
 			&current_space_str,
 			&show_dialog);
-  
+
   GetWorkspaces(str_table);
   GetBackgrounds(b_str_table);
   GetPixmaps(lp_str_table);
@@ -639,28 +639,28 @@ int main(argc, argv)
 
   /* This arglist is used for all of the dialogs created below */
   argcnt = 0;
-  XtSetArg(args[argcnt], XmNdeleteResponse, XmUNMAP); argcnt++; 
+  XtSetArg(args[argcnt], XmNdeleteResponse, XmUNMAP); argcnt++;
 
   Shell001 = XtCreatePopupShell("nameShell", topLevelShellWidgetClass,
 				shell, args, argcnt);
   CreateNameWorkspace(Shell001, wsm_ui);
 
-  
+
   Shell001a = XtCreatePopupShell("backgroundShell", topLevelShellWidgetClass,
 				 shell, args, argcnt);
   CreateBackgroundWorkspace(Shell001a, wsm_ui);
 
-  
+
   Shell002 = XtCreatePopupShell("deleteShell", topLevelShellWidgetClass,
 				shell, args, argcnt);
   CreateDeleteWorkspace(Shell002, wsm_ui);
 
-  
+
   Shell003 = XtCreatePopupShell("configureShell", topLevelShellWidgetClass,
 				shell, args, argcnt);
   CreateConfigureWorkspace(Shell003, wsm_ui);
 
-  
+
   Shell004 = XtCreatePopupShell("saveAsShell", topLevelShellWidgetClass,
 				shell, args, argcnt);
   CreateSaveAs(Shell004, wsm_ui);
@@ -707,32 +707,32 @@ int main(argc, argv)
 
   SendConnect(utmShell);
 
-  if (!show_dialog) 
+  if (!show_dialog)
     XtUnmapWidget(shell);
 
   SetupWsmSignalHandlers(0);
-  
-  for (;;) 
+
+  for (;;)
     {
       XtAppNextEvent(app_con, &event);
       if (event.type == ClientMessage)
 	{
 	  DealWithClientMessage(rc,(XClientMessageEvent *)&event);
 	}
-      if(event.type == DestroyNotify) 
+      if(event.type == DestroyNotify)
 	{
 	  DealWithDestroyNotify(rc,(XDestroyWindowEvent *) &event);
 	}
-      if(event.type == MapNotify) 
+      if(event.type == MapNotify)
 	{
 	  DealWithMapNotify(rc,(XMapEvent *) &event);
 	}
-      if(event.type == UnmapNotify) 
+      if(event.type == UnmapNotify)
 	{
 	  DealWithUnmapNotify(rc,(XUnmapEvent *) &event);
 	}
-      if(XtDispatchEvent(&event)) 
-	continue;	
+      if(XtDispatchEvent(&event))
+	continue;
     }
   return 0;
 }
@@ -750,11 +750,11 @@ static void
 UTMConvertProc(Widget w, XtPointer clientData, XtPointer callData)
 {
   int scr = XScreenNumberOfScreen(XtScreen(w));
-  Display *dsp = XtDisplay(w);
+  Display *d = XtDisplay(w);
   XmConvertCallbackStruct *ccs = (XmConvertCallbackStruct *)callData;
-  Atom lose_sel = XInternAtom(dsp, "_MOTIF_LOSE_SELECTION", False);
-  Atom wm_sel = _WSMGetSelectionAtom(dsp, scr, WSM_WINDOW_MANAGER);
-  Atom wsm_sel = _WSMGetSelectionAtom(dsp, scr, WSM_WORKSPACE_MANAGER);
+  Atom lose_sel = XInternAtom(d, "_MOTIF_LOSE_SELECTION", False);
+  Atom wm_sel = _WSMGetSelectionAtom(d, scr, WSM_WINDOW_MANAGER);
+  Atom wsm_sel = _WSMGetSelectionAtom(d, scr, WSM_WORKSPACE_MANAGER);
 
   /*
    * Check if the callback was invoked for the right reason.
@@ -815,8 +815,8 @@ WsmConvertProc(Widget w, Atom *selection, Atom *target,
     {
       PRINT("isn't known target\n");
       return (False);
-    }		
-  else 
+    }
+  else
     {
       PRINT ("is known target \n");
       if (WSMProcessProtoTarget(w, *target, input, input_len, input_fmt,
@@ -824,20 +824,20 @@ WsmConvertProc(Widget w, Atom *selection, Atom *target,
 	return(TRUE);
     }
   return(False);
-}	
+}
 
 
-void 
+void
 SendExtensionsProc(XtPointer client_data, XtIntervalId *int_id)
 {
   Widget w = (Widget)client_data;
-  SendExtensionCB(w,NULL,NULL);	
-  
+  SendExtensionCB(w,NULL,NULL);
+
 }
 
 /*ARGSUSED*/
 void
-RequestReceived(Widget w, XtPointer textp, 
+RequestReceived(Widget w, XtPointer textp,
 		WSMRequest *request, WSMReply *reply)
 {
   Boolean version_found = False;
@@ -850,7 +850,7 @@ RequestReceived(Widget w, XtPointer textp,
     {
       /* send versions in decending order */
       for (i = 0; i < request->connect.num_versions; i++)
-	if (request->connect.known_versions[i] == 1 || 
+	if (request->connect.known_versions[i] == 1 ||
 	    request->connect.known_versions[i] == 2 ||
 	    request->connect.known_versions[i] == 3)
 	  {
@@ -865,10 +865,10 @@ RequestReceived(Widget w, XtPointer textp,
 	  connected = False;
 	}
       mwm_reconnect = True;
-      SendExtensionCB(w,NULL,NULL);	
+      SendExtensionCB(w,NULL,NULL);
     }
     break;
-    
+
   case WSM_REG_WINDOW:
     {
       PRINT("wsm: get Register reply\n");
@@ -877,7 +877,7 @@ RequestReceived(Widget w, XtPointer textp,
 	  GetRegisterWindowReply(request->register_window.window,reply);
 	  print_reply(reply);
 	}
-      else 
+      else
 	{
 	  reply->register_window.allocated = False;
 	  reply->register_window.num_window_data = 0;
@@ -899,14 +899,14 @@ RequestReceived(Widget w, XtPointer textp,
     /* Not handled cases */
     break;
   }
-    
+
   /*
-   * If we had allocated any data here we need to ask the 
+   * If we had allocated any data here we need to ask the
    * library to free it, see comments in WSMDefaultOwnSelection for
    * details.
    */
-  
-}	
+
+}
 
 
 
@@ -915,12 +915,12 @@ SendConnect(Widget w)
 {
   WSMRequest request;
   static short versions[] = { 3,2,1 };
-  Display *dsp = XtDisplay(w);
+  Display *d = XtDisplay(w);
   int scr = XScreenNumberOfScreen(XtScreen(shell));
-  Atom wm_selection = _WSMGetSelectionAtom(dsp, scr, WSM_WINDOW_MANAGER);
+  Atom wm_selection = _WSMGetSelectionAtom(d, scr, WSM_WINDOW_MANAGER);
 
 
-  if (XGetSelectionOwner(dsp, wm_selection) == None)
+  if (XGetSelectionOwner(d, wm_selection) == None)
     return;
 
   PRINT("send connect\n");
@@ -933,12 +933,12 @@ SendConnect(Widget w)
       WSMSendMessage(utmShell, WSM_WINDOW_MANAGER, &request,
 		     ReceiveConnectRCB, NULL);
     }
-}	
+}
 
-void 
-ReceiveConnectRCB(Widget w, XtPointer call, 
+void
+ReceiveConnectRCB(Widget w, XtPointer call,
 		  WSMReply *reply, WSMErrorCode error)
-{	
+{
   PRINT("receive connect\n");
   if (reply != NULL)
     {
@@ -952,9 +952,9 @@ ReceiveConnectRCB(Widget w, XtPointer call,
 void
 SendExtensionCB(Widget w, XtPointer client,XtPointer call)
 {
-  
+
   WSMRequest request;
-  static String extensions[] = { "Test", 
+  static String extensions[] = { "Test",
 				   "Extension #1", "Extension #123" };
 
   request.any.type = WSM_EXTENSIONS;
@@ -963,18 +963,18 @@ SendExtensionCB(Widget w, XtPointer client,XtPointer call)
   request.extensions.allocated = False;
   WSMSendMessage(utmShell, WSM_WINDOW_MANAGER, &request,
 		 ReceiveExtensionsRCB, call);
-  
+
 }
 
-void 
-ReceiveExtensionsRCB(Widget w, XtPointer client, 
+void
+ReceiveExtensionsRCB(Widget w, XtPointer client,
 		     WSMReply *reply, WSMErrorCode error)
 {
   if (reply != NULL )
     {
       SendConfigCB(w,client, client);
-    }	
-  else 
+    }
+  else
     {
       PRINT(" extension reply == NULL\n");
       SendConfigCB(w,client,client);
@@ -991,7 +991,7 @@ SendConfigCB(Widget w, XtPointer client, XtPointer call)
 		 ReceiveConfigRCB, call);
 }
 
-Boolean 
+Boolean
 find_format(XrmQuark nameq, XrmQuark *nameq_list, int num_list)
 {
   int i;
@@ -1004,7 +1004,7 @@ find_format(XrmQuark nameq, XrmQuark *nameq_list, int num_list)
 }
 
 void
-ReceiveConfigRCB(Widget w, XtPointer call, 
+ReceiveConfigRCB(Widget w, XtPointer call,
 	     WSMReply *reply, WSMErrorCode error)
 {
   int i,j;
@@ -1018,9 +1018,9 @@ ReceiveConfigRCB(Widget w, XtPointer call,
       for (i = 0; i < reply->config_format.num_global_formats && mwm_reconnect; i++)
 	{
 	  if (global_attribq[i] != reply->config_format.global_formats[i].nameq ||
-	      global_attrib_list[i].size != 
-	      reply->config_format.global_formats[i].size || 
-	      global_attrib_list[i].is_list != 
+	      global_attrib_list[i].size !=
+	      reply->config_format.global_formats[i].size ||
+	      global_attrib_list[i].is_list !=
 	      reply->config_format.global_formats[i].is_list)
 	      mwm_reconnect = False;
 	}
@@ -1028,10 +1028,10 @@ ReceiveConfigRCB(Widget w, XtPointer call,
 	  mwm_reconnect = False;
       for (i = 0; i < reply->config_format.num_window_formats && mwm_reconnect; i++)
 	{
-	  if (window_attribq[i] != reply->config_format.window_formats[i].nameq ||	
+	  if (window_attribq[i] != reply->config_format.window_formats[i].nameq ||
 	      window_attrib_list[i].size !=
 	      reply->config_format.window_formats[i].size ||
-	      window_attrib_list[i].is_list != 
+	      window_attrib_list[i].is_list !=
 	      reply->config_format.window_formats[i].is_list)
 	      mwm_reconnect = False;
 	}
@@ -1049,14 +1049,14 @@ ReceiveConfigRCB(Widget w, XtPointer call,
   if (reply != NULL && !mwm_reconnect)
     {
       diffs_allowed =reply->config_format.accepts_diffs;
-      
+
       global_attrib_list=
 	(WSMAttribute*)	XtMalloc(reply->config_format.num_global_formats *
 				 sizeof(WSMAttribute));
       global_attribq =
-	(XrmQuark*)XtMalloc((1+reply->config_format.num_global_formats) * 
+	(XrmQuark*)XtMalloc((1+reply->config_format.num_global_formats) *
 			    sizeof(XrmQuark));
-      window_attrib_list = 
+      window_attrib_list =
 	(WSMAttribute*)XtMalloc(reply->config_format.num_window_formats *
 				sizeof(WSMAttribute));
       window_attribq =
@@ -1073,7 +1073,7 @@ ReceiveConfigRCB(Widget w, XtPointer call,
       for (i = 0; i < reply->config_format.num_global_formats; i++)
 	{
 	  global_attrib_list[i].nameq = global_attribq[i] =
-	    reply->config_format.global_formats[i].nameq;		
+	    reply->config_format.global_formats[i].nameq;
 	  global_attrib_list[i].size =
 	    reply->config_format.global_formats[i].size;
 	  global_attrib_list[i].is_list =
@@ -1088,7 +1088,7 @@ ReceiveConfigRCB(Widget w, XtPointer call,
 	  if (reply->config_format.window_formats[i].nameq == iconicq)
 	    wsm_index.iconic = i;
 	  window_attrib_list[i].nameq = window_attribq[i] =
-	    reply->config_format.window_formats[i].nameq;	
+	    reply->config_format.window_formats[i].nameq;
 	  window_attrib_list[i].size =
 	    reply->config_format.window_formats[i].size;
 	  window_attrib_list[i].is_list =
@@ -1129,9 +1129,9 @@ SendStartGetStateCB(Widget w, XtPointer call, XtPointer client)
 }
 
 void
-SendStartSetStateRCB(Widget w, XtPointer call, 
+SendStartSetStateRCB(Widget w, XtPointer call,
 		     WSMReply *reply, WSMErrorCode error)
-{	
+{
   WSMRequest request;
   if (reply != NULL)
   {
@@ -1143,11 +1143,11 @@ SendStartSetStateRCB(Widget w, XtPointer call,
 		       ReceiveSetStateRCB, call);
       }
   }
-}	
+}
 
 
 void
-ReceiveSetStateRCB(Widget w, XtPointer call, 
+ReceiveSetStateRCB(Widget w, XtPointer call,
 		     WSMReply *reply, WSMErrorCode error)
 {
   Atom mwm_selection;
@@ -1169,7 +1169,7 @@ ReceiveSetStateRCB(Widget w, XtPointer call,
   if ( mwm_window != None)
     {
       XSelectInput(dsp,mwm_window,StructureNotifyMask);
-    }  
+    }
   PRINT("CONNECTED!\n");
 }
 
@@ -1177,16 +1177,16 @@ ReceiveSetStateRCB(Widget w, XtPointer call,
 
 
 void
-SendSaveWsm(char *file_name)
+SendSaveWsm(char *fname)
 {
   WSMRequest request;
   request.get_state.window = 0;
   request.get_state.diffs_allowed = False;
   request.any.type = WSM_GET_STATE;
-  PRINT("wsm:  WSMSendMessage WSM_GET_STATE %s\n", file_name);
+  PRINT("wsm:  WSMSendMessage WSM_GET_STATE %s\n", fname);
   WSMSendMessage(utmShell, WSM_WINDOW_MANAGER, &request, ReceiveSaveWsmRCB,
-		 (XtPointer)file_name);
-}	
+		 (XtPointer)fname);
+}
 
 
 
@@ -1204,10 +1204,10 @@ SendLeaveRoom(Space *s)
 
 
 void
-ReceiveSaveWsmRCB(Widget w, XtPointer client, 
+ReceiveSaveWsmRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
-  char *file_name = (char*) client;
+  char *fname = (char *)client;
   if (reply != NULL)
     {
       if (reply->any.type == WSM_GET_STATE)
@@ -1218,13 +1218,13 @@ ReceiveSaveWsmRCB(Widget w, XtPointer client,
 	}
     }
   UpdateXrm();
-  SaveWsmToFile(file_name);
+  SaveWsmToFile(fname);
 }
 
 
 
 void
-ReceiveLeaveRoomRCB(Widget w, XtPointer client, 
+ReceiveLeaveRoomRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
   if (reply != NULL)
@@ -1240,7 +1240,7 @@ ReceiveLeaveRoomRCB(Widget w, XtPointer client,
 }
 
 void
-ReceiveEnterRoomRCB(Widget w, XtPointer client, 
+ReceiveEnterRoomRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
   PRINT("finished entering room\n");
@@ -1265,7 +1265,7 @@ ChangeRoomCB(Widget w, XtPointer client, XtPointer call)
 }
 
 void
-ReceiveCopyMoveRCB(Widget w, XtPointer client, 
+ReceiveCopyMoveRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
  PRINT("receive copy/move\n");
@@ -1288,7 +1288,7 @@ CopyWindow(WorkWindow *w_window, Space *from_s, Space* to_s)
 	  copy_struct = (CopyStruct *)XtMalloc(sizeof(CopyStruct));
 	  copy_struct->window = w_window->window;
 	  copy_struct->to_space = to_s;
-	  copy_struct->from_space = from_s;	  
+	  copy_struct->from_space = from_s;
 	  request.get_state.window = w_window->window;
 	  request.get_state.diffs_allowed = True;
 	  request.any.type = WSM_GET_STATE;
@@ -1305,8 +1305,8 @@ CopyWindow(WorkWindow *w_window, Space *from_s, Space* to_s)
 }
 
 
-void 
-CopyRCB(Widget w, XtPointer client, 
+void
+CopyRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
   WSMRequest request;
@@ -1325,7 +1325,7 @@ CopyRCB(Widget w, XtPointer client,
 		       ReceiveCopyMoveRCB, NULL);
     }
   XtFree((XtPointer)copy_struct);
-}	
+}
 
 void
 MoveWindow(WorkWindow *w_window, Space *from_s, Space* to_s)
@@ -1352,8 +1352,8 @@ MoveWindow(WorkWindow *w_window, Space *from_s, Space* to_s)
     }
 }
 
-void 
-MoveRCB(Widget w, XtPointer client, 
+void
+MoveRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
     WSMRequest request;
@@ -1386,7 +1386,7 @@ DeleteWindow(WorkWindow *w_window, Space *from_s)
 	WSMSendMessage(utmShell, WSM_WINDOW_MANAGER, &request,
 		       ReceiveCopyMoveRCB, NULL);
     }
-  
+
 }
 
 void
@@ -1420,8 +1420,8 @@ LinkWindow(WorkWindow *w_window, Space *from_s, Space *to_s)
 }
 
 
-void 
-LinkRCB(Widget w, XtPointer client, 
+void
+LinkRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
   WSMRequest request;
@@ -1440,8 +1440,8 @@ LinkRCB(Widget w, XtPointer client,
 
 /* This function doesn't appear to be used anywhere */
 #ifdef notdef
-void 
-BackgroundRCB(Widget w, XtPointer client, 
+void
+BackgroundRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
   Window windowID = reply->get_background.window;
@@ -1457,7 +1457,7 @@ BackgroundRCB(Widget w, XtPointer client,
 #endif
 
 
-void 
+void
 SetSpaceBackground(Space *space)
 {
   if (SpacePixelSet(space))
@@ -1490,17 +1490,17 @@ ManageAllWindowsAndExit()
   PRINT("ManageAllWindowsAndExit()\n");
   if (!mwm_gone)
     {
-      if (GetManageAllWindowsRequest(&request))    
+      if (GetManageAllWindowsRequest(&request))
 	WSMSendMessage(utmShell, WSM_WINDOW_MANAGER, &request, ExitRCB, NULL);
-      else 
+      else
 	CleanUpAndExit();
     }
   else exit(0);
 }
 
 
-void 
-ExitRCB(Widget w, XtPointer client, 
+void
+ExitRCB(Widget w, XtPointer client,
 	     WSMReply *reply, WSMErrorCode error)
 {
     CleanUpAndExit();

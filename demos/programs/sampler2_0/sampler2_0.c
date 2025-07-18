@@ -20,16 +20,16 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
  */
 
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <Xm/XmAll.h>
-#include <Xmd/AdjView.h>   
-#include <Xmd/Help.h>   
+#include <Xmd/AdjView.h>
+#include <Xmd/Help.h>
 /* need these semi public header during the construction of the
    ContainerOutline class widget tree, as data, not as real widgets */
 #include <Xm/SashP.h>
@@ -118,20 +118,20 @@ static void HelpCB (Widget w, XtPointer client_data, XtPointer call_data);
 static Widget CreateMainWindowWithMenuBar (Widget toplevel);
 static void ContainerExpose (Widget wid,   XtPointer closure,
 			     XEvent *event, Boolean *cont);
-static void InitContainerSpatial(Widget w, XtPointer client_data, 
+static void InitContainerSpatial(Widget w, XtPointer client_data,
 				 XtPointer call_data);
 static void TravCB (Widget w, XtPointer client_data, XtPointer call_data);
-static void InitContainerOutline(Widget w, XtPointer client_data, 
+static void InitContainerOutline(Widget w, XtPointer client_data,
 				 XtPointer call_data);
 static void OKCB (Widget w, XtPointer client_data, XtPointer call_data);
-static void InitPanedWindow(Widget w, XtPointer client_data, 
-			    XtPointer call_data); 
-static void InitFileSelectionBox(Widget w, XtPointer client_data, 
+static void InitPanedWindow(Widget w, XtPointer client_data,
+			    XtPointer call_data);
+static void InitFileSelectionBox(Widget w, XtPointer client_data,
 				 XtPointer call_data);
-static void InitTogglesWindow(Widget w, XtPointer client_data, 
-			      XtPointer call_data); 
-static void InitScaleCombo(Widget w, XtPointer client_data, 
-			   XtPointer call_data); 
+static void InitTogglesWindow(Widget w, XtPointer client_data,
+			      XtPointer call_data);
+static void InitScaleCombo(Widget w, XtPointer client_data,
+			   XtPointer call_data);
 static void SetDyn(WidgetClass wclass, Cardinal index, Boolean documented);
 static Cardinal InitClassArray (void);
 static void sb_ModifyVerifyCB(Widget w, XtPointer client_data,
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
     /* allocate new pages struct */
     nb_data.pages = NewPageSet (&nb_data.num_pages) ;
 
-    nb = XtVaCreateManagedWidget("nb", xmNotebookWidgetClass, mainw, 
+    nb = XtVaCreateManagedWidget("nb", xmNotebookWidgetClass, mainw,
 				 XmNuserData, &nb_data, NULL);
     XtAddCallback (nb, XmNpageChangedCallback, NbCB, NULL);
     XtAddCallback (nb, XmNdestroyCallback, DestroyCB, NULL);
@@ -196,15 +196,15 @@ int main(int argc, char *argv[])
 	char tab_name[100] ;
 
 	sprintf(tab_name, "TabTo%s", nb_data.pages[i].page_name);
-	(void) XtVaCreateManagedWidget(nb_data.pages[i].page_name, 
+	(void) XtVaCreateManagedWidget(nb_data.pages[i].page_name,
 				       nb_data.pages[i].page_class,
-				       nb, 
+				       nb,
 				       NULL);
 	(void) XtVaCreateManagedWidget(tab_name, xmPushButtonWidgetClass,
 				      nb, NULL);
     }
 
- 
+
     /*** create only one status area */
     nb_data.status = XtVaCreateManagedWidget("Status", xmLabelWidgetClass, nb,
 					    XmNpageNumber, 1, NULL);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
 }
 
 /* I wish C could initialized that statically, but it can't */
-static 
+static
 PageDataStruct * NewPageSet (Cardinal *num_page_return)
 
 {
@@ -227,23 +227,23 @@ PageDataStruct * NewPageSet (Cardinal *num_page_return)
   pages = (PageDataStruct *) XtMalloc(NUM_PAGES * sizeof(PageDataStruct));
 
   n = 0;
-  pages[n].page_name = "ContainerSpatial"; 
-  pages[n].page_init_proc = InitContainerSpatial; 
+  pages[n].page_name = "ContainerSpatial";
+  pages[n].page_init_proc = InitContainerSpatial;
   pages[n].page_class = xmContainerWidgetClass; n++;
-  pages[n].page_name = "SWContainerOutline"; 
-  pages[n].page_init_proc = InitContainerOutline; 
+  pages[n].page_name = "SWContainerOutline";
+  pages[n].page_init_proc = InitContainerOutline;
   pages[n].page_class = xmScrolledWindowWidgetClass; n++;
-  pages[n].page_name = "PanedWindow"; 
-  pages[n].page_init_proc = InitPanedWindow; 
+  pages[n].page_name = "PanedWindow";
+  pages[n].page_init_proc = InitPanedWindow;
   pages[n].page_class = xmPanedWindowWidgetClass; n++;
-  pages[n].page_name = "FileSelectionBox"; 
-  pages[n].page_init_proc = InitFileSelectionBox; 
-  pages[n].page_class = xmFrameWidgetClass; n++;  
-  pages[n].page_name = "TogglesWindow"; 
-  pages[n].page_init_proc = InitTogglesWindow; 
+  pages[n].page_name = "FileSelectionBox";
+  pages[n].page_init_proc = InitFileSelectionBox;
+  pages[n].page_class = xmFrameWidgetClass; n++;
+  pages[n].page_name = "TogglesWindow";
+  pages[n].page_init_proc = InitTogglesWindow;
   pages[n].page_class = xmScrolledWindowWidgetClass; n++;
-  pages[n].page_name = "ScaleCombo"; 
-  pages[n].page_init_proc = InitScaleCombo; 
+  pages[n].page_name = "ScaleCombo";
+  pages[n].page_init_proc = InitScaleCombo;
   pages[n].page_class = xmFormWidgetClass; n++;
 
   *num_page_return = n ;
@@ -254,8 +254,8 @@ PageDataStruct * NewPageSet (Cardinal *num_page_return)
  *   NbCB		- callback for Notebook
  *     Update the status label. and init the page if not yet done
  */
-static void 
-NbCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+NbCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
    XmNotebookCallbackStruct * nbcs =
 	(XmNotebookCallbackStruct *) call_data ;
@@ -266,14 +266,14 @@ NbCB (Widget w, XtPointer client_data, XtPointer call_data)
 
    /* set the status label to the widget I'm showing now, plus
       its page number */
-   XtVaSetValues(nb_data->status, 
+   XtVaSetValues(nb_data->status,
 		 XtVaTypedArg, XmNlabelString, XtRString,
 		 nb_data->pages[nbcs->page_number - 1].page_name,
 		 strlen(nb_data->pages[nbcs->page_number - 1].page_name)+1,
 		 XmNpageNumber, nbcs->page_number, NULL);
 
    /* here I use page_class as a flag to check if the page
-      has been initialized. page_class is the field that stores the 
+      has been initialized. page_class is the field that stores the
       class of the widget in the page, it is not NULL the first time
       thru and I set it NULL here cause I won't be using it again */
    if (nb_data->pages[nbcs->page_number - 1].page_class) {
@@ -288,8 +288,8 @@ NbCB (Widget w, XtPointer client_data, XtPointer call_data)
  *   DestroyCB		- callback when Notebook dies
  *     Free the data associated with this Notebook.
  */
-static void 
-DestroyCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+DestroyCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
    NotebookDataStruct * nb_data ;
 
@@ -301,72 +301,72 @@ DestroyCB (Widget w, XtPointer client_data, XtPointer call_data)
    /* nbdata itself comes from the stack in this program */
 }
 
-static void 
-QuitCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+QuitCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
     exit (0);
 }
 
-static void 
-HelpCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+HelpCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
     static Widget help_widget = NULL ;
 
     if (!help_widget)
 	help_widget = XmdCreateHelpDialog(toplevel, "help_manager", NULL, 0);
 
-    XtManageChild(help_widget);   
+    XtManageChild(help_widget);
 }
 
 
-static Widget 
-CreateMainWindowWithMenuBar(Widget toplevel)
+static Widget
+CreateMainWindowWithMenuBar(Widget top)
 {
     Widget	main_window, menu_bar, menu_pane, cascade, button ;
-    
-    Arg		args[20];	
-    Cardinal	n;		
-    
+
+    Arg		args[20];
+    Cardinal	n;
+
 
     /*	Create MainWindow.
      */
     n = 0;
-    main_window = XmCreateMainWindow (toplevel, "main_window", args, n);
+    main_window = XmCreateMainWindow (top, "main_window", args, n);
     XtManageChild (main_window);
-    
-    
+
+
     /*	Create MenuBar in MainWindow.
      */
     n = 0;
-    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n); 
+    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n);
     XtManageChild (menu_bar);
-    
+
     /*	Create "File" PulldownMenu.
      */
     n = 0;
     menu_pane = XmCreatePulldownMenu (menu_bar, "menu_pane", args, n);
-    
+
     n = 0;
     button = XmCreatePushButton (menu_pane, "Exit", args, n);
     XtManageChild (button);
     XtAddCallback (button, XmNactivateCallback, QuitCB, NULL);
-    
+
     n = 0;
     XtSetArg (args[n], XmNsubMenuId, menu_pane);  n++;
     cascade = XmCreateCascadeButton (menu_bar, "File", args, n);
     XtManageChild (cascade);
-    
-    
+
+
     /*	Create "Help" PulldownMenu.
      */
     n = 0;
     menu_pane = XmCreatePulldownMenu (menu_bar, "menu_pane3", args, n);
-    
+
     n = 0;
     button = XmCreatePushButton (menu_pane, "Overview", args, n);
     XtManageChild (button);
     XtAddCallback (button, XmNactivateCallback, HelpCB, NULL);
-    
+
     n = 0;
     XtSetArg (args[n], XmNsubMenuId, menu_pane);  n++;
     cascade = XmCreateCascadeButton (menu_bar, "Help", args, n);
@@ -374,11 +374,11 @@ CreateMainWindowWithMenuBar(Widget toplevel)
     n = 0;
     XtSetArg (args[n], XmNmenuHelpWidget, cascade);  n++;
     XtSetValues (menu_bar, args, n);
-    
-    return main_window ;    
+
+    return main_window ;
 }
 
-static void 
+static void
 ContainerExpose(
         Widget wid,
         XtPointer closure,	/* unused */
@@ -386,13 +386,13 @@ ContainerExpose(
         Boolean *cont )		/* unused */
 {
     /* Turn the spatial container to NONE after it is realized */
-    XtVaSetValues (wid, XmNspatialStyle, XmNONE, NULL); 
+    XtVaSetValues (wid, XmNspatialStyle, XmNONE, NULL);
 }
 
 
 
-static void 
-InitContainerSpatial (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitContainerSpatial (Widget w, XtPointer client_data, XtPointer call_data)
 {
     Cardinal i ;
 #define NUM_ICONS 10
@@ -400,7 +400,7 @@ InitContainerSpatial (Widget w, XtPointer client_data, XtPointer call_data)
 
     for (i=0; i<NUM_ICONS ; i++) {
 	char icon_name[20] ;
-	
+
 	sprintf(icon_name, "IconGadget%d", i);
 	icons[i] = XtVaCreateWidget(icon_name, xmIconGadgetClass,
 				    w, NULL);
@@ -412,19 +412,19 @@ InitContainerSpatial (Widget w, XtPointer client_data, XtPointer call_data)
 }
 
 
-static void 
-TravCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+TravCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
     XmTraverseObscuredCallbackStruct * tocs =
 	(XmTraverseObscuredCallbackStruct *) call_data ;
 
-    XmScrollVisible(w, tocs->traversal_destination, 20, 20) ; 
+    XmScrollVisible(w, tocs->traversal_destination, 20, 20) ;
 }
 
-static void 
-InitContainerOutline (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitContainerOutline (Widget w, XtPointer client_data, XtPointer call_data)
 {
-    Widget container, *icongs; 
+    Widget container, *icongs;
     Cardinal i ;
 
     /* get the number of classes in Xt/Motif */
@@ -449,9 +449,9 @@ InitContainerOutline (Widget w, XtPointer client_data, XtPointer call_data)
 		                 ClassName(icong_array[0]->class_info.w_class),
 				 xmIconGadgetClass, container,
 				 XmNentryParent, NULL,
-				 XmNsensitive, 
+				 XmNsensitive,
 				 icong_array[0]->class_info.documented,
-				 XmNuserData, 
+				 XmNuserData,
 				 &(icong_array[0]->class_info),
 				 NULL);
     i = 1 ;
@@ -460,22 +460,22 @@ InitContainerOutline (Widget w, XtPointer client_data, XtPointer call_data)
 	icongs[i] = XtVaCreateWidget(
 				ClassName(icong_array[i]->class_info.w_class),
 				   xmIconGadgetClass, container,
-				   XmNentryParent, 
+				   XmNentryParent,
 				      icongs[icong_array[i]->parent_index],
-				   XmNsensitive, 
+				   XmNsensitive,
 				      icong_array[i]->class_info.documented,
-				   XmNuserData, 
+				   XmNuserData,
 				       &(icong_array[i]->class_info),
 				   NULL);
 	i++ ;
     }
 
     XtManageChildren(icongs, i);
-	 
+
 }
 
-static void 
-OKCB (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+OKCB (Widget w, XtPointer client_data, XtPointer call_data)
 {
     String input_string ;
     int size_in_pixel ;
@@ -488,7 +488,7 @@ OKCB (Widget w, XtPointer client_data, XtPointer call_data)
 
     /* find the ':' */
     colon_location = strchr(input_string, ':');
-    
+
     /* cut the input_string in two by ending it at color_location,
        the other piece being at colon_location+1 */
     if (colon_location) *colon_location = '\0';
@@ -509,26 +509,26 @@ OKCB (Widget w, XtPointer client_data, XtPointer call_data)
 	XtFree(input_string);
 	return ;
     }
-	
-    size_in_pixel = XmConvertStringToUnits(XtScreen(w), colon_location+1, 
+
+    size_in_pixel = XmConvertStringToUnits(XtScreen(w), colon_location+1,
 					   orientation, XmPIXELS, NULL) ;
 
-    if (size_in_pixel) 
+    if (size_in_pixel)
 	XtVaSetValues(toplevel, resource_name, size_in_pixel, NULL);
-    
+
     XtFree(input_string);
 }
 
 
 
-static void 
-InitPanedWindow (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitPanedWindow (Widget w, XtPointer client_data, XtPointer call_data)
 {
     Widget child_w[2], sub_pane, temp, form, frame;
 
     child_w[0] = XtVaCreateWidget("Arrow1", xmArrowButtonWidgetClass,
 				  w, NULL);
-    sub_pane = child_w[1] = XtVaCreateWidget("SubPane", 
+    sub_pane = child_w[1] = XtVaCreateWidget("SubPane",
 					     xmPanedWindowWidgetClass,
 					     w, NULL);
     XtManageChildren(child_w, 2);
@@ -557,16 +557,16 @@ InitPanedWindow (Widget w, XtPointer client_data, XtPointer call_data)
     XtManageChildren(child_w, 2);
 }
 
-static void 
-InitFileSelectionBox (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitFileSelectionBox (Widget w, XtPointer client_data, XtPointer call_data)
 {
-    XtVaCreateManagedWidget("FileSelectionBox", 
+    XtVaCreateManagedWidget("FileSelectionBox",
 			    xmFileSelectionBoxWidgetClass,
 			    w, NULL);
 }
 
-static void 
-InitTogglesWindow (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitTogglesWindow (Widget w, XtPointer client_data, XtPointer call_data)
 {
     Cardinal i ;
 #define NUM_TOG 50
@@ -584,8 +584,8 @@ InitTogglesWindow (Widget w, XtPointer client_data, XtPointer call_data)
     XtManageChildren(toggles, i);
 }
 
-static void 
-InitScaleCombo (Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+InitScaleCombo (Widget w, XtPointer client_data, XtPointer call_data)
 {
     Arg			args[1];
     Widget		applyb, cbb, scale, selectb;
@@ -634,7 +634,7 @@ InitScaleCombo (Widget w, XtPointer client_data, XtPointer call_data)
     XtVaCreateManagedWidget("Year", xmTextFieldWidgetClass, spinb,
 			    XmNactivateCallback, tfActivateList,
 			    NULL);
-    
+
     sspinb_n = XtVaCreateWidget(
 		"SimpleSpinBoxNumeric", xmSimpleSpinBoxWidgetClass, w,
 		XmNmodifyVerifyCallback, sbModifyVerifyList,
@@ -681,14 +681,14 @@ InitScaleCombo (Widget w, XtPointer client_data, XtPointer call_data)
 		NULL);
     XtRealizeWidget(selectb);
     XtManageChild(selectb);
-    applyb = XmSelectionBoxGetChild(selectb, XmDIALOG_APPLY_BUTTON);
+    applyb = XtNameToWidget(selectb, "Apply");
     XtManageChild(applyb);
 #endif
 
-    scale = XtVaCreateWidget("Scale", xmScaleWidgetClass, w, NULL);    
+    scale = XtVaCreateWidget("Scale", xmScaleWidgetClass, w, NULL);
     XtRealizeWidget(scale);
     XtManageChild(scale);
-    XmScaleSetTicks(scale, 
+    XmScaleSetTicks(scale,
 		    10, 1, 4,
 		    20, 10, 5);
 
@@ -697,7 +697,7 @@ InitScaleCombo (Widget w, XtPointer client_data, XtPointer call_data)
 
 /* Now comes the stuff that describe the Xt/Xm class hierarchy */
 
-static void 
+static void
 SetDyn(WidgetClass wclass, Cardinal index, Boolean documented)
 {
     static Cardinal i = 0 ;
@@ -706,29 +706,29 @@ SetDyn(WidgetClass wclass, Cardinal index, Boolean documented)
 
     icong_array[i]->parent_index = index ;
     icong_array[i]->class_info.w_class = wclass ;
-    icong_array[i]->class_info.documented = documented ;     
-    
+    icong_array[i]->class_info.documented = documented ;
+
     i++ ;
 }
 
 
-static Cardinal 
-InitClassArray (void) 
+static Cardinal
+InitClassArray (void)
 {
-    /* This code builds the Xt/Motif widget class tree using 
+    /* This code builds the Xt/Motif widget class tree using
        a breadth first search algorithm */
 
   Cardinal n = 0;
   int index = -1;
 
-  SetDyn(objectClass, index, True); PushIndex(n); n++; 
+  SetDyn(objectClass, index, True); PushIndex(n); n++;
 
   index = PopIndex () ;
-  SetDyn(xmDragIconObjectClass, index, True); n++; 
-  SetDyn(xmDropTransferObjectClass, index, True); n++; 
-  SetDyn(xmDropSiteManagerObjectClass, index, False); n++; 
+  SetDyn(xmDragIconObjectClass, index, True); n++;
+  SetDyn(xmDropTransferObjectClass, index, True); n++;
+  SetDyn(xmDropSiteManagerObjectClass, index, False); n++;
   SetDyn(rectObjClass, index, True); PushIndex(n); n++;
-  
+
   index = PopIndex () ;
   SetDyn(unNamedObjClass, index, False); PushIndex(n); n++;
   SetDyn(xmGadgetClass, index, True); PushIndex(n); n++;
@@ -738,24 +738,24 @@ InitClassArray (void)
   SetDyn(xmSeparatorGadgetClass, index, True); n++;
   SetDyn(xmLabelGadgetClass, index, True); PushIndex(n); n++;
   SetDyn(xmIconGadgetClass, index, True); PushIndex(n); n++;
-  
+
   index = PopIndex () ;
   SetDyn(xmIconHeaderClass, index, False); n++;
-  
+
   index = PopIndex () ;
   SetDyn(xmPushButtonGadgetClass, index, True); n++;
   SetDyn(xmToggleButtonGadgetClass, index, True); n++;
   SetDyn(xmCascadeButtonGadgetClass, index, True); n++;
-  
+
   index = PopIndex () ;
   SetDyn(coreWidgetClass, index, True); PushIndex(n); n++;
 
   index = PopIndex () ;
   SetDyn(compositeWidgetClass, index, True); PushIndex(n); n++;
-  SetDyn(xmScreenClass, index, True); n++;              
-  SetDyn(xmDragContextClass, index, True); n++;         
+  SetDyn(xmScreenClass, index, True); n++;
+  SetDyn(xmDragContextClass, index, True); n++;
   SetDyn(xmPrimitiveWidgetClass, index, True); PushIndex(n); n++;
- 
+
   index = PopIndex () ;
   SetDyn(xmScrollBarWidgetClass, index, True); n++;
   SetDyn(xmArrowButtonWidgetClass, index, True); n++;
@@ -791,7 +791,7 @@ InitClassArray (void)
 
   index = PopIndex () ;
   SetDyn(xmGrabShellWidgetClass, index, False); n++;
-  SetDyn(xmDragOverShellWidgetClass, index, False); n++; 
+  SetDyn(xmDragOverShellWidgetClass, index, False); n++;
   SetDyn(transientShellWidgetClass, index, True); PushIndex(n); n++;
   SetDyn(topLevelShellWidgetClass, index, True); PushIndex(n); n++;
 
@@ -799,7 +799,7 @@ InitClassArray (void)
   SetDyn(applicationShellWidgetClass, index, True); PushIndex(n); n++;
 
   index = PopIndex () ;
-  SetDyn(xmDisplayClass, index, True); n++;             
+  SetDyn(xmDisplayClass, index, True); n++;
 
   index = PopIndex () ;
   SetDyn(xmDialogShellWidgetClass, index, True); n++;
@@ -838,8 +838,8 @@ InitClassArray (void)
 
 
 /* ARGSUSED */
-static void 
-sb_ModifyVerifyCB(Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+sb_ModifyVerifyCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
     char			*buffer;
     XmSpinBoxCallbackStruct	*cbs = (XmSpinBoxCallbackStruct *) call_data;
@@ -852,13 +852,13 @@ sb_ModifyVerifyCB(Widget w, XtPointer client_data, XtPointer call_data)
       textual = cbs->widget;
     else
       textual = (Widget) NULL;
-    
+
     if (! textual)
       {
 	printf("Null textual widget for %s\n", XtName(w));
         return;
       }
-  
+
 #ifdef SAMPLER_TEST_SSPINB
     if (XmStringGetLtoR(cbs->value, XmFONTLIST_DEFAULT_TAG, &buffer))
       printf("ModifyVerify value for %s.%s is %s\n",
@@ -868,8 +868,8 @@ sb_ModifyVerifyCB(Widget w, XtPointer client_data, XtPointer call_data)
 
 
 /* ARGSUSED */
-static void 
-sb_ValueChangedCB(Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+sb_ValueChangedCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
     char			*buffer;
     XmSpinBoxCallbackStruct	*cbs = (XmSpinBoxCallbackStruct *) call_data;
@@ -882,12 +882,12 @@ sb_ValueChangedCB(Widget w, XtPointer client_data, XtPointer call_data)
       textual = cbs->widget;
     else
       textual = (Widget) NULL;
-    
+
     if (! textual) {
 	printf("Null textual widget for %s\n", XtName(w));
         return;
     }
-  
+
 #ifdef SAMPLER_TEST_SSPINB
     if (XmStringGetLtoR(cbs->value, XmFONTLIST_DEFAULT_TAG, &buffer))
       printf("ValueChanged value for %s.%s is %s\n",
@@ -897,7 +897,7 @@ sb_ValueChangedCB(Widget w, XtPointer client_data, XtPointer call_data)
 
 /* ARGSUSED */
 static void
-tf_ActivateCB(Widget w, XtPointer client_data, XtPointer call_data) 
+tf_ActivateCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
     Arg		args[1];
     int		position, minimum;
@@ -916,8 +916,8 @@ tf_ActivateCB(Widget w, XtPointer client_data, XtPointer call_data)
 
 /* ARGSUSED */
 /* ARGSUSED */
-static void 
-sb_ApplyCB(Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+sb_ApplyCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
 /*
     Widget	*ssb_widgets = (Widget *) client_data;
@@ -925,7 +925,7 @@ sb_ApplyCB(Widget w, XtPointer client_data, XtPointer call_data)
     XmString	xmstring;
     int		pos;
     Arg		args[1];
-    
+
     /* Apply adds a new string to the sspinb_s widget */
 
     XtSetArg(args[0], XmNtextString, &xmstring);
@@ -938,15 +938,15 @@ sb_ApplyCB(Widget w, XtPointer client_data, XtPointer call_data)
 }
 
 
-static void 
-sb_CancelCB(Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+sb_CancelCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
 /*
     Widget	*ssb_widgets = (Widget *) client_data;
 */
     int		pos;
     Arg		args[1];
-    
+
     /* Cancel deletes a string from the sspinb_s widget */
 
     XtSetArg(args[0], XmNposition, &pos);
@@ -957,15 +957,15 @@ sb_CancelCB(Widget w, XtPointer client_data, XtPointer call_data)
 
 
 /* ARGSUSED */
-static void 
-sb_OkCB(Widget w, XtPointer client_data, XtPointer call_data) 
+static void
+sb_OkCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
 /*
     Widget	*ssb_widgets = (Widget *) client_data;
 */
     XmString	xmstring;
     Arg		args[1];
-    
+
     /* OK sets position of sspinb_s to the specified string. */
 
     XtSetArg(args[0], XmNtextString, &xmstring);
@@ -976,7 +976,7 @@ sb_OkCB(Widget w, XtPointer client_data, XtPointer call_data)
 
 
 /* ARGSUSED */
-static Widget 
+static Widget
 ssb_GetTextField(Widget w)
 {
     Arg		args[1];

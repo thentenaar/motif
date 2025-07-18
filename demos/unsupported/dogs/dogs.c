@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: dogs.c /main/5 1995/07/14 10:07:19 drk $"
@@ -32,7 +32,7 @@ static char rcsid[] = "$XConsortium: dogs.c /main/5 1995/07/14 10:07:19 drk $"
 /*****************************************************************************
 *
 *  dogs.c - Square & Dog widget demo source file.
-*  
+*
 ******************************************************************************/
 
 #include <stdio.h>
@@ -91,7 +91,7 @@ int main(argc, argv)
     app_context = XtCreateApplicationContext();
     display = XtOpenDisplay(app_context, NULL, argv[0], "Dogs",
 			NULL, 0, &argc, argv);
-    
+
     if (display == NULL) {
 	    fprintf(stderr, "%s:  Can't open display\n", argv[0]);
 	    exit(1);
@@ -124,10 +124,8 @@ static void create_cb(w, id, reason)
         case k_dog3_id: dog3_id = w; break;
         case k_help_id:
 	    help_id = w;
-	    XtUnmanageChild((Widget)XmMessageBoxGetChild(help_id,
-				XmDIALOG_CANCEL_BUTTON));
-	    XtUnmanageChild((Widget)XmMessageBoxGetChild(help_id,
-				XmDIALOG_HELP_BUTTON));
+	    XtUnmanageChild(XtNameToWidget(w, "Cancel"));
+	    XtUnmanageChild(XtNameToWidget(w, "Help"));
 	    break;
     }
 }
@@ -150,8 +148,8 @@ static void tb_cb (w, tag, cb)
 
     switch (*tag) {
 	case(1) : dog = dog1_id; break;
-	case(2) : dog = dog2_id; break;	
-	case(3) : dog = dog3_id; break;	
+	case(2) : dog = dog2_id; break;
+	case(3) : dog = dog3_id; break;
     }
     XtSetArg(args[0], SquareNmakeSquare, cb->set);
     XtSetValues(dog, args, 1);
@@ -167,8 +165,8 @@ static void scale_cb(w, tag, cb)
 
     switch (*tag) {
 	case(1) : dog = dog1_id; break;
-	case(2) : dog = dog2_id; break;	
-	case(3) : dog = dog3_id; break;	
+	case(2) : dog = dog2_id; break;
+	case(3) : dog = dog3_id; break;
     }
     XtSetArg(args[0], DogNwagTime, cb->value);
     XtSetValues(dog, args, 1);

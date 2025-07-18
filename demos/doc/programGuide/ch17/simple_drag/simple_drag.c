@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -51,65 +51,65 @@ void CreateMenus(Widget);
 int  Play(Widget);
 void HelpCB(Widget, XtPointer, XtPointer);
 void QuitCB(Widget, XtPointer, XtPointer);
-void OutputAnAtomName(Widget, Atom); 
-void StartDrag(Widget, XEvent *); 
+void OutputAnAtomName(Widget, Atom);
+void StartDrag(Widget, XEvent *);
 void ConvertCallback(Widget, XtPointer, XtPointer);
 
 Widget  toplevel;
+XtAppContext app_context;
 
 /******************************************************************
-main: 
+main:
 ******************************************************************/
-int 
+int
 main(int argc, char **argv)
 {
-    static Widget  MainWindow; 
-    XtAppContext   app_context;
+    static Widget  MainWindow;
     Widget         Frame1, RC1;
-    Widget         Text1, ScrollBar1; 
-    char    dragTranslations[] = "#override <Btn2Down>: StartDrag()"; 
-    static  XtActionsRec  dragActions[] = 
-    {  
-        {"StartDrag", (XtActionProc)StartDrag} 
+    Widget         Text1, ScrollBar1;
+    char    dragTranslations[] = "#override <Btn2Down>: StartDrag()";
+    static  XtActionsRec  dragActions[] =
+    {
+        {"StartDrag", (XtActionProc)StartDrag}
     };
     XtTranslations            parsed_xlations;
 
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
     toplevel = XtOpenApplication(&app_context, "Test", NULL, 0,
                                 &argc, argv, NULL, sessionShellWidgetClass,
                                 NULL, 0);
 
-    MainWindow = XtVaCreateManagedWidget("MainWindow1", 
+    MainWindow = XtVaCreateManagedWidget("MainWindow1",
                                     xmMainWindowWidgetClass, toplevel,
                                         NULL);
-                     
+
     CreateMenus(MainWindow);
 
 
     /* Create a RowColumn to contain the ScrollBar and Text widgets. */
-    RC1 = XtVaCreateManagedWidget("RC1", 
-                                    xmRowColumnWidgetClass, MainWindow, 
+    RC1 = XtVaCreateManagedWidget("RC1",
+                                    xmRowColumnWidgetClass, MainWindow,
                                     NULL);
 
-    /* Create a ScrollBar. */ 
+    /* Create a ScrollBar. */
     parsed_xlations = XtParseTranslationTable(dragTranslations);
     XtAppAddActions(app_context, dragActions, XtNumber(dragActions));
-    ScrollBar1 = XtVaCreateManagedWidget("SB1", 
+    ScrollBar1 = XtVaCreateManagedWidget("SB1",
                                     xmScrollBarWidgetClass, RC1,
-                                    XmNorientation, XmHORIZONTAL, 
+                                    XmNorientation, XmHORIZONTAL,
                                     XmNtranslations, parsed_xlations,
                                     NULL);
-  /* Associate a convert callback with the ScrollBar. */ 
+  /* Associate a convert callback with the ScrollBar. */
    XtAddCallback(ScrollBar1, XmNconvertCallback, ConvertCallback, NULL);
 
 
   /* Create a text widget; it will be a potential drop site. */
-   Text1 = XtVaCreateManagedWidget("Text", 
+   Text1 = XtVaCreateManagedWidget("Text",
                                     xmTextWidgetClass, RC1,
                                     XmNeditMode, XmMULTI_LINE_EDIT,
                                     XmNrows, 25,
-                                    XmNcolumns, 25, 
+                                    XmNcolumns, 25,
                                     NULL);
 
    XtRealizeWidget(toplevel);
@@ -120,7 +120,7 @@ main(int argc, char **argv)
 
 
 /**************************************************************************
-StartDrag: When the user presses <Btn2Down>, this routine will be called. 
+StartDrag: When the user presses <Btn2Down>, this routine will be called.
 **************************************************************************/
 void
 StartDrag(Widget w,
@@ -140,7 +140,7 @@ our ConvertCallback procedure only knows how to convert the following
 targets:
   * MOTIF_EXPORT_TARGETS
   * TARGETS
-  * COMPOUND_TEXT 
+  * COMPOUND_TEXT
 **********************************************************************/
 void
 ConvertCallback(Widget  w,
@@ -159,10 +159,10 @@ ConvertCallback(Widget  w,
   printf("\tSelection: ");
   OutputAnAtomName((Widget)w, ccs->selection);
   printf("\tTarget: ");
-  OutputAnAtomName((Widget)w, ccs->target); 
+  OutputAnAtomName((Widget)w, ccs->target);
 
  /* XmeDragSource is going to call ConvertCallback and ask
-    it to convert MOTIF_EXPORT_TARGETS. */ 
+    it to convert MOTIF_EXPORT_TARGETS. */
   if ( (ccs->target == MOTIF_EXPORT_TARGETS) ||
        (ccs->target == TARGETS))
     {
@@ -187,16 +187,16 @@ ConvertCallback(Widget  w,
 
 
  /* If the drop site supports COMPOUND_TEXT as an import target, then
-    the drop site will ask ConvertCallback to convert the 
-    value to COMPOUND_TEXT format. */ 
+    the drop site will ask ConvertCallback to convert the
+    value to COMPOUND_TEXT format. */
    else if (ccs->target == COMPOUND_TEXT) {
      char     *passtext;
      char     *ctext;
      XmString  cstring;
      char      ValueAsAString[10];
- 
-  /* The part of the ScrollBar that we are transferring is its 
-     XmNvalue resource. */ 
+
+  /* The part of the ScrollBar that we are transferring is its
+     XmNvalue resource. */
      XtVaGetValues(w, XmNvalue, &value, NULL);
 
   /* Convert XmNvalue to COMPOUND_TEXT. */
@@ -216,59 +216,59 @@ ConvertCallback(Widget  w,
    else  {
      /* Unexpected target. */
      ccs->status = XmCONVERT_REFUSE;
-   } 
+   }
 }
 
 
 
 /**************************************************************************
-CreateMenus: This function generates the menu bar and the submenus. 
+CreateMenus: This function generates the menu bar and the submenus.
 **************************************************************************/
-void 
+void
 CreateMenus(Widget parent_of_menu_bar)
 {
  XmString   file, help;
  Widget     menubar, FilePullDown, HelpPullDown;
- Widget     overview, quit, Help1; 
+ Widget     overview, quit, Help1;
 
  /* Create the menubar itself. */
-   file = XmStringCreateSimple("File");
-   help = XmStringCreateSimple("Help");
-   
-   menubar      = (Widget)XmCreateMenuBar(parent_of_menu_bar, "menubar", 
+   file = XmStringCreateLocalized("File");
+   help = XmStringCreateLocalized("Help");
+
+   menubar      = (Widget)XmCreateMenuBar(parent_of_menu_bar, "menubar",
                                           NULL, 0);
-   FilePullDown = (Widget)XmCreatePulldownMenu(menubar, "FilePullDown", 
-                                               NULL, 0); 
-   HelpPullDown = (Widget)XmCreatePulldownMenu(menubar, "HelpPullDown", 
-                                                 NULL, 0); 
+   FilePullDown = (Widget)XmCreatePulldownMenu(menubar, "FilePullDown",
+                                               NULL, 0);
+   HelpPullDown = (Widget)XmCreatePulldownMenu(menubar, "HelpPullDown",
+                                                 NULL, 0);
 
  /******************************FILE*********************************/
     XtVaCreateManagedWidget("File", xmCascadeButtonWidgetClass, menubar,
                              XmNlabelString, file,
-                             XmNmnemonic, 'F', 
+                             XmNmnemonic, 'F',
                              XmNsubMenuId, FilePullDown,
                              NULL);
-    quit = XtVaCreateManagedWidget("Quit", xmPushButtonGadgetClass, 
+    quit = XtVaCreateManagedWidget("Quit", xmPushButtonGadgetClass,
                                     FilePullDown, NULL);
     XtAddCallback(quit, XmNactivateCallback, QuitCB, NULL);
 
 
  /******************************HELP*********************************/
-    Help1 = XtVaCreateManagedWidget("Help", xmCascadeButtonWidgetClass, 
+    Help1 = XtVaCreateManagedWidget("Help", xmCascadeButtonWidgetClass,
                              menubar,
                              XmNlabelString, help,
-                             XmNmnemonic, 'H', 
+                             XmNmnemonic, 'H',
                              XmNsubMenuId, HelpPullDown,
                              NULL);
     XtVaSetValues(menubar, XmNmenuHelpWidget, Help1, NULL);
-    overview = XtVaCreateManagedWidget("Overview", xmPushButtonGadgetClass, 
+    overview = XtVaCreateManagedWidget("Overview", xmPushButtonGadgetClass,
                                     HelpPullDown, NULL);
     XtAddCallback(overview, XmNactivateCallback, HelpCB, (XtPointer)1);
 
     XmStringFree(file);
     XmStringFree(help);
 
-    XtManageChild(menubar); 
+    XtManageChild(menubar);
 }
 
 
@@ -282,12 +282,12 @@ HelpCB(Widget   w,
        XtPointer cb
       )
 {
- char      help_string[500]; 
- XmString  hs_as_cs; 
- Widget    dialog_general_help; 
+ char      help_string[500];
+ XmString  hs_as_cs;
+ Widget    dialog_general_help;
  Arg       arg[3];
 
- sprintf(help_string, 
+ sprintf(help_string,
 "This program demonstrates how to add a convert callback\n\
 to an application and how to add drag capability to the \n\
 ScrollBar widget.  You should place the cursor on the slider \n\
@@ -295,40 +295,39 @@ of the ScrollBar.  Then press <Btn2> to begin a drag operation.\n\
 A DragIcon will appear.  Move the DragIcon to the Text widget \n\
 and 'drop' the DragIcon anywhere inside the Text widget.\n\
 The application will transfer the XmNvalue of the ScrollBar \n\
-to the Text widget."); 
+to the Text widget.");
 
-   hs_as_cs = XmStringCreateLtoR(help_string, 
+   hs_as_cs = XmStringLtoRCreate(help_string,
                                  XmFONTLIST_DEFAULT_TAG);
-   
+
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
-   dialog_general_help = (Widget)XmCreateMessageDialog(toplevel, 
+   dialog_general_help = (Widget)XmCreateMessageDialog(toplevel,
                                              "message", arg, 1);
    XmStringFree(hs_as_cs);
- 
+
    switch ((intptr_t)cd)  {
      case 1: XtManageChild(dialog_general_help);
              break;
      default: /* no other help */
-             break; 
+             break;
    }
-          
+
 }
 
-
-
 /*******************************************************************************
-QuitCB: Exit 
+QuitCB: Exit
 *******************************************************************************/
 void
 QuitCB(Widget w, XtPointer cd, XtPointer cb)
 {
-  exit(0);
+	(void)w;
+	(void)cd;
+	(void)cb;
+	XtAppSetExitFlag(app_context);
 }
 
-
-
 /**********************************************************************
-OutputAnAtomName: Translates a target from its internal atom format into 
+OutputAnAtomName: Translates a target from its internal atom format into
 a human readable character string.
 **********************************************************************/
 void

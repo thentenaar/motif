@@ -1,9 +1,9 @@
 #include <stdlib.h>
 
-#include <Xm/XmAll.h>        
+#include <Xm/XmAll.h>
 
 /*
- * Fallbacks: font, label and position go together in this demo 
+ * Fallbacks: font, label and position go together in this demo
  */
 static String fallbacks[] = {
 "?.toolTipEnable: True",
@@ -132,12 +132,11 @@ ToolTipPopup(Widget w, XtPointer client_data, XtPointer call_data)
 static void
 cancelCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
-Widget child = XmMessageBoxGetChild(w, XmDIALOG_CANCEL_BUTTON);
-
-    XtSetSensitive(child, !XtIsSensitive(child));
+	if ((w = XtNameToWidget(w, "Cancel")))
+		XtSetSensitive(w, !XtIsSensitive(w));
 }
 
-int 
+int
 main(int argc, char *argv[])
 {
     XtAppContext        app_context;
@@ -149,14 +148,14 @@ main(int argc, char *argv[])
     Widget MessageBox;
     Widget ToolTipLabel;
 
-    /* 
-     * Initialize Xt and create a resizable shell 
+    /*
+     * Initialize Xt and create a resizable shell
      */
 
-    top_level = XtVaAppInitialize(&app_context, "test1", 
-				  NULL, 0, &argc, argv, fallbacks, NULL); 
+    top_level = XtVaAppInitialize(&app_context, "test1",
+				  NULL, 0, &argc, argv, fallbacks, NULL);
 
-    XtGetApplicationResources(top_level, &AppResources, 
+    XtGetApplicationResources(top_level, &AppResources,
     	resources, XtNumber(resources),
     	NULL, 0);
     /*

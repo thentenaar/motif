@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -32,7 +32,6 @@ static char rcsid[] = "$XConsortium: interface.c /main/6 1995/07/14 09:41:50 drk
 #endif
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <Xm/Xm.h>           /* Motif Toolkit */
 #include <Xm/CascadeBG.h>
 #include <Xm/Container.h>
@@ -49,7 +48,7 @@ static char rcsid[] = "$XConsortium: interface.c /main/6 1995/07/14 09:41:50 drk
 #include <Xmd/Help.h>
 #include "filemanager.h"
 
-Widget 
+Widget
 CreateMenuButton(char* name, Widget parent, XtCallbackProc callback,
 		 XtPointer data, char mnemonic)
 {
@@ -69,11 +68,11 @@ CreateMenuButton(char* name, Widget parent, XtCallbackProc callback,
   return(button);
 }
 
-Widget 
+Widget
 CreateInterface(char* name, Widget parent)
 {
   Widget top, menubar, selected, view, *selected_menu, *view_menu,
-         view_pulldown, form, dirOM, where, sw, dirMenu, lroot, 
+         view_pulldown, form, where, sw, dirMenu, lroot,
          help, *help_menu, helpDialog, container, view_sub_menu,
          show_hidden;
   Arg args[30];
@@ -109,20 +108,20 @@ CreateInterface(char* name, Widget parent)
   XmdCreateMenu(SELECTED_MENU, menubar, &selected_menu, &size);
   XtUnmanageChildren(selected_menu, size);
   XtManageChild(selected_menu[SELECTED_NEW]);
-  XtAddCallback(selected_menu[SELECTED_NEW], 
-		XmNactivateCallback, 
+  XtAddCallback(selected_menu[SELECTED_NEW],
+		XmNactivateCallback,
 		(XtCallbackProc) newFolder, NULL);
   XtManageChild(selected_menu[SELECTED_OPEN]);
-  XtAddCallback(selected_menu[SELECTED_OPEN], 
-		XmNactivateCallback, 
+  XtAddCallback(selected_menu[SELECTED_OPEN],
+		XmNactivateCallback,
 		(XtCallbackProc) manageCB, (XtPointer) gotoDialog);
   XtManageChild(selected_menu[SELECTED_DELETE]);
-  XtAddCallback(selected_menu[SELECTED_DELETE], 
-		XmNactivateCallback, 
+  XtAddCallback(selected_menu[SELECTED_DELETE],
+		XmNactivateCallback,
 		(XtCallbackProc) deleteItem, NULL);
   XtManageChild(selected_menu[SELECTED_EXIT]);
   XtAddCallback(selected_menu[SELECTED_EXIT],
-  		XmNactivateCallback, 
+  		XmNactivateCallback,
 		(XtCallbackProc) quitCB, NULL);
 
   view_pulldown = XmdCreateMenu(VIEW_MENU, menubar, &view_menu, &size);
@@ -132,19 +131,19 @@ CreateInterface(char* name, Widget parent)
   show_hidden = XmCreateToggleButtonGadget(view_pulldown, "show_hidden",
 					   NULL, 0);
   XtManageChild(show_hidden);
-  XtAddCallback(show_hidden, XmNvalueChangedCallback, 
+  XtAddCallback(show_hidden, XmNvalueChangedCallback,
 		(XtCallbackProc) showHiddenCB, NULL);
 
   view_sub_menu = XmCreatePulldownMenu(view_pulldown, "viewSubMenu",
 				       NULL, 0);
-  XtVaSetValues(view_menu[VIEW_CHANGE], XmNsubMenuId, 
+  XtVaSetValues(view_menu[VIEW_CHANGE], XmNsubMenuId,
 		view_sub_menu, NULL, NULL);
 
-  CreateMenuButton("Large", view_sub_menu, 
+  CreateMenuButton("Large", view_sub_menu,
 		   (XtCallbackProc) viewCB, "large", 'L');
-  CreateMenuButton("Small", view_sub_menu, 
+  CreateMenuButton("Small", view_sub_menu,
 		   (XtCallbackProc) viewCB, "small", 'S');
-  CreateMenuButton("Detail", view_sub_menu, 
+  CreateMenuButton("Detail", view_sub_menu,
 		   (XtCallbackProc) viewCB, "detail", 'D');
 
   helpDialog = XmdCreateHelpDialog(top, "help_manager", NULL, 0);
@@ -167,7 +166,7 @@ CreateInterface(char* name, Widget parent)
   /* Create children */
   for(n = 0; n < 9; n++) {
     char buffer[10];
-    
+
     sprintf(buffer, "l%d", n);
     CreateMenuButton(buffer, dirMenu, NULL, NULL, 0);
   }
@@ -177,7 +176,7 @@ CreateInterface(char* name, Widget parent)
   n = 0;
   XtSetArg(args[n], XmNlabelString, tmp); n++;
   lroot = XmCreatePushButtonGadget(dirMenu, "lroot", args, n);
-  XtAddCallback(lroot, XmNactivateCallback, 
+  XtAddCallback(lroot, XmNactivateCallback,
 		(XtCallbackProc) readdirCB, (XtPointer) "/");
   XtManageChild(lroot);
   XmStringFree(tmp);
@@ -241,9 +240,9 @@ CreateInterface(char* name, Widget parent)
   XtSetArg(args[n], XmNdetailColumnHeadingCount, num_headings); n++;
   container = XmCreateContainer(sw, "container", args, n);
   XtManageChild(container);
-  XtAddCallback(container, XmNdefaultActionCallback, 
+  XtAddCallback(container, XmNdefaultActionCallback,
 		(XtCallbackProc) selectCB, NULL);
-  XtAddCallback(container, XmNoutlineChangedCallback, 
+  XtAddCallback(container, XmNoutlineChangedCallback,
 		(XtCallbackProc) outlineCB, NULL);
 
   for(n = 0; n < num_headings; n++)

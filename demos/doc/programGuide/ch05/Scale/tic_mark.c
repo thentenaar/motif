@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -30,10 +30,11 @@
 
 void        CreateScale(Widget);
 extern void CreateMenus(Widget);
-extern void HelpCB(Widget, XtPointer, XtPointer); 
+extern void HelpCB(Widget, XtPointer, XtPointer);
 extern void QuitCB(Widget, XtPointer, XtPointer);
 
-Widget top_level; 
+Widget top_level;
+ XtAppContext app_context;
 
 #define APP_CLASS "XmdScale"
 
@@ -47,20 +48,19 @@ int
 main(int    argc,
      char **argv)
 {
- XtAppContext app_context;
- Widget       main_window; 
+   Widget main_window;
 
    XtSetLanguageProc(NULL, NULL, NULL);
-   top_level = XtVaOpenApplication(&app_context, APP_CLASS, 
-                                NULL, 0, &argc, argv, 
-                                fallbacks,sessionShellWidgetClass, 
+   top_level = XtVaOpenApplication(&app_context, APP_CLASS,
+                                NULL, 0, &argc, argv,
+                                fallbacks,sessionShellWidgetClass,
                                 NULL);
-   main_window = XtVaCreateManagedWidget("main_window", 
+   main_window = XtVaCreateManagedWidget("main_window",
                                 xmMainWindowWidgetClass, top_level,
                                 NULL);
 
    CreateMenus(main_window);
-   CreateScale(main_window); 
+   CreateScale(main_window);
 
    XtRealizeWidget(top_level);
    XtAppMainLoop(app_context);
@@ -90,9 +90,9 @@ CreateScale(Widget parent_of_scale)
                  XmNeditable, True,
                  XmNshowValue, True,
                  XmNminimum, BOTTOM_OF_THERMOMETER,
-                 XmNmaximum, TOP_OF_THERMOMETER, 
+                 XmNmaximum, TOP_OF_THERMOMETER,
                  NULL);
-   
+
  /* Now build the tic marks. */
    n = 0;
    XtSetArg(args[n], XmNorientation, &scale_orientation);   n++;
@@ -106,7 +106,7 @@ CreateScale(Widget parent_of_scale)
        tic_width = tic_long_dim;
        tic_height = tic_short_dim;
    }
-   
+
    for (i = 0; i < NUM_TICS; i++) {
        sprintf(tic_name, "tic_%d", i);
        n = 0;
