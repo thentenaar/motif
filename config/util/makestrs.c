@@ -597,12 +597,12 @@ DoLine(char* buf)
 }
 
 static void
-IntelABIIndexEntries (File* file)
+IntelABIIndexEntries (File *f)
 {
     Table* t;
     TableEnt* te;
 
-    for (t = file->table; t; t = t->next)
+    for (t = f->table; t; t = t->next)
 	for (te = t->tableent; te; te = te->next) {
 	    te->offset = t->offset;
 	    t->offset += strlen (te->right);
@@ -611,13 +611,13 @@ IntelABIIndexEntries (File* file)
 }
 
 static void
-DefaultIndexEntries (File* file)
+DefaultIndexEntries (File *f)
 {
     Table* t;
     TableEnt* te;
     int offset = 0;
 
-    for (t = file->table; t; t = t->next)
+    for (t = f->table; t; t = t->next)
 	for (te = t->tableent; te; te = te->next) {
 	    te->offset = offset;
 	    offset += strlen (te->right);
@@ -626,17 +626,17 @@ DefaultIndexEntries (File* file)
 }
 
 static void
-IndexEntries (File* file, int abi)
+IndexEntries (File *f, int abi)
 {
     switch (abi) {
     case X_SPARC_ABI:
 	break;
     case X_INTEL_ABI:
     case X_INTEL_ABI_BC:
-	IntelABIIndexEntries (file);
+	IntelABIIndexEntries(f);
 	break;
     default:
-	DefaultIndexEntries (file);
+	DefaultIndexEntries(f);
 	break;
     }
 }
