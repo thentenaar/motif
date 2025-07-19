@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <string.h>		/* May have to be strings.h on some systems. */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H
