@@ -208,7 +208,7 @@ TransferProc(Widget  w,
      }
    }
 
-  if ((scs->target == PIXMAP)) {
+  if (scs->target == PIXMAP) {
     Pixmap        transferred_pixmap = *(Pixmap*) scs->value;
     Pixmap        copy_of_transferred_pixmap;
     Window        root_return;

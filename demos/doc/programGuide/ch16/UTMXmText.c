@@ -250,7 +250,7 @@ TransferProc(Widget  w,
                    XtLastTimestampProcessed(XtDisplay(w)));
    }
 
-  if ((scs->target == MYTEXT)) {
+  if (scs->target == MYTEXT) {
     XmTextPosition current_insertion_position;
 
     printf("TransferProc: source has converted MYTEXT.\n");

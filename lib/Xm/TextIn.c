@@ -1026,7 +1026,7 @@ DeleteOrKill(XmTextWidget tw,
     if ((*tw->text.source->Replace)(tw, NULL, &from,
 				    &to, &newblock, False) != EditDone) {
       _XmTextEnableRedisplay(tw);
-      RingBell((Widget)tw, (XEvent *) NULL, (String *) NULL, (Cardinal) 0);
+      RingBell((Widget)tw, NULL, NULL, NULL);
       if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
       return FALSE;
     } else {
@@ -1038,7 +1038,7 @@ DeleteOrKill(XmTextWidget tw,
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   } else {
     _XmTextEnableRedisplay(tw);
-    RingBell((Widget)tw, (XEvent *) NULL, (String *) NULL, (Cardinal) 0);
+    RingBell((Widget)tw, NULL, NULL, NULL);
     return FALSE;
   }
   return TRUE;
@@ -1063,7 +1063,7 @@ StuffFromBuffer(XmTextWidget tw,
 			  &cursorPos, &block, &newblock, &freeBlock)) {
     if ((*tw->text.source->Replace)(tw, NULL, &from_pos, &to_pos,
 				    &newblock, False) != EditDone) {
-      RingBell((Widget)tw, (XEvent *) NULL, (String *) NULL, (Cardinal) 0);
+      RingBell((Widget)tw, NULL, NULL, NULL);
     } else {
       _XmTextSetCursorPosition((Widget)tw, cursorPos);
       _XmTextSetDestinationSelection((Widget)tw, tw->text.cursor_position,
@@ -1072,7 +1072,7 @@ StuffFromBuffer(XmTextWidget tw,
     }
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   } else {
-    RingBell((Widget)tw, (XEvent *) NULL, (String *) NULL, (Cardinal) 0);
+    RingBell((Widget)tw, NULL, NULL, NULL);
   }
   if (block.ptr) XtFree(block.ptr);
 }
@@ -4444,7 +4444,7 @@ _XmTextHandleSecondaryFinished(Widget w,
 			  &cursorPos, &block, &newblock, &freeBlock)) {
     if ((*tw->text.source->Replace)(tw, NULL, &left, &right,
 				    &newblock, False) != EditDone) {
-      RingBell(w, NULL, (String *) NULL, (Cardinal) 0);
+      RingBell((Widget)w, NULL, NULL, NULL);
     } else {
       int count;
       count = _XmTextCountCharacters(newblock.ptr, newblock.length);
@@ -4476,7 +4476,7 @@ _XmTextHandleSecondaryFinished(Widget w,
     }
     if (freeBlock && newblock.ptr) XtFree(newblock.ptr);
   } else {
-    RingBell(w, NULL, (String *) NULL, (Cardinal) 0);
+    RingBell(w, NULL, NULL, NULL);
   }
 }
 

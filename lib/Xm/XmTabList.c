@@ -328,7 +328,7 @@ XmTabListGetTab(XmTabList tablist,
 {
    XmTab ret_val;
   _XmProcessLock();
-  if (tablist == NULL || abs(position) >= _XmTabLCount(tablist)) {
+  if (tablist == NULL || position >= _XmTabLCount(tablist)) {
 	_XmProcessUnlock();
 	return((XmTab)NULL);
   }

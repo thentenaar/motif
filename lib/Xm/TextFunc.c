@@ -719,8 +719,8 @@ XmTextGetBaseline(Widget widget)
     _XmAppUnlock(app);
     return ret_val;
   } else {
-    Dimension *baselines;
-    int temp_bl;
+    Dimension *baselines = NULL;
+    int temp_bl = 0;
     int line_count = 0;
     XmPrimitiveClassExt           *wcePtr;
     XmTextWidget tw = (XmTextWidget) widget;
@@ -732,32 +732,29 @@ XmTextGetBaseline(Widget widget)
     }
 
     wcePtr = _XmGetPrimitiveClassExtPtr(XtClass(widget), NULLQUARK);
-
-    if (*wcePtr && (*wcePtr)->widget_baseline)
-      (void) (*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
+    if (wcePtr && *wcePtr && (*wcePtr)->widget_baseline)
+      (void)(*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
 
     if (line_count)
-      temp_bl = (int) baselines[0];
-    else
-      temp_bl = 0;
+      temp_bl = baselines[0];
 
-    XtFree((char *) baselines);
+    if (baselines)
+      XtFree((XtPointer)baselines);
     _XmAppUnlock(app);
-    return (temp_bl);
+    return temp_bl;
   }
 }
 
 int
 XmTextGetCenterline(Widget widget)
 {
-  Dimension *baselines;
-  int temp_bl;
+  Dimension *baselines = NULL;
+  int temp_bl = 0;
   int line_count = 0;
   XmPrimitiveClassExt           *wcePtr;
   XmTextWidget tw = (XmTextWidget) widget;
 
   _XmWidgetToAppContext(widget);
-
   _XmAppLock(app);
 
   if (!XmDirectionMatch(XmPrim_layout_direction(tw),
@@ -767,18 +764,16 @@ XmTextGetCenterline(Widget widget)
   }
 
   wcePtr = _XmGetPrimitiveClassExtPtr(XtClass(widget), NULLQUARK);
-
-  if (*wcePtr && (*wcePtr)->widget_baseline)
-    (void) (*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
+  if (wcePtr && *wcePtr && (*wcePtr)->widget_baseline)
+    (void)(*(*wcePtr)->widget_baseline)(widget, &baselines, &line_count);
 
   if (line_count)
-    temp_bl = (int) baselines[0];
-  else
-    temp_bl = 0;
+    temp_bl = baselines[0];
 
-  XtFree((char *) baselines);
+  if (baselines)
+    XtFree((XtPointer)baselines);
   _XmAppUnlock(app);
-  return (temp_bl);
+  return temp_bl;
 }
 
 void

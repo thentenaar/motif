@@ -6876,7 +6876,7 @@ XmStringLineCount(
   int ret_val;
 
   _XmProcessLock();
-  if ((string == NULL)) {
+  if (!string) {
 	_XmProcessUnlock();
 	return(0);
   }

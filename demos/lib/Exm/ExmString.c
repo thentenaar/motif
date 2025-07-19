@@ -987,9 +987,7 @@ StringGetValue(
            XmStringFree(separator);
 
          /* Unparse "value" into either MULTIBYTE or WCS format. */
-           result = XmStringUnparse (value,
-                                     (XmStringTag) NULL,
-                                     (XmTextType)NULL,
+           result = XmStringUnparse (value, NULL, 0,
                                      (XmTextType)output_type,
                                      (XmParseTable)map,
                                      XtNumber(map),

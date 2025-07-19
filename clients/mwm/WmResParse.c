@@ -4040,7 +4040,7 @@ Boolean ParseWmFuncStrArg (unsigned char **linePP,
          *  Insure that an argument for F_Exec ends in '&' .
          */
 
-	if ((wmFunction == F_Exec))
+	if (wmFunction == F_Exec)
 	{
 	    lastlen = 0;
 	    p = *pArgs;

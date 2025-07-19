@@ -67,6 +67,13 @@
 #include <Xm/XpmP.h>
 #include "piano.images"
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#endif
 
 /* note that anything after REST must be some type of rest. */
 
@@ -900,7 +907,7 @@ void SoundCB (Widget w, XtPointer noteNumber, XtPointer callData)
     {
       note.display      = XtDisplay(w);
       note.noteType     = EIGHTH;
-      note.noteNumber   = (NoteType)noteNumber;
+      note.noteNumber   = (NoteType)(intptr_t)noteNumber;
       note.noteIndex    = 0;
       note.ledgerLine   = 0;
       note.noteDuration = appData->baseDuration;
@@ -1121,20 +1128,15 @@ void SetActiveNote (Widget w, NoteType noteType)
    XSetClipMask(XtDisplay(w), appData->noteGC, appData->noteTable[noteType].mask);
 }
 
-
-
 /*--------------------------------------------------------------------*
  |                              SetNoteCB                             |
  | callback which sets the active note and modifies the cursor.       |
  *--------------------------------------------------------------------*/
 void SetNoteCB (Widget w, XtPointer clientData, XtPointer callData)
 {
-   NoteType noteType = (NoteType)clientData;
-
+   NoteType noteType = (NoteType)(intptr_t)clientData;
    SetActiveNote(w, noteType);
 }
-
-
 
 /*--------------------------------------------------------------------*
  |                             NoteNumber                             |

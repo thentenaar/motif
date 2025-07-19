@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
  * This file contains the structure and literal definitions required
  * by the WML processor
  */
 
-#if defined(__STDC__)
 #include <stddef.h>
-#else
-#include <stdio.h>
-#endif
 
 #define TRUE		1
 #define FALSE		0
@@ -63,13 +59,11 @@ typedef	char	*ObjectPtr;
 #define	WmlCharSizeTwoByte		2
 #define	WmlCharSizeMixed1_2Byte		3
 
-
 /*
  * Upper case and lower case converters
  */
 #define _upper(c)	((c) >= 'a' && (c) <= 'z' ? (c) & 0x5F:(c))
 #define _lower(c)	((c) >= 'A' && (c) <= 'Z' ? (c) | 0x20:(c))
-
 
 /*
  * The Uil token classes which are dealt with WML. Matched to definitions
@@ -91,14 +85,14 @@ typedef	char	*ObjectPtr;
 #define WmlTokenClassChild	14
 
 
-
+
 /*
  * Structures for WML objects. Two kinds are created for each object
  * recognized and built as a WML description is read:
  *	- A syntactic descriptor, which captures the information parse
  *	  from the input in pretty much its raw form
  *	- A semantically resolved descriptor, in which pointers to
- *	  other descriptors have been resolved, ordering is done, 
+ *	  other descriptors have been resolved, ordering is done,
  *	  superclass inheritance is complete, etc.
  */
 
@@ -136,7 +130,7 @@ typedef struct WmlSynClassResDefStruct
     } WmlSynClassResDef, *WmlSynClassResDefPtr;
 
 /*
- * A class child descriptor. 
+ * A class child descriptor.
  */
 #define WmlClassChildDefValid	780344
 
@@ -351,7 +345,7 @@ typedef struct WmlSynCharSetDefStruct
     } WmlSynCharSetDef, *WmlSynCharSetDefPtr;
 
 
-
+
 /*
  * Data structures constructed during semantic validation. Each points
  * as required to syntactic data structures. These are typically accessed
@@ -500,8 +494,8 @@ typedef struct WmlClassCtrlDefStruct
     struct WmlClassDefStruct
 			*ctrl;		/* class being controlled */
     } WmlClassCtrlDef, *WmlClassCtrlDefPtr;
-    
-    
+
+
 
 /*
  * A resolved class descriptor. It has a pointer to its superclass, and
@@ -548,7 +542,7 @@ typedef struct WmlCtrlListDefStruct
    } WmlCtrlListDef, *WmlCtrlListDefPtr;
 
 
-
+
 /*
  * Data structures used to locate and order objects in various ways.
  */
@@ -598,7 +592,7 @@ typedef struct
     } DynamicHandleListDef, *DynamicHandleListDefPtr;
 
 
-
+
 /*
  * Global declarations
  */
@@ -624,9 +618,6 @@ extern DynamicHandleListDefPtr	wml_obj_charset_ptr;
 
 extern DynamicHandleListDefPtr	wml_tok_sens_ptr;
 extern DynamicHandleListDefPtr	wml_tok_insens_ptr;
-
-
-
 
 /*
  * Defined in wmlutils.c

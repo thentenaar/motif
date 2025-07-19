@@ -35,6 +35,7 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wno-misleading-indentation dnl
 			-Wno-implicit-fallthrough dnl
 			-Wno-int-in-bool-context dnl
+			-Wno-deprecated-non-prototype dnl
 			-Wno-padded dnl
 			-Wno-switch-enum dnl
 			-Wno-disabled-macro-expansion dnl

@@ -3788,7 +3788,7 @@ GRA(char*, inst_name)
        strcpy(buf, lineage);
        lineage[0] = '*';
        strcpy(lineage + 1, XtName(parent));
-       strncat(lineage, buf, sizeof lineage - strlen(lineage));
+       strncat(lineage, buf, sizeof lineage - strlen(lineage) - 1);
        parent = XtParent(parent);
    }
 

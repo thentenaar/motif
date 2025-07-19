@@ -2524,7 +2524,7 @@ GetNextTab(char **s,
 	   XmOffsetModel *offsetModel)
 {
   int	ret_val;
-  char 	sign[2];
+  char 	sign[3];
   char	*tmp;
 
   bzero(sign, sizeof(sign));

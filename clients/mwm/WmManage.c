@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.4
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: WmManage.c /main/11 1998/01/12 16:45:48 cshi $"
@@ -81,14 +81,14 @@ static char rcsid[] = "$TOG: WmManage.c /main/11 1998/01/12 16:45:48 cshi $"
 #ifdef PANELIST
 
 Boolean IsEmbeddedClient (
-    ClientData *pCD, 
+    ClientData *pCD,
     WmFpEmbeddedClientData **ppECD);
-Boolean ManageEmbeddedClient ( 
-    ClientData *pCD, 
+Boolean ManageEmbeddedClient (
+    ClientData *pCD,
     WmFpEmbeddedClientData *pECD,
     long manageFlags);
 Boolean IsPushRecallClient (
-    ClientData *pCD, 
+    ClientData *pCD,
     WmFpPushRecallClientData **ppPRCD);
 static void HandleSubstructEvents(
         Widget w,
@@ -108,7 +108,7 @@ static void CheckPushRecallClient (ClientData *pCD);
  */
 
 
-
+
 /*************************************<->*************************************
  *
  *  AdoptInitialClients (pSD)
@@ -120,7 +120,7 @@ static void CheckPushRecallClient (ClientData *pCD);
  *
  *  Description:
  *  -----------
- *  This function is called to find client windows that were mapped prior to 
+ *  This function is called to find client windows that were mapped prior to
  *  starting (or restarting) the window manager.  These windows are included
  *  in the set of windows managed by the window manager.
  *
@@ -144,7 +144,7 @@ void AdoptInitialClients (WmScreenData *pSD)
     long manageFlags;
 
 #ifdef WSM
-    /* 
+    /*
      * Generate list of ancillary windows (not to be managed)
      */
     nAncillaries = 2 + pSD->numWorkspaces;
@@ -217,9 +217,9 @@ void AdoptInitialClients (WmScreenData *pSD)
 	    }
 #endif /* WSM */
 	    if (!XFindContext (DISPLAY, clients[i], wmGD.windowContextType,
-	        (caddr_t *)&pcd)) 
+	        (caddr_t *)&pcd))
 	    {
-		/* don't manage a window we've already established a 
+		/* don't manage a window we've already established a
 		   context for (e.g. icon windows) */
 		continue;
 	    }
@@ -253,7 +253,7 @@ void AdoptInitialClients (WmScreenData *pSD)
 		    }
 		    XFree ((char *)wmStateProp);
 		}
-		else 
+		else
 		{
 		    manageOnRestart = False;
 		}
@@ -290,7 +290,7 @@ void AdoptInitialClients (WmScreenData *pSD)
 } /* END OF FUNCTION AdoptInitialClients */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ManageWindow (pSD, clientWindow, manageFlags)
@@ -310,16 +310,16 @@ void AdoptInitialClients (WmScreenData *pSD)
  *  ------
  *  clientWindow = window of the client that we should manage
  *
- *  manageFlags	= additional control information 
+ *  manageFlags	= additional control information
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = initialized client data
  *
  *************************************<->***********************************/
 
-void 
+void
 ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 {
     ClientData *pCD;
@@ -329,7 +329,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 #ifdef WSM
     WmWorkspaceData *pwsi;
 #endif /* WSM */
-#ifdef PANELIST 
+#ifdef PANELIST
     WmFpEmbeddedClientData *pECD;
 #endif /* PANELIST */
 
@@ -368,9 +368,9 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
     if (IsEmbeddedClient (pCD, &pECD))
     {
 	/*
-	 * This client is embedded in the front panel 
+	 * This client is embedded in the front panel
 	 */
-	
+
 	if (ManageEmbeddedClient(pCD, pECD, manageFlags))
 	{
 	    /*
@@ -380,7 +380,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 #ifdef WSM
 	    if (smAckState == SM_START_ACK)
 	    {
-		SendClientMsg( wmGD.dtSmWindow, 
+		SendClientMsg( wmGD.dtSmWindow,
 			      (long) wmGD.xa_DT_SM_WM_PROTOCOL,
 			      (long) wmGD.xa_DT_WM_WINDOW_ACK,
 			      CurrentTime, NULL, 0);
@@ -389,7 +389,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 	    return;
 	}
     }
-    
+
     /*
      *  Handle case of transients that derive from embedded clients.
      *  !!!!
@@ -397,10 +397,10 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 #if 0
     if (pCD->transientLeader && pCD->transientLeader->pAccessPanel)
     {
-        pCD->transientLeader = 
+        pCD->transientLeader =
 	    pCD->transientLeader->pAccessPanel->pCD_accessPanel;
     }
-#endif 
+#endif
 #endif /* PANELIST */
 #ifdef WSM
     if (pCD->inputMode == MWM_INPUT_SYSTEM_MODAL)
@@ -470,10 +470,10 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
      *   3. There is a client offset to report.
      */
     if ((pCD->protocolFlags & PROTOCOL_MWM_OFFSET) &&
-	(wmGD.positionIsFrame) && 
+	(wmGD.positionIsFrame) &&
 	((pCD->clientOffset.x != 0) ||
 	 (pCD->clientOffset.y != 0)))
-    { 
+    {
 	SendClientOffsetMessage (pCD);
     }
 
@@ -486,8 +486,8 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
     if ((pCD->clientFunctions & MWM_FUNC_MINIMIZE) &&
 	(pCD->transientLeader == NULL))
     {
-	/* 
-	 * Make icons frames 
+	/*
+	 * Make icons frames
 	 * Only make one icon frame for root icons.
 	 * Make one per workspace for icon box icons.
 	 */
@@ -496,43 +496,43 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 	    if (pwsi = GetWorkspaceData(pCD->pSD, pCD->pWsList[i].wsID))
 	    {
 
-		if ((pCD->pSD->useIconBox && 
+		if ((pCD->pSD->useIconBox &&
                      !(manageFlags & MANAGEW_WM_CLIENTS) &&
 		     !(pCD->clientFlags & FRONT_PANEL_BOX)) || (i == 0))
 		{
 		    /*
 		     *   Make icon inside an icon box for non-root case
 		     */
-		    if (!MakeIcon (pwsi, pCD)) 
-		    { 
+		    if (!MakeIcon (pwsi, pCD))
+		    {
 			/*
-			 * Error in making an icon for the client window; 
-			 * clean up the wm resources; do not manage the 
+			 * Error in making an icon for the client window;
+			 * clean up the wm resources; do not manage the
 			 * client window.
 			 */
 
 			UnManageWindow (pCD);
 			return;
 		    }
-		    else 
+		    else
 		    {
-			XSaveContext (DISPLAY, pCD->pWsList[i].iconFrameWin, 
+			XSaveContext (DISPLAY, pCD->pWsList[i].iconFrameWin,
 				wmGD.windowContextType, (caddr_t)pCD);
 
 			if (pCD->iconWindow && pCD->pWsList[i].iconFrameWin)
 			{
-			    XGrabButton (DISPLAY, AnyButton, AnyModifier, 
+			    XGrabButton (DISPLAY, AnyButton, AnyModifier,
 				pCD->pWsList[i].iconFrameWin, True,
 				ButtonPressMask|ButtonReleaseMask|
 				    ButtonMotionMask,
-				GrabModeAsync, GrabModeAsync, None, 
+				GrabModeAsync, GrabModeAsync, None,
 				wmGD.workspaceCursor);
 			}
 		    }
 		}
-		else 
+		else
 		{
-		    /* 
+		    /*
 		     *  Make root icons for a client
 		     */
  		    if ((pCD->clientFunctions & MWM_FUNC_MINIMIZE) &&
@@ -542,20 +542,20 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
  			    (!MakeIcon (pwsi, pCD)))
  			{
  			    /*
- 			     * Error in making an icon for the client 
- 			     * window; clean up the wm resources; do 
+ 			     * Error in making an icon for the client
+ 			     * window; clean up the wm resources; do
  			     * not manage the client window.
  			     */
- 
+
  			    UnManageWindow (pCD);
  			    return;
  			}
  			else
  			{
- 			    /* copy root icon frame reference to other 
+ 			    /* copy root icon frame reference to other
  			     * workspaces
 			     */
- 			    pCD->pWsList[i].iconFrameWin = 
+ 			    pCD->pWsList[i].iconFrameWin =
  				    pCD->pWsList[0].iconFrameWin;
  			}
  		    }
@@ -565,7 +565,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
     }
 #else /* WSM */
     if ((pCD->clientFunctions & MWM_FUNC_MINIMIZE) &&
-        (pCD->transientLeader == NULL) && 
+        (pCD->transientLeader == NULL) &&
 	  !MakeIcon (pCD->pSD->pActiveWS, pCD))
     {
 	/*
@@ -591,7 +591,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 
     if (DECOUPLE_TITLE_APPEARANCE(pCD) && pCD->clientTitleWin)
     {
-	/* 
+	/*
 	 * handle exposures on title bar if it has its own appearance
 	 */
 	XSaveContext (DISPLAY, pCD->clientTitleWin, wmGD.windowContextType,
@@ -658,7 +658,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 	    if (!pCD->pWsList[i].pIconBox && pCD->pWsList[i].iconFrameWin)
 	    {
 		SetupKeyBindings (pCD->systemMenuSpec->accelKeySpecs,
-			      pCD->pWsList[i].iconFrameWin, GrabModeSync, 
+			      pCD->pWsList[i].iconFrameWin, GrabModeSync,
 			      F_CONTEXT_ALL);
 	    }
 	}
@@ -685,7 +685,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
         if ((iconKeySpec != 0) && KEY_SPECS(pCD))
         {
 #ifdef WSM
-	    iconKeySpec = SetupKeyBindings (KEY_SPECS(pCD), 
+	    iconKeySpec = SetupKeyBindings (KEY_SPECS(pCD),
 				pCD->pWsList[i].iconFrameWin,
 				GrabModeSync, F_CONTEXT_ICON);
 #else /* WSM */
@@ -764,9 +764,9 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
     pCD->clientFlags &= ~WM_INITIALIZATION;
 
 #ifdef WSM
-    /* 
+    /*
      * Add to stacking list using the client's zero'th workspace
-     * instead of the current one because it may not be in 
+     * instead of the current one because it may not be in
      * the current one.
      */
     AddClientToList (GetWorkspaceData (pSD, pCD->pWsList[0].wsID),
@@ -834,7 +834,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
 } /* END OF FUNCTION ManageWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  UnManageWindow (pCD)
@@ -843,7 +843,7 @@ ManageWindow (WmScreenData *pSD, Window clientWindow, long manageFlags)
  *  Description:
  *  -----------
  *  This function removes a top-level client window and it's transients
- *  from the set of windows that is managed by the window manager.  
+ *  from the set of windows that is managed by the window manager.
  *
  *
  *  Inputs:
@@ -878,14 +878,14 @@ void UnManageWindow (ClientData *pCD)
 
 	pPRCD = (WmFpPushRecallClientData *) pCD->pSD->pPRCD;
 
-	for (j = 0; 
-		 j < pCD->pSD->numPushRecallClients; 
+	for (j = 0;
+		 j < pCD->pSD->numPushRecallClients;
 			 j++, pPRCD++)
 	{
 	    /*
 	     * Clean out all slots used by this client.
 	     */
-	    if ((!strcmp ((char *)pCD->clientName, 
+	    if ((!strcmp ((char *)pCD->clientName,
 			 (char *)(pPRCD->pchResName))) &&
 		(pPRCD->pCD == pCD))
 	    {
@@ -899,7 +899,7 @@ void UnManageWindow (ClientData *pCD)
      * Withdraw all the transient children of this window.
      */
 
-    if (pCD->transientChildren != NULL) 
+    if (pCD->transientChildren != NULL)
     {
 	WithdrawTransientChildren (pCD);
     }
@@ -933,7 +933,7 @@ void UnManageWindow (ClientData *pCD)
 } /* END OF FUNCTION UnManageWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WithdrawTransientChildren (pCD)
@@ -947,7 +947,7 @@ void UnManageWindow (ClientData *pCD)
  *  Inputs:
  *  ------
  *  pCD = pointer to client data of the leader of the transient tree.
- * 
+ *
  *************************************<->***********************************/
 
 void WithdrawTransientChildren (ClientData *pCD)
@@ -972,7 +972,7 @@ void WithdrawTransientChildren (ClientData *pCD)
 } /* END OF FUNCTION WithdrawTransientChildren */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WithdrawWindow (pCD)
@@ -989,7 +989,7 @@ void WithdrawTransientChildren (ClientData *pCD)
  *  Inputs:
  *  ------
  *  pCD 	- pointer to client data of window to withdraw
- * 
+ *
  *************************************<->***********************************/
 
 void WithdrawWindow (ClientData *pCD)
@@ -1027,7 +1027,7 @@ void WithdrawWindow (ClientData *pCD)
 		WsClientData *pWsc;
 		int j;
 
-		/* 
+		/*
 		 * Clean up icon placement data in all inhabited
 		 * workspaces
 		 */
@@ -1039,7 +1039,7 @@ void WithdrawWindow (ClientData *pCD)
 		    {
 			if (pWsTmp=GetWorkspaceData(pCD->pSD, pWsc->wsID))
 			{
-			  pWsTmp->IPData.placeList[pWsc->iconPlace].pCD 
+			  pWsTmp->IPData.placeList[pWsc->iconPlace].pCD
 			      = NULL;
 			}
 		    }
@@ -1050,7 +1050,7 @@ void WithdrawWindow (ClientData *pCD)
 	    {
 		if (ICON_PLACE(pCD) != NO_ICON_PLACE)
 		{
-		pCD->pSD->pActiveWS->IPData.placeList[ICON_PLACE(pCD)].pCD 
+		pCD->pSD->pActiveWS->IPData.placeList[ICON_PLACE(pCD)].pCD
 		    = NULL;
 		}
 	    }
@@ -1069,7 +1069,7 @@ void WithdrawWindow (ClientData *pCD)
 	}
     }
 #ifdef WSM
-    /* 
+    /*
      * Clean up the workspace presence dialog if it's
      * connected to this client.
      */
@@ -1111,7 +1111,7 @@ void WithdrawWindow (ClientData *pCD)
         !(pCD->clientFlags & CLIENT_DESTROYED))
     {
 #ifdef WSM
-	SetWMState (pCD->client, WithdrawnSTATE, 
+	SetWMState (pCD->client, WithdrawnSTATE,
 		pCD->pWsList[0].iconFrameWin);
 #else /* WSM */
 	SetWMState (pCD->client, WithdrawnSTATE, ICON_FRAME_WIN(pCD));
@@ -1125,7 +1125,7 @@ void WithdrawWindow (ClientData *pCD)
 	else
 	{
 	    int xoff, yoff;
-	    
+
 	    if(wmGD.positionIsFrame)
             {
 	      CalculateGravityOffset (pCD, &xoff, &yoff);
@@ -1150,10 +1150,10 @@ void WithdrawWindow (ClientData *pCD)
 	{
 	    XUnmapWindow (DISPLAY, pCD->iconWindow);
 #ifdef WSM
-	    XReparentWindow (DISPLAY, pCD->iconWindow, ROOT_FOR_CLIENT(pCD), 
+	    XReparentWindow (DISPLAY, pCD->iconWindow, ROOT_FOR_CLIENT(pCD),
 			     pCD->pWsList[0].iconX, pCD->pWsList[0].iconY);
 #else /* WSM */
-	    XReparentWindow (DISPLAY, pCD->iconWindow, ROOT_FOR_CLIENT(pCD), 
+	    XReparentWindow (DISPLAY, pCD->iconWindow, ROOT_FOR_CLIENT(pCD),
 			     ICON_X(pCD), ICON_Y(pCD));
 #endif /* WSM */
 	}
@@ -1191,7 +1191,7 @@ void WithdrawWindow (ClientData *pCD)
      * Free the icon associated with the client window:
      */
 
-    if (PIXMAP_IS_VALID( pCD->iconPixmap )) 
+    if (PIXMAP_IS_VALID( pCD->iconPixmap ))
     {
 	XFreePixmap (DISPLAY, pCD->iconPixmap);
     }
@@ -1234,14 +1234,14 @@ void WithdrawWindow (ClientData *pCD)
 
 
     /*
-     * Free up window context associations.  
+     * Free up window context associations.
      */
     DeleteClientContext (pCD);
 
 
 #ifdef WSM
-    /* 
-     * Count backward for efficiency  --  
+    /*
+     * Count backward for efficiency  --
      *     removes from end of list.
      */
     for (i = pCD->numInhabited - 1; i >= 0; i--)
@@ -1305,7 +1305,7 @@ void WithdrawWindow (ClientData *pCD)
      */
     DiscardInitialPropertyList (pCD);
 
-    /* 
+    /*
      * free up list of workspace specific data
      */
     if ((pCD)->pWsList)
@@ -1347,7 +1347,7 @@ void WithdrawWindow (ClientData *pCD)
 	wmGD.keyboardFocus = NULL;
 
 /*
- * Fix for 5325 - Delete reference by dirty stack 
+ * Fix for 5325 - Delete reference by dirty stack
  */
     ClearDirtyStackEntry(pCD);
 
@@ -1357,7 +1357,7 @@ void WithdrawWindow (ClientData *pCD)
 } /* END OF FUNCTION WithdrawWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  DeleteClientContext (pCD)
@@ -1366,18 +1366,18 @@ void WithdrawWindow (ClientData *pCD)
  *  Description:
  *  -----------
  *  This function deletes the client from the X context manager
- *  
+ *
  *
  *  Inputs:
  *  ------
- *  pCD 	- pointer to client data 
- * 
+ *  pCD 	- pointer to client data
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void DeleteClientContext (ClientData *pCD)
@@ -1397,18 +1397,18 @@ void DeleteClientContext (ClientData *pCD)
 	    XDeleteContext (DISPLAY, pCD->clientTitleWin,
 		wmGD.windowContextType);
 	}
-	if (ICON_FRAME_WIN(pCD)) 
+	if (ICON_FRAME_WIN(pCD))
 	{
 #ifdef WSM
             int k;
 
 	    for (k=0; k < pCD->numInhabited; k++)
 	    {
-		XDeleteContext (DISPLAY, pCD->pWsList[k].iconFrameWin, 
+		XDeleteContext (DISPLAY, pCD->pWsList[k].iconFrameWin,
 				 wmGD.windowContextType);
 	    }
 #else /* WSM */
-	    XDeleteContext (DISPLAY, pCD->iconFrameWin, 
+	    XDeleteContext (DISPLAY, pCD->iconFrameWin,
 	                     wmGD.windowContextType);
 #endif /* WSM */
 	}
@@ -1418,7 +1418,7 @@ void DeleteClientContext (ClientData *pCD)
 } /* END OF FUNCTION DeleteClientContext */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ResetWitdrawnFocii (pCD)
@@ -1428,19 +1428,19 @@ void DeleteClientContext (ClientData *pCD)
  *  -----------
  *  This function resets the various types of focus if they are set to a
  *  window being withdrawn.
- *  
+ *
  *
  *
  *  Inputs:
  *  ------
- *  pCD 	- pointer to client data 
- * 
+ *  pCD 	- pointer to client data
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 void ResetWithdrawnFocii (ClientData *pCD)
@@ -1456,21 +1456,21 @@ void ResetWithdrawnFocii (ClientData *pCD)
 	    (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT))
 	{
 	    /* local hack: if we've already received a map for a new
-	    ** focus window, be sure to use wmGD.nextKeyboardFocus; otherwise 
-	    ** AutoResetKeyFocus chooses an essentially arbitrary window to 
-	    ** set focus to. 
+	    ** focus window, be sure to use wmGD.nextKeyboardFocus; otherwise
+	    ** AutoResetKeyFocus chooses an essentially arbitrary window to
+	    ** set focus to.
 	    */
 	    if (wmGD.nextKeyboardFocus == pCD)
 		    AutoResetKeyFocus (pCD, GetTimestamp());
 	    else
-	        Do_Focus_Key ((ClientData *)wmGD.nextKeyboardFocus, 
+	        Do_Focus_Key ((ClientData *)wmGD.nextKeyboardFocus,
 				GetTimestamp(), ALWAYS_SET_FOCUS);
 	}
 	else
 	{
 	    /*
 	     * Set the focus to the default state if the focus is not in
-	     * the process of being set (i.e. a FocusIn event will be 
+	     * the process of being set (i.e. a FocusIn event will be
 	     * comming along shortly.
 	     */
 
@@ -1488,7 +1488,7 @@ void ResetWithdrawnFocii (ClientData *pCD)
 	(wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_POINTER))
     {
 	/*
-	 * Repair the focus if an application modal dialog went 
+	 * Repair the focus if an application modal dialog went
 	 * away. We may not see an enter event and have the focus
 	 * set to the wrong place.
 	 */
@@ -1508,7 +1508,7 @@ void ResetWithdrawnFocii (ClientData *pCD)
 } /* END OF FUNCTION ResetWithdrawnFocii */
 
 
-
+
 /*************************************<->*************************************
  *
  *  FreeClientFrame (pCD)
@@ -1567,7 +1567,7 @@ void FreeClientFrame (ClientData *pCD)
 } /* END OF FUNCTION FreeClientFrame */
 
 
-
+
 /*************************************<->*************************************
  *
  *  FreeIcon (pCD)
@@ -1581,7 +1581,7 @@ void FreeClientFrame (ClientData *pCD)
  *  Inputs:
  *  ------
  *  pCD		- pointer to client data
- * 
+ *
  *************************************<->***********************************/
 
 void FreeIcon (ClientData *pCD)
@@ -1600,14 +1600,14 @@ void FreeIcon (ClientData *pCD)
 	pCD->piconBottomShadows = NULL;
     }
 
-    /* 
-     * destroy frame window & all children 
+    /*
+     * destroy frame window & all children
      */
 
 #ifdef WSM
     if ((pCD->pSD->useIconBox) && pCD->pWsList[0].pIconBox)
     {
-	/* 
+	/*
 	 * We're using icon boxes and it's in at least one ...
 	 * Delete from all workspaces we live in
 	 */
@@ -1644,7 +1644,7 @@ void FreeIcon (ClientData *pCD)
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  WithdrawDialog (dialogboxW)
@@ -1652,18 +1652,18 @@ void FreeIcon (ClientData *pCD)
  *
  *  Description:
  *  -----------
- *  This function removes a DialogBox widget "client" from the set of windows 
+ *  This function removes a DialogBox widget "client" from the set of windows
  *  that are managed by the window manager.
  *
  *
  *  Inputs:
  *  ------
  *  dialogboxW = DialogBox widget to withdraw.
- * 
+ *
  *  Comments:
  *  --------
  *  Does not maintain the WM_STATE property on the dialog "client".
- * 
+ *
  *************************************<->***********************************/
 
 void WithdrawDialog (Widget dialogboxW)
@@ -1686,8 +1686,8 @@ void WithdrawDialog (Widget dialogboxW)
 #ifdef WSM
     /* TakeClientOutOfWorkspace (ACTIVE_WS, pCD); */
 
-    /* 
-     * Count backward for efficiency  --  
+    /*
+     * Count backward for efficiency  --
      *     removes from end of list.
      */
     for (i = pCD->numInhabited - 1; i >= 0; i--)
@@ -1703,7 +1703,7 @@ void WithdrawDialog (Widget dialogboxW)
 } /* END OF FUNCTION WithdrawDialog */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ReManageDialog (pSD, dialogboxW)
@@ -1711,7 +1711,7 @@ void WithdrawDialog (Widget dialogboxW)
  *
  *  Description:
  *  -----------
- *  This function remanages a DialogBox "client" that was unmanaged via 
+ *  This function remanages a DialogBox "client" that was unmanaged via
  *  WithdrawDialog ().
  *
  *
@@ -1720,7 +1720,7 @@ void WithdrawDialog (Widget dialogboxW)
  *  pSD = pointer to screen data
  *  dialogboxW = DialogBox widget to remanage.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Does not maintain the WM_STATE property on the dialog "client".
@@ -1749,10 +1749,10 @@ void ReManageDialog (WmScreenData *pSD, Widget dialogboxW)
      * avoid the race condition of the window coming up
      * just as the user switches workspaces OR when
      * the window is up and a user switces workspaces
-     * with a key binding.  We may want to eventually short 
+     * with a key binding.  We may want to eventually short
      * circuit F_Functions any time there is a modal
      * window up, but for now, we will just make sure
-     * the modal window appears in all workspaces 
+     * the modal window appears in all workspaces
      */
 
     pCD->dtwmFunctions |= DtWM_FUNCTION_OCCUPY_WS;
@@ -1769,7 +1769,7 @@ void ReManageDialog (WmScreenData *pSD, Widget dialogboxW)
     XMapWindow (DISPLAY, pCD->clientFrameWin);
     XtManageChild (dialogboxW);
 
-    if ((wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT))
+    if (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT)
     {
 	Do_Focus_Key (pCD, GetTimestamp() , ALWAYS_SET_FOCUS);
     }
@@ -1778,7 +1778,7 @@ void ReManageDialog (WmScreenData *pSD, Widget dialogboxW)
 } /* END OF FUNCTION ReManageDialog */
 
 #ifdef PANELIST
-
+
 /*************************************<->*************************************
  *
  *  RegisterEmbeddedClients (wPanelist, pECD, count)
@@ -1796,7 +1796,7 @@ void ReManageDialog (WmScreenData *pSD, Widget dialogboxW)
  *  pECD = pointer to list of data for clients to embed
  *  count = number of elements in the list
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -1804,8 +1804,8 @@ void ReManageDialog (WmScreenData *pSD, Widget dialogboxW)
 
 void
 RegisterEmbeddedClients (
-	Widget wPanelist, 
-	WmFpEmbeddedClientList pECD, 
+	Widget wPanelist,
+	WmFpEmbeddedClientList pECD,
 	int count)
 {
     WmScreenData *pSD;
@@ -1836,7 +1836,7 @@ RegisterEmbeddedClients (
 
 } /* END OF FUNCTION RegisterEmbeddedClients */
 
-
+
 #define LTT_INCREMENT  16
 /*************************************<->*************************************
  *
@@ -1852,11 +1852,11 @@ RegisterEmbeddedClients (
  *  Inputs:
  *  ------
  *  pCD		- pointer to client data of a window.
- *  ppWins	- address of a pointer to a list of windows 
+ *  ppWins	- address of a pointer to a list of windows
  *		  (this must be in the heap -- XtMalloc).
  *  pSize	- address of variable with size of list
  *  pCount	- address of variable with number of windows in list
- * 
+ *
  *  Outputs:
  *  -------
  *  *ppWins	- may point to a new area of memory if list grows
@@ -1879,10 +1879,10 @@ ListTransientSubtree (
     /*
      * Check size
      */
-    if (*pCount == *pSize) 
+    if (*pCount == *pSize)
     {
 	*pSize += LTT_INCREMENT;
-	*ppWins = (Window *) 
+	*ppWins = (Window *)
 		XtRealloc ((char *) *ppWins, (*pSize * sizeof(Window)));
     }
     /*
@@ -1903,11 +1903,11 @@ ListTransientSubtree (
     if (pCD->transientChildren)
 	ListTransientSubtree (pCD->transientChildren, ppWins, pSize, pCount);
 
-    
+
 } /* END OF FUNCTION ListTransientSubtree */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ListTransientTree (pCD)
@@ -1922,7 +1922,7 @@ ListTransientSubtree (
  *  Inputs:
  *  ------
  *  pCD		- pointer to client data of a primary window.
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -1956,10 +1956,10 @@ ListTransientTree (
     /*
      * Add terminator to end of window list
      */
-    if (count == iSize) 
+    if (count == iSize)
     {
 	iSize += LTT_INCREMENT;
-	pWins = (Window *) 
+	pWins = (Window *)
 		XtRealloc ((char *)pWins, (iSize * sizeof(Window)));
     }
     pWins[count++] = None;
@@ -1968,10 +1968,10 @@ ListTransientTree (
      * Return the list of windows found
      */
     return (pWins);
-    
+
 } /* END OF FUNCTION ListTransientTree */
 
-
+
 /*************************************<->*************************************
  *
  *  ReManageWindow (pCD)
@@ -1986,7 +1986,7 @@ ListTransientTree (
  *  Inputs:
  *  ------
  *  pCD		- pointer to client data of a primary window.
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -2019,7 +2019,7 @@ ReManageWindow (
     UnManageWindow (pCD);
 
     /*** pCD is no longer a valid pointer!!! ***/
-    
+
     /*
      * Remanage this window and its secondaries
      */
@@ -2035,7 +2035,7 @@ ReManageWindow (
 } /* END OF FUNCTION ReManageWindow */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ScanForEmbeddedClients (pSD)
@@ -2050,7 +2050,7 @@ ReManageWindow (
  *  Inputs:
  *  ------
  *  pSD		- pointer to screen data.
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2093,11 +2093,11 @@ ScanForEmbeddedClients (
 	     */
 	    bReset = True;
 	}
-	
+
 	/*
-	 * Test for exit condition 
+	 * Test for exit condition
 	 */
-	if (pCLE == pSD->lastClient) 
+	if (pCLE == pSD->lastClient)
 	{
 	    /*
 	     * Gone all the way through the list without finding
@@ -2125,7 +2125,7 @@ ScanForEmbeddedClients (
 
 } /* END OF FUNCTION ScanForEmbeddedClients */
 
-
+
 /*************************************<->*************************************
  *
  *  IsEmbeddedClient (pCD, ppECD)
@@ -2142,7 +2142,7 @@ ScanForEmbeddedClients (
  *  pCD = ptr to Client Data
  *  ppECD = ptr to returned embedded client data ptr
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *ppECD = ptr to embedded client data
@@ -2165,12 +2165,12 @@ IsEmbeddedClient (ClientData *pCD, WmFpEmbeddedClientData **ppECD)
     for (i = 0; i < pSD->numEmbeddedClients && !bFoundMatch; i++, pECD++)
     {
 	/*
-	 * It's an embedded client if 
-	 *     the resource name matches a slot and 
+	 * It's an embedded client if
+	 *     the resource name matches a slot and
 	 *     it's not a subpanel and
 	 *     the slot isn't already filled.
 	 */
-	if ((!strcmp ((char *)pCD->clientName, 
+	if ((!strcmp ((char *)pCD->clientName,
 		      (char *)(pECD->pchResName))) &&
 	    (!(pCD->dtwmBehaviors & DtWM_BEHAVIOR_SUBPANEL)) &&
 	    (!pECD->pCD))
@@ -2183,7 +2183,7 @@ IsEmbeddedClient (ClientData *pCD, WmFpEmbeddedClientData **ppECD)
 
 } /* END OF FUNCTION IsEmbeddedClient */
 
-
+
 /******************************<->*************************************
  *
  *  ManageEmbeddedClient (pCD, pECD, manageFlags)
@@ -2200,8 +2200,8 @@ IsEmbeddedClient (ClientData *pCD, WmFpEmbeddedClientData **ppECD)
  *        we want to manage.
  *  pECD = ptr to embedded client entry for this client
  *
- *  manageFlags	= additional control information 
- * 
+ *  manageFlags	= additional control information
+ *
  *  Outputs:
  *  -------
  *  Returns False if normal client processing needs to be done.
@@ -2213,7 +2213,7 @@ IsEmbeddedClient (ClientData *pCD, WmFpEmbeddedClientData **ppECD)
 Boolean
 
 ManageEmbeddedClient (
-    ClientData *pCD, 
+    ClientData *pCD,
     WmFpEmbeddedClientData *pECD,
     long manageFlags)
 
@@ -2228,7 +2228,7 @@ ManageEmbeddedClient (
     {
 	return (False);
     }
-   
+
     /*
      * Add to all workspaces
      */
@@ -2239,7 +2239,7 @@ ManageEmbeddedClient (
     pCD->dtwmFunctions &= ~DtWM_FUNCTION_OCCUPY_WS;
 
     /*
-     * Set client list entries 
+     * Set client list entries
      * (in a list by itself)
      */
     pCD->clientEntry.type = NORMAL_STATE;
@@ -2257,7 +2257,7 @@ ManageEmbeddedClient (
      *
      */
 
-    XSaveContext (DISPLAY, pCD->client, wmGD.windowContextType, 
+    XSaveContext (DISPLAY, pCD->client, wmGD.windowContextType,
 		    (caddr_t)pCD);
 
     if (!(pCD->clientFlags & CLIENT_WM_CLIENTS))
@@ -2273,7 +2273,7 @@ ManageEmbeddedClient (
 	if (pCD->clientFlags & CLIENT_DESTROYED)
 	{
 	    UnManageWindow (pCD);
-	    return (True); 
+	    return (True);
 	}
     }
 
@@ -2283,7 +2283,7 @@ ManageEmbeddedClient (
 		(XtEventHandler)HandleSubstructEvents,
 		(XtPointer)(pCD));
 
-    /* 
+    /*
      * Fill in more client data
      */
     pCD->clientX = pECD->x;
@@ -2309,7 +2309,7 @@ ManageEmbeddedClient (
      */
     ForceSubpanelWMState (pECD->winParent);
 
-    XReparentWindow (DISPLAY1, pCD->client, 
+    XReparentWindow (DISPLAY1, pCD->client,
 		     pECD->winParent,
 		     pECD->x, pECD->y);
     pCD->clientFlags |= CLIENT_REPARENTED;
@@ -2341,13 +2341,13 @@ ManageEmbeddedClient (
 	pCD->pPRCD = (void *) pPRCD;
     }
 
-    WmStopWaiting(); 
+    WmStopWaiting();
 
     return(True); /* successful embedation */
 
 } /* END OF FUNCTION ManageEmbeddedClient */
 
-
+
 /******************************<->*************************************
  *
  *  ReparentEmbeddedClient (pECD, newControl, newWin, x, y, width, height)
@@ -2369,7 +2369,7 @@ ManageEmbeddedClient (
  *  width = desired width of embedded client in this new location
  *  height = desired height as above.
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Returns False if embedded client was is not moved to the new
@@ -2384,9 +2384,9 @@ ReparentEmbeddedClient (
     WmFpEmbeddedClientData *pECD,
     Widget newControl,
     Window newWin,
-    int x, 
+    int x,
     int y,
-    unsigned int width, 
+    unsigned int width,
     unsigned int height
     )
 
@@ -2403,7 +2403,7 @@ ReparentEmbeddedClient (
      * to reparent to our current parent, then just
      * say no.
      */
-    if ((pECD == NULL) || 
+    if ((pECD == NULL) ||
 	(pECD->pCD == NULL) ||
 	(pECD->winParent == newWin))
     {
@@ -2429,7 +2429,7 @@ ReparentEmbeddedClient (
 		(XtPointer)(pCD));
     }
 
-    /* 
+    /*
      * Update embedding and client data
      */
     pECD->wControl = newControl;
@@ -2450,7 +2450,7 @@ ReparentEmbeddedClient (
     /*
      * Do the actual reparent
      */
-    XReparentWindow (DISPLAY1, pCD->client, 
+    XReparentWindow (DISPLAY1, pCD->client,
 		     pECD->winParent,
 		     pECD->x, pECD->y);
 
@@ -2474,7 +2474,7 @@ ReparentEmbeddedClient (
 
 } /* END OF FUNCTION ReparentEmbeddedClient */
 
-
+
 /*************************************<->*************************************
  *
  *  ForceSubpanelWMState (win)
@@ -2491,7 +2491,7 @@ ReparentEmbeddedClient (
  *  ------
  *  win = window ID of a subpanel window (not necessarily the top level!)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2509,13 +2509,13 @@ ForceSubpanelWMState (Window win)
 
     while (!bDone)
     {
-	if (!XQueryTree (DISPLAY, win, &root, &parent, 
+	if (!XQueryTree (DISPLAY, win, &root, &parent,
 		&children, &numChildren))
 	{
 	    break;
 	}
 
-	if (!XFindContext(DISPLAY, win, wmGD.windowContextType, 
+	if (!XFindContext(DISPLAY, win, wmGD.windowContextType,
 	    (caddr_t *)&pCD))
 	{
 	    /*
@@ -2542,7 +2542,7 @@ ForceSubpanelWMState (Window win)
 	    }
 	    bDone = True;
 	}
-	else 
+	else
 	{
 	    /* continue ascent up to root */
 	    win = parent;
@@ -2553,7 +2553,7 @@ ForceSubpanelWMState (Window win)
 
 } /* END OF FUNCTION ForceSubpanelWMState */
 
-
+
 /*************************************<->*************************************
  *
  *  RegisterPushRecallClients (wPanelist, pPRCD, count)
@@ -2561,8 +2561,8 @@ ForceSubpanelWMState (Window win)
  *
  *  Description:
  *  -----------
- *  This function registers a list of push_recallclients for the 
- *  front panel subsystem. 
+ *  This function registers a list of push_recallclients for the
+ *  front panel subsystem.
  *
  *
  *  Inputs:
@@ -2571,7 +2571,7 @@ ForceSubpanelWMState (Window win)
  *  pPRCD = pointer to list of data for clients
  *  count = number of elements in the list
  *
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2579,8 +2579,8 @@ ForceSubpanelWMState (Window win)
 
 void
 RegisterPushRecallClients (
-	Widget wPanelist, 
-	WmFpPushRecallClientList pPRCD, 
+	Widget wPanelist,
+	WmFpPushRecallClientList pPRCD,
 	int count)
 {
     WmScreenData *pSD;
@@ -2619,7 +2619,7 @@ RegisterPushRecallClients (
 
 } /* END OF FUNCTION RegisterPushRecallClients */
 
-
+
 /*************************************<->*************************************
  *
  *  IsPushRecallClient (pCD, ppPRCD)
@@ -2636,7 +2636,7 @@ RegisterPushRecallClients (
  *  pCD = ptr to Client Data
  *  ppPRCD = ptr to returned embedded client data ptr
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  *ppPRCD = ptr to embedded client data
@@ -2662,7 +2662,7 @@ IsPushRecallClient (ClientData *pCD, WmFpPushRecallClientData **ppPRCD)
 	 * It's a push_recall client if the resource name matches
 	 * a slot and the slot isn't already filled.
 	 */
-	if ((!strcmp ((char *)pCD->clientName, 
+	if ((!strcmp ((char *)pCD->clientName,
 		     (char *)(pPRCD->pchResName))) &&
 	    (!pPRCD->pCD))
 	{
@@ -2674,7 +2674,7 @@ IsPushRecallClient (ClientData *pCD, WmFpPushRecallClientData **ppPRCD)
 
 } /* END OF FUNCTION IsPushRecallClient */
 
-
+
 /*************************************<->*************************************
  *
  *  ScanForPushRecallClients (pSD)
@@ -2689,7 +2689,7 @@ IsPushRecallClient (ClientData *pCD, WmFpPushRecallClientData **ppPRCD)
  *  Inputs:
  *  ------
  *  pSD		- pointer to screen data.
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2704,7 +2704,7 @@ ScanForPushRecallClients (
     WmFpPushRecallClientData *pPRCD;
 
     /*
-     *  Search through all the windows we're managing right now 
+     *  Search through all the windows we're managing right now
      */
     pCLE = pSD->clientList;
 
@@ -2719,11 +2719,11 @@ ScanForPushRecallClients (
 	{
 	    CheckPushRecallClient (pCD);
 	}
-	
+
 	/*
-	 * Test for exit condition 
+	 * Test for exit condition
 	 */
-	if (pCLE == pSD->lastClient) 
+	if (pCLE == pSD->lastClient)
 	{
 	    /*
 	     * Gone all the way through the list without finding
@@ -2742,7 +2742,7 @@ ScanForPushRecallClients (
 
 } /* END OF FUNCTION ScanForPushRecallClients */
 
-
+
 /******************************<->*************************************
  *
  *  static void CheckPushRecallClient (pCD)
@@ -2756,7 +2756,7 @@ ScanForPushRecallClients (
  *  Inputs:
  *  ------
  *  pCD - pointer to the Client Data structure
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2764,7 +2764,7 @@ ScanForPushRecallClients (
  *  --------
  *
  ******************************<->***********************************/
-static void 
+static void
 CheckPushRecallClient(
         ClientData *pCD)
 {
@@ -2783,7 +2783,7 @@ CheckPushRecallClient(
     }
 }
 
-
+
 /******************************<->*************************************
  *
  *  static void HandleSubstructEvents (Widget w, caddr_t pCD, XEvent *event)
@@ -2806,7 +2806,7 @@ CheckPushRecallClient(
  *  w   - not used
  *  pCD - pointer to the Client Data structure
  *  event - we only care about UnMapNotify
- * 
+ *
  *  Outputs:
  *  -------
  *
@@ -2815,7 +2815,7 @@ CheckPushRecallClient(
  *  This routine is called LOTS of times, for all types of events.
  *
  ******************************<->***********************************/
-static void 
+static void
 HandleSubstructEvents(
         Widget w,
         caddr_t ptr,
@@ -2836,7 +2836,7 @@ HandleSubstructEvents(
 	}
 } /* END OF FUNCTION HandleSubstructEvents */
 
-
+
 /*******************************<->*************************************
  *
  *  UpdateEmbeddedClientsProperty (pSD)
@@ -2847,20 +2847,20 @@ HandleSubstructEvents(
  *  Inputs:
  *  ------
  *  pSD - pointer to the screen data
- * 
+ *
  *  Outputs:
  *  -------
  *  True if successful, False otherwise.
  *
  *  Comments:
  *  --------
- *  The _DT_WORKSPACE_EMBEDDED_CLIENTS property on the 
+ *  The _DT_WORKSPACE_EMBEDDED_CLIENTS property on the
  *  root window for the screen will be updated to reflect the
  *  current contents of the front panel
  *
- * 
+ *
  ******************************<->***********************************/
-Boolean 
+Boolean
 UpdateEmbeddedClientsProperty(
         WmScreenData *pSD )
 {
@@ -2878,7 +2878,7 @@ UpdateEmbeddedClientsProperty(
 	{
 	    numClients += 1;
 
-	    if (!pClients) 
+	    if (!pClients)
 	    {
 		pClients = (Window *) XtMalloc (sizeof(Window));
 	    }
@@ -2915,7 +2915,7 @@ UpdateEmbeddedClientsProperty(
 } /* END OF FUNCTION UpdateEmbeddedClientsProperty */
 
 
-
+
 /*******************************<->*************************************
  *
  *  UnParentControls (pSD, unmap)
@@ -2927,18 +2927,18 @@ UpdateEmbeddedClientsProperty(
  *  ------
  *  pSD - pointer to the screen data
  *  unmap - if True, then unmap the windows after reparenting to root
- * 
+ *
  *  Outputs:
  *  -------
  *  none
  *
  *  Comments:
  *  --------
- *  Reparents clients embedded in the front panel back to the 
+ *  Reparents clients embedded in the front panel back to the
  *  root window
- * 
+ *
  ******************************<->***********************************/
-void 
+void
 UnParentControls(
         WmScreenData *pSD,
         Boolean unmap )
@@ -2946,7 +2946,7 @@ UnParentControls(
     int i;
     ClientData *pCD;
     WmFpEmbeddedClientData *pECD;
-    
+
     if (pSD && pSD->managed)
     {
 	pECD = (WmFpEmbeddedClientData *) pSD->pECD;
@@ -2962,7 +2962,7 @@ UnParentControls(
 		    XRemoveFromSaveSet (DISPLAY, pCD->client);
 		    XRemoveFromSaveSet (DISPLAY1, pCD->client);
 		}
-		
+
 		XReparentWindow (DISPLAY,
 				 pCD->client,
 				 pSD->rootWindow,
@@ -2984,11 +2984,10 @@ UnParentControls(
 	    }
 	}
     }
-    
+
 } /* END OF FUNCTION UnParentControl */
 
 
-
 /*************************************<->*************************************
  *
  *  RegisterIconBoxControl (wPanelist)

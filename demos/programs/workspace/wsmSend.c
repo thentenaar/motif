@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wsmSend.c /main/7 1997/03/31 14:15:32 dbl $"
@@ -72,8 +72,8 @@ static XrmQuark linkedRoomQuark;
                             GetDataListStart
 
   ------------------------------------------------------------------*/
-static 
-void 
+static
+void
 GetDataListStart(WorkWindow *w_window,
 		 int i,
 		 XrmQuark room_q,
@@ -109,7 +109,7 @@ GetDataListStart(WorkWindow *w_window,
 			w_window,
 			data_list,
 			num_data);
-    
+
   if (attr_values != NULL) XtFree((XtPointer)attr_values);
 
 }
@@ -119,8 +119,8 @@ GetDataListStart(WorkWindow *w_window,
                             GetDataList
 
   ------------------------------------------------------------------*/
-static 
-void 
+static
+void
 GetDataList(WorkWindow *w_window,
 	    XrmQuark room_q,
 	    Boolean diffs,
@@ -152,8 +152,8 @@ GetDataList(WorkWindow *w_window,
                             GetUnhideDataList
 
   ------------------------------------------------------------------*/
-static 
-void 
+static
+void
 GetUnhideDataList(WorkWindow *w_window,
 		 XrmQuark room_q,
 		 WSMWinData **data_list,
@@ -172,7 +172,7 @@ GetUnhideDataList(WorkWindow *w_window,
 
   ------------------------------------------------------------------*/
 void
-CreateStartStateRequest(WSMGetStateReply *get_state, 
+CreateStartStateRequest(WSMGetStateReply *get_state,
 			WSMRequest *request)
 {
   Window window;
@@ -194,7 +194,7 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
   linkedRoomQuark = XrmStringToQuark("linkedRoom");
   request->set_state.num_win_info_list = 0;
   num_win = 0;
-  win_info = (WSMWinInfo*)XtMalloc((get_state->num_win_info_list)*sizeof(WSMWinInfo));	
+  win_info = (WSMWinInfo*)XtMalloc((get_state->num_win_info_list)*sizeof(WSMWinInfo));
   for (i = 0; i < get_state->num_win_info_list; i ++)
     {
       in_current_space = False;
@@ -208,7 +208,7 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
 				   &xrm_data_list,
 				   &num_xrm_data_list);
 	  else num_xrm_data_list = 0;
-      }  
+      }
       else
 	  {
 	      w_window = CreateWorkWindow(window);
@@ -223,7 +223,7 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
 		  SetWorkWindowValues(w_window,all_work,linked);
 		  /* set links in internal structures */
 		  in_current_space = CreateInternalStructure(w_window,rooms_qlist);
-		  /* if its in current space or no diffs allowed, 
+		  /* if its in current space or no diffs allowed,
 		     get config info for WSM_SET_STATE */
 		  if (in_current_space || !diffs_allowed)
 		  {
@@ -240,9 +240,9 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
 				       &num_xrm_data_list);
 		      /* set last space variable */
 		      if (in_current_space) w_window->last_space = current_space;
-		      /* if no diffs allowed && not in current space then set hide 
+		      /* if no diffs allowed && not in current space then set hide
 			 info to True */
-		      else 
+		      else
 		      {
 			  w_window->win_data[wsm_index.hide].data.value = 1;
 			  xrm_data_list[wsm_index.hide].data.value = 1;
@@ -258,13 +258,13 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
 						get_state->win_info_list[i].num_data_list,
 						w_window,
 						&xrm_data_list,
-						&num_xrm_data_list);	 
+						&num_xrm_data_list);
 		  }
-		  if (rooms_qlist != NULL)	
+		  if (rooms_qlist != NULL)
 		      XtFree((XtPointer)rooms_qlist);
 	      }
 	      /* nothing in the database */
-	      else 
+	      else
 	      {
 		  CreateStartWSMWinData(NULL,
 					diffs_allowed,
@@ -284,13 +284,13 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
 	  print_win_data(xrm_data_list,num_xrm_data_list);
 	  win_info[num_win].data_list = xrm_data_list;
 	  win_info[num_win].num_data_list = num_xrm_data_list;
-	  win_info[num_win].window = GetWSMWindow(w_window);		
+	  win_info[num_win].window = GetWSMWindow(w_window);
 	  num_win++;
       }
     }/* end for loop */
 
   if (num_win ==0)
-    {	
+    {
       request->set_state.allocated = False;
       request->set_state.num_win_info_list = 0;
       request->any.type = WSM_SET_STATE;
@@ -307,12 +307,12 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
       request->set_state.win_info_list = win_info;
       request->any.type = WSM_SET_STATE;
       print_request(request);
-    }	
+    }
 
   if (mwm_reconnect)
       FinishRestartWSM();
 /*  SaveState(get_state);*/
-  
+
 }
 
 
@@ -320,21 +320,21 @@ CreateStartStateRequest(WSMGetStateReply *get_state,
                            SaveState
 
   ------------------------------------------------------------------*/
-void 
+void
 SaveState(WSMGetStateReply *get_state, Boolean diffs)
 {
   int i;
   XrmValue *value_list;
   WorkWindow *w_window;
-  XrmQuark roomq;	
+  XrmQuark roomq;
   Boolean no_save;
   WSMWinData *hide_data;
   PRINT("\n\nSAVE STATE\n");
-  
+
   /* If diffs = True then check to see if any of the windows
      were unmapped since the last save state. (This is done
      by setting mapped = False for every window in current space and then
-     turning mapped = True for each window sent over from window manager.  
+     turning mapped = True for each window sent over from window manager.
      Anything not sent over by window manager must have been unmapped ) */
   if (!diffs) UnmapCurrentSpace();
   /* for each window, save its state in database and in internal
@@ -373,12 +373,12 @@ SaveState(WSMGetStateReply *get_state, Boolean diffs)
 	      CreateValues(w_window,
 			   get_state->win_info_list[i].data_list,
 			   get_state->win_info_list[i].num_data_list,
-			   &value_list);      
-	      
+			   &value_list);
+
 	      /* store workspace resources */
 	      SaveWorkspaceResources(shell,
 				     w_window->specifier_qlist,
-				     current_space->nameq,	
+				     current_space->nameq,
 				     NULLQUARK,
 				     w_window->all_workspaces,
 				     w_window->linked);
@@ -395,7 +395,7 @@ SaveState(WSMGetStateReply *get_state, Boolean diffs)
 	      FreeValues(w_window->num_attrib_list,value_list);
 	    }
 	}
-    }		
+    }
 }
 
 
@@ -417,7 +417,7 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
   WSMWinInfo *win_info = NULL;
   XrmQuark room_name;
 
-  PRINT("\n\nCHANGE ROOM from %s to %s\n", 
+  PRINT("\n\nCHANGE ROOM from %s to %s\n",
 	 XrmQuarkToString(current_space->nameq),
 	XrmQuarkToString(to_s->nameq));
 
@@ -446,7 +446,7 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
 			      &xrm_data_list,
 			      &num_xrm_data_list);
 		  w_window->last_space = to_s;
-		}	
+		}
 	      /* if the window is linked, i only need to send stacked info */
 	      else
 		{
@@ -472,7 +472,7 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
 	      request->set_state.num_win_info_list++;
 	      if (first)
 		{
-		  win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));	
+		  win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));
 		  first = False;
 		}
 	      else win_info = (WSMWinInfo*)XtRealloc((char*)win_info,
@@ -498,9 +498,9 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
 	  /* if it was in current space, it was taken care of in the above loop */
 	  if (!in_current_space)
 	    {
-	      /* if the last configuration for the window was in the 
+	      /* if the last configuration for the window was in the
 		 destination workspace, i only need to send hide info */
-	      if (diffs_allowed && (w_window->last_space == to_s || 
+	      if (diffs_allowed && (w_window->last_space == to_s ||
 				    (w_window->linked && w_window->last_space != NULL)))
 		{
 		  GetUnhideDataList(w_window,
@@ -527,14 +527,14 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
 		  request->set_state.num_win_info_list++;
 		  if (first)
 		    {
-		      win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));	
+		      win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));
 		      first = False;
 		    }
 		  else win_info = (WSMWinInfo*)XtRealloc((char*)win_info,
 						     (num_win+1)* sizeof(WSMWinInfo));
 		  win_info[num_win].data_list = xrm_data_list;
 		  win_info[num_win].num_data_list = num_xrm_data_list;
-		  win_info[num_win].window = GetWSMWindow(w_window);	
+		  win_info[num_win].window = GetWSMWindow(w_window);
 		}
 	    }
 	}
@@ -566,7 +566,7 @@ GetChangeSpaceRequest(Space *to_s, WSMRequest *request)
 void
 GetRegisterOldWindowReply(WorkWindow *w_window,WSMReply *reply)
 {
-  WSMWinData *xrm_data_list;
+  WSMWinData *xrm_data_list = NULL;
   int num_xrm_data_list = 0;
   Boolean in_current_space = False;
 
@@ -574,12 +574,12 @@ GetRegisterOldWindowReply(WorkWindow *w_window,WSMReply *reply)
   reply->any.type = WSM_REG_WINDOW;
   reply->register_window.num_window_data = 0;
   reply->register_window.window_data = NULL;
-  
+
   in_current_space = IsWorkWindowInSpace(w_window,current_space);
   /* Display window in current room AND any rooms it was in previously.
      If other behavior wanted, take this if statement out */
   if (!in_current_space)
-    {	
+    {
       AddSpaceToWindow(current_space, w_window);
       AddWindowToSpace(current_space, w_window);
       in_current_space = True;
@@ -647,7 +647,7 @@ GetRegisterWindowReply(Window window,WSMReply *reply)
   PRINT("\n\nREGISTER WINDOW .....\n");
   reply->any.type = WSM_REG_WINDOW;
   reply->register_window.num_window_data = 0;
- 
+
   w_window = GetWorkWindow(window);
   if (w_window == NULL)
     w_window = CreateWorkWindow(window);
@@ -659,12 +659,12 @@ GetRegisterWindowReply(Window window,WSMReply *reply)
   if (_WSMGetConfigFormatType(window) == WSM_WINDOW_FMT)
       AddWindow(window);
 
-  if (!new_window)	
+  if (!new_window)
     {
       GetRegisterOldWindowReply(w_window,reply);
       return;
     }
-  
+
 
   /* get window's workspace resources from database */
   if (GetWorkspaceResources(shell,
@@ -677,18 +677,18 @@ GetRegisterWindowReply(Window window,WSMReply *reply)
       SetWorkWindowValues(w_window,all_workspaces,linked);
       /* create internal structures */
       in_current_space = CreateInternalStructure(w_window,rooms_qlist);
-      if (!in_current_space) 
+      if (!in_current_space)
 	{
 	  AddSpaceToWindow(current_space, w_window);
 	  AddWindowToSpace(current_space, w_window);
 	  in_current_space = True;
 	}
-      /* if its in current space or no diffs allowed, 
+      /* if its in current space or no diffs allowed,
 	 get config info for WSM_SET_STATE */
       if (in_current_space || !diffs_allowed)
 	{
 	  if (linked) room_name = linkedRoomQuark;
-	  else if (!diffs_allowed && !in_current_space) 
+	  else if (!diffs_allowed && !in_current_space)
 	    room_name = rooms_qlist[0];
 	  else room_name = current_space->nameq;
 	  GetDataListStart(w_window,
@@ -732,12 +732,12 @@ GetRegisterWindowReply(Window window,WSMReply *reply)
       print_reply(reply);
     }
   /* nothing in the database */
-  else 
+  else
     {
       CreateStartWSMWinData(NULL,
 			    True,
 			    NULL,
-			    0, 
+			    0,
 			    w_window,
 			    &xrm_data_list,
 			    &num_xrm_data_list);
@@ -759,7 +759,7 @@ GetRegisterWindowReply(Window window,WSMReply *reply)
                           DealWithClientMessage
 
   ------------------------------------------------------------------*/
-void 
+void
 DealWithClientMessage(Widget widget,XClientMessageEvent *ev)
 {
   char **argv;
@@ -786,7 +786,7 @@ DealWithClientMessage(Widget widget,XClientMessageEvent *ev)
                           DealWithDestroyNotify
 
   ------------------------------------------------------------------*/
-void 
+void
 DealWithDestroyNotify(Widget widget,XDestroyWindowEvent *ev)
 {
   WorkWindow *w_window = GetWorkWindow(ev->window);
@@ -810,7 +810,7 @@ DealWithDestroyNotify(Widget widget,XDestroyWindowEvent *ev)
 	}
     }
 
-  else 
+  else
     {
       RemoveWorkWindow(w_window,False);
       i_window = GetIconWorkWindow(w_window->window);
@@ -826,7 +826,7 @@ DealWithDestroyNotify(Widget widget,XDestroyWindowEvent *ev)
                           DealWithDestroyMwmNotify
 
   ------------------------------------------------------------------*/
-void 
+void
 DealWithDestroyMwmNotify()
 {
 
@@ -843,7 +843,7 @@ DealWithDestroyMwmNotify()
                           DealMapNotify
 
   ------------------------------------------------------------------*/
-void 
+void
 DealWithMapNotify(Widget widget,XMapEvent *ev)
 {
   WorkWindow *w_window = GetWorkWindow(ev->window);
@@ -871,7 +871,7 @@ DealWithMapNotify(Widget widget,XMapEvent *ev)
                           DealUnmapNotify
 
   ------------------------------------------------------------------*/
-void 
+void
 DealWithUnmapNotify(Widget widget,XUnmapEvent *ev)
 {
   WorkWindow *i_window;
@@ -894,7 +894,7 @@ DealWithUnmapNotify(Widget widget,XUnmapEvent *ev)
 */
       }
     }
-  else 
+  else
   {
       w_window->mapped = False;
 /*    RemoveWorkWindow(w_window, False);
@@ -911,7 +911,7 @@ DealWithUnmapNotify(Widget widget,XUnmapEvent *ev)
                           CreateSetState
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 CreateSetState(WSMWinData *data_list, int num_data_list,
 	       WSMWinData *data_list_i, int num_data_list_i,
 	       WorkWindow *w_window,
@@ -931,21 +931,21 @@ CreateSetState(WSMWinData *data_list, int num_data_list,
   count = 0;
   retval = False;
   if (num_data_list > 0 && num_data_list_i > 0)
-    win_info = (WSMWinInfo*)XtMalloc(2*sizeof(WSMWinInfo));	
+    win_info = (WSMWinInfo*)XtMalloc(2*sizeof(WSMWinInfo));
   else if (num_data_list > 0 || num_data_list_i > 0)
-    win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));	
+    win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));
   if (num_data_list > 0)
     {
       win_info[count].data_list = data_list;
       win_info[count].num_data_list = num_data_list;
-      win_info[count].window = GetWSMWindow(w_window);	
+      win_info[count].window = GetWSMWindow(w_window);
       count++;
     }
   if (num_data_list_i > 0)
     {
       win_info[count].data_list = data_list_i;
       win_info[count].num_data_list = num_data_list_i;
-      win_info[count].window = GetWSMWindow(i_window);	
+      win_info[count].window = GetWSMWindow(i_window);
       count++;
     }
   if (num_data_list > 0 || num_data_list_i > 0)
@@ -972,15 +972,15 @@ CreateSetState(WSMWinData *data_list, int num_data_list,
                           GetCopyWindowRequest
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetCopyWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request)
 {
-  WSMWinData *xrm_data_list;
-  WSMWinData *xrm_data_list_i;
+  WSMWinData *xrm_data_list = NULL;
+  WSMWinData *xrm_data_list_i = NULL;
   int num_xrm_data_list = 0;
   int num_xrm_data_list_i = 0;
-  WorkWindow *w_window;	
-  WorkWindow *i_window;	
+  WorkWindow *w_window;
+  WorkWindow *i_window;
   XrmValue *attr_values = NULL;
   XrmValue *attr_values_i = NULL;
   Boolean retval = False;
@@ -992,7 +992,7 @@ GetCopyWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 
   if (w_window != NULL && from_s != NULL && to_s != NULL
       && IsWorkWindowInSpace(w_window,from_s))
-    {	
+    {
       if (w_window->linked) room_nameq = linkedRoomQuark;
       else room_nameq = from_s->nameq;
       GetWindowConfigurationEntry(w_window->specifier_qlist,
@@ -1004,11 +1004,11 @@ GetCopyWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 				    i_window->attrib_qlist,
 				    room_nameq,
 				    &attr_values_i);
-      if (to_s == all_space) 
+      if (to_s == all_space)
 	{
 	  CopyWindowToAllSpaces(w_window,i_window,attr_values, attr_values_i, from_s);
 	}
-      else 
+      else
 	{
 	  CopyWindowToSpace(w_window,i_window,attr_values,attr_values_i,to_s);
 	}
@@ -1054,9 +1054,9 @@ GetCopyWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 	}
       if (attr_values != NULL) XtFree((char*)attr_values);
       if (attr_values_i != NULL) XtFree((char*)attr_values_i);
-    }	
+    }
   if (retval) print_request(request);
-  return retval;  
+  return retval;
 }
 
 
@@ -1065,8 +1065,8 @@ GetCopyWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
                           CopyWindowToAllSpaces
 
   ------------------------------------------------------------------*/
-void 
-CopyWindowToAllSpaces(WorkWindow *w_window, WorkWindow *i_window, 
+void
+CopyWindowToAllSpaces(WorkWindow *w_window, WorkWindow *i_window,
 		      XrmValue *attr_values, XrmValue *attr_values_i,Space* skip_space)
 {
   Space *space;
@@ -1098,10 +1098,10 @@ CopyWindowToAllSpaces(WorkWindow *w_window, WorkWindow *i_window,
 	  AddSpaceToWindow(space,w_window);
 	}
       space = space->next;
-    }				      
+    }
   if (!(IsWorkWindowInSpace(w_window,all_space)))
     AddWindowToSpace(all_space,w_window);
-  w_window->all_workspaces = True;	  
+  w_window->all_workspaces = True;
 }
 
 
@@ -1120,7 +1120,7 @@ CopyWindowToSpace(WorkWindow *w_window, WorkWindow *i_window,
       /* break links and replace with copies */
       s_list = w_window->s_list;
       while (s_list != NULL)
-	{	
+	{
 	  SaveWindowConfiguration(w_window->specifier_qlist,
 				  w_window->attrib_qlist,
 				  s_list->space->nameq,
@@ -1131,8 +1131,8 @@ CopyWindowToSpace(WorkWindow *w_window, WorkWindow *i_window,
 				    s_list->space->nameq,
 				    attr_values_i);
 	  s_list = s_list->next;
-	}	
-    }	
+	}
+    }
   SaveWindowConfiguration(w_window->specifier_qlist,
 			  w_window->attrib_qlist,
 			  space->nameq,
@@ -1154,14 +1154,14 @@ CopyWindowToSpace(WorkWindow *w_window, WorkWindow *i_window,
                            GetMoveWindowRequest
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request)
 {
-  WSMWinData *xrm_data_list, *xrm_data_list_i;
+  WSMWinData *xrm_data_list, *xrm_data_list_i = NULL;
   int num_xrm_data_list = 0;
   int num_xrm_data_list_i = 0;
-  WorkWindow *w_window;	
-  WorkWindow *i_window;	
+  WorkWindow *w_window;
+  WorkWindow *i_window;
   XrmValue *attr_values = NULL;
   XrmValue *attr_values_i = NULL;
   Boolean retval = False;
@@ -1198,7 +1198,7 @@ GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 	    }
 	}
       /* if the window was in all workspaces, remove it from all_space */
-      if (w_window->all_workspaces) 
+      if (w_window->all_workspaces)
 	{
 	  RemoveWorkWindowFromSpace(all_space,w_window);
 	  w_window->all_workspaces = False;
@@ -1240,7 +1240,7 @@ GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 			       &xrm_data_list,
 			       &num_xrm_data_list);
 	      w_window->last_space = current_space;
-	      if (i_window != NULL)	
+	      if (i_window != NULL)
 		{
 		  CreateWSMWinData(attr_values_i,
 				   True,
@@ -1252,7 +1252,7 @@ GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 	    }
 	  else
 	    {
-	      CreateHideWSMWinData(diffs_allowed,	
+	      CreateHideWSMWinData(diffs_allowed,
 				   w_window,
 				   &xrm_data_list,
 				   &num_xrm_data_list);
@@ -1273,9 +1273,9 @@ GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
       RemoveSpaceFromWindow(from_s, w_window);
       if (attr_values != NULL) XtFree((char*)attr_values);
       if (attr_values_i != NULL) XtFree((char*)attr_values_i);
-    }	
+    }
 
-  return retval;  
+  return retval;
 }
 
 
@@ -1286,14 +1286,14 @@ GetMoveWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
                            GetDeleteWindowRequest
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetDeleteWindowRequest(Window win, Space *from_s,WSMRequest *request)
 {
-  
+
   WSMWinInfo *win_info;
   WSMWinData *xrm_data_list;
   int num_xrm_data_list = 0;
-  WorkWindow *w_window;	
+  WorkWindow *w_window;
   Boolean retval = False;
 
 
@@ -1310,24 +1310,24 @@ GetDeleteWindowRequest(Window win, Space *from_s,WSMRequest *request)
 				   from_s->nameq);
 	  RemoveWorkWindowFromSpace(from_s, w_window);
 	  RemoveSpaceFromWindow(from_s, w_window);
-	  if (w_window->all_workspaces) 
+	  if (w_window->all_workspaces)
 	    {
 	      RemoveWorkWindowFromSpace(all_space,w_window);
 	      w_window->all_workspaces = False;
 	    }
 	  if (from_s == current_space && w_window->mapped)
 	    {
-	      CreateHideWSMWinData(diffs_allowed,	
+	      CreateHideWSMWinData(diffs_allowed,
 				   w_window,
 				   &xrm_data_list,
 				   &num_xrm_data_list);
 	      print_win_data(xrm_data_list,num_xrm_data_list);
 	      if (num_xrm_data_list > 0)
 		{
-		  win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));	
+		  win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));
 		  win_info[0].data_list = xrm_data_list;
 		  win_info[0].num_data_list = num_xrm_data_list;
-		  win_info[0].window = GetWSMWindow(w_window);	
+		  win_info[0].window = GetWSMWindow(w_window);
 		  request->set_state.allocated = True;
 		  request->any.type = WSM_SET_STATE;
 		  request->set_state.win_info_list = win_info;
@@ -1336,9 +1336,9 @@ GetDeleteWindowRequest(Window win, Space *from_s,WSMRequest *request)
 		}
 	    }
 	}
-    }	
+    }
 
-  return retval;  
+  return retval;
 }
 
 
@@ -1347,15 +1347,15 @@ GetDeleteWindowRequest(Window win, Space *from_s,WSMRequest *request)
                             GetLinkWindowRequest
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request)
 {
   WSMWinData *xrm_data_list;
   int num_xrm_data_list = 0;
-  WSMWinData *xrm_data_list_i;
+  WSMWinData *xrm_data_list_i = NULL;
   int num_xrm_data_list_i = 0;
-  WorkWindow *w_window;	
-  WorkWindow *i_window;	
+  WorkWindow *w_window;
+  WorkWindow *i_window;
   XrmValue *attr_values = NULL;
   XrmValue *attr_values_i = NULL;
   Boolean retval = False;
@@ -1377,8 +1377,8 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 	  in_space = IsWorkWindowInSpace(w_window,to_s);
 	  if (in_space && w_window->linked) return False;
 	  if (!in_space)
-	    {  
-	      /* if the window is being linked into all workspaces, 
+	    {
+	      /* if the window is being linked into all workspaces,
 	       look through all workspaces and also add it to all_space*/
 	      if (to_s == all_space)
 		{
@@ -1396,13 +1396,13 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 		  w_window->all_workspaces = True;
 		}
 	      /* else just add it to a single workspace */
-	      else 	
+	      else
 		{
 		  AddWindowToSpace(to_s,w_window);
-		  AddSpaceToWindow(to_s,w_window);	
+		  AddSpaceToWindow(to_s,w_window);
 		}
 	    }
-	  /* if the window wasn't linked then save the "from" configuration 
+	  /* if the window wasn't linked then save the "from" configuration
 	     into the database as the linked configuration */
 	  if (!(w_window->linked))
 	    {
@@ -1424,7 +1424,7 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 					  i_window->attrib_qlist,
 					  linkedRoomQuark,
 					  attr_values_i);
-		}	
+		}
 	      if (attr_values != NULL) XtFree((char*)attr_values);
 	      if (attr_values_i != NULL) XtFree((char*)attr_values_i);
 	      attr_values = NULL;
@@ -1461,7 +1461,7 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 					      i_window->attrib_qlist,
 					      linkedRoomQuark,
 					      &attr_values_i);
-		}	
+		}
 	      CreateWSMWinData(attr_values,
 			       diffs_allowed,
 			       w_window,
@@ -1490,9 +1490,9 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
 	  w_window->linked = True;
 	  if (i_window != NULL) i_window->linked = True;
 	}
-    }	
+    }
   PRINT("return\n");
-  return retval;  
+  return retval;
 }
 
 
@@ -1503,13 +1503,13 @@ GetLinkWindowRequest(Window win, Space *from_s, Space *to_s, WSMRequest *request
                             GetManageAllWindowsRequest
 
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetManageAllWindowsRequest(WSMRequest *request)
 {
   WSMWinInfo *win_info;
   WSMWinData *xrm_data_list;
   int num_xrm_data_list = 0;
-  WorkWindow *w_window;	
+  WorkWindow *w_window;
   int num_win;
 
   PRINT("MANAGE WINDOWS ");
@@ -1537,12 +1537,12 @@ GetManageAllWindowsRequest(WSMRequest *request)
 		      {
 			print_win_data(xrm_data_list,num_xrm_data_list);
 			if (win_info == NULL)
-			    win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));	
+			    win_info = (WSMWinInfo*)XtMalloc(sizeof(WSMWinInfo));
 			else win_info = (WSMWinInfo*)XtRealloc((char*)win_info,
 						     (num_win+1)* sizeof(WSMWinInfo));
 			win_info[num_win].data_list = xrm_data_list;
 			win_info[num_win].num_data_list = num_xrm_data_list;
-			win_info[num_win].window = GetWSMWindow(w_window);		
+			win_info[num_win].window = GetWSMWindow(w_window);
 			num_win++;
 		      }
 		  }
@@ -1550,7 +1550,7 @@ GetManageAllWindowsRequest(WSMRequest *request)
 	}
     }
   if (num_win ==0)
-    {	
+    {
       PRINT("MANAGE WINDOWS: no window data\n");
       return False;
     }
@@ -1562,5 +1562,5 @@ GetManageAllWindowsRequest(WSMRequest *request)
       request->any.type = WSM_SET_STATE;
       print_request(request);
       return True;
-    }	
+    }
 }

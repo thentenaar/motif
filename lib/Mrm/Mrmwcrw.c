@@ -1336,7 +1336,7 @@ Urm__CW_CreateArglist (Widget			parent,
 	       */
 	      if (reptype == MrmRtypeColor)
 		{
-		  Pixel pix;
+		  Pixel pix = 0;
 		  RGMColorDescPtr colorptr;
 		  Colormap cmap;
 

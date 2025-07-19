@@ -25,7 +25,6 @@
 /************************************************************
 *	INCLUDE FILES
 *************************************************************/
-#include <stdio.h>
 #include <stdarg.h>
 #include <X11/IntrinsicP.h>
 
@@ -744,12 +743,12 @@ IsSubclassOf(
 	WidgetClass p = wc;
 
     _XmProcessLock();
-	for(; (p) && (p != sc); p = p->core_class.superclass);
+    while (p && sc && p != sc)
+    	p = p->core_class.superclass;
     _XmProcessUnlock();
 
-	return (p == sc);
+	return p == sc;
 }
-
 
 #define XtIsConstraintClass(wc) IsSubclassOf(wc, constraintWidgetClass)
 /*
