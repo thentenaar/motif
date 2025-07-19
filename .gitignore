@@ -24,6 +24,8 @@ ltmain.sh
 missing
 ylwrap
 libtool
+test-driver
+tap-driver.sh
 INSTALL
 Makefile
 stamp-h*
@@ -148,4 +150,6 @@ tools/wml/wmlparse.c
 tools/wml/wmlparse.h
 tools/wml/wmluiltok
 tools/wml/wmluiltok.c
-
+tests/tests
+tests/*.log
+tests/*.trs

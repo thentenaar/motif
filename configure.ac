@@ -16,7 +16,7 @@ AC_INIT([motif], [XM_VERSION], [https://github.com/thentenaar/motif])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_SRCDIR([lib/Xm/Form.c])
-AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define])
+AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define dist-xz])
 LT_INIT
 AM_SILENT_RULES([yes])
 AM_EXTRA_RECURSIVE_TARGETS([demos doc])
@@ -129,6 +129,16 @@ AC_ARG_ENABLE([message-catalog],
 	[enable_message_catalog=$enableval],
 	[enable_message_catalog=no]
 )
+
+dnl Tests
+AC_ARG_ENABLE([tests],
+	[AS_HELP_STRING([--enable-tests], [Enable automated tests])],
+	[enable_tests=$enableval], [enable_tests=no])
+AS_IF([test "x$enable_tests" == "xyes"],[
+	AC_PROG_AWK
+	AC_REQUIRE_AUX_FILE([tap-driver.sh])
+	PKG_CHECK_MODULES([CHECK], [check])
+])
 
 dnl Debug builds (assert, etc.)
 AS_IF([test "x$enable_debug" == "xyes"],[
@@ -327,6 +337,7 @@ demos/doc/programGuide/ch17/Makefile \
 demos/doc/programGuide/ch17/simple_drop/Makefile \
 demos/doc/programGuide/ch17/simple_drag/Makefile \
 lib/Xm/xmstring.list \
+tests/Makefile
 ])
 AC_OUTPUT
 
