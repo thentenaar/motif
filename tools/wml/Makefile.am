@@ -28,7 +28,7 @@ wmluiltok_LDADD = @LEXLIB@
 
 wml_SOURCES = wml.c
 wml_LDADD = libwml.la
-wmldbcreate_LDADD = ../../lib/Xm/libXm.la
+wmldbcreate_LDADD = ../../lib/Xm/libXm.la $(X_LIBS)
 
 AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include ${X_CFLAGS}
 

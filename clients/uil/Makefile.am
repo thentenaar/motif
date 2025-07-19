@@ -13,7 +13,7 @@ UilParser.lo: UilParser.c
 
 libUil_la_LIBADD = UilParser.lo ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la
 
-uil_LDADD = ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la
+uil_LDADD = ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la $(X_LIBS)
 
 AM_CPPFLAGS = -DINCDIR=\"@INCDIR@\" \
               -DLIBDIR=\"@LIBDIR@\" \

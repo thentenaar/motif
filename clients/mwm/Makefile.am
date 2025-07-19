@@ -9,7 +9,7 @@ rcdir = $(MWMRCDIR)
 rc_DATA = system.mwmrc
 
 bin_PROGRAMS = mwm
-mwm_LDADD = ./WmWsmLib/libWsm.a ../../lib/Xm/libXm.la
+mwm_LDADD = ./WmWsmLib/libWsm.a ../../lib/Xm/libXm.la $(X_LIBS)
 
 AM_CPPFLAGS = -DLARGECURSORS -DR2_COMPAT -DUNMAP_ON_RESTART \
               -DCDE_INSTALLATION_TOP=\"@CDE_INSTALLATION_TOP@\" \
