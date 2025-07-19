@@ -97,7 +97,7 @@ static void DisplayDestroyCallback (Widget w,
 				     ((float_value) - 0.5)))
 
 
-
+
 /*
  *++
  *
@@ -174,7 +174,7 @@ UrmCreateWidgetInstanceCleanup (URMResourceContextPtr	context_id,
   return MrmSUCCESS;
 }
 
-
+
 /*
  *++
  *
@@ -359,7 +359,7 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
   return MrmSUCCESS ;
 }
 
-
+
 /*
  *++
  *
@@ -474,7 +474,7 @@ UrmCreateOrSetWidgetInstance (URMResourceContextPtr	context_id,
 			 NULL, context_id, MrmBAD_WIDGET_REC);
 }
 
-
+
 /*
  *++
  *
@@ -747,7 +747,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
 
 }
 
-
+
 /*
  *++
  *
@@ -1037,7 +1037,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
 
 }
 
-
+
 /*
  *++
  *
@@ -1638,7 +1638,7 @@ Urm__CW_CreateArglist (Widget			parent,
 }
 
 
-
+
 /*
  *++
  *
@@ -1687,7 +1687,7 @@ Urm__CW_EvaluateValOrOffset (MrmType			reptype,
 }
 
 
-
+
 /*
  *++
  *
@@ -1889,7 +1889,7 @@ Urm__CW_FixupValue (long			val,
 	  }
 	*swap_needed = FALSE;
 	_MrmOSIEEEDoubleToHost( floatval );
-	*((double *)(&unitsvalue->value[0])) = *floatval;
+	memcpy(unitsvalue->value, floatval, sizeof *floatval);
       }
     break ;
     default:
@@ -1900,7 +1900,7 @@ Urm__CW_FixupValue (long			val,
 }
 
 
-
+
 /*
  *++
  *
@@ -1973,7 +1973,7 @@ Urm__CW_DisplayToString (char                       *val,
 
 }
 
-
+
 /*
  *++
  *
@@ -2505,7 +2505,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	screen = DefaultScreenOfDisplay(display);
 	unitsfloatvalue = (RGMUnitsFloatPtr) *val;
 	float_units = unitsfloatvalue->units;
-	float_val = (float)(*((double *)(&unitsfloatvalue->value[0])));
+	memcpy(&float_val, unitsfloatvalue->value, sizeof float_val);
 
 	if (float_val != 0)
 	  {
@@ -2534,7 +2534,7 @@ Urm__CW_ConvertValue (Widget			parent,
   return MrmSUCCESS ;
 
 }
-
+
 /*
 ** Remove the font from the hash table so it won't later cause a protocol
 ** error if the display is closed and reopened and the same value is fetched.
@@ -2556,7 +2556,7 @@ DisplayDestroyCallback ( Widget w,
 }
 
 
-
+
 /*
  *++
  *
@@ -2758,7 +2758,7 @@ Urm__CW_SafeCopyValue (long				*val,
 }
 
 
-
+
 /*
  *++
  *
@@ -2847,7 +2847,7 @@ UrmDestroyCallback (Widget                     w, /* unused */
 
 }
 
-
+
 /*
  *++
  *
@@ -2978,7 +2978,7 @@ Urm__CW_ReadLiteral (RGMResourceDescPtr		resptr ,
 }
 
 
-
+
 /*
  *++
  *
@@ -3154,7 +3154,7 @@ Urm__CW_LoadIconImage (RGMIconImagePtr		iconptr ,
 }
 
 
-
+
 /*
  *++
  *
@@ -3354,7 +3354,7 @@ Urm__CW_FixupCallback (Widget			parent ,
 
 }
 
-
+
 /*
  *++
  *
@@ -3467,7 +3467,7 @@ Urm__CW_LoadWidgetResource (Widget			parent ,
 }
 
 
-
+
 /*
  *++
  *
@@ -3567,7 +3567,6 @@ Urm__CW_GetPixmapParms (Widget			w ,
 }
 
 
-
 /*
  *++
  *

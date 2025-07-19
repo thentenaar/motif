@@ -611,6 +611,7 @@ static void wmlTokenTokenString(char *dststg, size_t n, WmlKeyWTokenPtr tok)
 
 	assert(dststg);
 	assert(tok);
+	assert(n);
 
 	switch (tok->class) {
 	case WmlTokenClassArgument: strcpy(dststg, "ARGUMENT_NAME"); break;
@@ -623,7 +624,7 @@ static void wmlTokenTokenString(char *dststg, size_t n, WmlKeyWTokenPtr tok)
 	case WmlTokenClassReserved:
 		grtok = (WmlGrammarTokenPtr)tok->objdef;
 		assert(n > strlen(grtok->token));
-        strncpy(dststg, grtok->token, n);
+        strncpy(dststg, grtok->token, n - 1);
         break;
 	default: *dststg = '\0';
 	}

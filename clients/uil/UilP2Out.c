@@ -1962,8 +1962,8 @@ sym_value_entry_type	*value_entry;
 	    {
 	    RGMUnitsFloatPtr ufptr;
 
-	    ufptr = (RGMUnitsFloatPtr) buffer;
-	    *((double *)(&ufptr->value[0])) = value_entry->value.d_real;
+	    ufptr = (RGMUnitsFloatPtr)buffer;
+	    memcpy(ufptr->value, &value_entry->value.d_real, sizeof(double));
 	    ufptr->units = value_entry->b_arg_type;
 	    break;
 	    }
