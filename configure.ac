@@ -30,11 +30,11 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROG([PKG_CONFIG], [pkg-config])
 AC_CHECK_PROGS(YACC, byacc, yacc)
-AM_PROG_LEX(noyywrap)
+AM_PROG_LEX(yywrap)
 
 dnl Flex needs libfl
 LEXLIB=
-if test "x$LEX" == "xflex"; then
+if test "x$ac_cv_prog_LEX" == "xflex"; then
 	LEXLIB=-lfl
 fi
 AC_SUBST([LEXLIB])
@@ -52,7 +52,7 @@ PKG_INSTALLDIR
 PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 
 dnl Check for particular headers / functions
-AC_CHECK_HEADERS([alloca.h iconv.h wctype.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
+AC_CHECK_HEADERS([alloca.h iconv.h wctype.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
