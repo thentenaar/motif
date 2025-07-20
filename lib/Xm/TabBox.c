@@ -2895,7 +2895,7 @@ DrawSquareShadows(XmTabBoxWidget tab, XmTabAttributes info,
 			       (int)geometry->width - 2*shadow,
 			       shadow);
 
-		if( geometry->column == 0 && geometry->column > 0 )
+		if (geometry->column == 0)
 		{
 		    XmDrawBevel(XtDisplay(tab), XiCanvas(tab),
 				tab->manager.bottom_shadow_GC,
@@ -7107,7 +7107,7 @@ HorizontalStackedBottomEdgeRedisplay(XmTabBoxWidget tab)
 {
     XmTabbedStackList       list = XmTabBox_tab_list(tab);
     int             i, count = _XmTabbedStackListCount(list), row = 0, col,
-                    shadow = tab->manager.shadow_thickness, x,
+                    shadow = tab->manager.shadow_thickness, x = 0,
                     height, offset, idx, below, corner, cnt, first, last,
                     x1, x2;
     XmTabAttributes info;
