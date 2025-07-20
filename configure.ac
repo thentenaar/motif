@@ -143,6 +143,7 @@ AS_IF([test "x$enable_tests" == "xyes"],[
 dnl Debug builds (assert, etc.)
 AS_IF([test "x$enable_debug" == "xyes"],[
 	AX_APPEND_COMPILE_FLAGS([-Og -ggdb])
+	AX_APPEND_COMPILE_FLAGS([-DDEBUG], [CPPFLAGS])
 ],[
 	AX_APPEND_COMPILE_FLAGS([-O2])
 	AX_APPEND_COMPILE_FLAGS([-DNDEBUG], [CPPFLAGS])
