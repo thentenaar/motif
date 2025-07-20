@@ -17,6 +17,7 @@ jobs:
     strategy:
       matrix:
         arch: [x86_64, x86]
+        compiler: [gcc, clang]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,10 +48,12 @@ jobs:
             xvfb
             xbitmaps
             check-dev
+            clang
+            clang-dev
       - name: Make
         run: |
           cd /home/runner/work/motif/motif
-          ./autogen.sh --enable-tests
+          CC=${{ matrix.compiler }} ./autogen.sh --enable-tests
           make
         shell: alpine.sh {0}
       - name: Test
