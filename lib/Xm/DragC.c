@@ -58,9 +58,6 @@ static char rcsid[] = "$TOG: DragC.c /main/29 1997/10/07 12:19:52 cshi $"
 #include <stdio.h>
 #include <stdlib.h>
 
-/* force the multi screen support on */
-#define MULTI_SCREEN_DONE
-
 #ifdef DEBUG
 #define Warning(str)	XmeWarning(NULL, str)
 #else
@@ -751,7 +748,6 @@ DragContextDestroy(
 
   if (dc->drag.receiverInfos)
     {
-#ifdef MULTI_SCREEN_DONE
       if (dc->drag.trackingMode != XmDRAG_TRACK_MOTION)
 	{
 	  EventMask mask;
@@ -769,7 +765,6 @@ DragContextDestroy(
 	      XSelectInput(XtDisplay(w), info->window, mask);
 	    }
 	}
-#endif /* MULTI_SCREEN_DONE */
       XtFree((char *)dc->drag.receiverInfos);
     }
 }
@@ -2016,7 +2011,6 @@ TopWindowsReceived(
     }
 
 
-#ifdef MULTI_SCREEN_DONE
     if ((*length != 0) && (*format == 32) && (*type == XA_WINDOW)) {
 	/*
 	 * we make a receiverInfo array one larger than the number of
@@ -2070,7 +2064,6 @@ TopWindowsReceived(
 	ValidateDragOver(dc, oldStyle, dc->drag.activeProtocolStyle);
     }
     else
-#endif /* MULTI_SCREEN_DONE */
     {
 	EventMask	mask;
 	Window		confineWindow;
@@ -2080,11 +2073,7 @@ TopWindowsReceived(
 	GetDestinationInfo(dc,
 			   dc->drag.currWmRoot,
 			   dc->drag.currReceiverInfo->window);
-#ifndef MULTI_SCREEN_DONE
-	confineWindow = RootWindowOfScreen(XtScreen(dc));
-#else
 	confineWindow = None;
-#endif /* MULTI_SCREEN_DONE */
 
 	/*
 	 * we need to regrab so that the confine window can be changed
@@ -2107,11 +2096,9 @@ TopWindowsReceived(
 			 dc->drag.lastChangeTime) != GrabSuccess)
 	  Warning(MESSAGE4);
     }
-#ifdef MULTI_SCREEN_DONE
+
     if (value)
       XtFree((char *)value);
-#endif /* MULTI_SCREEN_DONE */
-
     DragStartWithTracking(dc);
 }
 
@@ -2196,15 +2183,11 @@ DragStart(
      */
     if (dc->drag.trackingMode == XmDRAG_TRACK_MOTION) {
 	dc->drag.activeProtocolStyle = activeProtocolStyle;
-#ifndef MULTI_SCREEN_DONE
-      confineWindow = RootWindowOfScreen(XtScreen(dc));
-#else
       confineWindow = None;
     } else { /* XmDRAG_TRACK_WM_QUERY */
 	dc->drag.trackingMode = XmDRAG_TRACK_WM_QUERY_PENDING;
 	confineWindow = XtWindow(dc->drag.srcShell);
     }
-#endif /*  MULTI_SCREEN_DONE */
 
     if (dc->drag.trackingMode == XmDRAG_TRACK_WM_QUERY_PENDING &&
         activeProtocolStyle == XmDRAG_PREREGISTER) {
@@ -2325,11 +2308,7 @@ DragStartWithTracking(
 	Window		confineWindow;
 	Cursor		cursor;
 
-#ifndef MULTI_SCREEN_DONE
-	confineWindow = RootWindowOfScreen(XtScreen(dc));
-#else
 	confineWindow = None;
-#endif
 	cursor = _XmDragOverGetActiveCursor((Widget)dc->drag.curDragOver);
 
 	/*
@@ -3049,11 +3028,9 @@ InitiatorMainLoop(
 		switch(dc->drag.trackingMode) {
 		  case XmDRAG_TRACK_MOTION:
 		    break;
-#ifdef MULTI_SCREEN_DONE
 		  case XmDRAG_TRACK_WM_QUERY:
 		    event.xmotion.subwindow = event.xmotion.window;
 		    break;
-#endif /*  MULTI_SCREEN_DONE */
 		  case XmDRAG_TRACK_WM_QUERY_PENDING:
 		    event.xmotion.subwindow = event.xmotion.window;
 		    break;
