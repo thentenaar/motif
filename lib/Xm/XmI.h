@@ -53,11 +53,13 @@ void _XmInitModifiers (void);
 #ifndef DEBUG
 # define assert(assert_exp)
 #elif (defined(__STDC__) && !defined(UNIXCPP)) || defined(ANSICPP)
+#include <stdlib.h>
 # define assert(assert_exp)						\
   (((assert_exp) ? (void) 0 :						\
     (void) (fprintf(stderr, "assert(%s) failed at line %d in %s\n",	\
                     #assert_exp, __LINE__, __FILE__), abort())))
 #else
+#include <stdlib.h>
 # define assert(assert_exp)						\
   (((assert_exp) ? 0 :							\
     (void) (fprintf(stderr, "assert(%s) failed at line %d in %s\n",	\
