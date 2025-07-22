@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wmldbcreate.c /main/7 1997/04/15 10:20:28 dbl $"
@@ -34,7 +34,7 @@ static char rcsid[] = "$TOG: wmldbcreate.c /main/7 1997/04/15 10:20:28 dbl $"
 #include <stdio.h>
 
 #include <Mrm/MrmWidget.h>
-#include <Xm/Xm.h> 
+#include <Xm/Xm.h>
 #include <Xm/MwmUtil.h>
 
 #include <Dt/Editor.h>
@@ -94,10 +94,10 @@ void emit_int_and_table_shorts( int	    table_id);
 void emit_ints( int	    table_id);
 
 FILE *bfile, *afile;
-int DEBUG=FALSE;
+int _DEBUG=FALSE;
 char outfilename[80];
 char debugfilename[80];
-
+
 int main(argc, argv)
 int argc;
 char **argv;
@@ -109,9 +109,9 @@ char **argv;
 
     for (argc--, argv++; argc; argc--, argv++)
 	{
-	if (strcmp("-debug", *argv) == 0) 
+	if (strcmp("-debug", *argv) == 0)
 	    {
-	    DEBUG=TRUE;
+	    _DEBUG=TRUE;
 	    }
 	else if ((strcmp("-o", *argv) == 0))
 		 {
@@ -125,7 +125,7 @@ char **argv;
 	printf("\nCouldnt't open %s", outfilename);
 	exit (1);
 	}
-    if (DEBUG)
+    if (_DEBUG)
 	{
 	afile = fopen(debugfilename, "w");
 	if (afile == (FILE *) NULL)
@@ -148,7 +148,7 @@ char **argv;
     emit_chars(Charset_Wrdirection_Table);
     emit_chars(Charset_Parsdirection_Table);
     emit_chars(Charset_Charsize_Table);
-    emit_chars(Child_Class_Table); 
+    emit_chars(Child_Class_Table);
 /*
  *    UilKeyTab
  */
@@ -204,7 +204,7 @@ char **argv;
     exit (0);
 }
 
-
+
 void emit_globals(void)
 {
     _db_globals globals;
@@ -220,32 +220,32 @@ void emit_globals(void)
     globals.key_k_keyword_count = key_k_keyword_count;
     globals.key_k_keyword_max_length = key_k_keyword_max_length;
     globals.uil_max_child = uil_max_child;
-    
+
     fwrite (&globals, sizeof (_db_globals), 1, bfile);
-    if (DEBUG)
+    if (_DEBUG)
 	fprintf(afile, "%d %d %d %d %d %d %d %d %d %d ", globals.version,
-		globals.uil_max_arg, globals.uil_max_charset, 
+		globals.uil_max_arg, globals.uil_max_charset,
 		globals.charset_lang_table_max, globals.uil_max_object,
-		globals.uil_max_reason, globals.uil_max_enumval, 
+		globals.uil_max_reason, globals.uil_max_enumval,
 		globals.uil_max_enumset, globals.key_k_keyword_count,
 		globals.key_k_keyword_max_length);
     }
 
 
-
+
 void emit_header(header)
 _db_header_ptr header;
 {
 
     fwrite (header, sizeof(_db_header), 1, bfile);
-    if (DEBUG)
-	fprintf(afile, 
+    if (_DEBUG)
+	fprintf(afile,
 		"\n\nTableId=%d, NumEntries=%d, TableSize=%d \n",
 		 header->table_id, header->num_items, header->table_size);
     }
 
 
-
+
 void emit_chars(table_id)
     int	    table_id;
 {
@@ -313,8 +313,8 @@ void emit_chars(table_id)
 
     emit_header(&header);
 
-    fwrite (ptr, header.table_size, 1, bfile);  
-    if (DEBUG)
+    fwrite (ptr, header.table_size, 1, bfile);
+    if (_DEBUG)
 	{
 	for (i=0; i<=header.num_items; i++)
 	    {
@@ -323,7 +323,7 @@ void emit_chars(table_id)
 	}
 }
 
-
+
 void emit_ints_and_string(table_id)
     int	    table_id;
 {
@@ -355,14 +355,14 @@ void emit_ints_and_string(table_id)
     for (i=0; i<header.num_items; i++)
         {
 	fwrite (table[i].at_name, table[i].b_length + 1, 1, bfile);
-	if (DEBUG)
+	if (_DEBUG)
 	    fprintf (afile, "%d %d %d %d %s", table[i].b_class, table[i].b_subclass,
 		 table[i].b_length, table[i].b_token, table[i].at_name);
 	}
-	       
+
 }
 
-
+
 void emit_char_table(table_id)
 int	table_id;
 {
@@ -409,7 +409,7 @@ int	table_id;
         {
         entry_vec = table[i];
 	fwrite (entry_vec, sizeof (char) * num_bits, 1, bfile);
-	if (DEBUG)
+	if (_DEBUG)
 	    {
 	    for (j=0; j<num_bits; j++)
 		{
@@ -420,7 +420,7 @@ int	table_id;
         }
 }
 
-
+
 void emit_length_and_string(table_id)
 int	table_id;
 {
@@ -509,7 +509,7 @@ int	table_id;
     emit_header(&header);
 
     lengths = (int *) malloc (sizeof (int) * (header.num_items + 1));
- 
+
     for (i=0; i<=header.num_items; i++)
 	{
 	if (table[i] != NULL)
@@ -523,7 +523,7 @@ int	table_id;
 	    {
 	    lengths[i] = 0;
 	    }
-	if (DEBUG)
+	if (_DEBUG)
 	    fprintf (afile, "%d ", lengths[i]);
 	}
     fwrite (lengths, sizeof (int) * (header.num_items + 1), 1, bfile);
@@ -536,14 +536,14 @@ int	table_id;
 	     * Add one for the null terminator
 	     */
 	    fwrite (table[i], lengths[i] + 1, 1, bfile);
-	    if (DEBUG)
+	    if (_DEBUG)
 		fprintf (afile, "%s ", table[i]);
 	    }
 	}
     free (lengths);
 }
 
-
+
 void emit_shorts(table_id)
     int	    table_id;
 {
@@ -553,7 +553,7 @@ void emit_shorts(table_id)
 
     switch (table_id)
 	{
-	/* 
+	/*
 	 * All tables are 1 based unless otherwise noted
 	 */
 	case Charset_Lang_Codes_Table:
@@ -599,8 +599,8 @@ void emit_shorts(table_id)
 
     emit_header(&header);
 
-    fwrite (ptr, header.table_size, 1, bfile);  
-    if (DEBUG)
+    fwrite (ptr, header.table_size, 1, bfile);
+    if (_DEBUG)
 	{
 	for (i=0; i<header.num_items; i++)
 	    {
@@ -609,7 +609,7 @@ void emit_shorts(table_id)
 	}
 }
 
-
+
 void emit_int_and_table_shorts(table_id)
     int	    table_id;
 {
@@ -642,7 +642,7 @@ void emit_int_and_table_shorts(table_id)
         }
 }
 
-
+
 void emit_ints(table_id)
     int	    table_id;
 {
@@ -665,8 +665,8 @@ void emit_ints(table_id)
 
     emit_header(&header);
 
-    fwrite (ptr, header.table_size, 1, bfile);  
-    if (DEBUG)
+    fwrite (ptr, header.table_size, 1, bfile);
+    if (_DEBUG)
 	{
 	for (i=0; i<header.num_items; i++)
 	    {
