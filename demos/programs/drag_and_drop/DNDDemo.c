@@ -418,8 +418,8 @@ RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
         /* value, type, length, and format must be assigned values */
         cs -> value = (XtPointer) rect;
         cs -> type = RECT_INFO;
-        cs -> length = sizeof(*rect)/sizeof(long);
-        cs -> format = 32;
+        cs -> length = sizeof(*rect);
+        cs -> format = 8;
 	cs -> status = XmCONVERT_DONE;
     }
     else if (cs -> target == DELETE) {
