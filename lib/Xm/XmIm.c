@@ -1107,8 +1107,6 @@ create_xic_info(Widget		shell,
       break;
 
     case XmPER_WIDGET:
-      break;
-
     case XmINHERIT_POLICY:
       break;
 
@@ -1274,6 +1272,7 @@ set_values(Widget w,
 	break;
 
       case XmPER_WIDGET:
+      case XmINHERIT_POLICY:
 	break;
       default:
 	assert(False);
@@ -1423,10 +1422,7 @@ ImPreeditStartCallback(XIC xic,
   XICProc proc;
   Widget real = NULL;
 
-  if (!client_data){
-    assert(False);
-  }
-
+  assert(client_data);
   proc = get_real_callback((Widget)client_data, PREEDIT_START, &real);
   if (proc)
     (*proc)(xic, (XPointer)real, call_data);
@@ -1445,10 +1441,7 @@ ImPreeditDoneCallback(XIC xic,
   XmImXICInfo icp;
   Widget real = NULL;
 
-  if (!client_data){
-    assert(False);
-  }
-
+  assert(client_data);
   if ((im_info = get_im_info(w, False)) == NULL)
     return;
   if ((icp = im_info->shell_xic) == NULL)
@@ -1482,9 +1475,7 @@ ImPreeditDrawCallback(XIC xic,
   wchar_t *wchar;
   Widget real = NULL;
 
-  if (!client_data){
-    assert(False);
-  }
+  assert(client_data);
 
   /* update the preedit buffer */
   if ((im_info = get_im_info(w, False)) == NULL)
@@ -1606,9 +1597,7 @@ ImPreeditCaretCallback(XIC xic,
 		(XIMPreeditCaretCallbackStruct *) call_data;
   Widget real = NULL;
 
-  if (!client_data){
-    assert(False);
-  }
+  assert(client_data);
 
 /* update the preedit buffer */
   if ((im_info = get_im_info(w, False)) == NULL)
@@ -1664,10 +1653,8 @@ get_real_callback(Widget w,
       break;
     }
   }
-  if (target == refs.num_refs){
-    assert(False);
-  }
 
+  assert(target < refs.num_refs);
   if (refs.callbacks[target])
     return (XICProc)refs.callbacks[target][swc];
   else
