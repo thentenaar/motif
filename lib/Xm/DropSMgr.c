@@ -470,6 +470,7 @@ DropSiteManagerInitialize(
 	dsm->dropManager.clipperList = NULL;
 	dsm->dropManager.updateInfo = NULL;
 	dsm->dropManager.updateTimeOutId = 0;
+	dsm->dropManager.dragUnderData = NULL;
 
 	/* Patch around broken Xt interfaces */
 	XtGetSubresources(nw, info, NULL, NULL, _XmDSResources,

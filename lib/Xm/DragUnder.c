@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DragUnder.c /main/12 1995/07/14 10:26:51 drk $"
@@ -29,7 +29,6 @@ static char rcsid[] = "$XConsortium: DragUnder.c /main/12 1995/07/14 10:26:51 dr
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/DrawP.h>
 #include "XmI.h"
@@ -48,39 +47,39 @@ static char rcsid[] = "$XConsortium: DragUnder.c /main/12 1995/07/14 10:26:51 dr
 
 /********    Static Function Declarations    ********/
 
-static XmAnimationSaveData CreateAnimationSaveData( 
+static XmAnimationSaveData CreateAnimationSaveData(
                         XmDragContext dc,
                         XmAnimationData aData,
                         XmDragProcCallbackStruct *dpcb) ;
-static void FreeAnimationData( 
+static void FreeAnimationData(
                         XmAnimationSaveData aSaveData) ;
-static Boolean SaveAll( 
+static Boolean SaveAll(
                         XmAnimationSaveData aSaveData,
                         Position x,
                         Position y,
                         Dimension width,
                         Dimension height) ;
-static Boolean SaveSegments( 
+static Boolean SaveSegments(
                         XmAnimationSaveData aSaveData,
                         Position x,
                         Position y,
                         Dimension width,
                         Dimension height,
                         Dimension *thickness) ;
-static void DrawHighlight( 
+static void DrawHighlight(
                         XmAnimationSaveData aSaveData) ;
-static void DrawShadow( 
+static void DrawShadow(
                         XmAnimationSaveData aSaveData) ;
-static void DrawPixmap( 
+static void DrawPixmap(
                         XmAnimationSaveData aSaveData) ;
-static void AnimateExpose(Widget w, XmAnimationSaveData aSaveData, 
-                          XEvent *event, 
+static void AnimateExpose(Widget w, XmAnimationSaveData aSaveData,
+                          XEvent *event,
                           Boolean *cont);
-static void AnimateEnter( 
+static void AnimateEnter(
                         XmDropSiteManagerObject dsm,
                         XmAnimationData aData,
                         XmDragProcCallbackStruct *dpcb) ;
-static void AnimateLeave( 
+static void AnimateLeave(
                         XmDropSiteManagerObject dsm,
                         XmAnimationData aData,
                         XmDragProcCallbackStruct *dpcb) ;
@@ -95,9 +94,7 @@ static void AnimateLeave(
  *  Create and fill an XmAnimationSaveData structure containing the data
  *  needed to animate the dropsite.
  ***************************************************************************/
-
-/*ARGSUSED*/
-static XmAnimationSaveData 
+static XmAnimationSaveData
 CreateAnimationSaveData(
         XmDragContext dc,
         XmAnimationData aData,
@@ -136,7 +133,7 @@ CreateAnimationSaveData(
      *  Get the window depth.
      */
 
-    if (!XGetGeometry (aSaveData->display, aSaveData->window, 
+    if (!XGetGeometry (aSaveData->display, aSaveData->window,
 		       &junkWin, &junkInt, &junkInt,
 		       &junkUInt, &junkUInt, &junkUInt,
                        &(aSaveData->windowDepth))) {
@@ -215,8 +212,7 @@ CreateAnimationSaveData(
  *
  *  Free an XmAnimationSaveData structure.
  ***************************************************************************/
-
-static void 
+static void
 FreeAnimationData(
         XmAnimationSaveData aSaveData )
 {
@@ -262,8 +258,7 @@ FreeAnimationData(
  *  Save the original contents of a dropsite window that will be overwritten
  *  by dropsite animation into a rectangular backing store.
  ***************************************************************************/
-
-static Boolean 
+static Boolean
 SaveAll(
         XmAnimationSaveData aSaveData,
         Position x,
@@ -309,8 +304,7 @@ SaveAll(
  *  save 0, 1, or 4 strips into backing store, depending on the dimensions
  *  of the dropsite and the animation thickness.
  ***************************************************************************/
-
-static Boolean 
+static Boolean
 SaveSegments(
         XmAnimationSaveData aSaveData,
         Position x,
@@ -409,8 +403,7 @@ SaveSegments(
  *
  *  Draws a highlight around the indicated region.
  ***************************************************************************/
-
-static void 
+static void
 DrawHighlight(
         XmAnimationSaveData aSaveData )
 {
@@ -436,12 +429,12 @@ DrawHighlight(
     if (aSaveData->highlightPixmap != None &&
 	aSaveData->highlightPixmap != XmUNSPECIFIED_PIXMAP) {
 	int depth ;
-	       
-	XmeGetPixmapData(XtScreen(aSaveData->xmScreen), 
+
+	XmeGetPixmapData(XtScreen(aSaveData->xmScreen),
 			 aSaveData->highlightPixmap,
-			 NULL,    
+			 NULL,
 			 &depth,
-			 NULL, NULL, NULL, NULL, NULL, NULL); 
+			 NULL, NULL, NULL, NULL, NULL, NULL);
 
 	if (depth == 1) {
 	   v.fill_style = FillStippled;
@@ -498,8 +491,7 @@ DrawHighlight(
  *
  *  Draws a 3-D shadow around the indicated region.
  ***************************************************************************/
-
-static void 
+static void
 DrawShadow(
         XmAnimationSaveData aSaveData )
 {
@@ -525,12 +517,12 @@ DrawShadow(
     if (aSaveData->topShadowPixmap != None &&
         aSaveData->topShadowPixmap != XmUNSPECIFIED_PIXMAP) {
 	int depth ;
-	       
-	XmeGetPixmapData(XtScreen(aSaveData->xmScreen), 
+
+	XmeGetPixmapData(XtScreen(aSaveData->xmScreen),
 			 aSaveData->topShadowPixmap,
-			 NULL,    
+			 NULL,
 			 &depth,
-			 NULL, NULL, NULL, NULL, NULL, NULL); 
+			 NULL, NULL, NULL, NULL, NULL, NULL);
 
 	if (depth == 1) {
 	   v.fill_style = FillStippled;
@@ -562,12 +554,12 @@ DrawShadow(
     if (aSaveData->bottomShadowPixmap != None &&
         aSaveData->bottomShadowPixmap != XmUNSPECIFIED_PIXMAP) {
 		int depth ;
-	       
-	XmeGetPixmapData(XtScreen(aSaveData->xmScreen), 
+
+	XmeGetPixmapData(XtScreen(aSaveData->xmScreen),
 			 aSaveData->bottomShadowPixmap,
-			 NULL,    
+			 NULL,
 			 &depth,
-			 NULL, NULL, NULL, NULL, NULL, NULL); 
+			 NULL, NULL, NULL, NULL, NULL, NULL);
 
 	if (depth == 1) {
 	   v.fill_style = FillStippled;
@@ -634,8 +626,7 @@ DrawShadow(
  *
  *  Copy an animationPixmap, possibly masked, to the dropsite window.
  ***************************************************************************/
-
-static void 
+static void
 DrawPixmap(
         XmAnimationSaveData aSaveData )
 {
@@ -673,7 +664,7 @@ DrawPixmap(
 
     if (SaveAll (aSaveData, x, y, width, height)) {
 
-	if (aSaveData->animationMask != None && 
+	if (aSaveData->animationMask != None &&
 	    aSaveData->animationMask != XmUNSPECIFIED_PIXMAP) {
 
 	    /*
@@ -751,11 +742,9 @@ DrawPixmap(
  *  AnimateExpose ()
  *
  ***************************************************************************/
-
-/*ARGSUSED*/
 static void
 AnimateExpose(Widget w,		/* unused */
-	      XmAnimationSaveData aSaveData, 
+	      XmAnimationSaveData aSaveData,
 	      XEvent *event,	/* unused */
 	      Boolean *cont)	/* unused */
 {
@@ -769,7 +758,7 @@ AnimateExpose(Widget w,		/* unused */
 		     aSaveData->windowX, aSaveData->windowY,
 		     aSaveData->clipRegion);
   }
-  
+
   /* Draw the visuals. */
   switch(aSaveData->animationStyle) {
   default:
@@ -806,9 +795,7 @@ AnimateExpose(Widget w,		/* unused */
  *  AnimateEnter ()
  *
  ***************************************************************************/
-
-/*ARGSUSED*/
-static void 
+static void
 AnimateEnter(
         XmDropSiteManagerObject dsm, /* unused */
         XmAnimationData aData,
@@ -839,7 +826,7 @@ AnimateEnter(
       if (XmIsGadget(hwidget))
 	hwidget = XtParent(hwidget);
       XtInsertEventHandler(hwidget, ExposureMask, False,
-			   (XtEventHandler) AnimateExpose, 
+			   (XtEventHandler) AnimateExpose,
 			   (XtPointer) aSaveData, XtListTail);
     }
 }
@@ -849,20 +836,30 @@ AnimateEnter(
  *  AnimateLeave ()
  *
  ***************************************************************************/
-
-/*ARGSUSED*/
-static void 
+static void
 AnimateLeave(
         XmDropSiteManagerObject dsm, /* unused */
         XmAnimationData aData,
         XmDragProcCallbackStruct *dpcb ) /* unused */
 {
+    Cardinal i;
+    DragPixmapData *pData;
     XmAnimationSaveData aSaveData =
 	(XmAnimationSaveData) *((XtPointer *) aData->saveAddr);
-	
-    if (aSaveData) {
-        Cardinal	i;
-        DragPixmapData	*pData;
+
+	(void)dpcb;
+	if (!aSaveData)
+	  return;
+
+	/**
+	 * Ignore this event if we have stale dragOver data. Likely, the
+	 * DragOver shell has already been destroyed.
+	 */
+	if (aData->dragOver && aData->dragOver != aSaveData->dragOver) {
+	  FreeAnimationData(aSaveData);
+	  dsm->dropManager.dragUnderData = NULL;
+	  return;
+	}
 
 	/* Move to here to avoid crashes when aSaveData already zeroed */
 	if (aSaveData->activeMode == XmDRAG_WINDOW) {
@@ -871,7 +868,7 @@ AnimateLeave(
 	  if (XmIsGadget(hwidget))
 	    hwidget = XtParent(hwidget);
 	  XtRemoveEventHandler(hwidget, ExposureMask, False,
-			       (XtEventHandler) AnimateExpose, 
+			       (XtEventHandler) AnimateExpose,
 			       (XtPointer) aSaveData);
 	}
 
@@ -901,7 +898,7 @@ AnimateLeave(
 		       aSaveData->drawGC,
                        0, 0,
 		       pData->width,
-		       pData->height, 
+		       pData->height,
 		       pData->x,
 		       pData->y);
         }
@@ -917,9 +914,8 @@ AnimateLeave(
 			     aSaveData->clipRegion);
 	}
 
-        FreeAnimationData (aSaveData);
-	*((XtPointer *) aData->saveAddr) = (XtPointer) NULL;
-    }
+	FreeAnimationData(aSaveData);
+	*((XtPointer *)aData->saveAddr) = NULL;
 }
 
 /*****************************************************************************
@@ -927,8 +923,7 @@ AnimateLeave(
  *  _XmDragUnderAnimation ()
  *
  ***************************************************************************/
-
-void 
+void
 _XmDragUnderAnimation(
     Widget w,
     XtPointer clientData,
