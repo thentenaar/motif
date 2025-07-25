@@ -57,7 +57,6 @@ renamed, and will evaluate to 1 if enabled, 0 if disabled:
     - JPEG_SUPPORTED     -> XM_WITH_JPEG
     - PNG_SUPPORTED      -> XM_WITH_PNG
     - UTF8_SUPPORTED     -> XM_UTF8
-    - OM22_COMPATIBILITY -> XM_22_COMPAT
 ```
 
 - The ``XM_MSGCAT`` macro was added, to signify that Motif was build with

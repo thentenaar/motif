@@ -101,26 +101,6 @@ AS_IF([test "x$enable_printing" == "xyes"],[
 	AS_IF([test "x$enable_printing" == "xno"], [AC_MSG_FAILURE([libXp not found])])
 ])
 
-AC_ARG_ENABLE([motif22-compatibility],
-	[AS_HELP_STRING(
-		[--enable-motif22-compatibility],
-		[enable backwards compatibility for Motif 2.2])
-	],
-	[enable_motif22_compatibility=$enableval],
-	[enable_motif22_compatibility=no]
-)
-
-dnl Signal backward-compatibility via libtool's age
-AS_IF([test "x$enable_motif22_compatibility" == "xyes"],[
-	ABI_AGE=1
-	dnl For lib/Xm/xmstring.list
-	XM_22_COMPAT_TRUE=
-	XM_22_COMPAT_FALSE=!
-].[
-	XM_22_COMPAT_TRUE=!
-	XM_22_COMPAT_FALSE=
-])
-
 AC_ARG_ENABLE([message-catalog],
 	[AS_HELP_STRING(
 		[--enable-message-catalog],
@@ -166,11 +146,6 @@ dnl Substitutions for lib/Xm/Xm.h
 AC_SUBST([XM_MAJOR], [XM_MAJOR])
 AC_SUBST([XM_MINOR], [XM_MINOR])
 AC_SUBST([XM_PATCH], [XM_PATCH])
-AC_DEFINE_UNQUOTED(
-	[XM_22_COMPAT],
-	$(test "x$enable_motif22_compatibility" != "xyes" ; echo $?),
-	[1 for OpenMotif 2.2 Compatibility]
-)
 
 AC_DEFINE_UNQUOTED(
 	[XM_UTF8],
@@ -207,10 +182,6 @@ AC_DEFINE_UNQUOTED(
 	$(test "x$enable_message_catalog" != "xyes" ; echo $?),
 	[1 if X/Open message catalog support is enabled]
 )
-
-dnl Substitutions for lib/Xm/xmstring.list
-AC_SUBST(XM_22_COMPAT_TRUE)
-AC_SUBST(XM_22_COMPAT_FALSE)
 
 dnl Defines/substitutions for mwm
 AC_DEFINE([NO_OL_COMPAT], 1, "No OL Compatability")

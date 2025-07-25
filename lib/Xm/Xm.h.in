@@ -26,11 +26,6 @@
 #define _Xm_h
 
 /**
- * 1 for OpenMotif 2.2 compatibility
- */
-#undef XM_22_COMPAT
-
-/**
  * 1 if Motif was built with JPEG support
  */
 #undef XM_WITH_JPEG

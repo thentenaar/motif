@@ -17,7 +17,6 @@ CAdjustLast
 CAdjustMargin
 CAlignment
 CAllowOverlap
-@XM_22_COMPAT_TRUE@CAllowUnusedSpace
 CAnimationMask
 CAnimationPixmap
 CAnimationPixmapDepth
@@ -340,7 +339,6 @@ NadjustMargin
 Nalignment
 NallowOverlap
 NallowResize
-@XM_22_COMPAT_TRUE@NallowUnusedSpace
 NanimationMask
 NanimationPixmap
 NanimationPixmapDepth
@@ -1374,8 +1372,8 @@ Sunspecified_pixmap
 #table _XmStrings22
 #htmpl XmStrDefs22.ht
 
-@XM_22_COMPAT_FALSE@CAllowUnusedSpace
-@XM_22_COMPAT_FALSE@NallowUnusedSpace
+CAllowUnusedSpace
+NallowUnusedSpace
 NitemFoundCallback
 NitemNotFoundCallback
 RXmTabSide
