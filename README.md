@@ -49,6 +49,7 @@ installed, and can be run by:
 
 - Various bugs have been fixed
 - Tons (probably >= 10k lines) of dead code pruned
+- Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
 - The autotools build system has been updated
 - The following macros that were previously exposed in ``Xm.h`` have been
 renamed, and will evaluate to 1 if enabled, 0 if disabled:
@@ -59,7 +60,7 @@ renamed, and will evaluate to 1 if enabled, 0 if disabled:
     - UTF8_SUPPORTED     -> XM_UTF8
 ```
 
-- The ``XM_MSGCAT`` macro was added, to signify that Motif was build with
+- The ``XM_MSGCAT`` macro was added, to signify that Motif was built with
 support for X/Open message catalogs.
 - JPEG, PNG, and Xft support is enabled by default if present at build-time.
   Specify ``--without-jpeg``, etc. to disable them.

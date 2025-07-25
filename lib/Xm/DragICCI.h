@@ -496,6 +496,8 @@ extern void _XmICCCallbackToICCEvent(
 extern void _XmSendICCCallback(
                         Display *display,
                         Window window,
+                        Window src_window,
+                        int protocol_style,
                         XmICCCallback callback,
                         XmICCEventType type) ;
 extern Boolean _XmICCEventToICCCallback(

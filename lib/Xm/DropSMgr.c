@@ -2037,6 +2037,7 @@ ProcessDrop(
 		(XmDragTopLevelClientData) clientData;
 	XmDropStartCallbackStruct *callback =
 		(XmDropStartCallbackStruct *) cb;
+	XmDropFinishCallbackStruct *finish = (XmDropFinishCallbackStruct *)cb;
 	XmDropProcCallbackStruct cbRec;
 	Widget	dragContext =
 		XmGetDragContext((Widget)dsm, callback->timeStamp);
@@ -2111,6 +2112,8 @@ ProcessDrop(
 		 * struct before calling notify in these cases?
 		 * ???
 		 */
+		finish->reason           = XmCR_DROP_FINISH;
+		finish->completionStatus = XmDROP_FAILURE;
 	}
 	else
 	{

@@ -33,7 +33,6 @@ static char rcsid[] = "$XConsortium: DropSMgrI.c /main/11 1995/07/14 10:30:45 dr
 
 #include <stdio.h>
 #include <Xm/DropSMgrP.h>
-#include "XmI.h"
 #include "DropSMgrI.h"
 #include "MessagesI.h"
 #include "RegionI.h"

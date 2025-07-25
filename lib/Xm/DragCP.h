@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmDragCP_h
 #define _XmDragCP_h
 
@@ -71,6 +71,7 @@ typedef struct {
     unsigned char	flags;
     unsigned char	dragProtocolStyle;
     int			xOrigin, yOrigin;
+    Position	xLast, yLast;
     unsigned int	width, height;
     unsigned int	depth;
     XtPointer		iccInfo;
@@ -82,7 +83,7 @@ typedef union _XmConvertSelectionRec
     XtConvertSelectionIncrProc sel_incr ;
     XtConvertSelectionProc     sel ;
   } XmConvertSelectionRec ;
-  
+
 
 typedef struct _XmDragContextPart{
     /****  resources ****/
@@ -135,14 +136,14 @@ typedef struct _XmDragContextPart{
     Boolean			useLocal;
     Boolean			inDropSite;
     XtIntervalId 		dragTimerId;
-    
+
     Time			roundOffTime;
     Time			lastChangeTime;
     Time			crossingTime;
 
     Time			dragFinishTime;
     Time			dropFinishTime;
-    
+
     Atom			dropSelection;
     Widget			srcShell;
 	Position		startX, startY;

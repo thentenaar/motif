@@ -153,7 +153,7 @@ static void PrintMessage(char, xmICCMessageStruct *);
 /********    End Static Function Declarations    ********/
 
 externaldef(dragicc)
-unsigned char _XmByteOrderChar = (char) 0;
+unsigned char _XmByteOrderChar = 0;
 
 static XmConst ReasonTable	reasonTable[] = {
     {	XmCR_TOP_LEVEL_ENTER,		XmTOP_LEVEL_ENTER	},
@@ -178,6 +178,9 @@ static XmConst int	messageTable[] = {
     XmCR_DRAG_DROP_FINISH,	/* XmDRAG_DROP_FINISH	7 */
     XmCR_OPERATION_CHANGED,	/* XmOPERATION_CHANGED	8 */
 };
+
+static unsigned char xdnd_version     = 5; /**< Xdnd protocol version */
+static unsigned char xdnd_version_min = 3; /**< Xdnd minimum version  */
 
 /************************************************************************
  *
@@ -216,7 +219,6 @@ _XmMessageTypeToReason(
  *
  *  Reformat a motif callback into a client message
  ***********************************************************************/
-
 void
 _XmICCCallbackToICCEvent(
         Display *display,
@@ -369,33 +371,263 @@ _XmICCCallbackToICCEvent(
     xmessage->any.message_type |= PUT_ICC_EVENT_TYPE(type);
 }
 
+static void _XmICCCallbackToXdndEvent(Display *display, Window window,
+                                      Window src_window,
+                                      XmICCCallback callback,
+                                      XClientMessageEvent *ev,
+                                      XmICCEventType type)
+{
+	Atom xdndEnter, xdndPosition, xdndStatus, xdndLeave, xdndDrop;
+	Atom xdndFinished, xdndMove, xdndCopy, xdndLink;
+	XmDragMotionCallback motion = (XmDragMotionCallback)callback;
+	XmDropStartCallback  drop   = (XmDropStartCallback)callback;
+	XmDropFinishCallback finish = (XmDropFinishCallback)callback;
+
+	xdndEnter    = XInternAtom(display, "XdndEnter",      False);
+	xdndLeave    = XInternAtom(display, "XdndLeave",      False);
+	xdndPosition = XInternAtom(display, "XdndPosition",   False);
+	xdndStatus   = XInternAtom(display, "XdndStatus",     False);
+	xdndDrop     = XInternAtom(display, "XdndDrop",       False);
+	xdndFinished = XInternAtom(display, "XdndFinished",   False);
+	xdndMove     = XInternAtom(display, "XdndActionMove", False);
+	xdndCopy     = XInternAtom(display, "XdndActionCopy", False);
+	xdndLink     = XInternAtom(display, "XdndActionLink", False);
+
+	ev->format     = 32;
+	ev->display    = display;
+	ev->type       = ClientMessage;
+	ev->serial     = LastKnownRequestProcessed(display);
+	ev->send_event = True;
+	ev->window     = window;
+
+	memset(&ev->data.b, 0, sizeof ev->data.b);
+	if (callback->any.reason != XmCR_TOP_LEVEL_ENTER) {
+		switch (motion->operation) {
+		case XmDROP_MOVE: ev->data.l[4] = xdndMove; break;
+		case XmDROP_COPY: ev->data.l[4] = xdndCopy; break;
+		case XmDROP_LINK: ev->data.l[4] = xdndLink; break;
+		}
+	}
+
+	/* The receiver receives XdndPosition and sends XdndStatus */
+	if (type == XmICC_RECEIVER_EVENT) {
+		if (callback->any.reason == XmCR_DRAG_MOTION)
+			callback->any.reason = XmCR_OPERATION_CHANGED;
+		if (callback->any.reason == XmCR_DROP_START)
+			return;
+	}
+
+	switch (callback->any.reason) {
+	case XmCR_TOP_LEVEL_ENTER:
+		/**
+		 * We set bit 0 in l[1] to signify that the other end
+		 * should query the XdndTypesList and not rely on the
+		 * 'quick' three Atoms method of conveyance.
+		 */
+#ifdef DEBUG_XDND
+		printf("-> xdndEnter from:0x%lx to:0x%lx\n", src_window, window);
+#endif
+		ev->message_type = xdndEnter;
+		ev->data.l[0]    = src_window;
+		ev->data.l[1]    = (xdnd_version_min << 24) | 1;
+		ev->data.l[2]    = None;
+		ev->data.l[3]    = None;
+		ev->data.l[4]    = None;
+		break;
+	case XmCR_TOP_LEVEL_LEAVE:
+#ifdef DEBUG_XDND
+		printf("-> xdndLeave from:0x%lx to:0x%lx\n",  src_window, window);
+#endif
+		ev->message_type = xdndLeave;
+		ev->data.l[0]    = src_window;
+		break;
+	case XmCR_DRAG_MOTION:
+#ifdef DEBUG_XDND
+		printf("-> xdndPosition 0x%lx\n", src_window);
+#endif
+		ev->message_type = xdndPosition;
+		ev->data.l[0]    = src_window;
+		ev->data.l[2]    = ((motion->x & 0xffff) << 16) | (motion->y & 0xffff);
+		ev->data.l[3]    = motion->timeStamp;
+		break;
+	case XmCR_DROP_SITE_ENTER:
+	case XmCR_OPERATION_CHANGED:
+#ifdef DEBUG_XDND
+		printf("-> xdndStatus (ds: %d)\n", motion->dropSiteStatus == XmVALID_DROP_SITE);
+#endif
+		ev->message_type  = xdndStatus;
+		ev->data.l[0]     = src_window;
+		ev->data.l[1]     = 2 | (motion->dropSiteStatus == XmVALID_DROP_SITE);
+		break;
+	case XmCR_DROP_SITE_LEAVE:
+#ifdef DEBUG_XDND
+		puts("-> xdndStatus (leave)");
+#endif
+		ev->message_type  = xdndStatus;
+		ev->data.l[0]     = src_window;
+		ev->data.l[1]     = 2;
+		break;
+	case XmCR_DROP_START:
+#ifdef DEBUG_XDND
+		puts("-> xdndDrop");
+#endif
+		ev->message_type = xdndDrop;
+		ev->data.l[0]    = src_window;
+		ev->data.l[2]    = drop->timeStamp;
+		break;
+	case XmCR_DROP_FINISH:
+	case XmCR_DRAG_DROP_FINISH:
+#ifdef DEBUG_XDND
+		printf("-> xdndFinished (%d)\n", finish->dropAction != XmDROP_FAILURE);
+#endif
+		ev->message_type = xdndFinished;
+		ev->data.l[0]    = src_window;
+		ev->data.l[1]    = finish->dropAction != XmDROP_FAILURE;
+		ev->data.l[2]    = ev->data.l[4];
+		break;
+	}
+}
+
 /************************************************************************
  *
  *  _XmSendICCCallback()
  *
  ***********************************************************************/
-
-void
-_XmSendICCCallback(
-        Display *display,
-        Window window,
-        XmICCCallback callback,
-	XmICCEventType type )
+void _XmSendICCCallback(Display *display, Window window, Window src_window,
+                        int protocol_style, XmICCCallback callback,
+                        XmICCEventType type)
 {
-	XClientMessageEvent	msgEvent;
-	Window receiverWindow;
-	XmDisplay dd = (XmDisplay) XmGetXmDisplay(display);
+	XClientMessageEvent msgEvent;
+	XmDisplay dd = (XmDisplay)XmGetXmDisplay(display);
+	Window receiverWindow = dd->display.proxyWindow;
 
-	_XmICCCallbackToICCEvent(display, window, callback,
-		&msgEvent, type);
+	if (protocol_style == XmDRAG_XDND)
+		_XmICCCallbackToXdndEvent(display, window, src_window, callback, &msgEvent, type);
+	else if (callback->any.reason == XmCR_DROP_FINISH)
+		return;
+	else _XmICCCallbackToICCEvent(display, window, callback, &msgEvent, type);
 
 	/* Fix for 8746 */
-	if (((receiverWindow = dd->display.proxyWindow) == None)
-	    || (type == XmICC_RECEIVER_EVENT)) /* always ACK to the src win */
-	  receiverWindow = window;
+	if (receiverWindow == None || (protocol_style != XmDRAG_XDND && type == XmICC_RECEIVER_EVENT)) {
+		/* always ACK to the src win */
+		receiverWindow = window;
+	}
 
-	XSendEvent(display, receiverWindow, False, 0,
-		(XEvent *) &msgEvent);
+	XSendEvent(display, receiverWindow, False, 0, (XEvent *)&msgEvent);
+}
+
+/**
+ * Translate inbound Xdnd events to our ICC callbacks
+ *
+ * The Ask and Private actions are not supported.
+ */
+static Boolean _XdndToMotifEvent(XClientMessageEvent *msgEv,
+                                 XmICCCallbackStruct *callback)
+{
+	XmTopLevelEnterCallback te = (XmTopLevelEnterCallback)callback;
+	XmTopLevelLeaveCallback tl = (XmTopLevelLeaveCallback)callback;
+	XmDragMotionCallback    dm = (XmDragMotionCallback)callback;
+	XmDropSiteEnterCallback de = (XmDropSiteEnterCallback)callback;
+	XmDropStartCallback     ds = (XmDropStartCallback)callback;
+	XmDropFinishCallback    df = (XmDropFinishCallback)callback;
+
+	unsigned long op = XmDROP_NOOP;
+	Atom xdndEnter, xdndPosition, xdndStatus, xdndLeave, xdndDrop;
+	Atom xdndFinished, xdndSelection, xdndMove, xdndCopy, xdndLink;
+	unsigned long n_targets = 0;
+
+	if (msgEv->format != 32)
+		return False;
+
+	xdndEnter     = XInternAtom(msgEv->display, "XdndEnter",      False);
+	xdndLeave     = XInternAtom(msgEv->display, "XdndLeave",      False);
+	xdndPosition  = XInternAtom(msgEv->display, "XdndPosition",   False);
+	xdndStatus    = XInternAtom(msgEv->display, "XdndStatus",     False);
+	xdndDrop      = XInternAtom(msgEv->display, "XdndDrop",       False);
+	xdndFinished  = XInternAtom(msgEv->display, "XdndFinished",   False);
+	xdndSelection = XInternAtom(msgEv->display, "XdndSelection",  False);
+	xdndMove      = XInternAtom(msgEv->display, "XdndActionMove", False);
+	xdndCopy      = XInternAtom(msgEv->display, "XdndActionCopy", False);
+	xdndLink      = XInternAtom(msgEv->display, "XdndActionLink", False);
+
+	if ((Atom)msgEv->data.l[4] == xdndMove) op = XmDROP_MOVE;
+	if ((Atom)msgEv->data.l[4] == xdndCopy) op = XmDROP_COPY;
+	if ((Atom)msgEv->data.l[4] == xdndLink) op = XmDROP_LINK;
+
+	/**
+	 * NB: We can't rely on the timestamp in the message data
+	 * as it may get sign extended somewhere before Xt calls
+	 * ReceiverShellExternalSourceHandler(), even if it's
+	 * correct when the other side puts it on the wire.
+	 */
+	callback->any.event     = NULL;
+	callback->any.timeStamp = XtLastTimestampProcessed(msgEv->display);
+
+	if (msgEv->message_type == xdndEnter) {
+#ifdef DEBUG_XDND
+		puts("<- xdndEnter");
+#endif
+		te->reason            = XmCR_TOP_LEVEL_ENTER;
+		te->window            = msgEv->data.l[0];
+		te->iccHandle         = xdndSelection;
+		te->dragProtocolStyle = XmDRAG_XDND;
+
+		if (!(msgEv->data.l[1] & 1)) {
+			te->targets[0] = msgEv->data.l[2];
+			te->targets[1] = msgEv->data.l[3];
+			te->targets[2] = msgEv->data.l[4];
+			te->n_targets = (te->targets[0] != None) +
+			                (te->targets[1] != None) +
+			                (te->targets[2] != None);
+		}
+	} else if (msgEv->message_type == xdndLeave) {
+#ifdef DEBUG_XDND
+		puts("<- xdndLeave");
+#endif
+		tl->reason = XmCR_TOP_LEVEL_LEAVE;
+		tl->window = msgEv->data.l[0];
+	} else if (msgEv->message_type == xdndPosition) {
+#ifdef DEBUG_XDND
+		puts("<- xdndPosition");
+#endif
+		dm->reason         = XmCR_DRAG_MOTION;
+		dm->x              = (Position)(msgEv->data.l[2] >> 16);
+		dm->y              = (Position)(msgEv->data.l[2] & 0xffff);
+		dm->operation      = op;
+		dm->operations     = XmDROP_COPY | XmDROP_MOVE | XmDROP_LINK;
+		dm->dropSiteStatus = op == XmDROP_NOOP ? XmINVALID_DROP_SITE : XmVALID_DROP_SITE;
+	} else if (msgEv->message_type == xdndStatus) {
+#ifdef DEBUG_XDND
+		printf("<- xdndStatus (ds? %ld op=%lu)\n", msgEv->data.l[1] & 1, op);
+#endif
+		de->reason         = XmCR_DROP_SITE_ENTER;
+		de->x              = -1;
+		de->y              = -1;
+		de->operation      = op;
+		de->operations     = XmDROP_COPY | XmDROP_MOVE | XmDROP_LINK;
+		de->dropSiteStatus = (op != XmDROP_NOOP && (msgEv->data.l[1] & 1))
+		                     ? XmVALID_DROP_SITE : XmINVALID_DROP_SITE;
+	} else if (msgEv->message_type == xdndDrop) {
+#ifdef DEBUG_XDND
+		puts("<- xdndDrop");
+#endif
+		ds->reason            = XmCR_DROP_START;
+		ds->window            = msgEv->data.l[0];
+		ds->iccHandle         = xdndSelection;
+		ds->operation         = op;
+		ds->operations        = XmDROP_COPY | XmDROP_MOVE | XmDROP_LINK;
+		ds->dropSiteStatus    = XmVALID_DROP_SITE;
+		ds->x                 = -1;
+		ds->y                 = -1;
+	} else if (msgEv->message_type == xdndFinished) {
+#ifdef DEBUG_XDND
+		puts("<- xdndFinished");
+#endif
+		df->reason           = XmCR_DROP_FINISH;
+		df->completionStatus = XmDROP_SUCCESS;
+	} else return False;
+
+	return True;
 }
 
 /************************************************************************
@@ -404,7 +636,6 @@ _XmSendICCCallback(
  *
  *  Message data has already been byte-swapped, if necessary.
  ***********************************************************************/
-
 static XmICCEventType
 GetMessageData(
         Display *display,
@@ -521,6 +752,12 @@ GetMessageData(
 	    cb->window = (Window) xmessage->drop.src_window;
 	}
 	break;
+      case XmCR_DROP_FINISH:
+      case XmCR_DRAG_DROP_FINISH:
+	/*
+	 * this message goes to initiator
+	 */
+	break;
 
       default:
 	XmeWarning ((Widget) XmGetXmDisplay (display), MESSAGE1);
@@ -591,48 +828,42 @@ SwapMessageData(
  *  _XmICCEventToICCCallback()
  *
  ***********************************************************************/
-
-Boolean
-_XmICCEventToICCCallback(
-        XClientMessageEvent *msgEv,
-        XmICCCallback callback,
-	XmICCEventType	type )
+Boolean _XmICCEventToICCCallback(XClientMessageEvent *msgEv,
+                                 XmICCCallback callback,
+                                 XmICCEventType type)
 {
-    Atom		motif_dnd_message_atom;
-    xmICCMessage	xmessage;
+	Atom motif_dnd_message_atom;
+	xmICCMessage xmessage;
 
-    if ((msgEv->type != ClientMessage) || (msgEv->format != 8))
-      return (False);
+	if (msgEv->type != ClientMessage)
+		return False;
 
-    motif_dnd_message_atom = XInternAtom(msgEv->display,
-				      _Xm_MOTIF_DRAG_AND_DROP_MESSAGE, False);
+	xmessage = (xmICCMessage)msgEv->data.b;
+	if (msgEv->format == 8) {
+		motif_dnd_message_atom = XInternAtom(msgEv->display,
+		                                     _Xm_MOTIF_DRAG_AND_DROP_MESSAGE, False);
+		if (msgEv->message_type != motif_dnd_message_atom)
+			return False;
 
-    if (msgEv->message_type != motif_dnd_message_atom)
-      return (False);
-
-    xmessage = (xmICCMessage)&msgEv->data.b[0];
-
-    if (xmessage->any.byte_order != _XmByteOrderChar) {
-	/*
-	 * swap it inplace and update the byte_order field so no one
-	 * else will try to reswap it.  This could happen since we're
-	 * probably being called out of an event Handler on a list
-	 */
-	SwapMessageData(xmessage);
-	xmessage->any.byte_order = _XmByteOrderChar;
-    }
-
-
-
+		if (xmessage->any.byte_order != _XmByteOrderChar) {
+			/*
+			 * swap it inplace and update the byte_order field so no one
+			 * else will try to reswap it.  This could happen since we're
+			 * probably being called out of an event Handler on a list
+			 */
+			SwapMessageData(xmessage);
+			xmessage->any.byte_order = _XmByteOrderChar;
+		}
 #ifdef DEBUG
-    /* Print data */
-    PrintMessage('R', xmessage);
+		/* Print data */
+		PrintMessage('R', xmessage);
 #endif /* DEBUG */
 
-    if (type == GetMessageData(msgEv->display, xmessage, callback))
-	return(True);
-    else
-	return(False);
+		return (type == GetMessageData(msgEv->display, xmessage, callback))
+		       ? True : False;
+	}
+
+	return _XdndToMotifEvent(msgEv, callback);
 }
 
 /************************************************************************
@@ -707,26 +938,21 @@ _XmWriteDragBuffer(
  *  _XmWriteInitiatorInfo()
  *
  ***********************************************************************/
-
-void
-_XmWriteInitiatorInfo(
-        Widget dc )
+void _XmWriteInitiatorInfo(Widget dc)
 {
     xmDragInitiatorInfoStruct	infoRec;
-    Atom		initiatorAtom;
-    int			i = 0;
+    Atom		initiatorAtom, iccHandle, xdndTypeList;
     Window		srcWindow;
-    Arg			args[8];
+    Arg			args[4];
     XmDisplay		xmDisplay = (XmDisplay)XtParent(dc);
     Atom		*exportTargets;
     Cardinal		numExportTargets;
-    Atom		iccHandle;
 
-    XtSetArg(args[i], XmNexportTargets, &exportTargets);i++;
-    XtSetArg(args[i], XmNnumExportTargets, &numExportTargets);i++;
-    XtSetArg(args[i], XmNsourceWindow, &srcWindow);i++;
-    XtSetArg(args[i], XmNiccHandle, &iccHandle);i++;
-    XtGetValues(dc, args, i);
+    XtSetArg(args[0], XmNexportTargets, &exportTargets);
+    XtSetArg(args[1], XmNnumExportTargets, &numExportTargets);
+    XtSetArg(args[2], XmNsourceWindow, &srcWindow);
+    XtSetArg(args[3], XmNiccHandle, &iccHandle);
+    XtGetValues(dc, args, 4);
 
     infoRec.byte_order = _XmByteOrderChar;
     infoRec.protocol_version = _MOTIF_DRAG_PROTOCOL_VERSION;
@@ -746,6 +972,10 @@ _XmWriteInitiatorInfo(
 		     (unsigned char *)&infoRec,
 		     sizeof(xmDragInitiatorInfoStruct));
 
+    xdndTypeList = XInternAtom(XtDisplayOfObject(dc), "XdndTypeList", False);
+    XChangeProperty(XtDisplayOfObject(dc), srcWindow, xdndTypeList, XA_ATOM,
+                    32, PropModeReplace, (unsigned char *)exportTargets,
+                    numExportTargets);
 }
 
 /************************************************************************
@@ -755,30 +985,21 @@ _XmWriteInitiatorInfo(
  *  We assume that the dc has been initialized enough to have it's
  *  source window field set.
  ***********************************************************************/
-
-void
-_XmReadInitiatorInfo(
-        Widget dc )
+void _XmReadInitiatorInfo(Widget dc)
 {
-    xmDragInitiatorInfoStruct	*info = NULL ;
-    Atom			initiatorAtom;
-    int				format;
-    unsigned long 		bytesafter, lengthRtn;
-    long 			length;
-    Atom			type;
-    Arg				args[4];
-    int				i;
-    Window			srcWindow;
-    Atom			iccHandle;
-    Atom			*exportTargets;
-    Cardinal			numExportTargets;
+    xmDragInitiatorInfoStruct *info = NULL;
+    int format, set_exports = 0;
+    unsigned long bytesafter, lengthRtn;
+    long length;
+    Arg args[3];
+    Window srcWindow;
+    Cardinal numExportTargets = 0;
+    Atom initiatorAtom, type, iccHandle, xdndTypeList, *exportTargets = NULL;
+    unsigned char *data = NULL;
 
-
-    i = 0;
-    XtSetArg(args[i], XmNsourceWindow, &srcWindow);i++;
-    XtSetArg(args[i], XmNiccHandle, &iccHandle);i++;
-
-    XtGetValues(dc, args, i);
+    XtSetArg(args[0], XmNsourceWindow, &srcWindow);
+    XtSetArg(args[1], XmNiccHandle, &iccHandle);
+    XtGetValues(dc, args, 2);
 
     initiatorAtom = XInternAtom(XtDisplayOfObject(dc),
 				 XmI_MOTIF_DRAG_INITIATOR_INFO,
@@ -803,20 +1024,37 @@ _XmReadInitiatorInfo(
 	      swap2bytes(info->targets_index);
 	      swap4bytes(info->icc_handle);
 	    }
+	    ++set_exports;
 	    numExportTargets =
 	      _XmIndexToTargets(dc, info->targets_index, &exportTargets);
-
-	    i = 0;
-	    XtSetArg(args[i], XmNexportTargets, exportTargets);i++;
-	    XtSetArg(args[i], XmNnumExportTargets, numExportTargets);i++;
-	    XtSetValues(dc, args, i);
 	  }
-        /* free the memory that Xlib passed us */
-	if(info)
-	  {
-	    XFree( (void *)info) ;
-	  }
+      } else {
+	/**
+	 * Get the Xdnd type list, if the receiver has published it
+	 */
+	xdndTypeList = XInternAtom(XtDisplayOfObject(dc), "XdndTypeList", False);
+	if (XGetWindowProperty(XtDisplayOfObject(dc), srcWindow, xdndTypeList,
+	                       0, 65536, False, XA_ATOM, &type, &format,
+	                       &lengthRtn, &bytesafter, &data) == Success) {
+	    if (type == XA_ATOM && format == 32) {
+		++set_exports;
+		exportTargets    = (Atom *)data;
+		numExportTargets = lengthRtn;
+	    }
+	}
       }
+
+    /* exportTargets gets duplicated in DragContextSetValues() */
+    if (set_exports) {
+	    XtSetArg(args[0], XmNexportTargets, exportTargets);
+	    XtSetArg(args[1], XmNnumExportTargets, numExportTargets);
+	    XtSetArg(args[2], XmNiccHandle, iccHandle);
+	    XtSetValues(dc, args, 3);
+    }
+
+    /* free the memory that Xlib passed us */
+    if (info) XFree(info);
+    if (data) XFree(data);
 }
 
 /************************************************************************
@@ -826,22 +1064,30 @@ _XmReadInitiatorInfo(
  *  The caller is responsible for freeing (using XFree) the dataRtn
  *  pointer that passes thru the memory allocated by XGetWindowProperty.
  ***********************************************************************/
-
-Boolean
-_XmGetDragReceiverInfo(
-        Display *display,
-        Window window,
-        XmDragReceiverInfoStruct *receiverInfoRtn )
+Boolean _XmGetDragReceiverInfo(Display *display, Window window,
+                               XmDragReceiverInfoStruct *receiverInfoRtn)
 {
-    xmDragReceiverInfoStruct	*iccInfo = NULL ;
-    Atom			drag_hints_atom;
-    int				format;
-    unsigned long 		bytesafter, lengthRtn, length;
-    Atom			type;
-    XmReceiverDSTreeStruct	*dsmInfo;
-    Window			root;
-    unsigned int		bw;
-    XmDisplay           dd = (XmDisplay) XmGetXmDisplay(display);
+    xmDragReceiverInfoStruct *iccInfo = NULL;
+    int format;
+    unsigned long bytesafter, lengthRtn, length;
+    XmReceiverDSTreeStruct *dsmInfo;
+    Window root;
+    unsigned int bw;
+    unsigned char *data;
+    Atom drag_hints_atom, type = None;
+    Atom xdndAware, xdndProxy;
+    XmDisplay dd = (XmDisplay) XmGetXmDisplay(display);
+
+    /* get their geometry */
+    assert(receiverInfoRtn);
+    XGetGeometry(display, window, &root,
+                 &(receiverInfoRtn->xOrigin),
+                 &(receiverInfoRtn->yOrigin),
+                 &(receiverInfoRtn->width),
+                 &(receiverInfoRtn->height), &bw, &(receiverInfoRtn->depth));
+    XTranslateCoordinates(display, window, root, -(int)bw, -(int)bw,
+                          &(receiverInfoRtn->xOrigin),
+                          &(receiverInfoRtn->yOrigin), &root);
 
     drag_hints_atom = XInternAtom(display,
 				   XmI_MOTIF_DRAG_RECEIVER_INFO,
@@ -863,7 +1109,7 @@ _XmGetDragReceiverInfo(
 	if (lengthRtn >= sizeof(xmDragReceiverInfoStruct)) {
 	  if (iccInfo->protocol_version != _MOTIF_DRAG_PROTOCOL_VERSION)
 	    {
-	      XmeWarning ((Widget) XmGetXmDisplay (display), MESSAGE2);
+	      XmeWarning((Widget)dd, MESSAGE2);
 	    }
 	  if (iccInfo->byte_order != _XmByteOrderChar) {
 	    swap2bytes(iccInfo->num_drop_sites);
@@ -872,8 +1118,7 @@ _XmGetDragReceiverInfo(
 	  }
 
 	  dd->display.proxyWindow = iccInfo->proxy_window;
-
-	  (receiverInfoRtn)->dragProtocolStyle = iccInfo->drag_protocol_style;
+	  receiverInfoRtn->dragProtocolStyle = iccInfo->drag_protocol_style;
 
 	  dsmInfo = XtNew(XmReceiverDSTreeStruct);
 	  dsmInfo->byteOrder = iccInfo->byte_order;
@@ -890,39 +1135,48 @@ _XmGetDragReceiverInfo(
 	   */
 	  dsmInfo->propBufRec.data.curr =
 	    (BYTE*)iccInfo + sizeof(xmDragReceiverInfoStruct);
-	  /*
-	   * now get their geometry
-	   */
-	  XGetGeometry(display,
-		       window,
-		       &root,
-		       &(receiverInfoRtn->xOrigin),
-		       &(receiverInfoRtn->yOrigin),
-		       &(receiverInfoRtn->width),
-		       &(receiverInfoRtn->height),
-		       &bw,
-		       &(receiverInfoRtn->depth));
-	  (void) XTranslateCoordinates(display,
-				     window,
-				     root,
-				     (int) -bw,
-				     (int) -bw,
-				     &(receiverInfoRtn->xOrigin),
-				     &(receiverInfoRtn->yOrigin),
-				     &root);
 	  (receiverInfoRtn)->iccInfo = (XtPointer) dsmInfo;
 	  return True;
 	}
-	else {
-	  (receiverInfoRtn)->dragProtocolStyle = XmDRAG_NONE;
-	  if (iccInfo)
-	    XFree((void *)iccInfo);
-	  return False;
-	}
       }
-      else
-	return False;
-  }
+
+    /**
+     * Target doesn't support Motif DND, try Xdnd
+     */
+    if (iccInfo)
+	XFree(iccInfo);
+    receiverInfoRtn->iccInfo = NULL;
+    receiverInfoRtn->dragProtocolStyle = XmDRAG_NONE;
+
+    xdndAware = XInternAtom(display, "XdndAware", False);
+    xdndProxy = XInternAtom(display, "XdndProxy", False);
+    dd->display.proxyWindow = window;
+    if (XGetWindowProperty(display, window, xdndProxy, 0, 1, False,
+                           XA_WINDOW, &type, &format, &lengthRtn,
+                           &bytesafter, &data) == Success) {
+	if (type != None && format == 32 && length == 1)
+	    dd->display.proxyWindow = *(Window *)data;
+	XFree(data);
+    }
+
+    /* Check for XdndAware and protocol version */
+    if (XGetWindowProperty(display, dd->display.proxyWindow, xdndAware,
+                           0, 1, False, AnyPropertyType, &type, &format,
+                           &length, &bytesafter, &data) == Success) {
+	if (type != None && format == 32 && length == 1) {
+	    if (*(Atom *)data >= (Atom)xdnd_version_min) {
+		receiverInfoRtn->dragProtocolStyle = XmDRAG_XDND;
+		XFree(data);
+		return True;
+	    }
+	}
+
+	/* Xdnd versions < 3 are not supported */
+	XFree(data);
+    }
+
+    return False;
+}
 
 /************************************************************************
  *
@@ -1305,20 +1559,14 @@ _XmFreeDragReceiverInfo(
  *  We can pass in the shell since we're pushing a property at one of
  *  our windows.
  ***********************************************************************/
-
-void
-_XmClearDragReceiverInfo(
-        Widget shell )
+void _XmClearDragReceiverInfo(Widget shell)
 {
-    Atom			receiverAtom;
+	Atom receiverAtom, xdndAware;
 
-    receiverAtom = XInternAtom(XtDisplayOfObject(shell),
-				XmI_MOTIF_DRAG_RECEIVER_INFO,
-				False);
-    XDeleteProperty(XtDisplayOfObject(shell),
-		    XtWindow(shell),
-		    receiverAtom);
-    return;
+	receiverAtom = XInternAtom(XtDisplayOfObject(shell), XmI_MOTIF_DRAG_RECEIVER_INFO, False);
+	xdndAware    = XInternAtom(XtDisplayOfObject(shell), "XdndAware", False);
+	XDeleteProperty(XtDisplayOfObject(shell), XtWindow(shell), receiverAtom);
+	XDeleteProperty(XtDisplayOfObject(shell), XtWindow(shell), xdndAware);
 }
 
 /************************************************************************
@@ -1330,11 +1578,7 @@ _XmClearDragReceiverInfo(
  *  with a protocol style of NONE, because such receivers should not
  *  have any visible receiver info.
  ***********************************************************************/
-
-void
-_XmSetDragReceiverInfo(
-        XmDisplay dd,
-        Widget shell )
+void _XmSetDragReceiverInfo(XmDisplay dd, Widget shell)
 {
     Cardinal			numDropSites = 0;
     BYTE			stackData[MAXSTACK];
@@ -1342,14 +1586,11 @@ _XmSetDragReceiverInfo(
     xmPropertyBufferRec		*propBuf;
     xmDragReceiverInfoStruct	infoRec, *infoRecPtr;
     XmReceiverDSTreeStruct	dsmInfoRec;
-    Atom			receiverAtom;
     XmDropSiteManagerObject 	dsm;
+    Atom receiverAtom, xdndAware;
 
-    dsm = _XmGetDropSiteManagerObject( dd) ;
-
-    receiverAtom = XInternAtom(XtDisplayOfObject(shell),
-				XmI_MOTIF_DRAG_RECEIVER_INFO,
-				False);
+    dsm          = _XmGetDropSiteManagerObject(dd);
+    receiverAtom = XInternAtom(XtDisplayOfObject(shell), XmI_MOTIF_DRAG_RECEIVER_INFO, False);
 
     dsmInfoRec.numDropSites = 0;
     dsmInfoRec.currDropSite = 0;
@@ -1369,7 +1610,6 @@ _XmSetDragReceiverInfo(
 
     infoRec.drag_protocol_style = dd->display.dragReceiverProtocolStyle;
 	infoRec.proxy_window = None;
-
 
     _XmWriteDragBuffer (propBuf, BUFFER_DATA, (BYTE*)&infoRec,
 		        sizeof(xmDragReceiverInfoStruct));
@@ -1424,6 +1664,11 @@ _XmSetDragReceiverInfo(
 	  XtFree((char *)propBuf->heap.bytes);
 
     }
+
+    xdndAware = XInternAtom(XtDisplayOfObject(shell), "XdndAware", False);
+    XChangeProperty(XtDisplayOfObject(shell), XtWindow(shell),
+                    xdndAware, XA_ATOM, 32, PropModeReplace,
+                    &xdnd_version, 1);
 }
 
 /************************************************************************
@@ -1513,6 +1758,11 @@ PrintMessage(char c, xmICCMessageStruct *xmessage)
 	   xmessage->drop.y,
 	   xmessage->drop.icc_handle,
 	   xmessage->drop.src_window);
+    break;
+  case XmCR_DROP_FINISH:
+  case XmCR_DRAG_DROP_FINISH:
+    printf("%c ", c);
+    puts("Finish");
     break;
   default:
     break;
