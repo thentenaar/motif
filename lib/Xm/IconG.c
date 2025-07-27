@@ -253,9 +253,9 @@ static  Boolean PointIn(Widget widget,
 		        Position x, Position y);
 
 /********    End Static Function Declarations    ********/
-
 
-
+
+
 /*** Xt trivia: How do you manage a flag that tells you that something
      happened during a resource conversion ?
      We need a association outside the widget instance for the
@@ -553,7 +553,7 @@ static XmGadgetClassExtRec GadClassExtRec = {
     MarginsProc,                        /* widget_margins */
 };
 
-
+
 externaldef( xmicongadgetclassrec) XmIconGadgetClassRec	xmIconGadgetClassRec =
 {	/* RectObjClassPart */
     {
@@ -613,7 +613,7 @@ externaldef( xmicongadgetclassrec) XmIconGadgetClassRec	xmIconGadgetClassRec =
 
 externaldef(xmicongadgetclass) WidgetClass
 	xmIconGadgetClass=(WidgetClass)&xmIconGadgetClassRec;
-
+
 
 
 /* ContainerItem Trait record for IconGadget */
@@ -658,7 +658,7 @@ static XtConvertArgRec smallIconArgs[] =
    { XtAddress, (XtPointer)(int)XmSMALL_ICON, 0}
 };
 
-
+
 /*** XmRCallProcs ***/
 /*
  * XmRCallProc routine for checking icon_cache.render_table before setting
@@ -666,8 +666,6 @@ static XtConvertArgRec smallIconArgs[] =
  * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
-
-/*ARGSUSED*/
 static void
 CheckSetRenderTable(Widget wid,
 		    int offset,
@@ -689,7 +687,6 @@ CheckSetRenderTable(Widget wid,
  *  FetchPixmap
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 FetchPixmap(
         Widget widget,
@@ -730,8 +727,6 @@ FetchPixmap(
 
    /* fetch only if a mask has not been specified in the resource slot */
    if (*(Pixmap *)mask_addr == XmUNSPECIFIED_PIXMAP) {
-       char mask_name[255] ;
-
        /* Fetch the mask out of image_name and ask for it.
 	  ImageCache:
 	  The mask_name returned is the same as the one used by the
@@ -740,11 +735,7 @@ FetchPixmap(
 	  specified for image_name. When an XPM file with a mask
 	  in it is read, the mask is cached with mask_name. */
 
-       _XmOSGenerateMaskName(image_name, mask_name, sizeof mask_name);
-
-       *(Pixmap*)mask_addr = (Pixmap) XmGetScaledPixmap(widget,
-							mask_name,
-							1, 0, 1, 0);
+       *(Pixmap *)mask_addr = XmeGetMask(XtScreen(widget), image_name);
        /* mark that we have to destroy the mask */
        if (*(Pixmap *)mask_addr != XmUNSPECIFIED_PIXMAP) {
 	   if (res_type == XmLARGE_ICON) {
@@ -768,7 +759,6 @@ FetchPixmap(
  *  CvtStringToIconPixmap
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 CvtStringToIconPixmap(
         Display *dpy,
@@ -847,7 +837,6 @@ CvtStringToIconPixmap(
 /************************************************************************
  * GetLabelString
  ************************************************************************/
-/*ARGSUSED*/
 static	void
 GetLabelString(
 	Widget		wid,
@@ -867,7 +856,6 @@ GetLabelString(
 *  SecondaryObjectCreate
 *
 ************************************************************************/
-/* ARGSUSED */
 static void
 SecondaryObjectCreate(
         Widget req,
@@ -926,7 +914,6 @@ SecondaryObjectCreate(
  *  InitializePosthook
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 InitializePosthook(
         Widget req,
@@ -971,7 +958,6 @@ InitializePosthook(
  *  SetValuesPrehook
  *
  ************************************************************************/
-/* ARGSUSED */
 static Boolean
 SetValuesPrehook(
         Widget oldParent,
@@ -1036,7 +1022,6 @@ SetValuesPrehook(
  *  GetValuesPrehook
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 GetValuesPrehook(
         Widget newParent,
@@ -1089,7 +1074,6 @@ GetValuesPrehook(
  *  GetValuesPosthook
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 GetValuesPosthook(
         Widget new_w,
@@ -1112,7 +1096,6 @@ GetValuesPosthook(
  *  SetValuesPosthook
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 SetValuesPosthook(
         Widget current,
@@ -1212,7 +1195,6 @@ ClassPartInitialize(
 /************************************************************************
  * Initialize
  ************************************************************************/
-/*ARGSUSED*/
 static	void
 Initialize(
 	Widget		rw,
@@ -1975,7 +1957,6 @@ GetContainerData(
  * Redisplay
  * This is the main routine of this baby.
  ************************************************************************/
-/*ARGSUSED*/
 static	void
 Redisplay(
 	Widget	wid,
@@ -2363,7 +2344,6 @@ Redisplay(
 /************************************************************************
  * SetValues
  ************************************************************************/
-/*ARGSUSED*/
 static	Boolean
 SetValues(
 	Widget		cw,
@@ -2588,7 +2568,7 @@ QueryGeometry(
     return XmeReplyToQueryGeometry(wid, intended, desired) ;
 }
 
-
+
 /*-----------------
 | XmGadget methods |
 -----------------*/
@@ -2815,7 +2795,6 @@ IconGCacheCompare(
  *	client_data = Address of the structure in the class record which
  *	  represents the (template of ) the secondary data.
  */
-/*ARGSUSED*/
 static Cardinal
 GetIconGClassSecResData(
         WidgetClass w_class,	/* unused */
@@ -2848,7 +2827,6 @@ GetIconGClassSecResData(
  *	have any cached_resources defined. If later secondary resources are
  *	defined for Gadget class then this routine will have to change.
  */
-/*ARGSUSED*/
 static XtPointer
 GetIconGClassSecResBase(
         Widget widget,
@@ -2956,7 +2934,7 @@ MarginsProc(
 /*------------
 | ActionProcs |
 ------------*/
-
+
 /*-------------------
 | Internal functions |
 -------------------*/
@@ -3364,7 +3342,7 @@ GetSize(
     if (*ret_height == 0) *ret_height = ideal_height + 2*ht;
 
 }
-
+
 
 /*-------------------
 | Trait methods     |
@@ -3426,8 +3404,6 @@ ContItemGetValues(Widget w,
 }
 
 
-
-/*ARGSUSED*/
 static Boolean
 HandleRedraw (
 	Widget kid,

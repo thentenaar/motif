@@ -771,7 +771,7 @@ Initialize(Widget request, Widget set, ArgList arg_list, Cardinal *arg_cnt)
     XmTabBox__num_columns(st) = 0;
     XmTabBox__num_rows(st) = 0;
     XmTabBox__gray_stipple(st) = XmGetPixmapByDepth(XtScreen(st),
-						   "50_foreground", 1, 0, 1);
+						   XmS50_foreground, 1, 0, 1);
 
     XmTabBox__cache(st) = NULL;
     XmTabBox__cache_size(st) = 0;

@@ -70,7 +70,6 @@
 #include "XmRenderTI.h"
 #endif
 
-
 #include "MessagesI.h"
 
 /*
@@ -109,7 +108,6 @@ extern unsigned char _XmGetFocusPolicy(Widget);
 extern void _XmPrimitiveFocusIn(Widget, XEvent *, String *, Cardinal *);
 extern void _XmPrimitiveEnter(Widget, XEvent *, String *, Cardinal *);
 extern void _XmPrimitiveLeave(Widget, XEvent *, String *, Cardinal *);
-extern Boolean _XmGetImage(Screen *, char *, XImage **);
 extern Boolean _XmGetIconControlInfo(
                         Screen *screen,
                         Boolean *useMaskRtn,
@@ -7180,7 +7178,7 @@ static void df_LoadGCs(XmDataFieldWidget tf, Pixel background, Pixel foreground)
        XmDestroyPixmap(XtScreen(tf), XmTextF_stipple_tile(tf));
 
    XmTextF_stipple_tile(tf) = (Pixmap)
-       XmGetPixmapByDepth(XtScreen(tf),"50_foreground",
+       XmGetPixmapByDepth(XtScreen(tf),  XmS50_foreground,
 			  tf->primitive.foreground, tf->core.background_pixel,
 			  tf->core.depth);
 
@@ -7418,9 +7416,7 @@ static void df_MakeAddModeCursor(XmDataFieldWidget tf, int line_width)
       int unused_origin;
       Window	root;
 
-      pixmap =  XmGetPixmapByDepth(screen, "50_foreground",
-				   1, 0, 1);
-
+      pixmap = XmGetPixmapByDepth(screen,  XmS50_foreground, 1, 0, 1);
       if (pixmap != XmUNSPECIFIED_PIXMAP) {
       	XGetGeometry(XtDisplay(tf), pixmap, &root, &unused_origin,
 		     &unused_origin, &pix_width, &pix_height,
