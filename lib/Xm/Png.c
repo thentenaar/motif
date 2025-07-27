@@ -19,23 +19,16 @@ static int png_load_file(FILE *infile, unsigned long *pWidth,
                          unsigned char **image_data);
 
 int
-_XmPngGetImage(Screen *screen, FILE *infile, Pixel background,
+_XmPngGetImage(Screen *screen, FILE *infile, XColor *bg,
                XImage **ximage)
 {
-    XColor xcolor;
     int image_channels;
-    unsigned char bg_red = 0, bg_green = 0, bg_blue = 0;
     unsigned char *image_data = NULL;
     unsigned long image_width, image_height, image_rowbytes;
     unsigned char *xdata;
     int pad;
     int rc;
 
-    xcolor.pixel = background;
-    XQueryColor(screen->display, screen->cmap, &xcolor);
-    bg_red = xcolor.red;
-    bg_green = xcolor.green;
-    bg_blue = xcolor.blue;
     rc = png_load_file(infile,
                        &image_width, &image_height,
                        NULL, NULL, NULL,
@@ -77,7 +70,7 @@ _XmPngGetImage(Screen *screen, FILE *infile, Pixel background,
     (*ximage)->byte_order = MSBFirst;
 
     rc = png_process_image(screen, *ximage, image_rowbytes,
-                              image_channels, bg_red, bg_green, bg_blue,
+                              image_channels, bg->red, bg->green, bg->blue,
                               image_data);
 
     if (image_data) {

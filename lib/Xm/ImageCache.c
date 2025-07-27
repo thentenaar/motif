@@ -29,7 +29,6 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include <config.h>
 #endif
 
-
 #include "XmI.h"
 #include "XmosI.h"              /* for mask name API and stuff */
 #include "BitmapsI.h"		/* for built-in images */
@@ -45,6 +44,7 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #endif
 #include <Xm/XpmP.h>
 #include <X11/Xresource.h>
+
 #if XM_WITH_JPEG
 #include "JpegI.h"
 #endif
@@ -614,44 +614,6 @@ GetOverrideColors(
     return n ;
 }
 
-
-
-#ifdef _ORIG_GET_ICON_FILE
-
-/******************************************************************
- *
- *   GetIconFileName. get a file name using XBMLANGPATH
- *
- *****************************************************************/
-
-static String
-GetIconFileName(
-    Screen *screen,
-    char *icon_name)
-{
-    char *bmPath;
-    SubstitutionRec	subs[1] ;
-    Boolean user_path ;
-    Display		*display = DisplayOfScreen(screen);
-    char *file_name;
-
-    subs[0].substitution = icon_name;
-
-    bmPath = _XmOSInitPath(icon_name, "XBMLANGPATH", &user_path);
-
-    if (user_path) subs[0].match = 'B';
-    else           subs[0].match = MATCH_CHAR ;
-
-    file_name = XtResolvePathname(display, "bitmaps", NULL,
-				  NULL, bmPath, subs, XtNumber(subs), NULL);
-    XtFree (bmPath);
-
-    return file_name ;
-
-}
-
-#endif
-
 static XtEnum
 GetXpmImage(
         Screen *screen,
@@ -833,6 +795,75 @@ GetXpmImage(
     return FALSE;
 }
 
+/**
+ * Load an image from a file
+ */
+static XtEnum LoadImage(Screen *screen, char *image_name,
+                        XmAccessColorData acc_color,
+                        XImage **image,
+                        unsigned short *pixmap_res,
+                        Pixel **pixels,
+                        int *npixels)
+{
+	FILE *fp;
+	char *fname;
+	XColor bg;
+	XtEnum ret;
+	unsigned char header[4];
+
+	fname = XmGetIconFileName(screen, NULL, image_name,
+	                          NULL, XmUNSPECIFIED_ICON_SIZE);
+
+	if (!fname)
+		return False;
+
+	if (!(fp = fopen(fname, "rb"))) {
+		XtFree(fname);
+		return False;
+	}
+
+	if (!fread(header, sizeof header, 1, fp)) {
+		fclose(fp);
+		XtFree(fname);
+		return False;
+	}
+
+	/* Grab the background color from the colormap */
+	bg.pixel = 0;
+	if (acc_color)
+		bg.pixel = acc_color->background;
+	XQueryColor(screen->display, screen->cmap, &bg);
+	rewind(fp);
+
+	switch (header[0]) {
+	case 0xff: /* 0xff 0xd8 - JPEG/Exif SOI */
+#if XM_WITH_JPEG
+		if (header[1] != 0xd8)
+			break;
+
+		ret = !_XmJpegGetImage(screen, fp, image)
+		      ? NOT_CACHED : False;
+#endif
+		break;
+	case 0x89: /* 0x89 'P' 'N' 'G' - PNG */
+#if XM_WITH_PNG
+		if (memcmp((char *)header + 1, "PNG", 3))
+			break;
+
+		ret = !_XmPngGetImage(screen, fp, &bg, image)
+		      ? NOT_CACHED : False;
+#endif
+		break;
+	default: /* Try XPM */
+		ret = GetXpmImage(screen, image_name, fname, acc_color,
+		                  image, pixmap_res, pixels, npixels);
+	}
+
+	fclose(fp);
+	XtFree(fname);
+	return ret;
+}
+
 /************************************************************************
  *
  *  GetImage
@@ -843,21 +874,15 @@ static XtEnum
 GetImage(
 	 Screen *screen,
 	 char *image_name,
-         XmAccessColorData acc_color,
+	 XmAccessColorData acc_color,
 	 XImage **image,
 	 unsigned short * pixmap_resolution,
 	 Pixel **pixels,	/* allocated pixels */
 	 int *npixels)
 {
     static XImage  * built_in_image = NULL;
-    register Display *display = DisplayOfScreen(screen);
+    Display *display = DisplayOfScreen(screen);
     ImageData *entry;
-    char *file_name;
-    XtEnum return_value;
-#if XM_WITH_PNG || XM_WITH_JPEG
-    FILE *infile;
-    int rc;
-#endif
 
     /* init for when we go thru the image cache first */
     if (pixmap_resolution) *pixmap_resolution = 0 ;
@@ -907,71 +932,19 @@ GetImage(
 
     /*** if no entry, try to read a new file and cache it
          only if it is a bitmap */
-
-#ifdef _ORIG_GET_ICON_FILE
-    file_name = GetIconFileName(screen, image_name);
-#else
-    file_name = XmGetIconFileName(screen, NULL, image_name,
-				  NULL, XmUNSPECIFIED_ICON_SIZE);
-#endif
-
-    if (!file_name) {
-        return FALSE;
-    }
-
-#if XM_WITH_JPEG || XM_WITH_PNG
-    if (!(infile = fopen(file_name, "rb"))) {
-        return FALSE;
-    }
-
-#if XM_WITH_JPEG
-    rc = _XmJpegGetImage(screen, infile, image);
-#endif
-#if XM_WITH_JPEG && XM_WITH_PNG
-    if (rc == 1) { /* not a jpeg file */
-#endif
-#if XM_WITH_PNG
-        Pixel background;
-
-        if (acc_color)
-            background = acc_color->background;
-        else
-            background = 0;
-
-        if (background == XmUNSPECIFIED_PIXEL)
-            background = 0; /* XXX is if OK? */
-#endif
-#if XM_WITH_JPEG && XM_WITH_PNG
-        rewind(infile);
-#endif
-#if XM_WITH_PNG
-        rc = _XmPngGetImage(screen, infile, background, image);
-#endif
-#if XM_WITH_JPEG && XM_WITH_PNG
-    }
-#endif
-
-    fclose(infile);
-
-    if (rc > 1) {
-        return_value = FALSE;
-    } else if (rc == 0) {
-        return_value = NOT_CACHED;
-    } else {
-#endif /* XM_WITH_JPEG || XM_WITH_PNG */
-        return_value =
-            GetXpmImage(screen, image_name, file_name, acc_color,
-                    image, pixmap_resolution, pixels, npixels);
-#if XM_WITH_JPEG || XM_WITH_PNG
-    }
-#endif
-
-    XtFree(file_name);
-    return return_value;
+    if (!acc_color) return FALSE;
+    return LoadImage(screen, image_name, acc_color, image,
+                     pixmap_resolution, pixels, npixels);
 }
 
-/*** Keep this one in here, this is the only entry point to
-     the Image cache. It can be used to duplicate them, etc */
+/**
+ * This function is unused, and can serve to fetch a cache entry only.
+ *
+ * To load an image, _XmGetScaledPixmap() should be used instead.
+ *
+ ** Keep this one in here, this is the only entry point to
+ ** the Image cache. It can be used to duplicate them, etc
+ */
 Boolean
 _XmGetImage(
 	Screen *screen,
@@ -980,7 +953,6 @@ _XmGetImage(
 {
     return GetImage(screen, image_name, NULL, image, NULL, NULL, NULL) ;
 }
-
 
 /************************************************************************
 *
@@ -1002,13 +974,6 @@ _XmInImageCache(
 
     return (ret_val != NULL) ;
 }
-
-
-
-
-
-
-
 
 
 /*** PIXMAP CACHE NOW ***/
@@ -1555,7 +1520,7 @@ _XmGetScaledPixmap(
  *   is given, xbm file give Bitmap and xpm file give Pixmap, while
  *   with positive depth, all files give Pixmap result.
  *
- *   Now a wrapper, but still used by IconG, MessageB, and Text directly.
+ *   Now a wrapper, but still used by Text directly.
  *
  *******************************************************************/
 Pixmap
