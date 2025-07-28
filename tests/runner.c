@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 	srunner_set_tap(runner, "-");
 	xmfontlistentry_suite(runner);
 	xmfontlist_suite(runner);
+	png_suite(runner);
 
 	/**
 	 * Given that some things in Motif / Xt rely on static initialization
