@@ -1814,12 +1814,12 @@ LocalNotifyHandler(
 	 * XmDropSiteLeaveCallbackStruct.
 	 */
         {
-	XmDropSiteLeaveCallbackStruct *cb =
+	XmDropSiteLeaveCallbackStruct *dcb =
 	    (XmDropSiteLeaveCallbackStruct *) call;
         XmDropSiteEnterPendingCallbackStruct new_call;
-	new_call.reason = cb->reason;
-	new_call.event = cb->event;
-	new_call.timeStamp = cb->timeStamp;
+	new_call.reason = dcb->reason;
+	new_call.event = dcb->event;
+	new_call.timeStamp = dcb->timeStamp;
 	new_call.enter_pending = False;
 	SiteLeftWithLocalSource((Widget) dsm, (XtPointer)dc,
 				(XtPointer) &new_call);
