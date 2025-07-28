@@ -808,7 +808,7 @@ static XtEnum LoadImage(Screen *screen, char *image_name,
 	FILE *fp;
 	char *fname;
 	XColor bg;
-	XtEnum ret;
+	XtEnum ret = False;
 	unsigned char header[4];
 
 	fname = XmGetIconFileName(screen, NULL, image_name,
@@ -850,8 +850,7 @@ static XtEnum LoadImage(Screen *screen, char *image_name,
 		if (memcmp((char *)header + 1, "PNG", 3))
 			break;
 
-		ret = !_XmPngGetImage(screen, fp, &bg, image)
-		      ? NOT_CACHED : False;
+		ret = !_XmPngGetImage(fp, &bg, image) ? NOT_CACHED : False;
 #endif
 		break;
 	default: /* Try XPM */
