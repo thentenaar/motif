@@ -111,6 +111,8 @@ MenuStateI.h \
 MenuUtilI.h \
 MessageBI.h \
 MessagesI.h \
+nanosvg.h \
+nanosvgrast.h \
 PixConvI.h \
 PrimitiveI.h \
 PrintSI.h \
@@ -130,6 +132,7 @@ ScrollFramTI.h \
 ScrolledWI.h \
 SelectioBI.h \
 SeparatoGI.h \
+SvgI.h \
 SyntheticI.h \
 TearOffI.h \
 TextDIconI.h \
@@ -225,9 +228,9 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         List.c          MainW.c         MapEvents.c     MenuShell.c \
         MenuUtil.c      MessageB.c      PanedW.c        PushB.c \
         PushBG.c        ReadImage.c     Region.c        ResConvert.c \
-        ResInd.c        RowColumn.c     Sash.c          \
-        Scale.c         ScrollBar.c     ScrolledW.c     SelectioB.c \
-        SeparatoG.c     Separator.c     Simple.c        Text.c \
+        ResInd.c        RowColumn.c     Sash.c          Scale.c \
+        ScrollBar.c     ScrolledW.c     SelectioB.c     SeparatoG.c \
+        Separator.c     Simple.c        Svg.c           Text.c \
         TextIn.c        TextOut.c       TextStrSo.c     TextSel.c \
         ToggleB.c       ToggleBG.c      TrackLoc.c      UniqueEvnt.c \
         VaSimple.c      VirtKeys.c      XmString.c      ResEncod.c\

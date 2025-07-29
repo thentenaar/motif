@@ -36,6 +36,7 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include "HashI.h"		/* for hash table routines. */
 #include "ImageCachI.h"		/* for DIRECT_PIXMAP_CACHED */
 #include "ReadImageI.h"		/* for read xbm stuff */
+#include "SvgI.h"
 #include <Xm/AccColorT.h>       /* for new _XmGetColoredPixmap API */
 #include <Xm/ColorObjP.h>       /* for Xme Color Obj access API */
 #include <Xm/IconFile.h>        /* XmGetIconFileName */
@@ -836,6 +837,10 @@ static XtEnum LoadImage(Screen *screen, char *image_name,
 	rewind(fp);
 
 	switch (header[0]) {
+	case '<':  /* SVG */
+		if (!_XmSvgGetImage(fp, image))
+			return True;
+		break;
 	case 0xff: /* 0xff 0xd8 - JPEG/Exif SOI */
 #if XM_WITH_JPEG
 		if (header[1] != 0xd8)
@@ -2139,7 +2144,18 @@ void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
                        int depth, GC gc, XImage *src, int sx, int sy,
                        int sw, int sh, int dx, int dy, int dw, int dh)
 {
+	int free_src = 0;
 	Visual *vis = DefaultVisualOfScreen(screen);
+
+	/* svg: Rasterize to the given size */
+	if (XImageIsSVG(src)) {
+		++free_src;
+		src = src->f.sub_image(src, sx, sy, dw, dh);
+		sx  = 0;
+		sy  = 0;
+		sw  = dw;
+		sh  = dh;
+	}
 
 	/* Same depth, size, and format */
 	if (src->depth == depth && dw == sw && dh == sh &&
@@ -2147,11 +2163,13 @@ void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
 	    src->green_mask == vis->green_mask &&
 	    src->blue_mask  == vis->blue_mask) {
 		XPutImage(display, d, gc, src, sx, sy, dx, dy, dw, dh);
+		if (free_src) XDestroyImage(src);
 		return;
 	}
 
 	render_image(screen, display, d, depth, gc, src, sx, sy, sw, sh,
 	             dx, dy, dw, dh);
+	if (free_src) XDestroyImage(src);
 }
 
 /*** COLOR CACHE NOW ***/
