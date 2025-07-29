@@ -1008,15 +1008,15 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 			b = nsvg__div255(cb * a);
 
 			// Blend over
-			r += nsvg__div255(ia * (int)dst[0]);
-			g += nsvg__div255(ia * (int)dst[1]);
-			b += nsvg__div255(ia * (int)dst[2]);
-			a += nsvg__div255(ia * (int)dst[3]);
+			a += nsvg__div255(ia * (int)dst[0]);
+			r += nsvg__div255(ia * (int)dst[1]);
+			g += nsvg__div255(ia * (int)dst[2]);
+			b += nsvg__div255(ia * (int)dst[3]);
 
-			dst[0] = (unsigned char)r;
-			dst[1] = (unsigned char)g;
-			dst[2] = (unsigned char)b;
-			dst[3] = (unsigned char)a;
+			dst[0] = (unsigned char)a;
+			dst[1] = (unsigned char)r;
+			dst[2] = (unsigned char)g;
+			dst[3] = (unsigned char)b;
 
 			cover++;
 			dst += 4;
@@ -1051,15 +1051,15 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 			b = nsvg__div255(cb * a);
 
 			// Blend over
-			r += nsvg__div255(ia * (int)dst[0]);
-			g += nsvg__div255(ia * (int)dst[1]);
-			b += nsvg__div255(ia * (int)dst[2]);
-			a += nsvg__div255(ia * (int)dst[3]);
+			a += nsvg__div255(ia * (int)dst[0]);
+			r += nsvg__div255(ia * (int)dst[1]);
+			g += nsvg__div255(ia * (int)dst[2]);
+			b += nsvg__div255(ia * (int)dst[3]);
 
-			dst[0] = (unsigned char)r;
-			dst[1] = (unsigned char)g;
-			dst[2] = (unsigned char)b;
-			dst[3] = (unsigned char)a;
+			dst[0] = (unsigned char)a;
+			dst[1] = (unsigned char)r;
+			dst[2] = (unsigned char)g;
+			dst[3] = (unsigned char)b;
 
 			cover++;
 			dst += 4;
@@ -1098,15 +1098,15 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 			b = nsvg__div255(cb * a);
 
 			// Blend over
-			r += nsvg__div255(ia * (int)dst[0]);
-			g += nsvg__div255(ia * (int)dst[1]);
-			b += nsvg__div255(ia * (int)dst[2]);
-			a += nsvg__div255(ia * (int)dst[3]);
+			a += nsvg__div255(ia * (int)dst[0]);
+			r += nsvg__div255(ia * (int)dst[1]);
+			g += nsvg__div255(ia * (int)dst[2]);
+			b += nsvg__div255(ia * (int)dst[3]);
 
-			dst[0] = (unsigned char)r;
-			dst[1] = (unsigned char)g;
-			dst[2] = (unsigned char)b;
-			dst[3] = (unsigned char)a;
+			dst[0] = (unsigned char)a;
+			dst[1] = (unsigned char)r;
+			dst[2] = (unsigned char)g;
+			dst[3] = (unsigned char)b;
 
 			cover++;
 			dst += 4;
@@ -1211,11 +1211,11 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
 	for (y = 0; y < h; y++) {
 		unsigned char *row = &image[y*stride];
 		for (x = 0; x < w; x++) {
-			int r = row[0], g = row[1], b = row[2], a = row[3];
+			int a = row[0], r = row[1], g = row[2], b = row[3];
 			if (a != 0) {
-				row[0] = (unsigned char)(r*255/a);
-				row[1] = (unsigned char)(g*255/a);
-				row[2] = (unsigned char)(b*255/a);
+				row[1] = (unsigned char)(r*255/a);
+				row[2] = (unsigned char)(g*255/a);
+				row[3] = (unsigned char)(b*255/a);
 			}
 			row += 4;
 		}
@@ -1225,36 +1225,36 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
 	for (y = 0; y < h; y++) {
 		unsigned char *row = &image[y*stride];
 		for (x = 0; x < w; x++) {
-			int r = 0, g = 0, b = 0, a = row[3], n = 0;
+			int a = row[0], r = 0, g = 0, b = 0, n = 0;
 			if (a == 0) {
-				if (x-1 > 0 && row[-1] != 0) {
-					r += row[-4];
-					g += row[-3];
-					b += row[-2];
+				if (x-1 > 0 && row[-4] != 0) {
+					r += row[-3];
+					g += row[-2];
+					b += row[-1];
 					n++;
 				}
-				if (x+1 < w && row[7] != 0) {
-					r += row[4];
-					g += row[5];
-					b += row[6];
+				if (x+1 < w && row[4] != 0) {
+					r += row[5];
+					g += row[6];
+					b += row[7];
 					n++;
 				}
-				if (y-1 > 0 && row[-stride+3] != 0) {
-					r += row[-stride];
-					g += row[-stride+1];
-					b += row[-stride+2];
+				if (y-1 > 0 && row[-stride] != 0) {
+					r += row[-stride+1];
+					g += row[-stride+2];
+					b += row[-stride+3];
 					n++;
 				}
-				if (y+1 < h && row[stride+3] != 0) {
-					r += row[stride];
-					g += row[stride+1];
-					b += row[stride+2];
+				if (y+1 < h && row[stride] != 0) {
+					r += row[stride+1];
+					g += row[stride+2];
+					b += row[stride+3];
 					n++;
 				}
 				if (n > 0) {
-					row[0] = (unsigned char)(r/n);
-					row[1] = (unsigned char)(g/n);
-					row[2] = (unsigned char)(b/n);
+					row[1] = (unsigned char)(r/n);
+					row[2] = (unsigned char)(g/n);
+					row[3] = (unsigned char)(b/n);
 				}
 			}
 			row += 4;
@@ -1456,5 +1456,4 @@ void nsvgRasterize(NSVGrasterizer* r,
 }
 
 #endif // NANOSVGRAST_IMPLEMENTATION
-
 #endif // NANOSVGRAST_H
