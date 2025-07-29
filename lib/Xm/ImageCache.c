@@ -44,6 +44,7 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #endif
 #include <Xm/XpmP.h>
 #include <X11/Xresource.h>
+#include <X11/Xlibint.h>
 
 #if XM_WITH_JPEG
 #include "JpegI.h"
@@ -813,7 +814,6 @@ static XtEnum LoadImage(Screen *screen, char *image_name,
 
 	fname = XmGetIconFileName(screen, NULL, image_name,
 	                          NULL, XmUNSPECIFIED_ICON_SIZE);
-
 	if (!fname)
 		return False;
 
@@ -1361,11 +1361,6 @@ _XmGetScaledPixmap(
 	  depth = -depth ;
     }
 
-    /* now check the validity of the image depth.  XPutImage can
-       only handle unequal depths for bitmaps. */
-    if ((image->depth != depth) && (image->depth != 1))
-	return (XmUNSPECIFIED_PIXMAP);
-
     /* force the foreground/background if a Bitmap
        is returned. These values are going to go in the cache
        too, so we will have to remember this forcing for the
@@ -1407,6 +1402,9 @@ _XmGetScaledPixmap(
 	      for (byte = 0; byte < nbytes; byte++)
 		image->data[byte] = ~old_image_data[byte];
 	    }
+
+	  if (ret != NOT_CACHED)
+	    _XmProcessUnlock();
 
 	  /* In this depth-1 case the image formats are equivalent. */
 	  image->format = XYBitmap;
@@ -1476,8 +1474,8 @@ _XmGetScaledPixmap(
 			  acc_color->background);
 
     /* transfer and scale the image */
-    _XmPutScaledImage (display, pixmap, gc, image,
-		       0, 0, 0, 0, image->width, image->height,
+    _XmPutScaledImage (screen, display, pixmap, depth, gc, image,
+		       0, 0, image->width, image->height, 0, 0,
 		       pix_entry->width, pix_entry->height);
 
     /* Destroy non-cached XImage now that we've cached the pixmap. */
@@ -1971,173 +1969,192 @@ _XmCleanPixmapCache(Screen * screen, Widget shell)
 
 ***/
 
+/**
+ * Simple alpha interpolation
+ */
+#define BLEND(bg, c, a) (int)(((((bg) * (1.0 - (a))) + ((c) * (a)))) * 255.0)
 
-#define roundint(x)                   MAX(1, (int)((x) + 0.5))
+/**
+ * Count trailing zeroes
+ */
+static unsigned int ctz(unsigned long n) {
+#if defined(__has_builtin) && __has_builtin(__builtin_ctzl)
+	return __builtin_ctzl(n);
+#else
+	static const unsigned int mod37[] = {
+		-1, 0, 1, 26, 2, 23, 27, 0, 3, 16, 24, 30, 28, 11, 0, 13, 4,
+		7, 17, 0, 25, 22, 31, 15, 29, 10, 12, 6, 0, 21, 14, 9, 5,
+		20, 8, 19, 18
+	};
 
-typedef struct {
-  Position *x, *y;
-  Dimension *width, *height;
-} Table;
-
-void _XmPutScaledImage (
-    Display*		 display,
-    Drawable		 d,
-    GC			 gc,
-    XImage*		 src_image,
-    int			 src_x,
-    int			 src_y,
-    int			 dest_x,
-    int			 dest_y,
-    unsigned int	 src_width,
-    unsigned int	 src_height,
-    unsigned int	 dest_width,
-    unsigned int	 dest_height)
-{
-    XImage *dest_image;
-    Position x, y, min_y, max_y, src_max_x;
-    Dimension w, h, strip_height;
-    Table table;
-    Pixel pixel;
-    double ratio_x, ratio_y;
-    Bool fast8;
-
-    if (dest_width == src_width && dest_height == src_height) {
-	/* same for x and y, just send it out */
-	XPutImage(display, d, gc, src_image, src_x, src_y,
-		  dest_x, dest_y, dest_width, dest_height);
-	return;
-    }
-
-    ratio_x = (double)dest_width / (double)src_width;
-    ratio_y = (double)dest_height / (double)src_height;
-
-#if XM_PRINTING
-    int xp_event, xp_error;
-    /*
-     * Check that we have uniform scaling, and that the print extension
-     * exists.  We can't call XpGetContext first, because if the print
-     * extension doesn't exist we'll get a warning to stderr.
-     * It would be better if the print context was passed in directly, so
-     * that we didn't spend a round trip when scaling for the video screen,
-     * but it's just one round trip on just the first call per display, so
-     * it's not that bad.
-     */
-    h = (double)src_height * ratio_x + 0.5;
-    if (dest_height <= h + 1 && h <= dest_height + 1 &&
-	XpQueryExtension(display, &xp_event, &xp_error)) {
-	/*
-	 * We could be clever and try to get the print context first from
-	 * the _XmPrintScreenToShellContext and then get the resolution from
-	 * the print shell, but we don't have a Screen* to do the lookup.
-	 */
-	XPContext pcontext = XpGetContext(display);
-	if (pcontext) {
-	    int media_res;
-	    media_res = atoi(XpGetOneAttribute(display, pcontext, XPDocAttr,
-					       "default-printer-resolution"));
-	    if (media_res) {
-		int image_res = (double)media_res / ratio_x + 0.5;
-		int prev_res;
-		if (XpSetImageResolution(display, pcontext,
-					 image_res, &prev_res)) {
-		    XPutImage(display, d, gc, src_image, src_x, src_y,
-			      dest_x, dest_y, src_width, src_height);
-		    XpSetImageResolution(display, pcontext, prev_res, NULL);
-		    return;
-		}
-	    }
-	}
-    }
-#endif /* XM_PRINTING */
-
-    src_max_x = src_x + src_width;
-
-    strip_height = 65536 / roundint(ratio_x * src_image->bytes_per_line);
-    if (strip_height == 0)
-	strip_height = 1;
-    if (strip_height > dest_height)
-	strip_height = dest_height;
-
-    h = strip_height + roundint(ratio_y);
-    dest_image = XCreateImage(display,
-			      DefaultVisualOfScreen(
-					     DefaultScreenOfDisplay(display)),
-			      src_image->depth, src_image->format,
-			      0, NULL,
-			      dest_width, h,
-			      src_image->bitmap_pad, 0);
-    dest_image->data = XtMalloc(dest_image->bytes_per_line * h);
-    fast8 = (src_image->depth == 8 && src_image->bits_per_pixel == 8 &&
-	     dest_image->bits_per_pixel == 8 && src_image->format == ZPixmap);
-
-    table.x = (Position *) XtMalloc(sizeof(Position) * (src_image->width + 1));
-    table.y = (Position *) XtMalloc(sizeof(Position) * (src_image->height + 1));
-    table.width = (Dimension *) XtMalloc(sizeof(Dimension) * src_image->width);
-    table.height = (Dimension *) XtMalloc(sizeof(Dimension)*src_image->height);
-
-    table.x[0] = 0;
-    for (x = 1; x <= src_image->width; x++) {
-	table.x[x] = roundint(ratio_x * x);
-	table.width[x - 1] = table.x[x] - table.x[x - 1];
-    }
-
-    table.y[0] = 0;
-    for (y = 1; y <= src_image->height; y++) {
-	table.y[y] = roundint(ratio_y * y);
-	table.height[y - 1] = table.y[y] - table.y[y - 1];
-    }
-
-    for (min_y = table.y[src_y]; min_y < dest_height; min_y = table.y[y]) {
-	max_y = min_y + strip_height;
-	if (max_y > dest_height) {
-	    strip_height = dest_height - min_y;
-	    max_y = dest_height;
-	}
-	for (y = src_y; table.y[y] < max_y; y++) {
-	    if (table.y[y] < min_y)
-		continue;
-	    if (fast8) {
-		for (x = src_x; x < src_max_x; x++) {
-		    pixel = ((unsigned char *)src_image->data)
-			[y * src_image->bytes_per_line + x];
-		    for (h = 0; h < table.height[y]; h++) {
-			memset(dest_image->data +
-			       (table.y[y] + h - min_y) *
-			       dest_image->bytes_per_line + table.x[x],
-			       pixel, table.width[x]);
-		    }
-		}
-	    } else {
-		for (x = src_x; x < src_max_x; x++) {
-		    pixel = XGetPixel(src_image, x, y);
-		    for (h = 0; h < table.height[y]; h++) {
-			for (w = 0; w < table.width[x]; w++)
-			    XPutPixel(dest_image,
-				      table.x[x] + w,
-				      table.y[y] + h - min_y,
-				      pixel);
-		    }
-		}
-	    }
-	}
-	XPutImage(display, d, gc, dest_image, dest_x, 0,
-		  dest_x, dest_y + min_y, dest_width, table.y[y] - min_y);
-	if (y >= src_image->height)
-	    break;
-    }
-
-    XtFree((char *)table.x);
-    XtFree((char *)table.y);
-    XtFree((char *)table.width);
-    XtFree((char *)table.height);
-
-    XDestroyImage(dest_image);
+    return mod37[(-n & n) % 37];
+#endif
 }
 
+/**
+ * Count the number of bits set in a long
+ */
+static unsigned int ones(unsigned long n) {
+#if defined(__has_builtin) && __has_builtin(__builtin_popcountl)
+	return __builtin_popcountl(n);
+#elif sizeof(unsigned long) == 8
+	n = n - ((n >> 1) & 0x5555555555555555);
+    n = (n & 0x3333333333333333) + ((n >> 2) & 0x3333333333333333);
+    n = (n + (n >> 4)) & 0x0F0F0F0F0F0F0F0F;
+    return (n * 0x0101010101010101) >> 56;
+#else
+	n = n - ((n >> 1) & 0x55555555);
+	n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
+	n = (n + (n >> 4)) & 0x0F0F0F0F;
+	return (n * 0x01010101) >> 24;
+#endif
+}
 
+/**
+ * Simple scaling / rendering to a Drawable (most likely a Pixmap.)
+ */
+static void render_image(Screen *screen, Display *display, Drawable d,
+                         int depth, GC gc, XImage *src, int sx, int sy,
+                         int sw, int sh, int dx, int dy, int dw, int dh)
+{
+	char *data;
+	Visual *vis;
+	XImage *dest_image;
+	Pixel pixel = 0;
+	XColor bg, xc;
+	XGCValues gcv;
+	int psz, x, y, ox, oy, r, g, b, a;
+
+	psz = depth > 16 ? 32 : depth < 16 ? 8 : 16;
+	if (!(data = Xmalloc(dw * dh * (psz >> 3)))) {
+		XmeWarning(NULL, "render_image: Out of memory");
+		return;
+	}
+
+	vis = DefaultVisualOfScreen(screen);
+	gcv.foreground = ULONG_MAX;
+	gcv.background = ULONG_MAX;
+	XGetGCValues(display, gc, GCBackground | GCForeground, &gcv);
+	if (gcv.background == ULONG_MAX || gcv.foreground == ULONG_MAX) {
+		gcv.background = XBlackPixelOfScreen(screen);
+		gcv.foreground = XWhitePixelOfScreen(screen);
+		XChangeGC(display, gc, GCBackground | GCForeground, &gcv);
+	}
+
+	bg.pixel = gcv.background;
+	XQueryColor(display, screen->cmap, &bg);
+	dest_image = XCreateImage(display, vis, depth, ZPixmap, 0, data,
+	                          dw, dh, psz, 0);
+
+	for (y = 0; y < dh; y++) {
+		for (x = 0; x < dw; x++) {
+			r = g = b = 0;
+			ox = sx + (int)(x / (double)dw * sw);
+			oy = sy + (int)(y / (double)dh * sh);
+
+			/* Anything out of bounds is background */
+			if (ox < sx || oy < sy || ox > sx + sw || oy > sy + sh) {
+				XPutPixel(dest_image, dx + x, dy + y, gcv.background);
+				continue;
+			}
+
+			/* Extract the color components */
+			switch (src->depth) {
+			case 1: /* Good ol' XBM */
+				pixel = ((src->data[(oy * src->bytes_per_line) + (ox >> 3)] >> (ox & 7)) & 1)
+				        ? gcv.foreground : gcv.background;
+				break;
+			case 8:
+				xc.pixel = XGetPixel(src, ox, oy);
+				XQueryColor(display, screen->cmap, &xc);
+				r = xc.red   / 257;
+				g = xc.green / 257;
+				b = xc.blue  / 257;
+				break;
+			default:
+				pixel = XGetPixel(src, ox, oy);
+				r = (pixel & src->red_mask)   >> ctz(src->red_mask);
+				g = (pixel & src->green_mask) >> ctz(src->green_mask);
+				b = (pixel & src->blue_mask)  >> ctz(src->blue_mask);
+
+				if (src->depth == 32) {
+					if (!(a = (pixel >> 24) & 0xff)) {
+						pixel = gcv.background;
+						break;
+					} else if (a != 0xff) {
+						r = BLEND(bg.red   / 65535.0, r / 255.0, a / 255.0);
+						g = BLEND(bg.green / 65535.0, g / 255.0, a / 255.0);
+						b = BLEND(bg.blue  / 65535.0, b / 255.0, a / 255.0);
+					}
+				}
+
+				if (r == 255 && g == 255 && b == 255)
+					pixel = XWhitePixelOfScreen(screen);
+				else if (!r && !g && !b)
+					pixel = XBlackPixelOfScreen(screen);
+				else {
+					if (src->depth > 16 && depth == 16 && ones(vis->red_mask) == 5) { /* 5:5:5 */
+						r >>= 3;
+						g >>= 3;
+						b >>= 3;
+					}
+
+					/* Assume TrueColor or DirectColor */
+					pixel = (((r << ctz(vis->red_mask))   & vis->red_mask)   |
+					         ((g << ctz(vis->green_mask)) & vis->green_mask) |
+					         ((b << ctz(vis->blue_mask))  & vis->blue_mask));
+				}
+			}
+
+			if (src->depth == 1 || vis->class == TrueColor || vis->class == DirectColor) {
+				XPutPixel(dest_image, dx + x, dy + y, pixel);
+				continue;
+			}
+
+			if (depth == 1 || vis->map_entries <= 2) {
+				XPutPixel(dest_image, dx + x, dy + y,
+				          (r | g | b) ? gcv.foreground : gcv.background);
+				continue;
+			}
+
+			/* Colormap time */
+			xc.pixel = 0;
+			xc.red   = r * 257;
+			xc.green = g * 257;
+			xc.blue  = b * 257;
+			pixel    = gcv.foreground;
+
+			/* Slowly interrogate the colormap for Pixel values */
+			if (XAllocColor(display, screen->cmap, &xc))
+				pixel = xc.pixel;
+			XPutPixel(dest_image, dx + x, dy + y, pixel);
+		}
+	}
+
+	XPutImage(display, d, gc, dest_image, 0, 0, dx, dy, dw, dh);
+	XDestroyImage(dest_image);
+}
+
+void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
+                       int depth, GC gc, XImage *src, int sx, int sy,
+                       int sw, int sh, int dx, int dy, int dw, int dh)
+{
+	Visual *vis = DefaultVisualOfScreen(screen);
+
+	/* Same depth, size, and format */
+	if (src->depth == depth && dw == sw && dh == sh &&
+	    src->red_mask   == vis->red_mask   &&
+	    src->green_mask == vis->green_mask &&
+	    src->blue_mask  == vis->blue_mask) {
+		XPutImage(display, d, gc, src, sx, sy, dx, dy, dw, dh);
+		return;
+	}
+
+	render_image(screen, display, d, depth, gc, src, sx, sy, sw, sh,
+	             dx, dy, dw, dh);
+}
 
 /*** COLOR CACHE NOW ***/
-
 
 static Boolean
 GetCacheColorByName( Display *display, Colormap colormap,

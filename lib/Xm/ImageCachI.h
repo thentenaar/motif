@@ -89,19 +89,9 @@ extern Pixmap _XmGetScaledPixmap(
     Boolean only_if_exists,
     double scaling_ratio);
 
-extern void _XmPutScaledImage (
-    Display		 *display ,
-    Drawable		 d ,
-    GC			 gc ,
-    XImage		 *src_image ,
-    int			 src_x ,
-    int			 src_y ,
-    int			 dest_x ,
-    int			 dest_y ,
-    unsigned int	 src_width ,
-    unsigned int	 src_height,
-    unsigned int	 dest_width ,
-    unsigned int	 dest_height);
+extern void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
+                              int depth, GC gc, XImage *src, int sx, int sy,
+                              int sw, int sh, int dx, int dy, int dw, int dh);
 
 extern void _XmCleanPixmapCache(Screen * screen, Widget shell);
 
