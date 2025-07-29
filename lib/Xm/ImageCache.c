@@ -841,8 +841,7 @@ static XtEnum LoadImage(Screen *screen, char *image_name,
 		if (header[1] != 0xd8)
 			break;
 
-		ret = !_XmJpegGetImage(screen, fp, image)
-		      ? NOT_CACHED : False;
+		ret = !_XmJpegGetImage(fp, image) ? NOT_CACHED : False;
 #endif
 		break;
 	case 0x89: /* 0x89 'P' 'N' 'G' - PNG */

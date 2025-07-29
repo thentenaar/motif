@@ -1,170 +1,144 @@
-#include "JpegI.h"
+/**
+ * Motif
+ *
+ * Copyright (c) 2025 Tim Hentenaar.
+ * Copyright (c) 1987 - 2012 The Open Group.
+ * Licensed under the LGPL 2.1 license.
+ */
+
+#include <stdio.h>
+#include <setjmp.h>
+#include <X11/Xlib.h>
+#include <X11/Xlibint.h>
+#include <jpeglib.h>
 #include <jerror.h>
-#include <stdlib.h>
-#include <X11/Intrinsic.h>
 
-void
-_XmJpegErrorExit(j_common_ptr cinfo)
+#include "JpegI.h"
+
+/**
+ * Error handling context info
+ */
+struct jerr {
+	struct jpeg_error_mgr jpeg_error;
+	jmp_buf jmp;
+};
+
+/**
+ * Error handling routine
+ */
+static void on_jpeg_error(j_common_ptr errinfo)
 {
-    int rc;
-    XmJpegErrorMgr err = (XmJpegErrorMgr) cinfo->err;
+	int ret;
+	struct jerr *err = (struct jerr *)errinfo->err;
 
-    switch (cinfo->err->msg_code) {
-    case JERR_NO_SOI:
-        rc = 1;
-        break;
-    case JERR_OUT_OF_MEMORY:
-        rc = 4;
-        break;
-    default:
-        rc = 2;
-        break;
-    }
-    longjmp(err->setjmp_buffer, rc);
+	switch (errinfo->err->msg_code) {
+	case JERR_NO_SOI:        ret = 1; break; /* Invalid JPEG: No start of image */
+	case JERR_OUT_OF_MEMORY: ret = 5; break;
+	default:
+		ret = -1;
+	}
+
+	longjmp(err->jmp, ret);
 }
 
-int
-load_jpeg(FILE * infile, unsigned long *pWidth, unsigned long *pHeight,
-          CTable ** image_data)
+int _XmJpegGetImage(FILE *fp, XImage **ximage)
 {
-    CTable *buf;
-    struct jpeg_decompress_struct cinfo;
-    XmJpegErrorMgrRec jerr;
-    JSAMPROW row_pointer[1];
-    int x, y;
-    int rc;
+	int ret = 0;
+	XImage *img = NULL;
+	int w1, h1;
+	unsigned int i, j, w, h;
+	unsigned char *data = NULL, *gp;
+	struct jerr err;
+	struct jpeg_decompress_struct jpeg;
+	JSAMPARRAY rows = NULL;
 
-    *image_data = NULL;
-    cinfo.err = jpeg_std_error((struct jpeg_error_mgr *) &jerr);
-    jerr.pub.error_exit = _XmJpegErrorExit;
-    if ((rc = setjmp(jerr.setjmp_buffer))) {
-        jpeg_destroy_decompress(&cinfo);
-        return rc;
-    }
-    jpeg_create_decompress(&cinfo);
-    jpeg_stdio_src(&cinfo, infile);
-    jpeg_read_header(&cinfo, TRUE);
-    jpeg_calc_output_dimensions(&cinfo);
-    jpeg_start_decompress(&cinfo);
-    *pWidth = cinfo.output_width;
-    *pHeight = cinfo.output_height;
-    *image_data =
-        malloc(cinfo.output_width * cinfo.output_height * sizeof(CTable));
-    for (buf = *image_data;
-         cinfo.output_scanline < cinfo.output_height;
-         buf += cinfo.output_width)
-        jpeg_read_scanlines(&cinfo, (JSAMPARRAY) (&buf), 1);
-    if (cinfo.out_color_space == JCS_GRAYSCALE) {
-        for (y = 0, buf = *image_data; y < cinfo.output_height;
-             y++, buf += cinfo.output_width)
-            for (x = cinfo.output_width - 1; x >= 0; x--)
-                buf[x].red = buf[x].green = buf[x].blue =
-                    ((JSAMPLE *) buf)[x];
-    }
-    jpeg_finish_decompress(&cinfo);
-    jpeg_destroy_decompress(&cinfo);
-    return 0;
+	if (!fp || !ximage)
+		return 1;
+
+	/* Setup error handling */
+	*ximage = NULL;
+	memset(&err, 0, sizeof err);
+	jpeg.err = jpeg_std_error(&err.jpeg_error);
+	err.jpeg_error.error_exit = on_jpeg_error;
+
+	if ((ret = setjmp(err.jmp))) {
+		if (data) XFree(data);
+		if (rows) XFree(rows);
+		jpeg_destroy_decompress(&jpeg);
+		return ret;
+	}
+
+	/* Initialize the JPEG struct */
+	jpeg_create_decompress(&jpeg);
+	jpeg_stdio_src(&jpeg, fp);
+	jpeg_read_header(&jpeg, True);
+	jpeg_calc_output_dimensions(&jpeg);
+
+	/* Allocate our data buffer */
+	w = jpeg.output_width;
+	h = jpeg.output_height;
+	if (!(data = Xmalloc(w * h * 3))) {
+		jpeg_destroy_decompress(&jpeg);
+		return 2;
+	}
+
+	/* Setup our row pointers */
+	if (!(rows = Xmalloc(h * sizeof(*rows)))) {
+		XFree(data);
+		jpeg_destroy_decompress(&jpeg);
+		return 3;
+	}
+
+	for (i = 0; i < h; i++)
+		rows[i] = data + w * i;
+
+	/* Read scanlines */
+	jpeg_start_decompress(&jpeg);
+	do {
+		jpeg_read_scanlines(&jpeg, rows + jpeg.output_scanline, h - jpeg.output_scanline);
+	} while (jpeg.output_scanline < h);
+
+	/* Do grayscale expansion if needed */
+	if (jpeg.out_color_space == JCS_GRAYSCALE) {
+		gp = data + 3 * w * h;
+		for (h1 = (h - 1) * h; h1 >= 0; h1 -= h) {
+			for (w1 = w - 1; w1 >= 0; --w1) {
+				*(--gp) = data[h1 + w1];
+				*(--gp) = data[h1 + w1];
+				*(--gp) = data[h1 + w1];
+			}
+		}
+	}
+
+	jpeg_finish_decompress(&jpeg);
+	jpeg_destroy_decompress(&jpeg);
+	XFree(rows);
+
+	/* Create our XImage */
+	if (!(img = Xmalloc(sizeof *img))) {
+		XFree(data);
+		return 4;
+	}
+
+	img->data             = (char *)data;
+	img->obdata           = NULL;
+	img->width            = w;
+	img->height           = h;
+	img->xoffset          = 0;
+	img->depth            = 24;
+	img->format           = ZPixmap;
+	img->byte_order       = MSBFirst;
+	img->red_mask         = 0xff0000;
+	img->green_mask       = 0x00ff00;
+	img->blue_mask        = 0x0000ff;
+	img->bitmap_unit      = 8;
+	img->bitmap_bit_order = MSBFirst;
+	img->bitmap_pad       = 32;
+	img->bits_per_pixel   = 24;
+	img->bytes_per_line   = w * 3;
+	XInitImage(img);
+
+	*ximage = img;
+	return 0;
 }
 
-Pixel
-get_cval(unsigned char c, unsigned long mask)
-{
-    Pixel value = c, x;
-    int i;
-    for (i = 0, x = 1; i < 32; i++, x <<= 1)
-        if (mask & x)
-            break;
-    for (; i < 32; i++, x <<= 1)
-        if (!(mask & x))
-            break;
-    if (i < 8)
-        value >>= 8 - i;
-    else if (i > 8)
-        value <<= i - 8;
-    return (value & mask);
-}
-
-void
-store_pixel(Screen * screen, CTable * p, int x, char *cdata)
-{
-    Pixel px = get_cval(p->red, screen->root_visual->red_mask)
-        | get_cval(p->green, screen->root_visual->green_mask)
-        | get_cval(p->blue, screen->root_visual->blue_mask);
-    if (screen->root_depth <= 16) {
-        if (ImageByteOrder(screen->display) == MSBFirst) {
-            cdata[x * 2] = (px >> 8);
-            cdata[x * 2 + 1] = (px & 0xff);
-        } else {
-            cdata[x * 2] = (px & 0xff);
-            cdata[x * 2 + 1] = (px >> 8);
-        }
-    } else {
-        if (ImageByteOrder(screen->display) == MSBFirst) {
-            cdata[x * 4] = (px >> 24);
-            cdata[x * 4 + 1] = (px >> 16);
-            cdata[x * 4 + 2] = (px >> 8);
-            cdata[x * 4 + 3] = (px & 0xff);
-        } else {
-            cdata[x * 4 + 3] = (px >> 24);
-            cdata[x * 4 + 2] = (px >> 16);
-            cdata[x * 4 + 1] = (px >> 8);
-            cdata[x * 4] = (px & 0xff);
-        }
-    }
-}
-
-int
-_XmJpegGetImage(Screen * screen, FILE * infile, XImage ** ximage)
-{
-    unsigned long image_width, image_height;
-    unsigned char *xdata;
-    int pad;
-    CTable *image_data = NULL;
-    int rc;
-
-    if ((rc = load_jpeg(infile, &image_width, &image_height, &image_data)))
-        return rc;
-    if (screen->root_depth == 24 || screen->root_depth == 32) {
-        xdata = (unsigned char *) malloc(4 * image_width * image_height);
-        pad = 32;
-    } else if (screen->root_depth == 16) {
-        xdata = (unsigned char *) malloc(2 * image_width * image_height);
-        pad = 16;
-    } else {                    /* depth == 8 */
-        xdata = (unsigned char *) malloc(image_width * image_height);
-        pad = 8;
-    }
-
-    if (!xdata) {
-      if (image_data)
-        free(image_data);
-      return 4;
-    }
-
-    *ximage =
-        XCreateImage(screen->display, screen->root_visual,
-                     screen->root_depth, ZPixmap, 0, (char *) xdata,
-                     image_width, image_height, pad, 0);
-    if (!*ximage) {
-        free(xdata);
-        if (image_data)
-          free(image_data);
-        return 4;
-    }
-
-    {
-        int xx, yy;
-        CTable *p;
-        for (yy = 0; yy < (*ximage)->height; yy++) {
-            p = image_data + yy * (*ximage)->width;
-            for (xx = 0; xx < (*ximage)->width; xx++, p++)
-                store_pixel(screen, p, xx + yy * (*ximage)->width,
-                            (*ximage)->data);
-        }
-    }
-
-    if (image_data)
-        free(image_data);
-
-    return 0;
-}
