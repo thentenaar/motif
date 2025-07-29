@@ -22,5 +22,6 @@ void xmfontlistentry_suite(SRunner *runner);
 void xmfontlist_suite(SRunner *runner);
 void png_suite(SRunner *runner);
 void jpeg_suite(SRunner *runner);
+void svg_suite(SRunner *runner);
 
 #endif /* SUITES_H */

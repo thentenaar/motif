@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 	xmfontlist_suite(runner);
 	png_suite(runner);
 	jpeg_suite(runner);
+	svg_suite(runner);
 
 	/**
 	 * Given that some things in Motif / Xt rely on static initialization
