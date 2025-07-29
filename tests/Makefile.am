@@ -5,7 +5,7 @@ TESTS                = tests
 AM_CPPFLAGS          = -I$(top_builddir)/include -I$(top_builddir)/lib $(X_CFLAGS) $(CHECK_CFLAGS)
 check_PROGRAMS       = tests
 noinst_HEADERS       = suites.h
-tests_SOURCES        = runner.c XmFontListEntry.c XmFontList.c Png.c
+tests_SOURCES        = runner.c XmFontListEntry.c XmFontList.c Png.c Jpeg.c
 tests_LDADD          = $(top_builddir)/lib/Xm/libXm.la $(X_LIBS) $(CHECK_LIBS)
 MAINTAINERCLEANFILES = Makefile.in
 
