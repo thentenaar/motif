@@ -1395,6 +1395,15 @@ extern Pixmap XmGetPixmapByDepth(
                         Pixel foreground,
                         Pixel background,
 			int depth) ;
+
+/**
+ * Get a pixmap, scaled to the given width and height. If either
+ * width or height is zero, scale according to the ratio between
+ * the given dimension and that of the image.
+ */
+extern Pixmap XmGetSizedPixmap(Widget widget, char *image_name, Pixel foreground,
+                               Pixel background, int depth, int width, int height);
+
 extern Boolean XmDestroyPixmap(
                         Screen *screen,
                         Pixmap pixmap) ;

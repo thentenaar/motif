@@ -261,6 +261,7 @@ man_MANS = ApplicationShell.3 \
     XmGetPixmap.3 \
     XmGetPixmapByDepth.3 \
     XmGetPostedFromWidget.3 \
+    XmGetSizedPixmap.3 \
     XmGetScaledPixmap.3 \
     XmGetSecondaryResourceData.3 \
     XmGetTabGroup.3 \

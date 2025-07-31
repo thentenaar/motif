@@ -1550,6 +1550,34 @@ _XmGetColoredPixmap(Screen *screen,
 			       only_if_exists, 1, 0, 0); /* no scaling */
 }
 
+/**
+ * Get a pixmap, scaled to the given width and height. If either
+ * width or height is zero, scale according to the ratio between
+ * the given dimension and that of the image.
+ */
+Pixmap XmGetSizedPixmap(Widget widget, char *image_name, Pixel foreground,
+                        Pixel background, int depth, int width, int height)
+{
+	Pixmap ret;
+	XmAccessColorDataRec acc_color_rec;
+	XtAppContext app = XtWidgetToApplicationContext(widget);
+
+	_XmAppLock(app);
+	_XmProcessLock();
+	acc_color_rec.foreground          = foreground;
+	acc_color_rec.background          = background;
+	acc_color_rec.top_shadow_color    = XmUNSPECIFIED_PIXEL;
+	acc_color_rec.bottom_shadow_color = XmUNSPECIFIED_PIXEL;
+	acc_color_rec.select_color        = XmUNSPECIFIED_PIXEL;
+	acc_color_rec.highlight_color     = XmUNSPECIFIED_PIXEL;
+	ret = _XmGetScaledPixmap(XtScreen(widget), widget, image_name,
+	                         &acc_color_rec, depth, False, 1,
+	                         width, height);
+	_XmProcessUnlock();
+	_XmAppUnlock(app);
+	return ret;
+}
+
 Pixmap
 XmGetScaledPixmap(
     Widget widget,
