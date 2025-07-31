@@ -195,6 +195,7 @@ AC_SUBST([XMBINDDIR_FALLBACK], "${datadir}/X11/bindings")
 dnl lib/Xm/Xmos.c
 AC_SUBST([INCDIR], "${includedir}/X11")
 AC_SUBST([LIBDIR], "${libdir}/X11")
+AC_SUBST([DATADIR], "${datadir}")
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \
@@ -210,6 +211,7 @@ config/Makefile \
 config/util/Makefile \
 include/Makefile \
 include/Dt/Makefile \
+icons/Makefile \
 lib/Makefile \
 lib/Xm/Makefile \
 lib/Xm/version.h \
