@@ -41,8 +41,6 @@
 #include <config.h>
 #endif
 
-
-#include <stdio.h>
 #include <X11/Xlocale.h>
 
 #define X_INCLUDE_DIRENT_H
@@ -531,6 +529,7 @@ XmGetIconFileName(
     unsigned int size)
 {
     Display		*display = DisplayOfScreen(screen);
+    Visual		*vis     = DefaultVisualOfScreen(screen);
     String		fileName = NULL;
     String		names[2];
     String		names_w_size[2];
@@ -726,25 +725,37 @@ XmGetIconFileName(
 	  return fileName;
         }
 
-	/*******************************
-	 * first try XPM and then XBM
-	 ******************************/
-	fileName =
-	  XtResolvePathname(display, "icons", NULL,
-			    NULL, iPath, iconSubs,
-			    XtNumber(iconSubs),
-			    (XtFilePredicate) testFileFunc);
-
-	if (fileName == NULL) {
-	    fileName =
-	      XtResolvePathname(display, "bitmaps", NULL,
-				NULL, bPath, iconSubs,
-				XtNumber(iconSubs),
-				(XtFilePredicate) testFileFunc);
+	/**
+	 * Prefer SVG for TrueColor or DirectColor Visuals, falling
+	 * back to XPM and XBM for other classes of Visual.
+	 */
+	if (vis->class == TrueColor || vis->class == DirectColor) {
+		fileName = XtResolvePathname(display, "icons", NULL, ".svg",
+		                             iPath, iconSubs, XtNumber(iconSubs),
+		                             (XtFilePredicate)testFileFunc);
 	}
 
-	if (fileName)
-	  break;
+	if (fileName) break;
+
+	/**
+	 * For monochrome, no point in mucking around with colors
+	 */
+	if (vis->map_entries > 2) {
+		fileName = XtResolvePathname(display, "icons", NULL, ".xpm",
+		                             iPath, iconSubs, XtNumber(iconSubs),
+		                             (XtFilePredicate)testFileFunc);
+	}
+	if (fileName) break;
+
+	fileName = XtResolvePathname(display, "icons", NULL, NULL,
+	                             iPath, iconSubs, XtNumber(iconSubs),
+	                             (XtFilePredicate)testFileFunc);
+	if (fileName) break;
+
+	fileName = XtResolvePathname(display, "bitmaps", NULL, NULL,
+	                             bPath, iconSubs, XtNumber(iconSubs),
+	                             (XtFilePredicate)testFileFunc);
+	if (fileName) break;
     }
     _XmProcessUnlock();
 
