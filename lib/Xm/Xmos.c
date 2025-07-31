@@ -951,10 +951,10 @@ _XmOSBuildFileList(String          dirPath,
  ****************************************************************/
 
 int
-_XmOSFileCompare(XmConst void *sp1,
-		 XmConst void *sp2)
+_XmOSFileCompare(const void *sp1,
+		 const void *sp2)
 {
-  return strcmp(*((XmConst String *) sp1), *((XmConst String *) sp2));
+  return strcmp(*((const String *) sp1), *((const String *) sp2));
 }
 
 /*************************************************************************
@@ -1016,8 +1016,8 @@ XmeGetHomeDirName(void)
 #define INCDIR "/usr/include/X11"
 #endif
 
-static XmConst char libdir[] = LIBDIR;
-static XmConst char incdir[] = INCDIR;
+static const char libdir[] = LIBDIR;
+static const char incdir[] = INCDIR;
 
 /*************************************************************************
  *
@@ -1033,7 +1033,7 @@ static XmConst char incdir[] = INCDIR;
  *
  *************************************************************************/
 
-static XmConst char XAPPLRES_DEFAULT[] = "\
+static const char XAPPLRES_DEFAULT[] = "\
 %%P\
 %%S:\
 %s/%%L/%%T/%%N/%%P\
@@ -1075,7 +1075,7 @@ static XmConst char XAPPLRES_DEFAULT[] = "\
 %s/%%T/%%P\
 %%S";
 
-static XmConst char PATH_DEFAULT[] = "\
+static const char PATH_DEFAULT[] = "\
 %%P\
 %%S:\
 %s/%%L/%%T/%%N/%%P\
@@ -1115,7 +1115,7 @@ static XmConst char PATH_DEFAULT[] = "\
 %s/%%T/%%P\
 %%S";
 
-static XmConst char ABSOLUTE_PATH[] = "\
+static const char ABSOLUTE_PATH[] = "\
 %P\
 %S";
 
