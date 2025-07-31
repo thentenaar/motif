@@ -483,6 +483,7 @@ Initialize(
     new_w->message_box.help_button = NULL;
     new_w->bulletin_board.default_button = NULL;
     new_w->message_box.internal_pixmap = FALSE ;
+    new_w->message_box.baseline = 0;
 
     if(    !XmRepTypeValidValue( XmRID_DIALOG_TYPE,
                                new_w->message_box.dialog_type, (Widget) new_w)    )
@@ -643,16 +644,58 @@ SetValues(
             XmMessageBoxWidget current = (XmMessageBoxWidget) cw ;
             XmMessageBoxWidget new_w = (XmMessageBoxWidget) nw ;
             Arg             al[ARG_LIST_CNT] ;  /* arg list       */
-            Cardinal        ac ;                /* arg list count */
+            Cardinal        ac = 0;             /* arg list count */
             Boolean         need_layout = FALSE ;
             Boolean         newPixmap = FALSE ;
             Widget          defaultButton ;
+            XmRenderTable rt;
+            XmString s;
 /****************/
 
     /* "in_set_values" means the GeometryManager won't try to resize
     *    and/or re-layout subwidgets.
     */
     BB_InSetValues( new_w) = True;
+
+    if(    new_w->message_box.message_string    )
+    {
+        XtSetArg( al[ac], XmNlabelString,
+                                      new_w->message_box.message_string) ; ++ac ;
+        XtSetArg( al[ac], XmNstringDirection,
+                                             BB_StringDirection( new_w)) ; ++ac ;
+        new_w->message_box.message_string = NULL ;
+        need_layout = TRUE ;
+        }
+    if(    current->message_box.message_alignment
+                                     != new_w->message_box.message_alignment    )
+    {   if(    !XmRepTypeValidValue( XmRID_ALIGNMENT,
+                         new_w->message_box.message_alignment, (Widget) new_w)    )
+        {   new_w->message_box.message_alignment
+                                     = current->message_box.message_alignment ;
+            }
+        else
+        {   XtSetArg( al[ac], XmNalignment,
+                                   new_w->message_box.message_alignment) ; ++ac ;
+            need_layout = TRUE ;
+            }
+        }
+    if( ac )
+    {
+      /* CR 7596,  create message widget if not there */
+      if ( ! new_w->message_box.message_wid ) {
+	SetUpMessage(new_w);
+	XtManageChild(new_w->message_box.message_wid);
+      }
+
+      XtSetValues( new_w->message_box.message_wid, al, ac) ;
+
+      /* Ensure we have the correct baseline */
+      XtSetArg(al[0], XmNrenderTable, &rt);
+      XtSetArg(al[1], XmNlabelString, &s);
+      XtGetValues(new_w->message_box.message_wid, al, 2);
+      new_w->message_box.baseline = XmStringBaseline(rt, s);
+      XmStringFree(s);
+    }
 
 	    /* fix for CR 5895 */
     if(    !new_w->message_box.symbol_pixmap    )
@@ -695,8 +738,8 @@ SetValues(
     {   /* If symbol pixmap is unchanged and a new dialog type is specified,
         *   then set to default pixmap.
         */
-        if(    new_w->message_box.dialog_type
-                                       != current->message_box.dialog_type    )
+        if(new_w->message_box.dialog_type != current->message_box.dialog_type ||
+           new_w->message_box.baseline != current->message_box.baseline)
         {   newPixmap = TRUE ;
 
             GetMsgBoxPixmap( new_w) ;
@@ -727,40 +770,6 @@ SetValues(
 
     /* Check the buttons and labels
     */
-    ac = 0 ;
-    if(    new_w->message_box.message_string    )
-    {
-        XtSetArg( al[ac], XmNlabelString,
-                                      new_w->message_box.message_string) ; ++ac ;
-        XtSetArg( al[ac], XmNstringDirection,
-                                             BB_StringDirection( new_w)) ; ++ac ;
-        new_w->message_box.message_string = NULL ;
-        need_layout = TRUE ;
-        }
-    if(    current->message_box.message_alignment
-                                     != new_w->message_box.message_alignment    )
-    {   if(    !XmRepTypeValidValue( XmRID_ALIGNMENT,
-                         new_w->message_box.message_alignment, (Widget) new_w)    )
-        {   new_w->message_box.message_alignment
-                                     = current->message_box.message_alignment ;
-            }
-        else
-        {   XtSetArg( al[ac], XmNalignment,
-                                   new_w->message_box.message_alignment) ; ++ac ;
-            need_layout = TRUE ;
-            }
-        }
-    if( ac )
-    {
-      /* CR 7596,  create message widget if not there */
-      if ( ! new_w->message_box.message_wid ) {
-	SetUpMessage(new_w);
-	XtManageChild(new_w->message_box.message_wid);
-      }
-
-      XtSetValues( new_w->message_box.message_wid, al, ac) ;
-    }
-
     if(    new_w->message_box.ok_label_string    )
     {
         if(    new_w->message_box.ok_button    )
@@ -1178,15 +1187,15 @@ CreateWidgets(
 
 /****************/
 
+    /* create the message label */
+    if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
+	w->message_box.message_string == NULL))
+	SetUpMessage (w);
+
     /* create the symbol label */
     if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
 	w->message_box.symbol_pixmap == XmUNSPECIFIED_PIXMAP))
 	SetUpSymbol (w);
-
-    /* create the message label, after symbol is created */
-    if (!(w->message_box.dialog_type == XmDIALOG_TEMPLATE &&
-	w->message_box.message_string == NULL))
-	SetUpMessage (w);
 
     /* create the separator */
     XtSetArg (al[0], XmNhighlightThickness, 0);
@@ -1553,10 +1562,13 @@ static void
 GetMsgBoxPixmap(
         XmMessageBoxWidget mBox )
 {
+    Arg arg[2];
     Pixmap          tmpPix = XmUNSPECIFIED_PIXMAP ;
     char *          fileName ;
     char *          defaultName ;
     XmAccessColorDataRec acc_color_rec;
+    XmRenderTable rt;
+    XmString s;
 
     /* Try to get pixmap from bitmap file or default.
     */
@@ -1614,13 +1626,20 @@ GetMsgBoxPixmap(
 	acc_color_rec.highlight_color = mBox->manager.highlight_color ;
 	acc_color_rec.select_color = XmUNSPECIFIED_PIXEL ;
 
-	tmpPix = _XmGetScaledPixmap(mBox->core.screen, (Widget)mBox,
-				    fileName,
-				    &acc_color_rec, depth, FALSE, 0) ;
- 	if(    tmpPix == XmUNSPECIFIED_PIXMAP    ) {
-	    tmpPix = _XmGetScaledPixmap(mBox->core.screen,  (Widget)mBox,
-					 defaultName,
-					 &acc_color_rec, depth, FALSE, 0) ;
+	/* Get the label baseline, and scale the Pixmap accordingly */
+	XtSetArg(arg[0], XmNrenderTable, &rt);
+	XtSetArg(arg[1], XmNlabelString, &s);
+	XtGetValues(mBox->message_box.message_wid, arg, 2);
+	mBox->message_box.baseline = XmStringBaseline(rt, s);
+	XmStringFree(s);
+
+	tmpPix = _XmGetScaledPixmap(mBox->core.screen, (Widget)mBox, fileName,
+	                            &acc_color_rec, depth, False, 0, 0,
+	                            mBox->message_box.baseline * 2.5);
+	if (tmpPix == XmUNSPECIFIED_PIXMAP) {
+		tmpPix = _XmGetScaledPixmap(mBox->core.screen, (Widget)mBox, defaultName,
+		                            &acc_color_rec, depth, False, 0, 0,
+		                            mBox->message_box.baseline * 2.5);
 	}
     }
 
