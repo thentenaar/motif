@@ -711,7 +711,7 @@ FetchPixmap(
 
    *pixmap = _XmGetScaledPixmap (XtScreen(widget), widget,
 				 image_name, &acc_color_rec,
-				 depth, FALSE, 0);
+				 depth, FALSE, 0, 0, 0);
 
    if (*pixmap == XmUNSPECIFIED_PIXMAP) {
        return ;

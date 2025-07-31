@@ -1248,7 +1248,9 @@ _XmGetScaledPixmap(
     XmAccessColorData acc_color,
     int depth,
     Boolean only_if_exists,
-    double scaling_ratio)
+    double scaling_ratio,
+    int desired_w,
+    int desired_h)
 {
     Display * display = DisplayOfScreen(screen);
     XImage * image;
@@ -1323,7 +1325,6 @@ _XmGetScaledPixmap(
          - for xbm, everything but foreground and background.
 	 - for xpm, on a case by case basis, depending
 	 if the corresponding symbolic color was used. */
-
     if (!(ret = GetImage(screen, image_name, acc_color, &image,
 			 &pixmap_resolution, &pixels, &npixels)))
 	return (XmUNSPECIFIED_PIXMAP);
@@ -1450,9 +1451,22 @@ _XmGetScaledPixmap(
        print_resolution might change for the same print shell */
     pix_entry->scaling_ratio = scaling_ratio ;
 
-    /* use the pixmap scaling ratio for printing  */
-    pix_entry->width = image->width * pix_data.scaling_ratio ;
-    pix_entry->height = image->height * pix_data.scaling_ratio ;
+    /* Scale according to the desired w/h or use the scaling ratio */
+    if (desired_w || desired_h) {
+        if (!desired_w) { /* Scale according to height */
+            pix_entry->width  = image->width * ((double)desired_h / image->height);
+            pix_entry->height = desired_h;
+        } else if (!desired_h) { /* Scale according to width */
+            pix_entry->width  = desired_w;
+            pix_entry->height = image->height * ((double)desired_w / image->width);
+        } else { /* Fixed size */
+            pix_entry->width  = desired_w;
+            pix_entry->height = desired_h;
+        }
+    } else {
+        pix_entry->width  = image->width  * pix_data.scaling_ratio ;
+        pix_entry->height = image->height * pix_data.scaling_ratio ;
+    }
 
     pixmap = XCreatePixmap (display, RootWindowOfScreen(screen),
 			    pix_entry->width,
@@ -1533,7 +1547,7 @@ _XmGetColoredPixmap(Screen *screen,
 {
     return _XmGetScaledPixmap (screen, NULL,
 			       image_name, acc_color, depth,
-			       only_if_exists, 1); /* no scaling */
+			       only_if_exists, 1, 0, 0); /* no scaling */
 }
 
 Pixmap
@@ -1559,7 +1573,7 @@ XmGetScaledPixmap(
     acc_color_rec.highlight_color = XmUNSPECIFIED_PIXEL ;
     ret_val = _XmGetScaledPixmap(XtScreen(widget), widget, image_name,
 				 &acc_color_rec, depth, False,
-				 scaling_ratio);
+				 scaling_ratio, 0, 0);
     _XmProcessUnlock();
     _XmAppUnlock(app);
 
@@ -1599,7 +1613,7 @@ XmGetPixmapByDepth(
     acc_color_rec.highlight_color = XmUNSPECIFIED_PIXEL ;
     ret_val = _XmGetScaledPixmap(screen, NULL, image_name,
 				 &acc_color_rec, depth, False,
-				 1);
+				 1, 0, 0);
     _XmProcessUnlock();
     _XmAppUnlock(app);
 

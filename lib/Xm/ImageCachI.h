@@ -87,7 +87,9 @@ extern Pixmap _XmGetScaledPixmap(
     XmAccessColorData acc_color,
     int depth,
     Boolean only_if_exists,
-    double scaling_ratio);
+    double scaling_ratio,
+    int desired_w,
+    int desired_h);
 
 extern void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
                               int depth, GC gc, XImage *src, int sx, int sy,

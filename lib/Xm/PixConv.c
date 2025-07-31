@@ -26,9 +26,8 @@
 #include <config.h>
 #endif
 
-
-#include <Xm/AccColorT.h> 
-#include <Xm/TraitP.h> 
+#include <Xm/AccColorT.h>
+#include <Xm/TraitP.h>
 #include <Xm/XmP.h>
 #include "XmI.h"
 #include "ImageCachI.h"
@@ -41,19 +40,17 @@
     (XtIsWidget(widget))? \
        ((widget)->core.depth):((XtParent(widget))->core.depth)
 
-
-
 /********    Static Function Declarations    ********/
 
 static Boolean GetColorInfo (
-			  Widget widget, 
+			  Widget widget,
 			  XmAccessColorData acc_color);
 static Pixmap GetPixmap (
 			 Widget widget,
 			 unsigned char  conv_type,
 			 String image_name,
 			 Boolean  scaling);
-static Boolean CvtStringToPixmap( 
+static Boolean CvtStringToPixmap(
                         Display *dpy,
                         XrmValue *args,
                         Cardinal *numArgs,
@@ -61,8 +58,6 @@ static Boolean CvtStringToPixmap(
                         XrmValue *toVal,
                         XtPointer *closure_ret) ;
 /********    End Static Function Declarations    ********/
-	
-
 
 
 /*--------------------------------------------------------------*/
@@ -82,7 +77,7 @@ static XtConvertArgRec bitmapArgs[] =
 
 static XtConvertArgRec bitmapNoScalingArgs[] =
 {
-   { XtBaseOffset, (XtPointer) 0, sizeof (int) }, 
+   { XtBaseOffset, (XtPointer) 0, sizeof (int) },
    { XtAddress, (XtPointer)CONVERT_BITMAP, 0},
    { XtAddress, (XtPointer)False, 0}
 };
@@ -114,7 +109,7 @@ static XtConvertArgRec pixmapArgs[] =
  *	Register the pixmap converters used in Motif 2.0
  *
  ************************************************************************/
-void 
+void
 _XmRegisterPixmapConverters( void )
 {
     static Boolean inited = False;
@@ -122,102 +117,102 @@ _XmRegisterPixmapConverters( void )
     _XmProcessLock();
     if (inited == False) {
 	inited = True;
-	
+
 	/* for icon masks - need scaling */
-	XtSetTypeConverter (XmRString, XmRBitmap, 
+	XtSetTypeConverter (XmRString, XmRBitmap,
 			    CvtStringToPixmap,
 			    bitmapArgs, XtNumber(bitmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
 	/* for insensitive stipple */
-	XtSetTypeConverter (XmRString, XmRNoScalingBitmap, 
+	XtSetTypeConverter (XmRString, XmRNoScalingBitmap,
 			    CvtStringToPixmap,
-			    bitmapNoScalingArgs, 
+			    bitmapNoScalingArgs,
 			    XtNumber(bitmapNoScalingArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
 	/* for most pixmap used as icon - need scaling */
 	XtSetTypeConverter (XmRString, XmRDynamicPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    dynamicArgs, XtNumber(dynamicArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
  	/* for pixmap used as tiling */
 	XtSetTypeConverter (XmRString, XmRNoScalingDynamicPixmap,
-			    CvtStringToPixmap, 
-			    dynamicNoScalingArgs, 
+			    CvtStringToPixmap,
+			    dynamicNoScalingArgs,
 			    XtNumber(dynamicNoScalingArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
 
  	/* for background and shell iconPixmap: no scaling by default */
-	XtSetTypeConverter (XmRString, XmRPixmap, 
+	XtSetTypeConverter (XmRString, XmRPixmap,
 			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
-	
+
+
 #ifndef _NO_PIXMAP_CONV_BC
 /* Here we install the 1.2 pixmap converters by default,
    so that subwidgets can still use them.
-   They use the pixmapArgs, meaning they create a matching 
+   They use the pixmapArgs, meaning they create a matching
    depth pixmap, with background and foreground color, not
    highlight, top_shadow, etc.
 
    define _NO_PIXMAP_CONV_BC if you don't want them */
 
-	XtSetTypeConverter (XmRString, XmRXmBackgroundPixmap, 
+	XtSetTypeConverter (XmRString, XmRXmBackgroundPixmap,
 			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRPrimForegroundPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRPrimHighlightPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRPrimTopShadowPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRPrimBottomShadowPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRManForegroundPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRManHighlightPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRManTopShadowPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRManBottomShadowPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
-	
+
 	XtSetTypeConverter (XmRString, XmRGadgetPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
 
 	XtSetTypeConverter (XmRString, XmRAnimationPixmap,
-			    CvtStringToPixmap, 
+			    CvtStringToPixmap,
 			    pixmapArgs, XtNumber(pixmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
 
-	XtSetTypeConverter (XmRString, XmRAnimationMask, 
+	XtSetTypeConverter (XmRString, XmRAnimationMask,
 			    CvtStringToPixmap,
 			    bitmapArgs, XtNumber(bitmapArgs),
 			    (XtCacheNone | XtCacheRefCount), NULL);
@@ -235,8 +230,7 @@ _XmRegisterPixmapConverters( void )
  *  CvtStringToPixmap
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 CvtStringToPixmap(
         Display *dpy,
         XrmValue *args,
@@ -258,13 +252,13 @@ CvtStringToPixmap(
 
    if (XmeNamesAreEqual(image_name, "none")) {
        pixmap = None ;
-       _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap, 
+       _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap,
 	     XmDestroyPixmap(XtScreen(widget), pixmap) ;)
    }
-       
+
    if (XmeNamesAreEqual(image_name, XmSunspecified_pixmap)) {
        pixmap = XmUNSPECIFIED_PIXMAP ;
-       _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap, 
+       _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap,
 	     XmDestroyPixmap(XtScreen(widget), pixmap) ;)
    }
 
@@ -272,20 +266,20 @@ CvtStringToPixmap(
    scaling = (unsigned char) (int) (long) args[2].addr;
 
    pixmap = GetPixmap (widget, conv_type, image_name, scaling) ;
-       
+
    if (pixmap == XmUNSPECIFIED_PIXMAP) {
-       XtDisplayStringConversionWarning(dpy, image_name, 
+       XtDisplayStringConversionWarning(dpy, image_name,
 					XmRPixmap);
-       return False;   
+       return False;
    }
 
 
-   _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap, 
+   _XM_CONVERTER_DONE ( toVal, Pixmap, pixmap,
 		       XmDestroyPixmap(XtScreen(widget), pixmap) ;)
 }
 
 
-static Pixmap 
+static Pixmap
 GetPixmap (
 	   Widget widget,
 	   unsigned char converter_type,
@@ -301,8 +295,8 @@ GetPixmap (
    if (scaling) scaling_ratio = 0 ; else scaling_ratio = 1;
 
    if (converter_type == CONVERT_BITMAP) {
-       pixmap = XmGetScaledPixmap (widget, image_name, 1, 0, 1, 
-				   scaling_ratio); 
+       pixmap = XmGetScaledPixmap (widget, image_name, 1, 0, 1,
+				   scaling_ratio);
        /* pass a double: 0 means scaling using print shell resolution, etc
 	  and 1 means no scaling explicitly */
        /* use the widget to find the print shell which gives
@@ -317,24 +311,24 @@ GetPixmap (
        /* If we cannot get the colors out of the widget,
 	  we have to delay the conversion.
 	  So we return a magic value for the pixmap,
-	  so that the conversion be done later in Initialize. 
-	  This probably happens for gadget when the cache is not yet 
+	  so that the conversion be done later in Initialize.
+	  This probably happens for gadget when the cache is not yet
 	  created at the time the pixmap is converted, so the colors
 	  cannot be accessed. */
        return  XmDELAYED_PIXMAP;
 
    depth = DEPTH(widget);
 
-    /* here we want the function to return a bitmap in the xbm case 
+    /* here we want the function to return a bitmap in the xbm case
       or a pixmap (match depth actually) in the xpm case.
       since it is a breakage, I can either use a new private API,
       or a private convention, useful for others who know it :-)
-      the convention is -depth (depth is an int). Positive depth 
+      the convention is -depth (depth is an int). Positive depth
 
       will still fetch pixmap even for xbm. */
    depth = -depth ;
 
-   
+
    /* if PIXMAP forced, force depth to be positive, meaning
       always a pixmap even if xbm specified */
    /* ...as long as the foreground color is not XmUNSPECIFIED_PIXEL.
@@ -351,10 +345,10 @@ GetPixmap (
 
    pixmap = _XmGetScaledPixmap (screen, widget, image_name,
 				&acc_color_rec, depth, FALSE,
-				scaling_ratio); /* pass scaling down to
-				             ImageCache */ 
+				scaling_ratio, 0, 0); /* pass scaling down to
+				             ImageCache */
 
-   return pixmap ; 
+   return pixmap ;
 }
 
 
@@ -362,17 +356,17 @@ GetPixmap (
 
 static Boolean
 GetColorInfo (
-	       Widget widget, 
+	       Widget widget,
 	       XmAccessColorData acc_color)
 {
     XmAccessColorsTrait access_colors_trait ;
 
-    access_colors_trait = (XmAccessColorsTrait) 
+    access_colors_trait = (XmAccessColorsTrait)
 	XmeTraitGet((XtPointer)XtClass(widget), XmQTaccessColors) ;
-    
+
     if (access_colors_trait) {
 	acc_color->valueMask = AccessForeground | AccessBackgroundPixel |
-	    AccessHighlightColor | AccessTopShadowColor | 
+	    AccessHighlightColor | AccessTopShadowColor |
 		AccessBottomShadowColor | AccessSelectColor;
 	access_colors_trait->getColors(widget, acc_color) ;
 
@@ -380,7 +374,7 @@ GetColorInfo (
 	if (!(acc_color->valueMask & AccessSelectColor))
 	    acc_color->select_color = XmUNSPECIFIED_PIXEL ;
 
-	if (acc_color->valueMask == AccessColorInvalid) 
+	if (acc_color->valueMask == AccessColorInvalid)
 	    return False ;
     }
     else /* not one of ours, set dumb default */ {
@@ -389,11 +383,11 @@ GetColorInfo (
 	else
 	    acc_color->background = WhitePixelOfScreen(XtScreen(widget));
 	acc_color->foreground = BlackPixelOfScreen(XtScreen(widget));
-	acc_color->highlight_color = acc_color->top_shadow_color = 
-	    acc_color->bottom_shadow_color = acc_color->select_color 
+	acc_color->highlight_color = acc_color->top_shadow_color =
+	    acc_color->bottom_shadow_color = acc_color->select_color
 		= XmUNSPECIFIED_PIXEL ;
     }
-    
+
     return True ;
 }
 
@@ -406,8 +400,7 @@ GetColorInfo (
  *  and depth information.
  *
  ************************************************************************/
-/*ARGSUSED*/
-void 
+void
 _XmTopShadowPixmapDefault(
         Widget widget,
         int offset,		/* unused */
@@ -433,22 +426,21 @@ _XmTopShadowPixmapDefault(
    if (depth == 1)
        pixmap = XmGetScaledPixmap (widget, XmS50_foreground,
 				   1, 0, 1, 1);
-   else 
+   else
        if (acc_color_rec.top_shadow_color == acc_color_rec.background) {
-	   /* forces a real pixmap here, otherwise the widget will 
-	      still use the top_shadow_color == background as a 
+	   /* forces a real pixmap here, otherwise the widget will
+	      still use the top_shadow_color == background as a
 	      stipple, so don't negative depth  */
 
-	   pixmap = XmGetScaledPixmap (widget, 
+	   pixmap = XmGetScaledPixmap (widget,
 				       XmS50_foreground,
-				       acc_color_rec.top_shadow_color, 
-				       acc_color_rec.foreground, 
+				       acc_color_rec.top_shadow_color,
+				       acc_color_rec.foreground,
 				       depth, 1);
        }
 }
 
-/*ARGSUSED*/
-void 
+void
 _XmHighlightPixmapDefault(
         Widget widget,
         int offset,		/* unused */
@@ -474,15 +466,15 @@ _XmHighlightPixmapDefault(
        /* forces a real pixmap here, otherwise the widget will still use
 	  the highlight_color == background as a stipple */
        pixmap = XmGetScaledPixmap  (widget, XmS50_foreground,
-				    acc_color_rec.highlight_color, 
-				    acc_color_rec.foreground, 
+				    acc_color_rec.highlight_color,
+				    acc_color_rec.foreground,
 				    depth, 1);
    }
 }
 
 
 
-   
+
 /************************************************************************
  *
  *  _XmGetPixmapBasedGC
@@ -507,10 +499,10 @@ _XmGetPixmapBasedGC(
        int depth ;
 
        XmeGetPixmapData(XtScreen(w), pixmap,
-			NULL,    
+			NULL,
 			&depth,
-			NULL, NULL, NULL, NULL, NULL, NULL); 
-        
+			NULL, NULL, NULL, NULL, NULL, NULL);
+
        if (depth == 1) {
 	   valueMask |= GCFillStyle | GCStipple ;
 	   values.fill_style = FillOpaqueStippled;
@@ -521,8 +513,8 @@ _XmGetPixmapBasedGC(
 	   valueMask |= GCFillStyle | GCTile ;
 	   values.fill_style = FillTiled;
 	   values.tile = pixmap;
-       }	   
-	       
+       }
+
    }
 
    return (XtGetGC (w, valueMask, &values));
