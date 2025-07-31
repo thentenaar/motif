@@ -5,7 +5,10 @@ CLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST = xmstring.list Xm.msg \
              XmStrDefs.ct
 
-AM_CPPFLAGS = -I.. -I$(srcdir)/.. -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
+AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
+              -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
+              -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
+              -DDATADIR=\"@DATADIR@\" \
               $(XFT_CFLAGS) ${X_CFLAGS}
 xmdir = $(includedir)/Xm
 

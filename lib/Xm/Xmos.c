@@ -1015,9 +1015,16 @@ XmeGetHomeDirName(void)
 #ifndef INCDIR
 #define INCDIR "/usr/include/X11"
 #endif
+#ifndef DATADIR
+#define DATADIR "/usr/share"
+#endif
+#ifndef PACKAGE_NAME
+#define PACKAGE_NAME "motif"
+#endif
 
-static const char libdir[] = LIBDIR;
-static const char incdir[] = INCDIR;
+static const char libdir[]  = LIBDIR;
+static const char incdir[]  = INCDIR;
+static const char datadir[] = DATADIR;
 
 /*************************************************************************
  *
@@ -1052,6 +1059,8 @@ static const char XAPPLRES_DEFAULT[] = "\
 %%S:\
 %s/%%T/%%P\
 %%S:\
+%s/%%T/%s/%%P%%S:\
+%s/%s/%%T/%%P%%S:\
 %s/%%T/%%P\
 %%S:\
 %s/%%P\
@@ -1078,6 +1087,8 @@ static const char XAPPLRES_DEFAULT[] = "\
 static const char PATH_DEFAULT[] = "\
 %%P\
 %%S:\
+%s/%%T/%s/%%P%%S:\
+%s/%s/%%T/%%P%%S:\
 %s/%%L/%%T/%%N/%%P\
 %%S:\
 %s/%%l_%%t/%%T/%%N/%%P\
@@ -1218,22 +1229,23 @@ _XmOSInitPath(String   file_name,
 	  if (old_path == NULL)
 	    {
 	      path = XtCalloc(1, (9*strlen(homedir) + strlen(PATH_DEFAULT) +
-				  8*strlen(libdir) + strlen(incdir) + 1));
-	      sprintf(path, PATH_DEFAULT, homedir, homedir, homedir,
-		      homedir, homedir, homedir, homedir, homedir, homedir,
-		      libdir, libdir, libdir, libdir, libdir, libdir, libdir,
-		      libdir, incdir);
+				  8*strlen(libdir) + strlen(incdir) + 2*strlen(datadir) +
+				  2*strlen(PACKAGE_NAME) + 1));
+	      sprintf(path, PATH_DEFAULT, datadir, PACKAGE_NAME, datadir,
+	              PACKAGE_NAME, homedir, homedir, homedir, homedir, homedir,
+	              homedir, homedir, homedir, homedir, libdir, libdir, libdir,
+	              libdir, libdir, libdir, libdir, libdir, incdir);
 	    }
 	  else
 	    {
 	      path = XtCalloc(1, (8*strlen(old_path) + 2*strlen(homedir) +
 				  strlen(XAPPLRES_DEFAULT) + 8*strlen(libdir) +
-				  strlen(incdir) + 1));
+				  strlen(incdir) + 2*strlen(datadir) + 2*strlen(PACKAGE_NAME) + 1));
 	      sprintf(path, XAPPLRES_DEFAULT,
 		      old_path, old_path, old_path, old_path, old_path,
-		      old_path, old_path, old_path, homedir, homedir,
-		      libdir, libdir, libdir, libdir, libdir, libdir, libdir,
-		      libdir, incdir);
+		      old_path, old_path, old_path, datadir, PACKAGE_NAME, datadir,
+		      PACKAGE_NAME, homedir, homedir, libdir, libdir, libdir, libdir,
+		      libdir, libdir, libdir, libdir, incdir);
 	    }
 	}
       else
