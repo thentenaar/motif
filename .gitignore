@@ -33,6 +33,8 @@ xmstring.list
 *.uid
 *.rej
 *.orig
+*.plist
+compile_commands.json
 include/config.h*
 config/util/makestrs
 clients/mwm/mwm

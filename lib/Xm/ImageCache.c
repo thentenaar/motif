@@ -1282,8 +1282,10 @@ _XmGetScaledPixmap(
     pix_data.acc_color = acc_color ;
     pix_data.print_resolution = 100 ; /* default */
     pix_data.scaling_ratio = scaling_ratio ;
-
     pix_data.pixmap = XmUNSPECIFIED_PIXMAP;
+
+    if (desired_h) pix_data.height = desired_h;
+    if (desired_w) pix_data.width  = desired_w;
 
     /* find out the print shell ancestor */
     pix_data.print_shell = widget ;
@@ -1307,9 +1309,12 @@ _XmGetScaledPixmap(
     _XmProcessLock();
     if ((pix_entry = (PixmapData*)
 	 _XmGetHashEntry(pixmap_data_set, (XmHashKey)&pix_data)) != NULL) {
-	pix_entry->reference_count++;
-	_XmProcessUnlock();
-	return pix_entry->pixmap ;
+	if ((!desired_w || (desired_w && pix_entry->width  == desired_w)) &&
+	    (!desired_h || (desired_h && pix_entry->height == desired_h))) {
+	    pix_entry->reference_count++;
+	    _XmProcessUnlock();
+		return pix_entry->pixmap ;
+	}
     }
     _XmProcessUnlock();
 
