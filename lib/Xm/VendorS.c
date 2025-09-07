@@ -68,9 +68,7 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 #include "VendorSI.h"
 #include "XmI.h"
 
-#if HAVE_LIBXMU
 #include <X11/Xmu/Editres.h>
-#endif
 
 #if XM_MSGCAT
 #if !defined(NL_CAT_LOCALE)
@@ -1866,11 +1864,7 @@ Initialize(
 	 XmDisplay xmDisplay = (XmDisplay) XmGetXmDisplay (XtDisplay(new_w));
 
 	 xmDisplay->display.shellCount += 1;
-
-#ifdef HAVE_LIBXMU
-	XtAddEventHandler(new_w, (EventMask)0, True, (XtEventHandler)_XEditResCheckMessages, NULL);
-#endif
-
+	 XtAddEventHandler(new_w, (EventMask)0, True, (XtEventHandler)_XEditResCheckMessages, NULL);
     }
 
     /* install the Motif warning handler that works with XmeWarning */
@@ -2942,6 +2936,10 @@ Destroy(
 	     XtDestroyWidget ((Widget)xmDisplay);
 	 }
     }
+
+#ifdef HAVE_EDITRES_CLEANUP
+	_XEditResCleanup();
+#endif
 }
 
 /*ARGSUSED*/
