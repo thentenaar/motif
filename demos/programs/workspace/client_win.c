@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,58 +19,20 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: client_win.c /main/5 1995/07/14 09:47:48 drk $"
 #endif
 #endif
 
-#include <stdio.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-
-static Window TryChildren();
 
 /* Find a window with WM_STATE, else return win itself, as per ICCCM */
 static Atom WM_STATE = None;
 
-Window IsClientWindow(dpy, win, retdata)
-	Display *dpy;
-	Window win;
-	unsigned int **retdata;
-{
-	Atom type = None;
-	int format;
-	unsigned long nitems, after;
-	unsigned int	*data;
-	Window inf;
-	/* WM_STATE        *data */
-
-	*retdata = NULL;
-
-	if(WM_STATE == None) {
-		WM_STATE = XInternAtom(dpy, "WM_STATE", True);
-	}
-	if (!WM_STATE) return win;
-
-	XGetWindowProperty(dpy, win, WM_STATE, 0, 2, False, AnyPropertyType,
-		       &type, &format, &nitems, &after, (unsigned char **)&data);
-	if (type) {
-		*retdata = data;
-		return win;
-	}
-	inf = TryChildren(dpy, win, WM_STATE, retdata);
-	if (!inf)
-		inf = win;
-	return inf;
-}
-
-static Window TryChildren (dpy, win, WM_STATE, retdata)
-	Display *dpy;
-	Window win;
-	Atom WM_STATE;
-	unsigned int **retdata;
+static Window TryChildren(Display *dpy, Window win, unsigned int **retdata)
 {
 	Window root, parent;
 	Window *children;
@@ -94,7 +56,31 @@ static Window TryChildren (dpy, win, WM_STATE, retdata)
 		}
 	}
 	for (i = 0; !inf && (i < nchildren); i++)
-		inf = TryChildren(dpy, children[i], WM_STATE, retdata);
+		inf = TryChildren(dpy, children[i], retdata);
 	if (children) XFree((char *)children);
 	return inf;
 }
+
+Window IsClientWindow(Display *dpy, Window win, unsigned int **retdata)
+{
+	Atom type = None;
+	int format;
+	unsigned long nitems, after;
+	unsigned int	*data;
+	Window inf;
+
+	*retdata = NULL;
+	if (WM_STATE == None)
+		WM_STATE = XInternAtom(dpy, "WM_STATE", True);
+	if (!WM_STATE) return win;
+
+	XGetWindowProperty(dpy, win, WM_STATE, 0, 2, False, AnyPropertyType,
+		       &type, &format, &nitems, &after, (unsigned char **)&data);
+	if (type) {
+		*retdata = data;
+		return win;
+	}
+	inf = TryChildren(dpy, win, retdata);
+	return inf ? inf : win;
+}
+
