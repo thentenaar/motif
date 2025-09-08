@@ -24,14 +24,11 @@
  */
 #include "fontsel.h"
 
-
-
 /*
  * Function: BxRegisterConverters()
  *     Registers all the converters for all widgets.
  */
-static void
-BxRegisterConverters()
+static void BxRegisterConverters(void)
 {
     XtInitializeWidgetClass(xmSeparatorWidgetClass);
     XtInitializeWidgetClass(xmPushButtonWidgetClass);
@@ -55,24 +52,21 @@ extern void MENU_POST();
 /*
  * Callback procedure declarations
  */
-extern void CreateHypeLabel();
-extern void ShowFontValChCB();
-extern void ExplainCB();
-extern void ShowCurFont();
-extern void ShowOtherCB();
-extern void QuitCB();
+extern void CreateHypeLabel(Widget w, XtPointer client, XtPointer call);
+extern void ShowFontValChCB(Widget w, XtPointer client, XtPointer call);
+extern void ExplainCB(Widget w, XtPointer client, XtPointer call);
+extern void ShowCurFont(Widget w, XtPointer client, XtPointer call);
+extern void ShowOtherCB(Widget w, XtPointer client, XtPointer call);
+extern void QuitCB(Widget w, XtPointer client, XtPointer call);
 
 /*
  * Function: CreateDemoForm()
  *        Create form hierarchy of widgets.
  */
-Widget
-CreateDemoForm( parent)
-Widget parent;
+Widget CreateDemoForm(Widget parent)
 {
     Arg    	args[512];
     Cardinal   	argcnt;
-    Boolean   	argok;
     Widget 	retval;
     Widget	form;
     Widget	font_frame;
@@ -90,8 +84,6 @@ Widget parent;
     Widget	other_pb;
     Widget	separator2;
     Widget	quit_pb;
-
-    argok = False;
 
     BxRegisterConverters();
 

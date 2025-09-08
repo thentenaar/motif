@@ -8,8 +8,6 @@
 /**************************************************************
  *		INCLUDES
  **************************************************************/
-#include <stdlib.h>
-#include <stdio.h>
 #include <Xm/Xm.h>
 #include <Xm/ToggleB.h>
 #include <Xm/MessageB.h>
@@ -30,63 +28,46 @@
  *		GLOBALS' EXTERNS
  **************************************************************/
 extern Widget G_font;
+extern XtAppContext app;
 
-/* ARGSUSED */
-void
-CreateHypeLabel(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void CreateHypeLabel(Widget w, XtPointer client, XtPointer call)
 {
-    Arg args[5];
-    Cardinal argcnt;
+    Arg args[2];
     XmString xmstring;
 
+	(void)client;
+	(void)call;
     xmstring = XmStringLtoRCreate(
 "The Motif Font Selector lets the developer add font selecting capabilities into their applications.\n\
 The Font Selector allows the end user to choose particular fonts based on font family, size,\n\
 weight, and other advanced criteria from the X Logical Font Description (XFLD).",
 				  XmSTRING_DEFAULT_CHARSET);
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNalignment, XmALIGNMENT_BEGINNING); argcnt++;
-    XtSetArg(args[argcnt], XmNlabelString, xmstring); argcnt++;
-    XtSetValues(w, args, argcnt);
+
+    XtSetArg(args[0], XmNalignment, XmALIGNMENT_BEGINNING);
+    XtSetArg(args[1], XmNlabelString, xmstring);
+    XtSetValues(w, args, 2);
 }
 
-/* ARGSUSED */
-void
-ShowFontValChCB(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void ShowFontValChCB(Widget w, XtPointer client, XtPointer call)
 {
-    Arg args[5];
-    Cardinal argcnt;
+    Arg args[1];
 
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNshowFontName, XmToggleButtonGetState(w));
-    argcnt++;
-    XtSetValues(G_font, args, argcnt);
+	(void)client;
+	(void)call;
+    XtSetArg(args[0], XmNshowFontName, XmToggleButtonGetState(w));
+    XtSetValues(G_font, args, 1);
 }
 
-/* ARGSUSED */
-void
-ExplainCB(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void ExplainCB(Widget w, XtPointer client, XtPointer call)
 {
-    Arg args[5];
-    Cardinal argcnt;
+    Arg args[1];
     XmString xmstring=NULL;
     static Widget info = NULL;
 
+	(void)call;
     if (!info) {
-	Widget temp;
-
-	argcnt = 0;
-	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
-	info = XmCreateInformationDialog(w, "explain", args, argcnt);
+	XtSetArg(args[0], XmNtitle, "Explanation");
+	info = XmCreateInformationDialog(w, "explain", args, 1);
 	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
 	XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
@@ -111,73 +92,50 @@ a separate dialog.",
 	break;
     }
 
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
-    XtSetValues(info, args, argcnt);
-
+    XtSetArg(args[0], XmNmessageString, xmstring);
+    XtSetValues(info, args, 1);
     XmStringFree(xmstring);
-
     XtManageChild(info);
 }
 
-/* ARGSUSED */
-void
-ShowCurFont(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void ShowCurFont(Widget w, XtPointer client, XtPointer call)
 {
-    Arg args[5];
-    Cardinal argcnt;
+    Arg args[1];
     XmString xmstring;
     static Widget info = NULL;
     String fontname;
 
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNcurrentFont, &fontname); argcnt++;
-    XtGetValues(G_font, args, argcnt);
+	(void)client;
+	(void)call;
+    XtSetArg(args[0], XmNcurrentFont, &fontname);
+    XtGetValues(G_font, args, 1);
 
-    if (info == NULL) {
-	Widget temp;
-
-	argcnt = 0;
-	XtSetArg(args[argcnt], XmNtitle, "Current Font"); argcnt++;
-	info = XmCreateInformationDialog(w, "explain", args, argcnt);
+    if (!info) {
+	XtSetArg(args[0], XmNtitle, "Current Font");
+	info = XmCreateInformationDialog(w, "explain", args, 1);
 	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
 	XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
 
-    if (fontname == NULL)
-	xmstring = XmStringCreateLocalized("No Current Font");
-    else
-	xmstring = XmStringCreateLocalized(fontname);
-
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
-    XtSetValues(info, args, argcnt);
-
+    xmstring = XmStringCreateLocalized(fontname ? fontname : "No Current Font");
+    XtSetArg(args[0], XmNmessageString, xmstring);
+    XtSetValues(info, args, 1);
     XmStringFree(xmstring);
     XtManageChild(info);
 }
 
-/* ARGSUSED */
-void
-ShowOtherCB(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void ShowOtherCB(Widget w, XtPointer client, XtPointer call)
 {
-    Arg args[5];
-    Cardinal argcnt;
+    Arg args[1];
     XmString xmstring;
     static Widget info = NULL;
 
-    if (info == NULL) {
-	Widget temp;
+	(void)client;
+	(void)call;
 
-	argcnt = 0;
-	XtSetArg(args[argcnt], XmNtitle, "Other Resources"); argcnt++;
-	info = XmCreateInformationDialog(w, "explain", args, argcnt);
+    if (!info) {
+	XtSetArg(args[0], XmNtitle, "Other Resources");
+	info = XmCreateInformationDialog(w, "explain", args, 1);
 	XtUnmanageChild(XtNameToWidget(info, "Cancel"));
 	XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
@@ -193,21 +151,17 @@ appearance:\n\
      useScaling - Boolean - Controls \"Use Font Scaling\" toggle",
 				  XmSTRING_DEFAULT_CHARSET);
 
-    argcnt = 0;
-    XtSetArg(args[argcnt], XmNmessageString, xmstring); argcnt++;
-    XtSetValues(info, args, argcnt);
-
+    XtSetArg(args[0], XmNmessageString, xmstring);
+    XtSetValues(info, args, 1);
     XmStringFree(xmstring);
-
     XtManageChild(info);
 }
 
-/* ARGSUSED */
-void
-QuitCB(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void QuitCB(Widget w, XtPointer client, XtPointer call)
 {
-    exit(0);
+	(void)w;
+	(void)client;
+	(void)call;
+    XtAppSetExitFlag(app);
 }
+

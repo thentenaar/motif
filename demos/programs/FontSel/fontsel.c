@@ -13,18 +13,17 @@
  *		INCLUDE FILES
  **************************************************************/
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "fontsel.h"
 
 #include <Xm/Xm.h>
 #include <Xm/ToggleB.h>
 #include <Xm/FontS.h>
 
+#include "fontsel.h"
+
 /**************************************************************
  *		GLOBALS
  **************************************************************/
+XtAppContext app = NULL;
 Widget G_font = NULL;
 
 /**************************************************************
@@ -54,7 +53,7 @@ static String fallbacks[] = {
     "*other_pb.labelString: Other Resources...",
     "*quit_pb.labelString: Quit",
     "*resform*rgbFileLabel.labelString: XmNrgbFile",
-    
+
     NULL,
 };
 /**************************************************************
@@ -63,63 +62,54 @@ static String fallbacks[] = {
 
 /*
  * Function Name: InitializeDemoForm
- * Description:   
- * Arguments:     form - 
+ * Description:
+ * Arguments:     form -
  * Returns:       nothing
  *
  */
-void 
-InitializeDemoForm(Widget form)
+void InitializeDemoForm(Widget form)
 {
     Widget w;
 
-    w = XtNameToWidget(form, "*show_font_tog");
-    if (w == NULL) {
-	fprintf(stderr, "InitializeDemoForm: cannot find show_font_tog\n");
-	exit(1);
+    if (!(w = XtNameToWidget(form, "*show_font_tog"))) {
+		fprintf(stderr, "InitializeDemoForm: cannot find show_font_tog\n");
+	    XtAppSetExitFlag(app);
     }
 
     XmToggleButtonSetState(w, False, False);
 
     /* Set the global variable */
-    G_font = XtNameToWidget(form, "*fontsel");
-    if (G_font == NULL) {
-	fprintf(stderr, "InitializeDemoForm: cannot find fontsel\n");
-	exit(1);
+    if (!(G_font = XtNameToWidget(form, "*fontsel"))) {
+		fprintf(stderr, "InitializeDemoForm: cannot find fontsel\n");
+	    XtAppSetExitFlag(app);
     }
 }
 
 /*
  * Function Name: main
- * Description:   
+ * Description:
  * Arguments:     the usual suspects
  * Returns:       nothing
  *
  */
-int
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char *argv[])
 {
     Arg args[5];
     Cardinal argcnt;
     Widget top, demowindow;
-    XtAppContext app;
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Font Selector Demo"); argcnt++;
     XtSetArg(args[argcnt], XmNiconName, "Font Selector Demo"); argcnt++;
     XtSetArg(args[argcnt], XmNallowShellResize, True); argcnt++;
-    top = XtAppInitialize(&app, "ColorSelector", NULL, 0,
+    top = XtAppInitialize(&app, "FontSelector", NULL, 0,
 			  &argc, argv, fallbacks, args, argcnt);
 
     demowindow = CreateDemoForm(top);
     XtManageChild(demowindow);
 
     InitializeDemoForm(demowindow);
-
     XtRealizeWidget(top);
-
     XtAppMainLoop(app);
     return 0;
 }
