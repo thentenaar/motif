@@ -7,6 +7,7 @@
  */
 #include <string.h>
 #include <X11/Intrinsic.h>
+#include <X11/Xft/Xft.h>
 #include <Xm/Xm.h>
 #include <check.h>
 
@@ -110,6 +111,20 @@ START_TEST(create_entry_from_fontset)
 	ck_assert_msg((e = XmFontListEntryCreate(font_tag[0], XmFONT_IS_FONTSET, "*medium-14-*")),
 	              "Failed to create a font list entry");
 	if (e) XmFontListEntryFree(&e);
+}
+END_TEST
+
+START_TEST(create_entry_from_xft)
+{
+	XftFont *xf;
+	XmFontListEntry e;
+
+	ck_assert_msg((xf = XftFontOpenName(display, DefaultScreen(display), "Misc Fixed-14:weight=200")),
+	              "Failed to load xft font");
+	ck_assert_msg((e = XmFontListEntryCreate(font_tag[0], XmFONT_IS_XFT, xf)),
+	              "Failed to create a font list entry from xft");
+	if (e) XmFontListEntryFree(&e);
+	if (!e && xf) XftFontClose(display, xf);
 }
 END_TEST
 
@@ -220,6 +235,7 @@ void xmfontlistentry_suite(SRunner *runner)
 	tcase_add_test(t, create_entry_with_invalid_font);
 	tcase_add_test(t, create_entry_from_font);
 	tcase_add_test(t, create_entry_from_fontset);
+	tcase_add_test(t, create_entry_from_xft);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_add_checked_fixture(t, load_fonts, unload_fonts);
 	tcase_set_timeout(t, 1);

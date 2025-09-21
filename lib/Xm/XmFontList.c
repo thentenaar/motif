@@ -85,7 +85,11 @@ XmFontListEntryCreate(
 
     _XmProcessLock();
     if ((font == NULL) || (tag == NULL) ||
-        ((type != XmFONT_IS_FONTSET) && (type != XmFONT_IS_FONT))) {
+        ((type != XmFONT_IS_FONTSET) && (type != XmFONT_IS_FONT)
+#if USE_XFT
+        && (type != XmFONT_IS_XFT)
+#endif
+    )) {
 	 _XmProcessUnlock();
          return (NULL);
     }
@@ -98,6 +102,11 @@ XmFontListEntryCreate(
     n = 0;
     XtSetArg(args[n], XmNfontType, type); n++;
     XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
+#if USE_XFT
+    if (type == XmFONT_IS_XFT)
+        XtSetArg(args[n], XmNxftFont, font);
+    else
+#endif
     XtSetArg(args[n], XmNfont, font); n++;
 
     ret_val =
