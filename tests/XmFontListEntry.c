@@ -150,6 +150,16 @@ START_TEST(load_entry)
 }
 END_TEST
 
+START_TEST(load_entry_xft)
+{
+	XmFontListEntry e;
+
+	ck_assert_msg((e = XmFontListEntryLoad(display, "Misc Fixed-14:weight=200", XmFONT_IS_XFT, font_tag[0])),
+	              "Failed to load a font list entry (xft)");
+	if (e) XmFontListEntryFree(&e);
+}
+END_TEST
+
 START_TEST(get_font_invalid_entry)
 {
 	XmFontType type = -1;
@@ -220,6 +230,7 @@ void xmfontlistentry_suite(SRunner *runner)
 	tcase_add_test(t, load_entry_invalid_tag);
 	tcase_add_test(t, load_entry_invalid_name);
 	tcase_add_test(t, load_entry);
+	tcase_add_test(t, load_entry_xft);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_add_checked_fixture(t, load_fonts, unload_fonts);
 	tcase_set_timeout(t, 1);

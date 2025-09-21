@@ -395,7 +395,11 @@ XmFontListEntryLoad(
   if (!fontName || !*fontName)
 	return NULL;
 
-  if (type != XmFONT_IS_FONT && type != XmFONT_IS_FONTSET)
+  if (type != XmFONT_IS_FONT && type != XmFONT_IS_FONTSET
+#if USE_XFT
+      && type != XmFONT_IS_XFT
+#endif
+  )
 	return NULL;
 
   _XmDisplayToAppContext(display);

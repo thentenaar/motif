@@ -2019,49 +2019,53 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		    FcResult res;
 		    FcPattern *p;
 
-						  static XmRendition *rend_cache;
-						  static int count_rend=0, num_rend;
-						  num_rend = GetSameRenditions(rend_cache, rend, count_rend);
+			static XmRendition *rend_cache;
+			static int count_rend=0, num_rend;
+			num_rend = GetSameRenditions(rend_cache, rend, count_rend);
 
-						  if(num_rend >= 0 && (display == _XmRendDisplay(rend_cache[num_rend]))) {
-							  _XmRendXftFont(rend) = _XmRendXftFont(rend_cache[num_rend]);
-						  } else {
-		    _XmRendPattern(rend) = FcPatternCreate();
-		    if (_XmRendFontName(rend))
-		      FcPatternAddString(_XmRendPattern(rend), FC_FAMILY,
-		                         (XftChar8 *)_XmRendFontName(rend));
-		    if (_XmRendFontFoundry(rend))
-		      FcPatternAddString(_XmRendPattern(rend), FC_FOUNDRY,
-		                         (XftChar8 *)_XmRendFontFoundry(rend));
-		    if (_XmRendFontEncoding(rend))
-		      FcPatternAddString(_XmRendPattern(rend), XFT_ENCODING,
-		                         (XftChar8 *)_XmRendFontEncoding(rend));
-		    if (_XmRendFontStyle(rend))
-		      FcPatternAddString(_XmRendPattern(rend), FC_STYLE,
-		                         (XftChar8 *)_XmRendFontStyle(rend));
-		    if (_XmRendFontSize(rend))
-		      FcPatternAddInteger(_XmRendPattern(rend), FC_SIZE,
-		                         _XmRendFontSize(rend));
-		    if (_XmRendPixelSize(rend))
-		      FcPatternAddInteger(_XmRendPattern(rend), FC_PIXEL_SIZE,
-		                         _XmRendPixelSize(rend));
-		    if (_XmRendFontSlant(rend))
-		      FcPatternAddInteger(_XmRendPattern(rend), FC_SLANT,
-		                         _XmRendFontSlant(rend));
-		    if (_XmRendFontWeight(rend))
-		      FcPatternAddInteger(_XmRendPattern(rend), FC_WEIGHT,
-		                         _XmRendFontWeight(rend));
-		    if (_XmRendFontSpacing(rend))
-		      FcPatternAddInteger(_XmRendPattern(rend), FC_SPACING,
-		                         _XmRendFontSpacing(rend));
-                    p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
-                    _XmRendXftFont(rend) = XftFontOpenPattern(display, p);
-					    		  rend_cache = (XmRendition *) XtRealloc((char *)rend_cache,
-					    		    (Cardinal)(sizeof(XmRendition) * (count_rend + 1)));
-							  rend_cache[count_rend] =_XmRenditionCopy(rend, TRUE);
-							  count_rend++;
-						  }
+			if(num_rend >= 0 && (display == _XmRendDisplay(rend_cache[num_rend]))) {
+				_XmRendXftFont(rend) = _XmRendXftFont(rend_cache[num_rend]);
+			} else {
+				if (_XmRendFontName(rend) && (strchr(_XmRendFontName(rend), '-') || strchr(_XmRendFontName(rend), '=')))
+					_XmRendPattern(rend) = FcNameParse((const FcChar8 *)_XmRendFontName(rend));
+				else {
+					_XmRendPattern(rend) = FcPatternCreate();
+					if (_XmRendFontName(rend))
+						FcPatternAddString(_XmRendPattern(rend), FC_FAMILY,
+						                   (XftChar8 *)_XmRendFontName(rend));
+				}
 
+				if (_XmRendFontFoundry(rend))
+					FcPatternAddString(_XmRendPattern(rend), FC_FOUNDRY,
+				                       (XftChar8 *)_XmRendFontFoundry(rend));
+				if (_XmRendFontEncoding(rend))
+					FcPatternAddString(_XmRendPattern(rend), XFT_ENCODING,
+					                   (XftChar8 *)_XmRendFontEncoding(rend));
+				if (_XmRendFontStyle(rend))
+					FcPatternAddString(_XmRendPattern(rend), FC_STYLE,
+					                   (XftChar8 *)_XmRendFontStyle(rend));
+				if (_XmRendFontSize(rend))
+					FcPatternAddInteger(_XmRendPattern(rend), FC_SIZE,
+					                    _XmRendFontSize(rend));
+				if (_XmRendPixelSize(rend))
+					FcPatternAddInteger(_XmRendPattern(rend), FC_PIXEL_SIZE,
+					                    _XmRendPixelSize(rend));
+				if (_XmRendFontSlant(rend))
+					FcPatternAddInteger(_XmRendPattern(rend), FC_SLANT,
+					                    _XmRendFontSlant(rend));
+				if (_XmRendFontWeight(rend))
+					FcPatternAddInteger(_XmRendPattern(rend), FC_WEIGHT,
+					                    _XmRendFontWeight(rend));
+				if (_XmRendFontSpacing(rend))
+					FcPatternAddInteger(_XmRendPattern(rend), FC_SPACING,
+					                    _XmRendFontSpacing(rend));
+
+				p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
+				_XmRendXftFont(rend) = XftFontOpenPattern(display, p);
+				rend_cache = (XmRendition *)XtRealloc((char *)rend_cache,
+				                                      (Cardinal)(sizeof(XmRendition) * (count_rend + 1)));
+				rend_cache[count_rend++] =_XmRenditionCopy(rend, TRUE);
+		  }
 		  }
 		  result = _XmRendXftFont(rend) != NULL;
 		  break;
