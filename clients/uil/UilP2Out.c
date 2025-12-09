@@ -241,9 +241,8 @@ void	sem_output_uid_file()
     **	Create a context
     */
 
-    urm_status =
-    	UrmGetResourceContext ( XtMalloc, XtFree,
-	initial_context_size, &out_az_context );
+    urm_status = UrmGetResourceContext(XtMalloc, (void (*)(void *))XtFree,
+                                       initial_context_size, &out_az_context);
     if( urm_status != MrmSUCCESS)
 	issue_urm_error( "allocating context" );
 

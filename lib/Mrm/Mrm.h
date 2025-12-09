@@ -246,8 +246,8 @@ typedef struct {
 	MrmType		type ;		/* resource type */
 	MrmCode		access ;	/* URMaPrivate or URMaPublic */
 	MrmCode		lock ;		/* resource locking code */
-	char		*((*alloc_func) ()) ;	/* memory allocation func */
-	void		(*free_func) () ;	/* deallocation func */
+	char		*(*alloc_func)(Cardinal);	/* memory allocation func */
+	void		(*free_func)(void *);	/* deallocation func */
 	MrmFlag		byte_swapped ;	/* resource is byte_swapped */
 } URMResourceContext, *URMResourceContextPtr ;
 
@@ -1237,8 +1237,6 @@ typedef struct {
 #define UrmWRefNameN(ref_id,ndx) \
     ((String)((String)(ref_id)+(ref_id)->refs[(ndx)].w_name_offs))
 
-
-
 /*
  * Function prototypes for URM routines
  */
@@ -1249,10 +1247,10 @@ typedef struct {
 #include "IDB.h"			/* needed for prototype definitions */
 
 /* mrmcontext.c */
-extern Cardinal UrmGetResourceContext  _ARGUMENTS(( char *((*alloc_func )()),
-						    void (*free_func )(),
-						    MrmSize size ,
-						    URMResourceContextPtr *context_id_return ));
+extern Cardinal UrmGetResourceContext(char *(*alloc_func)(Cardinal),
+                                      void (*free_func)(void *),
+                                      MrmSize size,
+                                      URMResourceContextPtr *context_id_return);
 extern Cardinal UrmResizeResourceContext  _ARGUMENTS(( URMResourceContextPtr context_id ,
 						    int size ));
 extern Cardinal UrmFreeResourceContext  _ARGUMENTS(( URMResourceContextPtr context_id ));

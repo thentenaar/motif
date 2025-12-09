@@ -259,7 +259,7 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
   /*
    * Read the literal, discard the context, and return.
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id);
+  UrmGetResourceContext(NULL, NULL, 0, &context_id);
   result = Urm__FetchLiteral (hierarchy_id, index, context_id, &ctxlist);
   if ( result == MrmSUCCESS )
     {
@@ -431,7 +431,7 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
   /*
    * Read the literal, and deal with errors
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id);
+  UrmGetResourceContext(NULL, NULL, 0, &context_id);
   result = Urm__FetchLiteral (hierarchy_id, index, context_id, &ctxlist);
   if ( result == MrmSUCCESS ) {
     type = UrmRCType(context_id);
@@ -537,7 +537,7 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
   /*
    * Read the literal, and deal with errors
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id);
+  UrmGetResourceContext(NULL, NULL, 0, &context_id);
   result = Urm__FetchLiteral (hierarchy_id, index, context_id, &ctxlist);
   if ( result == MrmSUCCESS ) {
     type = UrmRCType(context_id);
@@ -647,7 +647,7 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
   /*
    * Read the literal, and deal with errors.
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id);
+  UrmGetResourceContext(NULL, NULL, 0, &context_id);
   result = Urm__FetchLiteral (hierarchy_id, index, context_id, &ctxlist);
   if ( result == MrmSUCCESS )
     if (UrmRCType(context_id) != MrmRtypeColor)

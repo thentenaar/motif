@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -37,7 +37,7 @@ static char rcsid[] = "$XConsortium: Mrmcontext.c /main/12 1996/11/13 14:00:18 d
  *  FACILITY:
  *
  *      UIL Resource Manager (URM):
- *	
+ *
  *	URM context routines
  *
  *  ABSTRACT:
@@ -108,18 +108,16 @@ static char rcsid[] = "$XConsortium: Mrmcontext.c /main/12 1996/11/13 14:00:18 d
  *--
  */
 
-Cardinal 
-UrmGetResourceContext (char			*((*alloc_func) ()),
-		       void			(*free_func) (),
-		       MrmSize			size,
-		       URMResourceContextPtr	*context_id_return)
+Cardinal UrmGetResourceContext(char *(*alloc_func)(Cardinal),
+                               void (*free_func)(void *),
+                               MrmSize size,
+                               URMResourceContextPtr *context_id_return)
 {
-
   /*
    * Set function defaults if NULL
    */
-  if ( alloc_func == NULL ) alloc_func = XtMalloc ;
-  if ( free_func == NULL ) free_func = XtFree ;
+  if (!alloc_func) alloc_func = XtMalloc;
+  if (!free_func)  free_func  = (void (*)(void *))XtFree;
 
   /*
    * Allocate the context buffer and memory buffer, and set the
@@ -196,7 +194,7 @@ UrmGetResourceContext (char			*((*alloc_func) ()),
  *--
  */
 
-Cardinal 
+Cardinal
 UrmResizeResourceContext (URMResourceContextPtr	context_id,
 			  int			size)
 
@@ -289,7 +287,7 @@ UrmResizeResourceContext (URMResourceContextPtr	context_id,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmFreeResourceContext (URMResourceContextPtr	context_id)
 {
 

@@ -510,9 +510,7 @@ _XmConfigureWidget(Widget w, Position x, Position y,
  *            ( 0) -> first == second
  *            ( 1) -> first > second
  */
-int
-XmCompareISOLatin1(first, second)
-    char *first, *second;
+int XmCompareISOLatin1(char *first, char *second)
 {
     register unsigned char *ap, *bp;
 
@@ -543,9 +541,7 @@ XmCompareISOLatin1(first, second)
     return (((int) *bp) - ((int) *ap));
 }
 
-void
-XmCopyISOLatin1Lowered(dst, src)
-    char *dst, *src;
+void XmCopyISOLatin1Lowered(char *dst, char *src)
 {
     register unsigned char *dest, *source;
 

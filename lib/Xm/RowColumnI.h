@@ -183,10 +183,7 @@ extern void _XmCallRowColumnMapCallback(
 extern void _XmCallRowColumnUnmapCallback(
                         Widget wid,
                         XEvent *event) ;
-extern void _XmRC_RemoveFromPostFromListOnDestroyCB (
- 			Widget w,
- 			caddr_t clientData,
- 			caddr_t callData) ;
+extern void _XmRC_RemoveFromPostFromListOnDestroyCB(Widget w, XtPointer clientData, XtPointer callData);
 
 extern void _XmRC_CheckAndSetOptionCascade(XmRowColumnWidget menu) ;
 

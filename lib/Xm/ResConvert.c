@@ -411,10 +411,7 @@ externaldef(xmuseversion) int xmUseVersion = XmVersion;
  * Function used to allow Fonts to be per display
  *
  ************************************************************************/
-static void _XmGetDisplayArg(widget, size, value)
-    Widget widget;
-    Cardinal *size;
-    XrmValue* value;
+static void _XmGetDisplayArg(Widget widget, Cardinal *size, XrmValue *value)
 {
     if (widget == NULL)
             XtErrorMsg("missingWidget", "_XmGetDisplayArg", "XtToolkitError",

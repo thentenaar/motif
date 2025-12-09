@@ -78,7 +78,7 @@ extern Widget XmVaCreateManagedExt18List(Widget parent, char *name, ...);
  *  Arguments:     w - the ilist widget.
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListUnselectAllItems(Widget w);
+XM_DEPRECATED extern void XmExt18ListUnselectAllItems(Widget w);
 
 /*  Function Name: XmExt18ListUnselectItem
  *  Description:   Unselects the row passed in
@@ -86,14 +86,14 @@ extern XM_DEPRECATED void XmExt18ListUnselectAllItems(Widget w);
  *                 row_info - ptr to the row passed in
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListUnselectItem(Widget, Xm18RowInfo *);
+XM_DEPRECATED extern void XmExt18ListUnselectItem(Widget, Xm18RowInfo *);
 
 /*  Function Name: XmExt18ListToggleRow
  *  Description:   Toggles the selection state of a specified row
  *  Arguments:     w - the extended list widget
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListToggleRow(Widget, short);
+XM_DEPRECATED extern void XmExt18ListToggleRow(Widget, short);
 
 /*  Function Name: XmExt18ListSelectItems
  *  Description:   Set selection state by matching column entries to XmString
@@ -103,7 +103,7 @@ extern XM_DEPRECATED void XmExt18ListToggleRow(Widget, short);
  *		   notify - if True, call XmNsingleSelectionCallback
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListSelectItems(Widget, XmString, int, Boolean);
+XM_DEPRECATED extern void XmExt18ListSelectItems(Widget, XmString, int, Boolean);
 
 /*  Function Name: XmExt18ListDeselectItems
  *  Description:   Set selection state by matching column entries to XmString
@@ -112,7 +112,7 @@ extern XM_DEPRECATED void XmExt18ListSelectItems(Widget, XmString, int, Boolean)
  *		   column - column number (0 - N) to match (or XmANY_COLUMN)
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListDeselectItems(Widget, XmString, int);
+XM_DEPRECATED extern void XmExt18ListDeselectItems(Widget, XmString, int);
 
 /*  Function Name: XmExt18ListSelectAllItems
  *  Description:   Set selection state on all rows
@@ -120,7 +120,7 @@ extern XM_DEPRECATED void XmExt18ListDeselectItems(Widget, XmString, int);
  *		   notify - if True, call XmNsingleSelectionCallback for each
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListSelectAllItems(Widget, Boolean);
+XM_DEPRECATED extern void XmExt18ListSelectAllItems(Widget, Boolean);
 
 /*  Function Name: XmExt18ListSelectRow
  *  Description:   Set selection state on all rows
@@ -129,7 +129,7 @@ extern XM_DEPRECATED void XmExt18ListSelectAllItems(Widget, Boolean);
  *		   notify - if True, call XmNsingleSelectionCallback
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListSelectRow(Widget, int, Boolean);
+XM_DEPRECATED extern void XmExt18ListSelectRow(Widget, int, Boolean);
 
 /*  Function Name: XmExt18ListDeselectRow
  *  Description:   Set selection state on all rows
@@ -137,7 +137,7 @@ extern XM_DEPRECATED void XmExt18ListSelectRow(Widget, int, Boolean);
  *		   row - the row to select
  *  Returns:       none
  */
-extern XM_DEPRECATED void XmExt18ListDeselectRow(Widget, int);
+XM_DEPRECATED extern void XmExt18ListDeselectRow(Widget, int);
 
 /*
  * Function Name: XmExt18ListGetSelectedRowArray
@@ -147,7 +147,7 @@ extern XM_DEPRECATED void XmExt18ListDeselectRow(Widget, int);
  *		  num_rows - pointer to the number of rows
  * Returns:       array of integer (selected) row numbers
  */
-extern XM_DEPRECATED int *XmExt18ListGetSelectedRowArray(Widget, int *);
+XM_DEPRECATED extern int *XmExt18ListGetSelectedRowArray(Widget, int *);
 
 /*  Function Name: XmExt18ListMakeRowVisible
  *  Description:   Shifts the visible extended list rows as desired
@@ -155,7 +155,7 @@ extern XM_DEPRECATED int *XmExt18ListGetSelectedRowArray(Widget, int *);
  *		   row - the row number wished to be made visible
  *  Returns:       none
  */
-void XM_DEPRECATED XmExt18ListMakeRowVisible(Widget, int);
+XM_DEPRECATED extern void XmExt18ListMakeRowVisible(Widget, int);
 
 #if defined(__cplusplus)
 }
