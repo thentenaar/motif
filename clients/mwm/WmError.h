@@ -32,7 +32,7 @@ extern void PrintFormatted(char *f, char *s0, char *s1, char *s2, char *s3, char
 extern void WmInitErrorHandler (Display *display);
 extern int WmXErrorHandler (Display *display, XErrorEvent *errorEvent);
 extern int WmXIOErrorHandler (Display *display);
-extern _X_NORETURN void WmXtErrorHandler (char *message);
+_X_NORETURN extern void WmXtErrorHandler (char *message);
 extern void WmXtWarningHandler (char *message);
 extern void Warning (char *message);
 #if XM_MSGCAT
