@@ -723,6 +723,7 @@ XmCompareXtWidgetGeometry(XtWidgetGeometry *geom1, XtWidgetGeometry *geom2)
 #define ALIGN_SUBCLASS_PARTS
 
 #ifdef ALIGN_SUBCLASS_PARTS
+#undef _ALIGN
 #define _ALIGN(size) (((size) + (sizeof(double)-1)) & ~(sizeof(double)-1))
 #else
 #define _ALIGN(size) (size)

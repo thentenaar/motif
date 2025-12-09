@@ -68,7 +68,7 @@ support for X/Open message catalogs.
   in [libXmu](https://gitlab.freedesktop.org/xorg/lib/libxmu/-/merge_requests/18)
   can be used instead.
 - ``XmCommandGetChild()`` is deprecated in favor of ``XtNameToWidget`` like the other ``*GetChild()`` functions
-- The docs and demos have been split out from the ``all`` make target
+- The demos have been split out from the ``all`` make target
 
 ## TODO
 

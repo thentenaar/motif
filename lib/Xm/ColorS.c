@@ -146,7 +146,7 @@ static XtResource resources[] =
   {
     XmNrgbFile, XmCString, XmRString,
     sizeof(String), XtOffsetOf(XmColorSelectorRec, cs.rgb_file),
-    XmRString, (XtPointer) "/usr/lib/X11/rgb.txt"
+    XmRString, (XtPointer)RGB_TXT
   },
 #endif
   {

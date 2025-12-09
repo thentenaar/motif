@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#if XM_UTF8
+#if XM_UTF8 && defined(HAVE_ICONV_H)
 #include <iconv.h>
 #endif
 #include <errno.h>

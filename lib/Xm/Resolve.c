@@ -35,13 +35,15 @@
 #include <Xm/GadgetP.h>
 #include <Xm/BaseClassP.h> /* for _XmIsSubclassOf */
 
+#ifndef _ALIGN
 #define _ALIGN(size) (((size) + (sizeof(long)-1)) & ~(sizeof(long)-1))
+#endif
 
 /********    Static Function Declarations    ********/
 
 static void ResolveSyntheticOffsets(
-			WidgetClass wc, 
-			XmOffsetPtr * ipot, 
+			WidgetClass wc,
+			XmOffsetPtr * ipot,
 			XmOffsetPtr * cpot) ;
 
 /********    End Static Function Declarations    ********/
@@ -54,7 +56,7 @@ static void ResolveSyntheticOffsets(
  *
  ************************************************************************/
 
- 
+
 #define IsConstraintClass(wc) _XmIsSubclassOf(wc, constraintWidgetClass)
 /*
  *  end FIX for 5178.
@@ -62,8 +64,8 @@ static void ResolveSyntheticOffsets(
 
 static void
 ResolveSyntheticOffsets(
-			WidgetClass wc, 
-			XmOffsetPtr * ipot, 
+			WidgetClass wc,
+			XmOffsetPtr * ipot,
 			XmOffsetPtr * cpot)
 {
     XmSyntheticResource* sr = NULL;
@@ -110,7 +112,7 @@ ResolveSyntheticOffsets(
     }
 }
 
-void 
+void
 XmeResolvePartOffsets(
         WidgetClass w_class,
         XmOffsetPtr *offset,
@@ -151,15 +153,15 @@ XmeResolvePartOffsets(
 
    if (cc)
    {
-       if(constraint_offset != NULL) 
-	   *constraint_offset = (XmOffsetPtr) XtMalloc(classcount 
+       if(constraint_offset != NULL)
+	   *constraint_offset = (XmOffsetPtr) XtMalloc(classcount
 						       * sizeof(XmOffset));
    }
-   else 
+   else
    {
        if(constraint_offset != NULL) *constraint_offset = NULL;
    }
-   
+
    /*
     *  Fill in the offset table(s) with the offset of all parts
     */
@@ -169,21 +171,21 @@ XmeResolvePartOffsets(
    (*offset)[0] = 0;
 
    if (constraint_offset != NULL && *constraint_offset != NULL) {
-       for (i = classcount-1, scc = (ConstraintWidgetClass) super; i > 0; 
+       for (i = classcount-1, scc = (ConstraintWidgetClass) super; i > 0;
 	    scc = (ConstraintWidgetClass)(scc->core_class.superclass), i--)
 	   if (IsConstraintClass((WidgetClass)scc))
-	       (*constraint_offset)[i] = 
+	       (*constraint_offset)[i] =
 		   _ALIGN(scc->constraint_class.constraint_size);
 	   else
 	       (*constraint_offset)[i] = 0;
-	
+
        (*constraint_offset)[0] = 0;
    }
 
    /*
     *  Update the resource list(s) offsets in place
     */
-   for (i = 0; i < w_class->core_class.num_resources; i++) 
+   for (i = 0; i < w_class->core_class.num_resources; i++)
    {
       pr = (XmPartResource *) &w_class->core_class.resources[i];
 
@@ -194,7 +196,7 @@ XmeResolvePartOffsets(
    }
 
    if (cc && constraint_offset)
-       for (i = 0; i < cc->constraint_class.num_resources; i++) 
+       for (i = 0; i < cc->constraint_class.num_resources; i++)
        {
           pr = (XmPartResource *) &cc->constraint_class.resources[i];
 
@@ -214,7 +216,7 @@ XmeResolvePartOffsets(
 
 
 
-void 
+void
 XmResolveAllPartOffsets(
         WidgetClass w_class,
         XmOffsetPtr *offset,
@@ -224,7 +226,7 @@ XmResolveAllPartOffsets(
 }
 
 
-void 
+void
 XmResolvePartOffsets(
         WidgetClass w_class,
         XmOffsetPtr *offset)

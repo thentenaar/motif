@@ -11,8 +11,8 @@ m4_define([ABI_AGE],      [0])
 m4_define([ABI_VERSION],  [ABI_CURRENT:ABI_REVISION:ABI_AGE])
 
 AC_PREREQ([2.70])
-LT_PREREQ([2.4.6])
-AC_INIT([motif], [XM_VERSION], [https://github.com/thentenaar/motif])
+LT_PREREQ([2.4.2])
+AC_INIT([motif], [XM_VERSION], [https://github.com/thentenaar/motif/issues], [motif], [https://github.com/thentenaar/motif])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_SRCDIR([lib/Xm/Form.c])
@@ -56,6 +56,13 @@ AC_CHECK_HEADERS([alloca.h iconv.h wctype.h fcntl.h sys/poll.h sys/time.h X11/Xo
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
+
+dnl Check for libiconv if needed
+AS_IF([test "x$ac_cv_func_iconv" == "xno"],[
+	AC_SEARCH_LIBS([libiconv_open], [iconv], [], [
+		AC_MSG_ERROR([Unable to find iconv])
+	])
+])
 
 dnl Image formats
 AC_ARG_WITH([jpeg],
@@ -193,9 +200,21 @@ dnl lib/Xm/VirtKeys.c
 AC_SUBST([XMBINDDIR_FALLBACK], "${datadir}/X11/bindings")
 
 dnl lib/Xm/Xmos.c
-AC_SUBST([INCDIR], "${includedir}/X11")
-AC_SUBST([LIBDIR], "${libdir}/X11")
 AC_SUBST([DATADIR], "${datadir}")
+AS_IF([test "x$X11BASE" != "x"],[
+	AC_SUBST([INCDIR], "${X11BASE}/include/X11")
+	AC_SUBST([LIBDIR], "${X11BASE}/lib/X11")
+	AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${X11BASE}/share/X11/rgb.txt"])
+
+],[
+	AC_SUBST([INCDIR], "${includedir}/X11")
+	AC_SUBST([LIBDIR], "${libdir}/X11")
+])
+
+dnl lib/Xm/ColorS.c
+dnl Various NIXes store this file in different places
+AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${datarootdir}/X11/rgb.txt"])
+AC_SUBST([RGB_TXT])
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \
