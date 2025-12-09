@@ -90,18 +90,6 @@
 typedef int status;
 typedef int boolean;
 
-/*
-**  Copy const handling from XmP.h.
-*/
-
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
-
 /* Uil will automatically strip this prefix when saving name of automatically
  * created child.  This is used to prevent name conflicts in existing uil
  * files.  Children names without this prefix will be saved as is.
@@ -217,7 +205,7 @@ typedef int boolean;
 #include "UilIODef.h"
 #include "UilDiagDef.h"
 #include "UilSarDef.h"
-#if defined(linux) || defined(__APPLE__) || defined(sun)
+#if defined(linux) || defined(__APPLE__) || defined(sun) || defined(__FreeBSD__)
 #define YYSTYPE yystype
 #endif
 #include "UilLexPars.h"
@@ -267,17 +255,17 @@ extern String init_wmd_path _ARGUMENTS((String filename));
 
 /* uildiags.c */
 extern void diag_issue_summary  _ARGUMENTS(( void ));
-extern char *diag_tag_text  _ARGUMENTS(( int XmConst b_tag ));
-extern char *diag_object_text  _ARGUMENTS(( int XmConst b_type ));
-extern char *diag_value_text  _ARGUMENTS(( int XmConst b_type ));
-extern char *diag_charset_text  _ARGUMENTS(( int XmConst b_type ));
+extern char *diag_tag_text  _ARGUMENTS(( int const b_tag ));
+extern char *diag_object_text  _ARGUMENTS(( int const b_type ));
+extern char *diag_value_text  _ARGUMENTS(( int const b_type ));
+extern char *diag_charset_text  _ARGUMENTS(( int const b_type ));
 extern void diag_initialize_diagnostics  _ARGUMENTS(( void ));
 extern void diag_restore_diagnostics  _ARGUMENTS(( void ));
 extern void diag_reset_overflow_handler  _ARGUMENTS(( void ));
 extern void diag_handler  _ARGUMENTS(( int l_error ));
 extern void diag_issue_internal_error  _ARGUMENTS(( char *error_text ));
-extern void write_msg_to_standard_error  _ARGUMENTS(( XmConst int message_number , XmConst char *src_buffer , XmConst char *ptr_buffer , XmConst char *msg_buffer , XmConst char *loc_buffer ));
-extern char XmConst *diag_get_message_abbrev  _ARGUMENTS(( int d_message_number ));
+extern void write_msg_to_standard_error  _ARGUMENTS(( const int message_number , const char *src_buffer , const char *ptr_buffer , const char *msg_buffer , const char *loc_buffer ));
+extern char const *diag_get_message_abbrev  _ARGUMENTS(( int d_message_number ));
 extern void diag_report_status  _ARGUMENTS(( void ));
 
 /* uilkeytab.c */
@@ -291,7 +279,7 @@ extern void Uil_lex_cleanup_analyzer  _ARGUMENTS(( void ));
 extern void lex_issue_error  _ARGUMENTS(( int restart_token ));
 extern void issue_control_char_diagnostic  _ARGUMENTS(( unsigned char c_char ));
 extern void lex_filter_unprintable_chars  _ARGUMENTS(( unsigned char *buffer , int length , unsigned long flags ));
-extern long cvt_ascii_to_long  _ARGUMENTS(( unsigned char XmConst *c_text ));
+extern long cvt_ascii_to_long  _ARGUMENTS(( unsigned char const *c_text ));
 extern sym_value_entry_type *create_str_entry  _ARGUMENTS(( int l_size , int l_charset , sym_value_entry_type *az_charset_entry ));
 
 /* uillstlst.c */
@@ -420,9 +408,9 @@ extern sym_entry_type *sem_allocate_node  _ARGUMENTS(( unsigned char node_tag , 
 extern void sem_free_node  _ARGUMENTS(( sym_entry_type *node_ptr ));
 
 /* uilsarproc.c */
-extern void sar_create_procedure  _ARGUMENTS(( XmConst yystype *id_frame , XmConst yystype *param_frame , XmConst yystype *class_frame , XmConst yystype *semi_frame ));
-extern sym_proc_ref_entry_type *sem_reference_procedure  _ARGUMENTS(( yystype *id_frame , XmConst yystype *value_frame , XmConst int context ));
-extern sym_entry_type *sem_ref_name  _ARGUMENTS(( yystype *id_frame , XmConst int tag ));
+extern void sar_create_procedure  _ARGUMENTS(( const yystype *id_frame , const yystype *param_frame , const yystype *class_frame , const yystype *semi_frame ));
+extern sym_proc_ref_entry_type *sem_reference_procedure  _ARGUMENTS(( yystype *id_frame , const yystype *value_frame , const int context ));
+extern sym_entry_type *sem_ref_name  _ARGUMENTS(( yystype *id_frame , const int tag ));
 
 /* uilsarval.c */
 extern void sar_map_keyword_to_name  _ARGUMENTS(( yystype *target_frame , yystype *keyword_frame ));
@@ -441,9 +429,9 @@ extern void sar_value_type_error  _ARGUMENTS(( yystype *value_frame , int expect
 extern void sar_private_error  _ARGUMENTS(( yystype *value_frame ));
 extern void sar_import_value_entry  _ARGUMENTS(( yystype *target_frame , yystype *token_frame ));
 extern void sar_bind_value_name  _ARGUMENTS(( yystype *id_frame , yystype *value_frame , yystype *semi_frame ));
-extern sym_name_entry_type *sem_dcl_name  _ARGUMENTS(( XmConst yystype *id_frame ));
+extern sym_name_entry_type *sem_dcl_name  _ARGUMENTS(( const yystype *id_frame ));
 extern sym_value_entry_type *sem_create_value_entry  _ARGUMENTS(( char *value , int length , int value_type ));
-extern void sar_create_identifier  _ARGUMENTS(( XmConst yystype *id_frame , XmConst yystype *semi_frame ));
+extern void sar_create_identifier  _ARGUMENTS(( const yystype *id_frame , const yystype *semi_frame ));
 extern void sar_make_font_table  _ARGUMENTS(( yystype *target_frame , yystype *font_frame , yystype *prior_target_frame , yystype *keyword_frame ));
 extern void sar_make_font_item  _ARGUMENTS(( yystype *target_frame , yystype *charset_frame , yystype *font_frame ));
 extern void sar_make_font  _ARGUMENTS(( yystype *target_frame , yystype *charset_frame , yystype *value_frame , yystype *keyword_frame ));
@@ -504,16 +492,16 @@ extern void sar_cat_value_entry  _ARGUMENTS(( sym_value_entry_type **target_entr
 /* uilsrcsrc.c */
 extern void src_initialize_source  _ARGUMENTS(( void ));
 extern void Uil_src_cleanup_source  _ARGUMENTS(( void ));
-extern void src_open_file  _ARGUMENTS(( XmConst char *c_file_name , char *full_file_name ));
+extern void src_open_file  _ARGUMENTS(( const char *c_file_name , char *full_file_name ));
 extern status src_get_source_line  _ARGUMENTS(( void ));
-extern status open_source_file  _ARGUMENTS(( XmConst char *c_file_name , uil_fcb_type *az_fcb , src_source_buffer_type *az_source_buffer ));
+extern status open_source_file  _ARGUMENTS(( const char *c_file_name , uil_fcb_type *az_fcb , src_source_buffer_type *az_source_buffer ));
 extern status close_source_file  _ARGUMENTS(( uil_fcb_type *az_fcb ));
 extern status get_line  _ARGUMENTS(( uil_fcb_type *az_fcb ));
-extern boolean reget_line  _ARGUMENTS(( uil_fcb_type *az_fcb , char *c_buffer , XmConst z_key *z_access_key ));
-extern char *src_get_file_name  _ARGUMENTS(( XmConst src_source_record_type *az_src_rec ));
-extern boolean src_retrieve_source  _ARGUMENTS(( XmConst src_source_record_type *az_src_rec , char *c_buffer ));
-extern void src_append_diag_info  _ARGUMENTS(( XmConst src_source_record_type *az_src_rec , XmConst int l_src_pos , XmConst char *c_msg_text , XmConst int l_msg_number ));
-extern void src_append_machine_code  _ARGUMENTS(( src_source_record_type *az_src_rec , XmConst int l_offset , XmConst int l_code_len , XmConst char *c_code , XmConst char *c_text_arg ));
+extern boolean reget_line  _ARGUMENTS(( uil_fcb_type *az_fcb , char *c_buffer , const z_key *z_access_key ));
+extern char *src_get_file_name  _ARGUMENTS(( const src_source_record_type *az_src_rec ));
+extern boolean src_retrieve_source  _ARGUMENTS(( const src_source_record_type *az_src_rec , char *c_buffer ));
+extern void src_append_diag_info  _ARGUMENTS(( const src_source_record_type *az_src_rec , const int l_src_pos , const char *c_msg_text , const int l_msg_number ));
+extern void src_append_machine_code  _ARGUMENTS(( src_source_record_type *az_src_rec , const int l_offset , const int l_code_len , const char *c_code , const char *c_text_arg ));
 
 /* uilsymnam.c */
 extern sym_name_entry_type *sym_find_name  _ARGUMENTS(( int l_length , char *c_text ));
@@ -526,29 +514,29 @@ extern void sym_dump_hash_table  _ARGUMENTS(( void ));
 /* uilsymstor.c */
 extern void sym_initialize_storage  _ARGUMENTS(( void ));
 extern void Uil_sym_cleanup_storage  _ARGUMENTS(( boolean freealloc ));
-extern void sym_make_external_def  _ARGUMENTS(( XmConst sym_name_entry_type *az_name ));
-extern void sym_make_forward_ref  _ARGUMENTS(( XmConst yystype *az_id_frame , XmConst int l_widget_type , XmConst char *a_location ));
-extern void sym_make_value_forward_ref  _ARGUMENTS(( XmConst yystype *az_value_frame , XmConst char *a_location , XmConst unsigned char fwd_ref_flags ));
+extern void sym_make_external_def  _ARGUMENTS(( const sym_name_entry_type *az_name ));
+extern void sym_make_forward_ref  _ARGUMENTS(( const yystype *az_id_frame , const int l_widget_type , const char *a_location ));
+extern void sym_make_value_forward_ref  _ARGUMENTS(( const yystype *az_value_frame , const char *a_location , const unsigned char fwd_ref_flags ));
 extern void UilDumpSymbolTable  _ARGUMENTS(( sym_entry_type *node_entry ));
 extern void sym_dump_symbols  _ARGUMENTS(( void ));
 extern void sym_dump_symbol  _ARGUMENTS(( sym_entry_type *az_symbol_entry ));
-extern void sym_dump_widget  _ARGUMENTS(( XmConst sym_widget_entry_type *az_widget_entry ));
-extern void sym_dump_argument  _ARGUMENTS(( XmConst sym_argument_entry_type *az_argument_entry ));
-extern void sym_dump_control  _ARGUMENTS(( XmConst sym_control_entry_type *az_control_entry ));
-extern void sym_dump_callback  _ARGUMENTS(( XmConst sym_callback_entry_type *az_callback_entry ));
-extern void sym_dump_list  _ARGUMENTS(( XmConst sym_list_entry_type *az_list_entry ));
-extern void sym_dump_name  _ARGUMENTS(( XmConst sym_name_entry_type *az_name_entry ));
-extern void sym_dump_module  _ARGUMENTS(( XmConst sym_module_entry_type *az_module_entry ));
-extern void sym_dump_color_item  _ARGUMENTS(( XmConst sym_color_item_entry_type *az_color_item_entry ));
-extern void sym_dump_parent_list_item  _ARGUMENTS(( XmConst sym_parent_list_type *az_parent_list_item ));
-extern void sym_dump_external_def  _ARGUMENTS(( XmConst sym_external_def_entry_type *az_external_def_entry ));
-extern void sym_dump_proc_def  _ARGUMENTS(( XmConst sym_proc_def_entry_type *az_proc_def_entry ));
-extern void sym_dump_proc_ref  _ARGUMENTS(( XmConst sym_proc_ref_entry_type *az_proc_ref_entry ));
-extern void sym_dump_forward_ref  _ARGUMENTS(( XmConst sym_forward_ref_entry_type *az_forward_ref_entry ));
-extern void sym_dump_value  _ARGUMENTS(( XmConst sym_value_entry_type *az_value_entry ));
-extern void output_text  _ARGUMENTS(( XmConst int length , XmConst char *text ));
+extern void sym_dump_widget  _ARGUMENTS(( const sym_widget_entry_type *az_widget_entry ));
+extern void sym_dump_argument  _ARGUMENTS(( const sym_argument_entry_type *az_argument_entry ));
+extern void sym_dump_control  _ARGUMENTS(( const sym_control_entry_type *az_control_entry ));
+extern void sym_dump_callback  _ARGUMENTS(( const sym_callback_entry_type *az_callback_entry ));
+extern void sym_dump_list  _ARGUMENTS(( const sym_list_entry_type *az_list_entry ));
+extern void sym_dump_name  _ARGUMENTS(( const sym_name_entry_type *az_name_entry ));
+extern void sym_dump_module  _ARGUMENTS(( const sym_module_entry_type *az_module_entry ));
+extern void sym_dump_color_item  _ARGUMENTS(( const sym_color_item_entry_type *az_color_item_entry ));
+extern void sym_dump_parent_list_item  _ARGUMENTS(( const sym_parent_list_type *az_parent_list_item ));
+extern void sym_dump_external_def  _ARGUMENTS(( const sym_external_def_entry_type *az_external_def_entry ));
+extern void sym_dump_proc_def  _ARGUMENTS(( const sym_proc_def_entry_type *az_proc_def_entry ));
+extern void sym_dump_proc_ref  _ARGUMENTS(( const sym_proc_ref_entry_type *az_proc_ref_entry ));
+extern void sym_dump_forward_ref  _ARGUMENTS(( const sym_forward_ref_entry_type *az_forward_ref_entry ));
+extern void sym_dump_value  _ARGUMENTS(( const sym_value_entry_type *az_value_entry ));
+extern void output_text  _ARGUMENTS(( const int length , const char *text ));
 extern void sym_dump_source_info  _ARGUMENTS(( sym_entry_header_type *hdr ));
-extern void sym_dump_obj_header  _ARGUMENTS(( XmConst sym_obj_entry_type *az_obj_entry ));
+extern void sym_dump_obj_header  _ARGUMENTS(( const sym_obj_entry_type *az_obj_entry ));
 extern void sym_dump_include_file  _ARGUMENTS(( sym_include_file_entry_type *az_symbol_entry ));
 extern void sym_dump_section  _ARGUMENTS(( sym_section_entry_type *az_symbol_entry ));
 extern void sym_dump_object_variant  _ARGUMENTS(( sym_def_obj_entry_type *az_symbol_entry ));
