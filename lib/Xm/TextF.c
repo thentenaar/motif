@@ -2961,7 +2961,7 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
 	else
 	    size = sizeof(wchar_t);
 	insert_orig = XtMalloc(insert_length * size);
-	bcopy(insert, insert_orig, insert_length * size);
+	memmove(insert_orig, insert, insert_length * size);
     } else
 	insert_orig = NULL;
     if (!ModifyVerify(tf, event, &replace_prev, &replace_next,
@@ -8694,14 +8694,13 @@ PreeditStart(XIC xic,
 
             if (tf->text.max_char_size == 1){
                 mb = XtMalloc(tf->text.onthespot->over_len + 1);
-                bcopy(&tf->text.value[PreStart(tf)], mb,
-                                        tf->text.onthespot->over_len);
+                memmove(mb, &tf->text.value[PreStart(tf)], tf->text.onthespot->over_len);
                 mb[tf->text.onthespot->over_len] = '\0';
                 tf->text.onthespot->over_str = mb;
             } else {
                 wc = (wchar_t *) XtMalloc(
                         (tf->text.onthespot->over_len+1)*sizeof(wchar_t));
-                bcopy((char *)&tf->text.wc_value[PreStart(tf)], (char *)wc,
+                memmove(wc, &tf->text.wc_value[PreStart(tf)],
                                 tf->text.onthespot->over_len*sizeof(wchar_t));
                 wc[tf->text.onthespot->over_len] = (wchar_t)'\0';
                 tf->text.onthespot->over_str = (char *)wc;
@@ -8915,14 +8914,14 @@ PreeditDraw(XIC xic,
         if (rest_len){
             if (tf->text.max_char_size == 1){
                 over_mb = XtMalloc(rest_len+1);
-               bcopy(&tf->text.value[PreStart(tf)+call_data->chg_first+
-                                call_data->chg_length], over_mb, rest_len);
+               memmove(over_mb, &tf->text.value[PreStart(tf)+call_data->chg_first+
+                                call_data->chg_length], rest_len);
                 over_mb[rest_len] = '\0';
             } else {
                 over_wc = (wchar_t *)XtMalloc((rest_len+1)*sizeof(wchar_t));
-                bcopy((char *)&tf->text.wc_value[PreStart(tf)+
+                memmove(over_wc, &tf->text.wc_value[PreStart(tf)+
                         call_data->chg_first+call_data->chg_length],
-                        (char *)over_wc, rest_len*sizeof(wchar_t));
+                        rest_len*sizeof(wchar_t));
                 over_wc[rest_len] = (wchar_t)'\0';
             }
         }
@@ -9123,7 +9122,7 @@ TextFieldResetIC(Widget w)
 	FVerifyCommitNeeded(tf) = False;
 	str = XtMalloc((PreEnd(tf) - PreStart(tf)+1)*sizeof(wchar_t));
 	if (tf->text.max_char_size == 1) {
-	  bcopy(&tf->text.value[PreStart(tf)], str,
+	  memmove(str, &tf->text.value[PreStart(tf)],
 				PreEnd(tf) - PreStart(tf));
 	  str[PreEnd(tf) - PreStart(tf)] = '\0';
 	}
@@ -9132,7 +9131,7 @@ TextFieldResetIC(Widget w)
 	  wchar_t *wc_string;
 	  wc_string = (wchar_t *)XtMalloc((PreEnd(tf) - PreStart(tf)+1)
                                                         *sizeof(wchar_t));
-          bcopy((char *)&tf->text.wc_value[PreStart(tf)], (char *)wc_string,
+          memmove(wc_string, &tf->text.wc_value[PreStart(tf)],
                                 (PreEnd(tf) - PreStart(tf))*sizeof(wchar_t));
           wc_string[PreEnd(tf) - PreStart(tf)] = (wchar_t)'\0';
 	  num_bytes = wcstombs(str, wc_string,
