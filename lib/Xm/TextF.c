@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
@@ -60,7 +59,6 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include <Xm/VaSimpleP.h>
 #include "DestI.h"
 #include "DisplayI.h"
-#include "GMUtilsI.h"
 #include "ImageCachI.h"
 #include "MessagesI.h"
 #include "RepTypeI.h"
@@ -80,8 +78,11 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #endif
 #include <Xm/XmP.h>
 
-#if (defined(__FreeBSD__) && (__FreeBSD__ < 4)) || \
-    (defined(__APPLE__) || defined(__NetBSD__) || defined(__OpenBSD__))
+#if HAVE_WCHAR_H
+#include <wchar.h>
+#endif
+
+#if !defined(HAVE_WCSLEN)
 /*
  * Modification by Integrated Computer Solutions, Inc.  May 2000
  *
@@ -90,6 +91,32 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
  * the other missing functions as _Xmwc... routines.  The new functions are
  * added static to this file.
  */
+#include <X11/Xfuncproto.h>
+
+_XFUNCPROTOBEGIN
+extern size_t _Xwcslen(
+#if NeedFunctionPrototypes
+const wchar_t *
+#endif
+);
+_XFUNCPROTOEND
+
+_XFUNCPROTOBEGIN
+extern wchar_t *_Xwcscpy(
+#if NeedFunctionPrototypes
+wchar_t *, const wchar_t *
+#endif
+);
+_XFUNCPROTOEND
+
+_XFUNCPROTOBEGIN
+extern wchar_t *_Xwcsncpy(
+#if NeedFunctionPrototypes
+	wchar_t *, const wchar_t *, size_t
+#endif
+);
+_XFUNCPROTOEND
+
 #define wcslen(c) _Xwcslen(c)
 #define wcscpy(d,s) _Xwcscpy(d,s)
 #define wcsncpy(d,s,l) _Xwcsncpy(d,s,l)
@@ -111,7 +138,7 @@ static wchar_t* _Xmwcscat(wchar_t *ws1, const wchar_t *ws2)
         wchar_t *save = ws1;
 
         for (; *ws1; ++ws1);
-        while (*ws1++ = *ws2++);
+        while ((*ws1++ = *ws2++));
         return save;
 }
 #define wcscat(w1,w2) _Xmwcscat(w1,w2)
@@ -134,10 +161,7 @@ static wchar_t* _Xmwcsncat(wchar_t *ws1, const wchar_t *ws2, size_t n)
         return ws1;
 }
 #define wcsncat(w1,w2,l) _Xmwcsncat(w1,w2,l)
-
-#else  /* !__FreeBSD__ */
-#include <wchar.h>
-#endif /* __FreeBSD__ */
+#endif /* !HAVE_WCSLEN */
 
 #define MSG1		_XmMMsgTextF_0000
 #define MSG2		_XmMMsgTextF_0001
