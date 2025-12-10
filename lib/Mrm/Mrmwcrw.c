@@ -282,7 +282,7 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
   widgetrec = (RGMWidgetRecordPtr) UrmRCBuffer (context_id) ;
   if ( widgetrec->children_offs > 0)
     {
-      UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &child_ctx);
+      UrmGetResourceContext(NULL, NULL, 0, &child_ctx);
       childrendesc =
 	(RGMChildrenDescPtr)((char *)widgetrec+widgetrec->children_offs);
 
@@ -576,10 +576,8 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
   int			ndx ;		/* loop index */
   RGMCallbackDescPtr	cbptr ;		/* creation callback descriptor */
   RGMCallbackItemPtr	itmptr ;	/* current callback item */
-  void			(* cb_rtn) () ;	/* current callback routine */
-  /* BEGIN OSF Fix pir 1860, 2813 */
+  void (*cb_rtn)(Widget, XtPointer, XmAnyCallbackStruct *);
   XmAnyCallbackStruct	cb_reason; 	/* creation callback reason */
-  /* END OSF Fix pir 1860, 2813 */
 
   /*
    * Validate the context and the widget record in the context.
@@ -679,16 +677,13 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
 	  {
             itmptr = &cbptr->item[ndx] ;
 
-            cb_rtn = (void (*)()) itmptr->runtime.callback.callback ;
-            if ( cb_rtn != (XtCallbackProc)NULL )
-	      /* BEGIN OSF Fix pir 2813 */
+            cb_rtn = (void (*)(Widget, XtPointer, XmAnyCallbackStruct *))itmptr->runtime.callback.callback;
+            if (cb_rtn)
 	      {
 		cb_reason.reason = MrmCR_CREATE;
 		cb_reason.event = NULL;
-		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure,
-			   &cb_reason) ;
+		(*cb_rtn)(*w_return, itmptr->runtime.callback.closure, &cb_reason);
 	      }
-	    /* END OSF Fix pir 2813 */
 	  }
       else if (result == MrmUNRESOLVED_REFS)
 	Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0056,
@@ -847,7 +842,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   int			ndx ;		/* loop index */
   RGMCallbackDescPtr	cbptr ;		/* creation callback descriptor */
   RGMCallbackItemPtr	itmptr ;	/* current callback item */
-  void			(* cb_rtn) () ;	/* current callback routine */
+  void			(*cb_rtn)(Widget, XtPointer, XmAnyCallbackStruct *);	/* current callback routine */
   /* BEGIN OSF Fix pir 1860, 2813 */
   XmAnyCallbackStruct	cb_reason; 	/* creation callback reason */
   /* END OSF Fix pir 1860, 2813 */
@@ -968,17 +963,13 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
         for ( ndx=0 ; ndx<cbptr->count ; ndx++ )
 	  {
             itmptr = &cbptr->item[ndx] ;
-
-            cb_rtn = (void (*)()) itmptr->runtime.callback.callback ;
-            if ( cb_rtn != (XtCallbackProc)NULL )
-	      /* BEGIN OSF Fix pir 2813 */
+            cb_rtn = (void (*)(Widget, XtPointer, XmAnyCallbackStruct *))itmptr->runtime.callback.callback;
+            if (cb_rtn)
 	      {
 		cb_reason.reason = MrmCR_CREATE;
 		cb_reason.event = NULL;
-		(*cb_rtn) (*w_return, itmptr->runtime.callback.closure,
-			   &cb_reason) ;
+		(*cb_rtn)(*w_return, itmptr->runtime.callback.closure, &cb_reason);
 	      }
-	    /* END OSF Fix pir 2813 */
 	  }
       else if (result == MrmUNRESOLVED_REFS)
 	Urm__UT_Error("UrmCreateWidgetInstance", _MrmMMsg_0056,
@@ -2904,7 +2895,7 @@ Urm__CW_ReadLiteral (RGMResourceDescPtr		resptr ,
   /*
    * Acquire a context and read the literal into it.
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id) ;
+  UrmGetResourceContext (NULL, NULL, 0, &context_id);
   switch ( resptr->type )
     {
     case URMrIndex:
@@ -3418,7 +3409,7 @@ Urm__CW_LoadWidgetResource (Widget			parent ,
    * Acquire a context, then load the widget and instantiate the tree.
    * An HGet call may replace the file for private references.
    */
-  UrmGetResourceContext ((char *(*)())NULL, (void(*)())NULL, 0, &context_id) ;
+  UrmGetResourceContext(NULL, NULL, 0, &context_id);
   switch ( resptr->type )
     {
     case URMrIndex:

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -85,7 +85,7 @@ static char rcsid[] = "$XConsortium: Mrmwrefs.c /main/14 1996/11/13 14:07:43 drk
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_InitWRef (URMResourceContextPtr		*wref_id)
 {
   Cardinal		result;		/* function results */
@@ -95,8 +95,7 @@ Urm__CW_InitWRef (URMResourceContextPtr		*wref_id)
   /*
    * Acquire and initialize resource context
    */
-  result = UrmGetResourceContext ((char *(*)())NULL,(void(*)())NULL, 
-				  500, wref_id);
+  result = UrmGetResourceContext(NULL, NULL, 500, wref_id);
   if ( result != MrmSUCCESS ) return result;
 
   refdsc = (URMWRefStructPtr) UrmRCBuffer (*wref_id);
@@ -135,7 +134,7 @@ Urm__CW_InitWRef (URMResourceContextPtr		*wref_id)
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_AddWRef (URMResourceContextPtr	wref_id,
 		 String			w_name,
 		 Widget			w_id)
@@ -228,7 +227,7 @@ Urm__CW_AddWRef (URMResourceContextPtr	wref_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__CW_FindWRef (URMResourceContextPtr	wref_id,
 		  String		w_name,
 		  Widget		*w_id_return)
@@ -286,7 +285,7 @@ Urm__CW_FindWRef (URMResourceContextPtr	wref_id,
  *--
  */
 
-void 
+void
 Urm__CW_AppendSVWidgetRef (IDBFile		file_id,
 			   URMPointerListPtr	*svlist,
 			   String		w_name,
@@ -329,7 +328,7 @@ Urm__CW_AppendSVWidgetRef (IDBFile		file_id,
 	{
 	  sprintf (errmsg, _MrmMMsg_0108, argtag);
 	  XtFree ((char *)svdesc);
-	  Urm__UT_Error ("Urm__CW_AppendSVWidgetRef", errmsg, 
+	  Urm__UT_Error ("Urm__CW_AppendSVWidgetRef", errmsg,
 			 NULL, NULL, MrmNOT_FOUND);
 	  return;
 	}
@@ -373,7 +372,7 @@ Urm__CW_AppendSVWidgetRef (IDBFile		file_id,
  *--
  */
 
-void 
+void
 Urm__CW_AppendCBSVWidgetRef (IDBFile			file_id,
 			     URMPointerListPtr		*svlist,
 			     RGMCallbackDescPtr		cbptr,
@@ -415,7 +414,7 @@ Urm__CW_AppendCBSVWidgetRef (IDBFile			file_id,
 	{
 	  sprintf (errmsg, _MrmMMsg_0108, argtag);
 	  XtFree ((char *)svdesc);
-	  Urm__UT_Error ("Urm__CW_AppendCBSVWidgetRef", errmsg, 
+	  Urm__UT_Error ("Urm__CW_AppendCBSVWidgetRef", errmsg,
 			 NULL, NULL, MrmNOT_FOUND);
 	  return;
 	}
@@ -438,7 +437,7 @@ Urm__CW_AppendCBSVWidgetRef (IDBFile			file_id,
  *
  *	This routine updates a SetValues list from a just-created widget.
  *	Any entry whose modified widget field is NULL is has the modified
- *	widget set to the given widget. 
+ *	widget set to the given widget.
  *
  *  FORMAL PARAMETERS:
  *
@@ -456,7 +455,7 @@ Urm__CW_AppendCBSVWidgetRef (IDBFile			file_id,
  *--
  */
 
-void 
+void
 Urm__CW_UpdateSVWidgetRef (URMPointerListPtr		*svlist,
 			   Widget			cur_id)
 {
@@ -509,7 +508,7 @@ Urm__CW_UpdateSVWidgetRef (URMPointerListPtr		*svlist,
  *--
  */
 
-void 
+void
 Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
 			    String			cur_name,
 			    Widget			cur_id)
@@ -557,17 +556,17 @@ Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
 	      svdesc->sv.wname = NULL;
 	    }
 	  break;
-	
+
 	case URMsvCallBackList:
 	  cbdesc = (RGMCallbackDescPtr)svdesc->sv.callbacks;
 	  items = cbdesc->item;
-	
+
 	  /* Loop through callback items, resolving where possible */
 	  for (cbndx = 0; cbndx < cbdesc->count; cbndx++)
 	    {
-	      if (items[cbndx].runtime.resolved) continue; 
+	      if (items[cbndx].runtime.resolved) continue;
 
-	      if (strcmp(cur_name, items[cbndx].runtime.wname) == 0) 
+	      if (strcmp(cur_name, items[cbndx].runtime.wname) == 0)
 		/* Finish resolving the callback item. */
 		{
 		  items[cbndx].runtime.callback.closure = (XtPointer)cur_id;
@@ -578,12 +577,12 @@ Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
 		  items[cbndx].runtime.wname = NULL;
 		}
 	    }
-	
+
 	  if (cbdesc->unres_ref_count == 0)
 	    {
 	      /* Move individual items so array functions as callback list */
 	      XtCallbackRec *callbacks = (XtCallbackRec *)items;
-	    
+
 	      for (cbndx = 0; cbndx <= cbdesc->count; cbndx++)
 		/* <= so that null item is copied. */
 		{
@@ -592,8 +591,8 @@ Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
 		  callbacks[cbndx].closure = (XtPointer)
 		    items[cbndx].runtime.callback.closure;
 		}
-		
-		
+
+
 	      args[0].name = svdesc->tagname;
 	      args[0].value = (XtArgVal)items;
 	      XtSetValues(svdesc->setw, args, 1);
@@ -610,7 +609,7 @@ Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
 	      svdesc->sv.callbacks = NULL;
 	    }
 	  break;
-	    
+
 	default:
 	  continue;
 	}
@@ -639,7 +638,7 @@ Urm__CW_ResolveSVWidgetRef (URMPointerListPtr		*svlist,
  *--
  */
 
-void 
+void
 Urm__CW_FreeSetValuesDesc (URMSetValuesDescPtr         svdesc)
 {
   if ( (svdesc->type == URMsvWidgetRef) && (svdesc->sv.wname != NULL) )

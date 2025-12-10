@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 #ifndef MrmPublic
 #define MrmPublic
@@ -154,7 +154,7 @@ typedef unsigned char		MrmFlag;  /* flag fields */
 typedef long int		MrmResource_id; /* Resource id in portable IDB files */
 typedef short int		MrmGroup; /* For Mrm resource groups */
 
-#define	MrmMaxResourceSize	65535	/* (2)16 - 1 */ 
+#define	MrmMaxResourceSize	65535	/* (2)16 - 1 */
 
 
 /*
@@ -166,18 +166,18 @@ typedef struct	{
 /*
  * The version of this structure. Set to MrmOsOpenParamVersion
  */
-	Cardinal		version; 
+	Cardinal		version;
 /*
  * The default name, for systems which can use it
  */
-	char			*default_fname;	
+	char			*default_fname;
 /*
  * The related name, for systems which can use it
  * Flag for file clobber (1 means OK to clobber)
  */
 	union {
-	    unsigned long	related_nam; 
-	    Boolean		clobber_flg; 
+	    unsigned long	related_nam;
+	    Boolean		clobber_flg;
 	} nam_flg;
 
 /*
@@ -204,10 +204,14 @@ typedef struct {
 } MRMRegisterArg, MrmRegisterArg, *MrmRegisterArglist ;
 
 /*
- * Code for unknown (user-defined) classes. 
+ * Code for unknown (user-defined) classes.
  */
 #define	URMwcUnknown	1
 
+
+/* Widget creation / cleanup callbacks */
+typedef Widget (*MrmWidgetCreateProc)(Widget parent, char *name, ArgList args, Cardinal num);
+typedef void (*MrmWidgetCleanupProc)(void *);
 
 /*
  * Declarations of Mrm public entry points

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -39,7 +39,7 @@ static char rcsid[] = "$TOG: Mrminit.c /main/14 1999/05/19 15:25:33 mgreess $"
  *
  *  ABSTRACT:
  *
- *	This contains only the top-level routine MrmIntialize. It can be 
+ *	This contains only the top-level routine MrmIntialize. It can be
  *	modified by vendors as needed to add or remove widgets being \
  *	initialized for URM facilities. This routine is normally accessible to
  *	and used by an application at runtime to access URM facilities.
@@ -198,7 +198,16 @@ static char rcsid[] = "$TOG: Mrminit.c /main/14 1999/05/19 15:25:33 mgreess $"
  */
 static	Boolean	urm__initialize_complete = FALSE;
 
-
+static void __XmRenderTableFree(void *rt)
+{
+	XmRenderTableFree((XmRenderTable)rt);
+}
+
+static void __XmRenditionFree(void *rt)
+{
+	XmRenditionFree((XmRendition)rt);
+}
+
 /*
  *++
  *  PROCEDURE DESCRIPTION:
@@ -206,8 +215,8 @@ static	Boolean	urm__initialize_complete = FALSE;
  *	MrmInitialize must be called in order to prepare an application to
  *	use URM widget fetching facilities. It initializes the internal data
  *	structures (creating the mapping from class codes to the creation
- *	routine for each builtin widget class) which URM needs in order to 
- *	successfully perform type conversion on arguments, and successfully 
+ *	routine for each builtin widget class) which URM needs in order to
+ *	successfully perform type conversion on arguments, and successfully
  *	access widget creation facilities. MrmInitialize must be called before
  *	any widgets are	created, whether by URM's fetch mechanisms or directly
  *	by the application. It may be called before or after XtInitialize, and
@@ -237,12 +246,12 @@ void MrmInitialize (void)
   /*
    * Initialize only once
    */
-  if ( urm__initialize_complete ) 
+  if ( urm__initialize_complete )
     {
       _MrmProcessUnlock();
       return ;
     }
- 
+
   /*
    * Initialize the class descriptors for all the known widgets.
    */
@@ -271,7 +280,7 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateButtonBox", XmCreateButtonBox,
      (WidgetClass)&xmButtonBoxClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateCascadeButton", XmCreateCascadeButton,
      (WidgetClass)&xmCascadeButtonClassRec);
@@ -279,11 +288,11 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateCascadeButtonGadget", XmCreateCascadeButtonGadget,
      (WidgetClass)&xmCascadeButtonGadgetClassRec);
- 
+
   MrmRegisterClass
     (0, NULL, "XmCreateColumn", XmCreateColumn,
      (WidgetClass)&xmColumnClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateCommand", XmCreateCommand,
      (WidgetClass)&xmCommandClassRec);
@@ -295,7 +304,7 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateColorSelector", XmCreateColorSelector,
      (WidgetClass)&xmColorSelectorClassRec);
- 
+
   MrmRegisterClass
     (0, NULL, "XmCreateDataField", XmCreateDataField,
      (WidgetClass)&xmDataFieldClassRec);
@@ -315,7 +324,7 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateDrawnButton", XmCreateDrawnButton,
      (WidgetClass)&xmDrawnButtonClassRec);
- 
+
    MrmRegisterClass
     (0, NULL, "XmCreateFileSelectionBox", XmCreateFileSelectionBox,
      (WidgetClass)&xmFileSelectionBoxClassRec);
@@ -327,11 +336,11 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateForm", XmCreateForm,
      (WidgetClass)&xmFormClassRec);
- 
+
   MrmRegisterClass
     (0, NULL, "XmCreateFontSelector", XmCreateFontSelector,
      (WidgetClass)&xmFontSelectorClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateFormDialog", XmCreateFormDialog,
      (WidgetClass)&xmFormClassRec);
@@ -343,11 +352,11 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateIconButton", XmCreateIconButton,
      (WidgetClass)&xmIconButtonClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateIconBox", XmCreateIconBox,
      (WidgetClass)&xmIconBoxClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateLabel", XmCreateLabel,
      (WidgetClass)&xmLabelClassRec);
@@ -375,11 +384,11 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateMessageBox", XmCreateMessageBox,
      (WidgetClass)&xmMessageBoxClassRec);
- 
+
   MrmRegisterClass
     (0, NULL, "XmCreateOutline", XmCreateOutline,
      (WidgetClass)&xmOutlineClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateMessageDialog", XmCreateMessageDialog,
      (WidgetClass)&xmMessageBoxClassRec);
@@ -479,11 +488,11 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateSeparatorGadget", XmCreateSeparatorGadget,
      (WidgetClass)&xmSeparatorGadgetClassRec);
- 
+
   MrmRegisterClass
     (0, NULL, "XmCreateTabBox", XmCreateTabBox,
      (WidgetClass)&xmTabBoxClassRec);
-  
+
   MrmRegisterClass
     (0, NULL, "XmCreateTabStack", XmCreateTabStack,
      (WidgetClass)&xmTabStackClassRec);
@@ -511,7 +520,7 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateTree", XmCreateTree,
      (WidgetClass)&xmTreeClassRec);
-  
+
     MrmRegisterClass
     (0, NULL, "XmCreatePaned", XmCreatePaned,
      (WidgetClass)&xmPanedClassRec);
@@ -546,11 +555,11 @@ void MrmInitialize (void)
 
   MrmRegisterClassWithCleanup
     (0, NULL, "_XmCreateRenderTable", _XmCreateRenderTable,
-     (WidgetClass)NULL, XmRenderTableFree);
+     (WidgetClass)NULL, __XmRenderTableFree);
 
   MrmRegisterClassWithCleanup
     (0, NULL, "_XmCreateRendition", _XmCreateRendition,
-     (WidgetClass)NULL, XmRenditionFree);
+     (WidgetClass)NULL, __XmRenditionFree);
 
   MrmRegisterClass
     (0, NULL, "_XmCreateTabList", _XmCreateTabList,
@@ -562,7 +571,7 @@ void MrmInitialize (void)
 
   MrmRegisterClass
     (0, NULL, "XmCreateDropDown", XmCreateDropDown,
-     (WidgetClass)&xmDropDownClassRec);  
+     (WidgetClass)&xmDropDownClassRec);
 
   /*
    * Initialization complete

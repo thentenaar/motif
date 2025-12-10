@@ -376,11 +376,11 @@ typedef struct _WCIClassDesc {
 	String		creator_name ;	/* create routine name. This is also
 					   the accessor key for non-toolkit
 					   widget classes. */
-	Widget		(*creator) () ;	/* low-level create routine. This is
+	MrmWidgetCreateProc		creator;	/* low-level create routine. This is
 					   also the class identifier (name)
 					   used to match user classes. */
 	WidgetClass	class_record ;	/* Pointer to toolkit class record */
-	void		(*cleanup) () ;
+	MrmWidgetCleanupProc		cleanup;
 					/* low-level destructor routine.
 					   Used to clean up after creation
 					   routines that leave dangling
