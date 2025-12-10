@@ -1900,11 +1900,6 @@ extern "C" {
 }                                       /* for C++ V2.0 */
 #endif
 
-
-#ifdef SYSV
-#define bcopy(source, dest, count) memcpy(dest, source, count)
-#endif
-
 typedef struct {
     unsigned int type;
     union {
