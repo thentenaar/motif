@@ -247,7 +247,7 @@ static void wmlInit(void)
 	/*
  	 * Initialize the list of all syntactic objects
  	 */
-	wmlInitHList(wml_synobj_ptr, 1000, TRUE);
+	wmlInitHList(wml_synobj_ptr, 1000, TRUE, FALSE);
 }
 
 int yywrap(void)

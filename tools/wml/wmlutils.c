@@ -1,6 +1,7 @@
-/* 
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,12 +20,16 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wmlutils.c /main/8 1995/08/29 11:11:24 drk $"
 #endif
 #endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -34,151 +39,95 @@ static char rcsid[] = "$XConsortium: wmlutils.c /main/8 1995/08/29 11:11:24 drk 
  * This file contains utilities used by WML.
  */
 
-
 #include "wml.h"
 
-#if defined(__STDC__)
-#include <stdlib.h>
-#include <string.h>
-#endif
-#include <stdio.h>
-
-
 /*
  * Utility to allocate dynamic space for a string, and return the
  * dynamic copy. Produces a NULL on null input.
  */
-
-char *wmlAllocateString (stg)
-    char	*stg;
-
+char *wmlAllocateString(const char *s)
 {
+	char *d = NULL;
 
-char		*dynstg;	/* the dynamic copy */
-
-
-if ( stg == NULL ) return NULL;
-
-dynstg = (char *) malloc (strlen(stg)+1);
-strcpy (dynstg, stg);
-return dynstg;
-
+	if (s && (d = malloc(strlen(s) + 1)))
+		strcpy(d, s);
+	return d;
 }
 
-
-
-/*
+/**
  * Utility to convert a string to upper case. The conversion happens in
  * place, destroying the original string.
  */
-
-void wmlUpperCaseString (stg)
-    char	*stg;
-
+void wmlUpperCaseString(char *s)
 {
+	int i;
 
-int		ndx;		/* loop index */
-
-
-if ( stg == NULL ) return;
-for ( ndx=0 ; ndx<strlen(stg) ; ndx++ )
-    stg[ndx] = _upper (stg[ndx]);
-
+	for (i = 0; s && s[i]; i++)
+		s[i] = _upper(s[i]);
 }
 
-
-
 /*
  * Routines for accessing and manipulating dynamic handle lists.
  */
 
-
-/*
+/**
  * Initialize a dynamic handle list. Allocate a vector of the given
  * size, and set the count and number used (0).
  *
  *	listptr		the list to be inited
  *	size		# entries in handle vector
- *	is_ordered	TRUE is list is to be ordered
+ *	is_ordered	TRUE if list is to be ordered
+ *	dup         TRUE if list can contain duplicates
+ *
+ * Returns non-zero on success, 0 on failure.
  */
-
-void wmlInitHList (listptr, size, is_ordered)
-    DynamicHandleListDefPtr	listptr;
-    int				size;
-    int				is_ordered;
-
+int wmlInitHList(DynamicHandleListDefPtr listptr, int size, int is_ordered, int dup)
 {
-
-listptr->cnt = 0;
-listptr->max = size;
-listptr->ordered = is_ordered;
-listptr->hvec = (ObjectHandleDefPtr) malloc(size*sizeof(ObjectHandleDef));
-
-return;
-
+	listptr->dup     = !!dup;
+	listptr->cnt     = 0;
+	listptr->max     = size;
+	listptr->ordered = !!is_ordered;
+	listptr->hvec    = malloc(size * sizeof(ObjectHandleDef));
+	return !!listptr->hvec;
 }
 
-
-
-/*
+/**
  * Routine to resize a dynamic handle list. Increases the size if required,
  * but does nothing if the list is already big enough.
  *
  *	listptr		the dynamic list
  *	new_size	new list size
  */
+void wmlResizeHList(DynamicHandleListDefPtr listptr, int new_size)
+{
+	ObjectHandleDefPtr new_vec;	/* reallocated vector */
 
-void wmlResizeHList (listptr, new_size)
-    DynamicHandleListDefPtr	listptr;
-    int				new_size;
-
-{    
-
-ObjectHandleDefPtr	new_vec;	/* reallocated vector */
-
-
-if ( listptr->max >= new_size ) return;
-listptr->max = new_size;
-new_vec = (ObjectHandleDefPtr) realloc
-    (listptr->hvec, new_size*sizeof(ObjectHandleDef));
-listptr->hvec = new_vec;
-
-return;
-
+	if (!listptr || listptr->max >= new_size) return;
+	if ((new_vec = realloc(listptr->hvec, new_size * sizeof(ObjectHandleDef)))) {
+		listptr->max  = new_size;
+		listptr->hvec = new_vec;
+	}
 }
 
-
-
-/*
+/**
  * Routine to clear a dynamic handle list. It leaves the handle vector intact,
  * but frees all the allocated names. The count is reset to 0.
  * but does nothing if the list is already big enough.
  *
  *	listptr		the dynamic list
  */
+void wmlClearHList(DynamicHandleListDefPtr listptr)
+{
+	int i;
 
-void wmlClearHList (listptr)
-    DynamicHandleListDefPtr	listptr;
+	for (i=0; i < listptr->cnt; i++)
+		free(listptr->hvec[i].objname);
 
-{    
-
-int		ndx;		/* current index in list */
-
-
-for ( ndx=0 ; ndx<listptr->cnt ; ndx++ )
-    {
-    free (listptr->hvec[ndx].objname);
-    listptr->hvec[ndx].objname = NULL;
-    }
-listptr->cnt = 0;
-
-return;
-
+	memset(listptr->hvec, 0, listptr->cnt * sizeof *listptr->hvec);
+	listptr->cnt = 0;
 }
 
-
-
-/*
+/**
  * Function to find a name in a dynamic list. This will function on both
  * ordered and unordered lists.
  *
@@ -189,242 +138,143 @@ return;
  *	>= 0		name found, index in list
  *	< 0		name not found
  */
-
-int wmlFindInHList (listptr, name)
-    DynamicHandleListDefPtr	listptr;
-    char			*name;
-
+int wmlFindInHList(DynamicHandleListDefPtr listptr, const char *name)
 {
+	int i, lo, hi, mid;
 
-int		ndx;		/* current index in list */
-int		londx;		/* low index */
-int		hindx;		/* high index */
-int		midndx;		/* midpoint index */
-int		cmpres;		/* strcmp result */
+	if (!listptr || !listptr->cnt)
+		return -1;
 
+	/* Binary search if ordered, brute force otherwise */
+	if (!listptr->ordered) {
+		for (i = 0; i < listptr->cnt; i++) {
+			if (!strcmp(name, listptr->hvec[i].objname))
+				return i;
+		}
 
-/*
- * Binary search if ordered, brute force otherwise
- */
-if ( listptr->ordered )
-    {
-    for ( londx=0,hindx=listptr->cnt-1 ; hindx>=londx ; )
-	{
-	midndx = (londx+hindx) / 2;
-	cmpres = strcmp (name, listptr->hvec[midndx].objname);
-	if ( cmpres < 0 )
-	    hindx = midndx - 1;
-	if ( cmpres > 0 )
-	    londx = midndx + 1;
-	if ( cmpres == 0 )
-	    return midndx;
+		return -1;
 	}
-    return -1;
-    }
-else
-    {
-    for ( ndx=0 ; ndx<listptr->cnt ; ndx++ )
-	if ( strcmp(name,listptr->hvec[ndx].objname) == 0 )
-	    return ndx;
-    return -1;
-    }
 
+	for (lo=0, hi=listptr->cnt - 1; hi >= lo; ) {
+		mid = (unsigned int)(lo + hi) >> 1;
+		if (!(i = strcmp(name, listptr->hvec[mid].objname)))
+			return mid;
+		if (i < 0) hi = mid - 1;
+		if (i > 0) lo = mid + 1;
+	}
+
+	return -1;
 }
 
-
-
-/*
+/**
  * Routine to insert an entry into a list. The insertion is ordered or
  * unordered depending on the way the list is marked. Unordered lists
  * insert at the end. This routine assumes no duplicates will be entered
- * in the list.
+ * in the list if listptr->dup is zero.
  *
  *	listptr		the list
  *	name		the name under which to insert
  *	obj		the object to insert
+ *
+ *	Returns 1 on success, 0 on failure.
  */
-
-void wmlInsertInHList (listptr, name, obj)
-    DynamicHandleListDefPtr	listptr;
-    char			*name;
-    ObjectPtr			obj;
-
+int wmlInsertInHList(DynamicHandleListDefPtr listptr, const char *name, ObjectPtr obj)
 {
+	int i = 0, hi, lo, mid = 0;
 
-int		ndx;		/* current index in list */
-int		londx;		/* low index */
-int		hindx;		/* high index */
-int		midndx = 0;		/* midpoint index */
-int		newndx;		/* new entry index */
-int		cmpres = 0;		/* strcmp result */
-
-
-/*
- * Guarantee enough space in the list
- */
-wmlResizeHList (listptr, listptr->cnt+1);
-
-/*
- * Binary search and insert if ordered, brute force otherwise
- */
-if ( listptr->ordered )
-    {
-    if ( listptr->cnt == 0 )
-	{
-	listptr->hvec[0].objname = wmlAllocateString (name);
-	listptr->hvec[0].objptr = obj;
-	listptr->cnt += 1;
-	return;
+	/* Guarantee enough capacity in the list */
+	wmlResizeHList(listptr, (hi = (listptr ? listptr->cnt + 1 : 1)));
+	if (!listptr || listptr->max < hi) {
+		printf("\nwmlInsertInHList: failed to resize list for '%s'\n", name);
+		return 0;
 	}
-    for ( londx=0,hindx=listptr->cnt-1 ; hindx>=londx ; )
-	{
-	midndx = (londx+hindx) / 2;
-	cmpres = strcmp (name, listptr->hvec[midndx].objname);
-	if ( cmpres == 0 )
-	    {
-	    printf ("\nwmlInsertInHList: duplicate name '%s'found\n", name);
-	    return;
-	    }
-	if ( londx == hindx ) break;
-	if ( cmpres < 0 )
-	    hindx = midndx - 1;
-	if ( cmpres > 0 )
-	    londx = midndx + 1;
+
+	/* Binary search and insert if ordered, append otherwise */
+	if (!listptr->ordered || !listptr->cnt) {
+		listptr->hvec[listptr->cnt].objname  = wmlAllocateString(name);
+		listptr->hvec[listptr->cnt++].objptr = obj;
+		return 1;
 	}
-    /*
-     * The new entry will go either at midndx or after midndx. Move down
+
+	for (lo=0, hi=listptr->cnt - 1; hi >= lo;) {
+		mid = (unsigned int)(lo + hi) >> 1;
+		if (!(i = strcmp(name, listptr->hvec[mid].objname))) {
+			if (!listptr->dup) {
+				printf("\nwmlInsertInHList: duplicate name '%s' found\n", name);
+				return 0;
+			}
+
+			break;
+		}
+
+		if (i < 0) hi = mid - 1;
+		if (i > 0) lo = mid + 1;
+	}
+
+    /**
+     * The new entry will go either at mid or after mid. Move down
      * the vector appropriately.
      */
-    if ( cmpres < 0 )
-	newndx = midndx;
-    else
-	newndx = midndx + 1;
-    for ( ndx=listptr->cnt-1 ; ndx>=newndx ; ndx-- )
-	{
-	listptr->hvec[ndx+1].objname = listptr->hvec[ndx].objname;
-	listptr->hvec[ndx+1].objptr = listptr->hvec[ndx].objptr;
-	}
-    listptr->hvec[newndx].objname = wmlAllocateString (name);
-    listptr->hvec[newndx].objptr = obj;
-    listptr->cnt += 1;
-    return;
-    }
-else
-    {
-    listptr->hvec[listptr->cnt].objname = wmlAllocateString (name);
-    listptr->hvec[listptr->cnt].objptr = obj;
-    listptr->cnt += 1;
-    return;
-    }
-
+    mid += i >= 0;
+	memmove(listptr->hvec + mid + 1, listptr->hvec + mid, (listptr->cnt - mid) * sizeof *listptr->hvec);
+	listptr->hvec[mid].objname = wmlAllocateString(name);
+	listptr->hvec[mid].objptr  = obj;
+	listptr->cnt++;
+	return 1;
 }
 
-
-/*
+/**
  * Routine to insert an entry into a token list. The insertion is ordered.
  * This routine allows duplicates
  *
  *	listptr		the list
  *	name		the name under which to insert
  *	obj		the object to insert
+ *
+ *	Returns 1 on success, 0 on failure.
  */
-void wmlInsertInKeyList (listptr, name, obj)
-    DynamicHandleListDefPtr	listptr;
-    char			*name;
-    ObjectPtr			obj;
-
+int wmlInsertInKeyList(DynamicHandleListDefPtr listptr, const char *name, ObjectPtr obj)
 {
-  int		ndx;				  /* current index in list */
-  int		londx;				  /* low index */
-  int		hindx;				  /* high index */
-  int		midndx = 0;			  /* midpoint index */
-  int		newndx;				  /* new entry index */
-  int		cmpres = 0;			  /* strcmp result */
+	if (!listptr) {
+		printf("\nwmlInsertInKeyList: NULL listptr given for '%s'\n", name);
+		return 0;
+	}
 
-  /*
-   * Guarantee enough space in the list
-   */
-  wmlResizeHList (listptr, listptr->cnt+1);
+	if (!listptr->dup) {
+		printf("\nWARNING: wmlInsertInKeyList: '%s' doesn't allow duplicates... enabling duplicates\n", name);
+		listptr->dup |= 1;
+	}
 
-  /*
-   * Binary search and insert
-   */
-  if ( listptr->cnt == 0 )
-    {
-      listptr->hvec[0].objname = wmlAllocateString (name);
-      listptr->hvec[0].objptr = obj;
-      listptr->cnt += 1;
-      return;
-    }
-  for ( londx=0,hindx=listptr->cnt-1 ; hindx>=londx ; )
-    {
-      midndx = (londx+hindx) / 2;
-      cmpres = strcmp (name, listptr->hvec[midndx].objname);
-      if ( londx == hindx ) break;
-      if ( cmpres < 0 )
-	hindx = midndx - 1;
-      if ( cmpres >= 0 )
-	londx = midndx + 1;
-    }
-  /*
-   * The new entry will go either at midndx or after midndx. Move down
-   * the vector appropriately.
-   */
-  if ( cmpres < 0 )
-    newndx = midndx;
-  else
-    newndx = midndx + 1;
-  for ( ndx=listptr->cnt-1 ; ndx>=newndx ; ndx-- )
-    {
-      listptr->hvec[ndx+1].objname = listptr->hvec[ndx].objname;
-      listptr->hvec[ndx+1].objptr = listptr->hvec[ndx].objptr;
-    }
-  listptr->hvec[newndx].objname = wmlAllocateString (name);
-  listptr->hvec[newndx].objptr = obj;
-  listptr->cnt += 1;
-  return;
+	return wmlInsertInHList(listptr, name, obj);
 }
 
-
-/*
+/**
  * Indicate if a resource is in a resource reference list by returning its
  * reference pointer.
  */
-
-WmlClassResDefPtr wmlResolveResIsMember (resobj, resref)
-    WmlResourceDefPtr		resobj;
-    WmlClassResDefPtr		resref;
-
+WmlClassResDefPtr wmlResolveResIsMember(WmlResourceDefPtr resobj, WmlClassResDefPtr resref)
 {
+	while (resref) {
+		if (resref->act_resource == resobj)
+			return resref;
+		resref = resref->next;
+	}
 
-while ( resref != NULL )
-    {
-    if ( resref->act_resource == resobj ) return resref;
-    resref = resref->next;
-    }
-return NULL;
-
+	return NULL;
 }
 
-
-/*
+/**
  * Indicate if a child is in a child reference list by returning its
  * reference pointer.
  */
-
-WmlClassChildDefPtr wmlResolveChildIsMember (childobj, childref)
-    WmlChildDefPtr		childobj;
-    WmlClassChildDefPtr		childref;
-
+WmlClassChildDefPtr wmlResolveChildIsMember(WmlChildDefPtr childobj, WmlClassChildDefPtr childref)
 {
+	while (childref) {
+		if (childref->act_child == childobj)
+			return childref;
+		childref = childref->next;
+	}
 
-while ( childref != NULL )
-    {
-    if ( childref->act_child == childobj ) return childref;
-    childref = childref->next;
-    }
-return NULL;
-
+	return NULL;
 }
-
 

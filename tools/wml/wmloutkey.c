@@ -1,6 +1,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -108,9 +109,12 @@ void wmlOutputKeyWordFiles(void)
  */
 static void wmlKeyWBuildTables(void)
 {
-	/* Initialize the token vectors */
-	wmlInitHList(wml_tok_sens_ptr, 1000, TRUE);
-	wmlInitHList(wml_tok_insens_ptr, 1000, TRUE);
+	if (!wmlInitHList(wml_tok_sens_ptr,   1000, TRUE, TRUE) ||
+	    !wmlInitHList(wml_tok_insens_ptr, 1000, TRUE, TRUE)) {
+		fputs("Out of memory allocating token vectors\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+
 	memset(grtok_vec, 0, sizeof grtok_vec);
 
 	/* Read and enter the tokens from Uil.y (via tokens.dat) */
@@ -206,7 +210,7 @@ static void wmlKeyWGrammarTokens(void)
 				sens_name[ndx] = _lower(sens_name[ndx]);
 			if (grtok->token[0] == 'U' && grtok->token[1] == 'I' && grtok->token[2] == 'L')
 				memmove(sens_name, sens_name + 3, strlen(sens_name) - 2);
-			wmlKeyWMakeTokens(sens_name, grtok->class, (ObjectPtr)grtok);
+			wmlKeyWMakeTokens(sens_name, grtok->class, grtok);
 		}
 	}
 
@@ -673,3 +677,4 @@ externaldef(uil_sym_glbl) int tok_num_tokens = %d;\n";
 	puts("Created UilTokName.h");
 	fclose(outfil);
 }
+

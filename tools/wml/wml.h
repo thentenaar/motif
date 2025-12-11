@@ -28,16 +28,15 @@
 
 #include <stddef.h>
 
-#define TRUE		1
-#define FALSE		0
-#define SUCCESS		1
-#define FAILURE		0
+#define TRUE    1
+#define FALSE   0
+#define SUCCESS 1
+#define FAILURE 0
 
 /*
  * Generic object pointer
  */
-typedef	char	*ObjectPtr;
-
+typedef	void *ObjectPtr;
 
 /*
  * True and False for attributes, so setting is explicit
@@ -582,16 +581,13 @@ typedef struct
 /*
  * A dynamic handle element list, extensible by malloc'ing more space.
  */
-typedef struct
-    {
-    int			cnt;		/* # entries in use */
-    int			max;		/* max # entries available */
-    int			ordered;	/* TRUE if list is lexicographically
-					   ordered by object name */
-    ObjectHandleDefPtr	hvec;		/* vector of handle entries */
-    } DynamicHandleListDef, *DynamicHandleListDefPtr;
-
-
+typedef struct {
+	int cnt;     /* # entries in use */
+	int max;     /* list capacity */
+	int ordered; /* TRUE if list is lexicographically ordered by object name */
+	int dup;     /* TRUE if list allows duplicates */
+	ObjectHandleDefPtr hvec; /* vector of handle entries */
+} DynamicHandleListDef, *DynamicHandleListDefPtr;
 
 /*
  * Global declarations
@@ -622,18 +618,16 @@ extern DynamicHandleListDefPtr	wml_tok_insens_ptr;
 /*
  * Defined in wmlutils.c
  */
-extern char *wmlAllocateString ();		/* dynamic string copy */
-extern void wmlUpperCaseString ();		/* convert to upper case */
-extern void wmlInitHList ();			/* init dynamic list */
-extern void wmlResizeHList ();			/* resize a list */
-extern void wmlClearHList ();			/* clear a list for reuse */
-extern int wmlFindInHList ();			/* find name in list */
-extern void wmlInsertInHList ();		/* generic list insert */
-extern void wmlInsertInKeyList ();		/* specialized list insert */
-extern WmlClassResDefPtr wmlResolveResIsMember ();
-						/* is resource in class? */
-extern WmlClassChildDefPtr wmlResolveChildIsMember ();
-						/* is child in class? */
+extern char *wmlAllocateString(const char *s);
+extern void wmlUpperCaseString(char *s);
+extern int wmlInitHList(DynamicHandleListDefPtr listptr, int size, int is_ordered, int dup);
+extern void wmlResizeHList(DynamicHandleListDefPtr listptr, int new_size);
+extern void wmlClearHList(DynamicHandleListDefPtr listptr);
+extern int wmlFindInHList(DynamicHandleListDefPtr listptr, const char *name);
+extern int wmlInsertInHList(DynamicHandleListDefPtr listptr, const char *name, ObjectPtr obj);
+extern int wmlInsertInKeyList(DynamicHandleListDefPtr listptr, const char *name, ObjectPtr obj);
+extern WmlClassResDefPtr wmlResolveResIsMember(WmlResourceDefPtr resobj, WmlClassResDefPtr resref); /* resource in class? */
+extern WmlClassChildDefPtr wmlResolveChildIsMember(WmlChildDefPtr childobj, WmlClassChildDefPtr childref); /* child in class? */
 
 /*
  * Defined in wmlsynbld.c
@@ -661,21 +655,11 @@ extern void wmlCreateEnumValue ();
 extern void wmlAddEnumValueAttribute ();
 extern void wmlCreateCharset ();
 extern void wmlAddCharsetAttribute ();
-extern void LexIssueError ();
-
-/*      May be, declaration of functions must be next:
-extern void wmlAddClassChild ();
-extern void wmlCreateChild ();
-extern void wmlCreateOrAppendCtrlList ();
-extern void wmlAddCtrlListControl ();
-        But, we are using real function arguments type declaration:
-*/
-extern void wmlAddClassChild (char *);
-extern void wmlCreateChild (char *, char *);
-extern void wmlCreateOrAppendCtrlList (char *);
-extern void wmlAddCtrlListControl (char *);
-
-
+extern void LexIssueError(int token);
+extern void wmlAddClassChild(char *);
+extern void wmlCreateChild(char *, char *);
+extern void wmlCreateOrAppendCtrlList(char *);
+extern void wmlAddCtrlListControl(char *);
 
 /*
  * Defined in wmlresolve.c

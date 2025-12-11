@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 /* "$TOG: wmlparse.y /main/10 1997/04/14 12:56:03 dbl $" */
 /*
  * This file defines the grammar for the Motif Widget Meta Language (WML),
- * the declarative language which describes the widget, gadgets, and 
+ * the declarative language which describes the widget, gadgets, and
  * resources in the UIL language.
  */
 
@@ -516,7 +516,7 @@ child_statement
        : name COLON STRING
           { wmlCreateChild(yynameval, yystringval); }
        ;
-  
+
 
 /*
  * DATATYPE statement
@@ -635,7 +635,7 @@ enumset_value
  */
 enumval_statement
 	: name
-	    COLON    
+	    COLON
 		{ wmlCreateEnumValue (yynameval); }
 	    enumvalue_definition
 	;
@@ -736,8 +736,7 @@ name
 /*
  * Dummmy error routine, since we output our own.
  */
-int yyerror (s)
-char *s;
+int yyerror (const char *s)
 {
 	return 0;
 }

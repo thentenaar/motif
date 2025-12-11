@@ -1,6 +1,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -131,9 +132,13 @@ static void wmlOutputWmlUilMm(void)
 	/**
 	 * Initialize order lists for the tables.
 	 */
-	wmlInitHList(mm_arg_ptr, 200, TRUE);
-	wmlInitHList(mm_rsn_ptr, 200, TRUE);
-	wmlInitHList(mm_ctl_ptr, 200, TRUE);
+	if (!wmlInitHList(mm_arg_ptr, 200, TRUE, FALSE) ||
+	    !wmlInitHList(mm_rsn_ptr, 200, TRUE, FALSE) ||
+	    !wmlInitHList(mm_ctl_ptr, 200, TRUE, FALSE)) {
+		fputs("Out of memory creating order lists", stderr);
+		fclose(outfil);
+		return;
+	}
 
 	/**
 	 * Write out a table for each class, for both widget and gadget variants

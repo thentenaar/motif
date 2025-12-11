@@ -189,7 +189,7 @@ int			ndx;		/* loop index */
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_datatype_ptr, 50, TRUE);
+wmlInitHList(wml_obj_datatype_ptr, 50, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynDataTypeDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -239,7 +239,7 @@ int			ndx;		/* loop index */
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_child_ptr, 50, TRUE);
+wmlInitHList(wml_obj_child_ptr, 50, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynChildDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -317,7 +317,7 @@ for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_enumval_ptr, 50, TRUE);
+wmlInitHList(wml_obj_enumval_ptr, 50, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynEnumValueDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -374,7 +374,7 @@ WmlEnumSetValDefPtr	esvobj;		/* current list element */
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_enumset_ptr, 20, TRUE);
+wmlInitHList(wml_obj_enumset_ptr, 20, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynEnumSetDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -456,7 +456,7 @@ char			errmsg[300];
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_reason_ptr, 100, TRUE);
+wmlInitHList(wml_obj_reason_ptr, 100, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynResourceDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -531,7 +531,7 @@ char			errmsg[300];
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_arg_ptr, 500, TRUE);
+wmlInitHList(wml_obj_arg_ptr, 500, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynResourceDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -652,8 +652,8 @@ char			errmsg[300];
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_allclass_ptr, 200, TRUE);
-wmlInitHList (wml_obj_class_ptr, 200, TRUE);
+wmlInitHList(wml_obj_allclass_ptr, 200, TRUE, FALSE);
+wmlInitHList(wml_obj_class_ptr, 200, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynClassDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -754,7 +754,7 @@ int			ndx;		/* loop index */
 /*
  * Process each control list. Construct a resolved control list for each
  */
-wmlInitHList (wml_obj_ctrlist_ptr, 20, TRUE);
+wmlInitHList(wml_obj_ctrlist_ptr, 20, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynCtrlListDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
@@ -816,7 +816,7 @@ char			errmsg[300];
  * create and append a resolved object for each one encountered. This
  * will be ordered as well.
  */
-wmlInitHList (wml_obj_charset_ptr, 50, TRUE);
+wmlInitHList(wml_obj_charset_ptr, 50, TRUE, FALSE);
 for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
     {
     cursyn = (WmlSynCharSetDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
