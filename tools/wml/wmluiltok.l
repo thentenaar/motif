@@ -2,6 +2,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -25,18 +26,8 @@
  * HISTORY
  */
 
-#if defined(__STDC__)
 #include <string.h>
 #include <stdlib.h>
-#endif
-
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
 
 	/*
 	 * lex program to construct token data for WML to generate token
@@ -81,24 +72,21 @@ typedef struct _token
 TokenRec token[1000];
 TokenRec temp;
 
-void add_token ();
-int yywrap ();
+void add_token(Token t);
+int yywrap(void);
 
-int phase		= 0;
-int keyword_count;
-int line_num		= 0;
-int in_comment		= 0;
-int in_include		= 0;
-int in_token		= 0;
-int state		= 0;
-int used		= 0;
+int phase         = 0;
+int keyword_count = 0;
+int line_num      = 0;
+int in_comment    = 0;
+int in_include    = 0;
+int in_token      = 0;
+int state         = 0;
+int used          = 0;
 
 %}
 
-
-
 %%
-
 
 [\n]		{
 		    if (in_token == TRUE)
@@ -111,7 +99,7 @@ int used		= 0;
 		}
 
 [ \t]		{				/* swallow */
-		} 
+		}
 
 
 "/\*"		{				/* swallow */
@@ -129,35 +117,24 @@ int used		= 0;
 			switch (state)
 			{
 			    case 0:
-				temp.name = (char *)
-				    strcpy ((char *)
-					malloc (strlen ((XmConst char *)yytext) + 1), (XmConst char *)yytext);
-
-				temp.num_syn = 0; 
+				temp.name = strcpy(malloc(strlen(yytext) + 1), (const char *)yytext);
+				temp.num_syn = 0;
 				break;
 
 			    case 1:
-				temp.id = (char *)
-				    strcpy ((char *)
-					malloc (strlen ((XmConst char *)yytext) + 1), (XmConst char *)yytext);
+				temp.id = strcpy(malloc(strlen(yytext) + 1), (const char *)yytext);
 				break;
 
 			    case 2:
-				temp.class = (char *)
-				    strcpy ((char *)
-					malloc (strlen ((XmConst char *)yytext) + 1), (XmConst char *)yytext);
+				temp.class = strcpy(malloc(strlen(yytext) + 1), (const char *)yytext);
 				break;
 
 			    case 3:
-				temp.syn[temp.num_syn] = (char *)
-				    strcpy ((char *)
-					malloc (strlen ((XmConst char *)yytext) + 1), (XmConst char *)yytext);
+				temp.syn[temp.num_syn] = strcpy(malloc(strlen(yytext) + 1), (const char *)yytext);
 				temp.num_syn++;
 
 				if (temp.num_syn > MAX_SYN)
-				    printf (
-					"ERROR, too many synonyms, line %d\n",
-					line_num);
+				    printf("ERROR, too many synonyms, line %d\n", line_num);
 				break;
 			}
 
@@ -171,9 +148,7 @@ int used		= 0;
 %%
 
 
-void
-add_token (t)					/* keep sorted by name */
-    Token t;
+void add_token(Token t)					/* keep sorted by name */
 {
     int i, j;
 
@@ -191,21 +166,18 @@ add_token (t)					/* keep sorted by name */
     }
 
     /*
-     * if we get there then it goes at the end of the list 
+     * if we get there then it goes at the end of the list
      */
 
     token[used++] = *t;
 }
 
-
-
-int yywrap ()
+int yywrap(void)
 {
-    int i;
+	int i;
 
-    for (i=0; i<used; i++)
-	 { 
-	 printf ("%s %s %s\n", token[i].name, token[i].id, token[i].class);
-	 }
-    return (1);
+	for (i=0; i<used; i++)
+		printf("%s %s %s\n", token[i].name, token[i].id, token[i].class);
+	return 1;
 }
+

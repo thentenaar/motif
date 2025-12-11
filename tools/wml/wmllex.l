@@ -1,7 +1,8 @@
 %{
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -24,17 +25,8 @@
 /*
  * HISTORY
  */
-#if defined(__STDC__)
+#include <stdio.h>
 #include <string.h>
-#endif
-
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
 
 #ifdef YY_BUFFER_SIZE
 #define BUF_SIZE YY_BUFFER_SIZE
@@ -42,18 +34,16 @@
 #define BUF_SIZE 8192
 #endif
 
-char            yystringval[BUF_SIZE];      /* any string value */
-char            yynameval[BUF_SIZE];         /* any identifier (name) */
-int             yytknval1;              /* terminal token value 1 */
-int             yytknval2;              /* terminal token value 2 */
+char yystringval[BUF_SIZE]; /* any string value */
+char yynameval[BUF_SIZE];   /* any identifier (name) */
+int  yytknval1;             /* terminal token value 1 */
+int  yytknval2;             /* terminal token value 2 */
 
 %}
-
 %p 3000
 %%
 
-[ \t\f]		{}
-
+[ \t\f\r]		{}
 [\n]		{ wml_line_count += 1; }
 
 "Class"			{ return CLASS; }
@@ -115,7 +105,7 @@ int             yytknval2;              /* terminal token value 2 */
 "#"[^\n]*	{}
 
 [a-zA-Z_][a-zA-Z0-9$_]* {	/* string without quotes	*/
-	strcpy (yystringval, (XmConst char *) yytext);
+	strcpy(yystringval, yytext);
 	return STRING;
 	}
 
@@ -124,18 +114,17 @@ int             yytknval2;              /* terminal token value 2 */
 		}
 
 \"[^"\n]*\"	{	/* String in quotes	*/
-		strncpy(yystringval, (XmConst char *) yytext+1, yyleng - 2);
+		memcpy(yystringval, yytext+1, yyleng-2);
 		yystringval[yyleng-2] = '\0' ;
 		return STRING;
 		}
 \"[^"\n]*	{
-		printf ("\nUnterminated string near %s, line %d",
-			yytext, wml_line_count);
+		printf("\nUnterminated string near %s, line %d", yytext, wml_line_count);
 		return ERRORTOKEN;
 		}
 
 .	{
-	printf ("\nEncountered illegal character '%c', line %d",
-		yytext[0], wml_line_count);
+	printf("\nEncountered illegal character '%c', line %d", yytext[0], wml_line_count);
 	return ERRORTOKEN;
 	}
+

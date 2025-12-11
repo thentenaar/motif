@@ -5,6 +5,8 @@
 *~
 .deps
 .libs
+.cache
+.ccls-cache
 motif.pc
 Makefile.in
 aclocal.m4
@@ -51,6 +53,7 @@ demos/doc/programGuide/ch08/Notebook/notebook
 demos/doc/programGuide/ch16/UTMXmText
 demos/doc/programGuide/ch17/simple_drag/simple_drag
 demos/doc/programGuide/ch17/simple_drop/simple_drop
+demos/lib/Exm/wml/Exm.h
 demos/lib/Exm/wml/Exm.wmd
 demos/lib/Exm/wml/UilConst.h
 demos/lib/Exm/wml/UilKeyTab.h
@@ -152,6 +155,8 @@ tools/wml/wmlparse.c
 tools/wml/wmlparse.h
 tools/wml/wmluiltok
 tools/wml/wmluiltok.c
+tools/wml/wmlparse.output
+tools/wml/Uil.output
 tests/tests
 tests/*.log
 tests/*.trs

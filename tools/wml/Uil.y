@@ -1,6 +1,7 @@
-/* 
+/*
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 /*
 **++
@@ -57,7 +58,7 @@ YYSTYPE		prev_yylval;
 
 	/* End user declarations section */
 
-%}    
+%}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *     token name			token value	  token class	      *
@@ -65,7 +66,7 @@ YYSTYPE		prev_yylval;
  *----------------------------------------------------------------------------*
  */
 
-/* 
+/*
 **	terminals of the language
 **
 **	NOTE: the tags which appear in comments at the end of each token
@@ -227,7 +228,7 @@ YYSTYPE		prev_yylval;
 
 
 
-/* 
+/*
 **	productions of the grammar
 */
 
@@ -255,7 +256,7 @@ module_clauses
     : module_clause
     | module_clauses module_clause
     ;
-    
+
 module_clause
     : VERSION EQUAL_SIGN character_8_value		{ sar_process_module_version(  &$3 , &$1 ); }
     | NAMES EQUAL_SIGN sensitivity_value		{ sar_process_module_sensitivity( &$3 , &$1 ); }
@@ -416,7 +417,7 @@ opt_formal_parameters
 formal_parameter_type
     : /* empty */					{ $$ = gz_yynullval; $$.b_type = sym_k_no_value; }
     | value_type
-    | ANY 						{ $$ = $1; $$.b_type = 
+    | ANY 						{ $$ = $1; $$.b_type =
 sym_k_any_value; }
     | CLASS_NAME
 	{ YYSTYPE temp[2];
@@ -482,7 +483,7 @@ object_decl_list
 
 object_decl
     : id
-	{ sar_create_object (&$1, sym_k_widget_entry); 
+	{ sar_create_object (&$1, sym_k_widget_entry);
 	  sar_link_section (&$1); $$ = gz_yynullval;}
       COLON object_definition
 	{ $$ = gz_yynullval; }
@@ -621,7 +622,7 @@ object_feature
     | callback_list_def SEMICOLON
 	{ sar_save_list_end ( &$2); sar_save_feature (&$1); $$ = gz_yynullval; }
     | control_list_def SEMICOLON
-	{ sar_save_list_end ( &$2); sar_save_feature (&$1); 
+	{ sar_save_list_end ( &$2); sar_save_feature (&$1);
 sar_update_parent_list (&$1); $$ = gz_yynullval; }
     | error { lex_issue_error (SEMICOLON); } SEMICOLON
     ;
@@ -648,7 +649,7 @@ list_decl_list
 
 list_decl
     : id
-	{ sar_create_object (&$1, sym_k_list_entry); 
+	{ sar_create_object (&$1, sym_k_list_entry);
 sar_link_section (&$1); $$ = gz_yynullval;}
       COLON list_specification
 	{ $$ = gz_yynullval; }
@@ -824,21 +825,21 @@ control_list_item
     : opt_managed control_item
 	{ sar_save_control_item (&$1, &$2); $$ = $1; }
 
-    | id 
+    | id
 	{ sar_create_object (& $1, sym_k_widget_entry); $1.b_flags = sym_m_managed; $$ = gz_yynullval;}
-      COLON 
+      COLON
       control_object_definition
 	{ sar_save_control_widget (& $1, & $2); $$ = $1; }
 /* Child */
     | CHILD_NAME opt_child_managed
-        { sar_create_child (& $1); $1.b_flags = sym_m_managed; 
-	  $$ = gz_yynullval; } 
+        { sar_create_child (& $1); $1.b_flags = sym_m_managed;
+	  $$ = gz_yynullval; }
       child_object_spec
-        { sar_save_control_widget (& $1, & $2); $$ = $1; } 
+        { sar_save_control_widget (& $1, & $2); $$ = $1; }
     | CHILD_NAME UNMANAGED
-        { sar_create_child (& $1); $$ = gz_yynullval; } 
+        { sar_create_child (& $1); $$ = gz_yynullval; }
       child_object_spec
-        { sar_save_control_widget (& $1, & $3); $$ = $1; } 
+        { sar_save_control_widget (& $1, & $3); $$ = $1; }
     ;
 
 opt_child_managed
@@ -994,9 +995,9 @@ keyword
 
 /*    values    */
 
-character_8_value    : value	
-               { 
-                 $$ = $1; 
+character_8_value    : value
+               {
+                 $$ = $1;
 		 if (($$.b_type != sym_k_error_value) &&
 		     ($$.b_type != sym_k_any_value) &&
 		    (($$.b_flags &sym_m_forward_ref) == 0))
@@ -1004,27 +1005,27 @@ character_8_value    : value
 			if (($$.b_type != sym_k_char_8_value) &&
 			    ($$.b_type != sym_k_localized_string_value))
 		  	    sar_value_type_error( &$$, sym_k_char_8_value );
-			if (($$.b_flags &sym_m_private) == 0) 
+			if (($$.b_flags &sym_m_private) == 0)
 			    sar_private_error( &$$ );
 		       }
 		}
     ;
 
 private_value
-    : value							{ $$ = $1; 
+    : value							{ $$ = $1;
 								  if ($$.b_type != sym_k_error_value)
 								  {
 								    if ((($$.b_flags &sym_m_private) == 0) &&
 									(($$.b_flags &sym_m_forward_ref) == 0))
 									sar_private_error( &$$ );
 								  }
- 								} 
+ 								}
      ;
-  
+
  /* BEGIN HaL fix CR 5427 */
- 
+
  private_value_plus
-     : non_export_value					        { $$ = $1; 
+     : non_export_value					        { $$ = $1;
  								  if ($$.b_type != sym_k_error_value)
  								  {
  								    if ((($$.b_flags &sym_m_private) == 0) &&
@@ -1032,20 +1033,20 @@ private_value
  									sar_private_error( &$$ );
  								  }
 							}
-     | value							{ $$ = $1; 
+     | value							{ $$ = $1;
  								  if ($$.b_type != sym_k_error_value)
  								  {
  								    if ((($$.b_flags &sym_m_private) == 0) &&
  									(($$.b_flags &sym_m_forward_ref) == 0))
  									sar_private_error( &$$ );
  								  }
- 								}  
-  
+ 								}
+
  non_export_value
      : COLOR_TABLE LEFT_PAREN color_list RIGHT_PAREN		{ sar_make_color_table( &$$, &$3, &$1); }
- 
+
  /* END HaL fix CR 5427 */
- 
+
 
 value
     : value_1
@@ -1089,52 +1090,52 @@ value_6
     ;
 
 operand
-    : UNS_INT_LITERAL						{ sar_make_private_value( &$$, &$1, sym_k_integer_value, 
+    : UNS_INT_LITERAL						{ sar_make_private_value( &$$, &$1, sym_k_integer_value,
 								  &$1, XmPIXELS); }
-    | UNS_INT_LITERAL units_specification			{ sar_make_private_value( &$$, &$1, sym_k_integer_value, 
+    | UNS_INT_LITERAL units_specification			{ sar_make_private_value( &$$, &$1, sym_k_integer_value,
 								  &$1, sar_get_units_type(&$2)); }
     | optional_charset CHAR_8_LITERAL				{ /* Don't use FALSE because it is a token not a Boolean! */
-								  Uil_lex_l_charset_specified = 0; 
-								  sar_make_private_value( &$$, &$2, sym_k_char_8_value, 
+								  Uil_lex_l_charset_specified = 0;
+								  sar_make_private_value( &$$, &$2, sym_k_char_8_value,
 								  &$2, 0); }
     | id							{ sar_process_id( &$$, &$1 );}
-    | UNS_FLOAT_LITERAL						{ sar_make_private_value( &$$, &$1, sym_k_float_value, 
+    | UNS_FLOAT_LITERAL						{ sar_make_private_value( &$$, &$1, sym_k_float_value,
 								  &$1, XmPIXELS); }
-    | UNS_FLOAT_LITERAL units_specification			{ sar_make_private_value( &$$, &$1, sym_k_float_value, 
+    | UNS_FLOAT_LITERAL units_specification			{ sar_make_private_value( &$$, &$1, sym_k_float_value,
 								  &$1, sar_get_units_type(&$2)); }
     | PIXMAP LEFT_PAREN character_8_value RIGHT_PAREN		{ sar_value_not_implemented( &$$, &$1, "pixmap literal" ); }
     | FONT LEFT_PAREN font_spec RIGHT_PAREN			{ $$ = $3; }
     | FONTSET LEFT_PAREN fontset_spec RIGHT_PAREN		{ $$ = $3; }
     | COLOR LEFT_PAREN color_spec RIGHT_PAREN			{ $$ = $3; }
-    | REASON LEFT_PAREN character_8_value RIGHT_PAREN		{ sar_make_private_value(&$$, &$3, sym_k_reason_value, 
+    | REASON LEFT_PAREN character_8_value RIGHT_PAREN		{ sar_make_private_value(&$$, &$3, sym_k_reason_value,
 								  &$1, 0); }
     | CLASS_REC_NAME LEFT_PAREN character_8_value RIGHT_PAREN	{ sar_make_private_value(&$$, &$3, sym_k_class_rec_name_value,
 											 &$1, 0); }
     | ARGUMENT LEFT_PAREN character_8_value opt_arg_type RIGHT_PAREN
 								{ sar_make_private_value
 								      ( &$$, &$3, sym_k_argument_value, &$1, $4.b_type ); }
-    | UILTRUE							{ sar_make_private_value( &$$, &$1, sym_k_bool_value, 
+    | UILTRUE							{ sar_make_private_value( &$$, &$1, sym_k_bool_value,
 								  &$1, 0); }
-    | UILFALSE							{ sar_make_private_value( &$$, &$1, sym_k_bool_value, 
+    | UILFALSE							{ sar_make_private_value( &$$, &$1, sym_k_bool_value,
 								  &$1, 0); }
-    | ON							{ sar_make_private_value( &$$, &$1, sym_k_bool_value, 
+    | ON							{ sar_make_private_value( &$$, &$1, sym_k_bool_value,
 								  &$1, 0); }
-    | OFF							{ sar_make_private_value( &$$, &$1, sym_k_bool_value, 
+    | OFF							{ sar_make_private_value( &$$, &$1, sym_k_bool_value,
 								  &$1, 0); }
     | optional_charset COMP_STRING				{ /* Don't use FALSE because it is a token not a Boolean! */
 								  Uil_lex_l_charset_specified = 0;
 								  sar_make_private_value
 								      ( &$$, &$2, sym_k_compound_string_value, &$2, 0); }
-    | string_table_type LEFT_PAREN comp_str_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_string_table_value, 
+    | string_table_type LEFT_PAREN comp_str_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_string_table_value,
 								  &$1, 0); }
-    | asciz_table_type LEFT_PAREN asciz_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_asciz_table_value, 
+    | asciz_table_type LEFT_PAREN asciz_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_asciz_table_value,
 								  &$1, 0); }
-    | INTEGER_TABLE LEFT_PAREN integer_list RIGHT_PAREN		{ sar_make_private_value( &$$, &$3, sym_k_integer_table_value, 
+    | INTEGER_TABLE LEFT_PAREN integer_list RIGHT_PAREN		{ sar_make_private_value( &$$, &$3, sym_k_integer_table_value,
 								  &$1, 0); }
-    | TRANSLATION_TABLE LEFT_PAREN string_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_trans_table_value, 
+    | TRANSLATION_TABLE LEFT_PAREN string_list RIGHT_PAREN	{ sar_make_private_value( &$$, &$3, sym_k_trans_table_value,
 								  &$1, 0); }
     | COMPOUND_STRING LEFT_PAREN comp_str_result RIGHT_PAREN	{ $$ = $3; }
-    | COMPOUND_STRING_COMPONENT LEFT_PAREN comp_str_comp_result RIGHT_PAREN	{ $$ = $3; } 
+    | COMPOUND_STRING_COMPONENT LEFT_PAREN comp_str_comp_result RIGHT_PAREN	{ $$ = $3; }
     | FONT_TABLE LEFT_PAREN font_list RIGHT_PAREN		{ $$ = $3; }
     | ICON LEFT_PAREN icon_spec RIGHT_PAREN			{ $$ = $3; }
     | FLOAT LEFT_PAREN value RIGHT_PAREN			{ $$ = $1; sar_unary_op( &$$, &$3 ); }
@@ -1148,7 +1149,7 @@ operand
 
     | SINGLE_FLOAT	LEFT_PAREN value RIGHT_PAREN	        { $$ = $1; sar_unary_op( &$$, &$3 ); }
 
-    | RGB LEFT_PAREN rgb_list RIGHT_PAREN			{ sar_make_private_value( & $$, & $3, sym_k_rgb_value, 
+    | RGB LEFT_PAREN rgb_list RIGHT_PAREN			{ sar_make_private_value( & $$, & $3, sym_k_rgb_value,
 								  &$1, 0); }
     | WIDE_CHARACTER LEFT_PAREN wchar_str_result RIGHT_PAREN	{ $$ = $3; }
     | LOC_STRING						{ sar_make_private_value(&$$, &$1, sym_k_localized_string_value,
@@ -1234,10 +1235,10 @@ comp_str_result
 
 comp_str_comp_result
     : ENUMVAL_NAME	{ sar_make_comp_str_comp(&$$, &$1, &gz_yynullval, &$-1 ); }
-    | ENUMVAL_NAME COMMA ENUMVAL_NAME	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); } 
-    | ENUMVAL_NAME COMMA CHAR_8_LITERAL	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); } 
-    | ENUMVAL_NAME COMMA LOC_STRING	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); } 
-    | ENUMVAL_NAME COMMA CHARSET_NAME	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); } 
+    | ENUMVAL_NAME COMMA ENUMVAL_NAME	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); }
+    | ENUMVAL_NAME COMMA CHAR_8_LITERAL	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); }
+    | ENUMVAL_NAME COMMA LOC_STRING	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); }
+    | ENUMVAL_NAME COMMA CHARSET_NAME	{ sar_make_comp_str_comp( &$$, &$1, &$3, &$-1 ); }
     ;
 
 comp_str_attrs
@@ -1246,13 +1247,13 @@ comp_str_attrs
     ;
 
 comp_str_attr
-    : CHARACTER_SET EQUAL_SIGN valid_charset		{ $$.b_type = $1.b_type; 
+    : CHARACTER_SET EQUAL_SIGN valid_charset		{ $$.b_type = $1.b_type;
 							  $$.b_tag = $3.b_tag;
 							  $$.value.az_keyword_entry = $3.value.az_keyword_entry;
 							  $$.value.az_symbol_entry = $3.value.az_symbol_entry; }
-    | RIGHT_TO_LEFT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type; 
+    | RIGHT_TO_LEFT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type;
 							  $$.value.az_symbol_entry = $3.value.az_symbol_entry; }
-    | SEPARATE EQUAL_SIGN private_value			{ $$.b_type = $1.b_type; 
+    | SEPARATE EQUAL_SIGN private_value			{ $$.b_type = $1.b_type;
 							  $$.value.az_symbol_entry = $3.value.az_symbol_entry; }
     ;
 
@@ -1261,18 +1262,18 @@ wchar_str_result
     ;
 
 font_spec
-    : character_8_value COMMA CHARACTER_SET EQUAL_SIGN valid_charset 
+    : character_8_value COMMA CHARACTER_SET EQUAL_SIGN valid_charset
 							{ sar_make_font( &$$, &$5, &$1, &$-1 ); }
     | character_8_value					{ sar_make_font( &$$, &gz_yynullval, &$1, &$-1 ); }
-    ; 
+    ;
 
 fontset_spec
-    : character_8_value COMMA CHARACTER_SET EQUAL_SIGN valid_charset 
+    : character_8_value COMMA CHARACTER_SET EQUAL_SIGN valid_charset
 							{ sar_make_fontset( &$$, &$5, &$1, &$-1 ); }
     | character_8_value					{ sar_make_fontset( &$$, &gz_yynullval, &$1, &$-1 ); }
-    ; 
+    ;
 
-font_list						
+font_list
     : font_item						{ sar_make_font_table( &$$, &$1, &gz_yynullval, &$-1 ); }
     | font_list COMMA font_item				{ sar_make_font_table( &$$, &$3, &$1, &$-1 ); }
     ;
@@ -1287,25 +1288,25 @@ font_item
 
 optional_charset
     : POUND valid_charset				{ /* Don't use TRUE because it is a token not a Boolean! */
-							  $$ = $2; 
+							  $$ = $2;
 							  Uil_lex_l_charset_specified = 1;}
     | epsilon_production
     ;
-    
+
 
 valid_charset
     : CHARSET_NAME					{ sar_charset_verify (&$1); $$ = $1; }
     | CHARACTER_SET LEFT_PAREN charset_info RIGHT_PAREN	{ $$ = $3; }
     | NAME			{ sar_make_fallback_charset(&$1);
-				  $$ = $1; } 
-			   
+				  $$ = $1; }
+
     ;
 
 charset_info
-    : character_8_value				    	{ sar_make_private_value(&$$, &$1, sym_k_char_8_value, 
+    : character_8_value				    	{ sar_make_private_value(&$$, &$1, sym_k_char_8_value,
 							  &$1, 0);
 							  sar_make_charset (&$$, &$$, &gz_yynullval, &$1); }
-    | character_8_value charset_attrs			{ sar_make_private_value(&$$, &$1, sym_k_char_8_value, 
+    | character_8_value charset_attrs			{ sar_make_private_value(&$$, &$1, sym_k_char_8_value,
 							  &$1, 0);
 							  sar_make_charset (&$$, &$$, &$2, &$1); }
     ;
@@ -1316,12 +1317,12 @@ charset_attrs
     ;
 
 charset_attr
-    : RIGHT_TO_LEFT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type; 
-							  if ($3.b_type != sym_k_bool_value) 
+    : RIGHT_TO_LEFT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type;
+							  if ($3.b_type != sym_k_bool_value)
 							      sar_value_type_error( &$3, sym_k_bool_value );
 							  $$.value.az_symbol_entry = $3.value.az_symbol_entry; }
-    | SIXTEEN_BIT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type; 
-							  if ($3.b_type != sym_k_bool_value) 
+    | SIXTEEN_BIT EQUAL_SIGN private_value		{ $$.b_type = $1.b_type;
+							  if ($3.b_type != sym_k_bool_value)
 							      sar_value_type_error( &$3, sym_k_bool_value );
 							  $$.value.az_symbol_entry = $3.value.az_symbol_entry; }
     ;
@@ -1404,11 +1405,9 @@ units_specification
 /*    Dummy error routine for the parser.  We will output our own
       error messages.    */
 
-int yyerror (s)
-char	* s;
+int yyerror(const char *s)
 {
+	(void)s;
 	return 0;
 }
-
-
 

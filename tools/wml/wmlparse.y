@@ -1,6 +1,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -32,28 +33,8 @@
 
 
 %{
-
-#include "wml.h"
-
-#if defined(__STDC__)
 #include <string.h>		/* for strcpy() */
-#endif
-
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
-
-#if !defined(__STDC__)
-/*
- * Undefine NULL, since it is defined in stdio
- */
-#undef NULL
-#endif
-
+#include <wml.h>
 %}
 
 
@@ -145,7 +126,6 @@
 
 %%
 
-
 /*
  * Productions of the WML grammar. All routines assume that current
  * data structures are kept in globals. This works as the language has
@@ -268,7 +248,6 @@ charset_statement_list
 	;
 
 
-
 /*
  * The CLASS statement
  */
@@ -448,7 +427,6 @@ class_children_element
 	;
 
 
-
 /*
  * The RESOURCE statement
  */
@@ -508,7 +486,6 @@ boolean_resource_resource_attribute_name
 	: XRMRESOURCE		{ yytknval1 = XRMRESOURCE; }
 	;
 
-
 /*
  * The CHILD statement
  */
@@ -517,7 +494,6 @@ child_statement
           { wmlCreateChild(yynameval, yystringval); }
        ;
 
-
 /*
  * DATATYPE statement
  */
@@ -555,7 +531,6 @@ datatype_attribute_name
 	;
 
 
-
 /*
  * The CONTROLLIST statement
  */
@@ -592,7 +567,6 @@ ctrlist_controls_attributes
 	;
 
 
-
 /*
  * The ENUMERATIONSET statement
  */
@@ -629,7 +603,6 @@ enumset_value
 	;
 
 
-
 /*
  * The ENUMERATIONVALUE statement
  */
@@ -666,7 +639,6 @@ enumvalue_attribute_name
 	;
 
 
-
 /*
  * CHARACTERSET statement
  */
@@ -722,22 +694,19 @@ predefined_charset_attribute_value
 	| MIXED1_2BYTE		{ yytknval2 = MIXED1_2BYTE; }
         ;
 
-
 /*
  * Other productions
  */
-name
-	: STRING
-		{ strcpy (yynameval, (XmConst char *)yystringval); }
-	;
+name : STRING { strcpy(yynameval, yystringval); } ;
 
 %%
 
 /*
  * Dummmy error routine, since we output our own.
  */
-int yyerror (const char *s)
+int yyerror(const char *s)
 {
+	(void)s;
 	return 0;
 }
 
