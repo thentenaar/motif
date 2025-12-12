@@ -9,7 +9,7 @@ XCOMM
 XCOMM These libraries and programs are free software; you can
 XCOMM redistribute them and/or modify them under the terms of the GNU
 XCOMM Lesser General Public License as published by the Free Software
-XCOMM Foundation; either version 2 of the License, or (at your option)
+XCOMM Foundation; either version 2.1 of the License, or (at your option)
 XCOMM any later version.
 XCOMM
 XCOMM These libraries and programs are distributed in the hope that

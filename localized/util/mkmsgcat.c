@@ -7,7 +7,7 @@
  * These libraries and programs are free software; you can
  * redistribute them and/or modify them under the terms of the GNU
  * Lesser General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option)
+ * Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * These libraries and programs are distributed in the hope that
@@ -39,7 +39,7 @@ $\n\
 $ These libraries and programs are free software; you can\n\
 $ redistribute them and/or modify them under the terms of the GNU\n\
 $ Lesser General Public License as published by the Free Software\n\
-$ Foundation; either version 2 of the License, or (at your option)\n\
+$ Foundation; either version 2.1 of the License, or (at your option)\n\
 $ any later version.\n\
 $\n\
 $ These libraries and programs are distributed in the hope that\n\
@@ -63,7 +63,7 @@ char *OSF_COPYRIGHT_C = "/*\n\
  * These libraries and programs are free software; you can\n\
  * redistribute them and/or modify them under the terms of the GNU\n\
  * Lesser General Public License as published by the Free Software\n\
- * Foundation; either version 2 of the License, or (at your option)\n\
+ * Foundation; either version 2.1 of the License, or (at your option)\n\
  * any later version.\n\
  *\n\
  * These libraries and programs are distributed in the hope that\n\

@@ -1,4 +1,9 @@
-/* XPM */
+/**
+ * Motif
+ *
+ * Copyright (c) 2025 Tim Hentenaar
+ * SPDX-License-Identifier: CC-BY-SA-4.0
+ */
 static char * xm_information[] = {
 "64 64 5 1",
 " 	c #ffffff",

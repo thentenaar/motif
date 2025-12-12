@@ -1,6 +1,30 @@
 /**
+ * Motif
+ *
+ * Copyright (c) 2025 Tim Hentenaar
+ *
+ * These libraries and programs are free software; you can
+ * redistribute them and/or modify them under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * These libraries and programs are distributed in the hope that
+ * they will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with these librararies and programs; if not, write
+ * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301 USA
+ */
+
+/**
  * Prototypes for obsolete prototypes, split out from Xm.h
  */
+
 #ifdef _Xm_h
 #ifndef XM_OBSOLETE_H
 #define XM_OBSOLETE_H
@@ -8,14 +32,14 @@
 #include <Xm/deprecated.h>
 
 /* {{{ Deprecated macros using C99's _Pragma */
-#ifdef __GNUC__
+#if defined(__GNUC__) && __STDC_VERSION__ >= 199901L
 #define XmSTRING_COMPONENT_FONTLIST_ELEMENT_TAG \
 	_Pragma("GCC warning \"XmSTRING_COMPONENT_FONTLIST_ELEMENT_TAG is deprecated, use XmSTRING_COMPONENT_TAG instead\"") \
 	XmSTRING_COMPONENT_TAG
 #define XmSTRING_COMPONENT_CHARSET \
 	_Pragma("GCC warning \"XmSTRING_COMPONENT_CHARSET is deprecated, use XmSTRING_COMPONENT_TAG instead\"") \
 	XmSTRING_COMPONENT_TAG
-#elif defined(__clang__)
+#elif defined(__clang__) && __STDC_VERSION__ >= 199901L
 #define XmSTRING_COMPONENT_FONTLIST_ELEMENT_TAG \
 	_Pragma("clang warning \"XmSTRING_COMPONENT_FONTLIST_ELEMENT_TAG is deprecated, use XmSTRING_COMPONENT_TAG instead\"") \
 	XmSTRING_COMPONENT_TAG
