@@ -20,7 +20,7 @@ wmldir = $(includedir)/uil
 
 wml_HEADERS = UilDBDef.h
 
-noinst_HEADERS = wml.h wmlparse.h $(WMLTARGETS)
+noinst_HEADERS = wml.h wmlparse.h wmlnoreturn.h $(WMLTARGETS)
 
 noinst_PROGRAMS = wml wmluiltok wmldbcreate
 wmluiltok_SOURCES = wmluiltok.l

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 2025 Tim Hentenaar
@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 /*
  * HISTORY
 */
@@ -281,12 +281,12 @@ class_attribute
 	: class_attribute_name
 	    EQUALS
 	    STRING
-		{ wmlAddClassAttribute (yytknval1, yystringval); }
+		{ wmlAddClassAttributeStr(yytknval1, yystringval); }
 	    SEMICOLON
 	| boolean_class_attribute_name
 	    EQUALS
 	    boolean_attribute_value
-		{ wmlAddClassAttribute (yytknval1, yytknval2); }
+		{ wmlAddClassAttributeInt(yytknval1, yytknval2); }
 	    SEMICOLON
 	| class_resources SEMICOLON
 	| class_controls SEMICOLON
@@ -354,12 +354,12 @@ class_resource_attribute_element
 	: class_resource_attribute_name
 	    EQUALS
 	    STRING
-		{ wmlAddClassResourceAttribute (yytknval1, yystringval); }
+		{ wmlAddClassResourceAttributeStr(yytknval1, yystringval); }
 	    SEMICOLON
 	| boolean_class_resource_attribute_name
 	    EQUALS
 	    boolean_attribute_value
-		{ wmlAddClassResourceAttribute (yytknval1, yytknval2); }
+		{ wmlAddClassResourceAttributeInt(yytknval1, yytknval2); }
 	    SEMICOLON
 	| error { LexIssueError(SEMICOLON); } SEMICOLON
 	;
@@ -461,12 +461,12 @@ resource_attribute
 	: resource_attribute_name
 	    EQUALS
 	    STRING
-		{ wmlAddResourceAttribute (yytknval1, yystringval); }
+		{ wmlAddResourceAttributeStr(yytknval1, yystringval); }
 	    SEMICOLON
 	| boolean_resource_resource_attribute_name
 	    EQUALS
 	    boolean_attribute_value
-		{ wmlAddResourceAttribute (yytknval1, yytknval2); }
+		{ wmlAddResourceAttributeInt(yytknval1, yytknval2); }
 	    SEMICOLON
 	| error { LexIssueError(SEMICOLON); } SEMICOLON
 	;
@@ -519,7 +519,7 @@ datatype_attribute
 	: datatype_attribute_name
 	    EQUALS
 	    STRING
-		{ wmlAddDatatypeAttribute (yytknval1, yystringval); }
+		{ wmlAddDatatypeAttribute(yytknval1, yystringval); }
 	    SEMICOLON
 	| error { LexIssueError(SEMICOLON); } SEMICOLON
 	;
@@ -664,12 +664,12 @@ charset_attribute
 	: charset_attribute_name
 	    EQUALS
 	    STRING
-		{ wmlAddCharsetAttribute (yytknval1, yystringval); }
+		{ wmlAddCharsetAttributeStr(yytknval1, yystringval); }
 	    SEMICOLON
 	| predefined_charset_attribute_name
 	    EQUALS
 	    predefined_charset_attribute_value
-		{ wmlAddCharsetAttribute (yytknval1, yytknval2); }
+		{ wmlAddCharsetAttributeInt(yytknval1, yytknval2); }
 	    SEMICOLON
 	| error { LexIssueError(SEMICOLON); } SEMICOLON
 	;

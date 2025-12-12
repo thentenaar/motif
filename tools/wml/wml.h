@@ -596,24 +596,21 @@ typedef struct {
 /*
  * Defined in wml.c
  */
-extern int		wml_err_count;		/* total errors */
-extern int		wml_line_count;		/* lines read from input */
-extern DynamicHandleListDefPtr
-			wml_synobj_ptr;		/* syntactic object list */
-
-extern DynamicHandleListDefPtr	wml_obj_datatype_ptr;
-extern DynamicHandleListDefPtr	wml_obj_enumval_ptr;
-extern DynamicHandleListDefPtr	wml_obj_enumset_ptr;
-extern DynamicHandleListDefPtr	wml_obj_reason_ptr;
-extern DynamicHandleListDefPtr	wml_obj_arg_ptr;
-extern DynamicHandleListDefPtr	wml_obj_child_ptr;
-extern DynamicHandleListDefPtr	wml_obj_allclass_ptr;
-extern DynamicHandleListDefPtr	wml_obj_class_ptr;
-extern DynamicHandleListDefPtr	wml_obj_ctrlist_ptr;
-extern DynamicHandleListDefPtr	wml_obj_charset_ptr;
-
-extern DynamicHandleListDefPtr	wml_tok_sens_ptr;
-extern DynamicHandleListDefPtr	wml_tok_insens_ptr;
+extern int wml_err_count;		/* total errors */
+extern int wml_line_count;		/* lines read from input */
+extern DynamicHandleListDefPtr wml_synobj_ptr;		/* syntactic object list */
+extern DynamicHandleListDefPtr wml_obj_datatype_ptr;
+extern DynamicHandleListDefPtr wml_obj_enumval_ptr;
+extern DynamicHandleListDefPtr wml_obj_enumset_ptr;
+extern DynamicHandleListDefPtr wml_obj_reason_ptr;
+extern DynamicHandleListDefPtr wml_obj_arg_ptr;
+extern DynamicHandleListDefPtr wml_obj_child_ptr;
+extern DynamicHandleListDefPtr wml_obj_allclass_ptr;
+extern DynamicHandleListDefPtr wml_obj_class_ptr;
+extern DynamicHandleListDefPtr wml_obj_ctrlist_ptr;
+extern DynamicHandleListDefPtr wml_obj_charset_ptr;
+extern DynamicHandleListDefPtr wml_tok_sens_ptr;
+extern DynamicHandleListDefPtr wml_tok_insens_ptr;
 
 /*
  * Defined in wmlutils.c
@@ -632,34 +629,36 @@ extern WmlClassChildDefPtr wmlResolveChildIsMember(WmlChildDefPtr childobj, WmlC
 /*
  * Defined in wmlsynbld.c
  */
-extern char		yystringval[];		/* any string value */
-extern char		yynameval[];		/* any name (identifier) */
-extern int		yytknval1;		/* terminal token value 1 */
-extern int		yytknval2;		/* terminal token value 2 */
-extern ObjectPtr	wml_cur_obj;		/* object being constructed */
-extern ObjectPtr	wml_cur_subobj;		/* current subobject */
-extern void wmlCreateClass ();
-extern void wmlAddClassAttribute ();
-extern void wmlAddClassResource ();
-extern void wmlAddClassResourceAttribute ();
-extern void wmlAddClassControl ();
-extern void wmlAddCtrList ();
-extern void wmlCreateResource ();
-extern void wmlCreateDatatype ();
-extern void wmlAddResourceAttribute ();
-extern void wmlAddDatatypeAttribute ();
-extern void wmlAddCtrListControl ();
-extern void wmlCreateEnumSet ();
-extern void wmlAddEnumSetValue ();
-extern void wmlCreateEnumValue ();
-extern void wmlAddEnumValueAttribute ();
-extern void wmlCreateCharset ();
-extern void wmlAddCharsetAttribute ();
+extern char yystringval[];       /* any string value */
+extern char yynameval[];         /* any name (identifier) */
+extern int  yytknval1;           /* terminal token value 1 */
+extern int  yytknval2;           /* terminal token value 2 */
+extern ObjectPtr wml_cur_obj;    /* object being constructed */
+extern ObjectPtr wml_cur_subobj; /* current subobject */
 extern void LexIssueError(int token);
-extern void wmlAddClassChild(char *);
-extern void wmlCreateChild(char *, char *);
-extern void wmlCreateOrAppendCtrlList(char *);
-extern void wmlAddCtrlListControl(char *);
+extern void wmlCreateClass(const char *name, int ctype);
+extern void wmlCreateResource(const char *name, int rtype);
+extern void wmlCreateDatatype(const char *name);
+extern void wmlCreateChild(const char *name, const char *class);
+extern void wmlCreateOrAppendCtrlList(const char *name);
+extern void wmlCreateEnumSet(const char *name, const char *dtype);
+extern void wmlCreateEnumValue(const char *name);
+extern void wmlCreateCharset(const char *name);
+extern void wmlAddClassAttributeInt(int attrid, int val);
+extern void wmlAddClassAttributeStr(int attrid, const char *val);
+extern void wmlAddClassControl(const char *name);
+extern void wmlAddClassResource(const char *name);
+extern void wmlAddClassChild(const char *name);
+extern void wmlAddClassResourceAttributeInt(int attrid, int val);
+extern void wmlAddClassResourceAttributeStr(int attrid, const char *val);
+extern void wmlAddResourceAttributeInt(int attrid, int val);
+extern void wmlAddResourceAttributeStr(int attrid, const char *val);
+extern void wmlAddDatatypeAttribute(int attrid, const char *val);
+extern void wmlAddCtrlListControl(const char *name);
+extern void wmlAddEnumSetValue(const char *name);
+extern void wmlAddEnumValueAttribute(int attrid, const char *val);
+extern void wmlAddCharsetAttributeInt(int attrid, int val);
+extern void wmlAddCharsetAttributeStr(int attrid, const char *val);
 
 /*
  * Defined in wmlresolve.c
