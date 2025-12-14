@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilLstLst.c /main/20 1999/07/21 09:03:16 vipin $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilLstLst.c /main/20 1999/07/21 09:03:16 vipin $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -50,21 +50,10 @@ static char rcsid[] = "$TOG: UilLstLst.c /main/20 1999/07/21 09:03:16 vipin $"
 **  INCLUDE FILES
 **
 **/
-
+#include <stdarg.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
-
-#include <stdarg.h>
-
 #include "UilDefI.h"
-
-
-/*
-**
-**  EXTERNAL storage used by the listing
-**
-*/
-
 
 /*
 **
@@ -81,7 +70,6 @@ static	    char		lst_c_title1[132];
 static	    uil_fcb_type	*lst_az_fcb;
 static	     boolean		lst_v_listing_open = FALSE;
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -116,8 +104,7 @@ static	     boolean		lst_v_listing_open = FALSE;
 **
 **--
 **/
-
-void	lst_open_listing()
+void lst_open_listing(void)
 {
     status  open_status;
     _Xctimeparams	ctime_buf;
@@ -156,9 +143,8 @@ void	lst_open_listing()
     */
 
     Uil_lst_c_title2[ 0 ] = 0;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -189,8 +175,7 @@ void	lst_open_listing()
 **
 **--
 **/
-
-void	Uil_lst_cleanup_listing()
+void Uil_lst_cleanup_listing(void)
 {
     /*
     **	Check that there is a listing file requested and that
@@ -207,12 +192,6 @@ void	Uil_lst_cleanup_listing()
     XtFree((char*)lst_az_fcb);
     lst_az_fcb = NULL;
 }
-
-
-
-
-
-
 
 /*
 **++
@@ -243,11 +222,7 @@ void	Uil_lst_cleanup_listing()
 **
 **--
 **/
-
-status	create_listing_file( az_fcb )
-
-uil_fcb_type			*az_fcb;
-
+status create_listing_file(uil_fcb_type *az_fcb)
 {
     /* place the file name in the expanded_name buffer */
 
@@ -267,7 +242,6 @@ uil_fcb_type			*az_fcb;
     return src_k_open_normal;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -300,13 +274,7 @@ uil_fcb_type			*az_fcb;
 **
 **--
 **/
-
-
-void	lst_output_line( ac_line, v_new_page )
-
-char	*ac_line;
-boolean	v_new_page;
-
+void lst_output_line(char *ac_line, boolean v_new_page)
 {
     status	error_status;
 
@@ -318,7 +286,7 @@ boolean	v_new_page;
     **	our progress.
     */
     Uil_current_file = lst_az_fcb->expanded_name;
-    if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
+    if (Uil_cmd_z_command.status_cb)
 	diag_report_status();
 
 
@@ -347,7 +315,6 @@ boolean	v_new_page;
     return;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -376,8 +343,7 @@ boolean	v_new_page;
 **
 **--
 **/
-
-char	*current_time(_Xctimeparams *ctime_buf)
+char *current_time(_Xctimeparams *ctime_buf)
 {
     time_t	time_location;
     char	*ascii_time;
@@ -391,7 +357,6 @@ char	*current_time(_Xctimeparams *ctime_buf)
     return ascii_time;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -412,9 +377,7 @@ char	*current_time(_Xctimeparams *ctime_buf)
 **
 **--
 **/
-
-void	lst_output_listing()
-
+void lst_output_listing(void)
 {
     src_source_record_type  *az_src_rec;
     char		    src_buffer[ src_k_max_source_line_length+12 ];
@@ -520,7 +483,7 @@ void	lst_output_listing()
 
     return;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -548,11 +511,7 @@ void	lst_output_listing()
 **
 **--
 **/
-
-void	lst_output_messages( az_message_item )
-
-src_message_item_type	*az_message_item;
-
+void lst_output_messages(src_message_item_type *az_message_item)
 {
     src_message_item_type	*az_msg;
     char			buffer[132];
@@ -591,7 +550,7 @@ src_message_item_type	*az_message_item;
 
     return;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -620,11 +579,7 @@ src_message_item_type	*az_message_item;
 **
 **--
 **/
-
-void	lst_output_machine_code ( az_src_rec )
-
-src_source_record_type	*az_src_rec;
-
+void lst_output_machine_code (src_source_record_type *az_src_rec)
 {
 
     static	src_machine_code_type * * mc_array = NULL;
@@ -836,11 +791,9 @@ src_source_record_type	*az_src_rec;
 
     }
 
-
-
     return;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -870,12 +823,7 @@ src_source_record_type	*az_src_rec;
 **
 **--
 **/
-
-void	lst_output_message_ptr_line( az_src_rec, src_buffer )
-
-src_source_record_type	*az_src_rec;
-char			*src_buffer;
-
+void lst_output_message_ptr_line(src_source_record_type *az_src_rec, const char *src_buffer)
 {
     src_message_item_type	*az_msg;
     char			buffer[ src_k_max_source_line_length + 3 ];
@@ -941,7 +889,6 @@ finished_scan:
     return;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -975,9 +922,7 @@ finished_scan:
 static	int	cur_pos=0;
 static	char	buffer[132];
 
-void	lst_debug_output
-
-	(char *format, ...)
+void lst_debug_output(const char *format, ...)
 {
     va_list	ap;			/* ptr to variable length parameter */
 

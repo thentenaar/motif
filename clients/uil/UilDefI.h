@@ -233,14 +233,11 @@ typedef int boolean;
 extern "C" {
 #endif
 
-extern void diag_issue_diagnostic
-	_ARGUMENTS(( int d_message_number ,
-		    src_source_record_type *az_src_rec ,
-		    int l_start_column, ... ));
-extern void lst_debug_output  _ARGUMENTS(( char *format, ... ));
-
-
-extern void cmd_decode_command_line(int l_arg_count , char *rac_arg_value[]);
+extern void diag_issue_diagnostic(int d_message_number,
+                                  src_source_record_type *az_src_rec,
+                                  int l_start_column, ...);
+extern void lst_debug_output(const char *format, ...);
+extern void cmd_decode_command_line(int l_arg_count, char *rac_arg_value[]);
 
 /* uildb.c */
 extern void db_incorporate _ARGUMENTS(( void ));
@@ -288,15 +285,16 @@ extern sym_value_entry_type *create_str_entry(int l_size, int l_charset,
                                               sym_value_entry_type *az_charset_entry);
 
 /* uillstlst.c */
-extern void lst_open_listing  _ARGUMENTS(( void ));
-extern void Uil_lst_cleanup_listing  _ARGUMENTS(( void ));
-extern status create_listing_file  _ARGUMENTS(( uil_fcb_type *az_fcb ));
-extern void lst_output_line  _ARGUMENTS(( char *ac_line , boolean v_new_page ));
-extern char *current_time  _ARGUMENTS(( _Xctimeparams *ctime_buf ));
-extern void lst_output_listing  _ARGUMENTS(( void ));
-extern void lst_output_messages  _ARGUMENTS(( src_message_item_type *az_message_item ));
-extern void lst_output_machine_code  _ARGUMENTS(( src_source_record_type *az_src_rec ));
-extern void lst_output_message_ptr_line  _ARGUMENTS(( src_source_record_type *az_src_rec , char *src_buffer ));
+extern void lst_open_listing(void);
+extern void Uil_lst_cleanup_listing(void);
+extern status create_listing_file(uil_fcb_type *az_fcb);
+extern void lst_output_line(char *ac_line, boolean v_new_page);
+extern char *current_time(_Xctimeparams *ctime_buf);
+extern void lst_output_listing(void);
+extern void lst_output_messages(src_message_item_type *az_message_item);
+extern void lst_output_machine_code(src_source_record_type *az_src_rec);
+extern void lst_output_message_ptr_line(src_source_record_type *az_src_rec,
+                                        const char *src_buffer);
 
 /* uillstmac.c */
 extern void save_widget_machine_code  _ARGUMENTS(( sym_widget_entry_type *widget_entry , URMResourceContext *az_context ));
