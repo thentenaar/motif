@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 drk $"
@@ -30,7 +31,7 @@ static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 dr
 #include <config.h>
 #endif
 
-/*
+/**
  * This module contains all routines which perform semantic analysis of
  * the parsed WML specification. It is responsible for building all
  * ordered structures which can be directly translated into literal
@@ -40,133 +41,175 @@ static char rcsid[] = "$XConsortium: wmlresolve.c /main/9 1995/08/29 11:11:05 dr
  * Input:
  *	the ordered list of syntactic objects in wml_synobj_ptr
  *
- * Output:
- *
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+
 #include "wml.h"
+#include "wmlnoreturn.h"
 
-/*
- * Routines used only in this module
+/* Local routines */
+static void wmlResolveGenerateSymK(void);
+static void wmlResolveSymKDataType(void);
+static void wmlResolveSymKChild(void);
+static void wmlResolveSymKEnumVal(void);
+static void wmlResolveSymKEnumSet(void);
+static void wmlResolveSymKReason(void);
+static void wmlResolveSymKArgument(void);
+static void wmlResolveSymKRelated(void);
+static void wmlResolveSymKClass(void);
+static void wmlResolveSymKCtrlList(void);
+static void wmlResolveSymKCharSet(void);
+
+static void wmlResolveValidateClass(void);
+static void wmlResolvePrintReport(void);
+static void wmlResolveClassInherit(WmlClassDefPtr clsobj);
+static void wmlResolveClearRefPointers(void);
+static void wmlResolveInitRefObj(WmlClassResDefPtr dst, WmlClassResDefPtr src);
+static void wmlResolveInitChildRefObj(WmlClassChildDefPtr dst,
+                                      WmlClassChildDefPtr src);
+static void wmlResolvePrintClass(FILE *fp, WmlClassDefPtr clsobj);
+static void wmlResolvePrintClassArgs(FILE *fp, WmlClassDefPtr clsobj);
+static void wmlResolvePrintClassReasons(FILE *fp, WmlClassDefPtr clsobj);
+static ObjectPtr wmlResolveFindObject(const char *name, int type, const char *requester);
+
+/**
+ * Report an error
  */
-void wmlResolveGenerateSymK ();
-void wmlResolveValidateClass ();
-void wmlResolvePrintReport ();
-
-void wmlResolveSymKDataType ();
-void wmlResolveSymKChild ();
-void wmlResolveSymKEnumVal ();
-void wmlResolveSymKEnumSet ();
-void wmlResolveSymKReason ();
-void wmlResolveSymKArgument ();
-void wmlResolveSymKRelated ();
-void wmlResolveSymKClass ();
-void wmlResolveSymKCtrlList ();
-void wmlResolveSymKCharSet ();
-
-void wmlResolveClassInherit ();
-void wmlResolveClearRefPointers ();
-void wmlResolveInitRefObj ();
-void wmlResolveInitChildRefObj ();
-
-void wmlResolvePrintClass ();
-void wmlResolvePrintClassArgs ();
-void wmlResolvePrintClassReasons ();
-
-ObjectPtr wmlResolveFindObject ();
-void wmlIssueReferenceError ();
-void wmlIssueIllegalReferenceError ();
-void wmlIssueError ();
-
-
-
-/*
- * The control routine for semantic analysis. It calls the various phases.
- */
-
-void wmlResolveDescriptors ()
-
+static void err(const char *fmt, ...)
 {
+	va_list ap;
 
-/*
- * Perform the code assignment pass. This results in assignment of sym_k_...
- * codes to all entities. Also, all objects and cross-linking are validated.
- */
-wmlResolveGenerateSymK ();
-printf ("\nInitial validation and reference resolution complete");
-
-/*
- * Perform class inheritance and validation
- */
-wmlResolveValidateClass ();
-printf ("\nClass validation and inheritance complete");
-
-/*
- * Print a report
- */
-if ( wml_err_count > 0 ) return;
-wmlResolvePrintReport ();
-
+	va_start(ap, fmt);
+	fputc('\n', stderr);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+	wml_err_count++;
 }
 
+/**
+ * Report a fatal error and exit
+ */
+noreturn static void fatal(const char *fmt, ...)
+{
+	va_list ap;
 
-
-/*
+	va_start(ap, fmt);
+	fputc('\n', stderr);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+	exit(EXIT_FAILURE);
+}
+
+/**
+ * Report an object reference error
+ *
+ *	srcname		the object making the reference
+ *	badname		the missing object
+ */
+static void wmlIssueReferenceError(const char *src, const char *bad)
+{
+	err("Object %s references undefined object %s", src, bad);
+}
+
+/**
+ * Report an attempt to make a reference which is not supported.
+ */
+static void wmlIssueIllegalReferenceError(const char *src, const char *bad)
+{
+	err("Object %s cannot reference a %s object", src, bad);
+}
+
+/**
+ * The control routine for semantic analysis. It calls the various phases.
+ */
+void wmlResolveDescriptors(void)
+{
+	/*
+	 * Perform the code assignment pass. This results in assignment of sym_k_...
+	 * codes to all entities. Also, all objects and cross-linking are validated.
+	 */
+	wmlResolveGenerateSymK();
+	puts("Initial validation and reference resolution complete");
+
+	/*
+	 * Perform class inheritance and validation
+	 */
+	wmlResolveValidateClass();
+	puts("Class validation and inheritance complete");
+
+	/*
+	 * Print a report
+	 */
+	if (!wml_err_count)
+		wmlResolvePrintReport();
+}
+
+/**
+ * Routine to mark reference pointers for a class
+ *
+ * This routine clears all reference pointers, then marks the class and
+ * resource objects to flag those contained in the current class. This
+ * allows processing of the widget and resource vectors in order to produce
+ * bit masks or reports.
+ */
+void wmlMarkReferencePointers(WmlClassDefPtr clsobj)
+{
+	WmlClassResDefPtr resref;
+	WmlClassCtrlDefPtr ctrlref;
+
+	/**
+	 * Clear the reference pointers. Then go through the arguments, reasons,
+	 * and controls lists, and mark the referenced classes.
+	 */
+	wmlResolveClearRefPointers();
+
+	for (resref=clsobj->arguments; resref; resref=resref->next)
+		resref->act_resource->ref_ptr = resref;
+
+	for (resref=clsobj->reasons; resref; resref=resref->next)
+		resref->act_resource->ref_ptr = resref;
+
+	for (ctrlref=clsobj->controls; ctrlref; ctrlref=ctrlref->next)
+		ctrlref->ctrl->ref_ptr = ctrlref;
+}
+
+/**
  * Routine to linearize and assign sym_k... literals for objects. Simply
  * a dispatching routine.
  */
-
-void wmlResolveGenerateSymK ()
-
+static void wmlResolveGenerateSymK(void)
 {
+	/* Process the datatype objects */
+	wmlResolveSymKDataType();
 
-/*
- * Process the datatype objects
- */
-wmlResolveSymKDataType ();
+	/* Process the enumeration value and enumeration sets */
+	wmlResolveSymKEnumVal();
+	wmlResolveSymKEnumSet();
 
-/*
- * Process the enumeration value and enumeration sets
- */
-wmlResolveSymKEnumVal ();
-wmlResolveSymKEnumSet ();
+	/* Process the resources, producing argument and reason vectors */
+	wmlResolveSymKReason();
+	wmlResolveSymKArgument();
 
-/*
- * Process the resources, producing argument and reason vectors.
- */
-wmlResolveSymKReason ();
-wmlResolveSymKArgument ();
+	/* Bind related arguments */
+	wmlResolveSymKRelated();
 
-/*
- * Bind related arguments
- */
-wmlResolveSymKRelated ();
+	/* Process the class definitions */
+	wmlResolveSymKClass();
 
-/*
- * Process the class definitions
- */
-wmlResolveSymKClass ();
+	/* Process the controls list definitions */
+	wmlResolveSymKCtrlList();
 
-/*
- * Process the controls list definitions
- */
-wmlResolveSymKCtrlList ();
+	/* Process the charset objects */
+	wmlResolveSymKCharSet();
 
-/*
- * Process the charset objects
- */
-wmlResolveSymKCharSet ();
-
-/* Process the child definitions. */
-wmlResolveSymKChild();
-
+	/* Process the child definitions */
+	wmlResolveSymKChild();
 }
 
-
-
-/*
+/**
  * Routine to linearize data types
  *
  * - Generate the wml_obj_datatype... vector of resolved data type objects,
@@ -174,264 +217,226 @@ wmlResolveSymKChild();
  *   Do name processing, and acquire links to any other objects named in
  *   the syntactic descriptor.
  */
-
-void wmlResolveSymKDataType ()
-
+static void wmlResolveSymKDataType(void)
 {
+	int i;
+	WmlSynDataTypeDefPtr cursyn;
+	WmlDataTypeDefPtr newobj;
 
-WmlSynDataTypeDefPtr	cursyn;		/* current syntactic object */
-WmlDataTypeDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each datatype object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_datatype_ptr, 50, TRUE, FALSE))
+		fatal("wmlResolveSymKDataType: Failed to initialize list");
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each datatype object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_datatype_ptr, 50, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynDataTypeDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlDataTypeDefValid ) continue;
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlDataTypeDefValid)
+			continue;
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlDataTypeDefPtr) malloc (sizeof(WmlDataTypeDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    if ( cursyn->int_lit != NULL )
-	newobj->tkname = cursyn->int_lit;
-    else
-	newobj->tkname = cursyn->name;
-    wmlInsertInHList (wml_obj_datatype_ptr, newobj->tkname, (ObjectPtr)newobj);
+		/* Create and initialize a new object and apppend to resolved objects */
+		if (!(newobj = malloc(sizeof *newobj)))
+			fatal("wmlResolveSymKDataType: Out of memory");
 
-/*
- * Validate any object references in the syntactic object
- */
-
-    }
-
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->int_lit ? cursyn->int_lit : cursyn->name;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_datatype_ptr, newobj->tkname, newobj))
+			fatal("wmlResolveSymKDataType: List insert failed");
+	}
 }
 
-
-/*
+/**
  * Routine to linearize children
  *
  * - Generate the wml_obj_child... vector of resolved child objects,
  *   ordered lexicographically.  Assign sym_k_... values while doing so.
  *   Link child to its class.
  */
-
-void wmlResolveSymKChild ()
-
+static void wmlResolveSymKChild(void)
 {
+	int i, code = 0;
+	WmlSynChildDefPtr cursyn;
+	WmlChildDefPtr newobj;
 
-WmlSynChildDefPtr	cursyn;		/* current syntactic object */
-WmlChildDefPtr		newobj;		/* new resolved object */
-int			code;		/* assigned sym_k code value */
-int			ndx;		/* loop index */
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each child object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_child_ptr, 50, TRUE, FALSE))
+		fatal("wmlResolveSymKChild: Failed to initialize list");
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each child object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_child_ptr, 50, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynChildDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlChildDefValid ) continue;
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlChildDefValid)
+			continue;
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlChildDefPtr) malloc (sizeof(WmlChildDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    newobj->tkname = cursyn->name;
-    wmlInsertInHList (wml_obj_child_ptr, newobj->tkname, (ObjectPtr)newobj);
+		/* Create and initialize a new object and apppend to resolved objects */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKChild: Out of memory");
 
-/* Link class to the resolved object. */
-if (cursyn->class != NULL)
-  newobj->class = (WmlClassDefPtr)
-    wmlResolveFindObject(cursyn->class, WmlClassDefValid, cursyn->name);
-  }
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->name;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_child_ptr, newobj->tkname, newobj))
+			fatal("wmlResolveSymKChild: List insert failed");
 
-/*
- * All objects are in the vector. The order is the code order, so
- * process it again and assign codes to each object
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_child_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlChildDefPtr) wml_obj_child_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
+		/* Link class to the resolved object */
+		if (cursyn->class) {
+			newobj->class = wmlResolveFindObject(cursyn->class,
+			                                     WmlClassDefValid, cursyn->name);
+		}
+	}
 
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_child_ptr->cnt; i++)
+		((WmlChildDefPtr)wml_obj_child_ptr->hvec[i].objptr)->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to enumeration values
  *
  * - Generate the wml_obj_datatype... vector of resolved data type objects,
- *   ordered lexicographically. No sym_k_... values are needed for
- *   enumeration values, so don't assign any.
+ *   ordered lexicographically.
  */
-
-void wmlResolveSymKEnumVal ()
-
+static void wmlResolveSymKEnumVal(void)
 {
+	int i, code = 0;
+	WmlSynEnumSetDefPtr cures;
+	WmlSynEnumSetValDefPtr curesv;
+	WmlSynEnumValueDefPtr cursyn;
+	WmlEnumValueDefPtr newobj;
 
-WmlSynEnumSetDefPtr	cures;		/* current enumeration set */
-WmlSynEnumSetValDefPtr	curesv;		/* current enum set value */
-WmlSynEnumValueDefPtr	cursyn;		/* current syntactic object */
-WmlEnumValueDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* sym_k_... code */
+	/**
+	 * Perform defaulting. Process all the enumeration sets, and define a
+	 * syntactic object for every enumeration value named in an enumeration set
+	 * which has no syntactic entry. If there is an error in a name, then
+	 * this error won't be detected until we attempt to compile the output .h files.
+	 */
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cures = wml_synobj_ptr->hvec[i].objptr;
+		if (cures->validation != WmlEnumSetDefValid)
+			continue;
 
+		/* Create missing enum values */
+		for (curesv = cures->values; curesv; curesv = curesv->next) {
+			if (wmlFindInHList(wml_synobj_ptr, curesv->name) == -1)
+				wmlCreateEnumValue(curesv->name);
+		}
+	}
 
-/*
- * Perform defaulting. Process all the enumeration sets, and define a
- * syntactic object for every enumeration value named in an enumeration set
- * which has no syntactic entry. If there is an error in a name, then
- * this error won't be detected until we attempt to compile the output .h files.
- */
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cures = (WmlSynEnumSetDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cures->validation != WmlEnumSetDefValid ) continue;
-    for (curesv=cures->values ; curesv!=NULL ; curesv=curesv->next)
-	if ( wmlFindInHList(wml_synobj_ptr,curesv->name) < 0 )
-	    wmlCreateEnumValue (curesv->name);
-    }
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each enumeration value object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_enumval_ptr, 50, TRUE, FALSE))
+		fatal("wmlResolveSymKEnumValue: Failed to initialize list");
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each enumeration value object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_enumval_ptr, 50, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynEnumValueDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlEnumValueDefValid ) continue;
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (!cursyn || cursyn->validation != WmlEnumValueDefValid)
+			continue;
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlEnumValueDefPtr) malloc (sizeof(WmlEnumValueDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    wmlInsertInHList (wml_obj_enumval_ptr, cursyn->name, (ObjectPtr)newobj);
-    }
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKEnumVal: Out of memory");
 
-/*
- * All objects are in the vector. That order is the code order, so
- * process it again and assign codes to each object
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_enumval_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlEnumValueDefPtr) wml_obj_enumval_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
+		newobj->syndef  = cursyn;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_enumval_ptr, cursyn->name, newobj))
+			fatal("wmlResolveSymKEnumVal: List insert failed");
+	}
 
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_enumval_ptr->cnt; i++)
+		((WmlEnumValueDefPtr)wml_obj_enumval_ptr->hvec[i].objptr)->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to enumeration sets
  *
  * - Generate the wml_obj_datatype... vector of resolved data type objects,
- *   ordered lexicographically. No sym_k_... values are needed for
- *   enumeration values, so don't assign any.
+ *   ordered lexicographically.
  */
-
-void wmlResolveSymKEnumSet ()
-
+static void wmlResolveSymKEnumSet(void)
 {
+	int i, code = 0;
+	WmlSynEnumSetDefPtr cursyn;
+	WmlEnumSetDefPtr newobj;
+	WmlEnumValueDefPtr evobj;
+	WmlEnumSetValDefPtr esvobj;
+	WmlSynEnumSetValDefPtr esvelm;
 
-WmlSynEnumSetDefPtr	cursyn;		/* current syntactic object */
-WmlEnumSetDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* sym_k_... code */
-WmlSynEnumSetValDefPtr	esvelm;		/* current syntactic list element */
-WmlEnumValueDefPtr	evobj;		/* current enumeration value */
-WmlEnumSetValDefPtr	esvobj;		/* current list element */
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each enumeration set object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_enumset_ptr, 20, TRUE, FALSE))
+		fatal("wmlResolveSymKEnumSet: Failed to initialize list");
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each enumeration set object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_enumset_ptr, 20, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynEnumSetDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlEnumSetDefValid ) continue;
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlEnumSetDefValid)
+			continue;
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlEnumSetDefPtr) malloc (sizeof(WmlEnumSetDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    newobj->tkname = cursyn->name;
-    newobj->dtype_def = (WmlDataTypeDefPtr)
-	wmlResolveFindObject (cursyn->datatype,
-			      WmlDataTypeDefValid,
-			      cursyn->name);
-    wmlInsertInHList (wml_obj_enumset_ptr, newobj->tkname, (ObjectPtr)newobj);
-    }
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKEnumSet: Out of memory");
 
-/*
- * All objects are in the vector. That order is the code order, so
- * process it again and assign codes to each object. Simultaneously construct
- * a vector of resolved enumeration values, and count them.
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_enumset_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlEnumSetDefPtr) wml_obj_enumset_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-
-/*
- * Validate and construct a resolved enumeration value list
- */
-    cursyn = newobj->syndef;
-    newobj->values_cnt = 0;
-    newobj->values = NULL;
-    for ( esvelm=cursyn->values ; esvelm!=NULL ; esvelm=esvelm->next )
-	{
-	evobj = (WmlEnumValueDefPtr)
-	    wmlResolveFindObject (esvelm->name,
-				  WmlEnumValueDefValid,
-				  cursyn->name);
-	if ( evobj == NULL ) continue;
-	esvobj = (WmlEnumSetValDefPtr) malloc (sizeof(WmlEnumSetValDef));
-	esvobj->value = evobj;
-	esvobj->next = newobj->values;
-	newobj->values = esvobj;
-	newobj->values_cnt += 1;
+		cursyn->rslvdef   = newobj;
+		newobj->syndef    = cursyn;
+		newobj->tkname    = cursyn->name;
+		newobj->dtype_def = wmlResolveFindObject(cursyn->datatype,
+		                                         WmlDataTypeDefValid, cursyn->name);
+		if (!wmlInsertInHList(wml_obj_enumset_ptr, cursyn->name, newobj))
+			fatal("wmlResolveSymKEnumSet: List insert failed");
 	}
-    }
 
+	/**
+	 * All objects are in the vector. That order is the code order, so
+	 * process it again and assign codes to each object. Simultaneously
+	 * construct a vector of resolved enumeration values, and count them.
+	 */
+	for (i = 0; i < wml_obj_enumset_ptr->cnt; i++) {
+		newobj = wml_obj_enumset_ptr->hvec[i].objptr;
+		newobj->sym_code = ++code;
+
+		/**
+		 * Validate and construct a resolved enumeration value list
+		 */
+		cursyn = newobj->syndef;
+		for (esvelm = cursyn->values; esvelm; esvelm = esvelm->next) {
+			evobj = wmlResolveFindObject(esvelm->name,
+			                             WmlEnumValueDefValid, cursyn->name);
+			if (!evobj) continue;
+
+			if (!(esvobj = malloc(sizeof *esvobj)))
+				fatal("wmlResolveSymKEnumSet: Out of memory");
+
+			esvobj->value  = evobj;
+			esvobj->next   = newobj->values;
+			newobj->values = esvobj;
+			newobj->values_cnt++;
+		}
+    }
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to reasons.
  *
  * - Generate the wml_obj_reason... vector of resolved reason objects,
@@ -439,71 +444,54 @@ for ( ndx=0 ; ndx<wml_obj_enumset_ptr->cnt ; ndx++ )
  *   Do name processing, and acquire links to any other objects named in
  *   the syntactic descriptor.
  */
-
-void wmlResolveSymKReason ()
-
+static void wmlResolveSymKReason(void)
 {
+	int i, code = 0;
+	WmlSynResourceDefPtr cursyn;
+	WmlResourceDefPtr newobj;
 
-WmlSynResourceDefPtr	cursyn;		/* current syntactic object */
-WmlResourceDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* assigned sym_k code value */
-char			errmsg[300];
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each reason resource object encountered (the vector is
+	 * ordered). Create and append a resolved object for each one
+	 * encountered. This will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_reason_ptr, 100, TRUE, FALSE))
+		fatal("wmlResolveSymKReason: Failed to initialize list");
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each reason resource object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_reason_ptr, 100, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynResourceDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlResourceDefValid ) continue;
-    if ( cursyn->type != WmlResourceTypeReason ) continue;
-    newobj = (WmlResourceDefPtr) malloc (sizeof(WmlResourceDef));
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlResourceDefValid ||
+		    cursyn->type       != WmlResourceTypeReason)
+			continue;
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    if ( cursyn->int_lit != NULL )
-	newobj->tkname = cursyn->int_lit;
-    else
-	newobj->tkname = cursyn->name;
-    newobj->dtype_def = NULL;
-    newobj->enumset_def = NULL;
-    newobj->related_code = 0;
-    wmlInsertInHList (wml_obj_reason_ptr, newobj->tkname, (ObjectPtr)newobj);
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKReason: Out of memory");
 
-/*
- * Validate any object references in the syntactic object
- * Reason can't bind to some objects.
- */
-    if ( cursyn->datatype != NULL )
-	wmlIssueIllegalReferenceError (cursyn->name, "DataType");
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->int_lit ? cursyn->int_lit : cursyn->name;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_reason_ptr, newobj->tkname, newobj))
+			fatal("wmlResolveSymKReason: List insert failed");
 
-    }
+		/**
+		 * Validate any object references in the syntactic object
+		 * Reason can't bind to some objects.
+		 */
+		if (cursyn->datatype)
+			wmlIssueIllegalReferenceError(cursyn->name, "DataType");
+	}
 
-/*
- * All objects are in the vector. That order is the code order, so
- * process it again and assign codes to each object
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_reason_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlResourceDefPtr) wml_obj_reason_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
-
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_reason_ptr->cnt; i++)
+		((WmlResourceDefPtr)wml_obj_reason_ptr->hvec[i].objptr)->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to arguments.
  *
  * - Generate the wml_obj_arg... vector of resovled reason objects,
@@ -513,116 +501,81 @@ for ( ndx=0 ; ndx<wml_obj_reason_ptr->cnt ; ndx++ )
  *   Do name processing, and acquire links to any other objects named in
  *   the syntactic descriptor.
  */
-
-void wmlResolveSymKArgument ()
-
+static void wmlResolveSymKArgument(void)
 {
+	int i, code = 0;
+	WmlSynResourceDefPtr cursyn;
+	WmlResourceDefPtr newobj;
 
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each reason resource object encountered (the vector is
+	 * ordered). Create and append a resolved object for each one
+	 * encountered. This will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_arg_ptr, 500, TRUE, FALSE))
+		fatal("wmlResolveSymKArgument: Failed to initialize list");
 
-WmlSynResourceDefPtr	cursyn;		/* current syntactic object */
-WmlResourceDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* assigned sym_k code value */
-char			errmsg[300];
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlResourceDefValid ||
+		    cursyn->type       == WmlResourceTypeReason)
+			continue;
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each reason resource object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_arg_ptr, 500, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynResourceDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlResourceDefValid ) continue;
-    if ( cursyn->type == WmlResourceTypeReason ) continue;
-    newobj = (WmlResourceDefPtr) malloc (sizeof(WmlResourceDef));
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKArgument: Out of memory");
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    if ( cursyn->int_lit != NULL )
-	newobj->tkname = cursyn->int_lit;
-    else
-	newobj->tkname = cursyn->name;
-    newobj->related_code = 0;
-    newobj->enumset_def = NULL;
-    wmlInsertInHList (wml_obj_arg_ptr, newobj->tkname, (ObjectPtr)newobj);
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->int_lit ? cursyn->int_lit : cursyn->name;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_arg_ptr, newobj->tkname, newobj))
+			fatal("wmlResolveSymKArgument: List insert failed");
 
-/*
- * Validate any object references in the syntactic object
- */
-    newobj->dtype_def = (WmlDataTypeDefPtr)
-	wmlResolveFindObject (cursyn->datatype,
-			      WmlDataTypeDefValid,
-			      cursyn->name);
-    if ( cursyn->enumset != NULL )
-	newobj->enumset_def = (WmlEnumSetDefPtr)
-	    wmlResolveFindObject (cursyn->enumset,
-				  WmlEnumSetDefValid,
-				  cursyn->name);
+		/* Validate any object references in the syntactic object */
+		newobj->dtype_def = wmlResolveFindObject(cursyn->datatype,
+		                                         WmlDataTypeDefValid,
+		                                         cursyn->name);
+		if (cursyn->enumset) {
+			newobj->enumset_def = wmlResolveFindObject(cursyn->enumset,
+			                                           WmlEnumSetDefValid,
+			                                           cursyn->name);
+		}
+	}
 
-    }
-
-/*
- * All objects are in the vector. The order is the code order, so
- * process it again and assign codes to each object
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlResourceDefPtr) wml_obj_arg_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
-
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_arg_ptr->cnt; i++)
+		((WmlResourceDefPtr)wml_obj_arg_ptr->hvec[i].objptr)->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to resolve related argument references.
  *
  * Search the argument vector for any argument with its related
  * argument set. Find the related argument, and bind the relation.
  * The binding only goes one way.
  */
-
-void wmlResolveSymKRelated ()
-
+static void wmlResolveSymKRelated(void)
 {
+	int i;
+	WmlResourceDefPtr srcobj, dstobj;
 
-WmlResourceDefPtr	srcobj;		/* object with related reference */
-WmlResourceDefPtr	dstobj;		/* other object in binding */
-WmlSynResourceDefPtr	srcsynobj;	/* source syntactic object */
-int			ndx;		/* loop index */
+	/* Scan all arguments for related argument bindings */
+	for (i = 0; i < wml_obj_arg_ptr->cnt; i++) {
+		srcobj = wml_obj_arg_ptr->hvec[i].objptr;
+		if (!srcobj->syndef->related)
+			continue;
 
-
-/*
- * Scan all arguments for related argument bindings.
- */
-for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
-    {
-    srcobj = (WmlResourceDefPtr) wml_obj_arg_ptr->hvec[ndx].objptr;
-    srcsynobj = srcobj->syndef;
-    if ( srcsynobj->related != NULL )
-	{
-	dstobj = (WmlResourceDefPtr)
-	    wmlResolveFindObject (srcsynobj->related,
-				  WmlResourceDefValid,
-				  srcsynobj->name);
-	if ( dstobj != NULL )
-	    srcobj->related_code = dstobj->sym_code;
+		dstobj = wmlResolveFindObject(srcobj->syndef->related,
+		                              WmlResourceDefValid, srcobj->syndef->name);
+		if (dstobj) srcobj->related_code = dstobj->related_code;
 	}
-    }
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to classes
  *
  * There are two linearizations of classes:
@@ -634,163 +587,114 @@ for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
  *
  * Resources are not inherited and linked at this time.
  */
-
-void wmlResolveSymKClass ()
-
+static void wmlResolveSymKClass(void)
 {
+	int i, code = 0;
+	WmlSynClassDefPtr cursyn;
+	WmlClassDefPtr newobj;
 
-WmlSynClassDefPtr	cursyn;		/* current syntactic object */
-WmlClassDefPtr		newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* assigned sym_k code value */
-char			errmsg[300];
+	/**
+	 * Initialize the object vectors. Then process the syntactic vector,
+	 * processing each class object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_allclass_ptr, 200, TRUE, FALSE) ||
+	    !wmlInitHList(wml_obj_class_ptr,    200, TRUE, FALSE))
+		fatal("wmlResolveSymKClass: Failed to initialize list");
 
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlClassDefValid)
+			continue;
 
-/*
- * Initialize the object vectors. Then process the syntactic vector,
- * processing each class object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_allclass_ptr, 200, TRUE, FALSE);
-wmlInitHList(wml_obj_class_ptr, 200, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynClassDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlClassDefValid ) continue;
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKClass: Out of memory");
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlClassDefPtr) malloc (sizeof(WmlClassDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    newobj->superclass = NULL;
-    newobj->parentclass = NULL;
-    if ( cursyn->int_lit != NULL )
-	newobj->tkname = cursyn->int_lit;
-    else
-	newobj->tkname = cursyn->name;
-    newobj->inherit_done = FALSE;
-    newobj->arguments = NULL;
-    newobj->reasons = NULL;
-    newobj->controls = NULL;
-    newobj->children = NULL;
-    newobj->variant = NULL;
-    newobj->nondialog = NULL;
-    newobj->ctrlmapto = NULL;
-    switch ( cursyn->type )
-	{
-	case WmlClassTypeMetaclass:
-	    wmlInsertInHList
-		(wml_obj_allclass_ptr, newobj->tkname, (ObjectPtr)newobj);
-	    break;
-	case WmlClassTypeGadget:
-	case WmlClassTypeWidget:
-	    wmlInsertInHList
-		(wml_obj_allclass_ptr, newobj->tkname, (ObjectPtr)newobj);
-	    wmlInsertInHList
-		(wml_obj_class_ptr, newobj->tkname, (ObjectPtr)newobj);
-	    break;
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->int_lit ? cursyn->int_lit : cursyn->name;
+		cursyn->rslvdef = newobj;
+
+		switch (cursyn->type) {
+		case WmlClassTypeGadget:
+		case WmlClassTypeWidget:
+			if (!wmlInsertInHList(wml_obj_class_ptr, newobj->tkname, newobj))
+				fatal("wmlResolveSymKClass: List insert (class) failed");
+
+			if (!cursyn->convfunc)
+				err("Class %s lacks a convenience function", cursyn->name);
+		case WmlClassTypeMetaclass:
+			if (!wmlInsertInHList(wml_obj_allclass_ptr, newobj->tkname, newobj))
+				fatal("wmlResolveSymKClass: List insert (allclass) failed");
+			break;
+		}
+
+		if (cursyn->ctrlmapto) {
+			newobj->ctrlmapto = wmlResolveFindObject(cursyn->ctrlmapto,
+			                                         WmlResourceDefValid,
+			                                         cursyn->name);
+		}
 	}
 
-/*
- * Require a convenience function name
- */
-    if ( cursyn->type != WmlClassTypeMetaclass )
-	if ( cursyn->convfunc == NULL )
-	    {
-	    sprintf (errmsg, "Class %s does not have a convenience function",
-		     cursyn->name);
-	    wmlIssueError (errmsg);
-	    }
-
-/*
- * Validate any object references in the syntactic object
- */
-    if ( cursyn->ctrlmapto != NULL )
-	newobj->ctrlmapto = (WmlResourceDefPtr)
-	    wmlResolveFindObject (cursyn->ctrlmapto,
-				  WmlResourceDefValid,
-				  cursyn->name);
-
-    }
-
-/*
- * All objects are in the vector. That order is the code order, so
- * process it again and assign codes to each object
- */
-code = 1;
-for ( ndx=0 ; ndx<wml_obj_class_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlClassDefPtr) wml_obj_class_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
-
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_class_ptr->cnt; i++)
+		((WmlClassDefPtr)wml_obj_class_ptr->hvec[i].objptr)->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to validate controls lists
  *
  * Construct and linearize resolved controls lists. The linearized list
  * is used to resolve references.
  */
-
-void wmlResolveSymKCtrlList ()
-
+static void wmlResolveSymKCtrlList(void)
 {
+	int i;
+	WmlSynCtrlListDefPtr cursyn;
+	WmlSynClassCtrlDefPtr refptr;
+	WmlCtrlListDefPtr newobj;
+	WmlClassDefPtr classobj;
+	WmlClassCtrlDefPtr ctrlobj;
 
-WmlSynCtrlListDefPtr	cursyn;		/* current syntactic object */
-WmlCtrlListDefPtr	newobj;		/* new resolved object */
-WmlSynClassCtrlDefPtr	refptr;		/* current controls reference */
-WmlClassCtrlDefPtr	ctrlobj;	/* resolved control reference */
-WmlClassDefPtr		classobj;	/* the controlled class */
-int			ndx;		/* loop index */
+	/* Process each control list. Construct a resolved control list for each */
+	if (!wmlInitHList(wml_obj_ctrlist_ptr, 20, TRUE, FALSE))
+			fatal("wmlResolveSymKCtrlList: Failed to initialize list");
 
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlCtrlListDefValid)
+			continue;
 
-/*
- * Process each control list. Construct a resolved control list for each
- */
-wmlInitHList(wml_obj_ctrlist_ptr, 20, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynCtrlListDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlCtrlListDefValid ) continue;
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKCtrlList: Out of memory");
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlCtrlListDefPtr) malloc (sizeof(WmlCtrlListDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    newobj->controls = NULL;
-    wmlInsertInHList (wml_obj_ctrlist_ptr, cursyn->name, (ObjectPtr)newobj);
+		newobj->syndef  = cursyn;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_ctrlist_ptr, cursyn->name, newobj))
+			fatal("wmlResolveSymKCtrlList: List insert failed");
 
-/*
- * Validate and construct a resolved controls reference list.
- */
-    for ( refptr=cursyn->controls ; refptr!=NULL ; refptr=refptr->next )
-	{
-	classobj = (WmlClassDefPtr)
-	    wmlResolveFindObject (refptr->name,
-				  WmlClassDefValid,
-				  cursyn->name);
-	if ( classobj == NULL ) continue;
-	ctrlobj = (WmlClassCtrlDefPtr) malloc (sizeof(WmlClassCtrlDef));
-	ctrlobj->next = newobj->controls;
-	newobj->controls = ctrlobj;
-	ctrlobj->ctrl = classobj;
+		/* Validate and construct a resolved controls reference list. */
+		for (refptr = cursyn->controls; refptr; refptr = refptr->next) {
+			classobj = wmlResolveFindObject(refptr->name, WmlClassDefValid,
+			                                cursyn->name);
+			if (!classobj) continue;
+
+			if (!(ctrlobj = calloc(1, sizeof *ctrlobj)))
+				fatal("wmlResolveSymKCtrlList: Out of memory");
+
+			ctrlobj->next    = newobj->controls;
+			ctrlobj->ctrl    = classobj;
+			newobj->controls = ctrlobj;
+		}
 	}
-    }
-
 }
 
-
-
-/*
+/**
  * Routine to linearize and assign sym_k values to character sets
  *
  * - Generate the wml_obj_charset... vector of resolved data type objects,
@@ -798,78 +702,54 @@ for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
  *   Do name processing, and acquire links to any other objects named in
  *   the syntactic descriptor.
  */
-
-void wmlResolveSymKCharSet ()
-
+static void wmlResolveSymKCharSet(void)
 {
+	int i, code = 1;
+	WmlSynCharSetDefPtr cursyn;
+	WmlCharSetDefPtr newobj;
 
-WmlSynCharSetDefPtr	cursyn;		/* current syntactic object */
-WmlCharSetDefPtr	newobj;		/* new resolved object */
-int			ndx;		/* loop index */
-int			code;		/* assigned sym_k code value */
-char			errmsg[300];
+	/**
+	 * Initialize the object vector. Then process the syntactic vector,
+	 * processing each charset object encountered (the vector is ordered).
+	 * create and append a resolved object for each one encountered. This
+	 * will be ordered as well.
+	 */
+	if (!wmlInitHList(wml_obj_charset_ptr, 50, TRUE, FALSE))
+			fatal("wmlResolveSymKCharSet: Failed to initialize list");
 
+	for (i = 0; i < wml_synobj_ptr->cnt; i++) {
+		cursyn = wml_synobj_ptr->hvec[i].objptr;
+		if (cursyn->validation != WmlCharSetDefValid)
+			continue;
 
-/*
- * Initialize the object vector. Then process the syntactic vector,
- * processing each charset object encountered (the vector is ordered).
- * create and append a resolved object for each one encountered. This
- * will be ordered as well.
- */
-wmlInitHList(wml_obj_charset_ptr, 50, TRUE, FALSE);
-for ( ndx=0 ; ndx<wml_synobj_ptr->cnt ; ndx++ )
-    {
-    cursyn = (WmlSynCharSetDefPtr) wml_synobj_ptr->hvec[ndx].objptr;
-    if ( cursyn->validation != WmlCharSetDefValid ) continue;
+		/* Create and initialize new object. Append to resolved object vector. */
+		if (!(newobj = calloc(1, sizeof *newobj)))
+			fatal("wmlResolveSymKCharSet: Out of memory");
 
-/*
- * Create and initialize new object. Append to resolved object vector.
- */
-    newobj = (WmlCharSetDefPtr) malloc (sizeof(WmlCharSetDef));
-    newobj->syndef = cursyn;
-    cursyn->rslvdef = newobj;
-    if ( cursyn->int_lit != NULL )
-	newobj->tkname = cursyn->int_lit;
-    else
-	newobj->tkname = cursyn->name;
-    wmlInsertInHList (wml_obj_charset_ptr, newobj->tkname, (ObjectPtr)newobj);
+		newobj->syndef  = cursyn;
+		newobj->tkname  = cursyn->int_lit ? cursyn->int_lit : cursyn->name;
+		cursyn->rslvdef = newobj;
+		if (!wmlInsertInHList(wml_obj_charset_ptr, newobj->tkname, newobj))
+			fatal("wmlResolveSymKCharSet: List insert failed");
 
-/*
- * Parsing direction defaults to writing direction if unspecified
- */
-    if ( cursyn->parsedirection == WmlAttributeUnspecified )
-	cursyn->parsedirection = cursyn->direction;
+		/* Parsing direction defaults to writing direction if unspecified */
+		if (cursyn->parsedirection == WmlAttributeUnspecified)
+			cursyn->parsedirection = cursyn->direction;
 
-/*
- * Require StandardsName attribute for character set
- */
-    if ( cursyn->xms_name == NULL )
-	{
-	sprintf (errmsg, "CharacterSet %s does not have a StandardsName",
-		 cursyn->name);
-	wmlIssueError (errmsg);
+		/* Require StandardsName attribute for character set */
+		if (!cursyn->xms_name)
+			err("CharacterSet %s does not have a StandardsName", cursyn->name);
 	}
 
-    }
-
-/*
- * All objects are in the vector. That order is the code order, so
- * process it again and assign codes to each object. We start at code
- * 2 since 1 is reserved for sym_k_userdefined_charset
- */
-code = 2;
-for ( ndx=0 ; ndx<wml_obj_charset_ptr->cnt ; ndx++ )
-    {
-    newobj = (WmlCharSetDefPtr) wml_obj_charset_ptr->hvec[ndx].objptr;
-    newobj->sym_code = code;
-    code += 1;
-    }
-
+	/**
+	 * All objects are in the vector. The order is the code order, so
+	 * process it again and assign codes to each object
+	 */
+	for (i = 0; i < wml_obj_charset_ptr->cnt; i++)
+		((WmlCharSetDefPtr)(wml_obj_charset_ptr->hvec[i].objptr))->sym_code = ++code;
 }
 
-
-
-/*
+/**
  * Routine to perform class inheritance and validation.
  *
  * This routine has two major phases:
@@ -881,165 +761,107 @@ for ( ndx=0 ; ndx<wml_obj_charset_ptr->cnt ; ndx++ )
  *	  superclass and possibly a parentclass.
  *	  Excluded resources remain in the list, and are simply marked.
  */
-
-void wmlResolveValidateClass ()
-
+static void wmlResolveValidateClass(void)
 {
+	int i, idx;
+	WmlClassDefPtr clsobj, superobj, parentobj, widgetobj, refcls;
+	WmlSynClassCtrlDefPtr refptr;
+	WmlClassCtrlDefPtr ctrlobj, el;
+	WmlCtrlListDefPtr reflist;
 
-int			ndx;		/* loop index */
-int			max;		/* maximum code value */
-WmlClassDefPtr		clsobj;		/* current class object */
-WmlSynClassDefPtr	synobj;		/* syntactic class object */
-WmlClassDefPtr		superobj;	/* superclass */
-WmlClassDefPtr		parentobj;	/* parentclass */
-WmlClassDefPtr		widgobj;	/* gadget's widget class */
-WmlSynClassCtrlDefPtr	refptr;		/* current controls reference */
-WmlClassCtrlDefPtr	ctrlobj;	/* resolved control reference */
-int			refndx;		/* index in vector */
-WmlClassDefPtr		refcls;		/* referenced class object */
-WmlCtrlListDefPtr	reflist;	/* controls list object */
-WmlClassCtrlDefPtr	listelem;	/* control reference in list */
-char			errmsg[300];
+	/* Acquire parent/super pointers for widget and gadget classes */
+	for (i = 0; i < wml_obj_allclass_ptr->cnt; i++) {
+		clsobj = wml_obj_allclass_ptr->hvec[i].objptr;
 
-
-/*
- * Acquire the superclass pointer for each widget and gadget class
- */
-for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_allclass_ptr->hvec[ndx].objptr;
-    synobj = clsobj->syndef;
-    if ( synobj->superclass != NULL )
-	{
-	superobj = (WmlClassDefPtr)
-	    wmlResolveFindObject (synobj->superclass,
-				  WmlClassDefValid,
-				  synobj->name);
-	if ( superobj == NULL ) continue;
-	clsobj->superclass = superobj;
-	}
-    }
-
-/*
- * Acquire the parentclass pointer (if one exists),
- * for each widget and gadget class
- */
-for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_allclass_ptr->hvec[ndx].objptr;
-    synobj = clsobj->syndef;
-    if ( synobj->parentclass != NULL )
-	{
-	parentobj = (WmlClassDefPtr)
-	    wmlResolveFindObject (synobj->parentclass,
-				  WmlClassDefValid,
-				  synobj->name);
-	if ( parentobj == NULL ) continue;
-	clsobj->parentclass = parentobj;
-	}
-    }
-
-/*
- * Link each gadget class with its widget class (both ways).
- * Link any class with a non-dialog version to the non-dialog class.
- */
-for ( ndx=0 ; ndx<wml_obj_class_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_class_ptr->hvec[ndx].objptr;
-    synobj = clsobj->syndef;
-    if ( synobj->type == WmlClassTypeGadget )
-	{
-	if ( synobj->widgetclass == NULL )
-	    {
-	    sprintf (errmsg, "Gadget class %s has no widgetclass reference",
-		     synobj->name);
-	    wmlIssueError (errmsg);
-	    }
-	else
-	    {
-	    widgobj = (WmlClassDefPtr)
-		wmlResolveFindObject
-		    (synobj->widgetclass,
-		     WmlClassDefValid,
-		     synobj->name);
-	    if ( widgobj != NULL )
-		{
-		clsobj->variant = widgobj;
-		widgobj->variant = clsobj;
+		/* Acquire the superclass pointer */
+		if (clsobj->syndef->superclass) {
+			superobj = wmlResolveFindObject(clsobj->syndef->superclass,
+			                                WmlClassDefValid,
+			                                clsobj->syndef->name);
+			if (superobj) clsobj->superclass = superobj;
 		}
-	    }
-	}
-    if ( synobj->dialog == TRUE )
-	{
-	clsobj->nondialog = clsobj->superclass;
-	while ( clsobj->nondialog->syndef->dialog == TRUE )
-	    clsobj->nondialog = clsobj->nondialog->superclass;
-	}
-    else
-	if ( clsobj->superclass != NULL )
-	    {
-	    synobj->dialog = clsobj->superclass->syndef->dialog;
-	    clsobj->nondialog = clsobj->superclass->nondialog;
-	    }
-    }
 
-/*
- * Construct the list of resolved controls. Control lists are expanded
- * in place.
- */
-for ( ndx=0 ; ndx<wml_obj_class_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_class_ptr->hvec[ndx].objptr;
-    synobj = clsobj->syndef;
-    for ( refptr=synobj->controls ; refptr!= NULL ; refptr=refptr->next )
-	{
-	refndx = wmlFindInHList (wml_obj_class_ptr, refptr->name);
-	if ( refndx >= 0 )
-	    {
-	    refcls = (WmlClassDefPtr) wml_obj_class_ptr->hvec[refndx].objptr;
-	    ctrlobj = (WmlClassCtrlDefPtr) malloc (sizeof(WmlClassCtrlDef));
-	    ctrlobj->next = clsobj->controls;
-	    clsobj->controls = ctrlobj;
-	    ctrlobj->ctrl = refcls;
-	    continue;
-	    }
-	refndx = wmlFindInHList (wml_obj_ctrlist_ptr, refptr->name);
-	if ( refndx >= 0 )
-	    {
-	    reflist = (WmlCtrlListDefPtr)
-		wml_obj_ctrlist_ptr->hvec[refndx].objptr;
-	    for ( listelem=reflist->controls ;
-		  listelem!=NULL ;
-		  listelem=listelem->next)
-		{
-		ctrlobj = (WmlClassCtrlDefPtr)
-		    malloc (sizeof(WmlClassCtrlDef));
-		ctrlobj->next = clsobj->controls;
-		clsobj->controls = ctrlobj;
-		ctrlobj->ctrl = listelem->ctrl;
+		/* Acquire the parentclass pointer */
+		if (clsobj->syndef->parentclass) {
+			parentobj = wmlResolveFindObject(clsobj->syndef->parentclass,
+			                                 WmlClassDefValid,
+			                                 clsobj->syndef->name);
+			if (parentobj) clsobj->parentclass = parentobj;
 		}
-	    continue;
-	    }
-	wmlIssueReferenceError (synobj->name, refptr->name);
-	continue;
 	}
-    }
 
-/*
- * Perform resource inheritance for each class. This constructs the
- * arguments and reasons reference vectors.
- */
-for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_allclass_ptr->hvec[ndx].objptr;
-    wmlResolveClassInherit (clsobj);
-    }
+	/**
+	 * Link each gadget class with its widget class (both ways).
+	 * Link any class with a non-dialog version to the non-dialog class.
+	 */
+	for (i = 0; i < wml_obj_class_ptr->cnt; i++) {
+		clsobj = wml_obj_class_ptr->hvec[i].objptr;
+		if (clsobj->syndef->type == WmlClassTypeGadget) {
+			if (!clsobj->syndef->widgetclass) {
+				err("Gadget class %s has no widgetclass reference",
+				    clsobj->syndef->name);
+			} else {
+				widgetobj = wmlResolveFindObject(clsobj->syndef->widgetclass,
+				                                 WmlClassDefValid,
+				                                 clsobj->syndef->name);
 
+				if (widgetobj) {
+					clsobj->variant    = widgetobj;
+					widgetobj->variant = clsobj;
+				}
+			}
+		}
+
+		if (clsobj->syndef->dialog) {
+			clsobj->nondialog = clsobj->superclass;
+			while (clsobj->nondialog->syndef->dialog)
+				clsobj->nondialog = clsobj->nondialog->superclass;
+		} else if (clsobj->superclass) {
+			clsobj->syndef->dialog = clsobj->superclass->syndef->dialog;
+			clsobj->nondialog      = clsobj->superclass->nondialog;
+		}
+	}
+
+	/**
+	 * Construct the list of resolved controls. Control lists are expanded
+	 * in place.
+	 */
+	for (i = 0; i < wml_obj_class_ptr->cnt; i++) {
+		clsobj = wml_obj_class_ptr->hvec[i].objptr;
+
+		for (refptr = clsobj->syndef->controls; refptr; refptr = refptr->next) {
+			if ((idx = wmlFindInHList(wml_obj_class_ptr, refptr->name)) >= 0) {
+				refcls = wml_obj_class_ptr->hvec[idx].objptr;
+				if (!(ctrlobj = malloc(sizeof *ctrlobj)))
+					fatal("wmlResolveValidateClass: Out of memory");
+				ctrlobj->ctrl    = refcls;
+				ctrlobj->next    = clsobj->controls;
+				clsobj->controls = ctrlobj;
+				continue;
+			}
+
+			if ((idx = wmlFindInHList(wml_obj_ctrlist_ptr, refptr->name)) >= 0) {
+				reflist = wml_obj_ctrlist_ptr->hvec[idx].objptr;
+				for (el = reflist->controls; el; el = el->next) {
+					if (!(ctrlobj = malloc(sizeof *ctrlobj)))
+						fatal("wmlResolveValidateClass: Out of memory");
+					ctrlobj->ctrl    = el->ctrl;
+					ctrlobj->next    = clsobj->controls;
+					clsobj->controls = ctrlobj;
+				}
+			} else wmlIssueReferenceError(clsobj->syndef->name, refptr->name);
+		}
+	}
+
+	/**
+	 * Perform resource inheritance for each class. This constructs the
+	 * arguments and reasons reference vectors.
+	 */
+	for (idx = 0; idx < wml_obj_allclass_ptr->cnt; idx++)
+		wmlResolveClassInherit(wml_obj_allclass_ptr->hvec[idx].objptr);
 }
 
-
-
-/*
+/**
  * Routine to perform resource inheritance for a class.
  *
  * This routine constructs the argument and reason resource and child reference
@@ -1052,382 +874,299 @@ for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
  * detects whether a resource or child is already in the list (if so, it is
  * assumed to be inherited).
  */
-
-void wmlResolveClassInherit (clsobj)
-    WmlClassDefPtr		clsobj;
-
+static void wmlResolveClassInherit(WmlClassDefPtr clsobj)
 {
+	int i;
+	WmlClassResDefPtr sref, refobj;
+	WmlClassChildDefPtr cref, crefobj;
+	WmlResourceDefPtr resobj;
+	WmlChildDefPtr childobj;
+	WmlSynClassResDefPtr refptr;
+	WmlSynClassChildDefPtr crefptr;
 
-WmlClassDefPtr		superobj;	/* superclass object */
-WmlClassDefPtr		parentobj;	/* parentclass object */
-int			ndx;		/* loop index */
-WmlResourceDefPtr	resobj;		/* current resource object */
-WmlClassResDefPtr	refobj;		/* current resource reference */
-WmlClassResDefPtr	srcref;		/* source of copy */
-WmlChildDefPtr		childobj;	/* current child object */
-WmlClassChildDefPtr	crefobj;	/* current child reference */
-WmlClassChildDefPtr	csrcref;	/* child source of copy */
-WmlSynClassDefPtr	synobj;		/* this class' syntactic object */
-WmlSynClassResDefPtr	refptr;		/* syntactic resource reference */
-WmlSynClassChildDefPtr	crefptr;	/* syntactic child reference */
+	/**
+	 * Done if inheritance previously performed. Ensure the superclass is
+	 * done.
+	 */
+	if (!clsobj || clsobj->inherit_done)
+		return;
+	wmlResolveClassInherit(clsobj->superclass);
+	wmlResolveClassInherit(clsobj->parentclass);
 
+	/* Clear the active reference pointer in the resolved resource objects. */
+	wmlResolveClearRefPointers();
 
-/*
- * Done if inheritance previously performed. Ensure the superclass is
- * done.
- */
-if ( clsobj == NULL ) return;
-if ( clsobj->inherit_done ) return;
-superobj = clsobj->superclass;
-wmlResolveClassInherit (superobj);
-parentobj = clsobj->parentclass;
-wmlResolveClassInherit (parentobj);
-synobj = clsobj->syndef;
+	/* Copy the superclass resources, setting the reference pointer as we go. */
+	if (clsobj->superclass) {
+		for (sref = clsobj->superclass->arguments; sref; sref = sref->next) {
+			if (!(refobj = malloc(sizeof *refobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			refobj->next      = clsobj->arguments;
+			clsobj->arguments = refobj;
+			wmlResolveInitRefObj(refobj, sref);
+		}
 
-/*
- * Clear the active reference pointer in the resolved resource objects.
- */
-wmlResolveClearRefPointers ();
+		for (sref = clsobj->superclass->reasons; sref; sref = sref->next) {
+			if (!(refobj = malloc(sizeof *refobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			refobj->next    = clsobj->reasons;
+			clsobj->reasons = refobj;
+			wmlResolveInitRefObj(refobj, sref);
+		}
 
-/*
- * Copy the superclass resources, setting the reference pointer as we go.
- */
-if ( superobj != NULL )
-    {
-    for ( srcref=superobj->arguments ; srcref!=NULL ; srcref=srcref->next )
-	{
-	refobj = (WmlClassResDefPtr) malloc (sizeof(WmlClassResDef));
-	refobj->next = clsobj->arguments;
-	clsobj->arguments = refobj;
-	wmlResolveInitRefObj (refobj, srcref);
-	}
-    for ( srcref=superobj->reasons ; srcref!=NULL ; srcref=srcref->next )
-	{
-	refobj = (WmlClassResDefPtr) malloc (sizeof(WmlClassResDef));
-	refobj->next = clsobj->reasons;
-	clsobj->reasons = refobj;
-	wmlResolveInitRefObj (refobj, srcref);
-	}
-    for (csrcref = superobj->children ; csrcref!=NULL ; csrcref=csrcref->next)
-      {
-	crefobj = (WmlClassChildDefPtr) malloc (sizeof(WmlClassChildDef));
-	crefobj->next = clsobj->children;
-	clsobj->children = crefobj;
-	wmlResolveInitChildRefObj (crefobj, csrcref);
-      }
-    }
-
-/*
- * Copy the parentclass resources, setting the reference pointer as we go.
- */
-if ( parentobj != NULL )
-    {
-    for ( srcref=parentobj->arguments ; srcref!=NULL ; srcref=srcref->next )
-	{
-	  if (srcref->act_resource->ref_ptr == NULL)
-	    {
-	      refobj = (WmlClassResDefPtr) malloc (sizeof(WmlClassResDef));
-	      refobj->next = clsobj->arguments;
-	      clsobj->arguments = refobj;
-	      wmlResolveInitRefObj (refobj, srcref);
-	    }
-	}
-    for ( srcref=parentobj->reasons ; srcref!=NULL ; srcref=srcref->next )
-	{
-	  if (srcref->act_resource->ref_ptr == NULL)
-	    {
-	      refobj = (WmlClassResDefPtr) malloc (sizeof(WmlClassResDef));
-	      refobj->next = clsobj->reasons;
-	      clsobj->reasons = refobj;
-	      wmlResolveInitRefObj (refobj, srcref);
-	    }
-	}
-    for (csrcref = parentobj->children ; csrcref!=NULL ; csrcref=csrcref->next)
-      {
-	if (csrcref->act_child->ref_ptr == NULL)
-	  {
-	    crefobj = (WmlClassChildDefPtr) malloc (sizeof(WmlClassChildDef));
-	    crefobj->next = clsobj->children;
-	    clsobj->children = crefobj;
-	    wmlResolveInitChildRefObj (crefobj, csrcref);
-	  }
-      }
-    }
-
-/*
- * Process the resources belonging to this class. They may either be
- * new resources, or override ones already in the list. Partition them
- * into arguments and reasons.
- */
-for ( refptr=synobj->resources ; refptr!=NULL ; refptr=refptr->next )
-    {
-    resobj = (WmlResourceDefPtr) wmlResolveFindObject (refptr->name,
-						       WmlResourceDefValid,
-						       synobj->name);
-    if ( resobj == NULL ) continue;
-
-    /*
-     * Acquire the resolved resource object, and the resource reference.
-     * New references are linked in to the proper list, and have their
-     * defaults set.
-     */
-    if ( resobj->ref_ptr != NULL )
-	refobj = resobj->ref_ptr;
-    else
-	{
-	refobj = (WmlClassResDefPtr) malloc (sizeof(WmlClassResDef));
-	refobj->act_resource = resobj;
-	resobj->ref_ptr = refobj;
-	refobj->over_dtype = NULL;
-	refobj->dflt = NULL;
-	refobj->exclude = WmlAttributeUnspecified;
-	if ( resobj->syndef->type == WmlResourceTypeReason )
-	    {
-	    refobj->next = clsobj->reasons;
-	    clsobj->reasons = refobj;
-	    }
-	else
-	    {
-	    refobj->next = clsobj->arguments;
-	    clsobj->arguments = refobj;
-	    }
+		for (cref = clsobj->superclass->children; cref; cref = cref->next) {
+			if (!(crefobj = malloc(sizeof *crefobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			crefobj->next    = clsobj->children;
+			clsobj->children = crefobj;
+			wmlResolveInitChildRefObj(crefobj, cref);
+		}
 	}
 
-    /*
-     * Override any values in the reference which are explicit in the
-     * syntactic reference.
-     */
-    if ( refptr->type != NULL )
-	refobj->over_dtype = (WmlDataTypeDefPtr)
-	    wmlResolveFindObject (refptr->type,
-				  WmlDataTypeDefValid,
-				  synobj->name);
-    if ( refptr->dflt != NULL )
-	refobj->dflt = refptr->dflt;
-    if ( refptr->exclude != WmlAttributeUnspecified )
-	refobj->exclude = refptr->exclude;
-    }
+	/* Copy the parentclass resources, setting the reference pointer as we go. */
+	if (clsobj->parentclass) {
+		for (sref = clsobj->parentclass->arguments; sref; sref = sref->next) {
+			if (sref->act_resource->ref_ptr)
+				continue;
 
-/*
- * Process the children belonging to this class.
- */
-for ( crefptr = synobj->children ; crefptr!=NULL ; crefptr = crefptr->next )
-  {
-    childobj = (WmlChildDefPtr) wmlResolveFindObject (crefptr->name,
-						     WmlChildDefValid,
-						     synobj->name);
-    if ( childobj == NULL ) continue;
+			if (!(refobj = malloc(sizeof *refobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			refobj->next      = clsobj->arguments;
+			clsobj->arguments = refobj;
+			wmlResolveInitRefObj(refobj, sref);
+		}
 
-    /*
-     * Acquire the resolved child object, and the child reference.
-     * New references are linked in to the proper list, and have their
-     * defaults set.
-     */
-    if ( childobj->ref_ptr != NULL )
-	crefobj = childobj->ref_ptr;
-    else
-      {
-	crefobj = (WmlClassChildDefPtr) malloc (sizeof(WmlClassChildDef));
-	crefobj->act_child = childobj;
-	childobj->ref_ptr = crefobj;
-	crefobj->next = clsobj->children;
-	clsobj->children = crefobj;
-      }
-  }
+		for (sref = clsobj->parentclass->reasons; sref; sref = sref->next) {
+			if (sref->act_resource->ref_ptr)
+				continue;
 
-/*
- * inheritance complete
- */
-clsobj->inherit_done = TRUE;
+			if (!(refobj = malloc(sizeof *refobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			refobj->next    = clsobj->reasons;
+			clsobj->reasons = refobj;
+			wmlResolveInitRefObj(refobj, sref);
+		}
 
+		for (cref = clsobj->parentclass->children; cref; cref = cref->next) {
+			if (cref->act_child->ref_ptr)
+				continue;
+
+			if (!(crefobj = malloc(sizeof *crefobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			crefobj->next    = clsobj->children;
+			clsobj->children = crefobj;
+			wmlResolveInitChildRefObj(crefobj, cref);
+		}
+	}
+
+	/**
+	 * Process the resources belonging to this class. They may either be
+	 * new resources, or override ones already in the list. Partition them
+	 * into arguments and reasons.
+	 */
+	for (refptr = clsobj->syndef->resources; refptr; refptr = refptr->next) {
+		resobj = wmlResolveFindObject(refptr->name, WmlResourceDefValid,
+		                              clsobj->syndef->name);
+		if (!resobj) continue;
+
+		/**
+		 * Acquire the resolved resource object, and the resource reference.
+		 * New references are linked in to the proper list, and have their
+		 * defaults set.
+		 */
+		if (!(refobj = resobj->ref_ptr)) {
+			if (!(refobj = calloc(1, sizeof *refobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+			refobj->act_resource = resobj;
+			refobj->exclude      = WmlAttributeUnspecified;
+			resobj->ref_ptr      = refobj;
+
+			if (resobj->syndef->type == WmlResourceTypeReason) {
+				refobj->next    = clsobj->reasons;
+				clsobj->reasons = refobj;
+			} else {
+				refobj->next      = clsobj->arguments;
+				clsobj->arguments = refobj;
+			}
+		}
+
+		/**
+		 * Override any values in the reference which are explicit in the
+		 * syntactic reference.
+		 */
+		if (refptr->type) {
+			refobj->over_dtype = wmlResolveFindObject(refptr->type,
+			                                          WmlDataTypeDefValid,
+			                                          clsobj->syndef->name);
+		}
+
+		if (refptr->dflt)
+			refobj->dflt = refptr->dflt;
+
+		if (refptr->exclude != WmlAttributeUnspecified)
+			refobj->exclude = refptr->exclude;
+	}
+
+	/* Process the children belonging to this class */
+	for (crefptr = clsobj->syndef->children; crefptr; crefptr = crefptr->next) {
+		childobj = wmlResolveFindObject(crefptr->name, WmlChildDefValid,
+		                                clsobj->syndef->name);
+		if (!childobj) continue;
+
+		/**
+		 * Acquire the resolved child object, and the child reference.
+		 * New references are linked in to the proper list, and have their
+		 * defaults set.
+		 */
+		if (!childobj->ref_ptr) {
+			if (!(crefobj = malloc(sizeof *crefobj)))
+				fatal("wmlResolveClassInherit: Out of memory");
+
+			crefobj->act_child = childobj;
+			crefobj->next      = clsobj->children;
+			childobj->ref_ptr  = crefobj;
+			clsobj->children   = crefobj;
+		}
+	}
+
+	/* inheritance complete */
+	clsobj->inherit_done = TRUE;
 }
 
-
-
-/*
+/**
  * Routine to copy a resource reference
  */
-
-void wmlResolveInitRefObj (dstobj, srcobj)
-    WmlClassResDefPtr		dstobj;
-    WmlClassResDefPtr		srcobj;
-
+static void wmlResolveInitRefObj(WmlClassResDefPtr dst, WmlClassResDefPtr src)
 {
+	WmlResourceDefPtr res;
 
-WmlResourceDefPtr	resobj;
-
-
-resobj = srcobj->act_resource;
-dstobj->act_resource = resobj;
-resobj->ref_ptr = dstobj;
-dstobj->over_dtype = srcobj->over_dtype;
-dstobj->dflt = srcobj->dflt;
-dstobj->exclude = srcobj->exclude;
-
+	res               = src->act_resource;
+	res->ref_ptr      = dst;
+	dst->act_resource = res;
+	dst->over_dtype   = src->over_dtype;
+	dst->dflt         = src->dflt;
+	dst->exclude      = src->exclude;
 }
 
-
-/*
+/**
  * Routine to copy a child reference
  */
-
-void wmlResolveInitChildRefObj (dstobj, srcobj)
-    WmlClassChildDefPtr		dstobj;
-    WmlClassChildDefPtr		srcobj;
-
+static void wmlResolveInitChildRefObj(WmlClassChildDefPtr dst,
+                                      WmlClassChildDefPtr src)
 {
+	WmlChildDefPtr child;
 
-WmlChildDefPtr	childobj;
-
-childobj = srcobj->act_child;
-dstobj->act_child = childobj;
-childobj->ref_ptr = dstobj;
-
+	child          = src->act_child;
+	child->ref_ptr = dst;
+	dst->act_child = child;
 }
 
-
-
-/*
+/**
  * Routine to print a report in a file.
  *
  * This routine dumps the developed database into the file 'wml.report'
  */
-
-void wmlResolvePrintReport ()
-
+static void wmlResolvePrintReport(void)
 {
+	int i;
+	FILE *fp;
 
-FILE			*outfil;	/* output file */
-int			ndx;		/* loop index */
-WmlClassDefPtr		clsobj;		/* current class */
+	if (!(fp = fopen("wml.report", "w+"))) {
+		err("Couldn't open wml.report for writing");
+		return;
+	}
 
+	/**
+	 * Go through all classes. Print basic information, then dump their
+	 * resources. The main purpose of this report is to show the actual
+	 * resources and controls for the class.
+	 */
+	for (i = 0; i < wml_obj_allclass_ptr->cnt; i++) {
+		wmlMarkReferencePointers(wml_obj_allclass_ptr->hvec[i].objptr);
+		wmlResolvePrintClass(fp, wml_obj_allclass_ptr->hvec[i].objptr);
+	}
 
-/*
- * Open the output file.
- */
-outfil = fopen ( "wml.report", "w+");
-if ( outfil == NULL )
-    {
-    printf ("\nCouldn't open wml.report");
-    return;
-    }
-
-/*
- * Go through all classes. Print basic information, then dump their
- * resources. The main purpose of this report is to show the actual
- * resources and controls for the class.
- */
-
-for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
-    {
-    clsobj = (WmlClassDefPtr) wml_obj_allclass_ptr->hvec[ndx].objptr;
-    wmlMarkReferencePointers (clsobj);
-    wmlResolvePrintClass (outfil, clsobj);
-    }
-
-
-/*
- * close the output file
- */
-fprintf (outfil, "\n\n");
-printf ("\nCreated report file wml.report");
-fclose (outfil);
-
+	fputc('\n', fp);
+	fclose(fp);
+	puts("Created report file wml.report");
 }
 
-
-
-/*
+/**
  * Print the information for a class
  */
-
-void wmlResolvePrintClass (outfil, clsobj)
-    FILE			*outfil;
-    WmlClassDefPtr		clsobj;
-
+static void wmlResolvePrintClass(FILE *fp, WmlClassDefPtr clsobj)
 {
+	int i;
+	WmlSynClassDefPtr synobj;
+	WmlClassDefPtr ctrlobj;
 
-int			ndx;		/* loop index */
-WmlSynClassDefPtr	synobj;		/* syntactic object */
-WmlClassCtrlDefPtr	ctrlref;	/* controls reference */
-WmlClassDefPtr		ctrlobj;	/* current class in control */
+	synobj = clsobj->syndef;
+	fprintf(fp, "\n\n\nClass %s:", synobj->name);
+	switch (synobj->type) {
+	case WmlClassTypeMetaclass:
+		fprintf(fp, "\n  Type: Metaclass\t");
+		if (synobj->superclass)
+			fprintf(fp, "Superclass: %s\t", synobj->superclass);
+		if (synobj->parentclass)
+			fprintf(fp, "Parentclass: %s\t", synobj->parentclass);
+		break;
+	case WmlClassTypeWidget:
+		fprintf(fp, "\n  Type: Widget\t");
+		if (synobj->superclass)
+			fprintf(fp, "Superclass: %s\t", synobj->superclass);
+		if (synobj->parentclass)
+			fprintf(fp, "Parentclass: %s\t", synobj->parentclass);
+		if (clsobj->variant) {
+			fprintf(fp, "\n  Associated gadget class: %s\t",
+			        clsobj->variant->syndef->name);
+		}
+		if (synobj->convfunc)
+			fprintf(fp, "Convenience function: %s", synobj->convfunc);
+		break;
+	case WmlClassTypeGadget:
+		fprintf(fp, "\n  Type: Gadget\t");
+		if (synobj->superclass)
+			fprintf(fp, "Superclass: %s\t", synobj->superclass);
+		if (synobj->parentclass)
+			fprintf(fp, "Parentclass: %s\t", synobj->parentclass);
+		if (clsobj->variant) {
+			fprintf(fp, "\n  Associated widget class: %s\t",
+			        clsobj->variant->syndef->name);
+		}
+		if (synobj->convfunc)
+			fprintf(fp, "Convenience function: %s", synobj->convfunc);
+		break;
+	}
 
+	/* Print associated non-dialog class */
+	if (clsobj->nondialog) {
+		fprintf(fp, "\n  DialogClass: True\tNon-dialog ancestor: %s\t",
+		        clsobj->nondialog->syndef->name);
+	}
 
-synobj = clsobj->syndef;
-fprintf (outfil, "\n\n\nClass %s:", synobj->name);
-switch ( synobj->type )
-    {
-    case WmlClassTypeMetaclass:
-        fprintf (outfil, "\n  Type: Metaclass\t");
-	if ( synobj->superclass != NULL )
-	    fprintf (outfil, "Superclass: %s\t", synobj->superclass);
-	if ( synobj->parentclass != NULL )
-	    fprintf (outfil, "Parentclass: %s\t", synobj->parentclass);
-	break;
-    case WmlClassTypeWidget:
-	fprintf (outfil, "\n  Type: Widget\t");
-	if ( synobj->superclass != NULL )
-	    fprintf (outfil, "Superclass: %s\t", synobj->superclass);
-	if ( synobj->parentclass != NULL )
-	    fprintf (outfil, "Parentclass: %s\t", synobj->parentclass);
-	if ( clsobj->variant != NULL )
-	    fprintf (outfil, "\n  Associated gadget class: %s\t",
-		     clsobj->variant->syndef->name);
-	if ( synobj->convfunc != NULL )
-	    fprintf (outfil, "Convenience function: %s", synobj->convfunc);
-	break;
-    case WmlClassTypeGadget:
-	fprintf (outfil, "\n  Type: Gadget\t");
-	if ( synobj->superclass != NULL )
-	    fprintf (outfil, "Superclass: %s\t", synobj->superclass);
-	if ( synobj->parentclass != NULL )
-	    fprintf (outfil, "Parentclass: %s\t", synobj->parentclass);
-	if ( clsobj->variant != NULL )
-	    fprintf (outfil, "\n  Associated widget class: %s\t",
-		     clsobj->variant->syndef->name);
-	if ( synobj->convfunc != NULL )
-	    fprintf (outfil, "Convenience function: %s", synobj->convfunc);
-	break;
-    }
+	/**
+	 * Print the arguments valid in the class. First the new resources
+	 * for the class are printed, then each ancestor's contribution is
+	 * printed. This is intended to match the way resources are printed
+	 * in the toolkit manual, so that checking is as easy as possible.
+	 */
+	fprintf(fp, "\n  Arguments:");
+	wmlResolvePrintClassArgs(fp, clsobj);
 
-/*
- * Print associated non-dialog class
- */
-if ( clsobj->nondialog != NULL )
-    fprintf (outfil, "\n  DialogClass: True\tNon-dialog ancestor: %s\t",
-	     clsobj->nondialog->syndef->name);
+	/* Print the reasons valid in the class */
+	fprintf(fp, "\n  Reasons:");
+	wmlResolvePrintClassReasons(fp, clsobj);
 
-/*
- * Print the arguments valid in the class. First the new resources for the
- * class are printed, then each ancestor's contribution is printed. This
- * is intended to match the way resources are printed in the toolkit manual,
- * so that checking is as easy as possible.
- */
-fprintf (outfil, "\n  Arguments:");
-wmlResolvePrintClassArgs (outfil, clsobj);
-
-/*
- * Print the reasons valid in the class
- */
-fprintf (outfil, "\n  Reasons:");
-wmlResolvePrintClassReasons (outfil, clsobj);
-
-/*
- * Print the controls valid in the class
- */
-fprintf (outfil, "\n  Controls:");
-for ( ndx=0 ; ndx<wml_obj_class_ptr->cnt ; ndx++ )
-    {
-    ctrlobj = (WmlClassDefPtr) wml_obj_class_ptr->hvec[ndx].objptr;
-    if ( ctrlobj->ref_ptr == NULL ) continue;
-    fprintf (outfil, "\n    %s", ctrlobj->syndef->name);
-    }
-
+	/* Print the controls valid in the class */
+	fprintf(fp, "\n  Controls:");
+	for (i = 0; i < wml_obj_class_ptr->cnt; i++) {
+		ctrlobj = wml_obj_class_ptr->hvec[i].objptr;
+		if (ctrlobj->ref_ptr)
+			fprintf(fp, "\n    %s", ctrlobj->syndef->name);
+	}
 }
 
-
-
-/*
+/**
  * Routine to print the arguments for a class
  *
  * This routine prints out the currently marked arguments which are
@@ -1436,279 +1175,167 @@ for ( ndx=0 ; ndx<wml_obj_class_ptr->cnt ; ndx++ )
  * superclass arguments, so that the printing order becomes the top-down
  * inheritance order.
  */
-
-void wmlResolvePrintClassArgs (outfil, clsobj)
-    FILE			*outfil;
-    WmlClassDefPtr		clsobj;
-
+static void wmlResolvePrintClassArgs(FILE *fp, WmlClassDefPtr clsobj)
 {
+	int i, constr = FALSE, prthdr = TRUE;
+	WmlResourceDefPtr resobj;
 
-int			prthdr = TRUE;	/* print header line */
-int			ndx;		/* loop index */
-WmlSynClassDefPtr	synobj;		/* syntactic object */
-WmlClassResDefPtr	resref;		/* resource reference */
-int			constr = FALSE;	/* check for constraints */
-WmlResourceDefPtr	resobj;		/* current resource */
-WmlSynResourceDefPtr	synres;		/* syntactic resource object */
+	/* Print the superclass / parentclass args */
+	if (clsobj->superclass)
+		wmlResolvePrintClassArgs(fp, clsobj->superclass);
 
+	if (clsobj->parentclass)
+		wmlResolvePrintClassArgs(fp, clsobj->parentclass);
 
-/*
- * Print the superclass arguments
- */
-if ( clsobj->superclass != NULL )
-    wmlResolvePrintClassArgs (outfil, clsobj->superclass);
+	/**
+	 * Print the arguments for this class. Unmark the reference so it won't
+	 * be printed again.
+	 */
+	for (i = 0; i < wml_obj_arg_ptr->cnt; i++) {
+		resobj = wml_obj_arg_ptr->hvec[i].objptr;
+		if (!resobj->ref_ptr || !wmlResolveResIsMember(resobj, clsobj->arguments))
+			continue;
 
-/*
- * Print the parentclass arguments
- */
-if ( clsobj->parentclass != NULL )
-    wmlResolvePrintClassArgs (outfil, clsobj->parentclass);
+		constr = constr || resobj->syndef->type == WmlResourceTypeConstraint;
+		if (resobj->syndef->type != WmlResourceTypeArgument    &&
+		    resobj->syndef->type != WmlResourceTypeSubResource &&
+		    resobj->syndef->type == WmlResourceTypeConstraint)
+			continue;
 
-/*
- * Print the arguments for this class. Unmark the reference so it won't
- * be printed again.
- */
-synobj = clsobj->syndef;
-for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
-    {
-    resobj = (WmlResourceDefPtr) wml_obj_arg_ptr->hvec[ndx].objptr;
-    resref = resobj->ref_ptr;
-    if ( resref == NULL ) continue;
-    if ( wmlResolveResIsMember(resobj,clsobj->arguments) == NULL ) continue;
-    synres = resobj->syndef;
-    switch ( synres->type )
-	{
-	case WmlResourceTypeArgument:
-	case WmlResourceTypeSubResource:
-	    break;
-	case WmlResourceTypeConstraint:
-	    constr = TRUE;
-	    break;
-	default:
-	    continue;
-	    break;
+		if (prthdr) {
+			fprintf(fp, "\n    %s argument set:", clsobj->syndef->name);
+			prthdr = FALSE;
+		}
+
+		fprintf(fp, "\n      %s", resobj->syndef->name);
+		fprintf(fp, "\n\tType = %s", resobj->dtype_def->syndef->name);
+		if (strcmp(resobj->syndef->name, resobj->syndef->resliteral))
+			fprintf(fp, "\tResourceLiteral = %s", resobj->syndef->resliteral);
+
+		switch (resobj->ref_ptr->exclude) {
+		case WmlAttributeTrue:
+			fprintf(fp, "\n\tExclude = True;");
+			break;
+		case WmlAttributeFalse:
+			fprintf(fp, "\n\tExclude = False;");
+			break;
+		}
+
+		if (resobj->ref_ptr->dflt)
+			fprintf(fp, "\n\tDefault = \"%s\"", resobj->ref_ptr->dflt);
+		else if (resobj->syndef->dflt)
+			fprintf(fp, "\n\tDefault = \"%s\"", resobj->syndef->dflt);
+		resobj->ref_ptr = NULL;
 	}
-    if ( prthdr )
-	{
-	fprintf (outfil, "\n    %s argument set:", synobj->name);
-	prthdr = FALSE;
-	}
 
-    fprintf (outfil, "\n      %s", synres->name);
-    fprintf (outfil, "\n\tType = %s", resobj->dtype_def->syndef->name);
-    if ( strcmp(synres->name,synres->resliteral) != 0 )
-	fprintf (outfil, "\tResourceLiteral = %s", synres->resliteral);
-    switch ( resref->exclude )
-	{
-	case WmlAttributeTrue:
-	    fprintf (outfil, "\n\tExclude = True;");
-	    break;
-	case WmlAttributeFalse:
-	    fprintf (outfil, "\n\tExclude = False;");
-	    break;
-	}
-    if ( resref->dflt != NULL )
-	fprintf (outfil, "\n\tDefault = \"%s\"", resref->dflt);
-    else
-	if ( synres->dflt != NULL )
-	    fprintf (outfil, "\n\tDefault = \"%s\"", synres->dflt);
-    resobj->ref_ptr = NULL;
-    }
+	/* Print the constraints valid in the class */
+	if (!constr)
+		return;
 
-/*
- * Print the constraints valid in the class
- */
-if ( constr )
-    {
-    prthdr = TRUE;
-    for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
-	{
-	resobj = (WmlResourceDefPtr) wml_obj_arg_ptr->hvec[ndx].objptr;
-	resref = resobj->ref_ptr;
-	if ( resref == NULL ) continue;
-	if ( wmlResolveResIsMember(resobj,clsobj->arguments) == NULL ) continue;
-	synres = resobj->syndef;
-	switch ( synres->type )
-	    {
-	    case WmlResourceTypeConstraint:
-	        break;
-	    default:
-		continue;
-		break;
-	    }
-	if ( prthdr )
-	    {
-	    fprintf (outfil, "\n    %s constraint set:", synobj->name);
-	    prthdr = FALSE;
-	    }
-	fprintf (outfil, "\n      %s", synres->name);
-	if ( strcmp(synres->name,synres->resliteral) != 0 )
-	    fprintf (outfil, "\tResourceLiteral = %s", synres->resliteral);
-	switch ( resref->exclude )
-	    {
-	    case WmlAttributeTrue:
-	        fprintf (outfil, "\n\tExclude = True;");
-		break;
-	    case WmlAttributeFalse:
-		fprintf (outfil, "\n\tExclude = False;");
-		break;
-	    }
-	if ( resref->dflt != NULL )
-	    fprintf (outfil, "\n\tDefault = \"%s\"", resref->dflt);
-	else
-	    if ( synres->dflt != NULL )
-		fprintf (outfil, "\n\tDefault = \"%s\"", synres->dflt);
-	resobj->ref_ptr = NULL;
-	}
-    }
+	prthdr = TRUE;
+	for (i = 0; i < wml_obj_arg_ptr->cnt; i++) {
+		resobj = wml_obj_arg_ptr->hvec[i].objptr;
+		if (resobj->syndef->type != WmlResourceTypeConstraint)
+			continue;
 
+		if (!resobj->ref_ptr || !wmlResolveResIsMember(resobj, clsobj->arguments))
+			continue;
+
+		if (prthdr) {
+			fprintf(fp, "\n    %s constraint set:", clsobj->syndef->name);
+			prthdr = FALSE;
+		}
+
+		fprintf(fp, "\n      %s", resobj->syndef->name);
+		if (strcmp(resobj->syndef->name, resobj->syndef->resliteral))
+			fprintf(fp, "\tResourceLiteral = %s", resobj->syndef->resliteral);
+
+		switch (resobj->ref_ptr->exclude) {
+		case WmlAttributeTrue:
+			fprintf(fp, "\n\tExclude = True;");
+			break;
+		case WmlAttributeFalse:
+			fprintf(fp, "\n\tExclude = False;");
+			break;
+		}
+
+		if (resobj->ref_ptr->dflt)
+			fprintf(fp, "\n\tDefault = \"%s\"", resobj->ref_ptr->dflt);
+		else if (resobj->syndef->dflt)
+			fprintf(fp, "\n\tDefault = \"%s\"", resobj->syndef->dflt);
+		resobj->ref_ptr = NULL;
+	}
 }
 
-
-
-/*
+/**
  * Routine to print reasons in a class.
  *
  * Like printing arguments, only reasons instead.
  */
-
-void wmlResolvePrintClassReasons (outfil, clsobj)
-    FILE			*outfil;
-    WmlClassDefPtr		clsobj;
-
+static void wmlResolvePrintClassReasons(FILE *fp, WmlClassDefPtr clsobj)
 {
+	int i, prthdr = TRUE;
+	WmlResourceDefPtr resobj;
 
-int			prthdr = TRUE;	/* print header flag */
-int			ndx;		/* loop index */
-WmlSynClassDefPtr	synobj;		/* syntactic object */
-WmlClassResDefPtr	resref;		/* resource reference */
-WmlResourceDefPtr	resobj;		/* current resource */
-WmlSynResourceDefPtr	synres;		/* syntactic resource object */
+	/* Print the superclass / parentclass args */
+	if (clsobj->superclass)
+		wmlResolvePrintClassReasons(fp, clsobj->superclass);
 
+	if (clsobj->parentclass)
+		wmlResolvePrintClassReasons(fp, clsobj->parentclass);
 
-/*
- * Print the superclass reasons
- */
-if ( clsobj->superclass != NULL )
-    wmlResolvePrintClassReasons (outfil, clsobj->superclass);
+	/**
+	 * Print the reasons for this class. Unmark the reference so it won't
+	 * be printed again.
+	 */
+	for (i = 0; i < wml_obj_reason_ptr->cnt; i++) {
+		resobj = wml_obj_reason_ptr->hvec[i].objptr;
+		if (!resobj->ref_ptr || !wmlResolveResIsMember(resobj, clsobj->reasons))
+			continue;
 
-/*
- * Print the parentclass reasons
- */
-if ( clsobj->parentclass != NULL )
-    wmlResolvePrintClassReasons (outfil, clsobj->parentclass);
+		if (prthdr) {
+			fprintf(fp, "\n    %s reason set:", clsobj->syndef->name);
+			prthdr = FALSE;
+		}
 
-/*
- * Print the reasons for this class. Unmark the reference so it won't
- * be printed again.
- */
-synobj = clsobj->syndef;
-for ( ndx=0 ; ndx<wml_obj_reason_ptr->cnt ; ndx++ )
-    {
-    resobj = (WmlResourceDefPtr) wml_obj_reason_ptr->hvec[ndx].objptr;
-    resref = resobj->ref_ptr;
-    if ( resref == NULL ) continue;
-    if ( wmlResolveResIsMember(resobj,clsobj->reasons) == NULL ) continue;
-    synres = resobj->syndef;
-    if ( prthdr )
-	{
-	fprintf (outfil, "\n    %s reason set:", synobj->name);
-	prthdr = FALSE;
+		fprintf(fp, "\n      %s", resobj->syndef->name);
+		if (strcmp(resobj->syndef->name, resobj->syndef->resliteral))
+			fprintf(fp, "\tResourceLiteral = %s", resobj->syndef->resliteral);
+
+		switch (resobj->ref_ptr->exclude) {
+		case WmlAttributeTrue:
+			fprintf(fp, "\n\tExclude = True;");
+			break;
+		case WmlAttributeFalse:
+			fprintf(fp, "\n\tExclude = False;");
+			break;
+		}
+
+		resobj->ref_ptr = NULL;
 	}
-    fprintf (outfil, "\n      %s", synres->name);
-    if ( strcmp(synres->name,synres->resliteral) != 0 )
-	fprintf (outfil, "\tResourceLiteral = %s", synres->resliteral);
-    switch ( resref->exclude )
-	{
-	case WmlAttributeTrue:
-	    fprintf (outfil, "\n\tExclude = True;");
-	    break;
-	case WmlAttributeFalse:
-	    fprintf (outfil, "\n\tExclude = False;");
-	    break;
-	}
-    resobj->ref_ptr = NULL;
-    }
 }
 
-
-
-/*
- * Routine to mark reference pointers for a class
- *
- * This routine clears all reference pointers, then marks the class and
- * resource objects to flag those contained in the current class. This
- * allows processing of the widget and resource vectors in order to produce
- * bit masks or reports.
- */
-
-void wmlMarkReferencePointers (clsobj)
-    WmlClassDefPtr		clsobj;
-
-{
-
-int			ndx;		/* loop index */
-WmlClassDefPtr		mrkcls;		/* class object to mark */
-WmlResourceDefPtr	mrkres;		/* resource object to mark */
-WmlClassResDefPtr	resref;		/* resource reference */
-WmlClassCtrlDefPtr	ctrlref;	/* controls reference */
-
-
-/*
- * Clear the reference pointers. Then go through the arguments, reasons,
- * and controls lists, and mark the referenced classes.
- */
-wmlResolveClearRefPointers ();
-for ( resref=clsobj->arguments ; resref!= NULL ; resref=resref->next )
-    resref->act_resource->ref_ptr = resref;
-for ( resref=clsobj->reasons ; resref!= NULL ; resref=resref->next )
-    resref->act_resource->ref_ptr = resref;
-for ( ctrlref=clsobj->controls ; ctrlref!=NULL ; ctrlref=ctrlref->next )
-    ctrlref->ctrl->ref_ptr = ctrlref;
-
-}
-
-
-
-/*
+/**
  * Routine to clear reference pointers
  */
-
-void wmlResolveClearRefPointers ()
-
+static void wmlResolveClearRefPointers(void)
 {
+	int i;
 
-int			ndx;		/* loop index */
-WmlClassDefPtr		mrkcls;		/* class object to mark */
-WmlResourceDefPtr	mrkres;		/* resource object to mark */
-WmlChildDefPtr		mrkcld;		/* child object to mark */
+	for (i = 0; i < wml_obj_allclass_ptr->cnt; i++)
+		((WmlClassDefPtr)wml_obj_allclass_ptr->hvec[i].objptr)->ref_ptr = NULL;
 
-for ( ndx=0 ; ndx<wml_obj_allclass_ptr->cnt ; ndx++ )
-    {
-    mrkcls = (WmlClassDefPtr) wml_obj_allclass_ptr->hvec[ndx].objptr;
-    mrkcls->ref_ptr = NULL;
-    }
-for ( ndx=0 ; ndx<wml_obj_reason_ptr->cnt ; ndx++ )
-    {
-    mrkres = (WmlResourceDefPtr) wml_obj_reason_ptr->hvec[ndx].objptr;
-    mrkres->ref_ptr = NULL;
-    }
-for ( ndx=0 ; ndx<wml_obj_arg_ptr->cnt ; ndx++ )
-    {
-    mrkres = (WmlResourceDefPtr) wml_obj_arg_ptr->hvec[ndx].objptr;
-    mrkres->ref_ptr = NULL;
-    }
-for ( ndx=0 ; ndx<wml_obj_child_ptr->cnt ; ndx++ )
-    {
-    mrkcld = (WmlChildDefPtr) wml_obj_child_ptr->hvec[ndx].objptr;
-    mrkcld->ref_ptr = NULL;
-    }
+	for (i = 0; i < wml_obj_reason_ptr->cnt; i++)
+		((WmlResourceDefPtr)wml_obj_reason_ptr->hvec[i].objptr)->ref_ptr = NULL;
 
+	for (i = 0; i < wml_obj_arg_ptr->cnt; i++)
+		((WmlResourceDefPtr)wml_obj_arg_ptr->hvec[i].objptr)->ref_ptr = NULL;
+
+	for (i = 0; i < wml_obj_child_ptr->cnt; i++)
+		((WmlChildDefPtr)wml_obj_child_ptr->hvec[i].objptr)->ref_ptr = NULL;
 }
 
-
-
-/*
+/**
  * Routine to find an object for binding. The name is always looked
  * in the syntactic object list, since all references made by the
  * user are in that list (resolved objects may be entered under
@@ -1722,96 +1349,33 @@ for ( ndx=0 ; ndx<wml_obj_child_ptr->cnt ; ndx++ )
  *
  * Returns:	pointer to the object found
  */
-
-ObjectPtr wmlResolveFindObject (name, type, requester)
-    char			*name;
-    int				type;
-    char			*requester;
-
+static ObjectPtr wmlResolveFindObject(const char *name, int type, const char *requester)
 {
+	int idx;
+	WmlSynDefPtr synobj;
 
-int			objndx;		/* the object index in the list */
-WmlSynDefPtr		synobj;		/* syntactic object */
-char			errmsg[300];
+	if ((idx = wmlFindInHList(wml_synobj_ptr, name)) < 0) {
+		wmlIssueReferenceError(requester, name);
+		return NULL;
+	}
 
+	if ((synobj = wml_synobj_ptr->hvec[idx].objptr)->validation != type) {
+		err("Object %s references object %s\n\tin a context where a "
+		    "different type of object is required", requester, name);
+		return NULL;
+	}
 
-objndx = wmlFindInHList (wml_synobj_ptr, name);
-if ( objndx < 0 )
-    {
-    wmlIssueReferenceError (requester, name);
-    return NULL;
-    }
-synobj = (WmlSynDefPtr) wml_synobj_ptr ->hvec[objndx].objptr;
-if ( synobj->validation != type )
-    {
-    sprintf (errmsg,
-	     "Object %s references object %s\n\tin a context where a different type of object is required",
-	    requester, name);
-    wmlIssueError (errmsg);
-    return NULL;
-    }
-switch ( synobj->validation )
-    {
-    case WmlClassDefValid:
-    case WmlResourceDefValid:
-    case WmlDataTypeDefValid:
-    case WmlCtrlListDefValid:
-    case WmlEnumSetDefValid:
-    case WmlEnumValueDefValid:
-    case WmlChildDefValid:
-        return (ObjectPtr) synobj->rslvdef;
-	break;
-    default:
-	return (ObjectPtr) synobj;
-    }
-
+	switch (synobj->validation) {
+	case WmlClassDefValid:
+	case WmlResourceDefValid:
+	case WmlDataTypeDefValid:
+	case WmlCtrlListDefValid:
+	case WmlEnumSetDefValid:
+	case WmlEnumValueDefValid:
+	case WmlChildDefValid:
+		return synobj->rslvdef;
+	default:
+		return synobj;
+	}
 }
 
-
-/*
- * Report an object reference error
- *
- *	srcname		the object making the reference
- *	badname		the missing object
- */
-
-void wmlIssueReferenceError (srcname, badname)
-    char			*srcname;
-    char			*badname;
-
-{
-
-printf ("\nObject %s references undefined object %s", srcname, badname);
-wml_err_count += 1;
-
-}
-
-
-/*
- * Report an attempt to make a reference which is not supported.
- */
-
-void wmlIssueIllegalReferenceError (srcname, badname)
-    char			*srcname;
-    char			*badname;
-
-{
-
-printf ("\nObject %s cannot reference a %s object", srcname, badname);
-wml_err_count += 1;
-
-}
-
-
-/*
- * Report an error string.
- */
-void wmlIssueError (errstg)
-    char			*errstg;
-
-{
-
-printf ("\n%s", errstg);
-wml_err_count += 1;
-
-}

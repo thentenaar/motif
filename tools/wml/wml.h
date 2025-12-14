@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -20,6 +21,8 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
 */
+#ifndef _Xm_WML_H
+#define _Xm_WML_H
 
 /*
  * This file contains the structure and literal definitions required
@@ -33,36 +36,28 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-/*
- * Generic object pointer
- */
+/* Generic object pointer */
 typedef	void *ObjectPtr;
 
-/*
- * True and False for attributes, so setting is explicit
- */
-#define	WmlAttributeUnspecified		0
-#define	WmlAttributeTrue		1
-#define	WmlAttributeFalse		2
+/* True and False for attributes, so setting is explicit */
+#define	WmlAttributeUnspecified 0
+#define	WmlAttributeTrue        1
+#define	WmlAttributeFalse       2
 
-/*
- * Values of character set direction
- */
-#define	WmlCharSetDirectionLtoR		1
-#define	WmlCharSetDirectionRtoL		2
+/* Values of character set direction */
+#define	WmlCharSetDirectionLtoR 1
+#define	WmlCharSetDirectionRtoL 2
 
-/*
- * Values of character set character size
- */
-#define	WmlCharSizeOneByte		1
-#define	WmlCharSizeTwoByte		2
-#define	WmlCharSizeMixed1_2Byte		3
+/* Values of character set character size */
+#define	WmlCharSizeOneByte      1
+#define	WmlCharSizeTwoByte      2
+#define	WmlCharSizeMixed1_2Byte 3
 
 /*
  * Upper case and lower case converters
  */
-#define _upper(c)	((c) >= 'a' && (c) <= 'z' ? (c) & 0x5F:(c))
-#define _lower(c)	((c) >= 'A' && (c) <= 'Z' ? (c) | 0x20:(c))
+#define _upper(c) ((c) >= 'a' && (c) <= 'z' ? (c) & 0x5f:(c))
+#define _lower(c) ((c) >= 'A' && (c) <= 'Z' ? (c) | 0x20:(c))
 
 /*
  * The Uil token classes which are dealt with WML. Matched to definitions
@@ -589,11 +584,7 @@ typedef struct {
 	ObjectHandleDefPtr hvec; /* vector of handle entries */
 } DynamicHandleListDef, *DynamicHandleListDefPtr;
 
-/*
- * Global declarations
- */
-
-/*
+/**
  * Defined in wml.c
  */
 extern int wml_err_count;		/* total errors */
@@ -612,7 +603,7 @@ extern DynamicHandleListDefPtr wml_obj_charset_ptr;
 extern DynamicHandleListDefPtr wml_tok_sens_ptr;
 extern DynamicHandleListDefPtr wml_tok_insens_ptr;
 
-/*
+/**
  * Defined in wmlutils.c
  */
 extern char *wmlAllocateString(const char *s);
@@ -626,7 +617,7 @@ extern int wmlInsertInKeyList(DynamicHandleListDefPtr listptr, const char *name,
 extern WmlClassResDefPtr wmlResolveResIsMember(WmlResourceDefPtr resobj, WmlClassResDefPtr resref); /* resource in class? */
 extern WmlClassChildDefPtr wmlResolveChildIsMember(WmlChildDefPtr childobj, WmlClassChildDefPtr childref); /* child in class? */
 
-/*
+/**
  * Defined in wmlsynbld.c
  */
 extern char yystringval[];       /* any string value */
@@ -660,25 +651,21 @@ extern void wmlAddEnumValueAttribute(int attrid, const char *val);
 extern void wmlAddCharsetAttributeInt(int attrid, int val);
 extern void wmlAddCharsetAttributeStr(int attrid, const char *val);
 
-/*
+/**
  * Defined in wmlresolve.c
  */
-extern void wmlResolveDescriptors ();
-extern void wmlMarkReferencePointers ();
+extern void wmlResolveDescriptors(void);
+extern void wmlMarkReferencePointers(WmlClassDefPtr clsobj);
 
-
-/*
+/**
  * Defined in wmlouth.c
  */
-extern void wmlOutputHFiles ();
+extern void wmlOutputHFiles(void);
 
-
-/*
- * Defined in wmloutdat.c
+/**
+ * Defined in wmloutp1.c
  */
-extern void wmlOutputDatFiles ();
+extern void wmlOutput(void);
 
-/*
- * Define in wmloutp1 or wmloutp2
- */
-extern void wmlOutput ();
+#endif /* _Xm_WML_H */
+
