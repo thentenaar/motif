@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -51,11 +51,10 @@ static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
 **  INCLUDE FILES
 **
 **/
-
 #include <Xm/Xm.h>
 /* I think this one should be public too, it's not the case right now,
    and I don't want to include XmP.h here - dd */
-extern char *_XmStringGetCurrentCharset ();
+extern char *_XmStringGetCurrentCharset(void);
 #include <Xm/XmosP.h>	/* Need this for MB_CUR_MAX */
 
 #include <Mrm/MrmosI.h> /* Need this for _MrmOSSetLocale. */
@@ -305,7 +304,7 @@ static	lex_buffer_type  *az_first_lex_buffer;
 **  the actual token table
 */
 
-static cell XmConst token_table[ max_state+1][ max_class+1] =
+static const cell token_table[ max_state+1][ max_class+1] =
   {
     { /* state_initial */
 	/* class_blank   */ { reset,		state_initial,	    not_used },
@@ -1028,7 +1027,7 @@ int	yylex()
     /* %COMPLETE  (between 0-50) */
     Uil_percent_complete =
       CEIL((int)( .5 * ((float)Uil_characters_read/(float)Uil_file_size))*100, 50);
-    if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
+    if (Uil_cmd_z_command.status_cb)
 	diag_report_status();
 
 
@@ -2058,7 +2057,6 @@ void  Uil_lex_cleanup_analyzer( )
 	}
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2091,16 +2089,11 @@ void  Uil_lex_cleanup_analyzer( )
 **
 **--
 **/
-
-void  lex_issue_error( restart_token )
-
-int		restart_token;
-
+void lex_issue_error(int restart_token)
 {
-
-    int		    i, token_num;
-    unsigned char   c_char = '.';
-    char	    * tok_name;
+    int i, token_num;
+    unsigned char c_char = '.';
+    const char *tok_name;
 
 /*    Find the token number for the restart character in the table.
       It should be there.  Get the corresponding character for this
@@ -2131,10 +2124,7 @@ int		restart_token;
 	 yylval.b_source_pos,
 	 tok_name,
 	 c_char);
-
 }
-
-
 
 /*
 **
@@ -2171,11 +2161,7 @@ int		restart_token;
 **
 **--
 **/
-
-void issue_control_char_diagnostic
-
-	(unsigned char c_char )
-
+void issue_control_char_diagnostic(unsigned char c_char)
 {
 
     diag_issue_diagnostic
@@ -2187,7 +2173,6 @@ void issue_control_char_diagnostic
     src_az_current_source_record->b_flags |= src_m_unprintable_chars;
 
     return;
-
 }
 
 
@@ -2219,11 +2204,7 @@ void issue_control_char_diagnostic
 **
 **--
 **/
-
-static lex_buffer_type *get_lex_buffer( az_current_lex_buffer )
-
-lex_buffer_type *az_current_lex_buffer;
-
+static lex_buffer_type *get_lex_buffer(lex_buffer_type *az_current_lex_buffer)
 {
     lex_buffer_type *az_lex_buffer;
 
@@ -2249,7 +2230,6 @@ lex_buffer_type *az_current_lex_buffer;
     return az_lex_buffer;
 
 }
-
 
 /*
 **++
@@ -2283,11 +2263,8 @@ lex_buffer_type *az_current_lex_buffer;
 **
 **--
 **/
-
-void lex_filter_unprintable_chars
-(unsigned char	*buffer,
- int		length,
- unsigned long	flags )
+void lex_filter_unprintable_chars(unsigned char *buffer, int length,
+                                  unsigned long flags)
 {
     int		    i;
 
@@ -2407,8 +2384,7 @@ int		l_lex_pos;
 #define k_max_int 2147483647
 #define k_max_div_10 214748364
 
-long		cvt_ascii_to_long(c_text)
-unsigned char XmConst	*c_text;
+long cvt_ascii_to_long(const unsigned char *c_text)
 {
     unsigned long   	l_value;
     int			pos;
@@ -2471,14 +2447,8 @@ potential_overflow:
 **
 **--
 **/
-
-sym_value_entry_type *create_str_entry (l_size, l_charset, az_charset_entry)
-
-    int				l_size;
-    int				l_charset;
-    sym_value_entry_type	*az_charset_entry;
-
-
+sym_value_entry_type *create_str_entry(int l_size, int l_charset,
+                                       sym_value_entry_type *az_charset_entry)
 {
 
     sym_value_entry_type	*node;
@@ -2525,6 +2495,5 @@ sym_value_entry_type *create_str_entry (l_size, l_charset, az_charset_entry)
     node->obj_header.b_flags = sym_m_private | sym_m_builtin;
 
     return node;
-
-    }
+}
 

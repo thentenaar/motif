@@ -276,14 +276,16 @@ extern key_keytable_entry_type *key_find_keyword(unsigned int symbol_length , co
 extern void key_initialize(void);
 
 /* uillexana.c */
-extern int yylex  _ARGUMENTS(( void ));
-extern void lex_initialize_analyzer  _ARGUMENTS(( void ));
-extern void Uil_lex_cleanup_analyzer  _ARGUMENTS(( void ));
-extern void lex_issue_error  _ARGUMENTS(( int restart_token ));
-extern void issue_control_char_diagnostic  _ARGUMENTS(( unsigned char c_char ));
-extern void lex_filter_unprintable_chars  _ARGUMENTS(( unsigned char *buffer , int length , unsigned long flags ));
-extern long cvt_ascii_to_long  _ARGUMENTS(( unsigned char const *c_text ));
-extern sym_value_entry_type *create_str_entry  _ARGUMENTS(( int l_size , int l_charset , sym_value_entry_type *az_charset_entry ));
+extern int yylex(void);
+extern void lex_initialize_analyzer(void);
+extern void Uil_lex_cleanup_analyzer(void);
+extern void lex_issue_error(int restart_token);
+extern void issue_control_char_diagnostic(unsigned char c_char);
+extern void lex_filter_unprintable_chars(unsigned char *buffer,
+                                         int length, unsigned long flags);
+extern long cvt_ascii_to_long(const unsigned char *c_text);
+extern sym_value_entry_type *create_str_entry(int l_size, int l_charset,
+                                              sym_value_entry_type *az_charset_entry);
 
 /* uillstlst.c */
 extern void lst_open_listing  _ARGUMENTS(( void ));
