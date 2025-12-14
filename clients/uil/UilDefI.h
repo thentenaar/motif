@@ -43,7 +43,6 @@
 **  INCLUDE FILES
 **
 **/
-#include <string.h>
 #include <X11/Intrinsic.h>
 
 #define X_INCLUDE_TIME_H
@@ -273,8 +272,8 @@ extern char const *diag_get_message_abbrev(int d_message_number);
 extern void diag_report_status(void);
 
 /* uilkeytab.c */
-extern key_keytable_entry_type *key_find_keyword  _ARGUMENTS(( unsigned int symbol_length , char *symbol_ptr ));
-extern void key_initialize  _ARGUMENTS(( void ));
+extern key_keytable_entry_type *key_find_keyword(unsigned int symbol_length , const char *symbol_ptr);
+extern void key_initialize(void);
 
 /* uillexana.c */
 extern int yylex  _ARGUMENTS(( void ));

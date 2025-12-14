@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 drk $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 dr
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -51,30 +51,7 @@ static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 dr
 **  INCLUDE FILES
 **
 **/
-
 #include "UilDefI.h"
-
-
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
 
 /*
 **
@@ -86,7 +63,6 @@ static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 dr
 
 static key_keytable_entry_type * key_keytable_ptr;
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -129,30 +105,25 @@ static key_keytable_entry_type * key_keytable_ptr;
 **
 **--
 **/
-key_keytable_entry_type *
-	key_find_keyword (symbol_length, symbol_ptr)
-
-unsigned int	symbol_length;
-char		* symbol_ptr;
-
+key_keytable_entry_type *key_find_keyword(unsigned int symbol_length, const char *symbol_ptr)
 {
-    
+
     int
 	lower_limit,
 	upper_limit;
-    
+
 /*    Check the arguments.    */
 
     if (symbol_length > key_k_keyword_max_length)
 	return NULL;
 
 /*    Initialize region to search.    */
-    
+
     lower_limit = 0;
     upper_limit = key_k_keyword_count-1;
-    
+
 /*    Perform binary search on keyword index.    */
-    
+
     do {
 	int		mid_point, result;
 
@@ -177,9 +148,8 @@ char		* symbol_ptr;
 /*    If we fall out of the bottom of the loop, symbol was not found.    */
 
     return NULL;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -212,9 +182,7 @@ char		* symbol_ptr;
 **
 **--
 **/
-void
-	key_initialize ()
-
+void key_initialize(void)
 {
 
 /*    Use the correct keyword table based on the global case
@@ -226,5 +194,5 @@ void
 	key_keytable_ptr = key_table_case_ins;
     }
 
-}    
+}
 
