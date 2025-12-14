@@ -370,7 +370,7 @@ extern void sar_binary_op(yystype *operator_frame, yystype *op1_frame, yystype *
 extern void sar_unary_op(yystype *operator_frame, yystype *op1_frame);
 
 /* uilsarinc.c */
-extern void sar_include_file  _ARGUMENTS(( yystype *file_frame , yystype *include_frame , yystype *semi_frame ));
+extern void sar_include_file(yystype *file_frame, yystype *include_frame, yystype *semi_frame);
 
 /* uilsarmod.c */
 extern void sar_initialize  _ARGUMENTS(( void ));
