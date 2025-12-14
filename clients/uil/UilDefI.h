@@ -366,8 +366,8 @@ extern void sar_chk_charset_attr  _ARGUMENTS(( yystype *target_frame , yystype *
 extern void sar_make_charset  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *attr_frame , yystype *keyword_frame ));
 
 /* uilsarexp.c */
-extern void sar_binary_op  _ARGUMENTS(( yystype *operator_frame , yystype *op1_frame , yystype *op2_frame ));
-extern void sar_unary_op  _ARGUMENTS(( yystype *operator_frame , yystype *op1_frame ));
+extern void sar_binary_op(yystype *operator_frame, yystype *op1_frame, yystype *op2_frame);
+extern void sar_unary_op(yystype *operator_frame, yystype *op1_frame);
 
 /* uilsarinc.c */
 extern void sar_include_file  _ARGUMENTS(( yystype *file_frame , yystype *include_frame , yystype *semi_frame ));
