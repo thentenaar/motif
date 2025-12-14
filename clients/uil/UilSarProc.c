@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilSarProc.c /main/12 1995/07/14 09:37:43 drk $"
@@ -52,41 +53,11 @@ static char rcsid[] = "$XConsortium: UilSarProc.c /main/12 1995/07/14 09:37:43 d
 
 #include "UilDefI.h"
 
-
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**      This function create the procedure definition entry symbol 
+**      This function create the procedure definition entry symbol
 **	node a procedure declaration.
 **
 **  FORMAL PARAMETERS:
@@ -114,12 +85,10 @@ static char rcsid[] = "$XConsortium: UilSarProc.c /main/12 1995/07/14 09:37:43 d
 **
 **--
 **/
-
-void
-sar_create_procedure(XmConst yystype *id_frame, 
-                     XmConst yystype *param_frame, 
-                     XmConst yystype *class_frame, 
-                     XmConst yystype *semi_frame)
+void sar_create_procedure(const yystype *id_frame,
+                          const yystype *param_frame,
+                          const yystype *class_frame,
+                          const yystype *semi_frame)
 {
     sym_name_entry_type	    *name_entry;
     sym_proc_def_entry_type *proc_def_entry;
@@ -147,7 +116,7 @@ sar_create_procedure(XmConst yystype *id_frame,
     proc_def_entry->obj_header.az_name = (sym_name_entry_type *) name_entry;
     name_entry->az_object = (sym_entry_type *) proc_def_entry;
 
-    /* 
+    /*
     **	Parameter frame has 4 cases:
     **	    1) no argument checking desired
     **	       syntax: PROCEDURE id
@@ -176,7 +145,7 @@ sar_create_procedure(XmConst yystype *id_frame,
 	}
 	else
 	    proc_def_entry->v_arg_checking = FALSE;
-	    
+
 	break;
 
     case sar_k_token_frame:
@@ -187,15 +156,15 @@ sar_create_procedure(XmConst yystype *id_frame,
     case sar_k_object_frame:
 	_assert((param_frame->b_type == sym_k_widget_entry),
 		"object frame not widget entry");
-	
-	obj_entry = 
+
+	obj_entry =
 	  (sym_obj_entry_type *)param_frame->value.az_symbol_entry;
 
 	proc_def_entry->b_arg_type = sym_k_widget_ref_value;
 	proc_def_entry->b_arg_count = 1;
 	proc_def_entry->b_widget_type = obj_entry->header.b_type;
 	break;
-	
+
     default:
 	_assert( FALSE, "param frame in error" );
 
@@ -240,9 +209,8 @@ sar_create_procedure(XmConst yystype *id_frame,
     sym_az_current_section_entry->entries = (sym_entry_type *) section_entry;
 
     section_entry->entries = (sym_entry_type *) proc_def_entry;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -270,15 +238,13 @@ sar_create_procedure(XmConst yystype *id_frame,
 **
 **  SIDE EFFECTS:
 **
-**      errors may be issued 
+**      errors may be issued
 **
 **--
 **/
-
-sym_proc_ref_entry_type
-*sem_reference_procedure( yystype         *id_frame, 
-                          XmConst yystype *value_frame, 
-                          XmConst int     context )
+sym_proc_ref_entry_type *sem_reference_procedure(yystype *id_frame,
+                                                 const yystype *value_frame,
+                                                 const int context)
 {
     sym_value_entry_type    *value_entry = NULL;
     sym_proc_def_entry_type *proc_def_entry;
@@ -303,7 +269,7 @@ sym_proc_ref_entry_type
 	if ((value_frame->b_flags & sym_m_forward_ref) != 0)
 	    value_entry = NULL;
 	else
-	    value_entry = (sym_value_entry_type *) 
+	    value_entry = (sym_value_entry_type *)
 			  value_frame->value.az_symbol_entry;
 	break;
 
@@ -324,13 +290,13 @@ sym_proc_ref_entry_type
 	sem_allocate_node (sym_k_proc_ref_entry, sym_k_proc_ref_entry_size);
 
     if ((id_frame->b_flags & sym_m_forward_ref) != 0)
-        sym_make_value_forward_ref (id_frame, 
+        sym_make_value_forward_ref (id_frame,
 	(char*)&(proc_ref_entry->az_proc_def), sym_k_patch_list_add);
-    else 
+    else
 	proc_ref_entry->az_proc_def = proc_def_entry;
 
     if ((value_frame->b_flags & sym_m_forward_ref) != 0)
-        sym_make_value_forward_ref (value_frame, 
+        sym_make_value_forward_ref (value_frame,
 	(char*)&(proc_ref_entry->az_arg_value), sym_k_patch_add);
     else
 	proc_ref_entry->az_arg_value = value_entry;
@@ -349,10 +315,8 @@ sym_proc_ref_entry_type
     */
 
     return proc_ref_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -383,17 +347,14 @@ sym_proc_ref_entry_type
 **	forward_ref bit may be turned on in id_frame
 **--
 **/
-
-sym_entry_type
-*sem_ref_name(yystype     *id_frame, 
-              XmConst int tag)
+sym_entry_type *sem_ref_name(yystype *id_frame, const int tag)
 {
     sym_name_entry_type	    *name_entry;
     sym_entry_type	    *symbol_entry;
 
     _assert( id_frame->b_tag == sar_k_token_frame, "arg1 not id frame" );
 
-    /* 
+    /*
     ** The id frame may hold a name or the keyword for a font name, color
     ** name, reason name etc.  If it is one of these special name, then
     ** we must see if the symbol table holds a name for the special type.
@@ -401,7 +362,7 @@ sym_entry_type
 
     if (id_frame->b_type != NAME)
     {
-	name_entry = 
+	name_entry =
 	    sym_find_name
 		( id_frame->value.az_keyword_entry->b_length,
 		  id_frame->value.az_keyword_entry->at_name );
@@ -451,5 +412,5 @@ sym_entry_type
     }
 
     return symbol_entry;
-
 }
+

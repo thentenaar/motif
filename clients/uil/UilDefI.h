@@ -444,9 +444,9 @@ extern sym_entry_type *sem_allocate_node(unsigned char node_tag,
 extern void sem_free_node(sym_entry_type *node_ptr);
 
 /* uilsarproc.c */
-extern void sar_create_procedure  _ARGUMENTS(( const yystype *id_frame , const yystype *param_frame , const yystype *class_frame , const yystype *semi_frame ));
-extern sym_proc_ref_entry_type *sem_reference_procedure  _ARGUMENTS(( yystype *id_frame , const yystype *value_frame , const int context ));
-extern sym_entry_type *sem_ref_name  _ARGUMENTS(( yystype *id_frame , const int tag ));
+extern void sar_create_procedure(const yystype *id_frame, const yystype *param_frame, const yystype *class_frame, const yystype *semi_frame);
+extern sym_proc_ref_entry_type *sem_reference_procedure(yystype *id_frame, const yystype *value_frame, const int context);
+extern sym_entry_type *sem_ref_name(yystype *id_frame, const int tag);
 
 /* uilsarval.c */
 extern void sar_map_keyword_to_name  _ARGUMENTS(( yystype *target_frame , yystype *keyword_frame ));
