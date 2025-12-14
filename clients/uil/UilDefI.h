@@ -321,32 +321,42 @@ extern Uil_status_type Uil(Uil_command_type *command_desc,
 
 
 /* uilp2out.c */
-extern void sem_output_uid_file  _ARGUMENTS(( void ));
-extern void push  _ARGUMENTS(( sym_entry_type *sym_entry ));
-extern sym_entry_type *pop  _ARGUMENTS(( void ));
-extern void out_emit_widget  _ARGUMENTS(( sym_widget_entry_type *widget_entry ));
-extern void extract_subtree_control  _ARGUMENTS(( sym_list_entry_type *list_entry , sym_control_entry_type **menu_entry , int *count ));
-extern void extract_create_callback  _ARGUMENTS(( sym_list_entry_type *list_entry , sym_callback_entry_type **create_entry ));
-extern void process_all_callbacks  _ARGUMENTS(( sym_list_entry_type *list_entry , int *arglist_index ));
-extern void process_all_arguments  _ARGUMENTS(( sym_list_entry_type *list_entry , int *arglist_index , int *related_count ));
-extern void process_all_controls  _ARGUMENTS(( sym_list_entry_type *list_entry , int *widget_index ));
-extern void out_emit_value  _ARGUMENTS(( sym_value_entry_type *value_entry ));
-extern void emit_callback  _ARGUMENTS(( sym_callback_entry_type *callback_entry , int *arglist_index , boolean emit_create ));
-extern void emit_callback_procedures _ARGUMENTS(( sym_proc_ref_entry_type *proc_ref_entry_next, int *proc_ref_index, MrmOffset callback_offset ));
-extern int count_proc _ARGUMENTS(( sym_list_entry_type *proc_list, int count));
-extern void emit_argument  _ARGUMENTS(( sym_argument_entry_type *argument_entry , int arglist_index , int *related_arg_count ));
-extern void emit_control  _ARGUMENTS(( sym_control_entry_type *control_entry , int control_offset ));
-extern MrmCode ref_value  _ARGUMENTS(( sym_value_entry_type *value_entry , MrmCode *arg_type , long *arg_value , MrmCode *arg_access , char **arg_index , MrmResource_id *arg_id , MrmCode *arg_group ));
-extern MrmCode ref_control  _ARGUMENTS(( sym_control_entry_type *control_entry , MrmCode *access , char **index , MrmResource_id *id ));
-extern void issue_urm_error  _ARGUMENTS(( char *problem ));
-extern MrmCode Urm_code_from_uil_type  _ARGUMENTS(( int uil_type ));
-extern int compute_color_table_size  _ARGUMENTS(( sym_value_entry_type *table_entry ));
-extern void create_color_table  _ARGUMENTS(( sym_value_entry_type *table_entry , char *buffer ));
-extern int compute_icon_size  _ARGUMENTS(( sym_value_entry_type *icon_entry ));
-extern void create_icon  _ARGUMENTS(( sym_value_entry_type *icon_entry , char *buffer ));
-extern int compute_list_size  _ARGUMENTS(( sym_list_entry_type *list_entry , int type ));
-extern void create_int_compression_codes  _ARGUMENTS(( void ));
-extern void create_ext_compression_codes  _ARGUMENTS(( void ));
+extern void sem_output_uid_file(void);
+extern void push(sym_entry_type *sym_entry);
+extern sym_entry_type *pop(void);
+extern void out_emit_widget(sym_widget_entry_type *widget_entry);
+extern void extract_subtree_control(sym_list_entry_type *list_entry,
+                                    sym_control_entry_type **menu_entry,
+                                    int *count);
+extern void extract_create_callback(sym_list_entry_type *list_entry,
+                                    sym_callback_entry_type **create_entry);
+extern void process_all_callbacks(sym_list_entry_type *list_entry, int *arglist_index);
+extern void process_all_arguments(sym_list_entry_type *list_entry,
+                                  int *arglist_index, int *related_count);
+extern void process_all_controls(sym_list_entry_type *list_entry, int *widget_index);
+extern void out_emit_value(sym_value_entry_type *value_entry);
+extern void emit_callback(sym_callback_entry_type *callback_entry,
+                          int *arglist_index, boolean emit_create);
+extern void emit_callback_procedures(sym_proc_ref_entry_type *proc_ref_entry_next,
+                                     int *proc_ref_index, MrmOffset callback_offset);
+extern int count_proc(sym_list_entry_type *proc_list, int count);
+extern void emit_argument(sym_argument_entry_type *argument_entry,
+                          int arglist_index, int *related_arg_count);
+extern void emit_control(sym_control_entry_type *control_entry, int control_offset);
+extern MrmCode ref_value(sym_value_entry_type *value_entry, MrmCode *arg_type,
+                         long *arg_value, MrmCode *arg_access, char **arg_index,
+                         MrmResource_id *arg_id, MrmCode *arg_group);
+extern MrmCode ref_control(sym_control_entry_type *control_entry,
+                           MrmCode *access, char **index, MrmResource_id *id);
+extern void issue_urm_error(const char *problem);
+extern MrmCode Urm_code_from_uil_type(int uil_type);
+extern int compute_color_table_size(sym_value_entry_type *table_entry);
+extern void create_color_table(sym_value_entry_type *table_entry, char *buffer);
+extern int compute_icon_size(sym_value_entry_type *icon_entry);
+extern void create_icon(sym_value_entry_type *icon_entry, char *buffer);
+extern int compute_list_size(sym_list_entry_type *list_entry, int type);
+extern void create_int_compression_codes(void);
+extern void create_ext_compression_codes(void);
 
 /* uilp2reslv.c */
 extern void sem_resolve_forward_refs(void);

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilP2Out.c /main/15 1997/03/12 15:17:24 dbl $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilP2Out.c /main/15 1997/03/12 15:17:24 dbl $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -42,13 +42,6 @@ static char rcsid[] = "$TOG: UilP2Out.c /main/15 1997/03/12 15:17:24 dbl $"
 **      This module contain the routines for creating the UID file.
 **
 **--
-**/
-
-
-/*
-**
-**  INCLUDE FILES
-**
 **/
 
 #ifdef DXM_V11
@@ -88,14 +81,6 @@ typedef	struct	_out_queue_type
     sym_entry_type	    *entry[out_k_last_offset + 1];
 } out_queue_type;
 
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
 /*
 **
 **  OWN VARIABLE DECLARATIONS
@@ -110,8 +95,6 @@ static	int			out_l_next_offset;
 static UidCompressionTable     	*extern_arg_compr;
 static UidCompressionTable      *extern_class_compr;
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -148,9 +131,7 @@ static UidCompressionTable      *extern_class_compr;
 **
 **--
 **/
-
-void	sem_output_uid_file()
-
+void sem_output_uid_file(void)
 {
     sym_external_def_entry_type	*ext_entry;
     char			*module_version;
@@ -233,7 +214,7 @@ void	sem_output_uid_file()
     **	the Status callback routine to report our progress.
     */
     Uil_current_file =  uid_fcb.result_file;
-    if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
+    if (Uil_cmd_z_command.status_cb)
 	diag_report_status();
 
 
@@ -314,7 +295,7 @@ void	sem_output_uid_file()
       Uil_percent_complete=CEIL(
 	    80+	(.20 *((float)topmost_index/(float)(topmost_widget_count+.5)))*100, 80);
 
-	if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
+	if (Uil_cmd_z_command.status_cb)
 	    diag_report_status();
 
 	symbol_entry = ext_entry->az_name->az_object;
@@ -400,7 +381,7 @@ void	sem_output_uid_file()
 	/*
 	**  Call the Status callback routine to report our progress.
 	*/
-	if (Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL)
+	if (Uil_cmd_z_command.status_cb)
 	    diag_report_status();
 
 	switch (symbol_entry->header.b_tag)
@@ -452,9 +433,8 @@ void	sem_output_uid_file()
     UrmFreeResourceContext( out_az_context );
     if( urm_status != MrmSUCCESS)
 	issue_urm_error( "freeing context" );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -486,13 +466,8 @@ void	sem_output_uid_file()
 **
 **--
 **/
-
-void	push(sym_entry)
-
-sym_entry_type	*sym_entry;
-
+void push(sym_entry_type *sym_entry)
 {
-
     out_queue_type  *next_queue;
 
     /*
@@ -519,11 +494,9 @@ sym_entry_type	*sym_entry;
     }
 
     out_az_queue->entry[out_l_next_offset] = sym_entry;
-
     out_l_next_offset++;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -556,11 +529,8 @@ sym_entry_type	*sym_entry;
 **
 **--
 **/
-
-sym_entry_type	*pop()
-
+sym_entry_type *pop(void)
 {
-
     src_source_buffer_type  *avail_buffer;
 
     out_l_next_offset--;
@@ -579,9 +549,8 @@ sym_entry_type	*pop()
     }
 
     return out_az_queue->entry[out_l_next_offset];
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -611,15 +580,10 @@ sym_entry_type	*pop()
 **
 **--
 **/
-
-void	out_emit_widget( widget_entry )
-
-sym_widget_entry_type	*widget_entry;
-
+void out_emit_widget(sym_widget_entry_type *widget_entry)
 {
-
 char				buffer[32];
-char				*widget_name;
+const char			*widget_name;
 char				*widget_class_name;
 unsigned int			widget_class;
 unsigned long			widget_variety;
@@ -916,10 +880,8 @@ if( urm_status != MrmSUCCESS)
 	}
 
     widget_entry->output_state = sym_k_emitted;
-    }
+}
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -949,14 +911,10 @@ if( urm_status != MrmSUCCESS)
 **
 **--
 **/
-
-void extract_subtree_control (list_entry, menu_entry, count)
-    sym_list_entry_type		*list_entry;
-    sym_control_entry_type	**menu_entry;
-    int				*count;
-
+void extract_subtree_control(sym_list_entry_type *list_entry,
+                             sym_control_entry_type **menu_entry,
+                             int *count)
 {
-
 /*
  * Local variables
  */
@@ -985,11 +943,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    *menu_entry = control_entry;
 
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1014,13 +969,9 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void extract_create_callback (list_entry, create_entry)
-    sym_list_entry_type		*list_entry;
-    sym_callback_entry_type	**create_entry;
-
+void extract_create_callback(sym_list_entry_type *list_entry,
+                             sym_callback_entry_type **create_entry)
 {
-
 /*
  * Local variables
  */
@@ -1061,11 +1012,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 		}
 	    break;
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1092,13 +1040,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void process_all_callbacks (list_entry, arglist_index)
-    sym_list_entry_type		*list_entry;
-    int				*arglist_index;
-
+void process_all_callbacks(sym_list_entry_type *list_entry, int *arglist_index)
 {
-
 /*
  * Local variables
  */
@@ -1130,11 +1073,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    _assert (FALSE, "unknown entry in callback list");
 	    break;
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1162,14 +1102,9 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void process_all_arguments (list_entry, arglist_index, related_count)
-    sym_list_entry_type		*list_entry;
-    int				*arglist_index;
-    int				*related_count;
-
+void process_all_arguments(sym_list_entry_type *list_entry,
+                           int *arglist_index, int *related_count)
 {
-
 /*
  * Local variables
  */
@@ -1203,11 +1138,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    _assert (FALSE, "unknown entry in argument list");
 	    break;
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1233,13 +1165,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void process_all_controls (list_entry, widget_index)
-    sym_list_entry_type		*list_entry;
-    int				*widget_index;
-
+void process_all_controls(sym_list_entry_type *list_entry, int *widget_index)
 {
-
 /*
  * Local variables
  */
@@ -1272,11 +1199,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    _assert (FALSE, "unknown entry in control list");
 	    break;
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1305,11 +1229,7 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void	out_emit_value( value_entry )
-
-sym_value_entry_type	*value_entry;
-
+void out_emit_value(sym_value_entry_type *value_entry )
 {
     MrmCode	    access;
     int		    value_size = 0;
@@ -1993,10 +1913,8 @@ sym_value_entry_type	*value_entry;
 	save_value_machine_code (value_entry, out_az_context);
 
     value_entry->output_state = sym_k_emitted;
+}
 
-    }
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2029,13 +1947,8 @@ sym_value_entry_type	*value_entry;
 **
 **--
 **/
-
-void	emit_callback
-
-	(sym_callback_entry_type *callback_entry,
-	int *arglist_index,
-	boolean emit_create)
-
+void emit_callback(sym_callback_entry_type *callback_entry,
+                   int *arglist_index, boolean emit_create)
 {
 sym_value_entry_type		*reason_entry;
 sym_proc_ref_entry_type		*proc_ref_entry_next;
@@ -2162,10 +2075,8 @@ else
 emit_callback_procedures
     (proc_ref_entry_next, &proc_ref_index, callback_offset);
 *arglist_index = *arglist_index - 1;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2196,11 +2107,7 @@ emit_callback_procedures
 **
 **--
 **/
-
-int	count_proc(proc_list, count)
-sym_list_entry_type	*proc_list;
-int			count;
-
+int	count_proc(sym_list_entry_type *proc_list, int count)
 {
     sym_obj_entry_type		*proc_list_next;
 
@@ -2227,7 +2134,6 @@ int			count;
 	return (count);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2264,12 +2170,8 @@ int			count;
  *                   integer pointer to allow for proper construction of
  *                   internal callback arrays.
  */
-void	emit_callback_procedures
-
-	(sym_proc_ref_entry_type *proc_ref_entry_next,
-	int *proc_ref_index,
-	MrmOffset callback_offset)
-
+void emit_callback_procedures(sym_proc_ref_entry_type *proc_ref_entry_next,
+                              int *proc_ref_index, MrmOffset callback_offset)
 {
     sym_proc_def_entry_type *proc_def_entry;
     sym_value_entry_type    *proc_arg_entry;
@@ -2351,7 +2253,7 @@ void	emit_callback_procedures
 	    }
         }
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2381,13 +2283,8 @@ void	emit_callback_procedures
 **
 **--
 **/
-
-void	emit_argument( argument_entry, arglist_index, related_arg_count )
-
-sym_argument_entry_type	*argument_entry;
-int			arglist_index;
-int			*related_arg_count;
-
+void emit_argument(sym_argument_entry_type *argument_entry,
+                   int arglist_index, int *related_arg_count)
 {
 sym_value_entry_type		*arg_name_entry;
 sym_value_entry_type		*arg_value_entry;
@@ -2516,7 +2413,7 @@ if( urm_status != MrmSUCCESS)
     issue_urm_error ("setting arg value");
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2546,12 +2443,7 @@ if( urm_status != MrmSUCCESS)
 **
 **--
 **/
-
-void	emit_control( control_entry, control_offset )
-
-sym_control_entry_type	*control_entry;
-int			control_offset;
-
+void emit_control(sym_control_entry_type *control_entry, int control_offset)
 {
     MrmCode		    access;
     MrmCode		    form;
@@ -2605,9 +2497,8 @@ int			control_offset;
 
     if( urm_status != MrmSUCCESS)
 	issue_urm_error( "setting child" );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2643,20 +2534,10 @@ int			control_offset;
 **
 **--
 **/
-
-MrmCode	ref_value(value_entry,
-		  arg_type, arg_value, arg_access, arg_index, arg_id, arg_group)
-
-sym_value_entry_type	*value_entry;
-MrmCode			*arg_type;
-long			*arg_value;
-MrmCode			*arg_access;
-char			**arg_index;
-MrmResource_id		*arg_id;
-MrmCode			*arg_group;
-
+MrmCode ref_value(sym_value_entry_type *value_entry, MrmCode *arg_type,
+                  long *arg_value, MrmCode *arg_access, char **arg_index,
+                  MrmResource_id *arg_id, MrmCode *arg_group)
 {
-
     status	urm_status;
 
     *arg_value = 0L;
@@ -2771,9 +2652,8 @@ MrmCode			*arg_group;
 	}
 
     return URMrIndex;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2806,16 +2686,9 @@ MrmCode			*arg_group;
 **
 **--
 **/
-
-MrmCode	ref_control(control_entry, access, index, id)
-
-sym_control_entry_type	*control_entry;
-MrmCode			*access;
-char			**index;
-MrmResource_id		*id;
-
+MrmCode ref_control(sym_control_entry_type *control_entry,
+                    MrmCode *access, char **index, MrmResource_id *id)
 {
-
     sym_widget_entry_type   *widget_entry;
     MrmCode		    form;
     status		    urm_status;
@@ -2895,7 +2768,6 @@ MrmResource_id		*id;
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2924,11 +2796,7 @@ MrmResource_id		*id;
 **
 **--
 **/
-
-void	issue_urm_error( problem )
-
-char	*problem;
-
+void issue_urm_error(const char *problem)
 {
     char    buffer[132];
 
@@ -2938,7 +2806,7 @@ char	*problem;
 
     diag_issue_internal_error( buffer );
 }
-
+
 /*
  *++
  *
@@ -2968,57 +2836,47 @@ char	*problem;
  *
  *--
  */
-
-MrmCode Urm_code_from_uil_type( uil_type )
-
-int	uil_type;
-
+MrmCode Urm_code_from_uil_type(int uil_type)
 {
-
-    switch (uil_type)
-    {
-    case sym_k_integer_value:		    return MrmRtypeInteger;
-    case sym_k_horizontal_integer_value:    return MrmRtypeHorizontalInteger;
-    case sym_k_vertical_integer_value:	    return MrmRtypeVerticalInteger;
-    case sym_k_bool_value:		    return MrmRtypeBoolean;
-    case sym_k_char_8_value:		    return MrmRtypeChar8;
-    case sym_k_localized_string_value:	    return MrmRtypeChar8;
-    case sym_k_argument_value:		    return MrmRtypeChar8;
-    case sym_k_reason_value:		    return MrmRtypeChar8;
-    case sym_k_trans_table_value:	    return MrmRtypeTransTable;
-    case sym_k_asciz_table_value:	    return MrmRtypeChar8Vector;
-    case sym_k_string_table_value:	    return MrmRtypeCStringVector;
-    case sym_k_compound_string_value:	    return MrmRtypeCString;
-    case sym_k_wchar_string_value:	    return MrmRtypeWideCharacter;
-    case sym_k_integer_table_value:	    return MrmRtypeIntegerVector;
-    case sym_k_color_value:		    return MrmRtypeColor;
-    case sym_k_color_table_value:	    return MrmRtypeColorTable;
-    case sym_k_icon_value:		    return MrmRtypeIconImage;
-    case sym_k_float_value:		    return MrmRtypeFloat;
-    case sym_k_horizontal_float_value:	    return MrmRtypeHorizontalFloat;
-    case sym_k_vertical_float_value:	    return MrmRtypeVerticalFloat;
-    case sym_k_font_value:		    return MrmRtypeFont;
-    case sym_k_fontset_value:		    return MrmRtypeFontSet;
-    case sym_k_font_table_value:	    return MrmRtypeFontList;
-    case sym_k_identifier_value:	    return MrmRtypeAddrName;
-    case sym_k_class_rec_name_value:        return MrmRtypeClassRecName;
-    case sym_k_xbitmapfile_value:	    return MrmRtypeXBitmapFile;
-    case sym_k_widget_ref_value:	    return MrmRtypeAny;
-    case sym_k_pixmap_value:		    return MrmRtypeIconImage;
-    case sym_k_any_value:		    return MrmRtypeAny;
-    case sym_k_keysym_value:                return MrmRtypeKeysym;
-    case sym_k_single_float_value:          return MrmRtypeSingleFloat;
-    case sym_k_rgb_value:                   return MrmRtypeColor;
-
-    default:
-	_assert( FALSE, "unknown value type" );
-	return 0;
-    }
-
+	switch (uil_type) {
+	case sym_k_integer_value:            return MrmRtypeInteger;
+	case sym_k_horizontal_integer_value: return MrmRtypeHorizontalInteger;
+	case sym_k_vertical_integer_value:   return MrmRtypeVerticalInteger;
+	case sym_k_bool_value:               return MrmRtypeBoolean;
+	case sym_k_char_8_value:             return MrmRtypeChar8;
+	case sym_k_localized_string_value:   return MrmRtypeChar8;
+	case sym_k_argument_value:           return MrmRtypeChar8;
+	case sym_k_reason_value:             return MrmRtypeChar8;
+	case sym_k_trans_table_value:        return MrmRtypeTransTable;
+	case sym_k_asciz_table_value:        return MrmRtypeChar8Vector;
+	case sym_k_string_table_value:       return MrmRtypeCStringVector;
+	case sym_k_compound_string_value:    return MrmRtypeCString;
+	case sym_k_wchar_string_value:       return MrmRtypeWideCharacter;
+	case sym_k_integer_table_value:      return MrmRtypeIntegerVector;
+	case sym_k_color_value:              return MrmRtypeColor;
+	case sym_k_color_table_value:        return MrmRtypeColorTable;
+	case sym_k_icon_value:               return MrmRtypeIconImage;
+	case sym_k_float_value:              return MrmRtypeFloat;
+	case sym_k_horizontal_float_value:   return MrmRtypeHorizontalFloat;
+	case sym_k_vertical_float_value:     return MrmRtypeVerticalFloat;
+	case sym_k_font_value:               return MrmRtypeFont;
+	case sym_k_fontset_value:            return MrmRtypeFontSet;
+	case sym_k_font_table_value:         return MrmRtypeFontList;
+	case sym_k_identifier_value:         return MrmRtypeAddrName;
+	case sym_k_class_rec_name_value:     return MrmRtypeClassRecName;
+	case sym_k_xbitmapfile_value:        return MrmRtypeXBitmapFile;
+	case sym_k_widget_ref_value:         return MrmRtypeAny;
+	case sym_k_pixmap_value:             return MrmRtypeIconImage;
+	case sym_k_any_value:                return MrmRtypeAny;
+	case sym_k_keysym_value:             return MrmRtypeKeysym;
+	case sym_k_single_float_value:       return MrmRtypeSingleFloat;
+	case sym_k_rgb_value:                return MrmRtypeColor;
+	default:
+		_assert( FALSE, "unknown value type" );
+		return 0;
+	}
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3047,11 +2905,7 @@ int	uil_type;
 **
 **--
 **/
-
-int	compute_color_table_size(table_entry)
-
-sym_value_entry_type	*table_entry;
-
+int compute_color_table_size(sym_value_entry_type *table_entry)
 {
     sym_value_entry_type    *color_entry;
     int			    size;
@@ -3123,7 +2977,7 @@ sym_value_entry_type	*table_entry;
     return size;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3153,12 +3007,7 @@ sym_value_entry_type	*table_entry;
 **
 **--
 **/
-
-void	create_color_table(table_entry, buffer)
-
-sym_value_entry_type	*table_entry;
-char			*buffer;
-
+void create_color_table(sym_value_entry_type *table_entry, char *buffer)
 {
     RGMColorTable	    *table;
     RGMColorTableEntry	    *item;
@@ -3239,9 +3088,8 @@ char			*buffer;
 	    }
 	}
     }
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3270,11 +3118,7 @@ char			*buffer;
 **
 **--
 **/
-
-int	compute_icon_size(icon_entry)
-
-sym_value_entry_type	*icon_entry;
-
+int	compute_icon_size(sym_value_entry_type *icon_entry)
 {
     int			    size;
     int			    pixel_type;
@@ -3358,7 +3202,7 @@ sym_value_entry_type	*icon_entry;
     return size;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3388,12 +3232,7 @@ sym_value_entry_type	*icon_entry;
 **
 **--
 **/
-
-void	create_icon(icon_entry,buffer)
-
-sym_value_entry_type	*icon_entry;
-char			*buffer;
-
+void create_icon(sym_value_entry_type *icon_entry, char *buffer)
 {
     sym_value_entry_type    *row_entry;
     RGMIconImage	    *icon;
@@ -3518,8 +3357,6 @@ char			*buffer;
     }
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3545,13 +3382,8 @@ char			*buffer;
 **
 **--
 **/
-
-int compute_list_size (list_entry, type)
-    sym_list_entry_type		*list_entry;
-    int				type;
-
+int compute_list_size(sym_list_entry_type *list_entry, int type)
 {
-
 /*
  * Local variables
  */
@@ -3579,9 +3411,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	}
 
 return count;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3623,8 +3454,7 @@ return count;
 **
 **--
 **/
-
-void create_int_compression_codes ()
+void create_int_compression_codes(void)
 {
 
 /*
@@ -3687,10 +3517,8 @@ int	compression_code = 2;
 	if (uil_child_compr[i] == 1)
 	    uil_child_compr[i] = compression_code++;
 	}
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -3734,10 +3562,8 @@ int	compression_code = 2;
 **
 **--
 **/
-
-void create_ext_compression_codes ()
+void create_ext_compression_codes(void)
 {
-
 /*
  * Local variables
  */
@@ -4032,3 +3858,4 @@ status	urm_status;
 	    issue_urm_error("emitting literal");
 	}
 }
+
