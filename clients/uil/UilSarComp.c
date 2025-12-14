@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 drk $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 d
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -52,12 +52,7 @@ static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 d
 **  INCLUDE FILES
 **
 **/
-
-
-
 #include <Mrm/MrmAppl.h>
-
-
 
 #ifdef DXM_V11
 #include <DXm/DXmHelpB.h>
@@ -67,17 +62,9 @@ static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 d
 
 /*
 **
-**  TABLE OF CONTENTS
-**
-**/
-
-
-/*
-**
 **  DEFINE and MACRO DEFINITIONS
 **
 **/
-
 #define clear_class_mask (~(sym_m_private | sym_m_imported | sym_m_exported))
 
 /*
@@ -85,26 +72,8 @@ static char rcsid[] = "$XConsortium: UilSarComp.c /main/11 1995/07/14 09:36:46 d
 **  EXTERNAL VARIABLE DECLARATIONS
 **
 **/
-
 extern yystype		yylval;
 
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -133,9 +102,7 @@ extern yystype		yylval;
 **
 **--
 **/
-
-sym_value_entry_type 	*sem_create_cstr()
-
+sym_value_entry_type *sem_create_cstr(void)
 {
     sym_value_entry_type    *az_cstr_entry;
 
@@ -148,18 +115,12 @@ sym_value_entry_type 	*sem_create_cstr()
     az_cstr_entry->b_type = sym_k_compound_string_value;
     az_cstr_entry->w_length = sizeof (char *);
     az_cstr_entry->b_direction = NOSTRING_DIRECTION;
-
-    /* Fix for  CN 16149 (DTS 10023) part 1 -- initialize charset info */
     az_cstr_entry->b_charset = sym_k_error_charset;
     az_cstr_entry->az_charset_value = NULL;
-
     _sar_save_source_pos (&az_cstr_entry->header, &yylval);
-
     return az_cstr_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -188,9 +149,7 @@ sym_value_entry_type 	*sem_create_cstr()
 **
 **--
 **/
-
-sym_value_entry_type 	*sem_create_wchar_str()
-
+sym_value_entry_type *sem_create_wchar_str(void)
 {
     sym_value_entry_type    *az_wchar_str_entry;
 
@@ -207,10 +166,8 @@ sym_value_entry_type 	*sem_create_wchar_str()
     _sar_save_source_pos (&az_wchar_str_entry->header, &yylval);
 
     return az_wchar_str_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -242,13 +199,9 @@ sym_value_entry_type 	*sem_create_wchar_str()
 **
 **--
 **/
-
-void	sem_append_str_to_cstr(az_cstr_entry, az_str_entry, op2_temporary)
-
-sym_value_entry_type	*az_cstr_entry;
-sym_value_entry_type	*az_str_entry;
-boolean			op2_temporary;
-
+void sem_append_str_to_cstr(sym_value_entry_type *az_cstr_entry,
+                            sym_value_entry_type *az_str_entry,
+                            boolean op2_temporary)
 {
     sym_value_entry_type	*last_str_entry;
     sym_value_entry_type	**ptr;
@@ -333,7 +286,7 @@ boolean			op2_temporary;
     new_str_entry->az_next_table_value = NULL;
     *ptr = new_str_entry;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -364,13 +317,9 @@ boolean			op2_temporary;
 **
 **--
 **/
-
-void	sem_append_cstr_to_cstr(az_cstr1_entry, az_cstr2_entry, op2_temporary)
-
-sym_value_entry_type	*az_cstr1_entry;
-sym_value_entry_type	*az_cstr2_entry;
-boolean			op2_temporary;
-
+void sem_append_cstr_to_cstr(sym_value_entry_type *az_cstr1_entry,
+                             sym_value_entry_type *az_cstr2_entry,
+                             boolean op2_temporary)
 {
     sym_value_entry_type	*last_str_entry;
     sym_value_entry_type	**ptr;
@@ -463,9 +412,8 @@ boolean			op2_temporary;
     }
 
     *ptr = NULL;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -497,16 +445,10 @@ boolean			op2_temporary;
 **
 **--
 **/
-
-sym_value_entry_type
-	*sem_cat_str_to_str
-	    (az_str1_entry, op1_temporary, az_str2_entry, op2_temporary)
-
-sym_value_entry_type	*az_str1_entry;
-boolean			op1_temporary;
-sym_value_entry_type	*az_str2_entry;
-boolean			op2_temporary;
-
+sym_value_entry_type *sem_cat_str_to_str(sym_value_entry_type *az_str1_entry,
+                                         boolean op1_temporary,
+                                         sym_value_entry_type *az_str2_entry,
+                                         boolean op2_temporary)
 {
     sym_value_entry_type    *new_str_entry;
     int			    l1, l2;
@@ -566,9 +508,8 @@ boolean			op2_temporary;
 	}
 
     return new_str_entry;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -599,30 +540,23 @@ boolean			op2_temporary;
 **
 **--
 **/
-
-int	sem_map_subclass_to_charset(charset_as_subclass)
-
-int	charset_as_subclass;
-
+int	sem_map_subclass_to_charset(int charset_as_subclass)
 {
-    switch (charset_as_subclass)
-    {
-
-    case lex_k_fontlist_default_tag:
-    case sym_k_fontlist_default_tag:
-      return sym_k_fontlist_default_tag;
-    case lex_k_default_charset:
-	return uil_sym_default_charset;
-    case lex_k_userdefined_charset:
-	return sym_k_userdefined_charset;
-    default:
-	_assert (charset_as_subclass!=0, "charset code==0");
-	_assert (charset_as_subclass<=uil_max_charset, "unknown charset");
-	return charset_as_subclass;
-    }
+	switch (charset_as_subclass) {
+	case lex_k_fontlist_default_tag:
+	case sym_k_fontlist_default_tag:
+		return sym_k_fontlist_default_tag;
+	case lex_k_default_charset:
+		return uil_sym_default_charset;
+	case lex_k_userdefined_charset:
+		return sym_k_userdefined_charset;
+	default:
+		_assert (charset_as_subclass!=0, "charset code==0");
+		_assert (charset_as_subclass<=uil_max_charset, "unknown charset");
+		return charset_as_subclass;
+	}
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -652,11 +586,7 @@ int	charset_as_subclass;
 **
 **--
 **/
-
-void    sar_charset_verify ( charset_frame )
-
-yystype           *charset_frame;
-
+void sar_charset_verify(yystype *charset_frame)
 {
     key_keytable_entry_type	*az_keyword_entry;
 
@@ -675,7 +605,6 @@ yystype           *charset_frame;
     Uil_lex_l_literal_charset = az_keyword_entry->b_subclass;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -705,9 +634,7 @@ yystype           *charset_frame;
 **
 **--
 **/
-
-void sar_make_fallback_charset(name_frame)
-     yystype           *name_frame;
+void sar_make_fallback_charset(yystype *name_frame)
 {
   sym_name_entry_type			*symbol_entry;
   static key_keytable_entry_type	*az_keyword_entry = NULL;
@@ -745,7 +672,6 @@ void sar_make_fallback_charset(name_frame)
     Uil_lex_l_literal_charset = az_keyword_entry->b_subclass;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -776,14 +702,9 @@ void sar_make_fallback_charset(name_frame)
 **
 **--
 **/
-
-void	sar_chk_charset_attr( target_frame, value_frame, prior_value_frame )
-
-yystype	    *target_frame;
-yystype	    *value_frame;
-yystype	    *prior_value_frame;
+void sar_chk_charset_attr(yystype *target_frame, yystype *value_frame,
+                          yystype *prior_value_frame)
 {
-
     /*
     **	Set up not specified values in the target frame.
     **	    b_type will hold the sixteen_bit property
@@ -871,7 +792,6 @@ yystype	    *prior_value_frame;
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -904,13 +824,8 @@ yystype	    *prior_value_frame;
 **
 **--
 **/
-
-void	sar_make_charset (target_frame, value_frame, attr_frame, keyword_frame)
-
-yystype	    *target_frame;
-yystype	    *value_frame;
-yystype	    *attr_frame;
-yystype	    *keyword_frame;
+void sar_make_charset(yystype *target_frame, yystype *value_frame,
+                      yystype *attr_frame, yystype *keyword_frame)
 {
     sym_value_entry_type    *value_entry;
 
@@ -927,7 +842,6 @@ yystype	    *keyword_frame;
 	(sym_value_entry_type *) value_frame->value.az_symbol_entry;
     value_entry->b_charset = sym_k_userdefined_charset;
 
-/* BEGIN HaL fix CR 5547 */
     sem_evaluate_value (value_entry);
     if (value_entry->b_type != sym_k_char_8_value)
         diag_issue_diagnostic
@@ -935,8 +849,6 @@ yystype	    *keyword_frame;
              _sar_source_pos2( value_entry ),
              diag_value_text( value_entry->b_type ),
              "null-terminated string");
-/* END HaL fix CR 5547 */
-
 
     /*
     **  If the attr_frame is not null, it must be a value frame with contains
@@ -974,5 +886,4 @@ yystype	    *keyword_frame;
     Uil_lex_l_literal_charset = lex_k_userdefined_charset;
     Uil_lex_az_literal_charset = value_entry;
 }
-
 

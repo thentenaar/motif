@@ -365,16 +365,25 @@ extern void create_ext_compression_codes(void);
 extern void sem_resolve_forward_refs(void);
 
 /* uilsarcomp.c */
-extern sym_value_entry_type *sem_create_cstr  _ARGUMENTS(( void ));
-extern sym_value_entry_type *sem_create_wchar_str  _ARGUMENTS(( void ));
-extern void sem_append_str_to_cstr  _ARGUMENTS(( sym_value_entry_type *az_cstr_entry , sym_value_entry_type *az_str_entry , boolean op2_temporary ));
-extern void sem_append_cstr_to_cstr  _ARGUMENTS(( sym_value_entry_type *az_cstr1_entry , sym_value_entry_type *az_cstr2_entry , boolean op2_temporary ));
-extern sym_value_entry_type *sem_cat_str_to_str  _ARGUMENTS(( sym_value_entry_type *az_str1_entry , boolean op1_temporary , sym_value_entry_type *az_str2_entry , boolean op2_temporary ));
-extern int sem_map_subclass_to_charset  _ARGUMENTS(( int charset_as_subclass ));
-extern void sar_charset_verify  _ARGUMENTS(( yystype *charset_frame ));
-extern void sar_make_fallback_charset _ARGUMENTS((yystype *name_frame));
-extern void sar_chk_charset_attr  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *prior_value_frame ));
-extern void sar_make_charset  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *attr_frame , yystype *keyword_frame ));
+extern sym_value_entry_type *sem_create_cstr(void);
+extern sym_value_entry_type *sem_create_wchar_str(void);
+extern void sem_append_str_to_cstr(sym_value_entry_type *az_cstr_entry,
+                                   sym_value_entry_type *az_str_entry,
+                                   boolean op2_temporary);
+extern void sem_append_cstr_to_cstr(sym_value_entry_type *az_cstr1_entry,
+                                    sym_value_entry_type *az_cstr2_entry,
+                                    boolean op2_temporary);
+extern sym_value_entry_type *sem_cat_str_to_str(sym_value_entry_type *az_str1_entry,
+                                                boolean op1_temporary,
+                                                sym_value_entry_type *az_str2_entry,
+                                                boolean op2_temporary);
+extern int sem_map_subclass_to_charset(int charset_as_subclass);
+extern void sar_charset_verify(yystype *charset_frame);
+extern void sar_make_fallback_charset(yystype *name_frame);
+extern void sar_chk_charset_attr(yystype *target_frame, yystype *value_frame,
+                                 yystype *prior_value_frame);
+extern void sar_make_charset(yystype *target_frame, yystype *value_frame,
+                             yystype *attr_frame, yystype *keyword_frame);
 
 /* uilsarexp.c */
 extern void sar_binary_op(yystype *operator_frame, yystype *op1_frame, yystype *op2_frame);
