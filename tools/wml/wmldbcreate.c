@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wmldbcreate.c /main/8 1997/04/14 12:55:30 dbl $"
@@ -50,8 +51,6 @@ static char rcsid[] = "$TOG: wmldbcreate.c /main/8 1997/04/14 12:55:30 dbl $"
 #include <Dt/TermPrim.h>
 #include <Dt/Term.h>
 
-
-
 /*
  * User supplied widget public.h and/or private.h files are to be added here
  * #ifdef for automatic use in uilwmdcreate script file
@@ -81,24 +80,22 @@ static char rcsid[] = "$TOG: wmldbcreate.c /main/8 1997/04/14 12:55:30 dbl $"
 #include "UilSymChCl.h" /* from WML */
 #include "UilSymChTa.h" /* from WML */
 
-void emit_globals();
-void emit_header(_db_header_ptr header);
-void emit_chars(int	    table_id);
-void emit_ints_and_string( int	    table_id);
-void emit_char_table( int	table_id);
-void emit_length_and_string( int	table_id);
-void emit_shorts( int	    table_id);
-void emit_int_and_table_shorts( int	    table_id);
-void emit_ints( int	    table_id);
+static void emit_globals(void);
+static void emit_header(_db_header_ptr header);
+static void emit_chars(int table_id);
+static void emit_ints_and_string(int table_id);
+static void emit_char_table(int table_id);
+static void emit_length_and_string(int table_id);
+static void emit_shorts(int table_id);
+static void emit_int_and_table_shorts(int table_id);
+static void emit_ints(int table_id);
 
 FILE *bfile, *afile;
 int _DEBUG=FALSE;
 char outfilename[80];
 char debugfilename[80];
 
-int main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, const char *argv[])
 {
     _db_header	header;
 
@@ -198,14 +195,10 @@ char **argv;
  *   UilSymEnum
  */
     emit_ints (Enumval_Values_Table);
-
-    exit (0);
-
     return 0;    /* make compiler happy */
 }
 
-
-void emit_globals()
+static void emit_globals(void)
 {
     _db_globals globals;
 
@@ -229,12 +222,9 @@ void emit_globals()
 		globals.uil_max_reason, globals.uil_max_enumval,
 		globals.uil_max_enumset, globals.key_k_keyword_count,
 		globals.key_k_keyword_max_length);
-    }
+}
 
-
-
-void emit_header(header)
-_db_header_ptr header;
+static void emit_header(_db_header_ptr header)
 {
 
     fwrite (header, sizeof(_db_header), 1, bfile);
@@ -242,12 +232,9 @@ _db_header_ptr header;
 	fprintf(afile,
 		"\n\nTableId=%d, NumEntries=%d, TableSize=%d \n",
 		 header->table_id, header->num_items, header->table_size);
-    }
+}
 
-
-
-void emit_chars(table_id)
-    int	    table_id;
+static void emit_chars(int table_id)
 {
     _db_header	    header;
     unsigned char   *ptr = NULL;
@@ -323,9 +310,7 @@ void emit_chars(table_id)
 	}
 }
 
-
-void emit_ints_and_string(table_id)
-    int	    table_id;
+static void emit_ints_and_string(int table_id)
 {
     _db_header		    header;
     key_keytable_entry_type *table = NULL;
@@ -362,9 +347,7 @@ void emit_ints_and_string(table_id)
 
 }
 
-
-void emit_char_table(table_id)
-int	table_id;
+static void emit_char_table(int table_id)
 {
     unsigned char **table = NULL;
     _db_header header;
@@ -420,9 +403,7 @@ int	table_id;
         }
 }
 
-
-void emit_length_and_string(table_id)
-int	table_id;
+static void emit_length_and_string(int table_id)
 {
     _db_header	header;
     int		*lengths;
@@ -543,9 +524,7 @@ int	table_id;
     free (lengths);
 }
 
-
-void emit_shorts(table_id)
-    int	    table_id;
+static void emit_shorts(int table_id)
 {
     _db_header		header;
     unsigned short int	*ptr = NULL;
@@ -609,9 +588,7 @@ void emit_shorts(table_id)
 	}
 }
 
-
-void emit_int_and_table_shorts(table_id)
-    int	    table_id;
+static void emit_int_and_table_shorts(int table_id)
 {
     _db_header		header;
     UilEnumSetDescDef	*table = NULL;
@@ -642,8 +619,7 @@ void emit_int_and_table_shorts(table_id)
         }
 }
 
-void emit_ints(table_id)
-    int	    table_id;
+static void emit_ints(int table_id)
 {
     _db_header	header;
     int		*ptr = NULL;
