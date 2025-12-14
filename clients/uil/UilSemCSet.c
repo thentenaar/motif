@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSemCSet.c /main/10 1997/03/12 15:21:53 dbl $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilSemCSet.c /main/10 1997/03/12 15:21:53 dbl $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -46,48 +46,14 @@ static char rcsid[] = "$TOG: UilSemCSet.c /main/10 1997/03/12 15:21:53 dbl $"
 **--
 **/
 
-
 /*
 **
 **  INCLUDE FILES
 **
 **/
-
 #include <Xm/Xm.h>
-
 #include "UilDefI.h"
 
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -120,11 +86,7 @@ static char rcsid[] = "$TOG: UilSemCSet.c /main/10 1997/03/12 15:21:53 dbl $"
 **
 **--
 **/
-
-char *sem_charset_name (l_charset, az_charset_entry)
-    int				l_charset;
-    sym_value_entry_type	*az_charset_entry;
-
+const char *sem_charset_name(int l_charset, sym_value_entry_type *az_charset_entry)
 {
 
 int		charset;		/* mapped character set */
@@ -133,22 +95,19 @@ charset = sem_map_subclass_to_charset (l_charset);
 switch ( charset )
     {
     case sym_k_fontlist_default_tag:
-      return XmFONTLIST_DEFAULT_TAG;      
+      return XmFONTLIST_DEFAULT_TAG;
     case sym_k_userdefined_charset:
         /*
-	 ** If the charset is user-defined, then fetch info from the symbol 
-	 ** table entry for it.						   
+	 ** If the charset is user-defined, then fetch info from the symbol
+	 ** table entry for it.
 	 */
 	_assert (az_charset_entry!=NULL, "null userdefined charset entry");
 	return az_charset_entry->value.c_value;
     default:
 	return charset_xmstring_names_table[charset];
     }
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -181,26 +140,19 @@ switch ( charset )
 **
 **--
 **/
-
-void sem_charset_info
-    (l_charset, az_charset_entry, write_direction, parse_direction,  sixteen_bit)
-
-int			l_charset;
-sym_value_entry_type	*az_charset_entry;
-int			*write_direction;
-int			*parse_direction;
-int			*sixteen_bit;
-
+void sem_charset_info(int l_charset, sym_value_entry_type *az_charset_entry,
+                      int *write_direction, int *parse_direction,
+                      int *sixteen_bit)
 {
 
 int		charset;	/* mapped character set */
-    
+
 charset = sem_map_subclass_to_charset (l_charset);
-switch (charset) 
+switch (charset)
     {
     /*
-     ** If the charset is user-defined, then fetch info from the symbol 
-     ** table entry for it.						   
+     ** If the charset is user-defined, then fetch info from the symbol
+     ** table entry for it.
      */
     case sym_k_userdefined_charset:
         {
@@ -223,8 +175,6 @@ switch (charset)
 	}
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -253,7 +203,7 @@ switch (charset)
 **      0	no match - character set not found
 **	>0	character set code from sym_k_..._charset.
 **		sym_k_userdefined_charset is never returned.
-**		
+**
 **
 **  SIDE EFFECTS:
 **
@@ -261,29 +211,25 @@ switch (charset)
 **
 **--
 **/
-
-int sem_charset_lang_name (lang_charset)
-    char		*lang_charset;
-
+int sem_charset_lang_name(const char *lang_charset)
 {
+	size_t i;
+	char uname[256];
 
-char		uname[200];	/* upper-case character set name */
-int		ndx;		/* loop index */
+	/*
+	 * Convert name to upper case, then search table (which is already in
+	 * upper case).
+	 */
+	if (!lang_charset || !*lang_charset)
+		return 0;
 
+	for (i = 0; i < strlen(lang_charset) && i < sizeof uname - 1; i++)
+		uname[i] = _upper(lang_charset[i]);
+	uname[i] = '\0';
 
-/*
- * Convert name to upper case, then search table (which is already in
- * upper case).
- */
-strcpy (uname, lang_charset);
-for ( ndx=0 ; ndx<(int)strlen(uname) ; ndx++ )
-    uname[ndx] = _upper (uname[ndx]);
-
-for ( ndx=0 ; ndx<(int)charset_lang_table_max ; ndx++ )
-    if ( strcmp(uname,charset_lang_names_table[ndx]) == 0 )
-	return (int)charset_lang_codes_table[ndx];
-return 0;
-
+	for (i = 0; i < charset_lang_table_max; i++)
+		if (!strcmp(uname, charset_lang_names_table[i]))
+			return charset_lang_codes_table[i];
+	return 0;
 }
-
 

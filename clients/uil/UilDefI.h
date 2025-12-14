@@ -501,9 +501,11 @@ extern void sar_make_icon(yystype *target_frame, yystype *list_frame,
                           yystype *table_frame, yystype *keyword_frame);
 
 /* uilsemcset.c */
-extern char *sem_charset_name  _ARGUMENTS(( int l_charset , sym_value_entry_type *az_charset_entry ));
-extern void sem_charset_info  _ARGUMENTS(( int l_charset , sym_value_entry_type *az_charset_entry , int *write_direction , int *parse_direction , int *sixteen_bit ));
-extern int sem_charset_lang_name  _ARGUMENTS(( char *lang_charset ));
+extern const char *sem_charset_name(int l_charset, sym_value_entry_type *az_charset_entry);
+extern void sem_charset_info(int l_charset, sym_value_entry_type *az_charset_entry,
+                             int *write_direction, int *parse_direction,
+                             int *sixteen_bit);
+extern int sem_charset_lang_name(const char *lang_charset);
 
 /* uilsemval.c */
 typedef	union  	{
