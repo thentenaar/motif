@@ -349,7 +349,7 @@ extern void create_int_compression_codes  _ARGUMENTS(( void ));
 extern void create_ext_compression_codes  _ARGUMENTS(( void ));
 
 /* uilp2reslv.c */
-extern void sem_resolve_forward_refs  _ARGUMENTS(( void ));
+extern void sem_resolve_forward_refs(void);
 
 /* uilsarcomp.c */
 extern sym_value_entry_type *sem_create_cstr  _ARGUMENTS(( void ));
