@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilMain.c /main/14 1996/06/03 15:49:20 pascale $"
@@ -431,18 +432,12 @@ static void	common_cleanup()
 **	    none
 **--
 **/
-
-
-Uil_status_type Uil
-
-(Uil_command_type        *command_desc,
-Uil_compile_desc_type   *compile_desc,
-Uil_continue_type       (*message_cb)(),
-char            *message_data,
-Uil_continue_type       (*status_cb)(),
-char            *status_data)
-
-
+Uil_status_type Uil(Uil_command_type *command_desc,
+                    Uil_compile_desc_type *compile_desc,
+                    uil_message_cb_t message_cb,
+                    char *message_data,
+                    uil_status_cb_t status_cb,
+                    char *status_data)
 {
 
     /* Indicate compiler called rather than being started via command line */

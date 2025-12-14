@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,7 +20,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilDiags.c /main/15 1996/10/21 11:06:46 cde-osf $"
@@ -29,7 +31,6 @@ static char rcsid[] = "$XConsortium: UilDiags.c /main/15 1996/10/21 11:06:46 cde
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -46,7 +47,6 @@ static char rcsid[] = "$XConsortium: UilDiags.c /main/15 1996/10/21 11:06:46 cde
 **--
 **/
 
-
 /*
 **
 **  INCLUDE FILES
@@ -54,13 +54,12 @@ static char rcsid[] = "$XConsortium: UilDiags.c /main/15 1996/10/21 11:06:46 cde
 **/
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xos.h>
 #include <Xm/Xm.h>
-
-#include <stdarg.h>
 
 #include "UilDefI.h"
 #include "UilMessTab.h"
@@ -82,12 +81,10 @@ externaldef(uil_comp_glbl)	int	Uil_message_count[uil_k_max_status+1];
 static	boolean	issuing_diagnostic;
 static	int	Uil_diag_status_delay_count;
 
-/*
- * Fix for CR 5534 - static storage for old signal handlers
- */
-static	void 	(*bus_handler)();
-static	void 	(*sys_handler)();
-static	void 	(*fpe_handler)();
+/* Signal handlers */
+static void (*bus_handler)(int);
+static void (*sys_handler)(int);
+static void (*fpe_handler)(int);
 
 /*
 **++
@@ -118,26 +115,14 @@ static	void 	(*fpe_handler)();
 **
 **--
 **/
-
-void    diag_store_handlers
-            ( void )
+void diag_store_handlers(void)
 {
-/*
- * Fix for CR 5534 - set the file variables for holding previous bus handlers
- *                   to NULL and then store the old handlers (if any) when
- *                   calling signal for the Uil handlers
- */
-    bus_handler = signal( SIGBUS, diag_handler );       /* access violations */
+    bus_handler = signal(SIGBUS, diag_handler); /* access violations */
 #ifdef SIGSYS
-    sys_handler = signal( SIGSYS, diag_handler );       /* bad arguments to sys calls */
+    sys_handler = signal(SIGSYS, diag_handler); /* bad arguments to sys calls */
 #endif
-    fpe_handler = signal( SIGFPE, diag_handler );       /* overflows */
-/*
- * End Fix for CR 5534
- */
-
+    fpe_handler = signal(SIGFPE, diag_handler); /* overflows */
 }
-
 
 /*
 **++
@@ -180,10 +165,9 @@ void    diag_store_handlers
 
 #define buf_size (src_k_max_source_line_length + 1)
 
-void	diag_issue_diagnostic
-	    ( int d_message_number, src_source_record_type *az_src_rec,
-	      int l_start_column, ...)
-
+void diag_issue_diagnostic(int d_message_number,
+                           src_source_record_type *az_src_rec,
+                           int l_start_column, ...)
 {
     va_list	ap;			/* ptr to variable length parameter */
     int		severity;		/* severity of message */
@@ -410,7 +394,7 @@ void	diag_issue_diagnostic
     }
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -440,9 +424,7 @@ void	diag_issue_diagnostic
 **
 **--
 **/
-
-void	diag_issue_summary()
-
+void diag_issue_summary(void)
 {
 
     if (uil_l_compile_status == uil_k_success_status)
@@ -459,7 +441,7 @@ void	diag_issue_summary()
 
     return;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -491,66 +473,41 @@ void	diag_issue_summary()
 **
 **--
 **/
-
-char	*diag_tag_text( b_tag )
-
-int XmConst   b_tag;
-
+const char *diag_tag_text(const int b_tag)
 {
-
-    switch (b_tag)
-    {
-    case sym_k_value_entry:
-	return "value";
-    case sym_k_widget_entry:
-	return "widget";
-    case sym_k_gadget_entry:
-	return "gadget";
-    case sym_k_child_entry:
-	return "auto child";
-    case sym_k_module_entry:
-	return "module";
+    switch (b_tag) {
+    case sym_k_value_entry:       return "value";
+    case sym_k_widget_entry:      return "widget";
+    case sym_k_gadget_entry:      return "gadget";
+    case sym_k_child_entry:       return "auto child";
+    case sym_k_module_entry:      return "module";
     case sym_k_proc_def_entry:
-    case sym_k_proc_ref_entry:
-	return "procedure";
-    case sym_k_identifier_entry:
-	return "identifier";
+    case sym_k_proc_ref_entry:    return "procedure";
+    case sym_k_identifier_entry:  return "identifier";
 
 /*   These are used by the symbol table dumper.    */
 
-    case sym_k_argument_entry:
-	return "argument";
-    case sym_k_callback_entry:
-	return "callback";
-    case sym_k_control_entry:
-	return "control";
-    case sym_k_name_entry:
-	return "name";
-    case sym_k_forward_ref_entry:
-	return "forward ref";
-    case sym_k_external_def_entry:
-	return "external def";
-    case sym_k_list_entry:
-	return "list";
-    case sym_k_root_entry:
-	return "root";
-    case sym_k_include_file_entry:
-	return "include file";
-    case sym_k_def_obj_entry:
-	return "default variant";
-    case sym_k_section_entry:
-	return "section";
+    case sym_k_argument_entry:     return "argument";
+    case sym_k_callback_entry:     return "callback";
+    case sym_k_control_entry:      return "control";
+    case sym_k_name_entry:         return "name";
+    case sym_k_forward_ref_entry:  return "forward ref";
+    case sym_k_external_def_entry: return "external def";
+    case sym_k_list_entry:         return "list";
+    case sym_k_root_entry:         return "root";
+    case sym_k_include_file_entry: return "include file";
+    case sym_k_def_obj_entry:      return "default variant";
+    case sym_k_section_entry:      return "section";
 
     default:
 #if XM_MSGCAT
-	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
+	return catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **");
 #else
 	return "** unknown **";
 #endif
     }
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -581,28 +538,23 @@ int XmConst   b_tag;
 **
 **--
 **/
-
-char	*diag_object_text( b_type )
-
-int XmConst   b_type;
-
+const char *diag_object_text(const int b_type)
 {
-    if ( b_type <= sym_k_error_object )
+    if (b_type <= sym_k_error_object)
 #if XM_MSGCAT
-	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
+	return catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **");
 #else
 	return "** error **";
 #endif
-    if ( b_type <= uil_max_object )
+    if (b_type <= uil_max_object)
 	return uil_widget_names[b_type];
 #if XM_MSGCAT
-    return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
+    return catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **");
 #else
     return "** unknown **";
 #endif
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -633,30 +585,24 @@ int XmConst   b_type;
 **
 **--
 **/
-
-char	*diag_value_text( b_type )
-
-int XmConst   b_type;
-
+const char *diag_value_text(const int b_type)
 {
 
-    if ( b_type <= sym_k_error_value )
+    if (b_type <= sym_k_error_value)
 #if XM_MSGCAT
-	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
+	return catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **");
 #else
 	return "** error **";
 #endif
-    if ( b_type <= sym_k_max_value )
+    if (b_type <= sym_k_max_value)
 	return uil_datatype_names[b_type];
 #if XM_MSGCAT
-    return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
+    return catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **");
 #else
     return "** unknown **";
 #endif
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -687,30 +633,23 @@ int XmConst   b_type;
 **
 **--
 **/
-
-char	*diag_charset_text( b_type )
-
-int XmConst   b_type;
-
+const char *diag_charset_text(const int b_type)
 {
-
-    if ( b_type <= sym_k_error_charset )
+    if (b_type <= sym_k_error_charset)
 #if XM_MSGCAT
-	return (catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **"));
+	return catgets(uil_catd, UIL_VALUES, UIL_VAL_0, "** error **");
 #else
 	return "** error **";
 #endif
-    if ( b_type <= uil_max_charset )
+    if (b_type <= uil_max_charset)
 	return uil_charset_names[b_type];
 #if XM_MSGCAT
-    return (catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **"));
+    return catgets(uil_catd, UIL_VALUES, UIL_VAL_1, "** unknown **");
 #else
     return "** unknown **";
 #endif
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -743,53 +682,33 @@ int XmConst   b_type;
 **
 **--
 **/
-
-void	diag_initialize_diagnostics()
-
+void diag_initialize_diagnostics(void)
 {
+	int i;
 
-    int	    i;
+	/**
+	 * Set up a handler to be invoked if access violations or
+	 * bad arguments to sys calls occur. Other errors should be
+	 * processed as is standard for the OS.
+	 */
+	diag_store_handlers();
 
-    /*
-    **	Set up a handler to be invoked if access violations or
-    **	bad arguments to sys calls occur.
-    **  Other errors should be processed as is standard for the OS.
-    */
-/*
- * Fix for CR 5534 - call diag_store_handlers to save the old signal handlers.
- */
-    diag_store_handlers();
-/*
- * End Fix for CR 5534
- */
-
-    signal( SIGBUS, diag_handler );	/* access violations */
+	signal(SIGBUS, diag_handler); /* access violations */
 #ifdef SIGSYS
-    signal( SIGSYS, diag_handler );	/* bad arguments to sys calls */
+	signal(SIGSYS, diag_handler); /* bad arguments to sys calls */
 #endif
-    signal( SIGFPE, diag_handler );	/* overflows */
+	signal(SIGFPE, diag_handler); /* overflows */
 
+	/* Reset the message counts to zero. */
+	memset(Uil_message_count, 0, uil_k_max_status * sizeof *Uil_message_count);
 
-    /*
-    **  Reset the message counts to zero.
-    */
-    for (i=0;  i <= uil_k_max_status;  i++)
-	Uil_message_count[ i ] = 0;
+	/* Clear the flag that we used to detect recursive error reporinting. */
+	issuing_diagnostic = FALSE;
 
-
-    /*
-    **  Clear the flag that we used to detect recursive error reporinting.
-    */
-    issuing_diagnostic = FALSE;
-
-
-    /*
-    **  Make sure there is no delay before starting to report status.
-    */
-    Uil_diag_status_delay_count = 0;
+	/* Make sure there is no delay before starting to report status. */
+	Uil_diag_status_delay_count = 0;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -818,16 +737,11 @@ void	diag_initialize_diagnostics()
 **
 **--
 **/
-
-void	diag_reset_overflow_handler()
-
+void diag_reset_overflow_handler(void)
 {
-
-    signal( SIGFPE, diag_handler );	/* overflows */
-
+    signal(SIGFPE, diag_handler);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -856,11 +770,7 @@ void	diag_reset_overflow_handler()
 **
 **--
 **/
-
-void	diag_handler( l_error )
-
-int	l_error;
-
+void diag_handler(int l_error)
 {
     /*
     **	This handler is invoked for access violations, oeverflows or bad
@@ -908,9 +818,8 @@ int	l_error;
 #endif
 
     /* we don't expect to come back */
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -941,13 +850,8 @@ int	l_error;
 **
 **--
 **/
-
-void	diag_issue_internal_error( error_text )
-
-char	* error_text;
-
+void diag_issue_internal_error(const char *error_text)
 {
-
     /*
     **	This routine is a focal point for issuing internal errors.
     **  In DEBUG mode it takes an argument that gives more information
@@ -966,11 +870,7 @@ char	* error_text;
 #endif
 
     /* we don't expect to come back */
-
 }
-
-
-
 
 /*
 **++
@@ -1006,37 +906,24 @@ char	* error_text;
 **/
 
 
-static char	XmConst success_text[1]  = "";
-static char	XmConst info_text[7]     = "Info: ";
-static char	XmConst warning_text[10] = "Warning: ";
-static char	XmConst error_text[8]    = "Error: ";
-static char	XmConst severe_text[9]   = "Severe: ";
+static const char * const severity_table[] = {
+	"", "Info: ", "Warning: ", "Error: ", "Severe: "
+};
 
-static char	XmConst *severity_table [] =
-    { success_text, info_text, warning_text, error_text, severe_text, };
-
-void	write_msg_to_standard_error
-		(message_number, src_buffer, ptr_buffer, msg_buffer, loc_buffer)
-
-XmConst int   message_number;
-XmConst char  *src_buffer;
-XmConst char  *ptr_buffer;
-XmConst char  *msg_buffer;
-XmConst char  *loc_buffer;
-
+void write_msg_to_standard_error(const int message_number,
+                                 const char *src_buffer,
+                                 const char *ptr_buffer,
+                                 const char *msg_buffer,
+                                 const char *loc_buffer)
 {
+	Uil_status_type return_status;
 
     /*
     **  If message callback was supplied, call it with the description of the
     **  error instead of writing it to standard output.
     */
-    if (Uil_cmd_z_command.message_cb != (Uil_continue_type(*)())NULL)
+    if (Uil_cmd_z_command.message_cb)
     {
-	Uil_status_type return_status;
-/*
- * Fix for 5534 - restore the old signal handers before calling message_cb
- *                and restore the Uil signal handlers immediately afterwards
- */
         diag_restore_diagnostics();
 	return_status = (*Uil_cmd_z_command.message_cb)(
 			    Uil_cmd_z_command.message_data,
@@ -1048,16 +935,13 @@ XmConst char  *loc_buffer;
 			    loc_buffer,
 			    Uil_message_count);
          diag_store_handlers();
-/*
- * End Fix for 5534
- */
 
 	/*
 	**  If request is for termination, then longjmp back to main routine
 	**  and set the return status to reflect user abort.
 	*/
 	if (return_status == Uil_k_terminate)
-	    uil_exit (uil_k_error_status);
+	    uil_exit(uil_k_error_status);
 	else
 	    return;
     }
@@ -1105,7 +989,6 @@ XmConst char  *loc_buffer;
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1134,20 +1017,12 @@ XmConst char  *loc_buffer;
 **
 **--
 **/
-
-char XmConst *diag_get_message_abbrev( d_message_number )
-
-int	d_message_number;
-
+const char *diag_get_message_abbrev(int d_message_number)
 {
     return
 	severity_table[ diag_rz_msg_table[ d_message_number ].l_severity ];
 }
 
-
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1180,16 +1055,14 @@ int	d_message_number;
 **
 **--
 **/
-
-void	diag_report_status ( )
-
+void diag_report_status(void)
 {
     Uil_continue_type	return_status;
 
     /*
     **  If no status callback was supplied, just return.
     */
-    if (Uil_cmd_z_command.status_cb == (Uil_continue_type(*)())NULL) return;
+    if (!Uil_cmd_z_command.status_cb) return;
 
     /*
     **	If delay is used up (less than or equal to zero) then invoke the
@@ -1198,11 +1071,6 @@ void	diag_report_status ( )
     if (Uil_diag_status_delay_count <= 0)
     {
 	Uil_diag_status_delay_count = Uil_cmd_z_command.status_update_delay;
-/*
- * Fix for CR 5534 - restore the application signal handlers before calling
- *                   status_cb and then return the Uil signal handlers
- *                   immediately after.
- */
         diag_restore_diagnostics();
 	return_status = (*Uil_cmd_z_command.status_cb)(
 			    Uil_cmd_z_command.status_data,
@@ -1211,9 +1079,6 @@ void	diag_report_status ( )
 			    Uil_current_file,
 			    Uil_message_count);
         diag_store_handlers();
-/*
- * End Fix for CR 5534
- */
 
 	/*
 	**  If request is for termination, then longjmp back to main routine
@@ -1263,21 +1128,12 @@ void	diag_report_status ( )
 **
 **--
 **/
-
-void
-diag_restore_diagnostics(void)
+void diag_restore_diagnostics(void)
 {
-
-/*
- * Fix for CR 5534 - restore the old signal handlers
- */
-    signal( SIGBUS, bus_handler );
+	signal(SIGBUS, bus_handler);
 #ifdef SIGSYS
-    signal( SIGSYS, sys_handler );
+	signal(SIGSYS, sys_handler);
 #endif
-    signal( SIGFPE, fpe_handler );
-/*
- * End Fix for CR 5534
- */
+	signal(SIGFPE, fpe_handler);
 }
 

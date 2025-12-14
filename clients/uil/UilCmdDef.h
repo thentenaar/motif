@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 
 /*
 **++
@@ -38,14 +38,22 @@
 #ifndef UilCmdDef_h
 #define UilCmdDef_h
 
-/*
-**
-**  INCLUDE FILES
-**
-**/
+typedef unsigned int (*uil_message_cb_t)(const char *message_data,
+                                         int message_number,
+                                         int severity,
+                                         const char *msg_buffer,
+                                         const char *src_buffer,
+                                         const char *ptr_buffer,
+                                         const char *loc_buffer,
+                                         int message_cnt[]);
 
+typedef unsigned int (*uil_status_cb_t)(const char *status_data,
+                                        int pct_complete,
+                                        int lines_processed,
+                                        const char *current_file,
+                                        int message_cnt[]);
 
-typedef struct  
+typedef struct
 {
     char	    *ac_source_file;
     char	    *ac_resource_file;
@@ -62,14 +70,14 @@ typedef struct
     unsigned	    v_report_warn_msg: 1;
     unsigned	    v_parse_tree: 1;	    /* generate parse tree	    */
     unsigned        v_issue_summary: 1;
-    
+
     unsigned int    status_update_delay;    /* Number of times a status	    */
 					    /* point is passed before	    */
 					    /* calling statusCB routine	    */
 					    /* 0 means called every time    */
-    Uil_continue_type	(*message_cb)();
+    uil_message_cb_t message_cb;
     char		*message_data;
-    Uil_continue_type	(*status_cb)();
+    uil_status_cb_t status_cb;
     char		*status_data;
     unsigned	    	v_use_setlocale: 1;    /* Allow localized strings */
     char		*ac_database;

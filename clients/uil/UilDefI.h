@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 
 /*
 **++
@@ -34,7 +35,6 @@
 **
 **--
 **/
-
 #ifndef UilDefI_h
 #define UilDefI_h
 
@@ -241,7 +241,7 @@ extern void diag_issue_diagnostic
 extern void lst_debug_output  _ARGUMENTS(( char *format, ... ));
 
 
-void cmd_decode_command_line  _ARGUMENTS(( int l_arg_count , char *rac_arg_value []));
+extern void cmd_decode_command_line(int l_arg_count , char *rac_arg_value[]);
 
 /* uildb.c */
 extern void db_incorporate _ARGUMENTS(( void ));
@@ -254,19 +254,23 @@ extern String get_root_dir_name _ARGUMENTS(( void ));
 extern String init_wmd_path _ARGUMENTS((String filename));
 
 /* uildiags.c */
-extern void diag_issue_summary  _ARGUMENTS(( void ));
-extern char *diag_tag_text  _ARGUMENTS(( int const b_tag ));
-extern char *diag_object_text  _ARGUMENTS(( int const b_type ));
-extern char *diag_value_text  _ARGUMENTS(( int const b_type ));
-extern char *diag_charset_text  _ARGUMENTS(( int const b_type ));
-extern void diag_initialize_diagnostics  _ARGUMENTS(( void ));
-extern void diag_restore_diagnostics  _ARGUMENTS(( void ));
-extern void diag_reset_overflow_handler  _ARGUMENTS(( void ));
-extern void diag_handler  _ARGUMENTS(( int l_error ));
-extern void diag_issue_internal_error  _ARGUMENTS(( char *error_text ));
-extern void write_msg_to_standard_error  _ARGUMENTS(( const int message_number , const char *src_buffer , const char *ptr_buffer , const char *msg_buffer , const char *loc_buffer ));
-extern char const *diag_get_message_abbrev  _ARGUMENTS(( int d_message_number ));
-extern void diag_report_status  _ARGUMENTS(( void ));
+extern void diag_issue_summary(void);
+extern const char *diag_tag_text(const int b_tag);
+extern const char *diag_object_text(const int b_type);
+extern const char *diag_value_text(const int b_type);
+extern const char *diag_charset_text(const int b_type);
+extern void diag_initialize_diagnostics(void);
+extern void diag_restore_diagnostics(void);
+extern void diag_reset_overflow_handler(void);
+extern void diag_handler(int l_error);
+extern void diag_issue_internal_error(const char *error_text);
+extern void write_msg_to_standard_error(const int message_number,
+                                        const char *src_buffer,
+                                        const char *ptr_buffer,
+                                        const char *msg_buffer,
+                                        const char *loc_buffer);
+extern char const *diag_get_message_abbrev(int d_message_number);
+extern void diag_report_status(void);
 
 /* uilkeytab.c */
 extern key_keytable_entry_type *key_find_keyword  _ARGUMENTS(( unsigned int symbol_length , char *symbol_ptr ));
@@ -308,11 +312,13 @@ extern char *class_name_from_code  _ARGUMENTS(( MrmCode mrm_class ));
 extern char *resource_name_from_code  _ARGUMENTS(( MrmCode resource ));
 
 /* uilmain.c */
-extern void uil_exit  _ARGUMENTS(( int severity ));
-extern Uil_status_type Uil _ARGUMENTS((Uil_command_type
-*comand_desc,Uil_compile_desc_type *compile_desc,Uil_continue_type
-(*message_cb)(), char *message_data, Uil_continue_type (*status_cb)(),
-char *status_data));
+extern void uil_exit(int severity);
+extern Uil_status_type Uil(Uil_command_type *command_desc,
+                           Uil_compile_desc_type *compile_desc,
+                           uil_message_cb_t message_cb,
+                           char *message_data,
+                           uil_status_cb_t status_cb,
+                           char *status_data);
 
 
 /* uilp2out.c */
