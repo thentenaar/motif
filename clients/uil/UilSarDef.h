@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 
 /*
 **++
@@ -37,8 +37,6 @@
 
 #ifndef UilSarDef_h
 #define UilSarDef_h
-
-
 
 /*
 **  Format of a value on YACC value stack.  This is also the form of a
@@ -107,7 +105,7 @@ typedef struct
 #define _sar_save_source_info( _target, _src_beg, _src_end )	\
    {								\
 	sym_entry_header_type	*__target;			\
-	XmConst yystype	    		*__src_end;		\
+	const yystype	    		*__src_end;		\
 								\
 	__target = (_target); 					\
 	__src_end = (_src_end);					\
@@ -120,7 +118,7 @@ typedef struct
 #define _sar_save_source_pos( _target, _src )			\
    {								\
 	sym_entry_header_type	*__target;			\
-	XmConst yystype		*__src;				\
+	const yystype		*__src;				\
 								\
 	__target = (_target);	__src = (_src);			\
 								\
