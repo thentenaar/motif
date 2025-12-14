@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilSarObj.c /main/14 1995/07/14 09:37:30 drk $"
@@ -50,7 +51,6 @@ static char rcsid[] = "$XConsortium: UilSarObj.c /main/14 1995/07/14 09:37:30 dr
 **  INCLUDE FILES
 **
 **/
-
 #include "UilDefI.h"
 
 
@@ -66,7 +66,7 @@ static char rcsid[] = "$XConsortium: UilSarObj.c /main/14 1995/07/14 09:37:30 dr
 **	    1	8 < _size <= 16
 **	    2	16 < _size <= 32
 **	    3	32 < _size <= 64
-**	    4	64 < _size 
+**	    4	64 < _size
 **  The algorithm is based on the notion that the floating pt representation
 **  of an integer has an exponent that is the log_base2( int ).
 **
@@ -85,8 +85,6 @@ static char rcsid[] = "$XConsortium: UilSarObj.c /main/14 1995/07/14 09:37:30 dr
         else k = 4; \
         (_index) = k; \
     }
-	  
-	
 
 /*
 **
@@ -97,23 +95,6 @@ static char rcsid[] = "$XConsortium: UilSarObj.c /main/14 1995/07/14 09:37:30 dr
 extern yystype			gz_yynullval;
 extern yystype			yylval;
 
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -126,7 +107,7 @@ extern yystype			yylval;
 **      object_frame		address of the parse stack frame for this
 **				object.
 **
-**	
+**
 **
 **  IMPLICIT INPUTS:
 **
@@ -146,19 +127,13 @@ extern yystype			yylval;
 **
 **--
 **/
-
-void		sar_assoc_comment( object )
-
-sym_obj_entry_type    *object;
+void sar_assoc_comment(sym_obj_entry_type *object)
 {
-
-  object->obj_header.az_comment = (char *)XtMalloc(strlen(comment_text)+1);
+  object->obj_header.az_comment = XtMalloc(strlen(comment_text)+1);
   strcpy(object->obj_header.az_comment, comment_text);
   comment_text[0] = '\0';
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -191,12 +166,8 @@ sym_obj_entry_type    *object;
 **
 **--
 **/
-
-void		sar_create_object
-  	( yystype *object_frame, unsigned char object_type )
-
+void sar_create_object(yystype *object_frame, unsigned char object_type)
 {
-
     sym_name_entry_type		* name_entry;
     sym_obj_entry_type		* obj_entry;
     int				node_size = 0;
@@ -207,7 +178,7 @@ void		sar_create_object
     if (object_frame->b_tag != sar_k_null_frame)
 	{
 
-	/* 
+	/*
 	 ** First we check on the name to see if it has been previously used.
 	 ** This function returns NULL if name cannot be used.
 	 */
@@ -259,10 +230,8 @@ void		sar_create_object
     object_frame->b_tag = sar_k_object_frame;
     object_frame->b_type = object_type;
     object_frame->value.az_symbol_entry = (sym_entry_type *)obj_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -293,10 +262,7 @@ void		sar_create_object
 **
 **--
 **/
-
-void		sar_create_child
-  	( yystype *object_frame )
-
+void sar_create_child(yystype *object_frame)
 {
     sym_obj_entry_type		* obj_entry;
     yystype			* source_frame;
@@ -308,7 +274,7 @@ void		sar_create_child
  */
     obj_entry = (sym_obj_entry_type *)
 	sem_allocate_node (sym_k_child_entry, sym_k_widget_entry_size);
-    obj_entry->header.b_type = 
+    obj_entry->header.b_type =
       object_frame->value.az_keyword_entry->b_subclass;
 
     _sar_save_source_pos (&obj_entry->header, source_frame );
@@ -317,7 +283,7 @@ void		sar_create_child
  * Indicate in compress table that this child type is used.
  */
     uil_child_compr[(int)obj_entry->header.b_type] = 1;
-    
+
 /*
  * Set the definition in progress bit.
  */
@@ -332,7 +298,6 @@ void		sar_create_child
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -359,11 +324,7 @@ void		sar_create_child
 **
 **--
 **/
-
-void	sar_link_section ( id_frame )
-
-yystype			* id_frame;
-
+void sar_link_section(yystype *id_frame)
 {
 sym_section_entry_type	* section_entry;
 
@@ -378,7 +339,7 @@ sym_az_current_section_entry->entries = (sym_entry_type *) section_entry;
 section_entry->entries = id_frame->value.az_symbol_entry;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -410,11 +371,7 @@ section_entry->entries = id_frame->value.az_symbol_entry;
 **
 **--
 **/
-
-void	sar_save_src_semicolon_pos (semi_frame)
-
-yystype			* semi_frame;
-
+void sar_save_src_semicolon_pos(yystype *semi_frame)
 {
 sym_section_entry_type	* section_entry;
 
@@ -424,7 +381,6 @@ _sar_save_source_pos (&section_entry->entries->header, semi_frame);
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -454,11 +410,7 @@ _sar_save_source_pos (&section_entry->entries->header, semi_frame);
 **	none
 **--
 **/
-
-void	sar_save_list_end (close_frame)
-
-yystype	    *close_frame;
-
+void sar_save_list_end(yystype *close_frame)
 {
     sym_list_entry_type		* list_entry;
     yystype			* list_frame;
@@ -471,9 +423,8 @@ yystype	    *close_frame;
     list_entry = (sym_list_entry_type *) list_frame->value.az_symbol_entry;
 
     _sar_save_source_pos ( &list_entry->header , close_frame );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -503,12 +454,7 @@ yystype	    *close_frame;
 **	none
 **--
 **/
-
-void	sar_save_src_entry_end (close_frame, entry_frame)
-
-yystype    *close_frame;
-yystype    *entry_frame;
-
+void sar_save_src_entry_end(yystype *close_frame, yystype *entry_frame)
 {
     sym_entry_type		* entry;
 
@@ -535,9 +481,8 @@ yystype    *entry_frame;
     */
 
     _sar_save_source_pos ( &entry->header , close_frame );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -568,13 +513,8 @@ yystype    *entry_frame;
 **
 **--
 **/
-
-void	sar_set_object_flags 
-
-	(yystype *current_frame, unsigned char mask )
-
+void sar_set_object_flags(yystype *current_frame, unsigned char mask)
 {
-
     sym_obj_entry_type		* obj_entry;
     yystype			* object_frame;
 
@@ -587,8 +527,8 @@ void	sar_set_object_flags
 
     obj_entry->obj_header.b_flags |= mask;
 
-/*    If this is an exported or private object and it has a name, 
-**    make an external entry for it.	
+/*    If this is an exported or private object and it has a name,
+**    make an external entry for it.
 */
 
     if ((mask & (sym_m_exported | sym_m_private)) &&
@@ -596,10 +536,8 @@ void	sar_set_object_flags
 	{
 	sym_make_external_def (obj_entry->obj_header.az_name);
 	}
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -630,11 +568,7 @@ void	sar_set_object_flags
 **
 **--
 **/
-
-void	sar_unset_object_flags 
-
-	(yystype *current_frame, unsigned char mask )
-
+void sar_unset_object_flags(yystype *current_frame, unsigned char mask)
 {
     yystype			* object_frame;
 
@@ -645,10 +579,8 @@ void	sar_unset_object_flags
 /*    Unset the flags for the object entry.	*/
 
     object_frame->b_flags &= ~mask;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -677,14 +609,8 @@ void	sar_unset_object_flags
 **
 **--
 **/
-
-void		sar_set_list_type
-			( current_frame )
-
-yystype		* current_frame;
-
+void sar_set_list_type(yystype *current_frame)
 {
-
     sym_obj_entry_type		* obj_entry;
     yystype			* list_frame;
 
@@ -694,10 +620,8 @@ yystype		* current_frame;
 
 /*    Set the type for the list entry.	*/
     obj_entry->header.b_type = current_frame->b_type;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -726,14 +650,8 @@ yystype		* current_frame;
 **
 **--
 **/
-
-void		sar_set_object_class
-			( current_frame )
-
-yystype		* current_frame;
-
+void sar_set_object_class(yystype *current_frame)
 {
-
     sym_obj_entry_type		* obj_entry;
     yystype			* object_frame;
 
@@ -745,7 +663,7 @@ yystype		* current_frame;
     obj_entry->header.b_type =
 	current_frame->value.az_keyword_entry->b_subclass;
 
-/*    
+/*
 **  Indicate in compression table that this object type is used.
 **  Note that user defined widgets don't get compression code entires.
 **  We always identify user defined widgets as MrmwcUnknown.
@@ -755,7 +673,6 @@ yystype		* current_frame;
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -784,14 +701,8 @@ yystype		* current_frame;
 **
 **--
 **/
-
-void		sar_set_object_variant
-			( current_frame )
-
-yystype		* current_frame;
-
+void sar_set_object_variant(yystype *current_frame)
 {
-
     sym_obj_entry_type		* obj_entry;
     yystype			* object_frame;
 
@@ -870,10 +781,8 @@ yystype		* current_frame;
 
     if ((obj_entry->obj_header.b_flags & sym_m_obj_is_gadget) != 0)
 	uil_widget_compr[(int)obj_entry->header.b_type] = 1;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -902,13 +811,8 @@ yystype		* current_frame;
 **
 **--
 **/
-
-yystype		* sem_find_object ( current_frame )
-
-yystype 	* current_frame;
-
+yystype *sem_find_object(yystype *current_frame)
 {
-
     yystype 	* object_frame;
 
     object_frame = current_frame;
@@ -923,9 +827,8 @@ yystype 	* current_frame;
         _assert (FALSE, "missing object frame on the parser stack");
 
    return (object_frame);
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -956,10 +859,7 @@ yystype 	* current_frame;
 **
 **--
 **/
-
-void		sar_object_reference ( ref_frame )
-yystype 	* ref_frame;
-
+void sar_object_reference(yystype *ref_frame)
 {
     yystype			* obj_frame;
     sym_obj_entry_type		* obj_entry;
@@ -998,7 +898,7 @@ yystype 	* ref_frame;
 	    invalid_ref =
 		(ref_entry->header.b_tag!=obj_entry->header.b_tag) ||
 		(ref_entry->header.b_type!=obj_entry->header.b_type);
-	
+
 	if ( invalid_ref )
 	    {
 
@@ -1045,7 +945,7 @@ yystype 	* ref_frame;
 
     /*   Add this entry to the list.  A copy of the list will be made.    */
 
-	    if ((ref_value != 0) && 
+	    if ((ref_value != 0) &&
 		((ref_value->obj_header.b_flags & sym_m_forward_ref) == 0))
 		{
 	        ref_frame->value.az_symbol_entry = (sym_entry_type *)ref_entry;
@@ -1053,7 +953,7 @@ yystype 	* ref_frame;
 		}
 	    else
 		sar_add_forward_list_entry (ref_frame);
-	    
+
 	    break;
 	    }
 
@@ -1097,10 +997,10 @@ yystype 	* ref_frame;
 	    else
 		{
 		/*   Save this reference in the widget.	*/
-		
+
 		obj_entry->obj_header.az_reference = (sym_entry_type *)ref_entry;
 		}
-	    
+
 	    break;
 	    }
 
@@ -1110,9 +1010,8 @@ yystype 	* ref_frame;
 	    break;
 	    }
 	}
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1144,12 +1043,7 @@ yystype 	* ref_frame;
 **
 **--
 **/
-
-void		sar_update_parent_list
-			( control_list_frame )
-
-yystype 	* control_list_frame;
-
+void sar_update_parent_list(yystype *control_list_frame)
 {
     yystype			* widget_frame;
     sym_widget_entry_type	* widget_entry;
@@ -1168,7 +1062,7 @@ yystype 	* control_list_frame;
 
 /* Get the control_list entry from the widget */
 
-    control_list_entry = (sym_list_entry_type *) 
+    control_list_entry = (sym_list_entry_type *)
 			control_list_frame->value.az_symbol_entry;
 
     _assert ((control_list_entry->header.b_tag == sym_k_list_entry ||
@@ -1181,26 +1075,24 @@ yystype 	* control_list_frame;
 */
 
     parent_list_traverse(widget_entry, control_list_entry);
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **	This routine recursively traverses a control_list.  Control lists
 **	may contain control list entries as well as nested control lists.
-**	
-**      This routine also updates the parent list of every object in the 
-**	controls list(s) for this object.  Parent lists are required in order 
+**
+**      This routine also updates the parent list of every object in the
+**	controls list(s) for this object.  Parent lists are required in order
 **	to check constraint arguments.
 **
 **  FORMAL PARAMETERS:
 **
 **	widget_entry			the widget to be entered in lists
 **      control_list_entry		A control_list or nested control list
-**				        
+**
 **
 **  IMPLICIT INPUTS:
 **
@@ -1220,11 +1112,8 @@ yystype 	* control_list_frame;
 **
 **--
 **/
-
-void parent_list_traverse (widget_entry, control_list_entry)
-    sym_widget_entry_type	*widget_entry;
-    sym_list_entry_type 	*control_list_entry;
-
+void parent_list_traverse(sym_widget_entry_type *widget_entry,
+                          sym_list_entry_type *control_list_entry)
 {
 sym_obj_entry_type		*control_list_member;
 sym_control_entry_type		*control_entry;
@@ -1265,7 +1154,7 @@ sym_parent_list_type		*parent_ptr;
 **  be a forward reference.  If so, find the forward reference entry for it
 **  and update it with a pointer to its parent.
 */
-    
+
 		if ( control_widget->
 			obj_header.b_flags & sym_m_obj_is_reference)
         	    if ( control_widget->obj_header.az_reference == NULL )
@@ -1285,7 +1174,7 @@ sym_parent_list_type		*parent_ptr;
 				found = TRUE;
 				fwd_ref_entry->parent = widget_entry;
 				}
-			    }            
+			    }
 			}
 		    else
 			{
@@ -1303,8 +1192,8 @@ sym_parent_list_type		*parent_ptr;
 			    }
 			if (found == FALSE)
 			    {
-			    parent_node = (sym_parent_list_type *) 
-				sem_allocate_node (sym_k_parent_list_entry, 
+			    parent_node = (sym_parent_list_type *)
+				sem_allocate_node (sym_k_parent_list_entry,
 						   sym_k_parent_list_size);
 			    parent_node->next = control_widget->parent_list;
 			    control_widget->parent_list = parent_node;
@@ -1325,7 +1214,7 @@ sym_parent_list_type		*parent_ptr;
 			}
 		    if (found == FALSE)
 			{
-			parent_node = (sym_parent_list_type *) 
+			parent_node = (sym_parent_list_type *)
 			    sem_allocate_node (sym_k_parent_list_entry,
 					       sym_k_parent_list_size);
 			parent_node->next = control_widget->parent_list;
@@ -1335,10 +1224,8 @@ sym_parent_list_type		*parent_ptr;
 		    }
 		}
 	    }
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1368,12 +1255,7 @@ sym_parent_list_type		*parent_ptr;
 **
 **--
 **/
-
-void		sar_save_feature
-			( feature_frame )
-
-yystype 	* feature_frame;
-
+void sar_save_feature(yystype *feature_frame)
 {
     yystype			* widget_frame;
     sym_widget_entry_type	* widget_entry;
@@ -1446,9 +1328,8 @@ yystype 	* feature_frame;
 /*	Clear the feature frame from the stack.	*/
 
     feature_frame->b_tag = sar_k_null_frame;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1484,15 +1365,9 @@ yystype 	* feature_frame;
 **
 **--
 **/
-void		sar_save_argument_pair
-  		  ( argument_frame, value_frame, equals_frame)
-
-yystype 	* argument_frame;
-yystype 	* value_frame;
-yystype		* equals_frame;
-
+void sar_save_argument_pair(yystype *argument_frame,
+                            yystype *value_frame, yystype *equals_frame)
 {
-
     yystype			* object_frame;
     sym_argument_entry_type	* arg_entry;
     sym_list_entry_type		* list_entry;
@@ -1525,7 +1400,7 @@ yystype		* equals_frame;
     **  Save the source information (?)
     */
 
-    _sar_save_source_info ( &arg_value_entry->header , argument_frame , 
+    _sar_save_source_info ( &arg_value_entry->header , argument_frame ,
 	argument_frame );
 
     val_value_entry = (sym_value_entry_type *) value_frame->value.az_symbol_entry;
@@ -1543,7 +1418,7 @@ yystype		* equals_frame;
     */
 
     if ((argument_frame->b_flags & sym_m_forward_ref) != 0)
-	sym_make_value_forward_ref (argument_frame, 
+	sym_make_value_forward_ref (argument_frame,
 	(char*)&(arg_entry->az_arg_name), sym_k_patch_add);
     else
         arg_entry->az_arg_name =
@@ -1556,22 +1431,20 @@ yystype		* equals_frame;
     */
 
     if ((value_frame->b_flags & sym_m_forward_ref) != 0)
-	sym_make_value_forward_ref (value_frame, 
+	sym_make_value_forward_ref (value_frame,
 	(char*)&(arg_entry->az_arg_value), sym_k_patch_add);
     else
         arg_entry->az_arg_value = val_value_entry;
 
     argument_frame->b_tag = sar_k_null_frame;
     argument_frame->value.az_symbol_entry = (sym_entry_type *) arg_entry;
-
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
-**  This routine processes a reason to procedure or procedure list binding 
+**  This routine processes a reason to procedure or procedure list binding
 **  for a callback object in UIL.
 **
 **  FORMAL PARAMETERS:
@@ -1603,16 +1476,9 @@ yystype		* equals_frame;
 **
 **--
 **/
-
-void		sar_save_reason_binding
-  		  	( reason_frame, proc_ref_frame, equals_frame )
-
-yystype		* reason_frame;
-yystype 	* proc_ref_frame;
-yystype 	* equals_frame;
-
+void sar_save_reason_binding(yystype *reason_frame,
+                             yystype *proc_ref_frame, yystype *equals_frame)
 {
-
     yystype			* object_frame;
     sym_callback_entry_type	* callback_entry;
     sym_list_entry_type		* list_entry;
@@ -1653,7 +1519,7 @@ yystype 	* equals_frame;
     /*
     ** Save source information
     */
-/*    _sar_save_source_info ( &reason_value_entry->header , reason_frame , 
+/*    _sar_save_source_info ( &reason_value_entry->header , reason_frame ,
 **	reason_frame );
 */
 
@@ -1671,9 +1537,8 @@ yystype 	* equals_frame;
 
     reason_frame->b_tag = sar_k_null_frame;
     reason_frame->value.az_symbol_entry = (sym_entry_type *) callback_entry;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1706,15 +1571,8 @@ yystype 	* equals_frame;
 **
 **--
 **/
-
-void		sar_save_control_item
-			( managed_frame, item_frame )
-
-yystype		* managed_frame;
-yystype		* item_frame;
-
+void sar_save_control_item(yystype *managed_frame, yystype *item_frame)
 {
-
     yystype			* object_frame;
     sym_control_entry_type	* control_entry;
     sym_list_entry_type		* list_entry;
@@ -1742,7 +1600,7 @@ yystype		* item_frame;
 	     diag_tag_text (sym_k_control_entry),
 	     diag_tag_text (list_entry->header.b_type),
 	     diag_tag_text (list_entry->header.b_tag) );
-	
+
 	return;
 	}
 
@@ -1763,7 +1621,7 @@ yystype		* item_frame;
     managed_frame->value.az_symbol_entry = (sym_entry_type *) control_entry;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1797,15 +1655,8 @@ yystype		* item_frame;
 **
 **--
 **/
-
-void		sar_save_control_widget
-			( control_frame, item_frame )
-
-yystype		* control_frame;
-yystype		* item_frame;
-
+void sar_save_control_widget(yystype *control_frame, yystype *item_frame)
 {
-
     yystype			* object_frame;
     sym_control_entry_type	* control_entry;
     sym_list_entry_type		* list_entry;
@@ -1844,7 +1695,7 @@ yystype		* item_frame;
 	     diag_tag_text (sym_k_control_entry),
 	     diag_tag_text (list_entry->header.b_type),
 	     diag_tag_text (list_entry->header.b_tag) );
-	
+
 	return;
 	}
 
@@ -1864,7 +1715,7 @@ yystype		* item_frame;
     control_frame->value.az_symbol_entry = (sym_entry_type *) control_entry;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1900,14 +1751,9 @@ yystype		* item_frame;
 **
 **--
 **/
-
-void		sar_save_user_proc_ref_src
-			( procedure_frame, proc_id_frame, proc_arg_frame)
-
-yystype		* procedure_frame;
-yystype 	* proc_id_frame;
-yystype 	* proc_arg_frame;
-
+void sar_save_user_proc_ref_src(yystype *procedure_frame,
+                                yystype *proc_id_frame,
+                                yystype *proc_arg_frame)
 {
     sym_proc_ref_entry_type	* proc_ref_entry;
 
@@ -1918,9 +1764,8 @@ yystype 	* proc_arg_frame;
     ** We want to save the source for the "args" if it is there.
     */
     _sar_save_source_info (& proc_ref_entry->header, procedure_frame, proc_arg_frame );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1956,16 +1801,9 @@ yystype 	* proc_arg_frame;
 **
 **--
 **/
-
-void		sar_process_proc_ref
-			( proc_id_frame, proc_arg_frame, context )
-
-yystype 	* proc_id_frame;
-yystype 	* proc_arg_frame;
-int		context;
-
+void sar_process_proc_ref(yystype *proc_id_frame,
+                          yystype *proc_arg_frame, int context)
 {
-
 /*    Call the common routine to get the procedure reference node, and
       return it in the stack frame.	*/
 
@@ -1981,27 +1819,27 @@ int		context;
 	{
 	yystype			* widget_frame;
 	sym_widget_entry_type	* widget_entry;
-	
+
 /*    Search the syntax stack for the widget frame.  NOTE: gadgets can
 	      not have creation procedures; the grammar enforces this.     */
 
 	widget_frame = sem_find_object (proc_id_frame - 1);
 	widget_entry =
 	    (sym_widget_entry_type *) widget_frame->value.az_symbol_entry;
-	
+
 	_assert (widget_entry->header.b_tag == sym_k_widget_entry,
 		 "widget missing from the stack");
-	
+
 	if (widget_entry->header.b_type != uil_sym_user_defined_object)
 	    {
 	    yystype		* source_frame;
-	    
+
 	    source_frame = & yylval;
 	    diag_issue_diagnostic
 		(d_create_proc,
 		 _sar_source_position ( source_frame ),
 		 diag_object_text (widget_entry->header.b_type) );
-	    
+
 	    return;
 	    }
 	else
@@ -2009,13 +1847,12 @@ int		context;
 	    widget_entry->az_create_proc =
 		(sym_proc_ref_entry_type *) proc_id_frame->value.az_symbol_entry;
 	    }
-	
+
 	}
 
-    return;    
-
+    return;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2045,12 +1882,7 @@ int		context;
 **
 **--
 **/
-
-void		sar_add_list_entry
-  		  	( entry_frame )
-
-yystype		* entry_frame;
-
+void sar_add_list_entry(yystype *entry_frame)
 {
     yystype			* list_frame;
     sym_list_entry_type		* list_entry;
@@ -2131,15 +1963,14 @@ yystype		* entry_frame;
     list_entry->w_count++;
 
     entry_frame->b_tag = sar_k_null_frame;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **      This routine adds a forward referenced list entry to a list.
-**	
+**
 **
 **  FORMAL PARAMETERS:
 **
@@ -2164,12 +1995,7 @@ yystype		* entry_frame;
 **
 **--
 **/
-
-void		sar_add_forward_list_entry
-  		  	( entry_frame )
-
-yystype		* entry_frame;
-
+void sar_add_forward_list_entry(yystype *entry_frame)
 {
     yystype			* list_frame;
     sym_list_entry_type		* list_entry;
@@ -2211,9 +2037,8 @@ yystype		* entry_frame;
     list_entry->w_count++;
 
     entry_frame->b_tag = sar_k_null_frame;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2243,11 +2068,7 @@ yystype		* entry_frame;
 **
 **--
 **/
-
-void	sar_verify_object ( current_frame )
-
-yystype			* current_frame;
-
+void sar_verify_object(yystype *current_frame)
 {
 yystype				* obj_frame;
 sym_widget_entry_type		* widget_entry;
@@ -2268,7 +2089,7 @@ switch (obj_entry->header.b_tag)
     {
     case sym_k_gadget_entry:
     case sym_k_widget_entry:
-    
+
         /*
 	 * Clear the definition in progress bit.
 	 */
@@ -2326,11 +2147,8 @@ if (widget_type == uil_sym_user_defined_object)
 	    }
 	}
     }
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2359,12 +2177,9 @@ if (widget_type == uil_sym_user_defined_object)
 **
 **--
 **/
-
-sym_entry_type	* sem_allocate_node
-	(unsigned char node_tag, unsigned short node_size )
-
+sym_entry_type *sem_allocate_node(unsigned char node_tag,
+                                  unsigned short node_size)
 {
-
     sym_entry_type		* node_ptr;
 
     node_ptr = (sym_entry_type *) XtCalloc (1, node_size);
@@ -2373,10 +2188,8 @@ sym_entry_type	* sem_allocate_node
     UrmPlistAppendPointer (sym_az_allocated_nodes, (XtPointer)node_ptr);
 
     return node_ptr;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2401,14 +2214,8 @@ sym_entry_type	* sem_allocate_node
 **
 **--
 **/
-
-void	sem_free_node ( node_ptr )
-
-sym_entry_type		* node_ptr;
-
+void sem_free_node(sym_entry_type *node_ptr)
 {
-
     UrmPlistAppendPointer (sym_az_freed_nodes, (XtPointer)node_ptr);
-    
 }
-   
+

@@ -407,34 +407,41 @@ extern void sar_process_module_variant(yystype *obj_type_frame,
 extern void sar_save_section_source(yystype *header_frame, int section_type);
 
 /* uilsarobj.c */
-extern void sar_assoc_comment  _ARGUMENTS(( sym_obj_entry_type    *object ));
-extern void sar_create_object  _ARGUMENTS(( yystype *object_frame , unsigned char object_type ));
-extern void sar_create_child  _ARGUMENTS(( yystype *object_frame ));
-extern void sar_link_section  _ARGUMENTS(( yystype *id_frame ));
-extern void sar_save_src_semicolon_pos  _ARGUMENTS(( yystype *semi_frame ));
-extern void sar_save_list_end  _ARGUMENTS(( yystype *close_frame ));
-extern void sar_save_src_entry_end  _ARGUMENTS(( yystype *close_frame , yystype *entry_frame ));
-extern void sar_set_object_flags  _ARGUMENTS(( yystype *current_frame , unsigned char mask ));
-extern void sar_unset_object_flags  _ARGUMENTS(( yystype *current_frame , unsigned char mask ));
-extern void sar_set_list_type  _ARGUMENTS(( yystype *current_frame ));
-extern void sar_set_object_class  _ARGUMENTS(( yystype *current_frame ));
-extern void sar_set_object_variant  _ARGUMENTS(( yystype *current_frame ));
-extern yystype *sem_find_object  _ARGUMENTS(( yystype *current_frame ));
-extern void sar_object_reference  _ARGUMENTS(( yystype *ref_frame ));
-extern void sar_update_parent_list  _ARGUMENTS(( yystype *control_list_frame ));
-extern void parent_list_traverse  _ARGUMENTS(( sym_widget_entry_type *widget_entry , sym_list_entry_type *control_list_entry ));
-extern void sar_save_feature  _ARGUMENTS(( yystype *feature_frame ));
-extern void sar_save_argument_pair  _ARGUMENTS(( yystype *argument_frame , yystype *value_frame , yystype *equals_frame ));
-extern void sar_save_reason_binding  _ARGUMENTS(( yystype *reason_frame , yystype *proc_ref_frame , yystype *equals_frame ));
-extern void sar_save_control_item  _ARGUMENTS(( yystype *managed_frame , yystype *item_frame ));
-extern void sar_save_control_widget  _ARGUMENTS(( yystype *control_frame , yystype *item_frame ));
-extern void sar_save_user_proc_ref_src  _ARGUMENTS(( yystype *procedure_frame , yystype *proc_id_frame , yystype *proc_arg_frame ));
-extern void sar_process_proc_ref  _ARGUMENTS(( yystype *proc_id_frame , yystype *proc_arg_frame , int context ));
-extern void sar_add_list_entry  _ARGUMENTS(( yystype *entry_frame ));
-extern void sar_add_forward_list_entry  _ARGUMENTS(( yystype *entry_frame ));
-extern void sar_verify_object  _ARGUMENTS(( yystype *current_frame ));
-extern sym_entry_type *sem_allocate_node  _ARGUMENTS(( unsigned char node_tag , unsigned short node_size ));
-extern void sem_free_node  _ARGUMENTS(( sym_entry_type *node_ptr ));
+extern void sar_assoc_comment(sym_obj_entry_type *object);
+extern void sar_create_object(yystype *object_frame, unsigned char object_type);
+extern void sar_create_child(yystype *object_frame);
+extern void sar_link_section(yystype *id_frame);
+extern void sar_save_src_semicolon_pos(yystype *semi_frame);
+extern void sar_save_list_end(yystype *close_frame);
+extern void sar_save_src_entry_end(yystype *close_frame, yystype *entry_frame);
+extern void sar_set_object_flags(yystype *current_frame, unsigned char mask);
+extern void sar_unset_object_flags(yystype *current_frame, unsigned char mask);
+extern void sar_set_list_type(yystype *current_frame);
+extern void sar_set_object_class(yystype *current_frame);
+extern void sar_set_object_variant(yystype *current_frame);
+extern yystype *sem_find_object(yystype *current_frame);
+extern void sar_object_reference(yystype *ref_frame);
+extern void sar_update_parent_list(yystype *control_list_frame);
+extern void parent_list_traverse(sym_widget_entry_type *widget_entry,
+                                 sym_list_entry_type *control_list_entry);
+extern void sar_save_feature(yystype *feature_frame);
+extern void sar_save_argument_pair(yystype *argument_frame,
+                                   yystype *value_frame, yystype *equals_frame);
+extern void sar_save_reason_binding(yystype *reason_frame,
+                                    yystype *proc_ref_frame, yystype *equals_frame);
+extern void sar_save_control_item(yystype *managed_frame, yystype *item_frame);
+extern void sar_save_control_widget(yystype *control_frame, yystype *item_frame);
+extern void sar_save_user_proc_ref_src(yystype *procedure_frame,
+                                       yystype *proc_id_frame,
+                                       yystype *proc_arg_frame);
+extern void sar_process_proc_ref(yystype *proc_id_frame,
+                                 yystype *proc_arg_frame, int context);
+extern void sar_add_list_entry(yystype *entry_frame);
+extern void sar_add_forward_list_entry(yystype *entry_frame);
+extern void sar_verify_object(yystype *current_frame);
+extern sym_entry_type *sem_allocate_node(unsigned char node_tag,
+                                         unsigned short node_size);
+extern void sem_free_node(sym_entry_type *node_ptr);
 
 /* uilsarproc.c */
 extern void sar_create_procedure  _ARGUMENTS(( const yystype *id_frame , const yystype *param_frame , const yystype *class_frame , const yystype *semi_frame ));
