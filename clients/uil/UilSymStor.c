@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSymStor.c /main/15 1997/03/12 15:21:44 dbl $"
@@ -40,7 +41,7 @@ static char rcsid[] = "$TOG: UilSymStor.c /main/15 1997/03/12 15:21:44 dbl $"
 **  ABSTRACT:
 **
 **      This module contains the procedures for managing memory for
-**	the compiler. 
+**	the compiler.
 **
 **--
 **/
@@ -56,26 +57,6 @@ static char rcsid[] = "$TOG: UilSymStor.c /main/15 1997/03/12 15:21:44 dbl $"
 
 #include <ctype.h>
 #include "UilDefI.h"
-
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
 
 externaldef(uil_comp_glbl) sym_name_entry_type
 	*sym_az_hash_table[ sym_k_hash_table_limit];
@@ -102,15 +83,6 @@ externaldef(uil_comp_glbl) sym_entry_type
 externaldef(uil_comp_glbl) URMPointerListPtr	sym_az_allocated_nodes;
 externaldef(uil_comp_glbl) URMPointerListPtr	sym_az_freed_nodes;
 
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -139,9 +111,7 @@ externaldef(uil_comp_glbl) URMPointerListPtr	sym_az_freed_nodes;
 **
 **--
 **/
-
-void
-sym_initialize_storage(void)
+void sym_initialize_storage(void)
 {
 int		i;
 
@@ -152,7 +122,7 @@ int		i;
 for (i=0; i<sym_k_hash_table_limit; i++)
     sym_az_hash_table[ i ] = NULL;
 
-/* 
+/*
  * Set forward reference, external definition, and symbol table header
  * chains to null.
  */
@@ -179,14 +149,13 @@ if ( sym_az_error_value_entry == NULL )
 	sem_allocate_node (sym_k_value_entry, sym_k_value_entry_size);
 
 sym_az_error_value_entry->b_type = sym_k_error_value;
-sym_az_error_value_entry->obj_header.b_flags = 
+sym_az_error_value_entry->obj_header.b_flags =
     (sym_m_private | sym_m_builtin);
 
 sym_az_error_value_entry->obj_header.az_name =
     sym_insert_name( 9, "#error...");
 
 }
-
 
 /*
 **++
@@ -218,9 +187,7 @@ sym_az_error_value_entry->obj_header.az_name =
 **
 **--
 **/
-
-void
-Uil_sym_cleanup_storage (boolean freealloc)
+void Uil_sym_cleanup_storage(boolean freealloc)
 {
 if ( freealloc )
   { if ( sym_az_allocated_nodes != NULL )
@@ -235,7 +202,6 @@ if ( sym_az_freed_nodes != NULL )
     UrmPlistFree (sym_az_freed_nodes);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -264,13 +230,8 @@ if ( sym_az_freed_nodes != NULL )
 **
 **--
 **/
-
-void
-sym_make_external_def( XmConst sym_name_entry_type *az_name )
-
-
+void sym_make_external_def(const sym_name_entry_type *az_name)
 {
-
     sym_external_def_entry_type   *external_entry;
 
     /* allocate an external definition entry */
@@ -290,14 +251,13 @@ sym_make_external_def( XmConst sym_name_entry_type *az_name )
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **      This routine adds a reference to the forward reference chain.
 **	This routine is used for widget and gadget forward references only.
-**	
+**
 **
 **  FORMAL PARAMETERS:
 **
@@ -324,17 +284,14 @@ sym_make_external_def( XmConst sym_name_entry_type *az_name )
 **
 **--
 **/
-
-void
-sym_make_forward_ref(XmConst yystype *az_id_frame,
-		     XmConst int     l_widget_type,
-		     XmConst char    *a_location)
+void sym_make_forward_ref(const yystype *az_id_frame,
+                          const int l_widget_type,
+                          const char *a_location)
 {
-
     sym_forward_ref_entry_type   *fwd_ref_entry;
 
     _assert( (az_id_frame->b_tag == sar_k_token_frame) &&
-	     (az_id_frame->value.az_symbol_entry->header.b_tag == 
+	     (az_id_frame->value.az_symbol_entry->header.b_tag ==
 		sym_k_name_entry), "arg1 not an id frame" );
 
     /* allocate an external definition entry */
@@ -356,16 +313,15 @@ sym_make_forward_ref(XmConst yystype *az_id_frame,
 
     fwd_ref_entry->az_next_ref = sym_az_forward_ref_chain;
     sym_az_forward_ref_chain = fwd_ref_entry;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **      This routine adds a reference to the values forward reference chain.
 **	This routine is used for value forward references only.
-**	
+**
 **
 **  FORMAL PARAMETERS:
 **
@@ -391,14 +347,10 @@ sym_make_forward_ref(XmConst yystype *az_id_frame,
 **
 **--
 **/
-
-void
-sym_make_value_forward_ref (XmConst yystype  *az_value_frame,
-			    XmConst char *a_location,
-			    XmConst unsigned char fwd_ref_flags )
-
+void sym_make_value_forward_ref(const yystype *az_value_frame,
+                                const char *a_location,
+                                const unsigned char fwd_ref_flags)
 {
-
     sym_val_forward_ref_entry_type   *fwd_ref_entry;
 
     /* allocate an external definition entry */
@@ -419,13 +371,13 @@ sym_make_value_forward_ref (XmConst yystype  *az_value_frame,
 		 az_value_frame->value.az_symbol_entry)->obj_header.az_name;
 	    break;
 	case sym_k_patch_list_add:
-	    fwd_ref_entry->az_name = 
+	    fwd_ref_entry->az_name =
 		(sym_name_entry_type *)az_value_frame->value.az_symbol_entry;
 	    break;
 	default:
 	    _assert(FALSE, "Illegal forward reference");
 	};
-	
+
     fwd_ref_entry->a_update_location = (char *)a_location;
     fwd_ref_entry->fwd_ref_flags = fwd_ref_flags;
 
@@ -433,10 +385,8 @@ sym_make_value_forward_ref (XmConst yystype  *az_value_frame,
 
     fwd_ref_entry->az_next_ref = sym_az_val_forward_ref_chain;
     sym_az_val_forward_ref_chain = fwd_ref_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -465,9 +415,7 @@ sym_make_value_forward_ref (XmConst yystype  *az_value_frame,
 **
 **--
 **/
-
-void
-UilDumpSymbolTable ( sym_entry_type *node_entry )
+void UilDumpSymbolTable(sym_entry_type *node_entry)
 {
 
 sym_value_entry_type		*val_node;
@@ -549,11 +497,8 @@ switch ( node_entry->header.b_tag )
 	    }
 	break;
     }
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -581,9 +526,7 @@ switch ( node_entry->header.b_tag )
 **
 **--
 **/
-
-void
-sym_dump_symbols( void )
+void sym_dump_symbols(void)
 {
 
 int				ndx;
@@ -604,7 +547,6 @@ _debug_output ("\n\n");
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -632,9 +574,7 @@ _debug_output ("\n\n");
 **
 **--
 **/
-
-void
-sym_dump_symbol (sym_entry_type *az_symbol_entry)
+void sym_dump_symbol(sym_entry_type *az_symbol_entry)
 {
 
     switch (az_symbol_entry->header.b_tag) {
@@ -718,7 +658,7 @@ sym_dump_symbol (sym_entry_type *az_symbol_entry)
 		int	    *l_array;
 		int	    i;
 
-		_debug_output("%p  unknown type: %d  size: %d  byte: %x\n", 
+		_debug_output("%p  unknown type: %d  size: %d  byte: %x\n",
 			      az_symbol_entry,
 			      az_symbol_entry->header.b_tag,
 			      az_symbol_entry->header.w_node_size,
@@ -736,10 +676,8 @@ sym_dump_symbol (sym_entry_type *az_symbol_entry)
 
     sym_dump_source_info(( sym_entry_header_type *)az_symbol_entry);
     _debug_output("\n");
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -769,15 +707,12 @@ sym_dump_symbol (sym_entry_type *az_symbol_entry)
 **
 **--
 **/
-
-void
-sym_dump_widget( XmConst sym_widget_entry_type *az_widget_entry )
+void sym_dump_widget(const sym_widget_entry_type *az_widget_entry)
 {
-
     sym_dump_obj_header ((sym_obj_entry_type *)az_widget_entry);
 
     _debug_output (
-	"  %s %s  controls: %p  callbacks: %p  arguments: %p  parent_list: %p\n", 
+	"  %s %s  controls: %p  callbacks: %p  arguments: %p  parent_list: %p\n",
 	    diag_object_text( az_widget_entry->header.b_type),
 	    diag_tag_text( az_widget_entry->header.b_tag ),
 	    az_widget_entry->az_controls,
@@ -792,7 +727,6 @@ sym_dump_widget( XmConst sym_widget_entry_type *az_widget_entry )
     _debug_output ("\n Comment: %s\n", az_widget_entry->obj_header.az_comment);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -822,19 +756,15 @@ sym_dump_widget( XmConst sym_widget_entry_type *az_widget_entry )
 **
 **--
 **/
-
-void
-sym_dump_argument( XmConst sym_argument_entry_type *az_argument_entry )
+void sym_dump_argument(const sym_argument_entry_type *az_argument_entry)
 {
-
     sym_dump_obj_header ((sym_obj_entry_type *)az_argument_entry);
 
-    _debug_output ( "  arg name: %p  arg value: %p\n", 
+    _debug_output ( "  arg name: %p  arg value: %p\n",
 	az_argument_entry->az_arg_name,
 	az_argument_entry->az_arg_value );
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -864,11 +794,8 @@ sym_dump_argument( XmConst sym_argument_entry_type *az_argument_entry )
 **
 **--
 **/
-
-void
-sym_dump_control( XmConst sym_control_entry_type *az_control_entry )
+void sym_dump_control(const sym_control_entry_type *az_control_entry)
 {
-
     sym_dump_obj_header ((sym_obj_entry_type *)az_control_entry);
 
 /*    These are for control objects only.     */
@@ -886,7 +813,6 @@ sym_dump_control( XmConst sym_control_entry_type *az_control_entry )
     _debug_output("  obj: %p\n", az_control_entry->az_con_obj);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -916,20 +842,16 @@ sym_dump_control( XmConst sym_control_entry_type *az_control_entry )
 **
 **--
 **/
-
-void
-sym_dump_callback( XmConst sym_callback_entry_type *az_callback_entry )
+void sym_dump_callback(const sym_callback_entry_type *az_callback_entry)
 {
-
     sym_dump_obj_header ((sym_obj_entry_type *)az_callback_entry);
 
-    _debug_output("  reason name: %p  proc ref: %p  proc ref list: %p\n", 
+    _debug_output("  reason name: %p  proc ref: %p  proc ref list: %p\n",
 	az_callback_entry->az_call_reason_name,
 	az_callback_entry->az_call_proc_ref,
 	az_callback_entry->az_call_proc_ref_list);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -959,24 +881,20 @@ sym_dump_callback( XmConst sym_callback_entry_type *az_callback_entry )
 **
 **--
 **/
-
-void
-sym_dump_list( XmConst sym_list_entry_type *az_list_entry )
+void sym_dump_list(const sym_list_entry_type *az_list_entry)
 {
 
     sym_dump_obj_header ((sym_obj_entry_type *)az_list_entry);
 
-    _debug_output ( "  type: %s  count: %d  gadget count: %d\n", 
+    _debug_output ( "  type: %s  count: %d  gadget count: %d\n",
 	diag_tag_text( az_list_entry->header.b_type),
 	az_list_entry->w_count,
 	az_list_entry->w_gadget_count );
 
     /* preserve comments */
     _debug_output ("\n Comment: %s\n", az_list_entry->obj_header.az_comment);
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1006,11 +924,8 @@ sym_dump_list( XmConst sym_list_entry_type *az_list_entry )
 **
 **--
 **/
-
-void
-sym_dump_name( XmConst sym_name_entry_type *az_name_entry )
+void sym_dump_name(const sym_name_entry_type *az_name_entry)
 {
-
     _debug_output
 	( "%p name size: %d  next name: %p  object: %p",
 	  az_name_entry,
@@ -1024,10 +939,8 @@ sym_dump_name( XmConst sym_name_entry_type *az_name_entry )
 
     _debug_output
 	( "  name: %s \n", az_name_entry->c_text );
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1057,11 +970,8 @@ sym_dump_name( XmConst sym_name_entry_type *az_name_entry )
 **
 **--
 **/
-
-void
-sym_dump_module( XmConst sym_module_entry_type *az_module_entry )
+void sym_dump_module(const sym_module_entry_type *az_module_entry)
 {
-
     _debug_output
 	( "%p module size: %d  name: %p  version: %p \n",
 	  az_module_entry,
@@ -1073,7 +983,6 @@ sym_dump_module( XmConst sym_module_entry_type *az_module_entry )
     _debug_output ("\n Comment: %s\n", az_module_entry->obj_header.az_comment);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1103,11 +1012,8 @@ sym_dump_module( XmConst sym_module_entry_type *az_module_entry )
 **
 **--
 **/
-
-void
-sym_dump_color_item( XmConst sym_color_item_entry_type *az_color_item_entry )
+void sym_dump_color_item(const sym_color_item_entry_type *az_color_item_entry)
 {
-
     _debug_output
 	( "%p color_item  size: %d  letter: %c  index: %d  color: %p  next: %p\n",
 	  az_color_item_entry,
@@ -1118,7 +1024,6 @@ sym_dump_color_item( XmConst sym_color_item_entry_type *az_color_item_entry )
 	  az_color_item_entry->az_next );
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1147,9 +1052,7 @@ sym_dump_color_item( XmConst sym_color_item_entry_type *az_color_item_entry )
 **
 **--
 **/
-
-void
-sym_dump_parent_list_item ( XmConst sym_parent_list_type *az_parent_list_item )
+void sym_dump_parent_list_item(const sym_parent_list_type *az_parent_list_item)
 {
     _debug_output
 	( "%p parent_list  size: %d  parent: %p  next: %p \n",
@@ -1159,7 +1062,6 @@ sym_dump_parent_list_item ( XmConst sym_parent_list_type *az_parent_list_item )
       az_parent_list_item->next);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1189,12 +1091,8 @@ sym_dump_parent_list_item ( XmConst sym_parent_list_type *az_parent_list_item )
 **
 **--
 **/
-
-void
-sym_dump_external_def(
-		    XmConst sym_external_def_entry_type *az_external_def_entry)
+void sym_dump_external_def(const sym_external_def_entry_type *az_external_def_entry)
 {
-
     _debug_output
 	( "%p external def  size: %d  next external: %p  object: %p \n",
 	  az_external_def_entry,
@@ -1203,7 +1101,6 @@ sym_dump_external_def(
 	  az_external_def_entry->az_name );
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1228,16 +1125,13 @@ sym_dump_external_def(
 **
 **  SIDE EFFECTS:
 **
-**      symbolic representation of the procedure definition appears as 
+**      symbolic representation of the procedure definition appears as
 **	part of the debug output
 **
 **--
 **/
-
-void
-sym_dump_proc_def( XmConst sym_proc_def_entry_type *az_proc_def_entry )
+void sym_dump_proc_def(const sym_proc_def_entry_type *az_proc_def_entry)
 {
-
     char    *private_flag;
     char    *imported_flag;
     char    *exported_flag;
@@ -1249,13 +1143,13 @@ sym_dump_proc_def( XmConst sym_proc_def_entry_type *az_proc_def_entry )
     checking_flag = " no-check";
 
     if (az_proc_def_entry->v_arg_checking)
-	checking_flag = " check";	
+	checking_flag = " check";
     if (az_proc_def_entry->obj_header.b_flags & sym_m_private)
-	private_flag = " private";	
+	private_flag = " private";
     if (az_proc_def_entry->obj_header.b_flags & sym_m_exported)
-	exported_flag = " exported";	
+	exported_flag = " exported";
     if (az_proc_def_entry->obj_header.b_flags & sym_m_imported)
-	imported_flag = " imported";	
+	imported_flag = " imported";
 
     _debug_output
 	( "%p proc def  size: %d  name: %p %s%s%s%s  count: %d  %s\n",
@@ -1273,7 +1167,6 @@ sym_dump_proc_def( XmConst sym_proc_def_entry_type *az_proc_def_entry )
     _debug_output ("\nComment: %s\n",az_proc_def_entry->obj_header.az_comment);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1298,16 +1191,13 @@ sym_dump_proc_def( XmConst sym_proc_def_entry_type *az_proc_def_entry )
 **
 **  SIDE EFFECTS:
 **
-**      symbolic representation of the procedure reference appears as 
+**      symbolic representation of the procedure reference appears as
 **	part of the debug output
 **
 **--
 **/
-
-void
-sym_dump_proc_ref( XmConst sym_proc_ref_entry_type *az_proc_ref_entry )
+void sym_dump_proc_ref(const sym_proc_ref_entry_type *az_proc_ref_entry)
 {
-
     sym_dump_obj_header ((sym_obj_entry_type *)az_proc_ref_entry);
 
     _debug_output
@@ -1318,7 +1208,6 @@ sym_dump_proc_ref( XmConst sym_proc_ref_entry_type *az_proc_ref_entry )
 	  az_proc_ref_entry->az_arg_value );
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1348,11 +1237,8 @@ sym_dump_proc_ref( XmConst sym_proc_ref_entry_type *az_proc_ref_entry )
 **
 **--
 **/
-
-void
-sym_dump_forward_ref(XmConst sym_forward_ref_entry_type *az_forward_ref_entry)
+void sym_dump_forward_ref(const sym_forward_ref_entry_type *az_forward_ref_entry)
 {
-
     _debug_output
 	( "%p forward ref  size: %d  next ref: %p  location: %p  %s  parent: %p\n",
 	  az_forward_ref_entry,
@@ -1368,7 +1254,6 @@ sym_dump_forward_ref(XmConst sym_forward_ref_entry_type *az_forward_ref_entry)
 	  az_forward_ref_entry->az_name->c_text );
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1398,11 +1283,8 @@ sym_dump_forward_ref(XmConst sym_forward_ref_entry_type *az_forward_ref_entry)
 **
 **--
 **/
-
-void
-sym_dump_value( XmConst sym_value_entry_type *az_value_entry )
+void sym_dump_value(const sym_value_entry_type *az_value_entry)
 {
-
     char    *private_flag;
     char    *imported_flag;
     char    *exported_flag;
@@ -1415,13 +1297,13 @@ sym_dump_value( XmConst sym_value_entry_type *az_value_entry )
     builtin_flag = "";
 
     if (az_value_entry->obj_header.b_flags & sym_m_builtin)
-	builtin_flag = " builtin";	
+	builtin_flag = " builtin";
     if (az_value_entry->obj_header.b_flags & sym_m_private)
-	private_flag = " private";	
+	private_flag = " private";
     if (az_value_entry->obj_header.b_flags & sym_m_exported)
-	exported_flag = " exported";	
+	exported_flag = " exported";
     if (az_value_entry->obj_header.b_flags & sym_m_imported)
-	imported_flag = " imported";	
+	imported_flag = " imported";
 
     _debug_output
 	( "%p value  size: %d  name: %p  %s%s%s%s",
@@ -1441,19 +1323,19 @@ sym_dump_value( XmConst sym_value_entry_type *az_value_entry )
     case sym_k_integer_value:
     case sym_k_horizontal_integer_value:
     case sym_k_vertical_integer_value:
-	_debug_output("  integer: %ld \n", 
+	_debug_output("  integer: %ld \n",
 		      az_value_entry->value.l_integer );
 	break;
 
     case sym_k_bool_value:
-	_debug_output("  boolean: %ld \n", 
+	_debug_output("  boolean: %ld \n",
 		      az_value_entry->value.l_integer );
 	break;
 
     case sym_k_float_value:
     case sym_k_horizontal_float_value:
     case sym_k_vertical_float_value:
-	_debug_output("  double: %g \n", 
+	_debug_output("  double: %g \n",
 		      az_value_entry->value.d_real);
 	break;
 
@@ -1478,7 +1360,7 @@ sym_dump_value( XmConst sym_value_entry_type *az_value_entry )
 
 	_debug_output("  color  type: %s", ptr );
 
-	output_text( az_value_entry->w_length, 
+	output_text( az_value_entry->w_length,
 		     az_value_entry->value.c_value);
 
 	break;
@@ -1498,13 +1380,13 @@ common_special_type:
 	if (az_value_entry->obj_header.b_flags & sym_m_builtin)
 	    _debug_output("  code: %ld \n", az_value_entry->value.l_integer );
 	else
-	    output_text( az_value_entry->w_length, 
+	    output_text( az_value_entry->w_length,
 			 az_value_entry->value.c_value);
 
 	break;
 
     case sym_k_compound_string_value:
-	_debug_output("  compound string\n  first component: %p\n", 
+	_debug_output("  compound string\n  first component: %p\n",
 		      az_value_entry->az_first_table_value );
 
 	if ( (az_value_entry->b_aux_flags & sym_m_table_entry) != 0 ) {
@@ -1517,11 +1399,11 @@ common_special_type:
 
     case sym_k_font_value:
     case sym_k_fontset_value:
-	if (az_value_entry->b_charset != sym_k_userdefined_charset) 
-	    _debug_output("  font  charset: %s", 
+	if (az_value_entry->b_charset != sym_k_userdefined_charset)
+	    _debug_output("  font  charset: %s",
 			  diag_charset_text( az_value_entry->b_charset ) );
 	else
-	    _debug_output("  font  charset: userdefined(%p)", 
+	    _debug_output("  font  charset: userdefined(%p)",
 			  diag_charset_text( (long)az_value_entry->az_charset_value ) );
 
 	goto check_for_table_value;
@@ -1529,19 +1411,19 @@ common_special_type:
 
       case sym_k_char_8_value:
       case sym_k_localized_string_value:
-	if (az_value_entry->b_charset != sym_k_userdefined_charset) 
+	if (az_value_entry->b_charset != sym_k_userdefined_charset)
 	    switch ( az_value_entry->b_direction )
 		{
 		case XmSTRING_DIRECTION_L_TO_R:
 		    _debug_output
-			("  string length: %d\n  charset: %s  L_TO_R", 
+			("  string length: %d\n  charset: %s  L_TO_R",
 			  az_value_entry->w_length,
 			  diag_charset_text(
 			      az_value_entry->b_charset ));
 		    break;
 		case XmSTRING_DIRECTION_R_TO_L:
 		    _debug_output
-			("  string length: %d\n  charset: %s  R_TO_L", 
+			("  string length: %d\n  charset: %s  R_TO_L",
 			  az_value_entry->w_length,
 			  diag_charset_text(
 			      az_value_entry->b_charset ));
@@ -1552,13 +1434,13 @@ common_special_type:
 		{
 		case XmSTRING_DIRECTION_L_TO_R:
 		    _debug_output
-			("  string length: %d\n  charset: userdefined(%p)  L_TO_R", 
+			("  string length: %d\n  charset: userdefined(%p)  L_TO_R",
 			  az_value_entry->w_length,
 			  az_value_entry->az_charset_value);
 		    break;
 		case XmSTRING_DIRECTION_R_TO_L:
 		    _debug_output
-			("  string length: %d\n  charset: userdefined(%p)  R_TO_L", 
+			("  string length: %d\n  charset: userdefined(%p)  R_TO_L",
 			  az_value_entry->w_length,
 			  az_value_entry->az_charset_value);
 		    break;
@@ -1583,7 +1465,7 @@ check_for_table_value:
 	break;
 
     case sym_k_icon_value:
-	_debug_output("  icon  width: %d  height: %d  colors: %p  rows: %p \n", 
+	_debug_output("  icon  width: %d  height: %d  colors: %p  rows: %p \n",
 		      az_value_entry->value.z_icon->w_width,
 		      az_value_entry->value.z_icon->w_height,
 		      az_value_entry->value.z_icon->az_color_table,
@@ -1642,7 +1524,6 @@ common_table:
     _debug_output ("\nComment: %s\n",az_value_entry->obj_header.az_comment);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1673,22 +1554,20 @@ common_table:
 **
 **--
 **/
-
-void
-output_text(XmConst int length, XmConst char *text)
+void output_text(const int length, const char *text)
 {
 
-    char    		c_buffer[ 71 ];
-    XmConst char	*c_ptr;
-    int	    		l_length;
+    char c_buffer[71];
+    const char *c_ptr;
+    int l_length;
 
     l_length = length;
 
     _debug_output( "\n" );
 
-    for (c_ptr = text;  
+    for (c_ptr = text;
 
-	 l_length > 0;  
+	 l_length > 0;
 
 	 l_length -= 70,
 	 c_ptr += 70)
@@ -1706,12 +1585,11 @@ output_text(XmConst int length, XmConst char *text)
 		c_buffer[ i ] = '.';
 	}
 
-	c_buffer[ last ] = 0;			
+	c_buffer[ last ] = 0;
 	_debug_output( "    \"%s\"\n", c_buffer );
     }
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1733,8 +1611,7 @@ output_text(XmConst int length, XmConst char *text)
 **
 **--
 **/
-void
-sym_dump_source_info (sym_entry_header_type *hdr)
+void sym_dump_source_info(sym_entry_header_type *hdr)
 {
     src_source_record_type *src_rec;
 
@@ -1748,10 +1625,8 @@ sym_dump_source_info (sym_entry_header_type *hdr)
 		hdr->b_end_pos);
     else
 	_debug_output ("  Src source record not present.\n");
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1772,11 +1647,8 @@ sym_dump_source_info (sym_entry_header_type *hdr)
 **
 **--
 **/
-
-void
-sym_dump_obj_header (XmConst sym_obj_entry_type *az_obj_entry)
+void sym_dump_obj_header(const sym_obj_entry_type *az_obj_entry)
 {
-
     _debug_output
 	( "%p %s  size: %d  \n",
 	  az_obj_entry,
@@ -1811,44 +1683,31 @@ sym_dump_obj_header (XmConst sym_obj_entry_type *az_obj_entry)
     _debug_output ("\n");
 }
 
-
-
-void
-sym_dump_include_file ( sym_include_file_entry_type *az_symbol_entry )
+void sym_dump_include_file(const sym_include_file_entry_type *az_symbol_entry)
 {
-
     _debug_output ("%p  include file  file name: %s  full file name: %s\n",
 	az_symbol_entry,
 	az_symbol_entry->file_name, az_symbol_entry->full_file_name);
 }
 
-
-
-void
-sym_dump_section ( sym_section_entry_type *az_symbol_entry )
+void sym_dump_section(const sym_section_entry_type *az_symbol_entry)
 {
     _debug_output ("%p  %s section  prev section : %p  next section: %p  entries: %p\n",
 	az_symbol_entry,
 	sym_section_text(az_symbol_entry->header.b_type),
-	az_symbol_entry->prev_section, az_symbol_entry->next, 
+	az_symbol_entry->prev_section, az_symbol_entry->next,
 	az_symbol_entry->entries);
 }
 
-
-
-void
-sym_dump_object_variant ( sym_def_obj_entry_type * az_symbol_entry )
+void sym_dump_object_variant(const sym_def_obj_entry_type * az_symbol_entry)
 {
     _debug_output ("%p  default obj var  next: %p  object info: %d, variant_info: %d\n",
 	az_symbol_entry,
-	az_symbol_entry->next, az_symbol_entry->b_object_info, 
+	az_symbol_entry->next, az_symbol_entry->b_object_info,
 	az_symbol_entry->b_variant_info);
 }
 
-
-
-void
-sym_dump_root_entry ( sym_root_entry_type *az_symbol_entry )
+void sym_dump_root_entry(const sym_root_entry_type *az_symbol_entry)
 {
     _debug_output (  "%p  root  tag: %d  module: %p  sections: %p\n  module tail: ",
 	az_symbol_entry,
@@ -1857,29 +1716,18 @@ sym_dump_root_entry ( sym_root_entry_type *az_symbol_entry )
 	az_symbol_entry->sections);
 }
 
-
-
-char *
-sym_section_text (int b_type)
+const char *sym_section_text(int b_type)
 {
     switch (b_type)
     {
-	case 0:
-	    return "";
-	case sym_k_list_section:
-	    return "list";
-	case sym_k_procedure_section:
-	    return "procedure";
-	case sym_k_value_section:
-	    return "value";
-	case sym_k_identifier_section:
-	    return "identifier";
-	case sym_k_object_section:
-	    return "object";
-	case sym_k_include_section:
-	    return "include";
-	case sym_k_section_tail:
-	    return "tail";
+	case 0:                        return "";
+	case sym_k_list_section:       return "list";
+	case sym_k_procedure_section:  return "procedure";
+	case sym_k_value_section:      return "value";
+	case sym_k_identifier_section: return "identifier";
+	case sym_k_object_section:     return "object";
+	case sym_k_include_section:    return "include";
+	case sym_k_section_tail:       return "tail";
 	default:
 	    return "*unknown*";
     }

@@ -484,8 +484,6 @@ extern boolean sem_control_allowed  _ARGUMENTS(( unsigned int ctl_code , unsigne
 extern boolean sem_child_allowed  _ARGUMENTS(( unsigned int ctl_code , unsigned int class_code ));
 extern sym_value_entry_type *sem_evaluate_value  _ARGUMENTS(( sym_value_entry_type *val_entry ));
 extern sym_value_entry_type *sem_evaluate_value_cs  _ARGUMENTS(( sym_value_entry_type *csval_entry ));
-/* BEGIN OSF Fix CR 4859 */
-/* END OSF Fix CR 4859 */
 extern sym_value_entry_type *sem_evaluate_value_expr  _ARGUMENTS(( sym_value_entry_type *value_entry ));
 extern int validate_arg  _ARGUMENTS(( sym_value_entry_type *operand_entry , int v_operator ));
 extern int sem_convert_to_float  _ARGUMENTS(( sym_value_entry_type *operand_entry , data_value_type *data_value ));
@@ -517,38 +515,43 @@ extern void sym_dump_hash_table  _ARGUMENTS(( void ));
 #endif
 
 /* uilsymstor.c */
-extern void sym_initialize_storage  _ARGUMENTS(( void ));
-extern void Uil_sym_cleanup_storage  _ARGUMENTS(( boolean freealloc ));
-extern void sym_make_external_def  _ARGUMENTS(( const sym_name_entry_type *az_name ));
-extern void sym_make_forward_ref  _ARGUMENTS(( const yystype *az_id_frame , const int l_widget_type , const char *a_location ));
-extern void sym_make_value_forward_ref  _ARGUMENTS(( const yystype *az_value_frame , const char *a_location , const unsigned char fwd_ref_flags ));
-extern void UilDumpSymbolTable  _ARGUMENTS(( sym_entry_type *node_entry ));
-extern void sym_dump_symbols  _ARGUMENTS(( void ));
-extern void sym_dump_symbol  _ARGUMENTS(( sym_entry_type *az_symbol_entry ));
-extern void sym_dump_widget  _ARGUMENTS(( const sym_widget_entry_type *az_widget_entry ));
-extern void sym_dump_argument  _ARGUMENTS(( const sym_argument_entry_type *az_argument_entry ));
-extern void sym_dump_control  _ARGUMENTS(( const sym_control_entry_type *az_control_entry ));
-extern void sym_dump_callback  _ARGUMENTS(( const sym_callback_entry_type *az_callback_entry ));
-extern void sym_dump_list  _ARGUMENTS(( const sym_list_entry_type *az_list_entry ));
-extern void sym_dump_name  _ARGUMENTS(( const sym_name_entry_type *az_name_entry ));
-extern void sym_dump_module  _ARGUMENTS(( const sym_module_entry_type *az_module_entry ));
-extern void sym_dump_color_item  _ARGUMENTS(( const sym_color_item_entry_type *az_color_item_entry ));
-extern void sym_dump_parent_list_item  _ARGUMENTS(( const sym_parent_list_type *az_parent_list_item ));
-extern void sym_dump_external_def  _ARGUMENTS(( const sym_external_def_entry_type *az_external_def_entry ));
-extern void sym_dump_proc_def  _ARGUMENTS(( const sym_proc_def_entry_type *az_proc_def_entry ));
-extern void sym_dump_proc_ref  _ARGUMENTS(( const sym_proc_ref_entry_type *az_proc_ref_entry ));
-extern void sym_dump_forward_ref  _ARGUMENTS(( const sym_forward_ref_entry_type *az_forward_ref_entry ));
-extern void sym_dump_value  _ARGUMENTS(( const sym_value_entry_type *az_value_entry ));
-extern void output_text  _ARGUMENTS(( const int length , const char *text ));
-extern void sym_dump_source_info  _ARGUMENTS(( sym_entry_header_type *hdr ));
-extern void sym_dump_obj_header  _ARGUMENTS(( const sym_obj_entry_type *az_obj_entry ));
-extern void sym_dump_include_file  _ARGUMENTS(( sym_include_file_entry_type *az_symbol_entry ));
-extern void sym_dump_section  _ARGUMENTS(( sym_section_entry_type *az_symbol_entry ));
-extern void sym_dump_object_variant  _ARGUMENTS(( sym_def_obj_entry_type *az_symbol_entry ));
-extern void sym_dump_root_entry  _ARGUMENTS(( sym_root_entry_type *az_symbol_entry ));
-extern char *sym_section_text  _ARGUMENTS(( int b_type ));
-extern void dump_free_list  _ARGUMENTS(( void ));
-extern int sar_get_units_type (yystype *parse_frame);
+extern void sym_initialize_storage(void);
+extern void Uil_sym_cleanup_storage(boolean freealloc);
+extern void sym_make_external_def(const sym_name_entry_type *az_name);
+extern void sym_make_forward_ref(const yystype *az_id_frame,
+                                 const int l_widget_type,
+                                 const char *a_location);
+extern void sym_make_value_forward_ref(const yystype *az_value_frame,
+                                       const char *a_location,
+                                       const unsigned char fwd_ref_flags);
+extern void UilDumpSymbolTable(sym_entry_type *node_entry);
+extern void sym_dump_symbols(void);
+extern void sym_dump_symbol(sym_entry_type *az_symbol_entry);
+extern void sym_dump_widget(const sym_widget_entry_type *az_widget_entry);
+extern void sym_dump_argument(const sym_argument_entry_type *az_argument_entry);
+extern void sym_dump_control(const sym_control_entry_type *az_control_entry);
+extern void sym_dump_callback(const sym_callback_entry_type *az_callback_entry);
+extern void sym_dump_list(const sym_list_entry_type *az_list_entry);
+extern void sym_dump_name(const sym_name_entry_type *az_name_entry);
+extern void sym_dump_module(const sym_module_entry_type *az_module_entry);
+extern void sym_dump_color_item(const sym_color_item_entry_type *az_color_item_entry);
+extern void sym_dump_parent_list_item(const sym_parent_list_type *az_parent_list_item);
+extern void sym_dump_external_def(const sym_external_def_entry_type *az_external_def_entry);
+extern void sym_dump_proc_def(const sym_proc_def_entry_type *az_proc_def_entry);
+extern void sym_dump_proc_ref(const sym_proc_ref_entry_type *az_proc_ref_entry);
+extern void sym_dump_forward_ref(const sym_forward_ref_entry_type *az_forward_ref_entry);
+extern void sym_dump_value(const sym_value_entry_type *az_value_entry);
+extern void output_text(const int length, const char *text);
+extern void sym_dump_source_info(sym_entry_header_type *hdr);
+extern void sym_dump_obj_header(const sym_obj_entry_type *az_obj_entry);
+extern void sym_dump_include_file(const sym_include_file_entry_type *az_symbol_entry);
+extern void sym_dump_section(const sym_section_entry_type *az_symbol_entry);
+extern void sym_dump_object_variant(const sym_def_obj_entry_type *az_symbol_entry);
+extern void sym_dump_root_entry(const sym_root_entry_type *az_symbol_entry);
+extern const char *sym_section_text(int b_type);
+extern void dump_free_list(void);
+extern int sar_get_units_type(yystype *parse_frame);
+
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif
