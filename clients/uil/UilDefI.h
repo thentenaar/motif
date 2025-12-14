@@ -449,34 +449,56 @@ extern sym_proc_ref_entry_type *sem_reference_procedure(yystype *id_frame, const
 extern sym_entry_type *sem_ref_name(yystype *id_frame, const int tag);
 
 /* uilsarval.c */
-extern void sar_map_keyword_to_name  _ARGUMENTS(( yystype *target_frame , yystype *keyword_frame ));
-extern void sar_process_id  _ARGUMENTS(( yystype *target_frame , yystype *id_frame ));
-extern void sar_process_id_ref  _ARGUMENTS(( yystype *id_frame ));
-extern void sar_make_private_value  _ARGUMENTS(( yystype *value_frame , yystype *token_frame , int value_type , yystype *keyword_frame , int arg_type ));
-extern void sar_make_rgb_private_value  _ARGUMENTS(( yystype *value_frame , yystype *token_frame , int value_type , yystype *keyword_frame , int arg_type ));
-extern void sar_append_table_value  _ARGUMENTS(( yystype *value_frame , yystype *table_frame , int table_type , yystype *comma_frame ));
-extern void sar_value_not_implemented  _ARGUMENTS(( yystype *value_frame , yystype *token_frame , char *error_text ));
-extern void sar_cat_value  _ARGUMENTS(( yystype *operator_frame , yystype *op1_frame , yystype *op2_frame ));
-extern void sar_chk_comp_str_attr  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *prior_value_frame ));
-extern void sar_make_comp_str  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *attr_frame , yystype *keyword_frame ));
-extern void sar_make_comp_str_comp _ARGUMENTS((yystype *target_frame, yystype *type_frame, yystype *value_frame, yystype *keyword_frame));
-extern void sar_make_wchar_str  _ARGUMENTS(( yystype *target_frame , yystype *value_frame , yystype *attr_frame , yystype *keyword_frame ));
-extern void sar_value_type_error  _ARGUMENTS(( yystype *value_frame , int expected_type ));
-extern void sar_private_error  _ARGUMENTS(( yystype *value_frame ));
-extern void sar_import_value_entry  _ARGUMENTS(( yystype *target_frame , yystype *token_frame ));
-extern void sar_bind_value_name  _ARGUMENTS(( yystype *id_frame , yystype *value_frame , yystype *semi_frame ));
-extern sym_name_entry_type *sem_dcl_name  _ARGUMENTS(( const yystype *id_frame ));
-extern sym_value_entry_type *sem_create_value_entry  _ARGUMENTS(( char *value , int length , int value_type ));
-extern void sar_create_identifier  _ARGUMENTS(( const yystype *id_frame , const yystype *semi_frame ));
-extern void sar_make_font_table  _ARGUMENTS(( yystype *target_frame , yystype *font_frame , yystype *prior_target_frame , yystype *keyword_frame ));
-extern void sar_make_font_item  _ARGUMENTS(( yystype *target_frame , yystype *charset_frame , yystype *font_frame ));
-extern void sar_make_font  _ARGUMENTS(( yystype *target_frame , yystype *charset_frame , yystype *value_frame , yystype *keyword_frame ));
-extern void sar_make_fontset  _ARGUMENTS(( yystype *target_frame , yystype *charset_frame , yystype *value_frame , yystype *keyword_frame ));
-extern void sar_make_color_item  _ARGUMENTS(( yystype *target_frame , yystype *color_frame , yystype *letter_frame ));
-extern void sar_append_color_item  _ARGUMENTS(( yystype *target_frame , yystype *item_frame , yystype *prior_target_frame ));
-extern void sar_make_color_table  _ARGUMENTS(( yystype *target_frame , yystype *list_frame , yystype *keyword_frame ));
-extern void sar_make_color  _ARGUMENTS(( yystype *target_frame , yystype *color_frame , yystype *mono_frame , yystype *keyword_frame ));
-extern void sar_make_icon  _ARGUMENTS(( yystype *target_frame , yystype *list_frame , yystype *table_frame , yystype *keyword_frame ));
+extern void sar_map_keyword_to_name(yystype *target_frame, yystype *keyword_frame);
+extern void sar_process_id(yystype *target_frame, yystype *id_frame);
+extern void sar_process_id_ref(yystype *id_frame);
+extern void sar_make_private_value(yystype *value_frame,
+                                   yystype *token_frame, int value_type,
+                                   yystype *keyword_frame, int arg_type);
+extern void sar_make_rgb_private_value(yystype *value_frame, yystype *token_frame,
+                                       int value_type, yystype *keyword_frame,
+                                       int arg_type);
+extern void sar_append_table_value(yystype *value_frame, yystype *table_frame,
+                                   int table_type, yystype *comma_frame);
+extern void sar_value_not_implemented(yystype *value_frame, yystype *token_frame,
+                                      const char *error_text);
+extern void sar_cat_value(yystype *operator_frame, yystype *op1_frame,
+                          yystype *op2_frame);
+extern void sar_chk_comp_str_attr(yystype *target_frame, yystype *value_frame,
+                                  yystype *prior_value_frame);
+extern void sar_make_comp_str(yystype *target_frame, yystype *value_frame,
+                              yystype *attr_frame, yystype *keyword_frame);
+extern void sar_make_comp_str_comp(yystype *target_frame, yystype *type_frame,
+                                   yystype *value_frame, yystype *keyword_frame);
+extern void sar_make_wchar_str(yystype *target_frame, yystype *value_frame,
+                               yystype *attr_frame, yystype *keyword_frame);
+extern void sar_value_type_error(yystype *value_frame, int expected_type);
+extern void sar_private_error(yystype *value_frame);
+extern void sar_import_value_entry(yystype *target_frame, yystype *token_frame);
+extern void sar_bind_value_name(yystype *id_frame, yystype *value_frame,
+                                yystype *semi_frame);
+extern sym_name_entry_type *sem_dcl_name(const yystype *id_frame);
+extern sym_value_entry_type *sem_create_value_entry(char *value, int length,
+                                                    int value_type);
+extern void sar_create_identifier(const yystype *id_frame, const yystype *semi_frame);
+extern void sar_make_font_table(yystype *target_frame, yystype *font_frame,
+                                yystype *prior_target_frame, yystype *keyword_frame);
+extern void sar_make_font_item(yystype *target_frame, yystype *charset_frame,
+                               yystype *font_frame);
+extern void sar_make_font(yystype *target_frame, yystype *charset_frame,
+                          yystype *value_frame, yystype *keyword_frame);
+extern void sar_make_fontset(yystype *target_frame, yystype *charset_frame,
+                             yystype *value_frame, yystype *keyword_frame);
+extern void sar_make_color_item(yystype *target_frame, yystype *color_frame,
+                                yystype *letter_frame);
+extern void sar_append_color_item(yystype *target_frame, yystype *item_frame,
+                                  yystype *prior_target_frame);
+extern void sar_make_color_table(yystype *target_frame, yystype *list_frame,
+                                 yystype *keyword_frame);
+extern void sar_make_color(yystype *target_frame, yystype *color_frame,
+                           yystype *mono_frame, yystype *keyword_frame);
+extern void sar_make_icon(yystype *target_frame, yystype *list_frame,
+                          yystype *table_frame, yystype *keyword_frame);
 
 /* uilsemcset.c */
 extern char *sem_charset_name  _ARGUMENTS(( int l_charset , sym_value_entry_type *az_charset_entry ));
