@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilLstMac.c /main/15 1997/03/12 15:21:48 dbl $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilLstMac.c /main/15 1997/03/12 15:21:48 dbl $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -44,18 +44,8 @@ static char rcsid[] = "$TOG: UilLstMac.c /main/15 1997/03/12 15:21:48 dbl $"
 **--
 **/
 
-
-/*
-**
-**  INCLUDE FILES
-**
-**/
-
-
-
 #include <Mrm/MrmAppl.h>
 #include <X11/Xmd.h>		/* For 64-bit architecture dependencies */
-
 
 #ifdef DXM_V11
 #include <DXm/DXmHelpB.h>
@@ -107,13 +97,8 @@ static int		off_info_cnt = 0;
 #define _Offset(type,base,field)    \
         ((unsigned int)(base + XtOffsetOf(type, field)))
 
-#if defined(__STDC__)
 #define _OffsetArray(type,base,field)    \
         ((unsigned int)(base + XtOffsetOf(type, field)))
-#else
-#define _OffsetArray(type,base,field)    \
-        ((unsigned int)(base + XtOffsetOf(type, field[0])))
-#endif
 #define	_Pointer(base,offset) ((char *)(base)+(offset))
 
 #define ASNHEADERLEN 3
@@ -124,28 +109,6 @@ static int		off_info_cnt = 0;
 			(unsigned short)((a)[ASNHEADERLEN+2]))+3 : \
 		       ((unsigned short)((a)[ASNHEADERLEN]))+1))
 
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -176,14 +139,9 @@ static int		off_info_cnt = 0;
 **
 **--
 **/
-
-void		save_widget_machine_code ( widget_entry, az_context )
-
-sym_widget_entry_type	* widget_entry;
-URMResourceContext	* az_context;
-
+void save_widget_machine_code(sym_widget_entry_type *widget_entry,
+                              URMResourceContext *az_context)
 {
-
     RGMWidgetRecordPtr		w_rec;
     char			buffer [132];
     unsigned short int		w_rec_size;
@@ -353,9 +311,8 @@ URMResourceContext	* az_context;
 		buffer );
 
     unload_stack(( char *) w_rec, w_rec_size, az_src_rec );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -381,14 +338,8 @@ URMResourceContext	* az_context;
 **
 **--
 **/
-void	unload_stack( rec, rec_size, az_src_rec )
-
-char			*rec;
-int			rec_size;
-src_source_record_type	*az_src_rec;
-
+void unload_stack(char *rec, int rec_size, src_source_record_type *az_src_rec)
 {
-
     char			buffer [132], * ptr;
     int				child_index = 0;
 
@@ -410,7 +361,7 @@ src_source_record_type	*az_src_rec;
 			strlen (ptr) + 1, ptr, NULL );
 		break;
 	    }
-	    
+
 	    case k_unknown_off : {
 
 		unsigned short int	len;
@@ -434,7 +385,7 @@ src_source_record_type	*az_src_rec;
 			len, ptr, NULL );
 		break;
 	    }
-	    
+
 	    case k_arglist_off : {
 
 		RGMArgListDescPtr	argdesc;
@@ -715,7 +666,7 @@ src_source_record_type	*az_src_rec;
 			buffer );
 
 		sprintf (buffer, "resource type: %s",
-			(r_desc_ptr->res_group == URMgLiteral) ? 
+			(r_desc_ptr->res_group == URMgLiteral) ?
 				type_from_code (r_desc_ptr->cvt_type) :
 				class_name_from_code (r_desc_ptr->cvt_type) );
 
@@ -867,7 +818,7 @@ src_source_record_type	*az_src_rec;
     src_append_machine_code ( az_src_rec, 0, 0, 0, 0 );
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -898,12 +849,8 @@ src_source_record_type	*az_src_rec;
 **
 **--
 **/
-
-void		save_value_machine_code ( value_entry, az_context )
-
-sym_value_entry_type	* value_entry;
-URMResourceContext	* az_context;
-
+void save_value_machine_code(sym_value_entry_type *value_entry,
+                             URMResourceContext *az_context)
 {
     src_source_record_type	* az_src_rec;
     char			buffer [132], * rc_buffer;
@@ -948,7 +895,7 @@ URMResourceContext	* az_context;
     rc_buffer = UrmRCBuffer (az_context);
     rc_size = UrmRCSize (az_context);
 
-    /* 
+    /*
     **	Case on the type of literal.
     */
 
@@ -974,7 +921,7 @@ URMResourceContext	* az_context;
 		az_src_rec, 0, rc_size, rc_buffer, buffer );
 	    break;
 
-	case sym_k_integer_table_value: 
+	case sym_k_integer_table_value:
 	case sym_k_rgb_value:  /* rgb data type RAP */
 	    {
 	    int index = 0;
@@ -984,9 +931,9 @@ URMResourceContext	* az_context;
 		{
 		sprintf (buffer, "value[%d]: %ld",
 			 index, ((unsigned long *) rc_buffer)[index] );
-		
+
 		src_append_machine_code
-		    (az_src_rec, 0, sizeof(int), 
+		    (az_src_rec, 0, sizeof(int),
 		     (char*)&(((unsigned long *)rc_buffer)[index]), buffer );
 		}
 	    break;
@@ -1069,7 +1016,7 @@ URMResourceContext	* az_context;
 			char *stringPtr = (char *) _Pointer (rc_buffer,off_offset);
 			src_append_machine_code (az_src_rec, off_offset,
 						 ASNstrlen( stringPtr ),
-						 stringPtr, NULL );	    
+						 stringPtr, NULL );
 		      }
 			break;
 
@@ -1082,7 +1029,7 @@ URMResourceContext	* az_context;
 				"end of text vector" );
 
 			break;
-	    
+
 		    case k_text_entry_off :
 
 			te_ptr = (RGMTextEntryPtr)
@@ -1129,7 +1076,7 @@ URMResourceContext	* az_context;
 		az_src_rec, 0, rc_size, rc_buffer, NULL );
 
 	    break;
-	    
+
 	default: {
 
 	    sprintf (buffer, "unknown value");
@@ -1144,9 +1091,8 @@ URMResourceContext	* az_context;
     }
 
     src_append_machine_code ( az_src_rec, 0, 0, 0, 0 );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1176,14 +1122,9 @@ URMResourceContext	* az_context;
 **
 **--
 **/
-
-void		save_module_machine_code ( az_src_rec, az_context )
-
-src_source_record_type	* az_src_rec;
-URMResourceContext	* az_context;
-
+void save_module_machine_code(src_source_record_type *az_src_rec,
+                              URMResourceContext *az_context)
 {
-
     RGMModuleDescPtr		m_rec;
     RGMTopmostDescPtr		t_rec;
     char			buffer [132];
@@ -1225,9 +1166,8 @@ URMResourceContext	* az_context;
     }	/* for */
 
     src_append_machine_code ( az_src_rec, 0, 0, 0, 0 );
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1261,11 +1201,7 @@ URMResourceContext	* az_context;
 **
 **--
 **/
-
-void	off_put 
-
-	(unsigned short off_type, unsigned short off_offset)
-
+void off_put(unsigned short off_type, unsigned short off_offset)
 {
     off_info_type	off_info, * off_info_ptr;
     int			i;
@@ -1292,9 +1228,8 @@ void	off_put
 
     (* off_info_ptr) = off_info;
     off_info_cnt++;
-
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1328,12 +1263,7 @@ void	off_put
 **
 **--
 **/
-
-void	off_get (off_type, off_offset)
-
-unsigned short		* off_type;
-unsigned short		* off_offset;
-
+void off_get(unsigned short *off_type, unsigned short *off_offset)
 {
     off_info_type	* off_info_ptr;
 
@@ -1349,12 +1279,7 @@ unsigned short		* off_offset;
     (* off_offset) = off_info_ptr->w_off_offset;
 
     off_info_cnt--;
-
 }
-
-char * type_from_code 
-
-	(MrmType type_code)
 
 /*
  *++
@@ -1385,78 +1310,42 @@ char * type_from_code
  *
  *--
  */
-
+const char *type_from_code(MrmType type_code)
 {
-
-    switch (type_code)
-	{
-	case MrmRtypeInteger:
-	    return uil_datatype_names[sym_k_integer_value];
-	case MrmRtypeHorizontalInteger:
-	    return uil_datatype_names[sym_k_horizontal_integer_value];
-	case MrmRtypeVerticalInteger:
-	    return uil_datatype_names[sym_k_vertical_integer_value];
-	case MrmRtypeBoolean:
-	    return uil_datatype_names[sym_k_bool_value];
-	case MrmRtypeChar8:
-	    return uil_datatype_names[sym_k_char_8_value];
-	case MrmRtypeChar8Vector:
-	    return uil_datatype_names[sym_k_asciz_table_value];
-	case MrmRtypeCString:
-	    return uil_datatype_names[sym_k_compound_string_value];
-	case MrmRtypeCStringVector:
-	    return uil_datatype_names[sym_k_string_table_value];
-	case MrmRtypeFloat:
-	    return uil_datatype_names[sym_k_float_value];
-	case MrmRtypeHorizontalFloat:
-	    return uil_datatype_names[sym_k_horizontal_float_value];
-	case MrmRtypeVerticalFloat:
-	    return uil_datatype_names[sym_k_vertical_float_value];
+	switch (type_code) {
+	case MrmRtypeInteger:           return uil_datatype_names[sym_k_integer_value];
+	case MrmRtypeHorizontalInteger: return uil_datatype_names[sym_k_horizontal_integer_value];
+	case MrmRtypeVerticalInteger:   return uil_datatype_names[sym_k_vertical_integer_value];
+	case MrmRtypeBoolean:           return uil_datatype_names[sym_k_bool_value];
+	case MrmRtypeChar8:             return uil_datatype_names[sym_k_char_8_value];
+	case MrmRtypeChar8Vector:       return uil_datatype_names[sym_k_asciz_table_value];
+	case MrmRtypeCString:           return uil_datatype_names[sym_k_compound_string_value];
+	case MrmRtypeCStringVector:     return uil_datatype_names[sym_k_string_table_value];
+	case MrmRtypeFloat:             return uil_datatype_names[sym_k_float_value];
+	case MrmRtypeHorizontalFloat:   return uil_datatype_names[sym_k_horizontal_float_value];
+	case MrmRtypeVerticalFloat:     return uil_datatype_names[sym_k_vertical_float_value];
 	case MrmRtypeSingleFloat: /* single float data type RAP */
-	    return uil_datatype_names[sym_k_single_float_value];
-	case MrmRtypeCallback:
-	    return "callback";
-	case MrmRtypePixmapImage:
-	    return "pixmap image";
-	case MrmRtypePixmapDDIF:
-	    return "pixmap DDIF";
-	case MrmRtypeResource:
-	    return "resource";
-	case MrmRtypeAddrName:
-	    return "addr name";
-	case MrmRtypeIconImage:
-	    return uil_datatype_names[sym_k_icon_value];
-	case MrmRtypeFont:
-	    return uil_datatype_names[sym_k_font_value];
-	case MrmRtypeFontSet:
-	    return uil_datatype_names[sym_k_fontset_value];
-	case MrmRtypeFontList:
-	    return uil_datatype_names[sym_k_font_table_value];
-	case MrmRtypeColor:
-	    return uil_datatype_names[sym_k_color_value];
-	case MrmRtypeColorTable:
-	    return uil_datatype_names[sym_k_color_table_value];
-	case MrmRtypeAny:
-	    return uil_datatype_names[sym_k_any_value];
-	case MrmRtypeTransTable:
-	    return uil_datatype_names[sym_k_trans_table_value];
-	case MrmRtypeClassRecName:
-	    return uil_datatype_names[sym_k_class_rec_name_value];
-	case MrmRtypeIntegerVector:
-	    return uil_datatype_names[sym_k_integer_table_value];
-	case MrmRtypeXBitmapFile:
-	    return uil_datatype_names[sym_k_xbitmapfile_value];
-	  case MrmRtypeKeysym:
-	    return uil_datatype_names[sym_k_keysym_value];
-	default:
-	    return "unknown";
-    }
-
+	                                return uil_datatype_names[sym_k_single_float_value];
+	case MrmRtypeCallback:          return "callback";
+	case MrmRtypePixmapImage:       return "pixmap image";
+	case MrmRtypePixmapDDIF:        return "pixmap DDIF";
+	case MrmRtypeResource:          return "resource";
+	case MrmRtypeAddrName:          return "addr name";
+	case MrmRtypeIconImage:         return uil_datatype_names[sym_k_icon_value];
+	case MrmRtypeFont:              return uil_datatype_names[sym_k_font_value];
+	case MrmRtypeFontSet:           return uil_datatype_names[sym_k_fontset_value];
+	case MrmRtypeFontList:          return uil_datatype_names[sym_k_font_table_value];
+	case MrmRtypeColor:             return uil_datatype_names[sym_k_color_value];
+	case MrmRtypeColorTable:        return uil_datatype_names[sym_k_color_table_value];
+	case MrmRtypeAny:               return uil_datatype_names[sym_k_any_value];
+	case MrmRtypeTransTable:        return uil_datatype_names[sym_k_trans_table_value];
+	case MrmRtypeClassRecName:      return uil_datatype_names[sym_k_class_rec_name_value];
+	case MrmRtypeIntegerVector:     return uil_datatype_names[sym_k_integer_table_value];
+	case MrmRtypeXBitmapFile:       return uil_datatype_names[sym_k_xbitmapfile_value];
+	case MrmRtypeKeysym:            return uil_datatype_names[sym_k_keysym_value];
+	default:                        return "unknown";
+	}
 }
-
-char * access_from_code 
-
-	(MrmFlag access_code)
 
 /*
  *++
@@ -1487,20 +1376,14 @@ char * access_from_code
  *
  *--
  */
-
+const char *access_from_code(MrmFlag access_code)
 {
-
-    switch (access_code) {
-	case URMaPublic:	return "public"; 
-	case URMaPrivate:	return "private"; 
-	default:		return "unknown"; 
-    }
-
+	switch (access_code) {
+	case URMaPublic:  return "public";
+	case URMaPrivate: return "private";
+	default:          return "unknown";
+	}
 }
-
-char * group_from_code 
-
-	(MrmGroup group_code)
 
 /*
  *++
@@ -1531,23 +1414,15 @@ char * group_from_code
  *
  *--
  */
-
+const char *group_from_code(MrmGroup group_code)
 {
-
-    switch (group_code) {
-	case URMgWidget:	return "widget"; 
-	case URMgLiteral:	return "literal"; 
-	case URMgResourceSet:	return "resource set"; 
-	default:		return "unknown"; 
-    }
-
+	switch (group_code) {
+	case URMgWidget:      return "widget";
+	case URMgLiteral:     return "literal";
+	case URMgResourceSet: return "resource set";
+	default:              return "unknown";
+	}
 }
-
-
-void format_arg_value (argval_ptr, buffer)
-
-RGMArgValuePtr		argval_ptr;
-char			* buffer;
 
 /*
  *++
@@ -1576,9 +1451,8 @@ char			* buffer;
  *
  *--
  */
-
+void format_arg_value(RGMArgValuePtr argval_ptr, char *buffer)
 {
-
     switch ( argval_ptr->rep_type ) {
 
 	case MrmRtypeInteger:
@@ -1632,13 +1506,7 @@ char			* buffer;
 	    sprintf (buffer, "value unknown");
 	    break;
     }
-
 }
-
-
-char * class_name_from_code 
-
-	(MrmCode class)
 
 /*
  *++
@@ -1669,9 +1537,8 @@ char * class_name_from_code
  *
  *--
  */
-
+const char *class_name_from_code(MrmCode class)
 {
-
 int		sym_code;
 
 
@@ -1686,11 +1553,6 @@ for ( sym_code=sym_k_error_object+1;
 return "unknown";
 
 }
-
-
-char * resource_name_from_code 
-
-	(MrmCode resource)
 
 /*
  *++
@@ -1721,9 +1583,8 @@ char * resource_name_from_code
  *
  *--
  */
-
+const char *resource_name_from_code(MrmCode resource)
 {
-
 int		sym_code;
 
 

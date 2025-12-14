@@ -297,18 +297,21 @@ extern void lst_output_message_ptr_line(src_source_record_type *az_src_rec,
                                         const char *src_buffer);
 
 /* uillstmac.c */
-extern void save_widget_machine_code  _ARGUMENTS(( sym_widget_entry_type *widget_entry , URMResourceContext *az_context ));
-extern void unload_stack  _ARGUMENTS(( char *rec , int rec_size , src_source_record_type *az_src_rec ));
-extern void save_value_machine_code  _ARGUMENTS(( sym_value_entry_type *value_entry , URMResourceContext *az_context ));
-extern void save_module_machine_code  _ARGUMENTS(( src_source_record_type *az_src_rec , URMResourceContext *az_context ));
-extern void off_put  _ARGUMENTS(( unsigned short off_type , unsigned short off_offset ));
-extern void off_get  _ARGUMENTS(( unsigned short *off_type , unsigned short *off_offset ));
-extern char *type_from_code  _ARGUMENTS(( MrmType type_code ));
-extern char *access_from_code  _ARGUMENTS(( MrmFlag access_code ));
-extern char *group_from_code  _ARGUMENTS(( MrmGroup group_code ));
-extern void format_arg_value  _ARGUMENTS(( RGMArgValuePtr argval_ptr , char *buffer ));
-extern char *class_name_from_code  _ARGUMENTS(( MrmCode mrm_class ));
-extern char *resource_name_from_code  _ARGUMENTS(( MrmCode resource ));
+extern void save_widget_machine_code(sym_widget_entry_type *widget_entry,
+                                     URMResourceContext *az_context);
+extern void unload_stack(char *rec, int rec_size, src_source_record_type *az_src_rec);
+extern void save_value_machine_code(sym_value_entry_type *value_entry,
+                                    URMResourceContext *az_context);
+extern void save_module_machine_code(src_source_record_type *az_src_rec,
+                                     URMResourceContext *az_context);
+extern void off_put(unsigned short off_type, unsigned short off_offset);
+extern void off_get(unsigned short *off_type, unsigned short *off_offset);
+extern const char *type_from_code(MrmType type_code);
+extern const char *access_from_code(MrmFlag access_code);
+extern const char *group_from_code(MrmGroup group_code);
+extern void format_arg_value(RGMArgValuePtr argval_ptr, char *buffer);
+extern const char *class_name_from_code(MrmCode mrm_class);
+extern const char *resource_name_from_code(MrmCode resource);
 
 /* uilmain.c */
 extern void uil_exit(int severity);
