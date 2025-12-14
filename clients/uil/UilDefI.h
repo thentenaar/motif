@@ -393,16 +393,18 @@ extern void sar_unary_op(yystype *operator_frame, yystype *op1_frame);
 extern void sar_include_file(yystype *file_frame, yystype *include_frame, yystype *semi_frame);
 
 /* uilsarmod.c */
-extern void sar_initialize  _ARGUMENTS(( void ));
-extern void sar_create_root  _ARGUMENTS(( yystype *root_frame ));
-extern void sar_create_module  _ARGUMENTS(( yystype *target_frame , yystype *id_frame , yystype *module_frame ));
-extern void sar_process_module_version  _ARGUMENTS(( yystype *value_frame , yystype *start_frame ));
-extern void sar_process_module_sensitivity  _ARGUMENTS(( yystype *token_frame , yystype *start_frame ));
-extern void sar_process_module_charset  _ARGUMENTS(( yystype *token_frame , yystype *start_frame ));
-extern void sar_save_module_source  _ARGUMENTS(( void ));
-extern void sar_make_def_obj  _ARGUMENTS(( yystype *object_frame ));
-extern void sar_process_module_variant  _ARGUMENTS(( yystype *obj_type_frame , yystype *variant_frame ));
-extern void sar_save_section_source  _ARGUMENTS(( yystype *header_frame , int section_type ));
+extern void sar_initialize(void);
+extern void sar_create_root(yystype *root_frame);
+extern void sar_create_module(yystype *target_frame, yystype *id_frame,
+                              yystype *module_frame);
+extern void sar_process_module_version(yystype *value_frame, yystype *start_frame);
+extern void sar_process_module_sensitivity(yystype *token_frame, yystype *start_frame);
+extern void sar_process_module_charset(yystype *token_frame, yystype *start_frame);
+extern void sar_save_module_source(void);
+extern void sar_make_def_obj(yystype *object_frame);
+extern void sar_process_module_variant(yystype *obj_type_frame,
+                                       yystype *variant_frame);
+extern void sar_save_section_source(yystype *header_frame, int section_type);
 
 /* uilsarobj.c */
 extern void sar_assoc_comment  _ARGUMENTS(( sym_obj_entry_type    *object ));

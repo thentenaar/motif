@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSarMod.c /main/13 1997/03/12 15:21:36 dbl $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilSarMod.c /main/13 1997/03/12 15:21:36 dbl $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -50,29 +50,13 @@ static char rcsid[] = "$TOG: UilSarMod.c /main/13 1997/03/12 15:21:36 dbl $"
 **  INCLUDE FILES
 **
 **/
-
 #include "UilDefI.h"
-
-/*
-**
-**  TABLE OF CONTENTS
-**
-*/
-
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
 
 /*
 **
 **  EXTERNAL VARIABLE DECLARATIONS
 **
 **/
-
 extern   yystype			yylval;
 
 
@@ -84,7 +68,7 @@ extern   yystype			yylval;
 
 externaldef(uil_comp_glbl) src_source_record_type
 	*src_az_module_source_record;
-externaldef(uil_comp_glbl) unsigned short int	
+externaldef(uil_comp_glbl) unsigned short int
 	*uil_urm_variant = NULL;
 externaldef(uil_comp_glbl) unsigned short int
 	*uil_arg_compr = NULL;
@@ -110,7 +94,6 @@ unsigned int	module_clauses;
 
 #define m_after_names		(m_charset_clause)
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -136,17 +119,14 @@ unsigned int	module_clauses;
 **
 **  SIDE EFFECTS:
 **
-**      global variables are initialized 
+**      global variables are initialized
 **
 **--
 **/
-
-void	sar_initialize ()
-
+void sar_initialize(void)
 {
 int		i;	/* loop index */
 
-/* BEGIN OSF Fix CR 5443 */
 /* Initialize uil_sym_default_charset based on XmFALLBACK_CHARSET */
 if (strcmp(XmFALLBACK_CHARSET, "ISO8859-1") != 0) /* Most common case. */
   for (i = 0; i < (int)charset_lang_table_max; i++)
@@ -155,7 +135,6 @@ if (strcmp(XmFALLBACK_CHARSET, "ISO8859-1") != 0) /* Most common case. */
 	uil_sym_default_charset = charset_lang_codes_table[i];
 	break;
       }
-/* END OSF Fix CR 5443 */
 
 /*
  * Allocate vectors for the variant and usage vectors if they are NULL,
@@ -179,7 +158,7 @@ if ( uil_child_compr == NULL )
  **	Loop throught the array of object variants and set them all to NULL.
  */
 for (i = 0; i<uil_max_object+1; i++)
-    uil_urm_variant[i] = 0;   
+    uil_urm_variant[i] = 0;
 
 /*
  ** Initialize all compression vectors
@@ -194,7 +173,7 @@ for ( i=0 ; i<uil_max_child+1 ; i++ )
     uil_child_compr[i] = 0;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -228,11 +207,7 @@ for ( i=0 ; i<uil_max_child+1 ; i++ )
 **
 **--
 **/
-
-void	sar_create_root (root_frame)
-
-yystype	    *root_frame;
-
+void sar_create_root(yystype *root_frame)
 {
     /*
     ** Allocate the symbol nodes
@@ -267,10 +242,8 @@ yystype	    *root_frame;
     root_frame->b_tag = sar_k_root_frame;
     root_frame->b_type = sym_k_root_entry;
     root_frame->value.az_symbol_entry = (sym_entry_type *)sym_az_root_entry;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -301,13 +274,8 @@ yystype	    *root_frame;
 **
 **--
 **/
-
-void	sar_create_module(target_frame, id_frame, module_frame)
-
-yystype	    *target_frame;
-yystype	    *id_frame;
-yystype	    *module_frame;
-
+void sar_create_module(yystype *target_frame, yystype *id_frame,
+                       yystype *module_frame)
 {
     sym_name_entry_type	    *name_entry;
 
@@ -328,7 +296,7 @@ yystype	    *module_frame;
     _sar_save_source_pos (&sym_az_module_entry->header, module_frame);
 
     /* preserve module header comments */
-    sar_assoc_comment ((sym_obj_entry_type *)sym_az_module_entry);  
+    sar_assoc_comment ((sym_obj_entry_type *)sym_az_module_entry);
 
     /*
     ** Hang the module entry off the root entry
@@ -360,8 +328,8 @@ yystype	    *module_frame;
     */
 
     if (Uil_cmd_z_command.v_listing_file)
-	sprintf(Uil_lst_c_title2, 
-		"Module: %s", 
+	sprintf(Uil_lst_c_title2,
+		"Module: %s",
 		name_entry->c_text );
 
     /*
@@ -370,7 +338,7 @@ yystype	    *module_frame;
 
     module_clauses = 0;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -399,12 +367,7 @@ yystype	    *module_frame;
 **
 **--
 **/
-
-void	sar_process_module_version (value_frame, start_frame)
-
-yystype	    *value_frame;
-yystype	    *start_frame;
-
+void sar_process_module_version(yystype *value_frame, yystype *start_frame)
 {
     sym_value_entry_type    *value_entry = NULL;
 
@@ -431,7 +394,7 @@ yystype	    *start_frame;
 
     else
 	{
-	value_entry = (sym_value_entry_type *) 
+	value_entry = (sym_value_entry_type *)
 	    value_frame->value.az_symbol_entry;
 
 	if (value_entry->w_length > 31)
@@ -460,14 +423,14 @@ yystype	    *start_frame;
     */
 
     if (Uil_cmd_z_command.v_listing_file)
-	sprintf(Uil_lst_c_title2, 
-		"Module: %s \t Version: %s", 
+	sprintf(Uil_lst_c_title2,
+		"Module: %s \t Version: %s",
 		sym_az_module_entry->obj_header.az_name->c_text,
 		value_entry->value.c_value );
 
     module_clauses |= m_version_clause;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -496,12 +459,7 @@ yystype	    *start_frame;
 **
 **--
 **/
-
-void	sar_process_module_sensitivity (token_frame, start_frame)
-
-yystype	    *token_frame;
-yystype	    *start_frame;
-
+void sar_process_module_sensitivity(yystype *token_frame, yystype *start_frame)
 {
     _assert( token_frame->b_tag == sar_k_token_frame, "token frame missing" );
 
@@ -544,7 +502,7 @@ yystype	    *start_frame;
 
     module_clauses |= m_names_clause;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -574,12 +532,7 @@ yystype	    *start_frame;
 **
 **--
 **/
-
-void	sar_process_module_charset(token_frame , start_frame)
-
-yystype	    *token_frame;
-yystype	    *start_frame;
-
+void sar_process_module_charset(yystype *token_frame, yystype *start_frame)
 {
     sym_value_entry_type	*value_entry = NULL;
 
@@ -614,7 +567,7 @@ yystype	    *start_frame;
 				 token_frame->value.az_keyword_entry->b_length, sym_k_char_8_value );
 	    break;
 	    }
-     
+
 	case sar_k_value_frame:
 	    {
 	    Uil_lex_l_user_default_charset = lex_k_userdefined_charset;
@@ -626,7 +579,7 @@ yystype	    *start_frame;
 
     /* If charset specified for module, then localized strings not allowed */
     Uil_lex_l_localized = FALSE;
-    
+
     module_clauses |= m_charset_clause;
     sym_az_module_entry->az_character_set = value_entry;
 
@@ -637,7 +590,7 @@ yystype	    *start_frame;
     _sar_save_source_info ( &value_entry->header , start_frame , token_frame);
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -667,16 +620,11 @@ yystype	    *start_frame;
 **
 **--
 **/
-
-void	sar_save_module_source ()
-
+void sar_save_module_source(void)
 {
-
     src_az_module_source_record = yylval.az_source_record;
-
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -686,7 +634,7 @@ void	sar_save_module_source ()
 **
 **  FORMAL PARAMETERS:
 **
-**      object_frame	ptr to token frame for "OBJECT" 
+**      object_frame	ptr to token frame for "OBJECT"
 **
 **  IMPLICIT INPUTS:
 **
@@ -706,11 +654,7 @@ void	sar_save_module_source ()
 **
 **--
 **/
-
-void	sar_make_def_obj (object_frame)
-
-yystype	    *object_frame;
-
+void sar_make_def_obj(yystype *object_frame)
 {
 sym_def_obj_entry_type	*def_obj_entry;
 
@@ -725,7 +669,6 @@ sym_az_module_entry->az_def_obj = def_obj_entry;
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -760,14 +703,9 @@ sym_az_module_entry->az_def_obj = def_obj_entry;
 **
 **--
 **/
-
-void	sar_process_module_variant  (obj_type_frame, variant_frame)
-
-yystype	    *obj_type_frame;
-yystype	    *variant_frame;
-
+void sar_process_module_variant(yystype *obj_type_frame,
+                                yystype *variant_frame)
 {
-
     unsigned int		obj_type, obj_variant;
     yystype			*source_frame;
     sym_def_obj_entry_type	*def_obj_entry;
@@ -816,7 +754,7 @@ yystype	    *variant_frame;
     def_obj_entry->b_variant_info = obj_variant;
 
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -848,12 +786,7 @@ yystype	    *variant_frame;
 **
 **--
 */
-
-void	sar_save_section_source (header_frame, section_type)
-
-yystype	    *header_frame;
-int	    section_type;
-
+void sar_save_section_source(yystype *header_frame, int section_type)
 {
     sym_section_entry_type	*section_entry;
 
@@ -875,5 +808,5 @@ int	    section_type;
     section_entry->next = (sym_entry_type *) sym_az_current_section_entry;
     section_entry->prev_section = sym_az_current_section_entry->prev_section;
     sym_az_current_section_entry = section_entry;
-
 }
+
