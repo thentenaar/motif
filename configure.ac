@@ -225,6 +225,7 @@ clients/Makefile \
 clients/mwm/Makefile \
 clients/mwm/WmWsmLib/Makefile \
 clients/uil/Makefile \
+clients/uil/XmAppl.uil \
 clients/xmbind/Makefile \
 config/Makefile \
 config/util/Makefile \

@@ -1,4 +1,4 @@
-! 
+!
 ! Motif
 !
 ! Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,24 +19,24 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 !******************************************************************************
 !++
 ! FACILITY:
-! 
+!
 !	UIL -- Include file for Xm constant definitions.
-! 
+!
 ! ABSTRACT:
-! 
-!	This include file contains UIL value definintions corresponding 
+!
+!	This include file contains UIL value definintions corresponding
 !	to those defined in Xm.h
-! 
+!
 !--
 
 /* Version information */
-value	XmVERSION :			2;
-value	XmREVISION :			3;
-value	XmVersion :			(XmVERSION * 1000 + XmREVISION);
+value	XmVERSION : @XM_MAJOR@;
+value	XmREVISION : @XM_MINOR@;
+value	XmVersion : (XmVERSION * 1000 + XmREVISION);
 
 
 /* XmString definitions */

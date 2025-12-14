@@ -1,9 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in Uil.cat UilMsgCatI.h
 
 EXTRA_DIST = Uil.msg
-#
-# I don't seem to have all the pieces to make this thing
-#
 bin_PROGRAMS = uil
 
 libUil_la_LDFLAGS = -version-info @ABI_VERSION@
@@ -32,7 +29,7 @@ UilLexPars.c: $(top_builddir)/tools/wml/Uil.c
 
 BUILT_SOURCES = UilParser.c UilLexPars.c UilDBDef.h
 
-CLEANFILES = UilParser.c UilLexPars.c UilDBDef.h
+CLEANFILES = UilParser.c UilLexPars.c UilDBDef.h XmAppl.uil
 
 COMMON_SRC =	UilCmd.c	UilDiags.c	UilKeyTab.c	UilLexAna.c  \
 		UilLexPars.c	UilLstLst.c	UilP2Out.c	UilP2Reslv.c \

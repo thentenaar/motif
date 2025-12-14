@@ -44,6 +44,7 @@ clients/uil/uil
 clients/uil/UilDBDef.h
 clients/uil/UilLexPars.c
 clients/uil/UilParser.c
+clients/uil/XmAppl.uil
 clients/xmbind/xmbind
 demos/doc/programGuide/ch05/Scale/tic_mark
 demos/doc/programGuide/ch06/combo_box/combo_box
