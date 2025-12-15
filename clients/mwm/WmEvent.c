@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+ */
+
+/*
  * Motif Release 1.2.4
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -70,8 +71,9 @@ static char rcsid[] = "$XConsortium: WmEvent.c /main/7 1996/11/20 15:27:47 rswis
 #include "WmParseP.h"
 #endif /* PANELIST */
 
+/* XXX: _XmGetMenuState is obsolete */
 #include <Xm/RowColumnP.h> /* for MS_LastManagedMenuTime */
-extern XmMenuState _XmGetMenuState();
+extern XmMenuState _XmGetMenuState(Widget);
 
 #ifdef WSM
 /*
@@ -146,36 +148,36 @@ void InitEventHandling (void)
     {
 	pSD = &(wmGD.Screens[scr]);
 
-        if (pSD->managed) 
+        if (pSD->managed)
         {
 	    setAttributes.event_mask = base_mask;
 
 	    if (pSD->buttonBindings)
 	    {
 		/*
-		 * The desktop menu and button bindings for window 
-		 * manager functions use button press and button 
+		 * The desktop menu and button bindings for window
+		 * manager functions use button press and button
 		 * release events.
 		 */
-		setAttributes.event_mask |= 
+		setAttributes.event_mask |=
 		    (ButtonPressMask | ButtonReleaseMask);
 	    }
 
-            XChangeWindowAttributes (DISPLAY, pSD->rootWindow, 
+            XChangeWindowAttributes (DISPLAY, pSD->rootWindow,
                 CWEventMask, &setAttributes);
 
 
 	    /*
-	     * Setup event handling for "accelerated" window management 
+	     * Setup event handling for "accelerated" window management
 	     * functions done with key bindings.
 	     */
 
             if (pSD->keySpecs)
             {
-        	SetupKeyBindings (pSD->keySpecs, pSD->rootWindow, 
+        	SetupKeyBindings (pSD->keySpecs, pSD->rootWindow,
 		    GrabModeSync, F_CONTEXT_ALL);
             }
-        
+
 	    if (pSD->acceleratorMenuCount)
 	    {
 		for (n = 0; n < pSD->acceleratorMenuCount; n++)
@@ -214,7 +216,7 @@ void InitEventHandling (void)
  *  -------
  *  pointer to a NULL-terminated list of modifier masks. This memory is
  *  statically allocated and reused. Do no free or modify. Make a copy
- *  if you need to keep it. 
+ *  if you need to keep it.
  *
  *************************************<->***********************************/
 
@@ -234,11 +236,11 @@ _WmGrabMasks ( unsigned int modifiers, int *pnum_masks )
     /* insure we have enough space for our returned masks */
     if ((pRetMasks == NULL) || (len_ret_masks < num_masks+2))
     {
-	if (pRetMasks != NULL) 
+	if (pRetMasks != NULL)
 			XtFree ((char *)pRetMasks);
 
 	len_ret_masks = num_masks+2;
-	pRetMasks = (unsigned int *) 
+	pRetMasks = (unsigned int *)
 			XtCalloc (len_ret_masks, sizeof(unsigned int));
     }
 
@@ -317,7 +319,7 @@ WmGrabKey (
 	Window		grab_window,
 	Bool		owner_events,
 	int		pointer_mode,
-	int		keyboard_mode 
+	int		keyboard_mode
 	  )
 {
     unsigned int	*pGrabMasks;
@@ -349,7 +351,7 @@ WmGrabKey (
  *
  *  Inputs:
  *  ------
- *  display		- X server connection 
+ *  display		- X server connection
  *  button		- button to grab
  *  modifiers		- keymask of modifiers
  *  grab_window		- window to do grab on
@@ -402,7 +404,7 @@ WmGrabButton (
  *
  *  Description:
  *  -----------
- *  This function is the complement of WmGrabButton. It does several 
+ *  This function is the complement of WmGrabButton. It does several
  *  ungrabs on a button to undo the set of grabs done to ignore
  *  the state of locking modifiers.
  *
@@ -412,7 +414,7 @@ WmGrabButton (
  *
  *  Inputs:
  *  ------
- *  display		- X server connection 
+ *  display		- X server connection
  *  button		- button to grab
  *  modifiers		- keymask of modifiers
  *  grab_window		- window to do grab on
@@ -429,7 +431,7 @@ WmUngrabButton (
 	Display		*display,
 	unsigned int	button,
 	unsigned int	modifiers,
-	Window		grab_window 
+	Window		grab_window
 	  )
 {
     unsigned int	*pGrabMasks;
@@ -526,9 +528,9 @@ int SetupKeyBindings (KeySpec *keySpecs, Window grabWindow, int keyboardMode, lo
  *  Description:
  *  -----------
  *  This function detects and processes events that affect menu behavior that
- *  are NOT dispatched (processed) by the toolkit.  The events may cause the 
- *  menu to be unposted, may trigger hotspot processing, or may represent 
- *  menu accelerators.  This processing is generally done when the system 
+ *  are NOT dispatched (processed) by the toolkit.  The events may cause the
+ *  menu to be unposted, may trigger hotspot processing, or may represent
+ *  menu accelerators.  This processing is generally done when the system
  *  menu is posted in "sticky" mode.
  *
  *
@@ -564,7 +566,7 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
 	   /*
 	    * Check to see if the KeyPress is a menu accelerator
 	    * (don't require context match for system menu accelerators).
-	    * If so, the active menu will be unposted and the KeyPress event 
+	    * If so, the active menu will be unposted and the KeyPress event
 	    * will not be sent on to the toolkit.
 	    */
 
@@ -594,9 +596,9 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
 	    /* Begin fixing CR 5227 */
 	    keySpecs = wmGD.menuActive->accelKeySpecs;
 	    keyEvent = (XKeyEvent *)event;
-	    menuBtnPtr = wmGD.menuActive->menuButtons + 
+	    menuBtnPtr = wmGD.menuActive->menuButtons +
 	                 (wmGD.menuActive->menuButtonSize - 1);
-  
+
 	    while (keySpecs)
 	      {
                 if ((keyEvent->keycode == keySpecs->keycode) &&
@@ -604,18 +606,18 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
 		    (NOLOCKMOD(keyEvent->state) == keySpecs->state))
                    && ((!checkContext) || (context & keySpecs->context)))
                  {
-                    doXtDispatchEvent =  
+                    doXtDispatchEvent =
                             XtIsSensitive(menuBtnPtr->buttonWidget);
                     break;
-                 } 
+                 }
                  keySpecs = keySpecs->nextKeySpec;
                  menuBtnPtr--;
-                } 
-     
+                }
+
 	    doXtDispatchEvent = doXtDispatchEvent &&
-		HandleKeyPress ((XKeyEvent *)event, 
+		HandleKeyPress ((XKeyEvent *)event,
 				wmGD.menuActive->accelKeySpecs,
-				checkContext, context, 
+				checkContext, context,
 				TRUE, (ClientData *)NULL);
         }
 
@@ -645,7 +647,7 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
                  * This is a key spec to traverse to the next window
                  * via the keyboard.
                  */
-		
+
                 UnpostMenu (wmGD.menuActive);
                 doXtDispatchEvent = False;
             }
@@ -660,7 +662,7 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
                  * This is a key spec to traverse to the previous window
                  * via the keyboard.
                  */
-		
+
                 UnpostMenu (wmGD.menuActive);
                 doXtDispatchEvent = False;
             }
@@ -669,16 +671,16 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
     }
 
     else if (wmGD.checkHotspot &&
-	     ((event->type == ButtonPress) || 
+	     ((event->type == ButtonPress) ||
 	      (event->type == ButtonRelease)) &&
 	     (event->x_root >= wmGD.hotspotRectangle.x) &&
 	     (event->y_root >= wmGD.hotspotRectangle.y) &&
-	     (event->x_root < (wmGD.hotspotRectangle.x + 
+	     (event->x_root < (wmGD.hotspotRectangle.x +
 	                       (short) wmGD.hotspotRectangle.width)) &&
-	     (event->y_root < (wmGD.hotspotRectangle.y + 
+	     (event->y_root < (wmGD.hotspotRectangle.y +
 	                       (short) wmGD.hotspotRectangle.height))&&
 #ifdef WSM
-	     (pCD || 
+	     (pCD ||
 	      (wmGD.rootButtonClick && wmGD.clickData.clickPending)))
 #else /* WSM */
 	     pCD)
@@ -686,13 +688,13 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
     {
 	/*   ^^^
 	 * Added check for NULL pCD in the above condition.
-	 * We should never get here with a NULL pCD, but, 
+	 * We should never get here with a NULL pCD, but,
 	 * sometimes our UnmapCallback for a menu does not
 	 * get called, so..., we get to this point because
-	 * wmGD.menuActive is not cleared, but, wmGD.menuClient 
+	 * wmGD.menuActive is not cleared, but, wmGD.menuClient
 	 * is set to NULL when we unmanage the client window.
 	 */
-	
+
 	/*
 	 * The event triggers hotspot processing for the system menu button
 	 * or an icon.
@@ -728,11 +730,11 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
 #endif
 #ifdef WSM
           }
-	  else if ((!wmGD.clickData.pCD) && 
+	  else if ((!wmGD.clickData.pCD) &&
 	      (((XButtonEvent *)event)->button == wmGD.clickData.button) &&
-	      ((((XButtonEvent *)event)->state == 
+	      ((((XButtonEvent *)event)->state ==
 				wmGD.clickData.releaseState) ||
-	       (NOLOCKMOD(((XButtonEvent *)event)->state) == 
+	       (NOLOCKMOD(((XButtonEvent *)event)->state) ==
 				wmGD.clickData.releaseState)))
 	  {
 	      /*
@@ -742,17 +744,17 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
 	       */
 		Time timeDiff;
 
-		/* 
-		 * Check click time 
+		/*
+		 * Check click time
 		 */
 		 if (((XButtonEvent *)event)->time > wmGD.clickData.time)
 		 {
-		   timeDiff = 
+		   timeDiff =
 		     ((XButtonEvent *)event)->time - wmGD.clickData.time;
 		 }
 		 else
 		 {
-		   timeDiff = 
+		   timeDiff =
 		     ~wmGD.clickData.time + ((XButtonEvent *)event)->time + 1;
 		 }
 
@@ -834,7 +836,7 @@ Boolean WmDispatchMenuEvent (XButtonEvent *event)
                 /*
                  * Raise the Window and Normalize
                  */
-		
+
                 UnpostMenu (pCD->systemMenuSpec);
 		F_Restore_And_Raise ((String)NULL, pCD, (XEvent *)NULL);
 /*		F_Normalize_And_Raise ((String)NULL, pCD, (XEvent *)NULL);
@@ -990,7 +992,7 @@ Boolean WmDispatchWsEvent (XEvent *event)
 		(pSD = GetScreenForWindow (event->xmaprequest.window)))
 	    {
 	        /*
-                 * The window is not yet managed and it's parented to a 
+                 * The window is not yet managed and it's parented to a
 		 * screen/root window that we manage. Start to manage the
 		 * new window.  Management details are dependent on the
 		 * type of the window.  For a typical top-level application
@@ -1062,8 +1064,8 @@ Boolean HandleWsKeyPress (XKeyEvent *keyEvent)
     {
 	/*
 	 *  The active menu accelerators have been checked and keyEvent was
-	 *  not one of them.  We will check for pass keys mode and then 
-	 *  have the toolkit dispatch the event, without searching any other 
+	 *  not one of them.  We will check for pass keys mode and then
+	 *  have the toolkit dispatch the event, without searching any other
 	 *  key or accelerator specification list.
 	 */
 
@@ -1100,7 +1102,7 @@ Boolean HandleWsKeyPress (XKeyEvent *keyEvent)
 
 
     /*
-     * Search through the key specification list and the menu 
+     * Search through the key specification list and the menu
      * accelerator lists until these lists are exhausted or
      * the event is handled.
      */
@@ -1127,7 +1129,7 @@ Boolean HandleWsKeyPress (XKeyEvent *keyEvent)
 	    context = F_CONTEXT_ROOT;
         }
 
-        if (HandleKeyPress (keyEvent, ACTIVE_PSD->keySpecs, 
+        if (HandleKeyPress (keyEvent, ACTIVE_PSD->keySpecs,
 	                    TRUE, context, FALSE, (ClientData *)NULL) &&
 	    ACTIVE_PSD->acceleratorMenuCount)
 	{
@@ -1135,7 +1137,7 @@ Boolean HandleWsKeyPress (XKeyEvent *keyEvent)
 			 (n < ACTIVE_PSD->acceleratorMenuCount)); n++)
 	    {
 	        if (!HandleKeyPress (keyEvent,
-		     ACTIVE_PSD->acceleratorMenuSpecs[n]->accelKeySpecs, 
+		     ACTIVE_PSD->acceleratorMenuSpecs[n]->accelKeySpecs,
 				 TRUE, context, TRUE,(ClientData *)NULL))
 	        {
 		    break;
@@ -1185,11 +1187,11 @@ Boolean HandleWsKeyPress (XKeyEvent *keyEvent)
  *
  *************************************<->***********************************/
 
-Boolean HandleKeyPress (XKeyEvent *keyEvent, 
-			KeySpec *keySpecs, 
-			Boolean checkContext, 
-			Context context, 
-			Boolean onlyFirst, 
+Boolean HandleKeyPress (XKeyEvent *keyEvent,
+			KeySpec *keySpecs,
+			Boolean checkContext,
+			Context context,
+			Boolean onlyFirst,
 			ClientData *pCD)
 {
   Boolean     processKey = True;
@@ -1213,7 +1215,7 @@ Boolean HandleKeyPress (XKeyEvent *keyEvent,
 	       * A matching key binding has been found.
 	       * Determine the client to which the key binding function is to
 	       *   apply.
-	       * Unpost any active menu and specify that no futher key binding 
+	       * Unpost any active menu and specify that no futher key binding
 	       *   processing should be done.
 	       * Do the function associated with the matching key binding.
 	       * Stop if onlyFirst == TRUE
@@ -1282,7 +1284,7 @@ Boolean HandleKeyPress (XKeyEvent *keyEvent,
 	  /* Fix for 3117 -- If the keypress looks as if it had been intended
 	   *                 for the application, send it back.
 	   */
-	  
+
 	  else if ((context & (F_CONTEXT_WINDOW)) &&
 		   (keySpecs->context & F_CONTEXT_ROOT))
 	    {
@@ -1343,7 +1345,7 @@ void HandleWsButtonPress (XButtonEvent *buttonEvent)
 	/* no managed window under the pointer */
 	pCD = NULL;
     }
-    
+
 
     /*
      * Look through the window manager function button binding list for
@@ -1392,7 +1394,7 @@ void HandleWsButtonPress (XButtonEvent *buttonEvent)
  *  Inputs:
  *  ------
  *  buttonEvent = pointer to a button release event
- * 
+ *
  *************************************<->***********************************/
 
 void HandleWsButtonRelease (XButtonEvent *buttonEvent)
@@ -1416,7 +1418,7 @@ void HandleWsButtonRelease (XButtonEvent *buttonEvent)
 	/* no managed window under the pointer */
 	pCD = NULL;
     }
-    
+
 
     /*
      * Look for a builtin function that may be done by this event.
@@ -1582,7 +1584,7 @@ Boolean CheckForButtonAction (XButtonEvent *buttonEvent, Context context, Contex
  *
  *  Description:
  *  -----------
- *  This function identifies the context in which an event occured.  The 
+ *  This function identifies the context in which an event occured.  The
  *  pointer position is used to identify the context if the event is a
  *  button event.  If the context and the window state are incompatible
  *  (e.g., the context is window and the window is minimized) then the
@@ -1595,7 +1597,7 @@ Boolean CheckForButtonAction (XButtonEvent *buttonEvent, Context context, Contex
  *
  *  pCD = client data (maybe NULL) that the event is associated with
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pContext = event context
@@ -1613,7 +1615,7 @@ void IdentifyEventContext (XButtonEvent *event, ClientData *pCD, Context *pConte
     int framePart;
 
 
-    eventOnRoot = (event->window == ACTIVE_ROOT) ? 
+    eventOnRoot = (event->window == ACTIVE_ROOT) ?
 				True : False;
 
     if (pCD)
@@ -1717,7 +1719,7 @@ void IdentifyEventContext (XButtonEvent *event, ClientData *pCD, Context *pConte
  *
  *  subContext = subcontext for the event (title, system button, etc.)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  (wmGD.clickData) = click processing information
@@ -1779,7 +1781,7 @@ void ProcessClickBPress (XButtonEvent *buttonEvent, ClientData *pCD, Context con
      * setting up clickData.
      */
 
-    if ((buttonEvent->button == SELECT_BUTTON) && 
+    if ((buttonEvent->button == SELECT_BUTTON) &&
 	((buttonEvent->state == 0) ||
 	 (NOLOCKMOD(buttonEvent->state) == 0)))
     {
@@ -1838,13 +1840,13 @@ void ProcessClickBPress (XButtonEvent *buttonEvent, ClientData *pCD, Context con
  *
  *  (wmGD.clickData) = click processing information
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  (wmGD.clickData) = click processing information
  *
  *  (wmGD.clickData.clickContext) = set if click occured
- * 
+ *
  *************************************<->***********************************/
 
 void ProcessClickBRelease (XButtonEvent *buttonEvent, ClientData *pCD, Context context, Context subContext)
@@ -1858,7 +1860,7 @@ void ProcessClickBRelease (XButtonEvent *buttonEvent, ClientData *pCD, Context c
     {
 	PopGadgetOut(pCD, wmGD.gadgetDepressed);
     }
-	
+
 
     /*
      * Check to see if a click has been done.
@@ -1894,7 +1896,7 @@ void ProcessClickBRelease (XButtonEvent *buttonEvent, ClientData *pCD, Context c
  *
  *  Description:
  *  -----------
- *  This function handles client message events that are sent to the 
+ *  This function handles client message events that are sent to the
  *  wm window.  The window manager action that is taken depends on the
  *  message_type of the event.
  *
@@ -1902,7 +1904,7 @@ void ProcessClickBRelease (XButtonEvent *buttonEvent, ClientData *pCD, Context c
  *  Inputs:
  *  ------
  *  clientEvent = pointer to a client message event on the wm window
- * 
+ *
  *************************************<->***********************************/
 
 void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
@@ -1911,7 +1913,7 @@ void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
     /*
      * Process the client message event based on the message_type.
      */
-    
+
     if (clientEvent->message_type == wmGD.xa_DT_SM_WM_PROTOCOL)
     {
 	if (clientEvent->data.l[0] == wmGD.xa_DT_SM_START_ACK_WINDOWS)
@@ -1933,7 +1935,7 @@ void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
 		if (wmGD.Screens[scr].managed)
 		{
 		    /*
-		     * Write out current workspace, frontpanel 
+		     * Write out current workspace, frontpanel
 		     * position and iconbox position and size.
 		     */
 		    SaveResources(&wmGD.Screens[scr]);
@@ -1941,7 +1943,7 @@ void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
 	    } /*  for loop */
 	    XSetCommand(DISPLAY, wmGD.commandWindow, 0, 0);
 
-	} /* WM_SAVE_YOURSELF */     
+	} /* WM_SAVE_YOURSELF */
     } /* WM_PROTOCOLS */
 } /* END OF FUNCTION HandleDtWmClientMessage */
 
@@ -1953,7 +1955,7 @@ void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
  *
  *  Description:
  *  -----------
- *  This function processes _DT_WM_REQUESTs that come in from 
+ *  This function processes _DT_WM_REQUESTs that come in from
  *  other clients
  *
  *
@@ -1964,14 +1966,14 @@ void HandleDtWmClientMessage (XClientMessageEvent *clientEvent)
  *
  *  Comments:
  *  ---------
- *  This reuses the global parse buffer. It assumes that no parsing 
- *  is in progress. All parsing of the config file must be completed 
- *  before we call this routine. 
+ *  This reuses the global parse buffer. It assumes that no parsing
+ *  is in progress. All parsing of the config file must be completed
+ *  before we call this routine.
  *
  *
  *************************************<->***********************************/
 
-void 
+void
 HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 {
     Boolean more = True;
@@ -2000,11 +2002,11 @@ HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 	    ctxDisallowed = F_CONTEXT_ROOT;
 	    if (wmGD.requestContextWin != (Window) 0L)
 	    {
-		if (!XFindContext (DISPLAY, wmGD.requestContextWin, 
+		if (!XFindContext (DISPLAY, wmGD.requestContextWin,
 					wmGD.windowContextType,
 					(caddr_t *)&pCD))
 		{
-		    /* 
+		    /*
 		     * A valid client window was specified
 		     * in a previous F_Set_Context request.
 		     * Remove the restriction to root-only context.
@@ -2015,14 +2017,14 @@ HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 	    sRequest = XtNewString (pchReq);
 	    _DtWmParseSetLine (wmGD.pWmPB, (unsigned char *)sRequest);
 	    lineP = wmGD.pWmPB->pchLine;
-            iFuncIndex = ParseWmFunction (&lineP, CRS_BUTTON|CRS_KEY, 
+            iFuncIndex = ParseWmFunction (&lineP, CRS_BUTTON|CRS_KEY,
 		&wmFunction);
 
 	    if (iFuncIndex != F_NOP_INDEX)
 	    {
 		if (functionTable[iFuncIndex].greyedContext & ctxDisallowed)
 		{
-		    /* 
+		    /*
 		     * Sorry, we have to disallow this function request
 		     * based on context problems.
 		     */
@@ -2037,8 +2039,8 @@ HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 		if ((*(functionTable [iFuncIndex].parseProc))
 			   (&lineP, wmFunction, &wmFuncArgs))
 		{
-		    /* 
-		     * Found it in the function table! 
+		    /*
+		     * Found it in the function table!
 		     * Apply the function.
 		     */
 		    wmFunction (wmFuncArgs, pCD, NULL);
@@ -2102,12 +2104,12 @@ HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 
 		    /* get pixmap id */
 		    pch = strtok (NULL, " ");
-		    if (pch) 
+		    if (pch)
 		    {
-			sscanf (pch, "%lx", &pixmap);  
+			sscanf (pch, "%lx", &pixmap);
 			SetNewBackdrop (ACTIVE_WS, pixmap, (String)pchFile);
 		    }
-		    else 
+		    else
 		    {
 			Warning (((char *)GETMESSAGE(32, 4, "Missing pixmap id for backdrop change request.")));
 		    }
@@ -2173,7 +2175,7 @@ void HandleWsEnterNotify (XEnterWindowEvent *enterEvent)
      * The root window was entered; do focus processing
      * if necessary:
      */
-    
+
 
     if (!wmGD.menuActive &&
 	((enterEvent->mode == NotifyNormal) ||
@@ -2182,7 +2184,7 @@ void HandleWsEnterNotify (XEnterWindowEvent *enterEvent)
     {
         if (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_POINTER)
 	{
-	    Do_Focus_Key ((ClientData *) NULL, enterEvent->time, 
+	    Do_Focus_Key ((ClientData *) NULL, enterEvent->time,
 			ALWAYS_SET_FOCUS);
 	}
 	else if ((wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_EXPLICIT) &&
@@ -2196,7 +2198,7 @@ void HandleWsEnterNotify (XEnterWindowEvent *enterEvent)
 	     * window.
 	     */
 
-	    Do_Focus_Key ((ClientData *) NULL, enterEvent->time, 
+	    Do_Focus_Key ((ClientData *) NULL, enterEvent->time,
 	    		ALWAYS_SET_FOCUS);
 	}
 
@@ -2273,7 +2275,7 @@ void HandleWsLeaveNotify (XLeaveWindowEvent *leaveEvent)
 	    wmGD.queryScreen = True;
 
 	    /* set input focus to pointer root */
-	    XSetInputFocus (DISPLAY, PointerRoot, 
+	    XSetInputFocus (DISPLAY, PointerRoot,
 		RevertToPointerRoot, leaveEvent->time);
 	}
     }
@@ -2503,7 +2505,7 @@ void HandleWsFocusIn (XFocusInEvent *focusEvent)
                         /* has been replaced by pCD which seems to fix the icon */
                         /* focus problem.                                       */
                         /* Another related patch is made in WmCEvent.c.         */
-		        Do_Focus_Key ((ClientData *) pCD, GetTimestamp(), 
+		        Do_Focus_Key ((ClientData *) pCD, GetTimestamp(),
 					ALWAYS_SET_FOCUS);
 		    }
 		}
@@ -2538,7 +2540,7 @@ void HandleWsFocusIn (XFocusInEvent *focusEvent)
  *  -------
  *  Return = a timestamp value
  *
- *  Comment: 
+ *  Comment:
  *  --------
  *  This costs a server round-trip
  *
@@ -2554,15 +2556,15 @@ Time GetTimestamp (void)
     /*
      * Do zero-length append to our own WM_STATE
      */
-    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin, wmGD.xa_WM_STATE, 
-	wmGD.xa_WM_STATE, 32, PropModeAppend, 
+    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin, wmGD.xa_WM_STATE,
+	wmGD.xa_WM_STATE, 32, PropModeAppend,
 	(unsigned char *)&property, 0);
 
     /*
      * Pick up the property notify event
      */
     XSync (DISPLAY, False);
-    if (XCheckWindowEvent (DISPLAY, pSD->wmWorkspaceWin, 
+    if (XCheckWindowEvent (DISPLAY, pSD->wmWorkspaceWin,
 			    PropertyChangeMask, &event))
     {
 	if (event.type == PropertyNotify)
@@ -2572,12 +2574,12 @@ Time GetTimestamp (void)
 	else
 	{
 	    /* not sure what happened here ... use CurrentTime */
-	    timestamp = CurrentTime; 
+	    timestamp = CurrentTime;
 	}
 	if ((event.type != PropertyNotify) ||
 	    (event.xproperty.atom != wmGD.xa_WM_STATE))
 	{
-	    /* 
+	    /*
 	     * This wasn't the event we caused, put it back for
 	     * later processing. We'll keep the timestamp, though.
 	     */
@@ -2587,7 +2589,7 @@ Time GetTimestamp (void)
     else
     {
 	/* Hmm... didn't get the prop notify, fall back to current time */
-	timestamp = CurrentTime; 
+	timestamp = CurrentTime;
     }
 
     return (timestamp);
@@ -2610,7 +2612,7 @@ Time GetTimestamp (void)
  *  Inputs:
  *  ------
  *  none
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = a timestamp value - NOT CurrentTime
@@ -2636,26 +2638,26 @@ Time LastTime ()
  *
  *  Description:
  *  -----------
- *  Pull in and process all outstanding exposure events 
+ *  Pull in and process all outstanding exposure events
  *
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
  *  Useful for cleaning up display after menu popdown
- * 
+ *
  *************************************<->***********************************/
 void PullExposureEvents (void)
 {
     XEvent	event;
     Boolean	dispatchEvent;
 
-    /* 
+    /*
      * Force the exposure events into the queue
      */
     XSync (DISPLAY, False);
@@ -2666,9 +2668,9 @@ void PullExposureEvents (void)
      * Selectively extract the exposure events
      */
 #ifdef WSM
-    while (XCheckMaskEvent (DISPLAY, 
+    while (XCheckMaskEvent (DISPLAY,
 	       ExposureMask|VisibilityChangeMask, &event) ||
-	   XCheckMaskEvent (DISPLAY1, 
+	   XCheckMaskEvent (DISPLAY1,
 	       ExposureMask|VisibilityChangeMask, &event))
 #else /* WSM */
     while (XCheckMaskEvent (DISPLAY, ExposureMask, &event))
@@ -2726,14 +2728,14 @@ void PullExposureEvents (void)
  *
  *  Inputs:
  *  ------
- * 
+ *
  *  Outputs:
  *  -------
  *  return	= True if event is replayed.
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 Boolean
 ReplayedButtonEvent (
@@ -2755,7 +2757,7 @@ ReplayedButtonEvent (
 	 (pevB1->y_root 	== pevB2->y_root) &&
 	 (pevB1->state 		== pevB2->state) &&
 	 (pevB1->button		== pevB2->button) &&
-	 (pevB1->same_screen	== pevB2->same_screen) 
+	 (pevB1->same_screen	== pevB2->same_screen)
        )
     {
 	rval = True;
