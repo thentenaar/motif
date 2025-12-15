@@ -516,36 +516,70 @@ typedef	union  	{
 	    float       single_float_value; /* single float data type RAP */
 	} data_value_type;
 
-extern void sem_validation  _ARGUMENTS(( void ));
-extern void sem_validate_node  _ARGUMENTS(( sym_entry_type *node ));
-extern sym_value_entry_type *sem_validate_value_node  _ARGUMENTS(( sym_value_entry_type *value_node ));
-extern void sem_validate_widget_node  _ARGUMENTS(( sym_widget_entry_type *widget_node ));
-extern void sem_validate_argument_list  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , sym_argument_entry_type **seen ));
-extern void sem_validate_argument_entry  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , sym_argument_entry_type *argument_entry , sym_argument_entry_type **seen ));
-extern void sem_validate_argument_enumset  _ARGUMENTS(( sym_argument_entry_type *argument_entry , int arg_code , sym_value_entry_type *arg_value_entry ));
-extern void sem_validate_constraint_entry  _ARGUMENTS(( sym_widget_entry_type *widget_node , sym_argument_entry_type *argument_entry, unsigned int widget_type ));
-extern void sem_validate_callback_list  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , sym_callback_entry_type **seen ));
-extern void sem_validate_callback_entry  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , sym_callback_entry_type *callback_entry , sym_callback_entry_type **seen ));
-extern void sem_validate_control_list  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , int *count ));
-extern void sem_validate_control_entry  _ARGUMENTS(( sym_widget_entry_type *widget_node , unsigned int widget_type , sym_list_entry_type *list_entry , sym_control_entry_type *control_entry , int *gadget_count ));
-extern void sem_validate_widget_cycle  _ARGUMENTS(( sym_list_entry_type *list_entry , sym_name_entry_type *cycle_name ));
-extern boolean sem_validate_widget_cycle_aux  _ARGUMENTS(( sym_list_entry_type *list_entry , sym_name_entry_type *cycle_name ));
-extern boolean sem_validate_verify_cycle  _ARGUMENTS(( sym_widget_entry_type *cycle_obj , sym_list_entry_type *list_entry ));
-extern void sem_validate_procref_list  _ARGUMENTS(( sym_list_entry_type *list_entry ));
-extern void sem_validate_procref_entry  _ARGUMENTS(( sym_proc_ref_entry_type *procref_entry ));
-extern boolean sem_argument_allowed  _ARGUMENTS(( unsigned int arg_code , unsigned int class_code ));
-extern boolean sem_reason_allowed  _ARGUMENTS(( unsigned int rsn_code , unsigned int class_code ));
-extern boolean sem_control_allowed  _ARGUMENTS(( unsigned int ctl_code , unsigned int class_code ));
-extern boolean sem_child_allowed  _ARGUMENTS(( unsigned int ctl_code , unsigned int class_code ));
-extern sym_value_entry_type *sem_evaluate_value  _ARGUMENTS(( sym_value_entry_type *val_entry ));
-extern sym_value_entry_type *sem_evaluate_value_cs  _ARGUMENTS(( sym_value_entry_type *csval_entry ));
-extern sym_value_entry_type *sem_evaluate_value_expr  _ARGUMENTS(( sym_value_entry_type *value_entry ));
-extern int validate_arg  _ARGUMENTS(( sym_value_entry_type *operand_entry , int v_operator ));
-extern int sem_convert_to_float  _ARGUMENTS(( sym_value_entry_type *operand_entry , data_value_type *data_value ));
-extern int sem_convert_to_integer  _ARGUMENTS(( sym_value_entry_type *operand_entry , data_value_type *data_value ));
-extern int sem_convert_to_single_float  _ARGUMENTS(( sym_value_entry_type *operand_entry , data_value_type *data_value ));
-extern int sem_convert_to_error  _ARGUMENTS(( sym_value_entry_type *operand_entry , data_value_type *data_value ));
-extern void sar_cat_value_entry  _ARGUMENTS(( sym_value_entry_type **target_entry , sym_value_entry_type *op1_entry , sym_value_entry_type *op2_entry ));
+extern void sem_validation(void);
+extern void sem_validate_node(sym_entry_type *node);
+extern sym_value_entry_type *sem_validate_value_node(sym_value_entry_type *value_node);
+extern void sem_validate_widget_node(sym_widget_entry_type *widget_node);
+extern void sem_validate_argument_list(sym_widget_entry_type *widget_node,
+                                       unsigned int widget_type,
+                                       sym_list_entry_type *list_entry,
+                                       sym_argument_entry_type **seen);
+extern void sem_validate_argument_entry(sym_widget_entry_type *widget_node,
+                                        unsigned int widget_type,
+                                        sym_list_entry_type *list_entry,
+                                        sym_argument_entry_type *argument_entry,
+                                        sym_argument_entry_type **seen);
+extern void sem_validate_argument_enumset(sym_argument_entry_type *argument_entry,
+                                          int arg_code,
+                                          sym_value_entry_type *arg_value_entry);
+extern void sem_validate_constraint_entry(sym_widget_entry_type *widget_node,
+                                          sym_argument_entry_type *argument_entry,
+                                          unsigned int widget_type);
+extern void sem_validate_callback_list(sym_widget_entry_type *widget_node,
+                                       unsigned int widget_type,
+                                       sym_list_entry_type *list_entry,
+                                       sym_callback_entry_type **seen);
+extern void sem_validate_callback_entry(sym_widget_entry_type *widget_node,
+                                        unsigned int widget_type,
+                                        sym_list_entry_type *list_entry,
+                                        sym_callback_entry_type *callback_entry,
+                                        sym_callback_entry_type **seen);
+extern void sem_validate_control_list(sym_widget_entry_type *widget_node,
+                                      unsigned int widget_type,
+                                      sym_list_entry_type *list_entry,
+                                      int *count);
+extern void sem_validate_control_entry(sym_widget_entry_type *widget_node,
+                                       unsigned int widget_type,
+                                       sym_list_entry_type *list_entry,
+                                       sym_control_entry_type *control_entry,
+                                       int *gadget_count);
+extern void sem_validate_widget_cycle(sym_list_entry_type *list_entry,
+                                      sym_name_entry_type *cycle_name);
+extern boolean sem_validate_widget_cycle_aux(sym_list_entry_type *list_entry,
+                                             sym_name_entry_type *cycle_name);
+extern boolean sem_validate_verify_cycle(sym_widget_entry_type *cycle_obj,
+                                         sym_list_entry_type *list_entry);
+extern void sem_validate_procref_list(sym_list_entry_type *list_entry);
+extern void sem_validate_procref_entry(sym_proc_ref_entry_type *procref_entry);
+extern boolean sem_argument_allowed(unsigned int arg_code, unsigned int class_code);
+extern boolean sem_reason_allowed(unsigned int rsn_code, unsigned int class_code);
+extern boolean sem_control_allowed(unsigned int ctl_code, unsigned int class_code);
+extern boolean sem_child_allowed(unsigned int ctl_code, unsigned int class_code);
+extern sym_value_entry_type *sem_evaluate_value(sym_value_entry_type *val_entry);
+extern sym_value_entry_type *sem_evaluate_value_cs(sym_value_entry_type *csval_entry);
+extern sym_value_entry_type *sem_evaluate_value_expr(sym_value_entry_type *value_entry);
+extern int validate_arg(sym_value_entry_type *operand_entry, int operator);
+extern int sem_convert_to_float(sym_value_entry_type *operand_entry,
+                                data_value_type *data_value);
+extern int sem_convert_to_integer(sym_value_entry_type *operand_entry,
+                                  data_value_type *data_value);
+extern int sem_convert_to_single_float(sym_value_entry_type *operand_entry,
+                                       data_value_type *data_value);
+extern int sem_convert_to_error(sym_value_entry_type *operand_entry,
+                                data_value_type *data_value);
+extern void sar_cat_value_entry(sym_value_entry_type **target_entry,
+                                sym_value_entry_type *op1_entry,
+                                sym_value_entry_type *op2_entry);
 
 /* uilsrcsrc.c */
 extern void src_initialize_source  _ARGUMENTS(( void ));

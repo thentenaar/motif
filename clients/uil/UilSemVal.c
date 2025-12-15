@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -51,15 +51,11 @@ static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
 **  INCLUDE FILES
 **
 **/
-
 #include <stdlib.h>
 #include <setjmp.h>
 #include <Mrm/MrmAppl.h>
 #include <Xm/XmStrDefs.h>
-
-
 #include "UilDefI.h"
-
 
 /*
 **
@@ -101,23 +97,7 @@ static char rcsid[] = "$TOG: UilSemVal.c /main/18 1997/09/15 14:15:21 cshi $"
 #define font_table_arg_type 		18
 #define wcstr_arg_type			19
 #define fontset_arg_type		20
-/*  BEGIN HaL fix CR 5429 */
 #define classrec_arg_type     		21
-/* END HaL Fix CR 5429 */
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
 
 /*
 **
@@ -133,9 +113,8 @@ static int			cycle_id = 1;
 **  This table is indexed by arg_types defined above that are less than
 **  error_arg_type.
 **/
-
-static int ( * numeric_convert_table[])() = {
-	    0,
+static int (*numeric_convert_table[])(sym_value_entry_type *, data_value_type *) = {
+	    NULL,
 	    sem_convert_to_integer,
 	    sem_convert_to_single_float,
 	    sem_convert_to_float,
@@ -150,7 +129,7 @@ static int ( * numeric_convert_table[])() = {
  * expression operators in UilSymDef.h
  */
 
-static unsigned int legal_operand_type[ ] = {
+static const unsigned int legal_operand_type[] = {
     /* unused */	0,
     /* not */		1 << sym_k_bool_value | 1 << sym_k_integer_value,
     /* unary plus */	1 << sym_k_integer_value |
@@ -215,7 +194,7 @@ static unsigned int legal_operand_type[ ] = {
     /* valref */	0xFFFFFFFF,
     /* coerce */	0xFFFFFFFF
 				  };
-static char	*operator_symbol[ ] = {
+static const char *operator_symbol[] = {
     /* unused */	"** OPERATOR ERROR**",
     /* not */		"not operator",
     /* unary plus */	"unary plus operator",
@@ -235,7 +214,7 @@ static char	*operator_symbol[ ] = {
     /* coerce */	"coerce operator",
 				  };
 
-static char	*value_text[ ] = {
+static const char *value_text[] = {
     /* boolean */	"boolean expression",
     /* integer */	"integer expression",
     /* float */		"floating point expression",
@@ -244,9 +223,6 @@ static char	*value_text[ ] = {
 static sym_argument_entry_type		**arg_seen;
 static sym_callback_entry_type		**reason_seen;
 
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -278,8 +254,7 @@ static sym_callback_entry_type		**reason_seen;
 **
 **--
 **/
-
-void	sem_validation ()
+void sem_validation(void)
 {
 
 /*
@@ -297,11 +272,8 @@ if ( reason_seen == NULL )
  * requires it.
  */
 sem_validate_node (( sym_entry_type *)sym_az_root_entry->sections);
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -333,10 +305,7 @@ sem_validate_node (( sym_entry_type *)sym_az_root_entry->sections);
 **
 **--
 **/
-
-void sem_validate_node (node)
-    sym_entry_type		*node;
-
+void sem_validate_node(sym_entry_type *node)
 {
 
 /*
@@ -358,8 +327,8 @@ sym_control_entry_type		*control_entry;
  */
 /* %COMPLETE */
 Uil_percent_complete = 80;
-if ( Uil_cmd_z_command.status_cb != (Uil_continue_type(*)())NULL )
-    diag_report_status ();
+if (Uil_cmd_z_command.status_cb)
+    diag_report_status();
 
 /*
  * Switch on the node type for validation and recursion.
@@ -427,11 +396,8 @@ switch ( node->header.b_tag )
 	    }
 	break;
     }
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -457,10 +423,7 @@ switch ( node->header.b_tag )
 **
 **--
 **/
-
-sym_value_entry_type *sem_validate_value_node (value_node)
-    sym_value_entry_type	*value_node;
-
+sym_value_entry_type *sem_validate_value_node(sym_value_entry_type *value_node)
 {
 
 /*
@@ -481,8 +444,6 @@ value_node->obj_header.b_flags |= sym_m_validated;
 return value_node;
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -505,10 +466,7 @@ return value_node;
 **
 **--
 **/
-
-void sem_validate_widget_node (widget_node)
-    sym_widget_entry_type	*widget_node;
-
+void sem_validate_widget_node(sym_widget_entry_type *widget_node)
 {
 
 /*
@@ -577,8 +535,6 @@ if ( widget_node->az_controls != NULL )
 widget_node->obj_header.b_flags |= sym_m_validated;
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -603,13 +559,10 @@ widget_node->obj_header.b_flags |= sym_m_validated;
 **
 **--
 **/
-
-void sem_validate_argument_list	(widget_node, widget_type, list_entry, seen)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    sym_argument_entry_type		**seen;
-
+void sem_validate_argument_list(sym_widget_entry_type *widget_node,
+                                unsigned int widget_type,
+                                sym_list_entry_type *list_entry,
+                                sym_argument_entry_type **seen)
 {
 
 /*
@@ -662,11 +615,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	          diag_tag_text (list_entry->header.b_type),
 	          diag_tag_text (list_entry->header.b_tag) );
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -697,15 +647,11 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void sem_validate_argument_entry
-	(widget_node, widget_type, list_entry, argument_entry, seen)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    sym_argument_entry_type		*argument_entry;
-    sym_argument_entry_type		**seen;
-
+void sem_validate_argument_entry(sym_widget_entry_type *widget_node,
+                                 unsigned int widget_type,
+                                 sym_list_entry_type *list_entry,
+                                 sym_argument_entry_type *argument_entry,
+                                 sym_argument_entry_type **seen)
 {
 
 /*
@@ -1133,8 +1079,6 @@ if (!valid_value)
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1164,13 +1108,9 @@ if (!valid_value)
 **
 **--
 **/
-
-void sem_validate_argument_enumset
-	(argument_entry, arg_code, arg_value_entry)
-    sym_argument_entry_type		*argument_entry;
-    int					arg_code;
-    sym_value_entry_type		*arg_value_entry;
-
+void sem_validate_argument_enumset(sym_argument_entry_type *argument_entry,
+                                   int arg_code,
+                                   sym_value_entry_type *arg_value_entry)
 {
 
 /*
@@ -1210,8 +1150,6 @@ return;
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1241,11 +1179,9 @@ return;
 **
 **--
 **/
-
-void sem_validate_constraint_entry (widget_node, argument_entry, widget_type)
-    sym_widget_entry_type		*widget_node;
-    sym_argument_entry_type		*argument_entry;
-    unsigned int			widget_type;
+void sem_validate_constraint_entry(sym_widget_entry_type *widget_node,
+                                   sym_argument_entry_type *argument_entry,
+                                   unsigned int widget_type)
 {
 
 /*
@@ -1316,8 +1252,6 @@ if ((argument_entry->az_arg_value->header.b_tag != sym_k_widget_entry) &&
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1342,13 +1276,10 @@ if ((argument_entry->az_arg_value->header.b_tag != sym_k_widget_entry) &&
 **
 **--
 **/
-
-void sem_validate_callback_list	(widget_node, widget_type, list_entry, seen)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    sym_callback_entry_type		**seen;
-
+void sem_validate_callback_list(sym_widget_entry_type *widget_node,
+                                unsigned int widget_type,
+                                sym_list_entry_type *list_entry,
+                                sym_callback_entry_type **seen)
 {
 
 /*
@@ -1386,11 +1317,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	          diag_tag_text (list_entry->header.b_type),
 	          diag_tag_text (list_entry->header.b_tag) );
 	}
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1420,15 +1348,11 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void sem_validate_callback_entry
-	(widget_node, widget_type, list_entry, callback_entry, seen)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    sym_callback_entry_type		*callback_entry;
-    sym_callback_entry_type		**seen;
-
+void sem_validate_callback_entry(sym_widget_entry_type *widget_node,
+                                 unsigned int widget_type,
+                                 sym_list_entry_type *list_entry,
+                                 sym_callback_entry_type *callback_entry,
+                                 sym_callback_entry_type **seen)
 {
 
 /*
@@ -1552,8 +1476,6 @@ if ( (reason_value_entry->obj_header.b_flags&sym_m_builtin) &&
     /* End fixing DTS 10391 and OSF CR 8715*/
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1578,13 +1500,10 @@ if ( (reason_value_entry->obj_header.b_flags&sym_m_builtin) &&
 **
 **--
 **/
-
-void sem_validate_control_list (widget_node, widget_type, list_entry, count)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    int					*count;
-
+void sem_validate_control_list(sym_widget_entry_type *widget_node,
+                               unsigned int widget_type,
+                               sym_list_entry_type *list_entry,
+                               int *count)
 {
 
 /*
@@ -1618,8 +1537,6 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1649,15 +1566,11 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void sem_validate_control_entry
-	(widget_node, widget_type, list_entry, control_entry, gadget_count)
-    sym_widget_entry_type		*widget_node;
-    unsigned int			widget_type;
-    sym_list_entry_type			*list_entry;
-    sym_control_entry_type		*control_entry;
-    int					*gadget_count;
-
+void sem_validate_control_entry(sym_widget_entry_type *widget_node,
+                                unsigned int widget_type,
+                                sym_list_entry_type *list_entry,
+                                sym_control_entry_type *control_entry,
+                                int *gadget_count)
 {
 
 /*
@@ -1718,11 +1631,8 @@ else
 	 diag_tag_text(control_entry->header.b_tag),
 	 diag_object_text(widget_type));
   }
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1751,11 +1661,8 @@ else
 **
 **--
 **/
-
-void sem_validate_widget_cycle (list_entry, cycle_name)
-    sym_list_entry_type			*list_entry;
-    sym_name_entry_type			*cycle_name;
-
+void sem_validate_widget_cycle(sym_list_entry_type *list_entry,
+                               sym_name_entry_type *cycle_name)
 {
 
 /*
@@ -1778,8 +1685,6 @@ if ( cycle_res )
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1814,11 +1719,8 @@ if ( cycle_res )
 **
 **--
 **/
-
-boolean sem_validate_widget_cycle_aux (list_entry, cycle_name)
-    sym_list_entry_type			*list_entry;
-    sym_name_entry_type			*cycle_name;
-
+boolean sem_validate_widget_cycle_aux(sym_list_entry_type *list_entry,
+                                      sym_name_entry_type *cycle_name)
 {
 
 /*
@@ -1903,11 +1805,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    break;
 	}
 return FALSE;
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -1938,11 +1837,8 @@ return FALSE;
 **
 **--
 **/
-
-boolean sem_validate_verify_cycle (cycle_obj, list_entry)
-    sym_widget_entry_type		*cycle_obj;
-    sym_list_entry_type			*list_entry;
-
+boolean sem_validate_verify_cycle(sym_widget_entry_type *cycle_obj,
+                                  sym_list_entry_type *list_entry)
 {
 
 /*
@@ -1988,11 +1884,8 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 	    break;
 	}
 return FALSE;
-
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2014,10 +1907,7 @@ return FALSE;
 **
 **--
 **/
-
-void sem_validate_procref_list (list_entry)
-    sym_list_entry_type			*list_entry;
-
+void sem_validate_procref_list(sym_list_entry_type *list_entry)
 {
 
 /*
@@ -2049,8 +1939,6 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2075,10 +1963,7 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 **
 **--
 **/
-
-void sem_validate_procref_entry (procref_entry)
-    sym_proc_ref_entry_type		*procref_entry;
-
+void sem_validate_procref_entry(sym_proc_ref_entry_type *procref_entry)
 {
 
 /*
@@ -2275,7 +2160,6 @@ _assert (procref_entry->header.b_tag==sym_k_proc_ref_entry,
 sem_validate_node (( sym_entry_type *)procref_entry->az_arg_value);
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2302,11 +2186,7 @@ sem_validate_node (( sym_entry_type *)procref_entry->az_arg_value);
 **
 **--
 **/
-
-boolean sem_argument_allowed (arg_code, class_code)
-    unsigned int		arg_code;
-    unsigned int		class_code;
-
+boolean sem_argument_allowed(unsigned int arg_code, unsigned int class_code)
 {
 
 unsigned char		*entry_vec;
@@ -2318,8 +2198,6 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2346,11 +2224,7 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 **
 **--
 **/
-
-boolean sem_reason_allowed (rsn_code, class_code)
-    unsigned int		rsn_code;
-    unsigned int		class_code;
-
+boolean sem_reason_allowed(unsigned int rsn_code, unsigned int class_code)
 {
 
 unsigned char		*entry_vec;
@@ -2362,8 +2236,6 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2392,11 +2264,7 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 **
 **--
 **/
-
-boolean sem_control_allowed (ctl_code, class_code)
-    unsigned int		ctl_code;
-    unsigned int		class_code;
-
+boolean sem_control_allowed(unsigned int ctl_code, unsigned int class_code)
 {
 
 unsigned char		*entry_vec;
@@ -2408,8 +2276,6 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2439,11 +2305,7 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 **
 **--
 **/
-
-boolean sem_child_allowed (ctl_code, class_code)
-    unsigned int		ctl_code;
-    unsigned int		class_code;
-
+boolean sem_child_allowed(unsigned int ctl_code, unsigned int class_code)
 {
 
 unsigned char		*entry_vec;
@@ -2455,7 +2317,6 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2488,10 +2349,7 @@ return (boolean) vec_byte & _BIT_MASK(class_code);
 **
 **--
 **/
-
-sym_value_entry_type *sem_evaluate_value (val_entry)
-    sym_value_entry_type	*val_entry;
-
+sym_value_entry_type *sem_evaluate_value(sym_value_entry_type *val_entry)
 {
 /*
  * Force expression evaluation
@@ -2760,8 +2618,6 @@ return(sem_evaluate_value_expr (val_entry));
 
 }
 
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2791,10 +2647,7 @@ return(sem_evaluate_value_expr (val_entry));
 **
 **--
 **/
-
-sym_value_entry_type *sem_evaluate_value_cs (csval_entry)
-    sym_value_entry_type	*csval_entry;
-
+sym_value_entry_type *sem_evaluate_value_cs(sym_value_entry_type *csval_entry)
 {
 
 sym_value_entry_type	*next_segment;
@@ -2911,10 +2764,7 @@ _assert( csval_entry->w_length <= MrmMaxResourceSize, "compound string too long"
 
 return (csval_entry);
 }
-/* BEGIN OSF Fix CR 4859 */
 
-/* END OSF Fix CR 4859 */
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -2942,10 +2792,7 @@ return (csval_entry);
 **
 **--
 **/
-
-sym_value_entry_type *sem_evaluate_value_expr (value_entry)
-    sym_value_entry_type	*value_entry;
-
+sym_value_entry_type *sem_evaluate_value_expr(sym_value_entry_type *value_entry)
 {
 
     /*
@@ -4104,12 +3951,7 @@ sym_value_entry_type *sem_evaluate_value_expr (value_entry)
     goto continue_after_error;
 }
 
-
-int validate_arg( operand_entry, operator)
-
-sym_value_entry_type    *operand_entry;
-int	    		operator;
-
+int validate_arg(sym_value_entry_type *operand_entry, int operator)
 {
 
     char    operand_type;
@@ -4195,7 +4037,7 @@ int	    		operator;
 	return error_arg_type;
     }
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -4226,11 +4068,8 @@ int	    		operator;
 **
 **--
 **/
-int	sem_convert_to_float(operand_entry, data_value)
-
-sym_value_entry_type	*operand_entry;
-data_value_type	    	*data_value;
-
+int sem_convert_to_float(sym_value_entry_type *operand_entry,
+                         data_value_type *data_value)
 {
     switch (operand_entry->b_type)
     {
@@ -4259,7 +4098,7 @@ data_value_type	    	*data_value;
     }
     return error_arg_type;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -4290,11 +4129,8 @@ data_value_type	    	*data_value;
 **
 **--
 **/
-int	sem_convert_to_integer(operand_entry, data_value)
-
-sym_value_entry_type	*operand_entry;
-data_value_type	    	*data_value;
-
+int sem_convert_to_integer(sym_value_entry_type *operand_entry,
+                           data_value_type *data_value)
 {
     int			    res_type = 0;
 
@@ -4348,7 +4184,7 @@ data_value_type	    	*data_value;
 	return error_arg_type;
       }
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -4380,11 +4216,8 @@ data_value_type	    	*data_value;
 **
 **--
 **/
-int	sem_convert_to_single_float(operand_entry, data_value)
-
-sym_value_entry_type	    *operand_entry;
-data_value_type	    *data_value;
-
+int sem_convert_to_single_float(sym_value_entry_type *operand_entry,
+                                data_value_type *data_value)
 {
     switch (operand_entry->b_type)
     {
@@ -4409,7 +4242,7 @@ data_value_type	    *data_value;
     }
     return error_arg_type;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -4440,15 +4273,12 @@ data_value_type	    *data_value;
 **
 **--
 **/
-int	sem_convert_to_error(operand_entry, data_value)
-
-sym_value_entry_type	*operand_entry;
-data_value_type	    	*data_value;
-
+int sem_convert_to_error(sym_value_entry_type *operand_entry,
+                         data_value_type *data_value)
 {
     return error_arg_type;
 }
-
+
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -4479,13 +4309,9 @@ data_value_type	    	*data_value;
 **
 **--
 **/
-
-void	sar_cat_value_entry( target_entry, op1_entry, op2_entry )
-
-sym_value_entry_type	    **target_entry;
-sym_value_entry_type	    *op1_entry;
-sym_value_entry_type	    *op2_entry;
-
+void sar_cat_value_entry(sym_value_entry_type **target_entry,
+                         sym_value_entry_type *op1_entry,
+                         sym_value_entry_type *op2_entry)
 {
 
 /*
