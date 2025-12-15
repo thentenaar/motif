@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+ */
+
+/*
  * Motif Release 1.2.3
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -53,16 +53,11 @@ static char rcsid[] = "$XConsortium: WmKeyFocus.c /main/5 1996/05/17 12:53:16 rs
 #include "WmWinInfo.h"
 #include "WmWinList.h"
 
-
-
 /*
  * Global Variables:
  */
-
 static Boolean removeSelectGrab = True;
 
-
-
 /*************************************<->*************************************
  *
  *  InitKeyboardFocus ()
@@ -107,7 +102,7 @@ void InitKeyboardFocus (void)
 	    if (wmGD.keyboardFocusPolicy == KEYBOARD_FOCUS_POINTER)
 	    {
 		/*
-		 * Set the keyboard focus to the window that 
+		 * Set the keyboard focus to the window that
 		 * currently contains the pointer.
 		 */
 
@@ -116,7 +111,7 @@ void InitKeyboardFocus (void)
 		if (wmGD.colormapFocusPolicy == CMAP_FOCUS_POINTER)
 		{
 		    /*
-		     * Do some colormap installation that has been 
+		     * Do some colormap installation that has been
 		     * deferred from the InitColormapFocus routine.
 		     */
 
@@ -132,7 +127,7 @@ void InitKeyboardFocus (void)
 	    else
 	    {
 		ButtonSpec *buttonSpec;
-		
+
 		/*
 		 * Prepare to do explicit selection button grabs.
 		 */
@@ -159,7 +154,7 @@ void InitKeyboardFocus (void)
     if (!focusSet)
     {
         /*
-         * This is keyboard focus policy is either "explicit" or it it 
+         * This is keyboard focus policy is either "explicit" or it it
 	 * "pointer"
          * and there is no window under the pointer.  No window currently has
          * the keyboard input focus.  Set the keyboard focus to the window
@@ -170,17 +165,17 @@ void InitKeyboardFocus (void)
 	 * startup and restarts, a Mwm window will have focus!  Yeah!
          */
 
-	/* 
-	 * Set Active Screen First 
+	/*
+	 * Set Active Screen First
 	 */
-	if (XQueryPointer(DISPLAY, DefaultRootWindow(DISPLAY), 
+	if (XQueryPointer(DISPLAY, DefaultRootWindow(DISPLAY),
 			  &root_returned, &junk_win,
-			  &currentX, &currentY, 
+			  &currentX, &currentY,
 			  &junk, &junk, (unsigned int *)&junk))
 	{
 	    for (scr = 0; scr < wmGD.numScreens; scr++)
 	    {
-		if (wmGD.Screens[scr].managed && 
+		if (wmGD.Screens[scr].managed &&
 		    wmGD.Screens[scr].rootWindow == root_returned)
 		{
 		    SetActiveScreen(&(wmGD.Screens[scr]));
@@ -195,7 +190,6 @@ void InitKeyboardFocus (void)
 } /* END OF FUNCTION InitKeyboardFocus */
 
 
-
 /*************************************<->*************************************
  *
  *  SetKeyboardFocus (pCD, focusFlags)
@@ -204,7 +198,7 @@ void InitKeyboardFocus (void)
  *  Description:
  *  -----------
  *  This function is used to handle a client window getting the input
- *  focus (as the RESULT of an XSetInput call - probably done by 
+ *  focus (as the RESULT of an XSetInput call - probably done by
  *  Do_Focus_Key).
  *
  *
@@ -215,18 +209,18 @@ void InitKeyboardFocus (void)
  *  focusFlags = flags that indicate focus change details
  *	{REFRESH_LAST_FOCUS}
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  wmGD = (keyboardFocus)
- * 
+ *
  *************************************<->***********************************/
 
 void SetKeyboardFocus (ClientData *pCD, long focusFlags)
 {
     ClientData *currentFocus;
 
-    
+
     /*
      * Don't set the keyboard input focus if it is already set to
      * the client window.
@@ -257,7 +251,7 @@ void SetKeyboardFocus (ClientData *pCD, long focusFlags)
 	    ResetExplicitSelectHandling (currentFocus);
 	    wmGD.keyboardFocus = NULL;
 	}
-	
+
 	if (pCD && ((pCD->clientState == NORMAL_STATE) ||
 		    (pCD->clientState == MAXIMIZED_STATE)))
 	{
@@ -274,7 +268,7 @@ void SetKeyboardFocus (ClientData *pCD, long focusFlags)
 	    }
         }
     }
-    
+
     wmGD.keyboardFocus = pCD;
 
 
@@ -341,7 +335,6 @@ void SetKeyboardFocus (ClientData *pCD, long focusFlags)
 } /* END OF FUNCTION SetKeyboardFocus */
 
 
-
 /*************************************<->*************************************
  *
  *  ResetExplicitSelectHandling (pCD)
@@ -392,12 +385,11 @@ void ResetExplicitSelectHandling (ClientData *pCD)
     if (bUnseen)
 	pCD->clientState |= UNSEEN_STATE;
 #endif /* WSM */
-    
-
-} /* END OF FUNCTION ResetExplicitSelectHandling */    
 
 
-
+} /* END OF FUNCTION ResetExplicitSelectHandling */
+
+
 /*************************************<->*************************************
  *
  *  DoExplicitSelectGrab (window)
@@ -412,7 +404,7 @@ void ResetExplicitSelectHandling (ClientData *pCD)
  *  Inputs:
  *  ------
  *  widow = grab widow for the select button
- * 
+ *
  *************************************<->***********************************/
 
 void DoExplicitSelectGrab (Window window)
@@ -425,7 +417,6 @@ void DoExplicitSelectGrab (Window window)
 } /* END OF FUNCTION DoExplicitSelectGrab */
 
 
-
 /*************************************<->*************************************
  *
  *  SetFocusIndication (pCD)
@@ -441,15 +432,15 @@ void DoExplicitSelectGrab (Window window)
  *  ------
  *  pCD = pointer to client data for window/icon that is getting the focus
  *
- * 
+ *
  *************************************<->***********************************/
 
 void SetFocusIndication (ClientData *pCD)
 {
     ClientData *saveCD;
 
-    /* 
-     * Set the "focus" to pCD to insure correct display of the frame 
+    /*
+     * Set the "focus" to pCD to insure correct display of the frame
      * This is necessary because the called routines get GCs based
      * on the current keyboard focus.
      */
@@ -480,7 +471,6 @@ void SetFocusIndication (ClientData *pCD)
 } /* END OF FUNCTION SetFocusIndication */
 
 
-
 /*************************************<->*************************************
  *
  *  ClearFocusIndication (pCD, refresh)
@@ -508,8 +498,8 @@ void ClearFocusIndication (ClientData *pCD, Boolean refresh)
     Boolean bUnseen;
 #endif /* WSM */
 
-    /* 
-     * Set the "focus" to NULL to insure correct display of the frame 
+    /*
+     * Set the "focus" to NULL to insure correct display of the frame
      * This is necessary because the called routines get GCs based
      * on the current keyboard focus.
      */
@@ -541,7 +531,7 @@ void ClearFocusIndication (ClientData *pCD, Boolean refresh)
     }
 
 #ifdef WSM
-    if (bUnseen) 
+    if (bUnseen)
 	pCD->clientState |= UNSEEN_STATE;
 #endif /* WSM */
 
@@ -551,7 +541,6 @@ void ClearFocusIndication (ClientData *pCD, Boolean refresh)
 } /* END OF FUNCTION ClearFocusIndication */
 
 
-
 /*************************************<->*************************************
  *
  *  GetClientUnderPointer (pSameScreen)
@@ -569,12 +558,9 @@ void ClearFocusIndication (ClientData *pCD, Boolean refresh)
  *
  *  Return = client data pointer for the client window / icon under the
  *           mouse cursor
- *        
+ *
  *************************************<->***********************************/
-
-ClientData *GetClientUnderPointer (pSameScreen)
-    Boolean *pSameScreen;
-
+ClientData *GetClientUnderPointer(Boolean *pSameScreen)
 {
     Window root;
     Window child;
@@ -589,9 +575,9 @@ ClientData *GetClientUnderPointer (pSameScreen)
     if ((*pSameScreen = XQueryPointer (DISPLAY, ACTIVE_ROOT, &root, &child,
 			   &rootX, &rootY, &winX, &winY, &mask)) != False)
     {
-	if (child && 
+	if (child &&
 	    !XFindContext (DISPLAY, child, wmGD.windowContextType,
-		 (caddr_t *)&pCD))
+		 (XPointer *)&pCD))
 	{
 	    /*
 	     * There is a client window or icon under the pointer.
@@ -606,7 +592,6 @@ ClientData *GetClientUnderPointer (pSameScreen)
 } /* END OF FUNCTION GetClientUnderPointer */
 
 
-
 /*************************************<->*************************************
  *
  *  FocusNextWindow (type, focusTime)
@@ -614,7 +599,7 @@ ClientData *GetClientUnderPointer (pSameScreen)
  *
  *  Description:
  *  -----------
- *  This function is used to change the focus to the next window in the 
+ *  This function is used to change the focus to the next window in the
  *  window stacking order.  The next focus window must be of the specified
  *  type(s).  If the focus traversal cannot be done because there is not
  *  an object of the specified type (accepting focus) then don't change the
@@ -720,7 +705,6 @@ Boolean FocusNextWindow (unsigned long type, Time focusTime)
 } /* END OF FUNCTION FocusNextWindow */
 
 
-
 /*************************************<->*************************************
  *
  *  FocusNextTransient (pCD, type, initiate, focusTime)
@@ -801,7 +785,7 @@ Boolean FocusNextTransient (ClientData *pCD, unsigned long type, Boolean initiat
     else if (pCD && (pCD->clientState != MINIMIZED_STATE) &&
 	     (pCD->transientLeader || pCD->transientChildren))
     {
-	startAt = (initiate) ? (ACTIVE_PSD->clientCounter + 1) : 
+	startAt = (initiate) ? (ACTIVE_PSD->clientCounter + 1) :
 	    pCD->clientID;
 	pcdLeader = FindTransientTreeLeader (pCD);
 	pcdFocus = FindNextTFocusInSeq (pcdLeader, startAt);
@@ -859,7 +843,6 @@ Boolean FocusNextTransient (ClientData *pCD, unsigned long type, Boolean initiat
 } /* END OF FUNCTION FocusNextTransient */
 
 
-
 /*************************************<->*************************************
  *
  *  FindLastTransientTreeFocus (pCD, pcdNoFocus)
@@ -884,11 +867,7 @@ Boolean FocusNextTransient (ClientData *pCD, unsigned long type, Boolean initiat
  *	focus.
  *
  *************************************<->***********************************/
-
-ClientData *FindLastTransientTreeFocus (pCD, pcdNoFocus)
-    ClientData *pCD;
-    ClientData *pcdNoFocus;
-
+ClientData *FindLastTransientTreeFocus(ClientData *pCD, ClientData *pcdNoFocus)
 {
     ClientData *pcdNext;
     ClientData *pcdFocus;
@@ -917,12 +896,8 @@ ClientData *FindLastTransientTreeFocus (pCD, pcdNoFocus)
     }
 
     return (pcdLastFocus);
-
-
 } /* END OF FUNCTION FindLastTransientTreeFocus */
 
-
-
 /*************************************<->*************************************
  *
  *  FindNextTFocusInSeq (pCD, startAt)
@@ -947,11 +922,7 @@ ClientData *FindLastTransientTreeFocus (pCD, pcdNoFocus)
  *	focus.
  *
  *************************************<->***********************************/
-
-ClientData *FindNextTFocusInSeq (pCD, startAt)
-    ClientData *pCD;
-    unsigned long startAt;
-
+ClientData *FindNextTFocusInSeq(ClientData *pCD, unsigned long startAt)
 {
     ClientData *pcdNextFocus = NULL;
     ClientData *pcdNext;
@@ -983,12 +954,8 @@ ClientData *FindNextTFocusInSeq (pCD, startAt)
     }
 
     return (pcdNextFocus);
-
-
 } /* END OF FUNCTION FindNextTFocusInSeq */
 
-
-
 /*************************************<->*************************************
  *
  *  FocusPrevWindow (type, focusTime)
@@ -996,7 +963,7 @@ ClientData *FindNextTFocusInSeq (pCD, startAt)
  *
  *  Description:
  *  -----------
- *  This function is used to change the focus to the previous window in the 
+ *  This function is used to change the focus to the previous window in the
  *  window stacking order.  The next focus window must be of the specified
  *  type(s).  If the focus traversal cannot be done because there is not
  *  an object of the specified type (accepting focus) then don't change the
@@ -1033,7 +1000,7 @@ Boolean FocusPrevWindow (unsigned long type, Time focusTime)
 	focused = FocusPrevTransient (wmGD.keyboardFocus, type, False,
 				      focusTime);
     }
-    
+
     if (!focused)
     {
 	if (wmGD.systemModalActive)
@@ -1103,7 +1070,6 @@ Boolean FocusPrevWindow (unsigned long type, Time focusTime)
 } /* END OF FUNCTION FocusPrevWindow */
 
 
-
 /*************************************<->*************************************
  *
  *  FocusPrevTransient (pCD, type, initiate, focusTime)
@@ -1203,8 +1169,6 @@ Boolean FocusPrevTransient (ClientData *pCD, unsigned long type, Boolean initiat
 
 } /* END OF FUNCTION FocusPrevTransient */
 
-
-
 /*************************************<->*************************************
  *
  *  FindPrevTFocusInSeq (pCD, startAt)
@@ -1229,11 +1193,7 @@ Boolean FocusPrevTransient (ClientData *pCD, unsigned long type, Boolean initiat
  *	focus.
  *
  *************************************<->***********************************/
-
-ClientData *FindPrevTFocusInSeq (pCD, startAt)
-    ClientData *pCD;
-    unsigned long startAt;
-
+ClientData *FindPrevTFocusInSeq(ClientData *pCD, unsigned long startAt)
 {
     ClientData *pcdNextFocus = NULL;
     ClientData *pcdNext;
@@ -1265,12 +1225,8 @@ ClientData *FindPrevTFocusInSeq (pCD, startAt)
     }
 
     return (pcdNextFocus);
-
-
 } /* END OF FUNCTION FindPrevTFocusInSeq */
 
-
-
 /*************************************<->*************************************
  *
  *  CheckForKeyFocus (pNextEntry, type, focusNext, focusTime)
@@ -1293,7 +1249,7 @@ ClientData *FindPrevTFocusInSeq (pCD, startAt)
  *
  *  focusTime = timestamp to be used to set the input focus
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = True if the window gets the keyboard input focus otherwise False
@@ -1362,7 +1318,6 @@ Boolean CheckForKeyFocus (ClientListEntry *pNextEntry, unsigned long type, Boole
 } /* END OF FUNCTION CheckForKeyFocus */
 
 
-
 /*************************************<->*************************************
  *
  *  RepairFocus ()
@@ -1370,19 +1325,19 @@ Boolean CheckForKeyFocus (ClientListEntry *pNextEntry, unsigned long type, Boole
  *
  *  Description:
  *  -----------
- *  This function sets the keyboard and colormap focus to a client 
- *  window or icon when the window manager is recovering from a 
+ *  This function sets the keyboard and colormap focus to a client
+ *  window or icon when the window manager is recovering from a
  *  configuration action.
  *
  *
  *  Inputs:
  *  ------
  *
- * 
+ *
  *  Comments:
  *  --------
  *  o we only need to repair keyboard focus policy is "pointer"
- * 
+ *
  *************************************<->***********************************/
 
 void RepairFocus (void)
@@ -1433,8 +1388,6 @@ void RepairFocus (void)
 
 } /* END OF FUNCTION RepairFocus */
 
-
-
 /*************************************<->*************************************
  *
  *  AutoResetKeyFocus (pcdFocus, focusTime)
@@ -1454,7 +1407,7 @@ void RepairFocus (void)
  *	the focus should not be set to the pcdFocus window or subordinates.
  *
  *  focusTime = timestamp to be used in setting the keyboard input focus.
- * 
+ *
  *************************************<->***********************************/
 
 void AutoResetKeyFocus (ClientData *pcdNoFocus, Time focusTime)
@@ -1523,3 +1476,4 @@ void AutoResetKeyFocus (ClientData *pcdNoFocus, Time focusTime)
     }
 
 } /* END OF FUNCTION AutoResetKeyFocus */
+
