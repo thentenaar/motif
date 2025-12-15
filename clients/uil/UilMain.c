@@ -64,23 +64,14 @@ static char rcsid[] = "$XConsortium: UilMain.c /main/14 1996/06/03 15:49:20 pasc
 #include <setjmp.h>
 
 /*
-**
-**  TABLE OF CONTENTS
-**
-*/
-
-/*
 ** FORWARD DECLARATIONS
 */
-
-
-extern int main  _ARGUMENTS(( int l_argc , char *rac_argv []));
-
-static void common_main  _ARGUMENTS(( void ));
-static void common_cleanup  _ARGUMENTS(( void ));
+extern int main(int l_argc, char *rac_argv[]);
+static void common_main(void);
+static void common_cleanup(void);
 
 #ifdef CALLABLE
-static void UilWrapup _ARGUMENTS((Uil_compile_desc_type *compile_desc));
+static void UilWrapup(Uil_compile_desc_type *compile_desc);
 #endif	/* CALLABLE */
 
 /*
@@ -99,7 +90,7 @@ static void UilWrapup _ARGUMENTS((Uil_compile_desc_type *compile_desc));
 externaldef(uilmsg) nl_catd uil_catd = NULL;
 #endif
 
-extern  int yyparse();
+extern int yyparse(void);
 
 /*
 **
@@ -109,8 +100,8 @@ extern  int yyparse();
 
 static status      return_status = 0;
 static jmp_buf     environment;
-static unsigned    module_flags = 0;
-static unsigned	   doing_exit = 0;
+static unsigned int module_flags = 0;
+static volatile unsigned int doing_exit = 0;
 
 /*  Bit definitions for module_flags */
 
@@ -145,8 +136,7 @@ static unsigned	   doing_exit = 0;
 **
 **--
 **/
-
-static void	common_main()
+static void	common_main(void)
 {
 #if XM_MSGCAT
   if (uil_catd == NULL)
@@ -206,10 +196,8 @@ static void	common_main()
 	sym_dump_symbols();
 #endif
 
-
     /* write compilation summary */
     diag_issue_summary();
-
 
     /* write listing file if requested */
     if (Uil_cmd_z_command.v_listing_file)
@@ -217,9 +205,7 @@ static void	common_main()
 
     /* Storage is not cleaned up, since we will exit */
     uil_exit( uil_l_compile_status );
-
 }
-
 
 /*
 **++
@@ -249,16 +235,8 @@ static void	common_main()
 **
 **--
 **/
-
-void	uil_exit(severity)
-
-int	severity;
-
+void uil_exit(int severity)
 {
-
-
-
-
     /* Prevent multiple looping through this routine */
     if ( doing_exit ) return;
     doing_exit = 1;
@@ -280,15 +258,8 @@ int	severity;
 
     /* RAP FIX for listing files */
     common_cleanup();
-
-
     exit(return_status);
 }
-
-
-
-
-
 
 #ifndef CALLABLE
 /*
@@ -319,27 +290,18 @@ int	severity;
 **	produce possibly a resource file and a listing file
 **--
 **/
-
-int	main( l_argc, rac_argv )
-int	l_argc;
-char	*rac_argv[ ];
+int	main(int l_argc, char *rac_argv[])
 {
-
     setlocale(LC_ALL, "");
 
     /* call routine to parse the command line */
-
     cmd_decode_command_line( l_argc, rac_argv );
 
     /* call common main routine */
-
     common_main();
-
     return 0;    /* make compiler happy */
 }
 #endif /* !CALLABLE */
-
-
 
 /*
 **++
@@ -370,25 +332,19 @@ char	*rac_argv[ ];
 **
 **--
 **/
-
-static void	common_cleanup()
+static void	common_cleanup(void)
 {
 
     /* cleanup the source file information */
-
     Uil_src_cleanup_source();
 
 
     /* cleanup listing facility */
-
     Uil_lst_cleanup_listing();
 
 
     /* cleanup the lexical analyzer */
-
     Uil_lex_cleanup_analyzer();
-
-
     return;
 }
 
@@ -567,11 +523,8 @@ Uil_status_type Uil(Uil_command_type *command_desc,
  * Local function to provide compiler wrapup processing. It is called both
  * from the longjmp and sequential paths in the callable compiler above.
  */
-static void UilWrapup (compile_desc)
-    Uil_compile_desc_type	*compile_desc;
-
+static void UilWrapup(Uil_compile_desc_type *compile_desc)
 {
-
     int i;  /* loop index for copying message counts		    */
 
     /* write compilation summary if requested */
@@ -611,5 +564,6 @@ static void UilWrapup (compile_desc)
     /* was called or not						*/
     Uil_sym_cleanup_storage (Uil_cmd_z_command.v_parse_tree!=1);
 
-    }
+}
 #endif	/* CALLABLE */
+
