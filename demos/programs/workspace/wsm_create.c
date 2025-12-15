@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,14 +20,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
 */
-/*
- * HISTORY
-*/
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wsm_create.c /main/7 1996/10/30 10:23:18 cde-osf $"
 #endif
 #endif
+
 /*
  * Required Motif Include Files
  */
@@ -54,7 +53,7 @@ static char rcsid[] = "$XConsortium: wsm_create.c /main/7 1996/10/30 10:23:18 cd
 /*
  * Some Convenience Routines
  */
-void MENU_POST();
+void MENU_POST(Widget, XtPointer, XEvent *, Boolean *);
 extern Space *current_space;
 /*
  * Literal Definitions

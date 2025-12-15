@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
 */
-/*
- * HISTORY
-*/
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: wsm.c /main/8 1997/05/02 10:08:35 dbl $"
@@ -552,9 +550,7 @@ MyXtErrorHandler(char *err)
 }
 
 #endif
-int main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char *argv[])
 {
   XtAppContext app_con;
   Widget rc;
