@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,9 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */
-/* 
- * HISTORY
  */
 
 #ifdef REV_INFO
@@ -71,7 +68,7 @@ static char *rcsid = "$XConsortium: todo.c /main/6 1995/07/14 09:46:43 drk $";
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
-char * fallback_resources[] = {
+static char * fallback_resources[] = {
 "*text.rows: 24",
 "*text.columns: 80",
 "*print_manager.printerList: lp,./todo.txt",
@@ -87,7 +84,7 @@ OptionsRec options;
 #define Offset(field) XtOffsetOf(OptionsRec, field)
 
 XtResource resources[] = {
-  {"todoFile", "TodoFile", XtRString, sizeof(String), 
+  {"todoFile", "TodoFile", XtRString, sizeof(String),
     Offset(todoFile), XtRImmediate, NULL}
 };
 
@@ -126,8 +123,7 @@ int modified;
 extern int maxpages;
 struct passwd *user;
 
-int 
-main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Widget mainw, menubar;
   Widget *file_menu, *edit_menu, *selected_menu, *help_menu, temp;
@@ -145,7 +141,7 @@ main(int argc, char* argv[])
   }
 
   shell		= XtVaAppInitialize(&context, APP_CLASS,
-				    optionDesc, XtNumber(optionDesc), 
+				    optionDesc, XtNumber(optionDesc),
 				    &argc, argv,
 				    fallback_resources, NULL);
 
@@ -163,7 +159,7 @@ main(int argc, char* argv[])
   XtSetArg(args[n], XmNlastPageNumber, 100); n++;
   notebook	= XmCreateNotebook(mainw, "notebook", args, n);
   XtManageChild(notebook);
-  XtAddCallback(notebook, XmNpageChangedCallback, 
+  XtAddCallback(notebook, XmNpageChangedCallback,
 		(XtCallbackProc) PageChange, NULL);
 
   n = 0;
@@ -184,11 +180,11 @@ main(int argc, char* argv[])
   XtManageChild(labelw);
 
   XmdCreateMenu(FILE_MENU, menubar, &file_menu, &size);
-  XtAddCallback(file_menu[FILE_NEW], XmNactivateCallback, 
+  XtAddCallback(file_menu[FILE_NEW], XmNactivateCallback,
 		(XtCallbackProc) New, NULL);
   XtAddCallback(file_menu[FILE_OPEN], XmNactivateCallback,
 		(XtCallbackProc) PresentFDialog, (XtPointer) Open);
-  XtAddCallback(file_menu[FILE_EXIT], XmNactivateCallback, 
+  XtAddCallback(file_menu[FILE_EXIT], XmNactivateCallback,
 		(XtCallbackProc) QuitAppl, NULL);
   XtAddCallback(file_menu[FILE_SAVE_AS], XmNactivateCallback,
 		(XtCallbackProc) PresentFDialog, (XtPointer) Save);
@@ -198,10 +194,10 @@ main(int argc, char* argv[])
   XmdCreateMenu(SELECTED_MENU, menubar, &selected_menu, &size);
   XtUnmanageChildren(selected_menu, size);
   XtManageChild(selected_menu[SELECTED_PROPERTIES]);
-  XtAddCallback(selected_menu[SELECTED_PROPERTIES], 
+  XtAddCallback(selected_menu[SELECTED_PROPERTIES],
 		XmNactivateCallback, (XtCallbackProc) EditPage, NULL);
   XtManageChild(selected_menu[SELECTED_NEW]);
-  XtAddCallback(selected_menu[SELECTED_NEW], 
+  XtAddCallback(selected_menu[SELECTED_NEW],
 		XmNactivateCallback, (XtCallbackProc) NewPage, NULL);
   XtManageChild(selected_menu[SELECTED_DELETE]);
   XtAddCallback(selected_menu[SELECTED_DELETE],
@@ -215,7 +211,7 @@ main(int argc, char* argv[])
   XtAddCallback(print_widget, XmdNprintCallback, (XtCallbackProc) Print, NULL);
   tmp = XmStringCreateLocalized("About Printing");
 
-  XtAddCallback(file_menu[FILE_PRINT], XmNactivateCallback, 
+  XtAddCallback(file_menu[FILE_PRINT], XmNactivateCallback,
 		(XtCallbackProc) manageCB, (XtPointer) print_widget);
 
   help_widget = XmdCreateHelpDialog(shell, "help_manager", NULL, 0);
@@ -243,36 +239,30 @@ main(int argc, char* argv[])
   }
 
   XtVaSetValues(shell, XmNtitle, options.todoFile,
-		XmNtitleEncoding, XA_STRING, NULL, NULL);  
+		XmNtitleEncoding, XA_STRING, NULL, NULL);
   ReadDB(options.todoFile);
   SetPage(0);
 
   XtRealizeWidget(shell);
-
   XtAppMainLoop(context);
-
   return 0;    /* make compiler happy */
 }
 
-static void 
-QuitAppl(Widget w, char *i, XmPushButtonCallbackStruct *e) 
+static void QuitAppl(Widget w, char *i, XmPushButtonCallbackStruct *e)
 {
-  exit(0);
+	exit(EXIT_SUCCESS);
 }
 
-static void 
-TextChanged(Widget w, XtPointer i, XtPointer i2) 
+static void TextChanged(Widget w, XtPointer i, XtPointer i2)
 {
-  modified = 1;
+	modified = 1;
 }
 
-void manageCB( widget, w_to_manage, callback_data)
-     Widget widget;
-     Widget w_to_manage;
-     XtPointer callback_data;
+void manageCB(Widget widget, Widget w_to_manage, XtPointer callback)
 {
-  if (w_to_manage != (Widget) NULL)
-    XtManageChild(w_to_manage);
+	(void)callback;
+	if (w_to_manage)
+		XtManageChild(w_to_manage);
 }
 
 void
@@ -290,7 +280,7 @@ New(Widget w, char* ignore, XmPushButtonCallbackStruct *cs)
   char *str;
   Boolean found = False;
   int i = 0;
-  
+
   while(! found) {
     sprintf(buf, "untitled%d.todo", i++);
     found = access(buf, F_OK) != 0;
@@ -300,35 +290,35 @@ New(Widget w, char* ignore, XmPushButtonCallbackStruct *cs)
   ReadDB(str);
   XtFree(options.todoFile);
   options.todoFile = str;
-  XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding, 
+  XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding,
 		XA_STRING, NULL, NULL);
   SetPage(0);
 }
 
-void 
-Save(Widget w, char *i, XmFileSelectionBoxCallbackStruct *i2) 
+void
+Save(Widget w, char *i, XmFileSelectionBoxCallbackStruct *i2)
 {
   char *str;
-  if ((str = XmStringUnparse(i2->value, NULL, XmCHARSET_TEXT, 
+  if ((str = XmStringUnparse(i2->value, NULL, XmCHARSET_TEXT,
 			    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL))) {
     SaveDB(str);
     XtFree(options.todoFile);
     options.todoFile = str;
-    XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding, 
+    XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding,
 		  XA_STRING, NULL, NULL);
   }
 }
 
-void 
-Open(Widget w, char *i, XmFileSelectionBoxCallbackStruct *i2) 
+void
+Open(Widget w, char *i, XmFileSelectionBoxCallbackStruct *i2)
 {
   char *str;
-  if ((str = XmStringUnparse(i2->value, NULL, XmCHARSET_TEXT, 
+  if ((str = XmStringUnparse(i2->value, NULL, XmCHARSET_TEXT,
 			    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL))) {
     ReadDB(str);
     XtFree(options.todoFile);
     options.todoFile = str;
-    XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding, 
+    XtVaSetValues(shell, XmNtitle, str, XmNtitleEncoding,
 		  XA_STRING, NULL, NULL);
   }
 }
@@ -340,7 +330,7 @@ help_cb(Widget w, XtPointer item, XmAnyCallbackStruct *cb)
   XmdGotoHelpItem(w, (intptr_t)item, help_widget);
 }
 
-void 
+void
 Print(Widget w, char *ignore, XmdPrintCallbackStruct *cb)
 {
   int i;
@@ -351,7 +341,7 @@ Print(Widget w, char *ignore, XmdPrintCallbackStruct *cb)
 
   if (cb -> first == cb -> last &&
       cb -> first == 0) {
-    from = 0; 
+    from = 0;
     to = maxpages - 1;
   } else {
     from = MAX(0, cb -> first - 1);

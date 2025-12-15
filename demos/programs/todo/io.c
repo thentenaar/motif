@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,6 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/* 
- * HISTORY
- */
 
 #ifdef REV_INFO
 #ifndef lint
@@ -40,7 +37,7 @@ static char *rcsid = "$XConsortium: io.c /main/6 1995/07/14 09:46:23 drk $";
 #include <stdio.h>
 #include "page.h"
 
-Widget ioerror = (Widget) NULL;
+Widget ioerror = NULL;
 
 extern Widget notebook, textw, shell;
 Page pages[MAXPAGES];
@@ -48,7 +45,7 @@ Page pages[MAXPAGES];
 extern int currentPage;
 extern int modified;
 int maxpages;
-Page AllocPage();
+Page AllocPage(void);
 
 /* Pages are stored pretty simply:
  * each page starts with "*PLabel"
@@ -57,14 +54,12 @@ Page AllocPage();
  * *Cnnnn has the cursor position
  * *Lnnnn has the top line position
  * the page's text continues to the next page start.
- * regular lines start with . 
+ * regular lines start with .
  */
-
-void ParseNewLines(label)
-char * label ;
+void ParseNewLines(char *label)
 {
     /* look for "\n" and change in '\n' and compact */
-    
+
     char * s ;
 
     while (*label) {
@@ -81,16 +76,14 @@ char * label ;
 
 }
 
-static void PrintWithNewLines(output, label)
-FILE *output ;
-char * label ;
+static void PrintWithNewLines(FILE *output, char *label)
 {
     /* look for '\n' and print "\n" */
-    
+
     while (*label) {
 	if (*label == '\n') {
-	    fprintf(output,"\\n"); 
-	} else  
+	    fprintf(output,"\\n");
+	} else
 	    fprintf(output,"%c", *label);
 	label ++ ;
     }
@@ -98,7 +91,7 @@ char * label ;
 }
 
 void
-ReadDB(char* filename) 
+ReadDB(char* filename)
 {
   FILE *input;
   int i, number, first = 1;
@@ -107,7 +100,7 @@ ReadDB(char* filename)
   char line[1024];
   Arg args[5];
   Widget tab;
-  
+
   input = fopen(filename, "r");
 
   if (ioerror == (Widget) NULL) {
@@ -145,7 +138,7 @@ ReadDB(char* filename)
     buffer[0] = 0; /* Reset page buffer */
     current = 0;
     pages[0] = AllocPage();
-    
+
     while(fgets(line, 1024, input) != NULL) {
       if (line[0] == '*') /* Special */
 	{
@@ -176,7 +169,7 @@ ReadDB(char* filename)
 		pages[number] -> majorTab = XtNewString(&line[2]);
 		i = 0;
 		ParseNewLines(pages[number] -> majorTab);
-		name = XmStringGenerate(pages[number] -> majorTab, NULL, 
+		name = XmStringGenerate(pages[number] -> majorTab, NULL,
 					XmCHARSET_TEXT, NULL);
 		XtSetArg(args[i], XmNnotebookChildType, XmMAJOR_TAB); i++;
 		XtSetArg(args[i], XmNpageNumber, (number + 1)); i++;
@@ -196,7 +189,7 @@ ReadDB(char* filename)
 		pages[number] -> minorTab = XtNewString(&line[2]);
 		i = 0;
 		ParseNewLines(pages[number] -> minorTab);
-		name = XmStringGenerate(pages[number] -> minorTab, NULL, 
+		name = XmStringGenerate(pages[number] -> minorTab, NULL,
 					XmCHARSET_TEXT, NULL);
 		XtSetArg(args[i], XmNnotebookChildType, XmMINOR_TAB); i++;
 		XtSetArg(args[i], XmNpageNumber, (number + 1)); i++;
@@ -249,14 +242,14 @@ ReadDB(char* filename)
   if (input) fclose(input);
 }
 
-void 
+void
 SaveDB(char* filename)
 {
   int number;
   FILE *output;
   int i;
   char oldfilename[256];
-  
+
   if (ioerror == (Widget) NULL) {
     ioerror = XmCreateInformationDialog(shell, "IO_Error_Dialog", NULL, 0);
   }
@@ -282,7 +275,7 @@ SaveDB(char* filename)
 
   /* Make sure to grab current page */
   if (modified) {
-    if (pages[currentPage] -> page != NULL) 
+    if (pages[currentPage] -> page != NULL)
       XtFree(pages[currentPage] -> page);
     pages[currentPage] -> page = XmTextGetString(textw);
   }
@@ -294,11 +287,11 @@ SaveDB(char* filename)
     else
       fprintf(output, "*P\n");
     if (pages[number] -> majorTab != NULL) {
-	fprintf(output, "*T"); 
+	fprintf(output, "*T");
 	PrintWithNewLines(output, pages[number] -> majorTab);
     }
     if (pages[number] -> minorTab != NULL) {
-	fprintf(output, "*M"); 
+	fprintf(output, "*M");
 	PrintWithNewLines(output, pages[number] -> minorTab);
     }
     fprintf(output, "*C%d\n", pages[number] -> lastcursorpos);
@@ -316,7 +309,7 @@ SaveDB(char* filename)
   fclose(output);
 }
 
-Page AllocPage() 
+Page AllocPage(void)
 {
   Page p;
 
