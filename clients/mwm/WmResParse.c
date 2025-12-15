@@ -141,7 +141,6 @@ static int   linec = 0;       /* line counter for parser */
 static unsigned char *parseP = NULL;   /* pointer to parse string */
 #endif /* WSM */
 
-
 typedef struct {
    const char *name;
    unsigned int  mask;
@@ -177,7 +176,7 @@ typedef struct {
 
 # define CCI_USE_DEFAULT_NAME_TAG "DEFAULT_NAME"
 
-String CCIEntryModifierNames[] = {
+const char * const CCIEntryModifierNames[] = {
   "none",
   "inline",
   "cascade",
@@ -1995,8 +1994,7 @@ void ProcessWmFile (WmScreenData *pSD)
 /**** This function stolen from Xt/Intrinsic.c ****/
 /* The implementation of this routine is operating system dependent */
 
-static char *ExtractLocaleName(lang)
-    String	lang;
+static char *ExtractLocaleName(String lang)
 {
 
 #ifdef hpux	 /* hpux-specific parsing of the locale string */
