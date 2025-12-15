@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: xmbind.c /main/10 1997/06/18 17:34:48 samborn $"
@@ -36,9 +37,7 @@ static char rcsid[] = "$TOG: xmbind.c /main/10 1997/06/18 17:34:48 samborn $"
 extern Boolean _XmVirtKeysLoadFileBindings(char *fileName, String *binding);
 extern int _XmVirtKeysLoadFallbackBindings(Display *display, String *binding);
 
-int main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char *argv[])
 {
     enum { XA_MOTIF_DEFAULT_BINDINGS, XA_MOTIF_BINDINGS };
     static char *atom_names[] = {
@@ -53,7 +52,7 @@ int main(argc, argv)
     app_context = XtCreateApplicationContext();
     display = XtOpenDisplay(app_context, NULL, argv[0], "Xmbind",
 			NULL, 0, &argc, argv);
-    
+
     if (display == NULL) {
 	fprintf(stderr, "%s:  Can't open display\n", argv[0]);
 	exit(1);
@@ -87,7 +86,7 @@ int main(argc, argv)
 
     XFlush (display);
     XtFree (bindings);
-   
+
     exit(0);
 
     return 0;    /* make compiler happy */
