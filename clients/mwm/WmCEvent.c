@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.4
 */
@@ -32,14 +33,11 @@ static char rcsid[] = "$XConsortium: WmCEvent.c /main/10 1996/08/09 15:05:39 rsw
 #include <config.h>
 #endif
 
-
 /*
  * Included Files:
  */
-
 #include "WmGlobal.h"
 #include "WmICCC.h"
-
 #include <X11/Xatom.h>
 
 /*
@@ -68,11 +66,9 @@ static char rcsid[] = "$XConsortium: WmCEvent.c /main/10 1996/08/09 15:05:39 rsw
 #include "WmWrkspace.h"
 #endif /* WSM */
 
-
 /*
  * Global Variables:
  */
-
 extern unsigned int buttonModifierMasks[];
 
 
@@ -186,12 +182,12 @@ Boolean WmDispatchClientEvent (XEvent *event)
 
 #ifndef IBM_169380
     if ((XFindContext (DISPLAY, event->xany.window, wmGD.windowContextType,
-            (caddr_t *)&pCD)) &&
+            (XPointer *)&pCD)) &&
         (XFindContext (DISPLAY, event->xany.window, wmGD.cmapWindowContextType,
-            (caddr_t *)&cmap_window_data)))
+            (XPointer *)&cmap_window_data)))
 #else
     if (XFindContext (DISPLAY, event->xany.window, wmGD.windowContextType,
-	    (caddr_t *)&pCD))
+	    (XPointer *)&pCD))
 #endif
     {
 	/*
@@ -566,7 +562,7 @@ Boolean HandleEventsOnSpecialWindows (XEvent *pEvent)
     }
 #ifdef  WSM
     else if (!XFindContext (DISPLAY, pEvent->xany.window,
-		    wmGD.mwmWindowContextType, (caddr_t *)&pSD))
+		    wmGD.mwmWindowContextType, (XPointer *)&pSD))
     {
 	if ((pEvent->type == PropertyNotify) &&
 	    (pEvent->xproperty.atom == wmGD.xa_DT_WM_REQUEST) &&
@@ -2299,7 +2295,7 @@ void HandleCConfigureRequest (ClientData *pCD, XConfigureRequestEvent *configure
 	if (changeMask & CWSibling)
 	{
 	    if (XFindContext (DISPLAY, configureRequest->above,
-		    wmGD.windowContextType, (caddr_t *)&pcdSibling))
+		    wmGD.windowContextType, (XPointer *)&pcdSibling))
 	    {
 		changeMask &= ~CWSibling;
 	    }
@@ -2455,7 +2451,7 @@ void HandleCColormapNotify (ClientData *pCD, XColormapEvent *colorEvent)
 
 #ifndef	IBM_169380
         if (!XFindContext (DISPLAY, colorEvent->window,
-            wmGD.cmapWindowContextType, (caddr_t *)&cmap_window_data))
+            wmGD.cmapWindowContextType, (XPointer *)&cmap_window_data))
         {
             /*
              * The WM_COLORMAP_WINDOWS property of a toplevel window may
@@ -2746,14 +2742,10 @@ void DetermineActiveScreen (XEvent *pEvent)
  *  value of function = pointer to screen data (pSD) or NULL on failure
  *
  *************************************<->***********************************/
-
-WmScreenData * GetScreenForWindow (win)
-    Window win;
-
+WmScreenData *GetScreenForWindow(Window win)
 {
     XWindowAttributes attribs;
     WmScreenData *pSD = NULL;
-
 
     /*
      * Get the screen that the event occurred on.
@@ -2761,7 +2753,7 @@ WmScreenData * GetScreenForWindow (win)
     if (XGetWindowAttributes (DISPLAY, win, &attribs))
     {
 	if (!XFindContext (DISPLAY, attribs.root, wmGD.screenContextType,
-			    (caddr_t *)&pSD))
+			    (XPointer *)&pSD))
 	{
 	    if (pSD && !pSD->screenTopLevelW)
 	    {
@@ -2771,5 +2763,5 @@ WmScreenData * GetScreenForWindow (win)
     }
 
     return (pSD);
-
 } /* END OF FUNCTION GetScreenForWindow */
+
