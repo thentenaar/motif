@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.4
 */
@@ -57,9 +58,7 @@ static char rcsid[] = "$XConsortium: WmResCvt.c /main/4 1995/11/01 11:49:54 rswi
  * Function Declarations:
  */
 
-unsigned char *NextToken ();
-long           DecStrToL ();
-
+long DecStrToL(unsigned char *str, unsigned char **ptr);
 #include "WmResCvt.h"
 
 /*************************************<->*************************************
@@ -203,7 +202,7 @@ void WmCvtStringToAMBehavior (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t)&cval;
+    (*toVal).addr = (XPointer)&cval;
 
 
 } /* END OF FUNCTION WmCvtStringToAMBehavior */
@@ -293,7 +292,7 @@ void WmCvtStringToCFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t)&cval;
+    (*toVal).addr = (XPointer)&cval;
 
 
 } /* END OF FUNCTION WmCvtStringToCFocus */
@@ -489,7 +488,7 @@ void WmCvtStringToCDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
     if (!fHit) cval =  WM_DECOR_ALL;
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t) &cval;
+    (*toVal).addr = (XPointer) &cval;
 
 } /* END OF FUNCTION WmCvtStringToCDecor */
 
@@ -666,7 +665,7 @@ void WmCvtStringToCFunc (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xr
     if (!fHit) cval =  WM_FUNC_ALL;
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t) &cval;
+    (*toVal).addr = (XPointer) &cval;
 
 } /* END OF FUNCTION WmCvtStringToCFunc */
 
@@ -735,7 +734,7 @@ void WmCvtStringToFrameStyle (XrmValue *args, Cardinal numArgs, XrmValue *fromVa
     }
 
     (*toVal).size = sizeof (FrameStyle);
-    (*toVal).addr = (caddr_t)&frameStyle;
+    (*toVal).addr = (XPointer)&frameStyle;
 
 
 } /* END OF FUNCTION WmCvtStringToFrameStyle */
@@ -833,7 +832,7 @@ void WmCvtStringToIDecor (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t) &cval;
+    (*toVal).addr = (XPointer) &cval;
 
 } /* END OF FUNCTION WmCvtStringToIDecor */
 
@@ -1001,7 +1000,7 @@ void WmCvtStringToIPlace (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t) &cval;
+    (*toVal).addr = (XPointer) &cval;
 
 } /* END OF FUNCTION WmCvtStringToIPlace */
 
@@ -1080,7 +1079,7 @@ void WmCvtStringToKFocus (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, X
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t)&cval;
+    (*toVal).addr = (XPointer)&cval;
 
 
 } /* END OF FUNCTION WmCvtStringToKFocus */
@@ -1183,7 +1182,7 @@ void WmCvtStringToSize (XrmValue *args, Cardinal numArgs, XrmValue *fromVal, Xrm
     /* !!! check for the maximum maximum sizes !!! */
 
     (*toVal).size = sizeof (WHSize);
-    (*toVal).addr = (caddr_t)&cval;
+    (*toVal).addr = (XPointer)&cval;
 
 
 } /* END OF FUNCTION WmCvtStringToSize */
@@ -1384,7 +1383,7 @@ void WmCvtStringToShowFeedback (XrmValue *args, Cardinal numArgs, XrmValue *from
 
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t) &cval;
+    (*toVal).addr = (XPointer) &cval;
 
 } /* END OF FUNCTION WmCvtStringToShowFeedback */
 
@@ -1460,7 +1459,7 @@ void WmCvtStringToUsePPosition (XrmValue *args, Cardinal numArgs, XrmValue *from
     }
 
     (*toVal).size = sizeof (int);
-    (*toVal).addr = (caddr_t)&cval;
+    (*toVal).addr = (XPointer)&cval;
 
 
 } /* END OF FUNCTION WmCvtStringToUsePPosition */
