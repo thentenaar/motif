@@ -28,7 +28,7 @@ AC_DEFUN([AX_CFLAGS],[
 	AS_IF([test "$ax_cc_clang" == "yes"],[
 		ax_cc_gcov_command="llvm-cov gcov"
 		AX_APPEND_COMPILE_FLAGS([ dnl
-			-std=gnu11 dnl
+			-std=gnu17 dnl
 			-Wall dnl
 			-Wno-unused dnl
 			-Wno-comment dnl
@@ -50,7 +50,7 @@ AC_DEFUN([AX_CFLAGS],[
 	],[	dnl Assume GCC
 		ax_cc_gcov_command="gcov"
 		AX_APPEND_COMPILE_FLAGS([ dnl
-			-std=gnu11 dnl
+			-std=gnu17 dnl
 			-Wall dnl
 			-Wshadow dnl
 			-Wwrite-strings dnl
