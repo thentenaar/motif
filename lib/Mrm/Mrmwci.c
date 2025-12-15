@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -48,14 +48,13 @@ static char rcsid[] = "$TOG: Mrmwci.c /main/16 1999/05/19 15:25:58 mgreess $"
  *--
  */
 
-
 /*
  *
  *  INCLUDE FILES
  *
  */
-
 #include <stdio.h>
+#include <string.h>
 #include <X11/IntrinsicP.h>
 #include <X11/CoreP.h>
 
@@ -69,9 +68,7 @@ static char rcsid[] = "$TOG: Mrmwci.c /main/16 1999/05/19 15:25:58 mgreess $"
  *  TABLE OF CONTENTS
  *
  */
-static int hash_function ( int l_length , char *c_value );
-
-
+static int hash_function(int l_length , char *c_value);
 
 /*
  *
@@ -90,18 +87,11 @@ externaldef(urm__wci) WCIClassDescPtr	wci_cldesc_list = NULL;
  *
  */
 
-
-/*
-**  Hash tables
-*/
-
 /*  The hash tables are initialized to NULL by default. */
 static Boolean			hash_hash_inited = FALSE;
 static URMHashTableEntryPtr	hash_az_hash_table [k_hash_table_size];
 static Boolean			cldesc_hash_inited = FALSE;
 static URMHashTableEntryPtr	cldesc_hash_table [k_hash_table_size];
-
-
 
 /*
  *++
@@ -138,78 +128,68 @@ static URMHashTableEntryPtr	cldesc_hash_table [k_hash_table_size];
  *
  *--
  */
-
-Cardinal
-MrmRegisterClass (
-		  MrmType		class_code, /* unused */
-		  String		class_name, /* unused */
-		  String		create_name,
-		  MrmWidgetCreateProc		creator,
-		  WidgetClass		class_record)
+Cardinal MrmRegisterClass(MrmType    class_code, /* unused */
+                          const char *class_name, /* unused */
+                          const char *create_name,
+                          MrmWidgetCreateProc creator,
+                          WidgetClass class_record)
 {
-  Cardinal	status = MrmRegisterClassWithCleanup(
-				class_code, class_name,
-				create_name, creator,
-				class_record, NULL);
-  return status;
+	Cardinal status;
+
+	(void)class_code;
+	(void)class_name;
+
+	return MrmRegisterClassWithCleanup(class_code, class_name, create_name,
+	                                   creator, class_record, NULL);
 }
 
-Cardinal
-MrmRegisterClassWithCleanup (
-		  MrmType		class_code, /* unused */
-		  String		class_name, /* unused */
-		  String		create_name,
-		  MrmWidgetCreateProc		creator,
-		  WidgetClass		class_record,
-		  MrmWidgetCleanupProc		cleanup)
+Cardinal MrmRegisterClassWithCleanup(MrmType class_code,
+                                     const char *class_name,
+                                     const char *create_name,
+                                     MrmWidgetCreateProc creator,
+                                     WidgetClass class_record,
+                                     MrmWidgetCleanupProc cleanup)
 {
-  /*
-   *  Local variables
-   */
-  WCIClassDescPtr	cldesc;		/* creator descriptor being written */
-  URMHashTableEntryPtr	hash_entry;	/* new hash entry */
+	WCIClassDescPtr cldesc; /* creator descriptor being written */
+	URMHashTableEntryPtr hash_entry;
 
+	(void)class_code;
+	(void)class_name;
+	_MrmProcessLock();
 
-  _MrmProcessLock();
-  /*
-   * Allocate and fill in a new descriptor
-   */
-  if (create_name == NULL)
-    {
-      _MrmProcessUnlock();
-      return MrmFAILURE;
-    }
-  cldesc = (WCIClassDescPtr) XtMalloc (sizeof(WCIClassDesc) +
-				       strlen(create_name) + 1);
-  if ( cldesc == NULL )
-    {
-      _MrmProcessUnlock();
-      return MrmFAILURE;
-    }
-  cldesc->creator_name = (String) cldesc + sizeof(WCIClassDesc);
-  strcpy (cldesc->creator_name, create_name);
-  cldesc->validation = URMWCIClassDescValid;
-  cldesc->next_desc = wci_cldesc_list;
-  wci_cldesc_list = cldesc;
-  cldesc->creator = creator;
-  cldesc->class_record = class_record;
-  cldesc->cleanup = cleanup;
+	/* Allocate and fill in a new descriptor */
+	if (!create_name) {
+		_MrmProcessUnlock();
+		return MrmFAILURE;
+	}
 
-  /*
-   * Enter the descriptor in the descriptor hash table
-   */
-  hash_initialize (cldesc_hash_table, &cldesc_hash_inited);
-  hash_entry = (URMHashTableEntryPtr)
-    hash_insert_name (cldesc_hash_table, cldesc->creator_name);
-  /* Begin fixing CR 5573 */
-  if (hash_entry->az_value != NULL)
-    XtFree ((char *) hash_entry->az_value);
-  /* End fixing CR 5573 */
-  hash_entry->az_value = (char *) cldesc;
+	cldesc = (WCIClassDescPtr)XtMalloc(sizeof(WCIClassDesc) +
+	                                   strlen(create_name) + 1);
+	if (!cldesc) {
+		_MrmProcessUnlock();
+		return MrmFAILURE;
+	}
 
-  _MrmProcessUnlock();
-  return MrmSUCCESS;
+	cldesc->creator_name = (String)cldesc + sizeof(WCIClassDesc);
+	strcpy(cldesc->creator_name, create_name);
+	cldesc->validation   = URMWCIClassDescValid;
+	cldesc->next_desc    = wci_cldesc_list;
+	wci_cldesc_list      = cldesc;
+	cldesc->creator      = creator;
+	cldesc->class_record = class_record;
+	cldesc->cleanup      = cleanup;
 
+	/* Enter the descriptor in the descriptor hash table */
+	hash_initialize(cldesc_hash_table, &cldesc_hash_inited);
+	hash_entry = (URMHashTableEntryPtr)hash_insert_name(cldesc_hash_table,
+	                                                    cldesc->creator_name);
+
+	if (hash_entry->az_value)
+		XtFree((XtPointer)hash_entry->az_value);
+	hash_entry->az_value = (XtPointer)cldesc;
+
+	_MrmProcessUnlock();
+	return MrmSUCCESS;
 }
 
 

@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: MrmItopw.c /main/13 1996/11/13 13:59:22 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -40,23 +39,20 @@ static char rcsid[] = "$XConsortium: MrmItopw.c /main/13 1996/11/13 13:59:22 drk
  *
  *  ABSTRACT:
  *
- *      This module contains the publicly accessible top-level 
+ *      This module contains the publicly accessible top-level
  *	IDB write routines.
  *
  *--
  */
-
 
 /*
  *
  *  INCLUDE FILES
  *
  */
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 #include <Mrm/IDB.h>
-
 
 /*
  *
@@ -69,7 +65,6 @@ static char rcsid[] = "$XConsortium: MrmItopw.c /main/13 1996/11/13 13:59:22 drk
  *	UrmIdbPutRIDResource		Put resource id'ed resource in file
  *
  */
-
 /*
  *++
  *
@@ -109,7 +104,7 @@ static char rcsid[] = "$XConsortium: MrmItopw.c /main/13 1996/11/13 13:59:22 drk
  *--
  */
 
-Cardinal 
+Cardinal
 UrmIdbOpenFileWrite (String			name ,
 		     MrmOsOpenParamPtr		os_ext ,
 		     String			creator ,
@@ -143,7 +138,7 @@ UrmIdbOpenFileWrite (String			name ,
    * Attempt to open the file. For now, pay no attention to temporary naming
    * issues.
    */
-  result = 
+  result =
     Idb__FU_OpenFile(name, URMWriteAccess, os_ext, &fileid, fname_return);
   if ( result != MrmCREATE_NEW ) return result ;
 
@@ -206,8 +201,6 @@ UrmIdbOpenFileWrite (String			name ,
 
 }
 
-
-
 /*
  *++
  *
@@ -244,16 +237,10 @@ UrmIdbOpenFileWrite (String			name ,
  *
  *--
  */
-
-Cardinal 
-UrmIdbPutIndexedResource (IDBFile		file_id,
-			  String		index,
-			  URMResourceContextPtr	context_id)
-
+Cardinal UrmIdbPutIndexedResource(IDBFile file_id,
+                                  const char *index,
+                                  URMResourceContextPtr context_id)
 {
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBRecordBufferPtr	bufptr ;	/* not used */
   MrmCount		recno ;		/* not used */
@@ -292,12 +279,9 @@ UrmIdbPutIndexedResource (IDBFile		file_id,
   /*
    * item successfully entered
    */
-  return MrmSUCCESS ;
-
+  return MrmSUCCESS;
 }
 
-
-
 /*
  *++
  *

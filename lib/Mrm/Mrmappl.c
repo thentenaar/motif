@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -45,17 +45,14 @@ static char rcsid[] = "$XConsortium: Mrmappl.c /main/17 1996/11/13 13:59:58 drk 
  *--
  */
 
-
 /*
  *
  *  INCLUDE FILES
  *
  */
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 #include "MrmMsgI.h"
-
 
 /*
  *
@@ -80,8 +77,6 @@ static char rcsid[] = "$XConsortium: Mrmappl.c /main/17 1996/11/13 13:59:58 drk 
  *	MrmFetchSetValues		Do SetValues from UID literals
  *
  */
-
-
 
 /*
  *++
@@ -434,8 +429,6 @@ MrmRegisterNamesInHierarchy (MrmHierarchy		hierarchy_id,
 
 }
 
-
-
 /*
  *++
  *
@@ -479,12 +472,10 @@ MrmRegisterNamesInHierarchy (MrmHierarchy		hierarchy_id,
  *
  *--
  */
-Cardinal
-MrmFetchInterfaceModule (MrmHierarchy		hierarchy_id,
-			 char			*module_name,
-			 Widget			parent,
-			 Widget			*w_return) /* unused */
-
+Cardinal MrmFetchInterfaceModule(MrmHierarchy hierarchy_id,
+                                 const char *module_name,
+                                 Widget parent,
+                                 Widget *w_return)
 {
 
   /*
@@ -577,8 +568,6 @@ MrmFetchInterfaceModule (MrmHierarchy		hierarchy_id,
 
 }
 
-
-
 /*
  *++
  *
@@ -651,21 +640,15 @@ MrmFetchInterfaceModule (MrmHierarchy		hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchWidget (MrmHierarchy                hierarchy_id,
-		String                      index,
-		Widget                      parent,
-		Widget                      *w_return,
-		MrmType                     *class_return)
+Cardinal MrmFetchWidget(MrmHierarchy hierarchy_id,
+                        const char *index,
+                        Widget parent,
+                        Widget *w_return,
+                        MrmType *class_return)
 {
-
   return MrmFetchWidgetOverride (hierarchy_id, index, parent,
 				 NULL, NULL, 0, w_return, class_return);
-
 }
-
-
 
 /*
  *++
@@ -715,21 +698,15 @@ MrmFetchWidget (MrmHierarchy                hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchWidgetOverride (MrmHierarchy		hierarchy_id,
-			String			index,
-			Widget			parent,
-			String			ov_name,
-			ArgList			ov_args,
-			Cardinal		ov_num_args,
-			Widget			*w_return,
-			MrmType			*class_return)
+Cardinal MrmFetchWidgetOverride(MrmHierarchy hierarchy_id,
+                                const char *index,
+                                Widget parent,
+                                const char *ov_name,
+                                ArgList ov_args,
+                                Cardinal ov_num_args,
+                                Widget *w_return,
+                                MrmType *class_return)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result;		/* function results */
   URMResourceContextPtr	w_context;	/* context containing widget */
   RGMWidgetRecordPtr	widgetrec;	/* widget record in context */
@@ -845,7 +822,6 @@ MrmFetchWidgetOverride (MrmHierarchy		hierarchy_id,
   _MrmProcessUnlock();
   _MrmAppUnlock(app);
   return MrmSUCCESS;
-
 }
 
 /*

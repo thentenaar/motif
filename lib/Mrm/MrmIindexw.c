@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: MrmIindexw.c /main/12 1996/11/13 13:57:54 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -41,25 +40,22 @@ static char rcsid[] = "$XConsortium: MrmIindexw.c /main/12 1996/11/13 13:57:54 d
  *
  *  ABSTRACT:
  *
- *	These routines manage the index of an IDB file, including 
+ *	These routines manage the index of an IDB file, including
  *	retrieving data entries accessed by index, and maintaing the
  *	index structure, particularly index splitting
  *
  *--
  */
 
-
 /*
  *
  *  INCLUDE FILES
  *
  */
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 #include <Mrm/IDB.h>
 #include "MrmMsgI.h"
-
 
 /*
  *
@@ -115,8 +111,6 @@ static char rcsid[] = "$XConsortium: MrmIindexw.c /main/12 1996/11/13 13:57:54 d
      (_IdbBufferRecordType(buffer)==IDBrtIndexLeaf ||  \
       _IdbBufferRecordType(buffer)==IDBrtIndexNode)
 
-
-
 /*
  *++
  *
@@ -145,20 +139,13 @@ static char rcsid[] = "$XConsortium: MrmIindexw.c /main/12 1996/11/13 13:57:54 d
  *
  *--
  */
-
-Cardinal 
-Idb__INX_EnterItem (IDBFile		file_id ,
-		    char		*index ,
-		    IDBDataHandle	data_entry )
+Cardinal Idb__INX_EnterItem(IDBFile file_id,
+                            const char *index,
+                            IDBDataHandle data_entry)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBRecordBufferPtr	bufptr ;	/* buffer into which to stuff entry */
   MrmCount		entndx ;	/* locates pivotal entry in buffer */
-
 
   /*
    * Initialize the index with this entry if this is the initial one.
@@ -197,12 +184,9 @@ Idb__INX_EnterItem (IDBFile		file_id ,
   /*
    * Return results of final attempt to stuff in a leaf record
    */
-  return result ;
-
+  return result;
 }
 
-
-
 /*
  *++
  *
@@ -237,19 +221,13 @@ Idb__INX_EnterItem (IDBFile		file_id ,
  *
  *--
  */
-
-Cardinal 
-Idb__INX_EnterLeafIndex (IDBFile		file_id,
-			 IDBRecordBufferPtr	buffer,
-			 char			*index,
-			 IDBDataHandle		data_entry,
-			 MrmCount		entry_index,
-			 Cardinal		order)
+Cardinal Idb__INX_EnterLeafIndex(IDBFile file_id,
+                                 IDBRecordBufferPtr buffer,
+                                 const char *index,
+                                 IDBDataHandle data_entry,
+                                 MrmCount entry_index,
+                                 Cardinal order)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBIndexLeafRecordPtr	recptr ;	/* leaf record in buffer */
   IDBIndexLeafHdrPtr	hdrptr ;	/* record header */
@@ -262,7 +240,6 @@ Idb__INX_EnterLeafIndex (IDBFile		file_id,
   MrmCount		nfree ;		/* # free bytes */
   IDBIndexLeafEntryPtr	itemvec ;	/* The vector of index entries */
   MrmCount		itemcnt ;	/* # entries in vector */
-
 
   /*
    * Initialize pointers into the record
@@ -306,7 +283,7 @@ Idb__INX_EnterLeafIndex (IDBFile		file_id,
   /*
    * Move the string and set the values in the vector entry
    */
-  strcpy (ndxstg, "") ;
+  *ndxstg = '\0';
   strncat (ndxstg, index, IDBMaxIndexLength) ;
   itemvec[entndx].index_stg = (MrmOffset) (ndxstg-(char *)itemvec) ;
   itemvec[entndx].data.internal_id.rec_no = data_entry.rec_no ;
@@ -323,12 +300,9 @@ Idb__INX_EnterLeafIndex (IDBFile		file_id,
    * entry successfully added
    */
   Idb__BM_MarkModified (buffer) ;
-  return MrmSUCCESS ;
-
+  return MrmSUCCESS;
 }
 
-
-
 /*
  *++
  *
@@ -365,19 +339,13 @@ Idb__INX_EnterLeafIndex (IDBFile		file_id,
  *
  *--
  */
-
-Cardinal 
-Idb__INX_EnterNodeIndex (IDBFile		file_id,
-			 IDBRecordBufferPtr	buffer,
-			 char			*index,
-			 IDBDataHandle		data_entry,
-			 IDBRecordNumber	lt_record,
-			 IDBRecordNumber	gt_record)
+Cardinal Idb__INX_EnterNodeIndex(IDBFile file_id,
+                                 IDBRecordBufferPtr buffer,
+                                 const char *index,
+                                 IDBDataHandle data_entry,
+                                 IDBRecordNumber lt_record,
+                                 IDBRecordNumber gt_record)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBIndexNodeRecordPtr	recptr ;	/* node record in buffer */
   IDBIndexNodeHdrPtr	hdrptr ;	/* record header */
@@ -395,7 +363,6 @@ Idb__INX_EnterNodeIndex (IDBFile		file_id,
   MrmCount		prvndx ;	/* preceding entry index */
   MrmCount		nxtndx ;	/* succeeding entry index */
   IDBRecordNumber	p_recno ;	/* this node record number */
-
 
   /*
    * Initialize pointers into the record
@@ -444,8 +411,8 @@ Idb__INX_EnterNodeIndex (IDBFile		file_id,
   /*
    * Move the string and set the values in the vector entry and record vector
    */
-  ndxstg = (char *) stgheap - ndxsiz ;
-  strcpy (ndxstg, "") ;
+  ndxstg  = (char *) stgheap - ndxsiz;
+  *ndxstg = '\0';
   strncat (ndxstg, index, IDBMaxIndexLength) ;
   itemvec[entndx].index_stg = (MrmOffset) (ndxstg-(char *)itemvec) ;
   itemvec[entndx].data.internal_id.rec_no = data_entry.rec_no ;
@@ -494,16 +461,10 @@ Idb__INX_EnterNodeIndex (IDBFile		file_id,
    * Set the parent pointer in the LT  and GT records
    */
   p_recno = _IdbBufferRecordNumber (buffer) ;
-  result = Idb__INX_SetParent (file_id, p_recno, lt_record) ;
-  result = Idb__INX_SetParent (file_id, p_recno, gt_record) ;
-  if ( result != MrmSUCCESS ) return result ;
-
-  return MrmSUCCESS ;
-
+  Idb__INX_SetParent(file_id, p_recno, lt_record) ;
+  return Idb__INX_SetParent(file_id, p_recno, gt_record) ;
 }
 
-
-
 /*
  *++
  *
@@ -556,7 +517,7 @@ Idb__INX_EnterNodeIndex (IDBFile		file_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__INX_SplitLeafRecord (IDBFile		file_id,
 			  IDBRecordBufferPtr	gt_buffer)
 {
@@ -675,8 +636,6 @@ Idb__INX_SplitLeafRecord (IDBFile		file_id,
 
 }
 
-
-
 /*
  *++
  *
@@ -863,7 +822,6 @@ Idb__INX_SplitNodeRecord (IDBFile		file_id,
 }
 
 
-
 /*
  *++
  *
@@ -895,7 +853,7 @@ Idb__INX_SplitNodeRecord (IDBFile		file_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__INX_InitRootLeafRecord (IDBFile		file_id,
 			     IDBRecordBufferPtr	*buffer_return)
 {
@@ -936,13 +894,13 @@ Idb__INX_InitRootLeafRecord (IDBFile		file_id,
   return MrmSUCCESS ;
 
 }
-
+
 /*
  *++
  *
  *  PROCEDURE DESCRIPTION:
  *
- *	Idb__INX_InitNodeRecord initializes a new node index record. It
+ *	Idb__INX_InitRootNodeRecord initializes a new node index record. It
  *	creates the initial entry in the record, with its index, data pointer,
  *	and pointers to two children records in the B-tree. This entry always
  *	becomes the root of the B-tree, since the only occasion on which
@@ -970,25 +928,18 @@ Idb__INX_InitRootLeafRecord (IDBFile		file_id,
  *
  *--
  */
-
-Cardinal 
-Idb__INX_InitRootNodeRecord (IDBFile			file_id,
-			     IDBRecordBufferPtr		*buffer_return,
-			     char			*index,
-			     IDBDataHandle		data_entry,
-			     IDBRecordNumber		lt_record,
-			     IDBRecordNumber		gt_record)
+Cardinal Idb__INX_InitRootNodeRecord(IDBFile file_id,
+                                     IDBRecordBufferPtr *buffer_return,
+                                     const char *index,
+                                     IDBDataHandle data_entry,
+                                     IDBRecordNumber lt_record,
+                                     IDBRecordNumber gt_record)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBRecordBufferPtr	bufptr ;	/* node record buffer */
   IDBIndexNodeRecordPtr	recptr ;	/* node record in buffer */
   IDBIndexNodeHdrPtr	hdrptr ;	/* record header */
   IDBRecordNumber	recno ;		/* this buffer's record number */
-
 
   /*
    * Acquire a record
@@ -1033,11 +984,8 @@ Idb__INX_InitRootNodeRecord (IDBFile			file_id,
    */
   file_id->index_root = hdrptr->header.record_num ;
   return MrmSUCCESS ;
-
 }
 
-
-
 /*
  *++
  *
@@ -1061,7 +1009,7 @@ Idb__INX_InitRootNodeRecord (IDBFile			file_id,
  *--
  */
 
-void 
+void
 Idb__INX_CopyLeafRecord (IDBIndexLeafRecordPtr	dst_recptr,
 			 IDBIndexLeafRecordPtr	src_recptr)
 {
@@ -1093,7 +1041,7 @@ Idb__INX_CopyLeafRecord (IDBIndexLeafRecordPtr	dst_recptr,
   UrmBCopy (src_data, dst_data, IDBIndexLeafFreeMax) ;
 
 }
-
+
 /*
  *++
  *
@@ -1117,7 +1065,7 @@ Idb__INX_CopyLeafRecord (IDBIndexLeafRecordPtr	dst_recptr,
  *--
  */
 
-void 
+void
 Idb__INX_CopyNodeRecord (IDBIndexNodeRecordPtr	dst_recptr,
 			 IDBIndexNodeRecordPtr	src_recptr)
 {
@@ -1148,7 +1096,7 @@ Idb__INX_CopyNodeRecord (IDBIndexNodeRecordPtr	dst_recptr,
   UrmBCopy (src_data, dst_data, IDBIndexNodeFreeMax) ;
 
 }
-
+
 /*
  *++
  *
@@ -1177,7 +1125,7 @@ Idb__INX_CopyNodeRecord (IDBIndexNodeRecordPtr	dst_recptr,
  *--
  */
 
-void 
+void
 Idb__INX_CollapseLeafRecord (IDBIndexLeafRecordPtr	recptr,
 			     MrmCount			start,
 			     MrmCount			end)
@@ -1250,7 +1198,6 @@ Idb__INX_CollapseLeafRecord (IDBIndexLeafRecordPtr	recptr,
 
 }
 
-
 /*
  *++
  *
@@ -1283,7 +1230,7 @@ Idb__INX_CollapseLeafRecord (IDBIndexLeafRecordPtr	recptr,
  *--
  */
 
-void 
+void
 Idb__INX_CollapseNodeRecord (IDBIndexNodeRecordPtr	recptr,
 			     MrmCount			start,
 			     MrmCount			end)
@@ -1358,7 +1305,6 @@ Idb__INX_CollapseNodeRecord (IDBIndexNodeRecordPtr	recptr,
 
 }
 
-
 /*
  *++
  *
@@ -1388,7 +1334,7 @@ Idb__INX_CollapseNodeRecord (IDBIndexNodeRecordPtr	recptr,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__INX_ConfirmNodeSpace (IDBFile		file_id,
 			   IDBRecordBufferPtr	buffer)
 {
@@ -1420,7 +1366,6 @@ Idb__INX_ConfirmNodeSpace (IDBFile		file_id,
 
 }
 
-
 /*
  *++
  *
@@ -1448,7 +1393,7 @@ Idb__INX_ConfirmNodeSpace (IDBFile		file_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__INX_SetParent (IDBFile		file_id,
 		    IDBRecordNumber	parent_record,
 		    IDBRecordNumber	child_record)
@@ -1503,8 +1448,6 @@ Idb__INX_SetParent (IDBFile		file_id,
 
 }
 
-
-
 /*
  *++
  *
@@ -1532,7 +1475,7 @@ Idb__INX_SetParent (IDBFile		file_id,
  *--
  */
 
-Cardinal 
+Cardinal
 Idb__INX_FixNodeChildren (IDBFile		file_id,
 			  IDBRecordNumber	p_record)
 {
@@ -1577,7 +1520,5 @@ Idb__INX_FixNodeChildren (IDBFile		file_id,
    * Successfully modified
    */
   return MrmSUCCESS ;
-
 }
-
 

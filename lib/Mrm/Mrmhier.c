@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,17 +20,16 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -53,7 +52,6 @@ static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk 
  *  INCLUDE FILES
  *
  */
-
 #include <stdio.h>
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
@@ -69,7 +67,6 @@ static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk 
 #endif
 #endif
 
-
 /*
  *
  *  TABLE OF CONTENTS
@@ -81,7 +78,6 @@ static char rcsid[] = "$XConsortium: Mrmhier.c /main/17 1996/11/13 14:01:19 drk 
  *	UrmHGetIndexedResource		Get resource from hierarchy
  *
  */
-
 
 /*
  *
@@ -104,7 +100,6 @@ static char		*uidPath;
 static SubstitutionRec	uidSubs[1];
 
 
-
 /*
  *++
  *
@@ -335,7 +330,6 @@ Urm__OpenHierarchy (MrmCount			num_files,
 }
 
 
-
 /*
  *++
  *
@@ -411,8 +405,6 @@ Urm__CloseHierarchy (MrmHierarchy	hierarchy_id)
 
 }
 
-
-
 /*
  *++
  *
@@ -450,19 +442,13 @@ Urm__CloseHierarchy (MrmHierarchy	hierarchy_id)
  *
  *--
  */
-
-Cardinal
-UrmHGetIndexedResource (MrmHierarchy		hierarchy_id,
-			String			index ,
-			MrmGroup			group_filter,
-			MrmType			type_filter,
-			URMResourceContextPtr	context_id,
-			IDBFile			*file_id_return)
+Cardinal UrmHGetIndexedResource(MrmHierarchy hierarchy_id,
+                                const char *index,
+                                MrmGroup group_filter,
+                                MrmType type_filter,
+                                URMResourceContextPtr context_id,
+                                IDBFile *file_id_return)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   IDBFile		*file_ids ;	/* list of files to search */
   int			num_ids ;	/* number of entries in file_ids */
@@ -501,12 +487,9 @@ UrmHGetIndexedResource (MrmHierarchy		hierarchy_id,
   /*
    * Not found
    */
-  return MrmNOT_FOUND ;
-
+  return MrmNOT_FOUND;
 }
 
-
-
 /*
  *++
  *
@@ -584,7 +567,6 @@ Urm__RegisterNamesInHierarchy (MrmHierarchy		hierarchy_id,
 }
 
 
-
 /*
  *++
  *
@@ -648,7 +630,6 @@ Urm__LookupNameInHierarchy (MrmHierarchy	hierarchy_id,
 }
 
 
-
 /*
  *++
  *

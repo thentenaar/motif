@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "MrmFetchWidgetOverride" "library call"
 .SH "NAME"
 \fBMrmFetchWidgetOverride\fP \(em Fetches any indexed (UIL named) application widget\&.  It overrides the arguments specified for this application widget in UIL
@@ -57,9 +57,9 @@
 #include <Mrm/MrmPublic\&.h>
 \fBCardinal \fBMrmFetchWidgetOverride\fP\fR(
 \fBMrmHierarchy \fBhierarchy_id\fR\fR,
-\fBString \fBindex\fR\fR,
+\fBconst char *\fBindex\fR\fR,
 \fBWidget \fBparent_widget\fR\fR,
-\fBString \fBoverride_name\fR\fR,
+\fBconst char *\fBoverride_name\fR\fR,
 \fBArgList \fBoverride_args\fR\fR,
 \fBCardinal \fBoverride_num_args\fR\fR,
 \fBWidget *\fBwidget\fR\fR,

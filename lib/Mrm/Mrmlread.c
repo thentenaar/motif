@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -69,7 +69,7 @@ static char rcsid[] = "$XConsortium: Mrmlread.c /main/16 1996/11/13 14:02:28 drk
  *	UrmHGetIndexedLiteral		Read indexed literal from hierarchy
  *
  */
-
+
 /*
  *++
  *
@@ -97,12 +97,10 @@ static char rcsid[] = "$XConsortium: Mrmlread.c /main/16 1996/11/13 14:02:28 drk
  *
  *--
  */
-
-Cardinal
-Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
-		   String			index,
-		   URMResourceContextPtr	context_id,
-		   URMPointerListPtr		*ctxlist)
+Cardinal Urm__FetchLiteral(MrmHierarchy hierarchy_id,
+                           const char *index,
+                           URMResourceContextPtr context_id,
+                           URMPointerListPtr *ctxlist)
 {
 
   /*
@@ -192,8 +190,6 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
 
 }
 
-
-
 /*
  *++
  *
@@ -233,15 +229,12 @@ Urm__FetchLiteral (MrmHierarchy			hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchLiteral (MrmHierarchy		hierarchy_id,
-		 String			index,
-		 Display		*display,
-		 XtPointer		*value_return,
-		 MrmCode		*type_return)
+Cardinal MrmFetchLiteral(MrmHierarchy hierarchy_id,
+                         const char *index,
+                         Display *display,
+                         XtPointer *value_return,
+                         MrmCode *type_return)
 {
-
   /*
    *  Local variables
    */
@@ -374,8 +367,6 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
     }
 }
 
-
-
 /*
  *++
  *
@@ -404,20 +395,14 @@ MrmFetchLiteral (MrmHierarchy		hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
-		     String                      index,
-		     Screen                      *screen,
-		     Display                     *display,
-		     Pixel                       fgpix,
-		     Pixel                       bgpix,
-		     Pixmap                      *pixmap_return)
+Cardinal MrmFetchIconLiteral(MrmHierarchy hierarchy_id,
+                             const char *index,
+                             Screen *screen,
+                             Display *display,
+                             Pixel fgpix,
+                             Pixel bgpix,
+                             Pixmap *pixmap_return)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result;		/* function results */
   URMResourceContextPtr	context_id;	/* for the literal */
   URMPointerListPtr	ctxlist = NULL;	/* save added contexts */
@@ -482,7 +467,6 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
 
 }
 
-
 /*
  *++
  *
@@ -509,20 +493,14 @@ MrmFetchIconLiteral (MrmHierarchy                hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
-		       String                      index,
-		       Screen                      *screen,
-		       Display                     *display,
-		       Pixmap                      *pixmap_return,
-		       Dimension			*width,
-		       Dimension			*height)
+Cardinal MrmFetchBitmapLiteral(MrmHierarchy hierarchy_id,
+                               const char *index,
+                               Screen *screen,
+                               Display *display,
+                               Pixmap *pixmap_return,
+                               Dimension *width,
+                               Dimension *height)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result;		/* function results */
   URMResourceContextPtr	context_id;	/* for the literal */
   URMPointerListPtr	ctxlist = NULL;	/* save added contexts */
@@ -591,10 +569,8 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
   _MrmAppUnlock(app);
   _MrmProcessUnlock();
   return result;
-
 }
 
-
 /*
  *++
  *
@@ -621,18 +597,12 @@ MrmFetchBitmapLiteral (MrmHierarchy                hierarchy_id,
  *
  *--
  */
-
-Cardinal
-MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
-		      String                      index,
-		      Display                     *display,
-		      Colormap                    cmap,
-		      Pixel                       *pixel_return)
+Cardinal MrmFetchColorLiteral(MrmHierarchy hierarchy_id,
+                              const char *index,
+                              Display *display,
+                              Colormap cmap,
+                              Pixel *pixel_return)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result;		/* function results */
   URMResourceContextPtr	context_id;	/* for the literal */
   URMPointerListPtr	ctxlist = NULL;	/* save added contexts */
@@ -700,11 +670,8 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
   _MrmAppUnlock(app);
   _MrmProcessUnlock();
   return result;
-
 }
 
-
-
 /*
  *++
  *
@@ -759,16 +726,10 @@ MrmFetchColorLiteral (MrmHierarchy                hierarchy_id,
  *
  *--
  */
-
-Cardinal
-UrmGetIndexedLiteral (IDBFile			file_id ,
-		      String			index ,
-		      URMResourceContextPtr	context_id )
+Cardinal UrmGetIndexedLiteral(IDBFile file_id,
+                              const char *index,
+                              URMResourceContextPtr context_id)
 {
-
-  /*
-   *  Local variables
-   */
   MrmType		lit_type ;	/* the type of the literal */
 
 
@@ -782,10 +743,8 @@ UrmGetIndexedLiteral (IDBFile			file_id ,
   lit_type = UrmRCType (context_id) ;
   return UrmIdbGetIndexedResource
     (file_id, index, URMgLiteral, lit_type, context_id) ;
-
 }
 
-
 /*
  *++
  *
@@ -840,7 +799,6 @@ UrmGetRIDLiteral (IDBFile			file_id ,
 
 }
 
-
 /*
  *++
  *
@@ -871,17 +829,11 @@ UrmGetRIDLiteral (IDBFile			file_id ,
  *
  *--
  */
-
-Cardinal
-Urm__HGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
-			 String			index ,
-			 URMResourceContextPtr	context_id ,
-			 IDBFile		*file_id_return )
+Cardinal Urm__HGetIndexedLiteral(MrmHierarchy hierarchy_id,
+                                 const char *index,
+                                 URMResourceContextPtr context_id,
+                                 IDBFile *file_id_return)
 {
-
-  /*
-   *  Local variables
-   */
   MrmType			lit_type ;	/* the type of the literal */
 
   /*
@@ -900,11 +852,8 @@ Urm__HGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
   lit_type = UrmRCType (context_id) ;
   return UrmHGetIndexedResource
     (hierarchy_id, index, URMgLiteral, lit_type, context_id, file_id_return) ;
-
 }
 
-
-
 /*
  *++
  *
@@ -934,18 +883,11 @@ Urm__HGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
  *
  *--
  */
-
-Cardinal
-UrmHGetIndexedLiteral (MrmHierarchy		hierarchy_id ,
-		       String			index ,
-		       URMResourceContextPtr	context_id )
+Cardinal UrmHGetIndexedLiteral(MrmHierarchy hierarchy_id,
+                               const char *index,
+                               URMResourceContextPtr context_id)
 {
-
-  /*
-   *  Local variables
-   */
-  IDBFile			dummy ;		/* unused file return */
-
-  return Urm__HGetIndexedLiteral (hierarchy_id, index, context_id, &dummy) ;
+	IDBFile dummy; /* unused file return */
+	return Urm__HGetIndexedLiteral(hierarchy_id, index, context_id, &dummy);
 }
 

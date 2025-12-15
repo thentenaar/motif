@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Mrmmodule.c /main/12 1996/11/13 14:03:12 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -45,17 +44,14 @@ static char rcsid[] = "$XConsortium: Mrmmodule.c /main/12 1996/11/13 14:03:12 dr
  *--
  */
 
-
 /*
  *
  *  INCLUDE FILES
  *
  */
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 #include "MrmMsgI.h"
-
 
 /*
  *
@@ -73,7 +69,6 @@ static char rcsid[] = "$XConsortium: Mrmmodule.c /main/12 1996/11/13 14:03:12 dr
  *
  *
  */
-
 
 /*
  *
@@ -100,7 +95,6 @@ static char rcsid[] = "$XConsortium: Mrmmodule.c /main/12 1996/11/13 14:03:12 dr
   recptr = (RGMModuleDescPtr) UrmRCBuffer (ctx_ptr) ;		\
  }
 
-
 /*
  *++
  *
@@ -140,7 +134,7 @@ static char rcsid[] = "$XConsortium: Mrmmodule.c /main/12 1996/11/13 14:03:12 dr
  *--
  */
 
-Cardinal 
+Cardinal
 UrmIFMInitModule (URMResourceContextPtr		context_id,
 		  MrmCount			num_widget,
 		  MrmCode			access,
@@ -198,7 +192,6 @@ UrmIFMInitModule (URMResourceContextPtr		context_id,
 }
 
 
-
 /*
  *++
  *
@@ -228,7 +221,7 @@ UrmIFMInitModule (URMResourceContextPtr		context_id,
  *--
  */
 
-Cardinal 
+Cardinal
 UrmIFMSetTopmost (URMResourceContextPtr		context_id ,
 		  Cardinal			topmost_ndx ,
 		  String			index )
@@ -262,7 +255,6 @@ UrmIFMSetTopmost (URMResourceContextPtr		context_id ,
 
 }
 
-
 /*
  *++
  *
@@ -295,19 +287,11 @@ UrmIFMSetTopmost (URMResourceContextPtr		context_id ,
  *
  *--
  */
-
-Cardinal 
-UrmIFMPutModule (IDBFile		file_id ,
-		 String			index ,
-		 URMResourceContextPtr	context_id )
+Cardinal UrmIFMPutModule(IDBFile file_id, const char *index,
+                         URMResourceContextPtr context_id)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* Function results */
   RGMModuleDescPtr	ifmodptr ;	/* IF module in context */
-
 
   /*
    * Validate context and interface module.
@@ -324,12 +308,9 @@ UrmIFMPutModule (IDBFile		file_id ,
   UrmRCSetType (context_id, URMrsInterfaceModule) ;
 
   result = UrmIdbPutIndexedResource (file_id, index, context_id) ;
-  return result ;
-
+  return result;
 }
 
-
-
 /*
  *++
  *
@@ -361,32 +342,16 @@ UrmIFMPutModule (IDBFile		file_id ,
  *
  *--
  */
-
-Cardinal 
-UrmIFMHGetModule (MrmHierarchy		hierarchy_id ,
-		  String		index ,
-		  URMResourceContextPtr	context_id ,
-		  IDBFile		*file_id_return )
+Cardinal UrmIFMHGetModule(MrmHierarchy hierarchy_id,
+                          const char *index,
+                          URMResourceContextPtr context_id,
+                          IDBFile *file_id_return)
 {
-
-  /*
-   *  Local variables
-   */
-  Cardinal		result ;	/* function results */
-
-  /*
-   * Get the module
-   */
-  result = UrmHGetIndexedResource
-    (hierarchy_id, index, URMgResourceSet, URMrsInterfaceModule,
-     context_id, file_id_return) ;
-
-  return result ;
-
+	return UrmHGetIndexedResource(hierarchy_id, index, URMgResourceSet,
+	                              URMrsInterfaceModule, context_id,
+	                              file_id_return);
 }
 
-
-
 /*
  *++
  *
@@ -416,16 +381,9 @@ UrmIFMHGetModule (MrmHierarchy		hierarchy_id ,
  *
  *--
  */
-
-Cardinal 
-UrmIFMGetModule (IDBFile		file_id ,
-		 String			index ,
-		 URMResourceContextPtr	context_id )
+Cardinal UrmIFMGetModule(IDBFile file_id, const char *index,
+                         URMResourceContextPtr context_id)
 {
-
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   RGMModuleDescPtr	ifmodptr ;	/* IF module in context */
 
@@ -452,7 +410,6 @@ UrmIFMGetModule (IDBFile		file_id ,
   /*
    * Successfully retrieved
    */
-  return MrmSUCCESS ;
-
+  return MrmSUCCESS;
 }
 

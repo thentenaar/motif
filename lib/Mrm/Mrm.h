@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 #ifndef Mrm_H
 #define Mrm_H
 
@@ -27,7 +27,6 @@
 #include <Mrm/MrmPublic.h>
 #include <Xm/Xm.h>			/* XmString definition */
 #include <Xm/XmosP.h>
-
 
 /*
  * This is the internal file used throughout URM for literal and
@@ -49,7 +48,6 @@
 #define XmConst
 #endif /* __STDC__ */
 #endif /* XmConst */
-
 
 /*
  * The following macro is used to round the size of memory allocation requests
@@ -1256,11 +1254,11 @@ extern Cardinal UrmResizeResourceContext  _ARGUMENTS(( URMResourceContextPtr con
 extern Cardinal UrmFreeResourceContext  _ARGUMENTS(( URMResourceContextPtr context_id ));
 
 /* mrmerror.c */
-extern Cardinal Urm__UT_Error  _ARGUMENTS(( char *module ,
-					    char *error ,
-					    IDBFile file_id ,
-					    URMResourceContextPtr context_id ,
-					    Cardinal status ));
+extern Cardinal Urm__UT_Error(const char *module,
+                              const char *error,
+                              IDBFile file_id,
+                              URMResourceContextPtr context_id,
+                              Cardinal status);
 extern Cardinal Urm__UT_SetErrorReport  _ARGUMENTS(( MrmCode report_type ));
 extern MrmCode Urm__UT_LatestErrorCode  _ARGUMENTS(( void ));
 extern String Urm__UT_LatestErrorMessage  _ARGUMENTS(( void ));
@@ -1274,12 +1272,12 @@ extern Cardinal Urm__OpenHierarchy  _ARGUMENTS(( MrmCount num_files ,
 						 MrmFlag in_memory,
 						 unsigned char *uid_buffer));
 extern Cardinal Urm__CloseHierarchy  _ARGUMENTS(( MrmHierarchy hierarchy_id ));
-extern Cardinal UrmHGetIndexedResource  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-						String index ,
-						MrmGroup group_filter ,
-						MrmType type_filter ,
-						URMResourceContextPtr context_id ,
-						IDBFile *file_id_return ));
+extern Cardinal UrmHGetIndexedResource(MrmHierarchy hierarchy_id,
+                                       const char *index,
+                                       MrmGroup group_filter,
+                                       MrmType type_filter,
+                                       URMResourceContextPtr context_id,
+                                       IDBFile *file_id_return);
 extern Cardinal Urm__RegisterNamesInHierarchy  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
 							    String *names ,
 							    XtPointer *values ,
@@ -1429,17 +1427,17 @@ extern Boolean Idb__HDR_MatchFilter  _ARGUMENTS(( IDBFile file_id ,
 						    MrmCode type_filter ));
 
 /* mrmiindex.c */
-extern Cardinal Idb__INX_ReturnItem  _ARGUMENTS(( IDBFile file_id ,
-						    char *index ,
-						    IDBDataHandle *data_entry ));
-extern Cardinal Idb__INX_FindIndex  _ARGUMENTS(( IDBFile file_id ,
-						    char *index ,
-						    IDBRecordBufferPtr *buffer_return ,
-						    MrmCount *index_return ));
-extern Cardinal Idb__INX_SearchIndex  _ARGUMENTS(( IDBFile file_id ,
-						    char *index ,
-						    IDBRecordBufferPtr buffer ,
-						    MrmCount *index_return ));
+extern Cardinal Idb__INX_ReturnItem(IDBFile file_id,
+                                    const char *index,
+                                    IDBDataHandle *data_entry);
+extern Cardinal Idb__INX_FindIndex(IDBFile file_id,
+                                   const char *index,
+                                   IDBRecordBufferPtr *buffer_return,
+                                   MrmCount *index_return);
+extern Cardinal Idb__INX_SearchIndex(IDBFile file_id,
+                                     const char *index,
+                                     IDBRecordBufferPtr buffer,
+                                     MrmCount *index_return);
 extern Cardinal Idb__INX_GetBtreeRecord  _ARGUMENTS(( IDBFile file_id ,
 							IDBRecordBufferPtr *buffer_return ,
 							MrmCount entry_index ,
@@ -1451,33 +1449,33 @@ extern Cardinal Idb__INX_FindResources  _ARGUMENTS(( IDBFile file_id ,
 							URMPointerListPtr index_list ));
 
 /* mrmiindexw.c */
-extern Cardinal Idb__INX_EnterItem  _ARGUMENTS(( IDBFile file_id ,
-						    char *index ,
-						    IDBDataHandle data_entry ));
-extern Cardinal Idb__INX_EnterLeafIndex  _ARGUMENTS(( IDBFile file_id ,
-							IDBRecordBufferPtr buffer ,
-							char *index ,
-							IDBDataHandle data_entry ,
-							MrmCount entry_index ,
-							Cardinal order ));
-extern Cardinal Idb__INX_EnterNodeIndex  _ARGUMENTS(( IDBFile file_id ,
-							IDBRecordBufferPtr buffer ,
-							char *index ,
-							IDBDataHandle data_entry ,
-							IDBRecordNumber lt_record ,
-							IDBRecordNumber gt_record ));
+extern Cardinal Idb__INX_EnterItem(IDBFile file_id,
+                                   const char *index,
+                                   IDBDataHandle data_entry);
+extern Cardinal Idb__INX_EnterLeafIndex(IDBFile file_id,
+                                        IDBRecordBufferPtr buffer,
+                                        const char *index,
+                                        IDBDataHandle data_entry,
+                                        MrmCount entry_index,
+                                        Cardinal order);
+extern Cardinal Idb__INX_EnterNodeIndex(IDBFile file_id,
+                                        IDBRecordBufferPtr buffer,
+                                        const char *index,
+                                        IDBDataHandle data_entry,
+                                        IDBRecordNumber lt_record,
+                                        IDBRecordNumber gt_record);
 extern Cardinal Idb__INX_SplitLeafRecord  _ARGUMENTS(( IDBFile file_id ,
 							IDBRecordBufferPtr gt_buffer ));
 extern Cardinal Idb__INX_SplitNodeRecord  _ARGUMENTS(( IDBFile file_id ,
 							IDBRecordBufferPtr gt_buffer ));
 extern Cardinal Idb__INX_InitRootLeafRecord  _ARGUMENTS(( IDBFile file_id ,
 							    IDBRecordBufferPtr *buffer_return ));
-extern Cardinal Idb__INX_InitRootNodeRecord  _ARGUMENTS(( IDBFile file_id ,
-							    IDBRecordBufferPtr *buffer_return ,
-							    char *index ,
-							    IDBDataHandle data_entry ,
-							    IDBRecordNumber lt_record ,
-							    IDBRecordNumber gt_record ));
+extern Cardinal Idb__INX_InitRootNodeRecord(IDBFile file_id,
+                                            IDBRecordBufferPtr *buffer_return,
+                                            const char *index,
+                                            IDBDataHandle data_entry,
+                                            IDBRecordNumber lt_record,
+                                            IDBRecordNumber gt_record);
 extern void Idb__INX_CopyLeafRecord  _ARGUMENTS(( IDBIndexLeafRecordPtr dst_recptr ,
 						    IDBIndexLeafRecordPtr src_recptr ));
 extern void Idb__INX_CopyNodeRecord  _ARGUMENTS(( IDBIndexNodeRecordPtr dst_recptr ,
@@ -1517,11 +1515,11 @@ extern Cardinal UrmIdbOpenBuffer  _ARGUMENTS(( unsigned char *uid_buffer ,
 						    IDBFile *file_id_return ));
 extern Cardinal UrmIdbCloseFile  _ARGUMENTS(( IDBFile file_id ,
 						Boolean keep_new_file ));
-extern Cardinal UrmIdbGetIndexedResource  _ARGUMENTS(( IDBFile file_id ,
-							String index ,
-							MrmGroup group_filter ,
-							MrmType type_filter ,
-							URMResourceContextPtr context_id ));
+extern Cardinal UrmIdbGetIndexedResource(IDBFile file_id,
+                                         const char *index,
+                                         MrmGroup group_filter,
+                                         MrmType type_filter,
+                                         URMResourceContextPtr context_id );
 extern Cardinal UrmIdbFindIndexedResource  _ARGUMENTS(( IDBFile file_id ,
 							MrmGroup group_filter ,
 							MrmType type_filter ,
@@ -1544,31 +1542,31 @@ extern Cardinal UrmIdbOpenFileWrite  _ARGUMENTS(( String name ,
 						    String module_version ,
 						    IDBFile *file_id_return ,
 						    char *fname_return ));
-extern Cardinal UrmIdbPutIndexedResource  _ARGUMENTS(( IDBFile file_id ,
-						    String index ,
-						    URMResourceContextPtr context_id ));
+extern Cardinal UrmIdbPutIndexedResource(IDBFile file_id,
+                                         const char *index,
+                                         URMResourceContextPtr context_id );
 extern Cardinal UrmIdbPutRIDResource  _ARGUMENTS(( IDBFile file_id ,
 						    MrmResource_id resource_id ,
 						    URMResourceContextPtr context_id ));
 
 /* mrmlread.c */
-extern Cardinal Urm__FetchLiteral  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-						    String index ,
-						    URMResourceContextPtr context_id ,
-						    URMPointerListPtr *ctxlist ));
-extern Cardinal UrmGetIndexedLiteral  _ARGUMENTS(( IDBFile file_id ,
-						    String index ,
-						    URMResourceContextPtr context_id ));
+extern Cardinal Urm__FetchLiteral(MrmHierarchy hierarchy_id,
+                                  const char *index,
+                                  URMResourceContextPtr context_id,
+                                  URMPointerListPtr *ctxlist);
+extern Cardinal UrmGetIndexedLiteral(IDBFile file_id,
+                                     const char *index,
+                                     URMResourceContextPtr context_id);
 extern Cardinal UrmGetRIDLiteral  _ARGUMENTS(( IDBFile file_id ,
 						MrmResource_id resource_id ,
 						URMResourceContextPtr context_id ));
-extern Cardinal Urm__HGetIndexedLiteral  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-							String index ,
-							URMResourceContextPtr context_id ,
-							IDBFile *file_id_return ));
-extern Cardinal UrmHGetIndexedLiteral  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-							String index ,
-							URMResourceContextPtr context_id ));
+extern Cardinal Urm__HGetIndexedLiteral(MrmHierarchy hierarchy_id,
+                                        const char *index,
+                                        URMResourceContextPtr context_id,
+                                        IDBFile *file_id_return);
+extern Cardinal UrmHGetIndexedLiteral(MrmHierarchy hierarchy_id,
+                                      const char *index,
+                                      URMResourceContextPtr context_id);
 
 /* mrmlwrite.c */
 extern Cardinal UrmPutIndexedLiteral  _ARGUMENTS(( IDBFile file_id ,
@@ -1586,16 +1584,14 @@ extern Cardinal UrmIFMInitModule  _ARGUMENTS(( URMResourceContextPtr context_id 
 extern Cardinal UrmIFMSetTopmost  _ARGUMENTS(( URMResourceContextPtr context_id ,
 						Cardinal topmost_ndx ,
 						String index ));
-extern Cardinal UrmIFMPutModule  _ARGUMENTS(( IDBFile file_id ,
-						String index ,
-						URMResourceContextPtr context_id ));
-extern Cardinal UrmIFMHGetModule  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-						String index ,
-						URMResourceContextPtr context_id ,
-						IDBFile *file_id_return ));
-extern Cardinal UrmIFMGetModule  _ARGUMENTS(( IDBFile file_id ,
-						String index ,
-						URMResourceContextPtr context_id ));
+extern Cardinal UrmIFMPutModule(IDBFile file_id, const char *index,
+                                URMResourceContextPtr context_id);
+extern Cardinal UrmIFMHGetModule(MrmHierarchy hierarchy_id,
+                                 const char *index,
+                                 URMResourceContextPtr context_id,
+                                 IDBFile *file_id_return);
+extern Cardinal UrmIFMGetModule(IDBFile file_id, const char *index,
+                                URMResourceContextPtr context_id);
 
 /* mrmptrlist.c */
 extern Cardinal UrmPlistInit  _ARGUMENTS(( int size ,
@@ -1650,21 +1646,20 @@ extern URMHashTableEntryPtr hash_delete_name  _ARGUMENTS(( URMHashTableEntryPtr 
 							    char *c_text ));
 
 /* mrmwcrw.c */
-extern Cardinal UrmCreateWidgetTree
-                               _ARGUMENTS(( URMResourceContextPtr context_id ,
-					    Widget parent ,
-					    MrmHierarchy hierarchy_id ,
-					    IDBFile file_id ,
-					    String ov_name ,
-					    ArgList ov_args ,
-					    Cardinal ov_num_args ,
-					    MrmCode keytype ,
-					    String kindex ,
-					    MrmResource_id krid ,
-					    MrmManageFlag manage ,
-					    URMPointerListPtr *svlist ,
-					    URMResourceContextPtr wref_id ,
-					    Widget *w_return ));
+extern Cardinal UrmCreateWidgetTree(URMResourceContextPtr context_id,
+                                    Widget parent,
+                                    MrmHierarchy hierarchy_id,
+                                    IDBFile file_id,
+                                    const char *ov_name,
+                                    ArgList ov_args,
+                                    Cardinal ov_num_args,
+                                    MrmCode keytype,
+                                    const char *kindex,
+                                    MrmResource_id krid,
+                                    MrmManageFlag manage,
+                                    URMPointerListPtr *svlist,
+                                    URMResourceContextPtr wref_id,
+                                    Widget *w_return);
 extern Cardinal UrmCreateWidgetInstance
                                _ARGUMENTS((URMResourceContextPtr context_id ,
 					   Widget parent ,
@@ -1697,20 +1692,19 @@ extern Cardinal UrmCreateOrSetWidgetInstance
 					   URMResourceContextPtr wref_id ,
 					   Widget *w_return,
 					   char **w_name));
-extern Cardinal UrmSetWidgetInstance
-                               _ARGUMENTS((URMResourceContextPtr context_id ,
-					   Widget parent ,
-					   MrmHierarchy hierarchy_id ,
-					   IDBFile file_id ,
-					   ArgList ov_args ,
-					   Cardinal ov_num_args ,
-					   MrmCode keytype ,
-					   String kindex ,
-					   MrmResource_id krid ,
-					   MrmManageFlag manage ,
-					   URMPointerListPtr *svlist ,
-					   URMResourceContextPtr wref_id ,
-					   Widget *w_return ));
+extern Cardinal UrmSetWidgetInstance(URMResourceContextPtr context_id,
+                                     Widget parent,
+                                     MrmHierarchy hierarchy_id,
+                                     IDBFile file_id,
+                                     ArgList ov_args,
+                                     Cardinal ov_num_args,
+                                     MrmCode keytype,     /* unused */
+                                     const char *kindex,  /* unused */
+                                     MrmResource_id krid, /* unused */
+                                     MrmManageFlag manage,
+                                     URMPointerListPtr *svlist,
+                                     URMResourceContextPtr wref_id,
+                                     Widget *w_return);
 extern void Urm__CW_CreateArglist  _ARGUMENTS(( Widget parent ,
 						RGMWidgetRecordPtr widgetrec ,
 						RGMArgListDescPtr argdesc ,
@@ -1900,13 +1894,12 @@ extern Cardinal UrmCWR__BindCallbackPtrs  _ARGUMENTS(( URMResourceContextPtr con
 							RGMCallbackItemPtr *itmptr ));
 
 /* mrmwread.c */
-extern Cardinal UrmHGetWidget  _ARGUMENTS(( MrmHierarchy hierarchy_id ,
-						String index ,
-						URMResourceContextPtr context_id ,
-						IDBFile *file_id_return ));
-extern Cardinal UrmGetIndexedWidget  _ARGUMENTS(( IDBFile file_id ,
-						    String index ,
-						    URMResourceContextPtr context_id ));
+extern Cardinal UrmHGetWidget(MrmHierarchy hierarchy_id,
+                              const char *index,
+                              URMResourceContextPtr context_id,
+                              IDBFile *file_id_return);
+extern Cardinal UrmGetIndexedWidget(IDBFile file_id, const char *index,
+                                    URMResourceContextPtr context_id);
 extern Cardinal UrmGetRIDWidget  _ARGUMENTS(( IDBFile file_id ,
 						MrmResource_id resource_id ,
 						URMResourceContextPtr context_id ));

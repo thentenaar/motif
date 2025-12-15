@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifndef MrmDecls_H
 #define MrmDecls_H
 
@@ -151,9 +152,7 @@ externalref _MrmConst char *_MrmMsg_0106;
 externalref _MrmConst char *_MrmMsg_0107;
 externalref _MrmConst char *_MrmMsg_0108;
 externalref _MrmConst char *_MrmMsg_0109;
-/* BEGIN OSF Fix CR 4859 */
 externalref _MrmConst char *_MrmMsg_0110;
-/* END OSF Fix CR 4859 */
 externalref _MrmConst char *_MrmMsg_0111;
 externalref _MrmConst char *_MrmMsg_0112;
 externalref _MrmConst char *_MrmMsg_0113;
@@ -175,21 +174,64 @@ extern "C" {
 extern void MrmInitialize(void);
 
 /* mrmlread.c */
-extern Cardinal MrmFetchLiteral  ( MrmHierarchy hierarchy_id , String index , Display *display , XtPointer *value_return , MrmCode *type_return );
-extern Cardinal MrmFetchIconLiteral  ( MrmHierarchy hierarchy_id , String index , Screen *screen , Display *display , Pixel fgpix , Pixel bgpix , Pixmap *pixmap_return );
-extern Cardinal MrmFetchBitmapLiteral  ( MrmHierarchy hierarchy_id , String index , Screen *screen , Display *display , Pixmap *pixmap_return , Dimension *width , Dimension *height);
-extern Cardinal MrmFetchColorLiteral  ( MrmHierarchy hierarchy_id , String index , Display *display , Colormap cmap , Pixel *pixel_return );
-
+extern Cardinal MrmFetchLiteral(MrmHierarchy hierarchy_id,
+                                const char *index,
+                                Display *display,
+                                XtPointer *value_return,
+                                MrmCode *type_return);
+extern Cardinal MrmFetchIconLiteral(MrmHierarchy hierarchy_id,
+                                    const char *index,
+                                    Screen *screen,
+                                    Display *display,
+                                    Pixel fgpix,
+                                    Pixel bgpix,
+                                    Pixmap *pixmap_return);
+extern Cardinal MrmFetchBitmapLiteral(MrmHierarchy hierarchy_id,
+                                      const char *index,
+                                      Screen *screen,
+                                      Display *display,
+                                      Pixmap *pixmap_return,
+                                      Dimension *width,
+                                      Dimension *height);
+extern Cardinal MrmFetchColorLiteral(MrmHierarchy hierarchy_id,
+                                     const char *index,
+                                     Display *display,
+                                     Colormap cmap,
+                                     Pixel *pixel_return);
 extern Cardinal MrmOpenHierarchy  ( MrmCount num_files , String *name_list , MrmOsOpenParamPtr *os_ext_list , MrmHierarchy *hierarchy_id_return );
 extern Cardinal MrmOpenHierarchyPerDisplay  ( Display *display , MrmCount num_files , String *name_list , MrmOsOpenParamPtr *os_ext_list , MrmHierarchy *hierarchy_id_return );
 extern Cardinal MrmRegisterNames  ( MrmRegisterArglist reglist ,MrmCount num_reg );
 extern Cardinal MrmRegisterNamesInHierarchy  ( MrmHierarchy hierarchy_id , MrmRegisterArglist reglist , MrmCount num_reg );
-extern Cardinal MrmRegisterClass  ( MrmType class_code , String class_name , String create_name , MrmWidgetCreateProc creator, WidgetClass class_record );
-extern Cardinal MrmRegisterClassWithCleanup  ( MrmType class_code , String class_name , String create_name , MrmWidgetCreateProc creator, WidgetClass class_record, MrmWidgetCleanupProc cleanup );
-extern Cardinal MrmCloseHierarchy  ( MrmHierarchy hierarchy_id );
-extern Cardinal MrmFetchInterfaceModule  ( MrmHierarchy hierarchy_id , char *module_name , Widget parent , Widget *w_return );
-extern Cardinal MrmFetchWidget  ( MrmHierarchy hierarchy_id , String index , Widget parent , Widget *w_return , MrmType *class_return );
-extern Cardinal MrmFetchWidgetOverride  ( MrmHierarchy hierarchy_id , String index , Widget parent , String ov_name , ArgList ov_args , Cardinal ov_num_args , Widget *w_return , MrmType *class_return );
+
+extern Cardinal MrmRegisterClass(MrmType class_code, /* unused */
+                                 const char *class_name, /* unused */
+                                 const char *create_name,
+                                 MrmWidgetCreateProc creator,
+                                 WidgetClass class_record);
+extern Cardinal MrmRegisterClassWithCleanup(MrmType class_code, /* unused */
+                                            const char *class_name, /* unused */
+                                            const char *create_name,
+                                            MrmWidgetCreateProc creator,
+                                            WidgetClass class_record,
+                                            MrmWidgetCleanupProc cleanup);
+extern Cardinal MrmCloseHierarchy(MrmHierarchy hierarchy_id);
+extern Cardinal MrmFetchInterfaceModule(MrmHierarchy hierarchy_id,
+                                        const char *module_name,
+                                        Widget parent,
+                                        Widget *w_return);
+extern Cardinal MrmFetchWidget(MrmHierarchy hierarchy_id,
+                               const char *index,
+                               Widget parent,
+                               Widget *w_return,
+                               MrmType *class_return);
+extern Cardinal MrmFetchWidgetOverride(MrmHierarchy hierarchy_id,
+                                       const char *index,
+                                       Widget parent,
+                                       const char *ov_name,
+                                       ArgList ov_args,
+                                       Cardinal ov_num_args,
+                                       Widget *w_return,
+                                       MrmType *class_return);
 extern Cardinal MrmFetchSetValues  ( MrmHierarchy hierarchy_id , Widget w , ArgList args , Cardinal num_args );
 
 /* mrmwci.c */

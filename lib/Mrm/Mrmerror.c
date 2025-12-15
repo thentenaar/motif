@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Mrmerror.c /main/13 1996/11/13 14:00:43 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -51,10 +50,8 @@ static char rcsid[] = "$XConsortium: Mrmerror.c /main/13 1996/11/13 14:00:43 drk
  *  INCLUDE FILES
  *
  */
-
 #include <stdio.h>
 #include <Mrm/Mrm.h>
-
 
 /*
  *
@@ -71,8 +68,7 @@ externaldef(urm__latest_error_msg)	String	urm__latest_error_msg = NULL ;
  *  OWN VARIABLE DECLARATIONS
  *
  */
-
-static	String	urm_codes_codstg[] = {
+static const char * const urm_codes_codstg[] = {
   "MrmFAILURE"
   ,"MrmSUCCESS"
   ,"MrmNOT_FOUND"
@@ -138,11 +134,8 @@ static	String	urm_codes_codstg[] = {
   ,"MrmBAD_CLASS_CODE"
 } ;
 
-static String urm_codes_invalidcode = "Invalid URM code" ;
+static const char * const urm_codes_invalidcode = "Invalid URM code" ;
 
-
-
-
 /*
  *++
  *
@@ -169,20 +162,13 @@ static String urm_codes_invalidcode = "Invalid URM code" ;
  *
  *--
  */
-
-/*ARGSUSED*/
-Cardinal 
-Urm__UT_Error (char			*module,
-	       char			*error,
-	       IDBFile			file_id, /* unused */
-	       URMResourceContextPtr	context_id, /* unused */
-	       Cardinal			status)
+Cardinal Urm__UT_Error(const char *module,
+                       const char *error,
+                       IDBFile file_id,
+                       URMResourceContextPtr context_id,
+                       Cardinal status)
 {
-
-  /*
-   *  Local variables
-   */
-  char		msg[300] ;	/* error message */
+  char msg[1024];	/* error message */
 
 
   /*
@@ -213,11 +199,8 @@ Urm__UT_Error (char			*module,
       XtWarning (msg) ;
       return status ;
     }
-
 }
 
-
-
 /*
  *++
  *
@@ -248,7 +231,7 @@ Urm__UT_Error (char			*module,
  *--
  */
 
-Cardinal 
+Cardinal
 Urm__UT_SetErrorReport (MrmCode report_type)
 {
 
@@ -287,7 +270,7 @@ Urm__UT_SetErrorReport (MrmCode report_type)
  *--
  */
 
-MrmCode 
+MrmCode
 Urm__UT_LatestErrorCode (void)
 {
 
@@ -317,7 +300,7 @@ Urm__UT_LatestErrorCode (void)
  *--
  */
 
-String 
+String
 Urm__UT_LatestErrorMessage (void)
 
 {
@@ -350,7 +333,7 @@ Urm__UT_LatestErrorMessage (void)
  *--
  */
 
-String 
+String
 Urm__UT_UrmCodeString (MrmCode cod)
 {
 

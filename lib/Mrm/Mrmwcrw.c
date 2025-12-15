@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -44,7 +44,6 @@ static char rcsid[] = "$TOG: Mrmwcrw.c /main/20 1999/05/19 15:26:23 mgreess $"
  *
  *--
  */
-
 
 /*
  *
@@ -228,26 +227,21 @@ UrmCreateWidgetInstanceCleanup (URMResourceContextPtr	context_id,
  *
  *--
  */
-
-Cardinal
-UrmCreateWidgetTree (URMResourceContextPtr	context_id,
-		     Widget			parent,
-		     MrmHierarchy		hierarchy_id,
-		     IDBFile			file_id,
-		     String			ov_name,
-		     ArgList			ov_args,
-		     Cardinal			ov_num_args,
-		     MrmCode			keytype,
-		     String			kindex,
-		     MrmResource_id		krid,
-		     MrmManageFlag		manage,
-		     URMPointerListPtr		*svlist,
-		     URMResourceContextPtr	wref_id,
-		     Widget			*w_return)
+Cardinal UrmCreateWidgetTree(URMResourceContextPtr context_id,
+                             Widget parent,
+                             MrmHierarchy hierarchy_id,
+                             IDBFile file_id,
+                             const char *ov_name,
+                             ArgList ov_args,
+                             Cardinal ov_num_args,
+                             MrmCode keytype,
+                             const char *kindex,
+                             MrmResource_id krid,
+                             MrmManageFlag manage,
+                             URMPointerListPtr *svlist,
+                             URMResourceContextPtr wref_id,
+                             Widget *w_return)
 {
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   Widget		widget_id ;	/* this widget id */
   URMResourceContextPtr	child_ctx ;	/* context for children */
@@ -356,9 +350,8 @@ UrmCreateWidgetTree (URMResourceContextPtr	context_id,
   if ((w_name != NULL) && (*svlist != NULL))
     Urm__CW_ResolveSVWidgetRef(svlist, w_name, *w_return);
 
-  return MrmSUCCESS ;
+  return MrmSUCCESS;
 }
-
 
 /*
  *++
@@ -808,26 +801,20 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
  *
  *--
  */
-
-/*ARGSUSED*/
-Cardinal
-UrmSetWidgetInstance (URMResourceContextPtr	context_id,
-		      Widget			parent,
-		      MrmHierarchy		hierarchy_id,
-		      IDBFile			file_id,
-		      ArgList			ov_args,
-		      Cardinal			ov_num_args,
-		      MrmCode			keytype, /* unused */
-		      String			kindex,	/* unused */
-		      MrmResource_id		krid, /* unused */
-		      MrmManageFlag		manage,
-		      URMPointerListPtr		*svlist,
-		      URMResourceContextPtr	wref_id,
-		      Widget			*w_return)
+Cardinal UrmSetWidgetInstance(URMResourceContextPtr context_id,
+                              Widget parent,
+                              MrmHierarchy hierarchy_id,
+                              IDBFile file_id,
+                              ArgList ov_args,
+                              Cardinal ov_num_args,
+                              MrmCode keytype,     /* unused */
+                              const char *kindex,  /* unused */
+                              MrmResource_id krid, /* unused */
+                              MrmManageFlag manage,
+                              URMPointerListPtr *svlist,
+                              URMResourceContextPtr wref_id,
+                              Widget *w_return)
 {
-  /*
-   *  Local variables
-   */
   Cardinal		result ;	/* function results */
   RGMWidgetRecordPtr	widgetrec ;	/* widget record in the context */
   String		c_name ;	/* child name */
@@ -843,9 +830,7 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
   RGMCallbackDescPtr	cbptr ;		/* creation callback descriptor */
   RGMCallbackItemPtr	itmptr ;	/* current callback item */
   void			(*cb_rtn)(Widget, XtPointer, XmAnyCallbackStruct *);	/* current callback routine */
-  /* BEGIN OSF Fix pir 1860, 2813 */
   XmAnyCallbackStruct	cb_reason; 	/* creation callback reason */
-  /* END OSF Fix pir 1860, 2813 */
 
   /*
    * Validate the context and the widget record in the context.
@@ -1024,10 +1009,8 @@ UrmSetWidgetInstance (URMResourceContextPtr	context_id,
 	UrmPlistFree (ftllist) ;
     }
 
-  return MrmSUCCESS ;
-
+  return MrmSUCCESS;
 }
-
 
 /*
  *++
