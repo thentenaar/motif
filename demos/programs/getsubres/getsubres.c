@@ -1,5 +1,5 @@
 /* $XConsortium: getsubres.c /main/6 1995/07/15 20:45:28 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,15 +20,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
- */
-/*
- * HISTORY
+ *
  */
 
 #include <stdlib.h>
 #include <Xm/XmAll.h>
-#include <Xmd/Help.h>   
+#include <Xmd/Help.h>
 
 /* This is no your ordinary demo, it displays widget class info and
    needs a couple of P.h file usually reserved for widget writers */
@@ -40,8 +37,8 @@
 #include <Xm/IconHP.h>
 #include <Xm/ClipWindowP.h>
 
-static void QuitCB ();			
-static void HelpCB ();			
+static void QuitCB(Widget w, XtPointer client, XtPointer callback);
+static void HelpCB(Widget w, XtPointer client, XtPointer callback);
 
 typedef struct _ClassArrayRec {
     String name ;
@@ -56,7 +53,7 @@ static ClassArrayRec class_array[] = {
   { "Widget",  (WidgetClass) NULL },
   { "Core",  (WidgetClass) NULL },
   { "Composite",  (WidgetClass) NULL },
-  { "Constraint",  (WidgetClass) NULL },  
+  { "Constraint",  (WidgetClass) NULL },
 
   { "Primitive",  (WidgetClass) NULL },
   { "ScrollBar",  (WidgetClass) NULL },
@@ -68,17 +65,17 @@ static ClassArrayRec class_array[] = {
   { "DrawnB",  (WidgetClass) NULL },
   { "PushB",  (WidgetClass) NULL },
   { "ToggleB",  (WidgetClass) NULL },
-  { "CascadeB",  (WidgetClass) NULL },  
+  { "CascadeB",  (WidgetClass) NULL },
 
-  { "Text",  (WidgetClass) NULL },       
+  { "Text",  (WidgetClass) NULL },
 
   { "Gadget",  (WidgetClass) NULL },
   { "ArrowBG",  (WidgetClass) NULL },
   { "SeparatorG",  (WidgetClass) NULL },
   { "LabelG",  (WidgetClass) NULL },
   { "PushBG",  (WidgetClass) NULL },
-  { "ToggleBG", (WidgetClass) NULL },    
-  { "CascadeBG",  (WidgetClass) NULL }, 
+  { "ToggleBG", (WidgetClass) NULL },
+  { "CascadeBG",  (WidgetClass) NULL },
 
   { "Manager", (WidgetClass) NULL },
   { "BulletinB", (WidgetClass) NULL },
@@ -93,20 +90,20 @@ static ClassArrayRec class_array[] = {
   { "FileSB", (WidgetClass) NULL },
   { "MessageB", (WidgetClass) NULL },
   { "Scale",  (WidgetClass) NULL },
-  { "Command",  (WidgetClass) NULL },    
+  { "Command",  (WidgetClass) NULL },
 
   { "Shell",  (WidgetClass) NULL },
   { "OverrideShell",  (WidgetClass) NULL },
-  { "WMShell",  (WidgetClass) NULL },   
+  { "WMShell",  (WidgetClass) NULL },
 
-  { "MenuShell",  (WidgetClass) NULL },  
+  { "MenuShell",  (WidgetClass) NULL },
 
   { "VendorS",  (WidgetClass) NULL },
   { "ToplevelShell",  (WidgetClass) NULL },
   { "ApplicationShell",  (WidgetClass) NULL },
-  { "TransientShell",  (WidgetClass) NULL },  
+  { "TransientShell",  (WidgetClass) NULL },
 
-  { "DialogShell",  (WidgetClass) NULL },    
+  { "DialogShell",  (WidgetClass) NULL },
 
   { "Sash",  (WidgetClass) NULL },
   { "TearOffB",  (WidgetClass) NULL },
@@ -116,21 +113,21 @@ static ClassArrayRec class_array[] = {
   { "DragContext",  (WidgetClass) NULL },
   { "DragIcon",  (WidgetClass) NULL },
   { "DropSiteMgr",  (WidgetClass) NULL },
-  { "DropTransfer",  (WidgetClass) NULL }, 
+  { "DropTransfer",  (WidgetClass) NULL },
 
-  { "DragOverS",  (WidgetClass) NULL },    
+  { "DragOverS",  (WidgetClass) NULL },
 
-  { "GrabShell",  (WidgetClass) NULL },   
-  { "IconH",  (WidgetClass) NULL },   
-  { "ClipWindow",  (WidgetClass) NULL },   
+  { "GrabShell",  (WidgetClass) NULL },
+  { "IconH",  (WidgetClass) NULL },
+  { "ClipWindow",  (WidgetClass) NULL },
 
-  { "Container",  (WidgetClass) NULL },   
-  { "IconG",  (WidgetClass) NULL },   
-  { "Notebook",  (WidgetClass) NULL },   
-  { "SpinBox",  (WidgetClass) NULL },   
-  { "SimpleSpinBox",  (WidgetClass) NULL },   
-  { "ComboBox",  (WidgetClass) NULL },   
-};  
+  { "Container",  (WidgetClass) NULL },
+  { "IconG",  (WidgetClass) NULL },
+  { "Notebook",  (WidgetClass) NULL },
+  { "SpinBox",  (WidgetClass) NULL },
+  { "SimpleSpinBox",  (WidgetClass) NULL },
+  { "ComboBox",  (WidgetClass) NULL },
+};
 
 /* stupid c compiler */
 static void InitClassArray () {
@@ -203,20 +200,18 @@ static void InitClassArray () {
   class_array[n].class = xmDropTransferObjectClass; n++;   /* object */
   class_array[n].class = xmDragOverShellWidgetClass; n++;  /* vendors */
 
-  class_array[n].class = xmGrabShellWidgetClass; n++;  
-  class_array[n].class = xmIconHeaderClass; n++;  
-  class_array[n].class = xmClipWindowWidgetClass; n++;  
-  class_array[n].class = xmContainerWidgetClass; n++;  
-  class_array[n].class = xmIconGadgetClass; n++;  
-  class_array[n].class = xmNotebookWidgetClass; n++;   
-  class_array[n].class = xmSpinBoxWidgetClass; n++;  
-  class_array[n].class = xmSimpleSpinBoxWidgetClass; n++;  
-  class_array[n].class = xmComboBoxWidgetClass; n++;  
+  class_array[n].class = xmGrabShellWidgetClass; n++;
+  class_array[n].class = xmIconHeaderClass; n++;
+  class_array[n].class = xmClipWindowWidgetClass; n++;
+  class_array[n].class = xmContainerWidgetClass; n++;
+  class_array[n].class = xmIconGadgetClass; n++;
+  class_array[n].class = xmNotebookWidgetClass; n++;
+  class_array[n].class = xmSpinBoxWidgetClass; n++;
+  class_array[n].class = xmSimpleSpinBoxWidgetClass; n++;
+  class_array[n].class = xmComboBoxWidgetClass; n++;
 }
 
-
-static WidgetClass GetClassPointer(class)
-String class ;
+static WidgetClass GetClassPointer(String class)
 {
     Cardinal i ;
     static Boolean first_time = True ;
@@ -231,12 +226,10 @@ String class ;
     return NULL ;
 }
 
-
 static String buffer = NULL ;
 static short rows = 0, columns = 0 ;
-    
-static void 
-AddToBuffer (String fmt, ...)
+
+static void AddToBuffer(const char *fmt, ...)
 {
     va_list args;
     static Cardinal curpos = 0 ;
@@ -254,14 +247,12 @@ AddToBuffer (String fmt, ...)
 	if (tmp[i] == '\n') rows ++ ;
     }
     buffer[curpos] = '\0' ;
-    
+
 
     va_end(args);
 }
 
-
-static void GetPrintRes (name) 
-String name ;
+static void GetPrintRes(String name)
 {
     Cardinal i, j, k, num_resources, num_sec;
     XtResourceList resource_list ;
@@ -327,12 +318,12 @@ String name ;
 	    AddToBuffer(" %s\n", buff_line);
 	XtFree((XtPointer)resource_list) ;
     }
-    
+
     /* fetch Motif second */
     if ((num_sec = XmGetSecondaryResourceData (class, &res_sec_list))) {
-	AddToBuffer("\n\nMotif secondary blocks: %d\n", num_sec);    
+	AddToBuffer("\n\nMotif secondary blocks: %d\n", num_sec);
 	AddToBuffer(    "--------------------------\n");
-    
+
 	for (i = 0; i < num_sec; i++) {
 	    buff_line[0] = ' ';
 	    buff_line[1] = '\0';
@@ -367,10 +358,9 @@ static String fallbacks[] = {
 
 #define APP_CLASS "XmdGetsubres"
 
-int main(argc, argv)
-int argc ; char **argv;
+int main(int argc, char *argv[])
 {
-    Widget toplevel, main_window, menu_bar, menu_pane, cascade, 
+    Widget toplevel, main_window, menu_bar, menu_pane, cascade,
            button, viewer ;
     XtAppContext app_context;
     String name ;
@@ -386,7 +376,7 @@ int argc ; char **argv;
     /* get a default in no name provided */
     if (argc == 1) name = "Widget";
     else name = argv[1] ;
-    
+
     /* Fill a string buffer with lines of text (this demo was originally
        designed with printf...) */
     if (strcmp(name, "All") == 0) {
@@ -406,7 +396,7 @@ int argc ; char **argv;
     /*	Create MenuBar in MainWindow.
      */
     n = 0;
-    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n); 
+    menu_bar = XmCreateMenuBar (main_window, "menu_bar", args, n);
     XtManageChild (menu_bar);
 
 
@@ -456,7 +446,7 @@ int argc ; char **argv;
 	viewer = XmCreateText(main_window, "viewer", args, n);
     } else  {
 	viewer = XmCreateScrolledText(main_window, "viewer", args, n);
-    } 
+    }
     XtManageChild(viewer);
 
     XtFree(buffer) ; /* Text has its own copy */
@@ -470,29 +460,20 @@ int argc ; char **argv;
 /*-------------------------------------------------------------
 **	QuitCB			- callback for quit button
 */
-static void QuitCB (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  data from applicaiton   */
-caddr_t		call_data;	/*  data from widget class  */
+static void QuitCB(Widget w, XtPointer client, XtPointer callback)
 {
-    exit (0);
+    exit(EXIT_SUCCESS);
 }
 
 /*-------------------------------------------------------------
 **	HelpCB			- callback for help button
 */
-static void HelpCB (w, client_data, call_data) 
-Widget		w;		/*  widget id		*/
-caddr_t		client_data;	/*  data from application   */
-caddr_t		call_data;	/*  data from widget class  */
+static void HelpCB(Widget w, XtPointer client, XtPointer callback)
 {
-    static Widget help_widget = NULL ;
+	static Widget help_widget = NULL;
 
-    if (!help_widget)
-	help_widget = XmdCreateHelpDialog(w, "help_manager", NULL, 0);
-
-    XtManageChild(help_widget);   
+	if (!help_widget)
+		help_widget = XmdCreateHelpDialog(w, "help_manager", NULL, 0);
+	XtManageChild(help_widget);
 }
 
-
- 
