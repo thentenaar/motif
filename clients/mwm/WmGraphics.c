@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+ */
+
+/*
  * Motif Release 1.2
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rswiston $"
@@ -37,7 +37,6 @@ static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rs
 /*
  * Included Files:
  */
-
 #include "WmGlobal.h"
 
 #include <stdio.h>
@@ -47,7 +46,6 @@ static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rs
 #include <X11/Intrinsic.h>
 #include <X11/X.h>
 #include <Xm/Xm.h>
-
 
 #define RLIST_EXTENSION_SIZE	10
 
@@ -61,13 +59,6 @@ static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rs
 #include "WmGraphics.h"
 #include "WmError.h"
 
-
-
-/*
- * Global Variables:
- */
-
-
 /*
  * Macros:
  */
@@ -75,11 +66,9 @@ static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rs
 /* test if > 0 and return 1 if true, 0 if false. */
 #define GE1(x) ((x)>0?1:0)
 
-
-
 /*************************************<->*************************************
  *
- *   Procedure:	BevelRectangle (prTop, prBot, x, y, 
+ *   Procedure:	BevelRectangle (prTop, prBot, x, y,
  *                      width, height, top_wid, right_wid, bot_wid, left_wid)
  *
  *  Description:
@@ -97,12 +86,12 @@ static char rcsid[] = "$XConsortium: WmGraphics.c /main/4 1995/11/01 11:38:53 rs
  *  right_wid	- width of beveling on right side of rectangle
  *  bot_wid	- width of beveling on bottom side of rectangle
  *  left_wid	- width of beveling on left side of rectangle
- * 
+ *
  *  Outputs:
  *  -------
  *  prTop	- top shadows for this rectangle added to list
  *  prBot	- bottom shadows for this rectangle added to list
- *  
+ *
  *
  *  Comments:
  *  --------
@@ -136,7 +125,7 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
     x1 = x;
     y1 = y;
     len = width;
-    for (count=top_wid; count>0; count--, prect++, (*piTop)++) 
+    for (count=top_wid; count>0; count--, prect++, (*piTop)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -154,8 +143,8 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
     x1 = x;
     y1 = y+GE1(join1);
     len = height-GE1(join1);
-    for (count=left_wid; count >0; count--, prect++, (*piTop)++) 
-    {	
+    for (count=left_wid; count >0; count--, prect++, (*piTop)++)
+    {
 	prect->x = x1;
 	prect->y = y1;
 	prect->width = 1;
@@ -188,7 +177,7 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
 	x1--;
 	join1++;
     }
-    for (count=bot_wid; count >0; count--, prect++, (*piBot)++) 
+    for (count=bot_wid; count >0; count--, prect++, (*piBot)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -212,7 +201,7 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
 	y1--;
 	join1++;
     }
-    for (count=right_wid; count >0; count--, prect++, (*piBot)++) 
+    for (count=right_wid; count >0; count--, prect++, (*piBot)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -226,11 +215,9 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
 } /* END OF FUNCTION BevelRectangle */
 
 
-
-
 /*************************************<->*************************************
  *
- *   Procedure:	BevelDepressedRectangle (prTop, prBot, x, y, 
+ *   Procedure:	BevelDepressedRectangle (prTop, prBot, x, y,
  *                      width, height, top_wid, right_wid, bot_wid, left_wid
  *                      in_wid)
  *
@@ -251,12 +238,12 @@ void BevelRectangle (RList *prTop, RList *prBot, int x, int y, unsigned int widt
  *  bot_wid	- width of beveling on bottom side of rectangle
  *  left_wid	- width of beveling on left side of rectangle
  *  in_wid	- width of depressed beveling inside of rectangle
- * 
+ *
  *  Outputs:
  *  -------
  *  prTop	- top shadows for this rectangle added to list
  *  prBot	- bottom shadows for this rectangle added to list
- *  
+ *
  *
  *  Comments:
  *  --------
@@ -272,8 +259,8 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     int *piTop, *piBot;
 
 
-    /* 
-     *  Build the rectangles to implement the beveling on each side 
+    /*
+     *  Build the rectangles to implement the beveling on each side
      *  First, guarantee that there is enough memory.
      */
 
@@ -302,7 +289,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     x1 = x;
     y1 = y;
     len = width;
-    for (count=top_wid - in_wid; count>0; count--, prect++, (*piTop)++) 
+    for (count=top_wid - in_wid; count>0; count--, prect++, (*piTop)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -318,7 +305,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     piBot = &(prBot->used);
     prect = &(prBot->prect[*piBot]);
 
-    for (count=in_wid; count>0; count--, prect++, (*piBot)++) 
+    for (count=in_wid; count>0; count--, prect++, (*piBot)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -341,8 +328,8 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     x1 = x;
     y1 = y+GE1(join1);
     len = height-GE1(join1);
-    for (count=left_wid-in_wid; count >0; count--, prect++, (*piTop)++) 
-    {	
+    for (count=left_wid-in_wid; count >0; count--, prect++, (*piTop)++)
+    {
 	prect->x = x1;
 	prect->y = y1;
 	prect->width = 1;
@@ -357,8 +344,8 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     piBot = &(prBot->used);
     prect = &(prBot->prect[*piBot]);
 
-    for (count=in_wid; count >0; count--, prect++, (*piBot)++) 
-    {	
+    for (count=in_wid; count >0; count--, prect++, (*piBot)++)
+    {
 	prect->x = x1;
 	prect->y = y1;
 	prect->width = 1;
@@ -386,7 +373,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
 	x1--;
 	join1++;
     }
-    for (count=bot_wid-in_wid; count >0; count--, prect++, (*piBot)++) 
+    for (count=bot_wid-in_wid; count >0; count--, prect++, (*piBot)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -402,7 +389,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     piTop = &(prTop->used);
     prect = &(prTop->prect[*piTop]);
 
-    for (count=in_wid; count >0; count--, prect++, (*piTop)++) 
+    for (count=in_wid; count >0; count--, prect++, (*piTop)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -431,7 +418,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
 	y1--;
 	join1++;
     }
-    for (count=right_wid-in_wid; count >0; count--, prect++, (*piBot)++) 
+    for (count=right_wid-in_wid; count >0; count--, prect++, (*piBot)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -447,7 +434,7 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
     piTop = &(prTop->used);
     prect = &(prTop->prect[*piTop]);
 
-    for (count=in_wid; count >0; count--, prect++, (*piTop)++) 
+    for (count=in_wid; count >0; count--, prect++, (*piTop)++)
     {
 	prect->x = x1;
 	prect->y = y1;
@@ -461,11 +448,9 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
 } /* END OF FUNCTION BevelDepressedRectangle */
 
 
-
-
 /*************************************<->*************************************
  *
- *   Procedure:	StretcherCorner (prTop, prBot, x, y, cnum, 
+ *   Procedure:	StretcherCorner (prTop, prBot, x, y, cnum,
  *                               swidth,  cwidth, cheight);
  *
  *  Description:
@@ -482,10 +467,10 @@ void BevelDepressedRectangle (RList *prTop, RList *prBot, int x, int y, unsigned
  *  swidth 	- width (thickness) of border (includes bevels)
  *  cwidth 	- corner width from corner to end of horizontal run
  *  cheight 	- corner height from corner to end of vertical run
- * 
+ *
  *  Outputs:
  *  -------
- *  prTop	- array filled in for top shadows 
+ *  prTop	- array filled in for top shadows
  *  prBot	- array filledin for bottom shadows
  *
  *  Comments:
@@ -832,8 +817,6 @@ void StretcherCorner (RList *prTop, RList *prBot, int x, int y, int cnum, unsign
     }
 } /* END OF FUNCTION StretcherCorner */
 
-
-
 /*************************************<->*************************************
  *
  *  DrawStringInBox (dpy, win, gc, pbox, str)
@@ -852,7 +835,7 @@ void StretcherCorner (RList *prTop, RList *prBot, int x, int y, int cnum, unsign
  *  pfs		- pointer to XFontStruct for the font in "gc"
  *  pbox	- ptr to XRectangle that encloses text
  *  str		- String to write
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -860,7 +843,7 @@ void StretcherCorner (RList *prTop, RList *prBot, int x, int y, int cnum, unsign
  *  Comments:
  *  --------
  *  o Assumes 8-bit text for now.
- *  o Algorithm:  
+ *  o Algorithm:
  *			get length of String
  *			if String is short than box width then
  *			    draw string centered in box
@@ -868,10 +851,10 @@ void StretcherCorner (RList *prTop, RList *prBot, int x, int y, int cnum, unsign
  *			    draw string left justified and clipped to box
  *  o The clip_x_origin, clip_y_origin, and clip_mask are reset to None
  *    upon exit.
- *  o Due to bugs and / or misunderstanding, I gave up on trying to 
- *    extract the XFontStruct from the GC. I just made it a separate 
+ *  o Due to bugs and / or misunderstanding, I gave up on trying to
+ *    extract the XFontStruct from the GC. I just made it a separate
  *    parameter.
- *			
+ *
  *************************************<->***********************************/
 void DrawStringInBox (Display *dpy, Window win, GC gc, XFontStruct *pfs, XRectangle *pbox, String str)
 {
@@ -885,7 +868,7 @@ void DrawStringInBox (Display *dpy, Window win, GC gc, XFontStruct *pfs, XRectan
 
     if (textWidth < (int) pbox->width) {	/* center text if there's room */
 	xCenter = (int) pbox->x + ((int) pbox->width - textWidth) / 2 ;
-	WmDrawString(dpy, win, gc, xCenter, (pbox->y + pfs->ascent), 
+	WmDrawString(dpy, win, gc, xCenter, (pbox->y + pfs->ascent),
 		    str, strlen(str));
     }
     else {				/* left justify & clip text */
@@ -897,20 +880,18 @@ void DrawStringInBox (Display *dpy, Window win, GC gc, XFontStruct *pfs, XRectan
 	XSetClipRectangles (dpy, gc, pbox->x, pbox->y,	/* put into gc */
 			    &clipBox, 1, Unsorted);
 
-	WmDrawString(dpy, win, gc, pbox->x, (pbox->y + pfs->ascent), 
+	WmDrawString(dpy, win, gc, pbox->x, (pbox->y + pfs->ascent),
 		    str, strlen(str));
 
 	gcv.clip_x_origin = 0;		/* erase clip_mask from gc */
 	gcv.clip_y_origin = 0;
 	gcv.clip_mask = None;
-	XChangeGC (dpy, gc, 
+	XChangeGC (dpy, gc,
 		   GCClipXOrigin | GCClipYOrigin | GCClipMask, &gcv);
     }
 } /* END OF FUNCTION DrawStringInBox */
 
 
-
-
 /*************************************<->*************************************
  *
  *  ExtendRList (prl, amt)
@@ -925,14 +906,14 @@ void DrawStringInBox (Display *dpy, Window win, GC gc, XFontStruct *pfs, XRectan
  *  ------
  *  prl		- ptr to Display
  *  amt		- how much to extend it by
- * 
+ *
  *  Outputs:
  *  -------
  *  Returns True if succeeded, false otherwise.
  *
  *  Comments:
  *  --------
- *			
+ *
  *************************************<->***********************************/
 Boolean ExtendRList (RList *prl, unsigned int amt)
 {
@@ -942,13 +923,13 @@ Boolean ExtendRList (RList *prl, unsigned int amt)
 
 
     total = prl->allocated + amt;
-    if ( (pNewRect = (XRectangle *) XtMalloc (total * sizeof(XRectangle))) 
+    if ( (pNewRect = (XRectangle *) XtMalloc (total * sizeof(XRectangle)))
 	 == NULL)
     {
 	Warning (((char *)GETMESSAGE(28, 1, "Insufficient memory for graphics data")));
 	rval = False;
     }
-    else 
+    else
     {
 	prl->allocated = total;
 	rval = True;
@@ -964,8 +945,6 @@ Boolean ExtendRList (RList *prl, unsigned int amt)
     return (rval);
 } /* END OF FUNCTION ExtendRList */
 
-
-
 /*************************************<->*************************************
  *
  *  AllocateRList (amt)
@@ -979,31 +958,28 @@ Boolean ExtendRList (RList *prl, unsigned int amt)
  *  Inputs:
  *  ------
  *  amt		- number of XRectangles to allocate in list
- * 
+ *
  *  Outputs:
  *  -------
  *  Returns ptr to new RList structure if success, returns NULL ptr otherwise
  *
  *  Comments:
  *  --------
- *			
+ *
  *************************************<->***********************************/
-RList *AllocateRList (amt)
-
-    unsigned int amt;
+RList *AllocateRList(unsigned int amt)
 {
     RList *prl;
 
-
-    if ((prl = (RList *) XtMalloc (sizeof (RList))) != NULL) 
+    if ((prl = (RList *) XtMalloc (sizeof (RList))) != NULL)
     {
-	if ( (prl->prect = (XRectangle *) XtMalloc (amt * sizeof(XRectangle))) 
+	if ( (prl->prect = (XRectangle *) XtMalloc (amt * sizeof(XRectangle)))
 	     == NULL)
 	{
 	    XtFree ((char *)prl);
 	    prl = NULL;
 	}
-	else 
+	else
 	{
 	    prl->allocated = amt;
 	    prl->used = 0;
@@ -1014,8 +990,6 @@ RList *AllocateRList (amt)
     return (prl);
 } /* END OF FUNCTION AllocateRList */
 
-
-
 /*************************************<->*************************************
  *
  *  FreeRList (prl)
@@ -1029,26 +1003,24 @@ RList *AllocateRList (amt)
  *  Inputs:
  *  ------
  *  prl		- ptr to RList to free
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *			
+ *
  *************************************<->***********************************/
 void FreeRList (RList *prl)
 {
-    if (prl) 
+    if (prl)
     {
-	if (prl->prect) 
+	if (prl->prect)
 	    XtFree ((char *)prl->prect);
 
 	XtFree ((char *)prl);
     }
 }/* END OF FUNCTION FreeRList */
-
-
 /*************************************<->*************************************
  *
  *  WmDrawString
@@ -1062,17 +1034,17 @@ void FreeRList (RList *prl)
  *  Inputs:
  *  ------
  *  (same parameters used by XDrawString and XDrawImageString)
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *  o If wmGD.cleanText is True, then the text is drawn using 
+ *  o If wmGD.cleanText is True, then the text is drawn using
  *    XDrawImageString. This provides some clean space around the text
- *    if the background area is stippled -- especially useful on 
+ *    if the background area is stippled -- especially useful on
  *    B/W displays.
- *			
+ *
  *************************************<->***********************************/
 void WmDrawString (Display *dpy, Drawable d, GC gc, int x, int y, char *string, unsigned int length)
 {
@@ -1087,8 +1059,6 @@ void WmDrawString (Display *dpy, Drawable d, GC gc, int x, int y, char *string, 
 
 }/* END OF FUNCTION WmDrawString */
 
-
-
 /*************************************<->*************************************
  *
  *  WmXmDrawString
@@ -1102,25 +1072,25 @@ void WmDrawString (Display *dpy, Drawable d, GC gc, int x, int y, char *string, 
  *  Inputs:
  *  ------
  *  (subset of parameters used by XmStringDraw and XmStringDrawImage)
- * 
+ *
  *  Outputs:
  *  -------
  *
  *  Comments:
  *  --------
- *  o If wmGD.cleanText is True, then the text is drawn using 
+ *  o If wmGD.cleanText is True, then the text is drawn using
  *    XmStringDrawImage. This provides some clean space around the text
- *    if the background area is stippled -- especially useful on 
+ *    if the background area is stippled -- especially useful on
  *    B/W displays.
- *			
+ *
  *************************************<->***********************************/
 #ifdef WSM
-void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist, 
-		     XmString xmstring, GC gc, Position x, Position y, 
+void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
+		     XmString xmstring, GC gc, Position x, Position y,
 		     Dimension width,  XRectangle *pbox, Boolean bCenter)
 #else /* WSM */
-void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist, 
-		     XmString xmstring, GC gc, Position x, Position y, 
+void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
+		     XmString xmstring, GC gc, Position x, Position y,
 		     Dimension width,  XRectangle *pbox)
 #endif /* WSM */
 {
@@ -1130,7 +1100,7 @@ void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
 #else /* WSM */
     int alignment = XmALIGNMENT_BEGINNING;
 #endif /* WSM */
-    
+
 
     textWidth = XmStringWidth(xmfontlist, xmstring);
 
@@ -1145,28 +1115,26 @@ void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
     if (textWidth < pbox->width) {      /* center text if there's room */
 	alignment = XmALIGNMENT_CENTER;
     }
-    else 
+    else
     {                              /* left justify & clip text */
 	alignment = XmALIGNMENT_BEGINNING;
     }
 #endif /* WSM */
-    
+
     if (ACTIVE_PSD->cleanText)
     {
-	XmStringDrawImage(dpy, w, xmfontlist, xmstring, gc, x, y, width, 
-			  alignment, XmSTRING_DIRECTION_L_TO_R, 
+	XmStringDrawImage(dpy, w, xmfontlist, xmstring, gc, x, y, width,
+			  alignment, XmSTRING_DIRECTION_L_TO_R,
 			  pbox);
     }
     else
     {
-	XmStringDraw (dpy, w, xmfontlist, xmstring, gc, x, y, width, 
+	XmStringDraw (dpy, w, xmfontlist, xmstring, gc, x, y, width,
 		      alignment, XmSTRING_DIRECTION_L_TO_R, pbox);
     }
 } /* END OF FUNCTION WmDrawXmString */
 
-#ifdef WSM
-
-/*************************************<->*************************************
+#ifdef WSM/*************************************<->*************************************
  *
  *  WmInstallBitmapIntoXmCache (pchName, bitmap, width, height)
  *
@@ -1178,11 +1146,11 @@ void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
  *
  *  Inputs:
  *  ------
- *  pchName	= pointer to name of bitmap 
+ *  pchName	= pointer to name of bitmap
  *  bitmap	= depth-1 pixmap
  *  width 	= width of portion to install
  *  height	= height of portion to install
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -1192,7 +1160,7 @@ void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
  *  This always installs the Northwest corner of the passed in bitmap.
  *  If the width and height match the size of the bitmap, then the
  *  whole thing is installed in the cache.
- *			
+ *
  *************************************<->***********************************/
 void WmInstallBitmapIntoXmCache (unsigned char *pchName,
     Pixmap bitmap, unsigned int width, unsigned int height)
@@ -1204,8 +1172,6 @@ void WmInstallBitmapIntoXmCache (unsigned char *pchName,
     XmInstallImage (pImage, (char *)pchName);
 } /* END OF FUNCTION WmInstallBitmapIntoXmCache */
 
-
-
 /*************************************<->*************************************
  *
  *  WmInstallBitmapDataIntoXmCache (pSD, pchName, pData)
@@ -1219,9 +1185,9 @@ void WmInstallBitmapIntoXmCache (unsigned char *pchName,
  *  Inputs:
  *  ------
  *  pSD		= pointer to screen data
- *  pchName	= pointer to name of bitmap 
+ *  pchName	= pointer to name of bitmap
  *  pData	= pointer to the bitmap data
- * 
+ *
  *  Outputs:
  *  -------
  *  none
@@ -1233,11 +1199,11 @@ void WmInstallBitmapIntoXmCache (unsigned char *pchName,
  *
  *  ***WARNING***
  *  Do NOT call XmDestroyPixmap on images cached via this routine unless
- *  pData passed in points to malloc'ed memory. XmDestroyPixmap could 
+ *  pData passed in points to malloc'ed memory. XmDestroyPixmap could
  *  try to free this data.
- *			
+ *
  *************************************<->***********************************/
-void WmInstallBitmapDataIntoXmCache (WmScreenData *pSD, 
+void WmInstallBitmapDataIntoXmCache (WmScreenData *pSD,
     unsigned char *pchName, char *pData, unsigned int width,
     unsigned int height)
 {
@@ -1245,7 +1211,7 @@ void WmInstallBitmapDataIntoXmCache (WmScreenData *pSD,
 
     if (pImage = (XImage *) XtMalloc (sizeof (XImage)))
     {
-	pImage->width = width; 
+	pImage->width = width;
 	pImage->height = height;
 	pImage->xoffset = 0;
 	pImage->data = pData;
