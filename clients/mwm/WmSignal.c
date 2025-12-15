@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: WmSignal.c /main/6 1996/10/17 16:20:07 drk $"
@@ -54,7 +54,7 @@ static char rcsid[] = "$XConsortium: WmSignal.c /main/6 1996/10/17 16:20:07 drk 
  * Function Declarations:
  */
 
-#include "WmSignal.h" 
+#include "WmSignal.h"
 
 
 /*
@@ -207,8 +207,8 @@ void SetupWmSignalHandlers (int dummy)
     (void) sigaction (SIGCHLD, &sa, (struct sigaction *) 0);
     sa.sa_flags = 0;
 
-    /* 
-     * Catch other fatal signals so we can reset the 
+    /*
+     * Catch other fatal signals so we can reset the
      * keyboard focus to pointer root before aborting
      */
     sa.sa_handler = AbortWmSignalHandler;
@@ -280,7 +280,7 @@ void QuitWmSignalHandler (int dummy)
  *
  *  Description:
  *  -----------
- *  This function is called on receipt of a signal that the child of the 
+ *  This function is called on receipt of a signal that the child of the
  *  window manager has terminated.
  *  This child signal handler is primarily used to wait() for child
  *  processes that were inherited from the user's .xsession if the last
@@ -291,19 +291,19 @@ void QuitWmSignalHandler (int dummy)
  *
  *************************************<->***********************************/
 
-void ChildProcSignalHandler (int dummy)
+void ChildProcSignalHandler(int dummy)
 {
    pid_t pid;
    int status;
-   void (*intStat) ();
-   void (*quitStat) ();
-   
-   intStat = (void (*)())signal (SIGINT, SIG_IGN);
-   quitStat = (void (*)())signal (SIGQUIT, SIG_IGN);
+   void (*intStat)(int);
+   void (*quitStat)(int);
+
+   intStat  = signal(SIGINT, SIG_IGN);
+   quitStat = signal(SIGQUIT, SIG_IGN);
 
    pid = wait(&status);
-   signal(SIGCHLD, ChildProcSignalHandler); 
-
-   signal (SIGINT, intStat);
-   signal (SIGQUIT, quitStat);
+   signal(SIGCHLD, ChildProcSignalHandler);
+   signal(SIGINT, intStat);
+   signal(SIGQUIT, quitStat);
 }
+

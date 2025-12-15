@@ -994,9 +994,9 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
     int   pid;
     int   w;
 #ifndef WSM
-    void (*intStat) ();
-    void (*quitStat) ();
-    void (*chldStat) ();
+    void (*intStat)(int);
+    void (*quitStat)(int);
+    void (*chldStat)(int);
 #endif /* WSM */
     char *shell;
     char *shellname;
@@ -1029,7 +1029,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
      * Moved before fork() to avoid race condition.
      * Change handler to SIG_DFL, SIG_IGN causes bug. paulsh@sequent 31-08-95.
      */
-    chldStat = (void (*)())signal (SIGCHLD, SIG_DFL);
+    chldStat = signal(SIGCHLD, SIG_DFL);
 #endif
 
     /*
@@ -1132,8 +1132,8 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
      */
 
 #ifndef WSM
-    intStat = (void (*)())signal (SIGINT, SIG_IGN);
-    quitStat = (void (*)())signal (SIGQUIT, SIG_IGN);
+    intStat  = signal(SIGINT, SIG_IGN);
+    quitStat = signal(SIGQUIT, SIG_IGN);
 #endif /* WSM */
 
 #ifdef WSM
