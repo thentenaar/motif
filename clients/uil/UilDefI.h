@@ -562,11 +562,11 @@ extern void src_append_diag_info  _ARGUMENTS(( const src_source_record_type *az_
 extern void src_append_machine_code  _ARGUMENTS(( src_source_record_type *az_src_rec , const int l_offset , const int l_code_len , const char *c_code , const char *c_text_arg ));
 
 /* uilsymnam.c */
-extern sym_name_entry_type *sym_find_name  _ARGUMENTS(( int l_length , char *c_text ));
-extern sym_name_entry_type *sym_insert_name  _ARGUMENTS(( int l_length , char *c_text ));
-extern int hash_function  _ARGUMENTS(( int l_length , char *c_value ));
+extern sym_name_entry_type *sym_find_name(int l_length, const char *c_text);
+extern sym_name_entry_type *sym_insert_name(int l_length, const char *c_text);
+extern int hash_function(int l_length, const char *c_value);
 #if debug_version
-extern void sym_dump_hash_table  _ARGUMENTS(( void ));
+extern void sym_dump_hash_table(void);
 #endif
 
 /* uilsymstor.c */

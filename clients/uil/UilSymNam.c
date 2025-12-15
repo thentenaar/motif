@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,17 +19,19 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilSymNam.c /main/13 1997/09/08 11:12:50 cshi $"
 #endif
 #endif
 
+#include <string.h>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
 **++
@@ -44,52 +46,19 @@ static char rcsid[] = "$TOG: UilSymNam.c /main/13 1997/09/08 11:12:50 cshi $"
 **--
 **/
 
-
 /*
 **
 **  INCLUDE FILES
 **
 **/
-
 #include "UilDefI.h"
 
-/*
-**
-**  DEFINE and MACRO DEFINITIONS
-**
-**/
-
-
-/*
-**
-**  EXTERNAL VARIABLE DECLARATIONS
-**
-**/
-
-
-
-/*
-**
-**  GLOBAL VARIABLE DECLARATIONS
-**
-**/
-
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
-
-
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **  This routine searches for a name entry of the same name as its parameters.
-**  If the entry is found, a pointer to that name node is 
+**  If the entry is found, a pointer to that name node is
 **  returned as the value of the function.  If no entry is found, a NULL
 **  pointer is returned.
 **
@@ -118,13 +87,7 @@ static char rcsid[] = "$TOG: UilSymNam.c /main/13 1997/09/08 11:12:50 cshi $"
 **
 **--
 **/
-
-sym_name_entry_type 
-    *sym_find_name(l_length, c_text)
-
-int	l_length;	/* length of name to find */
-char	*c_text;	/* text of the name */
-
+sym_name_entry_type *sym_find_name(int l_length, const char *c_text)
 {
     sym_name_entry_type	*az_current_name;
     int			l_hash_code;
@@ -168,14 +131,13 @@ char	*c_text;	/* text of the name */
     return NULL;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
 **
 **  This routine searches for a name entry of the same name as its parameters.
-**  If the entry is found, a pointer to that name node is 
-**  returned as the value of the function.  If no entry is found, one is 
+**  If the entry is found, a pointer to that name node is
+**  returned as the value of the function.  If no entry is found, one is
 **  inserted.  In this case the value of the function is a pointer to
 **  the name entry created.
 **
@@ -212,12 +174,7 @@ char	*c_text;	/* text of the name */
 **
 **--
 **/
-
-sym_name_entry_type *sym_insert_name(l_length, c_text)
-
-int	l_length;	/* length of name to insert */
-char	*c_text;	/* text of the name */
-
+sym_name_entry_type *sym_insert_name(int l_length, const char *c_text)
 {
     sym_name_entry_type	*az_previous_name;
     sym_name_entry_type	*az_current_name;
@@ -227,7 +184,7 @@ char	*c_text;	/* text of the name */
 
     /*
     **  algorithm keeps 2 pointers, one for the previous name and one
-    **  for the current name.  This permits easy insertion of a new name 
+    **  for the current name.  This permits easy insertion of a new name
     */
 
 
@@ -278,7 +235,7 @@ insert_name:
     /* allocate and initialize the name entry */
 
     az_new_name = (sym_name_entry_type *)
-	sem_allocate_node (sym_k_name_entry, 
+	sem_allocate_node (sym_k_name_entry,
 			   sym_k_name_entry_size + l_length + 1);
 
     az_new_name->header.b_type = l_length;	/* b_type holds length */
@@ -302,7 +259,6 @@ insert_name:
     return az_new_name;
 }
 
-
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -314,7 +270,7 @@ insert_name:
 **  FORMAL PARAMETERS:
 **
 **      l_length	    length of the value in bytes not including null
-**	c_value		    a null terminated string 
+**	c_value		    a null terminated string
 **
 **  IMPLICIT INPUTS:
 **
@@ -334,29 +290,25 @@ insert_name:
 **
 **--
 **/
-
-int	hash_function(l_length, c_value)
-
-int	l_length;
-char	*c_value;
+int	hash_function(int l_length, const char *c_value)
 {
 #ifdef WORD64
 #define _shift 3
-    static unsigned int XmConst    mask[ 8 ] =
+    static const unsigned int mask[8] =
                 { 0x00000000000000FF, 0x000000000000FFFF,
                   0x0000000000FFFFFF, 0x00000000FFFFFFFF,
                   0x00000000FFFFFFFF, 0x0000FFFFFFFFFFFF,
                   0x00FFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, };
 #elif defined (LONG64)
     #define _shift 3
-    static long XmConst    mask[ 8 ] =
+    static const unsigned long mask[8] =
                 { 0x00000000000000FF, 0x000000000000FFFF,
                   0x0000000000FFFFFF, 0x00000000FFFFFFFF,
                   0x00000000FFFFFFFF, 0x0000FFFFFFFFFFFF,
                   0x00FFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, };
 #else
 #define _shift 2
-    static unsigned int XmConst	mask[ 4 ] = 
+    static const unsigned int mask[4] =
 		{ 0x000000FF, 0x0000FFFF, 0x00FFFFFF, 0xFFFFFFFF };
 #endif
 
@@ -374,11 +326,7 @@ char	*c_value;
     l_limit = (l_length-1) >> _shift;	/* divide by wordsize */
     l_extra = (l_length-1) & _slm;	/* remainder from divide by wordsize */
 
-#ifdef LONG64
-    bzero((char *)al_value, sizeof(long) * 20);
-#else
-    bzero((char *)al_value, sizeof(int) * 20);
-#endif
+    memset(al_value, 0, sizeof al_value);
     strncpy((char *)al_value, c_value, l_length);
     l_hash_code = 0;
 
@@ -392,7 +340,6 @@ char	*c_value;
     return (int)(l_hash_code % sym_k_hash_table_limit);
 }
 
-
 #if debug_version
 
 /*
@@ -424,8 +371,7 @@ char	*c_value;
 **
 **--
 **/
-
-void	sym_dump_hash_table()
+void sym_dump_hash_table(void)
 {
     int		i;
     int		total_count;
@@ -435,7 +381,7 @@ void	sym_dump_hash_table()
     total_count = 0;
     empty_count = 0;
     max_length = 0;
-	
+
     for (i=0;  i<sym_k_hash_table_limit;  i++)
     {
 	int		    bucket_count;
@@ -443,8 +389,8 @@ void	sym_dump_hash_table()
 
 	bucket_count = 0;
 
-	for (az_name = sym_az_hash_table[ i ];  
-	     az_name != NULL;  
+	for (az_name = sym_az_hash_table[ i ];
+	     az_name != NULL;
 	     az_name = az_name->az_next_name_entry)
 	{
 	    bucket_count++;
@@ -464,3 +410,4 @@ void	sym_dump_hash_table()
 		   total_count, empty_count, max_length );
 }
 #endif
+
