@@ -988,7 +988,7 @@ Boolean WmDispatchWsEvent (XEvent *event)
 	     */
 
 	    if ((XFindContext (DISPLAY, event->xmaprequest.window,
-		    wmGD.windowContextType, (caddr_t *)&pCD)) &&
+		    wmGD.windowContextType, (XPointer *)&pCD)) &&
 		(pSD = GetScreenForWindow (event->xmaprequest.window)))
 	    {
 	        /*
@@ -1264,7 +1264,7 @@ Boolean HandleKeyPress (XKeyEvent *keyEvent,
 		}
 #endif /* ROOT_ICON_MENU */
 	      if (!(keySpecs->wmFunction (keySpecs->wmFuncArgs,
-					  functionClient, keyEvent)))
+					  functionClient, (XEvent *)keyEvent)))
 		{
 		  /*
 		   * The window manager function return indicates that further
@@ -1340,7 +1340,7 @@ void HandleWsButtonPress (XButtonEvent *buttonEvent)
 
     if ((buttonEvent->subwindow == None) ||
 	(XFindContext (DISPLAY, buttonEvent->subwindow, wmGD.windowContextType,
-	     (caddr_t *)&pCD)))
+	     (XPointer *)&pCD)))
     {
 	/* no managed window under the pointer */
 	pCD = NULL;
@@ -1413,7 +1413,7 @@ void HandleWsButtonRelease (XButtonEvent *buttonEvent)
 
     if ((buttonEvent->subwindow == None) ||
 	(XFindContext (DISPLAY, buttonEvent->subwindow, wmGD.windowContextType,
-	     (caddr_t *)&pCD)))
+	     (XPointer *)&pCD)))
     {
 	/* no managed window under the pointer */
 	pCD = NULL;
@@ -1556,7 +1556,7 @@ Boolean CheckForButtonAction (XButtonEvent *buttonEvent, Context context, Contex
 		}
 
 	        if (!(buttonSpec->wmFunction (buttonSpec->wmFuncArgs, pCD,
-					      buttonEvent)))
+					      (XEvent *)buttonEvent)))
 		{
 		    /*
 		     * The window manager function return indicates that
@@ -2004,7 +2004,7 @@ HandleDtWmRequest (WmScreenData *pSD, XEvent *pev)
 	    {
 		if (!XFindContext (DISPLAY, wmGD.requestContextWin,
 					wmGD.windowContextType,
-					(caddr_t *)&pCD))
+					(XPointer *)&pCD))
 		{
 		    /*
 		     * A valid client window was specified
@@ -2166,7 +2166,7 @@ void HandleWsEnterNotify (XEnterWindowEvent *enterEvent)
      */
     if (wmGD.queryScreen &&
 	(!XFindContext (DISPLAY, enterEvent->window, wmGD.screenContextType,
-	    (caddr_t *)&pSD)))
+	    (XPointer *)&pSD)))
     {
 	SetActiveScreen (pSD);
     }
@@ -2264,7 +2264,7 @@ void HandleWsLeaveNotify (XLeaveWindowEvent *leaveEvent)
 	/*  Set new active screen */
 
 	if (!XFindContext (DISPLAY, leaveEvent->root, wmGD.screenContextType,
-	    (caddr_t *)&pSD))
+	    (XPointer *)&pSD))
 	{
 	    /* moved to another screen we manage! */
 	    SetActiveScreen (pSD);
@@ -2316,7 +2316,7 @@ void HandleWsConfigureRequest (XConfigureRequestEvent *configureEvent)
      */
 
     if (XFindContext (DISPLAY, configureEvent->window, wmGD.windowContextType,
-	    (caddr_t *)&pCD))
+	    (XPointer *)&pCD))
     {
 	/*
 	 * Get window attribute information; this is used later on
