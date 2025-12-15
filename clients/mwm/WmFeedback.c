@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.3
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -70,7 +70,6 @@ static char rcsid[] = "$XConsortium: WmFeedback.c /main/6 1996/10/23 17:20:55 rs
 #include "WmColormap.h"
 #include "stdio.h"
 
-
 /*
  * Global Variables:
  */
@@ -84,11 +83,8 @@ static char *confirm_mesg[4] = {"Switch to Default Behavior?",
                                 "Restart Mwm?",
                                 "QUIT Mwm?"};
 
-
-void
-initMesg()
+void initMesg(void)
 {
-
     char * tmpString;
 
     /*
@@ -194,8 +190,6 @@ initMesg()
     {
 	strcpy(confirm_mesg[3], tmpString);
     }
-
-
 }
 #else
 static char *confirm_mesg[4] = {"Toggle to Default Behavior?",
@@ -216,7 +210,6 @@ static ConfirmFunc confirm_func[4] = {Do_Set_Behavior,
 				      Do_Restart,
 				      Do_Quit_Mwm};
 
-
 /*************************************<->*************************************
  *
  *  ShowFeedbackWindow(pSD, x, y, width, height, style)
@@ -406,8 +399,6 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
 
 } /* END OF FUNCTION ShowFeedbackWindow */
 
-
-
 /*************************************<->*************************************
  *
  *  PaintFeedbackWindow(pSD)
@@ -479,8 +470,6 @@ void PaintFeedbackWindow (WmScreenData *pSD)
     }
 }
 
-
-
 /*************************************<->*************************************
  *
  *  HideFeedbackWindow (pSD)
@@ -515,9 +504,6 @@ void HideFeedbackWindow (WmScreenData *pSD)
     pSD->fbStyle = FB_OFF;
 }
 
-
-
-
 /*************************************<->*************************************
  *
  *  UpdateFeedbackInfo (pSD, x, y, width, height)
@@ -574,9 +560,6 @@ void UpdateFeedbackInfo (WmScreenData *pSD, int x, int y, unsigned int width, un
     }
 }
 
-
-
-
 /*************************************<->*************************************
  *
  *  UpdateFeedbackText (pSD, x, y, width, height)
@@ -628,8 +611,6 @@ void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, un
     }
 }
 
-
-
 /*************************************<->*************************************
  *
  *  static void
@@ -656,22 +637,13 @@ void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  None.
  *
  *************************************<->***********************************/
-
-static void OkCB (w, client_data, call_data)
-
-   Widget w;
-   caddr_t client_data;
-   caddr_t call_data;
+static void OkCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    WithdrawDialog (w);
-
-    confirm_func[((WmScreenData *)client_data)->actionNbr] (False);
-
+    WithdrawDialog(w);
+    confirm_func[((WmScreenData *)client_data)->actionNbr](False);
     wmGD.confirmDialogMapped = False;
+}
 
-} /* END OF FUNCTION OkCB */
-
-
 /*************************************<->*************************************
  *
  *  static void
@@ -698,21 +670,12 @@ static void OkCB (w, client_data, call_data)
  *  None.
  *
  *************************************<->***********************************/
-
-static void CancelCB (w, client_data, call_data)
-
-   Widget w;
-   caddr_t client_data;
-   caddr_t call_data;
+static void CancelCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    WithdrawDialog (w);
-
+    WithdrawDialog(w);
     wmGD.confirmDialogMapped = False;
+}
 
-} /* END OF FUNCTION CancelCB */
-
-
-
 /*************************************<->*************************************
  *
  *  void
@@ -897,8 +860,6 @@ void ConfirmAction (WmScreenData *pSD, int nbr)
 
 } /* END OF FUNCTION ConfirmAction */
 
-
-
 /*************************************<->*************************************
  *
  *  ShowWaitState (flag)
@@ -1004,8 +965,6 @@ void ShowWaitState (Boolean flag)
 
 } /* END OF FUNCTION ShowWaitState */
 
-
-
 /*************************************<->*************************************
  *
  *  InitCursorInfo ()
@@ -1038,5 +997,5 @@ void InitCursorInfo (void)
 	    wmGD.useLargeCursors = True;
 	}
     }
-
 } /* END OF FUNCTION InitCursorInfo */
+
