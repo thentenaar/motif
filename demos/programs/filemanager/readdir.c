@@ -1,5 +1,5 @@
 /* $TOG: readdir.c /main/7 1997/03/31 13:53:34 dbl $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,6 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  *
- */
-/*
- * HISTORY
  */
 
 #include <stdlib.h>
@@ -57,7 +54,7 @@ int  maxIcons = 0;
 int  validIcons = 0;
 WidgetList IconGadgets = NULL;
 
-static void doOptionMenu();
+static void doOptionMenu(void);
 
 static void getIcons(int ind, Pixmap *icon, Pixmap *mask,
 		     Pixmap *sicon, Pixmap *smask);
@@ -428,8 +425,7 @@ GetNewEntry(int vFI, char* dir, struct dirent *info)
   return status;
 }
 
-static char*
-find_suffix(char *filename)
+static const char *find_suffix(const char *filename)
 {
   int i = strlen(filename);
 
@@ -441,11 +437,7 @@ find_suffix(char *filename)
     return(filename);
 }
 
-static void readIcon(str, icon, mask, fg, bg)
-     char *str;
-     Pixmap *icon;
-     Pixmap *mask;
-     Pixel fg, bg;
+static void readIcon(const char *str, Pixmap *icon, Pixmap *mask, Pixel fg, Pixel bg)
 {
   if (str != NULL) {
     char msk[256];
@@ -459,7 +451,7 @@ static void readIcon(str, icon, mask, fg, bg)
       snprintf(msk, sizeof msk, "%s_m", str);
     }
 
-    *icon = XmGetPixmap(XtScreen(toplevel), str, fg, bg);
+    *icon = XmGetPixmap(XtScreen(toplevel), (String)str, fg, bg);
     *mask = XmGetPixmapByDepth(XtScreen(toplevel), msk,
                                WhitePixelOfScreen(XtScreen(toplevel)),
                                BlackPixelOfScreen(XtScreen(toplevel)), 1);
@@ -550,7 +542,7 @@ getIcons(int ind, Pixmap *icon, Pixmap *mask, Pixmap *sicon, Pixmap *smask)
 /* Break off components and stuff into the pushbuttons */
 /* This code is entirely UNIX pathname dependent */
 
-static void doOptionMenu()
+static void doOptionMenu(void)
 {
   int i;
   XmString stemp;
