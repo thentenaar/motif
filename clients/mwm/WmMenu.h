@@ -1,7 +1,7 @@
 #ifndef _WM_MENU_H
 #define _WM_MENU_H
 
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -22,10 +22,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+
+/*
  * Motif Release 1.2.2
-*/ 
+*/
 
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 # define MAKE_MENU(pSD, pCD, mName, iC, aC, moreItems, sysMenu) \
@@ -39,8 +40,7 @@
 	CreateMenuWidget(pSD, mName, parent, fTLP, tSpec, moreItems)
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-extern void ActivateCallback (Widget w, caddr_t client_data, 
-			      caddr_t call_data);
+void ActivateCallback (Widget w, void *client_data, void *call_data);
 extern Widget CreateMenuWidget (WmScreenData *pSD,
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 				ClientData *pCD,
@@ -54,11 +54,11 @@ extern MenuSpec *MakeMenu (WmScreenData *pSD,
 #if ((!defined(WSM)) || defined(MWM_QATS_PROTOCOL))
 			   ClientData *pCD,
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
-			   String menuName, 
-			   Context initialContext, Context accelContext, 
+			   String menuName,
+			   Context initialContext, Context accelContext,
 			   MenuItem *moreMenuItems, Boolean fSystemMenu);
-extern void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y, 
-		      unsigned int button, Context newContext, long flags, 
+extern void PostMenu (MenuSpec *menuSpec, ClientData *pCD, int x, int y,
+		      unsigned int button, Context newContext, long flags,
 		      XEvent *passedInEvent);
 extern void TraversalOff (MenuSpec *menuSpec);
 extern void TraversalOn (MenuSpec *menuSpec);
