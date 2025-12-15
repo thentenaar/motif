@@ -72,7 +72,7 @@ static char rcsid[] = "$TOG: WmResource.c /main/14 1997/04/15 10:30:02 dbl $"
 /*
  * Function Declarations:
  */
-XmColorData *_WmGetDefaultColors ();
+XmColorData *_WmGetDefaultColors(Screen *screen, Colormap colormap, String defaultColor);
 
 void _WmTopShadowPixmapDefault (Widget widget, int offset, XrmValue *value);
 void _WmIconImageFDefault (Widget widget, int offset, XrmValue *value);
