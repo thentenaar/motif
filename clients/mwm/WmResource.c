@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,14 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.3
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -37,7 +37,6 @@ static char rcsid[] = "$TOG: WmResource.c /main/14 1997/04/15 10:30:02 dbl $"
 /*
  * Included Files:
  */
-
 #include "WmGlobal.h"
 #include "WmResNames.h"
 
@@ -6021,12 +6020,7 @@ _WmGetDynamicDefault (Widget widget, unsigned char type, String defaultColor, Pi
  *  RETURN = pointer to WmColorData structure containing 3-D colors.
  *
  *************************************<->***********************************/
-
-XmColorData * _WmGetDefaultColors (screen, colormap, defaultColor)
-	Screen *screen;
-	Colormap colormap;
-	String defaultColor;
-
+XmColorData *_WmGetDefaultColors(Screen *screen, Colormap colormap, String defaultColor)
 {
     static XmColorData *defaultSet[2] = {NULL, NULL};
     static int defaultCount[2] = {0, 0};
@@ -6157,31 +6151,12 @@ XmColorData * _WmGetDefaultColors (screen, colormap, defaultColor)
  *  RETURN = pointer to realloc'ed block of storage
  *
  *************************************<->***********************************/
-
-char * WmRealloc (ptr, size)
-	char *ptr;
-	unsigned size;
-
+void *WmRealloc(void *ptr, Cardinal size)
 {
-    if (ptr)
-    {
-	ptr = (char *)XtRealloc (ptr, size);
-    }
-    else
-    {
-	ptr = (char *)XtMalloc (size);
-    }
-
-    if (ptr == NULL)
-    {
-	Warning (((char *)GETMESSAGE(62, 37, "Insufficient memory for window manager data")));
-    }
-
-    return (ptr);
-
-} /* END OF FUNCTION WmRealloc */
-
-
+	if (!(ptr = ptr ? XtRealloc(ptr, size) : XtMalloc(size)))
+		Warning(((char *)GETMESSAGE(62, 37, "Insufficient memory for window manager data")));
+    return ptr;
+}
 
 /*************************************<->*************************************
  *
@@ -6205,29 +6180,15 @@ char * WmRealloc (ptr, size)
  *  RETURN = pointer to malloc'ed block of storage
  *
  *************************************<->***********************************/
-
-char * WmMalloc (ptr, size)
-	char *ptr;
-	unsigned size;
-
+void *WmMalloc(void *ptr, Cardinal size)
 {
-    if (ptr)
-    {
-	XtFree (ptr);
-    }
+	if (ptr)
+		XtFree(ptr);
 
-    ptr = (char *)XtMalloc (size);
-
-    if (ptr == NULL)
-    {
-	Warning (((char *)GETMESSAGE(62, 38, "Insufficient memory for window manager data")));
-    }
-
-    return (ptr);
-
-} /* END OF FUNCTION WmMalloc */
-
-
+    if (!(ptr = XtMalloc(size)))
+		Warning(((char *)GETMESSAGE(62, 38, "Insufficient memory for window manager data")));
+    return ptr;
+}
 
 /*************************************<->*************************************
  *
@@ -6253,12 +6214,7 @@ char * WmMalloc (ptr, size)
  *   None
  *
  *************************************<->***********************************/
-
-void
-SetupDefaultResources (pSD)
-
-WmScreenData *pSD;
-
+void SetupDefaultResources(WmScreenData *pSD)
 {
     KeySpec *nextKeySpec;
     String keyBindings;

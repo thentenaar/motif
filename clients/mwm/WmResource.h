@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.3
 */
@@ -47,8 +48,8 @@ extern void ProcessWorkspaceResources (WmWorkspaceData *pWS);
 extern void ProcessClientResources (ClientData *pCD);
 extern void SetStdClientResourceValues (ClientData *pCD);
 extern void SetStdScreenResourceValues (WmScreenData *pSD);
-extern char *WmRealloc (char *ptr, unsigned size);
-extern char *WmMalloc (char *ptr, unsigned size);
+extern void *WmRealloc(void *ptr, Cardinal size);
+extern void *WmMalloc(void *ptr, Cardinal size);
 extern void SetupDefaultResources (WmScreenData *pSD);
 extern Boolean SimilarAppearanceData (AppearanceData *pAD1, AppearanceData *pAD2);
 #ifdef WSM
