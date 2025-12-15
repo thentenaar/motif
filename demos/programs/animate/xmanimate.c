@@ -1,5 +1,5 @@
 /* $XConsortium: xmanimate.c /main/5 1995/07/15 20:44:58 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,8 +20,9 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
+
 /*
  * HISTORY
  */
@@ -29,7 +30,7 @@
 * Motifanim.
 * ---------
 * This program displays a animation made of a succession of pixmaps drawn
-*    side by side in a scrolled drawingarea; there are also control 
+*    side by side in a scrolled drawingarea; there are also control
 *    buttons for managing the animation (start, speed, stop, step ...)
 * This program reads two uid files: 'motifanim.uid', describing the general
 *    interface of the buttons, label etc, and a <NAME>.uid file, describing
@@ -53,7 +54,7 @@
 #include <Xm/Xm.h>          /* Motif Toolkit */
 #include <Xm/Scale.h>
 #include <Mrm/MrmPublic.h>   /* Mrm */
-#include <Xmd/Help.h>   
+#include <Xmd/Help.h>
 #include <stdlib.h>
 
 static MrmHierarchy	s_MrmHierarchy;	   /* MRM database hierarch id */
@@ -66,33 +67,33 @@ static int vecnum = sizeof(vec) / sizeof(char*);
 static MrmCode		class, return_type ;
 
        /* forward declaration of interface procedures */
-static void p_motifanim_start();
-static void p_motifanim_stop();
-static void p_motifanim_step();
-static void p_motifanim_speed();
-static void p_motifanim_draw();
-static void p_motifanim_exit();
-static void p_motifanim_help();
-static void InitAnim();
+static void p_motifanim_help(Widget w, XtPointer client, XtPointer callback);
+static void p_motifanim_start(Widget w, XtPointer client, XtPointer callback);
+static void p_motifanim_stop(Widget w, XtPointer client, XtPointer callback);
+static void p_motifanim_step(Widget w, XtPointer client, XtPointer callback);
+static void p_motifanim_speed(Widget w, int *tag, XmScaleCallbackStruct *callback);
+static void p_motifanim_draw(Widget w, int *tag, XtPointer callback);
+static void p_motifanim_exit(Widget w, XtPointer client, XtPointer callback);
+static void InitAnim(void);
 
        /* binding of uil procedure names with C functions */
 static MRMRegisterArg	regvec[] = {
-	{"p_motifanim_start",(XtPointer)p_motifanim_start},
-	{"p_motifanim_stop",(XtPointer)p_motifanim_stop},
-	{"p_motifanim_step",(XtPointer)p_motifanim_step},
-	{"p_motifanim_speed",(XtPointer)p_motifanim_speed},
-	{"p_motifanim_exit",(XtPointer)p_motifanim_exit},
-	{"p_motifanim_draw",(XtPointer)p_motifanim_draw},
-	{"p_motifanim_help",(XtPointer)p_motifanim_help}
-	};
+	{"p_motifanim_start",(XPointer)p_motifanim_start},
+	{"p_motifanim_stop",(XPointer)p_motifanim_stop},
+	{"p_motifanim_step",(XPointer)p_motifanim_step},
+	{"p_motifanim_speed",(XPointer)p_motifanim_speed},
+	{"p_motifanim_exit",(XPointer)p_motifanim_exit},
+	{"p_motifanim_draw",(XPointer)p_motifanim_draw},
+	{"p_motifanim_help",(XPointer)p_motifanim_help}
+};
 static MrmCount regnum = XtNumber(regvec);
 
 
 static Display 	*display;
 static XtAppContext    app_context;
 
-/** 
---  Animation variables 
+/**
+--  Animation variables
 **/
 static int scalespeed, max_scale ; /* init with widget values */
 static short width ;
@@ -118,7 +119,7 @@ static int speedcount ;
 
 #define APP_CLASS "XmdAnimate"
 
-static String fallbacks[] = {
+static char *fallbacks[] = {
 "*help_manager.helpFile: xmanimate",
 NULL
 };
@@ -126,9 +127,7 @@ NULL
 /******************************************************************
  *  Main program: motifanim [-anim anim_name] [-speed speed_factor]
  */
-int main(argc, argv)
-     int    argc;
-     String argv[];
+int main(int argc, char *argv[])
 {
      /*
      *  Declare the variables to contain the two widget ids
@@ -142,8 +141,8 @@ int main(argc, argv)
     MrmInitialize ();
     XtSetLanguageProc(NULL, NULL, NULL);
     toplevel = XtVaOpenApplication(&app_context, APP_CLASS,
-				 NULL , 0, &argc, argv, fallbacks, 
-                                 sessionShellWidgetClass, 
+				 NULL , 0, &argc, argv, fallbacks,
+                                 sessionShellWidgetClass,
                                  NULL);
 
     /*
@@ -152,17 +151,17 @@ int main(argc, argv)
 
     while (*++argv) {
 	if (!strcmp(*argv,"-anim")) {
-	    if (*++argv)  anim_name = *argv ; 
+	    if (*++argv)  anim_name = *argv ;
 	} else
 	if (!strcmp(*argv,"-speed")) {
-	    if (*++argv)  speed_factor = atoi(*argv) ; 
+	    if (*++argv)  speed_factor = atoi(*argv) ;
 	}
     }
-		
+
 
     /*
      *  Build the secong uid file and open the Mrm.hierarchy (2 files)
-     */ 
+     */
     strcpy(uidanimfile,anim_name);
     strcat(uidanimfile,".uid");
     vec[1] = uidanimfile ;
@@ -192,13 +191,12 @@ int main(argc, argv)
     }
 
     XtManageChild(motifanimmain);
-    
     XtRealizeWidget(toplevel);
 
     /*
      *  Call the routine that will fetch the animation variables.
      */
-    
+
     InitAnim() ;
 
 
@@ -208,11 +206,8 @@ int main(argc, argv)
     return (0);
 }
 
-
-static void InitAnim()
-/********/
+static void InitAnim(void)
 {
-
     XGCValues gcv;
     int i,dum ;
     char uiliconname[100];
@@ -265,8 +260,8 @@ static void InitAnim()
     }
 
     /* to avoid event accumulation during animation */
-    gcv.graphics_exposures = False ; 
-    gc = XCreateGC(XtDisplay(drawingArea), XtWindow(drawingArea), 
+    gcv.graphics_exposures = False ;
+    gc = XCreateGC(XtDisplay(drawingArea), XtWindow(drawingArea),
 		   GCGraphicsExposures, &gcv);
     speedcount = 0 ;
 }
@@ -277,9 +272,7 @@ static void InitAnim()
   Background Work Procedure: it return the current value of stop
   and then is automatically removed when stop = true.
 **/
-static Boolean fstep(client_data)
-/************************/
-     XtPointer client_data ;       /* scalespeed */
+static Boolean fstep(XtPointer client_data)
 {
     speedcount += (int)*(int*)client_data ;
     if (speedcount >= (max_scale*speed_factor)) {
@@ -289,7 +282,7 @@ static Boolean fstep(client_data)
 	xanim = (xanim > width)?(-wanim[ianim]):(xanim+step_size) ;
 	ianim = (ianim == nimage)?0:(ianim+1);
 	XCopyArea(XtDisplay(drawingArea), panim[ianim], XtWindow(drawingArea),
-		  gc, 0, 0, wanim[ianim], hanim[ianim], 
+		  gc, 0, 0, wanim[ianim], hanim[ianim],
 		  xanim, yanim);
 	XSync(XtDisplay(drawingArea),False);
     }
@@ -299,84 +292,83 @@ static Boolean fstep(client_data)
 /** The callbacks **/
 /*******************/
 
-static void 
-p_motifanim_help (Widget w, XtPointer client_data, XtPointer call_data) 
+static void p_motifanim_help(Widget w, XtPointer client, XtPointer callback)
 {
-    static Widget help_widget = NULL ;
+	static Widget help_widget = NULL ;
 
-    if (!help_widget)
-	help_widget = XmdCreateHelpDialog(w, "help_manager", NULL, 0);
+	(void)w;
+	(void)client;
+	(void)callback;
 
-    XtManageChild(help_widget);   
+	if (!help_widget)
+		help_widget = XmdCreateHelpDialog(w, "help_manager", NULL, 0);
+    XtManageChild(help_widget);
 }
 
-
-static void p_motifanim_start( widget, tag, callback_data )
-	Widget	widget;
-	char    *tag;
-	XmAnyCallbackStruct *callback_data;
+static void p_motifanim_start(Widget w, XtPointer client, XtPointer callback)
 {
-    XtAppAddWorkProc(app_context,fstep, (XtPointer)&scalespeed);
-    stop = False ;
+	(void)w;
+	(void)client;
+	(void)callback;
+
+	XtAppAddWorkProc(app_context, fstep, (XtPointer)&scalespeed);
+	stop = False;
 }
 
-static void p_motifanim_stop( widget, tag, callback_data )
-	Widget	widget;
-	char    *tag;
-	XmAnyCallbackStruct *callback_data;
+static void p_motifanim_stop(Widget w, XtPointer client, XtPointer callback)
 {
-    stop = True ;
+	(void)w;
+	(void)client;
+	(void)callback;
+	stop = True;
 }
 
-static void p_motifanim_step( widget, tag, callback_data )
-	Widget	widget;
-	char    *tag;
-	XmAnyCallbackStruct *callback_data;
+static void p_motifanim_step(Widget w, XtPointer client, XtPointer callback)
 {
-    int max = (max_scale*speed_factor) ;
+	int s = max_scale * speed_factor;
+	(void)w;
+	(void)client;
+	(void)callback;
 
-    fstep(&max) ;
+	fstep((XtPointer)&s);
 }
 
-static void p_motifanim_speed( widget, tag, callback_data )
-	Widget	widget;
-	int    *tag;
-	XmScaleCallbackStruct *callback_data;
+static void p_motifanim_speed(Widget w, int *tag, XmScaleCallbackStruct *callback)
 {
-    Arg arg ;
+	Arg arg;
 
-    if (*tag == 0) {
-	XmScaleGetValue(widget,&scalespeed);
-	XtSetArg(arg,XmNmaximum,&max_scale);
-	XtGetValues(widget,&arg,1);
-    }
-    else scalespeed = callback_data->value ;
+	if (tag && *tag) {
+		scalespeed = callback->value;
+		return;
+	}
+
+	XmScaleGetValue(w, &scalespeed);
+	XtSetArg(arg, XmNmaximum, &max_scale);
+	XtGetValues(w, &arg, 1);
 }
 
-static void p_motifanim_draw( widget, tag, callback_data )
-	Widget	widget;
-	int    *tag;
-	XmAnyCallbackStruct *callback_data;
+static void p_motifanim_draw(Widget w, int *tag, XtPointer callback)
 {
-    Arg arg ;
+	Arg arg;
 
-    if (*tag == 0) {
-	XtSetArg(arg,XmNwidth,&width);
-	XtGetValues(widget,&arg,1);
-	drawingArea = widget ; 
-    } else {
-	XCopyArea(XtDisplay(drawingArea), panim[ianim], 
-		  XtWindow(drawingArea),
-		  gc, 0, 0, wanim[ianim], hanim[ianim], 
-		  xanim, yanim);
-    }
+	(void)callback;
+	if (tag && *tag) {
+		XCopyArea(XtDisplay(drawingArea), panim[ianim], XtWindow(drawingArea),
+		          gc, 0, 0, wanim[ianim], hanim[ianim], xanim, yanim);
+		return;
+	}
 
+
+	XtSetArg(arg, XmNwidth, &width);
+	XtGetValues(w, &arg, 1);
+	drawingArea = w;
 }
 
-static void p_motifanim_exit( widget, tag, callback_data )
-	Widget	widget;
-	char    *tag;
-	XmAnyCallbackStruct *callback_data;
+static void p_motifanim_exit(Widget w, XtPointer client, XtPointer callback)
 {
-    exit(0);
+	(void)w;
+	(void)client;
+	(void)callback;
+	exit(EXIT_SUCCESS);
 }
+
