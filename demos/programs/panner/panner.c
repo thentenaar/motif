@@ -1,5 +1,5 @@
 /* $TOG: panner.c /main/6 1997/03/31 13:38:32 dbl $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -22,9 +22,7 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xmd.h>
@@ -48,7 +46,6 @@
 #define PAN_SIZE		9
 #define WM_SELECTION_FORMAT	"WM_S%1d"
 #define COLOR_COUNT             20
-
 
 String fallback[] = {
   "Panner.mappedWhenManaged:		FALSE",
@@ -562,14 +559,12 @@ UpdatePannerView (
 /*----------------------------------------------------------------*
  |                          DrawWindows                           |
  *----------------------------------------------------------------*/
-static void
-DrawWindows (PannerInfoRec *infoList)
+static void DrawWindows(PannerInfoRec *infoList)
 {
   Window        realRoot, root, parent, *child = NULL;
   int           i, x, y;
   unsigned int  childCount, width, height;
-  int (*oldHandler)();
-
+  XErrorHandler oldHandler;
 
   realRoot = RootWindow(infoList[DSP].display,
 			XScreenNumberOfScreen(infoList[DSP].screen));
