@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 /*
  *++
@@ -70,36 +70,12 @@ static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
 
 /*
  *
- *  TABLE OF CONTENTS
- *
- *
- */
-
-
-/*
- *
  *  DEFINE and MACRO DEFINITIONS
  *
  */
 #define _check_read( __number_returned ) \
 	if (( (__number_returned) != 1) || (feof(dbfile)) || (ferror(dbfile)) ) \
 	{  diag_issue_diagnostic( d_bad_database, diag_k_no_source, diag_k_no_column ); }
-
-
-
-
-/*
- *
- *  EXTERNAL VARIABLE DECLARATIONS
- *
- */
-
-/*
- *
- *  GLOBAL VARIABLE DECLARATIONS
- *
- */
-
 
 /*
  *
@@ -108,8 +84,6 @@ static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
  */
 static FILE *dbfile;
 static int  num_bits;
-
-void db_incorporate()
 
 /*
  *++
@@ -131,14 +105,7 @@ void db_incorporate()
  *
  *--
  */
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
+void db_incorporate(void)
 {
     int			return_num_items;
     _db_header		header;
@@ -322,11 +289,6 @@ void db_incorporate()
     return;
 }
 
-
-
-void db_read_ints_and_string(header)
-    _db_header_ptr   header;
-
 /*
  *++
  *
@@ -352,16 +314,8 @@ void db_read_ints_and_string(header)
  *
  *--
  */
-
+void db_read_ints_and_string(_db_header_ptr header)
 {
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
 	int			return_num_items, i, string_size=0;
 	key_keytable_entry_type	*table = NULL;
 	char			*string_table;
@@ -416,11 +370,6 @@ void db_read_ints_and_string(header)
 	return;
 }
 
-
-
-void db_read_char_table(header)
-    _db_header_ptr   header;
-
 /*
  *++
  *
@@ -449,15 +398,8 @@ void db_read_char_table(header)
  *--
  */
 
+void db_read_char_table(_db_header_ptr header)
 {
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
 	unsigned char	**ptr = NULL;
 	int		return_num_items, i;
 	unsigned char	*table;
@@ -507,11 +449,6 @@ void db_read_char_table(header)
 	return;
 }
 
-
-
-void db_read_length_and_string(header)
-    _db_header_ptr   header;
-
 /*
  *++
  *
@@ -546,16 +483,8 @@ void db_read_length_and_string(header)
  *
  *--
  */
-
+void db_read_length_and_string(_db_header_ptr header)
 {
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
 	int		return_num_items, i, string_size=0;
 	int		*lengths;
 	char		*string_table;
@@ -668,11 +597,6 @@ void db_read_length_and_string(header)
 	return;
 }
 
-
-
-void db_read_int_and_shorts(header)
-    _db_header_ptr   header;
-
 /*
  *++
  *
@@ -698,16 +622,8 @@ void db_read_int_and_shorts(header)
  *
  *--
  */
-
+void db_read_int_and_shorts(_db_header_ptr header)
 {
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
 	int			return_num_items, i, int_table_size=0;
 	UilEnumSetDescDef	*table = NULL;
 	unsigned short int 	*int_table;
@@ -752,10 +668,6 @@ void db_read_int_and_shorts(header)
 	return;
 }
 
-
-
-void db_open_file ()
-
 /*
  *++
  *
@@ -784,16 +696,8 @@ void db_open_file ()
  *
  *--
  */
-
+void db_open_file(void)
 {
-
-/*
- *  External Functions
- */
-
-/*
- *  Local variables
- */
 	char			*resolvedname;		/* current resolved name */
 	SubstitutionRec		subs[3];
 	char			*wmdPath;
@@ -867,10 +771,7 @@ void db_open_file ()
 	return;
 }
 
-
-
-
-String get_root_dir_name()
+String get_root_dir_name(void)
 {
 	int uid;
 	_Xgetpwparams pwd_buf;
@@ -956,8 +857,7 @@ static char ABSOLUTE_PATH[] = "\
 %N\
 %S";
 
-String init_wmd_path(filename)
-    String	filename ;
+String init_wmd_path(String filename)
 {
     String path;
     String old_path;
@@ -1005,3 +905,4 @@ String init_wmd_path(filename)
 	}
     return (wmd_path);
 }
+
