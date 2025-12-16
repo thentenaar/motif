@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: hellomotif.c /main/6 1995/07/14 09:42:12 drk $"
@@ -33,7 +33,7 @@ static char rcsid[] = "$XConsortium: hellomotif.c /main/6 1995/07/14 09:42:12 dr
 /* Although it's really bad to hardcode Positions, keep this for
    now for compatibility */
 #define NEW_BUTTON_X 11
-/* not mentioning hardcoding labels... look at hellomotif_i18n for a 
+/* not mentioning hardcoding labels... look at hellomotif_i18n for a
    better example  */
 #define NEW_BUTTON_LABEL  "Goodbye\nWorld!"
 
@@ -47,7 +47,7 @@ static void Activate(
 
 static String uid_vec[]={"hellomotif.uid"}; /* MRM database file list   */
 static MrmRegisterArg	reg_vec[] = {       /* Callback bindings */
-    {"helloworld_button_activate", (XtPointer)Activate}
+    {"helloworld_button_activate", (XPointer)Activate}
 };
 
 
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     XtAppContext        app_context;
     Widget              top_level, helloworld_main;
     MrmCode		mrm_class ;
-    MrmHierarchy	mrm_hierarchy;		
+    MrmHierarchy	mrm_hierarchy;
 
     /*
      *  Initialize the MRM
@@ -67,13 +67,13 @@ int main(int argc, char *argv[])
 
     MrmInitialize ();
 
-    /* 
-     * Initialize Xt and create a resizable shell 
+    /*
+     * Initialize Xt and create a resizable shell
      */
 
-    top_level = XtVaAppInitialize(&app_context, "XmdHelloMotif", 
-				  NULL, 0, &argc, argv, NULL, 
-				  XmNallowShellResize, True, NULL); 
+    top_level = XtVaAppInitialize(&app_context, "XmdHelloMotif",
+				  NULL, 0, &argc, argv, NULL,
+				  XmNallowShellResize, True, NULL);
 
     /*
      *  Create the Mrm hierarchy
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     }
 
     /*
-     * 	Register our callback routines so that the resource manager can 
+     * 	Register our callback routines so that the resource manager can
      * 	resolve them at widget-creation time.
      */
 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	XtError("can't register names\n");
 
     /*
-     *  Call MRM to fetch and create the widgets 
+     *  Call MRM to fetch and create the widgets
      */
 
     if (MrmFetchWidget (mrm_hierarchy,
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
      */
 
     XtManageChild(helloworld_main);
-    
+
     /*
      *  Realize the toplevel widget.  This will cause the entire "managed"
      *  widget hierarchy to be displayed
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 }
 
 
-static void 
+static void
 Activate(
         Widget	widget,
 	XtPointer tag,
@@ -145,9 +145,9 @@ Activate(
     /* First click: change the pushbutton label and recenter */
     if (first_time) {
 	XmString new_button_label = XmStringGenerate(NEW_BUTTON_LABEL,
-						     NULL, 
+						     NULL,
 						     XmCHARSET_TEXT, NULL);
-	XtVaSetValues(widget, 
+	XtVaSetValues(widget,
 		      XmNx, NEW_BUTTON_X,
 		      XmNlabelString, new_button_label,
 		      NULL);
@@ -155,8 +155,8 @@ Activate(
 	XmStringFree(new_button_label);
 	first_time = False ;
     } else {
-	exit(0);
+	exit(EXIT_SUCCESS);
     }
 }
 
- 
+

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: tk.c /main/6 1995/07/14 09:45:11 drk $"
@@ -32,7 +32,7 @@ static char rcsid[] = "$XConsortium: tk.c /main/6 1995/07/14 09:45:11 drk $"
  *     tk.c -- toolkit-specific dialogue layer
  *
  *  The code in this file specifically interacts with the
- *  OSF/Motif toolkit.  
+ *  OSF/Motif toolkit.
  *
  *  The first half of the file provides utility routines and a
  *  toolkit-independent (but application-specific) interface that can
@@ -179,8 +179,7 @@ static XmString TkSetUnderline();
  * Beep
  ************************************************************/
 
-void
-TkBeep()
+void TkBeep(void)
 {
     XBell( dpy, 0 );
 }
@@ -189,10 +188,9 @@ TkBeep()
  * Exit
  ************************************************************/
 
-void
-TkExit()
+void TkExit(void)
 {
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
 
 /*===========================================================
@@ -209,7 +207,7 @@ void
 TkUpdateStatus(char *str)
 {
     char title[128];
-    
+
     strcpy( title, appString );
     if ( strlen(str) > 0 ) {
         strcat( title, ": " );
@@ -232,10 +230,10 @@ TkUpdateStatus(char *str)
 void TkTextClear()
 {
   static XmString empty = NULL;
-  
+
   if (empty == NULL)
     empty = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-  
+
      n = 0;
      XtSetArg( args[n], XmNcstextValue, empty); n++;
      XtSetValues( textStore, args, n );
@@ -243,7 +241,7 @@ void TkTextClear()
      textchangedsince = 0;
 }
 
-static XmIncludeStatus 
+static XmIncludeStatus
 parse_proc(XtPointer      *in_out,
 	   XtPointer       text_end,
 	   XmTextType      type,
@@ -286,17 +284,17 @@ parse_proc(XtPointer      *in_out,
   *in_out = (XtPointer) ptr;
   if (start)
     *str_include =
-      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, len, 
+      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, len,
 			      rendition_name);
   else
     *str_include =
-      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END, len, 
+      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END, len,
 			      rendition_name);
   XtFree(rendition_name);
   return XmINSERT;
 }
 
-static XmIncludeStatus 
+static XmIncludeStatus
 esc_parse_proc(XtPointer      *in_out,
 	       XtPointer       text_end,
 	       XmTextType      type,
@@ -330,7 +328,7 @@ TkHelpMarkupTable(XmParseTable *table_return)
 {
   static XmParseTable table = NULL;
   int table_size = 4;
-  
+
   if (table == NULL)
     {
       Arg args[10];
@@ -368,7 +366,7 @@ TkHelpMarkupTable(XmParseTable *table_return)
       table[index++] = XmParseMappingCreate(args, nargs);
       XmStringFree(tmp);
     }
-  
+
   *table_return = table;
   return(table_size);
 }
@@ -385,26 +383,26 @@ TkTextStore(char *txt)
   Cardinal 	format;
   int table_size;
   XmParseTable table;
-  
+
   XtVaGetValues(formatMenu, XmNmenuHistory, &formatButton, NULL);
   XtVaGetValues(formatButton, XmNuserData, &format, NULL);
-  
+
   switch (format)
     {
     case TkTEXT_ONLY:
       val = XmStringGenerate(txt, NULL, XmCHARSET_TEXT, NULL);
       break;
-      
+
     case TkBYTE_STREAM:
       val = XmCvtByteStreamToXmString((unsigned char *)txt);
       break;
-      
+
     case TkHELP_MARKUP:
       table_size = TkHelpMarkupTable(&table);
       val = XmStringParseText((XtPointer)txt, NULL, NULL, XmCHARSET_TEXT,
 			      table, table_size, NULL);
       break;
-			      
+
     default:
       val = NULL;
       break;
@@ -441,7 +439,7 @@ TkTextRetrieve(char **txt, int format)
   int table_size = 2;
   static XmParseTable table = NULL;
   size_t numchars;
-  
+
   if (table == NULL)
     {
       Arg args[10];
@@ -450,7 +448,7 @@ TkTextRetrieve(char **txt, int format)
       int index = 0;
 
       table = (XmParseTable)XtCalloc(table_size, sizeof(XmParseMapping));
-	 
+
       /* Parse tab characters. */
       tmp = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, NULL);
       nargs = 0;
@@ -470,34 +468,34 @@ TkTextRetrieve(char **txt, int format)
       table[index] = XmParseMappingCreate(args, nargs);
       index++;
     }
-     
+
   XtVaGetValues(textStore, XmNcstextValue, &val, NULL);
 
   switch (format)
     {
     case TkTEXT_ONLY:
-      *txt = XmStringUnparse(val, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, 
+      *txt = XmStringUnparse(val, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT,
 			    table, table_size, XmOUTPUT_ALL);
       numchars = strlen(*txt);
       break;
-      
+
     case TkBYTE_STREAM:
       numchars = (size_t)XmCvtXmStringToByteStream(val, (unsigned char **)txt);
       break;
-      
+
     default:
       txt = NULL;
       numchars = 0;
       break;
     }
-     
+
   textchanged = 0;
   textchangedsince = 0;
   return numchars;
 }
 
 /************************************************************
- * Has Text Changed? 
+ * Has Text Changed?
  ************************************************************/
 
 Boolean TkTextChanged()
@@ -618,7 +616,7 @@ static void TkPaneAppend()
     if ( nextpane == MAX_PANES ) {
         TkBeep();
         return;
-    }    
+    }
 
       /* Set the new pane's height so it will be 90%
          of the average pane height */
@@ -645,7 +643,7 @@ static void TkPaneRemove()
     if ( nextpane == 1 ) {
         TkBeep();
         return;
-    }    
+    }
 
     nextpane--;
     w = TkPaneTarget();
@@ -674,7 +672,7 @@ static void TkPaneOne()
     if ( nextpane == 1 ) {
         TkBeep();
         return;
-    }    
+    }
 
     w = TkPaneTarget();
     if ( w == NULL )
@@ -926,10 +924,10 @@ TkSetSelectedText(Widget w, enum attributes attr, XtPointer val)
 {
   XmString sel, text;
   XmTextPosition left, right, pos;
-  
+
   /* Get selection. */
   sel = XmCSTextGetSelection(w);
-  
+
   /* Set attribute. */
   switch (attr)
     {
@@ -946,35 +944,35 @@ TkSetSelectedText(Widget w, enum attributes attr, XtPointer val)
       text = TkSetUnderline(sel, *(Cardinal *)val);
       break;
     }
-  
+
   /* Replace text or insert begin/end. */
   if (sel == NULL)
     {
       pos = XmCSTextGetCursorPosition(w);
       XmCSTextInsert(w, pos, text);
     }
-  else 
+  else
     {
       XmCSTextGetSelectionPosition(w, &left, &right);
       XmCSTextReplace(w, left, right, text);
       XmCSTextSetSelection(w, left, right, XtLastTimestampProcessed(dpy));
     }
-    
+
   XmStringFree(text);
 }
-  
+
 static XmString
 TkSetFont(XmString text, char *font)
 {
   XmString begin = NULL, end = NULL;
-  
+
   /* Get begin and end components. */
   if (font != NULL)
     {
       begin = TkGetComp(TkBEGIN, TkFONT, font);
       end = TkGetComp(TkEND, TkFONT, font);
     }
-  
+
   return(TkSetTextAttribute(text, begin, end, tk_fonts, tk_font_count));
 }
 
@@ -982,14 +980,14 @@ static XmString
 TkSetColor(XmString text, char *color)
 {
   XmString begin = NULL, end = NULL;
-  
+
   /* Get begin and end components. */
   if (color != NULL)
     {
       begin = TkGetComp(TkBEGIN, TkCOLOR, color);
       end = TkGetComp(TkEND, TkCOLOR, color);
     }
-  
+
   return(TkSetTextAttribute(text, begin, end, tk_colors, tk_color_count));
 }
 
@@ -998,13 +996,13 @@ TkSetStrikethru(XmString text, Cardinal line)
 {
   XmString begin = NULL, end = NULL;
   char buf[MAX_CHAR];
-  
+
   /* Get begin and end components. */
   sprintf(buf, "Strikethru%d", line);
-  
+
   begin = TkGetComp(TkBEGIN, TkTHRU, buf);
   end = TkGetComp(TkEND, TkTHRU, buf);
-  
+
   return(TkSetTextAttribute(text, begin, end, tk_thru, tk_thru_count));
 }
 
@@ -1013,13 +1011,13 @@ TkSetUnderline(XmString text, Cardinal line)
 {
   XmString begin = NULL, end = NULL;
   char buf[MAX_CHAR];
-  
+
   /* Get begin and end components. */
   sprintf(buf, "Underline%d", line);
-  
+
   begin = TkGetComp(TkBEGIN, TkUNDER, buf);
   end = TkGetComp(TkEND, TkUNDER, buf);
-  
+
   return(TkSetTextAttribute(text, begin, end, tk_under, tk_under_count));
 }
 
@@ -1036,7 +1034,7 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
   XmString 		(*comps)[2];
   XmStringComponentType type;
   int i;
-  
+
   switch (attr)
     {
     case TkCOLOR:
@@ -1046,7 +1044,7 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
 	    color_comps[i][0] = color_comps[i][1] = NULL;
 	  col_inited = TRUE;
 	}
-      
+
       limit = tk_color_count;
       index = tk_colors;
       comps = color_comps;
@@ -1059,7 +1057,7 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
 	    font_comps[i][0] = font_comps[i][1] = NULL;
 	  font_inited = TRUE;
 	}
-      
+
       limit = tk_font_count;
       index = tk_fonts;
       comps = font_comps;
@@ -1072,7 +1070,7 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
 	    thru_comps[i][0] = thru_comps[i][1] = NULL;
 	  thru_inited = TRUE;
 	}
-      
+
       limit = tk_thru_count;
       index = tk_thru;
       comps = thru_comps;
@@ -1085,13 +1083,13 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
 	    under_comps[i][0] = under_comps[i][1] = NULL;
 	  under_inited = TRUE;
 	}
-      
+
       limit = tk_under_count;
       index = tk_under;
       comps = under_comps;
       break;
     }
-  
+
   for (i = 0; i < limit; i++)
     {
       if (strcmp(val, index[i]) == 0)
@@ -1111,14 +1109,14 @@ TkGetComp(Cardinal comp, enum attributes attr, char *val)
 		}
 	      comps[i][comp] = XmStringComponentCreate(type, strlen(val), val);
 	    }
-	  
+
 	  return(XmStringCopy(comps[i][comp]));
 	}
     }
   return(NULL);
 }
 
-static XmString 
+static XmString
 TkSetTextAttribute(XmString text, XmString begin, XmString end,
 		   char **tags, Cardinal tag_count)
 {
@@ -1131,10 +1129,10 @@ TkSetTextAttribute(XmString text, XmString begin, XmString end,
   Boolean		end_done = FALSE, init_push = FALSE;
   int			i;
   Boolean		skip;
-  
+
   /* No selection, just insert begin/end. */
   if (text == NULL) return(XmStringConcatAndFree(begin, end));
-      
+
   /* Search after first layout push. */
   if (!XmStringInitContext(&ctx, text))
     {
@@ -1142,7 +1140,7 @@ TkSetTextAttribute(XmString text, XmString begin, XmString end,
     }
 
   type = XmStringGetNextTriple(ctx, &len, &val);
-  
+
   result = begin;
 
   /* Remove conflicting begin/ends */
@@ -1155,7 +1153,7 @@ TkSetTextAttribute(XmString text, XmString begin, XmString end,
 	   with BIDI yet */
 	continue;
 	break;
-       
+
       case XmSTRING_COMPONENT_RENDITION_BEGIN:
       case XmSTRING_COMPONENT_RENDITION_END:
 	/* Check for match and skip if found */
@@ -1169,7 +1167,7 @@ TkSetTextAttribute(XmString text, XmString begin, XmString end,
 	if (skip) continue;
 	break;
 
-      default:	
+      default:
 	break;
       }
     /* Create component and concat. */
@@ -1178,12 +1176,12 @@ TkSetTextAttribute(XmString text, XmString begin, XmString end,
 
   } while ((type = XmStringGetNextTriple(ctx, &len, &val)) !=
 	   XmSTRING_COMPONENT_END);
-    
+
   /* Insert end component if necessary. */
   if (!end_done) result = XmStringConcatAndFree(result, end);
 
   XmStringFreeContext(ctx);
-  
+
   return(result);
 }
 
@@ -1198,9 +1196,9 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
   Cardinal	line;
   XmTab tabs[5];
   XmTabList tablist;
-  
+
   rt = XmRenderTableCopy(rt, NULL, 0);
-  
+
   /* Add renditions for all the Help Markup renditions. */
   i = 0;
     n = 0;
@@ -1218,11 +1216,11 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
     n = 0;
     XtSetArg(args[n], XmNfontName, TITLE_FONT_NAME); n++;
     XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-    rend[i] = XmRenditionCreate(w, "title", args, n); i++; 
+    rend[i] = XmRenditionCreate(w, "title", args, n); i++;
     n = 0;
     XtSetArg(args[n], XmNfontName, BOLD_FONT_NAME); n++;
     XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-    rend[i] = XmRenditionCreate(w, "subtitle", args, n); i++; 
+    rend[i] = XmRenditionCreate(w, "subtitle", args, n); i++;
   n = 0;
   tabs[n] = XmTabCreate(2.0, XmINCHES, XmABSOLUTE,
 			XmALIGNMENT_BEGINNING, NULL); n++;
@@ -1237,11 +1235,11 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
   n = 0;
   XtSetArg(args[n], XmNfontName, "*courier-medium-r-*-12-*"); n++;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-  rend[i] = XmRenditionCreate(w, "program", args, n); i++; 
+  rend[i] = XmRenditionCreate(w, "program", args, n); i++;
   n = 0;
   XtSetArg(args[n], XmNunderlineType, XmSINGLE_LINE); n++;
-  rend[i] = XmRenditionCreate(w, "underline", args, n); i++; 
-  
+  rend[i] = XmRenditionCreate(w, "underline", args, n); i++;
+
   rt = XmRenderTableAddRenditions(rt, rend, i, XmSKIP);
 
   for (i = 0; i < tk_color_count; i++)
@@ -1249,20 +1247,20 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
       n = 0;
       XtSetArg(args[n], XmNrenditionForeground,
 	       TkGetColor(w, tk_colors[i])); n++;
-      
+
       rend[0] = XmRenditionCreate(w, tk_colors[i], args, n);
       rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
       XmRenditionFree(rend[0]);
     }
-  
+
   /* Default Color */
   tk_colors[i] = "DefaultColor";
   tk_color_count++;
-  
+
   XtVaGetValues(w, XmNforeground, &fg, NULL);
   n = 0;
   XtSetArg(args[n], XmNrenditionForeground, fg); n++;
-      
+
   rend[0] = XmRenditionCreate(w, tk_colors[i], args, n);
   rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
   XmRenditionFree(rend[0]);
@@ -1272,23 +1270,23 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
       n = 0;
       XtSetArg(args[n], XmNfontName, tk_fonts[i]); n++;
       XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-      XtSetArg(args[n], XmNloadModel, XmLOAD_DEFERRED); n++; 
-      
+      XtSetArg(args[n], XmNloadModel, XmLOAD_DEFERRED); n++;
+
       rend[0] = XmRenditionCreate(w, tk_fonts[i], args, n);
       rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
       XmRenditionFree(rend[0]);
     }
-  
+
   /* Default font. */
   tk_fonts[i] = "DefaultFont";
   tk_font_count++;
-  
+
   XmeRenderTableGetDefaultFont(rt, &font);
-  
+
   n = 0;
   XtSetArg(args[n], XmNfont, font); n++;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-      
+
   rend[0] = XmRenditionCreate(w, tk_fonts[i], args, n);
   rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
   XmRenditionFree(rend[0]);
@@ -1296,21 +1294,21 @@ TkUpdateRenditions(Widget w, XmRenderTable rt)
   for (i = 0; i < tk_thru_count; i++)
     {
       sscanf(tk_thru[i], "Strikethru%d", &line);
-      
+
       n = 0;
       XtSetArg(args[n], XmNstrikethruType, line); n++;
-      
+
       rend[0] = XmRenditionCreate(w, tk_thru[i], args, n);
       rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
       XmRenditionFree(rend[0]);
     }
-  
+
   for (i = 0; i < tk_under_count; i++)
     {
       sscanf(tk_under[i], "Underline%d", &line);
       n = 0;
       XtSetArg(args[n], XmNunderlineType, line); n++;
-      
+
       rend[0] = XmRenditionCreate(w, tk_under[i], args, n);
       rt = XmRenderTableAddRenditions(rt, rend, 1, XmSKIP);
       XmRenditionFree(rend[0]);
@@ -1441,14 +1439,14 @@ static void
 TextChangedCB(Widget w, XtPointer cd, XtPointer wd)
 {
   static Boolean init = TRUE;
-  
+
   /* Skip the initial callback when the text is created. */
   if (init)
     {
       init = FALSE;
       return;
     }
-  
+
     if ( textchanged == 0 ) DlgNoteJustChangedCB();
     textchanged++;
     if ( textchangedsince == 0 ) DlgNoteJustChangedSinceCB();
@@ -1809,11 +1807,11 @@ static void
 RemoveLinesCB(Widget w, XtPointer cd, XtPointer wd)
 {
   Cardinal val;
-  
+
   if ( textCurPrimary != NULL )
     {
       val = XmNO_LINE;
-      
+
       TkSetSelectedText(textCurPrimary, TkTHRU, &val);
       TkSetSelectedText(textCurPrimary, TkUNDER, &val);
     }
@@ -1869,69 +1867,68 @@ NoopCB(Widget w, XtPointer cd, XtPointer wd)
   /* To associate UIL callback names with actual callback routines */
 
 static MRMRegisterArg argNames[] = {
-  { "ToggleOpCB", (XtPointer)ToggleOpCB },
-  { "ToggleKeepFileDialogueCB", (XtPointer)ToggleKeepFileDialogueCB },
-  { "ToggleRevertToOpenCB", (XtPointer)ToggleRevertToOpenCB },
-  { "TextChangedCB", (XtPointer)TextChangedCB },
-  { "TextGainFocusCB", (XtPointer)TextGainFocusCB },
-  { "TextLoseFocusCB", (XtPointer)TextLoseFocusCB },
-  { "TextGainPrimaryCB", (XtPointer)TextGainPrimaryCB },
-  { "TextLosePrimaryCB", (XtPointer)TextLosePrimaryCB },
-  { "NewCB", (XtPointer)NewCB },
-  { "PrintCB", (XtPointer)PrintCB },
-  { "PrintSetupCB", (XtPointer)NoopCB },
-  { "CloseCB", (XtPointer)NoopCB },
-  { "UndoCB", (XtPointer)NoopCB },
-  { "RepeatRedoCB", (XtPointer)NoopCB },
-  { "DragMoveCB", (XtPointer)NoopCB },
-  { "SelectAllCB", (XtPointer)NoopCB },
-  { "DeselectAllCB", (XtPointer)NoopCB },
-  { "ChangeViewCB", (XtPointer)NoopCB },
-  { "NewWindowCB", (XtPointer)NoopCB },
-  { "OpenCB", (XtPointer)OpenCB },
-  { "SaveCB", (XtPointer)SaveCB },
-  { "SaveAsCB", (XtPointer)SaveAsCB },
-  { "CopyToCB", (XtPointer)CopyToCB },
-  { "MoveToCB", (XtPointer)MoveToCB },
-  { "RemoveCB", (XtPointer)RemoveCB },
-  { "ExitCB", (XtPointer)ExitCB },
-  { "CutCB", (XtPointer)CutCB },
-  { "CopyCB", (XtPointer)CopyCB },
-  { "PasteCB", (XtPointer)PasteCB },
-  { "ClearCB", (XtPointer)ClearCB },
-  { "DeleteCB", (XtPointer)DeleteCB },
-  { "SplitCB", (XtPointer)SplitCB },
-  { "RemovePaneCB", (XtPointer)RemovePaneCB },
-  { "OverviewCB", (XtPointer)OverviewCB },
-  { "TocCB", (XtPointer)NoopCB },
-  { "TasksCB", (XtPointer)NoopCB },
-  { "ReferenceCB", (XtPointer)NoopCB },
-  { "OnePaneCB", (XtPointer)OnePaneCB },
-  { "OnItemCB", (XtPointer)NoopCB },
-  { "UsingHelpCB", (XtPointer)NoopCB },
-  { "AboutCB", (XtPointer)NoopCB },
-  { "OkFileCB", (XtPointer)OkFileCB },
-  { "CancelFileCB", (XtPointer)CancelFileCB },
-  { "SaveYesCB", (XtPointer)SaveYesCB },
-  { "SaveNoCB", (XtPointer)SaveNoCB },
-  { "SaveCancelCB", (XtPointer)SaveCancelCB },
-  { "WarnCancelCB", (XtPointer)WarnCancelCB },
-  { "QuestionYesCB", (XtPointer)QuestionYesCB },
-  { "DefaultFontCB", (XtPointer)DefaultFontCB },
-  { "SetFontCB", (XtPointer)SetFontCB },
-  { "AddFontCB", (XtPointer)AddFontCB },
-  { "DefaultColorCB", (XtPointer)DefaultColorCB },
-  { "SetColorCB", (XtPointer)SetColorCB }, 
-  { "AddColorCB", (XtPointer)AddColorCB },
-  { "textOnlyFormat", (XtPointer)TkTEXT_ONLY },
-  { "byteStreamFormat", (XtPointer)TkBYTE_STREAM },
-  { "RemoveLinesCB", (XtPointer)RemoveLinesCB },
-  { "StrikethruCB", (XtPointer)StrikethruCB },
-  { "UnderlineCB", (XtPointer)UnderlineCB }
-  
+  { "ToggleOpCB", (XPointer)ToggleOpCB },
+  { "ToggleKeepFileDialogueCB", (XPointer)ToggleKeepFileDialogueCB },
+  { "ToggleRevertToOpenCB", (XPointer)ToggleRevertToOpenCB },
+  { "TextChangedCB", (XPointer)TextChangedCB },
+  { "TextGainFocusCB", (XPointer)TextGainFocusCB },
+  { "TextLoseFocusCB", (XPointer)TextLoseFocusCB },
+  { "TextGainPrimaryCB", (XPointer)TextGainPrimaryCB },
+  { "TextLosePrimaryCB", (XPointer)TextLosePrimaryCB },
+  { "NewCB", (XPointer)NewCB },
+  { "PrintCB", (XPointer)PrintCB },
+  { "PrintSetupCB", (XPointer)NoopCB },
+  { "CloseCB", (XPointer)NoopCB },
+  { "UndoCB", (XPointer)NoopCB },
+  { "RepeatRedoCB", (XPointer)NoopCB },
+  { "DragMoveCB", (XPointer)NoopCB },
+  { "SelectAllCB", (XPointer)NoopCB },
+  { "DeselectAllCB", (XPointer)NoopCB },
+  { "ChangeViewCB", (XPointer)NoopCB },
+  { "NewWindowCB", (XPointer)NoopCB },
+  { "OpenCB", (XPointer)OpenCB },
+  { "SaveCB", (XPointer)SaveCB },
+  { "SaveAsCB", (XPointer)SaveAsCB },
+  { "CopyToCB", (XPointer)CopyToCB },
+  { "MoveToCB", (XPointer)MoveToCB },
+  { "RemoveCB", (XPointer)RemoveCB },
+  { "ExitCB", (XPointer)ExitCB },
+  { "CutCB", (XPointer)CutCB },
+  { "CopyCB", (XPointer)CopyCB },
+  { "PasteCB", (XPointer)PasteCB },
+  { "ClearCB", (XPointer)ClearCB },
+  { "DeleteCB", (XPointer)DeleteCB },
+  { "SplitCB", (XPointer)SplitCB },
+  { "RemovePaneCB", (XPointer)RemovePaneCB },
+  { "OverviewCB", (XPointer)OverviewCB },
+  { "TocCB", (XPointer)NoopCB },
+  { "TasksCB", (XPointer)NoopCB },
+  { "ReferenceCB", (XPointer)NoopCB },
+  { "OnePaneCB", (XPointer)OnePaneCB },
+  { "OnItemCB", (XPointer)NoopCB },
+  { "UsingHelpCB", (XPointer)NoopCB },
+  { "AboutCB", (XPointer)NoopCB },
+  { "OkFileCB", (XPointer)OkFileCB },
+  { "CancelFileCB", (XPointer)CancelFileCB },
+  { "SaveYesCB", (XPointer)SaveYesCB },
+  { "SaveNoCB", (XPointer)SaveNoCB },
+  { "SaveCancelCB", (XPointer)SaveCancelCB },
+  { "WarnCancelCB", (XPointer)WarnCancelCB },
+  { "QuestionYesCB", (XPointer)QuestionYesCB },
+  { "DefaultFontCB", (XPointer)DefaultFontCB },
+  { "SetFontCB", (XPointer)SetFontCB },
+  { "AddFontCB", (XPointer)AddFontCB },
+  { "DefaultColorCB", (XPointer)DefaultColorCB },
+  { "SetColorCB", (XPointer)SetColorCB },
+  { "AddColorCB", (XPointer)AddColorCB },
+  { "textOnlyFormat", (XPointer)TkTEXT_ONLY },
+  { "byteStreamFormat", (XPointer)TkBYTE_STREAM },
+  { "RemoveLinesCB", (XPointer)RemoveLinesCB },
+  { "StrikethruCB", (XPointer)StrikethruCB },
+  { "UnderlineCB", (XPointer)UnderlineCB }
 };
 
-void TkRegisterCallbacks()
+void TkRegisterCallbacks(void)
 {
   MrmRegisterNames(argNames, XtNumber(argNames));
-}  
+}

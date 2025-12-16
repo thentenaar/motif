@@ -32,31 +32,30 @@
 
 static void Activate(Widget, XtPointer,	XtPointer);
 
-/* 
- * MRM database file list 
+/*
+ * MRM database file list
  */
-static String uid_vec[]={"helloint.uid","l_strings.uid"}; 
-/* 
+static String uid_vec[]={"helloint.uid","l_strings.uid"};
+/*
  * Callback bindings
  */
-static MrmRegisterArg reg_vec[] = {       
-  {"helloworld_button_activate",(XtPointer)Activate}
+static MrmRegisterArg reg_vec[] = {
+  {"helloworld_button_activate", (XPointer)Activate}
 };
 
 /*
  * MRM Hierachy
  */
-static MrmHierarchy s_mrm_hierarchy;		
+static MrmHierarchy s_mrm_hierarchy;
 
 
 /****************************************************************
  *
- *  Main program. Fetch UIL interface description and enter 
+ *  Main program. Fetch UIL interface description and enter
  *  event loop.
  *
  ****************************************************************/
-int main(int argc, 
-	 char *argv[])
+int main(int argc, char *argv[])
 {
   XtAppContext app_context;
   Widget       top_level, helloworld_main;
@@ -80,25 +79,25 @@ int main(int argc,
    *  Set up language environment.
    */
   XtSetLanguageProc(NULL, NULL, NULL);
-  
+
   /*
    *  Initialize MRM
    */
-  
+
   MrmInitialize ();
-  
-  /* 
-   * Initialize Xt and create a resizable shell 
+
+  /*
+   * Initialize Xt and create a resizable shell
    */
-  
-  top_level = XtVaAppInitialize(&app_context, "XmdHelloInt", 
-				NULL, 0, &argc, argv, NULL, 
-				XmNallowShellResize, True, NULL); 
+
+  top_level = XtVaAppInitialize(&app_context, "XmdHelloInt",
+				NULL, 0, &argc, argv, NULL,
+				XmNallowShellResize, True, NULL);
 
   /*
    * Create the Mrm hierarchy
    */
-  
+
   if (MrmOpenHierarchy (XtNumber(uid_vec),	    /* number of files	    */
 			uid_vec, 		    /* files     	    */
 			NULL,			    /* os_ext_list (null)   */
@@ -106,9 +105,9 @@ int main(int argc,
       != MrmSUCCESS) {
     XtError ("can't open hierarchy\n");
   }
-  
+
   /*
-   * Register our callback routines so that the resource manager can 
+   * Register our callback routines so that the resource manager can
    * resolve them at widget-creation time.
    */
 
@@ -117,17 +116,17 @@ int main(int argc,
   }
 
   /*
-   *  Call MRM to fetch and create the widgets 
+   *  Call MRM to fetch and create the widgets
    */
-  
-  if (MrmFetchWidget (s_mrm_hierarchy, 
-		      "helloworld_main", 
+
+  if (MrmFetchWidget (s_mrm_hierarchy,
+		      "helloworld_main",
 		      top_level,
-		      &helloworld_main, 
+		      &helloworld_main,
 		      &mrm_class) != MrmSUCCESS) {
     XtError ("can't fetch interface\n");
   }
-  
+
   /*
    * Manage the widget returned by Mrm.
    */
@@ -138,11 +137,11 @@ int main(int argc,
    * Realize the widget tree.
    */
   XtRealizeWidget(top_level);
-   
+
   /*
    *  Loop and process events
    */
-  
+
   XtAppMainLoop(app_context);
 
   /* UNREACHABLE */
@@ -156,7 +155,7 @@ static void Activate(Widget    widget,
 {
   static Boolean first_time = True;
   Arg arglist[1];
-  
+
   if (first_time) {
     /*
      * Get "Goodbye World!" in the language of choice and
@@ -169,6 +168,6 @@ static void Activate(Widget    widget,
     /*
      * We're done...
      */
-    exit(0);
+    exit(EXIT_SUCCESS);
   }
 }

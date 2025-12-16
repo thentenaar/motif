@@ -150,24 +150,24 @@ static MrmHierarchy mrmId;
 static char *mrmFile[]={"periodic.uid"};
 static MrmCode mrmClass;
 static MRMRegisterArg mrmNames[] = {
-        {"InitPopupCb", (XtPointer)InitPopupCb },
-        {"PopdownCb", (XtPointer)PopdownCb },
-        {"UnmanageCb", (XtPointer)UnmanageCb },
-        {"ManageCb", (XtPointer)ManageCb },
-        {"DaExposeCb", (XtPointer)DaExposeCb },
-        {"DaResizeCb", (XtPointer)DaResizeCb },
-        {"DbExposeCb", (XtPointer)DbExposeCb },
-        {"DbResizeCb", (XtPointer)DbResizeCb },
-        {"ScaleCb", (XtPointer)ScaleCb },
-        {"SetScaleCb", (XtPointer)SetScaleCb },
-        {"ViewCb", (XtPointer)ViewCb },
-        {"LayoutCb", (XtPointer)LayoutCb },
-        {"ToggleLightsCb", (XtPointer)ToggleLightsCb },
-        {"ShowCb", (XtPointer)ShowCb },
-        {"ExitCb", (XtPointer)ExitCb },
-	{"ScrollVisibleCb", (XtPointer)ScrollVisibleCb },
-        {"ToggleValueChangedCb", (XtPointer)ToggleValueChangedCb },
-        {"ToggleControlCb", (XtPointer)ToggleControlCb }
+        {"InitPopupCb", (XPointer)InitPopupCb },
+        {"PopdownCb", (XPointer)PopdownCb },
+        {"UnmanageCb", (XPointer)UnmanageCb },
+        {"ManageCb", (XPointer)ManageCb },
+        {"DaExposeCb", (XPointer)DaExposeCb },
+        {"DaResizeCb", (XPointer)DaResizeCb },
+        {"DbExposeCb", (XPointer)DbExposeCb },
+        {"DbResizeCb", (XPointer)DbResizeCb },
+        {"ScaleCb", (XPointer)ScaleCb },
+        {"SetScaleCb", (XPointer)SetScaleCb },
+        {"ViewCb", (XPointer)ViewCb },
+        {"LayoutCb", (XPointer)LayoutCb },
+        {"ToggleLightsCb", (XPointer)ToggleLightsCb },
+        {"ShowCb", (XPointer)ShowCb },
+        {"ExitCb", (XPointer)ExitCb },
+	{"ScrollVisibleCb", (XPointer)ScrollVisibleCb },
+        {"ToggleValueChangedCb", (XPointer)ToggleValueChangedCb },
+        {"ToggleControlCb", (XPointer)ToggleControlCb }
 };
 
 static String fallbackResources[] = {

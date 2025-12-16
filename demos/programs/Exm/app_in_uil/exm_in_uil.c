@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -45,16 +45,14 @@ static MrmHierarchy mrmId;
 static MrmCode mrmClass;
 static char *mrmFiles[]={"exm_in_uil.uid"};
 static MRMRegisterArg mrmNames[] = {
-        {"ManageCb", (caddr_t)ManageCb },
-        {"ExitCb", (caddr_t)ExitCb }
+        {"ManageCb", (XPointer)ManageCb },
+        {"ExitCb", (XPointer)ExitCb }
 };
 
 static Display *display;
 static Widget shell;
 
-int 
-main(int argc,
-     char **argv)
+int main(int argc, char *argv[])
 {
 Widget appMain;
 XtAppContext appContext;
@@ -71,14 +69,14 @@ XtAppContext appContext;
     }
     shell = XtAppCreateShell("demo", NULL, applicationShellWidgetClass,
 						display, NULL, 0);
-    if (MrmOpenHierarchy (1, mrmFiles, NULL, &mrmId) != MrmSUCCESS) 
-      exit(1);
+    if (MrmOpenHierarchy (1, mrmFiles, NULL, &mrmId) != MrmSUCCESS)
+      exit(EXIT_FAILURE);
     MrmRegisterNames(mrmNames, XtNumber(mrmNames));
     MrmFetchWidget (mrmId, "appMain", shell, &appMain, &mrmClass);
     XtManageChild(appMain);
     XtRealizeWidget(shell);
     XtAppMainLoop(appContext);
-    exit(0);
+    return 0;
 }
 
 
@@ -86,7 +84,7 @@ XtAppContext appContext;
 /*
  * ManageCb - Manage widget passed as client_data.
  */
-static void 
+static void
 ManageCb(Widget w,
 	 String id,
 	 XtPointer cb)
@@ -98,10 +96,10 @@ ManageCb(Widget w,
 /*
  * ExitCb - Exit application.
  */
-static void 
+static void
 ExitCb(Widget w,
        XtPointer cd,
        XtPointer cb)
 {
-    exit(0);
+    exit(EXIT_SUCCESS);
 }

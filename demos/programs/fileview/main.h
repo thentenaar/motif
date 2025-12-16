@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,18 +64,18 @@ static char *uid_files[UIL_FILE_COUNT] = {NULL};
 static MrmHierarchy theUIDdatabase = NULL;  /* MRM database hierarchy id */
 /*
 static MRMRegisterArg regvec[] = {
-        {"exit_proc", (caddr_t) ExitCallback},
+        {"exit_proc", (XPointer) ExitCallback},
 };
 
 static MrmCount regnum = sizeof(regvec) / sizeof(MRMRegisterArg);
 */
 
-typedef enum 
-	{AIX=0, DGUX=1, HPUX=2, IRIX=3, IRIX64=4, OSF1=5, 
-	   Solaris=6, SunOS=7, SonyNews=8, SysV=9, 
-	   UXP=10, 
+typedef enum
+	{AIX=0, DGUX=1, HPUX=2, IRIX=3, IRIX64=4, OSF1=5,
+	   Solaris=6, SunOS=7, SonyNews=8, SysV=9,
+	   UXP=10,
 	   MaxOS=11 }
-	OS;	
+	OS;
 
 static String OSList[] = {
 /* AIX */		"AIX",
@@ -95,12 +95,12 @@ static String OSList[] = {
 static OS CurrentOS;
 
 typedef enum {C=0,
-		English=1, French=2, German=3, Spanish=4, 
+		English=1, French=2, German=3, Spanish=4,
 		Hebrew=5,
 		Japanese=6, Korean=7,
 		Russian=8,
 		MaxLanguage=9}
-	Language;	
+	Language;
 
 static String LangList[] = {
    "C locale",
@@ -141,7 +141,7 @@ static Boolean SupportedLocale [MaxOS+1][MaxLanguage] =
 static String LocaleTable [MaxOS+1][MaxLanguage] =
 {
 {/* AIX */	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1",
-		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR", 
+		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR",
 		"ru_RU.ISO8859-2", "es_ES.ISO8859-1"},
 {/* DGUX */	"C", "en_US.850", "fr_FR.850", "de_DE.850", "es_ES.850",
 		NULL,
@@ -152,29 +152,29 @@ static String LocaleTable [MaxOS+1][MaxLanguage] =
 {/* IRIX */	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1",
 		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR",
 		"ru_RU.ISO8859-2", "es_ES.ISO8859-1"},
-{/* IRIX64 */ 	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1", 
-		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR", 
+{/* IRIX64 */ 	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1",
+		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR",
 		"ru_RU.ISO8859-2", "es_ES.ISO8859-1"},
 {/* OSF1 */ 	"C", "en_US.8859-1", "fr_FR.8859-1",
   		"de_DE.8859-1", "es_ES.ISO8859-1",
 		"iw_IL.ISO8859-8",
-		"jp_JP.SJIS", "kr_KR.eucKR", 
+		"jp_JP.SJIS", "kr_KR.eucKR",
 		"ru_RU.ISO8859-2"},
 {/* Solaris */	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1",
-		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR", 
+		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR",
 		"ru_RU.ISO8859-2", "es_ES.ISO8859-1"},
 {/* SunOS */ 	"C", "en_US.8859-1", "fr_FR.8859-1", "gr_DE.8859-1",
-		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR", 
+		"iw_IL.ISO8859-8", "jp_JP.euc", "kr_KR",
 		"ru_RU.ISO8859-2", "es_ES.ISO8859-1"},
 {/* Sony NEWS */"C", "en_US.88591", NULL, NULL,	NULL,
-		"jp_JP.EUC", "kr_KR.EUC", 
+		"jp_JP.EUC", "kr_KR.EUC",
 		NULL, NULL},
 {/* Novell */	"C", "en_US", "fr", "de", "es", NULL, "ja", NULL, NULL},
 {/* Fujitsu */	"C", "C", NULL, NULL, NULL, NULL, "ja_JP", NULL, NULL},
 {/* dummy */     "C", "", "", "", "", "", "", "", ""}
 };
 
-/* 
+/*
  * Application Resources
  */
 
@@ -187,7 +187,7 @@ global struct _FileViewResources {
 static XtResource FileViewResourcesSpecs[] =
 {
    { "checkVersion", XtCString, XtRString, sizeof(String),
-       XtOffsetOf( struct _FileViewResources, version), XtRImmediate, 
+       XtOffsetOf( struct _FileViewResources, version), XtRImmediate,
        (XtPointer) "NoValue" },
    {
       "bellDuration", XmCMaxValue, XmRInt, sizeof(int),
