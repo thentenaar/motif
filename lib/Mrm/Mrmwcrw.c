@@ -2027,6 +2027,9 @@ Urm__CW_ConvertValue (Widget			parent,
   Pixel			fgint = (Pixel) -1;
   Pixel			bgint = (Pixel) -1;
   Pixmap		pixmap;
+  double double_val;
+  float float_val, int_value;
+  int int_units, float_units;
 
   /* BEGIN HAL Fix CR 5439 */
   /* If the cvttype is not zero, we should do some
@@ -2468,8 +2471,6 @@ Urm__CW_ConvertValue (Widget			parent,
       /* fall through */
     case MrmRtypeVerticalFloat:
       {
-	float float_val, int_value;
-	int int_units, float_units;
 
 	if (orientation == XmNO_ORIENTATION)
 	  {
@@ -2479,7 +2480,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	screen = DefaultScreenOfDisplay(display);
 	unitsfloatvalue = (RGMUnitsFloatPtr) *val;
 	float_units = unitsfloatvalue->units;
-	memcpy(&float_val, unitsfloatvalue->value, sizeof float_val);
+	float_val   = (float)*(double *)unitsfloatvalue->value;
 
 	if (float_val != 0)
 	  {
