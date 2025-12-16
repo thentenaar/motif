@@ -17,13 +17,11 @@
 #include <Xm/RowColumn.h>
 #include <Xm/Paned.h>
 
-
 /*
  * Function: BxRegisterConverters()
  *     Registers all the converters for all widgets.
  */
-static void
-BxRegisterConverters()
+static void BxRegisterConverters(void)
 {
     XtInitializeWidgetClass(xmPushButtonWidgetClass);
     XtInitializeWidgetClass(xmToggleButtonWidgetClass);
@@ -46,21 +44,19 @@ extern void MENU_POST();
 /*
  * Callback procedure declarations
  */
-extern void CreateLabel();
-extern void OtherResCB();
-extern void ConstraintResCB();
-extern void OrientChValCB();
-extern void SepValChCB();
-extern void QuitCB();
-extern void SashValChCB();
+extern void CreateLabel(Widget w, XtPointer client, XtPointer call);
+extern void OtherResCB(Widget w, XtPointer client, XtPointer call);
+extern void ConstraintResCB(Widget w, XtPointer client, XtPointer call);
+extern void OrientChValCB(Widget w, XtPointer client, XtPointer call);
+extern void SepValChCB(Widget w, XtPointer client, XtPointer call);
+extern void QuitCB(Widget w, XtPointer client, XtPointer call);
+extern void SashValChCB(Widget w, XtPointer client, XtPointer call);
 
 /*
  * Function: Createpaned()
  *        Create paned hierarchy of widgets.
  */
-Widget
-Createpaned( parent)
-Widget parent;
+Widget Createpaned(Widget parent)
 {
     Arg    	args[512];
     Cardinal   	argcnt;
@@ -272,9 +268,7 @@ Widget parent;
  * Function: Createform()
  *        Create form hierarchy of widgets.
  */
-Widget
-Createform( parent)
-Widget parent;
+Widget Createform(Widget parent)
 {
     Arg    	args[512];
     Cardinal   	argcnt;
