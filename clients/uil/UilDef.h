@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 
 /*
 **++
@@ -62,20 +62,35 @@
 /*
 ** Function declarations not defined elsewhere
 */
-#define _ARGUMENTS(arglist) arglist
-
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
 
+typedef unsigned int (*uil_message_cb_t)(const char *message_data,
+                                         int message_number,
+                                         int severity,
+                                         const char *msg_buffer,
+                                         const char *src_buffer,
+                                         const char *ptr_buffer,
+                                         const char *loc_buffer,
+                                         int message_cnt[]);
+
+typedef unsigned int (*uil_status_cb_t)(const char *status_data,
+                                        int pct_complete,
+                                        int lines_processed,
+                                        const char *current_file,
+                                        int message_cnt[]);
+
 /* uilmain.c */
-extern Uil_status_type Uil _ARGUMENTS((Uil_command_type
-*comand_desc,Uil_compile_desc_type *compile_desc,Uil_continue_type
-(*message_cb)(), char *message_data, Uil_continue_type (*status_cb)(),
-char *status_data));
+extern Uil_status_type Uil(Uil_command_type *command_desc,
+                           Uil_compile_desc_type *compile_desc,
+                           uil_message_cb_t message_cb,
+                           char *message_data,
+                           uil_status_cb_t status_cb,
+                           char *status_data);
 
 /* uilsymstor.c */
-extern void UilDumpSymbolTable  _ARGUMENTS(( sym_entry_type *node_entry ));
+extern void UilDumpSymbolTable(sym_entry_type *node_entry);
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
