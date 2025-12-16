@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -37,7 +37,7 @@
 
 /******************************************************************************
  *
- * Container.c - ExmContainer widget.  
+ * Container.c - ExmContainer widget.
  *
 ******************************************************************************/
 
@@ -46,32 +46,32 @@
 #include <Xm/TraitP.h>  /* header file for trait functions */
 #include <Xm/ContainerT.h>   /* container trait */
 #include <Xm/ContItemT.h>    /* container item trait */
-#include <Xm/DrawingA.h>   
-#include <Xm/IconH.h>   
+#include <Xm/DrawingA.h>
+#include <Xm/IconH.h>
 #include <Xm/ScrollFrameT.h>
 #include <Xm/XmI.h>
 #include <Xm/XmTabListI.h>
 #include <Exm/ContainerP.h>
 
 /* This one should be somewhere common */
-/* The Max macro returns the higher of two input arguments. */ 
+/* The Max macro returns the higher of two input arguments. */
 #define Max(x, y) (((x) > (y)) ? (x) : (y))
 
 extern Dimension XmTabListGetPosition(Screen *,XmTabList, Cardinal);
 
 
 /* Declare static functions. */
-static void ButtonHandler(Widget wid, 
-			  XtPointer data, 
+static void ButtonHandler(Widget wid,
+			  XtPointer data,
 			  XEvent * event,
 			  Boolean *cont);
 static	void GetFirstColumnWidth(
 				 Widget		wid,
-				 int		offset,	
+				 int		offset,
 				 XtArgVal	*value);
 static	void GetDetailTabList(
 				 Widget		wid,
-				 int		offset,	
+				 int		offset,
 				 XtArgVal	*value);
 static void SelectColorDefault(
 			       Widget widget,
@@ -105,13 +105,13 @@ static XmTabList GetDumbTabList(
 				Dimension tab_size,
 				Cardinal asked_num_tab);
 
-static	void ContainerGetValues(Widget w, 
+static	void ContainerGetValues(Widget w,
 				XmContainerData containerData);
 
 static	Dimension GetDefaultFirstColumnWidth(
 					     ExmContainerWidget cw,
 					     Dimension fcw_init);
-static Cardinal GetDefaultDetailCount( 
+static Cardinal GetDefaultDetailCount(
 				      ExmContainerWidget cw,
 				      Cardinal detail_count);
 
@@ -122,104 +122,104 @@ static Cardinal GetDefaultDetailCount(
 static XtResource resources[] =
 {
     {
-	ExmNfirstColumnWidth, 
-	ExmCFirstColumnWidth, 
-	XmRDimension, 
+	ExmNfirstColumnWidth,
+	ExmCFirstColumnWidth,
+	XmRDimension,
 	sizeof (Dimension),
 	XtOffsetOf(ExmContainerRec, container.first_column_width),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) 0
     },
     {
-	ExmNdetailOrder, 
-	ExmCDetailOrder, 
-	XmRCardinalList, 
+	ExmNdetailOrder,
+	ExmCDetailOrder,
+	XmRCardinalList,
 	sizeof (Cardinal *),
 	XtOffsetOf(ExmContainerRec, container.detail_order),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) NULL
     },
     {
-	ExmNdetailOrderCount, 
-	ExmCDetailOrderCount, 
-	XmRCardinal, 
+	ExmNdetailOrderCount,
+	ExmCDetailOrderCount,
+	XmRCardinal,
 	sizeof (Cardinal),
 	XtOffsetOf(ExmContainerRec, container.detail_order_count),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) 0
     },
     {
-	ExmNdetailTabList, 
-	ExmCDetailTabList, 
-	XmRTabList, 
+	ExmNdetailTabList,
+	ExmCDetailTabList,
+	XmRTabList,
 	sizeof (XmTabList),
 	XtOffsetOf(ExmContainerRec, container.detail_tablist),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) NULL
     },
     {
-	ExmNdetailHeader, 
-	ExmCDetailHeader, 
-	XmRXmStringTable, 
+	ExmNdetailHeader,
+	ExmCDetailHeader,
+	XmRXmStringTable,
 	sizeof (XmStringTable),
 	XtOffsetOf(ExmContainerRec, container.detail_header),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) NULL
     },
     {
-	ExmNdetailHeaderCount, 
-	ExmCDetailHeaderCount, 
-	XmRCardinal, 
+	ExmNdetailHeaderCount,
+	ExmCDetailHeaderCount,
+	XmRCardinal,
 	sizeof (Cardinal),
 	XtOffsetOf(ExmContainerRec, container.detail_header_count),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) 0
     },
     {
-	ExmNselectColor, 
-	ExmCSelectColor, 
-	XmRPixel, 
-	sizeof (Pixel), 
+	ExmNselectColor,
+	ExmCSelectColor,
+	XmRPixel,
+	sizeof (Pixel),
 	XtOffsetOf(ExmContainerRec, container.select_color),
 	XmRImmediate, (XtPointer) SelectColorDefault
    },
    {
-	ExmNlayoutType, 
-	ExmCLayoutType, 
-	XmRLayoutType, 
-	sizeof (unsigned char), 
+	ExmNlayoutType,
+	ExmCLayoutType,
+	XmRLayoutType,
+	sizeof (unsigned char),
 	XtOffsetOf(ExmContainerRec, container.layout_type),
 	XmRImmediate, (XtPointer) XmDETAIL
    },
 };
 
 
-static XmSyntheticResource syn_resources[] = 
+static XmSyntheticResource syn_resources[] =
 {
     {
-	ExmNfirstColumnWidth, 
+	ExmNfirstColumnWidth,
 	sizeof (Dimension),
 	XtOffsetOf( ExmContainerRec, container.first_column_width),
 	GetFirstColumnWidth, NULL
     },
     {
-	ExmNdetailTabList, 
+	ExmNdetailTabList,
 	sizeof (XmTabList),
 	XtOffsetOf( ExmContainerRec, container.detail_tablist),
 	GetDetailTabList, NULL
     },
  };
 
-/* Define the widget class record.  See Chapter 4 of the 
-   "OSF/Motif Widget Writer's Guide" for details. */ 
-externaldef(exmcontainerclassrec) ExmContainerClassRec exmContainerClassRec = 
-{ 
+/* Define the widget class record.  See Chapter 4 of the
+   "OSF/Motif Widget Writer's Guide" for details. */
+externaldef(exmcontainerclassrec) ExmContainerClassRec exmContainerClassRec =
+{
   { /* core_class */
-    /* superclass */                 (WidgetClass) &exmGridClassRec, 
+    /* superclass */                 (WidgetClass) &exmGridClassRec,
     /* class_name */                 "ExmContainer",
     /* widget_size */                sizeof(ExmContainerRec),
     /* class_initialize */           NULL,
-    /* class_part_initialize */      ClassPartInitialize, 
+    /* class_part_initialize */      ClassPartInitialize,
     /* class_inited */               FALSE,
     /* initialize */                 Initialize,
     /* initialize_hook */            NULL,
@@ -247,23 +247,23 @@ externaldef(exmcontainerclassrec) ExmContainerClassRec exmContainerClassRec =
     /* query_geometry */             XtInheritQueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
+  },
   { /* composite_class */
     /* geometry_manager */           XtInheritGeometryManager,
     /* change_managed */             XtInheritChangeManaged,
     /* insert_child */               XtInheritInsertChild,
     /* delete_child */               XtInheritDeleteChild,
     /* extension */                  NULL,
-  },    
-  { /* constraint_class */ 
+  },
+  { /* constraint_class */
     /* constraint_resources */       NULL,
     /* constraint_num_resources */   0,
-    /* constraint_size */            sizeof(ExmGridConstraintRec), 
+    /* constraint_size */            sizeof(ExmGridConstraintRec),
     /* constraint_initialize */      NULL,
     /* constraint_destroy */         NULL,
     /* constraint_set_values */      NULL,
     /* extension */                  NULL,
-  },    
+  },
   { /* manager class */
     /* translations */               XtInheritTranslations,
     /* syn_resources */              syn_resources,
@@ -272,17 +272,17 @@ externaldef(exmcontainerclassrec) ExmContainerClassRec exmContainerClassRec =
     /* num_syn_constraint_resources */ 0,
     /* parent_process */             XmInheritParentProcess,
     /* extension */                  NULL,
-  },    
+  },
   { /* grid class */
     /* layout */                     Layout,
     /* calc_size */                  CalcSize,
     /* need_relayout */              NeedRelayout,
     /* extension */                  NULL,
-  },    
+  },
   { /* container class */
     /* extension */                  NULL,
-  }    
-};    
+  }
+};
 
 /* Establish the widget class name as an externally accessible symbol.
    Use the "externaldef" macro rather than the "extern" keyword. */
@@ -341,12 +341,12 @@ GetDetailTabList(
 	if (cw->container.detail_order_count != 0) {
 	    detail_order_count = cw->container.detail_order_count ;
 	} else {
-	    detail_order_count = 
+	    detail_order_count =
 		GetDefaultDetailCount(cw, 0) ;
 	}
 	tab_list = GetDefaultTabList(cw, detail_order_count);
 	/* callers should not free this memory */
-    } 
+    }
 
     *value = (XtArgVal)tab_list;
 }
@@ -357,7 +357,7 @@ GetDetailTabList(
  *  SelectColorDefault.
  *
  ****************************************************************************/
-static void 
+static void
 SelectColorDefault(
         Widget widget,
         int offset,
@@ -377,7 +377,7 @@ ClassPartInitialize (
         WidgetClass widgetClass
                     )
 {
-    /* Install the XmQTcontainer trait on ExmContainer 
+    /* Install the XmQTcontainer trait on ExmContainer
        and all its subclasses. */
    XmeTraitSet(widgetClass, XmQTcontainer, (XtPointer) &containerCT);
 }
@@ -404,19 +404,19 @@ Initialize(
 
     cw->container.icon_header = NULL ;
 
-    if (cw->container.detail_header && 
+    if (cw->container.detail_header &&
 	cw->container.detail_header_count) {
 
 	/**** first make a copy of the detail header table */
-	cw->container.detail_header = (XmStringTable) 
+	cw->container.detail_header = (XmStringTable)
 	    XtMalloc(cw->container.detail_header_count * sizeof(XmString));
 
 	for (i=0; i<cw->container.detail_header_count; i++)
-	    cw->container.detail_header[i] = 
+	    cw->container.detail_header[i] =
 		XmStringCopy(rcw->container.detail_header[i]);
 
 	/**** deal with the IconHeader creation */
-	scrollFrameTrait = (XmScrollFrameTrait) 
+	scrollFrameTrait = (XmScrollFrameTrait)
 	    XmeTraitGet((XtPointer) XtClass(XtParent(nw)), XmQTscrollFrame);
 
 	/* check that the parent is a scrollframe already initialize,
@@ -427,20 +427,20 @@ Initialize(
 	    scrollp = XmAUTOMATIC ;
 	    /* use an intermediate DA so that we can have margins */
 	    n = 0 ;
-	    XtSetArg(sargs[n], XmNmarginHeight, 
+	    XtSetArg(sargs[n], XmNmarginHeight,
 		     cw->grid.margin_height); n++ ;
-	    XtSetArg(sargs[n], XmNmarginWidth, 
+	    XtSetArg(sargs[n], XmNmarginWidth,
 		     cw->grid.margin_width); n++ ;
 	    XtSetArg(sargs[n], XmNscrolledWindowChildType,
 		     XmSCROLL_HOR); n++;
 	    XtSetArg(sargs[n], XmNbackground,
-		     nw->core.background_pixel); n++; 
+		     nw->core.background_pixel); n++;
 	    XtSetArg(sargs[n], XmNbackgroundPixmap,
-		     nw->core.background_pixmap); n++; 
+		     nw->core.background_pixmap); n++;
 	    XtSetArg(sargs[n], XmNborderWidth,
-		     nw->core.border_width); n++; 
+		     nw->core.border_width); n++;
 	    XtSetArg(sargs[n], XmNforeground,
-		     cw->manager.foreground); n++; 
+		     cw->manager.foreground); n++;
 	    header_parent = XmCreateDrawingArea(XtParent(nw),
 						"HeaderDA", sargs, n);
 	    XtManageChild(header_parent);
@@ -454,31 +454,31 @@ Initialize(
 	XtSetArg(sargs[n], XmNshadowThickness, 0); n++ ;
 	XtSetArg(sargs[n], XmNtraversalOn, False); n++ ;
 
-	XtSetArg(sargs[n], XmNlabelString, 
+	XtSetArg(sargs[n], XmNlabelString,
 		 cw->container.detail_header[0]); n++ ;
 	if (cw->container.detail_header_count > 1) {
-	    XtSetArg(sargs[n], XmNdetail, 
+	    XtSetArg(sargs[n], XmNdetail,
 		     &(cw->container.detail_header[1])); n++ ;
 	}
-	XtSetArg(sargs[n], XmNdetailCount, 
+	XtSetArg(sargs[n], XmNdetailCount,
 		 cw->container.detail_header_count - 1); n++ ;
 
 	cw->container.icon_header = XmCreateIconHeader(header_parent,
 						       "Header", sargs, n);
 	XtManageChild(cw->container.icon_header);
 
-	/**** Now we have to position the Container properly in the 
+	/**** Now we have to position the Container properly in the
 	   scrolling window if there is one */
-	    
+
 	if (scrollp == XmAUTOMATIC) {
 	    cw->core.y = cw->container.icon_header->core.height ;
 	    /* also resize the DA to remove the bottom margin */
-	    XmeConfigureObject(header_parent, 
+	    XmeConfigureObject(header_parent,
 			       header_parent->core.x,
 			       header_parent->core.y,
-			       cw->container.icon_header->core.width + 
+			       cw->container.icon_header->core.width +
 			       2*cw->grid.margin_height,
-			       cw->container.icon_header->core.height + 
+			       cw->container.icon_header->core.height +
 			       cw->grid.margin_height,
 			       header_parent->core.border_width);
 	} else {
@@ -490,14 +490,14 @@ Initialize(
 
     /**** copy the tablist */
     if (cw->container.detail_tablist) {
-	cw->container.detail_tablist = 
+	cw->container.detail_tablist =
 	    XmTabListCopy(cw->container.detail_tablist, 0, 0);
     }
 
 
     /* add an event handler to play with selection */
     XtAddEventHandler(nw, ButtonPressMask, False, ButtonHandler, NULL);
-	   
+
 }
 
 static void
@@ -511,7 +511,7 @@ ButtonHandler(Widget wid,
     XmContainerItemTrait        cItemTrait;
 
     item = XmObjectAtPoint(wid, event->xbutton.x, event->xbutton.y);
-    
+
     if (item) {
 	if ((cItemTrait = (XmContainerItemTrait)
 	     XmeTraitGet((XtPointer)XtClass(item),
@@ -520,11 +520,11 @@ ButtonHandler(Widget wid,
 	    cItemTrait->getValues(item, &cItemData);
 	    if (cItemData.visual_emphasis == XmSELECTED)
 		cItemData.visual_emphasis = XmNOT_SELECTED ;
-	    else 
+	    else
 		cItemData.visual_emphasis = XmSELECTED ;
-		
+
 	    cItemTrait->setValues(item, &cItemData);
-	}	
+	}
     }
 }
 
@@ -546,7 +546,7 @@ Destroy(
 	XtDestroyWidget(XtParent(cw->container.icon_header));
     }
 
-    if (cw->container.detail_header && 
+    if (cw->container.detail_header &&
 	cw->container.detail_header_count) {
 
 	for (i=0; i<cw->container.detail_header_count; i++)
@@ -554,7 +554,7 @@ Destroy(
 
 	XtFree((char*)cw->container.detail_header);
     }
-	
+
     if (cw->container.detail_tablist) {
 	XmTabListFree(cw->container.detail_tablist);
     }
@@ -569,10 +569,10 @@ Destroy(
  *      only called once by the superclass defining the method.
  *
  ****************************************************************************/
-static Boolean 
+static Boolean
 NeedRelayout (
         Widget old_w,
-        Widget new_w 
+        Widget new_w
           )
 {
     ExmContainerWidget cw = (ExmContainerWidget)old_w;
@@ -583,15 +583,15 @@ NeedRelayout (
     need_relayout =
 	((* ((ExmGridClassRec *) exmContainerClassRec.core_class.superclass)
 	 ->grid_class.need_relayout) (old_w, new_w) ||
-	(nw->container.first_column_width != 
+	(nw->container.first_column_width !=
 	 cw->container.first_column_width ||
 	 nw->container.detail_order != cw->container.detail_order ||
-	 nw->container.detail_order_count != 
+	 nw->container.detail_order_count !=
 	 cw->container.detail_order_count ||
-	 nw->container.detail_tablist != 
+	 nw->container.detail_tablist !=
 	 cw->container.detail_tablist));
 
-	    
+
     return (need_relayout);
 }
 
@@ -603,7 +603,7 @@ NeedRelayout (
  *     Instigator tells whether or not to resize all children.
  *
  *************************************************************************/
-static void 
+static void
 Layout (
         Widget wid,
         Widget instigator
@@ -627,7 +627,7 @@ Layout (
 	num_managed ++ ;
 
 	/* ask for preferred height and baseline to the kid */
-	
+
 	XmWidgetGetBaselines(ic, &baselines, &line_count);
 	if (!line_count) continue ;
 
@@ -636,46 +636,46 @@ Layout (
 	    baseline_first = baselines[0];
 	    /* negative so that it gives 0 below, so that it
 	       doesn't count in the max */
-	    height_under_prec = -baseline_first ; 
+	    height_under_prec = -baseline_first ;
 	}
 
 	interspace = height_under_prec + baselines[0] ;
-	interspace_max = Max(interspace_max, interspace);	
+	interspace_max = Max(interspace_max, interspace);
 
 	/* Get child's preferred height. */
         XtQueryGeometry (ic, NULL, &reply);
-	pref_height = (reply.request_mode & CWHeight) ? 
+	pref_height = (reply.request_mode & CWHeight) ?
 	    reply.height : ic->core.height;
 
 	height_under_prec = pref_height - baselines[0] ;
 
 	XtFree((char*) baselines);
 
-    }    
+    }
 
     /* now layout */
 
      /**** a second pass to actually do the layout */
-    
+
     /* first deal with the icon header outside the container */
     if (cw->container.icon_header &&
 	XtIsManaged(cw->container.icon_header)) {
 	Widget header_parent ;
 
-	XmeConfigureObject (cw->container.icon_header, 
-			    cw->grid.margin_width, 
-			    cw->grid.margin_height, 
-			    cw->core.width - 2*cw->grid.margin_width, 
+	XmeConfigureObject (cw->container.icon_header,
+			    cw->grid.margin_width,
+			    cw->grid.margin_height,
+			    cw->core.width - 2*cw->grid.margin_width,
 			    cw->container.icon_header->core.height,
 			    cw->container.icon_header->core.border_width);
 
 	/* also reconfigure the parent DA */
 	header_parent = XtParent(cw->container.icon_header) ;
-	XmeConfigureObject(header_parent, 
+	XmeConfigureObject(header_parent,
 			   header_parent->core.x,
 			   header_parent->core.y,
 			   cw->core.width,
-			   cw->container.icon_header->core.height + 
+			   cw->container.icon_header->core.height +
 			   cw->grid.margin_height,
 			   header_parent->core.border_width);
     }
@@ -687,7 +687,7 @@ Layout (
 
 	if (LayoutIsRtoLM(cw))
 	    x = cw->grid.margin_width ;
-	else 
+	else
 	    x = cw->grid.margin_width + glc->grid_margin_width_within_cell ;
 	width = cw->core.width - 2*cw->grid.margin_width -
 	    glc->grid_margin_width_within_cell;
@@ -696,16 +696,16 @@ Layout (
 	    XtConfigureWidget (ic, x, y, width, height, ic->core.border_width);
 	}
 	else {
-	    ic->core.x = x; 
-	    ic->core.y = y; 
-	    ic->core.width = width; 
-	    ic->core.height = height; 
+	    ic->core.x = x;
+	    ic->core.y = y;
+	    ic->core.width = width;
+	    ic->core.height = height;
 	}
 	XmWidgetGetBaselines(ic, &baselines, &line_count);
 	if (line_count) y += baselines[0] + interspace_max ;
 
 	if (i != cw->composite.num_children - 1) {
-	    XmWidgetGetBaselines(cw->composite.children[i+1], 
+	    XmWidgetGetBaselines(cw->composite.children[i+1],
 				 &baselines, &line_count);
 	    if (line_count) y -= baselines[0] ;
 	}
@@ -715,11 +715,11 @@ Layout (
 /****************************************************************************
  *
  *  CalcSize:
- *     Calculate the ideal size of the ExmGrid widget. 
- *     Only affect the returned size if it is 0   
+ *     Calculate the ideal size of the ExmGrid widget.
+ *     Only affect the returned size if it is 0
  *
  ***************************************************************************/
-static void 
+static void
 CalcSize (
         Widget wid,
         Widget instigator,
@@ -729,15 +729,15 @@ CalcSize (
     /* The Width of the Container is the sum of the first_column_width
        and the detail width.
        If the first_column_width is not set, we must compute it as the
-       max of all the icon_width at their position (we set the fcw 
+       max of all the icon_width at their position (we set the fcw
        temporarily so that it is not recomputed when the detailwidth are
        calculated.
        The detail width is the position of the last tab if there is one
-       for the last detail_order, otherwise it's the max width of all 
+       for the last detail_order, otherwise it's the max width of all
        icon detail width.
-       The Height of the container is n-1 time the max of height_under 
+       The Height of the container is n-1 time the max of height_under
        baseline of i-1 + baseline of i , + baseline 0 + h_under n-1 */
-    
+
     ExmContainerWidget cw = (ExmContainerWidget) wid ;
     Boolean fcw_set = False ;
     Cardinal i, num_managed = 0 ;
@@ -779,31 +779,31 @@ CalcSize (
 
 		/* start with header's preferred width. */
 		XtQueryGeometry (cw->container.icon_header, NULL, &reply);
-		header_width = (reply.request_mode & CWWidth) ? 
+		header_width = (reply.request_mode & CWWidth) ?
 		    reply.width : cw->container.icon_header->core.width;
-		detail_width = header_width - 
+		detail_width = header_width -
 		    /* remove the horiz indent */
-		    (cw->container.first_column_width 
+		    (cw->container.first_column_width
 		     - cw->container.icon_header->core.x);
 	    } else
 		detail_width = 0 ;
 
 	    for (i = 0; i < cw->composite.num_children; i++) {
 		Widget ic = cw->composite.children[i];
-		
+
 		/* Get child's preferred width. */
 		if (ic != instigator) {
 		    XtQueryGeometry (ic, NULL, &reply);
-		    pref_width = (reply.request_mode & CWWidth) ? 
+		    pref_width = (reply.request_mode & CWWidth) ?
 			reply.width : ic->core.width;
 		} else {
 		    pref_width = ic->core.width ;
 		}
 
-		detail_width = Max(detail_width, 
-				   pref_width - 
+		detail_width = Max(detail_width,
+				   pref_width -
 				   /* remove the horiz indent */
-				   (cw->container.first_column_width 
+				   (cw->container.first_column_width
 				    - ic->core.x));
 	    }
 	}
@@ -818,7 +818,7 @@ CalcSize (
 	num_managed ++ ;
 
 	/* ask for preferred height and baseline to the kid */
-	
+
 	XmWidgetGetBaselines(ic, &baselines, &line_count);
 	if (!line_count) continue ;
 
@@ -827,33 +827,33 @@ CalcSize (
 	    baseline_first = baselines[0];
 	    /* negative so that it gives 0 below, so that it
 	       doesn't count in the max */
-	    height_under_prec = -baseline_first ; 
+	    height_under_prec = -baseline_first ;
 	}
 
 	interspace = height_under_prec + baselines[0] ;
-	interspace_max = Max(interspace_max, interspace);	
+	interspace_max = Max(interspace_max, interspace);
 
 	/* Get child's preferred height. */
         XtQueryGeometry (ic, NULL, &reply);
-	pref_height = (reply.request_mode & CWHeight) ? 
+	pref_height = (reply.request_mode & CWHeight) ?
 	    reply.height : ic->core.height;
 
 	height_under_prec = pref_height - baselines[0] ;
 
 	XtFree((char*) baselines);
 
-    }    
+    }
 
     /* now sum up everything */
     height = baseline_first + interspace_max * (num_managed-1) +
 	height_under_prec ;
 
     /*** do not set non null dimensions */
-    if (*width_ret == 0) *width_ret = 
+    if (*width_ret == 0) *width_ret =
 	cw->container.first_column_width + detail_width +
 	    cw->grid.margin_width ;
-    if (*height_ret == 0) *height_ret = height + 
-	2*cw->grid.margin_height; 
+    if (*height_ret == 0) *height_ret = height +
+	2*cw->grid.margin_height;
 
 
     /*** set it back to 0, a getvalueshook will provide the real
@@ -877,20 +877,20 @@ GetDefaultFirstColumnWidth(
     XmContainerItemTrait cont_item_trait ;
 
     /* Get the max icon width + indent of all managed kids */
-    
+
     /* deal with icon_header outside container first */
     if (cw->container.icon_header &&
 	XtIsManaged(cw->container.icon_header)) {
 
 	/* start with header's icon width. */
-	cont_item_trait = (XmContainerItemTrait) 
-	    XmeTraitGet((XtPointer) XtClass(cw->container.icon_header), 
+	cont_item_trait = (XmContainerItemTrait)
+	    XmeTraitGet((XtPointer) XtClass(cw->container.icon_header),
 			XmQTcontainerItem) ;
 
 	cont_item_data.valueMask = ContItemIconWidth ;
-	cont_item_trait->getValues(cw->container.icon_header, 
+	cont_item_trait->getValues(cw->container.icon_header,
 				   &cont_item_data);
-	first_column_width = Max(first_column_width, 
+	first_column_width = Max(first_column_width,
 				 cw->grid.margin_width +
 				 cont_item_data.icon_width) ;
     }
@@ -900,11 +900,11 @@ GetDefaultFirstColumnWidth(
 	ExmGridConstraint glc = ExmGridCPart (ic);
 
 	if (!XtIsManaged(ic)) continue ;
-	
+
 	/* if the child has the ContItem trait, use its icon_width,
 	   othersize, use it's width */
 
-	cont_item_trait = (XmContainerItemTrait) 
+	cont_item_trait = (XmContainerItemTrait)
 	    XmeTraitGet((XtPointer) XtClass(ic), XmQTcontainerItem) ;
 
 	if (cont_item_trait) {
@@ -917,12 +917,12 @@ GetDefaultFirstColumnWidth(
 
 	/* the inner cell margin width plays the outline
 	   indentation role in this example widget */
-	first_column_width = 
-	    Max (first_column_width, 
-		 cw->grid.margin_width + width 
+	first_column_width =
+	    Max (first_column_width,
+		 cw->grid.margin_width + width
 		 + glc->grid_margin_width_within_cell);
-    } 
-	
+    }
+
     return first_column_width ;
 }
 
@@ -941,19 +941,19 @@ GetDefaultDetailCount(
     XmContainerItemTrait cont_item_trait ;
 
     /* Get the max detail_count of all managed kids */
-    
+
     /* deal with icon_header outside container first */
     if (cw->container.icon_header &&
 	XtIsManaged(cw->container.icon_header)) {
 
 	/* start with header's detail_count */
-	cont_item_trait = (XmContainerItemTrait) 
-	    XmeTraitGet((XtPointer) XtClass(cw->container.icon_header), 
+	cont_item_trait = (XmContainerItemTrait)
+	    XmeTraitGet((XtPointer) XtClass(cw->container.icon_header),
 			XmQTcontainerItem) ;
 
 	/* icon headert always has the trait */
 	cont_item_data.valueMask = ContItemDetailCount ;
-	cont_item_trait->getValues(cw->container.icon_header, 
+	cont_item_trait->getValues(cw->container.icon_header,
 				   &cont_item_data);
 	detail_count = Max(detail_count, cont_item_data.detail_count) ;
     }
@@ -962,21 +962,21 @@ GetDefaultDetailCount(
 	Widget ic = cw->composite.children[i];
 
 	if (!XtIsManaged(ic)) continue ;
-	
+
 	/* if the child has the ContItem trait, use its detail_count */
 
-	cont_item_trait = (XmContainerItemTrait) 
+	cont_item_trait = (XmContainerItemTrait)
 	    XmeTraitGet((XtPointer) XtClass(ic), XmQTcontainerItem) ;
 
 	if (cont_item_trait) {
 	    cont_item_data.valueMask = ContItemDetailCount ;
 	    cont_item_trait->getValues(ic, &cont_item_data);
-	    
-	    detail_count = 
+
+	    detail_count =
 		Max (detail_count, cont_item_data.detail_count);
-	} 
+	}
     }
-	
+
     return detail_count ;
 }
 
@@ -984,11 +984,11 @@ GetDefaultDetailCount(
 
 /****************************************************************************
  *
- *  GetDefaultTabList  
+ *  GetDefaultTabList
  *   (XmNwidth-2*XmNmarginWidth-XmNfirstColumnWidth)/XmNdetailOrderCount
  *
  ***************************************************************************/
-static XmTabList 
+static XmTabList
 GetDefaultTabList(
         ExmContainerWidget cw,
 	Cardinal detail_order_count)
@@ -996,41 +996,41 @@ GetDefaultTabList(
     XmTabList default_tablist = NULL ;
 
     /* if the Container has a valid size, a default tablist of
-       size detail_order_count shall be returned in detail_tablist.  
+       size detail_order_count shall be returned in detail_tablist.
        The tabs in this tablist shall be equal to:
 
 	   (XmNwidth-2*XmNmarginWidth-XmNfirstColumnWidth)
-	               /XmNdetailOrderCount                        
+	               /XmNdetailOrderCount
 
-       If XmNwidth is not yet valid, a NULL detail_tablist 
-       is returned, so that the icon can concat all its details 
+       If XmNwidth is not yet valid, a NULL detail_tablist
+       is returned, so that the icon can concat all its details
        and get a reasonable size. */
 
     if (cw->core.width) {
 	Dimension tab_size = 0 ;
-	    
+
 	if ((cw->core.width > (2*cw->grid.margin_width +
 			       cw->container.first_column_width)) &&
 	    detail_order_count) {
 	    tab_size = (cw->core.width - 2*cw->grid.margin_width -
-			cw->container.first_column_width) 
+			cw->container.first_column_width)
 		/ detail_order_count ;
 	    default_tablist = GetDumbTabList(tab_size,
 						detail_order_count);
 	} /* else return NULL as well */
     }
-    
+
     return default_tablist ;
 }
 
 
 /****************************************************************************
  *
- *  GetDumbTabList  
+ *  GetDumbTabList
  *    fixed space - lazy allocation .do not deallocate the returned value
  *
  ***************************************************************************/
-static XmTabList 
+static XmTabList
 GetDumbTabList(
         Dimension tab_size,
         Cardinal asked_num_tab)
@@ -1039,7 +1039,7 @@ GetDumbTabList(
     static XmTab * Tab_pool = NULL ;
     static XmTabList Tab_list = NULL ;
     Cardinal i, prev_num_tab = Num_tab ;
-    
+
     if (Num_tab < asked_num_tab) {
 	Num_tab = asked_num_tab ;
 	Tab_pool = (XmTab*) XtRealloc((char*)Tab_pool,
@@ -1070,10 +1070,10 @@ GetDumbTabList(
 
 /************************************************************************
  * ContainerGetValues
- * 
+ *
  ************************************************************************/
 static	void
-ContainerGetValues(Widget w, 
+ContainerGetValues(Widget w,
 		  XmContainerData containerData)
 {
 
@@ -1083,14 +1083,14 @@ ContainerGetValues(Widget w,
     /**** fill in detail_order */
     if (cw->container.layout_type == XmDETAIL) {
 	if (cw->container.detail_order_count != 0) {
-	    containerData->detail_order_count = 
+	    containerData->detail_order_count =
 		cw->container.detail_order_count ;
 	    containerData->detail_order = cw->container.detail_order ;
 	} else {
 	    /* take the max detail count and return NULL for the
 	       detail_order, so that the icon takes a default order */
 	    if (containerData->valueMask & ContDetailOrder) {
-		containerData->detail_order_count = 
+		containerData->detail_order_count =
 		    GetDefaultDetailCount(cw, 0);
 		containerData->detail_order = NULL ;
 	    }
@@ -1099,20 +1099,20 @@ ContainerGetValues(Widget w,
         containerData->detail_order_count = 0 ;
 	containerData->detail_order = NULL ;
     }
-    
+
     /**** if the resource firstColumnWidth is set, use it, otherwise,
           default it */
 
     if (cw->container.layout_type == XmDETAIL) {
 	if (cw->container.first_column_width)
-	    containerData->first_column_width = 
+	    containerData->first_column_width =
 		cw->container.first_column_width ;
-	else 
+	else
 	    /* don't bother computing it if not asked */
 	    if (containerData->valueMask & ContFirstColumnWidth) {
 		/* set the container resource temporarily */
 		cw->container.first_column_width =
-		    containerData->first_column_width = 
+		    containerData->first_column_width =
 			GetDefaultFirstColumnWidth(cw,
 					containerData->first_column_width) ;
 		fcw_set = True ;
@@ -1123,28 +1123,28 @@ ContainerGetValues(Widget w,
     /**** if detail_tablist has been set, use it, else compute a default */
     if (cw->container.detail_tablist)
 	containerData->detail_tablist = cw->container.detail_tablist ;
-    else 
+    else
 	/* go find a default only if needed */
     if (containerData->valueMask & ContDetailTabList) {
-	containerData->detail_tablist = GetDefaultTabList(cw, 
+	containerData->detail_tablist = GetDefaultTabList(cw,
 					   containerData->detail_order_count);
-    } 
+    }
 
     /**** get a value for this one - kinda random, just to test */
     if (cw->manager.navigation_type == XmTAB_GROUP)
 	containerData->selection_mode = XmNORMAL_MODE ;
-    else 
+    else
 	containerData->selection_mode = XmADD_MODE ;
 
-	
+
     /**** just to try out the trait protocol */
     if (cw->container.select_color == WhitePixelOfScreen(XtScreen(w)))
 	containerData->valueMask &= ~ContSelectColor ;
     else
 	containerData->select_color = cw->container.select_color ;
 
-	
-    /*** set first_column_width back to 0, a getvalueshook 
+
+    /*** set first_column_width back to 0, a getvalueshook
       will provided the real
       information */
     if (fcw_set) cw->container.first_column_width =  0 ;
@@ -1157,19 +1157,13 @@ ContainerGetValues(Widget w,
 /*****************************************************************************
  *
  *  ExmCreateContainer:
- *      Called by an application. 
+ *      Called by an application.
  *
  ****************************************************************************/
-Widget 
-ExmCreateContainer (
-        Widget parent,
-        char *name,
-        ArgList arglist, 
-        Cardinal argcount
-              )
+Widget ExmCreateContainer(Widget parent, char *name, ArgList arglist, Cardinal argcount)
 {
  /* This is a convenience function to instantiate an ExmContainer widget. */
-   return (XtCreateWidget (name, exmContainerWidgetClass, parent, 
+   return (XtCreateWidget (name, exmContainerWidgetClass, parent,
                            arglist, argcount));
 }
 

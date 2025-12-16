@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -87,7 +87,7 @@ typedef struct _ExmContainerRec      * ExmContainerWidget;
 
 
 /* Specify the API for this widget. */
-extern Widget ExmCreateContainer();
+extern Widget ExmCreateContainer(Widget parent, char *name, ArgList arglist, Cardinal argcount);
 
 
 /* Allow for C++ compilation. */
