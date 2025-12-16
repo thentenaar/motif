@@ -30,20 +30,13 @@ AC_DEFUN([AX_CFLAGS],[
 		AX_APPEND_COMPILE_FLAGS([ dnl
 			-Wall dnl
 			-Wno-unused dnl
-			-Wno-comment dnl
 			-Wno-unused-result dnl
 			-Wno-misleading-indentation dnl
 			-Wno-implicit-fallthrough dnl
 			-Wno-int-in-bool-context dnl
-			-Wno-deprecated-non-prototype dnl
-			-Wno-padded dnl
 			-Wno-switch-enum dnl
-			-Wno-disabled-macro-expansion dnl
-			-Wno-format-nonliteral dnl
-			-Wno-long-long dnl
-			-Wno-format dnl
-			-Wno-extra-semi-stmt dnl
 			-Wno-documentation dnl
+			-Wno-incompatible-pointer-types-discards-qualifiers dnl
 			-Qunused-arguments dnl
 		])
 	],[	dnl Assume GCC
@@ -55,20 +48,13 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wcast-align dnl
 			-Wformat-security dnl
 			-Wno-unused dnl
-			-Wno-comment dnl
 			-Wno-unused-result dnl
 			-Wno-misleading-indentation dnl
 			-Wno-implicit-fallthrough dnl
 			-Wno-int-in-bool-context dnl
 			-Wno-conversion dnl
 			-Wno-discarded-qualifiers dnl
-			-Wno-strict-prototypes dnl
-			-Wno-missing-prototypes dnl
-			-Wno-missing-declarations dnl
-			-Wno-nested-externs dnl
 			-Wno-cast-qual dnl
-			-Wno-redundant-decls dnl
-			-Wno-bad-function-cast dnl
 		])
 	])
 

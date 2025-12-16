@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,7 +21,8 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
+
+/**
  * TabStack.c - Source code for the XmTabStack Widget Class.
  *
  * This file contains the source code that implements the XmTabStack
@@ -1277,10 +1278,7 @@ Redisplay(Widget widget, XEvent *event, Region region)
     (((XmBulletinBoardWidget) c_tab)->bulletin_board.f)
 #define bsfield(f) \
     (((XmBulletinBoardWidget) s_tab)->bulletin_board.f)
-//#define bcfield(f) ((XmBulletinBoardPart*) \
-//		    ((char*)c_tab + XmTabStack_offsets[XmBulletinBoardIndex]))->f
-//#define bsfield(f) ((XmBulletinBoardPart*) \
-//		    ((char*)s_tab + XmTabStack_offsets[XmBulletinBoardIndex]))->f
+
 static Boolean
 SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 	  Cardinal *arg_cnt)
