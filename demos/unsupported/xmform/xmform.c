@@ -1,5 +1,5 @@
 /* $XConsortium: xmform.c /main/4 1995/07/15 20:47:50 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -25,7 +25,7 @@
  * HISTORY
  */
 /**---------------------------------------------------------------------
-***	
+***
 ***	file:		xmform.c
 ***
 ***	project:	Motif Widgets example programs
@@ -35,7 +35,7 @@
 ***
 ***	description:	This program demonstrates the possibilities of
 ***                     the Motif form widget.
-***                     It can display a string of letters made from buttons 
+***                     It can display a string of letters made from buttons
 ***	                and arrows (resizable using Form attachments).
 ***
 ***	defaults:	xmform looks nicer with these defaults:
@@ -56,12 +56,13 @@ xmform*bottomShadowColor:        black
 #include <Xm/PushB.h>
 #include <Xm/ArrowB.h>
 
-static void FillItPlease();
-static void NearlyEvenSpread();
-static Widget AddStem() ;
+static void FillItPlease(Widget form, char letter);
+static void NearlyEvenSpread(Widget *child_list, Cardinal num_child,
+                             Dimension hor_spacing, Dimension ver_spacing);
+static Widget AddStem(Widget form, Dimension top, Dimension right,
+                      Dimension bottom, Dimension left, int type);
 
-int main(argc, argv) 
-int argc; char **argv;
+int main(int argc, char *argv[])
 {
     XtAppContext app_context;
     Widget      toplevel, topform, *forms ;
@@ -81,14 +82,14 @@ int argc; char **argv;
     len_word = strlen(word);
     forms = (Widget*)calloc(len_word,sizeof(Widget));
     s[1] = 0 ;  /* string used for the subform widget name */
-    for (p = 0 ; p < len_word; p++) { 
+    for (p = 0 ; p < len_word; p++) {
 	s[0] = word[p] ;  /* subform  names are the letters themselves */
-	forms[p] = XmCreateForm(topform, s, NULL, 0); 
+	forms[p] = XmCreateForm(topform, s, NULL, 0);
 	FillItPlease(forms[p], word[p]);
     }
 
     /* evenly spread out the forms with some spacing in between */
-    NearlyEvenSpread(forms, p, 
+    NearlyEvenSpread(forms, p,
 		     2,          /* horizontal spacing */
 		     9) ;        /* vertical margin */
 
@@ -99,13 +100,8 @@ int argc; char **argv;
     return 0;    /* make compiler happy */
 }
 
-
-static void NearlyEvenSpread(child_list, num_child, 
-			     hor_spacing, ver_spacing)
-Widget * child_list;
-Cardinal num_child;
-Dimension hor_spacing;
-Dimension ver_spacing;
+static void NearlyEvenSpread(Widget *child_list, Cardinal num_child,
+                             Dimension hor_spacing, Dimension ver_spacing)
 {
     /* this algorithm works only for the default fractionBase == 100 */
     /* hor_spacing and ver_margin are equally applied on each sides */
@@ -119,10 +115,10 @@ Dimension ver_spacing;
     for (i = 0 ; i < num_child ; i++) {
 	n = 0 ;
 	XtSetArg(args[n], XmNleftAttachment, XmATTACH_POSITION); n++ ;
-	XtSetArg(args[n], XmNleftPosition, 
+	XtSetArg(args[n], XmNleftPosition,
 		 hor_child_room*i + hor_spacing); n++ ;
 	XtSetArg(args[n], XmNrightAttachment, XmATTACH_POSITION); n++ ;
-	XtSetArg(args[n], XmNrightPosition, 
+	XtSetArg(args[n], XmNrightPosition,
 		 hor_child_room*(i+1) - hor_spacing); n++ ;
 	XtSetArg(args[n], XmNtopAttachment, XmATTACH_POSITION); n++ ;
 	XtSetArg(args[n], XmNtopPosition, ver_spacing); n++ ;
@@ -132,11 +128,9 @@ Dimension ver_spacing;
     }
 }
 
-static void FillItPlease(form, letter)
-Widget form ;
-char letter ;
+static void FillItPlease(Widget form, char letter)
 {
-    /* This routine only handle the "MOTIF" letters, it's up 
+    /* This routine only handle the "MOTIF" letters, it's up
        to you to implement the rest, good luck for K,N,R,V,X,Y,Z... */
 
     Cardinal n = 0, p = 0 ;
@@ -148,7 +142,7 @@ char letter ;
 	/* 2 buttons and the arrow in between on top */
 	child[p] = AddStem(form, 0, 25, 100, 0, XmPUSHBUTTON); p++;
 	child[p] = AddStem(form, 0, 100, 100, 75, XmPUSHBUTTON); p++;
-	child[p] = AddStem(form, 0, 75, 35, 25, NULL); p++;
+	child[p] = AddStem(form, 0, 75, 35, 25, 0); p++;
 /*	XtSetArg(args[n], XmNshadowThickness, 0); n++;*/
 	XtSetArg(args[n], XmNarrowDirection, XmARROW_DOWN); n++;
 	XtSetValues(child[2], args, n);
@@ -170,7 +164,7 @@ char letter ;
 	break ;
     case 'I' :
 	/* 1 vertical button + one arrow on top */
-	child[p] = AddStem(form, 0, 63, 25, 38, NULL); p++;
+	child[p] = AddStem(form, 0, 63, 25, 38, 0); p++;
 	child[p] = AddStem(form, 30, 63, 100, 38, XmPUSHBUTTON); p++;
 /*	XtSetArg(args[n], XmNshadowThickness, 0); n++;*/
 	XtSetValues(child[0], args, n);
@@ -191,13 +185,11 @@ char letter ;
 }
 
 
-static Widget AddStem(form, top, right, bottom, left, type)
-Widget form ;
-Dimension top, right, bottom, left;
-int type ;
+static Widget AddStem(Widget form, Dimension top, Dimension right,
+                      Dimension bottom, Dimension left, int type)
 {
     /* create an object, either a button or an arrow, using
-       positionnal attachment everywhere, instead of possibly 
+       positionnal attachment everywhere, instead of possibly
        form attachment or widget attachment */
 
     Cardinal n = 0 ;
@@ -212,8 +204,8 @@ int type ;
     XtSetArg(args[n], XmNleftAttachment, XmATTACH_POSITION); n++;
     XtSetArg(args[n], XmNleftPosition, left); n++;
     if (type == XmPUSHBUTTON)
-	return XmCreatePushButton(form, "", args, n); 
-    else 
-	return XmCreateArrowButton(form, "", args, n); 
+	return XmCreatePushButton(form, "", args, n);
+    else
+	return XmCreateArrowButton(form, "", args, n);
 }
 
