@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: uilsymdump.c /main/6 1998/04/17 11:26:22 mgreess $"
@@ -35,21 +35,44 @@ static char rcsid[] = "$TOG: uilsymdump.c /main/6 1998/04/17 11:26:22 mgreess $"
 ** Table of Contents
 **
 */
-Uil_status_type		MessageCB		();
-Uil_status_type	        StatusCB		();
-
 
 /*
 ** globals
 */
 FILE	*source_file;
 
+Uil_status_type MessageCB(const char *message_user_data,
+                          int msg_number,
+                          int msg_severity,
+                          const char *msg_text,
+                          const char *src_text,
+                          const char *ptr_text,
+                          const char *loc_text,
+                          int message_summary[])
+{
+    (void)message_summary;
+    printf ("Message(%d) -- %d-%d-%s\n    %s\n    %s\n    %s\n",
+		*message_user_data, msg_number, msg_severity, msg_text,
+		src_text, ptr_text, loc_text);
+    return Uil_k_continue;
+}
+
+Uil_status_type StatusCB(const char *status_user_data,
+                         int percent_complete,
+                         int lines_processed,
+                         const char *current_file,
+                         int message_summary[])
+{
+    (void)message_summary;
+    printf("Status(%d) -- Percent: %d,  Lines: %d, File: %s\n",
+	    *status_user_data, percent_complete, lines_processed, current_file);
+    return Uil_k_continue;
+}
 
 /*
 **  Entry point
 */
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     Uil_command_type	    command_desc;
     Uil_compile_desc_type   compile_desc;
@@ -99,52 +122,4 @@ main(int argc, char *argv[])
     return return_status;
 }
 
-Uil_status_type	MessageCB(  message_user_data, 
-			    msg_number, 
-			    msg_severity,
-			    msg_text,
-			    src_text, 
-			    ptr_text, 
-			    loc_text,
-			    message_summary)
-
-    int    *message_user_data;	    /* Opaque, user-supplied argument */
-    int	    msg_number;	    /* constant to identify the error */
-    int	    msg_severity;   /* severity level */
-    char    *msg_text;	    /* text of message */
-    char    *src_text;	    /* text of source line on which error occured */
-    char    *ptr_text;	    /* source column information */
-    char    *loc_text;	    /* location line */
-    unsigned int (*message_summary)[Uil_k_max_status+1];
- 
-{
-    printf ("Message(%d) -- %d-%d-%s\n    %s\n    %s\n    %s\n",
-		*message_user_data, msg_number, msg_severity, msg_text,
-		src_text, ptr_text, loc_text);
-
-    *message_user_data = *message_user_data + 1;
-    return Uil_k_continue;
-}
-
-
-
-Uil_status_type	StatusCB(	status_user_data, 
-				percent_complete, 
-				lines_processed,
-				current_file,
-				message_summary)
-
-    int			*status_user_data;
-    unsigned int	percent_complete;
-    unsigned int	lines_processed;
-    char		*current_file;
-    unsigned int (*message_summary)[Uil_k_max_status+1];
-
-{
-    printf("Status(%d) -- Percent: %d,  Lines: %d, File: %s\n",
-	    *status_user_data, percent_complete, lines_processed, current_file);
-
-    *status_user_data = *status_user_data + 1;
-    return Uil_k_continue;
-}
 
