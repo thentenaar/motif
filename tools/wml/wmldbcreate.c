@@ -95,7 +95,7 @@ int _DEBUG=FALSE;
 char outfilename[80];
 char debugfilename[80];
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     _db_header	header;
 
@@ -115,18 +115,18 @@ int main(int argc, const char *argv[])
 	}
 
     bfile = fopen(outfilename, "w");
-    if (bfile == (FILE *) NULL)
+    if (!bfile)
 	{
 	printf("\nCouldnt't open %s", outfilename);
-	exit (1);
+	exit(EXIT_FAILURE);
 	}
     if (_DEBUG)
 	{
 	afile = fopen(debugfilename, "w");
-	if (afile == (FILE *) NULL)
+	if (!afile)
 	    {
 	    printf("\nCouldn't open %s", debugfilename);
-	    exit (1);
+	    exit(EXIT_FAILURE);
 	    }
 	}
 
