@@ -48,10 +48,10 @@ GRA(char **, pixmapName);
  **************************************************************/
 Widget G_extlist = NULL;
 Pixmap porsche_pix;
-Pixmap stopsign_pix; 
+Pixmap stopsign_pix;
 Pixmap crab_pix;
 Pixmap clown_pix;
- 
+
 PlayerData players[] = {
 /*   Name      AB   R    H   RBI   AVG   HR */
 { PPORSCHE, "Mo Vaughn", 159, 30,  55, 33, 346, 11 },
@@ -59,7 +59,7 @@ PlayerData players[] = {
 { PSTOP, "Scott Cooper", 139, 24, 43, 30, 309, 9 },
 { PCLOWN, "John Valentin", 78, 12, 22, 11, 282, 2 },
 { PSTOP, "Carlos Rodriguez", 39, 2, 11, 4, 282, 1},
-{ PCLOWN, "Otis Nixon", 148, 23, 41, 13, 277, 0},    
+{ PCLOWN, "Otis Nixon", 148, 23, 41, 13, 277, 0},
 { PSTOP, "Scott Fletcher", 80, 13, 21, 8, 263, 2},
 { PCLOWN, "Andre Dawson", 134, 19, 33, 27, 246, 10},
 { PPORSCHE, "Damon Berryhill", 72, 4, 17, 6, 236, 1},
@@ -128,14 +128,12 @@ static String fallbacks[] = {
  **************************************************************/
 /*
  * Function Name: InitializeData
- * Description:   
- * Arguments:     
+ * Description:
+ * Arguments:
  * Returns:       nothing
  *
  */
-void
-InitializeData(shell )
-Widget shell;
+void InitializeData(Widget shell)
 {
   porsche_pix = XPM_PIXMAP(shell, porsche);
   crab_pix = XPM_PIXMAP(shell, crab);
@@ -151,28 +149,27 @@ Widget shell;
  **************************************************************/
 /*
  * Function Name: main
- * Description:   
+ * Description:
  * Arguments:     the usual suspects
  * Returns:       nothing
  *
  */
-int
-main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     Widget top, demo;
     XtAppContext app;
     DemoInfo demo_info = (DemoInfo)XtMalloc( sizeof(DemoStruct));
 
-    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL); 
+    XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
 
-    
+
     top = XtOpenApplication(
-            &app, 
-            "MultiList", 
-            NULL, 
+            &app,
+            "MultiList",
+            NULL,
             0,
-            &argc, 
-            argv, 
+            &argc,
+            argv,
             fallbacks,
             sessionShellWidgetClass,
             NULL, 0);
@@ -180,12 +177,9 @@ main(int argc, char **argv)
     demo = Createform(top, demo_info);
 
     XtManageChild(demo);
-
     InitializeData(top);
-
     XtRealizeWidget(top);
-
     XtAppMainLoop(app);
-    return(0);
+    return 0;
 }
 

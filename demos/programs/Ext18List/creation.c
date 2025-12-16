@@ -21,8 +21,7 @@ static void PlayerOptionMenu( Widget, DemoInfo );
  * Function: RegisterConverters()
  *     Registers all the converters for all widgets.
  */
-static void
-RegisterConverters()
+static void RegisterConverters(void)
 {
     XtInitializeWidgetClass(xmPushButtonWidgetClass);
     XtInitializeWidgetClass(xmToggleButtonWidgetClass);
@@ -48,17 +47,15 @@ extern void MENU_POST();
 /*
  * Callback procedure declarations
  */
-extern Widget CreateExtListCB();
-extern void AddCB();
-extern void RemCB();
-extern void ExplainCB();
-extern void QuitCB();
-extern void UnselCB();
-extern void ToggleFindArea();
-extern void FirstRowCol();
-extern void ChoosePlayerCB();
-extern void UpdateRemLabelStr();
-extern void CreateLabel();
+extern Widget CreateExtListCB(Widget parent);
+extern void RemCB(Widget w, XtPointer client, XtPointer call);
+extern void ToggleFindArea(Widget w, XtPointer client, XtPointer call);
+extern void FirstRowCol(Widget w, XtPointer client, XtPointer call);
+extern void UnselCB(Widget w, XtPointer client, XtPointer call);
+extern void QuitCB(Widget w, XtPointer client, XtPointer call);
+extern void UpdateRemLabelStr(Widget w,XtPointer client, XtPointer call);
+extern void ChoosePlayerCB(Widget w,XtPointer client, XtPointer call);
+extern void CreateLabel(Widget w, XtPointer client, XtPointer call);
 
 /*
  * Function: Createform()
@@ -97,7 +94,7 @@ Widget
     /* the left pane */
 
     argcnt = 0;
-    listframe = XtCreateManagedWidget("listframe", xmFrameWidgetClass, 
+    listframe = XtCreateManagedWidget("listframe", xmFrameWidgetClass,
 				      big_pane, args, argcnt);
 
 
@@ -111,7 +108,7 @@ Widget
 
     /* create the right pane */
 
-    right_pane = XtVaCreateManagedWidget("rigntPane",xmPanedWidgetClass, 
+    right_pane = XtVaCreateManagedWidget("rigntPane",xmPanedWidgetClass,
 				       big_pane, NULL );
 
     /* Create the Scrolled Help Text Area */
@@ -121,7 +118,7 @@ Widget
     XtSetArg(args[argcnt], XmNscrollBarDisplayPolicy, XmAS_NEEDED ); argcnt++;
     XtSetArg(args[argcnt], XmNresizeToPreferred, True ); argcnt++;
     XtSetArg(args[argcnt], XmNpreferredPaneSize, 300 ); argcnt++;
-    explain_scrolled = XtCreateManagedWidget( "scrollExplain", 
+    explain_scrolled = XtCreateManagedWidget( "scrollExplain",
 					     xmScrolledWindowWidgetClass,
 					     right_pane, args, argcnt );
 
@@ -168,11 +165,11 @@ Widget
     (void)XtCreateManagedWidget("rem_label", xmLabelWidgetClass, rem_rc,
 				 NULL, 0 );
 
-    demo_info->rem_pb = XtCreateManagedWidget("rem_pb", 
+    demo_info->rem_pb = XtCreateManagedWidget("rem_pb",
 					      xmPushButtonWidgetClass, rem_rc,
 					      NULL, 0 );
 
-    XtAddCallback(demo_info->rem_pb, XmNactivateCallback, RemCB, 
+    XtAddCallback(demo_info->rem_pb, XmNactivateCallback, RemCB,
 		  (XtPointer)demo_info);
 
     /* next group */
@@ -181,25 +178,25 @@ Widget
     XtSetArg(args[argcnt], XmNshowSash, False ); argcnt++;
     lineup_frame = XtCreateManagedWidget("lineup_frame", xmFrameWidgetClass,
 					 right_pane, args, argcnt);
-    
+
     argcnt = 0;
     XtSetArg(args[argcnt], XmNorientation, XmHORIZONTAL); argcnt++;
     XtSetArg(args[argcnt], XmNfillOption, XmFillNone ); argcnt++;
     add_rc = XtCreateManagedWidget("quit_rc", xmButtonBoxWidgetClass,
 				   lineup_frame, args, argcnt );
-    unsel_pb = XtCreateManagedWidget("unsel_pb", xmPushButtonWidgetClass, 
+    unsel_pb = XtCreateManagedWidget("unsel_pb", xmPushButtonWidgetClass,
 				   add_rc, NULL, 0 );
 
     XtAddCallback(unsel_pb, XmNactivateCallback, UnselCB,
 		  (XtPointer)demo_info);
 
-    unsel_pb = XtCreateManagedWidget("firstRowCol", xmPushButtonWidgetClass, 
+    unsel_pb = XtCreateManagedWidget("firstRowCol", xmPushButtonWidgetClass,
 				   add_rc, NULL, 0 );
 
     XtAddCallback(unsel_pb, XmNactivateCallback, FirstRowCol,
 		  (XtPointer)demo_info);
 
-    unsel_pb = XtCreateManagedWidget("toggleFind", xmToggleButtonWidgetClass, 
+    unsel_pb = XtCreateManagedWidget("toggleFind", xmToggleButtonWidgetClass,
 				   add_rc, NULL, 0 );
 
     XtAddCallback(unsel_pb, XmNarmCallback, ToggleFindArea,
@@ -267,7 +264,7 @@ PlayerOptionMenu( Widget parent, DemoInfo demo_info )
 						 args,
 						 argcnt);
 
-    XtAddCallback(demo_info->player[0], XmNactivateCallback, ChoosePlayerCB, 
+    XtAddCallback(demo_info->player[0], XmNactivateCallback, ChoosePlayerCB,
 		  (XtPointer)demo_info );
 
     argcnt = 0;
@@ -317,9 +314,9 @@ PlayerOptionMenu( Widget parent, DemoInfo demo_info )
 		args,
 		argcnt);
 
-    XtAddCallback(demo_info->player[5], XmNactivateCallback, ChoosePlayerCB, 
+    XtAddCallback(demo_info->player[5], XmNactivateCallback, ChoosePlayerCB,
 		  (XtPointer)demo_info );
-    
+
     argcnt = 0;
     demo_info->player[6] = XtCreateManagedWidget("playerseven",
 		xmPushButtonWidgetClass,
@@ -327,7 +324,7 @@ PlayerOptionMenu( Widget parent, DemoInfo demo_info )
 		args,
 		argcnt);
 
-    XtAddCallback(demo_info->player[6], XmNactivateCallback, ChoosePlayerCB, 
+    XtAddCallback(demo_info->player[6], XmNactivateCallback, ChoosePlayerCB,
 		  		  (XtPointer)demo_info );
 
     argcnt = 0;
@@ -337,7 +334,7 @@ PlayerOptionMenu( Widget parent, DemoInfo demo_info )
 		args,
 		argcnt);
 
-    XtAddCallback(demo_info->player[7], XmNactivateCallback, ChoosePlayerCB, 
+    XtAddCallback(demo_info->player[7], XmNactivateCallback, ChoosePlayerCB,
 		  (XtPointer)demo_info );
 
 

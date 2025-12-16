@@ -137,10 +137,7 @@ Widget CreateExtListCB(Widget parent)
 
 }
 
-
-/* ARGSUSED */
-void
-RemCB(Widget w, XtPointer client, XtPointer call )
+void RemCB(Widget w, XtPointer client, XtPointer call)
 {
     Arg args[5];
     Cardinal argcnt;
@@ -180,11 +177,8 @@ RemCB(Widget w, XtPointer client, XtPointer call )
 
     for (i = 0, j = 0; i < items_count; i++) {
 	if (!items[i].selected) {
-
 	    new_items[j].pixmap = items[i].pixmap;
-
 	    new_items[j].selected = False;
-
 	    new_items[j].data = items[i].data;
 
 	    for (k = 0; k < NUM_COLUMNS; k++)
@@ -204,9 +198,7 @@ RemCB(Widget w, XtPointer client, XtPointer call )
     XtFree((XtPointer) items);
 }
 
-/* ARGSUSED */
-void
-ToggleFindArea(Widget w, XtPointer client, XtPointer call )
+void ToggleFindArea(Widget w, XtPointer client, XtPointer call)
 {
   DemoInfo demo_info = (DemoInfo)client;
   Arg args[5];
@@ -218,13 +210,9 @@ ToggleFindArea(Widget w, XtPointer client, XtPointer call )
 
   XtSetArg( args[0], XmNshowFind, is_set );
   XtSetValues( demo_info->extlist, args, 1 );
-
 }
 
-
-/* ARGSUSED */
-void
-FirstRowCol(Widget w, XtPointer client, XtPointer call )
+void FirstRowCol(Widget w, XtPointer client, XtPointer call)
 {
   DemoInfo demo_info = (DemoInfo)client;
   Arg args[5];
@@ -235,30 +223,18 @@ FirstRowCol(Widget w, XtPointer client, XtPointer call )
   XtSetValues( demo_info->extlist, args, argcnt );
 }
 
-
-/* ARGSUSED */
-void
-UnselCB(Widget w, XtPointer client, XtPointer call )
+void UnselCB(Widget w, XtPointer client, XtPointer call)
 {
   DemoInfo demo_info = (DemoInfo)client;
-
   XmMultiListUnselectAllItems( demo_info->extlist );
-
 }
 
-/* ARGSUSED */
-void
-QuitCB(w, client, call)
-Widget w;
-XtPointer client;
-XtPointer call;
+void QuitCB(Widget w, XtPointer client, XtPointer call)
 {
-    exit(0);
+	exit(EXIT_SUCCESS);
 }
 
-/* ARGSUSED */
-void
-UpdateRemLabelStr(Widget w,XtPointer client, XtPointer call )
+void UpdateRemLabelStr(Widget w,XtPointer client, XtPointer call)
 {
   DemoInfo demo_info = (DemoInfo)client;
   Arg args[5];
@@ -278,10 +254,7 @@ UpdateRemLabelStr(Widget w,XtPointer client, XtPointer call )
 	}
 }
 
-
-
-void
-ChoosePlayerCB(Widget w,XtPointer client, XtPointer call )
+void ChoosePlayerCB(Widget w,XtPointer client, XtPointer call)
 {
     DemoInfo demo_info = (DemoInfo)client;
     Arg args[5];
@@ -453,18 +426,14 @@ end ",
     XmStringFree(xmstring);
 }
 
-
-
-
 /************************************************************
  *
  *  Sort routines.
  *
  ************************************************************/
-static int
-NothingSort( short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2 )
+static int NothingSort(short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2)
 {
-  return(0);
+	return 0;
 }
 
 static String StringFromXmString(XmString xms)
@@ -482,8 +451,7 @@ static String StringFromXmString(XmString xms)
  *      Returns:       -1, 0, or 1 depending upon whether 1 is less than,
  *                                 equal to, or greater than 2.
  */
-static int
-ExtListAlphaSort( short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2 )
+static int ExtListAlphaSort(short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2)
 {
   String str1 = StringFromXmString(row1->values[column]);
   String str2 = StringFromXmString(row2->values[column]);
@@ -511,8 +479,7 @@ ExtListAlphaSort( short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *ro
  *      Returns:       -1, 0, or 1 depending upon whether 1 is less than,
  *                                 equal to, or greater than 2.
  */
-static int
-ExtListIntSort( short column,  XmMultiListRowInfo *row1, XmMultiListRowInfo *row2 )
+static int ExtListIntSort(short column,  XmMultiListRowInfo *row1, XmMultiListRowInfo *row2)
 {
   String str1 = StringFromXmString(row1->values[column]);
   String str2 = StringFromXmString(row2->values[column]);
@@ -551,8 +518,7 @@ ExtListIntSort( short column,  XmMultiListRowInfo *row1, XmMultiListRowInfo *row
  *      Returns:       -1, 0, or 1 depending upon whether 1 is less than,
  *                                 equal to, or greater than 2.
  */
-static int
-ExtListDoubleSort( short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2 )
+static int ExtListDoubleSort(short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *row2)
 {
   String str1 = StringFromXmString(row1->values[column]);
   String str2 = StringFromXmString(row2->values[column]);
@@ -583,3 +549,4 @@ ExtListDoubleSort( short column, XmMultiListRowInfo *row1, XmMultiListRowInfo *r
 
   return(ret_val);
 }
+
