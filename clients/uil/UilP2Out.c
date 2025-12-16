@@ -1354,8 +1354,6 @@ void out_emit_value(sym_value_entry_type *value_entry )
 	case sym_k_xbitmapfile_value:
 	case sym_k_keysym_value:
 	case sym_k_localized_string_value:
-	    /* BEGIN OSF Fix CR 4859 */
-/* END OSF Fix CR 4859 */
 	    value_size = value_entry->w_length + 1;  /* +1 for the null */
 	    break;
 
@@ -1396,8 +1394,6 @@ void out_emit_value(sym_value_entry_type *value_entry )
 		}
 	    break;
 	    }
-
-
 	case sym_k_asciz_table_value:
 	    {
 	    sym_value_entry_type	*value_segment;
@@ -1537,7 +1533,6 @@ void out_emit_value(sym_value_entry_type *value_entry )
     /*
     **	Move the literal to the context.
     */
-
     UrmRCSetGroup( out_az_context, URMgLiteral );
     UrmRCSetType( out_az_context, value_type );
     UrmRCSetAccess( out_az_context, access );
@@ -1545,8 +1540,7 @@ void out_emit_value(sym_value_entry_type *value_entry )
     UrmRCSetSize( out_az_context, value_size );
 
     buffer = (char *) UrmRCBuffer( out_az_context );
-
-    bzero( buffer, value_size );
+    memset(buffer, 0, value_size);
 
     switch (value_entry->b_type)
 	{
@@ -1555,11 +1549,11 @@ void out_emit_value(sym_value_entry_type *value_entry )
 	case sym_k_float_value:
 	case sym_k_reason_value:
 	case sym_k_argument_value:
-	    memmove( buffer, &value_entry->value.l_integer, value_size );
+	    memmove(buffer, &value_entry->value.l_integer, value_size);
 	    break;
 
 	case sym_k_single_float_value:
-	    memmove( buffer, &value_entry->value.single_float, value_size);
+	    memmove(buffer, &value_entry->value.single_float, value_size);
 	    break;
 
 	case sym_k_char_8_value:
@@ -1569,7 +1563,7 @@ void out_emit_value(sym_value_entry_type *value_entry )
 	case sym_k_xbitmapfile_value:
 	case sym_k_keysym_value:
 	case sym_k_compound_string_value:
-	    memmove( buffer, value_entry->value.c_value, value_size );
+	    memmove(buffer, value_entry->value.c_value, value_size);
 	    break;
 
 /* BEGIN OSF Fix CR 4859 */
@@ -1880,7 +1874,6 @@ void out_emit_value(sym_value_entry_type *value_entry )
 	case sym_k_vertical_float_value:
 	    {
 	    RGMUnitsFloatPtr ufptr;
-
 	    ufptr = (RGMUnitsFloatPtr)buffer;
 	    memcpy(ufptr->value, &value_entry->value.d_real, sizeof(double));
 	    ufptr->units = value_entry->b_arg_type;

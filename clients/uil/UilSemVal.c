@@ -2378,8 +2378,6 @@ if ((val_entry->b_aux_flags & sym_m_exp_eval) == 0)
     case sym_k_compound_string_value:
         sem_evaluate_value_cs (val_entry);
 	break;
-/* BEGIN OSF Fix CR 4859 */
-/* END OSF Fix CR 4859 */
     case sym_k_string_table_value:
 	{
 	sym_value_entry_type *value_segment;
@@ -3112,8 +3110,6 @@ sym_value_entry_type *sem_evaluate_value_expr(sym_value_entry_type *value_entry)
 	    sem_append_str_to_cstr(value_entry, value_entry->az_exp_op1, FALSE);
 	    value_entry->az_first_table_value->b_aux_flags =
 	      value_entry->b_aux_flags;
-	    /* BEGIN OSF Fix CR 4859 */
-	    /* END OSF Fix CR 4859 */
 	    res_type = wcstr_arg_type;
 	    break;
 	  default:
@@ -3166,8 +3162,6 @@ sym_value_entry_type *sem_evaluate_value_expr(sym_value_entry_type *value_entry)
 		  (value_entry,
 		   op1_entry,
 		   FALSE);
-		/* BEGIN OSF Fix CR 4859 */
-		/* END OSF Fix CR 4859 */
 		res_type = wcstr_arg_type;
 		break;
 	      default:

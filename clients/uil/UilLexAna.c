@@ -83,7 +83,7 @@ typedef struct	_lex_buffer_type
 
 static lex_buffer_type *get_lex_buffer  _ARGUMENTS(( lex_buffer_type *az_current_lex_buffer ));
 #if debug_version
-static void dump_token  _ARGUMENTS(( lex_buffer_type *az_current_lex_buffer , int l_lex_pos ));
+static void dump_token(lex_buffer_type *az_current_lex_buffer, int l_lex_pos);
 #endif
 
 
@@ -996,7 +996,7 @@ static int	punc2_token[2] =
 **
 **--
 **/
-int	yylex()
+int	yylex(void)
 {
     unsigned char c_char;	    /* current character */
     int		l_class;	    /* current character's class */
@@ -2303,12 +2303,7 @@ void lex_filter_unprintable_chars(unsigned char *buffer, int length,
 **
 **--
 **/
-
-static void	dump_token( az_current_lex_buffer,
-		    l_lex_pos)
-
-lex_buffer_type	*az_current_lex_buffer;
-int		l_lex_pos;
+static void	dump_token(lex_buffer_type *az_current_lex_buffer, int l_lex_pos)
 {
     unsigned char    c_buffer[l_max_lex_buffer_pos +2];
     lex_buffer_type *az_lex_buffer;
