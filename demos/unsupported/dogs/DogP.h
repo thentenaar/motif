@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,16 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
- * HISTORY
-*/ 
+*/
+
 /*   $XConsortium: DogP.h /main/5 1995/07/14 10:06:06 drk $ */
 
 /*****************************************************************************
 *
 *  DogP.H - widget private header file
-*  
+*
 ******************************************************************************/
 
 #ifndef _DogP_h
@@ -37,8 +35,8 @@
 #include <Xm/PrimitiveP.h>
 #include "Dog.h"
 
-void _DogDrawPixmap();
-void _DogPosition();
+void _DogDrawPixmap(DogWidget dw);
+void _DogPosition(DogWidget w);
 
 #define DogIndex (XmPrimitiveIndex + 1)
 

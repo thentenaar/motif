@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
-/*
- * HISTORY
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Square.c /main/6 1998/03/25 18:18:13 csn $"
@@ -49,11 +47,13 @@ static char rcsid[] = "$TOG: Square.c /main/6 1998/03/25 18:18:13 csn $"
 #define MakeSquare(w) XmConstraintField((w),square_constraint_offsets, \
 			Square,make_square, Boolean)
 
-static void ClassInitialize();
-static void Initialize();
-static Boolean SetValues();
-static void ConstraintInitialize();
-static Boolean ConstraintSetValues();
+static void ClassInitialize(void);
+static void Initialize(Widget request, Widget new, ArgList args, Cardinal *num_args);
+static Boolean SetValues(Widget current, Widget request, Widget new,
+                         ArgList args, Cardinal *num_args);
+static void ConstraintInitialize(Widget request, Widget new, ArgList args, Cardinal *num_args);
+static Boolean ConstraintSetValues(Widget current, Widget request, Widget new,
+                                   ArgList args, Cardinal *num_args);
 
 static XmPartResource resources[] = {
     {
@@ -159,14 +159,9 @@ static XmOffsetPtr square_constraint_offsets;	/* Constraint offsets table */
  * SquareCreate - Convenience routine, used by Uil/Mrm.
  *
  *********************************************************************/
-
-Widget SquareCreate(parent, name, arglist, nargs)
-    Widget parent;
-    char *name;
-    Arg *arglist;
-    int nargs;
+Widget SquareCreate(Widget parent, char *name, Arg *arglist, Cardinal nargs)
 {
-    return(XtCreateWidget (name, squareWidgetClass, parent, arglist, nargs));
+	return XtCreateWidget(name, squareWidgetClass, parent, arglist, nargs);
 }
 
 /**********************************************************************
@@ -174,11 +169,10 @@ Widget SquareCreate(parent, name, arglist, nargs)
  * SquareMrmInitialize - register Square widget class with Mrm
  *
  *********************************************************************/
-
-int SquareMrmInitialize()
+int SquareMrmInitialize(void)
 {
-    return(MrmRegisterClass (MrmwcUnknown, "Square", "SquareCreate",
-			     SquareCreate, (WidgetClass)&squareClassRec));
+	return MrmRegisterClass(MrmwcUnknown, "Square", "SquareCreate",
+	                        SquareCreate, squareWidgetClass);
 }
 
 /**********************************************************************
@@ -187,85 +181,84 @@ int SquareMrmInitialize()
  *
  *********************************************************************/
 
-static void ClassInitialize()
+static void ClassInitialize(void)
 {
-    XmeResolvePartOffsets(squareWidgetClass, &square_offsets,
-				&square_constraint_offsets);
+	XmeResolvePartOffsets(squareWidgetClass, &square_offsets,
+	                      &square_constraint_offsets);
 }
 
-static void Initialize(req, new)
-    SquareWidget req;
-    SquareWidget new;
+static void Initialize(Widget request, Widget new, ArgList args, Cardinal *num_args)
 {
-    if (MajorDimension(new) != SquareWIDTH &&
-	MajorDimension(new) != SquareHEIGHT) {
-	XtWarning("Square: invalid majorDimension");
-	MajorDimension(new) = SquareWIDTH;
-    }
-}
+	(void)request;
+	(void)args;
+	(void)num_args;
 
-static Boolean SetValues(curr, req, new)
-    SquareWidget curr;
-    SquareWidget req;
-    SquareWidget new;
-{
-    if (MajorDimension(new) != SquareWIDTH &&
-	MajorDimension(new) != SquareHEIGHT) {
-	XtWarning("Square: invalid majorDimension");
-	MajorDimension(new) = MajorDimension(curr);
-    }
-    return (False);
-}
-
-static void ConstraintInitialize (req, new)
-    Widget req;
-    Widget new;
-{
-    Dimension m;
-
-    if(MakeSquare(new) == True) {
-        if (MajorDimension(XtParent(new))==SquareWIDTH)
-            m = Width(new);
-        else
-            m = Height(new);
-
-	XtResizeWidget(new, m, m, BorderWidth(new));
-    }
-}
-
-static Boolean ConstraintSetValues (old, ref, new)
-    Widget old;
-    Widget ref;
-    Widget new;
-{
-    Boolean redraw = False;
-
-    if (MakeSquare(new) != MakeSquare(old)) {
-	if(MakeSquare(new)==True) {
-            if (MajorDimension(XtParent(new))==SquareWIDTH)
-        	Height(new) = Width(new);
-            else
-        	Width(new) = Height(new);
+	if (MajorDimension(new) != SquareWIDTH && MajorDimension(new) != SquareHEIGHT) {
+		XtWarning("Square: invalid majorDimension");
+		MajorDimension(new) = SquareWIDTH;
 	}
-	else {
-	    XtWidgetGeometry gi;
-	    XtWidgetGeometry gp;
+}
 
-            if (MajorDimension(XtParent(new))==SquareWIDTH)
-        	Height(new) = Height(new)/2;
-            else
-        	Width(new) = Width(new)/2;
+static Boolean SetValues(Widget current, Widget request, Widget new,
+                         ArgList args, Cardinal *num_args)
+{
+	(void)request;
+	(void)args;
+	(void)num_args;
 
-	    gi.request_mode = CWWidth | CWHeight;
-	    gi.width = Width(new);
-	    gi.height = Height(new);
-	    if (XtQueryGeometry(new, &gi, &gp) == XtGeometryAlmost) {
-		if (gp.request_mode && CWWidth != 0) Width(new) = gp.width;
-		if (gp.request_mode && CWHeight != 0) Height(new) = gp.height;
-	    }
+	if (MajorDimension(new) != SquareWIDTH && MajorDimension(new) != SquareHEIGHT) {
+		XtWarning("Square: invalid majorDimension");
+		MajorDimension(new) = MajorDimension(current);
 	}
-	redraw = True;
+
+    return False;
+}
+
+static void ConstraintInitialize(Widget request, Widget new, ArgList args, Cardinal *num_args)
+{
+	Dimension m;
+
+	(void)request;
+	(void)args;
+	(void)num_args;
+
+	if (MakeSquare(new)) {
+		m = (MajorDimension(XtParent(new)) == SquareWIDTH) ? Width(new) : Height(new);
+		XtResizeWidget(new, m, m, BorderWidth(new));
     }
-    return (redraw);
+}
+
+static Boolean ConstraintSetValues(Widget current, Widget request, Widget new,
+                                   ArgList args, Cardinal *num_args)
+{
+	XtWidgetGeometry gi, gp;
+
+	(void)request;
+	(void)args;
+	(void)num_args;
+
+	if (MakeSquare(new) == MakeSquare(current))
+		return False;
+
+	if (MakeSquare(new)) {
+		if (MajorDimension(XtParent(new)) == SquareWIDTH)
+			Height(new) = Width(new);
+		else Width(new) = Height(new);
+		return True;
+	}
+
+	if (MajorDimension(XtParent(new)) == SquareWIDTH)
+		Height(new) = Height(new) >> 1;
+	else Width(new) = Width(new) >> 1;
+
+	gi.request_mode = CWWidth | CWHeight;
+	gi.width        = Width(new);
+	gi.height       = Height(new);
+	if (XtQueryGeometry(new, &gi, &gp) == XtGeometryAlmost) {
+		if (gp.request_mode & CWWidth)  Width(new)  = gp.width;
+		if (gp.request_mode & CWHeight) Height(new) = gp.height;
+	}
+
+	return True;
 }
 

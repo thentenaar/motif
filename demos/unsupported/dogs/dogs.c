@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
 */
-/*
- * HISTORY
-*/
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: dogs.c /main/5 1995/07/14 10:07:19 drk $"
@@ -50,23 +48,23 @@ XtAppContext  app_context;
 #define k_dog3_id 3
 #define k_help_id 4
 
-static void create_cb();
-static void bark_cb();
-static void tb_cb();
-static void scale_cb();
-static void help_cb();
-static void exit_cb();
+static void create_cb(Widget w, int *id, unsigned long *reason);
+static void bark_cb(Widget w, int *volume, XtPointer cb);
+static void tb_cb(Widget w, int *tag, XmToggleButtonCallbackStruct *cb);
+static void scale_cb(Widget w, int *tag, XmScaleCallbackStruct *cb);
+static void help_cb(Widget w, XmString name, XtPointer cb);
+static void exit_cb (Widget w, XmString name, XtPointer cb);
 
 static MrmHierarchy mrm_id;
 static char *mrm_vec[]={"dogs.uid"};
 static MrmCode mrm_class;
 static MRMRegisterArg mrm_names[] = {
-        {"create_cb", (caddr_t)create_cb },
-        {"bark_cb", (caddr_t)bark_cb },
-        {"tb_cb", (caddr_t)tb_cb },
-        {"scale_cb", (caddr_t)scale_cb },
-        {"help_cb", (caddr_t)help_cb },
-        {"exit_cb", (caddr_t)exit_cb }
+        {"create_cb", (XPointer)create_cb },
+        {"bark_cb", (XPointer)bark_cb },
+        {"tb_cb", (XPointer)tb_cb },
+        {"scale_cb", (XPointer)scale_cb },
+        {"help_cb", (XPointer)help_cb },
+        {"exit_cb", (XPointer)exit_cb }
 };
 
 static Widget dog1_id;
@@ -74,9 +72,7 @@ static Widget dog2_id;
 static Widget dog3_id;
 static Widget help_id;
 
-int main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char *argv[])
 {
     Widget shell;
     Display *display;
@@ -103,9 +99,9 @@ int main(argc, argv)
     shell = XtAppCreateShell(argv[0], NULL, applicationShellWidgetClass,
 			  display, args, 3);
 
-    if (MrmOpenHierarchy (1, mrm_vec, NULL, &mrm_id) != MrmSUCCESS) exit(0);
+    if (MrmOpenHierarchy(1, mrm_vec, NULL, &mrm_id) != MrmSUCCESS) exit(EXIT_FAILURE);
     MrmRegisterNames(mrm_names, XtNumber(mrm_names));
-    MrmFetchWidget (mrm_id, "app_main", shell, &app_main, &mrm_class);
+    MrmFetchWidget(mrm_id, "app_main", shell, &app_main, &mrm_class);
     XtManageChild(app_main);
     XtRealizeWidget(shell);
     XtAppMainLoop(app_context);
@@ -113,11 +109,9 @@ int main(argc, argv)
     return 0;    /* make compiler happy */
 }
 
-static void create_cb(w, id, reason)
-    Widget w;
-    int *id;
-    unsigned long *reason;
+static void create_cb(Widget w, int *id, unsigned long *reason)
 {
+    (void)reason;
     switch (*id) {
         case k_dog1_id: dog1_id = w; break;
         case k_dog2_id: dog2_id = w; break;
@@ -130,22 +124,17 @@ static void create_cb(w, id, reason)
     }
 }
 
-static void bark_cb (w, volume, cb)
-    Widget w;
-    int *volume;
-    XtPointer cb;
+static void bark_cb(Widget w, int *volume, XtPointer cb)
 {
     XBell(XtDisplay(w), *volume);
 }
 
-static void tb_cb (w, tag, cb)
-    Widget w;
-    int *tag;
-    XmToggleButtonCallbackStruct *cb;
+static void tb_cb(Widget w, int *tag, XmToggleButtonCallbackStruct *cb)
 {
     Arg args[1];
     Widget dog=NULL;
 
+	(void)w;
     switch (*tag) {
 	case(1) : dog = dog1_id; break;
 	case(2) : dog = dog2_id; break;
@@ -155,14 +144,12 @@ static void tb_cb (w, tag, cb)
     XtSetValues(dog, args, 1);
 }
 
-static void scale_cb(w, tag, cb)
-    Widget w;
-    int *tag;
-    XmScaleCallbackStruct *cb;
+static void scale_cb(Widget w, int *tag, XmScaleCallbackStruct *cb)
 {
     Arg args[1];
     Widget dog = NULL;
 
+	(void)w;
     switch (*tag) {
 	case(1) : dog = dog1_id; break;
 	case(2) : dog = dog2_id; break;
@@ -172,24 +159,22 @@ static void scale_cb(w, tag, cb)
     XtSetValues(dog, args, 1);
 }
 
-static void help_cb (w, name, cb)
-    Widget w;
-    XmString name;
-    XtPointer cb;
+static void help_cb(Widget w, XmString name, XtPointer cb)
 {
     Arg args[1];
 
-    if (name == NULL) return;
+	(void)w;
+    if (!name) return;
     XtSetArg (args[0], XmNmessageString, name);
     XtSetValues(help_id, args, 1);
     XtManageChild(help_id);
 }
 
-static void exit_cb (w, name, cb)
-    Widget w;
-    XmString name;
-    XtPointer cb;
+static void exit_cb (Widget w, XmString name, XtPointer cb)
 {
-    exit(0);
+	(void)w;
+	(void)name;
+	(void)cb;
+    exit(EXIT_SUCCESS);
 }
 

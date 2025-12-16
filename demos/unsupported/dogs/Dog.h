@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,16 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
- * HISTORY
-*/ 
+*/
+
 /*   $XConsortium: Dog.h /main/5 1995/07/14 10:05:31 drk $ */
 
 /*****************************************************************************
 *
 *  Dog.h - widget public header file
-*  
+*
 ******************************************************************************/
 
 #ifndef _Dog_h
@@ -50,9 +48,9 @@ typedef struct _DogRec *DogWidget;
 
 #define IsDog(w) XtIsSubclass((w), dogWidgetClass)
 
-extern Widget DogCreate();
+extern Widget DogCreate(Widget parent, char *name, Arg *arglist, Cardinal nargs);
 #ifdef	USING_UIL
-extern int DogMrmInitialize();
+extern int DogMrmInitialize(void);
 #endif
 
 #endif /* _Dog_h */

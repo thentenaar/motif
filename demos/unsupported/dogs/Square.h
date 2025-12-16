@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
- * HISTORY
-*/ 
+*/
+
 /*   $XConsortium: Square.h /main/5 1995/07/14 10:06:38 drk $ */
 
 /*****************************************************************************
@@ -41,8 +39,8 @@ externalref WidgetClass squareWidgetClass;
 typedef struct _SquareClassRec *SquareWidgetClass;
 typedef struct _SquareRec *SquareWidget;
 
-extern Widget SquareCreate();
-extern int SquareMrmInitialize();
+extern Widget SquareCreate(Widget parent, char *name, Arg *arglist, Cardinal nargs);
+extern int SquareMrmInitialize(void);
 
 #define IsSquare(w) XtIsSubclass((w), squareWidgetClass)
 
