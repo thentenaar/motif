@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 #ifndef _XmScreenP_h
 #define _XmScreenP_h
 
@@ -108,12 +108,6 @@ typedef struct {
     XtPointer           user_data;
 
     Pixmap              insensitive_stipple_bitmap;
-
-#ifdef DEFAULT_GLYPH_PIXMAP
-   Pixmap           default_glyph_pixmap ;
-   unsigned int     default_glyph_pixmap_width ;
-   unsigned int     default_glyph_pixmap_height ;
-#endif
 
    XtPointer		inUsePixmaps;
 } XmScreenPart, *XmScreenPartPtr;

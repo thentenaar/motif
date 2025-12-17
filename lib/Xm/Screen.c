@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdio.h>
 #include <X11/Xatom.h>
@@ -194,19 +194,7 @@ static XtResource resources[] = {
 	XmRNoScalingBitmap,
 	sizeof(Pixmap), Offset(screen.insensitive_stipple_bitmap),
 	XmRString, XmS50_foreground
-    },
-#ifdef DEFAULT_GLYPH_PIXMAP
-    {
-        XmNdefaultGlyphPixmap, XmCDefaultGlyphPixmap,
-	/* if you move this one as a real pixmap,
-	   change the code in the buttons as well,
-	   move the copyplane into a copyarea */
-	XmRBitmap,
-	sizeof (Pixmap), Offset(screen.default_glyph_pixmap),
-	XmRImmediate, (XtPointer) XmUNSPECIFIED_PIXMAP
-     },
-#endif
-
+    }
 };
 
 #undef Offset
@@ -461,18 +449,6 @@ Initialize(
 		(XtPointer)NULL;
     ((XmScreenInfo *)(xmScreen->screen.screenInfo))->destroyCallbackAdded =
 		False;
-
-
-#ifdef DEFAULT_GLYPH_PIXMAP
-    if (xmScreen->screen.default_glyph_pixmap != XmUNSPECIFIED_PIXMAP) {
-	(void) XmeGetPixmapData(XtScreen(new_widget),
-			 xmScreen->screen.default_glyph_pixmap,
-			 NULL, NULL, NULL, NULL, NULL, NULL,
-			 &(xmScreen->screen.default_glyph_pixmap_width),
-			 &(xmScreen->screen.default_glyph_pixmap_height));
-    }
-#endif
-
 }
 
 /************************************************************************
@@ -1342,31 +1318,6 @@ _XmGetInsensitiveStippleBitmap (Widget w)
 
     return(xmScreen->screen.insensitive_stipple_bitmap);
 }
-
-
-#ifdef DEFAULT_GLYPH_PIXMAP
-/**********************************************************************
- *
- *  _XmGetDefaultGlyphPixmap
- *
- **********************************************************************/
-Pixmap
-_XmGetDefaultGlyphPixmap(
-        Screen *screen,
-        unsigned int * width,
-        unsigned int  *height)
-{
-    XmScreen          xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(screen);
-
-    if (width) *width = xmScreen->screen.default_glyph_pixmap_width ;
-    if (height) *height = xmScreen->screen.default_glyph_pixmap_height ;
-
-    return(xmScreen->screen.default_glyph_pixmap);
-}
-#endif
-
 
 
 /*********************************************************************
