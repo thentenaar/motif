@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 2025 Tim Hentenaar
@@ -21,11 +21,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -38,15 +40,17 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include "ImageCachI.h"		/* for DIRECT_PIXMAP_CACHED */
 #include "ReadImageI.h"		/* for read xbm stuff */
 #include "SvgI.h"
+
+#include <X11/xpm.h>
+#include <X11/Xresource.h>
+#include <X11/Xlibint.h>
+
 #include <Xm/AccColorT.h>       /* for new _XmGetColoredPixmap API */
 #include <Xm/ColorObjP.h>       /* for Xme Color Obj access API */
 #include <Xm/IconFile.h>        /* XmGetIconFileName */
 #if XM_PRINTING
 #include <Xm/PrintSP.h>         /* for pixmap resolution */
 #endif
-#include <Xm/XpmP.h>
-#include <X11/Xresource.h>
-#include <X11/Xlibint.h>
 
 #if XM_WITH_JPEG
 #include "JpegI.h"
@@ -674,7 +678,7 @@ GetXpmImage(
 
     *image = NULL ;
 
-    xpmStatus = XmeXpmReadFileToImage(display,
+    xpmStatus = XpmReadFileToImage(display,
 			      file_name,
 			      image,
 			      &mask_image,
@@ -786,14 +790,14 @@ GetXpmImage(
 	    return TRUE ;
 	} else {
 	    if (xpmStatus >= 0)
-		XmeXpmFreeAttributes(&attrib);
+		XpmFreeAttributes(&attrib);
 	    return NOT_CACHED ; /* mean the image can be destroyed
 				   after it is used */
 	}
     }
 
     if (xpmStatus >= 0)
-	XmeXpmFreeAttributes(&attrib);
+	XpmFreeAttributes(&attrib);
 
     return FALSE;
 }
@@ -1753,7 +1757,7 @@ XmDestroyPixmap(
 	      FreeCacheColors(DisplayOfScreen(pix_entry->screen),
 			      DefaultColormapOfScreen(pix_entry->screen),
 			      pix_entry->pixels, pix_entry->npixels, NULL);
-	      XmeXpmFree(pix_entry->pixels);
+	      XpmFree(pix_entry->pixels);
 	  }
 	  XtFree((char*)pix_entry);
       }

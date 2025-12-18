@@ -32,6 +32,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <X11/xpm.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <Xm/ManagerP.h>
@@ -43,7 +44,6 @@
 #include "MessagesI.h"
 #include "ScreenI.h"
 #include "XmI.h"
-#include <Xm/XpmP.h>
 
 /* Warning and Error messages */
 
@@ -327,7 +327,7 @@ GetDefaultColors(
 	_XmProcessUnlock();
 	return result;
 }
-
+
 
 
 Boolean

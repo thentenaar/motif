@@ -43,9 +43,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <X11/xpm.h>
+#include <X11/Shell.h>
 #include <Xm/XmP.h>
 #include <Xm/Xm.h>
-#include <X11/Shell.h>
 #include <Xm/BulletinB.h>
 #include <Xm/CascadeB.h>
 #include <Xm/DrawingAP.h>
@@ -64,7 +65,6 @@
 #include <Xm/ScrolledW.h>
 #include <Xm/SelectioB.h>
 #include <Xm/Separator.h>
-#include <Xm/XpmP.h>
 #include "piano.images"
 
 #ifdef HAVE_CONFIG_H
@@ -952,18 +952,18 @@ void BuildKeys (Widget parent)
 	  XpmAttributes  attributes;
 
 	  attributes.valuemask = 0;
-	  XmeXpmCreatePixmapFromData(dsp, win, none,     &(iconPixmaps[0]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, andrew,   &(iconPixmaps[1]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, dan,      &(iconPixmaps[2]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, dave,     &(iconPixmaps[3]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, doug,     &(iconPixmaps[4]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, ellis,    &(iconPixmaps[5]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, ingeborg, &(iconPixmaps[6]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, jim,      &(iconPixmaps[7]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, kamesh,   &(iconPixmaps[8]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, scott,    &(iconPixmaps[9]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, steve,    &(iconPixmaps[10]), &shapemask, &attributes);
-	  XmeXpmCreatePixmapFromData(dsp, win, vania,    &(iconPixmaps[11]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, none,     &(iconPixmaps[0]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, andrew,   &(iconPixmaps[1]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, dan,      &(iconPixmaps[2]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, dave,     &(iconPixmaps[3]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, doug,     &(iconPixmaps[4]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, ellis,    &(iconPixmaps[5]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, ingeborg, &(iconPixmaps[6]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, jim,      &(iconPixmaps[7]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, kamesh,   &(iconPixmaps[8]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, scott,    &(iconPixmaps[9]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, steve,    &(iconPixmaps[10]), &shapemask, &attributes);
+	  XpmCreatePixmapFromData(dsp, win, vania,    &(iconPixmaps[11]), &shapemask, &attributes);
 
 	  appData->wkeyCount = noteCount = imageCount;
 	}

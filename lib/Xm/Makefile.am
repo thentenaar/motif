@@ -164,7 +164,6 @@ XmStrDefsI.h \
 XmStringI.h \
 XmTabListI.h \
 XmosI.h \
-XpmI.h \
 $(JPEG_HDRS) \
 $(PNG_HDRS) \
 $(TIP_HDRS)
@@ -260,20 +259,13 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
 
 OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c
 
-XPM_SRCS = \
-        XpmAttrib.c    XpmCrIFrDat.c  XpmInfo.c      XpmWrFFrDat.c  Xpmmisc.c \
-        XpmCrBufFrI.c  XpmCrIFrP.c    XpmRdFToBuf.c  XpmWrFFrI.c    Xpmparse.c\
-        XpmCrBufFrP.c  XpmCrPFrBuf.c  XpmRdFToDat.c  XpmWrFFrP.c    Xpmrgb.c \
-        XpmCrDatFrI.c  XpmCrPFrDat.c  XpmRdFToI.c    Xpmcreate.c    Xpmscan.c \
-	XpmCrDatFrP.c  XpmCrPFrI.c    XpmRdFToP.c    Xpmdata.c \
-        XpmCrIFrBuf.c  XpmImage.c     XpmWrFFrBuf.c  Xpmhashtab.c
-
 NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
         Notebook.c     ComboBox.c     GrabShell.c     SpinB.c  \
         SSpinB.c       TxtPropCv.c    TranslNew.c
 
-libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(XPM_SRCS) $(NEW_WID_SRCS) $(SLIDE_SRCS) \
-        $(TIP_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
+libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(NEW_WID_SRCS) \
+                   $(SLIDE_SRCS) $(TIP_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) \
+                   $(PNG_SRCS)
 
 EXTRA_libXm_la_SOURCES = $(SLIDE_SRCS) $(TIP_SRCS)
 
