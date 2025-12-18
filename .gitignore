@@ -2,12 +2,12 @@
 *.[oa]
 *.l[oa]
 *.so
+*.pc
 *~
 .deps
 .libs
 .cache
 .ccls-cache
-motif.pc
 Makefile.in
 aclocal.m4
 acinclude.m4

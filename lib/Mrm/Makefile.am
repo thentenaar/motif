@@ -1,6 +1,7 @@
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in Mrm.pc
 CLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST = Mrm.msg
+pkgconfig_DATA = Mrm.pc
 
 AM_CPPFLAGS = -I$(srcdir)/.. -I.. -I../Xm ${X_CFLAGS} $(XFT_CFLAGS)
 

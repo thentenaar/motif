@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mrm
+Description: Motif Resource Manager
+Version: @XM_VERSION@
+Requires: motif
+Requires.private: xpm xt xft xmu xext x11
+Cflags: -I${includedir}
+Libs: -L${libdir} -lMrm

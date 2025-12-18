@@ -226,6 +226,7 @@ clients/mwm/Makefile \
 clients/mwm/WmWsmLib/Makefile \
 clients/uil/Makefile \
 clients/uil/XmAppl.uil \
+clients/uil/Uil.pc \
 clients/xmbind/Makefile \
 config/Makefile \
 config/util/Makefile \
@@ -236,6 +237,7 @@ lib/Makefile \
 lib/Xm/Makefile \
 lib/Xm/version.h \
 lib/Mrm/Makefile \
+lib/Mrm/Mrm.pc \
 localized/Makefile \
 localized/util/Makefile \
 doc/Makefile \

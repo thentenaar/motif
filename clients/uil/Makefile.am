@@ -1,7 +1,8 @@
-MAINTAINERCLEANFILES = Makefile.in Uil.cat UilMsgCatI.h
+MAINTAINERCLEANFILES = Makefile.in Uil.cat UilMsgCatI.h Uil.pc
 
 EXTRA_DIST = Uil.msg
 bin_PROGRAMS = uil
+pkgconfig_DATA = Uil.pc
 
 libUil_la_LDFLAGS = -version-info @ABI_VERSION@
 
