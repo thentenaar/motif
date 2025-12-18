@@ -60,11 +60,13 @@ int main(int argc, char *argv[])
 
 	runner = srunner_create(NULL);
 	srunner_set_tap(runner, "-");
+
+	jpeg_suite(runner);
+	png_suite(runner);
+	svg_suite(runner);
+	xmdesktopobject_suite(runner);
 	xmfontlistentry_suite(runner);
 	xmfontlist_suite(runner);
-	png_suite(runner);
-	jpeg_suite(runner);
-	svg_suite(runner);
 
 	/**
 	 * Given that some things in Motif / Xt rely on static initialization

@@ -34,10 +34,11 @@ Widget init_xt(const char *klass);
 void uninit_xt(void);
 
 /* Suites */
+void jpeg_suite(SRunner *runner);
+void png_suite(SRunner *runner);
+void svg_suite(SRunner *runner);
+void xmdesktopobject_suite(SRunner *runner);
 void xmfontlistentry_suite(SRunner *runner);
 void xmfontlist_suite(SRunner *runner);
-void png_suite(SRunner *runner);
-void jpeg_suite(SRunner *runner);
-void svg_suite(SRunner *runner);
 
 #endif /* SUITES_H */
