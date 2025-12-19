@@ -265,6 +265,11 @@ externaldef(xmscreenquark) XrmQuark _XmMoveCursorIconQuark    = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark _XmCopyCursorIconQuark    = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark _XmLinkCursorIconQuark    = NULLQUARK;
 
+/**
+ * Context used to memoize Screen -> XmScreen association
+ */
+static XContext screen_context = None;
+
 static void ClassInitialize(void)
 {
 	baseClassExtRec.record_type = XmQmotif;
@@ -280,6 +285,7 @@ static void ClassInitialize(void)
 	XtInitializeWidgetClass(xmDesktopClass);
 	xmScreenClassRec.desktop_class.insert_child = xmDesktopClassRec.desktop_class.insert_child;
 	xmScreenClassRec.desktop_class.delete_child = xmDesktopClassRec.desktop_class.delete_child;
+	screen_context = XUniqueContext();
 }
 
 static void ClassPartInitialize(WidgetClass wc)
@@ -338,8 +344,14 @@ static void Initialize(Widget requested_widget, Widget new_widget,
                        ArgList args, Cardinal *num_args)
 {
 	XmScreenInfo *info;
-	XmScreen xmScreen = (XmScreen)new_widget;
-	Display *display  = XtDisplay(new_widget);
+	XmScreen xmScreen;
+	Display *display = XtDisplay(new_widget);
+
+	if (XFindContext(display, RootWindowOfScreen(XtScreen(new_widget)),
+	                 screen_context, (XPointer *)&xmScreen) == XCSUCCESS) {
+		XtError("Refusing to create an additional XmScreen");
+		return;
+	} else xmScreen = (XmScreen)new_widget;
 
 	((XmDesktopObject)xmScreen)->desktop.parent = NULL;
 	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
@@ -383,6 +395,10 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 	info->menu_state            = NULL;
 	info->destroyCallbackAdded  = False;
 	xmScreen->screen.screenInfo = info;
+
+	XSaveContext(display, RootWindowOfScreen(XtScreen(new_widget)),
+	             screen_context, (XPointer)xmScreen);
+
 }
 
 /**
@@ -463,38 +479,43 @@ static Boolean SetValues(Widget current, Widget requested, Widget new_w,
  ************************************************************************/
 static void Destroy(Widget widget)
 {
-	XmScreen xmScreen = (XmScreen)widget;
+	XmScreen xscr = (XmScreen)widget;
 	XmDragCursorCache cache, prev;
 	XmHashTable ht;
+	Window w;
 
 	/* destroy any default icons created by Xm */
-	_XmDestroyDefaultDragIcon(xmScreen->screen.xmStateCursorIcon);
-	_XmDestroyDefaultDragIcon(xmScreen->screen.xmMoveCursorIcon);
-	_XmDestroyDefaultDragIcon(xmScreen->screen.xmCopyCursorIcon);
-	_XmDestroyDefaultDragIcon(xmScreen->screen.xmLinkCursorIcon);
-	_XmDestroyDefaultDragIcon(xmScreen->screen.xmSourceCursorIcon);
+	_XmDestroyDefaultDragIcon(xscr->screen.xmStateCursorIcon);
+	_XmDestroyDefaultDragIcon(xscr->screen.xmMoveCursorIcon);
+	_XmDestroyDefaultDragIcon(xscr->screen.xmCopyCursorIcon);
+	_XmDestroyDefaultDragIcon(xscr->screen.xmLinkCursorIcon);
+	_XmDestroyDefaultDragIcon(xscr->screen.xmSourceCursorIcon);
 
 	/* free the cursorCache and the pixmapCache */
-	cache = xmScreen->screen.cursorCache;
+	cache = xscr->screen.cursorCache;
 	while (cache) {
 		prev = cache;
 		if (cache->cursor != None)
-			XFreeCursor(XtDisplay(xmScreen), cache->cursor);
+			XFreeCursor(XtDisplay(xscr), cache->cursor);
 		cache = cache->next;
 		XtFree((XtPointer)prev);
 	}
 
 	_XmProcessLock();
-	ht = (XmHashTable)xmScreen->screen.scratchPixmaps;
-	_XmMapHashTable(ht, FreePixmap, xmScreen);
+	ht = (XmHashTable)xscr->screen.scratchPixmaps;
+	_XmMapHashTable(ht, FreePixmap, xscr);
 	_XmFreeHashTable(ht);
-	_XmFreeHashTable((XmHashTable)xmScreen->screen.inUsePixmaps);
+	_XmFreeHashTable((XmHashTable)xscr->screen.inUsePixmaps);
 	_XmProcessUnlock();
 
 	/* need to remove pixmap and GC related to this screen */
-	_XmCleanPixmapCache(XtScreen(widget), NULL);
-	XtFree((XtPointer)xmScreen->screen.screenInfo);
+	_XmCleanPixmapCache(XtScreen(xscr), NULL);
+	XtFree((XtPointer)xscr->screen.screenInfo);
 	xmDesktopClass->core_class.destroy(widget);
+
+	w = RootWindowOfScreen(XtScreen(xscr));
+	if (XFindContext(XtDisplay(w), w, screen_context, (XPointer *)&xscr) == XCSUCCESS)
+		XDeleteContext(XtDisplay(w), w, screen_context);
 }
 
 /************************************************************************
@@ -992,6 +1013,13 @@ Widget XmGetXmScreen(Screen *screen)
 
 	_XmDisplayToAppContext(DisplayOfScreen(screen));
 	_XmAppLock(app);
+
+	if (screen_context != None && /* class might be yet uninitialized */
+	    XFindContext(DisplayOfScreen(screen), RootWindowOfScreen(screen),
+	                 screen_context, (XPointer *)&child) == XCSUCCESS) {
+		_XmAppUnlock(app);
+		return child;
+	}
 
 	if (!(d = (XmDisplay)XmGetXmDisplay(DisplayOfScreen(screen)))) {
 		XmeWarning(NULL, CANT_FIND_DISPLAY);
