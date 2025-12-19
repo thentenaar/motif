@@ -571,7 +571,7 @@ static void wmlResolveSymKRelated(void)
 
 		dstobj = wmlResolveFindObject(srcobj->syndef->related,
 		                              WmlResourceDefValid, srcobj->syndef->name);
-		if (dstobj) srcobj->related_code = dstobj->related_code;
+		if (dstobj) srcobj->related_code = dstobj->sym_code;
 	}
 }
 
