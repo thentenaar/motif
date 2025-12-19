@@ -2936,10 +2936,6 @@ Destroy(
 	     XtDestroyWidget ((Widget)xmDisplay);
 	 }
     }
-
-#ifdef HAVE_EDITRES_CLEANUP
-	_XEditResCleanup();
-#endif
 }
 
 /*ARGSUSED*/

@@ -232,9 +232,10 @@ extern Pixel _XmAssignInsensitiveColor(Widget w);
 
 /********    End Private Function Declarations    ********/
 
-/********    Conditionally defined macros for thread_safe Motif ******/
-#if defined(XTHREADS) && defined(XUSE_MTSAFE_API)
-
+/**
+ * Xt thread safety functions won't do anything unless Xt was compiled
+ * with XTHREADS defined. Enabling these by default brings no harm,
+ */
 # define _XmWidgetToAppContext(w) \
         XtAppContext app = XtWidgetToApplicationContext(w)
 
@@ -245,28 +246,9 @@ extern Pixel _XmAssignInsensitiveColor(Widget w);
 # define _XmAppUnlock(app)	XtAppUnlock(app)
 # define _XmProcessLock()	XtProcessLock()
 # define _XmProcessUnlock()	XtProcessUnlock()
-
-/* Remove use of _XtProcessLock when Xt provides API to query its MT-status */
-extern void (*_XtProcessLock)();
-# define _XmIsThreadInitialized() (_XtProcessLock)
-
-#else
-
-# define _XmWidgetToAppContext(w)
-# define _XmDisplayToAppContext(d)
-# define _XmAppLock(app)
-# define _XmAppUnlock(app)
-# define _XmProcessLock()
-# define _XmProcessUnlock()
-# define _XmIsThreadInitialized()	(FALSE)
-
-#endif /* XTHREADS && XUSE_MTSAFE_API */
-
+# define _XmIsThreadInitialized() (XtToolkitThreadInitialize())
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
-
 #endif /* _XmI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */
