@@ -1,14 +1,5 @@
 /* $TOG: XmStrDefs.ct /main/2 1997/06/18 17:49:37 samborn $ */
-#ifndef _XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define _XmConst const
-#else
-#define _XmConst
-#endif /* __STDC__ */
-#endif /* _XmConst */
-
 #include <Xm/Xm.h>
-
 
 <<<STRING_TABLE_GOES_HERE>>>
 

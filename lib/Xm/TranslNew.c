@@ -29,18 +29,6 @@
 #include <config.h>
 #endif
 
-
-/* Define _XmConst before including TransltnsP.h or XmP.h, so that the
- * declarations will be in agreement with the definitions.
- */
-#ifndef _XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
-#define _XmConst const
-#else
-#define _XmConst
-#endif /* __STDC__ */
-#endif /* _XmConst */
-
 #include <Xm/XmP.h>
 #include <Xm/TransltnsP.h>
 #include "XmI.h"
@@ -59,12 +47,12 @@
  */
 /*** ComboBox.c ***/
 externaldef(translations)
-_XmConst char _XmComboBox_defaultTranslations[] = "\
+const char _XmComboBox_defaultTranslations[] = "\
 <Btn1Down>:		CBArmAndDropDownList()\n\
 <Btn1Up>:		CBDisarm()";
 
 externaldef(translations)
-_XmConst char _XmComboBox_defaultAccelerators[] = "\
+const char _XmComboBox_defaultAccelerators[] = "\
 \043override\n\
 :c <Key>osfUp:		CBDropDownList()\n\
 :<Key>osfUp:		CBListAction(Up)\n\
@@ -77,7 +65,7 @@ _XmConst char _XmComboBox_defaultAccelerators[] = "\
 
 /* TextF translations except for misc, Btn, osf*Data, osf*Up, and osf*Down. */
 externaldef(translations)
-_XmConst char _XmComboBox_dropDownComboBoxAccelerators[] = "\
+const char _XmComboBox_dropDownComboBoxAccelerators[] = "\
 \043override\n\
 :m <Key>osfPrimaryPaste:cut-primary()\n\
 :a <Key>osfPrimaryPaste:cut-primary()\n\
@@ -135,7 +123,7 @@ s ~c ~m ~a <Key>space:	self-insert()\n\
 <Key>:			self-insert()";
 
 externaldef(translations)
-_XmConst char _XmComboBox_dropDownListTranslations[] = "\
+const char _XmComboBox_dropDownListTranslations[] = "\
 \043override\n\
 :c <Key>osfDown:	CBDropDownList()\n\
 :c <Key>osfUp:		CBDropDownList()\n\
@@ -144,13 +132,13 @@ _XmConst char _XmComboBox_dropDownListTranslations[] = "\
 ~s ~m ~a<Key>Return:	CBActivate()";
 
 externaldef(translations)
-_XmConst char _XmComboBox_textFocusTranslations[] = "\
+const char _XmComboBox_textFocusTranslations[] = "\
 \043override\n\
 <FocusOut>:		CBTextFocusOut()";
 
 
 /*** Container.c ***/
-externaldef(translations) _XmConst char _XmContainer_defaultTranslations[] = "\
+externaldef(translations) const char _XmContainer_defaultTranslations[] = "\
 ~c ~s ~m ~a <Btn1Down>:	ContainerHandleBtn1Down(ContainerBeginSelect,Copy)\n\
  c ~s ~m ~a <Btn1Down>:	ContainerHandleBtn1Down(ContainerBeginToggle,Copy)\n\
  c  s ~m ~a <Btn1Down>:	ContainerHandleBtn1Down(ContainerNoop,Link)\n\
@@ -186,7 +174,7 @@ externaldef(translations) _XmConst char _XmContainer_defaultTranslations[] = "\
 ~s  c ~m ~a <Key>backslash:	ContainerDeselectAll()";
 
 externaldef(translations)
-_XmConst char _XmContainer_traversalTranslations[] = "\
+const char _XmContainer_traversalTranslations[] = "\
 <FocusOut>:		ManagerFocusOut()\n\
 <FocusIn>:		ManagerFocusIn()\n\
 :c s <Key>osfBeginLine:	ContainerExtendCursor(First)\n\
@@ -207,7 +195,7 @@ _XmConst char _XmContainer_traversalTranslations[] = "\
 ~s ~m ~a <Key>Tab:	ManagerGadgetNextTabGroup()";
 
 /*** GrabShell.c ***/
-externaldef(translations) _XmConst char _XmGrabShell_translations [] = "\
+externaldef(translations) const char _XmGrabShell_translations [] = "\
 <Btn4Down>:		GrabShellMouseWheel()\n\
 <Btn4Up>:		GrabShellMouseWheel()\n\
 <Btn5Down>:		GrabShellMouseWheel()\n\
@@ -216,7 +204,7 @@ externaldef(translations) _XmConst char _XmGrabShell_translations [] = "\
 <BtnDown>:		GrabShellBtnDown()";
 
 /*** Notebook.c ***/
-externaldef(translations) _XmConst char _XmNotebook_TabAccelerators[] = "\
+externaldef(translations) const char _XmNotebook_TabAccelerators[] = "\
 \043override\n\
 :c <Key>osfBeginLine:           TraverseTab(Home)\n\
 :<Key>osfBeginLine:             TraverseTab(Home)\n\
@@ -228,7 +216,7 @@ externaldef(translations) _XmConst char _XmNotebook_TabAccelerators[] = "\
 :<Key>osfRight:                 TraverseTab(Next)\n\
 ";
 
-externaldef(translations) _XmConst char _XmNotebook_manager_translations[] = "\
+externaldef(translations) const char _XmNotebook_manager_translations[] = "\
 :c <Key>osfBeginLine:           TraverseTab(Home)\n\
 :<Key>osfBeginLine:             TraverseTab(Home)\n\
 :c <Key>osfEndLine:             TraverseTab(End)\n\
@@ -247,7 +235,7 @@ externaldef(translations) _XmConst char _XmNotebook_manager_translations[] = "\
 
 
 /*** SpinB.c ***/
-_XmConst char _XmSpinB_defaultTranslations[] = "\
+const char _XmSpinB_defaultTranslations[] = "\
 <Btn1Down>:		SpinBArm()\n\
 <Btn1Up>:		SpinBDisarm()\n\
 <EnterWindow>:		SpinBEnter()\n\
@@ -265,7 +253,7 @@ _XmConst char _XmSpinB_defaultTranslations[] = "\
 <Btn4Down>,<Btn4Up>:	SpinBNext()SpinBDisarm()\n\
 <Btn5Down>,<Btn5Up>:	SpinBPrior()SpinBDisarm()";
 
-_XmConst char _XmSpinB_defaultAccelerators[] =
+const char _XmSpinB_defaultAccelerators[] =
   "\043override\n\
 <Key>osfUp:		SpinBNext()\n\
 <Key>osfDown:		SpinBPrior()\n\
@@ -279,7 +267,7 @@ _XmConst char _XmSpinB_defaultAccelerators[] =
 <Key>osfEndLine:	SpinBLast()";
 
 /*** DataF.c **/
-_XmConst char _XmDataF_EventBindings1[] = "\
+const char _XmDataF_EventBindings1[] = "\
 :m <Key>osfPrimaryPaste:cut-primary()\n\
 :a <Key>osfPrimaryPaste:cut-primary()\n\
 :<Key>osfPrimaryPaste:copy-primary()\n\
@@ -310,7 +298,7 @@ _XmConst char _XmDataF_EventBindings1[] = "\
 :c <Key>osfDelete:delete-to-end-of-line()\n\
 :<Key>osfDelete:delete-next-character()\n";
 
-_XmConst char _XmDataF_EventBindings2[] = "\
+const char _XmDataF_EventBindings2[] = "\
 :c m <Key>osfInsert:copy-primary()\n\
 :c a <Key>osfInsert:copy-primary()\n\
 :s <Key>osfInsert:paste-clipboard()\n\
@@ -341,7 +329,7 @@ c s ~m ~a <Key>space:key-select()\n\
 s ~c ~m ~a <Key>space:self-insert()\n\
 <Key>:self-insert()\n";
 
-_XmConst char _XmDataF_EventBindings3[] = "\
+const char _XmDataF_EventBindings3[] = "\
 <Unmap>:unmap()\n\
 <Enter>:enter()\n\
 <Leave>:leave()\n\
@@ -358,7 +346,7 @@ m ~a <Btn2Motion>:secondary-adjust()\n\
 ~s <Btn2Up>:copy-to()\n\
 ~c <Btn2Up>:move-to()";
 
-_XmConst char _XmDataF_EventBindings4[] =
+const char _XmDataF_EventBindings4[] =
 "s ~m ~a <Key>Tab:ValidateAndMove(prev)\n\
 ~m ~a<Key>Tab:ValidateAndMove(next)";
 

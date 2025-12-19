@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,8 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -94,13 +94,6 @@
 #define WC_MSG1	        _XmMMsgDataFWcs_0000
 #define WC_MSG2	        _XmMMsgDataFWcs_0001
 #define GRABKBDERROR	_XmMMsgRowColText_0024
-
-#ifdef _XmConst
-       #undef _XmConst
-       #define _XmConst
-#else
-       #define _XmConst
-#endif
 
 extern Boolean _XmParentProcess(Widget, XmParentProcessData);
 extern Boolean _XmMgrTraversal(Widget, XmTraversalDirection);
@@ -1201,7 +1194,7 @@ externaldef(xmdatafieldwidgetclass) WidgetClass xmDataFieldWidgetClass =
 					 (WidgetClass) &xmDataFieldClassRec;
 
 /* AccessXmString Trait record for DataField */
-static XmConst XmAccessTextualTraitRec dataFieldCS = {
+static const XmAccessTextualTraitRec dataFieldCS = {
   0,  				  /* version */
   DataFieldGetValue,
   DataFieldSetValue,

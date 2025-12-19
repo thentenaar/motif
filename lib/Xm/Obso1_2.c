@@ -1,5 +1,5 @@
 /* $XConsortium: Obso1_2.c /main/7 1996/06/14 23:10:17 pascale $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -22,14 +22,10 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -61,20 +57,12 @@
 #include "TraversalI.h"
 #include "XmStringI.h"		/* for _XmStringGetTextConcat() */
 
-
 typedef struct {
     int		segment_size;
     char*	start;
     char*	current;
     int		bytes_remaining;
 } XmHeapRec, *XmHeap;
-
-
-/********    Static Function Declarations    ********/
-
-
-/********    End Static Function Declarations    ********/
-
 
 externaldef(desktopobjectclass) WidgetClass
       xmDesktopObjectClass = (WidgetClass) &xmDesktopClassRec;
@@ -88,7 +76,6 @@ externaldef(screenobjectclass) WidgetClass
 externaldef(worldobjectclass) WidgetClass
       xmWorldObjectClass = (WidgetClass) NULL;
 /* WorldP.h was defuncted for 2.0 , no more ref to (&xmWorldClassRec) */
-
 
 int
 XmTextFieldGetBaseLine(
@@ -2010,9 +1997,9 @@ _XmTextOutLoadGCsAndRecolorCursors(XmTextWidget old_tw, /* unused */
   return ;
 }
 
-_XmConst char *_XmTextEventBindings1 = _XmTextIn_XmTextEventBindings1 ;
-_XmConst char *_XmTextEventBindings2 = _XmTextIn_XmTextEventBindings2 ;
-_XmConst char *_XmTextEventBindings3 = _XmTextIn_XmTextEventBindings3 ;
+const char *_XmTextEventBindings1 = _XmTextIn_XmTextEventBindings1 ;
+const char *_XmTextEventBindings2 = _XmTextIn_XmTextEventBindings2 ;
+const char *_XmTextEventBindings3 = _XmTextIn_XmTextEventBindings3 ;
 
 
 /************************************************************************
