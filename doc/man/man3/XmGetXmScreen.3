@@ -45,27 +45,34 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmGetXmScreen" "library call"
 .SH "NAME"
 \fBXmGetXmScreen\fP \(em A Screen function that returns the XmScreen object
-ID for a specified screen
+for a specified screen
 .iX "XmGetXmScreen"
 .SH "SYNOPSIS"
 .PP
 .nf
 #include <Xm/Screen\&.h>
-\fBWidget \fBXmGetXmScreen\fP\fR(
-\fBScreen *\fBscreen\fR\fR);
+
+\fBXmScreen \fR\fBXmScreenOfScreen\fB\fP\fR(\fBScreen *\fR\fBs\fR);
+\fBXmScreen \fR\fBXmScreenOfObject\fB\fP\fR(\fBWidget \fR\fBw\fR);
+\fBWidget \fBXmGetXmScreen\fP\fR(\fBScreen *\fBscreen\fR\fR);
 .fi
 .SH "DESCRIPTION"
 .PP
-\fBXmGetXmScreen\fP returns the \fBXmScreen\fP object ID associated
-with a screen\&. The application can access
-and manipulate Screen resources with \fBXtGetValues\fP and
-\fBXtSetValues\fP\&.
+\fBXmGetXmScreen\fP returns the \fBXmScreen\fP object associated
+with a screen\&. The application can access and manipulate screen
+resources with \fBXtGetValues\fP and \fBXtSetValues\fP\&.
 .IP "\fIscreen\fP" 10
-Specifies the screen for which the \fBXmScreen\fP ID is to be returned
+Specifies the screen for which the \fBXmScreen\fP is to be returned
+.PP
+\fBXmScreenOfScreen\fP is a macro which wraps \fBXmGetXmScreen\fP() to
+alleviate the burden of casting its result\&.
+.PP
+\fBXmScreenOfObject\fP wraps \fBXmGetXmScreen\fP() and gets the screen
+by calling \fBXtScreenOfObject\fP() under the hood\&.
 .PP
 For a complete definition of Screen and its associated resources,
 see \fBXmScreen\fP(3)\&.

@@ -1,6 +1,7 @@
 /**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -32,10 +33,12 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include <X11/Xatom.h>
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
 #include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
+
 #include "DragIconI.h"
 #include "HashI.h"
 #include "ImageCachI.h"
@@ -45,280 +48,243 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #include "PixConvI.h"
 
 #define DEFAULT_QUAD_WIDTH 10
-
 #define RESOURCE_DEFAULT  (-1)
-
-#define MESSAGE1	_XmMMsgScreen_0000
-#define MESSAGE2        _XmMMsgScreen_0001
-
+#define SCREEN_MISMATCH   _XmMMsgScreen_0000
+#define CANT_FIND_DISPLAY _XmMMsgScreen_0001
 
 /********    Static Function Declarations    ********/
-
-static void ClassPartInitialize(
-                        WidgetClass wc) ;
-static void ClassInitialize( void ) ;
-static void GetUnitFromFont(
-                        Display *display,
-                        XFontStruct *fst,
-                        int *ph_unit,
-                        int *pv_unit) ;
-static void Initialize(
-                        Widget requested_widget,
-                        Widget new_widget,
-                        ArgList args,
-                        Cardinal *num_args) ;
-static Boolean SetValues(
-                        Widget current,
-                        Widget requested,
-                        Widget new_w,
-                        ArgList args,
-                        Cardinal *num_args) ;
-static void Destroy(
-                        Widget widget) ;
-static void InsertChild(
-                        Widget wid) ;
-static void DeleteChild(
-                        Widget wid) ;
-static Boolean MatchPixmap(XmHashKey, XmHashKey) ;
-static XmHashValue HashPixmap(XmHashKey) ;
-static Boolean FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data) ;
-
-/********    End Static Function Declarations    ********/
+static void ClassPartInitialize(WidgetClass wc);
+static void ClassInitialize(void);
+static void GetUnitFromFont(Display *display, XFontStruct *fst,
+                            int *ph_unit, int *pv_unit);
+static void Initialize(Widget requested_widget, Widget new_widget,
+                       ArgList args, Cardinal *num_args);
+static Boolean SetValues(Widget current, Widget requested, Widget new_w,
+                         ArgList args, Cardinal *num_args);
+static void Destroy(Widget widget);
+static Boolean MatchPixmap(XmHashKey a, XmHashKey b);
+static XmHashValue HashPixmap(XmHashKey x);
+static Boolean FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data);
 
 #define Offset(x) (XtOffsetOf(XmScreenRec, x))
-
 static XtResource resources[] = {
-    {
-	XmNdarkThreshold, XmCDarkThreshold, XmRInt,
-	sizeof(int), Offset(screen.darkThreshold),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNlightThreshold, XmCLightThreshold, XmRInt,
-	sizeof(int), Offset(screen.lightThreshold),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNforegroundThreshold, XmCForegroundThreshold, XmRInt,
-	sizeof(int), Offset(screen.foregroundThreshold),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultNoneCursorIcon, XmCDefaultNoneCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultNoneCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultValidCursorIcon, XmCDefaultValidCursorIcon,
-	XmRWidget, sizeof(Widget), Offset(screen.defaultValidCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultInvalidCursorIcon, XmCDefaultInvalidCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultInvalidCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultMoveCursorIcon, XmCDefaultMoveCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultMoveCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultLinkCursorIcon, XmCDefaultLinkCursorIcon,
-	XmRWidget, sizeof(Widget), Offset(screen.defaultLinkCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultCopyCursorIcon, XmCDefaultCopyCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultCopyCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNdefaultSourceCursorIcon, XmCDefaultSourceCursorIcon, XmRWidget,
-	sizeof(Widget), Offset(screen.defaultSourceCursorIcon),
-	XmRImmediate, (XtPointer)NULL,
-    },
-    {
-	XmNmenuCursor, XmCCursor, XmRCursor,
-	sizeof(Cursor), Offset(screen.menuCursor),
-	XmRString, "arrow",
-    },
-    {
-	XmNunpostBehavior, XmCUnpostBehavior, XmRUnpostBehavior,
-	sizeof(unsigned char), Offset(screen.unpostBehavior),
-	XmRImmediate, (XtPointer)XmUNPOST_AND_REPLAY,
-    },
-    {
-	XmNfont, XmCFont, XmRFontStruct,
-	sizeof(XFontStruct *), Offset(screen.font_struct),
-	XmRString, XmDEFAULT_FONT,
-    },
-    {
-	XmNhorizontalFontUnit, XmCHorizontalFontUnit, XmRInt,
-	sizeof(int), Offset(screen.h_unit),
-	XmRImmediate, (XtPointer) RESOURCE_DEFAULT,
-    },
-    {
-	XmNverticalFontUnit, XmCVerticalFontUnit, XmRInt,
-	sizeof(int), Offset(screen.v_unit),
-	XmRImmediate, (XtPointer) RESOURCE_DEFAULT,
-    },
-    {
-        XmNmoveOpaque, XmCMoveOpaque, XmRBoolean,
-        sizeof(unsigned char), Offset(screen.moveOpaque),
-        XmRImmediate, (XtPointer) False,
-    },
-    {
-        XmNcolorCalculationProc, XmCColorCalculationProc, XmRProc,
-        sizeof(XtProc), Offset(screen.color_calc_proc),
-        XmRImmediate, (XtPointer) NULL,
-    },
-    {
-        XmNcolorAllocationProc, XmCColorAllocationProc, XmRProc,
-        sizeof(XtProc), Offset(screen.color_alloc_proc),
-        XmRImmediate, (XtPointer) NULL,
-    },
-    {
-        XmNbitmapConversionModel, XmCBitmapConversionModel,
-        XmRBitmapConversionModel,
-        sizeof(XtEnum), Offset(screen.bitmap_conversion_model),
-        XmRImmediate, (XtPointer) XmMATCH_DEPTH,
-    },
-    {
-        XmNuserData, XmCUserData, XmRPointer,
-        sizeof(XtPointer), Offset(screen.user_data),
-        XmRPointer, (XtPointer) NULL
-    },
-    {
-	XmNinsensitiveStippleBitmap, XmCInsensitiveStippleBitmap,
-	XmRNoScalingBitmap,
-	sizeof(Pixmap), Offset(screen.insensitive_stipple_bitmap),
-	XmRString, XmS50_foreground
-    }
+	{
+		XmNdarkThreshold, XmCDarkThreshold, XmRInt,
+		sizeof(int), Offset(screen.darkThreshold),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNlightThreshold, XmCLightThreshold, XmRInt,
+		sizeof(int), Offset(screen.lightThreshold),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNforegroundThreshold, XmCForegroundThreshold, XmRInt,
+		sizeof(int), Offset(screen.foregroundThreshold),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultNoneCursorIcon, XmCDefaultNoneCursorIcon, XmRWidget,
+		sizeof(Widget), Offset(screen.defaultNoneCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultValidCursorIcon, XmCDefaultValidCursorIcon,
+		XmRWidget, sizeof(Widget), Offset(screen.defaultValidCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultInvalidCursorIcon, XmCDefaultInvalidCursorIcon, XmRWidget,
+		sizeof(Widget), Offset(screen.defaultInvalidCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultMoveCursorIcon, XmCDefaultMoveCursorIcon, XmRWidget,
+		sizeof(Widget), Offset(screen.defaultMoveCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultLinkCursorIcon, XmCDefaultLinkCursorIcon,
+		XmRWidget, sizeof(Widget), Offset(screen.defaultLinkCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultCopyCursorIcon, XmCDefaultCopyCursorIcon, XmRWidget,
+		sizeof(Widget), Offset(screen.defaultCopyCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNdefaultSourceCursorIcon, XmCDefaultSourceCursorIcon, XmRWidget,
+		sizeof(Widget), Offset(screen.defaultSourceCursorIcon),
+		XmRImmediate, NULL,
+	},
+	{
+		XmNmenuCursor, XmCCursor, XmRCursor,
+		sizeof(Cursor), Offset(screen.menuCursor),
+		XmRString, "arrow",
+	},
+	{
+		XmNunpostBehavior, XmCUnpostBehavior, XmRUnpostBehavior,
+		sizeof(unsigned char), Offset(screen.unpostBehavior),
+		XmRImmediate, (XtPointer)XmUNPOST_AND_REPLAY,
+	},
+	{
+		XmNfont, XmCFont, XmRFontStruct,
+		sizeof(XFontStruct *), Offset(screen.font_struct),
+		XmRString, XmDEFAULT_FONT,
+	},
+	{
+		XmNhorizontalFontUnit, XmCHorizontalFontUnit, XmRInt,
+		sizeof(int), Offset(screen.h_unit),
+		XmRImmediate, (XtPointer)RESOURCE_DEFAULT,
+	},
+	{
+		XmNverticalFontUnit, XmCVerticalFontUnit, XmRInt,
+		sizeof(int), Offset(screen.v_unit),
+		XmRImmediate, (XtPointer)RESOURCE_DEFAULT,
+	},
+	{
+    	XmNmoveOpaque, XmCMoveOpaque, XmRBoolean,
+    	sizeof(unsigned char), Offset(screen.moveOpaque),
+    	XmRImmediate, (XtPointer)False,
+	},
+	{
+    	XmNcolorCalculationProc, XmCColorCalculationProc, XmRProc,
+    	sizeof(XtProc), Offset(screen.color_calc_proc),
+    	XmRImmediate, NULL,
+	},
+	{
+    	XmNcolorAllocationProc, XmCColorAllocationProc, XmRProc,
+    	sizeof(XtProc), Offset(screen.color_alloc_proc),
+    	XmRImmediate, NULL,
+	},
+	{
+    	XmNbitmapConversionModel, XmCBitmapConversionModel,
+    	XmRBitmapConversionModel,
+    	sizeof(XtEnum), Offset(screen.bitmap_conversion_model),
+    	XmRImmediate, (XtPointer)XmMATCH_DEPTH,
+	},
+	{
+    	XmNuserData, XmCUserData, XmRPointer,
+    	sizeof(XtPointer), Offset(screen.user_data),
+    	XmRPointer, NULL
+	},
+	{
+		XmNinsensitiveStippleBitmap, XmCInsensitiveStippleBitmap,
+		XmRNoScalingBitmap,
+		sizeof(Pixmap), Offset(screen.insensitive_stipple_bitmap),
+		XmRString, XmS50_foreground
+	}
 };
-
 #undef Offset
 
-
 /***************************************************************************
  *
  * Class Record
  *
  ***************************************************************************/
-
-/***************************************************************************
- *
- * Class Record
- *
- ***************************************************************************/
-
 static XmBaseClassExtRec baseClassExtRec = {
-    NULL,
-    NULLQUARK,
-    XmBaseClassExtVersion,
-    sizeof(XmBaseClassExtRec),
-    NULL,				/* InitializePrehook	*/
-    NULL,				/* SetValuesPrehook	*/
-    NULL,				/* InitializePosthook	*/
-    NULL,				/* SetValuesPosthook	*/
-    NULL,				/* secondaryObjectClass	*/
-    NULL,				/* secondaryCreate	*/
-    NULL,          		        /* getSecRes data	*/
-    { 0 },     			        /* fastSubclass flags	*/
-    NULL,				/* getValuesPrehook	*/
-    NULL,				/* getValuesPosthook	*/
-    NULL,               /* classPartInitPrehook */
-    NULL,               /* classPartInitPosthook*/
-    NULL,               /* ext_resources        */
-    NULL,               /* compiled_ext_resources*/
-    0,                  /* num_ext_resources    */
-    FALSE,              /* use_sub_resources    */
-    NULL,               /* widgetNavigable      */
-    NULL                /* focusChange          */
-};
-
-
-externaldef(xmscreenclassrec)
-XmScreenClassRec xmScreenClassRec = {
-    {
-	(WidgetClass) &coreClassRec, /* superclass		*/
-	"XmScreen",			/* class_name 		*/
-	sizeof(XmScreenRec), 		/* size 		*/
-	ClassInitialize,		/* Class Initializer 	*/
-	ClassPartInitialize,		/* class_part_init 	*/
-	FALSE, 				/* Class init'ed ? 	*/
-	Initialize,		        /* initialize         	*/
-	NULL, 				/* initialize_notify    */
-	NULL,	 			/* realize            	*/
-	NULL,	 			/* actions            	*/
-	0,				/* num_actions        	*/
-	resources,			/* resources          	*/
-	XtNumber(resources),		/* resource_count     	*/
-	NULLQUARK, 			/* xrm_class          	*/
-	FALSE, 				/* compress_motion    	*/
-	FALSE, 				/* compress_exposure  	*/
-	FALSE, 				/* compress_enterleave	*/
-	FALSE, 				/* visible_interest   	*/
-	Destroy,			/* destroy            	*/
-	NULL,		 		/* resize             	*/
-	NULL, 				/* expose             	*/
-	SetValues, 		        /* set_values         	*/
-	NULL, 				/* set_values_hook      */
-	NULL,			 	/* set_values_almost    */
-	NULL,				/* get_values_hook      */
-	NULL, 				/* accept_focus       	*/
-	XtVersion, 			/* intrinsics version 	*/
-	NULL, 				/* callback offsets   	*/
-	NULL,				/* tm_table           	*/
-	NULL, 				/* query_geometry       */
-	NULL, 				/* screen_accelerator  */
-	(XtPointer)&baseClassExtRec,	/* extension            */
-    },
-    {					/* desktop		*/
-	NULL,				/* child_class		*/
-	InsertChild,		        /* insert_child		*/
-	DeleteChild,		        /* delete_child		*/
-	NULL,				/* extension		*/
-    },
-    {
 	NULL,
-    },
+	NULLQUARK,
+	XmBaseClassExtVersion,
+	sizeof(XmBaseClassExtRec),
+	NULL,   /* InitializePrehook      */
+	NULL,   /* SetValuesPrehook       */
+	NULL,   /* InitializePosthook     */
+	NULL,   /* SetValuesPosthook      */
+	NULL,   /* secondaryObjectClass   */
+	NULL,   /* secondaryCreate        */
+	NULL,   /* getSecRes data         */
+	{ 0 },  /* fastSubclass flags     */
+	NULL,   /* getValuesPrehook       */
+	NULL,   /* getValuesPosthook      */
+	NULL,   /* classPartInitPrehook   */
+	NULL,   /* classPartInitPosthook  */
+	NULL,   /* ext_resources          */
+	NULL,   /* compiled_ext_resources */
+	0,      /* num_ext_resources      */
+	FALSE,  /* use_sub_resources      */
+	NULL,   /* widgetNavigable        */
+	NULL,   /* focusChange            */
+	NULL    /* wrapperData            */
 };
 
-externaldef(xmscreenclass) WidgetClass
-      xmScreenClass = (WidgetClass) (&xmScreenClassRec);
+externaldef(xmscreenclassrec) XmScreenClassRec xmScreenClassRec = {
+{ /* core */
+	(WidgetClass)&coreClassRec,  /* superclass          */
+	"XmScreen",                  /* class_name          */
+	sizeof(XmScreenRec),         /* size                */
+	ClassInitialize,             /* Class Initializer   */
+	ClassPartInitialize,         /* class_part_init     */
+	FALSE,                       /* Class init'ed ?     */
+	Initialize,                  /* initialize          */
+	NULL,                        /* initialize_notify   */
+	NULL,                        /* realize             */
+	NULL,                        /* actions             */
+	0,                           /* num_actions         */
+	resources,                   /* resources           */
+	XtNumber(resources),         /* resource_count      */
+	NULLQUARK,                   /* xrm_class           */
+	FALSE,                       /* compress_motion     */
+	XtExposeNoCompress,          /* compress_exposure   */
+	FALSE,                       /* compress_enterleave */
+	FALSE,                       /* visible_interest    */
+	Destroy,                     /* destroy             */
+	NULL,                        /* resize              */
+	NULL,                        /* expose              */
+	SetValues,                   /* set_values          */
+	NULL,                        /* set_values_hook     */
+	NULL,                        /* set_values_almost   */
+	NULL,                        /* get_values_hook     */
+	NULL,                        /* accept_focus        */
+	XtVersion,                   /* intrinsics version  */
+	NULL,                        /* callback offsets    */
+	NULL,                        /* tm_table            */
+	NULL,                        /* query_geometry      */
+	NULL,                        /* screen_accelerator  */
+	(XtPointer)&baseClassExtRec, /* extension           */
+},
+{ /* desktop */
+	NULL,                        /* child_class         */
+	NULL,                        /* insert_child        */
+	NULL,                        /* delete_child        */
+	NULL,                        /* extension           */
+},
+{ /* screen */
+	NULL,
+}};
 
+externaldef(xmscreenclass) WidgetClass xmScreenClass =
+	(WidgetClass)&xmScreenClassRec;
 
+externaldef(xmscreenquark) XrmQuark _XmInvalidCursorIconQuark = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmValidCursorIconQuark   = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmNoneCursorIconQuark    = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmDefaultDragIconQuark   = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmMoveCursorIconQuark    = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmCopyCursorIconQuark    = NULLQUARK;
+externaldef(xmscreenquark) XrmQuark _XmLinkCursorIconQuark    = NULLQUARK;
 
-externaldef(xmscreenquark) XrmQuark	_XmInvalidCursorIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmValidCursorIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmNoneCursorIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmDefaultDragIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmMoveCursorIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmCopyCursorIconQuark = NULLQUARK;
-externaldef(xmscreenquark) XrmQuark	_XmLinkCursorIconQuark = NULLQUARK;
-
-static void
-ClassInitialize( void )
+static void ClassInitialize(void)
 {
-  baseClassExtRec.record_type = XmQmotif;
+	baseClassExtRec.record_type = XmQmotif;
 
-  _XmInvalidCursorIconQuark = XrmPermStringToQuark("defaultInvalidCursorIcon");
-  _XmValidCursorIconQuark = XrmPermStringToQuark("defaultValidCursorIcon");
-  _XmNoneCursorIconQuark = XrmPermStringToQuark("defaultNoneCursorIcon");
-  _XmDefaultDragIconQuark = XrmPermStringToQuark("defaultSourceCursorIcon");
-  _XmMoveCursorIconQuark = XrmPermStringToQuark("defaultMoveCursorIcon");
-  _XmCopyCursorIconQuark = XrmPermStringToQuark("defaultCopyCursorIcon");
-  _XmLinkCursorIconQuark = XrmPermStringToQuark("defaultLinkCursorIcon");
+	_XmInvalidCursorIconQuark = XrmPermStringToQuark("defaultInvalidCursorIcon");
+	_XmValidCursorIconQuark   = XrmPermStringToQuark("defaultValidCursorIcon");
+	_XmNoneCursorIconQuark    = XrmPermStringToQuark("defaultNoneCursorIcon");
+	_XmDefaultDragIconQuark   = XrmPermStringToQuark("defaultSourceCursorIcon");
+	_XmMoveCursorIconQuark    = XrmPermStringToQuark("defaultMoveCursorIcon");
+	_XmCopyCursorIconQuark    = XrmPermStringToQuark("defaultCopyCursorIcon");
+	_XmLinkCursorIconQuark    = XrmPermStringToQuark("defaultLinkCursorIcon");
+
+	XtInitializeWidgetClass(xmDesktopClass);
+	xmScreenClassRec.desktop_class.insert_child = xmDesktopClassRec.desktop_class.insert_child;
+	xmScreenClassRec.desktop_class.delete_child = xmDesktopClassRec.desktop_class.delete_child;
 }
 
-
-static void
-ClassPartInitialize(
-	WidgetClass wc )
+static void ClassPartInitialize(WidgetClass wc)
 {
-    _XmFastSubclassInit(wc, XmSCREEN_BIT);
-
+	_XmFastSubclassInit(wc, XmSCREEN_BIT);
 }
 
 /************************************************************************
@@ -326,129 +292,110 @@ ClassPartInitialize(
  *  GetUnitFromFont
  *
  ************************************************************************/
-static void
-GetUnitFromFont(
-	Display * display,
-	XFontStruct * fst,
-	int * ph_unit,
-	int * pv_unit)
+static void GetUnitFromFont(Display *display, XFontStruct *fst,
+                            int *ph_unit, int *pv_unit)
 {
-    enum { XmAAVERAGE_WIDTH, XmAPIXEL_SIZE, XmARESOLUTION_Y, NUM_ATOMS };
-    static char *atom_names[] = {
-      XmIAVERAGE_WIDTH, XmIPIXEL_SIZE, XmIRESOLUTION_Y };
-    Atom atoms[XtNumber(atom_names)];
-    unsigned long pixel_s, avg_w, point_s, resolution_y;
-    unsigned long font_unit_return;
+	enum { XmAAVERAGE_WIDTH, XmAPIXEL_SIZE, XmARESOLUTION_Y, NUM_ATOMS };
+	static char *atom_names[NUM_ATOMS] = { XmIAVERAGE_WIDTH, XmIPIXEL_SIZE, XmIRESOLUTION_Y };
+	Atom atoms[XtNumber(atom_names)];
+	unsigned long pixel_s, avg_w, point_s, res_y;
+	unsigned long font_unit_return;
 
-    if (fst) {
-      assert(XtNumber(atom_names) == NUM_ATOMS);
-      XInternAtoms(display, atom_names, XtNumber(atom_names), TRUE, atoms);
+	if (!fst) {
+		if (ph_unit) *ph_unit = DEFAULT_QUAD_WIDTH;
+		if (pv_unit) *pv_unit = DEFAULT_QUAD_WIDTH;
+		return;
+	}
 
-              /* Horizontal units */
-      if (ph_unit) {
-	  if (atoms[XmAAVERAGE_WIDTH] &&
-	      XGetFontProperty(fst, atoms[XmAAVERAGE_WIDTH], &avg_w)) {
-	      *ph_unit = (int) ((float) (avg_w / 10) + 0.5) ;
-	  } else if (XGetFontProperty (fst, XA_QUAD_WIDTH, &font_unit_return)){
-	      *ph_unit = font_unit_return ;
-	  } else {
-	      *ph_unit = (int) ((fst->min_bounds.width +
-				 fst-> max_bounds.width) / 2.3) + 0.5;
-	  }
-      }
+	XInternAtoms(display, atom_names, XtNumber(atom_names), TRUE, atoms);
 
-              /* Vertical units */
-      if (pv_unit) {
-	  if (XGetFontProperty(fst, atoms[XmAPIXEL_SIZE], &pixel_s)) {
-	      *pv_unit = (int) (((float) pixel_s) / 1.8) + 0.5;
-	  } else if ((XGetFontProperty(fst, XA_POINT_SIZE, &point_s)) &&
-		     (XGetFontProperty(fst, atoms[XmARESOLUTION_Y],
-				       &resolution_y))) {
-	      float ps, ry, tmp;
+	/* Horizontal units */
+	if (ph_unit) {
+		if (atoms[XmAAVERAGE_WIDTH] && XGetFontProperty(fst, atoms[XmAAVERAGE_WIDTH], &avg_w))
+			*ph_unit = (int)(avg_w / 10.0 + 0.5);
+		else if (XGetFontProperty(fst, XA_QUAD_WIDTH, &font_unit_return))
+			*ph_unit = font_unit_return;
+		else *ph_unit = (int)((fst->min_bounds.width + fst->max_bounds.width) / 2.3 + 0.5);
+	}
 
-	      ps = point_s;
-	      ry = resolution_y;
-
-	      tmp = (ps * ry) / 1400.0;
-
-	      *pv_unit = (int) (tmp + 0.5) ;
-	  } else {
-	      *pv_unit = (int) ((float) (fst->max_bounds.ascent +
-					 fst->max_bounds.descent) / 2.2) + 0.5;
-	  }
-      }
-
-    } else {  /* no X fontstruct */
-      if (ph_unit) *ph_unit = DEFAULT_QUAD_WIDTH ;
-      if (pv_unit) *pv_unit = DEFAULT_QUAD_WIDTH ;
-    }
-
+	/* Vertical units */
+	if (pv_unit) {
+		if (XGetFontProperty(fst, atoms[XmAPIXEL_SIZE], &pixel_s))
+			*pv_unit = (int)(pixel_s / 1.8 + 0.5);
+		else if (XGetFontProperty(fst, XA_POINT_SIZE, &point_s) &&
+		         XGetFontProperty(fst, atoms[XmARESOLUTION_Y], &res_y)) {
+			*pv_unit = (int)(((point_s * (float)res_y) / 1400.0) + 0.5);
+		} else *pv_unit = (int)((fst->max_bounds.ascent + fst->max_bounds.descent) / 2.2 + 0.5);
+	}
 }
-
 
 /************************************************************************
  *
  *  ScreenInitialize
  *
  ************************************************************************/
-static void
-Initialize(
-        Widget requested_widget,
-        Widget new_widget,
-        ArgList args,
-        Cardinal *num_args )
+static void Initialize(Widget requested_widget, Widget new_widget,
+                       ArgList args, Cardinal *num_args)
 {
-    XmScreen     xmScreen = (XmScreen)new_widget;
-    Display      *display = XtDisplay(new_widget);
+	XmScreenInfo *info;
+	XmScreen xmScreen = (XmScreen)new_widget;
+	Display *display  = XtDisplay(new_widget);
 
-    xmScreen->screen.screenInfo = NULL;
+	((XmDesktopObject)xmScreen)->desktop.parent = NULL;
+	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
+	XQueryBestCursor(display, RootWindowOfScreen(XtScreen(xmScreen)),
+	                 1024, 1024, &xmScreen->screen.maxCursorWidth,
+	                 &xmScreen->screen.maxCursorHeight);
 
-    XQueryBestCursor(display,
-		     RootWindowOfScreen(XtScreen(xmScreen)),
-		     1024, 1024,
-		     &xmScreen->screen.maxCursorWidth,
-		     &xmScreen->screen.maxCursorHeight);
+	xmScreen->screen.screenInfo         = NULL;
+	xmScreen->screen.nullCursor         = None;
+	xmScreen->screen.cursorCache        = NULL;
+	xmScreen->screen.scratchPixmaps     = _XmAllocHashTable(20, MatchPixmap, HashPixmap);
+	xmScreen->screen.inUsePixmaps       = _XmAllocHashTable(20, NULL, NULL);
+	xmScreen->screen.xmStateCursorIcon  = NULL;
+	xmScreen->screen.xmMoveCursorIcon   = NULL;
+	xmScreen->screen.xmCopyCursorIcon   = NULL;
+	xmScreen->screen.xmLinkCursorIcon   = NULL;
+	xmScreen->screen.xmSourceCursorIcon = NULL;
+	xmScreen->screen.mwmPresent         = XmIsMotifWMRunning(new_widget);
+	xmScreen->screen.numReparented      = 0;
 
-    xmScreen->screen.nullCursor = None;
-    xmScreen->screen.cursorCache = NULL;
-    xmScreen->screen.scratchPixmaps = (XtPointer)
-      _XmAllocHashTable(20, MatchPixmap, HashPixmap);
-    xmScreen->screen.inUsePixmaps = (XtPointer)
-      _XmAllocHashTable(20, NULL, NULL);
-    xmScreen->screen.xmStateCursorIcon = NULL;
-    xmScreen->screen.xmMoveCursorIcon = NULL;
-    xmScreen->screen.xmCopyCursorIcon = NULL;
-    xmScreen->screen.xmLinkCursorIcon = NULL;
-    xmScreen->screen.xmSourceCursorIcon = NULL;
-    xmScreen->screen.mwmPresent = XmIsMotifWMRunning( new_widget) ;
-    xmScreen->screen.numReparented = 0;
-    xmScreen->desktop.num_children = 0;
-    xmScreen->desktop.children = NULL;
-    xmScreen->desktop.num_slots = 0;
+	if (!XmRepTypeValidValue(XmRID_UNPOST_BEHAVIOR,
+	                         xmScreen->screen.unpostBehavior, new_widget))
+		xmScreen->screen.unpostBehavior = XmUNPOST_AND_REPLAY;
 
-    if(!XmRepTypeValidValue(XmRID_UNPOST_BEHAVIOR,
-                          xmScreen->screen.unpostBehavior,
-                          new_widget)) {
-      xmScreen->screen.unpostBehavior = XmUNPOST_AND_REPLAY;
-    }
+	/**
+	 * font unit stuff, priority to actual unit values, if they haven't
+	 * been set yet, compute from the font, otherwise, stay unchanged
+	 */
 
-    /* font unit stuff, priority to actual unit values, if they haven't
-     been set yet, compute from the font, otherwise, stay unchanged */
+	if (xmScreen->screen.h_unit == RESOURCE_DEFAULT)
+		GetUnitFromFont(display, xmScreen->screen.font_struct,
+		                &xmScreen->screen.h_unit, NULL);
 
-    if (xmScreen->screen.h_unit == RESOURCE_DEFAULT)
-	GetUnitFromFont(display, xmScreen->screen.font_struct,
-			&xmScreen->screen.h_unit, NULL);
+	if (xmScreen->screen.v_unit == RESOURCE_DEFAULT)
+		GetUnitFromFont(display, xmScreen->screen.font_struct,
+		                NULL, &xmScreen->screen.v_unit);
 
-    if (xmScreen->screen.v_unit == RESOURCE_DEFAULT)
-	GetUnitFromFont(display, xmScreen->screen.font_struct,
-			NULL, &xmScreen->screen.v_unit);
+	if (!(info = (XmScreenInfo *)XtNew(XmScreenInfo)))
+		return;
 
-    xmScreen->screen.screenInfo = (XtPointer) XtNew(XmScreenInfo);
+	info->menu_state            = NULL;
+	info->destroyCallbackAdded  = False;
+	xmScreen->screen.screenInfo = info;
+}
 
-    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->menu_state =
-		(XtPointer)NULL;
-    ((XmScreenInfo *)(xmScreen->screen.screenInfo))->destroyCallbackAdded =
-		False;
+/**
+ * Prevent modification of the icon if the new icon would be
+ * on a Screen other than the current one.
+ */
+static void validate_icon_assignment(Widget w,    XmDragIconObject *new,
+                                     Screen *scr, XmDragIconObject *old)
+{
+	if (*new && *new != *old && XtScreenOfObject(XtParent(new)) != scr) {
+		XmeWarning(w, SCREEN_MISMATCH);
+		*new = *old;
+	}
 }
 
 /************************************************************************
@@ -456,250 +403,98 @@ Initialize(
  *  SetValues
  *
  ************************************************************************/
-static Boolean
-SetValues(
-        Widget current,
-        Widget requested,
-        Widget new_w,
-        ArgList args,
-        Cardinal *num_args )
+static Boolean SetValues(Widget current, Widget requested, Widget new_w,
+                         ArgList args, Cardinal *num_args)
 {
-    XmScreen		newScr = (XmScreen)new_w;
-    XmScreen		oldScr = (XmScreen)current;
-    Display * display = XtDisplay( new_w);
+	Screen *scr      = XtScreen(new_w);
+	XmScreen new     = (XmScreen)new_w;
+	XmScreen old     = (XmScreen)current;
+	Display *display = XtDisplay(new_w);
 
-    if(!XmRepTypeValidValue(XmRID_UNPOST_BEHAVIOR,
-                          newScr->screen.unpostBehavior, new_w)) {
-      newScr->screen.unpostBehavior = XmUNPOST_AND_REPLAY;
-    }
+	if(!XmRepTypeValidValue(XmRID_UNPOST_BEHAVIOR,
+	                        new->screen.unpostBehavior, new_w))
+		new->screen.unpostBehavior = XmUNPOST_AND_REPLAY;
 
-    /*
-     *  If we are setting a default cursor icon, verify that
-     *  it has the same screen as the new XmScreen.
-     */
+	validate_icon_assignment(new_w, &new->screen.defaultNoneCursorIcon,
+	                         scr,   &old->screen.defaultNoneCursorIcon);
 
-    /* defaultNoneCursorIcon */
+	validate_icon_assignment(new_w, &new->screen.defaultValidCursorIcon,
+	                         scr,   &old->screen.defaultValidCursorIcon);
 
-    if (newScr->screen.defaultNoneCursorIcon !=
-	    oldScr->screen.defaultNoneCursorIcon &&
-	newScr->screen.defaultNoneCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultNoneCursorIcon)) !=
-	     XtScreen (newScr)) {
+	validate_icon_assignment(new_w, &new->screen.defaultInvalidCursorIcon,
+	                         scr,   &old->screen.defaultInvalidCursorIcon);
 
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultNoneCursorIcon =
-	    oldScr->screen.defaultNoneCursorIcon;
-    }
+	validate_icon_assignment(new_w, &new->screen.defaultMoveCursorIcon,
+	                         scr,   &old->screen.defaultMoveCursorIcon);
 
-    /* defaultValidCursorIcon */
+	validate_icon_assignment(new_w, &new->screen.defaultCopyCursorIcon,
+	                         scr,   &old->screen.defaultCopyCursorIcon);
 
-    if (newScr->screen.defaultValidCursorIcon !=
-	    oldScr->screen.defaultValidCursorIcon &&
-	newScr->screen.defaultValidCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultValidCursorIcon)) !=
-	     XtScreen (newScr)) {
+	validate_icon_assignment(new_w, &new->screen.defaultLinkCursorIcon,
+	                         scr,   &old->screen.defaultLinkCursorIcon);
 
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultValidCursorIcon =
-	    oldScr->screen.defaultValidCursorIcon;
-    }
+	validate_icon_assignment(new_w, &new->screen.defaultSourceCursorIcon,
+	                         scr,   &old->screen.defaultSourceCursorIcon);
 
-    /* defaultInvalidCursorIcon */
+	/**
+	 * font unit stuff, priority to actual unit values, if the
+	 * font has changed but not the unit values, report the change,
+	 * otherwise, use the unit value - i.e do nothing
+	 */
+	if (new->screen.font_struct->fid != old->screen.font_struct->fid) {
+		if (new->screen.h_unit == old->screen.h_unit) {
+			GetUnitFromFont(display, new->screen.font_struct,
+			                &new->screen.h_unit, NULL);
+		}
 
-    if (newScr->screen.defaultInvalidCursorIcon !=
-	    oldScr->screen.defaultInvalidCursorIcon &&
-	newScr->screen.defaultInvalidCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultInvalidCursorIcon)) !=
-	     XtScreen (newScr)) {
-
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultInvalidCursorIcon =
-	    oldScr->screen.defaultInvalidCursorIcon;
-    }
-
-    /* defaultMoveCursorIcon */
-
-    if (newScr->screen.defaultMoveCursorIcon !=
-	    oldScr->screen.defaultMoveCursorIcon &&
-	newScr->screen.defaultMoveCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultMoveCursorIcon)) !=
-	     XtScreen (newScr)) {
-
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultMoveCursorIcon =
-	    oldScr->screen.defaultMoveCursorIcon;
-    }
-
-    /* defaultCopyCursorIcon */
-
-    if (newScr->screen.defaultCopyCursorIcon !=
-	    oldScr->screen.defaultCopyCursorIcon &&
-	newScr->screen.defaultCopyCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultCopyCursorIcon)) !=
-	     XtScreen (newScr)) {
-
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultCopyCursorIcon =
-	    oldScr->screen.defaultCopyCursorIcon;
-    }
-
-    /* defaultLinkCursorIcon */
-
-    if (newScr->screen.defaultLinkCursorIcon !=
-	    oldScr->screen.defaultLinkCursorIcon &&
-	newScr->screen.defaultLinkCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultLinkCursorIcon)) !=
-	     XtScreen (newScr)) {
-
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultLinkCursorIcon =
-	    oldScr->screen.defaultLinkCursorIcon;
-    }
-
-    /* defaultSourceCursorIcon */
-
-    if (newScr->screen.defaultSourceCursorIcon !=
-	    oldScr->screen.defaultSourceCursorIcon &&
-	newScr->screen.defaultSourceCursorIcon != NULL &&
-	XtScreenOfObject (XtParent (newScr->screen.defaultSourceCursorIcon)) !=
-	     XtScreen (newScr)) {
-
-	XmeWarning( (Widget) new_w, MESSAGE1);
-	newScr->screen.defaultSourceCursorIcon =
-	    oldScr->screen.defaultSourceCursorIcon;
-    }
-
-    /* font unit stuff, priority to actual unit values, if the
-       font has changed but not the unit values, report the change,
-       otherwise, use the unit value - i.e do nothing */
-
-    if (newScr->screen.font_struct->fid !=
-	oldScr->screen.font_struct->fid) {
-
-	if (newScr->screen.h_unit == oldScr->screen.h_unit) {
-	    GetUnitFromFont(display, newScr->screen.font_struct,
-			    &newScr->screen.h_unit, NULL);
+		if (new->screen.v_unit == old->screen.v_unit) {
+			GetUnitFromFont(display, new->screen.font_struct,
+			                &new->screen.v_unit, NULL);
+		}
 	}
 
-	if (newScr->screen.v_unit == oldScr->screen.v_unit) {
-	    GetUnitFromFont(display, newScr->screen.font_struct,
-			    NULL, &newScr->screen.v_unit);
-	}
-    }
-
-    return FALSE ;
+	return FALSE;
 }
-
 
 /************************************************************************
  *
  *  Destroy
  *
  ************************************************************************/
-static void
-Destroy(
-        Widget widget )
+static void Destroy(Widget widget)
 {
-    XmScreen		xmScreen = (XmScreen)widget;
-    XmDragCursorCache 	prevCache, cache;
-    XmHashTable		tab;
+	XmScreen xmScreen = (XmScreen)widget;
+	XmDragCursorCache cache, prev;
+	XmHashTable ht;
 
-    /* destroy any default icons created by Xm */
+	/* destroy any default icons created by Xm */
+	_XmDestroyDefaultDragIcon(xmScreen->screen.xmStateCursorIcon);
+	_XmDestroyDefaultDragIcon(xmScreen->screen.xmMoveCursorIcon);
+	_XmDestroyDefaultDragIcon(xmScreen->screen.xmCopyCursorIcon);
+	_XmDestroyDefaultDragIcon(xmScreen->screen.xmLinkCursorIcon);
+	_XmDestroyDefaultDragIcon(xmScreen->screen.xmSourceCursorIcon);
 
-    if (xmScreen->screen.xmStateCursorIcon != NULL) {
-	_XmDestroyDefaultDragIcon (xmScreen->screen.xmStateCursorIcon);
-    }
-    if (xmScreen->screen.xmMoveCursorIcon != NULL) {
-	_XmDestroyDefaultDragIcon (xmScreen->screen.xmMoveCursorIcon);
-    }
-    if (xmScreen->screen.xmCopyCursorIcon != NULL) {
-	_XmDestroyDefaultDragIcon (xmScreen->screen.xmCopyCursorIcon);
-    }
-    if (xmScreen->screen.xmLinkCursorIcon != NULL) {
-	_XmDestroyDefaultDragIcon (xmScreen->screen.xmLinkCursorIcon);
-    }
-    if (xmScreen->screen.xmSourceCursorIcon != NULL) {
-	_XmDestroyDefaultDragIcon (xmScreen->screen.xmSourceCursorIcon);
-    }
-
-    XtFree((char *) xmScreen->desktop.children);
-
-    /* free the cursorCache and the pixmapCache */
-    cache = xmScreen->screen.cursorCache;
-    while(cache) {
-	prevCache = cache;
-	if (cache->cursor)
-	  XFreeCursor(XtDisplay(xmScreen), cache->cursor);
-	cache = cache->next;
-	XtFree((char *)prevCache);
-    }
-
-    _XmProcessLock();
-    tab = (XmHashTable) xmScreen->screen.scratchPixmaps;
-    _XmMapHashTable(tab, FreePixmap, xmScreen);
-    _XmFreeHashTable(tab);
-    _XmFreeHashTable((XmHashTable) xmScreen->screen.inUsePixmaps);
-    _XmProcessUnlock();
-
-    XtFree((char *) xmScreen->screen.screenInfo);
-
-    /* need to remove pixmap and GC related to this screen */
-    _XmCleanPixmapCache (XtScreen(widget), NULL);
-}
-
-static void
-InsertChild(
-        Widget wid )
-{
-    XmDesktopObject w = (XmDesktopObject) wid ;
-    register Cardinal	     	position;
-    register Cardinal        	i;
-    register XmScreen 	cw;
-    register WidgetList      	children;
-
-    cw = (XmScreen) w->desktop.parent;
-    children = cw->desktop.children;
-
-    position = cw->desktop.num_children;
-
-    if (cw->desktop.num_children == cw->desktop.num_slots) {
-	/* Allocate more space */
-	cw->desktop.num_slots +=  (cw->desktop.num_slots / 2) + 2;
-	cw->desktop.children = children =
-	  (WidgetList) XtRealloc((char *) children,
-		(unsigned) (cw->desktop.num_slots) * sizeof(Widget));
-    }
-    /* Ripple children up one space from "position" */
-    for (i = cw->desktop.num_children; i > position; i--) {
-	children[i] = children[i-1];
-    }
-    children[position] = (Widget)w;
-    cw->desktop.num_children++;
-}
-
-static void
-DeleteChild(
-        Widget wid )
-{
-    XmDesktopObject w = (XmDesktopObject) wid ;
-    register Cardinal	     	position;
-    register Cardinal	     	i;
-    register XmScreen 	cw;
-
-    cw = (XmScreen) w->desktop.parent;
-
-    for (position = 0; position < cw->desktop.num_children; position++) {
-        if (cw->desktop.children[position] == (Widget)w) {
-	    break;
+	/* free the cursorCache and the pixmapCache */
+	cache = xmScreen->screen.cursorCache;
+	while (cache) {
+		prev = cache;
+		if (cache->cursor != None)
+			XFreeCursor(XtDisplay(xmScreen), cache->cursor);
+		cache = cache->next;
+		XtFree((XtPointer)prev);
 	}
-    }
-    if (position == cw->desktop.num_children) return;
 
-    /* Ripple children down one space from "position" */
-    cw->desktop.num_children--;
-    for (i = position; i < cw->desktop.num_children; i++) {
-        cw->desktop.children[i] = cw->desktop.children[i+1];
-    }
+	_XmProcessLock();
+	ht = (XmHashTable)xmScreen->screen.scratchPixmaps;
+	_XmMapHashTable(ht, FreePixmap, xmScreen);
+	_XmFreeHashTable(ht);
+	_XmFreeHashTable((XmHashTable)xmScreen->screen.inUsePixmaps);
+	_XmProcessUnlock();
+
+	/* need to remove pixmap and GC related to this screen */
+	_XmCleanPixmapCache(XtScreen(widget), NULL);
+	XtFree((XtPointer)xmScreen->screen.screenInfo);
+	xmDesktopClass->core_class.destroy(widget);
 }
 
 /************************************************************************
@@ -708,52 +503,35 @@ DeleteChild(
  *
  *  Mark any cursor cache reference to the specified icon as deallocated.
  ************************************************************************/
-
-void
-_XmScreenRemoveFromCursorCache(
-    XmDragIconObject	icon )
+void _XmScreenRemoveFromCursorCache(XmDragIconObject icon)
 {
-    XmScreen	       xmScreen = (XmScreen) XmGetXmScreen(XtScreen(icon));
-    XmDragCursorCache  ptr = xmScreen->screen.cursorCache;
-    XmDragCursorCache  previous = xmScreen->screen.cursorCache;
-    XmDragCursorCache  next;
+	XmScreen scr = XmScreenOfObject(icon);
+	XmDragCursorCache i    = scr->screen.cursorCache;
+	XmDragCursorCache prev, next;
 
-    while (ptr) {
-	next = ptr->next;
+	prev = i;
+	while (i) {
+		next = i->next;
+		if (i->sourceIcon == icon || i->stateIcon == icon || i->opIcon == icon) {
+			if (i->cursor)
+				XFreeCursor(XtDisplay(icon), i->cursor);
 
-	if ((ptr->sourceIcon == icon) ||
-	    (ptr->stateIcon == icon) ||
-	    (ptr->opIcon == icon))
-	  {
-	    if (ptr->cursor)
-	      XFreeCursor (XtDisplay(icon), ptr->cursor);
+			if (i == scr->screen.cursorCache)
+				scr->screen.cursorCache = next;
+			else prev->next = i->next;
+			XtFree((XtPointer)i);
+		} else prev = i;
 
-	    if ( xmScreen->screen.cursorCache == ptr )
-		xmScreen->screen.cursorCache = ptr->next;
-	    else
-		previous->next = ptr->next;
-
-	    XtFree ((char*)ptr);
-	  }
-	else
-	    previous = ptr;
-
-	ptr = next;
-    }
+		i = next;
+	}
 }
 
-static Boolean
-FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data)
+static Boolean FreePixmap(XmHashKey k, XtPointer p, XtPointer client)
 {
-  XmScreen	xmScreen = (XmScreen) client_data;
-
-  XtFree((char*) k);
-  XFreePixmap(XtDisplay(xmScreen), (Pixmap) p);
-
-  return False;
+	XtFree((XtPointer)k);
+	XFreePixmap(XtDisplay((Widget)client), (Pixmap)p);
+	return False;
 }
-
-
 
 /************************************************************************
  *
@@ -765,48 +543,43 @@ FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data)
  *  own. The name of the OperatonIcon can cause the built-in cursor data
  *  to get loaded in (if not specified in the resource file).
  ************************************************************************/
-
-XmDragIconObject
-_XmScreenGetOperationIcon(
-        Widget w,
-        unsigned char operation )
+XmDragIconObject _XmScreenGetOperationIcon(Widget w, unsigned char operation)
 {
-    XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
-    XrmQuark		nameQuark = NULLQUARK;
-    XmDragIconObject	*ptr = NULL;
-    XmDragIconObject	*pt2 = NULL;
+	XrmQuark name = NULLQUARK;
+	XmScreen scr  = XmScreenOfObject(w);
+	XmDragIconObject *p1 = NULL, *p2 = NULL;
 
-    switch ((int) operation) {
+	switch (operation) {
 	case XmDROP_MOVE:
-	    ptr = &xmScreen->screen.defaultMoveCursorIcon;
-	    pt2 = &xmScreen->screen.xmMoveCursorIcon;
-	    nameQuark = _XmMoveCursorIconQuark;
-	    break;
-
+		p1   = &scr->screen.defaultMoveCursorIcon;
+		p2   = &scr->screen.xmMoveCursorIcon;
+		name = _XmMoveCursorIconQuark;
+		break;
 	case XmDROP_COPY:
-	    ptr = &xmScreen->screen.defaultCopyCursorIcon;
-	    pt2 = &xmScreen->screen.xmCopyCursorIcon;
-	    nameQuark = _XmCopyCursorIconQuark;
-	    break;
-
+		p1   = &scr->screen.defaultCopyCursorIcon;
+		p2   = &scr->screen.xmCopyCursorIcon;
+		name = _XmCopyCursorIconQuark;
+		break;
 	case XmDROP_LINK:
-	    ptr = &xmScreen->screen.defaultLinkCursorIcon;
-	    pt2 = &xmScreen->screen.xmLinkCursorIcon;
-	    nameQuark = _XmLinkCursorIconQuark;
-	    break;
-
+		p1   = &scr->screen.defaultLinkCursorIcon;
+		p2   = &scr->screen.xmLinkCursorIcon;
+		name = _XmLinkCursorIconQuark;
+		break;
 	default:
-	    return (NULL);
-    }
-    if (*ptr == NULL) {
-	if (*pt2 == NULL) {
-	    *pt2 = (XmDragIconObject)
-	        XmCreateDragIcon ((Widget) xmScreen,
-			          XrmQuarkToString(nameQuark), NULL, 0);
+		return NULL;
 	}
-	*ptr = *pt2;
-    }
-    return *ptr;
+
+	if (!*p1) {
+		if (!*p2) {
+			*p2 = (XmDragIconObject)XmCreateDragIcon(
+				(Widget)scr, XrmQuarkToString(name), NULL, 0
+			);
+		}
+
+		*p1 = *p2;
+	}
+
+    return *p1;
 }
 
 /************************************************************************
@@ -820,59 +593,50 @@ _XmScreenGetOperationIcon(
  *  to get loaded in (if not specified in the resource file).
  *  The default state cursors are the same XmDragIcon object.
  ************************************************************************/
-
-XmDragIconObject
-_XmScreenGetStateIcon(
-        Widget w,
-        unsigned char state )
+XmDragIconObject _XmScreenGetStateIcon(Widget w, unsigned char state)
 {
-    XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
-    XrmQuark		nameQuark = NULLQUARK;
-    XmDragIconObject	icon = NULL;
+	XrmQuark name = NULLQUARK;
+	XmScreen scr  = XmScreenOfObject(w);
+	XmDragIconObject icon = NULL, tmp;
 
-    switch(state) {
+	switch (state) {
 	default:
 	case XmNO_DROP_SITE:
-	    icon = xmScreen->screen.defaultNoneCursorIcon;
-	    nameQuark = _XmNoneCursorIconQuark;
-	    break;
-
+		icon = scr->screen.defaultNoneCursorIcon;
+		name = _XmNoneCursorIconQuark;
+		break;
 	case XmVALID_DROP_SITE:
-	    icon = xmScreen->screen.defaultValidCursorIcon;
-	    nameQuark = _XmValidCursorIconQuark;
-	    break;
-
+		icon = scr->screen.defaultValidCursorIcon;
+		name = _XmValidCursorIconQuark;
+		break;
 	case XmINVALID_DROP_SITE:
-	    icon = xmScreen->screen.defaultInvalidCursorIcon;
-	    nameQuark = _XmInvalidCursorIconQuark;
-	    break;
-    }
-    if (icon == NULL) {
+		icon = scr->screen.defaultInvalidCursorIcon;
+		name = _XmInvalidCursorIconQuark;
+		break;
+	}
 
-	/*
-	 *  We need to create the default state icons.
-	 *  Set all uncreated state icons to the same XmDragIcon object.
+	if (icon)
+		return icon;
+
+	/**
+	 * We need to create the default state icons.
+	 * Set all uncreated state icons to the same XmDragIcon object.
 	 */
+	if (!(icon = scr->screen.xmStateCursorIcon)) {
+		icon = (XmDragIconObject)XmCreateDragIcon(
+			(Widget)scr, XrmQuarkToString(name), NULL, 0
+		);
+	}
 
-	if (xmScreen->screen.xmStateCursorIcon == NULL) {
-	    xmScreen->screen.xmStateCursorIcon = (XmDragIconObject)
-	        XmCreateDragIcon ((Widget) xmScreen,
-			          XrmQuarkToString(nameQuark),
-				  NULL, 0);
-	}
-	icon = xmScreen->screen.xmStateCursorIcon;
+	scr->screen.xmStateCursorIcon = icon;
+	if (!scr->screen.defaultNoneCursorIcon)
+		scr->screen.defaultNoneCursorIcon = icon;
+	if (!scr->screen.defaultValidCursorIcon)
+		scr->screen.defaultValidCursorIcon = icon;
+	if (!scr->screen.defaultInvalidCursorIcon)
+		scr->screen.defaultInvalidCursorIcon = icon;
 
-	if (xmScreen->screen.defaultNoneCursorIcon == NULL) {
-	    xmScreen->screen.defaultNoneCursorIcon = icon;
-	}
-	if (xmScreen->screen.defaultValidCursorIcon == NULL) {
-	    xmScreen->screen.defaultValidCursorIcon = icon;
-	}
-	if (xmScreen->screen.defaultInvalidCursorIcon == NULL) {
-	    xmScreen->screen.defaultInvalidCursorIcon = icon;
-	}
-    }
-    return (icon);
+	return icon;
 }
 
 /************************************************************************
@@ -883,25 +647,24 @@ _XmScreenGetStateIcon(
  *  time in order to let the client specify its own.  If it hasn't by now
  *  (a drag is in process) then we create our own.
  ************************************************************************/
-
-XmDragIconObject
-_XmScreenGetSourceIcon(
-        Widget w )
+XmDragIconObject _XmScreenGetSourceIcon(Widget w)
 {
-    XmScreen	xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
+	XmDragIconObject icon;
+	XmScreen scr = XmScreenOfObject(w);
 
-    if (xmScreen->screen.defaultSourceCursorIcon == NULL) {
+	if (scr->screen.defaultSourceCursorIcon)
+		return scr->screen.defaultSourceCursorIcon;
 
-	if (xmScreen->screen.xmSourceCursorIcon == NULL) {
-	    xmScreen->screen.xmSourceCursorIcon = (XmDragIconObject)
-	        XmCreateDragIcon ((Widget) xmScreen,
-			          XrmQuarkToString(_XmDefaultDragIconQuark),
-			          NULL, 0);
+	if (!scr->screen.xmSourceCursorIcon) {
+		icon = (XmDragIconObject)XmCreateDragIcon(
+			(Widget)scr, XrmQuarkToString(_XmDefaultDragIconQuark),
+			NULL, 0
+		);
+		scr->screen.xmSourceCursorIcon = icon;
 	}
-	xmScreen->screen.defaultSourceCursorIcon =
-	    xmScreen->screen.xmSourceCursorIcon;
-    }
-    return xmScreen->screen.defaultSourceCursorIcon;
+
+	scr->screen.defaultSourceCursorIcon = scr->screen.xmSourceCursorIcon;
+	return scr->screen.defaultSourceCursorIcon;
 }
 
 /************************************************************************
@@ -909,68 +672,49 @@ _XmScreenGetSourceIcon(
  *  _XmAllocScratchPixmap
  *
  ************************************************************************/
-
-static Boolean
-MatchPixmap(XmHashKey k1, XmHashKey k2)
+static Boolean MatchPixmap(XmHashKey a, XmHashKey b)
 {
-  XmScratchPixmapKey key1 = (XmScratchPixmapKey) k1;
-  XmScratchPixmapKey key2 = (XmScratchPixmapKey) k2;
-
-  return(key1 -> height == key2 -> height &&
-	 key1 -> width == key2 -> width &&
-	 key1 -> depth == key2 -> depth);
+	XmScratchPixmapKey ka = (XmScratchPixmapKey)a;
+	XmScratchPixmapKey kb = (XmScratchPixmapKey)b;
+	return (ka->height == kb->height &&
+	        ka->width  == kb->width  &&
+	        ka->depth  == kb->depth);
 }
 
-static XmHashValue
-HashPixmap(XmHashKey k)
+static XmHashValue HashPixmap(XmHashKey x)
 {
-  XmScratchPixmapKey key = (XmScratchPixmapKey) k;
-
-  return(key -> height + key -> width + key -> depth);
+	XmScratchPixmapKey k = (XmScratchPixmapKey)x;
+	return k->height + k->width + k->depth;
 }
 
-Pixmap
-_XmAllocScratchPixmap(
-        XmScreen xmScreen,
-        Cardinal depth,
-        Dimension width,
-        Dimension height )
+Pixmap _XmAllocScratchPixmap(XmScreen scr, Cardinal depth,
+                             Dimension width, Dimension height)
 {
-    XmHashTable		scratchTable =
-      (XmHashTable) xmScreen->screen.scratchPixmaps;
-    XmHashTable		inUseTable =
-      (XmHashTable) xmScreen->screen.inUsePixmaps;
-    Pixmap		scratchPixmap = None;
-    XmScratchPixmapKeyRec	key;
-    XmScratchPixmapKey	returned_key;
+	Pixmap p = None;
+	XmHashTable scratch = (XmHashTable)scr->screen.scratchPixmaps;
+	XmHashTable in_use  = (XmHashTable)scr->screen.inUsePixmaps;
+	XmScratchPixmapKey key;
+	XmScratchPixmapKeyRec k;
 
-    key.height = height;
-    key.width = width;
-    key.depth = depth;
+	k.width  = width;
+	k.height = height;
+	k.depth  = depth;
 
-    _XmProcessLock();
-    scratchPixmap = (Pixmap) _XmGetHashEntry(scratchTable, &key);
+	_XmProcessLock();
+	if ((p = (Pixmap)_XmGetHashEntry(scratch, &k)) == None) {
+		key = (XmScratchPixmapKey)XtNew(XmScratchPixmapKeyRec);
+		key->width  = width;
+		key->height = height;
+		key->depth  = depth;
+		p = XCreatePixmap(XtDisplay(scr),
+		                  RootWindowOfScreen(XtScreen(scr)),
+		                  width, height, depth);
+	} else key = (XmScratchPixmapKey)_XmRemoveHashEntry(scratch, &k);
 
-    if (scratchPixmap != None) {
-      /* remove from free table */
-      returned_key = (XmScratchPixmapKey)
-	_XmRemoveHashEntry(scratchTable, &key);
-    } else {
-      returned_key = XtNew(XmScratchPixmapKeyRec);
-      returned_key->width = width;
-      returned_key->height = height;
-      returned_key->depth = depth;
-      scratchPixmap = XCreatePixmap (XtDisplay(xmScreen),
-				     RootWindowOfScreen(XtScreen(xmScreen)),
-				     width, height,
-				     depth);
-    }
-
-    /* Place key in inUse table */
-    _XmAddHashEntry(inUseTable, (XmHashKey) scratchPixmap, returned_key);
-
-    _XmProcessUnlock();
-    return(scratchPixmap);
+	/* Place key in in_use table */
+	_XmAddHashEntry(in_use,(XmHashKey)p, key);
+	_XmProcessUnlock();
+	return p;
 }
 
 /************************************************************************
@@ -978,44 +722,31 @@ _XmAllocScratchPixmap(
  *  _XmFreeScratchPixmap
  *
  ************************************************************************/
-
-void
-_XmFreeScratchPixmap(
-        XmScreen xmScreen,
-        Pixmap pixmap )
+void _XmFreeScratchPixmap(XmScreen scr, Pixmap pixmap)
 {
-    XmHashTable scratchTable = (XmHashTable) xmScreen->screen.scratchPixmaps;
-    XmHashTable inUseTable   = (XmHashTable) xmScreen->screen.inUsePixmaps;
-    XmScratchPixmapKey returned_key;
+	XmScratchPixmapKey key;
+	XmHashTable scratch = (XmHashTable)scr->screen.scratchPixmaps;
+	XmHashTable in_use  = (XmHashTable)scr->screen.inUsePixmaps;
 
-    _XmProcessLock();
-    returned_key = (XmScratchPixmapKey)
-      _XmGetHashEntry(inUseTable, (XmHashKey) pixmap);
+	_XmProcessLock();
+	if (!(key = (XmScratchPixmapKey)_XmGetHashEntry(in_use, (XmHashKey)pixmap))) {
+		_XmProcessUnlock();
+		return;
+	}
 
-    if (returned_key == NULL) {
-      /* Bad,  this pixmap wasn't in the cache,  return */
-      _XmProcessUnlock();
-      return;
-    }
-
-    _XmRemoveHashEntry(inUseTable, (XmHashKey) pixmap);
-
-    _XmAddHashEntry(scratchTable, returned_key, (XtPointer) pixmap);
-    _XmProcessUnlock();
+	_XmRemoveHashEntry(in_use, (XmHashKey)pixmap);
+	_XmAddHashEntry(scratch, key, (XtPointer)pixmap);
+	_XmProcessUnlock();
 }
-
 
 /************************************************************************
  *
  *  _XmGetDragCursorCachePtr ()
  *
  ************************************************************************/
-
-XmDragCursorCache *
-_XmGetDragCursorCachePtr(
-        XmScreen xmScreen )
+XmDragCursorCache *_XmGetDragCursorCachePtr(XmScreen scr)
 {
-    return &xmScreen->screen.cursorCache;
+	return &scr->screen.cursorCache;
 }
 
 /************************************************************************
@@ -1023,26 +754,18 @@ _XmGetDragCursorCachePtr(
  *  XmeQueryBestCursorSize()
  *
  ************************************************************************/
-
-void
-XmeQueryBestCursorSize(
-        Widget w,
-        Dimension *width,
-        Dimension *height )
+void XmeQueryBestCursorSize(Widget w, Dimension *width, Dimension *height)
 {
-    XmScreen	xmScreen;
-    _XmWidgetToAppContext(w);
-
-    _XmAppLock(app);
-    xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
-    *width = (Dimension)xmScreen->screen.maxCursorWidth;
-    *height = (Dimension)xmScreen->screen.maxCursorHeight;
-    _XmAppUnlock(app);
-    return;
+	XmScreen scr;
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+	scr     = XmScreenOfObject(w);
+	*width  = (Dimension)scr->screen.maxCursorWidth;
+	*height = (Dimension)scr->screen.maxCursorHeight;
+	_XmAppUnlock(app);
 }
 
-static XmConst char nullBits[] =
-{
+static const char null_bits[] = {
     0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
@@ -1054,42 +777,31 @@ static XmConst char nullBits[] =
  *  XmeGetNullCursor ()
  *
  ************************************************************************/
-
-Cursor
-XmeGetNullCursor(
-        Widget w )
+Cursor XmeGetNullCursor(Widget w)
 {
-    XmScreen		xmScreen;
-    Pixmap		pixmap;
-    Cursor		cursor;
-    XColor		foreground;
-    XColor		background;
-    _XmWidgetToAppContext(w);
+	XmScreen scr;
+	Pixmap p;
+	Cursor c;
+	XColor fg, bg;
 
-    _XmAppLock(app);
-    xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(w));
-    if (xmScreen->screen.nullCursor == None) {
-	foreground.pixel =
-	  background.pixel = 0;
-	pixmap =
-	  XCreatePixmapFromBitmapData(XtDisplayOfObject(w),
-				      RootWindowOfScreen(XtScreenOfObject(w)),
-				      (char*)nullBits,
-				      4, 4,
-				      0, 0,
-				      1);
-	cursor =
-	  XCreatePixmapCursor(XtDisplayOfObject(w),
-			      pixmap,
-			      pixmap,
-			      &foreground, &background,
-			      0, 0);
-	XFreePixmap(XtDisplayOfObject(w), pixmap);
-	xmScreen->screen.nullCursor = cursor;
-    }
-    cursor = xmScreen->screen.nullCursor;
-    _XmAppUnlock(app);
-    return cursor;
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+	scr = XmScreenOfObject(w);
+	if (scr->screen.nullCursor) {
+		c = scr->screen.nullCursor;
+		_XmAppUnlock(app);
+		return c;
+	}
+
+	fg.pixel = bg.pixel = 0;
+	p = XCreatePixmapFromBitmapData(XtDisplayOfObject(w),
+	                                RootWindowOfScreen(XtScreenOfObject(w)),
+	                                (char *)null_bits, 4, 4, 0, 0, 1);
+	c = XCreatePixmapCursor(XtDisplayOfObject(w), p, p, &fg, &bg, 0, 0);
+	XFreePixmap(XtDisplayOfObject(w), p);
+	scr->screen.nullCursor = c;
+	_XmAppUnlock(app);
+	return c;
 }
 
 /*
@@ -1097,85 +809,62 @@ XmeGetNullCursor(
  * They have moved from MenuUtil to here.
  */
 
-
 /* Obsolete global per-display menu cursor manipulation functions */
 /* Programs have to use XtSet/GetValues on the XmScreen object instead */
-void
-XmSetMenuCursor(
-        Display *display,
-        Cursor cursorId )
+void XmSetMenuCursor(Display *display, Cursor cursorId)
 {
-    XmScreen          xmScreen;
-    Screen            *scr;
-    int i ;
-    _XmDisplayToAppContext(display);
+	int i;
 
-    /* This function has no screen parameter, so we have to set the
-       menucursor for _all_ the xmscreen available on this display. why?
-       because when RowColumn will be getting a menucursor for a particular
-       screen, it will have to get what the application has set using
-       this function, not the default for that particular screen (which is
-       what will happen if we were only setting the default display here) */
+	_XmDisplayToAppContext(display);
+	_XmAppLock(app);
 
-    _XmAppLock(app);
-    for (i=0, scr = ScreenOfDisplay(display, i); i < ScreenCount(display);
-       i++, scr = ScreenOfDisplay(display, i)) {
-
-      xmScreen = (XmScreen) XmGetXmScreen(scr);
-      xmScreen->screen.menuCursor = cursorId ;
-    }
-    _XmAppUnlock(app);
+	/**
+	 * This function has no screen parameter, so we have to set the
+	 * menucursor for _all_ the xmscreen available on this display. why?
+	 * because when RowColumn will be getting a menucursor for a particular
+	 * screen, it will have to get what the application has set using
+	 * this function, not the default for that particular screen (which is
+	 * what will happen if we were only setting the default display here)
+	 */
+	for (i = 0; i < ScreenCount(display); i++)
+		XmScreenOfScreen(ScreenOfDisplay(display, i))->screen.menuCursor = cursorId;
+	_XmAppUnlock(app);
 }
 
-
-Cursor
-XmGetMenuCursor(
-        Display *display )
+Cursor XmGetMenuCursor(Display *display)
 {
-   XmScreen           xmScreen;
-   Cursor	      cursor;
-   _XmDisplayToAppContext(display);
+	Cursor c;
+	XmScreen scr;
 
-   /* get the default screen menuCursor since there is no
-      other information available to this function */
-   _XmAppLock(app);
-   xmScreen = (XmScreen) XmGetXmScreen(DefaultScreenOfDisplay(display));
-   cursor = xmScreen->screen.menuCursor;
-   _XmAppUnlock(app);
-   return cursor;
+	_XmDisplayToAppContext(display);
+	_XmAppLock(app);
+
+	/**
+	 * get the default screen menuCursor since there is no
+	 * other information available to this function
+	 */
+	scr = XmScreenOfScreen(DefaultScreenOfDisplay(display));
+	c   = scr->screen.menuCursor;
+	_XmAppUnlock(app);
+	return c;
 }
 
 /* a convenience for RowColumn */
-Cursor
-_XmGetMenuCursorByScreen(
-        Screen * screen  )
+Cursor _XmGetMenuCursorByScreen(Screen *screen)
 {
-   XmScreen           xmScreen;
-
-   xmScreen = (XmScreen) XmGetXmScreen(screen);
-   return(xmScreen->screen.menuCursor);
+	return XmScreenOfScreen(screen)->screen.menuCursor;
 }
 
-Boolean
-_XmGetMoveOpaqueByScreen(
-        Screen * screen  )
+Boolean _XmGetMoveOpaqueByScreen(Screen *screen)
 {
-   XmScreen           xmScreen;
-
-   xmScreen = (XmScreen) XmGetXmScreen(screen);
-   return(xmScreen->screen.moveOpaque);
+	return XmScreenOfScreen(screen)->screen.moveOpaque;
 }
 
 /* a convenience for RowColumn */
-unsigned char
-_XmGetUnpostBehavior(
-        Widget wid )
+unsigned char _XmGetUnpostBehavior(Widget w)
 {
-   XmScreen	xmScreen = (XmScreen) XmGetXmScreen(XtScreenOfObject(wid));
-
-   return(xmScreen->screen.unpostBehavior);
+	return XmScreenOfObject(w)->screen.unpostBehavior;
 }
-
 
 /**********************************************************************
  **********************************************************************
@@ -1194,27 +883,29 @@ _XmGetUnpostBehavior(
  **********************************************************************/
 static void _XmSetFontUnits(Display *display, int h_value, int v_value)
 {
-    XmScreen          xmScreen;
-    Screen            *scr;
-    int i ;
-    _XmDisplayToAppContext(display);
+	int i;
+	Screen *scr;
+	XmScreen xscr;
 
-    /* This function has no screen parameter, so we have to set the
-       fontunit for _all_ the xmscreen available on this display. why?
-       because when someone will be getting fontunits for a particular
-       screen, it will have to get what the application has set using
-       this function, not the default for that particular screen (which is
-       what will happen if we were only setting the default display here) */
+	_XmDisplayToAppContext(display);
+	_XmAppLock(app);
 
-    _XmAppLock(app);
-    for (i=0, scr = ScreenOfDisplay(display, i); i < ScreenCount(display);
-       i++, scr = ScreenOfDisplay(display, i)) {
+	/**
+	 * This function has no screen parameter, so we have to set the
+	 * fontunit for _all_ the xmscreen available on this display. why?
+	 * because when someone will be getting fontunits for a particular
+	 * screen, it will have to get what the application has set using
+	 * this function, not the default for that particular screen (which is
+	 * what will happen if we were only setting the default display here)
+	 */
+	for (i = 0; i < ScreenCount(display); i++) {
+		scr  = ScreenOfDisplay(display, i);
+		xscr = XmScreenOfScreen(scr);
+		xscr->screen.h_unit = h_value;
+		xscr->screen.v_unit = v_value;
+	}
 
-      xmScreen = (XmScreen) XmGetXmScreen(scr);
-      xmScreen->screen.h_unit =  h_value ;
-      xmScreen->screen.v_unit =  v_value ;
-    }
-    _XmAppUnlock(app);
+	_XmAppUnlock(app);
 }
 
 /* DEPRECATED */
@@ -1224,12 +915,9 @@ void XmSetFontUnits(Display *display, int h_value, int v_value)
 }
 
 /* DEPRECATED */
-void
-XmSetFontUnit(
-        Display *display,
-        int value )
+void XmSetFontUnit(Display *display, int value)
 {
-    _XmSetFontUnits(display, value, value);
+	_XmSetFontUnits(display, value, value);
 }
 
 /**********************************************************************
@@ -1237,20 +925,11 @@ XmSetFontUnit(
  *  _XmGetFontUnit
  *
  **********************************************************************/
-int
-_XmGetFontUnit(
-        Screen *screen,
-        int dimension )
+int _XmGetFontUnit(Screen *screen, int dimension)
 {
-    XmScreen          xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(screen);
-    if (dimension == XmHORIZONTAL)
-      return(xmScreen->screen.h_unit);
-    else
-      return(xmScreen->screen.v_unit);
+	XmScreen scr = XmScreenOfScreen(screen);
+	return (dimension == XmHORIZONTAL) ? scr->screen.h_unit : scr->screen.v_unit;
 }
-
 
 /**********************************************************************
  *
@@ -1260,14 +939,9 @@ _XmGetFontUnit(
  *     different. The old color proc will still be managed by Visual.c
  *     in its own way.
  **********************************************************************/
-XmScreenColorProc
-_XmGetColorCalculationProc(
-        Screen *screen)
+XmScreenColorProc _XmGetColorCalculationProc(Screen *screen)
 {
-    XmScreen          xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(screen);
-    return(xmScreen->screen.color_calc_proc);
+    return XmScreenOfScreen(screen)->screen.color_calc_proc;
 }
 
 /**********************************************************************
@@ -1275,14 +949,9 @@ _XmGetColorCalculationProc(
  *  _XmGetColorAllocationProc
  *
  **********************************************************************/
-XmAllocColorProc
-_XmGetColorAllocationProc(
-        Screen *screen)
+XmAllocColorProc _XmGetColorAllocationProc(Screen *screen)
 {
-    XmScreen          xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(screen);
-    return(xmScreen->screen.color_alloc_proc);
+    return XmScreenOfScreen(screen)->screen.color_alloc_proc;
 }
 
 /**********************************************************************
@@ -1290,19 +959,10 @@ _XmGetColorAllocationProc(
  *  _XmGetBitmapConversionModel
  *
  **********************************************************************/
-
-XtEnum
-_XmGetBitmapConversionModel(
-        Screen *screen)
+XtEnum _XmGetBitmapConversionModel(Screen *screen)
 {
-    XmScreen          xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(screen);
-    return(xmScreen->screen.bitmap_conversion_model);
+    return XmScreenOfScreen(screen)->screen.bitmap_conversion_model;
 }
-
-
-
 
 /************************************************************************
  *
@@ -1310,73 +970,53 @@ _XmGetBitmapConversionModel(
  *
  * Returns the insensitive_stipple_bitmap field of the XmScreenPart
  ************************************************************************/
-
-Pixmap
-_XmGetInsensitiveStippleBitmap (Widget w)
+Pixmap _XmGetInsensitiveStippleBitmap(Widget w)
 {
-    XmScreen    xmScreen = (XmScreen) XmGetXmScreen(XtScreen(w));
-
-    return(xmScreen->screen.insensitive_stipple_bitmap);
+    return XmScreenOfObject(w)->screen.insensitive_stipple_bitmap;
 }
-
 
 /*********************************************************************
  *
  *  XmGetXmScreen
  *
  *********************************************************************/
-
-Widget
-XmGetXmScreen(
-        Screen *screen )
+Widget XmGetXmScreen(Screen *screen)
 {
-    XmDisplay	xmDisplay;
-    WidgetList	children;
-    Widget 	widget;
-    int	num_children;
-    Arg args[5];
-    int i;
-    Screen *scr;
-    char name[25];
-    _XmDisplayToAppContext(DisplayOfScreen(screen));
+	int i;
+	Arg arg;
+	Cardinal c;
+	XmDisplay d;
+	Widget w, child;
+	WidgetList children;
+	char name[32];
 
-    _XmAppLock(app);
-    if ((xmDisplay = (XmDisplay)
-	 XmGetXmDisplay(DisplayOfScreen(screen))) == NULL)
-	{
-		XmeWarning(NULL, MESSAGE2);
+	_XmDisplayToAppContext(DisplayOfScreen(screen));
+	_XmAppLock(app);
+
+	if (!(d = (XmDisplay)XmGetXmDisplay(DisplayOfScreen(screen)))) {
+		XmeWarning(NULL, CANT_FIND_DISPLAY);
 		_XmAppUnlock(app);
-		return(NULL);
+		return NULL;
 	}
 
-	children = xmDisplay->composite.children;
-	num_children = xmDisplay->composite.num_children;
-
-	for (i=0; i < num_children; i++)
-	{
-		Widget child = children[i];
-		if ((XmIsScreen(child)) &&
-			(screen == XtScreen(child))) {
+	for (c = 0; c < d->composite.num_children; c++) {
+		child = d->composite.children[c];
+		if (XmIsScreen(child) && screen == XtScreen(child)) {
 			_XmAppUnlock(app);
-			return(child);
+			return child;
 		}
 	}
 
-	/* Not found; have to do an implied creation */
-	for (scr = ScreenOfDisplay(XtDisplay(xmDisplay), i);
-		i < ScreenCount(XtDisplay(xmDisplay));
-		i++, scr = ScreenOfDisplay(XtDisplay(xmDisplay), i))
-	{
-		if (scr == screen)
+	/* If we can't find it, create it */
+	for (i = 0; i < ScreenCount(XtDisplay(d)); i++) {
+		if (screen == ScreenOfDisplay(XtDisplay(d), i))
 			break;
 	}
 
 	sprintf(name, "screen%d", i);
-
-	i = 0;
-	XtSetArg(args[i], XmNscreen, screen); i++;
-	widget = XtCreateWidget(name, xmScreenClass, (Widget)xmDisplay,
-		args, i);
+	XtSetArg(arg, XmNscreen, screen);
+	w = XtCreateWidget(name, xmScreenClass, (Widget)d, &arg, 1);
 	_XmAppUnlock(app);
-	return widget;
+	return w;
 }
+

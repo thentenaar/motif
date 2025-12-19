@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DragIcon.c /main/17 1996/10/14 10:44:37 pascale $"
@@ -65,18 +66,18 @@ typedef struct {
 
 /********    Static Function Declarations    ********/
 
-static void DragIconInitialize( 
+static void DragIconInitialize(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *numArgs) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget current,
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget w) ;
 
 static void ScreenObjectDestroy(
@@ -112,7 +113,7 @@ static XmConst XmCursorDataRec validCursorDataRec =
    "valid_m",
    valid_m_bits,
 };
-   
+
 
 #define invalid_width 16
 #define invalid_height 16
@@ -147,7 +148,7 @@ static XmConst XmCursorDataRec invalidCursorDataRec =
 #define none_width 16
 #define none_height 16
 #define none_x_hot 1
-#define none_y_hot 1 
+#define none_y_hot 1
 #define none_x_offset 7
 #define none_y_offset 7
 
@@ -205,7 +206,7 @@ static XmConst XmCursorDataRec moveCursorDataRec =
 #define copy_height 16
 #define copy_x_hot 1
 #define copy_y_hot 1
-#define copy_x_offset 14 
+#define copy_x_offset 14
 #define copy_y_offset 14
 
 static XmConst unsigned char copy_bits[] = {
@@ -290,7 +291,7 @@ static XmConst XmCursorDataRec Altsource16CursorDataRec =
 #define Altsource_width 32
 #define Altsource_height 32
 #define Altsource_x_hot 3
-#define Altsource_y_hot 3 
+#define Altsource_y_hot 3
 
 static XmConst unsigned char Altsource_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0xf0, 0xff, 0x7f, 0x00, 0x10, 0x00, 0xc0, 0x00,
@@ -453,7 +454,7 @@ static XmConst XmCursorDataRec link16CursorDataRec =
 #define source16_height 16
 #define source16_x_hot 0
 #define source16_y_hot 0
-static XmConst unsigned char source16_bits[] = 
+static XmConst unsigned char source16_bits[] =
 {
    0x00, 0x00, 0xaa, 0xca, 0x54, 0x85, 0xaa, 0xca, 0x54, 0xe0, 0x2a, 0xe3,
    0x94, 0x81, 0xea, 0xf8, 0x54, 0xd4, 0xaa, 0xac, 0x94, 0xd9, 0xca, 0xac,
@@ -481,7 +482,7 @@ static XmConst XmCursorDataRec source16CursorDataRec =
 #define state32_y_hot 1
 #define state32_x_offset -16
 #define state32_y_offset -4
-static XmConst unsigned char state32_bits[] = 
+static XmConst unsigned char state32_bits[] =
 {
    0x00, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x0e, 0x00, 0x00, 0x00,
    0x1e, 0x00, 0x00, 0x00, 0x3e, 0x00, 0x00, 0x00, 0x7e, 0x00, 0x00, 0x00,
@@ -571,7 +572,7 @@ static XmConst XmCursorDataRec move32CursorDataRec =
 #define copy32_y_hot 1
 #define copy32_x_offset -16
 #define copy32_y_offset -4
-static XmConst unsigned char copy32_bits[] = 
+static XmConst unsigned char copy32_bits[] =
 {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -585,7 +586,7 @@ static XmConst unsigned char copy32_bits[] =
    0x00, 0x04, 0x80, 0x01, 0x00, 0x04, 0x80, 0x01, 0x00, 0xfc, 0xff, 0x01,
    0x00, 0xf8, 0xff, 0x01, 0x00, 0x00, 0x00, 0x00
 };
-static XmConst unsigned char copy32M_bits[] = 
+static XmConst unsigned char copy32M_bits[] =
 {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -744,7 +745,7 @@ static XtResource resources[]=
 {
     {
 	XmNdepth, XmCDepth, XmRInt,
-        sizeof(int), Offset(depth), 
+        sizeof(int), Offset(depth),
         XmRImmediate, (XtPointer)1,
     },
     {
@@ -759,7 +760,7 @@ static XtResource resources[]=
     },
     {
 	XmNhotX, XmCHot, XmRPosition,
-        sizeof(Position), Offset(hot_x), 
+        sizeof(Position), Offset(hot_x),
         XmRImmediate, (XtPointer)0,
     },
     {
@@ -779,7 +780,7 @@ static XtResource resources[]=
     },
     {
 	XmNoffsetX, XmCOffset, XmRPosition,
-        sizeof(Position), Offset(offset_x), 
+        sizeof(Position), Offset(offset_x),
         XmRImmediate, (XtPointer)0,
     },
     {
@@ -796,46 +797,46 @@ static XtResource resources[]=
 
 externaldef(xmdragiconclassrec)
 XmDragIconClassRec xmDragIconClassRec = {
-    {	
-	(WidgetClass) &objectClassRec,	/* superclass		*/   
-	"XmDragIcon",			/* class_name 		*/   
-	sizeof(XmDragIconRec),		/* size 		*/   
-	NULL,	                        /* Class Initializer 	*/   
-	NULL,				/* class_part_init 	*/ 
-	FALSE, 				/* Class init'ed ? 	*/   
-	DragIconInitialize,		/* initialize         	*/   
-	NULL, 				/* initialize_notify    */ 
-	NULL,	 			/* realize            	*/   
-	NULL,	 			/* actions            	*/   
-	0,				/* num_actions        	*/   
-	(XtResourceList)resources,	/* resources          	*/   
-	XtNumber(resources),		/* resource_count     	*/   
-	NULLQUARK, 			/* xrm_class          	*/   
-	FALSE, 				/* compress_motion    	*/   
-	XtExposeNoCompress, 		/* compress_exposure  	*/   
-	FALSE, 				/* compress_enterleave	*/   
-	FALSE, 				/* visible_interest   	*/   
-	Destroy,			/* destroy            	*/   
-	NULL,		 		/* resize             	*/   
-	NULL,				/* expose             	*/   
+    {
+	(WidgetClass) &objectClassRec,	/* superclass		*/
+	"XmDragIcon",			/* class_name 		*/
+	sizeof(XmDragIconRec),		/* size 		*/
+	NULL,	                        /* Class Initializer 	*/
+	NULL,				/* class_part_init 	*/
+	FALSE, 				/* Class init'ed ? 	*/
+	DragIconInitialize,		/* initialize         	*/
+	NULL, 				/* initialize_notify    */
+	NULL,	 			/* realize            	*/
+	NULL,	 			/* actions            	*/
+	0,				/* num_actions        	*/
+	(XtResourceList)resources,	/* resources          	*/
+	XtNumber(resources),		/* resource_count     	*/
+	NULLQUARK, 			/* xrm_class          	*/
+	FALSE, 				/* compress_motion    	*/
+	XtExposeNoCompress, 		/* compress_exposure  	*/
+	FALSE, 				/* compress_enterleave	*/
+	FALSE, 				/* visible_interest   	*/
+	Destroy,			/* destroy            	*/
+	NULL,		 		/* resize             	*/
+	NULL,				/* expose             	*/
 	SetValues, 			/* set_values		*/
-	NULL, 				/* set_values_hook      */ 
-	XtInheritSetValuesAlmost,	/* set_values_almost    */ 
-	NULL,				/* get_values_hook      */ 
-	NULL, 				/* accept_focus       	*/   
-	XtVersion, 			/* intrinsics version 	*/   
-	NULL, 				/* callback offsets   	*/   
-	NULL,				/* tm_table           	*/   
-	NULL, 				/* query_geometry       */ 
-	NULL,				/* display_accelerator  */ 
-	NULL, 				/* extension            */ 
-    },	
+	NULL, 				/* set_values_hook      */
+	XtInheritSetValuesAlmost,	/* set_values_almost    */
+	NULL,				/* get_values_hook      */
+	NULL, 				/* accept_focus       	*/
+	XtVersion, 			/* intrinsics version 	*/
+	NULL, 				/* callback offsets   	*/
+	NULL,				/* tm_table           	*/
+	NULL, 				/* query_geometry       */
+	NULL,				/* display_accelerator  */
+	NULL, 				/* extension            */
+    },
     {					/* dragIcon		*/
 	NULL,				/* extension		*/
     },
 };
 
-externaldef(dragIconobjectclass) WidgetClass 
+externaldef(dragIconobjectclass) WidgetClass
       xmDragIconObjectClass = (WidgetClass) &xmDragIconClassRec;
 
 
@@ -846,7 +847,7 @@ externaldef(dragIconobjectclass) WidgetClass
  ************************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 DragIconInitialize(
         Widget req,		/* unused */
         Widget new_w,
@@ -871,7 +872,7 @@ DragIconInitialize(
 	 *  If this is one of the default cursors (recognized by name)
 	 *  then we use the built in images to generate the pixmap, its
 	 *  mask (as appropriate), and its dimensions and hot spot.
-	 */ 
+	 */
 
 	XmeQueryBestCursorSize (XtParent(dragIcon), &maxW, &maxH);
 
@@ -930,24 +931,24 @@ DragIconInitialize(
 	    dragIcon->drag.offset_y = cursorData->offset_y;
 
 	    _XmCreateImage(image, display, (char *)cursorData->data,
-			dragIcon->drag.width, dragIcon->drag.height, 
+			dragIcon->drag.width, dragIcon->drag.height,
 			LSBFirst);
-    
-	    _XmInstallImage(image, cursorData->dataName, 	
-		            (int)dragIcon->drag.hot_x, 
+
+	    _XmInstallImage(image, cursorData->dataName,
+		            (int)dragIcon->drag.hot_x,
 		            (int)dragIcon->drag.hot_y);
 	    dragIcon->drag.pixmap =
 		XmGetPixmapByDepth (screen, cursorData->dataName, 1, 0, 1);
-    
+
 	    if (cursorData->maskData) {
 		_XmCreateImage(image, display, (char *)cursorData->maskData,
-			    dragIcon->drag.width, dragIcon->drag.height, 
+			    dragIcon->drag.width, dragIcon->drag.height,
 			    LSBFirst);
-	
+
 		_XmInstallImage (image, cursorData->maskDataName, 0, 0);
-	
+
 		dragIcon->drag.mask =
-		    XmGetPixmapByDepth(screen, cursorData->maskDataName, 
+		    XmGetPixmapByDepth(screen, cursorData->maskDataName,
 				       1, 0, 1);
 	    }
 	}
@@ -963,7 +964,7 @@ DragIconInitialize(
 	    if (XmeGetPixmapData(screen,
 				 dragIcon->drag.pixmap,
 				 &name,
-				 &depth, 
+				 &depth,
 				 &foreground, &background,
 				 &hot_x, &hot_y,
 				 &width, &height)) {
@@ -974,7 +975,7 @@ DragIconInitialize(
 		dragIcon->drag.height = (Dimension)height;
 	    }
 	    else {
-		dragIcon->drag.width = 
+		dragIcon->drag.width =
 		  dragIcon->drag.height = 0;
 		dragIcon->drag.pixmap = XmUNSPECIFIED_PIXMAP;
 		XmeWarning ((Widget) new_w, MESSAGE1);
@@ -993,7 +994,7 @@ DragIconInitialize(
 		    XDestroyImage(image);
             } else
 	        dragIcon->drag.region = NULL;
-	   
+
         } else
 	   dragIcon->drag.region = NULL;
     }
@@ -1013,7 +1014,7 @@ DragIconInitialize(
  *
  ************************************************************************/
 
-Widget 
+Widget
 XmCreateDragIcon(
         Widget parent,
         String name,
@@ -1032,22 +1033,24 @@ XmCreateDragIcon(
  *  the Xm pixmap cache from built-in images when the XmDragIcon was
  *  initialized.
  ************************************************************************/
-
-void 
-_XmDestroyDefaultDragIcon(
-	XmDragIconObject icon)
+void _XmDestroyDefaultDragIcon(XmDragIconObject icon)
 {
-    Screen	*screen = XtScreenOfObject(XtParent(icon));
+	Screen *screen;
 
-    if (icon->drag.pixmap != XmUNSPECIFIED_PIXMAP) {
-	XmDestroyPixmap (screen, icon->drag.pixmap);
-	icon->drag.pixmap = XmUNSPECIFIED_PIXMAP;
-    }
-    if (icon->drag.mask != XmUNSPECIFIED_PIXMAP) {
-	XmDestroyPixmap (screen, icon->drag.mask);
-	icon->drag.mask = XmUNSPECIFIED_PIXMAP;
-    }
-    XtDestroyWidget ((Widget) icon);
+	if (!icon) return;
+
+	screen = XtScreenOfObject(XtParent(icon));
+	if (icon->drag.pixmap != XmUNSPECIFIED_PIXMAP) {
+		XmDestroyPixmap (screen, icon->drag.pixmap);
+		icon->drag.pixmap = XmUNSPECIFIED_PIXMAP;
+	}
+
+	if (icon->drag.mask != XmUNSPECIFIED_PIXMAP) {
+		XmDestroyPixmap (screen, icon->drag.mask);
+		icon->drag.mask = XmUNSPECIFIED_PIXMAP;
+	}
+
+	XtDestroyWidget((Widget)icon);
 }
 
 /************************************************************************
@@ -1057,7 +1060,7 @@ _XmDestroyDefaultDragIcon(
  *  Test the isDirty member of XmDragIconObject.
  ************************************************************************/
 
-Boolean 
+Boolean
 _XmDragIconIsDirty(
 	XmDragIconObject icon)
 {
@@ -1157,7 +1160,7 @@ SetValues(
  *  Remove any cached cursors referencing this icon.
  ************************************************************************/
 
-static void 
+static void
 Destroy(
         Widget w )
 {
@@ -1189,7 +1192,7 @@ ScreenObjectDestroy(
 
    XtDestroyWidget(drag_icon);  /* destroy drag_icon */
    _XmProcessLock();
-   XDeleteContext(XtDisplay(w), RootWindowOfScreen(XtScreen(w)),  
+   XDeleteContext(XtDisplay(w), RootWindowOfScreen(XtScreen(w)),
 		  _XmTextualDragIconContext);
    _XmProcessUnlock();
 }
@@ -1266,15 +1269,15 @@ XmeGetTextualDragIcon(
 	 }
        }
 
-       _XmCreateImage(image, XtDisplay(w), (char *)icon_bits, 
+       _XmCreateImage(image, XtDisplay(w), (char *)icon_bits,
 		width, height, LSBFirst);
        _XmInstallImage(image, "XmTextualDragIcon", x_hot, y_hot);
        icon = XmGetPixmapByDepth(screen, "XmTextualDragIcon", 1, 0, 1);
 
-       _XmCreateImage(image, XtDisplay(w), (char *)icon_mask_bits, 
+       _XmCreateImage(image, XtDisplay(w), (char *)icon_mask_bits,
 		   width, height, LSBFirst);
        _XmInstallImage(image, "XmTextualDragIconMask", x_hot, y_hot);
-       icon_mask = XmGetPixmapByDepth(screen, "XmTextualDragIconMask", 
+       icon_mask = XmGetPixmapByDepth(screen, "XmTextualDragIconMask",
 				      1, 0, 1);
        screen_object = XmGetXmScreen(XtScreen(w));
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: ScreenI.h /main/5 1995/07/13 17:53:44 drk $ */
 #ifndef _XmScreenI_h
 #define _XmScreenI_h
@@ -34,61 +32,35 @@
 extern "C" {
 #endif
 
-
-externalref XrmQuark _XmInvalidCursorIconQuark ;
-externalref XrmQuark _XmValidCursorIconQuark ;
-externalref XrmQuark _XmNoneCursorIconQuark ;
-externalref XrmQuark _XmDefaultDragIconQuark ;
-externalref XrmQuark _XmMoveCursorIconQuark ;
-externalref XrmQuark _XmCopyCursorIconQuark ;
-externalref XrmQuark _XmLinkCursorIconQuark ;
-
+externalref XrmQuark _XmInvalidCursorIconQuark;
+externalref XrmQuark _XmValidCursorIconQuark;
+externalref XrmQuark _XmNoneCursorIconQuark;
+externalref XrmQuark _XmDefaultDragIconQuark;
+externalref XrmQuark _XmMoveCursorIconQuark;
+externalref XrmQuark _XmCopyCursorIconQuark;
+externalref XrmQuark _XmLinkCursorIconQuark;
 
 /********    Private Function Declarations    ********/
-
-extern XmDragIconObject _XmScreenGetOperationIcon(
-                        Widget w,
-                        unsigned char operation) ;
-extern XmDragIconObject _XmScreenGetStateIcon(
-                        Widget w,
-                        unsigned char state) ;
-extern XmDragIconObject _XmScreenGetSourceIcon(
-                        Widget w) ;
-extern Pixmap _XmAllocScratchPixmap(
-                        XmScreen xmScreen,
-                        Cardinal depth,
-                        Dimension width,
-                        Dimension height) ;
-extern void _XmFreeScratchPixmap(
-                        XmScreen xmScreen,
-                        Pixmap pixmap) ;
-extern XmDragCursorCache * _XmGetDragCursorCachePtr(
-                        XmScreen xmScreen) ;
-extern Cursor _XmGetMenuCursorByScreen(
-                        Screen *screen) ;
-extern Boolean _XmGetMoveOpaqueByScreen(
-                        Screen *screen) ;
-extern unsigned char _XmGetUnpostBehavior(
-                        Widget wid) ;
-extern int _XmGetFontUnit(
-                        Screen *screen,
-                        int dimension) ;
-extern void _XmScreenRemoveFromCursorCache(
-			XmDragIconObject icon) ;
-extern XmScreenColorProc _XmGetColorCalculationProc(
-                        Screen *screen) ;
-extern XmAllocColorProc _XmGetColorAllocationProc(
-			Screen *screen) ;
-extern Pixmap _XmGetInsensitiveStippleBitmap(
-			Widget w) ;
-extern XtEnum _XmGetBitmapConversionModel(
-			Screen *screen) ;
+extern XmDragIconObject _XmScreenGetOperationIcon(Widget w, unsigned char operation);
+extern XmDragIconObject _XmScreenGetStateIcon(Widget w, unsigned char state);
+extern XmDragIconObject _XmScreenGetSourceIcon(Widget w);
+extern Pixmap _XmAllocScratchPixmap(XmScreen scr, Cardinal depth,
+                                    Dimension width, Dimension height);
+extern void _XmFreeScratchPixmap(XmScreen scr, Pixmap pixmap);
+extern XmDragCursorCache * _XmGetDragCursorCachePtr(XmScreen scr);
+extern Cursor _XmGetMenuCursorByScreen(Screen *screen);
+extern Boolean _XmGetMoveOpaqueByScreen(Screen *screen);
+extern unsigned char _XmGetUnpostBehavior(Widget w);
+extern int _XmGetFontUnit(Screen *screen, int dimension);
+extern void _XmScreenRemoveFromCursorCache(XmDragIconObject icon);
+extern XmScreenColorProc _XmGetColorCalculationProc(Screen *screen);
+extern XmAllocColorProc _XmGetColorAllocationProc(Screen *screen);
+extern Pixmap _XmGetInsensitiveStippleBitmap(Widget w);
+extern XtEnum _XmGetBitmapConversionModel(Screen *screen);
 
 /********    End Private Function Declarations    ********/
-
 
 #ifdef __cplusplus
 }  /* Close scope of 'extern "C"' declaration which encloses file. */
 #endif
-
 #endif /* _XmScreenI_h */
