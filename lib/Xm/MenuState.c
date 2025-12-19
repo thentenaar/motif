@@ -1,5 +1,5 @@
 /* $XConsortium: MenuState.c /main/5 1995/07/15 20:52:55 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,6 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  *
- */
-/*
- * HISTORY
  */
 
 #ifdef HAVE_CONFIG_H
@@ -85,7 +82,7 @@ XmMenuState
 _XmGetMenuState(
         Widget wid)
 {
-   XmScreen scrn = (XmScreen) XmGetXmScreen(XtScreen(wid));
+   XmScreen scrn = XmScreenOfObject(wid);
    XmMenuState menu_state = (XmMenuState)NULL;
 
    if ((XmScreen)NULL != scrn)
@@ -131,7 +128,7 @@ ScreenDestroyCallback
         XtPointer client_data,
         XtPointer call_data )	/* unused */
 {
-   XmScreen scrn = (XmScreen) XmGetXmScreen(XtScreen(w));
+   XmScreen scrn = XmScreenOfObject(w);
    if ((XmScreen)NULL != scrn) {
        XmMenuState menu_state =
 	   (XmMenuState)((XmScreenInfo *)

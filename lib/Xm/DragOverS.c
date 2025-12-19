@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DragOverS.c /main/18 1999/08/11 15:53:11 mgreess $"
@@ -1161,7 +1162,7 @@ DestroyMixedIcon(
     XmDragOverShellWidget	dos,
     XmDragIconObject		mixedIcon)
 {
-    XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreen(dos));
+    XmScreen		xmScreen = XmScreenOfObject(dos);
     MixedIconCache 	*cache_ptr;
     MixedIconCache 	*prev_cache_ptr = NULL;
 
@@ -1215,7 +1216,7 @@ MixIcons(
     Boolean			clip)
 {
     Display		*display = XtDisplay(dos);
-    XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreen(dos));
+    XmScreen		xmScreen = XmScreenOfObject(dos);
     XmDragIconObject	mixedIcon = blendPtr->mixedIcon;
     XmDragOverBlendRec	*cursorBlend = &dos->drag.cursorBlend;
     Arg			al[8];
@@ -1716,7 +1717,7 @@ GetDragIconCursor(
      *                   which cursors use the dirty icon.  When found, mark
      *                   the cache as dirty.
      */
-    cursorCachePtr = _XmGetDragCursorCachePtr((XmScreen)XmGetXmScreen(screen));
+    cursorCachePtr = _XmGetDragCursorCachePtr(XmScreenOfScreen(screen));
     if (dirty)
       {
 	cursorCache = *cursorCachePtr;
@@ -1745,7 +1746,7 @@ GetDragIconCursor(
     }
     else {
 	cursorCachePtr =
-	    _XmGetDragCursorCachePtr((XmScreen)XmGetXmScreen(screen));
+	    _XmGetDragCursorCachePtr(XmScreenOfScreen(screen));
 
 	cursorCache = *cursorCachePtr;
 	while (cursorCache) {
@@ -2183,8 +2184,7 @@ Destroy(
 {
     XmDragOverShellWidget	dos = (XmDragOverShellWidget)w;
     Display			*display = XtDisplay((Widget)dos);
-    XmScreen			xmScreen =
-				    (XmScreen) XmGetXmScreen(XtScreen(dos));
+    XmScreen			xmScreen = XmScreenOfObject(dos);
 
     _XmDragOverHide (w, 0, 0, None);
 
@@ -2271,8 +2271,7 @@ ChangeActiveMode(
   if ((dos->drag.activeMode = newActiveMode) == XmCURSOR) {
     _XmDragOverChange ((Widget)dos, dos->drag.cursorState);
   } else {
-    XmScreen		xmScreen = (XmScreen)
-      XmGetXmScreen(XtScreen(dos));
+    XmScreen		xmScreen = XmScreenOfObject(dos);
     XmDragIconObject	sourceIcon;
     XmDragOverBlend		blend;
 
@@ -2393,7 +2392,7 @@ ChangeDragWindow(XmDragOverShellWidget	dos)
   Display		*display = XtDisplay((Widget)dos);
   Window		win = XtWindow((Widget)dos);
   GC			draw_gc = dos->drag.rootBlend.gc;
-  XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreen(dos));
+  XmScreen		xmScreen = XmScreenOfObject(dos);
   XmDragIconObject	sourceIcon;
   XmDragOverBlend	blend;
   XmDragIconObject    mixedIcon;
@@ -2525,7 +2524,7 @@ _XmDragOverMove(
     XmDragOverShellWidget	dos = (XmDragOverShellWidget) w;
     XmDragContext	dc = (XmDragContext)XtParent(dos);
     Display		*display = XtDisplay(w);
-    XmScreen		xmScreen = (XmScreen) XmGetXmScreen(XtScreen(w));
+    XmScreen		xmScreen = XmScreenOfObject(w);
     Window		root = RootWindowOfScreen(XtScreen(w));
     Pixmap		old_backing = BackingPixmap(dos);
     Pixmap		new_backing;

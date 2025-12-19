@@ -1,5 +1,5 @@
 /* $TOG: Color.c /main/13 1998/09/23 19:36:49 samborn $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <ctype.h>
 #include <stdio.h>
@@ -144,7 +140,7 @@ GetDefaultThresholdsForScreen( Screen *screen )
   XmTHRESHOLDS_INITD = True;
   _XmProcessUnlock();
 
-  xmScreen = (XmScreen) XmGetXmScreen(screen);
+  xmScreen = XmScreenOfScreen(screen);
 
   /* Get resources from the XmScreen */
   default_light_threshold_spec = xmScreen->screen.lightThreshold;

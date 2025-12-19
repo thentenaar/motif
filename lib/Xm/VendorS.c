@@ -1241,9 +1241,7 @@ PopupCallback(
     XmVendorShellExtObject	ve = (XmVendorShellExtObject)closure;
     XtGrabKind			grab_kind = XtGrabNone;
     Boolean			grabCousins = False;
-    XmScreen			xmScreen;
-
-    xmScreen = (XmScreen) XmGetXmScreen(XtScreen(shellParent));
+    XmScreen			xmScreen = XmScreenOfObject(shellParent);
 
     ve->vendor.xAtMap = shellParent->core.x;
     ve->vendor.yAtMap = shellParent->core.y;
@@ -1409,8 +1407,7 @@ GetShellDesktopParent(
 	}
 	else if (!XmIsDisplay((Widget)vw))
 	{
-		desktopParent =
-		    (XmDesktopObject) XmGetXmScreen(XtScreen((Widget)vw));
+		desktopParent = (XmDesktopObject)XmScreenOfObject(vw);
 	}
 	return desktopParent;
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DragUnder.c /main/12 1995/07/14 10:26:51 drk $"
@@ -116,17 +117,17 @@ CreateAnimationSaveData(
 
     aSaveData->dragOver = aData->dragOver;
     aSaveData->display = XtDisplay (dc);
-    aSaveData->xmScreen = (XmScreen) XmGetXmScreen (aData->screen);
+    aSaveData->xmScreen = XmScreenOfScreen(aData->screen);
 
     aSaveData->window = aData->window;
     aSaveData->windowX = aData->windowX;
     aSaveData->windowY = aData->windowY;
 
     if (aSaveData->dragOver) {
-        aSaveData->xmScreen = (XmScreen) XmGetXmScreen (XtScreen (aSaveData->dragOver));
+        aSaveData->xmScreen = XmScreenOfObject(aSaveData->dragOver);
     }
     else {
-        aSaveData->xmScreen = (XmScreen) XmGetXmScreen(XtScreen (dc));
+        aSaveData->xmScreen = XmScreenOfObject(dc);
     }
 
     /*

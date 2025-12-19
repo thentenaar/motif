@@ -1,5 +1,5 @@
 /* $XConsortium: GrabShell.c /main/9 1996/08/15 17:12:04 pascale $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include <X11/ShellP.h>
@@ -473,7 +469,7 @@ Popdown(Widget shell,
 	String *params,
 	Cardinal *num_params)
 {
-  XmScreen screen = (XmScreen) XmGetXmScreen(XtScreen(shell));
+  XmScreen screen = XmScreenOfObject(shell);
   XmGrabShellWidget grabshell = (XmGrabShellWidget)shell;
   Time time;
 
