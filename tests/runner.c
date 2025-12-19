@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 	xmdesktopobject_suite(runner);
 	xmfontlistentry_suite(runner);
 	xmfontlist_suite(runner);
+	xmscreen_suite(runner);
 
 	/**
 	 * Given that some things in Motif / Xt rely on static initialization
