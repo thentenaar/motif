@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -2059,6 +2057,8 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 				if (_XmRendFontSpacing(rend))
 					FcPatternAddInteger(_XmRendPattern(rend), FC_SPACING,
 					                    _XmRendFontSpacing(rend));
+				FcPatternAddDouble(_XmRendPattern(rend), FC_DPI,
+				                   DpiOfXmScreen(XmScreenOfScreen(DefaultScreenOfDisplay(display))));
 
 				p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
 				_XmRendXftFont(rend) = XftFontOpenPattern(display, p);
