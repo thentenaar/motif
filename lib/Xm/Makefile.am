@@ -2,8 +2,7 @@ XMSTRING_LIST = xmstring.list
 
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = $(BUILT_SOURCES)
-EXTRA_DIST = xmstring.list Xm.msg \
-             XmStrDefs.ct
+EXTRA_DIST = $(XMSTRING_LIST) Xm.msg XmStrDefs.ct
 
 AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
               -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
@@ -13,11 +12,8 @@ AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
 xmdir = $(includedir)/Xm
 
 libXm_la_LDFLAGS = -version-info @ABI_VERSION@
-libXm_la_LIBADD  = $(XFT_LIBS) ${X_LIBS}
+libXm_la_LIBADD  = $(XFT_LIBS) $(XRANDR_LIBS) $(XINERAMA_LIBS) ${X_LIBS}
 lib_LTLIBRARIES  = libXm.la
-
-TIP_SRCS = ToolTip.c
-TIP_HDRS = ToolTipI.h
 
 EXTRA_HDRS = Ext.h ExtP.h  \
              Column.h ColumnP.h \
@@ -39,9 +35,6 @@ EXTRA_SRCS = XmExtUtil.c \
              Hierarchy.c Outline.c TabBox.c TabList.c TabStack.c \
              DrawUtils.c Tree.c DropDown.c \
              XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefsI.ht
-
-SLIDE_HDRS = SlideC.h SlideCP.h
-SLIDE_SRCS = SlideC.c
 
 if XM_WITH_JPEG
 JPEG_SRCS = Jpeg.c
@@ -147,6 +140,7 @@ TextOutI.h \
 TextSelI.h \
 TextStrSoI.h \
 ToggleBGI.h \
+ToolTipI.h \
 TraitI.h \
 TransferI.h \
 TravActI.h \
@@ -165,8 +159,7 @@ XmStringI.h \
 XmTabListI.h \
 XmosI.h \
 $(JPEG_HDRS) \
-$(PNG_HDRS) \
-$(TIP_HDRS)
+$(PNG_HDRS)
 
 xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         BulletinB.h     BulletinBP.h    CacheP.h        CascadeB.h \
@@ -214,8 +207,9 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         Gadget.h        LayoutT.h       IconH.h         IconHP.h \
         UnitTypeT.h     TxtPropCv.h     MenuProcP.h     MenuStateP.h\
         ColorObjP.h     TravConT.h      UnhighlightT.h  PointInT.h \
-        Print.h         PrintSP.h       XpmP.h		Xmfuncs.h \
-        deprecated.h obsolete.h version.h ${SLIDE_HDRS} ${EXTRA_HDRS}
+        Print.h         PrintSP.h       XpmP.h		    Xmfuncs.h \
+        SlideC.h        SlideCP.h       deprecated.h    obsolete.h \
+        version.h       $(EXTRA_HDRS)
 
 nodist_xm_HEADERS = Xm.h
 
@@ -249,25 +243,22 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         Hash.c          ScrollFrameT.c  \
         XmTabList.c     Resolve.c       XmStringFunc.c \
         XmRenderT.c     PixConv.c       Color.c         Xm.c \
-        CareVisualT.c   Direction.c     XmStringObso.c \
+        CareVisualT.c   Direction.c     SlideC.c \
         IsMwmRun.c      MenuProc.c      MenuState.c     TextFind.c \
         TextFunc.c      ColorObj.c      IconFile.c      RCHook.c \
         GetRes.c        BBUtil.c        ChColor.c       ColObjFunc.c \
         DrTog.c         DrArrow.c       DrPoly.c        DrHiDash.c \
         ValTime.c       FocusAct.c      CvtUnit.c       ScalTics.c \
-        ScroVis.c       WidGet.c        $(PRINTS_SRC)
+        ScroVis.c       WidGet.c        ToolTip.c       $(PRINTS_SRC)
 
-OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c
+OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c
 
 NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
         Notebook.c     ComboBox.c     GrabShell.c     SpinB.c  \
         SSpinB.c       TxtPropCv.c    TranslNew.c
 
 libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(NEW_WID_SRCS) \
-                   $(SLIDE_SRCS) $(TIP_SRCS) $(EXTRA_SRCS) $(JPEG_SRCS) \
-                   $(PNG_SRCS)
-
-EXTRA_libXm_la_SOURCES = $(SLIDE_SRCS) $(TIP_SRCS)
+                   $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
 
 STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefsI.h XmStrDefs.c
 

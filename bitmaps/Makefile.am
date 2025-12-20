@@ -1,10 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = 
+EXTRA_DIST =
 
-bmdir = @INCDIR@/bitmaps
+bitmapdir = $(includedir)/X11/bitmaps
 
-bm_HEADERS = \
+bitmap_HEADERS = \
 	xm_error \
 	xm_hour16 \
 	xm_hour16m \

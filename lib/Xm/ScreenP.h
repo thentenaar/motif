@@ -106,6 +106,22 @@ typedef struct {
 	XtPointer user_data;
 	Pixmap insensitive_stipple_bitmap;
 	XtPointer inUsePixmaps;
+
+	/* Event base */
+	int randr_base;
+	int xinerama_base;
+
+	/* Screen geometry */
+	Dimension width;
+	Dimension height;
+	Dimension width_mm;
+	Dimension height_mm;
+	float dpi;      /* Logical DPI */
+	float user_dpi; /* User-specified (i.e., Xft.dpi) */
+
+	/* Monitors */
+	Cardinal n_monitors;
+	XmMonitorInfo *monitors;
 } XmScreenPart, *XmScreenPartPtr;
 
 typedef struct _XmScreenInfo {
@@ -121,6 +137,16 @@ typedef struct _XmScreenRec {
 	XmDesktopPart desktop;
 	XmScreenPart  screen;
 } XmScreenRec;
+
+/**
+ * Macros for accessing the screen geometry. These largely mirror
+ * Xlib's macros for Screen.
+ */
+#define WidthOfXmScreen(s)    ((s)->screen.width)
+#define HeightOfXmScreen(s)   ((s)->screen.height)
+#define WidthMMOfXmScreen(s)  ((s)->screen.width_mm)
+#define HeightMMOfXmScreen(s) ((s)->screen.height_mm)
+#define DpiOfXmScreen(s)      ((s)->screen.dpi)
 
 #ifdef __cplusplus
 }

@@ -2,6 +2,7 @@ Motif
 =====
 
 ![Build Status](https://github.com/thentenaar/motif/actions/workflows/build.yml/badge.svg?branch=master)
+![IRC Channel](https://img.shields.io/badge/irc.oftc.net-%23motif-blue)
 
 ## Background
 
@@ -47,8 +48,7 @@ installed, and can be run by:
 
 ## Notable Changes
 
-- Various bugs have been fixed
-- Tons (probably >= 10k lines) of dead code pruned
+- Initial support for Xrandr / Xinerama (Xrandr preferred)
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
 - The autotools build system has been updated
 - The following macros that were previously exposed in ``Xm.h`` have been
@@ -62,18 +62,19 @@ renamed, and will evaluate to 1 if enabled, 0 if disabled:
 
 - The ``XM_MSGCAT`` macro was added, to signify that Motif was built with
 support for X/Open message catalogs.
-- JPEG, PNG, and Xft support is enabled by default if present at build-time.
+- JPEG, PNG, Xft, and Xrandr support is enabled by default if present at build-time.
   Specify ``--without-jpeg``, etc. to disable them.
 - Motif's editres implementation has been removed, so that the updated version
   in [libXmu](https://gitlab.freedesktop.org/xorg/lib/libxmu/-/merge_requests/18)
   can be used instead.
 - ``XmCommandGetChild()`` is deprecated in favor of ``XtNameToWidget`` like the other ``*GetChild()`` functions
 - The demos have been split out from the ``all`` make target
+- Various bugs have been fixed
+- Tons (probably >= 10k lines) of dead code pruned
 
 ## TODO
 
 - Continued fixes and improvements
-- MacOS / Cygwin builds?
 
 ## Packaging Status
 

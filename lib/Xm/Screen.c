@@ -33,7 +33,10 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #endif
 
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
 #include <X11/Xatom.h>
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
 #include <Xm/AtomMgr.h>
@@ -46,6 +49,14 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #include "RepTypeI.h"
 #include "ScreenI.h"
 #include "PixConvI.h"
+
+#if XM_WITH_XRANDR
+#include <X11/extensions/Xrandr.h>
+#endif
+
+#if XM_WITH_XINERAMA
+#include <X11/extensions/Xinerama.h>
+#endif
 
 #define DEFAULT_QUAD_WIDTH 10
 #define RESOURCE_DEFAULT  (-1)
@@ -265,9 +276,7 @@ externaldef(xmscreenquark) XrmQuark _XmMoveCursorIconQuark    = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark _XmCopyCursorIconQuark    = NULLQUARK;
 externaldef(xmscreenquark) XrmQuark _XmLinkCursorIconQuark    = NULLQUARK;
 
-/**
- * Context used to memoize Screen -> XmScreen association
- */
+/* Context used to memoize Screen -> XmScreen association */
 static XContext screen_context = None;
 
 static void ClassInitialize(void)
@@ -335,6 +344,318 @@ static void GetUnitFromFont(Display *display, XFontStruct *fst,
 	}
 }
 
+#ifdef DEBUG
+static void dump_monitors(XmScreen scr)
+{
+	Cardinal i;
+
+	fputs("\n===============================================\n", stderr);
+	fprintf(stderr, "Got %u monitor(s)\n", scr->screen.n_monitors);
+	for (i = 0; i < scr->screen.n_monitors; i++) {
+		fprintf(stderr, "[%u] (%d,%d) %dpx (%d mm) x %dpx (%d mm) %g dpi \"%s\"\n", i,
+		        scr->screen.monitors[i].x, scr->screen.monitors[i].y,
+		        scr->screen.monitors[i].width, scr->screen.monitors[i].width_mm,
+		        scr->screen.monitors[i].height, scr->screen.monitors[i].height_mm,
+		        scr->screen.monitors[i].dpi,
+		        scr->screen.monitors[i].name ? scr->screen.monitors[i].name : "(none)");
+	}
+	fputs("===============================================\n", stderr);
+}
+#endif /* DEBUG */
+
+/**
+ * Canonical way for users to specify their desired DPI. This being
+ * set implies that Xft's default DPI calculation (which is based
+ * particularly on the X-provided Screen dimensions) isn't good
+ * enough to satisfy the user; likely because the size in millimeters
+ * X provides isn't correctly configured.
+ */
+static float user_dpi(Display *d)
+{
+	double dd = SCREEN_DEFAULT_DPI;
+	char *def, *end = NULL;
+
+	if ((def = XGetDefault(d, "Xft", "dpi"))) {
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+		dd = strtod(def, &end);
+		if (!end || !isfinite(dd) || dd == HUGE_VAL)
+			return SCREEN_DEFAULT_DPI;
+#else
+		(void)end;
+		dd = atof(def);
+		if (dd != dd || dd < -DBL_MAX || dd > DBL_MAX)
+			return SCREEN_DEFAULT_DPI;
+#endif
+	}
+
+	return (float)dd;
+}
+
+/**
+ * Approximate our diagonal pixels per inch
+ */
+static float calc_dpi(int w, int h, int w_mm, int h_mm)
+{
+	double d, nd, diag_px, diag_mm;
+	if (!w || !h || !w_mm || !h_mm)
+		return SCREEN_DEFAULT_DPI;
+
+	diag_px = sqrt(w * w + h * h);
+	diag_mm = sqrt(w_mm * w_mm + h_mm * h_mm);
+	d = floor((diag_px * 25.4) / diag_mm);
+	return (float)((d <= SCREEN_DEFAULT_DPI) ? SCREEN_DEFAULT_DPI : d);
+}
+
+/**
+ * Set the logical DPI for the screen
+ *
+ * We prefer the user-specified DPI if it's set to something larger than
+ * the default.
+ */
+static void set_dpi(XmScreenPart *screen)
+{
+	if ((screen->dpi = screen->user_dpi) <= SCREEN_DEFAULT_DPI)
+		screen->dpi = calc_dpi(screen->width, screen->height,
+		                       screen->width_mm, screen->height_mm);
+}
+
+#if XM_WITH_XRANDR
+/**
+ * Xt's default dispatcher ignores extension events. So, to use extension
+ * events with Xt, a custom dispatcher is needed.
+ */
+static Boolean dispatch_randr(XEvent *event)
+{
+	Widget w = XtWindowToWidget(event->xany.display, event->xany.window);
+
+	return XFilterEvent(event, XtWindow(w)) ||
+	       XtDispatchEventToWidget(w, event);
+}
+
+/**
+ * Allow Xt to select for Xrandr events
+ *
+ * We only need ScreenChange and CrtcChangeNotify, but we'll select
+ * the entire gamut for the benefit of other applications that may
+ * want to utilize XRandR, saving them the event dispatching pain.
+ */
+static void select_randr(Widget w, int *types, XtPointer *sel,
+                        int count, XtPointer client)
+{
+	(void)types;
+	(void)sel;
+	(void)count;
+	(void)client;
+
+	XRRSelectInput(XtDisplay(w), XtWindow(w),
+	               RRScreenChangeNotifyMask | RRCrtcChangeNotifyMask |
+	               RROutputChangeNotifyMask | RROutputPropertyNotifyMask |
+	               RRProviderChangeNotifyMask | RRProviderPropertyNotifyMask |
+	               RRResourceChangeNotifyMask | RRLeaseNotifyMask);
+}
+
+/**
+ * Update the monitor info using Xrandr's monitor API
+ */
+static void monitors_randr(Display *d, Window root, XmScreen screen)
+{
+	float dp;
+	int j;
+	Cardinal i, n;
+	XRRMonitorInfo *info;
+
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
+
+	for (i = 0; i < screen->screen.n_monitors; i++)
+		XFree((XPointer)screen->screen.monitors[i].name);
+	XtFree((XtPointer)screen->screen.monitors);
+	screen->screen.monitors   = NULL;
+	screen->screen.n_monitors = 0;
+
+	if (!(info = XRRGetMonitors(d, root, True, &j))) {
+		_XmAppUnlock(app);
+		return;
+	}
+
+	if ((n = (Cardinal)j)) {
+		screen->screen.n_monitors = n;
+		screen->screen.monitors   = XtMallocArray(n, sizeof *screen->screen.monitors);
+	}
+
+	for (i = 0; i < n; i++) {
+		dp = calc_dpi(info[i].width, info[i].height,
+		              info[i].mwidth, info[i].mheight);
+		screen->screen.monitors[i].x         = info[i].x;
+		screen->screen.monitors[i].y         = info[i].y;
+		screen->screen.monitors[i].width     = info[i].width;
+		screen->screen.monitors[i].height    = info[i].height;
+		screen->screen.monitors[i].width_mm  = info[i].mwidth;
+		screen->screen.monitors[i].height_mm = info[i].mheight;
+		screen->screen.monitors[i].dpi       = dp;
+		screen->screen.monitors[i].name      = XGetAtomName(d, info[i].name);
+	}
+
+	if (n == 1) {
+		screen->screen.width_mm  = info[0].mwidth;
+		screen->screen.height_mm = info[0].mheight;
+		set_dpi(&screen->screen);
+	}
+
+	XRRFreeMonitors(info);
+	_XmAppUnlock(app);
+}
+#endif /* XM_WITH_XRANDR */
+
+#if XM_WITH_XINERAMA
+/**
+ * Update the monitor info using Xinerama's API
+ */
+static void monitors_xinerama(Display *d, Window root, XmScreen screen)
+{
+	int i, n;
+	XineramaScreenInfo *info;
+
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
+
+	for (i = 0; i < screen->screen.n_monitors; i++)
+		XFree((XPointer)screen->screen.monitors[i].name);
+	XtFree((XtPointer)screen->screen.monitors);
+	screen->screen.monitors   = NULL;
+	screen->screen.n_monitors = 0;
+
+	if (!(info = XineramaQueryScreens(d, &n))) {
+		_XmAppUnlock(app);
+		return;
+	}
+
+	if (n) {
+		screen->screen.n_monitors = n;
+		screen->screen.monitors   = XtMallocArray(n, sizeof *screen->screen.monitors);
+	}
+
+	for (i = 0; i < n; i++) {
+		screen->screen.monitors[i].x         = info[i].x_org;
+		screen->screen.monitors[i].y         = info[i].y_org;
+		screen->screen.monitors[i].width     = info[i].width;
+		screen->screen.monitors[i].height    = info[i].height;
+		screen->screen.monitors[i].width_mm  = 0;
+		screen->screen.monitors[i].height_mm = 0;
+		screen->screen.monitors[i].dpi       = screen->screen.dpi;
+		screen->screen.monitors[i].name      = NULL;
+	}
+
+	XFree(info);
+	_XmAppUnlock(app);
+}
+#endif /* XM_WITH_XINERAMA */
+
+/**
+ * If we don't have anything else, at least we have a root window
+ */
+static void monitor_rootwin(Display *d, Window root, XmScreen screen)
+{
+	float dp;
+	Cardinal i;
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
+
+	for (i = 0; i < screen->screen.n_monitors; i++)
+		XFree((XPointer)screen->screen.monitors[i].name);
+
+	screen->screen.n_monitors = 1;
+	if (!screen->screen.monitors)
+		screen->screen.monitors = (XmMonitorInfo *)XtNew(XmMonitorInfo);
+
+	dp = calc_dpi(screen->screen.width, screen->screen.height,
+	              screen->screen.width_mm, screen->screen.height_mm);
+
+	screen->screen.monitors->x         = 0;
+	screen->screen.monitors->y         = 0;
+	screen->screen.monitors->width     = screen->screen.width;
+	screen->screen.monitors->height    = screen->screen.height;
+	screen->screen.monitors->width_mm  = screen->screen.width_mm;
+	screen->screen.monitors->height_mm = screen->screen.height_mm;
+	screen->screen.monitors->dpi       = dp;
+	screen->screen.monitors->name      = NULL;
+	_XmAppUnlock(app);
+}
+
+/**
+ * Update dimensions on our monitor(s) and root window
+ */
+static void monitor_cb(Widget w, XtPointer data, XEvent *ev, Boolean *cont)
+{
+#if XM_WITH_XRANDR
+	XRRNotifyEvent *notif;
+	XRRScreenChangeNotifyEvent *change;
+#endif
+
+	Display *d     = XtDisplayOfObject(w);
+	Screen *screen = XtScreenOfObject(w);
+	Window root    = RootWindowOfScreen(screen);
+	XmScreen scr   = XmScreenOfObject(w);
+
+	_XmDisplayToAppContext(d);
+	*cont = True;
+
+#if XM_WITH_XRANDR
+	if (scr->screen.randr_base != -1) {
+		switch (ev->type - scr->screen.randr_base) {
+		case RRScreenChangeNotify:
+			change = (XRRScreenChangeNotifyEvent *)ev;
+			XRRUpdateConfiguration(ev);
+
+			_XmAppLock(app);
+			scr->screen.width     = change->width;
+			scr->screen.height    = change->height;
+			scr->screen.width_mm  = change->mwidth;
+			scr->screen.height_mm = change->mheight;
+			set_dpi(&scr->screen);
+			_XmAppUnlock(app);
+
+		case RRNotify:
+			notif = (XRRNotifyEvent *)ev;
+			XRRUpdateConfiguration(ev);
+			if (notif->subtype == RRNotify_CrtcChange ||
+			    notif->subtype == RRNotify_OutputChange)
+				monitors_randr(d, root, scr);
+			break;
+		}
+	}
+#endif
+
+	if (ev->type != ConfigureNotify)
+		goto done;
+
+#if XM_WITH_XRANDR
+	XRRUpdateConfiguration(ev);
+#endif
+
+#if XM_WITH_XINERAMA
+	if (scr->screen.xinerama_base != -1 && XineramaIsActive(d))
+		monitors_xinerama(d, root, scr);
+#endif
+
+	/**
+	 * Handle size changes for the root window
+	 */
+	_XmAppLock(app);
+	if (scr->screen.width != ev->xconfigure.width ||
+	    scr->screen.height != ev->xconfigure.height) {
+		scr->screen.width  = ev->xconfigure.width;
+		scr->screen.height = ev->xconfigure.height;
+	}
+	_XmAppUnlock(app);
+
+done:
+#if XM_WITH_XRANDR || XM_WITH_XINERAMA
+	if (!scr->screen.n_monitors)
+#endif
+		monitor_rootwin(d, root, scr);
+}
+
 /************************************************************************
  *
  *  ScreenInitialize
@@ -343,20 +664,23 @@ static void GetUnitFromFont(Display *display, XFontStruct *fst,
 static void Initialize(Widget requested_widget, Widget new_widget,
                        ArgList args, Cardinal *num_args)
 {
+#if XM_WITH_XRANDR || XM_WITH_XINERAMA
+	int i, j, base;
+#endif
+
 	XmScreenInfo *info;
 	XmScreen xmScreen;
 	Display *display = XtDisplay(new_widget);
+	Screen *screen   = XtScreen(new_widget);
+	Window root      = RootWindowOfScreen(screen);
 
-	if (XFindContext(display, RootWindowOfScreen(XtScreen(new_widget)),
-	                 screen_context, (XPointer *)&xmScreen) == XCSUCCESS) {
+	if (XFindContext(display, root, screen_context, (XPointer *)&xmScreen) == XCSUCCESS) {
 		XtError("Refusing to create an additional XmScreen");
 		return;
 	} else xmScreen = (XmScreen)new_widget;
 
-	((XmDesktopObject)xmScreen)->desktop.parent = NULL;
-	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
-	XQueryBestCursor(display, RootWindowOfScreen(XtScreen(xmScreen)),
-	                 1024, 1024, &xmScreen->screen.maxCursorWidth,
+	XQueryBestCursor(display, root, 1024, 1024,
+	                 &xmScreen->screen.maxCursorWidth,
 	                 &xmScreen->screen.maxCursorHeight);
 
 	xmScreen->screen.screenInfo         = NULL;
@@ -371,6 +695,16 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 	xmScreen->screen.xmSourceCursorIcon = NULL;
 	xmScreen->screen.mwmPresent         = XmIsMotifWMRunning(new_widget);
 	xmScreen->screen.numReparented      = 0;
+	xmScreen->screen.width              = WidthOfScreen(screen);
+	xmScreen->screen.height             = HeightOfScreen(screen);
+	xmScreen->screen.width_mm           = WidthMMOfScreen(screen);
+	xmScreen->screen.height_mm          = HeightMMOfScreen(screen);
+	xmScreen->screen.user_dpi           = user_dpi(display);
+	xmScreen->screen.randr_base         = -1;
+	xmScreen->screen.xinerama_base      = -1;
+	xmScreen->screen.n_monitors         = 0;
+	xmScreen->screen.monitors           = NULL;
+	set_dpi(&xmScreen->screen);
 
 	if (!XmRepTypeValidValue(XmRID_UNPOST_BEHAVIOR,
 	                         xmScreen->screen.unpostBehavior, new_widget))
@@ -380,7 +714,6 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 	 * font unit stuff, priority to actual unit values, if they haven't
 	 * been set yet, compute from the font, otherwise, stay unchanged
 	 */
-
 	if (xmScreen->screen.h_unit == RESOURCE_DEFAULT)
 		GetUnitFromFont(display, xmScreen->screen.font_struct,
 		                &xmScreen->screen.h_unit, NULL);
@@ -389,16 +722,65 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 		GetUnitFromFont(display, xmScreen->screen.font_struct,
 		                NULL, &xmScreen->screen.v_unit);
 
-	if (!(info = (XmScreenInfo *)XtNew(XmScreenInfo)))
-		return;
-
+	info = (XmScreenInfo *)XtNew(XmScreenInfo);
 	info->menu_state            = NULL;
 	info->destroyCallbackAdded  = False;
 	xmScreen->screen.screenInfo = info;
 
-	XSaveContext(display, RootWindowOfScreen(XtScreen(new_widget)),
-	             screen_context, (XPointer)xmScreen);
+	/* Assume the identity of our root window for dispatching */
+	xmScreen->core.window = root;
+	XtRegisterDrawable(display, root, new_widget);
+	XSaveContext(display, root, screen_context, (XPointer)xmScreen);
 
+#if XM_WITH_XRANDR
+	/**
+	 * We're only interested in Xrandr >= 1.5, which was released nearly
+	 * a decade ago. The monitors API keeps things simple.
+	 */
+	if (XRRQueryExtension(display, &base, &i)) {
+		XRRQueryVersion(display, &i, &j);
+		if ((i * 100 + j) < 105)
+			base = -1;
+	}
+
+	if ((xmScreen->screen.randr_base = base) != -1) {
+		XtSetEventDispatcher(display, base + RRNotify,             dispatch_randr);
+		XtSetEventDispatcher(display, base + RRScreenChangeNotify, dispatch_randr);
+
+		XtRegisterExtensionSelector(display,
+		                            base + RRScreenChangeNotify,
+		                            base + RRNotify, select_randr, NULL);
+		XtInsertEventTypeHandler(new_widget, base + RRScreenChangeNotify,
+		                         NULL, monitor_cb, NULL, XtListHead);
+		XtInsertEventTypeHandler(new_widget, base + RRNotify,
+		                         NULL, monitor_cb, NULL, XtListHead);
+		monitors_randr(display, root, xmScreen);
+	}
+#endif
+
+#if XM_WITH_XINERAMA
+	/**
+	 * Use Xinerama as a fallback if we lack Xrandr for some reason
+	 */
+	if (xmScreen->screen.randr_base == -1 && XineramaQueryExtension(display, &i, &j)) {
+	    xmScreen->screen.xinerama_base = i;
+		if (XineramaIsActive(display))
+			monitors_xinerama(display, root, xmScreen);
+	}
+#endif
+
+	if (!xmScreen->screen.n_monitors)
+		monitor_rootwin(display, root, xmScreen);
+
+#ifdef DEBUG
+	dump_monitors(xmScreen);
+#endif
+
+	/* Install our glorious event handler */
+	XtInsertEventHandler(new_widget, StructureNotifyMask, False,
+	                     monitor_cb, NULL, XtListHead);
+	((XmDesktopObject)xmScreen)->desktop.parent = NULL;
+	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
 }
 
 /**
@@ -469,7 +851,14 @@ static Boolean SetValues(Widget current, Widget requested, Widget new_w,
 		}
 	}
 
-	return FALSE;
+	new->screen.width      = old->screen.width;
+	new->screen.height     = old->screen.height;
+	new->screen.width_mm   = old->screen.width_mm;
+	new->screen.height_mm  = old->screen.height_mm;
+	new->screen.dpi        = old->screen.dpi;
+	new->screen.n_monitors = old->screen.n_monitors;
+	new->screen.monitors   = old->screen.monitors;
+	return False;
 }
 
 /************************************************************************
@@ -479,10 +868,24 @@ static Boolean SetValues(Widget current, Widget requested, Widget new_w,
  ************************************************************************/
 static void Destroy(Widget widget)
 {
+	Cardinal i;
 	XmScreen xscr = (XmScreen)widget;
 	XmDragCursorCache cache, prev;
 	XmHashTable ht;
-	Window w;
+	Window w = xscr->core.window;
+
+	/* Remove our callback */
+#if XM_WITH_XRANDR
+	XtRemoveEventTypeHandler(widget,
+	                         xscr->screen.randr_base + RRScreenChangeNotify,
+	                         NULL, monitor_cb, NULL);
+	XtRemoveEventTypeHandler(widget,
+	                         xscr->screen.randr_base + RRNotify,
+	                         NULL, monitor_cb, NULL);
+#endif
+	XtRemoveEventHandler(widget, StructureNotifyMask, False, monitor_cb, NULL);
+	XtUnregisterDrawable(XtDisplay(w), w);
+	xscr->core.window = None;
 
 	/* destroy any default icons created by Xm */
 	_XmDestroyDefaultDragIcon(xscr->screen.xmStateCursorIcon);
@@ -513,7 +916,10 @@ static void Destroy(Widget widget)
 	XtFree((XtPointer)xscr->screen.screenInfo);
 	xmDesktopClass->core_class.destroy(widget);
 
-	w = RootWindowOfScreen(XtScreen(xscr));
+	for (i = 0; i < xscr->screen.n_monitors; i++)
+		XFree((XPointer)xscr->screen.monitors[i].name);
+	XtFree((XtPointer)xscr->screen.monitors);
+
 	if (XFindContext(XtDisplay(w), w, screen_context, (XPointer *)&xscr) == XCSUCCESS)
 		XDeleteContext(XtDisplay(w), w, screen_context);
 }
@@ -1046,5 +1452,42 @@ Widget XmGetXmScreen(Screen *screen)
 	w = XtCreateWidget(name, xmScreenClass, (Widget)d, &arg, 1);
 	_XmAppUnlock(app);
 	return w;
+}
+
+/**
+ * Returns a copy of the XmMonitorInfo for the monitor that contains
+ * the given point; or NULL if the given point is off-screen.
+ *
+ * The returned info must be freed with FreeXmMonitorInfo().
+ */
+XmMonitorInfo *XmGetMonitorInfoAt(XmScreen screen, Position x, Position y)
+{
+	Cardinal i;
+	XmMonitorInfo *s, *out;
+
+	for (i = 0; i < screen->screen.n_monitors; i++) {
+		s = screen->screen.monitors + i;
+		if (x < s->x || x >= s->x + s->width ||
+		    y < s->y || y >= s->y + s->height)
+			continue;
+
+		out = XtNew(XmMonitorInfo);
+		memcpy(out, s, sizeof *s);
+
+		if (s->name) {
+			out->name = XtMalloc(strlen(s->name) + 1);
+			strcpy(out->name, s->name);
+		}
+
+	    return out;
+	}
+
+	return NULL;
+}
+
+void FreeXmMonitorInfo(XmMonitorInfo *info)
+{
+	XtFree((XtPointer)info->name);
+	XtFree((XtPointer)info);
 }
 

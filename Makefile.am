@@ -18,7 +18,7 @@ MAINTAINERCLEANFILES = Makefile.in \
 pkgconfig_DATA  = motif.pc
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS	= bindings bitmaps doc localized lib include tools clients tests
+SUBDIRS	= bindings bitmaps doc icons localized lib include tools clients tests
 
 demos:
 	@$(MAKE) -C demos

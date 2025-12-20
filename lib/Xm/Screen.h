@@ -30,14 +30,14 @@
 extern "C" {
 #endif
 
+/**
+ * The tranditional default for DPI
+ */
+#define SCREEN_DEFAULT_DPI 96.0
+
 #ifndef XmIsScreen
 #define XmIsScreen(w) XtIsSubclass((w), xmScreenClass)
 #endif
-
-/* Class record constants */
-typedef struct _XmScreenRec *XmScreen;
-typedef struct _XmScreenClassRec *XmScreenClass;
-externalref WidgetClass xmScreenClass;
 
 /**
  * Convenience macros akin to XtScreen() / XtScreenOfObject() which wrap
@@ -46,6 +46,26 @@ externalref WidgetClass xmScreenClass;
 #define XmScreenOfScreen(s) ((XmScreen)XmGetXmScreen((s)))
 #define XmScreenOfObject(w) XmScreenOfScreen(XtScreenOfObject((Widget)(w)))
 
+/**
+ * Dimension and position information for monitors associated with
+ * a XmScreen
+ */
+typedef struct _XmMonitorInfo {
+	Position x;
+	Position y;
+	Dimension width;
+	Dimension height;
+	Dimension width_mm;
+	Dimension height_mm;
+	float dpi;
+	const char *name;
+} XmMonitorInfo;
+
+/* Class record constants */
+typedef struct _XmScreenRec *XmScreen;
+typedef struct _XmScreenClassRec *XmScreenClass;
+externalref WidgetClass xmScreenClass;
+
 /********    Public Function Declarations    ********/
 typedef void (*XmScreenColorProc)(Screen *screen, XColor *bg_color,
                                   XColor *fg_color, XColor *sel_color,
@@ -53,6 +73,9 @@ typedef void (*XmScreenColorProc)(Screen *screen, XColor *bg_color,
 typedef Status (*XmAllocColorProc)(Display *display, Colormap colormap,
                                    XColor *screen_in_out);
 extern Widget XmGetXmScreen(Screen *screen);
+extern XmMonitorInfo *XmGetMonitorInfoAt(XmScreen screen, Position x,
+                                         Position y);
+extern void FreeXmMonitorInfo(XmMonitorInfo *info);
 /********    End Public Function Declarations    ********/
 
 #ifdef __cplusplus

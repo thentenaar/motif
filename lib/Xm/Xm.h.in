@@ -37,6 +37,16 @@
 #undef XM_WITH_PNG
 
 /**
+ * 1 if Motif was built with XRandR support
+ */
+#undef XM_WITH_XRANDR
+
+/**
+ * 1 if Motif was built with Xinerama support
+ */
+#undef XM_WITH_XINERAMA
+
+/**
  * 1 if Motif was built with UTF-8 support
  */
 #undef XM_UTF8
