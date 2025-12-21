@@ -231,9 +231,11 @@ WriteHeader (char* tagline, File* phile, int abi)
     char* tmp;
     Table* t;
     TableEnt* te;
-    static void (*headerproc[])() = { DefaultWriteHeader, ArrayperWriteHeader,
-	                                  IntelABIWriteHeader, IntelABIWriteHeader,
-	                                  SPARCABIWriteHeader, FunctionWriteHeader };
+    static void (*headerproc[])(FILE *, File *) = {
+    	DefaultWriteHeader, ArrayperWriteHeader,
+    	IntelABIWriteHeader, IntelABIWriteHeader,
+    	SPARCABIWriteHeader, FunctionWriteHeader
+    };
 
     if ((f = fopen (phile->name, "w+")) == NULL) exit (1);
 
@@ -397,7 +399,7 @@ DefaultWriteSource (int abi)
 static void
 WriteSource(char* tagline, int abi)
 {
-    static void (*sourceproc[])() = {
+    static void (*sourceproc[])(int) = {
 	DefaultWriteSource, ArrayperWriteSource,
 	IntelABIWriteSource, IntelABIBCWriteSource,
 	DefaultWriteSource, FunctionWriteSource };
