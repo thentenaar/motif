@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 
+#include <Xm/Screen.h>
 #include <Xm/LabelP.h>
 #include <Xm/VendorSEP.h>
 #include <Xm/GadgetP.h>
@@ -138,17 +139,12 @@ ToolTipPost (XtPointer client_data,
              XtIntervalId * id)
 {
    Widget w = (Widget) client_data;
-
-   int rx,
-     ry,
-     x,
-     y;
+   int rx, ry, x, y;
    unsigned int key;
-   Window root,
-     child;
+   Window root, child;
    XtWidgetGeometry geo;
-   Position destX,
-     destY;
+   Position destX, destY;
+   XmMonitorInfo *monitor;
 
    XmToolTipConfigTrait ttp; /* ToolTip pointer */
 
@@ -164,6 +160,14 @@ ToolTipPost (XtPointer client_data,
 
    XQueryPointer (XtDisplay (w),
                   XtWindow (w), &root, &child, &rx, &ry, &x, &y, &key);
+
+   if (!(monitor = XmGetMonitorInfoAt(XmScreenOfObject(w), rx, ry))) {
+      if (!(monitor = XmGetMonitorInfoAt(XmScreenOfObject(w), XtX(w), XtY(w)))) {
+         /* We're offscreen ;) */
+         _XmToolTipRemove(w);
+         return;
+      }
+   }
 
    if (ttp->duration_timer != (XtIntervalId) NULL)
    {
@@ -186,23 +190,39 @@ ToolTipPost (XtPointer client_data,
       XtVaSetValues (ttp->label, XmNlabelString, string, NULL);
       XmStringFree (string);
    }
+
    XtQueryGeometry (ttp->label, NULL, &geo);
 
-   /* rws 25 Feb 2001
-      Fix for Bug #1153
-      Don't let the tip be off the right/bottom of the screen
+   /**
+    * Constrain the tooltip to the physical screen in which the pointer or
+    * the widget lives.
     */
    destX = rx + (XmIsGadget (w) ? XtX (w) : 0) - x + XtWidth (w) / 2;
-   if (destX + geo.width > WidthOfScreen (XtScreen (w)))
-   {
-      destX = WidthOfScreen (XtScreen (w)) - geo.width;
-   }
    destY = ry + (XmIsGadget (w) ? XtY (w) : 0) - y + XtHeight (w);
-   if (destY + geo.height > HeightOfScreen (XtScreen (w)))
-   {
-      destY = ry + (XmIsGadget (w) ? XtY (w) : 0) - y - geo.height;
-   }
 
+   /* Top */
+   if (destY < monitor->y)
+      destY = monitor->y + 16;
+
+   /* Left */
+   if (destX < monitor->x)
+      destX = monitor->x + 16;
+
+   /* Right */
+   if (geo.width > monitor->width)
+       geo.width = monitor->width - 16;
+
+   if (destX + geo.width > monitor->x + monitor->width)
+       destX = monitor->x + monitor->width - geo.width - 16;
+
+   /* Bottom */
+   if (geo.height > monitor->height)
+       geo.height = monitor->height - 16;
+
+   if (destY + geo.height > monitor->y + monitor->height)
+       destY = monitor->y + monitor->height - geo.height - 16;
+
+   FreeXmMonitorInfo(monitor);
    XtVaSetValues (XtParent (ttp->label),
                   XmNx, rx + 1,
                   XmNy, ry + 1, XmNwidth, 1, XmNheight, 1, NULL);
