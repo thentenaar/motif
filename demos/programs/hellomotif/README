@@ -1,6 +1,0 @@
-/* $XConsortium: README /main/3 1996/07/15 14:05:19 drk $ */
-This directory contains the sample UIL/Xm program, hellomotif,
-a simple program with a label and a push button.
-
-If you notice any bugs in this demo, please see the bug list in
-the Release Notes to see if the problem is a known Toolkit defect.

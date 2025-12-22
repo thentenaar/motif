@@ -1,5 +1,0 @@
-/* $TOG: XmStrDefs.ct /main/2 1997/06/18 17:49:37 samborn $ */
-#include <Xm/Xm.h>
-
-<<<STRING_TABLE_GOES_HERE>>>
-

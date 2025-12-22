@@ -1,6 +1,0 @@
-# $XConsortium: ComboBox7c.prt /main/2 1996/07/18 16:12:20 drk $
-Begin test
-Test Purpose 1
-TRACE:(1) CompareVisual ComboBox1 
-     SCRWARNING** : GetWidgetID: XtNameToWidget() Failed on *ComboBox1
-AUTOERROR** : Exiting Test ...

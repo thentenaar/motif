@@ -1,9 +1,0 @@
-Please see the file COPYING  for important information.
-
-Please see the file RELNOTES for current Release information.
-
-Please see the file INSTALL.configure on how to build and install
-this product using the autoconf tools.
-
-Please see the file distro/README.RPM for information on creating 
-rpms from this source tree. 

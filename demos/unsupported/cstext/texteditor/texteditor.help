@@ -1,6 +1,0 @@
-<title>Overview</title>
-<emphasis>texteditor</emphasis> is a primitive text editor, based on Motif's <emphasis>XmCSText</emphasis>
-widget.  In addition to standard text editing features, it supports
-multiple views of the same underlying text, modification of the rendition
-attributes of individual pieces of text, and the reading and writing of
-multiple file formats.

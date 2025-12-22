@@ -1,8 +1,0 @@
-# $XConsortium: SpinBox6.prt /main/2 1996/07/18 16:24:17 drk $
-TRACE:(1) LocatePointer SpinBox RIncrementBtn 
-TRACE:(2) ClickMB Btn1 
-TRACE:(3) LocatePointer SpinBox RDecrementBtn 
-TRACE:(4) ClickMB Btn1 
-TRACE:(5) Continue
-TRACE:(6) Exit
-Exiting Test...Please Standby...

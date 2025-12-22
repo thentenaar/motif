@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="4px" height="1px" xmlns="http://www.w3.org/2000/svg">
-	<rect x="0" y="0" width="1" height="1" fill="#f00" />
-	<rect x="1" y="0" width="1" height="1" fill="#0f0" />
-	<rect x="2" y="0" width="1" height="1" fill="#00f" />
-	<rect x="3" y="0" width="1" height="1" fill="transparent" />
-</svg>

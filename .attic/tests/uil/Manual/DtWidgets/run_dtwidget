@@ -1,3 +1,0 @@
-#!/bin/ksh
-
-DtdisplayUid -u $1 -I $1.Dat -S $1.Scr -O $1.prt -V $1.vis

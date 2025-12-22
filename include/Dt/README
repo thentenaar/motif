@@ -1,4 +1,0 @@
-$XConsortium: README /main/1 1996/04/10 13:56:31 drk $
-
-The files in this directory are present only so uil (and wml) can
-support CDE.  They should not be used elsewhere.

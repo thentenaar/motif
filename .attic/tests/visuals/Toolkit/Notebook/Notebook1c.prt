@@ -1,7 +1,0 @@
-# $XConsortium: Notebook1c.prt /main/2 1996/07/18 16:14:36 drk $
-TRACE:(1) WindowMove Notebook3 700 400
-TRACE:(2) CompareVisual Notebook3 
-X Error of failed request:  BadMatch (invalid parameter attributes)
-  Major opcode of failed request:  73 (X_GetImage)
-  Serial number of failed request:  10924
-  Current serial number in output stream:  10924
