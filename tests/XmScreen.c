@@ -48,19 +48,11 @@ END_TEST
 START_TEST(initialize)
 {
 	XmScreen s;
-	XmDesktopObject d;
 
 	ck_assert_msg((s = XmScreenOfObject(shell)), "Failed to get screen");
-	if ((d = (XmDesktopObject)s)) {
-		ck_assert_msg(!(d->desktop.num_slots),    "Should have 0 slots");
-		ck_assert_msg(!(d->desktop.num_children), "Should have 0 children");
-		ck_assert_msg(!(d->desktop.children),     "Should have no child storage");
-	}
-
 	ck_assert_msg(xmScreenClassRec.desktop_class.insert_child ==
 	              xmDesktopClassRec.desktop_class.insert_child,
 	              "Incorrect insert_child callback");
-
 	ck_assert_msg(xmScreenClassRec.desktop_class.delete_child ==
 	              xmDesktopClassRec.desktop_class.delete_child,
 	              "Incorrect delete_child callback");

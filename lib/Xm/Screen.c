@@ -677,12 +677,15 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 	if (XFindContext(display, root, screen_context, (XPointer *)&xmScreen) == XCSUCCESS) {
 		XtError("Refusing to create an additional XmScreen");
 		return;
-	} else xmScreen = (XmScreen)new_widget;
+	}
 
+	xmScreen = (XmScreen)new_widget;
 	XQueryBestCursor(display, root, 1024, 1024,
 	                 &xmScreen->screen.maxCursorWidth,
 	                 &xmScreen->screen.maxCursorHeight);
 
+	xmScreen->desktop.parent = NULL;
+	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
 	xmScreen->screen.screenInfo         = NULL;
 	xmScreen->screen.nullCursor         = None;
 	xmScreen->screen.cursorCache        = NULL;
@@ -779,8 +782,6 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 	/* Install our glorious event handler */
 	XtInsertEventHandler(new_widget, StructureNotifyMask, False,
 	                     monitor_cb, NULL, XtListHead);
-	((XmDesktopObject)xmScreen)->desktop.parent = NULL;
-	xmDesktopClass->core_class.initialize(NULL, new_widget, NULL, NULL);
 }
 
 /**
