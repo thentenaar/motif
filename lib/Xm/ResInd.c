@@ -472,9 +472,9 @@ int
 XmConvertUnits(
         Widget widget,
         int dimension,
-        register int from_type,
-        register int from_val,
-        register int to_type )
+        int from_type,
+        int from_val,
+        int to_type )
 {
   int value;
   Screen *screen;
@@ -499,8 +499,8 @@ XmConvertUnits(
 int
 XmCvtToHorizontalPixels(
         Screen *screen,
-        register int from_val,
-        register int from_type )
+        int from_val,
+        int from_type )
 {
   int value;
   _XmDisplayToAppContext(DisplayOfScreen(screen));
@@ -577,8 +577,8 @@ XmeToHorizontalPixels(
 int
 XmCvtToVerticalPixels(
         Screen *screen,
-        register int from_val,
-        register int from_type )
+        int from_val,
+        int from_type )
 {
   int value;
   _XmDisplayToAppContext(DisplayOfScreen(screen));
@@ -626,8 +626,8 @@ XmeToVerticalPixels(
 int
 XmCvtFromHorizontalPixels(
         Screen *screen,
-        register int from_val,
-        register int to_type )
+        int from_val,
+        int to_type )
 {
   int value;
   _XmDisplayToAppContext(DisplayOfScreen(screen));
@@ -703,8 +703,8 @@ XmeFromHorizontalPixels(
 int
 XmCvtFromVerticalPixels(
         Screen *screen,
-        register int from_val,
-        register int to_type )
+        int from_val,
+        int to_type )
 {
   int value;
   _XmDisplayToAppContext(DisplayOfScreen(screen));

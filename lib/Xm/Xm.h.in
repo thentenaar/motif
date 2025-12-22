@@ -1507,25 +1507,25 @@ extern int XmConvertStringToUnits(
 extern int XmConvertUnits(
                         Widget widget,
                         int dimension,
-                        register int from_type,
-                        register int from_val,
-                        register int to_type) ;
+                        int from_type,
+                        int from_val,
+                        int to_type) ;
 extern int XmCvtToHorizontalPixels(
                         Screen *screen,
-                        register int from_val,
-                        register int from_type) ;
+                        int from_val,
+                        int from_type) ;
 extern int XmCvtToVerticalPixels(
                         Screen *screen,
-                        register int from_val,
-                        register int from_type) ;
+                        int from_val,
+                        int from_type) ;
 extern int XmCvtFromHorizontalPixels(
                         Screen *screen,
-                        register int from_val,
-                        register int to_type) ;
+                        int from_val,
+                        int to_type) ;
 extern int XmCvtFromVerticalPixels(
                         Screen *screen,
-                        register int from_val,
-                        register int to_type) ;
+                        int from_val,
+                        int to_type) ;
 
 /********    End Public Function Declarations    ********/
 
@@ -1938,9 +1938,7 @@ extern Boolean XmProcessTraversal(
 
 /********        ********/
 
-#ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
-#endif
+#include <Xm/obsolete.h>
 
 /*
  * The following includes are for source compatibility.  They might be
@@ -1948,6 +1946,10 @@ extern Boolean XmProcessTraversal(
  */
 #include <Xm/VendorS.h>
 #include <Xm/XmIm.h>
+
+#ifdef __cplusplus
+}  /* Close scope of 'extern "C"' declaration which encloses file. */
+#endif
 
 #define XmINDICATOR_3D_BOX		0x01
 #define XmINDICATOR_FLAT_BOX		0x02
@@ -1980,6 +1982,5 @@ enum { XmEXTERNAL_HIGHLIGHT, XmINTERNAL_HIGHLIGHT };
 enum { XmPATH_MODE_FULL, XmPATH_MODE_RELATIVE };
 enum { XmFILTER_NONE, XmFILTER_HIDDEN_FILES} ;
 
-#include <Xm/obsolete.h>
 #endif /* _Xm_h */
  /* DON'T ADD STUFF AFTER THIS #endif */
