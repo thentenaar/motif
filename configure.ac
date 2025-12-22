@@ -190,8 +190,8 @@ AC_DEFINE_UNQUOTED(
 
 AC_DEFINE_UNQUOTED(
 	[USE_XFT],
-	$(test "x$pkg_cv_XFT_LIBS"  == "x" ; echo $?),
-	[1 if Motif ws built with Xft support]
+	$(test "x$with_xft" != "xyes" ; echo $?),
+	[1 if Motif was built with Xft support]
 )
 
 AC_DEFINE_UNQUOTED(
