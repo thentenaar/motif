@@ -161,3 +161,4 @@ tools/wml/Uil.output
 tests/tests
 tests/*.log
 tests/*.trs
+screenshots
