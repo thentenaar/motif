@@ -76,6 +76,10 @@ support for X/Open message catalogs.
 
 - Continued fixes and improvements
 
+## Action Shots
+
+![OpenBSD 7.8 + CDE](screenshots/openbsd-7.8-cde.png)
+
 ## Packaging Status
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/motif.svg)](https://repology.org/project/motif/versions)
