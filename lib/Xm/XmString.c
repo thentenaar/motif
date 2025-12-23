@@ -6521,8 +6521,6 @@ char *_XmStringGetCurrentCharset(void)
 
 	locale.tag    = NULL;
 	locale.taglen = 0;
-	ptr           = XmFALLBACK_CHARSET;
-	len           = strlen(XmFALLBACK_CHARSET);
 	str           = getenv(env_variable);
 
 	_parse_locale(str, &indx, &len);
@@ -6532,9 +6530,12 @@ char *_XmStringGetCurrentCharset(void)
 			ptr = "UTF-8";
 			len = 5;
 		}
+	} else {
+		ptr = XmFALLBACK_CHARSET;
+		len = strlen(XmFALLBACK_CHARSET);
 	}
 
-	locale.tag = (char *)XtMalloc(len + 1);
+	locale.tag = XtMalloc(len + 1);
 	strncpy(locale.tag, ptr, len);
 	locale.tag[len] = '\0';
 	locale.taglen = len;
