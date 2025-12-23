@@ -1947,72 +1947,55 @@ found_error:
 **--
 **/
 
-#define UNSCHAR_MINUS_ONE (unsigned char) 255;
+#define UNSCHAR_MINUS_ONE (unsigned char)255;
 
-void  lex_initialize_analyzer( )
-
+void lex_initialize_analyzer(void)
 {
-String language;
+	String language;
 
-/* RAP preserve comments */
-comment_text = (char *) XtMalloc(INITIAL_COMMENT_SIZE);
-comment_size = INITIAL_COMMENT_SIZE;
+	/* RAP preserve comments */
+	comment_text = XtMalloc(INITIAL_COMMENT_SIZE);
+	comment_size = INITIAL_COMMENT_SIZE;
+	comment_text[0] = '\0';
 
-comment_text[0] = '\0';
+	/**
+	 * The lex algorithm has the potential to write
+	 * into index l_max_lex_buffer_pos + 1, so allocate l_max_lex_buffer_pos
+	 * plus 2 positions in buffer.
+	 */
+	az_first_lex_buffer = (lex_buffer_type *)XtMalloc(
+		l_max_lex_buffer_pos + 2 + sizeof(lex_buffer_type *)
+	);
+	az_first_lex_buffer->az_next_buffer = NULL;
 
-/* BEGIN OSF Fix CR 4749 */
-/* The lex algorithm has the potential to write
- * into index l_max_lex_buffer_pos + 1, so allocate l_max_lex_buffer_pos
- * plus 2 positions in buffer.
- */
-az_first_lex_buffer =
-    (lex_buffer_type *) XtMalloc (l_max_lex_buffer_pos + 2 +
-				     sizeof(lex_buffer_type *));
-/* END OSF Fix CR 4749 */
-az_first_lex_buffer->az_next_buffer = NULL;
+	/* Initialize the stack frame entry for epsilon productions.   */
+	gz_yynullval.b_tag = sar_k_null_frame;
 
-/*   Initialize the stack frame entry for epsilon productions.   */
-
-gz_yynullval.b_tag = sar_k_null_frame;
-
-/*   Initialize the default character set  */
-
-language = (char *) _XmStringGetCurrentCharset();
-if ( language == NULL )
-    Uil_lex_l_user_default_charset = lex_k_default_charset;
-else
-    {
-    Uil_lex_l_user_default_charset = sem_charset_lang_name (language);
-    if (Uil_lex_l_user_default_charset == sym_k_error_charset)
-	{
-	diag_issue_diagnostic
-	    ( d_bad_lang_value,
-	     diag_k_no_source,
-	     diag_k_no_column);
-	Uil_lex_l_user_default_charset = lex_k_default_charset;
+	/* Initialize the default character set  */
+	if (!(language = _XmStringGetCurrentCharset()))
+		Uil_lex_l_user_default_charset = lex_k_default_charset;
+	else {
+		Uil_lex_l_user_default_charset = sem_charset_lang_name(language);
+		XtFree(language);
 	}
-    }
-Uil_lex_az_charset_entry = NULL;
 
-/* Determine if localized strings are possible */
-if (Uil_cmd_z_command.v_use_setlocale == FALSE)
-  Uil_lex_l_localized = FALSE;
-else
-  {
-    Uil_lex_l_localized = TRUE;
-    _MrmOSSetLocale("C");
-  }
+	if (Uil_lex_l_user_default_charset == sym_k_error_charset) {
+		diag_issue_diagnostic(d_bad_lang_value, diag_k_no_source, diag_k_no_column);
+		Uil_lex_l_user_default_charset = lex_k_default_charset;
+	}
+	Uil_lex_az_charset_entry = NULL;
 
-/*   Initialize the current character set */
-Uil_lex_l_charset_specified = FALSE;
+	/* Determine if localized strings are possible */
+	if ((Uil_lex_l_localized = Uil_cmd_z_command.v_use_setlocale))
+		_MrmOSSetLocale("C");
 
-/*    Initialize the source position and record */
+	/* Initialize the current character set */
+	Uil_lex_l_charset_specified = FALSE;
 
-prev_yylval.b_source_end = UNSCHAR_MINUS_ONE;
-prev_yylval.az_source_record = src_az_current_source_record;
-
+	/* Initialize the source position and record */
+	prev_yylval.b_source_end     = UNSCHAR_MINUS_ONE;
+	prev_yylval.az_source_record = src_az_current_source_record;
 }
-
 
 /*
 **++
@@ -2043,8 +2026,7 @@ prev_yylval.az_source_record = src_az_current_source_record;
 **--
 **/
 
-void  Uil_lex_cleanup_analyzer( )
-
+void  Uil_lex_cleanup_analyzer(void)
 {
     /*	pointer to next buffer to free	*/
     lex_buffer_type  *az_buffer_to_free;
@@ -2214,7 +2196,6 @@ static lex_buffer_type *get_lex_buffer(lex_buffer_type *az_current_lex_buffer)
 
     if (az_lex_buffer == NULL)
     {
-/* BEGIN OSF Fix CR 4749 */
       /* The lex algorithm has the potential to write
        * into index l_max_lex_buffer_pos + 1, so allocate l_max_lex_buffer_pos
        * plus 2 positions in buffer.
@@ -2222,7 +2203,6 @@ static lex_buffer_type *get_lex_buffer(lex_buffer_type *az_current_lex_buffer)
 	az_lex_buffer =
 	    (lex_buffer_type *)XtMalloc( l_max_lex_buffer_pos + 2 +
 					   sizeof(lex_buffer_type *));
-/* END OSF Fix CR 4749 */
 	az_current_lex_buffer->az_next_buffer = az_lex_buffer;
 	az_lex_buffer->az_next_buffer = NULL;
     }
