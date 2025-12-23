@@ -41,6 +41,7 @@
 #include <Xm/ArrowB.h>
 #include <Xm/ComboBoxP.h>
 #include <Xm/DisplayP.h>
+#include <Xm/ScreenP.h>
 #include <Xm/DrawP.h>
 #include <Xm/GrabShellP.h>
 #include <Xm/List.h>
@@ -1757,21 +1758,29 @@ CBDropDownList(Widget    widget,
 	  int tmp;
 	  Position root_x, root_y, shell_x, shell_y;
 	  Dimension shell_width;
+	  XmMonitorInfo *monitor;
 
+	  /* First, let's make sure the click didn't happen off-screen */
+	  monitor = XmGetMonitorInfoAt(XmScreenOfObject(cb),
+	                               event->xbutton.x_root,
+	                               event->xbutton.y_root);
+	  if (!monitor)
+	      return;
+
+	  /* Now, figure out where (on the monitor) to place the shell */
 	  XtTranslateCoords((Widget)cb, XtX(cb), XtY(cb), &root_x, &root_y);
-
 	  shell_x = root_x - XtX(cb) + CB_HighlightThickness(cb) -
 	    XtBorderWidth(CB_ListShell(cb));
 	  shell_y = root_y + XtHeight(cb) - CB_HighlightThickness(cb) -
 	    XtY(cb);
 
-	  /* Try to position the shell on the screen. */
-	  tmp = WidthOfScreen(XtScreen(cb)) - XtWidth(CB_ListShell(cb));
-	  tmp = MIN(tmp, shell_x);
-	  shell_x = MAX(0, tmp);
-	  tmp = HeightOfScreen(XtScreen(cb)) - XtHeight(CB_ListShell(cb));
-	  tmp = MIN(tmp, shell_y);
-	  shell_y = MAX(0, tmp);
+	  tmp = monitor->x + monitor->width - XtWidth(CB_ListShell(cb));
+	  tmp = MIN(tmp, shell_x - monitor->x);
+	  shell_x = MAX(monitor->x, tmp);
+	  tmp = monitor->y + monitor->height - XtHeight(CB_ListShell(cb));
+	  tmp = MIN(tmp, shell_y - monitor->y);
+	  shell_y = MAX(monitor->y, tmp);
+	  FreeXmMonitorInfo(monitor);
 
 	  /* CR 8446: The shell width may have changed unexpectedly. */
 	  shell_width = XtWidth(cb) - 2 * CB_HighlightThickness(cb);
