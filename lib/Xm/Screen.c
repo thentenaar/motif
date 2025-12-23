@@ -406,6 +406,11 @@ static float calc_dpi(int w, int h, int w_mm, int h_mm)
 	return (float)((d <= SCREEN_DEFAULT_DPI) ? SCREEN_DEFAULT_DPI : d);
 }
 
+static Dimension pix_to_mm(float dpi, Dimension pix)
+{
+	return ceil((pix / dpi) * 25.4);
+}
+
 /**
  * Set the logical DPI for the screen
  *
@@ -417,6 +422,10 @@ static void set_dpi(XmScreenPart *screen)
 	if ((screen->dpi = screen->user_dpi) <= SCREEN_DEFAULT_DPI)
 		screen->dpi = calc_dpi(screen->width, screen->height,
 		                       screen->width_mm, screen->height_mm);
+	else { /* So that we do conversions based on the user's preference */
+		screen->width_mm  = pix_to_mm(screen->user_dpi, screen->width);
+		screen->height_mm = pix_to_mm(screen->user_dpi, screen->height);
+	}
 }
 
 #if XM_WITH_XRANDR
@@ -459,8 +468,8 @@ static void select_randr(Widget w, int *types, XtPointer *sel,
  */
 static void monitors_randr(Display *d, Window root, XmScreen screen)
 {
-	float dp;
 	int j;
+	float dpi;
 	Cardinal i, n;
 	XRRMonitorInfo *info;
 
@@ -484,23 +493,21 @@ static void monitors_randr(Display *d, Window root, XmScreen screen)
 	}
 
 	for (i = 0; i < n; i++) {
-		dp = calc_dpi(info[i].width, info[i].height,
-		              info[i].mwidth, info[i].mheight);
+		dpi = calc_dpi(info[i].width, info[i].height,
+		               info[i].mwidth, info[i].mheight);
 		screen->screen.monitors[i].x         = info[i].x;
 		screen->screen.monitors[i].y         = info[i].y;
 		screen->screen.monitors[i].width     = info[i].width;
 		screen->screen.monitors[i].height    = info[i].height;
 		screen->screen.monitors[i].width_mm  = info[i].mwidth;
 		screen->screen.monitors[i].height_mm = info[i].mheight;
-		screen->screen.monitors[i].dpi       = dp;
+		screen->screen.monitors[i].dpi       = dpi;
 		screen->screen.monitors[i].name      = XGetAtomName(d, info[i].name);
 	}
 
-	if (n == 1) {
-		screen->screen.width_mm  = info[0].mwidth;
-		screen->screen.height_mm = info[0].mheight;
-		set_dpi(&screen->screen);
-	}
+	screen->screen.width_mm  = WidthMMOfScreen(XtScreen(screen));
+	screen->screen.height_mm = HeightMMOfScreen(XtScreen(screen));
+	set_dpi(&screen->screen);
 
 	XRRFreeMonitors(info);
 	_XmAppUnlock(app);
@@ -514,11 +521,13 @@ static void monitors_randr(Display *d, Window root, XmScreen screen)
 static void monitors_xinerama(Display *d, Window root, XmScreen screen)
 {
 	int i, n;
+	float dpi;
 	XineramaScreenInfo *info;
 
 	_XmDisplayToAppContext(d);
 	_XmAppLock(app);
 
+	dpi = screen->screen.dpi;
 	for (i = 0; i < screen->screen.n_monitors; i++)
 		XFree((XPointer)screen->screen.monitors[i].name);
 	XtFree((XtPointer)screen->screen.monitors);
@@ -540,9 +549,9 @@ static void monitors_xinerama(Display *d, Window root, XmScreen screen)
 		screen->screen.monitors[i].y         = info[i].y_org;
 		screen->screen.monitors[i].width     = info[i].width;
 		screen->screen.monitors[i].height    = info[i].height;
-		screen->screen.monitors[i].width_mm  = 0;
-		screen->screen.monitors[i].height_mm = 0;
-		screen->screen.monitors[i].dpi       = screen->screen.dpi;
+		screen->screen.monitors[i].width_mm  = pix_to_mm(dpi, info[i].width);
+		screen->screen.monitors[i].height_mm = pix_to_mm(dpi, info[i].height);
+		screen->screen.monitors[i].dpi       = dpi;
 		screen->screen.monitors[i].name      = NULL;
 	}
 
@@ -556,7 +565,6 @@ static void monitors_xinerama(Display *d, Window root, XmScreen screen)
  */
 static void monitor_rootwin(Display *d, Window root, XmScreen screen)
 {
-	float dp;
 	Cardinal i;
 	_XmDisplayToAppContext(d);
 	_XmAppLock(app);
@@ -568,8 +576,9 @@ static void monitor_rootwin(Display *d, Window root, XmScreen screen)
 	if (!screen->screen.monitors)
 		screen->screen.monitors = (XmMonitorInfo *)XtNew(XmMonitorInfo);
 
-	dp = calc_dpi(screen->screen.width, screen->screen.height,
-	              screen->screen.width_mm, screen->screen.height_mm);
+	screen->screen.width_mm  = WidthMMOfScreen(XtScreenOfObject((Widget)screen));
+	screen->screen.height_mm = HeightMMOfScreen(XtScreenOfObject((Widget)screen));
+	set_dpi(&screen->screen);
 
 	screen->screen.monitors->x         = 0;
 	screen->screen.monitors->y         = 0;
@@ -577,7 +586,7 @@ static void monitor_rootwin(Display *d, Window root, XmScreen screen)
 	screen->screen.monitors->height    = screen->screen.height;
 	screen->screen.monitors->width_mm  = screen->screen.width_mm;
 	screen->screen.monitors->height_mm = screen->screen.height_mm;
-	screen->screen.monitors->dpi       = dp;
+	screen->screen.monitors->dpi       = screen->screen.dpi;
 	screen->screen.monitors->name      = NULL;
 	_XmAppUnlock(app);
 }

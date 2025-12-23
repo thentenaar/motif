@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -19,17 +20,19 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: ResInd.c /main/17 1996/06/07 11:40:05 daniel $"
 #endif
+
 #endif
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-
+#include <math.h>
 #include <limits.h>
 #include <ctype.h>		/* for isascii, isspace */
 #include <Xm/ScreenP.h>
@@ -323,117 +326,111 @@ ParseUnitString(
   return(XmeParseUnits(string, unit_type));
 }
 
-
-
 /**********************************************************************
  *
  * _XmConvertUnits
  * Does the real work of conversion.
  *
  **********************************************************************/
-int
-_XmConvertUnits(
-        Screen *screen,
-        int dimension,
-        register int from_type,
-        register int from_val,
-        register int to_type )
+int _XmConvertUnits(Screen *screen, int dimension, int from_type,
+                    int from_val, int to_type)
 {
-  /*
-   * from_val_in_mm is actually from_val_in_1000thmillimeters for accuracy
-   *     likewise for mm_per_pixel
-   */
-  register int from_val_in_mm = 0;
-  register int mm_per_pixel = 0 ; /* time 100000 */
-  int font_unit;
+	XmScreen xscr;
 
+	/**
+	 * from_val_in_mm is actually from_val_in_1000thmillimeters for
+	 * accuracy, likewise for mm_per_pixel
+	 */
+	int mm_per_pixel = 0, from_val_in_mm = 0, font_unit;
 
-  /*  Do error checking  */
+	/* Do error checking */
+	if (!screen ||
+	    !XmRepTypeValidValue(XmRID_ORIENTATION, (unsigned char)dimension, NULL) ||
+	    !XmRepTypeValidValue(XmRID_UNIT_TYPE, from_type, NULL) ||
+	    !XmRepTypeValidValue(XmRID_UNIT_TYPE, to_type, NULL))
+		return 0;
 
-  if (!XmRepTypeValidValue(XmRID_ORIENTATION,
-			   (unsigned char) dimension,
-			   (Widget) NULL))
-    return (0);
+	/* Check for type to same type conversions */
+	if (from_type == to_type)
+		return from_val;
 
-  if (!XmRepTypeValidValue( XmRID_UNIT_TYPE, from_type, (Widget)NULL))
-    return (0);
+	/* Get the screen dimensional data */
+	xscr = XmScreenOfScreen(screen);
+	if (!mm_per_pixel) {
+		if (dimension == XmHORIZONTAL)
+			mm_per_pixel = WidthMMOfXmScreen(xscr) * 1000 / WidthOfXmScreen(xscr);
+		else mm_per_pixel = HeightMMOfXmScreen(xscr) * 1000 / HeightOfXmScreen(xscr);
+	}
 
-  if (!XmRepTypeValidValue( XmRID_UNIT_TYPE, to_type, (Widget)NULL))
-    return (0);
+	switch (from_type) {
+	case XmPIXELS: /* "Screen pixels" */
+		from_val_in_mm = from_val * mm_per_pixel;
+		break;
+	case Xm100TH_POINTS:
+		from_val_in_mm = (from_val * 353) / 100;
+		break;
+	case XmPOINTS:
+		from_val_in_mm = from_val * 353;
+		break;
+	case Xm1000TH_INCHES:
+		from_val_in_mm = (from_val * 254) / 100;
+		break;
+	case XmINCHES:
+		from_val_in_mm = (from_val * 254) * 100;
+		break;
+	case Xm100TH_MILLIMETERS:
+		from_val_in_mm = from_val * 10;
+		break;
+	case XmMILLIMETERS:
+		from_val_in_mm = from_val * 1000;
+		break;
+	case XmCENTIMETERS:
+		from_val_in_mm = from_val * 10000;
+		break;
+	case Xm100TH_FONT_UNITS:
+		font_unit = _XmGetFontUnit(screen, dimension);
+		from_val_in_mm = from_val * font_unit * mm_per_pixel / 100;
+		break;
+	default: /* XmFONT_UNITS */
+		font_unit = _XmGetFontUnit(screen, dimension);
+		from_val_in_mm = from_val * font_unit * mm_per_pixel;
+		break;
+	}
 
-  if (screen == NULL)
-    return (0);
-
-  /*  Check for type to same type conversions  */
-
-  if (from_type == to_type)
-    return (from_val);
-
-  /*  Get the screen dimensional data  */
-  if (!mm_per_pixel) {
-      if (dimension == XmHORIZONTAL)
-	  mm_per_pixel = (WidthMMOfScreen(screen) * 1000) /
-	      WidthOfScreen(screen);
-      else
-	  mm_per_pixel = (HeightMMOfScreen(screen) * 1000) /
-	      HeightOfScreen(screen);
-  }
-
-
-  if (from_type == XmPIXELS)
-    from_val_in_mm = from_val * mm_per_pixel ;
-  else if (from_type == Xm100TH_POINTS)
-    from_val_in_mm = (from_val * 353) / 100;
-  else if (from_type == XmPOINTS)
-    from_val_in_mm = (from_val * 353) ;
-  else if (from_type == Xm1000TH_INCHES)
-    from_val_in_mm = (from_val * 254) / 10;
-  else if (from_type == XmINCHES)
-    from_val_in_mm = (from_val * 254) * 100;
-  else if (from_type == Xm100TH_MILLIMETERS)
-    from_val_in_mm = from_val * 10;
-  else if (from_type == XmMILLIMETERS)
-    from_val_in_mm = from_val * 1000;
-  else if (from_type == XmCENTIMETERS)
-    from_val_in_mm = from_val * 10000;
-  else if (from_type == Xm100TH_FONT_UNITS)
-    {
-      font_unit = _XmGetFontUnit (screen, dimension);
-      from_val_in_mm = from_val * font_unit * mm_per_pixel / 100;
-    }
-  else if (from_type == XmFONT_UNITS)
-    {
-      font_unit = _XmGetFontUnit (screen, dimension);
-      from_val_in_mm = from_val * font_unit * mm_per_pixel ;
-    }
-
-
-  if (to_type == XmPIXELS)
-    return (from_val_in_mm / mm_per_pixel);
-  else if (to_type == Xm100TH_POINTS)
-    return ((from_val_in_mm * 100) / 353);
-  else if (to_type == XmPOINTS)
-    return ((from_val_in_mm ) / 353);
-  else if (to_type == Xm1000TH_INCHES)
-    return ((from_val_in_mm * 10) / 254);
-  else if (to_type == XmINCHES)
-    return ((from_val_in_mm / 100) / 254);
-  else if (to_type == Xm100TH_MILLIMETERS)
-    return (from_val_in_mm / 10);
-  else if (to_type == XmMILLIMETERS)
-    return (from_val_in_mm / 1000);
-  else if (to_type == XmCENTIMETERS)
-    return (from_val_in_mm / 10000);
-  else  if (to_type == Xm100TH_FONT_UNITS)
-    {
-      font_unit = _XmGetFontUnit (screen, dimension);
-      return ((from_val_in_mm * 100) / (mm_per_pixel * font_unit));
-    }
-  else /* to_type == XmFONT_UNITS */
-    {
-      font_unit = _XmGetFontUnit (screen, dimension);
-      return ((from_val_in_mm ) / (mm_per_pixel * font_unit));
-    }
+	switch (to_type) {
+	case XmPIXELS: /* "Screen pixels" */
+		return from_val_in_mm / mm_per_pixel;
+		break;
+	case Xm100TH_POINTS:
+		return (from_val_in_mm * 100) / 353;
+		break;
+	case XmPOINTS:
+		return from_val_in_mm / 353;
+		break;
+	case Xm1000TH_INCHES:
+		return (from_val_in_mm * 10) / 254;
+		break;
+	case XmINCHES:
+		return (from_val_in_mm / 100) / 254;
+		break;
+	case Xm100TH_MILLIMETERS:
+		return from_val_in_mm / 10;
+		break;
+	case XmMILLIMETERS:
+		return from_val_in_mm / 1000;
+		break;
+	case XmCENTIMETERS:
+		return from_val_in_mm / 10000;
+		break;
+	case Xm100TH_FONT_UNITS:
+		font_unit = _XmGetFontUnit(screen, dimension);
+		return from_val_in_mm * 100 / (font_unit * mm_per_pixel);
+		break;
+	default: /* XmFONT_UNITS */
+		font_unit = _XmGetFontUnit(screen, dimension);
+		return from_val_in_mm / (font_unit * mm_per_pixel);
+		break;
+	}
 }
 
 

@@ -49,6 +49,7 @@
 #include <Xm/DropDown.h>
 #include <Xm/ButtonBox.h>
 #include <Xm/ExtP.h>
+#include <Xm/ScreenP.h>
 #include "Xm/XmI.h"
 
 #define NUM_XLFD_DASHES 14
@@ -709,7 +710,7 @@ CmpStrings(const void * p1, const void *p2)
 static int
 FindResolution(Widget w)
 {
-    Screen *screen = XtScreen(w);
+    XmScreen screen = XmScreenOfObject(w);
     register int i, xres, yres, min, pref;
 
     /*
@@ -727,8 +728,8 @@ FindResolution(Widget w)
     /* This will get us the true pixels / inch.  That is probably
        not what we want */
 
-    xres = (254 * WidthOfScreen(screen) / WidthMMOfScreen(screen) + 5) / 10;
-    yres = (254 * HeightOfScreen(screen) / HeightMMOfScreen(screen) + 5) / 10;
+    xres = (254 * WidthOfXmScreen(screen) / WidthMMOfXmScreen(screen) + 5) / 10;
+    yres = (254 * HeightOfXmScreen(screen) / HeightMMOfXmScreen(screen) + 5) / 10;
 
     xres *= xres;
     yres *= yres;
