@@ -63,6 +63,7 @@ static char *rcsid = "$TOG: RCMenu.c /main/25 1999/05/24 18:06:57 samborn $";
 #include <Xm/MenuShellP.h>
 #include <Xm/MenuT.h>
 #include <Xm/PrimitiveP.h>
+#include <Xm/ScreenP.h>
 #include <Xm/SeparatoGP.h>
 #include <Xm/SeparatorP.h>
 #include <Xm/ToggleB.h>
@@ -497,9 +498,11 @@ LocatePulldown(
         XmRowColumnWidget m,
         XEvent *event )
 {
-    Position x, y, x1, y1;
+    XmScreen s;
+    XmMonitorInfo *monitor;
+    Position x, y, x1, y1, x2, y2;
 
-    if (root == NULL)
+    if (!root)
       return;
 
     x = y = 0;                  /* punt, don't know */
@@ -577,23 +580,34 @@ LocatePulldown(
      * widget's co-ord system and convert them to the root
      * window co-ords.
      */
-    XtTranslateCoords( (Widget) p, x, y, &x1, &y1);
+    XtTranslateCoords((Widget)p, x, y, &x1, &y1);
 
-    /* Oh no!  we're going off screen.  Let's try and do
-       something reasonable.  We're only doing the cascade
-       off a menu case for now.  (CR 6421) */
-    if ((x1 + XtWidth(m)) > WidthOfScreen(XtScreen(m))) {
-      if (!IsOption(root) && (XmIsCascadeButton(p) || XmIsCascadeButtonGadget(p))) {
-	x1 -= XtWidth(m) + x - XtX(p);
-      }
-    } else if (x1 < 0) { /* R to L case */
-      if (!IsOption(root) && (XmIsCascadeButton(p) || XmIsCascadeButtonGadget(p))) {
-	x1 += XtWidth(m) + x - XtX(p);
-      }
+    /**
+     * Constrain ourselves to the physical screen, either where we want
+     * to be (x1,y1) or where the button event happend; and absolute worst,
+     * at (0,0).
+     */
+    s = XmScreenOfObject((Widget)p);
+    if (!(monitor = XmGetMonitorInfoAt(s, x1, y1))) {
+        if (!event || !(monitor = XmGetMonitorInfoAt(s, event->xbutton.x_root, event->xbutton.y_root))) {
+            /* Well, it might be completely offscreen... */
+            XtTranslateCoords((Widget)p, 0, 0, &x2, &y2);
+            if (!(monitor = XmGetMonitorInfoAt(s, x2, y2)))
+                monitor = XmGetMonitorInfoAt(s, 0, 0);
+        }
     }
 
-    XtX (m) = x1;
-    XtY (m) = y1;
+    if (x1 < 0) x1 = monitor->x + 4;
+    if (x1 + XtWidth(m) >= monitor->width)
+        x1 = monitor->x + monitor->width - XtWidth(m) - 4;
+
+    if (y1 < 0) y1 = monitor->y + 4;
+    if (y1 + XtHeight(m) >= monitor->height)
+        y1 = monitor->y + monitor->height - XtHeight(m) - 4;
+
+    XtX(m) = x1;
+    XtY(m) = y1;
+    FreeXmMonitorInfo(monitor);
 }
 
 /* These next two routines are provided to change and get the way popup and
