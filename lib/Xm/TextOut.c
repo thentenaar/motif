@@ -58,9 +58,7 @@ static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 #include "TextOutI.h"
 #include "TraversalI.h"
 #include "XmI.h"
-#if XM_PRINTING
-#include <Xm/PrintSP.h>         /* for XmIsPrintShell */
-#endif
+
 #if USE_XFT
 #include "XmRenderTI.h"
 #endif
@@ -246,11 +244,6 @@ static Boolean SetXOCOrientation(XmTextWidget tw,
 				 XOC om,
 				 XOrientation orientation);
 
-static void CursorPosVisDefault(
-                        Widget widget,
-                        int offset,
-                        XrmValue *value) ;
-
 /********    End Static Function Declarations    ********/
 
 #define EraseInsertionPoint(tw)\
@@ -340,41 +333,15 @@ static XtResource output_resources[] =
       XmRImmediate, (XtPointer) False
     },
 
-    {
+    { /* XXX: This was false if the widget had a print shell ancestor */
       XmNcursorPositionVisible, XmCCursorPositionVisible, XmRBoolean,
       sizeof(Boolean),
       XtOffsetOf(struct _OutputDataRec, cursor_position_visible),
-      XmRCallProc, (XtPointer) CursorPosVisDefault
+      XmRImmediate, (XtPointer)True
 
     },
 
 };
-
-/*********************************************************************
- *
- * CursorPosVisDefault
- *
- *
- *********************************************************************/
-static void
-CursorPosVisDefault(
-        Widget widget,
-        int offset,		/* unused */
-        XrmValue *value )
-{
-      static Boolean cursor_pos_vis ;
-      Widget print_shell ;
-
-      value->addr = (XPointer) &cursor_pos_vis;
-
-      print_shell = widget ;
-      while(print_shell && !XmIsPrintShell(print_shell))
-	  print_shell = XtParent(print_shell);
-
-      if (print_shell) cursor_pos_vis = False ;
-      else             cursor_pos_vis = True ;
-}
-
 
 void
 _XmTextFreeContextData(Widget w,		/* unused */

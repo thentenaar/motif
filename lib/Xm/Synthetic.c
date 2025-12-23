@@ -35,9 +35,6 @@
 #include <Xm/PrimitiveP.h>
 #include <Xm/GadgetP.h>
 #include <Xm/VendorSEP.h>
-#if XM_PRINTING
-#include <Xm/PrintSP.h>
-#endif
 #include "SyntheticI.h"
 
 /**
@@ -81,7 +78,7 @@ static void ImportConstraintArgs(Widget w,
 
 
 /********    End Static Function Declarations    ********/
-
+
 /**********************************************************************
  *
  *  _XmBuildResources
@@ -174,7 +171,7 @@ _XmBuildResources(XmSyntheticResource **wc_resources_ptr,
   *wc_resources_ptr = new_resources;
   *wc_num_resources_ptr = new_num_resources;
 }
-
+
 /**********************************************************************
  *
  *  InitializeSyntheticResources
@@ -197,7 +194,7 @@ _XmInitializeSyntheticResources(XmSyntheticResource *resources,
     resources[i].resource_name = q.str;
   }
 }
-
+
 /**********************************************************************
  *
  *  GetValuesHook
@@ -308,7 +305,7 @@ GetValuesHook(Widget w,
 	}
     }
 }
-
+
 /**********************************************************************
  *
  *  ConstraintGetValuesHook
@@ -336,7 +333,7 @@ ConstraintGetValuesHook(Widget w,
 		  parent_wc->manager_class.num_syn_constraint_resources,
 		  args, *num_args);
 }
-
+
 /**********************************************************************
  *
  *  _XmPrimitiveGetValuesHook
@@ -364,7 +361,7 @@ _XmPrimitiveGetValuesHook(
     ConstraintGetValuesHook (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  *  _XmGadgetGetValuesHook
@@ -391,7 +388,7 @@ _XmGadgetGetValuesHook(Widget w,
     ConstraintGetValuesHook (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  *  _XmManagerGetValuesHook
@@ -418,36 +415,8 @@ _XmManagerGetValuesHook(Widget w,
     ConstraintGetValuesHook (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
-
 
-#if XM_PRINTING
 
-/**********************************************************************
- *
- *  _XmPrintShellGetValuesHook
- *	Process the synthetic resources that need to be synthesized
- *
- **********************************************************************/
-
-void
-_XmPrintShellGetValuesHook(Widget w,
-			ArgList args,
-			Cardinal *num_args)
-{
-  XmPrintShellWidgetClass wc;
-
-  _XmProcessLock();
-  wc = (XmPrintShellWidgetClass) w->core.widget_class;
-  if (wc->print_shell_class.num_syn_resources != 0)
-    GetValuesHook (w, (XtPointer) w, w, (XtPointer) w, None,
-		   wc->print_shell_class.syn_resources,
-		   wc->print_shell_class.num_syn_resources,
-		   args, *num_args);
-
-  _XmProcessUnlock();
-}
-#endif /* XM_PRINTING */
-
 /**********************************************************************
  *
  *  _XmExtGetValuesHook
@@ -474,7 +443,7 @@ _XmExtGetValuesHook(Widget w,
 		  args, *num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  * ImportArgs
@@ -563,7 +532,7 @@ ImportArgs(Widget w,
 	}
     }
 }
-
+
 /**********************************************************************
  *
  *  ImportConstraintArgs
@@ -590,7 +559,7 @@ ImportConstraintArgs(Widget w,
 	       parent_wc->manager_class.num_syn_constraint_resources,
 	       args, *num_args);
 }
-
+
 /**********************************************************************
  *
  * _XmExtImportArgs
@@ -617,7 +586,7 @@ _XmExtImportArgs(Widget w,
 	       args, *num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  * _XmPrimitiveImportArgs
@@ -644,7 +613,7 @@ _XmPrimitiveImportArgs(Widget w,
     ImportConstraintArgs (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  *  _XmGadgetImportArgs
@@ -672,7 +641,7 @@ _XmGadgetImportArgs(Widget w,
     ImportConstraintArgs (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  *  _XmGadgetImportSecondaryArgs
@@ -703,7 +672,7 @@ _XmGadgetImportSecondaryArgs(Widget w,
 		args, *num_args);
   _XmProcessUnlock();
 }
-
+
 /**********************************************************************
  *
  *  _XmManagerImportArgs

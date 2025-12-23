@@ -95,7 +95,7 @@ extern void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
                               int depth, GC gc, XImage *src, int sx, int sy,
                               int sw, int sh, int dx, int dy, int dw, int dh);
 
-extern void _XmCleanPixmapCache(Screen * screen, Widget shell);
+extern void _XmCleanPixmapCache(Screen * screen);
 
 /* for Xm.h */
 extern Pixmap XmGetScaledPixmap(
@@ -109,7 +109,7 @@ extern Pixmap XmGetScaledPixmap(
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
 
 #endif /* _XmImageCacheI_h */

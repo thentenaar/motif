@@ -48,9 +48,6 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include <Xm/AccColorT.h>       /* for new _XmGetColoredPixmap API */
 #include <Xm/ColorObjP.h>       /* for Xme Color Obj access API */
 #include <Xm/IconFile.h>        /* XmGetIconFileName */
-#if XM_PRINTING
-#include <Xm/PrintSP.h>         /* for pixmap resolution */
-#endif
 
 #if XM_WITH_JPEG
 #include "JpegI.h"
@@ -98,7 +95,6 @@ typedef struct _PixmapData
    Dimension height ;
    int      reference_count;
    unsigned short print_resolution ;
-   Widget   print_shell ;
    double   scaling_ratio ;
    Pixel  * pixels;
    int      npixels;
@@ -134,7 +130,6 @@ typedef struct _GCData
 {
     GC		gc;
     Screen     *screen;
-    Widget	print_shell;
     int		depth;
     int		image_depth;
     Pixel	foreground;
@@ -142,12 +137,6 @@ typedef struct _GCData
 } GCData;
 
 static XmHashTable gc_set = NULL;
-
-
-typedef struct _CleanKey {
-    Screen * screen ;
-    Widget shell ;
-} CleanKey ;
 
 /********    Static Function Declarations    ********/
 
@@ -183,7 +172,6 @@ static XtEnum GetImage(Screen *screen, char *image_name,
 		       Pixel **pixels,	/* allocated pixels */
 		       int *npixels);
 static GC GetGCForPutImage(Screen *screen,
-			   Widget print_shell,
 			   XImage * image,
 			   Pixmap pixmap,
 			   int depth,
@@ -1018,7 +1006,7 @@ ComparePixmapDatas (XmHashKey key_1,
   PixmapData *data_2 = (PixmapData *) key_2;
 
     /* Check for a matching pixmap using depth, screen, name and
-       colors info + print_resolution/scaling_ratio and print_shell */
+       colors info + print_resolution/scaling_ratio */
     /* if a negative depth is given, we must look for a matching
        pixmap of -depth or 1 */
 
@@ -1036,8 +1024,6 @@ ComparePixmapDatas (XmHashKey key_1,
 	   data_1->scaling_ratio) ||
 	  (data_1->print_resolution == data_2->print_resolution &&
 	   !data_1->scaling_ratio)) &&
-
-	 (data_1->print_shell == data_2->print_shell) &&
 
 	 ((data_1->depth == data_2->depth)  ||
 	  (data_2->depth < 0 && data_1->depth == -data_2->depth) ||
@@ -1171,7 +1157,6 @@ _XmCachePixmap(
    pix_entry->pixmap = pixmap;
    pix_entry->reference_count = 1;
    pix_entry->print_resolution = 100 ;
-   pix_entry->print_shell = NULL ;
    pix_entry->scaling_ratio = 1 ;
    pix_entry->pixels = NULL;
    pix_entry->npixels = 0;
@@ -1292,21 +1277,6 @@ _XmGetScaledPixmap(
     if (desired_h) pix_data.height = desired_h;
     if (desired_w) pix_data.width  = desired_w;
 
-    /* find out the print shell ancestor */
-    pix_data.print_shell = widget ;
-    while(pix_data.print_shell && !XmIsPrintShell(pix_data.print_shell))
-	pix_data.print_shell = XtParent(pix_data.print_shell);
-    /* pix_data.print_shell might be NULL here */
-
-#if XM_PRINTING
-    /* scaling_ratio == 0 means use print_resolution and pixmap_resolution
-       in scaling - so first find out the print_resolution, since it
-       is used in caching */
-    if (!scaling_ratio && pix_data.print_shell)
-	pix_data.print_resolution =
-	  ((XmPrintShellWidget)pix_data.print_shell)->print.print_resolution ;
-#endif
-
     /* if scaling_ratio a real number, like 1 or 1.2
        print_resolution still 100 and will not be used */
 
@@ -1352,13 +1322,6 @@ _XmGetScaledPixmap(
 	       in which case, the print shell default resolution
 	       for pixmap is used */
 
-#if XM_PRINTING
-	    if (pix_data.print_shell)
-		pixmap_resolution =
-		    ((XmPrintShellWidget)pix_data.print_shell)
-			->print.default_pixmap_resolution ;
-	    else
-#endif /* XM_PRINTING */
 		pixmap_resolution = 100 ;
 	}
 
@@ -1449,7 +1412,6 @@ _XmGetScaledPixmap(
 	   sizeof(XmAccessColorDataRec));
     pix_entry->depth = depth;
     pix_entry->image_name = XtNewString(image_name);
-    pix_entry->print_shell = pix_data.print_shell;
     pix_entry->print_resolution = pix_data.print_resolution ;
     pix_entry->pixels = pixels;
     pix_entry->npixels = npixels;
@@ -1497,7 +1459,7 @@ _XmGetScaledPixmap(
     /*  Set up a gc for the image to pixmap copy, store the image  */
     /*  into the pixmap and return the pixmap.                     */
 
-    gc = GetGCForPutImage(screen, pix_entry->print_shell,
+    gc = GetGCForPutImage(screen,
 			  image, pixmap, depth,
 			  acc_color->foreground,
 			  acc_color->background);
@@ -1782,7 +1744,6 @@ CompareGCDatas (XmHashKey key_1,
   GCData *data_2 = (GCData *) key_2;
 
   return ((data_1->screen == data_2->screen) &&
-	  (data_1->print_shell == data_2->print_shell) &&
 	  (data_1->depth == data_2->depth) &&
 	  ((data_1->image_depth != 1) ||
 	   ((data_1->image_depth == 1) &&
@@ -1800,8 +1761,7 @@ HashGCData (XmHashKey key)
   if (data->image_depth == 1)
     hv = data->foreground + data->background ;
 
-  return (hv + (long)data->screen + (long)data->print_shell +
-	  data->depth + data->image_depth);
+  return hv + (long)data->screen + data->depth + data->image_depth;
 }
 
 /***
@@ -1811,7 +1771,6 @@ HashGCData (XmHashKey key)
  ***/
 static GC
 GetGCForPutImage(Screen *screen,
-		 Widget print_shell,
 		 XImage * image,
 		 Pixmap pixmap,
 		 int depth,
@@ -1850,7 +1809,6 @@ GetGCForPutImage(Screen *screen,
        for image_depth 1 to pixmap depth (N or 1), since otherwise, N to N,
        the transfer is a plain copy */
     gc_data.screen = screen ;
-    gc_data.print_shell = print_shell ;
     gc_data.depth = depth ;
     gc_data.image_depth = image->depth ;
     gc_data.foreground = foreground ;
@@ -1868,7 +1826,6 @@ GetGCForPutImage(Screen *screen,
     /* create a new GC, cache it and return it */
     gc_entry = XtNew(GCData);
     gc_entry->screen = screen ;
-    gc_entry->print_shell = print_shell ;
     gc_entry->depth = depth ;
     gc_entry->image_depth = image->depth ;
     gc_entry->foreground = foreground ;
@@ -1885,110 +1842,45 @@ GetGCForPutImage(Screen *screen,
     return gc_entry->gc ;
 }
 
-
-/************
- When a Screen is closed, or a PrintShell, we need to clean up the
- respective cache .
-*****/
-
-
-static Boolean
-CleanGCMapProc (XmHashKey key, /* unused */
-		 XtPointer value,
-		 XtPointer data)
+/**
+ * When a Screen is closed we need to clean up the respective cache
+ */
+static Boolean CleanGCMapProc(XmHashKey key, XtPointer value, XtPointer data)
 {
-  GCData *entry = (GCData *) value;
-  CleanKey * ck = (CleanKey*) data ;
+	GCData *entry = (GCData *) value;
 
-  /* shell should be NULL for non printing screen */
-  if (entry->print_shell == ck->shell &&
-      entry->screen == ck->screen)
-    {
-	  _XmProcessLock();
-	  _XmRemoveHashEntry (gc_set, entry);
-	  _XmProcessUnlock();
-	  XFreeGC(DisplayOfScreen(entry->screen), entry->gc);
-	  XtFree((char*) entry);
-    }
+	(void)key;
+	if (entry->screen != (Screen *)data)
+		return False;
 
-  /* never return True: remove all gc keyed on this print shell */
-  return False;
+	_XmProcessLock();
+	_XmRemoveHashEntry (gc_set, entry);
+	_XmProcessUnlock();
+	XFreeGC(DisplayOfScreen(entry->screen), entry->gc);
+	XtFree((char *)entry);
+	return False;
 }
 
-static Boolean
-CleanPixmapMapProc (XmHashKey key, /* unused */
-		     XtPointer value,
-		     XtPointer data)
+static Boolean CleanPixmapMapProc(XmHashKey key, XtPointer value, XtPointer data)
 {
-  PixmapData *entry = (PixmapData *) value;
-  CleanKey * ck = (CleanKey*) data ;
+	PixmapData *entry = (PixmapData *)value;
 
-  /* shell should be NULL for non printing screen */
-  if (entry->print_shell == ck->shell &&
-      entry->screen == ck->screen)
-    {
-	/* this should take care of everything */
-	XmDestroyPixmap(entry->screen, entry->pixmap);
-    }
+	(void)key;
+	if (entry->screen == (Screen *)data)
+		XmDestroyPixmap(entry->screen, entry->pixmap);
 
-  /* never return True: remove all pixmap keyed on this print shell */
-  return False;
+	return False;
 }
 
-#ifdef XP_DEBUG
-static Boolean
-PrintPixmapMapProc (XmHashKey key, /* unused */
-		    XtPointer value,
-		    XtPointer data)
+/**
+ * This is called from Screen.destroy with a NULL shell, to remove the GCs
+ * and Pixmap used for a given screen.
+ */
+void _XmCleanPixmapCache(Screen *screen)
 {
-  PixmapData *entry = (PixmapData *) value;
-  CleanKey * ck = (CleanKey*) data ;
-
-  printf("entry->screen %d\n", entry->screen);
-  printf("entry->print_shell %d\n", entry->print_shell);
-  printf("entry->image_name %s\n", entry->image_name);
-  printf("entry->pixmap %d\n\n", entry->pixmap);
-
-  return False;
+	_XmMapHashTable(gc_set, CleanGCMapProc, screen);
+	_XmMapHashTable(pixmap_set, CleanPixmapMapProc, screen);
 }
-
-static Boolean
-PrintGCMapProc (XmHashKey key, /* unused */
-		XtPointer value,
-		XtPointer data)
-{
-  GCData *entry = (GCData *) value;
-  CleanKey * ck = (CleanKey*) data ;
-
-  printf("entry->screen %d\n", entry->screen);
-  printf("entry->print_shell %d\n", entry->print_shell);
-  printf("entry->gc %d\n\n", entry->gc);
-
-  return False;
-}
-#endif
-/******
- This is called from PrintShell.Destroy to invalidate the
- GCs and Pixmap used for a given print shell and from Screen.destroy,
- with a NULL shell, to remove the GCs and Pixmap used for a
- given screen. So in the case of PrintShell, this is call twice
- in a row, where the second time (from Screen) takes care of
- the Screen (non print shell) specific pixmaps abd GCs.
-*******/
-void
-_XmCleanPixmapCache(Screen * screen, Widget shell)
-{
-    CleanKey ck ;
-
-    ck.screen = screen;
-    ck.shell = shell ;
-
-    _XmMapHashTable(gc_set, CleanGCMapProc, &ck);
-    _XmMapHashTable(pixmap_set, CleanPixmapMapProc, &ck);
-}
-
-
-
 
 /************************************************************************
 *******************************************************************------

@@ -51,17 +51,9 @@
  */
 #undef XM_UTF8
 
-/**
- * 1 if Motif was built with printing support
- */
-#undef XM_PRINTING
-
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>
 #include <X11/Xatom.h>
-#if XM_PRINTING
-#include <X11/extensions/Print.h>
-#endif
 #include <Xm/XmStrDefs.h>
 #include <Xm/XmStrDefs22.h>
 #include <Xm/XmStrDefs23.h>
@@ -836,17 +828,6 @@ typedef struct
     XmRenderTable	render_table;
     XmStringTag		tag;
 } XmDisplayCallbackStruct;
-
-#if XM_PRINTING
-typedef struct
-{
-    int		reason;	   /* XmCR_START_JOB, XmCR_END_JOB, XmCR_PAGE_SETUP */
-    XEvent	*event;
-    XPContext	context;
-    Boolean	last_page; /* in_out */
-    XtPointer	detail;
-} XmPrintShellCallbackStruct;
-#endif /* XM_PRINTING */
 
 /************************************************************************
  *  PushButton defines

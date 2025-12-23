@@ -56,14 +56,6 @@ PNG_SRCS =
 PNG_HDRS =
 endif
 
-if XM_PRINTING
-PRINTS_SRC = PrintS.c
-AM_CPPFLAGS += $(XP_CFLAGS)
-libXm_la_LIBADD += $(XP_LIBS)
-else
-PRINTS_SRC =
-endif
-
 noinst_HEADERS = BaseClassI.h \
 BitmapsI.h \
 BulletinBI.h \
@@ -111,7 +103,6 @@ nanosvg.h \
 nanosvgrast.h \
 PixConvI.h \
 PrimitiveI.h \
-PrintSI.h \
 ProtocolsI.h \
 RCHookI.h \
 RCLayoutI.h \
@@ -207,7 +198,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         Gadget.h        LayoutT.h       IconH.h         IconHP.h \
         UnitTypeT.h     TxtPropCv.h     MenuProcP.h     MenuStateP.h\
         ColorObjP.h     TravConT.h      UnhighlightT.h  PointInT.h \
-        Print.h         PrintSP.h       XpmP.h		    Xmfuncs.h \
+        XpmP.h		    Xmfuncs.h \
         SlideC.h        SlideCP.h       deprecated.h    obsolete.h \
         version.h       $(EXTRA_HDRS)
 
@@ -249,7 +240,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         GetRes.c        BBUtil.c        ChColor.c       ColObjFunc.c \
         DrTog.c         DrArrow.c       DrPoly.c        DrHiDash.c \
         ValTime.c       FocusAct.c      CvtUnit.c       ScalTics.c \
-        ScroVis.c       WidGet.c        ToolTip.c       $(PRINTS_SRC)
+        ScroVis.c       WidGet.c        ToolTip.c
 
 OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c
 

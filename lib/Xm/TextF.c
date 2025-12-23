@@ -69,9 +69,7 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include "TraversalI.h"
 #include "VendorSEI.h"
 #include "XmStringI.h"
-#if XM_PRINTING
-#include <Xm/PrintSP.h>         /* for XmIsPrintShell */
-#endif
+
 #if USE_XFT
 #include <X11/Xft/Xft.h>
 #include "XmRenderTI.h"
@@ -821,11 +819,6 @@ static void TextFieldReplace(Widget w,
 			     XmTextPosition to_pos,
 			     char *value,
 			     int is_wc);
-static void CursorPosVisDefault(
-                        Widget widget,
-                        int offset,
-                        XrmValue *value) ;
-
 static int PreeditStart(XIC xic,
                         XPointer client_data,
                         XPointer call_data);
@@ -1096,11 +1089,11 @@ static XtResource resources[] =
     XmRImmediate, (XtPointer) True
   },
 
-  {
+  { /* XXX: This was false if the widget had a print shell ancestor */
     XmNcursorPositionVisible, XmCCursorPositionVisible, XmRBoolean,
     sizeof(Boolean),
     XtOffsetOf(struct _XmTextFieldRec, text.cursor_position_visible),
-    XmRCallProc, (XtPointer) CursorPosVisDefault
+    XmRImmediate, (XtPointer)True
   },
 
  {
@@ -1241,32 +1234,6 @@ ClassInitialize(void)
   XmeTraitSet((XtPointer)xmTextFieldWidgetClass, XmQTaccessTextual,
 	      (XtPointer) &textFieldCS);
 }
-
-/*********************************************************************
- *
- * CursorPosVisDefault
- *
- *
- *********************************************************************/
-static void
-CursorPosVisDefault(
-        Widget widget,
-        int offset,		/* unused */
-        XrmValue *value )
-{
-      static Boolean cursor_pos_vis ;
-      Widget print_shell ;
-
-      value->addr = (XPointer) &cursor_pos_vis;
-
-      print_shell = widget ;
-      while(print_shell && !XmIsPrintShell(print_shell))
-	  print_shell = XtParent(print_shell);
-
-      if (print_shell) cursor_pos_vis = False ;
-      else             cursor_pos_vis = True ;
-}
-
 
 /* USE ITERATIONS OF mblen TO COUNT THE NUMBER OF CHARACTERS REPRESENTED
  * BY n_bytes BYTES POINTED TO BY ptr, a pointer to char*.

@@ -117,19 +117,6 @@ AC_ARG_ENABLE([utf8],
 	], [enable_utf8=$enableval], [enable_utf8=yes]
 )
 
-AC_ARG_ENABLE([printing],
-	[AS_HELP_STRING(
-		[--enable-printing],
-		[enable printing support])
-	], [enable_printing=$enableval], [enable_printing=no]
-)
-
-dnl Printing support relies on the X print protocol
-AS_IF([test "x$enable_printing" == "xyes"],[
-	PKG_CHECK_MODULES([XP], [xp], [], [enable_printing=no])
-	AS_IF([test "x$enable_printing" == "xno"], [AC_MSG_FAILURE([libXp not found])])
-])
-
 AC_ARG_ENABLE([message-catalog],
 	[AS_HELP_STRING(
 		[--enable-message-catalog],
@@ -166,7 +153,6 @@ AC_SUBST([XM_VERSION], [XM_VERSION])
 
 dnl Automake substitutions
 AC_SUBST([ABI_VERSION], [ABI_VERSION])
-AM_CONDITIONAL([XM_PRINTING],  test "x$enable_printing" == "xyes")
 AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
 AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
 AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
@@ -180,12 +166,6 @@ AC_DEFINE_UNQUOTED(
 	[XM_UTF8],
 	$(test "x$enable_utf8" != "xyes"; echo $?),
 	[1 if Motif was built with UTF8 Support]
-)
-
-AC_DEFINE_UNQUOTED(
-	[XM_PRINTING],
-	$(test "x$enable_printing" != "xyes"; echo $?),
-	[1 if Motif was built with printing support]
 )
 
 AC_DEFINE_UNQUOTED(

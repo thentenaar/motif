@@ -913,7 +913,7 @@ static void Destroy(Widget widget)
 	_XmProcessUnlock();
 
 	/* need to remove pixmap and GC related to this screen */
-	_XmCleanPixmapCache(XtScreen(xscr), NULL);
+	_XmCleanPixmapCache(XtScreen(xscr));
 	XtFree((XtPointer)xscr->screen.screenInfo);
 	xmDesktopClass->core_class.destroy(widget);
 

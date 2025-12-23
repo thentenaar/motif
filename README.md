@@ -53,12 +53,12 @@ installed, and can be run by:
 ## Notable Changes
 
 - Initial support for Xrandr / Xinerama (Xrandr preferred)
+- With ``XPRINT`` being long dead, and no-one using it, the PrintShell has been removed
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
 - The autotools build system has been updated
 - The following macros that were previously exposed in ``Xm.h`` have been
 renamed, and will evaluate to 1 if enabled, 0 if disabled:
 ```
-    - PRINTING_SUPPORTED -> XM_PRINTING
     - JPEG_SUPPORTED     -> XM_WITH_JPEG
     - PNG_SUPPORTED      -> XM_WITH_PNG
     - UTF8_SUPPORTED     -> XM_UTF8
@@ -70,7 +70,8 @@ support for X/Open message catalogs.
   Specify ``--without-jpeg``, etc. to disable them.
 - Motif's editres implementation has been removed, so that the updated version
   in [libXmu](https://gitlab.freedesktop.org/xorg/lib/libxmu/-/merge_requests/18)
-  can be used instead.
+  can be used instead. Editres itself will require [this](https://gitlab.freedesktop.org/hentenaar/editres/-/merge_requests/1.diff)
+  patch.
 - ``XmCommandGetChild()`` is deprecated in favor of ``XtNameToWidget`` like the other ``*GetChild()`` functions
 - The demos have been split out from the ``all`` make target
 - Various bugs have been fixed
