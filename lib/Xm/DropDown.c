@@ -1,20 +1,36 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+/*
+ * Motif
+ *
+ * Copyright (c) 1987-2012, The Open Group. All rights reserved.
+ *
+ * These libraries and programs are free software; you can
+ * redistribute them and/or modify them under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * These libraries and programs are distributed in the hope that
+ * they will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with these librararies and programs; if not, write
+ * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301 USA
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(VMS) && !defined(__alpha)
-#define mbstowcs(a,b,n) XiMbstowcs(a,b,n)
-#endif
 
+#include <X11/Shell.h>
 #include <Xm/Xm.h>
 #include <Xm/XmP.h>
-#include "XmI.h"
 #include <Xm/VaSimpleP.h>
 #include <Xm/DrawP.h>
 #include <Xm/DropDownP.h>
-#include <X11/Shell.h>
+#include <Xm/ScreenP.h>
 #include <Xm/ArrowB.h>
 #include <Xm/Label.h>
 #include <Xm/TextF.h>
@@ -22,7 +38,16 @@
 #include <Xm/List.h>
 #include <Xm/GrabShellP.h>
 #include <Xm/ExtP.h>
+#include "XmI.h"
 #include "MenuShellI.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if defined(VMS) && !defined(__alpha)
+#define mbstowcs(a,b,n) XiMbstowcs(a,b,n)
+#endif
 
 /*
  * NOTE:  I use the same syntax for popup and popdown that Xt Uses.
@@ -79,7 +104,7 @@ static XtGeometryResult QueryGeometry(Widget,
 				      XtWidgetGeometry *, XtWidgetGeometry *);
 
 static void ClassPartInitialize(WidgetClass);
-static void ClassInitialize();
+static void ClassInitialize(void);
 static void ExposeMethod(Widget, XEvent*, Region);
 
 static Boolean ComboBoxParentProcess(Widget wid, XmParentProcessData event);
@@ -394,8 +419,7 @@ OsiStrncpy( char *s1, char *s2, int len )
  *	Arguments:     none
  *	Returns:       nothing
  */
-static void
-ClassInitialize()
+static void ClassInitialize(void)
 {
   /* do nothing */
 }
@@ -2097,24 +2121,28 @@ TextButtonPress(Widget w , XtPointer client, XEvent *event, Boolean *go_on)
  *	Arguments:     w - the combo box.
  *	Returns:       True if sucessful.
  */
-
-static Boolean
-PopupList(Widget w)
+static Boolean PopupList(Widget w)
 {
-    XmDropDownWidget cbw = (XmDropDownWidget) w;
+    XmScreen scr_shell, scr_cbw;
+    XmDropDownWidget cbw = (XmDropDownWidget)w;
     Widget shell = XmDropDown_popup_shell(cbw);
-    Position x, y, temp;
-    Dimension width;
-    int ret, scr_width, scr_height;
+    Position x, y, temp, arrow_x, arrow_y;
+    Dimension width, height;
+    int ret;
     Arg args[10];
     Cardinal num_args;
+    XmMonitorInfo *monitor;
 
-    if (shell == NULL) {
+    if (!shell) {
 	XmeWarning(w, XmNnoComboShellMsg);
 	return(False);
     }
 
     XtTranslateCoords(w, 0, XtHeight(w), &x, &y);
+    XtTranslateCoords(XmDropDown_arrow(cbw),
+                      XtWidth(XmDropDown_arrow(cbw)),
+                      XtHeight(XmDropDown_arrow(cbw)),
+                      &arrow_x, &arrow_y);
     XtRealizeWidget(shell);
 
     num_args = 0;
@@ -2126,9 +2154,7 @@ PopupList(Widget w)
     x += temp;
 
     if (!XmDropDown_customized_combo_box(cbw)) {
-	width = (cbw->core.width - temp -
-		 (shell)->core.border_width);
-	XtSetArg(args[num_args], XmNwidth, width); num_args++;
+	width = (cbw->core.width - temp - (shell)->core.border_width);
     }
     else
     {
@@ -2144,43 +2170,35 @@ PopupList(Widget w)
      *
      * Lets start by getting the width and height of the screen.
      */
-    scr_width = WidthOfScreen(XtScreen(shell));
-    scr_height = HeightOfScreen(XtScreen(shell));
-
-    if( (int)(y + XtHeight(shell)) > scr_height )
-    {
-	Position tmp;
-	XtTranslateCoords(w, 0, 0, &tmp, &y);
-	y -= ((int)XtHeight(shell));
+    scr_shell = XmScreenOfObject(shell);
+    scr_cbw   = XmScreenOfObject(cbw);
+    if (!(monitor = XmGetMonitorInfoAt(scr_shell, x, y))) {
+        if (!(monitor = XmGetMonitorInfoAt(scr_cbw, arrow_x, arrow_y))) {
+            XtTranslateCoords(XmDropDown_arrow(cbw), 0, 0, &arrow_x, &arrow_y);
+            if (!(monitor = XmGetMonitorInfoAt(scr_cbw, arrow_x, arrow_y)))
+                return False;
+        }
     }
-    if( y < 0 ) y = 0;
-    if( (int)(x + width) > scr_width )
-    {
-	x = scr_width - ((int)width);
-    }
-    if( x < 0 ) x = 0;
 
-    XtSetArg(args[num_args], XmNx, x); num_args++;
-    XtSetArg(args[num_args], XmNy, y); num_args++;
+    if ((height = XtHeight(shell)) > monitor->height)
+        height = monitor->height;
+
+    if (width > monitor->width)
+        width = monitor->width;
+
+    x -= monitor->x;
+    y -= monitor->y;
+    if (y + height >= monitor->height) y = monitor->height - height - 8;
+    if (x + width >= monitor->width)   x = monitor->width - width - 8;
+    x = (x < 0) ? 0 : x;
+    y = (y < 0) ? 0 : y;
+
+    XtSetArg(args[num_args], XmNwidth, width); num_args++;
+    XtSetArg(args[num_args], XmNheight, height); num_args++;
+    XtSetArg(args[num_args], XmNx, monitor->x + x); num_args++;
+    XtSetArg(args[num_args], XmNy, monitor->y + y); num_args++;
     XtSetValues(shell, args, num_args);
-
-    /*
-     * Because of an Xt bug, we need to cal the shell widget's resize
-     * proc ourselves.
-     */
-
-    {
-        /* THIS WAS -
-            (*(XtClass(shell)->core_class.resize))(shell);
-        */
-        XtWidgetProc resize;
-
-        _XmProcessLock();
-        resize = *(XtClass(shell)->core_class.resize);
-        _XmProcessUnlock();
-
-        (*resize) (shell);
-    }
+    FreeXmMonitorInfo(monitor);
 
     if (!XmIsGrabShell(shell))
         XGetInputFocus(XtDisplay(shell),
