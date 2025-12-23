@@ -73,6 +73,11 @@ typedef void (*XmScreenColorProc)(Screen *screen, XColor *bg_color,
 typedef Status (*XmAllocColorProc)(Display *display, Colormap colormap,
                                    XColor *screen_in_out);
 extern Widget XmGetXmScreen(Screen *screen);
+extern Dimension XmScreenWidth(XmScreen screen);
+extern Dimension XmScreenHeight(XmScreen screen);
+extern Dimension XmScreenWidthMM(XmScreen screen);
+extern Dimension XmScreenHeightMM(XmScreen screen);
+extern float XmScreenDpi(XmScreen screen);
 extern XmMonitorInfo *XmGetMonitorInfoAt(XmScreen screen, Position x,
                                          Position y);
 extern void FreeXmMonitorInfo(XmMonitorInfo *info);

@@ -894,7 +894,7 @@ static void Destroy(Widget widget)
 	                         NULL, monitor_cb, NULL);
 #endif
 	XtRemoveEventHandler(widget, StructureNotifyMask, False, monitor_cb, NULL);
-	XtUnregisterDrawable(XtDisplay(w), w);
+	XtUnregisterDrawable(XtDisplayOfObject(widget), w);
 	xscr->core.window = None;
 
 	/* destroy any default icons created by Xm */
@@ -930,8 +930,8 @@ static void Destroy(Widget widget)
 		XFree((XPointer)xscr->screen.monitors[i].name);
 	XtFree((XtPointer)xscr->screen.monitors);
 
-	if (XFindContext(XtDisplay(w), w, screen_context, (XPointer *)&xscr) == XCSUCCESS)
-		XDeleteContext(XtDisplay(w), w, screen_context);
+	if (XFindContext(XtDisplay(widget), w, screen_context, (XPointer *)&xscr) == XCSUCCESS)
+		XDeleteContext(XtDisplay(widget), w, screen_context);
 }
 
 /************************************************************************
@@ -1462,6 +1462,31 @@ Widget XmGetXmScreen(Screen *screen)
 	w = XtCreateWidget(name, xmScreenClass, (Widget)d, &arg, 1);
 	_XmAppUnlock(app);
 	return w;
+}
+
+extern Dimension XmScreenWidth(XmScreen screen)
+{
+	return screen ? screen->screen.width : 0;
+}
+
+extern Dimension XmScreenHeight(XmScreen screen)
+{
+	return screen ? screen->screen.height : 0;
+}
+
+extern Dimension XmScreenWidthMM(XmScreen screen)
+{
+	return screen ? screen->screen.width_mm : 0;
+}
+
+extern Dimension XmScreenHeightMM(XmScreen screen)
+{
+	return screen ? screen->screen.height_mm : 0;
+}
+
+extern float XmScreenDpi(XmScreen screen)
+{
+	return screen ? screen->screen.dpi : SCREEN_DEFAULT_DPI;
 }
 
 /**
