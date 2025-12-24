@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DrawingA.c /main/16 1999/10/13 16:16:41 mgreess $"
@@ -30,7 +31,6 @@ static char rcsid[] = "$TOG: DrawingA.c /main/16 1999/10/13 16:16:41 mgreess $"
 #include <config.h>
 #endif
 
-
 #include <Xm/TransltnsP.h>
 #include <Xm/VaSimpleP.h>
 #include "DrawingAI.h"
@@ -39,7 +39,6 @@ static char rcsid[] = "$TOG: DrawingA.c /main/16 1999/10/13 16:16:41 mgreess $"
 #include "RepTypeI.h"
 #include "TraversalI.h"
 #include "XmI.h"
-
 
 #define	MARGIN_DEFAULT		10
 
@@ -50,36 +49,36 @@ static char rcsid[] = "$TOG: DrawingA.c /main/16 1999/10/13 16:16:41 mgreess $"
 /********    Static Function Declarations    ********/
 
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass w_class) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static XtGeometryResult GeometryManager( 
+static XtGeometryResult GeometryManager(
                         Widget w,
                         XtWidgetGeometry *request,
                         XtWidgetGeometry *reply) ;
-static void ChangeManaged( 
+static void ChangeManaged(
                         Widget wid) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static XtGeometryResult QueryGeometry( 
+static XtGeometryResult QueryGeometry(
                         Widget wid,
                         XtWidgetGeometry *intended,
                         XtWidgetGeometry *desired) ;
-static XmNavigability WidgetNavigable( 
+static XmNavigability WidgetNavigable(
                         Widget wid) ;
 
 /********    End Static Function Declarations    ********/
@@ -215,7 +214,7 @@ externaldef( xmdrawingareaclassrec) XmDrawingAreaClassRec
       XtNumber(resources),			/* num_resources      */
       NULLQUARK,				/* xrm_class          */
       TRUE,					/* compress_motion    */
-      FALSE,					/* compress_exposure  */
+      XtExposeCompressMaximal,	/* compress_exposure  */
       TRUE,					/* compress_enterlv   */
       FALSE,					/* visible_interest   */
       NULL,			                /* destroy            */
@@ -242,12 +241,12 @@ externaldef( xmdrawingareaclassrec) XmDrawingAreaClassRec
    },
 
    {		/* constraint_class fields */
-      NULL,					/* resource list        */   
-      0,					/* num resources        */   
-      sizeof(XmManagerConstraintRec),		/* constraint size      */   
-      NULL,					/* init proc            */   
-      NULL,					/* destroy proc         */   
-      NULL,					/* set values proc      */   
+      NULL,					/* resource list        */
+      0,					/* num resources        */
+      sizeof(XmManagerConstraintRec),		/* constraint size      */
+      NULL,					/* init proc            */
+      NULL,					/* destroy proc         */
+      NULL,					/* set values proc      */
       NULL,                                     /* extension            */
    },
 
@@ -258,43 +257,43 @@ externaldef( xmdrawingareaclassrec) XmDrawingAreaClassRec
       NULL,					/* syn_cont_resources     */
       0,					/* num_get_cont_resources */
       XmInheritParentProcess,                   /* parent_process         */
-      NULL,					/* extension           */    
+      NULL,					/* extension           */
    },
 
    {          /* drawingArea class */
       (XtPointer) NULL,                         /* extension pointer */
-   }	
+   }
 };
 
 externaldef( xmdrawingareawidgetclass) WidgetClass xmDrawingAreaWidgetClass
                                        = (WidgetClass) &xmDrawingAreaClassRec ;
 
 
-
+
 /****************************************************************/
-static void 
+static void
 ClassInitialize( void )
-{   
+{
   baseClassExtRec.record_type = XmQmotif ;
 }
 
 
 /****************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass w_class )
-{   
+{
 
     _XmFastSubclassInit( w_class, XmDRAWING_AREA_BIT) ;
 
 }
 
-
+
 /****************************************************************
  * Initialize. Check resizePolicy resource value
  ****************/
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,		/* unused */
         Widget nw,
@@ -305,18 +304,18 @@ Initialize(
 
     if(new_w->drawing_area.resize_policy != XmRESIZE_SWINDOW
        && !XmRepTypeValidValue(XmRID_RESIZE_POLICY,
-                            new_w->drawing_area.resize_policy, 
-			    (Widget) new_w)    ) {   
+                            new_w->drawing_area.resize_policy,
+			    (Widget) new_w)    ) {
 	new_w->drawing_area.resize_policy = XmRESIZE_ANY ;
-    } 
+    }
 }
 
 
-
+
 /****************************************************************
  * General redisplay function called on exposure events.
  ****************/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -325,7 +324,7 @@ Redisplay(
     XmDrawingAreaWidget da = (XmDrawingAreaWidget) wid ;
     XmDrawingAreaCallbackStruct cb;
 /****************/
-   
+
     cb.reason = XmCR_EXPOSE;
     cb.event = event;
     cb.window = XtWindow (da);
@@ -339,7 +338,7 @@ Redisplay(
 /****************************************************************
  * Invoke the application resize callbacks.
  ****************/
-static void 
+static void
 Resize(
         Widget wid )
 {
@@ -353,7 +352,7 @@ Resize(
     XtCallCallbackList ((Widget) da, da->drawing_area.resize_callback, &cb);
 }
 
-static Widget 
+static Widget
 ObjectAtPoint(
         Widget wid,
         Position  x,
@@ -369,8 +368,8 @@ ObjectAtPoint(
 
 	/* do not care for gadget only for the DA input */
 	if (XmIsGadget(widget) && XtIsManaged (widget)) {
-	    if (x >= widget->core.x && y >= widget->core.y && 
-		x < widget->core.x + widget->core.width    && 
+	    if (x >= widget->core.x && y >= widget->core.y &&
+		x < widget->core.x + widget->core.width    &&
 		y < widget->core.y + widget->core.height)
 		return (widget);
 	}
@@ -379,43 +378,43 @@ ObjectAtPoint(
     return (NULL);
 }
 
-
+
 /****************************************************************
  * This function processes key and button presses and releases
  *   belonging to the DrawingArea.
  ****************/
 /*ARGSUSED*/
-void 
+void
 _XmDrawingAreaInput(
         Widget wid,
         XEvent *event,
         String *params,		/* unused */
         Cardinal *num_params )	/* unused */
-{   
+{
     XmDrawingAreaWidget da = (XmDrawingAreaWidget) wid ;
     XmDrawingAreaCallbackStruct cb ;
     int x, y ;
     Boolean button_event = True, input_on_gadget ;
 
-    if ((event->type == ButtonPress) || 
+    if ((event->type == ButtonPress) ||
 	(event->type == ButtonRelease)) {
 	x = event->xbutton.x ;
 	y = event->xbutton.y ;
-    } else 
+    } else
     if (event->type == MotionNotify) {
 	x = event->xmotion.x ;
 	y = event->xmotion.y ;
     } else
-    if ((event->type == KeyPress) || 
+    if ((event->type == KeyPress) ||
 	(event->type == KeyRelease)) {
 	x = event->xkey.x ;
 	y = event->xkey.y ;
 	button_event = False ;
-    } else return ; 
+    } else return ;
 	    /* Unrecognized event (cannot determine x, y of pointer).*/
-	
+
     input_on_gadget = (ObjectAtPoint((Widget)da, x, y) != NULL);
-	    
+
     if (!input_on_gadget && (!da->manager.active_child || button_event)) {
 	cb.reason = XmCR_INPUT ;
 	cb.event = event ;
@@ -426,9 +425,9 @@ _XmDrawingAreaInput(
     }
 }
 
-
+
 /****************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager(
         Widget w,
         XtWidgetGeometry *request,
@@ -441,17 +440,17 @@ GeometryManager(
     da = (XmDrawingAreaWidget) w->core.parent;
 
     /* function shared with Bulletin Board */
-    return(_XmGMHandleGeometryManager((Widget)da, w, request, reply, 
-                                    da->drawing_area.margin_width, 
-                                    da->drawing_area.margin_height, 
+    return(_XmGMHandleGeometryManager((Widget)da, w, request, reply,
+                                    da->drawing_area.margin_width,
+                                    da->drawing_area.margin_height,
                                     da->drawing_area.resize_policy,
                                     True)); /* no overlap checking */
 }
-
+
 /****************************************************************
  * Re-layout children.
  ****************/
-static void 
+static void
 ChangeManaged(
         Widget wid )
 {
@@ -460,7 +459,7 @@ ChangeManaged(
     /* function shared with Bulletin Board */
     _XmGMEnforceMargin((XmManagerWidget)da,
                      da->drawing_area.margin_width,
-                     da->drawing_area.margin_height, 
+                     da->drawing_area.margin_height,
                      False); /* use movewidget, not setvalue */
 
     /* The first time, reconfigure only if explicit size were not given */
@@ -474,13 +473,13 @@ ChangeManaged(
                           da->drawing_area.resize_policy,
                           False);  /* queryonly not specified */
         }
-  
+
     XmeNavigChangeManaged((Widget) da) ;
 }
 
 /****************************************************************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,		/* unused */
@@ -493,41 +492,41 @@ SetValues(
 
     if(new_w->drawing_area.resize_policy != XmRESIZE_SWINDOW
        && !XmRepTypeValidValue(XmRID_RESIZE_POLICY,
-			    new_w->drawing_area.resize_policy, 
-			    (Widget) new_w)  ) {   
-	new_w->drawing_area.resize_policy = 
+			    new_w->drawing_area.resize_policy,
+			    (Widget) new_w)  ) {
+	new_w->drawing_area.resize_policy =
 	    current->drawing_area.resize_policy ;
-    } 
+    }
 
 
-    /* If new margins, re-enforce them using movewidget, 
+    /* If new margins, re-enforce them using movewidget,
        then update the width and height so that XtSetValues does
        the geometry request */
     if (XtIsRealized((Widget) new_w) &&
-	(((new_w->drawing_area.margin_width != 
+	(((new_w->drawing_area.margin_width !=
 	  current->drawing_area.margin_width) ||
 	 (new_w->drawing_area.margin_height !=
 	  current->drawing_area.margin_height)))) {
-	    
+
 	/* move the child around if necessary */
 	_XmGMEnforceMargin((XmManagerWidget)new_w,
 			   new_w->drawing_area.margin_width,
 			   new_w->drawing_area.margin_height,
 			   False); /* use movewidget, no request */
-	_XmGMCalcSize ((XmManagerWidget)new_w, 
-		       new_w->drawing_area.margin_width, 
-		       new_w->drawing_area.margin_height, 
+	_XmGMCalcSize ((XmManagerWidget)new_w,
+		       new_w->drawing_area.margin_width,
+		       new_w->drawing_area.margin_height,
 		       &new_w->core.width, &new_w->core.height);
     }
 
     return( False) ;
 }
 
-   
+
 /****************************************************************
  * Handle query geometry requests
  ****************/
-static XtGeometryResult 
+static XtGeometryResult
 QueryGeometry(
         Widget wid,
         XtWidgetGeometry *intended,
@@ -536,25 +535,25 @@ QueryGeometry(
     XmDrawingAreaWidget da = (XmDrawingAreaWidget) wid ;
 
      /* function shared with Bulletin Board */
-     return(_XmGMHandleQueryGeometry(wid, intended, desired, 
-                                   da->drawing_area.margin_width, 
-                                   da->drawing_area.margin_height, 
+     return(_XmGMHandleQueryGeometry(wid, intended, desired,
+                                   da->drawing_area.margin_width,
+                                   da->drawing_area.margin_height,
                                    da->drawing_area.resize_policy));
 }
 
 
 /****************************************************************
- * Xm private class method 
+ * Xm private class method
  ****************/
 
-
+
 static XmNavigability
 WidgetNavigable(
         Widget wid)
-{   
+{
   if(    XtIsSensitive(wid)
      &&  ((XmManagerWidget) wid)->manager.traversal_on    )
-    {   
+    {
       XmNavigationType nav_type = ((XmManagerWidget) wid)
 	                                            ->manager.navigation_type ;
       Widget *children = ((XmManagerWidget) wid)->composite.children ;
@@ -566,7 +565,7 @@ WidgetNavigable(
         while(idx < ((XmManagerWidget) wid)->composite.num_children) {
 	  if  (_XmGetNavigability(children[idx]) &&
 	       ((((XmManagerWidget) wid)->manager.initial_focus == NULL) ||
-		(((XmManagerWidget) wid)->manager.initial_focus == 
+		(((XmManagerWidget) wid)->manager.initial_focus ==
 		                                          children[idx]))){
 	      if(    (nav_type == XmSTICKY_TAB_GROUP)
 		 ||  (nav_type == XmEXCLUSIVE_TAB_GROUP)
@@ -595,11 +594,11 @@ WidgetNavigable(
 
 
 
-
+
 /****************************************************************
  * This function creates and returns a DrawingArea widget.
  ****************/
-Widget 
+Widget
 XmCreateDrawingArea(
         Widget p,
         String name,
@@ -611,7 +610,7 @@ XmCreateDrawingArea(
     return( XtCreateWidget( name, xmDrawingAreaWidgetClass, p, args, n)) ;
 }
 
-Widget 
+Widget
 XmVaCreateDrawingArea(
         Widget parent,
         char *name,
@@ -620,18 +619,18 @@ XmVaCreateDrawingArea(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmDrawingAreaWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -644,16 +643,16 @@ XmVaCreateManagedDrawingArea(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmDrawingAreaWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
