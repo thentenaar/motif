@@ -1,5 +1,5 @@
 /* $TOG: SpinB.c /main/27 1999/04/16 08:48:58 mgreess $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -25,7 +25,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -188,6 +187,7 @@ static XtActionsRec actionsTable [] =
 #define BAD_SPIN_POSITION_TYPE		_XmMMsgSpinB_0008
 
 #define DEFAULT_ARROW_SIZE 16
+#define DEFAULT_ARROW_RATIO (16./28.)
 
 #define defaultTranslations _XmSpinB_defaultTranslations
 
@@ -491,7 +491,7 @@ Initialize(Widget req,		/* unused */
   XGCValues	  GCvalues;
   XtGCMask	  GCmask, unusedMask;
 
-  spinW->spinBox.textw = 0;
+  spinW->spinBox.textw = NULL;
   spinW->spinBox.dim_mask = 0;
   spinW->spinBox.last_hit = 0;
   spinW->spinBox.spin_timer = 0;
@@ -1547,6 +1547,23 @@ GetArrowDirection(Widget w, int spinDir)
   return(arrowDirection);
 }
 
+/**
+ * Relate the arrow size to the text widget height if we have the
+ * default size; otherwise, scale according to DPI.
+ */
+static int scale_arrow_size(Widget textw, int arrow_size)
+{
+	XtWidgetGeometry geo;
+
+	if (!textw || !XtIsRealized(textw))
+		return arrow_size;
+
+	XtQueryGeometry(textw, NULL, &geo);
+	if (arrow_size == DEFAULT_ARROW_SIZE)
+		return (int)(geo.height * DEFAULT_ARROW_RATIO);
+	return (int)(arrow_size * XmScreenDpi(XmScreenOfObject(textw))/96.);
+}
+
 /******************************************************************************
  * LayoutSpinBox
  *	Position Children and Arrows.
@@ -1592,8 +1609,9 @@ LayoutSpinBox(Widget w,
   Position	upX =0 ;
   Position	downX  = 0;
 
-  arrowLayout = (int) spinW->spinBox.arrow_layout;
-  arrowSize = spinW->spinBox.arrow_size;
+  arrowLayout = (int)spinW->spinBox.arrow_layout;
+  arrowSize   = scale_arrow_size(spinW->spinBox.textw,
+                                 spinW->spinBox.arrow_size);
 
   /*
    * Figure the starting position of the arrows and children
@@ -2384,8 +2402,8 @@ GetSpinSize(Widget w, Dimension *wide, Dimension *high)
   XtWidth(spinW) = *wide;
   XtHeight(spinW) = *high;
 
-
-  arrowSize = spinW->spinBox.arrow_size;
+  arrowSize  = scale_arrow_size(spinW->spinBox.textw,
+                                spinW->spinBox.arrow_size);
   arrowsWide = SB_NumArrowsWide(spinW);
   arrowsHigh = SB_NumArrowsHigh(spinW);
   spacing = spinW->spinBox.spacing;
