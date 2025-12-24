@@ -54,6 +54,7 @@ demos/doc/programGuide/ch08/Notebook/notebook
 demos/doc/programGuide/ch16/UTMXmText
 demos/doc/programGuide/ch17/simple_drag/simple_drag
 demos/doc/programGuide/ch17/simple_drop/simple_drop
+demos/GLw/paperplane
 demos/lib/Exm/wml/Exm.h
 demos/lib/Exm/wml/Exm.wmd
 demos/lib/Exm/wml/UilConst.h

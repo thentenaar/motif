@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
+SUBDIRS              = lib programs unsupported doc
 
-SUBDIRS = lib programs unsupported doc
-EXTRA_DIST =
+if WITH_GLW
+SUBDIRS += GLw
+endif
 

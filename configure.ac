@@ -141,7 +141,7 @@ AC_ARG_ENABLE([glw],
 	[enable_glw=no]
 )
 AS_IF([test "x$enable_glw" == "xyes"],[
-	PKG_CHECK_MODULES([GL], [gl])
+	PKG_CHECK_MODULES([GL], [gl], [], [enable_glw=no])
 ])
 
 dnl Tests
@@ -168,7 +168,6 @@ AX_CFLAGS
 
 dnl .pc
 AC_SUBST([XM_VERSION], [XM_VERSION])
-AC_SUBST([GLW_VERSION], [GLW_VERSION])
 
 dnl Automake substitutions
 AC_SUBST([ABI_VERSION], [ABI_VERSION])
@@ -251,7 +250,8 @@ AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${datarootdir}/X11/rgb.txt"])
 AC_SUBST([RGB_TXT])
 
 AS_IF([test "x$enable_glw" == "xyes"],[
-	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc])
+	AC_SUBST([GLW_VERSION], [GLW_VERSION])
+	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc demos/GLw/Makefile])
 ])
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
