@@ -10,6 +10,12 @@ m4_define([ABI_REVISION], [0])
 m4_define([ABI_AGE],      [0])
 m4_define([ABI_VERSION],  [ABI_CURRENT:ABI_REVISION:ABI_AGE])
 
+dnl Bundled GLw
+m4_define([GLW_CURRENT],  [1])
+m4_define([GLW_REVISION], [0])
+m4_define([GLW_AGE],      [0])
+m4_define([GLW_VERSION],  [GLW_CURRENT:GLW_REVISION:GLW_AGE])
+
 AC_PREREQ([2.70])
 LT_PREREQ([2.4.2])
 AC_INIT([motif], [XM_VERSION], [https://github.com/thentenaar/motif/issues], [motif], [https://github.com/thentenaar/motif])
@@ -126,6 +132,18 @@ AC_ARG_ENABLE([message-catalog],
 	[enable_message_catalog=no]
 )
 
+AC_ARG_ENABLE([glw],
+	[AS_HELP_STRING(
+		[--enable-glw],
+		[build OpenGL drawing area widget (libGLw)])
+	],
+	[enable_glw=$enableval],
+	[enable_glw=no]
+)
+AS_IF([test "x$enable_glw" == "xyes"],[
+	PKG_CHECK_MODULES([GL], [gl])
+])
+
 dnl Tests
 AC_ARG_ENABLE([tests],
 	[AS_HELP_STRING([--enable-tests], [Enable automated tests])],
@@ -150,12 +168,14 @@ AX_CFLAGS
 
 dnl .pc
 AC_SUBST([XM_VERSION], [XM_VERSION])
+AC_SUBST([GLW_VERSION], [GLW_VERSION])
 
 dnl Automake substitutions
 AC_SUBST([ABI_VERSION], [ABI_VERSION])
 AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
 AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
 AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
+AM_CONDITIONAL([WITH_GLW],     test "x$enable_glw" == "xyes")
 
 dnl Substitutions for lib/Xm/Xm.h
 AC_SUBST([XM_MAJOR], [XM_MAJOR])
@@ -229,6 +249,10 @@ dnl lib/Xm/ColorS.c
 dnl Various NIXes store this file in different places
 AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${datarootdir}/X11/rgb.txt"])
 AC_SUBST([RGB_TXT])
+
+AS_IF([test "x$enable_glw" == "xyes"],[
+	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc])
+])
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \

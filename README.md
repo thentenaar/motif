@@ -55,6 +55,8 @@ installed, and can be run by:
 - Initial support for Xrandr / Xinerama (Xrandr preferred)
 - With ``XPRINT`` being long dead, and no-one using it, the PrintShell has been removed
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
+- Mesa's [GL drawingarea](https://gitlab.freedesktop.org/mesa/glw) widget has been included,
+  and may be built by specifying ``--enable-glw``.
 - The autotools build system has been updated
 - The following macros that were previously exposed in ``Xm.h`` have been
 renamed, and will evaluate to 1 if enabled, 0 if disabled:

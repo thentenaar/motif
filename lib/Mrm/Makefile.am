@@ -1,24 +1,17 @@
 MAINTAINERCLEANFILES = Makefile.in Mrm.pc
-CLEANFILES = $(BUILT_SOURCES)
+CLEANFILES = $(CAT_FILES)
 EXTRA_DIST = Mrm.msg
-pkgconfig_DATA = Mrm.pc
 
-AM_CPPFLAGS = -I$(srcdir)/.. -I.. -I../Xm ${X_CFLAGS} $(XFT_CFLAGS)
+AM_CPPFLAGS       = -I$(srcdir)/.. -I.. -I../Xm ${X_CFLAGS} $(XFT_CFLAGS)
+libMrm_la_LDFLAGS = -version-info @ABI_VERSION@ -no-undefined
+libMrm_la_LIBADD  = ../Xm/libXm.la $(XFT_LIBS) ${X_LIBS}
+libMrm_la_SOURCES = $(SRCS)
+lib_LTLIBRARIES   = libMrm.la
 
-mrmdir = $(includedir)/Mrm
-
-libMrm_la_LIBADD = ../Xm/libXm.la $(XFT_LIBS) ${X_LIBS}
-
-libMrm_la_LDFLAGS = -version-info @ABI_VERSION@
-
-lib_LTLIBRARIES = libMrm.la
-
-noinst_HEADERS = IDB.h \
-Mrm.h \
-MrmMsgI.h \
-MrmWidget.h
-
-mrm_HEADERS = MrmDecls.h	MrmPublic.h	MrmAppl.h	MrmosI.h
+mrmdir            = $(includedir)/Mrm
+mrm_HEADERS       = MrmDecls.h MrmPublic.h MrmAppl.h MrmosI.h
+pkgconfig_DATA    = Mrm.pc
+noinst_HEADERS    = IDB.h Mrm.h MrmMsgI.h MrmWidget.h
 
 SRCS =	MrmIbuffer.c	MrmIentry.c	MrmIfile.c	MrmIheader.c \
 	MrmIindex.c	MrmIindexw.c	MrmIrid.c	MrmIswap.c \
@@ -30,9 +23,6 @@ SRCS =	MrmIbuffer.c	MrmIentry.c	MrmIfile.c	MrmIheader.c \
 	Mrmwci.c	Mrmwcrw.c	Mrmwcrwr.c	Mrmwread.c \
 	Mrmwrefs.c	Mrmwvalues.c	Mrmwwrite.c	MrmMessages.c
 
-libMrm_la_SOURCES = $(SRCS)
-
-BUILT_SOURCES = $(CAT_FILES)
 
 if XM_MSGCAT
 CAT_FILES = Mrm.cat MrmMsgCatI.h
