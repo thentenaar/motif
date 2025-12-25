@@ -2120,7 +2120,7 @@ QueryProc(Widget wid,
 
       viz = 0;
       vizheight = lineheight;
-      while (vizheight <= sbHeight)
+      while (lineheight && vizheight <= sbHeight)
 	{
 	  vizheight += lineheight + lw->list.spacing;
 	  viz++;
