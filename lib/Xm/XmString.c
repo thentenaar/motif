@@ -6719,10 +6719,7 @@ XmCvtXmStringToByteStream(XmString string,
   return(len);
 }
 
-Dimension
-XmStringBaseline(
-        XmRenderTable rendertable,
-        XmString string )
+Dimension XmStringBaseline(XmRenderTable rendertable, XmString string)
 {
   Dimension 		width, height, asc = 0, desc;
   _XmRenditionRec	scratch;
@@ -6733,7 +6730,8 @@ XmStringBaseline(
   Display		*d;
   XtAppContext		app = NULL;
 
-  if ((rendertable == NULL) || (string == NULL)) return(0);
+  if (!rendertable || !string)
+      return 0;
 
 #ifdef XTHREADS
   if (_XmRTDisplay(rendertable))
@@ -6747,17 +6745,15 @@ XmStringBaseline(
 	_XmProcessLock();
   }
 #endif
-  bzero((char*) &scratch, sizeof(_XmRenditionRec));
+
+  memset(&scratch, 0, sizeof scratch);
   tmp = &scratch;
   rend = &tmp;
 
   /* Initialize for tabs. */
-  d = (_XmRTDisplay(rendertable) == NULL) ?
-    _XmGetDefaultDisplay()
-      : _XmRTDisplay(rendertable);
+  d = !_XmRTDisplay(rendertable) ? _XmGetDefaultDisplay() : _XmRTDisplay(rendertable);
 
   _XmRendDisplay(rend) = d;
-
   _XmStringLayout(string, XmLEFT_TO_RIGHT);
 
   if (!_XmStrOptimized(string))
@@ -6783,7 +6779,6 @@ XmStringBaseline(
 	{
 	 _XmProcessUnlock();
 	}
-      return(asc);
     }
   else
     {
@@ -6795,8 +6790,10 @@ XmStringBaseline(
 	{
 	 _XmProcessUnlock();
 	}
-      return (OptLineAscender(rendertable, (_XmStringOpt)string));
+      asc = OptLineAscender(rendertable, (_XmStringOpt)string);
     }
+
+    return asc < 2048 ? asc : 0;
 }
 
 void

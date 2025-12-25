@@ -1634,7 +1634,7 @@ GetMsgBoxPixmap(
 	mBox->message_box.baseline = XmStringBaseline(rt, s);
 	XmStringFree(s);
 
-	if (!mBox->message_box.baseline)
+	if (!mBox->message_box.baseline || mBox->message_box.baseline > 2048)
 		mBox->message_box.baseline = 16;
 
 	tmpPix = _XmGetScaledPixmap(mBox->core.screen, (Widget)mBox, fileName,
