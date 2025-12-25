@@ -4539,16 +4539,13 @@ static void CalcCornerSize(XmTabBoxWidget tab)
 
     XmFontListInitFontContext(&fc, XmTabBox_font_list(tab));
 
-    while( (entry = XmFontListNextEntry(fc)) != NULL )
-    {
-	value = (XtPointer) XmFontListEntryGetFont(entry, &font_type);
+    while((entry = XmFontListNextEntry(fc))) {
+	if (!(value = (XtPointer)XmFontListEntryGetFont(entry, &font_type)))
+		continue;
 
 	if( font_type == XmFONT_IS_FONT )
 	{
-	    XFontStruct     *font;
-
-	    font = (XFontStruct*) value;
-	    tmp = font->ascent + font->descent;
+	    tmp = ((XFontStruct *)value)->ascent + ((XFontStruct *)value)->descent;
 	    AssignMax(size, tmp);
 	}
 #if USE_XFT
