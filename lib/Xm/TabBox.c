@@ -223,8 +223,7 @@ static void CheckSetRenderTable(Widget wid, int offs, XrmValue *value);
 #define Max(x,y) (((x)>(y))?(x):(y))
 #endif
 
-#define XiRectInRegion(r,x,y,w,h) ((r) == False ? RectangleIn : \
-				   XRectInRegion(r,x,y,w,h))
+#define XiRectInRegion(r,x,y,w,h) (!(r) || XRectInRegion((r),(x),(y),(w),(h)) != RectangleOut)
 #define XiCanvas(x) (XtWindow(XmTabBox__canvas((x))))
 #define XiTabParent(x) ((XmTabBoxWidget) XtParent(x))
 #define XImageWidth(i) (i)->width
@@ -3422,6 +3421,10 @@ DrawTab(XmTabBoxWidget tab, XmTabAttributes info, XiTabRect *geometry,
      * really nothing to draw so lets just leave.
      */
     if( !XtIsRealized(canvas) || info == NULL ) return;
+
+    /* Reset the clip rect just in case the tab is partially in Region */
+    clip = GetTabRectangle(tab, XmTAB_HIGHLIGHT_RECT, geometry);
+    XSetClipRectangles(XtDisplay(tab), gc, 0, 0, clip, 1, YXBanded);
 
     if( (XmTabBox_tab_mode(tab) == XmTABS_STACKED ||
 	 XmTabBox_tab_mode(tab) == XmTABS_STACKED_STATIC) &&
