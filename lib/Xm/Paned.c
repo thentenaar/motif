@@ -1134,6 +1134,7 @@ RefigureLocations(XmPanedWidget pw, int paneindex, Direction dir)
 static void
 CommitNewLocations(XmPanedWidget pw, Widget no_resize_child)
 {
+    Dimension width, height;
     Widget *childP, sash, separator;
     Pane pane;
     XWindowChanges changes;
@@ -1164,21 +1165,26 @@ CommitNewLocations(XmPanedWidget pw, Widget no_resize_child)
 	else
 	    internal_space = XmPaned_internal_bw(pw);
 
+	/* Ensure we don't underflow the child dimensions */
+	width = pw->core.width - 2 * (offset + (*childP)->core.border_width);
+	if (width > pw->core.width)
+		width = 1;
+
+	height = pw->core.height - 2 * (offset + (*childP)->core.border_width);
+	if (height > pw->core.height)
+		height = 1;
+
 	if (IsVert(pw)) {
 	    if (*childP == no_resize_child) {
 		(*childP)->core.x = offset;
 		(*childP)->core.y = pane->delta;
-		(*childP)->core.width = (pw->core.width -
-					 2 * (offset +
-					      (*childP)->core.border_width));
+		(*childP)->core.width = width;
 		(*childP)->core.height = pane->size;
 	    }
 	    else {
-		_XmConfigureWidget(*childP, (Position) offset, pane->delta,
-				   pw->core.width -
-				   2*(offset + (*childP)->core.border_width),
-				   (Dimension) pane->size,
-				   (Dimension) (*childP)->core.border_width);
+		_XmConfigureWidget(*childP, (Position) offset, pane->delta, width,
+				   (Dimension)pane->size,
+				   (Dimension)(*childP)->core.border_width);
 	    }
 
 	    if (sash != NULL) {	    /* Move and Display the Sash */
@@ -1215,15 +1221,11 @@ CommitNewLocations(XmPanedWidget pw, Widget no_resize_child)
 		(*childP)->core.x = pane->delta;
 		(*childP)->core.y = offset;
 		(*childP)->core.width = pane->size;
-		(*childP)->core.height = (pw->core.height -
-					  2 * (offset +
-					       (*childP)->core.border_width));
+		(*childP)->core.height = height;
 	    }
 	    else {
 		_XmConfigureWidget(*childP, pane->delta, (Position) offset,
-				   (Dimension) pane->size,
-				   pw->core.height -
-				   2*(offset + (*childP)->core.border_width),
+				   (Dimension) pane->size, height,
 				   (Dimension) (*childP)->core.border_width);
 	    }
 
