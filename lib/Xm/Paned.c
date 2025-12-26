@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <X11/cursorfont.h>
+
 #include "XmI.h"
 #include <Xm/PanedP.h>
 #include <Xm/SashP.h>
@@ -1843,14 +1845,13 @@ CreateSeparator(Widget child)
  *	Arguments: child - the child that wants a sash to be created for it.
  *	Returns: none.
  */
-
-static void
-CreateSash(Widget child)
+static void CreateSash(Widget child)
 {
     XmPanedWidget pw = (XmPanedWidget) XtParent(child);
     Arg arglist[20];
     Cardinal num_args = 0;
 
+    XtSetArg(arglist[num_args], XmNcursor, XmPaned_sash_cursor(pw)); num_args++;
     XtSetArg(arglist[num_args], XmNtranslations, XmPaned_sash_translations(pw));
     num_args++;
     XtSetArg(arglist[num_args], XmNwidth, XmPaned_sash_width(pw)); num_args++;
@@ -2295,6 +2296,11 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal * num_args)
 
     pw->core.width = request->core.width;
     pw->core.height = request->core.height;
+
+    XmPaned_sash_cursor(pw) = XCreateFontCursor(
+        XtDisplay(pw),
+        IsVert(pw) ? XC_sb_v_double_arrow : XC_sb_h_double_arrow
+    );
 }
 
 /*	Function Name: Realize
@@ -2355,14 +2361,14 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
  *	Returns: none.
  */
 
-static void
-Destroy(Widget w)
+static void Destroy(Widget w)
 {
     XmPanedWidget pw = (XmPanedWidget)w;
 
     ReleaseGCs(w);
     ClearPaneStack(pw);
-    XtFree((XtPointer) XmPaned_managed_children(pw));
+    XtFree((XtPointer)XmPaned_managed_children(pw));
+    XFreeCursor(XtDisplay(w), XmPaned_sash_cursor(pw));
 }
 
 /*	Function Name: InsertChild
@@ -2734,6 +2740,11 @@ SetValues(Widget old, Widget request, Widget set,
     }
 
     /* Build an arg list for global changes to the sashs */
+    if (XmPaned_sash_cursor(old_pw) != XmPaned_sash_cursor(set_pw)) {
+	XtSetArg(sargs[num_sargs], XmNcursor, XmPaned_sash_cursor(set_pw));
+	num_sargs++;
+	refigure = True;
+    }
 
     if (XmPaned_sash_width(old_pw) != XmPaned_sash_width(set_pw)) {
 	XtSetArg(sargs[num_sargs], XmNwidth, XmPaned_sash_width(set_pw));

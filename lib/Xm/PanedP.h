@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmPanedP_h
@@ -45,7 +45,7 @@ extern "C" {
 /* New fields for the Paned widget class record */
 
 typedef struct _XmPanedClassPart {
-    XtPointer extension;	
+    XtPointer extension;
 } XmPanedClassPart;
 
 /* Full Class record declaration */
@@ -74,7 +74,7 @@ typedef struct _XmPanedConstraintsPart {
     Dimension   preferred_size;	/* The Preferred size of the pane.
 				   Iff this is zero then ask child for size.*/
     Boolean     resize_to_pref;	/* resize this pane to its preferred size
-				   on a resize or change managed after 
+				   on a resize or change managed after
 				   realize. */
     Boolean     is_a_pane;	/* INTERNAL INFO */
 
@@ -82,8 +82,8 @@ typedef struct _XmPanedConstraintsPart {
   /* Private state. */
     Position	delta;		/* Desired Location */
     Position	olddelta;	/* The last value of delta. */
-    Dimension	wp_size;	/* widget's preferred on size */ 
-    Dimension	wp_off_size;	/* widget's preferred off size */ 
+    Dimension	wp_size;	/* widget's preferred on size */
+    Dimension	wp_off_size;	/* widget's preferred off size */
     int         size;		/* the size the widget will actually get. */
     Widget	sash;		/* The sash for this child */
     Widget      separator;      /* The separator for this child */
@@ -120,7 +120,7 @@ typedef struct _PaneStack {
 typedef struct {
     /* resources */
     Position    sash_indent;               /* Location of sashs (per motif) */
-    Boolean     refiguremode;              /* Whether to refigure changes 
+    Boolean     refiguremode;              /* Whether to refigure changes
 					      right now */
     XtTranslations sash_translations;      /* sash translation table */
     Dimension   internal_bw;	           /* internal border width. */
@@ -136,6 +136,7 @@ typedef struct {
                                         Paned window and it's children */
 
     /* sash modifying resources */
+    Cursor		sash_cursor;
     Dimension   sash_width;            /* Modify sash width */
     Dimension   sash_height;           /* Modify sash height */
     Dimension   sash_shadow_thickness; /* Modify sash shadow_thickness */
@@ -155,7 +156,7 @@ typedef struct {
 
     PaneStack * stack;		           /* The pane stack for this widget.*/
     WidgetList  managed_children;	   /* keep track of managed children */
- 
+
     Boolean     allow_unused_space;      /* should the paned widget allow
                                           * a pane to be shrunk to the point
                                           * that there is unused space at
@@ -195,6 +196,7 @@ XmImportOperator _XmToPanedPixels(Widget, int, XtArgVal *);
  */
 
 #define XmPaned_sash_indent(w) (((XmPanedWidget)(w))->paned.sash_indent)
+#define XmPaned_sash_cursor(w) (((XmPanedWidget)(w))->paned.sash_cursor)
 #define XmPaned_refiguremode(w) (((XmPanedWidget)(w))->paned.refiguremode)
 #define XmPaned_sash_translations(w) (((XmPanedWidget)(w))->paned.sash_translations)
 #define XmPaned_internal_bw(w) (((XmPanedWidget)(w))->paned.internal_bw)
