@@ -916,8 +916,7 @@ ForceMenuPaneOnScreen(
    }
 
    if (!monitor) {
-      XtTranslateCoords((Widget)rowcol, *x, *y, &x1, &y1);
-      if (!(monitor = XmGetMonitorInfoAt(XmScreenOfObject((Widget)rowcol), x1, y1)))
+      if (!(monitor = XmGetMonitorInfoAt(XmScreenOfObject((Widget)rowcol), *x, *y)))
           return;
    }
 
@@ -1006,7 +1005,7 @@ ForceMenuPaneOnScreen(
 	  *y -= (bottomEdgeOfMenu - monitor->height + 1);
    }
 
-   /* Make sure that the top left corner os on screen! */
+   /* Make sure that the top left corner is on screen! */
    if (*x <= 0) *x = monitor->x + 4;
    if (*y <= 0) *y = monitor->y + 4;
    FreeXmMonitorInfo(monitor);
@@ -1122,9 +1121,6 @@ PopupSharedMenuShell(
                                         /* pulldowns a lot */
       x = XtX(submenu);
       y = XtY(submenu);
-
-      ForceMenuPaneOnScreen(submenu,&x,&y);
-
       XtX (submenu) = XtY (submenu) = (-1 * XtBorderWidth(submenu));
 
       if (RC_WindowHasMoved(submenu))
@@ -1142,6 +1138,7 @@ PopupSharedMenuShell(
       y = XtY(popup);
    }
 
+   ForceMenuPaneOnScreen(submenu, &x, &y);
    XmeConfigureObject((Widget) popup, x, y, width, height, popup->core.border_width);
 
    XMapWindow(XtDisplay(submenu), XtWindow(submenu));
@@ -1430,9 +1427,6 @@ ChangeManaged(
       {
 	 x = XtX(rowcol);
 	 y = XtY(rowcol);
-
-         ForceMenuPaneOnScreen(rowcol,&x,&y);
-
 	 XtX (rowcol) = XtY (rowcol) = (-1 * XtBorderWidth(rowcol));
 
 	 if (RC_WindowHasMoved(rowcol))
@@ -1450,6 +1444,7 @@ ChangeManaged(
 	 y = XtY(popup);
       }
 
+      ForceMenuPaneOnScreen(rowcol, &x, &y);
       XmeConfigureObject((Widget) popup, x, y, width, height,
 			popup->core.border_width);
 
