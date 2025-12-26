@@ -1602,7 +1602,7 @@ ProcessKeyEvent(XtPointer client_data, XtIntervalId *id)
 static void
 HandleSash(Widget sash, XtPointer junk, XtPointer callData)
 {
-    SashCallData call_data = (SashCallData)callData;
+    struct XmSashCallbackData *call_data = (struct XmSashCallbackData *)callData;
     XmPanedWidget pw = (XmPanedWidget) XtParent(sash);
     int loc;
     char action_type;

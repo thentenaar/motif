@@ -34,7 +34,7 @@ extern "C" {
 
 typedef struct _XmScreenClassPart {
 	XtPointer extension;
-} XmScreenClassPart, *XmScreenClassPartPtr;
+} XmScreenClassPart;
 
 typedef struct _XmScreenClassRec {
 	CoreClassPart      core_class;
@@ -122,7 +122,7 @@ typedef struct {
 	/* Monitors */
 	Cardinal n_monitors;
 	XmMonitorInfo *monitors;
-} XmScreenPart, *XmScreenPartPtr;
+} XmScreenPart;
 
 typedef struct _XmScreenInfo {
 	/* so much for information hiding */
@@ -130,7 +130,7 @@ typedef struct _XmScreenInfo {
 	Boolean destroyCallbackAdded; /* ImageCache.c */
 } XmScreenInfo;
 
-externalref XmScreenClassRec 	xmScreenClassRec;
+externalref XmScreenClassRec xmScreenClassRec;
 
 typedef struct _XmScreenRec {
 	CorePart      core;

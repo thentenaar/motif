@@ -63,7 +63,6 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 #define SCREEN_MISMATCH   _XmMMsgScreen_0000
 #define CANT_FIND_DISPLAY _XmMMsgScreen_0001
 
-/********    Static Function Declarations    ********/
 static void ClassPartInitialize(WidgetClass wc);
 static void ClassInitialize(void);
 static void GetUnitFromFont(Display *display, XFontStruct *fst,
@@ -77,6 +76,11 @@ static Boolean MatchPixmap(XmHashKey a, XmHashKey b);
 static XmHashValue HashPixmap(XmHashKey x);
 static Boolean FreePixmap(XmHashKey k, XtPointer p, XtPointer client_data);
 
+/***************************************************************************
+ *
+ * Resources
+ *
+ ***************************************************************************/
 #define Offset(x) (XtOffsetOf(XmScreenRec, x))
 static XtResource resources[] = {
 	{
@@ -262,7 +266,7 @@ externaldef(xmscreenclassrec) XmScreenClassRec xmScreenClassRec = {
 	NULL,                        /* extension           */
 },
 { /* screen */
-	NULL,
+	NULL,                        /* extension           */
 }};
 
 externaldef(xmscreenclass) WidgetClass xmScreenClass =

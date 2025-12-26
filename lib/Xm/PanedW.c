@@ -1356,7 +1356,7 @@ HandleSash(
         XtPointer closure,
         XtPointer callData )
 {
-    SashCallData call_data = (SashCallData)callData;
+    struct XmSashCallbackData *call_data = (struct XmSashCallbackData *)callData;
     register XmPanedWindowWidget pw = (XmPanedWindowWidget)w->core.parent;
     register WidgetList children = pw->paned_window.managed_children;
     int num_panes = pw->paned_window.pane_count;
