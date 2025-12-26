@@ -37,6 +37,7 @@ static char rcsid[] = "$TOG: PanedW.c /main/24 1999/07/13 07:46:01 mgreess $"
 #include <Xm/PanedWP.h>
 #include <Xm/SeparatoG.h>
 #include <Xm/SashP.h>
+#include <Xm/Screen.h>
 #include <Xm/VaSimpleP.h>
 #include "MessagesI.h"
 #include "RepTypeI.h"
@@ -239,10 +240,10 @@ static XtResource resources[] = {
        Offset(sash_indent), XmRCallProc, (XtPointer) SashIndentDefault},
 
     {XmNsashWidth, XmCSashWidth, XmRHorizontalDimension, sizeof(Dimension),
-       Offset(sash_width), XmRImmediate, (XtPointer) 10},
+       Offset(sash_width), XmRImmediate, (XtPointer)0},
 
     {XmNsashHeight, XmCSashHeight, XmRVerticalDimension, sizeof(Dimension),
-       Offset(sash_height), XmRImmediate, (XtPointer) 10},
+       Offset(sash_height), XmRImmediate, (XtPointer)0},
 
     {XmNsashShadowThickness, XmCShadowThickness, XmRHorizontalDimension,
        sizeof(Dimension), Offset(sash_shadow_thickness), XmRCallProc,
@@ -1959,7 +1960,7 @@ InsertChild(
     XtSetArg(args[n], XmNborderWidth, 0); n++;
     XtSetArg(args[n], XmNhighlightThickness, 0); n++;
     XtSetArg(args[n], XmNseparatorType, XmSHADOW_ETCHED_IN); n++;
-    XtSetArg(args[n], XmNmargin, 0); n++;
+    XtSetArg(args[n], XmNmargin, (int)(4 * (XmScreenDpi(XmScreenOfObject(pw)) / 96.))); n++;
     XtSetArg(args[n], XmNorientation,
                       Minor(pw, XmHORIZONTAL, XmVERTICAL)); n++;
     XtSetArg(args[n], XmNnavigationType, (XtArgVal) XmNONE); n++;
