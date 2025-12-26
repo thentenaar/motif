@@ -367,7 +367,7 @@ static XmSyntheticResource get_constraint_resources[] =
 
 #undef Offset
 
-
+
 /*************************************<->*************************************
  *
  *
@@ -484,7 +484,7 @@ ClassPartInitialize(
 }
 
 
-
+
 /************************************************************************
  *
  *  Initialize
@@ -534,9 +534,12 @@ Initialize(
       pw->paned_window.orientation = XmVERTICAL;
   }
 
+  pw->paned_window.sash_cursor = XCreateFontCursor(
+      XtDisplay(pw),
+      Horizontal(pw) ? XC_sb_h_double_arrow : XC_sb_v_double_arrow
+  );
 }
 
-
 /*************************************<->*************************************
  *
  *  Realize
@@ -597,15 +600,12 @@ Realize(
 
 } /* Realize */
 
-
 /*************************************<->*************************************
  *
  *  Destroy
  *
  *************************************<->***********************************/
-static void
-Destroy(
-        Widget w )
+static void Destroy(Widget w)
 {
     XmPanedWindowWidget pw = (XmPanedWindowWidget)w;
 
@@ -618,10 +618,9 @@ Destroy(
     }
 
     XtFree( (char *) pw->paned_window.managed_children);
-
+    XFreeCursor(XtDisplay(w), pw->paned_window.sash_cursor);
 } /* Destroy */
 
-
 /*************************************<->*************************************
  *
  *  Resize
@@ -637,7 +636,7 @@ Resize(
 } /* Resize */
 
 
-
+
 /*************************************<->*************************************
  *
  *  ConstraintDestroy
@@ -688,7 +687,7 @@ ConstraintDestroy(
    }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  void AdjustGC(pw)
@@ -744,7 +743,7 @@ AdjustGC(
    }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  void GetFlipGC(pw)
@@ -771,7 +770,7 @@ GetFlipGC(
 					   dynamicMask, 0);
 }
 
-
+
 /**********************************************************************
  *
  *  ReManageChildren
@@ -839,7 +838,7 @@ NeedsAdjusting(
    return (needed != MajorSize(pw)) ? needed : 0 ;
 }
 
-
+
 /*************************************<->*************************************
  *
  *  AdjustPanedWindowMajor
@@ -885,7 +884,7 @@ AdjustPanedWindowMajor(
     return(result);
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ResetDMajors
@@ -908,7 +907,7 @@ ResetDMajors(
              PaneDMajor(*childP) = MajorChildSize(pw, *childP);
 }
 
-
+
 /*************************************<->*************************************
  *
  *  RefigureLocations
@@ -1038,7 +1037,7 @@ RefigureLocations(
 
 }
 
-
+
 /*************************************<->*************************************
  *
  *  CommitNewLocations
@@ -1143,7 +1142,7 @@ CommitNewLocations(
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  RefigureLocationsAndCommit
@@ -1167,7 +1166,7 @@ RefigureLocationsAndCommit(
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  DrawTrackLines
@@ -1216,7 +1215,7 @@ DrawTrackLines(
 	}
     }
 }
-
+
 /*************************************<->*************************************
  *
  *  EraseTrackLines
@@ -1251,7 +1250,7 @@ EraseTrackLines(
     }
 }
 
-
+
 /*************************************<->*************************************
  *
  *  ProcessKeyEvent
@@ -1332,7 +1331,7 @@ ProcessKeyEvent(
     pw->paned_window.increment_count = 0;
 }
 
-
+
 /*************************************<->*************************************
  *
  *  HandleSash
@@ -1520,7 +1519,7 @@ HandleSash(
 }
 
 
-
+
 /*************************************<->*************************************
  *
  * GeometryManager
@@ -1802,7 +1801,7 @@ GeometryManager(
     return XtGeometryAlmost;
 }
 
-
+
 /************************************************************************
  *
  *  Constraint Initialize
@@ -1905,7 +1904,7 @@ InsertOrder(
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  InsertChild()
@@ -1976,6 +1975,7 @@ InsertChild(
     * that field to NULL.
     */
     n = 0;
+    XtSetArg(args[n], XmNcursor, pw->paned_window.sash_cursor); n++;
     XtSetArg(args[n], XmNwidth, pw->paned_window.sash_width); n++;
     XtSetArg(args[n], XmNheight, pw->paned_window.sash_height); n++;
     XtSetArg(args[n], XmNshadowThickness,
@@ -1983,6 +1983,7 @@ InsertChild(
     XtSetArg(args[n], XmNunitType, (XtArgVal) XmPIXELS); n++;
     pw->paned_window.recursively_called = True;
     pane->sash = XtCreateWidget("Sash", xmSashWidgetClass, (Widget)pw, args, n);
+
     XtAddCallback(pane->sash, XmNcallback, HandleSash, (XtPointer)w);
     pw->paned_window.recursively_called = False;
 
@@ -2008,7 +2009,7 @@ InsertChild(
 
 
 
-
+
 /*************************************<->*************************************
  *
  * ChangeManaged
@@ -2191,7 +2192,7 @@ ChangeManaged(
 } /* ChangeManaged */
 
 
-
+
 /*************************************<->*************************************
  *
  *  SetValues
@@ -2225,6 +2226,10 @@ SetValues(
        GetFlipGC(newpw);
        returnFlag = True;
      }
+
+   if (newpw->paned_window.sash_cursor != oldpw->paned_window.sash_cursor) {
+      XtSetArg(sashargs[n], XmNcursor, newpw->paned_window.sash_cursor); n++;
+   }
 
    if (newpw->paned_window.sash_width == 0)
       newpw->paned_window.sash_width = oldpw->paned_window.sash_width;
@@ -2364,7 +2369,7 @@ SetValues(
 } /* SetValues */
 
 
-
+
 /*************************************<->*************************************
  *
  *  PaneSetValues
@@ -2492,6 +2497,8 @@ PaneSetValues(
                  if (new_pane->sash == NULL) {
 		    Cardinal nargs = 0;
 
+                    XtSetArg(sashargs[nargs], XmNcursor,
+			     pw->paned_window.sash_cursor); nargs++;
                     XtSetArg(sashargs[nargs], XmNwidth,
 			     pw->paned_window.sash_width), nargs++;
                     XtSetArg(sashargs[nargs], XmNheight,
