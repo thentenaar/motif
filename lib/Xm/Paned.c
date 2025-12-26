@@ -32,6 +32,7 @@
 #include <Xm/PanedP.h>
 #include <Xm/SashP.h>
 #include <Xm/Separator.h>
+#include <Xm/Screen.h>
 
 #include <Xm/ExtP.h>
 
@@ -214,13 +215,13 @@ static XtResource resources[] =
   {
     XmNsashWidth, XmCSashWidth, XmRHorizontalDimension,
     sizeof(Dimension), XtOffsetOf(XmPanedRec, paned.sash_width),
-    XmRImmediate, (XtPointer) 10
+    XmRImmediate, (XtPointer)0
   },
 
   {
     XmNsashHeight, XmCSashHeight, XmRVerticalDimension,
     sizeof(Dimension), XtOffsetOf(XmPanedRec, paned.sash_height),
-    XmRImmediate, (XtPointer) 10
+    XmRImmediate, (XtPointer)0
   },
 
   {
@@ -1823,7 +1824,7 @@ CreateSeparator(Widget child)
     XtSetArg(args[num_args], XmNborderWidth, 0); num_args++;
     XtSetArg(args[num_args], XmNhighlightThickness, 0); num_args++;
     XtSetArg(args[num_args], XmNseparatorType, XmSHADOW_ETCHED_IN); num_args++;
-    XtSetArg(args[num_args], XmNmargin, 0); num_args++;
+    XtSetArg(args[num_args], XmNmargin, (int)(4 * (XmScreenDpi(XmScreenOfObject(pw)) / 96.))); num_args++;
     XtSetArg(args[num_args], XmNnavigationType, XmNONE); num_args++;
     XtSetArg(args[num_args], XmNisAPane, False); num_args++;
 
@@ -2296,6 +2297,12 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal * num_args)
 
     pw->core.width = request->core.width;
     pw->core.height = request->core.height;
+
+    if (!XmPaned_sash_width(pw))
+        XmPaned_sash_width(pw) = (int)(4 + 6 * XmScreenDpi(XmScreenOfObject(pw)) / 96.);
+
+    if (!XmPaned_sash_height(pw))
+        XmPaned_sash_height(pw) = (int)(4 + 6 * XmScreenDpi(XmScreenOfObject(pw)) / 96.);
 
     XmPaned_sash_cursor(pw) = XCreateFontCursor(
         XtDisplay(pw),
