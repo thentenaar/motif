@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmDisplayP_h
 #define _XmDisplayP_h
 
@@ -47,7 +47,7 @@ typedef struct {
     XtPointer               extension;
 } XmDisplayClassPart;
 
-/* 
+/*
  * we make it a appShell subclass so it can have it's own instance
  * hierarchy
  */
@@ -119,7 +119,6 @@ typedef struct {
 
 typedef struct _XmDisplayInfo {
   /* so much for information hiding */
-  Cursor	SashCursor;		/* Sash.c */
   Widget	destinationWidget;	/* Dest.c */
   Cursor	TearOffCursor;		/* TearOff.c */
   XtPointer	UniqueStamp;		/* UniqueEvnt.c */

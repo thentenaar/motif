@@ -58,7 +58,6 @@ static void SashAction(Widget widget, XEvent *event, String *params,
                        Cardinal *num_params);
 static void Realize(Widget w, XtValueMask *p_valueMask,
                     XSetWindowAttributes *attributes);
-static void SashDisplayDestroyCallback(Widget w, XtPointer client, XtPointer call);
 static void Redisplay(Widget w, XEvent *event, Region region);
 
 /***************************************************************************
@@ -72,6 +71,11 @@ static XtResource resources[] = {
 		XmNborderWidth, XmCBorderWidth, XmRHorizontalDimension,
 		sizeof(Dimension), Offset(core.border_width),
 		XmRImmediate, NULL
+	},
+	{
+		XmNcursor, XmCCursor, XmRCursor,
+		sizeof(Cursor), Offset(sash.cursor),
+		XmRString, "double_arrow",
 	},
 	{
 		XmNcallback, XmCCallback, XmRCallback,
@@ -211,7 +215,9 @@ static void Initialize(Widget rw, Widget nw, ArgList args, Cardinal *num_args)
 	size = (Dimension)(4 + 6 * XmScreenDpi(XmScreenOfObject(new))/96.);
 	if (!req->core.width)  new->core.width  = size;
 	if (!req->core.height) new->core.height = size;
+
 	new->sash.has_focus = False;
+	new->sash.cursor    = req->sash.cursor;
 }
 
 static void HighlightSash(Widget w)
@@ -306,44 +312,8 @@ static void SashAction(Widget widget, XEvent *event, String *params,
 
 static void Realize(Widget w, XtValueMask *p_valueMask, XSetWindowAttributes *attributes)
 {
-	Display *d        = XtDisplay(w);
-	XmDisplay dd      = (XmDisplay)XmGetXmDisplay(d);
-	Cursor SashCursor = ((XmDisplayInfo *)(dd->display.displayInfo))->SashCursor;
-
-	_XmDisplayToAppContext(d);
-	if (!SashCursor) {
-		/**
-		 * create some data shared among all instances on this
-		 * display; the first one along can create it, and
-		 * any one can remove it; note no reference count
-		 */
-		SashCursor = XCreateFontCursor(XtDisplay(w), XC_crosshair);
-		XtAddCallback((Widget)dd, XtNdestroyCallback, SashDisplayDestroyCallback, NULL);
-
-		_XmAppLock(app);
-		((XmDisplayInfo *)(dd->display.displayInfo))->SashCursor = SashCursor;
-		_XmAppUnlock(app);
-	}
-
-	attributes->cursor = SashCursor;
+	attributes->cursor = ((XmSashWidget)w)->sash.cursor;
 	XtCreateWindow(w, InputOutput, CopyFromParent, *p_valueMask | CWCursor, attributes);
-}
-
-static void SashDisplayDestroyCallback(Widget w, XtPointer client, XtPointer call)
-{
-	Cursor cursor;
-	Display *d   = XtDisplay(w);
-	XmDisplay dd = (XmDisplay)XmGetXmDisplay(d);
-	(void)client;
-	(void)call;
-
-	_XmDisplayToAppContext(d);
-	if (dd && (cursor = ((XmDisplayInfo *)(dd->display.displayInfo))->SashCursor)) {
-		_XmAppLock(app);
-		((XmDisplayInfo *)(dd->display.displayInfo))->SashCursor = None;
-		XFreeCursor(d, cursor);
-		_XmAppUnlock(app);
-	}
 }
 
 /*************************************<->*************************************

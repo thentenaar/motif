@@ -45,7 +45,8 @@ externalref XmSashClassRec xmSashClassRec;
 
 typedef struct {
   XtCallbackList sash_action;
-  Boolean has_focus;
+  Boolean        has_focus;
+  Cursor         cursor;
 } XmSashPart;
 
 typedef struct _XmSashRec {
