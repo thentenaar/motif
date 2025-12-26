@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 /************************************************************
@@ -160,49 +160,49 @@ static XtResource constraints[] =
       XmRImmediate, (XtPointer) 0
    }
 };
-	    
+
 XmButtonBoxClassRec xmButtonBoxClassRec = {
   {
     /* core_class members      */
     /* superclass         */	(WidgetClass)SUPERCLASS,
-    /* class_name         */	"XmButtonBox",                            
-    /* widget_size        */	sizeof(XmButtonBoxRec),                 
+    /* class_name         */	"XmButtonBox",
+    /* widget_size        */	sizeof(XmButtonBoxRec),
     /* class_initialize   */	ClassInitialize,
-    /* class_part_init    */	ClassPartInitialize, 	
-    /* class_inited       */	False,                            	
-    /* initialize         */	Initialize, 
-    /* initialize_hook    */	NULL,                             	
-    /* realize            */	XtInheritRealize, 
-    /* actions            */	NULL,                     
+    /* class_part_init    */	ClassPartInitialize,
+    /* class_inited       */	False,
+    /* initialize         */	Initialize,
+    /* initialize_hook    */	NULL,
+    /* realize            */	XtInheritRealize,
+    /* actions            */	NULL,
 
-        
-    /* num_actions        */	0,                                	
-    /* resources          */	(XtResource*)resources,                     
-    /* num_resources      */	XtNumber(resources), 
-    /* xrm_class          */	NULLQUARK,                        
-    /* compress_motion    */	True,                             	
-    /* compress_exposure  */	True,                             	
-    /* compress_enterleave*/	True,                             	
-    /* visible_interest   */	False,                            
-    /* destroy            */	NULL,                             
-    /* resize             */	Resize,                           
-    /* expose             */	NULL,                             
-    /* set_values         */	SetValues,                             
-    /* set_values_hook    */	NULL,                             
-    /* set_values_almost  */	XtInheritSetValuesAlmost,         
-    /* get_values_hook    */	NULL,                             	
-    /* accept_focus       */	NULL,                             
+
+    /* num_actions        */	0,
+    /* resources          */	(XtResource*)resources,
+    /* num_resources      */	XtNumber(resources),
+    /* xrm_class          */	NULLQUARK,
+    /* compress_motion    */	True,
+    /* compress_exposure  */	True,
+    /* compress_enterleave*/	True,
+    /* visible_interest   */	False,
+    /* destroy            */	NULL,
+    /* resize             */	Resize,
+    /* expose             */	NULL,
+    /* set_values         */	SetValues,
+    /* set_values_hook    */	NULL,
+    /* set_values_almost  */	XtInheritSetValuesAlmost,
+    /* get_values_hook    */	NULL,
+    /* accept_focus       */	NULL,
     /* version            */	XtVersion,
-    /* callback_private   */	NULL,                             
-    /* tm_table           */	XtInheritTranslations, 
-    /* query_geometry     */	(XtGeometryHandler) QueryGeometry, 
-    /* display_accelerator*/	NULL,                             
-    /* extension          */	NULL,                             
+    /* callback_private   */	NULL,
+    /* tm_table           */	XtInheritTranslations,
+    /* query_geometry     */	(XtGeometryHandler) QueryGeometry,
+    /* display_accelerator*/	NULL,
+    /* extension          */	NULL,
   },
   {
     /* composite_class members */
-    /* geometry_manager   */	GeometryManager,                  
-    /* change_managed     */	ChangeManaged,                    
+    /* geometry_manager   */	GeometryManager,
+    /* change_managed     */	ChangeManaged,
     /* insert_child       */	InsertChild,
     /* delete_child       */	XtInheritDeleteChild,
     /* extension          */	NULL,
@@ -227,7 +227,7 @@ XmButtonBoxClassRec xmButtonBoxClassRec = {
   },
   {
     /* Row class members */
-    /* extension            */	NULL,                                
+    /* extension            */	NULL,
   }
 };
 
@@ -245,17 +245,17 @@ WidgetClass xmButtonBoxWidgetClass = (WidgetClass)&xmButtonBoxClassRec;
  */
 
 /* ARGSUSED */
-static void 
+static void
 ClassInitialize()
 {
-    XtSetTypeConverter(XmRString, XmRXmFillOption, 
+    XtSetTypeConverter(XmRString, XmRXmFillOption,
 		       (XtTypeConverter) CvtStringToFillOption,
                        NULL, (Cardinal)0, XtCacheAll, (XtDestructor)NULL);
 }
 
 
 /****************************************************************/
-static void 
+static void
 ClassPartInitialize(WidgetClass w_class )
 {
     XmButtonBoxWidgetClass bbClass
@@ -267,10 +267,10 @@ ClassPartInitialize(WidgetClass w_class )
 */
     _XmFastSubclassInit (w_class, XmBUTTONBOX_BIT);
 
-    
+
     /* Install the specifyrendertable trait for all subclasses */
     /*
-    XmeTraitSet((XtPointer)w_class, XmQTspecifyRenderTable, 
+    XmeTraitSet((XtPointer)w_class, XmQTspecifyRenderTable,
 		(XtPointer) &bulletinbSRT);
     */
     return ;
@@ -286,13 +286,13 @@ ClassPartInitialize(WidgetClass w_class )
  *	Arguments:     req - what was originally requested.
  *                     new - what will be created (our superclasses have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /* ARGSUSED */
-static void Initialize(Widget req, Widget set, 
+static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
     /*
@@ -313,13 +313,13 @@ static void Initialize(Widget req, Widget set,
  *	Arguments:     req - what was originally requested.
  *                     set - what will be created (our superclassed have
  *                           already mucked with this)
- *                     args, num_args - The arguments passed to 
+ *                     args, num_args - The arguments passed to
  *                                      the creation call.
  *	Returns:       none.
  */
 
 /* ARGSUSED */
-static void 
+static void
 ConstraintInitialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
 {
     XmButtonBoxC_pref_width(set) = XmButtonBoxC_pref_height(set) = 0;
@@ -366,7 +366,7 @@ static void
 Resize(Widget w)
 {
     LayoutChildren(w, NULL);
-} 
+}
 
 /*      Function Name: QueryGeometry
  *      Description:   Called when my parent wants to know my
@@ -383,11 +383,11 @@ QueryGeometry(Widget w, XtWidgetGeometry *request,
 {
     XmButtonBoxWidget 	bbox = (XmButtonBoxWidget)w;
     Dimension		max_major, max_minor, child_major_total;
-    
+
     /*
      * Calculate our desired size.
      */
-    
+
     (void) CalcChildrenPrefSizes(bbox, &max_major,
 				 &max_minor, &child_major_total);
 
@@ -400,7 +400,7 @@ QueryGeometry(Widget w, XtWidgetGeometry *request,
 	preferred->width = max_minor + (2 * MarginW(bbox));
 	preferred->height = child_major_total + (2 * MarginH(bbox));
     }
-    
+
     return(_XmHWQuery(w, request, preferred));
 }
 
@@ -424,20 +424,20 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
     /*
      * Say no to any change in position.
      */
-  
-    if ( (request->request_mode & (CWX | CWY | CWBorderWidth)) && 
+
+    if ( (request->request_mode & (CWX | CWY | CWBorderWidth)) &&
 	 !(request->request_mode & (CWWidth | CWHeight)) )
     {
 	return (XtGeometryNo);
     }
-  
+
     if ( request->request_mode & (CWWidth | CWHeight) )
     {
 	Dimension		max_major, max_minor;
 	Dimension		child_major, child_minor;
 	Dimension	        child_width, child_height;
 	Dimension		child_major_total;
-    
+
 	Cardinal   		num_managed;
 
 	/*
@@ -450,22 +450,22 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
 
 	if ( request->request_mode & CWWidth )
 	    XmButtonBoxC_pref_width(w)  = request->width;
-	
+
 	if ( request->request_mode & CWHeight )
 	    XmButtonBoxC_pref_height(w) = request->height;
-	
+
 	/*
 	 * See if everything fits with the new size.
 	 */
-	
-	(void) TryNewLayout((Widget)bbox, &mask, 
+
+	(void) TryNewLayout((Widget)bbox, &mask,
 			    (request->request_mode & XtCWQueryOnly));
 
 	num_managed = CalcChildrenPrefSizes(bbox, &max_major,
 					    &max_minor, &child_major_total);
 
-	CalcChildSize(bbox, w, max_major, max_minor, 
-		      child_major_total, num_managed, &child_major, 
+	CalcChildSize(bbox, w, max_major, max_minor,
+		      child_major_total, num_managed, &child_major,
 		      &child_minor);
 
 	if (IsHorizontal(bbox)) {
@@ -477,9 +477,9 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
 	    child_width = child_minor;
 	}
 
-	if ( (int)child_width >= (int)(2 * w->core.border_width) ) 
+	if ( (int)child_width >= (int)(2 * w->core.border_width) )
 	    child_width -= (2 * w->core.border_width);
-	
+
 	if ( (int)child_height >= (int)(2 * w->core.border_width) )
 	    child_height -= (2 * w->core.border_width);
 
@@ -490,7 +490,7 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
 	{
 	    result = XtGeometryYes;
 	}
-	else if ((child_width != w->core.width) || 
+	else if ((child_width != w->core.width) ||
 		 (child_height != w->core.height))
 	{
 	    reply->request_mode = CWHeight | CWWidth;
@@ -508,7 +508,7 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
 	    XmButtonBoxC_pref_width(w) = old_width;
 	    XmButtonBoxC_pref_height(w) = old_height;
 	}
-	else 
+	else
 	    LayoutChildren((Widget)bbox, w);
 
 	/*
@@ -522,7 +522,7 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
 	if (result != XtGeometryYes) {
 	    if ( request->request_mode & CWWidth )
 		XmButtonBoxC_pref_width(w) = 0;
-	    
+
 	    if ( request->request_mode & CWHeight )
 		XmButtonBoxC_pref_height(w) = 0;
 	}
@@ -583,7 +583,7 @@ XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
     {
     	return;
     }
-    
+
     /*
      * Insert the child widget in the composite children list with the
      * superclass insert_child routine.
@@ -599,7 +599,7 @@ XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
        XtWidgetProc insert_child;
        _XmProcessLock();
        insert_child = ((XmManagerWidgetClass)xmManagerWidgetClass)->
-				composite_class.insert_child; 
+				composite_class.insert_child;
        _XmProcessUnlock();
        (*insert_child)(child);
     }
@@ -609,7 +609,7 @@ XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
         is_button = TRUE ;
 
         if( XmButtonBox_default_button( bb) )
-        {   
+        {
             /* Notify child that it has to be ready for default visual */
             ButtonBoxSetDefaultShadow( child) ;
         }
@@ -617,7 +617,7 @@ XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
 
 }
 
-    
+
 /*      Function Name: SetValues
  *      Description:   Called when some widget data needs to be modified on-
  *                     the-fly.
@@ -646,7 +646,7 @@ SetValues(Widget current, Widget request, Widget set,
 	newLayout = True;
     }
 
-    if (set->core.width == 0) 
+    if (set->core.width == 0)
     { /* CR03420 */
       set->core.width = 1; /* setting to 1 to prevent zero width */
       mask |= CWWidth;
@@ -658,7 +658,7 @@ SetValues(Widget current, Widget request, Widget set,
     }
     if (mask) TryNewLayout((Widget)b_set, &mask, False);
     if ( newLayout == True ) LayoutChildren((Widget)b_set, NULL);
-    
+
     return(False);
 }
 
@@ -684,7 +684,7 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     char 			lowerName[BUFSIZ];
 
     XmCopyISOLatin1Lowered(lowerName, (char *)fromVal->addr);
-    
+
     if ( streq(lowerName, "none") || streq(lowerName,"fillnone") )
         option = XmFillNone;
     else if ( streq(lowerName, "major") || streq(lowerName, "fillmajor") )
@@ -699,7 +699,7 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
         return(False);          /* Conversion failed. */
     }
 
-    if ( toVal->addr == NULL ) 
+    if ( toVal->addr == NULL )
     {
         toVal->size = sizeof(XmFillOption);
         toVal->addr = (XtPointer)&option;
@@ -708,7 +708,7 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     else
     {
 	toVal->size = sizeof(XmFillOption);
-	if ( toVal->size >= sizeof(XmFillOption) ) 
+	if ( toVal->size >= sizeof(XmFillOption) )
 	{
 	    XmFillOption *state = (XmFillOption *)toVal->addr;
 
@@ -737,14 +737,14 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  */
 
 /* ARGSUSED */
-static XtGeometryResult 
-TryNewLayout(Widget parent, Mask *mask, 
+static XtGeometryResult
+TryNewLayout(Widget parent, Mask *mask,
 	     Boolean queryOnly)
 {
     XmButtonBoxWidget 	bbox = (XmButtonBoxWidget)parent;
     Dimension		new_width, new_height;
     Dimension		max_major, max_minor, child_major_total;
-    
+
     /*
      * Get the bounding width and height of all children.
      */
@@ -752,7 +752,7 @@ TryNewLayout(Widget parent, Mask *mask,
     (void) CalcChildrenPrefSizes(bbox, &max_major,
 				 &max_minor, &child_major_total);
 
-    if (IsHorizontal(bbox)) 
+    if (IsHorizontal(bbox))
     {
 	new_width = child_major_total + 2 * MarginW(bbox);
 	new_height = max_minor + 2 * MarginH(bbox);
@@ -762,7 +762,7 @@ TryNewLayout(Widget parent, Mask *mask,
 	new_width = max_minor + 2 * MarginW(bbox);
 	new_height = child_major_total + 2 * MarginH(bbox);
     }
-    
+
     /*
      * Be sure that we are always at least one pixel high.
      */
@@ -782,7 +782,7 @@ TryNewLayout(Widget parent, Mask *mask,
 
 	reply.width = 0;
 	reply.height = 0;
-	
+
 	request.request_mode = *mask; /* CR03420 */
 	if ( queryOnly )
 	{
@@ -803,7 +803,7 @@ TryNewLayout(Widget parent, Mask *mask,
 	{
 	    result = XtMakeGeometryRequest(parent, &reply, &reply);
 	}
-	
+
 	return(result);
     }
 
@@ -822,10 +822,7 @@ TryNewLayout(Widget parent, Mask *mask,
  *                                     policy.
  *      Returns:       none.
  */
-
-/* ARGSUSED */
-static void
-LayoutChildren(Widget w, Widget special_child)
+static void LayoutChildren(Widget w, Widget special_child)
 {
     XmButtonBoxWidget 	bbox = (XmButtonBoxWidget)w;
     Widget             *childp;
@@ -836,7 +833,7 @@ LayoutChildren(Widget w, Widget special_child)
     Dimension		child_major, child_minor;
     Dimension	        child_width, child_height;
     Dimension		child_major_total;
-    
+
     Position		pos_minor;
     Position   	        pos_x, pos_y;
 
@@ -845,7 +842,7 @@ LayoutChildren(Widget w, Widget special_child)
 
     child_major = 0;
     child_minor = 0;
-    
+
     if ( IsHorizontal(bbox) )
     {
 	margin_major = MarginW(bbox);
@@ -878,28 +875,28 @@ LayoutChildren(Widget w, Widget special_child)
     if ((FillOption(bbox) == XmFillNone) || (FillOption(bbox) == XmFillMinor))
     {
 	if ( box_major >= child_major_total ) {
-	    pad = ((float) box_major - 
+	    pad = ((float) box_major -
 		   (float) child_major_total) / ((float) num_managed + 1.0);
 	    pos_major += pad;
 	}
     }
-    
+
     ForAllChildren(bbox, childp) {
-	if ( !XtIsManaged(*childp) ) 
+	if ( !XtIsManaged(*childp) )
 	    continue;
 
-	CalcChildSize(bbox, *childp, max_major, max_minor, 
-		      child_major_total, num_managed, &child_major, 
+	CalcChildSize(bbox, *childp, max_major, max_minor,
+		      child_major_total, num_managed, &child_major,
 		      &child_minor);
-	
-	if ((FillOption(bbox) == XmFillNone) || 
+
+	if ((FillOption(bbox) == XmFillNone) ||
 	    (FillOption(bbox) == XmFillMajor))
 	{
 	    pos_minor = (((int)(box_minor - child_minor)) /2) + margin_minor;
 	}
 	else
 	    pos_minor = margin_minor;
-	
+
 	if ( IsHorizontal(bbox) ) {
 	    child_width = child_major;
 	    child_height = child_minor;
@@ -916,12 +913,12 @@ LayoutChildren(Widget w, Widget special_child)
 	    child_height = child_major;
 	}
 
-	if ( (int)child_width >= (int)(2 * (*childp)->core.border_width) ) 
+	if ( (int)child_width >= (int)(2 * (*childp)->core.border_width) )
 	    child_width -= (2 * (*childp)->core.border_width);
-	
+
 	if ( (int)child_height >= (int)(2 * (*childp)->core.border_width) )
 	    child_height -= (2 * (*childp)->core.border_width);
-	
+
 	child_width = (child_width == 0) ? 1 : child_width;
 	child_height = (child_height == 0) ? 1 : child_height;
 
@@ -932,17 +929,21 @@ LayoutChildren(Widget w, Widget special_child)
 	    special_child->core.height = child_height;
 	}
 	else {
-	    _XmConfigureWidget(*childp, pos_x, pos_y, child_width, 
+	    _XmConfigureWidget(*childp, pos_x, pos_y, child_width,
 			       child_height, (*childp)->core.border_width);
 	}
 
 	pos_major += (float) child_major + pad;
-    }
+
+	/* Encourage the child to redraw */
+	if (XtIsRealized(*childp))
+		XClearArea(XtDisplay(*childp), XtWindow(*childp), 0, 0, 0, 0, True);
+	}
 }
 
 /*      Function Name: CalcChildrenPrefSizes
  *      Description:   Determines the total size in the major direction
- *		       of all children of the ButtonBox, as well as the 
+ *		       of all children of the ButtonBox, as well as the
  *                     maximum value in both major and minor directions.
  *      Arguments:     bbox - the ButtonBox parent.
  *		       max_major - the maximum size of all the children
@@ -962,8 +963,8 @@ CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
     XtWidgetGeometry	geo;
     Dimension	       *maj_dim, *minor_dim;
     Boolean		is_equal = EqualSize(bbox);
-    
-    if ( IsHorizontal(bbox) ) 
+
+    if ( IsHorizontal(bbox) )
     {
 	maj_dim = &geo.width;
 	minor_dim = &geo.height;
@@ -973,44 +974,44 @@ CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
 	maj_dim = &geo.height;
 	minor_dim = &geo.width;
     }
-    
+
     *total = *max_major = *max_minor = 1;
-    
+
     ForAllChildren(bbox, childp) {
 
-	if ( !XtIsManaged(*childp) ) 
+	if ( !XtIsManaged(*childp) )
 	    continue;
 
 	num_managed++;
-	    
+
 	if ((XmButtonBoxC_pref_width(*childp) == 0) ||
-	    (XmButtonBoxC_pref_height(*childp) == 0)) 
+	    (XmButtonBoxC_pref_height(*childp) == 0))
 	{
 	    XtQueryGeometry(*childp, NULL, &geo);
 	}
 	else
 	    geo.border_width = (*childp)->core.border_width;
-	
+
 	if (XmButtonBoxC_pref_width(*childp) == 0)
 	    XmButtonBoxC_pref_width(*childp) = geo.width;
 	else
 	    geo.width = XmButtonBoxC_pref_width(*childp);
-	
+
 	if (XmButtonBoxC_pref_height(*childp) == 0)
 	    XmButtonBoxC_pref_height(*childp) = geo.height;
 	else
 	    geo.height = XmButtonBoxC_pref_height(*childp);
-	
+
 	ASSIGN_MAX(*max_major, *maj_dim + (2 * geo.border_width));
 	ASSIGN_MAX(*max_minor, *minor_dim + (2 * geo.border_width));
-	
-	if (!is_equal) 
+
+	if (!is_equal)
 	    *total += (*maj_dim + (2 * geo.border_width));
     }
-    
+
     if ( is_equal )
         *total = num_managed * (*max_major);
-    
+
     return(num_managed);
 }
 
@@ -1025,7 +1026,7 @@ CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
  *		       child_major_total - total size of all children in the
  *					   major direction.
  *		       num_managed - number of managed children.
- *		       child_major - return location for child's base 
+ *		       child_major - return location for child's base
  *				     major size.
  *		       child_minor - return location for child's base
  *				     minor size.
@@ -1035,22 +1036,22 @@ CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
 /* ARGSUSED */
 static void
 CalcChildSize(XmButtonBoxWidget bbox, Widget w, Dimension max_major,
-	      Dimension max_minor, Dimension child_major_total, 
-	      Cardinal num_managed, Dimension *child_major, 
+	      Dimension max_minor, Dimension child_major_total,
+	      Cardinal num_managed, Dimension *child_major,
 	      Dimension *child_minor)
 {
     XtWidgetGeometry	geo;
     Dimension		box_minor, box_major;
     Dimension		margin_major, margin_minor;
-    
-    if ((XmButtonBoxC_pref_width(w) == 0)||(XmButtonBoxC_pref_height(w) == 0)) 
+
+    if ((XmButtonBoxC_pref_width(w) == 0)||(XmButtonBoxC_pref_height(w) == 0))
 	XtQueryGeometry(w, NULL, &geo);
     else
 	geo.border_width = w->core.border_width;
-    
+
     if (XmButtonBoxC_pref_width(w) != 0)
 	geo.width = XmButtonBoxC_pref_width(w);
-    
+
     if (XmButtonBoxC_pref_height(w) != 0)
 	geo.height = XmButtonBoxC_pref_height(w);
 
@@ -1096,7 +1097,7 @@ CalcChildSize(XmButtonBoxWidget bbox, Widget w, Dimension max_major,
 	*child_major = (Dimension)
 	    (((float)*child_major/(float)child_major_total) * box_major);
     }
-    if ( FillOption(bbox) == XmFillMinor || FillOption(bbox) == XmFillAll || 
+    if ( FillOption(bbox) == XmFillMinor || FillOption(bbox) == XmFillAll ||
 	 *child_minor > box_minor )
     {
 	*child_minor = box_minor;
@@ -1120,11 +1121,11 @@ CalcChildSize(XmButtonBoxWidget bbox, Widget w, Dimension max_major,
 Widget
 XmCreateButtonBox(Widget parent, String name, ArgList args, Cardinal num_args)
 {
-    return(XtCreateWidget(name, 
+    return(XtCreateWidget(name,
 			  xmButtonBoxWidgetClass, parent, args, num_args));
 }
 
-Widget 
+Widget
 XmVaCreateButtonBox(
         Widget parent,
         char *name,
@@ -1133,18 +1134,18 @@ XmVaCreateButtonBox(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmButtonBoxWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -1157,29 +1158,29 @@ XmVaCreateManagedButtonBox(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmButtonBoxWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
 /****************************************************************/
-static void 
+static void
 ButtonBoxSetDefaultShadow(Widget button)
-{   
+{
     XmTakesDefaultTrait trait_default ;
-    
+
     trait_default = (XmTakesDefaultTrait) XmeTraitGet((XtPointer)
-						      XtClass(button), 
+						      XtClass(button),
 						      XmQTtakesDefault) ;
-    if (trait_default) 
+    if (trait_default)
 	trait_default->showAsDefault  (button, XmDEFAULT_READY);
 }
