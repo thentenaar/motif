@@ -1214,7 +1214,8 @@ _XmOSInitPath(String   file_name,
   String homedir = stackString ;
   String local_path;
 
-  *user_path = False;
+  if (user_path)
+      *user_path = False;
 
   if (file_name && _XmOSAbsolutePathName(file_name, &file_name, homedir)) {
       path = XtNewString(ABSOLUTE_PATH);
@@ -1252,7 +1253,7 @@ _XmOSInitPath(String   file_name,
 	{
 	  path = XtMalloc(strlen(local_path) + 1);
 	  strcpy (path, local_path);
-	  *user_path = True;
+	  if (user_path) *user_path = True;
 	}
     }
 

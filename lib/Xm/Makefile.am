@@ -8,11 +8,12 @@ AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
               -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
               -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
               -DDATADIR=\"@DATADIR@\" -DRGB_TXT=\"@RGB_TXT@\" \
-              $(XFT_CFLAGS) ${X_CFLAGS}
+              $(XFT_CFLAGS) $(XCURSOR_CFLAGS) $(X_CFLAGS)
 xmdir = $(includedir)/Xm
 
 libXm_la_LDFLAGS = -version-info @ABI_VERSION@ -no-undefined
-libXm_la_LIBADD  = $(XFT_LIBS) $(XRANDR_LIBS) $(XINERAMA_LIBS) ${X_LIBS}
+libXm_la_LIBADD  = $(XFT_LIBS) $(XRANDR_LIBS) $(XINERAMA_LIBS) \
+                   $(XCURSOR_LIBS) $(XRENDER_LIBS) $(X_LIBS)
 lib_LTLIBRARIES  = libXm.la
 
 EXTRA_HDRS = Ext.h ExtP.h  \
@@ -155,7 +156,7 @@ $(PNG_HDRS)
 xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         BulletinB.h     BulletinBP.h    CacheP.h        CascadeB.h \
         CascadeBG.h     CascadeBGP.h    CascadeBP.h     Command.h \
-        CommandP.h      CutPaste.h      DialogS.h \
+        CommandP.h      Cursor.h        CutPaste.h      DialogS.h \
         DialogSP.h      DialogSEP.h     DragC.h         DragCP.h \
         DragDrop.h      DragIcon.h      DragIconP.h     DragOverS.h \
         DragOverSP.h    DropTransP.h    DropSMgr.h      DropSMgrP.h \
@@ -240,7 +241,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         GetRes.c        BBUtil.c        ChColor.c       ColObjFunc.c \
         DrTog.c         DrArrow.c       DrPoly.c        DrHiDash.c \
         ValTime.c       FocusAct.c      CvtUnit.c       ScalTics.c \
-        ScroVis.c       WidGet.c        ToolTip.c
+        ScroVis.c       WidGet.c        ToolTip.c       Cursor.c
 
 OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c
 

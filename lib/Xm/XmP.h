@@ -1237,12 +1237,11 @@ extern int XmeVirtualToActualKeysyms(
                          Display *dpy,
 			 KeySym virtKeysym,
                          XmKeyBinding *actualKeyData) ;
-    /* Screen.c */
-extern Cursor XmeGetNullCursor(Widget w) ;
-extern void XmeQueryBestCursorSize(
-			Widget w,
-			Dimension *width,
-			Dimension *height );
+    /* Cursor.c */
+extern Cursor XmeGetNullCursor(Widget w);
+extern void XmeQueryBestCursorSize(Widget w,
+                                   Dimension *width,
+                                   Dimension *height);
     /* Xm.c */
 extern void XmeWarning( Widget w, char *message ) ;
     /* ResConvert.c */

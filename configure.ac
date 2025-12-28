@@ -87,10 +87,18 @@ AS_IF([test "x$with_jpeg" == "xyes"],[PKG_CHECK_MODULES([JPEG], [libjpeg])])
 AS_IF([test "x$with_png"  == "xyes"],[PKG_CHECK_MODULES([PNG],  [libpng])])
 AS_IF([test "x$with_xft"  == "xyes"],[PKG_CHECK_MODULES([XFT],  [xft >= 2])])
 
-dnl Optimistically look for xrandr
+dnl Optimistically look for xrandr, xrender, and xcursor
 AC_ARG_WITH([xrandr],
 	[AS_HELP_STRING([--with-xrandr], [Enable Xrandr support])],
 	[with_xrandr=$withval], [with_xrandr=yes])
+
+AC_ARG_WITH([xrender],
+	[AS_HELP_STRING([--with-xrender], [Enable Xrender support])],
+	[with_xrender=$withval], [with_xrender=yes])
+
+AC_ARG_WITH([xcursor],
+	[AS_HELP_STRING([--with-xcursor], [Enable Xrender support])],
+	[with_xcursor=$withval], [with_xcursor=yes])
 
 dnl Xinerama has been deprecated for ages, so the user should manually
 dnl indicate that they actually want it unless we lack xrandr.
@@ -107,6 +115,14 @@ AS_IF([test "x$with_xrandr" == "xyes"],[
 
 AS_IF([test "x$with_xinerama" == "xyes"],[
 	PKG_CHECK_MODULES([XINERAMA], [xinerama], [], [with_xinerama=no])
+])
+
+AS_IF([test "x$with_xrender" == "xyes"],[
+	PKG_CHECK_MODULES([XRENDER], [xrender], [], [with_xrender=no])
+])
+
+AS_IF([test "x$with_xcursor" == "xyes"],[
+	PKG_CHECK_MODULES([XCURSOR], [xcursor], [], [with_xcursor=no])
 ])
 
 AC_ARG_ENABLE([debug],
@@ -215,6 +231,18 @@ AC_DEFINE_UNQUOTED(
 	[XM_WITH_XINERAMA],
 	$(test "x$with_xinerama"  != "xyes" ; echo $?),
 	[1 if Motif was built with Xinerama support]
+)
+
+AC_DEFINE_UNQUOTED(
+	[XM_WITH_XRENDER],
+	$(test "x$with_xrender"  != "xyes" ; echo $?),
+	[1 if Motif was built with Xrender support]
+)
+
+AC_DEFINE_UNQUOTED(
+	[XM_WITH_XCURSOR],
+	$(test "x$with_xcursor"  != "xyes" ; echo $?),
+	[1 if Motif was built with Xcursor support]
 )
 
 AC_DEFINE_UNQUOTED(

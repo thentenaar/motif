@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2025 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -20,6 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $"
@@ -29,7 +31,6 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #define X_INCLUDE_STRING_H
 #define XOS_USE_XT_LOCKING
@@ -42,6 +43,8 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#include <Xm/Cursor.h>
 #include <Xm/SpecRenderT.h>
 #include <Xm/TraitP.h>
 #include <Xm/XmosP.h>
@@ -52,15 +55,12 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 #include "XmI.h"
 #include "XmRenderTI.h"
 
-
 #define MSG2	_XmMMsgResConvert_0001
 #define MSG3    _XmMMsgResConvert_0002
 #define MSG4    _XmMMsgResConvert_0003
 #define MSG6    _XmMMsgResConvert_0005
 #define MSG7    _XmMMsgResConvert_0006
 #define MSG12   _XmMMsgResConvert_0011
-
-
 
 /********    Static Function Declarations    ********/
 
@@ -382,6 +382,12 @@ static Boolean CvtStringToTextRenderTable(Display *dpy,
 					     XrmValue *from,
 					     XrmValue *to,
 					     XtPointer *converter_data);
+static Boolean CvtStringToCursor(Display *display, XrmValue *args,
+                                 Cardinal *num_args, XrmValue *from,
+                                 XrmValue *to, XtPointer *converter_data);
+static void CvtStringToCursorDestroy(XtAppContext app, XrmValue *to,
+                                     XtPointer converter_data, XrmValue *args,
+                                     Cardinal *num_args);
 
 static void _XmGetDisplayArg(Widget widget,
 					Cardinal *size,
@@ -570,6 +576,12 @@ _XmRegisterConverters( void )
 			   selfConvertArgs, XtNumber(selfConvertArgs),
 			   (XtCacheNone | XtCacheRefCount),
 			   CvtStringToXmFontListDestroy);
+
+        XtSetTypeConverter(XmRString, XmRCursor,
+                           CvtStringToCursor,
+                           displayConvertArg, XtNumber(displayConvertArg),
+                           XtCacheByDisplay,
+                           CvtStringToCursorDestroy);
 
         registered = True;
         }
@@ -2799,3 +2811,50 @@ CvtStringToXmRenderTableDestroy(XtAppContext app, /* unused */
 {
   XmRenderTableFree(*((XmRenderTable *)to->addr));
 }
+
+static Boolean CvtStringToCursor(Display *display, XrmValue *args,
+                                 Cardinal *num_args, XrmValue *from,
+                                 XrmValue *to, XtPointer *converter_data)
+{
+	Cursor c;
+	Display *d;
+	char *name = NULL;
+	int hot_x, hot_y;
+	XtAppContext app;
+
+	if (!*num_args || !args[0].addr) {
+		app = XtDisplayToApplicationContext(display);
+		XtAppWarningMsg(app, "wrongParameters", "CvtStringToCursor",
+		                "XtToolkitError",
+		                "String to Cursor conversion requires a display argument",
+		                NULL, NULL);
+		return False;
+	}
+
+    d = *(Display **)args[0].addr;
+    name = XtCalloc(1, strlen(from->addr) + 1);
+	if (sscanf(from->addr, "%[^:]:%d,%d", name, &hot_x, &hot_y) == 3) {
+		c = XmeLoadCursorImage(d, DefaultScreenOfDisplay(d), name, hot_x, hot_y);
+	} else c = XmeLoadCursor(d, DefaultScreenOfDisplay(d), name);
+
+	XtFree(name);
+	if (c == None)
+		XtDisplayStringConversionWarning(display, (char *)from->addr, XmRCursor);
+
+done:
+	_XM_CONVERTER_DONE(to, Cursor, c, ;);
+}
+
+static void CvtStringToCursorDestroy(XtAppContext app, XrmValue *to,
+                                     XtPointer converter_data, XrmValue *args,
+                                     Cardinal *num_args)
+{
+	if (!*num_args) {
+		XtAppWarningMsg(app, "wrongParameters", "freeCursor", "XtToolkitError",
+		                "Free Cursor requires a display argument", NULL, NULL);
+		return;
+	}
+
+	XFreeCursor(*(Display **)args[0].addr, *(Cursor *)to->addr);
+}
+

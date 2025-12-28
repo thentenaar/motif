@@ -52,6 +52,7 @@ installed, and can be run by:
 
 ## Notable Changes
 
+- Support for Xcursor and loading cursors from SVG/PNG files
 - Initial support for Xrandr / Xinerama (Xrandr preferred)
 - With ``XPRINT`` being long dead, and no-one using it, the PrintShell has been removed
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support

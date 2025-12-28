@@ -1191,61 +1191,6 @@ XmDragCursorCache *_XmGetDragCursorCachePtr(XmScreen scr)
 	return &scr->screen.cursorCache;
 }
 
-/************************************************************************
- *
- *  XmeQueryBestCursorSize()
- *
- ************************************************************************/
-void XmeQueryBestCursorSize(Widget w, Dimension *width, Dimension *height)
-{
-	XmScreen scr;
-	_XmWidgetToAppContext(w);
-	_XmAppLock(app);
-	scr     = XmScreenOfObject(w);
-	*width  = (Dimension)scr->screen.maxCursorWidth;
-	*height = (Dimension)scr->screen.maxCursorHeight;
-	_XmAppUnlock(app);
-}
-
-static const char null_bits[] = {
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-};
-
-/************************************************************************
- *
- *  XmeGetNullCursor ()
- *
- ************************************************************************/
-Cursor XmeGetNullCursor(Widget w)
-{
-	XmScreen scr;
-	Pixmap p;
-	Cursor c;
-	XColor fg, bg;
-
-	_XmWidgetToAppContext(w);
-	_XmAppLock(app);
-	scr = XmScreenOfObject(w);
-	if (scr->screen.nullCursor) {
-		c = scr->screen.nullCursor;
-		_XmAppUnlock(app);
-		return c;
-	}
-
-	fg.pixel = bg.pixel = 0;
-	p = XCreatePixmapFromBitmapData(XtDisplayOfObject(w),
-	                                RootWindowOfScreen(XtScreenOfObject(w)),
-	                                (char *)null_bits, 4, 4, 0, 0, 1);
-	c = XCreatePixmapCursor(XtDisplayOfObject(w), p, p, &fg, &bg, 0, 0);
-	XFreePixmap(XtDisplayOfObject(w), p);
-	scr->screen.nullCursor = c;
-	_XmAppUnlock(app);
-	return c;
-}
-
 /*
  * The following set of functions support the menu cursor functionality.
  * They have moved from MenuUtil to here.

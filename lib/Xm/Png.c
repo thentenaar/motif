@@ -45,7 +45,11 @@ int _XmPngGetImage(FILE *fp, XColor *bg, XImage **ximage)
 	png_bytep *rows  = NULL;
 	unsigned char header[8], *data = NULL;
 
-	if (!ximage || !fp || fread(header, 1, sizeof header, fp) != sizeof header ||
+	if (!ximage || !fp)
+		return 1;
+
+	rewind(fp);
+	if (fread(header, 1, sizeof header, fp) != sizeof header ||
         png_sig_cmp(header, 0, sizeof header))
 		return 1;
 
