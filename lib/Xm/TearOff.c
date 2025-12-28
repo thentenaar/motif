@@ -33,6 +33,7 @@ static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
 #include <X11/cursorfont.h>
 #include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
+#include <Xm/Cursor.h>
 #include <Xm/DisplayP.h>
 #include <Xm/GadgetP.h>
 #include <Xm/LabelP.h>
@@ -330,8 +331,7 @@ GetTearOffCursor(
 		** display; the first one along can create it, and
 		** any one can remove it; note no reference count
 		*/
-        	TearOffCursor =
-			XCreateFontCursor(XtDisplay(wid), XC_fleur);
+        	TearOffCursor = XmeLoadCursor(XtDisplay(wid), XtScreen(wid), "fleur");
 		if (0L == TearOffCursor)
 			TearOffCursor = _XmGetMenuCursorByScreen(XtScreen(wid));
 		else

@@ -30,10 +30,10 @@ static char rcsid[] = "$TOG: PanedW.c /main/24 1999/07/13 07:46:01 mgreess $"
 #include <config.h>
 #endif
 
-
 #include <ctype.h>
-#include <X11/cursorfont.h>
+
 #include "XmI.h"
+#include <Xm/Cursor.h>
 #include <Xm/PanedWP.h>
 #include <Xm/SeparatoG.h>
 #include <Xm/SashP.h>
@@ -535,9 +535,9 @@ Initialize(
       pw->paned_window.orientation = XmVERTICAL;
   }
 
-  pw->paned_window.sash_cursor = XCreateFontCursor(
-      XtDisplay(pw),
-      Horizontal(pw) ? XC_sb_h_double_arrow : XC_sb_v_double_arrow
+  pw->paned_window.sash_cursor = XmeLoadCursor(
+      XtDisplay(pw), XtScreen(new_w),
+      Horizontal(pw) ? "sb_h_double_arrow" : "sb_v_double_arrow"
   );
 }
 

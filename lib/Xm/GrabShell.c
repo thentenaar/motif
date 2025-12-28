@@ -30,6 +30,7 @@
 #include <X11/ShellP.h>
 #include <X11/VendorP.h>
 #include <X11/cursorfont.h>
+#include <Xm/Cursor.h>
 #include <Xm/DrawP.h>
 #include <Xm/GrabShellP.h>
 #include <Xm/MenuUtilP.h>
@@ -366,7 +367,7 @@ MapNotifyHandler(Widget shell, XtPointer client_data,
     time = CurrentTime;
   if (grabshell->grab_shell.cursor == None)
     grabshell->grab_shell.cursor =
-      XCreateFontCursor (XtDisplay(grabshell), XC_arrow);
+      XmeLoadCursor(XtDisplay(grabshell), XtScreen(grabshell), "arrow");
 
   _XmFastExpose(shell);
 
