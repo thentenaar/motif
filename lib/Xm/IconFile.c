@@ -575,8 +575,6 @@ XmGetIconFileName(
 
     /* generate the icon paths once per application: iconPath and bmPath */
     if (!iconNameCache) {
-	Boolean		junkBoolean;
-
 	iconNameCache =  _XmAllocHashTable(100,
 					   CompareIconNames, HashIconName);
 
@@ -588,14 +586,14 @@ XmGetIconFileName(
 	strcpy(stackString, homedir) ;
 
 	if (useColor) {
-	    iconPath = _XmOSInitPath(NULL, "XMICONSEARCHPATH", &junkBoolean);
+	    iconPath = _XmOSInitPath(NULL, "XMICONSEARCHPATH", NULL);
 	}
 	else {
-	    iconPath = _XmOSInitPath(NULL, "XMICONBMSEARCHPATH", &junkBoolean);
+	    iconPath = _XmOSInitPath(NULL, "XMICONBMSEARCHPATH", NULL);
 	}
 
 	/* 1.2 path as a fallback */
-	bmPath = _XmOSInitPath(NULL, "XBMLANGPATH", &junkBoolean);
+	bmPath = _XmOSInitPath(NULL, "XBMLANGPATH", NULL);
 
     }
 
