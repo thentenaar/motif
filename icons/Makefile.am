@@ -10,7 +10,7 @@ icon_DATA = \
 	xm_question.svg \
 	xm_warning.svg \
 	xm_working.svg \
-	xm_error.svg \
+	xm_error.xpm \
 	xm_information.xpm \
 	xm_question.xpm \
 	xm_warning.xpm \
