@@ -1205,14 +1205,15 @@ MergeBegins(_XmStringEntry a,
 static Boolean
 IsUnopt(_XmString str, int lines)
 {
-  _XmStringEntry line;
+  _XmStringEntry *line;
 
   if (lines > 0)
     {
-      line = _XmStrEntry(str)[0];
+      if (!(line = _XmStrEntryGet(str)) || !*line)
+          return False;
 
-      if ((_XmEntrySegmentCountGet(line) > 0) &&
-	  (_XmEntryType(_XmEntrySegmentGet(line)[0]) !=
+      if ((_XmEntrySegmentCountGet(*line) > 0) &&
+	  (_XmEntryType(_XmEntrySegmentGet(*line)[0]) !=
 	   XmSTRING_ENTRY_OPTIMIZED))
 	return True;
     }
@@ -1220,7 +1221,7 @@ IsUnopt(_XmString str, int lines)
 }
 
 static _XmStringEntry
-Unoptimize(_XmStringEntry entry, int free)
+Unoptimize(_XmStringEntry entry, int do_free)
 {
   _XmStringEntry new_entry = NULL;
   _XmStringNREntry tmp_seg;
@@ -1231,10 +1232,10 @@ Unoptimize(_XmStringEntry entry, int free)
 
   if (_XmEntryType(entry) == XmSTRING_ENTRY_OPTIMIZED) {
     new_entry = EntryCvtToUnopt(entry);
-    if (free)
+    if (do_free)
       _XmStringEntryFree(entry);
   } else if (_XmEntryMultiple(entry)) {
-    if (free) {
+    if (do_free) {
       for (j = 0; j < _XmEntrySegmentCount(entry); j++) {
 	tmp_seg = _XmEntrySegment(entry)[j];
 	if (_XmEntryType(tmp_seg) == XmSTRING_ENTRY_OPTIMIZED) {
@@ -1262,7 +1263,7 @@ Unoptimize(_XmStringEntry entry, int free)
       }
     }
   } else {
-    if (free)
+    if (do_free)
       new_entry = entry;
     else
       new_entry = _XmStringEntryCopy(entry);
@@ -1289,7 +1290,7 @@ XmStringConcatAndFree(XmString a,
   XmTextType            a_type, b_type;
   XmString 		a_str, b_str;
   _XmStringMultiRec     b_tmp;
-  _XmStringEntry 	a_line, b_line, tmp_line, *segs=NULL;
+  _XmStringEntry 	a_line, b_line, *tmp_line=NULL, *segs=NULL;
   _XmStringNREntry 	a_last, b_seg = NULL, tmp_seg;
   String		a_tag;
   String		b_tag;
@@ -1687,9 +1688,10 @@ XmStringConcatAndFree(XmString a,
   else /* Need to figure out last direction set. */
     {
       for (i = a_lc; i > 0; i--) {
-	tmp_line = _XmStrEntry(a_str)[i - 1];
-	for (j = _XmEntrySegmentCountGet(tmp_line); j > 0; j--) {
-	  tmp_seg = _XmEntrySegmentGet(tmp_line)[j - 1];
+	tmp_line = _XmStrEntryGet(a_str);
+	if (!tmp_line) break;
+	for (j = _XmEntrySegmentCountGet(tmp_line[i - 1]); j > 0; j--) {
+	  tmp_seg = _XmEntrySegmentGet(tmp_line[i - 1])[j - 1];
 	  if (_XmEntryDirectionGet((_XmStringEntry)tmp_seg) !=
 	      XmSTRING_DIRECTION_UNSET) {
 	    last = _XmEntryDirectionGet((_XmStringEntry)tmp_seg);
@@ -1792,11 +1794,11 @@ XmStringConcatAndFree(XmString a,
 
   /* Set layout cache dirty */
   if (a_str && _XmStrEntryCount(a_str) > 0 ) {
-    tmp_line = _XmStrEntry(a_str)[0];
-    if (tmp_line && _XmEntrySegmentCountGet(tmp_line) > 0) {
+    tmp_line = _XmStrEntryGet(a_str);
+    if (tmp_line && *tmp_line && _XmEntrySegmentCountGet(*tmp_line) > 0) {
       _XmStringCache cache;
 
-      tmp_seg = _XmEntrySegmentGet(tmp_line)[0];
+      tmp_seg = _XmEntrySegmentGet(*tmp_line)[0];
       for (cache = _XmStringCacheGet(_XmEntryCacheGet((_XmStringEntry)tmp_seg),
 				     _XmSCANNING_CACHE);
 	   cache;
@@ -4337,17 +4339,16 @@ _XmStringLayout(_XmString string,
                 XmDirection direction)
 {
   int seg_index=0, line_index=0;
-  _XmStringEntry        line;
+  _XmStringEntry        *line;
   _XmStringNREntry 	seg;
   Boolean needs_recompute = False;
 
   if (!_XmStrMultiple(string))
     return;
 
-  if (_XmStrEntryCount(string)) {
-    line = _XmStrEntry(string)[0];
-    if (_XmEntrySegmentCountGet(line)) {
-      seg = _XmEntrySegmentGet(line)[0];
+  if (_XmStrEntryCount(string) && (line = _XmStrEntryGet(string)) && *line) {
+    if (_XmEntrySegmentCountGet(*line)) {
+      seg = _XmEntrySegmentGet(*line)[0];
       needs_recompute = _XmEntryDirtyGet(seg, _XmSCANNING_CACHE, direction);
     }
   }
@@ -4355,11 +4356,10 @@ _XmStringLayout(_XmString string,
   if (!needs_recompute)
     return;
 
-  while (line_index < _XmStrEntryCount(string)) {
-    line = _XmStrEntry(string)[line_index];
-    while (seg_index < _XmEntrySegmentCountGet(line)) {
-      seg = _XmEntrySegmentGet(line)[seg_index];
-      if (_XmEntrySegmentCountGet(line) > 1) {
+  while (line_index < _XmStrEntryCount(string) && (line = _XmStrEntryGet(string))) {
+    while (seg_index < _XmEntrySegmentCountGet(line[line_index])) {
+      seg = _XmEntrySegmentGet(line[line_index])[seg_index];
+      if (_XmEntrySegmentCountGet(line[line_index]) > 1) {
 	_XmEntryDirtySet(seg, _XmSCANNING_CACHE, direction, True);
 	_XmEntryLeftSet(seg, direction, NULL);
 	_XmEntryRightSet(seg, direction, NULL);
@@ -4375,11 +4375,11 @@ _XmStringLayout(_XmString string,
 		   direction, direction, 0);
 
   /* if there are pops w/o matching pushes, ignore them */
+  line = _XmStrEntryGet(string);
   while (line_index < _XmStrLineCountGet(string) &&
-	 seg_index < _XmEntrySegmentCountGet(_XmStrEntry(string)[line_index]))
+	 seg_index < _XmEntrySegmentCountGet(line[line_index]))
     {
-      line = _XmStrEntry(string)[line_index];
-      seg = _XmEntrySegmentGet(line)[seg_index];
+      seg = _XmEntrySegmentGet(line[line_index])[seg_index];
       _XmEntryPopSet(seg, False);
       recursive_layout(string, &line_index, &seg_index,
 		       direction, direction, 0);
