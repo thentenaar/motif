@@ -74,7 +74,7 @@ support for X/Open message catalogs.
   Specify ``--without-jpeg``, etc. to disable them.
 - Motif's editres implementation has been removed, so that the updated version
   in [libXmu](https://gitlab.freedesktop.org/xorg/lib/libxmu/-/merge_requests/18)
-  can be used instead. Editres itself will require [this](https://gitlab.freedesktop.org/hentenaar/editres/-/merge_requests/1.diff)
+  can be used instead. Editres itself will require [this](https://gitlab.freedesktop.org/xorg/app/editres/-/merge_requests/7.diff)
   patch.
 - ``XmCommandGetChild()`` is deprecated in favor of ``XtNameToWidget`` like the other ``*GetChild()`` functions
 - The demos have been split out from the ``all`` make target
