@@ -2480,7 +2480,8 @@ Urm__CW_ConvertValue (Widget			parent,
 	screen = DefaultScreenOfDisplay(display);
 	unitsfloatvalue = (RGMUnitsFloatPtr) *val;
 	float_units = unitsfloatvalue->units;
-	float_val   = (float)*(double *)unitsfloatvalue->value;
+	memcpy(&double_val, unitsfloatvalue->value, sizeof double_val);
+	float_val = (float)double_val;
 
 	if (float_val != 0)
 	  {
