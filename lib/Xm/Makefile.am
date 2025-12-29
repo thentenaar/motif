@@ -240,7 +240,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         TextFunc.c      ColorObj.c      IconFile.c      RCHook.c \
         GetRes.c        BBUtil.c        ChColor.c       ColObjFunc.c \
         DrTog.c         DrArrow.c       DrPoly.c        DrHiDash.c \
-        ValTime.c       FocusAct.c      CvtUnit.c       ScalTics.c \
+        ValTime.c       FocusAct.c      ScalTics.c \
         ScroVis.c       WidGet.c        ToolTip.c       Cursor.c
 
 OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c obsolete.c
