@@ -29,6 +29,7 @@ AC_DEFUN([AX_CFLAGS],[
 		ax_cc_gcov_command="llvm-cov gcov"
 		AX_APPEND_COMPILE_FLAGS([ dnl
 			-Wall dnl
+			-Wstrict-aliasing dnl
 			-Wno-unused dnl
 			-Wno-unused-result dnl
 			-Wno-misleading-indentation dnl
@@ -45,6 +46,7 @@ AC_DEFUN([AX_CFLAGS],[
 			-Wall dnl
 			-Wshadow dnl
 			-Wwrite-strings dnl
+			-Wstrict-aliasing dnl
 			-Wcast-align dnl
 			-Wformat-security dnl
 			-Wno-unused dnl
