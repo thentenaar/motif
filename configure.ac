@@ -97,7 +97,7 @@ AC_ARG_WITH([xrender],
 	[with_xrender=$withval], [with_xrender=yes])
 
 AC_ARG_WITH([xcursor],
-	[AS_HELP_STRING([--with-xcursor], [Enable Xrender support])],
+	[AS_HELP_STRING([--with-xcursor], [Enable Xcursor support])],
 	[with_xcursor=$withval], [with_xcursor=yes])
 
 dnl Xinerama has been deprecated for ages, so the user should manually
