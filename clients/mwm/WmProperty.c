@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * Motif Release 1.2.3
-*/ 
+*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -88,7 +88,7 @@ static SizeHints sizeHints;
  *  ------
  *  pCD = (client)
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = A pointer to a filled out SizeHints structure is returned.
@@ -97,7 +97,7 @@ static SizeHints sizeHints;
  *
  *************************************<->***********************************/
 
-SizeHints * 
+SizeHints *
 GetNormalHints(
         ClientData *pCD )
 
@@ -225,7 +225,7 @@ GetNormalHints(
  *  ------
  *  pCD = pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = (clientProtocols, clientProtocolCount, protocolFlags)
@@ -279,10 +279,10 @@ void ProcessWmProtocols (ClientData *pCD)
 	rValue = -1;
     else
 #endif /* WSM */
-    rValue = XGetWMProtocols (DISPLAY, pCD->client, 
+    rValue = XGetWMProtocols (DISPLAY, pCD->client,
 		 (Atom **)&property, &nitems);
 
-    if (0 == rValue) 
+    if (0 == rValue)
 #endif /* ICCC_COMPLIANT */
     {
 	/*
@@ -356,7 +356,7 @@ void ProcessWmProtocols (ClientData *pCD)
  *  ------
  *  pCD = pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = (mwmMessagesCount, mwmMessages)
@@ -462,7 +462,7 @@ void ProcessMwmMessages (ClientData *pCD)
  *
  *  wmWindow = motifWmInfo.wmWindow value
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  _MWM_INFO = this property is set on the specified window
@@ -499,7 +499,7 @@ void SetMwmInfo (Window propWindow, long flags, Window wmWindow)
  *  ------
  *  wmWindow = motifWmInfo.wmWindow
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  WM_SAVE_YOURSELF = this property is set on the wm window
@@ -511,13 +511,13 @@ void SetMwmSaveSessionInfo (Window wmWindow)
 
     Atom  property;
     property = wmGD.xa_WM_SAVE_YOURSELF;
-    
-    XChangeProperty (DISPLAY, wmWindow, 
+
+    XChangeProperty (DISPLAY, wmWindow,
 		     wmGD.xa_WM_PROTOCOLS, XA_ATOM,
 		     32, PropModeReplace,
 		     (unsigned char *) &property, 1);
     SetWMState(wmWindow, NORMAL_STATE, 0);
-    
+
 } /* END OF FUNCTION SetMwmSaveSessionInfo */
 #endif /* WSM */
 
@@ -537,7 +537,7 @@ void SetMwmSaveSessionInfo (Window wmWindow)
  *  ------
  *  window = client window from which the WM_STATE property is to be retrieved
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  RETURN = a pointer to the WM_STATE property value (NULL if not defined)
@@ -547,7 +547,7 @@ void SetMwmSaveSessionInfo (Window wmWindow)
  *  --------
  *  This function will eventually be superceded when WM_STATE support is
  *  added to the official X release.
- * 
+ *
  *************************************<->***********************************/
 
 PropWMState *
@@ -562,10 +562,10 @@ GetWMState(
     unsigned long leftover;
 
 
-    ret_val = XGetWindowProperty (DISPLAY, window, wmGD.xa_WM_STATE, 
+    ret_val = XGetWindowProperty (DISPLAY, window, wmGD.xa_WM_STATE,
 		  0L, PROP_WM_STATE_ELEMENTS,
-		  False, wmGD.xa_WM_STATE, 
-		  &actual_type, &actual_format, 
+		  False, wmGD.xa_WM_STATE,
+		  &actual_type, &actual_format,
 		  &nitems, &leftover, (unsigned char **)&property);
 
     if (!((ret_val == Success) && (actual_type == wmGD.xa_WM_STATE) &&
@@ -607,7 +607,7 @@ GetWMState(
  *
  *  icon = window manager's icon window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  WM_STATE = this property is set on the client window
@@ -617,7 +617,7 @@ GetWMState(
  *  --------
  *  This function will eventually be superceded when WM_STATE support is
  *  added to the official X release.
- * 
+ *
  *************************************<->***********************************/
 
 void SetWMState (Window window, int state, Window icon)
@@ -643,13 +643,13 @@ void SetWMState (Window window, int state, Window icon)
  *
  *  Description:
  *  -----------
- *  This function reads any _MWM_HINTS property that is associated with a 
+ *  This function reads any _MWM_HINTS property that is associated with a
  *  client window.
  *
  *  Inputs:
  *  ------
  *  pCD = pointer to client data
- * 
+ *
  *  Outputs:
  *  -------
  *  RETURN = ptr to mwm hints property, or NULL ptr if failure
@@ -674,10 +674,10 @@ GetMwmHints(
 	ret_val = ~Success;
     else
 #endif /* WSM */
-    ret_val = XGetWindowProperty (DISPLAY, pCD->client, wmGD.xa_MWM_HINTS, 
+    ret_val = XGetWindowProperty (DISPLAY, pCD->client, wmGD.xa_MWM_HINTS,
 		  0L, PROP_MWM_HINTS_ELEMENTS,
-		  False, wmGD.xa_MWM_HINTS, 
-		  &actual_type, &actual_format, 
+		  False, wmGD.xa_MWM_HINTS,
+		  &actual_type, &actual_format,
 		  &nitems, &leftover, (unsigned char **)&property);
 
     /*
@@ -728,10 +728,10 @@ GetMwmHints(
  *  -----------
  *  This function reads the _MOTIF_WM_INFO property from the root window if
  *  it is setup.
- * 
+ *
  *  Inputs:
  *  ------
- *  pSD = pointer to screen data 
+ *  pSD = pointer to screen data
  *
  *  Outputs:
  *  -------
@@ -758,7 +758,7 @@ PropMwmInfo *GetMwmInfo (Window rootWindowOfScreen)
                                      (unsigned char **)&property);
 
     if ((ret_val == Success) && (actual_type == wmGD.xa_MWM_INFO) &&
-        (nitems == PROP_MWM_INFO_ELEMENTS)) 
+        (nitems == PROP_MWM_INFO_ELEMENTS))
     {
 	return (property);			/* indicate success */
     }
@@ -795,7 +795,7 @@ PropMwmInfo *GetMwmInfo (Window rootWindowOfScreen)
  *  ------
  *  pCD = pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD = (cmapWindows, clientCmapList, clientCmapCount, clientCmapIndex)
@@ -891,7 +891,7 @@ void ProcessWmColormapWindows (ClientData *pCD)
 	    sAttributes.event_mask = (ColormapChangeMask);
     	    for (i = 0; i < nitems; i++)
     	    {
-		if ((pColormaps[colormapCount] = 
+		if ((pColormaps[colormapCount] =
 		     FindColormap (pCD, property[i])) != None)
 		{
 		    pWindows[colormapCount] = property[i];
@@ -908,7 +908,7 @@ void ProcessWmColormapWindows (ClientData *pCD)
 
 		    XChangeWindowAttributes (DISPLAY, property[i], CWEventMask,
 			&sAttributes);
-		
+
 
 		    if (XGetWindowAttributes (DISPLAY, property[i],
 			    &wAttributes))
@@ -926,7 +926,7 @@ void ProcessWmColormapWindows (ClientData *pCD)
 	     */
 
 	    ResetColormapData (pCD, pWindows, colormapCount);
-		
+
 
 	    /*
 	     * Set the colormap window data.
@@ -993,7 +993,7 @@ void ProcessWmColormapWindows (ClientData *pCD)
  *
  *  window = get the colormap id for this window
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  RETURN = colormap id for window (NULL if no colormap information)
@@ -1052,7 +1052,7 @@ Colormap FindColormap (ClientData *pCD, Window window)
  *  ------
  *  pCD = pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return = MenuItem list or NULL.
@@ -1125,7 +1125,7 @@ GetMwmMenuItems(
  *
  *  Inputs:
  *  ------
- *  display	- X display 
+ *  display	- X display
  *  window	- window to get hints from
  *  ppWsAtoms	- pointer to a list of workspace atoms (to be returned)
  *  pCount	- ptr to a number of atoms (to be returned)
@@ -1135,7 +1135,7 @@ GetMwmMenuItems(
  *  Returns:
  *  --------
  *  Success if suceeded, otherwise failure code.
- * 
+ *
  *
  *  Outputs:
  *  -------
@@ -1147,10 +1147,10 @@ GetMwmMenuItems(
  *  Comments:
  *  --------
  *  The caller must XtFree *ppWsAtoms when done!!!
- * 
+ *
  *************************************<->***********************************/
 
-Status GetWorkspaceHints (Display *display, Window window, 
+Status GetWorkspaceHints (Display *display, Window window,
 			  Atom **ppWsAtoms, unsigned int *pCount,
 			  Boolean *pbAll)
 {
@@ -1163,10 +1163,10 @@ Status GetWorkspaceHints (Display *display, Window window,
     {
 	if (pWsHints->flags & DT_WORKSPACE_HINTS_WORKSPACES)
 	{
-	    paWs = (Atom *) 
+	    paWs = (Atom *)
 		XtMalloc (pWsHints->numWorkspaces * sizeof(Atom));
-	    memcpy (paWs, 
-		    pWsHints->pWorkspaces, 
+	    memcpy (paWs,
+		    pWsHints->pWorkspaces,
 		    (pWsHints->numWorkspaces * sizeof(Atom)));
 
 	    *pCount = pWsHints->numWorkspaces;
@@ -1191,7 +1191,7 @@ Status GetWorkspaceHints (Display *display, Window window,
 
 	_DtWsmFreeWorkspaceHints (pWsHints);
     }
-	
+
     return(rcode);
 
 } /* END OF FUNCTION GetWorkspaceHints */
@@ -1199,7 +1199,7 @@ Status GetWorkspaceHints (Display *display, Window window,
 
 /*************************************<->*************************************
  *
- *  SetEmbeddedClientsProperty (propWindow, pEmbeddedClients, 
+ *  SetEmbeddedClientsProperty (propWindow, pEmbeddedClients,
  *  				cEmbeddedCLients)
  *
  *
@@ -1216,10 +1216,10 @@ Status GetWorkspaceHints (Display *display, Window window,
  *
  *************************************<->***********************************/
 
-void SetEmbeddedClientsProperty (Window propWindow, 
+void SetEmbeddedClientsProperty (Window propWindow,
     Window *pEmbeddedClients, unsigned long cEmbeddedClients)
 {
-    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_EMBEDDED_CLIENTS, 
+    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_EMBEDDED_CLIENTS,
 	wmGD.xa_DT_EMBEDDED_CLIENTS,
 	32, PropModeReplace, (unsigned char *)pEmbeddedClients,
 	cEmbeddedClients);
@@ -1243,13 +1243,13 @@ void SetEmbeddedClientsProperty (Window propWindow,
  *  propWindow = window on which the _DT_WORKSPACE_INFO property is to be set
  *  pWsInfo =  pointer to workspace info data
  *  cInfo = size of workspace info data
- * 
+ *
  *
  *************************************<->***********************************/
 
 void SetWorkspaceInfo (Window propWindow, WorkspaceInfo *pWsInfo, unsigned long cInfo)
 {
-    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_WORKSPACE_INFO, 
+    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_WORKSPACE_INFO,
 	wmGD.xa_DT_WORKSPACE_INFO,
 	32, PropModeReplace, (unsigned char *)pWsInfo,
 	(cInfo * sizeof(WorkspaceInfo))/sizeof(long));
@@ -1271,7 +1271,7 @@ void SetWorkspaceInfo (Window propWindow, WorkspaceInfo *pWsInfo, unsigned long 
  *  Inputs:
  *  ------
  *  pSD = ptr to screen data
- * 
+ *
  *
  *************************************<->***********************************/
 
@@ -1282,7 +1282,7 @@ SetWorkspaceListProperty (WmScreenData *pSD)
     Atom *pWsList;
     int count;
 
-    pWsList = (Atom *) 
+    pWsList = (Atom *)
 	XtMalloc (pSD->numWorkspaces * sizeof(Atom));
 
     pws = pSD->pWS;
@@ -1292,8 +1292,8 @@ SetWorkspaceListProperty (WmScreenData *pSD)
 	pws++;
     }
 
-    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin, 
-        wmGD.xa_DT_WORKSPACE_LIST, 
+    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin,
+        wmGD.xa_DT_WORKSPACE_LIST,
 	XA_ATOM,
 	32, PropModeReplace, (unsigned char *)pWsList,
 	(pSD->numWorkspaces * sizeof(Atom))/sizeof(long));
@@ -1316,7 +1316,7 @@ SetWorkspaceListProperty (WmScreenData *pSD)
  *  Inputs:
  *  ------
  *  pSD = ptr to screen data
- * 
+ *
  *
  *************************************<->***********************************/
 
@@ -1327,8 +1327,8 @@ SetCurrentWorkspaceProperty (WmScreenData *pSD)
 
     aCurrent = pSD->pActiveWS->id;
 
-    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin, 
-        wmGD.xa_DT_WORKSPACE_CURRENT, 
+    XChangeProperty (DISPLAY, pSD->wmWorkspaceWin,
+        wmGD.xa_DT_WORKSPACE_CURRENT,
 	XA_ATOM,
 	32, PropModeReplace, (unsigned char *)&aCurrent,
 	(sizeof(Atom))/sizeof(long));
@@ -1352,7 +1352,7 @@ SetCurrentWorkspaceProperty (WmScreenData *pSD)
  *  Inputs:
  *  ------
  *  pWS = ptr to workspace data
- * 
+ *
  *
  *************************************<->***********************************/
 
@@ -1375,7 +1375,7 @@ SetWorkspaceInfoProperty (WmWorkspaceData *pWS)
      */
     pch = WorkspacePropertyName (pWS);
 
-    aProperty = XmInternAtom (DISPLAY, pch, FALSE);
+    aProperty = XInternAtom(DISPLAY, pch, FALSE);
 
     XtFree ((char *) pch);
 
@@ -1397,7 +1397,7 @@ SetWorkspaceInfoProperty (WmWorkspaceData *pWS)
     /* allocate string vector */
     ppchList = (char **) XtMalloc (iNumStrings * sizeof (char *));
     pch = (char *) XtMalloc (iNumStrings * WIP_NUMBER_SIZE * sizeof(char));
-    
+
     i = 0;
 
     /* Convert workspace title to ascii */
@@ -1437,8 +1437,8 @@ SetWorkspaceInfoProperty (WmWorkspaceData *pWS)
     ppchList[i++] = &pch[ix];
 
     /* backdrop windows */
-    /* 
-     * One or zero backdrop windows 
+    /*
+     * One or zero backdrop windows
      * (NULL written if zero)
      */
     ix = (i * WIP_NUMBER_SIZE);
@@ -1480,7 +1480,7 @@ SetWorkspaceInfoProperty (WmWorkspaceData *pWS)
  *  Inputs:
  *  ------
  *  pWS = ptr to workspace data
- * 
+ *
  *
  *************************************<->***********************************/
 
@@ -1495,7 +1495,7 @@ DeleteWorkspaceInfoProperty (WmWorkspaceData *pWS)
      */
     pch = WorkspacePropertyName (pWS);
 
-    aProperty = XmInternAtom (DISPLAY, pch, FALSE);
+    aProperty = XInternAtom(DISPLAY, pch, FALSE);
 
     XtFree ((char *) pch);
 
@@ -1516,7 +1516,7 @@ DeleteWorkspaceInfoProperty (WmWorkspaceData *pWS)
  *
  *  Description:
  *  -----------
- *  This function returns a string containing the property name for a 
+ *  This function returns a string containing the property name for a
  *  workspace.
  *
  *
@@ -1567,18 +1567,18 @@ WorkspacePropertyName (WmWorkspaceData *pWS)
  *
  *  Inputs:
  *  ------
- *  propWindow = window on which the _DT_WORKSPACE_PRESENCE property 
+ *  propWindow = window on which the _DT_WORKSPACE_PRESENCE property
  *               is to be set
  *  pWsPresence =  pointer to workspace presence data
  *  cPresence = size of workspace presence data
- * 
+ *
  *
  *************************************<->***********************************/
 
 void SetWorkspacePresence (Window propWindow, Atom *pWsPresence, unsigned long cPresence)
 {
-    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_WORKSPACE_PRESENCE, 
-	wmGD.xa_DT_WORKSPACE_PRESENCE, 32, PropModeReplace, 
+    XChangeProperty (DISPLAY, propWindow, wmGD.xa_DT_WORKSPACE_PRESENCE,
+	wmGD.xa_DT_WORKSPACE_PRESENCE, 32, PropModeReplace,
 	(unsigned char *)pWsPresence, cPresence);
     XFlush (DISPLAY);
 
@@ -1618,7 +1618,7 @@ void GetDtSessionHints (WmScreenData *pSD, int sNum)
     unsigned long leftover;
     unsigned long nitems;
 
-    
+
 
     /*
      * Read the  property.
@@ -1649,7 +1649,7 @@ void GetDtSessionHints (WmScreenData *pSD, int sNum)
     {
         XFree ((char *)property);
     }
-    
+
     /*
      * Delete the property so we don't see it if the user
      * restarts dtwm.
@@ -1692,10 +1692,10 @@ void GetDtSessionHints (WmScreenData *pSD, int sNum)
  *
  *************************************<->***********************************/
 
-void 
+void
 GetDtWmRequest (
-		WmScreenData *pSD, 
-		char **pszReq, 
+		WmScreenData *pSD,
+		char **pszReq,
 		Boolean *pmore)
 
 {
@@ -1710,7 +1710,7 @@ GetDtWmRequest (
     unsigned long leftover;
     static unsigned long nitems = 0;
 
-    
+
     /*
      * We need to read the property again if we have no data left
      * over from last time;
@@ -1735,15 +1735,15 @@ GetDtWmRequest (
 				     &leftover, (unsigned char **)&property);
 
 #ifdef PARANOID
-	/* Give the server back */ 
+	/* Give the server back */
 	XUngrabServer(DISPLAY);
 #endif /* PARANOID */
 
-	/* 
+	/*
 	 * Validate the property that we've read
 	 */
-	if ((rValue != Success) || 
-	    (actualType == None) || 
+	if ((rValue != Success) ||
+	    (actualType == None) ||
 	    (actualFormat != 8))
 	{
 	    /* The property does not exist or it is an invalid type. */
@@ -1759,7 +1759,7 @@ GetDtWmRequest (
     }
 
 
-    /* 
+    /*
      * If we've got something, then extract and return the next
      * request.
      */
@@ -1793,7 +1793,7 @@ GetDtWmRequest (
 	    }
 	    iNext = i+1;
 	}
-	
+
 	if (iNext >= nitems)
 	{
 	    /*
@@ -1805,7 +1805,7 @@ GetDtWmRequest (
 	    property = NULL;
 	}
     }
-    
+
     *pmore = (property != NULL);
     *pszReq = chRequest;
 
@@ -1826,7 +1826,7 @@ GetDtWmRequest (
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD		- paInitialProperties member is updated
@@ -1835,7 +1835,7 @@ GetDtWmRequest (
  *  Comments:
  *  --------
  *  The caller must XFree the paIntialialProperties member!
- * 
+ *
  *************************************<->***********************************/
 
 void
@@ -1874,7 +1874,7 @@ GetInitialPropertyList (ClientData *pCD)
  *  ------
  *  pCD		- pointer to client data
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  pCD		- paInitialProperties member is updated
@@ -1882,8 +1882,8 @@ GetInitialPropertyList (ClientData *pCD)
  *
  *  Comments:
  *  --------
- *  
- * 
+ *
+ *
  *************************************<->***********************************/
 
 void
@@ -1892,7 +1892,7 @@ DiscardInitialPropertyList (ClientData *pCD)
     if (pCD->paInitialProperties)
     {
 	/*
-	 * Free the initial property list. 
+	 * Free the initial property list.
 	 * (see HasProperty() function)
 	 */
 	XFree ((char *) pCD->paInitialProperties);
@@ -1917,7 +1917,7 @@ DiscardInitialPropertyList (ClientData *pCD)
  *  pCD		- pointer to client data
  *  aProperty	- atom of property to test for
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  Return	- True if this property was on the initial list for this
@@ -1926,7 +1926,7 @@ DiscardInitialPropertyList (ClientData *pCD)
  *
  *  Comments:
  *  --------
- * 
+ *
  *************************************<->***********************************/
 
 Boolean
@@ -1955,7 +1955,7 @@ HasProperty (
 	/*
 	 * The property list doesn't exist. Return
 	 * True to force a read of this property. The most likely
-	 * case is that this property was updated after the 
+	 * case is that this property was updated after the
 	 * window was managed and needs to be read.
 	 */
 	bFound = True;
@@ -1984,7 +1984,7 @@ HasProperty (
  *
  *  count = number of windows
  *
- * 
+ *
  *  Outputs:
  *  -------
  *  _MWM_CLIENT_LIST = this property is set on the specified window

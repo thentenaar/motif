@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -37,7 +38,6 @@ static char rcsid[] = "$TOG: VirtKeys.c /main/22 1999/06/02 14:45:52 samborn $"
 #include <X11/keysym.h>
 #include <Xm/DisplayP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/XmosP.h>
 #include "MapEventsI.h"
 #include "VirtKeysI.h"

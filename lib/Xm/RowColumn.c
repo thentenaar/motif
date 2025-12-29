@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,11 +20,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: RowColumn.c /main/25 1998/07/22 15:41:49 mgreess $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -38,7 +40,6 @@ static char rcsid[] = "$TOG: RowColumn.c /main/25 1998/07/22 15:41:49 mgreess $"
 #include <X11/Xatom.h>
 #include <X11/ShellP.h>
 #include <X11/keysym.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/CascadeBGP.h>
 #include <Xm/CascadeBP.h>
 #include <Xm/DrawP.h>

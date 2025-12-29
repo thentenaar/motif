@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -81,7 +81,6 @@ static char rcsid[] = "$TOG: Mrminit.c /main/14 1999/05/19 15:25:33 mgreess $"
 #include <Xm/ArrowBG.h>
 #include <Xm/ArrowBGP.h>
 #include <Xm/ArrowBP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/BulletinB.h>
 #include <Xm/BulletinBP.h>
 #include <Xm/ButtonBox.h>

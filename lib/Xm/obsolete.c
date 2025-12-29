@@ -1,7 +1,7 @@
-/*
+/**
  * Motif
  *
- * Copyright (c) 1987-2012, The Open Group. All rights reserved.
+ * Copyright (c) 2025 Tim Hentenaar
  *
  * These libraries and programs are free software; you can
  * redistribute them and/or modify them under the terms of the GNU
@@ -19,14 +19,23 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
-#ifndef _XmAtomMgr_h
-#define _XmAtomMgr_h
+ */
 
-#include <Xm/Xm.h>
-
-#if defined(__GNUC__) || defined(__clang__) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
-#warning "AtomMgr.h is deprecated, use the Xlib Atom functions instead"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
-#endif /* _XmAtomMgr_h */
+#include <X11/Xlib.h>
+#include <X11/Intrinsic.h>
+#include "obsolete.h"
+
+Atom XmInternAtom(Display *display, String name, Boolean only_if_exists)
+{
+	return XInternAtom(display, name, only_if_exists);
+}
+
+String XmGetAtomName(Display *display, Atom atom)
+{
+	return XGetAtomName(display, atom);
+}
+

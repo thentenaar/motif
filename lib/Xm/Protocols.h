@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmProtocols_h
 #define _XmProtocols_h
 
 #include <Xm/Xm.h>
-#include <Xm/AtomMgr.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,37 +73,37 @@ extern "C" {
 
 /********    Public Function Declarations    ********/
 
-extern void XmAddProtocols( 
+extern void XmAddProtocols(
                         Widget shell,
                         Atom property,
                         Atom *protocols,
                         Cardinal num_protocols) ;
-extern void XmRemoveProtocols( 
+extern void XmRemoveProtocols(
                         Widget shell,
                         Atom property,
                         Atom *protocols,
                         Cardinal num_protocols) ;
-extern void XmAddProtocolCallback( 
+extern void XmAddProtocolCallback(
                         Widget shell,
                         Atom property,
                         Atom proto_atom,
                         XtCallbackProc callback,
                         XtPointer closure) ;
-extern void XmRemoveProtocolCallback( 
+extern void XmRemoveProtocolCallback(
                         Widget shell,
                         Atom property,
                         Atom proto_atom,
                         XtCallbackProc callback,
                         XtPointer closure) ;
-extern void XmActivateProtocol( 
+extern void XmActivateProtocol(
                         Widget shell,
                         Atom property,
                         Atom proto_atom) ;
-extern void XmDeactivateProtocol( 
+extern void XmDeactivateProtocol(
                         Widget shell,
                         Atom property,
                         Atom proto_atom) ;
-extern void XmSetProtocolHooks( 
+extern void XmSetProtocolHooks(
                         Widget shell,
                         Atom property,
                         Atom proto_atom,

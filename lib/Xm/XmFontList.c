@@ -1,5 +1,5 @@
 /* $XConsortium: XmFontList.c /main/16 1996/11/20 15:15:34 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,6 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -42,7 +39,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
-#include <Xm/AtomMgr.h>
 #include <Xm/XmosP.h>
 #include "XmI.h"
 #include "XmRenderTI.h"

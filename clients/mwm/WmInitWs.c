@@ -57,7 +57,6 @@ static char rcsid[] = "$TOG: WmInitWs.c /main/18 1999/09/20 15:18:22 mgreess $"
 #include <X11/Shell.h>
 #include <X11/Core.h>
 #include <X11/keysym.h>
-#include <Xm/AtomMgr.h>
 #ifndef NO_HP_KEY_REMAP
 #include <Xm/VirtKeysP.h>
 
@@ -976,9 +975,9 @@ void InitWmGlobal (int argc, char *argv [], char *environ [])
 
     /* Initialize properties used in session management. */
     wmGD.xa_SM_CLIENT_ID =
-      XmInternAtom (DISPLAY, _XA_DT_SM_CLIENT_ID, False);
+      XInternAtom (DISPLAY, _XA_DT_SM_CLIENT_ID, False);
     wmGD.xa_WMSAVE_HINT =
-      XmInternAtom (DISPLAY, _XA_DT_WMSAVE_HINT, False);
+      XInternAtom (DISPLAY, _XA_DT_WMSAVE_HINT, False);
 
     /* Load client resource database. */
     wmGD.clientResourceDB = LoadClientResourceDB();

@@ -33,7 +33,6 @@
 #endif
 #include <stdlib.h>
 
-#include <Xm/AtomMgr.h>
 #include <Xm/ClipWindowP.h>
 #include <Xm/ContItemT.h>
 #include <Xm/ContainerP.h>

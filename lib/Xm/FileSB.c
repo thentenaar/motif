@@ -36,7 +36,6 @@ static char rcsid[] = "$TOG: FileSB.c /main/21 1997/09/26 13:38:52 bill $"
 #include "RepTypeI.h"
 #include <Xm/FileSBP.h>
 #include <Xm/GadgetP.h>
-#include <Xm/AtomMgr.h>
 
 #include <Xm/List.h>
 #include <Xm/LabelG.h>

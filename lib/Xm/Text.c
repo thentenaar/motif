@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -36,7 +36,6 @@ static char rcsid[] = "$TOG: Text.c /main/47 1999/01/26 15:18:26 mgreess $"
 #include <X11/Xos.h>
 #include <X11/keysymdef.h>
 #include <Xm/AccTextT.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/CutPaste.h>
 #include <Xm/Display.h>

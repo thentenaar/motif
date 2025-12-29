@@ -1,5 +1,5 @@
 /* $TOG: Transfer.c /main/17 1997/07/16 16:31:41 csn $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,16 +21,12 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <X11/Xatom.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DragDrop.h>
 #include <Xm/SpecRenderT.h>
 #include <Xm/TraitP.h>

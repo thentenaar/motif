@@ -222,7 +222,7 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         TextIn.c        TextOut.c       TextStrSo.c     TextSel.c \
         ToggleB.c       ToggleBG.c      TrackLoc.c      UniqueEvnt.c \
         VaSimple.c      VirtKeys.c      XmString.c      ResEncod.c\
-        TextF.c         TextFSel.c      AtomMgr.c \
+        TextF.c         TextFSel.c      \
         Cache.c         Protocols.c     Primitive.c     Manager.c \
         Traversal.c     TravAct.c       TraversalI.c    BaseClass.c
 
@@ -243,7 +243,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         ValTime.c       FocusAct.c      CvtUnit.c       ScalTics.c \
         ScroVis.c       WidGet.c        ToolTip.c       Cursor.c
 
-OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c
+OBSO_SRCS = Obso1_2.c ObsoStr.c ObsoXme.c Obso2_0.c XmStringObso.c obsolete.c
 
 NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
         Notebook.c     ComboBox.c     GrabShell.c     SpinB.c  \

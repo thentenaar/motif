@@ -31,7 +31,6 @@ static char rcsid[] = "$RCSfile: DataFSel.c,v $ $Revision: 1.6 $ $Date: 2003/10/
 #include <Xm/DataFSelP.h>
 #include <Xm/DataFP.h>
 #include <X11/Xatom.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/XmosP.h>
 #include <Xm/DragC.h>
 #include <Xm/TextFP.h>
@@ -93,7 +92,7 @@ InsertSelection(
     wchar_t * wc_value;
     char * temp;
     int num_chars = 0;
-    Atom COMPOUND_TEXT = XmInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
+    Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
     char * total_tmp_value = NULL;
     XTextProperty tmp_prop;
     char **tmp_value;
@@ -258,8 +257,8 @@ HandleInsertTargets(
         int *format )
 {
    _XmInsertSelect *insert_select = (_XmInsertSelect *) closure;
-   Atom TEXT = XmInternAtom(XtDisplay(w), "TEXT", False);
-   Atom COMPOUND_TEXT = XmInternAtom(XtDisplay(w),"COMPOUND_TEXT", False);
+   Atom TEXT = XInternAtom(XtDisplay(w), "TEXT", False);
+   Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w),"COMPOUND_TEXT", False);
    Atom target = TEXT;
    Atom *atom_ptr;
    int i;
@@ -304,9 +303,8 @@ ConvertInsertSelection(
    XtAppContext app = XtWidgetToApplicationContext(w);
    XSelectionRequestEvent * req_event;
    static unsigned long old_serial = 0;
-   Atom TARGETS = XmInternAtom(XtDisplay(w), "TARGETS", False);
-   Atom MOTIF_DESTINATION = XmInternAtom(XtDisplay(w), "MOTIF_DESTINATION",
-					 False);
+   Atom TARGETS = XInternAtom(XtDisplay(w), "TARGETS", False);
+   Atom MOTIF_DESTINATION = XInternAtom(XtDisplay(w), "MOTIF_DESTINATION", False);
    Atom actual_type;
    int actual_format;
    unsigned long nitems;
@@ -374,7 +372,7 @@ ConvertInsertSelection(
        XtDispatchEvent(&event);
    }
 
-   *type = XmInternAtom(XtDisplay(w), "NULL", False);
+   *type = XInternAtom(XtDisplay(w), "NULL", False);
    *format = 8;
    *value = NULL;
    *length = 0;
@@ -397,19 +395,17 @@ _XmDataFieldConvert(
         int *format )
 {
     XmDataFieldWidget tf;
-    Atom MOTIF_DESTINATION = XmInternAtom(XtDisplay(w),
-                                        "MOTIF_DESTINATION", False);
-    Atom INSERT_SELECTION = XmInternAtom(XtDisplay(w),
-                                           "INSERT_SELECTION", False);
-    Atom DELETE = XmInternAtom(XtDisplay(w), "DELETE", False);
-    Atom CLIPBOARD = XmInternAtom(XtDisplay(w), "CLIPBOARD", False);
-    Atom LENGTH = XmInternAtom(XtDisplay(w), "LENGTH", False);
-    Atom TARGETS = XmInternAtom(XtDisplay(w), "TARGETS", False);
-    Atom MULTIPLE = XmInternAtom(XtDisplay(w), "MULTIPLE", False);
-    Atom TEXT = XmInternAtom(XtDisplay(w), "TEXT", False);
-    Atom COMPOUND_TEXT = XmInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
-    Atom TIMESTAMP = XmInternAtom(XtDisplay(w), "TIMESTAMP", False);
-    Atom MOTIF_DROP = XmInternAtom(XtDisplay(w), "_MOTIF_DROP", False);
+    Atom MOTIF_DESTINATION = XInternAtom(XtDisplay(w), "MOTIF_DESTINATION", False);
+    Atom INSERT_SELECTION  = XInternAtom(XtDisplay(w), "INSERT_SELECTION", False);
+    Atom DELETE            = XInternAtom(XtDisplay(w), "DELETE", False);
+    Atom CLIPBOARD         = XInternAtom(XtDisplay(w), "CLIPBOARD", False);
+    Atom LENGTH            = XInternAtom(XtDisplay(w), "LENGTH", False);
+    Atom TARGETS           = XInternAtom(XtDisplay(w), "TARGETS", False);
+    Atom MULTIPLE          = XInternAtom(XtDisplay(w), "MULTIPLE", False);
+    Atom TEXT              = XInternAtom(XtDisplay(w), "TEXT", False);
+    Atom COMPOUND_TEXT     = XInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
+    Atom TIMESTAMP         = XInternAtom(XtDisplay(w), "TIMESTAMP", False);
+    Atom MOTIF_DROP        = XInternAtom(XtDisplay(w), "_MOTIF_DROP", False);
     Atom CS_OF_LOCALE; /* to be initialized by XmbTextListToTextProperty */
     XSelectionRequestEvent * req_event;
     Boolean has_selection = False;
@@ -678,7 +674,7 @@ _XmDataFieldConvert(
       if (XmTextF_has_destination(tf))
           XmTextF_prim_anchor(tf) = TextF_CursorPosition(tf);
 
-      *type = XmInternAtom(XtDisplay(w), "NULL", False);
+      *type = XInternAtom(XtDisplay(w), "NULL", False);
       *value = NULL;
       *length = 0;
       *format = 8;
@@ -705,8 +701,7 @@ _XmDataFieldLoseSelection(
         Atom *selection )
 {
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
-    Atom MOTIF_DESTINATION = XmInternAtom(XtDisplay(w),
-                                        "MOTIF_DESTINATION", False);
+    Atom MOTIF_DESTINATION = XInternAtom(XtDisplay(w), "MOTIF_DESTINATION", False);
 /* Losing Primary Selection */
     if (*selection == XA_PRIMARY && XmTextF_has_primary(tf)) {
         XmAnyCallbackStruct cb;

@@ -39,7 +39,6 @@ static char rcsid[] = "$TOG: DragC.c /main/29 1997/10/07 12:19:52 cshi $"
 
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DragOverSP.h>
 #include <Xm/GadgetP.h>

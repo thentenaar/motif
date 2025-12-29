@@ -112,8 +112,8 @@ main(int argc, char *argv[])
                                         NULL);
 
    this->display = XtDisplay(theWidgetRoot);
-   FlightAtom = XmInternAtom(this->display, "FLIGHT", False);
-   DeleteAtom = XmInternAtom(this->display, "DELETE", False);
+   FlightAtom = XInternAtom(this->display, "FLIGHT", False);
+   DeleteAtom = XInternAtom(this->display, "DELETE", False);
 
    XtGetApplicationResources(theWidgetRoot, &AirportResources,
 			     AirportResourcesSpecs,

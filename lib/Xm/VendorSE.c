@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,13 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
 */
-/*
- * HISTORY
-*/
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -41,7 +38,6 @@ static char rcsid[] = "$TOG: VendorSE.c /main/21 1997/10/13 14:58:18 cshi $"
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/LayoutT.h>
 #include <Xm/RepType.h>

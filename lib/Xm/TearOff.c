@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
@@ -31,7 +32,6 @@ static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
 #endif
 
 #include <X11/cursorfont.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/Cursor.h>
 #include <Xm/DisplayP.h>

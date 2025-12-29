@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -35,7 +35,6 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 
 #include <stdio.h>
 #include <Xm/AccColorT.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 #include <Xm/LayoutT.h>
 #include <Xm/MenuShell.h>

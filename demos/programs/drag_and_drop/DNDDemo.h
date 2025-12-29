@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  *    file: DNDDemo.h
@@ -32,7 +32,6 @@
 #include <X11/Intrinsic.h>
 #include <X11/Xproto.h>
 #include <Xm/Xm.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/MainW.h>
 #include <Xm/DrawingA.h>
 #include <Xm/SeparatoG.h>
@@ -87,7 +86,7 @@
 
 
 /*
- * This struct is used to contain information about each rectangle 
+ * This struct is used to contain information about each rectangle
  * to use in the dislay routines
  */
 typedef struct _RectStruct {
@@ -110,7 +109,7 @@ typedef struct _AppInfoRec {
     RectPtr highlightRect;  /* the current highlighted rectangle */
     RectPtr clearRect;      /* the rectangle that is being moved */
     Boolean doMove;         /* indicates that a move is being performed */
-    Boolean creatingRect;   /* indicates that a rect create is being 
+    Boolean creatingRect;   /* indicates that a rect create is being
                                performed */
     unsigned char operation;/* indicates the drop help operation */
     unsigned int maxCursorWidth;  /* the maximum allowable cursor width */

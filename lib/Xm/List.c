@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: List.c /main/47 1999/10/12 16:58:17 mgreess $"
@@ -35,7 +36,6 @@ static char rcsid[] = "$TOG: List.c /main/47 1999/10/12 16:58:17 mgreess $"
 #include <X11/Xatom.h>
 #include <Xm/XmosP.h>
 #include "XmI.h"
-#include <Xm/AtomMgr.h>
 #include <Xm/CutPaste.h>
 #include <Xm/DragC.h>
 #include <Xm/DragIcon.h>

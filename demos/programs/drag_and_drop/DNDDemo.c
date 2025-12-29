@@ -392,13 +392,12 @@ void
 RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
 {
 
-    Display         *display = XtDisplay(widget);
-    Atom            MY_RECT = XmInternAtom(display, "_MY_RECTANGLE", False);
-    Atom            RECT_INFO = XmInternAtom(display, "RECT_INFO", False);
-    Atom            DELETE = XmInternAtom(display, "DELETE", False);
-    Atom            TARGETS = XmInternAtom(display, "TARGETS", False);
-    Atom	    ME_TARGETS =
-      XmInternAtom(display, XmS_MOTIF_EXPORT_TARGETS, False);
+    Display         *display   = XtDisplay(widget);
+    Atom            MY_RECT    = XInternAtom(display, "_MY_RECTANGLE", False);
+    Atom            RECT_INFO  = XInternAtom(display, "RECT_INFO", False);
+    Atom            DELETE     = XInternAtom(display, "DELETE", False);
+    Atom            TARGETS    = XInternAtom(display, "TARGETS", False);
+    Atom	        ME_TARGETS = XInternAtom(display, XmS_MOTIF_EXPORT_TARGETS, False);
     Atom            *targs;
     int             target_count;
     Arg             args[1];
@@ -433,7 +432,7 @@ RectConvert(Widget widget, XtPointer ignore, XmConvertCallbackStruct *cs)
          * ICCCM compliant.
          */
         cs -> value = NULL;
-        cs -> type = XmInternAtom(XtDisplay(widget), "NULL", False);
+        cs -> type = XInternAtom(XtDisplay(widget), "NULL", False);
         cs -> length = 0;
         cs -> format = 8;
 	cs -> status = XmCONVERT_DONE;
@@ -670,9 +669,9 @@ CheckTargets(Widget w, Display *display, Boolean *rectFound,
 	     Boolean *bgFound, Boolean *pixFound)
 {
 
-    Atom        MY_RECT = XmInternAtom(display, "_MY_RECTANGLE", False);
-    Atom        BACKGROUND = XmInternAtom(display, "BACKGROUND", False);
-    Atom        PIXMAP = XmInternAtom(display, "PIXMAP", False);
+    Atom        MY_RECT    = XInternAtom(display, "_MY_RECTANGLE", False);
+    Atom        BACKGROUND = XInternAtom(display, "BACKGROUND", False);
+    Atom        PIXMAP     = XInternAtom(display, "PIXMAP", False);
     Atom        *exportTargets;
     Cardinal    numExportTargets;
     Arg         args[2];
@@ -947,10 +946,10 @@ TransferProcCallback(Widget wid,
 {
     XmSelectionCallbackStruct *cs = (XmSelectionCallbackStruct *) call_data;
     DropTransfer    transferRec = (DropTransfer) closure;
-    Display         *display = XtDisplay(wid);
-    Atom            RECT_INFO = XmInternAtom(display, "RECT_INFO", False);
-    Atom            PIXEL = XmInternAtom(display, "PIXEL", False);
-    Atom            NULL_ATOM = XmInternAtom(display, "NULL", False);
+    Display         *display  = XtDisplay(wid);
+    Atom            RECT_INFO = XInternAtom(display, "RECT_INFO", False);
+    Atom            PIXEL     = XInternAtom(display, "PIXEL", False);
+    Atom            NULL_ATOM = XInternAtom(display, "NULL", False);
     Arg             args[10];
     RectPtr         rect;
     int             n;
@@ -1060,21 +1059,21 @@ HandleDrop(Widget w, XtPointer call, XtPointer call_data)
       transferRec->y = ds->y;
 
       XmTransferValue(cs -> transfer_id,
-		      XmInternAtom(display, "_MY_RECTANGLE", False),
+		      XInternAtom(display, "_MY_RECTANGLE", False),
 		      TransferProcCallback,
 		      (XtPointer) transferRec, CurrentTime);
       XmTransferValue(cs -> transfer_id,
-		      XmInternAtom(display, "BACKGROUND", False),
+		      XInternAtom(display, "BACKGROUND", False),
 		      TransferProcCallback,
 		      (XtPointer) transferRec, CurrentTime);
       XmTransferValue(cs -> transfer_id,
-		      XmInternAtom(display, "PIXMAP", False),
+		      XInternAtom(display, "PIXMAP", False),
 		      TransferProcCallback,
 		      (XtPointer) transferRec, CurrentTime);
       /* Set up move targets */
       if (ds->operation == XmDROP_MOVE) {
 	XmTransferValue(cs -> transfer_id,
-			XmInternAtom(display, "DELETE", False),
+			XInternAtom(display, "DELETE", False),
 			TransferProcCallback,
 			(XtPointer) transferRec, CurrentTime);
       }
@@ -1234,9 +1233,9 @@ RegisterDropSite(Widget w)
     XtSetArg(args[n], XmNdragOperations, XmDROP_COPY | XmDROP_MOVE); n++;
 
     /* set all possible targets for any of the nested drop sites */
-    targets[0] = XmInternAtom(display, "_MY_RECTANGLE", False);
-    targets[1] = XmInternAtom(display, "BACKGROUND", False);
-    targets[2] = XmInternAtom(display, "PIXMAP", False);
+    targets[0] = XInternAtom(display, "_MY_RECTANGLE", False);
+    targets[1] = XInternAtom(display, "BACKGROUND", False);
+    targets[2] = XInternAtom(display, "PIXMAP", False);
     XtSetArg(args[n], XmNimportTargets, targets); n++;
     XtSetArg(args[n], XmNnumImportTargets, 3); n++;
 

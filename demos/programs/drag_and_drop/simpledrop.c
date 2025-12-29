@@ -209,9 +209,9 @@ int main(int argc, char *argv[])
 				     XmNallowShellResize, True,
 				     NULL);
    this->display = XtDisplay(theWidgetRoot);
-   StringAtom = XmInternAtom(this->display, "STRING", False);
-   PixmapAtom = XmInternAtom(this->display, "PIXMAP", False);
-   CTAtom = XmInternAtom(this->display, "COMPOUND_TEXT", False);
+   StringAtom = XInternAtom(this->display, "STRING", False);
+   PixmapAtom = XInternAtom(this->display, "PIXMAP", False);
+   CTAtom     = XInternAtom(this->display, "COMPOUND_TEXT", False);
 /*
  * Create the widget structure.
  * Create the Main Window, the menubar and the pulldown menus
@@ -384,7 +384,7 @@ static void SomethingDropped(Widget dropSite, XtPointer client_data,
    }
    else     {
       Warning(this, "Non Identified Object is Dropped. ",
-	      num_targets > 0 ? XmGetAtomName(this->display,exports[0]) : "");
+	      num_targets > 0 ? XGetAtomName(this->display,exports[0]) : "");
       status = XmTRANSFER_FAILURE;
    }
    XtSetArg(args[n], XmNnumDropTransfers, num_transfer);  n++;
@@ -429,7 +429,7 @@ static void TransferDone(Widget transfer, XtPointer client_data,
 		    XmNnumDropTransfers, 0,
 		    NULL);
       sprintf(msg, "Type %s format %d",
-	      XmGetAtomName(this->display, *type), *format);
+	      XGetAtomName(this->display, *type), *format);
       Warning(this, "Dropped data is corrupted. ", msg);
       return;
    }

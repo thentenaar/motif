@@ -29,6 +29,7 @@
 #ifndef XM_OBSOLETE_H
 #define XM_OBSOLETE_H
 
+#include <X11/Xlib.h>
 #include <Xm/deprecated.h>
 
 /* {{{ Deprecated macros using C99's _Pragma */
@@ -52,13 +53,11 @@
 #endif
 /* }}} */
 
-/********    Public Function Declarations for MenuUtil.c    ********/
 XM_ALTERNATIVE(Use XtSetValues for XmNmenuCursor on XmScreen instead)
 extern void XmSetMenuCursor(Display *display, Cursor cursorId);
 
 XM_ALTERNATIVE(Use XtGetValues for XmNmenuCursor on XmScreen instead)
-extern Cursor XmGetMenuCursor(Display *display) ;
-/********    End Public Function Declarations    ********/
+extern Cursor XmGetMenuCursor(Display *display);
 
 XM_ALTERNATIVE(Use XtSetValues for XmNhorizontalFontUnit and XmNverticalFontUnit instead)
 extern void XmSetFontUnits(Display *display, int h_value, int v_value);
@@ -78,6 +77,7 @@ extern void XmAddTabGroup(Widget tabGroup);
 XM_ALTERNATIVE(Set XmNnavigationType to XmNONE instead)
 extern void XmRemoveTabGroup(Widget w);
 
+/* The converter is available by default */
 XM_DEPRECATED
 extern void XmCvtStringToUnitType(XrmValuePtr args, Cardinal *num_args,
                                   XrmValue *from_val, XrmValue *to_val);
@@ -151,6 +151,12 @@ extern Boolean XmFontListGetNextFont(
                         XmFontContext context,
                         XmStringCharSet *charset,
                         XFontStruct **font);
+
+XM_ALTERNATIVE(Use XInternAtom instead)
+extern Atom XmInternAtom(Display *display, String name, Boolean only_if_exists);
+
+XM_ALTERNATIVE(Use XGetAtomName instead)
+extern String XmGetAtomName(Display *display, Atom atom);
 
 #endif /* XM_OBSOLETE_H */
 #endif /* _Xm_h */

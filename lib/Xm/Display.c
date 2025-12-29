@@ -38,7 +38,6 @@ static char rcsid[] = "$TOG: Display.c /main/23 1997/06/18 17:36:59 samborn $"
 #include <X11/extensions/shape.h>
 
 #include <X11/Xatom.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DropTransP.h>
 #include <Xm/ScreenP.h>

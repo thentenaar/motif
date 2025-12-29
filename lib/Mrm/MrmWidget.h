@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 
 #ifndef MrmWidget_H
 #define MrmWidget_H
@@ -51,7 +51,6 @@
 #include <Xm/ArrowBG.h>
 #include <Xm/ArrowBGP.h>
 #include <Xm/ArrowBP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/CascadeB.h>
 #include <Xm/CascadeBG.h>
 #include <Xm/CascadeBGP.h>

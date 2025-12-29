@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -32,7 +32,6 @@ static char rcsid[] = "$TOG: TextFSel.c /main/22 1997/10/14 15:38:30 cshi $"
 #endif
 
 #include <X11/Xatom.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DragC.h>
 #include <Xm/TraitP.h>		/* for XmeTraitSet() */
 #include <Xm/TransferP.h>

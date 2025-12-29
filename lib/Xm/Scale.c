@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
@@ -75,7 +76,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DragC.h>
 #include <Xm/DragIconP.h>

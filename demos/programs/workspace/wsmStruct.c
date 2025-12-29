@@ -30,8 +30,6 @@ static char rcsid[] = "$TOG: wsmStruct.c /main/7 1997/05/02 10:04:46 dbl $"
 #endif
 #include <stdio.h>
 #include <Xm/Xm.h>
-#include <Xm/AtomMgr.h>
-
 
 #include "wsm.h"
 #include "wsmData.h"
@@ -1090,11 +1088,11 @@ IsSpaceInWorkWindow(Space *s, WorkWindow *w)
   ------------------------------------------------------------------*/
 void InitializeWsm()
 {
-  atoms.save_property = XmInternAtom(XtDisplay(shell),"WM_SAVE_YOURSELF",False);
-  atoms.protocols_property = XmInternAtom(XtDisplay(shell),"WM_PROTOCOLS",False);
-  atoms.sm_client_id_property = XmInternAtom(XtDisplay(shell),"_MOTIF_SM_CLIENT_ID",False);
-  atoms.wm_role_property = XmInternAtom(XtDisplay(shell),"_MOTIF_WM_WINDOW_ROLE",False);
-  atoms.wm_client_leader = XmInternAtom(XtDisplay(shell),"WM_CLIENT_LEADER",False);
+  atoms.save_property = XInternAtom(XtDisplay(shell),"WM_SAVE_YOURSELF",False);
+  atoms.protocols_property = XInternAtom(XtDisplay(shell),"WM_PROTOCOLS",False);
+  atoms.sm_client_id_property = XInternAtom(XtDisplay(shell),"_MOTIF_SM_CLIENT_ID",False);
+  atoms.wm_role_property = XInternAtom(XtDisplay(shell),"_MOTIF_WM_WINDOW_ROLE",False);
+  atoms.wm_client_leader = XInternAtom(XtDisplay(shell),"WM_CLIENT_LEADER",False);
 
   all_space = (Space *)XtMalloc(sizeof(Space));
   all_space->nameq = XrmStringToQuark("all");

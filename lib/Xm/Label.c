@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -39,7 +39,6 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #include <X11/Xlocale.h>
 #include <X11/keysymdef.h>
 #include <Xm/AccTextT.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/CascadeBP.h>
 #include <Xm/DisplayP.h>

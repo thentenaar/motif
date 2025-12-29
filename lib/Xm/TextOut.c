@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
-/*
- * HISTORY
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -39,7 +38,6 @@ static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 #include <X11/Vendor.h>
 #include <X11/Xatom.h>
 #include <Xm/AccColorT.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/Display.h>
 #include <Xm/DrawP.h>
 #include <Xm/NavigatorT.h>

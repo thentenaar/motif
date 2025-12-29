@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
-*/
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -42,7 +40,6 @@ static char rcsid[] = "$TOG: TextIn.c /main/36 1999/01/27 16:10:29 mgreess $"
 #include <X11/ShellP.h>
 #include <X11/Vendor.h>
 #include <X11/VendorP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DragC.h>
 #include <Xm/DragIcon.h>

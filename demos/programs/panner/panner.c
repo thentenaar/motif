@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <X11/Xmd.h>
 #include <Xm/TransferP.h>
-#include <Xm/AtomMgr.h>
 #include <Xm/CascadeB.h>
 #include <Xm/DrawingA.h>
 #include <Xm/Frame.h>
@@ -330,13 +329,13 @@ OpenNewDisplay(
   /* Setup the atoms needed to communicate with Mwm. Check screen number! */
   sprintf(selectionName, WM_SELECTION_FORMAT,
 	  XScreenNumberOfScreen(infoList[newDsp].screen));
-  infoList[newDsp].WM         = XmInternAtom(infoList[newDsp].display,
+  infoList[newDsp].WM         = XInternAtom(infoList[newDsp].display,
 					      selectionName, False);
-  infoList[newDsp].WM_PAN     = XmInternAtom(infoList[newDsp].display,
+  infoList[newDsp].WM_PAN     = XInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_PAN", False);
-  infoList[newDsp].WM_GOTO    = XmInternAtom(infoList[newDsp].display,
+  infoList[newDsp].WM_GOTO    = XInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_GOTO", False);
-  infoList[newDsp].WM_PAN_POS = XmInternAtom(infoList[newDsp].display,
+  infoList[newDsp].WM_PAN_POS = XInternAtom(infoList[newDsp].display,
 					      "_MOTIF_WM_PAN_POSITION", False);
 
   XtAddEventHandler(infoList[newDsp].canvas, ButtonPressMask, False,

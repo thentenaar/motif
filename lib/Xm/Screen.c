@@ -39,7 +39,6 @@ static char rcsid[] = "$TOG: Screen.c /main/16 1997/06/18 17:41:50 samborn $"
 
 #include <X11/Xatom.h>
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
-#include <Xm/AtomMgr.h>
 #include <Xm/DisplayP.h>
 
 #include "DragIconI.h"

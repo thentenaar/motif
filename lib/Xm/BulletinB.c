@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
@@ -32,7 +32,6 @@ static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
 
 
 #include "BulletinBI.h"
-#include <Xm/AtomMgr.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/DialogS.h>
 #include <Xm/DrawP.h>
@@ -76,84 +75,84 @@ static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
 
 /********    Static Function Declarations    ********/
 
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass w_class) ;
-static void Initialize( 
+static void Initialize(
                         Widget wid_req,
                         Widget wid_new,
                         ArgList args,
                         Cardinal *numArgs) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValuesHook( 
+static Boolean SetValuesHook(
                         Widget wid,
                         ArgList args,
                         Cardinal *num_args) ;
-static void HandleChangeManaged( 
+static void HandleChangeManaged(
                         XmBulletinBoardWidget bbWid,
                         XmGeoCreateProc geoMatrixCreate) ;
-static void HandleResize( 
+static void HandleResize(
                         XmBulletinBoardWidget bbWid,
                         XmGeoCreateProc geoMatrixCreate) ;
-static XtGeometryResult HandleGeometryManager( 
+static XtGeometryResult HandleGeometryManager(
                         Widget instigator,
                         XtWidgetGeometry *desired,
                         XtWidgetGeometry *allowed,
                         XmGeoCreateProc geoMatrixCreate) ;
-static void ChangeManaged( 
+static void ChangeManaged(
                         Widget wid) ;
-static void UnmanageCallback( 
+static void UnmanageCallback(
                         Widget w,
                         XtPointer client_data,
                         XtPointer call_data) ;
-static void InsertChild( 
+static void InsertChild(
                         Widget child) ;
-static void DeleteChild( 
+static void DeleteChild(
                         Widget child) ;
-static XtGeometryResult GeometryManager( 
+static XtGeometryResult GeometryManager(
                         Widget w,
                         XtWidgetGeometry *request,
                         XtWidgetGeometry *reply) ;
-static XtGeometryResult QueryGeometry( 
+static XtGeometryResult QueryGeometry(
                         Widget wid,
                         XtWidgetGeometry *intended,
                         XtWidgetGeometry *desired) ;
-static void Resize( 
+static void Resize(
                         Widget wid) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static Boolean BulletinBoardParentProcess( 
+static Boolean BulletinBoardParentProcess(
                         Widget wid,
                         XmParentProcessData event) ;
-static void GetDialogTitle( 
+static void GetDialogTitle(
                         Widget bb,
                         int resource,
                         XtArgVal *value) ;
-static Widget GetBBWithDB( 
+static Widget GetBBWithDB(
                         Widget wid) ;
 static XmFontList GetTable(Widget wid,
 			   XtEnum type);
 static void CallMapUnmap(Widget wid,
 			 Boolean map_unmap) ;
-static void BulletinBoardSetDefaultShadow( 
+static void BulletinBoardSetDefaultShadow(
                         Widget button) ;
-static void BBUpdateDynDefaultButton( 
+static void BBUpdateDynDefaultButton(
                          Widget bb) ;
 static void CheckSetRenderTables(Widget wid,
 				int offset,
-				XrmValue *value); 
+				XrmValue *value);
 
 /********    End Static Function Declarations    ********/
 
-
+
 /*  default translation table and action list  */
 
 #define defaultTranslations	_XmBulletinB_defaultTranslations
@@ -167,7 +166,7 @@ static XtActionsRec actionsList[] =
 };
 
 
-
+
 /*  Resource definitions for BulletinBoard
  */
 
@@ -195,7 +194,7 @@ static XmSyntheticResource syn_resources[] =
 };
 
 
-
+
 static XtResource resources[] =
 {
 	{	XmNshadowType,
@@ -224,7 +223,7 @@ static XtResource resources[] =
 	},
 
 	{	XmNdefaultButton,
-		XmCWidget, XmRWidget, sizeof (Widget), 
+		XmCWidget, XmRWidget, sizeof (Widget),
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.default_button),
 		XmRImmediate, (XtPointer) NULL
 	},
@@ -251,8 +250,8 @@ static XtResource resources[] =
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.unmap_callback),
 		XmRImmediate, (XtPointer) NULL
 	},
-	{	"pri.vate", "Pri.vate", 
-	 	XmRUnsignedChar, sizeof (unsigned char), 
+	{	"pri.vate", "Pri.vate",
+	 	XmRUnsignedChar, sizeof (unsigned char),
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.check_set),
 		XmRImmediate, 0
 	},
@@ -339,11 +338,11 @@ static XtResource resources[] =
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.dialog_title),
 		XmRImmediate, (XtPointer) NULL
 	},
-                  
+
 };
 
 
-
+
 /****************************************************************
  *
  *	BulletinBoard class record
@@ -397,12 +396,12 @@ externaldef( xmbulletinboardclassrec) XmBulletinBoardClassRec
    },
 
    {		/* constraint_class fields */
-      NULL,					/* resource list        */   
-      0,					/* num resources        */   
+      NULL,					/* resource list        */
+      0,					/* num resources        */
       sizeof(XmManagerConstraintRec),		/* constraint size      */
-      NULL,					/* init proc            */   
-      NULL,             			/* destroy proc         */   
-      NULL,					/* set values proc      */   
+      NULL,					/* init proc            */
+      NULL,             			/* destroy proc         */
+      NULL,					/* set values proc      */
       NULL,                                     /* extension            */
    },
 
@@ -416,7 +415,7 @@ externaldef( xmbulletinboardclassrec) XmBulletinBoardClassRec
       NULL,					/* extension		  */
    },
 
-   {		/* bulletinBoard class fields */     
+   {		/* bulletinBoard class fields */
       FALSE,                                    /*always_install_accelerators*/
       NULL,                                     /* geo_matrix_create */
       _XmBulletinBoardFocusMoved,               /* focus_moved_proc */
@@ -466,7 +465,7 @@ GetDialogTitle(
 
 
 /****************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass w_class )
 {
@@ -482,19 +481,19 @@ ClassPartInitialize(
        == XmInheritGeoMatrixCreate    )
 	{   bbClass->bulletin_board_class.geo_matrix_create
 		= bbSuper->bulletin_board_class.geo_matrix_create ;
-        } 
+        }
     if (bbClass->bulletin_board_class.focus_moved_proc
 	== XmInheritFocusMovedProc    )
 	{   bbClass->bulletin_board_class.focus_moved_proc
 		= bbSuper->bulletin_board_class.focus_moved_proc ;
-        } 
-    
+        }
+
     /* Install the specifyrendertable trait for all subclasses */
-    XmeTraitSet((XtPointer)w_class, XmQTspecifyRenderTable, 
+    XmeTraitSet((XtPointer)w_class, XmQTspecifyRenderTable,
 		(XtPointer) &bulletinbSRT);
 
     /* Install the dialogShellsavyy trait for all subclasses */
-    XmeTraitSet((XtPointer)w_class, XmQTdialogShellSavvy, 
+    XmeTraitSet((XtPointer)w_class, XmQTdialogShellSavvy,
 		(XtPointer) &bulletinbDST);
 
     return ;
@@ -505,13 +504,13 @@ ClassPartInitialize(
  * Initialize a BulletinBoard instance.
  ****************/
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget wid_req,
         Widget wid_new,
         ArgList args,		/* unused */
         Cardinal *numArgs )	/* unused */
-{   
+{
             XmBulletinBoardWidget request = (XmBulletinBoardWidget) wid_req ;
             XmBulletinBoardWidget new_w = (XmBulletinBoardWidget) wid_new ;
             Arg             al[5] ;
@@ -535,26 +534,26 @@ Initialize(
     defaultFL = BB_ButtonFontList( new_w) ;
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmBUTTON_FONTLIST) ;
-        } 
+        }
     BB_ButtonFontList( new_w) = XmFontListCopy( defaultFL) ;
 
     defaultFL = BB_LabelFontList( new_w) ;
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmLABEL_FONTLIST) ;
-        } 
+        }
     BB_LabelFontList( new_w) = XmFontListCopy( defaultFL) ;
 
     defaultFL = BB_TextFontList( new_w) ;
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmTEXT_FONTLIST) ;
-        } 
+        }
     BB_TextFontList( new_w) = XmFontListCopy( defaultFL) ;
 
     if(    (request->manager.shadow_thickness == XmINVALID_DIMENSION)
-       && XtIsShell( XtParent( request))    ){   
+       && XtIsShell( XtParent( request))    ){
 	new_w->manager.shadow_thickness = 1 ;
     }
-    if(new_w->manager.shadow_thickness == XmINVALID_DIMENSION)   
+    if(new_w->manager.shadow_thickness == XmINVALID_DIMENSION)
 	new_w->manager.shadow_thickness = 0 ;
 
     /* Default and Cancel buttons are Set/Get resources only.  The
@@ -574,8 +573,8 @@ Initialize(
     new_w->bulletin_board.old_shadow_thickness = 0 ;
 
     if(    request->bulletin_board.dialog_title    )
-    {   
-        new_w->bulletin_board.dialog_title = XmStringCopy( 
+    {
+        new_w->bulletin_board.dialog_title = XmStringCopy(
                                         request->bulletin_board.dialog_title) ;
         XmeSetWMShellTitle(new_w->bulletin_board.dialog_title,
 			   XtParent(new_w)) ;
@@ -589,7 +588,7 @@ Initialize(
     */
     if(    request->bulletin_board.no_resize
         && XmIsVendorShell( XtParent( new_w))    )
-    {   
+    {
         int old_mwm_functions ;
 
         XtSetArg( al[0], XmNmwmFunctions, &old_mwm_functions) ;
@@ -604,42 +603,42 @@ Initialize(
         mwm_functions &= ~MWM_FUNC_RESIZE ;
         XtSetArg( al[ac], XmNmwmFunctions, mwm_functions) ;  ac++ ;
         }
-          
+
     /* If parent is DialogShell, set dialog attributes and realize.
     */
     if(    XmIsDialogShell (XtParent (request))    )
-    {   
+    {
         new_w->bulletin_board.shell = XtParent( request) ;
 
         switch(    request->bulletin_board.dialog_style    )
-        {   
+        {
             case XmDIALOG_PRIMARY_APPLICATION_MODAL:
             {   mwmStyle = MWM_INPUT_PRIMARY_APPLICATION_MODAL ;
                 break ;
-                } 
+                }
             case XmDIALOG_FULL_APPLICATION_MODAL:
             {   mwmStyle = MWM_INPUT_FULL_APPLICATION_MODAL ;
-                break; 
-                } 
+                break;
+                }
             case XmDIALOG_SYSTEM_MODAL:
             {   mwmStyle = MWM_INPUT_SYSTEM_MODAL ;
                 break ;
-                } 
+                }
             case XmDIALOG_MODELESS:
             default:
             {   mwmStyle = MWM_INPUT_MODELESS ;
                 break ;
-                } 
-            } 
+                }
+            }
         XtSetArg( al[ac], XmNmwmInputMode, mwmStyle) ;  ac++ ;
         XtSetValues( new_w->bulletin_board.shell, al, ac) ;
         XtRealizeWidget( new_w->bulletin_board.shell) ;
-        } 
+        }
     else
     {   new_w->bulletin_board.shell = NULL ;
         if(    ac    )
         {   XtSetValues( XtParent (request), al, (Cardinal) ac) ;
-            } 
+            }
         }
     XtFree( text_value) ;
 
@@ -654,62 +653,62 @@ Initialize(
         }
 
     if(    new_w->bulletin_board.shell    )
-    {   
+    {
         if(    !XmRepTypeValidValue( XmRID_DIALOG_STYLE,
                            new_w->bulletin_board.dialog_style, (Widget) new_w)    )
         {   new_w->bulletin_board.dialog_style = XmDIALOG_MODELESS ;
-            } 
-        } 
+            }
+        }
     else
     {   if(    new_w->bulletin_board.dialog_style != XmDIALOG_MODELESS    )
-        {   
+        {
             XmeWarning( (Widget) new_w, WARN_DIALOG_STYLE) ;
             new_w->bulletin_board.dialog_style = XmDIALOG_MODELESS ;
-            } 
+            }
         }
-    /* Set source widget for accelerators used 
+    /* Set source widget for accelerators used
     *   by Manager in ConstraintInitialize.
     */
     if(    new_w->core.accelerators    )
     {   new_w->manager.accelerator_widget = (Widget) new_w ;
-        } 
+        }
 
     bbClass = (XmBulletinBoardWidgetClass) new_w->core.widget_class ;
 
     if(    bbClass->bulletin_board_class.focus_moved_proc    )
-    {   
+    {
         /* Walk up hierarchy to find vendor shell.  Then setup moved focus
         *   callback so default button can be maintained.
         */
         ancestor = XtParent( new_w) ;
         while(    ancestor  &&  !XmIsVendorShell( ancestor)    )
         {   ancestor = XtParent( ancestor) ;
-            } 
+            }
         if(    ancestor
-	   && (extData = _XmGetWidgetExtData( ancestor, XmSHELL_EXTENSION)) 
+	   && (extData = _XmGetWidgetExtData( ancestor, XmSHELL_EXTENSION))
 	   && (extData->widget)  )
-        {   
+        {
              vendorExt = (XmVendorShellExtObject) extData->widget;
 
             _XmAddCallback((InternalCallbackList *) &(vendorExt->vendor.focus_moved_callback),
                             (XtCallbackProc) bbClass->bulletin_board_class.focus_moved_proc,
                             (XtPointer) new_w) ;
-        } 
-    } 
+        }
+    }
     new_w->bulletin_board.old_width = new_w->core.width;  /* may be 0 */
     new_w->bulletin_board.old_height = new_w->core.height;        /* may be 0 */
 
     return ;
 }
 
-
+
 /****************************************************************
  * Free fontlists, etc.
  ****************/
-static void 
+static void
 Destroy(
         Widget wid )
-{   
+{
     XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
     Widget          ancestor ;
     XmWidgetExtData extData ;
@@ -728,7 +727,7 @@ Destroy(
   */
     ancestor = XtParent( bb) ;
     while(    ancestor  &&  !XmIsVendorShell( ancestor)    )
-       {   
+       {
            if (XmIsBulletinBoard(ancestor))
            {
              num_children = bb->composite.num_children;
@@ -736,19 +735,19 @@ Destroy(
              for (i = 0; i < num_children; i++)
              {
                if (BB_CancelButton(ancestor) == childList[i])
-                 BB_CancelButton(ancestor) = NULL; 
+                 BB_CancelButton(ancestor) = NULL;
                if (BB_DynamicCancelButton(ancestor) == childList[i])
-                 BB_DynamicCancelButton(ancestor) = NULL; 
+                 BB_DynamicCancelButton(ancestor) = NULL;
                if (BB_DefaultButton(ancestor) == childList[i])
-                 BB_DefaultButton(ancestor) = NULL; 
+                 BB_DefaultButton(ancestor) = NULL;
                if (BB_DynamicDefaultButton(ancestor) == childList[i])
-                 BB_DynamicDefaultButton(ancestor) = NULL; 
+                 BB_DynamicDefaultButton(ancestor) = NULL;
              }
            }
            ancestor = XtParent( ancestor) ;
        }
   /* End 5209 */
-  
+
 
     XmStringFree( bb->bulletin_board.dialog_title) ;
 
@@ -756,57 +755,57 @@ Destroy(
     */
     if(    bb->bulletin_board.geo_cache    )
     {   _XmGeoMatrixFree( bb->bulletin_board.geo_cache) ;
-        } 
+        }
     /*	Free fontlists.
     */
     if(    bb->bulletin_board.button_font_list    )
     {   XmFontListFree( bb->bulletin_board.button_font_list) ;
-        } 
+        }
     if(    bb->bulletin_board.label_font_list    )
     {   XmFontListFree( bb->bulletin_board.label_font_list) ;
-        } 
+        }
     if(    bb->bulletin_board.text_font_list    )
     {   XmFontListFree( bb->bulletin_board.text_font_list) ;
-        } 
+        }
 
     bbClass = (XmBulletinBoardWidgetClass) bb->core.widget_class ;
 
 
     if(    bbClass->bulletin_board_class.focus_moved_proc    )
-    {   
+    {
         /* Walk up hierarchy to find vendor shell.  Then remove focus moved
         *   callback.
         */
         ancestor = XtParent( bb) ;
         while(    ancestor  &&  !XmIsVendorShell( ancestor)    )
         {   ancestor = XtParent( ancestor) ;
-            } 
+            }
         if(    ancestor
             && !ancestor->core.being_destroyed
             && (extData = _XmGetWidgetExtData( ancestor, XmSHELL_EXTENSION))  )
-        {   
+        {
              vendorExt = (XmVendorShellExtObject) extData->widget;
 
             _XmRemoveCallback((InternalCallbackList *) &(vendorExt->vendor.focus_moved_callback),
                              (XtCallbackProc) bbClass->bulletin_board_class.focus_moved_proc,
                              (XtPointer) bb) ;
-        } 
-    } 
+        }
+    }
 }
 
-
+
 /****************************************************************
  * Modify attributes of a BulletinBoard instance.
  ****************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
         ArgList args,		/* unused */
         Cardinal *num_args )	/* unused */
-{   
+{
     XmBulletinBoardWidget current = (XmBulletinBoardWidget) cw ;
     XmBulletinBoardWidget request = (XmBulletinBoardWidget) rw ;
     XmBulletinBoardWidget new_w = (XmBulletinBoardWidget) nw ;
@@ -826,41 +825,41 @@ SetValues(
     if(new_w->bulletin_board.shadow_type
        != current->bulletin_board.shadow_type) {
 	if (XmRepTypeValidValue( XmRID_SHADOW_TYPE,
-				new_w->bulletin_board.shadow_type, 
+				new_w->bulletin_board.shadow_type,
 				(Widget) new_w) )
 	    flag = True ;
-	else 
-	    new_w->bulletin_board.shadow_type = 
+	else
+	    new_w->bulletin_board.shadow_type =
 		current->bulletin_board.shadow_type ;
-    } 
-    
-    if(    (new_w->bulletin_board.resize_policy 
+    }
+
+    if(    (new_w->bulletin_board.resize_policy
                                       != current->bulletin_board.resize_policy)
         && !XmRepTypeValidValue( XmRID_RESIZE_POLICY,
                           new_w->bulletin_board.resize_policy, (Widget) new_w)    )
-    {   new_w->bulletin_board.resize_policy 
+    {   new_w->bulletin_board.resize_policy
                                       = current->bulletin_board.resize_policy ;
         }
 
     if(    new_w->bulletin_board.dialog_style
                                    != current->bulletin_board.dialog_style    )
     {   if(    new_w->bulletin_board.shell    )
-        {   
-            if(    !XmRepTypeValidValue( XmRID_DIALOG_STYLE, 
+        {
+            if(    !XmRepTypeValidValue( XmRID_DIALOG_STYLE,
                            new_w->bulletin_board.dialog_style, (Widget) new_w)    )
             {   new_w->bulletin_board.dialog_style
                                        = current->bulletin_board.dialog_style ;
-                } 
-            } 
+                }
+            }
         else
         {   if(    new_w->bulletin_board.dialog_style != XmDIALOG_MODELESS    )
-            {   
+            {
                 XmeWarning( (Widget) new_w, WARN_DIALOG_STYLE) ;
                 new_w->bulletin_board.dialog_style
                                        = current->bulletin_board.dialog_style ;
-                } 
+                }
             }
-        } 
+        }
     /*	Update shell attributes.
     */
     if(    new_w->bulletin_board.dialog_title !=
@@ -876,30 +875,30 @@ SetValues(
 
 /*
  * Fix for 2940 - If the parent of the BulletinBoard is a VendorShell or
- *                related to VendorShell, check the no_resize and 
+ *                related to VendorShell, check the no_resize and
  *		  change it if necessary
  */
     if (XmIsVendorShell(XtParent(new_w)))
-    {   
+    {
         ac = 0 ;
         /*	Turn window manager resize on or off.
         */
         if(    new_w->bulletin_board.no_resize != current->bulletin_board.no_resize    )
-        {   
+        {
             XtSetArg( al[0], XmNmwmFunctions, &mwm_functions) ;
 	    XtGetValues( XtParent( new_w), al, 1) ;
 
 	    if(    mwm_functions == DONT_CARE    )
 	      {
-		mwm_functions = (int) (XmIsDialogShell(XtParent(new_w)) ? 
+		mwm_functions = (int) (XmIsDialogShell(XtParent(new_w)) ?
 				       DIALOG_FUNCS : CLIENT_FUNCS);
 	      }
             if(    new_w->bulletin_board.no_resize    )
             {   mwm_functions &= ~MWM_FUNC_RESIZE ;
-                } 
+                }
             else
             {   mwm_functions |= MWM_FUNC_RESIZE ;
-                } 
+                }
             XtSetArg( al[ac], XmNmwmFunctions, mwm_functions) ;  ac++ ;
             }
         if(    new_w->bulletin_board.shell    )
@@ -908,37 +907,37 @@ SetValues(
                                    != current->bulletin_board.dialog_style    )
           {   if(    !XmRepTypeValidValue( XmRID_DIALOG_STYLE,
                              new_w->bulletin_board.dialog_style, (Widget) new_w)    )
-              {   
-                  new_w->bulletin_board.dialog_style 
+              {
+                  new_w->bulletin_board.dialog_style
                                        = current->bulletin_board.dialog_style ;
-                  } 
+                  }
               else
               {   switch(    new_w->bulletin_board.dialog_style    )
-                  {   
+                  {
                       case XmDIALOG_PRIMARY_APPLICATION_MODAL:
                       {   mwmStyle = MWM_INPUT_PRIMARY_APPLICATION_MODAL ;
                           break ;
-                          } 
+                          }
                       case XmDIALOG_FULL_APPLICATION_MODAL:
                       {   mwmStyle = MWM_INPUT_FULL_APPLICATION_MODAL ;
-                          break ; 
-                          } 
+                          break ;
+                          }
                       case XmDIALOG_SYSTEM_MODAL:
                       {   mwmStyle = MWM_INPUT_SYSTEM_MODAL ;
                           break ;
-                          } 
+                          }
                       case XmDIALOG_MODELESS:
 	              default:
                       {   mwmStyle = MWM_INPUT_MODELESS ;
                           break ;
-                          } 
-                      } 
+                          }
+                      }
                   XtSetArg( al[ac], XmNmwmInputMode, mwmStyle) ; ac++ ;
                   }
               }
           }
         if(    ac    )
-        {   
+        {
             XtSetValues( XtParent (new_w), al, ac) ;
             }
         }
@@ -948,63 +947,63 @@ SetValues(
                                != current->bulletin_board.button_font_list    )
     {   if(    current->bulletin_board.button_font_list    )
         {   XmFontListFree( current->bulletin_board.button_font_list) ;
-            } 
+            }
         if(    new_w->bulletin_board.button_font_list    )
-        {   new_w->bulletin_board.button_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.button_font_list = XmFontListCopy(
                                     request->bulletin_board.button_font_list) ;
-            } 
+            }
         if(    !new_w->bulletin_board.button_font_list    )
-        {   new_w->bulletin_board.button_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.button_font_list = XmFontListCopy(
                      XmeGetDefaultRenderTable( (Widget) new_w, XmBUTTON_FONTLIST)) ;
-            } 
+            }
         }
     if(    request->bulletin_board.label_font_list
                                 != current->bulletin_board.label_font_list    )
     {   if(    current->bulletin_board.label_font_list    )
         {   XmFontListFree( current->bulletin_board.label_font_list) ;
-            } 
+            }
         if(    new_w->bulletin_board.label_font_list    )
-        {   new_w->bulletin_board.label_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.label_font_list = XmFontListCopy(
                                      request->bulletin_board.label_font_list) ;
-            } 
+            }
         if(    !new_w->bulletin_board.label_font_list    )
-        {   new_w->bulletin_board.label_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.label_font_list = XmFontListCopy(
                       XmeGetDefaultRenderTable( (Widget) new_w, XmLABEL_FONTLIST)) ;
-            } 
+            }
         }
     if(    request->bulletin_board.text_font_list
                                  != current->bulletin_board.text_font_list    )
     {   if(    current->bulletin_board.text_font_list    )
         {   XmFontListFree( current->bulletin_board.text_font_list) ;
-            } 
+            }
         if(    new_w->bulletin_board.text_font_list    )
-        {   new_w->bulletin_board.text_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.text_font_list = XmFontListCopy(
                                       request->bulletin_board.text_font_list) ;
-            } 
+            }
         if(    !new_w->bulletin_board.text_font_list    )
-        {   new_w->bulletin_board.text_font_list = XmFontListCopy( 
+        {   new_w->bulletin_board.text_font_list = XmFontListCopy(
                        XmeGetDefaultRenderTable( (Widget) new_w, XmTEXT_FONTLIST)) ;
-            } 
+            }
         }
     if(    BB_DefaultButton( new_w) != BB_DefaultButton( current)    )
-    {   
+    {
         if(    !BB_DefaultButton( current)    )
-        {   
-            /* This is the a new default button.  Notify all potential 
+        {
+            /* This is the a new default button.  Notify all potential
 	       default button that they might turn default on sooner
             */
             numChildren = new_w->composite.num_children ;
             childList = new_w->composite.children ;
             childIndex = 0 ;
             while(childIndex < numChildren    )
-            {   
+            {
                 BulletinBoardSetDefaultShadow( childList[childIndex]) ;
-		 
+
                 ++childIndex ;
-	    } 
+	    }
 	}
 	BBUpdateDynDefaultButton( (Widget) new_w) ;
-    } 
+    }
     if(    !(new_w->manager.initial_focus) && BB_DefaultButton( new_w)    )
       {
 	_XmSetInitialOfTabGroup( (Widget) new_w, BB_DefaultButton( new_w)) ;
@@ -1016,15 +1015,15 @@ SetValues(
 	flag = True ;
 	new_w->bulletin_board.old_shadow_thickness =
 	    new_w->manager.shadow_thickness ;
-    } 
+    }
 
 
     if(    XtClass( new_w) == xmBulletinBoardWidgetClass    )
-    {   
+    {
      /* do the margin enforcement only for pure BB, not subclasses,
        which have their own layout */
 
-	if (((new_w->bulletin_board.margin_width != 
+	if (((new_w->bulletin_board.margin_width !=
 	      current->bulletin_board.margin_width) ||
 	     (new_w->bulletin_board.margin_height !=
 	      current->bulletin_board.margin_height))) {
@@ -1040,21 +1039,21 @@ SetValues(
 			       new_w->bulletin_board.margin_width,
 			       new_w->bulletin_board.margin_height,
 			       False); /* use movewidget, no request */
-		_XmGMCalcSize ((XmManagerWidget)new_w, 
-			   new_w->bulletin_board.margin_width, 
-			   new_w->bulletin_board.margin_height, 
+		_XmGMCalcSize ((XmManagerWidget)new_w,
+			   new_w->bulletin_board.margin_width,
+			   new_w->bulletin_board.margin_height,
 			   &new_w->core.width, &new_w->core.height);
-	    }  
+	    }
 	}
-    } 
+    }
 
     current->bulletin_board.in_set_values = False ;
 
     return( flag) ;
 }
-
+
 /****************************************************************/
-static Boolean 
+static Boolean
 SetValuesHook(
         Widget wid,
         ArgList args,
@@ -1069,7 +1068,7 @@ SetValuesHook(
 
     if (!shell)
       return (False);
-    
+
     for (i=0; i<*num_args; i++)
       {
 	  if (strcmp (args[i].name, XmNx) == 0)
@@ -1078,7 +1077,7 @@ SetValuesHook(
 		  {
 		      XtX (bb) = XmDIALOG_SAVVY_FORCE_ORIGIN;
 		  }
-	    } 
+	    }
 	  if (strcmp (args[i].name, XmNy) == 0)
 	    {
 		if ((args[i].value == 0) && (XtY (bb) == 0))
@@ -1090,11 +1089,11 @@ SetValuesHook(
     return (False);
 }
 
-
+
 /****************************************************************
  * Arrange widgets and make geometry request if necessary.
  ****************/
-static void 
+static void
 HandleChangeManaged(
         XmBulletinBoardWidget bbWid,
         XmGeoCreateProc geoMatrixCreate)
@@ -1141,7 +1140,7 @@ HandleChangeManaged(
 	    reset_h = True ;
 	    }
 	if(    reset_w  ||  reset_h    )
-	{   
+	{
             _XmGeoArrangeBoxes( geoSpec, (Position) 0, (Position) 0,
                      &desired_w, &desired_h) ;
             }
@@ -1151,40 +1150,40 @@ HandleChangeManaged(
     */
     if(    (desired_h != XtHeight( bbWid))
         || (desired_w != XtWidth( bbWid))    )
-    {   
-        switch(    XtMakeResizeRequest( (Widget) bbWid, desired_w, desired_h, 
+    {
+        switch(    XtMakeResizeRequest( (Widget) bbWid, desired_w, desired_h,
                                      &allowed_w, &allowed_h)    )
-        {   
+        {
             case XtGeometryYes:
             {   break ;
-                } 
+                }
             case XtGeometryAlmost:
-            {   
-                XtMakeResizeRequest( (Widget) bbWid, allowed_w, allowed_h, 
+            {
+                XtMakeResizeRequest( (Widget) bbWid, allowed_w, allowed_h,
                                   NULL, NULL) ;
-                _XmGeoArrangeBoxes( geoSpec, (Position) 0, (Position) 0, 
+                _XmGeoArrangeBoxes( geoSpec, (Position) 0, (Position) 0,
                                  &allowed_w, &allowed_h) ;
                 break ;
-                } 
+                }
             case XtGeometryNo:
 	    default:
             {   allowed_w = XtWidth( bbWid) ;
                 allowed_h = XtHeight( bbWid) ;
-                _XmGeoArrangeBoxes( geoSpec, (Position) 0, (Position) 0, 
+                _XmGeoArrangeBoxes( geoSpec, (Position) 0, (Position) 0,
                                  &allowed_w, &allowed_h) ;
                 break ;
-                } 
+                }
             }
         /*	Clear shadow if necessary.
         */
         if(    bbWid->bulletin_board.old_shadow_thickness
             && (   (allowed_w > bbWid->bulletin_board.old_width)
                 || (allowed_h > bbWid->bulletin_board.old_height))    )
-        {   
+        {
             _XmClearShadowType( (Widget) bbWid,
 			       bbWid->bulletin_board.old_width,
 			       bbWid->bulletin_board.old_height,
-			       bbWid->bulletin_board.old_shadow_thickness, 
+			       bbWid->bulletin_board.old_shadow_thickness,
 			       (Dimension) 0) ;
             bbWid->bulletin_board.old_shadow_thickness = 0 ;
             }
@@ -1198,16 +1197,16 @@ HandleChangeManaged(
     if(    bbWid->manager.shadow_thickness
         && (XtWidth( bbWid) <= bbWid->bulletin_board.old_width)
         && (XtHeight( bbWid) <= bbWid->bulletin_board.old_height)    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bbWid), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bbWid),
 			XtWindow((Widget) bbWid),
 			bbWid->manager.top_shadow_GC,
 			bbWid->manager.bottom_shadow_GC,
 			0, 0,
 			bbWid->core.width, bbWid->core.height,
-			bbWid->manager.shadow_thickness, 
+			bbWid->manager.shadow_thickness,
 			bbWid->bulletin_board.shadow_type) ;
-        bbWid->bulletin_board.old_shadow_thickness 
+        bbWid->bulletin_board.old_shadow_thickness
                                             = bbWid->manager.shadow_thickness ;
         }
     bbWid->bulletin_board.old_width = bbWid->core.width ;
@@ -1220,7 +1219,7 @@ HandleChangeManaged(
 /****************************************************************
  * Arrange widgets based on new size.
  ****************/
-static void 
+static void
 HandleResize(
         XmBulletinBoardWidget bbWid,
         XmGeoCreateProc geoMatrixCreate)
@@ -1231,7 +1230,7 @@ HandleResize(
 /*********** draw_shadow is not used **************
             Boolean         draw_shadow = False ;
 ****************/
-    
+
     /*	Clear shadow.
     */
     if(    bbWid->bulletin_board.old_shadow_thickness
@@ -1239,8 +1238,8 @@ HandleResize(
             || (bbWid->bulletin_board.old_height != bbWid->core.height))    )
     {
 	_XmClearShadowType( (Widget) bbWid, bbWid->bulletin_board.old_width,
-                              bbWid->bulletin_board.old_height, 
-                               bbWid->bulletin_board.old_shadow_thickness, 
+                              bbWid->bulletin_board.old_height,
+                               bbWid->bulletin_board.old_shadow_thickness,
                                                                (Dimension) 0) ;
         bbWid->bulletin_board.old_shadow_thickness = 0 ;
 	}
@@ -1256,18 +1255,18 @@ HandleResize(
     if(    bbWid->manager.shadow_thickness
         && (XtWidth( bbWid) <= bbWid->bulletin_board.old_width)
         && (XtHeight( bbWid) <= bbWid->bulletin_board.old_height)    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bbWid), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bbWid),
 			XtWindow((Widget) bbWid),
 			bbWid->manager.top_shadow_GC,
 			bbWid->manager.bottom_shadow_GC,
 			0, 0,
 			bbWid->core.width, bbWid->core.height,
-			bbWid->manager.shadow_thickness, 
+			bbWid->manager.shadow_thickness,
 			bbWid->bulletin_board.shadow_type) ;
-        bbWid->bulletin_board.old_shadow_thickness 
+        bbWid->bulletin_board.old_shadow_thickness
                                             = bbWid->manager.shadow_thickness ;
-        } 
+        }
     bbWid->bulletin_board.old_width = bbWid->core.width ;
     bbWid->bulletin_board.old_height = bbWid->core.height ;
 
@@ -1277,7 +1276,7 @@ HandleResize(
 /****************************************************************
  * Handle geometry requests from children.
  ****************/
-static XtGeometryResult 
+static XtGeometryResult
 HandleGeometryManager(
         Widget instigator,
         XtWidgetGeometry *desired,
@@ -1292,15 +1291,15 @@ HandleGeometryManager(
 
     if(    !(desired->request_mode & (CWWidth | CWHeight))    )
     {   return (XtGeometryYes) ;
-        } 
+        }
 
     /*	Clear shadow if necessary.
     */
     if(    bbWid->bulletin_board.old_shadow_thickness
         && (BB_ResizePolicy( bbWid) != XmRESIZE_NONE)    )
     {
-        _XmClearShadowType( (Widget) bbWid, bbWid->bulletin_board.old_width, 
-                              bbWid->bulletin_board.old_height, 
+        _XmClearShadowType( (Widget) bbWid, bbWid->bulletin_board.old_width,
+                              bbWid->bulletin_board.old_height,
                                bbWid->bulletin_board.old_shadow_thickness, 0) ;
         bbWid->bulletin_board.old_shadow_thickness = 0 ;
 	}
@@ -1313,40 +1312,40 @@ HandleGeometryManager(
         && bbWid->manager.shadow_thickness
         && (XtWidth( bbWid) <= bbWid->bulletin_board.old_width)
         && (XtHeight( bbWid) <= bbWid->bulletin_board.old_height)    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bbWid), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bbWid),
 			XtWindow((Widget) bbWid),
 			bbWid->manager.top_shadow_GC,
 			bbWid->manager.bottom_shadow_GC,
 			0, 0,
 			bbWid->core.width, bbWid->core.height,
-			bbWid->manager.shadow_thickness, 
+			bbWid->manager.shadow_thickness,
 			bbWid->bulletin_board.shadow_type) ;
         bbWid->bulletin_board.old_shadow_thickness
                                             = bbWid->manager.shadow_thickness ;
-        } 
+        }
     bbWid->bulletin_board.old_width = bbWid->core.width ;
     bbWid->bulletin_board.old_height = bbWid->core.height ;
 
     return( result) ;
     }
-
+
 /****************************************************************/
-void 
+void
 _XmBulletinBoardSizeUpdate(
         Widget wid )
 {
             XmBulletinBoardWidget bbWid = (XmBulletinBoardWidget) wid ;
-            XmBulletinBoardWidgetClass classPtr = 
+            XmBulletinBoardWidgetClass classPtr =
                         (XmBulletinBoardWidgetClass) bbWid->core.widget_class ;
 /****************/
 
     if(    !XtIsRealized((Widget)bbWid)    )
     {   return ;
-        } 
+        }
 
     if(    classPtr->bulletin_board_class.geo_matrix_create    )
-    {   
+    {
         /*	Clear shadow if necessary.
         */
         if(    bbWid->bulletin_board.old_shadow_thickness
@@ -1365,59 +1364,59 @@ _XmBulletinBoardSizeUpdate(
         if(    bbWid->manager.shadow_thickness
             && (XtWidth( bbWid) <= bbWid->bulletin_board.old_width)
             && (XtHeight( bbWid) <= bbWid->bulletin_board.old_height)    )
-        {   
-            XmeDrawShadows(XtDisplay((Widget) bbWid), 
+        {
+            XmeDrawShadows(XtDisplay((Widget) bbWid),
 			    XtWindow((Widget) bbWid),
 			    bbWid->manager.top_shadow_GC,
 			    bbWid->manager.bottom_shadow_GC,
 			    0, 0,
 			    bbWid->core.width, bbWid->core.height,
-			    bbWid->manager.shadow_thickness, 
+			    bbWid->manager.shadow_thickness,
 			    bbWid->bulletin_board.shadow_type) ;
 	    bbWid->bulletin_board.old_shadow_thickness
 		= bbWid->manager.shadow_thickness ;
             }
-        } 
+        }
     bbWid->bulletin_board.old_width = bbWid->core.width ;
     bbWid->bulletin_board.old_height = bbWid->core.height ;
 
     return ;
     }
-
+
 /****************************************************************
  * Layout children of the BulletinBoard.
  ****************/
-static void 
+static void
 ChangeManaged(
         Widget wid )
-{   
+{
             XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
-            XmBulletinBoardWidgetClass classPtr = 
+            XmBulletinBoardWidgetClass classPtr =
                            (XmBulletinBoardWidgetClass) bb->core.widget_class ;
 /****************/
 
     if(    classPtr->bulletin_board_class.geo_matrix_create    )
-    {   HandleChangeManaged( bb, 
+    {   HandleChangeManaged( bb,
                             classPtr->bulletin_board_class.geo_matrix_create) ;
         return ;
-        } 
+        }
 
     /* function shared with Bulletin Board */
     _XmGMEnforceMargin((XmManagerWidget)bb,
                      bb->bulletin_board.margin_width,
-                     bb->bulletin_board.margin_height, 
+                     bb->bulletin_board.margin_height,
                      False); /* use movewidget, not setvalue */
 
     /*	Clear shadow if necessary.
     */
     if(    bb->bulletin_board.old_shadow_thickness    )
-    {   
-        _XmClearShadowType( (Widget) bb, bb->bulletin_board.old_width, 
-				bb->bulletin_board.old_height, 
+    {
+        _XmClearShadowType( (Widget) bb, bb->bulletin_board.old_width,
+				bb->bulletin_board.old_height,
 				bb->bulletin_board.old_shadow_thickness, 0) ;
         bb->bulletin_board.old_shadow_thickness = 0 ;
         }
-  
+
     /* The first time, reconfigure only if explicit size were not given */
 
     if (XtIsRealized((Widget)bb) || (!XtWidth(bb)) || (!XtHeight(bb))) {
@@ -1432,16 +1431,16 @@ ChangeManaged(
     if(    bb->manager.shadow_thickness
         && (XtWidth( bb) <= bb->bulletin_board.old_width)
         && (XtHeight( bb) <= bb->bulletin_board.old_height)    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bb), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bb),
 			XtWindow((Widget) bb),
 			bb->manager.top_shadow_GC,
 			bb->manager.bottom_shadow_GC,
 			0, 0,
 			bb->core.width, bb->core.height,
-			bb->manager.shadow_thickness, 
+			bb->manager.shadow_thickness,
 			bb->bulletin_board.shadow_type) ;
-        bb->bulletin_board.old_shadow_thickness 
+        bb->bulletin_board.old_shadow_thickness
                                                = bb->manager.shadow_thickness ;
         }
     bb->bulletin_board.old_width = bb->core.width ;
@@ -1451,12 +1450,12 @@ ChangeManaged(
 
     return ;
     }
-   
+
 /****************************************************************
  * Unmanage BulletinBoard after button is activated.
  ****************/
 /*ARGSUSED*/
-static void 
+static void
 UnmanageCallback(
         Widget w,		/* unused */
         XtPointer client_data,
@@ -1469,14 +1468,14 @@ UnmanageCallback(
 
     return ;
     }
-
+
 /****************************************************************
  * Add a child to the BulletinBoard.
  ****************/
-static void 
+static void
 InsertChild(
         Widget child )
-{   
+{
     XmBulletinBoardWidget bb = (XmBulletinBoardWidget) XtParent( child) ;
     Boolean         is_button = False ;
     XtWidgetProc insert_child;
@@ -1495,51 +1494,51 @@ InsertChild(
     {   is_button = TRUE ;
 
         if(    BB_DefaultButton( bb)    )
-        {   
+        {
             /* Notify child that it has to be ready for default visual
             */
             BulletinBoardSetDefaultShadow( child) ;
-            } 
-        } 
+            }
+        }
     if(    XmIsDrawnButton( child)    )
     {   is_button = True ;
-        } 
+        }
 
     /* Now, here I could use the activatable trait to add the
-       auto_unmanage callback but I'm afraid that by covering the 
+       auto_unmanage callback but I'm afraid that by covering the
        Arrow button I introduce behavior compatibility problem, so
        I keep the DrawnButton check for now */
 
     if(    is_button && bb->bulletin_board.shell
                                        && bb->bulletin_board.auto_unmanage    )
-    {   
+    {
         XtAddCallback( child, XmNactivateCallback,
                                             UnmanageCallback, (XtPointer) bb) ;
         }
     if(    XmIsText (child)
         || XmIsTextField (child)    )
-    {   
+    {
         if(    bb->bulletin_board.text_translations    )
-        {   XtOverrideTranslations( child, 
+        {   XtOverrideTranslations( child,
 				bb->bulletin_board.text_translations) ;
-            } 
+            }
         }
     return ;
     }
-
+
 /****************************************************************
  * Clear widget id in instance record
  ****************/
-static void 
+static void
 DeleteChild(
         Widget child )
-{   
+{
   XmBulletinBoardWidget bb ;
   XtWidgetProc      delete_child;
 /****************/
 
   if(    XtIsRectObj( child)    )
-    {   
+    {
       bb = (XmBulletinBoardWidget) XtParent( child) ;
 
       /* To fix CR #4882, unnest the following to allow
@@ -1560,14 +1559,14 @@ DeleteChild(
   (*delete_child)(child);
   return ;
 }
-
+
 /****************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager(
         Widget w,
         XtWidgetGeometry *request,
         XtWidgetGeometry *reply )
-{   
+{
             XmBulletinBoardWidget bb ;
             XmBulletinBoardWidgetClass classPtr ;
 /****************/
@@ -1578,82 +1577,82 @@ GeometryManager(
     if(    classPtr->bulletin_board_class.geo_matrix_create    )
     {   return( HandleGeometryManager( w, request, reply,
                            classPtr->bulletin_board_class.geo_matrix_create)) ;
-        } 
+        }
 
     /* function shared with DrawingArea */
-    return(_XmGMHandleGeometryManager((Widget)bb, w, request, reply, 
-                                    bb->bulletin_board.margin_width, 
-                                    bb->bulletin_board.margin_height, 
+    return(_XmGMHandleGeometryManager((Widget)bb, w, request, reply,
+                                    bb->bulletin_board.margin_width,
+                                    bb->bulletin_board.margin_height,
                                     bb->bulletin_board.resize_policy,
                                     bb->bulletin_board.allow_overlap));
     }
-   
+
 /****************************************************************
  * Handle query geometry requests
  ****************/
-static XtGeometryResult 
+static XtGeometryResult
 QueryGeometry(
         Widget wid,
         XtWidgetGeometry *intended,
         XtWidgetGeometry *desired )
-{   
+{
             XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
-            XmBulletinBoardWidgetClass classPtr = 
+            XmBulletinBoardWidgetClass classPtr =
                            (XmBulletinBoardWidgetClass) bb->core.widget_class ;
 /****************/
 
     if(    classPtr->bulletin_board_class.geo_matrix_create    )
-    {   
+    {
         return( _XmHandleQueryGeometry( (Widget) bb,
                         intended, desired, BB_ResizePolicy( bb),
                            classPtr->bulletin_board_class.geo_matrix_create)) ;
-        } 
+        }
     /* function shared with DrawingArea */
-    return(_XmGMHandleQueryGeometry(wid, intended, desired, 
-                                  bb->bulletin_board.margin_width, 
-                                  bb->bulletin_board.margin_height, 
+    return(_XmGMHandleQueryGeometry(wid, intended, desired,
+                                  bb->bulletin_board.margin_width,
+                                  bb->bulletin_board.margin_height,
                                   bb->bulletin_board.resize_policy));
     }
-
+
 /****************************************************************
  * Conform to new size.
  ****************/
-static void 
+static void
 Resize(
         Widget wid )
-{   
+{
             XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
-            XmBulletinBoardWidgetClass classPtr = 
+            XmBulletinBoardWidgetClass classPtr =
                            (XmBulletinBoardWidgetClass) bb->core.widget_class ;
 /****************/
 
     if(    classPtr->bulletin_board_class.geo_matrix_create    )
-    {   
+    {
         HandleResize( bb, classPtr->bulletin_board_class.geo_matrix_create) ;
         return ;
-        } 
+        }
     /*	Clear shadow.
     */
     if(    bb->bulletin_board.old_shadow_thickness    )
-    {   
-        _XmClearShadowType( (Widget) bb, bb->bulletin_board.old_width, 
-				bb->bulletin_board.old_height, 
+    {
+        _XmClearShadowType( (Widget) bb, bb->bulletin_board.old_width,
+				bb->bulletin_board.old_height,
 				bb->bulletin_board.old_shadow_thickness, 0) ;
         bb->bulletin_board.old_shadow_thickness = 0 ;
         }
     if(    bb->manager.shadow_thickness
         && (XtWidth( bb) <= bb->bulletin_board.old_width)
         && (XtHeight( bb) <= bb->bulletin_board.old_height)    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bb), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bb),
 			XtWindow((Widget) bb),
 			bb->manager.top_shadow_GC,
 			bb->manager.bottom_shadow_GC,
 			0, 0,
 			bb->core.width, bb->core.height,
-			bb->manager.shadow_thickness, 
+			bb->manager.shadow_thickness,
 			bb->bulletin_board.shadow_type) ;
-        bb->bulletin_board.old_shadow_thickness 
+        bb->bulletin_board.old_shadow_thickness
                                                = bb->manager.shadow_thickness ;
         }
     bb->bulletin_board.old_width = bb->core.width ;
@@ -1661,16 +1660,16 @@ Resize(
 
     return ;
     }
-
+
 /****************************************************************
  * Redisplay gadgets and draw shadow.
  ****************/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
         Region region )
-{   
+{
             XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
 /****************/
 
@@ -1681,18 +1680,18 @@ Redisplay(
     /*	Draw shadow.
     */
     if(    bb->manager.shadow_thickness    )
-    {   
-        XmeDrawShadows(XtDisplay((Widget) bb), 
+    {
+        XmeDrawShadows(XtDisplay((Widget) bb),
 			XtWindow((Widget) bb),
 			bb->manager.top_shadow_GC,
 			bb->manager.bottom_shadow_GC,
 			0, 0,
 			bb->core.width, bb->core.height,
-			bb->manager.shadow_thickness, 
+			bb->manager.shadow_thickness,
 			bb->bulletin_board.shadow_type) ;
-        bb->bulletin_board.old_shadow_thickness 
+        bb->bulletin_board.old_shadow_thickness
                                                = bb->manager.shadow_thickness ;
-        } 
+        }
     bb->bulletin_board.old_width = bb->core.width ;
     bb->bulletin_board.old_height = bb->core.height ;
 
@@ -1703,13 +1702,13 @@ Redisplay(
 
 /****************************************************************/
 /*ARGSUSED*/
-void 
+void
 _XmBulletinBoardFocusMoved(
         Widget wid,		/* unused */
         XtPointer client_data,
         XtPointer data )
-{   
-            XmFocusMovedCallbackStruct * call_data 
+{
+            XmFocusMovedCallbackStruct * call_data
                                         = (XmFocusMovedCallbackStruct *) data ;
             Widget          ancestor ;
 	    XmBulletinBoardWidget bb = (XmBulletinBoardWidget) client_data ;
@@ -1725,78 +1724,78 @@ _XmBulletinBoardFocusMoved(
         *   to be discontinued.
         */
         return ;
-        } 
+        }
 
     /* Walk the heirarchy above the widget that is getting the focus to
-    *   determine the correct default and cancel buttons for the current 
+    *   determine the correct default and cancel buttons for the current
     *   context.
     *  Note that no changes are made to the Bulletin Board instance record
     *   until after the possibility of a forced traversal is evaluated.
     */
     ancestor = call_data->new_focus ;
     while(    ancestor  &&  !XtIsShell( ancestor)    )
-    {   
+    {
         if(    ancestor == (Widget) bb    )
         {   BBHasFocus = TRUE ;
             break ;
-            } 
+            }
         if(    XmIsBulletinBoard( ancestor)    )
-        {   
+        {
             if(    !dbutton    )
             {   dbutton = BB_DefaultButton( ancestor) ;
-                } 
+                }
             if(    !cbutton    )
             {   cbutton = BB_CancelButton( ancestor) ;
-                } 
-            } 
+                }
+            }
         ancestor = XtParent( ancestor) ;
-        } 
+        }
     ancestor = call_data->old_focus ;
     while(    ancestor  &&  !XtIsShell( ancestor)    )
-    {   
+    {
         if(    ancestor == (Widget) bb    )
         {   BBHadFocus = TRUE ;
             break ;
-            } 
+            }
         ancestor = XtParent( ancestor) ;
         }
 
     if(    BBHasFocus    )
-    {   
+    {
         /* The widget getting the input focus is a descendent of
         *   or is this Bulletin Board.
         * If there were no descendent Bulletin Boards with default or cancel
         *   buttons, use our own.
         */
         if(    !dbutton    ) dbutton = BB_DefaultButton( bb) ;
-	
+
         if(    !cbutton    ) cbutton = BB_CancelButton( bb) ;
 
         if(    !dbutton    )
-        {   
+        {
 	    /* No descendant has active default button, so be sure
              *   that the dynamic_default_button field for this
              *   ancestor is NULL.
              */
             BB_DynamicDefaultButton( bb) = NULL ;
-	} else {   
-            if(XmeTraitGet((XtPointer)XtClass(call_data->new_focus), 
+	} else {
+            if(XmeTraitGet((XtPointer)XtClass(call_data->new_focus),
 			   XmQTtakesDefault))
-            {   
+            {
                 /* Any defaultable which gets the focus
                 *   gets the default visuals and behavior.
                 */
                 _XmBulletinBoardSetDynDefaultButton( (Widget) bb,
                                                         call_data->new_focus) ;
-                } 
+                }
             else /* call_data->new_focus is not a push button */
-            {   
+            {
                 if(    (call_data->focus_policy == XmEXPLICIT)
                     || !XmIsManager( call_data->new_focus)
                     || !call_data->old_focus
-                    || (!XmeTraitGet((XtPointer)XtClass(call_data->old_focus), 
+                    || (!XmeTraitGet((XtPointer)XtClass(call_data->old_focus),
 				     XmQTtakesDefault)))
-                {   
+                {
                     /* Avoid setting the default button when in pointer mode,
                     *   leaving a button, and entering the background area.
                     *   The appropriate default button will be set when the
@@ -1805,40 +1804,40 @@ _XmBulletinBoardFocusMoved(
                     *   button shadow when moving pointer between buttons.
                     */
                     if(    XtIsManaged( dbutton)    )
-                    {   
+                    {
                         _XmBulletinBoardSetDynDefaultButton((Widget) bb,
 							    dbutton) ;
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
           }
         BB_DynamicCancelButton( bb) = cbutton ;
 
         if(    !BBHadFocus    )
-        {   
+        {
             cb.reason = XmCR_FOCUS ;
             cb.event = NULL ;
             XtCallCallbackList( (Widget) bb,
                                       bb->bulletin_board.focus_callback, &cb) ;
-            } 
+            }
         }
     else /* Bulletin Board does not have focus */
-    {   
+    {
         if(    BBHadFocus    )
-        {   
+        {
  	  if(    call_data->new_focus != NULL    )
  	    {
  	      _XmBulletinBoardSetDynDefaultButton( (Widget) bb, NULL) ;
  	    }
-	} 
+	}
     }
     BB_InitialFocus( bb) = FALSE ;
 
     return ;
     }
-
+
 /****************************************************************/
-static Boolean 
+static Boolean
 BulletinBoardParentProcess(
         Widget wid,
         XmParentProcessData event )
@@ -1851,41 +1850,41 @@ BulletinBoardParentProcess(
                  && BB_DynamicDefaultButton( bb))
             || (    (event->input_action.action == XmPARENT_CANCEL)
                  && BB_DynamicCancelButton( bb)))    )
-    {   
+    {
         if(    event->input_action.action == XmPARENT_ACTIVATE    )
-        {   
+        {
             _XmBulletinBoardReturn( (Widget)bb, event->input_action.event,
                                       event->input_action.params,
                                          event->input_action.num_params) ;
-            } 
+            }
         else
         {   _XmBulletinBoardCancel( (Widget)bb, event->input_action.event,
                                       event->input_action.params,
                                          event->input_action.num_params) ;
-            } 
+            }
         return( TRUE) ;
-        } 
+        }
 
     return( _XmParentProcess( XtParent( bb), event)) ;
     }
-
+
 /****************************************************************
  * Process Return and Enter key events in the BulletinBoard.
  *   If there is a default button, call its Activate callbacks.
  ****************/
-void 
+void
 _XmBulletinBoardReturn(Widget wid,
 		       XEvent *event,
 		       String *params,
 		       Cardinal *numParams )
-{   
+{
   XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
   XmGadgetClass   gadget_class ;
   XmPrimitiveWidgetClass primitive_class ;
   Widget          dbutton = BB_DynamicDefaultButton( bb) ;
 
   if (!dbutton)
-    {   
+    {
       XmParentInputActionRec parentEvent ;
 
       parentEvent.process_type = XmINPUT_ACTION ;
@@ -1897,24 +1896,24 @@ _XmBulletinBoardReturn(Widget wid,
       _XmParentProcess( XtParent( bb), (XmParentProcessData) &parentEvent) ;
     }
   else if (XmIsGadget( dbutton) && XtIsManaged( dbutton))
-    {   
+    {
       gadget_class = (XmGadgetClass) XtClass( dbutton) ;
       if (gadget_class->gadget_class.arm_and_activate &&
 	  XtIsSensitive(dbutton))
-	{  
+	{
 	  (*(gadget_class->gadget_class.arm_and_activate))
 	    (dbutton, event, params, numParams) ;
-	} 
+	}
     }
   else if (XmIsPrimitive( dbutton) && XtIsManaged( dbutton))
-    {   
+    {
       primitive_class = (XmPrimitiveWidgetClass) XtClass( dbutton) ;
       if (primitive_class->primitive_class.arm_and_activate &&
 	  XtIsSensitive(dbutton))
-	{ 
+	{
 	  (*(primitive_class->primitive_class.arm_and_activate))
 	    (dbutton, event, params, numParams);
-	} 
+	}
     }
   else
     {
@@ -1925,27 +1924,27 @@ _XmBulletinBoardReturn(Widget wid,
 	  cb.reason = XmCR_ACTIVATE ;
 	  cb.event = event ;
 	  XtCallCallbacks(dbutton, XmNactivateCallback, (XtPointer) &cb) ;
-	} 
+	}
     }
 }
-
+
 /****************************************************************
  * Process Cancel key events in the BulletinBoard.
  * If there is a cancel button, call its Activate callbacks.
  ****************/
-void 
+void
 _XmBulletinBoardCancel(Widget wid,
 		       XEvent *event,
 		       String *params,
 		       Cardinal *numParams )
-{   
+{
   XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
   XmGadgetClass   gadget_class ;
   XmPrimitiveWidgetClass primitive_class ;
   Widget          cbutton = BB_DynamicCancelButton( bb) ;
 
   if (!cbutton)
-    {   
+    {
       XmParentInputActionRec parentEvent ;
 
       parentEvent.process_type = XmINPUT_ACTION ;
@@ -1955,52 +1954,52 @@ _XmBulletinBoardCancel(Widget wid,
       parentEvent.num_params = numParams ;
 
       _XmParentProcess( XtParent( bb), (XmParentProcessData) &parentEvent) ;
-    } 
+    }
   else if (XmIsGadget(cbutton) && XtIsManaged(cbutton))
-    {   
+    {
       gadget_class = (XmGadgetClass) XtClass( cbutton) ;
       if (gadget_class->gadget_class.arm_and_activate &&
 	  XtIsSensitive( cbutton))
 	{
 	  (*(gadget_class->gadget_class.arm_and_activate))
 	    (cbutton, event, params, numParams) ;
-	} 
+	}
     }
   else if (XmIsPrimitive( cbutton) && XtIsManaged( cbutton))
-    {   
+    {
       primitive_class = (XmPrimitiveWidgetClass) XtClass( cbutton) ;
       if (primitive_class->primitive_class.arm_and_activate &&
 	  XtIsSensitive(cbutton))
-	{   
+	{
 	  (*(primitive_class->primitive_class.arm_and_activate))
 	    (cbutton, event, params, numParams) ;
-	} 
+	}
     }
   else
     {
       if (XtIsSensitive(cbutton))
-	{   
+	{
 	  XmAnyCallbackStruct cb ;
 
 	  cb.reason = XmCR_ACTIVATE ;
 	  cb.event = event ;
 	  XtCallCallbacks( cbutton, XmNactivateCallback, (XtPointer) &cb) ;
-	} 
+	}
     }
 }
-
-/*ARGSUSED*/ 
-void 
+
+/*ARGSUSED*/
+void
 _XmBulletinBoardMap(
          Widget wid,
          XEvent *event,		/* unused */
          String *params,	/* unused */
          Cardinal *numParams )	/* unused */
- {   
+ {
    if(    BB_DefaultButton( wid)    )
      {
        Widget focus_hier = _XmGetFirstFocus( wid) ;
- 
+
        while(    focus_hier
  	    &&  !XtIsShell( focus_hier)    )
  	{
@@ -2019,18 +2018,18 @@ _XmBulletinBoardMap(
  	}
      }
  }
- 
+
 /****************************************************************/
-static void 
+static void
 BulletinBoardSetDefaultShadow(
         Widget button )
-{   
+{
     XmTakesDefaultTrait trait_default ;
-    
+
     trait_default = (XmTakesDefaultTrait) XmeTraitGet((XtPointer)
-						      XtClass(button), 
+						      XtClass(button),
 						      XmQTtakesDefault) ;
-    if (trait_default) 
+    if (trait_default)
 	trait_default->showAsDefault  (button, XmDEFAULT_READY);
 }
 
@@ -2041,7 +2040,7 @@ BulletinBoardSetDefaultShadow(
  *   to turn off/on the appropriate default borders and the default button
  *   field of the bulletin board instance record is updated appropriately.
   ****************/
-void 
+void
 _XmBulletinBoardSetDynDefaultButton(
         Widget wid,
         Widget newDefaultButton )
@@ -2050,33 +2049,33 @@ _XmBulletinBoardSetDynDefaultButton(
     XmTakesDefaultTrait trait_default ;
 
 
-    if (newDefaultButton != BB_DynamicDefaultButton( bbWid)) {   
-        if (BB_DynamicDefaultButton(bbWid)) {   
-	    trait_default = (XmTakesDefaultTrait) 
-		XmeTraitGet((XtPointer) 
-			    XtClass(BB_DynamicDefaultButton(bbWid)), 
+    if (newDefaultButton != BB_DynamicDefaultButton( bbWid)) {
+        if (BB_DynamicDefaultButton(bbWid)) {
+	    trait_default = (XmTakesDefaultTrait)
+		XmeTraitGet((XtPointer)
+			    XtClass(BB_DynamicDefaultButton(bbWid)),
 			    XmQTtakesDefault) ;
 
-	    if (trait_default) 
+	    if (trait_default)
 		trait_default->showAsDefault ((Widget)
 					      BB_DynamicDefaultButton(bbWid),
 					      XmDEFAULT_OFF);
-	} 
+	}
 
         BB_DynamicDefaultButton( bbWid) = newDefaultButton ;
 
-        if (newDefaultButton) {   
-            trait_default = (XmTakesDefaultTrait) 
-		XmeTraitGet((XtPointer) 
-			    XtClass(BB_DynamicDefaultButton(bbWid)), 
+        if (newDefaultButton) {
+            trait_default = (XmTakesDefaultTrait)
+		XmeTraitGet((XtPointer)
+			    XtClass(BB_DynamicDefaultButton(bbWid)),
 			    XmQTtakesDefault) ;
 
-	    if (trait_default) 
+	    if (trait_default)
 		trait_default->showAsDefault ((Widget)
 					      BB_DynamicDefaultButton(bbWid),
 					      XmDEFAULT_ON);
-	} 
-    } 
+	}
+    }
     return ;
 }
 
@@ -2087,7 +2086,7 @@ BBUpdateDynDefaultButton(
  	Widget bb)
 {
     Widget bbwdb = GetBBWithDB( bb) ;
- 
+
     if(    bbwdb == NULL    ) {
 	if(    ((XmBulletinBoardWidget) bb)
 	   ->bulletin_board.dynamic_default_button    )
@@ -2101,13 +2100,13 @@ BBUpdateDynDefaultButton(
  	}
     }
 }
- 
+
 static Widget
 GetBBWithDB(
  	Widget wid)
  {
    Widget focus ;
- 
+
    if(    (_XmGetFocusPolicy( wid) == XmEXPLICIT)
       &&  (    (focus = XmGetFocusWidget( wid))
  	  ||  (focus = _XmGetFirstFocus( wid)))    )
@@ -2122,7 +2121,7 @@ GetBBWithDB(
  	    }
  	  focus = XtParent( focus) ;
  	}
- 
+
      }
    return NULL ;
  }
@@ -2130,12 +2129,12 @@ GetBBWithDB(
 /*
  * XmRCallProc routine for checking font before setting it to NULL
  * if no value is specified for both XmNrenderTable and XmNfontList.
- * If the appropriate bit in "check_state" is True, this function has 
- * been called twice on same widget for that resource, thus 
+ * If the appropriate bit in "check_state" is True, this function has
+ * been called twice on same widget for that resource, thus
  * the resource needs to be set NULL, otherwise leave it alone.
  */
 /* ARGSUSED */
-static void 
+static void
 CheckSetRenderTables(Widget wid,
 		     int offset,
 		     XrmValue *value )
@@ -2150,7 +2149,7 @@ CheckSetRenderTables(Widget wid,
 
   XmBulletinBoardWidget bbw = (XmBulletinBoardWidget)wid;
 
-  if (((char*)bbw + offset) == 
+  if (((char*)bbw + offset) ==
       (char*) &(bbw->bulletin_board.button_font_list)) {
 	if (IS_SET_BFL(bbw->bulletin_board.check_set))
 		value->addr = NULL;
@@ -2159,7 +2158,7 @@ CheckSetRenderTables(Widget wid,
 		value->addr = ((char *)bbw + offset);
 	}
   }
-  else if (((char*)bbw + offset) == 
+  else if (((char*)bbw + offset) ==
 	   (char*) &(bbw->bulletin_board.label_font_list)) {
 	if (IS_SET_LFL(bbw->bulletin_board.check_set))
 		value->addr = NULL;
@@ -2179,14 +2178,14 @@ CheckSetRenderTables(Widget wid,
   }
 }
 
-
+
 
 /****************************************************************
  *
- * Trait method for specify render table 
+ * Trait method for specify render table
  *
  **************************************************************/
-static XmFontList 
+static XmFontList
 GetTable(
 	 Widget wid,
 	 XtEnum type)
@@ -2198,7 +2197,7 @@ GetTable(
     case XmBUTTON_RENDER_TABLE : return bb->bulletin_board.button_font_list ;
     case XmTEXT_RENDER_TABLE : return bb->bulletin_board.text_font_list ;
     }
-   
+
     return NULL ;
 }
 
@@ -2216,16 +2215,16 @@ CallMapUnmap(
 	 Boolean map_unmap)
 {
     XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
-    XmAnyCallbackStruct call_data;	
+    XmAnyCallbackStruct call_data;
 
     call_data.reason = (map_unmap)? XmCR_MAP : XmCR_UNMAP;
-    call_data.event  = NULL;			
+    call_data.event  = NULL;
 
     if (map_unmap) {
-	XtCallCallbackList (wid, bb->bulletin_board.map_callback, 
+	XtCallCallbackList (wid, bb->bulletin_board.map_callback,
 			    &call_data);
     } else {
-	XtCallCallbackList (wid, bb->bulletin_board.unmap_callback, 
+	XtCallCallbackList (wid, bb->bulletin_board.unmap_callback,
 			    &call_data);
     }
 }
@@ -2235,13 +2234,13 @@ CallMapUnmap(
 /****************************************************************
  * This function creates and returns a BulletinBoard widget.
  ****************/
-Widget 
+Widget
 XmCreateBulletinBoard(
         Widget p,
         String name,
         ArgList args,
         Cardinal n )
-{   
+{
 
     return( XtCreateWidget( name, xmBulletinBoardWidgetClass, p, args, n)) ;
 }
@@ -2253,18 +2252,18 @@ XmCreateBulletinBoard(
  * This convenience function creates a DialogShell and a BulletinBoard
  *   child of the shell; returns the BulletinBoard widget.
  ****************/
-Widget 
+Widget
 XmCreateBulletinBoardDialog(
         Widget ds_p,
         String name,
         ArgList bb_args,
         Cardinal bb_n )
-{   
-    return XmeCreateClassDialog (xmBulletinBoardWidgetClass, 
+{
+    return XmeCreateClassDialog (xmBulletinBoardWidgetClass,
 				 ds_p, name, bb_args, bb_n) ;
 }
 
-Widget 
+Widget
 XmVaCreateBulletinBoard(
         Widget parent,
         char *name,
@@ -2273,18 +2272,18 @@ XmVaCreateBulletinBoard(
     register Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmBulletinBoardWidgetClass,
-                         parent, False, 
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
 
@@ -2297,16 +2296,16 @@ XmVaCreateManagedBulletinBoard(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
+    w = XmeVLCreateWidget(name,
                          xmBulletinBoardWidgetClass,
-                         parent, True, 
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
 }
