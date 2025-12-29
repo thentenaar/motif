@@ -2386,7 +2386,7 @@ PaneSetValues(
         Cardinal *num_args )
 {
    XmPanedWindowWidget pw = (XmPanedWindowWidget)new_w->core.parent;
-   Arg sashargs[4];
+   Arg sashargs[5];
    int i, count ;
    XmPanedWindowConstraintPart * old_pane = &(PaneInfo(old)->panedw);
    XmPanedWindowConstraintPart * new_pane = &(PaneInfo(new_w)->panedw);

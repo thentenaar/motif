@@ -822,17 +822,12 @@ hash_function(int	l_length,
   int	  	  	l_extra;
   int	   	 	i;
 
-  /* BEGIN OSF Fix CR 5232 */
   /* Don't go past array bounds */
-  if (l_length > (sizeof(int) * 20)) l_length = sizeof(int) * 20;
-  /* END OSF Fix CR 5232 */
-
+  if (l_length > (sizeof al_value)) l_length = sizeof(al_value) - 1;
   l_limit = (l_length-1) >> _shift;	/* divide by wordsize */
-  /* BEGIN OSF Fix CR 5232 */
   l_extra = (l_length-1) & _shift;	/* remainder from divide by wordsize */
-  /* END OSF Fix CR 5232 */
 
-  bzero((char *)al_value, sizeof(int) * 20);
+  memset(al_value, 0, sizeof al_value);
   strncpy((char *)al_value, c_value, l_length);
   l_hash_code = 0;
 
@@ -841,8 +836,7 @@ hash_function(int	l_length,
 
   l_hash_code = l_hash_code ^ (al_value[ i ] & mask[ l_extra ]);
 
-  /* BEGIN OSF Fix CR 5232 */
   /* Make sure result isn't negative */
   return abs((int)(l_hash_code % k_hash_table_size));
-  /* END OSF Fix CR 5232 */
 }
+

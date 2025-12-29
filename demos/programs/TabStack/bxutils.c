@@ -3762,9 +3762,9 @@ GRA(char*, inst_name)
 {
    Display*		dpy = XtDisplay ( w );	/*  Retrieve the display */
    XrmDatabase		rdb = NULL;		/* A resource data base */
-   char			lineage[1000];
-   char			buf[2000];
    Widget       	parent;
+   size_t bufsize;
+   char *lineage, *buf;
 
    /* Protect ourselves */
 
@@ -3775,7 +3775,8 @@ GRA(char*, inst_name)
    rdb = XrmGetStringDatabase ( "" );
 
    /* Start the lineage with our name and then get our parents */
-
+   if (!(lineage = XtMalloc(strlen(inst_name) + 2)))
+       return;
    sprintf(lineage, "*%s", inst_name);
    parent = w;
 
@@ -3785,15 +3786,19 @@ GRA(char*, inst_name)
 
        if (wclass == applicationShellWidgetClass) break;
 
-       strcpy(buf, lineage);
-       lineage[0] = '*';
-       strcpy(lineage + 1, XtName(parent));
-       strncat(lineage, buf, sizeof lineage - strlen(lineage) - 1);
+       if (!(lineage = XtRealloc(lineage, strlen(lineage) + strlen(XtName(parent) + 2)))) {
+           lineage = NULL;
+           break;
+       }
+
+       memmove(lineage + strlen(XtName(parent)) + 2, lineage, strlen(lineage));
+       memcpy(lineage, XtName(parent), strlen(XtName(parent)));
+       lineage[strlen(XtName(parent))] = '*';
        parent = XtParent(parent);
    }
 
    /*  Add the Component resources, prepending the name of the component */
-
+   bufsize = 1 + (lineage ? strlen(lineage) : 0);
    while (defs->wName != NULL)
    {
        /*
@@ -3806,37 +3811,47 @@ GRA(char*, inst_name)
 	   continue;
        }
 
+       bufsize += strlen(defs->wName) + strlen(defs->wRsc) + 5;
+       if (!(buf = XtMalloc(bufsize)))
+           continue;
+
        /* Build up string after lineage */
        if (defs->cInstName != NULL)
        {
 	   /* Don't include class instance name if it is also the instance */
 	   /* being affected.  */
+	   bufsize += strlen(defs->cInstName);
+	   if (!(buf = XtRealloc(buf, bufsize)))
+	       continue;
 
 	   if (*defs->cInstName != '\0')
 	   {
-	       sprintf(buf, "%s.%s*%s.%s: %s",
-		       lineage, defs->wName, defs->cInstName, defs->wRsc,
-		       defs->value);
+	       snprintf(buf, bufsize, "%s.%s*%s.%s: %s",
+		            lineage, defs->wName, defs->cInstName, defs->wRsc,
+		            defs->value);
 	   }
 	   else
 	   {
-	       sprintf(buf, "%s.%s.%s: %s",
-		       lineage, defs->wName, defs->wRsc, defs->value);
+	       snprintf(buf, bufsize, "%s.%s.%s: %s",
+		            lineage, defs->wName, defs->wRsc, defs->value);
 	   }
        }
        else if (*defs->wName != '\0')
        {
-	   snprintf(buf, sizeof buf, "%s*%s.%s: %s",
-		   lineage, defs->wName, defs->wRsc, defs->value);
+	   snprintf(buf, bufsize, "%s*%s.%s: %s",
+	            lineage, defs->wName, defs->wRsc, defs->value);
        }
        else
        {
-	   snprintf(buf, sizeof buf, "%s.%s: %s", lineage, defs->wRsc, defs->value);
+	   snprintf(buf, bufsize, "%s.%s: %s",
+	            lineage, defs->wRsc, defs->value);
        }
 
        XrmPutLineResource( &rdb, buf );
+       XtFree(buf);
        defs++;
    }
+   XtFree(lineage);
 
    /* Merge them into the Xt database, with lowest precendence */
    if ( rdb )
