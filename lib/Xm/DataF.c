@@ -100,11 +100,6 @@ extern unsigned char _XmGetFocusPolicy(Widget);
 extern void _XmPrimitiveFocusIn(Widget, XEvent *, String *, Cardinal *);
 extern void _XmPrimitiveEnter(Widget, XEvent *, String *, Cardinal *);
 extern void _XmPrimitiveLeave(Widget, XEvent *, String *, Cardinal *);
-extern Boolean _XmGetIconControlInfo(
-                        Screen *screen,
-                        Boolean *useMaskRtn,
-                        Boolean *useMultiColorIconsRtn,
-                        Boolean *useIconFileCacheRtn) ;
 extern unsigned char _XmGetAudibleWarning(Widget);
 extern void _XmSetDestination(Display *, Widget);
 

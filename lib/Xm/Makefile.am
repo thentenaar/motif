@@ -237,7 +237,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         CareVisualT.c   Direction.c     SlideC.c \
         IsMwmRun.c      MenuProc.c      MenuState.c     TextFind.c \
         TextFunc.c      ColorObj.c      IconFile.c      RCHook.c \
-        BBUtil.c        ChColor.c       ColObjFunc.c \
+        BBUtil.c        ChColor.c\
         DrTog.c         DrArrow.c       DrPoly.c        DrHiDash.c \
         ValTime.c       FocusAct.c      ScalTics.c \
         ScroVis.c       WidGet.c        ToolTip.c       Cursor.c
