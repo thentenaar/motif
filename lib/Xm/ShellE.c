@@ -162,9 +162,9 @@ StructureNotifyHandler(
         XEvent *event,
         Boolean *continue_to_dispatch )
 {
-    register ShellWidget 	w = (ShellWidget) wid;
+    ShellWidget 	w = (ShellWidget) wid;
     WMShellWidget 		wmshell = (WMShellWidget) w;
-    Boolean  			sizechanged = FALSE;
+    Boolean  			sizechanged = False, mwm = False;
     Position 			tmpx, tmpy;
     XmShellExtObject		shellExt = (XmShellExtObject) closure;
     XmVendorShellExtObject	vendorExt = (XmVendorShellExtObject)closure;
@@ -179,6 +179,7 @@ StructureNotifyHandler(
     else
       vePPtr = (XmVendorShellExtPart *) &(vendorExt->vendor);
 
+    _XmDisplayToAppContext(XtDisplayOfObject(wid));
     if (XmIsScreen(vendorExt->desktop.parent))
       xmScreen = (XmScreen) (vendorExt->desktop.parent);
     else
@@ -203,7 +204,10 @@ StructureNotifyHandler(
 	if ((vePPtr->xAtMap != w->core.x) ||
 	    (vePPtr->yAtMap != w->core.y))
 	  {
-	      if (xmScreen->screen.mwmPresent)
+	      _XmAppLock(app);
+	      mwm = xmScreen->screen.mwmPresent;
+	      _XmAppUnlock(app);
+	      if (mwm)
 		{
 		    if (vePPtr->lastOffsetSerial &&
 			(vePPtr->lastOffsetSerial >=
@@ -261,7 +265,7 @@ StructureNotifyHandler(
 	      else w->shell.client_specified &= ~_XtShellPositionValid;
 	      if (XtIsWMShell(wid) && !wmshell->wm.wait_for_wm) {
 		  /* Consider trusting the wm again */
-		  register WMShellPart *wmp = &(wmshell->wm);
+		  WMShellPart *wmp = &(wmshell->wm);
 #define EQ(x) (wmp->size_hints.x == w->core.x)
 		  if (EQ(x) && EQ(y) && EQ(width) && EQ(height)) {
 		      wmshell->wm.wait_for_wm = TRUE;
@@ -278,16 +282,19 @@ StructureNotifyHandler(
 		  /*
 		   * check to see if it's mwm
 		   */
+		  _XmAppLock(app);
 		  if (!(xmScreen->screen.numReparented++))
-		    xmScreen->screen.mwmPresent =
-		      XmIsMotifWMRunning( (Widget) w);
+		    xmScreen->screen.mwmPresent = XmIsMotifWMRunning((Widget)w);
+		  _XmAppUnlock(app);
 	      }
 	    else
 	      {
 		  w->core.x = event->xreparent.x;
 		  w->core.y = event->xreparent.y;
 		  w->shell.client_specified |= _XtShellNotReparented;
+		  _XmAppLock(app);
 		  xmScreen->screen.numReparented--;
+		  _XmAppUnlock(app);
 	      }
 	    w->shell.client_specified &= ~_XtShellPositionValid;
 	}
