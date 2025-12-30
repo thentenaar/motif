@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,13 +19,13 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: BaseClass.c /main/20 1997/03/31 13:14:31 dbl $"
 #endif
 #endif
-#define HAVE_EXTENSIONS
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -2661,5 +2661,21 @@ _XmIsFastSubclass(WidgetClass wc, unsigned int bit)
 		return True;
 	else
 		return False;
+}
+
+/**
+ * Get secondary widget resource data inaccessible through XtGetResourceList
+ * or XtGetConstraintResourceList.
+ */
+Cardinal XmGetSecondaryResourceData(WidgetClass w_class,
+                                    XmSecondaryResourceData **secondaryDataRtn)
+{
+	XmBaseClassExt *bcePtr; /* bcePtr is really **XmBaseClassExtRec */
+	Cardinal count = 0;
+
+	bcePtr = _XmGetBaseClassExtPtr(w_class, XmQmotif);
+	if (bcePtr && *bcePtr && (*bcePtr)->getSecResData)
+		count = ((*bcePtr)->getSecResData)(w_class, secondaryDataRtn);
+	return count;
 }
 
