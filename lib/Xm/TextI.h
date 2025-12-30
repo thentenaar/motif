@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: TextI.h /main/6 1996/05/29 13:45:16 pascale $ */
 #ifndef _XmTextI_h
 #define _XmTextI_h
@@ -45,9 +43,9 @@ extern XmTextLineTable _XmTextGetLineTable(Widget widget,
 extern void _XmTextRealignLineTable(XmTextWidget widget,
 				    XmTextLineTable *temp_table,
 				    int *temp_table_size,
-				    register unsigned int cur_index,
-				    register XmTextPosition cur_start,
-				    register XmTextPosition cur_end);
+				    unsigned int cur_index,
+				    XmTextPosition cur_start,
+				    XmTextPosition cur_end);
 extern unsigned int _XmTextGetTableIndex(XmTextWidget widget,
 					 XmTextPosition pos);
 extern void _XmTextUpdateLineTable(Widget widget,
@@ -103,9 +101,8 @@ extern XmTextPosition _XmTextSetPreeditPosition(Widget w,
                                                 XmTextPosition cursor_position);
 /********    End Private Function Declarations    ********/
 
-
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmTextI_h */
+

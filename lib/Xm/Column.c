@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -1326,11 +1326,11 @@ ConstraintGetValues(Widget w, ArgList args, Cardinal *num_args)
 static int
 CompareISOLatin1 (char *first, char *second)
 {
-    register unsigned char *ap, *bp;
+    unsigned char *ap, *bp;
 
     for (ap = (unsigned char *) first, bp = (unsigned char *) second;
          *ap && *bp; ap++, bp++) {
-        register unsigned char a, b;
+        unsigned char a, b;
 
         if ((a = *ap) != (b = *bp)) {
             /* try lowercasing and try again */
@@ -2762,7 +2762,7 @@ XmVaCreateColumn(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

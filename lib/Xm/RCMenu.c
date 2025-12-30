@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,9 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */
-/*
- * HISTORY
  */
 
 /* Old comments from RowColumn.c changes carried forward:
@@ -129,7 +126,7 @@ static int MenuStatus(
                         Widget wid );
 static int  MenuType( Widget ) ;
 static void PositionMenu(
-                        register XmRowColumnWidget m,
+                        XmRowColumnWidget m,
                         XButtonPressedEvent *event) ;
 static void ButtonMenuPopDown(
                         Widget w,
@@ -215,7 +212,7 @@ static void EntryFired(
 static int NoTogglesOn(
                         XmRowColumnWidget m) ;
 static int IsInWidgetList(
-                        register XmRowColumnWidget m,
+                        XmRowColumnWidget m,
                         RectObj w) ;
 static void AllOffExcept(
                         XmRowColumnWidget m,
@@ -2767,7 +2764,7 @@ MenuType(
  */
 static void
 PositionMenu(
-        register XmRowColumnWidget m,
+        XmRowColumnWidget m,
         XButtonPressedEvent *event )
 {
     XmRowColumnWidget root;
@@ -2919,8 +2916,8 @@ SearchMenu(
         Widget *w,
 	Boolean setHistory )
 {
-    register Widget *q;
-    register int i;
+    Widget *q;
+    int i;
 
     if ( ! InMenu (search_m, parent_m, child, w))
     {
@@ -2987,8 +2984,8 @@ static int
 NoTogglesOn(
         XmRowColumnWidget m )
 {
-    register Widget *q;
-    register int i;
+    Widget *q;
+    int i;
 
     ForManagedChildren (m, i, q)
     {
@@ -3009,11 +3006,11 @@ NoTogglesOn(
 
 static int
 IsInWidgetList(
-        register XmRowColumnWidget m,
+        XmRowColumnWidget m,
         RectObj w )
 {
-    register Widget *q;
-    register int i;
+    Widget *q;
+    int i;
 
     if ((m == NULL) || (w == NULL)) return (FALSE);
 
@@ -3031,8 +3028,8 @@ AllOffExcept(
         XmRowColumnWidget m,
         Widget w )
 {
-    register Widget *q;
-    register int i;
+    Widget *q;
+    int i;
 
     if (w)  /* then all widgets except this one go off */
     {
@@ -3679,3 +3676,4 @@ MenuPopupPosted(Widget w)
 {
   return(RC_PopupPosted(w));
 }
+

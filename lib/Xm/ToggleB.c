@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -228,7 +228,7 @@ static void TB_FixTearoff( XmToggleButtonWidget tb);
 /********    End Static Function Declarations    ********/
 
 
-
+
 /*************************************<->*************************************
  *
  *
@@ -275,7 +275,7 @@ static XtActionsRec actionsList[] =
 
 
 
-
+
 /*************************************<->*************************************
  *
  *
@@ -437,7 +437,7 @@ static XmSyntheticResource syn_resources[] =
 };
 
 #undef Offset
-
+
 /*************************************<->*************************************
  *
  *
@@ -560,7 +560,7 @@ ClassInitialize( void )
   /* Set up base class extension quark */
   toggleBBaseClassExtRec.record_type = XmQmotif;
 }
-
+
 /*****************************************************************************
  *
  * ClassPartInitialize
@@ -576,7 +576,7 @@ ClassPartInitialize(
   /* Install the menu savvy trait record,  copying fields from XmLabel */
   _XmLabelCloneMenuSavvy (wc, &MenuSavvyRecord);
 }
-
+
 /************************************************************
  *
  * InitializePrehook
@@ -619,7 +619,7 @@ InitializePrehook(
   if (bw->label.font == NULL)
     bw->label.font = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
 }
-
+
 /************************************************************
  *
  * InitializePosthook
@@ -637,7 +637,7 @@ InitializePosthook(
 {
   _XmRestoreCoreClassTranslations (new_w);
 }
-
+
 /*********************************************************************
  *
  * redisplayPixmap
@@ -709,7 +709,7 @@ redisplayPixmap(XmToggleButtonWidget tb,
   Lab_TextRect_width(tb) = saveWidth;
   Lab_TextRect_height(tb) = saveHeight;
 }
-
+
 static void
 HandlePixmap(XmToggleButtonWidget tb,
 	     Pixmap pix,
@@ -744,7 +744,7 @@ HandlePixmap(XmToggleButtonWidget tb,
 	redisplayPixmap(tb, event, region);
     }
 }
-
+
 /***********************************************************************
  *
  * SetAndDisplayPixmap
@@ -775,7 +775,7 @@ SetAndDisplayPixmap(
 	redisplayPixmap(tb, event, region);
     }
 }
-
+
 /*************************************************************************
  *
  *  Help
@@ -805,7 +805,7 @@ Help(
    if (is_menupane && menuSTrait != NULL)
      menuSTrait->reparentToTearOffShell(XtParent(tb), event);
 }
-
+
 /*************************************************************************
  *
  * ToggleButtonCallback
@@ -840,7 +840,7 @@ ToggleButtonCallback(
       break;
     }
 }
-
+
 /* Update the toggle after an Enter or Leave action. */
 static void
 ActionDraw(XmToggleButtonWidget w,
@@ -871,7 +871,7 @@ ActionDraw(XmToggleButtonWidget w,
 	SetAndDisplayPixmap(w, event, NULL);
     }
 }
-
+
 /**************************************************************************
  *
  * Leave
@@ -930,7 +930,7 @@ Leave(
       ActionDraw(w, event, TRUE);
     }
 }
-
+
 /**************************************************************************
  *
  * Enter
@@ -1000,7 +1000,7 @@ Enter(
       ActionDraw(w, event, FALSE);
     }
 }
-
+
 static void
 NextState(
     unsigned char *state)
@@ -1018,7 +1018,7 @@ NextState(
       break;
     }
 }
-
+
 /****************************************************************************
  *
  *     Arm
@@ -1067,7 +1067,7 @@ Arm(
       ToggleButtonCallback(tb, XmCR_ARM, tb->toggle.set, event);
     }
 }
-
+
 /************************************************************************
  *
  *     Select
@@ -1155,7 +1155,7 @@ Select(
 
     }
 }
-
+
 /**********************************************************************
  *
  *    Disarm
@@ -1183,7 +1183,7 @@ Disarm(
 
 /* END OSF Fix pir 2826 */
 }
-
+
 static void
 TB_FixTearoff( XmToggleButtonWidget tb)
 {
@@ -1354,7 +1354,7 @@ ArmAndActivate(
 	}
     }
 }
-
+
 /************************************************************************
  *
  *     BtnDown
@@ -1456,7 +1456,7 @@ BtnDown(
 
   _XmRecordEvent(event);
 }
-
+
 /************************************************************************
  *
  *     BtnUp
@@ -1582,7 +1582,7 @@ BtnUp(
     XmProcessTraversal((Widget) tb, XmTRAVERSE_CURRENT);
   TB_FixTearoff(tb);
 }
-
+
 /************************************************************************
  *
  *  GetUnselectGC
@@ -1605,7 +1605,7 @@ GetUnselectGC(
 
   tw->toggle.unselect_GC = XtGetGC((Widget) tw, valueMask, &values);
 }
-
+
 /************************************************************************
  *
  *  GetGC
@@ -1694,7 +1694,7 @@ GetGC(
 }
 
 
-
+
 /*************************************<->*************************************
  *
  *  Initialize
@@ -2038,7 +2038,7 @@ Initialize(
   GetGC (new_w);
   GetUnselectGC(new_w);
 }
-
+
 /************************************************************************
  *
  *  Destroy
@@ -2061,7 +2061,7 @@ Destroy(
   if (Lab_IsMenupane(tw) && etched_in)
       XtReleaseGC ((Widget) tw, tw->toggle.arm_GC);
 }
-
+
 static void
 DrawBox(XmToggleButtonWidget w,
 	GC top_gc, GC bot_gc, GC fillgc, int x, int y, int edge,
@@ -2093,7 +2093,7 @@ DrawBox(XmToggleButtonWidget w,
 		    edge - (shadow * 2),
 		    edge - (shadow * 2));
 }
-
+
 /*************************************<->*************************************
  *
  *  DrawToggle(w)
@@ -2363,7 +2363,7 @@ DrawToggle
       }
     }
 }
-
+
 /*************************************<->*************************************
  *
  *  BorderHighlight
@@ -2414,7 +2414,7 @@ BorderHighlight(
       (*(xmLabelClassRec.primitive_class.border_highlight))((Widget) tb) ;
     }
 }
-
+
 /*************************************<->*************************************
  *
  *  BorderUnhighlight
@@ -2462,7 +2462,7 @@ BorderUnhighlight(
       (*(xmLabelClassRec.primitive_class.border_unhighlight))((Widget) tb) ;
     }
 }
-
+
 /*  spb This action does not seem to be used anywhere */
 /* Tue Apr 27 17:31:48 1993 */
 /*************************************<->*************************************
@@ -2533,7 +2533,7 @@ KeySelect(
 	}
     }
 }
-
+
 /************************************************************************
  *
  * Compute Space
@@ -2610,7 +2610,7 @@ ComputeSpace(
 	}
     }
 }
-
+
 /*************************************<->*************************************
  *
  *  Redisplay (w, event, region)
@@ -2624,7 +2624,7 @@ Redisplay(
         XEvent *event,
         Region region )
 {
-  register XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
+  XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
 
   if (! XtIsRealized(w) ) return;    /* Fix CR #4884, D. Rand 6/4/92 */
 
@@ -2674,7 +2674,7 @@ Redisplay(
       DrawToggleShadow (tb);
     }
 }
-
+
 /**************************************************************************
  *
  * Resize(w, event)
@@ -2684,7 +2684,7 @@ static void
 Resize(
         Widget w )
 {
-  register XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
+  XmToggleButtonWidget tb = (XmToggleButtonWidget) w;
 
   /* BEGIN OSF Fix pir 1778 */
   if (Lab_IsPixmap(w))
@@ -2698,7 +2698,7 @@ Resize(
   }
   /* END OSF Fix pir 1778 */
 }
-
+
 /************************************************************************
  *
  *  SetValuesPrehook
@@ -2722,7 +2722,7 @@ SetValuesPrehook(
 
   return False;
 }
-
+
 /***************************************************************************
  *
  *  SetValues(current, request, new_w)
@@ -3200,7 +3200,7 @@ if (newcbox->toggle.indicator_dim != curcbox->toggle.indicator_dim)
 
   return(flag);
 }
-
+
 /***************************************************************
  *
  * XmToggleButtonGetState
@@ -3224,7 +3224,7 @@ XmToggleButtonGetState(
 
   return (ret_val);
 }
-
+
 /****************************************************************
  *
  * XmTogglebuttonSetState
@@ -3303,7 +3303,7 @@ XmToggleButtonSetState(
     }
   _XmAppUnlock(app);
 }
-
+
 /****************************************************************
  *
  * XmToggleButtonSetValue
@@ -3375,7 +3375,7 @@ XmToggleButtonSetValue(
   _XmAppUnlock(app);
   return True;
 }
-
+
 /***********************************************************************
  *
  * XmCreateToggleButton
@@ -3399,7 +3399,7 @@ XmVaCreateToggleButton(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -3440,7 +3440,7 @@ XmVaCreateManagedToggleButton(
     return w;
 
 }
-
+
 /*
  * DrawToggleShadow (tb)
  *   - Should be called only if ToggleShadow are to be drawn ;
@@ -3480,7 +3480,7 @@ DrawToggleShadow(
 		  hilite_thickness, hilite_thickness, width, height,
 		  tb->primitive.shadow_thickness, XmSHADOW_OUT);
 }
-
+
 /*
  * DrawToggleLabel (tb)
  *    Called when XmNindicatorOn is FALSE and XmNfillOnSelect is TRUE.
@@ -3574,7 +3574,7 @@ DrawToggleLabel(
       tb->label.normal_GC = tmp_gc;
     }
 }
-
+
 /*
  * DrawEtchedInMenu (tb)
  *    Called when in a Menu and EtchedInMenu is TRUE.
@@ -3654,7 +3654,7 @@ DrawEtchedInMenu(
       tb->label.normal_GC = tmp_gc;
     }
 }
-
+
 /* BEGIN OSF Fix pir 1778 */
 /*************************************************************************
  *
@@ -3748,7 +3748,7 @@ SetToggleSize(
   }
 }
 /* END OSF Fix pir 1778 */
-
+
 /*
  * DefaultSelectColor - an XtResourceDefaultProc for generating the
  *	default select color.  This may require examining the
@@ -3790,7 +3790,7 @@ DefaultSelectColor(Widget widget,
   else
     _XmSelectColorDefault(widget, offset, value);
 }
-
+
 /*
  * NormalizeIndOn - return the normalized value of XmNindicatorOn,
  *	replacing XmINDICATOR_FILL and XmINDICATOR_BOX with the proper
@@ -3820,7 +3820,7 @@ NormalizeIndOn(XmToggleButtonWidget tb)
 
   return value;
 }
-
+
 /*
  * NormalizeIndType - return the normalized value of XmNindicatorType,
  *	replacing XmONE_OF_MANY with the proper absolute value.
@@ -3844,3 +3844,4 @@ NormalizeIndType(XmToggleButtonWidget tb)
 
   return value;
 }
+

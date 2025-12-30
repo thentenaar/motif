@@ -3252,7 +3252,7 @@ XmVaCreateTabStack(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -4590,5 +4590,5 @@ XmTabBoxDragTab(Widget widget, XEvent *event, String *params,
     XtAddCallback(drag, XmNtopLevelLeaveCallback,
 		  DragCallback, (XtPointer) tab);
 }
-
 #endif
+

@@ -495,7 +495,6 @@ XmCvtToHorizontalPixels(
  *  horizontal orientation/resolution of the screen.
  *
  **********************************************************************/
-/*ARGSUSED*/
 static XmImportOperator
 ToPixels(
         Widget widget,
@@ -504,7 +503,7 @@ ToPixels(
     unsigned char orientation )
 {
   Screen * screen = XtScreen (widget);
-  register unsigned char unit_type;
+  unsigned char unit_type;
 
   /*  Get the unit type of the widget  */
   unit_type = _XmGetUnitType(widget) ;
@@ -622,7 +621,6 @@ XmCvtFromHorizontalPixels(
  *  given orientation/resolution of the screen.
  *
  **********************************************************************/
-/*ARGSUSED*/
 static void
 FromPixels(
         Widget widget,
@@ -724,7 +722,6 @@ XmeFromVerticalPixels(
  * the propagation of unit type from parent to child.
  *
  **********************************************************************/
-/*ARGSUSED*/
 void
 _XmUnitTypeDefault(
         Widget widget,
@@ -776,3 +773,4 @@ _XmGetUnitType(
 
     return XmPIXELS ;
 }
+

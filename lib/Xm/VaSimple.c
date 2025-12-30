@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: VaSimple.c /main/11 1995/10/25 20:26:43 cde-sun $"
@@ -56,28 +56,28 @@ static char rcsid[] = "$XConsortium: VaSimple.c /main/11 1995/10/25 20:26:43 cde
 
 
 /********  Static Function Declarations  ********/
-static XmButtonType _XmVaBType_to_XmBType( 
+static XmButtonType _XmVaBType_to_XmBType(
                         String symbol) ;
-static void _XmCountNestedList( 
+static void _XmCountNestedList(
                         XtTypedArgList avlist,
                         int *total_count,
                         int *typed_count) ;
-static int _XmTypedArgToArg( 
+static int _XmTypedArgToArg(
                         Widget widget,
                         XtTypedArgList typed_arg,
                         ArgList arg_return,
                         XtResourceList resources,
                         Cardinal num_resources) ;
-static int _XmNestedArgtoArg( 
+static int _XmNestedArgtoArg(
                         Widget widget,
                         XtTypedArgList avlist,
                         ArgList args,
                         XtResourceList resources,
                         Cardinal num_resources) ;
-static int _XmNestedArgtoTypedArg( 
+static int _XmNestedArgtoTypedArg(
                         XtTypedArgList args,
                         XtTypedArgList avlist) ;
-static void _XmVaProcessEverything( 
+static void _XmVaProcessEverything(
                         Widget widget,
                         va_list var,
                         XmButtonTypeTable *buttonTypes,
@@ -91,7 +91,7 @@ static void _XmVaProcessEverything(
 /********  End Static Function Declarations  ********/
 
 
-static XmButtonType 
+static XmButtonType
 _XmVaBType_to_XmBType(
         String symbol )
 {
@@ -120,7 +120,7 @@ _XmVaBType_to_XmBType(
  *    total number of attribute-value pairs and the count of those
  *    attributes that are typed. The list is counted recursively.
  */
-static void 
+static void
 _XmCountNestedList(
         XtTypedArgList avlist,
         int *total_count,
@@ -136,17 +136,17 @@ _XmCountNestedList(
             }
             ++(*total_count);
         }
-    }    
+    }
 }
 
 /*
  * Function: XmeCountVaList
  *
  * Description: Takes a variable list and returns the number of total
- *              items in it. This is a much simplified version of 
- *              _XmCountVaList. It is intended to be used in convience 
- *              creation routines for widgets both inside and outside the 
- *              toolkit. 
+ *              items in it. This is a much simplified version of
+ *              _XmCountVaList. It is intended to be used in convience
+ *              creation routines for widgets both inside and outside the
+ *              toolkit.
  *
  * Input: al - a variable lenth list, at the beginning of the list.
  *
@@ -157,9 +157,9 @@ int
 XmeCountVaListSimple(va_list al)
 {
    int d1, d2, d3, count;
-   
+
    _XmCountVaList(al, &d1, &d2, &d3, &count);
-  
+
    return count;
 }
 
@@ -169,7 +169,7 @@ XmeCountVaListSimple(va_list al)
  *    and the count of the number of those attributes that are typed.
  *    The list is counted recursively.
  */
-void 
+void
 _XmCountVaList(
         va_list var,
         int *button_count,
@@ -184,7 +184,7 @@ _XmCountVaList(
     *args_count = 0;
     *typed_count = 0;
     *total_count = 0;
- 
+
     for(attr = va_arg(var, String) ; attr != NULL;
                         attr = va_arg(var, String)) {
 /* Count typed Args */
@@ -202,7 +202,7 @@ _XmCountVaList(
 /* Count valid VaBUTTONS (done here because of the variable arg length) */
 	    if (strcmp(attr, XmVaCASCADEBUTTON) == 0) {
 		for (i = 1; i < XMCASCADE_ARGS_PER_LIST; i++)
-		  (void)va_arg(var, XtArgVal);		
+		  (void)va_arg(var, XtArgVal);
 		++(*total_count);
 		++(*button_count);
 	    } else if ((strcmp(attr, XmVaSEPARATOR) == 0) ||
@@ -235,18 +235,18 @@ _XmCountVaList(
  *    pair in the passed Arg structure. It returns 1 if the conversion
  *    succeeded and 0 if the conversion failed.
  */
-static int 
+static int
 _XmTypedArgToArg(
         Widget widget,
         XtTypedArgList typed_arg,
         ArgList arg_return,
         XtResourceList resources,
         Cardinal num_resources )
-{     
+{
     String              to_type = NULL;
     XrmValue            from_val, to_val;
-    register int        i;
-      
+    int        i;
+
 
     if (widget == NULL) {
         XtAppWarningMsg(XtWidgetToApplicationContext(widget),
@@ -254,7 +254,7 @@ _XmTypedArgToArg(
             MESSAGE1, (String *)NULL, (Cardinal *)NULL);
         return(0);
     }
-       
+
     /* again we assume that the XtResourceList is un-compiled */
 
     for (i = 0; i < num_resources; i++) {
@@ -271,7 +271,7 @@ _XmTypedArgToArg(
             MESSAGE2, (String *)NULL, (Cardinal *)NULL);
         return(0);
     }
-       
+
     to_val.addr = NULL;
     from_val.size = typed_arg->size;
     if ((strcmp(typed_arg->type, XtRString) == 0) ||
@@ -280,10 +280,10 @@ _XmTypedArgToArg(
     } else {
             from_val.addr = (XPointer)&typed_arg->value;
     }
-       
+
     _XmProcessLock();
     XtConvert(widget, typed_arg->type, &from_val, to_type, &to_val);
- 
+
     if (to_val.addr == NULL) {
 	_XmProcessUnlock();
         XtAppWarningMsg(XtWidgetToApplicationContext(widget),
@@ -309,7 +309,7 @@ _XmTypedArgToArg(
 	else
 	    arg_return->value = *(XtArgVal *)to_val.addr;
     }
-       
+
     _XmProcessUnlock();
     return(1);
 }
@@ -318,7 +318,7 @@ _XmTypedArgToArg(
  *    _XmNestedArgtoArg() converts the passed nested list into
  *    an ArgList/count.
  */
-static int 
+static int
 _XmNestedArgtoArg(
         Widget widget,
         XtTypedArgList avlist,
@@ -327,7 +327,7 @@ _XmNestedArgtoArg(
         Cardinal num_resources )
 {
     int         count = 0;
- 
+
     for (; avlist->name != NULL; avlist++) {
         if (avlist->type != NULL) {
             /* If widget is NULL, the typed arg is ignored */
@@ -349,41 +349,41 @@ _XmNestedArgtoArg(
     return(count);
 }
 
-static int 
+static int
 _XmNestedArgtoTypedArg(
         XtTypedArgList args,
         XtTypedArgList avlist )
-{    
+{
     int         count = 0;
-     
-    for (; avlist->name != NULL; avlist++) { 
-        if (avlist->type != NULL) { 
-            (args+count)->name = avlist->name; 
-            (args+count)->type = avlist->type; 
+
+    for (; avlist->name != NULL; avlist++) {
+        if (avlist->type != NULL) {
+            (args+count)->name = avlist->name;
+            (args+count)->type = avlist->type;
             (args+count)->size = avlist->size;
             (args+count)->value = avlist->value;
-            ++count; 
-        } else if(strcmp(avlist->name, XtVaNestedList) == 0) {             
-            count += _XmNestedArgtoTypedArg((args+count),  
-                            (XtTypedArgList)avlist->value); 
-        } else {                             
-            (args+count)->name = avlist->name; 
-	    (args+count)->type = NULL;
-            (args+count)->value = avlist->value; 
             ++count;
-        }                                     
-    }         
+        } else if(strcmp(avlist->name, XtVaNestedList) == 0) {
+            count += _XmNestedArgtoTypedArg((args+count),
+                            (XtTypedArgList)avlist->value);
+        } else {
+            (args+count)->name = avlist->name;
+	    (args+count)->type = NULL;
+            (args+count)->value = avlist->value;
+            ++count;
+        }
+    }
     return(count);
 }
 
 
 /*
- *    Given a variable argument list, _XmVaToTypedArgList() returns 
+ *    Given a variable argument list, _XmVaToTypedArgList() returns
  *    the equivalent TypedArgList. _XmVaToTypedArgList() handles nested
  *    lists.
  *    Note: _XmVaToTypedArgList() does not do type conversions.
  */
-void 
+void
 _XmVaToTypedArgList(
         va_list var,
         int max_count,
@@ -395,7 +395,7 @@ _XmVaToTypedArgList(
     int			count;
 
     args = (XtTypedArgList)
-	XtMalloc((unsigned)(max_count * sizeof(XtTypedArg))); 
+	XtMalloc((unsigned)(max_count * sizeof(XtTypedArg)));
 
     for(attr = va_arg(var, String), count = 0 ; attr != NULL;
 		    attr = va_arg(var, String)) {
@@ -406,7 +406,7 @@ _XmVaToTypedArgList(
 	    args[count].size = va_arg(var, int);
 	    ++count;
 	} else if (strcmp(attr, XtVaNestedList) == 0) {
-   	    count += _XmNestedArgtoTypedArg(&args[count], 
+   	    count += _XmNestedArgtoTypedArg(&args[count],
 			va_arg(var, XtTypedArgList));
 	} else {
 	    args[count].name = attr;
@@ -420,7 +420,7 @@ _XmVaToTypedArgList(
     *num_args_return = count;
 }
 
-static void 
+static void
 _XmVaProcessEverything(
         Widget widget,
         va_list var,
@@ -516,7 +516,7 @@ XmVaCreateSimpleMenuBar(Widget parent, String name, ...)
 #define MB_EXTRA_ARGS 1
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     ArgList		args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -585,7 +585,7 @@ XmVaCreateSimplePulldownMenu(Widget parent, String name, int post_from_button, X
 #define PD_EXTRA_ARGS 3
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     Arg			*args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -609,7 +609,7 @@ XmVaCreateSimplePulldownMenu(Widget parent, String name, int post_from_button, X
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + PD_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &pulldownMenuButtonTypes,
-		&pulldownMenuStrings, &pulldownMenuMnemonics, 
+		&pulldownMenuStrings, &pulldownMenuMnemonics,
 		&pulldownMenuAccelerators, &pulldownMenuAcceleratorText,
 		button_count, &args, num_args);
 
@@ -660,7 +660,7 @@ XmVaCreateSimplePopupMenu(Widget parent, String name, XtCallbackProc callback, .
 
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     Arg			*args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -684,7 +684,7 @@ XmVaCreateSimplePopupMenu(Widget parent, String name, XtCallbackProc callback, .
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + PU_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &popupMenuButtonTypes,
-		&popupMenuStrings, &popupMenuMnemonics, 
+		&popupMenuStrings, &popupMenuMnemonics,
 		&popupMenuAccelerators, &popupMenuAcceleratorText,
 		button_count, &args, num_args);
 
@@ -734,7 +734,7 @@ XmVaCreateSimpleOptionMenu(Widget parent, String name, XmString option_label, Ke
 
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     Arg			*args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -758,7 +758,7 @@ XmVaCreateSimpleOptionMenu(Widget parent, String name, XmString option_label, Ke
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + OM_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &optionMenuButtonTypes,
-		&optionMenuStrings, &optionMenuMnemonics, 
+		&optionMenuStrings, &optionMenuMnemonics,
 		&optionMenuAccelerators, &optionMenuAcceleratorText,
 		button_count, &args, num_args);
 
@@ -810,7 +810,7 @@ XmVaCreateSimpleRadioBox(Widget parent, String name, int button_set, XtCallbackP
 #define RB_EXTRA_ARGS 3
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     Arg			*args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -834,7 +834,7 @@ XmVaCreateSimpleRadioBox(Widget parent, String name, int button_set, XtCallbackP
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + RB_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &radioBoxButtonTypes,
-		&radioBoxStrings, &radioBoxMnemonics, 
+		&radioBoxStrings, &radioBoxMnemonics,
 		&radioBoxAccelerators, &radioBoxAcceleratorText,
 		button_count, &args, num_args);
 
@@ -884,7 +884,7 @@ XmVaCreateSimpleCheckBox(Widget parent, String name, XtCallbackProc callback, ..
 #define CB_EXTRA_ARGS 2
 
     va_list		var;
-    register Widget	widget;
+    Widget	widget;
     Arg			*args;
     int			button_count, args_count, typed_count, total_count;
     int			n, num_args;
@@ -908,7 +908,7 @@ XmVaCreateSimpleCheckBox(Widget parent, String name, XtCallbackProc callback, ..
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + CB_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &checkBoxButtonTypes,
-		&checkBoxStrings, &checkBoxMnemonics, 
+		&checkBoxStrings, &checkBoxMnemonics,
 		&checkBoxAccelerators, &checkBoxAcceleratorText,
 		button_count, &args, num_args);
 
@@ -952,28 +952,28 @@ XmVaCreateSimpleCheckBox(Widget parent, String name, XtCallbackProc callback, ..
 
 /*
  * Function: XmeVLCreateWidget
- *     
- * Description:  Creates a widget of WidgetClass wc using a va_list of 
- *               arguments. Intended for generic use in Widget convience 
- *               functions. Intended for use by future widget writers 
- *               subclassing widgets. 
- *     
- * Input: name - The widget name 
+ *
+ * Description:  Creates a widget of WidgetClass wc using a va_list of
+ *               arguments. Intended for generic use in Widget convience
+ *               functions. Intended for use by future widget writers
+ *               subclassing widgets.
+ *
+ * Input: name - The widget name
  *        WidgetClass - The class of the widget
  *        parent  - a widget that is a parent
  *        managed - if True the widget will be managed, if false it will not
  *        al - a variable argument list of type va_list from stdarg.h
  *        count - an integer value indicating the number of things in al
  * Output:
- *       a returned widget if one can be created, NULL on error. 
+ *       a returned widget if one can be created, NULL on error.
  */
 Widget
 XmeVLCreateWidget(
-        char *name, 
-        WidgetClass wc, 
-        Widget parent, 
+        char *name,
+        WidgetClass wc,
+        Widget parent,
         Boolean managed,
-        va_list al, 
+        va_list al,
         int count)
 {
     Widget w;
@@ -983,36 +983,36 @@ XmeVLCreateWidget(
 
     _XmWidgetToAppContext(parent);
     _XmAppLock(app);
-    
+
     /* The size as specified from count */
     args = (ArgList)XtMalloc(count * sizeof(Arg));
-    
+
     /*
      * go through each element and copy the name and the value
      * (remember the value might be a pointer) to the value field
      */
-    for (attr = va_arg(al, String), n = 0; 
-         attr != NULL; 
+    for (attr = va_arg(al, String), n = 0;
+         attr != NULL;
          attr = va_arg(al, String), n++)
     {
     	args[n].name = attr;
     	args[n].value = va_arg(al, XtArgVal);
     }
-    
+
     va_end(al);
-    
+
     /* Create the widget managed or not */
-    if (managed)w = XtCreateManagedWidget(name, wc, parent, args, n); 
+    if (managed)w = XtCreateManagedWidget(name, wc, parent, args, n);
     else w = XtCreateWidget(name, wc, parent, args, n);
 
-    /* 
-     * Just free the arg list, not the values in it, that is taken care 
+    /*
+     * Just free the arg list, not the values in it, that is taken care
      * of elseware
      */
     XtFree((char *)args);
-    
-    _XmAppUnlock(app);
-    
-    return(w);
 
+    _XmAppUnlock(app);
+
+    return(w);
 }
+

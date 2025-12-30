@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ScrolledW.c /main/16 1997/07/25 16:49:57 samborn $"
@@ -3750,7 +3751,7 @@ XmVaCreateScrolledWindow(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -3815,3 +3816,4 @@ field is NULLed, otherwise, it is just deleted from the child list.
 (ChangeManaged is called for the relayout).
 
 ***************************************************************************/
+

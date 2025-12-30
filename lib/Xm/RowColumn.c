@@ -3022,7 +3022,7 @@ ConstraintSetValues(
                   Cardinal *num_args) /* unused */
 {
     XmRowColumnWidget rc = (XmRowColumnWidget) XtParent(new_w);
-    register Widget tmp;
+    Widget tmp;
     int i ;
     XtWidgetGeometry current ;
     Boolean margins_changed;
@@ -3251,7 +3251,7 @@ XmVaCreateRowColumn(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -3680,9 +3680,9 @@ FindFirstManagedChild(
         CompositeWidget m,
         Boolean first_button )
 {
-    register Widget *kid;
-    register int i = 0;
-    register int n;
+    Widget *kid;
+    int i = 0;
+    int n;
 
     if (!m)
        return(NULL);
@@ -4168,3 +4168,4 @@ WidgetNavigable(
     }
   return XmNOT_NAVIGABLE ;
 }
+

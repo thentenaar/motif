@@ -845,7 +845,7 @@ XmMenuSavvyTrait mst)
 static void
 ClassPartInitialize(WidgetClass cl)
 {
-    register XmLabelGadgetClass wc = (XmLabelGadgetClass) cl;
+    XmLabelGadgetClass wc = (XmLabelGadgetClass) cl;
     XmLabelGadgetClass super = (XmLabelGadgetClass)wc->rect_class.superclass;
     XmGadgetClassExt *wcePtr, *scePtr;
 
@@ -1392,7 +1392,7 @@ _XmCalcLabelGDimensions(Widget wid)
         }
     }
 }
-
+
 void
 _XmLabelGCalcTextRect(Widget wid)
 {
@@ -3444,7 +3444,7 @@ Widget XmCreateLabelGadget(Widget parent, char *name, Arg *arglist, Cardinal arg
 
 Widget XmVaCreateLabelGadget(Widget parent, char *name, ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,9 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: MapEventsI.h /main/5 1995/07/13 17:35:36 drk $ */
 #ifndef _XmMapEventsI_h
 #define _XmMapEventsI_h
@@ -36,22 +34,22 @@ extern "C" {
 
 /********    Private Function Declarations for MapEvents.c    ********/
 
-extern Boolean _XmMapBtnEvent( 
-                        register String str,
+extern Boolean _XmMapBtnEvent(
+                        String str,
                         int *eventType,
                         unsigned int *button,
                         Modifiers *modifiers) ;
-extern int _XmMapKeyEvents( 
-                        register String str,
+extern int _XmMapKeyEvents(
+                        String str,
                         int **eventType,
                         KeySym **keysym,
                         Modifiers **modifiers) ;
-extern Boolean _XmMatchBtnEvent( 
+extern Boolean _XmMatchBtnEvent(
                         XEvent *event,
                         int eventType,
                         unsigned int button,
                         Modifiers modifiers) ;
-extern Boolean _XmMatchKeyEvent( 
+extern Boolean _XmMatchKeyEvent(
                         XEvent *event,
                         int eventType,
                         unsigned int key,
@@ -60,8 +58,7 @@ extern Boolean _XmMatchKeyEvent(
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmMapEventsI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */
+

@@ -144,8 +144,8 @@ static wchar_t* _Xmwcscat(wchar_t *ws1, const wchar_t *ws2)
 static wchar_t* _Xmwcsncat(wchar_t *ws1, const wchar_t *ws2, size_t n)
 {
         if (n != 0) {
-                register wchar_t *d = ws1;
-                register const wchar_t *s = ws2;
+                wchar_t *d = ws1;
+                const wchar_t *s = ws2;
 
                 while (*d != 0)
                         d++;
@@ -10240,7 +10240,7 @@ XmVaCreateTextField(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -10280,5 +10280,5 @@ XmVaCreateManagedTextField(
                          var, count);
     va_end(var);
     return w;
-
 }
+

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -820,7 +820,7 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
 static void
 ChangeNodeState(HierarchyConstraints node)
 {
-    register int i, num;
+    int i, num;
     HierarchyConstraints * childp;
     XmHierarchyWidget hw = (XmHierarchyWidget)
 	                   XtParent(XmHierarchyC_widget(node));
@@ -889,10 +889,10 @@ AncestorClosed(HierarchyConstraints node)
 static void
 UnmapAllExtraNodes(Widget w, HierarchyConstraints node)
 {
-    register int i;
+    int i;
     XmHierarchyWidgetClass hc = (XmHierarchyWidgetClass) (XtClass(w));
-    register int num;
-    register HierarchyConstraints * ptr;
+    int num;
+    HierarchyConstraints * ptr;
 
     void (*unmap_extra)(Widget, HierarchyConstraints);
     XmHierarchyNodeProc unmap_node;
@@ -965,7 +965,7 @@ static void
 _BuildNodeTable(Widget w, HierarchyConstraints node, Cardinal * current_index)
 {
     XmHierarchyWidget hw = (XmHierarchyWidget) w;
-    register int i;
+    int i;
 
     if ((node == NULL) || ((XmHierarchyC_widget(node) != NULL) &&
 			   !XtIsManaged(XmHierarchyC_widget(node))))
@@ -1310,7 +1310,7 @@ DestroyFolderImages(Widget w)
 static void
 RemoveChildren(HierarchyConstraints * list, Cardinal num)
 {
-    register int i;
+    int i;
 
     for (i = 0 ; i < num ; i++, list++ ) {
 	/*
@@ -1354,7 +1354,7 @@ static void
 AddChildToList(HierarchyConstraints ** list, Cardinal * num, Cardinal * alloc,
 	       HierarchyConstraints child)
 {
-    register int i, j;
+    int i, j;
     HierarchyConstraints *l_child;
     SuccessType success = DONT_CARE;
     Widget insert_before = XmHierarchyC_insert_before(child);
@@ -1422,7 +1422,7 @@ GetNodeInfo(Widget w)
 static void
 RemoveNodeFromParent(HierarchyConstraints node)
 {
-    register int i;
+    int i;
     HierarchyConstraints pnode;
 
     if (XmHierarchyC_status(node) & PARENT_GONE)

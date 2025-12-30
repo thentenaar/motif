@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -1259,7 +1259,7 @@ static void
 _CalcNodeMidPoint( TreeConstraints node, Widget w,
 		   LadderPoint *ret_point )
 {
-  register int extra_space;
+  int extra_space;
   XmTreeWidget tw = (XmTreeWidget)w;
 
   if (!XmHierarchyC_widget(node)) return;
@@ -1299,7 +1299,7 @@ static void
 DrawTreeLine(Widget w, XRectangle *rect, TreeConstraints node)
 {
     TreeConstraints * kids;
-    register int i, num_kids;
+    int i, num_kids;
     TreeConstraints from_node = node;
     LadderPoint from_node_point = {0, 0}, kid_point = {0, 0}, first_kid_point = {0, 0};
     LadderPoint last_kid_point = {0, 0};
@@ -1393,8 +1393,8 @@ _DrawLine(Widget w, XRectangle *rect, TreeConstraints parent,
 {
     GC gc;
     XmTreeWidget tw = (XmTreeWidget) w;
-    register int x2=0, y2=0, extra_space;
-    register int rx2, ry2, cx1, cx2, cy1, cy2;
+    int x2=0, y2=0, extra_space;
+    int rx2, ry2, cx1, cx2, cy1, cy2;
 
     /*
      * (from_ladder_point.x, from_ladder_point.y) are the coordinates
@@ -1510,7 +1510,7 @@ CalcLocations(Widget w, Boolean resize_it)
     XmTreeWidget      tw = (XmTreeWidget) w;
     TreeConstraints   node;
     XmTreeWidgetClass tc = (XmTreeWidgetClass) XtClass(w);
-    register int      i;
+    int      i;
 
     /*
      * Reset each node to be hidden;
@@ -1596,9 +1596,9 @@ LayoutChildren(Widget w, Widget assign_child)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
     XmTreeWidgetClass tc = (XmTreeWidgetClass) XtClass(w);
-    register HierarchyConstraints * node_table = XmHierarchy_node_table(tw);
-    register Cardinal num_nodes = XmHierarchy_num_nodes(tw);
-    register int i, extra_space;
+    HierarchyConstraints * node_table = XmHierarchy_node_table(tw);
+    Cardinal num_nodes = XmHierarchy_num_nodes(tw);
+    int i, extra_space;
     Boolean register_workproc = True;
 
     XmDropSiteStartUpdate(w);
@@ -1639,8 +1639,8 @@ LayoutChildren(Widget w, Widget assign_child)
 	TreeConstraints t_node = (TreeConstraints) *node_table;
 	Widget child = XmHierarchyC_widget(t_node);
 	Widget open_close = XmHierarchyC_open_close_button(t_node);
-	register Dimension c_height, c_width;
-	register Position y_loc, x_loc, oc_y_loc = 0, oc_x_loc = 0;
+	Dimension c_height, c_width;
+	Position y_loc, x_loc, oc_y_loc = 0, oc_x_loc = 0;
 
 	c_width = child->core.width + 2 * child->core.border_width;
 	c_height = child->core.height + 2 * child->core.border_width;
@@ -1718,7 +1718,7 @@ static int
 GetExtraVertSpace(Widget w)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
-    register int space, vmargin;
+    int space, vmargin;
     TreeConstraints node = (TreeConstraints) XmHierarchy_top_node(tw);
 
     space = w->core.height - XmTreeC_bb_height(node);
@@ -1738,7 +1738,7 @@ static int
 GetExtraHorizSpace(Widget w)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
-    register int space, hmargin;
+    int space, hmargin;
     TreeConstraints node = (TreeConstraints) XmHierarchy_top_node(tw);
 
     space = w->core.width - XmTreeC_bb_width(node);
@@ -1759,7 +1759,7 @@ FindNodeLocations(Widget w)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
     TreeConstraints * node;
-    register int i, num_nodes;
+    int i, num_nodes;
     Widget *childP;
 
     _ResetPlacedFlag((TreeConstraints) XmHierarchy_top_node(tw));
@@ -1782,8 +1782,8 @@ FindNodeLocations(Widget w)
 static void
 _ResetPlacedFlag(TreeConstraints node)
 {
-    register TreeConstraints *child;
-    register int i, num;
+    TreeConstraints *child;
+    int i, num;
 
     if (node == NULL)
 	return;
@@ -1806,9 +1806,9 @@ static void
 _PlaceNode(Widget w, TreeConstraints node)
 {
   XmTreeWidget tw = (XmTreeWidget) w;
-  register TreeConstraints *child, prev_child, parent;
-  register Widget pw = XmHierarchyC_parent(node);
-  register int i, num, x_loc, y_loc, box_amount, boxy, boxx;
+  TreeConstraints *child, prev_child, parent;
+  Widget pw = XmHierarchyC_parent(node);
+  int i, num, x_loc, y_loc, box_amount, boxy, boxx;
 
   if ((node == NULL) || XmTreeC_placed(node))	/* Already placed. */
     return;
@@ -1975,7 +1975,7 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
         Cardinal * num, Cardinal sib_index)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
-    register int i, num_kids, l_width, l_height;
+    int i, num_kids, l_width, l_height;
 
     if (node == NULL)
 	return(False);
@@ -2041,8 +2041,8 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
     {
       num_kids = XmHierarchyC_num_children(node);
       if ((XmHierarchyC_state(node) != XmClosed) && (num_kids > 0)) {
-	register TreeConstraints * child;
-	register int num_managed=0;
+	TreeConstraints * child;
+	int num_managed=0;
 
  	child = (TreeConstraints *) XmHierarchyC_children(node);
 
@@ -2083,9 +2083,9 @@ GetNodeHeightAndWidth(Widget w, TreeConstraints node,
     {
       num_kids = XmHierarchyC_num_children(node);
       if ((XmHierarchyC_state(node) != XmClosed) && (num_kids > 0)) {
-  	register TreeConstraints * child;
-  	register TreeConstraints prev_child = NULL;
-  	register int num_managed=0;
+  	TreeConstraints * child;
+  	TreeConstraints prev_child = NULL;
+  	int num_managed=0;
 
  	child = (TreeConstraints *) XmHierarchyC_children(node);
 
@@ -2183,7 +2183,7 @@ static void
 CalcMaxSize(Widget w)
 {
     XmTreeWidget tw = (XmTreeWidget) w;
-    register TreeConstraints node = (TreeConstraints) XmHierarchy_top_node(tw);
+    TreeConstraints node = (TreeConstraints) XmHierarchy_top_node(tw);
 
     XmTree_max_width(tw) = XmTreeC_bb_width(node) + 2 * XmHierarchy_h_margin(tw);
     XmTree_max_height(tw) = XmTreeC_bb_height(node) + 2 * XmHierarchy_v_margin(tw);
@@ -2206,8 +2206,8 @@ CalcMaxSize(Widget w)
 static void
 UnmapAllExtraNodes(Widget w, HierarchyConstraints node)
 {
-    register int i, num;
-    register HierarchyConstraints * ptr;
+    int i, num;
+    HierarchyConstraints * ptr;
 
     if ((XmHierarchyC_status(node) & IS_COMPRESSED) &&
 	(XmHierarchyC_status(node) & IS_MAPPED))
@@ -2397,8 +2397,8 @@ WidgetInRect(XRectangle *rect, Widget w)
 static Boolean
 LocInRect(XRectangle *rect, Widget w, Position x, Position y)
 {
-    register int x1, x2;
-    register int y1, y2;
+    int x1, x2;
+    int y1, y2;
 
     if (w == NULL)
 	return(False);
@@ -2472,3 +2472,4 @@ XmCreateTree(Widget parent, String name,
 {
     return(XtCreateWidget(name, xmTreeWidgetClass, parent, args, num_args));
 }
+

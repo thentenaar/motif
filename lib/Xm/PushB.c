@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 
 #ifdef REV_INFO
 #ifndef lint
@@ -1143,7 +1143,7 @@ static void
 Resize(
         Widget w )
 {
-  register XmPushButtonWidget tb = (XmPushButtonWidget) w;
+  XmPushButtonWidget tb = (XmPushButtonWidget) w;
 
   if (Lab_IsPixmap(w) || Lab_IsPixmapAndText(w))
     SetPushButtonSize((XmPushButtonWidget) tb);
@@ -2996,7 +2996,7 @@ XmVaCreatePushButton(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -3035,5 +3035,5 @@ XmVaCreateManagedPushButton(
                          var, count);
     va_end(var);
     return w;
-
 }
+

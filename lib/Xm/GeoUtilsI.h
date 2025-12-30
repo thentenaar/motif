@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: GeoUtilsI.h /main/5 1995/07/13 17:28:18 drk $ */
 #ifndef _XmGeoUtilsI_h
 #define _XmGeoUtilsI_h
@@ -101,7 +99,7 @@ extern void _XmGeoLoadValues(
                         XtWidgetGeometry *request,
                         XtWidgetGeometry *geoResult) ;
 extern int _XmGeoCount_kids(
-                        register CompositeWidget c) ;
+                        CompositeWidget c) ;
 extern XmKidGeometry _XmGetKidGeo(
                         Widget wid,
                         Widget instigator,

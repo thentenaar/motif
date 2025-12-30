@@ -223,7 +223,7 @@ HashString (XmHashKey key)
 static void
 InitializeImageSet( void )
 {
-  register int i;
+  int i;
 
   /* Allocate the hash table. */
   assert (image_set == NULL);
@@ -1371,8 +1371,8 @@ _XmGetScaledPixmap(
 	      (WhitePixelOfScreen(screen) == 1))
 	    {
 	      /* Flip the bits so fg == 1 in the image. */
-	      register int nbytes = image->height * image->bytes_per_line;
-	      register int byte;
+	      int nbytes = image->height * image->bytes_per_line;
+	      int byte;
 
 	      /* Image data may be constant, so we must copy it. */
 	      old_image_data = image->data;
@@ -2273,3 +2273,4 @@ FreeCacheColors(Display *display, Colormap colormap,
 	status = FreeCacheColor(display, colormap, *pixels);
     return 0;
 }
+

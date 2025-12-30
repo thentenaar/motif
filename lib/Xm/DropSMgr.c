@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DropSMgr.c /main/21 1999/08/11 14:44:57 vipin $"
@@ -137,15 +138,15 @@ static void CreateTable(
 static void DestroyTable(
                         XmDropSiteManagerObject dsm) ;
 static void RegisterInfo(
-                        register XmDropSiteManagerObject dsm,
-                        register Widget widget,
-                        register XtPointer info) ;
+                        XmDropSiteManagerObject dsm,
+                        Widget widget,
+                        XtPointer info) ;
 static void UnregisterInfo(
-                        register XmDropSiteManagerObject dsm,
-                        register XtPointer info) ;
+                        XmDropSiteManagerObject dsm,
+                        XtPointer info) ;
 static XtPointer WidgetToInfo(
-                        register XmDropSiteManagerObject dsm,
-                        register Widget widget) ;
+                        XmDropSiteManagerObject dsm,
+                        Widget widget) ;
 static Boolean Coincident(
                         XmDropSiteManagerObject dsm,
                         Widget w,
@@ -543,11 +544,11 @@ DestroyTable(
 
 static void
 RegisterInfo(
-        register XmDropSiteManagerObject dsm,
-        register Widget widget,
-        register XtPointer info )
+        XmDropSiteManagerObject dsm,
+        Widget widget,
+        XtPointer info )
 {
-    register XmHashTable tab;
+    XmHashTable tab;
 
     if (GetDSRegistered(info)) return;
 
@@ -570,8 +571,8 @@ RegisterInfo(
 
 static void
 UnregisterInfo(
-        register XmDropSiteManagerObject dsm,
-        register XtPointer info )
+        XmDropSiteManagerObject dsm,
+        XtPointer info )
 {
     XmHashTable tab;
     XtPointer iterator;
@@ -604,8 +605,8 @@ UnregisterInfo(
 
 static XtPointer
 WidgetToInfo(
-        register XmDropSiteManagerObject dsm,
-        register Widget widget )
+        XmDropSiteManagerObject dsm,
+        Widget widget )
 {
   XmHashTable tab;
   XmDSInfo info;

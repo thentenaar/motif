@@ -209,7 +209,7 @@ static Boolean SetValues(
                         ArgList args_in,
                         Cardinal *num_args_in) ;
 static void Realize(
-                        register Widget w,
+                        Widget w,
                         XtValueMask *p_valueMask,
                         XSetWindowAttributes *attributes) ;
 static void Destroy(
@@ -1505,7 +1505,7 @@ SetValues(
  ************************************************************************/
 static void
 Realize(
-        register Widget w,
+        Widget w,
         XtValueMask *p_valueMask,
         XSetWindowAttributes *attributes )
 {
@@ -1728,8 +1728,8 @@ static Dimension
 MaxLabelWidth(
         XmScaleWidget sw )
 {
-    register int i;
-    register Widget c;
+    int i;
+    Widget c;
     Dimension max = 0;
 
     /* start at 2 to skip the title and the scrollbar */
@@ -1748,8 +1748,8 @@ static Dimension
 MaxLabelHeight(
         XmScaleWidget sw )
 {
-    register int i;
-    register Widget c;
+    int i;
+    Widget c;
     Dimension max = 0;
 
     /* start at 2 to skip the title and the scrollbar */
@@ -1777,7 +1777,7 @@ ValueTroughHeight(
     return (Dimension)ret_val;
 #else
     char buff[15];
-    register Dimension tmp_max, tmp_min, result;
+    Dimension tmp_max, tmp_min, result;
     int direction, ascent, descent;
     XCharStruct overall_return;
 
@@ -1819,7 +1819,7 @@ ValueTroughAscent(
     return (Dimension)ret_val;
 #else
     char buff[15];
-    register Dimension tmp_max, tmp_min, result;
+    Dimension tmp_max, tmp_min, result;
     int direction, ascent, descent;
     XCharStruct overall_return;
 
@@ -1861,7 +1861,7 @@ ValueTroughDescent(
     return (Dimension)ret_val;
 #else
     char buff[15];
-    register Dimension tmp_max, tmp_min, result;
+    Dimension tmp_max, tmp_min, result;
     int direction, ascent, descent;
     XCharStruct overall_return;
 
@@ -1895,7 +1895,7 @@ ValueTroughWidth(
         XmScaleWidget sw)
 {
     char buff[15];
-    register Dimension tmp_max, tmp_min, result;
+    Dimension tmp_max, tmp_min, result;
     int direction, ascent, descent;
     XCharStruct overall_return;
 
@@ -1942,8 +1942,8 @@ static Dimension
 TitleWidth(
         XmScaleWidget sw )
 {
-    register Dimension tmp = 0;
-    register Widget title_widget = sw->composite.children[0];
+    Dimension tmp = 0;
+    Widget title_widget = sw->composite.children[0];
 
     if (XtIsManaged(title_widget)) {
 	tmp = TotalWidth(title_widget) ;
@@ -1961,8 +1961,8 @@ static Dimension
 TitleHeight(
         XmScaleWidget sw )
 {
-    register Dimension tmp = 0;
-    register Widget title_widget = sw->composite.children[0];
+    Dimension tmp = 0;
+    Widget title_widget = sw->composite.children[0];
 
     if (XtIsManaged(title_widget)) {
 	tmp = TotalHeight(title_widget);
@@ -2785,7 +2785,7 @@ GetValueString(
         int value,
         String buffer)
 {
-    register int i;
+    int i;
     int  diff, dec_point_size;
     struct lconv *loc_values;
 
@@ -2996,8 +2996,8 @@ CalcScrollBarData(
     float sb_value, tmp;
     XmScrollBarWidget scrollbar =
 	    (XmScrollBarWidget) sw->composite.children[1];
-    register int ht = scrollbar->primitive.highlight_thickness;
-    register int st = scrollbar->primitive.shadow_thickness;
+    int ht = scrollbar->primitive.highlight_thickness;
+    int st = scrollbar->primitive.shadow_thickness;
     int size;
 
 	/*  Adjust the slider size to take SLIDER_SIZE area.    */
@@ -3385,7 +3385,7 @@ XmVaCreateScale(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

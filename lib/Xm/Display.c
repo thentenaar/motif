@@ -21,6 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Display.c /main/23 1997/06/18 17:36:59 samborn $"
@@ -98,7 +99,7 @@ static XmDragContext FindDC(
                         Boolean sourceIsExternal) ;
 static int isMine(
                         Display *dpy,
-                        register XEvent *event,
+                        XEvent *event,
                         char *arg) ;
 static void ReceiverShellExternalSourceHandler(
                         Widget w,
@@ -797,7 +798,7 @@ FindDC(
 static int
 isMine(
         Display *dpy,
-        register XEvent *event,
+        XEvent *event,
         char *arg )
 {
 	XmDisplayEventQueryStruct 	*q = (XmDisplayEventQueryStruct *) arg;
@@ -1224,5 +1225,5 @@ _XmSetThicknessDefault0(
 	}
 
 	value->addr = (XPointer)&thickness;
-
 }
+

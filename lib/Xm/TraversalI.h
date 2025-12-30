@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifndef _XmTraversalI_h
 #define _XmTraversalI_h
 
@@ -190,16 +191,16 @@ extern Boolean _XmGetPointVisibility(Widget w,
 				     int root_x,
 				     int root_y);
 extern void _XmSetRect(
-                        register XRectangle *rect,
+                        XRectangle *rect,
                         Widget w) ;
 extern int _XmIntersectRect(
-                        register XRectangle *srcRectA,
-                        register Widget widget,
-                        register XRectangle *dstRect) ;
+                        XRectangle *srcRectA,
+                        Widget widget,
+                        XRectangle *dstRect) ;
 extern int _XmEmptyRect(
-                        register XRectangle *r) ;
+                        XRectangle *r) ;
 extern void _XmClearRect(
-                        register XRectangle *r) ;
+                        XRectangle *r) ;
 extern Boolean _XmIsNavigable(
                         Widget wid) ;
 extern void _XmWidgetFocusChange(
@@ -234,9 +235,9 @@ extern Boolean _XmGetEffectiveView(
                         Widget wid,
                         XRectangle *visRect) ;
 extern Boolean _XmIntersectionOf(
-                        register XRectangle *srcRectA,
-                        register XRectangle *srcRectB,
-                        register XRectangle *destRect) ;
+                        XRectangle *srcRectA,
+                        XRectangle *srcRectB,
+                        XRectangle *destRect) ;
 extern XmNavigationType _XmGetNavigationType(
                         Widget widget) ;
 extern Widget _XmGetActiveTabGroup(
@@ -278,9 +279,8 @@ extern void _XmTabListDelete(
 
 /********    End Private Function Declarations    ********/
 
-
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmTraversalI_h */
+

@@ -2777,7 +2777,7 @@ XmCreateSpinBox(Widget parent, String name,
 
 Widget XmVaCreateSpinBox(Widget parent, char *name, ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -2927,3 +2927,4 @@ XmSpinBoxValidatePosition(Widget text_field, int *position)
   _XmAppUnlock(app);
   return(XmVALID_VALUE);
 }
+

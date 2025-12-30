@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ArrowBG.c /main/20 1999/01/26 15:30:15 mgreess $"
@@ -52,7 +53,7 @@ static char rcsid[] = "$TOG: ArrowBG.c /main/20 1999/01/26 15:30:15 mgreess $"
 #define DELAY_DEFAULT	100
 #define INVALID_PIXEL	((Pixel) -1)
 #define INVALID_PIXMAP	((Pixmap) -1)
-
+
 /********    Static Function Declarations    ********/
 
 static Pixmap GetHighlightPixmapDefault(XmArrowButtonGadget ag);
@@ -88,15 +89,15 @@ static void Disarm(XmArrowButtonGadget aw, XEvent *event);
 static void Enter(XmArrowButtonGadget aw, XEvent *event);
 static void Leave(XmArrowButtonGadget aw, XEvent *event);
 static void Help(XmArrowButtonGadget aw, XEvent *event);
-static void ActivateCommonG(XmArrowButtonGadget ag, 
+static void ActivateCommonG(XmArrowButtonGadget ag,
 			    XEvent             *event,
 			    Mask                event_mask);
 
-static void ChangeCB(Widget         w, 
+static void ChangeCB(Widget         w,
 		     XtCallbackProc activCB,
 		     XtPointer      closure,
 		     Boolean        setunset);
-static Boolean HandleRedraw(Widget kid, 
+static Boolean HandleRedraw(Widget kid,
 			    Widget cur_parent,
 			    Widget new_parent,
 			    Mask   visual_flag);
@@ -112,10 +113,10 @@ static void DrawArrowG(XmArrowButtonGadget ag,
 static void GetColors(Widget widget, XmAccessColorData color_data);
 
 /********    End Static Function Declarations    ********/
-
+
 /*  Resource list for Arrow  */
 
-static XtResource resources[] = 
+static XtResource resources[] =
 {
   {
     XmNmultiClick, XmCMultiClick, XmRMultiClick,
@@ -125,9 +126,9 @@ static XtResource resources[] =
   },
 
   {
-    XmNarrowDirection, XmCArrowDirection, XmRArrowDirection, 
+    XmNarrowDirection, XmCArrowDirection, XmRArrowDirection,
     sizeof(unsigned char),
-    XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.direction), 
+    XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.direction),
     XmRImmediate, (XtPointer) XmARROW_UP
   },
 
@@ -148,23 +149,23 @@ static XtResource resources[] =
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.disarm_callback),
     XmRPointer, (XtPointer) NULL
   },
-   
+
   {
-    XmNbackground, XmCBackground, XmRPixel, 
+    XmNbackground, XmCBackground, XmRPixel,
     sizeof(Pixel),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.background),
     XmRImmediate, (XtPointer) INVALID_PIXEL
   },
-   
+
   {
-    XmNforeground, XmCForeground, XmRPixel, 
+    XmNforeground, XmCForeground, XmRPixel,
     sizeof(Pixel),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.foreground),
     XmRImmediate, (XtPointer) INVALID_PIXEL
   },
-   
+
   {
-    XmNtopShadowColor, XmCTopShadowColor, XmRPixel, 
+    XmNtopShadowColor, XmCTopShadowColor, XmRPixel,
     sizeof(Pixel),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.top_shadow_color),
     XmRImmediate, (XtPointer) INVALID_PIXEL
@@ -178,7 +179,7 @@ static XtResource resources[] =
   },
 
   {
-    XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel, 
+    XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel,
     sizeof(Pixel),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.bottom_shadow_color),
     XmRImmediate, (XtPointer) INVALID_PIXEL
@@ -192,21 +193,21 @@ static XtResource resources[] =
   },
 
   {
-    XmNhighlightColor, XmCHighlightColor, XmRPixel, 
-    sizeof(Pixel), 
+    XmNhighlightColor, XmCHighlightColor, XmRPixel,
+    sizeof(Pixel),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.highlight_color),
     XmRImmediate, (XtPointer) INVALID_PIXEL
   },
 
   {
     XmNhighlightPixmap, XmCHighlightPixmap, XmRNoScalingDynamicPixmap,
-    sizeof(Pixmap), 
+    sizeof(Pixmap),
     XtOffsetOf(struct _XmArrowButtonGadgetRec, arrowbutton.highlight_pixmap),
     XmRImmediate, (XtPointer) INVALID_PIXMAP
   },
    {
      XmNdetailShadowThickness, XmCShadowThickness, XmRHorizontalDimension,
-     sizeof (Dimension), 
+     sizeof (Dimension),
      XtOffsetOf(XmArrowButtonGadgetRec, arrowbutton.detail_shadow_thickness),
      XmRCallProc, (XtPointer) _XmSetThickness
    }
@@ -262,7 +263,7 @@ externaldef(xmarrowbuttongadgetclassrec) XmArrowButtonGadgetClassRec
     NULL,				/* display_accelerator   */
     (XtPointer)NULL			/* extension             */
   },
-  
+
   { /* XmGadget fields */
     HighlightBorder,			/* border highlight   */
     XmInheritBorderUnhighlight,		/* border_unhighlight */
@@ -274,43 +275,43 @@ externaldef(xmarrowbuttongadgetclassrec) XmArrowButtonGadgetClassRec
     (XmCacheClassPartPtr)NULL,		/* class cache part   */
     (XtPointer)NULL			/* extension          */
   },
-  
+
   { /* XmArrowButtonGadget fields */
     (XtPointer)NULL			/* extension	      */
   }
 };
 
-externaldef(xmarrowbuttongadgetclass) WidgetClass xmArrowButtonGadgetClass = 
+externaldef(xmarrowbuttongadgetclass) WidgetClass xmArrowButtonGadgetClass =
    (WidgetClass) &xmArrowButtonGadgetClassRec;
 
 
 /* Trait record for arrowBG */
-static XmConst XmActivatableTraitRec arrowBGAT = 
+static XmConst XmActivatableTraitRec arrowBGAT =
 {
   0,				/* version	*/
   ChangeCB			/* changeCB	*/
 };
 
-static XmConst XmCareVisualTraitRec arrowBGCVT = 
+static XmConst XmCareVisualTraitRec arrowBGCVT =
 {
   0,				/* version	*/
   HandleRedraw			/* redraw	*/
 };
 
 /* Access Colors Trait record for arrow button gadget */
-static XmConst XmAccessColorsTraitRec arrowBGACT = 
+static XmConst XmAccessColorsTraitRec arrowBGACT =
 {
   0,				/* version	*/
   GetColors,			/* getColors	*/
   NULL				/* setColors	*/
 };
- 
+
 static Pixmap
 GetHighlightPixmapDefault(XmArrowButtonGadget ag)
 {
   XmManagerWidget mw = (XmManagerWidget)XtParent(ag);
   Pixmap result = XmUNSPECIFIED_PIXMAP;
-  
+
   if (ag->arrowbutton.highlight_color == ag->arrowbutton.background)
     result = XmGetPixmapByDepth(XtScreen(ag), XmS50_foreground,
 				ag->arrowbutton.highlight_color,
@@ -319,7 +320,7 @@ GetHighlightPixmapDefault(XmArrowButtonGadget ag)
 
   return result;
 }
-
+
 static Pixmap
 GetTopShadowPixmapDefault(XmArrowButtonGadget ag)
 {
@@ -340,7 +341,7 @@ GetTopShadowPixmapDefault(XmArrowButtonGadget ag)
 
   return result;
 }
-
+
 /************************************************************************
  *
  *  ClassPartInitialize
@@ -348,22 +349,22 @@ GetTopShadowPixmapDefault(XmArrowButtonGadget ag)
  *
  ************************************************************************/
 
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc)
 {
   _XmFastSubclassInit (wc, XmARROW_BUTTON_GADGET_BIT);
-  
+
   /* Install the activatable trait for all subclasses */
   XmeTraitSet((XtPointer)wc, XmQTactivatable, (XtPointer)&arrowBGAT);
-  
+
   /* Install the careParentVisual trait for all subclasses as well. */
   XmeTraitSet((XtPointer)wc, XmQTcareParentVisual, (XtPointer)&arrowBGCVT);
-  
+
   /* Install the accessColors trait for all subclasses as well. */
   XmeTraitSet((XtPointer)wc, XmQTaccessColors, (XtPointer)&arrowBGACT);
 }
-
+
 /************************************************************************
  *
  *  Initialize
@@ -372,7 +373,7 @@ ClassPartInitialize(
  ************************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -381,58 +382,58 @@ Initialize(
 {
   XmArrowButtonGadget request = (XmArrowButtonGadget) rw;
   XmArrowButtonGadget new_w = (XmArrowButtonGadget) nw;
-  
+
   /*
    *  Check the data put into the new widget from .Xdefaults
    *  or through the arg list.
    */
-  if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION, 
+  if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
       new_w->arrowbutton.direction = XmARROW_UP;
     }
-  
-  
+
+
   /*  Set up a geometry for the widget if it is currently 0.  */
-  if (request->rectangle.width == 0) 
+  if (request->rectangle.width == 0)
     new_w->rectangle.width += 15;
   if (request->rectangle.height == 0)
     new_w->rectangle.height += 15;
-  
+
   /*  Set the internal arrow variables */
   new_w->arrowbutton.timer = 0;
   new_w->arrowbutton.selected = False;
-  
+
   /*  Get the drawing graphics contexts.  */
   DealWithColors(new_w);
   DealWithPixmaps(new_w);
-  
+
   GetArrowGC (new_w);
   GetBackgroundGC (new_w);
   new_w->arrowbutton.highlight_GC =
-    _XmGetPixmapBasedGC (XtParent(nw), 
+    _XmGetPixmapBasedGC (XtParent(nw),
 			 new_w->arrowbutton.highlight_color,
 			 new_w->arrowbutton.background,
 			 new_w->arrowbutton.highlight_pixmap);
-  
+
   new_w->arrowbutton.top_shadow_GC =
-    _XmGetPixmapBasedGC (XtParent(nw), 
+    _XmGetPixmapBasedGC (XtParent(nw),
 			 new_w->arrowbutton.top_shadow_color,
 			 new_w->arrowbutton.background,
 			 new_w->arrowbutton.top_shadow_pixmap);
-  
+
   new_w->arrowbutton.bottom_shadow_GC =
-    _XmGetPixmapBasedGC (XtParent(nw), 
+    _XmGetPixmapBasedGC (XtParent(nw),
 			 new_w->arrowbutton.bottom_shadow_color,
 			 new_w->arrowbutton.background,
 			 new_w->arrowbutton.bottom_shadow_pixmap);
-  
+
   /*  Initialize the interesting input types.  */
   new_w->gadget.event_mask =  XmARM_EVENT | XmACTIVATE_EVENT | XmHELP_EVENT |
     XmFOCUS_IN_EVENT | XmFOCUS_OUT_EVENT | XmENTER_EVENT | XmLEAVE_EVENT
       | XmMULTI_ARM_EVENT|  XmMULTI_ACTIVATE_EVENT;
 }
-
+
 /************************************************************************
  *
  *  GetBackgroundGC
@@ -440,28 +441,28 @@ Initialize(
  *
  ************************************************************************/
 
-static void 
+static void
 GetBackgroundGC(
         XmArrowButtonGadget ag)
 {
   XGCValues values;
   XtGCMask  valueMask;
   XmManagerWidget mw = (XmManagerWidget) XtParent(ag);
-  
-  ag->arrowbutton.fill_bg_box = 
+
+  ag->arrowbutton.fill_bg_box =
     ((mw->core.background_pixel != ag->arrowbutton.background) &&
      (mw->core.background_pixmap == XmUNSPECIFIED_PIXMAP));
-  
+
   if (!ag->arrowbutton.fill_bg_box)
     return;
-  
+
   valueMask = GCForeground | GCBackground;
   values.foreground = ag->arrowbutton.background;
-  values.background = ag->arrowbutton.foreground; 
-  
+  values.background = ag->arrowbutton.foreground;
+
   ag->arrowbutton.background_GC = XtGetGC ((Widget) mw, valueMask, &values);
 }
-
+
 /************************************************************************
  *
  *  GetArrowGC
@@ -469,33 +470,33 @@ GetBackgroundGC(
  *
  ************************************************************************/
 
-static void 
+static void
 GetArrowGC(
         XmArrowButtonGadget ag)
 {
   XGCValues values;
   XtGCMask  valueMask, unusedMask;
   XmManagerWidget mw = (XmManagerWidget) XtParent(ag);
-  
+
   valueMask = GCForeground | GCBackground | GCGraphicsExposures;
   unusedMask = GCClipXOrigin | GCClipYOrigin | GCFont;
 
   values.foreground = ag->arrowbutton.foreground;
   values.background = ag->arrowbutton.background;
   values.graphics_exposures = False;
-  
+
   ag->arrowbutton.arrow_GC = XtAllocateGC ((Widget) mw, 0, valueMask, &values,
 					   GCClipMask, unusedMask);
-  
+
   valueMask |= GCFillStyle | GCStipple;
   values.fill_style = FillOpaqueStippled;
   values.stipple = _XmGetInsensitiveStippleBitmap((Widget) ag);
-  
-  ag->arrowbutton.insensitive_GC = XtAllocateGC((Widget) mw, 0, valueMask, 
-						&values, GCClipMask, 
+
+  ag->arrowbutton.insensitive_GC = XtAllocateGC((Widget) mw, 0, valueMask,
+						&values, GCClipMask,
 						unusedMask);
 }
-
+
 /************************************************************************
  *
  *  Redisplay
@@ -504,7 +505,7 @@ GetArrowGC(
  ************************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 Redisplay(
         Widget w,
         XEvent *event,
@@ -514,21 +515,21 @@ Redisplay(
   int iwidth, iheight;
   int background_x_offset, background_y_offset, background_width,
   background_height;
-  
+
   iwidth = (int) aw->rectangle.width - 2 * aw->gadget.highlight_thickness;
   iheight = (int) aw->rectangle.height - 2 * aw->gadget.highlight_thickness;
-  
+
   background_x_offset = (aw->rectangle.x +
 			 aw->gadget.highlight_thickness +
 			 aw->gadget.shadow_thickness);
-  
+
   background_y_offset = (aw->rectangle.y +
 			 aw->gadget.highlight_thickness +
 			 aw->gadget.shadow_thickness);
-  
+
   background_height = iheight - 2 * aw->gadget.shadow_thickness;
   background_width = iwidth - 2 * aw->gadget.shadow_thickness;
-  
+
   if (aw->arrowbutton.fill_bg_box)
     XFillRectangle(XtDisplay(aw),
 		   XtWindow((Widget) aw),
@@ -537,7 +538,7 @@ Redisplay(
 		   background_y_offset,
 		   background_width,
 		   background_height);
-  
+
   /*  Draw the arrow  */
   if ((iwidth > 0) && (iheight > 0))
     {
@@ -552,31 +553,31 @@ Redisplay(
 			aw->rectangle.height-2 *
 			aw->gadget.highlight_thickness,
 			aw->gadget.shadow_thickness, XmSHADOW_OUT);
-      
+
       if (aw->arrowbutton.selected && XtIsSensitive(w))
 	DrawArrowG(aw, aw->arrowbutton.bottom_shadow_GC,
 		   aw->arrowbutton.top_shadow_GC, aw->arrowbutton.arrow_GC);
       else
 	DrawArrowG(aw, aw->arrowbutton.top_shadow_GC,
 		   aw->arrowbutton.bottom_shadow_GC,
-		   (XtIsSensitive(w) ? 
+		   (XtIsSensitive(w) ?
 		    aw->arrowbutton.arrow_GC : aw->arrowbutton.insensitive_GC));
     }
 
   if (aw->gadget.highlighted)
-    {   
+    {
       (*(xmArrowButtonGadgetClassRec.gadget_class.border_highlight)) (w);
-    } 
+    }
 }
-
+
  /*
   *
   * DealWithColors
   *
-  * Deal with compatibility.  
+  * Deal with compatibility.
   *  If any resource is set initialize like a widget otherwise get
   * everything from the parent.
-  * 
+  *
   *
   */
 static void
@@ -584,7 +585,7 @@ DealWithColors(
         XmArrowButtonGadget ag)
 {
   XmManagerWidget mw = (XmManagerWidget) XtParent(ag);
-  
+
   /*
    * If the gadget color is set to the tag value or it is the
    * same as the manager color; bc mode is enabled otherwise
@@ -612,42 +613,42 @@ DealWithColors(
       InitNewColorBehavior(ag);
     }
 }
- 
+
 static void
 InitNewColorBehavior(
         XmArrowButtonGadget ag)
 {
   XrmValue value;
-  
+
   value.size = sizeof(Pixel);
-  
+
   if (ag->arrowbutton.background == INVALID_PIXEL)
     {
       _XmBackgroundColorDefault ((Widget)ag,
-				 XtOffsetOf(struct _XmArrowButtonGadgetRec, 
+				 XtOffsetOf(struct _XmArrowButtonGadgetRec,
 					    arrowbutton.background),
 				 &value);
       memcpy((char*) &ag->arrowbutton.background, value.addr, value.size);
     }
-  
+
   if (ag->arrowbutton.foreground == INVALID_PIXEL)
     {
       _XmForegroundColorDefault ((Widget)ag,
-				 XtOffsetOf(struct _XmArrowButtonGadgetRec, 
+				 XtOffsetOf(struct _XmArrowButtonGadgetRec,
 					    arrowbutton.foreground),
 				 &value);
       memcpy((char*) &ag->arrowbutton.foreground, value.addr, value.size);
     }
-  
+
   if (ag->arrowbutton.top_shadow_color == INVALID_PIXEL)
     {
       _XmTopShadowColorDefault ((Widget)ag,
-				XtOffsetOf(struct _XmArrowButtonGadgetRec, 
+				XtOffsetOf(struct _XmArrowButtonGadgetRec,
 					   arrowbutton.top_shadow_color),
 				&value);
       memcpy((char*)&ag->arrowbutton.top_shadow_color, value.addr,value.size);
     }
-  
+
   if (ag->arrowbutton.bottom_shadow_color == INVALID_PIXEL)
     {
       _XmBottomShadowColorDefault((Widget)ag,
@@ -656,7 +657,7 @@ InitNewColorBehavior(
 				  &value);
       memcpy((char*)&ag->arrowbutton.bottom_shadow_color, value.addr, value.size);
     }
-  
+
   if (ag->arrowbutton.highlight_color == INVALID_PIXEL)
     {
       _XmHighlightColorDefault((Widget)ag,
@@ -666,15 +667,15 @@ InitNewColorBehavior(
       memcpy((char*) &ag->arrowbutton.highlight_color, value.addr,value.size);
     }
 }
-
+
  /*
   *
   * DealWithPixmaps
   *
-  * Deal with compatibility.  
+  * Deal with compatibility.
   *  If any resource is set initialize like a widget otherwise get
   * everything from the parent.
-  * 
+  *
   */
 
 static void
@@ -682,9 +683,9 @@ DealWithPixmaps(
         XmArrowButtonGadget ag)
 {
   XmManagerWidget mw = (XmManagerWidget) XtParent(ag);
-  
+
   if ((ag->arrowbutton.top_shadow_pixmap == INVALID_PIXMAP ||
-       ag->arrowbutton.top_shadow_pixmap == mw->manager.top_shadow_pixmap) && 
+       ag->arrowbutton.top_shadow_pixmap == mw->manager.top_shadow_pixmap) &&
       (ag->arrowbutton.highlight_pixmap == INVALID_PIXMAP  ||
        ag->arrowbutton.highlight_pixmap == mw->manager.highlight_pixmap))
     {
@@ -696,13 +697,13 @@ DealWithPixmaps(
       InitNewPixmapBehavior(ag);
     }
 }
-    
+
 /*
  * InitNewPixmapBehavior
  *
  * Initialize colors like a widget.
  */
- 
+
 static void
 InitNewPixmapBehavior(
         XmArrowButtonGadget ag)
@@ -717,7 +718,7 @@ InitNewPixmapBehavior(
       ag->arrowbutton.highlight_pixmap = GetHighlightPixmapDefault(ag);
     }
 }
-
+
 /************************************************************************
  *
  *  Destroy
@@ -725,16 +726,16 @@ InitNewPixmapBehavior(
  *
  ************************************************************************/
 
-static void 
+static void
 Destroy(
         Widget w)
 {
   XmArrowButtonGadget aw = (XmArrowButtonGadget) w;
   XmManagerWidget mw = (XmManagerWidget) XtParent(aw);
-  
+
   if (aw->arrowbutton.timer)
     XtRemoveTimeOut (aw->arrowbutton.timer);
-  
+
   XtReleaseGC ((Widget) mw, aw->arrowbutton.arrow_GC);
   XtReleaseGC ((Widget) mw, aw->arrowbutton.insensitive_GC);
   if (aw->arrowbutton.fill_bg_box)
@@ -743,7 +744,7 @@ Destroy(
   XtReleaseGC ((Widget) mw, aw->arrowbutton.bottom_shadow_GC);
   XtReleaseGC ((Widget) mw, aw->arrowbutton.highlight_GC);
 }
-
+
 /************************************************************************
  *
  *  SetValues
@@ -751,7 +752,7 @@ Destroy(
  ************************************************************************/
 
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,		/* unused */
@@ -761,25 +762,25 @@ SetValues(
 {
   XmArrowButtonGadget current = (XmArrowButtonGadget) cw;
   XmArrowButtonGadget new_w = (XmArrowButtonGadget) nw;
-  
+
   Boolean returnFlag = FALSE;
-  
-  
+
+
   /*  Check the data put into the new widget.  */
-  
-  if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION, 
+
+  if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
       new_w->arrowbutton.direction = current->arrowbutton.direction;
     }
-  
-  
+
+
   /*  ReInitialize the interesting input types.  */
-  
+
   new_w->gadget.event_mask |=  XmARM_EVENT | XmACTIVATE_EVENT | XmHELP_EVENT |
     XmFOCUS_IN_EVENT | XmFOCUS_OUT_EVENT | XmENTER_EVENT | XmLEAVE_EVENT
       | XmMULTI_ARM_EVENT | XmMULTI_ACTIVATE_EVENT;
-  
+
   if (new_w->arrowbutton.direction != current->arrowbutton.direction ||
       XtIsSensitive(nw) != XtIsSensitive(cw) ||
       new_w->gadget.highlight_thickness !=
@@ -788,7 +789,7 @@ SetValues(
     {
       returnFlag = TRUE;
     }
-  
+
   if (new_w->arrowbutton.foreground != current->arrowbutton.foreground ||
       new_w->arrowbutton.background != current->arrowbutton.background)
     {
@@ -800,36 +801,36 @@ SetValues(
       GetBackgroundGC (new_w);
       return (True);
     }
-  
-  if (current->arrowbutton.top_shadow_color != 
+
+  if (current->arrowbutton.top_shadow_color !=
       new_w->arrowbutton.top_shadow_color ||
-      current->arrowbutton.top_shadow_pixmap != 
+      current->arrowbutton.top_shadow_pixmap !=
       new_w->arrowbutton.top_shadow_pixmap)
     {
       XtReleaseGC ((Widget) new_w, new_w->arrowbutton.top_shadow_GC);
       new_w->arrowbutton.top_shadow_GC =
-	_XmGetPixmapBasedGC (XtParent(nw), 
+	_XmGetPixmapBasedGC (XtParent(nw),
 			     new_w->arrowbutton.top_shadow_color,
 			     new_w->arrowbutton.background,
 			     new_w->arrowbutton.top_shadow_pixmap);
       returnFlag = True;
     }
-  
-  
-  if (current->arrowbutton.bottom_shadow_color != 
+
+
+  if (current->arrowbutton.bottom_shadow_color !=
       new_w->arrowbutton.bottom_shadow_color ||
-      current->arrowbutton.bottom_shadow_pixmap != 
+      current->arrowbutton.bottom_shadow_pixmap !=
       new_w->arrowbutton.bottom_shadow_pixmap)
     {
       XtReleaseGC ((Widget) new_w, new_w->arrowbutton.bottom_shadow_GC);
       new_w->arrowbutton.bottom_shadow_GC =
-	_XmGetPixmapBasedGC (XtParent(nw), 
+	_XmGetPixmapBasedGC (XtParent(nw),
 			     new_w->arrowbutton.bottom_shadow_color,
 			     new_w->arrowbutton.background,
 			     new_w->arrowbutton.bottom_shadow_pixmap);
       returnFlag = True;
     }
-  
+
   if (current->arrowbutton.highlight_color !=
       new_w->arrowbutton.highlight_color ||
       current->arrowbutton.highlight_pixmap !=
@@ -837,45 +838,45 @@ SetValues(
     {
       XtReleaseGC ((Widget) new_w, new_w->arrowbutton.highlight_GC);
       new_w->arrowbutton.highlight_GC =
-	_XmGetPixmapBasedGC (XtParent(nw), 
+	_XmGetPixmapBasedGC (XtParent(nw),
 			     new_w->arrowbutton.highlight_color,
 			     new_w->arrowbutton.background,
 			     new_w->arrowbutton.highlight_pixmap);
-      
+
       returnFlag = True;
     }
-  
-  
+
+
   return (returnFlag);
 }
-
-static void 
+
+static void
 HighlightBorder(
         Widget w)
-{   
+{
   XmArrowButtonGadget ag = (XmArrowButtonGadget) w;
 
-  if (ag->rectangle.width == 0 || 
+  if (ag->rectangle.width == 0 ||
       ag->rectangle.height == 0 ||
       ag->gadget.highlight_thickness == 0)
-    {   
+    {
       return;
-    } 
+    }
 
   ag->gadget.highlighted = True;
   ag->gadget.highlight_drawn = True;
 
   /* CR 7330: Use XmeDrawHighlight, not _XmDrawHighlight. */
-  XmeDrawHighlight(XtDisplay((Widget) ag), XtWindow((Widget) ag), 
+  XmeDrawHighlight(XtDisplay((Widget) ag), XtWindow((Widget) ag),
 		   ag->arrowbutton.highlight_GC,
-		   ag->rectangle.x, ag->rectangle.y, 
+		   ag->rectangle.x, ag->rectangle.y,
 		   ag->rectangle.width, ag->rectangle.height,
 		   ag->gadget.highlight_thickness);
 }
-
-static Boolean 
+
+static Boolean
 HandleRedraw (
-	Widget kid, 	       
+	Widget kid,
 	Widget cur_parent,
 	Widget new_parent,
 	Mask visual_flag)
@@ -884,124 +885,124 @@ HandleRedraw (
   XmManagerWidget mw = (XmManagerWidget) new_parent;
   XmManagerWidget curmw = (XmManagerWidget) cur_parent;
   Boolean redraw, do_bg, do_arrow, do_highlight, do_top, do_bot;
-  
+
   redraw = do_bg = do_arrow = do_highlight = do_top = do_bot = False;
-  
+
   if ((visual_flag & VisualBackgroundPixel) &&
       (ag->arrowbutton.background == curmw->core.background_pixel))
-    
+
     {
       redraw = do_bg = do_arrow = do_highlight = do_top = do_bot = True;
       ag->arrowbutton.background = mw->core.background_pixel;
     }
-  
+
   if ((visual_flag & VisualForeground) &&
       (ag->arrowbutton.foreground == curmw->manager.foreground))
     {
       redraw = do_arrow = True;
       ag->arrowbutton.foreground = mw->manager.foreground;
     }
-  
-  if (visual_flag & VisualBackgroundPixmap)	
+
+  if (visual_flag & VisualBackgroundPixmap)
     {
       redraw = do_bg = True;
     }
-  
+
   if (visual_flag & (VisualTopShadowColor | VisualTopShadowPixmap))
     {
       redraw = do_top = True;
-      
+
       if (ag->arrowbutton.top_shadow_color == curmw->manager.top_shadow_color)
 	ag->arrowbutton.top_shadow_color = mw->manager.top_shadow_color;
-      
-      if ((ag->arrowbutton.top_shadow_pixmap == 
+
+      if ((ag->arrowbutton.top_shadow_pixmap ==
 	   curmw->manager.top_shadow_pixmap) &&
-	  (ag->arrowbutton.top_shadow_pixmap != XmUNSPECIFIED_PIXMAP || 
+	  (ag->arrowbutton.top_shadow_pixmap != XmUNSPECIFIED_PIXMAP ||
 	   ag->arrowbutton.top_shadow_color == curmw->manager.top_shadow_color))
 	ag->arrowbutton.top_shadow_pixmap = mw->manager.top_shadow_pixmap;
     }
-  
+
   if (visual_flag & (VisualBottomShadowColor | VisualBottomShadowPixmap))
     {
       redraw = do_bot = True;
-      
+
       if (ag->arrowbutton.bottom_shadow_color ==
 	  curmw->manager.bottom_shadow_color)
 	ag->arrowbutton.bottom_shadow_color = mw->manager.bottom_shadow_color;
-      
-      if ((ag->arrowbutton.bottom_shadow_pixmap == 
-	   curmw->manager.bottom_shadow_pixmap) && 
+
+      if ((ag->arrowbutton.bottom_shadow_pixmap ==
+	   curmw->manager.bottom_shadow_pixmap) &&
 	  (ag->arrowbutton.bottom_shadow_pixmap != XmUNSPECIFIED_PIXMAP ||
 	   ag->arrowbutton.bottom_shadow_color == curmw->manager.bottom_shadow_color))
 	ag->arrowbutton.bottom_shadow_pixmap = mw->manager.bottom_shadow_pixmap;
     }
-  
+
   if (visual_flag & (VisualHighlightColor | VisualHighlightPixmap))
     {
       redraw = do_highlight = True;
-      
+
       if (ag->arrowbutton.highlight_color == curmw->manager.highlight_color)
 	ag->arrowbutton.highlight_color = mw->manager.highlight_color;
-      
+
       if (ag->arrowbutton.highlight_pixmap == curmw->manager.highlight_pixmap &&
 	  (ag->arrowbutton.highlight_pixmap != XmUNSPECIFIED_PIXMAP ||
 	   ag->arrowbutton.highlight_color != curmw->manager.highlight_color))
 	ag->arrowbutton.highlight_pixmap = mw->manager.highlight_pixmap;
-      
+
       ag->arrowbutton.highlight_GC =
-	_XmGetPixmapBasedGC (XtParent(ag), 
+	_XmGetPixmapBasedGC (XtParent(ag),
 			     ag->arrowbutton.highlight_color,
 			     ag->arrowbutton.background,
 			     ag->arrowbutton.highlight_pixmap);
     }
-  
+
   if (do_bg)
     {
       if (ag->arrowbutton.fill_bg_box)
 	XtReleaseGC ((Widget)mw, ag->arrowbutton.background_GC);
       GetBackgroundGC (ag);
     }
-  
+
   if (do_arrow)
     {
       XtReleaseGC ((Widget)mw, ag->arrowbutton.arrow_GC);
       XtReleaseGC ((Widget)mw, ag->arrowbutton.insensitive_GC);
       GetArrowGC (ag);
     }
-  
+
   if (do_highlight)
     {
       XtReleaseGC ((Widget)mw, ag->arrowbutton.highlight_GC);
       ag->arrowbutton.highlight_GC =
-	_XmGetPixmapBasedGC (XtParent(ag), 
+	_XmGetPixmapBasedGC (XtParent(ag),
 			     ag->arrowbutton.highlight_color,
 			     ag->arrowbutton.background,
 			     ag->arrowbutton.highlight_pixmap);
     }
-  
+
   if (do_top)
     {
       XtReleaseGC ((Widget)mw, ag->arrowbutton.top_shadow_GC);
       ag->arrowbutton.top_shadow_GC =
-	_XmGetPixmapBasedGC (XtParent(ag), 
+	_XmGetPixmapBasedGC (XtParent(ag),
 			     ag->arrowbutton.top_shadow_color,
 			     ag->arrowbutton.background,
 			     ag->arrowbutton.top_shadow_pixmap);
     }
-  
+
   if (do_bot)
     {
       XtReleaseGC ((Widget)mw, ag->arrowbutton.bottom_shadow_GC);
       ag->arrowbutton.bottom_shadow_GC =
-	_XmGetPixmapBasedGC (XtParent(ag), 
+	_XmGetPixmapBasedGC (XtParent(ag),
 			     ag->arrowbutton.bottom_shadow_color,
 			     ag->arrowbutton.background,
 			     ag->arrowbutton.bottom_shadow_pixmap);
     }
-  
+
   return redraw;
 }
-
+
 /************************************************************************
  *
  *  InputDispatch
@@ -1010,38 +1011,38 @@ HandleRedraw (
  *
  ************************************************************************/
 
-static void 
+static void
 InputDispatch(
         Widget wid,
         XEvent *event,
         Mask event_mask)
 {
   XmArrowButtonGadget ag = (XmArrowButtonGadget) wid;
-  
-  if ((event_mask & XmARM_EVENT) || 
+
+  if ((event_mask & XmARM_EVENT) ||
       ((ag->arrowbutton.multiClick == XmMULTICLICK_KEEP) &&
        (event_mask & XmMULTI_ARM_EVENT)))
     Arm (ag, event);
 
   else if (event_mask & XmACTIVATE_EVENT)
-    { 
-      ag->arrowbutton.click_count = 1;  
+    {
+      ag->arrowbutton.click_count = 1;
       ActivateCommonG (ag, event, event_mask);
     }
 
   else if (event_mask & XmMULTI_ACTIVATE_EVENT)
-    { 
+    {
       /* if XmNMultiClick resource is set to DISCARD - do nothing
        * else call ActivateCommon() and increment clickCount;
        */
       if (ag->arrowbutton.multiClick == XmMULTICLICK_KEEP)
-	{  
+	{
 	  ag->arrowbutton.click_count++;
 	  ActivateCommonG (ag, event, event_mask);
 	}
     }
-  
-  else if (event_mask & XmHELP_EVENT) 
+
+  else if (event_mask & XmHELP_EVENT)
     Help (ag, event);
 
   else if (event_mask & XmENTER_EVENT)
@@ -1050,42 +1051,42 @@ InputDispatch(
   else if (event_mask & XmLEAVE_EVENT)
     Leave (ag, event);
 
-  else if (event_mask & XmFOCUS_IN_EVENT) 
+  else if (event_mask & XmFOCUS_IN_EVENT)
     _XmFocusInGadget ((Widget) ag, event, NULL, NULL);
 
-  else if (event_mask & XmFOCUS_OUT_EVENT) 
+  else if (event_mask & XmFOCUS_OUT_EVENT)
     _XmFocusOutGadget ((Widget)ag, event, NULL, NULL);
 }
-
+
 /************************************************************************
  *
  *  Arm
  *     This function processes button 1 down occuring on the arrowbutton.
  *
  ************************************************************************/
-static void 
+static void
 Arm(
         XmArrowButtonGadget aw,
         XEvent *event)
 {
   XmArrowButtonCallbackStruct call_value;
-  
+
   aw->arrowbutton.selected = True;
-  
+
   DrawArrowG(aw, aw->arrowbutton.bottom_shadow_GC,
 	     aw->arrowbutton.top_shadow_GC, NULL);
-  
+
   if (aw->arrowbutton.arm_callback)
     {
       XFlush(XtDisplay(aw));
-      
+
       call_value.reason = XmCR_ARM;
       call_value.event = event;
       XtCallCallbackList ((Widget) aw, aw->arrowbutton.arm_callback,
 			  &call_value);
     }
 }
-
+
 /************************************************************************
  *
  *  Activate
@@ -1096,7 +1097,7 @@ Arm(
  ************************************************************************/
 /*ARGSUSED*/
 
-static void 
+static void
 Activate(
         Widget wid,
         XEvent *event,
@@ -1105,30 +1106,30 @@ Activate(
 {
   XmArrowButtonGadget aw = (XmArrowButtonGadget) wid;
   XButtonPressedEvent *buttonEvent = (XButtonPressedEvent *) event;
-  
+
   XmPushButtonCallbackStruct call_value;
-  
+
   aw->arrowbutton.selected = False;
-  
-  DrawArrowG(aw, aw->arrowbutton.top_shadow_GC, 
+
+  DrawArrowG(aw, aw->arrowbutton.top_shadow_GC,
 	     aw->arrowbutton.bottom_shadow_GC, NULL);
-  
+
   /* CR 9181: Consider clipping when testing visibility. */
-  if ((buttonEvent->type == ButtonPress || 
+  if ((buttonEvent->type == ButtonPress ||
        buttonEvent->type == ButtonRelease) &&
       _XmGetPointVisibility(wid, buttonEvent->x_root, buttonEvent->y_root) &&
       (aw->arrowbutton.activate_callback))
     {
       XFlush(XtDisplay(aw));
-      
+
       call_value.reason = XmCR_ACTIVATE;
       call_value.event = (XEvent *) buttonEvent;
       call_value.click_count = aw->arrowbutton.click_count;
-      XtCallCallbackList ((Widget) aw, 
+      XtCallCallbackList ((Widget) aw,
 			  aw->arrowbutton.activate_callback, &call_value);
     }
 }
-
+
 /************************************************************************
  *
  *     ArmAndActivate
@@ -1136,7 +1137,7 @@ Activate(
  ************************************************************************/
 
 /*ARGSUSED*/
-static void 
+static void
 ArmAndActivate(
         Widget w,
         XEvent *event,
@@ -1146,17 +1147,17 @@ ArmAndActivate(
   XmArrowButtonGadget ab = (XmArrowButtonGadget) w;
   XmPushButtonCallbackStruct call_value;
   XtExposeProc expose;
-  
+
   ab->arrowbutton.selected = TRUE;
   ab->arrowbutton.click_count = 1;
   _XmProcessLock();
   expose = ab->object.widget_class->core_class.expose;
   _XmProcessUnlock();
-  (*(expose)) 
+  (*(expose))
     ((Widget) ab, event, FALSE);
-  
+
   XFlush (XtDisplay (ab));
-  
+
   if (ab->arrowbutton.arm_callback)
     {
       call_value.reason = XmCR_ARM;
@@ -1165,20 +1166,20 @@ ArmAndActivate(
       XtCallCallbackList ((Widget) ab, ab->arrowbutton.arm_callback,
 			  &call_value);
     }
-  
+
   call_value.reason = XmCR_ACTIVATE;
   call_value.event = event;
   call_value.click_count = 1;          /* always 1 in kselect */
-  
+
   if (ab->arrowbutton.activate_callback)
     {
       XFlush (XtDisplay (ab));
       XtCallCallbackList ((Widget) ab, ab->arrowbutton.activate_callback,
 			  &call_value);
     }
-  
+
   ab->arrowbutton.selected = FALSE;
-  
+
   if (ab->arrowbutton.disarm_callback)
     {
       XFlush (XtDisplay (ab));
@@ -1186,79 +1187,79 @@ ArmAndActivate(
       XtCallCallbackList ((Widget) ab, ab->arrowbutton.disarm_callback,
 			  &call_value);
     }
-  
+
   /* If the button is still around, show it released, after a short delay */
-  
+
   if (ab->object.being_destroyed == False)
     {
-      ab->arrowbutton.timer = 
+      ab->arrowbutton.timer =
 	XtAppAddTimeOut(XtWidgetToApplicationContext((Widget) ab),
 			(unsigned long) DELAY_DEFAULT,
 			ArmTimeout, (XtPointer)ab);
     }
 }
-
+
 /*ARGSUSED*/
-static void 
+static void
 ArmTimeout(
         XtPointer data,
         XtIntervalId *id)
 {
   XmArrowButtonGadget ab = (XmArrowButtonGadget) data;
-  
+
   ab->arrowbutton.timer = 0;
 
-  if (XtIsRealized((Widget)ab) && XtIsManaged((Widget)ab)) 
+  if (XtIsRealized((Widget)ab) && XtIsManaged((Widget)ab))
     {
       Redisplay ((Widget) ab, NULL, FALSE);
       XFlush (XtDisplay (ab));
     }
 }
-
+
 /************************************************************************
  *
  *  Disarm
  *     This function processes button 1 up occuring on the arrowbutton.
  *
  ************************************************************************/
-static void 
+static void
 Disarm(
         XmArrowButtonGadget aw,
         XEvent *event)
 {
   XmArrowButtonCallbackStruct call_value;
-  
+
   call_value.reason = XmCR_DISARM;
   call_value.event = event;
   XtCallCallbackList ((Widget) aw, aw->arrowbutton.disarm_callback,
 		      &call_value);
 }
-
+
 /************************************************************************
  *
  *  Enter
  *
  ************************************************************************/
 
-static void 
+static void
 Enter(
         XmArrowButtonGadget aw,
         XEvent *event)
 {
   _XmEnterGadget ((Widget) aw, event, NULL, NULL);
-  
+
   if (aw->arrowbutton.selected && XtIsSensitive((Widget) aw))
     DrawArrowG(aw, aw->arrowbutton.bottom_shadow_GC,
 	       aw->arrowbutton.top_shadow_GC, NULL);
 }
-
+
 /************************************************************************
  *
  *  Leave
  *
  ************************************************************************/
 
-static void 
+static void
 Leave(
         XmArrowButtonGadget aw,
         XEvent *event)
@@ -1269,33 +1270,33 @@ Leave(
     DrawArrowG(aw, aw->arrowbutton.top_shadow_GC,
 	       aw->arrowbutton.bottom_shadow_GC, NULL);
 }
-
+
 /************************************************************************
  *
  *  Help
- *     This function processes Function Key 1 press occuring on 
+ *     This function processes Function Key 1 press occuring on
  *     the arrowbutton.
  *
  ************************************************************************/
 
-static void 
+static void
 Help(
         XmArrowButtonGadget aw,
         XEvent *event)
 {
    _XmSocorro((Widget) aw, event, NULL, NULL);
 }
-
+
 /************************************************************************
  *
  *  ChangeCB
  *	add or remove the activate callback list.
- *      
+ *
  ************************************************************************/
 
-static void 
+static void
 ChangeCB(
-	 Widget w, 
+	 Widget w,
 	 XtCallbackProc activCB,
 	 XtPointer closure,
 	 Boolean setunset)
@@ -1305,9 +1306,9 @@ ChangeCB(
   else
     XtRemoveCallback (w, XmNactivateCallback, activCB, closure);
 }
-
+
 static void
-GetColors(Widget w, 
+GetColors(Widget w,
 	  XmAccessColorData color_data)
 {
   color_data->valueMask = AccessForeground | AccessBackgroundPixel |
@@ -1318,7 +1319,7 @@ GetColors(Widget w,
   color_data->top_shadow_color = ArrowBG_TopShadowColor(w);
   color_data->bottom_shadow_color = ArrowBG_BottomShadowColor(w);
 }
-
+
 /************************************************************************
  *
  *  XmCreateArrowButtonGadget
@@ -1326,42 +1327,42 @@ GetColors(Widget w,
  *
  ************************************************************************/
 
-Widget 
+Widget
 XmCreateArrowButtonGadget(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount)
 {
-  return XtCreateWidget(name, xmArrowButtonGadgetClass, parent, 
+  return XtCreateWidget(name, xmArrowButtonGadgetClass, parent,
 			arglist, argcount);
 }
 
-Widget 
+Widget
 XmVaCreateArrowButtonGadget(
         Widget parent,
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmArrowButtonGadgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmArrowButtonGadgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
+Widget
 XmVaCreateManagedArrowButtonGadget(
         Widget parent,
         char *name,
@@ -1370,23 +1371,23 @@ XmVaCreateManagedArrowButtonGadget(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmArrowButtonGadgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmArrowButtonGadgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-
+
 /* ARGSUSED */
-static void 
+static void
 ActivateCommonG(
         XmArrowButtonGadget ag,
         XEvent *event,
@@ -1403,7 +1404,7 @@ ActivateCommonG(
 	gadget_class.arm_and_activate))
       ((Widget) ag, event, NULL, NULL);
 }
-
+
 /* Wrapper around XmeDrawArrow to calculate sizes. */
 static void
 DrawArrowG(XmArrowButtonGadget ag,
@@ -1413,7 +1414,7 @@ DrawArrowG(XmArrowButtonGadget ag,
 {
   Position x, y;
   Dimension width, height;
-  Dimension margin = 
+  Dimension margin =
     ag->gadget.highlight_thickness + ag->gadget.shadow_thickness;
 
   /* Don't let large margins cause confusion. */
@@ -1439,18 +1440,18 @@ DrawArrowG(XmArrowButtonGadget ag,
       height = 0;
     }
 
-  /* The way we currently handle 1 shadowThickness in XmeDrawArrow 
+  /* The way we currently handle 1 shadowThickness in XmeDrawArrow
      is by drawing the center a little bit bigger, so the center_gc has
      to be present. Kinda hacky... */
-  if (!center_gc && 
-      ag->arrowbutton.detail_shadow_thickness == 1) 
+  if (!center_gc &&
+      ag->arrowbutton.detail_shadow_thickness == 1)
       center_gc = ag->arrowbutton.arrow_GC ;
   if (center_gc)
     XSetClipMask(XtDisplay((Widget) ag), center_gc, None);
 
   XmeDrawArrow (XtDisplay ((Widget) ag), XtWindow ((Widget) ag),
 		top_gc, bottom_gc, center_gc,
-		x, y, width, height, 
-		ag->arrowbutton.detail_shadow_thickness, 
+		x, y, width, height,
+		ag->arrowbutton.detail_shadow_thickness,
 		ag->arrowbutton.direction);
 }

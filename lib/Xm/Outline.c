@@ -890,7 +890,7 @@ CalcLocations(Widget w, Boolean allow_resize)
     XmOutlineWidget      ow = (XmOutlineWidget) w;
     OutlineConstraints   node;
     XmOutlineWidgetClass oc = (XmOutlineWidgetClass) XtClass(w);
-    register int         i;
+    int         i;
     unsigned int         num_nodes;
 
     if (!XmHierarchy_refigure_mode(ow))
@@ -1024,7 +1024,7 @@ GetDesiredSize(Widget w, Dimension *width, Dimension *height,
 	       Boolean recalc, Boolean allow_resize)
 {
     XmOutlineWidget ow = (XmOutlineWidget) w;
-    register int i, num, temp_height;
+    int i, num, temp_height;
     OutlineConstraints * node;
     XmOutlineWidgetClass oc = (XmOutlineWidgetClass) XtClass(w);
 
@@ -1091,11 +1091,11 @@ LayoutChildren(Widget w, Widget assign_child)
 {
     XmOutlineWidget ow = (XmOutlineWidget) w;
     XmOutlineWidgetClass oc = (XmOutlineWidgetClass) XtClass(w);
-    register OutlineConstraints disp_top = XmOutline_top_node_of_display(ow);
-    register HierarchyConstraints * node_table = XmHierarchy_node_table(ow);
-    register Cardinal num_nodes = XmHierarchy_num_nodes(ow);
-    register Position cur_y;
-    register int cur_node, v_margin;
+    OutlineConstraints disp_top = XmOutline_top_node_of_display(ow);
+    HierarchyConstraints * node_table = XmHierarchy_node_table(ow);
+    Cardinal num_nodes = XmHierarchy_num_nodes(ow);
+    Position cur_y;
+    int cur_node, v_margin;
     int oc_x = 0, oc_y = 0;
     Boolean register_workproc = True;
     Widget _w;
@@ -1215,7 +1215,7 @@ GetNodeHeightAndWidth(Widget w, OutlineConstraints node,
 		      Cardinal outline_depth, Boolean recurse, Cardinal * num)
 {
     XmOutlineWidget ow = (XmOutlineWidget) w;
-    register int i;
+    int i;
     XtWidgetGeometry geom_pref;
 
     if ((node == NULL) || ((XmHierarchyC_widget(node) != NULL) &&
@@ -1354,8 +1354,8 @@ CalcMaxWidth(Widget w)
 static void
 UnmapAllExtraNodes(Widget w, HierarchyConstraints node)
 {
-    register int i, num;
-    register HierarchyConstraints * ptr;
+    int i, num;
+    HierarchyConstraints * ptr;
 
     if ((XmHierarchyC_status(node) & IS_COMPRESSED) &&
 	(XmHierarchyC_status(node) & IS_MAPPED))
@@ -1544,8 +1544,8 @@ WidgetInRect(XRectangle *rect, Widget w)
 static Boolean
 LocInRect(XRectangle *rect, Widget w, Position x, Position y)
 {
-    register int x1, x2;
-    register int y1, y2;
+    int x1, x2;
+    int y1, y2;
 
     if (w == NULL) return(False);
 
@@ -1711,7 +1711,7 @@ DrawOutlineLine(Widget w, XRectangle *rect, OutlineConstraints node)
 
    {
     OutlineConstraints * kids;
-    register int i, num_kids;
+    int i, num_kids;
     Boolean anyKidManaged = False; /* CR03730 Support Case 22066 */
     LadderPoint from_node_point ={0, 0}, kid_point = {0, 0};
     LadderPoint last_kid_point ={0, 0};
@@ -1793,8 +1793,8 @@ _OutlineDrawLine(Widget w, XRectangle *rect, OutlineConstraints parent,
 {
     GC gc;
     XmOutlineWidget ow = (XmOutlineWidget) w;
-    register int x2, y2;
-    register int rx2, ry2, cx1, cx2, cy1, cy2;
+    int x2, y2;
+    int rx2, ry2, cx1, cx2, cy1, cy2;
 
     /*
      * (from_ladder_point.x, from_ladder_point.y) are the coordinates

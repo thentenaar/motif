@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -1012,7 +1012,7 @@ ChangeManaged(
     XtWidgetGeometry desired ;
     CompositeWidget cw = (CompositeWidget) mw->swindow.ClipWindow;
     Widget   w;
-    register int i;
+    int i;
     XtWidgetProc resize;
 
     if (mw->mwindow.ManagingSep || mw->swindow.FromResize) return;
@@ -1418,7 +1418,7 @@ XmVaCreateMainWindow(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

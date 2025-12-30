@@ -359,8 +359,8 @@ ObjectAtPoint(
         Position  y )
 {
     CompositeWidget cw = (CompositeWidget) wid ;
-    register int i;
-    register Widget widget;
+    int i;
+    Widget widget;
 
     i = cw->composite.num_children ;
     while( i-- ) {
@@ -616,7 +616,7 @@ XmVaCreateDrawingArea(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

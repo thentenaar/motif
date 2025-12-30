@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,18 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Draw.c /main/12 1995/10/25 20:02:15 cde-sun $"
 #endif
 #endif
 
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include <Xm/DrawP.h>
@@ -78,7 +77,7 @@ DrawSimpleShadow (Display *display,
   static XSegment * segms = NULL;
   static int segm_count = 0;
 
-  register int i, size2, size3;
+  int i, size2, size3;
 
   if (!d) return;
   ASSIGN_MIN(shadow_thick, (width >> 1));

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: FileSB.c /main/21 1997/09/26 13:38:52 bill $"
@@ -1009,7 +1010,7 @@ FSBCreateDirList(
         XmFileSelectionBoxWidget fsb )
 {
 	Arg		al[20];
-	register int	ac = 0;
+	int	ac = 0;
             XtCallbackProc callbackProc ;
 /****************/
 
@@ -1164,8 +1165,8 @@ FileSBGeoMatrixCreate(
 {
     XmFileSelectionBoxWidget fsb = (XmFileSelectionBoxWidget) wid ;
     XmGeoMatrix     geoSpec ;
-    register XmGeoRowLayout  layoutPtr ;
-    register XmKidGeometry   boxPtr ;
+    XmGeoRowLayout  layoutPtr ;
+    XmKidGeometry   boxPtr ;
     XmKidGeometry   firstButtonBox ;
     Boolean         dirListLabelBox ;
     Boolean         listLabelBox ;
@@ -3489,7 +3490,7 @@ XmVaCreateFileSelectionBox(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -3584,3 +3585,4 @@ FSBConvert(Widget wid, XtPointer client_data, XtPointer cb_struct)
     cs -> status = XmCONVERT_REFUSE;
   }
 }
+

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,18 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Command.c /main/21 1999/01/26 18:12:51 mgreess $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include "XmI.h"
 #include "CommandI.h"
 #include <Xm/DialogS.h>
@@ -891,7 +894,7 @@ XmVaCreateCommand(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

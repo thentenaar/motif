@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -630,7 +630,7 @@ XmVaCreateSimpleSpinBox(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -941,3 +941,4 @@ XmSimpleSpinBoxSetItem(	Widget		ssb_w,
     }
     _XmAppUnlock(app);
 }
+

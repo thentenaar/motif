@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 
 /************************************<+>*************************************
  ****************************************************************************
@@ -1167,7 +1167,7 @@ typedef enum {
     /* GadgetUtil.c */
 extern void XmeRedisplayGadgets(
                         Widget w,
-                        register XEvent *event,
+                        XEvent *event,
                         Region region) ;
 extern void XmeConfigureObject(
                         Widget g,
@@ -1249,8 +1249,8 @@ extern XmFontList XmeGetDefaultRenderTable(
         Widget w,
         unsigned char fontListType );
 extern Boolean XmeNamesAreEqual(
-        register char *in_str,
-        register char *test_str );
+        char *in_str,
+        char *test_str );
     /* Primitive.c */
 extern void XmeResolvePartOffsets(
 			WidgetClass w_class,
@@ -1418,6 +1418,5 @@ do {\
 #else
 #define XM_ALIAS(sym)
 #endif /* __GNUC__ || __clang__ */
-
 #endif /* _XmP_h */
-/* DON'T ADD STUFF AFTER THIS #endif */
+

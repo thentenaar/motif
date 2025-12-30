@@ -1,5 +1,5 @@
 /* $TOG: BBUtil.c /main/8 1997/04/15 10:23:34 dbl $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,17 +20,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
-/*
- * HISTORY
- */
-
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/Xm.h>
 #include <Xm/PushBG.h>
@@ -52,14 +47,12 @@
 #define DIRTEXT_STRING    _XmMMsgResource_0011
 #define PROMPT_STRING     _XmMMsgResource_0012
 
-
-
 /****************************************************************/
 static char *
 GetLabelString(
        XmLabelStringLoc l_loc )
 {
-    char *retval = (char*)NULL;
+    char *retval = NULL;
     switch (l_loc)
 	{
 	case XmOkStringLoc:
@@ -101,7 +94,7 @@ GetLabelString(
 
 
 /****************************************************************/
-Widget 
+Widget
 _XmBB_CreateButtonG(
         Widget bb,
         XmString l_string,
@@ -109,7 +102,7 @@ _XmBB_CreateButtonG(
         XmLabelStringLoc l_loc )
 {
     Arg		        al[10] ;
-    register Cardinal   ac = 0 ;
+    Cardinal   ac = 0 ;
     Widget              button ;
     XmTakesDefaultTrait trait_default ;
     XmString            default_label_string_loc = NULL;
@@ -125,15 +118,15 @@ _XmBB_CreateButtonG(
 						      XmFONTLIST_DEFAULT_TAG);
 	    XtSetArg( al[ac], XmNlabelString, default_label_string_loc); ac++;
 	}
-	    
+
     XtSetArg( al[ac], XmNstringDirection, BB_StringDirection( bb)) ; ac++ ;
 
     button = XmCreatePushButtonGadget( (Widget) bb, name, al, ac) ;
 
     trait_default = (XmTakesDefaultTrait) XmeTraitGet((XtPointer)
-						      XtClass(button), 
+						      XtClass(button),
 						      XmQTtakesDefault) ;
-    if (trait_default) 
+    if (trait_default)
 	trait_default->showAsDefault  (button, XmDEFAULT_READY);
 
     if (default_label_string_loc)
@@ -143,7 +136,7 @@ _XmBB_CreateButtonG(
 }
 
 /****************************************************************/
-Widget 
+Widget
 _XmBB_CreateLabelG(
         Widget bb,
         XmString l_string,
@@ -151,7 +144,7 @@ _XmBB_CreateLabelG(
         XmLabelStringLoc l_loc )
 {
             Arg		    al[10] ;
-    register int            ac = 0 ;
+    int            ac = 0 ;
     Widget                  label ;
     XmString                default_label_string_loc = NULL;
 /****************/
@@ -178,6 +171,6 @@ _XmBB_CreateLabelG(
 	XmStringFree(default_label_string_loc);
 
     return( label ) ;
-	
+
 }
 

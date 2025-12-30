@@ -1691,7 +1691,7 @@ static XtResourceList*
 CreateIndirectionTable(XtResourceList resources,
 			 Cardinal num_resources)
 {
-  register int i;
+  int i;
   XtResourceList* table;
 
   table = (XtResourceList*)XtMalloc(num_resources * sizeof(XtResourceList));

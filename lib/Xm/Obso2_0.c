@@ -1,5 +1,5 @@
 /* $TOG: Obso2_0.c /main/10 1998/08/18 18:59:44 samborn $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,11 +20,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
-/*
- * HISTORY
- */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -211,7 +208,7 @@ _XmGetRealXlations(
   char *result, buf[1000];
   char *tmp = buf;
   char *keystring;
-  register int i;
+  int i;
   int num_vkeys;
   XmKeyBinding vkeys;
   KeySym    keysym;
@@ -992,7 +989,7 @@ _XmGetDefaultColors(
 	static XmColorData ** default_set = NULL;
 	static int default_set_count = 0;
 	static int default_set_size = 0;
-	register int i;
+	int i;
 	XColor color_def;
 	static Pixel background;
         XrmValue fromVal;
@@ -1255,7 +1252,7 @@ _XmAccessColorData(
 /* OBSOLETE: Replaced by _XmMapKeyEvents. */
 Boolean
 _XmMapKeyEvent(
-        register String str,
+        String str,
         int *eventType,
         unsigned int *keysym,
         unsigned int *modifiers )

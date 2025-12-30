@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: ResIndI.h /main/5 1995/07/13 17:50:09 drk $ */
 #ifndef _XmResIndI_h
 #define _XmResIndI_h
@@ -35,19 +32,18 @@ extern "C" {
 #endif
 
 /********    Private Function Declarations for ResInd.c    ********/
-  
 
-extern int _XmConvertUnits( 
+extern int _XmConvertUnits(
                         Screen *screen,
                         int dimension,
-                        register int from_type,
-                        register int from_val,
-                        register int to_type) ;
-extern void _XmUnitTypeDefault( 
+                        int from_type,
+                        int from_val,
+                        int to_type) ;
+extern void _XmUnitTypeDefault(
                         Widget widget,
                         int offset,
                         XrmValue *value) ;
-extern unsigned char _XmGetUnitType( 
+extern unsigned char _XmGetUnitType(
                         Widget widget) ;
 extern int _XmConvertFloatUnitsToIntUnits(
   			int unitType,
@@ -65,12 +61,11 @@ extern int _XmConvertStringToUnits(
 extern void _XmStringDirectionDefault(Widget widget,
 				      int offset,
 				      XrmValue *value );
- 
+
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmResIndI_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */
+

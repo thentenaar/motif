@@ -1,5 +1,5 @@
 /* $XConsortium: ObsoXme.c /main/5 1995/07/15 20:54:09 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
- */
-/*
- * HISTORY
  */
 
 /*
@@ -178,7 +174,7 @@ _XmNavigChangeManaged(
 void
 _XmRedisplayGadgets(
         Widget w,
-        register XEvent *event,
+        XEvent *event,
         Region region )
 {
     XmeRedisplayGadgets( w, event, region );
@@ -274,8 +270,8 @@ _XmGMReplyToQueryGeometry(Widget widget,
 
 Boolean
 _XmStringsAreEqual(
-        register char *in_str,
-        register char *test_str )
+        char *in_str,
+        char *test_str )
 {
     return XmeNamesAreEqual( in_str, test_str );
 }
@@ -305,8 +301,8 @@ _XmStringIsXmString(
 XmGadget
 _XmInputInGadget(
         Widget wid,
-        register int x,
-        register int y )
+        int x,
+        int y )
 {
     return (XmGadget) XmObjectAtPoint( wid, x, y );
 }
@@ -418,3 +414,4 @@ _XmConfigureObject(
 {
     XmeConfigureObject( wid, x, y, width, height, border_width );
 }
+

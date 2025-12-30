@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
@@ -514,7 +515,7 @@ Initialize(
             XmBulletinBoardWidget request = (XmBulletinBoardWidget) wid_req ;
             XmBulletinBoardWidget new_w = (XmBulletinBoardWidget) wid_new ;
             Arg             al[5] ;
-    register Cardinal       ac ;
+    Cardinal       ac ;
             int             mwm_functions ;
             char *          text_value ;
             XmFontList      defaultFL ;
@@ -810,7 +811,7 @@ SetValues(
     XmBulletinBoardWidget request = (XmBulletinBoardWidget) rw ;
     XmBulletinBoardWidget new_w = (XmBulletinBoardWidget) nw ;
     Arg		    al[10] ;
-    register Cardinal       ac ;
+    Cardinal       ac ;
     int             mwm_functions ;
     int             mwmStyle ;
     unsigned int    numChildren ;
@@ -2269,7 +2270,7 @@ XmVaCreateBulletinBoard(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -2309,3 +2310,4 @@ XmVaCreateManagedBulletinBoard(
     va_end(var);
     return w;
 }
+

@@ -1,5 +1,5 @@
 /* $TOG: ComboBox.c /main/16 1999/07/28 10:59:19 vipin $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,11 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
-/* ComboBox.c */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include <stdio.h>
 #include <string.h>
 #include <Xm/XmP.h>
@@ -3348,7 +3345,7 @@ XmVaCreateComboBox(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

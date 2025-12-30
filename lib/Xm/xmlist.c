@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #include "xmlist.h"
@@ -75,7 +75,7 @@ _XmStackPush(XmStack stack, XtPointer elem)
 {
     if ((++stack->top) >= stack->alloc) {
 	stack->alloc += STACK_INC;
-	stack->elems = 
+	stack->elems =
 	    (XtPointer *) XtRealloc((XtPointer) stack->elems,
 				    sizeof(XtPointer) * stack->alloc);
     }
@@ -83,7 +83,7 @@ _XmStackPush(XmStack stack, XtPointer elem)
     stack->elems[stack->top] = elem;
 
 #ifdef STACK_DEBUG
-    printf("Pushing %d as elem %d\n", (int) elem, stack->top);    
+    printf("Pushing %d as elem %d\n", (int) elem, stack->top);
 #endif
 }
 
@@ -100,7 +100,7 @@ _XmStackPop(XmStack stack)
 	return(NULL);		/* no elements on the stack. */
 
 #ifdef STACK_DEBUG
-    printf("Popping %d from elem %d\n", 
+    printf("Popping %d from elem %d\n",
 	   (int) stack->elems[stack->top], stack->top);
 #endif
 
@@ -152,11 +152,11 @@ _XmQueueFree(XmQueue queue)
 
     for (count = 0; count < 2; count++) {
 	while (elem != NULL) {
-	    if (elem->alloced) 
+	    if (elem->alloced)
 		_XmStackPush(stack, (XtPointer) elem);
 	    elem = elem->next;
 	}
-	
+
 	elem = queue->free_elems;
     }
 
@@ -192,7 +192,7 @@ QueuePush(XmQueue queue, XtPointer data_in)
 
     _Xm_AddQueue(queue, queue->last, elem);
 
-    if (queue->first == NULL) 
+    if (queue->first == NULL)
 	queue->first = elem;
 
     queue->last = elem;
@@ -241,8 +241,8 @@ _XmQueuePop(XmQueue queue)
 int
 _XmQueueCount(XmQueue queue)
 {
-    register int i;
-    register _XmQElem *elem = queue->first;
+    int i;
+    _XmQElem *elem = queue->first;
 
     for (i = 0; elem != NULL; i++)
 	elem = elem->next;
@@ -297,9 +297,9 @@ _Xm_AddQueue(XmQueue queue, _XmQElem *after, _XmQElem *elem)
 {
     if (elem != NULL) {
 	elem->prev = after;
-	if (after == NULL) 
+	if (after == NULL)
 	    /*
-	     * If queue is NULL then this is being added to the 
+	     * If queue is NULL then this is being added to the
 	     * free elements queue, and we make certain assumptions, like
 	     * we are always adding to then end of the list, so that
 	     * we never will try to add before the first element.
@@ -361,7 +361,7 @@ _Xm_GetNewElement(XmQueue queue)
     _XmQElem *elem;
 
     if ((elem = _Xm_RemQueue(&queue->free_elems)) == NULL) {
-	register int i;
+	int i;
 
 	/*
 	 * We are out of free elements, alloc some more.
@@ -427,7 +427,7 @@ _XmListFree(XmList list)
  *	Description: Adds an element after the specified element.
  *	Arguments: list - the list
  *                 elem - The element to add this one after.
- *                        If NULL then add this element to the beginning of 
+ *                        If NULL then add this element to the beginning of
  *                        the list
  *                 data_in - the data to push onto the queue.
  *	Returns: The new added element.
@@ -440,7 +440,7 @@ _XmListAddAfter(XmList list, XmListElem *elem_in, XtPointer data_in)
 
     _Xm_AddQueue((XmQueue) list, elem_in, elem);
 
-    if (elem_in == NULL) 
+    if (elem_in == NULL)
 	list->first = elem;
 
     if (elem_in == list->last)
@@ -455,7 +455,7 @@ _XmListAddAfter(XmList list, XmListElem *elem_in, XtPointer data_in)
  *	Description: Adds an element before the specified element.
  *	Arguments: list - the list
  *                 elem - The element to add this one before.
- *                        If NULL then add this element to the end of 
+ *                        If NULL then add this element to the end of
  *                        the list.
  *                 data_in - the data to push onto the queue.
  *	Returns: The new added element.
@@ -466,7 +466,7 @@ _XmListAddBefore(XmList list, XmListElem *elem_in, XtPointer data_in)
 {
     XmListElem *after;
 
-    if (elem_in == NULL) 
+    if (elem_in == NULL)
 	after = list->last;
     else
 	after = elem_in->prev;
@@ -483,13 +483,13 @@ _XmListAddBefore(XmList list, XmListElem *elem_in, XtPointer data_in)
 void
 _XmListRemove(XmList list, XmListElem *elem)
 {
-    XmListElem *dead = (XmListElem *) _Xm_RemQueue((_XmQElem **) &elem);    
+    XmListElem *dead = (XmListElem *) _Xm_RemQueue((_XmQElem **) &elem);
 
     /*
      * if NULL is passed, then no action is taken.
      */
 
-    if (dead == NULL) 
+    if (dead == NULL)
 	return;
 
     if (list->first == dead)
@@ -523,19 +523,19 @@ _XmListCount(XmList list)
  *                 end - the element to end with.
  *                 exec_func - the function to execute.
  *                 data - data to pass to the function.
- *	Returns: NULL is returned if all items from start to end 
+ *	Returns: NULL is returned if all items from start to end
  *               have been operated on.  Otherwise the node in which
  *               the operation stopped is returned.
  *
  * NOTES: If start is NULL the start is the first element in the list.
  *        If end is NULL then all elements after start will be searched.
- *        The list is always executed if forward order from start -> 
+ *        The list is always executed if forward order from start ->
  *        	start->next, start->next->next...
- *        
+ *
  */
 
 XmListElem *
-_XmListExec(XmList list, XmListElem *start, XmListElem *end, 
+_XmListExec(XmList list, XmListElem *start, XmListElem *end,
 	 XmListFunc func, XtPointer data)
 {
     if (start == NULL)
@@ -545,16 +545,15 @@ _XmListExec(XmList list, XmListElem *start, XmListElem *end,
 	if (!(*func)(start, data))
 	    return(start);
     }
-    
+
     return(NULL);
 }
- 
+
 /*	Function Name: _XmListPrint
  *	Description: Prints out the real and free nodes of the list.
  *	Arguments: list - list to print.
  *	Returns: none.
  */
-
 
 #ifdef QUEUE_DEBUG
 void
@@ -563,4 +562,4 @@ _XmListPrint(XmList list)
     _XmQueuePrint((XmQueue) list);
 }
 #endif
-   
+

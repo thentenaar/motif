@@ -571,7 +571,7 @@ ChangeManaged(Widget w)
 
 /* ARGSUSED */
 static void
-InsertChild(register Widget child)
+InsertChild(Widget child)
 {
 Boolean         is_button = False ;
 XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
@@ -1131,7 +1131,7 @@ XmVaCreateButtonBox(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

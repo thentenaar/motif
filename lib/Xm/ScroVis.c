@@ -1,5 +1,5 @@
 /* $XConsortium: ScroVis.c /main/6 1995/09/19 23:07:44 cde-sun $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,16 +20,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
- */
-/*
- * HISTORY
+ *
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/ScrolledWP.h>
 #include <Xm/NavigatorT.h>
@@ -37,7 +33,7 @@
 #include "MessagesI.h"
 #include "XmI.h"
 
-#define SWMessage1      _XmMMsgScrollVis_0000 
+#define SWMessage1      _XmMMsgScrollVis_0000
 
 /************************************************************************
  *									*
@@ -48,23 +44,23 @@ void
 XmScrollVisible(
 		Widget      	scrw,
 		Widget          wid,
-		Dimension       hor_margin, 
+		Dimension       hor_margin,
 		Dimension       ver_margin)
 /*********************
- * A function that makes visible a unvisible or partially visible descendant 
+ * A function that makes visible a unvisible or partially visible descendant
  * of an AUTOMATIC scrolledwindow workwindow.
  *********************
  * - scrw is the ScrolledWindow whose workwindow act as the origin of the move.
  * - wid is the widget to be made visible.
- * - hor_margin, ver_margin are the margins between the widget in its new 
+ * - hor_margin, ver_margin are the margins between the widget in its new
  *   position and the scrolledwindow clipwindow.
 **********************/
 {
     XmScrolledWindowWidget sw = (XmScrolledWindowWidget) scrw ;
-    register 
+
     Position newx, newy,      /* new workwindow position */
              wx, wy  ;        /* current workwindow position */
-    register 
+
     unsigned short tw, th,         /* widget sizes */
               cw, ch ;        /* clipwindow sizes */
     Position dx, dy ;         /* position inside the workwindow */
@@ -93,7 +89,7 @@ XmScrollVisible(
 	return ;
     }
 
-    /* w is the potentially scrollable ascendant of wid that needs to 
+    /* w is the potentially scrollable ascendant of wid that needs to
        be scrolled, its parent is the clip window */
     /* In the new scheme, w might not be able to scroll at all,
        or even in the direction the margins point to. There is
@@ -101,27 +97,27 @@ XmScrollVisible(
        traversing to an unvisible kid of unscrollable workwindow will
        not scroll it, resulting in unvisible focus widget. We could
        check for NO_SCROLL in w, but since we cannot check for SCROLL_HOR
-       or SCROLL_VERT - depend on the traversal layout - I'd rather do 
+       or SCROLL_VERT - depend on the traversal layout - I'd rather do
        nothing */
 
-    /* we need to get the position of wid relative to w, 
+    /* we need to get the position of wid relative to w,
        so we use 2 XtTranslateCoords */
-    
+
     XtTranslateCoords(wid, 0, 0, &src_x, &src_y);
     XtTranslateCoords(w, 0, 0, &dst_x, &dst_y);
     dx = src_x - dst_x ;
     dy = src_y - dst_y ;
 
     swc = GetSWConstraint(w);
-   
+
     /* get the other positions and sizes */
     cw = XtWidth((Widget) sw->swindow.ClipWindow) ;
     ch = XtHeight((Widget) sw->swindow.ClipWindow) ;
-    wx = swc->orig_x - XtX(w) ;  
+    wx = swc->orig_x - XtX(w) ;
     wy = swc->orig_y - XtY(w) ; /* both always positive */
     tw = XtWidth(wid) ;
     th = XtHeight(wid) ;
-    
+
     /* find out the zone where the widget lies and set newx,newy (neg) for
        the workw */
     /* if the widget is bigger than the clipwindow, we put it on
@@ -129,7 +125,7 @@ XmScrollVisible(
 
     if (dy < wy) {                                       /* North */
 	newy = dy - (Position)ver_margin ;      /* stuck it on top + margin */
-    } else 
+    } else
     if ((dy + th) <= (ch - XtY(w))) {
 	newy = wy ;               /* in the middle : don't move y */
     } else {                                             /* South */
@@ -137,8 +133,8 @@ XmScrollVisible(
 	    newy = dy - (Position)ver_margin ; /* stuck it on top if too big */
 	else
 	    newy = swc->orig_y + dy - ch + th + (Position)ver_margin;
-    } 
-	
+    }
+
     if (dx < wx) {                              /* West */
 	newx = dx - (Position)hor_margin ; /* stuck it on left + margin */
     } else
@@ -149,12 +145,12 @@ XmScrollVisible(
 	    newx = dx - (Position)hor_margin ; /* stuck it on left if too big */
 	else
 	    newx = swc->orig_x + dx - cw + tw + (Position)hor_margin;
-    } 
+    }
 
     /* a last check */
-    if (newx > sw->swindow.hmax - sw->swindow.hExtent) 
+    if (newx > sw->swindow.hmax - sw->swindow.hExtent)
 	newx = sw->swindow.hmax - sw->swindow.hExtent;
-    if (newy > sw->swindow.vmax - sw->swindow.vExtent) 
+    if (newy > sw->swindow.vmax - sw->swindow.vExtent)
 	newy = sw->swindow.vmax - sw->swindow.vExtent;
     if (newx < sw->swindow.hmin) newx =  sw->swindow.hmin ;
     if (newy < sw->swindow.vmin) newy =  sw->swindow.vmin ;
@@ -166,3 +162,4 @@ XmScrollVisible(
     _XmSFUpdateNavigatorsValue((Widget)sw, &nav_data, True);
     _XmAppUnlock(app);
 }
+

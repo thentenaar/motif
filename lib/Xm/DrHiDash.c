@@ -1,5 +1,5 @@
 /* $XConsortium: DrHiDash.c /main/5 1995/07/15 20:50:42 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -22,14 +22,10 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include "DrawI.h"
@@ -48,8 +44,8 @@ void _XmDrawHighlight(Display *display, Drawable d,
                    int line_style)
 {
    XSegment seg[4];
-   register Dimension half_hl = highlight_thickness/2 ;
-   register Dimension cor = highlight_thickness % 2 ;
+   Dimension half_hl = highlight_thickness/2 ;
+   Dimension cor = highlight_thickness % 2 ;
    XGCValues gcvalues;
 
    if (!d || !highlight_thickness || !width || !height) return ;

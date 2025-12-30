@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 2025 Tim Hentenaar
@@ -21,10 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -949,8 +949,8 @@ _XmMessageBoxGeoMatrixCreate(
 {
             XmMessageBoxWidget mb = (XmMessageBoxWidget) wid ;
             XmGeoMatrix     geoSpec ;
-    register XmGeoRowLayout  layoutPtr ;
-    register XmKidGeometry   boxPtr ;
+    XmGeoRowLayout  layoutPtr ;
+    XmKidGeometry   boxPtr ;
             XmKidGeometry   firstBoxInRow ;
             Widget menubar = NULL;
             Widget workarea = NULL;
@@ -971,7 +971,7 @@ _XmMessageBoxGeoMatrixCreate(
     /* identify menu bar and work area children. */
 
     for (i=0; i < nchildren; i++)
-    {   register Widget w = mb->composite.children[i];
+    {   Widget w = mb->composite.children[i];
 
         if( menubar == NULL
             && XmIsRowColumn(w)
@@ -1110,7 +1110,7 @@ _XmMessageBoxGeoMatrixCreate(
 
 	for (i = 0; i < nchildren; i++)
 	{
-	    register Widget w = mb->composite.children[nchildren-i-1];
+	    Widget w = mb->composite.children[nchildren-i-1];
 
 	    if(   !IsAutoChild(mb,w) && IsButton(w) && _XmGeoSetupKid(boxPtr, w)  )
 	    {   ++boxPtr;
@@ -1128,7 +1128,7 @@ _XmMessageBoxGeoMatrixCreate(
 	  }
       for (i = 0; i < nchildren; i++)
 	{
-	  register Widget w = mb->composite.children[i];
+	  Widget w = mb->composite.children[i];
 
 	  if(   !IsAutoChild(mb,w) && IsButton(w) && _XmGeoSetupKid(boxPtr, w)  )
 	    {   ++boxPtr;
@@ -1304,7 +1304,7 @@ XmVaCreateMessageBox(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -1652,4 +1652,4 @@ GetMsgBoxPixmap(
 
     return ;
 }
-/****************************************************************/
+

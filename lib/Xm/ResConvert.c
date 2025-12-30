@@ -601,10 +601,10 @@ _XmRegisterConverters( void )
  ************************************************************************/
 Boolean
 XmeNamesAreEqual(
-        register char *in_str,
-        register char *test_str )
+        char *in_str,
+        char *test_str )
 {
-        register char i ;
+        char i ;
 
     if(    ((in_str[0] == 'X') || (in_str[0] == 'x'))
         && ((in_str[1] == 'M') || (in_str[1] == 'm'))    )
@@ -1386,7 +1386,7 @@ CvtStringToStringTable(
         XrmValue *to_val,
         XtPointer *data)	/* unused */
 {
-    register char *p ;
+    char *p ;
             char *top ;
             String *table ;
     static String *tblptr ;
@@ -1485,8 +1485,8 @@ CvtStringToCardinalList(
     XrmValue *to_val,
     XtPointer *data)	/* unused */
 {
-    register char *	p;
-    Cardinal *		crd_array;
+    char *p;
+    Cardinal 		*crd_array;
     int             	crd_array_size = 50;
     int			crd_array_count = 0;
     int			new_element;
@@ -1544,7 +1544,7 @@ CvtStringToHorizontalPosition(
         XtPointer *converter_data) /* unused */
 {
     Widget widget = *(Widget*) args[0].addr ;
-    Screen * screen = XtScreen(widget) ;
+    Screen *screen = XtScreen(widget) ;
     unsigned char defaultFromType = _XmGetUnitType(widget) ;
     Position tmpPix;
     Boolean parseError;
@@ -1571,7 +1571,7 @@ CvtStringToHorizontalDimension(
         XtPointer *converter_data) /* unused */
 {
     Widget widget = *(Widget*) args[0].addr ;
-    Screen * screen = XtScreen(widget) ;
+    Screen *screen = XtScreen(widget) ;
     unsigned char defaultFromType = _XmGetUnitType(widget) ;
     Dimension tmpPix;
     Boolean parseError;
@@ -1599,7 +1599,7 @@ CvtStringToVerticalPosition(
         XtPointer *converter_data) /* unused */
 {
     Widget widget = *(Widget*) args[0].addr ;
-    Screen * screen = XtScreen(widget) ;
+    Screen *screen = XtScreen(widget) ;
     unsigned char defaultFromType = _XmGetUnitType(widget) ;
     Position tmpPix;
     Boolean parseError;
@@ -1627,7 +1627,7 @@ CvtStringToVerticalDimension(
         XtPointer *converter_data) /* unused */
 {
         Widget widget = *(Widget*) args[0].addr ;
-        Screen * screen = XtScreen(widget) ;
+        Screen *screen = XtScreen(widget) ;
         unsigned char defaultFromType = _XmGetUnitType(widget) ;
 	Dimension tmpPix;
         Boolean parseError;
@@ -1751,8 +1751,7 @@ XmeGetDefaultRenderTable(
     _XmProcessLock();
     fontlist = DefaultSystemFontList(XtDisplay(origw), (XmFontList) NULL);
     if (!fontlist) {
-	/* Begin fixing OSF 4735 */
-	s = (char *) XmDEFAULT_FONT;
+	s = (char *)XmDEFAULT_FONT;
 	sPtr = newString = XtNewString (s);
 
 	if (!GetNextFontListEntry (&sPtr, &fontName, &fontTag,
@@ -1760,7 +1759,7 @@ XmeGetDefaultRenderTable(
 	    _XmProcessUnlock();
 	    XtFree (newString);
 	    XmeWarning(NULL, MSG2);
-	    exit( 1) ;
+	    exit(EXIT_FAILURE);
 	}
 
 	do {
@@ -1782,7 +1781,6 @@ XmeGetDefaultRenderTable(
 				     &fontType, &delim));
 	XtFree (newString);
 	DefaultSystemFontList(XtDisplay(origw), fontlist);
-	/* End fixing OSF 4735 */
     }
     _XmProcessUnlock();
     return (fontlist);

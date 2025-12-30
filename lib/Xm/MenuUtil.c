@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -130,7 +130,7 @@ _XmGrabPointer(
 	Cursor cursor,
 	Time time )
 {
-   register int status = 0, retry;
+   int status = 0, retry;
 
    for (retry=0; retry < 5; retry++)
    {
@@ -158,7 +158,7 @@ _XmGrabKeyboard(
 	int keyboard_mode,
 	Time time )
 {
-   register int status = 0, retry;
+   int status = 0, retry;
 
    for (retry=0; retry < 5; retry++)
    {
@@ -764,7 +764,7 @@ static void
 FindNextMenuBarItem(
         XmRowColumnWidget menubar )
 {
-   register int i, j;
+   int i, j;
    int upper_limit;
    Widget active_child;
 
@@ -804,7 +804,7 @@ static void
 FindPrevMenuBarItem(
         XmRowColumnWidget menubar )
 {
-   register int i, j;
+   int i, j;
    int upper_limit;
    Widget active_child;
 
@@ -879,7 +879,7 @@ FindNextMenuBarCascade(
         XmRowColumnWidget menubar )
 {
    Widget active_child = NULL;
-   register int i, j;
+   int i, j;
    int upper_limit;
    ShellWidget shell;
    XmMenuState mst = _XmGetMenuState((Widget)menubar);
@@ -924,7 +924,7 @@ FindPrevMenuBarCascade(
         XmRowColumnWidget menubar )
 {
     Widget active_child = NULL;
-    register int i, j;
+    int i, j;
     int upper_limit;
     ShellWidget shell;
     XmMenuState mst = _XmGetMenuState((Widget)menubar);
@@ -1030,8 +1030,7 @@ _XmMenuGrabKeyboardAndPointer(
       Widget widget,
       Time time )
 {
-
-   register int status =
+   int status =
            (_XmGrabKeyboard(widget,
                             True,
                             GrabModeSync,
@@ -1049,3 +1048,4 @@ _XmMenuGrabKeyboardAndPointer(
 
    return(status);
 }
+

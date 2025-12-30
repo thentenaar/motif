@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,20 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #endif
 #endif
-/*
- * Include files & Static Routine Definitions
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdio.h>
 #include <X11/X.h>
@@ -57,7 +54,6 @@ static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #include "TravActI.h"
 #include "TraversalI.h"
 #include "UniqueEvnI.h"
-
 
 #define DELAY_DEFAULT 100
 
@@ -1606,7 +1602,7 @@ XmVaCreateDrawnButton(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

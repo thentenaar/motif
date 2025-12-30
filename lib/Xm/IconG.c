@@ -1,5 +1,5 @@
 /* $TOG: IconG.c /main/28 1999/01/26 15:30:46 mgreess $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/AccColorT.h>
 #include <Xm/CareVisualT.h>
@@ -3639,7 +3635,7 @@ XmVaCreateIconGadget(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 

@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -52,85 +52,84 @@ static char rcsid[] = "$TOG: SeparatoG.c /main/18 1999/01/26 15:32:56 mgreess $"
 #include "SyntheticI.h"
 #include "XmI.h"
 
-
 /********    Static Function Declarations    ********/
 
 static void SetTopShadowPixmapDefault(
 				      Widget widget,
 				      int offset,
 				      XrmValue * value);
-static void InputDispatch( 
+static void InputDispatch(
                         Widget sg,
                         XEvent *event,
                         Mask event_mask) ;
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void SecondaryObjectCreate( 
+static void SecondaryObjectCreate(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void InitializePosthook( 
+static void InitializePosthook(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValuesPrehook( 
+static Boolean SetValuesPrehook(
                         Widget oldParent,
                         Widget refParent,
                         Widget newParent,
                         ArgList args,
                         Cardinal *num_args) ;
-static void GetValuesPrehook( 
+static void GetValuesPrehook(
                         Widget newParent,
                         ArgList args,
                         Cardinal *num_args) ;
-static void GetValuesPosthook( 
+static void GetValuesPosthook(
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValuesPosthook( 
+static Boolean SetValuesPosthook(
                         Widget current,
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void GetSeparatorGC( 
+static void GetSeparatorGC(
                         XmSeparatorGadget sg) ;
 static void GetBackgroundGC(
                         XmSeparatorGadget sg) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void Destroy( 
+static void Destroy(
                         Widget sg) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Help( 
+static void Help(
                         Widget sg,
                         XEvent *event) ;
-static Cardinal GetSeparatorGClassSecResData( 
+static Cardinal GetSeparatorGClassSecResData(
                         WidgetClass w_class,
                         XmSecondaryResourceData **data_rtn) ;
-static XtPointer GetSeparatorGClassSecResBase( 
+static XtPointer GetSeparatorGClassSecResBase(
                         Widget widget,
                         XtPointer client_data) ;
-static Boolean HandleRedraw (Widget kid, 
+static Boolean HandleRedraw (Widget kid,
 		       Widget cur_parent,
 		       Widget new_parent,
 		       Mask visual_flag);
-static void 
+static void
 InitNewColorBehavior(
 		     XmSeparatorGadget sg);
 static void DealWithColors(
@@ -140,7 +139,7 @@ static void DealWithPixmaps(
 static void InitNewPixmapBehavior(
 			   XmSeparatorGadget sg);
 
-static void GetColors(Widget widget, 
+static void GetColors(Widget widget,
 		      XmAccessColorData color_data);
 
 /********    End Static Function Declarations    ********/
@@ -168,7 +167,7 @@ static XmConst XmAccessColorsTraitRec sepACT = {
   GetColors
 };
 
-  
+
 
 /*  Resource list for Separator  */
 
@@ -194,7 +193,7 @@ static XtResource resources[] =
 };
 
 
-static XtResource cache_resources[] = 
+static XtResource cache_resources[] =
 {
    {
       XmNseparatorType,
@@ -207,9 +206,9 @@ static XtResource cache_resources[] =
    },
 
    {
-      XmNmargin, 
-      XmCMargin, 
-      XmRHorizontalDimension, 
+      XmNmargin,
+      XmCMargin,
+      XmRHorizontalDimension,
       sizeof (Dimension),
       XtOffsetOf( struct _XmSeparatorGCacheObjRec, separator_cache.margin),
       XmRImmediate, (XtPointer)  0
@@ -224,23 +223,23 @@ static XtResource cache_resources[] =
 		 separator_cache.orientation),
       XmRImmediate, (XtPointer) XmHORIZONTAL
    },
-   
-   
+
+
    {
-     XmNbackground, XmCBackground, XmRPixel, 
+     XmNbackground, XmCBackground, XmRPixel,
      sizeof (Pixel), XtOffsetOf(struct _XmSeparatorGCacheObjRec,
 				separator_cache.background),
      XmRImmediate, (XtPointer) INVALID_PIXEL
    },
    {
-     XmNforeground, XmCForeground, XmRPixel, 
+     XmNforeground, XmCForeground, XmRPixel,
      sizeof (Pixel),
      XtOffsetOf(struct _XmSeparatorGCacheObjRec, separator_cache.foreground),
      XmRImmediate, (XtPointer) INVALID_PIXEL
    },
-   
+
    {
-     XmNtopShadowColor, XmCTopShadowColor, XmRPixel, 
+     XmNtopShadowColor, XmCTopShadowColor, XmRPixel,
      sizeof (Pixel),
      XtOffsetOf(struct _XmSeparatorGCacheObjRec,
 		separator_cache.top_shadow_color),
@@ -255,7 +254,7 @@ static XtResource cache_resources[] =
    },
 
    {
-     XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel, 
+     XmNbottomShadowColor, XmCBottomShadowColor, XmRPixel,
      sizeof (Pixel),
      XtOffsetOf(struct _XmSeparatorGCacheObjRec,
 		separator_cache.bottom_shadow_color),
@@ -271,10 +270,10 @@ static XtResource cache_resources[] =
    },
 };
 
-static XmSyntheticResource cache_syn_resources[] = 
+static XmSyntheticResource cache_syn_resources[] =
 {
    {
-      XmNmargin, 
+      XmNmargin,
       sizeof (Dimension),
       XtOffsetOf( struct _XmSeparatorGCacheObjRec, separator_cache.margin),
       XmeFromHorizontalPixels,
@@ -376,15 +375,15 @@ externaldef(xmseparatorgadgetclassrec) XmSeparatorGadgetClassRec xmSeparatorGadg
       TRUE,                             /* compress_motion       */
       TRUE,                             /* compress_exposure     */
       TRUE,                             /* compress_enterleave   */
-      FALSE,                            /* visible_interest      */	
-      Destroy,                          /* destroy               */	
+      FALSE,                            /* visible_interest      */
+      Destroy,                          /* destroy               */
       NULL,                             /* resize                */
-      Redisplay,                        /* expose                */	
-      SetValues,                        /* set_values	         */	
+      Redisplay,                        /* expose                */
+      SetValues,                        /* set_values	         */
       NULL,                             /* set_values_hook       */
       XtInheritSetValuesAlmost,         /* set_values_almost     */
       NULL,                             /* get_values_hook       */
-      NULL,                             /* accept_focus	         */	
+      NULL,                             /* accept_focus	         */
       XtVersion,                        /* version               */
       NULL,                             /* callback private      */
       NULL,                             /* tm_table              */
@@ -410,12 +409,11 @@ externaldef(xmseparatorgadgetclassrec) XmSeparatorGadgetClassRec xmSeparatorGadg
    }
 };
 
-externaldef(xmseparatorgadgetclass) WidgetClass xmSeparatorGadgetClass = 
+externaldef(xmseparatorgadgetclass) WidgetClass xmSeparatorGadgetClass =
    (WidgetClass) &xmSeparatorGadgetClassRec;
 
-
-/*ARGSUSED*/
-static void 
+
+static void
 SetTopShadowPixmapDefault(
         Widget widget,
         int offset,		/* unused */
@@ -450,7 +448,7 @@ SetTopShadowPixmapDefault(
  *     to the individual routines.
  *
  ************************************************************************/
-static void 
+static void
 InputDispatch(
         Widget sg,
         XEvent *event,
@@ -464,7 +462,7 @@ InputDispatch(
  *  _XmSeparatorCacheCompare
  *
  *******************************************************************/
-int 
+int
 _XmSeparatorCacheCompare(
         XtPointer A,
         XtPointer B )
@@ -497,7 +495,7 @@ _XmSeparatorCacheCompare(
 *  ClassInitialize
 *
 ************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
     separatorBaseClassExtRec.record_type = XmQmotif;
@@ -514,12 +512,12 @@ ClassInitialize( void )
  *     Set up the fast subclassing for the widget
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
    _XmFastSubclassInit (wc, XmSEPARATOR_GADGET_BIT);
-  
+
    /* Install the careParentVisual trait for all subclasses as well. */
    XmeTraitSet((XtPointer)wc, XmQTcareParentVisual, (XtPointer)&SeparatoGCVT);
 
@@ -533,8 +531,7 @@ ClassPartInitialize(
 *  SecondaryObjectCreate
 *
 ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 SecondaryObjectCreate(
         Widget req,
         Widget new_w,
@@ -557,12 +554,12 @@ SecondaryObjectCreate(
   reqSec = _XmExtObjAlloc(size);
   _XmProcessUnlock();
 
-  
+
 /*
  *  Update pointers in instance records now so references to resources
  * in the cache record will be valid for use in CallProcs.
  */
- 
+
   SEPG_Cache(new_w) = &(((XmSeparatorGCacheObject)newSec)->separator_cache);
   SEPG_Cache(req) = &(((XmSeparatorGCacheObject)reqSec)->separator_cache);
 
@@ -594,8 +591,7 @@ SecondaryObjectCreate(
  *  InitializePosthook
  *
  ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 InitializePosthook(
         Widget req,
         Widget new_w,
@@ -639,8 +635,7 @@ InitializePosthook(
  *  SetValuesPrehook
  *
  ************************************************************************/
-/* ARGSUSED */
-static Boolean 
+static Boolean
 SetValuesPrehook(
         Widget oldParent,
         Widget refParent,
@@ -705,8 +700,7 @@ SetValuesPrehook(
  *  GetValuesPrehook
  *
  ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 GetValuesPrehook(
         Widget newParent,
         ArgList args,
@@ -737,7 +731,7 @@ GetValuesPrehook(
     newSec->ext.logicalParent = newParent;
     newSec->ext.extensionType = XmCACHE_EXTENSION;
 
-    memcpy( &(newSec->separator_cache), 
+    memcpy( &(newSec->separator_cache),
             SEPG_Cache(newParent),
             sizeof(XmSeparatorGCacheObjPart));
 
@@ -758,8 +752,7 @@ GetValuesPrehook(
  *  GetValuesPosthook
  *
  ************************************************************************/
-/* ARGSUSED */
-static void 
+static void
 GetValuesPosthook(
         Widget new_w,
         ArgList args,
@@ -781,8 +774,7 @@ GetValuesPosthook(
  *  SetValuesPosthook
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValuesPosthook(
         Widget current,
         Widget req,
@@ -823,15 +815,14 @@ SetValuesPosthook(
 }
 
 
-      
+
 /************************************************************************
  *
  *  Initialize
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -921,12 +912,12 @@ Initialize(
     GetSeparatorGC (new_w);
     GetBackgroundGC (new_w);
     SEPG_TopShadowGC(new_w) =
-	_XmGetPixmapBasedGC (XtParent(nw), 
+	_XmGetPixmapBasedGC (XtParent(nw),
 			     SEPG_TopShadowColor(new_w),
 			     SEPG_Background(new_w),
 			     SEPG_TopShadowPixmap(new_w));
     SEPG_BottomShadowGC(new_w) =
-	_XmGetPixmapBasedGC (XtParent(nw), 
+	_XmGetPixmapBasedGC (XtParent(nw),
 			     SEPG_BottomShadowColor(new_w),
 			     SEPG_Background(new_w),
 			     SEPG_BottomShadowPixmap(new_w));
@@ -944,18 +935,18 @@ Initialize(
   *
   * DealWithColors
   *
-  * Deal with compatibility.  
-  * 
+  * Deal with compatibility.
+  *
   *
   */
 static void
 DealWithColors(
         XmSeparatorGadget sg)
     {
-    
+
     XmManagerWidget mw = (XmManagerWidget) XtParent(sg);
-    
-    
+
+
     /*
       If the gadget color is set to the tag value or it is the
       same as the manager color; bc mode is enabled otherwise
@@ -967,7 +958,7 @@ DealWithColors(
        SEPG_Foreground(sg) == mw->manager.foreground) &&
    (SEPG_TopShadowColor(sg) == INVALID_PIXEL ||
    SEPG_TopShadowColor(sg) == mw->manager.top_shadow_color) &&
-(SEPG_BottomShadowColor(sg) == INVALID_PIXEL || 
+(SEPG_BottomShadowColor(sg) == INVALID_PIXEL ||
 SEPG_BottomShadowColor(sg) == mw->manager.bottom_shadow_color)
        )
 	{
@@ -991,15 +982,15 @@ SEPG_BottomShadowColor(sg) == mw->manager.bottom_shadow_color)
  * You make the call.
  *
  */
- 
+
 static void
 InitNewColorBehavior(
         XmSeparatorGadget sg)
     {
     XrmValue value;
-    
+
     value.size = sizeof(Pixel);
-    
+
     if(SEPG_Background(sg) == INVALID_PIXEL)
 	{
 	_XmBackgroundColorDefault((Widget)sg,
@@ -1008,7 +999,7 @@ InitNewColorBehavior(
 				  &value);
 	memcpy((char*) &SEPG_Background(sg), value.addr, value.size);
 	}
-    
+
     if(SEPG_Foreground(sg) == INVALID_PIXEL)
 	{
 	_XmForegroundColorDefault((Widget)sg,
@@ -1017,7 +1008,7 @@ InitNewColorBehavior(
 				  &value);
 	memcpy((char*) &SEPG_Foreground(sg), value.addr, value.size);
 	}
-	
+
     if(SEPG_TopShadowColor(sg) == INVALID_PIXEL)
 	{
 	_XmTopShadowColorDefault((Widget)sg,
@@ -1026,7 +1017,7 @@ InitNewColorBehavior(
 				 &value);
 	memcpy((char*) &SEPG_TopShadowColor(sg), value.addr, value.size);
 	}
-    
+
     if(SEPG_BottomShadowColor(sg) == INVALID_PIXEL)
 	{
 	_XmBottomShadowColorDefault((Widget)sg,
@@ -1041,26 +1032,26 @@ InitNewColorBehavior(
   *
   * DealWithPixmaps
   *
-  * Deal with compatibility.  
+  * Deal with compatibility.
   *  If any resource is set initialize like a widget otherwise get
   * everything from the parent.
-  * 
+  *
   *
   */
 static void
 DealWithPixmaps(
         XmSeparatorGadget sg)
     {
-    
+
     XmManagerWidget mw = (XmManagerWidget) XtParent(sg);
-    
-    
+
+
     if(SEPG_TopShadowPixmap(sg) == INVALID_PIXMAP ||
        SEPG_TopShadowPixmap(sg) == mw->manager.top_shadow_pixmap
        )
 	{
 	SEPG_TopShadowPixmap(sg) = mw->manager.top_shadow_pixmap;
-	}	
+	}
     else
 	{
 	InitNewPixmapBehavior(sg);
@@ -1075,28 +1066,28 @@ DealWithPixmaps(
  * You make the call.
  *
  */
- 
+
 static void
 InitNewPixmapBehavior(
         XmSeparatorGadget sg)
     {
     XrmValue value;
-    
+
     value.size = sizeof(Pixmap);
-    
-	
+
+
     if(SEPG_TopShadowPixmap(sg) == INVALID_PIXMAP)
 	{
 	SetTopShadowPixmapDefault((Widget)sg,
 				  0,
 				  &value);
-	
+
 	SEPG_TopShadowColor(sg) = *value.addr;
 	memcpy((char*) &SEPG_TopShadowPixmap(sg), value.addr, value.size);
 	}
     }
 
-		     
+
 
 
 /************************************************************************
@@ -1105,17 +1096,17 @@ InitNewPixmapBehavior(
  *     Get the graphics context used for drawing the separator.
  *
  ************************************************************************/
-static void 
+static void
 GetBackgroundGC(
         XmSeparatorGadget sg )
 {
    XGCValues values;
    XtGCMask  valueMask;
    XmManagerWidget mw;
-   
+
    mw = (XmManagerWidget) XtParent(sg);
 
-   sg->separator.fill_bg_box = 
+   sg->separator.fill_bg_box =
      ((mw->core.background_pixel != SEPG_Background(sg)) &&
       (mw->core.background_pixmap == XmUNSPECIFIED_PIXMAP));
 
@@ -1142,14 +1133,14 @@ GetBackgroundGC(
  *     Get the graphics context used for drawing the separator.
  *
  ************************************************************************/
-static void 
+static void
 GetSeparatorGC(
         XmSeparatorGadget sg )
 {
    XGCValues values;
    XtGCMask  valueMask;
    XmManagerWidget mw;
-   
+
    mw = (XmManagerWidget) XtParent(sg);
 
    valueMask = GCForeground | GCBackground;
@@ -1176,8 +1167,7 @@ GetSeparatorGC(
  *     Invoke the application exposure callbacks.
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -1197,17 +1187,17 @@ Redisplay(
            return;
        }
      }
-   
+
     background_height = (int) sg->rectangle.height - 2 *
 	sg->gadget.highlight_thickness;
-						  
+
     background_width = (int) sg->rectangle.width - 2 *
 	sg->gadget.highlight_thickness;
 
     background_x_offset = sg->rectangle.x + sg->gadget.highlight_thickness;
-    
+
     background_y_offset = sg->rectangle.y + sg->gadget.highlight_thickness;
-   
+
 
     if (sg->separator.fill_bg_box)  {
       XFillRectangle(XtDisplay(sg),
@@ -1242,7 +1232,7 @@ Redisplay(
  *	Remove the callback lists.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget sg )
 {
@@ -1261,9 +1251,9 @@ Destroy(
 
 
 
-static Boolean 
+static Boolean
 HandleRedraw (
-	Widget kid, 	       
+	Widget kid,
 	Widget cur_parent,
 	Widget new_parent,
 	Mask visual_flag)
@@ -1273,8 +1263,8 @@ HandleRedraw (
     XmManagerWidget curmw = (XmManagerWidget) cur_parent;
     Boolean redraw = False;
     XmSeparatorGCacheObjPart oldCopy;
-    
-	
+
+
     _XmProcessLock();
     _XmCacheCopy((XtPointer) SEPG_Cache(sg), (XtPointer) &oldCopy,
 		 sizeof(XmSeparatorGCacheObjPart));
@@ -1290,11 +1280,11 @@ HandleRedraw (
 	  XtReleaseGC (XtParent(sg), SEPG_BackgroundGC(sg));
 
 	SEPG_Background(sg) = mw->core.background_pixel;
-	
+
 	GetSeparatorGC((XmSeparatorGadget)sg);
 	GetBackgroundGC((XmSeparatorGadget)sg);
-      
-	
+
+
 	redraw = True;
 	}
 
@@ -1304,10 +1294,10 @@ HandleRedraw (
 	  XtReleaseGC (XtParent(sg), SEPG_BackgroundGC(sg));
 
 	GetBackgroundGC((XmSeparatorGadget)sg);
-	
+
 	redraw = True;
 	}
-    
+
     if ((visual_flag & VisualForeground) &&
 	(SEPG_Foreground(sg) == curmw->manager.foreground))
 	{
@@ -1315,34 +1305,34 @@ HandleRedraw (
 	XtReleaseGC (XtParent(sg), SEPG_TopShadowGC(sg));
 
 	SEPG_Foreground(sg) = mw->manager.foreground;
-	
+
 	GetSeparatorGC((XmSeparatorGadget)sg);
 	SEPG_TopShadowGC(sg) =
-	    _XmGetPixmapBasedGC (XtParent(sg), 
+	    _XmGetPixmapBasedGC (XtParent(sg),
 				 SEPG_TopShadowColor(sg),
 				 SEPG_Background(sg),
 				 SEPG_TopShadowPixmap(sg));
 	redraw = True;
 	}
-    
+
     if (visual_flag & (VisualTopShadowColor | VisualTopShadowPixmap))
 	{
 	XtReleaseGC (XtParent(sg), SEPG_TopShadowGC(sg));
 
 	if(SEPG_TopShadowColor(sg) == curmw->manager.top_shadow_color)
 	    SEPG_TopShadowColor(sg) = mw->manager.top_shadow_color;
-	
+
 	if(SEPG_TopShadowPixmap(sg) == curmw->manager.top_shadow_pixmap &&
 	   (SEPG_TopShadowPixmap(sg) != XmUNSPECIFIED_PIXMAP
 	    || SEPG_TopShadowColor(sg) == curmw->manager.top_shadow_color))
 	    SEPG_TopShadowPixmap(sg) = mw->manager.top_shadow_pixmap;
-	    
+
 	SEPG_TopShadowGC(sg) =
-	    _XmGetPixmapBasedGC (XtParent(sg), 
+	    _XmGetPixmapBasedGC (XtParent(sg),
 				 SEPG_TopShadowColor(sg),
 				 SEPG_Background(sg),
 				 SEPG_TopShadowPixmap(sg));
-	
+
 	redraw = True;
 	}
 
@@ -1352,27 +1342,27 @@ HandleRedraw (
 
 	if(SEPG_BottomShadowColor(sg) == curmw->manager.bottom_shadow_color)
 	    SEPG_BottomShadowColor(sg) = mw->manager.bottom_shadow_color;
-	
+
 	if(SEPG_BottomShadowPixmap(sg) == curmw->manager.bottom_shadow_pixmap &&
-	   (SEPG_BottomShadowPixmap(sg) != XmUNSPECIFIED_PIXMAP 
+	   (SEPG_BottomShadowPixmap(sg) != XmUNSPECIFIED_PIXMAP
 	   || SEPG_BottomShadowColor(sg) == curmw->manager.bottom_shadow_color))
 	    SEPG_BottomShadowPixmap(sg) = mw->manager.bottom_shadow_pixmap;
-	    
+
 	SEPG_BottomShadowGC(sg) =
-	    _XmGetPixmapBasedGC (XtParent(sg), 
+	    _XmGetPixmapBasedGC (XtParent(sg),
 				 SEPG_BottomShadowColor(sg),
 				 SEPG_Background(sg),
 				 SEPG_BottomShadowPixmap(sg));
-	
+
 	redraw = True;
 	}
-    
+
     _XmProcessLock();
     SEPG_Cache(sg) = (XmSeparatorGCacheObjPart *)
 	_XmCachePart(SEPG_ClassCachePart(sg), (XtPointer) SEPG_Cache(sg),
 		     sizeof(XmSeparatorGCacheObjPart));
     _XmProcessUnlock();
-		     
+
     return redraw ;
     }
 
@@ -1382,8 +1372,7 @@ HandleRedraw (
  *  SetValues
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -1394,7 +1383,7 @@ SetValues(
         XmSeparatorGadget current = (XmSeparatorGadget) cw ;
         XmSeparatorGadget request = (XmSeparatorGadget) rw ;
         XmSeparatorGadget new_w = (XmSeparatorGadget) nw ;
-   Boolean flag = FALSE;   
+   Boolean flag = FALSE;
    XmManagerWidget new_mw = (XmManagerWidget) XtParent(new_w);
 
    /*
@@ -1403,7 +1392,7 @@ SetValues(
     */
    /*  Force traversal_on to FALSE */
    new_w -> gadget.traversal_on = FALSE;
- 
+
    /* Force highlightThickness to zero if in a menu. */
    if (XmIsRowColumn(XtParent(new_w)) &&
        ((RC_Type(XtParent(new_w)) == XmMENU_PULLDOWN) ||
@@ -1437,7 +1426,7 @@ SetValues(
 	 else if (SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN_DASH ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH) 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH)
 	    new_w -> rectangle.height += new_w -> gadget.shadow_thickness;
 	 else if (SEPG_SeparatorType(new_w) == XmDOUBLE_LINE ||
 		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE)
@@ -1449,22 +1438,22 @@ SetValues(
 
       if ((SEPG_SeparatorType(new_w) != SEPG_SeparatorType(current) ||
            new_w->gadget.shadow_thickness != current->gadget.shadow_thickness ||
-           new_w->gadget.highlight_thickness != current->gadget.highlight_thickness) && 
+           new_w->gadget.highlight_thickness != current->gadget.highlight_thickness) &&
 	   request -> rectangle.height == current -> rectangle.height)
       {
 	 if (SEPG_SeparatorType(new_w) == XmSINGLE_LINE ||
 	     SEPG_SeparatorType(new_w) == XmSINGLE_DASHED_LINE)
 	    new_w -> rectangle.height = 2 * new_w -> gadget.highlight_thickness + 3;
 	 else if (SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT || 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN_DASH ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH) 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH)
 	    new_w -> rectangle.height = 2 * new_w -> gadget.highlight_thickness +
 				       new_w -> gadget.shadow_thickness;
 	 else if (SEPG_SeparatorType(new_w) == XmDOUBLE_LINE ||
-		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE) 
+		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE)
 	    new_w -> rectangle.height = 2 * new_w -> gadget.highlight_thickness + 5;
-         } 
+         }
    }
 
    if (SEPG_Orientation(new_w) == XmVERTICAL)
@@ -1482,7 +1471,7 @@ SetValues(
 	 else if (SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN_DASH ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH) 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH)
 	    new_w -> rectangle.width += new_w -> gadget.shadow_thickness;
 	 else if (SEPG_SeparatorType(new_w) == XmDOUBLE_LINE ||
 		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE)
@@ -1501,17 +1490,17 @@ SetValues(
 	     SEPG_SeparatorType(new_w) == XmSINGLE_DASHED_LINE)
 	    new_w -> rectangle.width = 2 * new_w -> gadget.highlight_thickness + 3;
 	 else if (SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT || 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT ||
 		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_IN_DASH ||
-		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH) 
+		  SEPG_SeparatorType(new_w) == XmSHADOW_ETCHED_OUT_DASH)
 	    new_w -> rectangle.width = 2 * new_w -> gadget.highlight_thickness +
 				       new_w -> gadget.shadow_thickness;
 	 else if (SEPG_SeparatorType(new_w) == XmDOUBLE_LINE ||
-		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE) 
+		  SEPG_SeparatorType(new_w) == XmDOUBLE_DASHED_LINE)
 	    new_w -> rectangle.width = 2 * new_w -> gadget.highlight_thickness + 5;
-         } 
+         }
    }
-  
+
    if (SEPG_Orientation(new_w) != SEPG_Orientation(current) ||
        SEPG_Margin(new_w) != SEPG_Margin(current) ||
        new_w -> gadget.shadow_thickness != current -> gadget.shadow_thickness)
@@ -1526,7 +1515,7 @@ SetValues(
       GetSeparatorGC (new_w);
       flag = TRUE;
    }
-  
+
    if (SEPG_Background(new_w)!= SEPG_Background(current))
    {
      if (new_w->separator.fill_bg_box)
@@ -1534,13 +1523,13 @@ SetValues(
       GetBackgroundGC (new_w);
       flag = TRUE;
    }
-   
+
    if (SEPG_TopShadowColor(new_w)!= SEPG_TopShadowColor(current) ||
       (SEPG_TopShadowPixmap(new_w)!= SEPG_TopShadowPixmap(current)))
    {
       XtReleaseGC( (Widget) new_mw, SEPG_TopShadowGC(new_w));
       SEPG_TopShadowGC(new_w) =
-	  _XmGetPixmapBasedGC ((Widget) new_mw, 
+	  _XmGetPixmapBasedGC ((Widget) new_mw,
 			       SEPG_TopShadowColor(new_w),
 			       SEPG_Background(new_w),
 			       SEPG_TopShadowPixmap(new_w));
@@ -1552,14 +1541,14 @@ SetValues(
    {
       XtReleaseGC( (Widget) new_mw, SEPG_BottomShadowGC(new_w));
       SEPG_BottomShadowGC(new_w) =
-	  _XmGetPixmapBasedGC ((Widget) new_mw, 
+	  _XmGetPixmapBasedGC ((Widget) new_mw,
 			       SEPG_BottomShadowColor(new_w),
 			       SEPG_Background(new_w),
 			       SEPG_BottomShadowPixmap(new_w));
       flag = TRUE;
    }
 
-       
+
    /* SPB Why is this here? */
    /* Initialize the interesting input types */
    new_w->gadget.event_mask = XmHELP_EVENT;
@@ -1573,7 +1562,7 @@ SetValues(
  *  Help
  *
  ************************************************************************/
-static void 
+static void
 Help(
         Widget sg,
         XEvent *event )
@@ -1601,41 +1590,41 @@ Help(
  *	Create an instance of a separator and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateSeparatorGadget(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount )
 {
-   return (XtCreateWidget (name, xmSeparatorGadgetClass, 
+   return (XtCreateWidget (name, xmSeparatorGadgetClass,
                            parent, arglist, argcount));
 }
-Widget 
+Widget
 XmVaCreateSeparatorGadget(
         Widget parent,
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSeparatorGadgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmSeparatorGadgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
+Widget
 XmVaCreateManagedSeparatorGadget(
         Widget parent,
         char *name,
@@ -1644,19 +1633,19 @@ XmVaCreateManagedSeparatorGadget(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSeparatorGadgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmSeparatorGadgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
 
 /****************************************************
@@ -1670,8 +1659,7 @@ XmVaCreateManagedSeparatorGadget(
  *	client_data = Address of the structure in the class record which
  *	  represents the (template of ) the secondary data.
  */
-/*ARGSUSED*/
-static Cardinal 
+static Cardinal
 GetSeparatorGClassSecResData(
         WidgetClass w_class,	/* unused */
         XmSecondaryResourceData **data_rtn )
@@ -1688,7 +1676,7 @@ GetSeparatorGClassSecResData(
     arrayCount =
       _XmSecondaryResourceData ( bcePtr, data_rtn, client_data,
                 resource_name, resource_class,
-                GetSeparatorGClassSecResBase); 
+                GetSeparatorGClassSecResBase);
     _XmProcessUnlock();
     return (arrayCount);
 
@@ -1699,19 +1687,18 @@ GetSeparatorGClassSecResData(
  *   retrun the address of the base of resources.
  *  If client data is the same as the address of the secndary data in the
  *	class record then send the base address of the cache-resources for this
- *	instance of the widget. 
+ *	instance of the widget.
  * Right now we  do not try to get the address of the cached_data from
  *  the Gadget component of this instance - since Gadget class does not
  *	have any cached_resources defined. If later secondary resources are
  *	defined for Gadget class then this routine will have to change.
  */
-/*ARGSUSED*/
-static XtPointer 
+static XtPointer
 GetSeparatorGClassSecResBase(
         Widget widget,
         XtPointer client_data )	/* unused */
-{	XtPointer  widgetSecdataPtr; 
-  
+{	XtPointer  widgetSecdataPtr;
+
 	_XmProcessLock();
 	widgetSecdataPtr = (XtPointer) (SEPG_Cache(widget));
 	_XmProcessUnlock();
@@ -1722,7 +1709,7 @@ GetSeparatorGClassSecResBase(
 
 
 static void
-GetColors(Widget w, 
+GetColors(Widget w,
 	  XmAccessColorData color_data)
 {
     color_data->valueMask = AccessForeground | AccessBackgroundPixel |

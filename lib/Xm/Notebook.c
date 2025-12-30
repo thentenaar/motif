@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,13 +20,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdlib.h>
 #include <Xm/AccTextT.h>
@@ -70,7 +67,7 @@
 #undef minor
 #endif
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                        constants & useful macros                          *
@@ -887,7 +884,7 @@ static XmConst XmSpecifyUnhighlightTraitRec notebookSUT =
 
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			    Core method functions			     *
@@ -1407,7 +1404,7 @@ QueryGeometry (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                         Composite Class Methods                           *
@@ -1760,7 +1757,7 @@ DeleteChild (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                        Constraint Class Methods                           *
@@ -1901,7 +1898,7 @@ ConstraintSetValues (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			  Initializing & Resource Managing		     *
@@ -2348,7 +2345,7 @@ SetPageScroller (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			   Child Layout Functions			     *
@@ -4096,7 +4093,7 @@ ResetTopPointers (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			      Drawing Functions 			     *
@@ -5121,7 +5118,7 @@ DrawBackPages (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			      Geometry Functions			     *
@@ -5543,7 +5540,7 @@ AdjustGeometry (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *			   Child Managing Functions			     *
@@ -6004,7 +6001,7 @@ GotoPage(
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                            utility functions                              *
@@ -6124,7 +6121,7 @@ HideShadowedTab (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                             callback functions                            *
@@ -6221,7 +6218,7 @@ TabPressed (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                Keyboard Traversal Functions & Action Procs                *
@@ -6712,7 +6709,7 @@ MaxIsRightUp (
 }
 
 
-
+
 /*****************************************************************************
  *                                                                           *
  *                          Trait Stuff			      		     *
@@ -6960,7 +6957,6 @@ GetUnhighlightGC (
 }
 
 
-
 /*****************************************************************************
  *                                                                           *
  *                               Public Functions                            *
@@ -7062,7 +7058,7 @@ XmVaCreateNotebook(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -7102,6 +7098,4 @@ XmVaCreateManagedNotebook(
     va_end(var);
     return w;
 }
-
-/* End of Notebook.c */
 

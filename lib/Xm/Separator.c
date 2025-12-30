@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
@@ -33,7 +33,7 @@ static char rcsid[] = "$XConsortium: Separator.c /main/14 1996/03/25 17:53:11 ba
 
 #include <stdio.h>
 #include <ctype.h>
-#include <X11/keysymdef.h>   
+#include <X11/keysymdef.h>
 #include <X11/IntrinsicP.h>
 #include "XmI.h"
 #include <Xm/RowColumnP.h>
@@ -48,22 +48,22 @@ static char rcsid[] = "$XConsortium: Separator.c /main/14 1996/03/25 17:53:11 ba
 /********    Static Function Declarations    ********/
 
 static void ClassInitialize() ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass wc) ;
-static void Initialize( 
+static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static void GetSeparatorGC( 
+static void GetSeparatorGC(
                         XmSeparatorWidget mw) ;
-static void Redisplay( 
+static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
-static Boolean SetValues( 
+static Boolean SetValues(
                         Widget cw,
                         Widget rw,
                         Widget nw,
@@ -84,10 +84,10 @@ static XmConst XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
 
 /* Definition for resources that need special processing in get values */
 
-static XmSyntheticResource syn_resources[] = 
+static XmSyntheticResource syn_resources[] =
 {
    {
-      XmNmargin, 
+      XmNmargin,
       sizeof (Dimension),
       XtOffsetOf( struct _XmSeparatorRec, separator.margin),
       XmeFromHorizontalPixels,
@@ -98,7 +98,7 @@ static XmSyntheticResource syn_resources[] =
 
 /*  Resource list for Separator  */
 
-static XtResource resources[] = 
+static XtResource resources[] =
 {
    {
       XmNseparatorType, XmCSeparatorType, XmRSeparatorType, sizeof (unsigned char),
@@ -107,9 +107,9 @@ static XtResource resources[] =
    },
 
    {
-      XmNmargin, 
+      XmNmargin,
       XmCMargin,
-      XmRHorizontalDimension, 
+      XmRHorizontalDimension,
       sizeof (Dimension),
       XtOffsetOf( struct _XmSeparatorRec, separator.margin),
       XmRImmediate, (XtPointer)  0
@@ -153,32 +153,32 @@ externaldef(xmseparatorclassrec) XmSeparatorClassRec xmSeparatorClassRec =
 {
    {
       (WidgetClass) &xmPrimitiveClassRec, /* superclass	 	 */
-      "XmSeparator",                      /* class_name	         */	
-      sizeof(XmSeparatorRec),             /* widget_size         */	
-      ClassInitialize,			/* class_initialize      */    
+      "XmSeparator",                      /* class_name	         */
+      sizeof(XmSeparatorRec),             /* widget_size         */
+      ClassInitialize,			/* class_initialize      */
       ClassPartInitialize,              /* class_part_initialize */
-      FALSE,                            /* class_inited          */	
-      Initialize,                       /* initialize	         */	
+      FALSE,                            /* class_inited          */
+      Initialize,                       /* initialize	         */
       (XtArgsProc)NULL,                 /* initialize_hook       */
-      XtInheritRealize,                 /* realize	         */	
-      NULL,                             /* actions               */	
-      0,                                /* num_actions    	 */	
-      resources,                        /* resources	         */	
-      XtNumber (resources),             /* num_resources         */	
-      NULLQUARK,                        /* xrm_class	         */	
-      TRUE,                             /* compress_motion       */	
-      XtExposeCompressSeries |          /* compress_exposure     */	
+      XtInheritRealize,                 /* realize	         */
+      NULL,                             /* actions               */
+      0,                                /* num_actions    	 */
+      resources,                        /* resources	         */
+      XtNumber (resources),             /* num_resources         */
+      NULLQUARK,                        /* xrm_class	         */
+      TRUE,                             /* compress_motion       */
+      XtExposeCompressSeries |          /* compress_exposure     */
 	  XtExposeNoRegion,
       TRUE,                             /* compress_enterleave   */
-      FALSE,                            /* visible_interest      */	
-      Destroy,                          /* destroy               */	
-      (XtWidgetProc)NULL,               /* resize                */	
-      Redisplay,                        /* expose                */	
-      SetValues,                        /* set_values	         */	
+      FALSE,                            /* visible_interest      */
+      Destroy,                          /* destroy               */
+      (XtWidgetProc)NULL,               /* resize                */
+      Redisplay,                        /* expose                */
+      SetValues,                        /* set_values	         */
       (XtArgsFunc)NULL,                 /* set_values_hook       */
       XtInheritSetValuesAlmost,         /* set_values_almost     */
       (XtArgsProc)NULL,                 /* get_values_hook       */
-      (XtAcceptFocusProc)NULL,          /* accept_focus	         */	
+      (XtAcceptFocusProc)NULL,          /* accept_focus	         */
       XtVersion,                        /* version               */
       NULL,                             /* callback private      */
       NULL,                             /* tm_table              */
@@ -207,10 +207,10 @@ externaldef(xmseparatorwidgetclass) WidgetClass xmSeparatorWidgetClass =
 
 /************************************************************************
  *
- *  ClassInitialize 
+ *  ClassInitialize
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
     /* Install the menu savvy trait. */
@@ -224,14 +224,14 @@ ClassInitialize( void )
  *     Set up the fast subclassing for the widget
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
    _XmFastSubclassInit (wc, XmSEPARATOR_BIT);
 }
 
-      
+
 /************************************************************************
  *
  *  Initialize
@@ -239,7 +239,7 @@ ClassPartInitialize(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 Initialize(
         Widget rw,
         Widget nw,
@@ -248,7 +248,7 @@ Initialize(
 {
    XmSeparatorWidget request = (XmSeparatorWidget) rw ;
    XmSeparatorWidget new_w = (XmSeparatorWidget) nw ;
-   new_w -> primitive.traversal_on = FALSE; 
+   new_w -> primitive.traversal_on = FALSE;
 
    /* Force highlightThickness to zero if in a menu. */
    if (XmIsRowColumn(XtParent(new_w)) &&
@@ -293,7 +293,7 @@ Initialize(
 	       new_w -> core.height = 1;
       }
    }
-   
+
    if (new_w->separator.orientation == XmVERTICAL)
    {
       if (request -> core.height == 0)
@@ -319,7 +319,7 @@ Initialize(
 	       new_w -> core.width = 1;
       }
    }
-   
+
    /*  Get the drawing graphics contexts.  */
 
    GetSeparatorGC (new_w);
@@ -334,7 +334,7 @@ Initialize(
  *     Get the graphics context used for drawing the separator.
  *
  ************************************************************************/
-static void 
+static void
 GetSeparatorGC(
         XmSeparatorWidget mw )
 {
@@ -366,7 +366,7 @@ GetSeparatorGC(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static void 
+static void
 Redisplay(
         Widget wid,
         XEvent *event,
@@ -397,7 +397,7 @@ Redisplay(
  *	Remove the callback lists.
  *
  ************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
 {
@@ -413,7 +413,7 @@ Destroy(
  *
  ************************************************************************/
 /*ARGSUSED*/
-static Boolean 
+static Boolean
 SetValues(
         Widget cw,
         Widget rw,
@@ -424,7 +424,7 @@ SetValues(
         XmSeparatorWidget current = (XmSeparatorWidget) cw ;
         XmSeparatorWidget request = (XmSeparatorWidget) rw ;
         XmSeparatorWidget new_w = (XmSeparatorWidget) nw ;
-   Boolean flag = FALSE;   
+   Boolean flag = FALSE;
 
    /*
     * We never allow our traversal flags to be changed during SetValues();
@@ -439,7 +439,7 @@ SetValues(
        ((RC_Type(XtParent(new_w)) == XmMENU_PULLDOWN) ||
         (RC_Type(XtParent(new_w)) == XmMENU_POPUP)))
      new_w->primitive.highlight_thickness = 0;
- 
+
    if(    !XmRepTypeValidValue( XmRID_SEPARATOR_TYPE,
                               new_w->separator.separator_type, (Widget) new_w)    )
    {
@@ -483,7 +483,7 @@ SetValues(
 	   request -> core.height == current -> core.height)
       {
 	 if (new_w -> separator.separator_type == XmSINGLE_LINE ||
-	     new_w -> separator.separator_type == XmSINGLE_DASHED_LINE) 
+	     new_w -> separator.separator_type == XmSINGLE_DASHED_LINE)
 	    new_w -> core.height = 2 * new_w -> primitive.highlight_thickness + 3;
 	 else if (new_w -> separator.separator_type == XmSHADOW_ETCHED_IN ||
 		  new_w -> separator.separator_type == XmSHADOW_ETCHED_OUT ||
@@ -492,10 +492,10 @@ SetValues(
 	    new_w -> core.height = 2 * new_w -> primitive.highlight_thickness +
 				       new_w -> primitive.shadow_thickness;
 	 else if (new_w -> separator.separator_type == XmDOUBLE_LINE ||
-		  new_w -> separator.separator_type == XmDOUBLE_DASHED_LINE) 
+		  new_w -> separator.separator_type == XmDOUBLE_DASHED_LINE)
 	    new_w -> core.height = 2 * new_w -> primitive.highlight_thickness + 5;
       }
-   } 
+   }
 
    if (new_w -> separator.orientation == XmVERTICAL)
    {
@@ -528,7 +528,7 @@ SetValues(
 	   request -> core.width == current -> core.width)
       {
 	 if (new_w -> separator.separator_type == XmSINGLE_LINE ||
-	     new_w -> separator.separator_type == XmSINGLE_DASHED_LINE) 
+	     new_w -> separator.separator_type == XmSINGLE_DASHED_LINE)
 	    new_w -> core.width = 2 * new_w -> primitive.highlight_thickness + 3;
 	 else if (new_w -> separator.separator_type == XmSHADOW_ETCHED_IN ||
 		  new_w -> separator.separator_type == XmSHADOW_ETCHED_OUT ||
@@ -537,14 +537,14 @@ SetValues(
 	    new_w -> core.width = 2 * new_w -> primitive.highlight_thickness +
 				       new_w -> primitive.shadow_thickness;
 	 else if (new_w -> separator.separator_type == XmDOUBLE_LINE ||
-		  new_w -> separator.separator_type == XmDOUBLE_DASHED_LINE) 
+		  new_w -> separator.separator_type == XmDOUBLE_DASHED_LINE)
 	    new_w -> core.width = 2 * new_w -> primitive.highlight_thickness + 5;
       }
-   } 
+   }
 
    if (new_w -> separator.orientation != current -> separator.orientation ||
        new_w -> separator.margin != current -> separator.margin ||
-       new_w -> primitive.shadow_thickness != current -> primitive.shadow_thickness) 
+       new_w -> primitive.shadow_thickness != current -> primitive.shadow_thickness)
       flag = TRUE;
 
    if (new_w -> separator.separator_type != current -> separator.separator_type  ||
@@ -567,41 +567,41 @@ SetValues(
  *	Create an instance of a separator and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 XmCreateSeparator(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount )
 {
-   return (XtCreateWidget (name, xmSeparatorWidgetClass, 
+   return (XtCreateWidget (name, xmSeparatorWidgetClass,
                            parent, arglist, argcount));
 }
-Widget 
+Widget
 XmVaCreateSeparator(
         Widget parent,
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
-    
+
     Va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSeparatorWidgetClass, 
-                         parent, False, 
+    w = XmeVLCreateWidget(name,
+                         xmSeparatorWidgetClass,
+                         parent, False,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
+
 }
-Widget 
+Widget
 XmVaCreateManagedSeparator(
         Widget parent,
         char *name,
@@ -610,17 +610,17 @@ XmVaCreateManagedSeparator(
     Widget w = NULL;
     va_list var;
     int count;
-    
+
     Va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
-    
+
     Va_start(var, name);
-    w = XmeVLCreateWidget(name, 
-                         xmSeparatorWidgetClass, 
-                         parent, True, 
+    w = XmeVLCreateWidget(name,
+                         xmSeparatorWidgetClass,
+                         parent, True,
                          var, count);
-    va_end(var);   
+    va_end(var);
     return w;
-    
 }
+

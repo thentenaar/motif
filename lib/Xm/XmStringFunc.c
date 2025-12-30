@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
-/*
- * HISTORY
- */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -282,8 +279,8 @@ XmParseMappingGetValues(XmParseMapping mapping,
 			ArgList        arg_list,
 			Cardinal       arg_count)
 {
-  register Cardinal i;
-  register String arg_name;
+  Cardinal i;
+  String arg_name;
 
   _XmProcessLock();
   /* Do a little error checking. */

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * Floor, Boston, MA 02110-1301 USA
  *
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: RCLayoutI.h /main/5 1995/07/13 17:44:58 drk $ */
 #ifndef _XmRCLayoutI_h
 #define _XmRCLayoutI_h
@@ -40,7 +38,7 @@ extern "C" {
 extern void _XmRCDoMarginAdjustment(
                         XmRowColumnWidget m) ;
 extern void _XmRCThinkAboutSize(
-                        register XmRowColumnWidget m,
+                        XmRowColumnWidget m,
                         Dimension *w,
                         Dimension *h,
                         Widget instigator,
@@ -75,9 +73,8 @@ extern void _XmRC_SetOrGetTextMargins(
 
 /********    End Private Function Declarations    ********/
 
-
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmRCLayoutI_h */
+

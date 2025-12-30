@@ -1,5 +1,5 @@
 /* $TOG: Synthetic.c /main/8 1999/04/13 13:21:09 mgreess $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include <Xm/ManagerP.h>
@@ -186,7 +182,7 @@ void
 _XmInitializeSyntheticResources(XmSyntheticResource *resources,
 				int num_resources )
 {
-  register int i;
+  int i;
   union string_quark q;
 
   for (i = 0, q.str = NULL; i < num_resources; i++, q.str = NULL) {
@@ -699,3 +695,4 @@ _XmManagerImportArgs(Widget w,
     ImportConstraintArgs (w, w, None, args, num_args);
   _XmProcessUnlock();
 }
+

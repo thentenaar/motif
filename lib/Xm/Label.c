@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
@@ -518,8 +519,6 @@ externaldef(xmlabelwidgetclass) WidgetClass xmLabelWidgetClass =
  *       the first time a widget of this class is initialized.
  *
  ********************************************************************/
-
-/*ARGSUSED*/
 static void
 ClassInitialize(void)
 {
@@ -571,8 +570,6 @@ char* _XmCBNameValueChanged()
  *	Restore core class translations.
  *
  ************************************************************/
-
-/*ARGSUSED*/
 static void
 InitializePosthook(Widget req,		/* unused */
 		   Widget new_w,
@@ -591,7 +588,7 @@ InitializePosthook(Widget req,		/* unused */
 static void
 ClassPartInitialize(WidgetClass c)
 {
-  register XmLabelWidgetClass wc = (XmLabelWidgetClass) c;
+  XmLabelWidgetClass wc = (XmLabelWidgetClass) c;
   XmLabelWidgetClass super = (XmLabelWidgetClass)wc->core_class.superclass;
 
   if (wc->label_class.setOverrideCallback == XmInheritSetOverrideCallback)
@@ -617,8 +614,6 @@ ClassPartInitialize(WidgetClass c)
  * that the data is massaged correctly.
  *
  ************************************************************/
-
-/*ARGSUSED*/
 static void
 InitializePrehook(Widget req,		/* unused */
 		  Widget new_w,
@@ -1038,7 +1033,6 @@ Resize(Widget wid)
  *    called once for each widget
  *
  ************************************************************/
-/*ARGSUSED*/
 static void
 Initialize(
         Widget req,
@@ -1711,8 +1705,6 @@ Leave(Widget wid,
  *	This routine will take care of any changes that have been made.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget cw,
 	  Widget rw,
@@ -2184,8 +2176,6 @@ Help(Widget w,
  * form of the label string from the internal form.
  *
  ***********************************************************************/
-
-/*ARGSUSED*/
 static void
 GetLabelString(Widget wid,
 	       int resource,	/* unused */
@@ -2206,8 +2196,6 @@ GetLabelString(Widget wid,
  *     of the accelerator string.
  *
  ***********************************************************************/
-
-/*ARGSUSED*/
 static void
 GetAccelerator(Widget wid,
 	       int resource,	/* unused */
@@ -2228,8 +2216,6 @@ GetAccelerator(Widget wid,
  *     form of the accelerator text from the internal form.
  *
  ***********************************************************************/
-
-/*ARGSUSED*/
 static void
 GetAcceleratorText(Widget wid,
 		   int resource, /* unused */
@@ -2267,7 +2253,7 @@ XmVaCreateLabel(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -2324,8 +2310,6 @@ _XmStringCharSetCreate(XmStringCharSet stringcharset)
  * form of the mnemonicCharSet from the internal form.  Returns a
  * string containg the mnemonicCharSet.  Caller must free the string.
  ***********************************************************************/
-
-/*ARGSUSED*/
 static void
 GetMnemonicCharSet(Widget wid,
 		   int resource, /* unused */
@@ -2346,7 +2330,6 @@ GetMnemonicCharSet(Widget wid,
   *value = (XtArgVal) cset;
 }
 
-/*ARGSUSED*/
 static void
 SetValuesAlmost(Widget cw,	/* unused */
 		Widget nw,
@@ -2450,8 +2433,6 @@ XmLabelGetBaselines(Widget wid,
  * XmLabelMarginsProc
  *
  ***********************************************************************/
-
-/* ARGSUSED */
 static void
 XmLabelMarginsProc(Widget w,
 		   XmBaselineMargins *margins_rec)
@@ -2504,7 +2485,6 @@ GetPixmapDragIcon(Widget w)
   return drag_icon;
 }
 
-/*ARGSUSED*/
 static void
 ProcessDrag(Widget w,
 	    XEvent *event,
@@ -2557,7 +2537,6 @@ ProcessDrag(Widget w,
     }
 }
 
-/*ARGSUSED*/
 void
 _XmLabelConvert(Widget w,
 		XtPointer ignore,
@@ -2963,7 +2942,6 @@ ToPaddingPixels(Widget widget, int offset, XtArgVal *value)
  * otherwise leave it alone.
  */
 
-/*ARGSUSED*/
 static void
 CheckSetRenderTable(Widget wid,
 		    int offset,
@@ -3051,7 +3029,6 @@ LabelSetValue(Widget w, XtPointer value, int type)
     XmStringFree(temp);
 }
 
-/*ARGSUSED*/
 static int
 LabelPreferredValue(Widget w)	/* unused */
 {

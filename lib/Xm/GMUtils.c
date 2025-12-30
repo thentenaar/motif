@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: GMUtils.c /main/11 1995/09/19 23:03:32 cde-sun $"
@@ -30,23 +31,14 @@ static char rcsid[] = "$XConsortium: GMUtils.c /main/11 1995/09/19 23:03:32 cde-
 #include <config.h>
 #endif
 
-
 /*******************************************************************
  * This file contains the common geometry management set of routines
  * for both pure BulletinBoard (not subclasses) and DrawingArea.
  ****************/
 
-
 #include "XmI.h"
 #include "GMUtilsI.h"
 #include <Xm/ManagerP.h>
-
-
-/********    Static Function Declarations    ********/
-
-
-/********    End Static Function Declarations    ********/
-
 
 /*******************************************************************
  * Figure out how much size we need. Shrink wrap around the children.
@@ -58,8 +50,8 @@ _XmGMCalcSize(XmManagerWidget manager,
             Dimension *replyWidth,
             Dimension *replyHeight )
 {
-    register int i ;
-    register Widget child ;
+    int i ;
+    Widget child ;
     int right, bottom ;
 
     *replyWidth = *replyHeight = 0 ;
@@ -201,8 +193,8 @@ _XmGMEnforceMargin(XmManagerWidget manager,
 )
 {
     int i ;
-    register Widget child ;
-    register Boolean do_move ;
+    Widget child ;
+    Boolean do_move ;
     Position newx, newy ;
 
     for(i = 0 ; i < manager->composite.num_children ; i++) {
@@ -336,7 +328,7 @@ Boolean
 _XmGMOverlap(XmManagerWidget manager,
            Widget w)
 {
-    register int      i ;
+    int      i ;
     Position  left1 = XtX(w) ;
     Position  top1 = XtY(w) ;
     Dimension right1 = XtX(w) + 2*XtBorderWidth(w) + XtWidth(w) ;

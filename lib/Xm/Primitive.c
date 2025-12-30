@@ -1,4 +1,4 @@
- /*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Primitive.c /main/25 1999/01/27 16:08:04 mgreess $"
@@ -85,7 +86,7 @@ static void Initialize(
 			 ArgList args,
 			 Cardinal *num_args) ;
 static void Realize(
-			 register Widget w,
+			 Widget w,
 			 XtValueMask *p_valueMask,
 			 XSetWindowAttributes *attributes) ;
 static void Destroy(
@@ -833,9 +834,6 @@ Initialize(
 
 }
 
-
-
-
 /************************************************************************
  *
  *  Realize
@@ -845,7 +843,7 @@ Initialize(
  ************************************************************************/
 static void
 Realize(
-        register Widget w,
+        Widget w,
         XtValueMask *p_valueMask,
         XSetWindowAttributes *attributes )
 {

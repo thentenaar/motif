@@ -1,5 +1,5 @@
 /* $TOG: Container.c /main/35 1999/07/29 09:16:07 mgreess $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 /*
  * (c) Copyright 1989, 1990, 1991, 1992, 1993 OPEN SOFTWARE FOUNDATION, INC.
  * ALL RIGHTS RESERVED
@@ -5295,7 +5293,7 @@ ContainerDestinationProc(
 
 	/*
 	** In case of a primary transfer operation where a location_data
-	** has been allocated, register a done proc to be called when
+	** has been allocated, a done proc to be called when
 	** the data transfer is complete to free the location_data
 	*/
 	if (cs->selection == XA_PRIMARY && cs->location_data)
@@ -9717,7 +9715,7 @@ XmVaCreateContainer(
         char *name,
         ...)
 {
-    register Widget w;
+    Widget w;
     va_list var;
     int count;
 
@@ -9757,3 +9755,4 @@ XmVaCreateManagedContainer(
     va_end(var);
     return w;
 }
+

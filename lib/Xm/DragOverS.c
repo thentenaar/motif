@@ -412,7 +412,7 @@ CacheMixedIcon(
 	Position		opY,
 	XmDragIconObject	mixedIcon)
 {
-    register MixedIconCache * cache_ptr;
+    MixedIconCache * cache_ptr;
 
     if (mixedIcon == NULL) return False;
 
@@ -472,7 +472,7 @@ GetMixedIcon(
 	Position		opX,
 	Position		opY)
 {
-    register MixedIconCache * cache_ptr;
+    MixedIconCache * cache_ptr;
 
     for (cache_ptr = mixed_cache; cache_ptr; cache_ptr = cache_ptr->next)
     {
@@ -1685,7 +1685,7 @@ GetDragIconCursor(
     Screen			*screen = XtScreen(dos);
     Display			*display = XtDisplay(dos);
     XmDragCursorCache		*cursorCachePtr= NULL;
-    register XmDragCursorCache	cursorCache = NULL;
+    XmDragCursorCache	cursorCache = NULL;
     XColor 			colors[2];
     Boolean			useCache = True;
     Cursor			cursor;
@@ -3127,7 +3127,7 @@ InstallColormap(XmDragOverShellWidget dw)
 	else
 	{
 	    Window *windows = (Window *)XtMalloc((sizeof(Window))*(countReturn+1));
-	    register int i;
+	    int i;
 	    windows[0] = XtWindow(dw);
 	    for (i=0; i<countReturn; i++)
 		windows[i+1] = windowsReturn[i];
@@ -3166,7 +3166,7 @@ UninstallColormap(XmDragOverShellWidget dos)
     Status status;
     Window *windowsReturn;
     int countReturn;
-    register int i;
+    int i;
 
     if (!dos->drag.colormapShell)
 	FindColormapShell(dos);

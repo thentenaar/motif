@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: GadgetUtil.c /main/16 1996/10/23 15:00:52 cde-osf $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$XConsortium: GadgetUtil.c /main/16 1996/10/23 15:00:52 c
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <stdio.h>
 #include <ctype.h>
@@ -41,14 +41,6 @@ static char rcsid[] = "$XConsortium: GadgetUtil.c /main/16 1996/10/23 15:00:52 c
 #include <Xm/DropSMgr.h>
 #include "GadgetUtiI.h"
 #include "XmI.h"
-
-
-/********    Static Function Declarations    ********/
-
-
-/********    End Static Function Declarations    ********/
-
-
 
 /************************************************************************
  *
@@ -124,12 +116,12 @@ XmeConfigureObject(
 void
 XmeRedisplayGadgets(
         Widget w,
-        register XEvent *event,
+        XEvent *event,
         Region region )
 {
    CompositeWidget mw = (CompositeWidget) w ;
-   register int i;
-   register Widget child;
+   int i;
+   Widget child;
    XtExposeProc expose;
 
    _XmWidgetToAppContext(w);
