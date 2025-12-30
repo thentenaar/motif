@@ -1415,27 +1415,72 @@ Widget XmGetXmScreen(Screen *screen)
 
 extern Dimension XmScreenWidth(XmScreen screen)
 {
-	return screen ? screen->screen.width : 0;
+	Dimension w;
+
+	if (!screen)
+		return XmINVALID_DIMENSION;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
+	w = screen->screen.width;
+	_XmAppUnlock(app);
+	return w;
 }
 
 extern Dimension XmScreenHeight(XmScreen screen)
 {
-	return screen ? screen->screen.height : 0;
+	Dimension h;
+
+	if (!screen)
+		return XmINVALID_DIMENSION;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
+	h = screen->screen.height;
+	_XmAppUnlock(app);
+	return h;
 }
 
 extern Dimension XmScreenWidthMM(XmScreen screen)
 {
-	return screen ? screen->screen.width_mm : 0;
+	Dimension w;
+
+	if (!screen)
+		return XmINVALID_DIMENSION;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
+	w = screen->screen.width_mm;
+	_XmAppUnlock(app);
+	return w;
 }
 
 extern Dimension XmScreenHeightMM(XmScreen screen)
 {
-	return screen ? screen->screen.height_mm : 0;
+	Dimension h;
+
+	if (!screen)
+		return XmINVALID_DIMENSION;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
+	h = screen->screen.height_mm;
+	_XmAppUnlock(app);
+	return h;
 }
 
 extern float XmScreenDpi(XmScreen screen)
 {
-	return screen ? screen->screen.dpi : SCREEN_DEFAULT_DPI;
+	float dpi;
+
+	if (!screen)
+		return SCREEN_DEFAULT_DPI;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
+	dpi = screen->screen.dpi;
+	_XmAppUnlock(app);
+	return dpi;
 }
 
 /**
@@ -1449,6 +1494,11 @@ XmMonitorInfo *XmGetMonitorInfoAt(XmScreen screen, Position x, Position y)
 	Cardinal i;
 	XmMonitorInfo *s, *out;
 
+	if (!screen)
+		return NULL;
+
+	_XmDisplayToAppContext(XtDisplayOfObject((Widget)screen));
+	_XmAppLock(app);
 	for (i = 0; i < screen->screen.n_monitors; i++) {
 		s = screen->screen.monitors + i;
 		if (x < s->x || x >= s->x + s->width ||
@@ -1463,9 +1513,11 @@ XmMonitorInfo *XmGetMonitorInfoAt(XmScreen screen, Position x, Position y)
 			strcpy(out->name, s->name);
 		}
 
+		_XmAppUnlock(app);
 	    return out;
 	}
 
+	_XmAppUnlock(app);
 	return NULL;
 }
 
