@@ -27,6 +27,11 @@
 #include <X11/Intrinsic.h>
 #include <check.h>
 
+/* For locating resources in out-of-tree builds */
+#define __RESOURCE(dir, x) #dir x
+#define _RESOURCE(dir, x) __RESOURCE(dir, #x)
+#define RESOURCE(x) _RESOURCE(RESDIR, x)
+
 extern XtAppContext app;
 
 /* Xt fixture */

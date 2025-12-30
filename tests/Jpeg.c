@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 #include <X11/Xlib.h>
-#include <JpegI.h>
+#include <Xm/JpegI.h>
 #include <check.h>
 
 #include "suites.h"
@@ -34,7 +34,8 @@ START_TEST(load_invalid_header)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("jpeg/invalid_header.jpeg", "rb"), "Failed to open jpeg/invalid_header.jpeg");
+	ck_assert_msg((fp = fopen(RESOURCE(jpeg/invalid_header.jpeg), "rb")),
+	              "Failed to open jpeg/invalid_header.jpeg");
 	ret = _XmJpegGetImage(fp, &img);
 	fclose(fp);
 
@@ -49,7 +50,8 @@ START_TEST(load_rgb24)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("jpeg/rgb24.jpeg", "rb"), "Failed to open jpeg/rgb24.jpeg");
+	ck_assert_msg((fp = fopen(RESOURCE(jpeg/rgb24.jpeg), "rb")),
+	              "Failed to open jpeg/rgb24.jpeg");
 	ret = _XmJpegGetImage(fp, &img);
 	fclose(fp);
 
@@ -81,7 +83,8 @@ START_TEST(load_grayscale)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("jpeg/grayscale.jpeg", "rb"), "Failed to open jpeg/grayscale.jpeg");
+	ck_assert_msg((fp = fopen(RESOURCE(jpeg/grayscale.jpeg), "rb")),
+	              "Failed to open jpeg/grayscale.jpeg");
 	ret = _XmJpegGetImage(fp, &img);
 	fclose(fp);
 

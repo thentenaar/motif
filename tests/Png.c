@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 #include <X11/Xlib.h>
-#include <PngI.h>
+#include <Xm/PngI.h>
 #include <check.h>
 
 #include "suites.h"
@@ -34,7 +34,8 @@ START_TEST(load_invalid_header)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("png/invalid_header.png", "rb"), "Failed to open png/invalid_header.png");
+	ck_assert_msg((fp = fopen(RESOURCE(png/invalid_header.png), "rb")),
+	              "Failed to open png/invalid_header.png");
 	ret = _XmPngGetImage(fp, NULL, &img);
 	fclose(fp);
 
@@ -49,7 +50,8 @@ START_TEST(load_rgb24)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("png/rgb24.png", "rb"), "Failed to open png/rgb24.png");
+	ck_assert_msg((fp = fopen(RESOURCE(png/rgb24.png), "rb")),
+	              "Failed to open png/rgb24.png");
 	ret = _XmPngGetImage(fp, NULL, &img);
 	fclose(fp);
 
@@ -85,7 +87,8 @@ START_TEST(load_rgba32)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("png/rgba32.png", "rb"), "Failed to open png/rgba32.png");
+	ck_assert_msg((fp = fopen(RESOURCE(png/rgba32.png), "rb")),
+	              "Failed to open png/rgba32.png");
 	ret = _XmPngGetImage(fp, NULL, &img);
 	fclose(fp);
 
@@ -126,7 +129,8 @@ START_TEST(load_rgba32_bgcolor)
 	bg.green = 0xcc;
 	bg.blue  = 0xcc;
 
-	ck_assert_msg(fp = fopen("png/rgba32.png", "rb"), "Failed to open png/rgba32.png");
+	ck_assert_msg((fp = fopen(RESOURCE(png/rgba32.png), "rb")),
+	              "Failed to open png/rgba32.png");
 	ret = _XmPngGetImage(fp, &bg, &img);
 	fclose(fp);
 

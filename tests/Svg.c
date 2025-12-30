@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 #include <X11/Xlib.h>
-#include <SvgI.h>
+#include <Xm/SvgI.h>
 #include <check.h>
 
 #include "suites.h"
@@ -34,7 +34,8 @@ START_TEST(load_invalid_file)
 	XImage *img = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("svg/invalid_file.svg", "rb"), "Failed to open svg/invalid_file.svg");
+	ck_assert_msg((fp = fopen(RESOURCE(svg/invalid_file.svg), "rb")),
+	              "Failed to open svg/invalid_file.svg");
 	ret = _XmSvgGetImage(fp, &img);
 	fclose(fp);
 
@@ -49,7 +50,8 @@ START_TEST(load_test_image)
 	XImage *img = NULL, *rast = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("svg/test.svg", "rb"), "Failed to open svg/test.svg");
+	ck_assert_msg((fp = fopen(RESOURCE(svg/test.svg), "rb")),
+	              "Failed to open svg/test.svg");
 	ret = _XmSvgGetImage(fp, &img);
 	fclose(fp);
 
@@ -67,7 +69,8 @@ START_TEST(rasterize_image)
 	XImage *img = NULL, *rast = NULL;
 	int ret;
 
-	ck_assert_msg(fp = fopen("svg/test.svg", "rb"), "Failed to open svg/test.svg");
+	ck_assert_msg((fp = fopen(RESOURCE(svg/test.svg), "rb")),
+	              "Failed to open svg/test.svg");
 	ret = _XmSvgGetImage(fp, &img);
 	fclose(fp);
 
