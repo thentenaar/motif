@@ -108,7 +108,6 @@ ProtocolsI.h \
 RCHookI.h \
 RCLayoutI.h \
 RCMenuI.h \
-ReadImageI.h \
 RegionI.h \
 RepTypeI.h \
 ResConverI.h \
@@ -215,7 +214,7 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         GeoUtils.c      ImageCache.c    Label.c         LabelG.c \
         List.c          MainW.c         MapEvents.c     MenuShell.c \
         MenuUtil.c      MessageB.c      PanedW.c        PushB.c \
-        PushBG.c        ReadImage.c     Region.c        ResConvert.c \
+        PushBG.c        Region.c        ResConvert.c \
         ResInd.c        RowColumn.c     Sash.c          Scale.c \
         ScrollBar.c     ScrolledW.c     SelectioB.c     SeparatoG.c \
         Separator.c     Simple.c        Svg.c           Text.c \

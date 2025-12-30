@@ -1396,20 +1396,16 @@ extern void _XmDestroyParentCallback(
  * following because XCreateImage will stuff here display specific
  * data and we want client specific values (i.e the bit orders we used
  * for creating the bitmap data in Motif) */
-#define _XmCreateImage(IMAGE, DISPLAY, DATA, WIDTH, HEIGHT, BYTE_ORDER) {\
-    IMAGE = XCreateImage(DISPLAY,\
+#define _XmCreateImage(IMAGE, DISPLAY, DATA, WIDTH, HEIGHT, BYTE_ORDER) \
+do {\
+    (IMAGE) = XCreateImage(DISPLAY,\
 			 DefaultVisual(DISPLAY, DefaultScreen(DISPLAY)),\
-			 1,\
-			 XYBitmap,\
-			 0,\
-			 DATA,\
-			 WIDTH, HEIGHT,\
-			 8,\
-			 (WIDTH+7) >> 3);\
-    IMAGE->byte_order = BYTE_ORDER;\
-    IMAGE->bitmap_unit = 8;\
-    IMAGE->bitmap_bit_order = LSBFirst;\
-}
+			 1, XYBitmap, 0, (DATA), (WIDTH), (HEIGHT),\
+			 8, (((WIDTH)+7) >> 3));\
+    (IMAGE)->byte_order = (BYTE_ORDER);\
+    (IMAGE)->bitmap_unit = 8;\
+    (IMAGE)->bitmap_bit_order = LSBFirst;\
+} while (0)
 
 #endif /* NO_XM_1_2_BC */
 

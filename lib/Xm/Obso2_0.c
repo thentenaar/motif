@@ -69,7 +69,6 @@
 #include "MenuStateI.h"
 #include "MessagesI.h"
 #include "PixConvI.h"
-#include "ReadImageI.h"
 #include "ResConverI.h"
 #include "TextOutI.h"
 #include "TravActI.h"
@@ -1289,9 +1288,25 @@ _XmMapKeyEvent(
   return (count > 0);
 }
 
+void XmRegisterConverters(void) { _XmRegisterConverters() ; }
 
-void XmRegisterConverters() { _XmRegisterConverters() ; }
+/************************************************************************
+ *
+ *  _XmReadImageAndHotSpotFromFile
+ *	Given a filename, extract and create an image from the file data.
+ *      This one takes a Display.
+ ************************************************************************/
+XImage *_XmReadImageAndHotSpotFromFile(Display *display, char *filename,
+                                       int *hot_x, int *hot_y)
+{
+	XImage *img = NULL;
+	unsigned int w, h;
+	unsigned char *data;
 
+	if (XReadBitmapFileData(filename, &w, &h, &data, hot_x, hot_y) == BitmapSuccess)
+		_XmCreateImage(img, display, (char *)data, w, h, LSBFirst);
+	return img;
+}
 
 /************************************************************************
  *

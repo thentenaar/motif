@@ -38,7 +38,6 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include "ColorI.h"		/* for _XmSearchColorCache() */
 #include "HashI.h"		/* for hash table routines. */
 #include "ImageCachI.h"		/* for DIRECT_PIXMAP_CACHED */
-#include "ReadImageI.h"		/* for read xbm stuff */
 #include "SvgI.h"
 
 #include <X11/xpm.h>
@@ -629,7 +628,9 @@ GetXpmImage(
     int num_override_colors;
     XImage * mask_image = NULL ;
     int hot_x = 0 , hot_y = 0 ;
-    register Display *display = DisplayOfScreen(screen);
+    unsigned int w, h;
+    unsigned char *data;
+    Display *display = DisplayOfScreen(screen);
 
     /* init so that we can call safely XpmFreeAttributes. */
     attrib.valuemask = 0;
@@ -682,11 +683,10 @@ GetXpmImage(
 	attrib.nalloc_pixels = 0;
     }
 
-
-    if (!(*image))
-	*image = (XImage *) _XmReadImageAndHotSpotFromFile (display,
-							    file_name,
-							    &hot_x, &hot_y);
+    if (!*image) {
+		if (XReadBitmapFileData(file_name, &w, &h, &data, &hot_x, &hot_y) == BitmapSuccess)
+			_XmCreateImage(*image, display, (char *)data, w, h, LSBFirst);
+    }
 
     /* get the image "design" resolution */
     /* in the future: look in the file */
