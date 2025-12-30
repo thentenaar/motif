@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -61,7 +61,7 @@ PrintRequest(WSMRequest *request)
 {
     static char str[STRSIZE]; /* The vile hacks we do in debugging code. */
     String ptr;
-    register int i;
+    int i;
 
     sprintf(str, "Request: %s\n", _WSMReqTypeToName(request->any.type));
     ptr = str + strlen(str);
@@ -89,17 +89,17 @@ PrintRequest(WSMRequest *request)
 		strcat(ptr, ", ");
 	}
 	strcat(ptr, "\n");
-	break;	
+	break;
     case WSM_CONFIG_FMT:
 	sprintf(ptr, "No other data for this request.\n");
 	break;
     case WSM_GET_STATE:
-	sprintf(ptr, "Window: 0x%X\nDiffs Allowed: %s\n", 
-		(unsigned)request->get_state.window, 
+	sprintf(ptr, "Window: 0x%X\nDiffs Allowed: %s\n",
+		(unsigned)request->get_state.window,
 		request->get_state.diffs_allowed ? "True" : "False");
 	break;
     case WSM_SET_STATE:
-	sprintf(ptr, "Number of Windows with Info: %d\n", 
+	sprintf(ptr, "Number of Windows with Info: %d\n",
 		request->set_state.num_win_info_list);
 	for (i = 0; i < request->set_state.num_win_info_list; i++) {
 	    ptr += strlen(ptr);
@@ -132,7 +132,7 @@ String
 PrintReply(WSMReply *reply)
 {
     static char str[STRSIZE]; /* The vile hacks we do in debugging code. */
-    register int i;
+    int i;
     String ptr;
 
     sprintf(str, "Reply: %s\n", _WSMReqTypeToName(reply->any.type));
@@ -153,12 +153,12 @@ PrintReply(WSMReply *reply)
 		strcat(ptr, ", ");
 	}
 	strcat(ptr, "\n");
-	break;	
+	break;
     case WSM_CONFIG_FMT:
 	PrintConfigFormat(ptr, &(reply->config_format));
 	break;
     case WSM_GET_STATE:
-	sprintf(ptr, "Number of Windows with Info: %d\n", 
+	sprintf(ptr, "Number of Windows with Info: %d\n",
 		reply->get_state.num_win_info_list);
 	for (i = 0; i < reply->get_state.num_win_info_list; i++) {
 	    ptr += strlen(ptr);
@@ -172,7 +172,7 @@ PrintReply(WSMReply *reply)
         {
 	    int num = reply->register_window.num_window_data;
 	    WSMWinData *win_data = reply->register_window.window_data;
-    
+
 	    sprintf(ptr, "Number of Data Attributes: %d\n", num);
 	    for (i = 0; i < num; i++, win_data++) {
 		ptr += strlen(ptr);
@@ -211,11 +211,11 @@ PrintWindowInfo(
      String      str,
      WSMWinInfo *win_info)
 {
-    register int i;
+    int i;
     int num = win_info->num_data_list;
     WSMWinData *win_data = win_info->data_list;
-    
-    sprintf(str, "Window: 0x%X\nNumber of Data Attributes: %d\n", 
+
+    sprintf(str, "Window: 0x%X\nNumber of Data Attributes: %d\n",
 	    (unsigned)win_info->window, num);
 
     for (i = 0; i < num; i++, win_data++) {
@@ -237,7 +237,7 @@ PrintWindowData(
      String      tab_str,
      WSMWinData *win_data)
 {
-    register int i;
+    int i;
     char *type_str = NULL;
 
     if (win_data->type == WSM_VALUE_DATA) {
@@ -246,7 +246,7 @@ PrintWindowData(
 	return;
     }
 
-	
+
     switch(win_data->type) {
     case WSM_CHAR_LIST_DATA:
 	type_str = "Char List";
@@ -262,14 +262,14 @@ PrintWindowData(
         /* Not handled cases */
         break;
     }
-    
+
     sprintf(str, "%sName: %s, Type: %s, Len: %d\n%s%s", tab_str,
 	    XrmQuarkToString(win_data->nameq), type_str,
 	    win_data->data_len, tab_str, "        ");
-    
+
     for (i = 0; i < win_data->data_len; i++) {
 	str += strlen(str);
-	
+
 	switch(win_data->type) {
 	case WSM_CHAR_LIST_DATA:
 	    sprintf(str, "%c(%d)", win_data->data.char_ptr[i],
@@ -289,7 +289,7 @@ PrintWindowData(
 	if (i < (win_data->data_len - 1))
 	    strcat(str, ", ");
     }
-    
+
     strcat(str, "\n");
 }
 
@@ -305,14 +305,14 @@ PrintConfigFormat(
      String                str,
      WSMConfigFormatReply *config_fmt)
 {
-    register int i;
+    int i;
 
     sprintf("Accepts Diffs: %s\n",
 	    (config_fmt->accepts_diffs ? "True" : "False"));
 
     for (i = 0; i < 3; i++) {
 	WSMAttribute *fmt;
-	register int j, num;
+	int j, num;
 
 	str += strlen(str);
 
@@ -337,7 +337,7 @@ PrintConfigFormat(
 	for (j = 0; j < num; j++) {
 	    str += strlen(str);
 	    sprintf(str, "        Name: %s, Size: %d, Is_List: %s\n",
-		    XrmQuarkToString(fmt[j].nameq), (int) fmt[j].size, 
+		    XrmQuarkToString(fmt[j].nameq), (int) fmt[j].size,
 		    fmt[j].is_list ? "True" : "False");
 	}
     }

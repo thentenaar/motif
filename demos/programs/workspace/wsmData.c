@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,15 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
- * HISTORY
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: wsmData.c /main/6 1995/07/14 09:48:38 drk $"
 #endif
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <Xm/Xm.h>
@@ -35,7 +34,7 @@ static char rcsid[] = "$XConsortium: wsmData.c /main/6 1995/07/14 09:48:38 drk $
 #include "wsmDebug.h"
 #include "xrmLib.h"
 
-void 
+void
 LongListDestructor(
      XtAppContext ,
      XrmValuePtr,
@@ -62,7 +61,7 @@ extern Space *space_list;
 
 
 /*------------------------------------------------------------------
-                             UpdateXrm   
+                             UpdateXrm
 
    Save the current workspaceList, backgroundList, and labelPixmapList
   ------------------------------------------------------------------*/
@@ -123,14 +122,14 @@ UpdateXrm()
       if (s->next != NULL)
         strcat(p_list,",");
     }
-  
+
   max_size = strlen(current_space->name) +1;
   c_space = (char*) XtMalloc( max_size*sizeof(char));
   strcpy(c_space,current_space->name);
   (void )SaveSpaceListResources(s_list,b_list,p_list,c_space);
 
   XtFree((char*)s_list);
-  XtFree((char*)b_list);        
+  XtFree((char*)b_list);
   XtFree((char*)p_list);
   XtFree((char*)c_space);
 }
@@ -138,19 +137,19 @@ UpdateXrm()
 
 
 /*------------------------------------------------------------------
-                             ConvertToWsmData   
+                             ConvertToWsmData
 
   Convert an XrmValue into a WSMWinData
   ------------------------------------------------------------------*/
-Boolean 
-ConvertToWSMData(XrmValue *value, 
-                 WSMWinData *win_data, 
+Boolean
+ConvertToWSMData(XrmValue *value,
+                 WSMWinData *win_data,
                  WSMWinData *start_data,
                  WSMAttribute *attrib)
 {
-  XrmValue toVal;       
+  XrmValue toVal;
   XtPointer fByte;
-  int i,j;      
+  int i,j;
   static Boolean register_long_converter;
   toVal.size = sizeof(fByte);
   toVal.addr = (XtPointer)&fByte;
@@ -162,16 +161,16 @@ ConvertToWSMData(XrmValue *value,
                             XtRInt,
                             &toVal))
         {
-          if (start_data->type == WSM_NONE ||   
+          if (start_data->type == WSM_NONE ||
               (int) *(int*)toVal.addr !=  (int) start_data->data.value )
             {
               win_data->nameq = attrib->nameq;
-              win_data->data.value = *(int*)toVal.addr; 
-              win_data->type = WSM_VALUE_DATA;      
-#ifdef DEBUG2   
-              PRINT(" value %s %s %ld %ld\n",XrmQuarkToString(attrib->nameq),   
+              win_data->data.value = *(int*)toVal.addr;
+              win_data->type = WSM_VALUE_DATA;
+#ifdef DEBUG2
+              PRINT(" value %s %s %ld %ld\n",XrmQuarkToString(attrib->nameq),
                     (char*)value->addr,*(int*)toVal.addr,start_data->data.value);
-#endif                          
+#endif
               return True;
             }
           else return False;
@@ -194,13 +193,13 @@ ConvertToWSMData(XrmValue *value,
           win_data->nameq = attrib->nameq;
           win_data->data.long_ptr = *(long**)toVal.addr;
           win_data->data_len = toVal.size;
-          win_data->type = WSM_LONG_LIST_DATA;      
-#ifdef DEBUG2   
+          win_data->type = WSM_LONG_LIST_DATA;
+#ifdef DEBUG2
           PRINT("value stackingOrder %d: ", win_data->data_len);
           for (j = 0; j < toVal.size; j++)
             PRINT(" %ld ",win_data->data.long_ptr[j]);
           PRINT("\n");
-#endif                          
+#endif
           return True;
         }
     }
@@ -214,12 +213,12 @@ ConvertToWSMData(XrmValue *value,
 
 
 /*------------------------------------------------------------------
-                             WinDataCopy       
+                             WinDataCopy
 
    Copy a WSMWinData structure
   ------------------------------------------------------------------*/
-void 
-WinDataCopy(WSMWinData *w_data, 
+void
+WinDataCopy(WSMWinData *w_data,
             WSMWinData *copy_data)
 {
   int i;
@@ -251,12 +250,12 @@ WinDataCopy(WSMWinData *w_data,
     {
       w_data->data.value =copy_data->data.value;
       w_data->type = WSM_VALUE_DATA;
-      break;    
+      break;
     }
   case WSM_NONE:
     /* Not handled case */
-    break;  
-  }     
+    break;
+  }
   w_data->nameq = copy_data->nameq;
 
 }
@@ -264,12 +263,12 @@ WinDataCopy(WSMWinData *w_data,
 
 
 /*------------------------------------------------------------------
-                            CreateWSMWinData    
+                            CreateWSMWinData
 
-  Create WSMWinData list from an XrmValue list              
+  Create WSMWinData list from an XrmValue list
   ------------------------------------------------------------------*/
 Boolean
-CreateWSMWinData(XrmValue *value_list,    
+CreateWSMWinData(XrmValue *value_list,
                  Boolean diffs_allowed,
                  WorkWindow *w_window,  /* return */
                  WSMWinData **win_data_return, /* return */
@@ -336,18 +335,18 @@ CreateWSMWinData(XrmValue *value_list,
 #endif
   return retval;
 }
-  
+
 
 
 
 /*------------------------------------------------------------------
-                           CreateStartWSMWinData  
+                           CreateStartWSMWinData
 
   Create WSMWinData list from an XrmValue list and initialize
   a windows WSMWinData list.
   ------------------------------------------------------------------*/
 Boolean
-CreateStartWSMWinData(XrmValue *value_list, 
+CreateStartWSMWinData(XrmValue *value_list,
                       Boolean diffs_allowed,
                       WSMWinData *start_win_data,
                       int num_start_win_data,
@@ -357,13 +356,13 @@ CreateStartWSMWinData(XrmValue *value_list,
 {
   int i;
   WSMWinData *start_data;
-  
+
   /* set internal start_win_data_return */
   if (start_win_data != NULL)
     {
       for (i = 0; i < w_window->num_attrib_list; i++)
         {
-          start_data = _WSMGetMatchingWinData(start_win_data, 
+          start_data = _WSMGetMatchingWinData(start_win_data,
                                               num_start_win_data,
                                               w_window->attrib_qlist[i]);
           if (start_data != NULL)
@@ -377,15 +376,15 @@ CreateStartWSMWinData(XrmValue *value_list,
                           win_data_return,
                           num_data_return);
 }
-  
+
 
 
 
 
 /*------------------------------------------------------------------
-                             CreateHideWSMWinData     
+                             CreateHideWSMWinData
 
-  Create WSMData list with hidden = True. 
+  Create WSMData list with hidden = True.
   ------------------------------------------------------------------*/
 void
 CreateHideWSMWinData(Boolean diffs_allowed,
@@ -423,7 +422,7 @@ CreateHideWSMWinData(Boolean diffs_allowed,
           else
             WinDataCopy(&(win_data[num_data]),&(w_window->win_data[i]));
           num_data++;
-        }       
+        }
       w_window->win_data[wsm_index.hide].data.value = 1;
     }
 
@@ -438,7 +437,7 @@ CreateHideWSMWinData(Boolean diffs_allowed,
 
 
 /*------------------------------------------------------------------
-                         CreateStartHideWSMWinData    
+                         CreateStartHideWSMWinData
 
   Create WSMWinData list with hidden = True and initialize window's
   WSMWinData list
@@ -467,7 +466,7 @@ CreateStartHideWSMWinData(Boolean diffs_allowed,
         {
           if (start_win_data != NULL)
             {
-              start_data = _WSMGetMatchingWinData(start_win_data, 
+              start_data = _WSMGetMatchingWinData(start_win_data,
                                                   num_start_win_data,
                                                   w_window->attrib_qlist[i]);
               if (start_data != NULL)
@@ -475,28 +474,28 @@ CreateStartHideWSMWinData(Boolean diffs_allowed,
             }
         }
     }
-  
+
   CreateHideWSMWinData(diffs_allowed,
                        w_window,
                        win_data_return,
                        num_data_return);
-  
+
 }
 
 
 /*------------------------------------------------------------------
-                         CreateUnhideWSMWinData    
+                         CreateUnhideWSMWinData
 
- Create WSMWinData list with hidden = False 
+ Create WSMWinData list with hidden = False
   ------------------------------------------------------------------*/
 void
 CreateUnhideWSMWinData(XrmValue *value,
                        WorkWindow *w_window,
                        WSMWinData **win_data_return,
                        int *num_data_return)
-{       
+{
   WSMWinData *win_data;
-  XrmValue              toVal;  
+  XrmValue              toVal;
   XtPointer             fByte;
   int num_data = 0;
   *num_data_return = 0;
@@ -529,7 +528,7 @@ CreateUnhideWSMWinData(XrmValue *value,
 
 
 /*------------------------------------------------------------------
-                            FreeValues     
+                            FreeValues
 
   Free values created in CreateValues
   ------------------------------------------------------------------*/
@@ -549,7 +548,7 @@ FreeValues(int num_values, XrmValue *value_list)
 
 
 /*------------------------------------------------------------------
-                            CreateValues     
+                            CreateValues
 
   Create XrmValue list from WSMWinData list
   ------------------------------------------------------------------*/
@@ -576,7 +575,7 @@ FreeValues(int num_values, XrmValue *value_list)
   values = (XrmValue*)XtMalloc(w_window->num_attrib_list*sizeof(XrmValue));
   for (i = 0; i < w_window->num_attrib_list; i++)
     {
-      win_data =  _WSMGetMatchingWinData(data_list, 
+      win_data =  _WSMGetMatchingWinData(data_list,
                                          num_data_list,
                                          w_window->attrib_qlist[i]);
       if (win_data != NULL)
@@ -601,7 +600,7 @@ FreeValues(int num_values, XrmValue *value_list)
               values[num_values].addr = str;
               values[num_values].size = strlen(str)+1;
               num_values++;
-              break;          
+              break;
             }
           case WSM_VALUE_DATA:
             {
@@ -617,7 +616,7 @@ FreeValues(int num_values, XrmValue *value_list)
             }
           case WSM_NONE:
               /* Not handled case */
-              break;  
+              break;
           }
         }
       else
@@ -634,13 +633,13 @@ FreeValues(int num_values, XrmValue *value_list)
   if (num_values == 0) return False;
   else return True;
 }
-  
+
 
 
 /*------------------------------------------------------------------
-                             UpdateWinData                  
+                             UpdateWinData
   ------------------------------------------------------------------*/
-void 
+void
 UpdateWinData(WSMWinData *win_data,
               int win_data_count,
               WSMWinData *start_win_data,
@@ -651,7 +650,7 @@ UpdateWinData(WSMWinData *win_data,
 
   for (i = 0; i < win_data_count; i++)
     {
-      start_data = _WSMGetMatchingWinData(start_win_data, 
+      start_data = _WSMGetMatchingWinData(start_win_data,
                                           start_win_data_count,
                                           win_data[i].nameq);
       if (start_data != NULL)
@@ -661,31 +660,31 @@ UpdateWinData(WSMWinData *win_data,
 }
 
 
-Boolean 
-CvtStringToLongList(Display *dpy, XrmValuePtr args, 
+Boolean
+CvtStringToLongList(Display *dpy, XrmValuePtr args,
                     Cardinal *num_args, XrmValuePtr from, XrmValuePtr to, XtPointer *data)
 {
 
-  register int i, count = 1;
-  register char *ch;
+  int i, count = 1;
+  char *ch;
   char *start = from->addr;
   int len;
   static long *list;
   Boolean reset;
   char *str;
   XrmValue value, toVal;
-  if (*num_args != 0) 
+  if (*num_args != 0)
       {
         XtAppErrorMsg(XtDisplayToApplicationContext(dpy),
                       "cvtStringToSTringList", "wrongParamters",
                       "XtToolkitError",
                       "String to string list conversion needs no extra args",
                       (String *) NULL, (Cardinal *) NULL);
-      } 
+      }
   if (to->addr != NULL && to->size < sizeof(XtPointer)) {
     to->size = sizeof(XtPointer);
     return FALSE;
-  }             
+  }
 
   if (start == NULL || *start == '\0') list = NULL;
   else
@@ -706,19 +705,19 @@ CvtStringToLongList(Display *dpy, XrmValuePtr args,
           str[len] = '\0';
           list[i] = atol(str);
           start = ch+1;
-        }       
+        }
       XtFree((XtPointer) str);
     }
   if (to->addr == NULL) to->addr = (caddr_t)&list;
   else *(long**) to->addr = list;
   to->size = count;
   return TRUE;
-  
+
 }
 
 
-void 
-LongListDestructor(XtAppContext app, XrmValuePtr to , 
+void
+LongListDestructor(XtAppContext app, XrmValuePtr to ,
                      XtPointer converter_data,
                      XrmValuePtr args,
                      Cardinal *num_args)
@@ -728,10 +727,11 @@ LongListDestructor(XtAppContext app, XrmValuePtr to ,
 
   if (list == NULL) return;
 
-  for (entry = list; entry != NULL; entry++) 
+  for (entry = list; entry != NULL; entry++)
     {
       XtFree((XtPointer)entry);
     }
 
   XtFree((XtPointer)list);
 }
+

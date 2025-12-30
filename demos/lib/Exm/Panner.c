@@ -32,13 +32,13 @@
 
 
 /*************************************************************************
- * 
+ *
  * Panner.c - ExmPanner widget.  This widget lets a user pan a
  *            ScrolledWindow (or any other scrollFrame widget)
- *            in two-dimensions.  The ExmPanner widget is similar 
+ *            in two-dimensions.  The ExmPanner widget is similar
  *            to the Athena Panner widget.  ExmPanner demonstrates:
- *               * how to install the XmQTnavigator trait.   
- * 
+ *               * how to install the XmQTnavigator trait.
+ *
  *********************************************************************/
 
 #include <Xm/XmP.h>
@@ -87,7 +87,7 @@ static void DestroyGC(
 static void DrawRubberBand(
     ExmPannerWidget pw);
 static void CheckKnob(
-    register ExmPannerWidget pw,
+    ExmPannerWidget pw,
     Boolean knob);
 static void ScaleKnob (
     ExmPannerWidget pw,
@@ -129,7 +129,7 @@ static Boolean GetEventXY (
     int *x,
     int *y);
 static int ParsePageString (
-    register char *s,
+    char *s,
     int pagesize,
     int canvassize,
     Boolean *relative);
@@ -139,12 +139,12 @@ static void ExmPannerPage (
     String *params,
     Cardinal *num_params);
 static void NavigChangeMoveCB(
-    Widget nav, 
+    Widget nav,
     XtCallbackProc moveCB,
     XtPointer closure,
     Boolean setunset);
 static void NavigSetValue(
-    Widget nav, 
+    Widget nav,
     XmNavigatorData nav_data,
     Boolean notify);
 static void NavigGetValue(
@@ -153,7 +153,7 @@ static void NavigGetValue(
 
 
 /* Define the translations. */
-static char defaultTranslations[] = 
+static char defaultTranslations[] =
 "<Unmap>:			PrimitiveUnmap()\n\
 <Enter>:			PrimitiveEnter()\n\
 <Leave>:			PrimitiveLeave()\n\
@@ -196,7 +196,7 @@ s ~m ~a <Key>Tab:	   	PrimitivePrevTabGroup()\n\
 static XtActionsRec actions[] = {
   {"ExmPannerStart", ExmPannerStart},  /* start tmp graphics */
   {"ExmPannerStop",  ExmPannerStop},   /* stop tmp graphics */
-  {"ExmPannerAbort", ExmPannerAbort},  /* abort panning */ 
+  {"ExmPannerAbort", ExmPannerAbort},  /* abort panning */
   {"ExmPannerMove",  ExmPannerMove},   /* move tmp graphics on Motion event */
   {"ExmPannerPage",  ExmPannerPage},   /* page around usually from keyboard */
   {"ExmPannerNotify",ExmPannerNotify}, /* callback new position */
@@ -207,130 +207,130 @@ static XtActionsRec actions[] = {
 /* Define the resources. */
 #define poff(field) XtOffsetOf(ExmPannerRec, panner.field)
 
-static XtResource resources[] = 
+static XtResource resources[] =
 {
-    { 
-	ExmNreportCallback, 
-	ExmCReportCallback, 
-	XtRCallback, 
+    {
+	ExmNreportCallback,
+	ExmCReportCallback,
+	XtRCallback,
 	sizeof(XtPointer),
-	poff(report_callbacks), 
-	XtRCallback, 
-	(XtPointer) NULL 
+	poff(report_callbacks),
+	XtRCallback,
+	(XtPointer) NULL
     },
-    { 
-	ExmNrubberBand, 
-	ExmCRubberBand, 
-	XtRBoolean, 
+    {
+	ExmNrubberBand,
+	ExmCRubberBand,
+	XtRBoolean,
 	sizeof(Boolean),
-	poff(rubber_band), 
-	XtRImmediate, 
-	(XtPointer) FALSE 
+	poff(rubber_band),
+	XtRImmediate,
+	(XtPointer) FALSE
     },
-    { 
-	ExmNcanvasWidth, 
-	ExmCCanvasWidth, 
-	XmRHorizontalDimension, 
+    {
+	ExmNcanvasWidth,
+	ExmCCanvasWidth,
+	XmRHorizontalDimension,
 	sizeof(Dimension),
-	poff(canvas_width), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(canvas_width),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	ExmNcanvasHeight, 
-	ExmCCanvasHeight, 
-        XmRVerticalDimension, 
+    {
+	ExmNcanvasHeight,
+	ExmCCanvasHeight,
+        XmRVerticalDimension,
 	sizeof(Dimension),
-	poff(canvas_height), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(canvas_height),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	ExmNsliderX, 
-	ExmCSliderX, 
-        XmRHorizontalPosition, 
+    {
+	ExmNsliderX,
+	ExmCSliderX,
+        XmRHorizontalPosition,
 	sizeof(Position),
-	poff(slider_x), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(slider_x),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	ExmNsliderY, 
-	ExmCSliderY, 
-        XmRVerticalPosition, 
+    {
+	ExmNsliderY,
+	ExmCSliderY,
+        XmRVerticalPosition,
 	sizeof(Position),
-	poff(slider_y), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(slider_y),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	ExmNsliderWidth, 
-	ExmCSliderWidth, 
-	XmRHorizontalDimension, 
+    {
+	ExmNsliderWidth,
+	ExmCSliderWidth,
+	XmRHorizontalDimension,
 	sizeof(Dimension),
-	poff(slider_width), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(slider_width),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	ExmNsliderHeight, 
-	ExmCSliderHeight, 
-	XmRVerticalDimension, 
+    {
+	ExmNsliderHeight,
+	ExmCSliderHeight,
+	XmRVerticalDimension,
 	sizeof(Dimension),
-	poff(slider_height), 
-	XtRImmediate, 
-	(XtPointer) 0 
+	poff(slider_height),
+	XtRImmediate,
+	(XtPointer) 0
     },
-    { 
-	XmNnavigationType, 
-	XmCNavigationType, 
+    {
+	XmNnavigationType,
+	XmCNavigationType,
 	XmRNavigationType,
 	sizeof(unsigned char),
 	XtOffsetOf(ExmPannerRec, primitive.navigation_type),
-	XmRImmediate, 
+	XmRImmediate,
         (XtPointer) XmSTICKY_TAB_GROUP
     },
 };
 
 
-/* 6 of the 8 resources have corresponding synthetic resources. */ 
+/* 6 of the 8 resources have corresponding synthetic resources. */
 static XmSyntheticResource syn_resources[] =
 {
    {	ExmNcanvasWidth,
-	sizeof (Dimension), 
+	sizeof (Dimension),
 	poff(canvas_width),
-	XmeFromHorizontalPixels, 
-	XmeToHorizontalPixels 
+	XmeFromHorizontalPixels,
+	XmeToHorizontalPixels
    },
    { 	ExmNcanvasHeight,
-	sizeof (Dimension), 
+	sizeof (Dimension),
 	poff(canvas_height),
-     	XmeFromVerticalPixels, 
-	XmeToVerticalPixels 
+     	XmeFromVerticalPixels,
+	XmeToVerticalPixels
    },
    {	ExmNsliderX,
 	sizeof (Position),
-	poff(slider_x), 
-	XmeFromHorizontalPixels, 
-	XmeToHorizontalPixels 
+	poff(slider_x),
+	XmeFromHorizontalPixels,
+	XmeToHorizontalPixels
    },
-   {	ExmNsliderY, 
-	sizeof (Position), 
+   {	ExmNsliderY,
+	sizeof (Position),
 	poff(slider_y),
-	XmeFromVerticalPixels, 
-	XmeToVerticalPixels 
+	XmeFromVerticalPixels,
+	XmeToVerticalPixels
    },
    {	ExmNsliderWidth,
-	sizeof (Dimension), 
+	sizeof (Dimension),
 	poff(slider_width),
-	XmeFromHorizontalPixels, 
-	XmeToHorizontalPixels 
+	XmeFromHorizontalPixels,
+	XmeToHorizontalPixels
    },
    {	ExmNsliderHeight,
-	sizeof (Dimension), 
+	sizeof (Dimension),
 	poff(slider_height),
-	XmeFromVerticalPixels, 
-        XmeToVerticalPixels 
+	XmeFromVerticalPixels,
+        XmeToVerticalPixels
    },
 };
 #undef poff
@@ -338,7 +338,7 @@ static XmSyntheticResource syn_resources[] =
 
 /* Define the widget class record. */
 externaldef(exmpannerclassrec) ExmPannerClassRec exmPannerClassRec = {
-  { /* Following is the Core class record. */ 
+  { /* Following is the Core class record. */
     /* superclass		*/	(WidgetClass) &exmSimpleClassRec,
     /* class_name		*/	"ExmPanner",
     /* widget_size		*/	sizeof(ExmPannerRec),
@@ -372,7 +372,7 @@ externaldef(exmpannerclassrec) ExmPannerClassRec exmPannerClassRec = {
     /* display_accelerator	*/	XtInheritDisplayAccelerator,
     /* extension		*/	NULL
   },
-  { /* Following is the XmPrimitive class record. */ 
+  { /* Following is the XmPrimitive class record. */
     /* border_highlight */              XmInheritWidgetProc,
     /* border_unhighlight */            XmInheritWidgetProc,
     /* translations */                  NULL,
@@ -381,7 +381,7 @@ externaldef(exmpannerclassrec) ExmPannerClassRec exmPannerClassRec = {
     /* num_syn_resources */             XtNumber(syn_resources),
     /* extension */                     NULL,
    },
-  { /* Following is the ExmSimple class record. */ 
+  { /* Following is the ExmSimple class record. */
     /* draw_visual */                   DrawVisual,
     /* draw_shadow */                   NULL,
     /* create_gc */                     CreateGC,
@@ -396,7 +396,7 @@ externaldef(exmpannerclassrec) ExmPannerClassRec exmPannerClassRec = {
   }
 };
 
-externaldef(exmpannerwidgetclass) 
+externaldef(exmpannerwidgetclass)
     WidgetClass exmPannerWidgetClass = (WidgetClass) &exmPannerClassRec;
 
 
@@ -420,7 +420,7 @@ static XmConst XmNavigatorTraitRec pannerNT = {
  *     Initialize navigator trait
  *
  *********************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass wc )
 {
@@ -437,19 +437,19 @@ ClassPartInitialize(
  *  Initialize
  *
  *********************************************************************/
-static void 
+static void
 Initialize(
     Widget greq,
     Widget gnew,
     ArgList args,
     Cardinal *num_args)
 {
- ExmPannerWidget req = (ExmPannerWidget) greq, 
+ ExmPannerWidget req = (ExmPannerWidget) greq,
                  new = (ExmPannerWidget) gnew;
 
-    if (req->panner.canvas_width < 1) 
+    if (req->panner.canvas_width < 1)
 	new->panner.canvas_width = DEFAULT_CANVAS_WIDTH;
-    if (req->panner.canvas_height < 1) 
+    if (req->panner.canvas_height < 1)
 	new->panner.canvas_height = DEFAULT_CANVAS_HEIGHT;
 
     if (greq->core.width == 0) gnew->core.width = DEFAULT_WIDTH;
@@ -471,7 +471,7 @@ Initialize(
  *  Resize
  *
  *********************************************************************/
-static void 
+static void
 Resize (
     Widget gw)
 {
@@ -501,7 +501,7 @@ Resize (
  *  SetValues
  *
  *********************************************************************/
-static Boolean 
+static Boolean
 SetValues(
     Widget gcur,
     Widget greq,
@@ -526,9 +526,9 @@ SetValues(
     } else {
 	Boolean loc = (cur->panner.slider_x != new->panner.slider_x ||
 		       cur->panner.slider_y != new->panner.slider_y);
-	Boolean siz = (cur->panner.slider_width != 
+	Boolean siz = (cur->panner.slider_width !=
 		       new->panner.slider_width ||
-		       cur->panner.slider_height != 
+		       cur->panner.slider_height !=
 		       new->panner.slider_height);
 	if (loc || siz) {
 	    ScaleKnob (new, loc, siz);
@@ -547,7 +547,7 @@ SetValues(
  *      an ExmSimple class method
  *
  *********************************************************************/
-static void 
+static void
 DrawVisual(
     Widget gw)
 {
@@ -559,7 +559,7 @@ DrawVisual(
  int ly = pw->panner.last_y + pw->simple.margin_height;
 
     /* Clear rubberband */
-    if (pw->panner.tmp.doing && pw->panner.rubber_band && pw->panner.tmp.showing) 
+    if (pw->panner.tmp.doing && pw->panner.rubber_band && pw->panner.tmp.showing)
       DrawRubberBand (pw);
 
     /* Only clear areas that need clearing. This minimizes flickering while
@@ -571,7 +571,7 @@ DrawVisual(
       if (ly < ky) {
 	/* Clear area above new panner position */
 	height = ky - ly;
-	XClearArea (XtDisplay(gw), XtWindow(gw), 
+	XClearArea (XtDisplay(gw), XtWindow(gw),
 		    lx, ly,
 		    (unsigned int) pw->panner.knob_width,
 		    (unsigned int) height,
@@ -579,7 +579,7 @@ DrawVisual(
       } else if (ky < ly) {
 	/* Clear area under new panner */
 	height = ly - ky;
-	XClearArea (XtDisplay(gw), XtWindow(gw), 
+	XClearArea (XtDisplay(gw), XtWindow(gw),
 		    lx, ky + pw->panner.knob_height - 1,
 		    (unsigned int) pw->panner.knob_width,
 		    (unsigned int) height,
@@ -590,14 +590,14 @@ DrawVisual(
       if (height > 0) {
 	if (lx < kx) {
 	/* Clear area to the left of new panner position */
-	  XClearArea (XtDisplay(gw), XtWindow(gw), 
+	  XClearArea (XtDisplay(gw), XtWindow(gw),
 		      lx, ly > ky ? ly : ky,
 		      (unsigned int) kx - lx,
 		      (unsigned int) height,
 		      False);
 	} else if (kx < lx) {
 	  /* Clear area to the right of new panner */
-	  XClearArea (XtDisplay(gw), XtWindow(gw), 
+	  XClearArea (XtDisplay(gw), XtWindow(gw),
 		      kx + pw->panner.knob_width - 1, ly > ky ? ly : ky,
 		      (unsigned int) lx - kx,
 		      (unsigned int) height,
@@ -609,48 +609,48 @@ DrawVisual(
     pw->panner.last_x = pw->panner.knob_x;
     pw->panner.last_y = pw->panner.knob_y;
 
-    /* use Simple class method to fetch either a normal GC or an 
+    /* use Simple class method to fetch either a normal GC or an
        insensitive GC. Draw a rectangle inside the shadow. */
-    XFillRectangle (XtDisplay(gw), XtWindow(gw), 
-		    wc->simple_class.select_gc(gw), 
-		    kx + pw->primitive.shadow_thickness, 
+    XFillRectangle (XtDisplay(gw), XtWindow(gw),
+		    wc->simple_class.select_gc(gw),
+		    kx + pw->primitive.shadow_thickness,
 		    ky + pw->primitive.shadow_thickness,
-		    pw->panner.knob_width - 2 * pw->primitive.shadow_thickness - 1, 
+		    pw->panner.knob_width - 2 * pw->primitive.shadow_thickness - 1,
 		    pw->panner.knob_height - 2 * pw->primitive.shadow_thickness - 1);
 
     XmeDrawShadows (XtDisplay (gw), XtWindow(gw),
 		    pw->primitive.top_shadow_GC,
-		    pw->primitive.bottom_shadow_GC, 
+		    pw->primitive.bottom_shadow_GC,
 		    kx, ky,
 		    pw->panner.knob_width - 1, pw->panner.knob_height - 1,
 		    pw->primitive.shadow_thickness,
 		    XmSHADOW_OUT);
 
     /* if in the middle of rubber_banding, redisplay it as well */
-    if (pw->panner.tmp.doing && pw->panner.rubber_band) 
+    if (pw->panner.tmp.doing && pw->panner.rubber_band)
       DrawRubberBand (pw);
 }
 
 
 /*********************************************************************
  *
- *  CreateGC  
+ *  CreateGC
  *      an ExmSimple class method
  *
  *********************************************************************/
-static void 
+static void
 CreateGC(
    Widget w)
 {
     ExmPannerWidget pw = (ExmPannerWidget) w ;
     XtGCMask valuemask = (GCForeground | GCFunction);
     XGCValues values;
-	
+
     /* Envelop our superclass method to get the normal
        and the insensitive GC and then add our rubber_band GC */
     (*(exmSimpleClassRec.simple_class.create_gc))(w);
 
-    values.foreground = pw->primitive.foreground ^ 
+    values.foreground = pw->primitive.foreground ^
 	pw->core.background_pixel;
     values.function = GXxor;
     pw->panner.xor_gc = XtGetGC ((Widget) pw, valuemask, &values);
@@ -659,11 +659,11 @@ CreateGC(
 
 /*********************************************************************
  *
- *  DestroyGC  
+ *  DestroyGC
  *      an ExmSimple class method
  *
  *********************************************************************/
-static void 
+static void
 DestroyGC(
    Widget w)
 {
@@ -684,35 +684,35 @@ DestroyGC(
  *
  *********************************************************************/
 
-static void 
+static void
 DrawRubberBand(
     ExmPannerWidget pw)
-{ 
-  XDrawRectangle (XtDisplay(pw), XtWindow(pw), 
-		  pw->panner.xor_gc, 
-		  (int) (pw->panner.tmp.x - 1 + pw->simple.margin_width), 
-		  (int) (pw->panner.tmp.y - 1 + pw->simple.margin_height), 
-		  (unsigned int) (pw->panner.knob_width), 
-		  (unsigned int) (pw->panner.knob_height)); 
-  pw->panner.tmp.showing = !pw->panner.tmp.showing; 
+{
+  XDrawRectangle (XtDisplay(pw), XtWindow(pw),
+		  pw->panner.xor_gc,
+		  (int) (pw->panner.tmp.x - 1 + pw->simple.margin_width),
+		  (int) (pw->panner.tmp.y - 1 + pw->simple.margin_height),
+		  (unsigned int) (pw->panner.knob_width),
+		  (unsigned int) (pw->panner.knob_height));
+  pw->panner.tmp.showing = !pw->panner.tmp.showing;
 }
 
 
 /*********************************************************************
  *
- *  CheckKnob 
- *      Called by several action methods.     
+ *  CheckKnob
+ *      Called by several action methods.
  *
  *********************************************************************/
-static void 
+static void
 CheckKnob(
-    register ExmPannerWidget pw,
+    ExmPannerWidget pw,
     Boolean knob)
 {
- Position maxx = (((Position) pw->core.width) - 
+ Position maxx = (((Position) pw->core.width) -
 		     pw->simple.margin_width * 2 -
 		     ((Position) pw->panner.knob_width));
- Position maxy = (((Position) pw->core.height) - 
+ Position maxy = (((Position) pw->core.height) -
 		     pw->simple.margin_height * 2 -
 		     ((Position) pw->panner.knob_height));
  Position *x = (knob ? &pw->panner.knob_x : &pw->panner.tmp.x);
@@ -738,12 +738,12 @@ CheckKnob(
 
 /*********************************************************************
  *
- *  ScaleKnob 
+ *  ScaleKnob
  *      Called by Resize and SetValues.  This function sets the knob
  *      size and/or its location.
  *
  *********************************************************************/
-static void 
+static void
 ScaleKnob (
     ExmPannerWidget pw,
     Boolean location,
@@ -791,10 +791,10 @@ ScaleKnob (
 /************************************************************************
  *
  *  ExmPannerStart
- * 	
- *      
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerStart (
     Widget gw,
     XEvent *event,
@@ -813,10 +813,10 @@ ExmPannerStart (
 	XBell (XtDisplay(gw), 0);
 	return;
     }
-    
+
     if (XmeNamesAreEqual (params[0], "1"))
 	(void) XmProcessTraversal (gw, XmTRAVERSE_CURRENT);
-  
+
     pw->panner.tmp.doing = TRUE;
     pw->panner.tmp.startx = pw->panner.knob_x;
     pw->panner.tmp.starty = pw->panner.knob_y;
@@ -824,7 +824,7 @@ ExmPannerStart (
     pw->panner.tmp.dy = (((Position) y) - pw->panner.knob_y);
     pw->panner.tmp.x = pw->panner.knob_x;
     pw->panner.tmp.y = pw->panner.knob_y;
-    if (pw->panner.rubber_band) 
+    if (pw->panner.rubber_band)
       DrawRubberBand (pw);
 }
 
@@ -832,10 +832,10 @@ ExmPannerStart (
 /************************************************************************
  *
  *  ExmPannerStop
- * 	
- *      
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerStop (
     Widget gw,
     XEvent *event,
@@ -851,7 +851,7 @@ ExmPannerStop (
       CheckKnob (pw, FALSE);
     }
 
-    if (pw->panner.rubber_band && pw->panner.tmp.showing) 
+    if (pw->panner.rubber_band && pw->panner.tmp.showing)
       DrawRubberBand(pw);
 
     pw->panner.tmp.doing = FALSE;
@@ -862,10 +862,10 @@ ExmPannerStop (
 /************************************************************************
  *
  *  ExmPannerAbort:
- *       Restores slider to the position it had at ExmPannerStart. 
- *      
+ *       Restores slider to the position it had at ExmPannerStart.
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerAbort (
     Widget gw,
     XEvent *event,
@@ -874,10 +874,10 @@ ExmPannerAbort (
 {
  ExmPannerWidget pw = (ExmPannerWidget) gw;
 
-    if (!pw->panner.tmp.doing) 
+    if (!pw->panner.tmp.doing)
       return;
 
-    if (pw->panner.rubber_band && pw->panner.tmp.showing) 
+    if (pw->panner.rubber_band && pw->panner.tmp.showing)
       DrawRubberBand (pw);
 
     if (!pw->panner.rubber_band) {	/* restore old position */
@@ -892,10 +892,10 @@ ExmPannerAbort (
 /************************************************************************
  *
  *  ExmPannerMove
- * 	
- *      
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerMove (
     Widget gw,
     XEvent *event,			/* must be a motion event */
@@ -905,7 +905,7 @@ ExmPannerMove (
  ExmPannerWidget pw = (ExmPannerWidget) gw;
  int x, y;
 
-    if (!pw->panner.tmp.doing) 
+    if (!pw->panner.tmp.doing)
       return;
 
     if (!GetEventXY (pw, event, &x, &y)) {
@@ -913,7 +913,7 @@ ExmPannerMove (
 	return;
     }
 
-    if (pw->panner.rubber_band && pw->panner.tmp.showing) 
+    if (pw->panner.rubber_band && pw->panner.tmp.showing)
       DrawRubberBand (pw);
 
     pw->panner.tmp.x = ((Position) x) - pw->panner.tmp.dx;
@@ -932,10 +932,10 @@ ExmPannerMove (
 /************************************************************************
  *
  *  ExmPannerNotify
- * 	
- *      
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerNotify (
     Widget gw,
     XEvent *event,			/* unused */
@@ -945,9 +945,9 @@ ExmPannerNotify (
  ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)XtClass(gw);
  ExmPannerWidget pw = (ExmPannerWidget) gw;
  Position tmp;
-	
-	
-    if (!pw->panner.tmp.doing) 
+
+
+    if (!pw->panner.tmp.doing)
       return;
 
     CheckKnob (pw, FALSE);
@@ -960,16 +960,16 @@ ExmPannerNotify (
 				      pw->panner.vaspect + 0.5);
     /* check knob */
     if (pw->panner.slider_x >
-	(tmp = (((Position) pw->panner.canvas_width) - 
+	(tmp = (((Position) pw->panner.canvas_width) -
 		((Position) pw->panner.slider_width))))
 	  pw->panner.slider_x = tmp;
     if (pw->panner.slider_x < 0) pw->panner.slider_x = 0;
     if (pw->panner.slider_y >
-	(tmp = (((Position) pw->panner.canvas_height) - 
+	(tmp = (((Position) pw->panner.canvas_height) -
 		((Position) pw->panner.slider_height))))
 	pw->panner.slider_y = tmp;
     if (pw->panner.slider_y < 0) pw->panner.slider_y = 0;
-   
+
     /* call callback if needed */
     if (pw->panner.last_x != pw->panner.knob_x ||
 	pw->panner.last_y != pw->panner.knob_y) {
@@ -983,7 +983,7 @@ ExmPannerNotify (
 	rep.slider_height = pw->panner.slider_height;
 	rep.canvas_width = pw->panner.canvas_width;
 	rep.canvas_height = pw->panner.canvas_height;
-	XtCallCallbackList (gw, pw->panner.report_callbacks, 
+	XtCallCallbackList (gw, pw->panner.report_callbacks,
 			    (XtPointer) &rep);
     }
 }
@@ -991,11 +991,11 @@ ExmPannerNotify (
 
 /************************************************************************
  *
- *  ExmPannerSet 
- * 	
- *      
+ *  ExmPannerSet
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerSet (
     Widget gw,
     XEvent *event,			/* unused */
@@ -1030,11 +1030,11 @@ ExmPannerSet (
 
 /************************************************************************
  *
- *  GetEventXY 
- * 	
- *      
+ *  GetEventXY
+ *
+ *
  ************************************************************************/
-static Boolean 
+static Boolean
 GetEventXY (
     ExmPannerWidget pw,
     XEvent *event,
@@ -1072,13 +1072,13 @@ GetEventXY (
 
 /************************************************************************
  *
- *  ParsePageString 
- * 	
- *      
+ *  ParsePageString
+ *
+ *
  ************************************************************************/
-static int 
+static int
 ParsePageString (
-    register char *s,
+    char *s,
     int pagesize,
     int canvassize,
     Boolean *relative)
@@ -1129,11 +1129,11 @@ ParsePageString (
 
 /************************************************************************
  *
- *  ExmPannerPage 
- *     
- *      
+ *  ExmPannerPage
+ *
+ *
  ************************************************************************/
-static void 
+static void
 ExmPannerPage (
     Widget gw,
     XEvent *event,			/* unused */
@@ -1152,10 +1152,10 @@ ExmPannerPage (
     }
 
     x = ParsePageString (params[0], (int) pw->panner.knob_width,
-			   ((int) pw->core.width) - 
+			   ((int) pw->core.width) -
 			 pw->simple.margin_width*2, &relx);
     y = ParsePageString (params[1], (int) pw->panner.knob_height,
-			   ((int) pw->core.height) -  
+			   ((int) pw->core.height) -
 			 pw->simple.margin_height*2, &rely);
 
     if (relx) x += pw->panner.knob_x;
@@ -1188,18 +1188,18 @@ ExmPannerPage (
  *
  *  NavigChangeMoveCB
  *	store or remove the callback list to be called on any move.
- *      
+ *
  ************************************************************************/
-static void 
+static void
 NavigChangeMoveCB(
-           Widget nav, 
+           Widget nav,
 	   XtCallbackProc moveCB,
            XtPointer closure,
            Boolean setunset)
 {
     if (setunset)
 	XtAddCallback (nav, ExmNreportCallback, moveCB, closure);
-    else 
+    else
 	XtRemoveCallback (nav, ExmNreportCallback, moveCB, closure);
 }
 
@@ -1212,9 +1212,9 @@ NavigChangeMoveCB(
  *	change the value and possibly call the callbacks
  *
  ************************************************************************/
-static void 
+static void
 NavigSetValue(
-           Widget nav, 
+           Widget nav,
 	   XmNavigatorData nav_data,
            Boolean notify)
 {
@@ -1249,7 +1249,7 @@ NavigSetValue(
 	if ((nav_data->valueMask & NavSliderSize) &&
 	    (pw->panner.slider_width != nav_data->slider_size.x) &&
 	    (nav_data->slider_size.x != 0)) {
-	    XtSetArg (arglist[n], ExmNsliderWidth, nav_data->slider_size.x); 
+	    XtSetArg (arglist[n], ExmNsliderWidth, nav_data->slider_size.x);
 	    n++;
 	}
     }
@@ -1273,7 +1273,7 @@ NavigSetValue(
 
     if (n) XtSetValues (nav, arglist, n);
 
-    if (notify && ((pw->panner.slider_x != hsave_value) || 
+    if (notify && ((pw->panner.slider_x != hsave_value) ||
 		   (pw->panner.slider_y != vsave_value))) {
 	ExmPannerCallbackStruct rep;
 
@@ -1284,7 +1284,7 @@ NavigSetValue(
 	rep.slider_height = pw->panner.slider_height;
 	rep.canvas_width = pw->panner.canvas_width;
 	rep.canvas_height = pw->panner.canvas_height;
-	XtCallCallbackList (nav, pw->panner.report_callbacks, 
+	XtCallCallbackList (nav, pw->panner.report_callbacks,
 			    (XtPointer) &rep);
     }
 }
@@ -1305,7 +1305,7 @@ NavigGetValue(
 
     nav_data->dimMask =  pw->panner.dimMask;
 
-    if (nav_data->valueMask & 
+    if (nav_data->valueMask &
 	(NavValue|NavMinimum|NavMaximum|
 	 NavSliderSize|NavIncrement|NavPageIncrement)) {
 
@@ -1334,14 +1334,14 @@ NavigGetValue(
  *	Create an instance of a Panner and return the widget id.
  *
  ************************************************************************/
-Widget 
+Widget
 ExmCreatePanner(
         Widget parent,
         char *name,
         ArgList arglist,
         Cardinal argcount )
 {
-   return (XtCreateWidget (name, exmPannerWidgetClass, 
+   return (XtCreateWidget (name, exmPannerWidgetClass,
                            parent, arglist, argcount));
 }
 
@@ -1353,7 +1353,7 @@ ExmCreatePanner(
  *	Set some Panner values.
  *
  ************************************************************************/
-void 
+void
 ExmPannerSetValues(
         Widget w,
         int hvalue,
@@ -1372,7 +1372,7 @@ ExmPannerSetValues(
 
    XtVaSetValues (w, ExmNsliderX, hvalue, ExmNsliderY, vvalue, NULL);
 
-   if (notify && ((pw->panner.slider_x != hsave_value) || 
+   if (notify && ((pw->panner.slider_x != hsave_value) ||
 		  (pw->panner.slider_y != vsave_value))) {
        ExmPannerCallbackStruct rep;
 

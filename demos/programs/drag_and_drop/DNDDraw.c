@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,14 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DNDDraw.c /main/7 1997/03/31 13:33:37 dbl $"
 #endif
 #endif
+
 /*
  *    file: DNDDraw.c
  *
@@ -313,10 +315,10 @@ void
 RectDrawStippled(Display *display, Window window, RectPtr rect)
 {
 
-    register int x = rect->x;
-    register int y = rect->y;
-    register Dimension width = rect->width;
-    register Dimension height = rect->height;
+    int x = rect->x;
+    int y = rect->y;
+    Dimension width = rect->width;
+    Dimension height = rect->height;
     XGCValues values;
     XSegment segments[4];
 
@@ -1110,5 +1112,5 @@ CreateRectGC(void)
     values.foreground = appInfo->currentColor = GetColor(RECT_START_COLOR);
     appInfo->rectGC = XCreateGC(XtDisplay(topLevel), XtWindow(drawingArea),
                       GCLineStyle | GCLineWidth | GCForeground, &values);
-
 }
+

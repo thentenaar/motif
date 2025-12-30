@@ -35,20 +35,8 @@
 #include <Xm/Xm.h>
 #include <Xm/RowColumn.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
-
-/*
- * Include stdlib.h and malloc.h if code is C++, ANSI, or Extended ANSI.
- */
-#if defined(__cplusplus) || defined(__STDC__) || defined(__EXTENSIONS__)
-#  include <stdlib.h>
-#  if defined(HAVE_MALLOC_H)
-#  include <malloc.h>
-#  elif defined(HAVE_SYS_MALLOC_H)
-#  include <sys/malloc.h>
-#  endif
-#endif
-
 
 /*****************************************************************************
  *       TYPDEFS AND DEFINES
@@ -203,10 +191,10 @@ static wchar_t *CStrCommonWideCharsGet	();
  */
 static int StrCasecmp
     ARGLIST((s1, s2))
-        ARG(register char *, s1)
-        GRA(register char *, s2)
+        ARG(char *, s1)
+        GRA(char *, s2)
 {
-    register int        c1, c2;
+    int        c1, c2;
 
     while (*s1 && *s2)
     {
@@ -265,8 +253,8 @@ static int strlenWc
     ARGLIST((ptr))
         GRA(wchar_t *,ptr)
 {
-    register wchar_t	*p = ptr;
-    register int	x = 0;
+    wchar_t	*p = ptr;
+    int	x = 0;
 
     if (!ptr) return(0);
 
@@ -1997,10 +1985,10 @@ LFUNC(XpmDataClose, void, (xpmData * mdata));
 
 /* RGB utility */
 
-LFUNC(xpm_xynormalizeimagebits, void, (register unsigned char *bp,
-                                     register XImage * img));
-LFUNC(xpm_znormalizeimagebits, void, (register unsigned char *bp,
-                                    register XImage * img));
+LFUNC(xpm_xynormalizeimagebits, void, (unsigned char *bp,
+                                     XImage * img));
+LFUNC(xpm_znormalizeimagebits, void, (unsigned char *bp,
+                                    XImage * img));
 
 /* Image utility */
 
@@ -2128,11 +2116,11 @@ GRA(char **, pixmapName)
 
 static unsigned int atoui
 ARGLIST((p, l, ui_return))
-ARG(register char *, p)
+ARG(char *, p)
 ARG(unsigned int, l)
 GRA(unsigned int *, ui_return)
 {
-    register int n, i;
+    int n, i;
 
     n = 0;
     for (i = 0; i < l; i++)
@@ -2817,10 +2805,10 @@ GRA(XImage **, image_return)
  * level. Assuming that we use only ZPixmap images.
  */
 
-LFUNC(_putbits, void, (register char *src, int dstoffset,
-		      register int numbits, register char *dst));
+LFUNC(_putbits, void, (char *src, int dstoffset,
+		      int numbits, char *dst));
 
-LFUNC(_XReverse_Bytes, void, (register unsigned char *bpt, register int nb));
+LFUNC(_XReverse_Bytes, void, (unsigned char *bpt, int nb));
 
 static unsigned char Const _reverse_byte[0x100] = {
 			    0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
@@ -2859,8 +2847,8 @@ static unsigned char Const _reverse_byte[0x100] = {
 
 static void _XReverse_Bytes
 ARGLIST((bpt, nb))
-ARG(register unsigned char *, bpt)
-GRA(register int, nb)
+ARG(unsigned char *, bpt)
+GRA(int, nb)
 {
     do {
 	*bpt = _reverse_byte[*bpt];
@@ -2870,10 +2858,10 @@ GRA(register int, nb)
 
 static void xpm_xynormalizeimagebits
 ARGLIST((bp,img))
-ARG(register unsigned char *, bp)
-GRA(register XImage *, img)
+ARG(unsigned char *, bp)
+GRA(XImage *, img)
 {
-    register unsigned char c;
+    unsigned char c;
 
     if (img->byte_order != img->bitmap_bit_order) {
 	switch (img->bitmap_unit) {
@@ -2900,10 +2888,10 @@ GRA(register XImage *, img)
 
 static void xpm_znormalizeimagebits
 ARGLIST((bp,img))
-ARG(register unsigned char *, bp)
-GRA(register XImage *, img)
+ARG(unsigned char *, bp)
+GRA(XImage *, img)
 {
-    register unsigned char c;
+    unsigned char c;
 
     switch (img->bits_per_pixel) {
 
@@ -2941,14 +2929,14 @@ static unsigned char Const _himask[0x09] = {
 
 static void _putbits
 ARGLIST((src, dstoffset, numbits, dst))
-ARG(register char *, src)		/* address of source bit string */
+ARG(char *, src)		/* address of source bit string */
 ARG(int, dstoffset)			/* bit offset into destination;
 					 * range is 0-31 */
-ARG(register int, numbits)		/* number of bits to copy to
+ARG(int, numbits)		/* number of bits to copy to
 					 * destination */
-GRA(register char *, dst)		/* address of destination bit string */
+GRA(char *, dst)		/* address of destination bit string */
 {
-    register unsigned char chlo, chhi;
+    unsigned char chlo, chhi;
     int hibits;
 
     dst = dst + (dstoffset >> 3);
@@ -2997,11 +2985,11 @@ GRA(Pixel *, pixels)
 {
     Pixel pixel;
     unsigned long px;
-    register char *src;
-    register char *dst;
+    char *src;
+    char *dst;
     int nbytes;
-    register unsigned int *iptr;
-    register int x, y, i;
+    unsigned int *iptr;
+    int x, y, i;
 
     iptr = pixelindex;
     if (image->depth == 1) {
@@ -3071,10 +3059,10 @@ ARG(unsigned int, height)
 ARG(unsigned int *, pixelindex)
 GRA(Pixel *, pixels)
 {
-    register unsigned char *addr;
-    register unsigned int *paddr;
-    register unsigned int *iptr;
-    register int x, y;
+    unsigned char *addr;
+    unsigned int *paddr;
+    unsigned int *iptr;
+    int x, y;
 
     iptr = pixelindex;
 #ifndef WORD64
@@ -3119,9 +3107,9 @@ ARG(unsigned int, height)
 ARG(unsigned int *, pixelindex)
 GRA(Pixel *, pixels)
 {
-    register unsigned char *addr;
-    register unsigned int *iptr;
-    register int x, y;
+    unsigned char *addr;
+    unsigned int *iptr;
+    int x, y;
 
     iptr = pixelindex;
     if (image->byte_order == MSBFirst)
@@ -3153,8 +3141,8 @@ ARG(unsigned int *, pixelindex)
 GRA(Pixel *, pixels)
 
 {
-    register unsigned int *iptr;
-    register int x, y;
+    unsigned int *iptr;
+    int x, y;
 
     iptr = pixelindex;
     for (y = 0; y < height; y++)
@@ -3176,8 +3164,8 @@ GRA(Pixel *, pixels)
 {
     unsigned char bit;
     int xoff, yoff;
-    register unsigned int *iptr;
-    register int x, y;
+    unsigned int *iptr;
+    int x, y;
 
     if (image->byte_order != image->bitmap_bit_order)
 	SetImagePixels(image, width, height, pixelindex, pixels);
@@ -3392,7 +3380,7 @@ ARGLIST((mdata))
 GRA(xpmData *, mdata)
 {
     int c;
-    register unsigned int n = 0, a;
+    unsigned int n = 0, a;
     unsigned int notend;
 
     switch (mdata->type) {
@@ -3489,7 +3477,7 @@ ARGLIST((mdata, buf))
 ARG(xpmData *, mdata)
 GRA(char *, buf)
 {
-    register unsigned int n = 0;
+    unsigned int n = 0;
     int c;
 
     switch (mdata->type) {

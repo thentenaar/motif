@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -75,23 +75,23 @@ _WSMTargetToReqType(Display *dpy, Atom target)
 {
     WSMDispInfo *disp_atoms = _WSMGetDispInfo(dpy);
 
-    if (target == disp_atoms->connect) 
+    if (target == disp_atoms->connect)
 	return(WSM_CONNECT);
-    if (target == disp_atoms->extensions) 
+    if (target == disp_atoms->extensions)
 	return(WSM_EXTENSIONS);
-    if (target == disp_atoms->config_fmt) 
+    if (target == disp_atoms->config_fmt)
 	return(WSM_CONFIG_FMT);
-    if (target == disp_atoms->get_state) 
+    if (target == disp_atoms->get_state)
 	return(WSM_GET_STATE);
-    if (target == disp_atoms->set_state) 
+    if (target == disp_atoms->set_state)
 	return(WSM_SET_STATE);
-    if (target == disp_atoms->reg_window) 
-	return(WSM_REG_WINDOW); 
+    if (target == disp_atoms->reg_window)
+	return(WSM_REG_WINDOW);
 
     /*
      * Atom doesn't match any request, generate error message.
      */
-    
+
     return(WSM_UNKNOWN);
 }
 
@@ -179,7 +179,7 @@ _WSMGetConfigFormatType(Window win)
 WSMAttribute *
 _WSMGetMatchingAttr(XrmQuark nameq, WSMConfigFormatData *fmt_data)
 {
-    register int i;
+    int i;
     WSMAttribute * attr = fmt_data->attr_list;
 
     for (i = 0; i < fmt_data->num_attrs; i++, attr++) {
@@ -202,7 +202,7 @@ _WSMGetMatchingAttr(XrmQuark nameq, WSMConfigFormatData *fmt_data)
 WSMWinData *
 _WSMGetMatchingWinData(WSMWinData *win_data_top, int num, XrmQuark nameq)
 {
-    register int i; 
+    int i;
     WSMWinData *local = win_data_top;
 
     for (i = 0; i < num; i++, local++) {

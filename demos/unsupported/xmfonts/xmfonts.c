@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: xmfonts.c /main/5 1995/07/14 10:08:26 drk $"
@@ -152,7 +153,7 @@ static Widget CreateApplication(Widget parent)
 	Widget hsb, vsb;	/*  ScrollBars		*/
 
 	Arg args[MAX_ARGS];	/*  arg list		*/
-	register int n;		/*  arg count		*/
+	int n;		/*  arg count		*/
 
 	char *name;
 	int count, i;
@@ -274,7 +275,7 @@ static Widget CreateFontSample(Widget parent)
 	Widget		message_box;		/*  MessageBox Dialog	*/
 	Widget		button;
 	Arg		args[MAX_ARGS];		/*  arg list		*/
-	register int	n;			/*  arg count		*/
+	int	n;			/*  arg count		*/
 	char		*name = NULL;		/*  font name		*/
 	XFontStruct	*font = NULL;		/*  font pointer	*/
 	XmFontListEntry e;
@@ -346,7 +347,7 @@ Widget CreateHelp(Widget parent)
 	Widget		button;
 	Widget		message_box;	/*  Message Dialog 	*/
 	Arg		args[MAX_ARGS];	/*  arg list		*/
-	register int	n;		/*  arg count		*/
+	int	n;		/*  arg count		*/
 
 	static char	message[BUFSIZ];	/*  help text	*/
 	XmString	title_string = NULL;

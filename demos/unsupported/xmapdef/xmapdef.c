@@ -1,5 +1,5 @@
 /* $XConsortium: xmapdef.c /main/4 1995/07/15 20:47:41 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 /*
 **  This demo shows an APPLICATION_DEFINED scrolled window.
 **
@@ -326,7 +324,7 @@ static Widget CreateHelp(Widget parent)
 	Widget		button;
 	Widget		message_box;	/*  Message Dialog 	*/
 	Arg		args[20];	/*  arg list		*/
-	register int	n;		/*  arg count		*/
+	int	n;		/*  arg count		*/
 
 	static char	message[1000];	/*  help text	*/
 	XmString	title_string = NULL;

@@ -1,5 +1,5 @@
 /* $TOG: xmforc.c /main/6 1997/03/31 13:42:03 dbl $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 /*
 **  The demo code demonstrates how to use Form attachments and
 **  the demo by itself illustrates the RowColumn layout resources.
@@ -693,7 +691,7 @@ CreateHelp (Widget parent)		/*  parent widget	*/
 {
 	Widget		message_box;	/*  Message Dialog 	*/
 	Arg		args[20];	/*  arg list		*/
-	register int	n;		/*  arg count		*/
+	int	n;		/*  arg count		*/
 
 	static char	message[1000];	/*  help text	*/
 	XmString	title_string = NULL;
