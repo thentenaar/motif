@@ -1,5 +1,5 @@
 /* $XConsortium: Xm.c /main/6 1995/10/25 20:28:03 cde-sun $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,14 +21,10 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include "MessagesI.h"
@@ -54,7 +50,7 @@ Boolean _init_modifiers = TRUE;
 unsigned int NumLockMask = 0;
 unsigned int ScrollLockMask = 0;
 
-
+
 /*************************************<->*************************************
  *
  *  _XmInitModifiers (void)
@@ -131,16 +127,17 @@ _XmInitModifiers (void)
  *   -- Called by various widgets across Xm                               *
  *                                                                        *
  *************************************************************************/
-/* ARGSUSED */
 void
 _XmSocorro(
         Widget w,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
     XmAnyCallbackStruct cb;
 
+    (void)params;
+    (void)num_params;
     if (w == NULL) return;
 
     cb.reason = XmCR_HELP;
@@ -183,25 +180,18 @@ _XmParentProcess(
     return( FALSE) ;
 }
 
-
-
 /************************************************************************
  *
  *  _XmDestroyParentCallback
  *     Destroy parent. Used by various dialog subclasses
  *
  ************************************************************************/
-/* ARGSUSED */
-void
-_XmDestroyParentCallback(
-        Widget w,
-        XtPointer client_data,	/* unused */
-        XtPointer call_data )	/* unused */
+void _XmDestroyParentCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
-   XtDestroyWidget (XtParent (w));
+	(void)client_data;
+	(void)call_data;
+	XtDestroyWidget(XtParent(w));
 }
-
-
 
 /************************************************************************
  *
@@ -339,7 +329,6 @@ _XmWarningMsg(Widget w,
     XtWarning(message);
 }
 
-/* ARGSUSED */
 Boolean
 _XmIsISO10646(Display *dpy, XFontStruct *font)
 {

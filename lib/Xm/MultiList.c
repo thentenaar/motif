@@ -358,8 +358,6 @@ ClassInitialize()
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
@@ -492,8 +490,6 @@ Resize(Widget w)
  *      Arguments:     w - the Ext List widget.
  *      Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 ChangeManaged(Widget w)
 {
@@ -510,8 +506,6 @@ ChangeManaged(Widget w)
  *
  *      Added:         04/09/92 beth
  */
-
-/*ARGSUSED*/
 static void
 GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
 {
@@ -569,7 +563,6 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
 
 #define NUM_FIND_WIDGETS 2
 
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
@@ -684,7 +677,6 @@ SetValues(Widget current, Widget request, Widget set,
  * disallowed.
  */
 
-/*ARGSUSED*/
 static XtGeometryResult
 GeometryManager(Widget w, XtWidgetGeometry * request,
 		XtWidgetGeometry * result)
@@ -785,7 +777,6 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
  *
  ************************************************************/
 
-/*ARGSUSED*/
 static void
 ActivateTextSearch(Widget w, XtPointer elist_ptr, XtPointer client)
 {

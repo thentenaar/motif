@@ -1,5 +1,5 @@
 /* $XConsortium: DrTog.c /main/6 1995/10/25 20:00:29 cde-sun $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,30 +20,20 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
- */
-/*
- * HISTORY
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-
 #include "XmI.h"
 #include <Xm/DrawP.h>
-
-
 
 /**************************** DrTog module ***************************
  *
  * Draw API used by Toggle Button only.
  *
  ***************************************************************************/
-
-
-
 
 /********    Static Function Declarations    ********/
 static void DrawCheckMark(Display *display,
@@ -118,7 +108,7 @@ DrawCheckMark(Display *display,
 
   XChangeGC(display, gc, mask, &old_values);
 }
-
+
 static void
 DrawCross(Display *display,
 	  Drawable d,
@@ -180,12 +170,11 @@ DrawCross(Display *display,
 
 
 /***********************XmeDrawDiamond**********************************/
-/*ARGSUSED*/
 void XmeDrawDiamond(Display *display, Drawable d,
                     GC top_gc, GC bottom_gc, GC center_gc,
                     Position x, Position y,
                     Dimension width,
-       		    Dimension height, /* unused */
+       		    Dimension height,
                     Dimension shadow_thick,
 	            Dimension margin)
 {
@@ -195,6 +184,7 @@ void XmeDrawDiamond(Display *display, Drawable d,
    int delta;
    _XmDisplayToAppContext(display);
 
+   (void)height;
    if (!d || !width) return ;
 
    _XmAppLock(app);
@@ -306,8 +296,6 @@ void XmeDrawDiamond(Display *display, Drawable d,
    _XmAppUnlock(app);
 }
 
-
-
 /******************************XmeDrawIndicator**********************/
 void
 XmeDrawIndicator(Display *display,
@@ -333,7 +321,7 @@ XmeDrawIndicator(Display *display,
     }
   _XmAppUnlock(app);
 }
-
+
 void
 XmeDrawCircle(Display *display,
 	      Drawable d,
@@ -403,3 +391,4 @@ XmeDrawCircle(Display *display,
   }
   _XmAppUnlock(app);
 }
+

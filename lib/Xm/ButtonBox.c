@@ -243,16 +243,12 @@ WidgetClass xmButtonBoxWidgetClass = (WidgetClass)&xmButtonBoxClassRec;
  *      Arguments:     none.
  *      Returns:       none.
  */
-
-/* ARGSUSED */
-static void
-ClassInitialize()
+static void ClassInitialize(void)
 {
     XtSetTypeConverter(XmRString, XmRXmFillOption,
 		       (XtTypeConverter) CvtStringToFillOption,
                        NULL, (Cardinal)0, XtCacheAll, (XtDestructor)NULL);
 }
-
 
 /****************************************************************/
 static void
@@ -290,8 +286,6 @@ ClassPartInitialize(WidgetClass w_class )
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/* ARGSUSED */
 static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
@@ -317,8 +311,6 @@ static void Initialize(Widget req, Widget set,
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 ConstraintInitialize(Widget request, Widget set, ArgList args, Cardinal *num_args)
 {
@@ -334,8 +326,6 @@ ConstraintInitialize(Widget request, Widget set, ArgList args, Cardinal *num_arg
  *                     args, num_args - the arguments in the list.
  *      Returns:       none
  */
-
-/* ARGSUSED */
 static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
@@ -360,12 +350,9 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
  *      Arguments:     w - Button Box Widget to resize.
  *      Returns:       none.
  */
-
-/*ARGSUSED */
-static void
-Resize(Widget w)
+static void Resize(Widget w)
 {
-    LayoutChildren(w, NULL);
+	LayoutChildren(w, NULL);
 }
 
 /*      Function Name: QueryGeometry
@@ -411,8 +398,6 @@ QueryGeometry(Widget w, XtWidgetGeometry *request,
  *                     result - what will be allowed if almost.
  *      Returns:       status.
  */
-
-/* ARGSUSED */
 static XtGeometryResult
 GeometryManager(Widget w, XtWidgetGeometry *request,
                 XtWidgetGeometry *reply)
@@ -543,8 +528,6 @@ GeometryManager(Widget w, XtWidgetGeometry *request,
  *      Arguments:     w - the ButtonBox widget.
  *      Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 ChangeManaged(Widget w)
 {
@@ -568,8 +551,6 @@ ChangeManaged(Widget w)
  *      Arguments:     w - the child widget
  *      Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 InsertChild(Widget child)
 {
@@ -627,8 +608,6 @@ XmButtonBoxWidget bb = (XmButtonBoxWidget) XtParent( child) ;
  *                     args, num_args - the arguments in the list.
  *      Returns:       none
  */
-
-/* ARGSUSED */
 static Boolean
 SetValues(Widget current, Widget request, Widget set,
           ArgList args, Cardinal * num_args)
@@ -674,8 +653,6 @@ SetValues(Widget current, Widget request, Widget set,
  *                     toVal - contains the converted node state.
  *      Returns:
  */
-
-/* ARGSUSED */
 static Boolean
 CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 		      XrmValuePtr fromVal, XrmValuePtr toVal)
@@ -735,8 +712,6 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  *		       queryOnly - should this only query
  *      Returns:       status.
  */
-
-/* ARGSUSED */
 static XtGeometryResult
 TryNewLayout(Widget parent, Mask *mask,
 	     Boolean queryOnly)
@@ -952,8 +927,6 @@ static void LayoutChildren(Widget w, Widget special_child)
  *			       major direction.
  *      Returns:       number of managed children.
  */
-
-/* ARGSUSED */
 static Cardinal
 CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
 		      Dimension *max_minor, Dimension *total)
@@ -1032,8 +1005,6 @@ CalcChildrenPrefSizes(XmButtonBoxWidget bbox, Dimension *max_major,
  *				     minor size.
  *      Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 CalcChildSize(XmButtonBoxWidget bbox, Widget w, Dimension max_major,
 	      Dimension max_minor, Dimension child_major_total,
@@ -1184,3 +1155,4 @@ ButtonBoxSetDefaultShadow(Widget button)
     if (trait_default)
 	trait_default->showAsDefault  (button, XmDEFAULT_READY);
 }
+

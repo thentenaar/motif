@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,16 +19,17 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Protocols.c /main/15 1996/10/17 12:00:24 cde-osf $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/XmosP.h>           /* for bzero et al */
 #include <Xm/ProtocolsP.h>
@@ -38,7 +39,6 @@ static char rcsid[] = "$XConsortium: Protocols.c /main/15 1996/10/17 12:00:24 cd
 #include "MessagesI.h"
 #include "ProtocolsI.h"
 #include "XmI.h"
-
 
 #define MSG1	_XmMMsgProtocols_0000
 #define MSG2	_XmMMsgProtocols_0001
@@ -50,60 +50,56 @@ static char rcsid[] = "$XConsortium: Protocols.c /main/15 1996/10/17 12:00:24 cd
 /********    Static Function Declarations    ********/
 
 static void ClassInitialize( void ) ;
-static void ClassPartInitialize( 
+static void ClassPartInitialize(
                         WidgetClass w) ;
-static void Initialize( 
+static void Initialize(
                         Widget req,
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
-static void Destroy( 
+static void Destroy(
                         Widget w) ;
-static void RemoveAllPMgrHandler( 
+static void RemoveAllPMgrHandler(
                         Widget w,
                         XtPointer closure,
                         XEvent *event,
                         Boolean *continue_to_dispatch) ;
-static void RemoveAllPMgr( 
+static void RemoveAllPMgr(
                         Widget w,
                         XtPointer closure,
                         XtPointer call_data) ;
-static XmAllProtocolsMgr GetAllProtocolsMgr( 
+static XmAllProtocolsMgr GetAllProtocolsMgr(
                         Widget shell) ;
-static void UpdateProtocolMgrProperty( 
+static void UpdateProtocolMgrProperty(
                         Widget shell,
                         XmProtocolMgr p_mgr) ;
-static void InstallProtocols( 
+static void InstallProtocols(
                         Widget w,
                         XmAllProtocolsMgr ap_mgr) ;
-static void RealizeHandler( 
+static void RealizeHandler(Widget w, XtPointer closure, XEvent *event, Boolean *cont);
+static void ProtocolHandler(
                         Widget w,
                         XtPointer closure,
                         XEvent *event,
                         Boolean *cont) ;
-static void ProtocolHandler( 
-                        Widget w,
-                        XtPointer closure,
-                        XEvent *event,
-                        Boolean *cont) ;
-static XmProtocol GetProtocol( 
+static XmProtocol GetProtocol(
                         XmProtocolMgr p_mgr,
                         Atom p_atom) ;
-static XmProtocolMgr AddProtocolMgr( 
+static XmProtocolMgr AddProtocolMgr(
                         XmAllProtocolsMgr ap_mgr,
                         Atom property) ;
-static XmProtocolMgr GetProtocolMgr( 
+static XmProtocolMgr GetProtocolMgr(
                         XmAllProtocolsMgr ap_mgr,
                         Atom property) ;
-static void RemoveProtocolMgr( 
+static void RemoveProtocolMgr(
                         XmAllProtocolsMgr ap_mgr,
                         XmProtocolMgr p_mgr) ;
-static void AddProtocols( 
+static void AddProtocols(
                         Widget shell,
                         XmProtocolMgr p_mgr,
                         Atom *protocols,
                         Cardinal num_protocols) ;
-static void RemoveProtocols( 
+static void RemoveProtocols(
                         Widget shell,
                         XmProtocolMgr p_mgr,
                         Atom *protocols,
@@ -143,40 +139,40 @@ static XtResource protocolResources[] =
 
 externaldef(xmprotocolclassrec)
 XmProtocolClassRec xmProtocolClassRec = {
-    {	
-	(WidgetClass) &xmExtClassRec,/* superclass 		*/   
-	"protocol",			/* class_name 		*/   
-	sizeof(XmProtocolRec),	 	/* size 		*/   
-	ClassInitialize, 		/* Class Initializer 	*/   
-	ClassPartInitialize, 		/* class_part_init 	*/ 
-	FALSE, 				/* Class init'ed ? 	*/   
-	Initialize, 			/* initialize         	*/   
-	NULL, 				/* initialize_notify    */ 
-	NULL,	 			/* realize            	*/   
-	NULL,	 			/* actions            	*/   
-	0,				/* num_actions        	*/   
-	protocolResources,		/* resources          	*/   
-	XtNumber(protocolResources),	/* resource_count     	*/   
-	NULLQUARK, 			/* xrm_class          	*/   
-	FALSE, 				/* compress_motion    	*/   
-	FALSE, 				/* compress_exposure  	*/   
-	FALSE, 				/* compress_enterleave	*/   
-	FALSE, 				/* visible_interest   	*/   
-	Destroy,			/* destroy            	*/   
-	NULL,		 		/* resize             	*/   
-	NULL, 				/* expose             	*/   
-	NULL,		 		/* set_values         	*/   
-	NULL, 				/* set_values_hook      */ 
-	NULL,			 	/* set_values_almost    */ 
-	NULL,				/* get_values_hook      */ 
-	NULL, 				/* accept_focus       	*/   
-	XtVersion, 			/* intrinsics version 	*/   
-	NULL, 				/* callback offsets   	*/   
-	NULL,				/* tm_table           	*/   
-	NULL, 				/* query_geometry       */ 
-	NULL, 				/* display_accelerator  */ 
-	NULL, 				/* extension            */ 
-    },	
+    {
+	(WidgetClass) &xmExtClassRec,/* superclass 		*/
+	"protocol",			/* class_name 		*/
+	sizeof(XmProtocolRec),	 	/* size 		*/
+	ClassInitialize, 		/* Class Initializer 	*/
+	ClassPartInitialize, 		/* class_part_init 	*/
+	FALSE, 				/* Class init'ed ? 	*/
+	Initialize, 			/* initialize         	*/
+	NULL, 				/* initialize_notify    */
+	NULL,	 			/* realize            	*/
+	NULL,	 			/* actions            	*/
+	0,				/* num_actions        	*/
+	protocolResources,		/* resources          	*/
+	XtNumber(protocolResources),	/* resource_count     	*/
+	NULLQUARK, 			/* xrm_class          	*/
+	FALSE, 				/* compress_motion    	*/
+	FALSE, 				/* compress_exposure  	*/
+	FALSE, 				/* compress_enterleave	*/
+	FALSE, 				/* visible_interest   	*/
+	Destroy,			/* destroy            	*/
+	NULL,		 		/* resize             	*/
+	NULL, 				/* expose             	*/
+	NULL,		 		/* set_values         	*/
+	NULL, 				/* set_values_hook      */
+	NULL,			 	/* set_values_almost    */
+	NULL,				/* get_values_hook      */
+	NULL, 				/* accept_focus       	*/
+	XtVersion, 			/* intrinsics version 	*/
+	NULL, 				/* callback offsets   	*/
+	NULL,				/* tm_table           	*/
+	NULL, 				/* query_geometry       */
+	NULL, 				/* display_accelerator  */
+	NULL, 				/* extension            */
+    },
     {
 	NULL,				/* synthetic resources	*/
 	0,				/* num syn resources	*/
@@ -186,7 +182,7 @@ XmProtocolClassRec xmProtocolClassRec = {
     },
 };
 
-externaldef(xmprotocolobjectclass) WidgetClass 
+externaldef(xmprotocolobjectclass) WidgetClass
   xmProtocolObjectClass = (WidgetClass) (&xmProtocolClassRec);
 
 /************************************************************************
@@ -197,7 +193,7 @@ externaldef(xmprotocolobjectclass) WidgetClass
  *    resource type converters unique to this class.
  *
  ************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
 
@@ -210,23 +206,22 @@ ClassInitialize( void )
  *    vendorShells class part.
  *
  ************************************************************************/
-static void 
+static void
 ClassPartInitialize(
         WidgetClass w )
 {
     XmProtocolObjectClass wc = (XmProtocolObjectClass) w;
-    
+
     if (wc == (XmProtocolObjectClass)xmProtocolObjectClass)
       return;
 }
 
-/*ARGSUSED*/
-static void 
+static void
 Initialize(
-        Widget req,		/* unused */
+        Widget req,
         Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     XmProtocol				ne = (XmProtocol) new_w;
     XmWidgetExtData			extData;
@@ -236,6 +231,9 @@ Initialize(
      * gadgets would need to change to not free it in thier code we'll
      * do it here. |||
      */
+    (void)req;
+    (void)args;
+    (void)num_args;
     extData = _XmGetWidgetExtData(ne->ext.logicalParent,
 				  ne->ext.extensionType);
 if(extData == NULL)
@@ -257,56 +255,53 @@ if(extData == NULL)
  *  Destroy
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void 
-Destroy(
-        Widget w )		/* unused */
+static void Destroy(Widget w)
 {
-  /*EMPTY*/
+	(void)w;
 }
 
-/*ARGSUSED*/
 static void
 RemoveAllPMgrHandler(
         Widget w,
         XtPointer closure,
-        XEvent *event,		/* unused */
+        XEvent *event,
         Boolean *continue_to_dispatch)
-{   
+{
     XmAllProtocolsMgr ap_mgr = (XmAllProtocolsMgr) closure ;
     Cardinal	i;
-    
+
+    (void)event;
     for (i = 0; i < ap_mgr->num_protocol_mgrs; i++)
       {
 	  RemoveProtocolMgr(ap_mgr, ap_mgr->protocol_mgrs[i]);
       }
     /* free the context manager entry ||| */
-    XDeleteContext(XtDisplay(w), 
-		   (Window)w, 
+    XDeleteContext(XtDisplay(w),
+		   (Window)w,
 		   allProtocolsMgrContext);
-    XtFree((char *)ap_mgr->protocol_mgrs);
-    XtFree((char *)ap_mgr);
+    XtFree((XtPointer)ap_mgr->protocol_mgrs);
+    XtFree((XtPointer)ap_mgr);
 
     *continue_to_dispatch = False;
     return ;
-    } 
+    }
 
 /************************************<+>*************************************
  *
  *   RemoveAllPMgr
  *
  *************************************<+>************************************/
-/*ARGSUSED*/
-static void 
+static void
 RemoveAllPMgr(
         Widget w,
         XtPointer closure,
-        XtPointer call_data )	/* unused */
-{ 
+        XtPointer call_data)
+{
 	XEvent ev ;
         Boolean save_sensitive = w->core.sensitive ;
         Boolean save_ancestor_sensitive = w->core.ancestor_sensitive ;
 
+    (void)call_data;
     XtInsertEventHandler( w, KeyPressMask, TRUE, RemoveAllPMgrHandler,
                                                          closure, XtListHead) ;
     bzero((void *) &ev, sizeof(XEvent));
@@ -339,13 +334,13 @@ RemoveAllPMgr(
  *   GetAllProtocolsMgr
  *
  *************************************<+>************************************/
-static XmAllProtocolsMgr 
+static XmAllProtocolsMgr
 GetAllProtocolsMgr(
         Widget shell )
 {
     XmAllProtocolsMgr	ap_mgr;
     Display		*display;
-    
+
     if (!XmIsVendorShell(shell))
       {
 	  XmeWarning(NULL, MSG1);
@@ -354,39 +349,39 @@ GetAllProtocolsMgr(
     else
       {
 	  display = XtDisplay(shell);
-	  
+
 	  _XmProcessLock();
 	  if (!allProtocolsMgrContext)
 	    allProtocolsMgrContext = XUniqueContext();
 	  _XmProcessUnlock();
-	  
+
 	  if (XFindContext(display,
 			   (Window) shell,
 			   allProtocolsMgrContext,
 			   (char **)&ap_mgr))
 	    {
 		ap_mgr = XtNew(XmAllProtocolsMgrRec);
-		
+
 		ap_mgr->shell = shell;
-		ap_mgr->num_protocol_mgrs = 
+		ap_mgr->num_protocol_mgrs =
 		  ap_mgr->max_protocol_mgrs = 0;
 		ap_mgr->protocol_mgrs = NULL;
-		(void) XSaveContext(display, 
-				    (Window) shell, 
-				    allProtocolsMgrContext, 
-				    (XPointer) ap_mgr);
-		
+		(void) XSaveContext(display,
+				    (Window)shell,
+				    allProtocolsMgrContext,
+				    (XPointer)ap_mgr);
+
 		/* !!! should this be in some init code for vendor shell ? */
 		/* if shell isn't realized, add an event handler for everybody */
-		
+
 		if (!XtIsRealized(shell))
 		  {
-		      XtAddEventHandler((Widget) shell, StructureNotifyMask,
-                                    FALSE, RealizeHandler, (XtPointer) ap_mgr);
+		      XtAddEventHandler((Widget)shell, StructureNotifyMask,
+                                    FALSE, RealizeHandler, (XtPointer)ap_mgr);
 		  }
-		XtAddCallback((Widget) shell, XmNdestroyCallback, 
+		XtAddCallback((Widget)shell, XmNdestroyCallback,
                                              RemoveAllPMgr, (XtPointer)ap_mgr);
-		
+
 	    }
 	  return ap_mgr;
       }
@@ -407,7 +402,7 @@ GetAllProtocolsMgr(
  *   UpdateProtocolMgrProperty
  *
  *************************************<+>************************************/
-static void 
+static void
 UpdateProtocolMgrProperty(
         Widget shell,
         XmProtocolMgr p_mgr )
@@ -415,12 +410,12 @@ UpdateProtocolMgrProperty(
     Cardinal	i, num_active = 0;
     Atom	active_protocols[MAX_PROTOCOLS];
     XmProtocolList	protocols = p_mgr->protocols;
-    
+
     for (i = 0; i < p_mgr->num_protocols; i++) {
 	if (protocols[i]->protocol.active)
 	  active_protocols[num_active++] = protocols[i]->protocol.atom;
     }
-    SetProtocolProperty(shell, p_mgr->property, XA_ATOM, 
+    SetProtocolProperty(shell, p_mgr->property, XA_ATOM,
 		(unsigned char *)active_protocols, num_active);
 }
 
@@ -430,21 +425,21 @@ UpdateProtocolMgrProperty(
  *   InstallProtocols
  *
  *************************************<+>************************************/
-static void 
+static void
 InstallProtocols(
         Widget w,
         XmAllProtocolsMgr ap_mgr )
 {
     Cardinal		i;
-    
-    XtAddRawEventHandler(w, (EventMask)0, TRUE, 
+
+    XtAddRawEventHandler(w, (EventMask)0, TRUE,
 			 ProtocolHandler, (XtPointer) ap_mgr);
-    XtRemoveEventHandler(w,StructureNotifyMask , FALSE, 
+    XtRemoveEventHandler(w,StructureNotifyMask , FALSE,
 			 RealizeHandler, ap_mgr);
-    
+
     for (i=0; i < ap_mgr->num_protocol_mgrs; i++)
       UpdateProtocolMgrProperty(w, ap_mgr->protocol_mgrs[i]);
-    
+
 }
 
 /************************************<+>*************************************
@@ -452,23 +447,14 @@ InstallProtocols(
  *   RealizeHandler
  *
  *************************************<+>************************************/
-/*ARGSUSED*/
-static void 
-RealizeHandler(
-        Widget w,
-        XtPointer closure,
-        XEvent *event,
-        Boolean *cont )		/* unused */
+static void RealizeHandler(Widget w, XtPointer closure, XEvent *event, Boolean *cont)
 {
-    XmAllProtocolsMgr	ap_mgr = (XmAllProtocolsMgr)closure;
-    
-    switch (event->type) 
-      {
-	case MapNotify:
-	  InstallProtocols(w, ap_mgr);
-	default:
-	  break;
-      }
+	XmAllProtocolsMgr ap_mgr = (XmAllProtocolsMgr)closure;
+
+	(void)event;
+    (void)cont;
+	if (event->type == MapNotify)
+		InstallProtocols(w, ap_mgr);
 }
 
 /************************************<+>*************************************
@@ -476,41 +462,41 @@ RealizeHandler(
  *   ProtocolHandler
  *
  *************************************<+>************************************/
-/*ARGSUSED*/
-static void 
+static void
 ProtocolHandler(
         Widget w,
         XtPointer closure,
         XEvent *event,
-        Boolean *cont )		/* unused */
+        Boolean *cont)
 {
   XmAllProtocolsMgr	ap_mgr = (XmAllProtocolsMgr)closure;
   XmProtocolMgr	p_mgr;
   XmProtocol		protocol;
   XmAnyCallbackStruct	call_data_rec;
   XtCallbackProc	func;
-  
+
+  (void)cont;
   call_data_rec.reason = XmCR_PROTOCOLS;
   call_data_rec.event = event;
-  
+
   switch (event->type) {
   case ClientMessage: {
       XClientMessageEvent	*p_event = (XClientMessageEvent *) event;
       Atom			p_atom = (Atom) p_event->data.l[0];
-	      
-      if (((p_mgr = GetProtocolMgr(ap_mgr, (Atom)p_event->message_type)) 
+
+      if (((p_mgr = GetProtocolMgr(ap_mgr, (Atom)p_event->message_type))
 	   == (XmProtocolMgr)0) ||
 	  ((protocol = GetProtocol(p_mgr, p_atom)) == (XmProtocol)0))
 	return;
       else {
 	if ((func = protocol->protocol.pre_hook.callback) != (XtCallbackProc)0)
 	  (*func) (w, protocol->protocol.pre_hook.closure, (XtPointer) &call_data_rec);
-		  
+
 	if (protocol->protocol.callbacks)
 	  _XmCallCallbackList(w,
-			      protocol->protocol.callbacks, 
+			      protocol->protocol.callbacks,
 			      (XtPointer) &call_data_rec);
-		  
+
 	if ((func = protocol->protocol.post_hook.callback) != (XtCallbackProc)0)
 	  (*func) (w, protocol->protocol.post_hook.closure, (XtPointer) &call_data_rec);
       }
@@ -522,31 +508,29 @@ ProtocolHandler(
   }
 }
 
-
-
 /************************************<+>*************************************
  *
  *   GetProtocol
  *
  *************************************<+>************************************/
-static XmProtocol 
+static XmProtocol
 GetProtocol(
         XmProtocolMgr p_mgr,
         Atom p_atom )
 {
     Cardinal	i;
     XmProtocol	protocol;
-    
+
     i = 0;
-    while ((i < p_mgr->num_protocols) && 
+    while ((i < p_mgr->num_protocols) &&
 	   (p_mgr->protocols[i]->protocol.atom != p_atom))
       i++;
-    
+
     if (i < p_mgr->num_protocols)
       {
 	  protocol = p_mgr->protocols[i];
       }
-    else 
+    else
       {
 	  protocol = (XmProtocol)0;
       }
@@ -559,41 +543,41 @@ GetProtocol(
  *   AddProtocolMgr
  *
  *************************************<+>************************************/
-static XmProtocolMgr 
+static XmProtocolMgr
 AddProtocolMgr(
         XmAllProtocolsMgr ap_mgr,
         Atom property )
 {
     XmProtocolMgr	p_mgr;
     Cardinal		i;
-    
+
     i = 0;
     while ((i < ap_mgr->num_protocol_mgrs) &&
 	   (ap_mgr->protocol_mgrs[i]->property != property))
       i++;
-    
+
     if (i < ap_mgr->num_protocol_mgrs)
       {
 	  XmeWarning(NULL, MSG2);
       }
-    
-    if (ap_mgr->num_protocol_mgrs + 2 >= ap_mgr->max_protocol_mgrs) 
+
+    if (ap_mgr->num_protocol_mgrs + 2 >= ap_mgr->max_protocol_mgrs)
       {
 	  ap_mgr->max_protocol_mgrs += 2;
-	  ap_mgr->protocol_mgrs = (XmProtocolMgrList) 
+	  ap_mgr->protocol_mgrs = (XmProtocolMgrList)
 	    XtRealloc((char *) ap_mgr->protocol_mgrs ,
-		      ((unsigned) (ap_mgr->max_protocol_mgrs) 
+		      ((unsigned) (ap_mgr->max_protocol_mgrs)
 		       * sizeof(XmProtocolMgr)));
       }
-    ap_mgr->protocol_mgrs[ap_mgr->num_protocol_mgrs++] 
+    ap_mgr->protocol_mgrs[ap_mgr->num_protocol_mgrs++]
       = p_mgr = XtNew(XmProtocolMgrRec);
-    
+
     p_mgr->property = property;
     p_mgr->num_protocols =
       p_mgr->max_protocols = 0;
-    
+
     p_mgr->protocols = NULL;
-    
+
     return(p_mgr);
 }
 /************************************<+>*************************************
@@ -601,21 +585,21 @@ AddProtocolMgr(
  *   GetProtcolMgr
  *
  *************************************<+>************************************/
-static XmProtocolMgr 
+static XmProtocolMgr
 GetProtocolMgr(
         XmAllProtocolsMgr ap_mgr,
         Atom property )
 {
     XmProtocolMgr	p_mgr = (XmProtocolMgr)0;
     Cardinal		i;
-    
+
     if (!ap_mgr) return p_mgr;
-    
+
     i = 0;
     while ((i < ap_mgr->num_protocol_mgrs) &&
 	   (ap_mgr->protocol_mgrs[i]->property != property))
       i++;
-    
+
     if (i < ap_mgr->num_protocol_mgrs)
       {
 	  p_mgr = ap_mgr->protocol_mgrs[i];
@@ -632,14 +616,14 @@ GetProtocolMgr(
  *   RemoveProtocolMgr
  *
  *************************************<+>************************************/
-static void 
+static void
 RemoveProtocolMgr(
         XmAllProtocolsMgr ap_mgr,
         XmProtocolMgr p_mgr )
 {
     Widget	shell = ap_mgr->shell;
     Cardinal 	i;
-    
+
     for (i = 0; i < p_mgr->num_protocols; i++)
       {
           _XmRemoveAllCallbacks(
@@ -647,10 +631,10 @@ RemoveProtocolMgr(
           XtFree((char *) p_mgr->protocols[i]);
       }
     if (XtIsRealized(shell))
-	XDeleteProperty(XtDisplay(shell), 
-			XtWindow(shell), 
+	XDeleteProperty(XtDisplay(shell),
+			XtWindow(shell),
 			p_mgr->property);
-    
+
     for (i = 0;  i < ap_mgr->num_protocol_mgrs;  i++)
       if (ap_mgr->protocol_mgrs[i] == p_mgr)
 	break;
@@ -667,13 +651,13 @@ RemoveProtocolMgr(
  *  AddProtocols
  *
  *************************************<+>************************************/
-static void 
+static void
 AddProtocols(
         Widget shell,
         XmProtocolMgr p_mgr,
         Atom *protocols,
         Cardinal num_protocols )
-{	
+{
     Cardinal		new_num_protocols, i, j;
     XtPointer           newSec;
     WidgetClass         wc;
@@ -681,44 +665,44 @@ AddProtocols(
 
     wc = XtClass(shell);
     size = wc->core_class.widget_size;
-    
+
     new_num_protocols = p_mgr->num_protocols + num_protocols;
-    
-    if (new_num_protocols >= p_mgr->max_protocols) 
+
+    if (new_num_protocols >= p_mgr->max_protocols)
       {
 	  /* Allocate more space */
 	  Cardinal	add_size;
-	  
+
 	  if (num_protocols >= PROTOCOL_BLOCK_SIZE)
 	    add_size = num_protocols + PROTOCOL_BLOCK_SIZE;
 	  else
 	    add_size = PROTOCOL_BLOCK_SIZE;
-	  
+
 	  p_mgr->max_protocols +=  add_size;
-	  p_mgr->protocols = (XmProtocolList) 
+	  p_mgr->protocols = (XmProtocolList)
 	    XtRealloc((char *) p_mgr->protocols ,
 		      (unsigned) (p_mgr->max_protocols) * sizeof(XmProtocol));
       }
-    
+
     for (i = p_mgr->num_protocols, j = 0;
-	 i < new_num_protocols; 
+	 i < new_num_protocols;
 	 i++,j++)
       {
-	  
+
           newSec = XtMalloc(size);
 
           ((XmProtocol) newSec)->protocol.atom = protocols[j];
 	  ((XmProtocol)newSec)->protocol.active = TRUE; /*default */
 	  ((XmProtocol)newSec)->protocol.callbacks = (XtCallbackList)0;
-	  ((XmProtocol)newSec)->protocol.pre_hook.callback = 
+	  ((XmProtocol)newSec)->protocol.pre_hook.callback =
           ((XmProtocol)newSec)->protocol.post_hook.callback = (XtCallbackProc)0;
-	  ((XmProtocol)newSec)->protocol.pre_hook.closure = 
+	  ((XmProtocol)newSec)->protocol.pre_hook.closure =
 	  ((XmProtocol)newSec)->protocol.post_hook.closure = (XtPointer)0;
 
           p_mgr->protocols[i] = (XmProtocol)newSec;
       }
     p_mgr->num_protocols = new_num_protocols;
-    
+
 }
 
 /************************************<+>*************************************
@@ -726,25 +710,25 @@ AddProtocols(
  *   RemoveProtocols
  *
  *************************************<+>************************************/
-/*ARGSUSED*/
-static void 
+static void
 RemoveProtocols(
-        Widget shell,		/* unused */
+        Widget shell,
         XmProtocolMgr p_mgr,
         Atom *protocols,
         Cardinal num_protocols )
 {
     Boolean	match_list[MAX_PROTOCOLS];
     Cardinal		i, j;
-    
+
+    (void)shell;
     if (!p_mgr || !p_mgr->num_protocols || !num_protocols) return;
-    
+
     if (p_mgr->num_protocols > MAX_PROTOCOLS)
       XmeWarning(NULL, MSG3);
-    
+
     for (i = 0; i <= p_mgr->num_protocols; i++)
       match_list[i] = FALSE;
-    
+
     /* setup the match list */
     for (i = 0; i < num_protocols; i++)
       {
@@ -755,9 +739,9 @@ RemoveProtocols(
 	  if (j < p_mgr->num_protocols)
 	    match_list[j] = TRUE;
       }
-    
-    /* 
-     * keep only the protocols that arent in the match list. 
+
+    /*
+     * keep only the protocols that arent in the match list.
      */
     for (j = 0, i = 0; i < p_mgr->num_protocols; i++)
       {
@@ -765,7 +749,7 @@ RemoveProtocols(
 	      p_mgr->protocols[j] = p_mgr->protocols[i];
 	      j++;
 	  }
-	  else 
+	  else
           {
             _XmRemoveAllCallbacks((InternalCallbackList *) &(p_mgr->protocols[i]->protocol.callbacks));
             XtFree((char *) p_mgr->protocols[i]);
@@ -773,14 +757,14 @@ RemoveProtocols(
       }
 
     p_mgr->num_protocols = j;
-    
+
 }
 
 
 
 
 /*
- *  
+ *
  * PUBLIC INTERFACES
  *
  */
@@ -791,7 +775,7 @@ RemoveProtocols(
  *   _XmInstallProtocols
  *
  *************************************<+>************************************/
-void 
+void
 _XmInstallProtocols(
         Widget w )
 {
@@ -808,19 +792,19 @@ _XmInstallProtocols(
  *   XmAddProtocols
  *
  *************************************<+>************************************/
-void 
+void
 XmAddProtocols(
         Widget shell,
         Atom property,
         Atom *protocols,
         Cardinal num_protocols )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     _XmWidgetToAppContext(shell);
 
     _XmAppLock(app);
-   
+
     if (shell->core.being_destroyed) {
 	_XmAppUnlock(app);
         return;
@@ -836,7 +820,7 @@ XmAddProtocols(
     /* get rid of duplicates and then append to end */
     RemoveProtocols(shell, p_mgr, protocols, num_protocols);
     AddProtocols(shell, p_mgr, protocols, num_protocols);
-    
+
     if (XtIsRealized(shell))
       UpdateProtocolMgrProperty(shell, p_mgr);
     _XmAppUnlock(app);
@@ -849,19 +833,19 @@ XmAddProtocols(
  *   XmRemoveProtocols
  *
  *************************************<+>************************************/
-void 
+void
 XmRemoveProtocols(
         Widget shell,
         Atom property,
         Atom *protocols,
         Cardinal num_protocols )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     _XmWidgetToAppContext(shell);
 
     _XmAppLock(app);
-    
+
     if (shell->core.being_destroyed) {
 	_XmAppUnlock(app);
         return;
@@ -873,7 +857,7 @@ XmRemoveProtocols(
       return;
     }
 
-    
+
     RemoveProtocols(shell, p_mgr, protocols, num_protocols);
 
     if (XtIsRealized(shell))
@@ -886,7 +870,7 @@ XmRemoveProtocols(
  *   XmAddProtocolCallback
  *
  *************************************<+>************************************/
-void 
+void
 XmAddProtocolCallback(
         Widget shell,
         Atom property,
@@ -894,20 +878,20 @@ XmAddProtocolCallback(
         XtCallbackProc callback,
         XtPointer closure )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     XmProtocol		protocol;
     _XmWidgetToAppContext(shell);
 
     _XmAppLock(app);
-   
+
     if (shell->core.being_destroyed) {
 	 _XmAppUnlock(app);
          return;
     }
     if ((ap_mgr = GetAllProtocolsMgr(shell)) == (XmAllProtocolsMgr)0) {
       _XmAppUnlock(app);
-      return;	
+      return;
     }
     if ((p_mgr = GetProtocolMgr(ap_mgr, property)) == (XmProtocolMgr)0)
       p_mgr = AddProtocolMgr(ap_mgr, property);
@@ -928,7 +912,7 @@ XmAddProtocolCallback(
  *   XmRemoveProtocolCallback
  *
  *************************************<+>************************************/
-void 
+void
 XmRemoveProtocolCallback(
         Widget shell,
         Atom property,
@@ -936,13 +920,13 @@ XmRemoveProtocolCallback(
         XtCallbackProc callback,
         XtPointer closure )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     XmProtocol		protocol;
     _XmWidgetToAppContext(shell);
 
     _XmAppLock(app);
-   
+
     if (shell->core.being_destroyed) {
 	_XmAppUnlock(app);
         return;
@@ -965,13 +949,13 @@ XmRemoveProtocolCallback(
  *   XmActivateProtocol
  *
  *************************************<+>************************************/
-void 
+void
 XmActivateProtocol(
         Widget shell,
         Atom property,
         Atom proto_atom )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     XmProtocol		protocol;
     _XmWidgetToAppContext(shell);
@@ -1003,19 +987,19 @@ XmActivateProtocol(
  *   XmDeactivateProtocol
  *
  *************************************<+>************************************/
-void 
+void
 XmDeactivateProtocol(
         Widget shell,
         Atom property,
         Atom proto_atom )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     XmProtocol		protocol;
     _XmWidgetToAppContext(shell);
 
     _XmAppLock(app);
-   
+
     if (shell->core.being_destroyed) {
 	_XmAppUnlock(app);
         return;
@@ -1041,7 +1025,7 @@ XmDeactivateProtocol(
  *   XmSetProtocolHooks
  *
  *************************************<+>************************************/
-void 
+void
 XmSetProtocolHooks(
         Widget shell,
         Atom property,
@@ -1051,7 +1035,7 @@ XmSetProtocolHooks(
         XtCallbackProc post_hook,
         XtPointer post_closure )
 {
-    XmAllProtocolsMgr	ap_mgr; 
+    XmAllProtocolsMgr	ap_mgr;
     XmProtocolMgr	p_mgr ;
     XmProtocol		protocol;
     _XmWidgetToAppContext(shell);
@@ -1067,10 +1051,11 @@ XmSetProtocolHooks(
       _XmAppUnlock(app);
       return;
     }
-    
+
     protocol->protocol.pre_hook.callback = pre_hook;
     protocol->protocol.pre_hook.closure = pre_closure;
     protocol->protocol.post_hook.callback = post_hook;
     protocol->protocol.post_hook.closure = post_closure;
     _XmAppUnlock(app);
 }
+

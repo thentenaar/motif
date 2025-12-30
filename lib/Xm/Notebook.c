@@ -920,7 +920,6 @@ ClassPartInitialize (
     XmeTraitSet((XtPointer)wc,XmQTscrollFrame,(XtPointer)&notebookSFT);
     XmeTraitSet((XtPointer)wc,XmQTtraversalControl,(XtPointer)&notebookTCT);
     XmeTraitSet((XtPointer)wc,XmQTspecifyUnhighlight,(XtPointer)&notebookSUT);
-
 }
 
 
@@ -929,19 +928,20 @@ ClassPartInitialize (
 	Initialize method
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
 Initialize (
-    Widget rw,			/* unused */
+    Widget rw,
     Widget nw,
-    ArgList args,		/* unused */
-    Cardinal *num)		/* unused */
+    ArgList args,
+    Cardinal *num)
 {
     XmNotebookWidget new_w = (XmNotebookWidget)nw;
     XmScrollFrameTrait scroll_frameT;
 
     /* XmNaccelerators */
+    (void)rw;
+    (void)args;
+    (void)num;
     new_w->core.accelerators = TabAcceleratorsParsed;
 
     /* XmNorientation */
@@ -1170,14 +1170,13 @@ Redisplay (
         Set notebook widget resources
 
 -----------------------------------------------------------------------------*/
-/*ARGSUSED*/
 static Boolean
 SetValues (
     Widget ow,
-    Widget rw,			/* unused */
+    Widget rw,
     Widget nw,
-    ArgList args,		/* unused */
-    Cardinal *num)		/* unused */
+    ArgList args,
+    Cardinal *num)
 {
     XmNotebookWidget old = (XmNotebookWidget) ow;
     XmNotebookWidget new_w = (XmNotebookWidget) nw;
@@ -1188,6 +1187,9 @@ SetValues (
     Mask visualFlag = NoVisualChange;
 
     /* XmNorientation */
+    (void)rw;
+    (void)args;
+    (void)num;
     if (new_w->notebook.orientation != old->notebook.orientation)
         {
         if (!XmRepTypeValidValue(XmRID_ORIENTATION,
@@ -1417,13 +1419,11 @@ QueryGeometry (
         Method for the composite widget's GeometryManager
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static XtGeometryResult
-GeometryManager (
+GeometryManager(
     Widget instigator,
     XtWidgetGeometry *desired,
-    XtWidgetGeometry *reply)	/* unused */
+    XtWidgetGeometry *reply)
 {
     XmNotebookWidget nb = (XmNotebookWidget)XtParent(instigator);
     XmNotebookConstraint nc = NotebookConstraint(instigator);
@@ -1431,6 +1431,7 @@ GeometryManager (
     XtWidgetGeometry myrequest, myallowed;
 
     /* handle changes during ConstraintSetValues layout */
+    (void)reply;
     if ( (nb->notebook.constraint_child == instigator)
       && ((IsX(desired)) && (IsY(desired))))
 	{
@@ -1772,18 +1773,19 @@ DeleteChild (
 	A default page number will be provided when the widget is managed.
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
-ConstraintInitialize (
-    Widget req,			/* unused */
+ConstraintInitialize(
+    Widget req,
     Widget new_w,
-    ArgList args,		/* unused */
-    Cardinal *num)		/* unused */
+    ArgList args,
+    Cardinal *num)
 {
     XmNotebookConstraint nc = NotebookConstraint(new_w);
 
     /* check for invalid object */
+    (void)req;
+    (void)args;
+    (void)num;
     if (!XtIsRectObj(new_w))
         return;
 
@@ -1813,15 +1815,13 @@ ConstraintInitialize (
         SetValue method for notebook's constraint class
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static Boolean
 ConstraintSetValues (
     Widget old_w,
-    Widget req,			/* unused */
+    Widget req,
     Widget new_w,
-    ArgList args,		/* unused */
-    Cardinal *num)		/* unused */
+    ArgList args,
+    Cardinal *num)
 {
     XmNotebookWidget nb = (XmNotebookWidget)XtParent(new_w);
     XmNotebookConstraint old_nc = NotebookConstraint(old_w);
@@ -1830,6 +1830,9 @@ ConstraintSetValues (
     Boolean need_reset = False;
 
     /* check for invalid object */
+    (void)req;
+    (void)args;
+    (void)num;
     if (!XtIsRectObj(new_w))
 	return False;
 
@@ -1911,46 +1914,43 @@ ConstraintSetValues (
 	Get the default back page position
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
 GetDefaultFrameBackground(
     Widget w,
-    int offset,			/* unused */
+    int offset,
     XrmValue *value)
 {
-  value->addr = (XtPointer) &w->core.background_pixel;
+	(void)offset;
+	value->addr = (XtPointer)&w->core.background_pixel;
 }
 
-
-/*ARGSUSED*/
 static void
 GetDefaultBackPageBackground(
     Widget w,
-    int offset,			/* unused */
+    int offset,
     XrmValue *value)
 {
   XmNotebookWidget nb = (XmNotebookWidget)w;
   static Pixel pixel;
 
-  value->addr = (XtPointer) &pixel;
+  (void)offset;
+  value->addr = (XtPointer)&pixel;
 
   XmGetColors(XtScreen(w), nb->core.colormap, nb->notebook.frame_background,
 	      NULL, NULL, NULL, &pixel);
 }
 
-
-/*ARGSUSED*/
 static void
 GetDefaultBackPagePos (
     Widget w,
-    int offset,			/* unused */
+    int offset,
     XrmValue *value)
 {
     static unsigned char back_page_pos;
     XmNotebookWidget nb = (XmNotebookWidget)w;
 
     /* initialize the notebook layout default */
+    (void)offset;
     if (LayoutIsRtoLM(w))
 	{
 	if (nb->notebook.orientation == XmVERTICAL)
@@ -4411,17 +4411,16 @@ MakeSpiralPixmap (
         Draw the Notebook binding
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
-DrawBinding (
+DrawBinding(
     XmNotebookWidget nb,
-    XExposeEvent *event,	/* unused */
+    XExposeEvent *event,
     Region region)
 {
     Dimension x, y, width, height;
 
     /* check binding type resource and binding width */
+    (void)event;
     if (nb->notebook.binding_type == XmNONE
 	|| nb->notebook.real_binding_width <= 0)
 	return;
@@ -4552,19 +4551,20 @@ DrawPixmapBinding (
         Draw the Notebook frame shadow
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
-DrawFrameShadow (
+DrawFrameShadow(
     XmNotebookWidget nb,
-    XExposeEvent *event,	/* unused */
-    Region region)		/* unused */
+    XExposeEvent *event,
+    Region region)
 {
     Dimension x, y, width, height;
     Region shadow_region;
     XRectangle rect;
 
     /* get the page's x, y position */
+    (void)event;
+    (void)region;
+
     x = y = 1;
     if (nb->notebook.binding_pos == LEFT)
         x += nb->notebook.real_binding_width;
@@ -4740,12 +4740,10 @@ DrawFrameShadow (
 	Draw Notebook back pages
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
 DrawBackPages (
     XmNotebookWidget nb,
-    XExposeEvent *event,	/* unused */
+    XExposeEvent *event,
     Region region)
 {
     int delta, back;	/* backpage foreground & background deltas */
@@ -4756,10 +4754,10 @@ DrawBackPages (
     XPoint p[5];	/* foreground line pattern */
     XPoint q[3];	/* background line pattern */
 
-
     /*
      * initialize
      */
+    (void)event;
     delta = nb->notebook.back_page_size / nb->notebook.real_back_page_number;
 
     /* draw backpages on the frame, which is not necessarily along the
@@ -6134,19 +6132,19 @@ HideShadowedTab (
         callback function for events for tab scrolling
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
-FlipTabs (
+FlipTabs(
     Widget w,
-    XtPointer data,		/* unused */
-    XtPointer call_data)	/* unused */
+    XtPointer data,
+    XtPointer call_data)
 {
     XmNotebookWidget nb = (XmNotebookWidget)XtParent(w);
     Widget old_first_major, old_first_minor;
     Widget cfw = XmGetFocusWidget((Widget)nb);
 
     /* save tab pointers */
+    (void)data;
+    (void)call_data;
     old_first_major = nb->notebook.first_major;
     old_first_minor = nb->notebook.first_minor;
 
@@ -6231,12 +6229,10 @@ TabPressed (
         action for moving the focus on tabs
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
-TraverseTab (
+TraverseTab(
     Widget w,
-    XEvent *event,		/* unused */
+    XEvent *event,
     String *params,
     Cardinal *num_params)
 {
@@ -6246,6 +6242,7 @@ TraverseTab (
     int traverse_to;
 
     /* Check error conditions */
+    (void)event;
     if (nb && XmIsNotebook(nb))
         child = XmGetFocusWidget(w);
     else
@@ -6373,15 +6370,13 @@ TraverseTab (
 
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static Widget
 RedirectTraversal(
     Widget 		old_focus,
     Widget	       	new_focus,
     unsigned int	focus_policy,
     XmTraversalDirection direction,
-    unsigned int	pass) /* unused */
+    unsigned int	pass)
 {
     unsigned char to_type = XmMAJOR_TAB, from_type = XmMAJOR_TAB;
     Widget to_child, from_child;
@@ -6389,6 +6384,7 @@ RedirectTraversal(
     Widget new_focus_widget;
 
     /* If we're in pointer focus mode there's nothing to be done. */
+    (void)pass;
     if ((focus_policy != XmEXPLICIT)
      || ((direction != XmTRAVERSE_NEXT_TAB_GROUP) &&
 	 (direction != XmTRAVERSE_PREV_TAB_GROUP)))
@@ -6813,13 +6809,11 @@ RemoveNavigator (
 	Callback for the value changes of navigators.
 
 -----------------------------------------------------------------------------*/
-
-/*ARGSUSED*/
 static void
 PageMove (
     Widget w,
     XtPointer data,
-    XtPointer call_data)	/* unused */
+    XtPointer call_data)
 {
     /* w is a navigator widget */
     XmNotebookWidget nb = (XmNotebookWidget)data;
@@ -6828,6 +6822,7 @@ PageMove (
     int reason;
 
     /* Get the new navigator value using the trait getValue */
+    (void)call_data;
     nav_data.valueMask = NavValue;
 
     /* Check to ensure navigator is ok */

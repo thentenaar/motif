@@ -19,7 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 /************************************************************
@@ -1869,3 +1868,4 @@ XmCreateOutline(Widget parent, String name,
     return(XtCreateWidget(name, xmOutlineWidgetClass,
 			  parent, args, num_args));
 }
+

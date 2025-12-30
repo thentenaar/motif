@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,8 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
+
 /*
  * COPYRIGHT NOTICE
  * Copyright (c) 1995 Integrated Computer Solutions
@@ -5090,7 +5090,6 @@ SetRightGC(XmTabBoxWidget tab, GC gc, GC_type gc_type)
       }
 }
 
-/* ARGSUSED */
 static void
 DrawLeftToRightTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		   Boolean have_pixmap, int pix_width, int pix_height,
@@ -5358,7 +5357,6 @@ DrawLeftToRightTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 DrawRightToLeftTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		   Boolean have_pixmap, int pix_width, int pix_height,
@@ -5903,7 +5901,6 @@ DrawTopToBottomTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
  * Output:
  *	None.
  */
-/* ARGSUSED */
 static void
 DrawVerticalTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		Boolean have_pixmap, int pix_width, int pix_height,
@@ -8925,8 +8922,6 @@ GetShellVisual(Widget widget)
  * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
-
-/*ARGSUSED*/
 static void
 CheckSetRenderTable(Widget wid, int offs, XrmValue *value)
 {
@@ -8949,3 +8944,4 @@ XmCreateTabBox(Widget parent, String name, ArgList arg_list,
     return( XtCreateWidget(name, xmTabBoxWidgetClass, parent, arg_list,
 			   arg_cnt) );
 }
+

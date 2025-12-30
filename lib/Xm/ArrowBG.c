@@ -371,14 +371,12 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args)	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmArrowButtonGadget request = (XmArrowButtonGadget) rw;
   XmArrowButtonGadget new_w = (XmArrowButtonGadget) nw;
@@ -387,6 +385,8 @@ Initialize(
    *  Check the data put into the new widget from .Xdefaults
    *  or through the arg list.
    */
+  (void)args;
+  (void)num_args;
   if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
@@ -503,8 +503,6 @@ GetArrowGC(
  *     General redisplay function called on exposure events.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Redisplay(
         Widget w,
@@ -750,24 +748,22 @@ Destroy(
  *  SetValues
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
-        Widget rw,		/* unused */
+        Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args)	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmArrowButtonGadget current = (XmArrowButtonGadget) cw;
   XmArrowButtonGadget new_w = (XmArrowButtonGadget) nw;
-
-  Boolean returnFlag = FALSE;
-
+  Boolean returnFlag = False;
 
   /*  Check the data put into the new widget.  */
-
+  (void)rw;
+  (void)args;
+  (void)num_args;
   if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
@@ -1095,20 +1091,19 @@ Arm(
  *     callbacks are called.
  *
  ************************************************************************/
-/*ARGSUSED*/
-
 static void
 Activate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
-  XmArrowButtonGadget aw = (XmArrowButtonGadget) wid;
-  XButtonPressedEvent *buttonEvent = (XButtonPressedEvent *) event;
-
+  XmArrowButtonGadget aw = (XmArrowButtonGadget)wid;
+  XButtonPressedEvent *buttonEvent = (XButtonPressedEvent *)event;
   XmPushButtonCallbackStruct call_value;
 
+  (void)params;
+  (void)num_params;
   aw->arrowbutton.selected = False;
 
   DrawArrowG(aw, aw->arrowbutton.top_shadow_GC,
@@ -1135,20 +1130,20 @@ Activate(
  *     ArmAndActivate
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 ArmAndActivate(
         Widget w,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmArrowButtonGadget ab = (XmArrowButtonGadget) w;
   XmPushButtonCallbackStruct call_value;
   XtExposeProc expose;
 
-  ab->arrowbutton.selected = TRUE;
+  (void)params;
+  (void)num_params;
+  ab->arrowbutton.selected = True;
   ab->arrowbutton.click_count = 1;
   _XmProcessLock();
   expose = ab->object.widget_class->core_class.expose;
@@ -1199,7 +1194,6 @@ ArmAndActivate(
     }
 }
 
-/*ARGSUSED*/
 static void
 ArmTimeout(
         XtPointer data,
@@ -1386,7 +1380,6 @@ XmVaCreateManagedArrowButtonGadget(
 
 }
 
-/* ARGSUSED */
 static void
 ActivateCommonG(
         XmArrowButtonGadget ag,
@@ -1455,3 +1448,4 @@ DrawArrowG(XmArrowButtonGadget ag,
 		ag->arrowbutton.detail_shadow_thickness,
 		ag->arrowbutton.direction);
 }
+

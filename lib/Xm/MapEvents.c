@@ -402,7 +402,6 @@ ScanWhitespace(
  *   -----------------
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static String
 ParseImmed(
         String str,
@@ -437,7 +436,6 @@ ParseImmed(
  *   -----------------
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static String
 ParseKeySym(
         String str,
@@ -927,3 +925,4 @@ _XmMatchKeyEvent(
    else
       return (FALSE);
 }
+

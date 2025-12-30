@@ -1100,7 +1100,6 @@ XmGetColors(
  *	default and store it in the value structure to be returned.
  *
  *********************************************************************/
-/*ARGSUSED*/
 void
 XmeGetDefaultPixel(
         Widget widget,

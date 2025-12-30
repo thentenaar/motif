@@ -1,5 +1,5 @@
 /* $TOG: ColorObj.c /main/19 1999/05/07 11:36:18 samborn $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,7 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -272,7 +271,6 @@ externaldef(xmcolorobjclass) WidgetClass
 /**         utilize seperate resource databases for "pseudo-apps".   **/
 /**                                                                  **/
 /**********************************************************************/
-/*ARGSUSED*/
 void
 _XmColorObjCreate(
         Widget w,
@@ -306,7 +304,6 @@ _XmColorObjCreate(
 /**        colorObj if there is one.                                 **/
 /**                                                                  **/
 /**********************************************************************/
-/*ARGSUSED*/
 static void
 DisplayDestroy( Widget wid, XtPointer clientData, XtPointer callData )
 {
@@ -334,7 +331,6 @@ DisplayDestroy( Widget wid, XtPointer clientData, XtPointer callData )
 /**        Free the data allocated for this ColorObj                 **/
 /**                                                                  **/
 /**********************************************************************/
-/*ARGSUSED*/
 static void
 Destroy( Widget wid )
 {
@@ -377,14 +373,12 @@ Destroy( Widget wid )
 /** Initialize()                                                     **/
 /**                                                                  **/
 /**********************************************************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
-        Widget rq,		/* unused */
+        Widget rq,
         Widget nw,
-        ArgList Args,		/* unused */
-        Cardinal *numArgs)	/* unused */
+        ArgList Args,
+        Cardinal *numArgs)
 {
     XmColorObj new_obj = (XmColorObj) nw ;
     int      i, nscreens;
@@ -396,6 +390,9 @@ Initialize(
     int result, isNotNews ;
     XExtCodes *xExt;
 
+    (void)rq;
+    (void)Args;
+    (void)numArgs;
     /* Ideally, we'd like check if we have a visual (like TrueColor)
        or colormap (non default) that would invalidate the use of
        shared pixels.. but since the color obj is a wmShell with no
@@ -700,22 +697,24 @@ ColorCachePropertyExists(
 /**        color info successfully read in.                          **/
 /**                                                                  **/
 /**********************************************************************/
-
-/*ARGSUSED*/
 static void
 GetSelection(
         Widget w,
-        XtPointer client_data,	/* unused */
+        XtPointer client_data,
         Atom *selection,
-        Atom *type,		/* unused */
+        Atom *type,
         XtPointer val,
-        unsigned long *length,	/* unused */
-        int *format )		/* unused */
+        unsigned long *length,
+        int *format)
 {
     XmColorObj tmpColorObj = (XmColorObj)w;
     char * value = (char*) val ;
     int  i, screen;
 
+    (void)client_data;
+    (void)type;
+    (void)length;
+    (void)format;
     tmpColorObj->color_obj.done = TRUE;
 
     /** get screen number **/
@@ -1210,17 +1209,16 @@ UpdateXrm(
 /** XmeGetIconControlInfo                                            **/
 /**              Get information needed for XmpGetIconFileName       **/
 /**********************************************************************/
-
-/*ARGSUSED*/
 Boolean
 XmeGetIconControlInfo(
-        Screen  *screen,	/* unused */
+        Screen  *screen,
 	Boolean *useMaskRtn,
         Boolean *useMultiColorIconsRtn,
         Boolean *useIconFileCacheRtn)
 {
     XmColorObj tmpColorObj = _XmDefaultColorObj;
 
+    (void)screen;
     _XmProcessLock();
     /* return False if color srv is not running, or color obj not used */
     if (!tmpColorObj || !tmpColorObj->color_obj.colorIsRunning ||

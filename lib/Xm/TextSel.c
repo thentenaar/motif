@@ -111,16 +111,14 @@ static XContext _XmTextDNDContext = 0;
 static _XmTextPrimSelect *prim_select;
 static _XmInsertSelect insert_select;
 
-/*ARGSUSED*/
-static void
-SetPrimarySelection(Widget w,
-		    XtEnum op,	/* unused */
-		    XmTransferDoneCallbackStruct *ts) /* unused */
+static void SetPrimarySelection(Widget w, XtEnum op, XmTransferDoneCallbackStruct *ts)
 {
   XmTextWidget tw = (XmTextWidget) w;
   InputData data = tw->text.input->data;
   XmTextPosition cursorPos = tw->text.cursor_position;
 
+  (void)op;
+  (void)ts;
   _XmProcessLock();
   if (!prim_select) {
     _XmProcessUnlock();
@@ -138,19 +136,17 @@ SetPrimarySelection(Widget w,
 				     prim_select->time);
   }
   if (--prim_select->ref_count == 0) {
-    XtFree((char *)prim_select);
+    XtFree((XtPointer)prim_select);
     prim_select = NULL;
   }
   _XmProcessUnlock();
 }
 
 
-/*ARGSUSED*/
-static void
-CleanPrimarySelection(Widget w,
-		    XtEnum op,	/* unused */
-		    XmTransferDoneCallbackStruct *ts) /* unused */
+static void CleanPrimarySelection(Widget w, XtEnum op, XmTransferDoneCallbackStruct *ts)
 {
+  (void)op;
+  (void)ts;
   _XmProcessLock();
   if (!prim_select) {
     _XmProcessUnlock();
@@ -158,7 +154,7 @@ CleanPrimarySelection(Widget w,
   }
 
   if (--prim_select->ref_count == 0) {
-    XtFree((char *)prim_select);
+    XtFree((XtPointer)prim_select);
     prim_select = NULL;
   }
   _XmProcessUnlock();
@@ -181,7 +177,6 @@ TextSecondaryWrapper(Widget w, XtPointer closure,
 		    ds -> transfer_id);
 }
 
-/* ARGSUSED */
 static void
 InsertSelection(
         Widget w,
@@ -313,7 +308,6 @@ InsertSelection(
   _insert_select->done_status = True;
 }
 
-/* ARGSUSED */
 static void
 HandleInsertTargets(
         Widget w,
@@ -392,7 +386,6 @@ HandleInsertTargets(
 		  closure, _insert_select -> event -> time);
 }
 
-/* ARGSUSED */
 Boolean
 _XmTextConvert(
         Widget w,
@@ -653,7 +646,6 @@ _XmTextConvert(
   return TRUE;
 }
 
-/* ARGSUSED */
 void
 _XmTextLoseSelection(
         Widget w,
@@ -1131,7 +1123,6 @@ DoStuff(Widget w,
   ds->value = NULL;
 }
 
-/* ARGSUSED */
 static void
 DropDestroyCB(Widget      w,
 	      XtPointer   clientData,
@@ -1143,7 +1134,6 @@ DropDestroyCB(Widget      w,
   if (ts->client_data != NULL) XtFree((char*) ts->client_data);
 }
 
-/* ARGSUSED */
 static void
 DropTransferProc(Widget w,
 		 XtPointer closure,
@@ -1366,11 +1356,7 @@ _XmTextGetDropReciever(Widget w)
  * Transfer trait method implementation
  ********************************************/
 
-/*ARGSUSED*/
-static void
-TextConvertCallback(Widget w,
-		    XtPointer ignore, /* unused */
-		    XmConvertCallbackStruct *cs)
+static void TextConvertCallback(Widget w, XtPointer ignore, XmConvertCallbackStruct *cs)
 {
   enum { XmADELETE, XmA_MOTIF_LOSE_SELECTION,
 	 XmA_MOTIF_EXPORT_TARGETS, XmATEXT, XmACOMPOUND_TEXT,
@@ -1394,6 +1380,7 @@ TextConvertCallback(Widget w,
   int format;
   Atom atoms[XtNumber(atom_names)];
 
+  (void)ignore;
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
@@ -1464,27 +1451,19 @@ TextConvertCallback(Widget w,
 /************************************************
  * Free data allocated for destination callback
  ************************************************/
-
-/*ARGSUSED*/
-static void
-FreeLocationData(Widget w,     /* unused */
-		 XtEnum op,    /* unused */
-		 XmTransferDoneCallbackStruct *ts)
+static void FreeLocationData(Widget w, XtEnum op, XmTransferDoneCallbackStruct *ts)
 {
-  XmDestinationCallbackStruct *ds;
+	XmDestinationCallbackStruct *ds;
 
-  ds = _XmTransferGetDestinationCBStruct(ts->transfer_id);
-
-  XtFree((char*) ds->location_data);
-
-  ds->location_data = NULL;
+	(void)w;
+	(void)op;
+	ds = _XmTransferGetDestinationCBStruct(ts->transfer_id);
+	XtFree((XtPointer)ds->location_data);
+	ds->location_data = NULL;
 }
 
-/*ARGSUSED*/
-static void
-TextDestinationCallback(Widget w,
-			XtPointer closure, /* unused */
-			XmDestinationCallbackStruct *ds)
+static void TextDestinationCallback(Widget w, XtPointer closure,
+                                    XmDestinationCallbackStruct *ds)
 {
   enum { XmATARGETS, XmA_MOTIF_DROP, NUM_ATOMS };
   static char *atom_names[] = { XmSTARGETS, XmS_MOTIF_DROP };
@@ -1492,6 +1471,7 @@ TextDestinationCallback(Widget w,
   Atom atoms[XtNumber(atom_names)];
   XPoint DropPoint;
 
+  (void)closure;
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
@@ -1565,9 +1545,12 @@ TextDestinationCallback(Widget w,
 		    ds->location_data, ds->time);
 }
 
-void
-_XmTextInstallTransferTrait(void)
+void _XmTextInstallTransferTrait(void)
 {
-  XmeTraitSet((XtPointer)xmTextWidgetClass, XmQTtransfer,
-	      (XtPointer) &TextTransfer);
+	XmeTraitSet(
+		(XtPointer)xmTextWidgetClass,
+		XmQTtransfer,
+		(XtPointer)&TextTransfer
+	);
 }
+

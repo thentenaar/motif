@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,12 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
- 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: UniqueEvnt.c /main/14 1996/11/25 11:33:58 pascale $"
@@ -39,7 +39,6 @@ static char rcsid[] = "$XConsortium: UniqueEvnt.c /main/14 1996/11/25 11:33:58 p
 #define XmCHECK_UNIQUENESS 1
 #define XmRECORD_EVENT     2
 
-
 /* XmUniqueStamp structure is per display */
 typedef struct _XmUniqueStampRec
 {
@@ -51,9 +50,9 @@ typedef struct _XmUniqueStampRec
 
 /********    Static Function Declarations    ********/
 
-static Time ExtractTime( 
+static Time ExtractTime(
                         XEvent *event) ;
-static Boolean ManipulateEvent( 
+static Boolean ManipulateEvent(
                         XEvent *event,
                         int action) ;
 static XmUniqueStamp GetUniqueStamp(
@@ -72,7 +71,7 @@ static void UniqueStampDisplayDestroyCallback(
  *     Extract the time field from the event structure.
  *
  ************************************************************************/
-static Time 
+static Time
 ExtractTime(
         XEvent *event )
 {
@@ -92,12 +91,12 @@ Later(unsigned long recorded,
   long normalizedNew;
 
   /* The pathogenic cases for this calculation involve numbers
-     very close to 0 or ULONG_MAX.  
+     very close to 0 or ULONG_MAX.
 
      So the way we do it is by normalizing to 0 (signed).  That
      way the differences are +/- in the appropriate way.
-     
-     These numbers are defined as a unsigned long.  Please 
+
+     These numbers are defined as a unsigned long.  Please
      remember that when changing this code.
      */
 
@@ -121,9 +120,9 @@ GetUniqueStamp(
     {
       uniqueStamp = (XmUniqueStamp) XtMalloc(sizeof(XmUniqueStampRec));
 
-      ((XmDisplayInfo *)(xmDisplay->display.displayInfo))->UniqueStamp = 
+      ((XmDisplayInfo *)(xmDisplay->display.displayInfo))->UniqueStamp =
 	(XtPointer)uniqueStamp;
-      
+
       XtAddCallback((Widget)xmDisplay, XtNdestroyCallback,
 		      UniqueStampDisplayDestroyCallback, (XtPointer) NULL);
 
@@ -135,15 +134,16 @@ GetUniqueStamp(
   return uniqueStamp;
 }
 
-/*ARGSUSED*/
 static void
 UniqueStampDisplayDestroyCallback
         ( Widget w,
-        XtPointer client_data,	/* unused */
-        XtPointer call_data )	/* unused */
+        XtPointer client_data,
+        XtPointer call_data)
 {
   XmDisplay xmDisplay = (XmDisplay)XmGetXmDisplay(XtDisplay(w));
 
+  (void)client_data;
+  (void)call_data;
   if ((XmDisplay)NULL != xmDisplay)
   {
     XmUniqueStamp uniqueStamp = (XmUniqueStamp)((XmDisplayInfo *)
@@ -158,7 +158,7 @@ UniqueStampDisplayDestroyCallback
   }
 }
 
-static Boolean 
+static Boolean
 ManipulateEvent(
         XEvent *event,
         int action )
@@ -175,16 +175,16 @@ ManipulateEvent(
 	 * these map to the same widget (menus).
 	 * Also, ignore an event which has already been processed by
 	 * another menu component.
-	 * 
+	 *
 	 * Changed D.Rand 6/26/92 Discussion:
 	 *
 	 * This used to be done by making an exact comparison with
 	 * a recorded event.  But there are many times when we can
 	 * get an event,  but not the original event.  This cuts
 	 * down on some distributed processing in the menu
-	 * system.  
+	 * system.
 	 *
-	 * So now we compare the serial number of the 
+	 * So now we compare the serial number of the
 	 * examined event against the recorded event.  This needs
 	 * to be done carefully to include the case where the
 	 * serial number wraps
@@ -196,12 +196,12 @@ ManipulateEvent(
 	 * if the user is very fast and therefore clicks while no
 	 * protocol request occurs.  XSentEvent would cause an
 	 * increment,  so we needn't worry over synthetic events
-	 * causing problems.  
+	 * causing problems.
 	 *
 	 * So if the serial numbers match,  we use the timestamps.
 	 */
 
-	if ( Later(uniqueStamp->serial, event->xany.serial) 
+	if ( Later(uniqueStamp->serial, event->xany.serial)
 	     ||  ( uniqueStamp->serial == event->xany.serial &&
 		   Later(uniqueStamp->time, event->xbutton.time)))
 	  return (TRUE);
@@ -226,25 +226,19 @@ ManipulateEvent(
    }
 }
 
-
-/*
+/**
  * Check to see if this event has already been processed.
  */
-Boolean 
-_XmIsEventUnique(
-        XEvent *event )
+Boolean _XmIsEventUnique(XEvent *event)
 {
-   return (ManipulateEvent (event, XmCHECK_UNIQUENESS));
+	return ManipulateEvent(event, XmCHECK_UNIQUENESS);
 }
 
-
-
-/*
+/**
  * Record the specified event, so that it will not be reprocessed.
  */
-void 
-_XmRecordEvent(
-        XEvent *event )
+void _XmRecordEvent(XEvent *event)
 {
-   ManipulateEvent (event, XmRECORD_EVENT);
+	ManipulateEvent(event, XmRECORD_EVENT);
 }
+

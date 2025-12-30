@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: DropTrans.c /main/15 1996/05/02 13:50:19 pascale $"
@@ -30,48 +31,27 @@ static char rcsid[] = "$XConsortium: DropTrans.c /main/15 1996/05/02 13:50:19 pa
 #include <config.h>
 #endif
 
-
+#include <stdio.h>
 #include <Xm/DropTransP.h>
 #include <Xm/DragCP.h>
 #include "XmI.h"
 #include "DragCI.h"
 #include "DragICCI.h"
-#include <stdio.h>
 
-/* Deactivated the fix, since it causes crash.
-   For details see http://bugs.motifzone.net/long_list.cgi?buglist=1361
-
-   #define CR1146
-*/
-
-#ifdef CR1146
-static int isValidStartDropTimerId = 0;
-#endif
 /********    Static Function Declarations    ********/
 
-static void ClassPartInit(
-                        WidgetClass wc) ;
+static void ClassPartInit(WidgetClass wc);
 static void Initialize(
                         Widget rw,
                         Widget nw,
                         ArgList args,
                         Cardinal *num_args) ;
-static Boolean SetValues(
-                        Widget cw,
-                        Widget rw,
-                        Widget nw,
-                        ArgList args,
-                        Cardinal *num_args) ;
-static void Destroy(
-                        Widget w) ;
-static void SourceNotifiedCB(
-                        Widget w,
-                        XtPointer client_data,
-                        Atom *selection,
-                        Atom *type,
-                        XtPointer value,
-                        unsigned long *length,
-                        int *format) ;
+static Boolean SetValues(Widget cw, Widget rw, Widget nw, ArgList args,
+                         Cardinal *num_args);
+static void Destroy(Widget w);
+static void SourceNotifiedCB(Widget w, XtPointer client_data, Atom *selection,
+                             Atom *type, XtPointer value, unsigned long *length,
+                             int *format);
 static void TerminateTransfer(
                         XmDropTransferObject dt,
                         Atom *selection) ;
@@ -94,10 +74,7 @@ static void AddDropTransfer(
                         Widget widget,
                         XmDropTransferEntry transfers,
                         Cardinal num_transfers) ;
-static void DragContextDestroyCB(
-			Widget widget,
-			XtPointer client,
-			XtPointer call) ;
+static void DragContextDestroyCB(Widget widget, XtPointer client, XtPointer call);
 
 /********    End Static Function Declarations    ********/
 
@@ -181,14 +158,11 @@ externaldef(xmdroptransferobjectclass) WidgetClass
 	xmDropTransferObjectClass = (WidgetClass)
 		&xmDropTransferClassRec;
 
-/*ARGSUSED*/
-static void
-ClassPartInit(
-        WidgetClass wc )
+static void ClassPartInit(WidgetClass wc)
 {
+	(void)wc;
 }
 
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
@@ -232,25 +206,22 @@ Initialize(
 	dtp->cur_client_data = (XtPointer *) NULL;
 }
 
-/*ARGSUSED*/
-static Boolean
-SetValues(
-        Widget cw,
-        Widget rw,
-        Widget nw,
-        ArgList args,
-        Cardinal *num_args )
+static Boolean SetValues(Widget cw, Widget rw, Widget nw, ArgList args,
+                         Cardinal *num_args)
 {
 	/* Stub */
 	/* !!! Should disallow any changes !!! */
+	(void)cw;
+	(void)rw;
+	(void)nw;
+	(void)args;
+	(void)num_args;
 	return True;
 }
 
-static void
-Destroy(
-        Widget w )
+static void Destroy(Widget w)
 {
-    XmDropTransferObject new_w = (XmDropTransferObject) w;
+    XmDropTransferObject new_w = (XmDropTransferObject)w;
     Cardinal 		 i;
     XmDragContext	 dc;
 
@@ -267,28 +238,24 @@ Destroy(
 	  XmDropTransferList	currEntry =
 	    &(new_w->dropTransfer.drop_transfer_lists[i]);
 
-	  XtFree((char *)currEntry->transfer_list);
+	  XtFree((XtPointer)currEntry->transfer_list);
       }
-    XtFree((char *)new_w->dropTransfer.drop_transfer_lists);
+    XtFree((XtPointer)new_w->dropTransfer.drop_transfer_lists);
 }
 
-/*ARGSUSED*/
-static void
-SourceNotifiedCB(
-        Widget w,
-        XtPointer client_data,
-        Atom *selection,
-        Atom *type,
-        XtPointer value,
-        unsigned long *length,
-        int *format )
+static void SourceNotifiedCB(Widget w, XtPointer client_data, Atom *selection,
+                             Atom *type, XtPointer value, unsigned long *length,
+                             int *format)
 {
-    XmDropTransferObject	dt = (XmDropTransferObject)client_data;
+	XmDropTransferObject dt = (XmDropTransferObject)client_data;
 
-    if (value != NULL)
-      XtFree((char *) value);
-    /* self-immolution aaaaaaiii */
-    XtDestroyWidget((Widget)dt);
+	/* self-immolution aaaaaaiii */
+	(void)selection;
+	(void)type;
+	(void)length;
+	(void)format;
+	XtFree(value);
+	XtDestroyWidget((Widget)dt);
 }
 
 static void
@@ -415,7 +382,6 @@ ProcessTransferEntry(
  * This routine is called with the shell as the widget and us as the
  * client data. We can't pass ourselves since we're not windowed
  */
-/*ARGSUSED*/
 static void
 DropTransferSelectionCB(
         Widget w,
@@ -426,16 +392,18 @@ DropTransferSelectionCB(
         unsigned long *length,
         int *format )
 {
-	XmDropTransferObject dt = (XmDropTransferObject) client_data;
+	XmDropTransferObject dt = (XmDropTransferObject)client_data;
 	XmDropTransferPart *dtp =
 		(XmDropTransferPart *) &(dt->dropTransfer);
 	XmDropTransferList	tl =
 		&(dtp->drop_transfer_lists[dtp->cur_drop_transfer_list]);
 
-
-	(*(dtp->transfer_callback))
-		((Widget)dt, tl->transfer_list[dtp->cur_xfer].client_data,
-			selection, type, value, length, format);
+	(void)w;
+	if (dtp->transfer_callback && tl->transfer_list) {
+		(*(dtp->transfer_callback))
+			((Widget)dt, tl->transfer_list[dtp->cur_xfer].client_data,
+				selection, type, value, length, format);
+	}
 
        /* The transfer list needs to be reassigned at this point in case
 	* an XmDropTransferAdd() was called in the callback.
@@ -450,8 +418,8 @@ DropTransferSelectionCB(
 
 		if (dtp->cur_xfer == tl->num_transfers)
 		{
-			XtFree((char *)dtp->cur_targets);
-			XtFree((char *)dtp->cur_client_data);
+			XtFree((XtPointer)dtp->cur_targets);
+			XtFree((XtPointer)dtp->cur_client_data);
 
 			if (++(dtp->cur_drop_transfer_list) <
 				dtp->num_drop_transfer_lists)
@@ -465,12 +433,7 @@ DropTransferSelectionCB(
 	}
 }
 
-
-/*ARGSUSED*/
-static void
-StartDropTimer(
-        XtPointer clientData,
-        XtIntervalId *id )
+static void StartDropTimer(XtPointer clientData, XtIntervalId *id)
 {
 	XmDropTransferObject dt = (XmDropTransferObject)clientData;
 	XmDropTransferPart *dtp;
@@ -478,11 +441,7 @@ StartDropTimer(
 	int i;
 	Atom selection;
 
-#ifdef CR1146
-    isValidStartDropTimerId = 0;
-#endif
-
-
+	(void)id;
 	dtp = (XmDropTransferPart *) &(dt->dropTransfer);
 
 	if (dtp->num_drop_transfer_lists)
@@ -500,17 +459,11 @@ StartDropTimer(
 	}
 }
 
-static void
-DragContextDestroyCB(
-        Widget widget,
-        XtPointer client,
-        XtPointer call)
+static void DragContextDestroyCB(Widget widget, XtPointer client, XtPointer call)
 {
-        XtIntervalId timer = (XtIntervalId) client;
-#ifdef CR1146
-        if (!isValidStartDropTimerId) return;
-#endif
-        XtRemoveTimeOut(timer);
+	(void)widget;
+	(void)call;
+	XtRemoveTimeOut((XtIntervalId)client);
 }
 
 static Widget
@@ -552,12 +505,6 @@ StartDropTransfer(
 
 	timer = XtAppAddTimeOut(XtWidgetToApplicationContext( (Widget)dt),
 				0, StartDropTimer, (XtPointer)dt);
-#ifdef CR1146
-    if (isValidStartDropTimerId) {
-        printf("Motif Error in file %s at line %d: A DropTimer is already active,\n", __FILE__, __LINE__);
-    }
-    isValidStartDropTimerId = 1;
-#endif
 	XtAddCallback(refWidget, XmNdestroyCallback, DragContextDestroyCB,
 		      (XtPointer)timer);
 
@@ -630,5 +577,4 @@ XmDropTransferAdd(
 		(widget, transfers, num_transfers));
 	_XmAppUnlock(app);
 }
-
 

@@ -31,7 +31,6 @@ static char rcsid[] = "$XConsortium: DragIcon.c /main/17 1996/10/14 10:44:37 pas
 #include <config.h>
 #endif
 
-
 #include <Xm/Xm.h>		/* To make cpp on Sun happy. CR 5943 */
 #include <Xm/DisplayP.h>
 #include <Xm/DragIconP.h>
@@ -845,14 +844,12 @@ externaldef(dragIconobjectclass) WidgetClass
  *  DragIconInitialize
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 DragIconInitialize(
-        Widget req,		/* unused */
+        Widget req,
         Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *numArgs )	/* unused */
+        ArgList args,
+        Cardinal *numArgs )
 {
     XmDragIconObject	dragIcon = (XmDragIconObject)new_w;
     Screen		*screen = XtScreenOfObject(XtParent(dragIcon));
@@ -860,6 +857,9 @@ DragIconInitialize(
     XmDisplay		xmdpy = (XmDisplay) XmGetXmDisplay(display);
     Boolean		use_alt = xmdpy -> display.enable_drag_icon;
 
+    (void)req;
+    (void)args;
+    (void)numArgs;
     dragIcon->drag.isDirty = False;
     if (dragIcon->drag.pixmap == XmUNSPECIFIED_PIXMAP) {
 
@@ -1093,15 +1093,13 @@ _XmDragIconClean(
  *  SetValues
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(
     Widget	current,
-    Widget	req,		/* unused */
+    Widget	req,
     Widget	new_w,
-    ArgList	args,		/* unused */
-    Cardinal	*num_args)	/* unused */
+    ArgList	args,
+    Cardinal	*num_args)
 {
     XmDragIconObject	newIcon = (XmDragIconObject) new_w;
     XmDragIconObject	oldIcon = (XmDragIconObject) current;
@@ -1109,7 +1107,9 @@ SetValues(
     /*
      *  Mark the icon as dirty if any of its resources have changed.
      */
-
+    (void)req;
+    (void)args;
+    (void)num_args;
     if ((newIcon->drag.depth != oldIcon->drag.depth) ||
 	(newIcon->drag.pixmap != oldIcon->drag.pixmap) ||
 	(newIcon->drag.mask != oldIcon->drag.mask) ||
@@ -1179,9 +1179,6 @@ Destroy(
     _XmScreenRemoveFromCursorCache (dragIcon);
 }
 
-
-
-/* ARGSUSED */
 static void
 ScreenObjectDestroy(
         Widget w,

@@ -168,7 +168,6 @@ static XmConst XmDefaultBindingStringRec fallbackBindingStrings[] =
       _XmVirtKeys_tekFallbackBindingString }
 };
 
-/*ARGSUSED*/
 static Boolean
 CvtStringToVirtualBinding(Display    *dpy,
 			  XrmValuePtr args,

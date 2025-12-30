@@ -1,5 +1,5 @@
 /* $XConsortium: Direction.c /main/6 1996/03/28 15:14:33 daniel $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,17 +20,11 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
  */
-/*
- * HISTORY
- */
-
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include "XmI.h"
 #include <Xm/ManagerP.h>
@@ -46,21 +40,21 @@
  *    the layout direction resource dependent on the parent's value.
  *
  *********************************************************************/
-/*ARGSUSED*/
-void 
+void
 _XmDirectionDefault(Widget widget,
-		    int offset, /* unused */
+		    int offset,
 		    XrmValue *value )
 {
   static XmDirection direction;
-  
+
+  (void)offset;
   value->addr = (XPointer) &direction;
 
   /* This is an ugly hack, but what to do when user sets stringDirection
      in resource file. Dependent on that stringDirection comes before
      layoutDirection in resource list. Part of the reason is that this is
      the same field. Yuck! */
-  if (XmIsManager(widget) && 
+  if (XmIsManager(widget) &&
       (((XmManagerWidget)widget)->manager.string_direction !=
        XmSTRING_DIRECTION_DEFAULT))
     direction =
@@ -70,36 +64,36 @@ _XmDirectionDefault(Widget widget,
     direction = _XmGetLayoutDirection(XtParent(widget));
 }
 
-/*ARGSUSED*/
-void 
+void
 _XmFromLayoutDirection(
         Widget wid,
-        int resource_offset,	/* unused */
+        int resource_offset,
         XtArgVal *value )
-{   
+{
+  (void)resource_offset;
   if (XmIsManager(wid))
     *value = (XtArgVal)XmDirectionToStringDirection((XmDirection)*value);
   else if (XmIsLabel(wid) || XmIsLabelGadget(wid) || XmIsList(wid))
-    *value = 
+    *value =
       (XtArgVal)XmDirectionToStringDirection(_XmGetLayoutDirection(wid));
 }
 
-/*ARGSUSED*/
-XmImportOperator 
+XmImportOperator
 _XmToLayoutDirection(
         Widget wid,
-        int resource_offset,	/* unused */
+        int resource_offset,
         XtArgVal *value )
-{   
+{
+  (void)resource_offset;
   if (XmIsManager(wid)) {
     *value = (XtArgVal)XmStringDirectionToDirection((XmStringDirection)*value);
     return XmSYNTHETIC_LOAD;
   } else if (XmIsLabel(wid) || XmIsList(wid)) {
-    XmPrim_layout_direction(((XmPrimitiveWidget)wid)) = 
+    XmPrim_layout_direction(((XmPrimitiveWidget)wid)) =
       XmStringDirectionToDirection((XmStringDirection)*value);
     return XmSYNTHETIC_NONE;
   } else if (XmIsLabelGadget(wid)) {
-    ((XmGadget)wid)->gadget.layout_direction = 
+    ((XmGadget)wid)->gadget.layout_direction =
       XmStringDirectionToDirection((XmStringDirection)*value);
     return XmSYNTHETIC_NONE;
   }
@@ -109,7 +103,7 @@ _XmToLayoutDirection(
 
 
 
-
+
 XmStringDirection
 XmDirectionToStringDirection(XmDirection dir)
 {
@@ -119,7 +113,7 @@ XmDirectionToStringDirection(XmDirection dir)
     return XmSTRING_DIRECTION_R_TO_L;
   return XmSTRING_DIRECTION_DEFAULT;
 }
-
+
 XmDirection
 XmStringDirectionToDirection(XmStringDirection dir)
 {
@@ -148,13 +142,13 @@ _XmGetLayoutDirection( Widget w )
     return layoutT->get_direction(w);
   else
     return XmLEFT_TO_RIGHT;
-} 
+}
 
 
 /* Handle compatibility with XmStringDirection */
 #define Fixdir(d) (((d) <= 1) ? (~((d)+1)) : ((d) | XmDIRECTION_IGNORED))
 
-Boolean 
+Boolean
 XmDirectionMatch(XmDirection d1,
 		 XmDirection d2)
 {
@@ -164,7 +158,7 @@ XmDirectionMatch(XmDirection d1,
 	  ((XmDirection)(d1 & d2) == (XmDirection)d2));
 }
 
-Boolean 
+Boolean
 XmDirectionMatchPartial(XmDirection d1,
 		 XmDirection d2,
 		 XmDirection dmask)

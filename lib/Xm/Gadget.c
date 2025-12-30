@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: Gadget.c /main/17 1997/07/07 11:38:57 cshi $"
@@ -29,7 +30,6 @@ static char rcsid[] = "$TOG: Gadget.c /main/17 1997/07/07 11:38:57 cshi $"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <ctype.h>
 #include <stdio.h>
@@ -58,26 +58,14 @@ static char rcsid[] = "$TOG: Gadget.c /main/17 1997/07/07 11:38:57 cshi $"
 #include "TraversalI.h"
 #include "ToolTipI.h"
 
-
-
 #define INVALID_UNIT_TYPE 255
 
 #define MESSAGE1	_XmMMsgGadget_0000
 
 /********    Static Function Declarations    ********/
-
-static void GetHighlightColor(
-                        Widget w,
-                        int offset,
-                        XtArgVal *value) ;
-static void GetTopShadowColor(
-                        Widget w,
-                        int offset,
-                        XtArgVal *value) ;
-static void GetBottomShadowColor(
-                        Widget w,
-                        int offset,
-                        XtArgVal *value) ;
+static void GetHighlightColor(Widget w, int offset, XtArgVal *value);
+static void GetTopShadowColor(Widget w, int offset, XtArgVal *value);
+static void GetBottomShadowColor(Widget w, int offset, XtArgVal *value);
 static void ClassInitialize( void ) ;
 static void ClassPartInit(
                         WidgetClass g) ;
@@ -114,16 +102,10 @@ static void GetColors(Widget widget,
 		      XmAccessColorData color_data);
 static unsigned char GetUnitType(Widget widget);
 
-static void GetToolTipString (Widget wid,
-               int resource, /* unused */
-               XtArgVal * value);
-
-static XmImportOperator SetToolTipString (Widget wid,
-               int resource, /* unused */
-               XtArgVal * value);
+static void GetToolTipString(Widget wid, int resource, XtArgVal *value);
+static XmImportOperator SetToolTipString(Widget wid, int resource, XtArgVal *value);
 
 /********    End Static Function Declarations    ********/
-
 
 
 /*  Resource definitions for Subclasses of Gadget */
@@ -389,41 +371,22 @@ static XmConst XmSpecifyLayoutDirectionTraitRec gadLDT = {
  *  The following functions are synthetic hooks.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
-static void
-GetHighlightColor(
-        Widget w,
-	int offset,		/* unused */
-	XtArgVal *value )
+static void GetHighlightColor(Widget w, int offset, XtArgVal *value)
 {
-    XmManagerWidget mw = (XmManagerWidget) XtParent(w);
-
-    *value = (XtArgVal) mw->manager.highlight_color;
+	(void)offset;
+	*value = (XtArgVal)((XmManagerWidget)XtParent(w))->manager.highlight_color;
 }
 
-/*ARGSUSED*/
-static void
-GetTopShadowColor(
-        Widget w,
-	int offset,		/* unused */
-	XtArgVal *value )
+static void GetTopShadowColor(Widget w, int offset, XtArgVal *value)
 {
-    XmManagerWidget mw = (XmManagerWidget) XtParent(w);
-
-    *value = (XtArgVal) mw->manager.top_shadow_color;
+	(void)offset;
+	*value = (XtArgVal)((XmManagerWidget)XtParent(w))->manager.top_shadow_color;
 }
 
-/*ARGSUSED*/
-static void
-GetBottomShadowColor(
-        Widget w,
-	int offset,		/* unused */
-	XtArgVal *value )
+static void GetBottomShadowColor(Widget w, int offset, XtArgVal *value)
 {
-    XmManagerWidget mw = (XmManagerWidget) XtParent(w);
-
-    *value = (XtArgVal) mw->manager.bottom_shadow_color;
+	(void)offset;
+	*value = (XtArgVal)((XmManagerWidget)XtParent(w))->manager.bottom_shadow_color;
 }
 
 /************************************************************************
@@ -518,7 +481,6 @@ ClassPartInit(
 *  SecondaryObjectCreate
 *
 ************************************************************************/
-/* ARGSUSED */
 static void
 SecondaryObjectCreate(
         Widget req,
@@ -974,32 +936,25 @@ GetColors(Widget w,
     color_data->bottom_shadow_color = parent->manager.bottom_shadow_color;
 }
 
-static unsigned char
-GetUnitType(Widget w)
+static unsigned char GetUnitType(Widget w)
 {
-    return ((XmGadget) w)->gadget.unit_type ;
+	return ((XmGadget) w)->gadget.unit_type ;
 }
 
-static XmDirection
-GetDirection(Widget w)
+static XmDirection GetDirection(Widget w)
 {
-  return ((XmGadget)(w))->gadget.layout_direction;
+	return ((XmGadget)(w))->gadget.layout_direction;
 }
 
-static void
-GetToolTipString(Widget wid,
-                 int resource, /* unused */
-                 XtArgVal * value)
+static void GetToolTipString(Widget wid, int resource, XtArgVal *value)
 {
-    XmString string = XmGetToolTipString (wid);
-    *value = (XtArgVal) string;
+	(void)resource;
+	*value = (XtArgVal)XmGetToolTipString(wid);
 }
 
-XmImportOperator
-SetToolTipString(Widget wid,
-                 int resource, /* unused */
-                 XtArgVal * value)
+XmImportOperator SetToolTipString(Widget wid, int resource, XtArgVal *value)
 {
-    XmSetToolTipString (wid, (XmString)*value);
-    return XmSYNTHETIC_NONE;
+	XmSetToolTipString(wid, (XmString)*value);
+	return XmSYNTHETIC_NONE;
 }
+

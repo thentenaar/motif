@@ -37,7 +37,6 @@ static char rcsid[] = "$XConsortium: ShellE.c /main/10 1995/10/25 20:19:54 cde-s
 #include <Xm/ScreenP.h>
 #include "XmI.h"
 
-
 /********    Static Function Declarations    ********/
 
 static void ShellClassPartInitialize(
@@ -154,7 +153,6 @@ ShellClassPartInitialize(
  *  StructureNotifyHandler
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 StructureNotifyHandler(
         Widget wid,
@@ -315,3 +313,4 @@ StructureNotifyHandler(
 	(*resize)((Widget) w);
     }
 }
+

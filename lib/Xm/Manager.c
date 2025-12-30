@@ -1145,13 +1145,12 @@ DeleteChild(
  *	the gadgets.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 ManagerMotion(
         Widget wid,
-        XtPointer closure,	/* unused */
+        XtPointer closure,
         XEvent *event,
-        Boolean *cont )		/* unused */
+        Boolean *cont)
 {
    XmManagerWidget mw = (XmManagerWidget) wid ;
    XmGadget gadget;
@@ -1188,7 +1187,8 @@ ManagerMotion(
      * Prior to 1.1, xcrossing.focus was used, but this proved incorrect,
      * as the 1.1 comment above describes.
      */
-
+   (void)closure;
+   (void)cont;
    if (event->xmotion.subwindow != 0 || !mw->manager.has_focus)
       return;
 
@@ -1242,13 +1242,12 @@ ManagerMotion(
  *	gadgets.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 ManagerEnter(
         Widget wid,
-        XtPointer closure,	/* unused */
+        XtPointer closure,
         XEvent *event,
-        Boolean *cont )		/* unused */
+        Boolean *cont)
 {
    XmManagerWidget mw = (XmManagerWidget) wid ;
    XmGadget gadget;
@@ -1260,6 +1259,8 @@ ManagerEnter(
     */
 
     /* Toggle to entered state */
+    (void)closure;
+    (void)cont;
     mw->manager.has_focus = True;
 
    /*
@@ -1298,13 +1299,12 @@ ManagerEnter(
  *	gadgets and the dispatching of these events to the gadgets.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 ManagerLeave(
         Widget wid,
-        XtPointer closure,	/* unused */
+        XtPointer closure,
         XEvent *event,
-        Boolean *cont )		/* unused */
+        Boolean *cont)
 {
    XmManagerWidget mw = (XmManagerWidget) wid ;
    XmGadget oldGadget;
@@ -1315,6 +1315,8 @@ ManagerLeave(
     */
 
     /* Toggle to leave state */
+    (void)closure;
+    (void)cont;
     mw->manager.has_focus = False;
 
    oldGadget = (XmGadget) mw->manager.highlighted_widget;
@@ -1379,17 +1381,19 @@ AddMotionHandlers(
  *	event handlers are checked to see if they need to be removed.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 ConstraintInitialize(
-        Widget request,		/* unused */
+        Widget request,
         Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal * num_args )	/* unused */
+        ArgList args,
+        Cardinal * num_args)
 {
    XmGadget g;
    XmManagerWidget parent;
 
+   (void)request;
+   (void)args;
+   (void)num_args;
    if (!XtIsRectObj(new_w)) return;
 
    parent = (XmManagerWidget) new_w->core.parent;
@@ -1512,20 +1516,22 @@ ConstraintDestroy(
  *	gadget event handling.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 ConstraintSetValues(
         Widget current,
-        Widget request,		/* unused */
+        Widget request,
         Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal * num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
    XmGadget currentg, newg;
    XmManagerWidget parent;
    unsigned int motion_events;
 
-   if (!XtIsRectObj(new_w)) return(FALSE);
+   (void)request;
+   (void)args;
+   (void)num_args;
+   if (!XtIsRectObj(new_w)) return False;
 
    /*  If the child is a gadget and its event mask has changed with  */
    /*  respect to the event types which need motion events on the    */
@@ -1674,20 +1680,21 @@ GetColors(Widget w,
  **
  ****************************************************************
  ****************************************************************/
-
-/*ARGSUSED*/
 void
 _XmGadgetTraversePrevTabGroup(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
   Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
   Boolean button_tab;
   XmDisplay xm_dpy;
 
-  if (ref_wid == NULL)
+  (void)event;
+  (void)params;
+  (void)num_params;
+  if (!ref_wid)
     ref_wid = wid ;
 
   xm_dpy = (XmDisplay) XmGetXmDisplay(XtDisplayOfObject(ref_wid));
@@ -1699,20 +1706,22 @@ _XmGadgetTraversePrevTabGroup(
     _XmMgrTraversal(ref_wid,  XmTRAVERSE_PREV_TAB_GROUP);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseNextTabGroup(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
   Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
   Boolean button_tab;
   XmDisplay xm_dpy;
 
-  if (ref_wid == NULL)
-    ref_wid = wid ;
+  (void)event;
+  (void)params;
+  (void)num_params;
+  if (!ref_wid)
+    ref_wid = wid;
 
   xm_dpy = (XmDisplay) XmGetXmDisplay(XtDisplayOfObject(ref_wid));
   button_tab = xm_dpy->display.enable_button_tab;
@@ -1723,150 +1732,159 @@ _XmGadgetTraverseNextTabGroup(
     _XmMgrTraversal(ref_wid, XmTRAVERSE_NEXT_TAB_GROUP);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseCurrent(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
-  Widget child ;
+	Widget child;
 
-  child = (Widget) _XmInputForGadget(wid, event->xbutton.x, event->xbutton.y);
-  XmProcessTraversal(child, XmTRAVERSE_CURRENT) ;
+	(void)params;
+	(void)num_params;
+	child = (Widget)_XmInputForGadget(wid, event->xbutton.x, event->xbutton.y);
+	XmProcessTraversal(child, XmTRAVERSE_CURRENT);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseLeft(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_LEFT) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_LEFT);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseRight(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_RIGHT) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_RIGHT);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseUp(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_UP) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_UP);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseDown(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_DOWN) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_DOWN);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseNext(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_NEXT) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_NEXT);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraversePrev(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_PREV) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_PREV);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetTraverseHome(
         Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        XEvent *event,
+        String *params,
+        Cardinal *num_params)
 {
-  Widget ref_wid = ((XmManagerWidget) wid)->manager.active_child ;
+	Widget ref_wid = ((XmManagerWidget)wid)->manager.active_child;
 
-  if(    ref_wid == NULL    )
-    {
-      ref_wid = wid ;
-    }
-  _XmMgrTraversal( ref_wid, XmTRAVERSE_HOME) ;
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (!ref_wid)
+		ref_wid = wid;
+	_XmMgrTraversal(ref_wid, XmTRAVERSE_HOME);
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetSelect(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
    XmManagerWidget mw = (XmManagerWidget) wid ;
             Widget child ;
 
+    (void)params;
+    (void)num_params;
     if(    _XmGetFocusPolicy( (Widget) mw) == XmEXPLICIT    )
     {
         child = mw->manager.active_child ;
@@ -1922,17 +1940,18 @@ _XmManagerParentCancel(
     _XmParentProcess( mw, (XmParentProcessData) &pp_data) ;
     }
 
-/*ARGSUSED*/
 void
 _XmGadgetButtonMotion(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
    XmManagerWidget mw = (XmManagerWidget) wid ;
             Widget child ;
 
+    (void)params;
+    (void)num_params;
     if(    _XmGetFocusPolicy( (Widget) mw) == XmEXPLICIT    )
     {
         child = mw->manager.active_child ;
@@ -1950,17 +1969,18 @@ _XmGadgetButtonMotion(
     return ;
     }
 
-/*ARGSUSED*/
 void
 _XmGadgetKeyInput(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
             XmManagerWidget mw = (XmManagerWidget) wid ;
             Widget child ;
 
+    (void)params;
+    (void)num_params;
     if(    _XmGetFocusPolicy( (Widget) mw) == XmEXPLICIT    )
     {
         child = mw->manager.active_child ;
@@ -1979,17 +1999,18 @@ _XmGadgetKeyInput(
     return ;
     }
 
-/*ARGSUSED*/
 void
 _XmGadgetArm(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
     XmManagerWidget mw = (XmManagerWidget) wid ;
     XmGadget gadget;
 
+    (void)params;
+    (void)num_params;
     if ((gadget = _XmInputForGadget( (Widget) mw, event->xbutton.x,
 				    event->xbutton.y)) != NULL)
     {
@@ -2008,18 +2029,19 @@ _XmGadgetArm(
     mw->manager.eligible_for_multi_button_event = NULL;
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetDrag(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
     XmManagerWidget mw = (XmManagerWidget) wid ;
     XmGadget gadget;
 
     /* CR 5141: Don't let multi-button drags cause confusion. */
+    (void)params;
+    (void)num_params;
     if ( !(event->xbutton.state &
          ~((Button1Mask >> 1) << event->xbutton.button) &
          (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask))
@@ -2033,13 +2055,12 @@ _XmGadgetDrag(
     mw->manager.eligible_for_multi_button_event = NULL;
 }
 
-/*ARGSUSED*/
 void
 _XmGadgetActivate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
         XmManagerWidget mw = (XmManagerWidget) wid ;
         XmGadget gadget;
@@ -2047,26 +2068,29 @@ _XmGadgetActivate(
     /* we emulate automatic grab with owner_events = false by sending
      * the button up to the button down gadget
      */
+    (void)params;
+    (void)num_params;
     if ((gadget = mw->manager.selected_gadget) != NULL)
     {
         _XmDispatchGadgetInput( (Widget) gadget, event, XmACTIVATE_EVENT);
         mw->manager.selected_gadget = NULL;
         mw->manager.eligible_for_multi_button_event = gadget;
         }
-    }
+}
 
 
-/*ARGSUSED*/
 void
 _XmManagerHelp(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
         XmManagerWidget mw = (XmManagerWidget) wid ;
 	Widget widget;
 
+    (void)params;
+    (void)num_params;
 	if (!_XmIsEventUnique(event))
 	   return;
 

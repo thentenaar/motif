@@ -345,7 +345,7 @@ static XmBaseClassExtRec       cascadeBBaseClassExtRec = {
     NULL,                                     /* ext_resources        */
     NULL,                                     /* compiled_ext_resources*/
     0,                                        /* num_ext_resources    */
-    FALSE,                                    /* use_sub_resources    */
+    False,                                    /* use_sub_resources    */
     XmInheritWidgetNavigable,                 /* widgetNavigable      */
     XmInheritFocusChange,                     /* focusChange          */
 };
@@ -359,7 +359,7 @@ externaldef(xmcascadebuttonclassrec) XmCascadeButtonClassRec xmCascadeButtonClas
 	sizeof (XmCascadeButtonWidgetRec),	/* size of Pulldown widget */
 	ClassInitialize,			/* class init proc */
 	ClassPartInitialize,			/* chained class init */
-	FALSE,					/* class is not init'ed */
+	False,					/* class is not init'ed */
 	Initialize,				/* widget init proc */
 	NULL,					/* init_hook proc */
     	XtInheritRealize,       		/* widget realize proc */
@@ -368,10 +368,10 @@ externaldef(xmcascadebuttonclassrec) XmCascadeButtonClassRec xmCascadeButtonClas
 	resources,				/* this class's resource list*/
 	XtNumber (resources),			/*  "	  " resource_count */
     	NULLQUARK,				/* xrm_class	        */
-    	TRUE,					/* compress motion */
+    	True,					/* compress motion */
     	XtExposeCompressMaximal,		/* compress exposure */
-	TRUE,					/* compress enter-leave */
-   	FALSE,					/* no VisibilityNotify */
+	True,					/* compress enter-leave */
+   	False,					/* no VisibilityNotify */
 	Destroy,				/* class destroy proc */
 	Resize,					/* class resize proc */
 	Redisplay,				/* expose proc */
@@ -660,7 +660,7 @@ Arm(
       XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(cb));
       Boolean etched_in = dpy->display.enable_etched_in_menu;
 
-      CB_SetArmed(cb, TRUE);
+      CB_SetArmed(cb, True);
 
       if (etched_in)
 	  Redisplay((Widget) cb, NULL, NULL);
@@ -686,7 +686,7 @@ ArmAndPost(
 {
    if (!CB_IsArmed(cb))
    {
-      _XmCascadingPopup ((Widget) cb, event, TRUE);
+      _XmCascadingPopup ((Widget) cb, event, True);
       Arm (cb);
    }
 }
@@ -697,13 +697,12 @@ ArmAndPost(
 /*
  * class function to cause the cascade button to be armed and selected
  */
-/*ARGSUSED*/
 static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
     XmCascadeButtonWidget cb = (XmCascadeButtonWidget) wid ;
     XmRowColumnWidget parent = (XmRowColumnWidget) XtParent(cb);
@@ -711,6 +710,8 @@ ArmAndActivate(
     Time _time;
 
     /* check if event has been processed  - if it's NULL, override processing */
+    (void)params;
+    (void)num_params;
     if (event && !_XmIsEventUnique(event))
        return;
 
@@ -742,7 +743,7 @@ ArmAndActivate(
 	      (cb == (XmCascadeButtonWidget)RC_CascadeBtn(CB_Submenu(cb))))
           {
 	     menuSTrait -> popdown((Widget) parent, event);
-	     Disarm (cb, FALSE);
+	     Disarm (cb, False);
 	  }
           else
           {
@@ -767,7 +768,7 @@ ArmAndActivate(
 	       menuSTrait -> menuBarCleanup((Widget) parent);
 
              /* do the select without calling the cascading callbacks again */
-             Select (cb, event, FALSE);
+             Select (cb, event, False);
 
 	     /* To support menu replay, keep the pointer in sync mode */
 	     XAllowEvents(XtDisplay(cb), SyncPointer, CurrentTime);
@@ -804,7 +805,7 @@ ArmAndActivate(
        {
 	  /* In case the tear off is active but not armed or grabbed */
 	  menuSTrait -> tearOffArm((Widget) parent);
-          Select (cb, event, TRUE);
+          Select (cb, event, True);
 	  if (CB_Submenu(cb))
 	  {
              /*
@@ -843,7 +844,7 @@ Disarm(
 
    if (CB_IsArmed(cb))
    {
-      CB_SetArmed(cb, FALSE);
+      CB_SetArmed(cb, False);
 
       /* popdown any posted submenus */
       if (unpost && RC_PopupPosted(rowcol))
@@ -890,28 +891,21 @@ Disarm(
 /*
  * called when the post delay timeout occurs.
  */
-/*ARGSUSED*/
-static void
-PostTimeout(
-        XtPointer closure,
-        XtIntervalId *id)	/* unused */
+static void PostTimeout(XtPointer closure, XtIntervalId *id)
 {
         XmCascadeButtonWidget cb = (XmCascadeButtonWidget) closure ;
 
-   if (cb->cascade_button.timer)
-   {
-      cb->cascade_button.timer = 0;
-
-      _XmCascadingPopup ((Widget) cb, NULL, TRUE);
-   }
+	(void)id;
+	if (cb->cascade_button.timer) {
+		cb->cascade_button.timer = 0;
+		_XmCascadingPopup((Widget)cb, NULL, True);
+	}
 }
-
 
 /*
  * set the timer to post the submenu if a leave event does
  * not occur first.
  */
-/*ARGSUSED*/
 static void
 DelayedArm(
         Widget wid,
@@ -948,7 +942,6 @@ DelayedArm(
  * has not entered its cascading submenu, disarm the
  * cascadebutton.
  */
-/*ARGSUSED*/
 static void
 CheckDisarm(
         Widget wid,
@@ -993,7 +986,7 @@ CheckDisarm(
                 return;
          }
       }
-      Disarm (cb, TRUE);
+      Disarm (cb, True);
    }
 }
 
@@ -1002,7 +995,6 @@ CheckDisarm(
  * post submenu and disable menu's traversal.  The order of these
  * function calls is critical.
  */
-/*ARGSUSED*/
 static void
 StartDrag(
         Widget wid,
@@ -1023,11 +1015,11 @@ StartDrag(
    if (menuSTrait == NULL) return;
 
    /* Start with posted submenu bit reset */
-   CB_SetWasPosted(cb, FALSE);
+   CB_SetWasPosted(cb, False);
 
    if (CB_Submenu(cb) &&
        RC_IsArmed ((XmRowColumnWidget) CB_Submenu(cb))) {
-     CB_SetWasPosted(cb, TRUE);
+     CB_SetWasPosted(cb, True);
    }
 
    /*
@@ -1052,7 +1044,7 @@ StartDrag(
 
       _XmSetInDragMode((Widget) cb, True);
 
-      _XmCascadingPopup ((Widget) cb, event, TRUE);
+      _XmCascadingPopup ((Widget) cb, event, True);
       Arm (cb);
 
       /* record event so MenuShell does not process it */
@@ -1082,7 +1074,7 @@ Select(
    if (menuSTrait == NULL) return;
 
    if (CB_WasPosted(cb)) {
-     Disarm(cb, TRUE);
+     Disarm(cb, True);
      if ((CB_Submenu(cb) != NULL) && (Lab_MenuType(cb) == XmMENU_BAR))
        _XmMenuPopDown(XtParent((Widget) cb), event, NULL);
      return;
@@ -1098,7 +1090,7 @@ Select(
    {
       menuSTrait -> popdown(XtParent(cb), event);
 
-      Disarm (cb, FALSE);
+      Disarm (cb, False);
 
       menuSTrait -> disarm(XtParent(cb));
 
@@ -1127,7 +1119,6 @@ Select(
  * if there is a submenu, enable traversal.
  * call select to do the work
  */
-/*ARGSUSED*/
 static void
 DoSelect(
         Widget wid,
@@ -1213,7 +1204,6 @@ DoSelect(
 /*
  * if the menu system traversal is enabled, do a select
  */
-/*ARGSUSED*/
 static void
 KeySelect(
         Widget wid,
@@ -1253,7 +1243,7 @@ MenuBarSelect(
      XmeTraitGet((XtPointer) XtClass(XtParent(wid)), XmQTmenuSystem);
    if (menuSTrait == NULL) return;
 
-   CB_SetWasPosted(cb, FALSE);
+   CB_SetWasPosted(cb, False);
 
    if (RC_IsArmed ((XmRowColumnWidget) XtParent(cb)))
    {
@@ -1294,7 +1284,7 @@ MenuBarSelect(
 
          _XmSetInDragMode((Widget) cb, True);
 
-         _XmCascadingPopup ((Widget) cb, event, TRUE);
+         _XmCascadingPopup ((Widget) cb, event, True);
 
 	 if (!CB_Submenu(cb))
 	 {
@@ -1326,7 +1316,6 @@ MenuBarSelect(
 /*
  * If the menu is active, post submenu and arm.
  */
-/*ARGSUSED*/
 static void
 MenuBarEnter(
         Widget wid,
@@ -1345,7 +1334,7 @@ MenuBarEnter(
 		      _XmGetDefaultTime(wid, event));
       }
 
-      _XmCascadingPopup ((Widget) cb, event, TRUE);
+      _XmCascadingPopup ((Widget) cb, event, True);
       Arm(cb);
    }
 }
@@ -1354,7 +1343,6 @@ MenuBarEnter(
 /*
  * unless our submenu is posted or traversal is on, disarm
  */
-/*ARGSUSED*/
 static void
 MenuBarLeave(
         Widget wid,
@@ -1369,7 +1357,7 @@ MenuBarLeave(
    {
       /* Reset this bit so that we don't unpost if the user
 	 reenters the cascade button */
-      CB_SetWasPosted(cb, FALSE);
+      CB_SetWasPosted(cb, False);
 
       if (CB_Submenu(cb))
       {
@@ -1380,14 +1368,13 @@ MenuBarLeave(
       }
 
       if (_XmGetInDragMode((Widget) cb))
-         Disarm (cb, TRUE);
+         Disarm (cb, True);
    }
 }
 
 /*
  * Cleanup the menubar, if its in the PM traversal mode
  */
-/*ARGSUSED*/
 static void
 CleanupMenuBar(
         Widget wid,
@@ -1736,7 +1723,7 @@ Popup(
 	       ((parent->row_column.type == XmMENU_PULLDOWN) ||
 		(parent->row_column.type == XmMENU_POPUP)) &&
 	       !XmIsMenuShell(XtParent(parent)))
-	       XmCascadeButtonHighlight(oldActiveChild, FALSE);
+	       XmCascadeButtonHighlight(oldActiveChild, False);
         }
         else
         {
@@ -1965,7 +1952,7 @@ Destroy(
    * break the submenu link
    */
   if (submenu != NULL && menuSTrait != NULL)
-    menuSTrait -> recordPostFromWidget((Widget) submenu, (Widget) cb, FALSE);
+    menuSTrait -> recordPostFromWidget((Widget) submenu, (Widget) cb, False);
 
   if (cb->cascade_button.timer)
     XtRemoveTimeOut (cb->cascade_button.timer);
@@ -2009,45 +1996,46 @@ Resize(
  *  SetValuesPrehook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValuesPrehook(
-        Widget cw,		/* unused */
-        Widget rw,		/* unused */
+        Widget cw,
+        Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
-  XmCascadeButtonWidget new_w = (XmCascadeButtonWidget) nw ;
+	XmCascadeButtonWidget new_w = (XmCascadeButtonWidget)nw;
 
-  /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (new_w->label.font == NULL)
-    new_w->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
-
-  return False;
+	(void)cw;
+	(void)rw;
+	(void)args;
+	(void)num_args;
+	if (!new_w->label.font)
+		new_w->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
+	return False;
 }
 
 /*
  * Set Values
  */
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmCascadeButtonWidget old = (XmCascadeButtonWidget) cw ;
   XmCascadeButtonWidget requested = (XmCascadeButtonWidget) rw ;
   XmCascadeButtonWidget new_w = (XmCascadeButtonWidget) nw ;
-  Boolean flag = FALSE;
-  Boolean adjustWidth = FALSE;
-  Boolean adjustHeight = FALSE;
+  Boolean flag = False;
+  Boolean adjustWidth = False;
+  Boolean adjustHeight = False;
   XmMenuSystemTrait menuSTrait;
 
+  (void)args;
+  (void)num_args;
   menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(cw)), XmQTmenuSystem);
 
@@ -2079,27 +2067,27 @@ SetValues(
        */
 
       if (CB_Submenu(old) && menuSTrait)
-	menuSTrait -> recordPostFromWidget(CB_Submenu(old), nw, FALSE);
+	menuSTrait->recordPostFromWidget(CB_Submenu(old), nw, False);
 
       if (CB_Submenu(new_w) && menuSTrait)
-	menuSTrait -> recordPostFromWidget(CB_Submenu(new_w), nw, TRUE);
+	menuSTrait->recordPostFromWidget(CB_Submenu(new_w), nw, True);
     }
 
     /* don't let traversal be changed */
     if (Lab_MenuType(new_w) == XmMENU_BAR)
-	new_w->primitive.traversal_on = TRUE;
+	new_w->primitive.traversal_on = True;
 
     /* handle the cascade pixmap indicator */
     else if (Lab_IsMenupane(new_w))
     {
        /* don't let traversal be changed */
-       new_w->primitive.traversal_on = TRUE;
+       new_w->primitive.traversal_on = True;
 
        if ((new_w->label.recompute_size)  || (requested->core.width <= 0))
-	  adjustWidth = TRUE;
+	  adjustWidth = True;
 
        if ((new_w->label.recompute_size)  || (requested->core.height <= 0))
-	  adjustHeight = TRUE;
+	  adjustHeight = True;
 
        /* get new pixmap size */
        if (CB_CascadePixmap(old) != CB_CascadePixmap (new_w))
@@ -2144,7 +2132,7 @@ SetValues(
 
 	  /* if there wasn't a cascade, and still isn't, don't redraw */
 	  if (old->cascade_button.submenu || new_w->cascade_button.submenu)
-	      flag = TRUE;
+	      flag = True;
        }
 
        /* make sure that other changes did not scrunch our pixmap */
@@ -2160,7 +2148,7 @@ SetValues(
 	      (Lab_MarginBottom (new_w) != Lab_MarginBottom (old)))
 	  {
 	     setup_cascade (new_w,adjustWidth, adjustHeight);
-	     flag = TRUE;
+	     flag = True;
 	  }
 
 	  else if ((Lab_MarginWidth(new_w) != Lab_MarginWidth(old)) ||
@@ -2169,7 +2157,7 @@ SetValues(
 
 	  {
 	     position_cascade (new_w);
-	     flag = TRUE;
+	     flag = True;
 	  }
        }
     }
@@ -2185,7 +2173,6 @@ SetValues(
  * the data is massaged correctly
  *
  ************************************************************/
-/*ARGSUSED*/
 static void
 InitializePrehook(
         Widget req,		/* unused */
@@ -2227,7 +2214,6 @@ InitializePrehook(
  * restore core class translations
  *
  ************************************************************/
-/*ARGSUSED*/
 static void
 InitializePosthook(
         Widget req,		/* unused */
@@ -2298,7 +2284,6 @@ GetBackgroundGC(
 /*
  * Initialize
  */
-/*ARGSUSED*/
 static void
 Initialize(
         Widget w_req,
@@ -2308,8 +2293,8 @@ Initialize(
 {
     XmCascadeButtonWidget  req = (XmCascadeButtonWidget) w_req ;
     XmCascadeButtonWidget  new_w = (XmCascadeButtonWidget) w_new ;
-    Boolean adjustWidth = FALSE;
-    Boolean adjustHeight = FALSE;
+    Boolean adjustWidth = False;
+    Boolean adjustHeight = False;
     XmMenuSystemTrait menuSTrait;
 
     XmRowColumnWidget    submenu = (XmRowColumnWidget) CB_Submenu(new_w);
@@ -2335,10 +2320,10 @@ Initialize(
 
     /* CR 7651: Clear before setting. */
     new_w->cascade_button.armed = 0;
-    CB_SetArmed(new_w, FALSE);
+    CB_SetArmed(new_w, False);
     new_w->cascade_button.timer = 0;
-    CB_SetTraverse (new_w, FALSE);
-    CB_SetWasPosted (new_w, FALSE);
+    CB_SetTraverse (new_w, False);
+    CB_SetWasPosted (new_w, False);
     CB_ArmedPixmap(new_w) = XmUNSPECIFIED_PIXMAP;
 
     /*
@@ -2371,7 +2356,7 @@ Initialize(
 
     /* call submenu's class function to set the link */
     if (submenu != NULL && menuSTrait != NULL)
-      menuSTrait -> recordPostFromWidget((Widget) submenu, (Widget) new_w, TRUE);
+      menuSTrait -> recordPostFromWidget((Widget) submenu, (Widget) new_w, True);
 
    if (submenu && (CB_CascadePixmap(new_w) == XmUNSPECIFIED_PIXMAP)) {
       _XmProcessLock();
@@ -2382,17 +2367,17 @@ Initialize(
     if (Lab_IsMenupane(new_w))
     {
       if (req->core.width <= 0)
-	adjustWidth = TRUE;
+	adjustWidth = True;
 
       if (req->core.height <= 0)
-	adjustHeight = TRUE;
+	adjustHeight = True;
 
       /* get pixmap size and set up widget to allow room for it */
       size_cascade (new_w);
       setup_cascade (new_w, adjustWidth, adjustHeight);
     }
 
-    new_w->primitive.traversal_on = TRUE;
+    new_w->primitive.traversal_on = True;
 
     /* Initialize GCs for armed button select and background only */
     GetArmGC (new_w);
@@ -2488,10 +2473,11 @@ XmCascadeButtonHighlight(
          Arm ((XmCascadeButtonWidget) cb);
 
       else
-         Disarm ((XmCascadeButtonWidget) cb, FALSE);
+         Disarm ((XmCascadeButtonWidget) cb, False);
    }
 
    else if ((cb) && XmIsCascadeButtonGadget(cb))
       XmCascadeButtonGadgetHighlight ((Widget) cb, highlight);
   _XmAppUnlock(app);
 }
+

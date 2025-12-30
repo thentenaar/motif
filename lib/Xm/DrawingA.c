@@ -292,16 +292,18 @@ ClassPartInitialize(
 /****************************************************************
  * Initialize. Check resizePolicy resource value
  ****************/
-/*ARGSUSED*/
 static void
 Initialize(
-        Widget rw,		/* unused */
+        Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     XmDrawingAreaWidget new_w = (XmDrawingAreaWidget) nw ;
 
+    (void)rw;
+    (void)args;
+    (void)num_args;
     if(new_w->drawing_area.resize_policy != XmRESIZE_SWINDOW
        && !XmRepTypeValidValue(XmRID_RESIZE_POLICY,
                             new_w->drawing_area.resize_policy,
@@ -383,19 +385,20 @@ ObjectAtPoint(
  * This function processes key and button presses and releases
  *   belonging to the DrawingArea.
  ****************/
-/*ARGSUSED*/
 void
 _XmDrawingAreaInput(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
     XmDrawingAreaWidget da = (XmDrawingAreaWidget) wid ;
     XmDrawingAreaCallbackStruct cb ;
     int x, y ;
     Boolean button_event = True, input_on_gadget ;
 
+    (void)params;
+    (void)num_params;
     if ((event->type == ButtonPress) ||
 	(event->type == ButtonRelease)) {
 	x = event->xbutton.x ;
@@ -478,18 +481,20 @@ ChangeManaged(
 }
 
 /****************************************************************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
-        Widget rw,		/* unused */
+        Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     XmDrawingAreaWidget current = (XmDrawingAreaWidget) cw ;
     XmDrawingAreaWidget new_w = (XmDrawingAreaWidget) nw ;
 
+    (void)rw;
+    (void)args;
+    (void)num_args;
     if(new_w->drawing_area.resize_policy != XmRESIZE_SWINDOW
        && !XmRepTypeValidValue(XmRID_RESIZE_POLICY,
 			    new_w->drawing_area.resize_policy,
@@ -656,3 +661,4 @@ XmVaCreateManagedDrawingArea(
     va_end(var);
     return w;
 }
+

@@ -288,14 +288,12 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args)	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmArrowButtonWidget request = (XmArrowButtonWidget) rw;
   XmArrowButtonWidget new_w = (XmArrowButtonWidget) nw;
@@ -304,6 +302,8 @@ Initialize(
    *  Check the data put into the new widget from .Xdefaults
    *  or through the arg list.
    */
+  (void)args;
+  (void)num_args;
   if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
@@ -435,15 +435,13 @@ Destroy(
  *  SetValues
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args)	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmArrowButtonWidget current = (XmArrowButtonWidget) cw;
   XmArrowButtonWidget new_w = (XmArrowButtonWidget) nw;
@@ -451,7 +449,8 @@ SetValues(
   Boolean returnFlag = FALSE;
 
   /*  Check the data put into the new widget.  */
-
+  (void)args;
+  (void)num_args;
   if (!XmRepTypeValidValue(XmRID_ARROW_DIRECTION,
 			   new_w->arrowbutton.direction, (Widget) new_w))
     {
@@ -487,19 +486,19 @@ SetValues(
  *     This function processes button 1 down occuring on the arrowButton.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Arm(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmArrowButtonWidget aw = (XmArrowButtonWidget) wid;
   XmArrowButtonCallbackStruct call_value;
 
-  (void) XmProcessTraversal((Widget) aw, XmTRAVERSE_CURRENT);
+  (void)params;
+  (void)num_params;
+  XmProcessTraversal((Widget) aw, XmTRAVERSE_CURRENT);
 
   aw->arrowbutton.selected = True;
   aw->arrowbutton.armTimeStamp = event->xbutton.time; /* see MultiActivate */
@@ -538,17 +537,17 @@ MultiArm(
  *     callbacks are called.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Activate(
         Widget wid,
         XEvent *buttonEvent,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmArrowButtonWidget aw = (XmArrowButtonWidget) wid;
 
+  (void)params;
+  (void)num_params;
   if (aw->arrowbutton.selected == False)
     return;
 
@@ -624,19 +623,19 @@ ActivateCommon(
  *     ArmAndActivate
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmArrowButtonWidget ab = (XmArrowButtonWidget) wid;
   XmArrowButtonCallbackStruct call_value;
   XtExposeProc expose;
 
+  (void)params;
+  (void)num_params;
   ab->arrowbutton.selected = TRUE;
   _XmProcessLock();
   expose = ab->core.widget_class->core_class.expose;
@@ -683,7 +682,6 @@ ArmAndActivate(
     }
 }
 
-/* ARGSUSED */
 static void
 ArmTimeout(
         XtPointer closure,
@@ -711,18 +709,18 @@ ArmTimeout(
  *     This function processes button 1 up occuring on the arrowButton.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Disarm(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params)	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmArrowButtonWidget aw = (XmArrowButtonWidget) wid;
   XmArrowButtonCallbackStruct call_value;
 
+  (void)params;
+  (void)num_params;
   aw->arrowbutton.selected = False;
 
   DrawArrow(aw, aw->primitive.top_shadow_GC,
@@ -914,3 +912,4 @@ DrawArrow(XmArrowButtonWidget aw,
 		aw->arrowbutton.detail_shadow_thickness,
 		aw->arrowbutton.direction);
 }
+

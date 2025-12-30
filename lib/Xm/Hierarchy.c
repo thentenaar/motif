@@ -331,9 +331,7 @@ WidgetClass xmHierarchyWidgetClass = (WidgetClass) &xmHierarchyClassRec;
  *	Returns:       none.
  */
 
-/*ARGSUSED*/
-static void
-ClassInit()
+static void ClassInit(void)
 {
     XmHierarchyClassRec* wc = &xmHierarchyClassRec;
 
@@ -409,8 +407,6 @@ ClassPartInitialize(WidgetClass class)
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -525,8 +521,6 @@ XtWidgetProc insert_child;
  *                     args, num_args - the argument list.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -705,7 +699,6 @@ RecursiveSetChildValues( HierarchyConstraints curr_node, Pixmap open_folder,
  *                     args, num_args - the arguments in the list.
  *	Returns:       Boolean
  */
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget w, Widget request, Widget set, ArgList args,
 	  Cardinal *num_args)
@@ -729,8 +722,6 @@ SetValues(Widget w, Widget request, Widget set, ArgList args,
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
@@ -815,8 +806,6 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
  *
  * This function closes all ancestors
  */
-
-/*ARGSUSED*/
 static void
 ChangeNodeState(HierarchyConstraints node)
 {
@@ -1184,8 +1173,6 @@ ToggleNodeState ( Widget w,
  *                     junk - *** UNUSED ***.
  *	Returns:
  */
-
-/*ARGSUSED*/
 static Boolean
 CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 		     XrmValuePtr fromVal, XrmValuePtr toVal, XtPointer *junk)

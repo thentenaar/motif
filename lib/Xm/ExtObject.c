@@ -166,13 +166,10 @@ XmExtClassRec xmExtClassRec = {
 externaldef(xmextobjectclass)
 WidgetClass xmExtObjectClass = (WidgetClass) (&xmExtClassRec);
 
-/*ARGSUSED*/
-static void
-UseParent(Widget w,
-	  int offset,		/* unused */
-	  XrmValue *value)
+static void UseParent(Widget w, int offset, XrmValue *value)
 {
-  value->addr = (XPointer) &(w->core.parent);
+	(void)offset;
+	value->addr = (XPointer)&(w->core.parent);
 }
 
 /************************************************************************
@@ -180,11 +177,9 @@ UseParent(Widget w,
  *  ClassInitialize
  *
  ************************************************************************/
-
-static void
-ClassInitialize(void)
+static void ClassInitialize(void)
 {
-  myBaseClassExtRec.record_type = XmQmotif;
+	myBaseClassExtRec.record_type = XmQmotif;
 }
 
 /************************************************************************
@@ -192,9 +187,7 @@ ClassInitialize(void)
  *  ClassPartInitPrehook
  *
  ************************************************************************/
-
-static void
-ClassPartInitPrehook(WidgetClass c)
+static void ClassPartInitPrehook(WidgetClass c)
 {
   XmExtObjectClass wc = (XmExtObjectClass) c;
 
@@ -260,9 +253,8 @@ ClassPartInitialize(WidgetClass c)
   _XmBuildExtResources(c);
 }
 
-/*ARGSUSED*/
 static void
-InitializePrehook(Widget req,	/* unused */
+InitializePrehook(Widget req,
 		  Widget new_w,
 		  ArgList args,
 		  Cardinal *num_args)
@@ -270,6 +262,7 @@ InitializePrehook(Widget req,	/* unused */
   XmExtObjectClass ec = (XmExtObjectClass) XtClass(new_w);
   XmBaseClassExt  *wcePtr = _XmGetBaseClassExtPtr(ec, XmQmotif);
 
+  (void)req;
   if ((*wcePtr)->use_sub_resources)
     {
       /*
@@ -332,10 +325,9 @@ Initialize(Widget req,
     }
 }
 
-/*ARGSUSED*/
 static Boolean
-SetValuesPrehook(Widget req,	/* unused */
-		 Widget curr,	/* unused */
+SetValuesPrehook(Widget req,
+		 Widget curr,
 		 Widget new_w,
 		 ArgList args,
 		 Cardinal *num_args)
@@ -343,6 +335,8 @@ SetValuesPrehook(Widget req,	/* unused */
   XmExtObjectClass ec = (XmExtObjectClass) XtClass(new_w);
   XmBaseClassExt *wcePtr = _XmGetBaseClassExtPtr(ec, XmQmotif);
 
+  (void)req;
+  (void)curr;
   if ((*wcePtr)->use_sub_resources)
     {
       _XmProcessLock();
@@ -380,8 +374,6 @@ GetValuesPrehook(Widget new_w,
  *  SetValues
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget old,
 	  Widget ref,
@@ -540,3 +532,4 @@ _XmBuildExtResources(WidgetClass c)
     }
   _XmProcessUnlock();
 }
+

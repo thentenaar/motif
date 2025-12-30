@@ -444,8 +444,6 @@ static void ClassPartInitialize(WidgetClass w_class)
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -506,7 +504,6 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  *	Arguments:     w - Extended List Widget to realize.
  *	Returns:       none.
  */
-
 static void
 Resize(Widget w)
 {
@@ -514,7 +511,6 @@ Resize(Widget w)
     PlaceChildren(w, False, NULL);
 }
 
-/*ARGSUSED*/
 static void
 GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
 {
@@ -544,8 +540,6 @@ GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
@@ -1081,8 +1075,6 @@ CheckExtensions( XmDropDownWidgetClass combo )
  * UNUSED              info_ptr - a pointer to the arrow button info.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static Boolean
 IsTextOK(XmDropDownWidget cbw)
 {
@@ -1108,8 +1100,6 @@ IsTextOK(XmDropDownWidget cbw)
  * UNUSED              info_ptr - a pointer to the arrow button info.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 VerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
 {
@@ -1204,8 +1194,6 @@ VerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
  * UNUSED              info_ptr - a pointer to the arrow button info.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ModifyVerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
 {
@@ -1240,8 +1228,6 @@ ModifyVerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
  * UNUSED              info_ptr - a pointer to the arrow button info.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ValueChangedTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
 {
@@ -1268,8 +1254,6 @@ ValueChangedTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
  *                     list_data_ptr - data from the list widget.
  *	Returns:       none.
  */
-
-/* ARGSUSED */
 static void
 ListSelected(Widget w, XtPointer cbw_ptr, XtPointer list_data_ptr)
 {
@@ -1307,8 +1291,6 @@ ListSelected(Widget w, XtPointer cbw_ptr, XtPointer list_data_ptr)
  *       on the arrow (the arrow click is handled by the arrow button)
  *       or if we click in the popped up combo box widget.
  */
-
-/* ARGSUSED */
 static void
 ShellButtonEvent(Widget w, XtPointer cbw_ptr, XEvent *event, Boolean *dispatch)
 {
@@ -1384,9 +1366,6 @@ ShellButtonEvent(Widget w, XtPointer cbw_ptr, XEvent *event, Boolean *dispatch)
  *                 junk - *** UNUSED ***.
  *	Returns: none.
  */
-
-/* ARGSUSED */
-
 static void
 LoseFocusHandler(Widget w, XtPointer cbw_ptr, XEvent *event, Boolean *junk)
 {
@@ -1408,8 +1387,6 @@ LoseFocusHandler(Widget w, XtPointer cbw_ptr, XEvent *event, Boolean *junk)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ComboUnpost(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -1430,8 +1407,6 @@ ComboUnpost(Widget w, XEvent *event, String *params, Cardinal *num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ComboPost(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -1452,8 +1427,6 @@ ComboPost(Widget w, XEvent *event, String *params, Cardinal *num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ComboCancel(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -1956,33 +1929,33 @@ CreateChildren(Widget w, ArgList args, Cardinal num_args)
  * to transfer the grab to the scrollbar and SBBtnUpEH will cause
  * the grab to return to the grab shell.
  */
-
-/*ARGSUSED*/
 static void
-SBBtnDownEH(Widget    w,
+SBBtnDownEH(Widget w,
 	    XtPointer client_data,
 	    XEvent   *event,
-	    Boolean  *cont)	/* unused */
+	    Boolean  *cont)
 {
-  XmGrabShellWidget shell = (XmGrabShellWidget) client_data;
+  XmGrabShellWidget shell = (XmGrabShellWidget)client_data;
 
+  (void)cont;
   XtGrabPointer(w, False, Events | PointerMotionMask | ButtonMotionMask,
 		GrabModeAsync, GrabModeAsync,
 		None, shell->grab_shell.cursor, event->xbutton.time);
 }
 
-/*ARGSUSED*/
 static void
-SBBtnUpEH(Widget    w,		/* unused */
+SBBtnUpEH(Widget w,
 	  XtPointer client_data,
 	  XEvent   *event,
-	  Boolean  *cont)	/* unused */
+	  Boolean  *cont)
 {
-  XmGrabShellWidget shell = (XmGrabShellWidget) client_data;
+  XmGrabShellWidget shell = (XmGrabShellWidget)client_data;
 
   /* Note that this regrab to the grab shell will need to be changed
    * if the kind of grab that the grabshell imposes changes.
    */
+  (void)w;
+  (void)cont;
   XtGrabPointer((Widget) shell, shell->grab_shell.owner_events,
 		Events,
 		shell->grab_shell.grab_style, GrabModeAsync,
@@ -2668,3 +2641,4 @@ Widget XmCombinationBox2GetText(Widget) XM_ALIAS(XmDropDownGetText);
 Widget XmCombinationBox2GetList(Widget) XM_ALIAS(XmDropDownGetList);
 Widget XmCombinationBox2GetChild(Widget, int) XM_ALIAS(XmDropDownGetChild);
 extern XmDropDownClassRec xmCombinationBox2ClassRec XM_ALIAS(xmDropDownClassRec);
+
