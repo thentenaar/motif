@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
-/* 
+*/
+/*
  * HISTORY
-*/ 
+*/
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: xrmLib.c /main/6 1995/07/14 10:01:41 drk $"
@@ -52,9 +52,9 @@ XrmQuark allspaceq = NULLQUARK;
 
 /*------------------------------------------------------------------
                          InitializeXrm
-                 
+
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 InitializeXrm(char *dbase_name)
 {
   Boolean retval = True;
@@ -74,7 +74,7 @@ InitializeXrm(char *dbase_name)
 	    }
 	}
     }
-  
+
   /* initialize workspace resource quarks */
   if (linkedq == NULLQUARK)
     {
@@ -94,9 +94,9 @@ InitializeXrm(char *dbase_name)
 
 /*------------------------------------------------------------------
                         GetSpaceListResources
-                 
+
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetSpaceListResources(Widget w,
 		      char ***s_list,
 		      char ***b_list,
@@ -116,7 +116,7 @@ GetSpaceListResources(Widget w,
 
   specifier[0] = workspace_listq;
   specifier[1] = NULLQUARK;
-  
+
   if (XrmQGetResource(wsm_dbase,
 		      specifier,
 		      specifier,
@@ -223,9 +223,9 @@ GetSpaceListResources(Widget w,
 
 /*------------------------------------------------------------------
                         GetWorkspaceResources
-                 
+
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 GetWorkspaceResources(Widget w,
 		      XrmQuarkList specifier_list,
 		      XrmQuarkList *room_list, /*return*/
@@ -248,16 +248,16 @@ GetWorkspaceResources(Widget w,
   xrm_workspace_list =  (XrmHashTable*)XtMalloc(list_length *sizeof(XrmHashTable));
 
   toVal.addr = NULL;
-  
+
 #ifdef DEBUG
  PRINT("GetWorkSpaceResources for %s\n",XrmQuarkToString(specifier_list[0]));
 #endif
 
   /* fetch a list of database levels that matches the specifier */
-  if (XrmQGetSearchList(wsm_dbase, 
-			specifier_list, 
-			specifier_list, 
-			xrm_workspace_list, 
+  if (XrmQGetSearchList(wsm_dbase,
+			specifier_list,
+			specifier_list,
+			xrm_workspace_list,
 			list_length)    == False)
     {
 #ifdef DEBUG
@@ -328,7 +328,7 @@ GetWorkspaceResources(Widget w,
 			    XtRString,
 			    &value,
 			    XtRBoolean,
-			    &boolVal))     
+			    &boolVal))
 	{
 	  *linked = *(Boolean*)boolVal.addr;
 #ifdef DEBUG
@@ -357,7 +357,7 @@ GetWorkspaceResources(Widget w,
 			    XtRString,
 			    &value,
 			    XtRBoolean,
-			    &boolVal)) 
+			    &boolVal))
 	{
 	  *all_workspaces = *(Boolean*)boolVal.addr;
 #ifdef DEBUG
@@ -384,12 +384,12 @@ GetWorkspaceResources(Widget w,
 
 /*------------------------------------------------------------------
                         GetWindowConfigurationEntry
-                 
+
   ------------------------------------------------------------------*/
 Boolean
 GetWindowConfigurationEntry(XrmQuarkList specifier_list,
 			    XrmQuarkList attribute_list,
-			    XrmQuark room_name,  
+			    XrmQuark room_name,
 			    XrmValue **attribute_values) /* return */
 
 {
@@ -417,7 +417,7 @@ GetWindowConfigurationEntry(XrmQuarkList specifier_list,
     {
       return False;
     }
-  
+
   for (num_attrib = 0; attribute_list[num_attrib] != NULLQUARK; num_attrib++);
 
 
@@ -430,7 +430,7 @@ GetWindowConfigurationEntry(XrmQuarkList specifier_list,
       values_array = (XrmValue*)XtMalloc(num_attrib*sizeof(XrmValue));
       for (j = 0; attribute_list[j] != NULLQUARK ;j++)
 	{
-	  if (!XrmQGetSearchResource(xrm_workspace_list, 
+	  if (!XrmQGetSearchResource(xrm_workspace_list,
 				     attribute_list[j],
 				     attribute_list[j],
 				     &type,
@@ -438,30 +438,30 @@ GetWindowConfigurationEntry(XrmQuarkList specifier_list,
 	    {
 	      values_array[j].size = 0;
 	      values_array[j].addr = NULL;
-	    }	
+	    }
 	  else retval = True;
-	} 
+	}
     }
 
   *attribute_values = values_array;
 /*  PRINT("return\n");*/
   XtFree((XtPointer)xrm_workspace_list);
   return retval;
-}	
+}
 
 
 
 
 /*------------------------------------------------------------------
                       GetAllWindowConfigurationEntry
-                 
+
   ------------------------------------------------------------------*/
 Boolean
 GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
 			       XrmQuarkList attribute_list,
-			       XrmQuarkList room_list,  
+			       XrmQuarkList room_list,
 			       XrmValue ***attribute_values)/*return*/
-{	
+{
   Boolean retval = False;
   int list_length  = 100;
   XrmHashTable *xrm_workspace_list;
@@ -490,7 +490,7 @@ GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
     {
       return retval;
     }
-  
+
   for (num_attributes = 0; attribute_list[num_attributes] != NULLQUARK; num_attributes++);
 
   for (num_rooms = 0; room_list[num_rooms] != NULLQUARK; num_rooms++);
@@ -510,7 +510,7 @@ GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
 	{
 	  for (j = 0;attribute_list[j] != NULLQUARK; j++)
 	    {
-	      if (!XrmQGetSearchResource(xrm_workspace_list, 
+	      if (!XrmQGetSearchResource(xrm_workspace_list,
 					 attribute_list[j],
 					 attribute_list[j],
 					 &type,
@@ -518,7 +518,7 @@ GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
 		{
 		  values_array[j].size = 0;
 		  values_array[j].addr = NULL;
-		}	
+		}
 	      else retval = True;
 	    }
 	}
@@ -529,7 +529,7 @@ GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
 /* PRINT("return\n");*/
   XtFree((XtPointer)xrm_workspace_list);
   return retval;
-}	
+}
 
 
 
@@ -538,9 +538,9 @@ GetAllWindowConfigurationEntry(XrmQuarkList specifier_list,
 
 /*------------------------------------------------------------------
                        SaveSpaceListResources
-                 
+
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 SaveSpaceListResources(char *space_list,
 		       char *b_list,
 		       char *p_list,
@@ -566,7 +566,7 @@ SaveSpaceListResources(char *space_list,
 
   value.addr = space_list;
   value.size = strlen(space_list) +1;
-  
+
   XrmQPutResource(&wsm_dbase,
 		  bind,
 		  specifier,
@@ -582,7 +582,7 @@ SaveSpaceListResources(char *space_list,
 
   value.addr = b_list;
   value.size = strlen(b_list) +1;
-  
+
   XrmQPutResource(&wsm_dbase,
 		  bind,
 		  specifier,
@@ -599,7 +599,7 @@ SaveSpaceListResources(char *space_list,
 
   value.addr = p_list;
   value.size = strlen(p_list) +1;
-  
+
   XrmQPutResource(&wsm_dbase,
 		  bind,
 		  specifier,
@@ -607,7 +607,7 @@ SaveSpaceListResources(char *space_list,
 		  &value);
 
   specifier[0] = current_spaceq;
-  value.addr = c_space; 
+  value.addr = c_space;
   value.size = strlen(c_space) +1;
 
   XrmQPutResource(&wsm_dbase,
@@ -629,9 +629,9 @@ SaveSpaceListResources(char *space_list,
 
 /*------------------------------------------------------------------
                        SaveWorkspaceResources
-                 
+
   ------------------------------------------------------------------*/
-Boolean 
+Boolean
 SaveWorkspaceResources(Widget w,
 		       XrmQuarkList specifier_list,
 		       XrmQuark room_nameq,
@@ -691,7 +691,7 @@ SaveWorkspaceResources(Widget w,
 	    }
 	}
     }
-  
+
   if (!room_found)
     {
 #ifdef DEBUG
@@ -731,7 +731,7 @@ SaveWorkspaceResources(Widget w,
       XtFree((XtPointer)rooms_str);
     }
 
-	
+
   if (room_list != NULL)
     XtFree((XtPointer)room_list);
 
@@ -741,11 +741,11 @@ SaveWorkspaceResources(Widget w,
       if (linked) strcpy(linked_string,"True");
       else strcpy(linked_string,"False");
 
-      value.addr = linked_string; 
+      value.addr = linked_string;
       value.size = strlen(linked_string) +1;
 
       specifier[specifier_count] =linkedq;
-      
+
       XrmQPutResource(&wsm_dbase,
 		      bind,
 		      specifier,
@@ -770,7 +770,7 @@ SaveWorkspaceResources(Widget w,
 		      specifier,
 		      XrmStringToRepresentation("String"),
 		      &value);
-    }	
+    }
 
 /*  XrmPutFileDatabase(wsm_dbase, ".test2");*/
 /*  PRINT("return\n");*/
@@ -782,7 +782,7 @@ SaveWorkspaceResources(Widget w,
 
 /*------------------------------------------------------------------
                         SaveWindowConfiguration
-                 
+
   ------------------------------------------------------------------*/
 Boolean
 SaveWindowConfiguration(XrmQuarkList specifier_list,
@@ -821,9 +821,9 @@ SaveWindowConfiguration(XrmQuarkList specifier_list,
       specifier[specifier_index] = attribute_qlist[j];
       if (attr_values[j].size != 0)
 	{
-	  XrmQPutResource(&wsm_dbase, 
-			  bind, 
-			  specifier, 
+	  XrmQPutResource(&wsm_dbase,
+			  bind,
+			  specifier,
 			  XrmStringToRepresentation("String"),
 			  &(attr_values[j]));
 	}
@@ -832,16 +832,16 @@ SaveWindowConfiguration(XrmQuarkList specifier_list,
 /*  XrmPutFileDatabase(wsm_dbase, ".test2");*/
 /*  PRINT("return\n");*/
   return True;
-}	
+}
 
-static 
+static
 Boolean delete_line(char *line)
 {
   int i;
   for (i = 0; line[i] != '\0'; i++);
 
-  if (line[i-2] == 'X' && 
-      line[i-3] == 'X' && 
+  if (line[i-2] == 'X' &&
+      line[i-3] == 'X' &&
       line[i-4] == 'X' )
 
     {
@@ -856,9 +856,9 @@ Boolean delete_line(char *line)
 
 /*------------------------------------------------------------------
                       RemoveAllWorkspaceResources
-                 
+
   ------------------------------------------------------------------*/
-void 
+void
 RemoveAllWorkspaceResources(XrmQuarkList specifier_list)
 {
   XrmQuark work_attrib_qlist[5];
@@ -891,9 +891,9 @@ RemoveAllWorkspaceResources(XrmQuarkList specifier_list)
   for (j = 0; work_attrib_qlist[j] != NULLQUARK; j++)
     {
       specifier[spec_index] = work_attrib_qlist[j];
-	  XrmQPutResource(&wsm_dbase, 
-			  bind, 
-			  specifier, 
+	  XrmQPutResource(&wsm_dbase,
+			  bind,
+			  specifier,
 			  XrmStringToRepresentation("String"),
 			  &value);
     }
@@ -904,10 +904,10 @@ RemoveAllWorkspaceResources(XrmQuarkList specifier_list)
 
 /*------------------------------------------------------------------
                         RemoveWorkspaceResource
-                 
+
   ------------------------------------------------------------------*/
 /*       */
-Boolean 
+Boolean
 RemoveWorkspacesResource(Widget w,
 			 XrmQuarkList specifier_list,
 			 XrmQuark room_nameq)
@@ -956,7 +956,7 @@ RemoveWorkspacesResource(Widget w,
 	      }
 	  }
     }
-  
+
   if (room_list != NULL)
     XtFree((XtPointer)room_list);
 
@@ -993,14 +993,14 @@ RemoveWorkspacesResource(Widget w,
 		      XrmStringToRepresentation("String"),
 		      &value);
       */
-    }	
-  
+    }
+
 /*  else if (in_dbase && room_found && strlen(rooms_str) == 0)
     {
       RemoveAllWorkspaceResources(specifier);
     }*/
 
-  else 
+  else
     {
       XtFree(rooms_str);
       return False;
@@ -1017,7 +1017,7 @@ RemoveWorkspacesResource(Widget w,
 
 /*------------------------------------------------------------------
                       PurgeAllWindowConfiguration
-                 
+
   ------------------------------------------------------------------*/
 Boolean
 PurgeAllWindowConfiguration(Widget w,
@@ -1039,8 +1039,7 @@ PurgeAllWindowConfiguration(Widget w,
   Boolean linked;
   int room_index, attrib_index;
   char *del_db, *save_db;
-  Boolean free_del = True, free_save = True;
-  
+
   in_dbase = GetWorkspaceResources(w,
 				   specifier_list,
 				   &room_list,
@@ -1063,7 +1062,7 @@ PurgeAllWindowConfiguration(Widget w,
       specifier[i] = specifier_list[i];
       bind[i] = XrmBindTightly;
     }
-  
+
   bind[i] = XrmBindTightly;
   bind[i+1] = XrmBindTightly;
   specifier[i+2] = NULLQUARK;
@@ -1077,9 +1076,9 @@ PurgeAllWindowConfiguration(Widget w,
       for (j = 0; attribute_qlist[j] != NULLQUARK; j++)
 	{
 	  specifier[attrib_index] = attribute_qlist[j];
-	      XrmQPutResource(&wsm_dbase, 
-			      bind, 
-			      specifier, 
+	      XrmQPutResource(&wsm_dbase,
+			      bind,
+			      specifier,
 			      XrmStringToRepresentation("String"),
 			      &value);
 	}
@@ -1088,23 +1087,13 @@ PurgeAllWindowConfiguration(Widget w,
   if (room_list != NULL)
     XtFree((XtPointer)room_list);
 
-  if ((del_db = tempnam(NULL, "wsmD")) == NULL)
-  {
-      del_db = ".wsmDelDB";
-      free_del = False;
-  }
-  if ((save_db = tempnam(NULL, "wsmS")) == NULL)
-  {
-      save_db = ".wsmSaveDB";
-      free_save = False;
-  }
-
+  del_db = ".wsmDelDB";
+  save_db = ".wsmSaveDB";
   XrmPutFileDatabase(wsm_dbase, del_db);
 
   fileD  = fopen(del_db,"r");
   fileN  = fopen(save_db,"w");
-
-  if ((fileD != NULL) && (fileN != NULL))
+  if (fileD && fileN)
   {
       while (fgets(line,512,fileD))
       {
@@ -1125,11 +1114,6 @@ PurgeAllWindowConfiguration(Widget w,
       remove(del_db);
       remove(save_db);
   }
-  
-  if (free_del)
-      free(del_db);
-  if (free_save)
-      free(save_db);
 
   return retval;
 }
@@ -1139,7 +1123,7 @@ PurgeAllWindowConfiguration(Widget w,
 
 /*------------------------------------------------------------------
                         PurgeWindowConfiguration
-                 
+
   ------------------------------------------------------------------*/
 Boolean
 PurgeWindowConfiguration(Widget w,
@@ -1159,7 +1143,6 @@ PurgeWindowConfiguration(Widget w,
   int specifier_index;
   char *str = "XXX";
   char *del_db, *save_db;
-  Boolean free_del = True, free_save = True;
 
   for (num_attrib = 0; attribute_qlist[num_attrib]!= NULLQUARK; num_attrib++)
     {
@@ -1172,7 +1155,7 @@ PurgeWindowConfiguration(Widget w,
 			   specifier_list,
 			   room_nameq);
 
-  
+
   for (i = 0; specifier_list[i] != NULLQUARK; i++)
     {
       specifier[i] = specifier_list[i];
@@ -1189,30 +1172,21 @@ PurgeWindowConfiguration(Widget w,
   for (j = 0; attribute_qlist[j] != NULLQUARK; j++)
     {
       specifier[specifier_index] = attribute_qlist[j];
-	  XrmQPutResource(&wsm_dbase, 
-			  bind, 
-			  specifier, 
+	  XrmQPutResource(&wsm_dbase,
+			  bind,
+			  specifier,
 			  XrmStringToRepresentation("String"),
 			  &value);
     }
 
-  if ((del_db = tempnam(NULL, "wsmD")) == NULL)
-  {
-      del_db = ".wsmDelDB";
-      free_del = False;
-  }
-  if ((save_db = tempnam(NULL, "wsmS")) == NULL)
-  {
-      save_db = ".wsmSaveDB";
-      free_save = False;
-  }
-
+  del_db = ".wsmDelDB";
+  save_db = ".wsmSaveDB";
   XrmPutFileDatabase(wsm_dbase, del_db);
 
   fileD  = fopen(del_db,"r");
   fileN  = fopen(save_db,"w");
 
-  if ((fileD != NULL) && (fileN != NULL))
+  if (fileD && fileN)
   {
       while (fgets(line,512,fileD))
       {
@@ -1233,22 +1207,16 @@ PurgeWindowConfiguration(Widget w,
       remove(del_db);
       remove(save_db);
   }
-  
-  if (free_del)
-      free(del_db);
-  if (free_save)
-      free(save_db);
 
   return retval;
-
 }
 
 
 /*------------------------------------------------------------------
                        SaveWsmToFile
-                 
+
   ------------------------------------------------------------------*/
-void 
+void
 SaveWsmToFile(char *file_name)
 {
   UpdateXrm();
