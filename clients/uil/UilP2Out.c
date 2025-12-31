@@ -233,9 +233,9 @@ void sem_output_uid_file(void)
 
     out_l_next_offset = 0;
     out_az_queue = (out_queue_type *)src_az_avail_source_buffer;
-    out_az_queue->az_prior_queue = NULL;
     src_az_avail_source_buffer =
 	src_az_avail_source_buffer->az_prior_source_buffer;
+    out_az_queue->az_prior_queue = NULL;
 
     /*
     **	Count the number of topmost widgets by scanning the external list.
