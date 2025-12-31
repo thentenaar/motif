@@ -603,22 +603,18 @@ open_source_file( XmConst char           *c_file_name,
                   uil_fcb_type           *az_fcb,
                   src_source_buffer_type *az_source_buffer )
 {
-
-    boolean			main_file;
     int				i;  /* loop index through include files */
     char			buffer[256];
 
 
     /* place the file name in the expanded_name buffer */
 
-    strncpy(buffer, c_file_name, sizeof(buffer));
+    strncpy(buffer, c_file_name, sizeof(buffer) - 1);
     buffer[sizeof(buffer)-1] = '\0';
 
 /*    Determine if this is the main file or an include file.  */
 
-    main_file = (main_fcb == NULL);
-
-    if (main_file) {
+    if (!main_fcb) {
 
 	char XmConst		* ptr;
 	unsigned short		len;
