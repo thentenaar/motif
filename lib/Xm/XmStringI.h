@@ -648,15 +648,15 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 {									   \
   switch (type) { 							   \
   case XmSTRING_ENTRY_OPTIMIZED : 					   \
-    bzero((char*)entry, sizeof(_XmStringOptSegRec));			   \
+    memset(entry, 0, sizeof(_XmStringOptSegRec)); \
     _XmEntryTagIndex(entry) = TAG_INDEX_UNSET;			 	   \
     _XmEntryRendIndex(entry) = REND_INDEX_UNSET;		 	   \
     break; 								   \
   case XmSTRING_ENTRY_ARRAY : 						   \
-    bzero((char*)entry, sizeof(_XmStringArraySegRec));			   \
+    memset(entry, 0, sizeof(_XmStringArraySegRec)); \
     break; 								   \
   case XmSTRING_ENTRY_UNOPTIMIZED :					   \
-    bzero((char*)entry, sizeof(_XmStringUnoptSegRec));		   \
+    memset(entry, 0, sizeof(_XmStringUnoptSegRec)); \
     break; 								   \
   } 									   \
   _XmEntryType(entry) = type; 						   \
@@ -669,18 +669,15 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 {									   \
   switch (type) { 							   \
   case XmSTRING_ENTRY_OPTIMIZED : 					   \
-    (entry) = (_XmStringEntry)XtMalloc(sizeof(_XmStringOptSegRec));	   \
-    bzero((char*)entry, sizeof(_XmStringOptSegRec));			   \
+    (entry) = (_XmStringEntry)XtCalloc(1, sizeof(_XmStringOptSegRec));	   \
     _XmEntryTagIndex(entry) = TAG_INDEX_UNSET;			 	   \
     _XmEntryRendIndex(entry) = REND_INDEX_UNSET;		 	   \
     break; 								   \
   case XmSTRING_ENTRY_ARRAY : 						   \
-    (entry) = (_XmStringEntry)XtMalloc(sizeof(_XmStringArraySegRec));	   \
-    bzero((char*)entry, sizeof(_XmStringArraySegRec));			   \
+    (entry) = (_XmStringEntry)XtCalloc(1, sizeof(_XmStringArraySegRec));	   \
     break; 								   \
   case XmSTRING_ENTRY_UNOPTIMIZED :					   \
-    (entry) = (_XmStringEntry)XtMalloc(sizeof(_XmStringUnoptSegRec));  \
-    bzero((char*)entry, sizeof(_XmStringUnoptSegRec));		   \
+    (entry) = (_XmStringEntry)XtCalloc(1, sizeof(_XmStringUnoptSegRec));  \
     break; 								   \
   } 									   \
   if (entry) {                                                             \
