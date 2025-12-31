@@ -107,8 +107,7 @@ static void GetConfigEvent(
                         Window window,
                         unsigned long mask,
                         XEvent *event) ;
-static Cursor GetTearOffCursor(
-                        Widget wid) ;
+static Cursor GetTearOffCursor(Widget wid);
 static Boolean DoPlacement(
                         Widget wid,
                         XEvent *event) ;
@@ -308,31 +307,26 @@ GetConfigEvent(
    }
 }
 
-static void
-DisplayDestroyCallback
-	( Widget w,
-        XtPointer client_data,
-        XtPointer call_data )	/* unused */
+static void DisplayDestroyCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
+	(void)call_data;
 	XFreeCursor(XtDisplay(w), (Cursor)client_data);
 }
 
-static Cursor
-GetTearOffCursor(
-       Widget wid )
+static Cursor GetTearOffCursor(Widget wid)
 {
-	XmDisplay   dd = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
+	XmDisplay dd = (XmDisplay)XmGetXmDisplay(XtDisplay(wid));
 	Cursor TearOffCursor =
 		((XmDisplayInfo *)(dd->display.displayInfo))->TearOffCursor;
 
-	if (0L == TearOffCursor)
+	if (TearOffCursor == None)
 		{
 		/* create some data shared among all instances on this
 		** display; the first one along can create it, and
 		** any one can remove it; note no reference count
 		*/
         	TearOffCursor = XmeLoadCursor(XtDisplay(wid), XtScreen(wid), "fleur");
-		if (0L == TearOffCursor)
+		if (TearOffCursor == None)
 			TearOffCursor = _XmGetMenuCursorByScreen(XtScreen(wid));
 		else
 			XtAddCallback((Widget)dd, XtNdestroyCallback,
@@ -764,10 +758,7 @@ DismissOnPostedFromDestroy(
 #define TEAR_OFF_TITLE_SUFFIX " Tear-off"
 #define TEAR_OFF_CHARSET "ISO8859-1"
 
-void
-_XmTearOffInitiate(
-        Widget wid,
-        XEvent *event )
+void _XmTearOffInitiate(Widget wid, XEvent *event)
 {
    enum { XmAWM_DELETE_WINDOW, XmA_MOTIF_WM_HINTS, NUM_ATOMS };
    static char *atom_names[] = { XmIWM_DELETE_WINDOW, _XA_MOTIF_WM_HINTS };
@@ -789,6 +780,7 @@ _XmTearOffInitiate(
    XEvent newEvent;
    XmMenuState mst = _XmGetMenuState((Widget)wid);
    XtWidgetProc proc;
+   Cursor cursor = None;
 
    if (IsPulldown(submenu))
       cb = RC_CascadeBtn(submenu);
@@ -1054,7 +1046,7 @@ _XmTearOffInitiate(
    }
    else
    {
-      bzero((void *)&sprop, sizeof(sprop));
+      memset(&sprop, 0, sizeof sprop);
       /* Fix for 9346,  use sizeof(long) to calculate total
 	 size of block from get property */
       memcpy(&sprop, rprop, (size_t)sizeof(long) * num_items);
@@ -1068,15 +1060,15 @@ _XmTearOffInitiate(
 		      (unsigned char *) &sprop, PROP_MWM_HINTS_ELEMENTS);
    }
 
+   /* Set our menu cursor */
+   if ((cursor = _XmGetMenuCursorByScreen(XtScreen(to_shell))) != None)
+       XDefineCursor(XtDisplay(to_shell), XtWindow(to_shell), cursor);
+
    /* Notify the server of the change */
-   XReparentWindow(XtDisplay(to_shell), XtWindow(submenu), XtWindow(to_shell),
-     0, 0);
-
+   XReparentWindow(XtDisplay(to_shell), XtWindow(submenu), XtWindow(to_shell), 0, 0);
    XtPopup((Widget)to_shell, XtGrabNone);
-
-   RC_SetArmed (submenu, FALSE);
-
-   RC_SetTearOffDirty(submenu, FALSE);
+   RC_SetArmed (submenu, False);
+   RC_SetTearOffDirty(submenu, False);
 }
 
 Boolean
