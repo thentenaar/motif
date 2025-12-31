@@ -4502,7 +4502,7 @@ void sar_cat_value_entry(sym_value_entry_type **target_entry,
 	    sem_evaluate_value_cs(value1_entry);
 
 	(*target_entry)->value.xms_value =
-	    XmStringConcat (value1_entry->value.xms_value,
+	    XmStringConcatAndFree(value1_entry->value.xms_value,
 			    (*target_entry)->value.xms_value);
 	target_type  = sym_k_compound_string_value;
 	break;
