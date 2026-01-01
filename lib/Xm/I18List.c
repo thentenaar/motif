@@ -19,7 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -208,7 +207,6 @@ static XtActionsRec actionsList[] =
   {"CopyToClipboard",   CopyToClipboard},
 };
 
-/* ARGSUSED */
 static void SetEntryBackground(Widget w, int offset, XrmValue *value)
 {
     XmI18ListWidget ilist = (XmI18ListWidget) w;
@@ -482,8 +480,6 @@ static void ClassPartInitialize(WidgetClass w_class)
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void Initialize(Widget req, Widget set,
 		       ArgList args, Cardinal * num_args)
 {
@@ -614,8 +610,6 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes * attributes)
  *
  *      Modified:      03/17/92 beth - converted to pixels
  */
-
-/*ARGSUSED*/
 static Boolean SetValues(Widget current, Widget request, Widget set,
 			 ArgList args, Cardinal * num_args)
 {
@@ -719,21 +713,6 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
      */
     if ( XmI18List_row_data(i_set) != NULL ||
 	 XmI18List_row_data(i_old) != NULL ) {
-#ifdef UNUSED_CODE
-	short	column;
-	if (XmI18List_first_col(i_set) > XmI18List_num_columns(i_set))
-	{
-	    column = XmI18List_num_columns(i_set) - 1;
-	}
-	else if (XmI18List_first_col(i_set) <= 0)
-	{
-	    column = 0;
-	}
-	else
-	{
-	    column = XmI18List_first_col(i_set) - 1;
-	}
-#endif
 	if ((XmI18List_num_rows(i_old) != XmI18List_num_rows(i_set)) ||
 	    (XmI18List_num_columns(i_old) != XmI18List_num_columns(i_set)) ||
 	    (XmI18List_row_data(i_set) != XmI18List_row_data(i_old)))
@@ -802,8 +781,6 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
  *
  *      Modified:      03/17/92 beth - converted to pixels
  */
-
-/*ARGSUSED*/
 static void
 Redisplay(Widget w, XEvent * event, Region region)
 {
@@ -891,8 +868,6 @@ Destroy(Widget w)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -986,8 +961,6 @@ ButtonDownAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ButtonUpOrLeaveAction(Widget w, XEvent *event,
 		      String *params, Cardinal *num_params)
@@ -1040,8 +1013,6 @@ ButtonUpOrLeaveAction(Widget w, XEvent *event,
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -1118,8 +1089,6 @@ MotionAction(Widget w, XEvent *event, String *params, Cardinal *num_params)
  *	Arguments:     ilist - the ilist widget.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 SingleClick(XmI18ListWidget ilist)
 {
@@ -1181,8 +1150,6 @@ SingleClick(XmI18ListWidget ilist)
  *                     id - the interval id.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 MoveListTimeout(XtPointer w_ptr, XtIntervalId *id)
 {
@@ -1504,8 +1471,6 @@ ExtendedSelect(Widget w, short row)
  *                     call_data - information about where to scroll.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static void
 VScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
@@ -1529,8 +1494,6 @@ VScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
  *
  *      Modified:      03/17/92 beth - converted to pixels
  */
-
-/*ARGSUSED*/
 static void
 HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
@@ -1553,8 +1516,6 @@ HScrollCallback(Widget w, XtPointer client_data, XtPointer call_data)
  *
  *      Added:         03/19/92 beth - for conversion to pixels
  */
-
-/*ARGSUSED*/
 static void
 HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
 {
@@ -1571,6 +1532,7 @@ HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
     /*
      * Don't bother if we're already as far left as we can go
      */
+    (void)junk;
     if (XmI18List_left_loc(ilist) <= 0) {
         int i, begin, end, before = 0;
 
@@ -1618,8 +1580,6 @@ HSlideLeftArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
  *
  *      Added:         03/19/92 beth - for conversion to pixels
  */
-
-/*ARGSUSED*/
 static void
 HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
 {
@@ -1633,7 +1593,7 @@ HSlideRightArrowCallback(Widget w, XtPointer client_data, XtPointer junk)
      * is currently between columns, then we will shift all columns
      * once to the right, thereby changing the last visible column.
      */
-
+    (void)junk;
     if ((0 - XmI18List_left_loc(ilist)) >= 0)
         i = XmI18List_left_loc(ilist);
     else
@@ -3568,8 +3528,6 @@ SelectItems(XmI18ListWidget i18list, XmString item,
  * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
-
-/*ARGSUSED*/
 static void
 CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
 {
@@ -3589,8 +3547,6 @@ CheckSetRenderTable(Widget wid, int offset, XrmValue *value)
  * ListConvert - Convert routine for dragNDrop.				   *
  *									   *
  ***************************************************************************/
-
-/*ARGSUSED*/
 static void
 ListConvert(Widget w, XtPointer client_data,
 	    XmConvertCallbackStruct *cs)
@@ -3808,16 +3764,16 @@ ListConvert(Widget w, XtPointer client_data,
   _XmConvertComplete(w, value, size, format, type, cs);
 }
 
-/*ARGSUSED*/
 static void
 ListPreDestProc(Widget w,
-		XtPointer ignore, /* unused */
+		XtPointer ignore,
 		XmDestinationCallbackStruct *cs)
 {
   XmDropProcCallbackStruct *ds;
   Atom XA_MOTIF_DROP = XInternAtom(XtDisplay(w), XmS_MOTIF_DROP, False);
   short row, col;
 
+  (void)ignore;
   if (cs->selection != XA_MOTIF_DROP) return;
 
   /* If this is the result of a drop,  we can fill in location_data with
@@ -3871,13 +3827,11 @@ GetConcatenatedRow(Widget w, int row)
  * ProcessDrag - drag the selected items				   *
  *									   *
  ***************************************************************************/
-
-/*ARGSUSED*/
 static void
 ProcessDrag(Widget wid,
 	    XEvent *event,
-	    String *params,		/* unused */
-	    Cardinal *num_params)	/* unused */
+	    String *params,
+	    Cardinal *num_params)
 {
     XmI18ListWidget lw = (XmI18ListWidget) wid;
     int i;
@@ -3888,6 +3842,8 @@ ProcessDrag(Widget wid,
     XmI18ListDragConvertStruct *ListDragConv;
 
     /* Don't allow multi-button drags. */
+    (void)params;
+    (void)num_params;
     if (event->xbutton.state &
 	    ~((Button1Mask >> 1) << event->xbutton.button) &
 	    (Button1Mask | Button2Mask | Button3Mask | Button4Mask |
@@ -3963,8 +3919,6 @@ ProcessDrag(Widget wid,
  *	This is a *sloow* process...					   *
  *									   *
  ***************************************************************************/
-
-/*ARGSUSED*/
 static void
 CopyToClipboard(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -3977,21 +3931,22 @@ CopyToClipboard(Widget w, XEvent *event, String *params, Cardinal *num_params)
 	(void) XmeClipboardSource(w, XmCOPY, 0);
 }
 
-/*ARGSUSED*/
 static void
-DragDropFinished(Widget w,		/* unused */
+DragDropFinished(Widget w,
 		 XtPointer closure,
-		 XtPointer call_data)	/* unused */
+		 XtPointer call_data)
 {
     int i;
     XmI18ListWidget lw = (XmI18ListWidget)closure;
     XmI18ListDragConvertStruct *ListDragConv = lw->ilist.drag_conv;
 
+    (void)w;
+    (void)call_data;
     for (i = 0; i < ListDragConv->num_items; i++)
 	XmStringFree(ListDragConv->strings[i]);
 
-    XtFree((char *) ListDragConv->strings);
-    XtFree((char *) ListDragConv);
+    XtFree((XtPointer)ListDragConv->strings);
+    XtFree((XtPointer)ListDragConv);
 }
 
 /*  Function Name: XmI18ListSelectItems
@@ -4088,3 +4043,4 @@ XmI18ListMakeRowVisible(XmI18ListWidget i18list, int row)
     /* Use column zero as a rule when making a row visible... */
     MakeCellVisible((Widget) i18list, row, 0);
 }
+

@@ -31,7 +31,6 @@ static char rcsid[] = "$TOG: Primitive.c /main/25 1999/01/27 16:08:04 mgreess $"
 #include <config.h>
 #endif
 
-
 #include <Xm/AccColorT.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/CareVisualT.h>
@@ -118,14 +117,8 @@ static XmDirection GetDirection(Widget);
 static void GetColors(Widget widget,
 		       XmAccessColorData color_data);
 static unsigned char GetUnitType(Widget);
-static void GetToolTipString(
-                         Widget wid,
-                         int resource, /* unused */
-                         XtArgVal * value);
-static XmImportOperator SetToolTipString(
-                         Widget wid,
-                         int resource, /* unused */
-                         XtArgVal * value);
+static void GetToolTipString(Widget wid, int resource, XtArgVal *value);
+static XmImportOperator SetToolTipString(Widget wid, int resource, XtArgVal *value);
 
 /********    End Static Function Declarations    ********/
 
@@ -864,7 +857,6 @@ Realize(
  *     General redisplay function called on exposure events.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 Redisplay(
         Widget wid,
@@ -1202,31 +1194,23 @@ FocusChange(
     return ;
 }
 
-
 /****************************************/
 /******------ trait methods -------******/
 /****************************************/
 
-
-
-static XmDirection
-GetDirection(Widget w)
+static XmDirection GetDirection(Widget w)
 {
-  return XmPrim_layout_direction(((XmPrimitiveWidget)(w)));
+	return XmPrim_layout_direction(((XmPrimitiveWidget)w));
 }
 
-
-
-/*ARGSUSED*/
-static Boolean
-Redraw (
-	Widget kid,
-	Widget cur_parent,	/* unused */
-	Widget new_parent,	/* unused */
-	Mask visual_flag)
+static Boolean Redraw(Widget kid, Widget cur_parent, Widget new_parent,
+                      Mask visual_flag)
 {
-    XmPrimitiveWidget pw = (XmPrimitiveWidget) kid ;
+	XmPrimitiveClassRec *kid_class;
+    XmPrimitiveWidget pw = (XmPrimitiveWidget)kid;
 
+    (void)cur_parent;
+    (void)new_parent;
     /* primitive only cares about background info */
     /* Menu buttons "redefine" unhighlight on a per instance basis,
        so they'll get this trait method anyway and do nothing
@@ -1234,44 +1218,41 @@ Redraw (
     /* Separators, Lists, have a null unhighlight, so they'll be caught
        here, they could redefine the trait, kindof uninstall it... */
 
-    if (visual_flag & (VisualBackgroundPixel|VisualBackgroundPixmap)) {
+    if (!(visual_flag & (VisualBackgroundPixel|VisualBackgroundPixmap)))
+    	return False;
+
 	/* do the unhighlight if necessary, using class method */
 	/* parent manager background gc already set up */
-	if (!pw->primitive.highlighted) {
-            XmPrimitiveClassRec* kid_class = (XmPrimitiveClassRec*) XtClass(kid);
+	if (pw->primitive.highlighted)
+		return False;
 
-	    if (! XtIsRealized(kid)) return True;
+	if (!XtIsRealized(kid))
+		return True;
 
-	    if (kid_class->primitive_class.border_unhighlight)
-	      kid_class-> primitive_class.border_unhighlight(kid);
-	}
-    }
-
-    return False ;
+	kid_class = (XmPrimitiveClassRec *)XtClass(kid);
+	if (kid_class->primitive_class.border_unhighlight)
+		kid_class->primitive_class.border_unhighlight(kid);
+	return False;
 }
 
-static void
-GetColors(Widget w,
-	  XmAccessColorData color_data)
+static void GetColors(Widget w, XmAccessColorData color_data)
 {
-    XmPrimitiveWidget pw = (XmPrimitiveWidget) w ;
+	XmPrimitiveWidget pw = (XmPrimitiveWidget)w;
 
-    color_data->valueMask = AccessForeground | AccessBackgroundPixel |
-	AccessHighlightColor | AccessTopShadowColor | AccessBottomShadowColor;
-    color_data->background = pw->core.background_pixel;
-    color_data->foreground = pw->primitive.foreground;
-    color_data->highlight_color = pw->primitive.highlight_color;
-    color_data->top_shadow_color = pw->primitive.top_shadow_color;
-    color_data->bottom_shadow_color = pw->primitive.bottom_shadow_color;
+	color_data->valueMask = AccessForeground | AccessBackgroundPixel |
+	                        AccessHighlightColor | AccessTopShadowColor |
+	                        AccessBottomShadowColor;
+	color_data->background          = pw->core.background_pixel;
+	color_data->foreground          = pw->primitive.foreground;
+	color_data->highlight_color     = pw->primitive.highlight_color;
+	color_data->top_shadow_color    = pw->primitive.top_shadow_color;
+	color_data->bottom_shadow_color = pw->primitive.bottom_shadow_color;
 }
 
-
-static unsigned char
-GetUnitType(Widget w)
+static unsigned char GetUnitType(Widget w)
 {
-    return ((XmPrimitiveWidget) w)->primitive.unit_type ;
+	return ((XmPrimitiveWidget) w)->primitive.unit_type;
 }
-
 
 /****************************************************************
  ****************************************************************
@@ -1282,9 +1263,6 @@ GetUnitType(Widget w)
  ****************************************************************
  ****************************************************************/
 
-
-
-
 /************************************************************************
  *
  *  The traversal event processing routines.
@@ -1293,171 +1271,136 @@ GetUnitType(Widget w)
  *    occur.  These routines are externed in XmP.h.
  *
  ************************************************************************/
-/*ARGSUSED*/
-void
-_XmTraverseLeft(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseLeft(Widget w, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-  _XmMgrTraversal(w, XmTRAVERSE_LEFT);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_LEFT);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseRight(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseRight(Widget w, XEvent *event, String *params,
+                      Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_RIGHT);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_RIGHT);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseUp(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseUp(Widget w, XEvent *event, String *params,
+                  Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_UP);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_UP);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseDown(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseDown(Widget w, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_DOWN);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_DOWN);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseNext(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseNext(Widget w, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_NEXT);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_NEXT);
 }
 
-/*ARGSUSED*/
-void
-_XmTraversePrev(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraversePrev(Widget w, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_PREV);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_PREV);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseHome(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseHome(Widget w, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-   _XmMgrTraversal (w, XmTRAVERSE_HOME);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	_XmMgrTraversal(w, XmTRAVERSE_HOME);
 }
 
-/*ARGSUSED*/
-void
-_XmTraverseNextTabGroup(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraverseNextTabGroup(Widget w, XEvent *event, String *params,
+                             Cardinal *num_params)
 {
-  XmDisplay xm_dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(w));
-  Boolean button_tab = xm_dpy->display.enable_button_tab;
+	XmDisplay d = (XmDisplay)XmGetXmDisplay(XtDisplay(w));
 
-  if (button_tab)
-    _XmMgrTraversal(w, XmTRAVERSE_GLOBALLY_FORWARD);
-  else
-    _XmMgrTraversal(w, XmTRAVERSE_NEXT_TAB_GROUP);
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (d->display.enable_button_tab)
+		_XmMgrTraversal(w, XmTRAVERSE_GLOBALLY_FORWARD);
+	else _XmMgrTraversal(w, XmTRAVERSE_NEXT_TAB_GROUP);
 }
 
-/*ARGSUSED*/
-void
-_XmTraversePrevTabGroup(
-        Widget w,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmTraversePrevTabGroup(Widget w, XEvent *event, String *params,
+                             Cardinal *num_params)
 {
-  XmDisplay xm_dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(w));
-  Boolean button_tab = xm_dpy->display.enable_button_tab;
+	XmDisplay d = (XmDisplay)XmGetXmDisplay(XtDisplay(w));
 
-  if (button_tab)
-    _XmMgrTraversal(w, XmTRAVERSE_GLOBALLY_BACKWARD);
-  else
-    _XmMgrTraversal(w, XmTRAVERSE_PREV_TAB_GROUP);
+	(void)event;
+	(void)params;
+	(void)num_params;
+
+	if (d->display.enable_button_tab)
+		_XmMgrTraversal(w, XmTRAVERSE_GLOBALLY_BACKWARD);
+	else _XmMgrTraversal(w, XmTRAVERSE_PREV_TAB_GROUP);
 }
 
-
-
-/*ARGSUSED*/
-void
-_XmPrimitiveHelp(
-        Widget wid,
-        XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmPrimitiveHelp(Widget wid, XEvent *event, String *params,
+                      Cardinal *num_params)
 {
-   if (!_XmIsEventUnique(event))
-      return;
+	(void)event;
+	(void)params;
+	(void)num_params;
+	if (!_XmIsEventUnique(event))
+		return;
 
-   _XmSocorro( wid, event, NULL, NULL);
-
-   _XmRecordEvent(event);
+	_XmSocorro(wid, event, NULL, NULL);
+	_XmRecordEvent(event);
 }
 
-
-
-void
-_XmPrimitiveParentActivate(
-        Widget pw,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
+void _XmPrimitiveParentActivate(Widget pw, XEvent *event, String *params,
+                                Cardinal *num_params)
 {
-    XmParentInputActionRec  pp_data ;
+	XmParentInputActionRec pp_data;
 
-    pp_data.process_type = XmINPUT_ACTION ;
-    pp_data.action = XmPARENT_ACTIVATE ;
-    pp_data.event = event ;
-    pp_data.params = params ;
-    pp_data.num_params = num_params ;
+	pp_data.process_type = XmINPUT_ACTION;
+	pp_data.action       = XmPARENT_ACTIVATE;
+	pp_data.event        = event;
+	pp_data.params       = params;
+	pp_data.num_params   = num_params;
 
-    _XmParentProcess( XtParent( pw), (XmParentProcessData) &pp_data) ;
+	_XmParentProcess(XtParent(pw), (XmParentProcessData)&pp_data);
 }
 
-void
-_XmPrimitiveParentCancel(
-        Widget pw,
-        XEvent *event,
-        String *params,
-        Cardinal *num_params )
+void _XmPrimitiveParentCancel(Widget pw, XEvent *event, String *params,
+                              Cardinal *num_params)
 {
-    XmParentInputActionRec  pp_data ;
+	XmParentInputActionRec pp_data;
 
-    pp_data.process_type = XmINPUT_ACTION ;
-    pp_data.action = XmPARENT_CANCEL ;
-    pp_data.event = event ;
-    pp_data.params = params ;
-    pp_data.num_params = num_params ;
+	pp_data.process_type = XmINPUT_ACTION;
+	pp_data.action       = XmPARENT_CANCEL;
+	pp_data.event        = event;
+	pp_data.params       = params;
+	pp_data.num_params   = num_params;
 
-    _XmParentProcess( XtParent( pw), (XmParentProcessData) &pp_data) ;
+	_XmParentProcess(XtParent(pw), (XmParentProcessData)&pp_data);
 }
 
 /**********************************************************************
@@ -1465,31 +1408,25 @@ _XmPrimitiveParentCancel(
  * _XmButtonTakeFocus
  *
  *********************************************************************/
-/*ARGSUSED*/
-void
-_XmButtonTakeFocus(
-        Widget wid,
-        XEvent *event,		/* unused */
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+void _XmButtonTakeFocus(Widget wid, XEvent *event, String *params,
+                        Cardinal *num_params)
 {
-    XmProcessTraversal(wid, XmTRAVERSE_CURRENT);
+	(void)event;
+	(void)params;
+	(void)num_params;
+	XmProcessTraversal(wid, XmTRAVERSE_CURRENT);
 }
 
-static void
-GetToolTipString(Widget wid,
-                 int resource, /* unused */
-                 XtArgVal * value)
+static void GetToolTipString(Widget wid, int resource, XtArgVal *value)
 {
-    XmString string = XmGetToolTipString (wid);
-    *value = (XtArgVal) string;
+	(void)resource;
+	*value = (XtArgVal)XmGetToolTipString(wid);
 }
 
-XmImportOperator
-SetToolTipString(Widget wid,
-                 int resource, /* unused */
-                 XtArgVal * value)
+XmImportOperator SetToolTipString(Widget wid, int resource, XtArgVal *value)
 {
-    XmSetToolTipString (wid, (XmString)*value);
-    return XmSYNTHETIC_NONE;
+	(void)resource;
+	XmSetToolTipString(wid, (XmString)*value);
+	return XmSYNTHETIC_NONE;
 }
+

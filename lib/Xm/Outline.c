@@ -282,7 +282,6 @@ ClassPartInitialize(WidgetClass class)
  *	Returns:       none.
  */
 
-/*ARGSUSED*/
 static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -364,7 +363,6 @@ typedef struct _RedispInfo {
     Boolean found;
 } RedispInfo;
 
-/* ARGSUSED */
 static void
 Redisplay(Widget w, XEvent * event, Region region)
 {
@@ -435,8 +433,6 @@ Redisplay(Widget w, XEvent * event, Region region)
  *                 info_ptr - a pointer to the redispInfo.
  *    Returns: Always False.
  */
-
-/* ARGSUSED */
 static Bool
 CheckExpose(Display *disp, XEvent *event, char *info_ptr)
 {
@@ -488,8 +484,6 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
-
-/* ARGSUSED */
 static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
@@ -588,8 +582,6 @@ ChangeManaged(Widget w)
  *                     return - what we will allow if this is an almost.
  *	Returns:       status.
  */
-
-/*ARGSUSED*/
 static XtGeometryResult
 GeometryManager(Widget w, XtWidgetGeometry * request,
 		XtWidgetGeometry * result)
@@ -687,8 +679,6 @@ GeometryManager(Widget w, XtWidgetGeometry * request,
  *                     args, num_args - the argument list.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -704,8 +694,6 @@ ConstraintInitialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static Boolean
 ConstraintSetValues(Widget current, Widget request, Widget set,
 		    ArgList args, Cardinal * num_args)
@@ -819,8 +807,6 @@ ConstraintDestroy(Widget w)
  *                     call_data - UNUSED.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ToggleNodeState(Widget w, XtPointer node_ptr, XtPointer call_data)
 {
@@ -1563,8 +1549,6 @@ LocInRect(XRectangle *rect, Widget w, Position x, Position y)
  *                 id - th ext interval id.
  *	Returns: none
  */
-
-/* ARGSUSED */
 static Boolean
 MoveNodesTimer(XtPointer data)
 {

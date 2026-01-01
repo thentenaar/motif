@@ -238,17 +238,19 @@ ClassPartInitialize(
  *     The main widget instance initialization routine.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
-   XmSeparatorWidget request = (XmSeparatorWidget) rw ;
-   XmSeparatorWidget new_w = (XmSeparatorWidget) nw ;
-   new_w -> primitive.traversal_on = FALSE;
+   XmSeparatorWidget request = (XmSeparatorWidget)rw;
+   XmSeparatorWidget new_w   = (XmSeparatorWidget)nw;
+
+   (void)args;
+   (void)num_args;
+   new_w->primitive.traversal_on = False;
 
    /* Force highlightThickness to zero if in a menu. */
    if (XmIsRowColumn(XtParent(new_w)) &&
@@ -365,7 +367,6 @@ GetSeparatorGC(
  *     Invoke the application exposure callbacks.
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 Redisplay(
         Widget wid,
@@ -397,42 +398,39 @@ Redisplay(
  *	Remove the callback lists.
  *
  ************************************************************************/
-static void
-Destroy(
-        Widget wid )
+static void Destroy(Widget wid)
 {
-   XtReleaseGC (wid, ((XmSeparatorWidget) wid)->separator.separator_GC);
+	XtReleaseGC(wid, ((XmSeparatorWidget)wid)->separator.separator_GC);
 }
-
-
-
 
 /************************************************************************
  *
  *  SetValues
  *
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
-        XmSeparatorWidget current = (XmSeparatorWidget) cw ;
-        XmSeparatorWidget request = (XmSeparatorWidget) rw ;
-        XmSeparatorWidget new_w = (XmSeparatorWidget) nw ;
-   Boolean flag = FALSE;
+    XmSeparatorWidget current = (XmSeparatorWidget)cw;
+    XmSeparatorWidget request = (XmSeparatorWidget)rw;
+    XmSeparatorWidget new_w   = (XmSeparatorWidget)nw;
+    Boolean flag = False;
+
+	(void)args;
+	(void)num_args;
 
    /*
     * We never allow our traversal flags to be changed during SetValues();
     * this is enforced by our superclass.
     */
 
-   /*  Force traversal_on to FALSE */
-   new_w -> primitive.traversal_on = FALSE;
+   /*  Force traversal_on to False */
+   new_w->primitive.traversal_on = False;
 
    /* Force highlightThickness to zero if in a menu. */
    if (XmIsRowColumn(XtParent(new_w)) &&

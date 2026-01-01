@@ -434,7 +434,6 @@ _XmGetDefaultBackgroundColorSpec( Screen *screen )
 }
 
 
-/*ARGSUSED*/
 void
 _XmSetDefaultBackgroundColorSpec(
 	Screen *screen,	/* unused */
@@ -1483,7 +1482,6 @@ _XmFilterResources(
  *  _XmRootGeometryManager
  *
  ************************************************************************/
-/*ARGSUSED*/
 XtGeometryResult
 _XmRootGeometryManager(
 	 Widget w,
@@ -1566,7 +1564,6 @@ _XmRootGeometryManager(
 }
 
 
-/*ARGSUSED*/
 void
 _XmVendorExtRealize(
 	 Widget w,
@@ -1585,7 +1582,6 @@ _XmVendorExtRealize(
 static XContext	actualClassContext = 0;
 
 
-/*ARGSUSED*/
 static void
 DisplayDestroyCallback
 	( Widget w,
@@ -1601,7 +1597,6 @@ DisplayDestroyCallback
  *  _XmGetActualClass
  *
  ************************************************************************/
-/* ARGSUSED */
 WidgetClass
 _XmGetActualClass(
 	Display     *display,
@@ -1632,7 +1627,6 @@ _XmGetActualClass(
  *  _XmSetActualClass
  *
  ************************************************************************/
-/* ARGSUSED */
 void
 _XmSetActualClass(
 	Display     *display,
@@ -1682,7 +1676,6 @@ _XmSetActualClass(
  *  _XmGetWorldObject
  *
  ************************************************************************/
-/* ARGSUSED */
 XmDesktopObject
 _XmGetWorldObject(
         Widget shell,
@@ -1754,7 +1747,6 @@ _XmGetWorldObject(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 void
 _XmVirtKeysHandler(Widget    widget,
 		   XtPointer client_data,
@@ -1821,7 +1813,6 @@ _XmTextGetAnchor(XmTextWidget tw)
  *
  ****************************************************************/
 
-/*ARGSUSED*/
 Boolean
 _XmGrabTheFocus(
         Widget w,
@@ -1905,7 +1896,6 @@ _XmStringCreate(
 }
 
 /* Used to create external XmString from internal, now just copies. */
-/*ARGSUSED*/
 XmString
 _XmStringCreateExternal(
         XmRenderTable rendertable, /* unused */

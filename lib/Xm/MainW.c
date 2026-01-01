@@ -282,7 +282,6 @@ ClassPartInitialize(
  *  Initialize								*
  *									*
  ************************************************************************/
-/* ARGSUSED */
 static void
 Initialize(
         Widget rw,
@@ -340,7 +339,6 @@ Initialize(
  *  DeleteChild								*
  *									*
  ************************************************************************/
-/* ARGSUSED */
 static void
 DeleteChild(
         Widget child)
@@ -1095,19 +1093,21 @@ ChangeManaged(
  *  SetValues								*
  *									*
  ************************************************************************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
-        Widget rw,		/* unused */
+        Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     XmMainWindowWidget current = (XmMainWindowWidget) cw ;
     XmMainWindowWidget new_w = (XmMainWindowWidget) nw ;
     Boolean flag = False;
 
+    (void)rw;
+    (void)args;
+    (void)num_args;
     CheckKids(new_w);
 
     /* somehow, this used not to create problem in 1.2,
@@ -1458,3 +1458,4 @@ XmVaCreateManagedMainWindow(
     va_end(var);
     return w;
 }
+

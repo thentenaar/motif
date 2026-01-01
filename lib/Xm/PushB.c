@@ -577,19 +577,15 @@ ExportHighlightThickness(
  *  ClassInitialize
  *
  *************************************<->***********************************/
-
-static void
-ClassInitialize( void )
+static void ClassInitialize(void)
 {
-  /* parse the various translation tables */
-  menu_parsed    = XtParseTranslationTable(menuTranslations);
-  default_parsed = XtParseTranslationTable(defaultTranslations);
+	/* parse the various translation tables */
+	menu_parsed    = XtParseTranslationTable(menuTranslations);
+	default_parsed = XtParseTranslationTable(defaultTranslations);
 
-  /* set up base class extension quark */
-  pushBBaseClassExtRec.record_type = XmQmotif;
+	/* set up base class extension quark */
+	pushBBaseClassExtRec.record_type = XmQmotif;
 }
-
-
 
 /************************************************************************
  *
@@ -597,23 +593,21 @@ ClassInitialize( void )
  *     Set up the fast subclassing for the widget
  *
  ************************************************************************/
-static void
-ClassPartInitialize(
-        WidgetClass wc )
+static void ClassPartInitialize(WidgetClass wc)
 {
-  _XmFastSubclassInit (wc, XmPUSH_BUTTON_BIT);
+	_XmFastSubclassInit (wc, XmPUSH_BUTTON_BIT);
 
-  /* Install the menu savvy trait record,  copying fields from XmLabel */
-  _XmLabelCloneMenuSavvy (wc, &MenuSavvyRecord);
+	/* Install the menu savvy trait record,  copying fields from XmLabel */
+	_XmLabelCloneMenuSavvy (wc, &MenuSavvyRecord);
 
-  /* Install the activatable trait for all subclasses */
-  XmeTraitSet((XtPointer) wc, XmQTactivatable, (XtPointer) &pushButtonAT);
+	/* Install the activatable trait for all subclasses */
+	XmeTraitSet(wc, XmQTactivatable, (XtPointer)&pushButtonAT);
 
-  /* Install the takesDefault trait for all subclasses */
-  XmeTraitSet((XtPointer) wc, XmQTtakesDefault, (XtPointer) &pushButtonTDT);
+	/* Install the takesDefault trait for all subclasses */
+	XmeTraitSet(wc, XmQTtakesDefault, (XtPointer)&pushButtonTDT);
 
-  /* Override primitive's careParentVisual trait for all subclasses. */
-  XmeTraitSet((XtPointer) wc, XmQTcareParentVisual, (XtPointer)&pushButtonCVT);
+	/* Override primitive's careParentVisual trait for all subclasses. */
+	XmeTraitSet(wc, XmQTcareParentVisual, (XtPointer)&pushButtonCVT);
 }
 
 /************************************************************
@@ -624,40 +618,30 @@ ClassPartInitialize(
  * the data is massaged correctly
  *
  ************************************************************/
-
-/*ARGSUSED*/
-static void
-InitializePrehook(
-        Widget req,		/* unused */
-        Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static void InitializePrehook(Widget req, Widget new_w, ArgList args,
+                              Cardinal *num_args)
 {
-  XmPushButtonWidget bw = (XmPushButtonWidget) new_w;
-  unsigned char type;
-  XmMenuSystemTrait menuSTrait;
+	XmMenuSystemTrait trait;
+	unsigned char type    = XmWORK_AREA;
+	XmPushButtonWidget bw = (XmPushButtonWidget)new_w;
 
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(new_w)), XmQTmenuSystem);
+	(void)req;
+	(void)args;
+	(void)num_args;
 
-  _XmSaveCoreClassTranslations (new_w);
+	_XmSaveCoreClassTranslations(new_w);
+	if ((trait = XmeTraitGet(XtClass(XtParent(new_w)), XmQTmenuSystem)))
+		type = trait->type(XtParent(new_w));
 
-  if (menuSTrait != NULL)
-    type = menuSTrait->type(XtParent(new_w));
-  else
-    type = XmWORK_AREA;
+	_XmProcessLock();
+	if (type == XmMENU_PULLDOWN || type == XmMENU_POPUP)
+		new_w->core.widget_class->core_class.tm_table = (String)menu_parsed;
+	else
+		new_w->core.widget_class->core_class.tm_table = (String)default_parsed;
 
-  _XmProcessLock();
-  if (type == XmMENU_PULLDOWN ||
-      type == XmMENU_POPUP)
-    new_w->core.widget_class->core_class.tm_table = (String) menu_parsed;
-  else
-    new_w->core.widget_class->core_class.tm_table = (String) default_parsed;
-
-  /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (bw->label.font == NULL)
-    bw->label.font = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
-  _XmProcessUnlock();
+	if (!bw->label.font)
+		bw->label.font = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
+	_XmProcessUnlock();
 }
 
 /************************************************************
@@ -667,16 +651,13 @@ InitializePrehook(
  * restore core class translations
  *
  ************************************************************/
-
-/*ARGSUSED*/
-static void
-InitializePosthook(
-        Widget req,		/* unused */
-        Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static void InitializePosthook(Widget req, Widget new_w, ArgList args,
+                               Cardinal *num_args)
 {
-  _XmRestoreCoreClassTranslations (new_w);
+	(void)req;
+	(void)args;
+	(void)num_args;
+	_XmRestoreCoreClassTranslations (new_w);
 }
 
 /************************************************************************
@@ -744,14 +725,12 @@ GetBackgroundGC(
  *  Initialize
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmPushButtonWidget request = (XmPushButtonWidget) rw ;
   XmPushButtonWidget new_w = (XmPushButtonWidget) nw ;
@@ -760,6 +739,8 @@ Initialize(
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(new_w));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
 
+  (void)args;
+  (void)num_args;
   if (new_w->pushbutton.multiClick == XmINVALID_MULTICLICK)
     {
       if (Lab_IsMenupane(new_w))
@@ -919,23 +900,19 @@ EraseDefaultButtonShadow(
  *  SetValuesPrehook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
-static Boolean
-SetValuesPrehook(
-        Widget cw,		/* unused */
-        Widget rw,		/* unused */
-        Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static Boolean SetValuesPrehook(Widget cw, Widget rw, Widget nw, ArgList args,
+                                Cardinal *num_args)
 {
-  XmPushButtonWidget new_w = (XmPushButtonWidget) nw ;
+	XmPushButtonWidget new_w = (XmPushButtonWidget)nw;
 
-  /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (new_w->label.font == NULL)
-    new_w->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
+	(void)cw;
+	(void)rw;
+	(void)args;
+	(void)num_args;
 
-  return False;
+	if (!new_w->label.font)
+		new_w->label.font = XmeGetDefaultRenderTable(nw, XmBUTTON_FONTLIST);
+	return False;
 }
 
 /*************************************<->*************************************
@@ -943,15 +920,13 @@ SetValuesPrehook(
  *  SetValues(current, request, new_w)
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmPushButtonWidget current = (XmPushButtonWidget) cw ;
   XmPushButtonWidget request = (XmPushButtonWidget) rw ;
@@ -961,6 +936,9 @@ SetValues(
   int adjustment;
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(new_w));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
+
+  (void)args;
+  (void)num_args;
 
   /*
    * Fix to introduce Resource XmNdefaultBorderWidth and compatibility
@@ -1193,8 +1171,6 @@ Destroy(
  *     XmNarmPixmap will be used in the label.
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static void
 Redisplay(
         Widget wid,
@@ -1414,14 +1390,16 @@ DrawPushButtonShadows(
     DrawPBPrimitiveShadows (pb);
 }
 
-/*ARGSUSED*/
 static Boolean
 ParentVisualChanged(Widget kid,
-		    Widget cur_parent,	/* unused */
-		    Widget new_parent,	/* unused */
+		    Widget cur_parent,
+		    Widget new_parent,
 		    Mask visual_flag)
 {
-  XmPushButtonWidget pb = (XmPushButtonWidget) kid ;
+  XmPushButtonWidget pb = (XmPushButtonWidget)kid;
+
+  (void)cur_parent;
+  (void)new_parent;
 
   /* CR 9333: The primitive Redraw procedure only redraws the */
   /*	highighlight area, but push buttons needs to redraw the */
@@ -1985,19 +1963,20 @@ SetPushButtonSize(
  *
  ************************************************************************/
 
-/*ARGSUSED*/
 static void
 Arm(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
   XtExposeProc expose;
 
-  (void) XmProcessTraversal ((Widget) pb, XmTRAVERSE_CURRENT);
+  (void)params;
+  (void)num_params;
+  XmProcessTraversal ((Widget) pb, XmTRAVERSE_CURRENT);
 
   pb->pushbutton.armed = TRUE;
 
@@ -2022,18 +2001,15 @@ Arm(
     }
 }
 
-/*ARGSUSED*/
-static void
-MultiArm(
-        Widget wid,
-        XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+static void MultiArm(Widget wid, XEvent *event, String *params,
+                     Cardinal *num_params)
 {
-  XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
+	XmPushButtonWidget pb = (XmPushButtonWidget)wid;
 
-  if (pb->pushbutton.multiClick == XmMULTICLICK_KEEP)
-    Arm ((Widget) pb, event, NULL, NULL);
+	(void)params;
+	(void)num_params;
+	if (pb->pushbutton.multiClick == XmMULTICLICK_KEEP)
+		Arm(wid, event, NULL, NULL);
 }
 
 /************************************************************************
@@ -2087,19 +2063,20 @@ MultiActivate(
     }
 }
 
-/*ARGSUSED*/
 static void
 ActivateCommon(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
   XmMenuSystemTrait menuSTrait;
   XtExposeProc expose;
 
+  (void)params;
+  (void)num_params;
   pb->pushbutton.armed = FALSE;
 
   _XmProcessLock();
@@ -2137,8 +2114,6 @@ ActivateCommon(
     }
 }
 
-
-
 static void
 PB_FixTearoff( XmPushButtonWidget pb)
 {
@@ -2156,14 +2131,12 @@ PB_FixTearoff( XmPushButtonWidget pb)
  *     ArmAndActivate
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   Boolean already_armed = pb->pushbutton.armed;
@@ -2172,6 +2145,8 @@ ArmAndActivate(
   Boolean torn_has_focus = FALSE;	/* must be torn! */
   XmMenuSystemTrait menuSTrait;
 
+  (void)params;
+  (void)num_params;
   if (is_menupane && !XmIsMenuShell(XtParent(XtParent(pb))))
     {
       /* Because the pane is torn and the parent is a transient shell,
@@ -2189,7 +2164,7 @@ ArmAndActivate(
 
   menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass((Widget)XtParent(pb)), XmQTmenuSystem);
-  if (is_menupane && menuSTrait != NULL)
+  if (is_menupane && menuSTrait)
     {
       pb->pushbutton.armed = FALSE;
 
@@ -2236,7 +2211,7 @@ ArmAndActivate(
   /* If the parent is menu system able, set the lastSelectToplevel before
    * the arm. It's ok if this is recalled later.
    */
-  if (menuSTrait != NULL)
+  if (menuSTrait)
     menuSTrait->getLastSelectToplevel(XtParent(pb));
 
   if (pb->pushbutton.arm_callback && !already_armed)
@@ -2251,7 +2226,7 @@ ArmAndActivate(
   call_value.click_count = 1;	           /* always 1 in kselect */
 
   /* if the parent is menu system able, notify it about the select */
-  if (menuSTrait != NULL)
+  if (menuSTrait)
     menuSTrait->entryCallback(XtParent(pb), (Widget)pb, &call_value);
 	pb->label.pixmap = pb->pushbutton.unarm_pixmap;
   if ((! pb->label.skipCallback) && (pb->pushbutton.activate_callback))
@@ -2310,7 +2285,6 @@ ArmAndActivate(
     }
 }
 
-/*ARGSUSED*/
 static void
 ArmTimeout(
         XtPointer data,
@@ -2368,32 +2342,31 @@ ArmTimeout(
  *     The callbacks for XmNdisarmCallback are called..
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Disarm(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
   XtExposeProc expose;
 
-  /* BEGIN OSF Fix pir 2826 */
-  if (pb->pushbutton.armed == TRUE)
+  (void)params;
+  (void)num_params;
+
+  if (pb->pushbutton.armed)
     {
       pb->pushbutton.armed = FALSE;
-      Redisplay((Widget) pb, event, (Region)NULL);
+      Redisplay((Widget) pb, event, NULL);
       _XmProcessLock();
       expose = XtClass(pb)->core_class.expose;
       _XmProcessUnlock();
       if (expose)
-        (* expose)((Widget)(pb), event, (Region)NULL);
+        (* expose)((Widget)(pb), event, NULL);
 
     }
-  /* END OSF Fix pir 2826 */
 
   if (pb->pushbutton.disarm_callback)
     {
@@ -2416,14 +2389,12 @@ Disarm(
  *     The callbacks for XmNarmCallback are called.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 BtnDown(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
@@ -2432,13 +2403,14 @@ BtnDown(
   ShellWidget popup;
   XmMenuSystemTrait menuSTrait;
 
+  (void)params;
+  (void)num_params;
+
   /* Support menu replay, free server input queue until next button event */
   XAllowEvents(XtDisplay(pb), SyncPointer, CurrentTime);
 
   /* If no menu system trait then parent isn't a menu as it should be. */
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(pb)), XmQTmenuSystem);
-  if (menuSTrait == NULL)
+  if (!(menuSTrait = XmeTraitGet(XtClass(XtParent(pb)), XmQTmenuSystem)))
     return;
 
   if (event && (event->type == ButtonPress))
@@ -2470,7 +2442,7 @@ BtnDown(
   /* Set focus to this pushbutton.  This must follow the possible
    * unhighlighting of the CascadeButton else it'll screw up active_child.
    */
-  (void)XmProcessTraversal ((Widget) pb, XmTRAVERSE_CURRENT);
+  XmProcessTraversal ((Widget) pb, XmTRAVERSE_CURRENT);
   /* get the location cursor - get consistent with Gadgets */
 
   already_armed = pb->pushbutton.armed;
@@ -2498,29 +2470,27 @@ BtnDown(
  *     The callbacks for XmNdisarmCallback are called.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 BtnUp(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   Widget parent =  XtParent(pb);
   XmPushButtonCallbackStruct call_value;
-  Boolean flushDone = False;
   Boolean validButton = False;
   Boolean popped_up;
   Boolean is_menupane = Lab_IsMenupane(pb);
   Widget shell = XtParent(XtParent(pb));
   XmMenuSystemTrait menuSTrait;
 
+  (void)params;
+  (void)num_params;
+
   /* If no menu system trait then parent isn't a menu as it should be. */
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(pb)), XmQTmenuSystem);
-  if (menuSTrait == NULL)
+  if (!(menuSTrait = XmeTraitGet(XtClass(XtParent(pb)), XmQTmenuSystem)))
     return;
 
   if (event && (event->type == ButtonRelease))
@@ -2547,24 +2517,17 @@ BtnUp(
   call_value.click_count = 1;
 
   /* if the parent is menu system able, notify it about the select */
-  if (menuSTrait != NULL)
-    {
-      menuSTrait->entryCallback(parent, (Widget) pb, &call_value);
-      flushDone = True;
-    }
-
+  menuSTrait->entryCallback(parent, (Widget) pb, &call_value);
   if ((! pb->label.skipCallback) &&
       (pb->pushbutton.activate_callback))
     {
-      XFlush (XtDisplay (pb));
-      flushDone = True;
+      XFlush(XtDisplay (pb));
       XtCallCallbackList ((Widget) pb, pb->pushbutton.activate_callback,
 			  &call_value);
     }
   if (pb->pushbutton.disarm_callback)
     {
-      if (!flushDone)
-	XFlush (XtDisplay (pb));
+	  XFlush(XtDisplay (pb));
       call_value.reason = XmCR_DISARM;
       call_value.event = event;
       XtCallCallbackList ((Widget) pb, pb->pushbutton.disarm_callback,
@@ -2641,18 +2604,18 @@ BtnUp(
  *  Enter
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Enter(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
 
+  (void)params;
+  (void)num_params;
   if (Lab_IsMenupane(pb))
     {
       if ((((ShellWidget) XtParent(XtParent(pb)))->shell.popped_up) &&
@@ -2724,18 +2687,18 @@ Enter(
  *  Leave
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Leave(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
 
+  (void)params;
+  (void)num_params;
   if (Lab_IsMenupane(pb))
     {
       XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(wid));
@@ -2798,38 +2761,34 @@ Leave(
  *  If the menu system traversal is enabled, do an activate and disarm
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static void
 KeySelect(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
   XmPushButtonCallbackStruct call_value;
   XmMenuSystemTrait menuSTrait;
 
+  (void)params;
+  (void)num_params;
   if (!_XmIsEventUnique(event))
     return;
 
   if (!_XmGetInDragMode((Widget)pb))
     {
-      menuSTrait = (XmMenuSystemTrait)
-	XmeTraitGet((XtPointer) XtClass(XtParent(pb)), XmQTmenuSystem);
       pb->pushbutton.armed = FALSE;
-
-      if (menuSTrait != NULL)
+      if ((menuSTrait = XmeTraitGet(XtClass(XtParent(pb)), XmQTmenuSystem)))
 	menuSTrait->buttonPopdown(XtParent(pb), event);
 
       _XmRecordEvent(event);
-
       call_value.reason = XmCR_ACTIVATE;
       call_value.event = event;
 
       /* if the parent is menu system able, notify it about the select */
-      if (menuSTrait != NULL)
+      if (menuSTrait)
 	menuSTrait->entryCallback(XtParent(pb), (Widget) pb, &call_value);
 
       if ((! pb->label.skipCallback) &&
@@ -2840,7 +2799,7 @@ KeySelect(
 			      &call_value);
 	}
 
-      if (menuSTrait != NULL)
+      if (menuSTrait)
 	menuSTrait->reparentToTearOffShell(XtParent(pb), event);
     }
 }
@@ -2851,23 +2810,21 @@ KeySelect(
  *     This function processes Function Key 1 press occuring on the PushButton.
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 Help(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
-  XmPushButtonWidget pb = (XmPushButtonWidget) wid ;
+  XmPushButtonWidget pb = (XmPushButtonWidget)wid;
   Boolean is_menupane = Lab_IsMenupane(pb);
   XmMenuSystemTrait menuSTrait;
 
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(wid)), XmQTmenuSystem);
-
-  if (is_menupane && menuSTrait != NULL)
+  (void)params;
+  (void)num_params;
+  menuSTrait = XmeTraitGet(XtClass(XtParent(wid)), XmQTmenuSystem);
+  if (is_menupane && menuSTrait)
     menuSTrait->buttonPopdown(XtParent(pb), event);
 
   _XmPrimitiveHelp ((Widget) pb, event, NULL, NULL);
@@ -2878,7 +2835,7 @@ Help(
    * XtCallCallbackList ((Widget) pb, pb->primitive.help_callback, &call_value);
    ***/
 
-  if (is_menupane && menuSTrait != NULL)
+  if (is_menupane && menuSTrait)
     menuSTrait->reparentToTearOffShell(XtParent(pb), event);
 }
 

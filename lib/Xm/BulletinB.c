@@ -429,41 +429,25 @@ externaldef( xmbulletinboardwidgetclass) WidgetClass xmBulletinBoardWidgetClass
 
 
 /* Trait record for BulletinB specify render table */
-
-static XmConst XmSpecRenderTraitRec bulletinbSRT = {
-  0,		/* version */
-  GetTable,
+static const XmSpecRenderTraitRec bulletinbSRT = {
+	0, /* version */
+	GetTable,
 };
-
 
 /* Trait record for BulletinB dialog shell savvy */
-
-static XmConst XmDialogSavvyTraitRec bulletinbDST = {
-  0,		/* version */
-  CallMapUnmap,
+static const XmDialogSavvyTraitRec bulletinbDST = {
+	0, /* version */
+	CallMapUnmap,
 };
 
-
-/*
+/**
  * Copy the XmString in XmNdialogTitle before returning it to the user.
  */
-/*ARGSUSED*/
-static void
-GetDialogTitle(
-        Widget bb,
-        int resource,		/* unused */
-        XtArgVal *value)
+static void GetDialogTitle(Widget bb, int resource, XtArgVal *value)
 {
-    XmString      data ;
-/****************/
-
-    data = XmStringCopy((XmString) ((XmBulletinBoardWidget) bb)
-                                                ->bulletin_board.dialog_title);
-    *value = (XtArgVal) data ;
-
-    return ;
-    }
-
+    (void)resource;
+	*value = (XtArgVal)XmStringCopy(((XmBulletinBoardWidget)bb)->bulletin_board.dialog_title);
+}
 
 /****************************************************************/
 static void
@@ -504,13 +488,12 @@ ClassPartInitialize(
 /****************************************************************
  * Initialize a BulletinBoard instance.
  ****************/
-/*ARGSUSED*/
 static void
 Initialize(
         Widget wid_req,
         Widget wid_new,
-        ArgList args,		/* unused */
-        Cardinal *numArgs )	/* unused */
+        ArgList args,
+        Cardinal *numArgs)
 {
             XmBulletinBoardWidget request = (XmBulletinBoardWidget) wid_req ;
             XmBulletinBoardWidget new_w = (XmBulletinBoardWidget) wid_new ;
@@ -526,6 +509,8 @@ Initialize(
             XmVendorShellExtObject vendorExt;
 /****************/
 
+    (void)args;
+    (void)numArgs;
     new_w->bulletin_board.in_set_values = False ;
     new_w->bulletin_board.geo_cache = (XmGeoMatrix) NULL ;
     new_w->bulletin_board.initial_focus = TRUE ;
@@ -798,14 +783,13 @@ Destroy(
 /****************************************************************
  * Modify attributes of a BulletinBoard instance.
  ****************/
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     XmBulletinBoardWidget current = (XmBulletinBoardWidget) cw ;
     XmBulletinBoardWidget request = (XmBulletinBoardWidget) rw ;
@@ -821,6 +805,8 @@ SetValues(
 
 /****************/
 
+    (void)args;
+    (void)num_args;
     current->bulletin_board.in_set_values = True ;
 
     if(new_w->bulletin_board.shadow_type
@@ -1455,20 +1441,12 @@ ChangeManaged(
 /****************************************************************
  * Unmanage BulletinBoard after button is activated.
  ****************/
-/*ARGSUSED*/
-static void
-UnmanageCallback(
-        Widget w,		/* unused */
-        XtPointer client_data,
-        XtPointer call_data )	/* unused */
+static void UnmanageCallback(Widget w, XtPointer client_data, XtPointer call_data)
 {
-            Widget          bb = (Widget) client_data ;
-/****************/
-
-    XtUnmanageChild( bb) ;
-
-    return ;
-    }
+	(void)w;
+	(void)call_data;
+	XtUnmanageChild((Widget)client_data);
+}
 
 /****************************************************************
  * Add a child to the BulletinBoard.
@@ -1491,7 +1469,7 @@ InsertChild(
     {   return ;
         }
 
-    if(XmeTraitGet((XtPointer)XtClass(child), XmQTtakesDefault))
+    if (XmeTraitGet(XtClass(child), XmQTtakesDefault))
     {   is_button = TRUE ;
 
         if(    BB_DefaultButton( bb)    )
@@ -1702,10 +1680,9 @@ Redisplay(
 
 
 /****************************************************************/
-/*ARGSUSED*/
 void
 _XmBulletinBoardFocusMoved(
-        Widget wid,		/* unused */
+        Widget wid,
         XtPointer client_data,
         XtPointer data )
 {
@@ -1720,6 +1697,7 @@ _XmBulletinBoardFocusMoved(
             Widget          cbutton = NULL ;
 /****************/
 
+    (void)wid;
     if(    !call_data->cont    )
     {   /* Preceding callback routine wants focus-moved processing
         *   to be discontinued.
@@ -1780,8 +1758,7 @@ _XmBulletinBoardFocusMoved(
              */
             BB_DynamicDefaultButton( bb) = NULL ;
 	} else {
-            if(XmeTraitGet((XtPointer)XtClass(call_data->new_focus),
-			   XmQTtakesDefault))
+            if (XmeTraitGet(XtClass(call_data->new_focus), XmQTtakesDefault))
             {
                 /* Any defaultable which gets the focus
                 *   gets the default visuals and behavior.
@@ -1989,14 +1966,17 @@ _XmBulletinBoardCancel(Widget wid,
     }
 }
 
-/*ARGSUSED*/
 void
 _XmBulletinBoardMap(
          Widget wid,
-         XEvent *event,		/* unused */
-         String *params,	/* unused */
-         Cardinal *numParams )	/* unused */
- {
+         XEvent *event,
+         String *params,
+         Cardinal *numParams)
+{
+   (void)event;
+   (void)params;
+   (void)numParams;
+
    if(    BB_DefaultButton( wid)    )
      {
        Widget focus_hier = _XmGetFirstFocus( wid) ;
@@ -2134,7 +2114,6 @@ GetBBWithDB(
  * been called twice on same widget for that resource, thus
  * the resource needs to be set NULL, otherwise leave it alone.
  */
-/* ARGSUSED */
 static void
 CheckSetRenderTables(Widget wid,
 		     int offset,

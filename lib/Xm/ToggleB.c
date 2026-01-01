@@ -585,39 +585,31 @@ ClassPartInitialize(
  * the data is massaged correctly
  *
  ************************************************************/
-/*ARGSUSED*/
-static void
-InitializePrehook(
-        Widget req,		/* unused */
-        Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static void InitializePrehook(Widget req, Widget new_w, ArgList args,
+                              Cardinal *num_args)
 {
-  unsigned char type;
-  XmMenuSystemTrait menuSTrait;
-  XmToggleButtonWidget bw = (XmToggleButtonWidget) new_w ;
+	unsigned char type = XmWORK_AREA;
+	XmMenuSystemTrait trait;
+	XmToggleButtonWidget bw = (XmToggleButtonWidget)new_w;
 
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(new_w)), XmQTmenuSystem);
+	(void)req;
+	(void)args;
+	(void)num_args;
 
-  _XmSaveCoreClassTranslations (new_w);
+	trait = XmeTraitGet(XtClass(XtParent(new_w)), XmQTmenuSystem);
+	_XmSaveCoreClassTranslations(new_w);
 
-  if (menuSTrait != NULL)
-    type = menuSTrait->type(XtParent(new_w));
-  else
-    type = XmWORK_AREA;
+	if (trait)
+		type = trait->type(XtParent(new_w));
 
-  _XmProcessLock();
-  if ((type == XmMENU_PULLDOWN) ||
-      (type == XmMENU_POPUP))
-    new_w->core.widget_class->core_class.tm_table = (String) menu_parsed;
-  else
-    new_w->core.widget_class->core_class.tm_table = (String) default_parsed;
-  _XmProcessUnlock();
+	_XmProcessLock();
+	new_w->core.widget_class->core_class.tm_table = (String)default_parsed;
+	if (type == XmMENU_PULLDOWN || type == XmMENU_POPUP)
+		new_w->core.widget_class->core_class.tm_table = (String)menu_parsed;
+	_XmProcessUnlock();
 
-  /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (bw->label.font == NULL)
-    bw->label.font = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
+	if (!bw->label.font)
+		bw->label.font = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
 }
 
 /************************************************************
@@ -627,15 +619,13 @@ InitializePrehook(
  * restore core class translations
  *
  ************************************************************/
-/*ARGSUSED*/
-static void
-InitializePosthook(
-        Widget req,		/* unused */
-        Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static void InitializePosthook(Widget req, Widget new_w, ArgList args,
+                               Cardinal *num_args)
 {
-  _XmRestoreCoreClassTranslations (new_w);
+	(void)req;
+	(void)args;
+	(void)num_args;
+	_XmRestoreCoreClassTranslations(new_w);
 }
 
 /*********************************************************************
@@ -1027,8 +1017,6 @@ NextState(
  *       The callbacks for XmNarmCallback are called.
  *
  ***************************************************************************/
-
-/* ARGSUSED */
 static void
 Arm(
         Widget wid,
@@ -1076,7 +1064,6 @@ Arm(
  *       callbacks for XmNvalueChangedCallback are called.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 Select(
         Widget wid,
@@ -1162,7 +1149,6 @@ Select(
  *      The callbacks for XmNdisarmCallback are called..
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 Disarm(
         Widget wid,
@@ -1205,7 +1191,6 @@ TB_FixTearoff( XmToggleButtonWidget tb)
  *       button accelerator has been activated.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 ArmAndActivate(
         Widget wid,
@@ -1366,7 +1351,6 @@ ArmAndActivate(
  *       The callbacks for XmNarmCallback are called.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 BtnDown(
         Widget wid,
@@ -1467,7 +1451,6 @@ BtnDown(
  *       The callbacks for XmNdisarmCallback are called.
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 BtnUp(
         Widget wid,
@@ -1700,8 +1683,6 @@ GetGC(
  *  Initialize
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
@@ -2471,7 +2452,6 @@ BorderUnhighlight(
  *    If the menu system traversal is enabled, do an activate and disarm
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static void
 KeySelect(
         Widget wid,
@@ -2704,23 +2684,18 @@ Resize(
  *  SetValuesPrehook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
-static Boolean
-SetValuesPrehook(
-        Widget cw,		/* unused */
-        Widget rw,		/* unused */
-        Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static Boolean SetValuesPrehook(Widget cw, Widget rw, Widget nw,
+                                ArgList args, Cardinal *num_args)
 {
-  XmToggleButtonWidget new_w = (XmToggleButtonWidget) nw ;
+	XmToggleButtonWidget new_w = (XmToggleButtonWidget)nw;
 
-  /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (new_w->label.font == NULL)
-    new_w->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
-
-  return False;
+	(void)cw;
+	(void)rw;
+	(void)args;
+	(void)num_args;
+	if (!new_w->label.font)
+		new_w->label.font = XmeGetDefaultRenderTable(nw, XmBUTTON_FONTLIST);
+	return False;
 }
 
 /***************************************************************************
@@ -2731,7 +2706,6 @@ SetValuesPrehook(
  *     first).
  *
  *************************************<->***********************************/
-/* ARGSUSED */
 static Boolean
 SetValues(
         Widget current,

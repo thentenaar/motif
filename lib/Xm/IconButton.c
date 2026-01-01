@@ -19,7 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 /************************************************************
@@ -423,10 +422,7 @@ static XmConst XmActivatableTraitRec iconButtonAT =
  *	Arguments:     none.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
-static void
-ClassInit()
+static void ClassInit(void)
 {
     XmIconButtonClassRec *wc = &xmIconButtonClassRec;
 
@@ -457,8 +453,6 @@ static void ClassPartInitialize(WidgetClass w_class)
  *                                      the creation call.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
 {
@@ -587,8 +581,6 @@ Resize(Widget w)
  *                     region - the region containing all the exposures.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static void
 Redisplay(Widget w, XEvent * event, Region region)
 {
@@ -667,7 +659,6 @@ Redisplay(Widget w, XEvent * event, Region region)
  *                 reply - the compromise from our parent.
  *	Returns: none
  */
-/* ARGSUSED */
 static void
 SetValuesAlmost(Widget old, Widget set,
 		XtWidgetGeometry * request,  XtWidgetGeometry * reply)
@@ -687,8 +678,6 @@ SetValuesAlmost(Widget old, Widget set,
  *                     args, num_args - the arguments in the list.
  *	Returns:       none
  */
-
-/*ARGSUSED*/
 static Boolean
 SetValues(Widget current, Widget request, Widget set,
 	  ArgList args, Cardinal * num_args)
@@ -941,8 +930,6 @@ SetValues(Widget current, Widget request, Widget set,
  *	Arguments:     w - the widget.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 Destroy(Widget w)
 {
@@ -997,8 +984,6 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
  *                     toVal - contains the converted node state.
  *	Returns:       True if the SetValues succeeds.
  */
-
-/*ARGSUSED*/
 static Boolean
 CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 			 XrmValuePtr fromVal, XrmValuePtr toVal)
@@ -1075,8 +1060,6 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ToggleState(Widget w, XEvent * event, String * params, Cardinal * num_params)
 {
@@ -1095,8 +1078,6 @@ ToggleState(Widget w, XEvent * event, String * params, Cardinal * num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 DoubleNotify(Widget w, XEvent * event, String * params, Cardinal * num_params)
 {
@@ -1117,8 +1098,6 @@ DoubleNotify(Widget w, XEvent * event, String * params, Cardinal * num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 Notify(Widget w, XEvent * event, String * params, Cardinal * num_params)
 {
@@ -1149,8 +1128,6 @@ Notify(Widget w, XEvent * event, String * params, Cardinal * num_params)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ArmAndActivate(Widget w,
 	       XEvent * event, String * params, Cardinal * num_params)
@@ -1176,8 +1153,6 @@ ArmAndActivate(Widget w,
  *                 timer - the timer that fired.
  *	Returns: none.
  */
-
-/* ARGSUSED */
 static void
 Deactivate(XtPointer data, XtIntervalId *timer)
 {
@@ -1199,8 +1174,6 @@ Deactivate(XtPointer data, XtIntervalId *timer)
  *                     params, num_params - action routine parameters.
  *	Returns:       none.
  */
-
-/*ARGSUSED*/
 static void
 ButtonUp(Widget w,
 	       XEvent * event, String * params, Cardinal * num_params)
@@ -1345,7 +1318,6 @@ DecPixCache(Display *disp, Pixmap pix)
     }
 }
 
-/* ARGSUSED */
 static void GetValues_labelString ( Widget w, int n, XtArgVal *value)
 {
 	(*value) = (XtArgVal) XmStringCopy(XmIconButton_label_string(w));
@@ -1949,8 +1921,6 @@ CreateXmString(Widget w, String str)
  * been called twice on same widget, thus resource needs to be set NULL,
  * otherwise leave it alone.
  */
-
-/*ARGSUSED*/
 static void
 CheckSetRenderTable(Widget wid,
 		    int offs,
@@ -2011,3 +1981,4 @@ XmCreateIconButton(Widget parent, String name,
     return(XtCreateWidget(name, xmIconButtonWidgetClass,
 			  parent, args, num_args));
 }
+

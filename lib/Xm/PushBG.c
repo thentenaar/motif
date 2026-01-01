@@ -772,14 +772,12 @@ PBG_FixTearoff( XmPushButtonGadget pb)
  *  - Called by SelectionBox and FileSelectionBox code when they receive
  *    a default-action callback on their embedded XmList widgets.
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 ArmAndActivate(
         Widget wid,
         XEvent *event,
-        String *params,		/* unused */
-        Cardinal *num_params )	/* unused */
+        String *params,
+        Cardinal *num_params)
 {
   XmPushButtonGadget pb = (XmPushButtonGadget) wid;
   XmPushButtonCallbackStruct call_value;
@@ -788,8 +786,9 @@ ArmAndActivate(
   Boolean torn_has_focus = FALSE;    /* must be torn! */
   XmMenuSystemTrait menuSTrait;
 
-  menuSTrait = (XmMenuSystemTrait)
-    XmeTraitGet((XtPointer) XtClass(XtParent(wid)), XmQTmenuSystem);
+  (void)params;
+  (void)num_params;
+  menuSTrait = XmeTraitGet(XtClass(XtParent(wid)), XmQTmenuSystem);
 
   if (is_menupane && !XmIsMenuShell(XtParent(XtParent(pb))))
     {
@@ -806,7 +805,7 @@ ArmAndActivate(
 	}
     }
 
-  if (is_menupane && menuSTrait != NULL)
+  if (is_menupane && menuSTrait)
     {
       PBG_Armed(pb) = FALSE;
 
@@ -863,7 +862,7 @@ ArmAndActivate(
   /* If the parent is menu system able, set the lastSelectToplevel before
    * the arm. It's ok if this is recalled later.
    */
-  if (menuSTrait != NULL)
+  if (menuSTrait)
     menuSTrait->getLastSelectToplevel (XtParent(pb));
 
   if (PBG_ArmCallback(pb) && !already_armed)
@@ -879,7 +878,7 @@ ArmAndActivate(
   call_value.click_count = PBG_ClickCount (pb);
 
   /* If the parent is menu system able, notify it about the select */
-  if (menuSTrait != NULL)
+  if (menuSTrait)
     menuSTrait->entryCallback (XtParent(pb), (Widget) pb, &call_value);
 
 
@@ -913,7 +912,7 @@ ArmAndActivate(
 	      XtCallCallbackList((Widget) pb, PBG_ArmCallback(pb), &call_value);
 	    }
 	}
-      else if (menuSTrait != NULL)
+      else if (menuSTrait)
 	{
 	menuSTrait->reparentToTearOffShell(XtParent(pb), event);
 	PBG_FixTearoff(pb);
@@ -939,7 +938,6 @@ ArmAndActivate(
     }
 }
 
-/*ARGSUSED*/
 static void
 ArmTimeout(
         XtPointer data,
@@ -1707,8 +1705,6 @@ ClassPartInitialize(
  *  SecondaryObjectCreate
  *
  ************************************************************************/
-
-/* ARGSUSED */
 static void
 SecondaryObjectCreate(
         Widget req,
@@ -1772,18 +1768,11 @@ SecondaryObjectCreate(
  *  InitializePosthook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
-static void
-InitializePrehook(
-        Widget req,
-        Widget new_w,
-        ArgList args,
-        Cardinal *num_args )
+static void InitializePrehook(Widget req, Widget new_w, ArgList args,
+                              Cardinal *num_args)
 {
-  /* CR 2990: Use XmNbuttonFontList as the default. */
-  if (LabG_Font(new_w) == NULL)
-    LabG_Font(new_w) = XmeGetDefaultRenderTable (new_w, XmBUTTON_FONTLIST);
+	if (LabG_Font(new_w))
+		LabG_Font(new_w) = XmeGetDefaultRenderTable(new_w, XmBUTTON_FONTLIST);
 }
 
 /************************************************************************
@@ -1791,8 +1780,6 @@ InitializePrehook(
  *  InitializePosthook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 InitializePosthook(
         Widget req,
@@ -1833,7 +1820,7 @@ InitializePosthook(
   _XmExtObjFree ((XtPointer)ext->widget);
   _XmExtObjFree ((XtPointer)ext->reqWidget);
   _XmProcessUnlock();
-  XtFree((char *) ext);
+  XtFree((XtPointer)ext);
 }
 
 /*************************************<->*************************************
@@ -1841,8 +1828,6 @@ InitializePosthook(
  *  Initialize
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static void
 Initialize(
         Widget rw,
@@ -2026,8 +2011,6 @@ GetFillGC(
  *  SetValuesPrehook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValuesPrehook(
         Widget oldParent,
@@ -2113,8 +2096,6 @@ SetValuesPrehook(
  *  GetValuesPrehook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 GetValuesPrehook(
         Widget newParent,
@@ -2188,8 +2169,6 @@ GetValuesPrehook(
  *  GetValuesPosthook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static void
 GetValuesPosthook(
         Widget new_w,
@@ -2211,8 +2190,6 @@ GetValuesPosthook(
  *  SetValuesPosthook
  *
  ************************************************************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValuesPosthook(
         Widget current,
@@ -2293,15 +2270,13 @@ SetValuesPosthook(
  *   -----------------
  *
  *************************************<->***********************************/
-
-/*ARGSUSED*/
 static Boolean
 SetValues(
         Widget cw,
         Widget rw,
         Widget nw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmPushButtonGadget current = (XmPushButtonGadget) cw;
   XmPushButtonGadget request = (XmPushButtonGadget) rw;
@@ -2312,6 +2287,9 @@ SetValues(
   int		     adjustment;
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(new_w));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
+
+  (void)args;
+  (void)num_args;
 
   /*
    * Fix to introduce Resource XmNdefaultBorderWidth and compatibility
@@ -2578,7 +2556,6 @@ Resize(
   }
 }
 
-/*ARGSUSED*/
 static void
 ActivateCommonG(
         XmPushButtonGadget pb,
@@ -2616,8 +2593,6 @@ ActivateCommonG(
  *    Put the pointers to these records in an array of pointers;
  *    Return the pointer to the array of pointers.
  */
-
-/*ARGSUSED*/
 static Cardinal
 GetPushBGClassSecResData(
         WidgetClass w_class,
@@ -2640,18 +2615,17 @@ GetPushBGClassSecResData(
  * GetPushBGClassResBase ()
  *   retrun the address of the base of resources.
  */
-
-/*ARGSUSED*/
 static XtPointer
 GetPushBGClassSecResBase(
         Widget widget,
-        XtPointer client_data )	/* unused */
+        XtPointer client_data)
 {
   XtPointer widgetSecdataPtr;
   size_t    labg_cache_size = sizeof (XmLabelGCacheObjPart);
   size_t    pushbg_cache_size = sizeof (XmPushButtonGCacheObjPart);
   char *cp;
 
+  (void)client_data;
   widgetSecdataPtr = (XtPointer)
     XtMalloc(labg_cache_size + pushbg_cache_size + 1);
 
@@ -2813,7 +2787,6 @@ AdjustHighLightThickness(
   return (adjustment);
 }
 
-/*ARGSUSED*/
 static void
 Redisplay(
         Widget wid,

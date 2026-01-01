@@ -103,15 +103,18 @@ _XmGetActiveItem(
   return XmGetFocusWidget( w) ;
 }
 
-/*ARGSUSED*/
 void
 _XmNavigInitialize(
-        Widget request,		/* unused */
+        Widget request,
         Widget new_wid,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
   XmFocusData focusData ;
+
+  (void)request;
+  (void)args;
+  (void)num_args;
 
   if(    (focusData = _XmGetFocusData( new_wid)) != NULL    )
     {
@@ -143,15 +146,20 @@ _XmNavigInitialize(
   return ;
 }
 
-/*ARGSUSED*/
 Boolean
 _XmNavigSetValues(
         Widget current,
-        Widget request,		/* unused */
+        Widget request,
         Widget new_wid,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
+  XmFocusData focusData;
+
+  (void)request;
+  (void)args;
+  (void)num_args;
+
   /* This routine is called from the SetValues method of Manager,
    * Primitive, and Gadget to keep the traversal data structures
    * up-to-date in regards to changes in the traversability of widgets.
@@ -171,9 +179,6 @@ _XmNavigSetValues(
    *       reset the focus for the hierarchy to the bootstrap
    *       condition).
    */
-
-  XmFocusData focusData ;
-
   if(    (focusData = _XmGetFocusData( new_wid)) != NULL    )
     {
       XmTravGraph graph = &(focusData->trav_graph) ;
@@ -946,21 +951,17 @@ _XmFindTopMostShell(
   return( w) ;
 }
 
-/*ARGSUSED*/
-void
-_XmFocusModelChanged(
-        Widget wid,
-        XtPointer client_data,	/* unused */
-        XtPointer call_data )
+void _XmFocusModelChanged(Widget wid, XtPointer client_data, XtPointer call_data)
 {
   /* Invoked by the VendorShell widget, when the focus_policy changes.
    * Registered as a callback by both the Manager and Primitive classes,
    * when the parent is a VendorShell widget.
    */
-  unsigned char new_focus_policy = (unsigned char)(unsigned long) call_data ;
-  Widget shell = _XmFindTopMostShell( wid) ;
-  XmFocusData focus_data = _XmGetFocusData( shell) ;
+  unsigned char new_focus_policy = (unsigned long)call_data & 0xff;
+  Widget shell = _XmFindTopMostShell(wid);
+  XmFocusData focus_data = _XmGetFocusData(shell);
 
+  (void)client_data;
   if(    focus_data    )
     {
       if(    new_focus_policy == XmEXPLICIT    )

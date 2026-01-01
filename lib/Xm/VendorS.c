@@ -523,38 +523,30 @@ VendorShellClassRec vendorShellClassRec = {
 externaldef(vendorshellwidgetclass) WidgetClass
   vendorShellWidgetClass = (WidgetClass) (&vendorShellClassRec);
 
-
-
-
 /* Trait record for VendorS specify render table */
-
-static XmConst XmSpecRenderTraitRec vsSRT = {
-  0,		/* version */
-  GetTable,
+static const XmSpecRenderTraitRec vsSRT = {
+	0, /* version */
+	GetTable,
 };
 
 /* Trait record for VendorS specify layout direction  */
-
-static XmConst XmSpecifyLayoutDirectionTraitRec vsLDT = {
-  0,			/* version */
-  GetDirection
+static const XmSpecifyLayoutDirectionTraitRec vsLDT = {
+	0, /* version */
+	GetDirection
 };
 
-
 /* Access Colors Trait record for vendor shell */
-
-static XmConst XmAccessColorsTraitRec vsACT = {
-  0,			/* version */
-  GetColors
+static const XmAccessColorsTraitRec vsACT = {
+	0, /* version */
+	GetColors,
+	NULL
 };
 
 /* Unit Type Trait record for VendorShell */
-
-static XmConst XmSpecUnitTypeTraitRec vsUTT = {
-  0,			/* version */
-  GetUnitType
+static const XmSpecUnitTypeTraitRec vsUTT = {
+	0, /* version */
+	GetUnitType
 };
-
 
 /************************************************************************
  *
@@ -563,28 +555,20 @@ static XmConst XmSpecUnitTypeTraitRec vsUTT = {
  *    been initialize (vs in the process of creation, like a conversion)
  *
  ************************************************************************/
-/*ARGSUSED*/
-static XtPointer
-BaseProc(
-        Widget widget,
-        XtPointer client_data )	/* unused */
+static XtPointer BaseProc(Widget widget, XtPointer client_data)
 {
-   XmWidgetExtData	extData;
-   Widget		secObj = NULL;
-   _XmWidgetToAppContext(widget);
+	XmWidgetExtData ext_data;
+	Widget sec = NULL;
 
-   _XmAppLock(app);
+	_XmWidgetToAppContext(widget);
+	_XmAppLock(app);
 
-
-    if ((extData = _XmGetWidgetExtData(widget, XmSHELL_EXTENSION)))
-    {
-	secObj = extData->widget;
-    }
-
+	(void)client_data;
+	if ((ext_data = _XmGetWidgetExtData(widget, XmSHELL_EXTENSION)))
+		sec = ext_data->widget;
     _XmAppUnlock(app);
-    return secObj;
+    return sec;
 }
-
 
 /************************************************************************
  *
@@ -1095,7 +1079,6 @@ RemoveGrab(
 #endif
 }
 
-/* ARGSUSED */
 static void
 RemoveGrabCallback(
 	Widget w,
@@ -1230,18 +1213,18 @@ IsPopupShell(
  *     PopupCallback
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 PopupCallback(
         Widget shellParent,
         XtPointer closure,
-        XtPointer callData )	/* unused */
+        XtPointer callData)
 {
     XmVendorShellExtObject	ve = (XmVendorShellExtObject)closure;
     XtGrabKind			grab_kind = XtGrabNone;
     Boolean			grabCousins = False;
     XmScreen			xmScreen = XmScreenOfObject(shellParent);
 
+    (void)callData;
     ve->vendor.xAtMap = shellParent->core.x;
     ve->vendor.yAtMap = shellParent->core.y;
 
@@ -1325,15 +1308,16 @@ PopupCallback(
  *     PopdownCallback
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 PopdownCallback(
-        Widget shellParent,	/* unused */
+        Widget shellParent,
         XtPointer closure,
-        XtPointer callData )	/* unused */
+        XtPointer callData)
 {
     XmVendorShellExtObject	ve = (XmVendorShellExtObject)closure;
 
+    (void)shellParent;
+    (void)callData;
     if (ve->vendor.grab_kind != XtGrabNone)
       RemoveGrab(ve, False, NULL);
 #ifdef DEBUG_GRABS
@@ -1355,17 +1339,15 @@ GetNextShell(
     return parent;
 }
 
-/*ARGSUSED*/
-static XmDesktopObject
-GetShellDesktopParent(
-        VendorShellWidget vw,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+static XmDesktopObject GetShellDesktopParent(VendorShellWidget vw,
+                                             ArgList args,
+                                             Cardinal *num_args)
 {
-	Widget			transientParent = NULL;
-	XmDesktopObject		desktopParent = NULL;
+	Widget transientParent = NULL;
+	XmDesktopObject desktopParent = NULL;
 
-
+	(void)args;
+	(void)num_args;
 	if (vw->wm.transient)
 	{
 		if (XtIsSubclass((Widget) vw, transientShellWidgetClass))
@@ -1416,25 +1398,22 @@ GetShellDesktopParent(
  *     DisplayClosedCallback
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
-DisplayClosedCallback(
-        Widget shellParent,	/* unused */
-        XtPointer closure,
-        XtPointer callData )	/* unused */
+DisplayClosedCallback(Widget shell_parent, XtPointer closure,
+                      XtPointer call_data)
 {
-  _XmProcessLock();
-  _XmDisplayHandle = NULL;
-  _XmProcessUnlock();
+	(void)shell_parent;
+	(void)call_data;
+	_XmProcessLock();
+	_XmDisplayHandle = NULL;
+	_XmProcessUnlock();
 }
-
 
 /************************************************************************
  *
  *  SecondaryObjectCreate
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 SecondaryObjectCreate(
         Widget req,
@@ -1532,7 +1511,6 @@ SecondaryObjectCreate(
  *  InitializePrehook
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 InitializePrehook(
         Widget req,
@@ -1582,13 +1560,12 @@ InitializePrehook(
  *     VendorExtInitialize
  *
  ************************************************************************/
-/*ARGSUSED*/
 static void
 VendorExtInitialize(
         Widget req,
         Widget new_w,
-        ArgList args,		/* unused */
-        Cardinal *num_args )	/* unused */
+        ArgList args,
+        Cardinal *num_args)
 {
     enum { XmA_MOTIF_WM_OFFSET, XmA_MOTIF_WM_MESSAGES,
 	   XmAWM_DELETE_WINDOW, NUM_ATOMS };
@@ -1605,6 +1582,8 @@ VendorExtInitialize(
     XmShellExtObjectClass	sec = (XmShellExtObjectClass) XtClass(new_w);
     XtEventHandler		handler;
 
+    (void)args;
+    (void)num_args;
     ve  = (XmVendorShellExtObject) new_w;
     req_ve  = (XmVendorShellExtObject) req;
 
@@ -1831,7 +1810,6 @@ MotifWarningHandler (String name,
  *  Initialize
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 Initialize(
 	 Widget req,
@@ -1878,7 +1856,6 @@ Initialize(
  *  InitializePosthook
  *
  ************************************************************************/
-/* ARGSUSED */
 static void
 InitializePosthook(
 	 Widget req,
@@ -1904,7 +1881,6 @@ InitializePosthook(
  *  SetValuesPrehook
  *
  ************************************************************************/
-/* ARGSUSED */
 static Boolean
 SetValuesPrehook(
 	 Widget old,
@@ -1965,7 +1941,6 @@ SetValuesPrehook(
  *  SetValues
  *
  ************************************************************************/
-/* ARGSUSED */
 static Boolean
 VendorExtSetValues(
 	 Widget old,
@@ -2149,49 +2124,45 @@ SetValues(
  *  SetValuesPosthook
  *
  ************************************************************************/
-/*ARGSUSED*/
-static Boolean
-SetValuesPosthook(
-	 Widget current,	/* unused */
-	 Widget req,		/* unused */
-	 Widget new_w,
-	 ArgList args,		/* unused */
-	 Cardinal *num_args )	/* unused */
+static Boolean SetValuesPosthook(Widget current, Widget req, Widget new_w,
+                                 ArgList args, Cardinal *num_args)
 {
-    XmWidgetExtData	ext;
+	XmWidgetExtData ext;
 
-    _XmPopWidgetExtData(new_w, &ext, XmSHELL_EXTENSION);
+	(void)current;
+	(void)req;
+	(void)args;
+	(void)num_args;
+	_XmPopWidgetExtData(new_w, &ext, XmSHELL_EXTENSION);
 
-    if (ext) {
-	 _XmProcessLock();
-	 _XmExtObjFree( (XtPointer) ext->reqWidget);
-	 _XmExtObjFree( (XtPointer) ext->oldWidget);
-	 _XmProcessUnlock();
-	 XtFree((char *) ext);
-    }
-	 return(FALSE);
+	if (ext) {
+		_XmProcessLock();
+		_XmExtObjFree((XtPointer)ext->reqWidget);
+		_XmExtObjFree((XtPointer)ext->oldWidget);
+		_XmProcessUnlock();
+		XtFree((XtPointer)ext);
+	}
+
+	return False;
 }
-
 
 /************************************************************************
  *
  *  GetValuesPrehook
  *
  ************************************************************************/
-/*ARGSUSED*/
-static void
-GetValuesPrehook(
-	 Widget w,
-	 ArgList args,		/* unused */
-	 Cardinal *num_args )	/* unused */
+static void GetValuesPrehook(Widget w, ArgList args, Cardinal *num_args)
 {
-    XmWidgetExtData	oldExtData, newExtData;
+	XmWidgetExtData oldExtData, newExtData;
 
-    if ((oldExtData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION)) != NULL) {
-	 newExtData = (XmWidgetExtData) XtCalloc(1, sizeof(XmWidgetExtDataRec));
-	 newExtData->widget = oldExtData->widget;
-	 _XmPushWidgetExtData(w, newExtData, XmSHELL_EXTENSION);
-    }
+	(void)args;
+	(void)num_args;
+	if (!(oldExtData = _XmGetWidgetExtData(w, XmSHELL_EXTENSION)))
+		return;
+
+	newExtData = (XmWidgetExtData)XtCalloc(1, sizeof(XmWidgetExtDataRec));
+	newExtData->widget = oldExtData->widget;
+	_XmPushWidgetExtData(w, newExtData, XmSHELL_EXTENSION);
 }
 
 static void
@@ -2250,61 +2221,48 @@ GetValuesHook(
 
 }
 
-/*ARGSUSED*/
-static void
-GetValuesPosthook(
-	 Widget w,
-	 ArgList args,		/* unused */
-	 Cardinal *num_args )	/* unused */
+static void GetValuesPosthook(Widget w, ArgList args, Cardinal *num_args)
 {
-    XmWidgetExtData	ext = NULL;
+	XmWidgetExtData ext = NULL;
 
-    _XmPopWidgetExtData(w, &ext, XmSHELL_EXTENSION);
-    if (ext)
-      XtFree((char *) ext);
+	(void)args;
+	(void)num_args;
+	_XmPopWidgetExtData(w, &ext, XmSHELL_EXTENSION);
+	XtFree((XtPointer)ext);
 }
 
-/*
+/**
  * This handles the case where the secondary shells is waiting for the
  * primary to get mapped and is destroyed in the interim.
  */
-/*ARGSUSED*/
-static void
-PendingTransientDestroyed(
-	 Widget vw,
-	 XtPointer cl_data,
-	 XtPointer ca_data )	/* unused */
+static void PendingTransientDestroyed(Widget vw, XtPointer cl_data, XtPointer ca_data)
 {
-	 XmExtObject ancestorExtObj = (XmExtObject) cl_data ;
-	 Widget ancestor = ancestorExtObj->ext.logicalParent ;
+	XmExtObject ext             = (XmExtObject)cl_data;
+	XmVendorShellExtObject vext = (XmVendorShellExtObject)ext;
+	Widget ancestor             = ext->ext.logicalParent;
 
-    if(    !ancestor->core.being_destroyed    )
-    {
-/*
-	 XtRemoveCallback( (Widget) ancestorExtObj, XmNrealizeCallback,
-					      SetTransientFor, (XtPointer) vw) ;
-*/
-        _XmRemoveCallback((InternalCallbackList *) &(((XmVendorShellExtObject)ancestorExtObj)->vendor.realize_callback),
-			  SetTransientFor, (XtPointer) vw) ;
-	 }
-    return ;
-    }
+	if (ancestor->core.being_destroyed)
+		return;
 
-/*
+	_XmRemoveCallback((InternalCallbackList *)&vext->vendor.realize_callback,
+	                  SetTransientFor, (XtPointer)vw);
+}
+
+/**
  * Handle having the application shell realized after the secondary shells
  */
-/*ARGSUSED*/
 static void
 SetTransientFor(
 	 Widget w,
 	 XtPointer closure,
-	 XtPointer call_data)	/* unused */
+	 XtPointer call_data)
 {
 	 VendorShellWidget vw = (VendorShellWidget) closure ;
 	 Widget ancestor = ((XmExtObject) w)->ext.logicalParent ;
 	 Arg args[2] ;
 	 Cardinal i = 0 ;
 
+    (void)call_data;
     if(    !XtIsRealized( ancestor)    )
     {
 	 XtRealizeWidget( ancestor) ;
@@ -2535,12 +2493,11 @@ Realize(
  *  GeometryManager
  *
  ************************************************************************/
-/*ARGSUSED*/
 static XtGeometryResult
 GeometryManager(
 	 Widget wid,
 	 XtWidgetGeometry *request,
-	 XtWidgetGeometry *reply ) /* unused */
+	 XtWidgetGeometry *reply)
 {
     ShellWidget 	shell = (ShellWidget)(wid->core.parent);
     XtWidgetGeometry 	my_request;
@@ -2548,6 +2505,7 @@ GeometryManager(
     XmWidgetExtData   extData;
     XtGeometryResult res ;
 
+    (void)reply;
     if (!(extData = _XmGetWidgetExtData((Widget)shell,
 					 XmSHELL_EXTENSION)))
       return XtGeometryNo;
@@ -2614,7 +2572,6 @@ GeometryManager(
  *  RootGeometryManager
  *
  ************************************************************************/
-/*ARGSUSED*/
 static XtGeometryResult
 RootGeometryManager(
 	 Widget w,
@@ -2777,16 +2734,17 @@ SetMwmMenu(
 }
 
 
-/*ARGSUSED*/
 static void
 VendorExtRealize(
 	 Widget w,
-	 XtPointer closure,	/* unused */
-	 XtPointer call_data )	/* unused */
+	 XtPointer closure,
+	 XtPointer call_data)
 {
     XmVendorShellExtObject	ve = (XmVendorShellExtObject)w;
     VendorShellWidget		vw;
 
+    (void)closure;
+    (void)call_data;
     vw = (VendorShellWidget)ve->ext.logicalParent;
     if (ve->vendor.mwm_hints.flags)
       SetMwmHints(ve);
@@ -2934,16 +2892,12 @@ Destroy(
     }
 }
 
-/*ARGSUSED*/
-static void
-Redisplay(
-	 Widget wid,
-	 XEvent *event,		/* unused */
-	 Region region )	/* unused */
+static void Redisplay(Widget wid, XEvent *event, Region region)
 {
-    _XmImRedisplay(wid);
+	(void)event;
+	(void)region;
+	_XmImRedisplay(wid);
 }
-
 
 /****************************************************************
  *
