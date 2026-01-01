@@ -683,7 +683,7 @@ GetSecResData(WidgetClass w_class,
 /*********************************************************************/
 
 /* AccessXmString Trait record for Text */
-static XmConst XmAccessTextualTraitRec TextCS = {
+static const XmAccessTextualTraitRec TextCS = {
   0,  				/* version */
   TextGetValue,			/* getValue */
   TextSetValue,			/* setValue */

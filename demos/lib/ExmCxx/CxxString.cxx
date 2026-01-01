@@ -53,7 +53,7 @@
 #include <Xm/Screen.h> /* header file for screen information */
 
 /* Define constants here. */ 
-static XmConst int  FIND_NATURAL_SIZE = 0;
+static const int  FIND_NATURAL_SIZE = 0;
 #define UNSUPPORTED_FORMAT "Someone is trying to get or set a value for \n\
 ExmNcompoundString; however, the specified format is undefined.\n"
 

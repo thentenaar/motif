@@ -799,8 +799,7 @@ RealizeWrapper10(
   RealizeWrapper(w, vmask, attr, 10);
 }
 
-/* Used to be XmConst, but this was not linking on Solaris */
-static XtRealizeProc realizeWrappers[] = {
+static const XtRealizeProc realizeWrappers[] = {
     RealizeWrapper0,
     RealizeWrapper1,
     RealizeWrapper2,
@@ -1014,8 +1013,7 @@ ResizeWrapper13(
   ResizeWrapper(w, 13);
 }
 
-/* Used to be XmConst, but this was not linking on Solaris */
-static XtWidgetProc resizeWrappers[] = {
+static const XtWidgetProc resizeWrappers[] = {
     ResizeWrapper0,
     ResizeWrapper1,
     ResizeWrapper2,
@@ -1237,8 +1235,7 @@ GeometryHandlerWrapper12(
   return GeometryHandlerWrapper(w, desired, allowed, 12);
 }
 
-/* Used to be XmConst, but this was not linkking on Solaris */
-static XtGeometryHandler geometryHandlerWrappers[] = {
+static const XtGeometryHandler geometryHandlerWrappers[] = {
     GeometryHandlerWrapper0,
     GeometryHandlerWrapper1,
     GeometryHandlerWrapper2,

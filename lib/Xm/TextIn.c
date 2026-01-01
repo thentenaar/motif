@@ -803,7 +803,7 @@ static XmTextPosition YtoPosInLine(XmTextWidget tw,
 
 static XContext _XmTextDestContext = 0;
 
-static XmConst XmTextScanType sarray[] = {
+static const XmTextScanType sarray[] = {
   XmSELECT_POSITION, XmSELECT_WORD, XmSELECT_LINE, XmSELECT_ALL
 };
 

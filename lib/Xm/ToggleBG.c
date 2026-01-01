@@ -639,7 +639,7 @@ static XmMenuSavvyTraitRec MenuSavvyRecord =
 
 
 /* Care about parent Visual trait record. */
-static XmConst XmCareVisualTraitRec ToggleBGCVT =
+static const XmCareVisualTraitRec ToggleBGCVT =
 {
   0,				/* version	 */
   HandleRedraw			/* redraw	 */

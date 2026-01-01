@@ -60,7 +60,7 @@ static void DrawCross(Display *display,
 #define CHECK_TEMPLATE_WIDTH	32
 #define CHECK_TEMPLATE_HEIGHT	32
 
-static XmConst XPoint check_template[] = {
+static const XPoint check_template[] = {
   {  0, 15 },
   {  6,  9 },
   { 14, 17 },

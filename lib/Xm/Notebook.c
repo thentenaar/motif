@@ -856,7 +856,7 @@ externaldef(xmnotebookwidgetclass) WidgetClass xmNotebookWidgetClass =
 
 
 /* Trait record for Notebook scrollFrame */
-static XmConst XmScrollFrameTraitRec notebookSFT =
+static const XmScrollFrameTraitRec notebookSFT =
 {
     1,				/* version */
     ScrollFrameInit,		/* initialize */
@@ -868,7 +868,7 @@ static XmConst XmScrollFrameTraitRec notebookSFT =
 
 
 /* Trait record for Notebook traversalControl */
-static XmConst XmTraversalControlTraitRec notebookTCT =
+static const XmTraversalControlTraitRec notebookTCT =
 {
   0,				/* version */
   RedirectTraversal		/* redirect */
@@ -876,7 +876,7 @@ static XmConst XmTraversalControlTraitRec notebookTCT =
 
 
 /* Trait record for Notebook specifyUnhighlight */
-static XmConst XmSpecifyUnhighlightTraitRec notebookSUT =
+static const XmSpecifyUnhighlightTraitRec notebookSUT =
 {
   0,				/* version */
   GetUnhighlightGC		/* getUnhighlightGC */
@@ -5718,13 +5718,10 @@ SetActiveChildren (
         Compares children, used for qsort() in SortChildren.
 
 -----------------------------------------------------------------------------*/
-static int
-CompareChildren (
-    XmConst void *a,
-    XmConst void *b)
+static int CompareChildren(const void *a, const void *b)
 {
-    XmNotebookConstraint ac = NotebookConstraint(*((Widget *)a));
-    XmNotebookConstraint bc = NotebookConstraint(*((Widget *)b));
+    XmNotebookConstraint ac = NotebookConstraint(*((const Widget *)a));
+    XmNotebookConstraint bc = NotebookConstraint(*((const Widget *)b));
     int cmp;
 
     /* Compare page numbers */

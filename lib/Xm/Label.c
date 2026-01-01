@@ -142,7 +142,7 @@ static XtPointer ConvertToEncoding(Widget, char*, Atom, unsigned long *,
 void _XmLabelConvert(Widget w, XtPointer ignore, XmConvertCallbackStruct*);
 
 /* Transfer trait record */
-static XmConst XmTransferTraitRec LabelTransfer = {
+static const XmTransferTraitRec LabelTransfer = {
   0, 						/* version		  */
   (XmConvertCallbackProc) _XmLabelConvert,	/* convertProc		  */
   NULL,						/* destinationProc	  */
@@ -150,7 +150,7 @@ static XmConst XmTransferTraitRec LabelTransfer = {
 };
 
 /* Menu Savvy trait record */
-static XmConst XmMenuSavvyTraitRec MenuSavvyRecord = {
+static const XmMenuSavvyTraitRec MenuSavvyRecord = {
   0,						     /* version		  */
   (XmMenuSavvyDisableProc) SetActivateCallbackState, /* disableCallback	  */
   GetLabelAccelerator,				     /* getAccelerator	  */

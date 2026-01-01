@@ -522,14 +522,14 @@ externaldef(xmpushbuttongadgetclass) WidgetClass xmPushButtonGadgetClass =
 
 /* Trait record for pushButtonG */
 
-static XmConst XmActivatableTraitRec pushButtonGAT = {
+static const XmActivatableTraitRec pushButtonGAT = {
   0,		/* version */
   ChangeCB,
 };
 
 /* TakesDefault Trait record for pushButtonG */
 
-static XmConst XmTakesDefaultTraitRec pushButtonGTDT = {
+static const XmTakesDefaultTraitRec pushButtonGTDT = {
   0,		/* version */
   ShowAsDefault,
 };

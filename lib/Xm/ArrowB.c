@@ -259,7 +259,7 @@ externaldef(xmarrowbuttonwidgetclass) WidgetClass xmArrowButtonWidgetClass =
 
 
 /* Trait record for arrowButton */
-static XmConst XmActivatableTraitRec arrowButtonAT =
+static const XmActivatableTraitRec arrowButtonAT =
 {
   0,				/* version	*/
   ChangeCB			/* changeCB	*/

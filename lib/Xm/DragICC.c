@@ -156,7 +156,7 @@ static void PrintMessage(char, xmICCMessageStruct *);
 externaldef(dragicc)
 unsigned char _XmByteOrderChar = 0;
 
-static XmConst ReasonTable	reasonTable[] = {
+static const ReasonTable	reasonTable[] = {
     {	XmCR_TOP_LEVEL_ENTER,		XmTOP_LEVEL_ENTER	},
     {	XmCR_TOP_LEVEL_LEAVE,		XmTOP_LEVEL_LEAVE	},
     {	XmCR_DRAG_MOTION,		XmDRAG_MOTION		},
@@ -168,7 +168,7 @@ static XmConst ReasonTable	reasonTable[] = {
     {	XmCR_OPERATION_CHANGED,		XmOPERATION_CHANGED	},
 };
 
-static XmConst int	messageTable[] = {
+static const int	messageTable[] = {
     XmCR_TOP_LEVEL_ENTER,	/* XmTOP_LEVEL_ENTER 	0 */
     XmCR_TOP_LEVEL_LEAVE,	/* XmTOP_LEVEL_LEAVE 	1 */
     XmCR_DRAG_MOTION,		/* XmDRAG_MOTION	2 */

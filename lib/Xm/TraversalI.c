@@ -50,7 +50,7 @@ static char rcsid[] = "$TOG: TraversalI.c /main/13 1997/10/13 11:28:33 cshi $"
 #define STACK_SORT_LIMIT		128
 
 /* Type of sort comparison function. */
-typedef int (*Comparator)(XmConst void *, XmConst void *);
+typedef int (*Comparator)(const void *, const void *);
 
 /********    Static Function Declarations    ********/
 
@@ -103,17 +103,17 @@ static void Sort(XmTraversalNode *nodes,
 		 size_t           n_mem,
 		 Boolean          horizontal,
 		 XmDirection      layout);
-static int CompareExclusive(XmConst void *A, XmConst void *B);
+static int CompareExclusive(const void *A, const void *B);
 static Comparator HorizNodeComparator(XmDirection layout);
-static int CompareNodesHorizLT(XmConst void *A, XmConst void *B);
-static int CompareNodesHorizRT(XmConst void *A, XmConst void *B);
-static int CompareNodesHorizLB(XmConst void *A, XmConst void *B);
-static int CompareNodesHorizRB(XmConst void *A, XmConst void *B);
+static int CompareNodesHorizLT(const void *A, const void *B);
+static int CompareNodesHorizRT(const void *A, const void *B);
+static int CompareNodesHorizLB(const void *A, const void *B);
+static int CompareNodesHorizRB(const void *A, const void *B);
 static Comparator VertNodeComparator(XmDirection layout);
-static int CompareNodesVertLT(XmConst void *A, XmConst void *B);
-static int CompareNodesVertRT(XmConst void *A, XmConst void *B);
-static int CompareNodesVertLB(XmConst void *A, XmConst void *B);
-static int CompareNodesVertRB(XmConst void *A, XmConst void *B);
+static int CompareNodesVertLT(const void *A, const void *B);
+static int CompareNodesVertRT(const void *A, const void *B);
+static int CompareNodesVertLB(const void *A, const void *B);
+static int CompareNodesVertRB(const void *A, const void *B);
 static void SortTabGraph(XmGraphNode graph,
 			 Boolean exclusive,
 			 XmDirection layout);
@@ -1715,12 +1715,10 @@ Sort(XmTraversalNode *list,
   XtFree((char*) rows);
 }
 
-static int
-CompareExclusive(XmConst void *A,
-		 XmConst void *B)
+static int CompareExclusive(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
   int PositionA = SearchTabList(SortReferenceGraph, nodeA->any.widget);
   int PositionB = SearchTabList(SortReferenceGraph, nodeB->any.widget);
 
@@ -1733,8 +1731,7 @@ CompareExclusive(XmConst void *A,
 }
 
 /* Select a horizontal comparator for this layout direction. */
-static Comparator
-HorizNodeComparator(XmDirection layout)
+static Comparator HorizNodeComparator(XmDirection layout)
 {
   if (XmDirectionMatchPartial(layout, XmLEFT_TO_RIGHT, XmHORIZONTAL_MASK))
     {
@@ -1753,12 +1750,10 @@ HorizNodeComparator(XmDirection layout)
 }
 
 /* Compare nodes horizontally in a Left-to-Right, Top-to-Bottom layout. */
-static int
-CompareNodesHorizLT(XmConst void *A,
-		    XmConst void *B)
+static int CompareNodesHorizLT(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if (nodeA->any.rect.x != nodeB->any.rect.x)
     return (nodeA->any.rect.x < nodeB->any.rect.x) ? -1 : 1;
@@ -1776,12 +1771,10 @@ CompareNodesHorizLT(XmConst void *A,
 }
 
 /* Compare nodes horizontally in a Right-to-Left, Top-to-Bottom layout. */
-static int
-CompareNodesHorizRT(XmConst void *A,
-		    XmConst void *B)
+static int CompareNodesHorizRT(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if ((nodeA->any.rect.x + nodeA->any.rect.width) !=
       (nodeB->any.rect.x + nodeB->any.rect.width))
@@ -1801,12 +1794,10 @@ CompareNodesHorizRT(XmConst void *A,
 }
 
 /* Compare nodes horizontally in a Left-to-Right, Bottom-to-Top layout. */
-static int
-CompareNodesHorizLB(XmConst void *A,
-		    XmConst void *B)
+static int CompareNodesHorizLB(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if (nodeA->any.rect.x != nodeB->any.rect.x)
     return (nodeA->any.rect.x < nodeB->any.rect.x) ? -1 : 1;
@@ -1826,12 +1817,10 @@ CompareNodesHorizLB(XmConst void *A,
 }
 
 /* Compare nodes horizontally in a Right-to-Left, Bottom-to-Top layout. */
-static int
-CompareNodesHorizRB(XmConst void *A,
-		    XmConst void *B)
+static int CompareNodesHorizRB(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if ((nodeA->any.rect.x + nodeA->any.rect.width) !=
       (nodeB->any.rect.x + nodeB->any.rect.width))
@@ -1853,8 +1842,7 @@ CompareNodesHorizRB(XmConst void *A,
 }
 
 /* Select a vertical comparator for this layout direction. */
-static Comparator
-VertNodeComparator(XmDirection layout)
+static Comparator VertNodeComparator(XmDirection layout)
 {
   if (XmDirectionMatchPartial(layout, XmLEFT_TO_RIGHT, XmHORIZONTAL_MASK))
     {
@@ -1873,12 +1861,10 @@ VertNodeComparator(XmDirection layout)
 }
 
 /* Compare nodes vertically in a Left-to-Right, Top-to-Bottom layout. */
-static int
-CompareNodesVertLT(XmConst void *A,
-		   XmConst void *B)
+static int CompareNodesVertLT(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if (nodeA->any.rect.y != nodeB->any.rect.y)
     return (nodeA->any.rect.y < nodeB->any.rect.y) ? -1 : 1;
@@ -1896,12 +1882,10 @@ CompareNodesVertLT(XmConst void *A,
 }
 
 /* Compare nodes vertically in a Right-to-Left, Top-to-Bottom layout. */
-static int
-CompareNodesVertRT(XmConst void *A,
-		   XmConst void *B)
+static int CompareNodesVertRT(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(XmTraversalNode *)B;
 
   if (nodeA->any.rect.y != nodeB->any.rect.y)
     return (nodeA->any.rect.y < nodeB->any.rect.y) ? -1 : 1;
@@ -1921,12 +1905,10 @@ CompareNodesVertRT(XmConst void *A,
 }
 
 /* Compare nodes vertically in a Left-to-Right, Bottom-to-Top layout. */
-static int
-CompareNodesVertLB(XmConst void *A,
-		   XmConst void *B)
+static int CompareNodesVertLB(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(XmTraversalNode *)B;
 
   if ((nodeA->any.rect.y + nodeA->any.rect.height) !=
       (nodeB->any.rect.y + nodeB->any.rect.height))
@@ -1946,12 +1928,10 @@ CompareNodesVertLB(XmConst void *A,
 }
 
 /* Compare nodes vertically in a Right-to-Left, Bottom-to-Top layout. */
-static int
-CompareNodesVertRB(XmConst void *A,
-		   XmConst void *B)
+static int CompareNodesVertRB(const void *A, const void *B)
 {
-  XmConst XmTraversalNode nodeA = *((XmTraversalNode *) A);
-  XmConst XmTraversalNode nodeB = *((XmTraversalNode *) B);
+  const XmTraversalNode nodeA = *(const XmTraversalNode *)A;
+  const XmTraversalNode nodeB = *(const XmTraversalNode *)B;
 
   if ((nodeA->any.rect.y + nodeA->any.rect.height) !=
       (nodeB->any.rect.y + nodeB->any.rect.height))

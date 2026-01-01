@@ -4,10 +4,6 @@
 
 #include <X11/Intrinsic.h>
 
-#ifndef _XmConst
-#define _XmConst /**/
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -184,117 +180,117 @@ extern "C" {
 
 #ifndef XmCFraction
 #define XmCFraction			XtCFraction
-#endif 
+#endif
 
 #ifndef XmCFunction
 #define XmCFunction			XtCFunction
-#endif 
+#endif
 
 #ifndef XmCGeometry
 #define XmCGeometry			XtCGeometry
-#endif 
+#endif
 
 #ifndef XmCHSpace
 #define XmCHSpace			XtCHSpace
-#endif 
+#endif
 
 #ifndef XmCHeight
 #define XmCHeight			XtCHeight
-#endif 
+#endif
 
 #ifndef XmCHeightInc
 #define XmCHeightInc			XtCHeightInc
-#endif 
+#endif
 
 #ifndef XmCIconMask
 #define XmCIconMask			XtCIconMask
-#endif 
+#endif
 
 #ifndef XmCIconName
 #define XmCIconName			XtCIconName
-#endif 
+#endif
 
 #ifndef XmCIconNameEncoding
 #define XmCIconNameEncoding		XtCIconNameEncoding
-#endif 
+#endif
 
 #ifndef XmCIconPixmap
 #define XmCIconPixmap			XtCIconPixmap
-#endif 
+#endif
 
 #ifndef XmCIconWindow
 #define XmCIconWindow			XtCIconWindow
-#endif 
+#endif
 
 #ifndef XmCIconX
 #define XmCIconX			XtCIconX
-#endif 
+#endif
 
 #ifndef XmCIconY
 #define XmCIconY			XtCIconY
-#endif 
+#endif
 
 #ifndef XmCIconic
 #define XmCIconic			XtCIconic
-#endif 
+#endif
 
 #ifndef XmCIndex
 #define XmCIndex			XtCIndex
-#endif 
+#endif
 
 #ifndef XmCInitialResourcesPersistent
 #define XmCInitialResourcesPersistent	XtCInitialResourcesPersistent
-#endif 
+#endif
 
 #ifndef XmCInitialState
 #define XmCInitialState			XtCInitialState
-#endif 
+#endif
 
 #ifndef XmCInput
 #define XmCInput			XtCInput
-#endif 
+#endif
 
 #ifndef XmCInsertPosition
 #define XmCInsertPosition		XtCInsertPosition
-#endif 
+#endif
 
 #ifndef XmCInterval
 #define XmCInterval			XtCInterval
-#endif 
+#endif
 
 #ifndef XmCJustify
 #define XmCJustify			XtCJustify
-#endif 
+#endif
 
 #ifndef XmCLabel
 #define XmCLabel			XtCLabel
-#endif 
+#endif
 
 #ifndef XmCLength
 #define XmCLength			XtCLength
-#endif 
+#endif
 
 #ifndef XmCMappedWhenManaged
 #define XmCMappedWhenManaged		XtCMappedWhenManaged
-#endif 
+#endif
 
 #ifndef XmCMargin
 #define XmCMargin			XtCMargin
-#endif 
+#endif
 
 
 #ifndef XmCMaxAspectX
 #define XmCMaxAspectX			XtCMaxAspectX
-#endif 
+#endif
 
 
 #ifndef XmCMaxAspectY
 #define XmCMaxAspectY			XtCMaxAspectY
-#endif 
+#endif
 
 #ifndef XmCMaxHeight
 #define XmCMaxHeight			XtCMaxHeight
-#endif 
+#endif
 
 #ifndef XmCMaxWidth
 #define XmCMaxWidth			XtCMaxWidth
@@ -334,7 +330,7 @@ extern "C" {
 
 #ifndef XmCParameter
 #define XmCParameter			XtCParameter
-#endif 
+#endif
 
 #ifndef XmCPixmap
 #define XmCPixmap			XtCPixmap

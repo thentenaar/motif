@@ -79,7 +79,7 @@ static void LoadVendorBindings(Display *display,
 
 /********    End Static Function Declarations    ********/
 
-static XmConst XmVirtualKeysymRec virtualKeysyms[] =
+static const XmVirtualKeysymRec virtualKeysyms[] =
 {
   { XmVosfActivate,		osfXK_Activate	      },
   { XmVosfAddMode,		osfXK_AddMode	      },
@@ -130,7 +130,7 @@ static XmConst XmVirtualKeysymRec virtualKeysyms[] =
   { XmVosfUp,			osfXK_Up	      }
 };
 
-static XmConst XmDefaultBindingStringRec fallbackBindingStrings[] =
+static const XmDefaultBindingStringRec fallbackBindingStrings[] =
 {
   { "Acorn Computers Ltd",
       _XmVirtKeys_acornFallbackBindingString },
@@ -908,13 +908,13 @@ _XmVirtKeysLoadFallbackBindings(Display	*display,
   enum { XmA_MOTIF_BINDINGS, XmA_MOTIF_DEFAULT_BINDINGS, NUM_ATOMS };
   static char *atom_names[] = {XmS_MOTIF_BINDINGS, XmS_MOTIF_DEFAULT_BINDINGS};
 
-  XmConst XmDefaultBindingStringRec *currDefault;
+  const XmDefaultBindingStringRec *currDefault;
   int i;
   FILE *fp;
   char *homeDir;
   char *fileName;
   char *bindDir;
-  static XmConst char xmbinddir_fallback[] = XMBINDDIR_FALLBACK;
+  static const char xmbinddir_fallback[] = XMBINDDIR_FALLBACK;
   Atom atoms[XtNumber(atom_names)];
 
   *binding = NULL;

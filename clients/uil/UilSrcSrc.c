@@ -337,7 +337,7 @@ Uil_src_cleanup_source(void)
 **/
 
 void
-src_open_file (XmConst char *c_file_name,
+src_open_file (const char *c_file_name,
                char         *full_file_name)
 {
     uil_fcb_type		*az_fcb;	    /* file control block ptr */
@@ -599,7 +599,7 @@ src_get_source_line(void)
 **/
 
 status
-open_source_file( XmConst char           *c_file_name,
+open_source_file( const char           *c_file_name,
                   uil_fcb_type           *az_fcb,
                   src_source_buffer_type *az_source_buffer )
 {
@@ -616,7 +616,7 @@ open_source_file( XmConst char           *c_file_name,
 
     if (!main_fcb) {
 
-	char XmConst		* ptr;
+	const char		* ptr;
 	unsigned short		len;
 
 /*    Save the directory info for the main file.    */
@@ -637,7 +637,7 @@ open_source_file( XmConst char           *c_file_name,
 	az_fcb->az_file_ptr = fopen(c_file_name, "r");
 
     } else {
-	static char XmConst	c_include_dir[]= "/usr/include/";
+	static const char	c_include_dir[]= "/usr/include/";
 	Boolean			search_user_include=True;
 	Boolean			specific_directory=False;
 
@@ -918,7 +918,7 @@ get_line( uil_fcb_type *az_fcb )
 boolean
 reget_line( uil_fcb_type  *az_fcb,
             char          *c_buffer,
-            XmConst z_key *z_access_key )
+            const z_key *z_access_key )
 {
     status	l_read_status;
     char	*c_new_line;
@@ -990,7 +990,7 @@ reget_line( uil_fcb_type  *az_fcb,
 **/
 
 char
-*src_get_file_name(XmConst src_source_record_type *az_src_rec)
+*src_get_file_name(const src_source_record_type *az_src_rec)
 {
     uil_fcb_type    *fcb;
 
@@ -1035,13 +1035,13 @@ char
 **--
 **/
 
-static char XmConst no_source[] = "[ source not available ]";
+static const char no_source[] = "[ source not available ]";
 
 
 
 boolean	src_retrieve_source
 
-	(XmConst src_source_record_type *az_src_rec,
+	(const src_source_record_type *az_src_rec,
 	char *c_buffer)
 
 {
@@ -1125,10 +1125,10 @@ boolean	src_retrieve_source
 **/
 
 void
-src_append_diag_info( XmConst src_source_record_type *az_src_rec,
-                      XmConst int                     l_src_pos,
-                      XmConst char                   *c_msg_text,
-                      XmConst int                     l_msg_number )
+src_append_diag_info( const src_source_record_type *az_src_rec,
+                      const int                     l_src_pos,
+                      const char                   *c_msg_text,
+                      const int                     l_msg_number )
 {
     src_message_item_type	    *az_msg_item;
     int			    	    l_msg_length;
@@ -1214,14 +1214,14 @@ src_append_diag_info( XmConst src_source_record_type *az_src_rec,
 
 void
 src_append_machine_code ( src_source_record_type *az_src_rec,
-                          XmConst int             l_offset,
-                          XmConst int             l_code_len,
-                          XmConst char           *c_code,
-                          XmConst char           *c_text_arg )
+                          const int             l_offset,
+                          const int             l_code_len,
+                          const char           *c_code,
+                          const char           *c_text_arg )
 {
     src_machine_code_type   *az_code_item;
     int			    l_text_len;
-    XmConst char	    *c_text;
+    const char	    *c_text;
 
     if (c_text_arg == NULL) {
 	c_text = "";

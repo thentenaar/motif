@@ -485,7 +485,7 @@ externaldef(xmprimitivewidgetclass) WidgetClass xmPrimitiveWidgetClass =
 
 
 
-static XmConst XmSpecifyLayoutDirectionTraitRec primLDT = {
+static const XmSpecifyLayoutDirectionTraitRec primLDT = {
   0,			/* version */
   GetDirection
 };
@@ -493,21 +493,21 @@ static XmConst XmSpecifyLayoutDirectionTraitRec primLDT = {
 
 /* Care visual Trait record for Primitive */
 
-static XmConst XmCareVisualTraitRec primCVT = {
+static const XmCareVisualTraitRec primCVT = {
     0,		/* version */
     Redraw,
 };
 
 /* Access Colors Trait record for Primitive */
 
-static XmConst XmAccessColorsTraitRec primACT = {
+static const XmAccessColorsTraitRec primACT = {
   0,			/* version */
   GetColors
 };
 
 /* Unit Type Trait record for Primitive */
 
-static XmConst XmSpecUnitTypeTraitRec primUTT = {
+static const XmSpecUnitTypeTraitRec primUTT = {
   0,			/* version */
   GetUnitType
 };

@@ -68,8 +68,8 @@ extern void _XmOSBuildFileList(
                         unsigned int *pNumEntries,
                         unsigned int *pNumAlloc) ;
 extern int _XmOSFileCompare(
-                        XmConst void *sp1,
-                        XmConst void *sp2) ;
+                        const void *sp1,
+                        const void *sp2) ;
 extern String _XmOSInitPath(
                         String file_name,
                         String env_pathname,

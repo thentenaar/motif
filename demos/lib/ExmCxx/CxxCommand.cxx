@@ -58,7 +58,7 @@
 #include <Xm/SpecRenderT.h> /* header file for render table constants */
 
 /* The VISUAL_DELAY constant holds a time in milliseconds. */
-static XmConst unsigned long VISUAL_DELAY = 100;
+static const unsigned long VISUAL_DELAY = 100;
 
 /* Define the resources for the ExmCxxCommandButton widget.  This widget 
    supports one new resource: XmNactivateCallback.  In addition,
@@ -197,13 +197,13 @@ externaldef(exmCxxCommandwidgetclass)
 WidgetClass exmCxxCommandWidgetClass = (WidgetClass) &exmCxxCommandClassRec;
 
 /* Declare an Activatable Trait record variable. */
-static XmConst XmActivatableTraitRec commandButtonAT = {
+static const XmActivatableTraitRec commandButtonAT = {
   0,            /* version */
   ExmCxxCommand::ChangeCB,
 };
 
 /* Declare a Takes Default record variable. */
-static XmConst XmTakesDefaultTraitRec  commandButtonTDT = {
+static const XmTakesDefaultTraitRec  commandButtonTDT = {
   0,            /* version */
   ExmCxxCommand::ShowAsDefault,
 };

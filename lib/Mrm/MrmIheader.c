@@ -105,7 +105,7 @@ static char rcsid[] = "$XConsortium: MrmIheader.c /main/16 1996/11/13 13:56:56 d
  * header records.
  */
 
-static XmConst	char *idb__database_version = URMversion;
+static const	char *idb__database_version = URMversion;
 
 
 
@@ -208,7 +208,7 @@ Idb__HDR_GetHeader (IDBFile		file_id)
     }
 
   {
-    /* sscanf() may call ungetc(), which would write the XmConst string. */
+    /* sscanf() may call ungetc(), which would write the const string. */
     char *buf = XtMalloc(strlen(idb__database_version) + 1);
     strcpy(buf, idb__database_version);
     sscanf(buf, "URM %d.%d", &db_major, &db_minor);

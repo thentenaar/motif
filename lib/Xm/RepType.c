@@ -147,17 +147,17 @@ static Boolean ReverseConvertRepType(
   declarations sorted. Put the map array right after the string
   array if any. ***/
 
-static XmConst char *XmConst AlignmentNames[] =
+static const char * const AlignmentNames[] =
 {   "alignment_beginning", "alignment_center", "alignment_end"
     } ;
-static XmConst char *XmConst AnimationStyleNames[] =
+static const char * const AnimationStyleNames[] =
 {   "drag_under_none", "drag_under_pixmap", "drag_under_shadow_in",
     "drag_under_shadow_out", "drag_under_highlight"
     };
-static XmConst char *XmConst ArrowDirectionNames[] =
+static const char * const ArrowDirectionNames[] =
 {   "arrow_up", "arrow_down", "arrow_left", "arrow_right"
     } ;
-static XmConst char *XmConst ArrowLayoutNames[] =
+static const char * const ArrowLayoutNames[] =
   {
   "arrows_end",
   "arrows_beginning",
@@ -165,12 +165,12 @@ static XmConst char *XmConst ArrowLayoutNames[] =
   "arrows_flat_end",
   "arrows_flat_beginning"
   };
-static XmConst char *XmConst ArrowOrientationNames[] =
+static const char * const ArrowOrientationNames[] =
   {
   "arrows_vertical",
   "arrows_horizontal"
   };
-static XmConst char *XmConst ArrowSensitivityNames[] =
+static const char * const ArrowSensitivityNames[] =
   {
   "arrows_insensitive",		/* 0b000 */
   "arrows_increment_sensitive",	/* 0b001 */
@@ -178,329 +178,329 @@ static XmConst char *XmConst ArrowSensitivityNames[] =
   "arrows_sensitive",		/* 0b011 */
   "arrows_default_sensitivity"  /* 0b100 Inherit */
   };
-static XmConst char *XmConst AttachmentNames[] =
+static const char * const AttachmentNames[] =
 {   "attach_none", "attach_form", "attach_opposite_form", "attach_widget",
     "attach_opposite_widget", "attach_position", "attach_self"
     } ;
-static XmConst char *XmConst AudibleWarningNames[] =
+static const char * const AudibleWarningNames[] =
 {   "none", "bell"
     } ;
-static XmConst char *XmConst AutoDragModelNames[] =
+static const char * const AutoDragModelNames[] =
 {   "auto_drag_enabled",	"auto_drag_disabled",
     } ;
-static XmConst char *XmConst AutomaticSelectionNames[] =
+static const char * const AutomaticSelectionNames[] =
 {   "no_auto_select", "auto_select",
     XtEoff, XtEfalse, XtEno, "0",
     XtEon, XtEtrue, XtEyes, "1"
     } ;
-static XmConst unsigned char AutomaticSelectionMap[] =
+static const unsigned char AutomaticSelectionMap[] =
 {   XmNO_AUTO_SELECT, XmAUTO_SELECT,
     XmNO_AUTO_SELECT, XmNO_AUTO_SELECT, XmNO_AUTO_SELECT, XmNO_AUTO_SELECT,
     XmAUTO_SELECT, XmAUTO_SELECT, XmAUTO_SELECT, XmAUTO_SELECT
     } ;
-static XmConst char *XmConst BindingTypeNames[] =
+static const char * const BindingTypeNames[] =
 {   "none", "pixmap", "solid", "spiral", "pixmap_overlap_only"
     } ;
-static XmConst char *XmConst BitmapConversionModelNames[] =
+static const char * const BitmapConversionModelNames[] =
 {   "match_depth", "dynamic_depth"
     } ;
-static XmConst char *XmConst BlendModelNames[] =
+static const char * const BlendModelNames[] =
 {   "blend_all", "blend_state_source", "blend_just_source", "blend_none"
     } ;
 #define ChildHorizontalAlignmentNames   AlignmentNames
 
-static XmConst char *XmConst ChildPlacementNames[] =
+static const char * const ChildPlacementNames[] =
 {   "place_top", "place_above_selection", "place_below_selection"
     } ;
-static XmConst char *XmConst ChildTypeNames[] =
+static const char * const ChildTypeNames[] =
 {   "frame_generic_child", "frame_workarea_child", "frame_title_child"
     } ;
-static XmConst char *XmConst ChildVerticalAlignmentNames[] =
+static const char * const ChildVerticalAlignmentNames[] =
 {   "alignment_baseline_top", "alignment_center",
     "alignment_baseline_bottom",
     "alignment_widget_top", "alignment_widget_bottom",
     "alignment_child_top", "alignment_child_bottom"
     } ;
 
-static XmConst unsigned char ChildVerticalAlignmentMap[] =
+static const unsigned char ChildVerticalAlignmentMap[] =
 {   XmALIGNMENT_BASELINE_TOP, XmALIGNMENT_CENTER,
     XmALIGNMENT_BASELINE_BOTTOM,
     XmALIGNMENT_WIDGET_TOP, XmALIGNMENT_WIDGET_BOTTOM,
     XmALIGNMENT_CHILD_TOP, XmALIGNMENT_CHILD_BOTTOM
     } ;
-static XmConst char *XmConst ComboBoxListActionActionParamNames[] =
+static const char * const ComboBoxListActionActionParamNames[] =
 {
     "up", "down", "listprevpage", "listnextpage", "listbegindata",
     "listenddata"
     } ;
-static XmConst char *XmConst ComboBoxTypeNames[] =
+static const char * const ComboBoxTypeNames[] =
 {   "combo_box", "drop_down_combo_box", "drop_down_list"
     } ;
-static XmConst char *XmConst CommandSelectionBoxUpOrDownActionParamNames[] =
+static const char * const CommandSelectionBoxUpOrDownActionParamNames[] =
 {   "previous", "next", "first", "last"
     } ;
-static XmConst char *XmConst CommandWindowLocationNames[] =
+static const char * const CommandWindowLocationNames[] =
 {   "command_above_workspace", "command_below_workspace"
     } ;
-static XmConst char *XmConst ContainerCursorActionParamNames[] =
+static const char * const ContainerCursorActionParamNames[] =
 {
     "left", "right", "up", "down", "first", "last"
   } ;
-static XmConst char *XmConst ContainerExpandCollapseActionParamNames[] =
+static const char * const ContainerExpandCollapseActionParamNames[] =
 {
     "left", "right", "collapse", "expand"
   } ;
-static XmConst char *XmConst ContainerStartTransferActionParamNames[] =
+static const char * const ContainerStartTransferActionParamNames[] =
 {
     "link", "move", "copy"
   } ;
 
-static XmConst char *XmConst DefaultButtonEmphasisNames[] =
+static const char * const DefaultButtonEmphasisNames[] =
 {
     "external_highlight", "internal_highlight"
 } ;
 
-static XmConst char *XmConst DefaultButtonTypeNames[] =
+static const char * const DefaultButtonTypeNames[] =
 {   "dialog_none", "dialog_cancel_button", "dialog_ok_button",
     "dialog_help_button"
     } ;
-static XmConst unsigned char DefaultButtonTypeMap[] =
+static const unsigned char DefaultButtonTypeMap[] =
 {   XmDIALOG_NONE, XmDIALOG_CANCEL_BUTTON, XmDIALOG_OK_BUTTON,
     XmDIALOG_HELP_BUTTON
     } ;
-static XmConst char *XmConst DeleteResponseNames[] =
+static const char * const DeleteResponseNames[] =
 {   "destroy", "unmap", "do_nothing"
     } ;
 
-static XmConst char *XmConst DialogStyleNames[] =
+static const char * const DialogStyleNames[] =
 {   "dialog_modeless", "dialog_work_area", "dialog_primary_application_modal",
     "dialog_application_modal", "dialog_full_application_modal",
     "dialog_system_modal"
     } ;
-static XmConst unsigned char DialogStyleMap[] =
+static const unsigned char DialogStyleMap[] =
 {   XmDIALOG_MODELESS, XmDIALOG_WORK_AREA, XmDIALOG_PRIMARY_APPLICATION_MODAL,
     XmDIALOG_APPLICATION_MODAL, XmDIALOG_FULL_APPLICATION_MODAL,
     XmDIALOG_SYSTEM_MODAL
     } ;
 
-static XmConst char *XmConst DialogTypeNames[] =
+static const char * const DialogTypeNames[] =
 {   "dialog_template", "dialog_error", "dialog_information", "dialog_message",
     "dialog_question", "dialog_warning", "dialog_working"
     } ;
-static XmConst char *XmConst DirectionNames[] =
+static const char * const DirectionNames[] =
 {   "left_to_right", "right_to_left",
     "left_to_right_top_to_bottom", "right_to_left_top_to_bottom",
     "left_to_right_bottom_to_top", "right_to_left_bottom_to_top",
     "top_to_bottom_left_to_right", "top_to_bottom_right_to_left",
     "bottom_to_top_left_to_right", "bottom_to_top_right_to_left"
    } ;
-static XmConst unsigned char DirectionMap[] =
+static const unsigned char DirectionMap[] =
 {   XmLEFT_TO_RIGHT, XmRIGHT_TO_LEFT,
     XmLEFT_TO_RIGHT_TOP_TO_BOTTOM, XmRIGHT_TO_LEFT_TOP_TO_BOTTOM,
     XmLEFT_TO_RIGHT_BOTTOM_TO_TOP, XmRIGHT_TO_LEFT_BOTTOM_TO_TOP,
     XmTOP_TO_BOTTOM_LEFT_TO_RIGHT, XmTOP_TO_BOTTOM_RIGHT_TO_LEFT,
     XmBOTTOM_TO_TOP_LEFT_TO_RIGHT, XmBOTTOM_TO_TOP_RIGHT_TO_LEFT
    };
-static XmConst char *XmConst DragInitiatorProtocolStyleNames[] =
+static const char * const DragInitiatorProtocolStyleNames[] =
 {   "drag_none", "drag_drop_only", "drag_prefer_preregister",
     "drag_preregister", "drag_prefer_dynamic", "drag_dynamic",
     "drag_prefer_receiver"
 	};
-static XmConst char *XmConst DragReceiverProtocolStyleNames[] =
+static const char * const DragReceiverProtocolStyleNames[] =
 {   "drag_none", "drag_drop_only", "drag_prefer_preregister",
     "drag_preregister", "drag_prefer_dynamic", "drag_dynamic"
 	};
-static XmConst char *XmConst DropSiteActivityNames[] =
+static const char * const DropSiteActivityNames[] =
 {   "drop_site_active", "drop_site_inactive", "drop_site_ignore"
 	};
-static XmConst char *XmConst DropSiteTypeNames[] =
+static const char * const DropSiteTypeNames[] =
 {   "drop_site_simple",   "drop_site_composite"
 	};
-static XmConst char *XmConst EditModeNames[] =
+static const char * const EditModeNames[] =
 {   "multi_line_edit", "single_line_edit"
     } ;
 
-static XmConst char *XmConst EnableBtn1Names[] =
+static const char * const EnableBtn1Names[] =
 {   XtEfalse, XtEtrue, XtEoff, "button2_adjust", "button2_transfer" };
 
-static XmConst unsigned char EnableBtn1Map[] =
+static const unsigned char EnableBtn1Map[] =
 {   XmOFF, XmBUTTON2_ADJUST, XmOFF, XmBUTTON2_ADJUST, XmBUTTON2_TRANSFER };
 
-static XmConst char *XmConst EnableWarpNames[] =
+static const char * const EnableWarpNames[] =
 {   "enable_warp_on",	"enable_warp_off",
     } ;
 
-static XmConst char *XmConst EntryViewTypeNames[] =
+static const char * const EntryViewTypeNames[] =
 {   "large_icon", "small_icon", "any_icon"
     } ;
-static XmConst char *XmConst FileFilterStyleNames[] =
+static const char * const FileFilterStyleNames[] =
 {   "filter_none", "filter_hidden_files"
     } ;
-static XmConst char *XmConst FileSelectionBoxUpOrDownActionParamNames[] =
+static const char * const FileSelectionBoxUpOrDownActionParamNames[] =
 {   "previous", "next", "first", "last"
     } ;
-static XmConst char *XmConst FileTypeMaskNames[] =
+static const char * const FileTypeMaskNames[] =
 {   "file_directory", "file_regular", "file_any_type"
     } ;
-static XmConst unsigned char FileTypeMaskMap[] =
+static const unsigned char FileTypeMaskMap[] =
 {   XmFILE_DIRECTORY, XmFILE_REGULAR, XmFILE_ANY_TYPE
     } ;
-static XmConst char *XmConst FontTypeNames[] =
+static const char * const FontTypeNames[] =
 {   "font_is_font", "font_is_fontset", "as_is", "font_is_xft"
    } ;
-static XmConst unsigned char FontTypeMap[] =
+static const unsigned char FontTypeMap[] =
 {   XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmAS_IS, XmFONT_IS_XFT
    } ;
-static XmConst char *XmConst IconAttachmentNames[] =
+static const char * const IconAttachmentNames[] =
 {   "attach_north_west", "attach_north", "attach_north_east", "attach_east",
     "attach_south_east", "attach_south", "attach_south_west", "attach_west",
     "attach_center", "attach_hot"
     } ;
-static XmConst char *XmConst IndicatorOnNames[] =
+static const char * const IndicatorOnNames[] =
     {
     "indicator_none", "indicator_fill", "indicator_box", "indicator_check",
     "indicator_check_box", "indicator_cross", "indicator_cross_box",
     XtEoff, XtEfalse, XtEno,
     XtEon, XtEtrue, XtEyes
     };
-static XmConst unsigned  char IndicatorOnMap[] =
+static const unsigned  char IndicatorOnMap[] =
     {
      XmINDICATOR_NONE, XmINDICATOR_FILL, XmINDICATOR_BOX, XmINDICATOR_CHECK,
      XmINDICATOR_CHECK_BOX, XmINDICATOR_CROSS, XmINDICATOR_CROSS_BOX,
      XmINDICATOR_NONE, XmINDICATOR_NONE, XmINDICATOR_NONE,
      XmINDICATOR_FILL, XmINDICATOR_FILL, XmINDICATOR_FILL
     };
-static XmConst char *XmConst IndicatorTypeNames[] =
+static const char * const IndicatorTypeNames[] =
 {   "n_of_many", "one_of_many", "one_of_many_round", "one_of_many_diamond"
     } ;
-static XmConst unsigned char IndicatorTypeMap[] =
+static const unsigned char IndicatorTypeMap[] =
 {   XmN_OF_MANY, XmONE_OF_MANY, XmONE_OF_MANY_ROUND, XmONE_OF_MANY_DIAMOND
     } ;
-static XmConst char *XmConst InputPolicyNames[] =
+static const char * const InputPolicyNames[] =
 {   "per_shell", "per_widget"
     } ;
-static XmConst char *XmConst KeyboardFocusPolicyNames[] =
+static const char * const KeyboardFocusPolicyNames[] =
 {   "explicit", "pointer"
     } ;
 
-static XmConst char *XmConst LabelTypeNames[] =
+static const char * const LabelTypeNames[] =
 {   "pixmap", "string", "pixmap_and_string"
     } ;
-static XmConst unsigned char LabelTypeMap[] =
+static const unsigned char LabelTypeMap[] =
 {   XmPIXMAP, XmSTRING, XmPIXMAP_AND_STRING
     } ;
-static XmConst char *XmConst LayoutTypeNames[] =
+static const char * const LayoutTypeNames[] =
 {   "outline", "spatial", "detail"
    } ;
-static XmConst char *XmConst LineStyleNames[] =
+static const char * const LineStyleNames[] =
 {   "no_line", "single"
     } ;
-static XmConst char *XmConst LineTypeNames[] =
+static const char * const LineTypeNames[] =
 {   "no_line", "single_line", "double_line",
     "single_dashed_line", "double_dashed_line", "as_is"
     } ;
-static XmConst unsigned char LineTypeMap[] =
+static const unsigned char LineTypeMap[] =
 {   XmNO_LINE, XmSINGLE_LINE, XmDOUBLE_LINE,
     XmSINGLE_DASHED_LINE, XmDOUBLE_DASHED_LINE, XmAS_IS
     } ;
-static XmConst char *XmConst ListSizePolicyNames[] =
+static const char * const ListSizePolicyNames[] =
 {   "variable", "constant", "resize_if_possible"
     } ;
-static XmConst char *XmConst LoadModelNames[] =
+static const char * const LoadModelNames[] =
 {   "load_deferred", "load_immediate", "as_is"
     } ;
-static XmConst unsigned char LoadModelMap[] =
+static const unsigned char LoadModelMap[] =
 {   XmLOAD_DEFERRED, XmLOAD_IMMEDIATE, XmAS_IS
     } ;
-static XmConst char *XmConst MatchBehaviorNames[] =
+static const char * const MatchBehaviorNames[] =
 {   "none", "quick_navigate"
     } ;
-static XmConst char *XmConst MultiClickNames[] =
+static const char * const MultiClickNames[] =
 {   "multiclick_discard", "multiclick_keep"
     } ;
-static XmConst char *XmConst NavigationTypeNames[] =
+static const char * const NavigationTypeNames[] =
 {   "none", "tab_group", "sticky_tab_group", "exclusive_tab_group"
     } ;
-static XmConst char *XmConst NotebookChildTypeNames[] =
+static const char * const NotebookChildTypeNames[] =
 {   "none", "page", "major_tab", "minor_tab", "status_area", "page_scroller"
     } ;
-static XmConst char *XmConst NotebookTraverseTabActionParamNames[] =
+static const char * const NotebookTraverseTabActionParamNames[] =
 {   "home", "end", "next", "previous"
     } ;
-static XmConst char *XmConst OrientationNames[] =
+static const char * const OrientationNames[] =
 {   XtEvertical, XtEhorizontal
     } ;
-static XmConst unsigned char OrientationMap[] =
+static const unsigned char OrientationMap[] =
 {   XmVERTICAL, XmHORIZONTAL
     } ;
-static XmConst char *XmConst OutlineButtonPolicyNames[] =
+static const char * const OutlineButtonPolicyNames[] =
 {   "outline_button_present", "outline_button_absent"
     } ;
-static XmConst char *XmConst OutlineStateNames[] =
+static const char * const OutlineStateNames[] =
 {   "collapsed", "expanded"
     } ;
-static XmConst char *XmConst PackingNames[] =
+static const char * const PackingNames[] =
 {   "pack_tight", "pack_column", "pack_none"
     } ;
-static XmConst unsigned char PackingMap[] =
+static const unsigned char PackingMap[] =
 {   XmPACK_TIGHT, XmPACK_COLUMN, XmPACK_NONE
     } ;
-static XmConst char *XmConst PanedWindowSashActionParamNames[] =
+static const char * const PanedWindowSashActionParamNames[] =
 {
     "start", "move", "commit", "key"
     };
-static XmConst char *XmConst PanedWindowSashDirectionActionParamNames[] =
+static const char * const PanedWindowSashDirectionActionParamNames[] =
 {
     "up", "down", "right", "left", "first", "last"
     };
-static XmConst char *XmConst PanedWindowSashIncrementActionParamNames[] =
+static const char * const PanedWindowSashIncrementActionParamNames[] =
 {
     "defaultincr", "largeincr"
     };
-static XmConst char *XmConst PathModeNames[] =
+static const char * const PathModeNames[] =
 {   "path_mode_full", "path_mode_relative"
     } ;
-static XmConst char *XmConst PositionModeNames[] =
+static const char * const PositionModeNames[] =
 {
   "zero_based", "one_based"
 };
-static XmConst char *XmConst PositionTypeNames[] =
+static const char * const PositionTypeNames[] =
   {
   "position_index",
   "position_value"
   };
-static XmConst char *XmConst PrimaryOwnershipNames[] =
+static const char * const PrimaryOwnershipNames[] =
 {   "own_never", "own_always", "own_multiple", "own_possible_multiple"
     } ;
-static XmConst char *XmConst ProcessingDirectionNames[] =
+static const char * const ProcessingDirectionNames[] =
 {   "max_on_top", "max_on_bottom", "max_on_left", "max_on_right"
     } ;
-static XmConst char *XmConst ResizePolicyNames[] =
+static const char * const ResizePolicyNames[] =
 {   "resize_none", "resize_grow", "resize_any"
     } ;
-static XmConst char *XmConst RowColumnTypeNames[] =
+static const char * const RowColumnTypeNames[] =
 {   "work_area", "menu_bar", "menu_pulldown", "menu_popup", "menu_option"
     } ;
-static XmConst char *XmConst ScrollBarDisplayPolicyNames[] =
+static const char * const ScrollBarDisplayPolicyNames[] =
 {   "static", "as_needed"
     } ;
-static XmConst char *XmConst ScrollBarIncrementDownOrRightActionParamNames[] =
+static const char * const ScrollBarIncrementDownOrRightActionParamNames[] =
 {   "down", "right"
     } ;
-static XmConst char *XmConst ScrollBarIncrementUpOrLeftActionParamNames[] =
+static const char * const ScrollBarIncrementUpOrLeftActionParamNames[] =
 {   "up", "left"
     } ;
-static XmConst char *XmConst ScrollBarPageDownOrRightActionParamNames[] =
+static const char * const ScrollBarPageDownOrRightActionParamNames[] =
 {   "down", "right"
     } ;
-static XmConst char *XmConst ScrollBarPageUpOrLeftActionParamNames[] =
+static const char * const ScrollBarPageUpOrLeftActionParamNames[] =
 {   "up", "left"
     } ;
-static XmConst char *XmConst ScrollBarPlacementNames[] =
+static const char * const ScrollBarPlacementNames[] =
 {   "bottom_right", "top_right", "bottom_left", "top_left"
     } ;
 /* NOTE: work_area, menu_bar and separator have to match the existing ones */
-static XmConst char *XmConst ScrolledWindowChildTypeNames[] =
+static const char * const ScrolledWindowChildTypeNames[] =
 {   "work_area", "menu_bar",
     "hor_scrollbar", "vert_scrollbar",
     "command_window",
@@ -508,157 +508,157 @@ static XmConst char *XmConst ScrolledWindowChildTypeNames[] =
     "scroll_hor", "scroll_vert", "no_scroll",
     "clip_window", "generic_child"
     } ;
-static XmConst char *XmConst ScrollingPolicyNames[] =
+static const char * const ScrollingPolicyNames[] =
 {   "automatic", "application_defined"
     } ;
-static XmConst char *XmConst SelectionBoxUpOrDownActionParamNames[] =
+static const char * const SelectionBoxUpOrDownActionParamNames[] =
 {   "previous", "next", "first", "last"
     } ;
-static XmConst char *XmConst SelectionModeNames[] =
+static const char * const SelectionModeNames[] =
 {   "normal_mode", "add_mode"
     } ;
-static XmConst char *XmConst SelectionPolicyNames[] =
+static const char * const SelectionPolicyNames[] =
 {   "single_select", "multiple_select", "extended_select", "browse_select"
     } ;
-static XmConst char *XmConst SelectionTechniqueNames[] =
+static const char * const SelectionTechniqueNames[] =
 {   "marquee", "marquee_extend_start", "marquee_extend_both",
     "touch_only", "touch_over"
     } ;
-static XmConst char *XmConst SelectionTypeNames[] =
+static const char * const SelectionTypeNames[] =
 {   "dialog_work_area", "dialog_prompt", "dialog_selection", "dialog_command",
     "dialog_file_selection"
     } ;
-static XmConst char *XmConst SeparatorTypeNames[] =
+static const char * const SeparatorTypeNames[] =
 {   "no_line", "single_line", "double_line", "single_dashed_line",
     "double_dashed_line", "shadow_etched_in", "shadow_etched_out",
     "shadow_etched_in_dash", "shadow_etched_out_dash"
     } ;
-static XmConst char *XmConst SetNames[] =
+static const char * const SetNames[] =
 {   "unset", "set", "indeterminate",
     XtEoff, XtEfalse, XtEno, "0",
     XtEon, XtEtrue, XtEyes, "1"
     } ;
-static XmConst unsigned char SetMap[] =
+static const unsigned char SetMap[] =
 {   XmUNSET, XmSET, XmINDETERMINATE,
     XmUNSET, XmUNSET, XmUNSET, XmUNSET,
     XmSET, XmSET, XmSET, XmSET
     } ;
-static XmConst char *XmConst ShadowTypeNames[] =
+static const char * const ShadowTypeNames[] =
 {   "shadow_etched_in", "shadow_etched_out", "shadow_in", "shadow_out"
     } ;
-static XmConst unsigned char ShadowTypeMap[] =
+static const unsigned char ShadowTypeMap[] =
 {   XmSHADOW_ETCHED_IN, XmSHADOW_ETCHED_OUT, XmSHADOW_IN, XmSHADOW_OUT
     } ;
-static XmConst char *XmConst ShowArrowsNames[] =
+static const char * const ShowArrowsNames[] =
 {   "each_side", XtEtrue, XtEyes, XtEon, "1",
     "max_side", "min_side",
     "none", XtEfalse, XtEno, XtEoff, "0"
     } ;
-static XmConst unsigned char ShowArrowsMap[] =
+static const unsigned char ShowArrowsMap[] =
 {   1,1,1,1,1,
     XmMAX_SIDE, XmMIN_SIDE,
     0,0,0,0,0
     } ;
-static XmConst char *XmConst ShowValueNames[] =
+static const char * const ShowValueNames[] =
 {   "near_slider", XtEtrue, XtEyes, XtEon, "1",
     "near_border",
     "none", XtEfalse, XtEno, XtEoff, "0"
     } ;
-static XmConst unsigned char ShowValueMap[] =
+static const unsigned char ShowValueMap[] =
 {   1,1,1,1,1,
     XmNEAR_BORDER,
     0,0,0,0,0
     } ;
 
-static XmConst char *XmConst SliderMarkNames[] =
+static const char * const SliderMarkNames[] =
 {   "none", "etched_line", "thumb_mark", "round_mark"
     } ;
-static XmConst char *XmConst SliderVisualNames[] =
+static const char * const SliderVisualNames[] =
 {   "background", "foreground", "trough_color", "shadowed_background"
     } ;
-static XmConst char *XmConst SlidingModeNames[] =
+static const char * const SlidingModeNames[] =
 {   "slider", "thermometer",
     } ;
-static XmConst char *XmConst SpatialIncludeModelNames[] =
+static const char * const SpatialIncludeModelNames[] =
 {   "append", "closest", "first_fit"
    } ;
-static XmConst char *XmConst SpatialResizeModelNames[] =
+static const char * const SpatialResizeModelNames[] =
 {   "grow_minor", "grow_major", "grow_balanced"
     } ;
-static XmConst char *XmConst SpatialSnapModelNames[] =
+static const char * const SpatialSnapModelNames[] =
 {   "none", "snap_to_grid", "center"
     } ;
-static XmConst char *XmConst SpatialStyleNames[] =
+static const char * const SpatialStyleNames[] =
 {   "none", "grid", "cells"
     } ;
-static XmConst char *XmConst SpinBoxChildTypeNames[] =
+static const char * const SpinBoxChildTypeNames[] =
   {
   "string",
   "numeric",
   };
 
-static XmConst unsigned char SpinBoxChildTypeMap[] =
+static const unsigned char SpinBoxChildTypeMap[] =
   {
   (unsigned char) XmSTRING,
   (unsigned char) XmNUMERIC,
   };
-static XmConst char *XmConst StringDirectionNames[] =
+static const char * const StringDirectionNames[] =
 {   "string_direction_l_to_r", "string_direction_r_to_l"
     } ;
-static XmConst char *XmConst TearOffModelNames[] =
+static const char * const TearOffModelNames[] =
 {   "tear_off_enabled", "tear_off_disabled"
     } ;
-static XmConst char *XmConst TextExtendMovementActionParamNames[] =
+static const char * const TextExtendMovementActionParamNames[] =
 {   "extend"
     } ;
-static XmConst char *XmConst TextFieldExtendMovementActionParamNames[] =
+static const char * const TextFieldExtendMovementActionParamNames[] =
 {   "extend"
     } ;
-static XmConst char *XmConst TextFieldDirectionActionParamNames[] =
+static const char * const TextFieldDirectionActionParamNames[] =
 {   "right", "left"
     } ;
-static XmConst char *XmConst TextHorizontalDirectionActionParamNames[] =
+static const char * const TextHorizontalDirectionActionParamNames[] =
 {   "right", "left"
     } ;
-static XmConst char *XmConst TextVerticalDirectionActionParamNames[] =
+static const char * const TextVerticalDirectionActionParamNames[] =
 {   "up", "down"
     } ;
-static XmConst char *XmConst ToggleModeNames[] =
+static const char * const ToggleModeNames[] =
 {   "toggle_boolean", "toggle_indeterminate"
     } ;
-static XmConst char *XmConst UnitTypeNames[] =
+static const char * const UnitTypeNames[] =
 {   "pixels", "100th_millimeters", "1000th_inches", "100th_points",
     "100th_font_units", "inches", "centimeters", "millimeters",
     "points", "font_units"
     } ;
-static XmConst char *XmConst UnpostBehaviorNames[] =
+static const char * const UnpostBehaviorNames[] =
 {   "unpost", "unpost_and_replay"
     } ;
-static XmConst char *XmConst VerticalAlignmentNames[] =
+static const char * const VerticalAlignmentNames[] =
 {   "alignment_baseline_top", "alignment_center", "alignment_baseline_bottom",
     "alignment_contents_top", "alignment_contents_bottom"
     } ;
-static XmConst char *XmConst ViewTypeNames[] =
+static const char * const ViewTypeNames[] =
 {   "large_icon", "small_icon"
     } ;
-static XmConst char *XmConst VisualEmphasisNames[] =
+static const char * const VisualEmphasisNames[] =
 {   "selected", "not_selected"
     };
-static XmConst char *XmConst VisualPolicyNames[] =
+static const char * const VisualPolicyNames[] =
 {   "variable", "constant"
     } ;
-static XmConst char *XmConst WhichButtonNames[] =
+static const char * const WhichButtonNames[] =
 {   "button1", "1", "button2", "2", "button3", "3", "button4", "4",
     "button5", "5"
     } ;
-static XmConst unsigned char WhichButtonMap[] =
+static const unsigned char WhichButtonMap[] =
 {   Button1, Button1, Button2, Button2, Button3, Button3, Button4, Button4,
     Button5, Button5
     } ;
-static XmConst char *XmConst PixmapPlacementNames[] =
+static const char * const PixmapPlacementNames[] =
 {   "top", "bottom", "left", "right"
     } ;
-static XmConst unsigned char PixmapPlacementMap[] =
+static const unsigned char PixmapPlacementMap[] =
 {   XmPIXMAP_TOP, XmPIXMAP_BOTTOM, XmPIXMAP_LEFT, XmPIXMAP_RIGHT
     } ;
 
@@ -1157,7 +1157,7 @@ static XmRepTypeEntryRec StandardRepTypes[] = {
   }
 } ;
 
-static XmConst Cardinal StandardNumRecs = XtNumber( StandardRepTypes );
+static const Cardinal StandardNumRecs = XtNumber( StandardRepTypes );
 static XmRepTypeEntryRec *DynamicRepTypes = NULL;
 static Cardinal DynamicRepTypeNumRecords = 0;
 

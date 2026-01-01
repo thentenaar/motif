@@ -252,7 +252,7 @@ externaldef( exmstringtransferwidgetclass) WidgetClass
 /* Define trait structure variables. */
 /* Any widget class that uses the Uniform Transfer Model must have the
  * Transfer trait.  Here we declare a variable to hold the trait structure. */
-static XmConst XmTransferTraitRec StringTrT = {
+static const XmTransferTraitRec StringTrT = {
   0,                           /* version */
   (XmConvertCallbackProc) ConvertProc,         /* convertProc */
   (XmDestinationCallbackProc) DestinationProc, /* destinationProc */

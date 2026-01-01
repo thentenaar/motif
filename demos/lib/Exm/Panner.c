@@ -52,13 +52,13 @@
 
 
 /* Define macros and constants. */
-static XmConst int DEFAULT_WIDTH=100;
-static XmConst int DEFAULT_HEIGHT=100;
+static const int DEFAULT_WIDTH=100;
+static const int DEFAULT_HEIGHT=100;
 
-static XmConst int DEFAULT_CANVAS_WIDTH=100;
-static XmConst int DEFAULT_CANVAS_HEIGHT=100;
+static const int DEFAULT_CANVAS_WIDTH=100;
+static const int DEFAULT_CANVAS_HEIGHT=100;
 
-static XmConst int PANNER_OUTOFRANGE = (-30000);
+static const int PANNER_OUTOFRANGE = (-30000);
 
 #define PANNER_HSCALE(pw,val) ((pw)->panner.haspect * ((double) (val)))
 #define PANNER_VSCALE(pw,val) ((pw)->panner.vaspect * ((double) (val)))
@@ -403,7 +403,7 @@ externaldef(exmpannerwidgetclass)
 
 /* Navigator Trait record for Panner */
 
-static XmConst XmNavigatorTraitRec pannerNT = {
+static const XmNavigatorTraitRec pannerNT = {
   0,         /* version */
   NavigChangeMoveCB,
   NavigSetValue,

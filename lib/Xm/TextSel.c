@@ -100,7 +100,7 @@ static void TextDestinationCallback(Widget, XtPointer,
 
 /* Transfer Trait record for Text */
 
-static XmConst XmTransferTraitRec TextTransfer = {
+static const XmTransferTraitRec TextTransfer = {
   0,  				/* version */
   (XmConvertCallbackProc) 	TextConvertCallback,
   (XmDestinationCallbackProc)	TextDestinationCallback,

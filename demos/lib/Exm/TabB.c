@@ -242,7 +242,7 @@ static XmRepTypeId openSideId;
 
 /* Define trait structure variables here. */
 /* This widget will install the XmQTjoinSide trait. */ 
-static XmConst XmJoinSideTraitRec tabButtonOST = {
+static const XmJoinSideTraitRec tabButtonOST = {
   0,		/* version */
   JoinSideSetValue,
   JoinSideGetValue,

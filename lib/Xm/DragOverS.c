@@ -3215,7 +3215,7 @@ UninstallColormap(XmDragOverShellWidget dos)
 static void
 DragOverShellPunchHole(Widget w)
 {
-    static XmConst XRectangle pixelPunch = { 0, 0, 1, 1 };
+    static const XRectangle pixelPunch = { 0, 0, 1, 1 };
     XmDragOverShellWidget dos = (XmDragOverShellWidget)w;
     XmDragIconObject icon = (dos->drag.rootBlend.mixedIcon ?
 			     dos->drag.rootBlend.mixedIcon :

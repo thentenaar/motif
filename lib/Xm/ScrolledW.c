@@ -534,7 +534,7 @@ xmScrolledWindowWidgetClass = (WidgetClass)&xmScrolledWindowClassRec;
 
 /* Trait record for ScrolledWindow */
 
-static XmConst XmScrollFrameTraitRec scrolledWindowSFT =
+static const XmScrollFrameTraitRec scrolledWindowSFT =
 {
     1,                                            /* version	   */
     ScrollFrameInit,                              /* init		   */

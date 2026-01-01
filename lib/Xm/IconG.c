@@ -614,7 +614,7 @@ externaldef(xmicongadgetclass) WidgetClass
 
 /* ContainerItem Trait record for IconGadget */
 
-static XmConst XmContainerItemTraitRec iconCIT = {
+static const XmContainerItemTraitRec iconCIT = {
   0,		/* version */
   ContItemSetValues,
   ContItemGetValues,
@@ -622,21 +622,21 @@ static XmConst XmContainerItemTraitRec iconCIT = {
 
 /* CareVisual Trait record for IconGadget */
 
-static XmConst XmCareVisualTraitRec iconCVT = {
+static const XmCareVisualTraitRec iconCVT = {
     0,		/* version */
     HandleRedraw,
 };
 
 /* Access Colors Trait record for IconGadget */
 
-static XmConst XmAccessColorsTraitRec iconACT = {
+static const XmAccessColorsTraitRec iconACT = {
   0,			/* version */
   GetColors
 };
 
 /* Point In Trait record for IconGadget */
 
-static XmConst XmPointInTraitRec iconPIT = {
+static const XmPointInTraitRec iconPIT = {
   0,			/* version */
   PointIn,
 };

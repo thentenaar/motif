@@ -63,7 +63,6 @@ typedef struct _File {
 static File* file = NULL;
 static File* filecurrent = NULL;
 static File** filetail = &file;
-static char* conststr;
 static char* prefixstr = NULL;
 static char* featurestr = NULL;
 static char* ctmplstr = NULL;
@@ -111,8 +110,7 @@ IntelABIWriteHeader (FILE* f, File* phile)
     WriteHeaderProlog (f, phile);
 
     for (t = phile->table; t; t = t->next) {
-      (void) fprintf (f, "%s %sConst char %s[];\n",
-		      externrefstr, conststr ? conststr : fileprotstr, t->name);
+      fprintf (f, "%s const char %s[];\n", externrefstr, t->name);
 	for (te = t->tableent; te; te = te->next)
 	    (void) fprintf (f,
 		"#ifndef %s%s\n#define %s%s ((char*)&%s[%d])\n#endif\n",
@@ -141,10 +139,7 @@ FunctionWriteHeader (FILE* f, File* phile)
     TableEnt* te;
 
     WriteHeaderProlog (f, phile);
-
-    (void) fprintf (f, "%s %sConst char* %s();\n",
-		    externrefstr, conststr ? conststr : fileprotstr,
-		    phile->table->name);
+    fprintf(f, "%s const char* %s();\n", externrefstr, phile->table->name);
 
     for (t = phile->table; t; t = t->next)
 	for (te = t->tableent; te; te = te->next)
@@ -166,13 +161,10 @@ ArrayperWriteHeader (FILE* f, File* phile)
 
     for (t = phile->table; t; t = t->next)
         for (te = t->tableent; te; te = te->next)
-	    (void) fprintf (f,
-			    "#ifndef %s%s\n%s %sConst char %s%s[];\n#endif\n",
-			    prefixstr, te->left,
-			    externrefstr, conststr ? conststr : fileprotstr,
-			    prefixstr, te->left);
+	    fprintf(f, "#ifndef %s%s\n%s const char %s%s[];\n#endif\n",
+			    prefixstr, te->left, externrefstr, prefixstr, te->left);
 
-    (void) fprintf (f, "#endif /* %s */\n", featurestr);
+    fprintf(f, "#endif /* %s */\n", featurestr);
 }
 
 static void
@@ -182,10 +174,7 @@ DefaultWriteHeader (FILE* f, File* phile)
     TableEnt* te;
 
     WriteHeaderProlog (f, phile);
-
-    (void) fprintf (f, "%s %sConst char %s[];\n",
-		    externrefstr, conststr ? conststr : fileprotstr,
-		    phile->table->name);
+    fprintf(f, "%s const char %s[];\n", externrefstr, phile->table->name);
 
     for (t = phile->table; t; t = t->next)
 	for (te = t->tableent; te; te = te->next)
@@ -266,9 +255,9 @@ WriteHeader (char* tagline, File* phile, int abi)
 
     if (phile->tmpl) CopyTmplEpilog (phile->tmpl, f);
 
-    (void) free (fileprotstr);
-    (void) fclose (phile->tmpl);
-    (void) fclose (f);
+    free(fileprotstr);
+    if (phile->tmpl) fclose(phile->tmpl);
+    fclose(f);
 }
 
 static void
@@ -282,7 +271,7 @@ WriteSourceLine (TableEnt* te, int abi, int fudge)
     (void) printf ("%s", "\n");
 }
 
-static char* const_string = "%s %sConst char %s[] = {\n";
+static const char * const const_string = "%s const char %s[] = {\n";
 
 static void
 IntelABIWriteSource (int abi)
@@ -294,11 +283,10 @@ IntelABIWriteSource (int abi)
 	TableEnt* te;
 
 	for (t = phile->table; t; t = t->next) {
-	    (void) printf (const_string, externdefstr,
-			   conststr ? conststr : "", t->name);
+	    printf(const_string, externdefstr, t->name);
 	    for (te = t->tableent; te; te = te->next)
 		WriteSourceLine (te, abi, 0);
-	    (void) printf ("%s\n\n", "};");
+	    puts("};\n");
 	}
     }
 }
@@ -312,21 +300,19 @@ IntelABIBCWriteSource (int abi)
 	Table* t;
 	TableEnt* te;
 
-	(void) printf (const_string, externdefstr,
-		       conststr ? conststr : "", phile->table->name);
+	printf(const_string, externdefstr, phile->table->name);
 
 	for (t = phile->table; t; t = t->next)
 	    for (te = t->tableent; te; te = te->next)
 		WriteSourceLine (te, abi, t->next ? 1 : 0);
-	(void) printf ("%s\n\n", "};");
+	puts("};\n");
 
 	if (phile->table->next) {
-	    (void) printf (const_string, externdefstr,
-			   conststr ? conststr : "", phile->table->next->name);
+	    printf(const_string, externdefstr, phile->table->next->name);
 	    for (t = phile->table->next; t; t = t->next)
 		for (te = t->tableent; te; te = te->next)
 		    WriteSourceLine (te, abi, 0);
-	    (void) printf ("%s\n\n", "};");
+	    puts("};\n");
 	}
     }
 }
@@ -340,17 +326,15 @@ FunctionWriteSource (int abi)
 	Table* t;
 	TableEnt* te;
 
-	(void) printf ("static %sConst char _%s[] = {\n",
-		       conststr ? conststr : "", phile->table->name);
+	printf("static const char _%s[] = {\n", phile->table->name);
 
 	for (t = phile->table; t; t = t->next)
 	    for (te = t->tableent; te; te = te->next)
 		    WriteSourceLine (te, abi, t->next ? 1 : 0);
-	(void) printf ("%s\n\n", "};");
+	puts("};\n");
 
-	(void) printf ("%sConst char* %s(index)\n    int index;\n{\n    return &_%s[index];\n}\n\n",
-		       conststr ? conststr : "",
-		       phile->table->name, phile->table->name);
+	printf("const char* %s(index)\n    int index;\n{\n    return &_%s[index];\n}\n\n",
+		   phile->table->name, phile->table->name);
     }
 }
 
@@ -370,9 +354,8 @@ ArrayperWriteSource (int abi)
 		    if (done_atom) return;
 		    done_atom = 1;
 		}
-		(void) printf ("%s %sConst char %s%s[] = \"%s\";\n",
-			       externdefstr, conststr ? conststr : "",
-			       prefixstr, te->left, te->right);
+		(void) printf ("%s const char %s%s[] = \"%s\";\n",
+			       externdefstr, prefixstr, te->left, te->right);
 	    }
     }
 }
@@ -386,13 +369,11 @@ DefaultWriteSource (int abi)
 	Table* t;
 	TableEnt* te;
 
-	(void) printf (const_string, externdefstr, conststr ? conststr : "",
-		       phile->table->name);
-
+	printf(const_string, externdefstr, phile->table->name);
 	for (t = phile->table; t; t = t->next)
 	    for (te = t->tableent; te; te = te->next)
 		WriteSourceLine (te, abi, t->next ? 1 : 0);
-	(void) printf ("%s\n\n", "};");
+	puts("};\n");
     }
 }
 
@@ -553,9 +534,6 @@ DoLine(char* buf)
 	}
 	break;
     case X_CONST_TOKEN:
-	if ((conststr = malloc (strlen (buf + strlen (const_str)) + 1)) == NULL)
-	    exit(1);
-	(void) strcpy (conststr, buf + strlen (const_str) + 1);
 	break;
     default:
 	{

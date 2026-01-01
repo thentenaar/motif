@@ -115,7 +115,7 @@ static int StringPreferredFormat(
 
 
 /* Define constants here. */
-static XmConst int  FIND_NATURAL_SIZE = 0;
+static const int  FIND_NATURAL_SIZE = 0;
 #define UNSUPPORTED_FORMAT "Someone is trying to get or set a value for \n\
 ExmNcompoundString; however, the specified format is undefined.\n"
 
@@ -284,7 +284,7 @@ static XmRepTypeId alignmentId;
 /* Since ExmString displays a primary parcel of text, the ExmString
    widget must install the XmQTaccessTextual trait.  The following
    declaration is of a trait structure variable named StringATT. */
-static XmConst XmAccessTextualTraitRec StringATT = {
+static const XmAccessTextualTraitRec StringATT = {
   0,  				/* version */
   StringGetValue,
   StringSetValue,

@@ -378,14 +378,14 @@ externaldef(exmgridwidgetclass) WidgetClass exmGridWidgetClass =
              /* Define trait record variables. */
 
 /* Here is the trait record variable for the XmQTdialogSavvy trait. */ 
-static XmConst XmDialogSavvyTraitRec gridDST = {
+static const XmDialogSavvyTraitRec gridDST = {
   0,            /* version */
   CallMapUnmap, /* trait method */        
 };
 
 
 /* Here is the trait record variable for the XmQTspecifyRenderTable trait. */ 
-static XmConst XmSpecRenderTraitRec gridSRTT = {
+static const XmSpecRenderTraitRec gridSRTT = {
   0,		/* version */
   GetTable,     /* trait method */
 };

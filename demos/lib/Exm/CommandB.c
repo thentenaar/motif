@@ -56,7 +56,7 @@
 #include <Xm/SpecRenderT.h> /* header file for render table constants */
 
 /* The VISUAL_DELAY constant holds a time in milliseconds. */
-static XmConst unsigned long  VISUAL_DELAY = 100;
+static const unsigned long  VISUAL_DELAY = 100;
 
 /* Declare all static functions. */
 static void Initialize (
@@ -271,13 +271,13 @@ externaldef( exmcommandbuttonwidgetclass) WidgetClass
 	exmCommandButtonWidgetClass = (WidgetClass) &exmCommandButtonClassRec;
 
 /* Declare an Activatable Trait record variable. */
-static XmConst XmActivatableTraitRec commandButtonAT = {
+static const XmActivatableTraitRec commandButtonAT = {
   0,            /* version */
   ChangeCB,
 };
 
 /* Declare a Takes Default record variable. */
-static XmConst XmTakesDefaultTraitRec  commandButtonTDT = {
+static const XmTakesDefaultTraitRec  commandButtonTDT = {
   0,            /* version */
   ShowAsDefault,
 };

@@ -4,10 +4,6 @@
 
 #include <X11/Intrinsic.h>
 
-#ifndef _XmConst
-#define _XmConst /**/
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

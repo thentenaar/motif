@@ -169,7 +169,7 @@ static void GetColors(Widget widget, XmAccessColorData color_data);
 void _XmLabelConvert(Widget w, XtPointer ignore, XmConvertCallbackStruct*);
 
 /* Transfer trait record */
-static XmConst XmTransferTraitRec LabelGTransfer =
+static const XmTransferTraitRec LabelGTransfer =
 {
     0,                                            /* version		  */
     (XmConvertCallbackProc) _XmLabelConvert,      /* convertProc		  */
@@ -178,7 +178,7 @@ static XmConst XmTransferTraitRec LabelGTransfer =
 };
 
 /* Menu Savvy trait record */
-static XmConst XmMenuSavvyTraitRec MenuSavvyGadgetRecord =
+static const XmMenuSavvyTraitRec MenuSavvyGadgetRecord =
 {
     0,                                            /* version	       */
     SetGadgetActivateCallbackState,               /* disableCallback   */
@@ -188,19 +188,19 @@ static XmConst XmMenuSavvyTraitRec MenuSavvyGadgetRecord =
 };
 
 /* Used to be:
-      extern XmConst XmAccessTextualTraitRec _XmLabel_AccessTextualRecord;
+      extern const XmAccessTextualTraitRec _XmLabel_AccessTextualRecord;
    but that was giving a linkage undefined with g++.
    It looks like a G++ bug. */
 extern XmAccessTextualTraitRec _XmLabel_AccessTextualRecord;
 
-static XmConst XmCareVisualTraitRec LabelGCVT =
+static const XmCareVisualTraitRec LabelGCVT =
 {
     0,                                            /* version */
     HandleRedraw                                  /* redraw */
 };
 
 /* Access Colors Trait record for label gadget */
-static XmConst XmAccessColorsTraitRec labACT =
+static const XmAccessColorsTraitRec labACT =
 {
     0,                                            /* version */
     GetColors,                                    /* getColors */

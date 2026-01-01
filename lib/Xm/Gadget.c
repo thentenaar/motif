@@ -349,19 +349,19 @@ externaldef(xmgadgetclass) WidgetClass xmGadgetClass =
 
 /* Access Colors Trait record for Gadget */
 
-static XmConst XmAccessColorsTraitRec gadACT = {
+static const XmAccessColorsTraitRec gadACT = {
   0,			/* version */
   GetColors
 };
 
 /* Unit Type Trait record for Gadget */
 
-static XmConst XmSpecUnitTypeTraitRec gadUTT = {
+static const XmSpecUnitTypeTraitRec gadUTT = {
   0,			/* version */
   GetUnitType
 };
 
-static XmConst XmSpecifyLayoutDirectionTraitRec gadLDT = {
+static const XmSpecifyLayoutDirectionTraitRec gadLDT = {
   0,			/* version */
   GetDirection
 };

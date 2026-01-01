@@ -162,20 +162,9 @@ extern "C" {
 
 #define XmINVALID_DIMENSION		0xFFFF
 
-/***********************************************************************
- *
- * Const stuff
- *
- ***********************************************************************/
-
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
+/* Backward-compat */
+#define _XmConst const
 #define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
-
 
 /***********************************************************************
  *
@@ -935,11 +924,11 @@ enum{	XmCASCADE_BUTTON_BIT = 1,	XmCASCADE_BUTTON_GADGET_BIT,
 #define CoreIndex 		XmCoreIndex
 #define XmCompositeIndex 	(XmWindowObjIndex + 2)
 #define CompositeIndex 		XmCompositeIndex
-#define XmConstraintIndex 	(XmCompositeIndex + 1)
-#define ConstraintIndex 	XmConstraintIndex
+#define constraintIndex 	(XmCompositeIndex + 1)
+#define ConstraintIndex 	constraintIndex
 #define XmGadgetIndex	 	(XmRectObjIndex + 1)
 #define XmPrimitiveIndex 	(XmWindowObjIndex + 2)
-#define XmManagerIndex	 	(XmConstraintIndex + 1)
+#define XmManagerIndex	 	(constraintIndex + 1)
 
 #define XmArrowBIndex		(XmPrimitiveIndex + 1)
 #define XmArrowButtonIndex	XmArrowBIndex

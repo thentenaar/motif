@@ -494,7 +494,7 @@ externaldef(xmmanagerwidgetclass) WidgetClass xmManagerWidgetClass =
 
 
 
-static XmConst XmSpecifyLayoutDirectionTraitRec manLDT = {
+static const XmSpecifyLayoutDirectionTraitRec manLDT = {
   0,			/* version */
   GetDirection
 };
@@ -502,14 +502,14 @@ static XmConst XmSpecifyLayoutDirectionTraitRec manLDT = {
 
 /* Access Colors Trait record for Manager */
 
-static XmConst XmAccessColorsTraitRec manACT = {
+static const XmAccessColorsTraitRec manACT = {
   0,			/* version */
   GetColors
 };
 
 /* Unit Type Trait record for Manager */
 
-static XmConst XmSpecUnitTypeTraitRec manUTT = {
+static const XmSpecUnitTypeTraitRec manUTT = {
   0,			/* version */
   GetUnitType
 };

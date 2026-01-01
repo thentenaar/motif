@@ -63,9 +63,7 @@ static void _XmGeoCalcFill(
                         Dimension betweenSpec,
                         Dimension *pEndSpace,
                         Dimension *pBetweenSpace) ;
-static int boxWidthCompare(
-                        XmConst void *boxPtr1,
-                        XmConst void *boxPtr2) ;
+static int boxWidthCompare(const void *box1, const void *box2);
 static void FitBoxesAveraging(
                         XmKidGeometry rowPtr,
                         unsigned int numBoxes,
@@ -1480,16 +1478,12 @@ _XmGeoArrangeBoxes(
     }
 
 /****************************************************************/
-static int
-boxWidthCompare(
-        XmConst void * boxPtr1,
-        XmConst void * boxPtr2 )
+static int boxWidthCompare(const void *box1, const void *box2)
 {
-/****************/
+	return ((*(const XmKidGeometry *)box1))->box.width >
+	       ((*(const XmKidGeometry *)box2))->box.width;
+}
 
-    return( (*((XmKidGeometry *) boxPtr1))->box.width
-                                 > (*((XmKidGeometry *) boxPtr2))->box.width) ;
-    }
 /****************************************************************
  * This routine alters box sizes such that the composite width is reduced
  *   by the offset amount specified.  The boxWidth parameter is assumed to

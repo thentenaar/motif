@@ -296,7 +296,7 @@ static XtResource _XmRenditionResources[] = {
   },
 };
 
-static XmConst Cardinal _XmNumRenditionResources =
+static const Cardinal _XmNumRenditionResources =
 	XtNumber(_XmRenditionResources);
 
 /* Searches up widget hierarchy, quarkifying ancestor names and */
@@ -2538,7 +2538,7 @@ XmRenditionUpdate(XmRendition rendition,
 
 /* Note that this MUST be in the same order as the output conversion
    below!! */
-static XmConst char *CVTproperties[] = {
+static const char *CVTproperties[] = {
   XmNtag,
   XmNfont,
   XmNtabList,

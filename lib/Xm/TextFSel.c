@@ -97,7 +97,7 @@ static void DoStuff(Widget w,
 
 /* Transfer Trait record for TextField */
 
-static XmConst XmTransferTraitRec textFieldTT = {
+static const XmTransferTraitRec textFieldTT = {
   0,  				/* version */
   (XmConvertCallbackProc) 	TextFieldConvertCallback,
   (XmDestinationCallbackProc)	TextFieldDestinationCallback,

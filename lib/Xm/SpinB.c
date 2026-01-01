@@ -436,7 +436,7 @@ externaldef (xmspinboxclassrec) XmSpinBoxClassRec xmSpinBoxClassRec= {
 externaldef(xmspinboxwidgetclass) WidgetClass xmSpinBoxWidgetClass =
        (WidgetClass)&xmSpinBoxClassRec;
 
-static XmConst XmNavigatorTraitRec spinBoxNT =
+static const XmNavigatorTraitRec spinBoxNT =
 {
   0,
   SpinNChangeMoveCB,

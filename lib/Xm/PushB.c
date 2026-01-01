@@ -501,20 +501,20 @@ externaldef(xmpushbuttonwidgetclass)
 
 
 /* Activatable Trait record for pushButton */
-static XmConst XmActivatableTraitRec pushButtonAT =
+static const XmActivatableTraitRec pushButtonAT =
 {
   0,		/* version */
   ChangeCB,
 };
 
 /* Care visual Trait record for pushButton */
-static XmConst XmCareVisualTraitRec pushButtonCVT = {
+static const XmCareVisualTraitRec pushButtonCVT = {
   0,		/* version */
   ParentVisualChanged,
 };
 
 /* TakesDefault Trait record for pushButton */
-static XmConst XmTakesDefaultTraitRec pushButtonTDT =
+static const XmTakesDefaultTraitRec pushButtonTDT =
 {
   0,		/* version */
   ShowAsDefault,

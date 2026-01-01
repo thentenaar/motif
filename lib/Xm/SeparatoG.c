@@ -145,7 +145,7 @@ static void GetColors(Widget widget,
 /********    End Static Function Declarations    ********/
 
 /* Menu Savvy trait record */
-static XmConst XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
+static const XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
   0,				/* version */
   NULL,				/* disableCallback */
   NULL,				/* getAccelerator */
@@ -154,7 +154,7 @@ static XmConst XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
 };
 
 
-static XmConst XmCareVisualTraitRec SeparatoGCVT = {
+static const XmCareVisualTraitRec SeparatoGCVT = {
     0,		/* version */
     HandleRedraw,
 };
@@ -162,7 +162,7 @@ static XmConst XmCareVisualTraitRec SeparatoGCVT = {
 
 /* Access Colors Trait record for separator */
 
-static XmConst XmAccessColorsTraitRec sepACT = {
+static const XmAccessColorsTraitRec sepACT = {
   0,			/* version */
   GetColors
 };

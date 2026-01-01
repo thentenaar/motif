@@ -73,7 +73,7 @@ static Boolean SetValues(
 /********    End Static Function Declarations    ********/
 
 /* Menu Savvy trait record */
-static XmConst XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
+static const XmMenuSavvyTraitRec MenuSavvySeparatorRecord = {
     0,				/* version */
     NULL,			/* disableCallback */
     NULL,			/* getAccelerator */

@@ -193,7 +193,7 @@ enum {
  */
 
 #define ASNHEADERLEN     3
-static XmConst unsigned char ASNHeader[ASNHEADERLEN] = { 0xdf, 0x80, 0x06 };
+static const unsigned char ASNHeader[ASNHEADERLEN] = { 0xdf, 0x80, 0x06 };
 
 
 #define MAXSHORTVALUE   127             /* maximum len to be used for short
@@ -820,7 +820,7 @@ XmStringDirectionCreate(
         XmStringDirection direction )
 {
   /* Maintain a static cache of the common results. */
-  static XmConst XmStringDirection dir_index[] =
+  static const XmStringDirection dir_index[] =
     {
       XmSTRING_DIRECTION_L_TO_R, XmSTRING_DIRECTION_R_TO_L,
       XmSTRING_DIRECTION_UNSET, XmSTRING_DIRECTION_DEFAULT

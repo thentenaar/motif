@@ -521,7 +521,7 @@ _XmRegisterConverters( void )
                              XtCacheNone, NULL) ;
 	XtSetTypeConverter(XmRString, XmRRenditionPixel,
 			   CvtStringToRenditionPixel,
-			   (XmConst XtConvertArgList)colorConvertArgs, 2,
+			   (const XtConvertArgList)colorConvertArgs, 2,
 			   XtCacheByDisplay, NULL);
 
 	/* also set a converter from Pixel to RenditionPixel so that
@@ -533,7 +533,7 @@ _XmRegisterConverters( void )
 
 	XtSetTypeConverter(XmRString, XmRSelectColor,
 			   CvtStringToSelectColor,
-			   (XmConst XtConvertArgList)colorConvertArgs, 2,
+			   (const XtConvertArgList)colorConvertArgs, 2,
 			   XtCacheByDisplay, NULL);
 
 	XtSetTypeConverter(XmRString, XmRTabList,

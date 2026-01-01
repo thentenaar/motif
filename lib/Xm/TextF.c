@@ -847,7 +847,7 @@ static void ResetUnder(XmTextFieldWidget tf);
 
 /********    End Static Function Declarations    ********/
 
-static XmConst XmTextScanType sarray[] = {
+static const XmTextScanType sarray[] = {
   XmSELECT_POSITION, XmSELECT_WORD, XmSELECT_LINE
 };
 
@@ -1220,7 +1220,7 @@ externaldef(xmtextfieldwidgetclass) WidgetClass xmTextFieldWidgetClass =
 					 (WidgetClass) &xmTextFieldClassRec;
 
 /* AccessXmString Trait record for TextField */
-static XmConst XmAccessTextualTraitRec textFieldCS = {
+static const XmAccessTextualTraitRec textFieldCS = {
   0,  				/* version */
   TextFieldGetValue,
   TextFieldSetValue,

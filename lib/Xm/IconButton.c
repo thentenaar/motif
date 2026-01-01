@@ -406,7 +406,7 @@ XmIconButtonClassRec xmIconButtonClassRec = {
 WidgetClass xmIconButtonWidgetClass = (WidgetClass)&xmIconButtonClassRec;
 
 /* Trait record for iconButton */
-static XmConst XmActivatableTraitRec iconButtonAT =
+static const XmActivatableTraitRec iconButtonAT =
 {
   0,				/* version	*/
   ChangeCB			/* changeCB	*/

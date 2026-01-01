@@ -74,7 +74,7 @@ Hash(XmHashKey x)
 
 /* Available table sizes,  should be prime numbers */
 
-static XmConst int size_table[] =
+static const int size_table[] =
 	{ 17, 31, 67, 131, 257, 521, 1031, 2053, 4099, 8209, 0 };
 
 XmHashTable

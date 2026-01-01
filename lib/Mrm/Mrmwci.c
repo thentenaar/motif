@@ -806,14 +806,14 @@ hash_function(int	l_length,
 {
 #ifdef WORD64
 #define _shift 3
-  static unsigned int XmConst	mask[ 8 ] =
+  static const unsigned int mask[ 8 ] =
   { 0x00000000000000FF, 0x000000000000FFFF,
     0x0000000000FFFFFF, 0x00000000FFFFFFFF,
     0x00000000FFFFFFFF, 0x0000FFFFFFFFFFFF,
     0x00FFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, };
 #else
 #define _shift 2
-  static unsigned int XmConst	mask[ 4 ] =
+  static const unsigned int mask[ 4 ] =
   { 0x000000FF, 0x0000FFFF, 0x00FFFFFF, 0xFFFFFFFF };
 #endif
   unsigned int    	l_hash_code;

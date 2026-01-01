@@ -45,7 +45,7 @@ typedef String (*XmEventParseProc)(String str,
 				   Boolean *status);
 
 typedef struct {
-   XmConst char    *event;
+   const char    *event;
    XrmQuark         signature;
    int              eventType;
    XmEventParseProc parseProc;
@@ -150,7 +150,7 @@ static EventKey keyEvents[] = {
 {"KeyRelease",	NULLQUARK,	KeyRelease,	ParseKeySym,	0},
 {NULL,		NULLQUARK,	0,		NULL,		0}};
 
-static XmConst Modifiers buttonModifierMasks[] = {
+static const Modifiers buttonModifierMasks[] = {
     0, Button1Mask, Button2Mask, Button3Mask, Button4Mask, Button5Mask
 };
 

@@ -40,7 +40,7 @@
 
 static String GetRealTranslations(
                         Display *dpy,
-			XmConst _XmBuildVirtualKeyStruct *keys,
+			const _XmBuildVirtualKeyStruct *keys,
                         int num_keys) ;
 static void ClassInitialize( void ) ;
 static void ClassPartInitialize(
@@ -244,7 +244,7 @@ externaldef( xmclipwindowwidgetclass) WidgetClass xmClipWindowWidgetClass
 
 /*  _XmBuildVirtualKeyStruct is declared in XmP.h */
 
-static XmConst _XmBuildVirtualKeyStruct ClipWindowKeys[] = {
+static const _XmBuildVirtualKeyStruct ClipWindowKeys[] = {
      {ControlMask, XmVosfBeginLine, "ActionGrab(SWTopLine)\n"},
      {0,           XmVosfBeginLine, "ActionGrab(SWBeginLine)\n"},
      {ControlMask, XmVosfEndLine,   "ActionGrab(SWBottomLine)\n"},
@@ -262,7 +262,7 @@ static XmConst _XmBuildVirtualKeyStruct ClipWindowKeys[] = {
 static String
 GetRealTranslations(
         Display *dpy,
-        XmConst _XmBuildVirtualKeyStruct *keys,
+        const _XmBuildVirtualKeyStruct *keys,
         int num_keys )
 {
   static char buf[MAX_CLIPWINDOW_TM_SIZE]; /* memory used externally */
@@ -330,7 +330,7 @@ ClassInitialize( void )
 }
 
 /****************************************************************/
-static XmConst XmClipWindowTraitRec clipWindowData = {
+static const XmClipWindowTraitRec clipWindowData = {
      0                         /* version         */
 };
 

@@ -590,7 +590,7 @@ externaldef(xmscalewidgetclass) WidgetClass
 
 /* Transfer trait record */
 
-static XmConst XmTransferTraitRec ScaleTransfer = {
+static const XmTransferTraitRec ScaleTransfer = {
   0, 						/* version */
   (XmConvertCallbackProc) DragConvertCallback,	/* convertProc */
   NULL,						/* destinationProc */

@@ -41,13 +41,8 @@
 #define MAX(x,y)	((x) > (y) ? (x) : (y))
 #endif
 
-#ifndef XmConst
-#if defined(__STDC__) || !defined( NO_CONST )
+/* Backward-compat */
 #define XmConst const
-#else
-#define XmConst
-#endif /* __STDC__ */
-#endif /* XmConst */
 
 /*
  * The following macro is used to round the size of memory allocation requests

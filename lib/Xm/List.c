@@ -851,7 +851,7 @@ externaldef(xmlistwidgetclass) WidgetClass xmListWidgetClass =
 
 /* Transfer trait record */
 
-static XmConst XmTransferTraitRec ListTransfer = {
+static const XmTransferTraitRec ListTransfer = {
   0, 						/* version */
   (XmConvertCallbackProc) ListConvert,		/* convertProc */
   NULL,						/* destinationProc */

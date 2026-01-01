@@ -482,7 +482,7 @@ externaldef(xmscrollbarwidgetclass) WidgetClass xmScrollBarWidgetClass =
 
 /* Trait record for ScrollBar */
 
-static XmConst XmNavigatorTraitRec scrollBarNT = {
+static const XmNavigatorTraitRec scrollBarNT = {
   0,		/* version */
   NavigChangeMoveCB,
   NavigSetValue,

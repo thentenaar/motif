@@ -56,8 +56,8 @@
 // The following section defines constants for the widget.  
 // The IDEAL_SHAPE_SIZE constant defines the starting preferred width 
 // and height for the widget visual (which is either a rectangle or an oval). 
-static XmConst int IDEAL_SHAPE_SIZE  = 30;
-static XmConst int FIND_NATURAL_SIZE = 0;
+static const int IDEAL_SHAPE_SIZE  = 30;
+static const int FIND_NATURAL_SIZE = 0;
 
 // Define the resources array.  Define this array just as you would in C. 
 static XtResource resources[] = 
@@ -167,14 +167,14 @@ WidgetClass exmCxxSimpleWidgetClass = (WidgetClass) &exmCxxSimpleClassRec;
 // Declare trait record variables.
 
 // Declare a trait record variable for the XmQTcontainerItem trait. 
-static XmConst XmContainerItemTraitRec simpleCIT = {
+static const XmContainerItemTraitRec simpleCIT = {
   0,			// version
   ExmCxxSimple::ContItemSetValues,
   ExmCxxSimple::ContItemGetValues,
 };
 
 // Declare a trait record variable for the XmQTcareParentVisual trait. 
-static XmConst XmCareVisualTraitRec simpleCVT = {
+static const XmCareVisualTraitRec simpleCVT = {
   0,			// version
   ExmCxxSimple::HandleRedraw,
 };

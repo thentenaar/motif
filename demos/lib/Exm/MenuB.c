@@ -66,7 +66,7 @@
 #include <Exm/MenuBP.h>
 
 /* The VISUAL_DELAY holds a time in milliseconds. */
-XmConst unsigned long VISUAL_DELAY=100;
+const unsigned long VISUAL_DELAY=100;
 
 /* Declare all static functions. */
 static void Initialize (
@@ -347,7 +347,7 @@ externaldef( exmmenubuttonwidgetclass) WidgetClass
    We will do that be setting the XmQTmenuSavvy trait on ExmMenuButton.
    In order to set this trait, we must define a trait record variable
    as follows: */ 
-static XmConst XmMenuSavvyTraitRec menuSavvyTraitRec = {
+static const XmMenuSavvyTraitRec menuSavvyTraitRec = {
   0,					 	     /* Version */
   (XmMenuSavvyDisableProc) DisableCallback,	     /* disableCallback	  */
   GetAccelerator,				     /* getAccelerator	  */

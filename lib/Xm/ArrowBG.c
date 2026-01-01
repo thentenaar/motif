@@ -286,20 +286,20 @@ externaldef(xmarrowbuttongadgetclass) WidgetClass xmArrowButtonGadgetClass =
 
 
 /* Trait record for arrowBG */
-static XmConst XmActivatableTraitRec arrowBGAT =
+static const XmActivatableTraitRec arrowBGAT =
 {
   0,				/* version	*/
   ChangeCB			/* changeCB	*/
 };
 
-static XmConst XmCareVisualTraitRec arrowBGCVT =
+static const XmCareVisualTraitRec arrowBGCVT =
 {
   0,				/* version	*/
   HandleRedraw			/* redraw	*/
 };
 
 /* Access Colors Trait record for arrow button gadget */
-static XmConst XmAccessColorsTraitRec arrowBGACT =
+static const XmAccessColorsTraitRec arrowBGACT =
 {
   0,				/* version	*/
   GetColors,			/* getColors	*/

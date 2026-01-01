@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,11 +20,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: DragBS.c /main/29 1998/03/18 15:10:28 csn $"
 #endif
 #endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -184,9 +186,7 @@ static xmTargetsTable CreateDefaultTargetsTable(
                         Display *display) ;
 static xmAtomsTable CreateDefaultAtomsTable(
                         Display *display) ;
-static int AtomCompare(
-                        XmConst void *atom1,
-                        XmConst void *atom2) ;
+static int AtomCompare(const void *atom1, const void *atom2);
 
 /********    End Static Function Declarations    ********/
 
@@ -1278,13 +1278,9 @@ _XmIndexToTargets(
  *  0 according as the first argument is to be considered less
  *  than, equal to, or greater than the second.
  ***************************************************************************/
-
-static int
-AtomCompare(
-        XmConst void *atom1,
-        XmConst void *atom2 )
+static int AtomCompare(const void *atom1, const void *atom2)
 {
-    return (*((Atom *) atom1) - *((Atom *) atom2));
+	return *(const Atom *)atom1 - *(const Atom *)atom2;
 }
 
 /*****************************************************************************
@@ -1661,3 +1657,4 @@ _XmGetDragProxyWindow(
     }
     return (motifProxyWindow);
 }
+

@@ -950,12 +950,9 @@ _XmOSBuildFileList(String          dirPath,
  * greater than 0 according as the first argument is to be
  * considered less than, equal to, or greater than the second.
  ****************************************************************/
-
-int
-_XmOSFileCompare(const void *sp1,
-		 const void *sp2)
+int _XmOSFileCompare(const void *sp1, const void *sp2)
 {
-  return strcmp(*((const String *) sp1), *((const String *) sp2));
+	return strcmp(*(const String *)sp1, *(const String *)sp2);
 }
 
 /*************************************************************************

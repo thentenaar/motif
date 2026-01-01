@@ -564,8 +564,8 @@ static	void			GetSelectedItems(
 					int		offset,
 					XtArgVal	*value);
 static	int			CompareInts(
-					XmConst void	*p1,
-					XmConst void	*p2);
+					const void	*p1,
+					const void	*p2);
 static	int			Isqrt(
 					int		n);
 static	void			GainPrimary(
@@ -1008,37 +1008,34 @@ externaldef( xmcontainerclassrec) XmContainerClassRec	xmContainerClassRec =
 	}
 };
 
-
 externaldef( xmcontainerwidgetclass) WidgetClass xmContainerWidgetClass
 		= (WidgetClass) &xmContainerClassRec;
 
 
 /* Transfer Trait record for Container */
-static XmConst XmTransferTraitRec transferT = {
-	0,				/* version */
-	(XmConvertCallbackProc)		ContainerConvertProc,
-	(XmDestinationCallbackProc)	ContainerDestinationProc,
-	(XmDestinationCallbackProc)	ContainerDestPrehookProc,
+static const XmTransferTraitRec transferT = {
+	0, /* version */
+	(XmConvertCallbackProc)ContainerConvertProc,
+	(XmDestinationCallbackProc)ContainerDestinationProc,
+	(XmDestinationCallbackProc)ContainerDestPrehookProc,
 };
 
 /* Trait record for ContainerT */
-static  XmConst XmContainerTraitRec containerT =
+static const XmContainerTraitRec containerT =
 {
-        0,              		/* version */
-        (XmContainerGetValuesProc)	ContGetValues,
+	0, /* version */
+	(XmContainerGetValuesProc)ContGetValues,
 };
 
 /* TraversalControl Trait record for Container */
-static XmConst XmTraversalControlTraitRec traversalControlT =
+static const XmTraversalControlTraitRec traversalControlT =
 {
-  0,                            /* version */
-  RedirectTraversal		/* redirect */
+	0, /* version */
+	RedirectTraversal /* redirect */
 };
 
-
-
 /* Context for drag icon information */
-static XContext dragIconInfoContext = 0;
+static XContext dragIconInfoContext = None;
 
 /* Data structure for drag icon info */
 typedef struct _DragIconInfo {
@@ -8806,18 +8803,9 @@ GetSelectedItems(
 /************************************************************************
  * CompareInts (Private qsort Function)
  ************************************************************************/
-static	int
-CompareInts(
-        XmConst void    *p1,
-        XmConst void    *p2)
+static int CompareInts(const void *p1, const void *p2)
 {
-        int     i1 = * (int *)p1;
-        int     i2 = * (int *)p2;
-
-	/*
-	 * A "qsort" function that simply compares two integers
-	 */
-        return(i1 - i2);
+	return *(const int *)p1 - *(const int *)p2;
 }
 
 /************************************************************************

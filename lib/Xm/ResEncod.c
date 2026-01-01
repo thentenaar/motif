@@ -55,7 +55,7 @@
 
 typedef unsigned char Octet;
 typedef Octet *OctetPtr;
-typedef XmConst Octet *const_OctetPtr;
+typedef const Octet *const_OctetPtr;
 
 typedef enum {
     ct_Dir_StackEmpty,
@@ -106,10 +106,10 @@ typedef struct _ct_context {
     OctetPtr	    item;		/* ptr to current item */
     unsigned int    itemlen;		/* length of current item */
     unsigned int    version;		/* version of compound text */
-    XmConst char*   gl_charset;		/* ptr to GL character set */
+    const char*   gl_charset;		/* ptr to GL character set */
     unsigned char   gl_charset_size;	/* # of chars in GL charset */
     unsigned char   gl_octets_per_char;	/* # of octets per GL char */
-    XmConst char*   gr_charset;		/* ptr to GR character set */
+    const char*   gr_charset;		/* ptr to GR character set */
     unsigned char   gr_charset_size;	/* # of chars in GR charset */
     unsigned char   gr_octets_per_char;	/* # of octets per GR char */
     XmString	    xmstring;		/* compound string to be returned */
@@ -135,24 +135,24 @@ typedef struct _EncodingRegistry {
 ** Define standard character set strings
 */
 
-static XmConst char CS_ISO8859_1[] = "ISO8859-1" ;
-static XmConst char CS_ISO8859_2[] = "ISO8859-2" ;
-static XmConst char CS_ISO8859_3[] = "ISO8859-3" ;
-static XmConst char CS_ISO8859_4[] = "ISO8859-4" ;
-static XmConst char CS_ISO8859_5[] = "ISO8859-5" ;
-static XmConst char CS_ISO8859_6[] = "ISO8859-6" ;
-static XmConst char CS_ISO8859_7[] = "ISO8859-7" ;
-static XmConst char CS_ISO8859_8[] = "ISO8859-8" ;
-static XmConst char CS_ISO8859_9[] = "ISO8859-9" ;
-static XmConst char CS_JISX0201[] = "JISX0201.1976-0" ;
-static XmConst char CS_GB2312_0[] = "GB2312.1980-0" ;
-static XmConst char CS_GB2312_1[] = "GB2312.1980-1" ;
-static XmConst char CS_JISX0208_0[] = "JISX0208.1983-0" ;
-static XmConst char CS_JISX0208_1[] = "JISX0208.1983-1" ;
-static XmConst char CS_KSC5601_0[] = "KSC5601.1987-0" ;
-static XmConst char CS_KSC5601_1[] = "KSC5601.1987-1" ;
-static XmConst char CS_UTF_8[] = "UTF-8" ;
-static XmConst char CS_ISO_IR_111[] = "ISO-IR-111" ;
+static const char CS_ISO8859_1[] = "ISO8859-1" ;
+static const char CS_ISO8859_2[] = "ISO8859-2" ;
+static const char CS_ISO8859_3[] = "ISO8859-3" ;
+static const char CS_ISO8859_4[] = "ISO8859-4" ;
+static const char CS_ISO8859_5[] = "ISO8859-5" ;
+static const char CS_ISO8859_6[] = "ISO8859-6" ;
+static const char CS_ISO8859_7[] = "ISO8859-7" ;
+static const char CS_ISO8859_8[] = "ISO8859-8" ;
+static const char CS_ISO8859_9[] = "ISO8859-9" ;
+static const char CS_JISX0201[] = "JISX0201.1976-0" ;
+static const char CS_GB2312_0[] = "GB2312.1980-0" ;
+static const char CS_GB2312_1[] = "GB2312.1980-1" ;
+static const char CS_JISX0208_0[] = "JISX0208.1983-0" ;
+static const char CS_JISX0208_1[] = "JISX0208.1983-1" ;
+static const char CS_KSC5601_0[] = "KSC5601.1987-0" ;
+static const char CS_KSC5601_1[] = "KSC5601.1987-1" ;
+static const char CS_UTF_8[] = "UTF-8" ;
+static const char CS_ISO_IR_111[] = "ISO-IR-111" ;
 
 
 
@@ -164,71 +164,71 @@ static XmConst char CS_ISO_IR_111[] = "ISO-IR-111" ;
 #define ESC	033
 #define CSI	0233
 
-static XmConst Octet NEWLINESTRING[] = "\012";
+static const Octet NEWLINESTRING[] = "\012";
 #define NEWLINESTRING_LEN		sizeof(NEWLINESTRING)-1
 
-static XmConst Octet TABSTRING[] = "\011";
+static const Octet TABSTRING[] = "\011";
 #define TABSTRING_LEN		sizeof(TABSTRING)-1
 
-static XmConst Octet CTEXT_L_TO_R[] = "\233\061\135";
+static const Octet CTEXT_L_TO_R[] = "\233\061\135";
 #define CTEXT_L_TO_R_LEN		sizeof(CTEXT_L_TO_R)-1
 
-static XmConst Octet CTEXT_R_TO_L[] = "\233\062\135";
+static const Octet CTEXT_R_TO_L[] = "\233\062\135";
 #define CTEXT_R_TO_L_LEN		sizeof(CTEXT_R_TO_L)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_1[] = "\033\050\102\033\055\101";
+static const Octet CTEXT_SET_ISO8859_1[] = "\033\050\102\033\055\101";
 #define CTEXT_SET_ISO8859_1_LEN		sizeof(CTEXT_SET_ISO8859_1)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_2[] = "\033\050\102\033\055\102";
+static const Octet CTEXT_SET_ISO8859_2[] = "\033\050\102\033\055\102";
 #define CTEXT_SET_ISO8859_2_LEN		sizeof(CTEXT_SET_ISO8859_2)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_3[] = "\033\050\102\033\055\103";
+static const Octet CTEXT_SET_ISO8859_3[] = "\033\050\102\033\055\103";
 #define CTEXT_SET_ISO8859_3_LEN		sizeof(CTEXT_SET_ISO8859_3)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_4[] = "\033\050\102\033\055\104";
+static const Octet CTEXT_SET_ISO8859_4[] = "\033\050\102\033\055\104";
 #define CTEXT_SET_ISO8859_4_LEN		sizeof(CTEXT_SET_ISO8859_4)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_5[] = "\033\050\102\033\055\114";
+static const Octet CTEXT_SET_ISO8859_5[] = "\033\050\102\033\055\114";
 #define CTEXT_SET_ISO8859_5_LEN		sizeof(CTEXT_SET_ISO8859_5)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_6[] = "\033\050\102\033\055\107";
+static const Octet CTEXT_SET_ISO8859_6[] = "\033\050\102\033\055\107";
 #define CTEXT_SET_ISO8859_6_LEN		sizeof(CTEXT_SET_ISO8859_6)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_7[] = "\033\050\102\033\055\106";
+static const Octet CTEXT_SET_ISO8859_7[] = "\033\050\102\033\055\106";
 #define CTEXT_SET_ISO8859_7_LEN		sizeof(CTEXT_SET_ISO8859_7)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_8[] = "\033\050\102\033\055\110";
+static const Octet CTEXT_SET_ISO8859_8[] = "\033\050\102\033\055\110";
 #define CTEXT_SET_ISO8859_8_LEN		sizeof(CTEXT_SET_ISO8859_8)-1
 
-static XmConst Octet CTEXT_SET_ISO8859_9[] = "\033\050\102\033\055\115";
+static const Octet CTEXT_SET_ISO8859_9[] = "\033\050\102\033\055\115";
 #define CTEXT_SET_ISO8859_9_LEN		sizeof(CTEXT_SET_ISO8859_9)-1
 
-static XmConst Octet CTEXT_SET_JISX0201[] = "\033\050\112\033\051\111";
+static const Octet CTEXT_SET_JISX0201[] = "\033\050\112\033\051\111";
 #define CTEXT_SET_JISX0201_LEN		sizeof(CTEXT_SET_JISX0201)-1
 
-static XmConst Octet CTEXT_SET_GB2312_0[] = "\033\044\050\101\033\044\051\101";
+static const Octet CTEXT_SET_GB2312_0[] = "\033\044\050\101\033\044\051\101";
 #define CTEXT_SET_GB2312_0_LEN		sizeof(CTEXT_SET_GB2312_0)-1
 
-static XmConst Octet CTEXT_SET_JISX0208_0[] = "\033\044\050\102\033\044\051\102";
+static const Octet CTEXT_SET_JISX0208_0[] = "\033\044\050\102\033\044\051\102";
 #define CTEXT_SET_JISX0208_0_LEN	sizeof(CTEXT_SET_JISX0208_0)-1
 
-static XmConst Octet CTEXT_SET_KSC5601_0[] = "\033\044\050\103\033\044\051\103";
+static const Octet CTEXT_SET_KSC5601_0[] = "\033\044\050\103\033\044\051\103";
 #define CTEXT_SET_KSC5601_0_LEN		sizeof(CTEXT_SET_KSC5601_0)-1
 
-static XmConst Octet CTEXT_SET_IR_111[] = "\033\050\102\033\055\100";
+static const Octet CTEXT_SET_IR_111[] = "\033\050\102\033\055\100";
 #define CTEXT_SET_IR_111_LEN		sizeof(CTEXT_SET_IR_111)-1
 
 #if XM_UTF8
-static XmConst char UTF8_NEWLINESTRING[] = "\012";
+static const char UTF8_NEWLINESTRING[] = "\012";
 #define UTF8_NEWLINESTRING_LEN		sizeof(UTF8_NEWLINESTRING)-1
 
-static XmConst char UTF8_TABSTRING[] = "\011";
+static const char UTF8_TABSTRING[] = "\011";
 #define UTF8_TABSTRING_LEN		sizeof(UTF8_TABSTRING)-1
 
-static XmConst char UTF8_L_TO_R[] = "\342\200\216";
+static const char UTF8_L_TO_R[] = "\342\200\216";
 #define UTF8_L_TO_R_LEN		sizeof(UTF8_L_TO_R)-1
 
-static XmConst char UTF8_R_TO_L[] = "\342\200\217";
+static const char UTF8_R_TO_L[] = "\342\200\217";
 #define UTF8_R_TO_L_LEN		sizeof(UTF8_R_TO_L)-1
 #endif /* XM_UTF8 */
 

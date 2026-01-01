@@ -414,7 +414,7 @@ externaldef(xmdrawnbuttonwidgetclass) WidgetClass xmDrawnButtonWidgetClass =
 
 /* Trait record for drawnButton */
 
-static XmConst XmActivatableTraitRec drawnButtonAT = {
+static const XmActivatableTraitRec drawnButtonAT = {
   0,		/* version */
   ChangeCB,
 };

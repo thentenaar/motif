@@ -179,7 +179,7 @@ static XmDirection GetDirection(Widget);
 
 /********    End Static Function Declarations    ********/
 
-static XmConst char tk_error[] = "XtToolkitError" ;
+static const char tk_error[] = "XtToolkitError" ;
 
 static XtActionsRec actionsList[] =
 {
@@ -351,12 +351,12 @@ externaldef(xmmenushellwidgetclass) WidgetClass xmMenuShellWidgetClass =
 
 /* Trait record for MenuShell specify render table */
 
-static XmConst XmSpecRenderTraitRec menushellSRT = {
+static const XmSpecRenderTraitRec menushellSRT = {
   0,		/* version */
   GetTable,
 };
 
-static XmConst XmSpecifyLayoutDirectionTraitRec LayoutDirection = {
+static const XmSpecifyLayoutDirectionTraitRec LayoutDirection = {
   0,			/* version */
   GetDirection
 };
