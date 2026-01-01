@@ -201,7 +201,7 @@ Cursor XmeLoadCursorImage(Display *display, Screen *screen, const char *name,
 		size = (int)(XmScreenDpi(s) * 16. / 72.);
 
 	p = render_cursor(display, screen, filename, size, &hot_x, &hot_y);
-	XtFree((char *)filename);
+	XtFree((XtPointer)filename);
 	if (p == XmUNSPECIFIED_PIXMAP) {
 		_XmAppUnlock(app);
 		return None;
@@ -379,6 +379,11 @@ Cursor XmeLoadCursor(Display *display, Screen *screen, const char *name)
 	Cursor c = None;
 	_XmDisplayToAppContext(display);
 	_XmAppLock(app);
+
+	if (!name || !*name) {
+		_XmAppUnlock(app);
+		return None;
+	}
 
 #if XM_WITH_XCURSOR
 	if (c == None)

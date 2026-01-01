@@ -26,6 +26,10 @@
 
 #include <X11/Intrinsic.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Load a cursor given a name, which can be a cursor name (e.g., "arrow")
  * or a Xcursor file (if Xcursor is supported.)
@@ -50,5 +54,8 @@ extern Cursor XmeLoadCursor(Display *display, Screen *screen, const char *name);
 extern Cursor XmeLoadCursorImage(Display *display, Screen *screen, const char *name,
                                  int hot_x, int hot_y);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _XmCursor_h */
 

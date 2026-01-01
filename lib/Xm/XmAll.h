@@ -34,6 +34,7 @@
 #include <Xm/ComboBox.h>
 #include <Xm/Command.h>
 #include <Xm/Container.h>
+#include <Xm/Cursor.h>
 #include <Xm/CutPaste.h>
 #include <Xm/DataF.h>
 #include <Xm/DialogS.h>

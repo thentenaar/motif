@@ -39,6 +39,7 @@ Widget init_xt(const char *klass);
 void uninit_xt(void);
 
 /* Suites */
+void cursor_suite(SRunner *runner);
 void jpeg_suite(SRunner *runner);
 void png_suite(SRunner *runner);
 void svg_suite(SRunner *runner);

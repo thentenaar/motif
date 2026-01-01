@@ -62,6 +62,7 @@
 #include <Xm/Primitive.h>
 #include <Xm/Manager.h>
 #include <Xm/Gadget.h>
+#include <Xm/Cursor.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 	runner = srunner_create(NULL);
 	srunner_set_tap(runner, "-");
 
+	cursor_suite(runner);
 	jpeg_suite(runner);
 	png_suite(runner);
 	svg_suite(runner);

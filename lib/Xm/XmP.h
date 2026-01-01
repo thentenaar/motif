@@ -163,6 +163,8 @@ extern "C" {
 #define XmINVALID_DIMENSION		0xFFFF
 
 /* Backward-compat */
+#undef _XmConst
+#undef XmConst
 #define _XmConst const
 #define XmConst const
 
