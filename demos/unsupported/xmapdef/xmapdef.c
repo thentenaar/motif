@@ -340,9 +340,9 @@ window and see the slider size change.\n\n\
 You can specify which font to display the test using the\n\
 XmNfont screen resource.");
 
-	message_string = XmStringLtoRCreate(message, XmSTRING_DEFAULT_CHARSET);
-	button_string  = XmStringLtoRCreate("Close", XmSTRING_DEFAULT_CHARSET);
-	title_string   = XmStringLtoRCreate("General Help", XmSTRING_DEFAULT_CHARSET);
+	message_string = XmStringCreateLocalized(message);
+	button_string  = XmStringCreateLocalized("Close");
+	title_string   = XmStringCreateLocalized("General Help");
 
 	/*	Create MessageBox dialog.
 	*/

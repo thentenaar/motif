@@ -180,7 +180,7 @@ ShowThisButton(Widget w, XtPointer client, XtPointer call)
     sprintf(message_string, OUTPUT_CODE, class_name,
             place_str, x, y, XtName(w));
 
-    xmstring = XmStringLtoRCreate(message_string, XmSTRING_DEFAULT_CHARSET);
+    xmstring = XmStringCreateLocalized(message_string);
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNtitle, "Code Sample"); argcnt++;
@@ -220,31 +220,28 @@ void Explain(Widget w, XtPointer client, XtPointer call)
 
     switch ((intptr_t)client) {
     case 1:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 " This is an IconButton resource. \n\
 \n\
  Specifies the location of the pixmap (icon) with respect \n\
 to the displayed text.\n\
 \n\
  This resource can take one of the following values: XmIconTop,\n\
- XmIconBottom, XmIconLeft, XmIconRight, XmIconNone, XmIconOnly. ",
-                                      XmSTRING_DEFAULT_CHARSET);
+ XmIconBottom, XmIconLeft, XmIconRight, XmIconNone, XmIconOnly. ");
         break;
     case 2:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 " This is an IconBox resource.\n\
 \n\
  It specifies the location of a particular button in cell space\n\
- in the x direction.",
-                                      XmSTRING_DEFAULT_CHARSET);
+ in the x direction.");
         break;
     case 3:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 " This is an IconBox resource.\n\
 \n\
  It specifies the location of a particular button in cell space\n\
- in the y direction.",
-                                      XmSTRING_DEFAULT_CHARSET);
+ in the y direction.");
         break;
     default:
         printf("explaining NOTHING\n");
@@ -333,7 +330,7 @@ main(int argc, char **argv)
  */
 
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "This is a demo of two unique Motif Widgets: the Icon Button and Icon Box.\n\
 \n\
 Labels, Push Buttons, and Toggle Buttons are limited because these\n\
@@ -346,8 +343,7 @@ Row Column and Form from Motif make it difficult to produce \"matrix\", or \n\
 The Icon Box places a constraint on all of its children, making each child\n\
 the same width and height. Moreover, the Icon Box lets the developer\n\
 specify which cell in the Icon Box each child should go.\n\
-",
-				  XmSTRING_DEFAULT_CHARSET);
+");
 
     infoframe = XtVaCreateManagedWidget("infoframe", xmFrameWidgetClass,
 					right_pane, NULL );

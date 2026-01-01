@@ -804,14 +804,12 @@ _XmStringNCreate(char *text,
     }
 }
 
-/*
+/**
  * Convenience routine creating localized XmString from NULL terminated string.
  */
-XmString
-XmStringCreateLocalized(
-        String text )
+XmString XmStringCreateLocalized(String text)
 {
-  return (XmStringGenerate(text, NULL, XmCHARSET_TEXT, NULL));
+	return XmStringGenerate(text, NULL, XmCHARSET_TEXT, NULL);
 }
 
 /* Create an optimized _XmString with only direction set. */
@@ -7655,7 +7653,7 @@ XmStringParseText(XtPointer    text,
   switch (type)
     {
     case XmCHARSET_TEXT:
-      if (tag == NULL)
+      if (!tag)
 	tag = XmFONTLIST_DEFAULT_TAG;
       tag_type = XmSTRING_COMPONENT_TAG;
       break;
@@ -7667,7 +7665,7 @@ XmStringParseText(XtPointer    text,
     case XmMULTIBYTE_TEXT:
       /* Non-NULL values (except _MOTIF_DEFAULT_LOCALE)
          are not accepted in Motif 2.0. */
-      if ((tag != NULL) && (strcmp(tag, _MOTIF_DEFAULT_LOCALE) != 0))
+      if (tag && !strcmp(tag, _MOTIF_DEFAULT_LOCALE))
       {
 	_XmProcessUnlock();
 	return NULL;

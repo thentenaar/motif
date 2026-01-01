@@ -297,9 +297,7 @@ and 'drop' the DragIcon anywhere inside the Text widget.\n\
 The application will transfer the XmNvalue of the ScrollBar \n\
 to the Text widget.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(toplevel,
                                              "message", arg, 1);

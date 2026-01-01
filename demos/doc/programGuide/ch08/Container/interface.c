@@ -118,9 +118,7 @@ You can toggle the arrows to expand or collapse the hierarchy underneath.\n\
 When you click on any label (like President), the application calls \n\
 a callback.  The callback merely prints the word 'Ring!' to standard output.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(top_level,
                                              "message", arg, 1);

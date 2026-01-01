@@ -1162,30 +1162,30 @@ HandleHelp(Widget w, XtPointer call, XtPointer ignore)
   if (rectFound) {
     if (ds->operations == (XmDROP_MOVE | XmDROP_COPY)) {
       XtManageChild(helpMenu);
-      helpStr = XmStringLtoRCreate(HELP_MSG4, XmFONTLIST_DEFAULT_TAG);
+      helpStr = XmStringCreateLocalized(HELP_MSG4);
       XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else if (ds->operation == XmDROP_MOVE) {
       XtUnmanageChild(helpMenu);
-      helpStr = XmStringLtoRCreate(HELP_MSG2, XmFONTLIST_DEFAULT_TAG);
+      helpStr = XmStringCreateLocalized(HELP_MSG2);
       XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else if (ds->operation == XmDROP_COPY) {
       XtUnmanageChild(helpMenu);
-      helpStr = XmStringLtoRCreate(HELP_MSG3, XmFONTLIST_DEFAULT_TAG);
+      helpStr = XmStringCreateLocalized(HELP_MSG3);
       XtManageChild(XtNameToWidget(helpDialog, "OK"));
     }
   } else if (bgFound || (pixFound && ds->operation == XmDROP_COPY)) {
     XtUnmanageChild(helpMenu);
     rect = RectFind(ds->x, ds->y);
     if (rect) {
-      helpStr = XmStringLtoRCreate(HELP_MSG1, XmFONTLIST_DEFAULT_TAG);
+      helpStr = XmStringCreateLocalized(HELP_MSG1);
       XtManageChild(XtNameToWidget(helpDialog, "OK"));
     } else {
-      helpStr = XmStringLtoRCreate(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
+      helpStr = XmStringCreateLocalized(HELP_MSG5);
       XtUnmanageChild(XtNameToWidget(helpDialog, "OK"));
     }
   } else {
     XtUnmanageChild(helpMenu);
-    helpStr = XmStringLtoRCreate(HELP_MSG5, XmFONTLIST_DEFAULT_TAG);
+    helpStr = XmStringCreateLocalized(HELP_MSG5);
     XtUnmanageChild(XtNameToWidget(helpDialog, "OK"));
   }
 

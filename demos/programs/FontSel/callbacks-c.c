@@ -37,11 +37,10 @@ void CreateHypeLabel(Widget w, XtPointer client, XtPointer call)
 
 	(void)client;
 	(void)call;
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "The Motif Font Selector lets the developer add font selecting capabilities into their applications.\n\
 The Font Selector allows the end user to choose particular fonts based on font family, size,\n\
-weight, and other advanced criteria from the X Logical Font Description (XFLD).",
-				  XmSTRING_DEFAULT_CHARSET);
+weight, and other advanced criteria from the X Logical Font Description (XFLD).");
 
     XtSetArg(args[0], XmNalignment, XmALIGNMENT_BEGINNING);
     XtSetArg(args[1], XmNlabelString, xmstring);
@@ -74,19 +73,17 @@ void ExplainCB(Widget w, XtPointer client, XtPointer call)
 
     switch ((intptr_t)client) {
     case EXPLAIN_SHOWFONT:
-	xmstring = XmStringLtoRCreate(
+	xmstring = XmStringCreateLocalized(
 "The Font Selector widget can display the name of the current font\n\
 directly on the widget itself. Press the \"Show Font on Widget\" toggle\n\
-button to see this behavior.",
-				      XmSTRING_DEFAULT_CHARSET);
+button to see this behavior.");
 	break;
     case EXPLAIN_CURFONT:
-	xmstring = XmStringLtoRCreate(
+	xmstring = XmStringCreateLocalized(
 "Getting and Setting the XmNcurrentFont resource results in obtaining\n\
 or setting the current font displayed by the Font Selector widget. Press\n\
 the \"Show Current Font...\" button to see the current font displayed in\n\
-a separate dialog.",
-				      XmSTRING_DEFAULT_CHARSET);
+a separate dialog.");
 	break;
     default:
 	break;
@@ -140,7 +137,7 @@ void ShowOtherCB(Widget w, XtPointer client, XtPointer call)
 	XtUnmanageChild(XtNameToWidget(info, "Help"));
     }
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "The Font Selector Widget has a few other resources to control its\n\
 appearance:\n\
 \n\
@@ -148,8 +145,7 @@ appearance:\n\
 \n\
      isoFontsOnly - Boolean - Show only ISO8859-1 fonts\n\
      textRows - Dimension - Number of rows shown in the text widget\n\
-     useScaling - Boolean - Controls \"Use Font Scaling\" toggle",
-				  XmSTRING_DEFAULT_CHARSET);
+     useScaling - Boolean - Controls \"Use Font Scaling\" toggle");
 
     XtSetArg(args[0], XmNmessageString, xmstring);
     XtSetValues(info, args, 1);

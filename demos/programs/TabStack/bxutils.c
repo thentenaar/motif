@@ -1087,7 +1087,7 @@ static Boolean CvtStringToXmString
     str = (char*)fromVal->addr;
     if (strncmp(str, "::", 2))
     {
-	resStr = XmStringLtoRCreate(fromVal->addr, XmSTRING_DEFAULT_CHARSET);
+	resStr = XmStringCreateLocalized(fromVal->addr);
     }
     else
     {

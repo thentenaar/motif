@@ -9604,8 +9604,7 @@ Boolean XmDataFieldCopy(Widget w, Time clip_time)
     /* using the clipboard facilities, copy the selected text to the clipboard */
     if (selected_string != NULL)
     {
-	clip_label = XmStringLtoRCreate ("XM_TEXT_FIELD",
-					 XmFONTLIST_DEFAULT_TAG);
+	clip_label = XmStringGenerate("XM_TEXT_FIELD", NULL, XmCHARSET_TEXT, NULL);
 
 	/* start copy to clipboard */
 	status = XmClipboardStartCopy(display, window, clip_label, clip_time,

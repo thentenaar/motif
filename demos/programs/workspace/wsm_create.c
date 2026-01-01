@@ -808,8 +808,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
 	XtSetArg(args[argcnt], XmNlabelString,
-		 (xmstr[0]=XmStringLtoRCreate(s->name,
-					      XmSTRING_DEFAULT_CHARSET)));
+		 (xmstr[0]=XmStringCreateLocalized(s->name)));
 	argcnt++;
 	wsm_ui->to_option_button[i] = XtCreateWidget("toWorkspace1Button",
 						     xmPushButtonWidgetClass,
@@ -830,8 +829,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNuserData, 0); argcnt++;
     XtSetArg(args[argcnt], XmNlabelString,
-	     (xmstr[0]=XmStringLtoRCreate("All Workspaces",
-					  XmSTRING_DEFAULT_CHARSET)));
+	     (xmstr[0]=XmStringCreateLocalized("All Workspaces")));
     argcnt++;
     wsm_ui->to_option_button[i] = XtCreateWidget("toAllWorkspaceButton",
 		xmPushButtonWidgetClass,
@@ -848,8 +846,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginWidth, 0); argcnt++;
     XtSetArg(args[argcnt], XmNspacing, 0); argcnt++;
-    XtSetArg(args[argcnt], XmNlabelString,  (xmstr[0]=XmStringLtoRCreate(
-		"", XmSTRING_DEFAULT_CHARSET))); argcnt++;
+    XtSetArg(args[argcnt], XmNlabelString,  (xmstr[0]=XmStringCreateLocalized(""))); argcnt++;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNleftAttachment, XmATTACH_NONE); argcnt++;
     XtSetArg(args[argcnt], XmNrightAttachment, XmATTACH_FORM); argcnt++;
@@ -890,7 +887,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
 	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=
-	     XmStringLtoRCreate(s->name,XmSTRING_DEFAULT_CHARSET))); argcnt++;
+	     XmStringCreateLocalized(s->name))); argcnt++;
 	wsm_ui->from_option_button[i] = XtCreateWidget("fromWorkspace1Button",
 						       xmPushButtonWidgetClass,
 						       pulldownMenu1,
@@ -910,8 +907,7 @@ CreateConfigureWorkspace(Widget parent, WSM_UI* wsm_ui)
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginWidth, 0); argcnt++;
     XtSetArg(args[argcnt], XmNspacing, 0); argcnt++;
-    XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringLtoRCreate(
-		"", XmSTRING_DEFAULT_CHARSET))); argcnt++;
+    XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringCreateLocalized(""))); argcnt++;
     XtSetArg(args[argcnt], XmNleftAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNtopAttachment, XmATTACH_FORM); argcnt++;
     XtSetArg(args[argcnt], XmNrowColumnType, XmMENU_OPTION); argcnt++;
@@ -1327,8 +1323,8 @@ CreateWorkspacePanelBX(Widget parent, WSM_UI* wsm_ui, Boolean show_menu)
 	XtSetArg(args[argcnt], XmNindicatorSize, 20); argcnt++;
 	XtSetArg(args[argcnt], XmNspacing, 10); argcnt++;
 	XtSetArg(args[argcnt], XmNuserData, i+1); argcnt++;
-	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringLtoRCreate(
-	       s->name, XmSTRING_DEFAULT_CHARSET))); argcnt++;
+	XtSetArg(args[argcnt], XmNlabelString, (xmstr[0]=XmStringCreateLocalized(
+	       s->name))); argcnt++;
 	XtSetArg(args[argcnt], XmNrecomputeSize, True); argcnt++;
 /* check between these lines...crashes in 2.0 not in 1.2.2 */
 	if (SpacePixelSet(s))

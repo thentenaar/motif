@@ -247,7 +247,7 @@ static Widget CreateApplication(Widget parent)
 
 		/*  create PushButton in RowCol  */
 		n = 0;
-		label_string = XmStringLtoRCreate(name, charset);
+		label_string = XmStringGenerate(name, charset, XmCHARSET_TEXT, NULL);
 		XtSetArg (args[n], XmNlabelString, label_string);  n++;
 		if (AppData.usegadget)
 		    button = XmCreatePushButtonGadget (row_column, name,
@@ -306,8 +306,8 @@ static Widget CreateFontSample(Widget parent)
 This is font %s.\n\
 The quick brown fox jumps over the lazy dog.", name);
 	}
-	message_string = XmStringLtoRCreate(message, charset);
-	button_string = XmStringLtoRCreate("Close", charset);
+	message_string = XmStringGenerate(message, charset, XmCHARSET_TEXT, NULL);
+	button_string  = XmStringGenerate("Close", charset, XmCHARSET_TEXT, NULL);
 
 	/*	Create MessageBox dialog.
 	*/
@@ -365,10 +365,9 @@ The button label is the name of the font.  When you select \n\
 a button, a small window will display a sample of the font.  \n\n\
 Press the 'close' button to close a font window.  \n\
 Select 'quit' from the 'exit' menu to exit this application.");
-	message_string = XmStringLtoRCreate (message, charset);
-	button_string = XmStringLtoRCreate ("Close", charset);
-	title_string = XmStringLtoRCreate ("xmfonts help", charset);
-
+	message_string = XmStringGenerate(message, charset, XmCHARSET_TEXT, NULL);
+	button_string  = XmStringGenerate("Close", charset, XmCHARSET_TEXT, NULL);
+	title_string   = XmStringGenerate("xmfonts help", charset, XmCHARSET_TEXT, NULL);
 
 	/*	Create MessageBox dialog.
 	*/

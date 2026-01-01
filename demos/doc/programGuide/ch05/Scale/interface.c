@@ -107,9 +107,7 @@ HelpCB(Widget   w,
 "This program demonstrates how to use an XmScale in an application.\n\
 In addition, it demonstrates how an XmScale can contain tic marks.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    if(dialog_general_help == NULL)
        dialog_general_help = (Widget)XmCreateMessageDialog(top_level,

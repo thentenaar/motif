@@ -232,14 +232,13 @@ void Explain(Widget w, XtPointer client, XtPointer call)
 
     switch (explain) {
     case 1:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "The equalSize resource specifies whether children of the Button\n\
 Box have equal heights and widths. The height and width chosen for\n\
-all the children is the height and width of the largest child.",
-                                      XmSTRING_DEFAULT_CHARSET);
+all the children is the height and width of the largest child.");
         break;
     case 2:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "The fillOption resource sets four kinds of fill options: FillNone,\n\
 FillMajor, FillMinor, and FillAll. Fill specifies how to use any extra\n\
 space left over once all children have been sized. This resource usually\n\
@@ -249,28 +248,24 @@ FillMajor expands children in the direction of the orientation resource.\n\
 FillMinor expands children in the opposite direction of the orientation \
 resource.\n\
 FillAll expands children in both major and minor directions.\n\
-FillNone doesn't expand children.",
-                                      XmSTRING_DEFAULT_CHARSET);
+FillNone doesn't expand children.");
         break;
     case 3:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "marginWidth is the number of spacing pixels to the left and to the right\n\
-of the children in the Button Box.",
-                                      XmSTRING_DEFAULT_CHARSET);
+of the children in the Button Box.");
         break;
     case 4:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "marginHeight is the number of spacing pixels on top and on bottom of the \n\
-children in the Button Box.",
-                                      XmSTRING_DEFAULT_CHARSET);
+children in the Button Box.");
         break;
     case 5:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "orientation specifies whether the children of the Button Box are placed\n\
 in a row or a column. HORIZONTAL places children in a row (major dimension\n\
 is width, minor dimension is height). VERTICAL places children in a column\n\
-(major dimension is height, minor dimension is width).",
-                                      XmSTRING_DEFAULT_CHARSET);
+(major dimension is height, minor dimension is width).");
         break;
     default:
         printf("explaining NOTHING\n");
@@ -378,7 +373,7 @@ main(int argc, char **argv)
                 NULL,
                 0);
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "The Motif Button Box widget can arrange buttons into single rows and columns\n\
 much more easily than the Motif Row Column or Motif Form!\n\
 (And two ButtonBoxes paired together do a great job of lining items up.)\n\
@@ -387,8 +382,7 @@ The four buttons in the other window are inside an Motif Button Box. Try \
 resizing\n\
 this window! Try modifying the Button Box's resources using the area below.\n\
 \n\
-Press the \"Explain...\" button to find out more about a particular resource.",
-                                  XmSTRING_DEFAULT_CHARSET);
+Press the \"Explain...\" button to find out more about a particular resource.");
 
     infoframe = XtVaCreateManagedWidget("infoframe", xmFrameWidgetClass, bform,
                                XmNbottomAttachment, XmATTACH_NONE,

@@ -118,9 +118,7 @@ The application creates seven different SpinBoxes for you to manipulate.\n\
 Click the ArrowButtons next to each SpinBox in order to increment or\n\
 decrement the values of the SpinBox Children.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(top_level,
                                              "message", arg, 1);

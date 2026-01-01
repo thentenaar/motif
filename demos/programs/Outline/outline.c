@@ -353,7 +353,7 @@ void WriteUpHype(Widget parent)
     Widget w;
     XmString xmstring;
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "The Motif Outline Widget displays hierarchical data in an outline layout with a Motif\n\
 look and feel. The Outline widget displayed below has several Motif PushButtons (the\n\
 Outline can accept any type of widget); press one to add a new child.\n\
@@ -363,8 +363,7 @@ To see the code to generate the tree below, press \"Show Layout Code...\".\n\
 \n\
 The toggles below set different resources on the Outline widget itself.\n\
 \n\
-Press \"Other Resources...\" for more information on the various resources.",
-				  XmSTRING_DEFAULT_CHARSET);
+Press \"Other Resources...\" for more information on the various resources.");
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginHeight, 10); argcnt++;
@@ -434,7 +433,7 @@ static void ExplainCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringLtoRCreate(
+	xmstring = XmStringCreateLocalized(
 "The Motif Tree and Outline widget actually derive behavior from the\n\
 Hierarchy Widget. The Hierarchy widget provides resources that specify\n\
 the relationships between children.\n\
@@ -454,8 +453,7 @@ the node will appear. Use \"Show Layout Code...\" to see how this demo used\n\
 this resource.\n\
 \n\
 XmNnodeStateCallback provides a way to receive feedback when any node is\n\
-opened or closed. To use this callback, press the Node State Callback toggle.",
-				      XmSTRING_DEFAULT_CHARSET);
+opened or closed. To use this callback, press the Node State Callback toggle.");
 
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;

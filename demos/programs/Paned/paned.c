@@ -238,7 +238,7 @@ ConstraintResCB(Widget w, XtPointer client, XtPointer call)
 	Widget temp;
 	XmString xmstring;
 
-	xmstring = XmStringLtoRCreate(
+	xmstring = XmStringCreateLocalized(
 "The Motif Paned Widget adds \"constraint\" widgets to any children that are\n\
 inside it. Here's the list of available constraint resources:\n\
 \n\
@@ -248,8 +248,7 @@ inside it. Here's the list of available constraint resources:\n\
      preferredPaneSize (Dimension)\n\
      resizeToPreferred (Boolean)\n\
      showSash (Boolean) - To see behavior, press \"Show Sash\" toggle\n\
-     skipAdjust (Boolean)",
-				      XmSTRING_DEFAULT_CHARSET);
+     skipAdjust (Boolean)");
 
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
@@ -278,7 +277,7 @@ OtherResCB(Widget w, XtPointer client, XtPointer call)
 	Cardinal argcnt;
 	XmString xmstring;
 
-	xmstring = XmStringLtoRCreate(
+	xmstring = XmStringCreateLocalized(
 "The Motif Paned widget provides other resources. Here's a partial\n\
 list of available resources:\n\
 \n\
@@ -286,8 +285,7 @@ list of available resources:\n\
      cursor (Cursor) - Cursor to use over Motif Paned\n\
      marginHeight, marginWidth (Dimension)\n\
      sashHeight (Position)\n\
-     sashShawdowThickness (Dimension)",
-			      XmSTRING_DEFAULT_CHARSET);
+     sashShawdowThickness (Dimension)");
 
 	argcnt = 0;
 	XtSetArg(args[argcnt], XmNtitle, "Explanation"); argcnt++;
@@ -315,7 +313,7 @@ CreateLabel(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     XmString xmstring;
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "The Motif Paned Widget extends the capabilities of the standard Paned\n\
 Window that comes with Motif.\n\
 \n\
@@ -325,8 +323,7 @@ two forms of orienation, press the XmHORIZONTAL or XmVERTICAL toggles.\n\
 \n\
 The Motif Paned Widget can be used as a \"smarter\" Row Column widget, by\n\
 turning off the separators between panes. Press the True or False toggles\n\
-to see this behavior.",
-				  XmSTRING_DEFAULT_CHARSET);
+to see this behavior.");
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNmarginHeight, 10); argcnt++;

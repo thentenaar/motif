@@ -1625,9 +1625,6 @@ extern XmString XmStringCreateLocalized(
 extern XmString XmStringDirectionCreate(
                         XmStringDirection direction) ;
 extern XmString XmStringSeparatorCreate( void ) ;
-extern XmString XmStringLtoRCreate(
-                        char *text,
-                        XmStringCharSet charset) ;
 extern Boolean XmStringInitContext(
                         XmStringContext *context,
                         XmString string) ;

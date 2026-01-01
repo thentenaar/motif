@@ -110,44 +110,38 @@ void Explain(Widget w, XtPointer client, XtPointer call)
 
     switch ((intptr_t)client) {
     case EXPLAIN_MODE:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "This resouce may be either XmListMode and XmScaleMode. This\n\
 determines what mode the Color Selector should use when it is\n\
 created.\n\
 \n\
 List Mode presents a listing of colors built up from the\n\
 XmNrgbFile resource. Scale Mode displays three sliders that\n\
-adjust Red, Green, and Blue color values.",
-                                      XmSTRING_DEFAULT_CHARSET);
+adjust Red, Green, and Blue color values.");
         break;
     case EXPLAIN_NAME:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "This resource controls the name of the color that is displayed\n\
 to the user. Using XtGetValues on this resource returns the name\n\
 of the current color. Using XtSetValues on this resource sets the\n\
 current color.\n\
 \n\
-This resource is of type String.",
-                                      XmSTRING_DEFAULT_CHARSET);
+This resource is of type String.");
         break;
     case EXPLAIN_MAR:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "The Color Selector is made up of many children. This resource\n\
 adjusts the remaining space between a) each of the children in the\n\
 Color Selector, and b) the outside children and the edge of the\n\
-Color Selector.",
-
-                                      XmSTRING_DEFAULT_CHARSET);
+Color Selector.");
         break;
     case EXPLAIN_RGB:
-        xmstring = XmStringLtoRCreate(
+        xmstring = XmStringCreateLocalized(
 "The name of a file that contains valid color names and their\n\
 appropriate values.\n\
 \n\
 All duplicates are removed, and the list is sorted, before it is\n\
-shown to the user.",
-
-                                      XmSTRING_DEFAULT_CHARSET);
+shown to the user.");
         break;
     default:
         printf("explaining NOTHING\n");
@@ -166,8 +160,7 @@ shown to the user.",
 static XmString
 CreateHelpArea()
 {
-  XmString xmstr =
-    XmStringLtoRCreate(
+  return XmStringCreateLocalized(
 "The Motif Color Selector is an interface to the colors \n\
 available on a display.\n\
 \n\
@@ -189,9 +182,7 @@ was used to set the backgroundColor of the Color Button.\n\
 \n\
 Resources defined by the Color Selector are shown below. For more\n\
 information on a resource, select the Explain button to \n\
-its right.", XmSTRING_DEFAULT_CHARSET);
-
-  return( xmstr );
+its right.");
 }
 
 

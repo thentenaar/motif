@@ -490,7 +490,7 @@ XmString     decoString;
 
     /*****  Create SpinBox decoration child  *****/
     n = 0;
-    decoString = XmStringLtoRCreate("/", XmSTRING_DEFAULT_CHARSET);
+    decoString = XmStringCreateLocalized("/");
     XtSetArg(argList[n], XmNlabelString, decoString); n++;
 
     spin6_deco1 = XmCreateLabel( spin6,
@@ -513,7 +513,7 @@ XmString     decoString;
 
     /*****  Create SpinBox decoration child  *****/
     n = 0;
-    decoString = XmStringLtoRCreate("/", XmSTRING_DEFAULT_CHARSET);
+    decoString = XmStringCreateLocalized("/");
     XtSetArg(argList[n], XmNlabelString, decoString); n++;
     spin6_deco2 = XmCreateLabel( spin6,
 			         "spin6_deco2",

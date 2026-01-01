@@ -380,7 +380,7 @@ void CreateLabel(Widget w, XtPointer client, XtPointer call)
     Cardinal argcnt;
     XmString xmstring;
 
-    xmstring = XmStringLtoRCreate(
+    xmstring = XmStringCreateLocalized(
 "This is a demo of the Motif Internationalized Extended List widget.\n\
 \n\
 The Internationalized Extended List provides multi-column list \n\
@@ -416,8 +416,7 @@ Row 2, Col 1 button. The extended list will make that the upper left \n\
 row and column. Remember, the list cannot be scrolled past its end.  \n\
 Therefore, if making a particular row and col the upper leftmost would \n\
 cause the list to scroll past its boundaries, it will scroll to the \n\
-end ",
-				  XmSTRING_DEFAULT_CHARSET);
+end ");
 
     argcnt = 0;
     XtSetArg(args[argcnt], XmNalignment, XmALIGNMENT_BEGINNING); argcnt++;

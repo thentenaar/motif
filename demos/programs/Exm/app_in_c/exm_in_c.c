@@ -294,8 +294,8 @@ ExerciseExmStringWidgets(Widget parent_handle)
  Widget       String1, String2;
  XmString     a_compound_string;
 
-  a_compound_string = XmStringLtoRCreate("A Multiline Compound String\nIn an\n\
-ExmString widget.\0", XmFONTLIST_DEFAULT_TAG);
+  a_compound_string = XmStringCreateLocalized("A Multiline Compound String\nIn an\n\
+ExmString widget.\0");
 
 
 /* Instantiate two ExmString widgets. */
@@ -389,15 +389,11 @@ ExerciseExmCommandButtonWidgets(Widget parent_handle)
  Widget    CommandButton1, CommandButton2, CommandButton3, CommandButton4;
  Arg       arg[3];
 
-  really_quit = XmStringLtoRCreate("Do you really want to quit?\0",
-                                             XmFONTLIST_DEFAULT_TAG);
-
-  yes = XmStringLtoRCreate("Yes\0", XmFONTLIST_DEFAULT_TAG);
-  no  = XmStringLtoRCreate("No\0", XmFONTLIST_DEFAULT_TAG);
-  dance = XmStringLtoRCreate("No, I want to\ndance instead.\0",
-                                             XmFONTLIST_DEFAULT_TAG);
-  help = XmStringLtoRCreate("Help\0", XmFONTLIST_DEFAULT_TAG);
-
+  really_quit = XmStringCreateLocalized("Do you really want to quit?\0");
+  yes         = XmStringCreateLocalized("Yes\0");
+  no          = XmStringCreateLocalized("No\0");
+  dance       = XmStringCreateLocalized("No, I want to\ndance instead.\0");
+  help        = XmStringCreateLocalized("Help\0");
 
  /* Create a MessageBox to which we can attach ExmCommandButton's. */
   TemplateDialog = XmCreateTemplateDialog(parent_handle, "QuitNow?", NULL, 0);
@@ -508,8 +504,7 @@ as a button inside a menu.",
  Widget    help_dialog;
  Arg       arg[3];
 
-   message_as_a_cs = XmStringLtoRCreate(messages[(intptr_t)cd],
-                                        XmFONTLIST_DEFAULT_TAG);
+   message_as_a_cs = XmStringCreateLocalized(messages[(intptr_t)cd]);
 
    XtSetArg(arg[0], XmNmessageString, message_as_a_cs);
    help_dialog = XmCreateMessageDialog(top_level, "message", arg, 1);

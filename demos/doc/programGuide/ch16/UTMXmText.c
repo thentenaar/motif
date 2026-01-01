@@ -366,9 +366,7 @@ will be converted to all uppercase when it arrives in the\n\
 destination widget.  You can transfer the text via drag and drop,\n\
 clipboard, secondary, or primary selections.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(toplevel,
                                              "message", arg, 1);

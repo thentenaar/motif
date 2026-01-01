@@ -118,9 +118,7 @@ You can make a selection by typing it directly into the TextField\n\
 or by selecting the item from the DropDown list.  To make the list\n\
 drop down, click on the arrow that appears next to the TextField.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(top_level,
                                              "message", arg, 1);
