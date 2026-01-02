@@ -941,7 +941,7 @@ _XmRenderTableFindFallback(
 	      XmStringTag       curtag;
 
 	      if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
-		curtag = _XmStringGetCurrentCharset();
+		curtag = XmStringGetCharset();
 	      else curtag = tag;
 
 	      *rend_ptr = (XmRendition)
@@ -966,7 +966,7 @@ _XmRenderTableFindFallback(
 	  else if ((tag == XmFONTLIST_DEFAULT_TAG) ||
 		   (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0))
 	    {
-	      search_cset = _XmStringGetCurrentCharset();
+	      search_cset = XmStringGetCharset();
 
 	      *rend_ptr = (XmRendition)
 		_XmRenderTableFindRendition(rendertable, search_cset, FALSE,
@@ -2188,7 +2188,7 @@ _XmRenditionCreate(Display *display,
  if ((tag != NULL) &&
      (tag != XmFONTLIST_DEFAULT_TAG) &&
      (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
-   tag = _XmStringGetCurrentCharset();
+   tag = XmStringGetCharset();
 
   /* Allocate rendition. */
   rend_int = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));

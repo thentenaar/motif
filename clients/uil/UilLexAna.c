@@ -52,9 +52,6 @@ static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
 **
 **/
 #include <Xm/Xm.h>
-/* I think this one should be public too, it's not the case right now,
-   and I don't want to include XmP.h here - dd */
-extern char *_XmStringGetCurrentCharset(void);
 #include <Xm/XmosP.h>	/* Need this for MB_CUR_MAX */
 
 #include <Mrm/MrmosI.h> /* Need this for _MrmOSSetLocale. */
@@ -1972,7 +1969,7 @@ void lex_initialize_analyzer(void)
 	gz_yynullval.b_tag = sar_k_null_frame;
 
 	/* Initialize the default character set  */
-	if (!(language = _XmStringGetCurrentCharset()))
+	if (!(language = XmStringGetCharset()))
 		Uil_lex_l_user_default_charset = lex_k_default_charset;
 	else {
 		Uil_lex_l_user_default_charset = sem_charset_lang_name(language);

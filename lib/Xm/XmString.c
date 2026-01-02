@@ -966,7 +966,7 @@ _XmStringIndexCacheTag(XmStringTag tag,
       _cache_count++;
       _tag_cache[_cache_count] = _MOTIF_DEFAULT_LOCALE;
       _cache_count++;
-      _tag_cache[_cache_count] = _XmStringGetCurrentCharset();
+      _tag_cache[_cache_count] = XmStringGetCharset();
       _cache_count++;
     }
 
@@ -6422,7 +6422,7 @@ static void _parse_locale(char *str, int *indx, int *len)
  /* This function returns current default charset being used.  This is */
  /* determined from the value of the $LANG environment variable or */
  /* XmFALLBACK_CHARSET.  */
-char *_XmStringGetCurrentCharset(void)
+XmStringTag XmStringGetCharset(void)
 {
 	char *ptr, *str, *ret_val;
 	int indx, len;
@@ -6468,7 +6468,7 @@ out:
 Boolean
 _XmStringIsCurrentCharset( XmStringCharSet c )
 {
-  return (strcmp(c, _XmStringGetCurrentCharset()) == 0);
+  return (strcmp(c, XmStringGetCharset()) == 0);
 }
 
 /*
@@ -7999,7 +7999,7 @@ XmStringUnparse(XmString          string,
   if ((tag_type == XmCHARSET_TEXT) && tag &&
       ((tag == XmSTRING_DEFAULT_CHARSET) ||
        (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0)))
-    tag = _XmStringGetCurrentCharset();
+    tag = XmStringGetCharset();
 
   /* Process the components of string individually. */
   prev_text_match = next_text_match = non_text_match = False;
@@ -8115,7 +8115,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
       }
       if ((value == XmSTRING_DEFAULT_CHARSET) ||
 	  (strcmp((char*) value, XmSTRING_DEFAULT_CHARSET) == 0)) {
-	value = _XmStringGetCurrentCharset();
+	value = XmStringGetCharset();
 	length = strlen((char*) value);
       }
 
@@ -8546,7 +8546,7 @@ XmeStringGetComponent(_XmStringContext context,
       tag = (optimized ? _XmStrTagGet(opt) : _XmEntryTag(seg));
       if ((tag == XmSTRING_DEFAULT_CHARSET) ||
 	  (tag && !strcmp((char*) tag, XmSTRING_DEFAULT_CHARSET)))
-	tag = _XmStringGetCurrentCharset();
+	tag = XmStringGetCharset();
 
       if ((text_type != XmNO_TEXT &&
 	   text_type != _XmStrContTagType(context)) ||

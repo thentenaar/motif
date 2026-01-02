@@ -945,7 +945,6 @@ extern _XmString _XmStringCreate(
                         XmString cs) ;
 extern void _XmStringFree(
                         _XmString string) ;
-extern char * _XmStringGetCurrentCharset( void ) ;
 extern char * _XmCharsetCanonicalize(
                         String charset) ;
 extern _XmString _XmStringCopy(
@@ -1112,8 +1111,6 @@ extern void _XmStringContextReInit(_XmStringContext context,
 extern int _XmConvertFactor(unsigned char units,
 			    float *factor);
 
-
-
 #ifdef _XmDEBUG_XMSTRING
 extern void _Xm_dump_fontlist(XmFontList f) ;
 extern void _Xm_dump_fontlist_cache( void ) ;
@@ -1123,7 +1120,7 @@ extern void _Xm_dump_internal(_XmString string) ;
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmStringI_h */
+

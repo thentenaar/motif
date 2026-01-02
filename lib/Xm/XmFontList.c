@@ -92,7 +92,7 @@ XmFontListEntryCreate(
 
     if ((tag != XmFONTLIST_DEFAULT_TAG) &&
 	(strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
-      derived_tag = _XmStringGetCurrentCharset();
+      derived_tag = XmStringGetCharset();
     else derived_tag = tag;
 
     n = 0;
@@ -147,7 +147,7 @@ XmFontListEntryCreate_r(char *tag,
 
   if ((tag != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
-    derived_tag = _XmStringGetCurrentCharset();
+    derived_tag = XmStringGetCharset();
   else
     derived_tag = tag;
 
@@ -451,7 +451,7 @@ XmFontListCreate(
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
-    curcharset = _XmStringGetCurrentCharset();
+    curcharset = XmStringGetCharset();
   else curcharset = charset;
 
   n = 0;
@@ -505,7 +505,7 @@ XmFontListCreate_r(
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
-    curcharset = _XmStringGetCurrentCharset();
+    curcharset = XmStringGetCharset();
   else curcharset = charset;
 
   n = 0;
@@ -602,7 +602,7 @@ XmFontListAdd(
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
       (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
-    curcharset = _XmStringGetCurrentCharset();
+    curcharset = XmStringGetCharset();
   else
     curcharset = charset;
 

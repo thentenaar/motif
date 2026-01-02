@@ -72,7 +72,7 @@ _XmStringNCreate(char *text,
     }
   else {
     if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
-      curtag = _XmStringGetCurrentCharset();
+      curtag = XmStringGetCharset();
     else curtag = tag;
   }
 
@@ -377,7 +377,7 @@ XmStringGetLtoR(
     {
       if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
 	{
-	  curtag = _XmStringGetCurrentCharset();
+	  curtag = XmStringGetCharset();
 	  is_default = TRUE;
 	}
       else curtag = tag;
@@ -394,7 +394,7 @@ XmStringGetLtoR(
 	      (((is_local || is_default) &&
 		((c == XmFONTLIST_DEFAULT_TAG) ||
 		 (strcmp(c, XmFONTLIST_DEFAULT_TAG) == 0) ||
-		 (strcmp(c, _XmStringGetCurrentCharset()) == 0))) ||
+		 (strcmp(c, XmStringGetCharset()) == 0))) ||
 	       (curtag && (strcmp (c, curtag) == 0))))
 	    {
 	      *text = t;		  /* OK, pass text to caller */
@@ -748,5 +748,11 @@ XmStringLength(
   len = XmCvtXmStringToByteStream(string, NULL);
 
   return((int)len);
+}
+
+/* Made public */
+char *_XmStringGetCurrentCharset(void)
+{
+	return XmStringGetCharset();
 }
 
