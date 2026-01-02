@@ -332,14 +332,14 @@ static SegmentEncoding *_encoding_registry_ptr = &_encoding_registry;
 
 static SegmentEncoding * FindEncoding(
                         char *fontlist_tag) ;
-static Boolean processCharsetAndText(XmStringCharSet tag,
+static Boolean processCharsetAndText(XmStringTag tag,
 				     OctetPtr	ctext,
 				     Boolean	separator,
 				     OctetPtr	*outc,
 				     unsigned int	*outlen,
 				     ct_Charset	*prev);
 #if XM_UTF8
-static Boolean processCharsetAndTextUtf8(XmStringCharSet tag,
+static Boolean processCharsetAndTextUtf8(XmStringTag tag,
 				     OctetPtr	ctext,
 				     Boolean	separator,
 				     OctetPtr	*outc,
@@ -2030,7 +2030,7 @@ cvtXmStringToUTF8String(
   OctetPtr		outc = NULL;
   unsigned int		outlen = 0;
   _XmStringContextRec	stack_context;
-  XmStringCharSet	ct_encoding = NULL, cset_save = NULL;
+  XmStringTag	ct_encoding = NULL, cset_save = NULL;
   ct_Direction		prev_direction = ct_Dir_LeftToRight;
   ct_Charset		prev_charset = cs_Latin1;
   XmStringComponentType	comp;
@@ -2094,7 +2094,7 @@ cvtXmStringToUTF8String(
 	  break;
 
 	case XmSTRING_COMPONENT_TAG:
-	  cset_save = (XmStringCharSet)val;
+	  cset_save = (XmStringTag)val;
 	  break;
 
 	case XmSTRING_COMPONENT_DIRECTION:
@@ -2182,7 +2182,7 @@ cvtXmStringToText(
   OctetPtr		outc = NULL;
   unsigned int		outlen = 0;
   _XmStringContextRec	stack_context;
-  XmStringCharSet	ct_encoding = NULL, cset_save = NULL;
+  XmStringTag	ct_encoding = NULL, cset_save = NULL;
 /*
  * Define XLIB_HANDLES_DIRECTION if vendor's X library knows how
  * to deal with direction control sequences in CT. Otherwise
@@ -2257,7 +2257,7 @@ cvtXmStringToText(
 	  break;
 
 	case XmSTRING_COMPONENT_TAG:
-	  cset_save = (XmStringCharSet)val;
+	  cset_save = (XmStringTag)val;
 	  break;
 
 	case XmSTRING_COMPONENT_DIRECTION:
@@ -2329,7 +2329,7 @@ cvtXmStringToText(
 
 #if XM_UTF8
 static Boolean
-processCharsetAndTextUtf8(XmStringCharSet tag,
+processCharsetAndTextUtf8(XmStringTag tag,
 		      OctetPtr		ctext,
 		      Boolean		separator,
 		      OctetPtr		*outc,
@@ -2426,7 +2426,7 @@ processCharsetAndTextUtf8(XmStringCharSet tag,
 
 
 static Boolean
-processCharsetAndText(XmStringCharSet tag,
+processCharsetAndText(XmStringTag tag,
 		      OctetPtr		ctext,
 		      Boolean		separator,
 		      OctetPtr		*outc,

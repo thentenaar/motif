@@ -316,7 +316,7 @@ _XmGetMBStringFromXmString(XmString xmstr)
     String 			text;
     XmStringContext 		context;   /* context for conversion	*/
     char			*newText;  /* new text string        	*/
-    XmStringCharSet		charset;   /* dummy			*/
+    XmStringTag		charset;   /* dummy			*/
     XmStringDirection   	direction; /* dummy			*/
     XmStringComponentType	u_tag;	   /* is newline		*/
     int				length;    /* length of string		*/

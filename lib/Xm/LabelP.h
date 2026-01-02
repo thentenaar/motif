@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 #ifndef _XmLabelP_h_
 #define _XmLabelP_h_
 
@@ -69,7 +69,7 @@ typedef struct _XmLabelPart
   _XmString	  _label;	 /* String sent to this widget */
   _XmString	  _acc_text;
   KeySym	  mnemonic;
-  XmStringCharSet mnemonicCharset;
+  XmStringTag mnemonicCharset;
   char		 *accelerator;
   unsigned char	  label_type;
   unsigned char	  alignment;

@@ -53,6 +53,9 @@
 #endif
 /* }}} */
 
+/* This should be XmStringTag */
+typedef char * XmStringCharSet; /* Null term string */
+
 XM_ALTERNATIVE(Use XtSetValues for XmNmenuCursor on XmScreen instead)
 extern void XmSetMenuCursor(Display *display, Cursor cursorId);
 

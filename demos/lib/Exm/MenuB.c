@@ -36,17 +36,17 @@
 
 /*******************************************************************************
  *
- * MenuB.c - ExmMenuButton widget.  This widget serves as a menu 
+ * MenuB.c - ExmMenuButton widget.  This widget serves as a menu
  *           button.  It has some features of the XmPushButton widget.
- *           This widget can be a child of a RowColumn widget, 
- *           assuming that the XmNrowColumnType resource of the 
- *           RowColumn is set to something other than XmWORK_AREA. 
+ *           This widget can be a child of a RowColumn widget,
+ *           assuming that the XmNrowColumnType resource of the
+ *           RowColumn is set to something other than XmWORK_AREA.
  *           ExmMenuButton is a subclass of ExmString and displays
- *           one compound string. 
- *           The ExmMenuButton widget demonstrates how to  
- *               * install the XmQTmenuSavvy trait. 
- *               * call many of the trait methods of the XmQTmenuSystem 
- *                 trait. 
+ *           one compound string.
+ *           The ExmMenuButton widget demonstrates how to
+ *               * install the XmQTmenuSavvy trait.
+ *               * call many of the trait methods of the XmQTmenuSystem
+ *                 trait.
  *            See the "OSF/Motif Widget Writer's Guide" for details.
  *
 *******************************************************************************/
@@ -131,9 +131,9 @@ static KeySym GetMnemonic(
                         Widget w);
 static char* GetActivateCBName(
                         void);
-static void DrawVisual( 
+static void DrawVisual(
                         Widget w);
-static void CalcVisualSize ( 
+static void CalcVisualSize (
                         Widget w);
 
 
@@ -160,7 +160,7 @@ static char menuTraversalTranslations[] =
 :<Key>osfDown:		MenuTraverseDown()";
 
 
-/* The following actions will be handled by code inside this file. */ 
+/* The following actions will be handled by code inside this file. */
 static XtActionsRec Actions[] = {
 	{"ArmAndActivate",	ArmAndActivate},
 	{"BtnDown",		BtnDown},
@@ -171,10 +171,10 @@ static XtActionsRec Actions[] = {
 };
 
 
-/* Define the resources.  The first four resource definitions are 
+/* Define the resources.  The first four resource definitions are
    do not define new resources, they simply provide new default values
-   for superclass resources.  The only new resource is XmNactivateCallback. */ 
-static XtResource resources[] = 
+   for superclass resources.  The only new resource is XmNactivateCallback. */
+static XtResource resources[] =
 {
     {
 	XmNshadowThickness,
@@ -200,7 +200,7 @@ static XtResource resources[] =
 	XmRBoolean,
 	sizeof (Boolean),
 	XtOffsetOf( ExmMenuButtonRec, primitive.traversal_on),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) True
     },
     {
@@ -219,17 +219,17 @@ static XtResource resources[] =
 	XmRCallback,
 	sizeof(XtCallbackList),
 	XtOffsetOf( ExmMenuButtonRec, menu_button.activate_callback),
-	XmRPointer, 
+	XmRPointer,
         (XtPointer) NULL
     },
 
     {
-        XmNmnemonic, 
-	XmCMnemonic, 
+        XmNmnemonic,
+	XmCMnemonic,
 	XmRKeySym,
-	sizeof(KeySym), 
+	sizeof(KeySym),
 	XtOffsetOf( ExmMenuButtonRec, menu_button.mnemonic),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) XK_VoidSymbol
     },
 
@@ -237,9 +237,9 @@ static XtResource resources[] =
         XmNaccelerator,
 	XmCAccelerator,
 	XmRString,
-	sizeof(char *), 
+	sizeof(char *),
 	XtOffsetOf(ExmMenuButtonRec, menu_button.accelerator),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) NULL
     },
 
@@ -247,20 +247,20 @@ static XtResource resources[] =
         XmNacceleratorText,
 	XmCAcceleratorText,
 	XmRXmString,
-	sizeof(XmString), 
+	sizeof(XmString),
 	XtOffsetOf(ExmMenuButtonRec, menu_button.accelerator_text),
 	XmRImmediate,
 	(XtPointer) NULL
     },
 
     {
-        XmNmnemonicCharSet, 
-	XmCMnemonicCharSet, 
+        XmNmnemonicCharSet,
+	XmCMnemonicCharSet,
 	XmRString,
-	sizeof(XmStringCharSet), 
+	sizeof(XmStringTag),
 	XtOffsetOf(ExmMenuButtonRec, menu_button.mnemonic_charset),
-	XmRImmediate, 
-	(XtPointer) XmFONTLIST_DEFAULT_TAG    
+	XmRImmediate,
+	(XtPointer) XmFONTLIST_DEFAULT_TAG
     }
 };
 
@@ -302,7 +302,7 @@ externaldef (exmmenubuttonclassrec) ExmMenuButtonClassRec exmMenuButtonClassRec 
     /* query_geometry */             XtInheritQueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
+  },
   { /* XmPrimitive */
     /* border_highlight */           BorderHighlight,
     /* border_unhighlight */         BorderUnhighlight,
@@ -314,8 +314,8 @@ externaldef (exmmenubuttonclassrec) ExmMenuButtonClassRec exmMenuButtonClassRec 
     /* syn_resources */              NULL,
     /* num_syn_resources */          0,
     /* extension */                  NULL,
-  },    
-  { /* ExmSimple */     
+  },
+  { /* ExmSimple */
     /* draw_visual */                DrawVisual,
     /* draw_shadow */                DrawShadow,
     /* create_text_gc */             ExmInheritCreateGC,
@@ -325,14 +325,14 @@ externaldef (exmmenubuttonclassrec) ExmMenuButtonClassRec exmMenuButtonClassRec 
     /* calc_widget_size */           ExmInheritCalcWidgetSize,
     /* reconfigure */		     ExmInheritReconfigure,
     /* extension */                  NULL,
-  },    
-  { /* ExmString */   
+  },
+  { /* ExmString */
     /* default_render_table_type */  XmBUTTON_RENDER_TABLE,
     /* extension */                  NULL,
-  },    
-  { /* ExmMenuButton */  
+  },
+  { /* ExmMenuButton */
     /* extension */                  NULL,
-  }    
+  }
 };
 
 
@@ -346,7 +346,7 @@ externaldef( exmmenubuttonwidgetclass) WidgetClass
 /* We will need to tell XmRowColumn that ExmMenuButton can be a menu child.
    We will do that be setting the XmQTmenuSavvy trait on ExmMenuButton.
    In order to set this trait, we must define a trait record variable
-   as follows: */ 
+   as follows: */
 static const XmMenuSavvyTraitRec menuSavvyTraitRec = {
   0,					 	     /* Version */
   (XmMenuSavvyDisableProc) DisableCallback,	     /* disableCallback	  */
@@ -359,18 +359,18 @@ static const XmMenuSavvyTraitRec menuSavvyTraitRec = {
 /******************************************************************************
  *
  * ClassInitialize:
- *     Called by the Intrinsics the first time a widget of this class is 
- *     instantiated. 
+ *     Called by the Intrinsics the first time a widget of this class is
+ *     instantiated.
  *
  *****************************************************************************/
-static void 
+static void
 ClassInitialize(
         void
                )
 {
   /* Install the menuSavvy trait so that the menu will know
      that this class has the right actions for menus */
-  XmeTraitSet(exmMenuButtonWidgetClass, XmQTmenuSavvy, 
+  XmeTraitSet(exmMenuButtonWidgetClass, XmQTmenuSavvy,
               (XtPointer) &menuSavvyTraitRec);
 }
 
@@ -380,7 +380,7 @@ ClassInitialize(
  * Initialize
  *
  *****************************************************************************/
-static void 
+static void
 Initialize (
         Widget request_w,
         Widget new_w,
@@ -390,23 +390,23 @@ Initialize (
 {
   ExmMenuButtonWidgetClass wc =(ExmMenuButtonWidgetClass)XtClass(new_w);
   ExmMenuButtonWidget nw = (ExmMenuButtonWidget)new_w;
- 
+
   nw->menu_button.armed = False;
   nw->menu_button.visual_timer = 0;
   nw->menu_button.skip_callback = False;
-  
+
   /* Force traversal on,  the menu system will break otherwise */
   nw->primitive.traversal_on = True;
   nw->primitive.highlight_thickness = 0;
-  
+
   if (wc->simple_class.calc_visual_size)
     (*(wc->simple_class.calc_visual_size))(new_w);
-  
+
   if (wc->simple_class.reconfigure)
     (*(wc->simple_class.reconfigure))(exmMenuButtonWidgetClass, new_w, NULL);
-  
+
   if (nw->menu_button.accelerator_text != NULL)
-    nw->menu_button.accelerator_text = 
+    nw->menu_button.accelerator_text =
       XmStringCopy(nw->menu_button.accelerator_text);
 }
 
@@ -417,13 +417,13 @@ Initialize (
  *  Destroy
  *
  *****************************************************************************/
-static void 
+static void
      Destroy (
 	      Widget w
 	      )
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   if (mw->menu_button.visual_timer != 0)
     XtRemoveTimeOut (mw->menu_button.visual_timer);
 }
@@ -437,7 +437,7 @@ static void
  *  SetValues
  *
  *****************************************************************************/
-static Boolean 
+static Boolean
 SetValues (
         Widget old_w,
         Widget request_w,
@@ -450,23 +450,23 @@ SetValues (
   ExmMenuButtonWidget nw = (ExmMenuButtonWidget) new_w;
   ExmMenuButtonWidget cw = (ExmMenuButtonWidget) old_w;
   Boolean redisplayFlag = False;
-  
+
   /* should we force these ? - probably to protect from *highlightThickness*/
   nw->primitive.highlight_thickness = 0;
   nw->primitive.traversal_on = True;
-  
+
   if (wc->simple_class.reconfigure) {
     (*(wc->simple_class.reconfigure))(exmMenuButtonWidgetClass, new_w, old_w);
     redisplayFlag = True;
   }
   if (nw->menu_button.accelerator_text != NULL)
-    nw->menu_button.accelerator_text = 
+    nw->menu_button.accelerator_text =
       XmStringCopy(nw->menu_button.accelerator_text);
-  
+
   if ((nw->menu_button.accelerator_text != cw->menu_button.accelerator_text) ||
       (nw->menu_button.mnemonic != cw->menu_button.mnemonic))
     redisplayFlag = True;
-  
+
   return (redisplayFlag);
 }
 
@@ -477,14 +477,14 @@ SetValues (
  *  BorderHighlight
  *
  *****************************************************************************/
-static void 
+static void
 BorderHighlight (
         Widget w
                 )
 {
   ExmMenuButtonWidgetClass wc = (ExmMenuButtonWidgetClass)XtClass(w);
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   if (mw->menu_button.armed == True) return;
 
 #ifndef USE_ORIGINAL_MOTIF_CODE
@@ -498,7 +498,7 @@ BorderHighlight (
 		  mw->primitive.shadow_thickness, XmSHADOW_OUT);
 #else
   mw->menu_button.armed = True;
-  
+
   if (wc->simple_class.draw_shadow)
     (*(wc->simple_class.draw_shadow)) ((Widget) mw);
 #endif
@@ -511,18 +511,18 @@ BorderHighlight (
  *      Called when ...
  *
  *****************************************************************************/
-static void 
+static void
 BorderUnhighlight (
         Widget w
                   )
 {
   ExmMenuButtonWidgetClass wc = (ExmMenuButtonWidgetClass)XtClass(w);
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
-  if (mw->menu_button.armed == False) 
+
+  if (mw->menu_button.armed == False)
     return;
 
-#ifndef USE_ORIGINAL_MOTIF_CODE  
+#ifndef USE_ORIGINAL_MOTIF_CODE
   XmeClearBorder (XtDisplay (mw), XtWindow(mw),
 		  mw->primitive.highlight_thickness,
 		  mw->primitive.highlight_thickness,
@@ -531,7 +531,7 @@ BorderUnhighlight (
 		  mw->primitive.shadow_thickness);
 #else
   mw->menu_button.armed = False;
-  
+
   if (wc->simple_class.draw_shadow)
     (*(wc->simple_class.draw_shadow)) ((Widget) mw);
 #endif
@@ -543,16 +543,16 @@ BorderUnhighlight (
  *  DrawVisual
  *
  *****************************************************************************/
-static void 
+static void
 DrawVisual (
         Widget w
            )
 {
   ExmMenuButtonWidgetClass wc = (ExmMenuButtonWidgetClass)XtClass(w);
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   /* If the compound string is not NULL and if there is enough space in the
-     widget to draw at least a little portion of the compound string, then 
+     widget to draw at least a little portion of the compound string, then
      render the string with XmStringDraw. */
   if (mw->string.compound_string &&
       (mw->simple.visual.width != 0) &&
@@ -567,45 +567,45 @@ DrawVisual (
       tmp = XmStringCreate(mnemonic_str,
 			   mw->menu_button.mnemonic_charset);
       XmStringDrawUnderline(XtDisplay(mw), XtWindow(mw),
-			    mw->string.render_table, 
+			    mw->string.render_table,
 			    mw->string.compound_string,
 			    wc->simple_class.select_gc(w),
 			    mw->simple.visual.x, mw->simple.visual.y,
 			    mw->simple.visual.width, mw->string.alignment,
 			    mw->primitive.layout_direction, NULL,
-			    tmp); 
+			    tmp);
       XmStringFree(tmp);
     } else {
       XmStringDraw(XtDisplay(mw), XtWindow(mw),
-		   mw->string.render_table, 
+		   mw->string.render_table,
 		   mw->string.compound_string,
 		   wc->simple_class.select_gc(w),
 		   mw->simple.visual.x, mw->simple.visual.y,
 		   mw->simple.visual.width, mw->string.alignment,
-		   mw->primitive.layout_direction, NULL); 
+		   mw->primitive.layout_direction, NULL);
     }
-    
+
     /* Draw the accelerator text */
     if (mw->menu_button.accelerator_text) {
       Dimension height, width, offset;
 
       offset = mw->primitive.highlight_thickness +
 	       mw->primitive.shadow_thickness;
-      XmStringExtent (mw->string.render_table, 
+      XmStringExtent (mw->string.render_table,
 		      mw->menu_button.accelerator_text, &width, &height);
       XmStringDraw(XtDisplay(mw), XtWindow(mw),
-		   mw->string.render_table, 
+		   mw->string.render_table,
 		   mw->menu_button.accelerator_text,
 		   wc->simple_class.select_gc(w),
 		   XtWidth(w) - width - offset,
 		   mw->simple.visual.y,
 		   mw->simple.visual.width, mw->string.alignment,
-		   mw->primitive.layout_direction, NULL); 
+		   mw->primitive.layout_direction, NULL);
     }
 
     XmeClearBorder(XtDisplay(mw), XtWindow(mw),
-		   (int)0, (int)0, 
-		   (Dimension)mw->core.width, (Dimension)mw->core.height, 
+		   (int)0, (int)0,
+		   (Dimension)mw->core.width, (Dimension)mw->core.height,
 		   (Dimension)(mw->primitive.highlight_thickness +
 			       mw->primitive.shadow_thickness)
                    );
@@ -618,15 +618,15 @@ DrawVisual (
  * CalcVisualSize
  *
  *****************************************************************************/
-static void 
+static void
 CalcVisualSize (
         Widget w
                )
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   /* Ideally, how much space would the compound string require? */
-  if (mw->string.compound_string && 
+  if (mw->string.compound_string &&
       !XmStringEmpty(mw->string.compound_string))
     XmStringExtent (mw->string.render_table, mw->string.compound_string,
 		    &(mw->simple.visual.width), &(mw->simple.visual.height));
@@ -635,21 +635,21 @@ CalcVisualSize (
     mw->simple.visual.width = 0;
     mw->simple.visual.height = 0;
   }
-  
+
   /* Now add the space for the accelerator text */
   if (mw->menu_button.accelerator_text) {
     Dimension height, width;
     int h_unit;
     Widget scr = XmGetXmScreen(XtScreen(w));
     Arg args[1];
-    
-    XtSetArg(args[0], XmNhorizontalFontUnit, &h_unit); 
+
+    XtSetArg(args[0], XmNhorizontalFontUnit, &h_unit);
     XtGetValues(scr, args, 1);
-    
-    XmStringExtent (mw->string.render_table, 
+
+    XmStringExtent (mw->string.render_table,
 		    mw->menu_button.accelerator_text, &width, &height);
     mw->simple.visual.width += width + (2 * h_unit);
-    if (height > mw->simple.visual.height) 
+    if (height > mw->simple.visual.height)
       mw->simple.visual.height = height;
   }
 }
@@ -660,17 +660,17 @@ CalcVisualSize (
  *  DrawShadow
  *
  ************************************************************************/
-static void 
+static void
      DrawShadow (
 		 Widget w
 		 )
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   if (mw->core.width > 2 * mw->primitive.highlight_thickness &&
       mw->core.height > 2 * mw->primitive.highlight_thickness &&
       mw->primitive.shadow_thickness > 0) {
-    
+
     if (mw->menu_button.armed)
       XmeDrawShadows (XtDisplay (mw), XtWindow (mw),
 		      mw->primitive.top_shadow_GC,
@@ -697,20 +697,20 @@ static void
  * MenuButtonEnter
  *
  *********************************************************************/
-static void 
+static void
      MenuButtonEnter (
 		      Widget w,
 		      XEvent *event,
 		      String *params,
-		      Cardinal *num_params 
+		      Cardinal *num_params
 		      )
 {
   ExmMenuButtonWidgetClass wc = (ExmMenuButtonWidgetClass)XtClass(w);
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
   XmMenuSystemTrait menuSTrait;
   int status;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(w)), XmQTmenuSystem);
 
   if (! menuSTrait) return;
@@ -719,11 +719,11 @@ static void
 
   if ((((ShellWidget) XtParent(XtParent(mw)))->shell.popped_up) &&
       XmIsInDragMode(status)) {
-    
+
     menuSTrait -> childFocus(w);
 
     mw->menu_button.armed = True;
-    
+
     if (wc->simple_class.draw_shadow)
       (*(wc->simple_class.draw_shadow)) ((Widget) mw);
   }
@@ -736,7 +736,7 @@ static void
  * MenuButtonLeave
  *
  *********************************************************************/
-static void 
+static void
 MenuButtonLeave (
         Widget w,
         XEvent *event,
@@ -749,7 +749,7 @@ MenuButtonLeave (
   XmMenuSystemTrait menuSTrait;
   int status;
 
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(w)), XmQTmenuSystem);
 
   if (! menuSTrait) return;
@@ -761,7 +761,7 @@ MenuButtonLeave (
       event->xcrossing.mode == NotifyNormal) {
 
     mw->menu_button.armed = False;
-    
+
     if (wc->simple_class.draw_shadow)
       (*(wc->simple_class.draw_shadow)) ((Widget) mw);
     }
@@ -774,7 +774,7 @@ MenuButtonLeave (
  * ArmAndActivate
  *
  *********************************************************************/
-static void 
+static void
 ArmAndActivate (
         Widget w,
         XEvent *event,
@@ -789,11 +789,11 @@ ArmAndActivate (
   Boolean torn_has_focus = False;
   XmMenuSystemTrait menuSTrait;
 
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(w)), XmQTmenuSystem);
 
   if (menuSTrait == NULL) {
-    /* We're in trouble.  This isn't a valid menu that we're 
+    /* We're in trouble.  This isn't a valid menu that we're
        in and Arm and Activate has been called.  Abort ! */
     return;
   }
@@ -855,7 +855,7 @@ ArmAndActivate (
   /* if the parent is a Menu, notify it about the select */
   menuSTrait -> entryCallback(XtParent(mw), (Widget) mw, &cb);
 
-  if (! mw -> menu_button.skip_callback && 
+  if (! mw -> menu_button.skip_callback &&
       mw->menu_button.activate_callback) {
     XFlush (XtDisplay (mw));
     XtCallCallbackList ((Widget)mw, mw->menu_button.activate_callback, &cb);
@@ -866,7 +866,7 @@ ArmAndActivate (
   if (torn_has_focus) {
     /* Leave the focus widget in an armed state */
     mw->menu_button.armed = True;
-  } 
+  }
   else {
     menuSTrait -> reparentToTearOffShell(XtParent(mw), event);
   }
@@ -881,7 +881,7 @@ ArmAndActivate (
       mw->menu_button.visual_timer == 0) {
     mw->menu_button.visual_timer = XtAppAddTimeOut(
 				XtWidgetToApplicationContext((Widget)mw),
-				(unsigned long) VISUAL_DELAY, 
+				(unsigned long) VISUAL_DELAY,
                                  VisualDisarm,
 				(XtPointer)(mw));
   }
@@ -890,10 +890,10 @@ ArmAndActivate (
 /**********************************************************************
  *
  * VisualDisarm:
- *     
+ *
  *
  *********************************************************************/
-static void 
+static void
 VisualDisarm (
         XtPointer cd,
         XtIntervalId *id
@@ -911,17 +911,17 @@ VisualDisarm (
 	(XmGetFocusWidget((Widget)mw) == (Widget)mw) ) {
       /* in a torn off menu, redraw shadows */
 
-      /* Draw a Motif-style shadow. */ 
+      /* Draw a Motif-style shadow. */
       XmeDrawShadows (XtDisplay(mw), XtWindow(mw),
 		      mw->primitive.top_shadow_GC,
 		      mw->primitive.bottom_shadow_GC,
 		      mw->primitive.highlight_thickness,
 		      mw->primitive.highlight_thickness,
-		      mw->core.width - 
+		      mw->core.width -
 		      (2 * mw->primitive.highlight_thickness),
-		      mw->core.height - 
+		      mw->core.height -
 		      (2 * mw->primitive.highlight_thickness),
-		      mw->primitive.shadow_thickness,	
+		      mw->primitive.shadow_thickness,
 		      XmSHADOW_OUT);
     }
     XFlush (XtDisplay(mw));
@@ -935,7 +935,7 @@ VisualDisarm (
  * BtnDown
  *
  *********************************************************************/
-static void 
+static void
 BtnDown (
         Widget w,
         XEvent *event,
@@ -954,11 +954,11 @@ BtnDown (
 
   XmMenuSystemTrait menuSTrait;
 
-  menuSTrait = (XmMenuSystemTrait) 
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(mw)), XmQTmenuSystem);
 
   if (menuSTrait == NULL) {
-    /* We're in trouble.  This isn't a valid menu that we're in.  Abort! */ 
+    /* We're in trouble.  This isn't a valid menu that we're in.  Abort! */
     return;
   }
 
@@ -1014,7 +1014,7 @@ BtnDown (
  * BtnUp
  *
  *********************************************************************/
-static void 
+static void
 BtnUp (
         Widget w,
         XEvent *event,
@@ -1030,52 +1030,52 @@ BtnUp (
   Boolean popped_up;
   Widget shell = XtParent(XtParent(mw));
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(w)), XmQTmenuSystem);
-  
+
   if (menuSTrait == NULL) {
-    /* We're in trouble.  This isn't a valid menu that we're 
+    /* We're in trouble.  This isn't a valid menu that we're
        in and Arm and Activate has been called.  Abort ! */
     return;
   }
-  
+
   if (event && (event->type == ButtonRelease))
     validButton =  menuSTrait -> verifyButton(parent, event);
-  
+
   if (!validButton || (mw->menu_button.armed == False))
     return;
-  
+
   mw->menu_button.armed = False;
-  
+
   if (!XmIsMenuShell(shell))
     popped_up = menuSTrait -> popdown(parent, event);
   else
     popped_up = menuSTrait -> buttonPopdown(parent, event);
-  
+
   _XmRecordEvent(event);
 
   /* XmMENU_POPDOWN left the menu posted on button click - don't activate! */
   if (popped_up) return;
-  
+
   cb.reason = XmCR_ACTIVATE;
   cb.event = event;
-  
+
   menuSTrait -> entryCallback(parent, (Widget) mw, &cb);
-  
-  if (! mw -> menu_button.skip_callback && 
+
+  if (! mw -> menu_button.skip_callback &&
       mw->menu_button.activate_callback) {
     XFlush (XtDisplay(mw));
     flushDone = True;
     XtCallCallbackList ((Widget)mw, mw->menu_button.activate_callback, &cb);
   }
-  
+
   /* If the original shell does not indicate an active menu, but rather a
    * tear off pane, leave the button in an armed state.  Also, briefly
    * display the button as depressed to give the user some feedback of
    * the selection.
    */
-  
+
   if (!XmIsMenuShell(shell)) {
     XmeDrawShadows (XtDisplay (mw), XtWindow (mw),
 		    mw->primitive.bottom_shadow_GC,
@@ -1085,10 +1085,10 @@ BtnUp (
 		    mw->core.width - 2 * mw->primitive.highlight_thickness,
 		    mw->core.height - 2 * mw->primitive.highlight_thickness,
 		    mw->primitive.shadow_thickness, XmSHADOW_OUT);
-    
+
     XFlush (XtDisplay (mw));
     flushDone = True;
-    
+
     if (mw->core.being_destroyed == False &&
 	mw->menu_button.visual_timer == 0) {
       mw->menu_button.visual_timer = XtAppAddTimeOut (
@@ -1097,20 +1097,20 @@ BtnUp (
 						      VisualDisarm,
 						      (XtPointer)mw);
     }
-    
+
     mw->menu_button.armed = True;
   }
   else {
     menuSTrait -> reparentToTearOffShell(XtParent(mw), event);
   }
-  
+
   menuSTrait -> controlTraversal(XtParent(mw), False);
-  
+
   /* For the benefit of tear off menus, we must set the focus item
    * to this button.  In normal menus, this would not be a problem
    * because the focus is cleared when the menu is unposted.
    */
-  
+
   if (!XmIsMenuShell(shell))
     XmProcessTraversal ((Widget)mw, XmTRAVERSE_CURRENT);
 }
@@ -1122,7 +1122,7 @@ BtnUp (
  * MenuButtonHelp
  *
  *********************************************************************/
-static void 
+static void
 MenuButtonHelp (
         Widget w,
         XEvent *event,
@@ -1133,20 +1133,20 @@ MenuButtonHelp (
   ExmMenuButtonWidgetClass wc = (ExmMenuButtonWidgetClass)XtClass(w);
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
   XmMenuSystemTrait menuSTrait;
-  
-  menuSTrait = (XmMenuSystemTrait) 
+
+  menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(w)), XmQTmenuSystem);
-  
+
   if (menuSTrait == NULL) {
-    /* We're in trouble.  This isn't a valid menu that we're 
+    /* We're in trouble.  This isn't a valid menu that we're
        in and Arm and Activate has been called.  Abort ! */
     return;
   }
-  
+
   menuSTrait -> buttonPopdown(XtParent(mw), event);
-  
+
   XtCallActionProc ((Widget)mw, "PrimitiveHelp", event, params, *num_params);
-  
+
   menuSTrait -> reparentToTearOffShell(XtParent(mw), event);
 }
 
@@ -1162,11 +1162,11 @@ MenuButtonHelp (
 
 static void
 DisableCallback(
-     Widget w, 
+     Widget w,
      XtEnum value)
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   mw->menu_button.skip_callback = !( value == XmENABLE_ACTIVATE);
 }
 
@@ -1175,20 +1175,20 @@ static char*
 GetAccelerator(Widget w)
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   return(mw -> menu_button.accelerator);
 }
 
 
-static KeySym 
+static KeySym
 GetMnemonic(Widget w)
 {
   ExmMenuButtonWidget mw = (ExmMenuButtonWidget)w;
-  
+
   return(mw -> menu_button.mnemonic);
 }
 
-static char* GetActivateCBName() 
+static char* GetActivateCBName()
 {
   return(XmNactivateCallback);
 }
@@ -1200,7 +1200,7 @@ static char* GetActivateCBName()
  *      Externally accessable function for creating a MenuButton widget
  *
  ************************************************************************/
-Widget 
+Widget
 ExmCreateMenuButton (
         Widget parent,
         char *name,

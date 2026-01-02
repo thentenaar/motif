@@ -6462,13 +6462,13 @@ out:
 	return ret_val;
 }
 
- /* This function compares a given charset to the current default charset
-    being used.  It return TRUE if they match, FALSE otherwise.
+/**
+ * This function compares a given charset to the current default charset
+ * being used.  It return TRUE if they match, FALSE otherwise.
  */
-Boolean
-_XmStringIsCurrentCharset( XmStringCharSet c )
+Boolean _XmStringIsCurrentCharset(XmStringTag c)
 {
-  return (strcmp(c, XmStringGetCharset()) == 0);
+	return !strcmp(c, XmStringGetCharset());
 }
 
 /*
@@ -7165,11 +7165,7 @@ _XmStringGetTextConcat(
  * Returns TRUE if str is a single segment, FALSE otherwise.
  * If TRUE, pTextOut is valid; if FALSE, pTextOut and pTagOut are NULL.
 ****************/
-Boolean
-_XmStringSingleSegment(
-        XmString str,
-        char **pTextOut,
-        XmStringTag *pTagOut )
+Boolean _XmStringSingleSegment(XmString str, char **pTextOut, XmStringTag *pTagOut)
 {
   _XmStringContextRec stack_context ;
   Boolean           retVal;

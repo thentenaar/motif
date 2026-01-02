@@ -601,7 +601,7 @@ static XtResource resources[]  =
 	XmNmnemonicCharSet,
 	XmCMnemonicCharSet,
 	XmRString,
-	sizeof(XmStringCharSet),
+	sizeof(XmStringTag),
 	XtOffsetOf( struct _XmRowColumnRec,row_column.mnemonicCharSet),
 	XmRImmediate,
 	(XtPointer) XmFONTLIST_DEFAULT_TAG
@@ -711,7 +711,7 @@ static XmSyntheticResource syn_resources[] =
 {
     {
         XmNmnemonicCharSet,
-        sizeof(XmStringCharSet),
+        sizeof(XmStringTag),
         XtOffsetOf( struct _XmRowColumnRec,row_column.mnemonicCharSet),
         GetMnemonicCharSet,
         NULL,

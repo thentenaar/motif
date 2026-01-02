@@ -120,7 +120,7 @@ SelectionCB (Widget w,
                    XtPointer call_data)
 {
  XmComboBoxCallbackStruct *cb = (XmComboBoxCallbackStruct *)call_data;
- XmStringCharSet	charset;
+ XmStringTag	charset;
  XmStringDirection	direction;
  XmStringContext	context;
  Boolean		separator;

@@ -73,7 +73,7 @@ static void QuitCB(Widget, XtPointer, XtPointer); /*  callback for quit button *
 
 #define MAX_ARGS 20
 
-static XmStringCharSet	charset = (XmStringCharSet) XmSTRING_DEFAULT_CHARSET;
+static XmStringTag charset = XmSTRING_DEFAULT_CHARSET;
 
 
 typedef struct {

@@ -46,6 +46,29 @@ static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+extern Boolean _XmStringGetNextSegment(
+                        _XmStringContext context,
+                        XmStringCharSet *charset,
+                        XmStringDirection *direction,
+                        char **text,
+                        short *char_count,
+                        Boolean *separator) ;
+extern void _XmStringDrawMnemonic(
+                        Display *d,
+                        Window w,
+                        XmFontList fontlist,
+                        _XmString string,
+                        GC gc,
+                        Position x,
+                        Position y,
+                        Dimension width,
+                        unsigned char align,
+                        unsigned char lay_dir,
+                        XRectangle *clip,
+                        String mnemonic,
+                        XmStringCharSet charset) ;
+
+
 /* Create a new XmString */
 XmString
 _XmStringNCreate(char *text,

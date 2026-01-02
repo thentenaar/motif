@@ -56,7 +56,7 @@ typedef struct _ExmMenuButtonPart
 	XtIntervalId		visual_timer;
 
 	KeySym			mnemonic;
-	XmStringCharSet		mnemonic_charset;
+	XmStringTag		mnemonic_charset;
 	char*			accelerator;
 	XmString		accelerator_text;
 } ExmMenuButtonPart;

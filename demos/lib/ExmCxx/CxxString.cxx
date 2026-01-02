@@ -36,7 +36,7 @@
  *            The ExmString widget demonstrates how to
  *               * use strings in a widget.
  *               * use render tables in a widget.
- *               * create the XmQTaccessTextual trait. 
+ *               * create the XmQTaccessTextual trait.
  *            See the "OSF/Motif Widget Writer's Guide" for details.
  *
  ******************************************************************************/
@@ -52,14 +52,14 @@
 #include <Xm/SpecRenderT.h> /* header file for XmLABEL_RENDER_TABLE */
 #include <Xm/Screen.h> /* header file for screen information */
 
-/* Define constants here. */ 
+/* Define constants here. */
 static const int  FIND_NATURAL_SIZE = 0;
 #define UNSUPPORTED_FORMAT "Someone is trying to get or set a value for \n\
 ExmNcompoundString; however, the specified format is undefined.\n"
 
 // Define the translations string for the ExmString widget.
-// All six actions will be handled by the XmPrimitive widget. 
-static char defaultTranslations[] = 
+// All six actions will be handled by the XmPrimitive widget.
+static char defaultTranslations[] =
 "<EnterWindow>:		PrimitiveEnter()\n\
 <LeaveWindow>:		PrimitiveLeave()\n\
 :<Key>osfActivate:	PrimitiveParentActivate()\n\
@@ -67,8 +67,8 @@ static char defaultTranslations[] =
 :<Key>osfHelp:		PrimitiveHelp()\n\
 ~s ~m ~a <Key>Return:	PrimitiveParentActivate()";
 
-// Define the resources. 
-static XtResource resources[] = 
+// Define the resources.
+static XtResource resources[] =
 {
    {
 	XmNtraversalOn,
@@ -76,10 +76,10 @@ static XtResource resources[] =
 	XmRBoolean,
 	sizeof (Boolean),
 	XtOffsetOf( XmPrimitiveRec, primitive.traversal_on),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) False /* override the default. */
     },
-    {    
+    {
 	ExmNcompoundString,
 	ExmCCompoundString,
 	XmRXmString,
@@ -88,7 +88,7 @@ static XtResource resources[] =
 	XmRImmediate,
 	(XtPointer) NULL
     },
-    { 
+    {
 	XmNrenderTable, /* change to XmNrenderTable? */
 	XmCRenderTable,
 	XmRRenderTable,
@@ -103,7 +103,7 @@ static XtResource resources[] =
 	XmRAlignment,
 	sizeof(unsigned char),
 	XtOffsetOf( ExmCxxString,string.alignment),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) XmALIGNMENT_CENTER
     },
     {
@@ -118,23 +118,23 @@ static XtResource resources[] =
 };
 
 
-/* Provide a synthetic resource for ExmNcompoundString. */ 
+/* Provide a synthetic resource for ExmNcompoundString. */
 static XmSyntheticResource syn_resources[] =
 {
    {
-        ExmNcompoundString, 
+        ExmNcompoundString,
         sizeof(XmString),
         XtOffsetOf(ExmCxxString, string.compound_string),
-        ExmCxxString::GetValuesCompoundString, 
-        NULL  
+        ExmCxxString::GetValuesCompoundString,
+        NULL
    }
 };
 
-// No actions array needed. 
-// static XtActionsRec ActionsList[] = {}; 
+// No actions array needed.
+// static XtActionsRec ActionsList[] = {};
 
 /************************************
- * Class declaration for CxxString * 
+ * Class declaration for CxxString *
  ************************************/
 ExmCxxStringClass::ExmCxxStringClass(char*		name,
 				     WidgetClass	parentClass,
@@ -156,13 +156,13 @@ ExmCxxStringClass::ExmCxxStringClass(char*		name,
 
  // Override all simple class record fields that need to be overrided.
 
- // Define string class record fields.  
+ // Define string class record fields.
    default_render_table_type = XmLABEL_RENDER_TABLE;
    cxx_simple_extension      = NULL;
 };
 
 
-// Set up the class record such that whenever it is instantiated, 
+// Set up the class record such that whenever it is instantiated,
 // the widget metaclass constructor is called.
 externaldef(exmCxxStringclassrec)
 ExmCxxStringClass exmCxxStringClassRec("ExmCxxString",
@@ -177,14 +177,14 @@ ExmCxxStringClass exmCxxStringClassRec("ExmCxxString",
 
 
 // Establish the widget class name as an externally accessible symbol.
-// Use the "externaldef" macro rather than the "extern" keyword. 
-externaldef(exmCxxStringwidgetclass) WidgetClass exmCxxStringWidgetClass = 
+// Use the "externaldef" macro rather than the "extern" keyword.
+externaldef(exmCxxStringwidgetclass) WidgetClass exmCxxStringWidgetClass =
                                       (WidgetClass) &exmCxxStringClassRec;
 
-// Define trait structure variables. 
+// Define trait structure variables.
 // Since ExmString works with XmString data, the ExmString widget must hold
-// the XmQTaccessTextual trait.  Here, we need to declare a trait structure 
-// variable named StringATT. 
+// the XmQTaccessTextual trait.  Here, we need to declare a trait structure
+// variable named StringATT.
 static XmAccessTextualTraitRec StringATT = {
   0,  				/* version */
   ExmCxxString::StringGetValue,
@@ -192,7 +192,7 @@ static XmAccessTextualTraitRec StringATT = {
   ExmCxxString::StringPreferredFormat,
 };
 
-// Define some global representation type variables. 
+// Define some global representation type variables.
 static XmRepTypeId alignmentId;
 long dummy; /* memory leaks */
 
@@ -200,7 +200,7 @@ long dummy; /* memory leaks */
  *
  *  DefaultFont:
  *      Called by the Intrinsics to establish a default value for the
- *      XmNrenderTable resource. 
+ *      XmNrenderTable resource.
  *
  *****************************************************************************/
 void ExmCxxString::DefaultFont (
@@ -211,8 +211,8 @@ void ExmCxxString::DefaultFont (
 {
   static XmRenderTable  f1;
 
-  // Find the default render table associated with the default 
-  // render table type. 
+  // Find the default render table associated with the default
+  // render table type.
   //  f1 = XmeGetDefaultRenderTable(w, string_class.default_render_table_type);
   f1 = XmeGetDefaultRenderTable (w,  ((ExmCxxStringWidgetClass) XtClass(w))->
 				 default_render_table_type);
@@ -225,8 +225,8 @@ void ExmCxxString::DefaultFont (
  *
  * GetValuesCompoundString
  *	This is a synthetic resource function called by Motif when
- *      an application calls XtGetValues to access the value of  
- *      ExmNcompoundString. 
+ *      an application calls XtGetValues to access the value of
+ *      ExmNcompoundString.
  *
  ***********************************************************************/
 
@@ -234,12 +234,12 @@ void ExmCxxString::GetValuesCompoundString(Widget w, int, XtArgVal *value)
 {
   ExmCxxString *sw = (ExmCxxString *) w;
   XmString  string;
-  
+
   /* All Motif widgets are responsible for making a copy of an XmString
      resource whenever an application accesses the resource through a call
-     to XtGetValues. */ 
+     to XtGetValues. */
   string = XmStringCopy(sw->string.compound_string);
-  
+
   *value = (XtArgVal) string;
 }
 
@@ -251,7 +251,7 @@ void ExmCxxString::GetValuesCompoundString(Widget w, int, XtArgVal *value)
  ************************************************************************/
 void ExmCxxString::_MakeCxxWidget(Widget,
                                   Widget new_w,
-			          ArgList, Cardinal*) 
+			          ArgList, Cardinal*)
 {
     ExmCxxStringWidget dummy = IDLE_NEW(new_w) ExmCxxString;
 }
@@ -267,8 +267,8 @@ void ExmCxxStringClass::ClassInitialize(void)
   // The following statement is not required in the C version of this widget;
   // however, you must provide this statement in the C++ version.
   exmCxxStringClassRec.SetBaseClassExtensionQuark();
-   
-  // Use existing Motif representation type for XmNalignment 
+
+  // Use existing Motif representation type for XmNalignment
   alignmentId = XmRepTypeGetId (XmRAlignment);
   if (alignmentId == XmREP_TYPE_INVALID)
     XmeWarning(NULL, "The value of XmNalignment is illegal.");
@@ -284,7 +284,7 @@ void ExmCxxStringClass::ClassInitialize(void)
 void ExmCxxStringClass::class_part_initialize()
 {
  // Install the XmQTaccessTextual trait on the ExmString class and all
- // its subclasses. 
+ // its subclasses.
    XmeTraitSet((XtPointer)(WidgetClass)this , XmQTaccessTextual,
                (XtPointer) &StringATT);
 }
@@ -303,7 +303,7 @@ void ExmCxxString::initialize (
            )
 {
   Arg dirArgs[1];
- 
+
   // Simulate chaining by calling the initialize method of ExmCxxString's
   // superclass (ExmCxxSimple).
   ExmCxxSimple::initialize(request_w, args, num_args);
@@ -315,8 +315,8 @@ void ExmCxxString::initialize (
   /* Validate  XmNalignment */
   if (!XmRepTypeValidValue (alignmentId, string.alignment, (Widget)this))
     string.alignment = XmALIGNMENT_CENTER;
-    
-  AlignmentDirection(); 
+
+  AlignmentDirection();
   calc_visual_size();
   reconfigure(exmCxxStringWidgetClass, NULL);
 }
@@ -330,8 +330,8 @@ void ExmCxxString::initialize (
  *****************************************************************************/
 ExmCxxString::~ExmCxxString()
 {
- // Free the memory used to hold the ExmNcompound_string and 
- // XmNrenderTable resource values. 
+ // Free the memory used to hold the ExmNcompound_string and
+ // XmNrenderTable resource values.
    if (string.compound_string != NULL)
      XmStringFree(string.compound_string);
 
@@ -348,96 +348,96 @@ ExmCxxString::~ExmCxxString()
  *****************************************************************************/
 void ExmCxxString::resize(void)
 {
-  Dimension  mw, mh; 
+  Dimension  mw, mh;
   Dimension  window_decoration_thickness;
-  
-  // Configure internal geometry using current size. 
-  if ((simple.visual.width  == FIND_NATURAL_SIZE) || 
-      (simple.visual.height == FIND_NATURAL_SIZE)) 
+
+  // Configure internal geometry using current size.
+  if ((simple.visual.width  == FIND_NATURAL_SIZE) ||
+      (simple.visual.height == FIND_NATURAL_SIZE))
    return;
-  
+
   window_decoration_thickness = primitive.highlight_thickness  +
     			        primitive.shadow_thickness;
-  
+
   /* Determine where the string's bounding box should start. */
-  /* First determine the X coordinate of the bounding box. */ 
+  /* First determine the X coordinate of the bounding box. */
   mw = window_decoration_thickness + simple.margin_width;
-  
+
   switch (string.text_starts_here)
     {
     case ExmSTART_STRING_LEFT_SIDE :
       simple.visual.x = mw;
-      break; 
+      break;
     case ExmSTART_STRING_RIGHT_SIDE :
       simple.visual.x = core.width - (mw + simple.visual.width +
 					      window_decoration_thickness);
       break;
     case ExmCENTER_STRING :
-      simple.visual.x = (core.width - simple.visual.width)/2; 
+      simple.visual.x = (core.width - simple.visual.width)/2;
       break;
     };
-  
-  
+
+
   /* Now do the same for the vertical dimension. */
   mh = window_decoration_thickness + simple.margin_height;
-  
-  /* If the widget has enough vertical space to display all the lines in 
+
+  /* If the widget has enough vertical space to display all the lines in
      the string, then center the string. */
-  if (core.height > 
+  if (core.height >
       ((2 * window_decoration_thickness) + simple.visual.height)) {
     simple.visual.y = (core.height - simple.visual.height)/2;
   }
   else if (core.height > 2 * window_decoration_thickness) {
-    /* Space is very tight.  We will eliminate the top margin altogether and 
-       start the first line of the compound string snug against the bottom of 
-       the top edge of the window decorations. */ 
+    /* Space is very tight.  We will eliminate the top margin altogether and
+       start the first line of the compound string snug against the bottom of
+       the top edge of the window decorations. */
     simple.visual.y = window_decoration_thickness;
   }
   else
-    /* Space is so tight that we do not have enough space to display even 
-       one pixel of the visual. */ 
+    /* Space is so tight that we do not have enough space to display even
+       one pixel of the visual. */
     simple.visual.y = window_decoration_thickness;
 }
 
 /****************************************************************************
- * 
- * AlignmentDirection:
- *     Called by Initialize and by SetValues. 
  *
- ****************************************************************************/ 
+ * AlignmentDirection:
+ *     Called by Initialize and by SetValues.
+ *
+ ****************************************************************************/
 void ExmCxxString::AlignmentDirection(void)
 {
-  /* 
-   * This method determines where the text starts.  The text could 
-   * be centered. 
-   * start at the left side of the widget. 
-   * start at the right side of the widget. 
-   */ 
+  /*
+   * This method determines where the text starts.  The text could
+   * be centered.
+   * start at the left side of the widget.
+   * start at the right side of the widget.
+   */
 
   if (string.alignment == XmALIGNMENT_CENTER)
-    /* The string will be centered. */ 
+    /* The string will be centered. */
     string.text_starts_here = ExmCENTER_STRING;
-  
+
   else if (
-	   (XmDirectionMatch(primitive.layout_direction, XmLEFT_TO_RIGHT) &&  
+	   (XmDirectionMatch(primitive.layout_direction, XmLEFT_TO_RIGHT) &&
 	    string.alignment == XmALIGNMENT_BEGINNING)
 	   ||
 	   (XmDirectionMatch(primitive.layout_direction, XmRIGHT_TO_LEFT) &&
 	    string.alignment == XmALIGNMENT_END)
            )
-    /* The string will start at the left side of the widget. */ 
+    /* The string will start at the left side of the widget. */
     string.text_starts_here = ExmSTART_STRING_LEFT_SIDE;
-  
+
   else if (
 	   (XmDirectionMatch(primitive.layout_direction, XmLEFT_TO_RIGHT) &&
-	    string.alignment == XmALIGNMENT_END) 
+	    string.alignment == XmALIGNMENT_END)
 	   ||
 	   (XmDirectionMatch(primitive.layout_direction, XmRIGHT_TO_LEFT) &&
 	    string.alignment == XmALIGNMENT_BEGINNING)
            )
-    /* The string will start at the right side of the widget. */ 
+    /* The string will start at the right side of the widget. */
     string.text_starts_here = ExmSTART_STRING_RIGHT_SIDE;
-}   
+}
 
 
 /******************************************************************************
@@ -471,7 +471,7 @@ Boolean ExmCxxString::set_values (
    simple.need_to_reconfigure = True;
  }
 
- // Validate any changes to the value of the XmNalignment resource. 
+ // Validate any changes to the value of the XmNalignment resource.
  // If the requested new value is not valid, then reset the value of the
  // XmNalignment resource to the old value.
  if (string.alignment != cw->string.alignment) {
@@ -483,7 +483,7 @@ Boolean ExmCxxString::set_values (
  // If the XmNrecomputeSize resource used to be False but is now True, then
  // we will have to set in motion the series of calls that will lead to
  // an appropriate size for the widget.
- if ((string.recompute_size == True) && 
+ if ((string.recompute_size == True) &&
      (cw->string.recompute_size == False)) {
    simple.need_to_reconfigure = True;
 
@@ -524,14 +524,14 @@ XtGeometryResult  ExmCxxString::query_geometry(
   Widget w = (Widget) this;
 
   if (!XtIsRealized(w)) {
-    /* Widget has not been realized yet. */ 
+    /* Widget has not been realized yet. */
     reply->width  = XtWidth(w);   /* might be 0 */
     reply->height = XtHeight(w);  /* might be 0 */
   } else {
     if (string.recompute_size) {
-      /* The user will allow the ExmCxxString widget to change size, so 
-	 let's call CalcWidgetSize to calculate the widget's 
-	 preferred size. */ 
+      /* The user will allow the ExmCxxString widget to change size, so
+	 let's call CalcWidgetSize to calculate the widget's
+	 preferred size. */
       int save_w, save_h;
 
       save_w = XtWidth(w);
@@ -559,20 +559,20 @@ void ExmCxxString::draw_visual (void)
 {
  // Assuming that there is at least a minimal amount of space inside
  // the widget, and assuming that the compound string is not NULL,
- // then render the widget with XmStringDraw. 
+ // then render the widget with XmStringDraw.
    if (string.compound_string &&
       (simple.visual.width != 0) &&
       (simple.visual.height != 0)) {
      XmStringDraw (XtDisplay(this), XtWindow(this),
-                   string.render_table, 
+                   string.render_table,
                    string.compound_string,
 		   select_gc(),
 		   simple.visual.x, simple.visual.y,
 		   simple.visual.width, string.alignment,
-		   primitive.layout_direction, NULL);  
+		   primitive.layout_direction, NULL);
      XmeClearBorder(XtDisplay(this), XtWindow(this),
-                    (int)0, (int)0, 
-                    (Dimension)core.width, (Dimension)core.height, 
+                    (int)0, (int)0,
+                    (Dimension)core.width, (Dimension)core.height,
                     (Dimension)(primitive.highlight_thickness +
                                 primitive.shadow_thickness +
                                 simple.margin_width));
@@ -596,14 +596,14 @@ void ExmCxxString::create_gc(void)
   /* This function creates two GC's: one to render a sensitive widget
      and the other to render an insensitive widget. */
 
-  /* First, create the sensitive GC (named normal_GC). */ 
+  /* First, create the sensitive GC (named normal_GC). */
   valueMask = GCForeground | GCBackground | GCGraphicsExposures;
   values.foreground = primitive.foreground;
   values.background = core.background_pixel;
   values.graphics_exposures = False;
 
-  /* In order to set the GCFont field of the GC, we must gather XFontStruct 
-     information out of the render table. */ 
+  /* In order to set the GCFont field of the GC, we must gather XFontStruct
+     information out of the render table. */
   XmeRenderTableGetDefaultFont(string.render_table, &fs);
   if (fs != NULL) {
     values.font = fs->fid;
@@ -614,7 +614,7 @@ void ExmCxxString::create_gc(void)
 
   /* Next, create the insensitive GC.  This GC will share the same
      foreground, background, font, and graphics exposures as the sensitive
-     GC, but will hold a different fill style and stipple pattern. */ 
+     GC, but will hold a different fill style and stipple pattern. */
   valueMask |= GCFillStyle | GCStipple;
   values.fill_style = FillStippled;
 
@@ -633,12 +633,12 @@ void ExmCxxString::create_gc(void)
  *****************************************************************************/
 void ExmCxxString::calc_visual_size(void)
 {
-  // Ideally, how much space would the compound string require? 
+  // Ideally, how much space would the compound string require?
  if (string.compound_string && !XmStringEmpty(string.compound_string)) {
    XmStringExtent (string.render_table, string.compound_string,
 		   &(simple.visual.width), &(simple.visual.height));
  } else {
-   // The string is empty, so it requires no space. 
+   // The string is empty, so it requires no space.
    simple.visual.width = 0;
    simple.visual.height = 0;
  }
@@ -649,7 +649,7 @@ void ExmCxxString::calc_visual_size(void)
  * WidgetBaselines:
  *      Called by manager widgets needing to align text-based visuals.
  *      This method can also be called directly by an application through
- *      the XmWidgetGetBaselines function. 
+ *      the XmWidgetGetBaselines function.
  *
  *****************************************************************************/
 Boolean ExmCxxString::widget_baseline(
@@ -663,9 +663,9 @@ Boolean ExmCxxString::widget_baseline(
   XmString str1 = NULL;
   char* text1;
   char* text2;
-  XmStringCharSet char_set1, char_set2;
+  XmStringTag char_set1, char_set2;
   XmStringDirection direction1, direction2;
-  XmRenderTable RenderTable=NULL; 
+  XmRenderTable RenderTable=NULL;
   Boolean separator1, separator2;
   Dimension *base_array;
   Dimension Offset;
@@ -673,7 +673,7 @@ Boolean ExmCxxString::widget_baseline(
 
   /* This function returns True to indicate that the widget is displaying
      text, or False to indicate that the widget is not displaying text.
-     If the widget is displaying text, this function calculates the baseline 
+     If the widget is displaying text, this function calculates the baseline
      of each displayed line of text. */
 
   index = 0;
@@ -692,7 +692,7 @@ Boolean ExmCxxString::widget_baseline(
   base_array = (Dimension *)XtMalloc((sizeof(Dimension) * (*line_count)));
   /*    Offset = ((ExmStringWidget) w)->string.visual.y;  */
   Offset = simple.visual.y;
-    
+
   /* Go through the compound string, segment by segment. */
   while (XmStringGetNextSegment (context, &text1, &char_set1, &direction1,
 				 &separator1)) {
@@ -708,17 +708,17 @@ Boolean ExmCxxString::widget_baseline(
 	       XmSTRING_COMPONENT_SEPARATOR) {
 	  XmStringGetNextComponent (context, &text1, &char_set1, &direction1,
 				    NULL, NULL, NULL);
-	  base_array[index++] = Offset + 
+	  base_array[index++] = Offset +
 	    XmStringBaseline (RenderTable, str1);
 	  Offset += XmStringHeight (RenderTable, str1);
 	}
-      } else if (XmStringGetNextSegment(context, &text2, &char_set2, 
+      } else if (XmStringGetNextSegment(context, &text2, &char_set2,
 					&direction2, &separator2)) {
         if (separator2)
 	  {
 	    str2 = XmStringCreate(text2, char_set2);
 	    str1 = XmStringConcat(str1, str2);
-	    base_array[index++] = Offset + 
+	    base_array[index++] = Offset +
 	      XmStringBaseline (RenderTable, str1);
 	    Offset += XmStringHeight (RenderTable, str1);
 	  } else {
@@ -745,54 +745,54 @@ Boolean ExmCxxString::widget_baseline(
 
   XmStringFreeContext(context);
   XmStringFree(str);
-    
-  return (True);   
+
+  return (True);
 }
 
 
 /******************************************************************************
  *
  *  WidgetDisplayRect:
- *      Called by several Motif managers to determine how to align the visuals 
- *      drawn by primitives.  In addition, an application can access this 
- *      method by calling XmWidgetGetDisplayRect. 
+ *      Called by several Motif managers to determine how to align the visuals
+ *      drawn by primitives.  In addition, an application can access this
+ *      method by calling XmWidgetGetDisplayRect.
  *
  *****************************************************************************/
 Boolean ExmCxxString::widget_display_rect(
         XRectangle  *displayrect
                  )
 {
- // Determine the bounding box of the string. 
-   if ((simple.visual.width > 0 && 
+ // Determine the bounding box of the string.
+   if ((simple.visual.width > 0 &&
         simple.visual.height > 0)) {
-     displayrect->x =       simple.visual.x; 
-     displayrect->y =       simple.visual.y; 
-     displayrect->width =   simple.visual.width; 
-     displayrect->height =  simple.visual.height; 
-     return True;  // Yes, this widget contains something displayable. 
+     displayrect->x =       simple.visual.x;
+     displayrect->y =       simple.visual.y;
+     displayrect->width =   simple.visual.width;
+     displayrect->height =  simple.visual.height;
+     return True;  // Yes, this widget contains something displayable.
    }
    else  {
-     return False; // this widget is not currently displaying a visual. 
+     return False; // this widget is not currently displaying a visual.
    }
 }
 
 /******************************************************************************
  *
- *  Trait Methods: 
+ *  Trait Methods:
  *      We now provide the code for the three methods defined by the
- *      AccessTextual trait. 
+ *      AccessTextual trait.
  *
  *****************************************************************************/
 
 
 /******************************************************************************
  *
- *  StringGetValue 
+ *  StringGetValue
  *
  *****************************************************************************/
 XtPointer ExmCxxString::StringGetValue(
-     Widget w, 
-     int format) 
+     Widget w,
+     int format)
 {
   ExmCxxString *string_w = (ExmCxxString *) w;
   XmString     value;
@@ -802,19 +802,19 @@ XtPointer ExmCxxString::StringGetValue(
   XmString     separator;
   XtPointer    result;
   XmTextType   output_type;
-  
+
   /* Get the string that the ExmString widget is currently displaying. */
   value = XmStringCopy(string_w -> string.compound_string);
 
   /* The "value" variable know holds the string in XmString format.  */
-  
+
   switch (format)   {
-  case XmFORMAT_XmSTRING:  
-    /* If the caller wants "value" returned as a 
+  case XmFORMAT_XmSTRING:
+    /* If the caller wants "value" returned as a
        compound string, no conversion is necessary. */
     return (XtPointer) value;
 
-      case XmFORMAT_MBYTE: 
+      case XmFORMAT_MBYTE:
       case XmFORMAT_WCS:
          /* If the caller wants "value" returned as a multibyte string
             or as a wide character string, then we have to convert it. */
@@ -823,16 +823,16 @@ XtPointer ExmCxxString::StringGetValue(
            else
              output_type = XmWIDECHAR_TEXT;
 
-         /* Create a very simple parse table consisting of two 
+         /* Create a very simple parse table consisting of two
             parse mappings. */
            separator = XmStringSeparatorCreate();
-         
+
            n = 0;
            XtSetArg( args[n], XmNpattern, "\n"); n++;
            XtSetArg( args[n], XmNpatternType, output_type ); n++;
            XtSetArg( args[n], XmNsubstitute, separator ); n++;
-           XtSetArg( args[n], XmNincludeStatus, XmINSERT ); n++; 
-           map[0] = (XmParseMapping  *) XmParseMappingCreate( args, n );  
+           XtSetArg( args[n], XmNincludeStatus, XmINSERT ); n++;
+           map[0] = (XmParseMapping  *) XmParseMappingCreate( args, n );
            XmStringFree(separator);
 
            separator = XmStringComponentCreate(
@@ -841,17 +841,17 @@ XtPointer ExmCxxString::StringGetValue(
            XtSetArg( args[n], XmNpattern, "\t"); n++;
            XtSetArg( args[n], XmNpatternType, output_type ); n++;
            XtSetArg( args[n], XmNsubstitute, separator ); n++;
-           XtSetArg( args[n], XmNincludeStatus, XmINSERT ); n++; 
-           map[1] = (XmParseMapping  *) XmParseMappingCreate( args, n );  
+           XtSetArg( args[n], XmNincludeStatus, XmINSERT ); n++;
+           map[1] = (XmParseMapping  *) XmParseMappingCreate( args, n );
            XmStringFree(separator);
 
          /* Unparse "value" into either MULTIBYTE or WCS format. */
-           result = XmStringUnparse (value, 
+           result = XmStringUnparse (value,
                                      (XmStringTag) NULL,
-                                     (XmTextType)NULL, 
-                                     (XmTextType)output_type, 
-                                     (XmParseTable)map, 
-                                     XtNumber(map), 
+                                     (XmTextType)NULL,
+                                     (XmTextType)output_type,
+                                     (XmParseTable)map,
+                                     XtNumber(map),
                                      XmOUTPUT_ALL);
 
          /* Variable "result" now holds the text of the string in either
@@ -866,12 +866,12 @@ XtPointer ExmCxxString::StringGetValue(
 
 /*******************************************************************************
  *
- *  StringSetValue 
+ *  StringSetValue
  *
  ******************************************************************************/
 void ExmCxxString::StringSetValue(
-     Widget w, 
-     XtPointer s, 
+     Widget w,
+     XtPointer s,
      int format)
 {
   Arg       args[1];
@@ -886,17 +886,17 @@ void ExmCxxString::StringSetValue(
      no guarantee that the input "string" will be passed in XmString format.
      If the input "string" is passed in WCS or MULTIBYTE format, then we
      must convert the "string" into XmString format.  Once the "string"
-     is in XmString format, we can use it as the new value of 
-     ExmNcompoundString. */ 
+     is in XmString format, we can use it as the new value of
+     ExmNcompoundString. */
   switch (format)    {
-  case XmFORMAT_XmSTRING: 
+  case XmFORMAT_XmSTRING:
     temp = (XmString) s;
     freetemp = False;
     break;
 
-  case XmFORMAT_WCS: 
+  case XmFORMAT_WCS:
     str2 = (wchar_t *) s;
-    /* How long is str2? */ 
+    /* How long is str2? */
     length = 0;
     while (str2[length] != 0)
       length++;
@@ -904,31 +904,31 @@ void ExmCxxString::StringSetValue(
     str = (char*) XtMalloc(MB_CUR_MAX * (length+1));
     wcstombs(str, str2, MB_CUR_MAX * (length+1));
     s = str;
-    
-  case XmFORMAT_MBYTE: 
+
+  case XmFORMAT_MBYTE:
     temp = XmStringCreateLocalized((char*) s);
     freetemp = True;
     break;
 
   default:                XmeWarning((Widget)w, UNSUPPORTED_FORMAT);
-    return; 
+    return;
   }
-  
-  XtSetArg(args[0], ExmNcompoundString, temp); 
+
+  XtSetArg(args[0], ExmNcompoundString, temp);
   XtSetValues(w, args, 1);
-  
-  if (freetemp) 
+
+  if (freetemp)
     XmStringFree(temp);
 }
 
 /******************************************************************************
  *
  *  StringPreferredFormat
- *      Called by a parent widget to determine the preferred format of  
+ *      Called by a parent widget to determine the preferred format of
  *      this widget.  The possible returned formats are:
  *            * XmFORMAT_XmSTRING
  *            * XmFORMAT_MBYTE
- *            * XmFORMAT_WCS 
+ *            * XmFORMAT_WCS
  *
  *****************************************************************************/
 int ExmCxxString::StringPreferredFormat(Widget)

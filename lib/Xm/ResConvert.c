@@ -1973,8 +1973,8 @@ CvtStringToCharSetTable(
     }
 
   charsetTable = (XmStringCharSetTable)
-    XtMalloc(strDataSize + sizeof(XmStringCharSet) * (numCharsets+1));
-  charsetTable[numCharsets] = (XmStringCharSet)NULL;
+    XtMalloc(strDataSize + sizeof(XmStringTag) * (numCharsets+1));
+  charsetTable[numCharsets] = NULL;
   dataPtr = (char *) &charsetTable[numCharsets+1];
   strcpy(work_str, in_str);
 

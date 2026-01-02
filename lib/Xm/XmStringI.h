@@ -842,7 +842,7 @@ extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;
 extern Boolean _XmFontListSearch(
                         XmFontList fontlist,
-                        XmStringCharSet charset,
+                        XmStringTag charset,
                         short *indx,
                         XFontStruct **font_struct) ;
 
@@ -857,13 +857,7 @@ extern XmStringTag _XmStringCacheTag(
 extern Boolean _XmStringInitContext(
                         _XmStringContext *context,
                         _XmString string) ;
-extern Boolean _XmStringGetNextSegment(
-                        _XmStringContext context,
-                        XmStringCharSet *charset,
-                        XmStringDirection *direction,
-                        char **text,
-                        short *char_count,
-                        Boolean *separator) ;
+
 extern void _XmStringFreeContext(
                         _XmStringContext context) ;
 extern Dimension _XmStringWidth(
@@ -916,20 +910,6 @@ extern void _XmStringDrawUnderline(
                         unsigned char lay_dir,
                         XRectangle *clip,
                         _XmString u) ;
-extern void _XmStringDrawMnemonic(
-                        Display *d,
-                        Window w,
-                        XmFontList fontlist,
-                        _XmString string,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip,
-                        String mnemonic,
-                        XmStringCharSet charset) ;
 extern void _XmStringRender(Display *d,
                             Drawable w,
                             XmRenderTable rendertable,
@@ -969,12 +949,8 @@ extern int _XmStringLineCount(
                         _XmString string) ;
 extern char * _XmStringGetTextConcat(
                         XmString string) ;
-extern Boolean _XmStringIsCurrentCharset(
-			XmStringCharSet c) ;
-extern Boolean _XmStringSingleSegment(
-			XmString str,
-			char **pTextOut,
-			XmStringCharSet *pCharsetOut ) ;
+extern Boolean _XmStringIsCurrentCharset(XmStringTag c);
+extern Boolean _XmStringSingleSegment(XmString str, char **pTextOut, XmStringTag *pCharsetOut);
 extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
 				Widget widget,
                                 unsigned char units,

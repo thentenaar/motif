@@ -132,7 +132,7 @@ static void Help(Widget w, XEvent *event);
 static void GetLabelString(Widget wid, int offset, XtArgVal *value);
 static void GetAccelerator(Widget wid, int offset, XtArgVal *value);
 static void GetAcceleratorText(Widget wid, int offset, XtArgVal *value);
-static XmStringCharSet _XmStringCharsetCreate(XmStringCharSet stringcharset);
+static XmStringTag _XmStringCharsetCreate(XmStringTag stringcharset);
 static void GetMnemonicCharset(Widget wid, int resource, XtArgVal *value);
 static void QualifyLabelLocalCache(XmLabelGadget w);
 static void SetOverrideCallback(Widget w);
@@ -276,7 +276,7 @@ static XtResource resources[] =
 
     {
         XmNmnemonicCharSet, XmCMnemonicCharSet, XmRString,
-        sizeof(XmStringCharSet), XtOffsetOf(XmLabelGadgetRec,label.mnemonicCharset),
+        sizeof(XmStringTag), XtOffsetOf(XmLabelGadgetRec,label.mnemonicCharset),
         XmRImmediate, (XtPointer)  XmFONTLIST_DEFAULT_TAG
     },
 
@@ -499,7 +499,7 @@ static XmSyntheticResource syn_resources[] =
 
     {
         XmNmnemonicCharSet,
-        sizeof(XmStringCharSet), XtOffsetOf(XmLabelGadgetRec,label.mnemonicCharset),
+        sizeof(XmStringTag), XtOffsetOf(XmLabelGadgetRec,label.mnemonicCharset),
         GetMnemonicCharset, NULL
     },
 
@@ -3235,12 +3235,10 @@ XtArgVal *value)
  *
  ************************************************************************/
 
-static XmStringCharSet
-_XmStringCharsetCreate(XmStringCharSet stringcharset)
+static XmStringTag _XmStringCharsetCreate(XmStringTag stringcharset)
 {
-    return (XmStringCharSet) XtNewString((char*) stringcharset);
+    return XtNewString(stringcharset);
 }
-
 
 /************************************************************************
  *

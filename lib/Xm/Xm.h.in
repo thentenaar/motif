@@ -168,7 +168,6 @@ enum { XmSTRING_DIRECTION_L_TO_R,
 typedef unsigned char 	XmStringDirection;
 typedef union __XmStringRec	*XmString;		/* opaque to outside */
 typedef XmString *	XmStringTable;		/* opaque to outside */
-typedef char *		XmStringCharSet;	/* Null term string */
 typedef char *		XmStringTag;		/* Null term string */
 typedef unsigned char	XmStringComponentType;	/* component tags */
 
@@ -1302,7 +1301,7 @@ typedef unsigned char   XmNavigationType;
 typedef unsigned char XmButtonType;
 typedef XmButtonType * XmButtonTypeTable;
 typedef KeySym * XmKeySymTable;
-typedef XmStringCharSet * XmStringCharSetTable;
+typedef XmStringTag * XmStringCharSetTable;
 
 enum{	XmPUSHBUTTON = 1,		XmTOGGLEBUTTON,
 	XmRADIOBUTTON,			XmCASCADEBUTTON,
@@ -1618,9 +1617,7 @@ extern void XmChangeColor(
 
 /********    Public Function Declarations for XmString.c    ********/
 
-extern XmString XmStringCreate(
-                        char *text,
-                        XmStringCharSet charset) ;
+extern XmString XmStringCreate(char *text, XmStringTag tag);
 extern XmString XmStringCreateLocalized(
                         String text) ;
 extern XmString XmStringDirectionCreate(

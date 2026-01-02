@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmRowColumnP_h
 #define _XmRowColumnP_h
 
@@ -145,7 +145,7 @@ typedef	struct _XmRowColumnPart
 
     String      menu_accelerator;
     KeySym	    mnemonic;
-    XmStringCharSet mnemonicCharSet;
+    XmStringTag mnemonicCharSet;
 
     unsigned char   entry_alignment; /* type of label alignment */
                                      /* our children should have */
@@ -172,14 +172,14 @@ typedef	struct _XmRowColumnPart
     Boolean     armed;      /* controls whether pulldowns work */
                             /* or not, button down in any part of */
                             /* the menubar arms it, this is a bit field  */
-                            /* used for other internal flags, see macros */ 
+                            /* used for other internal flags, see macros */
 
                     /* next is only valid for popup menus */
 
     Boolean     adjust_margin;  /* T/F, indicating if we should force */
                                 /* all subwidgets to have similar */
                                 /* margins */
-    
+
     Boolean     adjust_last;    /* Indicates whether or not the last row */
                                 /* row or column should be stretched to  */
                                 /* the edge of the row_column widget.    */
@@ -210,7 +210,7 @@ typedef	struct _XmRowColumnPart
     int		postFromCount;		/* count of the list */
     int		postFromListSize;	/* size of the malloc'ed list */
 
-    Widget      lastSelectToplevel;     /* returned in XmGetPostedFromWidget*/ 
+    Widget      lastSelectToplevel;     /* returned in XmGetPostedFromWidget*/
     Widget	popupPosted;		/* popup submenu currently posted */
 
     unsigned char oldFocusPolicy;	/* save when menus begin traversal */
@@ -225,7 +225,7 @@ typedef	struct _XmRowColumnPart
     XtCallbackList	tear_off_deactivated_callback;
     Widget		tear_off_lastSelectToplevel;
     Widget		tear_off_focus_item;	/* when tear off is inactive */
-    
+
     unsigned char	entry_vertical_alignment;
     unsigned char	popup_menu_click;
     XtWorkProcId	popup_workproc;
@@ -267,7 +267,7 @@ typedef struct _XmRowColumnClassPart
 
 
 
-typedef struct _XmRowColumnClassRec 
+typedef struct _XmRowColumnClassRec
 {
     CoreClassPart		core_class;
     CompositeClassPart		composite_class;
@@ -302,7 +302,7 @@ typedef struct _XmRowColumnConstraintRec
 
 /* Access macros */
 
-#define XmRC_ARMED_BIT	      (1 << 0)	
+#define XmRC_ARMED_BIT	      (1 << 0)
 #define XmRC_BEING_ARMED_BIT  (1 << 1)		/* bits in menu's armed byte */
 #define XmRC_EXPOSE_BIT       (1 << 2)		/* used in both menu and */
 #define XmRC_WINDOW_MOVED_BIT (1 << 3)		/* popup menu, careful */
@@ -379,7 +379,7 @@ typedef struct _XmRowColumnConstraintRec
 #define RC_TearOffTitle(m) (((XmRowColumnWidget)(m))->row_column.tear_off_title)
 
 /* Tear Off State */
- 
+
 #define XmTO_TORN_OFF_BIT	(1 << 0)
 #define XmTO_FROM_INIT_BIT	(1 << 1)
 #define XmTO_VISUAL_DIRTY_BIT	(1 << 2)
