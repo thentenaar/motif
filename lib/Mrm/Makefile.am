@@ -3,7 +3,7 @@ CLEANFILES = $(CAT_FILES)
 EXTRA_DIST = Mrm.msg
 
 AM_CPPFLAGS       = -I$(srcdir)/.. -I.. -I../Xm ${X_CFLAGS} $(XFT_CFLAGS)
-libMrm_la_LDFLAGS = -version-info @ABI_VERSION@ -no-undefined
+libMrm_la_LDFLAGS = -version-info @ABI_VERSION@
 libMrm_la_LIBADD  = ../Xm/libXm.la $(XFT_LIBS) ${X_LIBS}
 libMrm_la_SOURCES = $(SRCS)
 lib_LTLIBRARIES   = libMrm.la
