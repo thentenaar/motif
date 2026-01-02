@@ -46,6 +46,67 @@ static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+/* Create a new XmString */
+XmString
+_XmStringNCreate(char *text,
+		XmStringTag tag,
+		int len)
+{
+  XmString		str;
+  char     		*curtag = NULL;
+  int      		t_length;
+  unsigned int 		tag_index = 0;
+  _XmString		opt_str;
+  XmTextType            type = XmCHARSET_TEXT;
+
+  if (!text) return ((XmString) NULL);
+  if (!tag) return ((XmString) NULL);
+
+  t_length = ((len >= 0) ? len : strlen (text));
+
+  if ((tag == XmFONTLIST_DEFAULT_TAG) ||
+      (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0))
+    {
+      curtag = tag;
+      type = XmMULTIBYTE_TEXT;
+    }
+  else {
+    if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
+      curtag = _XmStringGetCurrentCharset();
+    else curtag = tag;
+  }
+
+  tag_index = _XmStringIndexCacheTag(curtag, XmSTRING_TAG_STRLEN);
+
+  if ((tag_index < TAG_INDEX_UNSET) &&
+      (t_length < (1 << BYTE_COUNT_BITS)))
+    /* Create optimized string. */
+    {
+      _XmStrCreate(opt_str, XmSTRING_OPTIMIZED, t_length);
+      _XmStrTagIndex(opt_str) = tag_index;
+      _XmStrTextType(opt_str) = type;
+      memcpy(_XmStrText(opt_str), text, t_length);
+
+      return(opt_str);
+    }
+  else /* Non-optimized */
+    {
+      _XmStringUnoptSegRec 	seg;
+      _XmStrCreate(str, XmSTRING_MULTIPLE_ENTRY, 0);
+
+      _XmEntryInit((_XmStringEntry)&seg, XmSTRING_ENTRY_UNOPTIMIZED);
+
+      _XmUnoptSegTag(&seg) = _XmStringCacheTag(curtag, XmSTRING_TAG_STRLEN);
+
+      _XmEntryTextTypeSet(&seg, type);
+      _XmEntryTextSet((_XmStringEntry)&seg, text);
+      _XmUnoptSegByteCount(&seg) = t_length;
+
+      _XmStringSegmentNew(str, 0, (_XmStringEntry)&seg, True);
+      return(str);
+    }
+}
+
 /*
  * as close as we can come to Latin1Create without knowing the charset of
  * Latin1.  This imposes the semantic of \n meaning separator.

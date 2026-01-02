@@ -1103,7 +1103,6 @@ extern unsigned char *_XmStringTruncateASN1(unsigned char *str, int n);
 extern void _XmStringContextCopy(_XmStringContext target,
 				 _XmStringContext source);
 extern void _XmStringContextFree(_XmStringContext target);
-extern XmString _XmStringNCreate(char *text, XmStringTag tag, int len);
 extern void _XmStringSegmentNew(_XmString string,
 				int line_index,
 				_XmStringEntry value,

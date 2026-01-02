@@ -1529,9 +1529,10 @@ concatStringToXmString(
 {
     XmString	tempxm1;
 
+    (void)textlen;
     tempxm1 =
       XmStringConcatAndFree(XmStringDirectionCreate(direction),
-			    _XmStringNCreate(textstring, charset, textlen));
+			    XmStringCreate(textstring, charset));
 
     if (separator)
       tempxm1 = XmStringConcatAndFree(tempxm1,
