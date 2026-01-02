@@ -896,9 +896,8 @@ XmStringSeparatorCreate( void )
       return ret_val;
     }
 
-  ret_val = Clone(str, _XmStrEntryCountGet(str)); /* ??? */
   _XmProcessUnlock();
-  return (XmString)ret_val;
+  return (XmString)str;
 }
 
 /* Create an empty optimized _XmString containing a single tab. */
