@@ -808,10 +808,10 @@ Initialize(
     {
         searchData.mask = XmStringCopy(FS_DirMask( new_w)) ;
     } else {
-	searchData.mask = XmStringCreate("*", XmFONTLIST_DEFAULT_TAG);
+	searchData.mask = XmStringCreateLocalized("*");
     }
 
-    searchData.mask_length = XmStringLength( searchData.mask) ;
+    searchData.mask_length = XmCvtXmStringToByteStream(searchData.mask, NULL);
 
         /* The DirMask field will be set after subsequent call to
         *   the DirSearchProc.  Set field to NULL to prevent freeing of
@@ -821,8 +821,8 @@ Initialize(
 
     if(    FS_Directory( new_w)    )
     {
-        searchData.dir = XmStringCopy( FS_Directory( new_w)) ;
-        searchData.dir_length = XmStringLength( searchData.dir) ;
+        searchData.dir = XmStringCopy(FS_Directory(new_w)) ;
+        searchData.dir_length = XmCvtXmStringToByteStream(searchData.dir, NULL);
 
         /* The Directory field will be set after subsequent call to
         *   the DirSearchProc.  Set field to NULL to prevent freeing of
@@ -832,8 +832,8 @@ Initialize(
         }
     if(    FS_Pattern( new_w)    )
     {
-        searchData.pattern = XmStringCopy( FS_Pattern( new_w)) ;
-        searchData.pattern_length = XmStringLength( searchData.pattern) ;
+        searchData.pattern = XmStringCopy(FS_Pattern(new_w));
+        searchData.pattern_length = XmCvtXmStringToByteStream(searchData.pattern, NULL);
 
         /* The Pattern field will be set after subsequent call to
         *   the DirSearchProc.  Set field to NULL to prevent freeing of
@@ -2043,29 +2043,18 @@ QualifySearchDataProc(
                 XtFree( dirStr) ;
               }
           }
-        qualifiedSearchData->value =
-	  XmStringGenerate(valueString, XmFONTLIST_DEFAULT_TAG,
-			   XmCHARSET_TEXT, NULL);
+        qualifiedSearchData->value = XmStringCreateLocalized(valueString);
         }
-    qualifiedSearchData->length = XmStringLength( qualifiedSearchData->value) ;
+    qualifiedSearchData->length = XmCvtXmStringToByteStream(qualifiedSearchData->value, NULL);
 
-    qualifiedSearchData->mask =
-      XmStringGenerate(qualifiedMask, XmFONTLIST_DEFAULT_TAG,
-		       XmCHARSET_TEXT, NULL) ;
-    qualifiedSearchData->mask_length = XmStringLength(
-                                                   qualifiedSearchData->mask) ;
+    qualifiedSearchData->mask = XmStringCreateLocalized(qualifiedMask);
+    qualifiedSearchData->mask_length = XmCvtXmStringToByteStream(qualifiedSearchData->mask, NULL);
 
-    qualifiedSearchData->dir =
-      XmStringGenerate(qualifiedDir, XmFONTLIST_DEFAULT_TAG,
-		       XmCHARSET_TEXT, NULL) ;
-    qualifiedSearchData->dir_length = XmStringLength(
-                                                    qualifiedSearchData->dir) ;
+    qualifiedSearchData->dir = XmStringCreateLocalized(qualifiedDir);
+    qualifiedSearchData->dir_length = XmCvtXmStringToByteStream(qualifiedSearchData->dir, NULL);
 
-    qualifiedSearchData->pattern =
-      XmStringGenerate(qualifiedPattern, XmFONTLIST_DEFAULT_TAG,
-		       XmCHARSET_TEXT, NULL) ;
-    qualifiedSearchData->pattern_length = XmStringLength(
-                                                qualifiedSearchData->pattern) ;
+    qualifiedSearchData->pattern = XmStringCreateLocalized(qualifiedPattern);
+    qualifiedSearchData->pattern_length = XmCvtXmStringToByteStream(qualifiedSearchData->pattern, NULL);
     XtFree( valueString) ;
     XtFree( qualifiedMask) ;
     XtFree( qualifiedPattern) ;
@@ -2393,21 +2382,18 @@ ListCallback(
                 change_data.reason = XmCR_NONE ;
                 change_data.value = NULL ;
                 change_data.length = 0 ;
-                textValue = XmTextFieldGetString( FS_FilterText( fsb)) ;
-                change_data.mask =
-		  XmStringGenerate(textValue, XmFONTLIST_DEFAULT_TAG,
-				   XmCHARSET_TEXT, NULL) ;
-                change_data.mask_length = XmStringLength( change_data.mask) ;
+                textValue = XmTextFieldGetString(FS_FilterText(fsb));
+                change_data.mask = XmStringCreateLocalized(textValue);
+                change_data.mask_length = XmCvtXmStringToByteStream(change_data.mask, NULL);
                 if(    FS_PathMode( fsb)  ==  XmPATH_MODE_FULL   )
                   {
-                    change_data.dir = XmStringCopy( callback->item) ;
+                    change_data.dir = XmStringCopy(callback->item);
                   }
                 else
                   {
-                    change_data.dir = XmStringConcat( FS_Directory( fsb),
-                                                              callback->item) ;
+                    change_data.dir = XmStringConcat(FS_Directory(fsb), callback->item);
                   }
-                change_data.dir_length = XmStringLength( change_data.dir) ;
+                change_data.dir_length = XmCvtXmStringToByteStream(change_data.dir, NULL);
                 change_data.pattern = NULL ;
                 change_data.pattern_length = 0 ;
 
@@ -2637,8 +2623,8 @@ SetValues(
             }
         else
         {   doSearch = TRUE ;
-            searchData.mask = XmStringCopy( FS_DirMask( request)) ;
-            searchData.mask_length = XmStringLength( searchData.mask) ;
+            searchData.mask = XmStringCopy(FS_DirMask(request));
+            searchData.mask_length = XmCvtXmStringToByteStream(searchData.mask, NULL);
             }
         FS_DirMask( new_w) = (XmString) XmUNSPECIFIED ;
         }
@@ -2651,8 +2637,8 @@ SetValues(
             }
         else
         {   doSearch = TRUE ;
-            searchData.dir = XmStringCopy( FS_Directory( request)) ;
-            searchData.dir_length = XmStringLength( searchData.dir) ;
+            searchData.dir = XmStringCopy(FS_Directory(request));
+            searchData.dir_length = XmCvtXmStringToByteStream(searchData.dir, NULL);
 
             /* The resource will be set to the new value after the Search
             *   routines have been called for validation.
@@ -2669,8 +2655,8 @@ SetValues(
             }
         else
         {   doSearch = TRUE ;
-            searchData.pattern = XmStringCopy( FS_Pattern( request)) ;
-            searchData.pattern_length = XmStringLength( searchData.pattern) ;
+            searchData.pattern = XmStringCopy(FS_Pattern( request));
+            searchData.pattern_length = XmCvtXmStringToByteStream(searchData.pattern, NULL);
 
             /* The resource will be set to the new value after the Search
             *   routines have been called for validation.
@@ -3272,19 +3258,15 @@ FileSelectionPB(
         if(    FS_FilterText( fs)
             && (text_value = XmTextFieldGetString( FS_FilterText( fs)))    )
         {
-            searchData.mask =
-	      XmStringGenerate(text_value, XmFONTLIST_DEFAULT_TAG,
-			       XmCHARSET_TEXT, NULL) ;
-            searchData.mask_length = XmStringLength( searchData.mask) ;
+            searchData.mask = XmStringCreateLocalized(text_value);
+            searchData.mask_length = XmCvtXmStringToByteStream(searchData.mask, NULL);
             XtFree( text_value) ;
             }
         if(    FS_DirText( fs)
             && (text_value = XmTextFieldGetString( FS_DirText( fs)))    )
         {
-            searchData.dir =
-	      XmStringGenerate(text_value, XmFONTLIST_DEFAULT_TAG,
-			       XmCHARSET_TEXT, NULL) ;
-            searchData.dir_length = XmStringLength( searchData.dir) ;
+            searchData.dir = XmStringCreateLocalized(text_value);
+            searchData.dir_length = XmCvtXmStringToByteStream(searchData.dir, NULL);
             XtFree( text_value) ;
             }
         searchData.reason = XmCR_NONE ;
@@ -3431,8 +3413,8 @@ XmFileSelectionDoSearch(
 
     if(    dirmask    )
     {
-        searchData.mask = XmStringCopy( dirmask) ;
-        searchData.mask_length = XmStringLength( searchData.mask) ;
+        searchData.mask = XmStringCopy(dirmask) ;
+        searchData.mask_length = XmCvtXmStringToByteStream(searchData.mask, NULL);
         }
     else
     {   if(    FS_FilterText( fs)    )
@@ -3443,10 +3425,8 @@ XmFileSelectionDoSearch(
         {   textString = NULL ;
             }
         if(    textString    )
-        {   searchData.mask =
-	      XmStringGenerate(textString, XmFONTLIST_DEFAULT_TAG,
-			       XmCHARSET_TEXT, NULL) ;
-            searchData.mask_length = XmStringLength( searchData.mask) ;
+        {   searchData.mask = XmStringCreateLocalized(textString);
+            searchData.mask_length = XmCvtXmStringToByteStream(searchData.mask, NULL);
             XtFree( textString) ;
             }
         else
@@ -3456,10 +3436,8 @@ XmFileSelectionDoSearch(
         if(    FS_DirText( fs)
             && (textString = XmTextFieldGetString( FS_DirText( fs)))    )
         {
-            searchData.dir =
-	      XmStringGenerate(textString, XmFONTLIST_DEFAULT_TAG,
-			       XmCHARSET_TEXT, NULL);
-            searchData.dir_length = XmStringLength( searchData.dir) ;
+            searchData.dir = XmStringCreateLocalized(textString);
+            searchData.dir_length = XmCvtXmStringToByteStream(searchData.dir, NULL);
             XtFree( textString) ;
             }
         }

@@ -1233,9 +1233,8 @@ SelectionBoxCallback(
 
 	text_value = XmTextFieldGetString (SB_Text (sel));
 	temp.event = callback->event;
-	temp.value = XmStringGenerate(text_value, XmFONTLIST_DEFAULT_TAG,
-				      XmCHARSET_TEXT, NULL);
-	temp.length = XmStringLength (temp.value);
+	temp.value = XmStringCreateLocalized(text_value);
+	temp.length = XmCvtXmStringToByteStream(temp.value, NULL);
 	XtFree (text_value);
 
 	switch (which_button)

@@ -1423,7 +1423,7 @@ ComboBoxParentProcess(Widget		  wid,
 	      if (pos)
 		{
 		  call_data.item		    = XmStringCopy(item);
-		  call_data.item_length             = XmStringLength(item);
+		  call_data.item_length             = XmCvtXmStringToByteStream(item, NULL);
 		  call_data.item_position	    = pos;
 		  call_data.selected_item_count     = 1;
 		  call_data.selected_item_positions = &pos;

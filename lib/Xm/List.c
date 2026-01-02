@@ -5572,7 +5572,7 @@ DefaultAction(XmListWidget lw,
     }
 
   if (lw->list.InternalList[item]->length == UNKNOWN_LENGTH)
-    lw->list.InternalList[item]->length = XmStringLength(lw->list.items[item]);
+    lw->list.InternalList[item]->length = XmCvtXmStringToByteStream(lw->list.items[item], NULL);
 
   cb.reason = XmCR_DEFAULT_ACTION;
   cb.event = event;
@@ -5647,7 +5647,7 @@ ClickElement(XmListWidget lw,
 
   assert(lw->list.itemCount && lw->list.InternalList);
   if (lw->list.InternalList[item]->length == UNKNOWN_LENGTH)
-    lw->list.InternalList[item]->length = XmStringLength(lw->list.items[item]);
+    lw->list.InternalList[item]->length = XmCvtXmStringToByteStream(lw->list.items[item], NULL);
 
   cb.event = event;
   cb.item_length = lw->list.InternalList[item]->length;

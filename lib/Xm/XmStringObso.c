@@ -674,3 +674,18 @@ XmStringGetNextSegment(XmStringContext context,
   _XmProcessUnlock();
   return ret_val;
 }
+
+int
+XmStringLength(
+        XmString string )
+{
+  unsigned int	len;
+
+  if (!string) return (0);
+  if (!XmeStringIsValid(string)) return (0);
+
+  len = XmCvtXmStringToByteStream(string, NULL);
+
+  return((int)len);
+}
+

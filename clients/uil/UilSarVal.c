@@ -1646,7 +1646,7 @@ void sar_make_comp_str_comp(yystype *target_frame, yystype *type_frame,
     }
 
   cstr_entry->value.xms_value = cstr_r;
-  cstr_entry->w_length = XmStringLength(cstr_r);
+  cstr_entry->w_length = XmCvtXmStringToByteStream(cstr_r, NULL);
 
   cstr_entry->az_first_table_value = NULL;
 

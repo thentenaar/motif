@@ -131,6 +131,9 @@ extern XmString XmStringNCopy(XmString str, int n);
 XM_ALTERNATIVE(Use XmStringCompare instead)
 extern Boolean XmStringByteCompare(XmString a1, XmString b1);
 
+XM_ALTERNATIVE(Use XmCvtXmStringToByteStream instead)
+extern int XmStringLength(XmString string);
+
 XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
 extern XmFontList XmFontListCreate(XFontStruct *font, XmStringCharSet charset);
 

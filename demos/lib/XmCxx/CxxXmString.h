@@ -32,8 +32,8 @@ private:
   XmString	internal;
 public:
       // Constructors
-  XmCxxString(const char* str) { 
-    internal = XmStringCreateLocalized((String) str); 
+  XmCxxString(const char* str) {
+    internal = XmStringCreateLocalized((String) str);
   };
   XmCxxString(XmCxxString &str) { internal = XmStringCopy(str.internal); }
   XmCxxString(XmString str) { internal = str; }
@@ -70,19 +70,19 @@ public:
       // Accessors and Functions
   Dimension 	baseline(XmRenderTable tab);
   Boolean 	empty() { return XmStringEmpty(internal); }
-  void 		draw(Widget w, XmRenderTable r, GC gc, 
-		     Position x, Position y, Dimension width, 
+  void 		draw(Widget w, XmRenderTable r, GC gc,
+		     Position x, Position y, Dimension width,
 		     unsigned char alignment, unsigned char layout_dir,
 		     XRectangle *clip);
-  void 		draw(Display *d, Window w, XmRenderTable r, GC gc, 
-		     Position x, Position y, Dimension width, 
+  void 		draw(Display *d, Window w, XmRenderTable r, GC gc,
+		     Position x, Position y, Dimension width,
 		     unsigned char alignment, unsigned char layout_dir,
 		     XRectangle *clip);
   void		extents(XmRenderTable r, Dimension *w, Dimension *h);
   Boolean	hasSubstring(XmCxxString& ss) {
     return XmStringHasSubstring(internal, ss.internal);
   }
-  int		length() { return XmStringLength(internal); }
+  int		length() { return XmCvtXmStringToByteStream(internal, NULL); }
   int		lineCount() { return XmStringLineCount(internal); }
 };
 

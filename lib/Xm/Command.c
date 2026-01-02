@@ -495,7 +495,7 @@ ListCallback(
         cmdCB.reason = XmCR_COMMAND_ENTERED ;
         cmdCB.event  = NULL ;
         cmdCB.value  = tmpXmString ;
-        cmdCB.length = XmStringLength( tmpXmString) ;
+        cmdCB.length = XmCvtXmStringToByteStream(tmpXmString, NULL);
         XtCallCallbackList( (Widget) cmdWid, cmdWid->command.callback, &cmdCB) ;
 
         XmStringFree( tmpXmString) ;
@@ -534,12 +534,10 @@ CommandCallback(
 
     /* get char* string from text and convert to XmString type */
     str = XmTextFieldGetString (client_data->selection_box.text);
-    cb.value = XmStringGenerate(str, XmFONTLIST_DEFAULT_TAG,
-				XmCHARSET_TEXT, NULL);
-    XtFree (str);
+    cb.value = XmStringCreateLocalized(str);
+    XtFree(str);
 
-    cb.length = XmStringLength (cb.value);
-
+    cb.length = XmCvtXmStringToByteStream(cb.value, NULL);
     XtCallCallbackList ((Widget) client_data, client_data->command.value_changed_callback, &cb);
     XmStringFree (cb.value);
     return ;
@@ -640,7 +638,7 @@ _XmCommandReturn(
     cb.reason = XmCR_COMMAND_ENTERED;
     cb.event  = event;
     cb.value  = tmpXmString;
-    cb.length = XmStringLength (tmpXmString);
+    cb.length = XmCvtXmStringToByteStream(tmpXmString, NULL);
     XtCallCallbackList ((Widget) w, w->command.callback, &cb);
     XmStringFree (tmpXmString);
     XtFree (tmpString);
