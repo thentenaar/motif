@@ -351,9 +351,7 @@ to an application.\n\
 You should drag the displayed pixmap from the Label widget\n\
 and drop it inside the framed DrawingArea widget.");
 
-   hs_as_cs = XmStringLtoRCreate(help_string,
-                                 XmFONTLIST_DEFAULT_TAG);
-
+   hs_as_cs = XmStringCreateLocalized(help_string);
    XtSetArg(arg[0], XmNmessageString, hs_as_cs);
    dialog_general_help = (Widget)XmCreateMessageDialog(toplevel,
                                              "message", arg, 1);
