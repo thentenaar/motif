@@ -704,9 +704,9 @@ CreateHelp (Widget parent)		/*  parent widget	*/
 Use the numChildren resource to control the creation and destruction\n\
 of the RowColumn. Then use the other controls to manipulate the RowColumn\n\
 layout resources.");
-	message_string = XmStringGenerate(message, charset, XmCHARSET_TEXT, NULL);
-	button_string  = XmStringGenerate("Close", charset, XmCHARSET_TEXT, NULL);
-	title_string   = XmStringGenerate("General Help", charset, XmCHARSET_TEXT, NULL);
+	message_string = XmStringCreateLocalized(message);
+	button_string  = XmStringCreateLocalized("Close");
+	title_string   = XmStringCreateLocalized("General Help");
 
 	/*	Create MessageBox dialog.
 	*/
