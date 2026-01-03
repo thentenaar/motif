@@ -949,7 +949,7 @@ extern int _XmStringLineCount(
                         _XmString string) ;
 extern char * _XmStringGetTextConcat(
                         XmString string) ;
-extern Boolean _XmStringIsCurrentCharset(XmStringTag c);
+extern Boolean _XmStringIsCurrentCharset(const XmStringTag c);
 extern Boolean _XmStringSingleSegment(XmString str, char **pTextOut, XmStringTag *pCharsetOut);
 extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
 				Widget widget,

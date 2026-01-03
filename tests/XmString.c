@@ -25,6 +25,8 @@
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <check.h>
+
+#include "XmStringI.h"
 #include "suites.h"
 
 static Display *display;
@@ -288,6 +290,31 @@ START_TEST(create_component)
 }
 END_TEST
 
+/**
+ * refcount is 6 bits for an "optimized" string, 8 bits for an unoptimized
+ * string
+ */
+START_TEST(copy_makes_copy)
+{
+	XmString a, b;
+	unsigned char cnt;
+
+	a = XmStringCreateLocalized("test");
+	_XmStrRefCountSet(a, 0);
+	_XmStrRefCountDec(a);
+	cnt = _XmStrRefCountGet(a);
+	b = XmStringCopy(a);
+
+	ck_assert_msg(a != b, "Copy should make a copy when refcount overflows");
+	ck_assert_msg(_XmStrRefCountGet(b) == 1, "The copy should have 1 reference");
+	ck_assert_msg(_XmStrRefCountGet(a) == cnt,
+	              "The original refcount should be unchanged");
+	_XmStrRefCountSet(a, 1);
+	XmStringFree(a);
+	XmStringFree(b);
+}
+END_TEST
+
 START_TEST(copy_null)
 {
 	ck_assert_msg(!XmStringCopy(NULL), "Copy should return NULL");
@@ -399,6 +426,7 @@ void xmstring_suite(SRunner *runner)
 	suite_add_tcase(s, t);
 
 	t = tcase_create("Copy");
+	tcase_add_test(t, copy_makes_copy);
 	tcase_add_test(t, copy_null);
 	tcase_add_test(t, copy_same);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);

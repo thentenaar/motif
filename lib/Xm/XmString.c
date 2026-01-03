@@ -6466,7 +6466,7 @@ out:
  * This function compares a given charset to the current default charset
  * being used.  It return TRUE if they match, FALSE otherwise.
  */
-Boolean _XmStringIsCurrentCharset(XmStringTag c)
+Boolean _XmStringIsCurrentCharset(const XmStringTag c)
 {
 	return !strcmp(c, XmStringGetCharset());
 }
