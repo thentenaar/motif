@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef	_XmColorSelectorP_h
@@ -32,7 +32,7 @@
 /************************************************************
  *      INCLUDE FILES
  *************************************************************/
-		
+
 #include <Xm/ManagerP.h>
 #include <Xm/ColorS.h>
 
@@ -44,7 +44,6 @@
 extern "C" {
 #endif
 
-#define XmColorSelector_COLOR_NAME_SIZE 100
 #define XmColorSelector_NUM_TOGGLES 2
 
 typedef struct _ColorSelStrings {
@@ -54,13 +53,13 @@ typedef struct _ColorSelStrings {
     XmString no_cell_error, file_read_error;
 } ColorSelStrings;
 
-typedef struct _ColorInfo {
-    char name[XmColorSelector_COLOR_NAME_SIZE], no_space_lower_name[XmColorSelector_COLOR_NAME_SIZE];
+typedef struct ColorInfo {
     unsigned short red, green, blue;
+    const char *name;
 } ColorInfo;
 
 typedef struct _ColorSelectorClassPart {
-    XtPointer 		extension; 
+    XtPointer 		extension;
 } ColorSelectorClassPart;
 
 typedef struct _XmColorSelectorClassRec
@@ -77,8 +76,7 @@ typedef struct _XmColorSelectorPart
     /* resources */
 
     XmColorMode		color_mode;		/* selector mode	   */
-    char	       *color_name;		/* the colorname we select */ 
-    String	        rgb_file;      		/* where to look for	   */
+    char	       *color_name;		/* the colorname we select */
     Dimension		margin_width;           /* for geom management     */
     Dimension		margin_height;	        /* for geom management	   */
 
@@ -132,7 +130,6 @@ typedef struct _XmColorSelectorConstraintRec
 
 #define XmColorS_color_mode(w) (((XmColorSelectorWidget)(w))->cs.color_mode)
 #define XmColorS_color_name(w) (((XmColorSelectorWidget)(w))->cs.color_name)
-#define XmColorS_rgb_file(w) (((XmColorSelectorWidget)(w))->cs.rgb_file)
 #define XmColorS_margin_width(w) (((XmColorSelectorWidget)(w))->cs.margin_width)
 #define XmColorS_margin_height(w) (((XmColorSelectorWidget)(w))->cs.margin_height)
 #define XmColorS_strings(w) (((XmColorSelectorWidget)(w))->cs.strings)

@@ -281,17 +281,10 @@ AC_SUBST([DATADIR], "${datadir}")
 AS_IF([test "x$X11BASE" != "x"],[
 	AC_SUBST([INCDIR], "${X11BASE}/include/X11")
 	AC_SUBST([LIBDIR], "${X11BASE}/lib/X11")
-	AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${X11BASE}/share/X11/rgb.txt"])
-
 ],[
 	AC_SUBST([INCDIR], "${includedir}/X11")
 	AC_SUBST([LIBDIR], "${libdir}/X11")
 ])
-
-dnl lib/Xm/ColorS.c
-dnl Various NIXes store this file in different places
-AS_IF([test "x$RGB_TXT" == "x"],[RGB_TXT="${datarootdir}/X11/rgb.txt"])
-AC_SUBST([RGB_TXT])
 
 AS_IF([test "x$enable_glw" == "xyes"],[
 	AC_SUBST([GLW_VERSION], [GLW_VERSION])

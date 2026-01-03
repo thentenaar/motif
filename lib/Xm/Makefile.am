@@ -7,7 +7,7 @@ EXTRA_DIST = $(XMSTRING_LIST) Xm.msg XmStrDefs.ct
 AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
               -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
               -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
-              -DDATADIR=\"@DATADIR@\" -DRGB_TXT=\"@RGB_TXT@\" \
+              -DDATADIR=\"@DATADIR@\" \
               $(XFT_CFLAGS) $(XCURSOR_CFLAGS) $(X_CFLAGS)
 xmdir = $(includedir)/Xm
 
