@@ -1514,3 +1514,29 @@ static int trap_XCloseDisplay(Display *disp, XExtCodes *codes)
     return 0;
 }
 
+/**********************************************************************/
+/** XmeUseColorObj()                                                 **/
+/**           Return False if color is not working for some reason.  **/
+/**                                                                  **/
+/**           Could be due to useColorObj resource == False, or any  **/
+/**           problem with the color server or color object.         **/
+/**                                                                  **/
+/**********************************************************************/
+Boolean
+XmeUseColorObj( void )
+{
+    XmColorObj tmpColorObj = _XmDefaultColorObj;
+
+    _XmProcessLock();
+    if (!tmpColorObj ||
+      !tmpColorObj->color_obj.colorIsRunning ||
+      !tmpColorObj->color_obj.useColorObj) {
+      _XmProcessUnlock();
+      return False;
+    }
+    else {
+      _XmProcessUnlock();
+      return True;
+    }
+}
+
