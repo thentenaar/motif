@@ -288,6 +288,24 @@ START_TEST(create_component)
 }
 END_TEST
 
+START_TEST(copy_null)
+{
+	ck_assert_msg(!XmStringCopy(NULL), "Copy should return NULL");
+}
+END_TEST
+
+START_TEST(copy_same)
+{
+	XmString s, c;
+
+	s = XmStringCreateLocalized("motif");
+	c = XmStringCopy(s);
+	ck_assert_msg(c == s, "Copy should return the same string");
+	XmStringFree(c);
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(compare_both_null)
 {
 	ck_assert_msg(XmStringCompare(NULL, NULL),
@@ -376,6 +394,13 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, create_separator);
 	tcase_add_loop_test(t, create_component, 0, XtNumber(components));
 
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Copy");
+	tcase_add_test(t, copy_null);
+	tcase_add_test(t, copy_same);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

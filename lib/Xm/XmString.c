@@ -4252,7 +4252,7 @@ _XmStringLayout(_XmString string,
                 XmDirection direction)
 {
   int seg_index=0, line_index=0;
-  _XmStringEntry        *line;
+  _XmStringEntry        *line=NULL;
   _XmStringNREntry 	seg;
   Boolean needs_recompute = False;
 
