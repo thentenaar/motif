@@ -60,6 +60,7 @@ PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 dnl Check for particular headers / functions
 AC_CHECK_HEADERS([alloca.h iconv.h wctype.h wchar.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat wcslen])
+AC_SEARCH_LIBS([floor], [m])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
 
@@ -68,6 +69,21 @@ AS_IF([test "x$ac_cv_func_iconv" == "xno"],[
 	AC_SEARCH_LIBS([libiconv_open], [iconv], [], [
 		AC_MSG_ERROR([Unable to find iconv])
 	])
+],[
+	dnl If <iconv.h> pulls in libconv later on in the build (e.g.,
+	dnl FreeBSD with native iconv and GNU libiconv from ports)
+	dnl make sure we add it to X_LIBS. This is damn ugly, but is
+	dnl an unfortuante necessity.
+	save_CPPFLAGS=$CPPFLAGS
+	save_LDFLAGS=$LDFLAGS
+	CPPFLAGS=$pkg_cv_X_CFLAGS
+	LDFLAGS=$pkg_cv_X_LIBS
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <iconv.h>]], [[
+		iconv_t i = iconv_open("UTF-8", "ASCII");
+		iconv_close(i);
+	]])],[],[X_LIBS="${X_LIBS} -liconv"])
+	CPPFLAGS=$save_CPPFLAGS
+	LDFLAGS=$save_LDFLAGS
 ])
 
 dnl Image formats
@@ -85,7 +101,7 @@ AC_ARG_WITH([xft],
 
 AS_IF([test "x$with_jpeg" == "xyes"],[PKG_CHECK_MODULES([JPEG], [libjpeg])])
 AS_IF([test "x$with_png"  == "xyes"],[PKG_CHECK_MODULES([PNG],  [libpng])])
-AS_IF([test "x$with_xft"  == "xyes"],[PKG_CHECK_MODULES([XFT],  [xft >= 2])])
+AS_IF([test "x$with_xft"  == "xyes"],[PKG_CHECK_MODULES([XFT],  [xft >= 2 fontconfig])])
 
 dnl Optimistically look for xrandr, xrender, and xcursor
 AC_ARG_WITH([xrandr],
