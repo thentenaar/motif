@@ -1,20 +1,21 @@
 MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES           = hellomotif.uid
+EXTRA_DIST           = README hellomotif.uil hellomotif.uid
 
-bindir = ${prefix}/share/Xm/hellomotif
+bindir  = ${prefix}/share/Xm/hellomotif
 datadir = ${prefix}/share/Xm/hellomotif
 
-bin_PROGRAMS = hellomotif
-EXTRA_DIST = hellomotif.uil README
-hellomotif_SOURCES = hellomotif.c
-data_DATA = $(EXTRA_DIST) $(hellomotif_SOURCES) hellomotif.uid
-LDADD = ../../../lib/Xm/libXm.la ../../../lib/Mrm/libMrm.la
+data_DATA               = $(hellomotif_SOURCES) $(EXTRA_DIST)
+bin_PROGRAMS            = hellomotif
+hellomotif_DEPENDENCIES = hellomotif.uid
+AM_CPPFLAGS             = $(X_CFLAGS)
+DEFAULT_INCLUDES        = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                          -I$(top_builddir)/include -I$(top_builddir)/lib
+hellomotif_LDADD        = $(top_builddir)/lib/Mrm/libMrm.la \
+                          $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
+.uil.uid:
+	$(top_builddir)/clients/uil/uil -I$(top_srcdir)/clients/uil -I$(top_builddir)/clients/uil -o $@ $<
 
-all: hellomotif.uid
+SUFFIXES = .uil .uid
 
-hellomotif.uid: hellomotif.uil
-	../../../clients/uil/uil -o $@ $? -I$(srcdir)/../../../clients/uil -I../../../clients/uil
-
-clean-local:
-	$(RM) hellomotif.uid

@@ -30,7 +30,7 @@ wml_SOURCES = wml.c
 wml_LDADD = libwml.la
 wmldbcreate_LDADD = ../../lib/Xm/libXm.la $(X_LIBS)
 
-AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include ${X_CFLAGS}
+AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include $(X_CFLAGS)
 
 noinst_LTLIBRARIES = libwml.la
 libwml_la_SOURCES = wmlparse.y wmloutkey.c wmlouth.c wmloutmm.c wmloutp1.c wmlresolve.c wmlsynbld.c wmlutils.c

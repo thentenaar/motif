@@ -17,7 +17,7 @@ AM_CPPFLAGS = -DLARGECURSORS -DR2_COMPAT -DUNMAP_ON_RESTART \
               -DBITMAPDIR=\"@INCDIR@/bitmaps\" \
               -DMWMRCDIR=\"$(MWMRCDIR)\" \
               -I$(top_builddir)/lib \
-              -I$(srcdir)/../../lib ${X_CFLAGS}
+              -I$(srcdir)/../../lib $(X_CFLAGS)
 
 SRCS1=	WmCDInfo.c	WmCDecor.c	WmCEvent.c\
 	WmCPlace.c	WmColormap.c	WmError.c\

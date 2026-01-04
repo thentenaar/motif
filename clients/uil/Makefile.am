@@ -10,17 +10,13 @@ UilParser.lo: UilParser.c
 	$(LTCOMPILE) -DCALLABLE -c UilParser.c
 
 libUil_la_LIBADD = UilParser.lo ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la
-
-uil_LDADD = ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la $(X_LIBS)
-
-AM_CPPFLAGS = -DINCDIR=\"@INCDIR@\" \
-              -DLIBDIR=\"@LIBDIR@\" \
-              -I$(srcdir)/../../include \
-              -I$(srcdir)/../../lib \
-              -I$(srcdir)/../../tools/wml \
-              -I../../include \
-              -I../../lib \
-              -I../../tools/wml ${X_CFLAGS}
+uil_LDADD        = ../../lib/Mrm/libMrm.la ../../lib/Xm/libXm.la $(X_LIBS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+AM_CPPFLAGS      = -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\" \
+                   -I$(top_srcdir)/clients/uil \
+                   -I$(top_srcdir)/tools/wml \
+                   -I$(top_builddir)/tools/wml $(X_CFLAGS) $(XFT_CFLAGS)
 
 UilParser.c:
 	test -f UilParser.c || $(LN_S) $(srcdir)/UilMain.c UilParser.c

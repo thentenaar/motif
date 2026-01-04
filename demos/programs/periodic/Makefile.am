@@ -1,22 +1,23 @@
 MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES           = periodic.uid
+EXTRA_DIST           = README periodic.uil periodic_l.uil XmdPeriodic.ad arrow
 
-bindir = ${prefix}/share/Xm/periodic
+bindir  = ${prefix}/share/Xm/periodic
 datadir = ${prefix}/share/Xm/periodic
+mandir  = ${prefix}/share/Xm/periodic
 
-bin_PROGRAMS = periodic
-EXTRA_DIST = periodic.uil periodic_l.uil XmdPeriodic.ad README
-periodic_SOURCES = periodic.c
-data_DATA = $(EXTRA_DIST) $(periodic_SOURCES) periodic.uid
-LDADD = ../../../lib/Xm/libXm.la ../../../lib/Mrm/libMrm.la
+data_DATA             = $(periodic_SOURCES) $(periodic_DEPENDENCIES) $(EXTRA_DIST)
+man_MANS              = periodic.man
+bin_PROGRAMS          = periodic
+periodic_DEPENDENCIES = periodic.uid
+AM_CPPFLAGS           = $(X_CFLAGS)
+DEFAULT_INCLUDES      = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                        -I$(top_builddir)/include -I$(top_builddir)/lib
+periodic_LDADD        = $(top_builddir)/lib/Mrm/libMrm.la \
+                        $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
+.uil.uid:
+	$(top_builddir)/clients/uil/uil -I$(srcdir) -I$(top_srcdir)/clients/uil -I$(top_builddir)/clients/uil -o $@ $<
 
-all: periodic.uid
-
-periodic.uid: periodic.uil
-	../../../clients/uil/uil -o $@ $? -I$(srcdir)/../../../clients/uil -I../../../clients/uil
-
-clean-local:
-	$(RM) periodic.uid
-
+SUFFIXES = .uil .uid
 

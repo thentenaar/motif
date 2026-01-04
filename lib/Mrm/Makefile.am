@@ -1,8 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in Mrm.pc
 CLEANFILES = $(CAT_FILES)
 EXTRA_DIST = Mrm.msg
-
-AM_CPPFLAGS       = -I$(srcdir)/.. -I.. -I../Xm ${X_CFLAGS} $(XFT_CFLAGS)
+DEFAULT_INCLUDES  = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                    -I$(top_builddir)/include -I$(top_builddir)/lib
+AM_CPPFLAGS       = -I$(top_srcdir)/lib/Xm -I$(top_builddir)/lib/Xm \
+                    $(X_CFLAGS) $(XFT_CFLAGS)
 libMrm_la_LDFLAGS = -version-info @ABI_VERSION@
 libMrm_la_LIBADD  = ../Xm/libXm.la $(XFT_LIBS) ${X_LIBS}
 libMrm_la_SOURCES = $(SRCS)

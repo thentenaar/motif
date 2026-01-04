@@ -33,6 +33,7 @@
  ******************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <Xm/Xm.h>
 #include <Xm/MessageB.h>
 #include <Mrm/MrmPublic.h>
@@ -65,7 +66,7 @@ XtAppContext appContext;
                             &argc, argv);
     if (display == NULL) {
 	fprintf(stderr, "Can't open display\n");
-	exit(1);
+	exit(EXIT_FAILURE);
     }
     shell = XtAppCreateShell("demo", NULL, applicationShellWidgetClass,
 						display, NULL, 0);

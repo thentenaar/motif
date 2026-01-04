@@ -1,13 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir = ${prefix}/share/Xm/Color
+bindir  = ${prefix}/share/Xm/Color
 datadir = ${prefix}/share/Xm/Color
 
-bin_PROGRAMS = colordemo
-colordemo_SOURCES = util-c.c colordemo.c
-EXTRA_DIST =
-data_DATA = $(colordemo_SOURCES) $(EXTRA_DIST)
-LDADD = $(TOPDIR)/lib/Xm/libXm.la
-TOPDIR = ../../..
+data_DATA         = $(colordemo_SOURCES)
+bin_PROGRAMS      = colordemo
+colordemo_SOURCES = colordemo.c util-c.c
+AM_CPPFLAGS       = $(X_CFLAGS)
+DEFAULT_INCLUDES  = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                    -I$(top_builddir)/include -I$(top_builddir)/lib
+colordemo_LDADD   = $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}

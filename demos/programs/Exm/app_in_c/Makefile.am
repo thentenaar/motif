@@ -1,17 +1,15 @@
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST           = exm_in_c.man
 
-bindir = ${prefix}/share/Xm/Exm/app_in_c
+bindir  = ${prefix}/share/Xm/Exm/app_in_c
 datadir = ${prefix}/share/Xm/Exm/app_in_c
+mandir  = ${prefix}/share/Xm/Exm/app_in_c
 
-man_MANS = exm_in_c.man
-bin_PROGRAMS = exm_in_c
-exm_in_c_SOURCES = exm_in_c.c
+man_MANS         = exm_in_c.man
+bin_PROGRAMS     = exm_in_c
+AM_CPPFLAGS      = -I$(top_srcdir)/demos/lib $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+exm_in_c_LDADD   = $(top_builddir)/demos/lib/Exm/libExm.a \
+                   $(top_builddir)/lib/Xm/libXm.la
 
-EXTRA_DIST = exm_in_c.man
-
-AM_CPPFLAGS = -I$(srcdir)/../../../../lib \
-           -I$(srcdir)/../../../lib \
-           -I$(top_builddir)/lib \
-            ${X_CFLAGS}
-LDADD = ../../../lib/Exm/libExm.a \
-	../../../../lib/Xm/libXm.la

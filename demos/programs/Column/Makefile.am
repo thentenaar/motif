@@ -1,14 +1,12 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir = ${prefix}/share/Xm/Column
+bindir  = ${prefix}/share/Xm/Column
 datadir = ${prefix}/share/Xm/Column
 
-bin_PROGRAMS = column
-column_SOURCES = column.c
-EXTRA_DIST = Column.ad
-data_DATA = $(EXTRA_DIST) $(column_SOURCES)
-TOPDIR = ../../..
-LDADD = $(TOPDIR)/lib/Xm/libXm.la
-
-AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}
+data_DATA        = column.c
+bin_PROGRAMS     = column
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+column_LDADD     = $(top_builddir)/lib/Xm/libXm.la
 

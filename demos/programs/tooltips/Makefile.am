@@ -1,12 +1,12 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir = ${prefix}/share/Xm/tooltips
+bindir  = ${prefix}/share/Xm/tooltips
 datadir = ${prefix}/share/Xm/tooltips
 
-EXTRA_DIST =
-bin_PROGRAMS = tooltips
-tooltips_SOURCES = tooltips.c
-data_DATA = $(tooltips_SOURCES) $(EXTRA_DIST)
-LDADD = ../../../lib/Xm/libXm.la
+data_DATA        = tooltips.c
+bin_PROGRAMS     = tooltips
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+tooltips_LDADD   = $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}

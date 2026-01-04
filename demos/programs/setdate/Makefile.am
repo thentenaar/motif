@@ -1,12 +1,15 @@
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST           = README XmdSetDate.ad
 
-bindir = ${prefix}/share/Xm/setDate
+bindir  = ${prefix}/share/Xm/setDate
 datadir = ${prefix}/share/Xm/setDate
+mandir  = ${prefix}/share/Xm/setDate
 
-bin_PROGRAMS = setDate
-EXTRA_DIST = XmdSetDate.ad README setDate.man
-setDate_SOURCES = setDate.c
-data_DATA = $(EXTRA_DIST) $(setDate_SOURCES)
-LDADD = ../../../lib/Xm/libXm.la
+data_DATA        = $(setDate_SOURCES) $(EXTRA_DIST)
+man_MANS         = setDate.man
+bin_PROGRAMS     = setDate
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+setDate_LDADD    = $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}

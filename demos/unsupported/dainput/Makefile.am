@@ -1,13 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-noinst_PROGRAMS = dainput
+bindir  = ${prefix}/share/Xm/dainput
+datadir = ${prefix}/share/Xm/dainput
 
-dainput_SOURCES = dainput.c dainput_dlg.c dainput_ui.c
+data_DATA        = $(dainput_SOURCES)
+bin_PROGRAMS     = dainput
+dainput_SOURCES  = dainput.c dainput_dlg.c dainput_ui.c
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+dainput_LDADD    = $(top_builddir)/lib/Xm/libXm.la
 
-LDADD = ../../../lib/Xm/libXm.la
-
-EXTRA_DIST =
-
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
-
-noinst_HEADERS = dainput.h

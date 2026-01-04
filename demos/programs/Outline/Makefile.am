@@ -1,13 +1,12 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir = ${prefix}/share/Xm/Outline
+bindir  = ${prefix}/share/Xm/Outline
 datadir = ${prefix}/share/Xm/Outline
 
-EXTRA_DIST =
-bin_PROGRAMS = outline
-outline_SOURCES = outline.c
-data_DATA = $(outline_SOURCES) $(EXTRA_DIST)
-LDADD = $(TOPDIR)/lib/Xm/libXm.la
-TOPDIR = ../../..
+data_DATA        = $(outline_SOURCES)
+bin_PROGRAMS     = outline
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+outline_LDADD    = $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}

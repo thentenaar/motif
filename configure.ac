@@ -382,11 +382,9 @@ demos/programs/TabStack/Makefile \
 demos/programs/Tree/Makefile \
 demos/programs/pixmaps/Makefile \
 demos/unsupported/Makefile \
-demos/unsupported/Exm/Makefile \
 demos/unsupported/aicon/Makefile \
 demos/unsupported/dainput/Makefile \
 demos/unsupported/dogs/Makefile \
-demos/unsupported/hellomotif/Makefile \
 demos/unsupported/motifshell/Makefile \
 demos/unsupported/uilsymdump/Makefile \
 demos/unsupported/xmapdef/Makefile \

@@ -1,30 +1,24 @@
 MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES           = English.uid French.uid German.uid
+EXTRA_DIST           = README English.df French.df German.df Fileview.ad \
+                       English.uil French.uil German.uil
 
-bindir = ${prefix}/share/Xm/fileview
+bindir  = ${prefix}/share/Xm/fileview
 datadir = ${prefix}/share/Xm/fileview
 
-bin_PROGRAMS = fileview
-fileview_SOURCES = main.c text.c file.c file.h fileE.h fileview.h main.h \
-                   mainE.h text.h textE.h
-EXTRA_DIST = $(UILS) English.df French.df German.df README Fileview.ad
-data_DATA = French.uid German.uid English.uid $(fileview_SOURCES) $(EXTRA_DIST)
+noinst_HEADERS        = fileview.h file.h fileE.h main.h mainE.h text.h textE.h
+data_DATA             = $(fileview_SOURCES) $(EXTRA_DIST)
+bin_PROGRAMS          = fileview
+fileview_SOURCES      = main.c text.c file.c
+fileview_DEPENDENCIES = English.uid French.uid German.uid
+AM_CPPFLAGS           = $(X_CFLAGS)
+DEFAULT_INCLUDES      = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                        -I$(top_builddir)/include -I$(top_builddir)/lib
+fileview_LDADD        = $(top_builddir)/lib/Mrm/libMrm.la \
+                        $(top_builddir)/lib/Xm/libXm.la
 
-UILS= French.uil German.uil English.uil
+.uil.uid:
+	$(top_builddir)/clients/uil/uil -I$(top_srcdir)/clients/uil -I$(top_builddir)/clients/uil -o $@ $<
 
-LDADD = ../../../lib/Xm/libXm.la ../../../lib/Mrm/libMrm.la
+SUFFIXES = .uil .uid
 
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
-
-all: French.uid German.uid English.uid
-
-French.uid: French.uil
-	../../../clients/uil/uil -o $@ $? -I$(srcdir)/../../../clients/uil -I../../../clients/uil
-
-German.uid: German.uil
-	../../../clients/uil/uil -o $@ $? -I$(srcdir)/../../../clients/uil -I../../../clients/uil
-
-English.uid: English.uil
-	../../../clients/uil/uil -o $@ $? -I$(srcdir)/../../../clients/uil -I../../../clients/uil
-
-clean-local:
-	$(RM) French.uid German.uid English.uid

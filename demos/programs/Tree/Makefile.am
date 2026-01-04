@@ -1,13 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir = ${prefix}/share/Xm/Tree
+bindir  = ${prefix}/share/Xm/Tree
 datadir = ${prefix}/share/Xm/Tree
 
-EXTRA_DIST =
-bin_PROGRAMS = tree
-tree_SOURCES = bxutil-c.c  tree.c
-data_DATA = $(EXTRA_DIST) $(tree_SOURCES)
-TOPDIR = ../../..
-LDADD = $(TOPDIR)/lib/Xm/libXm.la
+data_DATA        = $(tree_SOURCES)
+bin_PROGRAMS     = tree
+tree_SOURCES     = bxutil-c.c tree.c
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(srcdir)/.. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+tree_LDADD       = $(top_builddir)/lib/Xm/libXm.la
 
-AM_CPPFLAGS = -I$(TOPDIR)/lib -I$(srcdir)/.. -I$(srcdir)/$(TOPDIR)/lib ${X_CFLAGS}

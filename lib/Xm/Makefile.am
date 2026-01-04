@@ -3,12 +3,12 @@ XMSTRING_LIST = xmstring.list
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST = $(XMSTRING_LIST) Xm.msg XmStrDefs.ct
-
-AM_CPPFLAGS = -I.. -I$(srcdir)/.. \
-              -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
-              -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
-              -DDATADIR=\"@DATADIR@\" \
-              $(XFT_CFLAGS) $(XCURSOR_CFLAGS) $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+AM_CPPFLAGS      = -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
+                   -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
+                   -DDATADIR=\"@DATADIR@\" \
+                   $(XFT_CFLAGS) $(XCURSOR_CFLAGS) $(X_CFLAGS)
 xmdir = $(includedir)/Xm
 
 libXm_la_LDFLAGS = -version-info @ABI_VERSION@

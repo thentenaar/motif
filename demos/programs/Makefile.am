@@ -34,5 +34,3 @@ SUBDIRS = airport \
          Paned \
          pixmaps
 
-EXTRA_DIST =
-

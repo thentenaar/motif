@@ -1,11 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST           = README help membership motif principles research welcome
 
-noinst_PROGRAMS = motifshell
+bindir  = ${prefix}/share/Xm/motifshell
+datadir = ${prefix}/share/Xm/motifshell
 
-SOURCES = motifshell.c
+data_DATA        = motifshell.c $(EXTRA_DIST)
+bin_PROGRAMS     = motifshell
+AM_CPPFLAGS      = $(X_CFLAGS)
+DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                   -I$(top_builddir)/include -I$(top_builddir)/lib
+motifshell_LDADD = $(top_builddir)/lib/Xm/libXm.la
 
-LDADD = ../../../lib/Xm/libXm.la
-
-EXTRA_DIST =
-
-AM_CPPFLAGS = -I$(srcdir)/../../../lib -I$(top_builddir)/lib ${X_CFLAGS}
