@@ -1,11 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
-CLEANFILES           = helloint.uid C/uid/l_strings.uid \
-                       english/uid/l_strings.uid  \
-                       french/uid/l_strings.uid   \
-                       hebrew/uid/l_strings.uid   \
-                       japan/uid/l_strings.uid    \
-                       japanese/uid/l_strings.uid \
-                       swedish/uid/l_strings.uid
+CLEANFILES           = helloint.uid
 EXTRA_DIST           = README helloint.uil
 SUBDIRS              = C english french hebrew japan japanese swedish
 
@@ -13,7 +7,7 @@ bindir  = ${prefix}/share/Xm/helloint
 datadir = ${prefix}/share/Xm/helloint
 mandir  = ${prefix}/share/Xm/helloint
 
-data_DATA             = $(helloint_SOURCES) $(helloint_DEPENDENCIES) $(EXTRA_DIST)
+data_DATA             = $(helloint_SOURCES) $(EXTRA_DIST) helloint.uid
 man_MANS              = helloint.man
 bin_PROGRAMS          = helloint
 helloint_DEPENDENCIES = helloint.uid C/uid/l_strings.uid \
