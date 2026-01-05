@@ -428,6 +428,64 @@ START_TEST(empty_not_empty)
 }
 END_TEST
 
+START_TEST(string_null)
+{
+	XmString ss;
+
+	ss = XmStringCreateLocalized("sub");
+	ck_assert_msg(!XmStringHasSubstring(NULL, ss), "NULL strings cannot have substrings");
+	XmStringFree(ss);
+}
+END_TEST
+
+START_TEST(string_empty)
+{
+	XmString s, ss;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ss = XmStringCreateLocalized("sub");
+	ck_assert_msg(!XmStringHasSubstring(s, ss), "Empty strings cannot have substrings");
+	XmStringFree(ss);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_null)
+{
+	XmString s;
+
+	s = XmStringCreateLocalized("str");
+	ck_assert_msg(!XmStringHasSubstring(s, NULL), "Strings cannot have NULL substrings");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_empty)
+{
+	XmString s, ss;
+
+	s  = XmStringCreateLocalized("str");
+	ss = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(!XmStringHasSubstring(s, ss), "Strings cannot have empty substrings");
+	XmStringFree(ss);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_simple)
+{
+	XmString s, ss;
+
+	s  = XmStringCreateLocalized("cornholio");
+	ss = XmStringCreateLocalized("hol");
+	ck_assert_msg(_XmStrOptimized(s),  "String should be optimized");
+	ck_assert_msg(_XmStrOptimized(ss), "Substring should be optimized");
+	ck_assert_msg(XmStringHasSubstring(s, ss), "'cornholio' contains 'hol'");
+	XmStringFree(ss);
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(valid_null)
 {
 	ck_assert_msg(!XmeStringIsValid(NULL), "NULL strings aren't valid");
@@ -595,6 +653,16 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, empty_null);
 	tcase_add_test(t, empty_is_empty);
 	tcase_add_test(t, empty_not_empty);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("HasSubstring");
+	tcase_add_test(t, string_null);
+	tcase_add_test(t, string_empty);
+	tcase_add_test(t, substr_null);
+	tcase_add_test(t, substr_empty);
+	tcase_add_test(t, substr_simple);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
