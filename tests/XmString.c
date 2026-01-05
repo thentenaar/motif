@@ -555,6 +555,50 @@ START_TEST(valid_string)
 }
 END_TEST
 
+START_TEST(void_null)
+{
+	ck_assert_msg(XmStringIsVoid(NULL), "NULL is void, void is NULL");
+}
+END_TEST
+
+START_TEST(void_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringIsVoid(s), "Empty strings are void");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(void_text)
+{
+	XmString s = XmStringCreateLocalized("test");
+	ck_assert_msg(!XmStringIsVoid(s), "Strings with text are not void");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(void_tab)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, NULL);
+	ck_assert_msg(!XmStringIsVoid(s), "Strings with tabs are not void");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(void_separator)
+{
+	XmString s;
+
+	s = XmStringSeparatorCreate();
+	ck_assert_msg(!XmStringIsVoid(s), "Strings with separators are not void");
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(line_count_null)
 {
 	ck_assert_msg(XmStringLineCount(NULL) == 0, "NULL should have no lines");
@@ -675,6 +719,16 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, valid_bad_ptr);
 	tcase_add_test(t, valid_bad_data);
 	tcase_add_test(t, valid_string);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("IsVoid");
+	tcase_add_test(t, void_null);
+	tcase_add_test(t, void_empty);
+	tcase_add_test(t, void_text);
+	tcase_add_test(t, void_tab);
+	tcase_add_test(t, void_separator);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
