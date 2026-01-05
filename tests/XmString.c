@@ -497,6 +497,64 @@ START_TEST(valid_string)
 }
 END_TEST
 
+START_TEST(line_count_null)
+{
+	ck_assert_msg(XmStringLineCount(NULL) == 0, "NULL should have no lines");
+}
+END_TEST
+
+/**
+ * One separator == one line
+ */
+START_TEST(line_count_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringLineCount(s) == 1, "Empty strings have one line");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(line_count_separators)
+{
+	int i;
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	for (i = 0; i < _i; i++)
+		s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	ck_assert_msg(XmStringLineCount(s) == _i + 1, "Should have _i + 1 lines");
+	XmStringFree(s);
+}
+END_TEST
+
+/**
+ * Optimized strings have one line only
+ */
+START_TEST(line_count_optimized)
+{
+	XmString s;
+
+	s = XmStringCreateLocalized("motif");
+	ck_assert_msg(_XmStrOptimized(s), "String should be optimized");
+	ck_assert_msg(XmStringLineCount(s) == 1, "Optimized strings have one line");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(line_count_unoptimized)
+{
+	XmString s, x;
+
+	s = XmStringCreateLocalized("motif");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	ck_assert_msg(!_XmStrOptimized(s), "String should be unoptimized");
+	ck_assert_msg(XmStringLineCount(s) == 2, "String should have two lines");
+	XmStringFree(s);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -549,6 +607,16 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, valid_bad_ptr);
 	tcase_add_test(t, valid_bad_data);
 	tcase_add_test(t, valid_string);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("LineCount");
+	tcase_add_test(t, line_count_null);
+	tcase_add_test(t, line_count_empty);
+	tcase_add_loop_test(t, line_count_separators, 1, 5);
+	tcase_add_test(t, line_count_optimized);
+	tcase_add_test(t, line_count_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
