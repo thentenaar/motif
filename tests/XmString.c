@@ -408,6 +408,95 @@ START_TEST(empty_null)
 }
 END_TEST
 
+START_TEST(empty_is_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringEmpty(s), "Empty strings are empty");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(empty_not_empty)
+{
+	XmString s;
+
+	s = XmStringCreateLocalized("test");
+	ck_assert_msg(!XmStringEmpty(s), "Strings with text aren't empty");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(valid_null)
+{
+	ck_assert_msg(!XmeStringIsValid(NULL), "NULL strings aren't valid");
+}
+END_TEST
+
+START_TEST(valid_refcnt_zero)
+{
+	XmString s;
+
+	s = XmStringCreateLocalized("test");
+	_XmStrRefCountSet(s, 0);
+	ck_assert_msg(!XmeStringIsValid(s), "Refcount can't be zero");
+	_XmStrRefCountSet(s, 1);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(valid_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmeStringIsValid(s), "Empty strings are valid");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(valid_separator_only)
+{
+	XmString s;
+
+	s = XmStringSeparatorCreate();
+	ck_assert_msg(XmeStringIsValid(s), "Separator-only strings are valid");
+	XmStringFree(s);
+}
+END_TEST
+
+/**
+ * The memory region we allocate is much smaller than the header size,
+ * so this should trigger a memory access error which our signal handler
+ * should catch.
+ */
+START_TEST(valid_bad_ptr)
+{
+	XmString s = (XmString)XtMalloc(1);
+	memset(s, 0xaa, 1);
+	ck_assert_msg(!XmeStringIsValid(s), "Small 'strings' we can't grok aren't valid");
+	XtFree((XtPointer)s);
+}
+END_TEST
+
+START_TEST(valid_bad_data)
+{
+	XmString s = (XmString)XtMalloc(8);
+	memset(s, 0x3a, 8);
+	ck_assert_msg(!XmeStringIsValid(s), "Strings we can't grok aren't valid");
+	XtFree((XtPointer)s);
+}
+END_TEST
+
+START_TEST(valid_string)
+{
+	XmString s = XmStringCreateLocalized("test");
+	ck_assert_msg(XmeStringIsValid(s), "Strings are valid");
+	XmStringFree(s);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -446,6 +535,20 @@ void xmstring_suite(SRunner *runner)
 
 	t = tcase_create("Empty");
 	tcase_add_test(t, empty_null);
+	tcase_add_test(t, empty_is_empty);
+	tcase_add_test(t, empty_not_empty);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("IsValid");
+	tcase_add_test(t, valid_null);
+	tcase_add_test(t, valid_refcnt_zero);
+	tcase_add_test(t, valid_empty);
+	tcase_add_test(t, valid_separator_only);
+	tcase_add_test(t, valid_bad_ptr);
+	tcase_add_test(t, valid_bad_data);
+	tcase_add_test(t, valid_string);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

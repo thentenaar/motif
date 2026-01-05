@@ -60,11 +60,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 /* Warning Messages */
 #define NO_FONT_MSG	_XmMMsgXmString_0000
 
-/* These are the os-specific environment variables checked for a language
-** specification.
-*/
-#define env_variable "LANG"
-
 struct __Xmlocale {
     char   *tag;
     int    taglen;
@@ -1944,19 +1939,6 @@ XmStringCompare(
   }
   _XmProcessUnlock();
   return (TRUE);
-}
-
-/************************************************************************
- *                                                                      *
- * XmeStringIsXmString - returns TRUE if the parameter is an XmString.   *
- *                                                                      *
- ************************************************************************/
-Boolean
-XmeStringIsValid(
-        XmString string )
-{
-  if (string == NULL) return(FALSE);
-  return(TRUE);
 }
 
 /*
@@ -6433,7 +6415,7 @@ XmStringTag XmStringGetCharset(void)
 
 	locale.tag    = NULL;
 	locale.taglen = 0;
-	str           = getenv(env_variable);
+	str           = getenv("LANG");
 
 	_parse_locale(str, &indx, &len);
 	if (len > 0) {
@@ -8386,6 +8368,7 @@ XmeStringGetComponent(_XmStringContext context,
 
   /* No NULL pointers allowed. */
   if (! (length  && value)) {
+    _XmStrContError(context) = True;
     _XmProcessUnlock();
     return XmSTRING_COMPONENT_END;
   }
@@ -8755,10 +8738,7 @@ XmeStringGetComponent(_XmStringContext context,
       /* This is the last possible component for a segment. */
       if (last_seg && last_line)
 	{
-	  /* Separators only appear between lines. */
-	  if (update_context)
-	    _XmStrContError(context) = True;
-
+	  /* Empty lines are also separators, and perfectly valid */
 	  _XmProcessUnlock();
 	  return XmSTRING_COMPONENT_END;
 	}
