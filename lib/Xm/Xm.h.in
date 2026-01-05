@@ -1680,7 +1680,7 @@ extern Boolean XmStringCompare(
 extern Boolean XmStringEmpty(
                         XmString string) ;
 extern XmStringTag XmStringGetCharset(void);
-extern Boolean XmStringIsVoid(XmString string);
+extern Boolean XmStringIsVoid(const XmString string);
 extern Boolean XmStringHasSubstring(
                         XmString string,
                         XmString substring) ;

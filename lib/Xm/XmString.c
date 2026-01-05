@@ -2978,8 +2978,7 @@ XmStringEmpty(
   return (TRUE);
 }
 
-Boolean
-XmStringIsVoid(XmString string)
+Boolean XmStringIsVoid(const XmString string)
 {
   XmStringComponentType	type;
   _XmStringContextRec	stack_context;
@@ -8792,16 +8791,19 @@ XmeStringGetComponent(_XmStringContext context,
 /*
  * _XmStringContextReInit: Initialize an allocated _XmStringContext.
  */
-void
-_XmStringContextReInit(_XmStringContext context,
-		       _XmString	string)
+void _XmStringContextReInit(_XmStringContext context, _XmString string)
 {
-  assert(context != NULL);
-  bzero((char*) context, sizeof(_XmStringContextRec));
+	assert(context);
+	memset((void *)context, 0, sizeof *context);
 
-  _XmStrContString(context) = string;
-  _XmStrContOpt(context)    = _XmStrOptimized(string);
-  _XmStrContDir(context)    = XmSTRING_DIRECTION_UNSET;
+	if (!_XmStrRefCountGet(string)) {
+		_XmStrContError(context) = True;
+		return;
+	}
+
+	_XmStrContString(context) = string;
+	_XmStrContOpt(context)    = _XmStrOptimized(string);
+	_XmStrContDir(context)    = XmSTRING_DIRECTION_UNSET;
 }
 
 /*
