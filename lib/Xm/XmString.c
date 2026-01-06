@@ -2492,15 +2492,7 @@ _XmStringCharacterCount(XtPointer text,
 	}
       }
     case XmWIDECHAR_TEXT:
-      {
-	wchar_t *wcs = (wchar_t *)text;
-	int cnt = 0;
-	while (byte_count > 0 && wcs[cnt]) {
-	  cnt++;
-	  byte_count -= sizeof(wchar_t);
-	}
-	return cnt;
-      }
+	return wcslen((wchar_t *)text);
     default:
       return byte_count;
     }

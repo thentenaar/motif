@@ -58,8 +58,8 @@ PKG_INSTALLDIR
 PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 
 dnl Check for particular headers / functions
-AC_CHECK_HEADERS([alloca.h iconv.h wctype.h wchar.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
-AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat wcslen])
+AC_CHECK_HEADERS([alloca.h iconv.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
+AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_SEARCH_LIBS([floor], [m])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
