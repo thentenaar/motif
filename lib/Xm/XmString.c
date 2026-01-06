@@ -5188,7 +5188,8 @@ _XmStringNonOptCreate(
 
 	case XmSTRING_COMPONENT_SEPARATOR:              /* start new line */
 	  finish_segment(string, &seg, &lc, &sc, &needs_unopt, dir);
-	  need_finish = push_seen = txt_seen = pop_seen = False;
+	  push_seen = txt_seen = pop_seen = False;
+	  need_finish = True;
 
 	  if (!_XmStrImplicitLine(string) && _XmStrEntryCount(string) > 1) {
 	    /* need to move segments down one level */
