@@ -1740,19 +1740,16 @@ XmString XmStringConcatAndFree(XmString a, XmString b)
  * Returns TRUE if the strings are equal, FALSE o.w.			*
  *									*
  ************************************************************************/
-Boolean
-XmStringCompare(
-        XmString a,
-        XmString b )
+Boolean XmStringCompare(XmString a, XmString b)
 {
   _XmProcessLock();
-  if ((a == NULL) && (b == NULL)) {
+  if (XmStringEmpty(a) && XmStringEmpty(b)) {
 	_XmProcessUnlock();
-	return TRUE;
+	return True;
   }
   if ((a == NULL) || (b == NULL)) {
 	_XmProcessUnlock();
-	return FALSE;
+	return False;
   }
 
   if (_XmStrOptimized(a) && _XmStrOptimized(b)) {
@@ -1764,11 +1761,11 @@ XmStringCompare(
 	  ((strcmp(_XmStringIndexGetTag(_XmStrTagIndex(b)), XmFONTLIST_DEFAULT_TAG) == 0) &&
 	   _XmStringIsCurrentCharset(_XmStrTagGet(a))))) {
       _XmProcessUnlock();
-      return (FALSE);
+      return False;
     }
     if (_XmStrByteCount(a) != _XmStrByteCount(b)) {
       _XmProcessUnlock();
-      return (FALSE);
+      return False;
     }
     if ((_XmStrDirection(a) != _XmStrDirection(b)) &&
 	(((_XmStrDirection(a) == XmSTRING_DIRECTION_UNSET) &&
@@ -1776,11 +1773,11 @@ XmStringCompare(
 	 ((_XmStrDirection(b) == XmSTRING_DIRECTION_UNSET) &&
 	  (_XmStrDirection(a) != XmSTRING_DIRECTION_L_TO_R)))) {
       _XmProcessUnlock();
-      return (FALSE);
+      return False;
     }
     if (strncmp(_XmStrText(a), _XmStrText(b), _XmStrByteCount(a)) != 0) {
       _XmProcessUnlock();
-      return (FALSE);
+      return False;
     }
   } else {
     int i, j;
@@ -1791,7 +1788,7 @@ XmStringCompare(
 
     if (_XmStrEntryCountGet(a) != _XmStrEntryCountGet(b)) {
       _XmProcessUnlock();
-      return (FALSE);
+      return False;
     }
 
     if (_XmStrOptimized(a)) {
@@ -1815,7 +1812,7 @@ XmStringCompare(
 	  if (a_unopt) XmStringFree(a_unopt);
 	  if (b_unopt) XmStringFree(b_unopt);
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
 
 	for (j=0; j<_XmEntrySegmentCount(entry_a[i]); j++) {
@@ -1835,7 +1832,7 @@ XmStringCompare(
 	        if (a_unopt) XmStringFree(a_unopt);
 	        if (b_unopt) XmStringFree(b_unopt);
 	        _XmProcessUnlock();
-		return (FALSE);
+		return False;
 	  }
 
 	  len = _XmEntryByteCountGet((_XmStringEntry)a_seg);
@@ -1843,7 +1840,7 @@ XmStringCompare(
 	    if (a_unopt) XmStringFree(a_unopt);
 	    if (b_unopt) XmStringFree(b_unopt);
 	    _XmProcessUnlock();
-	    return (FALSE);
+	    return False;
 	  }
 
 	  {
@@ -1857,7 +1854,7 @@ XmStringCompare(
 	      if (a_unopt) XmStringFree(a_unopt);
 	      if (b_unopt) XmStringFree(b_unopt);
 	      _XmProcessUnlock();
-	      return (FALSE);
+	      return False;
 	    }
 	  }
 
@@ -1867,7 +1864,7 @@ XmStringCompare(
 	    if (a_unopt) XmStringFree(a_unopt);
 	    if (b_unopt) XmStringFree(b_unopt);
 	    _XmProcessUnlock();
-	    return (FALSE);
+	    return False;
 	  }
 	}
       } else if (!_XmEntryMultiple(entry_a[i]) &&
@@ -1887,7 +1884,7 @@ XmStringCompare(
 	  if (a_unopt) XmStringFree(a_unopt);
 	  if (b_unopt) XmStringFree(b_unopt);
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
 
 	len = _XmEntryByteCountGet(entry_a[i]);
@@ -1895,7 +1892,7 @@ XmStringCompare(
 	  if (a_unopt) XmStringFree(a_unopt);
 	  if (b_unopt) XmStringFree(b_unopt);
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
 
 	if ((_XmEntryDirectionGet(entry_a[i])  !=
@@ -1911,7 +1908,7 @@ XmStringCompare(
 	  if (a_unopt) XmStringFree(a_unopt);
 	  if (b_unopt) XmStringFree(b_unopt);
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
 
 	if (strncmp ((char*) _XmEntryTextGet(entry_a[i]),
@@ -1920,20 +1917,20 @@ XmStringCompare(
 	  if (a_unopt) XmStringFree(a_unopt);
 	  if (b_unopt) XmStringFree(b_unopt);
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
       } else {
         if (a_unopt) XmStringFree(a_unopt);
 	if (b_unopt) XmStringFree(b_unopt);
 	_XmProcessUnlock();
-	return (FALSE);
+	return False;
       }
     }
     if (a_unopt) XmStringFree(a_unopt);
     if (b_unopt) XmStringFree(b_unopt);
   }
   _XmProcessUnlock();
-  return (TRUE);
+  return True;
 }
 
 /*
@@ -2931,22 +2928,20 @@ XmStringExtent(
 #endif
 }
 
-Boolean
-XmStringEmpty(
-        XmString string )
+Boolean XmStringEmpty(XmString string)
 {
   int i, j;
 
   _XmProcessLock();
   if (!string) {
     _XmProcessUnlock();
-    return (TRUE);
+    return True;
   }
 
   if (_XmStrOptimized(string)) {
     if (_XmStrByteCount(string) > 0) {
       _XmProcessUnlock();
-      return FALSE;
+      return False;
     }
   } else {
     _XmStringEntry  *entry = _XmStrEntry(string);
@@ -2958,19 +2953,19 @@ XmStringEmpty(
 	  _XmStringNREntry seg = _XmEntrySegment(entry[i])[j];
 	  if (_XmEntryByteCountGet((_XmStringEntry)seg) > 0) {
 	    _XmProcessUnlock();
-	    return (FALSE);
+	    return False;
 	  }
 	}
       } else {
 	if (_XmEntryByteCountGet(entry[i]) > 0) {
 	  _XmProcessUnlock();
-	  return (FALSE);
+	  return False;
 	}
       }
     }
   }
   _XmProcessUnlock();
-  return (TRUE);
+  return True;
 }
 
 Boolean XmStringIsVoid(const XmString string)

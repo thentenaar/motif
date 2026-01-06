@@ -352,6 +352,17 @@ START_TEST(compare_one_null)
 }
 END_TEST
 
+START_TEST(compare_null_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringCompare(s, NULL), "NULL and empty are equivalent");
+	ck_assert_msg(XmStringCompare(NULL, s), "NULL and empty are equivalent");
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(compare_self)
 {
 	XmString s;
@@ -890,6 +901,7 @@ void xmstring_suite(SRunner *runner)
 	t = tcase_create("Compare");
 	tcase_add_test(t, compare_both_null);
 	tcase_add_test(t, compare_one_null);
+	tcase_add_test(t, compare_null_empty);
 	tcase_add_test(t, compare_self);
 	tcase_add_test(t, compare_same);
 	tcase_add_test(t, compare_diff_text);
