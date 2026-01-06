@@ -1182,17 +1182,12 @@ Unoptimize(_XmStringEntry entry, int do_free)
   return new_entry;
 }
 
-
-XmString
-XmStringConcat(XmString a,
-	       XmString b )
+XmString XmStringConcat(XmString a, XmString b)
 {
-  return XmStringConcatAndFree (XmStringCopy(a), XmStringCopy(b));
+	return XmStringConcatAndFree(XmStringCopy(a), XmStringCopy(b));
 }
 
-XmString
-XmStringConcatAndFree(XmString a,
-		      XmString b)
+XmString XmStringConcatAndFree(XmString a, XmString b)
 {
   _XmString 		opt_str;
   unsigned int 		a_len, b_len, a_lc, b_lc, a_sc, b_sc, lc;
@@ -5227,8 +5222,7 @@ _XmStringNonOptCreate(
 /*
  * Converts from ASN.1 formatted byte stream to XmString.
  */
-XmString
-XmCvtByteStreamToXmString(unsigned char *property)
+XmString XmCvtByteStreamToXmString(unsigned char *property)
 {
   unsigned char       *c;
   unsigned char       *c_opt;
@@ -6534,8 +6528,7 @@ Clone(XmString string,
  * Given a string in ASN.1 format, return the size of the
  * string, including the header.
  */
-unsigned int
-XmStringByteStreamLength(unsigned char *string)
+unsigned int XmStringByteStreamLength(unsigned char *string)
 {
     unsigned int len;
 
@@ -6552,9 +6545,7 @@ XmStringByteStreamLength(unsigned char *string)
  * needs to be and builds the ASN.1 string in-place.
  * If prop_return is NULL, just computes size.
  */
-unsigned int
-XmCvtXmStringToByteStream(XmString string,
-		  unsigned char **prop_return)
+unsigned int XmCvtXmStringToByteStream(XmString string, unsigned char **prop_return)
 {
   /* Using XmeStringGetComponent makes this almost trivial. */
   _XmStringContextRec	stack_context;

@@ -657,6 +657,102 @@ START_TEST(line_count_unoptimized)
 }
 END_TEST
 
+START_TEST(tostream_null)
+{
+	unsigned char *ret = NULL;
+	ck_assert_msg(!XmCvtXmStringToByteStream(NULL, &ret),
+	              "Converting a NULL string should yield a length of 0");
+	ck_assert_msg(!ret, "The return pointer should be NULL");
+}
+END_TEST
+
+START_TEST(tostream_empty)
+{
+	XmString s;
+	unsigned char *ret = NULL;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 4,
+	              "Converting an empty string should yield just the header");
+	ck_assert_msg(ret, "No data was returned");
+	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
+	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
+	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x06");
+	ck_assert_msg(ret[3] == 0x00, "The length field should be 0");
+	XmStringFree(s);
+	XtFree((XtPointer)ret);
+}
+END_TEST
+
+START_TEST(tostream_optimized)
+{
+	XmString s;
+	unsigned char *ret = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "BER representation should be 11 + length of "
+	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
+	ck_assert_msg(ret, "No data was returned");
+	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
+	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
+	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
+	ck_assert_msg(ret[3] == 7 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "The length field should be 7 + length of XmFONTLIST_DEFAULT_TAG_STRING");
+	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_TAG, "The tag should be TAG");
+	ck_assert_msg(ret[5] == strlen(XmFONTLIST_DEFAULT_TAG_STRING) - 2,
+	              "Tag length should be that of XmFONTLIST_DEFAULT_TAG_STRING without Xm");
+	ck_assert_msg(!memcmp(ret + 6, XmFONTLIST_DEFAULT_TAG_STRING + 2,
+	              strlen(XmFONTLIST_DEFAULT_TAG_STRING) - 2),
+	              "The tag should be XmFONTLIST_DEFAULT_TAG_STRING without Xm");
+	ck_assert_msg(ret[4 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == XmSTRING_COMPONENT_TEXT,
+	              "The second component should be TEXT");
+	ck_assert_msg(ret[5 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == 5,
+	              "The text length should be 5");
+	ck_assert_msg(!memcmp(ret + 6 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "motif", 5), "The text should be 'motif'");
+	XmStringFree(s);
+	XtFree((XtPointer)ret);
+}
+END_TEST
+
+START_TEST(tostream_unoptimized)
+{
+	XmString s;
+	unsigned char *ret = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "BER representation should be 13 + length of "
+	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
+	ck_assert_msg(ret, "No data was returned");
+	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
+	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
+	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
+	ck_assert_msg(ret[3] == 9 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "The length field should be 9 + length of XmFONTLIST_DEFAULT_TAG_STRING");
+	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_TAG, "The tag should be TAG");
+	ck_assert_msg(ret[5] == strlen(XmFONTLIST_DEFAULT_TAG_STRING) - 2,
+	              "Tag length should be that of XmFONTLIST_DEFAULT_TAG_STRING without Xm");
+	ck_assert_msg(!memcmp(ret + 6, XmFONTLIST_DEFAULT_TAG_STRING + 2,
+	              strlen(XmFONTLIST_DEFAULT_TAG_STRING) - 2),
+	              "The tag should be XmFONTLIST_DEFAULT_TAG_STRING without Xm");
+	ck_assert_msg(ret[4 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == XmSTRING_COMPONENT_TEXT,
+	              "The second component should be TEXT");
+	ck_assert_msg(ret[5 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == 5,
+	              "The text length should be 5");
+	ck_assert_msg(!memcmp(ret + 6 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "motif", 5), "The text should be 'motif'");
+	ck_assert_msg(ret[11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == XmSTRING_COMPONENT_SEPARATOR,
+	              "The third component should be SEPARATOR");
+	ck_assert_msg(ret[12 + strlen(XmFONTLIST_DEFAULT_TAG_STRING)] == 0x00,
+	              "The third length should be 0");
+	XmStringFree(s);
+	XtFree((XtPointer)ret);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -739,6 +835,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_loop_test(t, line_count_separators, 1, 5);
 	tcase_add_test(t, line_count_optimized);
 	tcase_add_test(t, line_count_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("StringToByteStream");
+	tcase_add_test(t, tostream_null);
+	tcase_add_test(t, tostream_empty);
+	tcase_add_test(t, tostream_optimized);
+	tcase_add_test(t, tostream_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
