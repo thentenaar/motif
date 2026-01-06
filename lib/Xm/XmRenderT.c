@@ -940,7 +940,7 @@ _XmRenderTableFindFallback(
 	    {
 	      XmStringTag       curtag;
 
-	      if ((strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
+	      if (!strcmp(tag, XmSTRING_DEFAULT_CHARSET))
 		curtag = XmStringGetCharset();
 	      else curtag = tag;
 
@@ -948,6 +948,8 @@ _XmRenderTableFindFallback(
 		_XmRenderTableFindRendition(rendertable, curtag, FALSE, TRUE, FALSE,
 					    indx);
 
+	      if (curtag != tag)
+	      	XtFree(curtag);
 	      if (*rend_ptr != NULL) return(TRUE);
 	    }
 
@@ -972,6 +974,7 @@ _XmRenderTableFindFallback(
 		_XmRenderTableFindRendition(rendertable, search_cset, FALSE,
 					    TRUE, FALSE, indx);
 
+	      XtFree(search_cset);
 	      if (*rend_ptr != NULL) return(TRUE);
 	    }
 	}
@@ -2180,19 +2183,21 @@ _XmRenditionCreate(Display *display,
 {
   XmRendition	rend;
   _XmRendition	rend_int;
-  Boolean 	result;
+  Boolean 	free_tag = False, result;
 
   if ((display == NULL) && (widget != NULL))
     display = XtDisplayOfObject(widget);
 
  if ((tag != NULL) &&
      (tag != XmFONTLIST_DEFAULT_TAG) &&
-     (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
+     (!strcmp(tag, XmSTRING_DEFAULT_CHARSET))) {
    tag = XmStringGetCharset();
+   free_tag = True;
+ }
 
   /* Allocate rendition. */
   rend_int = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
-  bzero((char*)rend_int, sizeof(_XmRenditionRec));
+  memset(rend_int, 0, sizeof(_XmRenditionRec));
   rend = GetHandle(_XmRendition);
   SetPtr(rend, rend_int);
 
@@ -2212,21 +2217,21 @@ _XmRenditionCreate(Display *display,
     {
       if (result == FALSE)
 	{
-	  XtFree((char *)rend_int);
+	  XtFree((XtPointer)rend_int);
 	  FreeHandle(rend);
-	  return(NULL);
+	  return NULL;
 	}
       else tag = _MOTIF_DEFAULT_LOCALE;
     }
 
+  /* If this is the current charset, it's already in the cache */
   _XmRendTag(rend) = _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN);
+  if (free_tag && tag != _XmRendTag(rend))
+  	XtFree(tag);
 
   /* Cleanup and validate resources. */
-
   CleanupResources(rend, TRUE);
-
   ValidateTag(rend, XmS);
-
   ValidateAndLoadFont(rend, display);
 
   return(rend);

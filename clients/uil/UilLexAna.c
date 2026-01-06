@@ -1973,6 +1973,7 @@ void lex_initialize_analyzer(void)
 		Uil_lex_l_user_default_charset = lex_k_default_charset;
 	else {
 		Uil_lex_l_user_default_charset = sem_charset_lang_name(language);
+		XtFree(language);
 	}
 
 	if (Uil_lex_l_user_default_charset == sym_k_error_charset) {

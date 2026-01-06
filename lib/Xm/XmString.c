@@ -942,9 +942,7 @@ _XmStringIndexGetTag(int index)
   return ret_val;
 }
 
-int
-_XmStringIndexCacheTag(XmStringTag tag,
-		       int length )
+int _XmStringIndexCacheTag(XmStringTag tag, int length)
 {
   char *a;
   int i;
@@ -955,14 +953,11 @@ _XmStringIndexCacheTag(XmStringTag tag,
   _XmProcessLock();
   if (_cache_count == 0)
     {
+      a = XmStringGetCharset();
       _tag_cache = (char **)XtMalloc(sizeof(char **) * 3);
-
-      _tag_cache[_cache_count] = XmFONTLIST_DEFAULT_TAG;
-      _cache_count++;
-      _tag_cache[_cache_count] = _MOTIF_DEFAULT_LOCALE;
-      _cache_count++;
-      _tag_cache[_cache_count] = XmStringGetCharset();
-      _cache_count++;
+      _tag_cache[_cache_count++] = XmFONTLIST_DEFAULT_TAG;
+      _tag_cache[_cache_count++] = _MOTIF_DEFAULT_LOCALE;
+      _tag_cache[_cache_count++] = a;
     }
 
   /* Look for an existing cache entry. */
@@ -6391,7 +6386,36 @@ static void _parse_locale(char *str, int *indx, int *len)
     }
 }
 
- /* This function returns current default charset being used.  This is */
+void _XmStringSetLocaleTag(const char *lang)
+{
+	const char *ptr, *str;
+	int index;
+
+	_XmProcessLock();
+	if (locale.inited)
+		XtFree(locale.tag);
+
+	str = lang ? lang : getenv("LANG");
+	_parse_locale((char *)str, &index, &locale.taglen);
+
+	if (locale.taglen > 0) {
+		ptr = str + index;
+		if (!strcmp(ptr, "UTF8")) {
+			ptr = "UTF-8";
+			locale.taglen = 5;
+		}
+	} else {
+		ptr = XmFALLBACK_CHARSET;
+		locale.taglen = strlen(XmFALLBACK_CHARSET);
+	}
+
+	locale.tag = XtMalloc(locale.taglen + 1);
+	memcpy(locale.tag, ptr, locale.taglen);
+	locale.tag[locale.taglen] = '\0';
+	_XmProcessUnlock();
+}
+
+ /* This function returns a copy of the current charset being used.  This is */
  /* determined from the value of the $LANG environment variable or */
  /* XmFALLBACK_CHARSET.  */
 XmStringTag XmStringGetCharset(void)
@@ -6403,33 +6427,14 @@ XmStringTag XmStringGetCharset(void)
 	if (locale.inited)
 		goto out;
 
-	locale.tag    = NULL;
-	locale.taglen = 0;
-	str           = getenv("LANG");
-
-	_parse_locale(str, &indx, &len);
-	if (len > 0) {
-		ptr = str + indx;
-		if (!strcmp(ptr, "UTF8")) {
-			ptr = "UTF-8";
-			len = 5;
-		}
-	} else {
-		ptr = XmFALLBACK_CHARSET;
-		len = strlen(XmFALLBACK_CHARSET);
-	}
-
-	locale.tag = XtMalloc(len + 1);
-	strncpy(locale.tag, ptr, len);
-	locale.tag[len] = '\0';
-	locale.taglen = len;
-
 	/* Register XmSTRING_DEFAULT_CHARSET for compound text conversion. */
+	_XmStringSetLocaleTag(NULL);
 	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG);
-	locale.inited = TRUE;
+	locale.inited = True;
 
 out:
-	ret_val = locale.tag;
+	ret_val = XtMalloc(strlen(locale.tag) + 1);
+	memcpy(ret_val, locale.tag, strlen(locale.tag) + 1);
 	_XmProcessUnlock();
 	return ret_val;
 }

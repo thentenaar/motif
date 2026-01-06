@@ -78,6 +78,7 @@ XmFontListEntryCreate(
     Cardinal	n;
     Arg		args[4];
     XmFontListEntry ret_val;
+    Boolean free_tag = False;
 
     _XmProcessLock();
     if ((font == NULL) || (tag == NULL) ||
@@ -91,9 +92,10 @@ XmFontListEntryCreate(
     }
 
     if ((tag != XmFONTLIST_DEFAULT_TAG) &&
-	(strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
+	(!strcmp(tag, XmSTRING_DEFAULT_CHARSET))) {
       derived_tag = XmStringGetCharset();
-    else derived_tag = tag;
+      free_tag    = True;
+    } else derived_tag = tag;
 
     n = 0;
     XtSetArg(args[n], XmNfontType, type); n++;
@@ -109,6 +111,8 @@ XmFontListEntryCreate(
       XmRenditionCreate(NULL,
 		_XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN),
 			args, n);
+	if (free_tag && derived_tag != _XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN))
+		XtFree(derived_tag);
     _XmProcessUnlock();
     return ret_val;
 }
@@ -135,6 +139,7 @@ XmFontListEntryCreate_r(char *tag,
   Cardinal    n;
   Arg         args[4];
   XmFontListEntry ret_val;
+  Boolean free_tag = False;
 
   _XmWidgetToAppContext(wid);
   _XmAppLock(app);
@@ -146,10 +151,10 @@ XmFontListEntryCreate_r(char *tag,
     }
 
   if ((tag != XmFONTLIST_DEFAULT_TAG) &&
-      (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0))
+      (!strcmp(tag, XmSTRING_DEFAULT_CHARSET))) {
     derived_tag = XmStringGetCharset();
-  else
-    derived_tag = tag;
+    free_tag    = True;
+  } else derived_tag = tag;
 
   n = 0;
   XtSetArg(args[n], XmNfontType, type); n++;
@@ -160,6 +165,9 @@ XmFontListEntryCreate_r(char *tag,
       XmRenditionCreate(wid,
 			_XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN),
 			args, n);
+
+  if (free_tag && derived_tag != _XmStringCacheTag(derived_tag, XmSTRING_TAG_STRLEN))
+  	XtFree(derived_tag);
   _XmAppUnlock(app);
   return ret_val;
 }
@@ -442,6 +450,7 @@ XmFontListCreate(
   XmRendition		rends[1];
   XmStringCharSet	curcharset;
   XmRenderTable		ret_val;
+  Boolean free_tag = False;
 
   _XmProcessLock();
   if ((font == NULL) || (charset == NULL)) {
@@ -450,9 +459,10 @@ XmFontListCreate(
   }
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
-      (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
+      (!strcmp(charset, XmSTRING_DEFAULT_CHARSET))) {
     curcharset = XmStringGetCharset();
-  else curcharset = charset;
+    free_tag   = True;
+  } else curcharset = charset;
 
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
@@ -464,9 +474,10 @@ XmFontListCreate(
 		      _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
 		      args, n);
 
+  if (free_tag && curcharset != _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN))
+  	XtFree(curcharset);
   _XmProcessUnlock();
   ret_val = XmRenderTableAddRenditions(NULL, rends, 1, XmDUPLICATE);
-
   XmRenditionFree(rends[0]);
 
   return(ret_val);
@@ -494,6 +505,7 @@ XmFontListCreate_r(
   XmRendition           rends[1];
   XmStringCharSet       curcharset;
   XmRenderTable         ret_val;
+  Boolean free_tag = False;
 
 
   _XmWidgetToAppContext(wid);
@@ -504,9 +516,10 @@ XmFontListCreate_r(
   }
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
-      (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
+      (!strcmp(charset, XmSTRING_DEFAULT_CHARSET))) {
     curcharset = XmStringGetCharset();
-  else curcharset = charset;
+    free_tag   = True;
+  } else curcharset = charset;
 
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
@@ -518,10 +531,10 @@ XmFontListCreate_r(
                       _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
                       args, n);
 
+  if (free_tag && curcharset != _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN))
+  	XtFree(curcharset);
   ret_val = XmRenderTableAddRenditions(NULL, rends, 1, XmDUPLICATE);
-
   XmRenditionFree(rends[0]);
-
   _XmAppUnlock(app);
   return(ret_val);
 }
@@ -581,14 +594,15 @@ XmFontListAdd(
   Arg			args[4];
   XmRendition		rends[1];
   XmFontList		ret_val;
+  Boolean free_tag = False;
 #ifdef XTHREADS
   XtAppContext		app=NULL;
 #endif
 
   if (!old)
-    return((XmFontList) NULL);
+    return NULL;
   if (!charset || !font)
-    return ((XmFontList) old);
+    return old;
 
 #ifdef XTHREADS
   if ( _XmRTDisplay((XmRenderTable)old) )
@@ -601,10 +615,10 @@ XmFontListAdd(
 #endif
 
   if ((charset != XmFONTLIST_DEFAULT_TAG) &&
-      (strcmp(charset, XmSTRING_DEFAULT_CHARSET) == 0))
+      (!strcmp(charset, XmSTRING_DEFAULT_CHARSET))) {
     curcharset = XmStringGetCharset();
-  else
-    curcharset = charset;
+    free_tag   = True;
+  } else curcharset = charset;
 
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
@@ -616,6 +630,8 @@ XmFontListAdd(
 		      _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN),
 		      args, n);
 
+  if (free_tag && curcharset != _XmStringCacheTag(curcharset, XmSTRING_TAG_STRLEN))
+  	XtFree(curcharset);
   ret_val = XmRenderTableAddRenditions(old, rends, 1, XmDUPLICATE);
 
 #ifdef XTHREADS
