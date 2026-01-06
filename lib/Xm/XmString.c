@@ -6542,6 +6542,9 @@ unsigned int XmStringByteStreamLength(unsigned char *string)
 {
     unsigned int len;
 
+	if (!string)
+		return 0;
+
     _XmProcessLock();
     len = _read_string_length( string );
     len += _calc_header_size(len);
