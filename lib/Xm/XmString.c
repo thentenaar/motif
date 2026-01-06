@@ -5251,6 +5251,11 @@ XmString XmCvtByteStreamToXmString(unsigned char *property)
       return ((XmString) NULL);
   }
 
+  if (!_read_string_length(property)) {
+      _XmProcessUnlock();
+      return StringEmptyCreate();
+  }
+
   c  = (unsigned char *) _read_header((unsigned char *) property);
   end = c + _read_string_length ((unsigned char *) property);
   if (c >= end) {
@@ -5281,9 +5286,13 @@ XmString XmCvtByteStreamToXmString(unsigned char *property)
       switch (*c_opt)
         {
 	/* All non-optimized */
+	case XmSTRING_COMPONENT_END:
+          end_seen  = True;
+          optimized = False;
+          break;
 	case XmSTRING_COMPONENT_LAYOUT_PUSH:
 	case XmSTRING_COMPONENT_LAYOUT_POP:
-        case XmSTRING_COMPONENT_SEPARATOR: /* start new line */
+	case XmSTRING_COMPONENT_SEPARATOR: /* start new line */
           optimized = FALSE;
           break;
 
