@@ -769,7 +769,6 @@ START_TEST(fromstream_empty)
 
 	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
 	s2 = XmCvtByteStreamToXmString(stream);
-	fflush(stdout);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
@@ -807,6 +806,58 @@ START_TEST(fromstream_unoptimized)
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(streamlen_null)
+{
+	ck_assert_msg(!XmStringByteStreamLength(NULL),
+	              "A NULL string results in a 0-length stream");
+}
+END_TEST
+
+START_TEST(streamlen_empty)
+{
+	XmString s;
+	unsigned char *stream = NULL;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	XmCvtXmStringToByteStream(s, &stream);
+	ck_assert_msg(XmStringByteStreamLength(stream) == 4,
+	              "An empty string is just a header");
+	XmStringFree(s);
+	XtFree((XtPointer)s);
+}
+END_TEST
+
+START_TEST(streamlen_optimized)
+{
+	XmString s;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	XmCvtXmStringToByteStream(s, &stream);
+	ck_assert_msg(XmStringByteStreamLength(stream) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "The bytestream should be 11 + length of "
+	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
+	XmStringFree(s);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(streamlen_unoptimized)
+{
+	XmString s;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	XmCvtXmStringToByteStream(s, &stream);
+	ck_assert_msg(XmStringByteStreamLength(stream) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	              "The bytestream should be 13 + length of "
+	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
+	XmStringFree(s);
 	XtFree((XtPointer)stream);
 }
 END_TEST
@@ -911,6 +962,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, fromstream_empty);
 	tcase_add_test(t, fromstream_optimized);
 	tcase_add_test(t, fromstream_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("ByteStreamLength");
+	tcase_add_test(t, streamlen_null);
+	tcase_add_test(t, streamlen_empty);
+	tcase_add_test(t, streamlen_optimized);
+	tcase_add_test(t, streamlen_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
