@@ -5019,14 +5019,6 @@ _XmStringNonOptCreate(
   _XmStrCreate(string, XmSTRING_MULTIPLE_ENTRY, 0);
   _XmEntryInit((_XmStringEntry)&seg, XmSTRING_ENTRY_UNOPTIMIZED);
 
-  if (!havetag)
-    {
-      tag = XmFONTLIST_DEFAULT_TAG;
-      _XmUnoptSegTag(&seg) =
-	_XmStringCacheTag((char *) (tag), XmSTRING_TAG_STRLEN);
-    }
-  _XmEntryDirectionSet((_XmStringEntry)&seg, XmSTRING_DIRECTION_L_TO_R);
-
   lc = sc = 0;
 
   while (c < end)
@@ -5087,6 +5079,7 @@ _XmStringNonOptCreate(
 	      push_seen = txt_seen = pop_seen = False;
 	    }
 
+	  havetag = True;
 	  _XmEntryTextTypeSet(&seg, XmCHARSET_TEXT);
 	  prev_type = XmCHARSET_TEXT;
 	  _XmUnoptSegTag(&seg) =
@@ -5155,6 +5148,13 @@ _XmStringNonOptCreate(
 	  _XmEntryTextSet((_XmStringEntry)&seg, (c + _asn1_size(length)));
 	  _XmUnoptSegByteCount(&seg) = length;
 
+	  if (!havetag)
+	    {
+	      tag = XmFONTLIST_DEFAULT_TAG;
+	      _XmUnoptSegTag(&seg) =
+		_XmStringCacheTag((char *) (tag), XmSTRING_TAG_STRLEN);
+	    }
+	  _XmEntryDirectionSet((_XmStringEntry)&seg, XmSTRING_DIRECTION_L_TO_R);
 	  txt_seen = True;
 	  break;
 
