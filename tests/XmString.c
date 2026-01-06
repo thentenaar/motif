@@ -753,6 +753,64 @@ START_TEST(tostream_unoptimized)
 }
 END_TEST
 
+START_TEST(fromstream_null)
+{
+	ck_assert_msg(!XmCvtByteStreamToXmString(NULL),
+	              "Converting a NULL bytestream should yield a NULL string");
+}
+END_TEST
+
+START_TEST(fromstream_empty)
+{
+	XmString s, s2 = NULL;
+	const unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x00
+	};
+
+	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	s2 = XmCvtByteStreamToXmString(stream);
+	fflush(stdout);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+}
+END_TEST
+
+START_TEST(fromstream_optimized)
+{
+	XmString s, s2;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	XmCvtXmStringToByteStream(s, &stream);
+
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(fromstream_unoptimized)
+{
+	XmString s, s2;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateLocalized("motif");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	XmCvtXmStringToByteStream(s, &stream);
+
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(!_XmStrOptimized(s2),   "String should not be optimized");
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -844,6 +902,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, tostream_empty);
 	tcase_add_test(t, tostream_optimized);
 	tcase_add_test(t, tostream_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("ByteStreamToString");
+	tcase_add_test(t, fromstream_null);
+	tcase_add_test(t, fromstream_empty);
+	tcase_add_test(t, fromstream_optimized);
+	tcase_add_test(t, fromstream_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
