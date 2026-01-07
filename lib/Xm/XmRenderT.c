@@ -396,18 +396,16 @@ GetResources(XmRendition rend,
   XrmQuark		rawType;
   XrmValue		convValue;
   Boolean		have_value, copied;
-#ifdef XTHREADS
   XtAppContext		app=NULL;
 
   if (wid)
 	app = XtWidgetToApplicationContext(wid);
   else if (dsp)
 	app = XtDisplayToApplicationContext(dsp);
-  if (app) {
+  if (app)
       _XmAppLock(app);
-  }
-  _XmProcessLock();
-#endif
+  else _XmProcessLock();
+
   /* Initialize quark cache */
   if (quarks == NULL)
     {
@@ -579,13 +577,11 @@ GetResources(XmRendition rend,
     }
   if (searchList != stackSearchList) XtFree((char *)searchList);
 
-#ifdef XTHREADS
-  _XmProcessUnlock();
-  if (app) {
+  if (app)
       _XmAppUnlock(app);
-  }
-#endif
-  return(got_one);
+  else _XmProcessUnlock();
+
+  return got_one;
 }
 
 /* Sets all resources to defaults from resource list. */
@@ -1259,16 +1255,12 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
   if ((renditions == NULL) || (rendition_count == 0))
     return(oldtable);
 
-#ifdef XTHREADS
   if (_XmRendDisplay(renditions[0]))
 	app = XtDisplayToApplicationContext(_XmRendDisplay(renditions[0]));
-  if (app) {
+  if (app)
      _XmAppLock(app);
-  }
-  else {
-     _XmProcessLock();
-  }
-#endif
+  else _XmProcessLock();
+
   if (oldtable == NULL)
     {
       /* Malloc new table */
@@ -1425,15 +1417,11 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
     }
 
   if (tmptable != NULL) FreeHandle(tmptable);
-#ifdef XTHREADS
-  if (app) {
+  if (app)
       _XmAppUnlock(app);
-  }
-  else {
-      _XmProcessUnlock();
-  }
-#endif
-  return(oldtable);
+  else _XmProcessUnlock();
+
+  return oldtable;
 }
 
 /* Remove matching renditions. */
@@ -1444,28 +1432,21 @@ XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 			      int tag_count)
 {
   XmRenderTable ret_val;
-#ifdef XTHREADS
   XtAppContext  app=NULL;
 
   if (_XmRTDisplay(oldtable))
 	app = XtDisplayToApplicationContext(_XmRTDisplay(oldtable));
-  if (app) {
+  if (app)
     _XmAppLock(app);
-  }
-  else {
-    _XmProcessLock();
-  }
-#endif
+  else _XmProcessLock();
+
   ret_val = _XmRenderTableRemoveRenditions(oldtable, tags,tag_count,
 				FALSE, XmFONT_IS_FONT, NULL);
-#ifdef XTHREADS
-  if (app) {
+
+  if (app)
      _XmAppUnlock(app);
-  }
-  else {
-     _XmProcessUnlock();
-  }
-#endif
+  else _XmProcessUnlock();
+
   return ret_val;
 }
 
@@ -1639,20 +1620,17 @@ XmRenderTableCopy(XmRenderTable table,
   XmRendition		rend = NULL;
   XtAppContext		app = NULL;
 
-  if (table == NULL) return((XmRenderTable)NULL);
+  if (!table)
+      return NULL;
 
-#ifdef XTHREADS
   if (_XmRTDisplay(table))
      app = XtDisplayToApplicationContext(_XmRTDisplay(table));
-  if (app) {
-     _XmAppLock(app);
-  }
-  else {
-     _XmProcessLock();
-  }
-#endif
-  count = 0;
 
+  if (app)
+     _XmAppLock(app);
+  else _XmProcessLock();
+
+  count = 0;
   if ((_XmRTRefcountInc(table) == 0) || (tags != NULL))
     {
       /* Malloc new table */
@@ -1735,15 +1713,11 @@ XmRenderTableCopy(XmRenderTable table,
 
   _XmRTDisplay(rt) = _XmRTDisplay(table);
 
-#ifdef XTHREADS
-  if (app) {
+  if (app)
 	_XmAppUnlock(app);
-  }
-  else {
-	_XmProcessUnlock();
-  }
-#endif
-  return(rt);
+  else _XmProcessUnlock();
+
+  return rt;
 }
 
 /* Decrement rendertable, free if refcount is zero.  XmRenditionFree */
@@ -1771,16 +1745,20 @@ XmRenderTableGetTags(XmRenderTable table,
 		     XmStringTag **tag_list)
 {
   int i, ret_val;
-  XtAppContext          app = NULL;
+  XtAppContext app = NULL;
 
-  if (table == NULL)
-    {
-      *tag_list = NULL;
-      return(0);
-    }
+  if (!table) {
+      if (tag_list) *tag_list = NULL;
+      return 0;
+  }
 
-  app = XtDisplayToApplicationContext(_XmRTDisplay(table));
-  _XmAppLock(app);
+  if (_XmRTDisplay(table))
+     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
+
+  if (app)
+     _XmAppLock(app);
+  else _XmProcessLock();
+
   *tag_list =
     (XmStringTag *)XtMalloc(sizeof(XmStringTag) * _XmRTCount(table));
 
@@ -1789,7 +1767,10 @@ XmRenderTableGetTags(XmRenderTable table,
 	XtNewString(_XmRendTag(_XmRTRenditions(table)[i]));
 
   ret_val = _XmRTCount(table);
-  _XmAppUnlock(app);
+  if (app)
+	_XmAppUnlock(app);
+  else _XmProcessUnlock();
+
   return ret_val;
 }
 
@@ -1799,12 +1780,22 @@ XmRenderTableGetRendition(XmRenderTable table,
 			  XmStringTag tag)
 {
   XmRendition ret_val;
-  _XmDisplayToAppContext(_XmRTDisplay(table));
+  XtAppContext app = NULL;
 
-  _XmAppLock(app);
+  if (_XmRTDisplay(table))
+     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
+
+  if (app)
+     _XmAppLock(app);
+  else _XmProcessLock();
+
   ret_val = CopyRendition(_XmRenderTableFindRendition(table, tag,
 			FALSE, FALSE, FALSE, NULL));
-  _XmAppUnlock(app);
+
+  if (app)
+	_XmAppUnlock(app);
+  else _XmProcessUnlock();
+
   return ret_val;
 }
 
@@ -1818,19 +1809,19 @@ XmRenderTableGetRenditions(XmRenderTable table,
   int		i, count;
   XtAppContext  app = NULL;
 
-  if ((table == NULL) || (tags == NULL) || (tag_count == 0))
-      return(NULL);
+  if (!table || !tags || !tag_count)
+      return NULL;
 
-#ifdef XTHREADS
   if (_XmRTDisplay(table))
-  {
      app = XtDisplayToApplicationContext(_XmRTDisplay(table));
-     _XmAppLock(app);
-  }
-#endif
-  rends = (XmRendition *)XtMalloc(tag_count * sizeof(XmRendition));
 
+  if (app)
+     _XmAppLock(app);
+  else _XmProcessLock();
+
+  rends = (XmRendition *)XtMalloc(tag_count * sizeof(XmRendition));
   count = 0;
+
   for (i = 0; i < tag_count; i++)
     {
       rend = _XmRenderTableFindRendition(table, tags[i],
@@ -1845,12 +1836,11 @@ XmRenderTableGetRenditions(XmRenderTable table,
   if (count < tag_count)
     rends = (XmRendition *)XtRealloc((char *)rends, count * sizeof(XmRendition));
 
-#ifdef XTHREADS
-  if (app) {
-     _XmAppUnlock(app);
-  }
-#endif
-  return(rends);
+  if (app)
+	_XmAppUnlock(app);
+  else _XmProcessUnlock();
+
+  return rends;
 }
 
 /* Wrapper for calling XtWarning functions. */
@@ -2020,7 +2010,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 		    FcResult res;
 		    FcPattern *p;
 
-			static XmRendition *rend_cache;
+			static XmRendition *rend_cache=NULL;
 			static int count_rend=0, num_rend;
 			num_rend = GetSameRenditions(rend_cache, rend, count_rend);
 
@@ -2151,20 +2141,15 @@ XmRenditionCreate(Widget widget,
    */
   if (widget)
 	app = XtWidgetToApplicationContext(widget);
-  if (app) {
+  if (app)
 	_XmAppLock(app);
-  }
-  else {
-	_XmProcessLock();
-  }
+  else _XmProcessLock();
+
   ret_val = _XmRenditionCreate(NULL, widget, XmS, XmCRenderTable,
 			    tag, arglist, argcount, NULL);
-  if (app) {
+  if (app)
 	_XmAppUnlock(app);
-  }
-  else {
-	_XmProcessUnlock();
-  }
+  else _XmProcessUnlock();
 
   return ret_val;
 }
@@ -2429,20 +2414,21 @@ XmRenditionUpdate(XmRendition rendition,
   Arg		*arg;
   Display	*display = _XmGetDefaultDisplay();
   Boolean	can_free;
-  XtAppContext	app = NULL;
+  XtAppContext app = NULL;
 
-  if (rendition == NULL) return;
+  if (!rendition)
+  	return;
 
-#ifdef XTHREADS
   if (_XmRendDisplay(rendition))
-  {
      app = XtDisplayToApplicationContext(_XmRendDisplay(rendition));
+
+  if (app)
      _XmAppLock(app);
-  }
-  if (_XmRendDisplay(rendition) && (_XmRendDisplay(rendition) !=
-			display) )
+  else _XmProcessLock();
+
+  if (_XmRendDisplay(rendition) && (_XmRendDisplay(rendition) != display))
  	display = _XmRendDisplay(rendition);
-#endif
+
   /* Save old values to check for dependencies and free memory. */
   oldtag = _XmRendTag(rendition);
   oldname = _XmRendFontName(rendition);
@@ -2507,13 +2493,10 @@ XmRenditionUpdate(XmRendition rendition,
   if ((oldtabs != _XmRendTabs(rendition)) && can_free) XmTabListFree(oldtabs);
 
   ValidateTag(rendition, oldtag);
-
   ValidateAndLoadFont(rendition, display);
-#ifdef XTHREADS
-  if (app) {
+  if (app)
      _XmAppUnlock(app);
-  }
-#endif
+  else _XmProcessUnlock();
 }
 
 /*****************************************************************************/
@@ -3261,7 +3244,6 @@ XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
     short           indx;
     int             h,a,d;
 
-#ifdef XTHREADS
   XtAppContext	       app=NULL;
 
   if ( _XmRTDisplay(rendertable) )
@@ -3271,7 +3253,6 @@ XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
     _XmAppLock(app);
   else
     _XmProcessLock();
-#endif
 
     a = d = h = 0;
     /* Get default rendition */
@@ -3317,14 +3298,13 @@ XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
         }
     }
 
-#ifdef XTHREADS
   if (app)
     _XmAppUnlock(app);
   else
     _XmProcessUnlock();
-#endif
 
   if (ascent) *ascent = a;
   if (descent) *descent = d;
   if (height) *height = h;
 }
+
