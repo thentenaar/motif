@@ -22,6 +22,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <check.h>
@@ -29,11 +30,10 @@
 #include "XmStringI.h"
 #include "suites.h"
 
-static Display *display;
-
 static void _init_xt(void)
 {
-	display = XtDisplay(init_xt("check_XmString"));
+	setenv("LANG", "C", 1);
+	init_xt("check_XmString");
 }
 
 /**
@@ -436,6 +436,63 @@ START_TEST(empty_not_empty)
 	s = XmStringCreateLocalized("test");
 	ck_assert_msg(!XmStringEmpty(s), "Strings with text aren't empty");
 	XmStringFree(s);
+}
+END_TEST
+
+/**
+ * Default (set in _init_xt is "C")
+ */
+extern void _XmStringSetLocaleTag(const char *lang);
+START_TEST(getcharset_default)
+{
+	XmStringTag cset;
+
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, XmFALLBACK_CHARSET),
+	              "Expected XmFALLBACK_CHARSET");
+
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getcharset_from_lang)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("C.KOI8-U");
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, "KOI8-U"), "Expected KOI8-U");
+
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getcharset_no_lang)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("");
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, XmFALLBACK_CHARSET),
+	              "Expected XmFALLBACK_CHARSET");
+
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getcharset_utf8)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("POSIX.UTF8");
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
+
+	if (cset)
+		XtFree(cset);
 }
 END_TEST
 
@@ -914,6 +971,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, empty_null);
 	tcase_add_test(t, empty_is_empty);
 	tcase_add_test(t, empty_not_empty);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("GetCharset");
+	tcase_add_test(t, getcharset_default);
+	tcase_add_test(t, getcharset_from_lang);
+	tcase_add_test(t, getcharset_no_lang);
+	tcase_add_test(t, getcharset_utf8);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
