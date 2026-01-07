@@ -21,10 +21,12 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xft/Xft.h>
 #include <Xm/Xm.h>
+#include <XmRenderTI.h>
 #include <check.h>
 
 #include "suites.h"
@@ -45,6 +47,7 @@ static char * const font_tag[N_FONTS] = {
 
 static void _init_xt(void)
 {
+	setenv("LANG", "C", 1);
 	display = XtDisplay(init_xt("check_XmFontListEntry"));
 }
 
@@ -113,10 +116,15 @@ END_TEST
 START_TEST(create_entry_from_font)
 {
 	XmFontListEntry e;
+	XmStringTag cs;
 
-	ck_assert_msg((e = XmFontListEntryCreate(font_tag[0], XmFONT_IS_FONT, font[0])),
+	cs = XmStringGetCharset();
+	ck_assert_msg((e = XmFontListEntryCreate("", XmFONT_IS_FONT, font[0])),
 	              "Failed to create a font list entry");
+	ck_assert_msg(e && !strcmp(_XmRendTag((XmRendition)e), cs),
+	              "Entry created with an empty tag should use the current charset");
 	if (e) XmFontListEntryFree(&e);
+	XtFree(cs);
 }
 END_TEST
 
@@ -153,11 +161,13 @@ START_TEST(load_entry_invalid_type)
 }
 END_TEST
 
-START_TEST(load_entry_invalid_tag)
+START_TEST(load_entry_null_tag)
 {
 	XmFontListEntry e;
-	ck_assert_msg(!(e = XmFontListEntryLoad(display, font_name[1], XmFONT_IS_FONT, NULL)),
-	              "Shouldn't be able to load an entry with an invalid tag");
+
+	e = XmFontListEntryLoad(display, font_name[1], XmFONT_IS_FONT, NULL);
+	ck_assert_msg(e && !strcmp(_XmRendTag((XmRendition)e), XmFONTLIST_DEFAULT_TAG),
+	              "Entry loaded with a NULL tag should use the default tag");
 	if (e) XmFontListEntryFree(&e);
 }
 END_TEST
@@ -259,7 +269,7 @@ void xmfontlistentry_suite(SRunner *runner)
 
 	t = tcase_create("Load entry");
 	tcase_add_test(t, load_entry_invalid_type);
-	tcase_add_test(t, load_entry_invalid_tag);
+	tcase_add_test(t, load_entry_null_tag);
 	tcase_add_test(t, load_entry_invalid_name);
 	tcase_add_test(t, load_entry);
 	tcase_add_test(t, load_entry_xft);

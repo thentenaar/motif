@@ -459,8 +459,8 @@ static int _get_generate_parse_table (XmParseTable *gen_table);
 
 
 static struct __Xmlocale locale;
-static char **_tag_cache;
-static int    _cache_count = 0;
+static XmStringTag *_tag_cache = NULL;
+static size_t _cache_count = 0;
 
 /*
  * Determines whether this string has a short or long length field
@@ -928,86 +928,91 @@ XmStringFreeContext(
 /*
  * this set is the TCS font list handling stuff
  */
-XmStringTag
-_XmStringIndexGetTag(int index)
+XmStringTag _XmStringIndexGetTag(int index)
 {
-  XmStringTag ret_val;
-  _XmProcessLock();
-  if (index > _cache_count) {
-    _XmProcessUnlock();
-    return NULL;
-  }
-  ret_val = _tag_cache[index];
-  _XmProcessUnlock();
-  return ret_val;
+	XmStringTag ret = XmFONTLIST_DEFAULT_TAG;
+
+	_XmProcessLock();
+	if (_tag_cache && index >= 0 && (size_t)index < _cache_count)
+		ret = _tag_cache[index];
+	_XmProcessUnlock();
+	return ret;
 }
 
 int _XmStringIndexCacheTag(XmStringTag tag, int length)
 {
-  char *a;
-  int i;
+	int i;
+	size_t len = (size_t)length;
 
-  /* Initialize cache with XmFONTLIST_DEFAULT_TAG, _MOTIF_DEFAULT_LOCALE, and
-     locale.tag if necessary, to keep indices low. */
-
-  _XmProcessLock();
-  if (_cache_count == 0)
-    {
-      a = XmStringGetCharset();
-      _tag_cache = (char **)XtMalloc(sizeof(char **) * 3);
-      _tag_cache[_cache_count++] = XmFONTLIST_DEFAULT_TAG;
-      _tag_cache[_cache_count++] = _MOTIF_DEFAULT_LOCALE;
-      _tag_cache[_cache_count++] = a;
-    }
-
-  /* Look for an existing cache entry. */
-  for (i = 0; i < _cache_count; i++)
-    {
-      if (((tag == _tag_cache[i]) ||
-	   ((length != XmSTRING_TAG_STRLEN) &&
-	    (strncmp(tag, _tag_cache[i], length) == 0)) ||
-	   ((length == XmSTRING_TAG_STRLEN) &&
-	    (strcmp(tag, _tag_cache[i]) == 0))) &&
-	  ((length == XmSTRING_TAG_STRLEN) || (_tag_cache[i][length] == '\0')))
-	{
-	  _XmProcessUnlock();
-	  return( i) ;
+	/**
+	 * Initialize cache with XmFONTLIST_DEFAULT_TAG, _MOTIF_DEFAULT_LOCALE,
+	 * and locale.tag to keep indices low.
+	 */
+	_XmProcessLock();
+	if (!_tag_cache || !_cache_count) {
+		_cache_count = 3;
+		_tag_cache = (XmStringTag *)XtRealloc((XtPointer)_tag_cache,
+		                                      _cache_count * sizeof *_tag_cache);
+		_tag_cache[0] = XmFONTLIST_DEFAULT_TAG;
+		_tag_cache[1] = _MOTIF_DEFAULT_LOCALE;
+		_tag_cache[2] = XmStringGetCharset();
 	}
-    }
 
-  /* Add this entry to the cache. */
-  if (length == XmSTRING_TAG_STRLEN) length = strlen(tag);
+	/* Use the default tag as a guard */
+	if (!tag || !*tag || !length || length < XmSTRING_TAG_STRLEN) {
+		_XmProcessUnlock();
+		return 0;
+	}
 
-  _tag_cache = (char **) XtRealloc ((char *) _tag_cache,
-				    sizeof (char **) * (_cache_count + 1));
+	/* Look for an existing entry */
+	for (i = 0; (size_t)i < _cache_count; i++) {
+		if (tag == _tag_cache[i])
+			break;
 
-  a = XtMalloc (length + 1);
-  memcpy(a, tag, length);
-  a[length] = '\0';
+		if (length != XmSTRING_TAG_STRLEN &&
+		    len == strlen(_tag_cache[i])  &&
+		    !strncmp(tag, _tag_cache[i], len))
+			break;
 
-  _tag_cache[_cache_count] = a;
-  _cache_count++;
+		if (length == XmSTRING_TAG_STRLEN        &&
+		    strlen(tag) == strlen(_tag_cache[i]) &&
+		    !strcmp(tag, _tag_cache[i]))
+			break;
+	}
 
-  _XmProcessUnlock();
-  return(i) ;
+	if ((size_t)i < _cache_count) {
+		_XmProcessUnlock();
+		return i;
+	}
+
+	/* Check for overflow, then add a new entry */
+	if (_cache_count + 1 < _cache_count) {
+		_XmProcessUnlock();
+		return 0;
+	}
+
+	if (length == XmSTRING_TAG_STRLEN)
+		len = strlen(tag);
+
+	_tag_cache = (XmStringTag *)XtRealloc((XtPointer)_tag_cache,
+	                                      (_cache_count + 1) * sizeof *_tag_cache);
+	_tag_cache[_cache_count] = XtCalloc(1, len + 1);
+	memcpy(_tag_cache[_cache_count++], tag, len);
+	i = (int)(_cache_count - 1);
+	_XmProcessUnlock();
+	return i;
 }
 
-XmStringTag
-_XmStringCacheTag(XmStringTag tag,
-		  int length )
+XmStringTag _XmStringCacheTag(XmStringTag tag, int length)
 {
-  int tag_index ;
-  XmStringTag ret_val;
+	int idx;
+	XmStringTag ret;
 
-  _XmProcessLock();
-  if (tag == NULL) {
-      _XmProcessUnlock();
-      return NULL;
-  }
-  tag_index = _XmStringIndexCacheTag( tag, length) ;
-  ret_val = _tag_cache[tag_index] ;
-  _XmProcessUnlock();
-  return ret_val;
+	_XmProcessLock();
+	idx = _XmStringIndexCacheTag(tag, length);
+	ret = _tag_cache[idx];
+	_XmProcessUnlock();
+	return ret;
 }
 
 static Boolean

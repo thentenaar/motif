@@ -21,6 +21,7 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
@@ -32,6 +33,7 @@ static Display *display;
 
 static void _init_xt(void)
 {
+	setenv("LANG", "C", 1);
 	display = XtDisplay(init_xt("check_XmFontList"));
 }
 
