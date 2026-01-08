@@ -2845,18 +2845,12 @@ XmStringExtent(
 
   if ((rendertable == NULL) || (string == NULL)) return;
 
-#ifdef XTHREADS
   if (_XmRTDisplay(rendertable))
     app = XtDisplayToApplicationContext(_XmRTDisplay(rendertable));
   if (app)
-  {
-      _XmAppLock(app);
-  }
-  else
-  {
-      _XmProcessLock();
-  }
-#endif
+    _XmAppLock(app);
+  else _XmProcessLock();
+
   if (_XmStrOptimized(string))
     OptLineMetrics(rendertable, string, NULL, NULL, width, height, NULL, NULL);
   else
@@ -2908,16 +2902,10 @@ XmStringExtent(
       if (_XmRendTags(rend) != NULL)
 	XtFree((char *)_XmRendTags(rend));
     }
-#ifdef XTHREADS
+
   if (app)
-  {
-     _XmAppUnlock(app);
-  }
-  else
-  {
-     _XmProcessUnlock();
-  }
-#endif
+    _XmAppUnlock(app);
+  else _XmProcessUnlock();
 }
 
 Boolean XmStringEmpty(XmString string)
@@ -6627,18 +6615,11 @@ Dimension XmStringBaseline(XmRenderTable rendertable, XmString string)
   if (!rendertable || !string)
       return 0;
 
-#ifdef XTHREADS
   if (_XmRTDisplay(rendertable))
     app = XtDisplayToApplicationContext(_XmRTDisplay(rendertable));
   if (app)
-  {
-	_XmAppLock(app);
-  }
-  else
-  {
-	_XmProcessLock();
-  }
-#endif
+    _XmAppLock(app);
+  else _XmProcessLock();
 
   memset(&scratch, 0, sizeof scratch);
   tmp = &scratch;
@@ -6666,24 +6647,14 @@ Dimension XmStringBaseline(XmRenderTable rendertable, XmString string)
 		  &width, &height, &asc, &desc);
 
       if (app)
-  	{
-         _XmAppUnlock(app);
-	}
-      else
-	{
-	 _XmProcessUnlock();
-	}
+        _XmAppUnlock(app);
+      else _XmProcessUnlock();
     }
   else
     {
       if (app)
-	{
-         _XmAppUnlock(app);
-	}
-      else
-	{
-	 _XmProcessUnlock();
-	}
+        _XmAppUnlock(app);
+      else _XmProcessUnlock();
       asc = OptLineAscender(rendertable, (_XmStringOpt)string);
     }
 
