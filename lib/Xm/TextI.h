@@ -37,7 +37,6 @@ extern "C" {
 extern XmTextPosition _XmTextFindScroll(XmTextWidget widget,
 					XmTextPosition start,
 					int delta);
-extern int _XmTextGetTotalLines(Widget widget);
 extern XmTextLineTable _XmTextGetLineTable(Widget widget,
 					   int *total_lines);
 extern void _XmTextRealignLineTable(XmTextWidget widget,

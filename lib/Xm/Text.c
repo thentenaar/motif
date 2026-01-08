@@ -3083,15 +3083,7 @@ _XmTextShowPosition(Widget widget,
   _XmAppUnlock(app);
 }
 
-/* Why is this here? It's never used */
-int
-_XmTextGetTotalLines(Widget widget)
-{
-  return(((XmTextWidget)widget)->text.total_lines);
-}
-
-
-/* Why is this here? It's never used */
+/* Used by CDE's lib/DtWidget/Editor.c  */
 XmTextLineTable
 _XmTextGetLineTable(Widget widget,
 		    int *total_lines)
@@ -3108,7 +3100,6 @@ _XmTextGetLineTable(Widget widget,
 
   return line_table;
 }
-
 
 /********************************************
  * AccessTextual trait method implementation
