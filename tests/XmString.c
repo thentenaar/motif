@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <check.h>
@@ -435,6 +436,155 @@ START_TEST(empty_not_empty)
 
 	s = XmStringCreateLocalized("test");
 	ck_assert_msg(!XmStringEmpty(s), "Strings with text aren't empty");
+	XmStringFree(s);
+}
+END_TEST
+
+/**
+ * These XmStringGenerate() tests also exercise XmStringParseText()
+ */
+START_TEST(generate_null_text)
+{
+	ck_assert_msg(!XmStringGenerate(NULL, NULL, XmCHARSET_TEXT, NULL),
+	              "Expected NULL result for NULL text input");
+}
+END_TEST
+
+/**
+ * For XmWIDECHAR_TEXT or XmMULTIBYTE_TEXT, only NULL or _MOTIF_DEFAULT_LOCALE
+ * are permitted for tag.
+ */
+START_TEST(generate_invalid_tag)
+{
+	ck_assert_msg(!XmStringGenerate("text", "bad_tag", XmWIDECHAR_TEXT, NULL),
+	              "Expected NULL result for bad tag");
+	ck_assert_msg(!XmStringGenerate("text", "bad_tag", XmMULTIBYTE_TEXT, NULL),
+	              "Expected NULL result for bad tag");
+}
+END_TEST
+
+/**
+ * Only XmCHARSET_TEXT, XmWIDECHAR_TEXT, and XmMULTIBYTE_TEXT are valid
+ */
+START_TEST(generate_invalid_type)
+{
+	ck_assert_msg(!XmStringGenerate("text", NULL, XmNO_TEXT, NULL),
+	              "Expected NULL result for bad type");
+}
+END_TEST
+
+START_TEST(generate_charset)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len;
+	char *val;
+	Cardinal i;
+
+	static XmStringComponentType extype[] = {
+		XmSTRING_COMPONENT_TAG, XmSTRING_COMPONENT_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_TEXT, XmSTRING_COMPONENT_TAB, XmSTRING_COMPONENT_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_TEXT,
+		XmSTRING_COMPONENT_END
+	};
+
+	static unsigned int exlen[] = {
+		27, 4, 0, 2, 0, 1, 0, 4, 0
+	};
+
+	s = XmStringGenerate("this\nis\ta\ntest", NULL, XmCHARSET_TEXT, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	XmStringInitContext(&ctx, s);
+	for (i = 0; i < XtNumber(extype); i++) {
+		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+		ck_assert_msg(t   == extype[i], "Unexpected component type");
+		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+	}
+
+	XmStringFreeContext(ctx);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(generate_widechar)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len;
+	char *val;
+	Cardinal i;
+
+	/* TAG is for CHARSET_TEXT, LOCALE for mb/wide */
+	static XmStringComponentType extype[] = {
+		XmSTRING_COMPONENT_LOCALE,
+		XmSTRING_COMPONENT_WIDECHAR_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_WIDECHAR_TEXT, XmSTRING_COMPONENT_TAB, XmSTRING_COMPONENT_WIDECHAR_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_WIDECHAR_TEXT,
+		XmSTRING_COMPONENT_END
+	};
+
+	static unsigned int exlen[] = {
+		21, 16, 0, 8, 0, 4, 0, 16, 0
+	};
+
+	s = XmStringGenerate(L"this\nis\ta\ntest", NULL, XmWIDECHAR_TEXT, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	XmStringInitContext(&ctx, s);
+	for (i = 0; i < XtNumber(extype); i++) {
+		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+		ck_assert_msg(t   == extype[i], "Unexpected component type");
+		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+	}
+
+	XmStringFreeContext(ctx);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(generate_multibyte)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len;
+	char *val;
+	Cardinal i;
+
+	/* TAG is for CHARSET_TEXT, LOCALE for mb/wide */
+	static XmStringComponentType extype[] = {
+		XmSTRING_COMPONENT_LOCALE,
+		XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_LOCALE_TEXT, XmSTRING_COMPONENT_TAB, XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_END
+	};
+
+	static unsigned int exlen[] = {
+		21, 6, 0, 12, 0, 3, 0, 6, 0
+	};
+
+	setlocale(LC_CTYPE, "UTF-8");
+	s = XmStringGenerate("这是\n玉米超人\t的\n测试", NULL, XmMULTIBYTE_TEXT, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	XmStringInitContext(&ctx, s);
+	for (i = 0; i < XtNumber(extype); i++) {
+		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+		ck_assert_msg(t   == extype[i], "Unexpected component type");
+		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+	}
+
+	XmStringFreeContext(ctx);
 	XmStringFree(s);
 }
 END_TEST
@@ -971,6 +1121,17 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, empty_null);
 	tcase_add_test(t, empty_is_empty);
 	tcase_add_test(t, empty_not_empty);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Generate");
+	tcase_add_test(t, generate_null_text);
+	tcase_add_test(t, generate_invalid_tag);
+	tcase_add_test(t, generate_invalid_type);
+	tcase_add_test(t, generate_charset);
+	tcase_add_test(t, generate_widechar);
+	tcase_add_test(t, generate_multibyte);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
