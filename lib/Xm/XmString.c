@@ -453,7 +453,7 @@ static _XmStringEntry EntryCvtToUnopt(_XmStringEntry entry);
 static XmString StringTabCreate(void);
 static XmString StringEmptyCreate(void);
 
-static int _get_generate_parse_table (XmParseTable *gen_table);
+static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide);
 
 /********    End Static Function Declarations    ********/
 
@@ -7050,8 +7050,13 @@ _Xm_dump_internal(
 		    _XmEntryTextTypeGet(seg),
 		    type_image(_XmEntryTextTypeGet(seg)));
 	    printf ("\t\ttext            = <");
-	    for (k=0; k<_XmEntryByteCountGet(seg); k++)
-	      printf ("%c", ((char *)_XmEntryTextGet(seg))[k]);
+	    if (_XmEntryTextTypeGet(seg) == XmWIDECHAR_TEXT) {
+	      for (k = 0; k < _XmEntryByteCountGet(seg) / sizeof(wchar_t); k++)
+	          wprintf(L"%lc", ((wchar_t *)_XmEntryTextGet(seg))[k]);
+	    } else {
+	      for (k = 0; k < _XmEntryByteCountGet(seg); k++)
+	        printf("%c", ((char *)_XmEntryTextGet(seg))[k]);
+	    }
 	    printf (">\n");
 	    printf ("\t\tbyte count      = %d\n", _XmEntryByteCountGet(seg));
 	    printf ("\t\trend_end_tags   = (%d)\n",
@@ -7505,13 +7510,7 @@ XmStringParseText(XtPointer    text,
   _XmProcessLock();
 
   /* Check some error conditions. */
-  if (parse_count && !parse_table)
-  {
-    _XmProcessUnlock();
-    return NULL;
-  }
-  if (!text)
-  {
+  if (!text || (parse_count && !parse_table)) {
     _XmProcessUnlock();
     return NULL;
   }
@@ -7532,7 +7531,7 @@ XmStringParseText(XtPointer    text,
     case XmMULTIBYTE_TEXT:
       /* Non-NULL values (except _MOTIF_DEFAULT_LOCALE)
          are not accepted in Motif 2.0. */
-      if (tag && !strcmp(tag, _MOTIF_DEFAULT_LOCALE))
+      if (tag && strcmp(tag, _MOTIF_DEFAULT_LOCALE))
       {
 	_XmProcessUnlock();
 	return NULL;
@@ -8890,7 +8889,7 @@ XmStringGenerate(XtPointer   text,
   /*
   ** Get the parse table shared by generate and ungenerate.
   */
-  table_size = _get_generate_parse_table (&gen_table);
+  table_size = _get_generate_parse_table(&gen_table, type == XmWIDECHAR_TEXT);
 
   /* Parse the text into an XmString. */
   result = XmStringParseText
@@ -9068,7 +9067,7 @@ _XmStringUngenerate(XmString    string,
   /*
   ** Get the parse table shared by generate and ungenerate.
   */
-  table_size = _get_generate_parse_table (&gen_table);
+  table_size = _get_generate_parse_table(&gen_table, output_type == XmWIDECHAR_TEXT);
 
   /* Unparse the XmString into text. */
   result = XmStringUnparse
@@ -9158,8 +9157,7 @@ XmParseMappingSetValues(XmParseMapping mapping,
   _XmProcessUnlock();
 }
 
-static int
-_get_generate_parse_table (XmParseTable *gen_table)
+static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide)
 /*
 **
 ** Utility function to build and supply the parse table shared by
@@ -9194,9 +9192,14 @@ _get_generate_parse_table (XmParseTable *gen_table)
   /* Parse tab characters. */
   tmp = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, NULL);
   nargs = 0;
-  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT), nargs++;
-  XtSetArg(args[nargs], XmNsubstitute, tmp), 	 nargs++;
-  XtSetArg(args[nargs], XmNpattern, "\t"), 		 nargs++;
+  if (wide) {
+	  XtSetArg(args[nargs], XmNpatternType, XmWIDECHAR_TEXT);
+	  nargs++;
+  }
+
+  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT); nargs++;
+  XtSetArg(args[nargs], XmNsubstitute, tmp); nargs++;
+  XtSetArg(args[nargs], XmNpattern, wide ? (XtPointer)L"\t" : (XtPointer)"\t"); nargs++;
   assert(nargs < XtNumber(args));
   _XmProcessLock();
   table[index++] = XmParseMappingCreate(args, nargs);
@@ -9206,9 +9209,14 @@ _get_generate_parse_table (XmParseTable *gen_table)
   /* Parse newline characters. */
   tmp = XmStringSeparatorCreate();
   nargs = 0;
-  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT), nargs++;
-  XtSetArg(args[nargs], XmNsubstitute, tmp),	 nargs++;
-  XtSetArg(args[nargs], XmNpattern, "\n"),		 nargs++;
+  if (wide) {
+	  XtSetArg(args[nargs], XmNpatternType, XmWIDECHAR_TEXT);
+	  nargs++;
+  }
+
+  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT); nargs++;
+  XtSetArg(args[nargs], XmNsubstitute, tmp); nargs++;
+  XtSetArg(args[nargs], XmNpattern, wide ? (XtPointer)L"\n" : (XtPointer)"\n"); nargs++;
   assert(nargs < XtNumber(args));
   _XmProcessLock();
   table[index++] = XmParseMappingCreate(args, nargs);
