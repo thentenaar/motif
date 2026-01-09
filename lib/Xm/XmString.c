@@ -62,6 +62,7 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 
 struct __Xmlocale {
     char   *tag;
+    char   *ctype;
     int    taglen;
     Boolean inited;
 };
@@ -2154,11 +2155,12 @@ OptLineMetrics(XmRenderTable 	r,
 	}
 
       /* 4a. Take the first one */
-      if ((rend == NULL) &&
-	  ((_XmStrTextType(opt) == XmCHARSET_TEXT) ||
-	    ((_XmStrTextType(opt) == XmMULTIBYTE_TEXT) &&
-	     (_XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG))) &&
-	  (r != NULL) && (_XmRTCount(r) > 0))
+      if (!rend && r && _XmRTCount(r) > 0 &&
+	  ((_XmStrTextType(opt) == XmCHARSET_TEXT &&
+	    _XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG) ||
+	   ((_XmStrTextType(opt) == XmMULTIBYTE_TEXT ||
+	     _XmStrTextType(opt) == XmWIDECHAR_TEXT) &&
+	     (_XmStrTagGet(opt) && !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(opt)), _MOTIF_DEFAULT_LOCALE)))))
 	_XmRenderTableFindFirstFont(r, &rend_index, &rend);
 
       if ((rend != NULL) &&
@@ -2228,16 +2230,17 @@ OptLineMetrics(XmRenderTable 	r,
 		   _XmStrByteCount(opt), (XmTextType) _XmStrTextType(opt),
 		   XmSTRING_SINGLE_SEG, width, height, ascent, descent,
 #if XM_UTF8
-                   (_XmStrTextType(opt) == XmCHARSET_TEXT ||
-                    _XmStrTextType(opt) == XmMULTIBYTE_TEXT) &&
-                   ((_XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG
-                     && _XmStringIsCurrentCharset("UTF-8"))
-                    || (_XmStrTagGet(opt)
-		     && strcmp(_XmStringIndexGetTag(_XmStrTagIndex(opt)), "UTF-8") == 0))
+           (_XmStrTextType(opt) == XmCHARSET_TEXT &&
+            ((_XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG &&
+              _XmStringIsCurrentCharset("UTF-8")) ||
+             !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(opt)), "UTF-8"))) ||
+
+           (_XmStrTextType(opt) == XmMULTIBYTE_TEXT &&
+            !strcmp(locale.ctype, "UTF-8"))
 #else
-                   False
+            False
 #endif
-		    );
+    );
 
   if (rend != NULL) tl = _XmRendTabs(rend);
   d = (_XmRTDisplay(r) == NULL) ? _XmGetDefaultDisplay() : _XmRTDisplay(r);
@@ -3369,11 +3372,13 @@ SubStringPosition(
 
       if (!fail) {          /* found it */
 #if XM_UTF8
-        Boolean utf8 = ((_XmEntryTextTypeGet(seg) == XmCHARSET_TEXT) &&
-              (((_XmEntryTag((_XmStringEntry)seg) ==
-                 XmFONTLIST_DEFAULT_TAG) &&
-                _XmStringIsCurrentCharset("UTF-8")) ||
-               (strcmp(seg_tag, "UTF-8") == 0)));
+        Boolean utf8 = (_XmEntryTextTypeGet(seg) == XmCHARSET_TEXT &&
+                        ((_XmEntryTag((_XmStringEntry)seg) == XmFONTLIST_DEFAULT_TAG &&
+                          _XmStringIsCurrentCharset("UTF-8")) ||
+                         !strcmp(seg_tag, "UTF-8")));
+
+        utf8 = utf8 || (_XmEntryTextTypeGet(seg) == XmMULTIBYTE_TEXT &&
+                        !strcmp(locale.ctype, "UTF-8"));
 #else
         Boolean utf8 = False;
 #endif
@@ -3631,7 +3636,7 @@ _XmStringDrawSegment(Display *d,
   text_type = _XmEntryTextTypeGet((_XmStringEntry)seg);
 
   seg_len = _XmEntryByteCountGet((_XmStringEntry)seg);
-  if (seg_len  > 0)
+  if (seg_len > 0)
     {
       multibyte = (((text_type ==  XmMULTIBYTE_TEXT) ||
 		    (text_type == XmCHARSET_TEXT)) &&
@@ -3641,15 +3646,18 @@ _XmStringDrawSegment(Display *d,
 		  (font_type == XmFONT_IS_FONTSET));
 
 #if XM_UTF8
-      utf8 = ((text_type == XmMULTIBYTE_TEXT || text_type == XmCHARSET_TEXT) &&
-		   (font_type == XmFONT_IS_FONTSET ||
-		    font_type == XmFONT_IS_XFT ||
-		    (font_type == XmFONT_IS_FONT
-		     && _XmIsISO10646(d, _XmRendFont(rend)))) &&
-              (((_XmEntryTag((_XmStringEntry)seg) == XmFONTLIST_DEFAULT_TAG &&
-                (_XmStringIsCurrentCharset("UTF-8"))) ||
-               ((_XmEntryTagIndex(seg) != TAG_INDEX_UNSET
-	       && strcmp(_XmEntryTag((_XmStringEntry)seg), "UTF-8") == 0)))));
+      utf8 = text_type == XmCHARSET_TEXT &&
+             ((_XmEntryTag((_XmStringEntry)seg) == XmFONTLIST_DEFAULT_TAG &&
+               _XmStringIsCurrentCharset("UTF-8")) ||
+              (_XmEntryTag((_XmStringEntry)seg) &&
+               !strcmp(_XmEntryTag((_XmStringEntry)seg), "UTF-8")));
+
+      utf8 = utf8 || (text_type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, "UTF-8"));
+
+      utf8 = utf8 && (
+             font_type  == XmFONT_IS_XFT     ||
+             font_type  == XmFONT_IS_FONTSET ||
+             (font_type == XmFONT_IS_FONT    && _XmIsISO10646(d, _XmRendFont(rend))));
 #else
       utf8 = False;
 #endif
@@ -3702,8 +3710,7 @@ _XmStringDrawSegment(Display *d,
 	    }
 	}
 
-      if (_XmEntryDirectionGet((_XmStringEntry)seg) ==
-	  XmSTRING_DIRECTION_R_TO_L)
+      if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
 	{
 	  /* Flip the bytes. */
 	  char *p = flip_char, *q;
@@ -3823,11 +3830,12 @@ _XmStringDrawSegment(Display *d,
 	}
 
 #if USE_XFT
-      if (_XmRendFontType(rend) == XmFONT_IS_XFT)
-        {
-	    _XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
-        }
-      else /* TODO: fix indentation */
+      if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
+        /* XXX: This assumes UTF-8 if charset/multibyte text */
+        if (text_type == XmWIDECHAR_TEXT)
+          _XmXftDrawString(d, w, rend, sizeof(wchar_t), x, y, draw_text, seg_len / sizeof(wchar_t), image);
+        else _XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
+      } else /* TODO: fix indentation */
 #endif
         {
       if (image)
@@ -6278,11 +6286,13 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 		     (XmTextType) _XmEntryTextTypeGet(entry),
 		     which_seg, &w, &h, &asc, &dsc,
 #if XM_UTF8
-                   _XmEntryType(entry) == XmCHARSET_TEXT &&
-                   (_XmEntryTag(entry) == XmFONTLIST_DEFAULT_TAG
-                    && (_XmStringIsCurrentCharset("UTF-8")
-                    || (_XmEntryTagIndex(entry) !=  TAG_INDEX_UNSET
-		    && strcmp(_XmEntryTag(entry), "UTF-8") == 0)))
+           (_XmEntryType(entry)  == XmCHARSET_TEXT &&
+            ((_XmEntryTag(entry) == XmFONTLIST_DEFAULT_TAG &&
+              _XmStringIsCurrentCharset("UTF-8")) ||
+             (_XmEntryTag(entry) && !strcmp(_XmEntryTag(entry), "UTF-8")))) ||
+
+           (_XmEntryType(entry) == XmMULTIBYTE_TEXT &&
+            !strcmp(locale.ctype, "UTF-8"))
 #else
                    False
 #endif
@@ -6391,15 +6401,17 @@ static void _parse_locale(char *str, int *indx, int *len)
 
 void _XmStringSetLocaleTag(const char *lang)
 {
-	const char *ptr, *str;
-	int index;
+	const char *ptr, *str, *ct;
+	int index, cindex, len;
 
 	_XmProcessLock();
 	if (locale.inited)
 		XtFree(locale.tag);
 
 	str = lang ? lang : getenv("LANG");
+	ct  = setlocale(LC_CTYPE, NULL);
 	_parse_locale((char *)str, &index, &locale.taglen);
+	_parse_locale((char *)ct, &cindex, &len);
 
 	if (locale.taglen > 0) {
 		ptr = str + index;
@@ -6412,9 +6424,27 @@ void _XmStringSetLocaleTag(const char *lang)
 		locale.taglen = strlen(XmFALLBACK_CHARSET);
 	}
 
+	/* If LANG is UTF-8, assume LC_CTYPE is also (if unspecified) */
+	if (!len && !memcmp(ptr, "UTF-8", locale.taglen)) {
+		ct  = "UTF-8";
+		len = 5;
+	} else if (len > 0) {
+		ct += cindex;
+		if (!strcmp(ct, "UTF8")) {
+			ct = "UTF-8";
+			len = 5;
+		}
+	} else {
+		ct  = "";
+		len = 1;
+	}
+
 	locale.tag = XtMalloc(locale.taglen + 1);
+	locale.ctype = XtMalloc(len + 1);
 	memcpy(locale.tag, ptr, locale.taglen);
+	memcpy(locale.ctype, ct, len);
 	locale.tag[locale.taglen] = '\0';
+	locale.ctype[len] = '\0';
 	_XmProcessUnlock();
 }
 
