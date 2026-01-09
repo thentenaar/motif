@@ -740,6 +740,16 @@ XmString XmStringCreateLocalized(String text)
 	return XmStringGenerate(text, NULL, XmCHARSET_TEXT, NULL);
 }
 
+XmString XmStringCreateWide(wchar_t *text)
+{
+	return XmStringGenerate(text, NULL, XmWIDECHAR_TEXT, NULL);
+}
+
+XmString XmStringCreateMultibyte(String text)
+{
+	return XmStringGenerate(text, NULL, XmMULTIBYTE_TEXT, NULL);
+}
+
 /* Create an optimized _XmString with only direction set. */
 XmString
 XmStringDirectionCreate(

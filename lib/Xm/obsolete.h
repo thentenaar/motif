@@ -88,10 +88,10 @@ extern void XmCvtStringToUnitType(XrmValuePtr args, Cardinal *num_args,
 XM_ALTERNATIVE(Use XmStringCreateLocalized instead)
 extern XmString XmStringCreateSimple(char *text);
 
-XM_ALTERNATIVE(Use XmStringGenerate or XmStringCreateLocalized instead)
+XM_ALTERNATIVE(Use XmStringCreate instead)
 extern XmString XmStringCreateLtoR(char *text, XmStringCharSet charset);
 
-XM_ALTERNATIVE(Use XmStringGenerate or XmStringCreateLocalized instead)
+XM_ALTERNATIVE(Use XmStringCreate instead)
 extern XmString XmStringLtoRCreate(char *text, XmStringCharSet charset);
 
 XM_ALTERNATIVE(Use XmStringComponentCreate and XmStringConcat instead)

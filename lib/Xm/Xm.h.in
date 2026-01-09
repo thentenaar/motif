@@ -1619,8 +1619,9 @@ extern void XmChangeColor(
 /********    Public Function Declarations for XmString.c    ********/
 
 extern XmString XmStringCreate(char *text, XmStringTag tag);
-extern XmString XmStringCreateLocalized(
-                        String text) ;
+extern XmString XmStringCreateLocalized(String text);
+extern XmString XmStringCreateWide(wchar_t *text);
+extern XmString XmStringCreateMultibyte(String text);
 extern XmString XmStringDirectionCreate(
                         XmStringDirection direction) ;
 extern XmString XmStringSeparatorCreate( void ) ;

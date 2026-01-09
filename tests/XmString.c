@@ -154,6 +154,91 @@ START_TEST(create_localized)
 }
 END_TEST
 
+/**
+ * Create a wide string
+ */
+START_TEST(create_wide)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len   = 0;
+	unsigned char *val = NULL;
+
+	s = XmStringCreateWide(L"test");
+	ck_assert_msg(s, "Resulting string is NULL");
+
+	/* 1. tag */
+	XmStringInitContext(&ctx, s);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_LOCALE,
+	              "First component should be the tag (locale)");
+	ck_assert_msg(len == strlen(_MOTIF_DEFAULT_LOCALE),
+	              "Unexpected length");
+	ck_assert_msg(val && !memcmp(val, _MOTIF_DEFAULT_LOCALE,
+	                             strlen(_MOTIF_DEFAULT_LOCALE)),
+	              "Tag should be _MOTIF_DEFAULT_LOCALE");
+	XtFree((XtPointer)val);
+
+	/* 2. text */
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_WIDECHAR_TEXT,
+	              "Second component should be WIDECHAR_TEXT");
+	ck_assert_msg(len == 16, "Length should be 16");
+	ck_assert_msg(val && !wcscmp((wchar_t *)val, L"test"),
+	              "Value should be 'test'");
+	ck_assert_msg(XmStringPeekNextTriple(ctx) == XmSTRING_COMPONENT_END,
+	              "String should have exactly two components");
+	XmStringFree(s);
+	XmStringFreeContext(ctx);
+	XtFree((XtPointer)val);
+}
+END_TEST
+
+/**
+ * Create a multibyte string
+ */
+extern void _XmStringSetLocaleTag(const char *lang);
+START_TEST(create_multibyte)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len   = 0;
+	unsigned char *val = NULL;
+
+	setlocale(LC_ALL, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("test");
+	ck_assert_msg(s, "Resulting string is NULL");
+
+	/* 1. tag */
+	XmStringInitContext(&ctx, s);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_LOCALE,
+	              "First component should be the tag (locale)");
+	ck_assert_msg(len == strlen(_MOTIF_DEFAULT_LOCALE),
+	              "Unexpected length");
+	ck_assert_msg(val && !memcmp(val, _MOTIF_DEFAULT_LOCALE,
+	                             strlen(_MOTIF_DEFAULT_LOCALE)),
+	              "Tag should be _MOTIF_DEFAULT_LOCALE");
+	XtFree((XtPointer)val);
+
+	/* 2. text */
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_LOCALE_TEXT,
+	              "Second component should be LOCALE_TEXT");
+	ck_assert_msg(len == 4, "Length should be 4");
+	ck_assert_msg(val && !memcmp(val, "test", 4),
+	              "Value should be 'test'");
+	ck_assert_msg(XmStringPeekNextTriple(ctx) == XmSTRING_COMPONENT_END,
+	              "String should have exactly two components");
+	XmStringFree(s);
+	XmStringFreeContext(ctx);
+	XtFree((XtPointer)val);
+}
+END_TEST
+
 static const struct _xmstring_direction_params {
 	XmStringDirection dir;
 	XmStringComponentType t;
@@ -573,7 +658,8 @@ START_TEST(generate_multibyte)
 		21, 6, 0, 12, 0, 3, 0, 6, 0
 	};
 
-	setlocale(LC_CTYPE, "UTF-8");
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
 	s = XmStringGenerate("这是\n玉米超人\t的\n测试", NULL, XmMULTIBYTE_TEXT, NULL);
 	ck_assert_msg(s, "Expected generate to succeed");
 
@@ -592,7 +678,6 @@ END_TEST
 /**
  * Default (set in _init_xt is "C")
  */
-extern void _XmStringSetLocaleTag(const char *lang);
 START_TEST(getcharset_default)
 {
 	XmStringTag cset;
@@ -1089,6 +1174,8 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, create);
 	tcase_add_test(t, create_tag);
 	tcase_add_test(t, create_localized);
+	tcase_add_test(t, create_wide);
+	tcase_add_test(t, create_multibyte);
 	tcase_add_loop_test(t, create_direction, 0, 4);
 	tcase_add_test(t, create_separator);
 	tcase_add_loop_test(t, create_component, 0, XtNumber(components));
