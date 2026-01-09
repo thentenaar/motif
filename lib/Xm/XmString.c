@@ -7612,7 +7612,8 @@ XmStringParseText(XtPointer    text,
 				       type, pat, len, call_data, &halt);
 
 	      /* Insert the charset component after pattern insertion */
-	      result = XmStringConcatAndFree(result, XmStringComponentCreate(tag_type, strlen(tag), (XtPointer) tag));
+	      if (tag_type != XmSTRING_COMPONENT_LOCALE)
+	        result = XmStringConcatAndFree(result, XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag));
 	    }
 	}
 
