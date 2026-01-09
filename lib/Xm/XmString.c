@@ -8144,7 +8144,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
       tag_index = _XmStringIndexCacheTag((char*) value, length);
       optimized = (tag_index < TAG_INDEX_MAX);
       if (optimized) {
-	_XmStrTextType((_XmString)&opt) = XmMULTIBYTE_TEXT;
+	_XmStrTextType((_XmString)&opt) = XmNO_TEXT;
 	_XmStrTagIndex((_XmString)&opt) = tag_index;
       } else {
 	_XmEntryTextTypeSet(&seg, XmMULTIBYTE_TEXT);
