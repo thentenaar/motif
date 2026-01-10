@@ -1620,8 +1620,8 @@ extern void XmChangeColor(
 
 extern XmString XmStringCreate(char *text, XmStringTag tag);
 extern XmString XmStringCreateLocalized(String text);
-extern XmString XmStringCreateWide(wchar_t *text);
-extern XmString XmStringCreateMultibyte(String text);
+extern XmString XmStringCreateWide(wchar_t *text, XmStringTag tag);
+extern XmString XmStringCreateMultibyte(String text, XmStringTag tag);
 extern XmString XmStringDirectionCreate(
                         XmStringDirection direction) ;
 extern XmString XmStringSeparatorCreate( void ) ;

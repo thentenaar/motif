@@ -733,22 +733,22 @@ XmString XmStringCreate(char *text, XmStringTag tag)
 	return XmStringGenerate(text, tag, XmCHARSET_TEXT, NULL);
 }
 
+XmString XmStringCreateWide(wchar_t *text, XmStringTag tag)
+{
+	return XmStringGenerate(text, tag, XmWIDECHAR_TEXT, NULL);
+}
+
+XmString XmStringCreateMultibyte(String text, XmStringTag tag)
+{
+	return XmStringGenerate(text, tag, XmMULTIBYTE_TEXT, NULL);
+}
+
 /**
  * Convenience routine creating localized XmString from NULL terminated string.
  */
 XmString XmStringCreateLocalized(String text)
 {
 	return XmStringGenerate(text, NULL, XmCHARSET_TEXT, NULL);
-}
-
-XmString XmStringCreateWide(wchar_t *text)
-{
-	return XmStringGenerate(text, NULL, XmWIDECHAR_TEXT, NULL);
-}
-
-XmString XmStringCreateMultibyte(String text)
-{
-	return XmStringGenerate(text, NULL, XmMULTIBYTE_TEXT, NULL);
 }
 
 /* Create an optimized _XmString with only direction set. */
@@ -5059,8 +5059,12 @@ _XmStringNonOptCreate(
 	      push_seen = txt_seen = pop_seen = False;
 	    }
 
-	  _XmEntryTextTypeSet(&seg, XmMULTIBYTE_TEXT);
+	  havetag   = True;
 	  prev_type = XmMULTIBYTE_TEXT;
+	  if (end > c + _asn1_size(length) + length + 1 &&
+	      *(char *)(c + _asn1_size(length) + length + 1) == XmSTRING_COMPONENT_WIDECHAR_TEXT)
+	      prev_type = XmWIDECHAR_TEXT;
+	  _XmEntryTextTypeSet(&seg, prev_type);
 	  _XmUnoptSegTag(&seg) =
 	    _XmStringCacheTag((char *)(c+_asn1_size(length)), (int)length);
 	  break;
@@ -5124,9 +5128,6 @@ _XmStringNonOptCreate(
 	      _XmEntryTextTypeSet(&seg, XmMULTIBYTE_TEXT);
 	      prev_type = XmMULTIBYTE_TEXT;
 	    }
-	  _XmUnoptSegTag(&seg) =
-	    _XmStringCacheTag((char *) XmFONTLIST_DEFAULT_TAG,
-			      XmSTRING_TAG_STRLEN);
 	  /* Fall through to regular text. */
 	case XmSTRING_COMPONENT_TEXT:
 	  if (txt_seen)
@@ -6193,9 +6194,11 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 
 	  /* 4a. Take the first one */
 	  if ((rend == NULL) &&
-	      ((_XmEntryTextTypeGet(entry) == XmCHARSET_TEXT) ||
-	       ((_XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT) &&
-		(entry_tag == XmFONTLIST_DEFAULT_TAG))) &&
+	      ((_XmEntryTextTypeGet(entry) == XmCHARSET_TEXT &&
+	        entry_tag == XmFONTLIST_DEFAULT_TAG) ||
+	       ((_XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
+	         _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT) &&
+	        entry_tag && !strcmp(entry_tag, _MOTIF_DEFAULT_LOCALE))) &&
 	      (rendertable != NULL) && (_XmRTCount(rendertable) > 0))
 	    rend = _XmRenditionMerge(d, rend_in_out, base, rendertable,
 				     NULL, NULL, 0, (render_cache != NULL));
@@ -7013,7 +7016,9 @@ _Xm_dump_internal(
       printf ("\tOptimized string - single segment\n");
       printf ("\t    tag type      = %4d\n", _XmStrTextType(string));
       printf ("\t    direction     = %4d\n", _XmStrDirection(string));
-      printf ("\t    tag index     = %4d\n", _XmStrTagIndex(string));
+      printf ("\t    tag_index     = %4d <%s>\n", _XmStrTagIndex(string),
+	      (_XmStrTagGet(string) ?
+	       _XmStrTagGet(string) : "(unset)"));
       printf ("\t    rend_begin    = %4d\n", _XmStrRendBegin(string));
       printf ("\t    rend_end      = %4d\n", _XmStrRendEnd(string));
       printf ("\t    rend_index    = %4d <%s>\n", _XmStrRendIndex(string),
@@ -7021,10 +7026,15 @@ _Xm_dump_internal(
 	       _XmStrRendTagGet(string) : "(unset)"));
       printf ("\t    tab_before    = %4d\n", _XmStrTabs(string));
       printf ("\t    refcount      = %4d\n", _XmStrRefCountGet(string));
-      printf ("\t    char count    = %4d\n", _XmStrByteCount(string));
+      printf ("\t    byte count    = %4d\n", _XmStrByteCount(string));
       printf ("\t    text          = <");
-      for (k=0; k<_XmStrByteCount(string); k++)
-	printf ("%c", _XmStrText(string)[k]);
+      if (_XmStrTextType(string) == XmWIDECHAR_TEXT) {
+        for (k = 0; k < _XmStrByteCount(string) / sizeof(wchar_t); k++)
+            printf("%lc", ((wchar_t *)_XmStrText(string))[k]);
+      } else {
+        for (k = 0; k < _XmStrByteCount(string); k++)
+          printf("%c", _XmStrText(string)[k]);
+      }
       printf (">\n");
     }
 
@@ -7089,16 +7099,16 @@ _Xm_dump_internal(
 	    printf ("\t\ttext type       = %d (%s)\n",
 		    _XmEntryTextTypeGet(seg),
 		    type_image(_XmEntryTextTypeGet(seg)));
+	    printf ("\t\tbyte count      = %d\n", _XmEntryByteCountGet(seg));
 	    printf ("\t\ttext            = <");
 	    if (_XmEntryTextTypeGet(seg) == XmWIDECHAR_TEXT) {
 	      for (k = 0; k < _XmEntryByteCountGet(seg) / sizeof(wchar_t); k++)
-	          wprintf(L"%lc", ((wchar_t *)_XmEntryTextGet(seg))[k]);
+	          printf("%lc", ((wchar_t *)_XmEntryTextGet(seg))[k]);
 	    } else {
 	      for (k = 0; k < _XmEntryByteCountGet(seg); k++)
 	        printf("%c", ((char *)_XmEntryTextGet(seg))[k]);
 	    }
 	    printf (">\n");
-	    printf ("\t\tbyte count      = %d\n", _XmEntryByteCountGet(seg));
 	    printf ("\t\trend_end_tags   = (%d)\n",
 		    _XmEntryRendEndCountGet(seg));
 	    for (k=0; k<_XmEntryRendEndCountGet(seg); k++)
@@ -7108,6 +7118,7 @@ _Xm_dump_internal(
       }
   }
   printf("\n\n");
+  fflush(stdout);
 }
 
 #endif /* _XmDEBUG_XMSTRING */
@@ -7537,7 +7548,7 @@ XmStringParseText(XtPointer    text,
   char*			 ptr = (char*) text;
   char*			 prev_ptr = ptr;
   XtPointer		 end_ptr = (text_end ? *text_end : NULL);
-  XmString		 result;
+  XmString		 result, tag_component;
   Boolean		 has_dir_pattern;
   Boolean		 wide_char = False;
   Boolean		 advanced;
@@ -7559,7 +7570,7 @@ XmStringParseText(XtPointer    text,
   switch (type)
     {
     case XmCHARSET_TEXT:
-      if (!tag)
+      if (!tag || !*tag)
 	tag = XmFONTLIST_DEFAULT_TAG;
       tag_type = XmSTRING_COMPONENT_TAG;
       break;
@@ -7569,15 +7580,7 @@ XmStringParseText(XtPointer    text,
       /* Fall through */
 
     case XmMULTIBYTE_TEXT:
-      /* Non-NULL values (except _MOTIF_DEFAULT_LOCALE)
-         are not accepted in Motif 2.0. */
-      if (tag && strcmp(tag, _MOTIF_DEFAULT_LOCALE))
-      {
-	_XmProcessUnlock();
-	return NULL;
-      }
-
-      if (tag == NULL)
+      if (!tag || !*tag)
 	tag = _MOTIF_DEFAULT_LOCALE;
       tag_type = XmSTRING_COMPONENT_LOCALE;
       break;
@@ -7590,6 +7593,7 @@ XmStringParseText(XtPointer    text,
 
   /* Create an empty segment with the right tag. */
   result = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer) tag);
+  _XmStrTextType(result) = type;
 
   /* Did the user provide an XmDIRECTION_CHANGE pattern? */
   has_dir_pattern = False;
@@ -7652,8 +7656,9 @@ XmStringParseText(XtPointer    text,
 				       type, pat, len, call_data, &halt);
 
 	      /* Insert the charset component after pattern insertion */
-	      if (tag_type != XmSTRING_COMPONENT_LOCALE)
-	        result = XmStringConcatAndFree(result, XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag));
+	      tag_component = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag);
+	      _XmStrTextType(tag_component) = type;
+	      result = XmStringConcatAndFree(result, tag_component);
 	    }
 	}
 
@@ -8098,24 +8103,24 @@ XmStringComponentCreate(XmStringComponentType c_type,
   switch (c_type)
     {
     case XmSTRING_COMPONENT_TAG:
-      if (!value || (length != strlen((char*) value))) {
+      if (!value || !*(char *)value || (length != strlen(value))) {
         _XmProcessUnlock();
-	return NULL;
+        return NULL;
       }
-      if ((value == XmSTRING_DEFAULT_CHARSET) ||
-	  (strcmp((char*) value, XmSTRING_DEFAULT_CHARSET) == 0)) {
+      if (value == XmSTRING_DEFAULT_CHARSET ||
+          !strcmp(value, XmSTRING_DEFAULT_CHARSET)) {
 	value = XmStringGetCharset();
-	length = strlen((char*) value);
+	length = strlen(value);
       }
 
-      tag_index = _XmStringIndexCacheTag((char*) value, length);
+      tag_index = _XmStringIndexCacheTag(value, length);
       optimized = (tag_index < TAG_INDEX_MAX);
       if (optimized) {
 	_XmStrTextType((_XmString)&opt) = XmCHARSET_TEXT;
 	_XmStrTagIndex((_XmString)&opt) = tag_index;
       } else {
 	_XmEntryTextTypeSet(&seg, XmCHARSET_TEXT);
-	_XmUnoptSegTag(&seg) = _XmStringCacheTag((char*) value, length);
+	_XmUnoptSegTag(&seg) = _XmStringCacheTag(value, length);
       }
       break;
 
@@ -8126,7 +8131,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
 	_XmStrByteCount((_XmString)&opt) = length;
       } else {
 	_XmEntryTextTypeSet(&seg, XmCHARSET_TEXT);
-	if (value != NULL) {
+	if (value) {
 	  _XmEntryTextSet((_XmStringEntry)&seg, value);
 	  _XmEntryByteCountSet(&seg, length);
 	}
@@ -8150,20 +8155,13 @@ XmStringComponentCreate(XmStringComponentType c_type,
       return XmStringSeparatorCreate();
 
     case XmSTRING_COMPONENT_LOCALE_TEXT:
-      tag_index = _XmStringIndexCacheTag(
-				(char*) XmFONTLIST_DEFAULT_TAG,
-				XmSTRING_TAG_STRLEN);
-
-      if (length < (1 << BYTE_COUNT_BITS))
-	optimized = (tag_index < TAG_INDEX_MAX);
-
+      optimized = (length < (1 << BYTE_COUNT_BITS));
       if (optimized) {
 	_XmStrTextType((_XmString)&opt)  = XmMULTIBYTE_TEXT;
 	_XmStrTagIndex((_XmString)&opt)  = tag_index;
 	_XmStrByteCount((_XmString)&opt) = length;
       } else {
 	_XmEntryTextTypeSet(&seg, XmMULTIBYTE_TEXT);
-	_XmUnoptSegTag(&seg) = _tag_cache[tag_index];
 	if (value != NULL) {
 	  _XmEntryTextSet((_XmStringEntry)&seg, value);
 	  _XmEntryByteCountSet(&seg, length);
@@ -8172,23 +8170,19 @@ XmStringComponentCreate(XmStringComponentType c_type,
       break;
 
     case XmSTRING_COMPONENT_LOCALE:
-      if (!value || (length != strlen((char*) value))) {
-	_XmProcessUnlock();
-	return NULL;
-      }
-      if (strcmp((char*) value, _MOTIF_DEFAULT_LOCALE) != 0) {
+      if (!value || !*(char *)value || (length != strlen(value))) {
 	_XmProcessUnlock();
 	return NULL;
       }
 
-      tag_index = _XmStringIndexCacheTag((char*) value, length);
+      tag_index = _XmStringIndexCacheTag(value, length);
       optimized = (tag_index < TAG_INDEX_MAX);
       if (optimized) {
-	_XmStrTextType((_XmString)&opt) = XmNO_TEXT;
+	_XmStrTextType((_XmString)&opt) = XmMULTIBYTE_TEXT;
 	_XmStrTagIndex((_XmString)&opt) = tag_index;
       } else {
 	_XmEntryTextTypeSet(&seg, XmMULTIBYTE_TEXT);
-	_XmUnoptSegTag(&seg)  = _XmStringCacheTag((char*) value, length);
+	_XmUnoptSegTag(&seg) = _XmStringCacheTag(value, length);
       }
       break;
 

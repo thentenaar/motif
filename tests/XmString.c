@@ -165,7 +165,7 @@ START_TEST(create_wide)
 	unsigned int len   = 0;
 	unsigned char *val = NULL;
 
-	s = XmStringCreateWide(L"test");
+	s = XmStringCreateWide(L"test", NULL);
 	ck_assert_msg(s, "Resulting string is NULL");
 
 	/* 1. tag */
@@ -209,7 +209,7 @@ START_TEST(create_multibyte)
 
 	setlocale(LC_ALL, "en_US.UTF-8");
 	_XmStringSetLocaleTag("C");
-	s = XmStringCreateMultibyte("test");
+	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Resulting string is NULL");
 
 	/* 1. tag */
@@ -313,6 +313,7 @@ static const struct _xmstring_component_params {
 } components[] = {
 	{ XmSTRING_COMPONENT_TAG, 0, NULL,    True  }, /* No data == NULL */
 	{ XmSTRING_COMPONENT_TAG, 3, NULL,    True  }, /* No data == NULL */
+	{ XmSTRING_COMPONENT_TAG, 1, "",      True  },
 	{ XmSTRING_COMPONENT_TAG, 0, "UTF-8", True  },
 	{ XmSTRING_COMPONENT_TAG, 3, "UTF-8", True  }, /* Bad length == NULL */
 	{ XmSTRING_COMPONENT_TAG, 5, "UTF-8", False },
@@ -329,9 +330,10 @@ static const struct _xmstring_component_params {
 	/* This also doesn't return NULL if !length? */
 	{ XmSTRING_COMPONENT_LOCALE_TEXT, 4, "test", False },
 
+	{ XmSTRING_COMPONENT_LOCALE, 1, "",                       True  },
 	{ XmSTRING_COMPONENT_LOCALE, 0,  "UTF-8",                 True  },
 	{ XmSTRING_COMPONENT_LOCALE, 3,  "UTF-8",                 True  },
-	{ XmSTRING_COMPONENT_LOCALE, 5,  "UTF-8",                 True  },
+	{ XmSTRING_COMPONENT_LOCALE, 5,  "UTF-8",                 False },
 	{ XmSTRING_COMPONENT_LOCALE, 21, "_MOTIF_DEFAULT_LOCALE", False },
 
     /* Returns NULL unless value is NULL */
@@ -535,16 +537,24 @@ START_TEST(generate_null_text)
 }
 END_TEST
 
-/**
- * For XmWIDECHAR_TEXT or XmMULTIBYTE_TEXT, only NULL or _MOTIF_DEFAULT_LOCALE
- * are permitted for tag.
- */
-START_TEST(generate_invalid_tag)
+static XmTextType tag_text_type[] = { XmCHARSET_TEXT, XmMULTIBYTE_TEXT, XmWIDECHAR_TEXT };
+START_TEST(generate_tag)
 {
-	ck_assert_msg(!XmStringGenerate("text", "bad_tag", XmWIDECHAR_TEXT, NULL),
-	              "Expected NULL result for bad tag");
-	ck_assert_msg(!XmStringGenerate("text", "bad_tag", XmMULTIBYTE_TEXT, NULL),
-	              "Expected NULL result for bad tag");
+	char *val;
+	unsigned int len;
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t, ext;
+
+	ext = (tag_text_type[_i] == XmCHARSET_TEXT) ? XmSTRING_COMPONENT_TAG : XmSTRING_COMPONENT_LOCALE;
+	ck_assert_msg(s = XmStringGenerate("text", "tag", tag_text_type[_i], NULL),
+	              "Expected non-NULL result for tag");
+	XmStringInitContext(&ctx, s);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == ext, "Unexpected tag type");
+	ck_assert_msg(len == 3, "Unexpected tag length");
+	XmStringFree(s);
+	XmStringFreeContext(ctx);
 }
 END_TEST
 
@@ -1056,6 +1066,39 @@ START_TEST(tostream_unoptimized)
 }
 END_TEST
 
+START_TEST(tostream_wide)
+{
+	XmString s;
+	unsigned char *ret = NULL;
+
+	s = XmStringCreateWide(L"motif", NULL);
+	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 8 + (sizeof(wchar_t) * 5) + strlen(_MOTIF_DEFAULT_LOCALE),
+	              "BER representation should be 8 + sizeof(wchar_t) * 5 "
+	              "+ length of _MOTIF_DEFAULT_LOCALE bytes long");
+	ck_assert_msg(ret, "No data was returned");
+	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
+	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
+	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
+	ck_assert_msg(ret[3] == 4 + (5 * sizeof(wchar_t)) + strlen(_MOTIF_DEFAULT_LOCALE),
+	              "The length field should be 4 + sizeof(wchar_t) * 5 + "
+	              "length of _MOTIF_DEFAULT_LOCALE");
+	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_LOCALE, "The tag should be LOCALE");
+	ck_assert_msg(ret[5] == strlen(_MOTIF_DEFAULT_LOCALE),
+	              "Tag length should be that of _MOTIF_DEFAULT_LOCALE");
+	ck_assert_msg(!memcmp(ret + 6, _MOTIF_DEFAULT_LOCALE,
+	              strlen(_MOTIF_DEFAULT_LOCALE)),
+	              "The tag should be _MOTIF_DEFAULT_LOCALE");
+	ck_assert_msg(ret[6 + strlen(_MOTIF_DEFAULT_LOCALE)] == XmSTRING_COMPONENT_WIDECHAR_TEXT,
+	              "The second component should be WIDECHAR_TEXT");
+	ck_assert_msg(ret[7 + strlen(_MOTIF_DEFAULT_LOCALE)] == 5 * sizeof(wchar_t),
+	              "The text length should be 5 * sizeof(wchar_t)");
+	ck_assert_msg(!wcsncmp((wchar_t *)(ret + 8 + strlen(_MOTIF_DEFAULT_LOCALE)),
+	              L"motif", 5), "The text should be 'motif'");
+	XmStringFree(s);
+	XtFree((XtPointer)ret);
+}
+END_TEST
+
 START_TEST(fromstream_null)
 {
 	ck_assert_msg(!XmCvtByteStreamToXmString(NULL),
@@ -1106,6 +1149,22 @@ START_TEST(fromstream_unoptimized)
 
 	s2 = XmCvtByteStreamToXmString(stream);
 	ck_assert_msg(!_XmStrOptimized(s2),   "String should not be optimized");
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(fromstream_wide)
+{
+	XmString s, s2;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateWide(L"motif", NULL);
+	XmCvtXmStringToByteStream(s, &stream);
+
+	s2 = XmCvtByteStreamToXmString(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
@@ -1214,7 +1273,7 @@ void xmstring_suite(SRunner *runner)
 
 	t = tcase_create("Generate");
 	tcase_add_test(t, generate_null_text);
-	tcase_add_test(t, generate_invalid_tag);
+	tcase_add_loop_test(t, generate_tag, 0, XtNumber(tag_text_type));
 	tcase_add_test(t, generate_invalid_type);
 	tcase_add_test(t, generate_charset);
 	tcase_add_test(t, generate_widechar);
@@ -1279,6 +1338,7 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, tostream_empty);
 	tcase_add_test(t, tostream_optimized);
 	tcase_add_test(t, tostream_unoptimized);
+	tcase_add_test(t, tostream_wide);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
@@ -1288,6 +1348,7 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, fromstream_empty);
 	tcase_add_test(t, fromstream_optimized);
 	tcase_add_test(t, fromstream_unoptimized);
+	tcase_add_test(t, fromstream_wide);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
