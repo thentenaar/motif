@@ -76,7 +76,8 @@ typedef struct _PixCacheEntry {
 *	GLOBAL DECLARATIONS
 *************************************************************/
 
-extern void _XmSelectColorDefault();
+extern void _XmSelectColorDefault(Widget widget, int offset, XrmValue *value);
+
 static XmList pix_cache_list = NULL;
 
 /************************************************************

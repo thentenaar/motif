@@ -68,7 +68,7 @@ extern int _XmTabBoxGetMaxTabWidth _ARGS((Widget));
 extern int _XmTabBoxGetMaxTabHeight _ARGS((Widget));
 extern void _XmTabBoxSelectTab _ARGS((Widget, int));
 extern void _XmTabBoxGetNumRowsColumns _ARGS((Widget, int, int *, int *));
-extern void _XmTabBoxStackedGeometry _ARGS((XmTabBoxWidget, int, XRectangle *));
+extern void _XmTabBoxStackedGeometry _ARGS((XmTabBoxWidget, Dimension, XRectangle *));
 extern int _XmTabbedStackListCount _ARGS((XmTabbedStackList));
 
 static void ClassInitialize(void);

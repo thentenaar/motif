@@ -216,7 +216,8 @@ int wmlInsertInHList(DynamicHandleListDefPtr listptr, const char *name, ObjectPt
      * the vector appropriately.
      */
     mid += i >= 0;
-	memmove(listptr->hvec + mid + 1, listptr->hvec + mid, (listptr->cnt - mid) * sizeof *listptr->hvec);
+	memmove(listptr->hvec + mid + 1, listptr->hvec + mid,
+	        (listptr->cnt - mid) * sizeof(ObjectHandleDef));
 	listptr->hvec[mid].objname = wmlAllocateString(name);
 	listptr->hvec[mid].objptr  = obj;
 	listptr->cnt++;
