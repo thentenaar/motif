@@ -5855,6 +5855,10 @@ ComputeMetrics(XmRendition rend,
   Dimension	wid, hi;
   int		dir, asc, desc;
 
+#if USE_XFT
+  XGlyphInfo info;
+#endif
+
   wid = 0;
   hi = 0;
   asc = 0;
@@ -5946,22 +5950,27 @@ ComputeMetrics(XmRendition rend,
     break;
 #if USE_XFT
     case XmFONT_IS_XFT:
-	asc = _XmRendXftFont(rend)->ascent;
+	asc  = _XmRendXftFont(rend)->ascent;
 	desc = _XmRendXftFont(rend)->descent;
-	/* FIXME
-	 * Following Keith Packard comments it should be
-	 *  hi = _XmRendXftFont(rend)->height;
-	 * but is looking ascent + descent better. Is it a bug?
-	 */
-	hi = asc+desc;
-    {
-	XGlyphInfo	info;
-	XftTextExtentsUtf8(_XmRendDisplay(rend),
-		_XmRendXftFont(rend),
-		text, byte_count,
-		&info);
+	hi   = _XmRendXftFont(rend)->height;
+
+	if (type == XmWIDECHAR_TEXT) {
+		switch (sizeof(wchar_t)) {
+		case 2:
+			XftTextExtents16(_XmRendDisplay(rend), _XmRendXftFont(rend),
+			                 text, byte_count >> 1, &info);
+			break;
+		case 4:
+			XftTextExtents32(_XmRendDisplay(rend), _XmRendXftFont(rend),
+			                 text, byte_count >> 2, &info);
+			break;
+		}
+	} else {
+		XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+		                   text, byte_count, &info);
+	}
+
 	wid = info.xOff;
-    }
 #endif
   }
 
