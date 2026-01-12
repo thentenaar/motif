@@ -7734,6 +7734,12 @@ check_unparse_models(XmStringContext context,
 	  case XmSTRING_COMPONENT_WIDECHAR_TEXT:
 	    if (!tag)
 	      *next_text_match = True;
+	    else if (tag_type == XmCHARSET_TEXT && tag &&
+	             !strcmp(tag, locale.tag) && (
+	               _XmStrContTag(&n_context) == XmSTRING_DEFAULT_CHARSET ||
+	               _XmStrContTag(&n_context) == XmFONTLIST_DEFAULT_TAG
+	             ))
+	      *next_text_match = True;
 	    else if ((tag_type == _XmStrContTagType(&n_context)) &&
 		     (!_XmStrContTag(&n_context) ||
 		      (tag == _XmStrContTag(&n_context)) ||
@@ -7992,6 +7998,7 @@ XmStringUnparse(XmString          string,
   Boolean             next_text_match;
   Boolean	      non_text_match;
   Boolean	      done;
+  Boolean free_tag = False;
 
   XmStringComponentType c_type;
   unsigned int	        c_length;
@@ -7999,10 +8006,12 @@ XmStringUnparse(XmString          string,
 
   _XmProcessLock();
   /* Convert special tags to real values. */
-  if ((tag_type == XmCHARSET_TEXT) && tag &&
-      ((tag == XmSTRING_DEFAULT_CHARSET) ||
-       (strcmp(tag, XmSTRING_DEFAULT_CHARSET) == 0)))
+  if (tag_type == XmCHARSET_TEXT && tag &&
+      (tag == XmSTRING_DEFAULT_CHARSET ||
+       !strcmp(tag, XmSTRING_DEFAULT_CHARSET))) {
     tag = XmStringGetCharset();
+    free_tag = True;
+  }
 
   /* Process the components of string individually. */
   prev_text_match = next_text_match = non_text_match = False;
@@ -8029,8 +8038,7 @@ XmStringUnparse(XmString          string,
 			 c_type, c_length, c_value);
 
 	  /* Advance to the next component. */
-	  (void) XmeStringGetComponent(&stack_context, True, False,
-				       &c_length, &c_value);
+	  XmeStringGetComponent(&stack_context, True, False, &c_length, &c_value);
 
 	  /* Update the text match values. */
 	  check_unparse_models(&stack_context, tag, tag_type, parse_model,
@@ -8080,8 +8088,11 @@ XmStringUnparse(XmString          string,
       break;
     }
 
+  if (free_tag)
+    XtFree(tag);
+
   _XmProcessUnlock();
-  return (XtPointer) result;
+  return (XtPointer)result;
 }
 
 XmString
