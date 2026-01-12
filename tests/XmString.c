@@ -207,7 +207,7 @@ START_TEST(create_multibyte)
 	unsigned int len   = 0;
 	unsigned char *val = NULL;
 
-	setlocale(LC_ALL, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "en_US.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Resulting string is NULL");
@@ -1224,6 +1224,273 @@ START_TEST(streamlen_unoptimized)
 }
 END_TEST
 
+START_TEST(unparse_null_charset)
+{
+	XtPointer t;
+
+	t = XmStringUnparse(NULL, NULL, XmCHARSET_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+}
+END_TEST
+
+START_TEST(unparse_null_wide)
+{
+	XtPointer t;
+
+	t = XmStringUnparse(NULL, NULL, XmWIDECHAR_TEXT,
+	                    XmWIDECHAR_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(wchar_t *)t, "Expected empty string");
+	XtFree(t);
+}
+END_TEST
+
+START_TEST(unparse_null_multibyte)
+{
+	XtPointer t;
+
+	t = XmStringUnparse(NULL, NULL, XmMULTIBYTE_TEXT,
+	                    XmMULTIBYTE_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+}
+END_TEST
+
+START_TEST(unparse_null_notext)
+{
+	XtPointer t;
+
+	t = XmStringUnparse(NULL, NULL, XmMULTIBYTE_TEXT,
+	                    XmNO_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+}
+END_TEST
+
+START_TEST(unparse_empty_charset)
+{
+	XtPointer t;
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	t = XmStringUnparse(NULL, NULL, XmCHARSET_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_empty_wide)
+{
+	XtPointer t;
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	t = XmStringUnparse(NULL, NULL, XmWIDECHAR_TEXT,
+	                    XmWIDECHAR_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(wchar_t *)t, "Expected empty string");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_empty_multibyte)
+{
+	XtPointer t;
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	t = XmStringUnparse(NULL, NULL, XmMULTIBYTE_TEXT,
+	                    XmMULTIBYTE_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_empty_notext)
+{
+	XtPointer t;
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	t = XmStringUnparse(NULL, NULL, XmMULTIBYTE_TEXT,
+	                    XmNO_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!*(char *)t, "Expected empty string");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_charset)
+{
+	XmString s;
+	XtPointer t;
+
+	s = XmStringCreateLocalized("test");
+	ck_assert_msg(s, "Expected to create a localized string");
+	t = XmStringUnparse(s, NULL, XmCHARSET_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_wide)
+{
+	XmString s;
+	XtPointer t;
+
+	s = XmStringCreateWide(L"test", NULL);
+	ck_assert_msg(s, "Expected to create a wide string");
+	t = XmStringUnparse(s, NULL, XmWIDECHAR_TEXT,
+	                    XmWIDECHAR_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!wcscmp((wchar_t *)t, L"test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_multibyte)
+{
+	XmString s;
+	XtPointer t;
+	wchar_t buf[5];
+
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("test", NULL);
+	ck_assert_msg(s, "Expected to create a multibyte string");
+	t = XmStringUnparse(s, NULL, XmMULTIBYTE_TEXT,
+	                    XmMULTIBYTE_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_charset_to_wide)
+{
+	XmString s;
+	XtPointer t;
+
+	s = XmStringCreateLocalized("test");
+	ck_assert_msg(s, "Expected to create a localized string");
+	t = XmStringUnparse(s, XmSTRING_DEFAULT_CHARSET, XmCHARSET_TEXT,
+	                    XmWIDECHAR_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!wcscmp((wchar_t *)t, L"test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_charset_to_multibyte)
+{
+	XmString s;
+	XtPointer t;
+
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateLocalized("test");
+	ck_assert_msg(s, "Expected to create a localized string");
+
+	t = XmStringUnparse(s, XmSTRING_DEFAULT_CHARSET, XmCHARSET_TEXT,
+	                    XmMULTIBYTE_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_wide_to_charset)
+{
+	XmString s;
+	XtPointer t;
+
+	s = XmStringCreateWide(L"test", NULL);
+	ck_assert_msg(s, "Expected to create a wide string");
+	t = XmStringUnparse(s, NULL, XmWIDECHAR_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_wide_to_multibyte)
+{
+	XmString s;
+	XtPointer t;
+
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateWide(L"test", NULL);
+	ck_assert_msg(s, "Expected to create a wide string");
+
+	t = XmStringUnparse(s, NULL, XmWIDECHAR_TEXT,
+	                    XmMULTIBYTE_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_multibyte_to_charset)
+{
+	XmString s;
+	XtPointer t;
+
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("test", NULL);
+	ck_assert_msg(s, "Expected to create a multibyte string");
+
+	t = XmStringUnparse(s, NULL, XmMULTIBYTE_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(unparse_multibyte_to_wide)
+{
+	XmString s;
+	XtPointer t;
+
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("test", NULL);
+	ck_assert_msg(s, "Expected to create a multibyte string");
+
+	t = XmStringUnparse(s, NULL, XmMULTIBYTE_TEXT,
+	                    XmWIDECHAR_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!wcscmp((wchar_t *)t, L"test"), "Expected 'test'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -1358,6 +1625,28 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, streamlen_empty);
 	tcase_add_test(t, streamlen_optimized);
 	tcase_add_test(t, streamlen_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Unparse");
+	tcase_add_test(t, unparse_null_charset);
+	tcase_add_test(t, unparse_null_wide);
+	tcase_add_test(t, unparse_null_multibyte);
+	tcase_add_test(t, unparse_null_notext);
+	tcase_add_test(t, unparse_empty_charset);
+	tcase_add_test(t, unparse_empty_wide);
+	tcase_add_test(t, unparse_empty_multibyte);
+	tcase_add_test(t, unparse_empty_notext);
+	tcase_add_test(t, unparse_charset);
+	tcase_add_test(t, unparse_wide);
+	tcase_add_test(t, unparse_multibyte);
+	tcase_add_test(t, unparse_charset_to_wide);
+	tcase_add_test(t, unparse_charset_to_multibyte);
+	tcase_add_test(t, unparse_wide_to_charset);
+	tcase_add_test(t, unparse_wide_to_multibyte);
+	tcase_add_test(t, unparse_multibyte_to_charset);
+	tcase_add_test(t, unparse_multibyte_to_wide);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
