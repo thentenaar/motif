@@ -33,11 +33,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <ctype.h>
-#if XM_UTF8 && defined(HAVE_ICONV_H)
-#include <iconv.h>
-#endif
-#include <errno.h>
+
 #include <Xm/XmosP.h>
 #include "MessagesI.h"
 #include "ResEncodI.h"
@@ -399,18 +397,7 @@ static OctetPtr ctextConcat(
 #if XM_UTF8
 static Boolean  cvtXmStringToUTF8String(
         XrmValue *from,
-        XrmValue *to ) ;
-
-static char* Convert(
-        const char     *str,
-        unsigned int    len,
-        const char      *to_codeset,
-        const char      *from_codeset);
-
-static char* ConvertWithIconv(
-        const char      *str,
-        unsigned int    len,
-        iconv_t converter);
+        XrmValue *to);
 #endif
 
 /********    End Static Function Declarations    ********/
@@ -1938,20 +1925,6 @@ XmCvtXmStringToUTF8String(
 #endif
 
 /***************************************************************************
- *                                                                       *
- * _XmConvertCSToString - Converts compound string to corresponding      *
- *   STRING if it can be fully converted.  Otherwise returns NULL.       *
- *                                                                       *
- ***************************************************************************/
-char *
-_XmConvertCSToString(XmString cs) /* unused */
-{
-  return((char *)NULL);
-
-}
-
-
-/***************************************************************************
  *									   *
  * _XmCvtXmStringToCT - public wrapper for the widgets to use.	  	   *
  *   This returns the length info as well - critical for the list widget   *
@@ -2336,7 +2309,7 @@ processCharsetAndTextUtf8(XmStringTag tag,
 		      unsigned int	*outlen,
 		      ct_Charset	*prev)
 {
-  unsigned int		ctlen = 0, len;
+  size_t ctlen = 0, len;
 
   if (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0) {
       if (_XmStringIsCurrentCharset("UTF-8")) {
@@ -2406,11 +2379,12 @@ processCharsetAndTextUtf8(XmStringTag tag,
 
   /* Now copy in the text */
   if (ctlen > 0) {
-    char *text = Convert((char *)ctext, ctlen, "UTF-8", tag);
-    if (text == NULL) return(False);
-    *outc = ctextConcat(*outc, *outlen, (const_OctetPtr)text, strlen(text));
+    ctext = (OctetPtr)_Xmcsconv(tag, "UTF-8", (char *)ctext, ctlen, &ctlen);
+    if (!ctext)
+        return False;
+    *outc = ctextConcat(*outc, *outlen, (const_OctetPtr)ctext, ctlen);
     *outlen += ctlen;
-    XtFree(text);
+    XtFree((XtPointer)ctext);
   };
 
   /* Finally, add the separator if any */
@@ -2691,111 +2665,3 @@ ctextConcat(
 	return(str1);
 }
 
-#if XM_UTF8
-char*
-Convert(const char     *str,
-        unsigned int    len,
-        const char      *to_codeset,
-        const char      *from_codeset)
-{
-    char *res;
-    iconv_t cd;
-
-    if (str == NULL || to_codeset == NULL || from_codeset == NULL)
-        return NULL;
-
-    cd = iconv_open(to_codeset, from_codeset);
-    if (cd == (iconv_t) -1) {
-        char msg[255];
-
-        snprintf(msg, sizeof(msg),
-                "Could not open converter from '%s' to '%s'",
-                from_codeset, to_codeset);
-
-        XmeWarning(NULL, msg);
-
-        return NULL;
-    }
-
-    res = ConvertWithIconv(str, len, cd);
-
-    iconv_close(cd);
-
-    return res;
-}
-
-char*
-ConvertWithIconv(const char  *str,
-        unsigned int    len,
-        iconv_t converter)
-{
-    char *dest;
-    char *outp;
-    const char *p;
-    size_t inbytes_remaining;
-    size_t outbytes_remaining;
-    size_t err;
-    size_t outbuf_size;
-    Boolean have_error = FALSE;
-
-    if (str == NULL || converter == (iconv_t) -1)
-        return NULL;
-
-   if (len < 0)
-       len = strlen(str);
-
-   p = str;
-   inbytes_remaining = len;
-   outbuf_size = len + 1; /* + 1 for nul in case len == 1 */
-
-   outbytes_remaining = outbuf_size - 1; /* -1 for nul */
-   outp = dest = XtMalloc(outbuf_size);
-
-again:
-
-   err = iconv(converter, (char **)&p, &inbytes_remaining, &outp,
-           &outbytes_remaining);
-
-   if (err == (size_t) -1) {
-      switch (errno) {
-	case EINVAL:
-            /* Incomplete text, do not report an error */
-            break;
-	case E2BIG:
-            {
-                size_t used = outp - dest;
-
-                outbuf_size *= 2;
-                dest = XtRealloc(dest, outbuf_size);
-
-                outp = dest + used;
-                outbytes_remaining = outbuf_size - used - 1; /* -1 for nul */
-
-                goto again;
-            }
-        case EILSEQ:
-            XmeWarning(NULL, "Invalid byte sequence in conversion input");
-            have_error = TRUE;
-            break;
-        default:
-            {
-                char msg[255];
-                snprintf(msg, sizeof(msg), "Error during conversion: %s",
-		       strerror(errno));
-                XmeWarning(NULL, msg);
-                have_error = TRUE;
-                break;
-            }
-      }
-   }
-
-   *outp = '\0';
-
-   if (have_error) {
-      XtFree(dest);
-      dest = NULL;
-   }
-
-   return dest;
-}
-#endif

@@ -37,6 +37,11 @@ static char rcsid[] = "$TOG: XmString.c /main/34 1998/04/16 14:35:32 mgreess $"
 #include <stdarg.h>
 #include <limits.h>		/* for MB_LEN_MAX */
 #include <ctype.h>
+#include <errno.h>
+
+#if HAVE_ICONV_H
+#include <iconv.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" { /* some 'locale.h' do not have prototypes (sun) */
@@ -385,12 +390,12 @@ static void ComputeMetrics(XmRendition rend,
 			   XtPointer text,
 			   unsigned int byte_count,
 			   XmTextType type,
+			   XmStringTag tag,
 			   int which_seg,
 			   Dimension *width,
 			   Dimension *height,
 			   Dimension *ascent,
-			   Dimension *descent,
-                           Boolean utf8);
+			   Dimension *descent);
 static Dimension ComputeWidth(unsigned char which,
 			      XCharStruct char_ret);
 static void _parse_locale(char *str, int *indx, int *len);
@@ -723,6 +728,67 @@ _read_component(
 
   return (uchar_p + *length);
 
+}
+
+/**
+ * Character set conversion routine
+ *
+ * Converts \a text from \a from encoding to \a to encoding.
+ *
+ * Returns NULL on conversion failure; converted buffer on success, with
+ * the buffer length optionally returned in *len_out.
+ */
+char *_Xmcsconv(const char *from, const char *to, char *text, size_t bytes, size_t *len_out)
+{
+	iconv_t ic;
+	char *inbuf, *outbuf, *result;
+	size_t insz, outsz, used, conv;
+	char msg[256];
+
+	if ((ic = iconv_open(to, from)) == (iconv_t)-1) {
+		snprintf(msg, sizeof msg, "Could not get converter from '%s' to '%s'",
+		         from, to);
+		XmeWarning(NULL, msg);
+		*len_out = 0;
+		return NULL;
+	}
+
+	insz   = bytes;
+	inbuf  = text;
+	outsz  = 1 + (bytes << 2);
+	outbuf = XtMalloc(outsz);
+	result = outbuf;
+
+again:
+	if ((conv  = iconv(ic, &inbuf, &insz, &outbuf, &outsz)) == (size_t)-1) {
+		switch (errno) {
+		case EINVAL: /* Incomplete input sequence */
+			break;
+		case E2BIG: /* Our buffer is somehow too small */
+			insz   = bytes;
+			inbuf  = text;
+			used   = (size_t)(outbuf - result);
+			outsz += 2 + (outsz >> 2);
+			result = XtRealloc(result, outsz);
+			outbuf = result + used;
+			goto again;
+		case EILSEQ:
+			XmeWarning(NULL, "Invalid byte sequence in character set conversion input");
+			break;
+		default:
+			snprintf(msg, sizeof msg, "Error during charset conversion: %s", strerror(errno));
+			XmeWarning(NULL, msg);
+		}
+
+		iconv_close(ic);
+		XtFree(result);
+		if (len_out) *len_out = 0;
+		return NULL;
+	}
+
+	iconv_close(ic);
+	if (len_out) *len_out = (size_t)(outbuf - result);
+	return result;
 }
 
 /**
@@ -1447,6 +1513,7 @@ XmString XmStringConcatAndFree(XmString a, XmString b)
     _XmStrImplicitLine(a_str) || _XmStrImplicitLine(b_str);
 
   /* Add first line of b_str to last line of a_str */
+
   a_line = _XmStrEntry(a_str)[a_lc - 1];
   if (_XmStrImplicitLine(b_str))
     {
@@ -2155,12 +2222,14 @@ OptLineMetrics(XmRenderTable 	r,
 	}
 
       /* 4a. Take the first one */
+      tags[0] = _XmStrTagGet(opt);
       if (!rend && r && _XmRTCount(r) > 0 &&
 	  ((_XmStrTextType(opt) == XmCHARSET_TEXT &&
-	    _XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG) ||
-	   ((_XmStrTextType(opt) == XmMULTIBYTE_TEXT ||
-	     _XmStrTextType(opt) == XmWIDECHAR_TEXT) &&
-	     (_XmStrTagGet(opt) && !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(opt)), _MOTIF_DEFAULT_LOCALE)))))
+	    (tags[0] && (tags[0] == XmFONTLIST_DEFAULT_TAG ||
+	      !strcmp(tags[0], XmFALLBACK_CHARSET)         ||
+	      !strcmp(tags[0], XmSTRING_DEFAULT_CHARSET)   ||
+	      !strcmp(tags[0], "UTF-8")))) ||
+	   (_XmStrTextType(opt) == XmMULTIBYTE_TEXT || _XmStrTextType(opt) == XmWIDECHAR_TEXT)))
 	_XmRenderTableFindFirstFont(r, &rend_index, &rend);
 
       if ((rend != NULL) &&
@@ -2227,20 +2296,9 @@ OptLineMetrics(XmRenderTable 	r,
   if (rend != NULL)
     ComputeMetrics(rend,
 		   (XtPointer)_XmStrText(opt),
-		   _XmStrByteCount(opt), (XmTextType) _XmStrTextType(opt),
-		   XmSTRING_SINGLE_SEG, width, height, ascent, descent,
-#if XM_UTF8
-           (_XmStrTextType(opt) == XmCHARSET_TEXT &&
-            ((_XmStrTagGet(opt) == XmFONTLIST_DEFAULT_TAG &&
-              _XmStringIsCurrentCharset("UTF-8")) ||
-             !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(opt)), "UTF-8"))) ||
-
-           (_XmStrTextType(opt) == XmMULTIBYTE_TEXT &&
-            !strcmp(locale.ctype, "UTF-8"))
-#else
-            False
-#endif
-    );
+		   _XmStrByteCount(opt), (XmTextType)_XmStrTextType(opt),
+		   _XmStrTagGet(opt), XmSTRING_SINGLE_SEG, width, height,
+		   ascent, descent);
 
   if (rend != NULL) tl = _XmRendTabs(rend);
   d = (_XmRTDisplay(r) == NULL) ? _XmGetDefaultDisplay() : _XmRTDisplay(r);
@@ -3614,11 +3672,11 @@ _XmStringDrawSegment(Display *d,
 		     Dimension descender
 		     )
 {
-  Boolean 		text16 = False, multibyte, widechar, utf8;
+  Boolean 		text16 = False, multibyte, widechar, utf8 = False;
   Font    		oldfont = (Font) 0;
   GC			gc;
   XGCValues 		xgcv;
-  char 			*draw_text;       /* text to be drawn -
+  char 			*cs = NULL, *tag, *converted, *draw_text;       /* text to be drawn -
 					     flipped in RtoL mode */
   char  		flip_char[100];	  /* but simple */
   char 			*flip_char_extra = NULL;
@@ -3628,6 +3686,7 @@ _XmStringDrawSegment(Display *d,
   unsigned int		seg_len;
   int			font_type;
   int			text_type;
+  size_t convsz;
 
   old_fg = old_bg = XmUNSPECIFIED_PIXEL;
 
@@ -3644,6 +3703,7 @@ _XmStringDrawSegment(Display *d,
 
       widechar = ((text_type == XmWIDECHAR_TEXT) &&
 		  (font_type == XmFONT_IS_FONTSET));
+      tag = _XmEntryTag((_XmStringEntry)seg);
 
 #if XM_UTF8
       utf8 = text_type == XmCHARSET_TEXT &&
@@ -3658,8 +3718,6 @@ _XmStringDrawSegment(Display *d,
              font_type  == XmFONT_IS_XFT     ||
              font_type  == XmFONT_IS_FONTSET ||
              (font_type == XmFONT_IS_FONT    && _XmIsISO10646(d, _XmRendFont(rend))));
-#else
-      utf8 = False;
 #endif
       gc = _XmRendGC(rend);
 
@@ -3831,10 +3889,31 @@ _XmStringDrawSegment(Display *d,
 
 #if USE_XFT
       if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
-        /* XXX: This assumes UTF-8 if charset/multibyte text */
-        if (text_type == XmWIDECHAR_TEXT)
-          _XmXftDrawString(d, w, rend, sizeof(wchar_t), x, y, draw_text, seg_len / sizeof(wchar_t), image);
-        else _XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
+        switch (text_type) {
+        case XmNO_TEXT:
+            break;
+        case XmWIDECHAR_TEXT:
+            _XmXftDrawString(d, w, rend, sizeof(wchar_t), x, y, draw_text,
+                             seg_len / sizeof(wchar_t), image);
+            break;
+        case XmMULTIBYTE_TEXT:
+            if (!utf8)
+                cs = XtNewString(locale.tag);
+        case XmCHARSET_TEXT:
+            if (!utf8 && !cs) {
+                if (!tag || tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
+                    cs = XmStringGetCharset();
+                else cs = XtNewString(tag);
+            }
+
+            if (!utf8 && (converted = _Xmcsconv(cs, "UTF-8", draw_text, seg_len, &convsz))) {
+                _XmXftDrawString(d, w, rend, 1, x, y, converted, convsz, image);
+                XtFree(converted);
+            } else _XmXftDrawString(d, w, rend, utf8 ? 1 : -1, x, y, draw_text, seg_len, image);
+
+            if (cs) XtFree(cs);
+            break;
+        }
       } else /* TODO: fix indentation */
 #endif
         {
@@ -5845,24 +5924,37 @@ ComputeMetrics(XmRendition rend,
 	       XtPointer text,
 	       unsigned int byte_count,
 	       XmTextType type,
+	       XmStringTag tag,
 	       int which_seg,
 	       Dimension *width,
 	       Dimension *height,
 	       Dimension *ascent,
-	       Dimension *descent,
-               Boolean utf8)
+	       Dimension *descent)
 {
+  Boolean utf8;
   Dimension	wid, hi;
   int		dir, asc, desc;
+  XmStringTag cs = NULL;
 
 #if USE_XFT
   XGlyphInfo info;
+  char *converted;
+  size_t convsz;
 #endif
 
   wid = 0;
   hi = 0;
   asc = 0;
   desc = 0;
+
+  /* We're in UTF-8 if we have a UTF-8 tag, or the default charset is UTF-8 */
+  utf8 = (type == XmCHARSET_TEXT && (
+          (tag && !strcmp(tag, "UTF-8")) ||
+          ((tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
+           && _XmStringIsCurrentCharset("UTF-8"))
+         ));
+  utf8 = utf8 || (type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, "UTF-8"));
+  memset(&info, 0, sizeof info);
 
   switch (_XmRendFontType(rend)) {
     case XmFONT_IS_FONT:
@@ -5926,12 +6018,10 @@ ComputeMetrics(XmRendition rend,
 			   byte_count/sizeof(wchar_t),
 			   &ink, &logical);
 	  else {
-#if XM_UTF8
               if (utf8)
                   Xutf8TextExtents(font_set, (char *)text, byte_count,
                           &ink, &logical);
               else
-#endif
                   XmbTextExtents(font_set, (char *)text, byte_count,
                           &ink, &logical);
           }
@@ -5954,7 +6044,13 @@ ComputeMetrics(XmRendition rend,
 	desc = _XmRendXftFont(rend)->descent;
 	hi   = _XmRendXftFont(rend)->height;
 
-	if (type == XmWIDECHAR_TEXT) {
+	if (!byte_count)
+		break;
+
+	switch (type) {
+	case XmNO_TEXT:
+		break;
+	case XmWIDECHAR_TEXT:
 		switch (sizeof(wchar_t)) {
 		case 2:
 			XftTextExtents16(_XmRendDisplay(rend), _XmRendXftFont(rend),
@@ -5965,13 +6061,36 @@ ComputeMetrics(XmRendition rend,
 			                 text, byte_count >> 2, &info);
 			break;
 		}
-	} else {
-		XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
-		                   text, byte_count, &info);
+		break;
+	case XmMULTIBYTE_TEXT:
+		if (!utf8)
+			cs = XtNewString(locale.ctype);
+	case XmCHARSET_TEXT:
+		if (!utf8 && !cs) {
+			if (!tag || tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
+				cs = XmStringGetCharset();
+			else cs = XtNewString(tag);
+		}
+
+		if (!utf8 && (converted = _Xmcsconv(cs, "UTF-8", text, byte_count, &convsz))) {
+			utf8 = True;
+			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+			                   (const FcChar8 *)converted, convsz, &info);
+			XtFree(converted);
+		} else if (utf8) {
+			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+			                   text, byte_count, &info);
+		}
+
+		if (!utf8) { /* Assume some 8-bit encoding as a fallback */
+			XftTextExtents8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+			                text, byte_count, &info);
+		}
+		break;
 	}
 
 	wid = info.xOff;
-#endif
+#endif /* USE_XFT */
   }
 
   /* Adjust for underlining. Add one pixel for line and one pixel at bottom so
@@ -6004,6 +6123,7 @@ ComputeMetrics(XmRendition rend,
   if (height != NULL) *height = hi;
   if (ascent != NULL) *ascent = asc;
   if (descent != NULL) *descent = desc;
+  if (cs) XtFree(cs);
 }
 
 static Dimension
@@ -6202,13 +6322,14 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 	    }
 
 	  /* 4a. Take the first one */
-	  if ((rend == NULL) &&
-	      ((_XmEntryTextTypeGet(entry) == XmCHARSET_TEXT &&
-	        entry_tag == XmFONTLIST_DEFAULT_TAG) ||
-	       ((_XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
-	         _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT) &&
-	        entry_tag && !strcmp(entry_tag, _MOTIF_DEFAULT_LOCALE))) &&
-	      (rendertable != NULL) && (_XmRTCount(rendertable) > 0))
+	  if (!rend && rendertable && _XmRTCount(rendertable) > 0 && (
+	       _XmEntryTextTypeGet(entry) == XmCHARSET_TEXT &&
+	        ((entry_tag == XmFONTLIST_DEFAULT_TAG          ||
+	          !strcmp(entry_tag, XmFALLBACK_CHARSET)       ||
+	          !strcmp(entry_tag, XmSTRING_DEFAULT_CHARSET) ||
+	          !strcmp(entry_tag, "UTF-8"))                 ||
+	        (_XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
+	         _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT))))
 	    rend = _XmRenditionMerge(d, rend_in_out, base, rendertable,
 				     NULL, NULL, 0, (render_cache != NULL));
 
@@ -6296,19 +6417,7 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
       ComputeMetrics(*rend_in_out, _XmEntryTextGet(entry),
 		     _XmEntryByteCountGet(entry),
 		     (XmTextType) _XmEntryTextTypeGet(entry),
-		     which_seg, &w, &h, &asc, &dsc,
-#if XM_UTF8
-           (_XmEntryType(entry)  == XmCHARSET_TEXT &&
-            ((_XmEntryTag(entry) == XmFONTLIST_DEFAULT_TAG &&
-              _XmStringIsCurrentCharset("UTF-8")) ||
-             (_XmEntryTag(entry) && !strcmp(_XmEntryTag(entry), "UTF-8")))) ||
-
-           (_XmEntryType(entry) == XmMULTIBYTE_TEXT &&
-            !strcmp(locale.ctype, "UTF-8"))
-#else
-                   False
-#endif
-		    );
+		     _XmEntryTag(entry), which_seg, &w, &h, &asc, &dsc);
 
       /* If cache exists, set it. */
       if (render_cache != NULL)
@@ -6490,7 +6599,10 @@ out:
  */
 Boolean _XmStringIsCurrentCharset(const XmStringTag c)
 {
-	return !strcmp(c, XmStringGetCharset());
+	const XmStringTag cs = XmStringGetCharset();
+	Boolean ret = c && cs && !strcmp(c, cs);
+	XtFree(cs);
+	return ret;
 }
 
 /*
@@ -6880,7 +6992,6 @@ XmStringDrawUnderline(
 
   _XmAppUnlock(app);
 }
-
 
 #ifdef _XmDEBUG_XMSTRING
 
@@ -8105,7 +8216,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
   _XmStringEntry      opt_seg;
   _XmStringOptRec     opt;
   int                 tag_index = TAG_INDEX_UNSET;
-  Boolean             optimized = False;
+  Boolean             optimized = False, free_value = False;
   XmStringTag         rend_tags[1];
 
   _XmProcessLock();
@@ -8131,6 +8242,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
           !strcmp(value, XmSTRING_DEFAULT_CHARSET)) {
 	value = XmStringGetCharset();
 	length = strlen(value);
+	free_value = True;
       }
 
       tag_index = _XmStringIndexCacheTag(value, length);
@@ -8142,6 +8254,7 @@ XmStringComponentCreate(XmStringComponentType c_type,
 	_XmEntryTextTypeSet(&seg, XmCHARSET_TEXT);
 	_XmUnoptSegTag(&seg) = _XmStringCacheTag(value, length);
       }
+      if (free_value) XtFree(value);
       break;
 
     case XmSTRING_COMPONENT_TEXT:

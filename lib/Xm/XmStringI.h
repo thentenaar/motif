@@ -838,6 +838,16 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 
 /**** Private Defines, Typedefs, and Function Declarations for XmString.c ****/
 
+/**
+ * Character set conversion routine
+ *
+ * Converts \a text from \a from encoding to \a to encoding.
+ *
+ * Returns NULL on conversion failure; converted buffer on success, with
+ * the buffer length optionally returned in *len_out.
+ */
+extern char *_Xmcsconv(const char *from, const char *to, char *text, size_t bytes, size_t *len_out);
+
 extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;
 extern Boolean _XmFontListSearch(

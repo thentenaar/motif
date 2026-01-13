@@ -2881,6 +2881,10 @@ _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc
 
     switch (bpc)
     {
+	case -1:
+		XftDrawString8(draw, &xftcol, font,
+			x, y, (XftChar8 *)s, len);
+		break;
 	case 1:
 		XftDrawStringUtf8(draw, &xftcol, font,
 			x, y, (XftChar8 *)s, len);
@@ -2915,6 +2919,10 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 
 	switch (bpc)
 	{
+	    case -1:
+	        XftTextExtents8(display, _XmRendXftFont(rend),
+		                (FcChar8 *)s, len, &ext);
+		break;
 	    case 1:
 	        XftTextExtentsUtf8(display, _XmRendXftFont(rend),
 		                (FcChar8*)s, len, &ext);
@@ -2967,6 +2975,10 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 
     switch (bpc)
     {
+	case -1:
+		XftDrawString8(draw, &fg_color, _XmRendXftFont(rend),
+			x, y, (XftChar8 *)s, len);
+		break;
 	case 1:
 		XftDrawStringUtf8(draw, &fg_color, _XmRendXftFont(rend),
 			x, y, (XftChar8 *)s, len);
