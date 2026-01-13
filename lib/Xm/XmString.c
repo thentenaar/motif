@@ -425,12 +425,9 @@ static void check_unparse_models(XmStringContext   context,
 				 Boolean	  *prev_text_match,
 				 Boolean	  *next_text_match,
 				 Boolean	  *non_text_match);
-static void unparse_text(char                **result,
-			 int                  *length,
-			 XmTextType            output_type,
-			 XmStringComponentType c_type,
-			 unsigned int          c_length,
-			 XtPointer             c_value);
+static void unparse_text(char **result, int *length, XmTextType output_type,
+                         XmStringComponentType c_type, size_t c_length,
+                         XtPointer c_value, XmStringTag c_tag);
 static Boolean unparse_is_plausible(XmParseMapping pattern);
 static void unparse_components(char          **result,
 			       int            *length,
@@ -7910,58 +7907,127 @@ check_unparse_models(XmStringContext context,
  * unparse_text: A helper for XmStringUnparse.  Output a matched text
  *	component.
  */
-static void
-unparse_text(char                **result,
-	     int                  *length,
-	     XmTextType            output_type,
-	     XmStringComponentType c_type,
-	     unsigned int	   c_length,
-	     XtPointer	           c_value)
+static void unparse_text(char **result, int *length, XmTextType output_type,
+                         XmStringComponentType c_type, size_t c_length,
+                         XtPointer c_value, XmStringTag c_tag)
 {
-  /* If we have an invalid character, treat it as a single byte. */
-  if ((int)c_length < 0)
-    c_length = 1;
+	size_t bufsz = (size_t)c_length, interimsz = 0;
+	Boolean noconv, freebuf = False;
+	char *buf = c_value, *interim = NULL;
+	const char *from = NULL, *to = NULL;
+	static const char *WCHAR_T = "WCHAR_T";
 
-  /* Convert c_value to the appropriate type and insert it. */
-  if ((c_type == XmSTRING_COMPONENT_WIDECHAR_TEXT) ==
-      (output_type == XmWIDECHAR_TEXT))
-    {
-      /* No conversion is necessary. */
-      *result = XtRealloc(*result, *length + c_length);
-      memcpy(*result + *length, c_value, c_length);
-      *length += c_length;
-    }
-  else if (output_type != XmWIDECHAR_TEXT)
-    {
-      /* Convert c_value to a multibyte string. */
-      int len;
-      int max_bytes = c_length * MB_CUR_MAX / sizeof(wchar_t);
-      wchar_t *null_text = (wchar_t*) XtMalloc(c_length + sizeof(wchar_t));
-      memcpy(null_text, c_value, c_length);
-      null_text[c_length / sizeof(wchar_t)] = (wchar_t) '\0';
+	if (!result || !c_value || !c_length ||
+	    (output_type == XmNO_TEXT && c_type != XmSTRING_COMPONENT_TEXT))
+		return;
 
-      *result = XtRealloc(*result, *length + max_bytes);
-      len = wcstombs(*result + *length, null_text, max_bytes);
-      if (len > 0)
-	*length += len;
+	/* Convert c_value to the appropriate type and append it. */
+	noconv = (c_type == XmSTRING_COMPONENT_WIDECHAR_TEXT && output_type == XmWIDECHAR_TEXT) ||
+	         (c_type == XmSTRING_COMPONENT_LOCALE_TEXT   && output_type == XmMULTIBYTE_TEXT);
 
-      XtFree((char*) null_text);
-    }
-  else
-    {
-      /* Convert c_value to a widechar string. */
-      int len;
-      char *null_text = XtMalloc(c_length + 1);
-      memcpy(null_text, c_value, c_length);
-      null_text[c_length] = '\0';
+	if (!noconv && c_type == XmSTRING_COMPONENT_TEXT) {
+		if (output_type == XmCHARSET_TEXT || output_type == XmNO_TEXT)
+			noconv = !c_tag || !strcmp(c_tag, locale.tag) ||
+			         !strcmp(c_tag, XmFONTLIST_DEFAULT_TAG);
+	}
 
-      *result = XtRealloc(*result, *length + c_length * sizeof(wchar_t));
-      len = mbstowcs((wchar_t*) (*result + *length), null_text, c_length);
-      if (len > 0)
-	*length += len * sizeof(wchar_t);
+	if (noconv) {
+		/* No conversion is necessary. */
+		*result = XtRealloc(*result, (size_t)*length + c_length);
+		memcpy(*result + *length, c_value, c_length);
+		*length += c_length;
+		return;
+	}
 
-      XtFree(null_text);
-    }
+	if (!c_tag || !strcmp(c_tag, XmFONTLIST_DEFAULT_TAG))
+		c_tag = locale.tag;
+
+	switch (c_type) {
+	case XmSTRING_COMPONENT_TEXT:
+		from = c_tag;
+		switch (output_type) {
+		case XmCHARSET_TEXT:   to = locale.tag;   break;
+		case XmMULTIBYTE_TEXT: to = locale.ctype; break;
+		default:               to = WCHAR_T;      break;
+		}
+		break;
+	case XmSTRING_COMPONENT_LOCALE_TEXT:
+		from = locale.ctype;
+		to   = (output_type == XmCHARSET_TEXT) ? locale.tag : WCHAR_T;
+		break;
+	default: /* wide */
+		from = WCHAR_T;
+		to   = (output_type == XmCHARSET_TEXT) ? locale.tag : locale.ctype;
+		break;
+	}
+
+	if (from == WCHAR_T) {
+		interim = XtMalloc(bufsz + 1);
+		interim[bufsz] = 0;
+		memcpy(interim, buf, bufsz);
+
+		if ((bufsz = wcstombs(NULL, (wchar_t *)interim, 0)) == (size_t)-1) {
+			XtFree(interim);
+			XmeWarning(NULL, "Invalid wide char sequence in conversion input");
+			return;
+		}
+
+		buf = XtMalloc(bufsz + 1);
+		if (wcstombs(buf, (wchar_t *)interim, bufsz + 1) == (size_t)-1) {
+			XmeWarning(NULL, "Wide-to-Multibyte conversion failed");
+			XtFree(interim);
+			XtFree(buf);
+			return;
+		}
+
+		XtFree(interim);
+		from = locale.ctype;
+		freebuf = True;
+	}
+
+	/* Wide-to-multibyte */
+	if (!strcmp(from, to)) {
+		*result = XtRealloc(*result, (size_t)*length + bufsz);
+		memcpy(*result + *length, buf, bufsz);
+		if (freebuf) XtFree(buf);
+		*length += (int)bufsz;
+		return;
+	}
+
+	if (!(interim = _Xmcsconv(from, to == WCHAR_T ? locale.ctype : to, buf, bufsz, &interimsz))) {
+		if (freebuf) XtFree(buf);
+		return;
+	}
+
+	if (freebuf)
+		XtFree(buf);
+
+	if (to == WCHAR_T) {
+		interim = XtRealloc(interim, interimsz + 1);
+		interim[interimsz] = '\0';
+		if ((bufsz = mbstowcs(NULL, interim, 0)) == (size_t)-1) {
+			XmeWarning(NULL, "Invalid multibyte sequence in conversion input");
+			XtFree(interim);
+			return;
+		}
+
+		buf = XtMalloc((bufsz + 1) * sizeof(wchar_t));
+		if (mbstowcs((wchar_t *)buf, interim, (bufsz + 1) * sizeof(wchar_t)) == (size_t)-1) {
+			XmeWarning(NULL, "Multibyte-to-Wide conversion failed");
+			XtFree(buf);
+			XtFree(interim);
+			return;
+		}
+
+		XtFree(interim);
+		interim   = buf;
+		interimsz = wcslen((wchar_t *)buf) * sizeof(wchar_t);
+	}
+
+	*result = XtRealloc(*result, (size_t)*length + interimsz);
+	memcpy(*result + *length, interim, interimsz);
+	XtFree(interim);
+	*length += (int)interimsz;
 }
 
 /*
@@ -8075,12 +8141,12 @@ unparse_components(char          **result,
 	      if (pat->pattern_type == XmWIDECHAR_TEXT)
 		unparse_text(result, length, output_type,
 			     XmSTRING_COMPONENT_WIDECHAR_TEXT,
-			     sizeof(wchar_t), pat->pattern);
+			     sizeof(wchar_t), pat->pattern, NULL);
 	      else
 		unparse_text(result, length, output_type,
 			     XmSTRING_COMPONENT_TEXT,
 			     mblen((char*) pat->pattern, MB_CUR_MAX),
-			     pat->pattern);
+			     pat->pattern, NULL);
 
 	      /* Skip all but the last matched component. */
 	      while (--n_comp > 0)
@@ -8151,7 +8217,7 @@ XmStringUnparse(XmString          string,
 	  /* Text component matches are computed in advance. */
 	  if (next_text_match)
 	    unparse_text(&result, &length, output_type,
-			 c_type, c_length, c_value);
+			 c_type, c_length, c_value, _XmStrContTag(&stack_context));
 
 	  /* Advance to the next component. */
 	  XmeStringGetComponent(&stack_context, True, False, &c_length, &c_value);
@@ -8192,7 +8258,7 @@ XmStringUnparse(XmString          string,
 	wchar_t zero = 0;
 	unparse_text(&result, &length, output_type,
 		     XmSTRING_COMPONENT_WIDECHAR_TEXT,
-		     sizeof(wchar_t), (XtPointer) &zero);
+		     sizeof(wchar_t), (XtPointer)&zero, NULL);
       }
       break;
 
@@ -8200,7 +8266,7 @@ XmStringUnparse(XmString          string,
     case XmMULTIBYTE_TEXT:
     case XmNO_TEXT:
       unparse_text(&result, &length, output_type,
-		   XmSTRING_COMPONENT_TEXT, 1, (XtPointer) "");
+		   XmSTRING_COMPONENT_TEXT, 1, (XtPointer)"", NULL);
       break;
     }
 
