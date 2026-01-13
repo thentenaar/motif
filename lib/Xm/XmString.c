@@ -7712,8 +7712,13 @@ XmStringParseText(XtPointer    text,
     }
 
   /* Create an empty segment with the right tag. */
-  result = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer) tag);
-  _XmStrTextType(result) = type;
+  result = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag);
+  if (type == XmWIDECHAR_TEXT) {
+    if (_XmStrOptimized(result))
+      _XmStrTextType(result) = type;
+    else
+      _XmEntryTextTypeSet(_XmStrEntry(result)[0], type);
+  }
 
   /* Did the user provide an XmDIRECTION_CHANGE pattern? */
   has_dir_pattern = False;
