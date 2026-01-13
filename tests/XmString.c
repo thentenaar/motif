@@ -31,9 +31,13 @@
 #include "XmStringI.h"
 #include "suites.h"
 
+extern void _XmStringSetLocaleTag(const char *lang);
+
 static void _init_xt(void)
 {
 	setenv("LANG", "C", 1);
+	setenv("LC_ALL", "C", 1);
+	setlocale(LC_ALL, "C");
 	init_xt("check_XmString");
 }
 
@@ -198,7 +202,6 @@ END_TEST
 /**
  * Create a multibyte string
  */
-extern void _XmStringSetLocaleTag(const char *lang);
 START_TEST(create_multibyte)
 {
 	XmString s;
@@ -207,7 +210,7 @@ START_TEST(create_multibyte)
 	unsigned int len   = 0;
 	unsigned char *val = NULL;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Resulting string is NULL");
@@ -668,7 +671,7 @@ START_TEST(generate_multibyte)
 		21, 6, 0, 12, 0, 3, 0, 6, 0
 	};
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringGenerate("这是\n玉米超人\t的\n测试", NULL, XmMULTIBYTE_TEXT, NULL);
 	ck_assert_msg(s, "Expected generate to succeed");
@@ -734,6 +737,44 @@ START_TEST(getcharset_utf8)
 
 	_XmStringSetLocaleTag("POSIX.UTF8");
 	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
+
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getmultibytecharset_default)
+{
+	XmStringTag cset;
+
+	cset = XmStringGetMultibyteCharset();
+	ck_assert_msg(cset && !strcmp(cset, "ASCII"), "Expected ASCII");
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getmultibytecharset_no_lang)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("");
+	cset = XmStringGetMultibyteCharset();
+	ck_assert_msg(cset && !strcmp(cset, "ASCII"), "Expected ASCII");
+
+	if (cset)
+		XtFree(cset);
+}
+END_TEST
+
+START_TEST(getmultibytecharset_utf8)
+{
+	XmStringTag cset;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	cset = XmStringGetMultibyteCharset();
 	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
 
 	if (cset)
@@ -1353,8 +1394,8 @@ START_TEST(unparse_charset_conversion)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
-	_XmStringSetLocaleTag("en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C.UTF-8");
 	s = XmStringCreate("\xd3\xf1\xc3\xd7\xb3\xac\xc8\xcb", "GB18030");
 	ck_assert_msg(s, "Expected to create a string");
 	t = XmStringUnparse(s, NULL, XmCHARSET_TEXT,
@@ -1388,7 +1429,7 @@ START_TEST(unparse_multibyte)
 	XtPointer t;
 	wchar_t buf[5];
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
@@ -1422,7 +1463,7 @@ START_TEST(unparse_charset_to_multibyte)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateLocalized("test");
 	ck_assert_msg(s, "Expected to create a localized string");
@@ -1441,6 +1482,8 @@ START_TEST(unparse_wide_to_charset)
 	XmString s;
 	XtPointer t;
 
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
 	s = XmStringCreateWide(L"test", NULL);
 	ck_assert_msg(s, "Expected to create a wide string");
 	t = XmStringUnparse(s, NULL, XmWIDECHAR_TEXT,
@@ -1457,7 +1500,7 @@ START_TEST(unparse_wide_to_multibyte)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateWide(L"test", NULL);
 	ck_assert_msg(s, "Expected to create a wide string");
@@ -1476,7 +1519,7 @@ START_TEST(unparse_multibyte_to_charset)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
@@ -1495,7 +1538,7 @@ START_TEST(unparse_multibyte_to_wide)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "en_US.UTF-8");
+	setlocale(LC_CTYPE, "C.UTF-8");
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
@@ -1572,6 +1615,14 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, getcharset_from_lang);
 	tcase_add_test(t, getcharset_no_lang);
 	tcase_add_test(t, getcharset_utf8);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("GetMultibyteCharset");
+	tcase_add_test(t, getmultibytecharset_default);
+	tcase_add_test(t, getmultibytecharset_no_lang);
+	tcase_add_test(t, getmultibytecharset_utf8);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

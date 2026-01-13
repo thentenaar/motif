@@ -6083,6 +6083,7 @@ ComputeMetrics(XmRendition rend,
 			XftTextExtents8(_XmRendDisplay(rend), _XmRendXftFont(rend),
 			                text, byte_count, &info);
 		}
+		XtFree(cs);
 		break;
 	}
 
@@ -6519,50 +6520,47 @@ static void _parse_locale(char *str, int *indx, int *len)
 
 void _XmStringSetLocaleTag(const char *lang)
 {
-	const char *ptr, *str, *ct;
+	const char *str, *ct;
 	int index, cindex, len;
 
 	_XmProcessLock();
 	if (locale.inited)
 		XtFree(locale.tag);
 
-	str = lang ? lang : getenv("LANG");
+	if (!(str = lang ? lang : setlocale(LC_ALL, NULL))) {
+		setlocale(LC_ALL, "");
+		if (!(str = setlocale(LC_ALL, NULL)))
+			str = "C";
+	}
+
 	ct  = setlocale(LC_CTYPE, NULL);
 	_parse_locale((char *)str, &index, &locale.taglen);
 	_parse_locale((char *)ct, &cindex, &len);
 
 	if (locale.taglen > 0) {
-		ptr = str + index;
-		if (!strcmp(ptr, "UTF8")) {
-			ptr = "UTF-8";
+		str += index;
+		if (!strcmp(str, "UTF8")) {
+			str = "UTF-8";
 			locale.taglen = 5;
 		}
 	} else {
-		ptr = XmFALLBACK_CHARSET;
+		str           = XmFALLBACK_CHARSET;
 		locale.taglen = strlen(XmFALLBACK_CHARSET);
 	}
 
-	/* If LANG is UTF-8, assume LC_CTYPE is also (if unspecified) */
-	if (!len && !memcmp(ptr, "UTF-8", locale.taglen)) {
-		ct  = "UTF-8";
-		len = 5;
-	} else if (len > 0) {
+	if (len > 0) {
 		ct += cindex;
 		if (!strcmp(ct, "UTF8")) {
 			ct = "UTF-8";
 			len = 5;
 		}
 	} else {
-		ct  = "";
-		len = 1;
+		ct  = "ASCII";
+		len = 5;
 	}
 
-	locale.tag = XtMalloc(locale.taglen + 1);
-	locale.ctype = XtMalloc(len + 1);
-	memcpy(locale.tag, ptr, locale.taglen);
-	memcpy(locale.ctype, ct, len);
-	locale.tag[locale.taglen] = '\0';
-	locale.ctype[len] = '\0';
+	locale.tag   = XtNewString(str);
+	locale.ctype = XtNewString(ct);
 	_XmProcessUnlock();
 }
 
@@ -6571,8 +6569,7 @@ void _XmStringSetLocaleTag(const char *lang)
  /* XmFALLBACK_CHARSET.  */
 XmStringTag XmStringGetCharset(void)
 {
-	char *ptr, *str, *ret_val;
-	int indx, len;
+	char *ret_val;
 
 	_XmProcessLock();
 	if (locale.inited)
@@ -6584,8 +6581,29 @@ XmStringTag XmStringGetCharset(void)
 	locale.inited = True;
 
 out:
-	ret_val = XtMalloc(strlen(locale.tag) + 1);
-	memcpy(ret_val, locale.tag, strlen(locale.tag) + 1);
+	ret_val = XtNewString(locale.tag);
+	_XmProcessUnlock();
+	return ret_val;
+}
+
+/**
+ * Get a copy of the character set in use for multibyte text
+ */
+XmStringTag XmStringGetMultibyteCharset(void)
+{
+	char *ret_val;
+
+	_XmProcessLock();
+	if (locale.inited)
+		goto out;
+
+	/* Register XmSTRING_DEFAULT_CHARSET for compound text conversion. */
+	_XmStringSetLocaleTag(NULL);
+	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG);
+	locale.inited = True;
+
+out:
+	ret_val = XtNewString(locale.ctype);
 	_XmProcessUnlock();
 	return ret_val;
 }
@@ -7962,13 +7980,13 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 	}
 
 	if (from == WCHAR_T) {
-		interim = XtMalloc(bufsz + 1);
-		interim[bufsz] = 0;
+		interim = XtMalloc(bufsz + sizeof(wchar_t));
+		memset(interim + bufsz, 0, sizeof(wchar_t));
 		memcpy(interim, buf, bufsz);
 
 		if ((bufsz = wcstombs(NULL, (wchar_t *)interim, 0)) == (size_t)-1) {
-			XtFree(interim);
 			XmeWarning(NULL, "Invalid wide char sequence in conversion input");
+			XtFree(interim);
 			return;
 		}
 
@@ -8733,8 +8751,8 @@ XmeStringGetComponent(_XmStringContext context,
       /* Don't output implicit leading charset component. */
       tag = (optimized ? _XmStrTagGet(opt) : _XmEntryTag(seg));
       if ((tag == XmSTRING_DEFAULT_CHARSET) ||
-	  (tag && !strcmp((char*) tag, XmSTRING_DEFAULT_CHARSET)))
-	tag = XmStringGetCharset();
+	  (tag && !strcmp(tag, XmSTRING_DEFAULT_CHARSET)))
+	tag = locale.tag;
 
       if ((text_type != XmNO_TEXT &&
 	   text_type != _XmStrContTagType(context)) ||
