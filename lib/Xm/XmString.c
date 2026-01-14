@@ -444,8 +444,6 @@ static void end_context_rends(_XmStringContext context,
 			      Boolean          update_context,
 			      XmStringTag     *rendition,
 			      int	       count);
-static XFontStruct * GetFont(XmRenderTable rt,
-			     _XmStringEntry entry);
 static _XmStringCache CacheGet(_XmStringEntry entry,
 			       int type,
 			       int create,
@@ -2493,109 +2491,6 @@ LineMetrics(_XmStringEntry line,
   if (max_asc > 0) *ascender = max_asc;
   if (max_dsc > 0) *descender = max_dsc;
 }
-
-static XFontStruct *
-GetFont(XmRenderTable rt,
-	_XmStringEntry entry)
-{
-  XmRendition rend = _XmEntryRenditionGet(entry, rt);
-  short	 indx = -1;
-  Cardinal	n;
-  Arg		args[2];
-  XmFontType	type;
-  XtPointer	font;
-
-  if (rend == NULL)
-    (void)_XmRenderTableFindFallback(rt, _XmEntryTag(entry), TRUE, &indx, &rend);
-
-  if (rend != NULL) {
-    n = 0;
-    XtSetArg(args[n], XmNfontType, &type); n++;
-    XtSetArg(args[n], XmNfont, &font); n++;
-    XmRenditionRetrieve(rend, args, n);
-
-    if (type == XmFONT_IS_FONT)
-      return (XFontStruct *)font;
-    else
-      return (XFontStruct *)NULL;
-  }
-  return (XFontStruct *)NULL;
-}
-
-
-unsigned char
-_XmStringCharacterCount(XtPointer text,
-			XmTextType text_type,
-			int byte_count,
-			XFontStruct *font)
-{
-  if (text == NULL)
-    return 0;
-  if (byte_count == 0)
-    byte_count = strlen((char *)text);
-
-  switch (text_type)
-    {
-    case XmCHARSET_TEXT:
-      {
-	if (font && two_byte_font(font))
-	  return (byte_count/2);
-	else
-	  return byte_count;
-      }
-    case XmMULTIBYTE_TEXT:
-      {
-	char *s = (char *) text;
-	if (MB_CUR_MAX == 1)
-	  return byte_count;
-	else {
-	  int cnt = 0;
-	  int len;
-	  while (byte_count > 0 && (len = mblen(s, MB_CUR_MAX)) > 0) {
-	    cnt++;
-	    s += len;
-	    byte_count -= len;
-	  }
-	  return cnt;
-	}
-      }
-    case XmWIDECHAR_TEXT:
-	return wcslen((wchar_t *)text);
-    default:
-      return byte_count;
-    }
-}
-
-unsigned char
-_XmEntryCharCountGet(_XmStringEntry entry,
-		     XmRenderTable rt)
-{
-  unsigned int len;
-
-  if (_XmEntryOptimized(entry)) {
-    if ((len = _XmEntryByteCountGet(entry)) == 0) {
-      return 0;
-    } else {
-      return _XmStringCharacterCount((char *)_XmEntryTextGet(entry),
-				     (XmTextType) _XmEntryTextTypeGet(entry),
-				     len,
-				     GetFont(rt, entry));
-    }
-  }
-  if (_XmEntryUnoptimized(entry))  {
-    if (((_XmStringUnoptSeg)entry)->char_count == 0 &&
-	(len = _XmEntryByteCountGet(entry)) != 0) {
-      ((_XmStringUnoptSeg)entry)->char_count =
-	_XmStringCharacterCount((char *)_XmEntryTextGet(entry),
-				(XmTextType) _XmEntryTextTypeGet(entry),
-				len,
-				GetFont(rt, entry));
-    }
-    return ((_XmStringUnoptSeg)entry)->char_count;
-  }
-  return(0);
-}
-
 
 _XmStringCache
 _XmStringCacheGet(_XmStringCache caches,

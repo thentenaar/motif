@@ -445,10 +445,6 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 			       NULL :                                      \
 			       _XmStringIndexGetTag(_XmStrTagIndex(str)))
 #define _XmStrByteCount(str)  ((str)->opt_str.byte_count)
-#define _XmStrCharCount(str)  _XmStringCharacterCount((str)->opt_str.text, \
-						      _XmStrTextType(str), \
-						      _XmStrByteCount(str),\
-						      NULL)
 #define _XmStrRendBegin(str)  ((str)->opt_str.rend_begin)
 #define _XmStrRendIndex(str)  ((str)->opt_str.rend_index)
 #define _XmStrRendTagGet(str) (_XmStrRendIndex(str) == REND_INDEX_UNSET ?  \
@@ -1098,8 +1094,6 @@ extern int _XmConvertFactor(unsigned char units,
 			    float *factor);
 
 #ifdef _XmDEBUG_XMSTRING
-extern void _Xm_dump_fontlist(XmFontList f) ;
-extern void _Xm_dump_fontlist_cache( void ) ;
 extern void _Xm_dump_stream( unsigned char *cs) ;
 extern void _Xm_dump_internal(_XmString string) ;
 #endif /* _XmDEBUG_XMSTRING */
