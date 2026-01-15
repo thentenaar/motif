@@ -1830,7 +1830,11 @@ Boolean XmStringCompare(XmString a, XmString b)
 	  ((strcmp(_XmStringIndexGetTag(_XmStrTagIndex(a)), XmFONTLIST_DEFAULT_TAG) == 0) &&
 	   _XmStringIsCurrentCharset(_XmStrTagGet(b))) ||
 	  ((strcmp(_XmStringIndexGetTag(_XmStrTagIndex(b)), XmFONTLIST_DEFAULT_TAG) == 0) &&
-	   _XmStringIsCurrentCharset(_XmStrTagGet(a))))) {
+	   _XmStringIsCurrentCharset(_XmStrTagGet(a))) ||
+	  ((!strcmp(_XmStringIndexGetTag(_XmStrTagIndex(a)), XmFONTLIST_DEFAULT_TAG)) &&
+	    !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(b)), TO_UTF8)) ||
+	  ((!strcmp(_XmStringIndexGetTag(_XmStrTagIndex(b)), XmFONTLIST_DEFAULT_TAG)) &&
+	    !strcmp(_XmStringIndexGetTag(_XmStrTagIndex(a)), TO_UTF8)))) {
       _XmProcessUnlock();
       return False;
     }
@@ -1896,10 +1900,10 @@ Boolean XmStringCompare(XmString a, XmString b)
 	  if (!((a_tag == b_tag) ||
 		(a_tag == NULL) ||
 		(b_tag == NULL) ||
-		((strcmp(a_tag, XmFONTLIST_DEFAULT_TAG) == 0) &&
-		 _XmStringIsCurrentCharset(b_tag)) ||
-		((strcmp(b_tag, XmFONTLIST_DEFAULT_TAG) == 0) &&
-		 _XmStringIsCurrentCharset(a_tag)))) {
+		(!strcmp(a_tag, XmFONTLIST_DEFAULT_TAG) && _XmStringIsCurrentCharset(b_tag)) ||
+		(!strcmp(b_tag, XmFONTLIST_DEFAULT_TAG) && _XmStringIsCurrentCharset(a_tag)) ||
+		(!strcmp(a_tag, XmFONTLIST_DEFAULT_TAG) && !strcmp(b_tag, TO_UTF8)) ||
+		(!strcmp(b_tag, XmFONTLIST_DEFAULT_TAG) && !strcmp(a_tag, TO_UTF8)))) {
 	        if (a_unopt) XmStringFree(a_unopt);
 	        if (b_unopt) XmStringFree(b_unopt);
 	        _XmProcessUnlock();
@@ -7793,7 +7797,7 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 		return;
 	}
 
-	if (!c_tag || !strcmp(c_tag, XmFONTLIST_DEFAULT_TAG))
+	if (!c_tag || !*c_tag || !strcmp(c_tag, XmFONTLIST_DEFAULT_TAG))
 		c_tag = locale.tag;
 
 	switch (c_type) {

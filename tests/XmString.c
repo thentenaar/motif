@@ -504,6 +504,19 @@ START_TEST(compare_diff_tag)
 }
 END_TEST
 
+START_TEST(compare_default_utf8)
+{
+	XmString a, b;
+
+	a = XmStringCreate("test", NULL);
+	b = XmStringCreateMultibyte("test", "UTF-8");
+	ck_assert_msg(a && b, "Test string(s) shouldn't be NULL");
+	ck_assert_msg(XmStringCompare(a, b), "The test strings should be equal");
+	XmStringFree(a);
+	XmStringFree(b);
+}
+END_TEST
+
 START_TEST(empty_null)
 {
 	ck_assert_msg(XmStringEmpty(NULL), "A NULL string should be empty");
@@ -1587,6 +1600,7 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, compare_same);
 	tcase_add_test(t, compare_diff_text);
 	tcase_add_test(t, compare_diff_tag);
+	tcase_add_test(t, compare_default_utf8);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
