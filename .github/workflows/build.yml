@@ -15,6 +15,7 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         arch: [x86_64, x86]
         compiler: [gcc, clang]
@@ -63,4 +64,16 @@ jobs:
           DISPLAY=:0 make check
           kill -TERM %1
         shell: alpine.sh {0}
+      - name: libcheck -> JUnit XML
+        if: (!cancelled())
+        run: |
+          sudo apt install -y xsltproc
+          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
+      - name: Test Results
+        if: (!cancelled())
+        uses: dorny/test-reporter@v2
+        with:
+          name: Test Results
+          path: results.junit.xml
+          reporter: java-junit
 
