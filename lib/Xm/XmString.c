@@ -399,16 +399,12 @@ static void ComputeMetrics(XmRendition rend,
 static Dimension ComputeWidth(unsigned char which,
 			      XCharStruct char_ret);
 static void _parse_locale(char *str, int *indx, int *len);
-static Boolean match_pattern(XtPointer      text,
-			     XmStringTag    tag,
-			     XmTextType     type,
-			     XmParseMapping pattern,
-			     int            char_len,
-			     Boolean        dir_change);
-static void parse_unmatched(XmString  *result,
-			    char     **ptr,
-			    XmTextType text_type,
-			    int        length);
+static Boolean match_pattern(XtPointer text, XmTextType type,
+                             XmParseMapping pattern, size_t text_size,
+                             Boolean dir_change);
+static void parse_unmatched(XmString *result, char **ptr,
+                            XmTextType text_type, XmStringTag tag,
+                            int length);
 static Boolean parse_pattern(XmString      *result,
 			     char         **ptr,
 			     XtPointer      text_end,
@@ -458,6 +454,8 @@ static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide);
 
 /********    End Static Function Declarations    ********/
 
+static const char *WCHAR_T = "WCHAR_T";
+static const XmStringTag TO_UTF8 = "UTF-8";
 
 static struct __Xmlocale locale;
 static XmStringTag *_tag_cache = NULL;
@@ -3144,7 +3142,7 @@ SubStringPosition(
   char *seg_tag = _XmEntryTag(seg);
   int i, j, k, begin, max, width;
   unsigned int seg_len, under_seg_len;
-  Boolean fail;
+  Boolean utf8, fail;
 
   /* Metro Link fix: _XmEntryTag(seg) can be NULL, but the original Motif
    * code never checked for that.  We check, and if it is NULL, we treat
@@ -3321,17 +3319,10 @@ SubStringPosition(
       }
 
       if (!fail) {          /* found it */
-#if XM_UTF8
-        Boolean utf8 = (_XmEntryTextTypeGet(seg) == XmCHARSET_TEXT &&
-                        ((_XmEntryTag((_XmStringEntry)seg) == XmFONTLIST_DEFAULT_TAG &&
-                          _XmStringIsCurrentCharset("UTF-8")) ||
-                         !strcmp(seg_tag, "UTF-8")));
+        utf8 = _XmEntryTextTypeGet(seg) == XmCHARSET_TEXT ||
+               (_XmEntryTextTypeGet(seg) == XmMULTIBYTE_TEXT &&
+                !strcmp(locale.ctype, TO_UTF8));
 
-        utf8 = utf8 || (_XmEntryTextTypeGet(seg) == XmMULTIBYTE_TEXT &&
-                        !strcmp(locale.ctype, "UTF-8"));
-#else
-        Boolean utf8 = False;
-#endif
 	if (begin == 0)
 	  *under_begin = x;
 	else if (type == XmWIDECHAR_TEXT) {
@@ -3339,12 +3330,10 @@ SubStringPosition(
 	    x + abs(XwcTextEscapement(font_set, (wchar_t *)a,
 				      begin/sizeof(wchar_t)));
         } else {
-#if XM_UTF8
             if (utf8)
                 *under_begin =
                     x + abs(Xutf8TextEscapement(font_set, a, begin));
             else
-#endif
                 *under_begin =
                     x + abs(XmbTextEscapement(font_set, a, begin));
         }
@@ -3352,24 +3341,16 @@ SubStringPosition(
 	width = _XmEntryWidthGet((_XmStringEntry)under_seg, rt);
 
 	if (width == 0) {
-#if XM_UTF8
 	  width = (type == XmWIDECHAR_TEXT)
 	    ? abs(XwcTextEscapement(font_set, (wchar_t *)b,
 				  under_seg_len / sizeof(wchar_t)))
 	    : (utf8
                     ? abs(Xutf8TextEscapement(font_set, b, under_seg_len))
                     : abs(XmbTextEscapement(font_set, b, under_seg_len)));
-#else
-	  width = (type == XmWIDECHAR_TEXT)
-	    ? abs(XwcTextEscapement(font_set, (wchar_t *)b,
-				  under_seg_len / sizeof(wchar_t)))
-	    : abs(XmbTextEscapement(font_set, b, under_seg_len));
-#endif
 	  _XmEntryWidthSet((_XmStringEntry)under_seg, rt, width);
 	}
 
 	*under_end = *under_begin + width;
-
 	return;
       }
     }
@@ -3568,7 +3549,7 @@ _XmStringDrawSegment(Display *d,
   Font    		oldfont = (Font) 0;
   GC			gc;
   XGCValues 		xgcv;
-  char 			*cs = NULL, *tag, *converted, *draw_text;       /* text to be drawn -
+  char 			*converted, *draw_text;       /* text to be drawn -
 					     flipped in RtoL mode */
   char  		flip_char[100];	  /* but simple */
   char 			*flip_char_extra = NULL;
@@ -3595,27 +3576,18 @@ _XmStringDrawSegment(Display *d,
 
       widechar = ((text_type == XmWIDECHAR_TEXT) &&
 		  (font_type == XmFONT_IS_FONTSET));
-      tag = _XmEntryTag((_XmStringEntry)seg);
 
-#if XM_UTF8
-      utf8 = text_type == XmCHARSET_TEXT &&
-             ((_XmEntryTag((_XmStringEntry)seg) == XmFONTLIST_DEFAULT_TAG &&
-               _XmStringIsCurrentCharset("UTF-8")) ||
-              (_XmEntryTag((_XmStringEntry)seg) &&
-               !strcmp(_XmEntryTag((_XmStringEntry)seg), "UTF-8")));
-
-      utf8 = utf8 || (text_type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, "UTF-8"));
+      utf8 = text_type == XmCHARSET_TEXT ||
+             (text_type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, TO_UTF8));
 
       utf8 = utf8 && (
              font_type  == XmFONT_IS_XFT     ||
              font_type  == XmFONT_IS_FONTSET ||
              (font_type == XmFONT_IS_FONT    && _XmIsISO10646(d, _XmRendFont(rend))));
-#endif
-      gc = _XmRendGC(rend);
 
+      gc = _XmRendGC(rend);
       fg = _XmRendFG(rend);
       bg = _XmRendBG(rend);
-
 
       if (fg != XmUNSPECIFIED_PIXEL)
 	{
@@ -3789,21 +3761,15 @@ _XmStringDrawSegment(Display *d,
                              seg_len / sizeof(wchar_t), image);
             break;
         case XmMULTIBYTE_TEXT:
-            if (!utf8)
-                cs = XtNewString(locale.tag);
-        case XmCHARSET_TEXT:
-            if (!utf8 && !cs) {
-                if (!tag || tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
-                    cs = XmStringGetCharset();
-                else cs = XtNewString(tag);
+            if (!utf8) {
+                if ((converted = _Xmcsconv(locale.ctype, TO_UTF8, draw_text, seg_len, &convsz))) {
+                    _XmXftDrawString(d, w, rend, 1, x, y, converted, convsz, image);
+                    XtFree(converted);
+                    break;
+                }
             }
-
-            if (!utf8 && (converted = _Xmcsconv(cs, "UTF-8", draw_text, seg_len, &convsz))) {
-                _XmXftDrawString(d, w, rend, 1, x, y, converted, convsz, image);
-                XtFree(converted);
-            } else _XmXftDrawString(d, w, rend, utf8 ? 1 : -1, x, y, draw_text, seg_len, image);
-
-            if (cs) XtFree(cs);
+        case XmCHARSET_TEXT:
+            _XmXftDrawString(d, w, rend, utf8 ? 1 : -1, x, y, draw_text, seg_len, image);
             break;
         }
       } else /* TODO: fix indentation */
@@ -3811,8 +3777,7 @@ _XmStringDrawSegment(Display *d,
         {
       if (image)
 	{
-	  if (text16)
-	    if (utf8)
+	  if (text16 && (utf8 || (!utf8 && text_type == XmCHARSET_TEXT)))
 	    {
 		size_t  ucs_str_len;
 		XChar2b *ucs_str;
@@ -3822,14 +3787,12 @@ _XmStringDrawSegment(Display *d,
 		ucs_str = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_str_len);
 		XDrawImageString16(d, w, gc, x, y, ucs_str, ucs_str_len);
 		XFree(ucs_str);
-	    } else
+	    } else if (text16)
 	        XDrawImageString16(d, w, gc, x, y, (XChar2b*)draw_text,
 			       Half(seg_len));
-#if XM_UTF8
           else if (utf8)
             Xutf8DrawImageString(d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
                                  draw_text, seg_len);
-#endif
 	  else if (multibyte)
 	    XmbDrawImageString (d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
 				draw_text, seg_len);
@@ -3842,10 +3805,8 @@ _XmStringDrawSegment(Display *d,
 	}
       else
 	{
-	  if (text16)
+	  if (text16 && (utf8 || (!utf8 || text_type == XmCHARSET_TEXT)))
 	  {
-	    if (utf8)
-	    {
 		size_t  ucs_str_len;
 		XChar2b *ucs_str;
 
@@ -3854,15 +3815,12 @@ _XmStringDrawSegment(Display *d,
 		ucs_str = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_str_len);
 		XDrawString16(d, w, gc, x, y, ucs_str, ucs_str_len);
 		XFree(ucs_str);
-	    } else
+	  } else if (text16)
 		    XDrawString16 (d, w, gc, x, y, (XChar2b *)draw_text,
 				    Half(seg_len));
-	  }
-#if XM_UTF8
-          else if (utf8)
+	  else if (utf8)
 	    Xutf8DrawString(d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
                             draw_text, seg_len);
-#endif
 	  else if (multibyte)
 	    XmbDrawString (d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
 			   draw_text, seg_len);
@@ -5839,13 +5797,8 @@ ComputeMetrics(XmRendition rend,
   asc = 0;
   desc = 0;
 
-  /* We're in UTF-8 if we have a UTF-8 tag, or the default charset is UTF-8 */
-  utf8 = (type == XmCHARSET_TEXT && (
-          (tag && !strcmp(tag, "UTF-8")) ||
-          ((tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
-           && _XmStringIsCurrentCharset("UTF-8"))
-         ));
-  utf8 = utf8 || (type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, "UTF-8"));
+  utf8 = type == XmCHARSET_TEXT ||
+         (type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, TO_UTF8));
   memset(&info, 0, sizeof info);
 
   switch (_XmRendFontType(rend)) {
@@ -5955,30 +5908,24 @@ ComputeMetrics(XmRendition rend,
 		}
 		break;
 	case XmMULTIBYTE_TEXT:
-		if (!utf8)
+		if (!utf8) {
 			cs = XtNewString(locale.ctype);
-	case XmCHARSET_TEXT:
-		if (!utf8 && !cs) {
-			if (!tag || tag == XmFONTLIST_DEFAULT_TAG || tag == XmSTRING_DEFAULT_CHARSET)
-				cs = XmStringGetCharset();
-			else cs = XtNewString(tag);
+			if ((converted = _Xmcsconv(cs, TO_UTF8, text, byte_count, &convsz))) {
+				utf8 = True;
+				XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+				                   (const FcChar8 *)converted, convsz, &info);
+				XtFree(converted);
+				break;
+			}
 		}
-
-		if (!utf8 && (converted = _Xmcsconv(cs, "UTF-8", text, byte_count, &convsz))) {
-			utf8 = True;
-			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
-			                   (const FcChar8 *)converted, convsz, &info);
-			XtFree(converted);
-		} else if (utf8) {
+	case XmCHARSET_TEXT:
+		if (utf8) {
 			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
 			                   text, byte_count, &info);
-		}
-
-		if (!utf8) { /* Assume some 8-bit encoding as a fallback */
+		} else { /* Assume some 8-bit encoding as a fallback */
 			XftTextExtents8(_XmRendDisplay(rend), _XmRendXftFont(rend),
 			                text, byte_count, &info);
 		}
-		XtFree(cs);
 		break;
 	}
 
@@ -6216,13 +6163,9 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 
 	  /* 4a. Take the first one */
 	  if (!rend && rendertable && _XmRTCount(rendertable) > 0 && (
-	       _XmEntryTextTypeGet(entry) == XmCHARSET_TEXT &&
-	        ((entry_tag == XmFONTLIST_DEFAULT_TAG          ||
-	          !strcmp(entry_tag, XmFALLBACK_CHARSET)       ||
-	          !strcmp(entry_tag, XmSTRING_DEFAULT_CHARSET) ||
-	          !strcmp(entry_tag, "UTF-8"))                 ||
-	        (_XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
-	         _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT))))
+	       _XmEntryTextTypeGet(entry) == XmCHARSET_TEXT   ||
+	       _XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
+	       _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT))
 	    rend = _XmRenditionMerge(d, rend_in_out, base, rendertable,
 				     NULL, NULL, 0, (render_cache != NULL));
 
@@ -7402,67 +7345,55 @@ XmeGetDirection(XtPointer     *in_out,
   return XmINSERT;
 }
 
-/*
+/**
  * match_pattern: A helper for XmStringParseText.  Determine whether
  *	the text matches a XmParseMapping pattern.
  */
-static Boolean
-match_pattern(XtPointer      text,
-	      XmStringTag    tag, /* unused */
-	      XmTextType     type,
-	      XmParseMapping pattern,
-	      int	     char_len,
-	      Boolean	     dir_change)
+static Boolean match_pattern(XtPointer text, XmTextType type,
+                             XmParseMapping pattern, size_t text_size,
+                             Boolean dir_change)
 {
-  if (pattern == NULL)
-    {
-      return False;
-    }
-  else if (pattern->pattern == XmDIRECTION_CHANGE)
-    {
-      return dir_change;
-    }
-  else if ((pattern->pattern_type == XmWIDECHAR_TEXT) &&
-	   (type == XmWIDECHAR_TEXT))
-    {
-      /* Compare wchar_t text to wchar_t pattern. */
-      return (*((wchar_t*) text) == *((wchar_t*) pattern->pattern));
-    }
-  else if (type == XmWIDECHAR_TEXT)
-    {
-      /* Compare wchar_t text to a mbs pattern. */
-      char mb_text[MB_LEN_MAX];
-      wctomb(mb_text, (wchar_t) '\0');
-      wctomb(mb_text, *((wchar_t*)text));
-      return !strncmp(mb_text, (char*) pattern->pattern, char_len);
-    }
-  else if (pattern->pattern_type == XmWIDECHAR_TEXT)
-    {
-      /* Compare mbs text to wchar_t pattern. */
-      char mb_pattern[MB_LEN_MAX];
-      wctomb(mb_pattern, (wchar_t) '\0');
-      wctomb(mb_pattern, *((wchar_t*)pattern->pattern));
-      return !strncmp((char*) text, mb_pattern, char_len);
-    }
-  else if (strlen((char*) pattern->pattern) == char_len)
-    {
-      /* The normal case: mbs text and pattern. */
-      return !strncmp((char*) text, (char*) pattern->pattern, char_len);
-    }
+	int len   = 0;
+	char *pat = NULL;
+	Boolean result;
+	XmStringComponentType ptype;
 
-  return False;
+	if (!pattern)
+		return False;
+
+	if (pattern->pattern == XmDIRECTION_CHANGE)
+		return dir_change;
+
+	if (pattern->pattern_type == type) {
+		return text_size >= pattern->pattern_size &&
+		       !memcmp(text, pattern->pattern, pattern->pattern_size);
+	}
+
+	switch (pattern->pattern_type) {
+	case XmMULTIBYTE_TEXT: ptype = XmSTRING_COMPONENT_LOCALE_TEXT;   break;
+	case XmWIDECHAR_TEXT:  ptype = XmSTRING_COMPONENT_WIDECHAR_TEXT; break;
+	default:               ptype = XmSTRING_COMPONENT_TEXT;
+	}
+
+	unparse_text(&pat, &len, type, ptype, pattern->pattern_size,
+	             pattern->pattern, (type == XmCHARSET_TEXT) ? TO_UTF8 : NULL);
+	result = pat && len && text_size >= (size_t)len &&
+	         !memcmp(text, pat, (size_t)len);
+	XtFree(pat);
+	return result;
 }
 
 /*
  * parse_unmatched: A Helper routine for XmStringParseText.  Produce
  *	a component for characters that weren't matched by any pattern.
  */
-static void
-parse_unmatched(XmString  *result,
-		char     **ptr,
-		XmTextType text_type,
-		int        length)
+static void parse_unmatched(XmString *result, char **ptr,
+                            XmTextType text_type, XmStringTag tag,
+                            int length)
 {
+  size_t outsz = (size_t)length;
+  char *out    = *ptr;
+
   /* Insert length bytes from ptr into result, and update ptr. */
   XmString tmp_1, tmp_2;
   XmStringComponentType ctype;
@@ -7476,6 +7407,16 @@ parse_unmatched(XmString  *result,
     {
     case XmCHARSET_TEXT:
       ctype = XmSTRING_COMPONENT_TEXT;
+      if (!tag || !*tag || tag == XmFONTLIST_DEFAULT_TAG  ||
+          !strcmp(tag, XmFONTLIST_DEFAULT_TAG_STRING + 2) ||
+          !strcmp(tag, XmSTRING_DEFAULT_CHARSET))
+        tag = locale.tag;
+
+      if (!(out = _Xmcsconv(tag, TO_UTF8, *ptr, length, &outsz))) {
+        XmeWarning(NULL, "XmStringParse: Failed to convert unparsed characters");
+        out   = *ptr;
+        outsz = (size_t)length;
+      }
       break;
     case XmMULTIBYTE_TEXT:
       ctype = XmSTRING_COMPONENT_LOCALE_TEXT;
@@ -7490,10 +7431,13 @@ parse_unmatched(XmString  *result,
 
   /* Can't concat without copying both strings? */
   tmp_1 = *result;
-  tmp_2 = XmStringComponentCreate(ctype, length, (XtPointer) *ptr);
-  if (tmp_2 == NULL)
+  if (!(tmp_2 = XmStringComponentCreate(ctype, outsz, (XtPointer)out))) {
+    if (out != *ptr) XtFree(out);
     return;
+  }
 
+  if (out != *ptr)
+    XtFree(out);
   *result = XmStringConcatAndFree(tmp_1, tmp_2);
   *ptr += length;
 }
@@ -7649,7 +7593,6 @@ XmStringParseText(XtPointer    text,
 
   /* Process characters until text has been consumed. */
   dir_ptr = NULL;
-  (void) mblen((char*) NULL, MB_CUR_MAX);
   (void) XmOSGetMethod(NULL, XmMInitialCharsDirection,
 		       (XtPointer *)&init_char_proc, NULL);
   halt = (end_ptr && (ptr >= (char*) end_ptr));
@@ -7674,7 +7617,7 @@ XmStringParseText(XtPointer    text,
       /* Match against an implicit XmDIRECTION_CHANGE pattern. */
       if (!has_dir_pattern && (ptr == dir_ptr))
 	{
-	  parse_unmatched(&result, &prev_ptr, type, ptr - prev_ptr);
+	  parse_unmatched(&result, &prev_ptr, type, tag, ptr - prev_ptr);
 	  advanced =
 	    parse_pattern(&result, &ptr, end_ptr, tag, type,
 			  default_dir_pattern, len, call_data, &halt);
@@ -7684,9 +7627,9 @@ XmStringParseText(XtPointer    text,
       for (index = 0; !advanced && !halt && (index < parse_count); index++)
 	{
 	  XmParseMapping pat = parse_table[index];
-	  if (match_pattern(ptr, tag, type, pat, len, (ptr == dir_ptr)))
+	  if (match_pattern(ptr, type, pat, len, (ptr == dir_ptr)))
 	    {
-	      parse_unmatched(&result, &prev_ptr, type, ptr - prev_ptr);
+	      parse_unmatched(&result, &prev_ptr, type, tag, ptr - prev_ptr);
 	      advanced = parse_pattern(&result, &ptr, end_ptr, tag,
 				       type, pat, len, call_data, &halt);
 
@@ -7714,7 +7657,7 @@ XmStringParseText(XtPointer    text,
     }
 
   /* Output and trailing unmatched characters. */
-  parse_unmatched(&result, &prev_ptr, type, ptr - prev_ptr);
+  parse_unmatched(&result, &prev_ptr, type, tag, ptr - prev_ptr);
 
   /* Return the true end of parsing if possible. */
   if (text_end)
@@ -7828,7 +7771,6 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 	Boolean noconv, freebuf = False;
 	char *buf = c_value, *interim = NULL;
 	const char *from = NULL, *to = NULL;
-	static const char *WCHAR_T = "WCHAR_T";
 
 	if (!result || !c_value || !c_length ||
 	    (output_type == XmNO_TEXT && c_type != XmSTRING_COMPONENT_TEXT))
@@ -7840,8 +7782,7 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 
 	if (!noconv && c_type == XmSTRING_COMPONENT_TEXT) {
 		if (output_type == XmCHARSET_TEXT || output_type == XmNO_TEXT)
-			noconv = !c_tag || !strcmp(c_tag, locale.tag) ||
-			         !strcmp(c_tag, XmFONTLIST_DEFAULT_TAG);
+			noconv = c_tag && c_tag != TO_UTF8 && !strcmp(c_tag, TO_UTF8);
 	}
 
 	if (noconv) {
@@ -7857,8 +7798,9 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 
 	switch (c_type) {
 	case XmSTRING_COMPONENT_TEXT:
-		from = c_tag;
+		from = c_tag == TO_UTF8 ? locale.tag : TO_UTF8;
 		switch (output_type) {
+		case XmNO_TEXT:
 		case XmCHARSET_TEXT:   to = locale.tag;   break;
 		case XmMULTIBYTE_TEXT: to = locale.ctype; break;
 		default:               to = WCHAR_T;      break;
@@ -7873,6 +7815,9 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 		to   = (output_type == XmCHARSET_TEXT) ? locale.tag : locale.ctype;
 		break;
 	}
+
+	if ((output_type == XmCHARSET_TEXT || output_type == XmNO_TEXT) && c_tag == TO_UTF8)
+		to = c_tag;
 
 	if (from == WCHAR_T) {
 		interim = XtMalloc(bufsz + sizeof(wchar_t));
@@ -7925,7 +7870,7 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 		}
 
 		buf = XtMalloc((bufsz + 1) * sizeof(wchar_t));
-		if (mbstowcs((wchar_t *)buf, interim, (bufsz + 1) * sizeof(wchar_t)) == (size_t)-1) {
+		if (mbstowcs((wchar_t *)buf, interim, bufsz + 1) == (size_t)-1) {
 			XmeWarning(NULL, "Multibyte-to-Wide conversion failed");
 			XtFree(buf);
 			XtFree(interim);
@@ -8051,15 +7996,25 @@ unparse_components(char          **result,
 	  if (match)
 	    {
 	      /* Output the original pattern. */
-	      if (pat->pattern_type == XmWIDECHAR_TEXT)
-		unparse_text(result, length, output_type,
-			     XmSTRING_COMPONENT_WIDECHAR_TEXT,
-			     sizeof(wchar_t), pat->pattern, NULL);
-	      else
-		unparse_text(result, length, output_type,
-			     XmSTRING_COMPONENT_TEXT,
-			     mblen((char*) pat->pattern, MB_CUR_MAX),
-			     pat->pattern, NULL);
+	      switch (pat->pattern_type) {
+	      case XmNO_TEXT:
+	          break;
+	      case XmCHARSET_TEXT:
+		      unparse_text(result, length, output_type,
+	                       XmSTRING_COMPONENT_TEXT,
+	                       pat->pattern_size, pat->pattern, NULL);
+	          break;
+	      case XmMULTIBYTE_TEXT:
+	          unparse_text(result, length, output_type,
+	                       XmSTRING_COMPONENT_LOCALE_TEXT,
+	                       pat->pattern_size, pat->pattern, NULL);
+	          break;
+	      case XmWIDECHAR_TEXT:
+	          unparse_text(result, length, output_type,
+	                       XmSTRING_COMPONENT_WIDECHAR_TEXT,
+	                       pat->pattern_size, pat->pattern, NULL);
+	          break;
+	      }
 
 	      /* Skip all but the last matched component. */
 	      while (--n_comp > 0)
@@ -9235,17 +9190,19 @@ _XmStringUngenerate(XmString    string,
 
 }
 
-XmParseMapping
-XmParseMappingCreate(ArgList  arg_list,
-		     Cardinal arg_count)
+XmParseMapping XmParseMappingCreate(ArgList arg_list, Cardinal arg_count)
 {
-  /* Allocate and initialize the return value. */
-  XmParseMapping result = XtNew(_XmParseMappingRec);
-  bzero((char*)result, sizeof(_XmParseMappingRec));
+  int len;
+  char *s;
 
-  /* Default values are established by bzero().
+  /* Allocate and initialize the return value. */
+  XmParseMapping result = (XmParseMapping)XtCalloc(1, sizeof(_XmParseMappingRec));
+
+  /* Default values are established by XtCalloc().
    *
-   * result->pattern        = XmDIRECTION_CHANGE = NULL;
+   * result->pattern        = XmDIRECTION_CHANGE (NULL);
+   * result->pattern_size   = 0;
+   * result->pattern_len    = 0;
    * result->pattern_type   = XmCHARSET_TEXT;
    * result->substitute     = NULL;
    * result->parse_proc     = NULL;
@@ -9256,6 +9213,30 @@ XmParseMappingCreate(ArgList  arg_list,
 
   /* Insert specified values. */
   XmParseMappingSetValues(result, arg_list, arg_count);
+
+  if (result->pattern) {
+    switch (result->pattern_type) {
+    case XmNO_TEXT:
+      break;
+    case XmCHARSET_TEXT:
+      result->pattern_len  = strlen(result->pattern);
+      result->pattern_size = result->pattern_len;
+      break;
+    case XmMULTIBYTE_TEXT:
+      s = result->pattern;
+      mblen(NULL, 0);
+      while ((len = mblen(s, MB_CUR_MAX)) > 0) {
+        s += len;
+        result->pattern_len++;
+        result->pattern_size += (size_t)len;
+      }
+      break;
+    case XmWIDECHAR_TEXT:
+      result->pattern_len  = wcslen((wchar_t *)result->pattern);
+      result->pattern_size = result->pattern_len * sizeof(wchar_t);
+      break;
+    }
+  }
 
   return result;
 }

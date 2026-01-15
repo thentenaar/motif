@@ -113,6 +113,8 @@ typedef struct __XmStringContextRec
  */
 typedef struct __XmParseMappingRec {
   XtPointer		pattern;
+  size_t		pattern_size; /* in bytes */
+  size_t		pattern_len;  /* in characters */
   XmTextType		pattern_type;
   XmString		substitute;
   XmParseProc		parse_proc;
