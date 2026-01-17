@@ -72,9 +72,9 @@ XmStringHasSubstring(
   XtPointer	      val;
 
   _XmProcessLock();
-  if ((string == NULL) || (substring == NULL) || (XmStringEmpty(substring))) {
+  if (XmStringEmpty(string) || XmStringEmpty(substring)) {
     _XmProcessUnlock();
-    return (FALSE);
+    return False;
   }
 
   /*
