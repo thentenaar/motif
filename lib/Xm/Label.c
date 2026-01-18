@@ -1154,7 +1154,7 @@ Initialize(
 						XmNlabelString,
 						lw->core.name);
     }
-  else if (XmeStringIsValid(lw->label._label))
+  else if (XmStringIsValid(lw->label._label))
     {
       lw->label._label= XmStringCopy(lw->label._label);
     }
@@ -1177,7 +1177,7 @@ Initialize(
   /* Accelerators are currently only supported in menus */
   if ((lw->label._acc_text != NULL) && Lab_IsMenupane(lw))
     {
-      if (XmeStringIsValid((XmString) lw->label._acc_text))
+      if (XmStringIsValid((XmString) lw->label._acc_text))
         {
 	  /*
 	   * Copy the input string into local space, if
@@ -1752,7 +1752,7 @@ SetValues(Widget cw,
 	}
       else
 	{
-	  if (XmeStringIsValid((XmString) newlp->_label))
+	  if (XmStringIsValid((XmString) newlp->_label))
 	    newlp->_label = XmStringCopy((XmString) newlp->_label);
 	  else
 	    {
@@ -1781,7 +1781,7 @@ SetValues(Widget cw,
       /* END OSF Fix pir 1098 */
       if (newlp->_acc_text != NULL)
 	{
-	  if (XmeStringIsValid((XmString) newlp->_acc_text))
+	  if (XmStringIsValid((XmString) newlp->_acc_text))
 	    {
 	      if ((XmIsCascadeButton (new_w)) && (newlp->_acc_text != NULL))
 		newlp->_acc_text = NULL;

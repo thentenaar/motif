@@ -899,7 +899,7 @@ END_TEST
 
 START_TEST(valid_null)
 {
-	ck_assert_msg(!XmeStringIsValid(NULL), "NULL strings aren't valid");
+	ck_assert_msg(!XmStringIsValid(NULL), "NULL strings aren't valid");
 }
 END_TEST
 
@@ -909,7 +909,7 @@ START_TEST(valid_refcnt_zero)
 
 	s = XmStringCreateLocalized("test");
 	_XmStrRefCountSet(s, 0);
-	ck_assert_msg(!XmeStringIsValid(s), "Refcount can't be zero");
+	ck_assert_msg(!XmStringIsValid(s), "Refcount can't be zero");
 	_XmStrRefCountSet(s, 1);
 	XmStringFree(s);
 }
@@ -920,7 +920,7 @@ START_TEST(valid_empty)
 	XmString s;
 
 	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-	ck_assert_msg(XmeStringIsValid(s), "Empty strings are valid");
+	ck_assert_msg(XmStringIsValid(s), "Empty strings are valid");
 	XmStringFree(s);
 }
 END_TEST
@@ -930,7 +930,7 @@ START_TEST(valid_separator_only)
 	XmString s;
 
 	s = XmStringSeparatorCreate();
-	ck_assert_msg(XmeStringIsValid(s), "Separator-only strings are valid");
+	ck_assert_msg(XmStringIsValid(s), "Separator-only strings are valid");
 	XmStringFree(s);
 }
 END_TEST
@@ -944,7 +944,7 @@ START_TEST(valid_bad_ptr)
 {
 	XmString s = (XmString)XtMalloc(1);
 	memset(s, 0xaa, 1);
-	ck_assert_msg(!XmeStringIsValid(s), "Small 'strings' we can't grok aren't valid");
+	ck_assert_msg(!XmStringIsValid(s), "Small 'strings' we can't grok aren't valid");
 	XtFree((XtPointer)s);
 }
 END_TEST
@@ -953,7 +953,7 @@ START_TEST(valid_bad_data)
 {
 	XmString s = (XmString)XtMalloc(8);
 	memset(s, 0x3a, 8);
-	ck_assert_msg(!XmeStringIsValid(s), "Strings we can't grok aren't valid");
+	ck_assert_msg(!XmStringIsValid(s), "Strings we can't grok aren't valid");
 	XtFree((XtPointer)s);
 }
 END_TEST
@@ -961,7 +961,7 @@ END_TEST
 START_TEST(valid_string)
 {
 	XmString s = XmStringCreateLocalized("test");
-	ck_assert_msg(XmeStringIsValid(s), "Strings are valid");
+	ck_assert_msg(XmStringIsValid(s), "Strings are valid");
 	XmStringFree(s);
 }
 END_TEST

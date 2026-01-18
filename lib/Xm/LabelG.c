@@ -1796,7 +1796,7 @@ Cardinal *num_args)
             XmNlabelString,
             XrmQuarkToString(lw->object.xrm_name));
     }
-    else if (XmeStringIsValid((XmString) LabG__label(new_w)))
+    else if (XmStringIsValid((XmString) LabG__label(new_w)))
     {
         LabG__label(new_w) = XmStringCopy((XmString) LabG__label(new_w));
     }
@@ -1822,7 +1822,7 @@ Cardinal *num_args)
     /* Accelerators are currently only supported in menus */
     if ((LabG__acceleratorText(new_w) != NULL) && LabG_IsMenupane(new_w))
     {
-        if (XmeStringIsValid((XmString) LabG__acceleratorText(new_w)))
+        if (XmStringIsValid((XmString) LabG__acceleratorText(new_w)))
         {
             /* Copy the input string into local space if not a Cascade Button. */
             if (XmIsCascadeButtonGadget(new_w))
@@ -2589,7 +2589,7 @@ Cardinal *num_args)                               /* unused */
         }
         else
         {
-            if (XmeStringIsValid((XmString) LabG__label(new_w)))
+            if (XmStringIsValid((XmString) LabG__label(new_w)))
             {
                 LabG__label(new_w) = XmStringCopy((XmString) LabG__label(new_w));
             }
@@ -2619,7 +2619,7 @@ Cardinal *num_args)                               /* unused */
         /* END OSF Fix pir 1098 */
         if (LabG__acceleratorText(new_w) != NULL)
         {
-            if (XmeStringIsValid((XmString) LabG__acceleratorText(new_w)))
+            if (XmStringIsValid((XmString) LabG__acceleratorText(new_w)))
             {
                 if ((XmIsCascadeButtonGadget(new_w)) &&
                     (LabG__acceleratorText(new_w) != NULL))

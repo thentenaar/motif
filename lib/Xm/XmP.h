@@ -1247,8 +1247,6 @@ extern void XmeResolvePartOffsets(
 			WidgetClass w_class,
 			XmOffsetPtr *offset,
 			XmOffsetPtr *constraint_offset ) ;
-	/* XmStringValid.c */
-extern Boolean XmeStringIsValid(const XmString string);
     /* XmString.c */
 extern void XmeSetWMShellTitle(
 			XmString xmstr,

@@ -91,12 +91,15 @@ static void uninstall_seg_handler(void)
 	sigaction(SIGBUS,  &old_bus, NULL);
 }
 
+/* Previous symbol name */
+Boolean XmeStringIsValid(const XmString string) XM_ALIAS(XmStringIsValid);
+
 /************************************************************************
  *                                                                      *
- * XmeStringIsValid - returns True if the parameter is an XmString.     *
+ * XmStringIsValid - returns True if the parameter is an XmString.      *
  *                                                                      *
  ************************************************************************/
-Boolean XmeStringIsValid(const XmString string)
+Boolean XmStringIsValid(const XmString string)
 {
 	unsigned int len;
 	XtPointer val;

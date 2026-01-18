@@ -293,7 +293,7 @@ Boolean
 _XmStringIsXmString(
         XmString string )
 {
-    return XmeStringIsValid(string);
+    return XmStringIsValid(string);
 }
 
 /********************************************************************/

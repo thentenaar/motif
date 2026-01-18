@@ -1629,6 +1629,7 @@ extern XmString XmStringSeparatorCreate( void ) ;
 extern Boolean XmStringInitContext(XmStringContext *context, XmString string);
 extern void XmStringFreeContext(XmStringContext context);
 extern void XmStringContextWantUtf8Text(XmStringContext context, Boolean want_utf8);
+extern Boolean XmStringIsValid(const XmString string);
 
 extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,
