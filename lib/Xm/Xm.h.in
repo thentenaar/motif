@@ -205,7 +205,8 @@ enum {
 
 typedef enum {
     XmCHARSET_TEXT,			XmMULTIBYTE_TEXT,
-    XmWIDECHAR_TEXT,                    XmNO_TEXT
+    XmWIDECHAR_TEXT,                    XmNO_TEXT,
+    XmUTF8_TEXT /* For XmStringUnparse() - Output text in UTF-8 */
     } XmTextType;
 
 typedef enum {

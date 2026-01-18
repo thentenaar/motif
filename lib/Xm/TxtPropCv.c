@@ -216,6 +216,7 @@ GetTextSegment(Display *display, /* unused */
 	    else return(_INVALID_SEGMENT); /* the encoding was unregistered */
 	    break;
 	case XmNO_TEXT:
+	case XmUTF8_TEXT:
 	    break;
 	}
 	/* Before returning Success, check to see whether we need to

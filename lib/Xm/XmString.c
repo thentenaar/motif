@@ -7649,7 +7649,8 @@ static void unparse_text(char **result, int *length, XmTextType output_type,
 		return;
 
 	/* Convert c_value to the appropriate type and append it. */
-	noconv = (output_type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, TO_UTF8));
+	noconv = output_type == XmUTF8_TEXT;
+	noconv = noconv || (output_type == XmMULTIBYTE_TEXT && !strcmp(locale.ctype, TO_UTF8));
 	if (!noconv && c_type == XmSTRING_COMPONENT_TEXT) {
 		if (output_type == XmCHARSET_TEXT || output_type == XmNO_TEXT)
 			noconv = c_tag && c_tag != TO_UTF8 && !strcmp(c_tag, TO_UTF8);
@@ -7861,6 +7862,7 @@ unparse_components(char          **result,
 	      switch (pat->pattern_type) {
 	      case XmNO_TEXT:
 	          break;
+	      case XmUTF8_TEXT:
 	      case XmCHARSET_TEXT:
 		      unparse_text(result, length, output_type,
 	                       XmSTRING_COMPONENT_TEXT,
@@ -7992,6 +7994,7 @@ XmStringUnparse(XmString          string,
 	  length += sizeof(wchar_t);
       break;
 
+    case XmUTF8_TEXT:
     case XmCHARSET_TEXT:
     case XmMULTIBYTE_TEXT:
     case XmNO_TEXT:
@@ -9091,6 +9094,7 @@ XmParseMapping XmParseMappingCreate(ArgList arg_list, Cardinal arg_count)
     switch (result->pattern_type) {
     case XmNO_TEXT:
       break;
+    case XmUTF8_TEXT:
     case XmCHARSET_TEXT:
       result->pattern_len  = strlen(result->pattern);
       result->pattern_size = result->pattern_len;

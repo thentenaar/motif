@@ -1733,6 +1733,29 @@ START_TEST(unparse_multibyte_to_wide)
 }
 END_TEST
 
+START_TEST(unparse_utf8_output)
+{
+	XmString s;
+	XtPointer t;
+
+	setlocale(LC_CTYPE, "C");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreate("\xd3\xf1\xc3\xd7\xb3\xac\xc8\xcb", "GB18030");
+	ck_assert_msg(s, "Expected to create a string");
+	t = XmStringUnparse(s, NULL, XmCHARSET_TEXT,
+	                    XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(t, "玉米超人"), "Expected '玉米超人'");
+	XtFree(t);
+	t = XmStringUnparse(s, NULL, XmCHARSET_TEXT,
+	                    XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(t, "Expected unparse to succeed");
+	ck_assert_msg(strcmp(t, "玉米超人"), "Expected not to get '玉米超人'");
+	XtFree(t);
+	XmStringFree(s);
+}
+END_TEST
+
 void xmstring_suite(SRunner *runner)
 {
 	TCase *t;
@@ -1911,6 +1934,7 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, unparse_wide_to_multibyte);
 	tcase_add_test(t, unparse_multibyte_to_charset);
 	tcase_add_test(t, unparse_multibyte_to_wide);
+	tcase_add_test(t, unparse_utf8_output);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
