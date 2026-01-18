@@ -131,6 +131,7 @@ XmStringHasSubstring(
 
   /** Find a text component that matches. **/
   if (string) {
+    memset(&stack_context, 0, sizeof stack_context);
     _XmStringContextReInit(&stack_context, string);
     while ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
 					 &len, &val)) !=
@@ -589,6 +590,8 @@ XmStringToXmStringTable(XmString string,
   int			i, count;
 
   _XmProcessLock();
+  memset(&stack_context, 0, sizeof stack_context);
+
   /* Get triple for first component of break_component */
   if (break_component)
     {
@@ -689,7 +692,8 @@ XmStringTableProposeTablist(XmStringTable strings,
     return ((XmTabList)NULL);
   }
 
-  bzero((char*) &scratch, sizeof(_XmRenditionRec));
+  memset(&stack_ctx, 0, sizeof stack_ctx);
+  memset(&scratch,   0, sizeof scratch);
   tmp = &scratch;
   rend = &tmp;
 

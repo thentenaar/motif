@@ -122,8 +122,8 @@ _XmStringNCreate(char *text,
       _XmUnoptSegTag(&seg) = _XmStringCacheTag(curtag, XmSTRING_TAG_STRLEN);
 
       _XmEntryTextTypeSet(&seg, type);
-      _XmEntryTextSet((_XmStringEntry)&seg, text);
       _XmUnoptSegByteCount(&seg) = t_length;
+      _XmEntryTextSet((_XmStringEntry)&seg, text);
 
       _XmStringSegmentNew(str, 0, (_XmStringEntry)&seg, True);
       return(str);

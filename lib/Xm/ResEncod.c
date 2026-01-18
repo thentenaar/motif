@@ -2019,7 +2019,8 @@ cvtXmStringToUTF8String(
   if (!from->addr)
     return(False);
 
-  _XmStringContextReInit(&stack_context, (XmString) from->addr);
+  memset(&stack_context, 0, sizeof stack_context);
+  _XmStringContextReInit(&stack_context, (XmString)from->addr);
 
 /* BEGIN OSF Fix CR 7403 */
   while ((comp = XmeStringGetComponent(&stack_context, True, False,
@@ -2182,7 +2183,8 @@ cvtXmStringToText(
   if (!from->addr)
     return(False);
 
-  _XmStringContextReInit(&stack_context, (XmString) from->addr);
+  memset(&stack_context, 0, sizeof stack_context);
+  _XmStringContextReInit(&stack_context, (XmString)from->addr);
 
 /* BEGIN OSF Fix CR 7403 */
   while ((comp = XmeStringGetComponent(&stack_context, True, False,

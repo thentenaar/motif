@@ -23,6 +23,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
+#include <limits.h>
 #include <locale.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
@@ -702,7 +704,7 @@ START_TEST(generate_multibyte)
 END_TEST
 
 /**
- * Default (set in _init_xt is "C")
+ * Default is "C"
  */
 START_TEST(getcharset_default)
 {
@@ -795,6 +797,48 @@ START_TEST(getmultibytecharset_utf8)
 }
 END_TEST
 
+/**
+ * Ensures that we get back UTF-8 if specified to the context
+ */
+START_TEST(getnexttriple_wide_utf8)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len   = 0;
+	unsigned char *val = NULL;
+
+	s = XmStringCreateWide(L"test", NULL);
+	ck_assert_msg(s, "Resulting string is NULL");
+
+	/* 1. tag */
+	XmStringInitContext(&ctx, s);
+	XmStringContextWantUtf8Text(ctx, True);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_LOCALE,
+	              "First component should be the tag (locale)");
+	ck_assert_msg(len == strlen(_MOTIF_DEFAULT_LOCALE),
+	              "Unexpected length");
+	ck_assert_msg(val && !memcmp(val, _MOTIF_DEFAULT_LOCALE,
+	                             strlen(_MOTIF_DEFAULT_LOCALE)),
+	              "Tag should be _MOTIF_DEFAULT_LOCALE");
+	XtFree((XtPointer)val);
+
+	/* 2. text (note: UTF-8) */
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_WIDECHAR_TEXT,
+	              "Second component should be WIDECHAR_TEXT");
+	ck_assert_msg(len == 4, "Length should be 4");
+	ck_assert_msg(val && !memcmp(val, "test", 4),
+	              "Value should be 'test'");
+	ck_assert_msg(XmStringPeekNextTriple(ctx) == XmSTRING_COMPONENT_END,
+	              "String should have exactly two components");
+	XmStringFree(s);
+	XmStringFreeContext(ctx);
+	XtFree((XtPointer)val);
+}
+END_TEST
+
 START_TEST(string_null)
 {
 	XmString ss;
@@ -809,7 +853,7 @@ START_TEST(string_empty)
 {
 	XmString s, ss;
 
-	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
 	ss = XmStringCreateLocalized("sub");
 	ck_assert_msg(!XmStringHasSubstring(s, ss), "Empty strings cannot have substrings");
 	XmStringFree(ss);
@@ -1044,7 +1088,7 @@ START_TEST(tostream_empty)
 	ck_assert_msg(ret, "No data was returned");
 	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
 	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
-	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x06");
+	ck_assert_msg(ret[2] == 0x07, "The string should be version 2");
 	ck_assert_msg(ret[3] == 0x00, "The length field should be 0");
 	XmStringFree(s);
 	XtFree((XtPointer)ret);
@@ -1063,7 +1107,7 @@ START_TEST(tostream_optimized)
 	ck_assert_msg(ret, "No data was returned");
 	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
 	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
-	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
+	ck_assert_msg(ret[2] == 0x07, "The stream should be version 2");
 	ck_assert_msg(ret[3] == 7 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "The length field should be 7 + length of XmFONTLIST_DEFAULT_TAG_STRING");
 	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_TAG, "The tag should be TAG");
@@ -1096,7 +1140,7 @@ START_TEST(tostream_unoptimized)
 	ck_assert_msg(ret, "No data was returned");
 	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
 	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
-	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
+	ck_assert_msg(ret[2] == 0x07, "The stream should be version 2");
 	ck_assert_msg(ret[3] == 9 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "The length field should be 9 + length of XmFONTLIST_DEFAULT_TAG_STRING");
 	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_TAG, "The tag should be TAG");
@@ -1126,16 +1170,15 @@ START_TEST(tostream_wide)
 	unsigned char *ret = NULL;
 
 	s = XmStringCreateWide(L"motif", NULL);
-	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 8 + (sizeof(wchar_t) * 5) + strlen(_MOTIF_DEFAULT_LOCALE),
-	              "BER representation should be 8 + sizeof(wchar_t) * 5 "
-	              "+ length of _MOTIF_DEFAULT_LOCALE bytes long");
+	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 8 + 5 + strlen(_MOTIF_DEFAULT_LOCALE),
+	              "BER representation should be 8 + 5 + len(_MOTIF_DEFAULT_LOCALE) "
+	              "bytes long");
 	ck_assert_msg(ret, "No data was returned");
 	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
 	ck_assert_msg(ret[1] == 0x80, "The second header byte should be 0x80");
-	ck_assert_msg(ret[2] == 0x06, "The third header byte should be 0x00");
-	ck_assert_msg(ret[3] == 4 + (5 * sizeof(wchar_t)) + strlen(_MOTIF_DEFAULT_LOCALE),
-	              "The length field should be 4 + sizeof(wchar_t) * 5 + "
-	              "length of _MOTIF_DEFAULT_LOCALE");
+	ck_assert_msg(ret[2] == 0x07, "The stream should be version 2");
+	ck_assert_msg(ret[3] == 4 + 5 + strlen(_MOTIF_DEFAULT_LOCALE),
+	              "The length field should be 4 + 5 + len(_MOTIF_DEFAULT_LOCALE)");
 	ck_assert_msg(ret[4] == XmSTRING_COMPONENT_LOCALE, "The tag should be LOCALE");
 	ck_assert_msg(ret[5] == strlen(_MOTIF_DEFAULT_LOCALE),
 	              "Tag length should be that of _MOTIF_DEFAULT_LOCALE");
@@ -1144,10 +1187,10 @@ START_TEST(tostream_wide)
 	              "The tag should be _MOTIF_DEFAULT_LOCALE");
 	ck_assert_msg(ret[6 + strlen(_MOTIF_DEFAULT_LOCALE)] == XmSTRING_COMPONENT_WIDECHAR_TEXT,
 	              "The second component should be WIDECHAR_TEXT");
-	ck_assert_msg(ret[7 + strlen(_MOTIF_DEFAULT_LOCALE)] == 5 * sizeof(wchar_t),
-	              "The text length should be 5 * sizeof(wchar_t)");
-	ck_assert_msg(!wcsncmp((wchar_t *)(ret + 8 + strlen(_MOTIF_DEFAULT_LOCALE)),
-	              L"motif", 5), "The text should be 'motif'");
+	ck_assert_msg(ret[7 + strlen(_MOTIF_DEFAULT_LOCALE)] == 5,
+	              "The text length should be 5");
+	ck_assert_msg(!memcmp(ret + 8 + strlen(_MOTIF_DEFAULT_LOCALE), "motif", 5),
+	              "The text should be 'motif'");
 	XmStringFree(s);
 	XtFree((XtPointer)ret);
 }
@@ -1164,7 +1207,7 @@ START_TEST(fromstream_empty)
 {
 	XmString s, s2 = NULL;
 	const unsigned char stream[] = {
-		0xdf, 0x80, 0x06, 0x00
+		0xdf, 0x80, 0x07, 0x00
 	};
 
 	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
@@ -1223,6 +1266,131 @@ START_TEST(fromstream_wide)
 	XmStringFree(s);
 	XmStringFree(s2);
 	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(fromstream_multibyte)
+{
+	XmString s, s2;
+	unsigned char *stream = NULL;
+
+	s = XmStringCreateMultibyte("motif", NULL);
+	XmCvtXmStringToByteStream(s, &stream);
+
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+/**
+ * Regression cases to ensure compatibility with version 1 bytestreams
+ */
+START_TEST(fromstream_empty_v1)
+{
+	XmString s, s2 = NULL;
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x00
+	};
+
+	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+}
+END_TEST
+
+START_TEST(fromstream_optimized_v1)
+{
+	XmString s, s2;
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x24, 0x01, 0x1b, 0x46, 0x4f, 0x4e, 0x54, 0x4c,
+		0x49, 0x53, 0x54, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54,
+		0x5f, 0x54, 0x41, 0x47, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47,
+		0x02, 0x05, 0x6d, 0x6f, 0x74, 0x69, 0x66
+	};
+
+	s  = XmStringCreateLocalized("motif");
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+}
+END_TEST
+
+START_TEST(fromstream_unoptimized_v1)
+{
+	XmString s, s2;
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x28, 0x01, 0x1b, 0x46, 0x4f, 0x4e, 0x54, 0x4c,
+		0x49, 0x53, 0x54, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54,
+		0x5f, 0x54, 0x41, 0x47, 0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47,
+		0x02, 0x05, 0x6d, 0x6f, 0x74, 0x69, 0x66, 0x04, 0x00, 0x04, 0x00
+	};
+
+	s = XmStringCreateLocalized("motif");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(!_XmStrOptimized(s2),   "String should not be optimized");
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+}
+END_TEST
+
+START_TEST(fromstream_wide_v1)
+{
+	XmString s, s2;
+#if WCHAR_MAX == (1 << 15) - 1
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x23, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
+		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
+		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x07, 0x0a, 0x6d, 0x00, 0x6f, 0x00,
+		0x74, 0x00, 0x69, 0x00, 0x66, 0x00
+	};
+#elif WCHAR_MAX == (1 << 31) - 1
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x2d, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
+		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
+		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x07, 0x14, 0x6d, 0x00, 0x00, 0x00,
+		0x6f, 0x00, 0x00, 0x00, 0x74, 0x00, 0x00, 0x00, 0x69, 0x00, 0x00,
+		0x00, 0x66, 0x00, 0x00, 0x00
+	};
+#else
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x00
+	};
+	ck_assert_msg(0, "Unknown size of wchar_t");
+#endif
+
+	s  = XmStringCreateWide(L"motif", NULL);
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
+}
+END_TEST
+
+START_TEST(fromstream_multibyte_v1)
+{
+	XmString s, s2;
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x1e, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
+		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
+		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x05, 0x05, 0x6d, 0x6f, 0x74, 0x69,
+		0x66
+	};
+
+	s  = XmStringCreateMultibyte("motif", NULL);
+	s2 = XmCvtByteStreamToXmString(stream);
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
 }
 END_TEST
 
@@ -1641,6 +1809,12 @@ void xmstring_suite(SRunner *runner)
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
+	t = tcase_create("GetNextTriple");
+	tcase_add_test(t, getnexttriple_wide_utf8);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
 	t = tcase_create("HasSubstring");
 	tcase_add_test(t, string_null);
 	tcase_add_test(t, string_empty);
@@ -1699,6 +1873,12 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, fromstream_optimized);
 	tcase_add_test(t, fromstream_unoptimized);
 	tcase_add_test(t, fromstream_wide);
+	tcase_add_test(t, fromstream_multibyte);
+	tcase_add_test(t, fromstream_empty_v1);
+	tcase_add_test(t, fromstream_optimized_v1);
+	tcase_add_test(t, fromstream_unoptimized_v1);
+	tcase_add_test(t, fromstream_wide_v1);
+	tcase_add_test(t, fromstream_multibyte_v1);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

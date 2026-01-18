@@ -158,6 +158,7 @@ GetTextSegment(Display *display, /* unused */
     return_status = _VALID_SEGMENT;
 
     /* Decompose the xmstring and handle each segment separately. */
+    /* TODO: _XmStringGetSegment() is obsolete */
     if (_XmStringGetSegment(xmcontext, TRUE, FALSE, &text, &tag, &type,
 			    &rendition_tags, &tag_count, &direction,
 			    &separator, &tabs, &char_count,
@@ -293,6 +294,7 @@ GetUseableText(Display *display, XmString xmstring, char **buffer,
     }
 
     /* Decompose the xmstring and handle each segment separately. */
+    memset(&stack_context, 0, sizeof stack_context);
     _XmStringContextReInit(&stack_context, xmstring);
 
     /* Get text for each segment of the compound string. Concatenate
@@ -570,15 +572,10 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 				 XmStringTable *string_table_return,
 				 int *count_return)
 {
-    enum { XmACOMPOUND_TEXT, XmA_MOTIF_COMPOUND_STRING,
-#if XM_UTF8
-        XmAUTF8_STRING,
-#endif
+    enum { XmACOMPOUND_TEXT, XmA_MOTIF_COMPOUND_STRING, XmAUTF8_STRING,
         NUM_ATOMS };
     static char* atom_names[] = { XmSCOMPOUND_TEXT, XmS_MOTIF_COMPOUND_STRING,
-#if XM_UTF8
         XmSUTF8_STRING
-#endif
 	};
 
     char **text_list;
@@ -663,13 +660,11 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 	tag = "ISO8859-1";
 	type = XmCHARSET_TEXT;
     }
-#if XM_UTF8
     else if (text_prop->encoding == atoms[XmAUTF8_STRING])
     {
 	tag = "UTF-8";
 	type = XmCHARSET_TEXT;
     }
-#endif
     else {
 	_XmAppUnlock(app);
         return(XLocaleNotSupported);

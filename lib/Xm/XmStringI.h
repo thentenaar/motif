@@ -79,6 +79,8 @@ typedef struct _XmFontListContextRec
 #define _XmStrContRendIndex(cont) ((_XmStringContextRec *)(cont))->rend_index
 #define _XmStrContTmpStrDir(cont) ((_XmStringContextRec *)(cont))->tmp_str_dir
 #define _XmStrContTmpDir(cont)	  ((_XmStringContextRec *)(cont))->tmp_dir
+#define _XmStrContWantUtf8Text(cont) ((_XmStringContextRec *)(cont))->want_utf8
+#define _XmStrContTmpText(cont)	     ((_XmStringContextRec *)(cont))->tmp_text
 
 /*
  * internal context data block, for read-out
@@ -106,6 +108,8 @@ typedef struct __XmStringContextRec
     short		rend_index;	/* renditions processed		*/
     XmDirection		tmp_dir;	/* temporary storage            */
     XmStringDirection	tmp_str_dir;	/* temporary storage            */
+    Boolean want_utf8; /* True if we want text in UTF-8 */
+    XtPointer tmp_text; /* temp. text storage */
 } _XmStringContextRec;
 
 /*

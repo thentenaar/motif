@@ -7361,6 +7361,7 @@ FirstChar(XmString string)
 
   if (string != NULL)
     {
+      memset(&stack_context, 0, sizeof stack_context);
       _XmStringContextReInit(&stack_context, string);
 
       (void) mbtowc(&result, NULL, 0);
