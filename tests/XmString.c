@@ -26,12 +26,16 @@
 #include <wchar.h>
 #include <limits.h>
 #include <locale.h>
+#include <iconv.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <check.h>
 
 #include "XmStringI.h"
 #include "suites.h"
+
+/* True if iconv() can convert to GB18030 */
+static Boolean to_gb18030 = True;
 
 extern void _XmStringSetLocaleTag(const char *lang);
 
@@ -190,8 +194,8 @@ START_TEST(create_wide)
 	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 	ck_assert_msg(t == XmSTRING_COMPONENT_WIDECHAR_TEXT,
 	              "Second component should be WIDECHAR_TEXT");
-	ck_assert_msg(len == 16, "Length should be 16");
-	ck_assert_msg(val && !wcscmp((wchar_t *)val, L"test"),
+	ck_assert_msg(len == 4 * sizeof(wchar_t), "Length should be 4 wchars");
+	ck_assert_msg(val && !wcsncmp((wchar_t *)val, L"test", 4),
 	              "Value should be 'test'");
 	ck_assert_msg(XmStringPeekNextTriple(ctx) == XmSTRING_COMPONENT_END,
 	              "String should have exactly two components");
@@ -565,12 +569,12 @@ START_TEST(generate_tag)
 	XmStringComponentType t, ext;
 
 	ext = (tag_text_type[_i] == XmCHARSET_TEXT) ? XmSTRING_COMPONENT_TAG : XmSTRING_COMPONENT_LOCALE;
-	ck_assert_msg(s = XmStringGenerate("text", "tag", tag_text_type[_i], NULL),
+	ck_assert_msg(s = XmStringGenerate("text", "UTF-8", tag_text_type[_i], NULL),
 	              "Expected non-NULL result for tag");
 	XmStringInitContext(&ctx, s);
 	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 	ck_assert_msg(t == ext, "Unexpected tag type");
-	ck_assert_msg(len == 3, "Unexpected tag length");
+	ck_assert_msg(len == 5, "Unexpected tag length");
 	XmStringFree(s);
 	XmStringFreeContext(ctx);
 }
@@ -703,9 +707,99 @@ START_TEST(generate_multibyte)
 }
 END_TEST
 
+START_TEST(generate_utf8_line_separator)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len;
+	char *val;
+	Cardinal i;
+
+	static XmStringComponentType extype[] = {
+		XmSTRING_COMPONENT_LOCALE,
+		XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_SEPARATOR,
+		XmSTRING_COMPONENT_LOCALE_TEXT,
+		XmSTRING_COMPONENT_END
+	};
+
+	static unsigned int exlen[] = {
+		21, 12, 0, 9, 0, 0, 0
+	};
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringGenerate("玉米超人\xe2\x80\xa8的测试\xe2\x80\xa8",
+	                     NULL, XmMULTIBYTE_TEXT, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	XmStringInitContext(&ctx, s);
+	for (i = 0; i < XtNumber(extype); i++) {
+		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+		ck_assert_msg(t   == extype[i], "Unexpected component type");
+		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+	}
+
+	XmStringFreeContext(ctx);
+	XmStringFree(s);
+}
+END_TEST
+
 /**
- * Default is "C"
+ * Test that we're able to grok Unicode direction control chars in
+ * different Unicode-ish character sets based on the internal UTF-8
+ * patterns.
  */
+static const struct _unicode_direction_params {
+	const char *locale;
+	const void *str;
+	XmTextType type;
+	XmStringDirection dir;
+} u_directions[] = {
+	{ "C",         L"\u200e",          XmWIDECHAR_TEXT,  XmSTRING_DIRECTION_L_TO_R },
+	{ "C.UTF-8",   "\xe2\x80\xaa",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
+	{ "C.UTF-8",   "\xe2\x80\xad",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
+	{ "C.GB18030", "\x81\x36\xac\x32", XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
+	{ "C",         "\xe2\x80\x8f",     XmMULTIBYTE_TEXT, XmSTRING_DIRECTION_R_TO_L },
+	{ "C.UTF-8",   "\xe2\x80\xab",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_R_TO_L },
+	{ "C.UTF-8",   "\xe2\x80\xae",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_R_TO_L },
+	{ "C.GB18030", "\x81\x36\xac\x33", XmCHARSET_TEXT,   XmSTRING_DIRECTION_R_TO_L },
+};
+
+START_TEST(generate_utf8_direction_markers)
+{
+	XmString s;
+	XmStringContext ctx;
+	XmStringComponentType t;
+	unsigned int len;
+	char *val;
+
+	/* "Skip" if we lack the necessary converter */
+	if (!to_gb18030 && !strcmp(u_directions[_i].locale, "C.GB18030")) {
+		return;
+	}
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag(u_directions[_i].locale);
+	s = XmStringGenerate((XtPointer)u_directions[_i].str, NULL, u_directions[_i].type, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	/* Probe string composition, check direction */
+	XmStringInitContext(&ctx, s);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	ck_assert_msg(t == XmSTRING_COMPONENT_DIRECTION, "Expected direction");
+	ck_assert_msg(len == sizeof(XmStringDirection), "Incorrect length");
+	ck_assert_msg(val && *(XmStringDirection *)val == u_directions[_i].dir,
+	              "Incorrect string direction");
+	XmStringFreeContext(ctx);
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(getcharset_default)
 {
 	XmStringTag cset;
@@ -1446,6 +1540,69 @@ START_TEST(streamlen_unoptimized)
 }
 END_TEST
 
+/**
+ * Test that we're able to Parse/Unparse Unicode control chars in
+ * different Unicode-ish character sets based on the internal UTF-8
+ * patterns; and that these are ignored for non-Unicodish charsets.
+ */
+static const struct _unicode_pattern_params {
+	const char *locale;
+	const void *str;
+	XmTextType type;
+	const void *out;
+	XmTextType out_type;
+} u_patterns[] = {
+	/* Horizontal tab */
+	{ "C", L"hello\tworld", XmWIDECHAR_TEXT,  "hello\tworld", XmUTF8_TEXT },
+	{ "C", "hello\tworld",  XmMULTIBYTE_TEXT, "hello\tworld", XmUTF8_TEXT },
+	{ "C", "hello\tworld",  XmCHARSET_TEXT,   "hello\tworld", XmUTF8_TEXT },
+
+	/* Line separator */
+	{ "C",         L"hello\nworld",              XmWIDECHAR_TEXT,  "hello\nworld", XmUTF8_TEXT },
+	{ "C",         "hello\nworld",               XmMULTIBYTE_TEXT, "hello\nworld", XmUTF8_TEXT },
+	{ "C",         "hello\r\nworld",             XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
+	{ "C",         L"hello\u2028world",          XmWIDECHAR_TEXT,  "hello\nworld", XmUTF8_TEXT },
+	{ "C.UTF-8",   "hello\xe2\x80\xa8world",     XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
+	{ "C.GB18030", "hello\x81\x36\xa6\x35world", XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
+
+	/* Direction patterns */
+	{ "C",         L"hello\u200eworld",          XmWIDECHAR_TEXT,  "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
+	{ "C.UTF-8",   "hello\xe2\x80\xaaworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
+	{ "C.UTF-8",   "hello\xe2\x80\xadworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
+	{ "C.GB18030", "hello\x81\x36\xac\x32world", XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
+	{ "C",         "hello\xe2\x80\x8fworld",     XmMULTIBYTE_TEXT, "hello\xe2\x80\x8fworld", XmUTF8_TEXT },
+	{ "C.UTF-8",   "hello\xe2\x80\xabworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8fworld", XmUTF8_TEXT },
+	{ "C.UTF-8",   "hello\xe2\x80\xaeworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8fworld", XmUTF8_TEXT },
+	{ "C.GB18030", "hello\x81\x36\xac\x33world", XmCHARSET_TEXT,   "hello\xe2\x80\x8fworld", XmUTF8_TEXT },
+
+	/* Ignored in non-Unicode locales */
+	{ "C", "hello\xe2\x80\x8eworld", XmMULTIBYTE_TEXT, "helloworld", XmCHARSET_TEXT },
+	{ "C", "hello\xe2\x80\x8fworld", XmMULTIBYTE_TEXT, "helloworld", XmCHARSET_TEXT },
+};
+
+START_TEST(ungenerate_utf8_patterns)
+{
+	XmString s;
+	XtPointer result;
+
+	/* "Skip" if we lack the necessary converter */
+	if (!to_gb18030 && !strcmp(u_patterns[_i].locale, "C.GB18030")) {
+		return;
+	}
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag(u_patterns[_i].locale);
+	s = XmStringGenerate((XtPointer)u_patterns[_i].str, NULL, u_patterns[_i].type, NULL);
+	ck_assert_msg(s, "Expected generate to succeed");
+
+	result = XmStringUngenerate(s, NULL, u_patterns[_i].type, u_patterns[_i].out_type);
+	ck_assert_msg(result, "Expected unparse to succeed");
+	ck_assert_msg(!strcmp(result, u_patterns[_i].out), "Unexpected result");
+	XtFree(result);
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(unparse_null_charset)
 {
 	XtPointer t;
@@ -1761,6 +1918,11 @@ void xmstring_suite(SRunner *runner)
 	TCase *t;
 	Suite *s = suite_create("XmString");
 
+	/* Musl's iconv() lacks a converter to GB18030... */
+	iconv_t i = iconv_open("GB18030", "UTF-8");
+	to_gb18030 = i != (iconv_t)-1;
+	iconv_close(i);
+
 	t = tcase_create("Create");
 	tcase_add_test(t, create);
 	tcase_add_test(t, create_tag);
@@ -1811,6 +1973,8 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, generate_charset);
 	tcase_add_test(t, generate_widechar);
 	tcase_add_test(t, generate_multibyte);
+	tcase_add_test(t, generate_utf8_line_separator);
+	tcase_add_loop_test(t, generate_utf8_direction_markers, 0, XtNumber(u_directions));
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
@@ -1911,6 +2075,12 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, streamlen_empty);
 	tcase_add_test(t, streamlen_optimized);
 	tcase_add_test(t, streamlen_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Ungenerate");
+	tcase_add_loop_test(t, ungenerate_utf8_patterns, 0, XtNumber(u_patterns));
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

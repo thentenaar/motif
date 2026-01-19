@@ -409,9 +409,9 @@ static void ComputeMetrics(XmRendition rend,
 static Dimension ComputeWidth(unsigned char which,
 			      XCharStruct char_ret);
 static void _parse_locale(char *str, int *indx, int *len);
-static Boolean match_pattern(XtPointer text, XmTextType type,
+static Boolean match_pattern(XtPointer text, XmTextType type, XmStringTag tag,
                              XmParseMapping pattern, size_t text_size,
-                             Boolean dir_change);
+                             size_t *match_len);
 static void parse_unmatched(XmString *result, char **ptr,
                             XmTextType text_type, XmStringTag tag,
                             int length);
@@ -422,6 +422,7 @@ static Boolean parse_pattern(XmString      *result,
 			     XmTextType     type,
 			     XmParseMapping pat,
 			     int            length,
+			     size_t         matchlen,
 			     XtPointer      call_data,
 			     Boolean       *terminate);
 static void check_unparse_models(XmStringContext   context,
@@ -460,7 +461,7 @@ static _XmStringEntry EntryCvtToUnopt(_XmStringEntry entry);
 static XmString StringTabCreate(void);
 static XmString StringEmptyCreate(void);
 
-static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide);
+static int _get_generate_parse_table(XmParseTable *gen_table);
 
 /********    End Static Function Declarations    ********/
 
@@ -1341,7 +1342,7 @@ XmString XmStringConcatAndFree(XmString a, XmString b)
 	    (a_len == 0))) &&
 	  (a_type == b_type || a_type == XmNO_TEXT || b_type == XmNO_TEXT) &&
 	  ((a_len + b_len) < (1 << BYTE_COUNT_BITS)) &&
-	  ((_XmStrText(a) && b_tabs==0) || (a_tabs+b_tabs <= 3)))
+	  (_XmStrText(a) && !b_tabs))
 	{
 	  /* Compatible strings.  Make an optimized string. */
 	  if ((b_len == 0) && (_XmStrRefCountGet(a) == 1))
@@ -7163,54 +7164,44 @@ XmeSetWMShellTitle(
     _XmAppUnlock(app);
 }
 
-/*
- * XmeGetDirection: An XmParseProc to insert a direction component.
- *	Does not consume the triggering character.
- */
-XmIncludeStatus
-XmeGetDirection(XtPointer     *in_out,
-		XtPointer      text_end, /* unused */
-		XmTextType     type,
-		XmStringTag    tag,
-		XmParseMapping entry, /* unused */
-		int	       pattern_length, /* unused */
-		XmString      *str_include,
-		XtPointer      call_data) /* unused */
-{
-  XmCharDirectionProc char_proc = _XmOSGetCharDirection;
-  XmStringDirection dir;
-  (void) XmOSGetMethod(NULL, XmMCharDirection, (XtPointer *)&char_proc, NULL);
-
-  /* Create a component for the new direction. */
-  dir = XmDirectionToStringDirection((*char_proc)(*in_out, type, tag));
-  *str_include = XmStringComponentCreate(XmSTRING_COMPONENT_DIRECTION,
-					 sizeof (dir),
-					 (XtPointer) &dir);
-
-  /* Don't consume the triggering character. */
-  return XmINSERT;
-}
-
 /**
  * match_pattern: A helper for XmStringParseText.  Determine whether
  *	the text matches a XmParseMapping pattern.
  */
-static Boolean match_pattern(XtPointer text, XmTextType type,
+static Boolean match_pattern(XtPointer text, XmTextType type, XmStringTag tag,
                              XmParseMapping pattern, size_t text_size,
-                             Boolean dir_change)
+                             size_t *match_len)
 {
 	int len   = 0;
 	char *pat = NULL;
 	Boolean result;
 	XmStringComponentType ptype;
 
-	if (!pattern)
+	if (!pattern || !pattern->pattern || !pattern->pattern_size)
 		return False;
 
-	if (pattern->pattern == XmDIRECTION_CHANGE)
-		return dir_change;
+	if (type == XmCHARSET_TEXT && tag && strcmp(tag, TO_UTF8)) {
+		if (tag == XmFONTLIST_DEFAULT_TAG)
+			tag = locale.tag;
+	} else if (!tag) tag = locale.tag;
+
+	/**
+	 * For UTF-8 patterns, ensure we're using a Unicode charset
+	 */
+	if (pattern->pattern_type == XmUTF8_TEXT && (
+	    (type == XmCHARSET_TEXT && tag &&
+	     memcmp(tag, "UTF", 3) &&
+	     memcmp(tag, "UCS", 3) &&
+	     strcmp(tag, "GB18030")
+	    ) ||
+	    ((type == XmMULTIBYTE_TEXT || type == XmWIDECHAR_TEXT) &&
+	      memcmp(locale.ctype, "UTF", 3) &&
+	      memcmp(locale.ctype, "UCS", 3) &&
+	      strcmp(locale.ctype, "GB18030"))))
+		return False;
 
 	if (pattern->pattern_type == type) {
+		*match_len = pattern->pattern_size;
 		return text_size >= pattern->pattern_size &&
 		       !memcmp(text, pattern->pattern, pattern->pattern_size);
 	}
@@ -7222,10 +7213,11 @@ static Boolean match_pattern(XtPointer text, XmTextType type,
 	}
 
 	unparse_text(&pat, &len, type, ptype, pattern->pattern_size,
-	             pattern->pattern, TO_UTF8);
+	             pattern->pattern, tag);
 	result = pat && len && text_size >= (size_t)len &&
 	         !memcmp(text, pat, (size_t)len);
 	XtFree(pat);
+	*match_len = len;
 	return result;
 }
 
@@ -7242,7 +7234,7 @@ static void parse_unmatched(XmString *result, char **ptr,
   size_t convsz;
 
   /* Insert length bytes from ptr into result, and update ptr. */
-  XmString tmp_1, tmp_2;
+  XmString tmp;
   XmStringComponentType ctype;
 
   /* Do nothing if there are no unmatched bytes. */
@@ -7301,16 +7293,15 @@ static void parse_unmatched(XmString *result, char **ptr,
     return;
   }
 
-  tmp_1 = *result;
-  if (!(tmp_2 = XmStringComponentCreate(ctype, outsz, (XtPointer)out))) {
+  if (!(tmp = XmStringComponentCreate(ctype, outsz, (XtPointer)out))) {
     if (out != *ptr) XtFree(out);
     return;
   }
 
-  if (_XmStrOptimized(tmp_2) && out != *ptr)
+  if (_XmStrOptimized(tmp) && out != *ptr)
     XtFree(out);
 
-  *result = XmStringConcatAndFree(tmp_1, tmp_2);
+  *result = XmStringConcatAndFree(*result, tmp);
   *ptr += length;
 }
 
@@ -7326,11 +7317,12 @@ parse_pattern(XmString      *result,
 	      XmTextType     type,
 	      XmParseMapping pat,
 	      int            length,
+	      size_t         match_len,
 	      XtPointer      call_data,
 	      Boolean	    *terminate)
 {
   /* Process a matched pattern.  Return True if ptr is updated. */
-  char* orig_ptr = *ptr;
+  char *orig_ptr = *ptr;
   XmIncludeStatus action = pat->include_status;
   XmString insertion = NULL;
 
@@ -7353,7 +7345,7 @@ parse_pattern(XmString      *result,
   else
     {
       /* Non-parse_procs always advance the pointer and terminate matching. */
-      *ptr += length;
+      *ptr += match_len;
       insertion = XmStringCopy(pat->substitute);
     }
 
@@ -7364,8 +7356,7 @@ parse_pattern(XmString      *result,
       *terminate = True;
       /* Fall through. */
     case XmINSERT:
-      if (insertion != NULL)
-	*result = XmStringConcatAndFree(*result, insertion);
+      if (insertion) *result = XmStringConcatAndFree(*result, insertion);
       break;
 
     default:
@@ -7375,7 +7366,7 @@ parse_pattern(XmString      *result,
     }
 
   /* Advancing the pointer prevents multiple matches. */
-  return (*ptr != orig_ptr);
+  return *ptr != orig_ptr;
 }
 
 XmString
@@ -7389,20 +7380,19 @@ XmStringParseText(XtPointer    text,
 {
   /* This routine needs to be reentrant so application supplied */
   /* XmParseProcs can make recursive calls. */
-  static XmParseMapping default_dir_pattern = NULL;
 
-  char*			 ptr = (char*) text;
-  char*			 prev_ptr = ptr;
-  XtPointer		 end_ptr = (text_end ? *text_end : NULL);
+  int			 len;
+  size_t		 mlen;
+  char			 *ptr = (char *)text;
+  char			 *prev_ptr = ptr;
+  char			 *end_ptr = text_end ? *text_end : NULL;
   XmString		 result, tag_component;
-  Boolean		 has_dir_pattern;
   Boolean		 wide_char = False;
   Boolean		 advanced;
   Boolean		 halt;
   unsigned int		 index;
-  char*			 dir_ptr;
   XmStringComponentType  tag_type;
-  XmInitialDirectionProc init_char_proc = _XmOSGetInitialCharsDirection;
+  XmParseMapping pat;
 
   _XmProcessLock();
 
@@ -7440,83 +7430,42 @@ XmStringParseText(XtPointer    text,
   /* Create an empty segment with the right tag. */
   result = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag);
   if (type == XmWIDECHAR_TEXT) {
+    len = end_ptr ? end_ptr - ptr : (int)(wcslen((wchar_t *)ptr) * sizeof(wchar_t));
     if (_XmStrOptimized(result))
       _XmStrTextType(result) = type;
     else
       _XmEntryTextTypeSet(_XmStrEntry(result)[0], type);
-  }
-
-  /* Did the user provide an XmDIRECTION_CHANGE pattern? */
-  has_dir_pattern = False;
-  for (index = 0; (index < parse_count) && !has_dir_pattern; index++)
-    has_dir_pattern = (parse_table[index]->pattern == XmDIRECTION_CHANGE);
-  if (!has_dir_pattern && !default_dir_pattern)
-    {
-      /* Create a default direction pattern. */
-      Arg args[10];
-      Cardinal nargs = 0;
-
-      XtSetArg(args[nargs], XmNincludeStatus, XmINVOKE),          nargs++;
-      XtSetArg(args[nargs], XmNinvokeParseProc, XmeGetDirection), nargs++;
-      XtSetArg(args[nargs], XmNpattern, XmDIRECTION_CHANGE),	  nargs++;
-      assert(nargs < XtNumber(args));
-      default_dir_pattern = XmParseMappingCreate(args, nargs);
-    }
+  } else len = end_ptr ? end_ptr - ptr : strlen(ptr);
 
   /* Process characters until text has been consumed. */
-  dir_ptr = NULL;
-  (void) XmOSGetMethod(NULL, XmMInitialCharsDirection,
-		       (XtPointer *)&init_char_proc, NULL);
-  halt = (end_ptr && (ptr >= (char*) end_ptr));
-  while (!halt && (wide_char ? *((wchar_t*) ptr) : *ptr))
+  halt = (end_ptr && (ptr >= (char *)end_ptr));
+  while (!halt && (wide_char ? *((wchar_t *)ptr) : *ptr))
     {
-      int len = (wide_char ? sizeof(wchar_t) : mblen(ptr, MB_CUR_MAX));
       advanced = False;
-
-      /* If we have an invalid character, treat it as a single byte. */
-      if (len < 0)
-	len = 1;
-
-      /* Reset dir_ptr if the input text has changed directions. */
-      if (ptr > dir_ptr)
-	{
-	  XmDirection xm_dir;
-	  if ((*init_char_proc)((XtPointer) ptr, type, tag, &index, &xm_dir) ==
-	      Success)
-	    dir_ptr = ptr + index;
-	}
-
-      /* Match against an implicit XmDIRECTION_CHANGE pattern. */
-      if (!has_dir_pattern && (ptr == dir_ptr))
-	{
-	  parse_unmatched(&result, &prev_ptr, type, tag, ptr - prev_ptr);
-	  advanced =
-	    parse_pattern(&result, &ptr, end_ptr, tag, type,
-			  default_dir_pattern, len, call_data, &halt);
-	}
 
       /* Try to match this character against the patterns. */
       for (index = 0; !advanced && !halt && (index < parse_count); index++)
 	{
-	  XmParseMapping pat = parse_table[index];
-	  if (match_pattern(ptr, type, pat, len, (ptr == dir_ptr)))
-	    {
+	  pat = parse_table[index];
+	  if (match_pattern(ptr, type, tag, pat, len, &mlen)) {
 	      parse_unmatched(&result, &prev_ptr, type, tag, ptr - prev_ptr);
 	      advanced = parse_pattern(&result, &ptr, end_ptr, tag,
-				       type, pat, len, call_data, &halt);
+				       type, pat, len, mlen, call_data, &halt);
+	      len -= (int)mlen;
 
 	      /* Insert the charset component after pattern insertion */
 	      tag_component = XmStringComponentCreate(tag_type, strlen(tag), (XtPointer)tag);
 	      _XmStrTextType(tag_component) = type;
 	      result = XmStringConcatAndFree(result, tag_component);
-	    }
+	  }
 	}
 
       /* Match an implicit "self-insert" pattern if all else fails. */
       if (!advanced)
 	{
 	  /* Buffer unmatched characters into one long insertion. */
-	  ptr += len;
+	  len -= wide_char ? sizeof(wchar_t) : 1;
+	  ptr += wide_char ? sizeof(wchar_t) : 1;
 	}
       else
 	{
@@ -7525,7 +7474,7 @@ XmStringParseText(XtPointer    text,
 	}
 
       /* Stop processing at the end of the text. */
-      halt |= (end_ptr && (ptr >= (char*) end_ptr));
+      halt |= (end_ptr && (ptr >= (char *)end_ptr));
     }
 
   /* Output and trailing unmatched characters. */
@@ -7778,7 +7727,7 @@ unparse_is_plausible(XmParseMapping pattern)
       (!pattern->substitute) ||
 
       /* Filter patterns based on the pattern. */
-      (pattern->pattern == XmDIRECTION_CHANGE))
+      !pattern->pattern)
     {
       pattern->internal_flags = XmSTRING_UNPARSE_IMPLAUSIBLE;
       return False;
@@ -7805,10 +7754,10 @@ unparse_components(char          **result,
 {
   Boolean match = False;
   XmParseMapping pat;
-  int n_pat;
+  Cardinal n_pat;
   int n_comp;
 
-  /* Compare each pattern component. */
+  /* Compare each pattern component, take the first match. */
   for (n_pat = 0; !match && (n_pat < parse_count); n_pat++)
     {
       pat = parse_table[n_pat];
@@ -7863,6 +7812,28 @@ unparse_components(char          **result,
 	      case XmNO_TEXT:
 	          break;
 	      case XmUTF8_TEXT:
+	          /**
+	           * Since we use this in the internal table for certain
+	           * Unicode control characters (i.e., direction markers)
+	           * ignore these matches unless we're outputting something
+	           * Unicode-ish.
+	           */
+	          if (output_type == XmUTF8_TEXT ||
+	              (output_type == XmCHARSET_TEXT && (
+	               !memcmp(locale.tag, "UTF", 3) ||
+	               !memcmp(locale.tag, "UCS", 3) ||
+	               !strcmp(locale.tag, "GB18030")
+	              )) ||
+	              ((output_type == XmMULTIBYTE_TEXT ||
+	                output_type == XmWIDECHAR_TEXT) && (
+	               !memcmp(locale.ctype, "UTF", 3) ||
+	               !memcmp(locale.ctype, "UCS", 3) ||
+	               !strcmp(locale.ctype, "GB18030")
+	              )))
+		      unparse_text(result, length, output_type,
+		                   XmSTRING_COMPONENT_TEXT,
+		                   pat->pattern_size, pat->pattern, "UTF-8");
+	          break;
 	      case XmCHARSET_TEXT:
 		      unparse_text(result, length, output_type,
 	                       XmSTRING_COMPONENT_TEXT,
@@ -8541,19 +8512,8 @@ XmeStringGetComponent(_XmStringContext context,
 	  /* Try to resolve unset directions. */
 	  if (dir == XmSTRING_DIRECTION_UNSET)
 	    {
-	      if ((char_count > 0) ||
-		  (_XmStrContDir(context) == XmSTRING_DIRECTION_UNSET))
-		{
-		  XmCharDirectionProc char_proc = _XmOSGetCharDirection;
-		  (void)XmOSGetMethod(NULL, XmMCharDirection,
-				      (XtPointer *)&char_proc, NULL);
-
-		  if (state > TAG_STATE)
-		    tag = (optimized ? _XmStrTagGet(opt) : _XmEntryTag(seg));
-
-		  dir = XmDirectionToStringDirection
-		    ((*char_proc)(seg_text, text_type, tag));
-		}
+	      if ((char_count > 0) || (_XmStrContDir(context) == XmSTRING_DIRECTION_UNSET))
+	        dir = XmSTRING_DIRECTION_L_TO_R;
 	      else skip = TRUE;
 	    }
 
@@ -8872,7 +8832,7 @@ XmStringGenerate(XtPointer   text,
   /*
   ** Get the parse table shared by generate and ungenerate.
   */
-  table_size = _get_generate_parse_table(&gen_table, type == XmWIDECHAR_TEXT);
+  table_size = _get_generate_parse_table(&gen_table);
 
   /* Parse the text into an XmString. */
   result = XmStringParseText
@@ -9037,11 +8997,13 @@ XmStringGenerate(XtPointer   text,
   return result;
 }
 
-XtPointer
-_XmStringUngenerate(XmString    string,
-		    XmStringTag tag,
-		    XmTextType  tag_type,
-		    XmTextType  output_type)
+/* CDE unfortunately relies on the internal symbol name */
+XtPointer _XmStringUngenerate(XmString string, XmStringTag tag,
+                             XmTextType tag_type, XmTextType output_type)
+                             XM_ALIAS(XmStringUngenerate);
+
+XtPointer XmStringUngenerate(XmString string, XmStringTag tag,
+                             XmTextType tag_type, XmTextType output_type)
 {
   XtPointer result;
   int table_size;
@@ -9050,18 +9012,11 @@ _XmStringUngenerate(XmString    string,
   /*
   ** Get the parse table shared by generate and ungenerate.
   */
-  table_size = _get_generate_parse_table(&gen_table, output_type == XmWIDECHAR_TEXT);
+  table_size = _get_generate_parse_table(&gen_table);
 
   /* Unparse the XmString into text. */
   result = XmStringUnparse
     (string, tag, tag_type, output_type, gen_table, table_size, XmOUTPUT_ALL);
-
-  /*
-  ** It might be useful to figure out rendition here to return the reverse of
-  ** what came in for XmStringGenerate.  I'm not real sure about how to do that
-  ** and it isn't necessary for the immediate needs of CSText, so...
-  ** RJS
-  */
   return result;
 
 }
@@ -9076,9 +9031,8 @@ XmParseMapping XmParseMappingCreate(ArgList arg_list, Cardinal arg_count)
 
   /* Default values are established by XtCalloc().
    *
-   * result->pattern        = XmDIRECTION_CHANGE (NULL);
+   * result->pattern        = NULL;
    * result->pattern_size   = 0;
-   * result->pattern_len    = 0;
    * result->pattern_type   = XmCHARSET_TEXT;
    * result->substitute     = NULL;
    * result->parse_proc     = NULL;
@@ -9096,21 +9050,18 @@ XmParseMapping XmParseMappingCreate(ArgList arg_list, Cardinal arg_count)
       break;
     case XmUTF8_TEXT:
     case XmCHARSET_TEXT:
-      result->pattern_len  = strlen(result->pattern);
-      result->pattern_size = result->pattern_len;
+      result->pattern_size = strlen(result->pattern);
       break;
     case XmMULTIBYTE_TEXT:
       s = result->pattern;
       mblen(NULL, 0);
       while ((len = mblen(s, MB_CUR_MAX)) > 0) {
         s += len;
-        result->pattern_len++;
         result->pattern_size += (size_t)len;
       }
       break;
     case XmWIDECHAR_TEXT:
-      result->pattern_len  = wcslen((wchar_t *)result->pattern);
-      result->pattern_size = result->pattern_len * sizeof(wchar_t);
+      result->pattern_size = wcslen((wchar_t *)result->pattern) * sizeof(wchar_t);
       break;
     }
   }
@@ -9167,22 +9118,21 @@ XmParseMappingSetValues(XmParseMapping mapping,
   _XmProcessUnlock();
 }
 
-static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide)
 /*
 **
 ** Utility function to build and supply the parse table shared by
-** XmStringGenerate and _XmStringUngenerate.  All of the information about
+** XmStringGenerate and XmStringUngenerate.  All of the information about
 ** the size and real storage of the table is maintained here.
 **
 */
+static int _get_generate_parse_table(XmParseTable *gen_table)
 {
-  int table_size = 2;
-  Arg args[10];
+  Arg args[4];
   Cardinal nargs;
   XmString tmp;
   int index = 0;
   static XmParseTable table = NULL;
-
+  static int table_size = 12;
 
   _XmProcessLock();
   /* Allocate a parse table only if necessary. */
@@ -9194,47 +9144,81 @@ static int _get_generate_parse_table(XmParseTable *gen_table, Boolean wide)
     }
   else
     {
-      table = (XmParseTable) XtCalloc (table_size, sizeof(XmParseMapping));
+      table = (XmParseTable)XtCalloc(table_size, sizeof(XmParseMapping));
       *gen_table = table;
     }
-  _XmProcessUnlock();
+
+  /**
+   * NB: The order below is important, as we will unparse with the first
+   * match to the substitute.
+   */
 
   /* Parse tab characters. */
   tmp = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0, NULL);
-  nargs = 0;
-  if (wide) {
-	  XtSetArg(args[nargs], XmNpatternType, XmWIDECHAR_TEXT);
-	  nargs++;
-  }
-
-  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT); nargs++;
-  XtSetArg(args[nargs], XmNsubstitute, tmp); nargs++;
-  XtSetArg(args[nargs], XmNpattern, wide ? (XtPointer)L"\t" : (XtPointer)"\t"); nargs++;
-  assert(nargs < XtNumber(args));
-  _XmProcessLock();
-  table[index++] = XmParseMappingCreate(args, nargs);
-  _XmProcessUnlock();
+  XtSetArg(args[0], XmNpatternType, XmCHARSET_TEXT);
+  XtSetArg(args[1], XmNincludeStatus, XmINSERT);
+  XtSetArg(args[2], XmNsubstitute, tmp);
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\t");
+  table[index++] = XmParseMappingCreate(args, 4);
   XmStringFree(tmp);
 
-  /* Parse newline characters. */
+  /* Plain ol' CR */
   tmp = XmStringSeparatorCreate();
-  nargs = 0;
-  if (wide) {
-	  XtSetArg(args[nargs], XmNpatternType, XmWIDECHAR_TEXT);
-	  nargs++;
-  }
+  XtSetArg(args[2], XmNsubstitute, tmp);
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\n");
+  table[index++] = XmParseMappingCreate(args, 4);
 
-  XtSetArg(args[nargs], XmNincludeStatus, XmINSERT); nargs++;
-  XtSetArg(args[nargs], XmNsubstitute, tmp); nargs++;
-  XtSetArg(args[nargs], XmNpattern, wide ? (XtPointer)L"\n" : (XtPointer)"\n"); nargs++;
-  assert(nargs < XtNumber(args));
-  _XmProcessLock();
-  table[index++] = XmParseMappingCreate(args, nargs);
+  /* CR + LF */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\r\n");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* Line Separator (U+2028) */
+  XtSetArg(args[0], XmNpatternType, XmUTF8_TEXT);
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\xa8");
+  table[index++] = XmParseMappingCreate(args, 4);
+  XmStringFree(tmp);
+
+  /* Parse L-to-R mark (U+200e) */
+  tmp = XmStringDirectionCreate(XmSTRING_DIRECTION_L_TO_R);
+  XtSetArg(args[2], XmNsubstitute, tmp);
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\x8e");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* L-to-R embedding (U+202a) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\xaa");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* L-to-R override (U+202d) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\xad");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* L-to-R isolate (U+2066) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x81\xa6");
+  table[index++] = XmParseMappingCreate(args, 4);
+  XmStringFree(tmp);
+
+  /* Parse R-to-L mark (U+200f) */
+  tmp = XmStringDirectionCreate(XmSTRING_DIRECTION_R_TO_L);
+  XtSetArg(args[2], XmNsubstitute, tmp);
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\x8f");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* R-to-L embedding (U+202b) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\xab");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* R-to-L override (U+202e) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x80\xae");
+  table[index++] = XmParseMappingCreate(args, 4);
+
+  /* R-to-L isolate (U+2067) */
+  XtSetArg(args[3], XmNpattern, (XtPointer)"\xe2\x81\xa7");
+  table[index++] = XmParseMappingCreate(args, 4);
+  XmStringFree(tmp);
+
   _XmProcessUnlock();
-
   assert(index == table_size);
-
-  return (table_size);
+  return table_size;
 }
 
 /* Destructively truncates str to be n bytes or less, insuring that it

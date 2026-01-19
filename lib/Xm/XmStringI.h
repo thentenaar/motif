@@ -118,7 +118,6 @@ typedef struct __XmStringContextRec
 typedef struct __XmParseMappingRec {
   XtPointer		pattern;
   size_t		pattern_size; /* in bytes */
-  size_t		pattern_len;  /* in characters */
   XmTextType		pattern_type;
   XmString		substitute;
   XmParseProc		parse_proc;
@@ -969,11 +968,6 @@ extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
                                 XmRenderTable rt,
 				float *width,
 				XmRendition *rend);
-extern XtPointer _XmStringUngenerate (XmString string,
-			XmStringTag tag,
-			XmTextType tag_type,
-			XmTextType output_type);
-
 extern void _XmStringDrawSegment(Display *d,
 				 Drawable w,
 				 Position x,

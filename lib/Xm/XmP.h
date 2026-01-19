@@ -1251,14 +1251,6 @@ extern void XmeResolvePartOffsets(
 extern void XmeSetWMShellTitle(
 			XmString xmstr,
 			Widget shell) ;
-extern XmIncludeStatus XmeGetDirection(XtPointer *in_out,
-				       XtPointer text_end,
-				       XmTextType type,
-				       XmStringTag locale_tag,
-				       XmParseMapping entry,
-				       int pattern_length,
-				       XmString *str_include,
-				       XtPointer call_data);
 extern XmIncludeStatus XmeGetNextCharacter(XtPointer *in_out,
 					   XtPointer text_end,
 					   XmTextType type,

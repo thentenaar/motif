@@ -2974,10 +2974,8 @@ LabelGetValue(Widget w, int type)
     {
       XtPointer temp;
       temp = (type == XmFORMAT_MBYTE) ?
-	_XmStringUngenerate(value, NULL,
-			    XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT) :
-	_XmStringUngenerate(value, NULL,
-			    XmWIDECHAR_TEXT, XmWIDECHAR_TEXT);
+	XmStringUngenerate(value, NULL, XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT) :
+	XmStringUngenerate(value, NULL, XmWIDECHAR_TEXT, XmWIDECHAR_TEXT);
       XmStringFree(value);
       return temp;
     }

@@ -3136,8 +3136,8 @@ TextSetValue(Widget w,
 
   switch(format) {
   case XmFORMAT_XmSTRING:
-    str = (char*) _XmStringUngenerate((XmString)s, NULL,
-				      XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT);
+    str = (char *)XmStringUngenerate((XmString)s, NULL,
+                                     XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT);
     XmTextSetString(w, str);
     if (str != NULL) XtFree(str);
     break;

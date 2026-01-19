@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
 #ifndef _XmosP_h
 #define _XmosP_h
 
@@ -158,37 +158,8 @@ extern "C" {
 #define XMBINDFILE "xmbind.alias"
 #define MOTIFBIND ".motifbind"
 
-typedef enum {
-  XmOS_METHOD_NULL,
-  XmOS_METHOD_DEFAULTED,
-  XmOS_METHOD_REPLACED
-} XmOSMethodStatus;
-
-typedef XmDirection (*XmCharDirectionProc)(XtPointer   /* char */,
-					   XmTextType  /* type */,
-					   XmStringTag /* locale */);
-
-typedef Status  (*XmInitialDirectionProc)(XtPointer      /* chars */,
-					  XmTextType     /* type */,
-					  XmStringTag    /* locale */,
-					  unsigned int * /* num_bytes */,
-					  XmDirection *  /* direction */);
-
-
-/********    Private Function Declarations    ********/
-
-extern XmOSMethodStatus XmOSGetMethod(Widget w,
-				      String method_name,
-				      XtPointer * method,
-				      XtPointer * os_data);
-
-/********    End Private Function Declarations    ********/
-
-
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
-
 #endif /* _XmosP_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */
+

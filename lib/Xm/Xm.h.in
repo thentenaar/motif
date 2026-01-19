@@ -206,7 +206,7 @@ enum {
 typedef enum {
     XmCHARSET_TEXT,			XmMULTIBYTE_TEXT,
     XmWIDECHAR_TEXT,                    XmNO_TEXT,
-    XmUTF8_TEXT /* For XmStringUnparse() - Output text in UTF-8 */
+    XmUTF8_TEXT /* For XmStringUnparse() / Patterns / [Un]Generate */
     } XmTextType;
 
 typedef enum {
@@ -242,10 +242,6 @@ typedef enum {
 
 typedef struct __XmParseMappingRec *XmParseMapping;	/* opaque */
 typedef XmParseMapping             *XmParseTable;
-
-/* A special pattern used to match a change of character direction. */
-#define XmDIRECTION_CHANGE	NULL
-
 
 typedef XmIncludeStatus (*XmParseProc) (XtPointer     *in_out,
 					XtPointer      text_end,
@@ -1473,10 +1469,7 @@ extern Boolean XmCvtXmStringToText(
                         XrmValue *from_val,
                         XrmValue *to_val,
                         XtPointer *converter_data) ;
-#if XM_UTF8
-extern char * XmCvtXmStringToUTF8String(
-                        XmString string) ;
-#endif
+extern char *XmCvtXmStringToUTF8String(XmString string);
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for ResInd.c    ********/
@@ -1756,6 +1749,8 @@ extern XmStringComponentType XmStringGetNextTriple(XmStringContext context,
 extern XmString XmStringComponentCreate(XmStringComponentType tag,
 					unsigned int length,
 					XtPointer value);
+extern XtPointer XmStringUngenerate(XmString string, XmStringTag tag,
+                                    XmTextType tag_type, XmTextType output_type);
 extern XtPointer XmStringUnparse(XmString string,
 				 XmStringTag tag,
 				 XmTextType tag_type,
