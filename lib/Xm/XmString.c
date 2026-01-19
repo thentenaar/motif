@@ -3649,7 +3649,7 @@ _XmStringDrawSegment(Display *d,
 	  free_text = True;
 	}
 
-      if (_XmRendFontType(rend) != XmFONT_IS_XFT)
+      if (_XmRendFontType(rend) == XmFONT_IS_FONT)
 	{
 	  /* If we don't have a font, don't render. */
 	  if (!(f = (XFontStruct *)_XmRendFont(rend)))

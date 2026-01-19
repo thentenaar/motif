@@ -92,5 +92,5 @@ void _MrmOSIEEEDoubleToHost(double *val)	/* unused */
 String
 _MrmOSSetLocale(String locale)
 {
-  return setlocale(LC_ALL, locale);
+	return locale;
 }
