@@ -54,8 +54,6 @@ static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
 #include <Xm/Xm.h>
 #include <Xm/XmosP.h>	/* Need this for MB_CUR_MAX */
 
-#include <Mrm/MrmosI.h> /* Need this for _MrmOSSetLocale. */
-
 #include "UilDefI.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -1341,10 +1339,6 @@ found_localized_string:
       int 		mb_len, i;
       unsigned char	mb_byte;
 
-      /* Should be looking at the first byte of the string. */
-      /* Localize... */
-      _MrmOSSetLocale("");
-
       /* Parse the string. */
       while (TRUE)
 	{
@@ -1369,14 +1363,12 @@ found_localized_string:
 		    l_lex_pos = 0;
 		  }
 		az_current_lex_buffer->c_text[ l_lex_pos++ ] = mb_byte;
-		_MrmOSSetLocale("C");
 		goto found_token;
 
 	      case class_dquote:
 		z_cell.backup = backup_0;
 		l_state = token_lstr;
 		src_az_current_source_buffer->w_current_position++;
-		_MrmOSSetLocale("C");
 		goto found_token;
 
 	      default:
@@ -1982,9 +1974,11 @@ void lex_initialize_analyzer(void)
 	}
 	Uil_lex_az_charset_entry = NULL;
 
+#if 0
 	/* Determine if localized strings are possible */
 	if ((Uil_lex_l_localized = Uil_cmd_z_command.v_use_setlocale))
 		_MrmOSSetLocale("C");
+#endif
 
 	/* Initialize the current character set */
 	Uil_lex_l_charset_specified = FALSE;
