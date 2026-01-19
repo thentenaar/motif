@@ -1,5 +1,5 @@
 /* $XConsortium: ResEncod.c /main/8 1996/11/12 05:37:04 pascale $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
- */
-/*
- * HISTORY
  */
 
 #ifdef HAVE_CONFIG_H
@@ -216,20 +212,6 @@ static const Octet CTEXT_SET_KSC5601_0[] = "\033\044\050\103\033\044\051\103";
 static const Octet CTEXT_SET_IR_111[] = "\033\050\102\033\055\100";
 #define CTEXT_SET_IR_111_LEN		sizeof(CTEXT_SET_IR_111)-1
 
-#if XM_UTF8
-static const char UTF8_NEWLINESTRING[] = "\012";
-#define UTF8_NEWLINESTRING_LEN		sizeof(UTF8_NEWLINESTRING)-1
-
-static const char UTF8_TABSTRING[] = "\011";
-#define UTF8_TABSTRING_LEN		sizeof(UTF8_TABSTRING)-1
-
-static const char UTF8_L_TO_R[] = "\342\200\216";
-#define UTF8_L_TO_R_LEN		sizeof(UTF8_L_TO_R)-1
-
-static const char UTF8_R_TO_L[] = "\342\200\217";
-#define UTF8_R_TO_L_LEN		sizeof(UTF8_R_TO_L)-1
-#endif /* XM_UTF8 */
-
 #define CTVERSION 1
 #define _IsValidC0(ctx, c)	(((c) == HT) || ((c) == NL) || ((ctx)->version > CTVERSION))
 #define _IsValidC1(ctx, c)	((ctx)->version > CTVERSION)
@@ -336,15 +318,6 @@ static Boolean processCharsetAndText(XmStringTag tag,
 				     OctetPtr	*outc,
 				     unsigned int	*outlen,
 				     ct_Charset	*prev);
-#if XM_UTF8
-static Boolean processCharsetAndTextUtf8(XmStringTag tag,
-				     OctetPtr	ctext,
-				     Boolean	separator,
-				     OctetPtr	*outc,
-				     unsigned int	*outlen,
-				     ct_Charset	*prev);
-#endif
-
 static Boolean processESCHack(
                         ct_context *ctx,
                         Octet final) ;
@@ -393,12 +366,6 @@ static OctetPtr ctextConcat(
                         unsigned int str1len,
                         const_OctetPtr str2,
                         unsigned int str2len) ;
-
-#if XM_UTF8
-static Boolean  cvtXmStringToUTF8String(
-        XrmValue *from,
-        XrmValue *to);
-#endif
 
 /********    End Static Function Declarations    ********/
 
@@ -1889,7 +1856,6 @@ XmCvtXmStringToCT(
   return( (char *) to_val.addr) ;
   }
 
-#if XM_UTF8
 /************************************************************************
  *
  *  XmCvtXmStringToUTF8String
@@ -1898,31 +1864,13 @@ XmCvtXmStringToCT(
  *	requires the XmString as an argument.
  *
  ************************************************************************/
-char *
-XmCvtXmStringToUTF8String(
-        XmString string )
+char *XmCvtXmStringToUTF8String(XmString string)
 {
-  Boolean	ok;
-  /* Dummy up some XrmValues to pass to cvtXmStringToText. */
-  XrmValue	from_val;
-  XrmValue	to_val;
+	if (!XmStringIsValid(string))
+		return NULL;
 
-  if (string == NULL)
-    return ( (char *) NULL );
-
-  from_val.addr = (char *) string;
-
-  ok = cvtXmStringToUTF8String(&from_val, &to_val);
-
-  if (!ok)
-  {
-    XtWarningMsg( "conversionError","compoundText", "XtToolkitError",
-		 MSG8, NULL, NULL) ;
-    return( (char *) NULL ) ;
-    }
-  return( (char *) to_val.addr) ;
-  }
-#endif
+	return (char *)XmStringUngenerate(string, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+}
 
 /***************************************************************************
  *									   *
@@ -1937,22 +1885,6 @@ _XmCvtXmStringToCT(
 {
     return (cvtXmStringToText( from, to ));
 }
-
-#if XM_UTF8
-/***************************************************************************
- *									   *
- * _XmCvtXmStringToUTF8String - public wrapper for the widgets to use.	   *
- *   This returns the length info as well - critical for the list widget   *
- * 									   *
- ***************************************************************************/
-Boolean
-_XmCvtXmStringToUTF8String(
-        XrmValue *from,
-        XrmValue *to )
-{
-    return (cvtXmStringToUTF8String( from, to ));
-}
-#endif
 
 /************************************************************************
  *
@@ -1984,160 +1916,6 @@ XmCvtXmStringToText(
     }
     return(ok);
 }
-
-#if XM_UTF8
-/************************************************************************
- *
- *  cvtXmStringToUTF8String
- *    Convert an XmString to a compound text string.  This is the
- *    underlying conversion routine for XmCvtXmStringToUTF8String,
- *    _XmCvtXmStringToUTF8String.
- *
- ************************************************************************/
-static Boolean
-cvtXmStringToUTF8String(
-        XrmValue *from,
-        XrmValue *to )
-{
-  Boolean		ok;
-  OctetPtr		outc = NULL;
-  unsigned int		outlen = 0;
-  _XmStringContextRec	stack_context;
-  XmStringTag	ct_encoding = NULL, cset_save = NULL;
-  ct_Direction		prev_direction = ct_Dir_LeftToRight;
-  ct_Charset		prev_charset = cs_Latin1;
-  XmStringComponentType	comp;
-  unsigned int		len;
-  XtPointer		val = NULL;
-  Octet			tmp_buf[256];
-  OctetPtr		tmp;
-
-  /* Initialize the return parameters. */
-  to->addr = (XPointer) NULL;
-  to->size = 0;
-
-  if (!from->addr)
-    return(False);
-
-  memset(&stack_context, 0, sizeof stack_context);
-  _XmStringContextReInit(&stack_context, (XmString)from->addr);
-
-/* BEGIN OSF Fix CR 7403 */
-  while ((comp = XmeStringGetComponent(&stack_context, True, False,
-				       &len, &val)) !=
-	 XmSTRING_COMPONENT_END)
-    {
-      switch (comp)
-	{
-	case XmSTRING_COMPONENT_LOCALE_TEXT:
-	  cset_save = XmFONTLIST_DEFAULT_TAG;
-	  /* Fall through */
-	case XmSTRING_COMPONENT_TEXT:
-	  if (cset_save != NULL) {
-	    /* Check Registry */
-	    if (ct_encoding)
-	      XtFree((char *)ct_encoding);
-	    ct_encoding = XmMapSegmentEncoding(cset_save);
-	  }
-
-	  /* We must duplicate val because the routines we want to */
-	  /*	call don't take a length parameter. */
-	  tmp = (OctetPtr) XmStackAlloc(len + 1, tmp_buf);
-	  memcpy((char*)tmp, val, len);
-	  tmp[len] = EOS;
-
-	  if (ct_encoding != NULL) {
-	    /* We have a mapping. */
-	    ok = processCharsetAndTextUtf8(ct_encoding, tmp, FALSE,
-				       &outc, &outlen, &prev_charset);
-	  } else {
-	    /* No mapping.  Vendor dependent. */
-	    ok = processCharsetAndTextUtf8(cset_save, tmp, FALSE,
-						    &outc, &outlen,
-						    &prev_charset);
-	  }
-
-	  /* Free our local copy of val. */
-	  XmStackFree((char*) tmp, tmp_buf);
-
-	  if (!ok)
-	    {
-	      _XmStringContextFree(&stack_context);
-	      return(False);
-	    }
-	  break;
-
-	case XmSTRING_COMPONENT_TAG:
-	  cset_save = (XmStringTag)val;
-	  break;
-
-	case XmSTRING_COMPONENT_DIRECTION:
-	  /* Output the direction, if changed */
-	  if (*(XmStringDirection *)val == XmSTRING_DIRECTION_L_TO_R) {
-	    if (prev_direction != ct_Dir_LeftToRight) {
-	      outc = ctextConcat(outc, outlen,
-				 (unsigned char *) UTF8_L_TO_R,
-				 (unsigned int)UTF8_L_TO_R_LEN);
-	      outlen += UTF8_L_TO_R_LEN;
-	      prev_direction = ct_Dir_LeftToRight;
-	    }
-	  } else {
-	    if (prev_direction != ct_Dir_RightToLeft) {
-	      outc = ctextConcat(outc, outlen,
-				 (unsigned char *) UTF8_R_TO_L,
-				 (unsigned int)UTF8_R_TO_L_LEN);
-	      outlen += UTF8_R_TO_L_LEN;
-	      prev_direction = ct_Dir_RightToLeft;
-	    }
-	  };
-	  break;
-
-	case XmSTRING_COMPONENT_SEPARATOR:
-	  if (ct_encoding != NULL) {		  /* We have a mapping. */
-	    ok = processCharsetAndTextUtf8(ct_encoding, NULL, TRUE,
-				       &outc, &outlen, &prev_charset);
-	  }
-	  else
-	    {
-	      /* No mapping.  Vendor dependent. */
-	      ok = processCharsetAndTextUtf8(cset_save, NULL, TRUE,
-                                    &outc, &outlen, &prev_charset);
-	    }
-
-	  if (!ok)
-	    {
-	      _XmStringContextFree(&stack_context);
-	      return(False);
-	    }
-	  break;
-
-	case XmSTRING_COMPONENT_TAB:
-	  outc = ctextConcat(outc, outlen,
-			     (unsigned char *)UTF8_TABSTRING,
-			     (unsigned int)UTF8_TABSTRING_LEN);
-	  outlen++;
-	  break;
-
-	default:
-	  /* Just ignore it. */
-	  break;
-	}
-  } /* end while */
-
-  if (ct_encoding)
-    XtFree((char *)ct_encoding);
-
-/* END OSF Fix CR 7403 */
-  if (outc != NULL) {
-    to->addr = (char *) outc;
-    to->size = outlen;
-  }
-
-  _XmStringContextFree(&stack_context);
-
-  return(True);
-}
-#endif
 
 /************************************************************************
  *
@@ -2301,105 +2079,6 @@ cvtXmStringToText(
 
   return(True);
 }
-
-#if XM_UTF8
-static Boolean
-processCharsetAndTextUtf8(XmStringTag tag,
-		      OctetPtr		ctext,
-		      Boolean		separator,
-		      OctetPtr		*outc,
-		      unsigned int	*outlen,
-		      ct_Charset	*prev)
-{
-  size_t ctlen = 0, len;
-
-  if (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0) {
-      if (_XmStringIsCurrentCharset("UTF-8")) {
-    	  if (ctext)
-    		  ctlen = strlen((char *)ctext);
-
-          if (ctlen > 0) {
-              *outc = ctextConcat(*outc, *outlen, ctext, ctlen);
-              *outlen += ctlen;
-          };
-      } else {
-          XTextProperty	prop_rtn;
-          int		ret_val;
-          String	msg;
-
-         /* Call XmbTextListToTextProperty */
-          ret_val =
-              XmbTextListToTextProperty(_XmGetDefaultDisplay(),
-                      (char **)&ctext,
-                      1, XUTF8StringStyle, &prop_rtn);
-
-          if (ret_val) {
-              switch (ret_val) {
-                  case XNoMemory:
-                      msg = MSG9;
-                      break;
-                  case XLocaleNotSupported:
-                      msg = MSG10;
-                      break;
-                  default:
-                      msg = MSG11;
-                      break;
-              }
-
-              XtWarningMsg("conversionError", "textProperty",
-                      "XtToolkitError", msg, NULL, 0);
-
-              return(False);
-          }
-
-          ctlen = strlen((char *)prop_rtn.value);
-
-          /* Now copy in the text */
-          if (ctlen > 0) {
-              *outc = ctextConcat(*outc, *outlen, prop_rtn.value, ctlen);
-              *outlen += ctlen;
-          };
-
-          XFree(prop_rtn.value);
-      }
-
-      /* Finally, add the separator if any */
-      if (separator) {
-	*outc = ctextConcat(*outc, *outlen,
-			    (unsigned char *)UTF8_NEWLINESTRING,
-			    (unsigned int)UTF8_NEWLINESTRING_LEN);
-	(*outlen)++;
-      };
-
-      *prev = cs_none;
-
-      return(True);
-  }
-
-  if (ctext)
-    ctlen = strlen((char *)ctext);
-
-  /* Now copy in the text */
-  if (ctlen > 0) {
-    ctext = (OctetPtr)_Xmcsconv(tag, "UTF-8", (char *)ctext, ctlen, &ctlen);
-    if (!ctext)
-        return False;
-    *outc = ctextConcat(*outc, *outlen, (const_OctetPtr)ctext, ctlen);
-    *outlen += ctlen;
-    XtFree((XtPointer)ctext);
-  };
-
-  /* Finally, add the separator if any */
-  if (separator) {
-    *outc = ctextConcat(*outc, *outlen,
-			(unsigned char *)UTF8_NEWLINESTRING,
-			(unsigned int)UTF8_NEWLINESTRING_LEN);
-    (*outlen)++;
-  }
-  return(True);
-}
-#endif
-
 
 static Boolean
 processCharsetAndText(XmStringTag tag,

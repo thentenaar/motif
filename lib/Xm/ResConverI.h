@@ -40,11 +40,6 @@ extern void _XmRegisterConverters( void ) ;
 extern Boolean _XmCvtXmStringToCT(
                         XrmValue *from,
                         XrmValue *to) ;
-#if XM_UTF8
-extern Boolean _XmCvtXmStringToUTF8String(
-                        XrmValue *from,
-                        XrmValue *to) ;
-#endif
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus
