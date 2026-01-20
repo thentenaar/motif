@@ -562,8 +562,7 @@ Initialize(
     {
         new_w->bulletin_board.dialog_title = XmStringCopy(
                                         request->bulletin_board.dialog_title) ;
-        XmeSetWMShellTitle(new_w->bulletin_board.dialog_title,
-			   XtParent(new_w)) ;
+        XtVaSetValues(XtParent(new_w), XmNtitleString, new_w->bulletin_board.dialog_title, NULL);
         }
     /*	Set parent attributes.
     */
@@ -856,8 +855,7 @@ SetValues(
         XmStringFree( current->bulletin_board.dialog_title) ;
         new_w->bulletin_board.dialog_title = XmStringCopy(
                                         request->bulletin_board.dialog_title) ;
-        XmeSetWMShellTitle(new_w->bulletin_board.dialog_title,
-				    XtParent(new_w)) ;
+        XtVaSetValues(XtParent(new_w), XmNtitleString, new_w->bulletin_board.dialog_title, NULL);
         }
 
 /*

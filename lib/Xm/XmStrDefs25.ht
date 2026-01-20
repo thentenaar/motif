@@ -1,0 +1,16 @@
+#ifndef _XmStrDefs25_h_
+#define _XmStrDefs25_h_
+
+#include <X11/Intrinsic.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+<<<STRING_TABLE_GOES_HERE>>>
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* _XmStrDefs25_h_ */
+

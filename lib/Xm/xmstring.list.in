@@ -1691,6 +1691,11 @@ NxftFont
 CXftFont
 SUTF8_STRING
 
+#file XmStrDefs25.h
+#table _XmStrings25
+#htmpl XmStrDefs25.ht
+NiconNameString
+
 #file XmStrDefsI.h
 #table _XmStringsI
 #htmpl XmStrDefsI.ht
@@ -1739,3 +1744,5 @@ I_MOTIF_DRAG_WINDOW
 I_MOTIF_INITIATOR
 I_MOTIF_RECEIVER
 I_MOTIF_SELECTION_TEXT
+I_NET_WM_NAME
+I_NET_WM_ICON_NAME

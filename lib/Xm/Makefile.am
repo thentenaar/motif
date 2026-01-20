@@ -251,20 +251,21 @@ NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
 libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(NEW_WID_SRCS) \
                    $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
 
-STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefsI.h XmStrDefs.c
+STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefs25.h XmStrDefsI.h
 
-BUILT_SOURCES = $(STRING_FILES) $(CAT_FILES)
+BUILT_SOURCES = $(STRING_FILES) XmStrDefs.c $(CAT_FILES)
 
 $(top_builddir)/config/util/makestrs:
 	( cd $(top_builddir)/config/util && $(MAKE) $(AM_MAKEFLAGS) makestrs )
 
-XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefsI.h: XmStrDefs.c
+$(STRING_FILES): XmStrDefs.c
 
 XmStrDefs.c: Makefile $(XMSTRING_LIST) XmStrDefs.ht XmStrDefsI.ht XmStrDefs.ct $(top_builddir)/config/util/makestrs
 	test -f $(XMSTRING_LIST) || $(LN_S) $(srcdir)/$(XMSTRING_LIST) $(XMSTRING_LIST)
 	test -f XmStrDefs.ht || $(LN_S) $(srcdir)/XmStrDefs.ht XmStrDefs.ht
 	test -f XmStrDefs22.ht || $(LN_S) $(srcdir)/XmStrDefs22.ht XmStrDefs22.ht
 	test -f XmStrDefs23.ht || $(LN_S) $(srcdir)/XmStrDefs23.ht XmStrDefs23.ht
+	test -f XmStrDefs25.ht || $(LN_S) $(srcdir)/XmStrDefs25.ht XmStrDefs25.ht
 	test -f XmStrDefsI.ht || $(LN_S) $(srcdir)/XmStrDefsI.ht XmStrDefsI.ht
 	test -f XmStrDefs.ct || $(LN_S) $(srcdir)/XmStrDefs.ct XmStrDefs.ct
 	$(top_builddir)/config/util/makestrs -f $(XMSTRING_LIST) >XmStrDefs.c

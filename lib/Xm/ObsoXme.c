@@ -41,6 +41,7 @@
 #include <Xm/XmP.h>
 #include <Xm/XmosP.h>
 #include "RegionI.h"
+#include "XmI.h"
 #include <Xm/DropSMgr.h>
 
 /****************************_XmDrawShadows****************************/
@@ -339,12 +340,17 @@ _XmOSGetHomeDirName()
 
 /********************************************************************/
 
-void
-_XmStringUpdateWMShellTitle(
-	XmString xmstr,
-	Widget shell)
+void XmeSetWMShellTitle(XmString s, Widget shell)
 {
-    XmeSetWMShellTitle(xmstr, shell);
+	_XmWidgetToAppContext(shell);
+	_XmAppLock(app);
+	if (!XtIsWMShell(shell) || !XmStringIsValid(s)) {
+		_XmAppUnlock(app);
+		return;
+	}
+
+	XtVaSetValues(shell, XmNtitleString, s, XmNiconNameString, s, NULL);
+	_XmAppUnlock(app);
 }
 
 /************************************************************************

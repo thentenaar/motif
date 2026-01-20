@@ -181,6 +181,10 @@ static Boolean SetValuesPrehook(
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args) ;
+static Boolean SetTitleAndIconName(XmVendorShellExtPartPtr ove,
+                                   XmVendorShellExtPartPtr nve,
+                                   ArgList args,
+                                   Cardinal *num_args);
 static Boolean VendorExtSetValues(
                         Widget old,
                         Widget ref,
@@ -246,6 +250,8 @@ static void VendorExtRealize(
                         Widget w,
                         XtPointer closure,
                         XtPointer call_data) ;
+
+static void SetWMTitle(XmVendorShellExtObject ve, Widget shell);
 
 static void AddDLEntry(
                         XmVendorShellExtObject ve,
@@ -1582,14 +1588,21 @@ VendorExtInitialize(
     XmShellExtObjectClass	sec = (XmShellExtObjectClass) XtClass(new_w);
     XtEventHandler		handler;
 
-    (void)args;
-    (void)num_args;
-    ve  = (XmVendorShellExtObject) new_w;
-    req_ve  = (XmVendorShellExtObject) req;
-
+    ve     = (XmVendorShellExtObject)new_w;
+    req_ve = (XmVendorShellExtObject)req;
     ve->shell.lastConfigureRequest = 0;
-
     extParent = ve->ext.logicalParent;
+
+    /* title and icon_name default to the shell's name if unset */
+    ve->vendor.title     = req_ve->vendor.title;
+    ve->vendor.icon_name = req_ve->vendor.icon_name;
+    SetTitleAndIconName(&req_ve->vendor, &ve->vendor, args, num_args);
+
+    if (!ve->vendor.title)
+        ve->vendor.title = XmStringCreateLocalized(XtName(extParent));
+
+    if (!ve->vendor.icon_name)
+        ve->vendor.icon_name = XmStringCopy(ve->vendor.title);
 
     /* add the handler for tracking whether the hierarchy has focus */
 
@@ -1735,7 +1748,6 @@ VendorExtInitialize(
     ve->vendor.timer = (XtIntervalId)0;
     ve->vendor.duration_timer = (XtIntervalId)0;
     ve->vendor.leave_time = (Time)0;
-
 }
 
 /************************************************************************
@@ -1936,6 +1948,78 @@ SetValuesPrehook(
     return FALSE;
 }
 
+/**
+ * Handle updates to the XmNtitleString and XmNiconNameString
+ * properties, and their legacy counterparts for which we use
+ * synthetic resources in the extension for backward compatibility.
+ *
+ * Returns False if neither value was updated
+ */
+static Boolean SetTitleAndIconName(XmVendorShellExtPartPtr ove,
+                                   XmVendorShellExtPartPtr nve,
+                                   ArgList args,
+                                   Cardinal *num_args)
+{
+	Cardinal i;
+	Boolean update = False, copy_title = True, copy_icon_name = True;
+
+	if (!args || !num_args || !*num_args)
+		goto no_args;
+
+	/**
+	 * Check for values created by our synthetic proc which overrides
+	 * Xt's XtNtitle and XtNiconName arguments; giving preference to
+	 * the new XmString arguments. If we use the synth value, we
+	 * refrain from increasing its reference count to avoid leaking
+	 * it later.
+	 */
+	for (i = 0; i < *num_args; i++) {
+		if (args[i].name == XmNtitle || !strcmp(args[i].name, XmNtitle)) {
+			if (!XmStringIsValid((XmString)args[i].value))
+				continue;
+
+			/* Defer to XmNtitleString if both were given */
+			if (nve->title != ove->title) {
+				XmStringFree((XmString)args[i].value);
+				continue;
+			}
+
+			nve->title = (XmString)args[i].value;
+			copy_title = False;
+		}
+
+		if (args[i].name == XmNiconName || !strcmp(args[i].name, XmNiconName)) {
+			if (!XmStringIsValid((XmString)args[i].value))
+				continue;
+
+			/* Defer to XmNiconNameString if both were given */
+			if (nve->icon_name != ove->icon_name) {
+				XmStringFree((XmString)args[i].value);
+				continue;
+			}
+
+			nve->icon_name = (XmString)args[i].value;
+			copy_icon_name = False;
+		}
+	}
+
+no_args:
+	/* Now, update title/icon_name */
+	if (nve->title != ove->title && XmStringIsValid(nve->title)) {
+		XmStringFree(ove->title);
+		if (copy_title) nve->title = XmStringCopy(nve->title);
+		update = True;
+	} else nve->title = ove->title;
+
+	if (nve->icon_name != ove->icon_name && XmStringIsValid(nve->icon_name)) {
+		XmStringFree(ove->icon_name);
+		if (copy_icon_name) nve->icon_name = XmStringCopy(nve->icon_name);
+		update = True;
+	} else nve->icon_name = ove->icon_name;
+
+	return update;
+}
+
 /************************************************************************
  *
  *  SetValues
@@ -1954,8 +2038,13 @@ VendorExtSetValues(
   XmVendorShellExtObject  nv = (XmVendorShellExtObject) new_w;
   XmFontList		  defaultFont;
 
+  (void)ref;
   ove = (XmVendorShellExtPartPtr) &(ov->vendor);
   nve = (XmVendorShellExtPartPtr) &(nv->vendor);
+
+  if (SetTitleAndIconName(ove, nve, args, num_args) &&
+      XtIsRealized(nv->ext.logicalParent))
+    SetWMTitle(nv, nv->ext.logicalParent);
 
   switch (nve->delete_response)
     {
@@ -2761,6 +2850,43 @@ VendorExtRealize(
 	  */
 	 AddGrab(ve, NULL, FALSE, FALSE, ve);
       }
+
+     SetWMTitle(ve, (Widget)vw);
+}
+
+static void SetWMTitle(XmVendorShellExtObject ve, Widget shell)
+{
+	Display *d;
+	Window win;
+	char *title, *icon_name;
+	Atom atoms[3];
+
+	enum {
+		NET_WM_NAME,
+		NET_WM_ICON_NAME,
+		UTF8_STRING
+	};
+
+	static const char *names[] = {
+		XmI_NET_WM_NAME,
+		XmI_NET_WM_ICON_NAME,
+		XmSUTF8_STRING
+	};
+
+	d         = XtDisplayOfObject((Widget)shell);
+	win       = XtWindowOfObject((Widget)shell);
+	title     = XmStringUngenerate(ve->vendor.title,     NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+	icon_name = XmStringUngenerate(ve->vendor.icon_name, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+
+	XInternAtoms(d, (char **)names, XtNumber(names), False, atoms);
+	Xutf8SetWMProperties(d, win, title, icon_name, NULL, 0, NULL, NULL, NULL);
+	XChangeProperty(d, win, atoms[NET_WM_NAME], atoms[UTF8_STRING], 8,
+	                PropModeReplace, (unsigned char *)title, strlen(title));
+	XChangeProperty(d, win, atoms[NET_WM_ICON_NAME], atoms[UTF8_STRING], 8,
+	                PropModeReplace, (unsigned char *)icon_name, strlen(icon_name));
+
+	XtFree(title);
+	XtFree(icon_name);
 }
 
 static void
@@ -2844,6 +2970,11 @@ Destroy(
 		 XmFontListFree(ve->vendor.label_font_list);
 	     if (ve->vendor.text_font_list)
 		 XmFontListFree(ve->vendor.text_font_list);
+	     if (ve->vendor.title)
+		 XmStringFree(ve->vendor.title);
+	     if (ve->vendor.icon_name)
+		 XmStringFree(ve->vendor.icon_name);
+
 	     if (ve->vendor.im_info)
 	         _XmImFreeShellData(wid, &ve->vendor.im_info);
 

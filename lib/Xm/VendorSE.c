@@ -74,6 +74,9 @@ static Boolean CvtStringToVerticalInt(
                         XrmValue *from_val,
                         XrmValue *toVal,
                         XtPointer *data) ;
+static void FromXmString(Widget w, int offset, XtArgVal *value);
+static XmImportOperator FromTitleString(Widget w, int offset, XtArgVal *value);
+static void ToTitleEncoding(Widget w, int offset, XtArgVal *value);
 static void ClassInitialize( void ) ;
 static void ClassPartInitialize(
                         WidgetClass w) ;
@@ -272,6 +275,14 @@ static XtResource extResources[] =
         sizeof (Boolean), Offset (verify_preedit),
         XmRImmediate, (XtPointer) False,
     },
+    {
+		XmNtitleString, XmCTitleString, XmRXmString, sizeof(XmString),
+		Offset(title), XmRImmediate, NULL
+    },
+    {
+		XmNiconNameString, XmCIconName, XmRXmString, sizeof(XmString),
+		Offset(icon_name), XmRImmediate, NULL
+    },
 };
 #undef Offset
 
@@ -283,6 +294,26 @@ static XtResource extResources[] =
 
 static XmSyntheticResource synResources[] =
 {
+    {
+	XmNtitle, sizeof(String),
+	ParentOffset(wm.title),
+	FromXmString,
+	FromTitleString
+    },
+    {
+	XmNiconName, sizeof(String),
+	ExtOffset(vendor.icon_name),
+	FromXmString,
+	FromTitleString
+    },
+    {
+	XmNtitleEncoding, sizeof(Atom),
+	0, ToTitleEncoding, NULL
+    },
+    {
+	XmNiconNameEncoding, sizeof(Atom),
+	0, ToTitleEncoding, NULL
+    },
     {
 	XmNx, sizeof (Position),
 	ParentOffset (core.x),
@@ -507,7 +538,29 @@ CvtStringToVerticalInt(
 
 }
 
+static void FromXmString(Widget w, int offset, XtArgVal *value)
+{
+	(void)w;
+	(void)offset;
+	if (XmStringIsValid((XmString)*value))
+		*value = (XtArgVal)XmStringUngenerate((XmString)*value, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+	else *value = 0;
+}
 
+static XmImportOperator FromTitleString(Widget w, int offset, XtArgVal *value)
+{
+	(void)w;
+	(void)offset;
+	*value = (XtArgVal)XmStringCreateLocalized((char *)*value);
+	return XmSYNTHETIC_NONE;
+}
+
+static void ToTitleEncoding(Widget w, int offset, XtArgVal *value)
+{
+	(void)w;
+	(void)offset;
+	*value = (XtArgVal)XA_STRING;
+}
 
 /************************************************************************
  *

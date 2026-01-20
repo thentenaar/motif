@@ -1904,8 +1904,7 @@ set_values_popup(
        /* Update title if menu torn off */
        if ((RC_TearOffTitle(new_w) != RC_TearOffTitle(old))
 	   && RC_TornOff(old)) {
-	 XmeSetWMShellTitle(RC_TearOffTitle(new_w),
-				     (Widget) XtParent(new_w));
+	 XtVaSetValues(XtParent(new_w), XmNtitleString, RC_TearOffTitle(new_w), NULL);
        }
 
     return (need_expose);

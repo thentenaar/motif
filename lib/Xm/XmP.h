@@ -1248,9 +1248,10 @@ extern void XmeResolvePartOffsets(
 			XmOffsetPtr *offset,
 			XmOffsetPtr *constraint_offset ) ;
     /* XmString.c */
-extern void XmeSetWMShellTitle(
-			XmString xmstr,
-			Widget shell) ;
+
+XM_ALTERNATIVE(Set XmNtitleString / XmNiconNameString on the shell instead)
+extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
+
 extern XmIncludeStatus XmeGetNextCharacter(XtPointer *in_out,
 					   XtPointer text_end,
 					   XmTextType type,

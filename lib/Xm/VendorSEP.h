@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmVendorSEP_h
 #define _XmVendorSEP_h
 
@@ -76,7 +76,7 @@ typedef struct {
  Boolean		externalReposition;
 
  /* mapStyle is an unused field. I'm using this field to keep
-  * track of the *font_list resource values. Refer 
+  * track of the *font_list resource values. Refer
   * CheckSetRenderTable in VendorSE.c
   */
  unsigned char		mapStyle;
@@ -112,6 +112,9 @@ typedef struct {
  Widget slider;			/* the XmSlideContext used to slide in the tip */
  Boolean enable;		/* flag to disable all this stuff */
 
+ /* Window title / icon name */
+ XmString title;
+ XmString icon_name;
 } XmVendorShellExtPart, *XmVendorShellExtPartPtr;
 
 externalref XmVendorShellExtClassRec 	xmVendorShellExtClassRec;

@@ -942,7 +942,7 @@ void _XmTearOffInitiate(Widget wid, XEvent *event)
       toplevel, args, 9);
 
    if (RC_TearOffTitle(submenu) != NULL)
-     XmeSetWMShellTitle(RC_TearOffTitle(submenu), (Widget) to_shell);
+     XtVaSetValues((Widget)to_shell, XmNtitleString, RC_TearOffTitle(submenu), NULL);
    else if (cb) {
      Widget lwid, mwid;
 
@@ -969,8 +969,7 @@ void _XmTearOffInitiate(Widget wid, XEvent *event)
  	 suffix_xms = XmStringCreate(TEAR_OFF_TITLE_SUFFIX, TEAR_OFF_CHARSET);
  	 title_xms = XmStringConcatAndFree(label_xms, suffix_xms);
 
- 	 XmeSetWMShellTitle(title_xms, (Widget)to_shell);
-
+	 XtVaSetValues((Widget)to_shell, XmNtitleString, title_xms, NULL);
  	 XmStringFree(title_xms);
        }
    }
