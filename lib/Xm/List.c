@@ -83,8 +83,6 @@ static char rcsid[] = "$TOG: List.c /main/47 1999/10/12 16:58:17 mgreess $"
 
 #define LIST_MAX_INPUT_SIZE	64
 
-#define	UNKNOWN_LENGTH		-1
-
 #define LINEHEIGHTS(lw,lines)	\
 	((lines) * ((lw)->list.MaxItemHeight + (lw)->list.spacing))
 
@@ -3197,10 +3195,10 @@ AddInternalElements(XmListWidget lw,
   for (i = 0; i < nitems; i++)
     {
       new_el = (ElementPtr)XtMalloc(sizeof(Element));
+      memset(new_el, 0, sizeof *new_el);
 
       /* Store an alias for string in the internal table. */
       assert(items[i] == lw->list.items[pos]);
-      new_el->length = UNKNOWN_LENGTH;
       XmStringExtent(lw->list.font, items[i], &new_el->width, &new_el->height);
       ASSIGN_MAX(lw->list.MaxWidth, new_el->width);
       ASSIGN_MAX(lw->list.MaxItemHeight, new_el->height);
@@ -3436,7 +3434,6 @@ ReplaceInternalElement(XmListWidget lw,
   /* The old name is an alias for an entry in the items list. */
 
   item->first_char = 0;
-  item->length = UNKNOWN_LENGTH;
   XmStringExtent(lw->list.font, name, &item->width, &item->height);
   item->selected = (selectable && OnSelectedList(lw, name, curpos));
   item->last_selected = item->selected;
@@ -5571,17 +5568,11 @@ DefaultAction(XmListWidget lw,
       lw->list.DragID = 0;
     }
 
-  if (lw->list.InternalList[item]->length == UNKNOWN_LENGTH)
-    lw->list.InternalList[item]->length = XmCvtXmStringToByteStream(lw->list.items[item], NULL);
-
+  memset(&cb, 0, sizeof cb);
   cb.reason = XmCR_DEFAULT_ACTION;
   cb.event = event;
-  cb.item_length = lw->list.InternalList[item]->length;
   cb.item_position = item + 1;
   cb.item = XmStringCopy(lw->list.items[item]);
-  cb.selected_item_count = 0;
-  cb.selected_items = NULL;
-  cb.selected_item_positions = NULL;
 
   UpdateSelectedList(lw, TRUE);
   UpdateSelectedPositions(lw, lw->list.selectedItemCount);
@@ -5631,7 +5622,7 @@ ClickElement(XmListWidget lw,
   unsigned char selection_policy;
   XmListCallbackStruct cb;
 
-  bzero((char*) &cb, sizeof(XmListCallbackStruct));
+  memset(&cb, 0, sizeof cb);
   item = lw->list.LastHLItem;
   lw->list.DidSelection = TRUE;
 
@@ -5646,11 +5637,7 @@ ClickElement(XmListWidget lw,
     }
 
   assert(lw->list.itemCount && lw->list.InternalList);
-  if (lw->list.InternalList[item]->length == UNKNOWN_LENGTH)
-    lw->list.InternalList[item]->length = XmCvtXmStringToByteStream(lw->list.items[item], NULL);
-
   cb.event = event;
-  cb.item_length = lw->list.InternalList[item]->length;
   cb.item_position = item + 1;
   cb.item = XmStringCopy(lw->list.items[item]);
 
@@ -7599,7 +7586,7 @@ ListConvert(Widget w, XtPointer client_data,
 #endif
       else
 	{
-	  size = XmCvtXmStringToByteStream(concat, (unsigned char**) &value);
+	  size = XmStringSerialize(concat, (unsigned char **)&value);
 	  type = atoms[XmA_MOTIF_COMPOUND_STRING];
 	}
 

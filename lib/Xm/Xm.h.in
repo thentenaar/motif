@@ -735,7 +735,7 @@ typedef struct
    int 	     reason;
    XEvent    *event;
    XmString  item;
-   int       item_length;
+   int       item_length XM_DEPRECATED;
    int       item_position;
    XmString  *selected_items;
    int       selected_item_count;
@@ -749,7 +749,7 @@ typedef struct
     int reason;
     XEvent	*event;
     XmString	value;
-    int		length;
+    int		length XM_DEPRECATED;
 } XmSelectionBoxCallbackStruct;
 
 typedef struct
@@ -757,7 +757,7 @@ typedef struct
     int reason;
     XEvent	*event;
     XmString	value;
-    int		length;
+    int		length XM_DEPRECATED;
 } XmCommandCallbackStruct;
 
 typedef struct
@@ -765,13 +765,13 @@ typedef struct
     int 	reason;
     XEvent	*event;
     XmString	value;
-    int		length;
+    int		length XM_DEPRECATED;
     XmString	mask;
-    int		mask_length;
+    int		mask_length XM_DEPRECATED;
     XmString	dir ;
-    int		dir_length ;
+    int		dir_length XM_DEPRECATED;
     XmString    pattern ;
-    int		pattern_length ;
+    int		pattern_length XM_DEPRECATED;
 } XmFileSelectionBoxCallbackStruct;
 
 
@@ -1737,12 +1737,10 @@ extern void XmStringDrawUnderline(
                         unsigned char lay_dir,
                         XRectangle *clip,
                         XmString under) ;
-extern unsigned int XmCvtXmStringToByteStream(
-			XmString string,
-        	        unsigned char **prop_return);
-extern XmString XmCvtByteStreamToXmString(
-        	        unsigned char *property);
-extern unsigned int XmStringByteStreamLength(unsigned char *string);
+extern Boolean XmStringSerializedIsValid(const unsigned char *stream);
+extern size_t XmStringSerializedLength(const unsigned char *stream);
+extern size_t XmStringSerialize(const XmString string, unsigned char **stream_out);
+extern XmString XmStringUnserialize(const unsigned char *stream);
 extern XmStringComponentType XmStringPeekNextTriple(XmStringContext context);
 extern XmStringComponentType XmStringGetNextTriple(XmStringContext context,
 						   unsigned int *length,

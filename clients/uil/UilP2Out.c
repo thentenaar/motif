@@ -1232,7 +1232,7 @@ for (list_member=(sym_obj_entry_type *)list_entry->obj_header.az_next;
 void out_emit_value(sym_value_entry_type *value_entry )
 {
     MrmCode	    access;
-    int		    value_size = 0;
+    size_t	    value_size = 0;
     MrmType	    value_type;
     int		    value_count = 0;
     char	    *buffer;
@@ -1299,9 +1299,7 @@ void out_emit_value(sym_value_entry_type *value_entry )
 
 	case sym_k_compound_string_value:
 	    tmp_str = value_entry->value.xms_value;
-	    value_size =
-	      XmCvtXmStringToByteStream(tmp_str,
-				(unsigned char **)&(value_entry->value.c_value));
+	    value_size = XmStringSerialize(tmp_str, (unsigned char **)&value_entry->value.c_value);
 	    XmStringFree(tmp_str);
 	    break;
 
@@ -1387,10 +1385,7 @@ void out_emit_value(sym_value_entry_type *value_entry )
 		 value_segment = value_segment->az_next_table_value)
 		{
 		value_count++;
-
-		value_size +=
-		  XmCvtXmStringToByteStream(value_segment->value.xms_value, NULL) +
-		    sizeof( RGMTextEntry );
+		value_size += value_segment->w_length + sizeof(RGMTextEntry);
 		}
 	    break;
 	    }
@@ -1507,7 +1502,6 @@ void out_emit_value(sym_value_entry_type *value_entry )
     /*
     **	Check that the context is large enough to hold the value
     */
-
     if ((int)(UrmRCSize( out_az_context ) ) < value_size)
 	{
 	if( MrmSUCCESS !=
@@ -1698,13 +1692,10 @@ void out_emit_value(sym_value_entry_type *value_entry )
 		 value_segment = value_segment->az_next_table_value)
 		{
 		  tmp_str = value_segment->value.xms_value;
-		  segment_size =
-		    XmCvtXmStringToByteStream(tmp_str,
-				      (unsigned char **)&(value_segment->value.c_value));
+		  segment_size = XmStringSerialize(tmp_str, (unsigned char **)&value_segment->value.c_value);
 		  XmStringFree(tmp_str);
 		  text_offset -= segment_size;
-		  memmove(&(buffer[text_offset]),
-			value_segment->value.c_value, segment_size);
+		  memmove(&(buffer[text_offset]), value_segment->value.c_value, segment_size);
 		  index--;
 		  string_vector->item[index].text_item.offset = text_offset;
 		  string_vector->item[index].text_item.rep_type =
@@ -2477,7 +2468,6 @@ void emit_control(sym_control_entry_type *control_entry, int control_offset)
     /*
     **  Add the object as a child.
     */
-
     urm_status =
     UrmCWRSetChild
 	( out_az_context,

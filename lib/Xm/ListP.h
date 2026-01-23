@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifndef _XmListP_h
 #define _XmListP_h
 
@@ -65,7 +66,6 @@ typedef	struct {
   Boolean	 selected;
   Boolean	 last_selected;
   Boolean	 LastTimeDrawn;
-  int		 length;
   wchar_t	 first_char;
 } Element, *ElementPtr;
 
@@ -103,9 +103,9 @@ typedef struct _XmListPart
   XtCallbackList    ExtendCallback;
   XtCallbackList    BrowseCallback;
   XtCallbackList    DefaultCallback;
-  
-  
-  GC		NormalGC;	
+
+
+  GC		NormalGC;
   GC		InverseGC;
   GC		HighlightGC;
   Pixmap        DashTile;	/* unused in Motif 1.2 */
@@ -118,7 +118,7 @@ typedef struct _XmListPart
 
   /* These fields specify the boundaries of the selection (i.e.
    * the current selection) as specified by the "selected" field
-   * of the InternalList elements and the boundaries of the 
+   * of the InternalList elements and the boundaries of the
    * last_selected selection (i.e. the previous selection) as
    * specified by the "last_selected" field of the InternalList
    * elements.
@@ -132,7 +132,7 @@ typedef struct _XmListPart
   Position	BaseY;
 
   /* MouseMoved: unused resource from Motif1.2, used now in the
-   * CheckSetRenderTable default proc (see List.c). 
+   * CheckSetRenderTable default proc (see List.c).
    */
   Boolean	MouseMoved;
 
@@ -144,12 +144,12 @@ typedef struct _XmListPart
   int		CurrentKbdItem;	/* position of location cursor */
   unsigned char	SelectionType;
   GC		InsensitiveGC;
-  
+
   int vmin;			/* unused in Motif 1.2 */
   int vmax;			/* unused in Motif 2.0 */
   int vOrigin;			/* unused in Motif 2.0 */
   int vExtent;			/* unused in Motif 2.0 */
-  
+
   int hmin;			/* slider minimum coordiate position */
   int hmax;			/* slider maximum coordiate position */
   int hOrigin;			/* slider edge location              */
@@ -158,7 +158,7 @@ typedef struct _XmListPart
   Dimension	MaxWidth;
   Dimension	CharWidth;	/* unused in Motif 1.2 */
   Position	XOrigin;
-	
+
   XmScrollBarWidget	  hScrollBar;
   XmScrollBarWidget	  vScrollBar;
   XmScrolledWindowWidget  Mom;

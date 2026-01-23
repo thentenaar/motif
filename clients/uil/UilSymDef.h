@@ -82,7 +82,7 @@
 /* MOVED TO DBDef.h */
 
 
-
+
 /*
 **	Constants to define compiler-recognized data types. It is
 **	important that the names used in .wml language descriptions
@@ -93,7 +93,7 @@
 /* MOVED TO DBDef.h */
 
 
-
+
 /*
 **  Header for each symbol entry
 */
@@ -139,7 +139,7 @@ typedef struct
 } sym_entry_header_type;
 
 
-
+
 /*
 **  Common view of a symbol entry
 */
@@ -153,7 +153,7 @@ typedef struct
 } sym_entry_type;
 
 
-
+
 /*
 **  Name entry
 */
@@ -196,7 +196,7 @@ typedef struct _sym_name_entry_type
 #define sym_k_name_entry_size (sizeof( sym_name_entry_type)- \
 			       sizeof( char[ 1 ]) )
 
-
+
 /*
 **  Value entry
 */
@@ -210,7 +210,7 @@ typedef struct _sym_name_entry_type
 */
 
 
-
+
 /*
 **  Common header for each "object" entry.  This header is shared by all
 **  widget, gadget, list, argument, callback, and control node types.  It
@@ -242,7 +242,7 @@ typedef struct
 } sym_obj_entry_type;
 
 
-
+
 /*
 **  This structure defines an element in a color table.  A color table contains
 **  an array of such elements.
@@ -326,7 +326,7 @@ typedef struct _sym_value_entry_type
     unsigned char	    b_type;
 	/* b_type distinguishes usage.  Possible values are sym_k_XXX_value */
 	/* as defined in UilSymGen.h					  */
-    unsigned short          w_length;
+    size_t          w_length;
 	/* length for variable length types				  */
     char		    output_state;
 	/* output_state (only byte is needed)				  */
@@ -403,7 +403,7 @@ resource id for private values.				  */
 
 #define sym_k_value_entry_size (sizeof(sym_value_entry_type))
 
-
+
 /*
 **  List entry
 */
@@ -437,7 +437,7 @@ typedef struct _sym_list_entry_type
 #define sym_k_list_entry_size (sizeof(sym_list_entry_type))
 
 
-
+
 /*
 **  Nested List entry
 */
@@ -468,7 +468,7 @@ typedef struct _sym_nested_list_entry_type
 #define sym_k_nested_list_entry_size (sizeof(sym_nested_list_entry_type))
 
 
-
+
 /*
 **  Argument entry
 */
@@ -487,7 +487,7 @@ typedef struct _sym_argument_entry_type
 
 #define sym_k_argument_entry_size (sizeof(sym_argument_entry_type))
 
-
+
 /*
 **  Procedure Definition Entry
 */
@@ -513,7 +513,7 @@ typedef struct
 
 #define sym_k_proc_def_entry_size (sizeof( sym_proc_def_entry_type))
 
-
+
 /*
 **  Procedure Reference Entry
 */
@@ -544,7 +544,7 @@ typedef struct
 #define sym_k_object_proc	2
     /*	The procedure was used as a creation routine for a user defined	    */
     /*	widget								    */
-
+
 
 /*
 **  Callback entry
@@ -568,7 +568,7 @@ typedef struct _sym_callback_entry_type
 
 #define sym_k_callback_entry_size (sizeof(sym_callback_entry_type))
 
-
+
 /*
 **  Parent list for widgets and gadgets
 **
@@ -590,7 +590,7 @@ typedef struct _sym_parent_list_type
 
 #define sym_k_parent_list_size (sizeof(sym_parent_list_type))
 
-
+
 
 /*
 **  Widget entry and Gadget entry
@@ -639,7 +639,7 @@ typedef struct _sym_widget_entry_type
 
 #define sym_k_widget_entry_size (sizeof(sym_widget_entry_type))
 
-
+
 
 /*
 **  Control entry
@@ -677,7 +677,7 @@ typedef struct _sym_control_entry_type
 #define sym_k_control_entry_size (sizeof(sym_control_entry_type))
 
 
-
+
 /*
 **  External Definition Entry
 */
@@ -694,7 +694,7 @@ typedef struct _sym_external_def_entry_type
 
 #define sym_k_external_def_entry_size (sizeof( sym_external_def_entry_type))
 
-
+
 /*
 **  Forward Reference Entry
 */
@@ -722,7 +722,7 @@ typedef struct _sym_forward_ref_entry_type
 
 #define sym_k_forward_ref_entry_size (sizeof( sym_forward_ref_entry_type))
 
-
+
 /*
 **  Forward Reference Entry
 */
@@ -754,7 +754,7 @@ typedef struct _sym_val_forward_ref_entry_type
 
 #define sym_k_val_forward_ref_entry_size (sizeof( sym_val_forward_ref_entry_type))
 
-
+
 /*
 **  Default object entry.  Pointed to from the module entry.  The first one in
 **  the list contains source information for the "OBJECTS = " text.  The 'next'
@@ -774,7 +774,7 @@ typedef struct _sym_def_obj_entry_type
 #define sym_k_def_obj_entry_size (sizeof( sym_def_obj_entry_type))
 
 
-
+
 /*
 **  Module entry (only 1 per compilation)
 */
@@ -801,7 +801,7 @@ typedef struct _sym_module_entry_type
 
 #define sym_k_module_entry_size (sizeof( sym_module_entry_type))
 
-
+
 /*
 **	Section entry
 */
@@ -843,7 +843,7 @@ typedef struct _sym_section_entry_type
 
 #define sym_k_section_entry_size (sizeof (sym_section_entry_type))
 
-
+
 /*
 **  Include file entry
 */
@@ -864,7 +864,7 @@ typedef struct _sym_include_file_entry_type
 
 #define sym_k_include_file_entry_size (sizeof( sym_include_file_entry_type))
 
-
+
 /*
 **  Symbol table root entry (root of symbol table tree)
 */
@@ -889,7 +889,7 @@ typedef struct _sym_root_entry_type
 
 #define sym_k_root_entry_size (sizeof( sym_root_entry_type))
 
-
+
 /*
 **  Color Item Entry
 */
@@ -913,7 +913,7 @@ typedef struct _sym_color_item_entry_type
 #define sym_k_color_item_entry_size (sizeof( sym_color_item_entry_type))
 
 
-
+
 /*
 **  This macro copies the contents of one entry to another without disturbing
 **  the the linked list of entries used to connect all symbol table entries.
@@ -922,4 +922,4 @@ typedef struct _sym_color_item_entry_type
 
 
 #endif /* UilSymDef_h */
-/* DON'T ADD STUFF AFTER THIS #endif */
+

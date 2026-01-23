@@ -1416,14 +1416,14 @@ common_special_type:
 		{
 		case XmSTRING_DIRECTION_L_TO_R:
 		    _debug_output
-			("  string length: %d\n  charset: %s  L_TO_R",
+			("  string length: %lu\n  charset: %s  L_TO_R",
 			  az_value_entry->w_length,
 			  diag_charset_text(
 			      az_value_entry->b_charset ));
 		    break;
 		case XmSTRING_DIRECTION_R_TO_L:
 		    _debug_output
-			("  string length: %d\n  charset: %s  R_TO_L",
+			("  string length: %lu\n  charset: %s  R_TO_L",
 			  az_value_entry->w_length,
 			  diag_charset_text(
 			      az_value_entry->b_charset ));
@@ -1434,13 +1434,13 @@ common_special_type:
 		{
 		case XmSTRING_DIRECTION_L_TO_R:
 		    _debug_output
-			("  string length: %d\n  charset: userdefined(%p)  L_TO_R",
+			("  string length: %lu\n  charset: userdefined(%p)  L_TO_R",
 			  az_value_entry->w_length,
 			  az_value_entry->az_charset_value);
 		    break;
 		case XmSTRING_DIRECTION_R_TO_L:
 		    _debug_output
-			("  string length: %d\n  charset: userdefined(%p)  R_TO_L",
+			("  string length: %lu\n  charset: userdefined(%p)  R_TO_L",
 			  az_value_entry->w_length,
 			  az_value_entry->az_charset_value);
 		    break;

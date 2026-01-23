@@ -2667,8 +2667,7 @@ _XmLabelConvert(Widget w,
     {
       type = atoms[XmA_MOTIF_COMPOUND_STRING];
       format = 8;
-      size = XmCvtXmStringToByteStream(label_string,
-				       (unsigned char **) &value);
+      size = XmStringSerialize(label_string, (unsigned char **)&value);
     }
   else if (cs->target == atoms[XmACOMPOUND_TEXT] ||
 	   cs->target == atoms[XmATEXT] ||

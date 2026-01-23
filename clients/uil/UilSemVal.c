@@ -2745,7 +2745,7 @@ for (next_segment = next_segment->az_next_table_value;
     }
 
 csval_entry->value.xms_value = cstr_r;
-csval_entry->w_length = XmCvtXmStringToByteStream(cstr_r, NULL);
+csval_entry->w_length = XmStringSerialize(cstr_r, NULL);
 
 /*
 ** Now deallocate the nodes for the compound string segments and put a null

@@ -91,9 +91,6 @@ static void uninstall_seg_handler(void)
 	sigaction(SIGBUS,  &old_bus, NULL);
 }
 
-/* Previous symbol name */
-Boolean XmeStringIsValid(const XmString string) XM_ALIAS(XmStringIsValid);
-
 /************************************************************************
  *                                                                      *
  * XmStringIsValid - returns True if the parameter is an XmString.      *
@@ -121,7 +118,7 @@ Boolean XmStringIsValid(const XmString string)
 	 * valid.
 	 */
 	if (seg_handler_installed()) {
-		XtWarningMsg("recursiveCall", "XmeIsStringValid", "XtToolkitError",
+		XtWarningMsg("recursiveCall", "XmStringIsValid", "XtToolkitError",
 		             "Called with signal handler already installed", NULL, NULL);
 		goto done;
 	}
@@ -158,6 +155,72 @@ Boolean XmStringIsValid(const XmString string)
 
 done:
 	XmStringFreeContext(ctx);
+	_XmProcessUnlock();
+	return valid;
+}
+
+/**
+ * Return True if we can grok each component in the stream without
+ * incurring any memory access errors
+ */
+Boolean XmStringSerializedIsValid(const unsigned char *stream)
+{
+	size_t i, len, bytes, total, remaining;
+	Boolean valid = False;
+
+	if (!stream || *stream != 0xdf)
+		return False;
+
+	_XmProcessLock();
+	if (seg_handler_installed()) {
+		XtWarningMsg("recursiveCall", "XmStringByteStreamIsValid", "XtToolkitError",
+		             "Called with signal handler already installed", NULL, NULL);
+		goto done;
+	}
+
+	install_seg_handler();
+	if (sigsetjmp(segjmp, True)) {
+		valid = False;
+		goto done;
+	}
+
+	if (stream[1] != 0x80)
+		goto done;
+
+	/* Read the overall length, and advance */
+	total   = 0;
+	bytes   = stream[3];
+	stream += 4;
+
+	if (bytes & 0x80) {
+		bytes &= 0x7f;
+		do {
+			total = (total << 8) | *stream++;
+		} while (--bytes);
+	} else total = bytes & 0x7f;
+
+	remaining = total;
+	while (remaining > 0 && remaining <= total) {
+		/* Figure component length and advance */
+		len = *++stream & 0x7f;
+		if (len & 0x80) {
+			bytes = len & 0x7f;
+			len   = 0;
+			do {
+				len = (len << 8) | *stream++;
+				remaining--;
+			} while (--bytes);
+		}
+
+		stream    += len + 1;
+		remaining -= len + 2;
+	}
+
+	/* Absent any mishaps... */
+	valid = !remaining;
+
+done:
+	uninstall_seg_handler();
 	_XmProcessUnlock();
 	return valid;
 }

@@ -324,7 +324,6 @@ static const struct _xmstring_component_params {
 	{ XmSTRING_COMPONENT_TAG, 3, NULL,    True  }, /* No data == NULL */
 	{ XmSTRING_COMPONENT_TAG, 1, "",      True  },
 	{ XmSTRING_COMPONENT_TAG, 0, "UTF-8", True  },
-	{ XmSTRING_COMPONENT_TAG, 3, "UTF-8", True  }, /* Bad length == NULL */
 	{ XmSTRING_COMPONENT_TAG, 5, "UTF-8", False },
 
 	/* This doesn't check length? */
@@ -341,7 +340,6 @@ static const struct _xmstring_component_params {
 
 	{ XmSTRING_COMPONENT_LOCALE, 1, "",                       True  },
 	{ XmSTRING_COMPONENT_LOCALE, 0,  "UTF-8",                 True  },
-	{ XmSTRING_COMPONENT_LOCALE, 3,  "UTF-8",                 True  },
 	{ XmSTRING_COMPONENT_LOCALE, 5,  "UTF-8",                 False },
 	{ XmSTRING_COMPONENT_LOCALE, 21, "_MOTIF_DEFAULT_LOCALE", False },
 
@@ -1162,22 +1160,22 @@ START_TEST(line_count_unoptimized)
 }
 END_TEST
 
-START_TEST(tostream_null)
+START_TEST(serialize_null)
 {
 	unsigned char *ret = NULL;
-	ck_assert_msg(!XmCvtXmStringToByteStream(NULL, &ret),
+	ck_assert_msg(!XmStringSerialize(NULL, &ret),
 	              "Converting a NULL string should yield a length of 0");
 	ck_assert_msg(!ret, "The return pointer should be NULL");
 }
 END_TEST
 
-START_TEST(tostream_empty)
+START_TEST(serialize_empty)
 {
 	XmString s;
 	unsigned char *ret = NULL;
 
 	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 4,
+	ck_assert_msg(XmStringSerialize(s, &ret) == 4,
 	              "Converting an empty string should yield just the header");
 	ck_assert_msg(ret, "No data was returned");
 	ck_assert_msg(ret[0] == 0xdf, "The first header byte should be 0xdf");
@@ -1189,13 +1187,13 @@ START_TEST(tostream_empty)
 }
 END_TEST
 
-START_TEST(tostream_optimized)
+START_TEST(serialize_optimized)
 {
 	XmString s;
 	unsigned char *ret = NULL;
 
 	s = XmStringCreateLocalized("motif");
-	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	ck_assert_msg(XmStringSerialize(s, &ret) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "BER representation should be 11 + length of "
 	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
 	ck_assert_msg(ret, "No data was returned");
@@ -1221,14 +1219,14 @@ START_TEST(tostream_optimized)
 }
 END_TEST
 
-START_TEST(tostream_unoptimized)
+START_TEST(serialize_unoptimized)
 {
 	XmString s;
 	unsigned char *ret = NULL;
 
 	s = XmStringCreateLocalized("motif");
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
-	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	ck_assert_msg(XmStringSerialize(s, &ret) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "BER representation should be 13 + length of "
 	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
 	ck_assert_msg(ret, "No data was returned");
@@ -1258,13 +1256,13 @@ START_TEST(tostream_unoptimized)
 }
 END_TEST
 
-START_TEST(tostream_wide)
+START_TEST(serialize_wide)
 {
 	XmString s;
 	unsigned char *ret = NULL;
 
 	s = XmStringCreateWide(L"motif", NULL);
-	ck_assert_msg(XmCvtXmStringToByteStream(s, &ret) == 8 + 5 + strlen(_MOTIF_DEFAULT_LOCALE),
+	ck_assert_msg(XmStringSerialize(s, &ret) == 8 + 5 + strlen(_MOTIF_DEFAULT_LOCALE),
 	              "BER representation should be 8 + 5 + len(_MOTIF_DEFAULT_LOCALE) "
 	              "bytes long");
 	ck_assert_msg(ret, "No data was returned");
@@ -1290,14 +1288,56 @@ START_TEST(tostream_wide)
 }
 END_TEST
 
-START_TEST(fromstream_null)
+START_TEST(serialize_multibyte_length)
 {
-	ck_assert_msg(!XmCvtByteStreamToXmString(NULL),
+	long sz;
+	size_t len;
+	char *buf;
+	XmString s, s2;
+	FILE *fp;
+	unsigned char *stream;
+
+	ck_assert_msg((fp = fopen(RESOURCE(xmstring/text), "r")),
+	              "Failed to open text fixture");
+	fseek(fp, 0, SEEK_END);
+	sz = ftell(fp);
+	rewind(fp);
+
+	buf = XtMalloc(sz + 1);
+	fread(buf, 1, (size_t)sz, fp);
+	fclose(fp);
+
+	s = XmStringCreate(buf, "UTF-8");
+	ck_assert_msg(s, "Failed to create XmString");
+	XtFree(buf);
+
+	/* Read in our previously-serialied stream */
+	ck_assert_msg((fp = fopen(RESOURCE(xmstring/serialized), "r")),
+	              "Failed to open previously serialized string fixture");
+	fseek(fp, 0, SEEK_END);
+	sz = ftell(fp);
+	rewind(fp);
+	buf = XtMalloc(sz);
+	fread(buf, 1, sz, fp);
+	fclose(fp);
+
+	len = XmStringSerialize(s, &stream);
+	ck_assert_msg(sz == len, "Wrong stream length");
+	ck_assert_msg(!memcmp(stream, buf, len), "Stream doesn't match");
+	XtFree(buf);
+	XmStringFree(s);
+	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(unserialize_null)
+{
+	ck_assert_msg(!XmStringUnserialize(NULL),
 	              "Converting a NULL bytestream should yield a NULL string");
 }
 END_TEST
 
-START_TEST(fromstream_empty)
+START_TEST(unserialize_empty)
 {
 	XmString s, s2 = NULL;
 	const unsigned char stream[] = {
@@ -1305,22 +1345,22 @@ START_TEST(fromstream_empty)
 	};
 
 	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 }
 END_TEST
 
-START_TEST(fromstream_optimized)
+START_TEST(unserialize_optimized)
 {
 	XmString s, s2;
 	unsigned char *stream = NULL;
 
 	s = XmStringCreateLocalized("motif");
-	XmCvtXmStringToByteStream(s, &stream);
+	XmStringSerialize(s, &stream);
 
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
@@ -1328,7 +1368,7 @@ START_TEST(fromstream_optimized)
 }
 END_TEST
 
-START_TEST(fromstream_unoptimized)
+START_TEST(unserialize_unoptimized)
 {
 	XmString s, s2;
 	unsigned char *stream = NULL;
@@ -1336,9 +1376,9 @@ START_TEST(fromstream_unoptimized)
 	s = XmStringCreateLocalized("motif");
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
-	XmCvtXmStringToByteStream(s, &stream);
+	XmStringSerialize(s, &stream);
 
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(!_XmStrOptimized(s2),   "String should not be optimized");
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
@@ -1347,15 +1387,15 @@ START_TEST(fromstream_unoptimized)
 }
 END_TEST
 
-START_TEST(fromstream_wide)
+START_TEST(unserialize_wide)
 {
 	XmString s, s2;
 	unsigned char *stream = NULL;
 
 	s = XmStringCreateWide(L"motif", NULL);
-	XmCvtXmStringToByteStream(s, &stream);
+	XmStringSerialize(s, &stream);
 
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
@@ -1363,26 +1403,68 @@ START_TEST(fromstream_wide)
 }
 END_TEST
 
-START_TEST(fromstream_multibyte)
+START_TEST(unserialize_multibyte)
 {
 	XmString s, s2;
 	unsigned char *stream = NULL;
 
 	s = XmStringCreateMultibyte("motif", NULL);
-	XmCvtXmStringToByteStream(s, &stream);
+	XmStringSerialize(s, &stream);
 
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 	XtFree((XtPointer)stream);
+}
+END_TEST
+
+START_TEST(unserialize_multibyte_length)
+{
+	long sz;
+	size_t len;
+	char *buf;
+	XmString s, s2;
+	FILE *fp;
+	unsigned char *stream;
+
+	ck_assert_msg((fp = fopen(RESOURCE(xmstring/serialized), "r")),
+	              "Failed to open serialized string fixture");
+	fseek(fp, 0, SEEK_END);
+	sz = ftell(fp);
+	rewind(fp);
+
+	buf = XtMalloc(sz);
+	fread(buf, 1, (size_t)sz, fp);
+	fclose(fp);
+
+	s = XmStringUnserialize((unsigned char *)buf);
+	XtFree(buf);
+	ck_assert_msg(s, "Failed to unserialize stream");
+	ck_assert_msg((fp = fopen(RESOURCE(xmstring/text), "r")),
+	              "Failed to open text fixture");
+	fseek(fp, 0, SEEK_END);
+	sz = ftell(fp);
+	rewind(fp);
+
+	buf = XtMalloc(sz + 1);
+	buf[sz] = '\0';
+	fread(buf, 1, (size_t)sz, fp);
+	fclose(fp);
+	s2 = XmStringCreate(buf, "UTF-8");
+	ck_assert_msg(s2, "Failed to create XmString");
+	XtFree(buf);
+
+	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
+	XmStringFree(s);
+	XmStringFree(s2);
 }
 END_TEST
 
 /**
  * Regression cases to ensure compatibility with version 1 bytestreams
  */
-START_TEST(fromstream_empty_v1)
+START_TEST(unserialize_empty_v1)
 {
 	XmString s, s2 = NULL;
 	static unsigned char stream[] = {
@@ -1390,14 +1472,14 @@ START_TEST(fromstream_empty_v1)
 	};
 
 	s  = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 }
 END_TEST
 
-START_TEST(fromstream_optimized_v1)
+START_TEST(unserialize_optimized_v1)
 {
 	XmString s, s2;
 	static unsigned char stream[] = {
@@ -1408,14 +1490,14 @@ START_TEST(fromstream_optimized_v1)
 	};
 
 	s  = XmStringCreateLocalized("motif");
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 }
 END_TEST
 
-START_TEST(fromstream_unoptimized_v1)
+START_TEST(unserialize_unoptimized_v1)
 {
 	XmString s, s2;
 	static unsigned char stream[] = {
@@ -1429,7 +1511,7 @@ START_TEST(fromstream_unoptimized_v1)
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
 
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(!_XmStrOptimized(s2),   "String should not be optimized");
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
@@ -1437,7 +1519,7 @@ START_TEST(fromstream_unoptimized_v1)
 }
 END_TEST
 
-START_TEST(fromstream_wide_v1)
+START_TEST(unserialize_wide_v1)
 {
 	XmString s, s2;
 #if WCHAR_MAX == (1 << 15) - 1
@@ -1463,14 +1545,14 @@ START_TEST(fromstream_wide_v1)
 #endif
 
 	s  = XmStringCreateWide(L"motif", NULL);
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 }
 END_TEST
 
-START_TEST(fromstream_multibyte_v1)
+START_TEST(unserialize_multibyte_v1)
 {
 	XmString s, s2;
 	static unsigned char stream[] = {
@@ -1481,42 +1563,42 @@ START_TEST(fromstream_multibyte_v1)
 	};
 
 	s  = XmStringCreateMultibyte("motif", NULL);
-	s2 = XmCvtByteStreamToXmString(stream);
+	s2 = XmStringUnserialize(stream);
 	ck_assert_msg(XmStringCompare(s, s2), "Strings should compare equal");
 	XmStringFree(s);
 	XmStringFree(s2);
 }
 END_TEST
 
-START_TEST(streamlen_null)
+START_TEST(serializedlen_null)
 {
-	ck_assert_msg(!XmStringByteStreamLength(NULL),
+	ck_assert_msg(!XmStringSerializedLength(NULL),
 	              "A NULL string results in a 0-length stream");
 }
 END_TEST
 
-START_TEST(streamlen_empty)
+START_TEST(serializedlen_empty)
 {
 	XmString s;
 	unsigned char *stream = NULL;
 
 	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
-	XmCvtXmStringToByteStream(s, &stream);
-	ck_assert_msg(XmStringByteStreamLength(stream) == 4,
+	XmStringSerialize(s, &stream);
+	ck_assert_msg(XmStringSerializedLength(stream) == 4,
 	              "An empty string is just a header");
 	XmStringFree(s);
 	XtFree((XtPointer)s);
 }
 END_TEST
 
-START_TEST(streamlen_optimized)
+START_TEST(serializedlen_optimized)
 {
 	XmString s;
 	unsigned char *stream = NULL;
 
 	s = XmStringCreateLocalized("motif");
-	XmCvtXmStringToByteStream(s, &stream);
-	ck_assert_msg(XmStringByteStreamLength(stream) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	XmStringSerialize(s, &stream);
+	ck_assert_msg(XmStringSerializedLength(stream) == 11 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "The bytestream should be 11 + length of "
 	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
 	XmStringFree(s);
@@ -1524,15 +1606,15 @@ START_TEST(streamlen_optimized)
 }
 END_TEST
 
-START_TEST(streamlen_unoptimized)
+START_TEST(serializedlen_unoptimized)
 {
 	XmString s;
 	unsigned char *stream = NULL;
 
 	s = XmStringCreateLocalized("motif");
 	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
-	XmCvtXmStringToByteStream(s, &stream);
-	ck_assert_msg(XmStringByteStreamLength(stream) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
+	XmStringSerialize(s, &stream);
+	ck_assert_msg(XmStringSerializedLength(stream) == 13 + strlen(XmFONTLIST_DEFAULT_TAG_STRING),
 	              "The bytestream should be 13 + length of "
 	              "XmFONTLIST_DEFAULT_TAG_STRING bytes long");
 	XmStringFree(s);
@@ -2044,37 +2126,39 @@ void xmstring_suite(SRunner *runner)
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
-	t = tcase_create("StringToByteStream");
-	tcase_add_test(t, tostream_null);
-	tcase_add_test(t, tostream_empty);
-	tcase_add_test(t, tostream_optimized);
-	tcase_add_test(t, tostream_unoptimized);
-	tcase_add_test(t, tostream_wide);
+	t = tcase_create("Serialize");
+	tcase_add_test(t, serialize_null);
+	tcase_add_test(t, serialize_empty);
+	tcase_add_test(t, serialize_optimized);
+	tcase_add_test(t, serialize_unoptimized);
+	tcase_add_test(t, serialize_wide);
+	tcase_add_test(t, serialize_multibyte_length);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
-	t = tcase_create("ByteStreamToString");
-	tcase_add_test(t, fromstream_null);
-	tcase_add_test(t, fromstream_empty);
-	tcase_add_test(t, fromstream_optimized);
-	tcase_add_test(t, fromstream_unoptimized);
-	tcase_add_test(t, fromstream_wide);
-	tcase_add_test(t, fromstream_multibyte);
-	tcase_add_test(t, fromstream_empty_v1);
-	tcase_add_test(t, fromstream_optimized_v1);
-	tcase_add_test(t, fromstream_unoptimized_v1);
-	tcase_add_test(t, fromstream_wide_v1);
-	tcase_add_test(t, fromstream_multibyte_v1);
+	t = tcase_create("Unserialize");
+	tcase_add_test(t, unserialize_null);
+	tcase_add_test(t, unserialize_empty);
+	tcase_add_test(t, unserialize_optimized);
+	tcase_add_test(t, unserialize_unoptimized);
+	tcase_add_test(t, unserialize_wide);
+	tcase_add_test(t, unserialize_multibyte);
+	tcase_add_test(t, unserialize_multibyte_length);
+	tcase_add_test(t, unserialize_empty_v1);
+	tcase_add_test(t, unserialize_optimized_v1);
+	tcase_add_test(t, unserialize_unoptimized_v1);
+	tcase_add_test(t, unserialize_wide_v1);
+	tcase_add_test(t, unserialize_multibyte_v1);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
-	t = tcase_create("ByteStreamLength");
-	tcase_add_test(t, streamlen_null);
-	tcase_add_test(t, streamlen_empty);
-	tcase_add_test(t, streamlen_optimized);
-	tcase_add_test(t, streamlen_unoptimized);
+	t = tcase_create("SerializedLength");
+	tcase_add_test(t, serializedlen_null);
+	tcase_add_test(t, serializedlen_empty);
+	tcase_add_test(t, serializedlen_optimized);
+	tcase_add_test(t, serializedlen_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

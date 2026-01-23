@@ -140,6 +140,16 @@ extern int XmStringLength(XmString string);
 XM_ALTERNATIVE(Use XmStringIsValid instead)
 extern Boolean XmeStringIsValid(const XmString string);
 
+XM_ALTERNATIVE(Use XmStringSerializedLength instead)
+extern unsigned int XmStringByteStreamLength(const unsigned char *stream);
+
+XM_ALTERNATIVE(Use XmStringSerialize instead)
+extern unsigned int XmCvtXmStringToByteStream(const XmString string,
+                                              unsigned char **prop_return);
+
+XM_ALTERNATIVE(Use XmStringUnserialize instead)
+extern XmString XmCvtByteStreamToXmString(const unsigned char *stream);
+
 XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
 extern XmFontList XmFontListCreate(XFontStruct *font, XmStringCharSet charset);
 

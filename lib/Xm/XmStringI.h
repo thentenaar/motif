@@ -1079,7 +1079,6 @@ extern unsigned char _XmEntryTabsGet(_XmStringEntry entry);
 extern unsigned int _XmEntryTextTypeGet(_XmStringEntry entry);
 extern void _XmEntryTextSet(_XmStringEntry entry, XtPointer val);
 
-extern unsigned char *_XmStringTruncateASN1(unsigned char *str, int n);
 extern void _XmStringContextCopy(_XmStringContext target,
 				 _XmStringContext source);
 extern void _XmStringContextFree(_XmStringContext target);

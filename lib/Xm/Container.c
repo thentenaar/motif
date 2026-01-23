@@ -5241,8 +5241,7 @@ ContainerConvertProc(
 	if (cs->target == atoms[XmA_MOTIF_COMPOUND_STRING])
 	  {
 	    type = atoms[XmA_MOTIF_COMPOUND_STRING];
-	    length = XmCvtXmStringToByteStream(return_xmstr,
-					       (unsigned char **)&(value));
+	    length = XmStringSerialize(return_xmstr, (unsigned char **)&value);
 	  }
 	else if (cs->target == atoms[XmA_COMPOUND_TEXT])
 	  {

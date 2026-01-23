@@ -599,7 +599,7 @@ void DoSaveVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   char     *fileName;
 
   (void)w;
-  if (fdata->length > 0)
+  if (!XmStringEmpty(fdata->value))
     {
       fileName = (char *)XmStringUnparse(fdata->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
       staffData = GetStaffData(staff);
@@ -669,7 +669,7 @@ void DoLoadVoiceCB (Widget w, XtPointer clientData, XtPointer callData)
   int       noteOffset;
   char     *fileName;
 
-  if (fdata->length > 0)
+  if (!XmStringEmpty(fdata->value))
     {
       fileName = (char *)XmStringUnparse(fdata->value, NULL, XmCHARSET_TEXT, XmCHARSET_TEXT, NULL, 0, XmOUTPUT_ALL);
       fp = fopen(fileName, "r");

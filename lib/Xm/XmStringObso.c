@@ -223,56 +223,30 @@ XmStringCreateSimple(
 /*
  * concat two external strings.  Only concat a component at a time
  * so that we always wind up with a meaningful string
+ *
+ * NB: This is used in Netscape 4, with has a very interesting bug
+ * report in cmd/xfe/src/BookmarkBase.cpp that should no longer be
+ * relevant. Seems it was a result of XmStringNCopy's behavior,
+ * as it was previously used to limit the size of the combined
+ * stream (when serialized.)
  */
-XmString
-XmStringNConcat(XmString first,
-		XmString second,
-		int n )
+XmString XmStringNConcat(XmString first, XmString second, int n)
 {
-  XmString	tmp, ret_val;
-
-  _XmProcessLock();
-  tmp = XmStringConcat(first, second);
-
-  ret_val = XmStringNCopy(tmp, XmStringLength(first) + n);
-
-  XmStringFree(tmp);
-
-  _XmProcessUnlock();
-  return(ret_val);
+	(void)n;
+	return XmStringConcat(first, second);
 }
 
 /*
  * Copy a compound string, such that the equivalent ASN.1 form
  * has <= n bytes.  Only copy a component at a time
  * so that we always wind up with a meaningful string
+ *
+ * XXX: I can't find any use of this function anywhere...
  */
-XmString
-XmStringNCopy(
-        XmString str,
-        int n )
+XmString XmStringNCopy(XmString str, int n)
 {
-  unsigned char	*tmp;
-  unsigned int	len;
-  XmString	ret_val;
-
-  _XmProcessLock();
-  len = XmCvtXmStringToByteStream(str, &tmp);
-
-  if (n >= len) /* No need to truncate */
-    {
-      ret_val = XmStringCopy(str);
-    }
-  else /* Truncate and convert */
-    {
-      tmp = _XmStringTruncateASN1(tmp, n);
-      ret_val = XmCvtByteStreamToXmString(tmp);
-    }
-
-  XtFree((char *)tmp);
-
-  _XmProcessUnlock();
-  return(ret_val);
+	(void)n;
+	return XmStringCopy(str);
 }
 
 /* Compare ASN.1 form of strings. */
@@ -296,8 +270,8 @@ XmStringByteCompare(
 	return (FALSE);
     }
 
-    a_length = XmCvtXmStringToByteStream(a1, &a);
-    b_length = XmCvtXmStringToByteStream(b1, &b);
+    a_length = (unsigned int)XmStringSerialize(a1, &a);
+    b_length = (unsigned int)XmStringSerialize(b1, &b);
 
     if ((a_length != b_length) || (memcmp(a, b, a_length) != 0))
       ret_val = FALSE;
@@ -759,23 +733,35 @@ XmStringGetNextSegment(XmStringContext context,
   return ret_val;
 }
 
-int
-XmStringLength(
-        XmString string )
+int XmStringLength(XmString string)
 {
-  unsigned int	len;
-
-  if (!string) return (0);
-  if (!XmStringIsValid(string)) return (0);
-
-  len = XmCvtXmStringToByteStream(string, NULL);
-
-  return((int)len);
+	return (int)XmStringSerialize(string, NULL);
 }
 
 /* Made public */
 char *_XmStringGetCurrentCharset(void)
 {
 	return XmStringGetCharset();
+}
+
+/* Renamed */
+Boolean XmeStringIsValid(const XmString string)
+{
+	return XmStringIsValid(string);
+}
+
+unsigned int XmCvtXmStringToByteStream(const XmString string, unsigned char **ret)
+{
+	return (unsigned int)XmStringSerialize(string, ret);
+}
+
+XmString XmCvtByteStreamToXmString(const unsigned char *stream)
+{
+	return XmStringUnserialize(stream);
+}
+
+extern unsigned int XmStringByteStreamLength(const unsigned char *stream)
+{
+	return (unsigned int)XmStringSerializedLength(stream);
 }
 

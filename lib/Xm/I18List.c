@@ -3734,7 +3734,7 @@ ListConvert(Widget w, XtPointer client_data,
 #endif
 	else
 	{
-	    size = XmCvtXmStringToByteStream(concat, (unsigned char**) &value);
+	    size = XmStringSerialize(concat, (unsigned char **)&value);
 	    type = atoms[XmA_MOTIF_COMPOUND_STRING];
 	}
 

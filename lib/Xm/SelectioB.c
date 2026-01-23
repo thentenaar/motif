@@ -1231,10 +1231,10 @@ SelectionBoxCallback(
 	String			text_value;
 /****************/
 
+	memset(&temp, 0, sizeof temp);
 	text_value = XmTextFieldGetString (SB_Text (sel));
 	temp.event = callback->event;
 	temp.value = XmStringCreateLocalized(text_value);
-	temp.length = XmCvtXmStringToByteStream(temp.value, NULL);
 	XtFree (text_value);
 
 	switch (which_button)
@@ -1344,8 +1344,7 @@ ListCallback(
 	if (success) {
 	  if (type == atoms[XmA_MOTIF_COMPOUND_STRING]) {
 	    XmString temp;
-	    temp = XmCvtByteStreamToXmString((unsigned char *) value);
-
+	    temp = XmStringUnserialize((unsigned char *)value);
 	    textTrait -> setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
 	    XmStringFree(temp);
 	  } else if (type == atoms[XmACOMPOUND_TEXT]) {

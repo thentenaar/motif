@@ -1741,7 +1741,7 @@ Urm__CW_FixupValue (long			val,
 	      ((char *)bufptr+vecptr->item[fixndx].text_item.offset) ;
 	  else
 	    vecptr->item[fixndx].pointer = (XtPointer)
-	      XmCvtByteStreamToXmString((unsigned char *)bufptr +
+	      XmStringUnserialize((unsigned char *)bufptr +
 					vecptr->item[fixndx].text_item.offset);
 	}
       *swap_needed = FALSE;
@@ -2123,7 +2123,7 @@ Urm__CW_ConvertValue (Widget			parent,
 	break;
       }
     case MrmRtypeCString:
-      cstg = XmCvtByteStreamToXmString((unsigned char *)*val);
+      cstg = XmStringUnserialize((unsigned char *)*val);
       *val = (long)cstg;
       /* BEGIN OSF Fix CR 8392 */
       /* fix memory leak */

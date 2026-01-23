@@ -1,5 +1,5 @@
 /* $TOG: TxtPropCv.c /main/15 1997/06/18 17:46:05 samborn $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
- */
-/*
- * HISTORY
  */
 
 #ifdef HAVE_CONFIG_H
@@ -435,15 +431,15 @@ XmCvtXmStringTableToTextProperty(Display *display,
       /* First calculate how much space the compound strings will occupy
 	 when they are all converted to ASN1 strings. */
       for (i = 0, total_size = 0; i < count; ++i)
-	total_size += XmCvtXmStringToByteStream(string_table[i],NULL);
+	total_size += XmStringSerialize(string_table[i],NULL);
       /* Allocate that amount of space and convert the compound strings
 	 to ASN1 strings, putting them directly into the buffer. */
       text_prop_return->value = ubufptr =
 	(unsigned char *) XtMalloc(sizeof(unsigned char) * total_size);
       for (i = 0; i < count; ++i)
 	{
-	  int size;
-	  size = XmCvtXmStringToByteStream(string_table[i],&bufptr);
+	  size_t size;
+	  size = XmStringSerialize(string_table[i], &bufptr);
 	  memcpy(ubufptr, bufptr, size);
 	  XtFree((char *) bufptr);
 	  ubufptr += size;
@@ -625,7 +621,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 	/* First calculate how many elements there are */
 	asn1_head = text_prop->value;
 	for (elements = 0; *asn1_head != '\0'; ++elements)
-	    asn1_head += XmStringByteStreamLength(asn1_head);
+	    asn1_head += XmStringSerializedLength(asn1_head);
 
 	/* Now allocate a string table to put them in */
 	string_table = (XmStringTable)XtMalloc(sizeof(XmString) * elements);
@@ -634,7 +630,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 	asn1_head = text_prop->value;
 	for (elements = 0; *asn1_head != '\0'; ++elements)
 	{
-	    string_table[elements] = XmCvtByteStreamToXmString(asn1_head);
+	    string_table[elements] = XmStringUnserialize(asn1_head);
 	    /* If the string is NULL, then we don't know what to do */
 	    if (string_table[elements] == (XmString) NULL)
 	    {
@@ -644,7 +640,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
 		return(XConverterNotFound);
 	    }
 	    /* Find the next asn1 string header */
-	    asn1_head += XmStringByteStreamLength(asn1_head);
+	    asn1_head += XmStringSerializedLength(asn1_head);
 	}
 	*string_table_return = string_table;
 	*count_return = elements;

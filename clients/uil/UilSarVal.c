@@ -1646,10 +1646,8 @@ void sar_make_comp_str_comp(yystype *target_frame, yystype *type_frame,
     }
 
   cstr_entry->value.xms_value = cstr_r;
-  cstr_entry->w_length = XmCvtXmStringToByteStream(cstr_r, NULL);
-
+  cstr_entry->w_length = XmStringSerialize(cstr_r, NULL);
   cstr_entry->az_first_table_value = NULL;
-
   _assert(cstr_entry->w_length <= MrmMaxResourceSize, "compound string too long" );
 
   /*

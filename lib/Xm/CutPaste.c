@@ -2969,8 +2969,7 @@ XmClipboardStartCopy(
     }
 
     if (label != NULL) {
-      asn1strlen = XmCvtXmStringToByteStream(label,
-					     (unsigned char **) &asn1string);
+      asn1strlen = XmStringSerialize(label, (unsigned char **)&asn1string);
 
       /* store the label */
       ClipboardReplaceItem(display,

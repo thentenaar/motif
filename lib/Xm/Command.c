@@ -492,10 +492,10 @@ ListCallback(
         XmTextFieldSetString( cmdWid->selection_box.text, "") ;
         /* Call the users command entered callback.
         */
+        memset(&cmdCB, 0, sizeof cmdCB);
         cmdCB.reason = XmCR_COMMAND_ENTERED ;
         cmdCB.event  = NULL ;
         cmdCB.value  = tmpXmString ;
-        cmdCB.length = XmCvtXmStringToByteStream(tmpXmString, NULL);
         XtCallCallbackList( (Widget) cmdWid, cmdWid->command.callback, &cmdCB) ;
 
         XmStringFree( tmpXmString) ;
@@ -529,6 +529,7 @@ CommandCallback(
     char *str;
 /****************/
 
+    memset(&cb, 0, sizeof cb);
     cb.reason = XmCR_COMMAND_CHANGED;
     cb.event = ((XmAnyCallbackStruct *) call_data)->event ;
 
@@ -537,7 +538,6 @@ CommandCallback(
     cb.value = XmStringCreateLocalized(str);
     XtFree(str);
 
-    cb.length = XmCvtXmStringToByteStream(cb.value, NULL);
     XtCallCallbackList ((Widget) client_data, client_data->command.value_changed_callback, &cb);
     XmStringFree (cb.value);
     return ;
@@ -635,10 +635,10 @@ _XmCommandReturn(
     XmTextFieldSetString (w->selection_box.text, "");
     /* call the users command entered callback */
 
+    memset(&cb, 0, sizeof cb);
     cb.reason = XmCR_COMMAND_ENTERED;
     cb.event  = event;
     cb.value  = tmpXmString;
-    cb.length = XmCvtXmStringToByteStream(tmpXmString, NULL);
     XtCallCallbackList ((Widget) w, w->command.callback, &cb);
     XmStringFree (tmpXmString);
     XtFree (tmpString);

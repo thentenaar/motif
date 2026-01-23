@@ -60,36 +60,36 @@ static void Initialize(
                         Cardinal *num_args );
 static void DrawVisual (
                         Widget w);
-static void CreateGC ( 
+static void CreateGC (
                         Widget w );
-static void RegisterDropSite( 
+static void RegisterDropSite(
                         Widget w);
 static void ExmStringTransferMoveFocus(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params);
-static void ExmStringTransferProcessDrag( 
+static void ExmStringTransferProcessDrag(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params);
-static void ExmStringTransferCopyPrimary( 
+static void ExmStringTransferCopyPrimary(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params);
-static void ExmStringTransferCopyClipboard( 
+static void ExmStringTransferCopyClipboard(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params);
-static void ExmStringTransferPastePrimary( 
+static void ExmStringTransferPastePrimary(
                         Widget w,
                         XEvent *event,
                         String *params,
                         Cardinal *num_params);
-static void ExmStringTransferPasteClipboard( 
+static void ExmStringTransferPasteClipboard(
                         Widget w,
                         XEvent *event,
                         String *params,
@@ -123,7 +123,7 @@ static Atom PreferredTarget(
 /* No constants needed. */
 
 /* Default translations for ExmStringTransfer */
-static char defaultTranslations[] = 
+static char defaultTranslations[] =
 "<EnterWindow>:		PrimitiveEnter()\n\
 <LeaveWindow>:		PrimitiveLeave()\n\
 c <Btn1Down>:		ExmStringTransferMoveFocus()\n\
@@ -149,16 +149,16 @@ static XtActionsRec actions[] = {
 };
 
 /* Resources for the ExmStringTransfer widget. */
-static XtResource resources[] = 
+static XtResource resources[] =
 {
   /* XmPrimitive */
   {
-    XmNtraversalOn, 
-    XmCTraversalOn, 
-    XmRBoolean, 
-    sizeof (Boolean), 
+    XmNtraversalOn,
+    XmCTraversalOn,
+    XmRBoolean,
+    sizeof (Boolean),
     XtOffsetOf(XmPrimitiveRec, primitive.traversal_on),
-    XmRImmediate, 
+    XmRImmediate,
     (XtPointer) True /* Restore the default */
   },
   /* ExmStringTransfer */
@@ -178,7 +178,7 @@ static XtResource resources[] =
 
 externaldef (exmstringtransferclassrec)
      ExmStringTransferClassRec exmStringTransferClassRec = {
-  {    
+  {
     /* superclass */                 (WidgetClass)&exmStringClassRec,
     /* class_name */                 "ExmStringTransfer",
     /* widget_size */                sizeof(ExmStringTransferRec),
@@ -211,17 +211,17 @@ externaldef (exmstringtransferclassrec)
     /* query_geometry */             XtInheritQueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
-  { /* XmPrimitive */        
+  },
+  { /* XmPrimitive */
     /* border_highlight */           XmInheritBorderHighlight,
     /* border_unhighlight */         XmInheritBorderUnhighlight,
     /* translations */               XtInheritTranslations,
     /* arm_and_activate */           NULL,
-    /* syn_resources */              NULL, 
-    /* num_syn_resources */          0, 
+    /* syn_resources */              NULL,
+    /* num_syn_resources */          0,
     /* extension */                  NULL,
-  },    
-  { /* ExmSimple */                  
+  },
+  { /* ExmSimple */
     /* draw_visual */                DrawVisual,
     /* draw_shadow */                ExmInheritDrawShadow,
     /* create_gc */                  CreateGC,
@@ -231,15 +231,15 @@ externaldef (exmstringtransferclassrec)
     /* calc_widget_size */           ExmInheritCalcWidgetSize,
     /* reconfigure */                ExmInheritReconfigure,
     /* extension */                  NULL,
-  },    
-  { /* ExmString */  
+  },
+  { /* ExmString */
     /* default_render_table_type */  XmLABEL_RENDER_TABLE,
     /* extension */                  NULL,
   },
   { /* ExmStringTransfer */
     /* extension */		     NULL,
   },
-};    
+};
 
 /* Establish the widget class name as an externally accessible symbol.
    Use the "externaldef" macro for OS-independent global definitions. */
@@ -275,7 +275,7 @@ ClassPartInitialize(
      its subclasses. */
   XmeTraitSet((XtPointer) widgetclass, XmQTtransfer,
 	      (XtPointer) &StringTrT);
-  
+
 }
 
 
@@ -294,10 +294,10 @@ Initialize (
            )
 {
   ExmStringTransferWidget stw = (ExmStringTransferWidget) new_w;
-  
+
   /* Initialize internal instance data structures. */
   stw->string_transfer.own_primary = False;
-  
+
   /* Register widget as a drop site. */
   RegisterDropSite(new_w);
 }
@@ -309,15 +309,15 @@ Initialize (
  *     widget visual.  Used here to do the highlighting for own_primary.
  *
  *****************************************************************************/
-static void 
+static void
 DrawVisual(Widget w)
 {
   ExmStringTransferWidgetClass wc = (ExmStringTransferWidgetClass)XtClass(w);
   ExmStringTransferWidget sw = (ExmStringTransferWidget)w;
   GC use_gc = wc->simple_class.select_gc(w);
-  
+
   /* If the compound string is not NULL and if there is enough space in the
-     widget to draw at least a little portion of the compound string, then 
+     widget to draw at least a little portion of the compound string, then
      render the string with XmStringDraw. */
   if (sw->string.compound_string &&
       (sw->simple.visual.width != 0) &&
@@ -329,7 +329,7 @@ DrawVisual(Widget w)
       values.background = sw->primitive.foreground;
       XChangeGC(XtDisplay(sw), use_gc, mask, &values);
       XmStringDrawImage (XtDisplay(sw), XtWindow(sw),
-			 sw->string.render_table, 
+			 sw->string.render_table,
 			 sw->string.compound_string,
 			 use_gc,
 			 sw->simple.visual.x, sw->simple.visual.y,
@@ -340,16 +340,16 @@ DrawVisual(Widget w)
       values.background = sw->core.background_pixel;
       XChangeGC(XtDisplay(sw), use_gc, mask, &values);
       XmStringDrawImage (XtDisplay(sw), XtWindow(sw),
-			 sw->string.render_table, 
+			 sw->string.render_table,
 			 sw->string.compound_string,
 			 use_gc,
 			 sw->simple.visual.x, sw->simple.visual.y,
 			 sw->simple.visual.width, sw->string.alignment,
-			 sw->primitive.layout_direction, NULL); 
+			 sw->primitive.layout_direction, NULL);
     }
     XmeClearBorder(XtDisplay(sw), XtWindow(sw),
-		   (int)0, (int)0, 
-		   (Dimension)sw->core.width, (Dimension)sw->core.height, 
+		   (int)0, (int)0,
+		   (Dimension)sw->core.width, (Dimension)sw->core.height,
 		   (Dimension)(sw->primitive.highlight_thickness +
 			       sw->primitive.shadow_thickness)
                    );
@@ -362,7 +362,7 @@ DrawVisual(Widget w)
  *      Called by the Initialize method of the base class (ExmSimple).
  *
  ******************************************************************************/
-static void 
+static void
 CreateGC (
         Widget w
          )
@@ -377,22 +377,22 @@ CreateGC (
  /* This function creates two GC's: one to render a sensitive widget
     and the other to render an insensitive widget. */
 
- /* This widget will change background and foreground of the text with the 
-    selection state. Therefore, foreground and background should be dynamic 
+ /* This widget will change background and foreground of the text with the
+    selection state. Therefore, foreground and background should be dynamic
     values */
    dynamicMask = GCForeground | GCBackground;
 
- /* First, create the sensitive GC (named normal_gc). */ 
+ /* First, create the sensitive GC (named normal_gc). */
    valueMask = GCForeground | GCBackground | GCGraphicsExposures;
    values.foreground = sw->primitive.foreground;
    values.background = sw->core.background_pixel;
    values.graphics_exposures = False;
 
- /* In order to set the GCFont field of the GC, we must gather XFontStruct 
+ /* In order to set the GCFont field of the GC, we must gather XFontStruct
     information out of the render table. This is only to get a reasonable
     initial value. XmStringDraw will pick the necessary fonts from the
-    render table, so we will not need to update the GC when the render 
-    table changes. */ 
+    render table, so we will not need to update the GC when the render
+    table changes. */
    if (XmeRenderTableGetDefaultFont(sw->string.render_table, &fs)) {
      values.font = fs->fid;
      valueMask |= GCFont;
@@ -403,7 +403,7 @@ CreateGC (
 
  /* Next, create the insensitive GC.  This GC will share the same
     foreground, background, font, and graphics exposures as the sensitive
-    GC, but will hold a different fill style and stipple pattern. */ 
+    GC, but will hold a different fill style and stipple pattern. */
    valueMask |= GCFillStyle | GCStipple;
    values.fill_style = FillStippled;
 
@@ -435,7 +435,7 @@ RegisterDropSite(
   Atom targets[5];
   Arg args[2];
   int n, nt;
-  
+
   /* Set up import targets.  These are the targets from which we can
      generate a compound string when a drop is made. */
   nt = 0;
@@ -449,7 +449,7 @@ RegisterDropSite(
     targets[nt++] = TEXT;
   }
   /* If you add any more targets, bump the array size. */
-  
+
   n = 0;
   XtSetArg(args[n], XmNimportTargets, targets); n++;
   XtSetArg(args[n], XmNnumImportTargets, nt); n++;
@@ -465,9 +465,9 @@ RegisterDropSite(
  *****************************************************************************/
 static void
 ExmStringTransferMoveFocus(
-     Widget w, 
-     XEvent *event, 
-     String *params, 
+     Widget w,
+     XEvent *event,
+     String *params,
      Cardinal *num_params)
 {
   XmProcessTraversal(w, XmTRAVERSE_CURRENT);
@@ -481,7 +481,7 @@ ExmStringTransferMoveFocus(
  *
  *****************************************************************************/
 static void
-ExmStringTransferProcessDrag( 
+ExmStringTransferProcessDrag(
      Widget w,
      XEvent *event,
      String *params,
@@ -490,23 +490,23 @@ ExmStringTransferProcessDrag(
  ExmStringTransferWidget stw = (ExmStringTransferWidget) w;
  Arg args[4];
  Cardinal n;
-  
+
   if (! stw -> string_transfer.own_primary) {
     ExmStringTransferPastePrimary(w, event, params, num_params);
     return;
   }
-  
+
   /* Initialize DragContext resources.  We want the drag icon to
      indicate text, and we support only the COPY operation. */
   n = 0;
   /* Normal drag and drop behavior will be to use the foreground
-     and background of the widget when creating the cursor or 
+     and background of the widget when creating the cursor or
      or the pixmap drag icon */
   XtSetArg(args[n], XmNcursorBackground, stw->core.background_pixel);  n++;
   XtSetArg(args[n], XmNcursorForeground, stw->primitive.foreground);  n++;
   /* We use the default text drag icon,  the same as used in
      the standard Motif widgets.  */
-  XtSetArg(args[n], XmNsourceCursorIcon, XmeGetTextualDragIcon(w));  n++; 
+  XtSetArg(args[n], XmNsourceCursorIcon, XmeGetTextualDragIcon(w));  n++;
   XtSetArg(args[n], XmNdragOperations, XmDROP_COPY); n++;
   (void) XmeDragSource(w, NULL, event, args, n);
 }
@@ -520,9 +520,9 @@ ExmStringTransferProcessDrag(
  *****************************************************************************/
 static void
 ExmStringTransferCopyPrimary(
-     Widget w, 
-     XEvent *event, 
-     String *params, 
+     Widget w,
+     XEvent *event,
+     String *params,
      Cardinal *num_params)
 {
  Time time;
@@ -534,13 +534,13 @@ ExmStringTransferCopyPrimary(
      from the last event the Intrinsics saw with a timestamp. */
   time = XtLastTimestampProcessed(XtDisplay(w));
 
-  /* Own the primary selection.  Indicate this to the user by 
+  /* Own the primary selection.  Indicate this to the user by
      reversing the foreground and background in the text rendition
      (eventually) */
   stw -> string_transfer.own_primary = True;
 
   /* Once we call XmePrimarySource,  the widget's transfer trait
-     convert method will get called if a destination wishes to 
+     convert method will get called if a destination wishes to
      obtain the PRIMARY selection */
   XmePrimarySource(w, time);
 
@@ -557,9 +557,9 @@ ExmStringTransferCopyPrimary(
  *****************************************************************************/
 static void
 ExmStringTransferCopyClipboard(
-     Widget w, 
-     XEvent *event, 
-     String *params, 
+     Widget w,
+     XEvent *event,
+     String *params,
      Cardinal *num_params)
 {
   Time time;
@@ -571,7 +571,7 @@ ExmStringTransferCopyClipboard(
   time = XtLastTimestampProcessed(XtDisplay(w));
 
   /* When we call XmeClipboardSource,  either the Motif clipboard
-     will request the current selection data or an external 
+     will request the current selection data or an external
      clipboard manager will obtain the data.  When the data is
      obtained,  the CLIPBOARD selection will be owned by the
      data holder */
@@ -587,9 +587,9 @@ ExmStringTransferCopyClipboard(
  *****************************************************************************/
 static void
 ExmStringTransferPastePrimary(
-     Widget w, 
-     XEvent *event, 
-     String *params, 
+     Widget w,
+     XEvent *event,
+     String *params,
      Cardinal *num_params)
 {
   Time time;
@@ -626,9 +626,9 @@ ExmStringTransferPastePrimary(
  *****************************************************************************/
 static void
 ExmStringTransferPasteClipboard(
-     Widget w, 
-     XEvent *event, 
-     String *params, 
+     Widget w,
+     XEvent *event,
+     String *params,
      Cardinal *num_params)
 {
   /* Calling XmeClipboardSink will start the process of requesting
@@ -640,7 +640,7 @@ ExmStringTransferPasteClipboard(
 
 /******************************************************************************
  *
- *  Trait Methods: 
+ *  Trait Methods:
  *      Provide two of the trait methods defined by the XmQTtransfer trait.
  *
  *****************************************************************************/
@@ -691,7 +691,7 @@ ConvertProc(
  Atom LOSE_SELECTION =
     XInternAtom(XtDisplay(w), XmS_MOTIF_LOSE_SELECTION, False);
 
-  /* We don't support links,  so refuse clipboard convert 
+  /* We don't support links,  so refuse clipboard convert
      requests which specify XmLINK in the parm field */
   if (cs -> selection == CLIPBOARD && cs -> parm == (XtPointer) XmLINK) {
     cs -> status = XmCONVERT_REFUSE;
@@ -778,7 +778,7 @@ ConvertProc(
 				    &format, &length, &nchars);
     if (cstatus == XmCONVERT_DONE && nchars == 0) {
       targs[n] = XA_STRING; n++;
-    } 
+    }
 
     /* If the locale is not STRING,  then make sure we can convert
        the locale and, if so, put it on the clipboard */
@@ -814,9 +814,9 @@ ConvertProc(
     if (cstatus == XmCONVERT_DONE) {
       converted = True;
     }
-  }   
+  }
 
-  if (converted) {  
+  if (converted) {
     /* Converted */
     if (cs -> status == XmCONVERT_MERGE) {
       /* A status of XmCONVERT_MERGE means that our value should be
@@ -887,7 +887,7 @@ ConvertCompoundString(
     /* For _MOTIF_COMPOUND_STRING, convert to ASN.1 format, and we're done. */
     *type = MOTIF_C_S;
     *format = 8;
-    *length = XmCvtXmStringToByteStream(cstring, (unsigned char **) value);
+    *length = XmStringSerialize(cstring, (unsigned char **)value);
     *nchars = 0;
     converted = True;
   }
@@ -1080,9 +1080,9 @@ DestinationProc(
   }
 
   if (ds -> selection == XA_MOTIF_DROP) {
-    XmDropProcCallbackStruct *cb = 
+    XmDropProcCallbackStruct *cb =
       (XmDropProcCallbackStruct *) ds -> destination_data;
-      
+
     /* No support for drop help. */
     if (cb -> dropAction == XmDROP_HELP ||
 	cb -> operation == XmDROP_NOOP) {
@@ -1153,10 +1153,8 @@ TransferProc(
 
   if (ss -> type == MOTIF_C_S) {
     /* For _MOTIF_COMPOUND_STRING, the data must be in ASN.1 format.
-       Convert to a compound string.
-       cstring = XmCvtByteStreamToXmString((unsigned char *) ss -> value, 
-       |                                                     ss -> length); */
-    cstring = XmCvtByteStreamToXmString((unsigned char *) ss -> value);
+       Convert to a compound string. */
+    cstring = XmStringUnserialize((unsigned char *)ss->value);
     transferred = True;
   }
 
@@ -1182,7 +1180,7 @@ TransferProc(
 
   if (ss -> type == XA_STRING || ss -> type == LOCALE_ATOM) {
     /* Convert either a XA_STRING (ISO8859-1 encoding) or the specific
-       locale encoding.  This will be the current locale of the 
+       locale encoding.  This will be the current locale of the
        application */
     XmString cstring1, sep, oldstring;
     char **strings;
