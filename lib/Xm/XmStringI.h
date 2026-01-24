@@ -68,6 +68,10 @@ typedef struct _XmFontListContextRec
                  ((_XmStringContextRec *)(cont))->current_seg
 #define _XmStrContOpt(cont)	  \
                  ((_XmStringContextRec *)(cont))->optimized
+#define _XmStrContPos(cont)      ((_XmStringContextRec *)(cont))->pos
+#define _XmStrContNextPos(cont)  ((_XmStringContextRec *)(cont))->next_pos
+#define _XmStrContLinePos(cont)  ((_XmStringContextRec *)(cont))->line_pos
+#define _XmStrContNextLinePos(cont) ((_XmStringContextRec *)(cont))->next_line_pos
 #define _XmStrContError(cont)	  ((_XmStringContextRec *)(cont))->error
 #define _XmStrContTabCount(cont)  ((_XmStringContextRec *)(cont))->tab_count
 #define _XmStrContDir(cont) 	  ((_XmStringContextRec *)(cont))->dir
@@ -94,6 +98,10 @@ enum
 typedef struct __XmStringContextRec
 {
     _XmString   	string;		/* pointer to internal string	*/
+    size_t      	pos;    	/* current character position */
+    size_t      	next_pos;  	/* next component's character position */
+    size_t      	line_pos;	/* offset into current line */
+    size_t      	next_line_pos;	/* next component's offset into current line */
     short       	current_line;	/* index of current line	*/
     unsigned short      current_seg;	/* index of current segment	*/
     Boolean     	optimized;      /* is string optimized		*/
@@ -848,6 +856,11 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
  * the buffer length optionally returned in *len_out.
  */
 extern char *_Xmcsconv(const char *from, const char *to, char *text, size_t bytes, size_t *len_out);
+
+/**
+ * Get the length of a UTF-8 string
+ */
+size_t _Xmstrlen(const unsigned char *s, size_t byte_count);
 
 extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;

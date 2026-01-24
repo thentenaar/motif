@@ -1000,6 +1000,154 @@ START_TEST(substr_simple)
 }
 END_TEST
 
+START_TEST(insert_null)
+{
+	XmString out;
+	XmString add = XmStringCreateLocalized("add");
+	ck_assert_msg((out = XmStringInsert(NULL, 0, add)) == add,
+	              "If s is NULL, a copy of add should be returned");
+	XmStringFree(out);
+	XmStringFree(add);
+}
+END_TEST
+
+START_TEST(insert_empty)
+{
+	XmString out;
+	XmString add = XmStringCreateLocalized("s");
+	XmString s   = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg((out = XmStringInsert(s, 0, add)) == add,
+	              "If s is empty, a copy of add should be returned");
+	XmStringFree(out);
+	XmStringFree(add);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(insert_addition_null)
+{
+	XmString out;
+	XmString s = XmStringCreateLocalized("add");
+	ck_assert_msg((out = XmStringInsert(s, 0, NULL)) == s,
+	              "If add is NULL, a copy of s should be returned");
+	XmStringFree(out);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(insert_addition_empty)
+{
+	XmString out;
+	XmString s   = XmStringCreateLocalized("s");
+	XmString add = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg((out = XmStringInsert(s, 0, add)) == s,\
+	               "If add is empty, a copy of s should be returned");
+	XmStringFree(out);
+	XmStringFree(add);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(insert_prepend)
+{
+	XtPointer text;
+	XmString s   = XmStringCreateLocalized("s");
+	XmString add = XmStringCreate("add", NULL);
+	XmString out = XmStringInsert(s, 0, add);
+	ck_assert_msg(out != s,   "The result should not be s");
+	ck_assert_msg(out != add, "The result should be be add");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The resulting string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "adds"),
+	              "The resulting unparsed text should be 'adds'");
+	XtFree(text);
+	XmStringFree(out);
+	XmStringFree(add);
+	XmStringFree(s);
+}
+END_TEST
+
+/**
+ * Attempting to insert beyond the end of the string is an append
+ */
+START_TEST(insert_append)
+{
+	XtPointer text;
+	XmString s   = XmStringCreateLocalized("s");
+	XmString add = XmStringCreate("add", NULL);
+	XmString out = XmStringInsert(add, 10, s);
+	ck_assert_msg(out != s,   "The result should not be s");
+	ck_assert_msg(out != add, "The result should be be add");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The resulting string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "adds"),
+	              "The resulting unparsed text should be 'adds'");
+	XtFree(text);
+	XmStringFree(out);
+	XmStringFree(add);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(insert_pre_component)
+{
+	XtPointer text;
+	XmString s, i, out;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("玉米超人", NULL);
+	s = XmStringConcatAndFree(s, XmStringCreateLocalized("superat"));
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"omnes", NULL));
+	i = XmStringCreateLocalized("non");
+
+	ck_assert_msg(XmStringLen(i) == 3,  "The inserted string should be 3 chars long");
+	ck_assert_msg(XmStringLen(s) == 16, "The subject string should be 16 chars long");
+	out = XmStringInsert(s, 11, i);
+	ck_assert_msg(XmStringLen(out) == 19, "The resulting string should be 19 chars long");
+	XmStringFree(i);
+	XmStringFree(s);
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The resulting string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "玉米超人superatnonomnes"),
+	              "The resulting unparsed text should be '玉米超人superatnonomnes'");
+	XtFree(text);
+	XmStringFree(out);
+}
+END_TEST
+
+START_TEST(insert_intra_component)
+{
+	XtPointer text;
+	XmString s, i, out;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("TP", NULL);
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("promeo", NULL));
+	i = XmStringCreateLocalized("culo");
+
+	ck_assert_msg(XmStringLen(i) == 4,  "The inserted string should be 4 chars long");
+	ck_assert_msg(XmStringLen(s) == 15, "The subject string should be 15 chars long");
+	out = XmStringInsert(s, 12, i);
+	ck_assert_msg(XmStringLen(out) == 19, "The resulting string should be 19 chars long");
+	XmStringFree(i);
+	XmStringFree(s);
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The resulting string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "TPindigeoproculomeo"),
+	              "The resulting unparsed text should be 'TPindigeoproculomeo'");
+	XtFree(text);
+	XmStringFree(out);
+
+}
+END_TEST
+
 START_TEST(valid_null)
 {
 	ck_assert_msg(!XmStringIsValid(NULL), "NULL strings aren't valid");
@@ -1109,6 +1257,45 @@ START_TEST(void_separator)
 
 	s = XmStringSeparatorCreate();
 	ck_assert_msg(!XmStringIsVoid(s), "Strings with separators are not void");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(len_null)
+{
+	ck_assert_msg(XmStringLen(NULL) == 0, "NULL should have no length");
+}
+END_TEST
+
+START_TEST(len_empty)
+{
+	XmString s;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringLen(s) == 0, "Empty strings have no length");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(len_optimized)
+{
+	XmString s;
+
+	s = XmStringCreateLocalized("motif");
+	ck_assert_msg(_XmStrOptimized(s), "String should be optimized");
+	ck_assert_msg(XmStringLen(s) == 5, "String should have a length of 5");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(len_unoptimized)
+{
+	XmString s, x;
+
+	s = XmStringCreate("\t玉米超人\tneeds TP\n", "UTF-8");
+	s = XmStringConcatAndFree(s, XmStringSeparatorCreate());
+	ck_assert_msg(!_XmStrOptimized(s), "String should be unoptimized");
+	ck_assert_msg(XmStringLen(s) == 16, "String should have a length of 16");
 	XmStringFree(s);
 }
 END_TEST
@@ -1317,6 +1504,7 @@ START_TEST(serialize_multibyte_length)
 	buf = XtMalloc(sz + 1);
 	fread(buf, 1, (size_t)sz, fp);
 	fclose(fp);
+	buf[sz] = '\0';
 
 	s = XmStringCreate(buf, "UTF-8");
 	ck_assert_msg(s, "Failed to create XmString");
@@ -1598,7 +1786,7 @@ START_TEST(serializedlen_empty)
 	ck_assert_msg(XmStringSerializedLength(stream) == 4,
 	              "An empty string is just a header");
 	XmStringFree(s);
-	XtFree((XtPointer)s);
+	XtFree((XtPointer)stream);
 }
 END_TEST
 
@@ -2105,6 +2293,19 @@ void xmstring_suite(SRunner *runner)
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
+	t = tcase_create("Insert");
+	tcase_add_test(t, insert_null);
+	tcase_add_test(t, insert_empty);
+	tcase_add_test(t, insert_addition_null);
+	tcase_add_test(t, insert_addition_empty);
+	tcase_add_test(t, insert_prepend);
+	tcase_add_test(t, insert_append);
+	tcase_add_test(t, insert_pre_component);
+	tcase_add_test(t, insert_intra_component);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
 	t = tcase_create("IsValid");
 	tcase_add_test(t, valid_null);
 	tcase_add_test(t, valid_refcnt_zero);
@@ -2123,6 +2324,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, void_text);
 	tcase_add_test(t, void_tab);
 	tcase_add_test(t, void_separator);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Len");
+	tcase_add_test(t, len_null);
+	tcase_add_test(t, len_empty);
+	tcase_add_test(t, len_optimized);
+	tcase_add_test(t, len_unoptimized);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

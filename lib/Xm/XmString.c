@@ -5908,6 +5908,7 @@ static void parse_unmatched(XmString *result, char **ptr,
   /* Choose a component type. */
   switch (text_type)
     {
+    case XmUTF8_TEXT:
     case XmCHARSET_TEXT:
       ctype = XmSTRING_COMPONENT_TEXT;
       break;
@@ -5949,7 +5950,11 @@ static void parse_unmatched(XmString *result, char **ptr,
     }
 
     outsz = (int)convsz;
-  } else unparse_text(&out, &outsz, text_type, ctype, length, *ptr, TO_UTF8);
+  } else {
+    if (text_type == XmCHARSET_TEXT && tag)
+      text_type = XmUTF8_TEXT;
+    unparse_text(&out, &outsz, text_type, ctype, length, *ptr, TO_UTF8);
+  }
 
   if (!out) {
     XmeWarning(NULL, "XmStringParse: Invalid characters in input string");
@@ -6917,6 +6922,7 @@ XmeStringGetComponent(_XmStringContext context,
 		      unsigned int    *length,
 		      XtPointer       *value)
 {
+  size_t sz;
   short			   tmp_index;
   Boolean		   optimized;
   char			   state;
@@ -6926,7 +6932,7 @@ XmeStringGetComponent(_XmStringContext context,
   XmStringDirection	   dir;
   XmStringTag		   tag = NULL;
   XmStringComponentType c_type;
-  int			   char_count = 0;
+  int			   byte_count = 0;
   XmTextType		   text_type = 0;
   char 		          *seg_text = NULL;
   XmStringTag	          *begin_rends = NULL;
@@ -6958,6 +6964,10 @@ XmeStringGetComponent(_XmStringContext context,
     return XmSTRING_COMPONENT_END;
   }
 
+  /* Advance our position markers */
+  _XmStrContPos(context)     = _XmStrContNextPos(context);
+  _XmStrContLinePos(context) = _XmStrContNextLinePos(context);
+
   /* Gather the current segment information. */
   state = _XmStrContState(context);
   optimized = _XmStrContOpt(context);
@@ -6972,7 +6982,7 @@ XmeStringGetComponent(_XmStringContext context,
     /* Only lookup push_dir when we need it. */
     /* Only lookup dir when we need it. */
     /* Only lookup tag when we need it. */
-    char_count  = _XmStrByteCount(opt);
+    byte_count  = _XmStrByteCount(opt);
     text_type   = (XmTextType) _XmStrTextType(opt);
     seg_text    = _XmStrText(opt);
     begin_count = _XmStrRendBegin(opt);
@@ -7031,7 +7041,7 @@ XmeStringGetComponent(_XmStringContext context,
       /* Only lookup push_dir when we need it. */
       /* Only lookup dir when we need it. */
       /* Only lookup tag when we need it. */
-      char_count  = _XmEntryByteCountGet(seg);
+      byte_count  = _XmEntryByteCountGet(seg);
       text_type   = (XmTextType) _XmEntryTextTypeGet(seg);
       seg_text    = (char*) _XmEntryTextGet(seg);
       begin_count = _XmEntryRendBeginCountGet(seg);
@@ -7160,6 +7170,8 @@ XmeStringGetComponent(_XmStringContext context,
 	    {
 	      _XmStrContState(context) = TAB_STATE;
 	      _XmStrContTabCount(context) = tmp_index + 1;
+	      _XmStrContNextPos(context)++;
+	      _XmStrContNextLinePos(context)++;
 	    }
 
 	  _XmProcessUnlock();
@@ -7176,7 +7188,7 @@ XmeStringGetComponent(_XmStringContext context,
 	  /* Try to resolve unset directions. */
 	  if (dir == XmSTRING_DIRECTION_UNSET)
 	    {
-	      if ((char_count > 0) || (_XmStrContDir(context) == XmSTRING_DIRECTION_UNSET))
+	      if ((byte_count > 0) || (_XmStrContDir(context) == XmSTRING_DIRECTION_UNSET))
 	        dir = XmSTRING_DIRECTION_L_TO_R;
 	      else skip = TRUE;
 	    }
@@ -7223,17 +7235,17 @@ XmeStringGetComponent(_XmStringContext context,
 	  }
 
 	  if (copy_data && _XmStrContWantUtf8Text(context)) {
-	    *length = char_count;
-	    *value  = XtMalloc(char_count + sizeof(wchar_t));
-	    memcpy(*value, seg_text, char_count);
-	    memset(*value + char_count, 0, sizeof(wchar_t));
+	    *length = byte_count;
+	    *value  = XtMalloc(byte_count + sizeof(wchar_t));
+	    memcpy(*value, seg_text, byte_count);
+	    memset((char *)*value + byte_count, 0, sizeof(wchar_t));
 	  }
 
 	  if (!_XmStrContWantUtf8Text(context)) {
 	    out     = NULL;
 	    *length = 0;
 	    unparse_text(&out, (int *)length, text_type, c_type,
-	                 char_count, seg_text, _XmStrContTag(context));
+	                 byte_count, seg_text, _XmStrContTag(context));
 	    *value = out;
 	    if (!copy_data) {
 	      XtFree(_XmStrContTmpText(context));
@@ -7242,7 +7254,7 @@ XmeStringGetComponent(_XmStringContext context,
 	  }
 
 	  if (!copy_data && _XmStrContWantUtf8Text(context)) {
-	    *length = seg_text ? char_count : 0;
+	    *length = seg_text ? byte_count : 0;
 	    *value  = seg_text ? seg_text : XmS;
 	  }
 
@@ -7250,6 +7262,12 @@ XmeStringGetComponent(_XmStringContext context,
 	    {
 	      _XmStrContState(context) = END_REND_STATE;
 	      _XmStrContRendIndex(context) = 0;
+
+	      if (seg_text) {
+	          sz = _Xmstrlen((const unsigned char *)seg_text, byte_count);
+	          _XmStrContNextPos(context)     += sz;
+	          _XmStrContNextLinePos(context) += sz;
+	      }
 	    }
 
 	  _XmProcessUnlock();
@@ -7321,6 +7339,8 @@ XmeStringGetComponent(_XmStringContext context,
 	      _XmStrContState(context) = PUSH_STATE;
 	      _XmStrContCurrSeg(context) = 0;
 	      _XmStrContCurrLine(context)++;
+	      _XmStrContNextPos(context)++;
+	      _XmStrContNextLinePos(context) = 0;
 	    }
 
 	  _XmProcessUnlock();
@@ -7400,11 +7420,11 @@ _XmStringContextCopy(_XmStringContext target,
   memcpy(target, source, sizeof(_XmStringContextRec));
 
   /* Copy the active renditions list so we can modify it. */
-  if (_XmStrContRendCount(target) > 0) {
+  if (_XmStrContRendTags(source) && _XmStrContRendCount(target) > 0) {
      size = sizeof(XmStringTag) * _XmStrContRendCount(target);
      _XmStrContRendTags(target) = (XmStringTag*) XtMalloc(size);
      memcpy(_XmStrContRendTags(target), _XmStrContRendTags(source), size);
-  }
+  } else _XmStrContRendTags(target) = NULL;
 }
 
 /*

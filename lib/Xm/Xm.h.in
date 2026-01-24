@@ -1624,6 +1624,8 @@ extern Boolean XmStringInitContext(XmStringContext *context, XmString string);
 extern void XmStringFreeContext(XmStringContext context);
 extern void XmStringContextWantUtf8Text(XmStringContext context, Boolean want_utf8);
 extern Boolean XmStringIsValid(const XmString string);
+extern size_t XmStringLen(const XmString s);
+extern XmString XmStringInsert(const XmString s, XmTextPosition pos, const XmString addition);
 
 extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,

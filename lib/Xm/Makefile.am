@@ -232,7 +232,7 @@ SRCS2 = Desktop.c       Messages.c      Transltns.c     RepType.c \
         RCLayout.c      GetPixData.c    RCPopup.c       Trait.c  \
         Synthetic.c     XmFontList.c    ClipWindow.c    Transfer.c \
         Hash.c          ScrollFrameT.c  XmStringValid.c XmStringSerialize.c \
-        XmTabList.c     Resolve.c       XmStringFunc.c  \
+        XmTabList.c     Resolve.c       XmStringFunc.c  XmStringOps.c \
         XmRenderT.c     PixConv.c       Color.c         Xm.c \
         CareVisualT.c   Direction.c     SlideC.c \
         IsMwmRun.c      MenuProc.c      MenuState.c     TextFind.c \
