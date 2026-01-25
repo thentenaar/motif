@@ -698,6 +698,7 @@ main(int argc, char *argv[])
 	WriteHeader (tagline, phile, abi);
     }
     WriteSource(tagline, abi);
+    free(tagline);
     return 0;
 }
 

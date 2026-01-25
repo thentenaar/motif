@@ -74,6 +74,7 @@ START_TEST(add_child)
 	ck_assert_msg(dw->desktop.children && dw->desktop.children[0] == x,
 	              "Child[0] should be child");
 
+	XtDestroyWidget(x);
 	XtDestroyWidget(w);
 }
 END_TEST
@@ -99,6 +100,7 @@ START_TEST(delete_child)
 	ck_assert_msg(dw->desktop.num_slots == 2,  "Should have 2 slots");
 	ck_assert_msg(!(dw->desktop.num_children), "Should have 0 children");
 	ck_assert_msg(!dw->desktop.children[0],    "The former child should be NULL");
+	XtDestroyWidget(x);
 	XtDestroyWidget(w);
 }
 END_TEST
@@ -135,6 +137,7 @@ START_TEST(delete_one_of_many)
 	ck_assert_msg(d->desktop.num_children == 2,           "Should have 2 children");
 	ck_assert_msg(d->desktop.children[0]  == children[0], "Unexpected child[0]");
 	ck_assert_msg(d->desktop.children[1]  == children[2], "Unexpected child[1]");
+	for (i = 0; i < 3; i++) { XtDestroyWidget(children[i]); }
 	XtDestroyWidget(w);
 }
 END_TEST

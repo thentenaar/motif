@@ -567,12 +567,18 @@ START_TEST(generate_tag)
 	XmStringComponentType t, ext;
 
 	ext = (tag_text_type[_i] == XmCHARSET_TEXT) ? XmSTRING_COMPONENT_TAG : XmSTRING_COMPONENT_LOCALE;
-	ck_assert_msg(s = XmStringGenerate("text", "UTF-8", tag_text_type[_i], NULL),
-	              "Expected non-NULL result for tag");
+	s = XmStringGenerate(
+		tag_text_type[_i] == XmWIDECHAR_TEXT ? (const char *)L"text" :
+		                                       "text",
+		"UTF-8", tag_text_type[_i], NULL
+	);
+
+	ck_assert_msg(s, "Expected non-NULL result for tag");
 	XmStringInitContext(&ctx, s);
 	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 	ck_assert_msg(t == ext, "Unexpected tag type");
 	ck_assert_msg(len == 5, "Unexpected tag length");
+	XtFree(val);
 	XmStringFree(s);
 	XmStringFreeContext(ctx);
 }
@@ -618,6 +624,7 @@ START_TEST(generate_charset)
 		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 		ck_assert_msg(t   == extype[i], "Unexpected component type");
 		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+		XtFree(val);
 	}
 
 	XmStringFreeContext(ctx);
@@ -657,6 +664,7 @@ START_TEST(generate_widechar)
 		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 		ck_assert_msg(t   == extype[i], "Unexpected component type");
 		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+		XtFree(val);
 	}
 
 	XmStringFreeContext(ctx);
@@ -698,6 +706,7 @@ START_TEST(generate_multibyte)
 		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 		ck_assert_msg(t   == extype[i], "Unexpected component type");
 		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+		XtFree(val);
 	}
 
 	XmStringFreeContext(ctx);
@@ -739,6 +748,7 @@ START_TEST(generate_utf8_line_separator)
 		t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 		ck_assert_msg(t   == extype[i], "Unexpected component type");
 		ck_assert_msg(len == exlen[i],  "Unexpected component length");
+		XtFree(val);
 	}
 
 	XmStringFreeContext(ctx);
@@ -787,12 +797,13 @@ START_TEST(generate_utf8_direction_markers)
 
 	/* Probe string composition, check direction */
 	XmStringInitContext(&ctx, s);
-	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
+	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val); XtFree(val);
 	t = XmStringGetNextTriple(ctx, &len, (XtPointer *)&val);
 	ck_assert_msg(t == XmSTRING_COMPONENT_DIRECTION, "Expected direction");
 	ck_assert_msg(len == sizeof(XmStringDirection), "Incorrect length");
 	ck_assert_msg(val && *(XmStringDirection *)val == u_directions[_i].dir,
 	              "Incorrect string direction");
+	XtFree(val);
 	XmStringFreeContext(ctx);
 	XmStringFree(s);
 }

@@ -1783,7 +1783,7 @@ _XmCharsetCanonicalize(
       len = strlen(XmSTRING_ISO8859_1);
 
       new_s = XtMalloc(len + 1);
-      strncpy(new_s, XmSTRING_ISO8859_1, len);
+      strncpy(new_s, XmSTRING_ISO8859_1, len + 1);
       new_s[len] = '\0';
     }
   else if (_isISO(charset))

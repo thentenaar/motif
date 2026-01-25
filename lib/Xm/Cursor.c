@@ -83,6 +83,7 @@ static Pixmap render_cursor(Display *display, Screen *screen, const char *filena
 		old = img;
 		img = img->f.sub_image(img, 0, 0, size, size);
 		XDestroyImage(old);
+		XFree(old);
 	} else {
 #if !XM_WITH_PNG
 		goto done;

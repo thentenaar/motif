@@ -60,6 +60,7 @@ START_TEST(load_test_image)
 	ck_assert_msg(img->width == 4 && img->height == 1, "Expected 4x1 image");
 	ck_assert_msg(XImageIsSVG(img), "Expected XImageIsSVG");
 	XDestroyImage(img);
+	XFree(img);
 }
 END_TEST
 
@@ -98,6 +99,7 @@ START_TEST(rasterize_image)
 	ck_assert_msg((unsigned char)rast->data[12] == 0x00, "Expected pixel 4 to be transparent (a)");
 	XDestroyImage(rast);
 	XDestroyImage(img);
+	XFree(img);
 }
 END_TEST
 

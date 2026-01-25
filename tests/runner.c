@@ -27,13 +27,13 @@
 #include "suites.h"
 
 XtAppContext app;
+Widget shell;
 
 /**
  * Xt fixture
  */
 Widget init_xt(const char *klass)
 {
-	Widget shell;
 	int argc = 0;
 
 	XtSetLanguageProc(NULL, NULL, NULL);
@@ -45,9 +45,10 @@ Widget init_xt(const char *klass)
 
 void uninit_xt(void)
 {
-	if (app)
-		XtDestroyApplicationContext(app);
-	app = NULL;
+	if (shell) XtDestroyWidget(shell);
+	if (app)   XtDestroyApplicationContext(app);
+	shell = NULL;
+	app   = NULL;
 }
 
 int main(int argc, char *argv[])
