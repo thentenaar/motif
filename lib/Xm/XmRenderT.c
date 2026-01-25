@@ -2014,7 +2014,6 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 			static int count_rend=0, num_rend;
 			num_rend = GetSameRenditions(rend_cache, rend, count_rend);
 
-			XftInit(NULL);
 			if(num_rend >= 0 && (display == _XmRendDisplay(rend_cache[num_rend]))) {
 				_XmRendXftFont(rend) = _XmRendXftFont(rend_cache[num_rend]);
 			} else {
@@ -2056,6 +2055,7 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 
 				p = XftFontMatch(display, 0, _XmRendPattern(rend), &res);
 				_XmRendXftFont(rend) = XftFontOpenPattern(display, p);
+				FcPatternDestroy(p);
 				rend_cache = (XmRendition *)XtRealloc((char *)rend_cache,
 				                                      (Cardinal)(sizeof(XmRendition) * (count_rend + 1)));
 				rend_cache[count_rend++] =_XmRenditionCopy(rend, TRUE);
