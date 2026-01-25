@@ -147,6 +147,30 @@ static XmString terminate_renditions(const XmString s, XmStringContext ctx)
 }
 
 /**
+ * Return a set of RENDITION_BEGINs for each currently active rendition
+ * in the given context
+ */
+static XmString current_renditions(const XmStringContext ctx)
+{
+	short i;
+	XmString tmp, out = NULL;
+
+	if (!ctx)
+		return NULL;
+
+	for (i = 0; i < _XmStrContRendCount(ctx); i++) {
+		tmp = XmStringComponentCreate(
+			XmSTRING_COMPONENT_RENDITION_BEGIN,
+			strlen(_XmStrContRendTags(ctx)[i]),
+			_XmStrContRendTags(ctx)[i]
+		);
+		out = XmStringConcatAndFree(out, tmp);
+	}
+
+	return out;
+}
+
+/**
  * Separators and tabs count for one character each, other non-text
  * components (e.g., control characters) have no length.
  */
@@ -169,6 +193,69 @@ size_t XmStringLen(const XmString s)
 	XmStringFreeContext(ctx);
 	_XmProcessUnlock();
 	return c_len;
+}
+
+/**
+ * Slice an XmString, yielding a substring
+ */
+XmString XmStringSubstr(const XmString s, XmTextPosition pos, size_t length)
+{
+	XtPointer val;
+	unsigned int len;
+	size_t mid_len;
+	Boolean first = False;
+	XmString out = NULL;
+	XmStringContext ctx;
+	XmStringComponentType t = XmSTRING_COMPONENT_UNKNOWN;
+
+	if (XmStringEmpty(s) || !length)
+		return NULL;
+
+	_XmProcessLock();
+	XmStringInitContext(&ctx, s);
+	XmStringContextWantUtf8Text(ctx, True);
+
+	while (t != XmSTRING_COMPONENT_END) {
+		t = XmeStringGetComponent(ctx, True, False, &len, &val);
+		if (_XmStrContNextPos(ctx) <= (size_t)pos)
+			continue;
+		if (_XmStrContPos(ctx) > (size_t)pos + length)
+			break;
+
+		if (!first) {
+			/* Output currently active renditions on our first component */
+			out = XmStringConcatAndFree(out, current_renditions(ctx));
+			first = True;
+		}
+
+		if (t == XmSTRING_COMPONENT_TEXT        ||
+		    t == XmSTRING_COMPONENT_LOCALE_TEXT ||
+		    t == XmSTRING_COMPONENT_WIDECHAR_TEXT)
+			out = XmStringConcatAndFree(out, create_tag(ctx, t));
+
+		/* We're starting inside the component */
+		if (_XmStrContPos(ctx) < (size_t)pos) {
+			mid_len = advance(val, (size_t)pos - _XmStrContPos(ctx));
+			val  = (XtPointer)((char *)val + mid_len);
+			len -= mid_len;
+		}
+
+		/* The whole component fits */
+		if (_XmStrContNextPos(ctx) <= (size_t)pos + length) {
+			out = XmStringConcatAndFree(out, XmStringComponentCreate(t, len, val));
+			continue;
+		}
+
+		/* Partial fit */
+		if (_XmStrContPos(ctx) <= (size_t)pos)
+			mid_len = advance(val, length);
+		else mid_len = advance(val, (size_t)pos + length - _XmStrContPos(ctx));
+		out = XmStringConcatAndFree(out, XmStringComponentCreate(t, mid_len, val));
+	}
+
+	XmStringFreeContext(ctx);
+	_XmProcessUnlock();
+	return out;
 }
 
 /**

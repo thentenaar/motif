@@ -942,7 +942,7 @@ START_TEST(getnexttriple_wide_utf8)
 }
 END_TEST
 
-START_TEST(string_null)
+START_TEST(hassubstr_null)
 {
 	XmString ss;
 
@@ -952,7 +952,7 @@ START_TEST(string_null)
 }
 END_TEST
 
-START_TEST(string_empty)
+START_TEST(hassubstr_empty_str)
 {
 	XmString s, ss;
 
@@ -964,7 +964,7 @@ START_TEST(string_empty)
 }
 END_TEST
 
-START_TEST(substr_null)
+START_TEST(hassubstr_null_str)
 {
 	XmString s;
 
@@ -974,7 +974,7 @@ START_TEST(substr_null)
 }
 END_TEST
 
-START_TEST(substr_empty)
+START_TEST(hassubstr_empty)
 {
 	XmString s, ss;
 
@@ -986,7 +986,7 @@ START_TEST(substr_empty)
 }
 END_TEST
 
-START_TEST(substr_simple)
+START_TEST(hassubstr_simple)
 {
 	XmString s, ss;
 
@@ -1821,6 +1821,150 @@ START_TEST(serializedlen_unoptimized)
 }
 END_TEST
 
+START_TEST(substr_null)
+{
+	ck_assert_msg(!XmStringSubstr(NULL, 0, 3),
+	              "If s is NULL, NULL should be returned");
+}
+END_TEST
+
+START_TEST(substr_empty)
+{
+	XmString s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(!XmStringSubstr(s, 0, 3), "If s is empty, NULL should be returned");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_zero_len)
+{
+	XmString s = XmStringCreateLocalized("test");
+	ck_assert_msg(!XmStringSubstr(s, 2, 0), "If length is 0, NULL should be returned");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_whole_component)
+{
+	XtPointer text;
+	XmString s, sub;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("TP", NULL);
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("pro", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateLocalized("culo"));
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"meo", NULL));
+
+	ck_assert_msg(XmStringLen(s) == 19, "Subject string should be 19 chars");
+	ck_assert_msg(sub = XmStringSubstr(s, 12, 4), "Should have a substring");
+	ck_assert_msg(XmStringLen(sub) == 4, "Substring should be 4 chars long");
+	XmStringFree(s);
+
+	text = XmStringUnparse(sub, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The substring should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "culo"),
+	              "The unparsed substring should be 'culo'");
+	XtFree(text);
+	XmStringFree(sub);
+}
+END_TEST
+
+START_TEST(substr_partial_component)
+{
+	XtPointer text;
+	XmString s, sub;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringCreateMultibyte("TP", NULL);
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("pro", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateLocalized("culo"));
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"meo", NULL));
+
+	ck_assert_msg(XmStringLen(s) == 19, "Subject string should be 19 chars");
+	ck_assert_msg(sub = XmStringSubstr(s, 4, 3), "Should have a substring");
+	ck_assert_msg(XmStringLen(sub) == 3, "Substring should be 3 chars long");
+	XmStringFree(s);
+
+	text = XmStringUnparse(sub, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The substring should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "dig"),
+	              "The unparsed substring should be 'dig'");
+	XtFree(text);
+	XmStringFree(sub);
+}
+END_TEST
+
+START_TEST(substr_inter_component)
+{
+	unsigned int len;
+	XtPointer text, val;
+	XmString s, sub;
+	XmStringContext ctx;
+
+	setlocale(LC_CTYPE, "C.UTF-8");
+	_XmStringSetLocaleTag("C");
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, 4, "rend");
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("TP", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
+	s = XmStringConcatAndFree(s, XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END, 4, "rend"));
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("pro", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateLocalized("culo"));
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"meo", NULL));
+
+	ck_assert_msg(XmStringLen(s) == 19, "Subject string should be 19 chars");
+	ck_assert_msg(sub = XmStringSubstr(s, 4, 6), "Should have a substring");
+	ck_assert_msg(XmStringLen(sub) == 6, "Substring should be 6 chars long");
+	XmStringFree(s);
+
+	XmStringInitContext(&ctx, sub);
+	ck_assert_msg(XmStringGetNextTriple(ctx, &len, &val) == XmSTRING_COMPONENT_RENDITION_BEGIN,
+	              "First substring component should be a rendition begin");
+	ck_assert_msg(!strcmp(val, "rend"), "Rendition tag should be 'rend'");
+	XtFree(val);
+	XmStringFreeContext(ctx);
+
+	text = XmStringUnparse(sub, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	ck_assert_msg(text, "The substring should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "digeop"),
+	              "The unparsed substring should be 'digeop'");
+	XtFree(text);
+	XmStringFree(sub);
+}
+END_TEST
+
+START_TEST(substr_pos_beyond_end)
+{
+	XmString s = XmStringCreateLocalized("test");
+	ck_assert_msg(!XmStringSubstr(s, 6, 3),
+	             "If pos is beyond the end of the subject string, "
+	             "NULL should be returned");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(substr_beyond_end)
+{
+	XmString sub;
+	XtPointer text;
+
+	XmString s = XmStringCreateLocalized("test");
+	ck_assert_msg(sub = XmStringSubstr(s, 2, 4), "Should have a substring");
+	ck_assert_msg(XmStringLen(sub) == 2, "Substring should be 2 chars long");
+	XmStringFree(s);
+
+	text = XmStringUnparse(sub, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	XmStringFree(sub);
+	ck_assert_msg(text, "The substring should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "st"),
+	              "The unparsed substring should be 'st'");
+	XtFree(text);
+}
+END_TEST
+
 /**
  * Test that we're able to Parse/Unparse Unicode control chars in
  * different Unicode-ish character sets based on the internal UTF-8
@@ -2284,11 +2428,11 @@ void xmstring_suite(SRunner *runner)
 	suite_add_tcase(s, t);
 
 	t = tcase_create("HasSubstring");
-	tcase_add_test(t, string_null);
-	tcase_add_test(t, string_empty);
-	tcase_add_test(t, substr_null);
-	tcase_add_test(t, substr_empty);
-	tcase_add_test(t, substr_simple);
+	tcase_add_test(t, hassubstr_null_str);
+	tcase_add_test(t, hassubstr_empty_str);
+	tcase_add_test(t, hassubstr_null);
+	tcase_add_test(t, hassubstr_empty);
+	tcase_add_test(t, hassubstr_simple);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
@@ -2380,6 +2524,19 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, serializedlen_empty);
 	tcase_add_test(t, serializedlen_optimized);
 	tcase_add_test(t, serializedlen_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Substr");
+	tcase_add_test(t, substr_null);
+	tcase_add_test(t, substr_empty);
+	tcase_add_test(t, substr_zero_len);
+	tcase_add_test(t, substr_whole_component);
+	tcase_add_test(t, substr_partial_component);
+	tcase_add_test(t, substr_inter_component);
+	tcase_add_test(t, substr_pos_beyond_end);
+	tcase_add_test(t, substr_beyond_end);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
