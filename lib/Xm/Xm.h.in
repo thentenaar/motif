@@ -1627,6 +1627,8 @@ extern Boolean XmStringIsValid(const XmString string);
 extern size_t XmStringLen(const XmString s);
 extern XmString XmStringSubstr(const XmString s, XmTextPosition pos, size_t length);
 extern XmString XmStringInsert(const XmString s, XmTextPosition pos, const XmString addition);
+extern XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
+                                const XmString replacement);
 
 extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,

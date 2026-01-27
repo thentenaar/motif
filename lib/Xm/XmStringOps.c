@@ -362,3 +362,97 @@ XmString XmStringInsert(const XmString s, XmTextPosition pos, const XmString add
 	return out;
 }
 
+/**
+ * Replace a portion of an XmString with \a replacement
+ */
+XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
+                         const XmString replacement)
+{
+	XtPointer val;
+	unsigned int len;
+	size_t mid_len, off;
+	Boolean r_empty;
+	XmString tmp, out = NULL, tail = NULL;
+	XmStringContext ctx, ctx2;
+	XmStringComponentType t = XmSTRING_COMPONENT_UNKNOWN, t2;
+
+	r_empty = XmStringEmpty(replacement);
+	if (XmStringEmpty(s))
+		return r_empty ? NULL : XmStringCopy(replacement);
+
+	if (!r_empty && !pos && !length)
+		return XmStringInsert(s, 0, replacement);
+
+	if ((size_t)pos >= XmStringLen(s))
+		return XmStringCopy(s);
+
+	_XmProcessLock();
+	XmStringInitContext(&ctx, s);
+	XmStringContextWantUtf8Text(ctx, True);
+
+	while (t != XmSTRING_COMPONENT_END) {
+		t = XmeStringGetComponent(ctx, True, False, &len, &val);
+		if (_XmStrContNextPos(ctx) <= (size_t)pos ||
+		    _XmStrContPos(ctx)     >= (size_t)pos + length) {
+			/* Everything around our replacement point is passthrough */
+			tmp = XmStringComponentCreate(t, len, val);
+			out = XmStringConcatAndFree(out, tmp);
+			continue;
+		}
+
+		/* Replacement begins inside the current text component */
+		if (_XmStrContPos(ctx) < (size_t)pos) {
+			mid_len = advance(val, (size_t)pos - _XmStrContPos(ctx));
+			out = XmStringConcatAndFree(out, XmStringComponentCreate(t, mid_len, val));
+		}
+
+		/**
+		 * Be careful of rendition ends within the replaced portion of
+		 * the original string.
+		 */
+		if (t == XmSTRING_COMPONENT_RENDITION_END) {
+			tmp = XmStringComponentCreate(t, len, val);
+			out = XmStringConcatAndFree(out, tmp);
+		}
+
+		do {
+			if (_XmStrContNextPos(ctx) > (size_t)pos + length) {
+				tail = XmStringConcatAndFree(tail, create_tag(ctx, t));
+
+				/* Replacement ends inside another component */
+				if (_XmStrContPos(ctx) < (size_t)pos + length) {
+					off     = advance(val, ((size_t)pos + length) - _XmStrContPos(ctx));
+					mid_len = advance((unsigned char *)val + off, _XmStrContNextPos(ctx) - ((size_t)pos + length));
+					tail    = XmStringConcatAndFree(tail, XmStringComponentCreate(t, mid_len, (char *)val + off));
+				}
+				break;
+			}
+
+			if (t == XmSTRING_COMPONENT_RENDITION_END) {
+				tmp = XmStringComponentCreate(t, len, val);
+				out = XmStringConcatAndFree(out, tmp);
+			}
+		} while ((t = XmeStringGetComponent(ctx, True, False, &len, &val)) != XmSTRING_COMPONENT_END);
+
+		/**
+		 * Insert our replacement
+		 */
+		if (!XmStringEmpty(replacement)) {
+			XmStringInitContext(&ctx2, replacement);
+			XmStringContextWantUtf8Text(ctx2, True);
+			while ((t2 = XmeStringGetComponent(ctx2, True, False, &len, &val)) != XmSTRING_COMPONENT_END) {
+				tmp = XmStringComponentCreate(t2, len, val);
+				out = XmStringConcatAndFree(out, tmp);
+			}
+			out = XmStringConcatAndFree(out, terminate_renditions(NULL, ctx2));
+			XmStringFreeContext(ctx2);
+		}
+
+		out = XmStringConcatAndFree(out, tail);
+	}
+
+	XmStringFreeContext(ctx);
+	_XmProcessUnlock();
+	return out;
+}
+

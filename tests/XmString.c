@@ -1358,6 +1358,116 @@ START_TEST(line_count_unoptimized)
 }
 END_TEST
 
+START_TEST(replace_null)
+{
+	XmString repl = XmStringCreateLocalized("repl");
+	ck_assert_msg(XmStringReplace(NULL, 0, 1, repl) == repl,
+	              "Replacing into an empty string should yield the replacement");
+	ck_assert_msg(!XmStringReplace(NULL, 0, 1, NULL),
+	              "If both the string and replacement are NULL, NULL should be returned");
+	XmStringFree(repl);
+}
+END_TEST
+
+START_TEST(replace_empty)
+{
+	XmString repl = XmStringCreateLocalized("repl");
+	XmString s    = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringReplace(s, 0, 1, repl) == repl,
+	              "Replace on an empty string should yield the replacement");
+	XmStringFree(repl);
+}
+END_TEST
+
+START_TEST(replace_empty_replacement)
+{
+	XtPointer text;
+	XmString s = XmStringCreate("minarisne me? minari meo culo non potes... quia meo est", "ASCII");
+	XmString out = XmStringReplace(s, 0, 14, NULL);
+	XmStringFree(s);
+
+	ck_assert_msg(out, "Should have an output string");
+	ck_assert_msg(XmStringLen(out) == 41, "The mutated string should be 41 chars long");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	XmStringFree(out);
+	ck_assert_msg(text, "The mutated string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "minari meo culo non potes... quia meo est"),
+	              "The unparsed substring should be 'minari meo culo non potes... quia meo est'");
+	XtFree(text);
+}
+END_TEST
+
+START_TEST(replace_whole_component)
+{
+	XmString out;
+	XtPointer text;
+	XmString s = XmStringCreateLocalized("corpus tollas, ");
+	s = XmStringConcatAndFree(s, XmStringCreateWide(L"mentem ", NULL));
+	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("numquam!", NULL));
+	out = XmStringReplace(s, 15, 6, XmStringCreateWide(L"culum", NULL));
+	ck_assert_msg(out, "Should have an output string");
+	ck_assert_msg(XmStringLen(out) == 29, "The mutated string should be 29 chars long");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	XmStringFree(out);
+	ck_assert_msg(text, "The mutated string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "corpus tollas, culum numquam!"),
+	              "The unparsed substring should be 'corpus tollas, culum numquam!'");
+	XtFree(text);
+}
+END_TEST
+
+START_TEST(replace_partial_component)
+{
+	XmString out;
+	XtPointer text;
+	XmString s = XmStringCreateLocalized("nihil habes quid perdas prater mentem!");
+	out = XmStringReplace(s, 31, 6, XmStringCreateWide(L"culum!", NULL));
+	ck_assert_msg(out, "Should have an output string");
+	ck_assert_msg(XmStringLen(out) == 38, "The mutated string should be 38 chars long");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	XmStringFree(out);
+	ck_assert_msg(text, "The mutated string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "nihil habes quid perdas prater culum!!"),
+	              "The unparsed substring should be 'nihil habes quid perdas prater culum!!'");
+	XtFree(text);
+}
+END_TEST
+
+START_TEST(replace_inter_component)
+{
+	XmString out;
+	XtPointer text;
+	XmString s = XmStringCreateLocalized("Vox Curiae, ");
+	s   = XmStringConcatAndFree(s, XmStringCreateWide(L"Vox Populi", NULL));
+	out = XmStringReplace(s, 4, 11, XmStringCreateMultibyte("Culum, Silentium", NULL));
+	ck_assert_msg(out, "Should have an output string");
+	ck_assert_msg(XmStringLen(out) == 27, "The mutated string should be 27 chars long");
+
+	text = XmStringUnparse(out, NULL, XmUTF8_TEXT, XmUTF8_TEXT, NULL, 0, XmOUTPUT_ALL);
+	XmStringFree(out);
+	ck_assert_msg(text, "The mutated string should be able to be unparsed");
+	ck_assert_msg(!strcmp((const char *)text, "Vox Culum, Silentium Populi"),
+	              "The unparsed substring should be 'Vox Culum, Silentium Populi'");
+	XtFree(text);
+}
+END_TEST
+
+/* No replacement is performed */
+START_TEST(replace_pos_beyond_end)
+{
+	XmString s = XmStringCreateLocalized("a");
+	XmString b = XmStringCreateLocalized("b");
+	XmString out = XmStringReplace(s, 2, 1, b);
+	ck_assert_msg(out == s, "The output string should be a copy of the input string");
+	XmStringFree(b);
+	XmStringFree(s);
+	XmStringFree(out);
+}
+END_TEST
+
 START_TEST(serialize_null)
 {
 	unsigned char *ret = NULL;
@@ -2487,6 +2597,18 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_loop_test(t, line_count_separators, 1, 5);
 	tcase_add_test(t, line_count_optimized);
 	tcase_add_test(t, line_count_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Replace");
+	tcase_add_test(t, replace_null);
+	tcase_add_test(t, replace_empty);
+	tcase_add_test(t, replace_empty_replacement);
+	tcase_add_test(t, replace_whole_component);
+	tcase_add_test(t, replace_partial_component);
+	tcase_add_test(t, replace_inter_component);
+	tcase_add_test(t, replace_pos_beyond_end);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
