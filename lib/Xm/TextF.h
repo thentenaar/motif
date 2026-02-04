@@ -1,6 +1,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -40,7 +41,6 @@ typedef struct _XmTextFieldRec *XmTextFieldWidget;
  ******************/
 externalref WidgetClass       xmTextFieldWidgetClass;
 
-
 /************************
  * fast subclass define *
  ************************/
@@ -48,55 +48,20 @@ externalref WidgetClass       xmTextFieldWidgetClass;
 #define XmIsTextField(w)     XtIsSubclass(w, xmTextFieldWidgetClass)
 #endif /* XmIsTextField */
 
-
 /********************
  * public functions *
  ********************/
 
 /********    Public Function Declarations    ********/
 
-char * XmTextFieldGetString(
-                 Widget w);
-int XmTextFieldGetSubstring(
-                 Widget widget,
-                 XmTextPosition start,
-                 int num_chars,
-                 int buf_size,
-                 char *buffer);
-wchar_t * XmTextFieldGetStringWcs(
-                 Widget w);
-int XmTextFieldGetSubstringWcs(
-                 Widget widget,
-                 XmTextPosition start,
-                 int num_chars,
-                 int buf_size,
-                 wchar_t *buffer);
-XmTextPosition XmTextFieldGetLastPosition(
-                 Widget w);
-void XmTextFieldSetString(
-                 Widget w,
-                 char *value);
-void XmTextFieldSetStringWcs(
-                 Widget w,
-                 wchar_t *wc_value);
-void XmTextFieldReplace(
-                 Widget w,
-                 XmTextPosition from_pos,
-                 XmTextPosition to_pos,
-                 char *value);
-void XmTextFieldReplaceWcs(
-                 Widget w,
-                 XmTextPosition from_pos,
-                 XmTextPosition to_pos,
-                 wchar_t *wc_value);
-void XmTextFieldInsert(
-                 Widget w,
-                 XmTextPosition position,
-                 char *value);
-void XmTextFieldInsertWcs(
-                 Widget w,
-                 XmTextPosition position,
-                 wchar_t *wcstring);
+XmString XmTextFieldGetXmString(Widget w);
+XmString XmTextFieldSubstring(Widget w, XmTextPosition start, size_t length);
+XmTextPosition XmTextFieldGetLastPosition(Widget w);
+void XmTextFieldSetXmString(Widget w, XmString value);
+void XmTextFieldReplaceString(Widget w, XmTextPosition from,
+                              XmTextPosition to, XmString value);
+void XmTextFieldInsertString(Widget w, XmTextPosition pos, XmString value);
+
 void XmTextFieldSetAddMode(
                         Widget w,
                         Boolean state);
@@ -126,10 +91,9 @@ Boolean XmTextFieldGetSelectionPosition(
                  Widget w,
                  XmTextPosition *left,
                  XmTextPosition *right);
-char * XmTextFieldGetSelection(
-                 Widget w);
-wchar_t * XmTextFieldGetSelectionWcs(
-                 Widget w);
+
+XmString XmTextFieldGetSelectionString(Widget w);
+
 Boolean XmTextFieldRemove(
                  Widget w);
 Boolean XmTextFieldCopy(
@@ -188,9 +152,48 @@ Widget XmVaCreateManagedTextField(
 
 /********    End Public Function Declarations    ********/
 
+XM_ALTERNATIVE(Use XmTextFieldGetXmString instead)
+char *XmTextFieldGetString(Widget w);
+
+XM_ALTERNATIVE(Use XmTextFieldGetXmString instead)
+wchar_t * XmTextFieldGetStringWcs(Widget w);
+
+XM_ALTERNATIVE(Use XmTextFieldSubstring instead)
+int XmTextFieldGetSubstring(Widget widget, XmTextPosition start,
+                            int num_chars, int buf_size, char *buffer);
+
+XM_ALTERNATIVE(Use XmTextFieldSubstring instead)
+int XmTextFieldGetSubstringWcs(Widget widget, XmTextPosition start,
+                               int num_chars, int buf_size, wchar_t *buffer);
+
+XM_ALTERNATIVE(Use XmTextFieldSetXmString instead)
+void XmTextFieldSetString(Widget w, char *value);
+
+XM_ALTERNATIVE(Use XmTextFieldSetXmString instead)
+void XmTextFieldSetStringWcs(Widget w, wchar_t *wc_value);
+
+XM_ALTERNATIVE(Use XmTextFieldGetSelectionString instead)
+char * XmTextFieldGetSelection(Widget w);
+
+XM_ALTERNATIVE(Use XmTextFieldGetSelectionString instead)
+wchar_t * XmTextFieldGetSelectionWcs(Widget w);
+
+XM_ALTERNATIVE(Use XmTextFieldReplaceString instead)
+void XmTextFieldReplace(Widget w, XmTextPosition from_pos,
+                        XmTextPosition to_pos, char *value);
+
+XM_ALTERNATIVE(Use XmTextFieldReplaceString instead)
+void XmTextFieldReplaceWcs(Widget w, XmTextPosition from_pos,
+                           XmTextPosition to_pos, wchar_t *wc_value);
+
+XM_ALTERNATIVE(Use XmTextFieldInsertString instead)
+void XmTextFieldInsert(Widget w, XmTextPosition position, char *value);
+
+XM_ALTERNATIVE(Use XmTextFieldInsertString instead)
+void XmTextFieldInsertWcs(Widget w, XmTextPosition position, wchar_t *wcstring);
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif /* _XmTextF_h */
+

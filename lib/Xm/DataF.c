@@ -266,7 +266,7 @@ static Boolean df_ModifyVerify(
                         XmTextPosition *replace_prev,
                         XmTextPosition *replace_next,
                         char **insert,
-                        int *insert_length,
+                        size_t *insert_length,
 			XmTextPosition *newInsert,
 			int *free_insert) ;
 
@@ -2749,7 +2749,7 @@ static Boolean df_ModifyVerify(
 	XmTextPosition *replace_prev,
 	XmTextPosition *replace_next,
 	char **insert,
-	int *insert_length,
+	size_t *insert_length,
 	XmTextPosition *newInsert,
 	int *free_insert)
 {
@@ -3205,6 +3205,7 @@ Boolean _XmDataFieldReplaceText(
   XmTextPosition old_pos = replace_prev;
   int free_insert = (int)False;
   Position	x1, y1, x2, y2;
+  size_t il;
 
   df_VerifyBounds(tf, &replace_prev, &replace_next);
 
@@ -3242,11 +3243,13 @@ Boolean _XmDataFieldReplaceText(
      * continue with the action.
      */
      if (!df_ModifyVerify(tf, event, &replace_prev, &replace_next,
-		       &insert, &insert_length, &newInsert, &free_insert)) {
+		       &insert, &il, &newInsert, &free_insert)) {
         if (XmTextF_verify_bell(tf)) XBell(XtDisplay(tf), 0);
+        insert_length = (int)il;
 	if (free_insert) XtFree(insert);
 	return False;
      } else {
+        insert_length = (int)il;
         df_VerifyBounds(tf, &replace_prev, &replace_next);
         replace_length = (int) (replace_next - replace_prev);
         delta = insert_length - replace_length;
@@ -8420,12 +8423,13 @@ static Boolean df_SetValues(Widget old, Widget request, Widget new_w,
           */
 	  char *temp, *s_old;
 	  int free_insert;
+	  size_t il = XmTextF_string_length(new_tf);
           XmTextPosition fromPos = 0, toPos;
           toPos = XmTextF_string_length(old_tf);
 	  if (XmTextF_max_char_size(new_tf) == 1) {
 	     temp = XmTextF_value(new_tf);
 	     mod_ver_ret = df_ModifyVerify(new_tf, NULL, &fromPos, &toPos,
-					&temp, &XmTextF_string_length(new_tf),
+					&temp, &il,
 					&newInsert, &free_insert);
 	  } else {
 	     s_old = temp = XtMalloc((unsigned)((XmTextF_string_length(new_tf) + 1) *
@@ -8433,10 +8437,12 @@ static Boolean df_SetValues(Widget old, Widget request, Widget new_w,
 	     (void)wcstombs(temp, XmTextF_wc_value(new_tf),
 	         (XmTextF_string_length(new_tf) + 1) * XmTextF_max_char_size(new_tf));
 	     mod_ver_ret = df_ModifyVerify(new_tf, NULL, &fromPos, &toPos, &temp,
-					&XmTextF_string_length(new_tf), &newInsert,
+					&il, &newInsert,
 					&free_insert);
 	     if (s_old != temp) XtFree(s_old);
           }
+
+	  XmTextF_string_length(new_tf) = (int)il;
 	  if (free_insert) XtFree(temp);
           if (!mod_ver_ret) {
              if (XmTextF_verify_bell(new_tf)) XBell(XtDisplay(new_w), 0);
@@ -8972,7 +8978,7 @@ void XmDataFieldSetString(Widget w, char *value)
     XmDataFieldWidget tf = (XmDataFieldWidget) w;
     XmAnyCallbackStruct cb;
     XmTextPosition fromPos, toPos, newInsert;
-    int length;
+    size_t length;
     int free_insert = False;
     int ret_val = 0;
     char * mod_value = NULL;

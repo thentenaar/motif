@@ -1211,9 +1211,11 @@ Class
             XmNmaxLength;
             XmNmodifyVerifyCallback;
             XmNmodifyVerifyCallbackWcs;
+            XmNmodifyVerifyCallbackStr;
             XmNmotionVerifyCallback;
             XmNvalue;
             XmNvalueWcs;
+            XmNvalueString;
             XmNvalueChangedCallback;
             XmNverifyBell;
             ! Input resource set
@@ -1855,6 +1857,8 @@ Resource
         { };
     XmNmodifyVerifyCallbackWcs : Reason
         { };
+    XmNmodifyVerifyCallbackStr : Reason
+        { };
     XmNmotionVerifyCallback : Reason
         { };
     XmNpendingDelete : Argument
@@ -1899,6 +1903,9 @@ Resource
           Default = "1"; };
     XmNvalueWcs : Argument
         { Type = wide_character;
+          Default = "Null"; };
+    XmNvalueString : Argument
+        { Type = compound_string;
           Default = "Null"; };
     XmNwordWrap : Argument
         { Type = boolean;

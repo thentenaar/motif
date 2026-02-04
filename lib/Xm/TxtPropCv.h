@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -29,7 +29,25 @@
 #ifndef _XmTxtPropCvP_h
 #define _XmTxtPropCvP_h
 
-#include <Xm/Xm.h>
+#include <X11/Intrinsic.h>
+
+#ifndef _Xm_h
+typedef union __XmStringRec	*XmString;
+typedef XmString *XmStringTable;
+#endif
+
+/* We are making an attempt (perhaps unnecessaryily) to keep our style
+   constants the same as the equivalent Xlib style constants. The first
+   Motif specific style constant starts at 32 so that the consortium can
+   add constants to their list without overlapping with ours. */
+typedef enum {
+	XmSTYLE_STRING            = XStringStyle,
+	XmSTYLE_COMPOUND_TEXT     = XCompoundTextStyle,
+	XmSTYLE_TEXT              = XTextStyle,
+	XmSTYLE_STANDARD_ICC_TEXT = XStdICCTextStyle,
+	XmSTYLE_LOCALE            = 32,
+	XmSTYLE_COMPOUND_STRING
+} XmICCEncodingStyle;
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,11 +66,13 @@ extern int XmCvtTextPropertyToXmStringTable(Display *display,
 				 XmStringTable *string_table_return,
 				 int *count_return);
 
+extern int XmCvtXmStringToTextProperty(Display *d, XmString s, XTextProperty *prop);
+extern XmString XmCvtTextPropertyToXmString(Display *d, XTextProperty *prop);
+
 /********    End Public Function Declarations    ********/
 
 #ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+}
 #endif
-
 #endif  /* _XmTxtPropCvP_h */
-/* DON'T ADD STUFF AFTER THIS #endif */
+

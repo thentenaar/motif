@@ -36,6 +36,7 @@ static char rcsid[] = "$TOG: TextFSel.c /main/22 1997/10/14 15:38:30 cshi $"
 #include <Xm/TraitP.h>		/* for XmeTraitSet() */
 #include <Xm/TransferP.h>
 #include <Xm/TransferT.h>
+#include <Xm/TxtPropCv.h>
 #include <Xm/XmosP.h>
 #include "TextFI.h"
 #include "TextFSelI.h"
@@ -183,18 +184,19 @@ InsertSelection(
         int *format,
 	XtPointer tid)
 {
+  size_t num_chars;
+  char **list;
   _XmInsertSelect *_insert_select = (_XmInsertSelect *) closure;
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   XmTextPosition left = 0;
   XmTextPosition right = 0;
   Boolean replace_res = False;
   Boolean dest_disjoint = False;
-  wchar_t * wc_value;
-  char * temp;
-  int num_chars = 0;
+  int i, listlen;
   Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), XmSCOMPOUND_TEXT, False);
   Atom UTF8_STRING = XInternAtom(XtDisplay(w), XmSUTF8_STRING, False);
-  char * total_value = NULL;
+  XTextProperty prop;
+  XmString total_value = NULL;
   XmAnyCallbackStruct cb;
 
   if (!value) {
@@ -203,7 +205,7 @@ InsertSelection(
   }
 
   /* Don't do replace if there is not text to add */
-  if (*(char *) value == (char)'\0' || *length == 0){
+  if (!*(char *)value || !*length){
     XtFree((char *)value);
     _insert_select->done_status = True;
     return;
@@ -231,67 +233,21 @@ InsertSelection(
       left = right = TextF_CursorPosition(tf);
   }
 
+  prop.encoding = *type;
+  prop.format   = 8;
+  prop.value    = value;
+  prop.nitems   = *length;
+  total_value   = XmCvtTextPropertyToXmString(XtDisplayOfObject(w), &prop);
+  if (!total_value)
+    return;
 
-  if (*type == COMPOUND_TEXT || *type == XA_STRING || *type == UTF8_STRING) {
-    total_value =  _XmTextToLocaleText(w, value, *type, *format,
-				       *length, NULL);
-    if (total_value) {
-      if (tf->text.max_char_size == 1) {
-	num_chars = strlen(total_value);
-	replace_res = _XmTextFieldReplaceText(tf,
-					      (XEvent *)_insert_select->event,
-					      left, right, total_value,
-					      num_chars, True);
-      } else { /* must convert to wchar_t before passing to Replace */
-	int len = strlen(total_value) + 1;
-	wc_value = (wchar_t *)XtMalloc((unsigned) len * sizeof(wchar_t));
-	num_chars = mbstowcs(wc_value, total_value, len);
-	if (num_chars < 0)
-	  num_chars = 0;
-	else
-	  replace_res = _XmTextFieldReplaceText(tf,
-                                                (XEvent *)_insert_select->event,
-                                                left, right, (char*) wc_value,
-                                                num_chars, True);
-	XtFree((char *)wc_value);
-      }
-      XtFree(total_value);
-    }
-  } else { /* it must be either TEXT or codeset of the locale */
-    if (tf->text.max_char_size == 1) {
-      /* NOTE: casting *length could result in a truncated long. */
-      num_chars = *length;
-      replace_res = _XmTextFieldReplaceText(tf,
-					    (XEvent *)_insert_select->event,
-					    left, right, (char *)value,
-					    (unsigned)*length, True);
-    } else {
-      temp = XtMalloc((unsigned) *length + 1);
-      /* NOTE: casting *length could result in a truncated long. */
-      (void)memcpy((void*)temp, (void*)value, (size_t)*length);
-      temp[*length] = '\0';
-      wc_value = (wchar_t*)XtMalloc((unsigned)
-				    (*length + 1) * sizeof(wchar_t));
-
-      /* NOTE: casting *length could result in a truncated long. */
-      num_chars = mbstowcs(wc_value, temp, (unsigned)*length + 1);
-      if (num_chars < 0)
-	num_chars = 0;
-      else
-	replace_res = _XmTextFieldReplaceText(tf,
-					      (XEvent *)_insert_select->event,
-					      left, right, (char*) wc_value,
-					      num_chars, True);
-      XtFree(temp);
-      XtFree((char *)wc_value);
-    }
-  }
-
+  num_chars   = XmStringLen(total_value);
+  replace_res = _XmTextFieldReplaceText(tf, (XEvent *)_insert_select->event,
+                                        left, right, total_value, num_chars, True, True);
   if (!replace_res) {
     _insert_select->success_status = False;
   } else {
     _insert_select->success_status = True;
-
     if (!tf->text.add_mode) tf->text.prim_anchor = left;
 
     tf->text.pending_off = True;
@@ -363,21 +319,16 @@ HandleInsertTargets(
 
     if (*atom_ptr == atoms[XmACOMPOUND_TEXT])
       supports_CT = True;
-
-#if XM_UTF8
     if (*atom_ptr == atoms[XmAUTF8_STRING])
       supports_utf8_string = True;
-#endif
   }
 
   if (supports_text && supports_encoding_data)
     target = atoms[XmATEXT];
   else if (supports_CT)
     target = atoms[XmACOMPOUND_TEXT];
-#if XM_UTF8
   else if (supports_utf8_string)
     target = atoms[XmAUTF8_STRING];
-#endif
   else if (supports_encoding_data)
     target = CS_OF_ENCODING;
   else
@@ -416,14 +367,15 @@ _XmTextFieldConvert(
   Boolean has_selection = False;
   XmTextPosition left = 0;
   XmTextPosition right = 0;
+  XmString substr;
+  XrmValue from, to;
+  XTextProperty tmp_prop;
+  XICCEncodingStyle style;
   Boolean is_primary;
   Boolean is_secondary;
   Boolean is_destination;
   Boolean is_drop;
   int target_count = 0;
-  XTextProperty tmp_prop;
-  char *tmp_value;
-  int ret_status = 0;
   Time _time;
   XmAnyCallbackStruct cb;
 
@@ -480,10 +432,10 @@ _XmTextFieldConvert(
       targs[target_count] = atoms[XmAINSERT_SELECTION]; target_count++;
     }
     if (is_primary || is_secondary || is_drop) {
-      targs[target_count] = atoms[XmACOMPOUND_TEXT]; target_count++;
-      targs[target_count] = atoms[XmATEXT]; target_count++;
-      targs[target_count] = XA_STRING; target_count++;
-      targs[target_count] = atoms[XmAUTF8_STRING]; target_count++;
+      targs[target_count++] = atoms[XmAUTF8_STRING];
+      targs[target_count++] = atoms[XmACOMPOUND_TEXT];
+      targs[target_count++] = atoms[XmATEXT];
+      targs[target_count++] = XA_STRING;
     }
     if (is_primary || is_drop) {
       targs[target_count] = atoms[XmADELETE]; target_count++;
@@ -491,7 +443,10 @@ _XmTextFieldConvert(
     *type = XA_ATOM;
     *length = target_count;
     *format = 32;
-  } else if (*target == atoms[XmATIMESTAMP]) {
+    return True;
+  }
+
+  if (*target == atoms[XmATIMESTAMP]) {
     Time *timestamp;
     timestamp = (Time *) XtMalloc(sizeof(Time));
     if (is_primary)
@@ -506,169 +461,14 @@ _XmTextFieldConvert(
     *type = XA_INTEGER;
     *length = sizeof(Time) / 4;
     *format = 32;
-  } else if (*target == XA_STRING) {
-    *type = (Atom) XA_STRING;
-    *format = 8;
-    if (is_destination || !has_selection) return False;
+    return True;
+  }
 
-    /* put a char* value into tmp_value, then convert to 8859.1 */
-    if (tf->text.max_char_size != 1) {
-      int stat ;
+  if (*target == atoms[XmAINSERT_SELECTION])
+    return !is_secondary;
 
-      /* NOTE: casting (right - left) could result in a truncated long. */
-      *length = _XmTextFieldCountBytes(tf, TextF_WcValue(tf) + left,
-				       (int)(right - left));
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      stat = wcstombs(tmp_value, TextF_WcValue(tf) + left,
-		      (unsigned)*length); /* NOTE: casting *length could
-					     result in a truncated long. */
-      if (stat < 0) /* wcstombs will return neg value on conv failure */
-	*length = 0;
-      else *length = (unsigned long) stat ;
-    } else {
-      *length = right - left;
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      /* get the selection value */
-      (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left),
-		   (size_t)*length); /* NOTE: casting *length could result
-					  in a truncated long. */
-    }
-    tmp_value[*length] = '\0';
-    tmp_prop.value = NULL;
-    /* convert tmp_value to 8859.1 */
-    ret_status = XmbTextListToTextProperty(XtDisplay(w), &tmp_value, 1,
-					   (XICCEncodingStyle)XStringStyle,
-					   &tmp_prop);
-    XtFree(tmp_value);
-    if (ret_status == Success || ret_status > 0){
-      *value = (XtPointer) tmp_prop.value;
-      *length = tmp_prop.nitems;
-    } else {
-      *value = NULL;
-      *length = 0;
-      return False;
-    }
-  } else if (*target == atoms[XmATEXT] || *target == CS_OF_ENCODING) {
-    *type = CS_OF_ENCODING;
-    *format = 8;
-    if (is_destination || !has_selection) return False;
-    if (tf->text.max_char_size != 1) {
-      int stat ;
-
-      /* NOTE: casting (right - left) could result in a truncated long. */
-      *length = _XmTextFieldCountBytes(tf, TextF_WcValue(tf) + left,
-				       (int)(right - left));
-      *value = XtMalloc((unsigned) *length + 1);
-      stat = wcstombs((char *)*value, TextF_WcValue(tf) + left,
-		      (unsigned)*length); /* NOTE: casting *length could
-					     result in a truncated long */
-      if (stat < 0) /* wcstombs return neg value on conv failure */
-	*length = 0;
-      else *length = (unsigned long) stat ;
-    } else {
-      *length = right - left;
-      *value = XtMalloc((unsigned) *length + 1);
-      /* get the selection value */
-      (void)memcpy((void*)*value, (void*)(TextF_Value(tf) + left),
-		   (size_t)*length); /* NOTE: casting *length could result
-					  in a truncated long. */
-    }
-    (*(char **)value)[*length]='\0';
-  } else if (*target == atoms[XmACOMPOUND_TEXT]) {
-    *type = atoms[XmACOMPOUND_TEXT];
-    *format = 8;
-    if (is_destination || !has_selection) return False;
-    if (tf->text.max_char_size != 1) {
-      int stat ;
-
-      /* convert to char* before converting to CT.  NOTE: casting
-       * (right - left) could result in a truncated long.
-       */
-      *length = _XmTextFieldCountBytes(tf, TextF_WcValue(tf) + left,
-				       (int)(right - left));
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      stat = wcstombs(tmp_value, TextF_WcValue(tf) + left,
-		      (unsigned)*length); /* NOTE: casting *length could
-					     result in a truncated long. */
-      if (stat < 0) /* wcstombs will return neg value on conv failure */
-	*length = 0;
-      else *length = (unsigned long) stat ;
-    } else { /* malloc the space and copy the data to be converted */
-      *length = right - left;
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      /* get the selection value */
-      (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left),
-		   (size_t)*length); /* NOTE: casting *length could result
-					  in a truncated long. */
-    }
-    tmp_value[*length] = '\0';
-    tmp_prop.value = NULL;
-    /* Convert to compound text */
-    ret_status =
-      XmbTextListToTextProperty(XtDisplay(w), &tmp_value, 1,
-				(XICCEncodingStyle)XCompoundTextStyle,
-				&tmp_prop);
-    XtFree(tmp_value);
-    if (ret_status == Success || ret_status > 0){
-      *length = tmp_prop.nitems;
-      *value = (XtPointer)tmp_prop.value;
-    } else {
-      *value = NULL;
-      *length = 0;
-      return False;
-    }
-#if XM_UTF8
-  } else if (*target == atoms[XmAUTF8_STRING]) {
-    *type = atoms[XmAUTF8_STRING];
-    *format = 8;
-    if (is_destination || !has_selection) return False;
-    if (tf->text.max_char_size != 1) {
-      int stat ;
-
-      /* convert to char* before converting to CT.  NOTE: casting
-       * (right - left) could result in a truncated long.
-       */
-      *length = _XmTextFieldCountBytes(tf, TextF_WcValue(tf) + left,
-				       (int)(right - left));
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      stat = wcstombs(tmp_value, TextF_WcValue(tf) + left,
-		      (unsigned)*length); /* NOTE: casting *length could
-					     result in a truncated long. */
-      if (stat < 0) /* wcstombs will return neg value on conv failure */
-	*length = 0;
-      else *length = (unsigned long) stat ;
-    } else { /* malloc the space and copy the data to be converted */
-      *length = right - left;
-      tmp_value = XtMalloc((unsigned) *length + 1);
-      /* get the selection value */
-      (void)memcpy((void*)tmp_value, (void*)(TextF_Value(tf) + left),
-		   (size_t)*length); /* NOTE: casting *length could result
-					  in a truncated long. */
-    }
-    tmp_value[*length] = '\0';
-    tmp_prop.value = NULL;
-    /* Convert to compound text */
-    ret_status =
-      XmbTextListToTextProperty(XtDisplay(w), &tmp_value, 1,
-				(XICCEncodingStyle)XUTF8StringStyle,
-				&tmp_prop);
-    XtFree(tmp_value);
-    if (ret_status == Success || ret_status > 0){
-      *length = tmp_prop.nitems;
-      *value = (XtPointer)tmp_prop.value;
-    } else {
-      *value = NULL;
-      *length = 0;
-      return False;
-    }
-#endif
-  } else if (*target == atoms[XmAINSERT_SELECTION]) {
-    if (is_secondary)
-      return False;
-    else
-      return True;
-    /* Delete the selection */
-  } else if (*target == atoms[XmADELETE]) {
+  /* Delete the selection */
+  if (*target == atoms[XmADELETE]) {
     Boolean move_cursor = True;
 
     if (!(is_primary || is_drop)) return False;
@@ -686,7 +486,7 @@ _XmTextFieldConvert(
       }
 
     if (!_XmTextFieldReplaceText(tf, (XEvent *) req_event,
-				 left, right, NULL, 0, move_cursor)) {
+				 left, right, NULL, 0, move_cursor, True)) {
       tf->text.has_primary = True;
       return False;
     }
@@ -708,10 +508,26 @@ _XmTextFieldConvert(
     *value = NULL;
     *length = 0;
     *format = 8;
-  } else
-    /* unknown selection type */
-    return FALSE;
-  return TRUE;
+    return True;
+  }
+
+  /* Do actual text conversion */
+  *length = 0;
+  *value  = NULL;
+  *format = 8;
+  if (is_destination || !has_selection) return False;
+  substr = XmStringSubstr(tf->text.xms_value, left, (size_t)right - (size_t)left);
+
+  *type = (*target == atoms[XmATEXT] || *target == CS_OF_ENCODING) ? CS_OF_ENCODING : *target;
+  tmp_prop.format   = 8;
+  tmp_prop.encoding = *type;
+  if (XmCvtXmStringToTextProperty(XtDisplayOfObject(w), substr, &tmp_prop) == Success) {
+    *value  = tmp_prop.value;
+    *length = tmp_prop.nitems;
+  }
+
+  XmStringFree(substr);
+  return !!*value;
 }
 
 void
@@ -820,16 +636,8 @@ static void
 DropTransferProc(Widget w, XtPointer closure,
 		 XmSelectionCallbackStruct *ds)
 {
-  enum { XmACOMPOUND_TEXT, XmANULL, XmADELETE,
-#if XM_UTF8
-      XmAUTF8_STRING,
-#endif
-      NUM_ATOMS };
-  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSNULL, XmSDELETE,
-#if XM_UTF8
-      XmSUTF8_STRING
-#endif
-      };
+  enum { XmACOMPOUND_TEXT, XmANULL, XmADELETE, XmAUTF8_STRING, NUM_ATOMS };
+  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSNULL, XmSDELETE, XmSUTF8_STRING };
 
   _XmTextDropTransferRec *transfer_rec = (_XmTextDropTransferRec *) closure;
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
@@ -838,12 +646,11 @@ DropTransferProc(Widget w, XtPointer closure,
   XmTextPosition insertPosLeft, insertPosRight, left, right, cursorPos;
   int max_length = 0;
   Boolean local = tf->text.has_primary;
-  char * total_value = NULL;
-  wchar_t * wc_total_value;
-  unsigned long total_length = 0;
-  int wc_total_length;
+  XmString total_value = NULL;
+  size_t total_length = 0;
   Boolean replace = False;
   XmAnyCallbackStruct cb;
+  XTextProperty prop;
 
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
@@ -872,9 +679,7 @@ DropTransferProc(Widget w, XtPointer closure,
   if (!(ds->value) ||
       (ds->type != CS_OF_ENCODING &&
        ds->type != atoms[XmACOMPOUND_TEXT] &&
-#if XM_UTF8
        ds->type != atoms[XmAUTF8_STRING] &&
-#endif
        ds->type != XA_STRING)) {
     XmTransferDone(ds->transfer_id, XmTRANSFER_DONE_FAIL);
     if (ds->value) {
@@ -886,25 +691,16 @@ DropTransferProc(Widget w, XtPointer closure,
 
   insertPosLeft = insertPosRight = transfer_rec->insert_pos;
 
-  if (ds->type == XA_STRING
-#if XM_UTF8
-      || ds->type == atoms[XmAUTF8_STRING]
-#endif
-      || ds->type == atoms[XmACOMPOUND_TEXT]) {
-    if ((total_value = _XmTextToLocaleText(w, ds->value, ds->type,
-					   8, ds->length, NULL)) != NULL)
-      total_length = strlen(total_value);
-    else
-      if (ds->value) {
-	XtFree((char*) ds->value);
-	ds->value = NULL;
-      }
-  } else {
-    total_value = (char*) ds->value;
-    total_length = ds->length;
-  }
-
-  if (total_value == NULL) return;
+  prop.encoding = ds->type;
+  prop.format   = 8;
+  prop.value    = ds->value;
+  prop.nitems   = ds->length;
+  total_value   = XmCvtTextPropertyToXmString(XtDisplayOfObject(w), &prop);
+  if (!total_value) {
+    XtFree((XtPointer)ds->value);
+    ds->value = NULL;
+    return;
+  } else total_length = XmStringLen(total_value);
 
   if (TextF_PendingDelete(tf) && tf->text.has_primary &&
       tf->text.prim_pos_left != tf->text.prim_pos_right) {
@@ -916,9 +712,7 @@ DropTransferProc(Widget w, XtPointer closure,
         insertPosRight = tf->text.prim_pos_right;
   }
 
-  transfer_rec->num_chars = _XmTextFieldCountCharacters(tf, total_value,
-							total_length);
-
+  transfer_rec->num_chars = total_length;
   _XmTextFieldDrawInsertionPoint(tf, False);
 
   if (transfer_rec->move && local) {
@@ -926,22 +720,9 @@ DropTransferProc(Widget w, XtPointer closure,
     TextF_MaxLength(tf) = INT_MAX;
   }
 
-  if (tf->text.max_char_size == 1) {
-    replace = _XmTextFieldReplaceText(tf, ds->event, insertPosLeft,
-				      insertPosRight, (char *) total_value,
-				      (int)total_length, False);
-  } else {
-    wc_total_length = _XmTextFieldCountCharacters(tf, total_value,
-                                                  total_length);
-    wc_total_value = (wchar_t*)XtMalloc((unsigned)
-					(wc_total_length+1) * sizeof(wchar_t));
-    wc_total_length = mbstowcs(wc_total_value, total_value, wc_total_length+1);
-    if (wc_total_length > 0)
-      replace = _XmTextFieldReplaceText(tf, ds->event, insertPosLeft,
-					insertPosRight, (char *)wc_total_value,
-					wc_total_length, False);
-    XtFree((char*)wc_total_value);
-  }
+  replace = _XmTextFieldReplaceText(tf, ds->event, insertPosLeft,
+                                    insertPosRight, total_value,
+                                    total_length, False, True);
 
   if (replace) {
     tf->text.pending_off = FALSE;
@@ -981,10 +762,9 @@ DropTransferProc(Widget w, XtPointer closure,
     TextF_MaxLength(tf) = max_length;
   }
 
-  if (total_value && (total_value != (char*)ds->value))
-    XtFree(total_value);
+  XmStringFree(total_value);
   if (ds->value) {
-    XtFree((char*) ds->value);
+    XtFree((XtPointer)ds->value);
     ds->value = NULL;
   }
 
@@ -996,17 +776,8 @@ DoStuff(Widget w,
 	XtPointer closure,
 	XmSelectionCallbackStruct *ds)
 {
-  enum { XmANULL, XmACLIPBOARD, XmATEXT, XmACOMPOUND_TEXT,
-#if XM_UTF8
-    XmAUTF8_STRING,
-#endif
-    NUM_ATOMS };
-  static char *atom_names[] = {
-    XmSNULL, XmSCLIPBOARD, XmSTEXT, XmSCOMPOUND_TEXT,
-#if XM_UTF8
-    XmSUTF8_STRING
-#endif
-    };
+  enum { XmANULL, XmACLIPBOARD, XmATEXT, XmACOMPOUND_TEXT, XmAUTF8_STRING, NUM_ATOMS };
+  static char *atom_names[] = { XmSNULL, XmSCLIPBOARD, XmSTEXT, XmSCOMPOUND_TEXT, XmSUTF8_STRING };
 
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   XmTextPosition right=0, left=0, replace_from, replace_to;
@@ -1014,6 +785,8 @@ DoStuff(Widget w,
   Boolean replace_res = False;
   XmAnyCallbackStruct cb;
   Atom atoms[XtNumber(atom_names)];
+  XTextProperty prop;
+  XmString total_value;
   _XmTextPrimSelect *_prim_select = (_XmTextPrimSelect *) closure;
 
   assert(XtNumber(atom_names) == NUM_ATOMS);
@@ -1080,101 +853,25 @@ DoStuff(Widget w,
       }
     }
 
-    if (ds->type == atoms[XmACOMPOUND_TEXT] ||
-#if XM_UTF8
-	ds->type == atoms[XmAUTF8_STRING] ||
-#endif
-	ds->type == XA_STRING) {
-      char *total_value;
-
-      if ((total_value =
-	   _XmTextToLocaleText(w, ds->value, ds->type, ds->format, ds->length,
-			       NULL))
-	  != NULL) {
-	if (tf->text.max_char_size == 1) {
-	  _XmProcessLock();
-	  _prim_select->num_chars = strlen(total_value);
-	  replace_res =
-	    _XmTextFieldReplaceText (tf, ds->event,
-				     replace_from,
-				     replace_to,
-				     total_value,
-				     _prim_select->num_chars,
-				     ds->selection == atoms[XmACLIPBOARD]);
-	  _XmProcessUnlock();
-	  XtFree(total_value);
-	} else {
-	  wchar_t * wc_value;
-	  int tmp_len = strlen(total_value) + 1;
-
-	  _XmProcessLock();
-	  _prim_select->num_chars = 0;
-	  wc_value = (wchar_t*)XtMalloc ((unsigned) tmp_len * sizeof(wchar_t));
-	  _prim_select->num_chars = mbstowcs(wc_value, total_value, tmp_len);
-	  if (_prim_select->num_chars < 0)
-	    _prim_select->num_chars = 0;
-	  else
-	    replace_res =
-	      _XmTextFieldReplaceText(tf, ds->event,
-				      replace_from,
-				      replace_to,
-				      (char*)wc_value,
-				      _prim_select->num_chars,
-				      ds->selection == atoms[XmACLIPBOARD]);
-	  _XmProcessUnlock();
-	  XtFree((char*)wc_value);
-	  XtFree(total_value);
-	}
-      } else { /* initialize _prim_select values for possible delete oper */
 	_XmProcessLock();
 	_prim_select->num_chars = 0;
 	_XmProcessUnlock();
-      }
-    } else {
-      if (tf->text.max_char_size == 1) {
-	/* Note: length may be truncated during cast to int */
-	_XmProcessLock();
-	_prim_select->num_chars = (int) ds->length;
-	replace_res =
-	  _XmTextFieldReplaceText(tf, ds->event,
-				  replace_from,
-				  replace_to,
-				  (char *) ds->value,
-				  _prim_select->num_chars,
-				  ds->selection == atoms[XmACLIPBOARD]);
-	_XmProcessUnlock();
-      } else {
-	wchar_t * wc_value;
-	char *temp;
 
-	temp = XtMalloc((unsigned) ds->length + 1);
-	(void)memcpy((void*)temp, (void*)ds->value, (size_t)ds->length);
-	temp[(size_t)ds->length] = '\0';
-
-	wc_value = (wchar_t*)XtMalloc ((unsigned)
-				       ((ds->length + 1) * sizeof(wchar_t)));
-	_XmProcessLock();
-
-	_prim_select->num_chars = mbstowcs(wc_value, (char *) temp,
-					  (size_t) ds->length+1);
-
-	if (_prim_select->num_chars < 0)
-	  _prim_select->num_chars = 0;
-	else {
-	  wc_value[_prim_select->num_chars] = 0;
-	  replace_res =
-	    _XmTextFieldReplaceText(tf, ds->event,
-				    replace_from,
-				    replace_to,
-				    (char*)wc_value,
-				    _prim_select->num_chars,
-				    ds->selection == atoms[XmACLIPBOARD]);
-	}
-	_XmProcessUnlock();
-	XtFree(temp);
-	XtFree((char*)wc_value);
-      }
-    }
+    prop.encoding = ds->type;
+    prop.format   = 8;
+    prop.value    = ds->value;
+    prop.nitems   = ds->length;
+    total_value   = XmCvtTextPropertyToXmString(XtDisplayOfObject(w), &prop);
+    if (!total_value)
+        total_value = XmStringCreateLocalized(ds->value);
+    _XmProcessLock();
+    _prim_select->num_chars = XmStringLen(total_value);
+    replace_res = _XmTextFieldReplaceText(tf, ds->event, replace_from,
+                                          replace_to, total_value,
+                                          _prim_select->num_chars,
+                                          ds->selection == atoms[XmACLIPBOARD],
+                                          True);
+    _XmProcessUnlock();
 
     if (replace_res) {
       XmTextPosition cursorPos = 0;
@@ -1246,16 +943,8 @@ static void
 HandleTargets(Widget w, XtPointer closure,
 	      XmSelectionCallbackStruct *ds)
 {
-  enum { XmACOMPOUND_TEXT, XmACLIPBOARD, XmATEXT,
-#if XM_UTF8
-      XmAUTF8_STRING,
-#endif
-      NUM_ATOMS };
-  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSCLIPBOARD, XmSTEXT,
-#if XM_UTF8
-      XmSUTF8_STRING
-#endif
-      };
+  enum { XmACOMPOUND_TEXT, XmACLIPBOARD, XmATEXT, XmAUTF8_STRING, NUM_ATOMS };
+  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSCLIPBOARD, XmSTEXT, XmSUTF8_STRING };
 
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   Atom atoms[XtNumber(atom_names)];
@@ -1292,10 +981,8 @@ HandleTargets(Widget w, XtPointer closure,
     if (*atom_ptr == atoms[XmACOMPOUND_TEXT])
       supports_CT = True;
 
-#if XM_UTF8
     if (*atom_ptr == atoms[XmAUTF8_STRING])
       supports_utf8_string = True;
-#endif
   }
 
 
@@ -1333,10 +1020,8 @@ HandleTargets(Widget w, XtPointer closure,
 
   if (supports_text && supports_encoding_data)
     prim_select->target = targets[0] = atoms[XmATEXT];
-#if XM_UTF8
   else if (supports_utf8_string)
     prim_select->target = targets[0] = atoms[XmAUTF8_STRING];
-#endif
   else if (supports_CT)
     prim_select->target = targets[0] = atoms[XmACOMPOUND_TEXT];
   else if (supports_encoding_data)
@@ -1387,16 +1072,8 @@ HandleDrop(Widget w,
       left != right && insert_pos >= left && insert_pos <= right) {
     /*EMPTY*/
   } else {
-    enum { XmATEXT, XmACOMPOUND_TEXT,
-#if XM_UTF8
-        XmAUTF8_STRING,
-#endif
-	NUM_ATOMS };
-    static char *atom_names[] = { XmSTEXT, XmSCOMPOUND_TEXT,
-#if XM_UTF8
-        XmSUTF8_STRING
-#endif
-	};
+    enum { XmATEXT, XmACOMPOUND_TEXT, XmAUTF8_STRING, NUM_ATOMS };
+    static char *atom_names[] = { XmSTEXT, XmSCOMPOUND_TEXT, XmSUTF8_STRING };
 
     Atom atoms[XtNumber(atom_names)];
     Atom CS_OF_ENCODING = XmeGetEncodingAtom(w);
@@ -1430,9 +1107,7 @@ HandleDrop(Widget w,
 	encoding_found = True;
 	break;
       }
-#if XM_UTF8
       if (exportTargets[n] == atoms[XmAUTF8_STRING]) utf8_string_found = True;
-#endif
       if (exportTargets[n] == atoms[XmACOMPOUND_TEXT]) c_text_found = True;
       if (exportTargets[n] == XA_STRING) string_found = True;
       if (exportTargets[n] == atoms[XmATEXT]) text_found = True;
@@ -1441,12 +1116,9 @@ HandleDrop(Widget w,
     n = 0;
     if (encoding_found || c_text_found || string_found || text_found) {
       if (!encoding_found) {
-#if XM_UTF8
 	if (utf8_string_found)
 	  desiredTarget = atoms[XmAUTF8_STRING];
-	else
-#endif
-	if (c_text_found)
+	else if (c_text_found)
 	  desiredTarget = atoms[XmACOMPOUND_TEXT];
 	else if (string_found)
 	  desiredTarget = XA_STRING;
@@ -1478,17 +1150,11 @@ static void TextFieldConvertCallback(Widget w, XtPointer ignore, XmConvertCallba
 {
   enum { XmADELETE, XmA_MOTIF_LOSE_SELECTION,
 	 XmA_MOTIF_EXPORT_TARGETS, XmA_MOTIF_CLIPBOARD_TARGETS,
-	 XmACOMPOUND_TEXT, XmATEXT, XmATARGETS, XmACLIPBOARD,
-#if XM_UTF8
-         XmAUTF8_STRING,
-#endif
+	 XmACOMPOUND_TEXT, XmATEXT, XmATARGETS, XmACLIPBOARD, XmAUTF8_STRING,
 	 NUM_ATOMS };
   static char *atom_names[] = { XmSDELETE, XmS_MOTIF_LOSE_SELECTION,
 	 XmS_MOTIF_EXPORT_TARGETS, XmS_MOTIF_CLIPBOARD_TARGETS,
-	 XmSCOMPOUND_TEXT, XmSTEXT, XmSTARGETS, XmSCLIPBOARD,
-#if XM_UTF8
-         XmSUTF8_STRING
-#endif
+	 XmSCOMPOUND_TEXT, XmSTEXT, XmSTARGETS, XmSCLIPBOARD, XmSUTF8_STRING
 	 };
 
   Atom XA_CS_OF_ENCODING = XmeGetEncodingAtom(w);
@@ -1549,9 +1215,7 @@ static void TextFieldConvertCallback(Widget w, XtPointer ignore, XmConvertCallba
     int n = 0;
 
     value = (XtPointer) targs;
-#if XM_UTF8
     targs[n] = atoms[XmAUTF8_STRING]; n++;
-#endif
     targs[n] = atoms[XmACOMPOUND_TEXT]; n++;
     targs[n] = atoms[XmATEXT]; n++;
     targs[n] = XA_STRING; n++;

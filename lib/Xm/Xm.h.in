@@ -222,19 +222,6 @@ enum {
   XmINSERT,	XmTERMINATE,	XmINVOKE
   };
 
-/* We are making an attempt (perhaps unnecessaryily) to keep our style
-   constants the same as the equivalent Xlib style constants. The first
-   Motif specific style constant starts at 32 so that the consortium can
-   add constants to their list without overlapping with ours. */
-typedef enum {
-    XmSTYLE_STRING = XStringStyle,
-    XmSTYLE_COMPOUND_TEXT = XCompoundTextStyle,
-    XmSTYLE_TEXT = XTextStyle,
-    XmSTYLE_STANDARD_ICC_TEXT = XStdICCTextStyle,
-    XmSTYLE_LOCALE = 32,
-    XmSTYLE_COMPOUND_STRING
-    } XmICCEncodingStyle;
-
 /****************
  *
  * XmParseTable structure defines. These must be here (at the start of
@@ -1149,6 +1136,18 @@ typedef enum{
 	XmHIGHLIGHT_SECONDARY_SELECTED,	XmSEE_DETAIL
 	} XmHighlightMode ;
 
+/**
+ * ModifyVerify with the text as XmString
+ */
+typedef struct XmTextVerifyCallbackStr {
+	int reason;
+	XEvent *event;
+	Boolean doit;
+	XmTextPosition currInsert, newInsert;
+	XmTextPosition startPos, endPos;
+	XmString str;
+} XmTextVerifyCallbackStructStr, *XmTextVerifyStrPtr;
+
 /* XmTextBlock's are used to pass text around. */
 
 typedef struct {
@@ -1162,8 +1161,8 @@ typedef struct
     int reason;
     XEvent  *event;
     Boolean doit;
-    long currInsert, newInsert;
-    long startPos, endPos;
+    XmTextPosition currInsert, newInsert;
+    XmTextPosition startPos, endPos;
     XmTextBlock text;
 } XmTextVerifyCallbackStruct, *XmTextVerifyPtr;
 
@@ -1180,8 +1179,8 @@ typedef struct
     int reason;
     XEvent  *event;
     Boolean doit;
-    long currInsert, newInsert;
-    long startPos, endPos;
+    XmTextPosition currInsert, newInsert;
+    XmTextPosition startPos, endPos;
     XmTextBlockWcs text;
 } XmTextVerifyCallbackStructWcs, *XmTextVerifyPtrWcs;
 

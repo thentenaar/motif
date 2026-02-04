@@ -1,6 +1,7 @@
 /**
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -34,8 +35,6 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include <stdio.h>
 #include <limits.h>		/* required for MB_LEN_MAX definition */
 #include <string.h>
-#include <ctype.h>
-#include <wctype.h>
 
 #include "XmI.h"
 #include <X11/ShellP.h>
@@ -69,21 +68,16 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include "TravActI.h"
 #include "TraversalI.h"
 #include "VendorSEI.h"
-#include "XmStringI.h"
 
-#if USE_XFT
-#include <X11/Xft/Xft.h>
-#include "XmRenderTI.h"
-#endif
 #include <Xm/XmP.h>
 
 #define MSG1		_XmMMsgTextF_0000
 #define MSG2		_XmMMsgTextF_0001
-#define MSG3		_XmMMsgTextF_0002
-#define MSG4		_XmMMsgTextF_0003
-#define MSG5		_XmMMsgTextF_0004
+#define MSG3		_XmMMsgTextF_0002 /* unused */
+#define MSG4		_XmMMsgTextF_0003 /* unused */
+#define MSG5		_XmMMsgTextF_0004 /* unused */
 #define MSG7		_XmMMsgTextF_0006
-#define WC_MSG1		_XmMMsgTextFWcs_0000
+#define WC_MSG1		_XmMMsgTextFWcs_0000 /* unused */
 #define GRABKBDERROR	_XmMMsgRowColText_0024
 
 #define TEXT_INCREMENT		 32
@@ -110,13 +104,10 @@ typedef struct {
 
 /********    Static Function Declarations    ********/
 
-static void MakeCopy(Widget w,
-		     int n,
-		     XtArgVal *value);
-
-static void WcsMakeCopy(Widget w,
-                        int n,
-                        XtArgVal *value);
+static XmImportOperator StringToXmString(Widget w, int n, XtArgVal *value);
+static XmImportOperator WideToXmString(Widget w, int n, XtArgVal *value);
+static void XmStringToString(Widget w, int n, XtArgVal *value);
+static void XmStringToWide(Widget w, int n, XtArgVal *value);
 
 static void FreeContextData(Widget w,
 			    XtPointer clientData,
@@ -172,16 +163,8 @@ static void SetShadowGC(XmTextFieldWidget tf,
 static void SetInvGC(XmTextFieldWidget tf,
 		       GC gc);
 
-static void DrawText(XmTextFieldWidget tf,
-		     GC gc,
-		     int x,
-		     int y,
-		     char *string,
-		     int length);
-
-static int FindPixelLength(XmTextFieldWidget tf,
-			   char *string,
-			   int length);
+static void DrawText(XmTextFieldWidget tf, GC gc, int x, int y, XmString string);
+static int FindPixelLength(XmTextFieldWidget tf, XmString s);
 
 static void DrawTextSegment(XmTextFieldWidget tf,
 			    XmHighlightMode mode,
@@ -211,14 +194,12 @@ static Boolean AdjustText(XmTextFieldWidget tf,
 
 static void AdjustSize(XmTextFieldWidget tf);
 
-static Boolean ModifyVerify(XmTextFieldWidget tf,
-			    XEvent *event,
-			    XmTextPosition *replace_prev,
-			    XmTextPosition *replace_next,
-			    char **insert,
-			    int *insert_length,
-			    XmTextPosition *newInsert,
-			    int *free_insert);
+static Boolean ModifyVerify(XmTextFieldWidget tf, XEvent *event,
+                            XmTextPosition *replace_prev,
+                            XmTextPosition *replace_next,
+                            XmString *insert,
+                            size_t *insert_length,
+                            XmTextPosition *newInsert);
 
 static void ResetClipOrigin(XmTextFieldWidget tf);
 
@@ -254,18 +235,10 @@ static Boolean _XmTextFieldIsWordBoundary(XmTextFieldWidget tf,
 					  XmTextPosition pos1,
 					  XmTextPosition pos2);
 
-static void FindWord(XmTextFieldWidget tf,
-		     XmTextPosition begin,
-		     XmTextPosition *left,
-		     XmTextPosition *right);
-
-static void FindPrevWord(XmTextFieldWidget tf,
-			 XmTextPosition *left,
-			 XmTextPosition *right);
-
-static void FindNextWord(XmTextFieldWidget tf,
-			 XmTextPosition *left,
-			 XmTextPosition *right);
+static void FindWord(XmTextFieldWidget tf, XmTextPosition begin,
+                     XmTextPosition *left, XmTextPosition *right);
+static void FindPrevWord(XmTextFieldWidget tf, XmTextPosition *left, XmTextPosition *right);
+static void FindNextWord(XmTextFieldWidget tf, XmTextPosition *left, XmTextPosition *right);
 
 static void CheckDisjointSelection(Widget w,
 				   XmTextPosition position,
@@ -341,35 +314,12 @@ static void SimpleMovement(Widget w,
 			   XmTextPosition cursorPos,
 			   XmTextPosition position);
 
-static void BackwardChar(Widget w,
-			 XEvent *event,
-			 char **params,
-			 Cardinal *num_params);
-
-static void ForwardChar(Widget w,
-                        XEvent *event,
-                        char **params,
-                        Cardinal *num_params);
-
-static void BackwardWord(Widget w,
-			 XEvent *event,
-			 char **params,
-			 Cardinal *num_params);
-
-static void ForwardWord(Widget w,
-                        XEvent *event,
-                        char **params,
-                        Cardinal *num_params);
-
-static void EndOfLine(Widget w,
-		      XEvent *event,
-		      char **params,
-		      Cardinal *num_params);
-
-static void BeginningOfLine(Widget w,
-			    XEvent *event,
-			    char **params,
-			    Cardinal *num_params);
+static void BackwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params);
+static void ForwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params);
+static void BackwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params);
+static void ForwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params);
+static void EndOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params);
+static void BeginningOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params);
 
 static void SetSelection(XmTextFieldWidget tf,
 			 XmTextPosition left,
@@ -642,11 +592,7 @@ static void ClassPartInitialize(WidgetClass w_class);
 
 static void Validates(XmTextFieldWidget tf);
 
-static Boolean LoadFontMetrics(XmTextFieldWidget tf);
-
-static void ValidateString(XmTextFieldWidget tf,
-			   char *value,
-                           Boolean is_wchar);
+static void  LoadFontMetrics(XmTextFieldWidget tf);
 
 static void InitializeTextStruct(XmTextFieldWidget tf);
 
@@ -859,13 +805,20 @@ static XtResource resources[] =
   },
 
   {
+	XmNmodifyVerifyCallbackStr, XmCCallback, XmRCallback,
+	sizeof(XtCallbackList),
+	XtOffsetOf(struct _XmTextFieldRec, text.str_modify_verify_callback),
+	XmRCallback, NULL
+  },
+
+  { /* Deprecated */
     XmNmodifyVerifyCallback, XmCCallback, XmRCallback,
     sizeof(XtCallbackList),
     XtOffsetOf(struct _XmTextFieldRec, text.modify_verify_callback),
     XmRCallback, NULL
   },
 
-  {
+  { /* Deprecated */
     XmNmodifyVerifyCallbackWcs, XmCCallback, XmRCallback,
     sizeof(XtCallbackList),
     XtOffsetOf(struct _XmTextFieldRec, text.wcs_modify_verify_callback),
@@ -905,15 +858,9 @@ static XtResource resources[] =
   },
 
   {
-    XmNvalue, XmCValue, XmRString, sizeof(String),
-    XtOffsetOf(struct _XmTextFieldRec, text.value),
-    XmRString, ""
-  },
-
-  {
-    XmNvalueWcs, XmCValueWcs, XmRValueWcs, sizeof(wchar_t*),
-    XtOffsetOf(struct _XmTextFieldRec, text.wc_value),
-    XmRString, NULL
+	XmNvalueString, XmCXmString, XmRXmString, sizeof(XmString),
+	XtOffsetOf(struct _XmTextFieldRec, text.xms_value),
+	XtRImmediate, NULL
   },
 
   {
@@ -1032,8 +979,6 @@ static XtResource resources[] =
  }
 };
 
-/* Definition for resources that need special processing in get values */
-
 static XmSyntheticResource syn_resources[] =
 {
  {
@@ -1054,18 +999,19 @@ static XmSyntheticResource syn_resources[] =
 
  {
    XmNvalue,
-   sizeof(char *),
+   sizeof(String),
    XtOffsetOf(struct _XmTextFieldRec, text.value),
-   MakeCopy,
+   XmStringToString, /* export */
+   StringToXmString  /* import */
  },
 
  {
    XmNvalueWcs,
    sizeof(wchar_t *),
    XtOffsetOf(struct _XmTextFieldRec, text.wc_value),
-   WcsMakeCopy,
+   XmStringToWide, /* export */
+   WideToXmString  /* import */
  }
-
 };
 
 static XmPrimitiveClassExtRec _XmTextFPrimClassExtRec = {
@@ -1077,7 +1023,6 @@ static XmPrimitiveClassExtRec _XmTextFPrimClassExtRec = {
   TextFieldGetDisplayRect,               /* widget_display_rect */
   TextFieldMarginsProc,                  /* get/set widget margins */
 };
-
 
 externaldef(xmtextfieldclassrec) XmTextFieldClassRec xmTextFieldClassRec =
 {
@@ -1143,89 +1088,45 @@ static const XmAccessTextualTraitRec textFieldCS = {
   TextFieldPreferredValue,
 };
 
-static void
-ClassInitialize(void)
+static void ClassInitialize(void)
 {
   _XmTextFieldInstallTransferTrait();
   XmeTraitSet((XtPointer)xmTextFieldWidgetClass, XmQTaccessTextual,
 	      (XtPointer) &textFieldCS);
 }
 
-/* USE ITERATIONS OF mblen TO COUNT THE NUMBER OF CHARACTERS REPRESENTED
- * BY n_bytes BYTES POINTED TO BY ptr, a pointer to char*.
- * n_bytes does not include NULL terminator (if any), nor does return.
- */
-int
-_XmTextFieldCountCharacters(XmTextFieldWidget tf,
-			    char *ptr,
-			    int n_bytes)
-{
-  char * bptr;
-  int count = 0;
-  int char_size = 0;
+static XmImportOperator StringToXmString(Widget w, int n, XtArgVal *value) {
+	(void)w;
+	(void)n;
 
-  if (n_bytes <= 0 || ptr == NULL || *ptr == '\0')
-    return 0;
+	if (!*value)
+		return XmSYNTHETIC_NONE;
 
-  if (tf->text.max_char_size == 1)
-    return n_bytes;
-
-  bptr = ptr;
-
-  for (bptr = ptr; n_bytes > 0; count++, bptr+= char_size) {
-    char_size = mblen(bptr, tf->text.max_char_size);
-    if (char_size <= 0) break; /* error */
-    n_bytes -= char_size;
-  }
-  return count;
+	*value = (XtArgVal)XmStringCreateMultibyte((String)*value, NULL);
+	return XmSYNTHETIC_NONE;
 }
 
-/* USE ITERATIONS OF wctomb TO COUNT THE NUMBER OF BYTES REQUIRED FOR THE
- * MULTI-BYTE REPRESENTION OF num_chars WIDE CHARACTERS IN wc_value.
- * COUNT TERMINATED IF NULL ENCOUNTERED IN THE STRING.
- * NUMBER OF BYTES IS RETURNED.
- */
-int
-_XmTextFieldCountBytes(XmTextFieldWidget tf,
-		       wchar_t * wc_value,
-		       int num_chars)
-{
-  wchar_t 	* wc_ptr;
-  char 	tmp[MB_LEN_MAX];  /* defined in limits.h: max in any locale */
-  int 	n_bytes = 0;
-  int   n_bytes_per_char = 0;
+static XmImportOperator WideToXmString(Widget w, int n, XtArgVal *value) {
+	(void)w;
+	(void)n;
 
-  if (num_chars <= 0 || wc_value == NULL || *wc_value == (wchar_t)0L)
-    return 0;
+	if (!*value)
+		return XmSYNTHETIC_NONE;
 
-  if (tf->text.max_char_size == 1)
-    return num_chars;
-
-  wc_ptr = wc_value;
-  while ((num_chars > 0) && (*wc_ptr != (wchar_t)0L)) {
-    n_bytes_per_char = wctomb(tmp, *wc_ptr);
-    if (n_bytes_per_char > 0 )
-      n_bytes += n_bytes_per_char;
-    num_chars--;
-    wc_ptr++;
-  }
-  return n_bytes;
+	*value = (XtArgVal)XmStringCreateWide((wchar_t *)*value, NULL);
+	return XmSYNTHETIC_NONE;
 }
 
-static void
-MakeCopy(Widget w,
-	 int n,
-	 XtArgVal *value)
-{
-  (*value) = (XtArgVal) XmTextFieldGetString (w);
+static void XmStringToString(Widget w, int n, XtArgVal *value) {
+	XmString s = XmTextFieldGetXmString(w);
+	*value = (XtArgVal)XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	XmStringFree(s);
 }
 
-static void
-WcsMakeCopy(Widget w,
-	    int n,
-	    XtArgVal *value)
-{
-  (*value) = (XtArgVal) XmTextFieldGetStringWcs (w);
+static void XmStringToWide(Widget w, int n, XtArgVal *value) {
+	XmString s = XmTextFieldGetXmString(w);
+	*value = (XtArgVal)XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+	XmStringFree(s);
 }
 
 static void
@@ -1463,17 +1364,18 @@ GetXYFromPos(XmTextFieldWidget tf,
 	     Position *x,
 	     Position *y)
 {
+  XmString s;
+
   /* initialize the x and y positions to zero */
   *x = 0;
   *y = 0;
 
-  if (position > tf->text.string_length) return False;
+  if (position > (XmTextPosition)tf->text.string_length)
+    return False;
 
-  if (tf->text.max_char_size != 1) {
-    *x += FindPixelLength(tf, (char*)TextF_WcValue(tf), (int)position);
-  } else {
-    *x += FindPixelLength(tf, TextF_Value(tf), (int)position);
-  }
+  s = XmStringSubstr(tf->text.xms_value, 0, (size_t)position);
+  *x += FindPixelLength(tf, s);
+  XmStringFree(s);
 
   *y += tf->primitive.highlight_thickness + tf->primitive.shadow_thickness
     + tf->text.margin_top + TextF_FontAscent(tf);
@@ -1497,8 +1399,10 @@ CurrentCursorState(XmTextFieldWidget tf)
 static void
 PaintCursor(XmTextFieldWidget tf)
 {
+  int pxlen;
   Position x, y;
   XmTextPosition position;
+  XmString s;
 
   if (!TextF_CursorPositionVisible(tf)) return;
 
@@ -1510,11 +1414,9 @@ PaintCursor(XmTextFieldWidget tf)
   if (!tf->text.overstrike)
     x -=(tf->text.cursor_width >> 1) + 1; /* "+1" for 1 pixel left of char */
   else {
-    int pxlen;
-    if (tf->text.max_char_size != 1)
-      pxlen = FindPixelLength(tf, (char*)&(TextF_WcValue(tf)[position]), 1);
-    else
-      pxlen = FindPixelLength(tf, &(TextF_Value(tf)[position]), 1);
+    s = XmStringSubstr(tf->text.xms_value, position, 1);
+    pxlen = FindPixelLength(tf, s);
+    XmStringFree(s);
     if (pxlen > tf->text.cursor_width)
       x += (pxlen - tf->text.cursor_width) >> 1;
   }
@@ -1733,44 +1635,18 @@ SetMarginGC(XmTextFieldWidget tf,
   XRectangle ClipRect;
 
   GetRect(tf, &ClipRect);
-
-#if USE_XFT
-  if (TextF_UseXft(tf))
-    _XmXftSetClipRectangles(XtDisplay(tf), XtWindow(tf), 0, 0, &ClipRect, 1);
-#endif
   XSetClipRectangles(XtDisplay(tf), gc, 0, 0, &ClipRect, 1,
                      Unsorted);
 }
-
 
 /*
  * Set new clipping rectangle for text field.  This is
  * done on each focus in event since the text field widgets
  * share the same GC.
  */
-void
-_XmTextFieldSetClipRect(XmTextFieldWidget tf)
+void _XmTextFieldSetClipRect(XmTextFieldWidget tf)
 {
-  XGCValues values;
-  unsigned long valueMask = (unsigned long) 0;
-
-  SetMarginGC(tf, tf->text.gc);
-
-  /* Restore cached text gc to state correct for this instantiation */
-
-  if (tf->text.gc) {
-#if USE_XFT
-    if (!TextF_UseFontSet(tf) && !TextF_UseXft(tf) && (TextF_Font(tf) != NULL)) {
-#else
-    if (!TextF_UseFontSet(tf) && (TextF_Font(tf) != NULL)) {
-#endif
-      valueMask |= GCFont;
-      values.font = TextF_Font(tf)->fid;
-    }
-    values.foreground = tf->primitive.foreground ^ tf->core.background_pixel;
-    values.background = 0;
-    XChangeGC(XtDisplay(tf), tf->text.gc, valueMask, &values);
-  }
+	SetMarginGC(tf, tf->text.gc);
 }
 
 static void
@@ -1825,139 +1701,16 @@ SetInvGC(XmTextFieldWidget tf,
   XChangeGC(XtDisplay(tf), gc, valueMask, &values);
 }
 
-static void
-DrawText(XmTextFieldWidget tf,
-	 GC  gc,
-	 int x,
-	 int y,
-	 char * string,
-	 int length)
+static void DrawText(XmTextFieldWidget tf, GC gc, int x, int y, XmString string)
 {
-  if (TextF_UseFontSet(tf)) {
-    if (tf->text.max_char_size != 1)
-      XwcDrawString (XtDisplay(tf), XtWindow(tf), (XFontSet)TextF_Font(tf),
-		     gc, x, y, (wchar_t*) string, length);
-
-    else  /* one byte chars */
-      XmbDrawString (XtDisplay(tf), XtWindow(tf), (XFontSet)TextF_Font(tf),
-		     gc, x, y, string, length);
-
-#if USE_XFT
-  } else if (TextF_UseXft(tf)) {
-    if (tf->text.max_char_size != 1) { /* was passed a wchar_t*  */
-      char stack_cache[400], *tmp;
-      wchar_t tmp_wc;
-      wchar_t *wc_string = (wchar_t*)string;
-      int num_bytes = 0;
-      /* ptr = tmp = XtMalloc((int)(length + 1)*sizeof(wchar_t)); */
-      tmp = (char *)XmStackAlloc((Cardinal) ((length + 1)*sizeof(wchar_t)),
-				 stack_cache);
-      tmp_wc = wc_string[length];
-      wc_string[length] = 0L;
-      num_bytes = wcstombs(tmp, wc_string,
-			   (int)((length + 1) * sizeof(wchar_t)));
-      wc_string[length] = tmp_wc;
-      if (num_bytes >= 0)
-        _XmXftDrawString2(XtDisplay(tf), XtWindow(tf), gc, TextF_XftFont(tf),
-			1, x, y, tmp, num_bytes);
-      XmStackFree(tmp, stack_cache);
-    } else /* one byte chars */
-        _XmXftDrawString2(XtDisplay(tf), XtWindow(tf), gc, TextF_XftFont(tf),
-			1, x, y, string, length);
-#endif
-  } else { /* have a font struct, not a font set */
-    if (tf->text.max_char_size != 1) { /* was passed a wchar_t*  */
-      char stack_cache[400], *tmp;
-      wchar_t tmp_wc;
-      wchar_t *wc_string = (wchar_t*)string;
-      int num_bytes = 0;
-      /* ptr = tmp = XtMalloc((int)(length + 1)*sizeof(wchar_t)); */
-      tmp = (char *)XmStackAlloc((Cardinal) ((length + 1)*sizeof(wchar_t)),
-				 stack_cache);
-      tmp_wc = wc_string[length];
-      wc_string[length] = 0L;
-      num_bytes = wcstombs(tmp, wc_string,
-			   (int)((length + 1) * sizeof(wchar_t)));
-      wc_string[length] = tmp_wc;
-      if (num_bytes >= 0)
-        { if (_XmIsISO10646(XtDisplay(tf), TextF_Font(tf))) {
-            size_t str_len = 0;
-            XChar2b *str = _XmUtf8ToUcs2(tmp, num_bytes, &str_len);
-            XDrawString16(XtDisplay(tf), XtWindow(tf), gc, x, y, str, str_len);
-            XFree(str);
-            }
-          else
-            XDrawString (XtDisplay(tf), XtWindow(tf), gc, x, y, tmp, num_bytes);
-        }
-      XmStackFree(tmp, stack_cache);
-    } else /* one byte chars */
-      XDrawString (XtDisplay(tf), XtWindow(tf), gc, x, y, string, length);
-  }
+	XmStringDraw(XtDisplay(tf), XtWindow(tf), TextF_FontList(tf),
+	             string, gc, x, y - TextF_FontAscent(tf), tf->core.width,
+	             tf->text.alignment, XmLEFT_TO_RIGHT, NULL);
 }
 
-static int
-FindPixelLength(XmTextFieldWidget tf,
-		char * string,
-		int length)
+static int FindPixelLength(XmTextFieldWidget tf, XmString s)
 {
-  if (TextF_UseFontSet(tf)) {
-    if (tf->text.max_char_size != 1)
-      return (XwcTextEscapement((XFontSet)TextF_Font(tf),
-				(wchar_t *) string, length));
-    else /* one byte chars */
-      return (XmbTextEscapement((XFontSet)TextF_Font(tf), string, length));
-#if USE_XFT
-  } else if (TextF_UseXft(tf)) {
-    XGlyphInfo	ext;
-    if (tf->text.max_char_size != 1) { /* was passed a wchar_t*  */
-      wchar_t *wc_string = (wchar_t*)string;
-      wchar_t wc_tmp = wc_string[length];
-      char stack_cache[400], *tmp;
-      int num_bytes;
-
-      wc_string[length] = 0L;
-      tmp = (char*)XmStackAlloc((Cardinal)((length + 1) * sizeof(wchar_t)),
-				stack_cache);
-      num_bytes = wcstombs(tmp, wc_string,
-			   (int)((length + 1)*sizeof(wchar_t)));
-      wc_string[length] = wc_tmp;
-      XftTextExtentsUtf8(XtDisplay(tf), TextF_XftFont(tf),
-              (FcChar8*)tmp, num_bytes, &ext);
-      XmStackFree(tmp, stack_cache);
-    } else /* one byte chars */
-      XftTextExtentsUtf8(XtDisplay(tf), TextF_XftFont(tf),
-              (FcChar8*)string, length, &ext);
-
-    return ext.xOff;
-#endif
-  } else { /* have font struct, not a font set */
-    if (tf->text.max_char_size != 1) { /* was passed a wchar_t*  */
-      wchar_t *wc_string = (wchar_t*)string;
-      wchar_t wc_tmp = wc_string[length];
-      char stack_cache[400], *tmp;
-      int num_bytes, ret_len = 0;
-
-      wc_string[length] = 0L;
-      tmp = (char*)XmStackAlloc((Cardinal)((length + 1) * sizeof(wchar_t)),
-				stack_cache);
-      num_bytes = wcstombs(tmp, wc_string,
-			   (int)((length + 1)*sizeof(wchar_t)));
-      wc_string[length] = wc_tmp;
-      if (num_bytes >= 0)
-        { if (_XmIsISO10646(XtDisplay(tf), TextF_Font(tf))) {
-            size_t str_len = 0;
-            XChar2b *str = _XmUtf8ToUcs2(tmp, num_bytes, &str_len);
-            ret_len = XTextWidth16(TextF_Font(tf), str, str_len);
-            XFree(str);
-            }
-          else
-            ret_len = XTextWidth(TextF_Font(tf), tmp, num_bytes);
-        }
-      XmStackFree(tmp, stack_cache);
-      return (ret_len);
-    } else /* one byte chars */
-        return XTextWidth(TextF_Font(tf), string, length);
-  }
+	return (int)XmStringWidth(TextF_FontList(tf), s);
 }
 
 static void
@@ -1971,21 +1724,15 @@ DrawTextSegment(XmTextFieldWidget tf,
 		int y,
 		int *x)
 {
+  XmString s, prev;
   int x_seg_len;
 
   /* update x position up to start position */
+  prev = XmStringSubstr(tf->text.xms_value, prev_seg_start, (size_t)seg_start - (size_t)prev_seg_start);
+  s    = XmStringSubstr(tf->text.xms_value, seg_start, (size_t)seg_end - (size_t)seg_start);
+  *x  += FindPixelLength(tf, prev);
+  x_seg_len = FindPixelLength(tf, s);
 
-  if (tf->text.max_char_size != 1) {
-    *x += FindPixelLength(tf, (char*)(TextF_WcValue(tf) + prev_seg_start),
-			  (int)(seg_start - prev_seg_start));
-    x_seg_len = FindPixelLength(tf, (char*)(TextF_WcValue(tf) + seg_start),
-				(int)seg_end - (int)seg_start);
-  } else {
-    *x += FindPixelLength(tf, TextF_Value(tf) + prev_seg_start,
-			  (int)(seg_start - prev_seg_start));
-    x_seg_len = FindPixelLength(tf, TextF_Value(tf) + seg_start,
-				(int)seg_end - (int)seg_start);
-  }
   if (mode == XmHIGHLIGHT_SELECTED) {
     /* Draw the selected text using an inverse gc */
     SetNormGC(tf, tf->text.gc, False, False);
@@ -2000,27 +1747,15 @@ DrawTextSegment(XmTextFieldWidget tf,
 		   TextF_FontAscent(tf) + TextF_FontDescent(tf));
     SetNormGC(tf, tf->text.gc, True, stipple);
   }
-if (stipple){
+
+  if (stipple) {
     /*Draw shadow for insensitive text*/
     SetShadowGC(tf, tf->text.gc);
-    if (tf->text.max_char_size != 1) {
-      DrawText(tf, tf->text.gc, *x+1, y+1, (char*) (TextF_WcValue(tf) + seg_start),
-	      (int)seg_end - (int)seg_start);
-    } else {
-    DrawText(tf, tf->text.gc, *x+1, y+1, TextF_Value(tf) + seg_start,
-	      (int)seg_end - (int)seg_start);
-    }
+    DrawText(tf, tf->text.gc, *x+1, y+1, s);
     SetNormGC(tf, tf->text.gc, True, stipple);
-}
-
-
-  if (tf->text.max_char_size != 1) {
-    DrawText(tf, tf->text.gc, *x, y, (char*) (TextF_WcValue(tf) + seg_start),
-	     (int)seg_end - (int)seg_start);
-  } else {
-    DrawText(tf, tf->text.gc, *x, y, TextF_Value(tf) + seg_start,
-	     (int)seg_end - (int)seg_start);
   }
+
+  DrawText(tf, tf->text.gc, *x, y, s);
   if (stipple) SetNormGC(tf, tf->text.gc, True, !stipple);
 
   if (mode == XmHIGHLIGHT_SECONDARY_SELECTED)
@@ -2028,14 +1763,12 @@ if (stipple){
 	      *x + x_seg_len - 1, y);
 
   /* update x position up to the next highlight position */
-  if (tf->text.max_char_size != 1)
-    *x += FindPixelLength(tf, (char*) (TextF_WcValue(tf) + seg_start),
-			  (int)(next_seg - (int)seg_start));
-  else
-    *x += FindPixelLength(tf, TextF_Value(tf) + seg_start,
-			  (int)(next_seg - (int)seg_start));
+  XmStringFree(s);
+  XmStringFree(prev);
+  s = XmStringSubstr(tf->text.xms_value, seg_start, (size_t)next_seg - (size_t)seg_start);
+  *x += FindPixelLength(tf, s);
+  XmStringFree(s);
 }
-
 
 /*
  * Redisplay the new adjustments that have been made the the text
@@ -2049,6 +1782,7 @@ RedisplayText(XmTextFieldWidget tf,
   _XmHighlightRec *l = tf->text.highlight.list;
   XRectangle rect;
   int x, y, i;
+  XmString s;
   Dimension margin_width = TextF_MarginWidth(tf) +
     tf->primitive.shadow_thickness +
       tf->primitive.highlight_thickness;
@@ -2110,12 +1844,9 @@ RedisplayText(XmTextFieldWidget tf,
 	start = end;
       }
     } else { /* start not within current record */
-      if (tf->text.max_char_size != 1)
-	x += FindPixelLength(tf, (char*)(TextF_WcValue(tf) + l[i].position),
-			     (int)(l[i+1].position - l[i].position));
-      else
-	x += FindPixelLength(tf, TextF_Value(tf) + l[i].position,
-			     (int)(l[i+1].position - l[i].position));
+      s = XmStringSubstr(tf->text.xms_value, l[i].position, (size_t)l[i+1].position - (size_t)l[i].position);
+      x += FindPixelLength(tf, s);
+      XmStringFree(s);
     }
   }  /* end for loop */
 
@@ -2124,12 +1855,9 @@ RedisplayText(XmTextFieldWidget tf,
     DrawTextSegment(tf, l[i].mode, l[i].position, start,
 		    end, tf->text.string_length, stipple, y, &x);
   } else {
-    if (tf->text.max_char_size != 1)
-      x += FindPixelLength(tf, (char*) (TextF_WcValue(tf) + l[i].position),
-			   tf->text.string_length - (int)l[i].position);
-    else
-      x += FindPixelLength(tf, TextF_Value(tf) + l[i].position,
-			   tf->text.string_length - (int)l[i].position);
+    s = XmStringSubstr(tf->text.xms_value, l[i].position, tf->text.string_length - (size_t)l[i].position);
+    x += FindPixelLength(tf, s);
+    XmStringFree(s);
   }
 
   if (x < (Position)(rect.x + rect.width)) {
@@ -2151,17 +1879,12 @@ ComputeSize(XmTextFieldWidget tf,
 	    Dimension *width,
 	    Dimension *height)
 {
+  XmString s;
   Dimension tmp = 0;
 
   if (TextF_ResizeWidth(tf) &&
       TextF_Columns(tf) < tf->text.string_length) {
-
-    if (tf->text.max_char_size != 1)
-      tmp = FindPixelLength(tf, (char *)TextF_WcValue(tf),
-			    tf->text.string_length);
-    else
-      tmp = FindPixelLength(tf, TextF_Value(tf), tf->text.string_length);
-
+    tmp = FindPixelLength(tf, tf->text.xms_value);
 
     *width = tmp + (2 * (TextF_MarginWidth(tf) +
 			 tf->primitive.shadow_thickness +
@@ -2177,7 +1900,6 @@ ComputeSize(XmTextFieldWidget tf,
       2 * (TextF_MarginHeight(tf) + tf->primitive.shadow_thickness +
 	   tf->primitive.highlight_thickness);
 }
-
 
 /*
  * TryResize - Attempts to resize the width of the text field widget.
@@ -2231,6 +1953,7 @@ AdjustText(XmTextFieldWidget tf,
 {
   int left_edge = 0;
   int diff;
+  XmString s;
   Dimension margin_width = TextF_MarginWidth(tf) +
     tf->primitive.shadow_thickness +
       tf->primitive.highlight_thickness;
@@ -2239,24 +1962,15 @@ AdjustText(XmTextFieldWidget tf,
   Dimension temp;
 
 
-  if (tf->text.max_char_size != 1) {
-    left_edge = FindPixelLength(tf, (char *) TextF_WcValue(tf),
-				(int)position) + (int) tf->text.h_offset;
-  } else {
-    left_edge = FindPixelLength(tf, TextF_Value(tf), (int)position) +
-      (int) tf->text.h_offset;
-  }
+  s = XmStringSubstr(tf->text.xms_value, 0, (size_t)position);
+  left_edge = FindPixelLength(tf, s) + tf->text.h_offset;
+  XmStringFree(s);
 
-  if (left_edge <= (int)margin_width &&
-      position == tf->text.string_length) {
+  if (left_edge <= (int)margin_width && position == tf->text.string_length) {
     position = MAX(position - TextF_Columns(tf)/2, 0);
-    if (tf->text.max_char_size != 1) {
-      left_edge = FindPixelLength(tf, (char *) TextF_WcValue(tf),
-				  (int)position) + (int) tf->text.h_offset;
-    } else {
-      left_edge = FindPixelLength(tf, TextF_Value(tf), (int)position) +
-	(int) tf->text.h_offset;
-    }
+    s = XmStringSubstr(tf->text.xms_value, 0, (size_t)position);
+    left_edge = FindPixelLength(tf, s) + tf->text.h_offset;
+    XmStringFree(s);
   }
 
   if ((diff = left_edge - margin_width) < 0) {
@@ -2334,14 +2048,7 @@ AdjustSize(XmTextFieldWidget tf)
     tf->primitive.shadow_thickness +
       tf->primitive.highlight_thickness;
 
-  if (tf->text.max_char_size != 1) {
-    left_edge = FindPixelLength(tf, (char *) TextF_WcValue(tf),
-				tf->text.string_length) + margin_width;
-  } else {
-    left_edge = FindPixelLength(tf, TextF_Value(tf),
-				tf->text.string_length) + margin_width;
-  }
-
+  left_edge = FindPixelLength(tf, tf->text.xms_value) + margin_width;
   if ((diff = (left_edge - (tf->core.width - (margin_width)))) > 0) {
     if (tf->text.in_setvalues) {
       tf->core.width += diff;
@@ -2359,7 +2066,7 @@ AdjustSize(XmTextFieldWidget tf)
       return;
     } else {
       /* We need to scroll the string to the left. */
-      tf->text.h_offset = margin_width - diff;
+      tf->text.h_offset = tf->text.alignment == XmALIGNMENT_END ? diff : margin_width - diff;
     }
   } else {
     Dimension width;
@@ -2394,201 +2101,133 @@ AdjustSize(XmTextFieldWidget tf)
     RedisplayText(tf, 0, tf->text.string_length);
 }
 
-/* If MB_CUR_MAX == 1, insert is a char* pointer; else, it is a wchar_t *
- * pointer and must be appropriately cast.  In all cases, insert_length
- * is the number of characters, not the number of bytes pointed to by
- * insert
- */
-static Boolean
-ModifyVerify(XmTextFieldWidget tf,
-	     XEvent *event,
-	     XmTextPosition *replace_prev,
-	     XmTextPosition *replace_next,
-	     char **insert,
-	     int *insert_length,
-	     XmTextPosition *newInsert,
-	     int *free_insert)
+static Boolean ModifyVerify(XmTextFieldWidget tf, XEvent *event,
+                            XmTextPosition *replace_prev,
+                            XmTextPosition *replace_next,
+                            XmString *insert,
+                            size_t *insert_length,
+                            XmTextPosition *newInsert)
 {
-  XmTextVerifyCallbackStruct vcb;
-  XmTextVerifyCallbackStructWcs wcs_vcb;
-  XmTextBlockRec newblock;
-  XmTextBlockRecWcs wcs_newblock;
-  Boolean do_free = False;
-  Boolean wcs_do_free = False;
-  int count;
-  wchar_t *wptr;
+	XmString str;
+	XmTextPosition curr_insert;
+	XmTextVerifyCallbackStruct vcb;
+	XmTextVerifyCallbackStructWcs wcs_vcb;
+	XmTextVerifyCallbackStructStr vcb_str;
+	XmTextBlockRec newblock;
+	XmTextBlockRecWcs wcs_newblock;
+	char *cptr;
+	wchar_t *wptr;
 
-  *newInsert = TextF_CursorPosition(tf);
-  *free_insert = (int)False;
+	/* if there are no callbacks, don't waste any time... just return True */
+	if (!TextF_ModifyVerifyCallbackStr(tf) &&
+	    !TextF_ModifyVerifyCallback(tf)    &&
+	    !TextF_ModifyVerifyCallbackWcs(tf))
+		return True;
 
-  /* if there are no callbacks, don't waste any time... just return  True */
-  if (!TextF_ModifyVerifyCallback(tf) && !TextF_ModifyVerifyCallbackWcs(tf))
-    return(True);
+	vcb_str.doit = True;
+	curr_insert = *newInsert = TextF_CursorPosition(tf);
+	if (TextF_ModifyVerifyCallbackStr(tf)) {
+		str                = XmStringCopy(*insert);
+		vcb_str.reason     = XmCR_MODIFYING_TEXT_VALUE;
+		vcb_str.event      = event;
+		vcb_str.currInsert = curr_insert;
+		vcb_str.newInsert  = *newInsert;
+		vcb_str.startPos   = *replace_prev;
+		vcb_str.endPos     = *replace_next;
+		vcb_str.str        = str;
+		XtCallCallbackList((Widget)tf, TextF_ModifyVerifyCallbackStr(tf), (XtPointer)&vcb_str);
+		XmStringFree(str);
 
-  newblock.format = XmFMT_8_BIT;
-  newblock.length = *insert_length * tf->text.max_char_size;
+		if (vcb_str.doit) {
+			if (vcb_str.str != *insert) {
+				*insert        = vcb_str.str;
+				*insert_length = XmStringLen(vcb_str.str);
+			}
 
-  if (*insert_length) {
-    if (TextF_ModifyVerifyCallback(tf)) {
-      newblock.ptr = (char *) XtMalloc((unsigned)newblock.length +
-				       tf->text.max_char_size);
-      if (tf->text.max_char_size == 1) {
-	(void)memcpy((void*)newblock.ptr, (void*)*insert,
-		     newblock.length);
-	newblock.ptr[newblock.length]='\0';
-      } else {
-	count = (int) wcstombs(newblock.ptr, (wchar_t*)*insert,
-			       newblock.length);
-	if (count < 0) { /* bad wchar; don't pass anything */
-	  newblock.ptr[0] = '\0';
-	  newblock.length = 0;
-	} else if (count == newblock.length) {
-	  newblock.ptr[newblock.length] = '\0';
-	} else {
-	  newblock.ptr[count] = '\0';
-	  newblock.length = count;
+			*replace_prev = vcb_str.startPos;
+			*replace_next = vcb_str.endPos;
+			*newInsert    = vcb_str.newInsert;
+			curr_insert   = vcb_str.currInsert;
+		}
 	}
-      }
-      do_free = True;
-    } else
-      newblock.ptr = NULL;
-  } else
-    newblock.ptr = NULL;
 
-  /* Fill in the appropriate structs */
-  vcb.reason = XmCR_MODIFYING_TEXT_VALUE;
-  vcb.event = (XEvent *) event;
-  vcb.doit = True;
-  vcb.currInsert = TextF_CursorPosition(tf);
-  vcb.newInsert = TextF_CursorPosition(tf);
-  vcb.text = &newblock;
-  vcb.startPos = *replace_prev;
-  vcb.endPos = *replace_next;
+	vcb.doit = True;
+	if (TextF_ModifyVerifyCallback(tf) && vcb_str.doit) {
+		newblock.format = XmFMT_8_BIT;
+		newblock.length = *insert_length;
+		cptr = newblock.ptr = XtCalloc(*insert_length + 1, 1);
 
-  /* Call the modify verify callbacks. */
-  if (TextF_ModifyVerifyCallback(tf))
-    XtCallCallbackList((Widget) tf, TextF_ModifyVerifyCallback(tf),
-		       (XtPointer) &vcb);
+		if (newblock.length) {
+			cptr = XmStringUngenerate(*insert, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+			memcpy(newblock.ptr, cptr, newblock.length);
+			XtFree(cptr);
+			cptr = newblock.ptr;
+		}
 
-  if (TextF_ModifyVerifyCallbackWcs(tf) && vcb.doit) {
-    if (do_free) { /* there is a char* modify verify callback; the data we
-		    * want is in vcb struct */
-      wcs_newblock.wcsptr = (wchar_t *) XtMalloc((unsigned)
-						 (vcb.text->length + 1) *
-						 sizeof(wchar_t));
-      wcs_newblock.length = mbstowcs(wcs_newblock.wcsptr, vcb.text->ptr,
-				     vcb.text->length);
-      if (wcs_newblock.length < 0) { /* bad value; don't pass anything */
-	wcs_newblock.wcsptr[0] = 0L;
-	wcs_newblock.length = 0;
-      } else
-	wcs_newblock.wcsptr[wcs_newblock.length] = 0L;
-    } else { /* there was no char* modify verify callback; use data
-	      * passed in from caller instead of that in vcb struct. */
-      wcs_newblock.wcsptr = (wchar_t *) XtMalloc((unsigned)
-						 (*insert_length + 1) *
-						 sizeof(wchar_t));
-      if (tf->text.max_char_size == 1)
-	wcs_newblock.length = mbstowcs(wcs_newblock.wcsptr, *insert,
-				       *insert_length);
-      else {
-	wcs_newblock.length = *insert_length;
-	(void)memcpy((void*)wcs_newblock.wcsptr, (void*)*insert,
-		     *insert_length * sizeof(wchar_t));
-      }
-      if (wcs_newblock.length < 0) { /* bad value; don't pass anything */
-	wcs_newblock.wcsptr[0] = 0L;
-	wcs_newblock.length = 0;
-      } else
-	wcs_newblock.wcsptr[wcs_newblock.length] = 0L;
+		vcb.reason     = XmCR_MODIFYING_TEXT_VALUE;
+		vcb.event      = event;
+		vcb.currInsert = curr_insert;
+		vcb.newInsert  = *newInsert;
+		vcb.text       = &newblock;
+		vcb.startPos   = *replace_prev;
+		vcb.endPos     = *replace_next;
+		XtCallCallbackList((Widget) tf, TextF_ModifyVerifyCallback(tf), (XtPointer)&vcb);
+		XtFree(cptr);
 
-    }
-    wcs_do_free = True;
-    wcs_vcb.reason = XmCR_MODIFYING_TEXT_VALUE;
-    wcs_vcb.event = (XEvent *) event;
-    wcs_vcb.doit = True;
-    wcs_vcb.currInsert = vcb.currInsert;
-    wcs_vcb.newInsert = vcb.newInsert;
-    wcs_vcb.text = &wcs_newblock;
-    wcs_vcb.startPos = vcb.startPos;
-    wcs_vcb.endPos = vcb.endPos;
+		if (vcb.doit) {
+			if (newblock.ptr != cptr ||
+			    newblock.length != *insert_length) {
+				XmStringFree(*insert);
+				newblock.ptr[newblock.length] = '\0';
+				*insert        = XmStringGenerate(newblock.ptr, NULL, XmCHARSET_TEXT, NULL);
+				*insert_length = XmStringLen(*insert);
+			}
 
-    XtCallCallbackList((Widget) tf, TextF_ModifyVerifyCallbackWcs(tf),
-		       (XtPointer) &wcs_vcb);
-
-  }
-  /* copy the newblock.ptr, length, start, and end to the pointers passed */
-  if (TextF_ModifyVerifyCallbackWcs(tf)) { /* use wcs_vcb data */
-    *insert_length = wcs_vcb.text->length; /* length is char count*/
-    if (wcs_vcb.doit) {
-      if (tf->text.max_char_size == 1) { /* caller expects char */
-	wcs_vcb.text->wcsptr[wcs_vcb.text->length] = 0L;
-	if (*insert_length > 0) {
-	  *insert = XtMalloc((unsigned) *insert_length + 1);
-	  *free_insert = (int)True;
-	  count = wcstombs(*insert, wcs_vcb.text->wcsptr,
-			   *insert_length + 1);
-	  if (count < 0) {
-	    (*insert)[0] = 0;
-	    *insert_length = 0;
-	  }
+			*replace_prev = vcb.startPos;
+			*replace_next = vcb.endPos;
+			*newInsert    = vcb.newInsert;
+			curr_insert   = vcb.currInsert;
+		}
 	}
-      } else {  /* callback struct has wchar*; caller expects wchar* */
-	if (*insert_length > 0) {
-	  *insert =
-	    XtMalloc((unsigned)(*insert_length + 1) * sizeof(wchar_t));
-	  *free_insert = (int)True;
-	  (void)memcpy((void*)*insert, (void*)wcs_vcb.text->wcsptr,
-		       *insert_length * sizeof(wchar_t));
-	  wptr = (wchar_t*) *insert;
-	  wptr[*insert_length] = 0L;
-	}
-      }
-      *replace_prev = wcs_vcb.startPos;
-      *replace_next = wcs_vcb.endPos;
-      *newInsert = wcs_vcb.newInsert;
-    }
-  } else { /* use vcb data */
-    if (vcb.doit) {
-      if (tf->text.max_char_size == 1) {  /* caller expects char* */
-	*insert_length =  vcb.text->length;
-	if (*insert_length > 0) {
-	  *insert = XtMalloc((unsigned) *insert_length + 1);
-	  *free_insert = (int)True;
-	  (void)memcpy((void*)*insert, (void*)vcb.text->ptr,
-		       *insert_length);
-	  (*insert)[*insert_length] = 0;
-	}
-      } else {                       /* caller expects wchar_t* back */
-	*insert_length =  _XmTextFieldCountCharacters(tf, vcb.text->ptr,
-						      vcb.text->length);
-	if (*insert_length > 0) {
-	  *insert =
-	    XtMalloc((unsigned)(*insert_length + 1) * sizeof(wchar_t));
-	  *free_insert = (int)True;
-	  count = mbstowcs((wchar_t*)*insert, vcb.text->ptr,
-			   *insert_length);
-	  wptr = (wchar_t*) *insert;
-	  if (count < 0) {
-	    wptr[0] = 0L;
-	    *insert_length = 0;
-	  } else
-	    wptr[count] = 0L;
-	}
-      }
-      *replace_prev = vcb.startPos;
-      *replace_next = vcb.endPos;
-      *newInsert = vcb.newInsert;
-    }
-  }
-  if (do_free) XtFree(newblock.ptr);
-  if (wcs_do_free) XtFree((char*)wcs_newblock.wcsptr);
 
-  /* If doit becomes False, then don't allow the change. */
-  if (TextF_ModifyVerifyCallbackWcs(tf))
-    return wcs_vcb.doit;
-  else
-    return vcb.doit;
+	wcs_vcb.doit = True;
+	if (TextF_ModifyVerifyCallbackWcs(tf) && vcb_str.doit && vcb.doit) {
+		wcs_newblock.length        = (int)*insert_length;
+		wptr = wcs_newblock.wcsptr = (wchar_t *)XtCalloc(wcs_newblock.length + 1, sizeof(wchar_t));
+
+		if (wcs_newblock.length) {
+			wptr = XmStringUngenerate(*insert, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+			memcpy(wcs_newblock.wcsptr, wptr, wcs_newblock.length * sizeof(wchar_t));
+			XtFree((XtPointer)wptr);
+			wptr = wcs_newblock.wcsptr;
+		}
+
+		wcs_vcb.reason     = XmCR_MODIFYING_TEXT_VALUE;
+		wcs_vcb.event      = event;
+		wcs_vcb.currInsert = curr_insert;
+		wcs_vcb.newInsert  = *newInsert;
+		wcs_vcb.text       = &wcs_newblock;
+		wcs_vcb.startPos   = *replace_prev;
+		wcs_vcb.endPos     = *replace_next;
+		XtCallCallbackList((Widget) tf, TextF_ModifyVerifyCallbackWcs(tf), (XtPointer)&wcs_vcb);
+		XtFree((XtPointer)wptr);
+
+		if (wcs_vcb.doit) {
+			if (wcs_newblock.wcsptr != wptr || *insert_length != (size_t)wcs_newblock.length) {
+				XmStringFree(*insert);
+				wcs_newblock.wcsptr[wcs_newblock.length] = 0;
+				*insert        = XmStringCreateWide(wcs_newblock.wcsptr, NULL);
+				*insert_length = XmStringLen(*insert);
+			}
+
+			*replace_prev = wcs_vcb.startPos;
+			*replace_next = wcs_vcb.endPos;
+			*newInsert    = wcs_vcb.newInsert;
+		}
+	}
+
+	/* Disallow the modification if any callback indicated so */
+	return vcb_str.doit && wcs_vcb.doit && vcb.doit;
 }
 
 static void
@@ -2662,8 +2301,8 @@ SetCursorPosition(XmTextFieldWidget tf,
 
   if (position < 0) position = 0;
 
-  if (position > tf->text.string_length)
-    position = tf->text.string_length;
+  if (position > (XmTextPosition)tf->text.string_length)
+    position = (XmTextPosition)tf->text.string_length;
 
   if (TextF_CursorPosition(tf) != position && call_cb) {
     /* Call Motion Verify Callback before Cursor Changes Positon */
@@ -2775,30 +2414,26 @@ VerifyBounds(XmTextFieldWidget tf,
  * the appropriate cast.  In all cases, insert_length is the number of
  * characters (not bytes) to be inserted.
  */
-Boolean
-_XmTextFieldReplaceText(XmTextFieldWidget tf,
-			XEvent *event,
-			XmTextPosition replace_prev,
-			XmTextPosition replace_next,
-			char *insert,
-			int insert_length,
-                        Boolean move_cursor)
+Boolean _XmTextFieldReplaceText(XmTextFieldWidget tf, XEvent *event,
+                                XmTextPosition replace_prev,
+                                XmTextPosition replace_next,
+                                XmString insert,
+                                size_t insert_length,
+                                Boolean move_cursor,
+                                Boolean modify_verify)
 {
-  int replace_length, i;
-  char *src, *dst;
-  wchar_t *wc_src, *wc_dst;
+  int replace_length, low = 0, high = 0;
   int delta = 0;
   XmTextPosition cursorPos, newInsert;
   XmTextPosition old_pos = replace_prev;
-  int free_insert = (int)False;
-  char *insert_orig;
-  int insert_length_orig;
-  int size = 0;
+  XmString repl, insert_orig = insert;
+  size_t insert_length_orig = XmStringLen(insert);
 
   VerifyBounds(tf, &replace_prev, &replace_next);
-
   if (!TextF_Editable(tf)) {
-    if (tf->text.verify_bell) XBell(XtDisplay((Widget)tf), 0);
+    if (tf->text.verify_bell)
+      XBell(XtDisplayOfObject((Widget)tf), 0);
+    XmStringFree(insert);
     return False;
   }
 
@@ -2808,7 +2443,6 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
 	** XmTextFieldSetHighlight called since last interaction here
 	** that resulted in clearing program-set highlights
 	*/
-	int low = 0, high = 0;
 	if (TrimHighlights(tf, &low, &high))
 		{
 	    	RedisplayText(tf, low, high);
@@ -2819,98 +2453,62 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
   replace_length = (int) (replace_next - replace_prev);
   delta = insert_length - replace_length;
 
-  /* Disallow insertions that go beyond max length boundries.
-   */
+  /* Disallow insertions that go beyond max length boundries. */
   if ((delta >= 0) && !FUnderVerifyPreedit(tf) &&
-      ((tf->text.string_length + delta) - (TextF_MaxLength(tf)) > 0)) {
-    if (tf->text.verify_bell) XBell(XtDisplay(tf), 0);
+      ((tf->text.string_length + delta) > (size_t)TextF_MaxLength(tf))) {
+    if (tf->text.verify_bell)
+      XBell(XtDisplayOfObject((Widget)tf), 0);
+    XmStringFree(insert);
     return False;
   }
-
 
   /* If there are modify verify callbacks, verify that we want to continue
    * the action.
    */
   newInsert = TextF_CursorPosition(tf);
-
-  if (TextF_ModifyVerifyCallback(tf) || TextF_ModifyVerifyCallbackWcs(tf)) {
-    /* If the function ModifyVerify() returns false then don't
-     * continue with the action.
-     */
-    insert_length_orig = insert_length;
-    if (insert_length > 0) {
-        if (tf->text.max_char_size == 1)
-	    size = sizeof(char);
-	else
-	    size = sizeof(wchar_t);
-	insert_orig = XtMalloc(insert_length * size);
-	memmove(insert_orig, insert, insert_length * size);
-    } else
-	insert_orig = NULL;
-    if (!ModifyVerify(tf, event, &replace_prev, &replace_next,
-		      &insert, &insert_length, &newInsert, &free_insert)) {
-      if (tf->text.verify_bell) XBell(XtDisplay(tf), 0);
-      if (free_insert) XtFree(insert);
-      if (FUnderVerifyPreedit(tf)) {
-	FVerifyCommitNeeded(tf) = True;
-	PreEnd(tf) -= insert_length_orig;
-      }
-      return False;
-    } else {
-      if (FUnderVerifyPreedit(tf))
-	if (insert_length != insert_length_orig ||
-          memcmp(insert, insert_orig, insert_length * size) != 0) {
-	  FVerifyCommitNeeded(tf) = True;
-	  PreEnd(tf) += insert_length - insert_length_orig;
-	}
-
-      VerifyBounds(tf, &replace_prev, &replace_next);
-      replace_length = (int) (replace_next - replace_prev);
-      delta = insert_length - replace_length;
-
-      /* Disallow insertions that go beyond max length boundries.
-       */
-      if ((delta >= 0) && !FUnderVerifyPreedit(tf) &&
-	  ((tf->text.string_length + delta) - (TextF_MaxLength(tf)) > 0)) {
-	if (tf->text.verify_bell) XBell(XtDisplay(tf), 0);
-	if (free_insert) XtFree(insert);
-	return False;
-      }
-
+  if (modify_verify &&
+      !ModifyVerify(tf, event, &replace_prev, &replace_next, &insert,
+                    &insert_length, &newInsert)) {
+    if (tf->text.verify_bell)
+      XBell(XtDisplayOfObject((Widget)tf), 0);
+    if (FUnderVerifyPreedit(tf)) {
+      FVerifyCommitNeeded(tf) = True;
+      PreEnd(tf) -= (int)insert_length_orig;
     }
-    XtFree(insert_orig);
+
+    XmStringFree(insert);
+    return False;
   }
 
-  /* make sure selections are turned off prior to changeing text */
+  if (FUnderVerifyPreedit(tf)) {
+    if (insert_length != insert_length_orig || insert != insert_orig) {
+      FVerifyCommitNeeded(tf) = True;
+      PreEnd(tf) += insert_length - insert_length_orig;
+    }
+  }
+
+  if (insert != insert_orig)
+    XmStringFree(insert_orig);
+  VerifyBounds(tf, &replace_prev, &replace_next);
+  replace_length = (int)(replace_next - replace_prev);
+  delta = insert_length - replace_length;
+
+  /* Disallow insertions that go beyond max length boundries. */
+  if (delta >= 0 && !FUnderVerifyPreedit(tf) &&
+      ((tf->text.string_length + delta) > (size_t)TextF_MaxLength(tf))) {
+    if (tf->text.verify_bell)
+      XBell(XtDisplayOfObject((Widget)tf), 0);
+    XmStringFree(insert);
+    return False;
+  }
+
+  /* make sure selections are turned off prior to changing text */
   if (tf->text.has_primary &&
       tf->text.prim_pos_left != tf->text.prim_pos_right)
     doSetHighlight((Widget)tf, tf->text.prim_pos_left,
 			    tf->text.prim_pos_right, XmHIGHLIGHT_NORMAL);
 
   _XmTextFieldDrawInsertionPoint(tf, False);
-
-  /* Allocate more space if we need it.
-   */
-  if (tf->text.max_char_size == 1) {
-    if (tf->text.string_length + insert_length - replace_length >=
-	tf->text.size_allocd) {
-      tf->text.size_allocd += MAX(insert_length + TEXT_INCREMENT,
-				  (tf->text.size_allocd * 2));
-      tf->text.value =
-	(char *) XtRealloc((char*)TextF_Value(tf),
-			   (unsigned) (tf->text.size_allocd * sizeof(char)));
-    }
-  } else {
-    if ((tf->text.string_length + insert_length - replace_length) *
-	sizeof(wchar_t) >= tf->text.size_allocd) {
-      tf->text.size_allocd +=
-	MAX((insert_length + TEXT_INCREMENT)*sizeof(wchar_t),
-	    (tf->text.size_allocd * 2));
-      tf->text.wc_value =
-	(wchar_t *) XtRealloc((char*)TextF_WcValue(tf),
-			      (unsigned) tf->text.size_allocd);
-    }
-  }
 
   if (tf->text.has_primary && replace_prev < tf->text.prim_pos_right &&
       replace_next > tf->text.prim_pos_left) {
@@ -2945,67 +2543,15 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
        }
     }
 
-  if (tf->text.max_char_size == 1) {
-    if (replace_length > insert_length)
-      /* We need to shift the text at and after replace_next to the left. */
-      for (src = TextF_Value(tf) + replace_next,
-	   dst = src + (insert_length - replace_length),
-	   i = (int) ((tf->text.string_length + 1) - replace_next);
-	   i > 0;
-	   ++src, ++dst, --i)
-	*dst = *src;
-    else if (replace_length < insert_length)
-      /* We need to shift the text at and after replace_next to the right. */
-      /* Need to add 1 to string_length to handle the NULL terminator on */
-      /* the string. */
-      for (src = TextF_Value(tf) + tf->text.string_length,
-	   dst = src + (insert_length - replace_length),
-	   i = (int) ((tf->text.string_length + 1) - replace_next);
-	   i > 0;
-	   --src, --dst, --i)
-	*dst = *src;
+  /* Do the actual string replacement */
+  if (replace_next == replace_prev)
+    repl = XmStringInsert(tf->text.xms_value, replace_next, insert);
+  else repl = XmStringReplace(tf->text.xms_value, replace_prev, replace_next - replace_prev, insert);
 
-    /* Update the string.
-     */
-    if (insert_length != 0) {
-      for (src = insert,
-	   dst = TextF_Value(tf) + replace_prev,
-	   i = insert_length;
-	   i > 0;
-	   ++src, ++dst, --i)
-	*dst = *src;
-    }
-  } else {  /* have wchar_t* data */
-    if (replace_length > insert_length)
-      /* We need to shift the text at and after replace_next to the left. */
-      for (wc_src = TextF_WcValue(tf) + replace_next,
-	   wc_dst = wc_src + (insert_length - replace_length),
-	   i = (int) ((tf->text.string_length + 1) - replace_next);
-	   i > 0;
-	   ++wc_src, ++wc_dst, --i)
-	*wc_dst = *wc_src;
-    else if (replace_length < insert_length)
-      /* We need to shift the text at and after replace_next to the right. */
-      /* Need to add 1 to string_length to handle the NULL terminator on */
-      /* the string. */
-      for (wc_src = TextF_WcValue(tf) + tf->text.string_length,
-	   wc_dst = wc_src + (insert_length - replace_length),
-	   i = (int) ((tf->text.string_length + 1) - replace_next);
-	   i > 0;
-	   --wc_src, --wc_dst, --i)
-	*wc_dst = *wc_src;
-
-    /* Update the string.
-     */
-    if (insert_length != 0) {
-      for (wc_src = (wchar_t *)insert,
-	   wc_dst = TextF_WcValue(tf) + replace_prev,
-	   i = insert_length;
-	   i > 0;
-	   ++wc_src, ++wc_dst, --i)
-	*wc_dst = *wc_src;
-    }
-  }
+  XmStringFree(tf->text.xms_value);
+  XmStringFree(insert);
+  tf->text.xms_value     = repl;
+  tf->text.string_length += delta;
 
   if (tf->text.has_primary &&
       tf->text.prim_pos_left != tf->text.prim_pos_right) {
@@ -3024,12 +2570,10 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
     doSetHighlight((Widget)tf, tf->text.prim_pos_left,
 			    tf->text.prim_pos_right, XmHIGHLIGHT_SELECTED);
 
-  tf->text.string_length += insert_length - replace_length;
-
   if (move_cursor) {
     if (TextF_CursorPosition(tf) != newInsert) {
-      if (newInsert > tf->text.string_length) {
-	cursorPos = tf->text.string_length;
+      if (newInsert > (XmTextPosition)tf->text.string_length) {
+	cursorPos = (XmTextPosition)tf->text.string_length;
       } else if (newInsert < 0) {
 	cursorPos = 0;
       } else {
@@ -3038,10 +2582,10 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
     } else
       cursorPos = replace_next + (insert_length - replace_length);
     if (event != NULL) {
-      (void)SetDestination((Widget)tf, cursorPos, False, event->xkey.time);
+      SetDestination((Widget)tf, cursorPos, False, event->xkey.time);
     } else {
-      (void) SetDestination((Widget)tf, cursorPos, False,
-			    XtLastTimestampProcessed(XtDisplay((Widget)tf)));
+      SetDestination((Widget)tf, cursorPos, False,
+                     XtLastTimestampProcessed(XtDisplayOfObject((Widget)tf)));
     }
     _XmTextFieldSetCursorPosition(tf, event, cursorPos, False, True);
   }
@@ -3054,10 +2598,8 @@ _XmTextFieldReplaceText(XmTextFieldWidget tf,
   }
 
   _XmTextFieldDrawInsertionPoint(tf, True);
-  if (free_insert) XtFree(insert);
   return True;
 }
-
 
 /*
  * Reset selection flag and selection positions and then display
@@ -3103,6 +2645,7 @@ static XmTextPosition
 GetPosFromX(XmTextFieldWidget tf,
             Position x)
 {
+  XmString s;
   XmTextPosition position;
   int temp_x = 0;
   int next_char_width = 0;
@@ -3116,12 +2659,9 @@ GetPosFromX(XmTextFieldWidget tf,
    */
 
   if (tf->text.string_length > 0) {
-
-    if (tf->text.max_char_size != 1) {
-      next_char_width = FindPixelLength(tf, (char*)TextF_WcValue(tf), 1);
-    } else {
-      next_char_width = FindPixelLength(tf, TextF_Value(tf), 1);
-    }
+    s = XmStringSubstr(tf->text.xms_value, 0, 1);
+    next_char_width = FindPixelLength(tf, s);
+    XmStringFree(s);
   }
 
   for (position = 0; temp_x + next_char_width/2 < (int) x &&
@@ -3139,13 +2679,9 @@ GetPosFromX(XmTextFieldWidget tf,
      */
 
     if (tf->text.string_length > position + 1) {
-      if (tf->text.max_char_size != 1) {
-	next_char_width =
-	  FindPixelLength(tf, (char*)(TextF_WcValue(tf) + position + 1), 1);
-      } else {
-	next_char_width = FindPixelLength(tf,
-					  TextF_Value(tf) + position + 1, 1);
-      }
+      s = XmStringSubstr(tf->text.xms_value, position + 1, 1);
+      next_char_width = FindPixelLength(tf, s);
+      XmStringFree(s);
     }
   } /* for */
 
@@ -3232,175 +2768,86 @@ VerifyLeave(XmTextFieldWidget tf,
   return(cbdata.doit);
 }
 
-/* This routine is used to determine if two adjacent wchar_t characters
- * constitute a word boundary */
-static Boolean
-_XmTextFieldIsWordBoundary(XmTextFieldWidget tf,
-			   XmTextPosition pos1 ,
-			   XmTextPosition pos2)
+/**
+ * This routine is used to determine if two adjacent characters
+ * constitute a word boundary
+ */
+static Boolean _XmTextFieldIsWordBoundary(XmTextFieldWidget tf,
+                                          XmTextPosition pos1,
+                                          XmTextPosition pos2)
 {
-  int size_pos1 = 0;
-  int size_pos2 = 0;
-  char s1[MB_LEN_MAX];
-  char s2[MB_LEN_MAX];
+	XmCodepoint c1, c2;
 
-  /* if positions aren't adjacent, return False */
-  if(pos1 < pos2 && ((pos2 - pos1) != 1))
-    return False;
-  else if(pos2 < pos1 && ((pos1 - pos2) != 1))
-    return False;
+	/* if positions aren't adjacent, return False */
+	if (pos1 < pos2 && ((pos2 - pos1) != 1))      return False;
+	else if (pos2 < pos1 && ((pos1 - pos2) != 1)) return False;
 
-  if (tf->text.max_char_size == 1) { /* data is char* and one-byte per char */
-    if (isspace((unsigned char)TextF_Value(tf)[pos1]) ||
-	isspace((unsigned char)TextF_Value(tf)[pos2])) return True;
-  } else {
-    size_pos1 = wctomb(s1, TextF_WcValue(tf)[pos1]);
-    size_pos2 = wctomb(s2, TextF_WcValue(tf)[pos2]);
-    if (size_pos1 == 1 && (size_pos2 != 1 || isspace((unsigned char)*s1)))
-      return True;
-    if (size_pos2 == 1 && (size_pos1 != 1 || isspace((unsigned char)*s2)))
-      return True;
-  }
-  return False;
+	/* Use space as the sole word boundary for now */
+	if (XmStringCodepointAt(tf->text.xms_value, pos1) == ' ' ||
+	    XmStringCodepointAt(tf->text.xms_value, pos2) == ' ')
+		return True;
+
+	return False;
 }
 
-static void
-FindWord(XmTextFieldWidget tf,
-	 XmTextPosition begin,
-	 XmTextPosition *left,
-	 XmTextPosition *right)
+static void FindWord(XmTextFieldWidget tf, XmTextPosition begin,
+                     XmTextPosition *left, XmTextPosition *right)
 {
-  XmTextPosition start, end;
+	XmTextPosition start, end;
 
-  if (tf->text.max_char_size == 1) {
-    for (start = begin; start > 0; start--) {
-      if (isspace((unsigned char)TextF_Value(tf)[start - 1])) {
-	break;
-      }
-    }
-    *left = start;
-
-    for (end = begin; end <= tf->text.string_length; end++) {
-      if (isspace((unsigned char)TextF_Value(tf)[end])) {
-	end++;
-	break;
-      }
-    }
-    *right = end - 1;
-  } else { /* check for iswspace and iswordboundary in each direction */
-    for (start = begin; start > 0; start --) {
-      if (iswspace(TextF_WcValue(tf)[start-1])
-	  || _XmTextFieldIsWordBoundary(tf, (XmTextPosition) start - 1,
-					start)) {
-	break;
-      }
-    }
-    *left = start;
-
-    for (end = begin; end <= tf->text.string_length; end++) {
-      if (iswspace(TextF_WcValue(tf)[end])) {
-	end++;
-	break;
-      } else if (end < tf->text.string_length) {
-	if (_XmTextFieldIsWordBoundary(tf, end, (XmTextPosition)end + 1)) {
-	  end += 2; /* want to return position of next word; end + 1 */
-	  break;    /* is that position && *right = end - 1... */
+	for (start = begin; start > 0; start--) {
+		if (_XmTextFieldIsWordBoundary(tf, start - 1, start))
+			break;
 	}
-      }
-    }
-    *right = end - 1;
-  }
+
+	*left = start;
+	for (end = begin; end <= (XmTextPosition)tf->text.string_length; end++) {
+		if (end < (XmTextPosition)tf->text.string_length) {
+			if (_XmTextFieldIsWordBoundary(tf, end, end + 1)) {
+				end += 2; /* want to return position of next word; end + 1 */
+				break;    /* is that position && *right = end - 1... */
+			}
+		}
+	}
+
+	*right = end - 1;
 }
 
-static void
-FindPrevWord(XmTextFieldWidget tf,
-	     XmTextPosition *left,
-	     XmTextPosition *right)
+static void FindPrevWord(XmTextFieldWidget tf, XmTextPosition *left, XmTextPosition *right)
 {
+	XmTextPosition start = TextF_CursorPosition(tf);
 
-  XmTextPosition start = TextF_CursorPosition(tf);
+	if (start > 0 && _XmTextFieldIsWordBoundary(tf, start - 1, start)) {
+		for (; start > 0; start--) {
+			if (!_XmTextFieldIsWordBoundary(tf, start - 1, start)) {
+				start--;
+				break;
+			}
+		}
+	}
 
-  if (tf->text.max_char_size == 1) {
-    if ((start > 0) &&
-	(isspace((unsigned char)TextF_Value(tf)[start - 1]))) {
-      for (; start > 0; start--) {
-	if (!isspace((unsigned char)TextF_Value(tf)[start - 1])) {
-	  start--;
-	  break;
-	}
-      }
-    }
-    FindWord(tf, start, left, right);
-  } else {
-    if ((start > 0) && (iswspace(TextF_WcValue(tf)[start - 1]))) {
-      for (; start > 0; start--) {
-	if (!iswspace(TextF_WcValue(tf)[start -1])) {
-	  start--;
-	  break;
-	}
-      }
-    } else if ((start > 0) &&
-	       _XmTextFieldIsWordBoundary(tf, (XmTextPosition) start - 1,
-					  start)) {
-      start--;
-    }
-    FindWord(tf, start, left, right);
-  }
+	FindWord(tf, start, left, right);
 }
 
-static void
-FindNextWord(XmTextFieldWidget tf,
-	     XmTextPosition *left,
-	     XmTextPosition *right)
+static void FindNextWord(XmTextFieldWidget tf, XmTextPosition *left, XmTextPosition *right)
 {
+	XmTextPosition end = TextF_CursorPosition(tf);
 
-  XmTextPosition end = TextF_CursorPosition(tf);
+	if (_XmTextFieldIsWordBoundary(tf, end - 1, end)) {
+		for (end = TextF_CursorPosition(tf); end < (XmTextPosition)tf->text.string_length; end++) {
+			if (!_XmTextFieldIsWordBoundary(tf, end - 1, end))
+				break;
+		}
+	}
 
-  if(tf->text.max_char_size == 1) {
-    if (isspace((unsigned char)TextF_Value(tf)[end])) {
-      for (end = TextF_CursorPosition(tf);
-	   end < tf->text.string_length; end++) {
-	if (!isspace((unsigned char)TextF_Value(tf)[end])) {
-	  break;
-	}
-      }
-    }
-    FindWord(tf, end, left, right);
-    /*
-     * Set right to the last whitespace following the end of the
-     * current word.
-     */
-    while (*right < tf->text.string_length &&
-	   isspace((unsigned char)TextF_Value(tf)[(int)*right]))
-      *right = *right + 1;
-    if (*right < tf->text.string_length)
-      *right = *right - 1;
-  } else {
-    if (iswspace(TextF_WcValue(tf)[end])) {
-      for (; end < tf->text.string_length; end ++) {
-	if (!iswspace(TextF_WcValue(tf)[end])) {
-	  break;
-	}
-      }
-    } else { /* if for other reasons at word boundry, advance to next word */
-      if ((end < tf->text.string_length) &&
-	  _XmTextFieldIsWordBoundary(tf, end, (XmTextPosition) end + 1))
-	end++;
-    }
-    FindWord(tf, end, left, right);
-    /*
-     * If word boundary caused by whitespace, set right to the last
-     * whitespace following the end of the current word.
-     */
-    if (iswspace(TextF_WcValue(tf)[(int)*right])) {
-      while (*right < tf->text.string_length &&
-	     iswspace(TextF_WcValue(tf)[(int)*right])) {
-	*right = *right + 1;
-      }
-      if (*right < tf->text.string_length)
-	*right = *right - 1;
-    }
-  }
+	FindWord(tf, end, left, right);
+
+	/* Set right to the last word boundary following the current word */
+	while (*right < (XmTextPosition)tf->text.string_length && _XmTextFieldIsWordBoundary(tf, *right - 1, *right))
+		*right += 1;
+
+	if (*right < (XmTextPosition)tf->text.string_length)
+		*right -= 1;
 }
 
 static void
@@ -3451,115 +2898,6 @@ NeedsPendingDeleteDisjoint(XmTextFieldWidget tf)
 }
 
 
-static Boolean
-PrintableString(XmTextFieldWidget tf,
-		char* str,
-		int n,
-		Boolean use_wchar) /* sometimes unused */
-{
-#ifdef SUPPORT_ZERO_WIDTH
-  /* some locales (such as Thai) have characters that are
-   * printable but non-spacing. These should be inserted,
-   * even if they have zero width.
-   */
-  if (tf->text.max_char_size == 1) {
-    int i;
-    if (!use_wchar) {
-      for (i = 0; i < n; i++) {
-	if (!isprint((unsigned char)str[i])) {
-	  return False;
-	}
-      }
-    } else {
-      char scratch[8];
-      wchar_t *ws = (wchar_t *) str;
-      for (i = 0; i < n; i++) {
-	if (wctomb(scratch, ws[i]) <= 0)
-	  return False;
-	if (!isprint((unsigned char)scratch[0])) {
-	  return False;
-	}
-      }
-    }
-    return True;
-  } else {
-    /* tf->text.max_char_size > 1 */
-    if (use_wchar) {
-      int i;
-      wchar_t *ws = (wchar_t *) str;
-      for (i = 0; i < n; i++) {
-	if (!iswprint(ws[i])) {
-	  return False;
-	}
-      }
-      return True;
-    } else {
-      int i, csize;
-      wchar_t wc;
-      for (i = 0, csize = mblen(str, tf->text.max_char_size);
-	   i < n;
-	   i += csize, csize=mblen(&(str[i]), tf->text.max_char_size))
-	{
-	  if (csize < 0)
-	    return False;
-	  if (mbtowc(&wc, &(str[i]), tf->text.max_char_size) <= 0)
-	    return False;
-	  if (!iswprint(wc)) {
-	    return False;
-	  }
-	}
-    }
-    return True;
-  }
-#else /* SUPPORT_ZERO_WIDTH */
-  if (TextF_UseFontSet(tf)) {
-      if(use_wchar)
-	  return (XwcTextEscapement((XFontSet)TextF_Font(tf), (wchar_t *)str, n) != 0);
-      else
-	  return (XmbTextEscapement((XFontSet)TextF_Font(tf), str, n) != 0);
-#if USE_XFT
-  } else if (TextF_UseXft(tf)) {
-    XGlyphInfo	ext;
-
-    XftTextExtentsUtf8(XtDisplay(tf), TextF_XftFont(tf),
-            (FcChar8*)str, n, &ext);
-
-    return ext.xOff != 0;
-#endif
-  }
-  else {
-    if (use_wchar) {
-      char cache[100];
-      char *tmp, *cache_ptr;
-      wchar_t *tmp_str;
-      int ret_val, buf_size, count;
-      Boolean is_printable;
-      buf_size = (n * MB_CUR_MAX) + 1;
-      cache_ptr = tmp = XmStackAlloc(buf_size, cache);
-
-      tmp_str = (wchar_t *)str;
-      // Fixed MZ BZ#1257: by Brad Despres <brad@sd.aonix.com>
-      count = 0;
-      do {
-	ret_val = wctomb(tmp, *tmp_str);
-	count += 1;
-	tmp += ret_val;
-	buf_size -= ret_val;
-	tmp_str++;
-      } while ( (ret_val > 0)&& (buf_size >= MB_CUR_MAX) && (count < n) ) ;
-      if (ret_val == -1)    /* bad character */
-	return (False);
-      is_printable = XTextWidth(TextF_Font(tf), cache_ptr, tmp - cache_ptr);
-      XmStackFree(cache_ptr, cache);
-      return (is_printable);
-    }
-    else {
-      return (XTextWidth(TextF_Font(tf), str, n) != 0);
-    }
-  }
-#endif /* SUPPORT_ZERO_WIDTH */
-}
-
 /****************************************************************
  *
  * Input functions defined in the action table.
@@ -3573,9 +2911,9 @@ InsertChar(Widget w,
 	   Cardinal *num_params)
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
+  XmString insert;
   char insert_string[TEXT_MAX_INSERT_SIZE + 1]; /* NULL-terminated below */
   XmTextPosition cursorPos =0 , nextPos = 0;
-  wchar_t * wc_insert_string;
   int insert_length, i;
   int num_chars;
   Boolean replace_res;
@@ -3583,11 +2921,9 @@ InsertChar(Widget w,
   Status status_return;
   XmAnyCallbackStruct cb;
 
-  /* Determine what was pressed.
-   */
-  insert_length = XmImMbLookupString(w, (XKeyEvent *) event, insert_string,
-		                     TEXT_MAX_INSERT_SIZE, (KeySym *) NULL,
-				     &status_return);
+  /* Determine what was pressed. */
+  insert_length = XmImMbLookupString(w, (XKeyEvent *)event, insert_string,
+		                     TEXT_MAX_INSERT_SIZE, NULL, &status_return);
 
   if (insert_length > 0 && !TextF_Editable(tf)) {
     if (tf->text.verify_bell) XBell(XtDisplay((Widget)tf), 0);
@@ -3607,10 +2943,6 @@ InsertChar(Widget w,
     if (insert_string[i] == 0) insert_length = 0; /* toss out input string */
 
   if (insert_length > 0) {
-    /* do not insert non-printing characters */
-    if (!PrintableString(tf, insert_string, insert_length, False))
-      return;
-
     _XmTextFieldDrawInsertionPoint(tf, False);
     if (NeedsPendingDeleteDisjoint(tf)) {
       if (!tf->text.has_primary ||
@@ -3626,27 +2958,12 @@ InsertChar(Widget w,
       cursorPos = nextPos = TextF_CursorPosition(tf);
     }
 
-
-    if (tf->text.max_char_size == 1) {
-      if (tf->text.overstrike) nextPos += insert_length;
-      if (nextPos > tf->text.string_length) nextPos = tf->text.string_length;
-      replace_res = _XmTextFieldReplaceText(tf, (XEvent *) event, cursorPos,
-					    nextPos, insert_string,
-					    insert_length, True);
-    } else {
-      char stack_cache[100];
-      insert_string[insert_length] = '\0'; /* NULL terminate for mbstowcs */
-      wc_insert_string = (wchar_t*)XmStackAlloc((Cardinal)(insert_length+1) *
-						sizeof(wchar_t), stack_cache);
-      num_chars = mbstowcs(wc_insert_string, insert_string, insert_length+1);
-      if (num_chars < 0) num_chars = 0;
-      if (tf->text.overstrike) nextPos += num_chars;
-      if (nextPos > tf->text.string_length) nextPos = tf->text.string_length;
-      replace_res = _XmTextFieldReplaceText(tf, (XEvent *) event, cursorPos,
-					    nextPos, (char*) wc_insert_string,
-					    num_chars, True);
-      XmStackFree((char *)wc_insert_string, stack_cache);
-    }
+    insert = XmStringCreateMultibyte(insert_string, NULL);
+    if (tf->text.overstrike) nextPos += insert_length;
+    if (nextPos > tf->text.string_length) nextPos = tf->text.string_length;
+    replace_res = _XmTextFieldReplaceText(tf, (XEvent *) event, cursorPos,
+                                          nextPos, insert,
+                                          insert_length, True, True);
 
     if (replace_res) {
       if (pending_delete) {
@@ -3684,7 +3001,7 @@ DeletePrevChar(Widget w,
 	tf->text.prim_pos_left != tf->text.prim_pos_right) {
       if (TextF_CursorPosition(tf) - 1 >= 0)
 	if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf) - 1,
-				    TextF_CursorPosition(tf), NULL, 0, True)) {
+				    TextF_CursorPosition(tf), NULL, 0, True, True)) {
 	  CheckDisjointSelection(w, TextF_CursorPosition(tf),
 				 event->xkey.time);
 	  _XmTextFieldSetCursorPosition(tf, event,
@@ -3697,7 +3014,7 @@ DeletePrevChar(Widget w,
 	}
     } else if (TextF_CursorPosition(tf) - 1 >= 0) {
       if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf) - 1,
-				  TextF_CursorPosition(tf), NULL, 0, True)) {
+				  TextF_CursorPosition(tf), NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event, TextF_CursorPosition(tf),
@@ -3729,8 +3046,7 @@ DeleteNextChar(Widget w,
 	tf->text.prim_pos_left != tf->text.prim_pos_right) {
       if (TextF_CursorPosition(tf) < tf->text.string_length)
 	if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf),
-				    TextF_CursorPosition(tf) + 1, NULL, 0,
-				    True)) {
+				    TextF_CursorPosition(tf) + 1, NULL, 0, True, True)) {
 	  CheckDisjointSelection(w, TextF_CursorPosition(tf),
 				 event->xkey.time);
 	  _XmTextFieldSetCursorPosition(tf, event,
@@ -3743,8 +3059,7 @@ DeleteNextChar(Widget w,
 	}
     } else if (TextF_CursorPosition(tf) < tf->text.string_length)
       if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf),
-				  TextF_CursorPosition(tf) + 1, NULL,
-				  0, True)) {
+				  TextF_CursorPosition(tf) + 1, NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event,
@@ -3777,7 +3092,7 @@ DeletePrevWord(Widget w,
     if (tf->text.has_primary &&
 	tf->text.prim_pos_left != tf->text.prim_pos_right) {
       if (_XmTextFieldReplaceText(tf, event, left, TextF_CursorPosition(tf),
-				  NULL, 0, True)) {
+				  NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event,
@@ -3790,7 +3105,7 @@ DeletePrevWord(Widget w,
       }
     } else if (TextF_CursorPosition(tf) - 1 >= 0)
       if (_XmTextFieldReplaceText(tf, event, left, TextF_CursorPosition(tf),
-				  NULL, 0, True)) {
+				  NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event,
@@ -3823,7 +3138,7 @@ DeleteNextWord(Widget w,
     if (tf->text.has_primary &&
 	tf->text.prim_pos_left != tf->text.prim_pos_right) {
       if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf),
-				  right, NULL, 0, True)) {
+				  right, NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event,
@@ -3836,7 +3151,7 @@ DeleteNextWord(Widget w,
       }
     } else if (TextF_CursorPosition(tf) < tf->text.string_length)
       if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf),
-				  right, NULL, 0, True)) {
+				  right, NULL, 0, True, True)) {
 	CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			       event->xkey.time);
 	_XmTextFieldSetCursorPosition(tf, event,
@@ -3866,7 +3181,7 @@ DeleteToEndOfLine(Widget w,
   if (NeedsPendingDelete(tf)) (void) TextFieldRemove(w, event);
   else if (TextF_CursorPosition(tf) < tf->text.string_length) {
     if (_XmTextFieldReplaceText(tf, event, TextF_CursorPosition(tf),
-				tf->text.string_length, NULL, 0, True)) {
+				tf->text.string_length, NULL, 0, True, True)) {
       CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			     event->xkey.time);
       _XmTextFieldSetCursorPosition(tf, event, TextF_CursorPosition(tf),
@@ -3894,7 +3209,7 @@ DeleteToStartOfLine(Widget w,
   if (NeedsPendingDelete(tf)) (void) TextFieldRemove(w, event);
   else if (TextF_CursorPosition(tf) - 1 >= 0) {
     if (_XmTextFieldReplaceText(tf, event, 0,
-			        TextF_CursorPosition(tf), NULL, 0, True)) {
+			        TextF_CursorPosition(tf), NULL, 0, True, True)) {
       CheckDisjointSelection(w, TextF_CursorPosition(tf),
 			     event->xkey.time);
       _XmTextFieldSetCursorPosition(tf, event, TextF_CursorPosition(tf),
@@ -4115,148 +3430,85 @@ SimpleMovement(Widget w,
   _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-BackwardChar(Widget w,
-	     XEvent *event,
-	     char **params,
-	     Cardinal *num_params)
+static void BackwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position;
+	XmTextFieldWidget tf  = (XmTextFieldWidget)w;
+	XmTextPosition cursor = TextF_CursorPosition(tf);
 
-  cursorPos = TextF_CursorPosition(tf);
+	if (cursor <= 0)
+		return;
 
-  if (cursorPos > 0) {
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    position = cursorPos - 1;
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-    _XmTextFieldDrawInsertionPoint(tf, True);
-  }
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	SimpleMovement(w, event, params, num_params, cursor, cursor - 1);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-ForwardChar(Widget w,
-	    XEvent *event,
-	    char **params,
-	    Cardinal *num_params)
+static void ForwardChar(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position;
+	XmTextFieldWidget tf  = (XmTextFieldWidget)w;
+	XmTextPosition cursor = TextF_CursorPosition(tf);
 
-  cursorPos = TextF_CursorPosition(tf);
+	if (cursor >= (XmTextPosition)tf->text.string_length)
+		return;
 
-  if (cursorPos < tf->text.string_length) {
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    position = cursorPos + 1;
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-    _XmTextFieldDrawInsertionPoint(tf, True);
-  }
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	SimpleMovement(w, event, params, num_params, cursor, cursor + 1);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-BackwardWord(Widget w,
-	     XEvent *event,
-	     char **params,
-	     Cardinal *num_params)
+static void BackwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position, dummy;
+	XmTextFieldWidget tf = (XmTextFieldWidget)w;
+	XmTextPosition cursor, pos, dummy;
 
-  cursorPos = TextF_CursorPosition(tf);
+	if ((cursor = TextF_CursorPosition(tf)) <= 0)
+		return;
 
-  if (cursorPos > 0) {
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    FindPrevWord(tf, &position, &dummy);
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-    _XmTextFieldDrawInsertionPoint(tf, True);
-  }
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	FindPrevWord(tf, &pos, &dummy);
+	SimpleMovement(w, event, params, num_params, cursor, pos);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-static void
-ForwardWord(Widget w,
-	    XEvent *event,
-	    char **params,
-	    Cardinal *num_params)
+static void ForwardWord(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position, dummy;
+	XmTextFieldWidget tf = (XmTextFieldWidget)w;
+	XmTextPosition cursor, dummy, pos;
 
-  cursorPos = TextF_CursorPosition(tf);
+	if ((cursor = TextF_CursorPosition(tf)) >= (XmTextPosition)tf->text.string_length)
+		return;
 
-  _XmTextFieldDrawInsertionPoint(tf, False);
-  if (cursorPos < tf->text.string_length) {
-    if (tf->text.max_char_size == 1) {
-      if (isspace((unsigned char)TextF_Value(tf)[cursorPos]))
-	FindWord(tf, cursorPos, &dummy, &position);
-      else
-	FindNextWord(tf, &dummy, &position);
-      if(isspace((unsigned char)TextF_Value(tf)[position])) {
-	for (;position < tf->text.string_length; position++) {
-	  if (!isspace((unsigned char)TextF_Value(tf)[position]))
-	    break;
-	}
-      }
-    } else {
-      if (iswspace(TextF_WcValue(tf)[cursorPos]))
-	FindWord(tf, cursorPos, &dummy, &position);
-      else
-	FindNextWord(tf, &dummy, &position);
-      if (iswspace(TextF_WcValue(tf)[position])) {
-	for (; position < tf->text.string_length; position++) {
-	  if (!iswspace(TextF_WcValue(tf)[position]))
-	    break;
-	}
-      }
-    }
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-  }
-  _XmTextFieldDrawInsertionPoint(tf, True);
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	FindNextWord(tf, &dummy, &pos);
+	SimpleMovement(w, event, params, num_params, cursor, pos);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
-static void
-EndOfLine(Widget w,
-	  XEvent *event,
-	  char **params,
-	  Cardinal *num_params)
+static void EndOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position;
+	XmTextFieldWidget tf = (XmTextFieldWidget)w;
+	XmTextPosition cursor, pos;
 
-  cursorPos = TextF_CursorPosition(tf);
+	pos = (XmTextPosition)tf->text.string_length;
+	if ((cursor = TextF_CursorPosition(tf)) >= pos)
+		return;
 
-  if (cursorPos < tf->text.string_length) {
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    position = tf->text.string_length;
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-    _XmTextFieldDrawInsertionPoint(tf, True);
-  }
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	SimpleMovement(w, event, params, num_params, cursor, pos);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
-static void
-BeginningOfLine(Widget w,
-		XEvent *event,
-		char **params,
-		Cardinal *num_params)
+static void BeginningOfLine(Widget w, XEvent *event, char **params, Cardinal *num_params)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition cursorPos, position;
+	XmTextFieldWidget tf = (XmTextFieldWidget) w;
+	XmTextPosition cursor = TextF_CursorPosition(tf);
 
-  cursorPos = TextF_CursorPosition(tf);
+	if (cursor <= 0)
+		return;
 
-  if (cursorPos > 0) {
-    position = 0;
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    SimpleMovement((Widget) tf, event, params, num_params,
-		   cursorPos, position);
-    _XmTextFieldDrawInsertionPoint(tf, True);
-  }
+	_XmTextFieldDrawInsertionPoint(tf, False);
+	SimpleMovement(w, event, params, num_params, cursor, 0);
+	_XmTextFieldDrawInsertionPoint(tf, True);
 }
 
 static void
@@ -4271,9 +3523,9 @@ SetSelection(XmTextFieldWidget tf,
   if (left < 0) left = 0;
   if (right < 0) right = 0;
 
-  if (left > tf->text.string_length)
+  if (left > (XmTextPosition)tf->text.string_length)
     left = tf->text.string_length;
-  if (right > tf->text.string_length)
+  if (right > (XmTextPosition)tf->text.string_length)
     right = tf->text.string_length;
 
   if (left == right && tf->text.prim_pos_left != tf->text.prim_pos_right &&
@@ -4319,17 +3571,16 @@ SetSelection(XmTextFieldWidget tf,
       display_right = (old_prim_left < tf->text.prim_pos_left) ?
 	tf->text.prim_pos_left : old_prim_left;
 
-    if (display_left > tf->text.string_length)
+    if (display_left > (XmTextPosition)tf->text.string_length)
       display_left = tf->text.string_length;
 
-    if (display_right > tf->text.string_length)
+    if (display_right > (XmTextPosition)tf->text.string_length)
       display_right = tf->text.string_length;
 
     RedisplayText(tf, display_left, display_right);
   }
   tf->text.refresh_ibeam_off = True;
 }
-
 
 /*
  * Begin the selection by gaining ownership of the selection
@@ -4516,7 +3767,7 @@ KeySelection(Widget w,
 
   cursorPos = position;
 
-  if (position < 0 || position > tf->text.string_length) {
+  if (position < 0 || position > (XmTextPosition)tf->text.string_length) {
     _XmTextFieldDrawInsertionPoint(tf,True); /* Turn on I beam now
 						that we are done */
     tf->text.extending = False;
@@ -4648,7 +3899,7 @@ SetScanIndex(XmTextFieldWidget tf,
 
 
   if (sel_time > tf->text.last_time &&
-      sel_time - tf->text.last_time < XtGetMultiClickTime(XtDisplay(tf))) {
+      (int)(sel_time - tf->text.last_time) < XtGetMultiClickTime(XtDisplay(tf))) {
     /*
      * Fix for HaL DTS 9841 - Increment the sarray_index first, then check to
      *			  see if it is greater that the count.  Otherwise,
@@ -4803,9 +4054,9 @@ SetScanSelection(XmTextFieldWidget tf,
     tf->text.pending_off = False;
     if (event->type == ButtonPress)
     {
-      if ((tf->text.string_length) / 2 <= new_position)
+      if ((XmTextPosition)(tf->text.string_length) / 2 <= new_position)
       {
-	cursorPos = tf->text.string_length;
+	cursorPos = (XmTextPosition)tf->text.string_length;
       }
       else
       {
@@ -5421,7 +4672,7 @@ ProcessBSelect(Widget w,
     case ButtonPress:
       if (!InSelection(w, event) ||
 	  (event_time > tf->text.last_time &&
-	   event_time - tf->text.last_time <
+	   (int)(event_time - tf->text.last_time) <
 	   XtGetMultiClickTime(XtDisplay(w)))) {
 	if (*num_params > 0)
 	  XtCallActionProc(w, params[0], event, NULL, 0);
@@ -5591,7 +4842,7 @@ _XmTextFieldHandleSecondaryFinished(Widget w,
   /* This will mark the has_secondary field to False. */
   (void) _XmTextFieldSetSel2(w, 1, 0, False, time);
 
-  if (_XmTextFieldReplaceText(tf, event, left, right, NULL, 0, False /* don't adjust cursor position */)) {
+  if (_XmTextFieldReplaceText(tf, event, left, right, NULL, 0, False, True)) {
     XmTextPosition cursorPos;
     if (dest_data->has_destination && TextF_CursorPosition(tf) > right) {
       cursorPos = TextF_CursorPosition(tf) - (right - left);
@@ -5821,55 +5072,34 @@ ClearSelection(Widget w,
   int num_spaces = 0;
   XmAnyCallbackStruct cb;
   Boolean rep_result = False;
+  char *spaces = NULL;
+  XmString sp;
 
   if (left < right)
     num_spaces = (int)(right - left);
   else
     num_spaces = (int)(left - right);
 
-  if (num_spaces > 0) {
-    _XmTextFieldDrawInsertionPoint(tf, False);
-    if (tf->text.max_char_size == 1) {
-      char spaces_cache[100];
-      Cardinal spaces_size;
-      char *spaces;
-      int i;
+  if (num_spaces <= 0)
+    return;
 
-      spaces_size = num_spaces + 1;
+  _XmTextFieldDrawInsertionPoint(tf, False);
+  spaces = XtMalloc(num_spaces + 1);
+  memset(spaces, ' ', num_spaces);
+  spaces[num_spaces] = '\0';
+  sp = XmStringCreateMultibyte(spaces, NULL);
+  XtFree(spaces);
 
-      spaces = (char *)XmStackAlloc(spaces_size, spaces_cache);
+  rep_result = _XmTextFieldReplaceText(tf, (XEvent *)event, left, right,
+                                       sp, num_spaces, False, True);
 
-      for (i = 0; i < num_spaces; i++) spaces[i] = ' ';
-      spaces[num_spaces] = 0;
-
-      rep_result = _XmTextFieldReplaceText(tf, (XEvent *)event, left, right,
-					    spaces, num_spaces, False);
-      XmStackFree(spaces, spaces_cache);
-    } else {
-      wchar_t *wc_spaces;
-      int i;
-
-      wc_spaces = (wchar_t *)XtMalloc((unsigned)
-				      (num_spaces + 1) * sizeof(wchar_t));
-
-      for (i = 0; i < num_spaces; i++) {
-	(void)mbtowc(&wc_spaces[i], " ", 1);
-      }
-
-      rep_result = _XmTextFieldReplaceText(tf, (XEvent *)event, left, right,
-					    (char*)wc_spaces, num_spaces,
-					    False);
-
-      XtFree((char*)wc_spaces);
-    }
-    if (rep_result) {
-      cb.reason = XmCR_VALUE_CHANGED;
-      cb.event = event;
-      XtCallCallbackList((Widget) tf, TextF_ValueChangedCallback(tf),
-			 (XtPointer) &cb);
-    }
-    _XmTextFieldDrawInsertionPoint(tf, True);
+  if (rep_result) {
+    cb.reason = XmCR_VALUE_CHANGED;
+    cb.event = event;
+    XtCallCallbackList((Widget) tf, TextF_ValueChangedCallback(tf), (XtPointer)&cb);
   }
+
+  _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
 static void
@@ -5886,12 +5116,7 @@ PageRight(Widget w,
       tf->primitive.highlight_thickness;
 
   TextFieldResetIC(w);
-  if (tf->text.max_char_size != 1) {
-    length = FindPixelLength(tf, (char*)TextF_WcValue(tf),
-			     tf->text.string_length);
-  } else {
-    length = FindPixelLength(tf, TextF_Value(tf), tf->text.string_length);
-  }
+  length = FindPixelLength(tf, tf->text.xms_value);
 
   /* if widget is wider than text, ignore page-right action*/
   if (length <= (int)(tf->core.width - (2 * margin_width)))
@@ -6468,323 +5693,20 @@ Validates(XmTextFieldWidget tf)
    */
 }
 
-static Boolean
-LoadFontMetrics(XmTextFieldWidget tf)
+static void LoadFontMetrics(XmTextFieldWidget tf)
 {
-  XmFontContext context;
-  XmFontListEntry next_entry;
-  XmFontType type_return = XmFONT_IS_FONT;
-  XtPointer tmp_font;
-  Boolean have_font_struct = False;
-  Boolean have_font_set = False;
-#if USE_XFT
-  Boolean have_xft_font = False;
-#endif
-  XFontSetExtents *fs_extents;
-  XFontStruct *font;
-  unsigned long charwidth = 0;
-  char* font_tag = NULL;
+	XmString s;
+	XmRenderTable rt = TextF_FontList(tf);
 
-  if (!XmFontListInitFontContext(&context, TextF_FontList(tf)))
-    XmeWarning ((Widget)tf, MSG3);
+	if (!XmStringIsValid(tf->text.xms_value) || XmStringEmpty(tf->text.xms_value)) {
+		s = XmStringCreate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+		                   XmFONTLIST_DEFAULT_TAG);
+	} else s = XmStringCopy(tf->text.xms_value);
 
-  do {
-    next_entry = XmFontListNextEntry(context);
-    if (next_entry
-        && (tmp_font = XmFontListEntryGetFont(next_entry, &type_return))) {
-      if (type_return == XmFONT_IS_FONTSET) {
-	font_tag = XmFontListEntryGetTag(next_entry);
-	if (!have_font_set) { /* this saves the first fontset found, just in
-			       * case we don't find a default tag set.
-			       */
-	  TextF_UseFontSet(tf) = True;
-#if USE_XFT
-	  TextF_UseXft(tf) = False;
-#endif
-	  tf->text.font = (XFontStruct *)tmp_font;
-	  have_font_struct = True; /* we have a font set, so no need to
-				    * consider future font structs */
-	  have_font_set = True;    /* we have a font set. */
-
-	  if (!strcmp(XmFONTLIST_DEFAULT_TAG, font_tag)) {
-	    if (font_tag) XtFree(font_tag);
-	    break; /* Break out!  We've found the one we want. */
-	  }
-	} else if (!strcmp(XmFONTLIST_DEFAULT_TAG, font_tag)) {
-	  tf->text.font = (XFontStruct *)tmp_font;
-	  have_font_set = True;    /* we have a font set. */
-	  if (font_tag) XtFree(font_tag);
-	  break; /* Break out!  We've found the one we want. */
-	}
-	if (font_tag) XtFree(font_tag);
-      } else if (type_return == XmFONT_IS_FONT && !have_font_struct) {
-        /* return_type must be XmFONT_IS_FONT */
-	TextF_UseFontSet(tf) = False;
-#if USE_XFT
-	TextF_UseXft(tf) = False;
-#endif
-	tf->text.font=(XFontStruct*)tmp_font; /* save the first font
-						* struct in case no font
-						* set is found */
-	have_font_struct = True;
-#if USE_XFT
-      } else if (type_return == XmFONT_IS_XFT && !have_xft_font) {
-	TextF_UseFontSet(tf) = False;
-	TextF_UseXft(tf) = True;
-	have_xft_font = True;
-	tf->text.font = tmp_font;
-#endif
-      }
-    }
-  } while(next_entry != NULL);
-
-  XmFontListFreeFontContext(context);
-
-#if USE_XFT
-  if (!have_font_struct && !have_font_set && !have_xft_font) {
-#else
-  if (!have_font_struct && !have_font_set) {
-#endif
-    XmeWarning ((Widget)tf, MSG4);
-    return False;
-  }
-
-  if(TextF_UseFontSet(tf)) {
-    fs_extents = XExtentsOfFontSet((XFontSet)TextF_Font(tf));
-    charwidth = (unsigned long)fs_extents->max_logical_extent.width;
-    /* max_logical_extent.y is number of pixels from origin to top of
-     * rectangle (i.e. y is negative) */
-    TextF_FontAscent(tf) = -fs_extents->max_logical_extent.y;
-    TextF_FontDescent(tf) = fs_extents->max_logical_extent.height +
-      fs_extents->max_logical_extent.y;
-#if USE_XFT
-  } else if (TextF_UseXft(tf)) {
-	_XmXftFontAverageWidth((Widget) tf, TextF_XftFont(tf), (int *)&charwidth);
-    TextF_FontAscent(tf) = TextF_XftFont(tf)->ascent;
-    TextF_FontDescent(tf) = TextF_XftFont(tf)->descent;
-#endif
-  } else {
-    font = TextF_Font(tf);
-    if (!XGetFontProperty(font, XA_QUAD_WIDTH, &charwidth) ||
-	charwidth == 0) {
-      if (font->per_char && font->min_char_or_byte2 <= '0' &&
-	  font->max_char_or_byte2 >= '0')
-	charwidth = font->per_char['0' - font->min_char_or_byte2].width;
-      else
-	charwidth = font->max_bounds.width;
-    }
-    TextF_FontAscent(tf) = font->max_bounds.ascent;
-    TextF_FontDescent(tf) = font->max_bounds.descent;
-  }
-  tf->text.average_char_width = (Dimension) charwidth;
-  return True;
-}
-
-
-/* ValidateString makes the following assumption:  if MB_CUR_MAX == 1, value
- * is a char*, otherwise value is a wchar_t*.  The Boolean "is_wchar" indicates
- * if value points to char* or wchar_t* data.
- *
- * It is ValidateString's task to verify that "value" contains only printing
- * characters; all others are discarded.  ValidateString then mallocs data
- * to store the value and assignes it to tf->text.value (if MB_CUR_MAX == 1)
- * or to tf->text.wc_value (if MB_CUR_MAX != 1), setting the opposite
- * pointer to NULL.  It is the callers responsibility to free data before
- * calling ValidateString.
- */
-static void
-ValidateString(XmTextFieldWidget tf,
-	       char *value,
-               Boolean is_wchar)
-{
-  /* if value is wchar_t *, must count the characters; else use strlen */
-
-  int str_len = 0;
-  int i, j;
-  char stack_cache[400];
-  char *params[1], *err_str;
-  char *temp_str, *curr_str, *start_temp;
-  wchar_t tmp;
-  int num_conv;
-  Boolean printable;
-
-  if (!is_wchar) {
-    str_len = strlen(value);
-    temp_str = (char*)XmStackAlloc((Cardinal)str_len + 1, stack_cache);
-    start_temp = temp_str;
-    curr_str = value;
-
-    for (i = 0; i < str_len;) {
-      if (tf->text.max_char_size == 1) {
-	if (PrintableString(tf, curr_str, 1, False)) {
-	  *temp_str = *curr_str;
-	  temp_str++;
-	} else {
-	  err_str = XmStackAlloc(6, stack_cache);
-	  sprintf(err_str, "\\%o", (unsigned char) *curr_str);
-	  params[0] = err_str;
-	  _XmWarningMsg((Widget)tf, "Unsupported char", MSG5, params, 1);
-	  XmStackFree(err_str, stack_cache);
-	}
-	curr_str++;
-	i++;
-      } else {
-#if USE_XFT
-        if (TextF_UseXft(tf)) {
-          num_conv = strlen(curr_str);
-	  printable = (num_conv >= 0
-                  && PrintableString(tf, curr_str, num_conv, True));
-        } else
-#endif
-	{
-	  num_conv = mbtowc(&tmp, curr_str, tf->text.max_char_size);
-	  printable = (num_conv >= 0
-                  && PrintableString(tf, (char*)&tmp, 1, True));
-        }
-	if (printable) {
-	  for (j = 0; j < num_conv; j++) {
-	    *temp_str = *curr_str;
-	    temp_str++;
-	    curr_str++;
-	    i++;
-	  }
-	} else {
-	  if (num_conv >= 0) {
-	    err_str = XtMalloc((4 * num_conv) + 1);
-	    for (j = 0; j < num_conv; j++) {
-	      sprintf(err_str + (j * 4), "\\%o", (unsigned char) curr_str[j]);
-	    }
-	  }
-	  else {
-	    err_str = XtMalloc(5);
-	    sprintf(err_str, "\\%o", (unsigned char) *curr_str);
-	    num_conv = 1;
-	  }
-	  params[0] = err_str;
-	  _XmWarningMsg ((Widget)tf, "Unsupported char", MSG5, params, 1);
-	  XtFree(err_str);
-	  if (num_conv > 0) {
-	      curr_str += num_conv;
-	      i += num_conv;
-	  }
-	  else {
-	      curr_str++;
-	      i++;
-	  }
-	}
-      }
-    }
-    *temp_str = '\0';
-
-    /* value contains validated string; now stuff it into the proper
-     * instance pointer. */
-    if (tf->text.max_char_size == 1) {
-      tf->text.string_length = strlen(start_temp);
-      /* malloc the space for the text value */
-      TextF_Value(tf) =
-	(char *) memcpy(XtMalloc((unsigned)(tf->text.string_length + 30)),
-			(void *)start_temp, tf->text.string_length + 1);
-      tf->text.size_allocd = tf->text.string_length + 30;
-      TextF_WcValue(tf) = NULL;
-    } else { /* Need wchar_t* data to set as the widget's value */
-      /* count number of wchar's */
-      str_len = strlen(start_temp);
-      tf->text.string_length = str_len;
-
-      tf->text.size_allocd = (tf->text.string_length + 30)*sizeof(wchar_t);
-      TextF_WcValue(tf) = (wchar_t*)XtMalloc((unsigned)tf->text.size_allocd);
-      tf->text.string_length = mbstowcs(TextF_WcValue(tf), start_temp,
-					tf->text.string_length + 30);
-      if (tf->text.string_length < 0) tf->text.string_length = 0;
-      TextF_Value(tf) = NULL;
-    }
-    XmStackFree(start_temp, stack_cache);
-  } else {  /* pointer passed points to wchar_t* data */
-    wchar_t *wc_value, *wcs_temp_str, *wcs_start_temp, *wcs_curr_str;
-    char scratch[8];
-    int new_len = 0;
-    int csize = 1;
-
-    wc_value = (wchar_t *) value;
-    for (str_len = 0, i = 0; *wc_value != (wchar_t)0L; str_len++)
-      wc_value++; /* count number of wchars */
-    wcs_temp_str=(wchar_t *)XmStackAlloc((Cardinal)
-					 ((str_len+1) * sizeof(wchar_t)),
-					 stack_cache);
-    wcs_start_temp = wcs_temp_str;
-    wcs_curr_str = (wchar_t *) value;
-
-    for (i = 0; i < str_len; i++, wcs_curr_str++) {
-      if (tf->text.max_char_size == 1) {
-	csize = wctomb(scratch, *wcs_curr_str);
-	if (csize >= 0 && PrintableString(tf, scratch, csize, False)) {
-	  *wcs_temp_str = *wcs_curr_str;
-	  wcs_temp_str++;
-	  new_len++;
-	} else {
-	  if (csize >= 0) {
-	      err_str = XtMalloc((4 * csize) + 1);
-	      for (j = 0; j < csize; j++) {
-                sprintf(err_str + (j * 4), "\\%o", (unsigned char) scratch[j]);
-	      }
-	  }
-	  else {
-	      err_str = XtMalloc(1);
-	      err_str[0] = '\0';
-	  }
-          params[0] = err_str;
-	  _XmWarningMsg ((Widget)tf, "Unsupported wchar", WC_MSG1, params, 1);
-          XtFree(err_str);
-	}
-      } else {
-	if (PrintableString(tf, (char*)wcs_curr_str, 1, True)) {
-	  *wcs_temp_str = *wcs_curr_str;
-	  wcs_temp_str++;
-	  new_len++;
-	} else {
-	  csize = wctomb(scratch, *wcs_curr_str);
-	  if (csize >= 0) {
-	      err_str = XtMalloc((4 * csize) + 1);
-	      for (j = 0; j < csize; j++) {
-                sprintf(err_str + (j * 4), "\\%o", (unsigned char) scratch[j]);
-	      }
-	  }
-	  else {
-	      err_str = XtMalloc(1);
-	      err_str[0] = '\0';
-	  }
-	  params[0] = err_str;
-	  _XmWarningMsg ((Widget)tf, "Unsupported wchar", WC_MSG1, params, 1);
-	  XtFree(err_str);
-	}
-      }
-    }
-    str_len = new_len;
-
-    *wcs_temp_str = (wchar_t)0L; /* terminate with a wchar_t NULL */
-
-    tf->text.string_length = str_len; /* This is *wrong* if MB_CUR_MAX > 2
-				       * with no font set... but what can
-				       * ya do? Spec says let it dump core. */
-
-    tf->text.size_allocd = (str_len + 30) * sizeof(wchar_t);
-    if (tf->text.max_char_size == 1) { /* Need to store data as char* */
-      int ret_val = 0;
-      TextF_Value(tf) = XtMalloc((unsigned)tf->text.size_allocd);
-      ret_val = wcstombs(TextF_Value(tf), wcs_start_temp,
-			 tf->text.size_allocd);
-      if (ret_val < 0) tf->text.value[0] = '\0';
-      TextF_WcValue(tf) = NULL;
-    } else { /* Need to store data as wchar_t* */
-      TextF_WcValue(tf) = (wchar_t*)memcpy(XtMalloc((unsigned)
-						    tf->text.size_allocd),
-					   (void*)wcs_start_temp,
-					   (1 + str_len) *
-					   sizeof(wchar_t));
-      TextF_Value(tf) = NULL;
-    }
-    XmStackFree((char *)wcs_start_temp, stack_cache);
-  }
+	TextF_FontAscent(tf)  = XmStringBaseline(rt, s);
+	TextF_FontDescent(tf) = XmStringHeight(rt, s) - XmStringBaseline(rt, s);
+	tf->text.average_char_width = XmStringWidth(rt, s) / 62;
+	XmStringFree(s);
 }
 
 /*
@@ -6833,28 +5755,12 @@ InitializeTextStruct(XmTextFieldWidget tf)
   tf->text.margin_top = TextF_MarginHeight(tf);
   tf->text.margin_bottom = TextF_MarginHeight(tf);
   tf->text.programmatic_highlights = False;
-  /* tf->text.rt_save = False; */
+  tf->text.alignment = XmALIGNMENT_BEGINNING;
 
-  tf->text.max_char_size = MB_CUR_MAX;
-
-  /* copy over the font list */
-  if (TextF_FontList(tf) == NULL) {
-    TextF_FontList(tf) =
-      XmeGetDefaultRenderTable((Widget)tf, (unsigned char) XmTEXT_FONTLIST);
-
-    TextF_FontList(tf) = (XmFontList)XmFontListCopy(TextF_FontList(tf));
-    (void)LoadFontMetrics(tf);
-   } else {
-     TextF_FontList(tf) = (XmFontList)XmFontListCopy(TextF_FontList(tf));
-     if(!LoadFontMetrics(tf)) {/*if failed use default */
-        XmFontListFree(TextF_FontList(tf));
-        TextF_FontList(tf) =
-          XmeGetDefaultRenderTable((Widget)tf, (unsigned char) XmTEXT_FONTLIST);
-
-        TextF_FontList(tf) = (XmFontList)XmFontListCopy(TextF_FontList(tf));
-        (void)LoadFontMetrics(tf);
-     }
-   }
+  if (!TextF_FontList(tf))
+    TextF_FontList(tf) = XmeGetDefaultRenderTable((Widget)tf, XmTEXT_FONTLIST);
+  TextF_FontList(tf) = XmRenderTableCopy(TextF_FontList(tf), NULL, 0);
+  LoadFontMetrics(tf);
 
   tf->text.gc = NULL;
   tf->text.image_gc = NULL;
@@ -6865,21 +5771,8 @@ InitializeTextStruct(XmTextFieldWidget tf)
 		       tf->primitive.shadow_thickness +
 		       tf->primitive.highlight_thickness);
 
-  /* ValidateString will verify value contents, convert to appropriate
-   * storage form (i.e. char* or wchar_t*), place in the appropriate
-   * location (text.value or text.wc_value), and null out opposite
-   * pointer.  */
-
-  if (TextF_WcValue(tf) != NULL) { /* XmNvalueWcs was set - it rules */
-    TextF_Value(tf) = NULL;
-    ValidateString(tf, (char*)TextF_WcValue(tf), True);
-  } else if (TextF_Value(tf) != NULL)
-    ValidateString(tf, TextF_Value(tf), False);
-  else /* TextF_Value(tf) is null pointer */
-    ValidateString(tf, "", False);
-
-  if (TextF_CursorPosition(tf) > tf->text.string_length)
-    TextF_CursorPosition(tf) = tf->text.string_length;
+  if (TextF_CursorPosition(tf) > (XmTextPosition)tf->text.string_length)
+    TextF_CursorPosition(tf) = (XmTextPosition)tf->text.string_length;
 
   tf->text.orig_left = tf->text.orig_right = tf->text.prim_pos_left =
     tf->text.prim_pos_right = tf->text.prim_anchor = TextF_CursorPosition(tf);
@@ -6987,15 +5880,6 @@ LoadGCs(XmTextFieldWidget tf,
   /*
    * Get GC for drawing text.
    */
-
-#if USE_XFT
-  if (!TextF_UseFontSet(tf) && !TextF_UseXft(tf)) {
-#else
-  if (!TextF_UseFontSet(tf)) {
-#endif
-    valueMask |= GCFont;
-    values.font = TextF_Font(tf)->fid;
-  }
   values.foreground = foreground ^ background;
   values.background = 0;
   values.graphics_exposures = (Bool) True;
@@ -7354,12 +6238,13 @@ Initialize(Widget request,
 	   ArgList args,
 	   Cardinal *num_args)
 {
+  Cardinal i;
   XmTextFieldWidget req_tf = (XmTextFieldWidget) request;
   XmTextFieldWidget new_tf = (XmTextFieldWidget) new_w;
   Dimension width, height;
+  XmString val = NULL, wcs = NULL;
 
   Validates(new_tf);
-
   InitializeTextStruct(new_tf);
 
   LoadGCs(new_tf, new_tf->core.background_pixel,
@@ -7379,6 +6264,48 @@ Initialize(Widget request,
       new_tf->text.verify_bell = True;
     else
       new_tf->text.verify_bell = False;
+  }
+
+  /* If we have XmString, use it */
+  if (req_tf->text.xms_value) {
+    new_tf->text.xms_value     = req_tf->text.xms_value;
+    new_tf->text.string_length = XmStringLen(new_tf->text.xms_value);
+    return;
+  } else if (new_tf->text.xms_value) return;
+
+  /**
+   * Probe for the values given by our synthetics, giving priority to
+   * the XmNvalueWcs
+   */
+  for (i = 0; i < *num_args; i++) {
+    if (args[i].name == XmNvalue || !strcmp(args[i].name, XmNvalue)) {
+      if (val) {
+        XmStringFree(val);
+        val = NULL;
+      }
+
+      if (XmStringIsValid((XmString)args[i].value))
+        val = (XmString)args[i].value;
+    }
+
+    if (args[i].name == XmNvalueWcs || !strcmp(args[i].name, XmNvalueWcs)) {
+      if (wcs) {
+        XmStringFree(wcs);
+        wcs = NULL;
+      }
+
+      if (XmStringIsValid((XmString)args[i].value))
+        wcs = (XmString)args[i].value;
+    }
+  }
+
+  if (wcs) {
+    new_tf->text.xms_value     = wcs;
+    new_tf->text.string_length = XmStringLen(wcs);
+    if (val) XmStringFree(val);
+  } else if (val) {
+    new_tf->text.xms_value     = val;
+    new_tf->text.string_length = XmStringLen(val);
   }
 }
 
@@ -7442,11 +6369,6 @@ Destroy(Widget wid)
     XtFree((char *)tf->text.transfer_action);
   }
 
-  if (tf->text.max_char_size == 1)
-    XtFree(TextF_Value(tf));
-  else
-    XtFree((char *)TextF_WcValue(tf));
-
   XtReleaseGC(wid, tf->text.gc);
   XtReleaseGC(wid, tf->text.image_gc);
   XtReleaseGC(wid, tf->text.save_gc);
@@ -7474,6 +6396,7 @@ Destroy(Widget wid)
   XtFree((char *)TextF_SelectionArray(tf));
 
   XmImUnregister(wid);
+  XmStringFree(tf->text.xms_value);
 }
 
 static void
@@ -7494,12 +6417,8 @@ Resize(Widget w)
   offset = tf->text.h_offset - (TextF_MarginWidth(tf) +
 				tf->primitive.shadow_thickness +
 				tf->primitive.highlight_thickness);
-  if (tf->text.max_char_size != 1)
-    text_width = FindPixelLength(tf, (char *)TextF_WcValue(tf),
-				 tf->text.string_length);
-  else
-    text_width = FindPixelLength(tf, TextF_Value(tf), tf->text.string_length);
 
+  text_width = FindPixelLength(tf, tf->text.xms_value);
   if (text_width - new_width < -offset)
   {
     if (text_width - new_width >= 0)
@@ -7633,6 +6552,7 @@ SetValues(Widget old,
 	  ArgList args,
 	  Cardinal *num_args)
 {
+  Cardinal i;
   XmTextFieldWidget new_tf = (XmTextFieldWidget) new_w;
   XmTextFieldWidget old_tf = (XmTextFieldWidget) old;
   Boolean cursor_pos_set = False;
@@ -7641,15 +6561,15 @@ SetValues(Widget old,
   Boolean redisplay_text = False;
   Boolean new_font = False;
   Boolean mod_ver_ret = False;
-  Boolean diff_values = False;
   Dimension new_width = new_tf->core.width;
   Dimension new_height = new_tf->core.height;
   Arg im_args[10];
   XPoint xmim_point;
   XRectangle xmim_area;
-  XmTextPosition new_position = 0;
-  XmTextPosition newInsert;
+  XmTextPosition from_position = 0, new_position = 0, newInsert;
+  XmString val = NULL, wcs = NULL;
   int n = 0;
+  XmAnyCallbackStruct cb;
 
   if (new_w->core.being_destroyed) return False;
   TextFieldResetIC(old);
@@ -7675,10 +6595,8 @@ SetValues(Widget old,
 			  XtLastTimestampProcessed(XtDisplay(new_w)));
     cursor_pos_set = True;
   } else {
-    int ix;
-
-    for (ix = 0; ix < *num_args; ix++)
-      if (strcmp(args[ix].name, XmNcursorPosition) == 0) {
+    for (i = 0; i < *num_args; i++)
+      if (strcmp(args[i].name, XmNcursorPosition) == 0) {
 	cursor_pos_set = True;
 	new_position = TextF_CursorPosition(new_tf);
 	break;
@@ -7729,169 +6647,97 @@ SetValues(Widget old,
     cursor_pos_set = False;
   }
 
-  if (TextF_FontList(new_tf)!= TextF_FontList(old_tf)) {
+  if (TextF_FontList(new_tf) != TextF_FontList(old_tf)) {
     new_font = True;
-    if (TextF_FontList(new_tf) == NULL)
-      TextF_FontList(new_tf) =
-	XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
-    TextF_FontList(new_tf) =
-      (XmFontList)XmFontListCopy(TextF_FontList(new_tf));
-    if (!LoadFontMetrics(new_tf)) { /* Fails if font set required but not
-                                   * available. */
-      XmFontListFree((XmFontList)TextF_FontList(new_tf));
-      TextF_FontList(new_tf) = TextF_FontList(old_tf);
-      (void)LoadFontMetrics(new_tf); /* it *was* correct, so re-use it */
-      new_font = False;
-    } else {
-      XtSetArg(im_args[n], XmNfontList, TextF_FontList(new_tf)); n++;
-      redisplay = True;
+    if (!TextF_FontList(new_tf))
+      TextF_FontList(new_tf) = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
+    TextF_FontList(new_tf) = XmRenderTableCopy(TextF_FontList(new_tf), NULL, 0);
+    LoadFontMetrics(new_tf);
+    XtSetArg(im_args[n], XmNfontList, TextF_FontList(new_tf)); n++;
+    redisplay = True;
+  }
+
+  /* OSF says:  if XmNvalueWcs set, it overrides multibyte */
+  /* Probe for our synthetic values */
+  for (i = 0; i < *num_args; i++) {
+    if (args[i].name == XmNvalue || !strcmp(args[i].name, XmNvalue)) {
+      if (val) {
+        XmStringFree(val);
+        val = NULL;
+      }
+
+      if (XmStringIsValid((XmString)args[i].value))
+        val = (XmString)args[i].value;
+    }
+
+    if (args[i].name == XmNvalueWcs || !strcmp(args[i].name, XmNvalueWcs)) {
+      if (wcs) {
+        XmStringFree(wcs);
+        wcs = NULL;
+      }
+
+      if (XmStringIsValid((XmString)args[i].value))
+        wcs = (XmString)args[i].value;
     }
   }
 
-  /* Four cases to handle for value:
-   *   1. user set both XmNvalue and XmNwcValue.
-   *   2. user set the opposite resource (i.e. value is a char*
-   *      and user set XmNwcValue, or vice versa).
-   *   3. user set the corresponding resource (i.e. value is a char*
-   *      and user set XmNValue, or vice versa).
-   *   4. user set neither XmNValue nor XmNwcValue
-   */
-
-  /* OSF says:  if XmNvalueWcs set, it overrides all else */
-
-  if (new_tf->text.max_char_size == 1) {
-    /* wc_value on new will be NULL unless XmNvalueWcs was set.   */
-    if (TextF_WcValue(new_tf) != NULL) { /* must be new if MB_CUR... == 1 */
-      ValidateString(new_tf, (char*) TextF_WcValue(new_tf), True);
-      diff_values = True;
-    } else if (TextF_Value(new_tf) != TextF_Value(old_tf)) {
-      diff_values = True;
-      if (TextF_Value(new_tf) == NULL) {
-	ValidateString(new_tf, "", False);
-      } else
-	ValidateString(new_tf, TextF_Value(new_tf), False);
-    } /* else, no change so don't do anything */
+  /* XmString didn't change, but these might have */
+  if (new_tf->text.xms_value == old_tf->text.xms_value) {
+    if (wcs) {
+      new_tf->text.xms_value = wcs;
+      if (val) XmStringFree(val);
+    } else if (val) {
+      new_tf->text.xms_value = val;
+    }
   } else {
-    if (TextF_WcValue(new_tf) != TextF_WcValue(old_tf)) {
-      diff_values = True;
-      if (TextF_WcValue(new_tf) == NULL) {
-	TextF_WcValue(new_tf) = (wchar_t*) XtMalloc(sizeof(wchar_t));
-	*TextF_WcValue(new_tf) = (wchar_t)0;
-      }
-      ValidateString(new_tf, (char*)TextF_WcValue(new_tf), True);
-    } else if (TextF_Value(new_tf) != TextF_Value(old_tf)) {
-      /* Someone set XmNvalue */
-      diff_values = True;
-      if (TextF_Value(new_tf) == NULL)
-	ValidateString(new_tf, "", True);
-      else
-	ValidateString(new_tf, TextF_Value(new_tf), False);
-
-    } /* else, no change so don't do anything */
+    XmStringFree(wcs);
+    XmStringFree(val);
   }
 
-  if (diff_values) { /* old value != new value */
-    Boolean do_it = True;
-    /* If there are modify verify callbacks, verify that we want to continue
-     * the action.
-     */
-    if (TextF_ModifyVerifyCallback(new_tf) ||
-	TextF_ModifyVerifyCallbackWcs(new_tf)) {
-      /* If the function ModifyVerify() returns false then don't
-       * continue with the action.
-       */
-      char *temp, *old_s;
-      int free_insert = (int)False;
-      XmTextPosition fromPos = 0, toPos;
-      int ret_val = 0;
+  if (new_tf->text.xms_value != old_tf->text.xms_value) {
+    from_position = 0;
+    new_position  = old_tf->text.string_length;
+    new_tf->text.string_length = XmStringLen(new_tf->text.xms_value);
 
-      toPos = old_tf->text.string_length;
-      if (new_tf->text.max_char_size == 1) {
-	temp = TextF_Value(new_tf);
-	mod_ver_ret = ModifyVerify(new_tf, NULL, &fromPos, &toPos,
-				   &temp, &new_tf->text.string_length,
-				   &newInsert, &free_insert);
-      } else {
-	old_s = temp = XtMalloc((unsigned)((new_tf->text.string_length + 1) *
-					 new_tf->text.max_char_size));
-	ret_val = wcstombs(temp, TextF_WcValue(new_tf),
-			   (new_tf->text.string_length + 1) *
-			   new_tf->text.max_char_size);
-	if (ret_val < 0) temp[0] = '\0';
-
-	mod_ver_ret = ModifyVerify(new_tf, NULL, &fromPos, &toPos,
-	                           &temp, &ret_val, &newInsert, &free_insert);
-
-	if (old_s != temp) XtFree(old_s);
-      }
-      if (free_insert) XtFree(temp);
-      if (!mod_ver_ret) {
-	if (new_tf->text.verify_bell) XBell(XtDisplay(new_w), 0);
-	if (new_tf->text.max_char_size == 1) {
-	  TextF_Value(new_tf) =
-	    (char *) memcpy(XtRealloc(TextF_Value(new_tf),
-				      (unsigned)old_tf->text.size_allocd),
-			    (void*)TextF_Value(old_tf),
-			    old_tf->text.string_length + 1);
-	  new_tf->text.string_length = old_tf->text.string_length;
-	  new_tf->text.size_allocd = old_tf->text.size_allocd;
-	  XtFree(TextF_Value(old_tf));
-	} else {
-	  /* realloc to old size, cast to wchar_t*, and copy the data */
-	  TextF_WcValue(new_tf) =
-	    (wchar_t*)memcpy( XtRealloc((char *)TextF_WcValue(new_tf),
-					(unsigned)old_tf->text.size_allocd),
-			     (void*)TextF_WcValue(old_tf),
-			     (size_t) old_tf->text.size_allocd);
-
-	  new_tf->text.string_length = old_tf->text.string_length;
-	  new_tf->text.size_allocd = old_tf->text.size_allocd;
-	  XtFree((char *)TextF_WcValue(old_tf));
-	}
-	do_it = False;
-      }
-    }
-
-    if (do_it) {
-      XmAnyCallbackStruct cb;
-
-      if (new_tf->text.max_char_size == 1)
-	XtFree(TextF_Value(old_tf));
-      else
-	XtFree((char *)TextF_WcValue(old_tf));
+    if (!ModifyVerify(new_tf, NULL, &from_position, &new_position,
+                      &new_tf->text.xms_value, &new_tf->text.string_length,
+                      &newInsert)) {
+      if (new_tf->text.verify_bell)
+        XBell(XtDisplayOfObject((Widget)new_tf), 0);
+      XmStringFree(new_tf->text.xms_value);
+      new_tf->text.xms_value     = old_tf->text.xms_value;
+      new_tf->text.string_length = old_tf->text.string_length;
+    } else {
+      XmStringFree(old_tf->text.xms_value);
 
       doSetHighlight(new_w, new_tf->text.prim_pos_left,
-			      new_tf->text.prim_pos_right,
-			      XmHIGHLIGHT_NORMAL);
-
+                     new_tf->text.prim_pos_right,
+                     XmHIGHLIGHT_NORMAL);
       new_tf->text.pending_off = True;
 
-      /* if new_position was > old_tf->text.string_length, last time
+      /**
+       * if new_position was > old_tf->text.string_length, last time
        * the SetCursorPosition didn't take.
        */
-      if (!cursor_pos_set || new_position > old_tf->text.string_length) {
-	_XmTextFieldSetCursorPosition(new_tf, NULL, new_position,
-				      True, False);
-	if (new_tf->text.has_destination)
-	  (void) SetDestination(new_w, TextF_CursorPosition(new_tf), False,
-				XtLastTimestampProcessed(XtDisplay(new_w)));
+      if (!cursor_pos_set || new_position > (XmTextPosition)old_tf->text.string_length) {
+        _XmTextFieldSetCursorPosition(new_tf, NULL, new_position,
+                                      True, False);
+        if (new_tf->text.has_destination)
+          SetDestination(new_w, TextF_CursorPosition(new_tf), False,
+                         XtLastTimestampProcessed(XtDisplay(new_w)));
       }
 
-      if (TextF_ResizeWidth(new_tf) && new_tf->text.do_resize)
-	AdjustSize(new_tf);
-      else {
-	new_tf->text.h_offset = TextF_MarginWidth(new_tf) +
-	  new_tf->primitive.shadow_thickness +
-	    new_tf->primitive.highlight_thickness;
-	if (!AdjustText(new_tf, TextF_CursorPosition(new_tf), False))
-	  redisplay_text = True;
-      }
+      if (!new_tf->text.do_resize || !TextF_ResizeWidth(new_tf)) {
+        new_tf->text.h_offset = TextF_MarginWidth(new_tf)          +
+                                new_tf->primitive.shadow_thickness +
+                                new_tf->primitive.highlight_thickness;
+        if (!AdjustText(new_tf, TextF_CursorPosition(new_tf), False))
+          redisplay_text = True;
+      } else AdjustSize(new_tf);
 
+      memset(&cb, 0, sizeof cb);
       cb.reason = XmCR_VALUE_CHANGED;
-      cb.event = NULL;
-      XtCallCallbackList(new_w, TextF_ValueChangedCallback(new_tf),
-			 (XtPointer) &cb);
-
+      XtCallCallbackList(new_w, TextF_ValueChangedCallback(new_tf), (XtPointer)&cb);
     }
   }
 
@@ -8043,50 +6889,54 @@ SetValues(Widget old,
  * AccessTextual trait method implementation
  ********************************************/
 
-static XtPointer
-TextFieldGetValue(Widget w, int format)
+static XtPointer TextFieldGetValue(Widget w, int format)
 {
-  char *str;
-  XmString tmp;
+	XmString s;
+	XtPointer str;
 
-  switch(format) {
-  case XmFORMAT_XmSTRING:
-    str = XmTextFieldGetString(w);
-    tmp = XmStringCreateLocalized(str);
-    if (str != NULL) XtFree(str);
-    return((XtPointer) tmp);
-  case XmFORMAT_MBYTE:
-    return((XtPointer) XmTextFieldGetString(w));
-  case XmFORMAT_WCS:
-    return((XtPointer) XmTextFieldGetStringWcs(w));
-  }
+	s = XmTextFieldGetXmString(w);
+	switch (format) {
+	case XmFORMAT_XmSTRING:
+		return s;
+	case XmFORMAT_MBYTE:
+		str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+		XmStringFree(s);
+		return str;
+	case XmFORMAT_WCS:
+		str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+		XmStringFree(s);
+		return str;
+	}
 
-  return(NULL);
+	XmStringFree(s);
+	return NULL;
 }
 
-static void
-TextFieldSetValue(Widget w, XtPointer s, int format)
+static void TextFieldSetValue(Widget w, XtPointer s, int format)
 {
-  char *str;
+	char *str;
+	XmString xs;
 
-  switch(format) {
-  case XmFORMAT_XmSTRING:
-    str = _XmStringGetTextConcat((XmString) s);
-    XmTextFieldSetString(w, str);
-    if (str != NULL) XtFree(str);
-    break;
-  case XmFORMAT_MBYTE:
-    XmTextFieldSetString(w, (char*) s);
-    break;
-  case XmFORMAT_WCS:
-    XmTextFieldSetStringWcs(w, (wchar_t *) s);
-  }
+	switch (format) {
+	case XmFORMAT_XmSTRING:
+		XmTextFieldSetXmString(w, s);
+		return;
+	case XmFORMAT_MBYTE:
+		xs = XmStringCreateMultibyte(s, NULL);
+		XmTextFieldSetXmString(w, xs);
+		XmStringFree(xs);
+		return;
+	case XmFORMAT_WCS:
+		xs = XmStringCreateWide((wchar_t *)s, NULL);
+		XmTextFieldSetXmString(w, xs);
+		XmStringFree(xs);
+		return;
+	}
 }
 
-static int
-TextFieldPreferredValue(Widget w) /* unused */
+static int TextFieldPreferredValue(Widget w) /* unused */
 {
-  return(XmFORMAT_MBYTE);
+	return XmFORMAT_XmSTRING;
 }
 
 /*
@@ -8128,7 +6978,7 @@ TextFieldRemove(Widget w,
     return False;
   }
 
-  if (_XmTextFieldReplaceText(tf, event, left, right, NULL, 0, True)) {
+  if (_XmTextFieldReplaceText(tf, event, left, right, NULL, 0, True, True)) {
     _XmTextFieldStartSelection(tf, TextF_CursorPosition(tf),
 			       TextF_CursorPosition(tf),
 			       XtLastTimestampProcessed(XtDisplay(w)));
@@ -8151,17 +7001,18 @@ TextFieldGetBaselines(Widget w,
 {
   XmTextFieldWidget tf = (XmTextFieldWidget) w;
   Dimension *base_array;
+  _XmWidgetToAppContext(w);
+  _XmAppLock(app);
 
   *line_count = 1;
-
   base_array = (Dimension *) XtMalloc(sizeof(Dimension));
 
   base_array[0] = tf->text.margin_top + tf->primitive.shadow_thickness +
     tf->primitive.highlight_thickness + TextF_FontAscent(tf);
 
   *baselines = base_array;
-
-  return (TRUE);
+  _XmAppUnlock(app);
+  return True;
 }
 
 static Boolean
@@ -8182,7 +7033,7 @@ TextFieldGetDisplayRect(Widget w,
   (*display_rect).width = tf->core.width - (2 * margin_width);
   (*display_rect).height = tf->core.height - (margin_top + margin_bottom);
 
-  return(TRUE);
+  return True;
 }
 
 static void
@@ -8201,187 +7052,6 @@ TextFieldMarginsProc(Widget w,
     margins_rec->highlight = tf->primitive.highlight_thickness;
     margins_rec->margin_height = 0;
   }
-}
-
-
-/*
- * This procedure and _XmTextFieldReplaceText are almost same.
- * The difference is that this function doesn't call user's callbacks,
- * like XmNmodifyVerifyCallback.
- */
-static Boolean
-_XmTextFieldReplaceTextForPreedit(XmTextFieldWidget tf,
-                                  XmTextPosition replace_prev,
-                                  XmTextPosition replace_next,
-                                  char *insert,
-                                  int insert_length,
-                                  Boolean move_cursor )
-{
-  int replace_length, i;
-  char *src, *dst;
-  wchar_t *wc_src, *wc_dst;
-  int delta = 0;
-  XmTextPosition cursorPos, newInsert;
-  XmTextPosition old_pos = replace_prev;
-  XmTextPosition redisplay_start;
-  int free_insert = (int)False;
-
-  VerifyBounds(tf, &replace_prev, &replace_next);
-
-  if (!TextF_Editable(tf)) {
-     if (tf->text.verify_bell) XBell(XtDisplay((Widget)tf), 0);
-     return False;
- }
-
-  /*
-   * If composite sequences were supported, we had to
-   * redisplay from the nearest composite sequence break.
-   * But for current implementation, just use old_pos.
-   */
-  redisplay_start = old_pos;
-
-  replace_length = (int) (replace_next - replace_prev);
-  delta = insert_length - replace_length;
-
- /* Disallow insertions that go beyond max length boundries.
-  */
-  if ((delta >= 0) &&
-      ((tf->text.string_length + delta) - (TextF_MaxLength(tf)) > 0)) {
-      if (tf->text.verify_bell) XBell(XtDisplay(tf), 0);
-      return False;
-  }
-
-  newInsert = TextF_CursorPosition(tf);
-
- /* make sure selections are turned off prior to changeing text */
-  if (tf->text.has_primary &&
-      tf->text.prim_pos_left != tf->text.prim_pos_right)
-     doSetHighlight((Widget)tf, tf->text.prim_pos_left,
-                             tf->text.prim_pos_right, XmHIGHLIGHT_NORMAL);
-
-  _XmTextFieldDrawInsertionPoint(tf, False);
-
-  /* Allocate more space if we need it.
-   */
-  if (tf->text.max_char_size == 1){
-  if (tf->text.string_length + insert_length - replace_length >=
-      tf->text.size_allocd)
-    {
-      tf->text.size_allocd += MAX(insert_length + TEXT_INCREMENT,
-                                        (tf->text.size_allocd * 2));
-      tf->text.value = (char *) XtRealloc((char*)TextF_Value(tf),
-                              (unsigned) (tf->text.size_allocd * sizeof(char)));
-    }
-  } else {
- if ((tf->text.string_length + insert_length - replace_length) *
-                                        sizeof(wchar_t) >= tf->text.size_allocd)
-    {
-      tf->text.size_allocd += MAX(insert_length + TEXT_INCREMENT,
-                                        (tf->text.size_allocd * 2));
-      tf->text.wc_value = (wchar_t *) XtRealloc((char*)TextF_WcValue(tf),
-                           (unsigned) (sizeof(wchar_t) * tf->text.size_allocd));
-    }
-  }
-
-  if (tf->text.max_char_size == 1) {
-     if (replace_length > insert_length)
-       /* We need to shift the text at and after replace_next to the left. */
-       for (src = TextF_Value(tf) + replace_next,
-            dst = src + (insert_length - replace_length),
-            i = (int) ((tf->text.string_length + 1) - replace_next);
-            i > 0;
-            ++src, ++dst, --i)
-         *dst = *src;
-     else if (replace_length < insert_length)
-       /* We need to shift the text at and after replace_next to the right. */
-       /* Need to add 1 to string_length to handle the NULL terminator on */
-       /* the string. */
-       for (src = TextF_Value(tf) + tf->text.string_length,
-            dst = src + (insert_length - replace_length),
-            i = (int) ((tf->text.string_length + 1) - replace_next);
-            i > 0;
-            --src, --dst, --i)
-         *dst = *src;
-
-    /* Update the string.
-     */
-     if (insert_length != 0) {
-        for (src = insert,
-             dst = TextF_Value(tf) + replace_prev,
-             i = insert_length;
-             i > 0;
-             ++src, ++dst, --i)
-          *dst = *src;
-     }
-   } else {  /* have wchar_t* data */
-     if (replace_length > insert_length)
-       /* We need to shift the text at and after replace_next to the left. */
-       for (wc_src = TextF_WcValue(tf) + replace_next,
-            wc_dst = wc_src + (insert_length - replace_length),
-            i = (int) ((tf->text.string_length + 1) - replace_next);
-            i > 0;
-            ++wc_src, ++wc_dst, --i)
-         *wc_dst = *wc_src;
-     else if (replace_length < insert_length)
-       /* We need to shift the text at and after replace_next to the right. */
-       /* Need to add 1 to string_length to handle the NULL terminator on */
-       /* the string. */
-       for (wc_src = TextF_WcValue(tf) + tf->text.string_length,
-            wc_dst = wc_src + (insert_length - replace_length),
-            i = (int) ((tf->text.string_length + 1) - replace_next);
-            i > 0;
-            --wc_src, --wc_dst, --i)
-         *wc_dst = *wc_src;
-
-    /* Update the string.
-     */
-     if (insert_length != 0) {
-       for (wc_src = (wchar_t *)insert,
-             wc_dst = TextF_WcValue(tf) + replace_prev,
-             i = insert_length;
-             i > 0;
-             ++wc_src, ++wc_dst, --i)
-          *wc_dst = *wc_src;
-     }
-   }
-
-  tf->text.string_length += insert_length - replace_length;
-
-  if (move_cursor) {
-     if (TextF_CursorPosition(tf) != newInsert) {
-        if (newInsert > tf->text.string_length) {
-           cursorPos = tf->text.string_length;
-        } else if (newInsert < 0) {
-           cursorPos = 0;
-        } else {
-           cursorPos = newInsert;
-        }
-     } else
-      cursorPos = replace_next + (insert_length - replace_length);
-     (void) SetDestination((Widget)tf, cursorPos, False,
-                        XtLastTimestampProcessed(XtDisplay((Widget)tf)));
-     PreeditSetCursorPosition(tf, cursorPos);
-  }
-
-  if (TextF_ResizeWidth(tf) && tf->text.do_resize) {
-     AdjustSize(tf);
-  } else {
-     AdjustText(tf, TextF_CursorPosition(tf), False);
-
-     /*
-      * If composite sequences where supported, we had to
-      * adjust redisplay_start once more here, since the widget
-      * value was updated.
-      * But for current implementation, there is no need
-      * to do so.
-      */
-
-     RedisplayText(tf, redisplay_start, tf->text.string_length);
-  }
-
-  _XmTextFieldDrawInsertionPoint(tf, True);
-  if (free_insert) XtFree(insert);
-  return True;
 }
 
 /*
@@ -8487,18 +7157,16 @@ PreeditSetCursorPosition(XmTextFieldWidget tf,
     _XmTextFieldDrawInsertionPoint(tf, True);
 }
 
-
 static void PreeditVerifyReplace(XmTextFieldWidget tf,
 				 XmTextPosition start,
 				 XmTextPosition end,
-				 char *insert,
-				 char insert_length,
+				 XmString insert,
+				 size_t insert_length,
 				 XmTextPosition cursor,
 				 Boolean *end_preedit)
-
 {
   FUnderVerifyPreedit(tf) = True;
-  _XmTextFieldReplaceText(tf, NULL, start, end, insert, insert_length, True);
+  _XmTextFieldReplaceText(tf, NULL, start, end, insert, insert_length, True, False);
   FUnderVerifyPreedit(tf) = False;
   if (FVerifyCommitNeeded(tf)) {
     TextFieldResetIC((Widget) tf);
@@ -8506,8 +7174,6 @@ static void PreeditVerifyReplace(XmTextFieldWidget tf,
   }
   _XmTextFieldSetCursorPosition(tf, NULL, cursor, False, True);
 }
-
-
 
 /*
  * This is the function set to XNPreeditStartCallback resource.
@@ -8547,9 +7213,8 @@ PreeditStart(XIC xic,
         pending_delete = True;
 
         tf->text.prim_anchor = TextF_CursorPosition(tf);
-
-        replace_res = _XmTextFieldReplaceText(tf,
-                        NULL, cursorPos, nextPos, NULL, 0, True);
+        replace_res = _XmTextFieldReplaceText(tf, NULL, cursorPos,
+                                              nextPos, NULL, 0, True, False);
 
         if (replace_res){
             if (pending_delete)
@@ -8567,30 +7232,16 @@ PreeditStart(XIC xic,
         _XmTextFieldDrawInsertionPoint(tf, True);
     }
 
-    PreStart(tf) = PreEnd(tf) = PreCursor(tf)
-        = TextF_CursorPosition(tf);
+    PreStart(tf) = PreEnd(tf) = PreCursor(tf) = TextF_CursorPosition(tf);
     tf->text.onthespot->under_preedit = True;
 
     if (tf->text.overstrike) {
        lastPos = tf->text.string_length;
        tf->text.onthespot->over_len = lastPos - PreCursor(tf);
-
-            if (tf->text.max_char_size == 1){
-                mb = XtMalloc(tf->text.onthespot->over_len + 1);
-                memmove(mb, &tf->text.value[PreStart(tf)], tf->text.onthespot->over_len);
-                mb[tf->text.onthespot->over_len] = '\0';
-                tf->text.onthespot->over_str = mb;
-            } else {
-                wc = (wchar_t *) XtMalloc(
-                        (tf->text.onthespot->over_len+1)*sizeof(wchar_t));
-                memmove(wc, &tf->text.wc_value[PreStart(tf)],
-                                tf->text.onthespot->over_len*sizeof(wchar_t));
-                wc[tf->text.onthespot->over_len] = (wchar_t)'\0';
-                tf->text.onthespot->over_str = (char *)wc;
-            }
+       tf->text.onthespot->over_str = XmStringSubstr(tf->text.xms_value, PreStart(tf), tf->text.onthespot->over_len);
     }
 
-    return (-1);
+    return -1;
 }
 
 /*
@@ -8602,6 +7253,7 @@ PreeditDone(XIC xic,
             XPointer client_data,
             XPointer call_data)
 {
+    XmString s, over;
     Boolean replace_res;
     XmTextFieldWidget tf = (XmTextFieldWidget)client_data;
     Widget p = (Widget) tf;
@@ -8621,29 +7273,28 @@ PreeditDone(XIC xic,
         if (end_preedit) return;
       }
       else
-        _XmTextFieldReplaceTextForPreedit(tf, PreStart(tf),
-                        PreEnd(tf), NULL, 0, True );
+        _XmTextFieldReplaceText(tf, NULL, PreStart(tf), PreEnd(tf), NULL, 0, True, False);
     }
 
     if (tf->text.overstrike){
+      over = XmStringCopy(tf->text.onthespot->over_str);
+
       if (need_verify) {
-	int cur = PreStart(tf);
- 	PreeditVerifyReplace(tf, PreStart(tf), PreStart(tf),
-				(char*) tf->text.onthespot->over_str,
-				tf->text.onthespot->over_maxlen,
-                                PreStart(tf), &end_preedit);
-	if (end_preedit) return;
-      }
-      else {
+        PreeditVerifyReplace(tf, PreStart(tf), PreStart(tf), over,
+                             XmStringLen(over), PreStart(tf), &end_preedit);
+	    if (end_preedit) return;
+      } else {
         _XmTextFieldDrawInsertionPoint(tf, False);
-        replace_res = _XmTextFieldReplaceTextForPreedit(tf, PreStart(tf),
-                        PreStart(tf), (char*) tf->text.onthespot->over_str,
-                        tf->text.onthespot->over_maxlen, True);
+        replace_res = _XmTextFieldReplaceText(tf, NULL, PreStart(tf),
+                                              PreStart(tf), over,
+                                              XmStringLen(over), True, False);
         TextF_CursorPosition(tf) = PreStart(tf);
         PreeditSetCursorPosition(tf, TextF_CursorPosition(tf));
         _XmTextFieldDrawInsertionPoint(tf, True);
       }
-      XtFree((char *)tf->text.onthespot->over_str);
+
+      XmStringFree(tf->text.onthespot->over_str);
+      tf->text.onthespot->over_str = NULL;
       tf->text.onthespot->over_len = tf->text.onthespot->over_maxlen = 0;
     }
 
@@ -8663,17 +7314,15 @@ PreeditDraw(XIC xic,
 {
     Widget w = (Widget) client_data;
     XmTextFieldWidget tf = (XmTextFieldWidget) client_data;
-    int escapement, insert_length = 0;
-    char *mb = NULL, *over_mb = NULL;
-    wchar_t *wc = NULL, *over_wc = NULL, *tab_wc = NULL , *recover_wc = NULL;
+    int insert_length = 0;
     XmTextPosition startPos, endPos, rest_len =0 , tmp_end;
     Boolean replace_res;
-    XRectangle overall_ink;
     int i;
     int recover_len=0;
     char *ptr=NULL;
     Widget p =w;
     Boolean need_verify, end_preedit = False;
+    XmString s, rest = NULL, recover = NULL;
 
     if (!TextF_Editable(tf))
         return;
@@ -8685,8 +7334,7 @@ PreeditDraw(XIC xic,
     if (call_data->chg_length>PreEnd(tf)-PreStart(tf))
         call_data->chg_length = PreEnd(tf)-PreStart(tf);
 
-    while (!XtIsShell(p))
-	p = XtParent(p);
+    while (!XtIsShell(p)) p = XtParent(p);
     XtVaGetValues(p, XmNverifyPreedit, &need_verify, NULL);
 
     _XmTextFieldDrawInsertionPoint(tf, False);
@@ -8708,8 +7356,8 @@ PreeditDraw(XIC xic,
 	  }
 	}
 	else {
-          replace_res = _XmTextFieldReplaceTextForPreedit(tf, startPos,
-                                             endPos, NULL, 0, True);
+      replace_res = _XmTextFieldReplaceText(tf, NULL, startPos,
+                                            endPos, NULL, 0, True, False);
 	}
 	_XmTextFieldDrawInsertionPoint(tf, True);
         return;
@@ -8720,51 +7368,11 @@ PreeditDraw(XIC xic,
          !call_data->text->string.wide_char) ||
         (!call_data->text->encoding_is_wchar &&
          !call_data->text->string.multi_byte)){
-
         PreeditSetRendition(w, call_data);
-
         PreeditSetCursorPosition(tf, TextF_CursorPosition(tf));
         _XmTextFieldDrawInsertionPoint(tf, True);
         return;
     }
-    }
-
-    if (insert_length > 0){
-        if (TextF_UseFontSet(tf)){
-
-            if (call_data->text->encoding_is_wchar){
-                escapement = XwcTextExtents((XFontSet)TextF_Font(tf),
-                        call_data->text->string.wide_char, insert_length,
-                        &overall_ink, NULL);
-           	tab_wc = (wchar_t*) XtMalloc((unsigned)(1+1) * sizeof(wchar_t));
-                mbstowcs(tab_wc, "\t", 1);
-                if ( escapement == 0 && overall_ink.width == 0 &&
-                    wcschr(call_data->text->string.wide_char, *tab_wc) == 0){
-                        /* cursor on */
-		    XtFree((char *) tab_wc);
-                    return;
-                }
-	        XtFree((char *) tab_wc);
-            } else {
-                mb = XtMalloc((insert_length+1)*(tf->text.max_char_size));
-                strcpy(mb, call_data->text->string.multi_byte);
-                escapement = XmbTextExtents((XFontSet)TextF_Font(tf),
-                        mb, strlen(mb), &overall_ink, NULL);
-                if ( escapement == 0 && overall_ink.width == 0 &&
-                    strchr(call_data->text->string.multi_byte, '\t') == 0){
-                        /* cursor on */
-                    if (mb)
-                       XtFree(mb);
-                    return;
-                }
-            }
-        }
-    }
-    else {
-        mb = XtMalloc(4);
-        mb[0] = '\0';
-        wc = (wchar_t *) XtMalloc((unsigned) sizeof(wchar_t));
-        wc[0] = (wchar_t) '\0';
     }
 
     startPos = PreStart(tf) + call_data->chg_first;
@@ -8789,24 +7397,18 @@ PreeditDraw(XIC xic,
             recover_len = tf->text.onthespot->over_maxlen - tmp_end +
                                 PreStart(tf);
             tf->text.onthespot->over_maxlen = tmp_end - PreStart(tf);
+            if (recover_len > 0) {
+              recover = XmStringSubstr(tf->text.onthespot->over_str, tf->text.onthespot->over_maxlen, (size_t)recover_len);
+            }
         } else
             endPos = startPos + call_data->chg_length;
 
         rest_len = (XmTextPosition)(PreEnd(tf) - PreStart(tf) -
                         call_data->chg_first - call_data->chg_length);
-        if (rest_len){
-            if (tf->text.max_char_size == 1){
-                over_mb = XtMalloc(rest_len+1);
-               memmove(over_mb, &tf->text.value[PreStart(tf)+call_data->chg_first+
-                                call_data->chg_length], rest_len);
-                over_mb[rest_len] = '\0';
-            } else {
-                over_wc = (wchar_t *)XtMalloc((rest_len+1)*sizeof(wchar_t));
-                memmove(over_wc, &tf->text.wc_value[PreStart(tf)+
-                        call_data->chg_first+call_data->chg_length],
-                        rest_len*sizeof(wchar_t));
-                over_wc[rest_len] = (wchar_t)'\0';
-            }
+        if (rest_len > 0) {
+            rest = XmStringSubstr(tf->text.xms_value,
+                                  PreStart(tf) + call_data->chg_first +
+                                  call_data->chg_length, (size_t)rest_len);
         }
     }
 
@@ -8819,120 +7421,32 @@ PreeditDraw(XIC xic,
         PreEnd(tf) = PreStart(tf);
 
     PreCursor(tf) = PreStart(tf) + call_data->caret;
+    if (call_data->text->encoding_is_wchar)
+      s = XmStringCreateWide(call_data->text->string.wide_char, NULL);
+    else s = XmStringCreateMultibyte(call_data->text->string.multi_byte, NULL);
 
-    if (tf->text.max_char_size == 1) {
-        if (call_data->text) {
-        if (call_data->text->encoding_is_wchar){
-            mb = XtMalloc((insert_length+1)*sizeof(char));
-            wcstombs(mb, call_data->text->string.wide_char, insert_length);
-            mb[insert_length] = '\0';
-        } else
-        {
-            mb = XtMalloc((insert_length+1)*sizeof(char));
-            strcpy(mb, call_data->text->string.multi_byte);
-        }
-	}
+    if (tf->text.overstrike && rest)
+      s = XmStringConcatAndFree(s, rest);
 
-        if (tf->text.overstrike && rest_len){
-            mb = XtRealloc(mb, strlen(mb)+strlen(over_mb)+1);
-            strcat(mb, over_mb);
-            XtFree(over_mb);
-        }
+    if (tf->text.overstrike && recover)
+      s = XmStringConcatAndFree(s, recover);
 
-        if (tf->text.overstrike && recover_len > 0) {
-           mb = XtRealloc(mb, strlen(mb)+(recover_len+1));
-           ptr = tf->text.onthespot->over_str + tf->text.onthespot->over_maxlen;
-           i = strlen(mb);
-           strncat(mb, ptr, recover_len);
-           mb[i+recover_len] = '\0';
-        }
-
-	if (need_verify) {
-	  PreeditVerifyReplace(tf, startPos, endPos, mb, strlen(mb),
-				PreCursor(tf), &end_preedit);
-	  if (end_preedit) {
-	    _XmTextFieldDrawInsertionPoint(tf, True);
-	    return;
-	  }
-	}
-	else {
-          replace_res = _XmTextFieldReplaceTextForPreedit(tf, startPos,
-                                             endPos, mb,
-                                             strlen(mb), True);
-    	  PreeditSetCursorPosition(tf, PreCursor(tf));
-	}
-
+    if (need_verify) {
+      PreeditVerifyReplace(tf, startPos, endPos, s, XmStringLen(s),
+                           PreCursor(tf), &end_preedit);
+      if (end_preedit) {
+        _XmTextFieldDrawInsertionPoint(tf, True);
+        return;
+      }
     } else {
-        if (call_data->text) {
-        if (!call_data->text->encoding_is_wchar){
-            wc = (wchar_t*)XtMalloc((unsigned)(insert_length+1) *
-                                             sizeof(wchar_t));
-            mbstowcs( wc, call_data->text->string.multi_byte,
-                                                        insert_length);
-        } else
-        {
-            wc = (wchar_t*)XtMalloc((unsigned)(insert_length+1) *
-                                             sizeof(wchar_t));
-            wcscpy(wc, call_data->text->string.wide_char);
-        }
-        wc[insert_length] = (wchar_t) '\0';
-        }
-
-        if (tf->text.overstrike && rest_len){
-            wc = (wchar_t *)XtRealloc((char *)wc,
-                        (insert_length+rest_len+1)*sizeof(wchar_t));
-            wcscat(wc, over_wc);
-            XtFree((char *)over_wc);
-        }
-
-        if (tf->text.overstrike && recover_len > 0) {
-           wc = (wchar_t *)XtRealloc((char *)wc,
-                       wcslen(wc)+(recover_len+1)*sizeof(wchar_t));
-           ptr = XtMalloc((tf->text.onthespot->over_len+1)*sizeof(char));
-           wcstombs(ptr, (wchar_t *)tf->text.onthespot->over_str,
-                            tf->text.onthespot->over_len);
-           ptr[tf->text.onthespot->over_len] = '\0';
-
-           for (i=0; i < tf->text.onthespot->over_maxlen; i++) {
-               ptr += mblen(ptr, 4);
-           }
-
-           recover_wc = (wchar_t*) XtMalloc((unsigned)(recover_len+1) *
-                                                       sizeof(wchar_t));
-           mbstowcs(recover_wc, ptr, recover_len);
-           i = wcslen(wc);
-           wcsncat(wc, recover_wc, recover_len);
-           wc[i+recover_len] = (wchar_t) '\0';
-           XtFree((char *) recover_wc);
-           if (ptr)
-              XtFree(ptr);
-        }
-
-	if (need_verify) {
-          PreeditVerifyReplace(tf, startPos, endPos, (char *)wc,
-				wcslen(wc), PreCursor(tf), &end_preedit);
-          if (end_preedit) {
-	    _XmTextFieldDrawInsertionPoint(tf, True);
-	    return;
-	  }
-        }
-        else {
-          replace_res = _XmTextFieldReplaceTextForPreedit(tf, startPos,
-                                             endPos, (char *)wc,
-                                             wcslen(wc), True);
-          PreeditSetCursorPosition(tf, PreCursor(tf));
-        }
+      replace_res = _XmTextFieldReplaceText(tf, NULL, startPos, endPos, s,
+                                            XmStringLen(s), True, False);
+      PreeditSetCursorPosition(tf, PreCursor(tf));
     }
 
     if (insert_length > 0)
        PreeditSetRendition(w, call_data);
-
     _XmTextFieldDrawInsertionPoint(tf, True);
-
-    if (mb)
-       XtFree(mb);
-    if (wc)
-       XtFree((char *) wc);
 }
 
 /*
@@ -8990,111 +7504,55 @@ PreeditCaret(XIC xic,
 static void
 TextFieldResetIC(Widget w)
 {
-    int insert_length, escapement, num_chars;
-    char *mb, *str=NULL;
+    size_t insert_length;
     Boolean replace_res;
-    wchar_t *wc_insert_string;
-    XRectangle overall_ink;
     XmTextPosition cursorPos, nextPos;
     XmTextFieldWidget tf = (XmTextFieldWidget)w;
+    XmString s = NULL;
+    char *mb = NULL;
 
     if (!(tf->text.onthespot->under_preedit))
         return;
 
     if (FVerifyCommitNeeded(tf)) {
-	FVerifyCommitNeeded(tf) = False;
-	str = XtMalloc((PreEnd(tf) - PreStart(tf)+1)*sizeof(wchar_t));
-	if (tf->text.max_char_size == 1) {
-	  memmove(str, &tf->text.value[PreStart(tf)],
-				PreEnd(tf) - PreStart(tf));
-	  str[PreEnd(tf) - PreStart(tf)] = '\0';
-	}
-	else {
-	  int num_bytes;
-	  wchar_t *wc_string;
-	  wc_string = (wchar_t *)XtMalloc((PreEnd(tf) - PreStart(tf)+1)
-                                                        *sizeof(wchar_t));
-          memmove(wc_string, &tf->text.wc_value[PreStart(tf)],
-                                (PreEnd(tf) - PreStart(tf))*sizeof(wchar_t));
-          wc_string[PreEnd(tf) - PreStart(tf)] = (wchar_t)'\0';
-	  num_bytes = wcstombs(str, wc_string,
-				(PreEnd(tf) - PreStart(tf)+1)*sizeof(wchar_t));
-	  str[num_bytes] = '\0';
-	  XtFree((char *)wc_string);
-	}
-	XmImMbResetIC(w, &mb);
-	mb = str;
+      FVerifyCommitNeeded(tf) = False;
+      s = XmStringSubstr(tf->text.xms_value, PreStart(tf), PreEnd(tf) - PreStart(tf));
+      XmImMbResetIC(w, &mb);
+      XFree(mb);
+    } else {
+      XmImMbResetIC(w, &mb);
+      s = XmStringCreateMultibyte(mb, NULL);
+      XFree(mb);
     }
-    else
-    	XmImMbResetIC(w, &mb);
 
-    if (!mb) {
+    if (!s) {
         ResetUnder(tf);
         return;
     }
 
     if (!TextF_Editable(tf)) {
-        if (tf->text.verify_bell) XBell(XtDisplay((Widget)tf), 0);
+      if (tf->text.verify_bell)
+        XBell(XtDisplay((Widget)tf), 0);
     }
 
-    if ((insert_length = strlen(mb)) > TEXT_MAX_INSERT_SIZE) {
+    if ((insert_length = XmStringLen(s)) > TEXT_MAX_INSERT_SIZE) {
         ResetUnder(tf);
+        XmStringFree(s);
         return;
     }
 
-    if (insert_length > 0) {
-        if (TextF_UseFontSet(tf)){
-            escapement = XmbTextExtents((XFontSet)TextF_Font(tf), mb,
-                        insert_length, &overall_ink, NULL );
-            if ( escapement == 0 && overall_ink.width == 0 ) {
-                ResetUnder(tf);
-                return;
-	    }
-#if USE_XFT
-        } else if (TextF_UseXft(tf)) {
-          XGlyphInfo	ext;
-
-          XftTextExtentsUtf8(XtDisplay((Widget)tf), TextF_XftFont(tf),
-	      (FcChar8*)mb, insert_length, &ext);
-
-          if (!ext.xOff) {
-              ResetUnder(tf);
-	      return;
-	  }
-#endif
-        } else {
-            if (!XTextWidth(TextF_Font(tf), mb, insert_length)) {
-                ResetUnder(tf);
-                return;
-	    }
-        }
-   }
-
     cursorPos = nextPos = TextF_CursorPosition(tf);
+    if (tf->text.overstrike && nextPos != (XmTextPosition)tf->text.string_length)
+      nextPos++;
 
-    if (tf->text.overstrike) {
-        if (nextPos != tf->text.string_length) nextPos++;
-    }
-    if (tf->text.max_char_size == 1) {
-        replace_res = _XmTextFieldReplaceText(tf, NULL, cursorPos,
-                                             nextPos, mb,
-                                             insert_length, True);
-    } else {
-        mb[insert_length] = '\0';
-        wc_insert_string = (wchar_t*)XtMalloc((unsigned)(insert_length+1) *
-                                             sizeof(wchar_t));
-        num_chars = mbstowcs( wc_insert_string, mb, insert_length+1);
-        replace_res = _XmTextFieldReplaceText(tf, NULL, cursorPos,
-                nextPos, (char*) wc_insert_string, num_chars, True);
-        XtFree((char *)wc_insert_string);
-    }
+    replace_res = _XmTextFieldReplaceText(tf, NULL, cursorPos,
+                                          nextPos, s, insert_length, True, True);
 
     if (replace_res)
         _XmTextFieldSetCursorPosition(tf, NULL,
                                       TextF_CursorPosition(tf), False, True);
     _XmTextFieldDrawInsertionPoint(tf, True);
-    if (str) XtFree(str);
-
+    XmStringFree(s);
     ResetUnder(tf);
 }
 
@@ -9111,491 +7569,318 @@ ResetUnder(XmTextFieldWidget tf)
  *                              Public Functions                             *
  ***********************************<->***************************************/
 
-char *
-XmTextFieldGetString(Widget w)
+XmString XmTextFieldGetXmString(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  char *temp_str;
-  int ret_val = 0;
-  _XmWidgetToAppContext(w);
+	XmString s;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  if (tf->text.string_length > 0) {
-    if (tf->text.max_char_size == 1) {
-      temp_str = XtNewString(TextF_Value(tf));
-      _XmAppUnlock(app);
-      return temp_str;
-    } else {
-      temp_str = (char *) XtMalloc((unsigned) tf->text.max_char_size *
-				   (tf->text.string_length + 1));
-      ret_val = wcstombs(temp_str, TextF_WcValue(tf),
-			 (tf->text.string_length + 1)*tf->text.max_char_size);
-      if (ret_val < 0) temp_str[0] = '\0';
-      _XmAppUnlock(app);
-      return temp_str;
-    }
-  }
-  else {
-    _XmAppUnlock(app);
-    return(XtNewString(""));
-  }
+	_XmAppLock(app);
+	s = XmStringCopy(((XmTextFieldWidget)w)->text.xms_value);
+	_XmAppUnlock(app);
+	return s;
 }
 
-int
-XmTextFieldGetSubstring(Widget widget,
-			XmTextPosition start,
-			int num_chars,
-			int buf_size,
-			char *buffer)
+char *XmTextFieldGetString(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) widget;
-  int ret_value = XmCOPY_SUCCEEDED;
-  int n_bytes = 0;
-  int wcs_ret = 0;
-  _XmWidgetToAppContext(widget);
+	char *ret;
+	XmTextFieldWidget tf = (XmTextFieldWidget) w;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  if (tf->text.max_char_size != 1)
-    n_bytes = _XmTextFieldCountBytes(tf, TextF_WcValue(tf)+start, num_chars);
-  else
-    n_bytes = num_chars;
-
-  if (buf_size < n_bytes + 1) {
-    _XmAppUnlock(app);
-    return XmCOPY_FAILED;
-  }
-
-  if (start + num_chars > tf->text.string_length) {
-    num_chars = (int) (tf->text.string_length - start);
-    if (tf->text.max_char_size != 1)
-      n_bytes = _XmTextFieldCountBytes(tf, TextF_WcValue(tf)+start,
-				       num_chars);
-    else
-      n_bytes = num_chars;
-    ret_value = XmCOPY_TRUNCATED;
-  }
-
-  if (num_chars > 0) {
-    if (tf->text.max_char_size == 1) {
-      (void)memcpy((void*)buffer, (void*)&TextF_Value(tf)[start], num_chars);
-    } else {
-      wcs_ret = wcstombs(buffer, &TextF_WcValue(tf)[start], n_bytes);
-      if (wcs_ret < 0) n_bytes = 0;
-    }
-    buffer[n_bytes] = '\0';
-  } else
-    ret_value = XmCOPY_FAILED;
-
-  _XmAppUnlock(app);
-  return (ret_value);
+	_XmAppLock(app);
+	ret = XmStringUngenerate(tf->text.xms_value, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	_XmAppUnlock(app);
+	return ret;
 }
 
-
-wchar_t *
-XmTextFieldGetStringWcs(Widget w)
+wchar_t *XmTextFieldGetStringWcs(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  wchar_t *temp_wcs;
-  int num_wcs = 0;
-  _XmWidgetToAppContext(w);
+	char *ret;
+	XmTextFieldWidget tf = (XmTextFieldWidget) w;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  if (tf->text.string_length > 0) {
-    temp_wcs = (wchar_t*) XtMalloc((unsigned) sizeof(wchar_t) *
-				   (tf->text.string_length + 1));
-    if (tf->text.max_char_size != 1) {
-      (void)memcpy((void*)temp_wcs, (void*)TextF_WcValue(tf),
-		   sizeof(wchar_t) * (tf->text.string_length + 1));
-    } else {
-      num_wcs = mbstowcs(temp_wcs, TextF_Value(tf),
-			 tf->text.string_length + 1);
-      if (num_wcs < 0) temp_wcs[0] = (wchar_t)0L;
-    }
-    _XmAppUnlock(app);
-    return temp_wcs;
-  } else {
-    temp_wcs = (wchar_t*) XtMalloc((unsigned) sizeof(wchar_t));
-    temp_wcs[0] = (wchar_t)0L; /* put a wchar_t NULL in position 0 */
-    _XmAppUnlock(app);
-    return temp_wcs;
-  }
+	_XmAppLock(app);
+	ret = XmStringUngenerate(tf->text.xms_value, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+	_XmAppUnlock(app);
+	return (wchar_t *)ret;
 }
 
-int
-XmTextFieldGetSubstringWcs(Widget widget,
-			   XmTextPosition start,
-			   int num_chars,
-			   int buf_size,
-			   wchar_t *buffer)
+XmString XmTextFieldSubstring(Widget w, XmTextPosition start, size_t length)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) widget;
-  int ret_value = XmCOPY_SUCCEEDED;
-  int num_wcs = 0;
-  _XmWidgetToAppContext(widget);
+	XmString s;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  if (start + num_chars > tf->text.string_length) {
-    num_chars = (int) (tf->text.string_length - start);
-    ret_value = XmCOPY_TRUNCATED;
-  }
+	_XmAppLock(app);
+	s = XmStringSubstr(((XmTextFieldWidget)w)->text.xms_value, start, length);
+	_XmAppUnlock(app);
 
-  if (buf_size < num_chars + 1) {
-    _XmAppUnlock(app);
-    return XmCOPY_FAILED;
-  }
-
-  if (num_chars > 0) {
-    if (tf->text.max_char_size == 1) {
-      num_wcs = mbstowcs(buffer, &TextF_Value(tf)[start], num_chars);
-      if (num_wcs < 0) num_chars = 0;
-    } else {
-      (void)memcpy((void*)buffer, (void*)&TextF_WcValue(tf)[start],
-		   (size_t) num_chars * sizeof(wchar_t));
-    }
-    buffer[num_chars] = '\0';
-  } else if (num_chars == 0) {
-    buffer[num_chars] = '\0';
-  } else
-    ret_value = XmCOPY_FAILED;
-
-  _XmAppUnlock(app);
-  return (ret_value);
+	return s;
 }
 
-
-XmTextPosition
-XmTextFieldGetLastPosition(Widget w)
+int XmTextFieldGetSubstring(Widget widget, XmTextPosition start,
+                            int num_chars, int buf_size, char *buffer)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmTextPosition ret_val;
-  _XmWidgetToAppContext(w);
+	int ret = XmCOPY_SUCCEEDED;
+	char *bytes = NULL;
+	XmString s;
+	_XmWidgetToAppContext(widget);
 
-  _XmAppLock(app);
-  ret_val = (tf->text.string_length);
-  _XmAppUnlock(app);
-  return ret_val;
+	if (num_chars < 0 || !buffer)
+		return XmCOPY_FAILED;
+
+	_XmAppLock(app);
+	if (!(s     = XmTextFieldSubstring(widget, start, (size_t)num_chars))   ||
+	    !(bytes = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT)) ||
+	    (size_t)buf_size < strlen(bytes) + 1)
+		goto copy_failed;
+
+	if ((size_t)num_chars > XmStringLen(s))
+		ret = XmCOPY_TRUNCATED;
+	XmStringFree(s);
+
+	memcpy(buffer, bytes, strlen(bytes) + 1);
+	XtFree(bytes);
+	_XmAppUnlock(app);
+	return ret;
+
+copy_failed:
+	_XmAppUnlock(app);
+	XtFree(bytes);
+	XmStringFree(s);
+	return XmCOPY_FAILED;
 }
 
-void
-XmTextFieldSetString(Widget w,
-		     char *value)
+int XmTextFieldGetSubstringWcs(Widget widget, XmTextPosition start,
+                               int num_chars, int buf_size, wchar_t *buffer)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  XmAnyCallbackStruct cb;
-  XmTextPosition fromPos, toPos, newInsert;
-  int length;
-  int free_insert = False;
-  int ret_val = 0;
-  char * tmp_ptr;
-  char * mod_value = NULL;
-  _XmWidgetToAppContext(w);
+	int ret = XmCOPY_SUCCEEDED;
+	char *bytes = NULL;
+	XmString s;
+	_XmWidgetToAppContext(widget);
 
-  _XmAppLock(app);
-  TextFieldResetIC(w);
-  fromPos = 0;
+	if (num_chars < 0 || !buffer)
+		return XmCOPY_FAILED;
 
-  if (value == NULL) value = "";
-  toPos = tf->text.string_length;
-  if (tf->text.max_char_size == 1)
-      length = strlen(value);
-  else {
-      for (length = 0, tmp_ptr = value, ret_val = mblen(tmp_ptr, MB_CUR_MAX);
-	   ret_val > 0;
-	   ret_val = mblen(tmp_ptr, MB_CUR_MAX)){
-	 if (ret_val < 0){
-	    length = 0; /* If error, treat the whole string as bad */
-	    break;
-	 } else {
-	    length += ret_val;
-	    tmp_ptr += ret_val;
-	 }
-      }
-    }
+	_XmAppLock(app);
+	if (!(s     = XmTextFieldSubstring(widget, start, (size_t)num_chars))    ||
+	    !(bytes = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT)) ||
+	    (size_t)buf_size < wcslen((wchar_t *)bytes))
+		goto copy_failed;
 
-  if (XtIsSensitive(w) && tf->text.has_focus)
-    ChangeBlinkBehavior(tf, False);
-  _XmTextFieldDrawInsertionPoint(tf, False);
+	if ((size_t)num_chars > XmStringLen(s))
+		ret = XmCOPY_TRUNCATED;
+	XmStringFree(s);
 
-  if (TextF_ModifyVerifyCallback(tf) || TextF_ModifyVerifyCallbackWcs(tf)) {
-    /* If the function ModifyVerify() returns false then don't
-     * continue with the action.
-     */
-      if (tf->text.max_char_size == 1) {
-	  if (!ModifyVerify(tf, NULL, &fromPos, &toPos,
-			    &value, &length, &newInsert, &free_insert)) {
-	      if (tf->text.verify_bell) XBell(XtDisplay(w), 0);
-	      if (free_insert) XtFree(value);
-	      _XmAppUnlock(app);
-	      return;
-	  }
-      } else {
-	  wchar_t * wbuf;
-	  wchar_t * orig_wbuf;
-	  wbuf = (wchar_t*)XtMalloc((unsigned)
-				    ((strlen(value) + 1) * sizeof(wchar_t)));
-	  length = mbstowcs(wbuf, value, (size_t)(strlen(value) + 1));
-	  if (length < 0) length = 0;
-	  orig_wbuf = wbuf; /* save the pointer to free later */
+	memcpy(buffer, bytes, (wcslen((wchar_t *)bytes) + 1) * sizeof(wchar_t));
+	XtFree(bytes);
+	_XmAppUnlock(app);
+	return ret;
 
-	  if (!ModifyVerify(tf, NULL, &fromPos, &toPos, (char**)&wbuf,
-			    &length, &newInsert, &free_insert)) {
-	      if (tf->text.verify_bell) XBell(XtDisplay(w), 0);
-	      if (free_insert) XtFree((char*)wbuf);
-	      XtFree((char*)orig_wbuf);
-	      _XmAppUnlock(app);
-	      return;
-	  }
-	  else {
-	      mod_value = XtMalloc((unsigned)
-				   ((length + 1) * tf->text.max_char_size));
-	      ret_val = wcstombs(mod_value, wbuf, (size_t)
-				 ((length + 1) * tf->text.max_char_size));
-	      if (free_insert) {
-		  XtFree((char*)wbuf);
-		  free_insert = False;
-	      }
-	      XtFree((char*)orig_wbuf);
-	      if (ret_val < 0){
-		  XtFree(mod_value);
-		  length = strlen(value);
-	      } else {
-		  value = mod_value;
-	      }
-	  }
-      }
-  }
-
-  TextFieldSetHighlight((XmTextFieldWidget) w, 0,
-			tf->text.string_length, XmHIGHLIGHT_NORMAL);
-
-  if (tf->text.max_char_size == 1)
-    XtFree(TextF_Value(tf));
-  else   /* convert to wchar_t before calling ValidateString */
-    XtFree((char *)TextF_WcValue(tf));
-
-  ValidateString(tf, value, False);
-  if(mod_value) XtFree(mod_value);
-
-  tf->text.pending_off = True;
-
-  SetCursorPosition(tf, NULL, 0, True, True, False, DontCare);
-
-  if (TextF_ResizeWidth(tf) && tf->text.do_resize)
-    AdjustSize(tf);
-  else {
-    tf->text.h_offset = TextF_MarginWidth(tf) +
-      tf->primitive.shadow_thickness +
-	tf->primitive.highlight_thickness;
-    if (!AdjustText(tf, TextF_CursorPosition(tf), False))
-      RedisplayText(tf, 0, tf->text.string_length);
-  }
-
-  cb.reason = XmCR_VALUE_CHANGED;
-  cb.event = NULL;
-  XtCallCallbackList(w, TextF_ValueChangedCallback(tf), (XtPointer) &cb);
-
-  tf->text.refresh_ibeam_off = True;
-
-  if (XtIsSensitive(w) && tf->text.has_focus)
-    ChangeBlinkBehavior(tf, True);
-  _XmTextFieldDrawInsertionPoint(tf, True);
-  if (free_insert) XtFree(value);
-  _XmAppUnlock(app);
+copy_failed:
+	_XmAppUnlock(app);
+	XtFree(bytes);
+	XmStringFree(s);
+	return XmCOPY_FAILED;
 }
 
-
-void
-XmTextFieldSetStringWcs(Widget w,
-			wchar_t *wc_value)
+XmTextPosition XmTextFieldGetLastPosition(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  char * tmp;
-  wchar_t *tmp_wc;
-  int num_chars = 0;
-  int result;
-  _XmWidgetToAppContext(w);
+	XmTextFieldWidget tf = (XmTextFieldWidget) w;
+	XmTextPosition ret;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  TextFieldResetIC(w);
-  for (num_chars = 0, tmp_wc = wc_value; *tmp_wc != (wchar_t)0L; num_chars++)
-    tmp_wc++;  /* count number of wchar_t's */
-
-  tmp = XtMalloc((unsigned) (num_chars + 1) * tf->text.max_char_size);
-  result = wcstombs(tmp, wc_value, (num_chars + 1) * tf->text.max_char_size);
-
-  if (result == (size_t) -1) /* if wcstombs fails, it returns (size_t) -1 */
-    tmp = "";               /* if invalid data, pass in the empty string */
-
-  XmTextFieldSetString(w, tmp);
-
-  XtFree(tmp);
-  _XmAppUnlock(app);
+	_XmAppLock(app);
+	ret = (XmTextPosition)tf->text.string_length;
+	_XmAppUnlock(app);
+	return ret;
 }
 
-
-static void
-TextFieldReplace(Widget w,
-		 XmTextPosition from_pos,
-		 XmTextPosition to_pos,
-		 char *value,
-		 int is_wc)
+void XmTextFieldSetXmString(Widget w, XmString value)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  int save_maxlength = TextF_MaxLength(tf);
-  Boolean save_editable = TextF_Editable(tf);
-  Boolean deselected = False;
-  Boolean rep_result = False;
-  wchar_t *wc_value = (wchar_t *)value;
-  int length = 0;
-  XmAnyCallbackStruct cb;
-  _XmWidgetToAppContext(w);
+	size_t length;
+	XmAnyCallbackStruct cb;
+	XmTextPosition from = 0, to, new_insert = 0;
+	XmTextFieldWidget tf = (XmTextFieldWidget)w;
 
-  _XmAppLock(app);
-  if (value == NULL) value = "";
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+	TextFieldResetIC(w);
 
-  VerifyBounds(tf, &from_pos, &to_pos);
+	if (!value)
+		value = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
 
-  if (tf->text.has_primary) {
-    if ((tf->text.prim_pos_left > from_pos &&
-	 tf->text.prim_pos_left < to_pos) ||
-	(tf->text.prim_pos_right >from_pos &&
-	 tf->text.prim_pos_right < to_pos) ||
-	(tf->text.prim_pos_left <= from_pos &&
-	 tf->text.prim_pos_right >= to_pos)) {
-      _XmTextFieldDeselectSelection(w, False,
-				    XtLastTimestampProcessed(XtDisplay(w)));
-      deselected = True;
-    }
-  }
+	memset(&cb, 0, sizeof cb);
+	if (XtIsSensitive(w) && tf->text.has_focus)
+		ChangeBlinkBehavior(tf, False);
+	_XmTextFieldDrawInsertionPoint(tf, False);
 
-  TextF_Editable(tf) = True;
-  TextF_MaxLength(tf) = INT_MAX;
-  if (is_wc) {
-    /* Count the number of wide chars in the array */
-    for (length = 0; wc_value[length] != (wchar_t)0L; length++)
-      /*EMPTY*/;
-    if (tf->text.max_char_size != 1) {
-      rep_result = _XmTextFieldReplaceText(tf, NULL, from_pos, to_pos,
-					 (char*)wc_value, length, False);
-    } else {  /* need to convert to char* before calling Replace */
-      value = XtMalloc((unsigned) (length + 1) * tf->text.max_char_size);
-      length = wcstombs(value, wc_value,
-			   (length + 1) * tf->text.max_char_size);
-      if (length < 0) {        /* if wcstombs fails, it returns -1 */
-	value = "";            /* if invalid data, pass in the empty string */
-	length = 0;
-      }
-      rep_result = _XmTextFieldReplaceText(tf, NULL, from_pos, to_pos,
-					   (char*)value, length, False);
-      XtFree(value);
-    }
-  } else {
-    if (tf->text.max_char_size == 1) {
-      length = strlen(value);
-      rep_result = _XmTextFieldReplaceText(tf, NULL, from_pos,
-					   to_pos, value, length, False);
-    } else { /* need to convert to wchar_t* before calling Replace */
-      wc_value = (wchar_t *) XtMalloc((unsigned) sizeof(wchar_t) *
-				      (1 + strlen(value)));
-      length = mbstowcs(wc_value, value, (unsigned) (strlen(value) + 1));
-      if (length < 0) {
-	wc_value[0] = (wchar_t) 0L;/* if invalid data, pass in empty string */
-	length = 0;
-      }
-      rep_result = _XmTextFieldReplaceText(tf, NULL, from_pos, to_pos,
-					   (char*)wc_value, length, False);
-      XtFree((char *)wc_value);
-    }
-  }
-  if (from_pos <= TextF_CursorPosition(tf)) {
-    XmTextPosition cursorPos;
-    /* Replace will not move us, we still want this to happen */
-    if (TextF_CursorPosition(tf) < to_pos) {
-      if (TextF_CursorPosition(tf) - from_pos <= length)
-	cursorPos = TextF_CursorPosition(tf);
-      else
-	cursorPos = from_pos + length;
-    } else {
-      cursorPos = TextF_CursorPosition(tf) - (to_pos - from_pos) + length;
-    }
-    SetCursorPosition(tf, NULL, cursorPos, True, True, False, DontCare);
-  }
-  TextF_Editable(tf) = save_editable;
-  TextF_MaxLength(tf) = save_maxlength;
+	to     = tf->text.string_length;
+	length = XmStringLen(value);
+	if (!ModifyVerify(tf, NULL, &from, &to, &value, &length, &new_insert)) {
+		if (tf->text.verify_bell)
+			XBell(XtDisplayOfObject(w), 0);
+		_XmAppUnlock(app);
+		return;
+	}
 
-  /*
-   * Replace Text utilizes an optimization in deciding which text to redraw;
-   * in the case that the selection has been changed (as above), this can
-   * cause part/all of the replaced text to NOT be redrawn.  The following
-   * AdjustText call ensures that it IS drawn in this case.
-   */
+	TextFieldSetHighlight(tf, 0, tf->text.string_length, XmHIGHLIGHT_NORMAL);
+	XmStringFree(tf->text.xms_value);
+	tf->text.xms_value     = XmStringCopy(value);
+	tf->text.string_length = length;
+	tf->text.pending_off   = True;
+	SetCursorPosition(tf, NULL, 0, True, True, False, DontCare);
 
-  if (deselected)
-    AdjustText(tf, from_pos, True);
+	if (!tf->text.do_resize || !TextF_ResizeWidth(tf)) {
+		tf->text.h_offset = TextF_MarginWidth(tf) +
+		                    tf->primitive.shadow_thickness +
+		                    tf->primitive.highlight_thickness;
+		if (!AdjustText(tf, TextF_CursorPosition(tf), False))
+			RedisplayText(tf, 0, tf->text.string_length);
+	} else AdjustSize(tf);
 
-  (void) SetDestination(w, TextF_CursorPosition(tf), False,
-			XtLastTimestampProcessed(XtDisplay(w)));
-  if (rep_result) {
-    cb.reason = XmCR_VALUE_CHANGED;
-    cb.event = NULL;
-    XtCallCallbackList((Widget) tf, TextF_ValueChangedCallback(tf),
-		       (XtPointer) &cb);
-  }
-  _XmAppUnlock(app);
+	cb.reason = XmCR_VALUE_CHANGED;
+	XtCallCallbackList(w, TextF_ValueChangedCallback(tf), (XtPointer)&cb);
+	tf->text.refresh_ibeam_off = True;
+
+	if (XtIsSensitive(w) && tf->text.has_focus)
+		ChangeBlinkBehavior(tf, True);
+	_XmTextFieldDrawInsertionPoint(tf, True);
+	_XmAppUnlock(app);
 }
 
-void
-XmTextFieldReplace(Widget w,
-		   XmTextPosition from_pos,
-		   XmTextPosition to_pos,
-		   char *value)
+void XmTextFieldSetString(Widget w, char *value)
 {
-  _XmWidgetToAppContext(w);
+	XmString s;
 
-  _XmAppLock(app);
-  TextFieldReplace(w, from_pos, to_pos, value, False);
-  _XmAppUnlock(app);
+	s = XmStringCreateMultibyte(value, NULL);
+	XmTextFieldSetXmString(w, s);
+	XmStringFree(s);
 }
 
-
-void
-XmTextFieldReplaceWcs(Widget w,
-		      XmTextPosition from_pos,
-		      XmTextPosition to_pos,
-		      wchar_t *wc_value)
+void XmTextFieldSetStringWcs(Widget w, wchar_t *wc_value)
 {
-  _XmWidgetToAppContext(w);
+	XmString s;
 
-  _XmAppLock(app);
-  TextFieldReplace(w, from_pos, to_pos, (char *)wc_value, True);
-  _XmAppUnlock(app);
+	s = XmStringCreateWide(wc_value, NULL);
+	XmTextFieldSetXmString(w, s);
+	XmStringFree(s);
 }
 
-
-void
-XmTextFieldInsert(Widget w,
-		  XmTextPosition position,
-		  char *value)
+void XmTextFieldReplaceString(Widget w, XmTextPosition from,
+                              XmTextPosition to, XmString value)
 {
-  _XmWidgetToAppContext(w);
+	size_t length;
+	Boolean rep           = False;
+	Boolean deselected    = False;
+	XmTextFieldWidget tf  = (XmTextFieldWidget)w;
+	Boolean save_editable;
+	int save_maxlength;
+	XmTextPosition cursor;
+	XmAnyCallbackStruct cb;
 
-  _XmAppLock(app);
-  /* XmTextFieldReplace takes care of converting to wchar_t* if needed */
-  XmTextFieldReplace(w, position, position, value);
-  _XmAppUnlock(app);
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+
+	/* TODO: Emit a warning here? */
+	if (to < from)
+		return;
+
+	memset(&cb, 0, sizeof cb);
+	save_editable  = TextF_Editable(tf);
+	save_maxlength = TextF_MaxLength(tf);
+
+	VerifyBounds(tf, &from, &to);
+	TextF_Editable(tf)  = True;
+	TextF_MaxLength(tf) = INT_MAX;
+
+	length = XmStringLen(value);
+	rep    = _XmTextFieldReplaceText(tf, NULL, from, to, XmStringCopy(value),
+	                                 length, False, True);
+	TextF_Editable(tf)  = save_editable;
+	TextF_MaxLength(tf) = save_maxlength;
+
+	if (!rep) {
+		_XmAppUnlock(app);
+		return;
+	}
+
+	if (tf->text.has_primary) {
+		if ((tf->text.prim_pos_left  > from &&
+		     tf->text.prim_pos_left  < to) ||
+		    (tf->text.prim_pos_right > from &&
+		     tf->text.prim_pos_right < to) ||
+		    (tf->text.prim_pos_left  <= from &&
+		     tf->text.prim_pos_right >= to)) {
+			_XmTextFieldDeselectSelection(w, False, XtLastTimestampProcessed(XtDisplayOfObject(w)));
+			deselected = True;
+		}
+	}
+
+	cursor = TextF_CursorPosition(tf);
+	if (from <= cursor) {
+		/* Replace will not move us, we still want this to happen */
+		if (cursor < to)
+			cursor = (cursor - from) <= (XmTextPosition)length ?
+			         cursor : from + (XmTextPosition)length;
+		else cursor -= (to - from) + (XmTextPosition)length;
+		SetCursorPosition(tf, NULL, cursor, True, True, False, DontCare);
+	}
+
+	/*
+	 * Replace Text utilizes an optimization in deciding which text to redraw;
+	 * in the case that the selection has been changed (as above), this can
+	 * cause part/all of the replaced text to NOT be redrawn.  The following
+	 * AdjustText call ensures that it IS drawn in this case.
+	 */
+	if (deselected)
+		AdjustText(tf, from, True);
+	SetDestination(w, TextF_CursorPosition(tf), False, XtLastTimestampProcessed(XtDisplay(w)));
+
+	cb.reason = XmCR_VALUE_CHANGED;
+	XtCallCallbackList(w, TextF_ValueChangedCallback(tf), (XtPointer)&cb);
+	_XmAppUnlock(app);
 }
 
-void
-XmTextFieldInsertWcs(Widget w,
-		     XmTextPosition position,
-		     wchar_t *wcstring)
+void XmTextFieldReplace(Widget w, XmTextPosition from_pos,
+                        XmTextPosition to_pos, char *value)
 {
-  _XmWidgetToAppContext(w);
+	XmString s;
 
-  _XmAppLock(app);
-  /* XmTextFieldReplaceWcs takes care of converting to wchar_t* if needed */
-  XmTextFieldReplaceWcs(w, position, position, wcstring);
-  _XmAppUnlock(app);
+	s = XmStringCreateMultibyte(value, NULL);
+	XmTextFieldReplaceString(w, from_pos, to_pos, s);
+	XmStringFree(s);
+}
+
+void XmTextFieldReplaceWcs(Widget w, XmTextPosition from_pos,
+                           XmTextPosition to_pos, wchar_t *wc_value)
+{
+	XmString s;
+
+	s = XmStringCreateWide(wc_value, NULL);
+	XmTextFieldReplaceString(w, from_pos, to_pos, s);
+	XmStringFree(s);
+}
+
+void XmTextFieldInsertString(Widget w, XmTextPosition pos, XmString value)
+{
+	XmTextFieldReplaceString(w, pos, pos, value);
+}
+
+void XmTextFieldInsert(Widget w, XmTextPosition position, char *value)
+{
+	XmString s;
+
+	s = XmStringCreateMultibyte(value, NULL);
+	XmTextFieldInsertString(w, position, s);
+	XmStringFree(s);
+}
+
+void XmTextFieldInsertWcs(Widget w, XmTextPosition position, wchar_t *wcstring)
+{
+	XmString s;
+
+	s = XmStringCreateWide(wcstring, NULL);
+	XmTextFieldInsertString(w, position, s);
+	XmStringFree(s);
 }
 
 void
@@ -9783,76 +8068,40 @@ XmTextFieldGetSelectionPosition(Widget w,
   return tf->text.has_primary;
 }
 
-char *
-XmTextFieldGetSelection(Widget w)
+XmString XmTextFieldGetSelectionString(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  size_t length, num_chars;
-  char *value;
-  _XmWidgetToAppContext(w);
+	XmString s;
+	XmTextFieldWidget tf = (XmTextFieldWidget)w;
 
-  _XmAppLock(app);
-
-  if (tf->text.prim_pos_left == tf->text.prim_pos_right) {
-    _XmAppUnlock(app);
-    return NULL;
-  }
-  num_chars = (size_t) (tf->text.prim_pos_right - tf->text.prim_pos_left);
-  length = num_chars;
-  if (tf->text.max_char_size == 1) {
-    value = XtMalloc((unsigned) num_chars + 1);
-    (void) memcpy((void*)value,
-		  (void*)(TextF_Value(tf) + tf->text.prim_pos_left),
-		  num_chars);
-  } else {
-    value = XtMalloc((unsigned) ((num_chars + 1) * tf->text.max_char_size));
-    length = wcstombs(value, TextF_WcValue(tf) + tf->text.prim_pos_left,
-		      (num_chars + 1) * tf->text.max_char_size);
-    if (length == (size_t) -1) {
-      length = 0;
-    } else {
-      for(length = 0;num_chars > 0; num_chars--)
-	length += mblen(&value[length], tf->text.max_char_size);
-    }
-  }
-  value[length] = (char)'\0';
-  _XmAppUnlock(app);
-  return (value);
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+	s = XmStringSubstr(tf->text.xms_value, tf->text.prim_pos_left,
+	                   (size_t)tf->text.prim_pos_right - (size_t)tf->text.prim_pos_left);
+	_XmAppUnlock(app);
+	return s;
 }
 
-wchar_t *
-XmTextFieldGetSelectionWcs(Widget w)
+char *XmTextFieldGetSelection(Widget w)
 {
-  XmTextFieldWidget tf = (XmTextFieldWidget) w;
-  size_t length;
-  wchar_t *wc_value;
-  int return_val = 0;
-  _XmWidgetToAppContext(w);
+	XmString s;
+	char *out;
 
-  _XmAppLock(app);
-  if (tf->text.prim_pos_left == tf->text.prim_pos_right)
-  {
-    _XmAppUnlock(app);
-    return NULL;
-  }
-  length = (size_t) (tf->text.prim_pos_right - tf->text.prim_pos_left);
-
-  wc_value = (wchar_t*)XtMalloc((unsigned) (length + 1) * sizeof(wchar_t));
-
-  if (tf->text.max_char_size == 1) {
-    return_val = mbstowcs(wc_value, TextF_Value(tf) + tf->text.prim_pos_left,
-			  length);
-    if (return_val < 0) length = 0;
-  } else {
-    (void)memcpy((void*)wc_value,
-		 (void*)(TextF_WcValue(tf) + tf->text.prim_pos_left),
-		 length * sizeof(wchar_t));
-  }
-  wc_value[length] = (wchar_t)0L;
-  _XmAppUnlock(app);
-  return (wc_value);
+	s   = XmTextFieldGetSelectionString(w);
+	out = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	XmStringFree(s);
+	return out;
 }
 
+wchar_t *XmTextFieldGetSelectionWcs(Widget w)
+{
+	XmString s;
+	char *out;
+
+	s   = XmTextFieldGetSelectionString(w);
+	out = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+	XmStringFree(s);
+	return (wchar_t *)out;
+}
 
 Boolean
 XmTextFieldRemove(Widget w)

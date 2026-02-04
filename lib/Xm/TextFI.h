@@ -37,10 +37,6 @@ extern "C" {
 
 /********    Private Function Declarations    ********/
 
-extern int _XmTextFieldCountBytes(
-                        XmTextFieldWidget tf,
-                        wchar_t *wc_value,
-                        int num_chars) ;
 extern void _XmTextFToggleCursorGC(
                         Widget widget) ;
 extern void _XmTextFieldDrawInsertionPoint(
@@ -54,14 +50,13 @@ extern void _XmTextFieldSetCursorPosition(
                         XmTextPosition position,
                         Boolean adjust_flag,
                         Boolean call_cb) ;
-extern Boolean _XmTextFieldReplaceText(
-                        XmTextFieldWidget tf,
-                        XEvent *event,
-                        XmTextPosition replace_prev,
-                        XmTextPosition replace_next,
-                        char *insert,
-                        int insert_length,
-                        Boolean move_cursor) ;
+extern Boolean _XmTextFieldReplaceText(XmTextFieldWidget tf, XEvent *event,
+                                       XmTextPosition replace_prev,
+                                       XmTextPosition replace_next,
+                                       XmString insert,
+                                       size_t insert_length,
+                                       Boolean move_cursor,
+                                       Boolean modify_verify);
 extern void _XmTextFieldDeselectSelection(
                         Widget w,
                         Boolean disown,
@@ -83,9 +78,6 @@ extern void _XmTextFieldSetSel2(
                         Time sel_time) ;
 extern void _XmTextFieldHandleSecondaryFinished(Widget w,
 						XEvent *event);
-extern int _XmTextFieldCountCharacters(XmTextFieldWidget tf,
-				       char *ptr,
-				       int n_bytes);
 
 /********    End Private Function Declarations    ********/
 

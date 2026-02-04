@@ -701,3 +701,40 @@ XmCvtTextPropertyToXmStringTable(Display *display,
     return(Success);
 }
 
+int XmCvtXmStringToTextProperty(Display *d, XmString s, XTextProperty *prop)
+{
+	int ret;
+	char *list;
+	XICCEncodingStyle style = XStringStyle;
+	Atom COMPOUND_TEXT = XInternAtom(d, XmSCOMPOUND_TEXT, False);
+	Atom UTF8_STRING   = XInternAtom(d, XmSUTF8_STRING, False);
+
+	if (prop->encoding == COMPOUND_TEXT) style = XCompoundTextStyle;
+	if (prop->encoding == UTF8_STRING)   style = XUTF8StringStyle;
+
+	list = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+	ret  = Xutf8TextListToTextProperty(d, &list, 1, style, prop);
+	XtFree(list);
+	return ret;
+}
+
+XmString XmCvtTextPropertyToXmString(Display *d, XTextProperty *prop)
+{
+	int i, listlen;
+	char **list;
+	XmString out = NULL;
+
+	if (!prop || !d)
+		return NULL;
+
+	if (Xutf8TextPropertyToTextList(d, prop, &list, &listlen) > 0) {
+		XFreeStringList(list);
+		return NULL;
+	}
+
+	for (i = 0; i < listlen; i++)
+		out = XmStringConcatAndFree(out, XmStringGenerate(list[i], NULL, XmUTF8_TEXT, NULL));
+	XFreeStringList(list);
+	return out;
+}
+

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifndef _XmTextFP_h
 #define _XmTextFP_h
 
@@ -67,7 +67,7 @@ typedef struct _OnTheSpotData {
   XmTextPosition cursor;
   int over_len;
   int over_maxlen;
-  char *over_str;
+  XmString over_str;
   int under_preedit;
   Boolean under_verify_preedit;
   Boolean verify_commit;
@@ -81,29 +81,21 @@ typedef struct _OnTheSpotData {
 typedef struct _XmTextFieldPart {
     XtCallbackList activate_callback;	       /* Command activate callback */
     XtCallbackList focus_callback;             /* Verify gain focus callback */
-    XtCallbackList losing_focus_callback;      /* Verify losing focus 
-						  callback */
-    XtCallbackList modify_verify_callback;     /* Verify value to change 
-						  callback */
-    XtCallbackList wcs_modify_verify_callback; /* Verify value to change 
-						  callback */
-    XtCallbackList motion_verify_callback;     /* Verify insert cursor position
-						  to change callback */
-    XtCallbackList gain_primary_callback;      /* Gained ownership of Primary
-						  Selection */
-    XtCallbackList lose_primary_callback;      /* Lost ownership of Primary
-						  Selection */
-    XtCallbackList value_changed_callback;     /* Notify that value has changed
-						  callback */
-    char * value;		/* pointer to widget value stored as char * */
-    wchar_t * wc_value;		/* pointer to widget value stored as 
-				   wchar_t * */
+    XtCallbackList losing_focus_callback;      /* Verify losing focus callback */
+    XtCallbackList modify_verify_callback;     /* Verify value to change callback [deprecated] */
+    XtCallbackList wcs_modify_verify_callback; /* Verify value to change callback [deprecated] */
+    XtCallbackList motion_verify_callback;     /* Verify insert cursor position to change callback */
+    XtCallbackList gain_primary_callback;      /* Gained ownership of Primary Selection */
+    XtCallbackList lose_primary_callback;      /* Lost ownership of Primary Selection */
+    XtCallbackList value_changed_callback;     /* Notify that value has changed callback */
+    String value;		/* pointer to widget value stored as char * [unused] */
+    wchar_t *wc_value;		/* pointer to widget value stored as wchar_t * [unused] */
 
-    XmFontList font_list;	/* Uses only the font portion of fontlist */
+    XmRenderTable font_list;
 #if USE_XFT
-    XtPointer font;	        /* font retrieved from the fontlist */
+    XtPointer font;	        /* font retrieved from the fontlist (Unused) */
 #else
-    XFontStruct *font;	        /* font retrieved from the fontlist */
+    XFontStruct *font;	        /* font retrieved from the fontlist (Unused) */
 #endif
     XmTextScanType *selection_array; /* Description of what to cycle
 					through on selections */
@@ -120,12 +112,12 @@ typedef struct _XmTextFieldPart {
     Pixmap stipple_tile;	/* The tile pattern for the stippled I-beam */
     Pixmap image_clip;		/* AVAILABLE: was in 1.2 but not used now */
 
-    XmTextPosition cursor_position;  /* Character location of the insert 
+    XmTextPosition cursor_position;  /* Character location of the insert
 					cursor */
     XmTextPosition new_h_offset;     /* AVAILABLE: was in 1.1 but not used */
     XmTextPosition h_offset;  	     /* The x position of the first character
 					(relative to left edge of widget) */
-    XmTextPosition orig_left;        /* Left primary selection prior to 
+    XmTextPosition orig_left;        /* Left primary selection prior to
 					extend */
     XmTextPosition orig_right;       /* Right primary selection prior to
 					extend */
@@ -153,8 +145,7 @@ typedef struct _XmTextFieldPart {
     int selection_array_count;  /* Selection array count */
     int threshold;		/* Selection threshold */
     int size_allocd;		/* Size allocated for value string */
-    int string_length;          /* The number of characters in the string 
-				   (including the trailing NULL) */
+    size_t string_length;          /* The number of characters in the string */
     int cursor_height;		/* Save cursor dimensions */
     int cursor_width;		/* Save cursor dimensions */
     int sarray_index;		/* Index into selection array */
@@ -167,9 +158,9 @@ typedef struct _XmTextFieldPart {
     Dimension margin_width;	/* Height between text borders and text */
     Dimension margin_height;	/* Width between text borders and text */
     Dimension average_char_width;   /* Average character width based on font */
-    Dimension margin_top;       /* Height between text borders and top of 
+    Dimension margin_top;       /* Height between text borders and top of
 				   text */
-    Dimension margin_bottom;    /* Height between text borders and bottom of 
+    Dimension margin_bottom;    /* Height between text borders and bottom of
 				   text */
     Dimension font_ascent;      /* Ascent of font or fontset used by widget */
     Dimension font_descent;     /* Descent of font or fontset used by widget */
@@ -199,7 +190,7 @@ typedef struct _XmTextFieldPart {
 				   secondary selection */
     Boolean has_destination;	/* Indicates that is has the
 				   destination selection */
-    Boolean sec_drag;           /* Indicates a secondary drag was made */ 
+    Boolean sec_drag;           /* Indicates a secondary drag was made */
     Boolean selection_move;	/* Indicates that the action requires a
 				   secondary move (i.e. copy & cut) */
     Boolean pending_off;	/* indicates pending delete state */
@@ -215,7 +206,7 @@ typedef struct _XmTextFieldPart {
     Boolean sec_extending;      /* Indicates extending secondary selection */
     Boolean changed_visible;    /* Indicates whether the dest_visible flag
                                    is in a temporary changed state */
-    Boolean have_fontset;       /* The widgets font is a fontset, not a 
+    Boolean have_fontset;       /* The widgets font is a fontset, not a
 				   fontstruct... use R5 draw routines */
     Boolean in_setvalues;	/* used to disable unnecessary redisplays */
     Boolean do_resize;		/* used to prevent inappropriate resizes */
@@ -230,11 +221,10 @@ typedef struct _XmTextFieldPart {
     /* New for 2.0 */
     Boolean take_primary;	/* Indicates that is has to take the
 				   primary selection */
-    GC cursor_gc;               /* 1-bit depth GC for creating the I-beam 
+    GC cursor_gc;               /* 1-bit depth GC for creating the I-beam
 				   stipples (normal & add mode) */
     XtIntervalId drag_id;       /* timer to start btn1 drag */
     _XmTextActionRec *transfer_action;  /* to keep track of delayed action */
-    /* Boolean rt_save; */  		/* used for MT work */
     OnTheSpotData onthespot;    /* data for on-the-spot im support */
 
     Boolean check_set_render_table; /* used for MT safe work */
@@ -242,6 +232,11 @@ typedef struct _XmTextFieldPart {
 #if USE_XFT
     Boolean use_xft;
 #endif
+
+    /* 2.5 */
+    XtCallbackList str_modify_verify_callback;
+    XmString xms_value;
+    unsigned char alignment;
 } XmTextFieldPart;
 
 typedef struct _XmTextFieldRec {
@@ -264,17 +259,19 @@ typedef struct _XmTextFieldRec {
 #define TextF_FocusCallback(tfg)	\
 	(((XmTextFieldWidget)(tfg)) -> text.focus_callback)
 #define TextF_ModifyVerifyCallback(tfg)	\
-	(((XmTextFieldWidget)(tfg)) -> text.modify_verify_callback)
+	(((XmTextFieldWidget)(tfg)) -> text.modify_verify_callback) /* XXX: Deprecated */
 #define TextF_ModifyVerifyCallbackWcs(tfg) \
-	(((XmTextFieldWidget)(tfg)) -> text.wcs_modify_verify_callback)
+	(((XmTextFieldWidget)(tfg)) -> text.wcs_modify_verify_callback) /* XXX: Deprecated */
+#define TextF_ModifyVerifyCallbackStr(tfg)	\
+	(((XmTextFieldWidget)(tfg))->text.str_modify_verify_callback)
 #define TextF_MotionVerifyCallback(tfg)	\
 	(((XmTextFieldWidget)(tfg)) -> text.motion_verify_callback)
 #define TextF_ValueChangedCallback(tfg)	\
 	(((XmTextFieldWidget)(tfg)) -> text.value_changed_callback)
 #define TextF_Value(tfg)		\
-	(((XmTextFieldWidget)(tfg)) -> text.value)
+	(((XmTextFieldWidget)(tfg)) -> text.value) /* XXX: Unused */
 #define TextF_WcValue(tfg)		\
-	(((XmTextFieldWidget)(tfg)) -> text.wc_value)
+	(((XmTextFieldWidget)(tfg)) -> text.wc_value) /* XXX: Unused */
 #define TextF_MarginHeight(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.margin_height)
 #define TextF_MarginWidth(tfg)		\
@@ -290,7 +287,7 @@ typedef struct _XmTextFieldRec {
 #define TextF_FontList(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.font_list)
 #define TextF_Font(tfg)			\
-	((XFontStruct*)(((XmTextFieldWidget)(tfg)) -> text.font))
+	((XFontStruct*)(((XmTextFieldWidget)(tfg)) -> text.font)) /* XXX: Unused */
 #define TextF_FontAscent(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.font_ascent)
 #define TextF_FontDescent(tfg)		\
@@ -310,12 +307,12 @@ typedef struct _XmTextFieldRec {
 #define TextF_Threshold(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.threshold)
 #define TextF_UseFontSet(tfg)		\
-	(((XmTextFieldWidget)(tfg)) -> text.have_fontset)
+	(((XmTextFieldWidget)(tfg)) -> text.have_fontset) /* XXX: Unused */
 #if USE_XFT
 #define TextF_UseXft(tfg)		\
-	(((XmTextFieldWidget)(tfg)) -> text.use_xft)
+	(((XmTextFieldWidget)(tfg)) -> text.use_xft) /* XXX: Unused */
 #define	TextF_XftFont(tfg)		\
-	((XftFont*)(((XmTextFieldWidget)(tfg)) -> text.font))
+	((XftFont*)(((XmTextFieldWidget)(tfg)) -> text.font)) /* XXX: Unused */
 #endif
 
 /*

@@ -1697,6 +1697,8 @@ SUTF8_STRING
 NiconNameString
 CSashCursor
 NsashCursor
+NvalueString
+NmodifyVerifyCallbackStr
 
 #file XmStrDefsI.h
 #table _XmStringsI

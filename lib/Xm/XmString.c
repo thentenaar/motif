@@ -3274,6 +3274,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	                    rend, XmUNSPECIFIED_PIXEL, XmHIGHLIGHT_NORMAL, True);
 
 	/* Restore the GC */
+	if (old_gcv.font == (unsigned long)-1) old_gcv.font = gcv.font;
 	XChangeGC(d, gc, GCForeground | GCBackground | GCFont, &old_gcv);
 	if (draw_text != seg_text) XtFree(draw_text);
 }
