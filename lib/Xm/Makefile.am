@@ -35,7 +35,7 @@ EXTRA_SRCS = XmExtUtil.c \
              MultiList.c I18List.c Paned.c FontS.c IconBox.c IconButton.c xmlist.c \
              Hierarchy.c Outline.c TabBox.c TabList.c TabStack.c \
              DrawUtils.c Tree.c DropDown.c \
-             XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefsI.ht
+             XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefs25.ht XmStrDefsI.ht
 
 if XM_WITH_JPEG
 JPEG_SRCS = Jpeg.c
@@ -175,7 +175,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         TextP.h         TextStrSoP.h    ToggleB.h       ToggleBG.h \
         ToggleBGP.h     ToggleBP.h      XmP.h \
         BaseClassP.h    ManagerP.h      PrimitiveP.h    GadgetP.h \
-        XmStrDefs.h     XmStrDefs22.h   XmStrDefs23.h \
+        XmStrDefs.h     XmStrDefs22.h   XmStrDefs23.h   XmStrDefs25.h \
         VaSimpleP.h     VirtKeys.h      VirtKeysP.h \
         ExtObjectP.h    Display.h       DisplayP.h      Screen.h \
         ScreenP.h       ShellEP.h       VendorS.h       VendorSP.h \
