@@ -862,6 +862,26 @@ START_TEST(getcharset_utf8)
 }
 END_TEST
 
+START_TEST(getcharset_modifier)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("en_US.UTF-8@mod");
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
+}
+END_TEST
+
+START_TEST(getcharset_semicolons)
+{
+	XmStringTag cset;
+
+	_XmStringSetLocaleTag("en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=");
+	cset = XmStringGetCharset();
+	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
+}
+END_TEST
+
 START_TEST(getmultibytecharset_default)
 {
 	XmStringTag cset;
@@ -2519,6 +2539,8 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, getcharset_from_lang);
 	tcase_add_test(t, getcharset_no_lang);
 	tcase_add_test(t, getcharset_utf8);
+	tcase_add_test(t, getcharset_modifier);
+	tcase_add_test(t, getcharset_semicolons);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

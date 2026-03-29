@@ -5191,40 +5191,35 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
   return(can_do);
 }
 
-static void _parse_locale(char *str, int *indx, int *len)
+/**
+ * Parse a locale string, yielding the index and length of the character
+ * set identifier therein.
+ */
+static void _parse_locale(char *str, int *idx, int *len)
 {
-    char     *temp;
-    int      start;
-    int      end;
+	int end = 0;
+	char *tmp = str;
 
-    /*
-     *  Set the return variables to zero.  If we find what we're looking
-     *  for, we reset them.
-     */
+	*idx = 0;
+	*len = 0;
+	if (!str || !*str || *str == '@' || *str == ';')
+		return;
 
-    *indx = 0;
-    *len = 0;
-    if (!str) return;
+	/**
+	 * Locale identifiers are formatted as:
+	 * language[_territory][.codeset][@modifier]
+	 */
+	while (tmp[end] && tmp[end] != '.' && tmp[end] != '@' && tmp[end] != ';')
+		end++;
 
-    /*
-     *  The format of the locale string is:
-     *          language[_territory[.codeset]]
-     */
+	/* Bail if we didn't get a codeset */
+	if (tmp[end++] != '.')
+		return;
 
-    temp = str;
-    end = 0;
-    while ((temp[end] != '.') && (temp[end] != 0))
-      end++;
-
-    if (temp[end] == '.')
-    {
-        start = end + 1;
-        *indx = start;
-	end = start;
-        while (temp[end] != 0)
-	  end++;
-        *len = end - start;
-    }
+	/* Look for the end of the codeset */
+	*idx = end;
+	while (tmp[end] && tmp[end] != '@' && tmp[end] != ';') end++;
+	*len = end - *idx;
 }
 
 void _XmStringSetLocaleTag(const char *lang)
@@ -5268,8 +5263,10 @@ void _XmStringSetLocaleTag(const char *lang)
 		len = 5;
 	}
 
-	locale.tag   = XtNewString(str);
-	locale.ctype = XtNewString(ct);
+	locale.tag   = XtCalloc(locale.taglen, 1);
+	locale.ctype = XtCalloc(len, 1);
+	memcpy(locale.tag, str, locale.taglen);
+	memcpy(locale.ctype, ct, len);
 	_XmProcessUnlock();
 }
 
