@@ -5263,8 +5263,8 @@ void _XmStringSetLocaleTag(const char *lang)
 		len = 5;
 	}
 
-	locale.tag   = XtCalloc(locale.taglen, 1);
-	locale.ctype = XtCalloc(len, 1);
+	locale.tag   = XtCalloc(locale.taglen + 1, 1);
+	locale.ctype = XtCalloc(len + 1, 1);
 	memcpy(locale.tag, str, locale.taglen);
 	memcpy(locale.ctype, ct, len);
 	_XmProcessUnlock();
