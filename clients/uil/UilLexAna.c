@@ -1963,15 +1963,14 @@ void lex_initialize_analyzer(void)
 	/* Initialize the default character set  */
 	if (!(language = XmStringGetCharset()))
 		Uil_lex_l_user_default_charset = lex_k_default_charset;
-	else {
-		Uil_lex_l_user_default_charset = sem_charset_lang_name(language);
-		XtFree(language);
-	}
+	else Uil_lex_l_user_default_charset = sem_charset_lang_name(language);
 
 	if (Uil_lex_l_user_default_charset == sym_k_error_charset) {
-		diag_issue_diagnostic(d_bad_lang_value, diag_k_no_source, diag_k_no_column);
+		diag_issue_diagnostic(d_bad_lang_value, diag_k_no_source, diag_k_no_column, language);
 		Uil_lex_l_user_default_charset = lex_k_default_charset;
 	}
+
+	XtFree(language);
 	Uil_lex_az_charset_entry = NULL;
 
 #if 0

@@ -68,7 +68,7 @@ UIL_63 the %s value is circularly defined
 UIL_64 overriding built-in name %s
 UIL_65 the %s argument does not support enumerated values
 UIL_66 the %s argument does not support the %s enumerated value
-UIL_67 $LANG contains an unknown character set
+UIL_67 $LC_ALL contains an unknown character set (%s)
 UIL_68 the %s object's controls hierarchy contains a reference to itself
 UIL_69 value %s is too large for context buffer
 UIL_70 forward referencing is not allowed for %s

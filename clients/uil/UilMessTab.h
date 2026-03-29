@@ -96,7 +96,7 @@ const char msg63[35] = "the %s value is circularly defined";
 const char msg64[28] = "overriding built-in name %s";
 const char msg65[51] = "the %s argument does not support enumerated values";
 const char msg66[57] = "the %s argument does not support the %s enumerated value";
-const char msg67[40] = "$LANG contains an unknown character set";
+const char msg67[47] = "$LC_ALL contains an unknown character set (%s)";
 const char msg68[66] = "the %s object's controls hierarchy contains a reference to itself";
 const char msg69[41] = "value %s is too large for context buffer";
 const char msg70[42] = "forward referencing is not allowed for %s";
@@ -186,7 +186,7 @@ const diag_rz_msg_entry diag_rz_msg_table[81] =
 	   { 2, msg64 },
 	   { 2, msg65 },
 	   { 2, msg66 },
-	   { 3, msg67 },
+	   { 2, msg67 },
 	   { 3, msg68 },
 	   { 4, msg69 },
 	   { 4, msg70 },
