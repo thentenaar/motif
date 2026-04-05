@@ -36,14 +36,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROG([PKG_CONFIG], [pkg-config])
 AC_CHECK_PROGS(YACC, byacc, yacc)
-AM_PROG_LEX(yywrap)
-
-dnl Flex needs libfl
-LEXLIB=
-if test "x$ac_cv_prog_LEX" == "xflex"; then
-	LEXLIB=-lfl
-fi
-AC_SUBST([LEXLIB])
+AM_PROG_LEX
 
 dnl Check the host system type and compiler characteristics
 AC_CANONICAL_HOST

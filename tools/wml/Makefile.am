@@ -24,7 +24,6 @@ noinst_HEADERS = wml.h wmlparse.h wmlnoreturn.h $(WMLTARGETS)
 
 noinst_PROGRAMS = wml wmluiltok wmldbcreate
 wmluiltok_SOURCES = wmluiltok.l
-wmluiltok_LDADD = @LEXLIB@
 
 wml_SOURCES = wml.c
 wml_LDADD = libwml.la

@@ -181,3 +181,12 @@ int yywrap(void)
 	return 1;
 }
 
+extern int yylex (void);
+int main(int argc, char *argv[])
+{
+	(void)argc;
+	(void)argv;
+	while (yylex());
+	exit(0);
+}
+
