@@ -1266,7 +1266,7 @@ externaldef(uil_sym_glbl) char **uil_child_names =\n\
 		if (!chobj->sym_code) continue;
 		fprintf(outfil, "    \"%s\",\n", chobj->syndef->name);
 	}
-	fprintf(outfil, canned7);
+	fputs(canned7, outfil);
 
 	/* close the output file */
 	puts("Created UilSymNam.h");
