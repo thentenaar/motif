@@ -149,6 +149,7 @@ XmStrDefsI.h \
 XmStringI.h \
 XmTabListI.h \
 XmosI.h \
+_aixutf8.h \
 $(JPEG_HDRS) \
 $(PNG_HDRS)
 

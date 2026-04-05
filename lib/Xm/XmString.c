@@ -63,6 +63,11 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include "XmStringI.h"
 #include "XmTabListI.h"
 
+/* 'AIX and pains' indeed */
+#if defined(_AIX) && defined(XLIB_MISSING_UTF8_STRING_SYMBOLS)
+#include "_aixutf8.h"
+#endif
+
 /* Warning Messages */
 #define NO_FONT_MSG	_XmMMsgXmString_0000
 
