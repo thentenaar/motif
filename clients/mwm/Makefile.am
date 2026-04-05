@@ -67,7 +67,8 @@ WmWinInfo.h \
 WmWinList.h \
 WmWinState.h \
 WmWsm.h \
-WmXSMP.h
+WmXSMP.h \
+noreturn.h
 
 mwm_SOURCES = $(SRCS1)
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,12 +19,13 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */ 
+ */
 #ifndef _WmXSMP_h
 #define _WmXSMP_h
 
 #include <X11/Intrinsic.h>
 #include "WmGlobal.h"
+#include "noreturn.h"
 
 /* Atoms used for session management capabilities. */
 #define _XA_DT_SM_CLIENT_ID		"SM_CLIENT_ID"
@@ -44,7 +45,7 @@
 
 extern void AddSMCallbacks(void);
 extern void ResignFromSM(void);
-extern _X_NORETURN void ExitWM(int exitCode);
+noreturn extern void ExitWM(int exitCode);
 extern XrmDatabase LoadClientResourceDB(void);
 extern XrmDatabase SaveClientResourceDB(void);
 extern Boolean FindClientDBMatch(ClientData *, char **);

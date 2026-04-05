@@ -1,7 +1,7 @@
-/*
+/**
  * Motif
  *
- * Copyright (c) 1987-2012, The Open Group. All rights reserved.
+ * Copyright (c) 2026 Tim Hentenaar
  *
  * These libraries and programs are free software; you can
  * redistribute them and/or modify them under the terms of the GNU
@@ -19,26 +19,21 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
-/*
- * Motif Release 1.2
-*/
-#include "noreturn.h"
+ */
+#ifndef MWM_NORETURN_H
+#define MWM_NORETURN_H
 
-#ifdef WSM
-#ifdef DEBUGGER
-extern void PrintFormatted(char *f, char *s0, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6, char *s7, char *s8, char *s9);
-#endif /* DEBUGGER */
-#endif /* WSM */
-extern void WmInitErrorHandler (Display *display);
-extern int WmXErrorHandler (Display *display, XErrorEvent *errorEvent);
-extern int WmXIOErrorHandler (Display *display);
-noreturn extern void WmXtErrorHandler (String message);
-extern void WmXtWarningHandler (char *message);
-extern void Warning (char *message);
-#if XM_MSGCAT
-extern char * GetMessage(int set, int n, char * s);
+/* The many facets of noreturn... */
+#if __has_attribute(noreturn) \
+    || (defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 205)) \
+    || (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590))
+#define noreturn __attribute((noreturn))
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#define noreturn [[noreturn]]
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#include <stdnoreturn.h>
+#else
+#define noreturn
 #endif
-#ifdef WSM
-/****************************   eof    ***************************/
-#endif /* WSM */
+
+#endif /* MWM_NORETURN_H */

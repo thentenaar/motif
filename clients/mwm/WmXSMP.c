@@ -1171,7 +1171,7 @@ ResignFromSM(void)
 /*
  *  Exit the WM, being polite by first resigning from session mgmt.
  */
-_X_NORETURN void
+noreturn void
 ExitWM(int exitCode)
 {
     ResignFromSM();
