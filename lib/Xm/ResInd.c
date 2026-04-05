@@ -54,7 +54,7 @@ static char rcsid[] = "$XConsortium: ResInd.c /main/17 1996/06/07 11:40:05 danie
             (float_value) : \
             ((float_value) * -1.0))
 
-#define OVERFLOW(float_value) \
+#define _OVERFLOW(float_value) \
             (FLOATABS(float_value) > (float) INT_MAX) ? 1 : 0
 
 /********    Static Function Declarations    ********/
@@ -160,7 +160,7 @@ _XmConvertFloatUnitsToIntUnits(int unitType, float unitValue,
 
     /* Normalize to units _XmConvertUnits will understand. */
     *intUnitValue = multiplier * unitValue;
-    if (OVERFLOW(*intUnitValue)) {
+    if (_OVERFLOW(*intUnitValue)) {
 	return(False);
     }
     return(True);
@@ -199,7 +199,7 @@ _XmConvertStringToUnits(
       case XmPARSE_NO_UNITS:
 	fromType = default_from_type;
 	convertValue = floatValue;
-	if (OVERFLOW(convertValue)) {
+	if (_OVERFLOW(convertValue)) {
 	    return 0;
 	}
 	break;
