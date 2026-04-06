@@ -36,7 +36,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROG([PKG_CONFIG], [pkg-config])
 AC_CHECK_PROGS(YACC, byacc, yacc)
-AM_PROG_LEX
+AM_PROG_LEX(noyywrap)
 
 dnl Check the host system type and compiler characteristics
 AC_CANONICAL_HOST
