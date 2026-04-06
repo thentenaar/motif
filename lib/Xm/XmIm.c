@@ -2191,8 +2191,11 @@ get_xim_info(Widget  widget)
 
   XtGetApplicationNameAndClass(dpy, &name, &w_class);
 
+#ifndef _AIX
   /* Try to open the input method. */
   xim_info->xim = XOpenIM(dpy, XtDatabase(dpy), name, w_class);
+#endif
+
   if (xim_info->xim == NULL)
     {
 #ifdef XOPENIM_WARNING
