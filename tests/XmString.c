@@ -653,7 +653,11 @@ START_TEST(generate_widechar)
 	};
 
 	static unsigned int exlen[] = {
+#if WCHAR_MAX > 65535
 		21, 16, 0, 8, 0, 4, 0, 16, 0
+#else
+		21, 8, 0, 4, 0, 2, 0, 8, 0
+#endif
 	};
 
 	s = XmStringGenerate(L"this\nis\ta\ntest", NULL, XmWIDECHAR_TEXT, NULL);
@@ -767,7 +771,9 @@ static const struct _unicode_direction_params {
 	XmTextType type;
 	XmStringDirection dir;
 } u_directions[] = {
+#if WCHAR_MAX > 65535
 	{ "C",         L"\u200e",          XmWIDECHAR_TEXT,  XmSTRING_DIRECTION_L_TO_R },
+#endif
 	{ "C.UTF-8",   "\xe2\x80\xaa",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
 	{ "C.UTF-8",   "\xe2\x80\xad",     XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
 	{ "C.GB18030", "\x81\x36\xac\x32", XmCHARSET_TEXT,   XmSTRING_DIRECTION_L_TO_R },
@@ -1223,7 +1229,7 @@ END_TEST
 START_TEST(valid_bad_data)
 {
 	XmString s = (XmString)XtMalloc(8);
-	memset(s, 0x3a, 8);
+	memset(s, 0x7a, 8);
 	ck_assert_msg(!XmStringIsValid(s), "Strings we can't grok aren't valid");
 	XtFree((XtPointer)s);
 }
@@ -1851,14 +1857,40 @@ END_TEST
 START_TEST(unserialize_wide_v1)
 {
 	XmString s, s2;
-#if WCHAR_MAX == (1 << 15) - 1
+
+/* These should catch most semi-modern cases (i.e., gcc, clang, armcl, xlC) */
+#if ((defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__) || \
+    defined(__BIG_ENDIAN__)) || defined(_BIG_ENDIAN) || defined(__big_endian__)
+#if WCHAR_MAX <= 65535
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x23, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
+		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
+		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x07, 0x0a, 0x00, 0x6d, 0x00, 0x6f,
+		0x00, 0x74, 0x00, 0x69, 0x00, 0x66
+	};
+#elif WCHAR_MAX <= 4294967295
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x2d, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
+		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
+		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x07, 0x14, 0x00, 0x00, 0x00, 0x6d,
+		0x00, 0x00, 0x00, 0x6f, 0x00, 0x00, 0x00, 0x74, 0x00, 0x00, 0x00,
+		0x69, 0x00, 0x00, 0x00, 0x66
+	};
+#else
+	static unsigned char stream[] = {
+		0xdf, 0x80, 0x06, 0x00
+	};
+	ck_assert_msg(0, "Unknown size of wchar_t");
+#endif /* WCHAR_MAX */
+#else /* optimistically assume little endian */
+#if WCHAR_MAX <= 65535
 	static unsigned char stream[] = {
 		0xdf, 0x80, 0x06, 0x23, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
 		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
 		0x4f, 0x43, 0x41, 0x4c, 0x45, 0x07, 0x0a, 0x6d, 0x00, 0x6f, 0x00,
 		0x74, 0x00, 0x69, 0x00, 0x66, 0x00
 	};
-#elif WCHAR_MAX == (1 << 31) - 1
+#elif WCHAR_MAX <= 4294967295
 	static unsigned char stream[] = {
 		0xdf, 0x80, 0x06, 0x2d, 0x06, 0x15, 0x5f, 0x4d, 0x4f, 0x54, 0x49,
 		0x46, 0x5f, 0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x4c,
@@ -1871,7 +1903,8 @@ START_TEST(unserialize_wide_v1)
 		0xdf, 0x80, 0x06, 0x00
 	};
 	ck_assert_msg(0, "Unknown size of wchar_t");
-#endif
+#endif /* WCHAR_MAX */
+#endif /* big endian */
 
 	s  = XmStringCreateWide(L"motif", NULL);
 	s2 = XmStringUnserialize(stream);
@@ -2116,12 +2149,16 @@ static const struct _unicode_pattern_params {
 	{ "C",         L"hello\nworld",              XmWIDECHAR_TEXT,  "hello\nworld", XmUTF8_TEXT },
 	{ "C",         "hello\nworld",               XmMULTIBYTE_TEXT, "hello\nworld", XmUTF8_TEXT },
 	{ "C",         "hello\r\nworld",             XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
+#if WCHAR_MAX > 65535
 	{ "C",         L"hello\u2028world",          XmWIDECHAR_TEXT,  "hello\nworld", XmUTF8_TEXT },
+#endif
 	{ "C.UTF-8",   "hello\xe2\x80\xa8world",     XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
 	{ "C.GB18030", "hello\x81\x36\xa6\x35world", XmCHARSET_TEXT,   "hello\nworld", XmUTF8_TEXT },
 
 	/* Direction patterns */
+#if WCHAR_MAX > 65535
 	{ "C",         L"hello\u200eworld",          XmWIDECHAR_TEXT,  "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
+#endif
 	{ "C.UTF-8",   "hello\xe2\x80\xaaworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
 	{ "C.UTF-8",   "hello\xe2\x80\xadworld",     XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
 	{ "C.GB18030", "hello\x81\x36\xac\x32world", XmCHARSET_TEXT,   "hello\xe2\x80\x8eworld", XmUTF8_TEXT },
