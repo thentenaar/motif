@@ -48,6 +48,18 @@ static void _init_xt(void)
 }
 
 /**
+ * AIX doesn't like C.UTF-8 :(
+ */
+static void set_utf8_ctype(void)
+{
+#if defined(_AIX)
+	setlocale(LC_CTYPE, "en_US.UTF-8");
+#else
+	setlocale(LC_CTYPE, "C.UTF-8");
+#endif
+}
+
+/**
  * Create a string consisting of a singular LOCALE_TEXT component
  */
 START_TEST(create)
@@ -216,7 +228,7 @@ START_TEST(create_multibyte)
 	unsigned int len   = 0;
 	unsigned char *val = NULL;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Resulting string is NULL");
@@ -700,7 +712,7 @@ START_TEST(generate_multibyte)
 		21, 6, 0, 12, 0, 3, 0, 6, 0
 	};
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringGenerate("这是\n玉米超人\t的\n测试", NULL, XmMULTIBYTE_TEXT, NULL);
 	ck_assert_msg(s, "Expected generate to succeed");
@@ -741,7 +753,7 @@ START_TEST(generate_utf8_line_separator)
 		21, 12, 0, 9, 0, 0, 0
 	};
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringGenerate("玉米超人\xe2\x80\xa8的测试\xe2\x80\xa8",
 	                     NULL, XmMULTIBYTE_TEXT, NULL);
@@ -796,7 +808,7 @@ START_TEST(generate_utf8_direction_markers)
 		return;
 	}
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag(u_directions[_i].locale);
 	s = XmStringGenerate((XtPointer)u_directions[_i].str, NULL, u_directions[_i].type, NULL);
 	ck_assert_msg(s, "Expected generate to succeed");
@@ -916,7 +928,7 @@ START_TEST(getmultibytecharset_utf8)
 {
 	XmStringTag cset;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	cset = XmStringGetMultibyteCharset();
 	ck_assert_msg(cset && !strcmp(cset, "UTF-8"), "Expected UTF-8");
@@ -1122,7 +1134,7 @@ START_TEST(insert_pre_component)
 	XtPointer text;
 	XmString s, i, out;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("玉米超人", NULL);
 	s = XmStringConcatAndFree(s, XmStringCreateLocalized("superat"));
@@ -1150,7 +1162,7 @@ START_TEST(insert_intra_component)
 	XtPointer text;
 	XmString s, i, out;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("TP", NULL);
 	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
@@ -2012,7 +2024,7 @@ START_TEST(substr_whole_component)
 	XtPointer text;
 	XmString s, sub;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("TP", NULL);
 	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
@@ -2039,7 +2051,7 @@ START_TEST(substr_partial_component)
 	XtPointer text;
 	XmString s, sub;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("TP", NULL);
 	s = XmStringConcatAndFree(s, XmStringCreateWide(L"indigeo", NULL));
@@ -2068,7 +2080,7 @@ START_TEST(substr_inter_component)
 	XmString s, sub;
 	XmStringContext ctx;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, 4, "rend");
 	s = XmStringConcatAndFree(s, XmStringCreateMultibyte("TP", NULL));
@@ -2182,7 +2194,7 @@ START_TEST(ungenerate_utf8_patterns)
 		return;
 	}
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag(u_patterns[_i].locale);
 	s = XmStringGenerate((XtPointer)u_patterns[_i].str, NULL, u_patterns[_i].type, NULL);
 	ck_assert_msg(s, "Expected generate to succeed");
@@ -2324,7 +2336,7 @@ START_TEST(unparse_charset_conversion)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C.UTF-8");
 	s = XmStringCreate("\xd3\xf1\xc3\xd7\xb3\xac\xc8\xcb", "GB18030");
 	ck_assert_msg(s, "Expected to create a string");
@@ -2359,7 +2371,7 @@ START_TEST(unparse_multibyte)
 	XtPointer t;
 	wchar_t buf[5];
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
@@ -2393,7 +2405,7 @@ START_TEST(unparse_charset_to_multibyte)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateLocalized("test");
 	ck_assert_msg(s, "Expected to create a localized string");
@@ -2412,7 +2424,7 @@ START_TEST(unparse_wide_to_charset)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateWide(L"test", NULL);
 	ck_assert_msg(s, "Expected to create a wide string");
@@ -2430,7 +2442,7 @@ START_TEST(unparse_wide_to_multibyte)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateWide(L"test", NULL);
 	ck_assert_msg(s, "Expected to create a wide string");
@@ -2449,7 +2461,7 @@ START_TEST(unparse_multibyte_to_charset)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
@@ -2468,7 +2480,7 @@ START_TEST(unparse_multibyte_to_wide)
 	XmString s;
 	XtPointer t;
 
-	setlocale(LC_CTYPE, "C.UTF-8");
+	set_utf8_ctype();
 	_XmStringSetLocaleTag("C");
 	s = XmStringCreateMultibyte("test", NULL);
 	ck_assert_msg(s, "Expected to create a multibyte string");
