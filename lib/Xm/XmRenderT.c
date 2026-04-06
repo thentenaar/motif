@@ -2867,18 +2867,10 @@ _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc
 {
     XftDraw	*draw = _XmXftDrawCreate(display, window);
     XGCValues gc_val;
-    XColor xcol;
     XftColor xftcol;
 
     XGetGCValues(display, gc, GCForeground, &gc_val);
-
-    xcol.pixel = gc_val.foreground;
-    XQueryColor(display, DefaultColormap(display,
-        DefaultScreen(display)), &xcol);
-    xftcol.color.red = xcol.red;
-    xftcol.color.blue = xcol.blue;
-    xftcol.color.green = xcol.green;
-    xftcol.color.alpha = 0xFFFF;
+    xftcol = GetCachedXftColor(display, gc_val.foreground);
 
     switch (bpc)
     {
@@ -2909,6 +2901,7 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
                 char *s, int len, Boolean image
 		)
 {
+    XGCValues gc_val;
     XftDraw	*draw = _XmXftDrawCreate(display, window);
     XftColor    fg_color = _XmRendXftFG(rend);
 
@@ -2940,19 +2933,10 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 
 	if (_XmRendBG(rend) == XmUNSPECIFIED_PIXEL)
 	{
-	    XGCValues gc_val;
-	    XColor xcol;
-
 	    XGetGCValues(display, _XmRendGC(rend), GCBackground, &gc_val);
-	    xcol.pixel = gc_val.background;
-            XQueryColor(display, DefaultColormapOfScreen(
-                  DefaultScreenOfDisplay(display)), &xcol);
-	    bg_color.pixel = xcol.pixel;
-	    bg_color.color.red = xcol.red;
-	    bg_color.color.green = xcol.green;
-	    bg_color.color.blue = xcol.blue;
-	    bg_color.color.alpha = 0xFFFF;
+	    bg_color = GetCachedXftColor(display, gc_val.background);
 	}
+
         XftDrawRect(draw, &bg_color, x, y - _XmRendXftFont(rend)->ascent,
 	            ext.xOff,
 		    _XmRendXftFont(rend)->ascent +
@@ -2961,17 +2945,8 @@ _XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
 
     if (_XmRendFG(rend) == XmUNSPECIFIED_PIXEL)
     {
-        XGCValues gc_val;
-	XColor xcol;
 	XGetGCValues(display, _XmRendGC(rend), GCForeground, &gc_val);
-	xcol.pixel = gc_val.foreground;
-        XQueryColor(display, DefaultColormapOfScreen(
-              DefaultScreenOfDisplay(display)), &xcol);
-	fg_color.pixel = xcol.pixel;
-	fg_color.color.red = xcol.red;
-	fg_color.color.green = xcol.green;
-	fg_color.color.blue = xcol.blue;
-	fg_color.color.alpha = 0xFFFF;
+	fg_color = GetCachedXftColor(display, gc_val.foreground);
     }
 
     switch (bpc)
