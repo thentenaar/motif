@@ -327,15 +327,31 @@ char *_Xmcsconv(const char *from, const char *to, char *text, size_t bytes, size
 	char *inbuf, *outbuf, *result;
 	size_t insz, outsz, used, conv;
 	char msg[256];
+#if defined(_LIBICONV_VERSION)
+	char *_to, *_from;
+#endif
 
 	if (from == XmFONTLIST_DEFAULT_TAG || (from && !strcmp(from, XmFONTLIST_DEFAULT_TAG)))
 		from = locale.tag;
+
+#if defined(_LIBICONV_VERSION)
+	_to   = XtMalloc(strlen(to) + 9);
+	_from = XtMalloc(strlen(from) + 9);
+	sprintf(_to,   "%s//IGNORE", to);
+	sprintf(_from, "%s//IGNORE", from);
+	to   = _to;
+	from = _from;
+#endif
 
 	if ((ic = iconv_open(to, from)) == (iconv_t)-1) {
 		snprintf(msg, sizeof msg, "Could not get converter from '%s' to '%s'",
 		         from, to);
 		XmeWarning(NULL, msg);
 		*len_out = 0;
+#if defined(_LIBICONV_VERSION)
+		XtFree(_to);
+		XtFree(_from);
+#endif
 		return NULL;
 	}
 
@@ -368,11 +384,19 @@ again:
 
 		iconv_close(ic);
 		XtFree(result);
+#if defined(_LIBICONV_VERSION)
+		XtFree(_to);
+		XtFree(_from);
+#endif
 		if (len_out) *len_out = 0;
 		return NULL;
 	}
 
 	iconv_close(ic);
+#if defined(_LIBICONV_VERSION)
+	XtFree(_to);
+	XtFree(_from);
+#endif
 	if (len_out) *len_out = (size_t)(outbuf - result);
 	return result;
 }
@@ -5932,7 +5956,7 @@ static void parse_unmatched(XmString *result, char **ptr,
      *
      * Since the charset tag annoyingly affects which rendition table
      * entry is chosen by default to draw the string, CDE uses this
-     * (togther with the olias font) to indicate that it should be used
+     * (together with the olias font) to indicate that it should be used
      * to render certain strings; and that certainly isn't a valid
      * charset. I would expect other applications to do similar things;
      * although the most ubiquitous case seems to simply be
