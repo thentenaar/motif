@@ -47,10 +47,6 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 #include <Xm/VendorSP.h>
 #include <Xm/XmosP.h>		/* for bzero */
 #include <Xm/ToolTipCT.h>
-#if defined(__APPLE__)
-#include <Xm/GrabShell.h>
-#include <Xm/DragOverS.h>
-#endif
 #include "BaseClassI.h"
 #include "CallbackI.h"
 #include "ExtObjectI.h"
@@ -293,25 +289,6 @@ static unsigned short destroy_list_cnt ;
 static Display * _XmDisplayHandle = NULL ;
 static XtErrorMsgHandler previousWarningHandler = NULL;
 
-
-#if defined(__APPLE__)
-/* Hack necessary to handle Apple two-level namespaces */
-extern WidgetClass vendorShellWidgetClass; /* from Xt/Vendor.c */
-extern VendorShellClassRec xmVendorShellClassRec;
-#define vendorShellClassRec xmVendorShellClassRec
-
-__attribute__((constructor))
-static void __VendorShellHack(void)
-{
-    vendorShellWidgetClass = (WidgetClass)(&xmVendorShellClassRec);
-    transientShellWidgetClass->core_class.superclass = vendorShellWidgetClass;
-    topLevelShellWidgetClass->core_class.superclass = vendorShellWidgetClass;
-    xmGrabShellWidgetClass->core_class.superclass = vendorShellWidgetClass;
-    xmDragOverShellWidgetClass->core_class.superclass = vendorShellWidgetClass;
-}
-#endif
-
-
 /***************************************************************************
  *
  * Vendor shell class record
@@ -472,6 +449,9 @@ static XmBaseClassExtRec baseClassExtRec = {
     GetValuesPosthook,				/* get_values_posthook  */
 };
 
+#if defined(__APPLE__)
+__attribute__((weak))
+#endif
 externaldef(vendorshellclassrec)
 VendorShellClassRec vendorShellClassRec = {
     {
@@ -526,6 +506,9 @@ VendorShellClassRec vendorShellClassRec = {
     }
 };
 
+#if defined(__APPLE__)
+__attribute__((weak))
+#endif
 externaldef(vendorshellwidgetclass) WidgetClass
   vendorShellWidgetClass = (WidgetClass) (&vendorShellClassRec);
 
