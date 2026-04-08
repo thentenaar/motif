@@ -3138,251 +3138,146 @@ _XmStringDrawLining(Display *d,
     }
 }
 
-extern void
-_XmStringDrawSegment(Display *d,
-		     Drawable w,
-		     Position x,
-		     Position y,
-		     Dimension width,
-		     Dimension height,
-		     _XmStringNREntry seg,
-		     XmRendition rend,
-		     XmRenderTable rendertable,
-		     Boolean image,
-		     XmString *underline,
-		     Dimension descender
-		     )
+/**
+ * Determine the position of the given substring for underlining
+ */
+static Boolean get_substring_pos(_XmStringNREntry seg, XmString substr,
+                                 XmRenderTable rt, XmRendition r,
+                                 Position x, Boolean text16,
+                                 Dimension *u_begin, Dimension *u_end)
 {
-  Boolean 		text16 = False, free_text = False;
-  Font    		oldfont = None;
-  GC			gc;
-  XGCValues 		xgcv;
-  char 			*draw_text, *seg_text;
-  Pixel			fg, bg, old_fg, old_bg;
-  XGCValues 		current_gcv;
-  Dimension		under_begin, under_end;
-  unsigned int		seg_len, pos, i, clen;
-  int			font_type, text_type;
-  size_t ucs_str_len;
-  XFontStruct *f;
-  XChar2b *ucs_str;
+	Boolean imm;
+	_XmStringEntry line;
+	_XmStringOptSegRec u_seg;
+	_XmStringNREntry n_seg;
 
-  /**
-   * Determine the length of a UTF-8 character based on it's initial
-   * four bits (0 for contiuation bytes).
-   */
-  static const unsigned char utf8_len[16] = {
-    1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 2, 2, 3, 4
-  };
+	if (!seg || !substr || !rt || !r || !u_begin || !u_end)
+		return False;
 
-  old_fg = old_bg = XmUNSPECIFIED_PIXEL;
-
-  _XmRendDisplay(rend) = d;
-  font_type = _XmRendFontType(rend);
-  text_type = _XmEntryTextTypeGet((_XmStringEntry)seg);
-  seg_len   = _XmEntryByteCountGet((_XmStringEntry)seg);
-  draw_text = _XmEntryTextGet((_XmStringEntry)seg);
-  seg_text  = draw_text;
-
-  if (seg_len > 0)
-    {
-      gc = _XmRendGC(rend);
-      fg = _XmRendFG(rend);
-      bg = _XmRendBG(rend);
-
-      if (fg != XmUNSPECIFIED_PIXEL)
-	{
-	  XGetGCValues(d, gc, GCForeground, &current_gcv);
-	  if (current_gcv.foreground != fg)
-	    {
-	      old_fg = current_gcv.foreground;
-	      xgcv.foreground = fg;
-	      XChangeGC(d, gc, GCForeground, &xgcv);
-	    }
-	}
-
-      if (bg != XmUNSPECIFIED_PIXEL)
-	{
-	  XGetGCValues(d, gc, GCBackground, &current_gcv);
-	  if (current_gcv.background != bg)
-	    {
-	      old_bg = current_gcv.background;
-	      xgcv.background = bg;
-	      XChangeGC(d, gc, GCBackground, &xgcv);
-	    }
-	}
-
-	if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L) {
-	  draw_text = XtMalloc(seg_len + 1);
-	  pos       = seg_len;
-	  draw_text[pos] = '\0';
-
-	  for (i = 0; i < seg_len; i++) {
-	    if (!(clen = utf8_len[(seg_text[i] & 0xf0) >> 4])) {
-	      /* Unexpected continuation byte. Ignore for now. */
-	      continue;
-	    }
-
-	    if (pos < clen)
-	      break;
-
-	    /* Copy this character to the end of draw_text */
-	    memcpy(draw_text + pos - clen, seg_text + i, clen);
-	    pos -= clen;
-	    i += clen - 1;
-	  }
-
-	  /* Make sure we start at the beginning */
-	  if (pos > 0) {
-	      memmove(draw_text, draw_text + pos, 1 + seg_len - pos);
-	      seg_len -= pos;
-	  }
-
-	  free_text = True;
-	}
-
-      if (_XmRendFontType(rend) == XmFONT_IS_FONT)
-	{
-	  /* If we don't have a font, don't render. */
-	  if (!(f = (XFontStruct *)_XmRendFont(rend)))
-	    return;
-
-	  text16 = two_byte_font(f);
-
-	  XGetGCValues(d, gc, GCFont, &current_gcv) ;
-
-	  xgcv.font = f->fid;			  /* get segment font */
-
-	  if (current_gcv.font != xgcv.font)	  /* not right one */
-	    {					  /* change it */
-	      oldfont = current_gcv.font;
-	      XChangeGC(d, gc, GCFont, &xgcv);
-	    }
-	}
-
-      if (*underline != (_XmString)NULL)
-	{
-	  under_begin = under_end = 0;
-	  if (_XmStrOptimized(*underline))
-	    {
-	      /*
-	       * This is an optimized string; coerce underline to segment
-	       * and call the sub-string search routine.
-	       */
-	      Boolean			imm;
-	      _XmStringOptSegRec	under_seg;
-
-	      if (_XmStrText(*underline) !=
-		  (char *)_XmEntryTextGet((_XmStringEntry)*underline))
-		/* If XtPointer in union in optimized segment leads to
-		 * padding in struct between header and text data
-		 * (on some 64-bit architectures) we have to move
-		 * text data, since optimized string does not have padding.
+	if (_XmStrOptimized(substr)) {
+		/**
+		 * This is an optimized string; coerce underline to segment
+		 * and call the sub-string search routine.
 		 */
-		{
-		  bzero((char*)&under_seg, sizeof(_XmStringOptSegRec));
-		  _XmEntryType(&under_seg) = XmSTRING_ENTRY_OPTIMIZED;
-		  _XmEntryTagIndex(&under_seg) = _XmStrTagIndex(*underline);
-		  _XmEntryByteCountSet(&under_seg, _XmStrByteCount(*underline));
-		  _XmEntryTextTypeSet(&under_seg,
-				      (XmTextType)_XmStrTextType(*underline));
-		  _XmEntryTextSet((_XmStringEntry)&under_seg,
-				  (char *)_XmStrText(*underline));
-
-		  SubStringPosition((!text16), rendertable, rend,
-				    (_XmStringEntry)seg,
-				    (_XmStringEntry)&under_seg, x,
-				    &under_begin, &under_end);
+		if (_XmStrText(substr) != (char *)_XmEntryTextGet((_XmStringEntry)substr)) {
+			/* If XtPointer in union in optimized segment leads to
+			 * padding in struct between header and text data
+			 * (on some 64-bit architectures) we have to move
+			 * text data, since optimized string does not have padding.
+			 */
+			memset(&u_seg, 0, sizeof u_seg);
+			_XmEntryType(&u_seg)         = XmSTRING_ENTRY_OPTIMIZED;
+			_XmEntryTagIndex(&u_seg)     = _XmStrTagIndex(substr);
+			_XmEntryByteCountSet(&u_seg, _XmStrByteCount(substr));
+			_XmEntryTextTypeSet(&u_seg,  _XmStrTextType(substr));
+			_XmEntryTextSet((_XmStringEntry)&u_seg, _XmStrText(substr));
+			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			                  (_XmStringEntry)&u_seg, x, u_begin, u_end);
+		} else {
+			imm = _XmEntryImm(substr);
+			_XmEntryImm(substr) = True;
+			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			                  (_XmStringEntry)substr, x, u_begin, u_end);
+			_XmEntryImm(substr) = imm;
 		}
-	      else
-		{
-		  imm = _XmEntryImm((_XmStringEntry)*underline);
-		  _XmEntryImm((_XmStringEntry)*underline) = TRUE;
-		  SubStringPosition((!text16), rendertable, rend,
-				    (_XmStringEntry)seg,
-				    (_XmStringEntry)*underline, x,
-				    &under_begin, &under_end);
-		  _XmEntryImm((_XmStringEntry)*underline) = imm;
+	} else {
+		line = _XmStrEntry(substr)[0];
+		if (_XmStrEntryCount(substr) > 0 && _XmEntrySegmentCountGet(line) > 0) {
+			n_seg = (_XmStringNREntry)_XmEntrySegmentGet(line)[0];
+			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			                  (_XmStringEntry)&n_seg, x, u_begin, u_end);
 		}
-	    }
-	  else {
-	    _XmStringEntry line;
-	    line = _XmStrEntry(*underline)[0];
-
-	    if ((_XmStrEntryCount(*underline) > 0) &&
-		(_XmEntrySegmentCountGet(line) > 0))
-	      {
-		_XmStringNREntry under_seg;
-
-		under_seg = (_XmStringNREntry)_XmEntrySegmentGet(line)[0];
-
-		SubStringPosition((!text16), rendertable, rend,
-				  (_XmStringEntry)seg,
-				  (_XmStringEntry)under_seg, x,
-				  &under_begin, &under_end);
-	      }
-	  }
 	}
 
+	return *u_begin != *u_end;
+}
+
+/**
+ * Draw a string segment with the given rendition
+ */
+extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
+                                 Position y, Dimension width, Dimension height,
+                                 _XmStringNREntry seg, XmRendition rend,
+                                 XmRenderTable rendertable, Boolean image,
+                                 XmString *underline, Dimension descender)
+{
+	GC gc;
+	XChar2b *ucs;
+	XGCValues gcv, old_gcv;
+	XFontStruct *f = NULL;
+	Pixel fg, bg;
+	char *draw_text, *seg_text;
+	int font_type, text_type;
+	size_t seg_len, ucs_len;
+	Boolean text16 = False;
+	Dimension u_begin = 0, u_end = 0;
+
+	/* If we lack a rendition, segment, or dimensionality, nothing to do. */
+	if (!rend || !seg || !width || !height)
+		return;
+
+	/* If we don't have a font (or text), don't render */
+	font_type = _XmRendFontType(rend);
+	text_type = _XmEntryTextTypeGet((_XmStringEntry)seg);
+	seg_len   = _XmEntryByteCountGet((_XmStringEntry)seg);
+	seg_text  = _XmEntryTextGet((_XmStringEntry)seg);
+	if (!seg_text || !seg_len || text_type == XmNO_TEXT ||
+	    (font_type == XmFONT_IS_FONT && !(f = (XFontStruct *)_XmRendFont(rend))))
+		return;
+
+	/* Prepare the GC */
+	_XmRendDisplay(rend) = d;
+	gc = _XmRendGC(rend);
+	XGetGCValues(d, gc, GCForeground | GCBackground | GCFont, &old_gcv);
+	memcpy(&gcv, &old_gcv, sizeof gcv);
+
+	if ((fg = _XmRendFG(rend)) != XmUNSPECIFIED_PIXEL) gcv.foreground = fg;
+	if ((bg = _XmRendBG(rend)) != XmUNSPECIFIED_PIXEL) gcv.background = bg;
+	if (font_type == XmFONT_IS_FONT) {
+		text16 = two_byte_font(f);
+		if (gcv.font != f->fid) gcv.font = f->fid;
+	}
+
+	draw_text = seg_text;
+	XChangeGC(d, gc, GCForeground | GCBackground | GCFont, &gcv);
+	if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
+		draw_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
+
+	/* Draw the text */
+	switch (font_type) {
 #if USE_XFT
-      if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
-        if (text_type != XmNO_TEXT)
-            _XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
-      } else /* TODO: fix indentation */
+	case XmFONT_IS_XFT:
+		_XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
+		break;
 #endif
-	  {
-
-	  if (font_type != XmFONT_IS_FONTSET) {
-		/* TODO: it is very unoptimized convert the same sting
-		 * twice - for getting extents and drawing */
-		ucs_str = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_str_len);
-		if (image) XDrawImageString16(d, w, gc, x, y, ucs_str, ucs_str_len);
-		else       XDrawString16(d, w, gc, x, y, ucs_str, ucs_str_len);
-		XFree(ucs_str);
-	  } else {
+	case XmFONT_IS_FONTSET:
 		if (image) Xutf8DrawImageString(d, w, (XFontSet)_XmRendFont(rend),
-			                            gc, x, y, draw_text, seg_len);
+		                                gc, x, y, draw_text, seg_len);
 		else Xutf8DrawString(d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
-			                 draw_text, seg_len);
-	  }
-	  }
-
-      /* Draw lines */
-      if ((*underline != NULL) && (under_begin != under_end))
-	{
-	  *underline = (_XmString) NULL;	  /* only once */
-
-	  XDrawLine (d, w, gc,
-		     under_begin, (y + descender),
-		     under_end, (y + descender));
+		                     draw_text, seg_len);
+		break;
+	default: /* XmFONT_IS_FONT */
+		ucs = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_len);
+		if (image) XDrawImageString16(d, w, gc, x, y, ucs, ucs_len);
+		else       XDrawString16(d, w, gc, x, y, ucs, ucs_len);
+		XFree(ucs);
 	}
 
-      _XmStringDrawLining(d, w, x, y, width, height, descender,
-			  rend, XmUNSPECIFIED_PIXEL, XmHIGHLIGHT_NORMAL, TRUE);
-
-      if (((Font)0 != oldfont) &&		  /* if font was changed */
-	  ((Font)~0 != oldfont))		  /* put it back */
-	{
-	  xgcv.font = oldfont;
-	  XChangeGC (d, gc, GCFont, &xgcv);
+	/* Draw underline if needed */
+	if (underline) {
+		if (get_substring_pos(seg, *underline, rendertable, rend, x,
+		                      text16, &u_begin, &u_end)) {
+			*underline = NULL; /* only once */
+			XDrawLine(d, w, gc, u_begin, y + descender, u_end, y + descender);
+		}
 	}
 
-      if (old_fg != XmUNSPECIFIED_PIXEL)
-	{
-	  xgcv.foreground = old_fg;
-	  XChangeGC(d, gc, GCForeground, &xgcv);
-	}
+	_XmStringDrawLining(d, w, x, y, width, height, descender,
+	                    rend, XmUNSPECIFIED_PIXEL, XmHIGHLIGHT_NORMAL, True);
 
-      if (old_bg != XmUNSPECIFIED_PIXEL)
-	{
-	  xgcv.background = old_bg;
-	  XChangeGC(d, gc, GCBackground, &xgcv);
-	}
-
-	if (free_text)
-	  XtFree(draw_text);
-    }
+	/* Restore the GC */
+	XChangeGC(d, gc, GCForeground | GCBackground | GCFont, &old_gcv);
+	if (draw_text != seg_text) XtFree(draw_text);
 }
 
 /****************************************************************

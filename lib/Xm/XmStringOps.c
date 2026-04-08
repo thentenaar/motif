@@ -67,6 +67,38 @@ size_t _Xmstrlen(const unsigned char *s, size_t byte_count)
 }
 
 /**
+ * Reverse a UTF-8 string, returning a copy
+ */
+unsigned char *_Xmstrrev(const unsigned char *s, size_t len)
+{
+	size_t i, clen, pos = len;
+	unsigned char *buf;
+
+	if (!len)
+		return NULL;
+
+	buf = (unsigned char *)XtCalloc(len, 1);
+	for (i = 0; i < len; i++) {
+		if (!(clen = utf8_len[(s[i] & 0xf0) >> 4])) {
+			/* Ignore errant continuation bytes */
+			continue;
+		}
+
+		if (pos < clen)
+			break;
+
+		/* Copy this character to the end */
+		memcpy(buf + pos - clen, s + i, clen);
+		pos -= clen;
+		i   += clen - 1;
+	}
+
+	/* Make sure we start at the beginning of the end */
+	if (pos) memmove(buf, buf + pos, 1 + len - pos);
+	return buf;
+}
+
+/**
  * Advance \a n characters and return the offset from \a s in bytes
  */
 static size_t advance(const unsigned char *s, size_t n)

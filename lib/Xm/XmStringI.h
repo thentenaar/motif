@@ -862,6 +862,11 @@ extern char *_Xmcsconv(const char *from, const char *to, char *text, size_t byte
  */
 size_t _Xmstrlen(const unsigned char *s, size_t byte_count);
 
+/**
+ * Reverse a UTF-8 string, returning a copy
+ */
+unsigned char *_Xmstrrev(const unsigned char *s, size_t len);
+
 extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;
 extern Boolean _XmFontListSearch(
