@@ -203,7 +203,7 @@ static XtResource resources[] =
 
    {      XmNlabelFontList,
           XmCLabelFontList,
-          XmRLabelRenderTable,
+          XmRLabelFontList,
           sizeof(XmFontList),
           XtOffsetOf( struct _XmMenuShellRec, menu_shell.label_font_list),
           XmRCallProc,
@@ -212,7 +212,7 @@ static XtResource resources[] =
 
    {      XmNbuttonFontList,
           XmCButtonFontList,
-          XmRButtonRenderTable,
+          XmRButtonFontList,
           sizeof(XmFontList),
           XtOffsetOf( struct _XmMenuShellRec, menu_shell.button_font_list),
           XmRCallProc,
