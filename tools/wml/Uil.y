@@ -35,9 +35,12 @@
 **/
 
 %{
+#if YYBISON
+int yylex(void);
+int yyerror(const char *);
+#endif
 
-
-	/* Begin user declarations section */
+/* Begin user declarations section */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

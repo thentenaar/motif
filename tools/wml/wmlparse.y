@@ -31,8 +31,12 @@
  * resources in the UIL language.
  */
 
-
 %{
+#if YYBISON
+int yylex(void);
+int yyerror(const char *);
+#endif
+
 #include <string.h>		/* for strcpy() */
 #include <wml.h>
 %}
