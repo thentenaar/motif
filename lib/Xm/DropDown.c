@@ -2614,6 +2614,19 @@ Widget XmDropDownGetChild(Widget w, int num)
     return child;
 }
 
+#if defined(__APPLE__) && defined(__clang__)
+#pragma weak xmCombinationBox2WidgetClass     = xmDropDownWidgetClass
+#pragma weak XmCombinationBox2GetValue        = XmDropDownGetValue
+#pragma weak XmCreateCombinationBox2          = XmCreateDropDown
+#pragma weak XmVaCreateCombinationBox2        = XmVaCreateDropDown
+#pragma weak XmVaCreateManagedCombinationBox2 = XmVaCreateManagedDropDown
+#pragma weak XmCombinationBox2GetLabel        = XmDropDownGetLabel
+#pragma weak XmCombinationBox2GetArrow        = XmDropDownGetArrow
+#pragma weak XmCombinationBox2GetText         = XmDropDownGetText
+#pragma weak XmCombinationBox2GetList         = XmDropDownGetList
+#pragma weak XmCombinationBox2GetChild        = XmDropDownGetChild
+#pragma weak xmCombinationBox2ClassRec        = xmDropDownClassRec
+#else
 /* aliases for deprecated functions of XmComboBox2 */
 extern WidgetClass xmCombinationBox2WidgetClass XM_ALIAS(xmDropDownWidgetClass);
 String XmCombinationBox2GetValue(Widget) XM_ALIAS(XmDropDownGetValue);
@@ -2626,4 +2639,5 @@ Widget XmCombinationBox2GetText(Widget) XM_ALIAS(XmDropDownGetText);
 Widget XmCombinationBox2GetList(Widget) XM_ALIAS(XmDropDownGetList);
 Widget XmCombinationBox2GetChild(Widget, int) XM_ALIAS(XmDropDownGetChild);
 extern XmDropDownClassRec xmCombinationBox2ClassRec XM_ALIAS(xmDropDownClassRec);
+#endif
 

@@ -1468,7 +1468,26 @@ XmMultiListMakeRowVisible(Widget w, int row)
     _XmAppUnlock(app);
 }
 
-/* aliases of deprecated functiosn of XmExt18List */
+#if defined(__APPLE__) && defined(__clang__)
+#pragma weak xmExt18ListWidgetClass         = xmMultiListWidgetClass
+#pragma weak XmExt18ListGetSelectedRows     = XmMultiListGetSelectedRows
+#pragma weak XmCreateExtended18List         = XmCreateMultiList
+#pragma weak XmCreateExt18List              = XmCreateMultiList
+#pragma weak XmVaCreateExt18List            = XmVaCreateMultiList
+#pragma weak XmVaCreateManagedExt18List     = XmVaCreateManagedMultiList
+#pragma weak XmExt18ListUnselectAllItems    = XmMultiListUnselectAllItems
+#pragma weak XmExt18ListUnselectItem        = XmMultiListUnselectItem
+#pragma weak XmExt18ListToggleRow           = XmMultiListToggleRow
+#pragma weak XmExt18ListSelectItems         = XmMultiListSelectItems
+#pragma weak XmExt18ListDeselectItems       = XmMultiListDeselectItems
+#pragma weak XmExt18ListSelectAllItems      = XmMultiListSelectAllItems
+#pragma weak XmExt18ListSelectRow           = XmMultiListSelectRow
+#pragma weak XmExt18ListDeselectRow         = XmMultiListDeselectRow
+#pragma weak XmExt18ListGetSelectedRowArray = XmMultiListGetSelectedRowArray
+#pragma weak XmExt18ListMakeRowVisible      = XmMultiListMakeRowVisible
+#pragma weak xmExt18ListClassRec            = xmMultiListClassRec
+#else
+/* aliases of deprecated functions of XmExt18List */
 extern WidgetClass xmExt18ListWidgetClass XM_ALIAS(xmMultiListWidgetClass);
 XmMultiListRowInfo ** XmExt18ListGetSelectedRows(Widget) XM_ALIAS(XmMultiListGetSelectedRows);
 Widget XmCreateExtended18List(Widget, String, ArgList, Cardinal) XM_ALIAS(XmCreateMultiList);
@@ -1486,4 +1505,5 @@ void XmExt18ListDeselectRow(Widget, int) XM_ALIAS(XmMultiListDeselectRow);
 int *XmExt18ListGetSelectedRowArray(Widget, int *) XM_ALIAS(XmMultiListGetSelectedRowArray);
 void XmExt18ListMakeRowVisible(Widget, int) XM_ALIAS(XmMultiListMakeRowVisible);
 extern XmMultiListClassRec xmExt18ListClassRec XM_ALIAS(xmMultiListClassRec);
+#endif
 
