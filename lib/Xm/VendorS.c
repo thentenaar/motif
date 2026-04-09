@@ -47,7 +47,7 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 #include <Xm/VendorSP.h>
 #include <Xm/XmosP.h>		/* for bzero */
 #include <Xm/ToolTipCT.h>
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__CYGWIN__)
 #include <Xm/GrabShell.h>
 #include <Xm/DragOverS.h>
 #endif
@@ -534,6 +534,22 @@ __attribute__((weak))
 #endif
 externaldef(vendorshellwidgetclass) WidgetClass
   vendorShellWidgetClass = (WidgetClass) (&vendorShellClassRec);
+
+#ifdef __CYGWIN__
+int __stdcall DllMain(unsigned long handle, unsigned long flag, void *proc)
+{
+	(void)handle;
+	(void)proc;
+	if (flag == 1) { /* DLL_PROCESS_ATTACH */
+		transientShellWidgetClass->core_class.superclass  = vendorShellWidgetClass;
+		topLevelShellWidgetClass->core_class.superclass   = vendorShellWidgetClass;
+		xmGrabShellWidgetClass->core_class.superclass     = vendorShellWidgetClass;
+		xmDragOverShellWidgetClass->core_class.superclass = vendorShellWidgetClass;
+	}
+
+	return 1;
+}
+#endif
 
 /* Trait record for VendorS specify render table */
 static const XmSpecRenderTraitRec vsSRT = {
