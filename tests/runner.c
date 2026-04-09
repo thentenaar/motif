@@ -64,8 +64,15 @@ int main(int argc, char *argv[])
 	srunner_set_xml(runner, "results.xml");
 
 	cursor_suite(runner);
+
+#if XM_WITH_JPEG
 	jpeg_suite(runner);
+#endif
+
+#if XM_WITH_PNG
 	png_suite(runner);
+#endif
+
 	svg_suite(runner);
 	xmdesktopobject_suite(runner);
 	xmfontlistentry_suite(runner);

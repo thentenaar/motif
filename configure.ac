@@ -99,22 +99,30 @@ AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
 	[AC_MSG_ERROR([Motif requires a UTF-8 capable libX11.])])
 ])
 
-dnl Image formats
+dnl Image formats and Xft support (optional)
 AC_ARG_WITH([jpeg],
 	[AS_HELP_STRING([--with-jpeg], [Enable jpeg support])],
-	[with_jpeg=$withval], [with_jpeg=yes])
+	[with_jpeg=$withval], [with_jpeg=auto])
 
 AC_ARG_WITH([png],
 	[AS_HELP_STRING([--with-png], [Enable png support])],
-	[with_png=$withval], [with_png=yes])
+	[with_png=$withval], [with_png=auto])
 
 AC_ARG_WITH([xft],
 	[AS_HELP_STRING([--with-xft], [Enable xft support])],
-	[with_xft=$withval], [with_xft=yes])
+	[with_xft=$withval], [with_xft=auto])
 
-AS_IF([test "x$with_jpeg" == "xyes"],[PKG_CHECK_MODULES([JPEG], [libjpeg])])
-AS_IF([test "x$with_png"  == "xyes"],[PKG_CHECK_MODULES([PNG],  [libpng])])
-AS_IF([test "x$with_xft"  == "xyes"],[PKG_CHECK_MODULES([XFT],  [xft >= 2 fontconfig])])
+AS_IF([test "x$with_jpeg" != "xno"],[
+	PKG_CHECK_MODULES([JPEG], [libjpeg], [with_jpeg=yes], [with_jpeg=no])
+])
+
+AS_IF([test "x$with_png" != "xno"],[
+	PKG_CHECK_MODULES([PNG], [libpng], [with_png=yes], [with_png=no])
+])
+
+AS_IF([test "x$with_xft" != "xno"],[
+	PKG_CHECK_MODULES([XFT], [xft >= 2 fontconfig], [with_xft=yes], [with_xft=no])
+])
 
 dnl Optimistically look for xrandr, xrender, and xcursor
 AC_ARG_WITH([xrandr],

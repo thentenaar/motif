@@ -25,6 +25,7 @@
 #define SUITES_H
 
 #include <X11/Intrinsic.h>
+#include <Xm/Xm.h>
 #include <check.h>
 
 /* For locating resources in out-of-tree builds */
@@ -40,8 +41,15 @@ void uninit_xt(void);
 
 /* Suites */
 void cursor_suite(SRunner *runner);
+
+#if XM_WITH_JPEG
 void jpeg_suite(SRunner *runner);
+#endif
+
+#if XM_WITH_PNG
 void png_suite(SRunner *runner);
+#endif
+
 void svg_suite(SRunner *runner);
 void xmdesktopobject_suite(SRunner *runner);
 void xmfontlistentry_suite(SRunner *runner);
