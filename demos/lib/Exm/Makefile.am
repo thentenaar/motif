@@ -10,6 +10,6 @@ libExm_a_SOURCES     = CommandB.c Grid.c Panner.c MenuB.c Simple.c \
                        ExmString.c StringTrans.c TabB.c
 libExmMrm_a_SOURCES  = ExmMrm.c
 AM_CPPFLAGS          = -I$(srcdir)/.. $(X_CFLAGS)
-DEFAULT_INCLUDES     = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+DEFAULT_INCLUDES     = -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                        -I$(top_builddir)/include -I$(top_builddir)/lib
 
