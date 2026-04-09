@@ -54,7 +54,6 @@ dnl Check for particular headers / functions
 AC_CHECK_HEADERS([alloca.h iconv.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_SEARCH_LIBS([floor], [m])
-AC_SEARCH_LIBS([Xutf8TextExtents], [X11])
 AC_DEFINE([HAVE_SYS_POLL_H])
 AC_DEFINE([HAVE_SYS_TIME_H])
 
@@ -80,21 +79,24 @@ AS_IF([test "x$ac_cv_func_iconv" == "xno"],[
 	LDFLAGS=$save_LDFLAGS
 ])
 
-dnl AIX >= 7.1's Xlib header defines X_HAVE_UTF8_STRING and includes the
-dnl UTF-8 prototypes, but lacks the external symbols. It does have
-dnl Xutf8SetWMProperties and Xutf8TextListToTextProperty though,
-dnl and the OC functions seem to be present. R6 (and below)
-dnl predate the Nov. 2000 emergence of UTF-8 functionality in Xlib.
-AS_CASE([$host_os],
-[aix7*], [
-	AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
-		X_CFLAGS="${X_CFLAGS} -DXLIB_MISSING_UTF8_STRING_SYMBOLS"
-	])
-],
-[
-	AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
-		AC_MSG_ERROR([Motif requires a UTF-8 capable libX11.])
-	])
+dnl Xlib may be in a non-standard location
+save_CPPFLAGS=$CPPFLAGS
+save_LDFLAGS=$LDFLAGS
+CPPFLAGS=$pkg_cv_X_CFLAGS
+LDFLAGS=$pkg_cv_X_LIBS
+AC_SEARCH_LIBS([Xutf8TextExtents], [X11])
+CPPFLAGS=$save_CPPFLAGS
+LDFLAGS=$save_LDFLAGS
+
+AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
+	dnl AIX >= 7.1's Xlib header defines X_HAVE_UTF8_STRING and includes the
+	dnl UTF-8 prototypes, but lacks the external symbols. It does have
+	dnl Xutf8SetWMProperties and Xutf8TextListToTextProperty though,
+	dnl and the OC functions seem to be present. R6 (and below)
+	dnl predate the Nov. 2000 emergence of UTF-8 functionality in Xlib.
+	AS_CASE([$host_os],
+	[aix7*], [X_CFLAGS="${X_CFLAGS} -DXLIB_MISSING_UTF8_STRING_SYMBOLS"],
+	[AC_MSG_ERROR([Motif requires a UTF-8 capable libX11.])])
 ])
 
 dnl Image formats

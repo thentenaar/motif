@@ -7602,10 +7602,14 @@ XmStringGenerate(XtPointer   text,
   return result;
 }
 
+#if defined(__APPLE__) && defined(__clang__)
+#pragma weak _XmStringUngenerate = XmStringUngenerate
+#else
 /* CDE unfortunately relies on the internal symbol name */
 XtPointer _XmStringUngenerate(XmString string, XmStringTag tag,
                              XmTextType tag_type, XmTextType output_type)
                              XM_ALIAS(XmStringUngenerate);
+#endif
 
 XtPointer XmStringUngenerate(XmString string, XmStringTag tag,
                              XmTextType tag_type, XmTextType output_type)

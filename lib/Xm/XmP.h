@@ -1392,6 +1392,14 @@ do {\
 
 #endif /* NO_XM_1_2_BC */
 
+/**
+ * Weak aliases are only supported on Darwin via #pragma weak
+ * See: https://github.com/llvm/llvm-project/issues/71001
+ */
+#if defined(__APPLE__) && defined(__clang__)
+#define NO_WEAK_ALIASES
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
 #  ifdef NO_WEAK_ALIASES
 #    define XM_ALIAS(sym)
