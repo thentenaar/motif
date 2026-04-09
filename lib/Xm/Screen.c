@@ -492,7 +492,7 @@ static void monitors_randr(Display *d, Window root, XmScreen screen)
 
 	if ((n = (Cardinal)j)) {
 		screen->screen.n_monitors = n;
-		screen->screen.monitors   = XtMallocArray(n, sizeof *screen->screen.monitors);
+		screen->screen.monitors   = (void *)XtMalloc(n * sizeof *screen->screen.monitors);
 	}
 
 	for (i = 0; i < n; i++) {
@@ -544,7 +544,7 @@ static void monitors_xinerama(Display *d, Window root, XmScreen screen)
 
 	if (n) {
 		screen->screen.n_monitors = n;
-		screen->screen.monitors   = XtMallocArray(n, sizeof *screen->screen.monitors);
+		screen->screen.monitors   = (void *)XtMalloc(n * sizeof *screen->screen.monitors);
 	}
 
 	for (i = 0; i < n; i++) {
