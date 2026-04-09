@@ -60,7 +60,9 @@ AC_DEFINE([HAVE_SYS_TIME_H])
 dnl Check for libiconv if needed
 AS_IF([test "x$ac_cv_func_iconv" == "xno"],[
 	AC_SEARCH_LIBS([libiconv_open], [iconv], [], [
-		AC_MSG_ERROR([Unable to find iconv])
+		AC_SEARCH_LIBS([iconv], [iconv], [], [
+			AC_MSG_ERROR([Unable to find iconv])
+		])
 	])
 ],[
 	dnl If <iconv.h> pulls in libconv later on in the build (e.g.,
