@@ -203,11 +203,15 @@ END_TEST
 #if USE_XFT
 START_TEST(load_entry_xft)
 {
+#ifdef __APPLE__
+	puts("Skipping test (fontconfig assertion failure with Xquartz)");
+#else
 	XmFontListEntry e;
 
 	ck_assert_msg((e = XmFontListEntryLoad(display, "Misc Fixed-14:weight=200", XmFONT_IS_XFT, font_tag[0])),
 	              "Failed to load a font list entry (xft)");
 	if (e) XmFontListEntryFree(&e);
+#endif
 }
 END_TEST
 #endif
