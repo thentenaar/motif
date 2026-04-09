@@ -21,13 +21,20 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Intrinsic.h>
-#include <X11/Xft/Xft.h>
 #include <Xm/Xm.h>
 #include <XmRenderTI.h>
 #include <check.h>
+
+#if USE_XFT
+#include <X11/Xft/Xft.h>
+#endif
 
 #include "suites.h"
 
@@ -138,6 +145,7 @@ START_TEST(create_entry_from_fontset)
 }
 END_TEST
 
+#if USE_XFT
 START_TEST(create_entry_from_xft)
 {
 	XftFont *xf;
@@ -151,6 +159,7 @@ START_TEST(create_entry_from_xft)
 	if (!e && xf) XftFontClose(display, xf);
 }
 END_TEST
+#endif
 
 START_TEST(load_entry_invalid_type)
 {
@@ -191,6 +200,7 @@ START_TEST(load_entry)
 }
 END_TEST
 
+#if USE_XFT
 START_TEST(load_entry_xft)
 {
 	XmFontListEntry e;
@@ -200,6 +210,7 @@ START_TEST(load_entry_xft)
 	if (e) XmFontListEntryFree(&e);
 }
 END_TEST
+#endif
 
 START_TEST(get_font_invalid_entry)
 {
@@ -261,7 +272,9 @@ void xmfontlistentry_suite(SRunner *runner)
 	tcase_add_test(t, create_entry_with_invalid_font);
 	tcase_add_test(t, create_entry_from_font);
 	tcase_add_test(t, create_entry_from_fontset);
+#if USE_XFT
 	tcase_add_test(t, create_entry_from_xft);
+#endif
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_add_checked_fixture(t, load_fonts, unload_fonts);
 	tcase_set_timeout(t, 1);
@@ -272,7 +285,9 @@ void xmfontlistentry_suite(SRunner *runner)
 	tcase_add_test(t, load_entry_null_tag);
 	tcase_add_test(t, load_entry_invalid_name);
 	tcase_add_test(t, load_entry);
+#if USE_XFT
 	tcase_add_test(t, load_entry_xft);
+#endif
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_add_checked_fixture(t, load_fonts, unload_fonts);
 	tcase_set_timeout(t, 1);
