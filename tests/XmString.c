@@ -52,7 +52,7 @@ static void _init_xt(void)
  */
 static void set_utf8_ctype(void)
 {
-#if defined(_AIX)
+#if defined(_AIX) || defined(__APPLE__)
 	setlocale(LC_CTYPE, "en_US.UTF-8");
 #else
 	setlocale(LC_CTYPE, "C.UTF-8");
