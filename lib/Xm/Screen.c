@@ -463,7 +463,11 @@ static void select_randr(Widget w, int *types, XtPointer *sel,
 	               RRScreenChangeNotifyMask | RRCrtcChangeNotifyMask |
 	               RROutputChangeNotifyMask | RROutputPropertyNotifyMask |
 	               RRProviderChangeNotifyMask | RRProviderPropertyNotifyMask |
-	               RRResourceChangeNotifyMask | RRLeaseNotifyMask);
+	               RRResourceChangeNotifyMask
+#if defined(RRLeaseNotifyMask)
+	               | RRLeaseNotifyMask
+#endif
+	               );
 }
 
 /**
