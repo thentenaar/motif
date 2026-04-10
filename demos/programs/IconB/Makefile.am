@@ -10,5 +10,5 @@ iconbuttondemo_SOURCES = misc.c iconbuttondemo.c
 AM_CPPFLAGS            = $(X_CFLAGS)
 DEFAULT_INCLUDES       = -I. -I$(srcdir)/.. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                          -I$(top_builddir)/include -I$(top_builddir)/lib
-iconbuttondemo_LDADD   = $(top_builddir)/lib/Xm/libXm.la
+iconbuttondemo_LDADD   = $(top_builddir)/lib/Xm/libXm.la $(X_LIBS)
 

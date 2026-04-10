@@ -12,5 +12,5 @@ libXmd_la_SOURCES  = Help.c Menus.c Print.c AdjView.c
 AM_CPPFLAGS        = $(X_CFLAGS)
 DEFAULT_INCLUDES   = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                      -I$(top_builddir)/include -I$(top_builddir)/lib
-onHelp_LDADD       = libXmd.la $(top_builddir)/lib/Xm/libXm.la
+onHelp_LDADD       = libXmd.la $(top_builddir)/lib/Xm/libXm.la $(X_LIBS)
 

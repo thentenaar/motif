@@ -14,7 +14,7 @@ AM_CPPFLAGS       = $(X_CFLAGS)
 DEFAULT_INCLUDES  = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                     -I$(top_builddir)/include -I$(top_builddir)/lib
 dogs_LDADD        = $(top_builddir)/lib/Mrm/libMrm.la \
-                    $(top_builddir)/lib/Xm/libXm.la
+                    $(top_builddir)/lib/Xm/libXm.la $(X_LIBS)
 
 .uil.uid:
 	$(top_builddir)/clients/uil/uil -I$(srcdir) -I$(top_srcdir)/clients/uil -I$(top_builddir)/clients/uil -o $@ $<

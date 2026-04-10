@@ -14,7 +14,7 @@ DEFAULT_INCLUDES        = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
 exm_in_uil_LDADD        = $(top_builddir)/demos/lib/Exm/libExmMrm.a \
                           $(top_builddir)/demos/lib/Exm/libExm.a \
 				          $(top_builddir)/lib/Mrm/libMrm.la \
-                          $(top_builddir)/lib/Xm/libXm.la
+                          $(top_builddir)/lib/Xm/libXm.la $(X_LIBS)
 
 .uil.uid:
 	$(top_builddir)/clients/uil/uil -wmd $(top_builddir)/demos/lib/Exm/wml/Exm.wmd -I$(srcdir) -o $@ $<

@@ -10,5 +10,5 @@ AM_CPPFLAGS      = $(X_CFLAGS)
 DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                    -I$(top_builddir)/include -I$(top_builddir)/lib \
                    -I$(top_srcdir)/clients -I$(top_builddir)/clients
-uilsymdump_LDADD = $(top_builddir)/clients/uil/libUil.la
+uilsymdump_LDADD = $(top_builddir)/clients/uil/libUil.la $(X_LIBS)
 
