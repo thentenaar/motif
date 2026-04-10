@@ -39,7 +39,7 @@ wmllex.c: wmllex.l
 
 wmlsynbld.c: wmlparse.h
 
-$(srcdir)/wmldbcreate.c: $(WMLTARGETS) UilLexPars.h
+@srcdir@/wmldbcreate.c: $(WMLTARGETS) UilLexPars.h
 
 UilLexPars.h: UilLexPars.c
 
