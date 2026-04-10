@@ -1690,8 +1690,6 @@ Urm__CW_EvaluateValOrOffset (MrmType			reptype,
  *
  *--
  */
-
-/*ARGSUSED*/
 Cardinal
 Urm__CW_FixupValue (long			val,
 		    MrmType			reptype,
@@ -1851,19 +1849,14 @@ Urm__CW_FixupValue (long			val,
     case MrmRtypeHorizontalFloat:
     case MrmRtypeVerticalFloat:
       {
-	RGMUnitsFloatPtr unitsvalue;
-	double *floatval;
-
-	unitsvalue = (RGMUnitsFloatPtr) val;
-	floatval = (double *)(&unitsvalue->value[0]);
-	if ( *swap_needed )
+	RGMUnitsFloatPtr unitsvalue = (RGMUnitsFloatPtr)val;
+	if (*swap_needed)
 	  {
-	    swapdouble(*floatval);
-	    swapbytes( unitsvalue->units );
+	    swapdouble((unitsvalue->value[0]));
+	    swapbytes(unitsvalue->units);
 	  }
-	*swap_needed = FALSE;
-	_MrmOSIEEEDoubleToHost( floatval );
-	memcpy(unitsvalue->value, floatval, sizeof *floatval);
+	*swap_needed = False;
+	_MrmOSIEEEDoubleToHost((double *)unitsvalue->value);
       }
     break ;
     default:
