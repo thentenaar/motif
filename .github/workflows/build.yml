@@ -27,7 +27,7 @@ jobs:
         uses: jirutka/setup-alpine@v1
         with:
           arch: ${{ matrix.arch }}
-          branch: v3.22
+          branch: v3.23
           packages: >
             libx11-dev
             libxpm-dev
@@ -35,12 +35,13 @@ jobs:
             libxmu-dev
             libxext-dev
             libxft-dev
+            libxcursor-dev
+            libxrandr-dev
             libjpeg-turbo-dev
             libpng-dev
             linux-headers
             alpine-sdk
             autoconf
-            autoconf-archive
             automake
             libtool
             flex-dev
@@ -51,6 +52,7 @@ jobs:
             check-dev
             clang
             clang-dev
+            doas
       - name: Make
         run: |
           cd /home/runner/work/motif/motif
@@ -60,6 +62,7 @@ jobs:
       - name: Test
         run: |
           cd /home/runner/work/motif/motif
+          doas -u root rm -f /etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf
           Xvfb :0 &>/dev/null &
           DISPLAY=:0 make check
           kill -TERM %1
