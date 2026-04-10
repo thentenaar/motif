@@ -1,6 +1,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in glw.pc
-libGLw_la_LDFLAGS    = -version-info @GLW_VERSION@
+libGLw_la_LDFLAGS    = -version-info @GLW_VERSION@ @NO_UNDEF@
 libGLw_la_LIBADD     = ../Xm/libXm.la $(GL_LIBS) $(XFT_LIBS) $(X_LIBS)
 libGLw_la_SOURCES    = GLwDrawA.c GLwMDrawA.c
 lib_LTLIBRARIES      = libGLw.la

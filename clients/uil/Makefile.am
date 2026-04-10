@@ -4,7 +4,7 @@ EXTRA_DIST = Uil.msg
 bin_PROGRAMS = uil
 pkgconfig_DATA = Uil.pc
 
-libUil_la_LDFLAGS = -version-info @ABI_VERSION@
+libUil_la_LDFLAGS = -version-info @ABI_VERSION@ @NO_UNDEF@
 
 UilParser.lo: UilParser.c
 	$(LTCOMPILE) -DCALLABLE -c UilParser.c
