@@ -8,6 +8,7 @@ Motif
 
 ![Xcursor in action](https://github.com/thentenaar/motif/blob/pages/screenshots/periodic-xcursor.png?raw=true)
 ![OpenBSD 7.8 + CDE](https://github.com/thentenaar/motif/blob/pages/screenshots/openbsd-7.8-cde.png?raw=true)
+![Winblows XP](https://github.com/thentenaar/motif/blob/pages/screenshots/winblows-xp.png?raw=true)
 
 ## Background
 
