@@ -211,11 +211,13 @@ int wmlInsertInHList(DynamicHandleListDefPtr listptr, const char *name, ObjectPt
 		if (i > 0) lo = mid + 1;
 	}
 
-    /**
-     * The new entry will go either at mid or after mid. Move down
-     * the vector appropriately.
-     */
-    mid += i >= 0;
+	/**
+	 * The new entry will go either at mid or after mid. Move down
+	 * the vector appropriately.
+	 */
+	if ((mid += i >= 0) > listptr->cnt)
+		mid = listptr->cnt - 1;
+
 	memmove(listptr->hvec + mid + 1, listptr->hvec + mid,
 	        (listptr->cnt - mid) * sizeof(ObjectHandleDef));
 	listptr->hvec[mid].objname = wmlAllocateString(name);

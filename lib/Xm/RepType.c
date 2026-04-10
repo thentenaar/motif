@@ -1170,7 +1170,7 @@ CopyStringArray(
                 unsigned char NumEntries,
                 Boolean UppercaseFormat)
 {
-    unsigned int Index ;
+    unsigned int Index, i;
     String * TmpStr ;
     int PrefixSize = 0 ;
 
@@ -1191,8 +1191,6 @@ CopyStringArray(
 	Index = 0 ;
 	while( Index < NumEntries)
 	    {
-		Cardinal i ;
-
 		TmpStr[Index][0] = 'X' ;
 		TmpStr[Index][1] = 'm' ;
 		i = 2 ;
