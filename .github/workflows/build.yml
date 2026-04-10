@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - cygwin
   pull_request:
     types:
       - opened
+      - edited
     branches:
       - master
 
@@ -13,107 +15,6 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x86_64, x86]
-        compiler: [gcc, clang]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - name: Setup Alpine
-        id:   alpine
-        uses: jirutka/setup-alpine@v1
-        with:
-          arch: ${{ matrix.arch }}
-          branch: v3.22
-          packages: >
-            libx11-dev
-            libxpm-dev
-            libxt-dev
-            libxmu-dev
-            libxext-dev
-            libxft-dev
-            libjpeg-turbo-dev
-            libpng-dev
-            linux-headers
-            alpine-sdk
-            autoconf
-            automake
-            libtool
-            flex-dev
-            flex
-            byacc
-            xvfb
-            xbitmaps
-            check-dev
-            clang
-            clang-dev
-      - name: Make
-        run: |
-          cd /home/runner/work/motif/motif
-          CC=${{ matrix.compiler }} ./autogen.sh --enable-tests
-          make
-        shell: alpine.sh {0}
-      - name: Test
-        run: |
-          cd /home/runner/work/motif/motif
-          Xvfb :0 &>/dev/null &
-          DISPLAY=:0 make check
-          kill -TERM %1
-        shell: alpine.sh {0}
-      - name: libcheck -> JUnit XML
-        if: (!cancelled())
-        run: |
-          sudo apt install -y xsltproc
-          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
-      - name: Test Results
-        if: (!cancelled())
-        uses: dorny/test-reporter@v3
-        with:
-          name: Test Results
-          path: results.junit.xml
-          reporter: java-junit
-
-  mac-build:
-    strategy:
-      fail-fast: false
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@v5
-      - name: Update homebrew
-        run: brew update
-      - name: Install Xquartz
-        run: brew install --cask xquartz
-      - name: Install build dependencies
-        run: brew install autoconf automake libtool pkgconf byacc check jpeg-turbo
-      - name: Setup environment
-        run: |
-          echo PKG_CONFIG_PATH="$(brew --prefix)/lib/pkgconfig:/opt/X11/share/pkgconfig:/opt/X11/lib/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
-          echo CPPFLAGS="-I$(xcrun --show-sdk-path)/include -I$(brew --prefix)/usr/include" >> $GITHUB_ENV
-          echo LDFLAGS="-L$(xcrun --show-sdk-path)/usr/lib -L$(brew --prefix)/lib" >> $GITHUB_ENV
-      - name: Make
-        run: |
-          ./autogen.sh --enable-tests
-          make
-      - name: Test
-        run: |
-          /opt/X11/bin/Xvfb :10 &>/dev/null &
-          DISPLAY=:10 make check
-          kill -TERM %1
-      - name: libcheck -> JUnit XML
-        if: (!cancelled())
-        run: |
-          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
-      - name: Test Results
-        if: (!cancelled())
-        uses: dorny/test-reporter@v3
-        with:
-          name: Darwin Test Results
-          path: results.junit.xml
-          reporter: java-junit
-
   cygwin-build:
     strategy:
       fail-fast: false
