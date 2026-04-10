@@ -44,6 +44,7 @@ AC_C_CONST
 AC_TYPE_SIZE_T
 AC_TYPE_INTPTR_T
 AC_TYPE_UINTPTR_T
+AC_CHECK_SIZEOF([long])
 AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
 
 dnl Check for X

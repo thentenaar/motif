@@ -1946,11 +1946,11 @@ static unsigned int ctz(unsigned long n) {
 static unsigned int ones(unsigned long n) {
 #if defined(__has_builtin) && __has_builtin(__builtin_popcountl)
 	return __builtin_popcountl(n);
-#elif sizeof(unsigned long) == 8
+#elif SIZEOF_LONG == 8
 	n = n - ((n >> 1) & 0x5555555555555555);
-    n = (n & 0x3333333333333333) + ((n >> 2) & 0x3333333333333333);
-    n = (n + (n >> 4)) & 0x0F0F0F0F0F0F0F0F;
-    return (n * 0x0101010101010101) >> 56;
+	n = (n & 0x3333333333333333) + ((n >> 2) & 0x3333333333333333);
+	n = (n + (n >> 4)) & 0x0F0F0F0F0F0F0F0F;
+	return (n * 0x0101010101010101) >> 56;
 #else
 	n = n - ((n >> 1) & 0x55555555);
 	n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
