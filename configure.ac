@@ -315,6 +315,15 @@ AS_IF([test "x$enable_glw" == "xyes"],[
 	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc demos/GLw/Makefile])
 ])
 
+dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
+dnl warnings are spurious.
+m4_define([_NO_UNDEF], [])
+AS_IF([test "x$host_os" == "xcygwin"],[
+	m4_define([_NO_UNDEF],[-no-undefined])
+	CFLAGS="${CFLAGS} -Wno-maybe-uninitialized -Wno-char-subscripts"
+])
+AC_SUBST([NO_UNDEF], [_NO_UNDEF])
+
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
 AC_CONFIG_FILES([Makefile \
 motif.pc \
