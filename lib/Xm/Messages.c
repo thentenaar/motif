@@ -627,7 +627,7 @@ externaldef(messages) const char *_XmMsgRowColumn_0027 =
 /**************** Scale.c ****************/
 
 externaldef(messages) const char *_XmMsgScale_0000 =
-   "The minumum scale value is greater than or equal to the maximum scale \
+   "The minimum scale value is greater than or equal to the maximum scale \
 value.";
 
 externaldef(messages) const char *_XmMsgScale_0001 =

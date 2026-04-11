@@ -165,6 +165,17 @@ AS_IF([test "x$with_xcursor" == "xyes"],[
 	PKG_CHECK_MODULES([XCURSOR], [xcursor], [], [with_xcursor=no])
 ])
 
+AC_ARG_WITH([mwmrcdir],
+	[AS_HELP_STRING([--with-mwmrcdir], [mwm resources are located in DIR])],
+	[MWMRCDIR=$withval], [MWMRCDIR="${sysconfdir}/X11"])
+AC_SUBST(MWMRCDIR)
+
+dnl lib/Xm/VirtKeys.c
+AC_ARG_WITH([xmbinddir],
+	[AS_HELP_STRING([--with-xmbinddir], [fallback bindings are located in DIR])],
+	[XMBINDDIR_FALLBACK=$withval], [XMBINDDIR_FALLBACK="${datadir}/X11/bindings"])
+AC_SUBST(XMBINDDIR_FALLBACK)
+
 AC_ARG_ENABLE([debug],
 	[AS_HELP_STRING(
 		[--enable-debug],
@@ -295,10 +306,6 @@ dnl Defines/substitutions for mwm
 AC_DEFINE([NO_OL_COMPAT], 1, "No OL Compatability")
 AC_SUBST([CDE_INSTALLATION_TOP], "\${prefix}/dt")
 AC_SUBST([CDE_CONFIGURATION_TOP], "\${prefix}/etc/dt")
-AC_SUBST([MWMRCDIR], "${sysconfdir}/X11")
-
-dnl lib/Xm/VirtKeys.c
-AC_SUBST([XMBINDDIR_FALLBACK], "${datadir}/X11/bindings")
 
 dnl lib/Xm/Xmos.c
 AC_SUBST([DATADIR], "${datadir}")

@@ -28,6 +28,6 @@ wml-uil.mm: $(WMLDIR)/Uil.y Exm.wml $(WMLDIR)/motif.wml $(top_builddir)/tools/wm
 	$(RM) Exm.h
 	$(top_builddir)/tools/wml/wmluiltok < $(WMLDIR)/Uil.y > tokens.dat
 	$(LN_S) $(srcdir)/Exm.wml ./Exm.h
-	$(CPP) -I$(WMLDIR) Exm.h | $(top_builddir)/tools/wml/wml
+	$(CPP) $(CPPFLAGS) -I$(WMLDIR) Exm.h | $(top_builddir)/tools/wml/wml
 	$(RM) Exm.h
 

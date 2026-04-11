@@ -1236,7 +1236,7 @@ DisplayCurrentFont(XmFontSelectorWidget fsw, String font)
 
     if ((fontdata = XLoadQueryFont(XtDisplay((Widget) fsw), font)) == NULL)
     {
-	sprintf(buf, "Font '%s'\nis not availiable on this machine", font);
+	sprintf(buf, "Font '%s'\nis not available on this machine", font);
 	DisplayUserError(fsw, buf);
 	err = True;
     }
@@ -1286,7 +1286,7 @@ DisplayCurrentFont(XmFontSelectorWidget fsw, String font)
 					   fbuf)) == NULL)
 	    {
 		sprintf(buf,
-			    "Font '%s'\nis not availiable on this machine",
+			    "Font '%s'\nis not available on this machine",
 			    font);
 		DisplayUserError(fsw, buf);
 		    err = True;

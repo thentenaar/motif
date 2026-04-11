@@ -111,7 +111,7 @@ will probably run more quickly if
 In addition to X bitmap files (XBM), Motif also supports XPM (X
 Pixmap) file formats, and, from version 2.3, JPEG and PNG image formats\&.
 (Note that support of JPEG and PNG image format is an optional feature
-of Motif, in order to check if current version supports PNG ang JPEG
+of Motif, in order to check if current version supports PNG and JPEG
 image formats the PNG_SUPPORT and JPEG_SUPPORT macros should be checked
 correspondingly.)
 The \fBXBMLANGPATH\fP specifies the path for
@@ -245,8 +245,8 @@ for a plaid pattern\&.
 \f(CW/* XBM file */
 #define plaid_width 22
 #define plaid_height 22
-#define plaid_x_hot -1
-#define plaid_y_hot -1
+#define plaid_x_hot \-1
+#define plaid_y_hot \-1
 static char plaid_bits[] = {
    0x75, 0xfd, 0x3f, 0xaa, 0xfa, 0x3e, 0x75, 0xfd, 0x3f, 0xaa, 0xfa, 0x3e,
    0x75, 0xfd, 0x3f, 0xff, 0x57, 0x15, 0x75, 0xfd, 0x3f, 0xaa, 0xfa, 0x3e,

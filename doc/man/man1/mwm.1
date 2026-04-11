@@ -359,7 +359,7 @@ The window manager is an X Session Management Protocol aware client\&. It respon
 (and other associated messages) by saving the geometries of its clients to a state file\&. 
 \fBmwm\fP can then be restarted by the XSMP session manager\&.
 The default location for the state file is \fB$HOME/\&.mwmclientdb\fP\&.
-This location can be overriden with the resource \fBsessionClientDB\fP\&.
+This location can be overridden with the resource \fBsessionClientDB\fP\&.
 .SS "X Resources"
 .PP
 The \fBmwm\fP command is configured from its resource
@@ -904,7 +904,7 @@ resizeBorderWidthResizeBorderWidthpixelsvaries
 resizeCursorsResizeCursorsT/FT
 transientDecorationTransientDecorationstringmenu title
 transientFunctionsTransientFunctionsstringT{
--minimize-maximize
+\-minimize-maximize
 T}
 useIconBoxUseIconBoxT/FF
 .TE
@@ -941,7 +941,7 @@ placement\&. The units for width and height are columns and rows\&. The actual
 screen size of the icon box window depends on the iconImageMaximum (size)
 and \fIiconDecoration\fP resources\&. The default value for size
 is (6 * iconWidth + padding) wide by (1 * iconHeight + padding) high\&. The
-default value of the location is +0 -0\&.
+default value of the location is +0 \-0\&.
 .IP "\fIiconBoxName\fP\ (class\  \fIIconBoxName\fP)" 10
 This resource specifies the name that is used to look up icon box resources\&.
 The default name is iconbox\&.
@@ -1059,7 +1059,7 @@ reference page\&.
 This resource is used to indicate which window management functions
 are applicable (or not applicable) to transient windows\&. The function specification
 is exactly the same as for the \fIclientFunctions\fP (client
-specific) resource\&. The default value for this resource is -minimize -maximize\&.
+specific) resource\&. The default value for this resource is \-minimize \-maximize\&.
 .IP "" 10
 An application can also specify which functions \fBmwm\fP
 should apply to its windows\&. If it does so, \fBmwm\fP applies
@@ -1176,7 +1176,7 @@ T}
 titleTitle bar (includes border)\&.
 .TE
 .PP
-Examples: \fIMwm*XClock\&.clientDecoration: -resizeh -maximize\fP This removes the resize handles and maximize button from XClock
+Examples: \fIMwm*XClock\&.clientDecoration: \-resizeh \-maximize\fP This removes the resize handles and maximize button from XClock
 windows\&. \fIMwm*XClock\&.clientDecoration: menu minimize border\fP This does the same thing as above\&. Note that either \fImenu\fP or \fIminimize\fP implies
 \fItitle\fP\&.
 .IP "\fIclientFunctions\fP\ (class\  \fIClientFunctions\fP)" 10

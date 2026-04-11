@@ -1211,7 +1211,7 @@ T{
 3\&.1415E-2 (equals \&.031415)
 T}2\&.87 e6 (embedded blanks)
 T{
--6\&.29e7 (equals -62900000)
+\-6\&.29e7 (equals \-62900000)
 T}2\&.0e100 (out of range)
 .TE
 .PP
@@ -1322,7 +1322,7 @@ You cannot mix types in an expression without using conversion routines\&.
 You can use parentheses to override the normal precedence of operators\&.
 In a sequence of unary operators, the operations are performed in
 right-to-left
-order\&. For example, \fB- + -A\fP is equivalent to \fB-(+(-A))\fP\&.
+order\&. For example, \fB- + \-A\fP is equivalent to \fB\-(+(\-A))\fP\&.
 In a sequence of binary operators of the same precedence, the operations
 are performed in left-to-right order\&. For example, \fBA*B/C*D\fP is
 equivalent to \fB((A*B)/C)*D\fP\&.
@@ -1755,7 +1755,7 @@ You cannot use imported or exported values as the operands of the
 .IP "\fBCOMPOUND_STRING_COMPONENT\fP(\fIcomponent_type\fP [, {\fIstring\fP | \fIenumval\fP}])" 10
 Use the \fBCOMPOUND_STRING_COMPONENT\fP function to create compound strings
 in UIL consisting of single components\&.
-This function is analagous to \fBXmStringComponentCreate\fP\&.
+This function is analogous to \fBXmStringComponentCreate\fP\&.
 This function lets you create simple compound strings containing
 components such as \fBXmSTRING_COMPONENT_TAB\fP and
 \fBXmSTRING_COMPONENT_RENDITION_BEGIN\fP which are not produced by
