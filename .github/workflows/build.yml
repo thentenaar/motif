@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  alpine-build:
     strategy:
       fail-fast: false
       matrix:

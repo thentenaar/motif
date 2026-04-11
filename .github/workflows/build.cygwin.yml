@@ -1,0 +1,31 @@
+name: Cygwin Build
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cygwin-build:
+    strategy:
+      fail-fast: false
+    runs-on: windows-latest
+    steps:
+      - run: git config --global core.autocrlf input
+      - uses: actions/checkout@v6
+      - uses: cygwin/cygwin-install-action@master
+        id: cygwin
+        with:
+          packages: >-
+            gcc-core, autoconf, automake, libtool, pkg-config, make,
+            byacc, flex, libXmu-devel, libXft-devel, libXrandr-devel,
+            libXcursor-devel, libXpm-devel, libpng-devel, libjpeg-devel,
+            xbitmaps, libxcb-randr-devel, libxcb-cursor-devel,
+            libxcb-xfixes-devel, libX11-xcb-devel
+      - name: Make
+        run: |
+          export PATH="/usr/bin:$(cygpath "$SYSTEMROOT")/system32"
+          ./autogen.sh --enable-shared
+          make
+        shell: bash.exe --noprofile --norc -e -o igncr -o pipefail {0}
+
