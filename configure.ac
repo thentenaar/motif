@@ -25,7 +25,7 @@ AC_CONFIG_SRCDIR([lib/Xm/Form.c])
 AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define dist-xz])
 LT_INIT
 AM_SILENT_RULES([yes])
-AM_EXTRA_RECURSIVE_TARGETS([demos doc])
+AM_EXTRA_RECURSIVE_TARGETS([doc])
 AC_LANG([C])
 
 dnl Check for the C compiler / pkg-config
@@ -317,9 +317,15 @@ AS_IF([test "x$X11BASE" != "x"],[
 	AC_SUBST([LIBDIR], "${libdir}/X11")
 ])
 
+dnl Demos
+AC_ARG_ENABLE([demos],
+	[AS_HELP_STRING([--enable-demos], [Enable building the demos])],
+	[enable_demos=$enableval], [enable_demos=yes])
+
 AS_IF([test "x$enable_glw" == "xyes"],[
 	AC_SUBST([GLW_VERSION], [_GLW_VERSION])
-	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc demos/GLw/Makefile])
+	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc])
+	AS_IF([test "x$enable_demos" == "xyes"],[AC_CONFIG_FILES([demos/GLw/Makefile])])
 ])
 
 dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
@@ -332,7 +338,8 @@ AS_IF([test "x$host_os" == "xcygwin"],[
 AC_SUBST([NO_UNDEF], [_NO_UNDEF])
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
-AC_CONFIG_FILES([Makefile \
+AC_CONFIG_FILES([
+Makefile \
 motif.pc \
 bindings/Makefile \
 bitmaps/Makefile \
@@ -363,6 +370,14 @@ doc/man/man4/Makefile \
 doc/man/man5/Makefile \
 tools/Makefile \
 tools/wml/Makefile \
+lib/Xm/xmstring.list \
+tests/Makefile
+])
+
+dnl Demos
+AS_IF([test "x$enable_demos" == "xyes"],[
+AM_EXTRA_RECURSIVE_TARGETS([demos])
+AC_CONFIG_FILES([
 demos/Makefile \
 demos/lib/Makefile \
 demos/lib/Xmd/Makefile \
@@ -444,9 +459,8 @@ demos/doc/programGuide/ch08/Container/Makefile \
 demos/doc/programGuide/ch16/Makefile \
 demos/doc/programGuide/ch17/Makefile \
 demos/doc/programGuide/ch17/simple_drop/Makefile \
-demos/doc/programGuide/ch17/simple_drag/Makefile \
-lib/Xm/xmstring.list \
-tests/Makefile
-])
+demos/doc/programGuide/ch17/simple_drag/Makefile
+])])
+
 AC_OUTPUT
 
