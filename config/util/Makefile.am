@@ -1,4 +1,0 @@
-MAINTAINERCLEANFILES = Makefile.in
-
-AM_CPPFLAGS = $(X_CFLAGS)
-noinst_PROGRAMS = makestrs

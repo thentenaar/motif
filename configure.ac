@@ -351,7 +351,6 @@ clients/uil/XmAppl.uil \
 clients/uil/Uil.pc \
 clients/xmbind/Makefile \
 config/Makefile \
-config/util/Makefile \
 include/Makefile \
 include/Dt/Makefile \
 icons/Makefile \

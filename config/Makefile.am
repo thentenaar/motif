@@ -1,3 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS	= util
+AM_CPPFLAGS = $(X_CFLAGS)
+noinst_PROGRAMS = makestrs
