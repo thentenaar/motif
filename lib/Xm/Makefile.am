@@ -256,9 +256,6 @@ STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefs25.h XmStrDefsI.
 
 BUILT_SOURCES = $(STRING_FILES) XmStrDefs.c $(CAT_FILES)
 
-$(top_builddir)/config/util/makestrs:
-	( cd $(top_builddir)/config/util && $(MAKE) $(AM_MAKEFLAGS) makestrs )
-
 $(STRING_FILES): XmStrDefs.c
 
 XmStrDefs.c: Makefile $(XMSTRING_LIST) XmStrDefs.ht XmStrDefsI.ht XmStrDefs.ct $(top_builddir)/config/util/makestrs
