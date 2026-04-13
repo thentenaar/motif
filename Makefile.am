@@ -20,9 +20,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS	= config bindings bitmaps doc icons localized lib include tools clients tests
 
-demos:
-	@$(MAKE) -C demos
-
-clean-local:
-	@$(MAKE) -C demos clean
-
+if WITH_DEMOS
+SUBDIRS += demos
+endif
