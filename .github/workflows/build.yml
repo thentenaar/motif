@@ -122,6 +122,43 @@ jobs:
           reporter: java-junit
           max-annotations: 0
 
+  fedora-build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    container: fedora
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install dependencies
+        run: |
+          dnf update -y
+          dnf install -y @c-development libXcursor-devel libXrandr-devel     \
+                         libXft-devel libXmu-devel libXt-devel libXext-devel \
+                         libXpm-devel libpng-devel libjpeg-devel check-devel \
+                         xorg-x11-xbitmaps xorg-x11-server-Xvfb libxslt      \
+                         xorg-x11-fonts-misc glibc-gconv-extra procps-ng
+      - name: Make
+        run: |
+          ./autogen.sh --enable-tests --disable-demos
+          make
+      - name: Test
+        run: |
+          Xvfb :0 &>/dev/null &
+          DISPLAY=:0 make check
+          kill -TERM $(pidof Xvfb)
+      - name: libcheck -> JUnit XML
+        if: (!cancelled())
+        run: |
+          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
+      - name: Test Results
+        if: (!cancelled())
+        uses: dorny/test-reporter@v3
+        with:
+          name: Test Results
+          path: results.junit.xml
+          reporter: java-junit
+          max-annotations: 0
+
   mac-build:
     strategy:
       fail-fast: false
