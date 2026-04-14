@@ -242,7 +242,6 @@ AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
 AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
 AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
 AM_CONDITIONAL([WITH_GLW],     test "x$enable_glw" == "xyes")
-AM_CONDITIONAL([WITH_DEMOS],   test "x$enable_demos" == "xyes")
 
 dnl Substitutions for lib/Xm/Xm.h
 AC_SUBST([XM_MAJOR], [_XM_MAJOR])
@@ -322,6 +321,7 @@ dnl Demos
 AC_ARG_ENABLE([demos],
 	[AS_HELP_STRING([--enable-demos], [Enable building the demos])],
 	[enable_demos=$enableval], [enable_demos=yes])
+AM_CONDITIONAL([WITH_DEMOS],   test "x$enable_demos" == "xyes")
 
 AS_IF([test "x$enable_glw" == "xyes"],[
 	AC_SUBST([GLW_VERSION], [_GLW_VERSION])
