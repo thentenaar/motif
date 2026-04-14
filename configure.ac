@@ -320,13 +320,13 @@ AS_IF([test "x$X11BASE" != "x"],[
 dnl Demos
 AC_ARG_ENABLE([demos],
 	[AS_HELP_STRING([--enable-demos], [Enable building the demos])],
-	[enable_demos=$enableval], [enable_demos=yes])
-AM_CONDITIONAL([WITH_DEMOS],   test "x$enable_demos" == "xyes")
+	[enable_demos=$enableval], [enable_demos=auto])
+AM_CONDITIONAL([WITH_DEMOS], test "x$enable_demos" == "xyes")
 
 AS_IF([test "x$enable_glw" == "xyes"],[
 	AC_SUBST([GLW_VERSION], [_GLW_VERSION])
 	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc])
-	AS_IF([test "x$enable_demos" == "xyes"],[AC_CONFIG_FILES([demos/GLw/Makefile])])
+	AS_IF([test "x$enable_demos" != "xno"],[AC_CONFIG_FILES([demos/GLw/Makefile])])
 ])
 
 dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
@@ -375,7 +375,7 @@ tests/Makefile
 ])
 
 dnl Demos
-AS_IF([test "x$enable_demos" == "xyes"],[
+AS_IF([test "x$enable_demos" != "xno"],[
 AC_CONFIG_FILES([
 demos/Makefile \
 demos/lib/Makefile \

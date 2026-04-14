@@ -36,9 +36,9 @@ autoconf, automake, etc. installed):
 
 ## Building the Demos
 
-The demos can be built by running:
+The demos can be built by configuring with ``--enable-demos``, or by running:
 ```
-% make demos
+% make -C demos
 ```
 
 Note that not all of the demos are in working order, and there are a
