@@ -38,7 +38,7 @@ xmstring.list
 *.plist
 compile_commands.json
 include/config.h*
-config/util/makestrs
+config/makestrs
 clients/mwm/mwm
 clients/uil/uil
 clients/uil/UilDBDef.h
@@ -78,6 +78,7 @@ demos/lib/Exm/wml/wml.report
 demos/lib/Exm/wml/wmldbcreate
 demos/lib/Xmd/onHelp
 demos/programs/Exm/app_in_c/exm_in_c
+demos/programs/Exm/app_in_uil/exm_in_uil
 demos/programs/hellomotifi18n/helloint
 demos/programs/ButtonBox/bboxdemo
 demos/programs/ColorSel/colordemo

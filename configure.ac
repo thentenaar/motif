@@ -242,6 +242,7 @@ AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
 AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
 AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
 AM_CONDITIONAL([WITH_GLW],     test "x$enable_glw" == "xyes")
+AM_CONDITIONAL([WITH_DEMOS],   test "x$enable_demos" == "xyes")
 
 dnl Substitutions for lib/Xm/Xm.h
 AC_SUBST([XM_MAJOR], [_XM_MAJOR])
@@ -375,7 +376,6 @@ tests/Makefile
 
 dnl Demos
 AS_IF([test "x$enable_demos" == "xyes"],[
-AM_EXTRA_RECURSIVE_TARGETS([demos])
 AC_CONFIG_FILES([
 demos/Makefile \
 demos/lib/Makefile \
