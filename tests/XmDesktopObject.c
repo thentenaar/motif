@@ -1,7 +1,7 @@
 /**
  * Motif
  *
- * Copyright (c) 2025 Tim Hentenaar
+ * Copyright (c) 2025-2026 Tim Hentenaar
  *
  * These libraries and programs are free software; you can
  * redistribute them and/or modify them under the terms of the GNU
