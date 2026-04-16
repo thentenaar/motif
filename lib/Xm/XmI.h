@@ -32,6 +32,11 @@
 #include <Xm/XmP.h>
 #include "XmStrDefsI.h"
 
+/* Just in case we lack __has_builtin() */
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
