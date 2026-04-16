@@ -38,20 +38,7 @@
 #ifndef UilCmdDef_h
 #define UilCmdDef_h
 
-typedef unsigned int (*uil_message_cb_t)(const char *message_data,
-                                         int message_number,
-                                         int severity,
-                                         const char *msg_buffer,
-                                         const char *src_buffer,
-                                         const char *ptr_buffer,
-                                         const char *loc_buffer,
-                                         int message_cnt[]);
-
-typedef unsigned int (*uil_status_cb_t)(const char *status_data,
-                                        int pct_complete,
-                                        int lines_processed,
-                                        const char *current_file,
-                                        int message_cnt[]);
+#include "Uil.h"
 
 typedef struct
 {
