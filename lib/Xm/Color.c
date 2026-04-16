@@ -28,9 +28,10 @@
 
 #include <ctype.h>
 #include <stdio.h>
-#include <X11/xpm.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
+#include <X11/xpm.h>
+
 #include <Xm/ManagerP.h>
 #include <Xm/PrimitiveP.h>
 #include <Xm/XmP.h>

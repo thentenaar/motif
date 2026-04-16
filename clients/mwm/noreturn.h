@@ -23,6 +23,10 @@
 #ifndef MWM_NORETURN_H
 #define MWM_NORETURN_H
 
+#if !defined(__has_attribute)
+#define __has_attribute(x) 0
+#endif
+
 /* The many facets of noreturn... */
 #if __has_attribute(noreturn) \
     || (defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 205)) \

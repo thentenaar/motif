@@ -33,12 +33,13 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 
 #include <string.h>
 #include <ctype.h>
-#include <X11/xpm.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xatom.h>
 #include <X11/Xlocale.h>
 #include <X11/keysymdef.h>
+#include <X11/xpm.h>
+
 #include <Xm/AccTextT.h>
 #include <Xm/BaseClassP.h>
 #include <Xm/CascadeBP.h>
