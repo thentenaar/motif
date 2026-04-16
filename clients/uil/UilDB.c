@@ -59,12 +59,7 @@ static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
 
 #define X_INCLUDE_PWD_H
 #define XOS_USE_XT_LOCKING
-
-#ifdef HAVE_X11_XOS_R_H
 #include <X11/Xos_r.h>
-#else
-#include <Xm/Xmos_r.h>
-#endif
 
 #include <stdio.h>
 

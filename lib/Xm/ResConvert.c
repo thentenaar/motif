@@ -34,11 +34,7 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 
 #define X_INCLUDE_STRING_H
 #define XOS_USE_XT_LOCKING
-#if HAVE_X11_XOS_R_H
 #include <X11/Xos_r.h>
-#else
-#include <Xm/Xmos_r.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>

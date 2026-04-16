@@ -47,11 +47,7 @@
 
 #define X_INCLUDE_TIME_H
 #define XOS_USE_XT_LOCKING
-#ifdef HAVE_X11_XOS_R_H
 #include <X11/Xos_r.h>
-#else
-#include <Xm/Xmos_r.h>
-#endif
 
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
