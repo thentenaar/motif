@@ -1,31 +1,30 @@
 dnl Library version
-m4_define([_XM_MAJOR], [2])
-m4_define([_XM_MINOR], [5])
-m4_define([_XM_PATCH], [2])
+m4_define([_XM_MAJOR],   [2])
+m4_define([_XM_MINOR],   [5])
+m4_define([_XM_PATCH],   [2])
 m4_define([_XM_VERSION], [_XM_MAJOR._XM_MINOR._XM_PATCH])
 
 dnl Shared library version (libtool)
 m4_define([ABI_CURRENT],  [5])
 m4_define([ABI_REVISION], [1])
 m4_define([ABI_AGE],      [0])
-m4_define([_ABI_VERSION],  [ABI_CURRENT:ABI_REVISION:ABI_AGE])
+m4_define([_ABI_VERSION], [ABI_CURRENT:ABI_REVISION:ABI_AGE])
 
 dnl Bundled GLw
 m4_define([GLW_CURRENT],  [1])
 m4_define([GLW_REVISION], [0])
 m4_define([GLW_AGE],      [0])
-m4_define([_GLW_VERSION],  [GLW_CURRENT:GLW_REVISION:GLW_AGE])
+m4_define([_GLW_VERSION], [GLW_CURRENT:GLW_REVISION:GLW_AGE])
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.64])
 LT_PREREQ([2.4.2])
 AC_INIT([motif], [_XM_VERSION], [https://github.com/thentenaar/motif/issues], [motif], [https://github.com/thentenaar/motif])
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_SRCDIR([lib/Xm/Form.c])
 AM_INIT_AUTOMAKE([foreign subdir-objects silent-rules no-installinfo no-define dist-xz])
 LT_INIT
 AM_SILENT_RULES([yes])
-AM_EXTRA_RECURSIVE_TARGETS([doc])
 AC_LANG([C])
 
 dnl Check for the C compiler / pkg-config
@@ -34,6 +33,7 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_PROG_LIBTOOL
 AC_PATH_PROG([PKG_CONFIG], [pkg-config])
 AC_CHECK_PROGS(YACC, byacc, yacc)
 AM_PROG_LEX(noyywrap)
@@ -45,14 +45,21 @@ AC_TYPE_SIZE_T
 AC_TYPE_INTPTR_T
 AC_TYPE_UINTPTR_T
 AC_CHECK_SIZEOF([long])
-AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
 
 dnl Check for X
 PKG_INSTALLDIR
 PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
 
+dnl Check for XICProc
+AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
+AC_DEFINE_UNQUOTED(
+	[HAVE_XICPROC],
+	$(test "x$ac_cv_type_XICProc" != "xyes" ; echo $?),
+	[Non-zero if Xlib has XICProc]
+)
+
 dnl Check for particular headers / functions
-AC_CHECK_HEADERS([alloca.h iconv.h fcntl.h sys/poll.h sys/time.h X11/Xos_r.h X11/Xpoll.h])
+AC_CHECK_HEADERS([alloca.h iconv.h fcntl.h sys/poll.h sys/time.h X11/Xpoll.h])
 AC_CHECK_FUNCS([getcwd getwd iconv nanosleep putenv regcomp regex strcasecmp strdup strlcat])
 AC_SEARCH_LIBS([floor], [m])
 AC_DEFINE([HAVE_SYS_POLL_H])
