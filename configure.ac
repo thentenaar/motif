@@ -223,6 +223,8 @@ dnl Tests
 AC_ARG_ENABLE([tests],
 	[AS_HELP_STRING([--enable-tests], [Enable automated tests])],
 	[enable_tests=$enableval], [enable_tests=no])
+AM_CONDITIONAL([WITH_TESTS], test "x$enable_tests" == "xyes")
+
 AS_IF([test "x$enable_tests" == "xyes"],[
 	AC_PROG_AWK
 	AC_REQUIRE_AUX_FILE([tap-driver.sh])
