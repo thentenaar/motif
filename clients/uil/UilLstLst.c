@@ -51,6 +51,7 @@ static char rcsid[] = "$TOG: UilLstLst.c /main/20 1999/07/21 09:03:16 vipin $"
 **
 **/
 #include <stdarg.h>
+#include <time.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include "UilDefI.h"
@@ -107,7 +108,7 @@ static	     boolean		lst_v_listing_open = FALSE;
 void lst_open_listing(void)
 {
     status  open_status;
-    _Xctimeparams	ctime_buf;
+    char ctime_buf[26];
 
     /* allocate fcb */
 
@@ -135,7 +136,7 @@ void lst_open_listing(void)
     sprintf(lst_c_title1,
 	    "%s %s \t%s\t\t Page ",
 	    _host_compiler, _compiler_version,
-	    current_time(&ctime_buf));
+	    current_time(ctime_buf));
 
     /*
     **	Haven't parsed the module yet.
@@ -343,18 +344,21 @@ void lst_output_line(char *ac_line, boolean v_new_page)
 **
 **--
 **/
-char *current_time(_Xctimeparams *ctime_buf)
+char *current_time(char ctime_buf[26])
 {
-    time_t	time_location;
-    char	*ascii_time;
+	char *out;
+	time_t time_location = time(NULL);
 
-    time_location = time( 0 );
+	memset(ctime_buf, 0, 26);
+#if HAVE_CTIME_R
+	out = ctime_r(&time_location, ctime_buf);
+#else
+	if ((out = ctime(&time_location)))
+		memcpy(ctime_buf, out, 26);
+#endif
 
-    ascii_time = _XCtime( &time_location, *ctime_buf );
-
-    ascii_time[24] = 0;
-
-    return ascii_time;
+	if (!out) memcpy(ctime_buf, "(invalid time)", 15);
+	return ctime_buf;
 }
 
 /*

@@ -44,11 +44,6 @@
 **
 **/
 #include <X11/Intrinsic.h>
-
-#define X_INCLUDE_TIME_H
-#define XOS_USE_XT_LOCKING
-#include <X11/Xos_r.h>
-
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 
@@ -242,8 +237,6 @@ extern void db_read_char_table(_db_header_ptr header);
 extern void db_read_length_and_string(_db_header_ptr header);
 extern void db_read_int_and_shorts(_db_header_ptr header);
 extern void db_open_file(void);
-extern String get_root_dir_name(void);
-extern String init_wmd_path(String filename);
 
 /* uildiags.c */
 extern void diag_issue_summary(void);
@@ -285,7 +278,7 @@ extern void lst_open_listing(void);
 extern void Uil_lst_cleanup_listing(void);
 extern status create_listing_file(uil_fcb_type *az_fcb);
 extern void lst_output_line(char *ac_line, boolean v_new_page);
-extern char *current_time(_Xctimeparams *ctime_buf);
+extern char *current_time(char ctime_buf[26]);
 extern void lst_output_listing(void);
 extern void lst_output_messages(src_message_item_type *az_message_item);
 extern void lst_output_machine_code(src_source_record_type *az_src_rec);

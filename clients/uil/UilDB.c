@@ -53,15 +53,11 @@ static char rcsid[] = "$XConsortium: UilDB.c /main/11 1996/11/21 20:03:11 drk $"
  *  INCLUDE FILES
  *
  */
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <Xm/XmosI.h>
 #include "UilDefI.h"
-
-#define X_INCLUDE_PWD_H
-#define XOS_USE_XT_LOCKING
-#include <X11/Xos_r.h>
-
-#include <stdio.h>
 
 /*
  *
@@ -713,15 +709,13 @@ void db_open_file(void)
 	/*
 	 * Make sure 'S' is the last one so we can remove the suffix for the first pass.
 	 */
-	subs[0].match = 'N';
+	subs[0].match = 'P';
 	subs[0].substitution = Uil_cmd_z_command.ac_database;
 	subs[1].match = 'T';
 	subs[1].substitution = "wmd";
 	subs[2].match = 'S';
 	subs[2].substitution = ".wmd";
-
-	wmdPath = init_wmd_path(Uil_cmd_z_command.ac_database);
-
+	wmdPath = _XmOSInitPath(Uil_cmd_z_command.ac_database, (String)"WMDPATH", NULL);
 	resolvedname = 0;
 
 	/*
@@ -764,140 +758,5 @@ void db_open_file(void)
 	    }
 
 	return;
-}
-
-String get_root_dir_name(void)
-{
-	int uid;
-	_Xgetpwparams pwd_buf;
-	struct passwd *pwd_value;
-	static char *ptr = NULL;
-	char *outptr;
-
-	if (ptr == NULL)
-	{
-	if((ptr = (char *)getenv("HOME")) == NULL)
-	    {
-	    if((ptr = (char *)getenv(USER_VAR)) != NULL)
-		{
-		pwd_value = _XGetpwnam(ptr, pwd_buf);
-		}
-	    else
-		{
-		uid = getuid();
-		pwd_value = _XGetpwuid(uid, pwd_buf);
-		}
-	    if (pwd_value != NULL)
-		{
-		ptr = pwd_value->pw_dir;
-		}
-	    else
-		{
-		 ptr = "";
-		}
-	    }
-	}
-
-	outptr = XtMalloc (strlen(ptr) + 2);
-	strcpy (outptr, ptr);
-	strcat (outptr, "/");
-	return outptr;
-}
-
-/*
- * XAPPLRES_DEFAULT and UIDPATH_DEFAULT are intentionally split to support
- * SCCS. DO NOT reformat the lines else %-N-%-S could be converted by SCCS into
- * something totally bizarre causing MrmOpenHierarchy failures.
- */
-
-/* The following are usually defined in the Makefile */
-
-#ifndef LIBDIR
-#define LIBDIR "/usr/lib/X11"
-#endif
-#ifndef INCDIR
-#define INCDIR "/usr/include/X11"
-#endif
-
-static char libdir[] = LIBDIR;
-static char incdir[] = INCDIR;
-
-static char XAPPLRES_DEFAULT[] = "\
-%%N\
-%%S:\
-%s/%%T/%%N\
-%%S:\
-%s%%T/%%N\
-%%S:\
-%s%%N\
-%%S:\
-%s/%%T/%%N\
-%%S:\
-%s/%%T/%%N\
-%%S";
-
-static char WMDPATH_DEFAULT[] = "\
-%%N\
-%%S:\
-%s%%T/%%N\
-%%S:\
-%s%%N\
-%%S:\
-%s/%%L/%%T/%%N\
-%%S:\
-%s/%%T/%%N\
-%%S";
-
-static char ABSOLUTE_PATH[] = "\
-%N\
-%S";
-
-String init_wmd_path(String filename)
-{
-    String path;
-    String old_path;
-    String homedir;
-    String wmd_path;
-
-
-    if (filename[0] == '/')
-	{
-	wmd_path = XtMalloc(strlen(ABSOLUTE_PATH));
-	strcpy (wmd_path, ABSOLUTE_PATH);
-	}
-    else
-	{
-	path = (char *)getenv ("WMDPATH");
-	if (path  == NULL)
-	    {
-	    homedir = get_root_dir_name();
-	    old_path = (char *)getenv ("XAPPLRESDIR");
-	    if (old_path == NULL)
-		{
-		wmd_path = XtCalloc(1, 2*strlen(homedir) +
-				 strlen(libdir) + strlen(incdir) +
-				 strlen(WMDPATH_DEFAULT));
-		sprintf( wmd_path, WMDPATH_DEFAULT,
-			 homedir, homedir, libdir, incdir);
-		}
-	    else
-		{
-		wmd_path = XtCalloc(1, 1*strlen(old_path) + 2*strlen(homedir) +
-				 strlen(libdir) + strlen(incdir) +
-				 strlen(XAPPLRES_DEFAULT));
-		sprintf(wmd_path, XAPPLRES_DEFAULT,
-			old_path,
-			homedir, homedir, libdir, incdir);
-		}
-	    XtFree (homedir);
-	    }
-	else
-	    {
-	    wmd_path = XtMalloc(strlen(path) + 1);
-	    strcpy (wmd_path, path);
-	    free (path);
-	    }
-	}
-    return (wmd_path);
 }
 
