@@ -1616,7 +1616,7 @@ extern Boolean Urm__IsSubtreeResource  _ARGUMENTS(( IDBFile cfile ,
 						    MrmCode code ));
 
 /* mrmtime.c */
-extern void Urm__UT_Time  _ARGUMENTS(( char *time_stg ));
+extern void Urm__UT_Time  _ARGUMENTS(( char time_stg[26] ));
 
 /* mrmvm.c */
 extern String Urm__UT_AllocString  _ARGUMENTS(( String stg ));

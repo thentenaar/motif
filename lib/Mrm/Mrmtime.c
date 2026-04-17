@@ -51,12 +51,8 @@ static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk 
  *  INCLUDE FILES
  *
  */
-
-#define X_INCLUDE_TIME_H
-#define XOS_USE_XT_LOCKING
-#include <X11/Xos_r.h> /* Must precede Mrm/MrmAppl.h and Mrm/Mrm.h to avoid
-			  possible redefinitions of MIN() and MAX(). */
-
+#include <time.h>
+#include <string.h>
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
 
@@ -69,7 +65,6 @@ static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk 
  *
  */
 
-
 /*
  *++
  *
@@ -94,22 +89,19 @@ static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk 
  *--
  */
 
-void
-Urm__UT_Time (char		*time_stg)
+void Urm__UT_Time(char time_stg[26])
 {
-#if defined(__STDC__)
-  time_t	timeval;
+	char *out;
+	time_t timeval = time(NULL);
+
+	memset(time_stg, 0, 26);
+#if HAVE_CTIME_R
+	out = ctime_r(&timeval, time_stg);
 #else
-  long		timeval;
-#endif /* __STDC__ */
+	if ((out = ctime(&timeval)))
+		memcpy(time_stg, out, 26);
+#endif
 
-  _Xctimeparams ctime_buf;
-  char *result;
-
-  time (&timeval);
-  if ((result = _XCtime(&timeval, ctime_buf)) != NULL)
-    strcpy(time_stg, result);
-  else
-    *time_stg = 0;
+	if (!out) memcpy(time_stg, "(invalid time)", 15);
 }
 
