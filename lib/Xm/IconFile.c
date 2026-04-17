@@ -44,18 +44,11 @@
 
 #include <X11/Xlocale.h>
 
-#define X_INCLUDE_DIRENT_H
-#define XOS_USE_XT_LOCKING
-#include <X11/Xos_r.h> /* Must precede XmI.h to avoid possible redefinitions
-			  of MIN() and MAX(). Xos_r.h includes Xos.h */
-
 #include "XmosI.h"
-
 #include <Xm/IconFileP.h>
 #include <Xm/ColorObjP.h>
 #include "XmI.h"
 #include "HashI.h"
-
 #include "ImageCachI.h"
 
 /**************** vendor dependant defaults ********/
@@ -65,6 +58,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 
@@ -174,14 +168,13 @@ MakeCachedDirEntry(String dirName)
 	char    *p;
 	int	numFiles = 0;
 	int	nameHeapSize = 0;
-	_Xreaddirparams dirEntryBuf;
 
         /*
          * Original code was caching each struct direct in stackBuf.
          * Instead, just cache currDirect->d_name, null-terminated.
          */
         cachedDirType = DtVALID_CACHED_DIR;
-	while ((currDirect = _XReaddir(fileDesc, dirEntryBuf)) != NULL) {
+	while ((currDirect = readdir(fileDesc))) {
 	  bufLen = strlen(currDirect->d_name);
 	  if (bufLen + oldBufLen + 1 >= MAX_CACHE_DIR_SIZE) {
 	    /*
