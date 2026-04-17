@@ -55,7 +55,8 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 
 #include <stdlib.h>
 #include <unistd.h>
-#include <ctype.h>		/* for isspace() */
+#include <dirent.h>
+#include <pwd.h>
 
 #if HAVE_REGEX && !HAVE_REGCOMP
 # if defined(SVR4)
@@ -71,11 +72,6 @@ extern int regex();
 #endif
 
 #include <sys/stat.h>
-
-#define X_INCLUDE_PWD_H
-#define X_INCLUDE_DIRENT_H
-#define XOS_USE_XT_LOCKING
-#include <X11/Xos_r.h>
 
 #include "XmosI.h"
 #include "XmI.h"
@@ -116,7 +112,8 @@ externaldef(xmos) char _XmSDEFAULT_BACKGROUND[] = "#c4c4c4";
 /**************** end of vendor dependant defaults ********/
 
 /********    Static Function Declarations    ********/
-
+static struct passwd *_Xmgetpwnam(const char *name);
+static struct passwd *_Xmgetpwuid(uid_t uid);
 static String GetCurrentDir(String buf);
 static String GetQualifiedDir(String dirSpec);
 static String GetFixedMatchPattern(String pattern);
@@ -210,7 +207,6 @@ GetQualifiedDir(String dirSpec)
  ****************/
 {
   int             dirSpecLen;
-  _Xgetpwparams	  pwd_buf;
   struct passwd * pwd_value;
 
   char *          userDir;
@@ -252,7 +248,7 @@ GetQualifiedDir(String dirSpec)
 	    }
 	  *destPtr = '\0';
 
-	  pwd_value = _XGetpwnam(nameBuf, pwd_buf);
+	  pwd_value = _Xmgetpwnam(nameBuf);
 	  if (pwd_value != NULL)
 	    {
 	      userDirLen = strlen(pwd_value->pw_dir);
@@ -707,10 +703,8 @@ void
   if (dirStream || useCache)
     {
       unsigned loopCount = 0;
-      _Xreaddirparams dirEntryBuf;
 
-      if (loadCache)
-	ResetCache(qualifiedDir);
+      if (loadCache) ResetCache(qualifiedDir);
 
       /* The POSIX specification for the "readdir" routine makes
        *  it OPTIONAL to return the "." and ".." entries in a
@@ -764,7 +758,7 @@ void
 		  }
 		else
 		  {
-		    if ((dirEntry = _XReaddir(dirStream, dirEntryBuf)) == NULL)
+		    if (!(dirEntry = readdir(dirStream)))
 		      {
 			dirName = NULL;
 			break;
@@ -949,6 +943,68 @@ int _XmOSFileCompare(const void *sp1, const void *sp2)
 	return strcmp(*(const String *)sp1, *(const String *)sp2);
 }
 
+/**
+ * Use getpwnam_r() if we have it
+ */
+static struct passwd *_Xmgetpwnam(const char *name)
+{
+	struct passwd *res;
+
+#if !HAVE_GETPWNAM_R
+	_XmProcessLock();
+	res = getpwnam(name);
+	_XmProcessUnlock();
+#else
+	char *buf;
+	struct passwd *pwd;
+
+	#if defined(_SC_GETPW_R_SIZE_MAX)
+	size_t bufsz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	#else
+	size_t bufsz = 8192;
+	#endif
+
+	buf = XtMalloc(bufsz);
+	pwd = (void *)XtMalloc(sizeof *pwd);
+	(void)getpwnam_r(name, pwd, buf, bufsz, &res);
+	XtFree(buf);
+	if (!res) XtFree((XtPointer)pwd);
+#endif
+
+	return res;
+}
+
+/**
+ * Use getpwuid_r() if we have it
+ */
+static struct passwd *_Xmgetpwuid(uid_t uid)
+{
+	struct passwd *res;
+
+#if !HAVE_GETPWUID_R
+	_XmProcessLock();
+	res = getpwuid(uid);
+	_XmProcessUnlock();
+#else
+	char *buf;
+	struct passwd *pwd;
+
+	#if defined(_SC_GETPW_R_SIZE_MAX)
+	size_t bufsz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	#else
+	size_t bufsz = 8192;
+	#endif
+
+	buf = XtMalloc(bufsz);
+	pwd = (void *)XtMalloc(sizeof *pwd);
+	(void)getpwuid_r(uid, pwd, buf, bufsz, &res);
+	XtFree(buf);
+	if (!res) XtFree((XtPointer)pwd);
+#endif
+
+	return res;
+}
+
 /*************************************************************************
  *
  *   Path code, used in Mwm and Xm.
@@ -960,8 +1016,7 @@ String
 XmeGetHomeDirName(void)
 {
   uid_t uid;
-  _Xgetpwparams	pwd_buf;
-  struct passwd * pwd_value;
+  struct passwd *pwd_value;
 
   char *ptr = NULL;
   static char empty = '\0';
@@ -973,11 +1028,11 @@ XmeGetHomeDirName(void)
       if ((ptr = (char *)getenv("HOME")) == NULL)
 	{
 	  if ((ptr = (char *)getenv(USER_VAR)) != NULL)
-	    pwd_value = _XGetpwnam(ptr, pwd_buf);
+	    pwd_value = _Xmgetpwnam(ptr);
 	  else
 	    {
 	      uid = getuid();
-	      pwd_value = _XGetpwuid(uid, pwd_buf);
+	      pwd_value = _Xmgetpwuid(uid);
             }
 
 	  if (pwd_value != NULL)
