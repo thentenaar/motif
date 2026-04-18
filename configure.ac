@@ -318,7 +318,12 @@ AC_SUBST([CDE_INSTALLATION_TOP], "\${prefix}/dt")
 AC_SUBST([CDE_CONFIGURATION_TOP], "\${prefix}/etc/dt")
 
 dnl lib/Xm/Xmos.c
-AC_SUBST([DATADIR], "${datadir}")
+AS_IF([test "x$DATADIR" != "x"],[
+	AC_SUBST([DATADIR], ["${DATADIR}"])
+],[
+	AC_SUBST([DATADIR], ["${datadir}"])
+])
+
 AS_IF([test "x$X11BASE" != "x"],[
 	AC_SUBST([INCDIR], "${X11BASE}/include/X11")
 	AC_SUBST([LIBDIR], "${X11BASE}/lib/X11")
