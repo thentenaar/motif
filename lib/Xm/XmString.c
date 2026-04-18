@@ -5148,20 +5148,23 @@ static void _parse_locale(char *str, int *idx, int *len)
 
 void _XmStringSetLocaleTag(const char *lang)
 {
-	const char *str, *ct;
+	const char *str = lang, *ct;
 	int index, cindex, len;
 
 	_XmProcessLock();
 	if (locale.inited)
 		XtFree(locale.tag);
 
-	if (!(str = lang ? lang : setlocale(LC_ALL, NULL))) {
-		setlocale(LC_ALL, "");
-		if (!(str = setlocale(LC_ALL, NULL)))
-			str = "C";
+	if (!str) {
+		str = setlocale(LC_ALL, NULL);
+		if (!str || !*str || !memcmp(str, "C", 2)) {
+			if (!(str = setlocale(LC_ALL, "")))
+				str = "C";
+		}
 	}
 
-	ct  = setlocale(LC_CTYPE, NULL);
+	if (!(ct = setlocale(LC_CTYPE, NULL)) || !*ct || !memcmp(ct, "C", 2))
+		ct = setlocale(LC_CTYPE, "");
 	_parse_locale((char *)str, &index, &locale.taglen);
 	_parse_locale((char *)ct, &cindex, &len);
 
