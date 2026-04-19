@@ -39,17 +39,7 @@
 #endif
 
 #include <stdlib.h> /* Needed for MB_CUR_MAX, mbtowc, mbstowcs and mblen */
-
-/* On Sun systems, mblen is broken. It doesn't return 0 when the
-   string is empty. Here's a patch. NOTE: On Sun systems, mblen
-   is a macro wrapper around mbtowc. Hence the implementation below. */
-#if defined(sun)
-#undef  mblen
-#define mblen(ptr, size) \
-  ((ptr && *(ptr) == '\0') ? 0 : mbtowc((wchar_t *)0, (ptr), (size)))
-#endif
-
-#include <limits.h>		/* for MB_LEN_MAX et al */
+#include <limits.h> /* for MB_LEN_MAX et al */
 
 #ifndef INT_MAX
 #define INT_MAX 2147483647
