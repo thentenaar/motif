@@ -1034,14 +1034,7 @@ Boolean F_Exec (String args, ClientData *pCD, XEvent *event)
     /*
      * Fork a process to exec a shell to run the specified command:
      */
-
-#ifdef PORT_NOVFORK
-    if ((pid = fork ()) == 0)
-#else
-    if ((pid = vfork ()) == 0)
-#endif
-    {
-
+    if (!(pid = fork())) {
 #ifndef NO_SETPGRP
 #if defined(SVR4) || defined(__OSF1__) || defined(__osf__) || defined(_POSIX_JOB_CONTROL)
 	setsid();
