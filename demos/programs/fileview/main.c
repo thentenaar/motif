@@ -63,7 +63,7 @@ static Widget CreateLocaleBox(ViewPtr this, OS os, String os_name)
    int count;
    int n;
    Widget lang_frame, os_frame;
-   char s[255];
+   char s[512];
    int def_lang = 0;
    XmString msg;
 
@@ -125,7 +125,7 @@ static Widget CreateLocaleBox(ViewPtr this, OS os, String os_name)
    XtSetArg(args[n], XmNleftAttachment, XmATTACH_FORM) ; n++;
    if (os < MaxOS)
      {
-	sprintf(s, "Your Operating System is %s", os_name);
+	snprintf(s, sizeof s, "Your Operating System is %s", os_name);
 	msg = XmStringCreateLocalized(s);
 	XtSetArg(args[n], XmNlabelString, msg); n++;
 	os_frame = XmCreateLabel(pick_form, "title", args, n);
