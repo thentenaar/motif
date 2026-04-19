@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = Combo.ad
 
-bindir  = ${prefix}/share/Xm/combo2
-datadir = ${prefix}/share/Xm/combo2
+bindir  = ${prefix}/share/motif/demos/combo2
+datadir = ${prefix}/share/motif/demos/combo2
 
 data_DATA        = $(EXTRA_DIST) combo.c
 bin_PROGRAMS     = combo

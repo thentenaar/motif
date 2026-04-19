@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README i18ninput.help XmdI18nInput.ad
 
-bindir  = ${prefix}/share/Xm/i18ninput
-datadir = ${prefix}/share/Xm/i18ninput
-mandir  = ${prefix}/share/Xm/i18ninput
+bindir  = ${prefix}/share/motif/demos/i18ninput
+datadir = ${prefix}/share/motif/demos/i18ninput
+mandir  = ${prefix}/share/motif/demos/i18ninput
 
 data_DATA         = $(i18ninput_SOURCES) $(EXTRA_DIST)
 man_MANS          = i18ninput.man

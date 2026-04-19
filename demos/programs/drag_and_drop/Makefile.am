@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/drag_and_drop
-datadir = ${prefix}/share/Xm/drag_and_drop
-mandir  = ${prefix}/share/Xm/drag_and_drop
+bindir  = ${prefix}/share/motif/demos/drag_and_drop
+datadir = ${prefix}/share/motif/demos/drag_and_drop
+mandir  = ${prefix}/share/motif/demos/drag_and_drop
 
 data_DATA        = $(DNDDemo_SOURCES) DNDDemo.h simpledrop.c $(EXTRA_DIST)
 man_MANS         = DNDDemo.man simpledrop.man

@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch06/combo_box
-datadir = ${prefix}/share/Xm/ch06/combo_box
-mandir  = $(prefix)/share/Xm/ch06/combo_box
+bindir  = ${prefix}/share/motif/demos/ch06/combo_box
+datadir = ${prefix}/share/motif/demos/ch06/combo_box
+mandir  = $(prefix)/share/motif/demos/ch06/combo_box
 
 data_DATA         = $(combo_box_SOURCES) $(EXTRA_DIST)
 man_MANS          = combo_box.man

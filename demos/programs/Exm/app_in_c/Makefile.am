@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = exm_in_c.man
 
-bindir  = ${prefix}/share/Xm/Exm/app_in_c
-datadir = ${prefix}/share/Xm/Exm/app_in_c
-mandir  = ${prefix}/share/Xm/Exm/app_in_c
+bindir  = ${prefix}/share/motif/demos/Exm/app_in_c
+datadir = ${prefix}/share/motif/demos/Exm/app_in_c
+mandir  = ${prefix}/share/motif/demos/Exm/app_in_c
 
 man_MANS         = exm_in_c.man
 bin_PROGRAMS     = exm_in_c

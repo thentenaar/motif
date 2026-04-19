@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/autopopups
-datadir = ${prefix}/share/Xm/autopopups
-mandir  = ${prefix}/share/Xm/autopopups
+bindir  = ${prefix}/share/motif/demos/autopopups
+datadir = ${prefix}/share/motif/demos/autopopups
+mandir  = ${prefix}/share/motif/demos/autopopups
 
 data_DATA        = $(autopopups_SOURCES) $(EXTRA_DIST)
 man_MANS         = autopopups.man

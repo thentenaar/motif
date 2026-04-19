@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch06/spin_box
-datadir = ${prefix}/share/Xm/ch06/spin_box
-mandir  = ${prefix}/share/Xm/ch06/spin_box
+bindir  = ${prefix}/share/motif/demos/ch06/spin_box
+datadir = ${prefix}/share/motif/demos/ch06/spin_box
+mandir  = ${prefix}/share/motif/demos/ch06/spin_box
 
 data_DATA        = $(spin_box_SOURCES) $(EXTRA_DIST)
 man_MANS         = spin_box.man

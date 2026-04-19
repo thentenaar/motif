@@ -3,8 +3,8 @@ CLEANFILES           = English.uid French.uid German.uid
 EXTRA_DIST           = README English.df French.df German.df Fileview.ad \
                        English.uil French.uil German.uil
 
-bindir  = ${prefix}/share/Xm/fileview
-datadir = ${prefix}/share/Xm/fileview
+bindir  = ${prefix}/share/motif/demos/fileview
+datadir = ${prefix}/share/motif/demos/fileview
 
 noinst_HEADERS        = fileview.h file.h fileE.h main.h mainE.h text.h textE.h
 data_DATA             = $(fileview_SOURCES) $(EXTRA_DIST)

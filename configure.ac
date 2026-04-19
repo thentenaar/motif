@@ -175,7 +175,7 @@ AS_IF([test "x$with_xcursor" == "xyes"],[
 
 AC_ARG_WITH([mwmrcdir],
 	[AS_HELP_STRING([--with-mwmrcdir], [mwm resources are located in DIR])],
-	[MWMRCDIR=$withval], [MWMRCDIR="${sysconfdir}/X11"])
+	[MWMRCDIR=$withval], [MWMRCDIR="${sysconfdir}/X11/mwm"])
 AC_SUBST(MWMRCDIR)
 
 dnl lib/Xm/VirtKeys.c

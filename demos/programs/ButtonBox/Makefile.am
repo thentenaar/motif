@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/ButtonBox
-datadir = ${prefix}/share/Xm/ButtonBox
+bindir  = ${prefix}/share/motif/demos/ButtonBox
+datadir = ${prefix}/share/motif/demos/ButtonBox
 
 data_DATA        = bboxdemo.c
 bin_PROGRAMS     = bboxdemo

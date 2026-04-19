@@ -4,9 +4,9 @@ EXTRA_DIST           = README sampler2_0.help XmdSampler2_0.ad         \
 					   k7.xpm labir.xpm main.xpm pile.xpm prev.xpm     \
 					   spir.xpm stack.xpm text.xpm
 
-bindir  = ${prefix}/share/Xm/sampler2_0
-datadir = ${prefix}/share/Xm/sampler2_0
-mandir  = ${prefix}/share/Xm/sampler2_0
+bindir  = ${prefix}/share/motif/demos/sampler2_0
+datadir = ${prefix}/share/motif/demos/sampler2_0
+mandir  = ${prefix}/share/motif/demos/sampler2_0
 
 data_DATA          = $(sampler2_0_SOURCES) $(EXTRA_DIST)
 man_MANS           = sampler2_0.man

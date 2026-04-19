@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/paperplane
-datadir = ${prefix}/share/Xm/paperplane
+bindir  = ${prefix}/share/motif/demos/paperplane
+datadir = ${prefix}/share/motif/demos/paperplane
 
 data_DATA         = paperplane.c
 bin_PROGRAMS      = paperplane

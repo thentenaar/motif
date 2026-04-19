@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/wsm
-datadir = ${prefix}/share/Xm/wsm
-mandir  = ${prefix}/share/Xm/wsm
+bindir  = ${prefix}/share/motif/demos/wsm
+datadir = ${prefix}/share/motif/demos/wsm
+mandir  = ${prefix}/share/motif/demos/wsm
 
 data_DATA        = command_ui.h wsm_cb.h wsm_create.h wsmData.h wsmDebug.h \
                    wsm.h wsmSend.h wsmStruct.h wsm_ui.h xrmLib.h           \

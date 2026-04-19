@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = XmdAirport.ad README
 
-bindir  = ${prefix}/share/Xm/airport
-datadir = ${prefix}/share/Xm/airport
+bindir  = ${prefix}/share/motif/demos/airport
+datadir = ${prefix}/share/motif/demos/airport
 
 data_DATA        = $(airport_SOURCES) $(EXTRA_DIST)
 bin_PROGRAMS     = airport

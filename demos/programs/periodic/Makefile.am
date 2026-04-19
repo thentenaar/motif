@@ -2,9 +2,9 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES           = periodic.uid
 EXTRA_DIST           = README periodic.uil periodic_l.uil XmdPeriodic.ad arrow
 
-bindir  = ${prefix}/share/Xm/periodic
-datadir = ${prefix}/share/Xm/periodic
-mandir  = ${prefix}/share/Xm/periodic
+bindir  = ${prefix}/share/motif/demos/periodic
+datadir = ${prefix}/share/motif/demos/periodic
+mandir  = ${prefix}/share/motif/demos/periodic
 
 data_DATA             = $(periodic_SOURCES) $(periodic_DEPENDENCIES) $(EXTRA_DIST)
 man_MANS              = periodic.man

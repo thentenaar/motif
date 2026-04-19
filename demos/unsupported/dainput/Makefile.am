@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/dainput
-datadir = ${prefix}/share/Xm/dainput
+bindir  = ${prefix}/share/motif/demos/dainput
+datadir = ${prefix}/share/motif/demos/dainput
 
 data_DATA        = $(dainput_SOURCES)
 bin_PROGRAMS     = dainput

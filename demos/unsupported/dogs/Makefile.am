@@ -2,8 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES           = dogs.uid
 EXTRA_DIST           = README dogs.uil Dog.uil Square.uil bark.bm down.bm up.bm
 
-bindir  = ${prefix}/share/Xm/dogs
-datadir = ${prefix}/share/Xm/dogs
+bindir  = ${prefix}/share/motif/demos/dogs
+datadir = ${prefix}/share/motif/demos/dogs
 
 data_DATA         = Dog.h DogP.h Square.h SquareP.h $(dogs_SOURCES) \
                     $(dogs_DEPENDENCIES) $(EXTRA_DIST)

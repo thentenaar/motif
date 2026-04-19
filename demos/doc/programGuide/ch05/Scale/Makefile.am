@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch05/Scale
-datadir = ${prefix}/share/Xm/ch05/Scale
-mandir  = ${prefix}/share/Xm/ch05/Scale
+bindir  = ${prefix}/share/motif/demos/ch05/Scale
+datadir = ${prefix}/share/motif/demos/ch05/Scale
+mandir  = ${prefix}/share/motif/demos/ch05/Scale
 
 data_DATA        = $(tic_mark_SOURCES) $(EXTRA_DIST)
 man_MANS         = tic_mark.man

@@ -2,8 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES           = hellomotif.uid
 EXTRA_DIST           = README hellomotif.uil hellomotif.uid
 
-bindir  = ${prefix}/share/Xm/hellomotif
-datadir = ${prefix}/share/Xm/hellomotif
+bindir  = ${prefix}/share/motif/demos/hellomotif
+datadir = ${prefix}/share/motif/demos/hellomotif
 
 data_DATA               = $(hellomotif_SOURCES) $(EXTRA_DIST)
 bin_PROGRAMS            = hellomotif

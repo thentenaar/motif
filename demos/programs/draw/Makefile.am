@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README XmdDraw.ad draw.help
 
-bindir  = ${prefix}/share/Xm/draw
-datadir = ${prefix}/share/Xm/draw
-mandir  = ${prefix}/share/Xm/draw
+bindir  = ${prefix}/share/motif/demos/draw
+datadir = ${prefix}/share/motif/demos/draw
+mandir  = ${prefix}/share/motif/demos/draw
 
 data_DATA        = $(draw_SOURCES) $(EXTRA_DIST)
 man_MANS         = draw.man

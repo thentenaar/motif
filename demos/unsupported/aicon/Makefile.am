@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = aicon.help
 
-bindir  = ${prefix}/share/Xm/aicon
-datadir = ${prefix}/share/Xm/aicon
+bindir  = ${prefix}/share/motif/demos/aicon
+datadir = ${prefix}/share/motif/demos/aicon
 
 data_DATA        = aicon.c $(EXTRA_DIST)
 bin_PROGRAMS     = aicon

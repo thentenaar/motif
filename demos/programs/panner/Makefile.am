@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/panner
-datadir = ${prefix}/share/Xm/panner
-mandir  = ${prefix}/share/Xm/panner
+bindir  = ${prefix}/share/motif/demos/panner
+datadir = ${prefix}/share/motif/demos/panner
+mandir  = ${prefix}/share/motif/demos/panner
 
 data_DATA        = $(panner_SOURCES) $(EXTRA_DIST)
 man_MANS         = panner.man

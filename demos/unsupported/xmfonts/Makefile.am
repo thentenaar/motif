@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/xmfonts
-datadir = ${prefix}/share/Xm/xmfonts
+bindir  = ${prefix}/share/motif/demos/xmfonts
+datadir = ${prefix}/share/motif/demos/xmfonts
 
 data_DATA        = xmfonts.c
 bin_PROGRAMS     = xmfonts

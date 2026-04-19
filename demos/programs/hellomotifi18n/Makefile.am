@@ -3,9 +3,9 @@ CLEANFILES           = helloint.uid
 EXTRA_DIST           = README helloint.uil
 SUBDIRS              = C english french hebrew japan japanese swedish
 
-bindir  = ${prefix}/share/Xm/helloint
-datadir = ${prefix}/share/Xm/helloint
-mandir  = ${prefix}/share/Xm/helloint
+bindir  = ${prefix}/share/motif/demos/helloint
+datadir = ${prefix}/share/motif/demos/helloint
+mandir  = ${prefix}/share/motif/demos/helloint
 
 data_DATA             = $(helloint_SOURCES) $(EXTRA_DIST) helloint.uid
 man_MANS              = helloint.man

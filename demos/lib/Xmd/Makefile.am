@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = helpOn.help
 
-bindir  = ${prefix}/share/Xm/Xmd
-datadir = ${prefix}/share/Xm/Xmd
+bindir  = ${prefix}/share/motif/demos/Xmd
+datadir = ${prefix}/share/motif/demos/Xmd
 
 noinst_HEADERS     = AdjView.h Help.h HelpP.h Menus.h Print.h PrintP.h
 data_DATA          = $(EXTRA_DIST)

@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/uilsymdump
-datadir = ${prefix}/share/Xm/uilsymdump
+bindir  = ${prefix}/share/motif/demos/uilsymdump
+datadir = ${prefix}/share/motif/demos/uilsymdump
 
 data_DATA        = uilsymdump.c $(EXTRA_DIST)
 bin_PROGRAMS     = uilsymdump

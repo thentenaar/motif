@@ -2350,7 +2350,7 @@ FILE *FopenConfigFile (void)
 #endif /* PANELIST */
 
 #ifndef MWMRCDIR
-#define MWMRCDIR "/usr/lib/X11"
+#define MWMRCDIR "/etc/X11/mwm"
 #endif
     if (LANG != NULL)
     {

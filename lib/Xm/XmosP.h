@@ -143,7 +143,7 @@ extern "C" {
 
 #define XMBINDDIR "XMBINDDIR"
 #ifndef XMBINDDIR_FALLBACK
-#define XMBINDDIR_FALLBACK "/usr/lib/Xm/bindings"
+#define XMBINDDIR_FALLBACK "/usr/share/X11/bindings"
 #endif
 #define XMBINDFILE "xmbind.alias"
 #define MOTIFBIND ".motifbind"

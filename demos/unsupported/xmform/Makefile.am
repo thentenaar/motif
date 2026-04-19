@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/xmform
-datadir = ${prefix}/share/Xm/xmform
+bindir  = ${prefix}/share/motif/demos/xmform
+datadir = ${prefix}/share/motif/demos/xmform
 
 data_DATA        = xmform.c
 bin_PROGRAMS     = xmform

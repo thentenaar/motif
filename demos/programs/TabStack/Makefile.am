@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Tabstack
-datadir = ${prefix}/share/Xm/Tabstack
+bindir  = ${prefix}/share/motif/demos/Tabstack
+datadir = ${prefix}/share/motif/demos/Tabstack
 
 data_DATA        = $(tabstack_SOURCES)
 bin_PROGRAMS     = tabstack

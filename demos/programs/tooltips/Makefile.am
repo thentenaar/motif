@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/tooltips
-datadir = ${prefix}/share/Xm/tooltips
+bindir  = ${prefix}/share/motif/demos/tooltips
+datadir = ${prefix}/share/motif/demos/tooltips
 
 data_DATA        = tooltips.c
 bin_PROGRAMS     = tooltips

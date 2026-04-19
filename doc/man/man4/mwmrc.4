@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "mwmrc" "special file"
 .SH "NAME"
 \fBmwmrc\fP \(em the
@@ -53,16 +53,16 @@ Motif Window Manager Resource Description File
 .SH "DESCRIPTION"
 .PP
 The \fBmwmrc\fP file is a supplementary resource
-file that controls much of the behavior of the Motif window manager \fBmwm\fP\&. 
+file that controls much of the behavior of the Motif window manager \fBmwm\fP\&.
 It contains descriptions of resources that cannot easily be
 written using standard X Window System, Version 11 resource syntax\&. The resource
 description file contains entries that are referred to by X resources in
-defaults files (for example, \fB/usr/X11R6/lib/X11/app-defaults/Mwm\fP)
+defaults files (for example, \fB/usr/share/X11/app-defaults/Mwm\fP)
 or in the \fBRESOURCE_MANAGER\fP property on the
 root window\&. For example, the resource description file enables you to specify
 different types of window menus; however, an X resource is used to specify
 which of these window menus \fBmwm\fP should use for a particular
-window\&. 
+window\&.
 .SS "Location"
 .PP
 The window manager searches for one of the following resource description
@@ -72,8 +72,8 @@ on a per-user basis:
 .nf
 \f(CW$HOME/$LANG/\&.mwmrc
 $HOME/\&.mwmrc
-/usr/X11R6/lib/X11/$LANG/system\&.mwmrc
-/usr/X11R6/lib/X11/system\&.mwmrc\fR
+/etc/X11/mwm/$LANG/system\&.mwmrc
+/etc/X11/mwm/system\&.mwmrc\fR
 .fi
 .PP
 .PP
@@ -84,7 +84,7 @@ resource\&. The following shows how a different resource description file can
 be specified from the command line:
 .PP
 .nf
-\f(CW/usr/X11R6/bin/X11/mwm \-xrm "mwm*configFile: mymwmrc"\fR
+\f(CW/usr/bin/mwm \-xrm "mwm*configFile: mymwmrc"\fR
 .fi
 .PP
 .SS "Resource Types"
@@ -626,11 +626,11 @@ is not what you expect\&.
 .nf
 \fB$HOME/$LANG/\&.mwmrc
 $HOME/\&.mwmrc
-/usr/X11R6/lib/X11/$LANG/system\&.mwmrc
-/usr/X11R6/lib/X11/system\&.mwmrc\fP
+/etc/X11/mwm/$LANG/system\&.mwmrc
+/etc/X11/mwm/system\&.mwmrc\fP
 .fi
 .SH "RELATED INFORMATION"
 .PP
 \fBmwm\fP(1),
-\fBX\fP(1)\&. 
+\fBX\fP(1)\&.
 ...\" created by instant / docbook-to-man, Sun 22 Dec 1996, 20:36

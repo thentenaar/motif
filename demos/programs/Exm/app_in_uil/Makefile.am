@@ -2,8 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = exm_in_uil.uil
 CLEANFILES           = exm_in_uil.uid
 
-bindir  = ${prefix}/share/Xm/Exm/app_in_uil
-datadir = ${prefix}/share/Xm/Exm/app_in_uil
+bindir  = ${prefix}/share/motif/demos/Exm/app_in_uil
+datadir = ${prefix}/share/motif/demos/Exm/app_in_uil
 
 data_DATA               = exm_in_uil.c exm_in_uil.uil exm_in_uil.uid
 bin_PROGRAMS            = exm_in_uil

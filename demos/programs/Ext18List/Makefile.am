@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Ext18list
-datadir = ${prefix}/share/Xm/Ext18list
+bindir  = ${prefix}/share/motif/demos/Ext18list
+datadir = ${prefix}/share/motif/demos/Ext18list
 SUBDIRS = pixmaps
 
 data_DATA         = $(ext18list_SOURCES) extlist.h

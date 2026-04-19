@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Column
-datadir = ${prefix}/share/Xm/Column
+bindir  = ${prefix}/share/motif/demos/Column
+datadir = ${prefix}/share/motif/demos/Column
 
 data_DATA        = column.c
 bin_PROGRAMS     = column

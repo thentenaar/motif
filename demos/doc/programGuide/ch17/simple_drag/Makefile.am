@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch17/simple_drag
-datadir = ${prefix}/share/Xm/ch17/simple_drag
-mandir  = ${prefix}/share/Xm/ch17/simple_drag
+bindir  = ${prefix}/share/motif/demos/ch17/simple_drag
+datadir = ${prefix}/share/motif/demos/ch17/simple_drag
+mandir  = ${prefix}/share/motif/demos/ch17/simple_drag
 
 data_DATA         = $(simple_drag_SOURCES) $(EXTRA_DIST)
 man_MANS          = simple_drag.man

@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Tree
-datadir = ${prefix}/share/Xm/Tree
+bindir  = ${prefix}/share/motif/demos/Tree
+datadir = ${prefix}/share/motif/demos/Tree
 
 data_DATA        = $(tree_SOURCES)
 bin_PROGRAMS     = tree

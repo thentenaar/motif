@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch08/container
-datadir = ${prefix}/share/Xm/ch08/container
-mandir  = ${prefix}/share/Xm/ch08/container
+bindir  = ${prefix}/share/motif/demos/ch08/container
+datadir = ${prefix}/share/motif/demos/ch08/container
+mandir  = ${prefix}/share/motif/demos/ch08/container
 
 data_DATA         = $(container_SOURCES) $(EXTRA_DIST)
 man_MANS          = container.man

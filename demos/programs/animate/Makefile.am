@@ -5,9 +5,9 @@ EXTRA_DIST           = dog.uil plane.uil superman.uil xmanimate.uil \
                        superman4.xbm superman5.xbm superman6.xbm    \
                        XmdAnimate.ad README xmanimate.help
 
-bindir  = ${prefix}/share/Xm/animate
-datadir = ${prefix}/share/Xm/animate
-mandir  = ${prefix}/share/Xm/animate
+bindir  = ${prefix}/share/motif/demos/animate
+datadir = ${prefix}/share/motif/demos/animate
+mandir  = ${prefix}/share/motif/demos/animate
 
 data_DATA              = $(xmanimate_SOURCES) $(EXTRA_DIST)
 man_MANS               = xmanimate.man

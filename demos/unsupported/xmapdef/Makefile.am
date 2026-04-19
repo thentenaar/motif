@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/xmapdef
-datadir = ${prefix}/share/Xm/xmapdef
+bindir  = ${prefix}/share/motif/demos/xmapdef
+datadir = ${prefix}/share/motif/demos/xmapdef
 
 data_DATA        = xmapdef.c
 bin_PROGRAMS     = xmapdef

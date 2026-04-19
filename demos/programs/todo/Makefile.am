@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README XmdTodo.ad example.todo todo.help
 
-bindir  = ${prefix}/share/Xm/todo
-datadir = ${prefix}/share/Xm/todo
-mandir  = ${prefix}/share/Xm/todo
+bindir  = ${prefix}/share/motif/demos/todo
+datadir = ${prefix}/share/motif/demos/todo
+mandir  = ${prefix}/share/motif/demos/todo
 
 noinst_HEADERS   = page.h
 data_DATA        = $(todo_SOURCES) $(EXTRA_DIST)

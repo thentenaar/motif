@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README getsubres.help
 
-bindir  = ${prefix}/share/Xm/getsubres
-datadir = ${prefix}/share/Xm/getsubres
-mandir  = ${prefix}/share/Xm/getsubres
+bindir  = ${prefix}/share/motif/demos/getsubres
+datadir = ${prefix}/share/motif/demos/getsubres
+mandir  = ${prefix}/share/motif/demos/getsubres
 
 data_DATA        = $(getsubres_SOURCES) $(EXTRA_DIST)
 man_MANS         = getsubres.man

@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "VirtualBindings" "library call"
 .SH "NAME"
 \fBVirtualBindings\fP \(em Bindings for virtual mouse and key events
@@ -90,7 +90,7 @@ bindings contained in that file\&.
 If it has found no bindings, Motif next looks for the file
 \fBxmbind\&.alias\fP in the directory specified by the environment
 variable \fBXMBINDDIR\fP, if \fBXMBINDDIR\fP is set, or in the directory
-\fB/usr/lib/Xm/bindings\fP if \fBXMBINDDIR\fP is not set\&.
+\fB/usr/share/X11/bindings\fP if \fBXMBINDDIR\fP is not set\&.
 If this file exists Motif searches it for a pathname associated with the
 vendor string or with the vendor string and vendor release\&.
 If it finds such a pathname and if that file exists, Motif loads the

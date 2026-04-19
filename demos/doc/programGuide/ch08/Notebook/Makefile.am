@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch08/notebook
-datadir = ${prefix}/share/Xm/ch08/notebook
-mandir  = ${prefix}/share/Xm/ch08/notebook
+bindir  = ${prefix}/share/motif/demos/ch08/notebook
+datadir = ${prefix}/share/motif/demos/ch08/notebook
+mandir  = ${prefix}/share/motif/demos/ch08/notebook
 
 data_DATA         = $(notebook_SOURCES) $(EXTRA_DIST)
 man_MANS          = notebook.man

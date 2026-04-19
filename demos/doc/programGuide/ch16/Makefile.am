@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README
 
-bindir  = ${prefix}/share/Xm/ch16/UTMXmText
-datadir = ${prefix}/share/Xm/ch16/UTMXmText
-mandir  = ${prefix}/share/Xm/ch16/UTMXmText
+bindir  = ${prefix}/share/motif/demos/ch16/UTMXmText
+datadir = ${prefix}/share/motif/demos/ch16/UTMXmText
+mandir  = ${prefix}/share/motif/demos/ch16/UTMXmText
 
 data_DATA         = $(UTMXmText_SOURCES) $(EXTRA_DIST)
 man_MANS          = UTMXmText.man

@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Paned2
-datadir = ${prefix}/share/Xm/Paned2
+bindir  = ${prefix}/share/motif/demos/Paned2
+datadir = ${prefix}/share/motif/demos/Paned2
 
 data_DATA        = $(paned_SOURCES)
 bin_PROGRAMS     = paned

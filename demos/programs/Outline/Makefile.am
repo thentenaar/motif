@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Outline
-datadir = ${prefix}/share/Xm/Outline
+bindir  = ${prefix}/share/motif/demos/Outline
+datadir = ${prefix}/share/motif/demos/Outline
 
 data_DATA        = $(outline_SOURCES)
 bin_PROGRAMS     = outline

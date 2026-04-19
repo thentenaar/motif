@@ -45,14 +45,14 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "mwm" "user cmd"
 .SH "NAME"
 \fBmwm\fP \(em The Motif
 Window Manager
 .SH "SYNOPSIS"
 .PP
-\fBmwm\fP [\fIoptions\fP] 
+\fBmwm\fP [\fIoptions\fP]
 .SH "DESCRIPTION"
 .PP
 The \fBmwm\fP window manager provides
@@ -356,7 +356,7 @@ and \fBf\&.raise_lower\fP\&.
 .SS "Session Management"
 .PP
 The window manager is an X Session Management Protocol aware client\&. It responds to SaveYourself
-(and other associated messages) by saving the geometries of its clients to a state file\&. 
+(and other associated messages) by saving the geometries of its clients to a state file\&.
 \fBmwm\fP can then be restarted by the XSMP session manager\&.
 The default location for the state file is \fB$HOME/\&.mwmclientdb\fP\&.
 This location can be overridden with the resource \fBsessionClientDB\fP\&.
@@ -366,7 +366,7 @@ The \fBmwm\fP command is configured from its resource
 database\&. This database is built from the following sources\&. They are listed
 in order of precedence, low to high:
 .PP
-\fB/usr/X11R6/lib/X11/app-defaults/Mwm\fP
+\fB/usr/share/X11/app-defaults/Mwm\fP
 .PP
 \fB$HOME/Mwm\fP
 .PP
@@ -376,7 +376,7 @@ in order of precedence, low to high:
 .PP
 \fBmwm\fP command line options
 .PP
-The file names \fB/usr/X11R6/lib/X11/app-defaults/Mwm\fP and \fB$HOME/Mwm\fP represent customary locations for these files\&. The actual
+The file names \fB/usr/share/X11/app-defaults/Mwm\fP and \fB$HOME/Mwm\fP represent customary locations for these files\&. The actual
 location of the system-wide class resource file may depend on the \fBXFILESEARCHPATH\fP environment variable and the
 current language environment\&. The actual location of the user-specific class
 resource file may depend on the \fBXUSERFILESEARCHPATH\fP and \fBXAPPLRESDIR\fP
@@ -595,7 +595,7 @@ lw(1.528376i) lw(1.592955i) lw(1.054795i) lw(1.323875i).
 NameClassValue TypeDefault
 autoKeyFocusAutoKeyFocusT/FT
 autoRaiseDelayAutoRaiseDelaymillisec500
-bitmap-Bitmap-directory/usr/X11R6/include-
+bitmap-Bitmap-directory/usr/include-
 DirectoryDirectory/X11/bitmaps
 clientAutoPlaceClientAutoPlaceT/FT
 colormapFocus-ColormapFocus-stringkeyboard
@@ -650,7 +650,7 @@ the keyboard focus\&. The default value of this resource is 500 (ms)\&.
 This resource identifies a directory to be searched for bitmaps referenced
 by \fBmwm\fP resources\&. This directory is searched if a bitmap
 is specified without an absolute pathname\&. The default value for this resource
-is \fB/usr/X11R6/include/X11/bitmaps\fP\&. The directory \fB/usr/X11R6/include/X11/bitmaps\fP
+is \fB/usr/include/X11/bitmaps\fP\&. The directory \fB/usr/include/X11/bitmaps\fP
 represents the customary locations for this directory\&. The actual
 location of this directory may vary on some systems\&. If the bitmap is not
 found in the specified directory, \fBXBMLANGPATH\fP is searched\&.
@@ -1344,11 +1344,11 @@ the shell to use when executing commands via the \fBf\&.exec\fP
 function\&.
 .SS "Files"
 .PP
-\fB/usr/X11R6/lib/X11/$LANG/system\&.mwmrc\fP
+\fB/etc/X11/mwm/$LANG/system\&.mwmrc\fP
 .PP
-\fB/usr/X11R6/lib/X11/system\&.mwmrc\fP
+\fB/etc/X11/mwm/system\&.mwmrc\fP
 .PP
-\fB/usr/X11R6/lib/X11/app-defaults/Mwm\fP
+\fB/usr/share/X11/app-defaults/Mwm\fP
 .PP
 \fB$HOME/Mwm\fP
 .PP

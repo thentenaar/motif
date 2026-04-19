@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/fontsel
-datadir = ${prefix}/share/Xm/fontsel
+bindir  = ${prefix}/share/motif/demos/fontsel
+datadir = ${prefix}/share/motif/demos/fontsel
 
 data_DATA        = $(ext18list_SOURCES) fontsel.h
 noinst_HEADERS   = fontsel.h

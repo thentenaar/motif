@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = small.bm
 
-bindir  = ${prefix}/share/Xm/Icon
-datadir = ${prefix}/share/Xm/Icon
+bindir  = ${prefix}/share/motif/demos/Icon
+datadir = ${prefix}/share/motif/demos/Icon
 
 data_DATA              = $(iconbuttondemo_SOURCES) small.bm
 bin_PROGRAMS           = iconbuttondemo

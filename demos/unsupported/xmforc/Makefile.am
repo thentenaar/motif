@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/xmforc
-datadir = ${prefix}/share/Xm/xmforc
+bindir  = ${prefix}/share/motif/demos/xmforc
+datadir = ${prefix}/share/motif/demos/xmforc
 
 data_DATA        = xmforc.c
 bin_PROGRAMS     = xmforc

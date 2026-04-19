@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README XmdSetDate.ad
 
-bindir  = ${prefix}/share/Xm/setDate
-datadir = ${prefix}/share/Xm/setDate
-mandir  = ${prefix}/share/Xm/setDate
+bindir  = ${prefix}/share/motif/demos/setDate
+datadir = ${prefix}/share/motif/demos/setDate
+mandir  = ${prefix}/share/motif/demos/setDate
 
 data_DATA        = $(setDate_SOURCES) $(EXTRA_DIST)
 man_MANS         = setDate.man

@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bindir  = ${prefix}/share/Xm/Color
-datadir = ${prefix}/share/Xm/Color
+bindir  = ${prefix}/share/motif/demos/Color
+datadir = ${prefix}/share/motif/demos/Color
 
 data_DATA         = $(colordemo_SOURCES)
 bin_PROGRAMS      = colordemo

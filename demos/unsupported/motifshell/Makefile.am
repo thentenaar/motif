@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST           = README help membership motif principles research welcome
 
-bindir  = ${prefix}/share/Xm/motifshell
-datadir = ${prefix}/share/Xm/motifshell
+bindir  = ${prefix}/share/motif/demos/motifshell
+datadir = ${prefix}/share/motif/demos/motifshell
 
 data_DATA        = motifshell.c $(EXTRA_DIST)
 bin_PROGRAMS     = motifshell
