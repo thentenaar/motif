@@ -57,7 +57,7 @@ static char rcsid[] = "$TOG: motifshell.c /main/7 1997/03/31 13:41:20 dbl $"
 /*  Standard C headers  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 #if HAVE_STDINT_H
 #include <stdint.h>

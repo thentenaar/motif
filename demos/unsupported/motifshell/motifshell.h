@@ -47,11 +47,6 @@
 *                                                  *
 ****************************************************/
 
-
-/*  Standard C headers  */
-#include <stdio.h>
-#include <sys/signal.h>
-
 /*  X headers  */
 #include <X11/IntrinsicP.h>
 /*#include <X11/Shell.h>
