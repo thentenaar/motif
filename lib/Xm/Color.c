@@ -26,8 +26,8 @@
 #include <config.h>
 #endif
 
-#include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/xpm.h>
@@ -35,7 +35,6 @@
 #include <Xm/ManagerP.h>
 #include <Xm/PrimitiveP.h>
 #include <Xm/XmP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "ColorI.h"
 #include "ImageCachI.h"
 #include "MessagesI.h"

@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <Xm/XmosP.h>
 #include "XmI.h"
 #include "XmStringI.h"
 
@@ -169,7 +168,7 @@ GetTextSegment(Display *display, /* unused */
 	      /* The text should be already be valid locale text */
 	      char *tmp = XtMalloc(char_count + sizeof(wchar_t));
 	      memcpy(tmp, text, char_count);
-	      bzero(tmp + char_count, sizeof(wchar_t));
+	      memset(tmp + char_count, 0, sizeof(wchar_t));
 
 	      *buffer = tmp;
 	    }
@@ -193,7 +192,7 @@ GetTextSegment(Display *display, /* unused */
 		     already be valid locale text. */
 		  char *tmp = XtMalloc(char_count + sizeof(wchar_t));
 		  memcpy(tmp, text, char_count);
-		  bzero(tmp + char_count, sizeof(wchar_t));
+		  memset(tmp + char_count, 0, sizeof(wchar_t));
 
 		  *buffer = tmp;
 		}
@@ -203,7 +202,7 @@ GetTextSegment(Display *display, /* unused */
 		  /* The text is valid STRING text */
 		  char *tmp = XtMalloc(char_count + sizeof(wchar_t));
 		  memcpy(tmp, text, char_count);
-		  bzero(tmp + char_count, sizeof(wchar_t));
+		  memset(tmp + char_count, 0, sizeof(wchar_t));
 
 		  *buffer = tmp;
 		}

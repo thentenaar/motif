@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * HISTORY
 */
@@ -28,6 +29,7 @@
 #ifndef _XmStringI_h
 #define _XmStringI_h
 
+#include <string.h>
 #include <Xm/XmP.h>
 
 #ifdef __cplusplus
@@ -488,7 +490,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 {									   \
   switch (type) { 							   \
   case XmSTRING_OPTIMIZED : 						   \
-    bzero((char*)str, sizeof(_XmStringOptRec));				   \
+    memset(str, 0, sizeof(_XmStringOptRec));				   \
     _XmStrType(str) = type; 						   \
     _XmStrTextType(str) = XmNO_TEXT;                                       \
     _XmStrDirection(str) = XmSTRING_DIRECTION_UNSET;			   \
@@ -497,7 +499,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
     _XmStrRefCountSet(str, 1);			 	 	 	   \
     break; 								   \
   case XmSTRING_MULTIPLE_ENTRY : 					   \
-    bzero((char*)str, sizeof(_XmStringMultiRec));			   \
+    memset(str, 0, sizeof(_XmStringMultiRec));			   \
     _XmStrType(str) = type; 						   \
     _XmStrRefCountSet(str, 1);			 	 	 	   \
     break; 								   \
@@ -520,7 +522,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
     (str) = (_XmString)							   \
       _XmStrMalloc(sizeof(_XmStringOptRec) +                               \
 		   (text_len ? (text_len - TEXT_BYTES_IN_STRUCT) : 0));    \
-    bzero((char*)str, sizeof(_XmStringOptRec)); 			   \
+    memset(str, 0, sizeof(_XmStringOptRec)); 			   \
     _XmStrType(str) = type; 						   \
     _XmStrTextType(str) = XmNO_TEXT;                                       \
     _XmStrDirection(str) = XmSTRING_DIRECTION_UNSET;			   \
@@ -531,7 +533,7 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
     break; 								   \
   case XmSTRING_MULTIPLE_ENTRY : 					   \
     (str) = (_XmString)_XmStrMalloc(sizeof(_XmStringMultiRec));		   \
-    bzero((char*)str, sizeof(_XmStringMultiRec));			   \
+    memset(str, 0, sizeof(_XmStringMultiRec));			   \
     _XmStrType(str) = type; 						   \
     _XmStrRefCountSet(str, 1);			 	 	 	   \
     break; 								   \

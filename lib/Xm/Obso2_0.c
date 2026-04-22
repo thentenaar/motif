@@ -26,8 +26,9 @@
 #include <config.h>
 #endif
 
-#include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <unistd.h>
 
 #include <X11/Intrinsic.h>
@@ -56,7 +57,6 @@
 #include <Xm/TransltnsP.h>
 #include <Xm/VendorSEP.h>
 #include <Xm/XmP.h>
-#include <Xm/XmosP.h>
 #include "BaseClassI.h"
 #include "BulletinBI.h"
 #include "ColorI.h"
@@ -496,7 +496,7 @@ _XmGetDefaultThresholdsForScreen( Screen *screen )
   * that call this routine don't have a widget, we need this hack
   * to create a dummy widget.
   */
-  bzero((void*) &widget, sizeof(widget) );
+  memset(&widget, 0, sizeof widget);
   widget.core.self = &widget;
   widget.core.widget_class = coreWidgetClass;
   widget.core.screen = screen;

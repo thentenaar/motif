@@ -34,12 +34,12 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 
 #include <Xm/Cursor.h>
 #include <Xm/SpecRenderT.h>
 #include <Xm/TraitP.h>
-#include <Xm/XmosP.h>
 #include "MessagesI.h"
 #include "RepTypeI.h"
 #include "ResConverI.h"
@@ -2540,7 +2540,7 @@ GetNextTab(char **s,
   char 	sign[3];
   char	*tmp;
 
-  bzero(sign, sizeof(sign));
+  memset(sign, 0, sizeof sign);
   unitType[0] = '\0';
 
   if (sscanf(*s, " %2[+]", sign) == 1)

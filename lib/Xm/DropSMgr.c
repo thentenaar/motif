@@ -31,7 +31,6 @@ static char rcsid[] = "$TOG: DropSMgr.c /main/21 1999/08/11 14:44:57 vipin $"
 #include <config.h>
 #endif
 
-
 /*****************************************************************************
  * THE DROPSITE DATABASE
  *
@@ -77,12 +76,13 @@ static char rcsid[] = "$TOG: DropSMgr.c /main/21 1999/08/11 14:44:57 vipin $"
  * hierarchy.
  *****************************************************************************/
 
+#include <string.h>
+
 #include <Xm/GadgetP.h>
 #include <Xm/PrimitiveP.h>
 #include <Xm/ManagerP.h>
 #include <Xm/DragC.h>
 #include <Xm/DropTrans.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "XmI.h"
 #include "DisplayI.h"
 #include "DragBSI.h"
@@ -2310,7 +2310,7 @@ PutDSToStream(
 	 * that the widget does not define resources all of the required
 	 * animation resources.
 	 */
-	bzero(((void *) &iccInfo), sizeof(iccInfo));
+	memset(&iccInfo, 0, sizeof iccInfo);
 
 	if (last)
 		tType |= XmDSM_T_CLOSE;
@@ -3182,7 +3182,7 @@ CreateInfo(
 	size_t size;
 
 	/* zero out the working info struct */
-	bzero((void *)(&fullInfoRec), sizeof(fullInfoRec));
+	memset(&fullInfoRec, 0, sizeof fullInfoRec);
 
 	/* Load that puppy */
 	SetDSLeaf(&fullInfoRec, True);
@@ -3346,7 +3346,7 @@ int index;
 	/*
 	 * Clear the full info back to the default (kind of) state.
 	 */
-	bzero((void *)(full_info), sizeof(XmDSFullInfoRec));
+	memset(full_info, 0, sizeof(XmDSFullInfoRec));
 	full_info->animation_pixmap = XmUNSPECIFIED_PIXMAP;
 	full_info->animation_mask = XmUNSPECIFIED_PIXMAP;
 

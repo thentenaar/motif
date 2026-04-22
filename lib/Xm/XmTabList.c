@@ -27,7 +27,6 @@
 #include <config.h>
 #endif
 
-
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: XmTabList.c /main/9 1999/04/27 17:49:59 samborn $"
@@ -36,9 +35,7 @@ static char rcsid[] = "$TOG: XmTabList.c /main/9 1999/04/27 17:49:59 samborn $"
 
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
-#include <Xm/XmosP.h>		/* For ALLOCATE/DEALLOCATE_LOCAL */
 #include "MessagesI.h"
 #include "ResIndI.h"
 #include "XmI.h"
@@ -209,7 +206,7 @@ _XmCreateTabList(Widget parent,
   if (_XmRendTabs(rend) == NULL)
     {
       tl = (XmTabList)XtMalloc(sizeof(_XmTabListRec));
-      bzero((char *)tl, sizeof(_XmTabListRec));
+      memset(tl, 0, sizeof(_XmTabListRec));
       _XmRendTabs(rend) = tl;
     }
 

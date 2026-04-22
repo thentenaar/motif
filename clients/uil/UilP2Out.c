@@ -31,6 +31,8 @@ static char rcsid[] = "$TOG: UilP2Out.c /main/15 1997/03/12 15:17:24 dbl $"
 #include <config.h>
 #endif
 
+#include <string.h>
+
 /*
 **++
 **  FACILITY:
@@ -3657,7 +3659,7 @@ status	urm_status;
     arg_buffer = (char *) UrmRCBuffer( out_az_context );
 
     extern_arg_compr = (UidCompressionTable *)arg_buffer;
-    bzero (arg_buffer, arg_value_size);
+    memset(arg_buffer, 0, arg_value_size);
 
     /*
     ** Now fill in the actual value of the external compresion code
@@ -3793,7 +3795,7 @@ status	urm_status;
     class_buffer = (char *) UrmRCBuffer( out_az_context );
 
     extern_class_compr = (UidCompressionTable *)class_buffer;
-    bzero (class_buffer, class_value_size);
+    memset(class_buffer, 0, class_value_size);
 
     /*
     ** Now fill in the actual value of the external compresion code

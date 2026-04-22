@@ -34,6 +34,8 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 /* Make sure all wm properties can make it out of the resource manager */
 
 #include <stdio.h>
+#include <string.h>
+
 #include <Xm/AccColorT.h>
 #include <Xm/DisplayP.h>
 #include <Xm/LayoutT.h>
@@ -45,7 +47,6 @@ static char rcsid[] = "$TOG: VendorS.c /main/21 1999/08/09 10:49:41 mgreess $"
 #include <Xm/UnitTypeT.h>
 #include <Xm/VendorSEP.h>
 #include <Xm/VendorSP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include <Xm/ToolTipCT.h>
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #include <Xm/GrabShell.h>
@@ -1810,7 +1811,7 @@ MotifWarningHandler (String name,
      char *par[10];
      if (i > 10) i = 10;
      memcpy((char*)par, (char*)params, i * sizeof(String));
-     bzero((char *)&par[i], (10-i) * sizeof(String));
+     memset(&par[i], 0, (10 - i) * sizeof(String));
      (void) sprintf(&buf[strlen(buf)], buf2, par[0], par[1], par[2], par[3],
 		    par[4], par[5], par[6], par[7], par[8], par[9]);
    } else

@@ -34,7 +34,8 @@ static char rcsid[] = "$XConsortium: XmStringObso.c /main/6 1995/09/19 23:13:52 
 #endif
 #endif
 
-#include <Xm/XmosP.h>
+#include <string.h>
+
 #include "XmStringI.h"
 #include "XmI.h"
 #include "XmRenderTI.h"
@@ -648,8 +649,7 @@ _XmStringGetSegment(_XmStringContext   context,
 	{
 	  char *tmp = XtMalloc(*char_count + sizeof(wchar_t));
 	  memcpy(tmp, *text, *char_count);
-	  bzero(tmp + *char_count, sizeof(wchar_t));
-
+	  memset(tmp + *char_count, 0, sizeof(wchar_t));
 	  *text = (XtPointer) tmp;
 	}
     }

@@ -33,12 +33,13 @@ static char rcsid[] = "$TOG: XmIm.c /main/28 1997/10/13 14:57:31 cshi $"
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DrawP.h>
 #include <Xm/PrimitiveP.h>
 #include <Xm/VendorSEP.h>
 #include <Xm/VendorSP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "BaseClassI.h"
 #include "MessagesI.h"
 #include "XmI.h"
@@ -997,7 +998,7 @@ recreate_xic_info(XIC		  xic,
 
   /* This XIC must have been created by the application directly. */
   xic_info = XtNew(XmImXICRec);
-  bzero((char*) xic_info, sizeof(XmImXICRec));
+  memset(xic_info, 0, sizeof(XmImXICRec));
   (void) XGetICValues(xic, XNInputStyle, &xic_info->input_style, NULL);
   xic_info->next = im_info->iclist;
   im_info->iclist = xic_info;
@@ -1086,11 +1087,11 @@ create_xic_info(Widget		shell,
 
   /* Create the XIC info record. */
   xic_info = XtNew(XmImXICRec);
-  bzero((char*) xic_info, sizeof(XmImXICRec));
+  memset(xic_info, 0, sizeof(XmImXICRec));
   xic_info->input_style = style;
   xic_info->anonymous = True;
   xic_info->preedit_buffer = XtNew(PreeditBufferRec);
-  bzero((char *) xic_info->preedit_buffer, sizeof(PreeditBufferRec));
+  memset(xic_info->preedit_buffer, 0, sizeof(PreeditBufferRec));
 
   xic_info->next = im_info->iclist;
   im_info->iclist = xic_info;
@@ -1167,9 +1168,9 @@ set_values(Widget w,
       icp->focus_window && icp->focus_window != XtWindow(w))
     return;
 
-  bzero((char*) &status_vlist, sizeof(VaArgListRec));
-  bzero((char*) &preedit_vlist, sizeof(VaArgListRec));
-  bzero((char*) &xic_vlist, sizeof(VaArgListRec));
+  memset(&status_vlist, 0, sizeof(VaArgListRec));
+  memset(&preedit_vlist, 0, sizeof(VaArgListRec));
+  memset(&xic_vlist, 0, sizeof(VaArgListRec));
   for (i = num_args; i > 0; i--, argp++) {
     name = XrmStringToName(argp->name);
     if (name == area_name && !(icp->input_style & XIMPreeditPosition))
@@ -1453,7 +1454,7 @@ ImPreeditDoneCallback(XIC xic,
     XtFree((char *)icp->preedit_buffer->text);
   if (icp->preedit_buffer->feedback)
     XtFree((char *)icp->preedit_buffer->feedback);
-  bzero((char *)icp->preedit_buffer, sizeof(PreeditBufferRec));
+  memset(icp->preedit_buffer, 0, sizeof(PreeditBufferRec));
 }
 
 static void
@@ -1550,11 +1551,8 @@ ImPreeditDrawCallback(XIC xic,
 		text->length * sizeof(XIMFeedback));
 
       pb->length = pb->length + text->length - data->chg_length;
-      bzero((char *)pb->text + pb->length * sizeof(wchar_t),
-	    sizeof(wchar_t));
-      bzero((char *)pb->feedback + pb->length * sizeof(XIMFeedback),
-	    sizeof(XIMFeedback));
-
+      memset(pb->text + pb->length * sizeof(wchar_t), 0, sizeof(wchar_t));
+      memset(pb->feedback + pb->length * sizeof(XIMFeedback), 0, sizeof(XIMFeedback));
       XtFree((char *) wchar);
     }
   }
@@ -1570,10 +1568,10 @@ ImPreeditDrawCallback(XIC xic,
 	    ml * sizeof(XIMFeedback));
 
     pb->length = pb->length - data->chg_length;
-    bzero((char *)pb->text + pb->length * sizeof(wchar_t),
-	  data->chg_length * sizeof(wchar_t));
-    bzero((char *)pb->feedback + pb->length * sizeof(XIMFeedback),
-	  data->chg_length * sizeof(XIMFeedback));
+    memset(pb->text + pb->length * sizeof(wchar_t), 0,
+           data->chg_length * sizeof(wchar_t));
+    memset(pb->feedback + pb->length * sizeof(XIMFeedback), 0,
+           data->chg_length * sizeof(XIMFeedback));
   }
 
   proc = get_real_callback((Widget)client_data, PREEDIT_DRAW, &real);
@@ -2176,7 +2174,7 @@ get_xim_info(Widget  widget)
 
   /* Create a record so that we only try XOpenIM() once. */
   xim_info = XtNew(XmImDisplayRec);
-  bzero((char*) xim_info, sizeof(XmImDisplayRec));
+  memset(xim_info, 0, sizeof(XmImDisplayRec));
   xmDisplay->display.xmim_info = (XtPointer)xim_info;
 
   /* Setup any specified locale modifiers. */
@@ -2267,7 +2265,7 @@ get_im_info_ptr(Widget  w,
   if ((ve->vendor.im_info == NULL) && create)
     {
       im_info = XtNew(XmImShellRec);
-      bzero((char*) im_info, sizeof(XmImShellRec));
+      memset(im_info, 0, sizeof(XmImShellRec));
       ve->vendor.im_info = (XtPointer)im_info;
 
       xim_info = get_xim_info(p);

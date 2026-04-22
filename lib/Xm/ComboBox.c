@@ -27,9 +27,9 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <Xm/XmP.h>
-#include <Xm/XmosP.h>		/* for bzero et al */
 #include <X11/Shell.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>

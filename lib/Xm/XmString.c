@@ -37,7 +37,6 @@ static char rcsid[] = "$TOG: XmString.c /main/34 1998/04/16 14:35:32 mgreess $"
 #include <string.h>
 #include <stdarg.h>
 #include <limits.h>		/* for MB_LEN_MAX */
-#include <ctype.h>
 #include <errno.h>
 
 #if HAVE_ICONV_H
@@ -54,11 +53,9 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 
 #include <Xm/Display.h>		/* for XmGetXmDisplay */
 #include <Xm/DisplayP.h>	/* for noFontCallback list */
-#include <Xm/XmosP.h>
 #include "MessagesI.h"
 #include "ResIndI.h"
 #include "XmI.h"
-#include "XmosI.h"
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 #include "XmTabListI.h"
@@ -2445,7 +2442,7 @@ XmStringExtent(
       XmRendition	rend;
       _XmStringArraySegRec array_seg;
 
-      bzero((char*) &scratch, sizeof(_XmRenditionRec));
+      memset(&scratch, 0, sizeof scratch);
       tmp = &scratch;
       rend = &tmp;
 
@@ -4047,10 +4044,10 @@ _render(Display *d,
   if (!string) return;
 
   tmp1 = &scratch1;
-  bzero((char *)tmp1, sizeof(_XmRenditionRec));
+  memset(tmp1, 0, sizeof(_XmRenditionRec));
   rend1 = &tmp1;
   tmp2 = &scratch2;
-  bzero((char *)tmp2, sizeof(_XmRenditionRec));
+  memset(tmp2, 0, sizeof(_XmRenditionRec));
   rend2 = &tmp2;
 
   _XmRendDisplay(rend1) = _XmRendDisplay(rend2) = d;
@@ -5424,7 +5421,7 @@ _XmStringGetBaselines(XmRenderTable rendertable,
       *baselines = (Dimension*) XtMalloc(*line_count * sizeof(Dimension));
 
       /* Initialize the scratch rendition for tabs. */
-      bzero((char*) &scratch, sizeof(_XmRenditionRec));
+      memset(&scratch, 0, sizeof scratch);
       _XmRendDisplay(rend) =
 	((_XmRTDisplay(rendertable) == NULL) ?
 	 _XmGetDefaultDisplay() : _XmRTDisplay(rendertable));

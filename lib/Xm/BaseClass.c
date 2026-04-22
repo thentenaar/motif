@@ -36,7 +36,6 @@ static char rcsid[] = "$TOG: BaseClass.c /main/20 1997/03/31 13:14:31 dbl $"
 #include <Xm/ExtObjectP.h>
 #include <Xm/Screen.h>
 #include <Xm/VendorSEP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "BaseClassI.h"
 #include "CallbackI.h"
 #include "DropSMgrI.h"

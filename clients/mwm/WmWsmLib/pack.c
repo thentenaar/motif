@@ -1,5 +1,5 @@
 /* $XConsortium: pack.c /main/5 1995/07/15 20:38:40 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,16 +20,13 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 /*
  * HISTORY
  */
+#include <string.h>
 
 #include "wsm_proto.h"
-
-/* this will redifine bzero to memset if needed. */
-#include <Xm/XmosP.h>
 
 #define COUNT_SIZE (sizeof(CARD16))
 #define BOOL_SIZE  1		/* at least 1 byte for a boolean. */
@@ -964,10 +961,10 @@ PackWinData(Display *dpy, int screen_num, MessageData data,
     WSMConfigFormatData *conf_fmt = _WSMGetConfigFormat(dpy, screen_num, fmt);
     MessageData mask_pos = data;
     WSMAttribute *attr;
-    register int i, size = (conf_fmt->num_attrs / 8) + 1;
+    int i, size = (conf_fmt->num_attrs / 8) + 1;
 
     data = (MessageData) ((char *)data + size);
-    bzero((char *) mask_pos, size);	/* Set all bits to zero initially*/
+    memset(mask_pos, 0, size);
 
     attr = conf_fmt->attr_list;
     for (i = 0; i < conf_fmt->num_attrs ; i++, attr++) {

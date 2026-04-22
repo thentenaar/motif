@@ -34,7 +34,6 @@ static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <math.h>
 
 #ifdef __cplusplus
 extern "C" { /* some 'locale.h' do not have prototypes (sun) */
@@ -44,7 +43,6 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
-#include <Xm/XmosP.h>		/* For ALLOCATE/DEALLOCATE_LOCAL */
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xresource.h>
@@ -417,7 +415,7 @@ GetResources(XmRendition rend,
   /* Initialize found */
   if (found == NULL)
     found = (Boolean *)XtMalloc(_XmNumRenditionResources * sizeof(Boolean));
-  bzero(found, _XmNumRenditionResources * sizeof(Boolean));
+  memset(found, 0, _XmNumRenditionResources * sizeof(Boolean));
 
   /* Compile names and classes. */
   if (wid != NULL)
@@ -570,7 +568,7 @@ GetResources(XmRendition rend,
 		memcpy(((char *)GetPtr(rend) + res->xrm_offset),
 		       value.addr, res->xrm_size);
 	      else
-		bzero(((char *)GetPtr(rend) + res->xrm_offset), res->xrm_size);
+		memset(GetPtr(rend) + res->xrm_offset, 0, res->xrm_size);
 	    }
 
 	}
@@ -1135,8 +1133,7 @@ CloneRendition(XmRendition rend)
 
   if (rend == NULL) return(NULL);
 
-  copy = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
-  bzero((char*)copy, sizeof(_XmRenditionRec));
+  copy = (_XmRendition)XtCalloc(1, sizeof(_XmRenditionRec));
   copy_handle = GetHandle(_XmRendition);
   SetPtr(copy_handle, copy);
 
@@ -1286,9 +1283,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
     }
   else
     {
-      matches =
-	(Boolean *)ALLOCATE_LOCAL(rendition_count * sizeof(Boolean));
-      bzero(matches, rendition_count * sizeof(Boolean));
+      matches = (Boolean *)XtCalloc(rendition_count, sizeof *matches);
 
       /* May have to copy table if shared. */
       if (_XmRTRefcount(oldtable) > 1)
@@ -1411,8 +1406,7 @@ XmRenderTableAddRenditions(XmRenderTable oldtable,
 	  FreeHandle(oldtable);
 	}
 
-      DEALLOCATE_LOCAL((char *)matches);
-
+      XtFree((XtPointer)matches);
       oldtable = newtable;
     }
 
@@ -2182,8 +2176,7 @@ _XmRenditionCreate(Display *display,
  }
 
   /* Allocate rendition. */
-  rend_int = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
-  memset(rend_int, 0, sizeof(_XmRenditionRec));
+  rend_int = (_XmRendition)XtCalloc(1, sizeof(_XmRenditionRec));
   rend = GetHandle(_XmRendition);
   SetPtr(rend, rend_int);
 

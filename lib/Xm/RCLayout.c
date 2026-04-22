@@ -31,9 +31,8 @@ static char *rcsid = "$XConsortium: RCLayout.c /main/6 1995/10/25 20:14:15 cde-s
 #endif
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <string.h>
+
 #include <Xm/CascadeBGP.h>
 #include <Xm/CascadeBP.h>
 #include <Xm/GadgetP.h>
@@ -43,7 +42,6 @@ static char *rcsid = "$XConsortium: RCLayout.c /main/6 1995/10/25 20:14:15 cde-s
 #include <Xm/RowColumnP.h>
 #include <Xm/TearOffBP.h>
 #include <Xm/TearOffP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "LabelGI.h"
 #include "GeoUtilsI.h"
 #include "RCLayoutI.h"
@@ -1825,10 +1823,9 @@ _XmRC_SetOrGetTextMargins(
 {
   WidgetClass wc = XtClass(wid);
 
-  if (op == XmBASELINE_GET) {
-    /* in case the class does not have this procedure */
-    bzero((void *) textMargins, sizeof(XmBaselineMargins));
-  }
+  /* in case the class does not have this procedure */
+  if (op == XmBASELINE_GET)
+    memset(textMargins, 0, sizeof *textMargins);
 
   textMargins->get_or_set = op;
 

@@ -28,6 +28,7 @@ from The Open Group.
 #ifndef _XPOLL_H_
 #define _XPOLL_H_
 
+#include <string.h>
 #include <X11/Xos.h>
 
 #ifndef WIN32
@@ -109,7 +110,7 @@ typedef struct fd_set {
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & ((fd_mask)1 << ((n) % NFDBITS)))
 #endif
 #ifndef FD_ZERO
-#define FD_ZERO(p)      bzero((char *)(p), sizeof(*(p)))
+#define FD_ZERO(p)      memset((p), 0, sizeof(*(p)))
 #endif
 
 /*

@@ -31,7 +31,8 @@ static char rcsid[] = "$XConsortium: Protocols.c /main/15 1996/10/17 12:00:24 cd
 #include <config.h>
 #endif
 
-#include <Xm/XmosP.h>           /* for bzero et al */
+#include <string.h>
+
 #include <Xm/ProtocolsP.h>
 #include "BaseClassI.h"
 #include "CallbackI.h"
@@ -304,7 +305,7 @@ RemoveAllPMgr(
     (void)call_data;
     XtInsertEventHandler( w, KeyPressMask, TRUE, RemoveAllPMgrHandler,
                                                          closure, XtListHead) ;
-    bzero((void *) &ev, sizeof(XEvent));
+    memset(&ev, 0, sizeof ev);
     ev.xkey.type = KeyPress ;
     ev.xkey.display = XtDisplay( w) ;
     ev.xkey.time = XtLastTimestampProcessed( XtDisplay( w)) ;

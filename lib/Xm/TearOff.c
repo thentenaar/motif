@@ -44,7 +44,6 @@ static char rcsid[] = "$TOG: TearOff.c /main/15 1997/08/21 14:19:26 csn $"
 #include <Xm/SeparatorP.h>
 #include <Xm/TraitP.h>
 #include <Xm/VirtKeysP.h>
-#include <Xm/XmosP.h>		/* for bzero */
 #include "MenuStateI.h"
 #include "MenuUtilI.h"
 #include "RCMenuI.h"

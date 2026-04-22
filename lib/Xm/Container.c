@@ -61,7 +61,6 @@
 #include "CareVisualTI.h"
 #include "MessagesI.h"
 #include "ClipWindTI.h"
-#include <Xm/XmosP.h>                /* for bzero et al */
 
 #define	ZERO_DIM	0
 #define	DEFAULT_INDENTATION	40
@@ -9374,7 +9373,7 @@ ScrollProc(
 	/* get the current position */
 	nav_data.valueMask =
 	    NavValue | NavIncrement | NavMinimum | NavMaximum | NavSliderSize;
-	bzero(&nav_data,sizeof(XmNavigatorDataRec));
+	memset(&nav_data, 0, sizeof nav_data);
 	navigatorTrait->getValue(*nav, &nav_data);
 
 	/* compute the new position */
