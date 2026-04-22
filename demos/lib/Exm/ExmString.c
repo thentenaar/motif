@@ -45,8 +45,8 @@
  ******************************************************************************/
 
 /* Include appropriate header files. */
+#include <stdlib.h>
 #include <Xm/XmP.h>   /* private header file for the XmPrimitive widget */
-#include <Xm/XmosP.h>  /* header file for MB_CUR_MAX */
 #include <Exm/ExmStringP.h>  /* private header file for the ExmString widget */
 #include <Xm/RepType.h> /* header file for representation type facility */
 #include <Xm/TraitP.h>  /* header file for installing traits */

@@ -32,6 +32,8 @@ static char rcsid[] = "$TOG: TraversalI.c /main/13 1997/10/13 11:28:33 cshi $"
 #endif
 
 #include <stdlib.h>
+#include <string.h>
+
 #include <Xm/BaseClassP.h>
 #include <Xm/ClipWindowP.h>
 #include <Xm/GadgetP.h>
@@ -39,7 +41,6 @@ static char rcsid[] = "$TOG: TraversalI.c /main/13 1997/10/13 11:28:33 cshi $"
 #include <Xm/PrimitiveP.h>
 #include <Xm/SashP.h>
 #include <Xm/ScrolledWP.h>
-#include <Xm/XmosP.h>		/* for memmove() */
 #include "ScrolledWI.h"
 #include "TravActI.h"
 #include "TraversalI.h"

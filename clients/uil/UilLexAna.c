@@ -51,13 +51,11 @@ static char rcsid[] = "$TOG: UilLexAna.c /main/14 1997/03/12 15:10:52 dbl $"
 **  INCLUDE FILES
 **
 **/
-#include <Xm/Xm.h>
-#include <Xm/XmosP.h>	/* Need this for MB_CUR_MAX */
-
-#include "UilDefI.h"
-#include <ctype.h>
 #include <stdlib.h>
 #include <errno.h>	/* needed to support conversion functions */
+
+#include <Xm/Xm.h>
+#include "UilDefI.h"
 
 /*
 **

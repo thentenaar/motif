@@ -27,9 +27,10 @@
 #include <config.h>
 #endif
 
-#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include <X11/Xmd.h>
-#include <Xm/XmosP.h>		/* for <stdlib.h>, and wcstombs() */
 #include "XmI.h"
 #include "TextI.h"
 #include "TextStrSoI.h"

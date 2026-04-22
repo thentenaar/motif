@@ -57,7 +57,7 @@ static char rcsid[] = "$XConsortium: Region.c /main/10 1995/07/13 17:46:45 drk $
  * the y-x-banding that's so nice to have...
  */
 
-#include <Xm/XmosP.h>  /* for memmove */
+#include <string.h>
 #include "XmI.h"
 #include "RegionI.h"
 #include "MessagesI.h"

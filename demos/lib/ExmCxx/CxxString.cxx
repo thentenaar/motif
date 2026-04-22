@@ -42,15 +42,17 @@
  ******************************************************************************/
 
 /* Include appropriate header files. */
+#include <stdlib.h>
+
 #include <Xm/XmP.h>   /* private header file for the XmPrimitive widget */
-#include <Xm/XmosP.h> /* header file for multibyte functions */
-#include "CxxString.h"  /* header file for the ExmString widget */
 #include <Xm/DrawP.h>   /* header file for XmeClearBorder */
 #include <Xm/RepType.h> /* header file for representation type facility */
 #include <Xm/TraitP.h>  /* header file for installing traits */
 #include <Xm/AccTextT.h> /* header file for AccessTextual trait */
 #include <Xm/SpecRenderT.h> /* header file for XmLABEL_RENDER_TABLE */
 #include <Xm/Screen.h> /* header file for screen information */
+
+#include "CxxString.h"  /* header file for the ExmString widget */
 
 /* Define constants here. */
 static const int  FIND_NATURAL_SIZE = 0;
