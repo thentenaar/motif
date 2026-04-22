@@ -56,7 +56,6 @@ static char rcsid[] = "$TOG: Mrmwcrw.c /main/20 1999/05/19 15:26:23 mgreess $"
 #include "MrmosI.h"
 #include "MrmMsgI.h"
 #include <X11/keysym.h>
-#include <Xm/XmosP.h>		/* for ALLOCATE/DEALLOCATE_LOCAL */
 #include <Xm/RowColumn.h>	/* for XmGetTearOffControl */
 #include <Xm/DisplayP.h>	/* for XmDisplay */
 
@@ -854,7 +853,7 @@ Cardinal UrmSetWidgetInstance(URMResourceContextPtr context_id,
   else
     {
       /* Need to add * for ScrolledText and ScrolledList */
-      c_name_tmp = (String)ALLOCATE_LOCAL((strlen(c_name) + 2) * sizeof(char));
+      c_name_tmp = XtMalloc(strlen(c_name) + 2);
       sprintf(c_name_tmp, "*%s", c_name);
       *w_return = XtNameToWidget(parent, c_name_tmp);
 
@@ -866,7 +865,7 @@ Cardinal UrmSetWidgetInstance(URMResourceContextPtr context_id,
 	  *w_return = XtNameToWidget(XtParent(parent), c_name_tmp);
 	}
 
-      DEALLOCATE_LOCAL(c_name_tmp);
+      XtFree(c_name_tmp);
     }
 
   if (*w_return == NULL)

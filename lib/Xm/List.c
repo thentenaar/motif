@@ -34,7 +34,6 @@ static char rcsid[] = "$TOG: List.c /main/47 1999/10/12 16:58:17 mgreess $"
 #include <stdio.h>
 #include <string.h>
 #include <X11/Xatom.h>
-#include <Xm/XmosP.h>
 #include "XmI.h"
 #include <Xm/CutPaste.h>
 #include <Xm/DragC.h>
@@ -920,12 +919,11 @@ ClassPartInitialize(WidgetClass wc)
 
   _XmFastSubclassInit (wc, XmLIST_BIT);
 
-  xlats = (char *)
-    ALLOCATE_LOCAL(strlen(ListXlations1) + strlen(ListXlations2) + 1);
+  xlats = XtMalloc(strlen(ListXlations1) + strlen(ListXlations2) + 1);
   strcpy(xlats, ListXlations1);
   strcat(xlats, ListXlations2);
   wc->core_class.tm_table =(String) XtParseTranslationTable(xlats);
-  DEALLOCATE_LOCAL((char *)xlats);
+  XtFree(xlats);
 
   /* Install transfer trait */
   XmeTraitSet((XtPointer)wc, XmQTtransfer, (XtPointer) &ListTransfer);
@@ -5580,10 +5578,8 @@ DefaultAction(XmListWidget lw,
 
   if (lw->list.selectedItems && lw->list.selectedItemCount)
     {
-      cb.selected_items =
-	(XmString *)ALLOCATE_LOCAL(sizeof(XmString) * SLcount);
-      cb.selected_item_positions =
-	(int *)ALLOCATE_LOCAL(sizeof(int) * SLcount);
+      cb.selected_items = (XmString *)XtMalloc(sizeof(XmString) * SLcount);
+      cb.selected_item_positions = (int *)XtMalloc(sizeof(int) * SLcount);
       for (i = 0; i < SLcount; i++)
 	{
 	  cb.selected_items[i] = XmStringCopy(lw->list.selectedItems[i]);
@@ -5598,8 +5594,8 @@ DefaultAction(XmListWidget lw,
   lw->list.AutoSelectionType = XmAUTO_UNSET;
   for (i = 0; i < SLcount; i++)
     XmStringFree(cb.selected_items[i]);
-  DEALLOCATE_LOCAL((char*)cb.selected_items);
-  DEALLOCATE_LOCAL((char*)cb.selected_item_positions);
+  XtFree((XtPointer)cb.selected_items);
+  XtFree((XtPointer)cb.selected_item_positions);
   XmStringFree(cb.item);
 
   lw->list.DownCount = 0;
@@ -5660,10 +5656,8 @@ ClickElement(XmListWidget lw,
     {
       if (lw->list.selectedItems && lw->list.selectedItemCount)
     	{
-	  cb.selected_items =
-	    (XmString *)ALLOCATE_LOCAL(sizeof(XmString) * SLcount);
-	  cb.selected_item_positions =
-	    (int *)ALLOCATE_LOCAL(sizeof(int) * SLcount);
+	  cb.selected_items = (XmString *)XtMalloc(sizeof(XmString) * SLcount);
+	  cb.selected_item_positions = (int *)XtMalloc(sizeof(int) * SLcount);
 	  for (i = 0; i < SLcount; i++)
 	    {
 	      cb.selected_items[i] = XmStringCopy(lw->list.selectedItems[i]);
@@ -5723,8 +5717,8 @@ ClickElement(XmListWidget lw,
 	    for (i = 0; i < SLcount; i++)
 	      if (cb.selected_items[i])
 		XmStringFree(cb.selected_items[i]);
-	  DEALLOCATE_LOCAL((char *) cb.selected_items);
-	  DEALLOCATE_LOCAL((char *) cb.selected_item_positions);
+	  XtFree((XtPointer)cb.selected_items);
+	  XtFree((XtPointer)cb.selected_item_positions);
 	}
     }
 
@@ -7931,7 +7925,7 @@ XmListDeleteItems(Widget w,
     }
 
   /* Make a copy of items in case of XmNitems from w */
-  copy = (XmString *)ALLOCATE_LOCAL(item_count * sizeof(XmString));
+  copy = (XmString *)XtMalloc(item_count * sizeof(XmString));
   for (i = 0; i < item_count; i++)
     copy[i] = XmStringCopy(items[i]);
 
@@ -8011,7 +8005,7 @@ XmListDeleteItems(Widget w,
   /* Free memory for copied list. */
   for (i = 0; i < item_count; i++)
     XmStringFree(copy[i]);
-  DEALLOCATE_LOCAL((char *)copy);
+  XtFree((XtPointer)copy);
   _XmAppUnlock(app);
 }
 
@@ -9709,7 +9703,7 @@ XmCreateScrolledList(Widget parent,
   Arg my_args[4];
   Cardinal nargs;
 
-  s = (char*) ALLOCATE_LOCAL(XmStrlen(name) + 3); /* Name+"SW"+NULL */
+  s = XtMalloc(XmStrlen(name) + 3); /* Name+"SW"+NULL */
   if (name)
     {
       strcpy(s, name);
@@ -9729,11 +9723,10 @@ XmCreateScrolledList(Widget parent,
   Args = XtMergeArgLists(args, argCount, my_args, nargs);
   sw = XtCreateManagedWidget(s , xmScrolledWindowWidgetClass, parent,
 			     Args, argCount + nargs);
-  DEALLOCATE_LOCAL(s);
-  XtFree((char *) Args);
+  XtFree(s);
+  XtFree((XtPointer)Args);
 
   lw = XtCreateWidget(name, xmListWidgetClass, sw, args, argCount);
-
   XtAddCallback (lw, XmNdestroyCallback, _XmDestroyParentCallback, NULL);
   return (lw);
 }
