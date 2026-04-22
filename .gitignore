@@ -161,6 +161,7 @@ tools/wml/wmluiltok
 tools/wml/wmluiltok.c
 tools/wml/wmlparse.output
 tools/wml/Uil.output
+tools/wml/tokens.dat
 tests/tests
 tests/*.log
 tests/*.trs
