@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifndef _XmI_h
 #define _XmI_h
 
@@ -95,9 +96,6 @@ void _XmInitModifiers (void);
 #define IsBorder(g)	    (GMode (g) & CWBorderWidth)
 #define IsWidthHeight(g)    (GMode (g) & (CWWidth | CWHeight))
 #define IsQueryOnly(g)      (GMode (g) & XtCWQueryOnly)
-
-#define XmStrlen(s)      ((s) ? strlen(s) : 0)
-
 
 #define XmStackAlloc(size, stack_cache_array)	\
     ((((char*)(stack_cache_array) != NULL) &&	\

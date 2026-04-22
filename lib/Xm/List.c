@@ -9703,14 +9703,15 @@ XmCreateScrolledList(Widget parent,
   Arg my_args[4];
   Cardinal nargs;
 
-  s = XtMalloc(XmStrlen(name) + 3); /* Name+"SW"+NULL */
   if (name)
     {
+      s = XtMalloc(strlen(name) + 3);
       strcpy(s, name);
       strcat(s, "SW");
     }
   else
     {
+      s = XtMalloc(3);
       strcpy(s, "SW");
     }
 

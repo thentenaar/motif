@@ -32,7 +32,7 @@ static char rcsid[] = "$TOG: RowColumn.c /main/25 1998/07/22 15:41:49 mgreess $"
 #endif
 
 #include <stdio.h>
-#include <ctype.h>
+
 #include "XmI.h"
 #include <Xm/BaseClassP.h>
 #include <Xm/DisplayP.h>
@@ -1761,10 +1761,10 @@ set_values_non_popup(
     }
     else if (IsBar(new_w) && (RC_MenuAccelerator(new_w) != RC_MenuAccelerator(old)))
     {
-        if (RC_MenuAccelerator(new_w))
+        if (RC_MenuAccelerator(new_w) && *RC_MenuAccelerator(new_w))
         {
-            RC_MenuAccelerator(new_w) = (String)strcpy(XtMalloc( XmStrlen(
-                RC_MenuAccelerator(new_w)) + 1), RC_MenuAccelerator(new_w));
+            RC_MenuAccelerator(new_w) = strcpy(XtMalloc(strlen(RC_MenuAccelerator(new_w)) + 1),
+                                               RC_MenuAccelerator(new_w));
         }
         _XmRC_DoProcessMenuTree((Widget) new_w, XmREPLACE);
         if (RC_MenuAccelerator(old))
@@ -1828,10 +1828,10 @@ set_values_popup(
        /* See if our accelerator has changed */
        if (RC_MenuAccelerator(new_w) != RC_MenuAccelerator(old))
        {
-          if (RC_MenuAccelerator(new_w))
+          if (RC_MenuAccelerator(new_w) && *RC_MenuAccelerator(new_w))
           {
-             RC_MenuAccelerator(new_w) = (String)strcpy(XtMalloc( XmStrlen(
-                 RC_MenuAccelerator(new_w)) + 1), RC_MenuAccelerator(new_w));
+             RC_MenuAccelerator(new_w) = strcpy(XtMalloc(strlen(RC_MenuAccelerator(new_w)) + 1),\
+                                                RC_MenuAccelerator(new_w));
           }
 
 	  if (RC_PopupEnabled(new_w))
