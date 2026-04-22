@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = README wmllex.c wmllex.l motif.wml Uil.y Uil.c Uil.h UilLexPars.h UilLexPars.c
+EXTRA_DIST = README wmllex.c wmllex.l motif.wml UilLexPars.y UilLexPars.h UilLexPars.c
 
 AM_YFLAGS = -d
 
@@ -32,7 +32,7 @@ wml_SOURCES = wml.c
 wml_LDADD = libwml.la
 wmldbcreate_LDADD = ../../lib/Xm/libXm.la $(X_LIBS)
 
-AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include $(X_CFLAGS)
+AM_CPPFLAGS = -I../../lib -I$(srcdir)/../../lib -I$(srcdir)/../../include $(X_CFLAGS) -I../../clients/uil
 
 noinst_LTLIBRARIES = libwml.la
 libwml_la_SOURCES = wmlparse.y wmloutkey.c wmlouth.c wmloutmm.c wmloutp1.c wmlresolve.c wmlsynbld.c wmlutils.c
@@ -45,16 +45,10 @@ wmlsynbld.c: wmlparse.h
 
 @srcdir@/wmldbcreate.c: $(WMLTARGETS) UilLexPars.h
 
-UilLexPars.h: UilLexPars.c
-
-UilLexPars.c: Uil.c
-	$(LN_S) Uil.h UilLexPars.h
-	$(LN_S) Uil.c UilLexPars.c
-
 $(WMLTARGETS): wml-uil.mm
 
 wml-uil.mm: wmluiltok wml UilLexPars.c $(TABLE)
-	./wmluiltok <$(srcdir)/Uil.y >tokens.dat
+	./wmluiltok <$(srcdir)/UilLexPars.y >tokens.dat
 	./wml $(srcdir)/$(TABLE)
 
 motif.wmd: wmldbcreate

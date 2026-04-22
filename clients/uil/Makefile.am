@@ -21,15 +21,12 @@ AM_CPPFLAGS      = -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\" \
 UilParser.c:
 	test -f UilParser.c || $(LN_S) $(srcdir)/UilMain.c UilParser.c
 
-UilLexPars.c: $(top_builddir)/tools/wml/Uil.c
-	test -f UilLexPars.c || $(LN_S) $(top_builddir)/tools/wml/Uil.c UilLexPars.c
+BUILT_SOURCES = UilParser.c UilDBDef.h
 
-BUILT_SOURCES = UilParser.c UilLexPars.c UilDBDef.h
-
-CLEANFILES = UilParser.c UilLexPars.c UilDBDef.h XmAppl.uil
+CLEANFILES = UilParser.c UilDBDef.h XmAppl.uil
 
 COMMON_SRC =	UilCmd.c	UilDiags.c	UilKeyTab.c	UilLexAna.c  \
-		UilLexPars.c	UilLstLst.c	UilP2Out.c	UilP2Reslv.c \
+		../../tools/wml/UilLexPars.c	UilLstLst.c	UilP2Out.c	UilP2Reslv.c \
 		UilSarComp.c	UilSarExp.c	UilSarInc.c	UilSarMod.c \
 		UilSarObj.c	UilSarProc.c	UilSarVal.c	UilSrcSrc.c  \
 		UilSymNam.c	UilSymStor.c	UilData.c	\
