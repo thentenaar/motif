@@ -38,14 +38,18 @@ jobs:
             libxft-dev
             libxcursor-dev
             libxrandr-dev
+            libxrender-dev
             libjpeg-turbo-dev
             libpng-dev
             linux-headers
-            alpine-sdk
+            musl-dev
+            gcc
+            g++
+            git
             autoconf
             automake
             libtool
-            flex-dev
+            make
             flex
             byacc
             xvfb
@@ -197,4 +201,26 @@ jobs:
           path: results.junit.xml
           reporter: java-junit
           max-annotations: 0
+
+  out-of-tree-build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    container: alpine
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install dependencies
+        run: |
+          apk --no-cache --update add autoconf automake libtool flex byacc \
+              make pkgconf gcc g++ musl-dev linux-headers xvfb xbitmaps    \
+              libx11-dev libxpm-dev libxt-dev libxmu-dev libxext-dev       \
+              libxft-dev libxcursor-dev libxrandr-dev libxrender-dev       \
+              libjpeg-turbo-dev libpng-dev
+      - name: Out-of-tree Build w/Demos
+        run: |
+          autoreconf -fi
+          mkdir build
+          cd build
+          ../configure --disable-tests --enable-demos
+          make -j4 && make install
 
