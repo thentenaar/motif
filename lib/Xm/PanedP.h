@@ -161,6 +161,7 @@ typedef struct {
                                           * a pane to be shrunk to the point
                                           * that there is unused space at
                                           * the bottom/right of the widget */
+    Boolean sash_cursor_specified;
 } XmPanedPart;
 
 /**************************************************************************
@@ -197,6 +198,7 @@ XmImportOperator _XmToPanedPixels(Widget, int, XtArgVal *);
 
 #define XmPaned_sash_indent(w) (((XmPanedWidget)(w))->paned.sash_indent)
 #define XmPaned_sash_cursor(w) (((XmPanedWidget)(w))->paned.sash_cursor)
+#define XmPaned_sash_cursor_specified(w) (((XmPanedWidget)(w))->paned.sash_cursor_specified)
 #define XmPaned_refiguremode(w) (((XmPanedWidget)(w))->paned.refiguremode)
 #define XmPaned_sash_translations(w) (((XmPanedWidget)(w))->paned.sash_translations)
 #define XmPaned_internal_bw(w) (((XmPanedWidget)(w))->paned.internal_bw)

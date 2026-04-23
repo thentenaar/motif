@@ -96,6 +96,7 @@ typedef struct {
 					PanedWindow window and it's children */
     Dimension   spacing;             /* whitespace between panes
 				        around window, else leave none */
+
     /* sash modifying resources */
     Cursor      sash_cursor;
     Dimension	sash_width;	       /* Modify sash width */
@@ -127,6 +128,7 @@ typedef struct {
     unsigned char orientation ;     /* horizontal or vertical panedw */
 
     XtIntervalId timer ;            /* handle key event on sash */
+    Boolean sash_cursor_specified;
 } XmPanedWindowPart;
 
 /**************************************************************************

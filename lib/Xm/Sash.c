@@ -47,6 +47,7 @@ static char rcsid[] = "$XConsortium: Sash.c /main/12 1995/07/13 17:51:55 drk $"
 static void ClassPartInitialize(WidgetClass wc);
 static void ClassInitialize(void);
 static void Initialize(Widget rw, Widget nw, ArgList args, Cardinal *num_args);
+static Boolean SetValues(Widget old, Widget req, Widget new, ArgList args, Cardinal *num_args);
 static void HighlightSash(Widget w);
 static void UnhighlightSash(Widget w);
 static XmNavigability WidgetNavigable(Widget w);
@@ -151,7 +152,7 @@ externaldef(xmsashclassrec) XmSashClassRec xmSashClassRec = {
 	NULL,                               /* destroy             */
 	NULL,                               /* resize              */
 	Redisplay,                          /* expose              */
-	NULL,                               /* set_values          */
+	SetValues,                          /* set_values          */
 	NULL,                               /* set_values_hook     */
 	XtInheritSetValuesAlmost,           /* set_values_almost   */
 	NULL,                               /* get_values_hook     */
@@ -218,6 +219,20 @@ static void Initialize(Widget rw, Widget nw, ArgList args, Cardinal *num_args)
 
 	new->sash.has_focus = False;
 	new->sash.cursor    = req->sash.cursor;
+}
+
+static Boolean SetValues(Widget old, Widget req, Widget new, ArgList args, Cardinal *num_args)
+{
+	XmSashWidget old_sash = (XmSashWidget)old;
+	XmSashWidget new_sash = (XmSashWidget)new;
+
+	(void)req;
+	(void)args;
+	(void)num_args;
+	if ((new_sash->sash.cursor != old_sash->sash.cursor) && XtIsRealized(new))
+		XDefineCursor(XtDisplay(new), XtWindow(new), new_sash->sash.cursor);
+
+	return True;
 }
 
 static void HighlightSash(Widget w)

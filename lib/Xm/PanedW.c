@@ -250,6 +250,9 @@ static XtResource resources[] = {
        sizeof(Dimension), Offset(sash_shadow_thickness), XmRCallProc,
        (XtPointer) _XmSetThickness},
 
+    {XmNsashCursor, XmCSashCursor, XmRCursor, sizeof(Cursor),
+       Offset(sash_cursor), XmRImmediate, NULL},
+
     {XtNinsertPosition, XtCInsertPosition, XtRFunction, sizeof(XtOrderProc),
        XtOffsetOf(XmPanedWindowRec, composite.insert_position),
        XtRImmediate, (XtPointer) InsertOrder},
@@ -500,6 +503,7 @@ Initialize(
         ArgList args,
         Cardinal *num_args )
 {
+  Cardinal i;
   XmPanedWindowWidget pw = (XmPanedWindowWidget) new_w;
 
  /* Protect against empty widgets */
@@ -536,10 +540,18 @@ Initialize(
       pw->paned_window.orientation = XmVERTICAL;
   }
 
-  pw->paned_window.sash_cursor = XmeLoadCursor(
-      XtDisplay(pw), XtScreen(new_w),
-      Horizontal(pw) ? "sb_h_double_arrow" : "sb_v_double_arrow"
-  );
+  pw->paned_window.sash_cursor_specified = False;
+  if (num_args) {
+    for (i = 0; i < *num_args; i++) {
+      if (!strcmp(args[i].name, XmNsashCursor)) {
+          pw->paned_window.sash_cursor_specified = True;
+          break;
+      }
+    }
+  }
+
+  if (!pw->paned_window.sash_cursor_specified)
+    pw->paned_window.sash_cursor = None;
 }
 
 /*************************************<->*************************************
@@ -620,7 +632,8 @@ static void Destroy(Widget w)
     }
 
     XtFree( (char *) pw->paned_window.managed_children);
-    XFreeCursor(XtDisplay(w), pw->paned_window.sash_cursor);
+    if (!pw->paned_window.sash_cursor_specified && pw->paned_window.sash_cursor != None)
+      XFreeCursor(XtDisplay(w), pw->paned_window.sash_cursor);
 } /* Destroy */
 
 /*************************************<->*************************************
@@ -1956,6 +1969,13 @@ InsertChild(
     }
     pane->isPane = TRUE;
 
+    if (!pw->paned_window.sash_cursor_specified && pw->paned_window.sash_cursor == None) {
+      pw->paned_window.sash_cursor = XmeLoadCursor(
+          XtDisplay(w), XtScreen(w),
+          Horizontal(pw) ? "sb_h_double_arrow" : "sb_v_double_arrow"
+      );
+    }
+
     n = 0;
     XtSetArg(args[n], Minor(pw, XmNwidth, XmNheight), MinorSize(pw)); n++;
     XtSetArg(args[n], XmNborderWidth, 0); n++;
@@ -2230,6 +2250,9 @@ SetValues(
      }
 
    if (newpw->paned_window.sash_cursor != oldpw->paned_window.sash_cursor) {
+      if (!oldpw->paned_window.sash_cursor_specified)
+        XFreeCursor(XtDisplayOfObject(cw), oldpw->paned_window.sash_cursor);
+      newpw->paned_window.sash_cursor_specified = True;
       XtSetArg(sashargs[n], XmNcursor, newpw->paned_window.sash_cursor); n++;
    }
 
@@ -2287,6 +2310,7 @@ SetValues(
 			   newpw->paned_window.orientation, (Widget) newpw)){
        newpw->paned_window.orientation = oldpw->paned_window.orientation;
    }
+
    if (newpw->paned_window.orientation != oldpw->paned_window.orientation)
    {
       ChangeManaged( (Widget) newpw);

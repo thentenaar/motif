@@ -229,6 +229,12 @@ static XtResource resources[] =
   },
 
   {
+    XmNsashCursor, XmCSashCursor, XmRCursor,
+    sizeof(Cursor), XtOffsetOf(XmPanedRec, paned.sash_cursor),
+    XmRImmediate, NULL
+  },
+
+  {
     XmNallowUnusedSpace, XmCAllowUnusedSpace, XmRBoolean,
     sizeof(Boolean), XtOffsetOf(XmPanedRec, paned.allow_unused_space),
     XmRImmediate, (XtPointer) TRUE
@@ -1852,6 +1858,13 @@ static void CreateSash(Widget child)
     Arg arglist[20];
     Cardinal num_args = 0;
 
+    if (!XmPaned_sash_cursor_specified(pw) && XmPaned_sash_cursor(pw) == None) {
+		XmPaned_sash_cursor(pw) = XmeLoadCursor(
+			XtDisplay(child), XtScreen(child),
+			IsVert(pw) ? "sb_v_double_arrow" : "sb_h_double_arrow"
+		);
+	}
+
     XtSetArg(arglist[num_args], XmNcursor, XmPaned_sash_cursor(pw)); num_args++;
     XtSetArg(arglist[num_args], XmNtranslations, XmPaned_sash_translations(pw));
     num_args++;
@@ -2278,6 +2291,7 @@ GeometryManager(Widget w, XtWidgetGeometry *request, XtWidgetGeometry *reply)
 static void
 Initialize(Widget request, Widget set, ArgList args, Cardinal * num_args)
 {
+    Cardinal i;
     XmPanedWidget pw = (XmPanedWidget)set;
 
     GetGCs( (Widget) pw);
@@ -2304,10 +2318,18 @@ Initialize(Widget request, Widget set, ArgList args, Cardinal * num_args)
     if (!XmPaned_sash_height(pw))
         XmPaned_sash_height(pw) = (int)(4 + 6 * XmScreenDpi(XmScreenOfObject(pw)) / 96.);
 
-	XmPaned_sash_cursor(pw) = XmeLoadCursor(
-		XtDisplay(set), XtScreen(set),
-		IsVert(pw) ? "sb_v_double_arrow" : "sb_h_double_arrow"
-	);
+    XmPaned_sash_cursor_specified(pw) = False;
+    if (num_args) {
+        for (i = 0; i < *num_args; i++) {
+            if (!strcmp(args[i].name, XmNsashCursor)) {
+                XmPaned_sash_cursor_specified(pw) = True;
+                break;
+            }
+        }
+    }
+
+    if (!XmPaned_sash_cursor_specified(pw))
+        XmPaned_sash_cursor(pw) = None;
 }
 
 /*	Function Name: Realize
@@ -2367,15 +2389,15 @@ Realize(Widget w, Mask *valueMask, XSetWindowAttributes *attributes)
  *	Arguments: w - the widget.
  *	Returns: none.
  */
-
 static void Destroy(Widget w)
 {
-    XmPanedWidget pw = (XmPanedWidget)w;
+	XmPanedWidget pw = (XmPanedWidget)w;
 
-    ReleaseGCs(w);
-    ClearPaneStack(pw);
-    XtFree((XtPointer)XmPaned_managed_children(pw));
-    XFreeCursor(XtDisplay(w), XmPaned_sash_cursor(pw));
+	ReleaseGCs(w);
+	ClearPaneStack(pw);
+	XtFree((XtPointer)XmPaned_managed_children(pw));
+	if (!XmPaned_sash_cursor_specified(pw) && XmPaned_sash_cursor(pw) != None)
+		XFreeCursor(XtDisplay(w), XmPaned_sash_cursor(pw));
 }
 
 /*	Function Name: InsertChild
@@ -2656,7 +2678,7 @@ SetValues(Widget old, Widget request, Widget set,
     int num_panes = XmPaned_num_panes(set_pw);
     Widget *childP;
     Boolean refigure = False, commit = False;
-    Arg sargs[3];
+    Arg sargs[4];
     int num_sargs = 0;
 
     /*
@@ -2720,23 +2742,26 @@ SetValues(Widget old, Widget request, Widget set,
 	}
     }
 
+    if (XmPaned_sash_cursor(old_pw) != XmPaned_sash_cursor(set_pw))
+	XmPaned_sash_cursor_specified(set_pw) = True;
+
     if (IsVert(old_pw) != IsVert(set_pw)) {
-	Cardinal num_sep_args;
-	Arg sep_args[10];
+	/* Update the default cursor when orientation changes */
+	if (!XmPaned_sash_cursor_specified(old_pw) && XmPaned_sash_cursor(old_pw)) {
+		XFreeCursor(XtDisplayOfObject(old), XmPaned_sash_cursor(old_pw));
+		XmPaned_sash_cursor(old_pw) = None;
+		XmPaned_sash_cursor(set_pw) = XmeLoadCursor(
+			XtDisplay(set), XtScreen(set),
+			IsVert(set_pw) ? "sb_v_double_arrow" : "sb_h_double_arrow"
+		);
+	}
 
-	num_sep_args = 0;
-	if (IsVert(set_pw))
-	    XtSetArg(sep_args[num_sep_args], XmNorientation, XmHORIZONTAL);
-	else
-	    XtSetArg(sep_args[num_sep_args], XmNorientation, XmVERTICAL);
-
-	num_sep_args++;
-
+	XtSetArg(sargs[0], XmNcursor, XmPaned_sash_cursor(set_pw));
+	XtSetArg(sargs[1], XmNorientation, IsVert(set_pw) ? XmVERTICAL : XmHORIZONTAL);
 	ForAllChildren(set_pw, childP) {
 	    Pane pane = PaneInfo(*childP);
-	    if (pane->separator != NULL) {
-		XtSetValues(pane->separator, sep_args, num_sep_args);
-	    }
+	    if (pane->separator)  XtSetValues(pane->separator, sargs + 1, 1);
+	    if (HasSash(*childP)) XtSetValues(pane->sash, sargs, 1);
 	}
 
 	XmPaned_resize_children_to_pref(set_pw) = TRUE;
@@ -2748,6 +2773,10 @@ SetValues(Widget old, Widget request, Widget set,
 
     /* Build an arg list for global changes to the sashs */
     if (XmPaned_sash_cursor(old_pw) != XmPaned_sash_cursor(set_pw)) {
+	if (!XmPaned_sash_cursor_specified(old_pw))
+		XFreeCursor(XtDisplayOfObject(old), XmPaned_sash_cursor(old_pw));
+	XmPaned_sash_cursor(old_pw) = None;
+	XmPaned_sash_cursor_specified(set_pw) = True;
 	XtSetArg(sargs[num_sargs], XmNcursor, XmPaned_sash_cursor(set_pw));
 	num_sargs++;
 	refigure = True;
