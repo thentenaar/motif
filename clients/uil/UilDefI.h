@@ -192,9 +192,6 @@ typedef int boolean;
 #include "UilIODef.h"
 #include "UilDiagDef.h"
 #include "UilSarDef.h"
-#ifndef YYSTYPE
-#define YYSTYPE yystype
-#endif
 #include "UilLexPars.h"
 #include "UilCmdDef.h"
 #include "UilLexDef.h"

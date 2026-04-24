@@ -11,12 +11,14 @@ WMLDIR               = $(top_srcdir)/tools/wml
 
 noinst_PROGRAMS   = wmldbcreate
 AM_CPPFLAGS       = -I$(srcdir)/../.. \
-                    -I$(top_srcdir)/tools/wml \
+                    -I$(WMLDIR) \
                     -I$(top_builddir)/tools/wml \
                     -I$(top_builddir)/clients/uil \
-                    $(X_CFLAGS)
-DEFAULT_INCLUDES  = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+                    $(X_CFLAGS) \
+		    -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                     -I$(top_builddir)/include -I$(top_builddir)/lib
+
+wmldbcreate_SOURCES = $(WMLDIR)/wmldbcreate.c
 wmldbcreate_LDADD = $(top_builddir)/lib/Xm/libXm.la $(X_LIBS)
 
 all-local: Exm.wmd
@@ -24,9 +26,9 @@ all-local: Exm.wmd
 Exm.wmd: wmldbcreate
 	./wmldbcreate -o $@
 
-wml-uil.mm: $(WMLDIR)/Uil.y Exm.wml $(WMLDIR)/motif.wml $(top_builddir)/tools/wml/wmluiltok
+wml-uil.mm: $(WMLDIR)/UilLexPars.y Exm.wml $(WMLDIR)/motif.wml $(top_builddir)/tools/wml/wmluiltok
 	$(RM) Exm.h
-	$(top_builddir)/tools/wml/wmluiltok < $(WMLDIR)/Uil.y > tokens.dat
+	$(top_builddir)/tools/wml/wmluiltok < $(WMLDIR)/UilLexPars.y > tokens.dat
 	$(LN_S) $(srcdir)/Exm.wml ./Exm.h
 	$(CPP) $(CPPFLAGS) -I$(WMLDIR) Exm.h | $(top_builddir)/tools/wml/wml
 	$(RM) Exm.h
