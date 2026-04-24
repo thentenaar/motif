@@ -47,6 +47,10 @@ int yyerror(const char *);
 #include "UilDefI.h"
 #include "UilCompGl.h"
 
+#ifndef YYSTYPE
+#define YYSTYPE yystype
+#endif
+
 #ifdef DEBUG
 #define		YYDEBUG		1
 #endif

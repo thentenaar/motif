@@ -11,11 +11,8 @@ WMLTARGETS = UilConst.h	UilKeyTab.h	 \
 	UilSymChTa.h
 
 TABLE = motif.wml
-WMDTABLE = motif.wmd
-WMLTOOLS = wml wmluiltok
-REPORT = wml.report
 
-CLEANFILES = $(WMLTARGETS) $(WMDTABLE) $(REPORT) tokens.dat UilLexPars.[ch] wmllex.c wmlparse.[ch] wmluiltok.c
+CLEANFILES = $(WMLTARGETS) motif.wmd wml.report tokens.dat UilLexPars.[ch] wmllex.c wmlparse.[ch] wmluiltok.c wml-uil.mm
 
 wmldir = $(includedir)/uil
 
@@ -43,11 +40,11 @@ wmllex.c: wmllex.l
 
 wmlsynbld.c: wmlparse.h
 
-@srcdir@/wmldbcreate.c: $(WMLTARGETS) UilLexPars.h
+@srcdir@/wmldbcreate.c: $(WMLTARGETS) UilLexPars.c
 
 $(WMLTARGETS): wml-uil.mm
 
-wml-uil.mm: wmluiltok wml UilLexPars.c $(TABLE)
+wml-uil.mm: wmluiltok wml $(TABLE)
 	./wmluiltok <$(srcdir)/UilLexPars.y >tokens.dat
 	./wml $(srcdir)/$(TABLE)
 
