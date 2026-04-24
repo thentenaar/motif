@@ -1971,12 +1971,6 @@ void lex_initialize_analyzer(void)
 	XtFree(language);
 	Uil_lex_az_charset_entry = NULL;
 
-#if 0
-	/* Determine if localized strings are possible */
-	if ((Uil_lex_l_localized = Uil_cmd_z_command.v_use_setlocale))
-		_MrmOSSetLocale("C");
-#endif
-
 	/* Initialize the current character set */
 	Uil_lex_l_charset_specified = FALSE;
 
