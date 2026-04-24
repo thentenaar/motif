@@ -66,6 +66,7 @@ DataType
     vertical_integer;
     horizontal_float;
     vertical_float;
+    cursor { DocName = "Cursor identifier or file:hot_x,hot_y"; };
 
 !
 ! UIL character sets
@@ -153,7 +154,9 @@ CharacterSet
                 { XmStringCharsetName = "KSC5601.1987-1";
                   CharacterSize = TwoByte; };
     utf8
-		{ XmStringCharsetName = "UTF-8"; };
+		{ XmStringCharsetName = "UTF-8";
+		  Alias = "utf-8";
+		  Alias = "UTF8"; };
     iso_ir_111
                 { XmStringCharsetName = "ISO-IR-111";
                   Alias = "KOI8-R";
@@ -2611,6 +2614,7 @@ Class
             XmNmarginWidth { Default = "3"; };
             XmNorientation;
             XmNrefigureMode;
+            XmNsashCursor;
             XmNsashHeight;
             XmNsashIndent;
             XmNsashShadowThickness;
@@ -5510,7 +5514,10 @@ Class XmButtonBox : Widget {
   !
   Resource
   XmNcursor : Argument {
-    Type = identifier;
+    Type = cursor;
+  };
+  XmNsashCursor : Argument {
+    Type = cursor;
   };
   XmNsashTranslations : Argument {
     Type = translation_table;
@@ -5540,6 +5547,7 @@ Class XmPaned : Widget {
     XmNorientation;
     XmNseparatorOn;
     XmNcursor;
+    XmNsashCursor;
     XmNsashIndent;
     XmNsashTranslations;
     XmNsashWidth;
@@ -5586,7 +5594,7 @@ Resource
     Type = integer;
   };
   XmNpopupCursor : Argument {
-    Type = identifier;
+    Type = cursor;
   };
   XmNcomboTranslations : Argument {
     Type = translation_table;

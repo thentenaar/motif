@@ -131,8 +131,8 @@
 #define MrmRtypeVerticalInteger   31
 #define MrmRtypeHorizontalFloat   32
 #define MrmRtypeVerticalFloat     33
-#define	MrmRtypeMax		33
-
+#define MrmRtypeCursor 34
+#define MrmRtypeMax 34
 
 /*
  * MRM typedefs

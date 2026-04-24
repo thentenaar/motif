@@ -968,6 +968,7 @@ void save_value_machine_code(sym_value_entry_type *value_entry,
 	case sym_k_compound_string_value:
 	case sym_k_xbitmapfile_value:
 	case sym_k_keysym_value:
+	case sym_k_cursor_value:
 	    src_append_machine_code (
 		az_src_rec,
 		0,
@@ -1343,6 +1344,7 @@ const char *type_from_code(MrmType type_code)
 	case MrmRtypeIntegerVector:     return uil_datatype_names[sym_k_integer_table_value];
 	case MrmRtypeXBitmapFile:       return uil_datatype_names[sym_k_xbitmapfile_value];
 	case MrmRtypeKeysym:            return uil_datatype_names[sym_k_keysym_value];
+	case MrmRtypeCursor:            return "cursor";
 	default:                        return "unknown";
 	}
 }
@@ -1475,7 +1477,8 @@ void format_arg_value(RGMArgValuePtr argval_ptr, char *buffer)
 	case MrmRtypePixmapDDIF:
 	case MrmRtypeCString:
 	case MrmRtypeAddrName:
-        case MrmRtypeKeysym:
+	case MrmRtypeKeysym:
+	case MrmRtypeCursor:
 	    sprintf (buffer, "offset: %X (hex)", argval_ptr->datum.offset);
 	    off_put (k_unknown_off, argval_ptr->datum.offset);
 	    break;

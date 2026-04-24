@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 
 /*
 **++
@@ -29,7 +29,7 @@
 **
 **  ABSTRACT:
 **
-**      This include file defines the interfaces necessry to the binary 
+**      This include file defines the interfaces necessry to the binary
 **	data base in the WML & UIL compilers.
 **
 **--
@@ -59,7 +59,7 @@
 
 #define sym_k_hash_table_limit	127
 
-/* 
+/*
 **  Symbol tags.  These values are used in the tag field of every object header
 **  to identify the type of the entry.
 */
@@ -221,9 +221,9 @@
 #define sym_k_any_value			1
 #define sym_k_bool_value		2
 #define sym_k_char_8_value		3
-#define sym_k_compound_string_value	4 
+#define sym_k_compound_string_value	4
 #define sym_k_float_value		5
-#define sym_k_integer_value		6 
+#define sym_k_integer_value		6
 #define sym_k_single_float_value	7
 #define sym_k_localized_string_value	8
 #define sym_k_wchar_string_value	9
@@ -252,7 +252,8 @@
 #define sym_k_xbitmapfile_value		31
 #define sym_k_fontset_value		32
 #define	sym_k_child_value		33
-#define sym_k_max_value			33
+#define sym_k_cursor_value		34
+#define sym_k_max_value			34
 #define sym_k_no_value			(sym_k_max_value+1)
 
 /*
@@ -278,7 +279,7 @@
 #define sym_k_userdefined_charset	1
 
 /*
- * XmFONTLIST_DEFAULT_TAG 
+ * XmFONTLIST_DEFAULT_TAG
  */
 #define sym_k_fontlist_default_tag 	0
 
@@ -286,7 +287,7 @@
 **	value sets defining expression operators
 */
 #define sym_k_unspecified_op	0
-#define sym_k_not_op		1 
+#define sym_k_not_op		1
 #define sym_k_unary_plus_op	2
 #define sym_k_unary_minus_op	3
 #define sym_k_comp_str_op	4
@@ -297,7 +298,7 @@
 #define sym_k_divide_op		7
 #define sym_k_add_op		8
 #define sym_k_subtract_op	9
-#define sym_k_left_shift_op	10 
+#define sym_k_left_shift_op	10
 #define sym_k_right_shift_op	11
 #define sym_k_and_op		12
 #define sym_k_xor_op		13
@@ -348,7 +349,7 @@ typedef struct
 /*
  * Keyword table entry structure
  */
-typedef struct 
+typedef struct
     {
     unsigned char         b_class;
     unsigned short int    b_subclass;
@@ -420,14 +421,14 @@ typedef struct _db_globals_struct
     int	    key_k_keyword_max_length;
     int	    uil_max_child;
 } _db_globals;
-   
+
 typedef struct _db_header_struct
 {
     int	    table_id;
     int	    num_items;
     int	    table_size;
 } _db_header, *_db_header_ptr;
-   
+
 
 #endif /* UilDBDef_h */
 /* DON'T ADD STUFF AFTER THIS #endif */
