@@ -52,9 +52,6 @@
 **  Universal Definitions
 **
 */
-
-#define _compiler_version "V2.0-000"
-#define _compiler_version_int 2
 #define _data_version 2
 #define _host_compiler "Motif Uil Compiler"
 

@@ -542,7 +542,7 @@ static void UilWrapup(Uil_compile_desc_type *compile_desc)
      */
     compile_desc->parse_tree_root = (char *)sym_az_root_entry;
     compile_desc->data_version = _data_version;
-    compile_desc->compiler_version = _compiler_version_int;
+    compile_desc->compiler_version = XmVersion;
 
     /* Fill in the message_summary array in the compile_desc */
     for (i = uil_k_min_status; i <= uil_k_max_status; i++)

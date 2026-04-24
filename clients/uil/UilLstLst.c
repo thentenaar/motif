@@ -135,7 +135,7 @@ void lst_open_listing(void)
 
     sprintf(lst_c_title1,
 	    "%s %s \t%s\t\t Page ",
-	    _host_compiler, _compiler_version,
+	    _host_compiler, PACKAGE_VERSION,
 	    current_time(ctime_buf));
 
     /*

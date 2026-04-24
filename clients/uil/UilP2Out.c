@@ -193,7 +193,7 @@ void sem_output_uid_file(void)
 		  ( Uil_cmd_z_command.ac_resource_file,
 		    & uid_fcb.os_param,
 		    _host_compiler,
-		    _compiler_version,
+		    PACKAGE_VERSION,
 		    module_name,
 		    module_version,
 		    &out_az_idbfile_id,
