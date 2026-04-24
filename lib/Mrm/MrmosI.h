@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,8 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
  */
+
 /*
  * HISTORY
  */
@@ -38,7 +38,6 @@ extern void _MrmOSHostFloatToIEEE(float *val);
 extern void _MrmOSHostDoubleToIEEE(double *val);
 extern void _MrmOSIEEEFloatToHost(float *val);
 extern void _MrmOSIEEEDoubleToHost(double *val);
-extern String _MrmOSSetLocale(String locale);
 
 /********    End Private Function Declarations    ********/
 
