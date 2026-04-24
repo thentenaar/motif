@@ -84,6 +84,9 @@ static void DisplayDestroyCallback (Widget w,
 				    XtPointer client_data,
 				    XtPointer call_data );
 
+static void CursorDestroyCallback(Widget w, XtPointer client, XtPointer call);
+
+
 /*
  *
  *  DEFINE and MACRO DEFINITIONS
@@ -1989,6 +1992,7 @@ Urm__CW_ConvertValue (Widget			parent,
   /*
    *  Local variables
    */
+  XmDisplay     dd;
   Cardinal		result ;	/* function results */
   XFontStruct		*font ;		/* result of conversion to font */
   XFontSet		fontset ;	/* result of converstion to fontset */
@@ -2009,7 +2013,7 @@ Urm__CW_ConvertValue (Widget			parent,
   KeySym		xkey;		/* result of keysym conversion */
   char			err_msg[300] ;
   XmString		cstg ;          /* to copy compound strings */
-  String		dpyandfontstr;
+  String		dpyandfontstr, cursor_str, name;
   RGMTextVectorPtr	vecptr ;	  /* val as text vector */
   int			vec_count;	  /* for moving strings */
   int			orientation = XmNO_ORIENTATION; /* for values w/units */
@@ -2022,6 +2026,10 @@ Urm__CW_ConvertValue (Widget			parent,
   double double_val;
   float float_val, int_value;
   int int_units, float_units;
+  int hot_x, hot_y;
+  Cursor c;
+
+  dd = (XmDisplay)XmGetXmDisplay(display);
 
   /* BEGIN HAL Fix CR 5439 */
   /* If the cvttype is not zero, we should do some
@@ -2085,6 +2093,34 @@ Urm__CW_ConvertValue (Widget			parent,
 	      }
 	    *val = (long) trans ;
 	    break ;
+	case MrmRtypeCursor: /* String -> Cursor */
+		cursor_str = Urm__CW_DisplayToString((String)&display,
+		                                     (XtPointer )*val,
+		                                     strlen((String)*val) + 1);
+		if (!cursor_str) {
+			return Urm__UT_Error("URM__CW_ConvertValue",
+			                     "Failed to create cursor lookup string",
+			                     NULL, NULL, MrmFAILURE);
+		}
+
+		result = Urm__WCI_LookupRegisteredName(cursor_str, (XtPointer *)&c);
+		if (result != MrmSUCCESS) {
+			name = XtCalloc(1, strlen((String)*val) + 1);
+			if (sscanf((String)*val, "%[^:]:%d,%d", name, &hot_x, &hot_y) == 3)
+				c = XmeLoadCursorImage(display, DefaultScreenOfDisplay(display), name, hot_x, hot_y);
+			else c = XmeLoadCursor(display, DefaultScreenOfDisplay(display), name);
+
+			XtFree(name);
+			if (c != None) {
+				Urm__WCI_RegisterNames(&cursor_str, (XtPointer *)&c, 1);
+				XtAddCallback((Widget)dd, XtNdestroyCallback, CursorDestroyCallback,
+				              (XtPointer)XtNewString(cursor_str));
+			}
+		}
+
+		*val = c;
+		XtFree(cursor_str);
+		break;
 	  }
 	break;
       }
@@ -2190,7 +2226,6 @@ Urm__CW_ConvertValue (Widget			parent,
 		}
 	      Urm__WCI_RegisterNames (&dpyandfontstr, (XtPointer *)&font, 1);
 	      {
-		XmDisplay dd = (XmDisplay) XmGetXmDisplay(display);
 		if (dd)
 		  XtAddCallback((Widget)dd,XtNdestroyCallback,
 				DisplayDestroyCallback, (XtPointer)
@@ -2276,7 +2311,6 @@ Urm__CW_ConvertValue (Widget			parent,
 		    }
 		  Urm__WCI_RegisterNames(&dpyandfontstr, (XtPointer *)&font, 1);
 		  {
-		    XmDisplay dd = (XmDisplay) XmGetXmDisplay(display);
 		    if (dd)
 		      XtAddCallback((Widget)dd,XtNdestroyCallback,
 				    DisplayDestroyCallback, (XtPointer)
@@ -2523,7 +2557,15 @@ DisplayDestroyCallback ( Widget w,
   XtFree(dpyandfontstr);
 }
 
+static void CursorDestroyCallback(Widget w, XtPointer client, XtPointer call)
+{
+	Cursor c;
 
+	if (Urm__WCI_LookupRegisteredName((String)client, (XtPointer *)&c) == MrmSUCCESS)
+		XFreeCursor(XtDisplay(w), c);
+	Urm__WCI_UnregisterName((String)client);
+	XtFree(client);
+}
 
 /*
  *++

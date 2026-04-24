@@ -383,6 +383,7 @@ arg_value_type
     | WIDE_CHARACTER		{ $$ = $1; $$.b_type = sym_k_wchar_string_value; }
     | FONTSET			{ $$ = $1; $$.b_type = sym_k_fontset_value; }
     | WIDGET			{ $$ = $1; $$.b_type = sym_k_widget_ref_value; }
+    ;
 /* End for fixing CR 5888 */
 
 string_table_type

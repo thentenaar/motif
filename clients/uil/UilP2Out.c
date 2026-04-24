@@ -1354,6 +1354,7 @@ void out_emit_value(sym_value_entry_type *value_entry )
 	case sym_k_xbitmapfile_value:
 	case sym_k_keysym_value:
 	case sym_k_localized_string_value:
+	case sym_k_cursor_value:
 	    value_size = value_entry->w_length + 1;  /* +1 for the null */
 	    break;
 
@@ -2597,6 +2598,7 @@ MrmCode ref_value(sym_value_entry_type *value_entry, MrmCode *arg_type,
  	    case sym_k_vertical_integer_value:
  	    case sym_k_horizontal_float_value:
  	    case sym_k_vertical_float_value:
+ 	    case sym_k_cursor_value:
 		if (value_entry->resource_id == 0 )
 		    {
 		    urm_status =
@@ -2856,6 +2858,7 @@ MrmCode Urm_code_from_uil_type(int uil_type)
 	case sym_k_keysym_value:             return MrmRtypeKeysym;
 	case sym_k_single_float_value:       return MrmRtypeSingleFloat;
 	case sym_k_rgb_value:                return MrmRtypeColor;
+	case sym_k_cursor_value:             return MrmRtypeCursor;
 	default:
 		_assert( FALSE, "unknown value type" );
 		return 0;

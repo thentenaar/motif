@@ -1068,6 +1068,9 @@ if ((( expected_type == sym_k_horizontal_float_value ) &&
     valid_value = TRUE;
 }
 
+if ((expected_type == sym_k_cursor_value) && (actual_type == sym_k_char_8_value))
+    valid_value = True;
+
 if (!valid_value)
     diag_issue_diagnostic
 	(d_obj_type,
