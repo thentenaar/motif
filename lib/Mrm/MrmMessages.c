@@ -40,10 +40,6 @@
  *  INCLUDE FILES
  *
  */
-
-/* Define _MrmConst before including MrmDecl.h, so that the
- * declarations will be in agreement with the definitions.
- */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
