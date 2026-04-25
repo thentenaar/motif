@@ -1044,7 +1044,6 @@ typedef struct _XmPartResource {
     XtPointer  default_addr;   	/* Address of default resource		    */
 } XmPartResource;
 
-#if (defined(__STDC__) && !defined(UNIXCPP)) || defined(__cplusplus) || defined(ANSICPP)
 # define XmPartOffset(part, variable) \
         ((part##Index) << XmOFFSETBITS) + XtOffsetOf( part##Part, variable)
 
@@ -1064,27 +1063,6 @@ typedef struct _XmPartResource {
 	(*(type *)(((char *) (widget)->core.constraints) + \
 	offsetrecord[part##Index] + \
 	XtOffsetOf( part##ConstraintPart, variable)))
-#else
-# define XmPartOffset(part, variable) \
-        ((part/**/Index) << XmOFFSETBITS) + XtOffsetOf( part/**/Part, variable)
-
-# define XmConstraintPartOffset(part, variable) \
-        ((part/**/Index) << XmOFFSETBITS) + \
-	XtOffsetOf( part/**/ConstraintPart, variable)
-
-# define XmGetPartOffset(r, offset) \
-       ((r)->resource_offset & XmOFFSETMASK) + \
-	(*(offset))[(r)->resource_offset >> XmOFFSETBITS];
-
-# define XmField(widget, offsetrecord, part, variable, type) \
-	(*(type *)(((char *) (widget)) + offsetrecord[part/**/Index] + \
-	XtOffsetOf( part/**/Part, variable)))
-
-# define XmConstraintField(widget, offsetrecord, part, variable, type) \
-	(*(type *)(((char *) (widget)->core.constraints) + \
-	offsetrecord[part/**/Index] + \
-	XtOffsetOf( part/**/ConstraintPart, variable)))
-#endif
 
 /***********************************************************************
  *

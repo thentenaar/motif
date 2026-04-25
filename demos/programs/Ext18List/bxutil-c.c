@@ -2065,12 +2065,6 @@ LFUNC(atoui, unsigned int, (char *p, unsigned int l, unsigned int *ui_return));
 
 #define ZINDEX1(x, y, img) ((y) * img->bytes_per_line) + ((x) >> 3)
 
-#if __STDC__
-#define Const const
-#else
-#define Const
-#endif
-
 Pixmap XPM_PIXMAP
 ARGLIST((w, pixmapName))
 ARG(Widget, w)
@@ -2810,7 +2804,7 @@ LFUNC(_putbits, void, (char *src, int dstoffset,
 
 LFUNC(_XReverse_Bytes, void, (unsigned char *bpt, int nb));
 
-static unsigned char Const _reverse_byte[0x100] = {
+static const unsigned char _reverse_byte[0x100] = {
 			    0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
 			    0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
 			    0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
@@ -2922,9 +2916,9 @@ GRA(XImage *, img)
     }
 }
 
-static unsigned char Const _lomask[0x09] = {
+static const unsigned char _lomask[0x09] = {
 		     0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
-static unsigned char Const _himask[0x09] = {
+static const unsigned char _himask[0x09] = {
 		     0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80, 0x00};
 
 static void _putbits

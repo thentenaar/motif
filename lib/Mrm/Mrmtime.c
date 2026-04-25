@@ -1,6 +1,7 @@
-/*
+/**
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -20,17 +21,16 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk $"
 #endif
 #endif
-
 
 /*
  *++
@@ -45,7 +45,6 @@ static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk 
  *--
  */
 
-
 /*
  *
  *  INCLUDE FILES
@@ -55,7 +54,6 @@ static char rcsid[] = "$XConsortium: Mrmtime.c /main/19 1996/11/21 20:03:40 drk 
 #include <string.h>
 #include <Mrm/MrmAppl.h>
 #include <Mrm/Mrm.h>
-
 
 /*
  *
