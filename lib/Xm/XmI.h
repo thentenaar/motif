@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <limits.h>
+#include <assert.h>
 #include <Xm/XmP.h>
 #include "XmStrDefsI.h"
 
@@ -55,23 +56,6 @@ void _XmInitModifiers (void);
 	    _init_modifiers = FALSE; 					\
 	}								\
     }
-
-#ifndef DEBUG
-# define assert(assert_exp)
-#elif (defined(__STDC__) && !defined(UNIXCPP)) || defined(ANSICPP)
-#include <stdlib.h>
-# define assert(assert_exp)						\
-  (((assert_exp) ? (void) 0 :						\
-    (void) (fprintf(stderr, "assert(%s) failed at line %d in %s\n",	\
-                    #assert_exp, __LINE__, __FILE__), abort())))
-#else
-#include <stdlib.h>
-# define assert(assert_exp)						\
-  (((assert_exp) ? 0 :							\
-    (void) (fprintf(stderr, "assert(%s) failed at line %d in %s\n",	\
-		    "assert_exp", __LINE__, __FILE__), abort())))
-#endif
-
 
 #define ASSIGN_MAX(a, b) 	((a) = ((a) > (b) ? (a) : (b)))
 #define ASSIGN_MIN(a, b) 	((a) = ((a) < (b) ? (a) : (b)))
