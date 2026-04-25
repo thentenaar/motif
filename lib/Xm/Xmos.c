@@ -1328,27 +1328,6 @@ XmeMicroSleep(long usecs)
 }
 
 /************************************************************************
- *
- *	XmeGetLocalizedString	Map an X11 R5 XPCS string in a locale
- *				sensitive XmString.
- *
- *		reserved	Reserved for future use.
- *		widget		The widget id.
- *		resource	The resource name.
- *		string		The input 8859-1 value.
- *
- ************************************************************************/
-
-XmString
-XmeGetLocalizedString(char *reserved,		/* unused */
-		      Widget widget,		/* unused */
-		      char *resource,		/* unused */
-		      String string)
-{
-  return XmStringCreateLocalized(string);
-}
-
-/************************************************************************
  *									*
  *    _XmOSBuildFileName						*
  *									*

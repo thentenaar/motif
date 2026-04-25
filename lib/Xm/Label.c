@@ -1141,24 +1141,12 @@ Initialize(
    *     save a copy of the given string.
    *     If the given string is not an XmString issue an warning.
    */
-  if (lw->label._label == (XmString) XmUNSPECIFIED)
-    {
-      lw->label._label = XmeGetLocalizedString ((char *) NULL, /* reserved */
-						(Widget) lw,
-						XmNlabelString,
-						"");
-    }
-  else if (lw->label._label == NULL)
-    {
-      lw->label._label = XmeGetLocalizedString ((char *) NULL, /* reserved */
-						(Widget) lw,
-						XmNlabelString,
-						lw->core.name);
-    }
+  if (lw->label._label == (XmString)XmUNSPECIFIED)
+      lw->label._label = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+  else if (!lw->label._label)
+     lw->label._label = XmStringCreateLocalized(lw->core.name);
   else if (XmStringIsValid(lw->label._label))
-    {
-      lw->label._label= XmStringCopy(lw->label._label);
-    }
+      lw->label._label = XmStringCopy(lw->label._label);
   else
     {
       XmeWarning((Widget) lw, CS_STRING_MESSAGE);

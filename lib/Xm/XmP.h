@@ -1262,11 +1262,6 @@ extern void XmeGetDefaultPixel(
 extern String XmeGetHomeDirName(void) ;
 extern int XmeMicroSleep(
                         long secs) ;
-extern XmString XmeGetLocalizedString(
-                        char *reserved,
-                        Widget widget,
-                        char *resource,
-                        String string) ;
 
 extern void XmRenderTableGetDefaultFontExtents(
                         XmRenderTable rendertable,

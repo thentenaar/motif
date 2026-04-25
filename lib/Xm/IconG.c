@@ -1233,9 +1233,7 @@ Initialize(
 
     /* XmNlabelString */
     if (!IG_LabelString(nw)) {
-	IG_LabelString(nw) =  XmeGetLocalizedString (
-				(char *) NULL, nw, XmNlabelString,
-				XrmQuarkToString(new_ig->object.xrm_name));
+	IG_LabelString(nw) = XmStringCreateLocalized(XrmQuarkToString(new_ig->object.xrm_name));
     } else
 	IG_LabelString(nw) = XmStringCopy(IG_LabelString(nw));
 

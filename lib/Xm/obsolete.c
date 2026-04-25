@@ -67,3 +67,23 @@ void XmCvtStringToUnitType(XrmValuePtr args, Cardinal *num_args,
 	XtConvertAndStore(XmGetXmDisplay(dpy), XmRString, from_val, REAL_UNIT_TYPE_NAME, to_val);
 }
 
+/************************************************************************
+ *
+ *	XmeGetLocalizedString	Map an X11 R5 XPCS string in a locale
+ *				sensitive XmString.
+ *
+ *		reserved	Reserved for future use.
+ *		widget		The widget id.
+ *		resource	The resource name.
+ *		string		The input 8859-1 value.
+ *
+ ************************************************************************/
+XmString XmeGetLocalizedString(char *reserved, Widget widget,
+                               char *resource, String string)
+{
+	(void)reserved;
+	(void)widget;
+	(void)resource;
+	return XmStringCreateLocalized(string);
+}
+

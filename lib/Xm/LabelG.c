@@ -1789,23 +1789,14 @@ Cardinal *num_args)
      *     If the given string is not an XmString issue an warning.
      */
 
-    if (LabG__label(new_w) == NULL)
-    {
-                                                  /* reserved */
-        LabG__label(new_w) = XmeGetLocalizedString ((char *) NULL,
-            (Widget) lw,
-            XmNlabelString,
-            XrmQuarkToString(lw->object.xrm_name));
-    }
-    else if (XmStringIsValid((XmString) LabG__label(new_w)))
-    {
-        LabG__label(new_w) = XmStringCopy((XmString) LabG__label(new_w));
-    }
+    if (!LabG__label(new_w))
+        LabG__label(new_w) = XmStringCreateLocalized(XrmQuarkToString(lw->object.xrm_name));
+    else if (XmStringIsValid(LabG__label(new_w)))
+        LabG__label(new_w) = XmStringCopy(LabG__label(new_w));
     else
     {
         XmeWarning((Widget) lw, CS_STRING_MESSAGE);
-        LabG__label(new_w) =
-            XmStringCreateLocalized(XrmQuarkToString(lw->object.xrm_name));
+        LabG__label(new_w) = XmStringCreateLocalized(XrmQuarkToString(lw->object.xrm_name));
     }
 
     /*

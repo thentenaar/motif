@@ -180,6 +180,15 @@ extern Atom XmInternAtom(Display *display, String name, Boolean only_if_exists);
 XM_ALTERNATIVE(Use XGetAtomName instead)
 extern String XmGetAtomName(Display *display, Atom atom);
 
+#ifdef _XmP_h
+/**
+ * Obsolete private functions
+ */
+
+XM_ALTERNATIVE(Use XmStringCreateLocalized instead)
+extern XmString XmeGetLocalizedString(char *reserved, Widget widget,
+                                      char *resource, String string);
+#endif /* _XmP_h */
 #endif /* XM_OBSOLETE_H */
 #endif /* _Xm_h */
 

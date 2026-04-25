@@ -310,18 +310,6 @@ _XmInputInGadget(
 
 /********************************************************************/
 
-XmString
-_XmOSGetLocalizedString(
-        char *reserved,
-        Widget widget,
-        char *resource,
-        String string)
-{
-    return XmeGetLocalizedString( reserved, widget, resource, string);
-}
-
-/********************************************************************/
-
 int
 _XmMicroSleep(
         long    usecs)
