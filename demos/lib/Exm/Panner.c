@@ -1,5 +1,5 @@
 /* $XConsortium: Panner.c /main/5 1995/07/15 20:41:11 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -212,10 +212,10 @@ static XtResource resources[] =
     {
 	ExmNreportCallback,
 	ExmCReportCallback,
-	XtRCallback,
+	XmRCallback,
 	sizeof(XtPointer),
 	poff(report_callbacks),
-	XtRCallback,
+	XmRCallback,
 	(XtPointer) NULL
     },
     {
