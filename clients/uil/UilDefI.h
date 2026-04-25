@@ -65,10 +65,6 @@
 #endif
 #define FALSE	  	0
 
-#ifndef debug_version
-#define debug_version	FALSE
-#endif
-
 #define NOSTRING_DIRECTION 2
 
 #define k_normal  	1
@@ -136,7 +132,7 @@ typedef int boolean;
 **
 */
 
-#if debug_version
+#ifdef DEBUG
 #define _assert( __condition, __text )			\
 	if (!(__condition))				\
 	{  diag_issue_internal_error( (__text)); }
@@ -172,7 +168,7 @@ typedef int boolean;
 **  Debug output macro
 **
 */
-#if debug_version
+#ifdef DEBUG
 #define _debug_output lst_debug_output
 #else
 #define _debug_output printf
@@ -585,7 +581,7 @@ extern void src_append_machine_code  _ARGUMENTS(( src_source_record_type *az_src
 extern sym_name_entry_type *sym_find_name(int l_length, const char *c_text);
 extern sym_name_entry_type *sym_insert_name(int l_length, const char *c_text);
 extern int hash_function(int l_length, const char *c_value);
-#if debug_version
+#ifdef DEBUG
 extern void sym_dump_hash_table(void);
 #endif
 

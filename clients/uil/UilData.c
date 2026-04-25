@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: UilData.c /main/14 1999/04/16 10:41:44 mgreess $"
@@ -104,7 +105,7 @@ externaldef(uil_comp_glbl) boolean	uil_az_error_env_valid = FALSE;
 
 /*    Debugging switches.    */
 
-#if debug_version
+#ifdef DEBUG
 externaldef(uil_comp_glbl) boolean	uil_v_dump_tokens = FALSE;
 externaldef(uil_comp_glbl) boolean	uil_v_dump_symbols = FALSE;
 #endif
@@ -192,11 +193,4 @@ externaldef(uil_comp_glbl) char *uil_datatype_names [] = {
 
 /*	The keyword tables */
 #include "UilKeyTab.h"
-
-
-/*
-**
-**  OWN VARIABLE DECLARATIONS
-**
-**/
 

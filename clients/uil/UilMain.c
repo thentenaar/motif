@@ -191,9 +191,8 @@ static void	common_main(void)
 	sem_output_uid_file();
 
     /* call symbol table dumper - if requested */
-#if debug_version
-    if (uil_v_dump_symbols == TRUE)
-	sym_dump_symbols();
+#ifdef DEBUG
+    if (uil_v_dump_symbols) sym_dump_symbols();
 #endif
 
     /* write compilation summary */
@@ -482,9 +481,8 @@ Uil_status_type Uil(Uil_command_type *command_desc,
             	sem_output_uid_file();
 
             /* call symbol table dumper - if requested */
-#if debug_version
-		if (uil_v_dump_symbols == TRUE)
-		    sym_dump_symbols();
+#ifdef DEBUG
+		if (uil_v_dump_symbols) sym_dump_symbols();
 #endif
 
 	    /* Perform standard wrapup processing */

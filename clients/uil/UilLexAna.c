@@ -75,7 +75,7 @@ typedef struct	_lex_buffer_type
 
 
 static lex_buffer_type *get_lex_buffer  _ARGUMENTS(( lex_buffer_type *az_current_lex_buffer ));
-#if debug_version
+#ifdef DEBUG
 static void dump_token(lex_buffer_type *az_current_lex_buffer, int l_lex_pos);
 #endif
 
@@ -1853,9 +1853,8 @@ found_primitive_string:
 
     /* dump the token if requested */
 
-#if debug_version
-    if (uil_v_dump_tokens)
-	dump_token( az_current_lex_buffer, l_lex_pos );
+#ifdef DEBUG
+    if (uil_v_dump_tokens) dump_token(az_current_lex_buffer, l_lex_pos);
 #endif
 
     /*
@@ -2244,7 +2243,7 @@ void lex_filter_unprintable_chars(unsigned char *buffer, int length,
 }
 
 
-#if debug_version
+#ifdef DEBUG
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:

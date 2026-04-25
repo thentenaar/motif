@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 
 /*
 **++
@@ -52,7 +52,7 @@ externalref cmd_command_line_type		Uil_cmd_z_command;
 externalref boolean				uil_v_case_sensitive;
 externalref jmp_buf				uil_az_error_env_block;
 externalref boolean				uil_az_error_env_valid;
-#if debug_version
+#ifdef DEBUG
 externalref boolean				uil_v_dump_tokens;
 externalref boolean				uil_v_dump_symbols;
 #endif
@@ -128,6 +128,5 @@ externalref sym_section_entry_type		*sym_az_current_section_entry;
 externalref sym_entry_type			*sym_az_entry_list_header;
 externalref URMPointerListPtr			sym_az_allocated_nodes;
 externalref URMPointerListPtr			sym_az_freed_nodes;
-
 #endif /* UilCompGl_h */
-/* DON'T ADD STUFF AFTER THIS #endif */
+

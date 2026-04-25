@@ -787,7 +787,7 @@ void diag_handler(int l_error)
 	}
     }
 
-#if debug_version
+#ifdef DEBUG
     {
       char	*error_text;
 
@@ -858,15 +858,12 @@ void diag_issue_internal_error(const char *error_text)
     **	about the failure.
     */
 
-#if debug_version
-
+#ifdef DEBUG
     diag_issue_diagnostic
 	( d_bug_check, diag_k_no_source, diag_k_no_column , error_text );
 
 #else
-
     diag_issue_diagnostic( d_submit_spr, diag_k_no_source, diag_k_no_column );
-
 #endif
 
     /* we don't expect to come back */

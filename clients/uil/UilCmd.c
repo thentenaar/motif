@@ -135,7 +135,7 @@ void cmd_decode_command_line(int l_arg_count, char *rac_arg_value[])
     Uil_cmd_z_command.ac_database = NULL;
     Uil_cmd_z_command.v_database = FALSE;
 
-#if debug_version
+#ifdef DEBUG
     uil_v_dump_tokens = FALSE;
     uil_v_dump_symbols = FALSE;
 #endif

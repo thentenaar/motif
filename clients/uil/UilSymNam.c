@@ -340,8 +340,7 @@ int	hash_function(int l_length, const char *c_value)
     return (int)(l_hash_code % sym_k_hash_table_limit);
 }
 
-#if debug_version
-
+#ifdef DEBUG
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
