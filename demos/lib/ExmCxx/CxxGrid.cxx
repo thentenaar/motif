@@ -36,10 +36,10 @@
 /******************************************************************************
  *
  * Grid.c - ExmGrid widget.  This widget manages its children as an MxN matrix.
- *          The ExmGrid widget demonstrates how to 
+ *          The ExmGrid widget demonstrates how to
  *             * create a relatively easy Motif manager widget.
  *             * install and use the XmQTspecifyRenderTable trait.
- *             * install and use the XmQTdialogShellSavvy trait. 
+ *             * install and use the XmQTdialogShellSavvy trait.
  *          See the "OSF/Motif Widget Writer's Guide" for details.
  *
 ******************************************************************************/
@@ -53,97 +53,97 @@
 
 /* Define macros. */
 #define Max(x, y) (((x) > (y)) ? (x) : (y))
-#define WARNING_TOO_MANY_ROWS "Too many rows specified for ExmCxxGrid.\n" 
+#define WARNING_TOO_MANY_ROWS "Too many rows specified for ExmCxxGrid.\n"
 #define WARNING_TOO_MANY_COLUMNS "Too many columns specified for ExmCxxGrid.\n"
 
 static XtResource resources[] =
 {
     {
-	XmNrows, 
-	XmCRows, 
-	XmRShort, 
+	XmNrows,
+	XmCRows,
+	XmRShort,
 	sizeof (short),
 	XtOffsetOf(ExmCxxGrid, grid.rows),
 	XmRImmediate, (XtPointer) 4
     },
     {
-	XmNcolumns, 
-	XmCColumns, 
-	XmRShort, 
+	XmNcolumns,
+	XmCColumns,
+	XmRShort,
 	sizeof (short),
 	XtOffsetOf(ExmCxxGrid, grid.columns),
 	XmRImmediate, (XtPointer) 4
     },
     {
-	XmNmarginWidth, 
-	XmCMarginWidth, 
-	XmRHorizontalDimension, 
+	XmNmarginWidth,
+	XmCMarginWidth,
+	XmRHorizontalDimension,
 	sizeof (Dimension),
 	XtOffsetOf(ExmCxxGrid, grid.margin_width),
 	XmRImmediate, (XtPointer) 10
     },
     {
-	XmNmarginHeight, 
-	XmCMarginHeight, 
+	XmNmarginHeight,
+	XmCMarginHeight,
 	XmRVerticalDimension,
 	sizeof (Dimension),
 	XtOffsetOf(ExmCxxGrid, grid.margin_height),
 	XmRImmediate, (XtPointer) 10
     },
-    {	
+    {
 	XmNmapCallback,
-	XmCCallback, 
-	XmRCallback, 
+	XmCCallback,
+	XmRCallback,
 	sizeof (XtCallbackList),
 	XtOffsetOf(ExmCxxGrid, grid.map_callback),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) NULL
     },
-    {	
+    {
 	XmNunmapCallback,
-	XmCCallback, 
-	XmRCallback, 
+	XmCCallback,
+	XmRCallback,
 	sizeof (XtCallbackList),
 	XtOffsetOf(ExmCxxGrid, grid.unmap_callback),
-	XmRImmediate, 
+	XmRImmediate,
 	(XtPointer) NULL
     },
-    {	
+    {
 	XmNdefaultPosition,
-	XmCDefaultPosition, 
+	XmCDefaultPosition,
 	XmRBoolean, sizeof (Boolean),
 	XtOffsetOf(ExmCxxGrid, grid.default_position),
 	XmRImmediate,
 	(XtPointer) True
     },
-    {	
+    {
 	XmNbuttonRenderTable,
-	XmCButtonRenderTable, 
-	XmRButtonRenderTable, 
+	XmCButtonRenderTable,
+	XmRButtonRenderTable,
 	sizeof (XmRenderTable),
 	XtOffsetOf(ExmCxxGrid, grid.button_render_table),
 	XmRCallProc, (XtPointer) NULL
     },
-    {	
+    {
 	XmNlabelRenderTable,
-	XmCLabelRenderTable, 
-	XmRLabelRenderTable, 
+	XmCLabelRenderTable,
+	XmRLabelRenderTable,
 	sizeof (XmRenderTable),
 	XtOffsetOf(ExmCxxGrid, grid.label_render_table),
 	XmRCallProc, (XtPointer) NULL
     },
-    {	
+    {
 	XmNtextRenderTable,
-	XmCTextRenderTable, 
-	XmRTextRenderTable, 
+	XmCTextRenderTable,
+	XmRTextRenderTable,
 	sizeof (XmRenderTable),
 	XtOffsetOf(ExmCxxGrid, grid.text_render_table),
 	XmRCallProc, (XtPointer) NULL
     },
-    {	
+    {
 	XmNdialogTitle,
-	XmCDialogTitle, 
-	XmRXmString, 
+	XmCDialogTitle,
+	XmRXmString,
 	sizeof (XmString),
 	XtOffsetOf(ExmCxxGrid, grid.dialog_title),
 	XmRImmediate, (XtPointer) NULL
@@ -151,25 +151,25 @@ static XtResource resources[] =
 
 };
 
-/* Three of the preceding resources will be handled as synthetic 
+/* Three of the preceding resources will be handled as synthetic
    resources. */
-static XmSyntheticResource syn_resources[] = 
+static XmSyntheticResource syn_resources[] =
 {
     {
-	XmNmarginWidth, 
+	XmNmarginWidth,
 	sizeof (Dimension),
 	XtOffsetOf(ExmCxxGrid, grid.margin_width),
 	XmeFromHorizontalPixels,
 	XmeToHorizontalPixels
     },
     {
-	XmNmarginHeight, 
+	XmNmarginHeight,
 	sizeof (Dimension),
 	XtOffsetOf(ExmCxxGrid, grid.margin_height),
 	XmeFromVerticalPixels,
 	XmeToVerticalPixels
     },
-    {	
+    {
 	XmNdialogTitle,
 	sizeof (XmString),
 	XtOffsetOf(ExmCxxGrid, grid.dialog_title),
@@ -184,7 +184,7 @@ static XtResource constraints[] =
 	ExmNgridMarginWidthWithinCell,
 	ExmCGridMarginWidthWithinCell,
 	XmRHorizontalDimension, sizeof (Dimension),
-	XtOffsetOf( struct ExmCxxGridConstraintRec, 
+	XtOffsetOf( struct ExmCxxGridConstraintRec,
 		    grid.grid_margin_width_within_cell),
 	XmRImmediate, (XtPointer) 0
     },
@@ -248,7 +248,7 @@ ExmCxxGridClass::ExmCxxGridClass(char*		name,
      * On the other hand, .constraint_size MUST be set for subclasses, even
      * when they do not define new constraints.
      */
-    if (parentClass == (WidgetClass) &xmCxxManagerClassRec) {	
+    if (parentClass == (WidgetClass) &xmCxxManagerClassRec) {
 	constraint_class.resources	= constraints;
 	constraint_class.num_resources	= XtNumber(constraints);
     }
@@ -261,7 +261,7 @@ ExmCxxGridClass::ExmCxxGridClass(char*		name,
      * set in subclasses (Xm job).
      */
     manager_class.translations			= XtInheritTranslations;
-    if (parentClass == (WidgetClass) &xmCxxManagerClassRec) {	
+    if (parentClass == (WidgetClass) &xmCxxManagerClassRec) {
 	manager_class.syn_resources		= syn_resources;
 	manager_class.num_syn_resources		= XtNumber(syn_resources);
 	manager_class.syn_constraint_resources	= syn_constraints;
@@ -292,14 +292,14 @@ WidgetClass exmCxxGridWidgetClass = (WidgetClass) &exmCxxGridClassRec;
 
 /* Define trait record variables. */
 
-/* Here is the trait record variable for the XmQTdialogSavvy trait. */ 
+/* Here is the trait record variable for the XmQTdialogSavvy trait. */
 static const XmDialogSavvyTraitRec gridDST = {
   0,            /* version */
-  ExmCxxGrid::CallMapUnmap, /* trait method */        
+  ExmCxxGrid::CallMapUnmap, /* trait method */
 };
 
 
-/* Here is the trait record variable for the XmQTspecifyRenderTable trait. */ 
+/* Here is the trait record variable for the XmQTspecifyRenderTable trait. */
 static const XmSpecRenderTraitRec gridSRTT = {
   0,		/* version */
   ExmCxxGrid::GetTable,     /* trait method */
@@ -383,25 +383,25 @@ void ExmCxxGrid::initialize(Widget reqw, ArgList args, Cardinal* nargs) {
    */
   XmCxxManager::initialize(reqw, args, nargs);
 
-  /* Initialize one of the internal fields of the ExmGrid widget. */ 
+  /* Initialize one of the internal fields of the ExmGrid widget. */
   grid.processing_constraints = False;
-    
-  /* Ensure that user doesn't specify too many rows. */ 
+
+  /* Ensure that user doesn't specify too many rows. */
   if (rw->grid.rows > EXM_GRID_MAX_NUMBER_OF_ROWS) {
     XmeWarning((Widget)rw, WARNING_TOO_MANY_ROWS);
     grid.rows = EXM_GRID_MAX_NUMBER_OF_ROWS;
   }
-    
-  /* Ensure that user doesn't specify too many columns. */ 
+
+  /* Ensure that user doesn't specify too many columns. */
   if (rw->grid.columns > EXM_GRID_MAX_NUMBER_OF_COLUMNS) {
     XmeWarning((Widget)rw, WARNING_TOO_MANY_COLUMNS);
     grid.columns = EXM_GRID_MAX_NUMBER_OF_COLUMNS;
   }
 
   /* Copy in the dialog title XmString and update our shell */
-  if (grid.dialog_title) {   
-    grid.dialog_title = XmStringCopy(rw->grid.dialog_title) ;
-    XmeSetWMShellTitle(grid.dialog_title, XtParent((Widget) this)) ;
+  if (grid.dialog_title) {
+    grid.dialog_title = XmStringCopy(rw->grid.dialog_title);
+    XtVaSetValues(XtParent((Widget)this), XmNtitleString, grid.dialog_title, NULL);
   }
 }
 
@@ -413,7 +413,7 @@ void ExmCxxGrid::initialize(Widget reqw, ArgList args, Cardinal* nargs) {
  ****************************************************************************/
 
 ExmCxxGrid::~ExmCxxGrid()
-{   
+{
   // Free dialog title memory
   XmStringFree(grid.dialog_title);
 }
@@ -421,7 +421,7 @@ ExmCxxGrid::~ExmCxxGrid()
 
 /************************************************************************
  *
- *  Resize 
+ *  Resize
  *
  ************************************************************************/
 void ExmCxxGrid::resize()
@@ -452,7 +452,7 @@ void ExmCxxGrid::expose(XEvent *event, Region region)
  *     Adjust the size of the manager based on shadow thickness changes.
  *
  ************************************************************************/
-Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w, 
+Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w,
 			      ArgList args, Cardinal *num_args)
 {
     ExmCxxGridWidget cw = (ExmCxxGridWidget)old_w;
@@ -466,40 +466,40 @@ Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w,
     redisplay = XmCxxManager::set_values(old_w, request_w, args, num_args);
 
 
-    /* Ensure that user doesn't specify too many rows. */ 
+    /* Ensure that user doesn't specify too many rows. */
     if (rw->grid.rows > EXM_GRID_MAX_NUMBER_OF_ROWS) {
       XmeWarning((Widget)rw, WARNING_TOO_MANY_ROWS);
       grid.rows = EXM_GRID_MAX_NUMBER_OF_ROWS;
     }
-    
-    /* Ensure that user doesn't specify too many rows. */ 
+
+    /* Ensure that user doesn't specify too many rows. */
     if (rw->grid.columns > EXM_GRID_MAX_NUMBER_OF_COLUMNS) {
       XmeWarning((Widget)rw, WARNING_TOO_MANY_COLUMNS);
       grid.columns = EXM_GRID_MAX_NUMBER_OF_COLUMNS;
     }
-    
-    
+
+
     /* See if any class or subclass resources have changed. */
     need_relayout_flag = need_relayout(old_w);
 
   /* If any geometry resources changed and a new size wasn't specified,
-     recalculate a new ideal size. */ 
+     recalculate a new ideal size. */
     if (need_relayout_flag) {
       /* Reset the widget size so that CalcSize can affect them. */
-      if (core.width == cw->core.width) 
+      if (core.width == cw->core.width)
 	core.width = 0;
-      if (core.height == cw->core.height) 
+      if (core.height == cw->core.height)
 	core.height = 0;
-	
+
       /* Call CalcSize. */
       calc_size(NULL, &core.width, &core.height);
-	
-      /* If the geometry resources have changed but the size hasn't, 
-	 we need to relayout manually, because Xt won't generate a 
+
+      /* If the geometry resources have changed but the size hasn't,
+	 we need to relayout manually, because Xt won't generate a
 	 Resize at this point. */
       if ((core.width == cw->core.width) &&
           (core.height == cw->core.height)) {
-	layout(NULL); 
+	layout(NULL);
 	redisplay = True ;
       }
     }
@@ -510,23 +510,23 @@ Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w,
        That is, the "current" position of an ExmGrid within a DialogShell is
        always 0.  Therefore, if an application tries to set ExmGrid's x or
        y position to 0, the Intrinsics will not detect a position change and
-       wll not trigger a geometry request.  ExmGrid has to detect this special 
-       request and set core.x and core.y to the special value, 
+       wll not trigger a geometry request.  ExmGrid has to detect this special
+       request and set core.x and core.y to the special value,
        XmDIALOG_SAVVY_FORCE_ORIGIN.  That is, XmDIALOG_SAVVY_FORCE_ORIGIN
        tells DialogShell that ExmGrid really does want to move to an x or y
        position of 0. */
- 
+
    if (XmIsDialogShell(XtParent((Widget) this)))
      {   /* Is parent a DialogShell? */
        Cardinal i ;
 
-       /* We have to look in the arglist since old_w->core.x is always 0, and 
+       /* We have to look in the arglist since old_w->core.x is always 0, and
 	  if new_w->core.x is also set to 0, we see no change. */
        for (i=0; i<*num_args; i++) {
          if (strcmp (args[i].name, XmNx) == 0) {
 	   if ((args[i].value == 0) && (core.x == 0))
              core.x = XmDIALOG_SAVVY_FORCE_ORIGIN;
-	 } 
+	 }
 	 if (strcmp (args[i].name, XmNy) == 0) {
            if ((args[i].value == 0) && (core.y == 0))
              core.y = XmDIALOG_SAVVY_FORCE_ORIGIN;
@@ -535,10 +535,10 @@ Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w,
      } /* end of if */
 
    /* Update wm shell title if it has changed */
-   if(grid.dialog_title != cw->grid.dialog_title ) {  
+   if(grid.dialog_title != cw->grid.dialog_title ) {
      XmStringFree(cw->grid.dialog_title) ;
-     grid.dialog_title = XmStringCopy(rw->grid.dialog_title) ;
-     XmeSetWMShellTitle(grid.dialog_title, XtParent((Widget) this)) ;
+     grid.dialog_title = XmStringCopy(rw->grid.dialog_title);
+     XtVaSetValues(XtParent((Widget)this), XmNtitleString, grid.dialog_title, NULL);
    }
 
    return (redisplay);
@@ -548,13 +548,13 @@ Boolean ExmCxxGrid::set_values(Widget old_w, Widget request_w,
  *
  *  SetValuesAlmost:
  *       Called by the Intrinsics when an XtMakeGeometryRequest call
- *       returns either XmGeometryAlmost or XtGeometryNo.  
+ *       returns either XmGeometryAlmost or XtGeometryNo.
  *
  *************************************************************************/
 void ExmCxxGrid::set_values_almost(Widget,
 				   XtWidgetGeometry* request,
 				   XtWidgetGeometry* reply) {
-  /* ExmCxxGrid's parent said XtGeometryNo to ExmCxxGrid's geometry request. 
+  /* ExmCxxGrid's parent said XtGeometryNo to ExmCxxGrid's geometry request.
      Therefore, we need to relayout because this request
      was due to a change in internal geometry resource of the ExmCxxGrid */
   if (!reply->request_mode)
@@ -573,8 +573,8 @@ XtGeometryResult ExmCxxGrid::query_geometry(XtWidgetGeometry *request,
 					   XtWidgetGeometry *reply) {
   Widget w = (Widget) this;
 
-  /* If ExmGrid's parent calls XtQueryGeometry before ExmGrid has been 
-     realized, use the current size of ExmGrid as the preferred size. */ 
+  /* If ExmGrid's parent calls XtQueryGeometry before ExmGrid has been
+     realized, use the current size of ExmGrid as the preferred size. */
   /* Deal with user initial size setting */
     if (!XtIsRealized(w))  {  /* Widget is not yet realized. */
 	reply->width = XtWidth(w) ;    /* might be 0 */
@@ -582,10 +582,10 @@ XtGeometryResult ExmCxxGrid::query_geometry(XtWidgetGeometry *request,
     } else {	    /* Widget is realized. */
 	/* always computes natural size afterwards */
 	reply->width = 0;
-	reply->height = 0; 
+	reply->height = 0;
     }
 
-  /* Call CalcSize to figure out what the preferred size really is. */ 
+  /* Call CalcSize to figure out what the preferred size really is. */
   calc_size(NULL, &reply->width, &reply->height);
 
   /* This function handles CWidth and CHeight */
@@ -607,57 +607,57 @@ XtGeometryResult ExmCxxGrid::geometry_manager(Widget w,
   XtWidgetGeometry parentRequest;
   XtGeometryResult result;
   Dimension curWidth, curHeight, curBW;
-  
+
   /* If the request was caused by ConstraintSetValues reset the flag */
   if (gw->grid.processing_constraints) {
     gw->grid.processing_constraints = False;
-    /* The ConstraintSetValues added one to border_width; 
-       This is the Xt trick used to fire the GM when a non core 
+    /* The ConstraintSetValues added one to border_width;
+       This is the Xt trick used to fire the GM when a non core
        geometry resource (like a constraint) changes.
        now take it away. */
     request->border_width -= 1;
   }
-  
+
   /* Save the original child resources. */
   curWidth = w->core.width;
   curHeight = w->core.height;
   curBW = w->core.border_width;
-  
+
   /* Deny any requests for a new position. */
   if ((request->request_mode & CWX) || (request->request_mode & CWY))
     return XtGeometryNo ;
-  
-  if (request->request_mode & CWWidth) 
+
+  if (request->request_mode & CWWidth)
     w->core.width = request->width;
-  if (request->request_mode & CWHeight) 
+  if (request->request_mode & CWHeight)
     w->core.height = request->height;
-  if (request->request_mode & CWBorderWidth) 
+  if (request->request_mode & CWBorderWidth)
     w->core.border_width = request->border_width;
 
-  /* Calculate a new ideal size based on these requests. */ 
+  /* Calculate a new ideal size based on these requests. */
   /* Setting width and height to 0 tells CalcSize to override these
-     fields with the calculated width and height. */ 
+     fields with the calculated width and height. */
   parentRequest.width = 0;
   parentRequest.height = 0;
   gw -> calc_size(w, &parentRequest.width, &parentRequest.height);
-    
+
   /* Ask the Grid's parent if new calculated size is acceptable. */
   parentRequest.request_mode = CWWidth | CWHeight;
   if (request->request_mode & XtCWQueryOnly)
     parentRequest.request_mode |= XtCWQueryOnly;
   result = XtMakeGeometryRequest ((Widget)gw, &parentRequest, NULL);
 
-  /*  Turn XtGeometryAlmost into XtGeometryNo. */ 
-  if (result == XtGeometryAlmost) 
+  /*  Turn XtGeometryAlmost into XtGeometryNo. */
+  if (result == XtGeometryAlmost)
     result = XtGeometryNo;
 
-  if (result == XtGeometryNo || 
-      request->request_mode & XtCWQueryOnly) { 
+  if (result == XtGeometryNo ||
+      request->request_mode & XtCWQueryOnly) {
     /* Restore original geometry. */
     w->core.width = curWidth;
     w->core.height = curHeight;
     w->core.border_width = curBW;
-  } else {    
+  } else {
     /* result == XtGeometryYes and this wasn't just a query */
     gw -> layout(w); /* Layout with this child as the instigator,
 			so that we don't resize this child. */
@@ -679,9 +679,9 @@ void ExmCxxGrid::change_managed() {
     Dimension gridWidth, gridHeight;
     Widget w = (Widget) this;
 
-    /* If you get an initial (C) size from the user or application, keep it.  
+    /* If you get an initial (C) size from the user or application, keep it.
        Otherwise, just force width and height to 0 so that CalcSize will
-       overwrite the appropriate fields. */ 
+       overwrite the appropriate fields. */
     if (!XtIsRealized(w))  {
 	/* The first time, only attempts to change non specified sizes */
 	gridWidth = XtWidth(w) ;   /* might be 0 */
@@ -714,7 +714,7 @@ void ExmCxxGrid::change_managed() {
  *
  ************************************************************************/
 Boolean ExmCxxGrid::constraint_set_values(Widget cw, Widget rw, Widget nw,
-					 ArgList args, Cardinal* nargs) 
+					 ArgList args, Cardinal* nargs)
 {
     ExmCxxGridConstraintPart *nc;
     ExmCxxGridConstraintPart *cc;
@@ -732,16 +732,16 @@ Boolean ExmCxxGrid::constraint_set_values(Widget cw, Widget rw, Widget nw,
 
 
     /* Check for change in ExmNgridMarginWidth or ExmNgridMarginHeight */
-    if ((nc->grid_margin_width_within_cell != 
+    if ((nc->grid_margin_width_within_cell !=
 	 cc->grid_margin_width_within_cell ||
-	 nc->grid_margin_height_within_cell != 
-	 cc->grid_margin_height_within_cell) && 
+	 nc->grid_margin_height_within_cell !=
+	 cc->grid_margin_height_within_cell) &&
 	XtIsManaged (nw)) {
-	/* Tell the Intrinsics and the GeometryManager method that a 
+	/* Tell the Intrinsics and the GeometryManager method that a
 	   reconfigure is needed. */
 	grid.processing_constraints = True;
 	/* A trick: by altering one of the core geometry fields, Xt will
-	   call the parent's geometry_manager method. */ 
+	   call the parent's geometry_manager method. */
 	nw->core.border_width += 1;
     }
 
@@ -760,25 +760,25 @@ void ExmCxxGrid::layout(Widget instigator)
   Dimension TotalWidthOfGridWidget  = core.width;
   Dimension TotalWidthOfGridMargins, TotalHeightOfGridMargins;
   Dimension TotalHeightOfGridWidget = core.height;
-  Dimension AvailWidthForChildren = 1, AvailHeightForChildren = 1; 
+  Dimension AvailWidthForChildren = 1, AvailHeightForChildren = 1;
   Dimension WidthAllottedEachChild, HeightAllottedEachChild;
   int i, row, column;
 
-  /* Lay out the children that ExmGrid is currently managing.  
+  /* Lay out the children that ExmGrid is currently managing.
      Each child will be placed somewhere on the rowxcolumn grid. */
   TotalWidthOfGridMargins = 2 * mw;
-  if (TotalWidthOfGridWidget > TotalWidthOfGridMargins) 
-    AvailWidthForChildren = TotalWidthOfGridWidget - 
-      TotalWidthOfGridMargins; 
-  
+  if (TotalWidthOfGridWidget > TotalWidthOfGridMargins)
+    AvailWidthForChildren = TotalWidthOfGridWidget -
+      TotalWidthOfGridMargins;
+
   WidthAllottedEachChild = AvailWidthForChildren / grid.columns;
-  
+
   TotalHeightOfGridMargins = 2 * mh;
-  if (TotalHeightOfGridWidget > TotalHeightOfGridMargins) 
-    AvailHeightForChildren = TotalHeightOfGridWidget - 
-      TotalHeightOfGridMargins; 
+  if (TotalHeightOfGridWidget > TotalHeightOfGridMargins)
+    AvailHeightForChildren = TotalHeightOfGridWidget -
+      TotalHeightOfGridMargins;
   HeightAllottedEachChild = AvailHeightForChildren / grid.rows;
-  
+
   /* Now that we know how much space is allotted for each child, we
      can lay them all out. */
   row = 0;
@@ -788,48 +788,48 @@ void ExmCxxGrid::layout(Widget instigator)
     ExmCxxGridConstraintPart *glc = GridConstraint (ic);
     Dimension gmw = glc->grid_margin_width_within_cell;
     Dimension gmh = glc->grid_margin_height_within_cell;
-    Position ChildsStartingX, ChildsStartingY; 
+    Position ChildsStartingX, ChildsStartingY;
     Dimension ChildsActualWidth, ChildsActualHeight, cb;
-    
-    if (!XtIsManaged(ic))  
+
+    if (!XtIsManaged(ic))
       continue;  /* ignored unmanaged children */
-    
-    cb = ic->core.border_width;  
-    
+
+    cb = ic->core.border_width;
+
     /* Calculate the position and the size of the child.
-       During the layout, the children are all resized 
-       to exactly fit the cell size minus the cell margin */ 
-    
+       During the layout, the children are all resized
+       to exactly fit the cell size minus the cell margin */
+
     ChildsActualWidth = WidthAllottedEachChild - (2 * (gmw + cb));
     ChildsStartingX = mw + (column * WidthAllottedEachChild) + gmw;
     ChildsStartingY = mh + (row * HeightAllottedEachChild) + gmh;
     ChildsActualHeight = HeightAllottedEachChild - 2 * (gmh + cb);
-    
-    /* If layout is instigated by the GeometryManager don't 
-       configure the requesting child, just set its geometry and 
+
+    /* If layout is instigated by the GeometryManager don't
+       configure the requesting child, just set its geometry and
        let Xt configure it.   */
     if (ic != instigator) {
-      XmeConfigureObject (ic, ChildsStartingX, ChildsStartingY, 
+      XmeConfigureObject (ic, ChildsStartingX, ChildsStartingY,
 			  ChildsActualWidth, ChildsActualHeight, cb);
     }
     else {
-      ic->core.x = ChildsStartingX; 
-      ic->core.y = ChildsStartingY; 
-      ic->core.width = ChildsActualWidth; 
-      ic->core.height = ChildsActualHeight; 
+      ic->core.x = ChildsStartingX;
+      ic->core.y = ChildsStartingY;
+      ic->core.width = ChildsActualWidth;
+      ic->core.height = ChildsActualHeight;
       ic->core.border_width = cb;
     }
-    
-    /* Advance the column counter until we reach the right edge.  
-       When we reach the right edge, reset the column 
-       counter back to 0 (left edge) and advance the row counter. */ 
+
+    /* Advance the column counter until we reach the right edge.
+       When we reach the right edge, reset the column
+       counter back to 0 (left edge) and advance the row counter. */
     column += 1;
-    
+
     if (column == grid.columns) {
       column = 0;
       row += 1;
     }
-  } 
+  }
 }
 
 /************************************************************************
@@ -837,27 +837,27 @@ void ExmCxxGrid::layout(Widget instigator)
  *  CalcSize
  *
  ************************************************************************/
-void ExmCxxGrid::calc_size(Widget instigator, 
+void ExmCxxGrid::calc_size(Widget instigator,
 			   Dimension *TotalWidthOfGridWidget,
 			   Dimension *TotalHeightOfGridWidget)
 {
   Dimension maxWidth = 1;
   Dimension maxHeight = 1;
   int i;
-  
-  /* Examine each of Grid's children.  Find the biggest child.  The 
+
+  /* Examine each of Grid's children.  Find the biggest child.  The
      ideal size of the Grid will be large enough to accomodate the
-     largest child. */ 
+     largest child. */
   for (i = 0; i < composite.num_children; i++) {
     Widget ic = composite.children[i];
     ExmCxxGridConstraintPart *glc = GridConstraint (ic);
     Dimension width, height;
     Dimension cw, ch, cb;
     XtWidgetGeometry reply;
-    
-    if (!XtIsManaged(ic)) 
+
+    if (!XtIsManaged(ic))
       continue ;
-    
+
     /* Get child's preferred geometry if not the instigator. */
     if (ic != instigator) {
       XtQueryGeometry (ic, NULL, &reply);
@@ -870,23 +870,23 @@ void ExmCxxGrid::calc_size(Widget instigator,
       ch = ic->core.height;
     }
     cb = ic->core.border_width;
-    
+
     width = cw + 2 * (cb + glc->grid_margin_width_within_cell);
     height = ch + 2 * (cb + glc->grid_margin_height_within_cell);
-    
+
     maxWidth  = Max (width, maxWidth);
     maxHeight = Max (height, maxHeight);
-  } 
-  
-  
-  /* The total width of the grid widget should be set to the width of 
+  }
+
+
+  /* The total width of the grid widget should be set to the width of
      the largest child widget times the number of columns. */
   if (!*TotalWidthOfGridWidget) {
     *TotalWidthOfGridWidget = maxWidth * grid.columns +
       (2 * (grid.margin_width));
   }
-  
-  /* The total height of the grid widget should be set to the height of 
+
+  /* The total height of the grid widget should be set to the height of
      the largest child widget times the number of columns. */
   if (!*TotalHeightOfGridWidget) {
     *TotalHeightOfGridWidget = maxHeight * grid.rows +
@@ -898,9 +898,9 @@ void ExmCxxGrid::calc_size(Widget instigator,
 /****************************************************************************
  *
  *  need_relayout:
- *     Called by SetValues. 
- *     Returns True if a relayout is needed.  
- *     based on this class and all superclass resources' changes. 
+ *     Called by SetValues.
+ *     Returns True if a relayout is needed.
+ *     based on this class and all superclass resources' changes.
  *
  ***************************************************************************/
 Boolean ExmCxxGrid::need_relayout(Widget old_w)
@@ -920,29 +920,29 @@ Boolean ExmCxxGrid::need_relayout(Widget old_w)
 
 /****************************************************************
  *
- * Trait method for XmQTdialogShellSavvy trait. 
+ * Trait method for XmQTdialogShellSavvy trait.
  *
  **************************************************************/
 void ExmCxxGrid::CallMapUnmap(Widget wid, Boolean map_unmap)
 {
     ExmCxxGrid *grid = (ExmCxxGrid *) wid ;
-    XmAnyCallbackStruct call_data;	
+    XmAnyCallbackStruct call_data;
 
     call_data.reason = (map_unmap)? XmCR_MAP : XmCR_UNMAP;
-    call_data.event  = NULL;			
+    call_data.event  = NULL;
 
     if (map_unmap) {
-	XtCallCallbackList (wid, grid -> grid.map_callback, 
+	XtCallCallbackList (wid, grid -> grid.map_callback,
 			    &call_data);
     } else {
-	XtCallCallbackList (wid, grid -> grid.unmap_callback, 
+	XtCallCallbackList (wid, grid -> grid.unmap_callback,
 			    &call_data);
     }
 }
 
 /*****************************************************************
  *
- * Trait method for XmQTspecifyRenderTable.   
+ * Trait method for XmQTspecifyRenderTable.
  *
  *****************************************************************/
 XmRenderTable ExmCxxGrid::GetTable(Widget wid, XtEnum type)
@@ -954,7 +954,7 @@ XmRenderTable ExmCxxGrid::GetTable(Widget wid, XtEnum type)
     case XmBUTTON_RENDER_TABLE : return grid->grid.button_render_table ;
     case XmTEXT_RENDER_TABLE : return grid->grid.text_render_table ;
     }
-   
+
     return NULL ;
 }
 
@@ -962,14 +962,14 @@ XmRenderTable ExmCxxGrid::GetTable(Widget wid, XtEnum type)
 /******************************************************************************
  *
  *  ExmCreateCxxGrid:
- *      Called by an application. 
+ *      Called by an application.
  *
  *****************************************************************************/
-Widget ExmCreateCxxGrid (Widget parent, char *name, 
+Widget ExmCreateCxxGrid (Widget parent, char *name,
 			 ArgList arglist, Cardinal argcount)
 {
  /* This is a convenience function to instantiate an ExmGrid widget. */
-   return (XtCreateWidget (name, exmCxxGridWidgetClass, parent, 
+   return (XtCreateWidget (name, exmCxxGridWidgetClass, parent,
                            arglist, argcount));
 }
 
@@ -977,13 +977,13 @@ Widget ExmCreateCxxGrid (Widget parent, char *name,
  *
  *  ExmCreateCxxGridDialog
  *      Called by an application to create an ExmGrid managed by a
- *      DialogShell. 
+ *      DialogShell.
  *
  *****************************************************************************/
 Widget ExmCreateCxxGridDialog (Widget parent, char *name,
 			       ArgList arglist, Cardinal argcount)
 {
    return XmeCreateClassDialog (exmCxxGridWidgetClass,
-                                parent, name, arglist, argcount) ; 
+                                parent, name, arglist, argcount) ;
 
 }
