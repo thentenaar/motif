@@ -87,3 +87,16 @@ XmString XmeGetLocalizedString(char *reserved, Widget widget,
 	return XmStringCreateLocalized(string);
 }
 
+void XmeSetWMShellTitle(XmString s, Widget shell)
+{
+	_XmWidgetToAppContext(shell);
+	_XmAppLock(app);
+	if (!XtIsWMShell(shell) || !XmStringIsValid(s)) {
+		_XmAppUnlock(app);
+		return;
+	}
+
+	XtVaSetValues(shell, XmNtitleString, s, XmNiconNameString, s, NULL);
+	_XmAppUnlock(app);
+}
+

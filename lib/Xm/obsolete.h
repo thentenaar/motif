@@ -188,6 +188,10 @@ extern String XmGetAtomName(Display *display, Atom atom);
 XM_ALTERNATIVE(Use XmStringCreateLocalized instead)
 extern XmString XmeGetLocalizedString(char *reserved, Widget widget,
                                       char *resource, String string);
+
+XM_ALTERNATIVE(Set XmNtitleString / XmNiconNameString on the shell instead)
+extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
+
 #endif /* _XmP_h */
 #endif /* XM_OBSOLETE_H */
 #endif /* _Xm_h */

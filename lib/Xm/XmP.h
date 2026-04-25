@@ -1227,9 +1227,6 @@ extern void XmeResolvePartOffsets(
 			XmOffsetPtr *constraint_offset ) ;
     /* XmString.c */
 
-XM_ALTERNATIVE(Set XmNtitleString / XmNiconNameString on the shell instead)
-extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
-
 extern XmIncludeStatus XmeGetNextCharacter(XtPointer *in_out,
 					   XtPointer text_end,
 					   XmTextType type,
@@ -1328,7 +1325,6 @@ extern void XmRenderTableGetDefaultFontExtents(
 #define _XmToHorizontalPixels		XmeToHorizontalPixels
 #define _XmToVerticalPixels		XmeToVerticalPixels
 #define _XmWarning			XmeWarning
-
 
 /*
  * These routines are really undocumented and internal, but have been
