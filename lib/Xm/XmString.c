@@ -5123,14 +5123,14 @@ static void _parse_locale(char *str, int *idx, int *len)
 
 	*idx = 0;
 	*len = 0;
-	if (!str || !*str || *str == '@' || *str == ';')
+	if (!str || !*str || *str == '@' || *str == ';' || *str == '/')
 		return;
 
 	/**
 	 * Locale identifiers are formatted as:
 	 * language[_territory][.codeset][@modifier]
 	 */
-	while (tmp[end] && tmp[end] != '.' && tmp[end] != '@' && tmp[end] != ';')
+	while (tmp[end] && tmp[end] != '.' && tmp[end] != '@' && tmp[end] != ';' && tmp[end] != '/')
 		end++;
 
 	/* Bail if we didn't get a codeset */
@@ -5139,7 +5139,7 @@ static void _parse_locale(char *str, int *idx, int *len)
 
 	/* Look for the end of the codeset */
 	*idx = end;
-	while (tmp[end] && tmp[end] != '@' && tmp[end] != ';') end++;
+	while (tmp[end] && tmp[end] != '@' && tmp[end] != ';' && tmp[end] != '/') end++;
 	*len = end - *idx;
 }
 
