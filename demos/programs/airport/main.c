@@ -472,7 +472,7 @@ static void ConfigureAirport(Widget area, Airport this)
    XtSetArg(args[n], XmNheight, &height); n++;
    XtGetValues(area, args, n);
 
-   if (this->state == open)  { /* destroy current data */
+   if (this->state == Open)  { /* destroy current data */
       XtFree((char *)this->park.spots);
       XClearWindow(this->display, XtWindow(area) );
       this->park.spot_count = 0;
@@ -485,7 +485,7 @@ static void ConfigureAirport(Widget area, Airport this)
 	Warning(this,
 		XmStringCreateLocalized(AirportResources.too_small),
 		NULL);
-	this->state = closed;
+	this->state = Closed;
      }
    else
      {
@@ -530,7 +530,7 @@ static void ConfigureAirport(Widget area, Airport this)
 static void ResizeAirport(Widget area, Airport this, XtPointer cbs)
 {
 
-   if (! XtIsRealized(area) || this->state == closed)
+   if (! XtIsRealized(area) || this->state == Closed)
      return ;
    ConfigureAirport(area, this);
 
@@ -542,10 +542,10 @@ static void ResizeAirport(Widget area, Airport this, XtPointer cbs)
 static void ShowAirport(Widget area, Airport this, XtPointer cbs)
 {
 
-   if (this->state == closed) {
+   if (this->state == Closed) {
       ConfigureAirport(area, this);
       MakeAirportDropSite(area, this);
-      this->state = open;
+      this->state = Open;
    }
    DrawAirport(this, XtWindow(area), AirportResources.track_background,
 	       AirportResources.track_foreground);

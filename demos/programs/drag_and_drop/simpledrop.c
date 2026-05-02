@@ -46,7 +46,7 @@
  *  General Types
  */
 
-typedef enum {closed, open} State ;
+typedef enum {Closed, Open} State ;
 
 /*
  * The demo basic data structure
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
  * Initialize
  */
    this = (DropDemo) XtCalloc(sizeof(DropDemoRec), 1);
-   this->state = closed;
+   this->state = Closed;
 
    theWidgetRoot = XtVaAppInitialize(&this->context, myClass,
 				     NULL, 0, &argc, argv, NULL, NULL,

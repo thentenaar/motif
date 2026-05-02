@@ -35,7 +35,7 @@
  *
  *
  * ======================================================================
- * 
+ *
  */
 
 /*
@@ -43,7 +43,7 @@
  */
 
 #if (! defined airport_h)
-#define airport_h 
+#define airport_h
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -76,7 +76,7 @@ typedef struct _Spot {
 } SpotRec, *Spot;
 
 typedef enum {empty, normal, full} ParkState ;
- 
+
 typedef struct _Park {
    ParkState state;
    GC gc;
@@ -91,18 +91,18 @@ typedef struct _Track {
    GC gc;
 } TrackRec, *Track;
 
-typedef enum {closed, open} AirportState ;
+typedef enum {Closed, Open} AirportState ;
 
 /*
  * The airport data structure consists of
- * 	- the widget needed in various callbacks 
+ * 	- the widget needed in various callbacks
  *	- the drag source data
  *	- the drop site data
- *	- the details of the track graphics 
+ *	- the details of the track graphics
  */
 
 typedef struct _Airport {
-   XtAppContext context; 
+   XtAppContext context;
    Display * display;
    Window ocean;
    int screen_width;
@@ -140,7 +140,7 @@ typedef struct _Flight {
 #define plane_height 25
 
 /* ======================================================================
- * Global variables 
+ * Global variables
  */
 
 #ifdef DECLAREGLOBAL
@@ -152,7 +152,7 @@ typedef struct _Flight {
 global Atom FlightAtom;
 global Atom DeleteAtom;
 
-/* 
+/*
  * Application Resources
  */
 
