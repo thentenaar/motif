@@ -25,7 +25,7 @@ AC_DEFUN([AX_CFLAGS],[
 	                      [ax_cc_clang="yes"],dnl
 	                      [ax_cc_clang="no"])
 
-	AS_IF([test "$ax_cc_clang" == "yes"],[
+	AS_IF([test "$ax_cc_clang" = "yes"],[
 		ax_cc_gcov_command="llvm-cov gcov"
 		AX_APPEND_COMPILE_FLAGS([ dnl
 			-Wall dnl

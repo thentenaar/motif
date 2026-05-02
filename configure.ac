@@ -75,7 +75,7 @@ AC_SEARCH_LIBS([Xutf8TextExtents], [X11])
 CPPFLAGS=$save_CPPFLAGS
 LDFLAGS=$save_LDFLAGS
 
-AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
+AS_IF([test "x$ac_cv_search_Xutf8TextExtents" = "xno"],[
 	dnl AIX >= 7.1's Xlib header defines X_HAVE_UTF8_STRING and includes the
 	dnl UTF-8 prototypes, but lacks the external symbols. It does have
 	dnl Xutf8SetWMProperties and Xutf8TextListToTextProperty though,
@@ -87,7 +87,7 @@ AS_IF([test "x$ac_cv_search_Xutf8TextExtents" == "xno"],[
 ])
 
 dnl Check for libiconv if needed
-AS_IF([test "x$ac_cv_func_iconv" == "xno"],[
+AS_IF([test "x$ac_cv_func_iconv" = "xno"],[
 	AC_SEARCH_LIBS([libiconv_open], [iconv], [], [
 		AC_SEARCH_LIBS([iconv], [iconv], [], [
 			AC_MSG_ERROR([Unable to find iconv])
@@ -154,22 +154,22 @@ AC_ARG_WITH([xinerama],
 	[AS_HELP_STRING([--with-xinerama], [Enable Xinerama support])],
 	[with_xinerama=$withval], [with_xinerama=no])
 
-AS_IF([test "x$with_xrandr" == "xyes"],[
+AS_IF([test "x$with_xrandr" = "xyes"],[
 	PKG_CHECK_MODULES([XRANDR], [xrandr], [], [
 		with_xrandr=no
 		with_xinerama=yes
 	])
 ],[with_xinerama=yes])
 
-AS_IF([test "x$with_xinerama" == "xyes"],[
+AS_IF([test "x$with_xinerama" = "xyes"],[
 	PKG_CHECK_MODULES([XINERAMA], [xinerama], [], [with_xinerama=no])
 ])
 
-AS_IF([test "x$with_xrender" == "xyes"],[
+AS_IF([test "x$with_xrender" = "xyes"],[
 	PKG_CHECK_MODULES([XRENDER], [xrender], [], [with_xrender=no])
 ])
 
-AS_IF([test "x$with_xcursor" == "xyes"],[
+AS_IF([test "x$with_xcursor" = "xyes"],[
 	PKG_CHECK_MODULES([XCURSOR], [xcursor], [], [with_xcursor=no])
 ])
 
@@ -215,7 +215,7 @@ AC_ARG_ENABLE([glw],
 	[enable_glw=$enableval],
 	[enable_glw=no]
 )
-AS_IF([test "x$enable_glw" == "xyes"],[
+AS_IF([test "x$enable_glw" = "xyes"],[
 	PKG_CHECK_MODULES([GL], [gl], [], [enable_glw=no])
 ])
 
@@ -223,16 +223,16 @@ dnl Tests
 AC_ARG_ENABLE([tests],
 	[AS_HELP_STRING([--enable-tests], [Enable automated tests])],
 	[enable_tests=$enableval], [enable_tests=no])
-AM_CONDITIONAL([WITH_TESTS], test "x$enable_tests" == "xyes")
+AM_CONDITIONAL([WITH_TESTS], test "x$enable_tests" = "xyes")
 
-AS_IF([test "x$enable_tests" == "xyes"],[
+AS_IF([test "x$enable_tests" = "xyes"],[
 	AC_PROG_AWK
 	AC_REQUIRE_AUX_FILE([tap-driver.sh])
 	PKG_CHECK_MODULES([CHECK], [check])
 ])
 
 dnl Debug builds (assert, etc.)
-AS_IF([test "x$enable_debug" == "xyes"],[
+AS_IF([test "x$enable_debug" = "xyes"],[
 	AX_APPEND_COMPILE_FLAGS([-Og -ggdb])
 	AX_APPEND_COMPILE_FLAGS([-DDEBUG], [CPPFLAGS])
 ],[
@@ -248,10 +248,10 @@ AC_SUBST([XM_VERSION], [_XM_VERSION])
 
 dnl Automake substitutions
 AC_SUBST([ABI_VERSION], [_ABI_VERSION])
-AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" == "xyes")
-AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  == "xyes")
-AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" == "xyes")
-AM_CONDITIONAL([WITH_GLW],     test "x$enable_glw" == "xyes")
+AM_CONDITIONAL([XM_WITH_JPEG], test "x$with_jpeg" = "xyes")
+AM_CONDITIONAL([XM_WITH_PNG],  test "x$with_png"  = "xyes")
+AM_CONDITIONAL([XM_MSGCAT],    test "x$enable_message_catalog" = "xyes")
+AM_CONDITIONAL([WITH_GLW],     test "x$enable_glw" = "xyes")
 
 dnl Substitutions for lib/Xm/Xm.h
 AC_SUBST([XM_MAJOR], [_XM_MAJOR])
@@ -336,9 +336,9 @@ dnl Demos
 AC_ARG_ENABLE([demos],
 	[AS_HELP_STRING([--enable-demos], [Enable building the demos])],
 	[enable_demos=$enableval], [enable_demos=auto])
-AM_CONDITIONAL([WITH_DEMOS], test "x$enable_demos" == "xyes")
+AM_CONDITIONAL([WITH_DEMOS], test "x$enable_demos" = "xyes")
 
-AS_IF([test "x$enable_glw" == "xyes"],[
+AS_IF([test "x$enable_glw" = "xyes"],[
 	AC_SUBST([GLW_VERSION], [_GLW_VERSION])
 	AC_CONFIG_FILES([lib/GLw/Makefile lib/GLw/glw.pc])
 	AS_IF([test "x$enable_demos" != "xno"],[AC_CONFIG_FILES([demos/GLw/Makefile])])
@@ -347,7 +347,7 @@ AS_IF([test "x$enable_glw" == "xyes"],[
 dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
 dnl warnings are spurious.
 m4_define([_NO_UNDEF], [])
-AS_IF([test "x$host_os" == "xcygwin"],[
+AS_IF([test "x$host_os" = "xcygwin"],[
 	m4_define([_NO_UNDEF],[-no-undefined])
 	CFLAGS="${CFLAGS} -Wno-maybe-uninitialized -Wno-char-subscripts"
 ])
