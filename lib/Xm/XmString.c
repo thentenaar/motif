@@ -22,6 +22,7 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
+#include "XmP.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -2010,12 +2011,12 @@ LineMetrics(_XmStringEntry line,
 		  NULL);
     }
 
-  if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_UNSET)
-    {
-      _XmEntryDirectionSet((_XmStringEntry)seg,
-			   XmDirectionToStringDirection(prim_dir));
-      set_direction = True;
-    }
+  if (_XmEntryTextTypeGet((_XmStringEntry)seg) != XmNO_TEXT &&
+  	  _XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_UNSET)
+      {
+        _XmEntryDirectionSet((_XmStringEntry)seg, XmDirectionToStringDirection(prim_dir));
+        set_direction = True;
+      }
 
   if (peek_seg != NULL)
     (void)SpecifiedSegmentExtents((_XmStringEntry)seg, r, rend_io, base,
@@ -2088,8 +2089,8 @@ LineMetrics(_XmStringEntry line,
 	}
 	if (seg != NULL)
 	  {
-	    if (_XmEntryDirectionGet((_XmStringEntry)seg) ==
-		XmSTRING_DIRECTION_UNSET)
+	    if (_XmEntryTextTypeGet((_XmStringEntry)seg) != XmNO_TEXT &&
+	    	_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_UNSET)
 	      {
 		_XmEntryDirectionSet((_XmStringEntry)seg,
 				     XmDirectionToStringDirection(prim_dir));
@@ -4831,6 +4832,14 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
   Boolean		can_do = TRUE;
   _XmRendition		rend_int;
   _XmStringRenderingCache render_cache;
+
+  if (_XmEntryTextTypeGet(entry) == XmNO_TEXT) {
+  	if (width)   *width   = 0;
+  	if (height)  *height  = 0;
+  	if (ascent)  *ascent  = 0;
+  	if (descent) *descent = 0;
+    return False;
+  }
 
   /* Fetching the cache once and accessing the fields directly saves
    * substantial time searching the cache

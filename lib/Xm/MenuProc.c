@@ -26,6 +26,10 @@
 #include <config.h>
 #endif
 
+#ifdef DEBUG
+#include <stdlib.h>
+#endif
+
 /*
  * The following functions are used to separate the private class function
  * in RowColumn from the buttons that may be children of the RowColumn.
