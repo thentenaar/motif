@@ -3735,7 +3735,9 @@ DrawLine(
     Boolean             set_direction = False;
     XmDirection         lay_dir = prim_dir; /* layout direction of this line */
 
-    seg = _XmEntrySegmentGet(line)[seg_index];
+    if (_XmEntryMultiple(line))
+        seg = _XmEntrySegment(line)[seg_index];
+    else seg = (_XmStringNREntry)line;
 
     if (_XmEntryType(seg) != XmSTRING_ENTRY_OPTIMIZED) {
       lay_dir = _XmEntryLayoutGet(seg, prim_dir);
