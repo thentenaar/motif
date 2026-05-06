@@ -49,7 +49,9 @@ int yyerror(const char *);
 
 #define		YYSTYPE		yystype
 
+#ifdef DEBUG
 #define		YYDEBUG		1
+#endif
 
 /*   Declare and initialize stack entry for epsilon productions.    */
 
