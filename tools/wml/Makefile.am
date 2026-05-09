@@ -22,6 +22,9 @@ wml_HEADERS = UilDBDef.h
 noinst_HEADERS = wml.h wmlparse.h wmlnoreturn.h $(WMLTARGETS)
 
 noinst_PROGRAMS = wml wmluiltok wmldbcreate
+
+noinst_DATA = motif.wmd
+
 wmluiltok_SOURCES = wmluiltok.l
 
 wml_SOURCES = wml.c
@@ -55,8 +58,6 @@ wml-uil.mm: wmluiltok wml UilLexPars.c $(TABLE)
 	$(RM) wml-uil.mm
 	./wml $(srcdir)/$(TABLE)
 	$(RM) tokens.dat
-
-all: motif.wmd
 
 motif.wmd: wmldbcreate
 	./wmldbcreate -o motif.wmd
