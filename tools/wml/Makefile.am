@@ -10,10 +10,9 @@ WMLTARGETS = UilConst.h	UilKeyTab.h	 \
 	UilSymReas.h	UilTokName.h	UilUrmClas.h	UilSymChCl.h \
 	UilSymChTa.h
 
+CLEANFILES = $(WMLTARGETS) motif.wmd wml.report tokens.dat UilLexPars.[ch] wmllex.c wmlparse.[ch] wmluiltok.c wml-uil.mm
+
 TABLE = motif.wml
-WMDTABLE = motif.wmd
-WMLTOOLS = wml wmluiltok
-REPORT = wml.report
 
 wmldir = $(includedir)/uil
 
@@ -53,17 +52,8 @@ UilLexPars.c: Uil.c
 $(WMLTARGETS): wml-uil.mm
 
 wml-uil.mm: wmluiltok wml UilLexPars.c $(TABLE)
-	$(RM) $(WMLTARGETS) wml.report wml-uil.mm
 	./wmluiltok <$(srcdir)/Uil.y >tokens.dat
-	$(RM) wml-uil.mm
 	./wml $(srcdir)/$(TABLE)
-	$(RM) tokens.dat
 
 motif.wmd: wmldbcreate
 	./wmldbcreate -o motif.wmd
-
-clean-local:
-	$(RM) $(WMLTARGETS) $(WMDTABLE) $(REPORT) lex.yy.c libwml.la wml \
-	*.mm *.sdml *.txt wmlparse.c wmlparse.h wmluiltok wmllex.c \
-	tokens.dat DONE wmluiltok.c Uil.c Uil.h wml.report UilLexPars.[ch] ylwrap
-

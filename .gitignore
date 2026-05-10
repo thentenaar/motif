@@ -150,6 +150,7 @@ tools/wml/UilSymReas.h
 tools/wml/UilTokName.h
 tools/wml/UilUrmClas.h
 tools/wml/motif.wmd
+tools/wml/tokens.dat
 tools/wml/wml
 tools/wml/wml-uil.mm
 tools/wml/wml.report
