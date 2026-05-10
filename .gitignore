@@ -130,8 +130,6 @@ lib/Xm/XmStrDefs22.h
 lib/Xm/XmStrDefs23.h
 lib/Xm/XmStrDefs25.h
 lib/Xm/XmStrDefsI.h
-tools/wml/Uil.c
-tools/wml/Uil.h
 tools/wml/UilConst.h
 tools/wml/UilKeyTab.h
 tools/wml/UilLexPars.c
