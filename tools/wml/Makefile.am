@@ -45,8 +45,10 @@ wmlsynbld.c: wmlparse.h
 
 $(WMLTARGETS): wml-uil.mm
 
-wml-uil.mm: wmluiltok wml UilLexPars.y $(TABLE)
-	./wmluiltok <$(srcdir)/UilLexPars.y >tokens.dat
+tokens.dat: UilLexPars.y wmluiltok
+	./wmluiltok < $(srcdir)/UilLexPars.y > tokens.dat
+
+wml-uil.mm: tokens.dat wml $(TABLE)
 	./wml $(srcdir)/$(TABLE)
 
 motif.wmd: wmldbcreate
