@@ -25,9 +25,7 @@ Exm.wmd: wmldbcreate
 	./wmldbcreate -o $@
 
 wml-uil.mm: $(WMLDIR)/UilLexPars.y Exm.wml $(WMLDIR)/motif.wml $(top_builddir)/tools/wml/wmluiltok
-	$(RM) Exm.h
 	$(top_builddir)/tools/wml/wmluiltok < $(WMLDIR)/UilLexPars.y > tokens.dat
-	$(LN_S) $(srcdir)/Exm.wml ./Exm.h
+	$(LN_S) -f $(srcdir)/Exm.wml ./Exm.h
 	$(CPP) $(CPPFLAGS) -I$(WMLDIR) Exm.h | $(top_builddir)/tools/wml/wml
-	$(RM) Exm.h
 
