@@ -6,7 +6,7 @@ CLEANFILES           = $(BUILT_SOURCES) Exm.wmd wml.report tokens.dat      \
                        UilSymArTa.h UilSymArTy.h UilSymCSet.h UilSymCtl.h  \
                        UilSymEnum.h UilSymGen.h UilSymNam.h UilSymRArg.h   \
                        UilSymReas.h UilTokName.h UilUrmClas.h UilSymChCl.h \
-                       UilSymChTa.h
+                       UilSymChTa.h Exm.h
 WMLDIR               = $(top_srcdir)/tools/wml
 
 noinst_PROGRAMS   = wmldbcreate
