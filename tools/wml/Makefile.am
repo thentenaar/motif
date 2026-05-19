@@ -4,6 +4,8 @@ EXTRA_DIST = README wmllex.c wmllex.l motif.wml UilLexPars.y UilLexPars.h UilLex
 
 AM_YFLAGS = -d
 
+BUILT_SOURCES = UilLexPars.c
+
 WMLTARGETS = UilConst.h	UilKeyTab.h	 \
 	UilSymArTa.h	UilSymArTy.h	UilSymCSet.h	UilSymCtl.h \
 	UilSymEnum.h	UilSymGen.h	UilSymNam.h	UilSymRArg.h \
