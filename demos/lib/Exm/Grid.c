@@ -62,8 +62,7 @@ static void GetDialogTitle(
                         Widget bb,
                         int resource,
                         XtArgVal *value) ;
-static void ClassPartInitialize(
-                        WidgetClass widgetClass);
+static void ClassPartInitialize(WidgetClass wc);
 static void Initialize(
                         Widget request_w,
                         Widget new_w,
@@ -413,10 +412,7 @@ GetDialogTitle(
  *      Called when this widget or a subclass of this widget is instantiated.
  *
  ****************************************************************************/
-static void
-ClassPartInitialize (
-        WidgetClass widgetClass
-                    )
+static void ClassPartInitialize(WidgetClass wclass)
 {
  ExmGridWidgetClass wc = (ExmGridWidgetClass)widgetClass;
  ExmGridWidgetClass sc = (ExmGridWidgetClass)wc->core_class.superclass;

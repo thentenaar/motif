@@ -67,8 +67,7 @@ static const int FIND_NATURAL_SIZE = 0;
 
 /* Declare all static functions. */ 
 static void ClassInitialize(void);
-static void ClassPartInitialize (
-                        WidgetClass widgetClass );
+static void ClassPartInitialize(WidgetClass wclass);
 static void Initialize(
                         Widget request_w,
                         Widget new_w,
@@ -318,10 +317,7 @@ ClassInitialize( void )
  *      Called when this widget or a subclass of this widget is instantiated.
  *
  *****************************************************************************/
-static void 
-ClassPartInitialize (
-        WidgetClass widgetClass
-                    )
+static void ClassPartInitialize(WidgetClass wclass)
 {
  ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)widgetClass;
  ExmSimpleWidgetClass sc = (ExmSimpleWidgetClass) wc->core_class.superclass;
