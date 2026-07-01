@@ -206,6 +206,7 @@ static void	common_main(void)
     uil_exit( uil_l_compile_status );
 }
 
+#ifdef CALLABLE
 /*
 **++
 **  FUNCTIONAL DESCRIPTION:
@@ -259,6 +260,7 @@ void uil_exit(int severity)
     common_cleanup();
     exit(return_status);
 }
+#endif
 
 #ifndef CALLABLE
 /*
