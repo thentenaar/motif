@@ -143,6 +143,10 @@ static void	common_main(void)
     uil_catd = catopen("Uil", NL_CAT_LOCALE);
 #endif
 
+#ifdef _AIX
+	keytab_init();
+#endif
+
   /* Initialize the X toolkit. */
   XtToolkitInitialize();
 
@@ -396,6 +400,9 @@ Uil_status_type Uil(Uil_command_type *command_desc,
                     uil_status_cb_t status_cb,
                     char *status_data)
 {
+#ifdef _AIX
+	keytab_init();
+#endif
 
     /* Indicate compiler called rather than being started via command line */
 

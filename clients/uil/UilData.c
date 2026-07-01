@@ -191,6 +191,3 @@ externaldef(uil_comp_glbl) char *uil_datatype_names [] = {
 /*	Names of tokens in grammar */
 #include "UilTokName.h"
 
-/*	The keyword tables */
-#include "UilKeyTab.h"
-

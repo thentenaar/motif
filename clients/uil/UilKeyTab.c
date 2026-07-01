@@ -52,6 +52,7 @@ static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 dr
 **
 **/
 #include "UilDefI.h"
+#include "UilKeyTab.h"
 
 /*
 **
@@ -61,7 +62,7 @@ static char rcsid[] = "$XConsortium: UilKeyTab.c /main/11 1995/07/14 09:34:29 dr
 
 /*    Keyword table pointer.    */
 
-static key_keytable_entry_type * key_keytable_ptr;
+static key_keytable_entry_type *key_keytable_ptr;
 
 /*
 **++
@@ -184,15 +185,24 @@ key_keytable_entry_type *key_find_keyword(unsigned int symbol_length, const char
 **/
 void key_initialize(void)
 {
-
-/*    Use the correct keyword table based on the global case
-      sensitivity.   */
-
-    if (uil_v_case_sensitive) {
-	key_keytable_ptr = key_table;
-    } else {
-	key_keytable_ptr = key_table_case_ins;
-    }
-
+	/**
+	 * Use the correct keyword table based on the global case
+	 * sensitivity.
+	 */
+	key_keytable_ptr = uil_v_case_sensitive ? key_table
+	                                        : key_table_case_ins;
 }
+
+#ifdef _AIX
+/**
+ * Forcibly initialize the key_table and key_table_case_ins pointers, as
+ * on AIX these fail to be initialized to the expected values for reasons
+ * I have yet to ascertain.
+ */
+void keytab_init(void)
+{
+	key_table          = key_table_vec;
+	key_table_case_ins = key_table_case_ins_vec;
+}
+#endif
 

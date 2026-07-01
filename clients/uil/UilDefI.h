@@ -253,6 +253,9 @@ extern void diag_report_status(void);
 /* uilkeytab.c */
 extern key_keytable_entry_type *key_find_keyword(unsigned int symbol_length , const char *symbol_ptr);
 extern void key_initialize(void);
+#ifdef _AIX
+void keytab_init(void);
+#endif
 
 /* uillexana.c */
 extern int yylex(void);
