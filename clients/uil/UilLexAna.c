@@ -994,6 +994,7 @@ int	yylex(void)
     unsigned char c_char;	    /* current character */
     int		l_class;	    /* current character's class */
     int		l_state;	    /* current token_table state */
+    int		p_class;	    /* previous character's class */
     int		l_lex_pos;	    /* next available position in c_lex_buffer*/
     cell	z_cell;		    /* local copy of current token_table state*/
     int		l_bslash_value = 0;	    /* current value of \digit...\ construct */
@@ -1039,6 +1040,7 @@ initialize_token_builder:
     l_charset = lex_k_default_charset;
     l_16bit_chars_only = FALSE;
     l_state = state_initial;
+    p_class = class_illegal;
 
     /* start looking for the token */
 
@@ -1057,8 +1059,15 @@ continue_in_next_state:
 	l_class = class_table[ c_char ];	    /* determine its class */
 	z_cell = token_table[ l_state][l_class ];   /* load state cell */
 
-	/* pick up the next state, or terminal, or error */
+	/* Don't bail on UTF-8 continuation bytes */
+	if ((c_char & 0xc0) == 0x80 && l_class == class_illegal && p_class == class_highbit &&
+	    src_az_current_source_buffer->w_current_position > 1) {
+		l_class = class_highbit;
+		z_cell  = token_table[l_state][l_class];
+	}
 
+	/* pick up the next state, or terminal, or error */
+	p_class = l_class;
 	l_state = z_cell.next_state;
 
 	/* l_state is negative for action states requiring the current
@@ -2126,7 +2135,6 @@ void lex_issue_error(int restart_token)
 **/
 void issue_control_char_diagnostic(unsigned char c_char)
 {
-
     diag_issue_diagnostic
 	( d_control_char,
 	  src_az_current_source_record,
