@@ -19,33 +19,26 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 ! HISTORY
 module kanji_strings
     version = 'v1.0'
     names = case_sensitive
-    character_set = jis_kanji
+    character_set = utf8
 
 value
-  local_font : exported fontset ('*medium-r*--14*');
-				 
+  local_font : exported font('*unifont*iso10646-1');
+
   string_direction : exported XmSTRING_DIRECTION_L_TO_R;
 
-  hello_label : exported 
-                compound_string("º£°ì±©", separate=true) & 
-		compound_string("¤³¤ó¤Ë¤Á¤Ï");
+  hello_label : exported compound_string("ã“ã‚“ã«ã¡ã¯", separate=true)&
+                         compound_string("Hello!");
 
-  bye_label : exported 
-	    compound_string("¤µ¤è¤Ê¤é", separate=true)&
-		compound_string("¤³¤ó¤Ë¤Á¤Ï");
+  bye_label : exported compound_string("ã¾ãŸã­", separate=true)&
+                       compound_string("Good-bye!");
 
-  label_label :  exported compound_string(
-        "£±²ó¤Î¥¯¥ê¥Ã¥¯¤Ç", 
-	         separate=true)&
-                          compound_string(
-        "¥é¥Ù¥ë¤¬ÊÑ¤ï¤ê", 
-	         separate=true)&
-                          compound_string(	
-       "£²²ó¤Ç½ªÎ»¤·¤Ş¤¹");
+  label_label : exported compound_string("1å›ã‚’ã‚¯ãƒªãƒƒã‚¯ã§", separate=true)&
+                         compound_string("è¨­å®šãŒå¤‰ã‚ã‚Š", separate=true)&
+                         compound_string("ã‚ˆã‚ã—ããŠé¡˜ã„ã—ã¾ã™");
 
 end module ;
