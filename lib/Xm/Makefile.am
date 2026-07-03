@@ -174,7 +174,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         SeparatorP.h    TextF.h         TextFP.h        TextFSelP.h \
         TextSelP.h      Text.h          TextInP.h       TextOutP.h \
         TextP.h         TextStrSoP.h    ToggleB.h       ToggleBG.h \
-        ToggleBGP.h     ToggleBP.h      XmP.h \
+        ToggleBGP.h     ToggleBP.h      XmP.h           XmChar.h \
         BaseClassP.h    ManagerP.h      PrimitiveP.h    GadgetP.h \
         XmStrDefs.h     XmStrDefs22.h   XmStrDefs23.h   XmStrDefs25.h \
         VaSimpleP.h     VirtKeys.h      VirtKeysP.h \
@@ -222,7 +222,7 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         TextIn.c        TextOut.c       TextStrSo.c     TextSel.c \
         ToggleB.c       ToggleBG.c      TrackLoc.c      UniqueEvnt.c \
         VaSimple.c      VirtKeys.c      XmString.c      ResEncod.c\
-        TextF.c         TextFSel.c      \
+        TextF.c         TextFSel.c      XmChar.c \
         Cache.c         Protocols.c     Primitive.c     Manager.c \
         Traversal.c     TravAct.c       TraversalI.c    BaseClass.c
 

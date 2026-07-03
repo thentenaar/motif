@@ -1,7 +1,7 @@
 /**
  * Motif
  *
- * Copyright (c) 2025-2026 Tim Hentenaar
+ * Copyright (c) 2026 Tim Hentenaar
  *
  * These libraries and programs are free software; you can
  * redistribute them and/or modify them under the terms of the GNU
@@ -20,42 +20,35 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-
-#ifndef SUITES_H
-#define SUITES_H
+#ifndef XM_CHAR_H
+#define XM_CHAR_H
 
 #include <X11/Intrinsic.h>
-#include <Xm/Xm.h>
-#include <check.h>
 
-/* For locating resources in out-of-tree builds */
-#define __RESOURCE(dir, x) #dir x
-#define _RESOURCE(dir, x) __RESOURCE(dir, #x)
-#define RESOURCE(x) _RESOURCE(RESDIR, x)
+/* A non-character to represent invalid codepoints */
+#define XM_INVALID_CODEPOINT 0xfffd
 
-extern XtAppContext app;
+/* A single UTF-8 encoded character */
+typedef unsigned char *XmChar;
 
-/* Xt fixture */
-Widget init_xt(const char *klass);
-void uninit_xt(void);
+/* A single Unicode codepoint */
+typedef unsigned long XmCodepoint;
 
-/* Suites */
-void cursor_suite(SRunner *runner);
+/**
+ * Get the length (in bytes) of the given XmChar
+ */
+unsigned int XmCharLen(const XmChar c);
 
-#if XM_WITH_JPEG
-void jpeg_suite(SRunner *runner);
-#endif
+/**
+ * Decode a XmChar to a Unicode codepoint
+ */
+XmCodepoint XmCharToCodepoint(const XmChar c);
 
-#if XM_WITH_PNG
-void png_suite(SRunner *runner);
-#endif
+/**
+ * Encode a Unicode codepoint to XmChar.
+ *
+ * Note: The resulting XmChar must be freed via XtFree().
+ */
+XmChar XmCodepointToChar(XmCodepoint cp);
 
-void svg_suite(SRunner *runner);
-void xmdesktopobject_suite(SRunner *runner);
-void xmfontlistentry_suite(SRunner *runner);
-void xmfontlist_suite(SRunner *runner);
-void xmscreen_suite(SRunner *runner);
-void xmchar_suite(SRunner *runner);
-void xmstring_suite(SRunner *runner);
-
-#endif /* SUITES_H */
+#endif /* XM_CHAR_H */

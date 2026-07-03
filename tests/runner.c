@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
 	xmfontlistentry_suite(runner);
 	xmfontlist_suite(runner);
 	xmscreen_suite(runner);
+	xmchar_suite(runner);
 	xmstring_suite(runner);
 
 	/**

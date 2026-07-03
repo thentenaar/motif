@@ -65,6 +65,7 @@
 #include <Xm/Manager.h>
 #include <Xm/Gadget.h>
 #include <Xm/Cursor.h>
+#include <Xm/XmChar.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -1629,6 +1630,8 @@ extern XmString XmStringSubstr(const XmString s, XmTextPosition pos, size_t leng
 extern XmString XmStringInsert(const XmString s, XmTextPosition pos, const XmString addition);
 extern XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
                                 const XmString replacement);
+extern XmChar XmStringCharAt(const XmString string, XmTextPosition pos);
+extern XmCodepoint XmStringCodepointAt(const XmString string, XmTextPosition pos);
 
 extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,

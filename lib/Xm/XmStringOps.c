@@ -30,15 +30,7 @@
 
 #include "XmI.h"
 #include "XmStringI.h"
-
-/**
- * Determine the length of a UTF-8 character based on it's initial
- * four bits (0 for contiuation bytes).
- */
-static const unsigned int utf8_len[16] = {
-	1, 1, 1, 1, 1, 1, 1, 1,
-	0, 0, 0, 0, 2, 2, 3, 4
-};
+#include "XmChar.h"
 
 /**
  * Get the length of a UTF-8 string
@@ -56,7 +48,7 @@ size_t _Xmstrlen(const unsigned char *s, size_t byte_count)
 	end = s + byte_count;
 	while ((!byte_count || s < end) && *s) {
 		/* Make sure we don't have an errant contiunation byte */
-		if (!(len = utf8_len[(*s & 0xf0) >> 4]))
+		if (!(len = XmCharLen((const XmChar)s)))
 			break;
 
 		s += len;
@@ -79,7 +71,7 @@ unsigned char *_Xmstrrev(const unsigned char *s, size_t len)
 
 	buf = (unsigned char *)XtCalloc(len, 1);
 	for (i = 0; i < len; i++) {
-		if (!(clen = utf8_len[(s[i] & 0xf0) >> 4])) {
+		if (!(clen = XmCharLen(s + i))) {
 			/* Ignore errant continuation bytes */
 			continue;
 		}
@@ -109,7 +101,7 @@ static size_t advance(const unsigned char *s, size_t n)
 		return 0;
 
 	while (*s && n) {
-		if (!(len = utf8_len[(*s & 0xf0) >> 4]))
+		if (!(len = XmCharLen((const XmChar)s)))
 			break;
 
 		s += len;
@@ -486,5 +478,45 @@ XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
 	XmStringFreeContext(ctx);
 	_XmProcessUnlock();
 	return out;
+}
+
+/**
+ * Return the character at the given position, or NULL if the position
+ * or the string are invalid.
+ *
+ * The returned value must be freed with XtFree().
+ */
+XmChar XmStringCharAt(const XmString string, XmTextPosition pos)
+{
+	XmChar c = NULL;
+	XmString sub;
+
+	if ((sub = XmStringSubstr(string, pos, 1))) {
+		c = XmStringUngenerate(string, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+		XmStringFree(sub);
+	}
+
+	return c;
+}
+
+/**
+ * Return the codepoint corresponding to the character at the given
+ * position, or XM_INVALID_CODEPOINT if there is no character, or
+ * the character represents an invalid codepoint.
+ */
+XmCodepoint XmStringCodepointAt(const XmString string, XmTextPosition pos)
+{
+	XmChar c = NULL;
+	XmCodepoint cp;
+	XmString sub;
+
+	if ((sub = XmStringSubstr(string, pos, 1))) {
+		c = XmStringUngenerate(sub, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+		XmStringFree(sub);
+	}
+
+	cp = c ? XmCharToCodepoint(c) : XM_INVALID_CODEPOINT;
+	XtFree((XtPointer)c);
+	return cp;
 }
 
