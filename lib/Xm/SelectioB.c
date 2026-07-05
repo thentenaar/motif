@@ -872,7 +872,6 @@ _XmSelectionBoxCreateText(
 {
 	Arg		al[10];
 	int	ac = 0;
-	String		text_value ;
 	XtAccelerators	temp_accelerators ;
 /****************/
 
@@ -882,17 +881,11 @@ _XmSelectionBoxCreateText(
         XtSetArg( al[ac], XmNnavigationType, XmSTICKY_TAB_GROUP) ; ++ac ;
 
 	SB_Text( sel) = XmCreateTextField( (Widget) sel, "Text", al, ac);
-	if(    (sel->selection_box.text_string != (XmString) XmUNSPECIFIED)    )
-        {
-            text_value = _XmStringGetTextConcat(
-                                              sel->selection_box.text_string) ;
-            XmTextFieldSetString( SB_Text (sel), text_value) ;
-            if(    text_value    )
-            {   XmTextFieldSetInsertionPosition( SB_Text( sel),
-			          XmTextFieldGetLastPosition( SB_Text( sel))) ;
-                }
-            XtFree( (char *) text_value) ;
-            }
+	if (sel->selection_box.text_string != (XmString)XmUNSPECIFIED) {
+        XmTextFieldSetXmString(SB_Text(sel), sel->selection_box.text_string);
+        XmTextFieldSetInsertionPosition(SB_Text(sel),
+                                        XmTextFieldGetLastPosition(SB_Text(sel)));
+    }
 
 	/*	Install text accelerators.
 	*/
@@ -1228,14 +1221,11 @@ SelectionBoxCallback(
 	XmAnyCallbackStruct	*callback = (XmAnyCallbackStruct *) call_data;
 	XmSelectionBoxCallbackStruct	temp;
 	Boolean			match = True;
-	String			text_value;
 /****************/
 
 	memset(&temp, 0, sizeof temp);
-	text_value = XmTextFieldGetString (SB_Text (sel));
 	temp.event = callback->event;
-	temp.value = XmStringCreateLocalized(text_value);
-	XtFree (text_value);
+	temp.value = XmTextFieldGetXmString(SB_Text(sel));
 
 	switch (which_button)
 	{
@@ -1423,9 +1413,7 @@ SetValues(
             XmSelectionBoxWidget new_w = (XmSelectionBoxWidget) nw ;
 	Arg		al[10];
 	int	ac;
-
-	String		text_value ;
-/****************/
+	XmString text = NULL;
 
 	BB_InSetValues (new_w) = True;
 
@@ -1516,33 +1504,27 @@ SetValues(
 
 	/*	Update Text widget.
 	*/
-        text_value = NULL ;
 	ac = 0;
-	if(    new_w->selection_box.text_string
-                                     != current->selection_box.text_string    )
-	{
-            text_value = _XmStringGetTextConcat(
-                                              new_w->selection_box.text_string) ;
-            XtSetArg( al[ac], XmNvalue, text_value) ;  ac++ ;
-            new_w->selection_box.text_string = (XmString) XmUNSPECIFIED ;
-            }
+	if (new_w->selection_box.text_string != current->selection_box.text_string) {
+		text = new_w->selection_box.text_string;
+		XtSetArg(al[ac], XmNvalueString, text); ac++;
+		new_w->selection_box.text_string = (XmString)XmUNSPECIFIED;
+	}
+
 	if (new_w->selection_box.text_columns !=
 		current->selection_box.text_columns)
 	{
 		XtSetArg (al[ac], XmNcolumns,
 			new_w->selection_box.text_columns);  ac++;
 	}
-	if (ac)
-	{
-		if (SB_Text (new_w))
-			XtSetValues (SB_Text (new_w), al, ac);
-	}
-	if (text_value)
-	{
-		if (SB_Text (new_w))
+	if (ac && SB_Text(new_w))
+		XtSetValues(SB_Text(new_w), al, ac);
+
+	if (text) {
+		if (SB_Text(new_w))
 			XmTextFieldSetInsertionPosition (SB_Text (new_w),
 			          XmTextFieldGetLastPosition( SB_Text( new_w))) ;
-		XtFree (text_value);
+		XmStringFree(text);
 	}
 
 	/*	Validate dialog type.
@@ -1562,8 +1544,8 @@ SetValues(
 	{
             _XmBulletinBoardSizeUpdate( (Widget) new_w) ;
 	    }
-	return (Boolean) (FALSE);
-        }
+	return False;
+}
 
 /****************************************************************/
 void
@@ -1924,46 +1906,32 @@ _XmSelectionBoxUpOrDown(
     }
 
 /****************************************************************/
-void
-_XmSelectionBoxRestore(
-        Widget wid,
-        XEvent *event,		/* unused */
-        String *argv,		/* unused */
-        Cardinal *argc )	/* unused */
+
+void _XmSelectionBoxRestore(Widget w, XEvent *event, String *argv, Cardinal *argc)
 {
-            XmSelectionBoxWidget sel = (XmSelectionBoxWidget) wid ;
-            Widget          list ;
-            int	            count ;
-            XmString *      items ;
-            Arg             al[5] ;
-            int             ac ;
-            String          textItem ;
-/****************/
+	XmSelectionBoxWidget sel = (XmSelectionBoxWidget)w;
+	Widget list;
+	int count;
+	XmString *items;
+	Arg al[2];
+	int ac = 0;
 
-    list = SB_List( sel) ;
+	(void)event;
+	(void)argv;
+	(void)argc;
 
-    if(    list
-        && SB_Text( sel)    )
-    {
-        ac = 0 ;
-        XtSetArg( al[ac], XmNselectedItems, &items) ; ++ac ;
-        XtSetArg( al[ac], XmNselectedItemCount, &count) ; ++ac ;
-        XtGetValues( list, al, ac) ;
-        if(    count    )
-        {
-            textItem = _XmStringGetTextConcat( *items) ;
-            XmTextFieldSetString( SB_Text( sel), textItem) ;
-            XmTextFieldSetInsertionPosition( SB_Text( sel),
-			          XmTextFieldGetLastPosition( SB_Text( sel))) ;
-            XtFree( textItem) ;
-            }
-        else
-        {
-            XmTextFieldSetString( SB_Text( sel), NULL) ;
-            }
-        }
-    return ;
-    }
+	if ((list = SB_List(sel)) && SB_Text(sel)) {
+		XtSetArg(al[0], XmNselectedItems, &items);
+		XtSetArg(al[1], XmNselectedItemCount, &count);
+		XtGetValues(list, al, 2);
+
+		if (count) {
+			XmTextFieldSetXmString(SB_Text(sel), *items);
+			XmTextFieldSetInsertionPosition(SB_Text(sel),
+			                                XmTextFieldGetLastPosition(SB_Text(sel)));
+		} else XmTextFieldSetXmString(SB_Text(sel), NULL);
+	}
+}
 
 /****************************************************************
  * This function returns the widget id of a SelectionBox child widget.
