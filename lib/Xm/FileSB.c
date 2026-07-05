@@ -777,11 +777,8 @@ Initialize(
     XtAddCallback( SB_HelpButton( new_w), XmNactivateCallback,
                            FileSelectionPB, (XtPointer) XmDIALOG_HELP_BUTTON) ;
 
-
     if( FS_NoMatchString( new_w) == (XmString) XmUNSPECIFIED) {
-	FS_NoMatchString( new_w) = XmStringConcatAndFree
-	  (XmStringDirectionCreate(XmSTRING_DIRECTION_L_TO_R),
-	   XmStringCreate(" [    ] ", XmFONTLIST_DEFAULT_TAG));
+	FS_NoMatchString(new_w) = XmStringCreate(" [    ] ", XmFONTLIST_DEFAULT_TAG);
     }
     else {
 	FS_NoMatchString( new_w) = XmStringCopy( FS_NoMatchString( new_w)) ;
@@ -1037,81 +1034,48 @@ FSBCreateFilterText(
         XmFileSelectionBoxWidget fs )
 {
             Arg             arglist[10] ;
-            int             argCount ;
-            char *          stext_value ;
+            int             argCount = 0;
             XtAccelerators  temp_accelerators ;
-/****************/
 
     /* Get text portion from Compound String, and set
     *   fs_stext_charset and fs_stext_direction bits...
     */
-    /* Should do this stuff entirely with XmStrings when the text
-    *   widget supports it.
-    */
-    if(    !(stext_value = _XmStringGetTextConcat( FS_Pattern( fs)))    )
-    {   stext_value = (char *) XtMalloc( 1) ;
-        stext_value[0] = '\0' ;
-        }
-    argCount = 0 ;
-    XtSetArg( arglist[argCount], XmNcolumns,
-                                            SB_TextColumns( fs)) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNresizeWidth, FALSE) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNvalue, stext_value) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNnavigationType,
-                                             XmSTICKY_TAB_GROUP) ; argCount++ ;
-    FS_FilterText( fs) = XmCreateTextField( (Widget) fs, "FilterText",
-                                                           arglist, argCount) ;
+    XtSetArg( arglist[argCount], XmNcolumns, SB_TextColumns(fs)); argCount++;
+    XtSetArg( arglist[argCount], XmNresizeWidth, False); argCount++;
+    XtSetArg( arglist[argCount], XmNvalueString, FS_Pattern(fs)); argCount++;
+    XtSetArg( arglist[argCount], XmNnavigationType, XmSTICKY_TAB_GROUP) ; argCount++;
+    FS_FilterText(fs) = XmCreateTextField((Widget)fs, "FilterText", arglist, argCount);
+
     /*	Install text accelerators.
     */
     temp_accelerators = fs->core.accelerators ;
     fs->core.accelerators = SB_TextAccelerators( fs) ;
     XtInstallAccelerators( FS_FilterText( fs), (Widget) fs) ;
     fs->core.accelerators = temp_accelerators ;
+}
 
-    XtFree( stext_value) ;
-    return ;
-    }
-
-
-static void
-FSBCreateDirText(
-        XmFileSelectionBoxWidget fs)
+static void FSBCreateDirText(XmFileSelectionBoxWidget fs)
 {
             Arg             arglist[10] ;
-            int             argCount ;
-            char *          stext_value ;
+            int             argCount = 0;
             XtAccelerators  temp_accelerators ;
-/****************/
 
     /* Get text portion from Compound String, and set
     *   fs_stext_charset and fs_stext_direction bits...
     */
-    /* Should do this stuff entirely with XmStrings when the text
-    *   widget supports it.
-    */
-    if(    !(stext_value = _XmStringGetTextConcat( FS_Directory( fs)))    )
-    {   stext_value = (char *) XtMalloc( 1) ;
-        stext_value[0] = '\0' ;
-        }
-    argCount = 0 ;
-    XtSetArg( arglist[argCount], XmNcolumns,
-                                            SB_TextColumns( fs)) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNresizeWidth, FALSE) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNvalue, stext_value) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNnavigationType,
-                                             XmSTICKY_TAB_GROUP) ; argCount++ ;
-    FS_DirText( fs) = XmCreateTextField( (Widget) fs, "DirText",
-                                                           arglist, argCount) ;
+    XtSetArg(arglist[argCount], XmNcolumns, SB_TextColumns(fs)); argCount++;
+    XtSetArg(arglist[argCount], XmNresizeWidth, False); argCount++;
+    XtSetArg(arglist[argCount], XmNvalueString, FS_Directory(fs)); argCount++;
+    XtSetArg(arglist[argCount], XmNnavigationType, XmSTICKY_TAB_GROUP); argCount++;
+    FS_DirText(fs) = XmCreateTextField((Widget) fs, "DirText", arglist, argCount);
+
     /*	Install text accelerators.
     */
     temp_accelerators = fs->core.accelerators ;
     fs->core.accelerators = SB_TextAccelerators( fs) ;
     XtInstallAccelerators(FS_DirText( fs), (Widget) fs) ;
     fs->core.accelerators = temp_accelerators ;
-
-    XtFree( stext_value) ;
-    return ;
-    }
+}
 
 static void
 FSBCreateDirTextLabel(
@@ -1799,22 +1763,19 @@ FileSearchProc(
             String          pattern ;
             Arg             args[3] ;
             int             Index ;
-            String *        fileList ;
+            String *        fileList = NULL;
             unsigned int    numFiles ;
             unsigned int    numItems = 0 ;
             unsigned int    numAlloc ;
-            XmString *      XmStringFileList ;
+            XmString *      XmStringFileList, s;
             unsigned        dirLen ;
 /****************/
 
-    if(   !(dir = _XmStringGetTextConcat( searchData->dir))    )
-    {   return ;
-        }
-    if(    !(pattern = _XmStringGetTextConcat( searchData->pattern))    )
-    {   XtFree( dir) ;
-        return ;
-        }
-    fileList = NULL ;
+    if (XmStringEmpty(searchData->dir) || XmStringEmpty(searchData->pattern))
+        return;
+
+    dir     = XmStringUngenerate(searchData->dir,     NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+    pattern = XmStringUngenerate(searchData->pattern, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
     _XmOSBuildFileList( dir, pattern, FS_FileTypeMask( fs),
                                             &fileList,  &numFiles, &numAlloc) ;
     if(    fileList  &&  numFiles    ) {
@@ -1898,10 +1859,10 @@ QualifySearchDataProc(
                                     = (XmFileSelectionBoxCallbackStruct *) sd ;
             XmFileSelectionBoxCallbackStruct * qualifiedSearchData
                                    = (XmFileSelectionBoxCallbackStruct *) qsd ;
-            String          valueString ;
-            String          patternString ;
-            String          dirString ;
-            String          maskString ;
+            XmString s;
+            String          patternString = NULL;
+            String          dirString = NULL;
+            String          maskString = NULL;
             String          qualifiedDir ;
             String          qualifiedPattern ;
             String          qualifiedMask ;
@@ -1910,17 +1871,20 @@ QualifySearchDataProc(
             unsigned int    qDirLen ;
 /****************/
 
-    maskString = _XmStringGetTextConcat( searchData->mask) ;
-    dirString = _XmStringGetTextConcat( searchData->dir) ;
-    patternString = _XmStringGetTextConcat( searchData->pattern) ;
+    if (!XmStringEmpty(searchData->mask))
+        maskString = XmStringUngenerate(searchData->mask, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+    if (!XmStringEmpty(searchData->dir))
+        dirString = XmStringUngenerate(searchData->dir, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+    if (!XmStringEmpty(searchData->pattern))
+        patternString = XmStringUngenerate(searchData->pattern, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
 
     if(    !maskString
         || (dirString  &&  patternString)
         || (dirString  &&  maskString  &&  (maskString[0] != '/'))    )
     {
-        if(    !dirString    )
-        {   dirString = _XmStringGetTextConcat( FS_Directory( fs)) ;
-            }
+        if (!dirString && !XmStringEmpty(FS_Directory(fs)))
+            dirString = XmStringUngenerate(FS_Directory(fs), NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+
         if(    !patternString    )
         {
             if(    maskString  &&  (maskString[0] != '/')    )
@@ -1928,13 +1892,12 @@ QualifySearchDataProc(
                 patternString = maskString ;
                 maskString = NULL ;
                 }
-            else
-            {   patternString = _XmStringGetTextConcat( FS_Pattern( fs)) ;
-                }
+            else if (!XmStringEmpty(FS_Pattern(fs)))
+                patternString = XmStringUngenerate(FS_Pattern(fs), NULL, XmUTF8_TEXT, XmUTF8_TEXT);
             }
         _XmOSQualifyFileSpec( dirString, patternString,
                                             &qualifiedDir, &qualifiedPattern) ;
-        }
+    }
     else
     {   patternPartPtr = _XmOSFindPatternPart( maskString) ;
 
@@ -1999,53 +1962,30 @@ QualifySearchDataProc(
     memset(qualifiedSearchData, 0, sizeof *qualifiedSearchData);
     qualifiedSearchData->reason = searchData->reason ;
     qualifiedSearchData->event = searchData->event ;
-
-    if(    searchData->value    )
-    {   qualifiedSearchData->value = XmStringCopy( searchData->value) ;
-        valueString = NULL ;
-        }
-    else
-    {
-	if(    FS_PathMode( fs)  ==  XmPATH_MODE_FULL   )
-          {
-	      valueString = XmTextFieldGetString( SB_Text( fs)) ;
-	  }else
-          {
-	      String fileStr = XmTextFieldGetString( SB_Text( fs)) ;
-
-            if(    (fileStr == NULL)
-                || (*fileStr == '\0')
-                || (*fileStr == '/')
-                || (FS_Directory( fs) == NULL)    )
-              {
-                valueString = fileStr ;
-              }
-            else
-              {
-                String dirStr = _XmStringGetTextConcat( FS_Directory( fs)) ;
-                unsigned dirLen = strlen( dirStr) ;
-
-                valueString = XtMalloc( dirLen + strlen( fileStr) + 1) ;
-                strcpy( valueString, dirStr) ;
-                strcpy( &valueString[dirLen], fileStr) ;
-                XtFree( fileStr) ;
-                XtFree( dirStr) ;
-              }
-          }
-        qualifiedSearchData->value = XmStringCreateLocalized(valueString);
-        }
     qualifiedSearchData->mask = XmStringCreateLocalized(qualifiedMask);
     qualifiedSearchData->dir = XmStringCreateLocalized(qualifiedDir);
     qualifiedSearchData->pattern = XmStringCreateLocalized(qualifiedPattern);
-    XtFree( valueString) ;
-    XtFree( qualifiedMask) ;
-    XtFree( qualifiedPattern) ;
-    XtFree( qualifiedDir) ;
-    XtFree( patternString) ;
-    XtFree( dirString) ;
-    XtFree( maskString) ;
-    return ;
+    XtFree(qualifiedMask);
+    XtFree(qualifiedPattern);
+    XtFree(qualifiedDir);
+    XtFree(patternString);
+    XtFree(dirString);
+    XtFree(maskString);
+
+    if (!XmStringEmpty(searchData->value))
+        qualifiedSearchData->value = XmStringCopy(searchData->value);
+    else if (FS_PathMode(fs) == XmPATH_MODE_FULL)
+        qualifiedSearchData->value = XmTextFieldGetXmString(SB_Text(fs));
+    else {
+        s = XmTextFieldGetXmString(SB_Text(fs));
+        if (XmStringEmpty(FS_Directory(fs)) || XmStringEmpty(s) || XmStringCodepointAt(s, 0) == '/')
+            qualifiedSearchData->value = s;
+        else {
+            qualifiedSearchData->value = XmStringConcat(FS_Directory(fs), s);
+            XmStringFree(s);
+        }
     }
+}
 
 /****************************************************************/
 static void
@@ -2057,10 +1997,7 @@ FileSelectionBoxUpdate(
             Cardinal        al ;
             int             itemCount ;
             XmString        item ;
-            String          textValue ;
-            String          dirString ;
-            String          maskString ;
-            String          patternString ;
+            XmString        maskString;
             int             len ;
             XmFileSelectionBoxCallbackStruct qualifiedSearchData ;
 /****************/
@@ -2075,12 +2012,10 @@ FileSelectionBoxUpdate(
     {   XmListDeleteAllItems( SB_List( fs)) ;
         }
     FS_StateFlags( fs) |= XmFS_IN_FILE_SEARCH ;
-
     (*FS_QualifySearchDataProc( fs))( (Widget) fs, (XtPointer) searchData,
                                             (XtPointer) &qualifiedSearchData) ;
     FS_ListUpdated( fs) = FALSE ;
     FS_DirectoryValid( fs) = FALSE ;
-
     (*FS_DirSearchProc( fs))( (Widget) fs, (XtPointer) &qualifiedSearchData) ;
 
     if(    FS_DirectoryValid( fs)    )
@@ -2106,40 +2041,27 @@ FileSelectionBoxUpdate(
         */
         if(    FS_PathMode( fs)  ==  XmPATH_MODE_FULL   )
           {
-            if ((dirString = _XmStringGetTextConcat( FS_Directory(fs))) != NULL)
-            {
-                if((patternString=_XmStringGetTextConcat(FS_Pattern(fs)))!=NULL)
-                  {
-                    len = strlen( dirString) ;
-                    maskString = XtMalloc( len + strlen( patternString) + 1) ;
-                    strcpy( maskString, dirString) ;
-                    strcpy( &maskString[len], patternString) ;
-
-		    XmTextFieldSetString( FS_FilterText( fs), maskString) ;
-		    XmTextFieldSetInsertionPosition( FS_FilterText( fs),
-			     XmTextFieldGetLastPosition( FS_FilterText( fs))) ;
-                    XtFree( maskString) ;
-                    XtFree( patternString) ;
-                  }
-                XtFree( dirString) ;
-              }
+            if (!XmStringEmpty(FS_Directory(fs)) && !XmStringEmpty(FS_Pattern(fs))) {
+                maskString = XmStringConcat(FS_Directory(fs), FS_Pattern(fs));
+                XmTextFieldSetXmString(FS_FilterText(fs), maskString);
+                XmTextFieldSetInsertionPosition(FS_FilterText(fs),
+                                                XmTextFieldGetLastPosition(FS_FilterText(fs)));
+                XmStringFree(maskString);
+            }
           }
         else
           {
-            if ((dirString = _XmStringGetTextConcat( FS_Directory(fs))) != NULL)
-              {
-                XmTextFieldSetString( FS_DirText( fs), dirString) ;
-                XmTextFieldSetInsertionPosition( FS_DirText( fs),
-                                XmTextFieldGetLastPosition( FS_DirText( fs))) ;
-                XtFree( dirString) ;
-              }
-            if((patternString=_XmStringGetTextConcat(FS_Pattern(fs)))!=NULL)
-              {
-                XmTextFieldSetString( FS_FilterText( fs), patternString) ;
-                XmTextFieldSetInsertionPosition( FS_FilterText( fs),
-                             XmTextFieldGetLastPosition( FS_FilterText( fs))) ;
-                XtFree( patternString) ;
-              }
+            if (!XmStringEmpty(FS_Directory(fs))) {
+                XmTextFieldSetXmString(FS_DirText(fs), FS_Directory(fs));
+                XmTextFieldSetInsertionPosition(FS_DirText(fs),
+                                                XmTextFieldGetLastPosition(FS_DirText(fs)));
+            }
+
+            if (!XmStringEmpty(FS_Pattern(fs))) {
+                XmTextFieldSetXmString(FS_FilterText(fs), FS_Pattern(fs));
+                XmTextFieldSetInsertionPosition(FS_FilterText(fs),
+                                                XmTextFieldGetLastPosition(FS_FilterText(fs)));
+            }
           }
         }
     FS_StateFlags( fs) &= ~XmFS_IN_FILE_SEARCH ;
@@ -2165,18 +2087,12 @@ FileSelectionBoxUpdate(
     {
         if(    FS_PathMode( fs)  ==  XmPATH_MODE_FULL   )
           {
-            if ((textValue = _XmStringGetTextConcat(FS_Directory(fs))) != NULL)
-              {
-		  XmTextFieldSetString( SB_Text( fs), textValue) ;
-		  XmTextFieldSetInsertionPosition( SB_Text( fs),
-			     XmTextFieldGetLastPosition( SB_Text( fs))) ;
-                XtFree( textValue) ;
-              }
-          }
-        else
-          {
-            XmTextFieldSetString( SB_Text( fs), NULL) ;
-          }
+            if (!XmStringEmpty(FS_Directory(fs))) {
+                XmTextFieldSetXmString(SB_Text(fs), FS_Directory(fs));
+                XmTextFieldSetInsertionPosition(SB_Text(fs),
+                                                XmTextFieldGetLastPosition(SB_Text(fs)));
+            }
+          } else XmTextFieldSetXmString(SB_Text(fs), NULL);
 
         _XmBulletinBoardSizeUpdate( (Widget) fs) ;
 
@@ -2231,15 +2147,14 @@ DirSearchProc(
      *   re-implemented in Xmos.c.
      */
 
-    if(    (qualifiedDir = _XmStringGetTextConcat( searchData->dir))
-                                                                   == NULL    )
-      {
+    if (XmStringEmpty(searchData->dir))
+    {
         if(    _XmGetAudibleWarning((Widget) fs) == XmBELL    )
-          {
             XBell( XtDisplay( fs), 0) ;
-          }
         return ;
-      }
+    }
+
+    qualifiedDir = XmStringUngenerate(searchData->dir, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
     if( !stat( qualifiedDir, &curDirStats)    )
       {
         curDirModTime = curDirStats.st_mtime ;
@@ -2341,10 +2256,7 @@ ListCallback(
             XmGadget        dbutton ;
             XmFileSelectionBoxCallbackStruct change_data ;
             XmFileSelectionBoxCallbackStruct qualified_change_data ;
-            String          textValue ;
-            String          dirString ;
-            String          maskString ;
-            String          patternString ;
+            XmString        maskString;
             int             len ;
 /****************/
 
@@ -2362,8 +2274,7 @@ ListCallback(
                 FS_DirListSelectedItemPosition( fsb)
                                                     = callback->item_position ;
                 change_data.reason = XmCR_NONE;
-                textValue = XmTextFieldGetString(FS_FilterText(fsb));
-                change_data.mask = XmStringCreateLocalized(textValue);
+                change_data.mask = XmTextFieldGetXmString(FS_FilterText(fsb));
                 if(    FS_PathMode( fsb)  ==  XmPATH_MODE_FULL   )
                   {
                     change_data.dir = XmStringCopy(callback->item);
@@ -2379,57 +2290,35 @@ ListCallback(
                                      (XtPointer) &change_data,
                                           (XtPointer) &qualified_change_data) ;
 
-                if(    FS_PathMode( fsb)  ==  XmPATH_MODE_FULL   )
-                  {
-                    if ((dirString =
-		     _XmStringGetTextConcat(qualified_change_data.dir)) != NULL)
-                      {   if ((patternString =
-			 _XmStringGetTextConcat(qualified_change_data.pattern))
-			 != NULL)
-                          {
-                            len = strlen( dirString) ;
-                            maskString = XtMalloc( len
-                                                 + strlen( patternString) + 1) ;
-                            strcpy( maskString, dirString) ;
-                            strcpy( &maskString[len], patternString) ;
-                            XmTextFieldSetString( FS_FilterText( fsb),
-                                                                  maskString) ;
-                            XmTextFieldSetInsertionPosition( FS_FilterText( fsb),
-                                                    XmTextFieldGetLastPosition(
-                                                        FS_FilterText( fsb))) ;
-                            XtFree( maskString) ;
-                            XtFree( patternString) ;
-                          }
-                        XtFree( dirString) ;
-                      }
-                  }
-                else
-                  {
-                    if ((dirString =
-		     _XmStringGetTextConcat(qualified_change_data.dir)) != NULL)
-                      {
-                        XmTextFieldSetString( FS_DirText( fsb), dirString) ;
-                        XmTextFieldSetInsertionPosition( FS_DirText( fsb),
-                               XmTextFieldGetLastPosition( FS_DirText( fsb))) ;
-                         XtFree( dirString) ;
-                      }
-                    if ((patternString =
-			 _XmStringGetTextConcat(qualified_change_data.pattern))
-			 != NULL)
-                      {
-                        XmTextFieldSetString( FS_FilterText( fsb), patternString) ;
-                        XmTextFieldSetInsertionPosition( FS_FilterText( fsb),
-                            XmTextFieldGetLastPosition( FS_FilterText( fsb))) ;
-                        XtFree( patternString) ;
-                      }
-                  }
+                if (FS_PathMode(fsb) == XmPATH_MODE_FULL) {
+                    if (!XmStringEmpty(qualified_change_data.dir) &&
+                        !XmStringEmpty(qualified_change_data.pattern)) {
+                        maskString = XmStringConcat(qualified_change_data.dir, qualified_change_data.pattern);
+                        XmTextFieldSetXmString(FS_FilterText(fsb), maskString);
+                        XmTextFieldSetInsertionPosition(FS_FilterText(fsb),
+                                                        XmTextFieldGetLastPosition(FS_FilterText(fsb)));
+                        XmStringFree(maskString);
+                    }
+                } else {
+                    if (!XmStringEmpty(qualified_change_data.dir)) {
+                        XmTextFieldSetXmString(FS_DirText(fsb), qualified_change_data.dir);
+                        XmTextFieldSetInsertionPosition(FS_DirText(fsb),
+                                                        XmTextFieldGetLastPosition(FS_DirText(fsb)));
+                    }
+
+                    if (!XmStringEmpty(qualified_change_data.pattern)) {
+                        XmTextFieldSetXmString(FS_FilterText(fsb), qualified_change_data.pattern);
+                        XmTextFieldSetInsertionPosition(FS_FilterText(fsb),
+                                                        XmTextFieldGetLastPosition(FS_FilterText(fsb)));
+                    }
+
+                }
 		XmStringFree( qualified_change_data.pattern) ;
                 XmStringFree( qualified_change_data.dir) ;
                 XmStringFree( qualified_change_data.mask) ;
                 XmStringFree( qualified_change_data.value) ;
                 XmStringFree( change_data.mask) ;
                 XmStringFree( change_data.dir) ;
-                XtFree( textValue) ;
                 }
             else    /* wid is File List. */
             {
@@ -2439,15 +2328,12 @@ ListCallback(
                     break ;
                     }
                 SB_ListSelectedItemPosition( fsb) = callback->item_position ;
-                if ((textValue =
-		     _XmStringGetTextConcat(callback->item)) != NULL)
-                {
-                    XmTextFieldSetString( SB_Text( fsb), textValue) ;
-                    XmTextFieldSetInsertionPosition( SB_Text( fsb),
-			     XmTextFieldGetLastPosition( SB_Text( fsb))) ;
-                 XtFree(textValue);
-                    }
+                if (!XmStringEmpty(callback->item)) {
+                    XmTextFieldSetXmString(SB_Text(fsb), callback->item);
+                    XmTextFieldSetInsertionPosition(SB_Text(fsb),
+                                                    XmTextFieldGetLastPosition(SB_Text(fsb)));
                 }
+            }
             break ;
             }
         case XmCR_DEFAULT_ACTION:
@@ -2578,31 +2464,21 @@ SetValues(
     */
     memset(&searchData, 0, sizeof(XmFileSelectionBoxCallbackStruct));
 
-    if(    FS_DirMask( new_w) != FS_DirMask( current)    )
-    {
-        if(    FS_StateFlags( new_w) & XmFS_IN_FILE_SEARCH    )
-        {
-            if(    FS_FilterText( new_w)    )
-            {
-                newString = _XmStringGetTextConcat( FS_DirMask( new_w)) ;
-
-                /* Should do this stuff entirely with XmStrings when the text
-                *   widget supports it.
-                */
-                XmTextFieldSetString( FS_FilterText( new_w), newString) ;
-                if(    newString    )
-                {   XmTextFieldSetInsertionPosition( FS_FilterText( new_w),
-			    XmTextFieldGetLastPosition( FS_FilterText( new_w))) ;
-                    }
-                XtFree( newString) ;
-                }
+    if (FS_DirMask(new_w) != FS_DirMask(current)) {
+        if (FS_StateFlags(new_w) & XmFS_IN_FILE_SEARCH) {
+            if (FS_FilterText(new_w)) {
+                XmTextFieldSetXmString(FS_FilterText(new_w), FS_DirMask(new_w));
+                XmTextFieldSetInsertionPosition(FS_FilterText(new_w),
+                                                XmTextFieldGetLastPosition(FS_FilterText(new_w)));
             }
-        else
-        {   doSearch = TRUE ;
+        } else {
+            doSearch = True;
             searchData.mask = XmStringCopy(FS_DirMask(request));
-            }
-        FS_DirMask( new_w) = (XmString) XmUNSPECIFIED ;
         }
+
+        FS_DirMask(new_w) = (XmString)XmUNSPECIFIED;
+    }
+
     if(    FS_Directory( current) != FS_Directory( new_w)    )
     {
         if(    FS_StateFlags( new_w) & XmFS_IN_FILE_SEARCH    )
@@ -2873,24 +2749,11 @@ FSBGetListItemCount(
  * This does get values hook magic to keep the
  * user happy.
  ****************/
-static void
-FSBGetDirMask(
-        Widget fs,
-        int resource_offset,	/* unused */
-        XtArgVal *value )
+static void FSBGetDirMask(Widget fs, int resource_offset, XtArgVal *value)
 {
-            String          filterText ;
-            XmString        data ;
-/****************/
-
-    filterText = XmTextFieldGetString( FS_FilterText(fs)) ;
-    data = XmStringGenerate(filterText, XmFONTLIST_DEFAULT_TAG,
-			    XmCHARSET_TEXT, NULL);
-    *value = (XtArgVal) data ;
-    XtFree( filterText) ;
-
-    return ;
-    }
+	(void)resource_offset;
+	*value = (XtArgVal)XmTextFieldGetXmString(FS_FilterText(fs));
+}
 
 /****************************************************************/
 static Widget
@@ -3043,77 +2906,47 @@ FileSelectionBoxUpOrDown(
     return ;
     }
 /****************************************************************/
-static void
-FileSelectionBoxRestore(
-        Widget wid,
-        XEvent *event,
-        String *argv,
-        Cardinal *argc )
+
+static void FileSelectionBoxRestore(Widget w, XEvent *event,
+                                    String *argv, Cardinal *argc)
 {
-            XmFileSelectionBoxWidget fsb = (XmFileSelectionBoxWidget) wid ;
-            String          itemString ;
-            String          dir ;
-            String          mask ;
-            int             dirLen ;
-            int             maskLen ;
-            Widget          activeChild ;
-/****************/
+	XmFileSelectionBoxWidget fsb = (XmFileSelectionBoxWidget)w;
+	Widget active;
+	XmString s;
 
-    if(    !(activeChild = GetActiveText( fsb, event))    )
-    {   return ;
-        }
-    if(    activeChild == SB_Text( fsb)    )
-    {   _XmSelectionBoxRestore( (Widget) fsb, event, argv, argc) ;
-        }
-    else
-    {
-        if(    FS_PathMode( fsb)  ==  XmPATH_MODE_FULL    )
-          {
-            if ((dir = _XmStringGetTextConcat( FS_Directory( fsb))) != NULL)
-              {
-                dirLen = strlen( dir) ;
+	if (!(active = GetActiveText(fsb, event)))
+		return;
 
-                if ((mask = _XmStringGetTextConcat( FS_Pattern( fsb))) != NULL)
-                  {
-                    maskLen = strlen( mask) ;
-                    itemString = XtMalloc( dirLen + maskLen + 1) ;
-                    strcpy( itemString, dir) ;
-                    strcpy( &itemString[dirLen], mask) ;
-                    XmTextFieldSetString( FS_FilterText( fsb), itemString) ;
-                    XmTextFieldSetInsertionPosition( FS_FilterText( fsb),
-			    XmTextFieldGetLastPosition( FS_FilterText( fsb))) ;
-                    XtFree( itemString) ;
-                    XtFree( mask) ;
-                  }
-                XtFree( dir) ;
-              }
-          }
-        else
-          {
-            if(    activeChild == FS_FilterText( fsb)    )
-            {
-                if ((mask = _XmStringGetTextConcat(FS_Pattern(fsb))) != NULL)
-                {
-                    XmTextFieldSetString( FS_FilterText( fsb), mask) ;
-                    XmTextFieldSetInsertionPosition( FS_FilterText( fsb),
-                            XmTextFieldGetLastPosition( FS_FilterText( fsb))) ;
-                    XtFree( mask) ;
-                    }
-                }
-            else /* activeChild == FS_DirText( fsb) */
-            {
-                if ((dir = _XmStringGetTextConcat(FS_Directory(fsb))) != NULL)
-                {
-                    XmTextFieldSetString( FS_DirText( fsb), dir) ;
-                    XmTextFieldSetInsertionPosition( FS_DirText( fsb),
-                               XmTextFieldGetLastPosition( FS_DirText( fsb))) ;
-                     XtFree( dir) ;
-                    }
-                }
-          }
-        }
-    return ;
-    }
+	if (active == SB_Text(fsb)) {
+		_XmSelectionBoxRestore(w, event, argv, argc);
+		return;
+	}
+
+	if (FS_PathMode(fsb) == XmPATH_MODE_FULL) {
+		if (!XmStringEmpty(FS_Directory(fsb)) && !XmStringEmpty(FS_Pattern(fsb))) {
+			s = XmStringConcat(FS_Directory(fsb), FS_Pattern(fsb));
+			XmTextFieldSetXmString(FS_FilterText(fsb), s);
+			XmStringFree(s);
+			XmTextFieldSetInsertionPosition(FS_FilterText(fsb),
+			                                XmTextFieldGetLastPosition(FS_FilterText(fsb)));
+		}
+
+		return;
+	}
+
+	if (active == FS_FilterText(fsb)) {
+		if (!XmStringEmpty(FS_Pattern(fsb))) {
+			XmTextFieldSetXmString(FS_FilterText(fsb), FS_Pattern(fsb));
+			XmTextFieldSetInsertionPosition(FS_FilterText(fsb),
+			                                XmTextFieldGetLastPosition(FS_FilterText(fsb)));
+		}
+	} else if (!XmStringEmpty(FS_Directory(fsb))) {
+		XmTextFieldSetXmString(FS_DirText(fsb), FS_Directory(fsb));
+		XmTextFieldSetInsertionPosition(FS_DirText(fsb),
+		                                XmTextFieldGetLastPosition(FS_DirText(fsb)));
+	}
+}
+
 /****************************************************************/
 static void
 FileSelectionBoxFocusMoved(
@@ -3208,6 +3041,7 @@ FileSelectionPB(
             XmFileSelectionBoxWidget fs ;
             XmFileSelectionBoxCallbackStruct searchData ;
             XmFileSelectionBoxCallbackStruct qualifiedSearchData ;
+            XmString s;
             Boolean         match = True ;
             String          text_value ;
             Boolean         allowUnmanage = FALSE ;
@@ -3221,25 +3055,24 @@ FileSelectionPB(
 
     if(    ((long) which_button) == XmDIALOG_APPLY_BUTTON    )
     {
-        if(    FS_FilterText( fs)
-            && (text_value = XmTextFieldGetString( FS_FilterText( fs)))    )
-        {
-            searchData.mask = XmStringCreateLocalized(text_value);
-            XtFree( text_value) ;
-            }
-        if(    FS_DirText( fs)
-            && (text_value = XmTextFieldGetString( FS_DirText( fs)))    )
-        {
-            searchData.dir = XmStringCreateLocalized(text_value);
-            XtFree( text_value) ;
-            }
-        searchData.reason = XmCR_NONE ;
+        if (FS_FilterText(fs)) {
+            s = XmTextFieldGetXmString(FS_FilterText(fs));
+            if (!XmStringEmpty(s)) searchData.mask = s;
+            else XmStringFree(s);
+        }
+
+        if (FS_DirText(fs)) {
+            s = XmTextFieldGetXmString(FS_DirText(fs));
+            if (!XmStringEmpty(s)) searchData.dir = s;
+            else XmStringFree(s);
+        }
+
         FileSelectionBoxUpdate(fs, &searchData);
         XmStringFree(searchData.mask);
         XmStringFree(searchData.dir);
         searchData.mask = NULL;
         searchData.dir  = NULL;
-        }
+    }
 
     /* Use the XmNqualifySearchDataProc routine to fill in all fields of the
     *   callback data record.
@@ -3350,53 +3183,29 @@ Widget XmFileSelectionBoxGetChild(Widget fs, unsigned char which)
     }
 
 /****************************************************************/
-void
-XmFileSelectionDoSearch(
-        Widget fs,
-        XmString dirmask )
+
+void XmFileSelectionDoSearch(Widget fs, XmString dirmask)
 {
-            XmFileSelectionBoxCallbackStruct searchData ;
-            String          textString ;
-/****************/
+	XmFileSelectionBoxCallbackStruct search_data;
+	_XmWidgetToAppContext(fs);
+	_XmAppLock(app);
+	memset(&search_data, 0, sizeof search_data);
+	search_data.reason = XmCR_NONE;
 
-    _XmWidgetToAppContext(fs);
-    _XmAppLock(app);
-    memset(&searchData, 0, sizeof searchData);
-    searchData.reason = XmCR_NONE;
+	if (dirmask)
+		search_data.mask = XmStringCopy(dirmask);
+	else {
+		if (FS_FilterText(fs))
+			search_data.mask = XmTextFieldGetXmString(FS_FilterText(fs));
+		if (FS_DirText(fs))
+			search_data.dir = XmTextFieldGetXmString(FS_DirText(fs));
+	}
 
-    if(    dirmask    )
-    {
-        searchData.mask = XmStringCopy(dirmask) ;
-        }
-    else
-    {   if(    FS_FilterText( fs)    )
-        {
-            textString = XmTextFieldGetString( FS_FilterText( fs)) ;
-            }
-        else
-        {   textString = NULL ;
-            }
-        if(    textString    )
-        {   searchData.mask = XmStringCreateLocalized(textString);
-            XtFree( textString) ;
-            }
-        else
-        {   searchData.mask = NULL ;
-            }
-        if(    FS_DirText( fs)
-            && (textString = XmTextFieldGetString( FS_DirText( fs)))    )
-        {
-            searchData.dir = XmStringCreateLocalized(textString);
-            XtFree( textString) ;
-            }
-        }
-    FileSelectionBoxUpdate( (XmFileSelectionBoxWidget) fs, &searchData) ;
-
-    XmStringFree( searchData.mask) ;
-    XmStringFree( searchData.dir) ;
-    _XmAppUnlock(app);
-    return ;
-    }
+	FileSelectionBoxUpdate((XmFileSelectionBoxWidget)fs, &search_data);
+	XmStringFree(search_data.mask);
+	XmStringFree(search_data.dir);
+	_XmAppUnlock(app);
+}
 
 /****************************************************************/
 Widget
