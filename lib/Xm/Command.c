@@ -419,17 +419,12 @@ ListCallback(
             Cardinal        argc ;
             int             count ;
             XmString        tmpXmString ;
-/*********** reset is not used ************
-            Boolean         reset = FALSE ;
-****************/
 
     argc = 0 ;
     XtSetArg( argv[argc], XmNitemCount, &count) ; ++argc ;
     XtGetValues( SB_List( cmdWid), argv, argc) ;
+    if (!count) return;
 
-    if(    !count    )
-    {   return ;
-        }
     if(    cmdWid->command.error    )
     {
         if(    (listCB->item_position == (count - 1))
@@ -469,7 +464,7 @@ ListCallback(
             {   XmListSelectPos( SB_List( cmdWid),
                     cmdWid->selection_box.list_selected_item_position, FALSE) ;
                 }
-            XmTextFieldSetString( cmdWid->selection_box.text, "") ;
+            XmTextFieldSetXmString(SB_Text(cmdWid), NULL);
             return ;
             }
         }
@@ -489,7 +484,8 @@ ListCallback(
         XmListAddItemUnselected( cmdWid->selection_box.list, tmpXmString, 0) ;
 
         XmListSetBottomPos( cmdWid->selection_box.list, 0) ;
-        XmTextFieldSetString( cmdWid->selection_box.text, "") ;
+        XmTextFieldSetXmString(SB_Text(cmdWid), NULL);
+
         /* Call the users command entered callback.
         */
         memset(&cmdCB, 0, sizeof cmdCB);
@@ -505,13 +501,8 @@ ListCallback(
         */
         cmdWid->selection_box.list_selected_item_position =
                                                         listCB->item_position ;
-        if((text_value = _XmStringGetTextConcat( listCB->item)) != NULL)
-        {
-            XmTextFieldSetString( SB_Text( cmdWid), text_value) ;
-            XmTextFieldSetInsertionPosition( SB_Text( cmdWid),
-			       XmTextFieldGetLastPosition( SB_Text( cmdWid))) ;
-            XtFree( text_value) ;
-            }
+        XmTextFieldSetXmString(SB_Text(cmdWid), listCB->item);
+        XmTextFieldSetInsertionPosition(SB_Text(cmdWid), XmTextFieldGetLastPosition(SB_Text(cmdWid)));
         }
     return ;
     }
@@ -532,11 +523,7 @@ CommandCallback(
     memset(&cb, 0, sizeof cb);
     cb.reason = XmCR_COMMAND_CHANGED;
     cb.event = ((XmAnyCallbackStruct *) call_data)->event ;
-
-    /* get char* string from text and convert to XmString type */
-    str = XmTextFieldGetString (client_data->selection_box.text);
-    cb.value = XmStringCreateLocalized(str);
-    XtFree(str);
+    cb.value = XmTextFieldGetXmString(SB_Text(client_data));
 
     XtCallCallbackList ((Widget) client_data, client_data->command.value_changed_callback, &cb);
     XmStringFree (cb.value);
@@ -587,7 +574,6 @@ _XmCommandReturn(
             XmCommandWidget w = (XmCommandWidget) wid ;
     XmCommandCallbackStruct cb;
     XmString                   tmpXmString;
-    String                     tmpString;
             Arg             argv[5] ;
             Cardinal        argc ;
             int             count ;
@@ -611,11 +597,12 @@ _XmCommandReturn(
     /*                      - reset selection list ptr    */
     /*                      - reset command to ""         */
 
-    tmpString = XmTextFieldGetString (w->selection_box.text);
-    if ((tmpString == NULL) || (strcmp(tmpString, "") == 0)) {
-        if (tmpString) XtFree(tmpString);
+    tmpXmString = XmTextFieldGetXmString(SB_Text(w));
+    if (XmStringEmpty(tmpXmString)) {
+        XmStringFree(tmpXmString);
         return;
     }
+
     argc = 0 ;
     XtSetArg( argv[argc], XmNitemCount, &count) ; ++argc ;
     XtGetValues( SB_List( w), argv, argc) ;
@@ -627,21 +614,18 @@ _XmCommandReturn(
         if (w->selection_box.list_selected_item_position > 0)
             w->selection_box.list_selected_item_position--;
     }
-    tmpXmString = XmStringGenerate(tmpString, XmFONTLIST_DEFAULT_TAG,
-				   XmCHARSET_TEXT, NULL);
+
     XmListAddItemUnselected (w->selection_box.list, tmpXmString, 0);
+    XmListSetBottomPos(w->selection_box.list, 0);
+    XmTextFieldSetXmString(SB_Text(w), NULL);
 
-    XmListSetBottomPos (w->selection_box.list, 0);
-    XmTextFieldSetString (w->selection_box.text, "");
     /* call the users command entered callback */
-
     memset(&cb, 0, sizeof cb);
     cb.reason = XmCR_COMMAND_ENTERED;
     cb.event  = event;
     cb.value  = tmpXmString;
     XtCallCallbackList ((Widget) w, w->command.callback, &cb);
     XmStringFree (tmpXmString);
-    XtFree (tmpString);
     return ;
 }
 /****************************************************************/
@@ -976,19 +960,16 @@ XmCommandSetValue(
         XmString value )
 {
     XmCommandWidget   w = (XmCommandWidget)widget;
-    char *str;
     _XmWidgetToAppContext(widget);
 /****************/
 
     _XmAppLock(app);
-    if(    !(str = _XmStringGetTextConcat( value))    )
-    {
+    if (!XmStringIsValid(value)) {
         XmeWarning( (Widget) w, WARNING3);
 	_XmAppUnlock(app);
         return;
         }
-    XmTextFieldSetString(w->selection_box.text, str);
-    XtFree(str);
+    XmTextFieldSetXmString(SB_Text(w), value);
     _XmAppUnlock(app);
     return ;
     }
@@ -1001,7 +982,6 @@ XmCommandAppendValue(
         XmString value )
 {
     XmCommandWidget   w = (XmCommandWidget)widget;
-    char            *strNew;
     XmTextPosition   endPosition;
     _XmWidgetToAppContext(widget);
 /****************/
@@ -1009,14 +989,13 @@ XmCommandAppendValue(
     if (value == NULL) return;
 
     _XmAppLock(app);
+    if (!XmStringIsValid(value)) {
     /* return if invalid string from "value" passed in */
-    if(    !(strNew = _XmStringGetTextConcat( value))    )
-    {
         XmeWarning( (Widget) w, WARNING3);
 	_XmAppUnlock(app);
         return;
         }
-    if(    !strNew  ||  !*strNew    ) {
+    if (XmStringEmpty(value)) {
         XmeWarning( (Widget) w, WARNING4);
 	_XmAppUnlock(app);
         return;
@@ -1024,12 +1003,11 @@ XmCommandAppendValue(
     /* get string length of current command string */
     endPosition = XmTextFieldGetLastPosition( w->selection_box.text) ;
     /* append new string to existing string */
-    XmTextFieldReplace (w->selection_box.text, endPosition, endPosition,
-			                                              strNew) ;
+    XmTextFieldReplaceString(SB_Text(w), endPosition, endPosition, value);
+
     /* reset insertion position to end of text, and free new string */
     XmTextFieldSetInsertionPosition( w->selection_box.text,
 			  XmTextFieldGetLastPosition( w->selection_box.text)) ;
-    XtFree (strNew);
     _XmAppUnlock(app);
     return ;
     }
