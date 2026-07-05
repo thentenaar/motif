@@ -57,5 +57,6 @@ void xmfontlist_suite(SRunner *runner);
 void xmscreen_suite(SRunner *runner);
 void xmchar_suite(SRunner *runner);
 void xmstring_suite(SRunner *runner);
+void xmtextf_suite(SRunner *runner);
 
 #endif /* SUITES_H */
