@@ -1278,10 +1278,10 @@ ListCallback(
         XtPointer call_data )
 {
 	enum { XmA_MOTIF_SELECTION_TEXT, XmA_MOTIF_COMPOUND_STRING,
-	       XmACOMPOUND_TEXT, NUM_ATOMS };
+	       XmAUTF8_STRING, XmACOMPOUND_TEXT, NUM_ATOMS };
 	static char *atom_names[] = {
 	  XmI_MOTIF_SELECTION_TEXT, XmS_MOTIF_COMPOUND_STRING,
-	  XmSCOMPOUND_TEXT };
+	  XmSUTF8_STRING, XmSCOMPOUND_TEXT };
 
 	XmListCallbackStruct	*callback = (XmListCallbackStruct *) call_data;
 	XmSelectionBoxWidget	sel = (XmSelectionBoxWidget) client_data ;
@@ -1296,7 +1296,7 @@ ListCallback(
 	unsigned long	size;
 	int		format;
 	Boolean		success;
-
+	XmString temp;
 
 	textTrait = (XmAccessTextualTrait)
 	  XmeTraitGet((XtPointer) XtClass(SB_Text(sel)), XmQTaccessTextual);
@@ -1333,18 +1333,19 @@ ListCallback(
 	}
 	if (success) {
 	  if (type == atoms[XmA_MOTIF_COMPOUND_STRING]) {
-	    XmString temp;
 	    temp = XmStringUnserialize((unsigned char *)value);
-	    textTrait -> setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
+	    textTrait->setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
+	    XmStringFree(temp);
+	  } else if (type == atoms[XmAUTF8_STRING]) {
+	    temp = XmStringCreate(value, "UTF-8");
+	    textTrait->setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
 	    XmStringFree(temp);
 	  } else if (type == atoms[XmACOMPOUND_TEXT]) {
-	    XmString temp;
-	    temp = XmCvtCTToXmString((char*) value);
-	    textTrait -> setValue(SB_Text(sel), value, XmFORMAT_XmSTRING);
+	    temp = XmCvtCTToXmString(value);
+	    textTrait->setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
 	    XmStringFree(temp);
-	  } else if (type == XA_STRING) {
-	    textTrait -> setValue(SB_Text(sel), value, XmFORMAT_MBYTE);
-	  }
+	  } else if (type == XA_STRING)
+	    textTrait->setValue(SB_Text(sel), value, XmFORMAT_MBYTE);
 	}
 
 	if(success)
