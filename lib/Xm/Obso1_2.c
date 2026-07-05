@@ -55,7 +55,6 @@
 #include "SelectioBI.h"
 #include "SyntheticI.h"
 #include "TraversalI.h"
-#include "XmStringI.h"		/* for _XmStringGetTextConcat() */
 
 typedef struct {
     int		segment_size;
@@ -1173,25 +1172,14 @@ _XmFileSelectionBoxCreateFilterText(
 {
             Arg             arglist[10] ;
             int             argCount ;
-            char *          stext_value ;
             XtAccelerators  temp_accelerators ;
 /****************/
 
-    /* Get text portion from Compound String, and set
-    *   fs_stext_charset and fs_stext_direction bits...
-    */
-    /* Should do this stuff entirely with XmStrings when the text
-    *   widget supports it.
-    */
-    if(    !(stext_value = _XmStringGetTextConcat( FS_Pattern( fs)))    )
-    {   stext_value = (char *) XtMalloc( 1) ;
-        stext_value[0] = '\0' ;
-        }
     argCount = 0 ;
     XtSetArg( arglist[argCount], XmNcolumns,
                                             SB_TextColumns( fs)) ; argCount++ ;
     XtSetArg( arglist[argCount], XmNresizeWidth, FALSE) ; argCount++ ;
-    XtSetArg( arglist[argCount], XmNvalue, stext_value) ; argCount++ ;
+    XtSetArg( arglist[argCount], XmNvalueString, FS_Pattern(fs)) ; argCount++ ;
     XtSetArg( arglist[argCount], XmNnavigationType,
                                              XmSTICKY_TAB_GROUP) ; argCount++ ;
     FS_FilterText( fs) = XmCreateTextField( (Widget) fs, "FilterText",
@@ -1203,9 +1191,6 @@ _XmFileSelectionBoxCreateFilterText(
     fs->core.accelerators = SB_TextAccelerators( fs) ;
     XtInstallAccelerators( FS_FilterText( fs), (Widget) fs) ;
     fs->core.accelerators = temp_accelerators ;
-
-    XtFree( stext_value) ;
-    return ;
 }
 
 /****************************************************************/
@@ -1342,22 +1327,10 @@ _XmFileSelectionBoxGetListItemCount(
         }
 }
 /*****************************************************************/
-void
-_XmFileSelectionBoxGetDirMask(
-        Widget fs,
-        int resource_offset,	/* unused */
-        XtArgVal *value )
+void _XmFileSelectionBoxGetDirMask(Widget fs, int resource_offset, XtArgVal *value)
 {
-            String          filterText ;
-            XmString        data ;
-
-    filterText = XmTextFieldGetString( FS_FilterText(fs)) ;
-    data = XmStringGenerate(filterText, XmFONTLIST_DEFAULT_TAG,
-			    XmCHARSET_TEXT, NULL) ;
-    *value = (XtArgVal) data ;
-    XtFree( filterText) ;
-
-    return ;
+	(void)resource_offset;
+	*value = (XtArgVal)XmTextFieldGetXmString(FS_FilterText(fs));
 }
 
 /****************************************************************/
@@ -1497,13 +1470,8 @@ _XmFileSelectionBoxRestore(
         Cardinal *argc )
 {
             XmFileSelectionBoxWidget fsb = (XmFileSelectionBoxWidget) wid ;
-            String          itemString ;
-            String          dir ;
-            String          mask ;
-            int             dirLen ;
-            int             maskLen ;
-            Widget          activeChild ;
-/****************/
+            Widget activeChild ;
+            XmString s;
 
     if(    !(activeChild = GetActiveText( fsb, event))    )
     {   return ;
@@ -1512,29 +1480,15 @@ _XmFileSelectionBoxRestore(
     {   _XmSelectionBoxRestore( (Widget) fsb, event, argv, argc) ;
         }
     else /* activeChild == FS_FilterText( fsb) */
-    {   /* Should do this stuff entirely with XmStrings when the text
-        *   widget supports it.
-        */
-        if(    (dir = _XmStringGetTextConcat( FS_Directory( fsb))) != NULL    )
-        {
-            dirLen = strlen( dir) ;
-
-            if(   (mask = _XmStringGetTextConcat( FS_Pattern( fsb))) != NULL   )
-            {
-                maskLen = strlen( mask) ;
-                itemString = XtMalloc( dirLen + maskLen + 1) ;
-                strcpy( itemString, dir) ;
-                strcpy( &itemString[dirLen], mask) ;
-                XmTextFieldSetString( FS_FilterText( fsb), itemString) ;
-                XmTextFieldSetCursorPosition( FS_FilterText( fsb),
-			    XmTextFieldGetLastPosition( FS_FilterText( fsb))) ;
-                XtFree( itemString) ;
-                XtFree( mask) ;
-                }
-            XtFree( dir) ;
-            }
+    {
+        if (!XmStringEmpty(FS_Directory(fsb)) && !XmStringEmpty(FS_Pattern(fsb))) {
+            s = XmStringConcat(FS_Directory(fsb), FS_Pattern(fsb));
+            XmTextFieldSetXmString(FS_FilterText(fsb), s);
+            XmStringFree(s);
+            XmTextFieldSetInsertionPosition(FS_FilterText(fsb),
+                                            XmTextFieldGetLastPosition(FS_FilterText(fsb)));
         }
-    return ;
+    }
 }
 /*****************************************************************/
 XmGeoMatrix
