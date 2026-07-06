@@ -2,6 +2,7 @@
 #define _XmDropDown_h
 
 #include <X11/Intrinsic.h>
+#include <Xm/Xm.h>
 
 #if defined(VMS) || defined(__VMS)
 #include <X11/apienvset.h>
@@ -10,7 +11,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-    
+
 externalref WidgetClass xmDropDownWidgetClass;
 
 typedef struct _XmDropDownClassRec	*XmDropDownWidgetClass;
@@ -41,8 +42,16 @@ extern Widget XmCreateDropDown(Widget parent,
  *	Arguments:     w - the combination box.
  *	Returns:       The value in the text widget.
  */
-
+XM_ALTERNATIVE(Use XmDropDownGetString instead)
 extern String XmDropDownGetValue(Widget w);
+
+/**
+ * Get the value of the combo box as a XmString.
+ *
+ * The caller must free the returned XmString with
+ * XmStringFree().
+ */
+extern XmString XmDropDownGetString(Widget w);
 
 /*
  * Variable argument list functions

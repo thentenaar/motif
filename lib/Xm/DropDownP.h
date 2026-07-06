@@ -71,6 +71,7 @@ extern "C" {
  *  does not currently use this. Presumes do it in subclasses
  */
 typedef Boolean (*XmDropDownTextProc)(Widget w, char *text);
+typedef Boolean (*XmDropDownStringProc)(Widget w, XmString str);
 
 typedef Boolean (*XmDropDownTextListMapProc)(
     Widget w,		/* combo box */
@@ -79,10 +80,10 @@ typedef Boolean (*XmDropDownTextListMapProc)(
 );
 
 /* Version number for the first Revision  */
-#define XmDropDownExtensionVersion 2
+#define XmDropDownExtensionVersion 3
 
 typedef struct {
-        /* standard extension fields */
+    /* standard extension fields */
 	XtPointer 		    next_extension;
 	XrmQuark                    record_type;
 	long                        version;
@@ -93,6 +94,10 @@ typedef struct {
 	XmDropDownTextProc	    update;
 	XmDropDownTextListMapProc   setTextFromList;
 	XmDropDownTextListMapProc   setListFromText;
+
+	/* XmString methods added in version 3 */
+	XmDropDownStringProc verify_string;
+	XmDropDownStringProc update_string;
 } XmDropDownClassPartExtension;
 
 typedef struct {
@@ -135,7 +140,7 @@ typedef struct {
 
     /* private state */
 
-    String old_text;		/* The old text value. */
+    XmString old_text;		/* The old text value. */
     Window focus_owner;		/* Previous owner and state of the focus. */
     int focus_state;
 

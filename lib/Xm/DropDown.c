@@ -988,16 +988,13 @@ ArrowClicked(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
 	    /*
 	     * Save the old text in case the user cancels.
 	     */
-
-	    XtFree((char *) XmDropDown_old_text(cbw));
-	    XmDropDown_old_text(cbw) = XmTextFieldGetString(XmDropDown_text(cbw));
+	    XmStringFree(XmDropDown_old_text(cbw));
+	    XmDropDown_old_text(cbw) = XmTextFieldGetXmString(XmDropDown_text(cbw));
 
 	    if (!XmDropDown_customized_combo_box(cbw) &&
-		!SetListFromText((Widget) cbw, False) &&
-		XmDropDown_verify(cbw))
-	    {
-		XmTextFieldSetString(XmDropDown_text(cbw), "");
-	    }
+	        !SetListFromText((Widget) cbw, False) &&
+	        XmDropDown_verify(cbw))
+			XmTextFieldSetXmString(XmDropDown_text(cbw), NULL);
 	}
     }
 
@@ -1067,30 +1064,34 @@ CheckExtensions( XmDropDownWidgetClass combo )
 
 }
 
-
-/*	Function Name: IsTextOK
- *	Description:   This is called to verify the text field.
- *	Arguments:     w - the text field widget.
- *                     combo_ptr - the combination box pointer.
- * UNUSED              info_ptr - a pointer to the arrow button info.
- *	Returns:       none.
+/**
+ * Verify the string in the text field
  */
-static Boolean
-IsTextOK(XmDropDownWidget cbw)
+static Boolean IsTextOK(XmDropDownWidget cbw)
 {
-	Boolean isOK = True;
+	XmString s;
+	char *txt;
+	Boolean ok = True;
 	XmDropDownClassPartExtension *addition;
 
-	addition = CheckExtensions( (XmDropDownWidgetClass)XtClass(cbw) );
-	if (addition && addition->verify) {
-		char *text = XmTextFieldGetString(XmDropDown_text(cbw));
-		/* let the subclass verify the string with the application */
-		isOK = (*addition->verify)((Widget)cbw, text);
-		XtFree(text);
-	} else {
-		isOK = SetListFromText((Widget) cbw, True);
+	if (!(addition = CheckExtensions((XmDropDownWidgetClass)XtClass(cbw))))
+		return SetListFromText((Widget)cbw, True);
+
+	/**
+	 * Allow the application to give input as to the validity of the
+	 * string.
+	 */
+	s = XmTextFieldGetXmString(XmDropDown_text(cbw));
+	if (addition->version >= 3 && addition->verify_string)
+		ok = (*addition->verify_string)((Widget)cbw, s);
+	else if (addition->verify) {
+		txt = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+		ok  = (*addition->verify)((Widget)cbw, txt);
+		XtFree(txt);
 	}
-	return isOK;
+
+	XmStringFree(s);
+	return ok;
 }
 
 /*	Function Name: VerifyTextField
@@ -1106,20 +1107,19 @@ VerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
   XmDropDownWidget     cbw = (XmDropDownWidget) combo_ptr;
   XmTextVerifyCallbackStruct *field = (XmTextVerifyCallbackStruct*) info_ptr;
   XmAnyCallbackStruct        cbdata;
+  XmDropDownClassPartExtension *addition;
   Boolean		     allowTraverse = True;
+  char *text;
+  XmString s;
 
   if (!XmDropDown_customized_combo_box(cbw))
   {
-      if (XmDropDown_verify(cbw) && !IsTextOK(cbw))
-      {
 	  /*
 	   * Check to see if the extension is there
 	   */
-	  XmDropDownClassPartExtension *addition;
+	  addition = CheckExtensions((XmDropDownWidgetClass)XtClass(cbw));
 
-	  addition =
-	      CheckExtensions((XmDropDownWidgetClass)XtClass(cbw));
-
+      if (XmDropDown_verify(cbw) && !IsTextOK(cbw)) {
 	  cbdata.reason = XmCR_VERIFY_TEXT_FAILED;
 	  cbdata.event = (field == NULL ? NULL : field->event);
 
@@ -1137,31 +1137,40 @@ VerifyTextField(Widget w, XtPointer combo_ptr, XtPointer info_ptr)
 	      */
 	      XmListSelectPos(XmDropDown_list(cbw), 1, False);
 	      SetTextFromList((Widget) cbw);
-	      if (addition && addition->update)
-	      {
-		  char *text = XmTextFieldGetString(XmDropDown_text(cbw));
-		  (void)(*addition->update)((Widget)cbw,text);
-		  XtFree(text);
+
+	      if (addition) {
+	          s = XmTextFieldGetXmString(XmDropDown_text(cbw));
+	          if (addition && addition->version >= 3 && addition->update_string)
+	              (*addition->update_string)((Widget)cbw, s);
+	          else if (addition && addition->update) {
+		          text = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+		          (*addition->update)((Widget)cbw, text);
+		          XtFree(text);
+	          }
+
+	          XmStringFree(s);
 	      }
-	  }
-	  else
-	  {
-	      XmTextFieldSetString(XmDropDown_text(cbw), "");
-	      if (addition && addition->update)
-		  (void)(*addition->update)((Widget)cbw,"");
+	  } else {
+	      XmTextFieldSetXmString(XmDropDown_text(cbw), NULL);
+	      if (addition && addition->version >= 3 && addition->update_string)
+	          (*addition->update_string)((Widget)cbw, NULL);
+	      else if (addition && addition->update)
+	          (*addition->update)((Widget)cbw, "");
 	  }
       }
       /* else blindly accept the value */
       else
 	  {
-	      XmDropDownClassPartExtension *addition =
-		  CheckExtensions( (XmDropDownWidgetClass)XtClass(cbw) );
-	      if (addition && addition->update)
-		  {
-		      char *text = XmTextFieldGetString(XmDropDown_text(cbw));
-		      (void)(*addition->update)((Widget)cbw,text);
+	      s = XmTextFieldGetXmString(XmDropDown_text(cbw));
+	      if (addition && addition->version >= 3 && addition->update_string)
+	          (*addition->update_string)((Widget)cbw, s);
+	      else if (addition && addition->update) {
+		      text = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+		      (*addition->update)((Widget)cbw, text);
 		      XtFree(text);
-		  }
+	      }
+
+	      XmStringFree(s);
 	  }
   }
 
@@ -1445,10 +1454,10 @@ ComboCancel(Widget w, XEvent *event, String *params, Cardinal *num_params)
     XtSetArg(args[num_args], XmNarrowDirection,	XmARROW_DOWN); num_args++;
     XtSetValues(XmDropDown_arrow(cbw), args, num_args);
 
-    if (XmDropDown_old_text(cbw) != NULL) {
-	XmTextFieldSetString(XmDropDown_text(cbw), XmDropDown_old_text(cbw));
-	XtFree((char *) XmDropDown_old_text(cbw));
-	XmDropDown_old_text(cbw) = NULL;
+    if (XmDropDown_old_text(cbw)) {
+        XmTextFieldSetXmString(XmDropDown_text(cbw), XmDropDown_old_text(cbw));
+        XmStringFree(XmDropDown_old_text(cbw));
+        XmDropDown_old_text(cbw) = NULL;
     }
 }
 
@@ -2248,21 +2257,22 @@ SetListFromText(Widget w, Boolean no_action)
     Cardinal num_args;
     int count = 0, vcount, tcount;
     XrmValue to, from;
+    XmString s;
     XmStringTable table, tptr;
     XmDropDownWidget cbw = (XmDropDownWidget) w;
-    String ptr = XmTextFieldGetString(XmDropDown_text(cbw));
-    XmStringTable sel_table;
+    String ptr = NULL;
+    XmStringTable sel_table = NULL;
     Boolean error = False;
     unsigned char policy;
+    int num_items;
     XmDropDownClassPartExtension *addition;
 
-    if (ptr != NULL) {
-	int num_items;
-
+	s = XmTextFieldGetXmString(XmDropDown_text(cbw));
+    if (!XmStringEmpty(s)) {
 	addition = CheckExtensions((XmDropDownWidgetClass)XtClass(cbw));
 	if (addition && addition->setListFromText)
 	{
-	    XtFree(ptr);
+	    XmStringFree(s);
 	    return (*addition->setListFromText)(w, XmDropDown_text(cbw),
 						XmDropDown_list(cbw));
 	}
@@ -2271,20 +2281,15 @@ SetListFromText(Widget w, Boolean no_action)
 	XtSetArg(args[num_args], XmNitemCount, &num_items); num_args++;
 	XtGetValues(XmDropDown_list(cbw), args, num_args);
 
-	/*
-	 * Strlen can be used here because we are attempting to find the
-	 * number of bytes in the string not the number of i18n characters.
-	 */
-
-	from.size = sizeof(char) * (strlen(ptr) + 1);
+	ptr = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	from.size = 0; /* Unused by the converter */
 	from.addr = ptr;
-
 	to.size = sizeof(XmStringTable);
 	to.addr = (XtPointer) &table;
 
 	XtConvertAndStore(XmDropDown_list(cbw), XmRString, &from,
 			  XmRXmStringTable, &to);
-
+	XtFree(ptr);
 
 	/*
 	 * If the text field contains "", the table will be NULL
@@ -2304,13 +2309,9 @@ SetListFromText(Widget w, Boolean no_action)
 	else
 		sel_table = NULL;
 
-	XtFree((char *) ptr);
-    }
-    else {
-	count = 0;
-	sel_table = NULL;
     }
 
+    XmStringFree(s);
     if (!no_action)
 	XmListDeselectAllItems(XmDropDown_list(cbw));
 
@@ -2398,27 +2399,18 @@ SetTextFromList(Widget w)
     XtSetArg(args[num_args], XmNselectionPolicy, &policy); num_args++;
     XtGetValues(XmDropDown_list(cbw), args, num_args);
 
-    if ((policy == XmMULTIPLE_SELECT) || (policy == XmEXTENDED_SELECT) ||
-	(count > 0))
-    {
-	XmTextFieldSetString(XmDropDown_text(cbw), "");
-    }
+    if (policy == XmMULTIPLE_SELECT || policy == XmEXTENDED_SELECT || count > 0)
+        XmTextFieldSetXmString(XmDropDown_text(cbw), NULL);
 
     text_loc = 0;
     i = 0;
     while (i < count) {
-	ptr = XmStringUnparse(items[i], NULL, XmCHARSET_TEXT, XmWIDECHAR_TEXT,
-	                      NULL, 0, XmOUTPUT_ALL);
-
-	XmTextFieldInsertWcs(XmDropDown_text(cbw), text_loc, ptr);
-	text_loc += (int)wcslen(ptr);
-	XtFree((XtPointer)ptr);
-
-	if (++i >= count)
-	    break;
-
-	XmTextFieldInsert(XmDropDown_text(cbw), text_loc, ",");
-	text_loc++;
+        XmTextFieldInsertString(XmDropDown_text(cbw), text_loc, items[i]);
+        text_loc += XmStringLen(items[i]);
+        if (++i < count) {
+            XmTextFieldInsertString(XmDropDown_text(cbw), text_loc, XmStringCreate(",", "UTF-8"));
+	        text_loc++;
+        }
     }
 
     XmTextFieldSetInsertionPosition(XmDropDown_text(cbw), 0);
@@ -2437,19 +2429,27 @@ SetTextFromList(Widget w)
  *	Returns:       The value in the text widget.
  */
 
-String
-XmDropDownGetValue(Widget w)
+String XmDropDownGetValue(Widget w)
 {
-    XmDropDownWidget cbw = (XmDropDownWidget) w;
-    String ptr;
+    XmString s;
+    String t;
+    XmDropDownWidget cbw = (XmDropDownWidget)w;
 
-    _XmWidgetToAppContext(w);
-    _XmAppLock(app);
+	s = XmDropDownGetString(w);
+	t = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	XmStringFree(s);
+	return t;
+}
 
-    ptr = XmTextFieldGetString(XmDropDown_text(cbw));
-
-    _XmAppUnlock(app);
-    return ptr;
+XmString XmDropDownGetString(Widget w)
+{
+	XmString s;
+	XmDropDownWidget cbw = (XmDropDownWidget)w;
+	_XmWidgetToAppContext(w);
+	_XmAppLock(app);
+	s = XmTextFieldGetXmString(XmDropDown_text(cbw));
+	_XmAppUnlock(app);
+	return s;
 }
 
 /*	Function Name: XmCreateDropDown
