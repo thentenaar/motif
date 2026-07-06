@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmExtP_h_
@@ -61,7 +61,7 @@ extern String xm_std_filter[], xm_std_constraint_filter[];
         (childP)++ )
 
 /*
- * Math Stuff 
+ * Math Stuff
  *
  * Some Systems define MIN and MAX so I have to undef them before I make
  * my own definitions.
@@ -78,12 +78,12 @@ extern String xm_std_filter[], xm_std_constraint_filter[];
 *	GLOBAL DECLARATIONS
 *************************************************************/
 
-   
+
 
 void XmResolveAllPartOffsets64(WidgetClass, XmOffsetPtr*, XmOffsetPtr*);
 void _XmMoveWidget(Widget, Position, Position);
 void _XmResizeWidget(Widget, Dimension, Dimension, Dimension);
-void _XmConfigureWidget(Widget, Position, Position, 
+void _XmConfigureWidget(Widget, Position, Position,
                         Dimension, Dimension, Dimension);
 
 XtGeometryResult _XmRequestNewSize(Widget, Boolean, Dimension,
@@ -101,12 +101,13 @@ void _XmSetValuesOnChildren(Widget, ArgList, Cardinal);
 
 Boolean _XmGadgetWarning(Widget);
 
+XM_ALTERNATIVE(Use XmStringUngenerate instead)
 String _XmGetMBStringFromXmString(XmString);
 
 /*
  * Context Managment Routines.
  */
-    
+
 void _XmSetContextData(Widget, XContext, XtPointer);
 void _XmDeleteContextData(Widget, XContext);
 Boolean _XmGetContextData(Widget, XContext, XtPointer *);
@@ -125,4 +126,4 @@ void _XmExtUnhighlightBorder(Widget);
 }
 #endif
 
-#endif 
+#endif

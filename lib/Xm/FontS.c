@@ -621,7 +621,7 @@ ProcessXlfdFontData(XmFontSelectorWidget fsw,
     font_info->num_families = num;
 
     any_fam = fam + ANY_FAMILY;
-    temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+    temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
     any_fam->nameq = XrmStringToQuark(temp);
     XtFree(temp);
     any_fam->bold_nameq = XrmStringToQuark(BOLD_WEIGHT);
@@ -858,7 +858,7 @@ FillData(XmFontSelectorWidget fsw, FontData *current, char *name)
     StoreString(ptr, temp, BUFSIZ - 1);
 
     if (streq(temp, STAR_STRING)) {
-	String str = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+	String str = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 	strcpy(temp, str);
 	XtFree((XtPointer) str);
     }
@@ -1368,8 +1368,8 @@ BuildFontString(XmFontSelectorWidget fsw, FontData *cf, String buf, int size)
     char res_x[BUFSIZ], res_y[BUFSIZ], point_size[BUFSIZ];
 
     if (anyquark == NULLQUARK) {
-	String temp1 = _XmGetMBStringFromXmString(ANY_STRING(fsw));
-	String temp2 = _XmGetMBStringFromXmString(LOWER_ANY_STRING(fsw));
+	String temp1 = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	String temp2 = XmStringUngenerate(LOWER_ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 
 	anyquark = XrmStringToQuark(temp1);
 	anyquark2 = XrmStringToQuark(temp2);
@@ -1619,7 +1619,7 @@ UpdateFamilies(XmFontSelectorWidget fsw)
      */
 
     if (!str_match) {
-	temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+	temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 
 	XtSetArg(largs[num_largs], XmNvalue, temp); num_largs++;
     }
@@ -1711,8 +1711,7 @@ UpdateSizes(XmFontSelectorWidget fsw)
     }
 
     if (!match) {
-	temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
-
+	temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 	XtSetArg(largs[num_largs], XmNvalue, temp); num_largs++;
     }
 
@@ -2053,7 +2052,7 @@ ChangeMode(XmFontSelectorWidget fsw, Boolean xlfd_mode, Boolean force)
     if (xlfd_mode) {
 	char buf[BUFSIZ];
 	FontData * cf = XmFontS_font_info(fsw)->current_font;
-	String temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+	String temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 
 	family_label = FAMILY_STRING(fsw);
 
@@ -2190,7 +2189,7 @@ CreateChildren(XmFontSelectorWidget fsw, ArgList args, Cardinal num_args)
     XtFree((XtPointer) margs);
 
     num_largs = 0;
-    temp_txt = _XmGetMBStringFromXmString(SAMPLE_TEXT(fsw));
+    temp_txt = XmStringUngenerate(SAMPLE_TEXT(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
     XtSetArg(largs[num_largs], XmNvalue, temp_txt); num_largs++;
     XtSetArg(largs[num_largs], XmNeditMode, XmMULTI_LINE_EDIT); num_largs++;
     XtSetArg(largs[num_largs], XmNwordWrap, True); num_largs++;
@@ -2326,7 +2325,7 @@ CreateFamilyBox(XmFontSelectorWidget fsw, Widget parent,
     Widget c_box;
     Cardinal num_largs;
     Arg *margs, largs[15];
-    String temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+    String temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 
     num_largs = 0;
     XtSetArg(largs[num_largs], XmNlabelString,FAMILY_STRING(fsw)); num_largs++;
@@ -2391,7 +2390,7 @@ CreateSizesBox(XmFontSelectorWidget fsw, Widget parent,
     XtSetArg(largs[num_largs], XmNvisibleItemCount, VISIBILE_FAMILIES);
     num_largs++;
 
-    temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+    temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
     XtSetArg(largs[num_largs], XmNvalue, temp); num_largs++;
 
     margs = XtMergeArgLists(largs, num_largs, args, num_args);
@@ -3002,7 +3001,7 @@ ToggleScaling(Widget w, XtPointer fsw_ptr, XtPointer data)
 			   !CheckLongFlag(family->sizes_100, map));
 
 	if (map_bad || bad_75 || (bad_100 && (cf->point_size != 0))) {
-	    String temp = _XmGetMBStringFromXmString(ANY_STRING(fsw));
+	    String temp = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 
 	    cf->point_size = 0;	/* Reset to Any. */
 	    SetComboValue(XmFontS_size_box(fsw), temp);
@@ -3736,7 +3735,7 @@ SetValues(Widget old, Widget request, Widget set,
 	DoCheck( SAMPLE_TEXT(old_fsw), SAMPLE_TEXT(set_fsw));
 		if (reset)
 		{
-		char * temp_txt = _XmGetMBStringFromXmString(SAMPLE_TEXT(set_fsw));
+		char * temp_txt = XmStringUngenerate(SAMPLE_TEXT(set_fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 		XtVaSetValues( XmFontS_text(set_fsw), XmNlabelString, temp_txt, NULL);
 		XtFree(temp_txt);
 		}

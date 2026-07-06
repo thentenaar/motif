@@ -2119,3 +2119,14 @@ _XmBuildPrimitiveResources(
 		sc->primitive_class.num_syn_resources);
 }
 
+/*	Function Name: _XmGetMBStringFromXmString
+ *	Description: Given an Xm String, returns an MB string
+ *	Arguments: xmstr - an Xm String.
+ *	Returns: A multi byte string.
+ */
+String _XmGetMBStringFromXmString(XmString s)
+{
+	return XmStringEmpty(s) ? NULL
+	       : XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+}
+
