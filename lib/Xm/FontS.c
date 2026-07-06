@@ -2862,12 +2862,20 @@ FamilyChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
 {
     XmFontSelectorWidget fsw = (XmFontSelectorWidget) fsw_ptr;
     FontData * cf = XmFontS_font_info(fsw)->current_font;
-    String str = XmDropDownGetValue(w);
+    XmString s;
     char buf[BUFSIZ];
-    XrmQuark familyq = XrmStringToQuark(str);
+    String str;
+    XrmQuark familyq;
 
-    if (cf->familyq == familyq)
+    s = XmDropDownGetString(w);
+    str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+    familyq = XrmStringToQuark(str);
+    XmStringFree(s);
+
+    if (cf->familyq == familyq) {
+	XtFree(str);
 	return;			/* no change. */
+    }
 
     cf->familyq = familyq;
 
@@ -2882,7 +2890,7 @@ FamilyChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
 	DisplayCurrentFont(fsw, str);
     }
 
-    XtFree((XtPointer) str);
+    XtFree(str);
 }
 
 /*	Function Name: SizeChanged
@@ -2898,22 +2906,26 @@ SizeChanged(Widget w, XtPointer fsw_ptr, XtPointer junk)
 {
     XmFontSelectorWidget fsw = (XmFontSelectorWidget) fsw_ptr;
     FontData * cf = XmFontS_font_info(fsw)->current_font;
-    String str = XmDropDownGetValue(w);
+    String str;
     char buf[BUFSIZ];
     short size;
+    XmString s;
+
+
+    s = XmDropDownGetString(w);
+    str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+    XmStringFree(s);
 
     if (cf->point_size == (size = atoi(str) * 10))
 	{
-	XtFree((char*)str);
+	XtFree(str);
 	return;			/* no change. */
 	}
 
     cf->point_size = size;
-
     UpdateFamilies(fsw);
-
     DisplayCurrentFont(fsw, BuildFontString(fsw, cf, buf, BUFSIZ));
-    XtFree((XtPointer) str);
+    XtFree(str);
 }
 
 /*	Function Name: ChangeEncoding
@@ -3121,6 +3133,8 @@ ToggleNameWindow(Widget w, XtPointer fsw_ptr, XtPointer data)
     XmFontSelectorWidget fsw = (XmFontSelectorWidget) fsw_ptr;
     XmToggleButtonCallbackStruct *info;
     char buf[BUFSIZ];
+    XmString s;
+    String str;
 
     info = (XmToggleButtonCallbackStruct *) data;
 
@@ -3135,9 +3149,11 @@ ToggleNameWindow(Widget w, XtPointer fsw_ptr, XtPointer data)
 					       buf, BUFSIZ));
 	}
 	else {
-	    String str = XmDropDownGetValue(XmFontS_family_box(fsw));
+	    s   = XmDropDownGetString(XmFontS_family_box(fsw));
+	    str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+	    XmStringFree(s);
 	    DisplayCurrentFont(fsw, str);
-	    XtFree((XtPointer) str);
+	    XtFree(str);
 	}
     }
     else
