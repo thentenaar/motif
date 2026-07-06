@@ -785,15 +785,17 @@ ActivateTextSearch(Widget w, XtPointer elist_ptr, XtPointer client)
     XmPushButtonCallbackStruct *cbs = (XmPushButtonCallbackStruct *) client;
     Boolean reset = True;
     XmMultiListRowInfo *match;
-
-    char * ptr;
+    XmString s;
+    char *ptr;
     wchar_t *wc_string;
 
     if (!XmMultiList_show_find(elist))
         return;
 
-    ptr = XmTextFieldGetString(XmMultiList_find_text(elist));
-    wc_string = XmTextFieldGetStringWcs(XmMultiList_find_text(elist));
+    s = XmTextFieldGetXmString(XmMultiList_find_text(elist));
+    ptr = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+    wc_string = (wchar_t *)XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+    XmStringFree(s);
 
     if (XmMultiList_last_search(elist))
       reset = !streq(ptr, XmMultiList_last_search(elist));
