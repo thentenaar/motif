@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
-/*
- * HISTORY
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: text.c /main/7 1996/10/30 10:28:07 cde-osf $"
@@ -311,11 +309,11 @@ static void SearchSubstring(Widget button, ViewPtr this,
 			    XmPushButtonCallbackStruct *call_data)
 {
 #define STRING_MAX_CHARS 1024
-   char *substring;
+   char *substring = NULL;
 /*   int status; */
    XmTextPosition pos;
 /*   int last = XmTextFieldGetLastPosition(this->search_entry); */
-   XmString s = NULL;
+   XmString s;
    XmTextDirection direction;
    Widget toggle;
 
@@ -331,11 +329,16 @@ static void SearchSubstring(Widget button, ViewPtr this,
       return;
    }
 */
-   substring = XmTextFieldGetString(this->search_entry);
+
+   s = XmTextFieldGetXmString(this->search_entry);
+   if (!XmStringEmpty(s))
+      substring = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+
    if (substring == NULL) {
       if (no_pattern_msg == NULL)
 	no_pattern_msg = FetchString(this, no_pattern);
       ViewWarning(this, no_pattern_msg, (XmString) NULL);
+      XmStringFree(s);
       return;
    }
    XtVaGetValues(this->direction, XmNmenuHistory, &toggle, NULL);
@@ -351,11 +354,11 @@ static void SearchSubstring(Widget button, ViewPtr this,
    else {
       if (not_found_msg == NULL)
 	not_found_msg = FetchString(this, not_found);
-      s = XmStringCreateLocalized(substring);
       ViewWarning(this, not_found_msg, s);
-      XmStringFree(s);
    }
+
    XtFree(substring);
+   XmStringFree(s);
 }
 
 /* =====================================================================

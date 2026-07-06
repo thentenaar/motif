@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,6 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/* 
- * HISTORY
- */ 
 
 #ifdef REV_INFO
 #ifndef lint
@@ -64,13 +61,13 @@ extern void SaveDB(char*);
 extern Widget shell, textw, labelw, notebook;
 extern int maxpages, currentPage, modified;
 
-void 
-NewPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs) 
+void
+NewPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
 {
   Arg args[2];
 
   if (modified && pages[currentPage] != NULL) {
-    if (pages[currentPage] -> page != NULL) 
+    if (pages[currentPage] -> page != NULL)
       XtFree(pages[currentPage] -> page);
      pages[currentPage] -> page = XmTextGetString(textw);
   }
@@ -83,8 +80,8 @@ NewPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
   SetPage(currentPage);
 }
 
-void 
-DoDeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs) 
+void
+DoDeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
 {
   Arg args[2];
 
@@ -114,12 +111,12 @@ DoDeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
   SetPage(currentPage);
 }
 
-void 
-DeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs) 
+void
+DeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
 {
   if (deleteDialog == 0) {
     Arg args[10];
-    XmString okLabel, promptText, dialogTitle; 
+    XmString okLabel, promptText, dialogTitle;
 
     dialogTitle = XmStringCreateLocalized("Page Delete Dialog");
     okLabel = XmStringCreateLocalized("Delete");
@@ -128,9 +125,9 @@ DeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
     XtSetArg(args[1], XmNmessageString, promptText);
     XtSetArg(args[2], XmNdialogTitle, dialogTitle);
     XtSetArg(args[3], XmNdialogStyle, XmDIALOG_PRIMARY_APPLICATION_MODAL);
-    deleteDialog = XmCreateMessageDialog(shell, "DeletePage", 
+    deleteDialog = XmCreateMessageDialog(shell, "DeletePage",
 					args, 4);
-    XtAddCallback(deleteDialog, XmNokCallback, 
+    XtAddCallback(deleteDialog, XmNokCallback,
 		  (XtCallbackProc) DoDeletePage, NULL);
     XmStringFree(dialogTitle);
     XmStringFree(okLabel);
@@ -142,15 +139,17 @@ DeletePage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
 
 Widget labelEditW, majorTabW, minorTabW;
 
-void 
-DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs) 
+void
+DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs)
 {
   char *temp;
   XmString tstr;
   Arg args[5];
   int i;
 
-  pages[currentPage] -> label = XmTextFieldGetString(labelEditW);
+  tstr = XmTextFieldGetXmString(labelEditW);
+  pages[currentPage]->label = XmStringUngenerate(tstr, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+  XmStringFree(tstr);
 
   if (pages[currentPage] -> minorTab != NULL)
     XtFree(pages[currentPage] -> minorTab);
@@ -169,7 +168,7 @@ DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs)
     XtFree(pages[currentPage] -> majorTab);
   temp = XmTextGetString(majorTabW);
   temp = Trim(temp);
-  if (strlen(temp) > 0) 
+  if (strlen(temp) > 0)
     pages[currentPage] -> majorTab = temp;
   else {
     XtFree(temp);
@@ -187,7 +186,7 @@ DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs)
       pages[currentPage] -> majorPB =
 	ExmCreateTabButton(notebook, "atab", args, i);
     }
-    tstr = XmStringGenerate(pages[currentPage] -> majorTab, NULL, 
+    tstr = XmStringGenerate(pages[currentPage] -> majorTab, NULL,
 			    XmCHARSET_TEXT, NULL);
     XtSetArg(args[0], ExmNcompoundString, tstr);
     XtSetValues(pages[currentPage] -> majorPB, args, 1);
@@ -203,7 +202,7 @@ DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs)
       pages[currentPage] -> minorPB =
 	ExmCreateTabButton(notebook, "atab", args, i);
     }
-    tstr = XmStringGenerate(pages[currentPage] -> minorTab, NULL, 
+    tstr = XmStringGenerate(pages[currentPage] -> minorTab, NULL,
 			    XmCHARSET_TEXT, NULL);
     XtSetArg(args[0], ExmNcompoundString, tstr);
     XtSetValues(pages[currentPage] -> minorPB, args, 1);
@@ -217,14 +216,16 @@ DoEditPage(Widget w, XtPointer ig, XmPushButtonCallbackStruct *cs)
   SetPage(currentPage);
 }
 
-void 
-EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs) 
+void
+EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
 {
+  XmString temp;
+
   if (pages[currentPage] == NULL) return;
 
   if (editDialog == 0) {
     Arg args[10];
-    XmString promptText, dialogTitle, temp; 
+    XmString promptText, dialogTitle;
     XmString okLabel, cancelLabel;
     Widget label, rc1, rc2;
 
@@ -237,7 +238,7 @@ EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
     XtSetArg(args[2], XmNdialogStyle, XmDIALOG_PRIMARY_APPLICATION_MODAL);
     XtSetArg(args[3], XmNokLabelString, okLabel);
     XtSetArg(args[4], XmNcancelLabelString, cancelLabel);
-    editDialog = XmCreateTemplateDialog(shell, "EditPage", 
+    editDialog = XmCreateTemplateDialog(shell, "EditPage",
 					args, 5);
     XtAddCallback(editDialog, XmNokCallback,
 		  (XtCallbackProc) DoEditPage, NULL);
@@ -246,8 +247,8 @@ EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
     XmStringFree(promptText);
     XmStringFree(okLabel);
     XmStringFree(cancelLabel);
-    
-    XtSetArg(args[0], XmNorientation, XmVERTICAL); 
+
+    XtSetArg(args[0], XmNorientation, XmVERTICAL);
     rc1 = XmCreateRowColumn(editDialog, "rc", args, 1);
     XtManageChild(rc1);
 
@@ -291,10 +292,12 @@ EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
     XtManageChild(rc2);
   }
 
-  if (pages[currentPage] -> label != NULL)
-    XmTextFieldSetString(labelEditW, pages[currentPage] -> label);
+  temp = XmStringGenerate(pages[currentPage]->label, NULL, XmUTF8_TEXT, NULL);
+  if (!XmStringEmpty(temp))
+    XmTextFieldSetXmString(labelEditW, temp);
   else
-    XmTextFieldSetString(labelEditW, "");
+    XmTextFieldSetXmString(labelEditW, NULL);
+  XmStringFree(temp);
 
   if (pages[currentPage] -> majorTab != NULL)
     XmTextSetString(majorTabW, pages[currentPage] -> majorTab);
@@ -309,14 +312,14 @@ EditPage(Widget w, XtPointer i, XmPushButtonCallbackStruct *cs)
   XtManageChild(editDialog);
 }
 
-void 
-SaveIt(Widget w, char *i, XmPushButtonCallbackStruct *e) 
+void
+SaveIt(Widget w, char *i, XmPushButtonCallbackStruct *e)
 {
   SaveDB(options.todoFile);
 }
 
-void 
-SetPage(int pageNumber) 
+void
+SetPage(int pageNumber)
 {
   XmString tmp;
   char buf[80];
@@ -350,18 +353,18 @@ SetPage(int pageNumber)
 
   XmTextSetTopCharacter(textw, pages[pageNumber] -> lasttoppos);
   XmTextSetInsertionPosition(textw, pages[pageNumber] -> lastcursorpos);
-    
+
   XtSetArg(args[0], XmNpageNumber, (pageNumber + 1));
   XtSetArg(args[1], XmNlabelString, tmp);
   XtSetValues(labelw, args, 2);
   XmStringFree(tmp);
 }
 
-void 
-PageChange(Widget w, XtPointer i, XmNotebookCallbackStruct *cs) 
+void
+PageChange(Widget w, XtPointer i, XmNotebookCallbackStruct *cs)
 {
   if (modified && pages[currentPage] != NULL) {
-    if (pages[currentPage] -> page != NULL) 
+    if (pages[currentPage] -> page != NULL)
       XtFree(pages[currentPage] -> page);
     pages[currentPage] -> page = XmTextGetString(textw);
     pages[currentPage] -> lasttoppos = XmTextGetTopCharacter(textw);
@@ -371,8 +374,8 @@ PageChange(Widget w, XtPointer i, XmNotebookCallbackStruct *cs)
   SetPage(cs -> page_number - 1);
 }
 
-void 
-AdjustPages(int startpage, int ins) 
+void
+AdjustPages(int startpage, int ins)
 {
   int i;
 
@@ -406,7 +409,7 @@ void FixPages() {
 /* This function removes leading and trailing whitespace.  It
    deallocates the original string and returns a brand new string */
 
-char* 
+char*
 Trim(char* str)
 {
   char *new;

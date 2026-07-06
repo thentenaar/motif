@@ -1,5 +1,5 @@
 /* $XConsortium: Print.c /main/5 1995/07/15 20:43:49 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,11 +20,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
-/*
- * HISTORY
- */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <Xm/XmP.h>
@@ -442,14 +439,20 @@ Initialize(Widget request_w,
     XmToggleButtonGadgetSetState(nw -> print.all_toggle, False, True);
   }
 
-  sprintf(buf, "%d", nw -> print.from_page);
-  XmTextFieldSetString(nw -> print.from_tf, buf);
+  sprintf(buf, "%d", nw->print.from_page);
+  str = XmStringCreateMultibyte(buf, NULL);
+  XmTextFieldSetXmString(nw->print.from_tf, str);
+  XmStringFree(str);
 
-  sprintf(buf, "%d", nw -> print.to_page);
-  XmTextFieldSetString(nw -> print.to_tf, buf);
+  sprintf(buf, "%d", nw->print.to_page);
+  str = XmStringCreateMultibyte(buf, NULL);
+  XmTextFieldSetXmString(nw->print.to_tf, str);
+  XmStringFree(str);
 
-  sprintf(buf, "%d", nw -> print.number_of_copies);
-  XmTextFieldSetString(nw -> print.copies_tf, buf);
+  sprintf(buf, "%d", nw->print.number_of_copies);
+  str = XmStringCreateMultibyte(buf, NULL);
+  XmTextFieldSetXmString(nw->print.copies_tf, str);
+  XmStringFree(str);
 
   XmToggleButtonGadgetSetState(nw -> print.two_sided_toggle,
 			       nw -> print.two_sided, False);
@@ -504,6 +507,7 @@ SetValues (
   XmdPrintWidget cw = (XmdPrintWidget)old_w;
   XmdPrintWidget rw = (XmdPrintWidget)request_w;
   XmdPrintWidget nw = (XmdPrintWidget)new_w;
+  XmString str;
   char buf[32];
 
   process_printer_list(new_w);
@@ -519,18 +523,24 @@ SetValues (
   }
 
   if (nw -> print.from_page != cw -> print.from_page) {
-    sprintf(buf, "%d", nw -> print.from_page);
-    XmTextFieldSetString(nw -> print.from_tf, buf);
+    sprintf(buf, "%d", nw->print.from_page);
+    str = XmStringCreateMultibyte(buf, NULL);
+    XmTextFieldSetXmString(nw->print.from_tf, str);
+    XmStringFree(str);
   }
 
   if (nw -> print.to_page != cw -> print.to_page) {
-    sprintf(buf, "%d", nw -> print.to_page);
-    XmTextFieldSetString(nw -> print.to_tf, buf);
+    sprintf(buf, "%d", nw->print.to_page);
+    str = XmStringCreateMultibyte(buf, NULL);
+    XmTextFieldSetXmString(nw->print.to_tf, str);
+    XmStringFree(str);
   }
 
   if (nw -> print.number_of_copies != cw -> print.number_of_copies) {
-    sprintf(buf, "%d", nw -> print.number_of_copies);
-    XmTextFieldSetString(nw -> print.copies_tf, buf);
+    sprintf(buf, "%d", nw->print.number_of_copies);
+    str = XmStringCreateMultibyte(buf, NULL);
+    XmTextFieldSetXmString(nw->print.copies_tf, str);
+    XmStringFree(str);
   }
 
   if (nw -> print.two_sided != cw -> print.two_sided)
@@ -657,6 +667,7 @@ do_print_cb(Widget button, Widget pw, XtPointer ignore)
 {
   XmdPrintWidget print = (XmdPrintWidget) pw;
   XmdPrintCallbackStruct cbstruct;
+  XmString s;
   Widget history;
   int i;
   char* temp;
@@ -667,22 +678,28 @@ do_print_cb(Widget button, Widget pw, XtPointer ignore)
     XmToggleButtonGetState(print -> print.two_sided_toggle);
   cbstruct.reverse_order =
     XmToggleButtonGetState(print -> print.reverse_order_toggle);
-  temp = XmTextFieldGetString(print -> print.copies_tf);
+  s = XmTextFieldGetXmString(print->print.copies_tf);
+  temp = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
   cbstruct.copies = atol(temp);
   XtFree(temp);
+  XmStringFree(s);
 
   cbstruct.to_printer = True;
   if (XmToggleButtonGetState(print -> print.all_toggle)) {
     cbstruct.first = 0;
     cbstruct.last = 0;
   } else {
-    temp = XmTextFieldGetString(print -> print.from_tf);
+    s = XmTextFieldGetXmString(print->print.from_tf);
+    temp = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
     cbstruct.first = atol(temp);
     XtFree(temp);
+    XmStringFree(s);
 
-    temp = XmTextFieldGetString(print -> print.to_tf);
+    s = XmTextFieldGetXmString(print->print.to_tf);
+    temp = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
     cbstruct.last = atol(temp);
     XtFree(temp);
+    XmStringFree(s);
   }
   XtVaGetValues(print -> print.destination_om,
 		XmNmenuHistory, &history,

@@ -1,5 +1,5 @@
 /* $XConsortium: draw.c /main/5 1996/06/13 10:32:01 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,11 +20,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
-/*
- * HISTORY
- */
+
 /*
 **  This demo shows an AUTOMATIC scrolled window and some graphics
 **  done in a DrawingArea.
@@ -521,6 +518,7 @@ DrawCB (Widget		w,		/*  widget id		*/
     Dimension width, height ;
     String name ;
     Widget newpush ;
+    XmString s;
     XSetWindowAttributes xswa;
     Graphic * graph = (Graphic *) client_data ;
 
@@ -550,12 +548,15 @@ DrawCB (Widget		w,		/*  widget id		*/
 	break ;
     case XmCR_INPUT:
 	if (dacs->event->type == ButtonPress) {
-	    name = XmTextFieldGetString(graph->textf) ; /* textfield */
-	    if (strcmp ("", name) != 0) {
+	    s = XmTextFieldGetXmString(graph->textf);
+	    if (!XmStringEmpty(s)) {
 		n = 0;
 		XtSetArg (args[n], XmNx, dacs->event->xbutton.x);  n++;
 		XtSetArg (args[n], XmNy, dacs->event->xbutton.y);  n++;
+		name    = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 		newpush = XmCreatePushButton(w, name, args, n);
+		XtFree(name);
+
 		XtAddCallback (newpush, XmNactivateCallback, PushCB, NULL);
 		XtManageChild (newpush);
 	    } else
@@ -572,7 +573,7 @@ DrawCB (Widget		w,		/*  widget id		*/
 			    dacs->event->xbutton.y);
 		}
 	    }
-	    XtFree(name);
+	    XmStringFree(s);
     	} else  /* need to get motion events here: app_default should
 		   modified DrawingArea translation with both Motion
 		   and BtnMotion addition */

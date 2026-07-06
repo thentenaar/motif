@@ -1049,11 +1049,18 @@ TextFieldCB (Widget	w,		/*  widget id		*/
 {
     Arg args[1] ;
     String string ;
+    XmString s;
     int val ;
 
-    string = XmTextFieldGetString(w) ;
-    if (string) {
-	val = atoi(string) ;
+    if (XmStringEmpty((s = XmTextFieldGetXmString(w)))) {
+        XmStringFree(s);
+        return;
+    }
+
+    string = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    val    = atoi(string);
+    XtFree(string);
+    XmStringFree(s);
 
 	if (strcmp(client_data, XmNmarginWidth))
 	    rc_data.margin_width = val ;
@@ -1068,8 +1075,6 @@ TextFieldCB (Widget	w,		/*  widget id		*/
 	    XtSetArg(args[0], client_data, val);
 	    XtSetValues(rc_data.rc, args, 1);
 	}
-	XtFree(string);
-    }
 }
 
 
@@ -1211,6 +1216,7 @@ ResOkCB (Widget		w,		/*  widget id		*/
     Arg args[10] ;
     Cardinal n ;
     char * s_x, * s_y, * s_width, * s_height, *s_recomp_size ;
+    XmString s;
     Widget * children ;
 
     /* following code based on the assumption that the children
@@ -1220,11 +1226,25 @@ ResOkCB (Widget		w,		/*  widget id		*/
     XtSetArg (args[n], XmNchildren, &children);  n++;
     XtGetValues (rc_data.res_form, args, n);
 
-    s_x = XmTextFieldGetString(children[0]) ;
-    s_y = XmTextFieldGetString(children[1]) ;
-    s_width = XmTextFieldGetString(children[2]) ;
-    s_height = XmTextFieldGetString(children[3]) ;
-    s_recomp_size = XmTextFieldGetString(children[4]) ;
+    s = XmTextFieldGetXmString(children[0]);
+    s_x = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    XmStringFree(s);
+
+    s = XmTextFieldGetXmString(children[1]);
+    s_y = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    XmStringFree(s);
+
+    s = XmTextFieldGetXmString(children[2]);
+    s_width = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    XmStringFree(s);
+
+    s = XmTextFieldGetXmString(children[3]);
+    s_height = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    XmStringFree(s);
+
+    s = XmTextFieldGetXmString(children[4]);
+    s_recomp_size = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+    XmStringFree(s);
 
     n = 0 ;
     XtSetArg(args[n], XmNx, atoi(s_x)); n++;
@@ -1240,7 +1260,6 @@ ResOkCB (Widget		w,		/*  widget id		*/
     XtFree(s_height);
     XtFree(s_recomp_size);
 }
-
 
 /*-------------------------------------------------------------
 **	UpdateResDialog - update the dialog window used to change

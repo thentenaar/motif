@@ -1,5 +1,5 @@
 /* $XConsortium: actions.c /main/5 1995/07/15 20:45:12 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
- */
-/*
- * HISTORY
+ *
  */
 
 #include <stdlib.h>
@@ -37,29 +34,29 @@
 #include <Xm/TextF.h>
 #include "filemanager.h"
 
-void 
+void
 gotoCB(Widget widget, XtPointer i1, XtPointer cb)
 {
   Widget text;
+  XmString s;
   char *str;
 
   text = XtNameToWidget(widget, "*Text");
-
-  str = XmTextFieldGetString(text);
-
+  s    = XmTextFieldGetXmString(text);
+  str  = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
   readdirCB(widget, str, NULL);
-
+  XmStringFree(s);
   XtFree(str);
 }
 
-void 
+void
 manageCB(Widget widget, Widget w_to_manage, XtPointer callback_data)
 {
   if (w_to_manage != (Widget) NULL)
     XtManageChild(w_to_manage);
 }
 
-void 
+void
 viewCB(Widget widget, char   *type, XtPointer callback_data)
 {
   XtEnum size=0, spatial=0;
@@ -85,13 +82,13 @@ viewCB(Widget widget, char   *type, XtPointer callback_data)
   XmContainerRelayout(fileviewer);
 }
 
-void 
+void
 quitCB(Widget widget, char *tag, XmAnyCallbackStruct *callback_data)
 {
   exit(0);
 }
 
-char* 
+char*
 fullpath(char *filename)
 {
   char buf[1024];
@@ -111,7 +108,7 @@ fullpath(char *filename)
 }
 
 
-void 
+void
 showHiddenCB(Widget widget, XtPointer ignore,
 	     XmToggleButtonCallbackStruct *callback_data)
 {
@@ -120,7 +117,7 @@ showHiddenCB(Widget widget, XtPointer ignore,
   read_directory((Widget) NULL, ".");
 }
 
-void 
+void
 newFolder(Widget widget, XtPointer ignore, XtPointer ignore2)
 {
   char buf[256];
@@ -145,8 +142,8 @@ newFolder(Widget widget, XtPointer ignore, XtPointer ignore2)
   mkdir(buf, 0755);
 
 }
-     
-void 
+
+void
 deleteItem(Widget widget, XtPointer ignore, XtPointer ignore2)
 {
   WidgetList selected;
@@ -154,13 +151,13 @@ deleteItem(Widget widget, XtPointer ignore, XtPointer ignore2)
   int i;
 
   /* First get list of selected items. */
-  XtVaGetValues(fileviewer, 
+  XtVaGetValues(fileviewer,
 		XmNselectedObjects, &selected,
 		XmNselectedObjectCount, &count,
 		NULL, NULL);
 
   if (count <= 0) return;
- 
+
   for(i = 0; i < count; i++) {
     char buf[256];
     sprintf(buf, deleteCommand, getPathFromIcon(selected[i]));

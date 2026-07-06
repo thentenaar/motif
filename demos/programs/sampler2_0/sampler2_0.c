@@ -1,5 +1,5 @@
 /* $XConsortium: sampler2_0.c /main/13 1995/07/15 20:46:01 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,10 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
- */
-/*
- * HISTORY
  */
 
 #include <stdlib.h>
@@ -482,9 +478,12 @@ OKCB (Widget w, XtPointer client_data, XtPointer call_data)
     String colon_location ;
     String resource_name ;
     XtEnum orientation ;
+    XmString s;
 
     /* get back something ala "width: 20cm" */
-    input_string = XmTextFieldGetString((Widget)client_data);
+    s = XmTextFieldGetXmString((Widget)client_data);
+    input_string = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+    XmStringFree(s);
 
     /* find the ':' */
     colon_location = strchr(input_string, ':');

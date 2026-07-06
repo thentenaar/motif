@@ -55,48 +55,52 @@ static void
 ValueChanged(Widget w, XtPointer client_data, XtPointer call_data)
 {
 Widget shell = (Widget)client_data;
-String valueString;
-int value;
+XmString s;
+int value = 0;
 XmTextPosition position;
+char buf[6], *tmp = NULL;
 
-    valueString = XmTextFieldGetString(w);
-    value = atoi(valueString);
-    value = value < 0 ? 0 : value;
-    value = value > 60000 ? 60000 : value;
-    valueString = XtRealloc(valueString, 255);
-    sprintf(valueString, "%i", value);
+    if (!XmStringEmpty((s = XmTextFieldGetXmString(w)))) {
+        tmp = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+        value = atoi(tmp);
+        XtFree(tmp);
+    }
+
+    XmStringFree(s);
+    value = value < 0 ? 0 : value > 60000 ? 60000 : value;
+    snprintf(buf, 6, "%i", value);
+    s = XmStringGenerate(buf, NULL, XmCHARSET_TEXT, NULL);
+
     position = XmTextFieldGetInsertionPosition(w);
     XtRemoveCallback(w, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, shell);
-    XmTextFieldSetString(w, valueString);
+    XmTextFieldSetXmString(w, s);
+    XmStringFree(s);
+
     XtAddCallback(w, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, shell);
     XmTextFieldSetInsertionPosition(w, position);
-    XtFree(valueString);
 }
 
 static void
 Activate(Widget w, XtPointer client_data, XtPointer call_data)
 {
 Widget shell = (Widget)client_data;
-String valueString;
+XmString s;
+String valueString = NULL;
 String callback;
-int value;
+int value = 0;
 Pixel background;
 
-    valueString = XmTextFieldGetString(w);
-    XtVaGetValues(w,
-    	XmNuserData, &callback,
-    	NULL);
-    value = atoi(valueString);
-    XtVaSetValues(shell,
-    	callback, value,
-    	NULL);
-    XtFree(valueString);
-    XtVaGetValues(XtParent(w),
-    	XmNbackground, &background,
-    	NULL);
-    XtVaSetValues(w,
-    	XmNbackground, background,
-    	NULL);
+    if (!XmStringEmpty((s = XmTextFieldGetXmString(w)))) {
+        valueString = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+        value = atoi(valueString);
+        XtFree(valueString);
+    }
+
+    XmStringFree(s);
+    XtVaGetValues(w, XmNuserData, &callback, NULL);
+    XtVaSetValues(shell, callback, value, NULL);
+    XtVaGetValues(XtParent(w), XmNbackground, &background, NULL);
+    XtVaSetValues(w, XmNbackground, background, NULL);
 }
 
 static void
@@ -198,15 +202,16 @@ main(int argc, char *argv[])
 	    XmNtoolTipPostDelay, &delay,
 	    NULL);
 	sprintf(buf, "%i", delay);
-	XmTextFieldSetString(text, buf);
-	XtAddCallback(text, XmNmodifyVerifyCallback, (XtCallbackProc)ModifyVerify, top_level);
-	XtAddCallback(text, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, top_level);
-	XtAddCallback(text, XmNactivateCallback, (XtCallbackProc)Activate, top_level);
 	XtVaSetValues(text,
 	    XmNuserData, XmNtoolTipPostDelay,
 	    XmNtopAttachment, XmATTACH_FORM,
 	    XmNrightAttachment, XmATTACH_FORM,
+	    XmNvalue, buf,
 	    NULL);
+	XtAddCallback(text, XmNmodifyVerifyCallback, (XtCallbackProc)ModifyVerify, top_level);
+	XtAddCallback(text, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, top_level);
+	XtAddCallback(text, XmNactivateCallback, (XtCallbackProc)Activate, top_level);
+
 	XtVaSetValues(label,
 	    XmNalignment, XmALIGNMENT_BEGINNING,
 	    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -240,15 +245,16 @@ main(int argc, char *argv[])
 	    XmNtoolTipPostDuration, &delay,
 	    NULL);
 	sprintf(buf, "%i", delay);
-	XmTextFieldSetString(text, buf);
-	XtAddCallback(text, XmNmodifyVerifyCallback, (XtCallbackProc)ModifyVerify, top_level);
-	XtAddCallback(text, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, top_level);
-	XtAddCallback(text, XmNactivateCallback, (XtCallbackProc)Activate, top_level);
 	XtVaSetValues(text,
+	    XmNvalue, buf,
 	    XmNuserData, XmNtoolTipPostDuration,
 	    XmNtopAttachment, XmATTACH_FORM,
 	    XmNrightAttachment, XmATTACH_FORM,
 	    NULL);
+	XtAddCallback(text, XmNmodifyVerifyCallback, (XtCallbackProc)ModifyVerify, top_level);
+	XtAddCallback(text, XmNvalueChangedCallback, (XtCallbackProc)ValueChanged, top_level);
+	XtAddCallback(text, XmNactivateCallback, (XtCallbackProc)Activate, top_level);
+
 	XtVaSetValues(label,
 	    XmNalignment, XmALIGNMENT_BEGINNING,
 	    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,

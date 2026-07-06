@@ -114,11 +114,16 @@ void Width(Widget w, XtPointer client, XtPointer call)
 {
     Arg args[5];
     Cardinal argcnt;
+    XmString s;
     char *val;
     int margin = 0;
 
-    val = XmTextFieldGetString(w);
-    margin = atoi(val);
+    if (!XmStringEmpty((s = XmTextFieldGetXmString(w)))) {
+       val = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
+       margin = atoi(val);
+       XtFree(val);
+    }
+    XmStringFree(s);
 
     argcnt = 0;
     if ((intptr_t)client == 1)
@@ -130,8 +135,6 @@ void Width(Widget w, XtPointer client, XtPointer call)
         XtSetArg(args[argcnt], XmNmarginWidth, (short) margin); argcnt++;
     }
     XtSetValues(bbox, args, argcnt);
-
-    XtFree(val);
 }
 
 /*
