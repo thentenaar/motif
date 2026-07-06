@@ -1,5 +1,5 @@
 /* $XConsortium: TextFunc.c /main/16 1996/11/19 12:37:29 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -26,7 +26,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #include <Xm/XmosP.h>
 #include <Xm/TextStrSoP.h>
@@ -171,9 +170,13 @@ XmTextReplace(Widget widget,
 	      XmTextPosition topos,
 	      char *value)
 {
-  if (XmIsTextField(widget))
-    XmTextFieldReplace(widget, frompos, topos, value);
-  else {
+  XmString s;
+
+  if (XmIsTextField(widget)) {
+    s = XmStringCreateMultibyte(value, NULL);
+    XmTextFieldReplaceString(widget, frompos, topos, s);
+    XmStringFree(s);
+  } else {
     _XmWidgetToAppContext(widget);
 
     _XmAppLock(app);
@@ -188,9 +191,13 @@ XmTextReplaceWcs(Widget widget,
 		 XmTextPosition topos,
 		 wchar_t *value)
 {
-  if (XmIsTextField(widget))
-    XmTextFieldReplaceWcs(widget, frompos, topos, (wchar_t*) value);
-  else {
+  XmString s;
+
+  if (XmIsTextField(widget)) {
+    s = XmStringCreateWide(value, NULL);
+    XmTextFieldReplaceString(widget, frompos, topos, s);
+    XmStringFree(s);
+  } else {
     _XmWidgetToAppContext(widget);
 
     _XmAppLock(app);
@@ -507,9 +514,15 @@ XmTextPasteLink(Widget widget)
 char *
 XmTextGetSelection(Widget widget)
 {
-  if (XmIsTextField(widget))
-    return(XmTextFieldGetSelection(widget));
-  else {
+  char *out;
+  XmString s;
+
+  if (XmIsTextField(widget)) {
+    s = XmTextFieldGetSelectionString(widget);
+    out = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
+    XmStringFree(s);
+    return out;
+  } else {
     XmTextSource source;
     XmTextPosition left, right;
     char *ret_val;
@@ -533,9 +546,15 @@ XmTextGetSelection(Widget widget)
 wchar_t *
 XmTextGetSelectionWcs(Widget widget)
 {
-  if (XmIsTextField(widget))
-    return(XmTextFieldGetSelectionWcs(widget));
-  else {
+  XmString s;
+  wchar_t *out;
+
+  if (XmIsTextField(widget)) {
+    s = XmTextFieldGetSelectionString(widget);
+    out = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmWIDECHAR_TEXT);
+    XmStringFree(s);
+    return out;
+  } else {
     XmTextSource source;
     XmTextPosition left, right;
     wchar_t *ret_val;
@@ -853,6 +872,18 @@ _XmTextGetSubstring(Widget widget,
   return XmCOPY_SUCCEEDED;
 }
 
+/**
+ * XXX: For now, ignore the use of XmTextFieldGetSubstring* by these two
+ * functions.
+ */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 int
 XmTextGetSubstring(Widget widget,
 		   XmTextPosition start,
@@ -896,3 +927,10 @@ XmTextGetSubstringWcs(Widget widget,
     return ret_val;
   }
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
