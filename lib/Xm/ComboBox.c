@@ -3048,12 +3048,10 @@ CreateEditBox(Widget    parent,
       XtSetArg(loc_args[nloc], XmNcolumns, CBS_Columns(cb)), nloc++;
     }
 
-  if (CBS_SelectedItem(cb))
-    {
-      item = _XmStringGetTextConcat(CBS_SelectedItem(cb));
-      if (item)
-	XtSetArg(loc_args[nloc], XmNvalue, item), nloc++;
-    }
+  if (CBS_SelectedItem(cb)) {
+      XtSetArg(loc_args[nloc], XmNvalueString, CBS_SelectedItem(cb));
+      nloc++;
+  }
 
   XtSetArg(loc_args[nloc], XmNrenderTable, CB_RenderTable(cb)), nloc++;
   XtSetArg(loc_args[nloc], XmNnavigationType, XmNONE), nloc++;
@@ -3061,15 +3059,15 @@ CreateEditBox(Widget    parent,
   XtSetArg(loc_args[nloc], XmNborderWidth, 0), nloc++;
   if (CB_Type(cb) == XmDROP_DOWN_LIST)
     {
-      XtSetArg(loc_args[nloc], XmNeditable, FALSE), nloc++;
-      XtSetArg(loc_args[nloc], XmNcursorPositionVisible, FALSE), nloc++;
+      XtSetArg(loc_args[nloc], XmNeditable, False), nloc++;
+      XtSetArg(loc_args[nloc], XmNcursorPositionVisible, False), nloc++;
       XtSetArg(loc_args[nloc], XmNshadowThickness, 0), nloc++;
     }
   else
     {
-      XtSetArg(loc_args[nloc], XmNeditable, TRUE), nloc++;
+      XtSetArg(loc_args[nloc], XmNeditable, True), nloc++;
       XtSetArg(loc_args[nloc], XmNeditMode, XmSINGLE_LINE_EDIT), nloc++;
-      XtSetArg(loc_args[nloc], XmNcursorPositionVisible, TRUE), nloc++;
+      XtSetArg(loc_args[nloc], XmNcursorPositionVisible, True), nloc++;
     }
   assert(nloc <= XtNumber(loc_args));
 
