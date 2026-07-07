@@ -978,8 +978,6 @@ extern void _XmStringGetBaselines(XmRenderTable rendertable,
                                   Cardinal *line_count);
 extern int _XmStringLineCount(
                         _XmString string) ;
-extern char * _XmStringGetTextConcat(
-                        XmString string) ;
 extern Boolean _XmStringIsCurrentCharset(const XmStringTag c);
 extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
 				Widget widget,
