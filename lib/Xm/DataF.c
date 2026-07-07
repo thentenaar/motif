@@ -8727,14 +8727,15 @@ static XtPointer DataFieldGetValue(Widget w, int format)
 
 static void DataFieldSetValue(Widget w, XtPointer s, int format)
 {
-  char *str;
+  char *str = NULL;
 
   switch(format)
     {
     case XmFORMAT_XmSTRING:
-      str = _XmStringGetTextConcat((XmString) s);
+      if (!XmStringEmpty(s))
+          str = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
       XmDataFieldSetString(w, str);
-      if (str != NULL) XtFree(str);
+      if (str) XtFree(str);
       break;
     case XmFORMAT_MBYTE:
       XmDataFieldSetString(w, (char*) s);
