@@ -414,10 +414,8 @@ static void ListQuickNavigate(Widget wid,
 			      XEvent *event,
 			      String *params,
 			      Cardinal *num_params);
-static wchar_t FirstChar(XmString string);
-static Boolean CompareCharAndItem(XmListWidget lw,
-				  wchar_t input_char,
-				  int pos);
+static XmCodepoint FirstChar(XmString s);
+static Boolean CompareCharAndItem(XmListWidget lw, XmCodepoint input_char, int pos);
 static void ListConvert(Widget, XtPointer, XmConvertCallbackStruct*);
 static void ListPreDestProc(Widget, XtPointer, XmDestinationCallbackStruct*);
 static void APIAddItems(XmListWidget lw,
@@ -7279,15 +7277,15 @@ ListQuickNavigate(Widget wid,
   Status status_return;
   Boolean found = False;
   int i;
-  wchar_t input_char;
+  XmCodepoint input_char;
 
   if (lw->list.matchBehavior != XmQUICK_NAVIGATE)
     return;
 
   /* Determine what was pressed. */
-  input_length = XmImMbLookupString(wid, (XKeyEvent *) event, input_string,
-				    LIST_MAX_INPUT_SIZE, (KeySym *) NULL,
-				    &status_return);
+  input_length = XmImUtf8LookupString(wid, (XKeyEvent *)event, input_string,
+                                      LIST_MAX_INPUT_SIZE, NULL,
+                                      &status_return);
 
   /* If there is more data than we can handle, bail out. */
   if (((status_return == XLookupChars) || (status_return == XLookupBoth)) &&
@@ -7295,9 +7293,7 @@ ListQuickNavigate(Widget wid,
     {
       if (lw->list.itemCount > 0)
 	{
-	  /* Convert input to a wchar_t for easy comparison. */
-	  (void) mbtowc(&input_char, NULL, 0);
-	  (void) mbtowc(&input_char, input_string, input_length);
+	  input_char = XmCharToCodepoint((XmChar)input_string);
 
 	  /* Search forward from the current position. */
 	  for (i = lw->list.CurrentKbdItem + 1; i < lw->list.itemCount; i++)
@@ -7326,53 +7322,14 @@ ListQuickNavigate(Widget wid,
 
 /***************************************************************************
  *									   *
- * FirstChar - return the first wchar in an XmString.			   *
+ * FirstChar - return the first codepoint in an XmString.			   *
  *									   *
  ***************************************************************************/
-
-static wchar_t
-FirstChar(XmString string)
+static XmCodepoint FirstChar(XmString s)
 {
-  /* This code is patterned on _XmStringGetTextConcat. */
-  _XmStringContextRec stack_context;
-  XmStringComponentType type;
-  unsigned int len;
-  XtPointer val;
-  wchar_t result = 0;
-
-  if (string != NULL)
-    {
-      memset(&stack_context, 0, sizeof stack_context);
-      _XmStringContextReInit(&stack_context, string);
-
-      (void) mbtowc(&result, NULL, 0);
-      while((result == 0) &&
-	    ((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
-					   &len, &val)) !=
-	     XmSTRING_COMPONENT_END))
-	{
-	  switch( type)
-	    {
-	    case XmSTRING_COMPONENT_TEXT:
-	    case XmSTRING_COMPONENT_LOCALE_TEXT:
-	      if (len)
-		(void) mbtowc(&result, (char*)val, len);
-	      break;
-
-	    case XmSTRING_COMPONENT_WIDECHAR_TEXT:
-	      if (len)
-		result = *((wchar_t*) val);
-	      break;
-
-	    default:
-	      break;
-	    }
-	}
-
-      _XmStringContextFree(&stack_context);
-    }
-
-  return result;
+	if (XmStringEmpty(s))
+		return 0;
+	return XmStringCodepointAt(s, 0);
 }
 
 /***************************************************************************
@@ -7381,10 +7338,7 @@ FirstChar(XmString string)
  *									   *
  ***************************************************************************/
 
-static Boolean
-CompareCharAndItem(XmListWidget lw,
-		   wchar_t input_char,
-		   int pos)
+static Boolean CompareCharAndItem(XmListWidget lw, XmCodepoint input_char, int pos)
 {
   if (lw->list.InternalList[pos]->first_char == 0)
     lw->list.InternalList[pos]->first_char = FirstChar(lw->list.items[pos]);
