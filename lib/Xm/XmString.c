@@ -5715,52 +5715,6 @@ _Xm_dump_internal(
 
 #endif /* _XmDEBUG_XMSTRING */
 
-/****************************************************************
- * _XmStringGetTextConcat:
- * Note: at some point this could be reimplemented as two pass
- * process to eliminate calls to XtRealloc.
- ****************************************************************/
-char *
-_XmStringGetTextConcat(
-        XmString string)
-{
-  _XmStringContextRec stack_context;
-  XmStringComponentType type ;
-  unsigned int len ;
-  XtPointer val ;
-  size_t OldLen ;
-  size_t OutLen = 0 ;
-  char * OutStr = NULL ;
-
-  if (string) {
-    memset(&stack_context, 0, sizeof stack_context);
-    _XmStringContextReInit(&stack_context, string);
-
-    while((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
-					&len, &val)) !=
-	  XmSTRING_COMPONENT_END)
-      {
-	switch( type)
-	  {
-	  case XmSTRING_COMPONENT_TEXT:
-	  case XmSTRING_COMPONENT_LOCALE_TEXT:
-	  case XmSTRING_COMPONENT_WIDECHAR_TEXT:
-	    OldLen = OutLen;
-	    OutLen += len;
-	    OutStr = XtRealloc( OutStr, OutLen + 1) ;
-	    memcpy( &OutStr[OldLen], (char *)val, len) ;
-	    OutStr[OutLen] = '\0';
-	    break ;
-	  default:
-	    break ;
-	  }
-      }
-
-    _XmStringContextFree(&stack_context);
-  }
-  return( OutStr) ;
-}
-
 /**
  * match_pattern: A helper for XmStringParseText.  Determine whether
  *	the text matches a XmParseMapping pattern.

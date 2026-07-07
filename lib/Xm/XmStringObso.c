@@ -765,3 +765,49 @@ extern unsigned int XmStringByteStreamLength(const unsigned char *stream)
 	return (unsigned int)XmStringSerializedLength(stream);
 }
 
+/****************************************************************
+ * _XmStringGetTextConcat:
+ *
+ * This internal Motif 1.x routine is depended on by CDE's dtmail and
+ * Netscape 4 for converting XmString -> String without regard for
+ * the charset / encoding.
+ ****************************************************************/
+char *_XmStringGetTextConcat(XmString string)
+{
+  _XmStringContextRec stack_context;
+  XmStringComponentType type ;
+  unsigned int len ;
+  XtPointer val ;
+  size_t OldLen ;
+  size_t OutLen = 0 ;
+  char * OutStr = NULL ;
+
+  if (string) {
+    memset(&stack_context, 0, sizeof stack_context);
+    _XmStringContextReInit(&stack_context, string);
+
+    while((type = XmeStringGetComponent(&stack_context, TRUE, FALSE,
+					&len, &val)) !=
+	  XmSTRING_COMPONENT_END)
+      {
+	switch( type)
+	  {
+	  case XmSTRING_COMPONENT_TEXT:
+	  case XmSTRING_COMPONENT_LOCALE_TEXT:
+	  case XmSTRING_COMPONENT_WIDECHAR_TEXT:
+	    OldLen = OutLen;
+	    OutLen += len;
+	    OutStr = XtRealloc( OutStr, OutLen + 1) ;
+	    memcpy( &OutStr[OldLen], (char *)val, len) ;
+	    OutStr[OutLen] = '\0';
+	    break ;
+	  default:
+	    break ;
+	  }
+      }
+
+    _XmStringContextFree(&stack_context);
+  }
+  return( OutStr) ;
+}
+
