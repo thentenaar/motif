@@ -582,33 +582,43 @@ XmImCloseXIM(Widget w)
   _XmAppUnlock(app);
 }
 
-int
-XmImMbLookupString(Widget w,
-		   XKeyPressedEvent *event,
-		   char *buf,
-		   int nbytes,
-		   KeySym *keysym,
-		   int *status )
+static int _XmImLookupString(Widget w, XKeyPressedEvent *event,
+                             char *buf, int nbytes, KeySym *keysym,
+                             int *status, Boolean utf8)
 {
-  XmImXICInfo icp;
-  int ret_val;
-  _XmWidgetToAppContext(w);
+	XmImXICInfo icp;
+	int ret;
+	_XmWidgetToAppContext(w);
 
-  _XmAppLock(app);
-  if ((icp = get_current_xic(get_xim_info(w), w)) == NULL ||
-      icp->xic == NULL)
-    {
-      if (status)
-	*status = XLookupBoth;
-      ret_val = XLookupString(event, buf, nbytes, keysym, 0);
-      _XmAppUnlock(app);
-      return ret_val;
-    }
+	_XmAppLock(app);
 
-  ret_val = XmbLookupString( icp->xic, event, buf, nbytes,
-				keysym, status );
-  _XmAppUnlock(app);
-  return ret_val;
+	if (!(icp = get_current_xic(get_xim_info(w), w)) || !icp->xic) {
+		if (status) *status = XLookupBoth;
+		ret = XLookupString(event, buf, nbytes, keysym, NULL);
+		_XmAppUnlock(app);
+		return ret;
+	}
+
+	if (utf8)
+		ret = Xutf8LookupString(icp->xic, event, buf, nbytes, keysym, status);
+	else
+		ret = XmbLookupString(icp->xic, event, buf, nbytes, keysym, status);
+	_XmAppUnlock(app);
+	return ret;
+}
+
+
+int XmImMbLookupString(Widget w, XKeyPressedEvent *event, char *buf,
+                       int nbytes, KeySym *keysym, int *status)
+{
+	return _XmImLookupString(w, event, buf, nbytes, keysym, status, False);
+}
+
+int XmImUtf8LookupString(Widget w, XKeyPressedEvent *event,
+                         char *buf, int nbytes, KeySym *keysym,
+                         int *status)
+{
+	return _XmImLookupString(w, event, buf, nbytes, keysym, status, True);
 }
 
 XIC

@@ -1,5 +1,5 @@
 /* $XConsortium: XmIm.h /main/7 1996/05/21 12:13:36 pascale $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */
-/*
- * HISTORY
  */
 #ifndef _XmIm_h
 #define _XmIm_h
@@ -55,13 +52,14 @@ extern XIM XmImGetXIM(
 extern void XmImCloseXIM(
                         Widget w) ;
 
-extern int XmImMbLookupString(
-                        Widget w,
-                        XKeyPressedEvent *event,
-                        char *buf,
-                        int nbytes,
-                        KeySym *keysym,
-                        int *status) ;
+extern int XmImMbLookupString(Widget w, XKeyPressedEvent *event,
+                              char *buf, int nbytes, KeySym *keysym,
+                              int *status);
+
+extern int XmImUtf8LookupString(Widget w, XKeyPressedEvent *event,
+                                char *buf, int nbytes, KeySym *keysym,
+                                int *status);
+
 extern void XmImVaSetFocusValues(
                         Widget w,
                         ...) ;

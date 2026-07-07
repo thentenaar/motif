@@ -2922,8 +2922,8 @@ InsertChar(Widget w,
   XmAnyCallbackStruct cb;
 
   /* Determine what was pressed. */
-  insert_length = XmImMbLookupString(w, (XKeyEvent *)event, insert_string,
-		                     TEXT_MAX_INSERT_SIZE, NULL, &status_return);
+  insert_length = XmImUtf8LookupString(w, (XKeyEvent *)event, insert_string,
+                                       TEXT_MAX_INSERT_SIZE, NULL, &status_return);
 
   if (insert_length > 0 && !TextF_Editable(tf)) {
     if (tf->text.verify_bell) XBell(XtDisplay((Widget)tf), 0);
@@ -2958,7 +2958,7 @@ InsertChar(Widget w,
       cursorPos = nextPos = TextF_CursorPosition(tf);
     }
 
-    insert = XmStringCreateMultibyte(insert_string, NULL);
+    insert = XmStringCreate(insert_string, "UTF-8");
     if (tf->text.overstrike) nextPos += insert_length;
     if (nextPos > tf->text.string_length) nextPos = tf->text.string_length;
     replace_res = _XmTextFieldReplaceText(tf, (XEvent *) event, cursorPos,
