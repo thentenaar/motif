@@ -21,11 +21,8 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 #include <limits.h>
-#include <locale.h>
-#include <iconv.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <check.h>
@@ -80,22 +77,33 @@ END_TEST
 START_TEST(invalid_char)
 {
 	static const unsigned char missing_zero_bit[4] = {0xf8, 0x80, 0x80, 0x80};
+	static const unsigned char s[3]  = {0xed, 0xa0, 0x80};
+	static const unsigned char s2[3] = {0xed, 0xbf, 0xbf};
+
 	ck_assert_msg(!XmCharToCodepoint(NULL),
 	              "Expected NULL to yield codepoint 0");
 	ck_assert_msg(!XmCharToCodepoint((XmChar)""),
 	              "Expected empty string to yield codepoint 0");
 	ck_assert_msg(XmCharToCodepoint((XmChar)missing_zero_bit) == XM_INVALID_CODEPOINT,
 	              "Expected invalid codepoint (missing zero bit)");
+	ck_assert_msg(XmCharToCodepoint((XmChar)missing_zero_bit) == XM_INVALID_CODEPOINT,
+	              "Expected invalid codepoint (missing zero bit)");
+	ck_assert_msg(XmCharToCodepoint((XmChar)missing_zero_bit) == XM_INVALID_CODEPOINT,
+	              "Expected invalid codepoint (missing zero bit)");
+	ck_assert_msg(XmCharToCodepoint((XmChar)s) == XM_INVALID_CODEPOINT,
+	              "Surrogates (0xd000) should yield XM_INVALID_CODEPOINT");
+	ck_assert_msg(XmCharToCodepoint((XmChar)s2) == XM_INVALID_CODEPOINT,
+	              "Surrogates (0xdfff) should yield XM_INVALID_CODEPOINT");
 }
 END_TEST
-
-/* Out-of-range / UTF-16 surrogates */
-static const XmCodepoint invalid_cp[] = { 0x110000, 0xd800, 0xdffff, 0xdc5a };
-static const unsigned char invalid_cp_char[] = { 0xef, 0xbf, 0xbd };
 
 START_TEST(invalid_codepoint)
 {
 	XmChar x;
+
+	/* Out-of-range / UTF-16 surrogates */
+	static const XmCodepoint invalid_cp[] = { 0x110000, 0xd800, 0xdffff, 0xdc5a };
+	static const unsigned char invalid_cp_char[] = { 0xef, 0xbf, 0xbd };
 
 	x = XmCodepointToChar(invalid_cp[_i]);
 	ck_assert_msg(XmCharLen(x) == 3 && !memcmp(x, invalid_cp_char, 3),

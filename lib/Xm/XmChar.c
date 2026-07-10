@@ -55,8 +55,12 @@ XmCodepoint XmCharToCodepoint(const XmChar c)
 		return c[0];
 
 	switch (len) {
-	case 2: return ((c[0] & 0x1f) << 6)  | (c[1] & 0x3f);
-	case 3: return ((c[0] & 0x0f) << 12) | ((c[1] & 0x3f) << 6) | (c[2] & 0x3f);
+	case 2: return ((c[0] & 0x1f) << 6) | (c[1] & 0x3f);
+	case 3:
+		cp = ((c[0] & 0x0f) << 12) | ((c[1] & 0x3f) << 6) | (c[2] & 0x3f);
+		if (cp >= 0xd800 && cp <= 0xdfff)
+			return XM_INVALID_CODEPOINT;
+		return cp;
 	default:
 		/* Ensure we have the mandatory zero bit */
 		if ((c[0] & 0xf8) != 0xf0)
