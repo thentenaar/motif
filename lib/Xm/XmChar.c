@@ -22,6 +22,7 @@
  */
 
 #include "XmChar.h"
+#include "XmCharI.h"
 
 /**
  * Determine the length of a UTF-8 character based on it's initial

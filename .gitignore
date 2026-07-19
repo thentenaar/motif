@@ -39,6 +39,8 @@ xmstring.list
 compile_commands.json
 include/config.h*
 config/makestrs
+config/unicode/genucd
+config/unicode/*.txt
 clients/mwm/mwm
 clients/uil/uil
 clients/uil/UilDBDef.h

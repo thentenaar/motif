@@ -367,6 +367,7 @@ clients/uil/XmAppl.uil \
 clients/uil/Uil.pc \
 clients/xmbind/Makefile \
 config/Makefile \
+config/unicode/Makefile \
 include/Makefile \
 include/Dt/Makefile \
 icons/Makefile \

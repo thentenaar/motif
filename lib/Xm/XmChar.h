@@ -23,6 +23,7 @@
 #ifndef XM_CHAR_H
 #define XM_CHAR_H
 
+#include <limits.h>
 #include <X11/Intrinsic.h>
 
 /* A non-character to represent invalid codepoints */
@@ -32,7 +33,11 @@
 typedef unsigned char *XmChar;
 
 /* A single Unicode codepoint */
+#if UINT_MAX >= (1 << 32) - 1
+typedef unsigned int XmCodepoint;
+#else
 typedef unsigned long XmCodepoint;
+#endif
 
 /**
  * Get the length (in bytes) of the given XmChar

@@ -142,6 +142,7 @@ VendorSEI.h \
 VendorSI.h \
 VirtKeysI.h \
 XmI.h \
+XmCharI.h \
 XmImI.h \
 XmMsgI.h \
 XmRenderTI.h \
