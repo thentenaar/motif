@@ -68,6 +68,7 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include "TravActI.h"
 #include "TraversalI.h"
 #include "VendorSEI.h"
+#include "XmCharI.h"
 
 #include <Xm/XmP.h>
 
@@ -2776,18 +2777,12 @@ static Boolean _XmTextFieldIsWordBoundary(XmTextFieldWidget tf,
                                           XmTextPosition pos1,
                                           XmTextPosition pos2)
 {
-	XmCodepoint c1, c2;
-
 	/* if positions aren't adjacent, return False */
 	if (pos1 < pos2 && ((pos2 - pos1) != 1))      return False;
 	else if (pos2 < pos1 && ((pos1 - pos2) != 1)) return False;
 
-	/* Use space as the sole word boundary for now */
-	if (XmStringCodepointAt(tf->text.xms_value, pos1) == ' ' ||
-	    XmStringCodepointAt(tf->text.xms_value, pos2) == ' ')
-		return True;
-
-	return False;
+	return XmCodepointIsWordBoundary(XmStringCodepointAt(tf->text.xms_value, pos1),
+	                                 XmStringCodepointAt(tf->text.xms_value, pos2));
 }
 
 static void FindWord(XmTextFieldWidget tf, XmTextPosition begin,

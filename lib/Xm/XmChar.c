@@ -23,6 +23,7 @@
 
 #include "XmChar.h"
 #include "XmCharI.h"
+#include "unicode.h"
 
 /**
  * Determine the length of a UTF-8 character based on it's initial
@@ -111,5 +112,25 @@ XmChar XmCodepointToChar(XmCodepoint cp)
 	}
 
 	return c;
+}
+
+/**
+ * Determine whether a word boundary exists between the two
+ * given codepoints based on the tr29 default rules.
+ */
+Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b)
+{
+	enum codepoint_props cp;
+	enum word_break_props wba, wbb;
+
+	wba = (UCD_PROPS(a).props & WB_MASK)   >> WB_SHIFT;
+	wbb = (UCD_PROPS(b).props & WB_MASK)   >> WB_SHIFT;
+	cp  = (UCD_PROPS(b).props & PROP_MASK) >> PROP_SHIFT;
+
+	/* WB3c: Do not break within emoji zwj sequences */
+	if (wba == WB_ZWJ && cp == CP_ExtendedPictographic)
+		return False;
+
+	return wb_table[wba][wbb];
 }
 

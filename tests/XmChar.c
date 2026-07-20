@@ -25,8 +25,8 @@
 #include <limits.h>
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
+#include <XmCharI.h>
 #include <check.h>
-
 #include "suites.h"
 
 static void _init_xt(void)
@@ -112,6 +112,72 @@ START_TEST(invalid_codepoint)
 }
 END_TEST
 
+#define N_WB_CASES 51
+static const struct wb_case {
+	XmCodepoint a;
+	XmCodepoint b;
+	Boolean result;
+} wb_cases[N_WB_CASES] = {
+	{ 0x00000d, 0x00000a, False }, /* WB3: CR x LF */
+	{ 0x00000d, 0x00000d, True  }, /* WB3a-b: CR / CR */
+	{ 0x00000d, 0x000085, True  }, /* WB3a-b: CR / NEL */
+	{ 0x000085, 0x00000d, True  }, /* WB3a-b: NEL / CR */
+	{ 0x000085, 0x000085, True  }, /* WB3a-b: NEL / NEL */
+	{ 0x000061, 0x000085, True  }, /* WB3a-b: ALetter / NEL */
+	{ 0x000085, 0x000061, True  }, /* WB3a-b: NEL / ALetter */
+	{ 0x00200d, 0x01f595, False }, /* WB3c: ZWJ x Extended_Pictographic */
+	{ 0x000020, 0x000020, False }, /* WB3d: WSegSpace x WSegSpace */
+	{ 0x000300, 0x000308, False }, /* WB4: Extend x Extend */
+	{ 0x000308, 0x0000ad, False }, /* WB4: Extend x Format */
+	{ 0x000308, 0x00200d, False }, /* WB4: Extend x ZWJ */
+	{ 0x000061, 0x000061, False }, /* WB5: ALetter x ALetter */
+	{ 0x0005d0, 0x0005d0, False }, /* WB5: HebrewLetter x HebrewLetter */
+	{ 0x0005d0, 0x000061, False }, /* WB5: HebrewLetter x ALetter */
+	{ 0x000061, 0x0005d0, False }, /* WB5: ALetter x HebrewLetter */
+	{ 0x000061, 0x000033, False }, /* WB6: ALetter x MidLetter */
+	{ 0x0005d0, 0x00ff1a, False }, /* WB6: HebrewLetter x MidLetter */
+	{ 0x00ff1a, 0x000062, False }, /* WB7: MidLetter x ALetter */
+	{ 0x00ff1a, 0x0005d0, False }, /* WB7: MidLetter x HebrewLetter */
+	{ 0x0005d0, 0x000027, False }, /* WB7a: HebrewLetter x SingleQuote */
+	{ 0x0005d0, 0x000022, False }, /* WB7b: HebrewLetter x DoubleQuote */
+	{ 0x000022, 0x0005d0, False }, /* WB7c: DoubleQuote x HebrewLetter */
+	{ 0x000030, 0x000039, False }, /* WB8: Numeric x Numeric */
+	{ 0x000061, 0x000033, False }, /* WB9: ALetter x Numeric */
+	{ 0x0005d0, 0x000033, False }, /* WB9: HebrewLetter x Numeric */
+	{ 0x000030, 0x000061, False }, /* WB10: Numeric x ALetter */
+	{ 0x000061, 0x0005d0, False }, /* WB10: Numeric x HebrewLetter */
+	{ 0x00002c, 0x000033, False }, /* WB11: MidNum x Numeric */
+	{ 0x002024, 0x000033, False }, /* WB11: MidNumLet x Numeric */
+	{ 0x000027, 0x000033, False }, /* WB11: Single_Quote x Numeric */
+	{ 0x000033, 0x00002c, False }, /* WB12: Numeric x MidNum */
+	{ 0x000033, 0x002024, False }, /* WB12: Numeric x MidNumLet */
+	{ 0x000033, 0x000027, False }, /* WB12: Numeric x Single_Quote */
+	{ 0x003031, 0x003031, False }, /* WB13: Katakana x Katakana */
+	{ 0x000061, 0x00202f, False }, /* WB13a: ALetter x ExtendNumLet */
+	{ 0x0005d0, 0x00202f, False }, /* WB13a: HebrewLetter x ExtendNumLet */
+	{ 0x000030, 0x00202f, False }, /* WB13a: Numeric x ExtendNumLet */
+	{ 0x003031, 0x00202f, False }, /* WB13a: Katakana x ExtendNumLet */
+	{ 0x00202f, 0x00202f, False }, /* WB13a: ExtendNumLet x ExtendNumLet */
+	{ 0x00202f, 0x000061, False }, /* WB13b: ExtendNumLet x ALetter */
+	{ 0x00202f, 0x0005d0, False }, /* WB13b: ExtendNumLet x HebrewLetter */
+	{ 0x00202f, 0x000030, False }, /* WB13b: ExtendNumLet x Numeric */
+	{ 0x00202f, 0x003031, False }, /* WB13b: ExtendNumLet x Katakana */
+	{ 0x01f1e6, 0x01f1e6, False }, /* WB15/16: RI x RI */
+	{ 0x00000a, 0x003031, True  }, /* LF / Katakana */
+	{ 0x00002c, 0x000308, False }, /* MidNum x Extend */
+	{ 0x000027, 0x002060, False }, /* Single_Quote x Format */
+	{ 0x01f1e6, 0x000041, True  }, /* RI / ALetter */
+	{ 0x01f1e6, 0x0005d0, True  }, /* RI / HebrewLetter */
+	{ 0x01f1e6, 0x000308, False }  /* RI x Extend */
+};
+
+START_TEST(word_boundary)
+{
+	ck_assert_msg(XmCodepointIsWordBoundary(wb_cases[_i].a, wb_cases[_i].b) == wb_cases[_i].result,
+	              "Case %u failed", _i);
+}
+END_TEST
+
 void xmchar_suite(SRunner *runner)
 {
 	TCase *t;
@@ -128,6 +194,12 @@ void xmchar_suite(SRunner *runner)
 	t = tcase_create("Edge Cases");
 	tcase_add_test(t, invalid_char);
 	tcase_add_test(t, invalid_codepoint);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Unicode");
+	tcase_add_loop_test(t, word_boundary, 0, N_WB_CASES);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

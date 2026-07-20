@@ -227,4 +227,10 @@ struct comp_entry {
 	XmCodepoint result; /**< Resulting character */
 };
 
+/**
+ * Determine whether a word boundary exists between the two
+ * given codepoints based on the tr29 default rules.
+ */
+Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b);
+
 #endif /* XM_CHARI_H */
