@@ -228,9 +228,53 @@ struct comp_entry {
 };
 
 /**
+ * Hangul constants
+ */
+#define SBASE  0xac00
+#define LBASE  0x1100
+#define VBASE  0x1161
+#define TBASE  0x11a7
+#define LCOUNT 19
+#define VCOUNT 21
+#define TCOUNT 28
+#define NCOUNT (VCOUNT * TCOUNT)
+#define SCOUNT (LCOUNT * NCOUNT)
+
+/**
  * Determine whether a word boundary exists between the two
  * given codepoints based on the tr29 default rules.
  */
 Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b);
+
+/**
+ * Returns True if cp is a Hangul Jamo, syllable, or syllabic block
+ */
+Boolean XmCodepointIsHangul(XmCodepoint cp);
+
+/**
+ * Compose two codepoints, if able.
+ *
+ * Returns the composed codepoint, or XM_INVALID_CODEPOINT on error with
+ * errno set to indicate the reason (EINVAL: invalid codepoint passed;
+ * ENOTSUP: The two codepoints can't combine).
+ */
+XmCodepoint XmCodepointCompose(XmCodepoint a, XmCodepoint b);
+
+/**
+ * Decompose a codepoint into the given buffer.
+ *
+ * \param cp Codepoint to decompose
+ * \param buf Buffer to write decomposed codepoints to
+ * \param len Length of \a buf (in codepoints)
+ *
+ * Returns the number of codepoints written to the buffer, or 0 if the
+ * codepoint could not be decomposed or if an error occured. errno will
+ * be set to EINVAL if the parameters given are invalid; ENOSPC if the
+ * buffer has insufficient space.
+ *
+ * If the codepoint doesn't decompose, it gets copied into the buffer,
+ * and 1 is returned.
+ */
+size_t XmCodepointDecompose(XmCodepoint cp, XmCodepoint *buf, size_t len);
 
 #endif /* XM_CHARI_H */

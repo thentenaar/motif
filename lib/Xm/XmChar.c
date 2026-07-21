@@ -21,6 +21,8 @@
  * Floor, Boston, MA 02110-1301 USA
  */
 
+#include <errno.h>
+
 #include "XmChar.h"
 #include "XmCharI.h"
 #include "unicode.h"
@@ -83,7 +85,7 @@ XmChar XmCodepointToChar(XmCodepoint cp)
 	unsigned int len = 4;
 
 	/* Use a non-character for out-of-range values / UTF-16 surrogates */
-	if (cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff))
+	if (cp > XM_CODEPOINT_MAX || (cp >= 0xd800 && cp <= 0xdfff))
 		cp = XM_INVALID_CODEPOINT;
 
 	if (cp < 0x80)         len = 1;
@@ -123,6 +125,9 @@ Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b)
 	enum codepoint_props cp;
 	enum word_break_props wba, wbb;
 
+	if (a > XM_CODEPOINT_MAX || b > XM_CODEPOINT_MAX)
+		return True;
+
 	wba = (UCD_PROPS(a).props & WB_MASK)   >> WB_SHIFT;
 	wbb = (UCD_PROPS(b).props & WB_MASK)   >> WB_SHIFT;
 	cp  = (UCD_PROPS(b).props & PROP_MASK) >> PROP_SHIFT;
@@ -132,5 +137,116 @@ Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b)
 		return False;
 
 	return wb_table[wba][wbb];
+}
+
+/**
+ * Returns True if cp is a Hangul Jamo, syllable, or syllabic block
+ */
+Boolean XmCodepointIsHangul(XmCodepoint cp)
+{
+	enum line_break_props lb;
+
+	lb = (UCD_PROPS(cp).props & LB_MASK) >> LB_SHIFT;
+	return lb == LB_JL || lb == LB_JV || lb == LB_JT ||
+	       lb == LB_H2 || lb == LB_H3;
+}
+
+/**
+ * Compose two codepoints, if able.
+ *
+ * Returns the composed codepoint, or XM_INVALID_CODEPOINT on error with
+ * errno set to indicate the reason (EINVAL: invalid codepoint passed;
+ * ENOTSUP: The two codepoints can't combine).
+ */
+XmCodepoint XmCodepointCompose(XmCodepoint a, XmCodepoint b)
+{
+	unsigned short i;
+	enum line_break_props lba, lbb;
+
+	if (a > XM_CODEPOINT_MAX || b > XM_CODEPOINT_MAX) {
+		errno = EINVAL;
+		return XM_INVALID_CODEPOINT;
+	}
+
+	if (XmCodepointIsHangul(a) && XmCodepointIsHangul(b)) {
+		lba = (UCD_PROPS(a).props & LB_MASK) >> LB_SHIFT;
+		lbb = (UCD_PROPS(b).props & LB_MASK) >> LB_SHIFT;
+
+		if (lba == LB_JL && lbb == LB_JV) /* L + V */
+			return SBASE + (a - LBASE) * NCOUNT + (b - VBASE) * TCOUNT;
+
+		if (lba == LB_H2 && lbb == LB_JT) /* LV + T */
+			return a + (b - TBASE);
+
+		errno = ENOTSUP;
+		return XM_INVALID_CODEPOINT;
+	}
+
+	/* These lists are small, so a linear probe is good enough */
+	for (i = 0; i < UCD_PROPS(a).n_comp; i++) {
+		if (comp_table[UCD_PROPS(a).comp + i].comb == b)
+			return comp_table[UCD_PROPS(a).comp + i].result;
+	}
+
+	errno = ENOTSUP;
+	return XM_INVALID_CODEPOINT;
+}
+
+/**
+ * Decompose a codepoint into the given buffer.
+ *
+ * \param cp Codepoint to decompose
+ * \param buf Buffer to write decomposed codepoints to
+ * \param len Length of \a buf (in codepoints)
+ *
+ * Returns the number of codepoints written to the buffer, or 0 if the
+ * codepoint could not be decomposed or if an error occured. errno will
+ * be set to EINVAL if the parameters given are invalid; ENOSPC if the
+ * buffer has insufficient space.
+ *
+ * If the codepoint doesn't decompose, it gets copied into the buffer,
+ * and 1 is returned.
+ */
+size_t XmCodepointDecompose(XmCodepoint cp, XmCodepoint *buf, size_t len)
+{
+	size_t out;
+	enum line_break_props lb;
+
+	if (!buf || !len || cp > XM_CODEPOINT_MAX) {
+		errno = EINVAL;
+		return 0;
+	}
+
+	if (XmCodepointIsHangul(cp)) {
+		lb = (UCD_PROPS(cp).props & LB_MASK) >> LB_SHIFT;
+		if (lb != LB_H2 && lb != LB_H3)
+			goto nodecomp;
+
+		if (len < (2 + (lb == LB_H3)))
+			goto nospc;
+
+		cp    -= SBASE;
+		buf[0] = LBASE + cp / NCOUNT;
+		buf[1] = VBASE + (cp % NCOUNT) / TCOUNT;
+		buf[2] = TBASE + cp % TCOUNT;
+		return 2 + (buf[2] != TBASE);
+	}
+
+	/* Decompose according to our table */
+	if (!(out = UCD_PROPS(cp).n_decomp))
+		goto nodecomp;
+
+	if (out <= len) {
+		memcpy(buf, decomp_table + UCD_PROPS(cp).decomp, out * sizeof *buf);
+		return out;
+	}
+
+nospc:
+	errno = ENOSPC;
+	return 0;
+
+nodecomp:
+	*buf = cp;
+	return 1;
 }
 

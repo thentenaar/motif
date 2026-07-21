@@ -23,6 +23,8 @@
 
 #include <string.h>
 #include <limits.h>
+#include <errno.h>
+
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <XmCharI.h>
@@ -178,6 +180,283 @@ START_TEST(word_boundary)
 }
 END_TEST
 
+START_TEST(compose_invalid_params)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(XM_CODEPOINT_MAX + 1, XM_CODEPOINT_MAX);
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+
+	cp = XmCodepointCompose(XM_CODEPOINT_MAX, XM_CODEPOINT_MAX + 1);
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+
+	cp = XmCodepointCompose(XM_CODEPOINT_MAX + 1, XM_CODEPOINT_MAX + 1);
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * L + L is invalid
+ */
+START_TEST(compose_hangul_LL)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00110b, 0x00110b);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * L + T is invalid
+ */
+START_TEST(compose_hangul_LT)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00110b, 0x0011bf);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * V + L is invalid
+ */
+START_TEST(compose_hangul_VL)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x001167, 0x00110b);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * V + T is invalid
+ */
+START_TEST(compose_hangul_VT)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x001167, 0x0011bf);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * V + V is invalid
+ */
+START_TEST(compose_hangul_VV)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x001167, 0x001167);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * L + V = LV
+ */
+START_TEST(compose_hangul_LV)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00110b, 0x001167);
+	ck_assert_msg(cp == 0x00c5ec, "Expected LV YEO, got U+%X", cp);
+}
+END_TEST
+
+/**
+ * LV + T = LVT
+ */
+START_TEST(compose_hangul_LVT)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00c5ec, 0x0011bf);
+	ck_assert_msg(cp == 0x00c604, "Expected LVT YEOK, got U+%X", cp);
+}
+END_TEST
+
+/**
+ * LV + L is invalid
+ */
+START_TEST(compose_hangul_LVL)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00c604, 0x00110b);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * LV + V is invalid
+ */
+START_TEST(compose_hangul_LVV)
+{
+	XmCodepoint cp;
+
+	cp = XmCodepointCompose(0x00c604, 0x001167);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * If we don't have a composition for a set of codepoints, we should get
+ * XM_INVALID_CODEPOINT / ENOTSUPP
+ */
+START_TEST(compose_no_composition)
+{
+	XmCodepoint cp;
+
+	/* Q + combining Titlo should not combine */
+	cp = XmCodepointCompose(0x000051, 0x000483);
+	ck_assert_msg(errno == ENOTSUP, "Expected errno to be ENOTSUP");
+	ck_assert_msg(cp == XM_INVALID_CODEPOINT, "Expected XM_INVALID_CODEPOINT");
+}
+END_TEST
+
+/**
+ * Ensure correct behavior when the composition list is traversed.
+ */
+START_TEST(compose)
+{
+	XmCodepoint cp;
+
+	/* U + Combining Hook Above is pretty far down the combination list */
+	cp = XmCodepointCompose(0x000055, 0x000309);
+	ck_assert_msg(cp == 0x001ee6, "Expected U+1EE6, got U+%X", cp);
+}
+END_TEST
+
+START_TEST(decompose_invalid_params)
+{
+	size_t ret;
+	XmCodepoint buf[5];
+
+	/* Null buf */
+	ret = XmCodepointDecompose(0x001ee6, NULL, sizeof buf / sizeof *buf);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+
+	/* 0 size */
+	ret = XmCodepointDecompose(0x001ee6, buf, 0);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+
+	/* Codepoint out of range */
+	ret = XmCodepointDecompose(XM_CODEPOINT_MAX + 1, buf, sizeof buf / sizeof *buf);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == EINVAL, "Expected errno to be EINVAL");
+}
+END_TEST
+
+#define N_NODECOMP 4
+static const XmCodepoint nodecomp[N_NODECOMP] = {
+	0x00110b, /* Hangul L */
+	0x001167, /* Hangul V */
+	0x0011bf, /* Hangul T */
+	0x000051  /* U */
+};
+
+/**
+ * If it can't decompose, it should yield the given codepoint.
+ */
+START_TEST(decompose_no_decomposition)
+{
+	size_t ret;
+	XmCodepoint buf[5];
+
+	memset(buf, 0, sizeof buf);
+	ret = XmCodepointDecompose(nodecomp[_i], buf, sizeof buf / sizeof *buf);
+	ck_assert_msg(ret == 1, "Expected ret == 1");
+	ck_assert_msg(buf[0] == nodecomp[_i], "Expected buf[0] == U+%X", nodecomp[_i]);
+}
+END_TEST
+
+/**
+ * LV should decompose into <L, V>
+ */
+START_TEST(decompose_hangul_LV)
+{
+	size_t ret;
+	XmCodepoint buf[3];
+
+	/* Insufficient space */
+	ret = XmCodepointDecompose(0x00c5ec, buf, 1);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == ENOSPC, "Expected errno to be ENOSPC");
+
+	/* Sufficient space */
+	ret = XmCodepointDecompose(0x00c5ec, buf, 2);
+	ck_assert_msg(ret == 2, "Expected ret == 2");
+	ck_assert_msg(buf[0] == 0x00110b, "Expected buf[0] == U+110B (U+%X)", buf[0]);
+	ck_assert_msg(buf[1] == 0x001167, "Expected buf[1] == U+1167 (U+%X)", buf[1]);
+}
+END_TEST
+
+/**
+ * LVT should fully decompose into <L, V, T>
+ */
+START_TEST(decompose_hangul_LVT)
+{
+	size_t ret;
+	XmCodepoint buf[3];
+
+	/* Insufficient space */
+	ret = XmCodepointDecompose(0x00d4db, buf, 1);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == ENOSPC, "Expected errno to be ENOSPC");
+
+	/* 2 is expected for LV, but this is LVT */
+	ret = XmCodepointDecompose(0x00d4db, buf, 2);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == ENOSPC, "Expected errno to be ENOSPC");
+
+	/* Sufficient space */
+	ret = XmCodepointDecompose(0x00d4db, buf, 3);
+	ck_assert_msg(ret == 3, "Expected ret == 3");
+	ck_assert_msg(buf[0] == 0x001111, "Expected buf[0] == U+1111 (U+%X)", buf[0]);
+	ck_assert_msg(buf[1] == 0x001171, "Expected buf[1] == U+1171 (U+%X)", buf[1]);
+	ck_assert_msg(buf[2] == 0x0011b6, "Expected buf[2] == U+11B6 (U+%X)", buf[2]);
+}
+END_TEST
+
+START_TEST(decompose)
+{
+	size_t ret;
+	XmCodepoint buf[3];
+
+	/* Insufficient space */
+	ret = XmCodepointDecompose(0x001ff2, buf, 1);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == ENOSPC, "Expected errno to be ENOSPC");
+
+	ret = XmCodepointDecompose(0x001ff2, buf, 2);
+	ck_assert_msg(!ret, "Expected ret == 0");
+	ck_assert_msg(errno == ENOSPC, "Expected errno to be ENOSPC");
+
+	/* Sufficient space */
+	ret = XmCodepointDecompose(0x001ff2, buf, 3);
+	ck_assert_msg(ret == 3, "Expected ret == 3");
+	ck_assert_msg(buf[0] == 0x0003c9, "Expected buf[0] == U+03C9 (U+%X)", buf[0]);
+	ck_assert_msg(buf[1] == 0x000300, "Expected buf[1] == U+0300 (U+%X)", buf[1]);
+	ck_assert_msg(buf[2] == 0x000345, "Expected buf[2] == U+0345 (U+%X)", buf[2]);
+}
+END_TEST
+
 void xmchar_suite(SRunner *runner)
 {
 	TCase *t;
@@ -200,6 +479,23 @@ void xmchar_suite(SRunner *runner)
 
 	t = tcase_create("Unicode");
 	tcase_add_loop_test(t, word_boundary, 0, N_WB_CASES);
+	tcase_add_test(t, compose_invalid_params);
+	tcase_add_test(t, compose_hangul_LL);
+	tcase_add_test(t, compose_hangul_LT);
+	tcase_add_test(t, compose_hangul_VL);
+	tcase_add_test(t, compose_hangul_VT);
+	tcase_add_test(t, compose_hangul_VV);
+	tcase_add_test(t, compose_hangul_LV);
+	tcase_add_test(t, compose_hangul_LVT);
+	tcase_add_test(t, compose_hangul_LVL);
+	tcase_add_test(t, compose_hangul_LVV);
+	tcase_add_test(t, compose_no_composition);
+	tcase_add_test(t, compose);
+	tcase_add_test(t, decompose_invalid_params);
+	tcase_add_loop_test(t, decompose_no_decomposition, 0, N_NODECOMP);
+	tcase_add_test(t, decompose_hangul_LV);
+	tcase_add_test(t, decompose_hangul_LVT);
+	tcase_add_test(t, decompose);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
