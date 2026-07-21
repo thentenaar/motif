@@ -29,6 +29,9 @@
 /* A non-character to represent invalid codepoints */
 #define XM_INVALID_CODEPOINT 0xfffd
 
+/* Maximum valid codepoint value */
+#define XM_CODEPOINT_MAX 0x10ffff
+
 /* A single UTF-8 encoded character */
 typedef unsigned char *XmChar;
 
