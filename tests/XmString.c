@@ -559,6 +559,177 @@ START_TEST(empty_not_empty)
 }
 END_TEST
 
+START_TEST(find_empty_s)
+{
+	XmString s, needle;
+
+	needle = XmStringCreateLocalized(":");
+	ck_assert_msg(XmStringFind(NULL, needle, 0) == -1, "Expected -1 on NULL s");
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringFind(s, needle, 0) == -1, "Expected -1 on empty s");
+
+	XmStringFree(needle);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(find_empty_needle)
+{
+	XmString s, needle;
+
+	s = XmStringCreateLocalized("Numquam:te:relinquam");
+	ck_assert_msg(XmStringFind(s, NULL, 0) == -1, "Expected -1 on empty needle");
+
+	needle = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	ck_assert_msg(XmStringFind(s, needle, 0) == -1, "Expected -1 on empty needle");
+	XmStringFree(s);
+	XmStringFree(needle);
+
+}
+END_TEST
+
+START_TEST(find_invalid_start)
+{
+	XmString s, needle;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized(":");
+	ck_assert_msg(XmStringFind(s, needle, -1) == -1, "Expected -1 on invalid start");
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_start_beyond_end)
+{
+	XmString s, needle;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized("x");
+	ck_assert_msg(XmStringFind(s, needle, 30) == -1, "Expected -1 (start beyond end)");
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_no_match)
+{
+	XmString s, needle;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized("x");
+	ck_assert_msg(XmStringFind(s, needle, -1) == -1, "Expected -1 on no match");
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_beginning)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized("Numquam");
+	idx    = XmStringFind(s, needle, 0);
+
+	ck_assert_msg(idx == 0, "Expected 0, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_first_match)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized(":");
+	idx    = XmStringFind(s, needle, 0);
+
+	ck_assert_msg(idx == 7, "Expected 7, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_next_match)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized(":");
+	idx    = XmStringFind(s, needle, 8);
+
+	ck_assert_msg(idx == 10, "Expected 10, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_no_further_match)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam:te:relinquam");
+	needle = XmStringCreateLocalized(":");
+	idx    = XmStringFind(s, needle, 11);
+
+	ck_assert_msg(idx == -1, "Expected -1, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_across_segments)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam\nte\t:relinquam");
+	needle = XmStringCreateLocalized(":");
+	idx    = XmStringFind(s, needle, 0);
+
+	ck_assert_msg(idx == 11, "Expected 11, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_separator)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam\nte\t:relinquam");
+	needle = XmStringCreateLocalized("\nt");
+	idx    = XmStringFind(s, needle, 0);
+
+	ck_assert_msg(idx == 7, "Expected 7, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
+START_TEST(find_tab)
+{
+	XmString s, needle;
+	XmTextPosition idx;
+
+	s      = XmStringCreateLocalized("Numquam\nte\t:relinquam");
+	needle = XmStringCreateLocalized("\t:");
+	idx    = XmStringFind(s, needle, 0);
+
+	ck_assert_msg(idx == 10, "Expected 10, got %ld", idx);
+	XmStringFree(s);
+	XmStringFree(needle);
+}
+END_TEST
+
 /**
  * These XmStringGenerate() tests also exercise XmStringParseText()
  */
@@ -2576,6 +2747,23 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_test(t, empty_null);
 	tcase_add_test(t, empty_is_empty);
 	tcase_add_test(t, empty_not_empty);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Find");
+	tcase_add_test(t, find_empty_s);
+	tcase_add_test(t, find_empty_needle);
+	tcase_add_test(t, find_invalid_start);
+	tcase_add_test(t, find_start_beyond_end);
+	tcase_add_test(t, find_no_match);
+	tcase_add_test(t, find_beginning);
+	tcase_add_test(t, find_first_match);
+	tcase_add_test(t, find_next_match);
+	tcase_add_test(t, find_no_further_match);
+	tcase_add_test(t, find_across_segments);
+	tcase_add_test(t, find_separator);
+	tcase_add_test(t, find_tab);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

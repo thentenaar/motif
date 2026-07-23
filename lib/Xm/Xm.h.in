@@ -1683,6 +1683,8 @@ extern Boolean XmStringCompare(
                         XmString b) ;
 extern Boolean XmStringEmpty(
                         XmString string) ;
+extern XmTextPosition XmStringFind(const XmString s, const XmString needle,
+                                   XmTextPosition start);
 extern XmStringTag XmStringGetCharset(void);
 extern XmStringTag XmStringGetMultibyteCharset(void);
 extern Boolean XmStringIsVoid(const XmString string);
