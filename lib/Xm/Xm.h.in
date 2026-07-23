@@ -1688,9 +1688,6 @@ extern XmTextPosition XmStringFind(const XmString s, const XmString needle,
 extern XmStringTag XmStringGetCharset(void);
 extern XmStringTag XmStringGetMultibyteCharset(void);
 extern Boolean XmStringIsVoid(const XmString string);
-extern Boolean XmStringHasSubstring(
-                        XmString string,
-                        XmString substring) ;
 extern void XmStringFree(
                         XmString string) ;
 extern Dimension XmStringBaseline(

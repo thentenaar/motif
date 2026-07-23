@@ -3229,7 +3229,7 @@ Search(XmI18ListWidget ilist, XmString xms,
 		  {
 		  if ((column != 0) || (!XmI18List_first_col_pixmaps(ilist))){
 		    value = XmI18List_row_data(ilist)[row].values[column];
-			if (XmStringHasSubstring(value, xms))
+			if (XmStringFind(value, xms, 0) != -1)
 			  {
 			    /* found it! */
 			    *found_row = row;
@@ -3246,7 +3246,7 @@ Search(XmI18ListWidget ilist, XmString xms,
         for (column=0; column < XmI18List_num_columns(ilist); column++)
 	  if ((column != 0) || (!XmI18List_first_col_pixmaps(ilist))){
 	    value = XmI18List_row_data(ilist)[row].values[column];
-            if (XmStringHasSubstring(value, xms))
+            if (XmStringFind(value, xms, 0) != -1)
 	      {
                 /* found it! */
                 *found_row = row;
