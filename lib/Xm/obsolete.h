@@ -140,6 +140,9 @@ extern int XmStringLength(XmString string);
 XM_ALTERNATIVE(Use XmStringIsValid instead)
 extern Boolean XmeStringIsValid(const XmString string);
 
+XM_ALTERNATIVE(Use XmStringFind instead)
+extern Boolean XmStringHasSubstring(XmString string, XmString substring);
+
 XM_ALTERNATIVE(Use XmStringSerializedLength instead)
 extern unsigned int XmStringByteStreamLength(const unsigned char *stream);
 
