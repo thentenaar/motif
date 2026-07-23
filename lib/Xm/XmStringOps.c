@@ -481,6 +481,90 @@ XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
 }
 
 /**
+ * Find \a needle in the given string, starting at the position given
+ * by \a start.
+ *
+ * Returns the position of \a needle in \a s or -1 if it could not
+ * be found, if either string is empty, or if \a start is invalid.
+ */
+XmTextPosition XmStringFind(const XmString s, const XmString needle, XmTextPosition start)
+{
+	unsigned int len;
+	XmStringContext ctx;
+	XmChar val, n, current_n;
+	XmTextPosition idx = -1, out = -1;
+	XmStringComponentType t = XmSTRING_COMPONENT_UNKNOWN;
+
+	if (XmStringEmpty(s) || XmStringEmpty(needle) || start < 0)
+		return out;
+
+	if (!(n = XmStringUngenerate(needle, NULL, XmUTF8_TEXT, XmUTF8_TEXT)))
+		return out;
+	current_n = n;
+
+	_XmProcessLock();
+	XmStringInitContext(&ctx, s);
+	XmStringContextWantUtf8Text(ctx, True);
+
+	while (t != XmSTRING_COMPONENT_END && *current_n) {
+		t = XmeStringGetComponent(ctx, True, False, &len, (XtPointer *)&val);
+		if (_XmStrContNextPos(ctx) <= (size_t)start || (
+		    t != XmSTRING_COMPONENT_TEXT          &&
+		    t != XmSTRING_COMPONENT_LOCALE_TEXT   &&
+		    t != XmSTRING_COMPONENT_WIDECHAR_TEXT &&
+		    t != XmSTRING_COMPONENT_TAB           &&
+		    t != XmSTRING_COMPONENT_SEPARATOR))
+			continue;
+
+		if (idx == -1)
+			idx = (XmTextPosition)_XmStrContPos(ctx);
+
+		/* We know that our starting offset is in the current segment */
+		if (idx < start) {
+			val += advance(val, start - idx);
+			len -= start - idx;
+			idx  = start;
+		}
+
+		if (t == XmSTRING_COMPONENT_SEPARATOR || t == XmSTRING_COMPONENT_TAB) {
+			if (XmCharToCodepoint(current_n) == ((t == XmSTRING_COMPONENT_SEPARATOR) ? '\n' : '\t')) {
+				current_n += advance(current_n, 1);
+				if (out == -1) out = idx;
+			} else {
+				current_n = n;
+				out       = -1;
+			}
+
+			idx++;
+			continue;
+		}
+
+		/**
+		 * Search codepoint-by-codepoint, tracking the index of the first
+		 * match.
+		 */
+		while (len && *val && *current_n) {
+			if (XmCharToCodepoint(current_n) == XmCharToCodepoint(val)) {
+				current_n += advance(current_n, 1);
+				if (out == -1) out = idx;
+			} else {
+				current_n = n;
+				out = -1;
+			}
+
+			val += advance(val, 1);
+			--len;
+			++idx;
+		}
+	}
+
+	XtFree((XtPointer)n);
+	XmStringFreeContext(ctx);
+	_XmProcessUnlock();
+	return out;
+}
+
+/**
  * Return the character at the given position, or NULL if the position
  * or the string are invalid.
  *
