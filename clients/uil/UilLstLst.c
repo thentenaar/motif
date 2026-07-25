@@ -923,50 +923,35 @@ finished_scan:
 **--
 **/
 
-static	int	cur_pos=0;
-static	char	buffer[132];
+static size_t cur_pos=0;
+static char buffer[512];
 
 void lst_debug_output(const char *format, ...)
 {
-    va_list	ap;			/* ptr to variable length parameter */
+	size_t count;
+	char *ptr;
+	va_list ap;
 
-    /*
-    **	establish the start of the parameter list
-    */
+	va_start(ap, format);
 
-    va_start(ap,format);
+	/* If the listing file is open, print to it */
+	if (lst_v_listing_open) {
+		if (cur_pos < sizeof buffer)
+			vsnprintf(buffer + cur_pos, sizeof buffer - cur_pos, format, ap);
 
-    /*
-    **	check if the listing file is open for output
-    */
+		for (ptr = buffer; *ptr && ptr < buffer + sizeof buffer; ptr += count + 1) {
+			count = strcspn(ptr, "\n");
+			if (count == strlen(ptr)) {
+				cur_pos = ptr - buffer + count;
+				return;
+			}
 
-    if (lst_v_listing_open)
-    {
-	int	count;
-	char	*ptr;
+			ptr[count] = '\0';
+			lst_output_line(ptr, False);
+		}
 
-	vsprintf( &(buffer[cur_pos]), format, ap );
-
-	for ( ptr=buffer; ptr[0] != '\0'; ptr += (count+1) )
-	{
-	    _assert( ptr <= &(buffer[132]), "Overflowed debug listing buffer" );
-	    count = strcspn( ptr, "\n" );
-	    if (count == strlen( ptr ))
-	    {
-		cur_pos = ptr - buffer + count;
-		return;
-	    }
-	    else
-	    {
-		ptr[ count ] = '\0';
-	    }
-	    lst_output_line( ptr, FALSE );
-	}
-	cur_pos = 0;
-
-    }
-    else
- 	vprintf( format, ap );
-
-    va_end(ap);
+		cur_pos = 0;
+	} else vprintf(format, ap);
+	va_end(ap);
 }
+
