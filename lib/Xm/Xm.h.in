@@ -1631,6 +1631,7 @@ extern XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t len
                                 const XmString replacement);
 extern XmChar XmStringCharAt(const XmString string, XmTextPosition pos);
 extern XmCodepoint XmStringCodepointAt(const XmString string, XmTextPosition pos);
+extern XmString XmStringNormalize(const XmString s, enum XmCodepointNormalForm form);
 
 extern XmFontListEntry XmFontListEntryCreate(
                         char *tag,

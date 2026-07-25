@@ -340,10 +340,10 @@ static XmCodepoint *normalize_nfd(const XmCodepoint *buf, size_t len,
                                   size_t *len_out)
 {
 	unsigned int qc;
-	size_t i, x, decomp_len = 2, out_len = 0;
+	size_t i, x, decomp_len = 3, out_len = 0;
 	XmCodepoint *out = NULL, *decomp;
 
-	decomp = (XmCodepoint *)XtMalloc(2 * sizeof *decomp);
+	decomp = (XmCodepoint *)XtMalloc(3 * sizeof *decomp);
 	for (i = 0; i < len; i++) {
 		qc = (UCD_PROPS(buf[i]).props & QC_MASK) >> QC_SHIFT;
 

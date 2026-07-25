@@ -1519,6 +1519,57 @@ START_TEST(line_count_unoptimized)
 }
 END_TEST
 
+START_TEST(normalize_null)
+{
+	XmString s;
+
+	s = XmStringNormalize(NULL, XM_CODEPOINT_NORM_NFD);
+	ck_assert_msg(!s, "Resulting string should be NULL");
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(normalize_empty)
+{
+	XmString s, x;
+
+	s = XmStringComponentCreate(XmSTRING_COMPONENT_END, 0, NULL);
+	x = XmStringNormalize(s, XM_CODEPOINT_NORM_NFD);
+	ck_assert_msg(XmStringCompare(s, x), "Strings should compare equal");
+	XmStringFree(x);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(normalize_nfd)
+{
+	XmString s, x, y;
+
+	s = XmStringCreate("\t콘홀리오\tṇ eedš TP\n", "UTF-8");
+	x = XmStringCreate("\t\xe1\x84\x8f\xe1\x85\xa9\xe1\x86\xab\xe1\x84\x92"
+	                   "\xe1\x85\xa9\xe1\x86\xaf\xe1\x84\x85\xe1\x85\xb5"
+	                   "\xe1\x84\x8b\xe1\x85\xa9\tn\xcc\xa3 eeds\xcc\x8c"
+	                   " TP\n", "UTF-8");
+	y = XmStringNormalize(s, XM_CODEPOINT_NORM_NFD);
+	ck_assert_msg(XmStringCompare(x, y), "Strings should compare equal");
+	XmStringFree(y);
+	XmStringFree(x);
+	XmStringFree(s);
+}
+END_TEST
+
+START_TEST(normalize_nfc)
+{
+	XmString s, x;
+
+	s = XmStringCreate("\t콘홀리오\tṇeedš TP\n", "UTF-8");
+	x = XmStringNormalize(s, XM_CODEPOINT_NORM_NFC);
+	ck_assert_msg(XmStringCompare(s, x), "Strings should compare equal");
+	XmStringFree(x);
+	XmStringFree(s);
+}
+END_TEST
+
 START_TEST(replace_null)
 {
 	XmString repl = XmStringCreateLocalized("repl");
@@ -2799,6 +2850,15 @@ void xmstring_suite(SRunner *runner)
 	tcase_add_loop_test(t, line_count_separators, 1, 5);
 	tcase_add_test(t, line_count_optimized);
 	tcase_add_test(t, line_count_unoptimized);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("Normalize");
+	tcase_add_test(t, normalize_null);
+	tcase_add_test(t, normalize_empty);
+	tcase_add_test(t, normalize_nfd);
+	tcase_add_test(t, normalize_nfc);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

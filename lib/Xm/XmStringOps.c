@@ -604,3 +604,77 @@ XmCodepoint XmStringCodepointAt(const XmString string, XmTextPosition pos)
 	return cp;
 }
 
+/**
+ * Perform Unicode normalization on an XmString
+ *
+ * The form parameter can be one of XM_CODEPOINT_NORM_NFC for NFC normalization,
+ * and XM_CODEPOINT_NORM_NFD for NFD. A new, normalized, XmString is returned.
+ *
+ * Normalization is applied individually to each text segment in the string,
+ * to ensure that inter-segment property changes (e.g., render tags) are
+ * respected.
+ */
+XmString XmStringNormalize(const XmString s, enum XmCodepointNormalForm form)
+{
+	XmChar val, ctmp;
+	unsigned int len;
+	size_t i, j, norm_len;
+	XmStringContext ctx;
+	XmCodepoint *buf = NULL, *norm;
+	XmString out = NULL, tmp;
+	XmStringComponentType t = XmSTRING_COMPONENT_UNKNOWN;
+
+	if (XmStringEmpty(s))
+		return XmStringCopy(s);
+
+	_XmProcessLock();
+	XmStringInitContext(&ctx, s);
+	XmStringContextWantUtf8Text(ctx, True);
+
+	while (1) {
+		/* Pass non-text segments thru */
+		t = XmeStringGetComponent(ctx, True, False, &len, (XtPointer *)&val);
+		if (t == XmSTRING_COMPONENT_END)
+			break;
+
+		if (t != XmSTRING_COMPONENT_TEXT          &&
+		    t != XmSTRING_COMPONENT_LOCALE_TEXT   &&
+		    t != XmSTRING_COMPONENT_WIDECHAR_TEXT) {
+			tmp = XmStringComponentCreate(t, len, val);
+			out = XmStringConcatAndFree(out, tmp);
+			continue;
+		}
+
+		/* UTF-8 to codepoints */
+		if (!(norm_len = _Xmstrlen(val, len)))
+			continue;
+
+		buf = (XmCodepoint *)XtMalloc(norm_len * sizeof *buf);
+		for (i = 0; i < norm_len; i++) {
+			buf[i] = XmCharToCodepoint(val);
+			val += advance(val, 1);
+		}
+
+		/* Normalize, and convert back to UTF-8 */
+		norm = XmCodepointNormalize(form, buf, norm_len, &norm_len);
+		val  = NULL;
+		len  = 0;
+		for (i = 0; i < norm_len; i++) {
+			ctmp = XmCodepointToChar(norm[i]);
+			j    = XmCharLen(ctmp);
+			val = (XmChar)XtRealloc((XtPointer)val, len + j);
+			memcpy(val + len, ctmp, j);
+			XtFree((XtPointer)ctmp);
+			len += j;
+		}
+
+		tmp = XmStringComponentCreate(t, len, val);
+		out = XmStringConcatAndFree(out, tmp);
+		XtFree((XtPointer)norm);
+		XtFree((XtPointer)buf);
+	}
+
+	_XmProcessUnlock();
+	return out;
+}
+
