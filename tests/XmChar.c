@@ -457,6 +457,93 @@ START_TEST(decompose)
 }
 END_TEST
 
+#define N_NORM_CASES 6
+static struct norm_test {
+	const char *desc;
+	XmCodepoint buf[8];
+	size_t len;
+	XmCodepoint nfd[8];
+	size_t nfd_len;
+	XmCodepoint nfc[8];
+	size_t nfc_len;
+} norm_test[6] = {
+	{
+		"Basic Precomposed",
+		{ 0x0000e9 }, 1,
+		{ 0x000065, 0x000301 }, 2,
+		{ 0x0000e9 }, 1
+	},
+	{
+		"Out-of-order Marks",
+		{ 0x000061, 0x000307, 0x000323 }, 3,
+		{ 0x000061, 0x000323, 0x000307 }, 3,
+		{ 0x001ea1, 0x000307 }, 2
+	},
+	{
+		"Multiple Marks",
+		{ 0x001e4f }, 1,
+		{ 0x00006f, 0x000303, 0x000308 }, 3,
+		{ 0x001e4f }, 1
+	},
+	{
+		"Compulsory Reordering",
+		{ 0x001faf, 0x000303, 0x000301, 0x000061 }, 4,
+		{ 0x0003a9, 0x000314, 0x000342, 0x000303, 0x000301, 0x000345, 0x000061 }, 7,
+		{ 0x001f6f, 0x000303, 0x000301, 0x000345, 0x000061 }, 5
+	},
+	{
+		"Hangul",
+		{ 0x0000d6, 0x00c5ec, 0x000061 }, 3,
+		{ 0x00004f, 0x000308, 0x00110b, 0x001167, 0x000061 }, 5,
+		{ 0x0000d6, 0x00c5ec, 0x000061 }, 3
+	},
+	{
+		"Kirat Rai (16.0)",
+		{ 0x016d69, 0x016d68 }, 2,
+		{ 0x016d63, 0x016d67, 0x016d67, 0x016d67 }, 4,
+		{ 0x016d6a, 0x016d67 }, 2
+	}
+};
+
+START_TEST(nfd_normalization)
+{
+	XmCodepoint *out;
+	size_t out_len;
+
+	out = XmCodepointNormalize(XM_CODEPOINT_NORM_NFD, norm_test[_i].buf, norm_test[_i].len, &out_len);
+	ck_assert_msg(out_len == norm_test[_i].nfd_len,
+	              "%s: Expected result to be %lu bytes (got %lu)",
+	              norm_test[_i].desc, norm_test[_i].nfd_len, out_len);
+	ck_assert_msg(!memcmp(out, norm_test[_i].nfd, out_len),
+	              "%s: NFD form incorrect", norm_test[_i].desc);
+	XtFree((XtPointer)out);
+}
+END_TEST
+
+START_TEST(nfc_normalization)
+{
+	XmCodepoint *out;
+	size_t out_len;
+
+	out = XmCodepointNormalize(XM_CODEPOINT_NORM_NFC, norm_test[_i].buf, norm_test[_i].len, &out_len);
+	ck_assert_msg(out_len == norm_test[_i].nfc_len,
+	              "%s: Expected result to be %lu bytes (got %lu)",
+	              norm_test[_i].desc, norm_test[_i].nfc_len, out_len);
+	ck_assert_msg(!memcmp(out, norm_test[_i].nfc, out_len),
+	              "%s: NFC form incorrect", norm_test[_i].desc);
+	XtFree((XtPointer)out);
+}
+END_TEST
+
+START_TEST(normalization_invalid_params)
+{
+	ck_assert_msg(!XmCodepointNormalize(XM_CODEPOINT_NORM_NFC, NULL, 3, NULL),
+	              "Expected NULL result in absence of buf");
+	ck_assert_msg(!XmCodepointNormalize(XM_CODEPOINT_NORM_NFD, norm_test[0].buf, 0, NULL),
+	              "Expected NULL result in absence of len");
+}
+END_TEST
+
 void xmchar_suite(SRunner *runner)
 {
 	TCase *t;
@@ -496,6 +583,9 @@ void xmchar_suite(SRunner *runner)
 	tcase_add_test(t, decompose_hangul_LV);
 	tcase_add_test(t, decompose_hangul_LVT);
 	tcase_add_test(t, decompose);
+	tcase_add_loop_test(t, nfd_normalization, 0, N_NORM_CASES);
+	tcase_add_loop_test(t, nfc_normalization, 0, N_NORM_CASES);
+	tcase_add_test(t, normalization_invalid_params);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

@@ -24,6 +24,7 @@
 #define XM_CHARI_H
 
 #include <limits.h>
+#include <X11/Intrinsic.h>
 #include "XmChar.h"
 
 /**

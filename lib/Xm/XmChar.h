@@ -23,8 +23,8 @@
 #ifndef XM_CHAR_H
 #define XM_CHAR_H
 
+#include <stddef.h>
 #include <limits.h>
-#include <X11/Intrinsic.h>
 
 /* A non-character to represent invalid codepoints */
 #define XM_INVALID_CODEPOINT 0xfffd
@@ -43,6 +43,14 @@ typedef unsigned long XmCodepoint;
 #endif
 
 /**
+ * Canonical Unicode normalization forms
+ */
+enum XmCodepointNormalForm {
+	XM_CODEPOINT_NORM_NFC = 0,
+	XM_CODEPOINT_NORM_NFD
+};
+
+/**
  * Get the length (in bytes) of the given XmChar
  */
 unsigned int XmCharLen(const XmChar c);
@@ -58,5 +66,21 @@ XmCodepoint XmCharToCodepoint(const XmChar c);
  * Note: The resulting XmChar must be freed via XtFree().
  */
 XmChar XmCodepointToChar(XmCodepoint cp);
+
+/**
+ * Canonically normalize a series of codepoints.
+ *
+ * Returns a newly-allocated buffer containing the normalized form of
+ * the codepoints from \a buf, with \a processed being set to the number
+ * of codepoints processed, and \a len_out being set to the number of
+ * codepoints written to the resultant buffer. NULL will be returned if
+ * the input parameters are invalid.
+ *
+ * For NFC, this function will first apply NFD before performing NFC
+ * normalization.
+ */
+XmCodepoint *XmCodepointNormalize(enum XmCodepointNormalForm form,
+                                  const XmCodepoint *buf, size_t len,
+                                  size_t *len_out);
 
 #endif /* XM_CHAR_H */

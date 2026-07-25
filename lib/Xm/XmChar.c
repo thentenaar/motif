@@ -250,3 +250,177 @@ nodecomp:
 	return 1;
 }
 
+/**
+ * Sort combining marks in-place according to the Canonical Ordering
+ * Algorithm. Larger values for ccc go further down the sequence, while
+ * batches of similar marks should not be reordered.
+ */
+static void sort_marks(XmCodepoint *buf, size_t len)
+{
+	size_t i, j;
+	XmCodepoint c;
+	unsigned int ccc, ccx = 1;
+
+	for (i = 0; i < len; i++) {
+		if (!UCD_PROPS(buf[i]).ccc)
+			continue;
+
+		for (j = i; j < len - 1; j++) {
+			ccc = UCD_PROPS(buf[j]).ccc;
+			ccx = UCD_PROPS(buf[j + 1]).ccc;
+			if (!ccc || !ccx)
+				break;
+
+			if (ccc > ccx) {
+				c = buf[j];
+				buf[j] = buf[j + 1];
+				buf[j + 1] = c;
+			}
+		}
+	}
+}
+
+/**
+ * Perform a NFC normalization pass over the given set of codepoints,
+ * assuming they're NFD-normal and combining marks have been properly
+ * reordered.
+ */
+static XmCodepoint *normalize_nfc(const XmCodepoint *buf, size_t len,
+                                  size_t *len_out)
+{
+	unsigned int qca, qcb;
+	size_t i, out_len = 0;
+	XmCodepoint *out = NULL, c, d;
+
+	for (i = 0; i < len; i++) {
+		/**
+		 * Excluded codepoints (NFC_QC=N).
+		 */
+		qca = (UCD_PROPS(buf[i]).props & QC_MASK) >> QC_SHIFT;
+		if (qca == QC_Exclusion)
+			continue;
+
+		/**
+		 * NFC_QC=M indicates that this is an isolated combining
+		 * mark. Copy it out and continue.
+		 */
+		if (qca == QC_BackwardDecomp || qca == QC_BackwardCombine) {
+			out = (XmCodepoint *)XtRealloc((XtPointer)out, (out_len + 1) * sizeof *out);
+			out[out_len++] = buf[i];
+			continue;
+		}
+
+		/**
+		 * Here, we have NFC_QC=Y / NFC_QC=M, and can possibly compose.
+		 * If the composition fails, emit the current codepoint, and
+		 * continue on.
+		 */
+		c = buf[i];
+		while (i < len) {
+			d = XmCodepointCompose(c, buf[++i]);
+			if (d == XM_INVALID_CODEPOINT) {
+				out = (XmCodepoint *)XtRealloc((XtPointer)out, (out_len + 1) * sizeof *out);
+				out[out_len++] = c;
+				--i;
+				break;
+			}
+
+			c = d;
+		}
+	}
+
+	if (len_out) *len_out = out_len;
+	return out;
+}
+
+/**
+ * Perform a NFD normalization pass over the given set of codepoints.
+ */
+static XmCodepoint *normalize_nfd(const XmCodepoint *buf, size_t len,
+                                  size_t *len_out)
+{
+	unsigned int qc;
+	size_t i, x, decomp_len = 2, out_len = 0;
+	XmCodepoint *out = NULL, *decomp;
+
+	decomp = (XmCodepoint *)XtMalloc(2 * sizeof *decomp);
+	for (i = 0; i < len; i++) {
+		qc = (UCD_PROPS(buf[i]).props & QC_MASK) >> QC_SHIFT;
+
+		/**
+		 * NFD_QC=Y indicates this codepoint is already D-normal.
+		 */
+		if (qc == QC_Standard || qc == QC_BackwardCombine) {
+			out = (XmCodepoint *)XtRealloc((XtPointer)out, (out_len + 1) * sizeof *out);
+			out[out_len++] = buf[i];
+			continue;
+		}
+
+again:
+		/**
+		 * NFD_QC=N here implies this codepoint should decompose.
+		 */
+		x = XmCodepointDecompose(buf[i], decomp, decomp_len);
+		if (!x && errno == ENOSPC) {
+			if (decomp_len > 8) {
+				/**
+				 * This shouldn't happen, but this guards against
+				 * runaway if we somehow have corrupted data in our
+				 * decomposition table, at the expense of the current
+				 * codepoint.
+				 */
+				continue;
+			}
+
+			decomp_len += 2;
+			decomp = (XmCodepoint *)XtRealloc((XtPointer)decomp, decomp_len * sizeof *decomp);
+			goto again;
+		}
+
+		/* Add our decomposition to the out buffer */
+		out = (XmCodepoint *)XtRealloc((XtPointer)out, (out_len + x) * sizeof *out);
+		memcpy(out + out_len, decomp, x * sizeof *decomp);
+		out_len += x;
+	}
+
+	sort_marks(out, out_len);
+	XtFree((XtPointer)decomp);
+	if (len_out) *len_out = out_len;
+	return out;
+}
+
+/**
+ * Canonically normalize a series of codepoints.
+ *
+ * Returns a newly-allocated buffer containing the normalized form of
+ * the codepoints from \a buf, with \a processed being set to the number
+ * of codepoints processed, and \a len_out being set to the number of
+ * codepoints written to the resultant buffer. NULL will be returned if
+ * the input parameters are invalid.
+ *
+ * For NFC, this function will first apply NFD before performing NFC
+ * normalization.
+ */
+XmCodepoint *XmCodepointNormalize(enum XmCodepointNormalForm form,
+                                  const XmCodepoint *buf, size_t len,
+                                  size_t *len_out)
+{
+	size_t norm_len;
+	XmCodepoint *norm, *out;
+
+	if (len_out) *len_out   = 0;
+
+	if (!buf || !len)
+		return NULL;
+
+	norm = normalize_nfd(buf, len, &norm_len);
+	if (form == XM_CODEPOINT_NORM_NFD) {
+		if (len_out) *len_out = norm_len;
+		return norm;
+	}
+
+	out = normalize_nfc(norm, norm_len, len_out);
+	XtFree((XtPointer)norm);
+	return out;
+}
+
