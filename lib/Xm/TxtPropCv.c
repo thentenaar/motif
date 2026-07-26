@@ -175,7 +175,8 @@ GetTextSegment(Display *display, /* unused */
 	    else if (texttype == _STRING_TEXT)
 	    {
 		*buffer = NULL;
-		return(_INVALID_SEGMENT);
+		return_status = _INVALID_SEGMENT;
+		break;
 	    }
 	    break;
 	  case XmCHARSET_TEXT:
@@ -205,10 +206,14 @@ GetTextSegment(Display *display, /* unused */
 		  memset(tmp + char_count, 0, sizeof(wchar_t));
 
 		  *buffer = tmp;
+		} else {
+		  return_status = _INVALID_SEGMENT;
+		  break;
 		}
-		else return(_INVALID_SEGMENT);
+	    } else {
+	      return_status = _INVALID_SEGMENT;
+	      break;
 	    }
-	    else return(_INVALID_SEGMENT); /* the encoding was unregistered */
 	    break;
 	case XmNO_TEXT:
 	case XmUTF8_TEXT:
@@ -231,7 +236,9 @@ GetTextSegment(Display *display, /* unused */
 	    XtFree(*buffer);
 	    *buffer = newstring;
 	}
-	return(return_status);
+
+	XtFree(text);
+	return return_status;
     }
     else
     {

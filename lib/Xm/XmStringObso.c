@@ -561,6 +561,7 @@ _XmStringGetSegment(_XmStringContext   context,
 	    {
 	      *char_count = len;
 	      *text = val;
+	      _XmStrContTmpText(context) = NULL;
 
 	      if (ctype == XmSTRING_COMPONENT_TEXT)
 		*type = XmCHARSET_TEXT;
@@ -650,9 +651,13 @@ _XmStringGetSegment(_XmStringContext   context,
 	  char *tmp = XtMalloc(*char_count + sizeof(wchar_t));
 	  memcpy(tmp, *text, *char_count);
 	  memset(tmp + *char_count, 0, sizeof(wchar_t));
+	  XtFree(*text);
 	  *text = (XtPointer) tmp;
 	}
     }
+
+  if (!result && *text)
+    XtFree(*text);
 
   /* Free the local context. */
   if (local_context == &local_context_data)
