@@ -426,8 +426,8 @@ XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
 
 		/* Replacement begins inside the current text component */
 		if (_XmStrContPos(ctx) < (size_t)pos) {
-			mid_len = advance(val, (size_t)pos - _XmStrContPos(ctx));
-			out = XmStringConcatAndFree(out, XmStringComponentCreate(t, mid_len, val));
+			if ((mid_len = advance(val, (size_t)pos - _XmStrContPos(ctx))))
+				out = XmStringConcatAndFree(out, XmStringComponentCreate(t, mid_len, val));
 		}
 
 		/**
@@ -447,7 +447,8 @@ XmString XmStringReplace(const XmString s, XmTextPosition pos, size_t length,
 				if (_XmStrContPos(ctx) < (size_t)pos + length) {
 					off     = advance(val, ((size_t)pos + length) - _XmStrContPos(ctx));
 					mid_len = advance((unsigned char *)val + off, _XmStrContNextPos(ctx) - ((size_t)pos + length));
-					tail    = XmStringConcatAndFree(tail, XmStringComponentCreate(t, mid_len, (char *)val + off));
+					if (mid_len)
+						tail = XmStringConcatAndFree(tail, XmStringComponentCreate(t, mid_len, (char *)val + off));
 				}
 				break;
 			}

@@ -2409,11 +2409,6 @@ VerifyBounds(XmTextFieldWidget tf,
  *   (4) moving the selection (the insertion point), and
  *   (5) redrawing the text.
  *
- * Though the procedure claims to take a char* argument, MB_CUR_MAX determines
- * what the different routines will actually pass to it.  If MB_CUR_MAX is
- * greater than 1, then "insert" points to wchar_t data and we must set up
- * the appropriate cast.  In all cases, insert_length is the number of
- * characters (not bytes) to be inserted.
  */
 Boolean _XmTextFieldReplaceText(XmTextFieldWidget tf, XEvent *event,
                                 XmTextPosition replace_prev,

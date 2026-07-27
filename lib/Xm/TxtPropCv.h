@@ -2,6 +2,7 @@
 /*
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -66,7 +67,32 @@ extern int XmCvtTextPropertyToXmStringTable(Display *display,
 				 XmStringTable *string_table_return,
 				 int *count_return);
 
-extern int XmCvtXmStringToTextProperty(Display *d, XmString s, XTextProperty *prop);
+/**
+ * Convert an XmString to XTextProperty
+ *
+ * Converts the string specified by \a s into the given \a prop. The
+ * encoding field of \a prop should be set to the desired property
+ * encoding, which should be one of the following atoms:
+ * COMPOUND_TEXT, STRING, UTF8_STRING, or _MOTIF_COMPOUND_STRING.
+ *
+ * The caller must free the value member of \a prop when done
+ * with it.
+ *
+ * This function returns Success on success, and on failure returns
+ * XNoMemory, XConverterNotFound, or XLocaleNotSupported as reported
+ * by Xutf8TextListToTextProperty.
+ */
+extern int XmCvtXmStringToTextProperty(Display *d, const XmString s, XTextProperty *prop);
+
+/**
+ * Convert a XmTextProperty to XmString
+ *
+ * Returns the XmString representation of the given \a prop, or NULL
+ * if \a prop could not be converted to XmString.
+ *
+ * Remember to free the resulting XmString with XmStringFree() when
+ * done with it.
+ */
 extern XmString XmCvtTextPropertyToXmString(Display *d, XTextProperty *prop);
 
 /********    End Public Function Declarations    ********/

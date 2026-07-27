@@ -2,6 +2,7 @@
 /**
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -26,35 +27,28 @@
 #include <config.h>
 #endif
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+
 #include "XmI.h"
 #include "XmStringI.h"
 
-static Atom
-GetLocaleEncodingAtom(Display *dpy)
+/**
+ * Get the Atom that represents the current locale encoding
+ * by converting a simple XPCS string to a text property.
+ */
+static Atom GetLocaleAtom(Display *d)
 {
-  int ret_status = 0;
-  XTextProperty tmp_prop;
-  char * tmp_string = "ABC";  /* these are characters in XPCS, so... safe */
-  Atom encoding;
+	int ret = 0;
+	XTextProperty prop;
+	static const char *xpcs = "ABC";
+	Atom atom;
 
-  tmp_prop.value = NULL; /* just in case X doesn't do it */
-  ret_status = XmbTextListToTextProperty(dpy, &tmp_string, 1,
-					 (XICCEncodingStyle)XTextStyle,
-					 &tmp_prop);
-  if (ret_status == Success)
-    encoding = tmp_prop.encoding;
-  else
-    encoding = None;        /* XmbTextList... should always be able
-			   * to convert XPCS characters; but in
-			   * case its broken, this prevents a core
-			   * dump.
-			   */
-  if (tmp_prop.value != NULL) XFree((char *)tmp_prop.value);
-  return(encoding);
+	memset(&prop, 0, sizeof prop);
+	ret  = XmbTextListToTextProperty(d, (char **)&xpcs, 1, XTextStyle, &prop);
+	atom = (ret >= Success) ? prop.encoding : None;
+	XFree(prop.value);
+	return atom;
 }
 
 /************************************************************************
@@ -469,12 +463,12 @@ XmCvtXmStringTableToTextProperty(Display *display,
       case XmSTYLE_LOCALE:
 	  strict = False;
 	  texttype = _LOCALE_TEXT;
-	  encoding = GetLocaleEncodingAtom(display);
+	  encoding = GetLocaleAtom(display);
 	  break;
       case XmSTYLE_TEXT:
 	  strict = True;
 	  texttype = _LOCALE_TEXT;
-	  encoding = GetLocaleEncodingAtom(display);
+	  encoding = GetLocaleAtom(display);
 	  break;
       case XmSTYLE_STRING:
 	  strict = False;
@@ -586,7 +580,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
     XmStringTable string_table;
     XmStringTag tag;
     XmTextType type;
-    Atom LOCALE_ATOM = GetLocaleEncodingAtom(display);
+    Atom LOCALE_ATOM = GetLocaleAtom(display);
     Atom atoms[XtNumber(atom_names)];
     _XmDisplayToAppContext(display);
 
@@ -660,7 +654,7 @@ XmCvtTextPropertyToXmStringTable(Display *display,
     }
     else if (text_prop->encoding == XA_STRING)
     {
-	tag = "ISO8859-1";
+	tag = XmFALLBACK_CHARSET;
 	type = XmCHARSET_TEXT;
     }
     else if (text_prop->encoding == atoms[XmAUTF8_STRING])
@@ -708,39 +702,105 @@ XmCvtTextPropertyToXmStringTable(Display *display,
     return(Success);
 }
 
-int XmCvtXmStringToTextProperty(Display *d, XmString s, XTextProperty *prop)
+/**
+ * Convert an XmString to XTextProperty
+ *
+ * Converts the string specified by \a s into the given \a prop. The
+ * encoding field of \a prop should be set to the desired property
+ * encoding, which should be one of the following atoms:
+ * COMPOUND_TEXT, STRING, UTF8_STRING, or _MOTIF_COMPOUND_STRING.
+ *
+ * The caller must free the value member of \a prop when done
+ * with it.
+ *
+ * This function returns Success on success, and on failure returns
+ * XNoMemory, XConverterNotFound, or XLocaleNotSupported as reported
+ * by Xutf8TextListToTextProperty.
+ */
+int XmCvtXmStringToTextProperty(Display *d, const XmString s, XTextProperty *prop)
 {
 	int ret;
-	char *list;
+	char *list = NULL;
 	XICCEncodingStyle style = XStringStyle;
-	Atom COMPOUND_TEXT = XInternAtom(d, XmSCOMPOUND_TEXT, False);
-	Atom UTF8_STRING   = XInternAtom(d, XmSUTF8_STRING, False);
+	Atom COMPOUND_TEXT, UTF8_STRING, _MOTIF_COMPOUND_STRING;
+
+	if (!d || !s || !prop)
+		return XConverterNotFound;
+
+	COMPOUND_TEXT          = XInternAtom(d, XmSCOMPOUND_TEXT, False);
+	UTF8_STRING            = XInternAtom(d, XmSUTF8_STRING, False);
+	_MOTIF_COMPOUND_STRING = XInternAtom(d, XmS_MOTIF_COMPOUND_STRING, False);
+
+	prop->value = NULL;
+	if (prop->encoding == _MOTIF_COMPOUND_STRING) {
+		prop->nitems = XmStringSerialize(s, (unsigned char **)&list);
+		prop->format = 8;
+		if (list && prop->nitems) {
+			prop->value = (unsigned char *)list;
+			return Success;
+		}
+
+		return XNoMemory;
+	}
 
 	if (prop->encoding == COMPOUND_TEXT) style = XCompoundTextStyle;
 	if (prop->encoding == UTF8_STRING)   style = XUTF8StringStyle;
-
 	list = XmStringUngenerate(s, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
 	ret  = Xutf8TextListToTextProperty(d, &list, 1, style, prop);
 	XtFree(list);
-	return ret;
+	return ret >= Success ? Success : ret;
 }
 
+/**
+ * Convert a XmTextProperty to XmString
+ *
+ * Returns the XmString representation of the given \a prop, or NULL
+ * if \a prop could not be converted to XmString.
+ *
+ * Remember to free the resulting XmString with XmStringFree() when
+ * done with it.
+ */
 XmString XmCvtTextPropertyToXmString(Display *d, XTextProperty *prop)
 {
-	int i, listlen;
-	char **list;
-	XmString out = NULL;
+	int i, listlen = 0;
+	char **list      = NULL;
+	XmString out     = NULL;
+	XmStringTag tag  = (XmStringTag)"UTF-8";
+	XmTextType type  = XmCHARSET_TEXT;
+	Atom _MOTIF_COMPOUND_STRING;
+	unsigned long j = 0;
 
-	if (!prop || !d)
+	if (!d || !prop || !prop->value || !prop->nitems)
 		return NULL;
 
-	if (Xutf8TextPropertyToTextList(d, prop, &list, &listlen) > 0) {
-		XFreeStringList(list);
-		return NULL;
+	_MOTIF_COMPOUND_STRING = XInternAtom(d, XmS_MOTIF_COMPOUND_STRING, False);
+	if (prop->encoding == _MOTIF_COMPOUND_STRING) {
+		while (j < prop->nitems && prop->value[j] != '\0') {
+			out = XmStringConcatAndFree(out, XmStringUnserialize(prop->value + j));
+			j  += XmStringSerializedLength(prop->value) + 1;
+		}
+
+		return out;
 	}
 
+	if (prop->encoding == GetLocaleAtom(d)) {
+		tag  = (XmStringTag)_MOTIF_DEFAULT_LOCALE;
+		type = XmMULTIBYTE_TEXT;
+		if (XmbTextPropertyToTextList(d, prop, &list, &listlen) < Success)
+			goto out;
+	} else if (prop->encoding == XA_STRING) {
+		tag = (XmStringTag)XmFALLBACK_CHARSET;
+		if (!XTextPropertyToStringList(prop, &list, &listlen))
+			goto out;
+	}
+
+	if (!list && Xutf8TextPropertyToTextList(d, prop, &list, &listlen) < Success)
+		goto out;
+
 	for (i = 0; i < listlen; i++)
-		out = XmStringConcatAndFree(out, XmStringGenerate(list[i], NULL, XmUTF8_TEXT, NULL));
+		out = XmStringConcatAndFree(out, XmStringGenerate(list[i], tag, type, NULL));
+
+out:
 	XFreeStringList(list);
 	return out;
 }
