@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 #endif
 
 	svg_suite(runner);
+	txtpropcv_suite(runner);
 	xmdesktopobject_suite(runner);
 	xmfontlistentry_suite(runner);
 	xmfontlist_suite(runner);

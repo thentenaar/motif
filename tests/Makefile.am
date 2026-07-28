@@ -13,7 +13,8 @@ noinst_HEADERS       = suites.h
 tests_LDADD          = $(top_builddir)/lib/Xm/libXm.la $(X_LIBS) \
                        $(XFT_LIBS) $(XCURSOR_LIBS) $(CHECK_LIBS)
 tests_SOURCES        = runner.c XmDesktopObject.c XmFontListEntry.c XmFontList.c \
-                       XmScreen.c XmString.c Svg.c Cursor.c XmChar.c XmTextF.c
+                       XmScreen.c XmString.c Svg.c Cursor.c XmChar.c XmTextF.c \
+                       TxtPropCv.c
 
 if XM_WITH_JPEG
 tests_SOURCES += Jpeg.c

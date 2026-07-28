@@ -75,8 +75,8 @@ extern int XmCvtTextPropertyToXmStringTable(Display *display,
  * encoding, which should be one of the following atoms:
  * COMPOUND_TEXT, STRING, UTF8_STRING, or _MOTIF_COMPOUND_STRING.
  *
- * The caller must free the value member of \a prop when done
- * with it.
+ * The caller must free the value member of \a prop with XFree() when
+ * done with it.
  *
  * This function returns Success on success, and on failure returns
  * XNoMemory, XConverterNotFound, or XLocaleNotSupported as reported
