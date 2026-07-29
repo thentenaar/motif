@@ -409,14 +409,20 @@ static void TransferDone(Widget transfer, XtPointer client_data,
    DropDemo this = (DropDemo) client_data;
    XmString string = NULL;
    char msg[256];
+   XTextProperty prop;
 
 
    if (*format == 8)
      {
 	if (*type == StringAtom)
 	  string = XmStringCreateLocalized((char *)value);
-	else if (*type == CTAtom)
-	  string = XmCvtCTToXmString( (char *) value );
+	else if (*type == CTAtom) {
+	  prop.nitems   = *length;
+	  prop.format   = *format;
+	  prop.value    = value;
+	  prop.encoding = *type;
+	  string = XmCvtTextPropertyToXmString(XtDisplayOfObject(transfer), &prop);
+	}
       XtSetArg(args[n], XmNlabelString, string); n++;
      }
    else if (*type == PixmapAtom && *format == 32) {

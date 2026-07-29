@@ -2262,7 +2262,7 @@ WmICCCMToXmString (XTextProperty *wmNameProp)
       }
 
       /* Couldn't convert using Xm; apply a default */
-      return XmCvtCTToXmString((char*)wmNameProp->value);
+      return NULL; /*XmCvtCTToXmString((char*)wmNameProp->value);*/
   }
 
   xms_return = xmsTable[0];

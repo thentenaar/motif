@@ -1136,6 +1136,7 @@ TransferProc(
  Atom LOCALE_ATOM = XmeGetEncodingAtom(w);
  XmString cstring = (XmString) NULL;
  Boolean transferred = False;
+ XTextProperty prop;
 
   if (ss -> target == TARGETS && ss -> type == XA_ATOM) {
     /* For TARGETS, if the returned target list contains one we can
@@ -1159,22 +1160,12 @@ TransferProc(
   }
 
   if (ss -> type == COMPOUND_TEXT) {
-    /* Convert compound text to a compound string.
-     * Note that XmCvtCTToXmString does not convert a list of compound text
-     * strings, so we will get only the first if there's more than one.
-     * XmCvtCTToXmString expects a NULL-terminated compound text string,
-     * so add a trailing NULL. */
-    char *string;
-    string = XtMalloc(ss -> length + 1);
-    if (string == NULL) {
-      XtFree((char *) ss -> value);
-      ss -> value = (XtPointer) NULL;
-      return;
-    }
-    (void) memcpy(string, ss -> value, ss -> length);
-    string[ss -> length] = '\0';
-    cstring = XmCvtCTToXmString(string);
-    XtFree(string);
+    /* Convert compound text to a compound string. */
+    prop.format   = 8;
+    prop.encoding = ss->type;
+    prop.nitems   = ss->length;
+    prop.value    = ss->value;
+    cstring = XmCvtTextPropertyToXmString(XtDisplayOfObject(w), &prop);
     transferred = True;
   }
 

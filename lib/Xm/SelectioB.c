@@ -1297,6 +1297,7 @@ ListCallback(
 	int		format;
 	Boolean		success;
 	XmString temp;
+	XTextProperty prop;
 
 	textTrait = (XmAccessTextualTrait)
 	  XmeTraitGet((XtPointer) XtClass(SB_Text(sel)), XmQTaccessTextual);
@@ -1341,7 +1342,11 @@ ListCallback(
 	    textTrait->setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
 	    XmStringFree(temp);
 	  } else if (type == atoms[XmACOMPOUND_TEXT]) {
-	    temp = XmCvtCTToXmString(value);
+	    prop.format   = 8;
+	    prop.encoding = type;
+	    prop.value    = value;
+	    prop.nitems   = size;
+	    temp = XmCvtTextPropertyToXmString(XtDisplay(w), &prop);
 	    textTrait->setValue(SB_Text(sel), temp, XmFORMAT_XmSTRING);
 	    XmStringFree(temp);
 	  } else if (type == XA_STRING)
