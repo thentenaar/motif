@@ -62,7 +62,6 @@ int main(int argc, char *argv[])
 	runner = srunner_create(NULL);
 	srunner_set_tap(runner, "-");
 	srunner_set_xml(runner, "results.xml");
-
 	cursor_suite(runner);
 
 #if XM_WITH_JPEG

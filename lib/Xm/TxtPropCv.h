@@ -46,6 +46,7 @@ typedef enum {
 	XmSTYLE_COMPOUND_TEXT     = XCompoundTextStyle,
 	XmSTYLE_TEXT              = XTextStyle,
 	XmSTYLE_STANDARD_ICC_TEXT = XStdICCTextStyle,
+	XmSTYLE_UTF8_STRING       = XUTF8StringStyle,
 	XmSTYLE_LOCALE            = 32,
 	XmSTYLE_COMPOUND_STRING
 } XmICCEncodingStyle;
@@ -56,16 +57,45 @@ extern "C" {
 
 /********    Public Function Declarations    ********/
 
-extern int XmCvtXmStringTableToTextProperty(Display *display,
-				 XmStringTable string_table,
-				 int count,
-				 XmICCEncodingStyle style,
-				 XTextProperty *text_prop_return);
+/**
+ * Convert an array of XmString (XmStringTable) to a TextProperty list
+ * according to the given \a style.
+ *
+ * \param count Number of entries in \a string_table
+ * \param style One of the XmSTYLE_* constants (i.e. XmSTYLE_UTF8_STRING)
+ * \param prop  XTextProperty to fill in
+ *
+ * This function returns Success on success, and on failure returns
+ * XNoMemory, XConverterNotFound, or XLocaleNotSupported.
+ *
+ * The pointer returned in prop->value must be freed with XFree().
+ */
+extern int XmCvtXmStringTableToTextProperty(Display *d, const XmStringTable string_table,
+                                            int count, XmICCEncodingStyle style,
+                                            XTextProperty *prop);
 
-extern int XmCvtTextPropertyToXmStringTable(Display *display,
-				 XTextProperty *text_prop,
-				 XmStringTable *string_table_return,
-				 int *count_return);
+/**
+ * Convert a TextProperty list to XmStringTable
+ *
+ * Each null-delimited entry from \a prop is placed into \a string_table
+ * as a separate entry, with the count of entries in the table returned
+ * in \a count.
+ *
+ * Success is returned if the conversion was successful (or if the
+ * TextProperty was empty.) XConverterNotFound is returned if the
+ * TextProperty could not be converted, or if invalid parameters were
+ * given.
+ *
+ * If the TextProperty was empty (nitems = 0), the value returned in
+ * \a count will be zero, and the value returned in \a string_table will
+ * be NULL.
+ *
+ * The memory for each entry (and \a string_table itself) must be freed
+ * with XtFree().
+ */
+extern int XmCvtTextPropertyToXmStringTable(Display *d, XTextProperty *prop,
+                                            XmStringTable *string_table,
+                                            int *count);
 
 /**
  * Convert an XmString to XTextProperty

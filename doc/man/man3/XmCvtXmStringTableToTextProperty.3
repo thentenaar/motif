@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmCvtXmStringTableToTextProperty" "library call"
 .SH "NAME"
 \fBXmCvtXmStringTableToTextProperty\fP \(em A function that converts from XmStringTable to an XTextProperty Structure
@@ -54,12 +54,12 @@
 .PP
 .nf
 #include <Xm/Xm\&.h>
-int XmCvtXmStringTableToTextProperty (\fIdisplay, string_table, count, style, text_prop_return\fP)
-        Display *\fIdisplay\fP;
+int XmCvtXmStringTableToTextProperty (\fId, string_table, count, style, prop\fP)
+        Display *\fId\fP;
         XmStringTable   \fIstring_table\fP;
         int     \fIcount\fP;
         XmICCEncodingStyle      \fIstyle\fP;
-        XTextProperty   *\fItext_prop_return\fP;
+        XTextProperty   *\fIprop\fP;
 \fB\fR(\fBvoid\fR)
 .fi
 .SH "DESCRIPTION"
@@ -78,6 +78,9 @@ possible encoding styles:
 The encoding is \fB_MOTIF_COMPOUND_STRING\fP\&. The function converts
 each specified \fBXmString\fR to a compound string in Byte Stream
 format\&.
+.IP "\fBXmSTYLE_UTF8_STRING\fP" 10
+The encoding is \fBUTF8_STRING\fP\&. The function converts each
+specified \fBXmString\fR to UTF-8.\&.
 .IP "\fBXmSTYLE_COMPOUND_TEXT\fP" 10
 The encoding is \fBCOMPOUND_TEXT\fP\&. The function converts each
 specified \fBXmString\fR to compound text\&.

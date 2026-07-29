@@ -127,13 +127,14 @@ START_TEST(xmstring_to_compound_text)
 {
 	XmString s;
 	XTextProperty prop;
-	Atom COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
+	Atom COMPOUND_TEXT;
 
 	static const unsigned char expected[13] = {
 		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74
 	};
 
+	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
 	memset(&prop, 0, sizeof prop);
@@ -262,13 +263,14 @@ START_TEST(compound_text_to_xmstring)
 {
 	XmString s, x;
 	XTextProperty prop;
-	Atom COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
+	Atom COMPOUND_TEXT;
 
 	static const unsigned char expected[13] = {
 		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74
 	};
 
+	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
 	memset(&prop, 0, sizeof prop);
@@ -329,6 +331,232 @@ START_TEST(string_to_xmstring)
 }
 END_TEST
 
+START_TEST(null_table_to_text_property)
+{
+	int x;
+	XTextProperty prop;
+	XmStringTable tbl;
+
+	tbl    = (XmStringTable)XtCalloc(1, sizeof(XmString));
+	tbl[0] = XmStringCreateLocalized("table");
+	x = XmCvtXmStringTableToTextProperty(display, NULL, 1, XmSTYLE_COMPOUND_STRING, &prop);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL string_table");
+
+	x = XmCvtXmStringTableToTextProperty(display, tbl, 1, XmSTYLE_COMPOUND_STRING, NULL);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL prop");
+
+	XmStringFree(tbl[0]);
+	tbl[0] = NULL;
+
+	x = XmCvtXmStringTableToTextProperty(display, tbl, 1, XmSTYLE_COMPOUND_STRING, NULL);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL table entry");
+	XtFree((XtPointer)tbl);
+}
+END_TEST
+
+START_TEST(empty_table_to_text_property)
+{
+	int x;
+	XTextProperty prop;
+	XmStringTable tbl;
+
+	tbl = (XmStringTable)XtCalloc(1, sizeof(XmString));
+	x = XmCvtXmStringTableToTextProperty(display, tbl, 0, XmSTYLE_COMPOUND_STRING, &prop);
+	ck_assert_msg(x == Success, "Expected Success for 0 count");
+	XtFree((XtPointer)tbl);
+}
+END_TEST
+
+START_TEST(xmstringtable_to_textprop_1)
+{
+	int x;
+	XTextProperty prop;
+	XmStringTable tbl;
+
+	static const unsigned char expected[14] = {
+		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
+		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00
+	};
+
+	tbl    = (XmStringTable)XtCalloc(1, sizeof(XmString));
+	tbl[0] = XmStringGenerate("\xf0\x9d\x95\xa5\x65st",
+	                          (XmStringTag)"UTF-8", XmCHARSET_TEXT, NULL);
+
+	x = XmCvtXmStringTableToTextProperty(display, tbl, 1, XmSTYLE_COMPOUND_TEXT, &prop);
+	ck_assert_msg(x == Success, "Failed to convert XmString to TextProp");
+	ck_assert_msg(prop.nitems == 13, "Expected len to be 13 (got %lu)", prop.nitems);
+	ck_assert_msg(!memcmp(prop.value, expected, prop.nitems + 1), "Expected bytes to be equal");
+	XmStringFree(tbl[0]);
+	XFree(prop.value);
+	XtFree((XtPointer)tbl);
+}
+END_TEST
+
+START_TEST(xmstringtable_to_textprop_2)
+{
+	int x;
+	XTextProperty prop;
+	XmStringTable tbl;
+
+	static const unsigned char expected[28] = {
+		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
+		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00,
+		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
+		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00
+	};
+
+	tbl    = (XmStringTable)XtCalloc(2, sizeof(XmString));
+	tbl[0] = XmStringGenerate("\xf0\x9d\x95\xa5\x65st",
+	                          (XmStringTag)"UTF-8", XmCHARSET_TEXT, NULL);
+	tbl[1] = XmStringCopy(tbl[0]);
+
+	x = XmCvtXmStringTableToTextProperty(display, tbl, 2, XmSTYLE_COMPOUND_TEXT, &prop);
+	ck_assert_msg(x == Success, "Failed to convert 2 XmStrings to TextProp");
+	ck_assert_msg(prop.nitems == 27, "Expected len to be 27 (got %lu)", prop.nitems);
+	ck_assert_msg(!memcmp(prop.value, expected, prop.nitems + 1), "Expected bytes to be equal");
+	XmStringFree(tbl[0]);
+	XmStringFree(tbl[1]);
+	XFree(prop.value);
+	XtFree((XtPointer)tbl);
+}
+END_TEST
+
+START_TEST(null_text_property_or_invalid_params)
+{
+	int x, count;
+	XTextProperty prop;
+	XmStringTable tbl;
+	Atom COMPOUND_TEXT;
+
+	static const unsigned char ct[15] = {
+		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
+		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00, 0x00
+	};
+
+	memset(&prop, 0, sizeof prop);
+	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
+	prop.format   = 8;
+	prop.encoding = COMPOUND_TEXT;
+	prop.nitems   = 15;
+	prop.value    = (unsigned char *)ct;
+
+	x = XmCvtTextPropertyToXmStringTable(display, NULL, &tbl, &count);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL prop");
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, NULL, &count);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL table");
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, &tbl, NULL);
+	ck_assert_msg(x == XConverterNotFound, "Expected XConverterNotFound for NULL count");
+}
+END_TEST
+
+START_TEST(empty_text_property_to_xmstringtable)
+{
+	int x, count = 1;
+	XTextProperty prop;
+	XmStringTable tbl = (XmStringTable)0x1234;
+	Atom COMPOUND_TEXT;
+
+	static const unsigned char ct[15] = {
+		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
+		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00, 0x00
+	};
+
+	memset(&prop, 0, sizeof prop);
+	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
+	prop.format   = 8;
+	prop.encoding = COMPOUND_TEXT;
+	prop.nitems   = 0;
+	prop.value    = (unsigned char *)ct;
+
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, &tbl, &count);
+	ck_assert_msg(x == Success, "Expected Success for empty prop");
+	ck_assert_msg(!count, "Expected 0 count for empty prop (got %d)", count);
+	ck_assert_msg(!tbl,   "Expected NULL table for empty prop");
+
+	prop.value  = (unsigned char *)"\0";
+	prop.nitems = 1;
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, &tbl, &count);
+	ck_assert_msg(x == Success, "Expected Success for empty prop");
+	ck_assert_msg(!count, "Expected 0 count for empty prop.value (got %d)", count);
+	ck_assert_msg(!tbl,   "Expected NULL table for empty prop.value");
+}
+END_TEST
+
+START_TEST(compound_string_to_xmstringtable)
+{
+	size_t len;
+	int x, count;
+	XmString s;
+	XmStringTable tbl = NULL;
+	XTextProperty prop;
+	unsigned char *serialized;
+	Atom _MOTIF_COMPOUND_STRING = XInternAtom(display, XmS_MOTIF_COMPOUND_STRING, False);
+
+	s   = XmStringCreateLocalized("test");
+	len = XmStringSerialize(s, &serialized);
+	serialized = (unsigned char *)XtRealloc((XtPointer)serialized, len + len + 2);
+	serialized[len] = '\0';
+	memmove(serialized + len + 1, serialized, len + 1);
+
+	memset(&prop, 0, sizeof prop);
+	prop.format   = 8;
+	prop.encoding = _MOTIF_COMPOUND_STRING;
+	prop.nitems   = len + len + 1;
+	prop.value    = serialized;
+
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, &tbl, &count);
+	ck_assert_msg(x == Success, "Expected Success");
+	ck_assert_msg(count == 2, "Expected count to be 2 (got %d)", count);
+	ck_assert_msg(tbl, "Expected non-NULL table");
+	ck_assert_msg(tbl[0], "Expected non-NULL table[0]");
+	ck_assert_msg(tbl[1], "Expected non-NULL table[1]");
+	ck_assert_msg(XmStringCompare(tbl[0], s), "Expected tbl[0] to compare equal");
+	ck_assert_msg(XmStringCompare(tbl[1], s), "Expected tbl[1] to compare equal");
+	XmStringFree(tbl[0]);
+	XmStringFree(tbl[1]);
+	XmStringFree(s);
+	XtFree((XtPointer)tbl);
+	XtFree((XtPointer)serialized);
+}
+END_TEST
+
+START_TEST(locale_to_xmstringtable)
+{
+	size_t len;
+	int x, count = 0;
+	XmString s;
+	XTextProperty prop;
+	XmStringTable tbl = NULL;
+	unsigned char *tmp;
+
+	s   = XmStringCreateMultibyte("local", _MOTIF_DEFAULT_LOCALE);
+	tmp = XmStringUngenerate(s, NULL, XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT);
+	len = XmStringLen(s);
+
+	memset(&prop, 0, sizeof prop);
+	prop.format   = 8;
+	prop.encoding = GetLocaleAtom(display);
+	prop.nitems   = len + len + 1;
+	prop.value    = (unsigned char *)XtCalloc(1, len + len + 2);
+	memcpy(prop.value, tmp, len + 1);
+	memcpy(prop.value + len + 1, tmp, len + 1);
+	XtFree((XtPointer)tmp);
+
+	x = XmCvtTextPropertyToXmStringTable(display, &prop, &tbl, &count);
+	ck_assert_msg(x == Success, "Expected Success");
+	ck_assert_msg(count == 2, "Expected count to be 2 (got %d)", count);
+	ck_assert_msg(tbl, "Expected non-NULL table");
+	ck_assert_msg(tbl[0], "Expected non-NULL table[0]");
+	ck_assert_msg(tbl[1], "Expected non-NULL table[1]");
+	ck_assert_msg(XmStringCompare(tbl[0], s), "Expected tbl[0] to compare equal");
+	ck_assert_msg(XmStringCompare(tbl[1], s), "Expected tbl[1] to compare equal");
+	XmStringFree(tbl[0]);
+	XmStringFree(tbl[1]);
+	XmStringFree(s);
+	XtFree((XtPointer)tbl);
+}
+END_TEST
+
 void txtpropcv_suite(SRunner *runner)
 {
 	TCase *t;
@@ -352,6 +580,24 @@ void txtpropcv_suite(SRunner *runner)
 	tcase_add_test(t, compound_text_to_xmstring);
 	tcase_add_test(t, locale_to_xmstring);
 	tcase_add_test(t, string_to_xmstring);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("XmStringTableToTextProp");
+	tcase_add_test(t, null_table_to_text_property);
+	tcase_add_test(t, empty_table_to_text_property);
+	tcase_add_test(t, xmstringtable_to_textprop_1);
+	tcase_add_test(t, xmstringtable_to_textprop_2);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("TextPropToXmStringTable");
+	tcase_add_test(t, null_text_property_or_invalid_params);
+	tcase_add_test(t, empty_text_property_to_xmstringtable);
+	tcase_add_test(t, compound_string_to_xmstringtable);
+	tcase_add_test(t, locale_to_xmstringtable);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
