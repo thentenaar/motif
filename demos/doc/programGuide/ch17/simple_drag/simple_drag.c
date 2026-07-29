@@ -153,6 +153,7 @@ ConvertCallback(Widget  w,
  Atom TARGETS = XInternAtom(XtDisplay(w), "TARGETS", False);
  Atom MOTIF_EXPORT_TARGETS =
    XInternAtom(XtDisplay(w), XmS_MOTIF_EXPORT_TARGETS, False);
+ XTextProperty prop;
  int n;
 
   printf("\nNow in ConvertCallback.\n");
@@ -202,18 +203,22 @@ ConvertCallback(Widget  w,
   /* Convert XmNvalue to COMPOUND_TEXT. */
        sprintf(ValueAsAString, "%d", value);
        cstring = XmStringCreateLocalized(ValueAsAString);
-       ctext = XmCvtXmStringToCT(cstring);
-       passtext = XtMalloc(strlen(ctext)+1);
-       memcpy(passtext, ctext, strlen(ctext)+1);
-  /* Assign converted string to XmConvertCallbackStruct. */
-     ccs->value  = (XtPointer)passtext;
-     ccs->type   = XA_STRING;
-     ccs->length = strlen(passtext);
-     ccs->format = 8;
-     ccs->status = XmCONVERT_DONE;
-   }
 
-   else  {
+       prop.format   = 8;
+       prop.encoding = COMPOUND_TEXT;
+       ccs->status   = XmCONVERT_REFUSE;
+
+       if (XmCvtXmStringToTextProperty(XtDisplayOfObject(w), cstring, &prop) == Success) {
+  /* Assign converted string to XmConvertCallbackStruct. */
+         ccs->value  = prop.value;
+         ccs->type   = prop.encoding;
+         ccs->length = prop.nitems;
+         ccs->format = prop.format;
+         ccs->status = XmCONVERT_DONE;
+       }
+
+       XmStringFree(cstring);
+   } else  {
      /* Unexpected target. */
      ccs->status = XmCONVERT_REFUSE;
    }

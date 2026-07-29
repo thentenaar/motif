@@ -432,7 +432,8 @@ RegisterDropSite(
   Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
   Atom LOCALE_ATOM = XmeGetEncodingAtom(w);
   Atom MOTIF_C_S = XInternAtom(XtDisplay(w), "_MOTIF_COMPOUND_STRING", False);
-  Atom targets[5];
+  Atom UTF8_STRING = XInternAtom(XtDisplay(w), "UTF8_STRING", False);
+  Atom targets[6];
   Arg args[2];
   int n, nt;
 
@@ -440,6 +441,7 @@ RegisterDropSite(
      generate a compound string when a drop is made. */
   nt = 0;
   targets[nt++] = MOTIF_C_S;
+  targets[nt++] = UTF8_STRING;
   targets[nt++] = COMPOUND_TEXT;
   targets[nt++] = LOCALE_ATOM;
   if (LOCALE_ATOM != XA_STRING) {
@@ -678,6 +680,7 @@ ConvertProc(
  Atom CLIPBOARD = XInternAtom(XtDisplay(w), XmSCLIPBOARD, False);
  Atom TEXT = XInternAtom(XtDisplay(w), XmSTEXT, False);
  Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), XmSCOMPOUND_TEXT, False);
+ Atom UTF8_STRING = XInternAtom(XtDisplay(w), XmSUTF8_STRING, False);
  Atom LOCALE_ATOM = XmeGetEncodingAtom(w);
  Atom FOREGROUND = XInternAtom(XtDisplay(w), "FOREGROUND", False);
  Atom BACKGROUND = XInternAtom(XtDisplay(w), "BACKGROUND", False);
@@ -709,9 +712,10 @@ ConvertProc(
   if (cs -> target == TARGETS) {
     /* We convert the standard targets, plus those to which we can
      * convert a compound string. */
-    Atom *targs = XmeStandardTargets(w, 5, &n);
+    Atom *targs = XmeStandardTargets(w, 7, &n);
 
     targs[n] = MOTIF_C_S; n++;
+    targs[n] = UTF8_STRING; n++;
     targs[n] = COMPOUND_TEXT; n++;
     targs[n] = LOCALE_ATOM; n++;
     if (LOCALE_ATOM != XA_STRING) {
@@ -732,7 +736,7 @@ ConvertProc(
     /* Allow dragging of targets to which we can convert a compound
      * string, plus FOREGROUND and BACKGROUND.  These two will be
      * converted by XmeStandardConvert. */
-    Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 7);
+    Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 8);
 
     if (targs == NULL) {
       cs -> status = XmCONVERT_REFUSE;
@@ -740,6 +744,7 @@ ConvertProc(
     }
     n = 0;
     targs[n] = MOTIF_C_S; n++;
+    targs[n] = UTF8_STRING; n++;
     targs[n] = COMPOUND_TEXT; n++;
     targs[n] = LOCALE_ATOM; n++;
     if (LOCALE_ATOM != XA_STRING) {
@@ -764,7 +769,7 @@ ConvertProc(
        We also put the locale encoding and STRING (the locale encoding
        of ISO8859-1) on the clipboard providing that they are completely
        convertable (no loss of data) */
-    Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 4);
+    Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 6);
 
     if (targs == NULL) {
       cs -> status = XmCONVERT_REFUSE;
@@ -772,6 +777,7 @@ ConvertProc(
     }
     n = 0;
     targs[n] = MOTIF_C_S; n++;
+    targs[n] = UTF8_STRING; n++;
 
     /* Check to make sure we can convert to STRING */
     cstatus = ConvertCompoundString(w, cstring, XA_STRING, &value, &type,
@@ -803,7 +809,8 @@ ConvertProc(
 
   if (cs -> target == MOTIF_C_S ||
       cs -> target == COMPOUND_TEXT || cs -> target == TEXT ||
-      cs -> target == LOCALE_ATOM || cs -> target == XA_STRING) {
+      cs -> target == LOCALE_ATOM || cs -> target == XA_STRING ||
+      cs -> target == UTF8_STRING) {
     /* Convert the compound string to the appropriate target. */
     cstatus = ConvertCompoundString(w, cstring, cs -> target, &value, &type,
 				    &format, &length, &nchars);
@@ -875,10 +882,12 @@ ConvertCompoundString(
  Atom MOTIF_C_S = XInternAtom(XtDisplay(w), "_MOTIF_COMPOUND_STRING", False);
  Atom TEXT = XInternAtom(XtDisplay(w), "TEXT", False);
  Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
+ Atom UTF8_STRING = XInternAtom(XtDisplay(w), "UTF8_STRING", False);
  Atom LOCALE_ATOM = XmeGetEncodingAtom(w);
  Boolean converted = False;
  char ** strings;
  int count, nchars1;
+ XTextProperty prop;
 
   if (value == NULL || type == NULL || format == NULL ||
       length == NULL || nchars == NULL) return XmCONVERT_REFUSE;
@@ -893,152 +902,29 @@ ConvertCompoundString(
   }
 
   if (target == COMPOUND_TEXT || target == TEXT ||
-      target == LOCALE_ATOM || target == XA_STRING) {
-    char *ct;
-    XTextProperty text_prop;
+      target == LOCALE_ATOM || target == XA_STRING ||
+      target == UTF8_STRING) {
     *type = target;
     *format = 8;
     *length = 0;
-    *value = (XtPointer) NULL;
+    *value  = NULL;
     *nchars = 0;
 
-    if (cstring == NULL) {
+    prop.encoding = target;
+    prop.format   = 8;
+    prop.value    = NULL;
+    prop.nitems   = 0;
+
+    if (XmCvtXmStringToTextProperty(XtDisplayOfObject(w), cstring, &prop) == Success) {
+      converted = True;
+      *length   = prop.nitems;
+      *value    = prop.value;
+    } else if (!cstring) {
       /* If the compound string is NULL, return a value of NULL and a
        * length of 0, and assert that the conversion was successful. */
       if (target == TEXT) *type = LOCALE_ATOM;
       converted = True;
-
-    } else {
-
-      /* For any of these four targets, the first thing we must do is
-       * convert the compound string to compound text. */
-      ct = XmCvtXmStringToCT(cstring);
-      if (ct == NULL) {
-	/* error in conversion to CT */
-	return XmCONVERT_REFUSE;
-      }
-
-      if (target == COMPOUND_TEXT) {
-	/* For COMPOUND_TEXT, return the compound text.
-	 * Note: There is no way, using documented functions, to obtain
-	 * the length of the converted compound text, other than to
-	 * assume that it contains no embedded NULL bytes and call strlen().
-	 * It is theoretically possible for compound text to include
-	 * embedded NULLs, but we'll ignore that possibility. */
-	*value = (XtPointer) ct;
-	*length = strlen(ct);	/* Don't include NULL byte */
-	converted = True;
-
-      } else {
-
-	/* For a target of TEXT, STRING, or the locale atom, the next
-	 * step is to convert the compound text into locale text.
-	 * We use XmbTextPropertyToTextList to do that. */
-	text_prop.encoding = COMPOUND_TEXT;
-	text_prop.format = 8;
-	text_prop.value = (unsigned char *) ct;
-	text_prop.nitems = strlen(ct); /* Don't include NULL byte */
-	*nchars = nchars1 = XmbTextPropertyToTextList(XtDisplay(w), &text_prop,
-						      &strings, &count);
-	if (nchars1 <= 0) nchars1 = 0;
-	if (*nchars == XNoMemory || *nchars == XLocaleNotSupported ||
-	    *nchars == XConverterNotFound) {
-	  /* error in conversion to locale text */
-	  XtFree(ct);
-	  return XmCONVERT_REFUSE;
-	}
-
-	if (target == TEXT) {
-	  /* For TEXT, if we completely converted the compound text to
-	   * locale text, return the locale text and the locale atom.
-	   * XmbTextListToTextProperty takes care of converting the
-	   * locale text to a set of NULL-separated elements, and it
-	   * computes the length of the value.
-	   * If we only partially converted the compound text to locale
-	   * text, we return the compound text and COMPOUND_TEXT. */
-	  if (*nchars == Success) {
-	    *type = LOCALE_ATOM;
-	    *nchars = XmbTextListToTextProperty(XtDisplay(w), strings, count,
-						XTextStyle, &text_prop);
-	    XtFree(ct);
-	    XFreeStringList(strings);
-	    if (*nchars == XNoMemory || *nchars == XLocaleNotSupported ||
-		*nchars == XConverterNotFound) {
-	      /* error in conversion to locale text */
-	      return XmCONVERT_REFUSE;
-	    }
-
-	    *value = (XtPointer) XtMalloc(text_prop.nitems + 1);
-	    if (*value == NULL) {
-	      XFree(text_prop.value);
-	      return XmCONVERT_REFUSE;
-	    }
-	    (void) memcpy(*value, text_prop.value, text_prop.nitems + 1);
-	    XFree(text_prop.value);
-	    *length = text_prop.nitems;
-	  } else {
-	    XFreeStringList(strings);
-	    *type = COMPOUND_TEXT;
-	    *value = (XtPointer) ct;
-	    *length = strlen(ct); /* Don't include NULL byte */
-	  }
-	  converted = True;
-	}
-
-	if (target == LOCALE_ATOM && !converted) {
-	  /* For the locale atom, return the locale text and the
-	   * locale atom, even if the compound text was only
-	   * partially converted to locale text. */
-	  *nchars = XmbTextListToTextProperty(XtDisplay(w), strings, count,
-					      XTextStyle, &text_prop);
-	  XtFree(ct);
-	  XFreeStringList(strings);
-	  if (*nchars == XNoMemory || *nchars == XLocaleNotSupported ||
-	      *nchars == XConverterNotFound) {
-	    /* error in conversion to locale text */
-	    return XmCONVERT_REFUSE;
-	  }
-
-	  *value = (XtPointer) XtMalloc(text_prop.nitems + 1);
-	  if (*value == NULL) {
-	    XFree(text_prop.value);
-	    return XmCONVERT_REFUSE;
-	  }
-	  (void) memcpy(*value, text_prop.value, text_prop.nitems + 1);
-	  XFree(text_prop.value);
-	  *length = text_prop.nitems;
-	  *nchars = nchars1 + (*nchars <= 0 ? 0 : *nchars);
-	  converted = True;
-	}
-
-	if (target == XA_STRING && !converted) {
-	  /* For STRING, use XmbTextListToTextProperty to convert the
-	   * locale text to STRING, and return the result.
-	   * Note that the locale atom might be STRING, so we might
-	   * already have done the conversion above. */
-	  *nchars = XmbTextListToTextProperty(XtDisplay(w), strings, count,
-					      XStringStyle, &text_prop);
-	  XtFree(ct);
-	  XFreeStringList(strings);
-	  if (*nchars == XNoMemory || *nchars == XLocaleNotSupported ||
-	      *nchars == XConverterNotFound) {
-	    /* error in conversion to string */
-	    return XmCONVERT_REFUSE;
-	  }
-
-	  *value = (XtPointer) XtMalloc(text_prop.nitems + 1);
-	  if (*value == NULL) {
-	    XFree(text_prop.value);
-	    return XmCONVERT_REFUSE;
-	  }
-	  (void) memcpy(*value, text_prop.value, text_prop.nitems + 1);
-	  XFree(text_prop.value);
-	  *length = text_prop.nitems;
-	  *nchars = nchars1 + (*nchars <= 0 ? 0 : *nchars);
-	  converted = True;
-	}
-      }
-    }
+    } else return XmCONVERT_REFUSE;
   }
 
   /* For a successful conversion, return XmCONVERT_DONE.
@@ -1133,6 +1019,7 @@ TransferProc(
  Atom TARGETS = XInternAtom(XtDisplay(w), "TARGETS", False);
  Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), "COMPOUND_TEXT", False);
  Atom MOTIF_C_S = XInternAtom(XtDisplay(w), "_MOTIF_COMPOUND_STRING", False);
+ Atom UTF8_STRING = XInternAtom(XtDisplay(w), "UTF8_STRING", False);
  Atom LOCALE_ATOM = XmeGetEncodingAtom(w);
  XmString cstring = (XmString) NULL;
  Boolean transferred = False;
@@ -1152,96 +1039,15 @@ TransferProc(
 		    (XtCallbackProc) TransferProc, NULL, 0);
   }
 
-  if (ss -> type == MOTIF_C_S) {
-    /* For _MOTIF_COMPOUND_STRING, the data must be in ASN.1 format.
-       Convert to a compound string. */
-    cstring = XmStringUnserialize((unsigned char *)ss->value);
-    transferred = True;
-  }
-
-  if (ss -> type == COMPOUND_TEXT) {
-    /* Convert compound text to a compound string. */
+  if (ss->type == MOTIF_C_S     || ss->type == UTF8_STRING ||
+      ss->type == COMPOUND_TEXT || ss->type == LOCALE_ATOM ||
+      ss->type == XA_STRING) {
     prop.format   = 8;
     prop.encoding = ss->type;
     prop.nitems   = ss->length;
     prop.value    = ss->value;
     cstring = XmCvtTextPropertyToXmString(XtDisplayOfObject(w), &prop);
-    transferred = True;
-  }
-
-  if (ss -> type == XA_STRING || ss -> type == LOCALE_ATOM) {
-    /* Convert either a XA_STRING (ISO8859-1 encoding) or the specific
-       locale encoding.  This will be the current locale of the
-       application */
-    XmString cstring1, sep, oldstring;
-    char **strings;
-    int nchars, count, i;
-    XTextProperty text_prop;
-    text_prop.value = (unsigned char *) ss -> value;
-    text_prop.encoding = ss -> type;
-    text_prop.format = ss -> format;
-    text_prop.nitems = ss -> length;
-
-    if (ss -> type == XA_STRING) {
-      /* For STRING, create a compound string with an explicit tag
-       * and a type of XmCHARSET_TEXT. */
-      nchars = (int) XTextPropertyToStringList(&text_prop, &strings, &count);
-      if (nchars == 0) {
-	/* error in conversion to list of strings */
-	XtFree((char *) ss -> value);
-	ss -> value = (XtPointer) NULL;
-	return;
-      }
-      sep = XmStringSeparatorCreate();
-      for (i = 0; i < count; i++) {
-	oldstring = cstring;
-	cstring1 = XmStringGenerate(strings[i],
-				    (XmStringTag) XmSTRING_ISO8859_1,
-				    XmCHARSET_TEXT, NULL);
-	cstring = XmStringConcat(oldstring, cstring1);
-	XmStringFree(oldstring);
-	XmStringFree(cstring1);
-	if (i < count - 1) {
-	  oldstring = cstring;
-	  cstring = XmStringConcat(oldstring, sep);
-	  XmStringFree(oldstring);
-	}
-      }
-      XmStringFree(sep);
-      XFreeStringList(strings);
-      transferred = True;
-    }
-
-    if (ss -> type == LOCALE_ATOM && !transferred) {
-      /* For locale text (unless the locale atom is STRING), create a
-       * compound string with a tag of _MOTIF_DEFAULT_LOCALE and a type
-       * of XmMULTIBYTE_TEXT. */
-      nchars = XmbTextPropertyToTextList(XtDisplay(w), &text_prop,
-					 &strings, &count);
-      if (nchars == XNoMemory || nchars == XLocaleNotSupported ||
-	  nchars == XConverterNotFound) {
-	/* error in conversion to locale text */
-	XtFree((char *) ss -> value);
-	ss -> value = (XtPointer) NULL;
-	return;
-      }
-      sep = XmStringSeparatorCreate();
-      for (i = 0; i < count; i++) {
-	oldstring = cstring;
-	cstring1 = XmStringGenerate(strings[i], NULL, XmMULTIBYTE_TEXT, NULL);
-	cstring = XmStringConcat(oldstring, cstring1);
-	XmStringFree(oldstring);
-	XmStringFree(cstring1);
-	if (i < count - 1) {
-	  oldstring = cstring;
-	  cstring = XmStringConcat(oldstring, sep);
-	  XmStringFree(oldstring);
-	}
-      }
-      XmStringFree(sep);
-      XFreeStringList(strings);
-      transferred = True;
-    }
+    transferred = !!cstring;
   }
 
   if (transferred) {

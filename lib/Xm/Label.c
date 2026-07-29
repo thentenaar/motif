@@ -135,8 +135,6 @@ static void LabelSetValue(Widget, XtPointer, int);
 static int LabelPreferredValue(Widget);
 static char* GetLabelAccelerator(Widget);
 static KeySym GetLabelMnemonic(Widget);
-static XtPointer ConvertToEncoding(Widget, char*, Atom, unsigned long *,
-				 Boolean *);
 /********    End Static Function Declarations    ********/
 
 
@@ -2534,17 +2532,13 @@ _XmLabelConvert(Widget w,
 	 XmATARGETS, XmA_MOTIF_DROP, XmABACKGROUND, XmAFOREGROUND,
 	 XmAPIXEL, XmA_MOTIF_EXPORT_TARGETS,
 	 XmA_MOTIF_CLIPBOARD_TARGETS,
-#if XM_UTF8
 	 XmAUTF8_STRING,
-#endif
 	 NUM_ATOMS };
   static char *atom_names[] = {
     XmS_MOTIF_COMPOUND_STRING, XmSCOMPOUND_TEXT, XmSTEXT,
     XmSTARGETS, XmS_MOTIF_DROP, XmIBACKGROUND, XmIFOREGROUND,
     XmIPIXEL, XmS_MOTIF_EXPORT_TARGETS, XmS_MOTIF_CLIPBOARD_TARGETS,
-#if XM_UTF8
     XmSUTF8_STRING
-#endif
     };
 
   Atom atoms[XtNumber(atom_names)];
@@ -2557,6 +2551,7 @@ _XmLabelConvert(Widget w,
   XmString label_string;
   Pixmap label_pixmap;
   Boolean is_pixmap, is_text;
+  XTextProperty prop;
 
   if (w == (Widget) NULL)
     {
@@ -2607,126 +2602,41 @@ _XmLabelConvert(Widget w,
 
       if (is_pixmap)
 	{
-	  targs[target_count] = XA_PIXMAP; target_count++;
+	  targs[target_count++] = XA_PIXMAP;
 	}
 
       if (is_text)
 	{
-	  XtPointer temp;
-	  unsigned long length;
-	  char* ctext;
-	  Boolean success;
-
-	  ctext = XmCvtXmStringToCT(label_string);
-	  targs[target_count] = atoms[XmA_MOTIF_COMPOUND_STRING]; target_count++;
-	  targs[target_count] = atoms[XmACOMPOUND_TEXT]; target_count++;
-	  targs[target_count] = atoms[XmATEXT]; target_count++;
-#if XM_UTF8
-	  if (C_ENCODING != XA_STRING && C_ENCODING != atoms[XmAUTF8_STRING]) {
-	    temp = ConvertToEncoding(w, ctext, C_ENCODING, &length, &success);
-	    if (success) {
-	      targs[target_count] = C_ENCODING;
-	      target_count++;
-	    }
-	    XtFree((char*) temp);
-	  }
-#endif
-	  temp = ConvertToEncoding(w, ctext, XA_STRING, &length, &success);
-	  if (success) {
-	    targs[target_count] = XA_STRING;
-	    target_count++;
-	  }
-	  XtFree((char*) temp);
-	  XtFree((char*) ctext);
-#if XM_UTF8
-	  ctext = XmCvtXmStringToUTF8String(label_string);
-	  if (ctext) {
-	    targs[target_count] = atoms[XmAUTF8_STRING];
-	    target_count++;
-	  }
-	  XtFree((char*) ctext);
-#endif
+	  targs[target_count++] = atoms[XmA_MOTIF_COMPOUND_STRING];
+	  targs[target_count++] = atoms[XmAUTF8_STRING];
+	  targs[target_count++] = atoms[XmACOMPOUND_TEXT];
+	  targs[target_count++] = atoms[XmATEXT];
 	}
       type = XA_ATOM;
       size = target_count;
       format = 32;
     }
 
-  if (cs->target == atoms[XmA_MOTIF_COMPOUND_STRING])
+  if (cs->target == atoms[XmA_MOTIF_COMPOUND_STRING] ||
+      cs->target == atoms[XmAUTF8_STRING]            ||
+      cs->target == atoms[XmACOMPOUND_TEXT]          ||
+      cs->target == XA_STRING  ||
+      cs->target == C_ENCODING ||
+      cs->target == atoms[XmATEXT])
     {
-      type = atoms[XmA_MOTIF_COMPOUND_STRING];
-      format = 8;
-      size = XmStringSerialize(label_string, (unsigned char **)&value);
-    }
-  else if (cs->target == atoms[XmACOMPOUND_TEXT] ||
-	   cs->target == atoms[XmATEXT] ||
-	   cs->target == XA_STRING ||
-	   cs->target == C_ENCODING)
-    {
-      type = atoms[XmACOMPOUND_TEXT];
-      format = 8;
-      value = XmCvtXmStringToCT(label_string);
-      if (value != NULL)
-	size = strlen((char*) value);
-      else
-	size = 0;
+        format        = 8;
+        type          = cs->target;
+        prop.encoding = cs->target;
+        prop.format   = 8;
+        prop.value    = NULL;
+        prop.nitems   = 0;
+        value         = NULL;
+        size          = 0;
 
-      if (cs->target == XA_STRING)
-	{
-	  Boolean success;
-
-	  value = ConvertToEncoding(w, (char*) value,
-				    XA_STRING, &size, &success);
-
-	  if (value != NULL && success == False)
-	    cs->flags |= XmCONVERTING_PARTIAL;
-	  type = XA_STRING;
-	}
-      else if ((cs->target == atoms[XmATEXT] ||
-		cs->target == C_ENCODING) &&
-	       value != NULL)
-	{
-	  char *cvt;
-	  Boolean success;
-
-	  cvt = (char*) ConvertToEncoding(w, (char*) value,
-					  C_ENCODING, &size, &success);
-
-	  if (cvt != NULL && success == False)
-	    cs->flags |= XmCONVERTING_PARTIAL;
-
-	  if (cvt != NULL && success)
-	    {
-	      /* 100% ok */
-	      XtFree((char*) value);
-	      value = cvt;
-	      type = C_ENCODING;
-	    }
-	  else
-	    {
-	      /* If the request was C_ENCODING,  then return only C_ENCODING,
-	       * not atoms[XmACOMPOUND_TEXT] */
-	      if (cs->target == C_ENCODING)
-		{
-		  XtFree((char*) value);
-		  value = cvt;
-		  type = C_ENCODING;
-		}
-	      else
-		if (cvt != NULL) XtFree(cvt);
-	      type = atoms[XmACOMPOUND_TEXT];
-	    }
-	}
-#if XM_UTF8
-    } else if (cs->target == atoms[XmAUTF8_STRING]) {
-      type = atoms[XmAUTF8_STRING];
-      format = 8;
-      value = XmCvtXmStringToUTF8String(label_string);
-      if (value != NULL)
-	size = strlen((char*) value);
-      else
-	size = 0;
-#endif
+        if (XmCvtXmStringToTextProperty(XtDisplayOfObject(w), label_string, &prop) == Success) {
+            value = prop.value;
+            size  = prop.nitems;
+        }
     }
 
   if (cs->target == XA_PIXMAP)
@@ -2795,82 +2705,6 @@ _XmLabelConvert(Widget w,
     }
 
   _XmConvertComplete(w, value, size, format, type, cs);
-}
-
-/**************************************************************************
- * ConvertToEncoding
- *
- * This contains conversion code which is needed more than once in
- * _XmLabelConvert.  The first calls are to check for 100% conversion
- * in _MOTIF_EXPORT_TARGETS and _MOTIF_CLIPBOARD_TARGETS.
- * The second are for the real conversion
- **************************************************************************/
-static XtPointer
-ConvertToEncoding(Widget w, char* str, Atom encoding,
-		  unsigned long *length, Boolean *flag)
-{
-  XtPointer rval = NULL;
-  XTextProperty tmp_prop;
-  Atom COMPOUND_TEXT = XInternAtom(XtDisplay(w), XmSCOMPOUND_TEXT, False);
-#if XM_UTF8
-  Atom UTF8_STRING = XInternAtom(XtDisplay(w), XmSUTF8_STRING, False);
-#endif
-  int ret_status;
-
-  if (encoding == XA_STRING) {
-    /* convert value to 8859.1 */
-    ret_status =
-      XmbTextListToTextProperty(XtDisplay(w), (char**) &str, 1,
-				(XICCEncodingStyle)XStringStyle,
-				&tmp_prop);
-
-    if (ret_status == Success || ret_status > 0)
-      {
-	rval = (XtPointer) tmp_prop.value;
-	*length = tmp_prop.nitems;
-      }
-    else
-      {
-	rval = NULL;
-	*length = 0;
-      }
-
-    *flag = (ret_status == Success);
-#if XM_UTF8
-  } else if (encoding == UTF8_STRING) {
-    /* convert value to UTF8 */
-    ret_status =
-      Xutf8TextListToTextProperty(XtDisplay(w), (char**) &str, 1,
-				(XICCEncodingStyle)XUTF8StringStyle,
-				&tmp_prop);
-
-    if (ret_status == Success || ret_status > 0)
-      {
-	rval = (XtPointer) tmp_prop.value;
-	*length = tmp_prop.nitems;
-      }
-    else
-      {
-	rval = NULL;
-	*length = 0;
-      }
-
-    *flag = (ret_status >= Success);
-#endif
-  } else {
-    /* Locale encoding */
-    /* Fix for Bug 1117 - if str is null then a SEGVIOLATION occures
-     * in strlen.
-     */
-    *length = str ? strlen(str) : 0;
-
-    rval = _XmTextToLocaleText(w, (XtPointer) str,
-			       COMPOUND_TEXT, 8,
-			       *length,
-			       flag);
-  }
-
-  return(rval);
 }
 
 /**************************************************************************

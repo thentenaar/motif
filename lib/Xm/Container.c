@@ -5108,28 +5108,35 @@ ContainerConvertProc(
     XmA_MOTIF_LOSE_SELECTION,		XmA_MOTIF_EXPORT_TARGETS,
     XmA_MOTIF_CLIPBOARD_TARGETS,	XmA_COMPOUND_TEXT,
     XmA_MOTIF_COMPOUND_STRING,		XmA_MOTIF_DRAG_OFFSET,
-    XmA_MOTIF_DROP,			XmA_TARGETS,
+    XmA_MOTIF_DROP,			XmA_TARGETS, XmATEXT,
     XmAUTF8_STRING,			NUM_ATOMS };
   static char *atom_names[] = {
     XmS_MOTIF_LOSE_SELECTION,		XmS_MOTIF_EXPORT_TARGETS,
     XmS_MOTIF_CLIPBOARD_TARGETS,	XmSCOMPOUND_TEXT,
     XmS_MOTIF_COMPOUND_STRING,		XmS_MOTIF_DRAG_OFFSET,
-    XmS_MOTIF_DROP,			XmSTARGETS,
+    XmS_MOTIF_DROP,			XmSTARGETS, XmSTEXT,
     XmSUTF8_STRING,
   };
 
   XmContainerWidget	cw = (XmContainerWidget)wid;
   WidgetList		items = NULL;
-  int			item_count = 0;
+  int			item_count = 0, return_pm_count = 0, n, i;
   XtPointer		value = NULL;
   unsigned int		length = 0;
   int			format = 0;
-  Atom			type = 0;
-  Atom			atoms[XtNumber(atom_names)];
+  Atom			type = 0, *targargs;
+  Atom			atoms[XtNumber(atom_names)], local;
+  XTextProperty prop;
+  Arg wargs[6];
+  Pixmap item_pm, *return_pm;
+  XmString item_xmstr, return_xmstr = NULL, sep = NULL;
+  short *offset_args;
+
 
   /* Get Atom values from cache. */
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(wid), atom_names, XtNumber(atom_names), False, atoms);
+  local = XmeGetEncodingAtom(wid);
 
   if (cs->target == atoms[XmA_MOTIF_LOSE_SELECTION])
     {
@@ -5144,17 +5151,17 @@ ContainerConvertProc(
       (cs->target == atoms[XmA_MOTIF_EXPORT_TARGETS]) ||
       (cs->target == atoms[XmA_MOTIF_CLIPBOARD_TARGETS]))
     {
-      Atom	*targargs;
-      int	n = 0;
-
+      n = 0;
       if (cs -> target == atoms[XmA_TARGETS])
-	targargs = XmeStandardTargets(wid,6,&n);
+	targargs = XmeStandardTargets(wid,7,&n);
       else
-	targargs  = (Atom*) XtMalloc(sizeof(Atom) * 6);
+	targargs  = (Atom*) XtMalloc(sizeof(Atom) * 7);
       targargs[n++] = XA_PIXMAP;
+      targargs[n++] = atoms[XmA_MOTIF_COMPOUND_STRING];
       targargs[n++] = atoms[XmAUTF8_STRING];
       targargs[n++] = atoms[XmA_COMPOUND_TEXT];
-      targargs[n++] = atoms[XmA_MOTIF_COMPOUND_STRING];
+      targargs[n++] = local;
+      targargs[n++] = atoms[XmATEXT];
       if (cw->container.drag_context != (Widget) NULL)
 	targargs[n++] = atoms[XmA_MOTIF_DRAG_OFFSET];
       value = (XtPointer)targargs;
@@ -5163,9 +5170,9 @@ ContainerConvertProc(
       type = XA_ATOM;
     } else if (cs->target == atoms[XmA_MOTIF_DRAG_OFFSET])
       {
-	short	*offset_args = (short *)XtCalloc(2,sizeof(short));
-	int	n = 0;
+	offset_args = (short *)XtCalloc(2, sizeof *offset_args);
 
+	n = 0;
 	value = (XtPointer)offset_args;
 	offset_args[n++] = cw->container.drag_offset_x;
 	offset_args[n++] = cw->container.drag_offset_y;
@@ -5192,23 +5199,17 @@ ContainerConvertProc(
 	}
   if (cs->target == XA_PIXMAP)
     {
-      Arg             wargs[10];
-      int             n,i;
-      Pixmap		item_pm;
-      Pixmap *        return_pm = (Pixmap *)
-	XtCalloc(item_count,sizeof(Pixmap));
-      int	      return_pm_count = 0;
+      return_pm = (Pixmap *)XtCalloc(item_count, sizeof *return_pm);
 
       for (i = 0; i < item_count; i++)
 	{
-	  n = 0;
 	  if (GetViewType(items[0]) == XmSMALL_ICON)
-	    XtSetArg(wargs[n],XmNsmallIconPixmap,&item_pm);
+	    XtSetArg(wargs[0],XmNsmallIconPixmap,&item_pm);
 	  else
-	    XtSetArg(wargs[n],XmNlargeIconPixmap,&item_pm);
-	  n++;
+	    XtSetArg(wargs[0],XmNlargeIconPixmap,&item_pm);
+
 	  item_pm = XmUNSPECIFIED_PIXMAP;
-	  XtGetValues(items[i],wargs,n);
+	  XtGetValues(items[i], wargs, 1);
 	  if (item_pm != XmUNSPECIFIED_PIXMAP)
 	    return_pm[return_pm_count++] = item_pm;
 	}
@@ -5216,52 +5217,38 @@ ContainerConvertProc(
       type = XA_PIXMAP;
       value = (XtPointer)return_pm;
       length = return_pm_count;
-    } else if ((cs->target == atoms[XmA_MOTIF_COMPOUND_STRING]) ||
-	       (cs->target == atoms[XmA_COMPOUND_TEXT]))
+    } else if (cs->target == atoms[XmA_MOTIF_COMPOUND_STRING] ||
+               cs->target == atoms[XmAUTF8_STRING]            ||
+               cs->target == atoms[XmA_COMPOUND_TEXT]         ||
+               cs->target == atoms[XmATEXT]                   ||
+               cs->target == local)
       {
-	Arg		wargs[10];
-	int		n,i;
-	XmString	item_xmstr;
-	XmString	return_xmstr = XmStringCreateLocalized("");
-
-	n = 0;
-	XtSetArg(wargs[n],XmNlabelString,&item_xmstr); n++;
+	sep = XmStringSeparatorCreate();
+	XtSetArg(wargs[0], XmNlabelString, &item_xmstr);
 	for (i = 0; i < item_count; i++)
 	  {
-	    /* CR 7669: Concatenate efficiently and free strings. */
 	    item_xmstr = NULL;
-	    XtGetValues(items[i],wargs,n);
+	    XtGetValues(items[i], wargs, 1);
 	    if (i > 0)
-	      return_xmstr = XmStringConcatAndFree(return_xmstr,
-						   XmStringSeparatorCreate());
+	      return_xmstr = XmStringConcatAndFree(return_xmstr, sep);
 	    return_xmstr = XmStringConcatAndFree(return_xmstr, item_xmstr);
 	  }
-	format = 8;
-	if (cs->target == atoms[XmA_MOTIF_COMPOUND_STRING])
-	  {
-	    type = atoms[XmA_MOTIF_COMPOUND_STRING];
-	    length = XmStringSerialize(return_xmstr, (unsigned char **)&value);
-	  }
-	else if (cs->target == atoms[XmA_COMPOUND_TEXT])
-	  {
-	    type = atoms[XmA_COMPOUND_TEXT];
-	    value = XmCvtXmStringToCT(return_xmstr);
-	    if (value != NULL)
-	    	length = strlen((char*) value);
-	    else
-	    	length = 0;
-	  }
-#if XM_UTF8
-	else if (cs->target == atoms[XmAUTF8_STRING])
-	  {
-	    type = atoms[XmAUTF8_STRING];
-	    value = XmCvtXmStringToUTF8String(return_xmstr);
-	    if (value != NULL)
-	    	length = strlen((char*) value);
-	    else
-	    	length = 0;
-	  }
-#endif
+	XmStringFree(sep);
+
+	format        = 8;
+	type          = cs->target;
+	prop.encoding = cs->target;
+	prop.format   = 8;
+	prop.value    = NULL;
+	prop.nitems   = 0;
+	value         = NULL;
+	length        = 0;
+
+	if (XmCvtXmStringToTextProperty(XtDisplayOfObject(wid), return_xmstr, &prop) == Success) {
+		value  = prop.value;
+		length = prop.nitems;
+	}
+
 	XmStringFree(return_xmstr);
       }
   if (items)

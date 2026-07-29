@@ -7375,27 +7375,28 @@ ListConvert(Widget w, XtPointer client_data,
 
   Atom atoms[XtNumber(atom_names)];
   Atom C_ENCODING = XmeGetEncodingAtom(w);
-  int target_count = 0;
-  int i;
+  int i, itemcount, *pos, target_count = 0;
   Atom type = None;
   XtPointer value = NULL;
   unsigned long size = 0;
   int format = 8;
   XmListWidget lw = (XmListWidget) w;
   XmListDragConvertStruct *ListDragConv = lw->list.drag_conv;
+  XmString *items;
+  XTextProperty prop;
 
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
   if (cs->target == atoms[XmATARGETS])
     {
-      Atom *targs = XmeStandardTargets(w, 5, &target_count);
+      Atom *targs = XmeStandardTargets(w, 7, &target_count);
 
       value = (XtPointer) targs;
       targs[target_count++] = atoms[XmA_MOTIF_COMPOUND_STRING];
+      targs[target_count++] = atoms[XmAUTF8_STRING];
       targs[target_count++] = atoms[XmACOMPOUND_TEXT];
       targs[target_count++] = atoms[XmATEXT];
-      targs[target_count++] = atoms[XmAUTF8_STRING];
       targs[target_count++] = C_ENCODING;
       if (XA_STRING != C_ENCODING)
 	targs[target_count++] = XA_STRING;
@@ -7406,11 +7407,12 @@ ListConvert(Widget w, XtPointer client_data,
   else if ((cs->target == atoms[XmA_MOTIF_EXPORT_TARGETS]) ||
 	   (cs->target == atoms[XmA_MOTIF_CLIPBOARD_TARGETS]))
     {
-      Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 5);
+      Atom *targs = (Atom *) XtMalloc(sizeof(Atom) * 7);
       int n = 0;
 
       value = (XtPointer) targs;
       targs[n++] = atoms[XmA_MOTIF_COMPOUND_STRING];
+      targs[n++] = atoms[XmAUTF8_STRING];
       targs[n++] = atoms[XmACOMPOUND_TEXT];
       targs[n++] = atoms[XmATEXT];
       targs[n++] = C_ENCODING;
@@ -7435,8 +7437,8 @@ ListConvert(Widget w, XtPointer client_data,
 
       if (cs->selection == atoms[XmA_MOTIF_DROP])
 	{
-	  int itemcount = ListDragConv->num_strings;
-	  XmString *items = ListDragConv->strings;
+	  itemcount = ListDragConv->num_strings;
+	  items     = ListDragConv->strings;
 
 	  concat = (itemcount ? XmStringCopy(items[0]) : NULL);
 	  for (i = 1; i < itemcount; i++) {
@@ -7447,9 +7449,9 @@ ListConvert(Widget w, XtPointer client_data,
       else
 	{
 	  /* The selectedItems array may contain extraneous entries. */
-	  int itemcount = lw->list.selectedPositionCount;
-	  XmString *items = lw->list.items;
-	  int *pos = lw->list.selectedPositions;
+	  itemcount = lw->list.selectedPositionCount;
+	  items     = lw->list.items;
+	  pos       = lw->list.selectedPositions;
 
 	  concat = (itemcount ? XmStringCopy(items[pos[0] - 1]) : NULL);
 	  for (i = 1; i < itemcount; i++) {
@@ -7459,83 +7461,15 @@ ListConvert(Widget w, XtPointer client_data,
 	  }
 	}
 
-      if (cs->target == atoms[XmACOMPOUND_TEXT] ||
-	  cs->target == C_ENCODING ||
-	  cs->target == XA_STRING ||
-	  cs->target == atoms[XmATEXT])
-	{
-	  if (concat != NULL)
-	    value = XmCvtXmStringToCT(concat);
-	  else
-	    value = NULL;
+	type          = cs->target;
+	prop.encoding = cs->target;
+	prop.format   = 8;
+	value         = NULL;
+	size          = 0;
 
-	  type = atoms[XmACOMPOUND_TEXT];
-
-	  if (value != NULL)
-	    size = strlen((char*) value);
-	  else
-	    size = 0;
-
-	  if (cs->target == XA_STRING)
-	    {
-	      XTextProperty tmp_prop;
-	      int ret_status;
-
-	      /* convert value to 8859.1 */
-	      ret_status = XmbTextListToTextProperty(XtDisplay(w),
-						     (char**) &value, 1,
-						     (XICCEncodingStyle)
-						     XStringStyle,
-						     &tmp_prop);
-	      XtFree((char*) value);
-	      if (ret_status == Success || ret_status > 0)
-		{
-		  value = (XtPointer) tmp_prop.value;
-		  type = XA_STRING;
-		  size = tmp_prop.nitems;
-		}
-	      else
-		{
-		  value = NULL;
-		  size = 0;
-		}
-
-	      /* If the target was TEXT then try and convert it.  If
-	       * fully converted then we'll pass it back in locale
-	       * text.  For locale text requests,  always pass
-	       * back the converted text */
-	    }
-	  else if ((cs->target == atoms[XmATEXT] || cs->target == C_ENCODING) &&
-		   (value != NULL))
-	    {
-	      char *cvt;
-	      Boolean success;
-	      cvt = _XmTextToLocaleText(w, value, type, format, size, &success);
-	      if ((cvt != NULL && success) || cs->target == C_ENCODING)
-		{
-		  if (! success && cvt != NULL)
-		    cs->flags |= XmCONVERTING_PARTIAL;
-		  XtFree((char*) value);
-		  value = cvt;
-		  type = C_ENCODING;
-		}
-	    }
-	}
-#if XM_UTF8
-      else if (cs->target == atoms[XmAUTF8_STRING])
-	{
-	    type = atoms[XmAUTF8_STRING];
-	    value = XmCvtXmStringToUTF8String(concat);
-	    if (value != NULL)
-	        size = strlen((char*) value);
-	    else
-	        size = 0;
-	}
-#endif
-      else
-	{
-	  size = XmStringSerialize(concat, (unsigned char **)&value);
-	  type = atoms[XmA_MOTIF_COMPOUND_STRING];
+	if (XmCvtXmStringToTextProperty(XtDisplayOfObject(w), concat, &prop) == Success) {
+		value = prop.value;
+		size  = prop.nitems;
 	}
 
       XmStringFree(concat);
