@@ -83,6 +83,9 @@ START_TEST(xmstring_to_compound_string)
 	unsigned char *serialized;
 	Atom _MOTIF_COMPOUND_STRING = XInternAtom(display, XmS_MOTIF_COMPOUND_STRING, False);
 
+	if (!XSupportsLocale())
+		return;
+
 	s   = XmStringCreateLocalized("test");
 	len = XmStringSerialize(s, &serialized);
 	memset(&prop, 0, sizeof prop);
@@ -106,6 +109,9 @@ START_TEST(xmstring_to_utf8_string)
 	XmString s;
 	XTextProperty prop;
 	Atom UTF8_STRING = XInternAtom(display, XmSUTF8_STRING, False);
+
+	if (!XSupportsLocale())
+		return;
 
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
@@ -134,6 +140,9 @@ START_TEST(xmstring_to_compound_text)
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74
 	};
 
+	if (!XSupportsLocale())
+		return;
+
 	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
@@ -156,6 +165,9 @@ START_TEST(xmstring_to_locale)
 	XmString s;
 	XTextProperty prop;
 
+	if (!XSupportsLocale())
+		return;
+
 	s = XmStringCreateLocalized("local");
 	memset(&prop, 0, sizeof prop);
 	prop.encoding = GetLocaleAtom(display);
@@ -176,6 +188,9 @@ START_TEST(xmstring_to_string)
 {
 	XmString s;
 	XTextProperty prop;
+
+	if (!XSupportsLocale())
+		return;
 
 	s = XmStringCreateLocalized("Carthago delenda est");
 	memset(&prop, 0, sizeof prop);
@@ -220,6 +235,9 @@ START_TEST(compound_string_to_xmstring)
 	unsigned char *serialized;
 	Atom _MOTIF_COMPOUND_STRING = XInternAtom(display, XmS_MOTIF_COMPOUND_STRING, False);
 
+	if (!XSupportsLocale())
+		return;
+
 	s   = XmStringCreateLocalized("test");
 	len = XmStringSerialize(s, &serialized);
 	memset(&prop, 0, sizeof prop);
@@ -242,6 +260,9 @@ START_TEST(utf8_string_to_xmstring)
 	XmString s, x;
 	XTextProperty prop;
 	Atom UTF8_STRING = XInternAtom(display, XmSUTF8_STRING, False);
+
+	if (!XSupportsLocale())
+		return;
 
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
@@ -270,6 +291,9 @@ START_TEST(compound_text_to_xmstring)
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74
 	};
 
+	if (!XSupportsLocale())
+		return;
+
 	COMPOUND_TEXT = XInternAtom(display, XmSCOMPOUND_TEXT, False);
 	s = XmStringGenerate("\xf0\x9d\x95\xa5\x65st", (XmStringTag)"UTF-8",
 	                     XmCHARSET_TEXT, NULL);
@@ -292,6 +316,9 @@ START_TEST(locale_to_xmstring)
 	XmString s, x;
 	XTextProperty prop;
 
+	if (!XSupportsLocale())
+		return;
+
 	s = XmStringCreateMultibyte("local", _MOTIF_DEFAULT_LOCALE);
 	memset(&prop, 0, sizeof prop);
 	prop.encoding = GetLocaleAtom(display);
@@ -312,6 +339,9 @@ START_TEST(string_to_xmstring)
 {
 	XmString s, x;
 	XTextProperty prop;
+
+	if (!XSupportsLocale())
+		return;
 
 	if (GetLocaleAtom(display) == XA_STRING)
 		s =  XmStringCreateMultibyte("Carthago delenda est", _MOTIF_DEFAULT_LOCALE);
@@ -378,6 +408,9 @@ START_TEST(xmstringtable_to_textprop_1)
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00
 	};
 
+	if (!XSupportsLocale())
+		return;
+
 	tbl    = (XmStringTable)XtCalloc(1, sizeof(XmString));
 	tbl[0] = XmStringGenerate("\xf0\x9d\x95\xa5\x65st",
 	                          (XmStringTag)"UTF-8", XmCHARSET_TEXT, NULL);
@@ -404,6 +437,9 @@ START_TEST(xmstringtable_to_textprop_2)
 		0x1b, 0x25, 0x47, 0xf0, 0x9d, 0x95, 0xa5,
 		0x1b, 0x25, 0x40, 0x65, 0x73, 0x74, 0x00
 	};
+
+	if (!XSupportsLocale())
+		return;
 
 	tbl    = (XmStringTable)XtCalloc(2, sizeof(XmString));
 	tbl[0] = XmStringGenerate("\xf0\x9d\x95\xa5\x65st",
@@ -492,6 +528,9 @@ START_TEST(compound_string_to_xmstringtable)
 	unsigned char *serialized;
 	Atom _MOTIF_COMPOUND_STRING = XInternAtom(display, XmS_MOTIF_COMPOUND_STRING, False);
 
+	if (!XSupportsLocale())
+		return;
+
 	s   = XmStringCreateLocalized("test");
 	len = XmStringSerialize(s, &serialized);
 	serialized = (unsigned char *)XtRealloc((XtPointer)serialized, len + len + 2);
@@ -528,6 +567,9 @@ START_TEST(locale_to_xmstringtable)
 	XTextProperty prop;
 	XmStringTable tbl = NULL;
 	unsigned char *tmp;
+
+	if (!XSupportsLocale())
+		return;
 
 	s   = XmStringCreateMultibyte("local", _MOTIF_DEFAULT_LOCALE);
 	tmp = XmStringUngenerate(s, NULL, XmMULTIBYTE_TEXT, XmMULTIBYTE_TEXT);
