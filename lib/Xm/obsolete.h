@@ -183,6 +183,21 @@ extern Atom XmInternAtom(Display *display, String name, Boolean only_if_exists);
 XM_ALTERNATIVE(Use XGetAtomName instead)
 extern String XmGetAtomName(Display *display, Atom atom);
 
+XM_ALTERNATIVE(Use XmStringUngenerate instead)
+extern char *XmCvtXmStringToUTF8String(XmString string);
+
+XM_ALTERNATIVE(Use XmCvtTextPropertyToXmString instead)
+extern XmString XmCvtCTToXmString(char *text);
+
+XM_ALTERNATIVE(Use XmCvtXmStringToTextProperty instead)
+extern char *XmCvtXmStringToCT(XmString string);
+
+XM_DEPRECATED
+extern char *XmRegisterSegmentEncoding(char *fontlist_tag, char *ct_encoding);
+
+XM_DEPRECATED
+extern char *XmMapSegmentEncoding(char *fontlist_tag);
+
 #ifdef _XmP_h
 /**
  * Obsolete private functions

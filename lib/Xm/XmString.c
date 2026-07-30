@@ -5217,9 +5217,7 @@ XmStringTag XmStringGetCharset(void)
 	if (locale.inited)
 		goto out;
 
-	/* Register XmSTRING_DEFAULT_CHARSET for compound text conversion. */
 	_XmStringSetLocaleTag(NULL);
-	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG);
 	locale.inited = True;
 
 out:
@@ -5241,7 +5239,6 @@ XmStringTag XmStringGetMultibyteCharset(void)
 
 	/* Register XmSTRING_DEFAULT_CHARSET for compound text conversion. */
 	_XmStringSetLocaleTag(NULL);
-	XmRegisterSegmentEncoding(XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG);
 	locale.inited = True;
 
 out:

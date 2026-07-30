@@ -37,9 +37,6 @@ extern "C" {
 /********    Private Function Declarations for ResConvert.c    ********/
 
 extern void _XmRegisterConverters( void ) ;
-extern Boolean _XmCvtXmStringToCT(
-                        XrmValue *from,
-                        XrmValue *to) ;
 /********    End Private Function Declarations    ********/
 
 #ifdef __cplusplus

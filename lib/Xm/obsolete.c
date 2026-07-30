@@ -100,3 +100,19 @@ void XmeSetWMShellTitle(XmString s, Widget shell)
 	_XmAppUnlock(app);
 }
 
+/************************************************************************
+ *
+ *  XmCvtXmStringToUTF8String
+ *	Convert an XmString to a compound utf8 string directly.
+ *	This is the public version of the resource converter and only
+ *	requires the XmString as an argument.
+ *
+ ************************************************************************/
+char *XmCvtXmStringToUTF8String(XmString string)
+{
+	if (!XmStringIsValid(string))
+		return NULL;
+
+	return (char *)XmStringUngenerate(string, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+}
+

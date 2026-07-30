@@ -1447,13 +1447,6 @@ extern Boolean XmWidgetGetDisplayRect(
 
 /********    Public Function Declarations for ResConvert.c    ********/
 
-extern char * XmRegisterSegmentEncoding(
-                        char *fontlist_tag,
-                        char *ct_encoding) ;
-extern char * XmMapSegmentEncoding(
-                        char *fontlist_tag) ;
-extern XmString XmCvtCTToXmString(
-                        char *text) ;
 extern Boolean XmCvtTextToXmString(
                         Display *display,
                         XrmValuePtr args,
@@ -1461,8 +1454,6 @@ extern Boolean XmCvtTextToXmString(
                         XrmValue *from_val,
                         XrmValue *to_val,
                         XtPointer *converter_data) ;
-extern char * XmCvtXmStringToCT(
-                        XmString string) ;
 extern Boolean XmCvtXmStringToText(
                         Display *display,
                         XrmValuePtr args,
@@ -1470,7 +1461,6 @@ extern Boolean XmCvtXmStringToText(
                         XrmValue *from_val,
                         XrmValue *to_val,
                         XtPointer *converter_data) ;
-extern char *XmCvtXmStringToUTF8String(XmString string);
 /********    End Public Function Declarations    ********/
 
 /********    Public Function Declarations for ResInd.c    ********/

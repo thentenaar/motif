@@ -26,8 +26,6 @@
 #include <config.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <ctype.h>
@@ -40,12 +38,22 @@
 #include "XmStringI.h"
 #include "ResConverI.h"
 
+/**
+ * This entire file is obsolete, so no harm in allowing deprecated
+ * declarations here.
+ */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #define MSG8    _XmMMsgResConvert_0007
 #define MSG9    _XmMMsgResConvert_0008
 #define MSG10   _XmMMsgResConvert_0009
 #define MSG11   _XmMMsgResConvert_0010
-#define MSG13   _XmMMsgResConvert_0012
-#define MSG14   _XmMMsgResConvert_0013
 
 typedef unsigned char Octet;
 typedef Octet *OctetPtr;
@@ -305,7 +313,9 @@ static SegmentEncoding _loc_encoding_registry =
 { _MOTIF_DEFAULT_LOCALE, XmFONTLIST_DEFAULT_TAG, &_mit_ISO8859_1_registry};
 static SegmentEncoding _encoding_registry =
 { XmFONTLIST_DEFAULT_TAG, XmFONTLIST_DEFAULT_TAG, &_loc_encoding_registry};
-static SegmentEncoding *_encoding_registry_ptr = &_encoding_registry;
+static SegmentEncoding __encoding_registry =
+{ XmSTRING_DEFAULT_CHARSET, XmFONTLIST_DEFAULT_TAG, &_encoding_registry};
+static SegmentEncoding *_encoding_registry_ptr = &__encoding_registry;
 
 
 /********    Static Function Declarations    ********/
@@ -324,9 +334,6 @@ static Boolean processESCHack(
 static Boolean processExtendedSegmentsHack(
                         ct_context *ctx,
                         Octet final) ;
-static Boolean cvtTextToXmString(
-                        XrmValue *from,
-                        XrmValue *to) ;
 static void outputXmString(
                         ct_context *ctx,
                         Boolean separator) ;
@@ -962,294 +969,6 @@ processExtendedSegmentsHack(
     return(ok);
 }
 
-
-/************************************************************************
- *
- *  XmCvtTextToXmString
- *	Convert a compound text string to a XmString.
- *
- ************************************************************************/
-Boolean
-XmCvtTextToXmString(
-        Display *display,
-        XrmValuePtr args,	/* unused */
-        Cardinal *num_args,	/* unused */
-        XrmValue *from_val,
-        XrmValue *to_val,
-        XtPointer *converter_data ) /* unused */
-{
-    Boolean		ok;
-
-    if (from_val->addr == NULL)
-	return( FALSE);
-
-    ok = cvtTextToXmString(from_val, to_val);
-
-    if (!ok)
-    {
-	to_val->addr = NULL;
-	to_val->size = 0;
-	XtAppWarningMsg(XtDisplayToApplicationContext(display),
-			"conversionError","compoundText", "XtToolkitError",
-			MSG13, (String *)NULL, (Cardinal *)NULL);
-    }
-    return(ok);
-}
-
-
-static Boolean
-cvtTextToXmString(
-        XrmValue *from,
-        XrmValue *to )
-{
-    ct_context	    *ctx;		/* compound text context block */
-    Boolean	    ok = True;
-    Octet	    c;
-
-    ctx = (ct_context *) XtMalloc(sizeof(ct_context));
-
-/* initialize the context block */
-    ctx->octet = (OctetPtr)from->addr;
-    ctx->lastoctet = ctx->octet + from->size;
-    ctx->flags.dircs = False;
-    ctx->flags.gchar = False;
-    ctx->flags.ignext = False;
-    ctx->flags.gl = False;
-    ctx->flags.text = False;
-    ctx->dirstacksize = 8;
-    ctx->dirstack = (ct_Direction *)
-            XtMalloc(ctx->dirstacksize*sizeof(ct_Direction));
-/*
- * Define XLIB_HANDLES_DIRECTION if vendor's X library knows how
- * to deal with direction control sequences in CT. Otherwise
- * no such ones will be output if there are no Rtol segments
- * in the XmString. Note that the MIT sample implementation
- * does not deal with direction control sequences...
- */
-#ifdef XLIB_HANDLES_DIRECTION
-    ctx->dirstack[0] = ct_Dir_StackEmpty;
-    ctx->dirsp = 0;
-#else
-    ctx->dirstack[0] = ct_Dir_StackEmpty;
-    ctx->dirstack[1] = ct_Dir_LeftToRight;
-    ctx->dirsp = 1;
-#endif
-    ctx->encoding = NULL;
-    ctx->encodinglen = 0;
-    ctx->item = NULL;
-    ctx->itemlen = 0;
-    ctx->version = CTVERSION;
-    ctx->gl_charset = CS_ISO8859_1;
-    ctx->gl_charset_size = 94;
-    ctx->gl_octets_per_char = 1;
-    ctx->gr_charset = CS_ISO8859_1;
-    ctx->gr_charset_size = 96;
-    ctx->gr_octets_per_char = 1;
-    ctx->xmstring = NULL;
-    ctx->xmsep = NULL;
-    ctx->xmtab = NULL;
-
-/*
-** check for version/ignore extensions sequence (must be first if present)
-**  Format is:	ESC 02/03 V 03/00   ignoring extensions is OK
-**		ESC 02/03 V 03/01   ignoring extensions is not OK
-**  where V is in the range 02/00 thru 02/15 and represents versions 1 thru 16
-*/
-    if (    (from->size >= 4)
-	&&  (ctx->octet[0] == ESC)
-	&&  (ctx->octet[1] == 0x23)
-	&&  (_IsInColumn2(ctx->octet[2])
-	&&  ((ctx->octet[3] == 0x30) || ctx->octet[3] == 0x31))
-       ) {
-	ctx->version = ctx->octet[2] - 0x1f;	/* 0x20-0x2f => version 1-16 */
-	if (ctx->octet[3] == 0x30)		/* 0x30 == can ignore extensions */
-	    ctx->flags.ignext = True;
-	ctx->octet += 4;			/* advance ptr to next seq */
-    }
-
-
-    while (ctx->octet < ctx->lastoctet) {
-    switch (*ctx->octet) {			/* look at next octet in seq */
-	case ESC:
-	    /* %%% TEMP
-	    ** if we have any text to output, do it
-	    ** this section needs to be optimized so that it handles
-	    ** paired character sets without outputting a new segment.
-	    */
-	    if (ctx->flags.text) {
-		outputXmString(ctx, False);	/* with no separator */
-	    }
-	    ctx->flags.text = False;
-	    ctx->item = ctx->octet;		/* remember start of this item */
-	    ctx->itemlen = 0;
-
-	    ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-
-	    /* scan for final char */
-	    while (	(ctx->octet != ctx->lastoctet)
-		     && (_IsInColumn2(*ctx->octet)) ) {
-		ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-	    }
-
-	    if (ctx->octet == ctx->lastoctet) {	/* if nothing after this, it's an error */
-		ok = False;
-		break;
-	    }
-
-	    c = *ctx->octet;			/* get next char in seq */
-	    ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-	    if (_IsValidESCFinal(c)) {
-		/* we have a valid ESC sequence - handle it */
-		ok = processESC(ctx, c);
-	    } else {
-		ok = False;
-	    }
-	    if (ok) {
-	      ctx->encoding = ctx->item;
-	      ctx->encodinglen = ctx->itemlen;
-	    }
-	    break;
-
-	case CSI:
-	    /*
-	    ** CSI format is:	CSI P I F   where
-	    **	    03/00 <= P <= 03/15
-	    **	    02/00 <= I <= 02/15
-	    **	    04/00 <= F <= 07/14
-	    */
-	    /* %%% TEMP
-	    ** if we have any text to output, do it
-	    ** This may need optimization.
-	    */
-	    if (ctx->flags.text) {
-		/* check whether we have a specific direction set */
-                if (((ctx->octet[1] == 0x31) && (ctx->octet[2] == 0x5d))||
-                    ((ctx->octet[1] == 0x32) && (ctx->octet[2] == 0x5d))||
-                    (ctx->octet[1] == 0x5d))
-                        outputXmString(ctx, False);    /* without a separator*/
-                else
-			outputXmString(ctx, True);	/* with a separator */
-	    }
-	    ctx->flags.text = False;
-	    ctx->item = ctx->octet;		/* remember start of this item */
-	    ctx->itemlen = 0;
-
-	    ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-
-	    /* scan for final char */
-	    while (	(ctx->octet != ctx->lastoctet)
-		    &&	_IsInColumn3(*ctx->octet)  ) {
-		ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-	    }
-	    while (	(ctx->octet != ctx->lastoctet)
-		    && _IsInColumn2(*ctx->octet)   ) {
-		ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-	    }
-
-	    /* if nothing after this, it's an error */
-	    if (ctx->octet == ctx->lastoctet) {
-		ok = False;
-		break;
-	    }
-
-	    c = *ctx->octet;			/* get next char in seq */
-	    ctx->octet++; ctx->itemlen++;	/* advance ptr to next char */
-	    if (_IsValidCSIFinal(c)) {
-		/* we have a valid CSI sequence - handle it */
-		ok = processCSI(ctx, c);
-	    } else {
-		ok = False;
-	    }
-	    break;
-
-	case NL:			    /* new line */
-	    /* if we have any text to output, do it */
-	    if (ctx->flags.text) {
-	      outputXmString(ctx, True);	/* with a separator */
-	      ctx->flags.text = False;
-	    } else {
-	      if (ctx->xmsep == NULL) {
-		ctx->xmsep = XmStringSeparatorCreate();
-	      }
-	      ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
-						    XmStringCopy(ctx->xmsep));
-	    }
-	    ctx->octet++;			/* advance ptr to next char */
-	    break;
-
-	case HT:
-	    /* if we have any text to output, do it */
-	    if (ctx->flags.text) {
-	      outputXmString(ctx, False);
-	      ctx->flags.text = False;
-	    }
-	    if (ctx->xmtab == NULL) {
-	      ctx->xmtab = XmStringComponentCreate(XmSTRING_COMPONENT_TAB, 0,
-						   NULL);
-	    }
-	    ctx->xmstring = XmStringConcatAndFree(ctx->xmstring,
-						  XmStringCopy(ctx->xmtab));
-	    ctx->octet++;			/* advance ptr to next char */
-	    break;
-
-	default:			    /* just 'normal' text */
-	    ctx->item = ctx->octet;		/* remember start of this item */
-	    ctx->itemlen = 0;
-	    ctx->flags.text = True;
-	    while (ctx->octet < ctx->lastoctet) {
-		c = *ctx->octet;
-		if ((c == ESC) || (c == CSI) || (c == NL) || (c == HT)) {
-		    break;
-		}
-		if (	(_IsInC0Set(c) && (!_IsValidC0(ctx, c)))
-		    ||	(_IsInC1Set(c) && (!_IsValidC1(ctx, c))) ) {
-		    ok = False;
-		    break;
-		}
-		ctx->flags.gchar = True;	/* We have a character! */
-
-                /*
-                 *  We should look at the actual character to
-                 *  decide whether it's a gl or gr character.
-                 *
-                 *  We'll hit the problem if we get a CT that
-                 *  isn't generated by Motif.
-                 */
-                if (isascii((unsigned char)c)) {
-		    ctx->octet += ctx->gl_octets_per_char;
-		    ctx->itemlen += ctx->gl_octets_per_char;
-		} else {
-		    ctx->octet += ctx->gr_octets_per_char;
-		    ctx->itemlen += ctx->gr_octets_per_char;
-		}
-		if (ctx->octet > ctx->lastoctet) {
-		    ok = False;
-		    break;
-		}
-	    } /* end while */
-	    break;
-	} /* end switch */
-    if (!ok) break;
-    } /* end while */
-
-/* if we have any text left to output, do it */
-    if (ctx->flags.text) {
-	outputXmString(ctx, False);		/* with no separator */
-    }
-
-    XtFree((char *) ctx->dirstack);
-    if (ctx->xmstring != NULL) {
-	to->addr = (char *) ctx->xmstring;
-	to->size = sizeof(XmString);
-    }
-    if (ctx->xmsep != NULL) XmStringFree(ctx->xmsep);
-    if (ctx->xmtab != NULL) XmStringFree(ctx->xmtab);
-    XtFree((char *) ctx);
-
-    return (ok);
-}
-
-
 static char **
 cvtCTsegment(ct_context *ctx,
 	     OctetPtr item,
@@ -1856,22 +1575,6 @@ XmCvtXmStringToCT(
   return( (char *) to_val.addr) ;
   }
 
-/************************************************************************
- *
- *  XmCvtXmStringToUTF8String
- *	Convert an XmString to a compound utf8 string directly.
- *	This is the public version of the resource converter and only
- *	requires the XmString as an argument.
- *
- ************************************************************************/
-char *XmCvtXmStringToUTF8String(XmString string)
-{
-	if (!XmStringIsValid(string))
-		return NULL;
-
-	return (char *)XmStringUngenerate(string, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
-}
-
 /***************************************************************************
  *									   *
  * _XmCvtXmStringToCT - public wrapper for the widgets to use.	  	   *
@@ -1884,37 +1587,6 @@ _XmCvtXmStringToCT(
         XrmValue *to )
 {
     return (cvtXmStringToText( from, to ));
-}
-
-/************************************************************************
- *
- *  XmCvtXmStringToText
- *	Convert an XmString to an ASCII string.
- *
- ************************************************************************/
-Boolean
-XmCvtXmStringToText(
-        Display *display,
-        XrmValuePtr args,	/* unused */
-        Cardinal *num_args,	/* unused */
-        XrmValue *from_val,
-        XrmValue *to_val,
-        XtPointer *converter_data ) /* unused */
-{
-    Boolean		ok;
-
-    if (from_val->addr == NULL)
-	return( FALSE) ;
-
-    ok = cvtXmStringToText(from_val, to_val);
-
-    if (!ok)
-    {
-	XtAppWarningMsg(XtDisplayToApplicationContext(display),
-			"conversionError","compoundText", "XtToolkitError",
-			MSG14, (String *)NULL, (Cardinal *)NULL);
-    }
-    return(ok);
 }
 
 /************************************************************************
@@ -2345,4 +2017,10 @@ ctextConcat(
 	str1[str1len+str2len] = EOS;
 	return(str1);
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 

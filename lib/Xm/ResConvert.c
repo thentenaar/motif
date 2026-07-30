@@ -53,6 +53,8 @@ static char rcsid[] = "$TOG: ResConvert.c /main/29 1999/05/18 19:19:39 mgreess $
 #define MSG6    _XmMMsgResConvert_0005
 #define MSG7    _XmMMsgResConvert_0006
 #define MSG12   _XmMMsgResConvert_0011
+#define MSG13   _XmMMsgResConvert_0012
+#define MSG14   _XmMMsgResConvert_0013
 
 /********    Static Function Declarations    ********/
 static char *_Xmstrtok(char *s, const char *delim, char **saveptr);
@@ -2860,5 +2862,70 @@ static void CvtStringToCursorDestroy(XtAppContext app, XrmValue *to,
 	}
 
 	XFreeCursor(*(Display **)args[0].addr, *(Cursor *)to->addr);
+}
+
+/**
+ * Compound Text -> XmString
+ */
+Boolean XmCvtTextToXmString(Display *d, XrmValuePtr args, Cardinal *num_args,
+                            XrmValue *from, XrmValue *to, XtPointer *data)
+{
+	XmString s;
+	XTextProperty prop;
+	Atom COMPOUND_TEXT = XInternAtom(d, XmSCOMPOUND_TEXT, False);
+
+	(void)args;
+	(void)num_args;
+	(void)data;
+	if (!from || !from->addr || !from->size || !to)
+		return False;
+
+	prop.format   = 8;
+	prop.encoding = COMPOUND_TEXT;
+	prop.value    = (unsigned char *)from->addr;
+	prop.nitems   = from->size;
+	s = XmCvtTextPropertyToXmString(d, &prop);
+
+	if (s) {
+		to->addr = (XPointer)s;
+		to->size = sizeof(XmString);
+		return True;
+	}
+
+	XtAppWarningMsg(XtDisplayToApplicationContext(d),
+	                "conversionError","compoundText", "XtToolkitError",
+	                MSG13, NULL, NULL);
+	return False;
+}
+
+/**
+ * XmString -> Compound Text
+ */
+Boolean XmCvtXmStringToText(Display *d, XrmValuePtr args, Cardinal *num_args,
+                            XrmValue *from, XrmValue *to, XtPointer *data)
+{
+	XmString s;
+	XTextProperty prop;
+	Atom COMPOUND_TEXT = XInternAtom(d, XmSCOMPOUND_TEXT, False);
+
+	(void)args;
+	(void)num_args;
+	(void)data;
+	if (!from || !from->addr || !from->size || !to)
+		return False;
+
+	prop.format   = 8;
+	prop.encoding = COMPOUND_TEXT;
+
+	if (XmCvtXmStringToTextProperty(d, (XmString)from->addr, &prop) == Success) {
+		to->addr = (XPointer)prop.value;
+		to->size = prop.nitems;
+		return True;
+	}
+
+	XtAppWarningMsg(XtDisplayToApplicationContext(d),
+	                "conversionError","compoundText", "XtToolkitError",
+	                MSG14, NULL, NULL);
+	return False;
 }
 
