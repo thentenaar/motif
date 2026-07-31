@@ -4430,7 +4430,7 @@ Boolean HandleMarqueeKeyPress (WmScreenData *pSD, XEvent *pev)
 	  keyMult++;
     }
 
-    keysym = XKeycodeToKeysym (DISPLAY, pev->xkey.keycode, 0);
+    keysym = WmKeycodeToKeysym(DISPLAY, pev->xkey.keycode);
     control = (pev->xkey.state & ControlMask) != 0;
 
     switch (keysym) {
