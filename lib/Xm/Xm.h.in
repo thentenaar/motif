@@ -46,11 +46,6 @@
  */
 #undef XM_WITH_XINERAMA
 
-/**
- * 1 if Motif was built with UTF-8 support
- */
-#undef XM_UTF8
-
 #include <wchar.h>
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>

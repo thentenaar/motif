@@ -259,12 +259,6 @@ AC_SUBST([XM_MINOR], [_XM_MINOR])
 AC_SUBST([XM_PATCH], [_XM_PATCH])
 
 AC_DEFINE_UNQUOTED(
-	[XM_UTF8],
-	$(test "x$enable_utf8" != "xyes"; echo $?),
-	[1 if Motif was built with UTF8 Support]
-)
-
-AC_DEFINE_UNQUOTED(
 	[USE_XFT],
 	$(test "x$with_xft" != "xyes" ; echo $?),
 	[1 if Motif was built with Xft support]

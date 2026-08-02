@@ -3,6 +3,7 @@ Motif
 
 ![Build Status](https://github.com/thentenaar/motif/actions/workflows/build.yml/badge.svg?branch=master)
 ![IRC Channel](https://img.shields.io/badge/irc.oftc.net-%23motif-blue)
+![IRC Channel](https://img.shields.io/badge/irc.libera.chat-%23motif-blue)
 
 ## Action Shots
 
@@ -47,40 +48,27 @@ few that depend on running under mwm.
 ## Running the Tests
 
 The tests require [check](https://github.com/libcheck/check) to be
-installed, and can be run by:
+installed, and an X server to be running, and can be run by:
 ```
 % ./configure --enable-tests && make check
 ```
 
 ## Notable Changes
 
+- Basic Unicode support around ``XmString``.
 - Support for Xcursor and loading cursors from SVG/PNG files
 - Initial support for Xrandr / Xinerama (Xrandr preferred)
-- With ``XPRINT`` being long dead, and no-one using it, the PrintShell has been removed
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
 - Mesa's [GL drawingarea](https://gitlab.freedesktop.org/mesa/glw) widget has been included,
   and may be built by specifying ``--enable-glw``.
-- The autotools build system has been updated
+- JPEG, PNG, Xft, and Xrandr support is enabled by default if present at build-time.
+  Specify ``--without-jpeg``, etc. to disable them.
 - The following macros that were previously exposed in ``Xm.h`` have been
 renamed, and will evaluate to 1 if enabled, 0 if disabled:
 ```
-    - JPEG_SUPPORTED     -> XM_WITH_JPEG
-    - PNG_SUPPORTED      -> XM_WITH_PNG
-    - UTF8_SUPPORTED     -> XM_UTF8
+    - JPEG_SUPPORTED -> XM_WITH_JPEG
+    - PNG_SUPPORTED  -> XM_WITH_PNG
 ```
-
-- The ``XM_MSGCAT`` macro was added, to signify that Motif was built with
-support for X/Open message catalogs.
-- JPEG, PNG, Xft, and Xrandr support is enabled by default if present at build-time.
-  Specify ``--without-jpeg``, etc. to disable them.
-- Motif's editres implementation has been removed, so that the updated version
-  in libXmu >= 1.3.0 can be used instead. Editres itself will require [this](https://gitlab.freedesktop.org/xorg/app/editres/-/merge_requests/7.diff)
-  patch.
-- ``XmCommandGetChild()`` is deprecated in favor of ``XtNameToWidget`` like the other ``*GetChild()`` functions
-- The demos have been split out from the ``all`` make target
-- Various bugs have been fixed
-- Tons (probably >= 10k lines) of dead code pruned
-
 ## TODO
 
 - Continued fixes and improvements
