@@ -1,0 +1,30 @@
+.TH XMSTRINGLEN 3 2026-01-27 "Motif 2.5.0"
+.SH NAME
+XmStringLen - Obtain the length (in characters) of a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBsize_t XmStringLen\fR(\fBconst XmString\fR s);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringLen\fP yields the number of characters in the given string.
+Separator and tab components count for one character each. Other
+non-text components have no length.
+
+.IP "\fIs\fP" 12
+\fBXmString\fP to determine the length of.
+
+.SH RETURN VALUE
+Returns the number of characters in the given string, or zero if the
+string is invalid or empty.
+
+.SH SEE ALSO
+\fBXmStringByteStreamLength\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

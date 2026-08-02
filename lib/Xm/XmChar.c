@@ -393,8 +393,7 @@ again:
  * Canonically normalize a series of codepoints.
  *
  * Returns a newly-allocated buffer containing the normalized form of
- * the codepoints from \a buf, with \a processed being set to the number
- * of codepoints processed, and \a len_out being set to the number of
+ * the codepoints from \a buf, with \a len_out being set to the number of
  * codepoints written to the resultant buffer. NULL will be returned if
  * the input parameters are invalid.
  *

@@ -1,0 +1,26 @@
+.TH XMCODEPOINTISWORDBOUNDARY 3 2026-07-20 "Motif 2.5.3"
+.SH NAME
+XmCodepointIsWordBoundary - Determine if two codepoints comprise a word
+boundary
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBBoolean XmCodepointIsWordBoundary\fR(\fBXmCodepoint\fR a,
+\fB                                 \fR \fBXmCodepoint\fR b);
+.fi
+
+.SH DESCRIPTION
+Evaluates the two given codepoints (presuming \fIa\fP is before
+\fIb\fP) to determine if a word boundary exists between them. To determine
+whether a word boundary exists, the Unicode TR29 default rules are applied.
+
+.SH RETURN VALUE
+Returns \fBTrue\fP if a word boundary exists between \fIa\fP and \fIb\fP,
+\fBFalse\fP otherwise.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

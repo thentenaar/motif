@@ -1,0 +1,36 @@
+.TH XMSTRINGINSERT 3 2026-01-27 "Motif 2.5.0"
+.SH NAME
+XmStringInsert - Insert one compound string into another
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringInsert\fR(\fBconst XmString\fR s, \fBXmTextPosition\fR pos,
+\fB                       \fR \fBconst XmString\fR addition);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringInsert\fR inserts the \fIaddition\fR into the subject string at
+the given position. If the position is zero, the \fIaddition\fR is
+effectively prepended to \fIs\fR. If the position is at the end of the
+string, the operation becomes an append.
+
+.IP "\fIs\fP" 12
+Subject \fBXmString\fR.
+.IP "\fIpos\fP" 12
+Position at which to perform the insertion.
+.IP "\fIaddition\fP" 12
+\fBXmString\fR to be inserted.
+
+.SH RETURN VALUE
+Returns a newly-constructed \fBXmString\fR containing the value of \fIs\fR
+post-insertion.
+
+.SH SEE ALSO
+\fBXmStringReplace\fR(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -1,0 +1,24 @@
+.TH XMCHARLEN 3 2026-07-02 "Motif 2.5.3"
+.SH NAME
+XmCharLen - Get the length of a XmChar
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBunsigned int XmCharLen\fR(\fBconst XmChar\fR c);
+.fi
+
+.SH DESCRIPTION
+Get the length (in bytes) of the given \fBXmChar\fP.
+
+.IP "\fIc\fP" 12
+\fBXmChar\fP to get the length of.
+
+.SH RETURN VALUE
+Returns the number of bytes the given UTF-8 character is composed of.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

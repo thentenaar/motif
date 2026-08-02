@@ -25,6 +25,7 @@
 
 #include <stddef.h>
 #include <limits.h>
+#include <X11/Intrinsic.h>
 
 /* A non-character to represent invalid codepoints */
 #define XM_INVALID_CODEPOINT 0xfffd
@@ -68,11 +69,16 @@ XmCodepoint XmCharToCodepoint(const XmChar c);
 XmChar XmCodepointToChar(XmCodepoint cp);
 
 /**
+ * Determine whether a word boundary exists between the two
+ * given codepoints based on the tr29 default rules.
+ */
+Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b);
+
+/**
  * Canonically normalize a series of codepoints.
  *
  * Returns a newly-allocated buffer containing the normalized form of
- * the codepoints from \a buf, with \a processed being set to the number
- * of codepoints processed, and \a len_out being set to the number of
+ * the codepoints from \a buf, with \a len_out being set to the number of
  * codepoints written to the resultant buffer. NULL will be returned if
  * the input parameters are invalid.
  *

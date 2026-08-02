@@ -1,0 +1,37 @@
+.TH XMSTRINGNORMALIZE 3 2026-07-25 "Motif 2.5.3"
+.SH NAME
+XmStringNormalize - Apply Unicode normalization to a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringNormalize\fR(\fBconst XmString\fR s,
+\fB                          \fR \fBenum XmCodepointNormalForm\fR form);
+.fi
+
+.SH DESCRIPTION
+Canonically normalize a \fBXmString\fP. Note that
+\fBXM_CODEPOINT_NORM_NFC\fP will apply NFD normalization as a
+prerequisite for NFC normalization.
+
+Normalization is applied to each text segment in the compound string
+individually, to ensure that inter-segment property changes (e.g., render
+tags) are respected.
+
+.IP "\fIs\fP" 12
+\fBXmString\fP to normalize.
+.IP "\fIform\fP" 12
+Unicode normal form (one of \fBXM_CODEPOINT_NORM_NFC\fP or
+\fBXM_CODEPOINT_NORM_NFD\fP)
+
+.SH RETURN VALUE
+Returns a newly-allocated \fBXmString\fP with the requested normalization
+applied. If the given string is empty, and empty string is returned.
+NULL is returned if invalid parameters are passed. The returned
+\fBXmString\fP must be freed with \fBXmStringFree\fP().
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

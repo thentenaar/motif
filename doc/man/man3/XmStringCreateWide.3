@@ -1,0 +1,30 @@
+.TH XMSTRINGCREATEWIDE 3 2026-01-09 "Motif 2.5.0"
+.SH NAME
+XmStringCreateWide - Create a compound string from wide text
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringCreateWide\fR(\fBwchar_t *\fRtext);
+.fi
+
+.SH DESCRIPTION
+This routine generates a compound string from wide (\fBwchar_t\fP) text,
+and is equivalent to calling \fBXmStringGenerate\fP with a \fItype\fP of
+\fBXmWIDECHAR_TEXT\fP.
+
+.IP "\fItext\fP" 12
+Wide text from which to construct the compound string.
+
+.SH RETURN VALUE
+A newly-allocated \fBXmString\fP containing the provided wide text.
+
+.SH SEE ALSO
+\fBXmStringCreateLocalized\fP(3), \fBXmStringCreateMultibyte\fP(3),
+\fBXmStringCreate\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

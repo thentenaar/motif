@@ -1,0 +1,33 @@
+.TH XMSTRINGSUBSTR 3 2026-01-27 "Motif 2.5.0"
+.SH NAME
+XmStringSubstr - Get a substring of a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringSubstr\fR(\fBconst XmString\fR s, \fBXmTextPosition\fR pos,
+\fB                       \fR \fBsize_t\fR length);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringSubstr\fP returns a substring of \fIs\fP beginning at the
+given position, with the given length.
+
+.IP "\fIs\fP" 12
+Subject \fBXmString\fP.
+.IP "\fIpos\fP" 12
+Position from which to take the substring.
+.IP "\fIlength\fP" 12
+Number of characters to extract.
+
+.SH RETURN VALUE
+Returns a newly-constructed \fBXmString\fP consisting of the requested
+portion of \fIs\fP. If \fIlength\fP is zero or beyond the end of \fIs\fP,
+or \fIs\fP is empty, NULL is returned. The substring may be shorter than
+the requested length if \fIs\fP lacks the full range.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -1,0 +1,36 @@
+.TH XMCVTTEXTPROPERTYTOXMSTRING 3 2026-07-26 "Motif 2.5.3"
+.SH NAME
+XmCvtTextPropertyToXmString - Convert a XTextProperty to XmString
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmCvtTextPropertyToXmString\fR(\fBDisplay *\fRdisplay,
+\fB                                    \fR \fBXTextProperty *\fRprop);
+.fi
+
+.SH DESCRIPTION
+Converts the given \fBXTextProperty\fP to \fBXmString\fP, according to
+the \fIencoding\fP \fBAtom\fP set on the property.
+
+.IP "\fIdisplay\fP" 12
+X Display.
+.IP "\fIprop\fP" 12
+Text property to convert.
+
+.SH RETURN VALUE
+A new \fBXmString\fP with the converted text from the given text
+property. NULL is returned if the text property could not be converted,
+or if invalid parameters were given. The resulting value must be freed
+with \fBXmStringFree\fP().
+
+.SH SEE ALSO
+\fBXmCvtXmStringToTextProperty\fP(3),
+\fBXmCvtTextPropertyToXmStringTable\fP(3),
+\fBXutf8TextProperyToTextList\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

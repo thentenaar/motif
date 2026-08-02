@@ -1,0 +1,38 @@
+.TH XMSTRINGFIND 3 2026-07-23 "Motif 2.5.3"
+.SH NAME
+XmStringFind - Find a string within a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmTextPosition XmStringFind\fR(\fBconst XmString\fR s,
+\fB                           \fR \fBconst XmString\fR needle,
+\fB                           \fR \fBXmTextPosition\fR start);
+.fi
+
+.SH DESCRIPTION
+Search for \fIneedle\fP in \fIs\fP starting at the requested start
+position.
+\fBXmStringUngenerate\fP calls \fBXmStringUnparse\fP with a default
+parse table, converting the compound string into a simple string of
+the chosen type. Text is selected by \fItag\fP and \fItext_type\fP,
+and converted to the chosen \fIoutput_type\fP. The inner call to
+\fBXmStringUnparse\fP happens with \fBXmOUTPUT_ALL\fP.
+
+.IP "\fIs\fP" 12
+Subject \fBXmString\fP.
+.IP "\fIneedle\fP" 12
+String to search for.
+.IP "\fIstart\fP" 12
+Starting position within \fIs\fP.
+
+.SH RETURN VALUE
+The position of \fIneedle\fP within \fIs\fP. -1 is returned if \fIs\fP
+is empty, \fIneedle\fP is empty, \fIstart\fP is less than zero, or if
+\fIneedle\fP could not be found in \fIs\fP.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

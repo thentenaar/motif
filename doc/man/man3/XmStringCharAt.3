@@ -1,0 +1,29 @@
+.TH XMSTRINGCHARAT 3 2026-07-07 "Motif 2.5.3"
+.SH NAME
+XmStringCharAt - Extract a single UTF-8 character from a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmChar XmStringCharAt\fR(\fBconst XmString\fR string,
+\fB                     \fR \fBXmTextPosition\fR pos);
+.fi
+
+.SH DESCRIPTION
+Extract a single UTF-8 character from a compound string at a given
+position.
+
+.IP "\fIstring\fP" 12
+Subject \fBXmString\fP.
+.IP "\fIpos\fP" 12
+Position at which to extract the character.
+
+.SH RETURN VALUE
+Returns a newly-allocated \fBXmChar\fP or NULL if invalid parameters
+were given. The resultant value must be freed with \fBXtFree\fP().
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

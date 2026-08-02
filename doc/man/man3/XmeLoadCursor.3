@@ -1,0 +1,50 @@
+.TH XMELOADCURSOR 3 2025-12-27 "Motif 2.4.0"
+.SH NAME
+XmeLoadCursor, XmeLoadCursorImage - Load a \fBCursor\fR
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBCursor XmeLoadCursor\fR(\fBDisplay *\fRdisplay, \fBScreen *\fRscreen,
+\fB                    \fR \fBconst char *\fRname);
+\fBCursor XmeLoadCursorImage\fR(\fBDisplay *\fRdisplay, \fBScreen *\fRscreen,
+\fB                         \fR \fBconst char *\fRname, \fBint\fR hot_x,
+\fB                         \fR \fBint\fR hot_y);
+.fi
+
+.SH DESCRIPTION
+\fBXmeLoadCursor\fP loads the cursor specified by \fIname\fP, attempting
+first to load an Xcursor file of that name, followed by an Xcursor with
+that name, finally falling back to cursorfont.
+.PP
+\fBXmeLoadCursorImage\fP loads a image from a given filename (i.e., "name.svg"
+or simply "name") via Xrender to be utilized as a \fBCursor\fP. Both SVG
+and PNG images are supported. This function is also used to load image
+cursors from resource strings which are thus formatted: "name:hot_x,hot_y".
+
+.IP "\fIdisplay\fP" 12
+Display for which to load the cursor.
+.IP "\fIscreen\fP" 12
+Screen for which to load the cursor.
+.IP "\fIname\fP" 12
+Cursor name or Xcursor file name.
+.IP "\fIhot_x\fP" 12
+Hot X coordinate within the image.
+.IP "\fIhot_y\fP" 12
+Hot Y coordinate within the image.
+
+.SH RETURN VALUE
+Both functions return a \fBCursor\fP on success.
+.PP
+\fBXmeLoadCursor\fP returns \fBNone\fP if the named cursor could not be
+loaded.
+.PP
+\fBXmeLoadCursorImage\fP returns \fBNone\fP if the named image could not
+be found or loaded, Xcursor support was not compiled-in or an ARGB
+\fBVisual\fP could not be found.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

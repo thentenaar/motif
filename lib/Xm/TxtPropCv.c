@@ -297,7 +297,7 @@ int XmCvtXmStringToTextProperty(Display *d, const XmString s, XTextProperty *pro
 }
 
 /**
- * Convert a XmTextProperty to XmString
+ * Convert a XTextProperty to XmString
  *
  * Returns the XmString representation of the given \a prop, or NULL
  * if \a prop could not be converted to XmString.

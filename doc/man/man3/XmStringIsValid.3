@@ -1,0 +1,34 @@
+.TH XMSTRINGISVALID 3 2026-01-05 "Motif 2.5.0"
+.SH NAME
+XmStringIsValid - Determine whether or not a compound string is valid
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBBoolean XmStringIsValid\fR(\fBconst XmString\fR string);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringIsValid\fP examines each component in the given string to
+determine whether it is indeed a proper \fBXmString\fP.
+
+.IP "\fIstring\fP" 12
+\fBXmString\fP to validate.
+
+.SH RETURN VALUE
+Returns \fBTrue\fP if the given string is a valid \fBXmString\fP,
+\fBFalse\fP otherwise. A NULL \fBXmString\fP (while being considered "empty",
+is not considered "valid").
+
+.SH HISTORY
+This function was previously named \fBXmeStringIsValid\fP was undocumented
+and did not actually evaluate the given string.
+
+.SH SEE ALSO
+\fBXmStringEmpty\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

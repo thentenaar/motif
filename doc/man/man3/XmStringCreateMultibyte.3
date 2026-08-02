@@ -1,0 +1,30 @@
+.TH XMSTRINGCREATEMULTIBYTE 3 2026-01-09 "Motif 2.5.0"
+.SH NAME
+XmStringCreateMultibyte - Create a compound string from multibyte text
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringCreateMultibyte\fR(\fBString\fR text);
+.fi
+
+.SH DESCRIPTION
+This routine generates a compound string from multibyte text, and is
+equivalent to calling \fBXmStringGenerate\fP with a \fItype\fP of
+\fBXmMULTIBYTE_TEXT\fP.
+
+.IP "\fItext\fP" 12
+Multibyte text from which to construct the compound string.
+
+.SH RETURN VALUE
+A newly-allocated \fBXmString\fP containing the provided wide text.
+
+.SH SEE ALSO
+\fBXmStringCreateLocalized\fP(3), \fBXmStringCreateWide\fP(3),
+\fBXmStringCreate\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

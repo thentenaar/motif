@@ -1,0 +1,40 @@
+.TH XMCODEPOINTNORMALIZE 3 2026-07-25 "Motif 2.5.3"
+.SH NAME
+XmCodepointNormalize - Apply Unicode normalization to a series of
+codepoints
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmCodepoint *XmCodepointNormalize\fR(\fBenum XmCodepointNormalForm\fR form,
+\fB                                 \fR \fBconst XmCodepoint *\fRbuf,
+\fB                                 \fR \fBsize_t\fR len,
+\fB                                 \fR \fBsize_t *\fRlen_out);
+.fi
+
+.SH DESCRIPTION
+Canonically normalize a series of \fBXmCodepoint\fP. Note that
+\fBXM_CODEPOINT_NORM_NFC\fP will apply NFD normalization as a
+prerequisite for NFC normalization.
+
+.IP "\fIform\fP" 12
+Unicode normal form (one of \fBXM_CODEPOINT_NORM_NFC\fP or
+\fBXM_CODEPOINT_NORM_NFD\fP).
+.IP "\fIbuf\fP" 12
+Series of \fBXmCodepoint\fP to normalize.
+.IP "\fIlen\fP" 12
+Length of the series, in codepoints.
+.IP "\fIlen_out\fP" 12
+If non-NULL, the length (in codepoints) of the normalized series is
+written here.
+
+.SH RETURN VALUE
+Returns a newly-allocated series of \fBXmCodepoint\fP with the requested
+normalization applied. NULL is returned if invalid parameters are passed.
+The returned series of codepoints must be freed with \fBXtFree\fP().
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

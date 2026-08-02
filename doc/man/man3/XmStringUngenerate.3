@@ -1,0 +1,44 @@
+.TH XMSTRINGUNGENERATE 3 2026-01-19 "Motif 2.5.0"
+.SH NAME
+XmStringUngenerate - A convenience function to unparse a compound string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXtPointer XmStringUngenerate\fR(\fBXmString\fR string, \fBXmStringTag\fR tag,
+\fB                            \fR \fBXmTextType\fR text_type,
+\fB                            \fR \fBXmTextType\fR output_type);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringUngenerate\fP calls \fBXmStringUnparse\fP with a default
+parse table, converting the compound string into a simple string of
+the chosen type. Text is selected by \fItag\fP and \fItext_type\fP,
+and converted to the chosen \fIoutput_type\fP. The inner call to
+\fBXmStringUnparse\fP happens with \fBXmOUTPUT_ALL\fP.
+
+.IP "\fIstring\fP" 12
+Subject \fBXmString\fP.
+.IP "\fItag\fP" 12
+Tag of text to convert.
+.IP "\fItext_type\fP" 12
+Type of text to convert.
+.IP "\fIoutput_type\fP" 12
+Type of text to output.
+
+.SH RETURN VALUE
+Returns a freshly-allocated buffer containing the requested conversion of
+the text, which must be freed with \fBXtFree\fP().
+
+.SH HISTORY
+This is the public version of a prior internal function called
+\fB_XmStringUngenerate\fP.
+
+.SH SEE ALSO
+\fBXmStringUnparse\fP(3), \fBXmStringGenerate\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

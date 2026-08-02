@@ -1,0 +1,30 @@
+.TH XMCHAR 3 2026-07-02 "Motif 2.5.3"
+.SH NAME
+XmChar, XmCodepoint - Data types representing a Unicode character/codepoint
+
+.SH SYNOPSIS
+.nf
+#include <Xm/XmChar.h>
+.fi
+
+.SH DESCRIPTION
+These types are used to represent Unicode characters in various forms for
+utility routines. \fBXmChar\fP is a pointer to the first byte of a UTF-8
+encoded character. \fBXmCodepoint\fP is an integer type guaranteed to be
+at least 32-bits wide.
+
+.SH MACROS
+.IP "\fIXM_INVALID_CODEPOINT\fP" 12
+A non-character codepoint used as a replacement for invalid codepoints.
+.IP "\fIXM_CODEPOINT_MAX\fP" 12
+The largest possible Unicode codepoint (\fR0x10ffff\fP).
+
+.SH SEE ALSO
+\fBXmCharLen\fP(3), \fBXmCharToCodepoint\fP(3),
+\fBXmCodepointToChar\fP(3), \fBXmCodepointNormalize\fP(3),
+\fBXmStringNormalize\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

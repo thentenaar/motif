@@ -1,0 +1,30 @@
+.TH XMCODEPOINTTOCHAR 3 2026-07-02 "Motif 2.5.3"
+.SH NAME
+XmCodepointToChar - Convert a XmCodepoint to XmChar
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmChar XmCodepointToChar\fR(\fBXmCodepoint\fR cp);
+.fi
+
+.SH DESCRIPTION
+Converts the given codepoint to a UTF-8 character.
+
+.IP "\fIcp\fP" 12
+\fBXmCodepoint\fP to convert.
+
+.SH RETURN VALUE
+A newly-allocated \fBXmChar\fP corresponding to the UTF-8 encoded version
+of \fIcp\fP. If the given codepoint is invalid, the UTF-8 encoded form of
+\fBXM_INVALID_CODEPOINT\fP is returned. The returned \fBXmChar\fP value
+must be freed with \fBXtFree\fP().
+
+.SH SEE ALSO
+\fBXmCharToCodepoint\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

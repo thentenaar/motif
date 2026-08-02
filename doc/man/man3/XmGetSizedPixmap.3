@@ -1,6 +1,8 @@
-.TH XmGetSizedPixmap 3 "July 2025" "Motif 2.4.0"
+.TH XmGetSizedPixmap 3 2025-08-04 "Motif 2.4.0"
+.SH NAME
+XmGetSizedPixmap - Generate a scaled \fBPixmap\fR for an image
+
 .SH SYNOPSIS
-.PP
 .nf
 #include <Xm/Xm.h>
 .P
@@ -10,14 +12,13 @@
 .fi
 
 .SH DESCRIPTION
-.PP
-\fBXmGetSizedPixmap\fR loads the image specified by \fIimage_name\fR and
-generates a \fBPixmap\fR appropriate for the given \fIdepth\fR, scaled
-to the given \fIwidth\fR and \fIheight\fR.
+\fBXmGetSizedPixmap\fP loads the image specified by \fIimage_name\fP and
+generates a \fBPixmap\fP appropriate for the given \fIdepth\fP, scaled
+to the given \fIwidth\fP and \fIheight\fP.
 
 .IP "\fIwidget\fP" 12
-Widget used to determine the \fBScreen\fR for which to create the
-\fBPixmap\fR\&.
+Widget used to determine the \fBScreen\fP for which to create the
+\fBPixmap\fP.
 .IP "\fIimage_name\fP" 12
 See \fBXmGetPixmapByDepth\fP for description.
 .IP "\fIforeground\fP" 12
@@ -27,21 +28,18 @@ See \fBXmGetPixmapByDepth\fP for description.
 .IP "\fIdepth\fP" 12
 See \fBXmGetPixmapByDepth\fP for description.
 .IP "\fIwidth\fP" 12
-Desired \fBPixmap\fR width.
+Desired \fBPixmap\fP width.
 .IP "\fIheight\fP" 12
-Desired \fBPixmap\fR height.
+Desired \fBPixmap\fP height.
 
 .SH RETURN VALUE
-.PP
-A \fBPixmap\fR on success, \fBNULL\fR on error.
+A \fBPixmap\fP on success, \fBNULL\fP on error.
 
 .SH ERRORS / WARNINGS
-.PP
-See \fBXmGetPixmapByDepth\fR(3).
+See \fBXmGetPixmapByDepth\fP(3).
 
 .SH SEE ALSO
-.PP
-\fBXmGetPixmapByDepth\fR(3)
+\fBXmGetPixmapByDepth\fP(3)
 
 .SH AUTHOR
 Tim Hentenaar <tim@hentenaar.com>

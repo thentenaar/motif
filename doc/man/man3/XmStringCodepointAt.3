@@ -1,0 +1,31 @@
+.TH XMSTRINGCODEPOINTAT 3 2026-07-07 "Motif 2.5.3"
+.SH NAME
+XmStringCodepointAt - Extract a single Unicode codepoint from a compound
+string
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmCodepoint XmStringCodepointAt\fR(\fBconst XmString\fR string,
+\fB                               \fR \fBXmTextPosition\fR pos);
+.fi
+
+.SH DESCRIPTION
+Extract a single Unicode codepoint from a compound string at a given
+position.
+
+.IP "\fIstring\fP" 12
+Subject \fBXmString\fP.
+.IP "\fIpos\fP" 12
+Position at which to extract the codepoint.
+
+.SH RETURN VALUE
+Returns the codepoint corresponding to the character at the given
+position in \fIstring\fP, or \fBXM_INVALID_CODEPOINT\fP if there is
+no character, or if it represents an invalid codepoint.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

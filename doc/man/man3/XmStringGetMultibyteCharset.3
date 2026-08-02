@@ -1,0 +1,28 @@
+.TH XMSTRINGGETMULTIBYTECHARSET 3 2026-01-13 "Motif 2.5.0"
+.SH NAME
+XmStringGetMultibyteCharset - Get the character set in use for "multibyte" text
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmStringTag XmStringGetMultibyteCharset\fR(\fBvoid\fR);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringGetMultibyteCharset\fR gets the \fBXmStringTag\fR associated
+with the character set used for \fIXmMULTIBYTE_TEXT\fR. This is gleaned
+from the environment at startup, and normally corresponds to the value
+of \fILC_CTYPE\fR, and defaults to "ASCII".
+
+.SH RETURN VALUE
+Returns a copy of the \fBXmStringTag\fR corresponding to the multibyte
+charset in use. This must be freed with \fBXtFree\fR().
+
+.SH SEE ALSO
+\fBXmStringGetCharset\fR(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

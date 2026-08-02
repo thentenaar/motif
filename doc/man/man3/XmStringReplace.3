@@ -1,0 +1,39 @@
+.TH XMSTRINGREPLACE 3 2026-01-27 "Motif 2.5.0"
+.SH NAME
+XmStringReplace - Replace a portion of a compound string with another
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmStringReplace\fR(\fBconst XmString\fR s, \fBXmTextPosition\fR pos,
+\fB                        \fR \fBsize_t\fR length, \fBconst XmString\fR replacement);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringReplace\fP replaces the range of \fIs\fP, beginning at
+\fIpos\fP up until \fIlength\fP bytes thereafer, with the given
+replacement string. If \fIpos\fP and \fIlength\fP are zero, then
+the operation becomes an insertion. If \fIpos\fP is at or beyond
+the end of \fIs\fP, no replacement is performed.
+
+.IP "\fIs\fP" 12
+Subject \fBXmString\fP.
+.IP "\fIpos\fP" 12
+Position at which to perform the replacment.
+.IP "\fIlength\fP" 12
+Number of characters to replace.
+.IP "\fIreplacement\fP" 12
+\fBXmString\fP replacement.
+
+.SH RETURN VALUE
+Returns a newly-constructed \fBXmString\fP containing the value of \fIs\fP
+post-replacement.
+
+.SH SEE ALSO
+\fBXmStringInsert\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

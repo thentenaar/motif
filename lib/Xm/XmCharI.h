@@ -242,12 +242,6 @@ struct comp_entry {
 #define SCOUNT (LCOUNT * NCOUNT)
 
 /**
- * Determine whether a word boundary exists between the two
- * given codepoints based on the tr29 default rules.
- */
-Boolean XmCodepointIsWordBoundary(XmCodepoint a, XmCodepoint b);
-
-/**
  * Returns True if cp is a Hangul Jamo, syllable, or syllabic block
  */
 Boolean XmCodepointIsHangul(XmCodepoint cp);

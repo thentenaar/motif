@@ -1,0 +1,31 @@
+.TH XMSTRINGGETCHARSET 3 2026-01-02 "Motif 2.5.0"
+.SH NAME
+XmStringGetCharset - Get the character set in use for "charset" text
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmStringTag XmStringGetCharset\fR(\fBvoid\fR);
+.fi
+
+.SH DESCRIPTION
+\fBXmStringGetCharset\fP gets the \fBXmStringTag\fP associated with the
+character set used for \fIXmCHARSET_TEXT\fP. This is gleaned from the
+environment at startup, and defaults to \fIXmFALLBACK_CHARSET\fP.
+
+.SH RETURN VALUE
+Returns a copy of the \fBXmStringTag\fP corresponding to the charset in
+use. This must be freed with \fBXtFree\fP().
+
+.SH HISTORY
+This is the public version of a prior internal function called
+\fB_XmStringGetCurrentCharset\fP.
+
+.SH SEE ALSO
+\fBXmStringGetMultibyteCharset\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

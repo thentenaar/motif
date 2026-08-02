@@ -49,6 +49,9 @@ man_MANS = ApplicationShell.3 \
     XmCascadeButtonGadgetHighlight.3 \
     XmCascadeButtonHighlight.3 \
     XmChangeColor.3 \
+    XmChar.3 \
+    XmCharLen.3 \
+    XmCharToCodepoint.3 \
     XmClipboardCancelCopy.3 \
     XmClipboardCopy.3 \
     XmClipboardCopyByName.3 \
@@ -66,6 +69,9 @@ man_MANS = ApplicationShell.3 \
     XmClipboardUndoCopy.3 \
     XmClipboardUnlock.3 \
     XmClipboardWithdrawFormat.3 \
+    XmCodepointIsWordBoundary.3 \
+    XmCodepointNormalize.3 \
+    XmCodepointToChar.3 \
     XmColorSelector.3 \
     XmColumn.3 \
     XmComboBox.3 \
@@ -166,10 +172,12 @@ man_MANS = ApplicationShell.3 \
     XmCvtByteStreamToXmString.3 \
     XmCvtCTToXmString.3 \
     XmCvtStringToUnitType.3 \
+    XmCvtTextPropertyToXmString.3 \
     XmCvtTextPropertyToXmStringTable.3 \
     XmCvtXmStringTableToTextProperty.3 \
     XmCvtXmStringToByteStream.3 \
     XmCvtXmStringToCT.3 \
+    XmCvtXmStringToTextProperty.3 \
     XmDataField.3 \
     XmDataFieldCopy.3 \
     XmDataFieldCut.3 \
@@ -334,6 +342,7 @@ man_MANS = ApplicationShell.3 \
     XmListSetPos.3 \
     XmListUpdateSelectedList.3 \
     XmListYToPos.3 \
+    XmeLoadCursor.3 \
     XmMainWindow.3 \
     XmMainWindowSep1.3 \
     XmMainWindowSep2.3 \
@@ -435,6 +444,8 @@ man_MANS = ApplicationShell.3 \
     XmStringBaseline.3 \
     XmStringByteCompare.3 \
     XmStringByteStreamLength.3 \
+    XmStringCharAt.3 \
+    XmStringCodepointAt.3 \
     XmStringCompare.3 \
     XmStringComponentCreate.3 \
     XmStringComponentType.3 \
@@ -444,7 +455,9 @@ man_MANS = ApplicationShell.3 \
     XmStringCreate.3 \
     XmStringCreateLocalized.3 \
     XmStringCreateLtoR.3 \
+    XmStringCreateMultibyte.3 \
     XmStringCreateSimple.3 \
+    XmStringCreateWide.3 \
     XmStringDirection.3 \
     XmStringDirectionCreate.3 \
     XmStringDirectionToDirection.3 \
@@ -453,9 +466,12 @@ man_MANS = ApplicationShell.3 \
     XmStringDrawUnderline.3 \
     XmStringEmpty.3 \
     XmStringExtent.3 \
+    XmStringFind.3 \
     XmStringFree.3 \
     XmStringFreeContext.3 \
     XmStringGenerate.3 \
+    XmStringGetCharset.3 \
+    XmStringGetMultibyteCharset.3 \
     XmStringGetLtoR.3 \
     XmStringGetNextComponent.3 \
     XmStringGetNextSegment.3 \
@@ -463,23 +479,30 @@ man_MANS = ApplicationShell.3 \
     XmStringHasSubstring.3 \
     XmStringHeight.3 \
     XmStringInitContext.3 \
+    XmStringInsert.3 \
+    XmStringIsValid.3 \
     XmStringIsVoid.3 \
+    XmStringLen.3 \
     XmStringLength.3 \
     XmStringLineCount.3 \
     XmStringNConcat.3 \
     XmStringNCopy.3 \
+    XmStringNormalize.3 \
     XmStringParseText.3 \
     XmStringPeekNextComponent.3 \
     XmStringPeekNextTriple.3 \
     XmStringPutRendition.3 \
+    XmStringReplace.3 \
     XmStringSegmentCreate.3 \
     XmStringSeparatorCreate.3 \
+    XmStringSubstr.3 \
     XmStringTable.3 \
     XmStringTableParseStringArray.3 \
     XmStringTableProposeTablist.3 \
     XmStringTableToXmString.3 \
     XmStringTableUnparse.3 \
     XmStringToXmStringTable.3 \
+    XmStringUngenerate.3 \
     XmStringUnparse.3 \
     XmStringWidth.3 \
     XmTab.3 \

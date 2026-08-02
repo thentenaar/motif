@@ -1,0 +1,39 @@
+.TH XMCVTXMSTRINGTEXTPROPERTY 3 2026-07-26 "Motif 2.5.3"
+.SH NAME
+XmCvtXmStringToTextProperty - Convert a XmString to XTextProperty
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBint XmCvtXmStringToTextProperty\fR(\fBDisplay *\fRdisplay,
+\fB                               \fR \fBconst XmString\fR s,
+\fB                               \fR \fBXTextProperty *\fRprop);
+.fi
+
+.SH DESCRIPTION
+Converts the given \fBXmString\fR to \fBXTextProperty\fP, according to
+the desired encoding \fBAtom\fP specified on the property. If the encoding
+is unspecified, it will default to \fBSTRING\fP.
+
+.IP "\fIdisplay\fP" 12
+X Display.
+.IP "\fIs\fP" 12
+\fBXmString\fP to convert.
+.IP "\fIprop\fP" 12
+Text property to fill in.
+
+.SH RETURN VALUE
+Returns \fBSuccess\fP on success, and one of \fBXNoMemory\fP,
+\fBXConverterNotFound\fP, or \fBXLocaleNotSupported\fP on failure.
+If invalid parameters are given, \fBXConverterNotFound\fP is returned.
+
+.SH SEE ALSO
+\fBXmCvtTextPropertyToXmString\fP(3),
+\fBXmCvtXmStringTableToTextProperty\fP(3),
+\fBXutf8TextListToTextProperty\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
