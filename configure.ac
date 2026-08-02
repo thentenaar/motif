@@ -1,7 +1,7 @@
 dnl Library version
 m4_define([_XM_MAJOR],   [2])
 m4_define([_XM_MINOR],   [5])
-m4_define([_XM_PATCH],   [2])
+m4_define([_XM_PATCH],   [3])
 m4_define([_XM_VERSION], [_XM_MAJOR._XM_MINOR._XM_PATCH])
 
 dnl Shared library version (libtool)
