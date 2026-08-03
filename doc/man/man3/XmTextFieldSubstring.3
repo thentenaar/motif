@@ -1,0 +1,39 @@
+.TH XMTEXTFIELDSUBSTRING 3 2026-02-03 "Motif 2.5.3"
+.SH NAME
+XmTextFieldSubstring - Get a portion of the compound string value of a
+TextField
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmTextFieldSubstring\fR(\fBWidget\fR w,
+\fB                             \fR \fBXmTextPosition\fR start,
+\fB                             \fR \fBsize_t\fR length);
+.fi
+
+.SH DESCRIPTION
+Retrieves a copy of the value of the given \fBXmTextField\fP widget,
+beginning at the requested position, and up to the requested length.
+
+.IP "\fIw\fP" 12
+\fBXmTextField\fP widget for which to get the value.
+.IP "\fIstart\fP" 12
+Starting position from whence to take the substring.
+.IP "\fIlength\fP" 12
+Length of the substring.
+
+.SH RETURN VALUE
+Returns a newly-allocated copy of the requested portion of the given
+widget's value. NULL is returned if invalid parameters are given. The
+returned \fBXmString\fP must be freed with \fBXmStringFree\fP(). Note
+that if \fIlength\fP would run beyond the end of the value, the resulting
+string will be truncated.
+
+.SH SEE ALSO
+\fBXmTextFieldGetXmString\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

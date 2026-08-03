@@ -210,6 +210,7 @@ man_MANS = ApplicationShell.3 \
     XmDrawnButton.3 \
     XmDropDown.3 \
     XmDropDownGetChild.3 \
+    XmDropDownGetString.3 \
     XmDropSite.3 \
     XmDropSiteConfigureStackingOrder.3 \
     XmDropSiteEndUpdate.3 \
@@ -543,18 +544,22 @@ man_MANS = ApplicationShell.3 \
     XmTextFieldGetSelection.3 \
     XmTextFieldGetSelectionPosition.3 \
     XmTextFieldGetSelectionWcs.3 \
+    XmTextFieldGetSelectionString.3 \
     XmTextFieldGetString.3 \
     XmTextFieldGetStringWcs.3 \
     XmTextFieldGetSubstring.3 \
     XmTextFieldGetSubstringWcs.3 \
+    XmTextFieldGetXmString.3 \
     XmTextFieldInsert.3 \
     XmTextFieldInsertWcs.3 \
+    XmTextFieldInsertString.3 \
     XmTextFieldPaste.3 \
     XmTextFieldPasteLink.3 \
     XmTextFieldPosToXY.3 \
     XmTextFieldRemove.3 \
     XmTextFieldReplace.3 \
     XmTextFieldReplaceWcs.3 \
+    XmTextFieldReplaceString.3 \
     XmTextFieldSetAddMode.3 \
     XmTextFieldSetEditable.3 \
     XmTextFieldSetHighlight.3 \
@@ -563,7 +568,9 @@ man_MANS = ApplicationShell.3 \
     XmTextFieldSetSelection.3 \
     XmTextFieldSetString.3 \
     XmTextFieldSetStringWcs.3 \
+    XmTextFieldSetXmString.3 \
     XmTextFieldShowPosition.3 \
+    XmTextFieldSubstring.3 \
     XmTextFieldXYToPos.3 \
     XmTextFindString.3 \
     XmTextFindStringWcs.3 \

@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmTextField" "library call"
 .SH "NAME"
 \fBXmTextField\fP \(em The TextField class
@@ -105,6 +105,8 @@ value of this member is the widget ID of the TextField widget\&.
 .PP
 As a source of data, TextField supports the following targets and
 associated conversions of data to these targets:
+.IP "\fB_MOTIF_COMPOUND_STRING\fP" 10
+The widget transfers the selected text as type \fB_MOTIF_COMPOUND_STRING\fP\&.
 .IP "\fBUTF8_STRING\fP" 10
 The widget transfers the selected text as type \fBUTF8_STRING\fP\&.
 .IP "\fIlocale\fP" 10
@@ -127,6 +129,8 @@ the widget can convert data to be placed on the clipboard immediately\&.
 These include the following targets:
 .RS
 .IP "   \(bu" 6
+\fB_MOTIF_COMPOUND_STRING\fP
+.IP "   \(bu" 6
 \fBUTF8_STRING\fP
 .IP "   \(bu" 6
 \fBCOMPOUND_TEXT\fP
@@ -140,9 +144,9 @@ the encoding of the locale
 The widget transfers, as type \fBATOM\fP, a list of the targets to be
 used as the value of the DragContext\&'s \fBXmNexportTargets\fP in a
 drag-and-drop transfer\&.
-These include \fBCOMPOUND_TEXT\fP, the encoding of the locale,
-\fBSTRING\fP, \fBTEXT\fP, \fBUTF8_STRING\fP, \fBBACKGROUND\fP,
-and \fBFOREGROUND\fP\&.
+These include \fB_MOTIF_COMPOUND_STRING\fP, \fBCOMPOUND_TEXT\fP, the
+encoding of the locale, \fBSTRING\fP, \fBTEXT\fP, \fBUTF8_STRING\fP,
+\fBBACKGROUND\fP, and \fBFOREGROUND\fP\&.
 .IP "\fB_MOTIF_LOSE_SELECTION\fP" 10
 The widget takes the following actions:
 .RS
@@ -181,8 +185,8 @@ locale\&.
 The widget transfers, as type \fBATOM\fP, a list of the targets it
 supports\&.
 These include the standard targets in this list\&.
-These also include \fBCOMPOUND_TEXT\fP, the encoding of the locale,
-\fBSTRING\fP, \fBTEXT\fP and \fBUTF8_STRING\fP\&.
+These also include \fB_MOTIF_COMPOUND_STRING\fP, \fBCOMPOUND_TEXT\fP,
+the encoding of the locale, \fBSTRING\fP, \fBTEXT\fP and \fBUTF8_STRING\fP\&.
 .IP "\fBTIMESTAMP\fP" 10
 The widget transfers the timestamp used to acquire the selection as type
 \fBINTEGER\fP\&.
@@ -206,24 +210,26 @@ If the encoding of the locale is present in the list of available
 targets, TextField chooses a requested target from the available targets
 in the following order of preference:
 .IP "   1." 6
-\fBTEXT\fP
-.IP "   1." 6
-\fBUTF8_STRING\fP
+\fB_MOTIF_COMPOUND_STRING\fP
 .IP "   2." 6
-\fBCOMPOUND_TEXT\fP
+\fBUTF8_STRING\fP
 .IP "   3." 6
-The encoding of the locale
+\fBCOMPOUND_TEXT\fP
 .IP "   4." 6
+The encoding of the locale
+.IP "   5." 6
 \fBSTRING\fP
 .PP
 If the encoding of the locale is not present in the list of available
 targets, TextField chooses a requested target from the available targets
 in the following order of preference:
 .IP "   1." 6
-\fBUTF8_STRING\fP
-.IP "   1." 6
-\fBCOMPOUND_TEXT\fP
+\fB_MOTIF_COMPOUND_STRING\fP
 .IP "   2." 6
+\fBUTF8_STRING\fP
+.IP "   3." 6
+\fBCOMPOUND_TEXT\fP
+.IP "   4." 6
 \fBSTRING\fP
 .SS "Classes"
 .PP
@@ -286,9 +292,11 @@ XmNmarginWidthXmCMarginWidthDimension5CSG
 _____
 XmNmaxLengthXmCMaxLengthintlargest integerCSG
 _____
-XmNmodifyVerifyCallbackXmCCallbackXtCallbackListNULLC
+XmNmodifyVerifyCallbackXmCCallbackXtCallbackListNULLC\u2\d
 _____
-XmNmodifyVerifyCallbackWcsXmCCallbackXtCallbackListNULLC
+XmNmodifyVerifyCallbackStrXmCCallbackXtCallbackListNULLC
+_____
+XmNmodifyVerifyCallbackWcsXmCCallbackXtCallbackListNULLC\u2\d
 _____
 XmNmotionVerifyCallbackXmCCallbackXtCallbackListNULLC
 _____
@@ -304,17 +312,21 @@ XmNselectionArrayCountXmCSelectionArrayCountint3CSG
 _____
 XmNselectThresholdXmCSelectThresholdint5CSG
 _____
-XmNvalueXmCValueString""CSG
+XmNvalueXmCValueString""CSG\u2\d
 _____
-XmNvalueChangedCallbackXmCCallbackXtCallbackListNULLC
+XmNvalueChangedCallbackXmCCallbackXtCallbackListNULLC\u2\d
 _____
-XmNvalueWcsXmCValueWcswchar_t *(wchar_t *)""CSG\u1\d
+XmNvalueStringXmCXmStringXmStringNULLCSG
+_____
+XmNvalueWcsXmCValueWcswchar_t *(wchar_t *)""CSG\u1\u2\d
 _____
 XmNverifyBellXmCVerifyBellBooleandynamicCSG
 _____
 .TE
 .PP
 \u1\d This resource cannot be specified in a resource file\&.
+.PP
+\u2\d This resource is deprecated\&.
 .IP "\fBXmNactivateCallback\fP" 10
 Specifies the list of callbacks that is called when the user invokes an
 event that calls the
@@ -413,36 +425,39 @@ text from the keyboard\&.
 This value must be nonnegative\&.
 Strings that are entered using the \fBXmNvalue\fP resource or the
 \fBXmTextFieldSetString\fP function ignore this resource\&.
-.IP "\fBXmNmodifyVerifyCallback\fP" 10
-Specifies the list of callbacks that is called
-before text is deleted from or inserted into
-TextField\&.
-The type of the structure whose address is passed to this callback is
-\fBXmTextVerifyCallbackStruct\fR\&.
+.IP "\fBXmNmodifyVerifyCallbackStr\fP" 10
+Specifies the list of callbacks called when text is deleted or inserted
+into the field where the callback expects a \fBXmString\fP. If specified,
+this is the first callback to be called, and any modifications made by
+the callback are passed on to the remaining two callbacks if they too
+are specified. This callback takes a \fBXmTextVerifyCallbackStructStr\fP.
 The reason sent by the callback is \fBXmCR_MODIFYING_TEXT_VALUE\fP\&.
-When multiple TextField widgets share the same
-source, only the widget that initiates the source change will
-generate the \fBXmNmodifyVerifyCallback\fP\&.
-.IP "" 10
-If both \fBXmNmodifyVerifyCallback\fP and \fBXmNmodifyVerifyCallbackWcs\fP
-are registered callback lists, the procedure(s) in the
-\fBXmNmodifyVerifyCallback\fP list is always executed first; and the
-resulting data, which may have been modified, is passed to the
-\fBXmNmodifyVerifyCallbackWcs\fP callback routines\&.
+.IP "\fBXmNmodifyVerifyCallback\fP" 10
+This callback list serves the same purpose as
+\fBXmNmodifyVerifyCallbackStr\fP, with this difference:
+The callback list uses the \fBXmTextVerifyCallbackStruct\fP which expects
+regular C string instead of \fBXmString\fP.
 .IP "\fBXmNmodifyVerifyCallbackWcs\fP" 10
-Specifies the list of callbacks called before text is deleted from
-or inserted into Text\&. The type of the structure whose address is
-passed to this callback is \fBXmTextVerifyCallbackStructWcs\fR\&. The
-reason sent by the callback is \fBXmCR_MODIFYING_TEXT_VALUE\fP\&.
-When multiple TextField widgets share the same
-source, only the widget that initiates the source change will
-generate the \fBXmNmodifyVerifyCallbackWcs\fP\&.
+This callback list uses the \fBXmTextVerifyCallbackStructWcs\fP which
+expects a wide string instead of \fBXmString\fP or a regular C string.
 .IP "" 10
-If both \fBXmNmodifyVerifyCallback\fP and \fBXmNmodifyVerifyCallbackWcs\fP
-are registered callback lists, the procedure(s) in the
-\fBXmNmodifyVerifyCallback\fP list is always executed first; and the
-resulting data, which may have been modified, is passed to the
-\fBXmNmodifyVerifyCallbackWcs\fP callback routines\&.
+If one or more of \fBXmNmodifyVerifyCallbackStr\fP,
+\fBXmNmodifyVerifyCallback\fP, or \fBXmNmodifyVerifyCallbackWcs\fP are
+specified, they are called in the following order, with changes from each
+being applied before the next list is called:
+
+.IP "          1." 14
+\fBXmNmodifyVerifyCallbackStr\fP
+.IP "          2."
+\fBXmNmodifyVerifyCallback\fP
+.IP "          3."
+\fBXmNmodifyVerifyCallbackWcs\fP
+
+.IP "" 10
+Generally, the use of \fBXmString\fP is preferred, and the other two
+callback types are deprecated and are preserved for compatibility with
+previous versions.
+
 .IP "\fBXmNmotionVerifyCallback\fP" 10
 Specifies the list of callbacks that is called
 before the insert cursor is moved to a new position\&.
@@ -504,15 +519,10 @@ This resource also specifies whether a drag should be started and the
 number of pixels to start a drag when
 \fBBtn2Down\fP and \fBBtn1Down\fP are integrated\&.
 .IP "\fBXmNvalue\fP" 10
-Specifies the string value of the TextField widget as a \fBchar*\fP
-data value\&.
-Moves the cursor to position 0 unless a value of
-\fBXmNcursorPosition\fP was explicitly supplied in the argument list\&.
-If \fBXmNvalue\fP and \fBXmNvalueWcs\fP are both
-defined, the value of \fBXmNvalueWcs\fP supersedes that of
-\fBXmNvalue\fP\&. \fBXtGetValues\fP returns a copy of the value of
-the internal buffer and \fBXtSetValues\fP copies the string values
-into the internal buffer\&.
+Specifies the string value of the TextField widget as a C string.
+This is a synthetic resource which gets implicitly converted to
+or from \fBXmString\fP. This resource is deprecated and is provided
+only for source compatibility with previous versions.
 .IP "\fBXmNvalueChangedCallback\fP" 10
 Specifies the list of callbacks that is called
 after text is deleted from or inserted into
@@ -524,19 +534,23 @@ The \fBXmNvalueChangedCallback\fP should occur only in pairs
 with a \fBXmNmodifyVerifyCallback\fP, assuming that the \fIdoit\fP
 flag in the callback structure of the \fBXmNmodifyVerifyCallback\fP is
 not set to False\&.
+.IP "\fBXmNvalueString\fP" 10
+Specifies the string value of the TextField as \fBXmString\fP. Moves the
+cursor to position 0 unless a value of \fBXmNcursorPosition\fP was
+explicitly supplied in the argument list. \fBXtGetValues\fP returns
+a copy of the \fBXmString\fP used by the widget. Generally, the use of
+\fBXmString\fP is preferred.
 .IP "\fBXmNvalueWcs\fP" 10
 Specifies the string value of the TextField widget as a \fBwchar_t*\fP data
-value\&.
-Moves the cursor to position 0 unless a value of
-\fBXmNcursorPosition\fP was explicitly supplied in the argument list\&.
+value\&. This is a synthetic resource which gets implicitly converted to
+or from \fBXmString\fP. This resource is deprecated and is only provided
+for source compatibility with previous versions.
 .IP "" 10
 This resource cannot be specified in a resource file\&.
 .IP "" 10
-If \fBXmNvalue\fP and \fBXmNvalueWcs\fP are both defined,
-the value of \fBXmNvalueWcs\fP supersedes that of \fBXmNvalue\fP\&.
-\fBXtGetValues\fP returns a copy of the value of the internal buffer
-encoded as a wide character string\&. \fBXtSetValues\fP copies the
-value of the wide character string into the internal buffer\&.
+If any of \fBXmNvalueString\fP, \fBXmNvalue\fP, or \fBXmNvalueWcs\fP
+are given, \fBXmNvalueString\fP takes precendence followed by
+\fBXmNvalueWcs\fP and finally, \fBXmNvalue\fP.
 .IP "\fBXmNverifyBell\fP" 10
 Specifies whether a bell will sound when an action is reversed
 during a verification callback\&.

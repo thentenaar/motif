@@ -1,0 +1,37 @@
+.TH XMTEXTFIELDREPLACESTRING 3 2026-02-03 "Motif 2.5.3"
+.SH NAME
+XmTextFieldReplaceString - Replace a portion of the compound string value
+of a TextField
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBvoid XmTextFieldReplaceString\fR(\fBWidget\fR w,
+\fB                             \fR \fBXmTextPosition\fR from,
+\fB                             \fR \fBXmTextPosition\fR to,
+\fB                             \fR \fBXmString\fR value);
+.fi
+
+.SH DESCRIPTION
+Replaces a portion of the value of the given \fBXmTextField\fP widget,
+within the given bounds with the given replacement string. This function
+is a wrapper around \fBXmStringReplace\fP.
+
+.IP "\fIw\fP" 12
+\fBXmTextField\fP widget for which to get the value.
+.IP "\fIfrom\fP" 12
+Position at which to begin replacement.
+.IP "\fIto\fP" 12
+Position at which to end replacement.
+.IP "\fIvalue\fP" 12
+Replacement string.
+
+.SH SEE ALSO
+\fBXmTextFieldInsertString\fP(3),
+\fBXmStringReplace\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

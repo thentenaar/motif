@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmTextFieldGetSelection" "library call"
 .SH "NAME"
 \fBXmTextFieldGetSelection\fP \(em A TextField function that retrieves the value of the primary selection
@@ -59,6 +59,9 @@
 \fBWidget \fBwidget\fR\fR);
 .fi
 .SH "DESCRIPTION"
+.PP
+This function is obsolete and exists for compatibility with previous
+releases\&. It is replaced by \fBXmTextFieldGetSelectionString\fP\&.
 .PP
 \fBXmTextFieldGetSelection\fP
 retrieves the value of the primary selection\&. It returns

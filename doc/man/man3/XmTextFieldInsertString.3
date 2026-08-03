@@ -1,0 +1,33 @@
+.TH XMTEXTFIELDINSERTSTRING 3 2026-02-03 "Motif 2.5.3"
+.SH NAME
+XmTextFieldInsertString - Insert a compound string at a given position in
+a TextField
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBvoid XmTextFieldInsertString\fR(\fBWidget\fR w,
+\fB                            \fR \fBXmTextPosition\fR pos,
+\fB                            \fR \fBXmString\fR value);
+.fi
+
+.SH DESCRIPTION
+Inserts the given string at the given position in the \fBXmTextField\fP
+widget. This function is a wrapper around \fBXmStringInsert\fP.
+
+.IP "\fIw\fP" 12
+\fBXmTextField\fP widget for which to get the value.
+.IP "\fIfrom\fP" 12
+Position at which to insert.
+.IP "\fIvalue\fP" 12
+String to insert.
+
+.SH SEE ALSO
+\fBXmTextFieldReplaceString\fP(3),
+\fBXmStringInsert\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

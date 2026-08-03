@@ -1,0 +1,31 @@
+.TH XMTEXTFIELDGETXMSTRING 3 2026-02-03 "Motif 2.5.3"
+.SH NAME
+XmTextFieldGetXmString - Get the compound string value of a TextField
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmTextFieldGetXmString\fR(\fBWidget\fR w);
+.fi
+
+.SH DESCRIPTION
+Retrieves a copy of the \fBXmString\fP value behind the given
+\fBXmTextField\fP widget.
+
+.IP "\fIw\fP" 12
+\fBXmTextField\fP widget for which to get the value.
+
+.SH RETURN VALUE
+Returns a newly-allocated copy of the \fBXmString\fP value of the given
+widget. NULL is returned if invalid parameters are passed. The returned
+\fBXmString\fP must be freed with \fBXmStringFree\fP().
+
+.SH SEE ALSO
+\fBXmTextFieldSetXmString\fP(3),
+\fBXmTextFieldSubstring\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

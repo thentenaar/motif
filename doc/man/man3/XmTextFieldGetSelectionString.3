@@ -1,0 +1,29 @@
+.TH XMTEXTFIELDGETSELECTIONSTRING 3 2026-02-03 "Motif 2.5.3"
+.SH NAME
+XmTextFieldGetSelectionString - Get a TextField's primary selection
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmTextFieldGetSelectionString\fR(\fBWidget\fR w);
+.fi
+
+.SH DESCRIPTION
+
+Get the portion of a \fBXmTextField\fP's value selected as part of the
+primary selection.
+
+.IP "\fIw\fP" 12
+\fBXmTextField\fP widget for which to get the primary selection.
+
+.SH RETURN VALUE
+Returns a newly-allocated copy of the portion of the widget's value
+currently within the primary selection boundaries, or NULL if the
+primary selection is empty. The returned \fBXmString\fP must be freed
+with \fBXmStringFree\fP().
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

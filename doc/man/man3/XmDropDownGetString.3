@@ -1,0 +1,29 @@
+.TH XMDROPDOWNGETSTRING 3 2026-07-05 "Motif 2.5.3"
+.SH NAME
+XmDropDownGetString - Get the value of a DropDown's TextField
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmString XmTextFieldGetSelectionString\fR(\fBWidget\fR w);
+.fi
+
+.SH DESCRIPTION
+Get the value of a \fBXmDropDown\fP's text field.
+
+.IP "\fIw\fP" 12
+\fBXmDropDown\fP widget for which to get the value.
+
+.SH RETURN VALUE
+Returns a newly-allocated copy of the value present in the DropDown's
+TextField, or NULL if no value could be obtained. The returned
+\fBXmString\fP must be freed with \fBXmStringFree\fP().
+
+.SH SEE ALSO
+\fBXmTextFieldGetXmString\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

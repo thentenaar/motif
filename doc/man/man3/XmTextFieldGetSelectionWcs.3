@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmTextFieldGetSelectionWcs" "library call"
 .SH "NAME"
 \fBXmTextFieldGetSelectionWcs\fP \(em A TextField function that retrieves the
@@ -60,6 +60,9 @@ value of a wide character encoded primary selection
 \fBWidget \fBwidget\fR\fR);
 .fi
 .SH "DESCRIPTION"
+.PP
+This function is obsolete and exists for compatibility with previous
+releases\&. It is replaced by \fBXmTextFieldGetSelectionString\fP\&.
 .PP
 \fBXmTextFieldGetSelectionWcs\fP retrieves the value of the primary
 selection, encoded in a wide character format\&. It returns a
