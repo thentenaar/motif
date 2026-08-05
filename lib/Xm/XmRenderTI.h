@@ -62,7 +62,6 @@ extern "C" {
 #define _XmRendXftFont(r)       ((_XmRendition)*(r))->xftFont
 #define _XmRendXftFG(r)         ((_XmRendition)*(r))->xftForeground
 #define _XmRendXftBG(r)         ((_XmRendition)*(r))->xftBackground
-#define _XmRendPattern(r)       ((_XmRendition)*(r))->pattern
 #define _XmRendFontStyle(r)     ((_XmRendition)*(r))->fontStyle
 #define _XmRendFontFoundry(r)   ((_XmRendition)*(r))->fontFoundry
 #define _XmRendFontEncoding(r)  ((_XmRendition)*(r))->fontEncoding
@@ -117,7 +116,6 @@ typedef struct __XmRenditionRec
 /*			*family,	Use font_name instead. */
 	*fontFoundry, *fontEncoding;
 	int fontSize, pixelSize, fontSlant, fontSpacing, fontWeight;
-	XftPattern *pattern;
 	XftFont *xftFont;
 	XftColor xftForeground, xftBackground;
 #endif
@@ -150,15 +148,13 @@ typedef struct __XmFontRenditionRec
 #define _XmRTRefcountInc(rt)	++(((_XmRenderTable)*(rt))->refcount)
 #define _XmRTRefcountDec(rt)	--(((_XmRenderTable)*(rt))->refcount)
 
-#define RENDITIONS_IN_STRUCT	1
-
 typedef struct __XmRenderTableRec
 {
   unsigned int			mark : REND_MARK_BITS;
   unsigned int			refcount : REND_REFCOUNT_BITS;
   unsigned short		count;
   Display			*display;
-  XmRendition			renditions[RENDITIONS_IN_STRUCT];
+  XmRendition			*renditions;
 } _XmRenderTableRec, 		*_XmRenderTable;
 
 

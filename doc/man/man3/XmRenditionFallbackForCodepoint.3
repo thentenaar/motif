@@ -1,0 +1,38 @@
+.TH XMRENDITIONFALLBACKFORCODEPOINT 3 2026-08-04 "Motif 2.5.3"
+.SH NAME
+XmRenditionFallbackForCodepoint - Find a fallback rendition for a codepoint
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmRendition XmRenditionFallbackForCodepoint\fR(\fBXmRenderTable\fR tbl,
+\fB                                           \fR \fBconst XmRendition\fR orig,
+\fB                                           \fR \fBXmCodepoint\fR cp);
+.fi
+
+.SH DESCRIPTION
+Probe the render table for a rendition that has a glyph for the given
+codepoint that is stylistically-compatible with the original rendition.
+If such a rendition cannot be found in the render table, attempt to find a
+a compatible rendition by way of fontconfig and add it to the render
+table. It is presumed that \fIorig\fP exists in \fItbl\fP.
+
+.IP "\fItbl\fP" 12
+\fBXmRenderTable\fP to search / update.
+.IP "\fIorig\fP" 12
+Original rendition to be used that lacks the codepoint.
+.IP "\fIcp\fP" 12
+Codepoint for which to find a rendition.
+
+.SH RETURN VALUE
+Returns a newly-allocated \fBXmRendition\fP suitable for rendering
+the requested codepoint, or NULL if one could not be found, invalid
+parameters were given, or the original rendition is not a
+\fBXmFONT_IS_XFT\fP rendition. NULL is exclusively returned if Xft
+support is not enabled.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

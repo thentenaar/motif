@@ -1861,6 +1861,10 @@ extern XmRendition
 			      Cardinal tag_count);
 extern XmRendition XmRenderTableGetRendition(XmRenderTable table,
 					     XmStringTag tag);
+extern Boolean XmRenditionHasCodepoint(const XmRendition r, XmCodepoint cp);
+extern XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
+                                                   const XmRendition orig,
+                                                   XmCodepoint cp);
 extern int XmRenderTableGetTags(XmRenderTable table,
 				XmStringTag **tag_list);
 extern void XmRenderTableFree(XmRenderTable table);

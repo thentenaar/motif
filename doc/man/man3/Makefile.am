@@ -399,7 +399,9 @@ man_MANS = ApplicationShell.3 \
     XmRenderTableRemoveRenditions.3 \
     XmRendition.3 \
     XmRenditionCreate.3 \
+    XmRenditionFallbackForCodepoint.3 \
     XmRenditionFree.3 \
+    XmRenditionHasCodepoint.3 \
     XmRenditionRetrieve.3 \
     XmRenditionUpdate.3 \
     XmRepTypeAddReverse.3 \

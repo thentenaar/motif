@@ -1,0 +1,29 @@
+.TH XMRENDITIONHASCODEPOINT 3 2026-08-04 "Motif 2.5.3"
+.SH NAME
+XmRenditionHasCodepoint - Determine if a rendition has a glyph for a codepoint
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBBoolean XmRenditionHasCodepoint\fR(\fBconst XmRendition\fR r,
+\fB                               \fR \fBXmCodepoint\fR cp);
+.fi
+
+.SH DESCRIPTION
+Determine if the given rendition has a glyph for the given codepoint,
+
+.IP "\fIr\fP" 12
+Rendition to check.
+.IP "\fIcp\fP" 12
+Codepoint for which to check.
+
+.SH RETURN VALUE
+Returns \fBTrue\fP if the given rendition is a \fBXmFONT_IS_XFT\fP
+rendition that contains a glyph for the requested codepoint, or if Xft
+support was not enabled. \fBFalse\fP otherwise.
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
