@@ -118,23 +118,6 @@ typedef struct __XmRenditionRec
 #endif
 } _XmRenditionRec, *_XmRendition;
 
-typedef struct __XmFontRenditionRec
-{
-  /* flag indicating _XmFontRenditionRec */
-  unsigned int	fontOnly : REND_OPTIMIZED_BITS;
-  unsigned int	refcount : REND_REFCOUNT_BITS;
-
-  unsigned char	loadModel;
-  XmStringTag	tag;
-  String	fontName;
-  XmFontType	fontType;
-  XtPointer	font;
-  Display	*display;
-  GC		*gc;
-  XmStringTag	*tags;
-  unsigned int	count;
-} _XmFontRenditionRec, *_XmFontRendition;
-
 /* Accessor macros. */
 
 #define _XmRTCount(rt)		((_XmRenderTable)*(rt))->count
