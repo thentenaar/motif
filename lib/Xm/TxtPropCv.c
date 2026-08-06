@@ -146,14 +146,14 @@ int XmCvtXmStringTableToTextProperty(Display *d, const XmStringTable string_tabl
 	 * is not included in nitems. The last item in the list need not be
 	 * null terminated.
 	 */
-	if (prop->nitems && (count > 1 || prop->value[prop->nitems] == '\0')) {
+	if (prop->nitems && (count > 1 || prop->value[prop->nitems - 1] == '\0')) {
 		if (!--prop->nitems) {
 			XtFree((XtPointer)prop->value);
 			prop->value = NULL;
 		}
 	} else if (prop->nitems) {
 		prop->value = (unsigned char *)XtRealloc((XtPointer)prop->value, prop->nitems + 1);
-		prop->value[prop->nitems + 1] = '\0';
+		prop->value[prop->nitems] = '\0';
 	}
 
 	_XmAppUnlock(app);

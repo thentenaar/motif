@@ -317,7 +317,7 @@ static XmCodepoint *normalize_nfc(const XmCodepoint *buf, size_t len,
 		 */
 		c = buf[i];
 		while (i < len) {
-			d = XmCodepointCompose(c, buf[++i]);
+			d = (++i < len) ? XmCodepointCompose(c, buf[i]) : XM_INVALID_CODEPOINT;
 			if (d == XM_INVALID_CODEPOINT) {
 				out = (XmCodepoint *)XtRealloc((XtPointer)out, (out_len + 1) * sizeof *out);
 				out[out_len++] = c;

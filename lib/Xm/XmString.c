@@ -2424,9 +2424,13 @@ XmStringExtent(
   Display *d;
   XtAppContext app = NULL;
 
-  *width = 0, *height = 0;
+  if (!width || !height)
+    return;
 
-  if ((rendertable == NULL) || (string == NULL)) return;
+  *width  = 0;
+  *height = 0;
+  if (!rendertable || !string)
+    return;
 
   if (_XmRTDisplay(rendertable))
     app = XtDisplayToApplicationContext(_XmRTDisplay(rendertable));
@@ -3209,6 +3213,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	size_t seg_len, ucs_len;
 	Boolean text16 = False;
 	Dimension u_begin = 0, u_end = 0;
+	unsigned long mask = 0;
 
 	/* If we lack a rendition, segment, or dimensionality, nothing to do. */
 	if (!rend || !seg || !width || !height)
@@ -3226,7 +3231,10 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	/* Prepare the GC */
 	_XmRendDisplay(rend) = d;
 	gc = _XmRendGC(rend);
-	XGetGCValues(d, gc, GCForeground | GCBackground | GCFont, &old_gcv);
+	mask = GCForeground | GCBackground;
+	if (font_type == XmFONT_IS_FONT)
+		mask |= GCFont;
+	XGetGCValues(d, gc, mask, &old_gcv);
 	memcpy(&gcv, &old_gcv, sizeof gcv);
 
 	if ((fg = _XmRendFG(rend)) != XmUNSPECIFIED_PIXEL) gcv.foreground = fg;
@@ -3237,7 +3245,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	}
 
 	draw_text = seg_text;
-	XChangeGC(d, gc, GCForeground | GCBackground | GCFont, &gcv);
+	XChangeGC(d, gc, mask, &gcv);
 	if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
 		draw_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
 
@@ -3274,8 +3282,9 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	                    rend, XmUNSPECIFIED_PIXEL, XmHIGHLIGHT_NORMAL, True);
 
 	/* Restore the GC */
-	if (old_gcv.font == (unsigned long)-1) old_gcv.font = gcv.font;
-	XChangeGC(d, gc, GCForeground | GCBackground | GCFont, &old_gcv);
+	if ((mask & GCFont) && old_gcv.font == ULONG_MAX)
+		old_gcv.font = gcv.font;
+	XChangeGC(d, gc, mask, &old_gcv);
 	if (draw_text != seg_text) XtFree(draw_text);
 }
 
@@ -5493,76 +5502,50 @@ XmStringLineCount(
 /*
  * drawing routine for external TCS
  */
-void
-XmStringDraw(
-        Display *d,
-        Window w,
-        XmRenderTable rendertable,
-        XmString string,
-        GC gc,
-        Position x,
-        Position y,
-        Dimension width,
-        unsigned char align,
-        unsigned char lay_dir,
-        XRectangle *clip )
+void XmStringDraw(Display *d, Window w, XmRenderTable rendertable,
+                  XmString string, GC gc, Position x, Position y,
+                  Dimension width, unsigned char align,
+                  unsigned char lay_dir, XRectangle *clip)
 {
-  _XmDisplayToAppContext(d);
-  _XmAppLock(app);
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
 
-  if (string)
-    _draw (d, w, rendertable, (_XmString)string, gc, x, y, width,
-	   align, lay_dir, clip, FALSE, NULL);
+	if (string)
+		_draw (d, w, rendertable, (_XmString)string, gc, x, y, width,
+		       align, lay_dir, clip, False, NULL);
 
-  _XmAppUnlock(app);
+	 _XmAppUnlock(app);
 }
 
-void
-XmStringDrawImage(
-        Display *d,
-        Window w,
-        XmRenderTable rendertable,
-        XmString string,
-        GC gc,
-        Position x,
-        Position y,
-        Dimension width,
-        unsigned char align,
-        unsigned char lay_dir,
-        XRectangle *clip )
+void XmStringDrawImage(Display *d, Window w, XmRenderTable rendertable,
+                       XmString string, GC gc, Position x, Position y,
+                       Dimension width, unsigned char align,
+                       unsigned char lay_dir, XRectangle *clip)
 {
-  _XmDisplayToAppContext(d);
-  _XmAppLock(app);
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
 
-  if (string)
-    _draw (d, w, rendertable, (_XmString)string, gc, x, y, width,
-	   align, lay_dir, clip, TRUE, NULL);
+	if (string)
+		_draw (d, w, rendertable, (_XmString)string, gc, x, y, width,
+		       align, lay_dir, clip, True, NULL);
 
-  _XmAppUnlock(app);
+	_XmAppUnlock(app);
 }
 
-void
-XmStringDrawUnderline(
-        Display *d,
-        Window w,
-        XmRenderTable fntlst,
-        XmString str,
-        GC gc,
-        Position x,
-        Position y,
-        Dimension width,
-        unsigned char align,
-        unsigned char lay_dir,
-        XRectangle *clip,
-        XmString under )
+void XmStringDrawUnderline(Display *d, Window w, XmRenderTable fntlst,
+                           XmString str, GC gc, Position x, Position y,
+                           Dimension width, unsigned char align,
+                           unsigned char lay_dir, XRectangle *clip,
+                           XmString under)
 {
-  _XmDisplayToAppContext(d);
-  _XmAppLock(app);
-  if (str)
-    _draw (d, w, fntlst, (_XmString)str, gc, x, y, width,
-	   align, lay_dir, clip, FALSE, (_XmString)under);
+	_XmDisplayToAppContext(d);
+	_XmAppLock(app);
 
-  _XmAppUnlock(app);
+	if (str)
+		_draw (d, w, fntlst, (_XmString)str, gc, x, y, width,
+		       align, lay_dir, clip, False, (_XmString)under);
+
+	_XmAppUnlock(app);
 }
 
 #ifdef _XmDEBUG_XMSTRING
