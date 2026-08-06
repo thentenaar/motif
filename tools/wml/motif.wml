@@ -4457,7 +4457,6 @@ Class
             XmNrenditionForeground;
             XmNunderlineType;
             XmNstrikethruType;
-	    XmNfontEncoding;
 	    XmNfontFoundry;
 	    XmNfontSize;
 	    XmNfontStyle;
@@ -4497,9 +4496,6 @@ Resource
          { Type = integer;
            EnumerationSet = LineType;
            Default = "XmAS_IS"; };
-    XmNfontEncoding : Argument
-         { Type = string;
-           Default = "Null"; };
     XmNfontFoundry : Argument
          { Type = string;
            Default = "Null"; };

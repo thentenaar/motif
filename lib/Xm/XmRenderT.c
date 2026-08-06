@@ -189,7 +189,6 @@ static XftColor GetCachedXftColor(Display *display, Pixel color);
 #define DEFAULT_xftFont			(XtPointer)XmAS_IS
 #define DEFAULT_fontStyle		(String)NULL
 #define DEFAULT_fontFoundry		(String)NULL
-#define DEFAULT_fontEncoding		(String)NULL
 #define DEFAULT_fontSize		0
 #endif
 
@@ -249,11 +248,6 @@ static XtResource _XmRenditionResources[] = {
     XmNfontFoundry, XmCFontFoundry, XmRString,
     sizeof(String), XtOffsetOf (_XmRenditionRec, fontFoundry),
     XmRImmediate, (XtPointer) DEFAULT_fontFoundry
-  },
-  {
-    XmNfontEncoding, XmCFontEncoding, XmRString,
-    sizeof(String), XtOffsetOf (_XmRenditionRec, fontEncoding),
-    XmRImmediate, (XtPointer) DEFAULT_fontEncoding
   },
   {
     XmNfontSize, XmCFontSize, XmRInt,
@@ -624,7 +618,6 @@ SetDefault(XmRendition rend)
   _XmRendXftFont(rend) = DEFAULT_xftFont;
   _XmRendFontStyle(rend) = DEFAULT_fontStyle;
   _XmRendFontFoundry(rend) = DEFAULT_fontFoundry;
-  _XmRendFontEncoding(rend) = DEFAULT_fontEncoding;
   _XmRendFontSize(rend) = DEFAULT_fontSize;
   _XmRendPixelSize(rend) = 0;
   _XmRendFontSlant(rend) = 0;
@@ -782,8 +775,6 @@ SetRend(XmRendition to,
     _XmRendFontStyle (to) = _XmRendFontStyle (from);
   if ((_XmRendFontFoundry (from) != NULL) && _XmRendFontFoundry (to) == NULL)
     _XmRendFontFoundry (to) = _XmRendFontFoundry (from);
-  if ((_XmRendFontEncoding (from) != NULL) && _XmRendFontEncoding (to) == NULL)
-    _XmRendFontEncoding (to) = _XmRendFontEncoding (from);
   if (_XmRendFontSize (to) == 0)
     _XmRendFontSize (to) = _XmRendFontSize (from);
 #else
@@ -1065,7 +1056,6 @@ CopyInto(XmRendition toRend,
   _XmRendXftFG (toRend) = _XmRendXftFG (fromRend);
   _XmRendFontStyle (toRend) = _XmRendFontStyle (fromRend);
   _XmRendFontFoundry (toRend) = _XmRendFontFoundry (fromRend);
-  _XmRendFontEncoding (toRend) = _XmRendFontEncoding (fromRend);
   _XmRendFontSize (toRend) = _XmRendFontSize (fromRend);
   _XmRendPixelSize (toRend) = _XmRendPixelSize (fromRend);
 #else
@@ -1107,8 +1097,6 @@ MergeInto(XmRendition toRend,
     _XmRendFontStyle(toRend) = _XmRendFontStyle(fromRend);
   if (_XmRendFontFoundry(toRend) == NULL)
     _XmRendFontFoundry(toRend) = _XmRendFontFoundry(fromRend);
-  if (_XmRendFontEncoding(toRend) == NULL)
-    _XmRendFontEncoding(toRend) = _XmRendFontEncoding(fromRend);
   if (_XmRendFontSize(toRend) == 0)
     _XmRendFontSize(toRend) = _XmRendFontSize(fromRend);
 #else
@@ -2144,8 +2132,6 @@ GetSameRenditions(XmRendition *rend_cache, XmRendition rend, int count_rend)
 					|| 	(!_XmRendFontName(rend) && !_XmRendFontName(rend_cache[i])))
 				&& (((_XmRendFontFoundry(rend) && _XmRendFontFoundry(rend_cache[i])) && !strcmp(_XmRendFontFoundry(rend_cache[i]), _XmRendFontFoundry(rend)))
 					|| 	(!_XmRendFontFoundry(rend) && !_XmRendFontFoundry(rend_cache[i])))
-				&& (((_XmRendFontEncoding(rend) && _XmRendFontEncoding(rend_cache[i])) && !strcmp(_XmRendFontEncoding(rend_cache[i]), _XmRendFontEncoding(rend)))
-					|| 	(!_XmRendFontEncoding(rend) && !_XmRendFontEncoding(rend_cache[i])))
 				&& (((_XmRendFontStyle(rend) && _XmRendFontStyle(rend_cache[i])) && !strcmp(_XmRendFontStyle(rend_cache[i]), _XmRendFontStyle(rend)))
 					|| 	(!_XmRendFontStyle(rend) && !_XmRendFontStyle(rend_cache[i])) )
 				&& _XmRendFontSize(rend) == _XmRendFontSize(rend_cache[i])

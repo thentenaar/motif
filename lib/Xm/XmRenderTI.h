@@ -64,7 +64,6 @@ extern "C" {
 #define _XmRendXftBG(r)         ((_XmRendition)*(r))->xftBackground
 #define _XmRendFontStyle(r)     ((_XmRendition)*(r))->fontStyle
 #define _XmRendFontFoundry(r)   ((_XmRendition)*(r))->fontFoundry
-#define _XmRendFontEncoding(r)  ((_XmRendition)*(r))->fontEncoding
 #define _XmRendFontSize(r)      ((_XmRendition)*(r))->fontSize
 #define _XmRendPixelSize(r)     ((_XmRendition)*(r))->pixelSize
 #define _XmRendFontSlant(r)     ((_XmRendition)*(r))->fontSlant
@@ -112,9 +111,7 @@ typedef struct __XmRenditionRec
   unsigned char foregroundState;
 
 #if USE_XFT
-	char *fontStyle,
-/*			*family,	Use font_name instead. */
-	*fontFoundry, *fontEncoding;
+	char *fontStyle, *fontFoundry;
 	int fontSize, pixelSize, fontSlant, fontSpacing, fontWeight;
 	XftFont *xftFont;
 	XftColor xftForeground, xftBackground;
