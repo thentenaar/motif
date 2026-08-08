@@ -832,6 +832,12 @@ _XmRenditionMerge(Display *d,	/* unused */
   if (scr == NULL)
     {
       rend = XmRenditionCreate(NULL, XmS, NULL, 0); /* Create new */
+      if (rend && !_XmRendFont(rend))
+        _XmRendFont(rend)    = DEFAULT_font;
+      if (rend && !_XmRendXftFont(rend))
+        _XmRendXftFont(rend) = DEFAULT_xftFont;
+      if (rend && !_XmRendDisplay(rend))
+        _XmRendDisplay(rend) = _XmRTDisplay(rt);
     }
   else
     {
@@ -879,10 +885,79 @@ _XmRenditionMerge(Display *d,	/* unused */
     }
 
   CleanupResources(rend, copy);
-
   return(rend);
 }
 
+/**
+ * If we somehow end up with an empty RenderTable, try to load
+ * the default hardcoded renditions, and add the first one
+ * in preference order (Xft, FontSet, Font) to the table and
+ * return True if successful. If rend_out is set, it will receive a
+ * pointer to the created rendition, or NULL on failure.
+ */
+static Boolean _XmRenderTableDefaultFont(XmRenderTable rt, XmRendition *rend_out)
+{
+	Arg args[3];
+	char buf[26];
+	XmRendition rend = NULL;
+	XmScreen s;
+
+	if (rend_out) *rend_out = NULL;
+	if (!rt || !_XmRTDisplay(rt)) return False;
+
+#if USE_XFT
+	/* Try the default Xft font */
+	s = XmScreenOfScreen(DefaultScreenOfDisplay(_XmRTDisplay(rt)));
+	snprintf(buf, sizeof buf, XmDEFAULT_XFTFONT, 10 + (int)(3 * (XmScreenDpi(s) / 96.)));
+	XtSetArg(args[0], XmNfontName, buf);
+	XtSetArg(args[1], XmNfontType, XmFONT_IS_XFT);
+	rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
+	                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
+	                          args, 2, NULL);
+	if (rend && !_XmRendXftFont(rend)) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
+#endif
+
+	/* See if we have the default fontset */
+	if (!rend) {
+		XtSetArg(args[0], XmNfontName, XmDEFAULT_FONTSET);
+		XtSetArg(args[1], XmNfontType, XmFONT_IS_FONTSET);
+		rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
+		                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
+		                          args, 2, NULL);
+		if (rend && !_XmRendFont(rend)) {
+			XmRenditionFree(rend);
+			rend = NULL;
+		}
+	}
+
+	/* Fall back to the default core font */
+	if (!rend) {
+		XtSetArg(args[0], XmNfontName, XmDEFAULT_FONT);
+		XtSetArg(args[1], XmNfontType, XmFONT_IS_FONT);
+		rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
+		                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
+		                          args, 2, NULL);
+		if (rend && !_XmRendFont(rend)) {
+			XmRenditionFree(rend);
+			rend = NULL;
+		}
+	}
+
+	/* Add it to the render table */
+	if (rend) {
+		_XmRTRenditions(rt) = (XmRendition *)XtRealloc(
+			(XtPointer)_XmRTRenditions(rt),
+			(_XmRTCount(rt) + 1) * sizeof(XmRendition)
+		);
+		_XmRTRenditions(rt)[_XmRTCount(rt)++] = rend;
+	}
+
+	if (rend_out) *rend_out = _XmRenditionCopy(rend, True);
+	return !!rend;
+}
 
 /****************
  * If the cached_tag flag is true, _XmRenderTableFindFallback assumes that the
@@ -900,15 +975,9 @@ _XmRenderTableFindFallback(
 {
   XmStringTag     search_cset = NULL;
 
-  *indx = -1 ;
+  if (indx) *indx = -1;
 
-  if ((rendertable != NULL) && (_XmRTCount(rendertable) == 0))
-    {
-      *rend_ptr = NULL;
-      return(FALSE);
-    }
-
-  if (rendertable != NULL)
+  if (rendertable)
     {
       if (tag != NULL)
 	{
@@ -962,16 +1031,16 @@ _XmRenderTableFindFallback(
 	    }
 	}
 
-      /* Otherwise pick up first font(set) if tag a default value. */
-      if ((tag == NULL) ||
-	  (tag == XmFONTLIST_DEFAULT_TAG) ||
-	  (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0) ||
-	  _XmStringIsCurrentCharset(tag))
-	return(_XmRenderTableFindFirstFont(rendertable, indx, rend_ptr));
+	/* Otherwise pick up first font(set) if tag a default value. */
+	if (!tag || tag == XmFONTLIST_DEFAULT_TAG ||
+	    !strcmp(tag, XmFONTLIST_DEFAULT_TAG)  ||
+	    _XmStringIsCurrentCharset(tag))
+	    return _XmRenderTableFindFirstFont(rendertable, indx, rend_ptr);
     }
-  *rend_ptr = NULL;
-  *indx = -1;
-  return(FALSE);
+
+  if (rend_ptr) *rend_ptr = NULL;
+  if (indx)     *indx = -1;
+  return False;
 }
 
 extern Boolean
@@ -1001,29 +1070,34 @@ _XmRenderTableFindFirstFont(XmRenderTable rendertable,
 #if USE_XFT
   if (xft_idx >= 0)
     {
-      *rend_ptr = _XmRTRenditions (rendertable)[xft_idx];
-      *indx = xft_idx;
+      if (rend_ptr) *rend_ptr = _XmRTRenditions (rendertable)[xft_idx];
+      if (indx)     *indx = xft_idx;
     }
   else
 #endif
   if (fs_idx >= 0)
     {
-      *rend_ptr = _XmRTRenditions(rendertable)[fs_idx];
-      *indx = fs_idx;
+      if (rend_ptr) *rend_ptr = _XmRTRenditions(rendertable)[fs_idx];
+      if (indx)     *indx = fs_idx;
     }
   else if (f_idx >= 0)
     {
-      *rend_ptr = _XmRTRenditions(rendertable)[f_idx];
-      *indx = f_idx;
+      if (rend_ptr) *rend_ptr = _XmRTRenditions(rendertable)[f_idx];
+      if (indx)     *indx = f_idx;
     }
   else
     {
-      *rend_ptr = NULL;
-      *indx = -1;
-      return(FALSE);
+      if (_XmRenderTableDefaultFont(rendertable, rend_ptr)) {
+        if (indx) *indx = _XmRTCount(rendertable) - 1;
+        return True;
+      }
+
+      if (rend_ptr) *rend_ptr = NULL;
+      if (indx)     *indx = -1;
+      return False;
     }
 
-  return(TRUE);
+  return True;
 }
 
 /* Put value of every resource in fromRend into toRend, copying where */
@@ -2095,9 +2169,9 @@ CleanupResources(XmRendition rend,
 #endif
 
   if (((unsigned int)(unsigned long)_XmRendFontName(rend) == XmAS_IS) ||
-      (strcmp(_XmRendFontName(rend), XmSXmAS_IS) == 0))
+      (_XmRendFontName(rend) && !strcmp(_XmRendFontName(rend), XmSXmAS_IS)))
     _XmRendFontName(rend) = NULL;
-  else if (copy)
+  else if (copy && _XmRendFontName(rend))
     _XmRendFontName(rend) = XtNewString(_XmRendFontName(rend));
 
   if ((unsigned int)(unsigned long)_XmRendTabs(rend) == XmAS_IS)

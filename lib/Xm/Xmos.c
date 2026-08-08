@@ -106,7 +106,9 @@ typedef struct {
  * and may be modified.
  ********/
 
-externaldef(xmos) char _XmSDEFAULT_FONT[] = "fixed";
+externaldef(xmos) char _XmSDEFAULT_FONT[]       = "fixed";
+externaldef(xmos) char _XmSDEFAULT_FONTSET[]    = "*-medium-r-normal-*-13-*";
+externaldef(xmos) char _XmSDEFAULT_XFTFONT[]    = "sans-serif:pixelsize=%d";
 externaldef(xmos) char _XmSDEFAULT_BACKGROUND[] = "#c4c4c4";
 
 /**************** end of vendor dependant defaults ********/

@@ -91,13 +91,17 @@ externalref int xmUseVersion;
 #endif
 
 #define XmDEFAULT_FONT                  _XmSDEFAULT_FONT
+#define XmDEFAULT_FONTSET               _XmSDEFAULT_FONTSET
+#define XmDEFAULT_XFTFONT               _XmSDEFAULT_XFTFONT
 #define XmDEFAULT_BACKGROUND            _XmSDEFAULT_BACKGROUND
 #define XmDEFAULT_DARK_THRESHOLD        20
 #define XmDEFAULT_LIGHT_THRESHOLD       93
 #define XmDEFAULT_FOREGROUND_THRESHOLD  70
 
-externalref  char    _XmSDEFAULT_FONT[];            /* In Xmos.c */
-externalref  char    _XmSDEFAULT_BACKGROUND[];      /* In Xmos.c */
+externalref char _XmSDEFAULT_FONT[];       /* In Xmos.c */
+externalref char _XmSDEFAULT_FONTSET[];    /* In Xmos.c */
+externalref char _XmSDEFAULT_XFTFONT[];    /* In Xmos.c */
+externalref char _XmSDEFAULT_BACKGROUND[]; /* In Xmos.c */
 
 typedef unsigned char	XmDirection;
 
