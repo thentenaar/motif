@@ -1713,85 +1713,45 @@ static XmFontList DefaultSystemFontList(Display *display, XmFontList fontlist)
     return NULL;
 }
 
-XmFontList
-XmeGetDefaultRenderTable(
-        Widget w,
-        unsigned char fontListType )
+XmFontList XmeGetDefaultRenderTable(Widget w, unsigned char fontListType)
 {
-    XmFontList fontlist = NULL;
-    static XmFontList sFontList = NULL;
-    Widget origw = w;
-    XmFontListEntry fontListEntry;
-    char *s;
-    char *newString;
-    char *sPtr;
-    char *fontName;
-    char *fontTag;
-    XmFontType fontType;
-    char delim;
-    XmSpecRenderTrait trait ;
-    _XmWidgetToAppContext(w);
+	XmFontList fontlist = NULL;
+	Widget wx = w;
+	XmSpecRenderTrait trait;
+	XmRendition rend;
+	_XmWidgetToAppContext(w);
 
-    if (fontListType) {
-        _XmAppLock(app);
-	/* look for the first ancestor with the trait */
-	while ((w = XtParent(w)) != NULL) {
-	    if ((trait = (XmSpecRenderTrait)
-		 XmeTraitGet((XtPointer) XtClass(w),
-			     XmQTspecifyRenderTable)) != NULL) {
-		fontlist = trait->getRenderTable(w, fontListType) ;
-		break ;
-	    }
-	}
-        _XmAppUnlock(app);
-    }
+	if (fontListType) {
+		_XmAppLock(app);
+		/* look for the first ancestor with the trait */
+		while ((wx = XtParent(wx))) {
+			trait = (XmSpecRenderTrait)XmeTraitGet(
+				(XtPointer)XtClass(wx), XmQTspecifyRenderTable
+			);
 
-    if (fontlist) {
-        return (fontlist);
-    }
-#if 0
-    else if (sFontList) {
-	printf("Reusing sFontList\n");
-	return(sFontList);
-    }
-#endif
-
-    _XmProcessLock();
-    fontlist = DefaultSystemFontList(XtDisplay(origw), (XmFontList) NULL);
-    if (!fontlist) {
-	s = (char *)XmDEFAULT_FONT;
-	sPtr = newString = XtNewString (s);
-
-	if (!GetNextFontListEntry (&sPtr, &fontName, &fontTag,
-				   &fontType, &delim)) {
-	    _XmProcessUnlock();
-	    XtFree (newString);
-	    XmeWarning(NULL, MSG2);
-	    exit(EXIT_FAILURE);
-	}
-
-	do {
-	    if (*fontName) {
-		fontListEntry = XmFontListEntryLoad (XtDisplay(origw),
-						     fontName,
-						     fontType, fontTag);
-		if (fontListEntry != NULL) {
-		    fontlist = XmFontListAppendEntry (fontlist, fontListEntry);
-		    XmFontListEntryFree (&fontListEntry);
+			if (trait && (fontlist = trait->getRenderTable(wx, fontListType)))
+				break;
 		}
-		else
-		    XtDisplayStringConversionWarning(XtDisplay(origw),
-						     fontName, XmRFontList);
-	    }
+
+		_XmAppUnlock(app);
+		if (fontlist)
+			return fontlist;
 	}
-	while ((delim == ',') && *++sPtr && !fontlist &&
-	       GetNextFontListEntry (&sPtr, &fontName, &fontTag,
-				     &fontType, &delim));
-	XtFree (newString);
-	DefaultSystemFontList(XtDisplay(origw), fontlist);
-    }
-    _XmProcessUnlock();
-    return (fontlist);
+
+	_XmProcessLock();
+    if ((fontlist = DefaultSystemFontList(XtDisplay(w), NULL))) {
+		_XmProcessUnlock();
+		return fontlist;
+	}
+
+	/* Load a default rendition and add it to an empty rendertable */
+	fontlist = (XmFontList)_XmCreateRenderTable(w, NULL, NULL, 0);
+	if (!_XmRenderTableFindFallback(fontlist, NULL, False, NULL, &rend))
+		XmeWarning(w, MSG2);
+
+	DefaultSystemFontList(XtDisplay(w), fontlist);
+	_XmProcessUnlock();
+	return fontlist;
 }
 
 static void
