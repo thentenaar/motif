@@ -2992,12 +2992,16 @@ _XmStringDrawLining(Display *d,
   _XmRendDisplay(rend) = d;
 
   gc = _XmRendGC(rend);
-
   fg = _XmRendFG(rend);
   bg = _XmRendBG(rend);
 
   under = _XmRendUnderlineType(rend);
   thru = _XmRendStrikethruType(rend);
+
+#if USE_XFT
+  if (_XmRendFontType(rend) == XmFONT_IS_XFT)
+    w = XftDrawDrawable(_XmXftDrawCreate(d, w));
+#endif
 
   if (!colors_set)
     {
@@ -3214,6 +3218,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	Boolean text16 = False;
 	Dimension u_begin = 0, u_end = 0;
 	unsigned long mask = 0;
+	Drawable draw = w;
 
 	/* If we lack a rendition, segment, or dimensionality, nothing to do. */
 	if (!rend || !seg || !width || !height)
@@ -3254,6 +3259,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 #if USE_XFT
 	case XmFONT_IS_XFT:
 		_XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
+		draw = XftDrawDrawable(_XmXftDrawCreate(d, w));
 		break;
 #endif
 	case XmFONT_IS_FONTSET:
@@ -3274,7 +3280,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 		if (get_substring_pos(seg, *underline, rendertable, rend, x,
 		                      text16, &u_begin, &u_end)) {
 			*underline = NULL; /* only once */
-			XDrawLine(d, w, gc, u_begin, y + descender, u_end, y + descender);
+			XDrawLine(d, draw, gc, u_begin, y + descender, u_end, y + descender);
 		}
 	}
 
@@ -4088,7 +4094,6 @@ _render(Display *d,
 		     &rend2, rend, rendertable, lay_dir, image,
 		     &underline, descender, TRUE, line_width, line_height);
           }
-        y += descender ;      /* go to bottom of this line */
       }
   else {
     XmDirection 		direction = lay_dir;
@@ -4114,7 +4119,6 @@ _render(Display *d,
 	/* width, height, ascent, descent of this line */
 	LineMetrics(line, rendertable, &rend1, rend, lay_dir,
 		    &line_width, &line_height, &ascender, &descender);
-
 	y += ascender;
 
 	if (line_width != 0)
