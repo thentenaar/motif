@@ -152,15 +152,6 @@ static void LineMetrics(_XmStringEntry line,
 			Dimension *height,
 			Dimension *ascender,
 			Dimension *descender);
-static void SubStringPosition(
-                        Boolean one_byte,
-			XmRenderTable rt,
-                        XmRendition entry,
-                        _XmStringEntry seg,
-                        _XmStringEntry under_seg,
-                        Position x,
-                        Dimension *under_begin,
-                        Dimension *under_end) ;
 static void recursive_layout(_XmString string,
 			     int *line_index,
 			     int *seg_index,
@@ -2755,216 +2746,116 @@ _XmStringOptToNonOpt(_XmStringOpt string)
  * and end of the match section in pixels.  Don't touch anything if
  * there is no match
  */
-static void
-SubStringPosition(
-        Boolean one_byte,
-	XmRenderTable rt,
-	XmRendition entry,
-        _XmStringEntry seg,
-        _XmStringEntry under_seg,
-        Position x,
-        Dimension *under_begin,
-        Dimension *under_end )
+static void SubStringPosition(const XmRenderTable rt, const XmRendition rend,
+                              const _XmStringEntry seg,
+                              const _XmStringEntry under_seg,
+                              Position x, Dimension *under_begin,
+                              Dimension *under_end)
 {
-  char *a = (char*) _XmEntryTextGet(seg);
-  char *b = (char*) _XmEntryTextGet(under_seg);
-  char *seg_tag = _XmEntryTag(seg);
-  int i, j, k, begin, max, width;
-  unsigned int seg_len, under_seg_len;
-  Boolean fail;
-
-  /* Metro Link fix: _XmEntryTag(seg) can be NULL, but the original Motif
-   * code never checked for that.  We check, and if it is NULL, we treat
-   * it as if it was set to XmFONTLIST_DEFAULT_TAG. */
-
-  if (seg_tag == NULL)
-    seg_tag = XmFONTLIST_DEFAULT_TAG;
-
-  if (!((seg_tag == _XmEntryTag(under_seg)) ||
-	((strcmp(seg_tag, XmFONTLIST_DEFAULT_TAG) == 0) &&
-	 _XmStringIsCurrentCharset(_XmEntryTag(under_seg))) ||
-	((strcmp(_XmEntryTag(under_seg), XmFONTLIST_DEFAULT_TAG) == 0) &&
-	 _XmStringIsCurrentCharset(seg_tag))))
-    return;
-
-  seg_len = _XmEntryByteCountGet(seg);
-  under_seg_len = _XmEntryByteCountGet(under_seg);
-  if (seg_len < under_seg_len)
-    return;
-
-  max = (seg_len - under_seg_len);
-
-  if (_XmRendFontType(entry) == XmFONT_IS_FONT
-      || _XmRendFontType(entry) == XmFONT_IS_XFT) {
-    XFontStruct *font_struct = (XFontStruct *)_XmRendFont(entry);
-
-    if (one_byte) {
-      for (i = 0; i <= max; i++) {
-	fail = FALSE;
-	begin = i;
-
-	for (j = 0; j < under_seg_len; j++) {
-	  if (a[i+j] != b[j]) {
-	    fail = TRUE;
-	    break;
-	  }
-	}
-	if ( ! fail) {    /* found it */
-	  if (begin == 0)
-	    *under_begin = x;
-	  else
-	    if (_XmRendFontType(entry) == XmFONT_IS_FONT)
-	      *under_begin = x + abs(XTextWidth (font_struct, a, begin));
+	char *a, *b, *seg_tag, *useg_tag;
+	Dimension width = 0;
+	XFontStruct *font_struct;
+	XFontSet font_set;
+	XChar2b *ucs;
+	size_t i, j, begin = 0, ucs_len, seg_len, under_seg_len;
+	size_t b_bytes, aj_off, bj_off;
+	XmCodepoint c_a, c_b;
+	XmTextType type;
+	Boolean fail;
 #if USE_XFT
-	    else {
-	      XGlyphInfo ext;
-	      XftTextExtentsUtf8(_XmRendDisplay(entry), _XmRendXftFont(entry),
-	                      (FcChar8*)a, begin, &ext);
-	      *under_begin = x + ext.xOff;
-	    }
+	XGlyphInfo ext;
 #endif
 
-	  width = _XmEntryWidthGet((_XmStringEntry)under_seg, rt);
+	if (!seg || !under_seg)
+		return;
 
-	  if (width == 0) {
-	    if (_XmRendFontType(entry) == XmFONT_IS_FONT)
-	      width = abs(XTextWidth(font_struct, b, under_seg_len));
-#if USE_XFT
-	    else {
-	      XGlyphInfo ext;
-	      XftTextExtentsUtf8(_XmRendDisplay(entry), _XmRendXftFont(entry),
-	                      (FcChar8*)b, under_seg_len, &ext);
-	      width = ext.xOff;
-	    }
-#endif
-	    _XmEntryWidthSet((_XmStringEntry)under_seg, rt, width);
-	  }
+	a = _XmEntryTextGet(seg);
+	b = _XmEntryTextGet(under_seg);
+	if (!a || !b)
+		return;
 
-	  *under_end = *under_begin + width;
+	/* Metro Link fix: _XmEntryTag(seg) can be NULL, but the original Motif
+	 * code never checked for that.  We check, and if it is NULL, we treat
+	 * it as if it was set to XmFONTLIST_DEFAULT_TAG. */
+	seg_tag  = _XmEntryTag(seg);
+	useg_tag = _XmEntryTag(under_seg);
+	if (!seg_tag)  seg_tag  = XmFONTLIST_DEFAULT_TAG;
+	if (!useg_tag) useg_tag = XmFONTLIST_DEFAULT_TAG;
 
-	  return;
-	}
-      }
-    } else {
-      /*
-       * If either string isn't even byte length, it can't be
-       * two bytes/char.
-       */
+	if (seg_tag != useg_tag && (
+		(!strcmp(seg_tag, XmFONTLIST_DEFAULT_TAG)  &&
+		 !_XmStringIsCurrentCharset(useg_tag))     ||
+		(!strcmp(useg_tag, XmFONTLIST_DEFAULT_TAG) &&
+		 !_XmStringIsCurrentCharset(seg_tag))))
+		return;
 
-      if (((seg_len % 2) != 0) || ((under_seg_len % 2) != 0))
-	return;
+	b_bytes       = _XmEntryByteCountGet(under_seg);
+	seg_len       = _Xmstrlen((unsigned char *)a, _XmEntryByteCountGet(seg));
+	under_seg_len = _Xmstrlen((unsigned char *)b, b_bytes);
+	if (seg_len < under_seg_len)
+		return;
 
-      /*
-       * search for the substring
-       */
+	font_struct = (XFontStruct *)_XmRendFont(rend);
+	font_set    = (XFontSet)_XmRendFont(rend);
+	for (i = 0, begin = 0; i <= seg_len - under_seg_len; i++) {
+		fail = False;
 
-      for (i = 0; i <= max; i+=2) {
-	fail = FALSE;
-	begin = i;
+		for (j = 0, aj_off = 0, bj_off = 0; j < under_seg_len; j++) {
+			fail = XmCharToCodepoint((XmChar)a + begin + aj_off) !=
+			       XmCharToCodepoint((XmChar)b + bj_off);
+			if (fail)
+				break;
+			aj_off += XmCharLen((XmChar)a + begin + aj_off);
+			bj_off += XmCharLen((XmChar)b + bj_off);
+		}
 
-	for (j = 0; j < under_seg_len; j+=2) {
-	  if ((a[i+j] != b[j]) || (a[i+j+1] != b[j+1])) {
-	    fail = TRUE;
-	    break;
-	  }
-	}
-	if ( ! fail) {    /* found it */
-	  if (begin == 0)
-	    *under_begin = x;
-	  else
-	    if (_XmRendFontType(entry) == XmFONT_IS_FONT)
-	      *under_begin =
-	        x + abs(XTextWidth16 (font_struct, (XChar2b *) a, begin/2));
-#if USE_XFT
-	    else {
-	      XGlyphInfo ext;
-	      XftTextExtents16(_XmRendDisplay(entry), _XmRendXftFont(entry),
-	                      (FcChar16*)a, begin, &ext);
-	      *under_begin = x + ext.xOff;
-	    }
-#endif
+		if (fail) {
+			begin += XmCharLen((XmChar)a + begin);
+			continue;
+		}
 
-	  width = _XmEntryWidthGet((_XmStringEntry)under_seg, rt);
-
-	  if (width == 0) {
-	    if (_XmRendFontType(entry) == XmFONT_IS_FONT)
-	      width = abs(XTextWidth16(font_struct, (XChar2b *) b,
-				       under_seg_len/2));
-#if USE_XFT
-	    else {
-	      XGlyphInfo ext;
-	      XftTextExtents16(_XmRendDisplay(entry), _XmRendXftFont(entry),
-	                      (FcChar16*)b, under_seg_len, &ext);
-	      width = ext.xOff;
-	    }
-#endif
-	    _XmEntryWidthSet((_XmStringEntry)under_seg, rt, width);
-	  }
-
-	  *under_end = *under_begin + width;
-	  return;
-	}
-      }
-    }
-  } else {
-    XFontSet font_set = (XFontSet)_XmRendFont(entry);
-    XmTextType type = (XmTextType) _XmEntryTextTypeGet(under_seg);
-    int len_a, len_a1, len_b;
-
-    for (i = 0; i <= max; i += len_a) {
-      fail = FALSE;
-      begin = i;
-
-      if (type == XmWIDECHAR_TEXT) {
-	len_a = sizeof(wchar_t);
-
-	for (j = 0; j < under_seg_len; j += sizeof(wchar_t))
-	  if (((wchar_t *)a)[(i+j)/len_a] != ((wchar_t *)b)[j/len_a]) {
-	    fail = TRUE;
-	    break;
-	  }
-      } else {
-	len_a = mblen(&a[i], MB_CUR_MAX);
-	if (len_a < 1) return;
-	len_a1 = len_a;
-
-	for (j = 0; j < under_seg_len; j += len_b) {
-	  len_b = mblen(&b[j], MB_CUR_MAX);
-	  if (len_b < 1) return;
-
-	  if (len_b == len_a1) {
-	    for (k = 0; k < len_b; k++) {
-	      if (a[i+j+k] != b[j+k]) {
-		fail = TRUE;
 		break;
-	      }
-	    }
-	    if (fail == TRUE) break;
-	  } else {
-	    fail = TRUE;
-	    break;
-	  }
-	}
-      }
-
-      if (!fail) {          /* found it */
-	if (begin == 0)
-	  *under_begin = x;
-	else {
-	  *under_begin = x + abs(Xutf8TextEscapement(font_set, a, begin));
-        }
-
-	width = _XmEntryWidthGet((_XmStringEntry)under_seg, rt);
-	if (width == 0) {
-	  width = abs(Xutf8TextEscapement(font_set, b, under_seg_len));
-	  _XmEntryWidthSet((_XmStringEntry)under_seg, rt, width);
 	}
 
-	*under_end = *under_begin + width;
-	return;
-      }
-    }
-  }
+	if (begin) {
+		switch (_XmRendFontType(rend)) {
+		case XmFONT_IS_FONT:
+			ucs = _XmUtf8ToUcs2(a, begin, &ucs_len);
+			*under_begin = x + abs(XTextWidth16(font_struct, ucs, (int)ucs_len));
+			XFree(ucs);
+			break;
+		case XmFONT_IS_FONTSET:
+			*under_begin = x + abs(Xutf8TextEscapement(font_set, a, begin));
+			break;
+#if USE_XFT
+		case XmFONT_IS_XFT:
+			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+				               (FcChar8 *)a, begin, &ext);
+			*under_begin = x + ext.xOff;
+			break;
+#endif
+		}
+	} else *under_begin = x;
+
+	switch (_XmRendFontType(rend)) {
+	case XmFONT_IS_FONT:
+		ucs   = _XmUtf8ToUcs2(b, b_bytes, &ucs_len);
+		width = abs(XTextWidth16(font_struct, ucs, (int)ucs_len));
+		XFree(ucs);
+		break;
+	case XmFONT_IS_FONTSET:
+		width = abs(Xutf8TextEscapement(font_set, b, b_bytes));
+		break;
+#if USE_XFT
+	case XmFONT_IS_XFT:
+		XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
+				           (FcChar8 *)b, b_bytes, &ext);
+		width = ext.xOff;
+		break;
+#endif
+	}
+
+	*under_end = *under_begin + width - 2;
 }
 
 extern void
@@ -3149,8 +3040,8 @@ _XmStringDrawLining(Display *d,
  */
 static Boolean get_substring_pos(_XmStringNREntry seg, XmString substr,
                                  XmRenderTable rt, XmRendition r,
-                                 Position x, Boolean text16,
-                                 Dimension *u_begin, Dimension *u_end)
+                                 Position x, Dimension *u_begin,
+                                 Dimension *u_end)
 {
 	Boolean imm;
 	_XmStringEntry line;
@@ -3177,12 +3068,12 @@ static Boolean get_substring_pos(_XmStringNREntry seg, XmString substr,
 			_XmEntryByteCountSet(&u_seg, _XmStrByteCount(substr));
 			_XmEntryTextTypeSet(&u_seg,  _XmStrTextType(substr));
 			_XmEntryTextSet((_XmStringEntry)&u_seg, _XmStrText(substr));
-			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			SubStringPosition(rt, r, (_XmStringEntry)seg,
 			                  (_XmStringEntry)&u_seg, x, u_begin, u_end);
 		} else {
 			imm = _XmEntryImm(substr);
 			_XmEntryImm(substr) = True;
-			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			SubStringPosition(rt, r, (_XmStringEntry)seg,
 			                  (_XmStringEntry)substr, x, u_begin, u_end);
 			_XmEntryImm(substr) = imm;
 		}
@@ -3190,7 +3081,7 @@ static Boolean get_substring_pos(_XmStringNREntry seg, XmString substr,
 		line = _XmStrEntry(substr)[0];
 		if (_XmStrEntryCount(substr) > 0 && _XmEntrySegmentCountGet(line) > 0) {
 			n_seg = (_XmStringNREntry)_XmEntrySegmentGet(line)[0];
-			SubStringPosition(!text16, rt, r, (_XmStringEntry)seg,
+			SubStringPosition(rt, r, (_XmStringEntry)seg,
 			                  (_XmStringEntry)&n_seg, x, u_begin, u_end);
 		}
 	}
@@ -3215,10 +3106,10 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	char *draw_text, *seg_text;
 	int font_type, text_type;
 	size_t seg_len, ucs_len;
-	Boolean text16 = False;
 	Dimension u_begin = 0, u_end = 0;
 	unsigned long mask = 0;
 	Drawable draw = w;
+	Dimension ulyoff = 0;
 
 	/* If we lack a rendition, segment, or dimensionality, nothing to do. */
 	if (!rend || !seg || !width || !height)
@@ -3244,10 +3135,8 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 
 	if ((fg = _XmRendFG(rend)) != XmUNSPECIFIED_PIXEL) gcv.foreground = fg;
 	if ((bg = _XmRendBG(rend)) != XmUNSPECIFIED_PIXEL) gcv.background = bg;
-	if (font_type == XmFONT_IS_FONT) {
-		text16 = two_byte_font(f);
-		if (gcv.font != f->fid) gcv.font = f->fid;
-	}
+	if (font_type == XmFONT_IS_FONT && gcv.font != f->fid)
+		gcv.font = f->fid;
 
 	draw_text = seg_text;
 	XChangeGC(d, gc, mask, &gcv);
@@ -3260,6 +3149,7 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	case XmFONT_IS_XFT:
 		_XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
 		draw = XftDrawDrawable(_XmXftDrawCreate(d, w));
+		ulyoff = -2; /* Ensure the underline sits at the end of the descender */
 		break;
 #endif
 	case XmFONT_IS_FONTSET:
@@ -3278,9 +3168,10 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	/* Draw underline if needed */
 	if (underline) {
 		if (get_substring_pos(seg, *underline, rendertable, rend, x,
-		                      text16, &u_begin, &u_end)) {
+		                      &u_begin, &u_end)) {
 			*underline = NULL; /* only once */
-			XDrawLine(d, draw, gc, u_begin, y + descender, u_end, y + descender);
+			XDrawLine(d, draw, gc, u_begin, y + descender + ulyoff,
+			          u_end, y + descender + ulyoff);
 		}
 	}
 

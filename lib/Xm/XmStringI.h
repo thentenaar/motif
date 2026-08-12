@@ -758,42 +758,6 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 #define _XmCACHE_RENDER_ASCENT	  7
 #define _XmCACHE_RENDER_DESCENT	  8
 #define _XmCACHE_RENDER_PREV_TABS 9
-#define _XmEntryXGet(entry, rt) 					   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_X)
-#define _XmEntryYGet(entry, rt) 					   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_Y)
-#define _XmEntryWidthGet(entry, rt) 					   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_WIDTH)
-#define _XmEntryHeightGet(entry, rt) 					   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_HEIGHT)
-#define _XmEntryBaselineGet(entry, rt) 				 	   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_BASELINE)
-#define _XmEntryAscentGet(entry, rt) 				 	   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_ASCENT)
-#define _XmEntryDescentGet(entry, rt) 				 	   \
-        (long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_DESCENT)
-#define _XmEntryRenditionGet(entry, rt) 				   \
-        (XmRendition)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_RENDITION)
-#define _XmEntryPrevTabsGet(entry, rt)					   \
-        (char)(long)_XmRenderCacheGet(entry, rt, _XmCACHE_RENDER_PREV_TABS)
-#define _XmEntryXSet(entry, rt, val) 					   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_X, (XtPointer)(long)val)
-#define _XmEntryYSet(entry, rt, val) 					   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_Y, (XtPointer)(long)val)
-#define _XmEntryWidthSet(entry, rt, val) 				   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_WIDTH, (XtPointer)(long)val)
-#define _XmEntryHeightSet(entry, rt, val) 				   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_HEIGHT, (XtPointer)(long)val)
-#define _XmEntryBaselineSet(entry, rt, val) 			 	   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_BASELINE, (XtPointer)(long)val)
-#define _XmEntryAscentSet(entry, rt, val) 				 	   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_ASCENT, (XtPointer)(long)val)
-#define _XmEntryDescentSet(entry, rt, val) 				 	   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_DESCENT, (XtPointer)(long)val)
-#define _XmEntryRenditionSet(entry, rt, val) 				   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_RENDITION, (XtPointer)(long)val)
-#define _XmEntryPrevTabsSet(entry, rt, val)				   \
-        _XmRenderCacheSet(entry, rt, _XmCACHE_RENDER_PREV_TABS, (XtPointer)(long)val)
 
 /*
  * Macros for old non-optimized segment data structure access
