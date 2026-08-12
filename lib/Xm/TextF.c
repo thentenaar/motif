@@ -1704,9 +1704,12 @@ SetInvGC(XmTextFieldWidget tf,
 
 static void DrawText(XmTextFieldWidget tf, GC gc, int x, int y, XmString string)
 {
+	XRectangle c;
+
+	GetRect(tf, &c);
 	XmStringDraw(XtDisplay(tf), XtWindow(tf), TextF_FontList(tf),
 	             string, gc, x, y - TextF_FontAscent(tf), tf->core.width,
-	             tf->text.alignment, XmLEFT_TO_RIGHT, NULL);
+	             tf->text.alignment, XmLEFT_TO_RIGHT, &c);
 }
 
 static int FindPixelLength(XmTextFieldWidget tf, XmString s)
@@ -1772,7 +1775,7 @@ DrawTextSegment(XmTextFieldWidget tf,
 }
 
 /*
- * Redisplay the new adjustments that have been made the the text
+ * Redisplay the new adjustments that have been made to the text
  * field widget.
  */
 static void

@@ -175,30 +175,25 @@ START_TEST(insert_string)
 }
 END_TEST
 
-
-/* void XmTextFieldSetMaxLength(Widget w, int max_length) */
-/* int XmTextFieldGetMaxLength(Widget w) */
-/* void XmTextFieldSetEditable(Widget w, Boolean editable) */
-/* Boolean XmTextFieldGetEditable(Widget w) */
-/* XmTextPosition XmTextFieldGetInsertionPosition(Widget w) */
-/* void XmTextFieldSetInsertionPosition(Widget w, XmTextPosition position) */
-
 /** Actions **/
 START_TEST(backward_char)
 {
+	XEvent e;
+
 	XmTextPosition pos = 4;
 	XmString s = XmStringCreate("test", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "backward-character", NULL, NULL, 0);
+	XtCallActionProc(text, "backward-character", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 3, "Expected cursor to be one before end of string");
 
 	pos = 0;
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "backward-character", NULL, NULL, 0);
+	XtCallActionProc(text, "backward-character", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 0, "Expected cursor to be at the beginning of the string");
 }
@@ -206,19 +201,22 @@ END_TEST
 
 START_TEST(forward_char)
 {
+	XEvent e;
+
 	XmTextPosition pos = 4;
 	XmString s = XmStringCreate("test", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "forward-character", NULL, NULL, 0);
+	XtCallActionProc(text, "forward-character", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 4, "Expected cursor to be at the end of the string");
 
 	pos = 0;
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "forward-character", NULL, NULL, 0);
+	XtCallActionProc(text, "forward-character", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 1, "Expected cursor to be one beyond the start of the string");
 }
@@ -226,19 +224,22 @@ END_TEST
 
 START_TEST(backward_word)
 {
+	XEvent e;
+
 	XmTextPosition pos = 9;
 	XmString s = XmStringCreate("test tset", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "backward-word", NULL, NULL, 0);
+	XtCallActionProc(text, "backward-word", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 5, "Expected cursor to be at the previous word");
 
 	pos = 0;
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "backward-word", NULL, NULL, 0);
+	XtCallActionProc(text, "backward-word", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 0, "Expected cursor to be at the beginning of the string");
 }
@@ -246,22 +247,25 @@ END_TEST
 
 START_TEST(forward_word)
 {
+	XEvent e;
+
 	XmTextPosition pos = 9;
 	XmString s = XmStringCreate("test tset", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "forward-word", NULL, NULL, 0);
+	XtCallActionProc(text, "forward-word", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 9, "Expected cursor to be at the end of the string");
 
 	pos = 0;
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "forward-word", NULL, NULL, 0);
+	XtCallActionProc(text, "forward-word", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 5, "Expected cursor to be at the next word");
-	XtCallActionProc(text, "forward-word", NULL, NULL, 0);
+	XtCallActionProc(text, "forward-word", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 9, "Expected cursor to be at the end of the string");
 }
@@ -269,19 +273,22 @@ END_TEST
 
 START_TEST(end_of_line)
 {
+	XEvent e;
+
 	XmTextPosition pos = 9;
 	XmString s = XmStringCreate("test tset", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "end-of-line", NULL, NULL, 0);
+	XtCallActionProc(text, "end-of-line", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 9, "Expected cursor to be at the end of the string");
 
 	pos = 0;
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "end-of-line", NULL, NULL, 0);
+	XtCallActionProc(text, "end-of-line", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 9, "Expected cursor to be at the end of the string");
 }
@@ -289,16 +296,19 @@ END_TEST
 
 START_TEST(beginning_of_line)
 {
+	XEvent e;
+
 	XmTextPosition pos = 9;
 	XmString s = XmStringCreate("test tset", XmFONTLIST_DEFAULT_TAG);
 	XmTextFieldSetXmString(text, s);
 	XmStringFree(s);
 
+	memset(&e, 0, sizeof e);
 	XtVaSetValues(text, XmNcursorPosition, pos, NULL);
-	XtCallActionProc(text, "beginning-of-line", NULL, NULL, 0);
+	XtCallActionProc(text, "beginning-of-line", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 0, "Expected cursor to be at the beginning of the string");
-	XtCallActionProc(text, "beginning-of-line", NULL, NULL, 0);
+	XtCallActionProc(text, "beginning-of-line", &e, NULL, 0);
 	XtVaGetValues(text, XmNcursorPosition, &pos, NULL);
 	ck_assert_msg(pos == 0, "Expected cursor to be at the beginning of the string");
 }
