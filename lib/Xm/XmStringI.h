@@ -160,10 +160,16 @@ typedef struct __XmParseMappingRec {
   256 bytes with an associated string direction and up to three
   implicit tabs.
 
-  The text is stored immediately after the header within the string.
+  The text is stored immediately after the string cache pointer
+  within the string. The structure must be kept compatible with
+  _XmStringOptSeg, as the string code loves to cast between
+  the two seeing as how they're similar. The latter has additional
+  bits in the optimized string's refcount field, so care must
+  be taken when casting.
 
  ****************************************************************/
 
+typedef struct __XmStringCacheRec *_XmStringCache;
 typedef struct __XmStringOptHeader {
   unsigned int type        : 2;	     /* XmSTRING_OPTIMIZED */
   unsigned int text_type   : 2;	     /* MB, WC, locale or charset text.*/
@@ -180,6 +186,7 @@ typedef struct __XmStringOptHeader {
 
 typedef struct __XmStringOpt {
   _XmStringOptHeader header;
+  _XmStringCache     cache; /* String cache (_XmStringOptSeg compat) */
   char               text[TEXT_BYTES_IN_STRUCT];
 } _XmStringOptRec, *_XmStringOpt;
 
@@ -220,11 +227,8 @@ typedef struct __XmStringEmptyHeader {
 typedef union __XmStringRec {
   _XmStringEmptyHeader  empty;
   _XmStringOptHeader	opt_str;	/* XmSTRING_OPTIMIZED */
-  XtPointer		component;	/* unused */
   _XmStringMultiHeader	multi_str;      /* XmSTRING_MULTIPLE_ENTRY */
 } _XmStringRec;
-
-
 
 /****************************************************************
 
@@ -269,12 +273,10 @@ typedef struct __XmStringRendering {
   XmRenderTable        rt;
 
   /* Cached data */
-  int  	               x;	         /* x pos of segment */
-  int                  y;	         /* y pos of segment */
-  int  	               width;	         /* width of segment */
-  int                  height;	         /* height of segment */
-  int		       ascent;		 /* ascent of segment */
-  int		       descent;		 /* descent of segment */
+  Dimension            width;	     /* width of segment */
+  Dimension            height;	     /* height of segment */
+  Dimension            ascent;	     /* ascent of segment */
+  Dimension            descent;      /* descent of segment */
   int                  baseline;	 /* baseline of segment */
   XmRendition          rendition;        /* Rendition used for this segment */
   char                 prev_tabs;        /* accumulates tabs on line */
@@ -306,9 +308,9 @@ typedef struct __XmStringOptSegHdrRec {
 
 typedef struct __XmStringOptSegRec {
   _XmStringOptSegHdrRec header;
+  _XmStringCache        cache;
   union {
-    wchar_t		wchars[1];
-    unsigned char	chars[1];
+    unsigned char	chars[TEXT_BYTES_IN_STRUCT];
     XtPointer	        text;
   } data;
 } _XmStringOptSegRec, *_XmStringOptSeg;
@@ -353,6 +355,7 @@ typedef struct __XmStringUnoptSegHdrRec {
 
 typedef struct __XmStringUnoptSegRec {
   _XmStringUnoptSegHdrRec header;
+  _XmStringCache          cache;
   union {
     wchar_t		* wchars;
     unsigned char	* chars;
@@ -365,7 +368,6 @@ typedef struct __XmStringUnoptSegRec {
   XmStringTag	          tag;		   /* locale or charset tag */
   unsigned int	          byte_count;	   /* byte count for this segment */
   unsigned int	          char_count;	   /* character count */
-  _XmStringCache          cache;
 }  _XmStringUnoptSegRec, *_XmStringUnoptSeg;
 
 /****************************************************************
@@ -630,13 +632,6 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 	 0)
 #define _XmEntryMBText(entry) 						   \
 	(((_XmStringOptSeg)(entry))->data.chars)
-#define _XmEntryWCText(entry) 						   \
-	(((_XmStringOptSeg)(entry))->data.wchars)
-#define _XmEntryCacheSet(entry, val) 					   \
-	(_XmEntryUnoptimized(entry) ? 					   \
-	 (((_XmStringUnoptSeg)(entry))->cache = (val)) :		   \
-	 NULL)
-
 
 /* Array entry specific macros */
 #define _XmEntrySegmentCount(entry) 					   \
@@ -703,28 +698,12 @@ typedef struct __XmStringArraySegRec *_XmStringLine;
 #define _XmCacheDirty(cache)    (((_XmStringCache)(cache))->dirty)
 #define _XmCacheNext(cache)     (((_XmStringCache)(cache))->next)
 
-#define _XmEntryDirtyGet(entry, type, data) \
-     (((type) == _XmSCANNING_CACHE) ? \
-      (Boolean)(long)_XmScanningCacheGet((_XmStringNREntry)entry, \
-					 (XmDirection)(long)data, \
-					 _XmCACHE_DIRTY) : \
-      (((type) == _XmRENDERING_CACHE) ? \
-       (Boolean)(long)_XmRenderCacheGet((_XmStringEntry)entry, \
-					(XmRenderTable)(long)data, \
-				        _XmCACHE_DIRTY) : \
-       True))
-
-
-#define _XmEntryDirtySet(entry, type, data, val) \
-     (((type) == _XmSCANNING_CACHE) ? \
-      _XmScanningCacheSet((_XmStringNREntry)entry, \
-			  (XmDirection)(long)data, \
-			  _XmCACHE_DIRTY, (XtPointer)(long)val) : \
-      (((type) == _XmRENDERING_CACHE) ? \
-       _XmRenderCacheSet((_XmStringEntry)entry, \
-			 (XmRenderTable)(long)data, \
-			 _XmCACHE_DIRTY, (XtPointer)(long)val) : \
-       (void)NULL))
+#define _XmEntryDirtySet(entry, type, data, val) do { \
+     if ((type) == _XmSCANNING_CACHE) { \
+       _XmScanningCacheSet((_XmStringNREntry)entry, data, \
+                           _XmCACHE_DIRTY, (XtPointer)(intptr_t)val);\
+      } \
+} while (0);
 
 /* Scanning cache */
 #define _XmCACHE_SCAN_LEFT    1
@@ -1001,7 +980,6 @@ extern unsigned char _XmEntryCharCountGet(_XmStringEntry entry,
 					  XmRenderTable rt);
 extern _XmStringCache _XmStringCacheGet(_XmStringCache caches,
 					int type);
-extern void _XmStringCacheFree(_XmStringCache caches);
 extern XtPointer _XmScanningCacheGet(_XmStringNREntry entry,
 				     XmDirection d,
 				     int field);
@@ -1009,15 +987,6 @@ extern void      _XmScanningCacheSet(_XmStringNREntry entry,
 				     XmDirection d,
 				     int field,
 				     XtPointer value);
-/* Rendering cache */
-extern XtPointer _XmRenderCacheGet(_XmStringEntry entry,
-				   XmRenderTable rt,
-				   int field);
-extern void      _XmRenderCacheSet(_XmStringEntry entry,
-				   XmRenderTable rt,
-				   int field,
-				   XtPointer value);
-
 extern XmStringTag _XmStringIndexGetTag(int index);
 
 extern Boolean _XmStringGetSegment(_XmStringContext   context,
@@ -1036,7 +1005,6 @@ extern Boolean _XmStringGetSegment(_XmStringContext   context,
 				   Boolean	     *pop_after);
 
 /* Declarations for macro to function switchover. */
-extern _XmStringCache _XmEntryCacheGet(_XmStringEntry entry);
 extern XmStringTag _XmEntryTag(_XmStringEntry entry);
 extern void _XmEntryTagSet(_XmStringEntry entry, XmStringTag tag);
 extern XtPointer _XmEntryTextGet(_XmStringEntry entry);

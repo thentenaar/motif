@@ -39,18 +39,15 @@ static char rcsid[] = "$TOG: XmString.c /main/34 1998/04/16 14:35:32 mgreess $"
 #include <stdarg.h>
 #include <limits.h>		/* for MB_LEN_MAX */
 #include <errno.h>
+#include <locale.h>
 
 #if HAVE_ICONV_H
 #include <iconv.h>
 #endif
 
-#ifdef __cplusplus
-extern "C" { /* some 'locale.h' do not have prototypes (sun) */
+#if HAVE_STDINT_H
+#include <stdint.h>
 #endif
-#include <X11/Xlocale.h>
-#ifdef __cplusplus
-} /* Close scope of 'extern "C"' declaration */
-#endif /* __cplusplus */
 
 #include <Xm/Display.h>		/* for XmGetXmDisplay */
 #include <Xm/DisplayP.h>	/* for noFontCallback list */
@@ -286,10 +283,11 @@ static void end_context_rends(_XmStringContext context,
 			      Boolean          update_context,
 			      XmStringTag     *rendition,
 			      int	       count);
-static _XmStringCache CacheGet(_XmStringEntry entry,
-			       int type,
-			       int create,
-			       XtPointer match_value);
+static _XmStringCache CacheGet(_XmStringEntry entry, int type,
+                               Boolean create, const XtPointer match_value);
+static XtPointer _XmRenderCacheGet(_XmStringEntry entry,
+                                   const XmRenderTable rt, int field);
+static _XmStringCache _XmEntryCacheGet(const _XmStringEntry entry);
 static _XmStringEntry EntryCvtToOpt(_XmStringEntry entry);
 static _XmStringEntry EntryCvtToUnopt(_XmStringEntry entry);
 
@@ -1737,7 +1735,7 @@ OptLineMetrics(XmRenderTable 	r,
 	       Dimension *descent)
 {
   short	                rend_index;
-  XmRendition		rend = NULL;
+  XmRendition		rend = NULL, cached_rend = NULL;
   XmStringTag		tags[1];
   Display              *d;
   Screen	       *screen;
@@ -1745,8 +1743,53 @@ OptLineMetrics(XmRenderTable 	r,
   XmTabList		tl = NULL;
   XmTab			tab;
   unsigned short	tab_cnt;
-  Dimension             tab_w = 0;
-  _XmRendition		rend_int;
+  Dimension             tab_w = 0, w, h, asc, dsc;
+  _XmRendition         rend_int;
+  _XmStringRenderingCache render_cache;
+
+  if (width)   *width   = 0;
+  if (height)  *height  = 0;
+  if (ascent)  *ascent  = 0;
+  if (descent) *descent = 0;
+
+  render_cache = (_XmStringRenderingCache)CacheGet(
+      (_XmStringEntry)opt, _XmRENDERING_CACHE, True, r
+  );
+
+  if (render_cache && !render_cache->header.dirty) {
+      if (width)   *width   = render_cache->width;
+      if (height)  *height  = render_cache->height;
+      if (ascent)  *ascent  = render_cache->ascent;
+      if (descent) *descent = render_cache->descent;
+
+      if (rend_io && *rend_io) {
+        if (base_rend) {
+            _XmRendGC(*rend_io) = _XmRendGC(base_rend);
+            _XmRendFG(*rend_io) = _XmRendFG(base_rend);
+            _XmRendBG(*rend_io) = _XmRendBG(base_rend);
+            _XmRendFGState(*rend_io) = _XmRendFGState(base_rend);
+            _XmRendBGState(*rend_io) = _XmRendBGState(base_rend);
+#if USE_XFT
+            _XmRendXftFG(*rend_io) = _XmRendXftFG(base_rend);
+            _XmRendXftBG(*rend_io) = _XmRendXftBG(base_rend);
+#endif
+        }
+
+        _XmRendFont(*rend_io)     = _XmRendFont(render_cache->rendition);
+#if USE_XFT
+        _XmRendXftFont(*rend_io)  = _XmRendXftFont(render_cache->rendition);
+#endif
+        _XmRendFontName(*rend_io) = _XmRendFontName(render_cache->rendition);
+        _XmRendFontType(*rend_io) = _XmRendFontType(render_cache->rendition);
+      }
+
+      return;
+  }
+
+  if (!rend_io) {
+      if (render_cache) cached_rend = render_cache->rendition;
+      rend_io = &cached_rend;
+  }
 
   /* compute rendition */
   /* Find font as per I 198. */
@@ -1887,26 +1930,41 @@ OptLineMetrics(XmRenderTable 	r,
 	  rend = NULL;
 	  return;
 	}
-      else if (rend_io != NULL)
-	{
-	  _XmRendFont(*rend_io) = _XmRendFont(rend);
-#if USE_XFT
-	  _XmRendXftFont(*rend_io) = _XmRendXftFont(rend);
-#endif
-	  _XmRendFontName(*rend_io) = _XmRendFontName(rend);
-	  _XmRendFontType(*rend_io) = _XmRendFontType(rend);
-	}
     }
 
   /* Use the raster extent for a single line. */
-  if (rend != NULL)
+  if (rend) {
     ComputeMetrics(rend,
 		   (XtPointer)_XmStrText(opt),
 		   _XmStrByteCount(opt), (XmTextType)_XmStrTextType(opt),
-		   _XmStrTagGet(opt), XmSTRING_SINGLE_SEG, width, height,
-		   ascent, descent);
+		   _XmStrTagGet(opt), XmSTRING_SINGLE_SEG, &w, &h, &asc, &dsc);
+    tl = _XmRendTabs(rend);
 
-  if (rend != NULL) tl = _XmRendTabs(rend);
+    if (!*rend_io) *rend_io = rend;
+    else {
+        _XmRendFont(*rend_io)     = _XmRendFont(rend);
+#if USE_XFT
+        _XmRendXftFont(*rend_io)  = _XmRendXftFont(rend);
+#endif
+        _XmRendFontName(*rend_io) = _XmRendFontName(rend);
+        _XmRendFontType(*rend_io) = _XmRendFontType(rend);
+    }
+
+    if (render_cache) {
+        render_cache->width        = w;
+        render_cache->height       = h;
+        render_cache->ascent       = asc;
+        render_cache->descent      = dsc;
+        render_cache->header.dirty = False;
+        render_cache->rendition    = _XmRenditionCopy(*rend_io, True);
+    } else if (rend_io == &cached_rend) rend_io = NULL;
+
+    if (width)   *width   = w;
+    if (height)  *height  = h;
+    if (ascent)  *ascent  = asc;
+    if (descent) *descent = dsc;
+  }
+
   d = (_XmRTDisplay(r) == NULL) ? _XmGetDefaultDisplay() : _XmRTDisplay(r);
   screen = XtScreenOfObject(XmGetXmDisplay(d));
 
@@ -2115,96 +2173,87 @@ _XmStringCacheGet(_XmStringCache caches,
   return cache;
 }
 
-
-void
-_XmStringCacheFree(_XmStringCache caches)
+static void _XmStringCacheFree(_XmStringCache current)
 {
-  _XmStringCache prev = NULL, current = caches;
+	_XmStringCache next = NULL;
 
-  while (current) {
-    prev = current;
-    current = current->next;
-    if (prev)
-      {
-	if (prev->cache_type == _XmRENDERING_CACHE &&
-	    ((_XmStringRenderingCache)prev)->rendition != NULL)
-	  XmRenditionFree(((_XmStringRenderingCache)prev)->rendition);
-
-	XtFree((char *)prev);
-      }
-  }
+	while (current) {
+		next = current->next;
+		if (current->cache_type == _XmRENDERING_CACHE)
+			XmRenditionFree(((_XmStringRenderingCache)current)->rendition);
+		XtFree((XtPointer)current);
+		current = next;
+	}
 }
 
-
-static _XmStringCache
-CacheGet(_XmStringEntry entry,
-         int type,
-         int create,
-         XtPointer match_value)
+static _XmStringCache _XmEntryCacheGet(const _XmStringEntry entry)
 {
-  _XmStringCache cache;
-
-  if (!entry || !_XmEntryUnoptimized(entry))
-    return NULL;
-
-  switch (type)
-    {
-    case _XmSCANNING_CACHE:
-      {
-        XmDirection  d;
-
-	d = (XmDirection)(long)match_value;
-
-        if (d) {
-          cache = _XmEntryCacheGet(entry);
-          while (cache &&
-                 !(cache->cache_type == type &&
-                   (XmDirectionMatch(((_XmStringScanningCache)cache)->prim_dir,
-                                     d))))
-            cache = cache->next;
-          if (!cache && create) {
-            cache = (_XmStringCache)XtCalloc(1, sizeof(_XmStringScanningRec));
-            cache->cache_type = type;
-            cache->dirty = True;
-            cache->next = _XmEntryCacheGet(entry);
-            _XmEntryCacheSet(entry, cache);
-            ((_XmStringScanningCache)cache)->prim_dir = d;
-          }
-        } else
-          cache = NULL;
-      }
-      break;
-    case _XmRENDERING_CACHE:
-      {
-        XmRenderTable rt;
-
-	rt = (XmRenderTable)match_value;
-
-        if (rt) {
-          cache = _XmEntryCacheGet(entry);
-          while (cache &&
-                 !(cache->cache_type == type &&
-                   ((_XmStringRenderingCache)cache)->rt == rt))
-            cache = cache->next;
-          if (!cache && create) {
-            cache = (_XmStringCache)XtCalloc(1, sizeof(_XmStringRenderingRec));
-            cache->cache_type = type;
-            cache->dirty = True;
-            cache->next = _XmEntryCacheGet(entry);
-            _XmEntryCacheSet(entry, cache);
-            ((_XmStringRenderingCache)cache)->rt = rt;
-          }
-        } else
-          cache = NULL;
-      }
-      break;
-    default:
-      cache = NULL;
-      break;
-    }
-  return cache;
+	if (_XmEntryOptimized(entry))
+		return ((_XmStringOptSeg)entry)->cache;
+	else if (_XmEntryUnoptimized(entry))
+		return ((_XmStringUnoptSeg)entry)->cache;
+	return NULL;
 }
 
+static void _XmEntryCacheSet(_XmStringEntry entry,
+                             const _XmStringCache val)
+{
+	if (_XmEntryOptimized(entry))
+		((_XmStringOptSeg)entry)->cache = val;
+	else if (_XmEntryUnoptimized(entry))
+		((_XmStringUnoptSeg)entry)->cache = val;
+}
+
+static _XmStringCache CacheGet(_XmStringEntry entry, int type,
+                               Boolean create, const XtPointer match_value)
+{
+	XmDirection d;
+	XmRenderTable rt;
+	_XmStringCache cache = NULL;
+
+	if (!entry)
+		return NULL;
+
+	cache = _XmEntryCacheGet(entry);
+	switch (type) {
+	case _XmSCANNING_CACHE:
+		if (!(d = (XmDirection)(uintptr_t)match_value))
+			break;
+
+		while (cache && (cache->cache_type != type ||
+		       !XmDirectionMatch(((_XmStringScanningCache)cache)->prim_dir, d)))
+			cache = cache->next;
+
+		if (cache || !create)
+			break;
+
+		cache = (_XmStringCache)XtCalloc(1, sizeof(_XmStringScanningRec));
+		cache->dirty      = True;
+		cache->cache_type = _XmSCANNING_CACHE;
+		cache->next       = _XmEntryCacheGet(entry);
+		_XmEntryCacheSet(entry, cache);
+		((_XmStringScanningCache)cache)->prim_dir = d;
+		break;
+	case _XmRENDERING_CACHE:
+		rt = (XmRenderTable)match_value;
+		while (cache && (cache->cache_type != type ||
+		       ((_XmStringRenderingCache)cache)->rt != rt))
+			cache = cache->next;
+
+		if (cache || !create)
+			break;
+
+		cache = (_XmStringCache)XtCalloc(1, sizeof(_XmStringRenderingRec));
+		cache->dirty      = True;
+		cache->cache_type = _XmRENDERING_CACHE;
+		cache->next       = _XmEntryCacheGet(entry);
+		_XmEntryCacheSet(entry, cache);
+		((_XmStringRenderingCache)cache)->rt = rt;
+		break;
+	}
+
+	return cache;
+}
 
 XtPointer
 _XmScanningCacheGet(_XmStringNREntry entry,
@@ -2276,101 +2325,29 @@ _XmScanningCacheSet(_XmStringNREntry entry,
     }
 }
 
-
-XtPointer
-_XmRenderCacheGet(_XmStringEntry entry,
-		  XmRenderTable rt,
-		  int field)
+static XtPointer _XmRenderCacheGet(_XmStringEntry entry,
+                                   const XmRenderTable rt, int field)
 {
-  _XmStringRenderingCache cache;
+	_XmStringRenderingCache cache;
 
-  cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE, False,
-					    (XtPointer)rt);
-  if (!cache)
-    {
-      if (entry && _XmEntryUnoptimized(entry) && (field == _XmCACHE_DIRTY))
-	return (XtPointer)True;
-      else
+	cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE,
+	                                          False, rt);
+
+	if (cache) {
+		switch (field) {
+		case _XmCACHE_DIRTY:            return (XtPointer)(intptr_t)cache->header.dirty;
+		case _XmCACHE_RENDER_WIDTH:     return (XtPointer)(intptr_t)cache->width;
+		case _XmCACHE_RENDER_HEIGHT:    return (XtPointer)(intptr_t)cache->height;
+		case _XmCACHE_RENDER_BASELINE:  return (XtPointer)(intptr_t)cache->baseline;
+		case _XmCACHE_RENDER_ASCENT:    return (XtPointer)(intptr_t)cache->ascent;
+		case _XmCACHE_RENDER_DESCENT:   return (XtPointer)(intptr_t)cache->descent;
+		case _XmCACHE_RENDER_RENDITION: return (XtPointer)cache->rendition;
+		case _XmCACHE_RENDER_PREV_TABS: return (XtPointer)(intptr_t)cache->prev_tabs;
+		}
+	}
+
 	return NULL;
-    }
-
-  switch (field)
-    {
-    case _XmCACHE_DIRTY:
-      return (XtPointer)(long)cache->header.dirty;
-    case _XmCACHE_RENDER_X:
-      return (XtPointer)(long)cache->x;
-    case _XmCACHE_RENDER_Y:
-      return (XtPointer)(long)cache->y;
-    case _XmCACHE_RENDER_WIDTH:
-      return (XtPointer)(long)cache->width;
-    case _XmCACHE_RENDER_HEIGHT:
-      return (XtPointer)(long)cache->height;
-    case _XmCACHE_RENDER_BASELINE:
-      return (XtPointer)(long)cache->baseline;
-    case _XmCACHE_RENDER_ASCENT:
-      return (XtPointer)(long)cache->ascent;
-    case _XmCACHE_RENDER_DESCENT:
-      return (XtPointer)(long)cache->descent;
-    case _XmCACHE_RENDER_RENDITION:
-      return (XtPointer)cache->rendition;
-    case _XmCACHE_RENDER_PREV_TABS:
-      return (XtPointer)(long)cache->prev_tabs;
-    default:
-      return NULL;
-    }
 }
-
-
-void
-_XmRenderCacheSet(_XmStringEntry entry,
-		  XmRenderTable rt,
-		  int field,
-		  XtPointer value)
-{
-  _XmStringRenderingCache cache;
-
-  cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE, True,
-					    (XtPointer)rt);
-  if (!cache)
-    return;
-
-  switch (field)
-    {
-    case _XmCACHE_DIRTY:
-      cache->header.dirty = (Boolean)(long)value;
-      break;
-    case _XmCACHE_RENDER_X:
-      cache->x = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_Y:
-      cache->y = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_WIDTH:
-      cache->width = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_HEIGHT:
-      cache->height = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_BASELINE:
-      cache->baseline = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_ASCENT:
-      cache->ascent = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_DESCENT:
-      cache->descent = (int)(long)value;
-      break;
-    case _XmCACHE_RENDER_RENDITION:
-      if (cache->rendition != NULL) XmRenditionFree(cache->rendition);
-      cache->rendition = (XmRendition)value;
-      break;
-    case _XmCACHE_RENDER_PREV_TABS:
-      cache->prev_tabs = (char)(long)value;
-      break;
-    }
-}
-
 
 /*
  * find width of widest line in XmString
@@ -3457,7 +3434,6 @@ recursive_layout(_XmString string,
   }
 }
 
-
 void
 _XmStringLayout(_XmString string,
                 XmDirection direction)
@@ -3473,7 +3449,7 @@ _XmStringLayout(_XmString string,
   if (_XmStrEntryCount(string) > 0 && (line = _XmStrEntryGet(string)) && *line) {
     if (_XmEntrySegmentCountGet(*line)) {
       seg = _XmEntrySegmentGet(*line)[0];
-      needs_recompute = _XmEntryDirtyGet(seg, _XmSCANNING_CACHE, direction);
+      needs_recompute = !!_XmScanningCacheGet(seg, direction, _XmCACHE_DIRTY);
     }
   }
 
@@ -3850,7 +3826,6 @@ _calc_align_and_clip(
         int *restore,
 	XmFontType font_type)
 {
-
     Boolean l_to_r = XmDirectionMatch(lay_dir, XmSTRING_DIRECTION_L_TO_R);
 
 
@@ -3962,8 +3937,6 @@ _render(Display *d,
 
   _XmRendDisplay(rend1) = _XmRendDisplay(rend2) = d;
   gc = _XmRendGC(rend1) = _XmRendGC(rend2) = _XmRendGC(rend);
-  _XmRendTags(rend1) = _XmRendTags(rend2) = NULL;
-  _XmRendTagCount(rend1) = _XmRendTagCount(rend2) = 0;
 
   if (lay_dir <= 1) /* got passed XmStringDirection value */
     lay_dir = XmStringDirectionToDirection(lay_dir);
@@ -4042,9 +4015,6 @@ _render(Display *d,
 #endif
 		  XSetClipMask (d, gc, None);
   }
-
-  if (_XmRendTags(rend1) != NULL) XtFree((char *)_XmRendTags(rend1));
-  if (_XmRendTags(rend2) != NULL) XtFree((char *)_XmRendTags(rend2));
 }
 
 void
@@ -4156,6 +4126,7 @@ _XmStringEntryCopy(_XmStringEntry entry)
 	_XmEntryTextSet(new_entry, NULL);
 	  }
     }
+    _XmEntryCacheSet(new_entry, NULL);
     break;
   case XmSTRING_ENTRY_ARRAY:
     {
@@ -4322,14 +4293,6 @@ _XmEntryTextTypeGet(_XmStringEntry entry)
   return(_XmEntryOptimized(entry) ?
 	 ((_XmStringEntry)(entry))->single.text_type :
 	 ((_XmStringEntry)(entry))->unopt_single.text_type);
-}
-
-_XmStringCache
-_XmEntryCacheGet(_XmStringEntry entry)
-{
-  return (_XmEntryUnoptimized(entry) ?
-	  ((_XmStringUnoptSeg)(entry))->cache :
-	  NULL);
 }
 
 unsigned char
@@ -4501,6 +4464,7 @@ _XmStringEntryFree(_XmStringEntry entry)
 
   switch (_XmEntryType(entry)) {
   case XmSTRING_ENTRY_OPTIMIZED:
+    _XmStringCacheFree(_XmEntryCacheGet(entry));
     if (!_XmEntryImm(entry) && !_XmEntryPermGet(entry) && _XmEntryTextGet(entry))
       XtFree((char *)_XmEntryTextGet(entry));
     XtFree((char *)entry);
@@ -4554,7 +4518,7 @@ XmStringFree(
 	  _XmStringEntryFree(_XmStrEntry(string)[i]);
 	}
       XtFree((char *)_XmStrEntry(string));
-    }
+    } else _XmStringCacheFree(((_XmStringOpt)string)->cache);
   _XmStrFree ((char *) string);
   _XmProcessUnlock();
 }
@@ -4740,41 +4704,44 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
   _XmRendition		rend_int;
   _XmStringRenderingCache render_cache;
 
-  if (_XmEntryTextTypeGet(entry) == XmNO_TEXT) {
-  	if (width)   *width   = 0;
-  	if (height)  *height  = 0;
-  	if (ascent)  *ascent  = 0;
-  	if (descent) *descent = 0;
-    return False;
-  }
+  if (width)   *width   = 0;
+  if (height)  *height  = 0;
+  if (ascent)  *ascent  = 0;
+  if (descent) *descent = 0;
+  if (_XmEntryTextTypeGet(entry) == XmNO_TEXT)
+      return False;
 
   /* Fetching the cache once and accessing the fields directly saves
    * substantial time searching the cache
    */
-  render_cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE, False,
-						   (XtPointer)rendertable);
+  render_cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE,
+                                                   True, (XtPointer)rendertable);
 
-  if ((render_cache != NULL) && !render_cache->header.dirty)
-    {
-      if (width != NULL)
-	*width = (Dimension)render_cache->width;
-      if (height != NULL)
-	*height = (Dimension)render_cache->height;
-      if (ascent != NULL)
-	*ascent = (Dimension)render_cache->ascent;
-      if (descent != NULL)
-	*descent = (Dimension)render_cache->descent;
-      if (rend_in_out != NULL)
-	*rend_in_out = render_cache->rendition;
-      return True;
-    } else if (rend_in_out == NULL)
-      {
-	if (render_cache != NULL)
-	  cached_rend = render_cache->rendition;
-
-	if (cached_rend == NULL) return(FALSE);
-	else rend_in_out = &cached_rend;
+  if (render_cache && !render_cache->header.dirty) {
+      if (width)   *width   = (Dimension)render_cache->width;
+      if (height)  *height  = (Dimension)render_cache->height;
+      if (ascent)  *ascent  = (Dimension)render_cache->ascent;
+      if (descent) *descent = (Dimension)render_cache->descent;
+      if (rend_in_out) {
+        *rend_in_out = render_cache->rendition;
+        if (base) {
+            _XmRendGC(*rend_in_out) = _XmRendGC(base);
+            _XmRendFG(*rend_in_out) = _XmRendFG(base);
+            _XmRendBG(*rend_in_out) = _XmRendBG(base);
+            _XmRendFGState(*rend_in_out) = _XmRendFGState(base);
+            _XmRendBGState(*rend_in_out) = _XmRendBGState(base);
+#if USE_XFT
+            _XmRendXftFG(*rend_in_out) = _XmRendXftFG(base);
+            _XmRendXftBG(*rend_in_out) = _XmRendXftBG(base);
+#endif
+        }
       }
+      return True;
+  } else if (!rend_in_out) {
+      if (render_cache) cached_rend = render_cache->rendition;
+      if (!cached_rend) return False;
+      rend_in_out = &cached_rend;
+  }
 
   entry_tag = _XmEntryTag(entry);
 
@@ -4966,19 +4933,28 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
       /* If cache exists, set it. */
       if (render_cache != NULL)
 	{
-	  if (width != NULL) render_cache->width = w;
-	  if (height != NULL) render_cache->height = h;
-	  if (ascent != NULL) render_cache->ascent = asc;
-	  if (descent != NULL) render_cache->descent = dsc;
+	  if (width)   render_cache->width   = w;
+	  if (height)  render_cache->height  = h;
+	  if (ascent)  render_cache->ascent  = asc;
+	  if (descent) render_cache->descent = dsc;
 
-	  render_cache->rendition = *rend_in_out;
+	  /**
+	   * If the rendition has a valid refcount, meaning it was properly
+	   * created and not hastily constructed in auto storage, then we
+	   * can just bump the refcount. Otherwise, we have to clone the
+	   * entire thing.
+	   */
+	  render_cache->rendition = _XmRenditionCopy(
+	      *rend_in_out,
+	      _XmRendRefcount(*rend_in_out) >= 1
+	  );
 	  render_cache->header.dirty = False;
 	}
 
-      if (width != NULL) *width = w;
-      if (height != NULL) *height = h;
-      if (ascent != NULL) *ascent = asc;
-      if (descent != NULL) *descent = dsc;
+      if (width)   *width   = w;
+      if (height)  *height  = h;
+      if (ascent)  *ascent  = asc;
+      if (descent) *descent = dsc;
     }
 
   if (cached_rend == NULL)			  /* Update *rend_in_out */
@@ -5021,6 +4997,7 @@ SpecifiedSegmentExtents(_XmStringEntry entry,
 	  _XmRendHadEnds(*rend_in_out) = FALSE;
 	}
 
+      XtFree((XtPointer)_XmRendTags(*rend_in_out));
       _XmRendTagCount(*rend_in_out) = tag_count;
       _XmRendTags(*rend_in_out) = tags;
     }
@@ -5501,6 +5478,7 @@ _Xm_dump_internal(
 	       _XmStrRendTagGet(string) : "(unset)"));
       printf ("\t    tab_before    = %4d\n", _XmStrTabs(string));
       printf ("\t    refcount      = %4d\n", _XmStrRefCountGet(string));
+      printf ("\t    cache         = %p\n",  _XmEntryCacheGet((_XmStringEntry)string));
       printf ("\t    byte count    = %4d\n", _XmStrByteCount(string));
       printf ("\t    text          = <");
       for (k = 0; k < _XmStrByteCount(string); k++)
