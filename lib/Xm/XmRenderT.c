@@ -1125,9 +1125,12 @@ CopyInto(XmRendition toRend,
   else
     _XmRendTabs(toRend) = XmTabListCopy(_XmRendTabs(fromRend), 0, 0);
 #if USE_XFT
-  _XmRendXftFont (toRend) = _XmRendXftFont (fromRend);
   _XmRendXftBG (toRend) = _XmRendXftBG (fromRend);
   _XmRendXftFG (toRend) = _XmRendXftFG (fromRend);
+  if (_XmRendFontType(fromRend) == XmFONT_IS_XFT && _XmRendXftFont(fromRend))
+      _XmRendXftFont(toRend) = XftFontCopy(_XmRendDisplay(fromRend),
+                                           _XmRendXftFont(fromRend));
+
   _XmRendFontStyle (toRend) = _XmRendFontStyle (fromRend);
   _XmRendFontFoundry (toRend) = _XmRendFontFoundry (fromRend);
   _XmRendFontSize (toRend) = _XmRendFontSize (fromRend);
