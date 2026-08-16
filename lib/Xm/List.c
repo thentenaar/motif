@@ -2403,7 +2403,7 @@ DrawItems(XmListWidget lw,
 		     ((lw->list.InternalList[pos]->selected) ?
 		      lw->list.NormalGC : lw->list.InverseGC),
 			  lw->list.BaseX, y - 1,
-			  width + 1, lw->list.MaxItemHeight + 1);
+			  width + 1, lw->list.MaxItemHeight + 2);
 
       if (XtIsSensitive((Widget)lw))
 	gc = ((lw->list.InternalList[pos]->selected) ?
