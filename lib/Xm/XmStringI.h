@@ -247,7 +247,7 @@ typedef struct __XmStringCacheRec {
   struct __XmStringCacheRec * next;
   unsigned char               cache_type;/* only 255 cache types supported */
   Boolean		      dirty;	 /* 1 => recompute this cache */
-}  _XmStringCacheHeader, *_XmStringCache;
+}  _XmStringCacheHeader;
 
 /*
  * Scanning cache
