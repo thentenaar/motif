@@ -1683,17 +1683,10 @@ extern void XmStringFree(
 extern Dimension XmStringBaseline(
                         XmFontList fontlist,
                         XmString string) ;
-extern Dimension XmStringWidth(
-                        XmFontList fontlist,
-                        XmString string) ;
-extern Dimension XmStringHeight(
-                        XmFontList fontlist,
-                        XmString string) ;
-extern void XmStringExtent(
-                        XmFontList fontlist,
-                        XmString string,
-                        Dimension *width,
-                        Dimension *height) ;
+extern Dimension XmStringWidth(XmRenderTable rt, XmString string);
+extern Dimension XmStringHeight(XmRenderTable rt, XmString string);
+extern void XmStringExtent(XmRenderTable rt, XmString string,
+                           Dimension *width, Dimension *height);
 extern int XmStringLineCount(
                         XmString string) ;
 extern void XmStringDraw(

@@ -137,9 +137,6 @@ static void OptLineMetrics(XmRenderTable rendertable,
 			   Dimension *height,
 			   Dimension *ascender,
 			   Dimension *descender );
-static Dimension OptLineAscender(
-                        XmRenderTable f,
-                        _XmStringOpt opt) ;
 static void LineMetrics(_XmStringEntry line,
 			XmRenderTable r,
 			XmRendition *rend_io,
@@ -218,21 +215,10 @@ static void _render(Display *d,
 		    _XmString underline,
 		    XRectangle *clip);
 
-static Boolean SpecifiedSegmentExtents(_XmStringEntry entry,
-				       XmRenderTable rendertable,
-				       XmRendition *rend_in_out,
-				       XmRendition base,
-				       int which_seg,
-				       Dimension *width,
-				       Dimension *height,
-				       Dimension *ascent,
-				       Dimension *descent);
-
 static void ComputeMetrics(XmRendition rend,
 			   XtPointer text,
 			   unsigned int byte_count,
 			   XmTextType type,
-			   XmStringTag tag,
 			   int which_seg,
 			   Dimension *width,
 			   Dimension *height,
@@ -1631,22 +1617,6 @@ Boolean XmStringCompare(XmString a, XmString b)
 /*
  * optimized internal TCS structure handling routines
  */
-/*
- * find the ascender for the given optimized line
- */
-static Dimension
-OptLineAscender(
-        XmRenderTable f,
-        _XmStringOpt opt )
-{
-  Dimension width, height, ascent, descent;
-
-  OptLineMetrics(f, (_XmString)opt, NULL, NULL,
-		 &width, &height, &ascent, &descent);
-
-  return(ascent);
-}
-
 int
 _XmConvertFactor(unsigned char units,
 	      float *factor)
@@ -1720,284 +1690,366 @@ TabVal(Display *d,
   return _XmConvertUnits(*pscreen, XmHORIZONTAL, fromType, intValue, XmPIXELS);
 }
 
+/**
+ * Create a _XmStringRendition for the given portion of a
+ * string entry.
+ */
+static void cache_rendition(_XmStringEntry ent, const XmRendition rend,
+                            const XmRenderTable rt, XmTextPosition start,
+                            XmTextPosition end)
+{
+	_XmStringRendition sr;
+	_XmStringRenderingCache rcache;
 
-/*
+	rcache = (_XmStringRenderingCache)CacheGet(ent, _XmRENDERING_CACHE,
+	                                           True, rt);
+	sr = (_XmStringRendition)XtCalloc(1, sizeof(struct __XmStringRendition));
+	sr->start     = start;
+	sr->end       = end;
+	sr->rendition = rend;
+
+	_XmRendRefcountInc(rend);
+	if (rcache->rendition_tail) {
+		sr->prev = rcache->rendition_tail;
+		sr->prev->next = sr;
+	}
+
+	if (!rcache->rendition_head)
+		rcache->rendition_head = sr;
+	rcache->rendition_tail = sr;
+	rcache->header.dirty   = True;
+}
+
+#if USE_XFT
+/**
+ * If we've got an Xft rendition, walk the string to see where we may
+ * need to apply fallback fonts, and add them to the _XmStringRendition.
+ */
+static void make_renditions(_XmStringEntry ent, const XmRendition rend, XmRenderTable rt)
+{
+	XmTextPosition c, c2, len, split;
+	Boolean has_cp;
+	XmCodepoint cp;
+	XmChar text;
+	XmRendition fallback;
+
+	if (!ent || !rend || !rt)
+		return;
+
+	/**
+	 * Here begins the real fun. Walk the string and subdivide the
+	 * entry according to which font renders which codepoints.
+	 */
+	split = c = c2 = 0;
+	len   = _XmEntryByteCountGet(ent);
+	text  = _XmEntryTextGet(ent);
+
+	while (c < len) {
+		cp     = XmCharToCodepoint(text + c);
+		has_cp = XmRenditionHasCodepoint(rend, cp);
+		if (!cp || cp == XM_INVALID_CODEPOINT || has_cp) {
+			c += MAX(1, XmCharLen(text + c));
+			continue;
+		}
+
+		/* If we can't find a fallback font, leave it with the original */
+		if (!(fallback = XmRenditionFallbackForCodepoint(rt, rend, cp))) {
+			c += MAX(1, XmCharLen(text + c));
+			continue;
+		}
+
+		/* See how far the fallback covers */
+		c2 = c;
+		while (c2 < len) {
+			cp     = XmCharToCodepoint((XmChar)text + c2);
+			has_cp = XmRenditionHasCodepoint(fallback, cp);
+			if (!has_cp || XmRenditionHasCodepoint(rend, cp))
+				break;
+			c2 += MAX(1, XmCharLen(text + c2));
+		}
+
+		/* See if the whole thing is fallback */
+		if (c2 >= len && c == split) {
+			cache_rendition(ent, fallback, rt, c, len - c);
+			break;
+		}
+
+		/* First range: split .. c */
+		if (c > split) {
+			cache_rendition(ent, rend, rt, split, c);
+		    split = c2;
+		}
+
+		/* Second range: c .. c2 */
+		if (c2 > c) {
+			cache_rendition(ent, fallback, rt, c, c2);
+		    c = split = c2;
+		}
+	}
+
+	/* The rest is rend */
+	if (c2 < len)
+		cache_rendition(ent, rend, rt, c2, len);
+}
+#endif /* USE_XFT */
+
+/**
+ * Find a suitable rendition for this string entry, then apply it. If the
+ * rendition is a Xft rendition, probe further to see if fallback fonts
+ * are needed for rendering.
+ *
+ * Complain if we can't find a suitable rendition.
+ *
+ * Returns the rendering cache entry, or NULL on error.
+ */
+static _XmStringRenderingCache plan_renditions(_XmStringEntry ent,
+                                               const XmRendition base,
+                                               XmRenderTable rt)
+{
+	XmRendition r, rend = NULL;
+	XmStringTag tag, *tags = NULL;
+	_XmStringRenderingCache rcache = NULL;
+	Boolean unopt;
+	unsigned int i, n_tags = 0;
+
+	if (!ent || !rt || _XmEntryTextTypeGet(ent) == XmNO_TEXT)
+		return NULL;
+
+	/* Make sure we haven't already processed this entry */
+	rcache = (_XmStringRenderingCache)CacheGet(ent, _XmRENDERING_CACHE,
+	                                           False, (XtPointer)rt);
+	if (rcache && !rcache->header.dirty)
+		return rcache;
+
+	if ((n_tags = _XmEntryRendBeginCountGet(ent))) {
+		tags = (XmStringTag *)XtMalloc(
+			_XmEntryRendBeginCountGet(ent) * sizeof *tags
+		);
+
+		for (i = 0; i < n_tags; i++)
+			tags[i] = _XmEntryRendBeginGet(ent, i);
+	}
+
+	/* Render tags / Charset tag / RT Fallbacks */
+	rend = _XmRenditionMerge(_XmRTDisplay(rt), NULL, base, rt,
+	                         _XmEntryTag(ent), tags, n_tags, False);
+	if (!rend && tags)
+		XtFree((XtPointer)tags);
+
+	/* Default rendition */
+	if (!rend) {
+		tag = _XmEntryTextTypeGet(ent) == XmCHARSET_TEXT
+		      ? (XmStringTag)XmFONTLIST_DEFAULT_TAG
+		      : (XmStringTag)_MOTIF_DEFAULT_LOCALE;
+		_XmRenderTableFindFallback(rt, tag, True, NULL, &rend);
+	}
+
+#if USE_XFT
+	if (rend && _XmRendFontType(rend) == XmFONT_IS_XFT)
+		make_renditions(ent, rend, rt);
+	else
+#endif
+	/**
+	 * If we don't have a rendition, we likely can't load anything.
+	 */
+	if (!rend) {
+		XmeWarning(NULL, NO_FONT_MSG);
+		return NULL;
+	} else {
+		/* Non-Xft: Just one rendition for the whole entry */
+		cache_rendition(ent, rend, rt, 0, _XmEntryByteCountGet(ent));
+	}
+
+	return (_XmStringRenderingCache)CacheGet(ent, _XmRENDERING_CACHE,
+	                                         False, rt);
+}
+
+/**
+ * Measure entry extents and cache renditions.
+ *
+ * Returns True if a rendition was loaded, False otherwise.
+ *
+ * NOTE: If you get a rendition back in rend_io, do NOT free it. Cave
+ * dracones.
+ */
+static Boolean entry_metrics(_XmStringEntry ent, XmRenderTable r,
+                             XmRendition *rend_io, const XmRendition base,
+                             int which_seg, Dimension *width,
+                             Dimension *height, Dimension *ascent,
+                             Dimension *descent)
+{
+	Dimension w, h, asc, dsc;
+	Dimension xw = 0, xh = 0, xa = 0, xd = 0;
+	_XmStringRendition sr = NULL, tmp;
+	XtPointer text;
+	_XmStringRenderingCache render_cache;
+
+	if (width)   *width   = 0;
+	if (height)  *height  = 0;
+	if (ascent)  *ascent  = 0;
+	if (descent) *descent = 0;
+	if (_XmEntryTextTypeGet(ent) == XmNO_TEXT)
+		return False;
+
+	/**
+	 * See if we already have a cache entry
+	 */
+	render_cache = (_XmStringRenderingCache)CacheGet(ent, _XmRENDERING_CACHE,
+	                                                 False, r);
+
+	if (render_cache && !render_cache->header.dirty) {
+		if (width)   *width   = render_cache->width;
+		if (height)  *height  = render_cache->height;
+		if (ascent)  *ascent  = render_cache->ascent;
+		if (descent) *descent = render_cache->descent;
+
+		if (rend_io)
+			goto out;
+		return True;
+	}
+
+	/**
+	 * Plan the renditions for our entry, initializing the cache
+	 */
+	if (!render_cache)
+		render_cache = plan_renditions(ent, base, r);
+
+	if (!render_cache || !render_cache->rendition_head) {
+		/**
+		 * This should not happen, as it implies that no rendition,
+		 * not even a fallback rendition, could be successfully
+		 * created.
+		 */
+		return False;
+	}
+
+	/**
+	 * Accumulate metrics across string rendition entries
+	 */
+	for (sr = render_cache->rendition_head; sr; sr = sr->next) {
+		text = XtMalloc(sr->end - sr->start);
+		memcpy(text, (XmChar)_XmEntryTextGet(ent) + sr->start,
+		       sr->end - sr->start);
+		ComputeMetrics(sr->rendition, text, sr->end - sr->start,
+		               (XmTextType)_XmEntryTextTypeGet(ent),
+		               which_seg, &w, &h, &asc, &dsc);
+		XtFree(text);
+
+		xw += w;
+		xh  = MAX(xh, h);
+		xa  = MAX(xa, asc);
+		xd  = MAX(xd, dsc);
+	}
+
+	/**
+	 * Cache the result, update the in/out param, and return the
+	 * metrics to the caller.
+	 */
+	render_cache->width   = xw;
+	render_cache->height  = xh;
+	render_cache->ascent  = xa;
+	render_cache->descent = xd;
+	render_cache->header.dirty = False;
+
+	if (width)   *width   = xw;
+	if (height)  *height  = xh;
+	if (ascent)  *ascent  = xa;
+	if (descent) *descent = xd;
+
+out:
+	if (!rend_io)
+		return True;
+
+	/* Polish the head rendition with the usuals */
+	if (!*rend_io)
+		*rend_io = render_cache->rendition_head->rendition;
+
+	if (base) {
+		_XmRendGC(*rend_io)      = _XmRendGC(base);
+		_XmRendFG(*rend_io)      = _XmRendFG(base);
+		_XmRendBG(*rend_io)      = _XmRendBG(base);
+		_XmRendFGState(*rend_io) = _XmRendFGState(base);
+		_XmRendBGState(*rend_io) = _XmRendBGState(base);
+		_XmRendTabs(*rend_io)    = _XmRendTabs(base);
+#if USE_XFT
+		_XmRendXftFG(*rend_io)   = _XmRendXftFG(base);
+		_XmRendXftBG(*rend_io)   = _XmRendXftBG(base);
+#endif
+	}
+
+	/**
+	 * Use the head of the list for things like font name, etc.
+	 * preserving previous behavior where only one is expected,
+	 * just to make sure we don't break something unexpectedly.
+	 */
+	_XmRendFont(*rend_io)     = _XmRendFont(render_cache->rendition_head->rendition);
+#if USE_XFT
+	_XmRendXftFont(*rend_io)  = _XmRendXftFont(render_cache->rendition_head->rendition);
+#endif
+	_XmRendFontName(*rend_io) = _XmRendFontName(render_cache->rendition_head->rendition);
+	_XmRendFontType(*rend_io) = _XmRendFontType(render_cache->rendition_head->rendition);
+	return True;
+}
+
+/**
  * Find width, height, ascent and descent for the given optimized line.
  */
-static void
-OptLineMetrics(XmRenderTable 	r,
-	       _XmString 	opt,
-	       XmRendition *rend_io,
-	       XmRendition base_rend,
-	       Dimension *width,
-	       Dimension *height,
-	       Dimension *ascent,
-	       Dimension *descent)
+static void OptLineMetrics(XmRenderTable r, _XmString opt,
+                           XmRendition *rend_io, XmRendition base_rend,
+                           Dimension *width, Dimension *height,
+                           Dimension *ascent, Dimension *descent)
 {
-  short	                rend_index;
-  XmRendition		rend = NULL, cached_rend = NULL;
-  XmStringTag		tags[1];
-  Display              *d;
-  Screen	       *screen;
-  int			prev_val, val, i, ref_cnt, rt_ref_cnt;
-  XmTabList		tl = NULL;
-  XmTab			tab;
-  unsigned short	tab_cnt;
-  Dimension             tab_w = 0, w, h, asc, dsc;
-  _XmRendition         rend_int;
-  _XmStringRenderingCache render_cache;
+	Screen *s;
+	Dimension tab_w = 0;
+	XmTab tab;
+	XmTabList tl = NULL;
+	int val, prev_val;
+	unsigned int i, tab_cnt;
+	Boolean done;
+	XmRendition rend = NULL;
+	_XmStringOptSegRec seg;
+	_XmStringRendition sr = NULL, tmp;
+	_XmStringRenderingCache render_cache;
 
-  if (width)   *width   = 0;
-  if (height)  *height  = 0;
-  if (ascent)  *ascent  = 0;
-  if (descent) *descent = 0;
+	if (!rend_io)
+		rend_io = &rend;
 
-  render_cache = (_XmStringRenderingCache)CacheGet(
-      (_XmStringEntry)opt, _XmRENDERING_CACHE, True, r
-  );
+	/* Coerce opt into an optimized entry */
+	memset(&seg, 0, sizeof seg);
+	memcpy(&seg.header, &((_XmStringOpt)opt)->header, sizeof seg.header);
+	seg.header.tabs_before     = _XmStrTabs(opt);
+	seg.header.permanent       = 0;
+	seg.header.soft_line_break = 0;
+	seg.header.immediate       = 0;
+	seg.cache                  = ((_XmStringOptSeg)opt)->cache;
+	seg.data.text              = _XmStrText(opt);
+	if (!entry_metrics((_XmStringEntry)&seg, r, rend_io, base_rend,
+	                    XmSTRING_SINGLE_SEG, width, height, ascent, descent))
+		return;
 
-  if (render_cache && !render_cache->header.dirty) {
-      if (width)   *width   = render_cache->width;
-      if (height)  *height  = render_cache->height;
-      if (ascent)  *ascent  = render_cache->ascent;
-      if (descent) *descent = render_cache->descent;
+	/* Copy the cache pointer to opt */
+	((_XmStringOptSeg)opt)->cache = seg.cache;
 
-      if (rend_io && *rend_io) {
-        if (base_rend) {
-            _XmRendGC(*rend_io) = _XmRendGC(base_rend);
-            _XmRendFG(*rend_io) = _XmRendFG(base_rend);
-            _XmRendBG(*rend_io) = _XmRendBG(base_rend);
-            _XmRendFGState(*rend_io) = _XmRendFGState(base_rend);
-            _XmRendBGState(*rend_io) = _XmRendBGState(base_rend);
-#if USE_XFT
-            _XmRendXftFG(*rend_io) = _XmRendXftFG(base_rend);
-            _XmRendXftBG(*rend_io) = _XmRendXftBG(base_rend);
-#endif
-        }
+	tl = _XmRendTabs(*rend_io);
+	s  = XtScreenOfObject(XmGetXmDisplay(_XmRTDisplay(r)));
+	tab = (!tl || ((long)tl == XmAS_IS)) ? NULL : _XmTabLStart(tl);
+	prev_val = 0;
+	tab_cnt  = 0;
 
-        _XmRendFont(*rend_io)     = _XmRendFont(render_cache->rendition);
-#if USE_XFT
-        _XmRendXftFont(*rend_io)  = _XmRendXftFont(render_cache->rendition);
-#endif
-        _XmRendFontName(*rend_io) = _XmRendFontName(render_cache->rendition);
-        _XmRendFontType(*rend_io) = _XmRendFontType(render_cache->rendition);
-      }
-
-      return;
-  }
-
-  if (!rend_io) {
-      if (render_cache) cached_rend = render_cache->rendition;
-      rend_io = &cached_rend;
-  }
-
-  /* compute rendition */
-  /* Find font as per I 198. */
-  /* 1. Find font from rendition tags. */
-  /* 2. Find font from locale/charset tag. */
-  if (base_rend == NULL)
-    {
-      if (_XmStrRendBegin(opt))
-	rend = _XmRenderTableFindRendition(r, _XmStrRendTagGet(opt),
-					   TRUE, FALSE, TRUE, &rend_index);
-
-      if ((rend == NULL) ||
-          (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL))
-	rend = _XmRenderTableFindRendition(r, _XmStrTagGet(opt),
-					   TRUE, FALSE, TRUE, &rend_index);
-    }
-  else
-    {
-      if (_XmStrRendBegin(opt))
-	{
-	  tags[0] = _XmStrRendTagGet(opt);
-
-	  rend = _XmRenditionMerge(_XmRendDisplay(base_rend), rend_io,
-				   base_rend, r, _XmStrTagGet(opt), tags, 1,
-				   FALSE);
-	}
-      else
-	{
-	  rend = _XmRenditionMerge(_XmRendDisplay(base_rend), rend_io,
-				   base_rend, r, _XmStrTagGet(opt), NULL, 0,
-				   FALSE);
-	}
-    }
-
-  /* 3. Default rendition. */
-  if ((rend == NULL) ||
-      (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL))
-    {
-      tags[0] = ((_XmStrTextType(opt) == XmCHARSET_TEXT) ?
-		 XmFONTLIST_DEFAULT_TAG :
-		 _MOTIF_DEFAULT_LOCALE);
-
-      rend = _XmRenderTableFindRendition(r, tags[0],
-					 TRUE, FALSE, FALSE, NULL);
-      if ((rend != NULL) &&
-          (_XmRendFont(rend) == NULL) && (_XmRendXftFont(rend) == NULL) &&
-	  (((base_rend != NULL) && (_XmRendDisplay(base_rend) != NULL)) ||
-	   (_XmRendDisplay(rend) != NULL)))
-	/* Call noFontCallback. */
-	{
-	  XmDisplay			dsp;
-	  XmDisplayCallbackStruct	cb;
-
-	  rt_ref_cnt = _XmRTRefcount(r);
-	  rend = _XmRTRenditions(r)[0];
-	  rend_int = *rend;
-	  ref_cnt = _XmRendRefcount(rend);
-
-	  if ((base_rend != NULL) && (_XmRendDisplay(base_rend) != NULL))
-	    dsp = (XmDisplay)XmGetXmDisplay(_XmRendDisplay(base_rend));
-	  else dsp = (XmDisplay)XmGetXmDisplay(_XmRendDisplay(rend));
-
-	  cb.reason = XmCR_NO_FONT;
-	  cb.event = NULL;
-	  cb.rendition = rend;
-	  cb.font_name = XmS;
-
-	  XtCallCallbackList((Widget)dsp, dsp->display.noFontCallback, &cb);
-
-	  if (rend_int != *rend)		  /* Changed in callback. */
-	    {
-	      /* Need to split ref counts. */
-	      _XmRendRefcount(&rend_int) = ref_cnt - rt_ref_cnt;
-	      _XmRendRefcount(rend) = rt_ref_cnt;
-	    }
-
-	  if (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL)
-	    rend = NULL;
+	/* If this string is tabbed, set width accordingly. */
+	if (tab && _XmStrTabs(opt) && (tab_cnt < _XmTabLCount(tl))) {
+		for (i = 0; i < _XmStrTabs(opt) && tab_cnt < _XmTabLCount(tl); i++) {
+			val = TabVal(_XmRTDisplay(r), &s, None, tab);
+			if (_XmTabModel(tab) == XmABSOLUTE)
+				prev_val = tab_w = val;
+			else /* XmRELATIVE */
+				tab_w = (prev_val += val);
+			++tab_cnt;
+			tab = _XmTabNext(tab);
+		}
 	}
 
-      /* 4a. Take the first one */
-      tags[0] = _XmStrTagGet(opt);
-      if (!rend && r && _XmRTCount(r) > 0 &&
-	  ((_XmStrTextType(opt) == XmCHARSET_TEXT &&
-	    (tags[0] && (tags[0] == XmFONTLIST_DEFAULT_TAG ||
-	      !strcmp(tags[0], XmFALLBACK_CHARSET)         ||
-	      !strcmp(tags[0], XmSTRING_DEFAULT_CHARSET)   ||
-	      !strcmp(tags[0], "UTF-8")))) ||
-	   (_XmStrTextType(opt) == XmMULTIBYTE_TEXT || _XmStrTextType(opt) == XmWIDECHAR_TEXT)))
-	_XmRenderTableFindFirstFont(r, &rend_index, &rend);
-
-      if ((rend != NULL) &&
-          (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL) &&
-	  (((base_rend != NULL) && (_XmRendDisplay(base_rend) != NULL)) ||
-	   (_XmRendDisplay(rend) != NULL)))
-	/* Call noFontCallback. */
-	{
-	  XmDisplay			dsp;
-	  XmDisplayCallbackStruct	cb;
-
-	  rt_ref_cnt = _XmRTRefcount(r);
-	  rend = _XmRTRenditions(r)[0];
-	  rend_int = *rend;
-	  ref_cnt = _XmRendRefcount(rend);
-
-	  if ((base_rend != NULL) && (_XmRendDisplay(base_rend) != NULL))
-	    dsp = (XmDisplay)XmGetXmDisplay(_XmRendDisplay(base_rend));
-	  else dsp = (XmDisplay)XmGetXmDisplay(_XmRendDisplay(rend));
-
-	  cb.reason = XmCR_NO_FONT;
-	  cb.event = NULL;
-	  cb.rendition = rend;
-	  cb.font_name = XmS;
-
-	  XtCallCallbackList((Widget)dsp, dsp->display.noFontCallback, &cb);
-
-	  if (rend_int != *rend)		  /* Changed in callback. */
-	    {
-	      /* Need to split ref counts. */
-	      _XmRendRefcount(&rend_int) = ref_cnt - rt_ref_cnt;
-	      _XmRendRefcount(rend) = rt_ref_cnt;
-	    }
-
-	  if (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL)
-	    rend = NULL;
-	}
-
-      /* 4b/5a. Emit warning and don't render. */
-      if ((rend == NULL) ||
-          (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL))
-	{
-	  /* Don't emit warning if no tags, e.g. just a dir component. */
-	  if (_XmStrRendBegin(opt) ||
-	      (_XmStrTagGet(opt) != NULL))
-	    XmeWarning(NULL, NO_FONT_MSG);
-	  if ((base_rend != NULL) && (rend_io == NULL))
-	    XmRenditionFree(rend);
-	  rend = NULL;
-	  return;
-	}
-    }
-
-  /* Use the raster extent for a single line. */
-  if (rend) {
-    ComputeMetrics(rend,
-		   (XtPointer)_XmStrText(opt),
-		   _XmStrByteCount(opt), (XmTextType)_XmStrTextType(opt),
-		   _XmStrTagGet(opt), XmSTRING_SINGLE_SEG, &w, &h, &asc, &dsc);
-    tl = _XmRendTabs(rend);
-
-    if (!*rend_io) *rend_io = rend;
-    else {
-        _XmRendFont(*rend_io)     = _XmRendFont(rend);
-#if USE_XFT
-        _XmRendXftFont(*rend_io)  = _XmRendXftFont(rend);
-#endif
-        _XmRendFontName(*rend_io) = _XmRendFontName(rend);
-        _XmRendFontType(*rend_io) = _XmRendFontType(rend);
-    }
-
-    if (render_cache) {
-        render_cache->width        = w;
-        render_cache->height       = h;
-        render_cache->ascent       = asc;
-        render_cache->descent      = dsc;
-        render_cache->header.dirty = False;
-        render_cache->rendition    = _XmRenditionCopy(*rend_io, True);
-    } else if (rend_io == &cached_rend) rend_io = NULL;
-
-    if (width)   *width   = w;
-    if (height)  *height  = h;
-    if (ascent)  *ascent  = asc;
-    if (descent) *descent = dsc;
-  }
-
-  d = (_XmRTDisplay(r) == NULL) ? _XmGetDefaultDisplay() : _XmRTDisplay(r);
-  screen = XtScreenOfObject(XmGetXmDisplay(d));
-
-  tab = ((tl == NULL) || ((long)tl == XmAS_IS)) ? NULL : _XmTabLStart(tl);
-
-  prev_val = 0;
-  tab_cnt = 0;
-
-  /* If this string is tabbed, set width accordingly. */
-  if ((tab != NULL) &&
-      (_XmStrTabs(opt) != 0) &&
-      (tab_cnt < _XmTabLCount(tl)))
-    {
-      for (i = 0;
-	   (i < _XmStrTabs(opt)) && (tab_cnt < _XmTabLCount(tl));
-	   tab = _XmTabNext(tab), tab_cnt++, i++)
-	{
-	  val = TabVal(d, &screen, None, tab);
-	  if (_XmTabModel(tab) == XmABSOLUTE)
-	    {
-	      tab_w = val;
-	      prev_val = val;
-	    }
-	  else				  /* XmRELATIVE */
-	    {
-	      tab_w = prev_val + val;
-	      prev_val += val;
-	    }
-	}
-    }
-
-  (*width) += tab_w;
-  if ((base_rend != NULL) && (rend_io == NULL)) XmRenditionFree(rend);
+	if (width) *width += tab_w;
 }
 
 /*
@@ -2031,10 +2083,9 @@ LineMetrics(_XmStringEntry line,
   XmDirection 		lay_dir = 0;
   Boolean		set_direction = FALSE;
 
-  d = _XmRendDisplay(*rend_io);
+  d      = _XmRTDisplay(r);
   screen = XtScreenOfObject(XmGetXmDisplay(d));
-
-  seg = _XmEntrySegmentGet(line)[seg_index];
+  seg    = _XmEntrySegmentGet(line)[seg_index];
 
   if (_XmEntryType(seg) != XmSTRING_ENTRY_OPTIMIZED)
     {
@@ -2068,12 +2119,12 @@ LineMetrics(_XmStringEntry line,
       }
 
   if (peek_seg != NULL)
-    (void)SpecifiedSegmentExtents((_XmStringEntry)seg, r, rend_io, base,
-				  XmSTRING_FIRST_SEG, &w, &h, &asc, &dsc);
-  else (void)SpecifiedSegmentExtents((_XmStringEntry)seg, r, rend_io, base,
-				     XmSTRING_SINGLE_SEG, &w, &h, &asc, &dsc);
+    entry_metrics((_XmStringEntry)seg, r, rend_io, base,
+                  XmSTRING_FIRST_SEG, &w, &h, &asc, &dsc);
+  else entry_metrics((_XmStringEntry)seg, r, rend_io, base,
+                     XmSTRING_SINGLE_SEG, &w, &h, &asc, &dsc);
 
-  if (*rend_io != NULL) tl = _XmRendTabs(*rend_io);
+  if (rend_io && *rend_io) tl = _XmRendTabs(*rend_io);
 
   tab = ((tl == NULL) || ((long)tl == XmAS_IS)) ? NULL : _XmTabLStart(tl);
 
@@ -2146,19 +2197,17 @@ LineMetrics(_XmStringEntry line,
 		set_direction = True;
 	      }
 	    if (peek_seg != NULL)
-	      (void)SpecifiedSegmentExtents((_XmStringEntry)seg, r, rend_io, base,
-					    XmSTRING_MIDDLE_SEG,
-					    &w, &h, &asc, &dsc);
-	    else (void)SpecifiedSegmentExtents((_XmStringEntry)seg, r, rend_io, base,
-					       XmSTRING_LAST_SEG,
-					       &w, &h, &asc, &dsc);
+	      entry_metrics((_XmStringEntry)seg, r, rend_io, base,
+	                    XmSTRING_MIDDLE_SEG, &w, &h, &asc, &dsc);
+	    else entry_metrics((_XmStringEntry)seg, r, rend_io, base,
+	                       XmSTRING_LAST_SEG, &w, &h, &asc, &dsc);
 	  }
       }
 
-  *width = tab_w;
-  if (max_h > 0) *height = max_h;
-  if (max_asc > 0) *ascender = max_asc;
-  if (max_dsc > 0) *descender = max_dsc;
+  if (width) *width = tab_w;
+  if (height    && max_h   > 0) *height    = max_h;
+  if (ascender  && max_asc > 0) *ascender  = max_asc;
+  if (descender && max_dsc > 0) *descender = max_dsc;
 }
 
 _XmStringCache
@@ -2176,11 +2225,20 @@ _XmStringCacheGet(_XmStringCache caches,
 static void _XmStringCacheFree(_XmStringCache current)
 {
 	_XmStringCache next = NULL;
+	_XmStringRenderingCache rc;
+	_XmStringRendition tmp, nx;
 
 	while (current) {
 		next = current->next;
-		if (current->cache_type == _XmRENDERING_CACHE)
-			XmRenditionFree(((_XmStringRenderingCache)current)->rendition);
+		if (current->cache_type == _XmRENDERING_CACHE) {
+			rc = (_XmStringRenderingCache)current;
+			for (tmp = rc->rendition_head; tmp; tmp = nx) {
+				nx = tmp->next;
+				XmRenditionFree(tmp->rendition);
+				XtFree((XtPointer)tmp);
+			}
+		}
+
 		XtFree((XtPointer)current);
 		current = next;
 	}
@@ -2341,7 +2399,7 @@ static XtPointer _XmRenderCacheGet(_XmStringEntry entry,
 		case _XmCACHE_RENDER_BASELINE:  return (XtPointer)(intptr_t)cache->baseline;
 		case _XmCACHE_RENDER_ASCENT:    return (XtPointer)(intptr_t)cache->ascent;
 		case _XmCACHE_RENDER_DESCENT:   return (XtPointer)(intptr_t)cache->descent;
-		case _XmCACHE_RENDER_RENDITION: return (XtPointer)cache->rendition;
+		case _XmCACHE_RENDER_RENDITION: return (XtPointer)cache->rendition_head;
 		case _XmCACHE_RENDER_PREV_TABS: return (XtPointer)(intptr_t)cache->prev_tabs;
 		}
 	}
@@ -2352,115 +2410,98 @@ static XtPointer _XmRenderCacheGet(_XmStringEntry entry,
 /*
  * find width of widest line in XmString
  */
-Dimension
-XmStringWidth(
-        XmRenderTable rendertable,
-        XmString string )
+Dimension XmStringWidth(XmRenderTable rt, XmString string)
 {
-  Dimension width, height;
-  XmStringExtent(rendertable, string, &width, &height);
-  return(width);
+	Dimension width, height;
+	XmStringExtent(rt, string, &width, NULL);
+	return width;
 }
 
 /*
  * find total height of an XmString
  */
-Dimension
-XmStringHeight(
-        XmRenderTable rendertable,
-        XmString string )
+Dimension XmStringHeight(XmRenderTable rt, XmString string)
 {
-  Dimension width, height;
-  XmStringExtent(rendertable, string, &width, &height);
-  return(height);
+	Dimension width, height;
+	XmStringExtent(rt, string, NULL, &height);
+	return height;
 }
 
 /*
  * find the rectangle which will enclose the text
  */
-void
-XmStringExtent(
-        XmRenderTable rendertable,
-        XmString string,
-        Dimension *width,
-        Dimension *height )
+void XmStringExtent(XmRenderTable rt, XmString string,
+                    Dimension *width, Dimension *height)
 {
-  Dimension cur_width = 0, max_width = 0;
-  Dimension cur_height = 0, line_height = 0;
-  Dimension asc, dsc;
-  int j;
-  Display *d;
-  XtAppContext app = NULL;
+	int j;
+	Display *d;
+	Dimension asc, dsc;
+	Dimension cur_width = 0, max_width = 0, cur_height = 0, line_height = 0;
+	XtAppContext app = NULL;
+	_XmStringEntry line;
+	_XmStringArraySegRec array_seg;
 
-  if (!width || !height)
-    return;
+	if (!width && !height)
+		return;
 
-  *width  = 0;
-  *height = 0;
-  if (!rendertable || !string)
-    return;
+	if (width)  *width  = 0;
+	if (height) *height = 0;
+	if (!rt || !string)
+		return;
 
-  if (_XmRTDisplay(rendertable))
-    app = XtDisplayToApplicationContext(_XmRTDisplay(rendertable));
-  if (app)
-    _XmAppLock(app);
-  else _XmProcessLock();
+	d = _XmRTDisplay(rt);
+	if ((app = XtDisplayToApplicationContext(d)))
+		_XmAppLock(app);
+	else _XmProcessLock();
 
-  if (_XmStrOptimized(string))
-    OptLineMetrics(rendertable, string, NULL, NULL, width, height, NULL, NULL);
-  else
-    {
-      _XmRenditionRec	scratch;
-      _XmRendition	tmp;
-      XmRendition	rend;
-      _XmStringArraySegRec array_seg;
-
-      memset(&scratch, 0, sizeof scratch);
-      tmp = &scratch;
-      rend = &tmp;
-
-      /* Initialize for tabs. */
-      d = (_XmRTDisplay(rendertable) == NULL) ?
-	_XmGetDefaultDisplay()
-	  : _XmRTDisplay(rendertable);
-
-      _XmRendDisplay(rend) = d;
-
-      _XmStringLayout(string, XmLEFT_TO_RIGHT);
-
-      for (j = 0; j < _XmStrLineCountGet(string); j++)
-	{
-	  _XmStringEntry line;
-
-	  if (_XmStrImplicitLine(string))
-	    line = _XmStrEntry(string)[j];
-	  else {
-	    _XmEntryType(&array_seg) = XmSTRING_ENTRY_ARRAY;
-	    _XmEntrySegmentCount(&array_seg) = _XmStrEntryCount(string);
-	    _XmEntrySegment(&array_seg) =
-	      (_XmStringNREntry *)_XmStrEntry(string);
-	    line = (_XmStringEntry)&array_seg;
-	  }
-
-	  LineMetrics(line, rendertable, &rend, NULL, XmLEFT_TO_RIGHT,
-		      &cur_width, &cur_height, &asc, &dsc);
-
-	  /* Returned height for empty lines is zero, so go
-	     with previous in that case. */
-	  if (cur_height != 0) line_height = cur_height;
-
-	  *height += line_height;
-
-	  if (cur_width > max_width) max_width = cur_width;
+	if (_XmStrOptimized(string)) {
+		OptLineMetrics(rt, string, NULL, NULL, width, height, NULL, NULL);
+		if (app) _XmAppUnlock(app);
+		else _XmProcessUnlock();
+		return;
 	}
-      *width = max_width;
-      if (_XmRendTags(rend) != NULL)
-	XtFree((char *)_XmRendTags(rend));
-    }
 
-  if (app)
-    _XmAppUnlock(app);
-  else _XmProcessUnlock();
+	/**
+	 * Unoptimized string
+	 */
+
+	/* Initialize for tabs. */
+	_XmStringLayout(string, XmLEFT_TO_RIGHT);
+
+	/* Singular line: coerce to an array segment */
+	if (_XmStrLineCountGet(string) == 1) {
+		memset(&array_seg, 0, sizeof array_seg);
+		_XmEntryType(&array_seg)         = XmSTRING_ENTRY_ARRAY;
+		_XmEntrySegmentCount(&array_seg) = _XmStrEntryCount(string);
+		_XmEntrySegment(&array_seg)      = (_XmStringNREntry *)_XmStrEntry(string);
+
+		LineMetrics((_XmStringEntry)&array_seg, rt, NULL, NULL,
+		            XmLEFT_TO_RIGHT, &cur_width, &cur_height,
+		            &asc, &dsc);
+		if (height) *height = cur_height;
+		if (width)  *width  = cur_width;
+		return;
+	}
+
+	/* Multi-line */
+	for (j = 0; j < _XmStrLineCountGet(string); j++) {
+		line = (_XmStringEntry)_XmStrEntry(string)[j];
+		LineMetrics(line, rt, NULL, NULL, XmLEFT_TO_RIGHT, &cur_width,
+		            &cur_height, NULL, NULL);
+		max_width = MAX(cur_width, max_width);
+
+		/* For empty lines, we get zero height, so use previous height */
+		if (height) {
+			if (cur_height) {
+				line_height = cur_height;
+				if (height) *height += cur_height;
+			} else if (height) *height += line_height;
+		}
+	}
+
+	if (width) *width = max_width;
+	if (app) _XmAppUnlock(app);
+	else _XmProcessUnlock();
 }
 
 Boolean XmStringEmpty(XmString string)
@@ -3078,69 +3119,105 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 	GC gc;
 	XChar2b *ucs;
 	XGCValues gcv, old_gcv;
-	XFontStruct *f = NULL;
 	Pixel fg, bg;
 	char *draw_text, *seg_text;
 	int font_type, text_type;
-	size_t seg_len, ucs_len;
-	Dimension u_begin = 0, u_end = 0;
+	size_t seg_len, draw_len, ucs_len;
+	Dimension u_begin = 0, u_end = 0, ulyoff = 0, wid;
 	unsigned long mask = 0;
 	Drawable draw = w;
-	Dimension ulyoff = 0;
+	Position x2;
+	Boolean rev = False;
+	_XmStringRendition tmp;
+	_XmStringRenderingCache rcache;
+	XtPointer f;
+#if USE_XFT
+	XtPointer xf;
+#endif
 
 	/* If we lack a rendition, segment, or dimensionality, nothing to do. */
 	if (!rend || !seg || !width || !height)
 		return;
 
-	/* If we don't have a font (or text), don't render */
-	font_type = _XmRendFontType(rend);
+	/* If we don't have text, don't render */
 	text_type = _XmEntryTextTypeGet((_XmStringEntry)seg);
 	seg_len   = _XmEntryByteCountGet((_XmStringEntry)seg);
 	seg_text  = _XmEntryTextGet((_XmStringEntry)seg);
-	if (!seg_text || !seg_len || text_type == XmNO_TEXT ||
-	    (font_type == XmFONT_IS_FONT && !(f = (XFontStruct *)_XmRendFont(rend))))
+	if (!seg_text || !seg_len || text_type == XmNO_TEXT)
 		return;
 
 	/* Prepare the GC */
 	_XmRendDisplay(rend) = d;
 	gc = _XmRendGC(rend);
 	mask = GCForeground | GCBackground;
-	if (font_type == XmFONT_IS_FONT)
-		mask |= GCFont;
-	XGetGCValues(d, gc, mask, &old_gcv);
+	XGetGCValues(d, gc, mask | GCFont, &old_gcv);
 	memcpy(&gcv, &old_gcv, sizeof gcv);
 
 	if ((fg = _XmRendFG(rend)) != XmUNSPECIFIED_PIXEL) gcv.foreground = fg;
 	if ((bg = _XmRendBG(rend)) != XmUNSPECIFIED_PIXEL) gcv.background = bg;
-	if (font_type == XmFONT_IS_FONT && gcv.font != f->fid)
-		gcv.font = f->fid;
-
-	draw_text = seg_text;
 	XChangeGC(d, gc, mask, &gcv);
-	if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
-		draw_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
 
-	/* Draw the text */
-	switch (font_type) {
 #if USE_XFT
-	case XmFONT_IS_XFT:
-		_XmXftDrawString(d, w, rend, 1, x, y, draw_text, seg_len, image);
-		draw = XftDrawDrawable(_XmXftDrawCreate(d, w));
+	if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
+		xf     = _XmRendXftFont(rend);
 		ulyoff = -2; /* Ensure the underline sits at the end of the descender */
-		break;
+		draw   = XftDrawDrawable(_XmXftDrawCreate(d, w));
+
+		/* Get the rendition list for this segment */
+		rcache = (_XmStringRenderingCache)CacheGet((_XmStringEntry)seg, _XmRENDERING_CACHE,
+		                                           False, rendertable);
+		if (!rcache)
+			return;
+
+		/* Walk the list and draw (L-to-R) */
+		tmp = rcache->rendition_head;
+		if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L) {
+			tmp = rcache->rendition_tail;
+			rev = True;
+			seg_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
+		}
+
+		for (x2 = x; tmp; tmp = rev ? tmp->prev : tmp->next) {
+			draw_len  = tmp->end - tmp->start;
+			draw_text = XtCalloc(1, draw_len);
+			memcpy(draw_text, seg_text + (rev ? seg_len - tmp->end : (unsigned long)tmp->start), draw_len);
+
+			_XmRendXftFont(rend) = _XmRendXftFont(tmp->rendition);
+			_XmXftDrawString(d, w, rend, 1, x2, y, draw_text, draw_len, image);
+			ComputeMetrics(rend, draw_text, draw_len, text_type,
+			               XmSTRING_MIDDLE_SEG, &wid, NULL, NULL, NULL);
+			x2 += wid;
+			XtFree(draw_text);
+		}
+
+		_XmRendXftFont(rend) = xf;
+	} else {
 #endif
-	case XmFONT_IS_FONTSET:
-		if (image) Xutf8DrawImageString(d, w, (XFontSet)_XmRendFont(rend),
-		                                gc, x, y, draw_text, seg_len);
-		else Xutf8DrawString(d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
-		                     draw_text, seg_len);
-		break;
-	default: /* XmFONT_IS_FONT */
-		ucs = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_len);
-		if (image) XDrawImageString16(d, w, gc, x, y, ucs, ucs_len);
-		else       XDrawString16(d, w, gc, x, y, ucs, ucs_len);
-		XFree(ucs);
+		if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
+			draw_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
+		else draw_text = seg_text;
+
+		switch (_XmRendFontType(rend)) {
+		case XmFONT_IS_FONTSET:
+			if (image) Xutf8DrawImageString(d, w, (XFontSet)_XmRendFont(rend),
+			                                gc, x, y, draw_text, seg_len);
+			else Xutf8DrawString(d, w, (XFontSet)_XmRendFont(rend), gc, x, y,
+			                     draw_text, seg_len);
+			break;
+		default: /* XmFONT_IS_FONT */
+			gcv.font = ((XFontStruct *)_XmRendFont(rend))->fid;
+			XChangeGC(d, gc, mask |= GCFont, &gcv);
+			ucs = _XmUtf8ToUcs2(draw_text, seg_len, &ucs_len);
+			if (image) XDrawImageString16(d, w, gc, x, y, ucs, ucs_len);
+			else       XDrawString16(d, w, gc, x, y, ucs, ucs_len);
+			XFree(ucs);
+		}
+
+		if (draw_text != seg_text)
+			XtFree(draw_text);
+#if USE_XFT
 	}
+#endif
 
 	/* Draw underline if needed */
 	if (underline) {
@@ -3152,14 +3229,13 @@ extern void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 		}
 	}
 
-	_XmStringDrawLining(d, w, x, y, width, height, descender,
+	_XmStringDrawLining(d, draw, x, y, width, height, descender,
 	                    rend, XmUNSPECIFIED_PIXEL, XmHIGHLIGHT_NORMAL, True);
 
 	/* Restore the GC */
 	if ((mask & GCFont) && old_gcv.font == ULONG_MAX)
 		old_gcv.font = gcv.font;
 	XChangeGC(d, gc, mask, &old_gcv);
-	if (draw_text != seg_text) XtFree(draw_text);
 }
 
 /****************************************************************
@@ -3606,6 +3682,7 @@ DrawLine(
 	    }
 	}
 
+      segm.cache = ((_XmStringOpt)line)->cache;
       _XmStringDrawSegment(d, w, x, y, opt_width, opt_height,
 			   (_XmStringNREntry)&segm, *scr_rend, rendertable,
 			   image, underline, descender);
@@ -3640,7 +3717,7 @@ DrawLine(
 	set_direction = True;
       }
 
-      ok = SpecifiedSegmentExtents((_XmStringEntry)seg, rendertable, scr_rend,
+      ok = entry_metrics((_XmStringEntry)seg, rendertable, scr_rend,
 				   base, XmSTRING_MIDDLE_SEG,
 				   &width, &height, NULL, NULL);
 
@@ -3708,7 +3785,7 @@ DrawLine(
 				   XmDirectionToStringDirection(prim_dir));
 	      set_direction = True;
 	    }
-	    ok = SpecifiedSegmentExtents((_XmStringEntry)seg, rendertable,
+	    ok = entry_metrics((_XmStringEntry)seg, rendertable,
 					 scr_rend,
 					 base, XmSTRING_MIDDLE_SEG,
 					 &width, &height, NULL, NULL);
@@ -3727,7 +3804,7 @@ DrawLine(
 	set_direction = True;
       }
 
-      ok = SpecifiedSegmentExtents((_XmStringEntry)seg, rendertable, scr_rend,
+      ok = entry_metrics((_XmStringEntry)seg, rendertable, scr_rend,
 				   base, XmSTRING_MIDDLE_SEG,
 				   &width, &height, NULL, NULL);
 
@@ -3796,7 +3873,7 @@ DrawLine(
 				   XmDirectionToStringDirection(prim_dir));
 	      set_direction = True;
 	    }
-	    ok = SpecifiedSegmentExtents((_XmStringEntry)seg, rendertable,
+	    ok = entry_metrics((_XmStringEntry)seg, rendertable,
 					 scr_rend,
 					 base, XmSTRING_MIDDLE_SEG,
 					 &width, &height, NULL, NULL);
@@ -4528,7 +4605,6 @@ ComputeMetrics(XmRendition rend,
 	       XtPointer text,
 	       unsigned int byte_count,
 	       XmTextType type,
-	       XmStringTag tag,
 	       int which_seg,
 	       Dimension *width,
 	       Dimension *height,
@@ -4547,7 +4623,6 @@ ComputeMetrics(XmRendition rend,
 
 #if USE_XFT
   XGlyphInfo info;
-  memset(&info, 0, sizeof info);
 #endif
 
   wid = 0;
@@ -4675,334 +4750,9 @@ _XmStringSegmentExtents(_XmStringEntry entry,
 			Dimension      * ascent,
 			Dimension      * descent)
 {
-  return(SpecifiedSegmentExtents(entry, rendertable, rend_in_out, base,
+  return entry_metrics(entry, rendertable, rend_in_out, base,
 				 XmSTRING_MIDDLE_SEG,
-				 width, height, ascent, descent));
-}
-
-static Boolean
-SpecifiedSegmentExtents(_XmStringEntry entry,
-			XmRenderTable    rendertable,
-			XmRendition    * rend_in_out,
-			XmRendition	 base,
-			int		 which_seg,
-			Dimension      * width,
-			Dimension      * height,
-			Dimension      * ascent,
-			Dimension      * descent)
-{
-  unsigned short	count;
-  XmStringTag		*tags = NULL;
-  unsigned int		tag_count =0;
-  Display		*d;
-  XmStringTag		def_tag;
-  XmStringTag		entry_tag;
-  XmRendition		rend, cached_rend = NULL, def_rend;
-  int			i, j, depth, hits, ref_cnt, rt_ref_cnt;
-  Dimension		h, w, asc, dsc;
-  Boolean		can_do = TRUE;
-  _XmRendition		rend_int;
-  _XmStringRenderingCache render_cache;
-
-  if (width)   *width   = 0;
-  if (height)  *height  = 0;
-  if (ascent)  *ascent  = 0;
-  if (descent) *descent = 0;
-  if (_XmEntryTextTypeGet(entry) == XmNO_TEXT)
-      return False;
-
-  /* Fetching the cache once and accessing the fields directly saves
-   * substantial time searching the cache
-   */
-  render_cache = (_XmStringRenderingCache)CacheGet(entry, _XmRENDERING_CACHE,
-                                                   True, (XtPointer)rendertable);
-
-  if (render_cache && !render_cache->header.dirty) {
-      if (width)   *width   = (Dimension)render_cache->width;
-      if (height)  *height  = (Dimension)render_cache->height;
-      if (ascent)  *ascent  = (Dimension)render_cache->ascent;
-      if (descent) *descent = (Dimension)render_cache->descent;
-      if (rend_in_out) {
-        *rend_in_out = render_cache->rendition;
-        if (base) {
-            _XmRendGC(*rend_in_out) = _XmRendGC(base);
-            _XmRendFG(*rend_in_out) = _XmRendFG(base);
-            _XmRendBG(*rend_in_out) = _XmRendBG(base);
-            _XmRendFGState(*rend_in_out) = _XmRendFGState(base);
-            _XmRendBGState(*rend_in_out) = _XmRendBGState(base);
-#if USE_XFT
-            _XmRendXftFG(*rend_in_out) = _XmRendXftFG(base);
-            _XmRendXftBG(*rend_in_out) = _XmRendXftBG(base);
-#endif
-        }
-      }
-      return True;
-  } else if (!rend_in_out) {
-      if (render_cache) cached_rend = render_cache->rendition;
-      if (!cached_rend) return False;
-      rend_in_out = &cached_rend;
-  }
-
-  entry_tag = _XmEntryTag(entry);
-
-  if (cached_rend == NULL)			  /* Update *rend_in_out. */
-    {
-      /* Add rendition begins */
-      d = _XmRendDisplay(*rend_in_out);
-
-      /* Prepare tags. */
-      count = _XmEntryRendBeginCountGet(entry);
-      tags = _XmRendTags(*rend_in_out);
-      tag_count = _XmRendTagCount(*rend_in_out);
-
-      /* Update tag stack. */
-      if (count > 0)
-	{
-	  tags = (XmStringTag *)XtRealloc((char *)tags,
-					  (sizeof(XmStringTag) *
-					   (tag_count + count)));
-	  for (i = 0; i < count; i++)
-	    tags[tag_count + i] = _XmEntryRendBeginGet(entry, i);
-
-	  tag_count += count;
-	}
-
-      /* compute rendition */
-      /* Find font as per I 198. */
-      /* 1. Find font from rendition tags. */
-      /* 2. Find font from locale/charset tag. */
-      if ((_XmRendTag(*rend_in_out) != entry_tag) ||
-	  (count != 0) || _XmRendHadEnds(*rend_in_out))
-	{
-	  *rend_in_out = _XmRenditionMerge(d, rend_in_out, base, rendertable,
-					   entry_tag, tags, tag_count,
-					   (render_cache != NULL));
-	  _XmRendTag(*rend_in_out) = entry_tag;
-	}
-
-      /* 3. Default rendition. */
-      if (_XmRendFont(*rend_in_out) == NULL &&
-          _XmRendXftFont(*rend_in_out) == NULL)
-	{
-	  def_tag = ((_XmEntryTextTypeGet(entry) == XmCHARSET_TEXT) ?
-		     XmFONTLIST_DEFAULT_TAG :
-		     _MOTIF_DEFAULT_LOCALE);
-
-	  rend = _XmRenditionMerge(d, rend_in_out, base, rendertable,
-				   def_tag, NULL, 0, (render_cache != NULL));
-
-	  if ((rend != NULL) &&
-	      (_XmRendFont(rend) == NULL) && (_XmRendXftFont(rend) == NULL) &&
-	      ((def_rend = _XmRenderTableFindRendition(rendertable, def_tag,
-						       TRUE, FALSE, FALSE, NULL))
-	       != NULL))
-	    /* Call noFontCallback. */
-	    {
-	      XmDisplay			dsp;
-	      XmDisplayCallbackStruct	cb;
-
-	      rt_ref_cnt = _XmRTRefcount(rendertable);
-	      def_rend = _XmRTRenditions(rendertable)[0];
-	      rend_int = *def_rend;
-	      ref_cnt = _XmRendRefcount(def_rend);
-
-	      dsp = (XmDisplay)XmGetXmDisplay(d);
-	      cb.reason = XmCR_NO_FONT;
-	      cb.event = NULL;
-	      cb.rendition = def_rend;
-	      cb.font_name = XmS;
-
-	      XtCallCallbackList((Widget)dsp, dsp->display.noFontCallback, &cb);
-
-	      if (rend_int != *def_rend)	  /* Changed in callback. */
-		{
-		  /* Need to split ref counts. */
-		  _XmRendRefcount(&rend_int) = ref_cnt - rt_ref_cnt;
-		  _XmRendRefcount(def_rend) = rt_ref_cnt;
-		}
-
-	      if (_XmRendFont(def_rend) != NULL)
-		{
-		  _XmRendFontType(rend) = _XmRendFontType(def_rend);
-		  _XmRendFont(rend) = _XmRendFont(def_rend);
-		}
-#if USE_XFT
-              else if (_XmRendXftFont(def_rend) != NULL)
-	        {
-		  _XmRendFontType(rend) = _XmRendFontType(def_rend);
-		  _XmRendXftFont(rend) = _XmRendXftFont(def_rend);
-		}
-#endif
-	      else rend = NULL;
-	    }
-
-	  /* 4a. Take the first one */
-	  if (!rend && rendertable && _XmRTCount(rendertable) > 0 && (
-	       _XmEntryTextTypeGet(entry) == XmCHARSET_TEXT   ||
-	       _XmEntryTextTypeGet(entry) == XmMULTIBYTE_TEXT ||
-	       _XmEntryTextTypeGet(entry) == XmWIDECHAR_TEXT))
-	    rend = _XmRenditionMerge(d, rend_in_out, base, rendertable,
-				     NULL, NULL, 0, (render_cache != NULL));
-
-	  if ((rend != NULL) &&
-	      (_XmRendFont(rend) == NULL) && (_XmRendXftFont(rend) == NULL))
-	    /* Call noFontCallback. */
-	    {
-	      XmDisplay			dsp;
-	      XmDisplayCallbackStruct	cb;
-
-	      rt_ref_cnt = _XmRTRefcount(rendertable);
-	      def_rend = _XmRTRenditions(rendertable)[0];
-	      rend_int = *def_rend;
-	      ref_cnt = _XmRendRefcount(def_rend);
-
-	      dsp = (XmDisplay)XmGetXmDisplay(d);
-	      cb.reason = XmCR_NO_FONT;
-	      cb.event = NULL;
-	      cb.rendition = def_rend;
-	      cb.font_name = XmS;
-
-	      XtCallCallbackList((Widget)dsp, dsp->display.noFontCallback, &cb);
-
-	      if (rend_int != *def_rend)	  /* Changed in callback. */
-		{
-		  /* Need to split ref counts. */
-		  _XmRendRefcount(&rend_int) = ref_cnt - rt_ref_cnt;
-		  _XmRendRefcount(def_rend) = rt_ref_cnt;
-		}
-
-	      if (_XmRendFont(def_rend) != NULL)
-		{
-		  _XmRendFontType(rend) = _XmRendFontType(def_rend);
-		  _XmRendFont(rend) = _XmRendFont(def_rend);
-		}
-#if USE_XFT
-              else if (_XmRendXftFont(def_rend) != NULL)
-	        {
-		  _XmRendFontType(rend) = _XmRendFontType(def_rend);
-		  _XmRendXftFont(rend) = _XmRendXftFont(def_rend);
-		}
-#endif
-	      else rend = NULL;
-	    }
-
-	  /* 4b/5a. Emit warning and don't render. */
-	  if ((rend == NULL) ||
-	      (_XmRendFont(rend) == NULL && _XmRendXftFont(rend) == NULL))
-	    {
-	      /* No warning if no tags, e.g. just dir component. */
-	      if ((tag_count > 0) || (entry_tag != NULL))
-		XmeWarning(NULL, NO_FONT_MSG);
-	      if (width != NULL)
-		{
-		  *width = 0;
-		  if (render_cache)
-		    render_cache->width = 0;
-		}
-	      if (height != NULL)
-		{
-		  *height = 0;
-		  if (render_cache)
-		    render_cache->height = 0;
-		}
-	      if (ascent != NULL)
-		{
-		  *ascent = 0;
-		  if (render_cache)
-		    render_cache->ascent = 0;
-		}
-	      if (descent != NULL)
-		{
-		  *descent = 0;
-		  if (render_cache)
-		    render_cache->descent = 0;
-		}
-	      can_do = FALSE;
-	    }
-	}
-    }
-
-  if (can_do)
-    {
-      /* compute width & height */
-      ComputeMetrics(*rend_in_out, _XmEntryTextGet(entry),
-		     _XmEntryByteCountGet(entry),
-		     (XmTextType) _XmEntryTextTypeGet(entry),
-		     _XmEntryTag(entry), which_seg, &w, &h, &asc, &dsc);
-
-      /* If cache exists, set it. */
-      if (render_cache != NULL)
-	{
-	  if (width)   render_cache->width   = w;
-	  if (height)  render_cache->height  = h;
-	  if (ascent)  render_cache->ascent  = asc;
-	  if (descent) render_cache->descent = dsc;
-
-	  /**
-	   * If the rendition has a valid refcount, meaning it was properly
-	   * created and not hastily constructed in auto storage, then we
-	   * can just bump the refcount. Otherwise, we have to clone the
-	   * entire thing.
-	   */
-	  render_cache->rendition = _XmRenditionCopy(
-	      *rend_in_out,
-	      _XmRendRefcount(*rend_in_out) >= 1
-	  );
-	  render_cache->header.dirty = False;
-	}
-
-      if (width)   *width   = w;
-      if (height)  *height  = h;
-      if (ascent)  *ascent  = asc;
-      if (descent) *descent = dsc;
-    }
-
-  if (cached_rend == NULL)			  /* Update *rend_in_out */
-    {
-      /* Remove rendition ends. */
-      count = _XmEntryRendEndCountGet(entry);
-
-      if (count > 0)
-	{
-	  depth = tag_count;
-	  hits = 0;
-
-	  for (i = 0; i < count; i++)
-	    for (j = (tag_count - 1); j >= 0; j--)
-	      if (_XmEntryRendEndGet(entry, i) == (tags)[j])
-		{
-		  tags[j] = NULL;
-		  depth = j;
-		  hits++;
-		  break;
-		}
-
-	  j = depth;
-	  for (i = (depth + 1); i < tag_count; i++)
-	    if (tags[i] != NULL)
-	      {
-		tags[j] = tags[i];
-		j++;
-	      }
-
-	  if(tags != NULL && tag_count - hits)
-	    tags = (XmStringTag *)XtRealloc((char *)tags,
-					  (sizeof(XmStringTag) *
-					   (tag_count - hits)));
-	  tag_count -= hits;
-	  _XmRendHadEnds(*rend_in_out) = TRUE;
-	}
-      else
-	{
-	  _XmRendHadEnds(*rend_in_out) = FALSE;
-	}
-
-      XtFree((XtPointer)_XmRendTags(*rend_in_out));
-      _XmRendTagCount(*rend_in_out) = tag_count;
-      _XmRendTags(*rend_in_out) = tags;
-    }
-
-  return(can_do);
+				 width, height, ascent, descent);
 }
 
 /**
@@ -5272,7 +5022,7 @@ Dimension XmStringBaseline(XmRenderTable rendertable, XmString string)
       if (app)
         _XmAppUnlock(app);
       else _XmProcessUnlock();
-      asc = OptLineAscender(rendertable, (_XmStringOpt)string);
+      OptLineMetrics(rendertable, string, NULL, NULL, NULL, NULL, &asc, NULL);
     }
 
     return asc < 2048 ? asc : 0;

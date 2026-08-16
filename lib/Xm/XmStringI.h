@@ -264,6 +264,17 @@ typedef struct __XmStringScanning {
   unsigned short       depth;		 /* depth of layout push */
 } _XmStringScanningRec, *_XmStringScanningCache;
 
+/**
+ * List of ranges within an entry with the rendition to utilize.
+ */
+typedef struct __XmStringRendition {
+	XmTextPosition start;
+	XmTextPosition end;
+	XmRendition  rendition;
+	struct __XmStringRendition *prev;
+	struct __XmStringRendition *next;
+} *_XmStringRendition;
+
 /*
  * Rendering cache
  */
@@ -278,7 +289,8 @@ typedef struct __XmStringRendering {
   Dimension            ascent;	     /* ascent of segment */
   Dimension            descent;      /* descent of segment */
   int                  baseline;	 /* baseline of segment */
-  XmRendition          rendition;        /* Rendition used for this segment */
+  _XmStringRendition   rendition_head;    /* Renditions used for this segment */
+  _XmStringRendition   rendition_tail;
   char                 prev_tabs;        /* accumulates tabs on line */
 } _XmStringRenderingRec, *_XmStringRenderingCache;
 
