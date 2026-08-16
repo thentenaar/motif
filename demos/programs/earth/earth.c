@@ -253,10 +253,9 @@ int main(int argc, char *argv[])
 			      0);
 
     /* create a fixed size drawing area + callback for dialog popup */
-    nx = 0 ;
-    XtSetArg(args[n], XmNwidth, 64);  nx++ ;
-    XtSetArg(args[n], XmNheight, 64); nx++ ;
-    draw = XmCreateDrawingArea (toplevel, "draw", args, nx);
+    XtSetArg(args[0], XmNwidth, 64);
+    XtSetArg(args[1], XmNheight, 64);
+    draw = XmCreateDrawingArea (toplevel, "draw", args, 2);
     XtManageChild(draw);
     XtAddCallback(draw,XmNinputCallback,(XtCallbackProc)input_callback,NULL);
     XtAddCallback(draw,XmNexposeCallback,(XtCallbackProc)expose_callback,NULL);
