@@ -239,7 +239,7 @@ _XmFilterArgs(ArgList args, Cardinal num_args, String *filter,
     for (i = 0; i < num_args; i++) {
 	Boolean match = False;
 	for (ptr = filter; *ptr != NULL; ptr++) {
-	    if (streq(*ptr, args[i].name)) {
+	    if (!strcmp(*ptr, args[i].name)) {
 		match = True;
 		break;
 	    }
@@ -391,6 +391,10 @@ int XmCompareISOLatin1(char *first, char *second)
 {
     unsigned char *ap, *bp;
 
+    if (first == second)  return 0;
+    if (!first && second) return -1;
+    if (first && !second) return 1;
+
     for (ap = (unsigned char *) first, bp = (unsigned char *) second;
          *ap && *bp; ap++, bp++) {
         unsigned char a, b;
@@ -421,6 +425,12 @@ int XmCompareISOLatin1(char *first, char *second)
 void XmCopyISOLatin1Lowered(char *dst, char *src)
 {
     unsigned char *dest, *source;
+
+    if (!dst) return;
+    if (!src) {
+       *dst = '\0';
+       return;
+    }
 
     for (dest = (unsigned char *)dst, source = (unsigned char *)src;
 	 *source;
