@@ -75,7 +75,6 @@ static String fallbacks[] = {
     "*rightpane*colModeLabel.labelString: XmNcolorMode",
     "*rightpane*colNameLabel.labelString: XmNcolorName",
     "*rightpane*marLabel.labelString: XmNmarginWidth, XmNmarginHeight",
-    "*rightpane*rgbFileLabel.labelString: XmNrgbFile",
     "*quitPB.labelString: Quit",
     "*colorPB.labelString: Color",
     "*buttonBox1*XmLabel.alignment: XmALIGNMENT_BEGINNING",
@@ -115,9 +114,9 @@ void Explain(Widget w, XtPointer client, XtPointer call)
 determines what mode the Color Selector should use when it is\n\
 created.\n\
 \n\
-List Mode presents a listing of colors built up from the\n\
-XmNrgbFile resource. Scale Mode displays three sliders that\n\
-adjust Red, Green, and Blue color values.");
+List Mode presents a listing of colors built into Motif.\n\
+Scale Mode displays three sliders that adjust\n\
+Red, Green, and Blue color values.");
         break;
     case EXPLAIN_NAME:
         xmstring = XmStringCreateLocalized(
@@ -167,9 +166,9 @@ available on a display.\n\
 In Scale Mode, the position of the sliders \n\
 determines RGB values of the current color, and displays the \n\
 pixel value in the colored area at the bottom.\n\
-In List Mode, a list of all the named colors in the current\n\
-rgb.txt file are shown. Selecting from this list updates\n\
-the color display area with the associated pixel value.\n\
+In List Mode, a list of all the named colors built into\n\
+Motif are shown. Selecting from this list updates the\n\
+color display area with the associated pixel value.\n\
 The ColorSelector will attempt to show the closest approximation\n\
 to the color selected in one mode when switching to another\n\
 if it cannot find an exact match .\n\
@@ -224,7 +223,7 @@ main(int argc, char **argv)
     Widget top, colorframe, colorSelector, infoframe, infolabel,
     buttonBox, rbuttonBox, lbuttonBox, colModeLabel, pushButton,
     big_pane, right_pane, left_pane, explain_scrolled,
-    colNameLabel, marLabel, rgbFileLabel, quitPB, colorPB;
+    colNameLabel, marLabel, quitPB, colorPB;
     XtAppContext app;
 
     XmString      xmstring;
@@ -353,10 +352,6 @@ main(int argc, char **argv)
 					  rbuttonBox, NULL);
     XtAddCallback(pushButton, XmNactivateCallback, Explain,
 		  (XtPointer)EXPLAIN_MAR);
-
-    rgbFileLabel = XtVaCreateManagedWidget("rgbFileLabel",
-					   xmLabelWidgetClass,
-					   lbuttonBox, NULL);
 
     pushButton = XtVaCreateManagedWidget("pushButton3",
 					  xmPushButtonWidgetClass,
