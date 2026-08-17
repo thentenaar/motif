@@ -408,7 +408,7 @@ _XmUtf8ToUcs2(char *draw_text, size_t seg_len, size_t *ret_str_len)
  ************************************************************************/
 void
 XmeWarning(Widget w,
-	   char *message )
+	   const char *message )
 {
   char *params[1];
   Cardinal num_params = 0;

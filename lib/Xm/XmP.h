@@ -1212,7 +1212,7 @@ extern void XmeQueryBestCursorSize(Widget w,
                                    Dimension *width,
                                    Dimension *height);
     /* Xm.c */
-extern void XmeWarning( Widget w, char *message ) ;
+extern void XmeWarning(Widget w, const char *message);
     /* ResConvert.c */
 extern XmFontList XmeGetDefaultRenderTable(
         Widget w,
