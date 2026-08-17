@@ -966,26 +966,29 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static XmTreeConnectStyle connect;
     static XrmQuark XtQELadder;
     static XrmQuark XtQEDirect;
-    static Boolean haveQuarks = FALSE;
+    static XrmQuark XtQETreeLadder;
+    static XrmQuark XtQETreeDirect;
+    static Boolean haveQuarks = False;
     XrmQuark q;
-    char lowerName[BUFSIZ];
+    char *lower;
 
     if (!haveQuarks) {
-	XtQELadder = XrmStringToQuark("ladder");
-	XtQEDirect = XrmStringToQuark("direct");
-	haveQuarks = TRUE;
+	XtQELadder     = XrmStringToQuark("ladder");
+	XtQEDirect     = XrmStringToQuark("direct");
+	XtQETreeLadder = XrmStringToQuark("treeladder");
+	XtQETreeDirect = XrmStringToQuark("treedirect");
+	haveQuarks     = TRUE;
     }
 
-    XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
-    q = XrmStringToQuark(lowerName);
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    q     = XrmStringToQuark(lower);
+    XtFree(lower);
 
-    if ((q == XtQELadder) || !strcmp(lowerName,"treeladder"))
-	connect = XmTreeLadder;
-    else if ((q == XtQEDirect) || !strcmp(lowerName,"treedirect"))
-	connect = XmTreeDirect;
+    if (q == XtQELadder || q == XtQETreeLadder)      connect = XmTreeLadder;
+    else if (q == XtQEDirect || q == XtQETreeDirect) connect = XmTreeDirect;
     else {
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmConnectStyle);
-	return(FALSE);		/* Conversion failed. */
+	return False;		/* Conversion failed. */
     }
 
     if (toVal->addr == NULL) {
@@ -1019,28 +1022,41 @@ CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
                         XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static XmTreeCompressStyle compress;
+    static XrmQuark XtQENone;
+    static XrmQuark XtQELeaves;
+    static XrmQuark XtQEAll;
     static XrmQuark XtQECompressNone;
     static XrmQuark XtQECompressLeaves;
     static XrmQuark XtQECompressAll;
+    static XrmQuark XtQETreeCompressNone;
+    static XrmQuark XtQETreeCompressLeaves;
+    static XrmQuark XtQETreeCompressAll;
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
-    char lowerName[BUFSIZ];
+    char *lower;
 
     if (!haveQuarks) {
-        XtQECompressNone = XrmStringToQuark("compressnone");
-        XtQECompressLeaves = XrmStringToQuark("compressleaves");
-        XtQECompressAll = XrmStringToQuark("compressall");
-        haveQuarks = TRUE;
+        XtQENone               = XrmStringToQuark("none");
+        XtQELeaves             = XrmStringToQuark("leaves");
+        XtQEAll                = XrmStringToQuark("all");
+        XtQECompressNone       = XrmStringToQuark("compressnone");
+        XtQECompressLeaves     = XrmStringToQuark("compressleaves");
+        XtQECompressAll        = XrmStringToQuark("compressall");
+        XtQETreeCompressNone   = XrmStringToQuark("treecompressnone");
+        XtQETreeCompressLeaves = XrmStringToQuark("treecompressleaves");
+        XtQETreeCompressAll    = XrmStringToQuark("treecompressall");
+        haveQuarks             = True;
     }
 
-    XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
-    q = XrmStringToQuark(lowerName);
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    q     = XrmStringToQuark(lower);
+    XtFree(lower);
 
-    if ((q == XtQECompressNone) || !strcmp(lowerName,"none") || !strcmp(lowerName,"treecompressnone") )
+    if (q == XtQECompressNone || q == XtQENone || q == XtQETreeCompressNone)
         compress = XmTreeCompressNone;
-    else if ((q == XtQECompressLeaves) || !strcmp(lowerName,"leaves") || !strcmp(lowerName,"treecompressleaves") )
+    else if (q == XtQECompressLeaves || q == XtQELeaves || q == XtQETreeCompressLeaves)
         compress = XmTreeCompressLeaves;
-    else if ((q == XtQECompressAll) || !strcmp(lowerName,"all") || !strcmp(lowerName,"treecompressall") )
+    else if (q == XtQECompressAll || q == XtQEAll || q == XtQETreeCompressAll)
         compress = XmTreeCompressAll;
     else {
         XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmCompressStyle);
@@ -1069,16 +1085,33 @@ CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 			XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static int lineStyle = LineSolid;
-    char lowerName[BUFSIZ];
+    static XrmQuark XtQEsolid;
+    static XrmQuark XtQEonoffdash;
+    static XrmQuark XtQEdoubledash;
+    static XrmQuark XtQElinesolid;
+    static XrmQuark XtQElineonoffdash;
+    static XrmQuark XtQElinedoubledash;
+    static Boolean quarks = False;
+    XrmQuark q;
+    char *lower;
 
-    XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
+    if (!quarks) {
+        XtQEsolid          = XrmStringToQuark("solid");
+        XtQEonoffdash      = XrmStringToQuark("onoffdash");
+        XtQEdoubledash     = XrmStringToQuark("doubledash");
+        XtQElinesolid      = XrmStringToQuark("linesolid");
+        XtQElineonoffdash  = XrmStringToQuark("lineonoffdash");
+        XtQElinedoubledash = XrmStringToQuark("linedoubledash");
+        quarks             = True;
+    }
 
-    if ( !strcmp(lowerName, "linesolid") || !strcmp(lowerName,"solid") )
-	lineStyle = LineSolid;
-    else if ( !strcmp(lowerName, "lineonoffdash") || !strcmp(lowerName,"onoffdash") )
-	lineStyle = LineOnOffDash;
-    else if ( !strcmp(lowerName, "linedoubledash") || !strcmp(lowerName,"doubledash") )
-	lineStyle = LineDoubleDash;
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    q     = XrmStringToQuark(lower);
+    XtFree(lower);
+
+    if (q == XtQEsolid || q == XtQElinesolid)                lineStyle = LineSolid;
+    else if (q == XtQEonoffdash  || q == XtQElineonoffdash)  lineStyle = LineOnOffDash;
+    else if (q == XtQEdoubledash || q == XtQElinedoubledash) lineStyle = LineDoubleDash;
     else {
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmLineStyle);
 	return(FALSE);		/* Conversion failed. */

@@ -658,23 +658,24 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 		      XrmValuePtr fromVal, XrmValuePtr toVal)
 {
     static XmFillOption 	option;
-    char 			lowerName[BUFSIZ];
+    char *lower;
 
-    XmCopyISOLatin1Lowered(lowerName, (char *)fromVal->addr);
-
-    if (!strcmp(lowerName, "none") || !strcmp(lowerName,"fillnone"))
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    if (!strcmp(lower, "none") || !strcmp(lower,"fillnone"))
         option = XmFillNone;
-    else if (!strcmp(lowerName, "major") || !strcmp(lowerName, "fillmajor"))
+    else if (!strcmp(lower, "major") || !strcmp(lower, "fillmajor"))
 	option = XmFillMajor;
-    else if (!strcmp(lowerName, "minor") || !strcmp(lowerName, "fillminor"))
+    else if (!strcmp(lower, "minor") || !strcmp(lower, "fillminor"))
 	option = XmFillMinor;
-    else if (!strcmp(lowerName, "all") || !strcmp(lowerName, "fillall") )
+    else if (!strcmp(lower, "all") || !strcmp(lower, "fillall") )
 	option = XmFillAll;
     else
     {
-	XtDisplayStringConversionWarning(dpy, fromVal->addr, XmRXmFillOption);
-        return(False);          /* Conversion failed. */
+        XtDisplayStringConversionWarning(dpy, fromVal->addr, XmRXmFillOption);
+        XtFree(lower);
+        return False;          /* Conversion failed. */
     }
+    XtFree(lower);
 
     if ( toVal->addr == NULL )
     {

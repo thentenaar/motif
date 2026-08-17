@@ -19,7 +19,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 #ifndef _XmExt_h_
@@ -86,11 +86,11 @@ typedef Widget (*XmWidgetFunc)(Widget);
 #define XmNforceGreaterThanZero "forceGreaterThanZero"
 #define XmNforceGreaterThanZeroMsg \
 "XmNvisibleItemCount must be greater than zero being reset to one (1)."
-    
+
 #define XmNinsertBeforeNotSibling "insertBeforeNotSibling"
 #define XmNinsertBeforeNotSiblingMsg "XmHierarchy: InsertBefore Widget\
  is not a sibling of '%s'.\nInserting child at end of list."
-    
+
 #define XmNnoComboShell "noComboShell"
 #define XmNnoComboShellMsg \
     "Combination Box: When using a custom combo box a shell must be provided."
@@ -100,7 +100,7 @@ typedef Widget (*XmWidgetFunc)(Widget);
 
 #define XmNnoGadgetSupport "noGadgetSupport"
 #define XmNnoGadgetSupportMsg "Widget does not support gadget children."
-    
+
 #define XmNpixEditBadImageCreate "pixEditBadImageCreate"
 #define XmNpixEditBadImageCreateMsg "Pixmap Editor: Can't allocate image data"
 
@@ -146,9 +146,9 @@ typedef Widget (*XmWidgetFunc)(Widget);
 /************************************************************
 *	EXTERNAL DECLARATIONS
 *************************************************************/
-	  
 
-void XmCopyISOLatin1Lowered(char *, char *);
+
+char *XmCopyISOLatin1Lowered(const char *);
 
 int XmCompareISOLatin1(char*, char*);
 

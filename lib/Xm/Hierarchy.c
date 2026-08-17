@@ -1182,7 +1182,7 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static XrmQuark XtQENotInHierarchy;
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
-    char lowerName[BUFSIZ];
+    char *lower;
 
     if (!haveQuarks) {
 	XtQEAlwaysOpen = XrmStringToQuark("alwaysopen");
@@ -1193,8 +1193,9 @@ CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 	haveQuarks = TRUE;
     }
 
-    XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
-    q = XrmStringToQuark(lowerName);
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    q     = XrmStringToQuark(lower);
+    XtFree(lower);
 
     if (q == XtQEAlwaysOpen)
 	type = XmAlwaysOpen;

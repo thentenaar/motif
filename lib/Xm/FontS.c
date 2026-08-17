@@ -854,11 +854,11 @@ FillData(XmFontSelectorWidget fsw, FontData *current, char *name)
 
     GET_NEXT_FIELD(ptr);	/* ptr == Foundry */
     GET_NEXT_FIELD(ptr);	/* ptr == Family */
-    StoreString(ptr, temp, BUFSIZ - 1);
+    StoreString(ptr, temp, sizeof temp - 1);
 
     if (!strcmp(temp, STAR_STRING)) {
 	String str = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
-	strcpy(temp, str);
+	StoreString(str, temp, sizeof temp - 1);
 	XtFree((XtPointer) str);
     }
 
@@ -918,7 +918,7 @@ FillData(XmFontSelectorWidget fsw, FontData *current, char *name)
 static void
 SetNonStringData(FontData *current)
 {
-    char lower[BUFSIZ];
+    char *lower;
 
     /*
      * Now fill in the non string fields.
@@ -928,26 +928,26 @@ SetNonStringData(FontData *current)
      * If the weight_name field contains the words "bold" or "demi"
      * then this is a bold font.
      */
-
-    XmCopyISOLatin1Lowered(lower, XrmQuarkToString(current->weightq));
+    lower = XmCopyISOLatin1Lowered(XrmQuarkToString(current->weightq));
     if ((strstr(lower, "bold") != NULL) || (strstr(lower, "demi") != NULL))
     	SetFlag(&(current->state), BOLD, True);
+    XtFree(lower);
 
     /*
      * If the spacing is "p" then proportional, otherwize monospaced.
      */
-
-    XmCopyISOLatin1Lowered(lower, current->spacing);
+    lower = XmCopyISOLatin1Lowered(current->spacing);
     if (strstr(lower, PROPORTIONAL_SPACING) != NULL)
     	SetFlag(&(current->state), PROPORTIONAL, True);
+    XtFree(lower);
 
     /*
      * If the slant it "i" or "o" then this is an italic font.
      */
-
-    XmCopyISOLatin1Lowered(lower, current->slant);
+    lower = XmCopyISOLatin1Lowered(current->slant);
     if ((strchr(lower, 'i') != NULL) || (strchr(lower, 'o') != NULL))
     	SetFlag(&(current->state), ITALIC, True);
+    XtFree(lower);
 
     /*
      * If the point_size is 0 then this is a scalable font.
@@ -1872,7 +1872,7 @@ SetDisplayedFont(XmFontSelectorWidget fsw, String new_font)
     Arg 	largs[10];
     Cardinal 	num_largs;
     FontData 	*cf = XmFontS_font_info(fsw)->current_font;
-    char 	buf[BUFSIZ];
+    char 	buf[BUFSIZ], *lower;
 
     sprintf(buf, "--%s-%s-%s----0-%d-%d-*--%s",
 	    STAR_STRING, DEFAULT_WEIGHT, DEFAULT_SLANT,
@@ -1925,7 +1925,10 @@ SetDisplayedFont(XmFontSelectorWidget fsw, String new_font)
 
     SetResolution(fsw, cf);
 
-    XmCopyISOLatin1Lowered(buf, cf->spacing);
+    lower = XmCopyISOLatin1Lowered(cf->spacing);
+    StoreString(lower, buf, sizeof buf - 1);
+    XtFree(lower);
+
     if ( strstr(buf, STAR_STRING) != NULL )
     {
 	SetFlag(&(XmFontS_user_state(fsw)), USER_PROPORTIONAL | USER_FIXED, True);

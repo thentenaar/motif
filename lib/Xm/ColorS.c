@@ -630,19 +630,21 @@ CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args,
 		     XrmValuePtr from, XrmValuePtr to, XtPointer * junk)
 {
     static XmColorMode	mode;
-    char		lowerName[BUFSIZ];
+    char *lower;
 
-    XmCopyISOLatin1Lowered(lowerName, (char *)from->addr);
+    lower = XmCopyISOLatin1Lowered(from->addr);
 
-    if (!strcmp(lowerName, "listmode"))
+    if (!strcmp(lower, "listmode"))
 	mode = XmListMode;
-    else if (!strcmp(lowerName, "scalemode"))
+    else if (!strcmp(lower, "scalemode"))
 	mode = XmScaleMode;
     else {
+        XtFree(lower);
         XtDisplayStringConversionWarning(dpy, from->addr, XmRXmColorMode);
-        return(False);          /* Conversion failed. */
+        return False;          /* Conversion failed. */
     }
 
+    XtFree(lower);
     to->size = sizeof(XmColorMode);
     if ( to->addr == NULL ) {
         to->addr = (XtPointer)&mode;

@@ -422,30 +422,30 @@ int XmCompareISOLatin1(char *first, char *second)
     return (((int) *bp) - ((int) *ap));
 }
 
-void XmCopyISOLatin1Lowered(char *dst, char *src)
+char *XmCopyISOLatin1Lowered(const char *src)
 {
-    unsigned char *dest, *source;
+	char *dest;
+	unsigned char c;
+	size_t len, i;
 
-    if (!dst) return;
-    if (!src) {
-       *dst = '\0';
-       return;
-    }
+	if (!src || !*src) {
+		dest = XtMalloc(1);
+		*dest = '\0';
+		return dest;
+	}
 
-    for (dest = (unsigned char *)dst, source = (unsigned char *)src;
-	 *source;
-	 source++, dest++)
-    {
-	if ((*source >= XK_A) && (*source <= XK_Z))
-	    *dest = *source + (XK_a - XK_A);
-	else if ((*source >= XK_Agrave) && (*source <= XK_Odiaeresis))
-	    *dest = *source + (XK_agrave - XK_Agrave);
-	else if ((*source >= XK_Ooblique) && (*source <= XK_Thorn))
-	    *dest = *source + (XK_oslash - XK_Ooblique);
-	else
-	    *dest = *source;
-    }
+	len  = strlen(src);
+	dest = XtCalloc(1, len);
+	for (i = 0; i < len; i++) {
+		c = (unsigned char)src[i];
+		if (c >= XK_A && c <= XK_Z)               c += XK_a - XK_A;
+		if (c >= XK_Agrave && c <= XK_Odiaeresis) c += XK_agrave - XK_Agrave;
+		if (c >= XK_Ooblique && c <= XK_Thorn)    c += XK_oslash - XK_Ooblique;
+		dest[i] = (char)c;
+	}
+
     *dest = '\0';
+    return dest;
 }
 
 /*

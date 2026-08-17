@@ -1641,8 +1641,6 @@ HandleSash(Widget sash, XtPointer junk, XtPointer callData)
     loc = GetEventLocation(pw, event);
 
     if (event->xany.type == KeyPress) {
-	char restptr[BUFSIZ];	/* points to the rest of the string. */
-
 	/* Get movement size */
 
 	if ((increment = atoi(call_data->params[1])) == 0) {
@@ -1656,27 +1654,22 @@ HandleSash(Widget sash, XtPointer junk, XtPointer callData)
 	default:
 	    return;
 	case  'U':		/* Up */
-	    XmCopyISOLatin1Lowered(restptr, call_data->params[2] + 2);
-
 	    if (!IsVert(pw))
 		increment = 0;
 	    else
 		increment = -increment;
 	    break;
 	case 'L':		/* Left */
-	    XmCopyISOLatin1Lowered(restptr, call_data->params[2] + 4);
 	    if (IsVert(pw))
 		increment = 0;
 	    else
 		increment = -increment;
 	    break;
 	case  'D':		/* Down */
-	    XmCopyISOLatin1Lowered(restptr, call_data->params[2] + 4);
 	    if (!IsVert(pw))
 		increment = 0;
 	    break;
 	case  'R':		/* Right */
-	    XmCopyISOLatin1Lowered(restptr, call_data->params[2] + 5);
 	    if (IsVert(pw))
 		increment = 0;
 	    break;

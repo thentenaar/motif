@@ -995,39 +995,41 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     static XrmQuark XtQEBottom;
     static XrmQuark XtQEIconOnly;
     static XrmQuark XtQEIconNone;
+    static XrmQuark XtQEIconTop;
+    static XrmQuark XtQEIconLeft;
+    static XrmQuark XtQEIconRight;
+    static XrmQuark XtQEIconBottom;
     static Boolean haveQuarks = FALSE;
     XrmQuark q;
-    char lowerName[BUFSIZ];
+    char *lower;
 
     if (!haveQuarks) {
-	XtQETop = XrmStringToQuark("top");
-	XtQELeft = XrmStringToQuark("left");
-	XtQERight = XrmStringToQuark("right");
-	XtQEBottom = XrmStringToQuark("bottom");
-	XtQEIconOnly = XrmStringToQuark("icononly");
-	XtQEIconNone = XrmStringToQuark("none");
-	haveQuarks = TRUE;
+	XtQETop        = XrmStringToQuark("top");
+	XtQELeft       = XrmStringToQuark("left");
+	XtQERight      = XrmStringToQuark("right");
+	XtQEBottom     = XrmStringToQuark("bottom");
+	XtQEIconOnly   = XrmStringToQuark("icononly");
+	XtQEIconNone   = XrmStringToQuark("none");
+	XtQEIconTop    = XrmStringToQuark("icontop");
+	XtQEIconLeft   = XrmStringToQuark("iconleft");
+	XtQEIconRight  = XrmStringToQuark("iconright");
+	XtQEIconBottom = XrmStringToQuark("iconbottom");
+	haveQuarks     = True;
     }
 
-    XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
-    q = XrmStringToQuark(lowerName);
+    lower = XmCopyISOLatin1Lowered(fromVal->addr);
+    q     = XrmStringToQuark(lower);
+    XtFree(lower);
 
-    if ( (q == XtQETop) || !strcmp(lowerName, "icontop") )
-	type = XmIconTop;
-    else if ( (q == XtQELeft) || !strcmp(lowerName, "iconleft") )
-	type = XmIconLeft;
-    else if ( (q == XtQERight) || !strcmp(lowerName, "iconright") )
-	type = XmIconRight;
-    else if ( (q == XtQEBottom) || !strcmp(lowerName, "iconbottom") )
-	type = XmIconBottom;
-    else if (q == XtQEIconOnly)
-	type = XmIconOnly;
-    else if ( (q == XtQEIconNone) || !strcmp(lowerName, "iconnone") )
-	type = XmIconNone;
+    if (q == XtQETop  || q == XtQEIconTop)           type = XmIconTop;
+    else if (q == XtQELeft   || q == XtQEIconLeft)   type = XmIconLeft;
+    else if (q == XtQERight  || q == XtQEIconRight)  type = XmIconRight;
+    else if (q == XtQEBottom || q == XtQEIconBottom) type = XmIconBottom;
+    else if (q == XtQEIconOnly) type = XmIconOnly;
+    else if (q == XtQEIconNone) type = XmIconNone;
     else {
-	XtDisplayStringConversionWarning(dpy,
-					 fromVal->addr, XmRXmIconPlacement);
-	return(FALSE);		/* Conversion failed. */
+	XtDisplayStringConversionWarning(dpy, fromVal->addr, XmRXmIconPlacement);
+	return False;		/* Conversion failed. */
     }
 
     if (toVal->addr == NULL) {
