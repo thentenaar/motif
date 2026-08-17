@@ -71,7 +71,7 @@ static Boolean  SetValues(Widget, Widget, Widget, ArgList, Cardinal *);
 static Boolean  ConstraintSetValues(Widget, Widget,
 				    Widget, ArgList, Cardinal *);
 static Boolean CvtStringToFillOption(Display *, XrmValuePtr, Cardinal *,
-				     XrmValuePtr, XrmValuePtr);
+				     XrmValuePtr, XrmValuePtr, XtPointer *);
 
 static XtGeometryResult GeometryManager(Widget, XtWidgetGeometry *,
 					XtWidgetGeometry *);
@@ -647,57 +647,64 @@ SetValues(Widget current, Widget request, Widget set,
 
 /*      Function Name: CvtStringToFillOption
  *      Description:   Converts a string to a FillOption
- *      Arguments:     dpy - the X Display.
+ *      Arguments:     d - the X Display.
  *                     args, num_args - *** NOT USED ***
- *                     fromVal - contains the string to convert.
- *                     toVal - contains the converted node state.
+ *                     from - contains the string to convert.
+ *                     to - contains the converted node state.
  *      Returns:
  */
-static Boolean
-CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-		      XrmValuePtr fromVal, XrmValuePtr toVal)
+static Boolean CvtStringToFillOption(Display *d, XrmValuePtr args,
+                                     Cardinal *num_args, XrmValuePtr from,
+                                     XrmValuePtr to, XtPointer *conv_data)
 {
-    static XmFillOption 	option;
-    char *lower;
+	static XmFillOption 	option;
+	static XrmQuark XtQENone, XtQEMajor, XtQEMinor, XtQEAll;
+	static XrmQuark XtQEFillNone, XtQEFillMajor, XtQEFillMinor, XtQEFillAll;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    if (!strcmp(lower, "none") || !strcmp(lower,"fillnone"))
-        option = XmFillNone;
-    else if (!strcmp(lower, "major") || !strcmp(lower, "fillmajor"))
-	option = XmFillMajor;
-    else if (!strcmp(lower, "minor") || !strcmp(lower, "fillminor"))
-	option = XmFillMinor;
-    else if (!strcmp(lower, "all") || !strcmp(lower, "fillall") )
-	option = XmFillAll;
-    else
-    {
-        XtDisplayStringConversionWarning(dpy, fromVal->addr, XmRXmFillOption);
-        XtFree(lower);
-        return False;          /* Conversion failed. */
-    }
-    XtFree(lower);
-
-    if ( toVal->addr == NULL )
-    {
-        toVal->size = sizeof(XmFillOption);
-        toVal->addr = (XtPointer)&option;
-        return(True);
-    }
-    else
-    {
-	toVal->size = sizeof(XmFillOption);
-	if ( toVal->size >= sizeof(XmFillOption) )
-	{
-	    XmFillOption *state = (XmFillOption *)toVal->addr;
-
-	    *state = option;
-	    return(True);
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQENone      = XrmStringToQuark("none");
+		XtQEMajor     = XrmStringToQuark("major");
+		XtQEMinor     = XrmStringToQuark("minor");
+		XtQEAll       = XrmStringToQuark("all");
+		XtQEFillNone  = XrmStringToQuark("fillnone");
+		XtQEFillMajor = XrmStringToQuark("fillmajor");
+		XtQEFillMinor = XrmStringToQuark("fillminor");
+		XtQEFillAll   = XrmStringToQuark("fillall");
+		quarks        = True;
 	}
-	else
-	{
-	    return(False);
+
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
+
+	if (q == XtQENone || q == XtQEFillNone)        option = XmFillNone;
+	else if (q == XtQEMajor || q == XtQEFillMajor) option = XmFillMajor;
+	else if (q == XtQEMinor || q == XtQEFillMinor) option = XmFillMinor;
+	else if (q == XtQEAll   || q == XtQEFillAll)   option = XmFillAll;
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmFillOption);
+		return False;
 	}
-    }
+
+	if (!to->addr) {
+		to->size = sizeof(XmFillOption);
+		to->addr = (XPointer)&option;
+		return True;
+	}
+
+	if (to->size >= sizeof(XmFillOption)) {
+		*(XmFillOption *)to->addr = option;
+		return True;
+	}
+
+	to->size = sizeof(XmFillOption);
+	return False;
 }
 
 /************************************************************

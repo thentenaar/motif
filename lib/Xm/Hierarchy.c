@@ -1166,66 +1166,63 @@ ToggleNodeState ( Widget w,
 
 /*	Function Name: CvtStringToNodeState
  *	Description:   Converts a string to a NodeState.
- *	Arguments:     dpy - the X Display.
+ *	Arguments:     d - the X Display.
  *                     args, num_args - *** NOT USED ***
- *                     fromVal - contains the string to convert.
- *                     toVal - contains the converted node state.
- *                     junk - *** UNUSED ***.
+ *                     from - contains the string to convert.
+ *                     to - contains the converted node state.
+ *                     conv_data - converter data *** UNUSED ***.
  *	Returns:
  */
-static Boolean
-CvtStringToNodeState(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-		     XrmValuePtr fromVal, XrmValuePtr toVal, XtPointer *junk)
+static Boolean CvtStringToNodeState(Display *d, XrmValuePtr args,
+                                    Cardinal *num_args, XrmValuePtr from,
+                                    XrmValuePtr to, XtPointer *conv_data)
 {
-    static XmHierarchyNodeState type;
-    static XrmQuark XtQEAlwaysOpen, XtQEOpen, XtQEClosed, XtQEHidden;
-    static XrmQuark XtQENotInHierarchy;
-    static Boolean haveQuarks = FALSE;
-    XrmQuark q;
-    char *lower;
+	static XmHierarchyNodeState type;
+	static XrmQuark XtQEAlwaysOpen, XtQEOpen, XtQEClosed, XtQEHidden;
+	static XrmQuark XtQENotInHierarchy;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    if (!haveQuarks) {
-	XtQEAlwaysOpen = XrmStringToQuark("alwaysopen");
-	XtQEOpen = XrmStringToQuark("open");
-	XtQEClosed = XrmStringToQuark("closed");
-	XtQEHidden = XrmStringToQuark("hidden");
-	XtQENotInHierarchy = XrmStringToQuark("notinhierarchy");
-	haveQuarks = TRUE;
-    }
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQEAlwaysOpen     = XrmStringToQuark("alwaysopen");
+		XtQEOpen           = XrmStringToQuark("open");
+		XtQEClosed         = XrmStringToQuark("closed");
+		XtQEHidden         = XrmStringToQuark("hidden");
+		XtQENotInHierarchy = XrmStringToQuark("notinhierarchy");
+		quarks = True;
+	}
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    q     = XrmStringToQuark(lower);
-    XtFree(lower);
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
 
-    if (q == XtQEAlwaysOpen)
-	type = XmAlwaysOpen;
-    else if (q == XtQEOpen)
-	type = XmOpen;
-    else if (q == XtQEClosed)
-	type = XmClosed;
-    else if (q == XtQEHidden)
-	type = XmHidden;
-    else if (q == XtQENotInHierarchy) 	/* note! shouldn't ever be needed */
-	type = XmNotInHierarchy;
-    else {
-	XtDisplayStringConversionWarning(dpy, fromVal->addr,
-					 XmRXmHierarchyNodeState);
-	return(False);		/* Conversion failed. */
-    }
+	if (q == XtQEAlwaysOpen)          type = XmAlwaysOpen;
+	else if (q == XtQEOpen)           type = XmOpen;
+	else if (q == XtQEClosed)         type = XmClosed;
+	else if (q == XtQEHidden)         type = XmHidden;
+	else if (q == XtQENotInHierarchy) type = XmNotInHierarchy; /* note! shouldn't ever be needed */
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmHierarchyNodeState);
+		return False;
+	}
 
-    toVal->size = sizeof(XmHierarchyNodeState);
+	if (!to->addr) {
+		to->size = sizeof(XmHierarchyNodeState);
+		to->addr = (XPointer)&type;
+		return True;
+	}
 
-    if (toVal->addr == NULL) {
-	toVal->addr = (XtPointer) &type;
-	return(TRUE);
-    }
+	if (to->size >= sizeof(XmHierarchyNodeState)) {
+		*(XmHierarchyNodeState *)to->addr = type;
+		return True;
+	}
 
-    if (toVal->size >= sizeof(XmHierarchyNodeState)) {
-	*((XmHierarchyNodeState *) toVal->addr) = type;
-	return(TRUE);
-    }
-
-    return(FALSE);
+	to->size = sizeof(XmHierarchyNodeState);
+	return False;
 }
 
 /************************************************************

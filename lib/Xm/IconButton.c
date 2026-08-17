@@ -134,7 +134,7 @@ static void CheckSetRenderTable(Widget wid, int offs, XrmValue *value);
  ******************/
 
 static Boolean CvtStringToIconPlacement(Display *, XrmValuePtr, Cardinal *,
-					XrmValuePtr, XrmValuePtr);
+					XrmValuePtr, XrmValuePtr, XtPointer *);
 
 /************************************************************
 *	STATIC DECLARATIONS
@@ -978,75 +978,69 @@ QueryGeometry(Widget w,XtWidgetGeometry *intended, XtWidgetGeometry *preferred)
 
 /*	Function Name: CvtStringToIconPlacement
  *	Description:   Converts a string to an Icon Placement
- *	Arguments:     dpy - the X Display.
+ *	Arguments:     d - the X Display.
  *                     args, num_args - *** NOT USED ***
- *                     fromVal - contains the string to convert.
- *                     toVal - contains the converted node state.
- *	Returns:       True if the SetValues succeeds.
+ *                     from - contains the string to convert.
+ *                     to - contains the converted node state.
+ *	Returns:       True if the conversion was succeessful.
  */
-static Boolean
-CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-			 XrmValuePtr fromVal, XrmValuePtr toVal)
+static Boolean CvtStringToIconPlacement(Display *d, XrmValuePtr args,
+                                        Cardinal *num_args, XrmValuePtr from,
+                                        XrmValuePtr to, XtPointer *conv_data)
 {
-    static XmIconPlacement type;
-    static XrmQuark XtQETop;
-    static XrmQuark XtQELeft;
-    static XrmQuark XtQERight;
-    static XrmQuark XtQEBottom;
-    static XrmQuark XtQEIconOnly;
-    static XrmQuark XtQEIconNone;
-    static XrmQuark XtQEIconTop;
-    static XrmQuark XtQEIconLeft;
-    static XrmQuark XtQEIconRight;
-    static XrmQuark XtQEIconBottom;
-    static Boolean haveQuarks = FALSE;
-    XrmQuark q;
-    char *lower;
+	static XmIconPlacement type;
+	static XrmQuark XtQETop, XtQELeft, XtQERight, XtQEBottom;
+	static XrmQuark XtQEIconOnly, XtQEIconNone, XtQEIconTop;
+	static XrmQuark XtQEIconLeft, XtQEIconRight, XtQEIconBottom;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    if (!haveQuarks) {
-	XtQETop        = XrmStringToQuark("top");
-	XtQELeft       = XrmStringToQuark("left");
-	XtQERight      = XrmStringToQuark("right");
-	XtQEBottom     = XrmStringToQuark("bottom");
-	XtQEIconOnly   = XrmStringToQuark("icononly");
-	XtQEIconNone   = XrmStringToQuark("none");
-	XtQEIconTop    = XrmStringToQuark("icontop");
-	XtQEIconLeft   = XrmStringToQuark("iconleft");
-	XtQEIconRight  = XrmStringToQuark("iconright");
-	XtQEIconBottom = XrmStringToQuark("iconbottom");
-	haveQuarks     = True;
-    }
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQETop        = XrmStringToQuark("top");
+		XtQELeft       = XrmStringToQuark("left");
+		XtQERight      = XrmStringToQuark("right");
+		XtQEBottom     = XrmStringToQuark("bottom");
+		XtQEIconOnly   = XrmStringToQuark("icononly");
+		XtQEIconNone   = XrmStringToQuark("none");
+		XtQEIconTop    = XrmStringToQuark("icontop");
+		XtQEIconLeft   = XrmStringToQuark("iconleft");
+		XtQEIconRight  = XrmStringToQuark("iconright");
+		XtQEIconBottom = XrmStringToQuark("iconbottom");
+		quarks         = True;
+	}
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    q     = XrmStringToQuark(lower);
-    XtFree(lower);
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
 
-    if (q == XtQETop  || q == XtQEIconTop)           type = XmIconTop;
-    else if (q == XtQELeft   || q == XtQEIconLeft)   type = XmIconLeft;
-    else if (q == XtQERight  || q == XtQEIconRight)  type = XmIconRight;
-    else if (q == XtQEBottom || q == XtQEIconBottom) type = XmIconBottom;
-    else if (q == XtQEIconOnly) type = XmIconOnly;
-    else if (q == XtQEIconNone) type = XmIconNone;
-    else {
-	XtDisplayStringConversionWarning(dpy, fromVal->addr, XmRXmIconPlacement);
-	return False;		/* Conversion failed. */
-    }
+	if (q == XtQETop  || q == XtQEIconTop)           type = XmIconTop;
+	else if (q == XtQELeft   || q == XtQEIconLeft)   type = XmIconLeft;
+	else if (q == XtQERight  || q == XtQEIconRight)  type = XmIconRight;
+	else if (q == XtQEBottom || q == XtQEIconBottom) type = XmIconBottom;
+	else if (q == XtQEIconOnly) type = XmIconOnly;
+	else if (q == XtQEIconNone) type = XmIconNone;
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmIconPlacement);
+		return False;
+	}
 
-    if (toVal->addr == NULL) {
-	toVal->size = sizeof(XmIconPlacement);
-	toVal->addr = (XtPointer) &type;
-	return(TRUE);
-    }
+	if (!to->addr) {
+		to->size = sizeof(XmIconPlacement);
+		to->addr = (XPointer)&type;
+		return True;
+	}
 
-    if (toVal->size >= sizeof(XmIconPlacement)) {
-	XmIconPlacement *loc = (XmIconPlacement *)toVal->addr;
+	if (to->size >= sizeof(XmIconPlacement)) {
+		*(XmIconPlacement *)to->addr = type;
+		return True;
+	}
 
-	*loc = type;
-	return(TRUE);
-    }
-
-    toVal->size = sizeof(XmIconPlacement);
-    return(FALSE);
+	to->size = sizeof(XmIconPlacement);
+	return False;
 }
 
 /************************************************************

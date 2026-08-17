@@ -85,11 +85,11 @@ static XtGeometryResult GeometryManager(Widget,
  *********************/
 
 static Boolean CvtStringToConnectStyle(Display *, XrmValuePtr, Cardinal *,
-				       XrmValuePtr, XrmValuePtr);
+				       XrmValuePtr, XrmValuePtr, XtPointer *);
 static Boolean CvtStringToCompressStyle(Display *, XrmValuePtr, Cardinal *,
-				       XrmValuePtr, XrmValuePtr);
+				       XrmValuePtr, XrmValuePtr, XtPointer *);
 static Boolean CvtStringToLineStyle(Display *, XrmValuePtr, Cardinal *,
-				       XrmValuePtr, XrmValuePtr);
+				       XrmValuePtr, XrmValuePtr, XtPointer *);
 
 static void ReleaseNodeGCs(Widget), GetNodeGCs(Widget);
 static TreeConstraints GetNodeInfo(Widget);
@@ -952,186 +952,177 @@ ToggleNodeState(Widget w, XtPointer node_ptr, XtPointer call_data)
 
 /*	Function Name: CvtStringToConnectStyle
  *	Description:   Converts a string to a connect style
- *	Arguments:     dpy - the X Display.
+ *	Arguments:     d - the X Display.
  *                     args, num_args - *** NOT USED ***
  *                     fromVal - contains the string to convert.
  *                     toVal - contains the converted node state.
  *	Returns:       True if the SetValues succeeds.
  */
 
-static Boolean
-CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-			XrmValuePtr fromVal, XrmValuePtr toVal)
+static Boolean CvtStringToConnectStyle(Display *d, XrmValuePtr args,
+                                       Cardinal *num_args, XrmValuePtr from,
+                                       XrmValuePtr to, XtPointer *conv_data)
 {
-    static XmTreeConnectStyle connect;
-    static XrmQuark XtQELadder;
-    static XrmQuark XtQEDirect;
-    static XrmQuark XtQETreeLadder;
-    static XrmQuark XtQETreeDirect;
-    static Boolean haveQuarks = False;
-    XrmQuark q;
-    char *lower;
+	static XmTreeConnectStyle connect;
+	static XrmQuark XtQELadder, XtQEDirect;
+	static XrmQuark XtQETreeLadder, XtQETreeDirect;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    if (!haveQuarks) {
-	XtQELadder     = XrmStringToQuark("ladder");
-	XtQEDirect     = XrmStringToQuark("direct");
-	XtQETreeLadder = XrmStringToQuark("treeladder");
-	XtQETreeDirect = XrmStringToQuark("treedirect");
-	haveQuarks     = TRUE;
-    }
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQELadder     = XrmStringToQuark("ladder");
+		XtQEDirect     = XrmStringToQuark("direct");
+		XtQETreeLadder = XrmStringToQuark("treeladder");
+		XtQETreeDirect = XrmStringToQuark("treedirect");
+		quarks         = True;
+	}
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    q     = XrmStringToQuark(lower);
-    XtFree(lower);
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
 
-    if (q == XtQELadder || q == XtQETreeLadder)      connect = XmTreeLadder;
-    else if (q == XtQEDirect || q == XtQETreeDirect) connect = XmTreeDirect;
-    else {
-	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmConnectStyle);
-	return False;		/* Conversion failed. */
-    }
+	if (q == XtQELadder || q == XtQETreeLadder)      connect = XmTreeLadder;
+	else if (q == XtQEDirect || q == XtQETreeDirect) connect = XmTreeDirect;
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmConnectStyle);
+		return False;
+	}
 
-    if (toVal->addr == NULL) {
-	toVal->size = sizeof(XmTreeConnectStyle);
-	toVal->addr = (XtPointer) &connect;
-	return(TRUE);
-    }
+	if (!to->addr) {
+		to->size = sizeof(XmTreeConnectStyle);
+		to->addr = (XPointer)&connect;
+		return True;
+	}
 
-    if (toVal->size >= sizeof(XmTreeConnectStyle)) {
-	XmTreeConnectStyle *loc = (XmTreeConnectStyle *)toVal->addr;
+	if (to->size >= sizeof(XmTreeConnectStyle)) {
+		*(XmTreeConnectStyle *)to->addr = connect;
+		return True;
+	}
 
-	*loc = connect;
-	return(TRUE);
-    }
-
-    toVal->size = sizeof(XmTreeConnectStyle);
-    return(FALSE);
+	to->size = sizeof(XmTreeConnectStyle);
+	return False;
 }
 
 /*      Function Name: CvtStringToCompressStyle
  *      Description:   Converts a string to a compress style
- *      Arguments:     dpy - the X Display.
+ *      Arguments:     d - the X Display.
  *                     args, num_args - *** NOT USED ***
- *                     fromVal - contains the string to convert.
- *                     toVal - contains the converted value
+ *                     from - contains the string to convert.
+ *                     to - contains the converted value
  *      Returns:       True if the SetValues succeeds.
  */
 
-static Boolean
-CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-                        XrmValuePtr fromVal, XrmValuePtr toVal)
+static Boolean CvtStringToCompressStyle(Display *d, XrmValuePtr args,
+                                        Cardinal *num_args, XrmValuePtr from,
+                                        XrmValuePtr to, XtPointer *conv_data)
 {
-    static XmTreeCompressStyle compress;
-    static XrmQuark XtQENone;
-    static XrmQuark XtQELeaves;
-    static XrmQuark XtQEAll;
-    static XrmQuark XtQECompressNone;
-    static XrmQuark XtQECompressLeaves;
-    static XrmQuark XtQECompressAll;
-    static XrmQuark XtQETreeCompressNone;
-    static XrmQuark XtQETreeCompressLeaves;
-    static XrmQuark XtQETreeCompressAll;
-    static Boolean haveQuarks = FALSE;
-    XrmQuark q;
-    char *lower;
+	static XmTreeCompressStyle compress;
+	static XrmQuark XtQENone, XtQELeaves, XtQEAll;
+	static XrmQuark XtQECompressNone, XtQECompressLeaves, XtQECompressAll;
+	static XrmQuark XtQETreeCompressNone, XtQETreeCompressLeaves, XtQETreeCompressAll;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    if (!haveQuarks) {
-        XtQENone               = XrmStringToQuark("none");
-        XtQELeaves             = XrmStringToQuark("leaves");
-        XtQEAll                = XrmStringToQuark("all");
-        XtQECompressNone       = XrmStringToQuark("compressnone");
-        XtQECompressLeaves     = XrmStringToQuark("compressleaves");
-        XtQECompressAll        = XrmStringToQuark("compressall");
-        XtQETreeCompressNone   = XrmStringToQuark("treecompressnone");
-        XtQETreeCompressLeaves = XrmStringToQuark("treecompressleaves");
-        XtQETreeCompressAll    = XrmStringToQuark("treecompressall");
-        haveQuarks             = True;
-    }
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQENone               = XrmStringToQuark("none");
+		XtQELeaves             = XrmStringToQuark("leaves");
+		XtQEAll                = XrmStringToQuark("all");
+		XtQECompressNone       = XrmStringToQuark("compressnone");
+		XtQECompressLeaves     = XrmStringToQuark("compressleaves");
+		XtQECompressAll        = XrmStringToQuark("compressall");
+		XtQETreeCompressNone   = XrmStringToQuark("treecompressnone");
+		XtQETreeCompressLeaves = XrmStringToQuark("treecompressleaves");
+		XtQETreeCompressAll    = XrmStringToQuark("treecompressall");
+		quarks                 = True;
+	}
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    q     = XrmStringToQuark(lower);
-    XtFree(lower);
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
 
-    if (q == XtQECompressNone || q == XtQENone || q == XtQETreeCompressNone)
-        compress = XmTreeCompressNone;
-    else if (q == XtQECompressLeaves || q == XtQELeaves || q == XtQETreeCompressLeaves)
-        compress = XmTreeCompressLeaves;
-    else if (q == XtQECompressAll || q == XtQEAll || q == XtQETreeCompressAll)
-        compress = XmTreeCompressAll;
-    else {
-        XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmCompressStyle);
-        return(FALSE);          /* Conversion failed. */
-    }
+	if (q == XtQECompressNone || q == XtQENone || q == XtQETreeCompressNone)
+		compress = XmTreeCompressNone;
+	else if (q == XtQECompressLeaves || q == XtQELeaves || q == XtQETreeCompressLeaves)
+		compress = XmTreeCompressLeaves;
+	else if (q == XtQECompressAll || q == XtQEAll || q == XtQETreeCompressAll)
+		compress = XmTreeCompressAll;
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmCompressStyle);
+		return False;
+	}
 
-    if (toVal->addr == NULL) {
-        toVal->size = sizeof(XmTreeCompressStyle);
-        toVal->addr = (XtPointer) &compress;
-        return(TRUE);
-    }
+	if (!to->addr) {
+		to->size = sizeof(XmTreeCompressStyle);
+		to->addr = (XPointer)&compress;
+		return True;
+	}
 
-    if (toVal->size >= sizeof(XmTreeCompressStyle)) {
-        XmTreeCompressStyle *loc = (XmTreeCompressStyle *)toVal->addr;
+	if (to->size >= sizeof(XmTreeCompressStyle)) {
+		*(XmTreeCompressStyle *)to->addr = compress;
+		return True;
+	}
 
-        *loc = compress;
-        return(TRUE);
-    }
-
-    toVal->size = sizeof(XmTreeCompressStyle);
-    return(FALSE);
+	to->size = sizeof(XmTreeCompressStyle);
+	return False;
 }
 
-static Boolean
-CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
-			XrmValuePtr fromVal, XrmValuePtr toVal)
+static Boolean CvtStringToLineStyle(Display *d, XrmValuePtr args,
+                                    Cardinal *num_args, XrmValuePtr from,
+                                    XrmValuePtr to, XtPointer *conv_data)
 {
-    static int lineStyle = LineSolid;
-    static XrmQuark XtQEsolid;
-    static XrmQuark XtQEonoffdash;
-    static XrmQuark XtQEdoubledash;
-    static XrmQuark XtQElinesolid;
-    static XrmQuark XtQElineonoffdash;
-    static XrmQuark XtQElinedoubledash;
-    static Boolean quarks = False;
-    XrmQuark q;
-    char *lower;
+	static int line_style = LineSolid;
+	static XrmQuark XtQEsolid, XtQEonoffdash, XtQEdoubledash;
+	static XrmQuark XtQElinesolid, XtQElineonoffdash, XtQElinedoubledash;
+	static Boolean quarks = False;
+	XrmQuark q;
+	char *lower;
 
-    if (!quarks) {
-        XtQEsolid          = XrmStringToQuark("solid");
-        XtQEonoffdash      = XrmStringToQuark("onoffdash");
-        XtQEdoubledash     = XrmStringToQuark("doubledash");
-        XtQElinesolid      = XrmStringToQuark("linesolid");
-        XtQElineonoffdash  = XrmStringToQuark("lineonoffdash");
-        XtQElinedoubledash = XrmStringToQuark("linedoubledash");
-        quarks             = True;
-    }
+	(void)args;
+	(void)num_args;
+	(void)conv_data;
+	if (!quarks) {
+		XtQEsolid          = XrmStringToQuark("solid");
+		XtQEonoffdash      = XrmStringToQuark("onoffdash");
+		XtQEdoubledash     = XrmStringToQuark("doubledash");
+		XtQElinesolid      = XrmStringToQuark("linesolid");
+		XtQElineonoffdash  = XrmStringToQuark("lineonoffdash");
+		XtQElinedoubledash = XrmStringToQuark("linedoubledash");
+		quarks             = True;
+	}
 
-    lower = XmCopyISOLatin1Lowered(fromVal->addr);
-    q     = XrmStringToQuark(lower);
-    XtFree(lower);
+	lower = XmCopyISOLatin1Lowered(from->addr);
+	q     = XrmStringToQuark(lower);
+	XtFree(lower);
 
-    if (q == XtQEsolid || q == XtQElinesolid)                lineStyle = LineSolid;
-    else if (q == XtQEonoffdash  || q == XtQElineonoffdash)  lineStyle = LineOnOffDash;
-    else if (q == XtQEdoubledash || q == XtQElinedoubledash) lineStyle = LineDoubleDash;
-    else {
-	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmLineStyle);
-	return(FALSE);		/* Conversion failed. */
-    }
+	if (q == XtQEsolid || q == XtQElinesolid)                line_style = LineSolid;
+	else if (q == XtQEonoffdash  || q == XtQElineonoffdash)  line_style = LineOnOffDash;
+	else if (q == XtQEdoubledash || q == XtQElinedoubledash) line_style = LineDoubleDash;
+	else {
+		XtDisplayStringConversionWarning(d, from->addr, XmRXmLineStyle);
+		return False;
+	}
 
-    if (toVal->addr == NULL) {
-	toVal->size = sizeof(int);
-	toVal->addr = (XtPointer) &lineStyle;
-	return(TRUE);
-    }
+	if (!to->addr) {
+		to->size = sizeof(int);
+		to->addr = (XPointer)&line_style;
+		return True;
+	}
 
-    if (toVal->size >= sizeof(int)) {
-	int *loc = (int*)toVal->addr;
+	if (to->size >= sizeof(int)) {
+		*(int *)to->addr = line_style;
+		return True;
+	}
 
-	*loc = lineStyle;
-	return(TRUE);
-    }
-
-    toVal->size = sizeof(int);
-    return(FALSE);
+	to->size = sizeof(int);
+	return False;
 }
 
 /************************************************************
