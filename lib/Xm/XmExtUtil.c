@@ -318,6 +318,8 @@ _XmMoveWidget(Widget w, Position x, Position y)
     XmDropSiteStartUpdate(w);
     XtMoveWidget(w, x, y);
     XmDropSiteEndUpdate(w);
+    if (XtIsRealized(w))
+	    XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
 }
 
 /*	Function Name: _XmResizeWidget
@@ -334,6 +336,8 @@ _XmResizeWidget(Widget w, Dimension width, Dimension height, Dimension bw)
     XmDropSiteStartUpdate(w);
     XtResizeWidget(w, width, height, bw);
     XmDropSiteEndUpdate(w);
+    if (XtIsRealized(w))
+	    XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
 }
 
 /*	Function Name: _XmConfigureWidget
