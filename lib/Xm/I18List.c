@@ -81,8 +81,6 @@
 /************************************************************
 *	MACROS
 *************************************************************/
-
-#define streq(a, b) (((a) != NULL) && ((b) != NULL) && (strcmp((a), (b)) == 0))
 #define IsValidPixmap(p) (((p) != None) && ((p) != XmUNSPECIFIED_PIXMAP))
 
 /************************************************************
@@ -628,28 +626,28 @@ static Boolean SetValues(Widget current, Widget request, Widget set,
     {
 	String name = args[i].name;
 
-	if (streq(XmNcolumnTitles, name))
+	if (!strcmp(XmNcolumnTitles, name))
 	{
 	    copyTitles = True;
 	    redisplay = recalculate = XtIsRealized(set);
 	}
 
-	if (streq(XmNentryData, name))
+	if (!strcmp(XmNentryData, name))
 	{
 	    redisplay = recalculate = resort = XtIsRealized(set);
 	}
 
-	if (streq(XmNsortFunctions, name))
+	if (!strcmp(XmNsortFunctions, name))
 	{
 	    redisplay = resort = XtIsRealized(set);
 	}
 
-	if (streq(XmNfirstRow, name) || streq(XmNfirstColumn,name))
+	if (!strcmp(XmNfirstRow, name) || !strcmp(XmNfirstColumn,name))
 	{
 	    check_pos = True;
 	}
 
-	if (streq(XmNnumRows, name))
+	if (!strcmp(XmNnumRows, name))
 	{
 	    check_pos = True;
 	    /*

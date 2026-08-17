@@ -68,8 +68,6 @@ typedef struct _PixCacheEntry {
 /************************************************************
 *	MACROS
 *************************************************************/
-
-#define streq(a, b) (((a) != NULL) && ((b) != NULL) && (strcmp((a), (b)) == 0))
 #define ValidPixmap(p) ((p)!=None&&(p)!=XmUNSPECIFIED_PIXMAP)
 
 /************************************************************
@@ -691,26 +689,27 @@ SetValues(Widget current, Widget request, Widget set,
     Boolean pixmapChanged = False;
     Boolean pixmapGeoChanged = False;
     Boolean resetPixmapValues = False;
+    String name;
 
     reinit_l = reinit_ls = resetGCs = recalc = redisplay = False;
 
     for (i = 0; i < *num_args; i++) {
-	String name = args[i].name;
+	name = args[i].name;
 
-	if (streq(XmNlabel, name))
+	if (!strcmp(XmNlabel, name))
 	    reinit_l = resetGCs = recalc = redisplay = TRUE;
 
-	if (streq(XmNlabelString, name))
+	if (!strcmp(XmNlabelString, name))
 	    reinit_ls = resetGCs = recalc = redisplay = TRUE;
 
-	if (streq(XmNpixmap, name))
+	if (!strcmp(XmNpixmap, name))
 	{
 	    DecPixCache(XtDisplay(current), XmIconButton_pixmap(old_iw));
 	    recalc = redisplay = TRUE;
 	    pixmapChanged = True;
 	}
 
-	if ( streq(XmNpixmapWidth, name) || streq(XmNpixmapHeight, name) || streq(XmNpixmapDepth, name) )
+	if ( !strcmp(XmNpixmapWidth, name) || !strcmp(XmNpixmapHeight, name) || !strcmp(XmNpixmapDepth, name) )
 	{
 	    pixmapGeoChanged = True;
 	    /* for now, we naively assume that the user knows that all of
@@ -718,7 +717,7 @@ SetValues(Widget current, Widget request, Widget set,
 	    */
 	}
 
-	if (streq(XmNset, name)) {
+	if (!strcmp(XmNset, name)) {
 	    /*
 	     * Remove the timer since programmer has changed value.
 	     */
@@ -1013,17 +1012,17 @@ CvtStringToIconPlacement(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
 
-    if ( (q == XtQETop) || streq(lowerName, "icontop") )
+    if ( (q == XtQETop) || !strcmp(lowerName, "icontop") )
 	type = XmIconTop;
-    else if ( (q == XtQELeft) || streq(lowerName, "iconleft") )
+    else if ( (q == XtQELeft) || !strcmp(lowerName, "iconleft") )
 	type = XmIconLeft;
-    else if ( (q == XtQERight) || streq(lowerName, "iconright") )
+    else if ( (q == XtQERight) || !strcmp(lowerName, "iconright") )
 	type = XmIconRight;
-    else if ( (q == XtQEBottom) || streq(lowerName, "iconbottom") )
+    else if ( (q == XtQEBottom) || !strcmp(lowerName, "iconbottom") )
 	type = XmIconBottom;
     else if (q == XtQEIconOnly)
 	type = XmIconOnly;
-    else if ( (q == XtQEIconNone) || streq(lowerName, "iconnone") )
+    else if ( (q == XtQEIconNone) || !strcmp(lowerName, "iconnone") )
 	type = XmIconNone;
     else {
 	XtDisplayStringConversionWarning(dpy,

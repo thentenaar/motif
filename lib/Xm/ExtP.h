@@ -53,8 +53,6 @@ extern String xm_std_filter[], xm_std_constraint_filter[];
 *	MACROS
 *************************************************************/
 
-#define streq(a, b) (((a) != NULL) && ((b) != NULL) && (strcmp((a), (b)) == 0))
-
 #define ForAllChildren(w, childP)                                          \
   for ( (childP) = (w)->composite.children ;                               \
         (childP) < (w)->composite.children + (w)->composite.num_children ; \

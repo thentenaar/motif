@@ -30,7 +30,6 @@
 #endif
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
 
 #include "ColorSP.h"
@@ -509,7 +508,7 @@ SetValues(Widget current, Widget request, Widget set,
 	oldValue = XmColorS_color_name(curr);
 	newValue = XmColorS_color_name(csw);
 
-	if (!streq(newValue, oldValue))
+	if (!strcmp(newValue, oldValue))
 	{
 	    /*
 	     * Color name changed will automatically free the old
@@ -635,9 +634,9 @@ CvtStringToColorMode(Display *dpy, XrmValuePtr args, Cardinal num_args,
 
     XmCopyISOLatin1Lowered(lowerName, (char *)from->addr);
 
-    if (streq(lowerName, "listmode"))
+    if (!strcmp(lowerName, "listmode"))
 	mode = XmListMode;
-    else if (streq(lowerName, "scalemode"))
+    else if (!strcmp(lowerName, "scalemode"))
 	mode = XmScaleMode;
     else {
         XtDisplayStringConversionWarning(dpy, from->addr, XmRXmColorMode);
@@ -841,7 +840,7 @@ FindColor(XmColorSelectorWidget csw, int *color_num)
 		if(XmColorS_color_name(csw)[0] == '#')
 		    *color_num = i;
 
-		if(streq(XmColorS_color_name(csw), ptr->name))
+		if(!strcmp(XmColorS_color_name(csw), ptr->name))
 		{
 		    *color_num = i;
 		    return(True);

@@ -1646,7 +1646,7 @@ HandleSash(Widget sash, XtPointer junk, XtPointer callData)
 	/* Get movement size */
 
 	if ((increment = atoi(call_data->params[1])) == 0) {
-	    if (streq(call_data->params[1], LARGE_INC))
+	    if (!strcmp(call_data->params[1], LARGE_INC))
 		increment = 10;
 	    else
 		increment = 1;

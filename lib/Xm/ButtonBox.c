@@ -662,13 +662,13 @@ CvtStringToFillOption(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     XmCopyISOLatin1Lowered(lowerName, (char *)fromVal->addr);
 
-    if ( streq(lowerName, "none") || streq(lowerName,"fillnone") )
+    if (!strcmp(lowerName, "none") || !strcmp(lowerName,"fillnone"))
         option = XmFillNone;
-    else if ( streq(lowerName, "major") || streq(lowerName, "fillmajor") )
+    else if (!strcmp(lowerName, "major") || !strcmp(lowerName, "fillmajor"))
 	option = XmFillMajor;
-    else if ( streq(lowerName, "minor") || streq(lowerName, "fillminor") )
+    else if (!strcmp(lowerName, "minor") || !strcmp(lowerName, "fillminor"))
 	option = XmFillMinor;
-    else if ( streq(lowerName, "all") || streq(lowerName, "fillall") )
+    else if (!strcmp(lowerName, "all") || !strcmp(lowerName, "fillall") )
 	option = XmFillAll;
     else
     {

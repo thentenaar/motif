@@ -23,7 +23,6 @@
 
 #define dbg() fprintf(stderr, "file: %s - XtWidgetToApplicationContext() on line: %d\n", __FILE__, __LINE__);
 #include <stdio.h>
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>		/* May have to be strings.h on some systems. */
 
@@ -663,7 +662,7 @@ SortOtherFontData(FontInfo *font_info, String *list, int num)
      */
 
     while (i < (num - 1)) {
-	if (streq(list[i], list[i+1])) {
+	if (!strcmp(list[i], list[i+1])) {
 	    int j;
 	    String *ptr;
 
@@ -857,7 +856,7 @@ FillData(XmFontSelectorWidget fsw, FontData *current, char *name)
     GET_NEXT_FIELD(ptr);	/* ptr == Family */
     StoreString(ptr, temp, BUFSIZ - 1);
 
-    if (streq(temp, STAR_STRING)) {
+    if (!strcmp(temp, STAR_STRING)) {
 	String str = XmStringUngenerate(ANY_STRING(fsw), NULL, XmUTF8_TEXT, XmMULTIBYTE_TEXT);
 	strcpy(temp, str);
 	XtFree((XtPointer) str);
@@ -1110,7 +1109,7 @@ UpdateExistingFamily(FamilyInfo *fam, FontData *font)
     else
 	fam->upright_nameq = XrmStringToQuark(font->slant);
 
-    if (!streq(font->spacing, PROPORTIONAL_SPACING))
+    if (!strcmp(font->spacing, PROPORTIONAL_SPACING))
 	strcpy(fam->fixed_spacing, font->spacing);
 
     if (font->point_size != 0) {
@@ -1166,7 +1165,7 @@ FillNewFamily(FamilyInfo *fam, FontData *font)
 	fam->medium_nameq = font->weightq;
     }
 
-    if (streq(font->spacing, PROPORTIONAL_SPACING))
+    if (!strcmp(font->spacing, PROPORTIONAL_SPACING))
 	strcpy(fam->fixed_spacing, DEFAULT_FIXED_SPACING);
     else
 	strcpy(fam->fixed_spacing, font->spacing);
@@ -2777,7 +2776,7 @@ CreateEncodingMenu(XmFontSelectorWidget fsw,
 	XtAddCallback(button,
 		      XmNactivateCallback, ChangeEncoding, (XtPointer)(intptr_t)i);
 
-	if (streq(*encodings, ENCODING_STRING(fsw)))
+	if (!strcmp(*encodings, ENCODING_STRING(fsw)))
 	{
 	    current = i;
 	    history = button;
@@ -2828,7 +2827,7 @@ CheckEncoding(XmFontSelectorWidget fsw, FamilyInfo *fam)
     int i;
     XrmQuark curr;
 
-    if (streq(ENCODING_STRING(fsw), ANY_ENCODING) || fam->encodings == NULL)
+    if (!strcmp(ENCODING_STRING(fsw), ANY_ENCODING) || fam->encodings == NULL)
 	return(TRUE);
 
     curr = XrmStringToQuark(ENCODING_STRING(fsw));
@@ -3635,7 +3634,7 @@ SetValues(Widget old, Widget request, Widget set,
 
     for (i = 0; i < *num_args; i++)
     {
-	if (streq(args[i].name, XmNencodingList))
+	if (!strcmp(args[i].name, XmNencodingList))
 	    new_encoding_list = True;
     }
 
@@ -3669,7 +3668,7 @@ SetValues(Widget old, Widget request, Widget set,
     */
     if (new_encoding_list ||
 	(((ENCODING_STRING(old_fsw) != NULL) && (ENCODING_STRING(set_fsw) != NULL))
-	&& !streq(ENCODING_STRING(old_fsw), ENCODING_STRING(set_fsw)))
+	&& strcmp(ENCODING_STRING(old_fsw), ENCODING_STRING(set_fsw)))
 	)
     {
 	char buf[BUFSIZ];
@@ -3764,10 +3763,10 @@ GetValuesHook(Widget w, ArgList args, Cardinal * num_args)
     XmFontSelectorWidget fsw = (XmFontSelectorWidget) w;
     FontData * cf;
     String *str_ptr;
-    int i;
+    Cardinal i;
 
     for (i = 0; i < *num_args; i++) {
-	if (streq(args[i].name, XmNcurrentFont))
+	if (!strcmp(args[i].name, XmNcurrentFont))
 	{
 		cf = XmFontS_font_info(fsw)->current_font;
 
@@ -3780,24 +3779,24 @@ GetValuesHook(Widget w, ArgList args, Cardinal * num_args)
 		    *str_ptr = XrmQuarkToString(cf->familyq);
 		}
 	}
-	else if (streq(args[i].name, XmNanyString))		*(XmString*)args[i].value = XmStringCopy(ANY_STRING(fsw));
-	else if (streq(args[i].name, XmNbothString))		*(XmString*)args[i].value = XmStringCopy(BOLD_STRING(fsw));
-	else if (streq(args[i].name, XmNboldString))		*(XmString*)args[i].value = XmStringCopy(BOTH_STRING(fsw));
-	else if (streq(args[i].name, XmN100DPIstring))		*(XmString*)args[i].value = XmStringCopy(DPI100_STRING(fsw));
-	else if (streq(args[i].name, XmN75DPIstring))		*(XmString*)args[i].value = XmStringCopy(DPI75_STRING(fsw));
-	else if (streq(args[i].name, XmNencodingString))	*(XmString*)args[i].value = XmStringCopy(ENCODING_ONLY_STRING(fsw));
-	else if (streq(args[i].name, XmNfamilyString))		*(XmString*)args[i].value = XmStringCopy(FAMILY_STRING(fsw));
-	else if (streq(args[i].name, XmNitalicString))		*(XmString*)args[i].value = XmStringCopy(ITALIC_STRING(fsw));
-	else if (streq(args[i].name, XmNanyLowerString))	*(XmString*)args[i].value = XmStringCopy(LOWER_ANY_STRING(fsw));
-	else if (streq(args[i].name, XmNmonoSpaceString))	*(XmString*)args[i].value = XmStringCopy(MONO_SPACE_STRING(fsw));
-	else if (streq(args[i].name, XmNoptionString))		*(XmString*)args[i].value = XmStringCopy(OPTION_STRING(fsw));
-	else if (streq(args[i].name, XmNotherString))		*(XmString*)args[i].value = XmStringCopy(OTHER_FONT_STRING(fsw));
-	else if (streq(args[i].name, XmNpropSpaceString))	*(XmString*)args[i].value = XmStringCopy(PROPORTIONAL_STRING(fsw));
-	else if (streq(args[i].name, XmNsampleText))		*(XmString*)args[i].value = XmStringCopy(SAMPLE_TEXT(fsw));
-	else if (streq(args[i].name, XmNscalingString))		*(XmString*)args[i].value = XmStringCopy(SCALING_STRING(fsw));
-	else if (streq(args[i].name, XmNshowNameString))	*(XmString*)args[i].value = XmStringCopy(SHOW_NAME_STRING(fsw));
-	else if (streq(args[i].name, XmNsizeString))		*(XmString*)args[i].value = XmStringCopy(SIZE_STRING(fsw));
-	else if (streq(args[i].name, XmNxlfdString))		*(XmString*)args[i].value = XmStringCopy(XLFD_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNanyString))		*(XmString*)args[i].value = XmStringCopy(ANY_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNbothString))		*(XmString*)args[i].value = XmStringCopy(BOLD_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNboldString))		*(XmString*)args[i].value = XmStringCopy(BOTH_STRING(fsw));
+	else if (!strcmp(args[i].name, XmN100DPIstring))		*(XmString*)args[i].value = XmStringCopy(DPI100_STRING(fsw));
+	else if (!strcmp(args[i].name, XmN75DPIstring))		*(XmString*)args[i].value = XmStringCopy(DPI75_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNencodingString))	*(XmString*)args[i].value = XmStringCopy(ENCODING_ONLY_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNfamilyString))		*(XmString*)args[i].value = XmStringCopy(FAMILY_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNitalicString))		*(XmString*)args[i].value = XmStringCopy(ITALIC_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNanyLowerString))	*(XmString*)args[i].value = XmStringCopy(LOWER_ANY_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNmonoSpaceString))	*(XmString*)args[i].value = XmStringCopy(MONO_SPACE_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNoptionString))		*(XmString*)args[i].value = XmStringCopy(OPTION_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNotherString))		*(XmString*)args[i].value = XmStringCopy(OTHER_FONT_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNpropSpaceString))	*(XmString*)args[i].value = XmStringCopy(PROPORTIONAL_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNsampleText))		*(XmString*)args[i].value = XmStringCopy(SAMPLE_TEXT(fsw));
+	else if (!strcmp(args[i].name, XmNscalingString))		*(XmString*)args[i].value = XmStringCopy(SCALING_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNshowNameString))	*(XmString*)args[i].value = XmStringCopy(SHOW_NAME_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNsizeString))		*(XmString*)args[i].value = XmStringCopy(SIZE_STRING(fsw));
+	else if (!strcmp(args[i].name, XmNxlfdString))		*(XmString*)args[i].value = XmStringCopy(XLFD_STRING(fsw));
     }
 }
 

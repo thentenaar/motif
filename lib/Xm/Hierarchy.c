@@ -731,10 +731,10 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     HierarchyConstraints new_node = GetNodeInfo(set);
     HierarchyConstraints old_node = GetNodeInfo(current);
     Boolean insert_change = False;
-    int i;
+    Cardinal i;
 
     for (i = 0; i < *num_args; i++)
-	if (streq(args[i].name, XmNinsertBefore)) {
+	if (!strcmp(args[i].name, XmNinsertBefore)) {
 	    insert_change = True;
 	    break;
 	}

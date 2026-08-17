@@ -24,7 +24,6 @@
 /************************************************************
 *	INCLUDE FILES
 *************************************************************/
-#include <stdio.h>
 #include <Xm/OutlineP.h>
 #include <Xm/DropSMgr.h>
 #include "XmI.h"
@@ -702,10 +701,10 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     OutlineConstraints set_node = GetNodeInfo(set);
     OutlineConstraints old_node = GetNodeInfo(current);
     Boolean insert_change = False, redisplay = False;
-    int i;
+    Cardinal i;
 
     for (i = 0; i < *num_args; i++)
-	if (streq(args[i].name, XmNinsertBefore)) {
+	if (!strcmp(args[i].name, XmNinsertBefore)) {
 	    insert_change = True;
 	    break;
 	}

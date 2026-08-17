@@ -834,10 +834,10 @@ ConstraintSetValues(Widget current, Widget request, Widget set,
     TreeConstraints old_node = GetNodeInfo(current);
     Boolean redisplay = False;
     Boolean insert_change = False;
-    int i;
+    Cardinal i;
 
     for (i = 0; i < *num_args; i++)
-	if (streq(args[i].name, XmNinsertBefore)) {
+	if (!strcmp(args[i].name, XmNinsertBefore)) {
 	    insert_change = True;
 	    break;
 	}
@@ -979,9 +979,9 @@ CvtStringToConnectStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
 
-    if ( (q == XtQELadder) || streq(lowerName,"treeladder") )
+    if ((q == XtQELadder) || !strcmp(lowerName,"treeladder"))
 	connect = XmTreeLadder;
-    else if ( (q == XtQEDirect) || streq(lowerName,"treedirect") )
+    else if ((q == XtQEDirect) || !strcmp(lowerName,"treedirect"))
 	connect = XmTreeDirect;
     else {
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmConnectStyle);
@@ -1036,11 +1036,11 @@ CvtStringToCompressStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
     q = XrmStringToQuark(lowerName);
 
-    if ((q == XtQECompressNone) || streq(lowerName,"none") || streq(lowerName,"treecompressnone") )
+    if ((q == XtQECompressNone) || !strcmp(lowerName,"none") || !strcmp(lowerName,"treecompressnone") )
         compress = XmTreeCompressNone;
-    else if ((q == XtQECompressLeaves) || streq(lowerName,"leaves") || streq(lowerName,"treecompressleaves") )
+    else if ((q == XtQECompressLeaves) || !strcmp(lowerName,"leaves") || !strcmp(lowerName,"treecompressleaves") )
         compress = XmTreeCompressLeaves;
-    else if ((q == XtQECompressAll) || streq(lowerName,"all") || streq(lowerName,"treecompressall") )
+    else if ((q == XtQECompressAll) || !strcmp(lowerName,"all") || !strcmp(lowerName,"treecompressall") )
         compress = XmTreeCompressAll;
     else {
         XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmCompressStyle);
@@ -1073,11 +1073,11 @@ CvtStringToLineStyle(Display * dpy, XrmValuePtr args, Cardinal *num_args,
 
     XmCopyISOLatin1Lowered(lowerName, (char *) fromVal->addr);
 
-    if ( streq(lowerName, "linesolid") || streq(lowerName,"solid") )
+    if ( !strcmp(lowerName, "linesolid") || !strcmp(lowerName,"solid") )
 	lineStyle = LineSolid;
-    else if ( streq(lowerName, "lineonoffdash") || streq(lowerName,"onoffdash") )
+    else if ( !strcmp(lowerName, "lineonoffdash") || !strcmp(lowerName,"onoffdash") )
 	lineStyle = LineOnOffDash;
-    else if ( streq(lowerName, "linedoubledash") || streq(lowerName,"doubledash") )
+    else if ( !strcmp(lowerName, "linedoubledash") || !strcmp(lowerName,"doubledash") )
 	lineStyle = LineDoubleDash;
     else {
 	XtDisplayStringConversionWarning(dpy,fromVal->addr, XmRXmLineStyle);

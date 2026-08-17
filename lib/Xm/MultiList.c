@@ -26,8 +26,6 @@
 #include <config.h>
 #endif
 
-#include <stdio.h>
-
 #include "XmI.h"
 #include "MessagesI.h"
 #include <Xm/MultiListP.h>
@@ -45,8 +43,6 @@
 /************************************************************
 *	TYPEDEFS AND DEFINES
 *************************************************************/
-#define BUG_FIX_1385 1
-
 #define H_MARGIN 5
 #define V_MARGIN 5
 
@@ -161,98 +157,7 @@ static XtResource resources[] =
     XmNvisibleItemCount, XmCVisibleItemCount, XmRInt,
     sizeof(int), XtOffsetOf(XmMultiListRec, ext_list.visible_rows),
     XmRImmediate, (XtPointer) XmMultiList_DEFAULT_VISIBLE_COUNT
-  },
-#ifndef BUG_FIX_1385
-  {
-    XmNnumColumns, XmCNumColumns, XmRShort,
-    sizeof(short), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNnumRows, XmCNumRows, XmRShort,
-    sizeof(short), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNselectedColumn, XmCSelectedColumn, XmRShort,
-    sizeof(short), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNcolumnTitles, XmCColumnTitles, XmRXmStringTable,
-    sizeof(XmString *), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNentryData, XmCEntryData, XmRPointer,
-    sizeof(XtPointer), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNentryBackground, XmCBackground, XtRPixel,
-    sizeof(Pixel), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNfirstColumnPixmaps, XmCFirstColumnPixmaps, XmRBoolean,
-    sizeof(Boolean), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNrenderTable, XmCRenderTable, XmRRenderTable,
-    sizeof(XmRenderTable), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNverticalScrollBar, XmCScrollBar, XmRWidget,
-    sizeof(Widget), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNhorizontalScrollBar, XmCScrollBar, XmRWidget,
-    sizeof(Widget), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNfirstRow, XmCFirstLocation, XmRShort,
-    sizeof(short), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNfirstColumn, XmCFirstLocation, XmRShort,
-    sizeof(short), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNsortFunctions, XmCFunction, XmRFunction,
-    sizeof(Xm18SortFunction **), 0,
-    NULL, (XtPointer) NULL
-  },
-
-  {
-    XmNselectionPolicy, XmCSelectionPolicy, XmRSelectionPolicy,
-    sizeof(unsigned char), 0,
-    NULL, (XtPointer) NULL
   }
-#endif
 };
 
 static XmSyntheticResource syn_resources[] =
@@ -506,49 +411,45 @@ ChangeManaged(Widget w)
  *
  *      Added:         04/09/92 beth
  */
-static void
-GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
+static void GetValuesHook(Widget w, ArgList args, Cardinal *num_args)
 {
-    XmMultiListWidget elist = (XmMultiListWidget) w;
-    Cardinal i, num=0, j = *num_args;
-    Arg i_args[15];
+	XmMultiListWidget elist = (XmMultiListWidget) w;
+	Cardinal i, num=0;
+	Arg i_args[15];
 
-    /*
-     * Get the correct args to pass to the I18List widget
-     */
-    for (i=0; i < j; i++) {
-        if (streq(args[i].name, XmNnumColumns)           ||
-            streq(args[i].name, XmNnumRows)              ||
-            streq(args[i].name, XmNselectedColumn)       ||
-            streq(args[i].name, XmNcolumnTitles)         ||
-            streq(args[i].name, XmNentryData)            ||
-            streq(args[i].name, XmNentryBackground)      ||
-            streq(args[i].name, XmNfirstColumnPixmaps)   ||
-            streq(args[i].name, XmNfontList)             ||
-            streq(args[i].name, XmNrenderTable)          ||
-            streq(args[i].name, XmNverticalScrollBar)    ||
-            streq(args[i].name, XmNhorizontalScrollBar)  ||
-            streq(args[i].name, XmNfirstRow)             ||
-            streq(args[i].name, XmNfirstColumn)          ||
-            streq(args[i].name, XmNsortFunctions)        ||
-            streq(args[i].name, XmNselectionPolicy))  {
+	/* Get the correct args to pass to the I18List widget */
+	for (i=0; i < *num_args; i++) {
+		if (!strcmp(args[i].name, XmNnumColumns)           ||
+		    !strcmp(args[i].name, XmNnumRows)              ||
+		    !strcmp(args[i].name, XmNselectedColumn)       ||
+		    !strcmp(args[i].name, XmNcolumnTitles)         ||
+		    !strcmp(args[i].name, XmNentryData)            ||
+		    !strcmp(args[i].name, XmNentryBackground)      ||
+		    !strcmp(args[i].name, XmNfirstColumnPixmaps)   ||
+		    !strcmp(args[i].name, XmNfontList)             ||
+		    !strcmp(args[i].name, XmNrenderTable)          ||
+		    !strcmp(args[i].name, XmNverticalScrollBar)    ||
+		    !strcmp(args[i].name, XmNhorizontalScrollBar)  ||
+		    !strcmp(args[i].name, XmNfirstRow)             ||
+		    !strcmp(args[i].name, XmNfirstColumn)          ||
+		    !strcmp(args[i].name, XmNsortFunctions)        ||
+		    !strcmp(args[i].name, XmNselectionPolicy))  {
+			XtSetArg(i_args[num], args[i].name, args[i].value);
+			num++;
+			continue;
+		}
 
-     	    XtSetArg(i_args[num], args[i].name, args[i].value);
-            num++;
-        }
-	else if (streq(args[i].name, XmNtitle))
-			*(XmString*)args[i].value = XmStringCopy(XmMultiList_title(elist));
-	else if (streq(args[i].name, XmNtitleString))
-			*(XmString*)args[i].value = XmStringCopy(XmMultiList_title_string(elist));
-	else if (streq(args[i].name, XmNfindLabel))
-			*(XmString*)args[i].value = XmStringCopy(XmMultiList_find_label(elist));
-    }
+		if (!strcmp(args[i].name, XmNtitle))
+			*(XmString *)args[i].value = XmStringCopy(XmMultiList_title(elist));
+		else if (!strcmp(args[i].name, XmNtitleString))
+			*(XmString *)args[i].value = XmStringCopy(XmMultiList_title_string(elist));
+		else if (!strcmp(args[i].name, XmNfindLabel))
+			*(XmString *)args[i].value = XmStringCopy(XmMultiList_find_label(elist));
+	}
 
-    /*
-     * Pass argument list through to the IList widget.
-     */
-    if (num > 0)
-        XtGetValues(XmMultiList_ilist(elist), i_args, num);
+	/* Pass argument list through to the IList widget. */
+	if (num > 0)
+		XtGetValues(XmMultiList_ilist(elist), i_args, num);
 }
 
 /*	Function Name: SetValues
@@ -798,7 +699,7 @@ ActivateTextSearch(Widget w, XtPointer elist_ptr, XtPointer client)
     XmStringFree(s);
 
     if (XmMultiList_last_search(elist))
-      reset = !streq(ptr, XmMultiList_last_search(elist));
+      reset = strcmp(ptr, XmMultiList_last_search(elist));
 
     /* Last parameter tells search proc to highlight a matching row... */
     match = XmI18ListFindRow(XmMultiList_ilist(elist), ptr,
