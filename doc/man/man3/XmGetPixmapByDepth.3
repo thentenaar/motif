@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmGetPixmapByDepth" "library call"
 .SH "NAME"
 \fBXmGetPixmapByDepth\fP \(em A pixmap caching function that generates a pixmap, stores it in a pixmap cache, and returns the pixmap
@@ -115,7 +115,7 @@ of Motif, in order to check if current version supports PNG and JPEG
 image formats the PNG_SUPPORT and JPEG_SUPPORT macros should be checked
 correspondingly.)
 The \fBXBMLANGPATH\fP specifies the path for
-both XBM, XPM, PNG and JPEG files\&. XPM files are described in more detail later
+XBM, XPM, SVG, PNG, and JPEG files\&. XPM files are described in more detail later
 in this reference page\&.
 .PP
 The \fBXBMLANGPATH\fP environment variable specifies a search path
@@ -124,8 +124,8 @@ It can contain the substitution field \fB%B\fP, where the \fIimage_name\fP
 argument to \fBXmGetPixmapByDepth\fP is substituted for \fB%B\fP\&.
 It can also contain the substitution fields accepted by
 \fBXtResolvePathname\fP\&.
-The substitution field \fB%T\fP is always mapped to \fIbitmaps\fP, and \fB%S\fP is
-always mapped to NULL\&.
+The substitution field \fB%T\fP is always mapped to either \fIicons\fP or
+\fIbitmaps\fP, and \fB%S\fP is always mapped to NULL\&.
 .PP
 If \fBXBMLANGPATH\fP is not set, but the environment variable
 \fBXAPPLRESDIR\fP is set, the following pathnames are searched:

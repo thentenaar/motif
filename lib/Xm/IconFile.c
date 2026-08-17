@@ -509,13 +509,8 @@ HashIconName (XmHashKey key)
 }
 
 
-String
-XmGetIconFileName(
-    Screen	*screen,
-    String	imageInstanceName,
-    String	imageClassName,
-    String	hostPrefix,
-    unsigned int size)
+String XmGetIconFileName(Screen *screen, String instance, String class,
+                         String prefix, unsigned int size)
 {
     Display		*display = DisplayOfScreen(screen);
     Visual		*vis     = DefaultVisualOfScreen(screen);
@@ -603,16 +598,16 @@ XmGetIconFileName(
 	break;
     }
 
-    iconSubs[H_SUB].substitution = hostPrefix;
+    iconSubs[H_SUB].substitution = prefix;
 
     if (useIconFileCache)
       testFileFunc = TestIconFile;
     else
       testFileFunc = NULL;
 
-    names[0] 	    = imageInstanceName;
-    names[1] 	    = imageClassName;
-    names_w_size[0] = names_w_size[1] = (String)NULL;
+    names[0] 	    = instance;
+    names[1] 	    = class;
+    names_w_size[0] = names_w_size[1] = NULL;
 
     /** loop over the two names */
     for (i = 0; i < 2; i++) {

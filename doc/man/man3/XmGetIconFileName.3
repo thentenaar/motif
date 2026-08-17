@@ -1,0 +1,58 @@
+.TH XmGetIconFileName 3 2012-04-20 "Motif 2.1.30"
+.SH NAME
+XmGetIconFileName - Search for an icon file and determine its path
+
+.SH SYNOPSIS
+.nf
+#include <Xm/ImageCache.h>
+.P
+\fBString XmGetIconFileName\fR(\fBScreen *\fRscreen, \fBString\fR instance,
+\fB                        \fR \fBString\fR class, \fBString\fR prefix,
+\fB                        \fR \fBunsigned int\fR size);
+.fi
+
+.SH DESCRIPTION
+\fBXmIconFileName\fP searches the image paths, namely:
+\fBXMICONSEARCHPATH\fP (color icons) and \fBXMICONBMSEARCHPATH\fP (bitmaps),
+for an image matching either \fIinstance\fP or \fIclass\fP (in that order,
+either may be an absolute path). Color icons (%T is substituted with
+"icons") are sought out before falling back to searching for a matching
+bitmap (%T is subsituted with "bitmaps"). See \fBXmGetPixmapByDepth\fP(3)
+for an expanded description of the search process.
+
+Applications should have little need to call this function, unless they
+require the path to a given icon. This function underlies
+\fBXmGetSizedPixmap\fP(3), \fBXmGetPixmapByDepth\fP(3), etc.
+
+.IP "\fIscreen\fP" 12
+Primarily used to obtain the default \fBVisual\fP to check depth.
+.IP "\fIinstance\fP" 12
+First of two names to search for (sans file extension). Used for %B and %P
+substitutions.
+.IP "\fIclass\fP" 12
+Second of two names to search for.
+.IP "\fIprefix\fP" 12
+Prefix for the icon search path (when \fIinstance\fP or \fIclass\fP is
+absolute).
+.IP "\fIsize\fP" 12
+Used to determine the suffix for bitmaps. May be one of:
+\fBXmTINY_ICON_SIZE\fP (.t), \fBXmSMALL_ICON_SIZE\fP (s)
+\fBXmMEDIUM_ICON_SIZE\fP (.m), \fBXmLARGE_ICON_SIZE\fP (.l),
+\fBXmUNSPECIFIED_ICON_SIZE\fP (no suffix)
+
+.SH RETURN VALUE
+A string containing the absolute path to the first matching icon file,
+or \fBNULL\fP if no icon could be found.
+
+.SH HISTORY
+This function was added sometime between Motif 2.1 and Motif 2.1.30,
+though it remains unclear precisely when. It is indeed a public function
+but was not mentioned in the 2.1 documentation, or the 6B reference.
+
+.SH SEE ALSO
+\fBXmGetPixmapByDepth\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

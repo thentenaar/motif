@@ -6,7 +6,7 @@ XmGetSizedPixmap - Generate a scaled \fBPixmap\fR for an image
 .nf
 #include <Xm/Xm.h>
 .P
-\fBXtEnum XmGetSizedPixmap\fR(\fBWidget\fR widget, \fBString\fR image_name,
+\fBPixmap XmGetSizedPixmap\fR(\fBWidget\fR widget, \fBString\fR image_name,
 \fB                       \fR \fBPixel\fR foreground, \fBPixel\fR background,
 \fB                       \fR \fBint\fR depth, \fBint\fR width, \fBint\fR height);
 .fi
@@ -14,19 +14,22 @@ XmGetSizedPixmap - Generate a scaled \fBPixmap\fR for an image
 .SH DESCRIPTION
 \fBXmGetSizedPixmap\fP loads the image specified by \fIimage_name\fP and
 generates a \fBPixmap\fP appropriate for the given \fIdepth\fP, scaled
-to the given \fIwidth\fP and \fIheight\fP.
+to the given \fIwidth\fP and \fIheight\fP. If an image with similar
+properties is found in the image cache, that image will be returned.
+Otherwise, the standard paths will be searched for a similarly named
+image by way of \fBXmGetIconFilename\fP(3).
 
 .IP "\fIwidget\fP" 12
 Widget used to determine the \fBScreen\fP for which to create the
 \fBPixmap\fP.
 .IP "\fIimage_name\fP" 12
-See \fBXmGetPixmapByDepth\fP for description.
+Name of the image from which to generate the pixmap.
 .IP "\fIforeground\fP" 12
-See \fBXmGetPixmapByDepth\fP for description.
+Foreground color to combine with the image (if the image is a color image).
 .IP "\fIbackground\fP" 12
-See \fBXmGetPixmapByDepth\fP for description.
+Background color to combine with the image (if the image is a color image).
 .IP "\fIdepth\fP" 12
-See \fBXmGetPixmapByDepth\fP for description.
+Desired depth for the pixmap.
 .IP "\fIwidth\fP" 12
 Desired \fBPixmap\fP width.
 .IP "\fIheight\fP" 12
@@ -39,7 +42,7 @@ A \fBPixmap\fP on success, \fBNULL\fP on error.
 See \fBXmGetPixmapByDepth\fP(3).
 
 .SH SEE ALSO
-\fBXmGetPixmapByDepth\fP(3)
+\fBXmGetPixmapByDepth\fP(3), \fBXmGetIconFilename\fP(3)
 
 .SH AUTHOR
 Tim Hentenaar <tim@hentenaar.com>

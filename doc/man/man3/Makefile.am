@@ -266,12 +266,12 @@ man_MANS = ApplicationShell.3 \
     XmGetDestination.3 \
     XmGetDragContext.3 \
     XmGetFocusWidget.3 \
+    XmGetIconFileName.3 \
     XmGetMenuCursor.3 \
     XmGetPixmap.3 \
     XmGetPixmapByDepth.3 \
     XmGetPostedFromWidget.3 \
     XmGetSizedPixmap.3 \
-    XmGetScaledPixmap.3 \
     XmGetSecondaryResourceData.3 \
     XmGetTabGroup.3 \
     XmGetTearOffControl.3 \
