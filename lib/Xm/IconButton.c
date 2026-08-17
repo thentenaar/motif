@@ -1729,14 +1729,14 @@ static void
 				XmIconButton_label_string(iw), XmIconButton_shadow_gc(iw),
 				XmIconButton_text_x(iw)+1, XmIconButton_text_y(iw)+1,
 				XmIconButton_max_text_width(iw), XmIconButton_alignment(iw),
-				XmPrim_layout_direction(iw), NULL);
+				XmPrim_layout_direction(iw), &clip);
 		}
 
 	    XmStringDraw(XtDisplay(w), XtWindow(w), XmIconButton_font_list(iw),
 			 XmIconButton_label_string(iw), text_gc,
 			 XmIconButton_text_x(iw), XmIconButton_text_y(iw),
 			 XmIconButton_max_text_width(iw), XmIconButton_alignment(iw),
-			 XmPrim_layout_direction(iw), NULL);
+			 XmPrim_layout_direction(iw), &clip);
 	    XSetClipMask(XtDisplay(w), text_gc, None);
 	}
     }

@@ -32,7 +32,6 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #endif
 
 #include <string.h>
-#include <ctype.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xatom.h>
@@ -1415,8 +1414,7 @@ Redisplay(
     {
       XSetClipMask (XtDisplay (lw), clipgc, None);
 #if USE_XFT
-      XftDraw* draw = _XmXftDrawCreate(XtDisplay(lw), XtWindow(lw));
-      XftDrawSetClip(draw, NULL);
+      XftDrawSetClip(_XmXftDrawCreate(XtDisplay(lw), XtWindow(lw)), NULL);
 #endif
     }
 

@@ -631,7 +631,8 @@ static const XmCareVisualTraitRec iconCVT = {
 
 static const XmAccessColorsTraitRec iconACT = {
   0,			/* version */
-  GetColors
+  GetColors,
+  NULL
 };
 
 /* Point In Trait record for IconGadget */
@@ -2177,7 +2178,7 @@ Redisplay(
 		      ig->rectangle.y + label_y+1 + DEFAULT_LABEL_MARGIN_HEIGHT,
 		      IG_LabelRectWidth(wid) - 2*DEFAULT_LABEL_MARGIN_WIDTH,
 		      XmALIGNMENT_BEGINNING,
-		      LayoutG(wid), NULL);
+		      LayoutG(wid), &clip_rect);
 	}
 
 	XmStringDraw(XtDisplay(wid),XtWindow(wid),
@@ -2186,7 +2187,7 @@ Redisplay(
 		      ig->rectangle.y + label_y + DEFAULT_LABEL_MARGIN_HEIGHT,
 		      IG_LabelRectWidth(wid) - 2*DEFAULT_LABEL_MARGIN_WIDTH,
 		      XmALIGNMENT_BEGINNING,
-		      LayoutG(wid), NULL);
+		      LayoutG(wid), &clip_rect);
     }
 
     XSetClipMask(XtDisplay(wid),background_gc,None);
@@ -2311,8 +2312,7 @@ Redisplay(
 			     ((i < tab_count) ? clip_rect.width : w),
 			     XmALIGNMENT_BEGINNING,
 			     LayoutG(wid),
-			     NULL);  /* clip is done in gc */
-
+			     &clip_rect);
 	    }
 
 	    if (i < tab_count) {

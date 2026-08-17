@@ -33,7 +33,6 @@ static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
 
 #include <string.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xatom.h>
@@ -2288,8 +2287,7 @@ LRectangle *background_box)
     {
     XSetClipMask (XtDisplay (lw), clipgc, None);
 #if USE_XFT
-	XftDraw	*draw = _XmXftDrawCreate(XtDisplay(lw), XtWindow(lw));
-	XftDrawSetClip(draw, NULL);
+	XftDrawSetClip(_XmXftDrawCreate(XtDisplay(lw), XtWindow(lw)), NULL);
 #endif
     }
 

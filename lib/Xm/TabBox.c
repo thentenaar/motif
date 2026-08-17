@@ -38,8 +38,8 @@
 #include <config.h>
 #endif
 
-#include <stdlib.h>
 #include "XmI.h"
+#include "XmRenderTI.h"
 #include <Xm/TabBoxP.h>
 #ifdef SCROLLED_LAYOUT
 #include <Xm/ArrowB.h>
@@ -3744,6 +3744,9 @@ DrawTab(XmTabBoxWidget tab, XmTabAttributes info, XiTabRect *geometry,
      */
     clip = GetTabRectangle(tab, XmTAB_TEXT_RECT, geometry);
     XSetClipRectangles(XtDisplay(tab), gc, 0, 0, clip, 1, YXBanded);
+#if USE_XFT
+    _XmXftSetClipRectangles(XtDisplay(tab), XtWindow(tab), 0, 0, clip, 1);
+#endif
 
     switch( XmTabBox_tab_orientation(tab) )
     {
@@ -3783,6 +3786,9 @@ DrawTab(XmTabBoxWidget tab, XmTabAttributes info, XiTabRect *geometry,
      * clipping area for our GC.
      */
     XSetClipMask(XtDisplay(tab), gc, None);
+#if USE_XFT
+	XftDrawSetClip(_XmXftDrawCreate(XtDisplay(tab), XtWindow(tab)), NULL);
+#endif
 }
 
 #define XiCvtDone(type, value) 				\
@@ -5297,6 +5303,9 @@ DrawLeftToRightTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 	{
 	    XSetClipRectangles(XtDisplay(tab), gc, 0, 0, &draw, 1,
 			       YXBanded);
+#if USE_XFT
+	    _XmXftSetClipRectangles(XtDisplay(tab), XtWindow(tab), 0, 0, &draw, 1);
+#endif
 	}
 
 	/*
@@ -5591,6 +5600,9 @@ DrawRightToLeftTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
     if( have_pixmap )
     {
 	XSetClipRectangles(XtDisplay(tab), gc, 0, 0, &draw, 1, YXBanded);
+#if USE_XFT
+	_XmXftSetClipRectangles(XtDisplay(tab), XtWindow(tab), 0, 0, &draw, 1);
+#endif
     }
 
     /*
@@ -6181,6 +6193,9 @@ DrawVerticalTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
     if( have_pixmap )
     {
 	XSetClipRectangles(XtDisplay(tab), gc, 0, 0, &draw, 1, YXBanded);
+#if USE_XFT
+	_XmXftSetClipRectangles(XtDisplay(tab), XtWindow(tab), 0, 0, &draw, 1);
+#endif
     }
 
     src_ximage = NULL;
