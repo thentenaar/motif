@@ -832,12 +832,12 @@ _XmRenditionMerge(Display *d,	/* unused */
   if (scr == NULL)
     {
       rend = XmRenditionCreate(NULL, XmS, NULL, 0); /* Create new */
-      if (rend && !_XmRendFont(rend))
-        _XmRendFont(rend)    = DEFAULT_font;
-      if (rend && !_XmRendXftFont(rend))
-        _XmRendXftFont(rend) = DEFAULT_xftFont;
-      if (rend && !_XmRendDisplay(rend))
-        _XmRendDisplay(rend) = _XmRTDisplay(rt);
+      if (rend && !_XmRendFont(rend))     _XmRendFont(rend)     = DEFAULT_font;
+      if (rend && !_XmRendFontType(rend)) _XmRendFontType(rend) = DEFAULT_fontType;
+      if (rend && !_XmRendDisplay(rend))  _XmRendDisplay(rend)  = _XmRTDisplay(rt);
+#if USE_XFT
+      if (rend && !_XmRendXftFont(rend))  _XmRendXftFont(rend)  = DEFAULT_xftFont;
+#endif
     }
   else
     {
@@ -865,7 +865,7 @@ _XmRenditionMerge(Display *d,	/* unused */
     {
       short index;
 
-      _XmRenderTableFindFallback(rt, base_tag, TRUE, &index, &tmp);
+      _XmRenderTableFindFallback(rt, base_tag, True, &index, &tmp);
       if (tmp != NULL) SetRend(rend, tmp);
     }
 
@@ -884,8 +884,14 @@ _XmRenditionMerge(Display *d,	/* unused */
 	_XmRendBG(rend) = _XmRendBG(base_rend);
     }
 
+  /* This implies we lack a rendition in the table for the given tag(s) */
+  if (!scr && rend && _XmRendFontType(rend) == XmAS_IS) {
+      XmRenditionFree(rend);
+      return NULL;
+  }
+
   CleanupResources(rend, copy);
-  return(rend);
+  return rend;
 }
 
 /**
@@ -1031,7 +1037,7 @@ _XmRenderTableFindFallback(
 	    }
 	}
 
-	/* Otherwise pick up first font(set) if tag a default value. */
+	/* Otherwise pick up first font(set) if tag is a default value. */
 	if (!tag || tag == XmFONTLIST_DEFAULT_TAG ||
 	    !strcmp(tag, XmFONTLIST_DEFAULT_TAG)  ||
 	    _XmStringIsCurrentCharset(tag))
@@ -2561,7 +2567,7 @@ static Boolean FreeRendition(XmRendition rendition)
       if (_XmRendTagCount(rendition) != 0)
 	XtFree((char *)_XmRendTags(rendition));
 #if USE_XFT
-      if (_XmRendXftFont(rendition))
+      if (_XmRendXftFont(rendition) && _XmRendXftFont(rendition) != DEFAULT_xftFont)
         {
           XftFontClose(_XmRendDisplay(rendition),
               _XmRendXftFont(rendition));
