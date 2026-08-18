@@ -1842,6 +1842,8 @@ static _XmStringRenderingCache plan_renditions(_XmStringEntry ent,
 		      ? (XmStringTag)XmFONTLIST_DEFAULT_TAG
 		      : (XmStringTag)_MOTIF_DEFAULT_LOCALE;
 		_XmRenderTableFindFallback(rt, tag, True, NULL, &rend);
+		if (!rend && _XmEntryTextTypeGet(ent) != XmCHARSET_TEXT)
+			_XmRenderTableFindFallback(rt, XmFONTLIST_DEFAULT_TAG, True, NULL, &rend);
 	}
 
 #if USE_XFT
