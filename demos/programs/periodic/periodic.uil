@@ -918,7 +918,6 @@ object scrollFrame : XmFrame {
 		    XmNbottomAttachment = XmATTACH_POSITION;
 		    XmNbottomPosition = 50;
 		    XmNtraversalOn = true;
-		    XmNhighlightThickness = 2;
 		    XmNorientation = XmHORIZONTAL;
 		}; };
 	    };
@@ -1344,22 +1343,22 @@ object column: XmColumn {
     controls {
         XmText { arguments {
 	    XmNvalue = "617-621-0020";
-            XmNwidth = 100;
+            XmNcolumns = 14;
             XmNentryLabelString = "Phone Number";
 	}; };
         XmText { arguments {
 	    XmNvalue = "201 Broadway";
-            XmNwidth = 100;
+            XmNcolumns = 14;
             XmNentryLabelString = "Address";
 	}; };
         XmText { arguments {
 	    XmNvalue = "Cambridge";
-            XmNwidth = 100;
+            XmNcolumns = 14;
             XmNentryLabelString = "City";
 	}; };
         XmText { arguments {
 	    XmNvalue = "Mass";
-            XmNwidth = 100;
+            XmNcolumns = 14;
             XmNentryLabelString = "State";
 	}; };
         
