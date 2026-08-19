@@ -1385,12 +1385,13 @@ CalcSliderRect(
 	int minSliderHeight;
 	int hitTheWall = 0;
 	int value ;
+	int msl = MIN_SLIDER_LENGTH + 3 * (XmScreenDpi(XmScreenOfObject(sbw)) / 96.);
 
 	/* Set up */
 	if (sbw->scrollBar.orientation == XmHORIZONTAL)
 	{
 		trueSize =  sbw->scrollBar.slider_area_width;
-		minSliderWidth = MIN_SLIDER_LENGTH;
+		minSliderWidth = msl;
 		if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 		    minSliderWidth = 1;
 		minSliderHeight = MIN_SLIDER_THICKNESS;
@@ -1400,7 +1401,7 @@ CalcSliderRect(
 	{
 		trueSize = sbw->scrollBar.slider_area_height;
 		minSliderWidth = MIN_SLIDER_THICKNESS;
-		minSliderHeight = MIN_SLIDER_LENGTH;
+		minSliderHeight = msl;
 		if (sbw->scrollBar.sliding_mode == XmTHERMOMETER)
 		    minSliderHeight = 1;
 	}
@@ -1645,6 +1646,7 @@ Resize(
     XmScrollBarWidget sbw = (XmScrollBarWidget) wid ;
     int ht = sbw->primitive.highlight_thickness;
     int st = sbw->primitive.shadow_thickness;
+    int msl = MIN_SLIDER_LENGTH + 3 * (XmScreenDpi(XmScreenOfObject(sbw)) / 96.);
 
 #define CHECK(x) if (x <= 0) x = 1
 
@@ -1693,10 +1695,9 @@ Resize(
 	     }
 
 	    if (sbw->core.width <
-		2 * (sbw->scrollBar.arrow_width + ht + st)
-		+ MIN_SLIDER_LENGTH + 2)
+		2 * (sbw->scrollBar.arrow_width + ht + st) + msl + 2)
 		sbw->scrollBar.arrow_width = (sbw->core.width
-			 - (MIN_SLIDER_LENGTH + 2 + 2 * (ht + st))) / 2;
+			 - (msl + 2 + 2 * (ht + st))) / 2;
 
 	    /*  slide area position and size  */
 
@@ -1757,10 +1758,9 @@ Resize(
 	    }
 
 	    if (sbw->core.height <
-		2 * (sbw->scrollBar.arrow_height + ht + st)
-		+ MIN_SLIDER_LENGTH +2)
+		2 * (sbw->scrollBar.arrow_height + ht + st) + msl + 2)
 		sbw->scrollBar.arrow_height = (sbw->core.height
-			- (MIN_SLIDER_LENGTH + 2 + 2 * (ht + st))) / 2;
+			- (msl + 2 + 2 * (ht + st))) / 2;
 
 	    /*  slide area position and size  */
 
