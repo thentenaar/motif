@@ -777,7 +777,7 @@ void MakeControlPanel(Widget right_pane)
     XtSetArg(args[argcnt], XmNfillOption, XmFillNone); argcnt++;
     XtSetArg(args[argcnt], XmNorientation, XmHORIZONTAL); argcnt++;
     XtSetArg(args[argcnt], XmNshowSash, False); argcnt++;
-    XtSetArg(args[argcnt], XmNskipAdjust, True); argcnt++;
+    XtSetArg(args[argcnt], XmNskipAdjust, False); argcnt++;
     bbox = XtCreateManagedWidget("buttonBox1",
 				xmButtonBoxWidgetClass,
 				right_pane, args, argcnt);
@@ -786,7 +786,7 @@ void MakeControlPanel(Widget right_pane)
     XtSetArg(args[argcnt], XmNequalSize, True); argcnt++;
     XtSetArg(args[argcnt], XmNfillOption, XmFillNone); argcnt++;
     XtSetArg(args[argcnt], XmNorientation, XmVERTICAL); argcnt++;
-    leftBbox = XtCreateManagedWidget("buttonBox1",
+    leftBbox = XtCreateManagedWidget("buttonBox2",
 				xmButtonBoxWidgetClass,
 				bbox, args, argcnt);
 
@@ -794,7 +794,7 @@ void MakeControlPanel(Widget right_pane)
     XtSetArg(args[argcnt], XmNequalSize, True); argcnt++;
     XtSetArg(args[argcnt], XmNfillOption, XmFillNone); argcnt++;
     XtSetArg(args[argcnt], XmNorientation, XmVERTICAL); argcnt++;
-    rightBbox = XtCreateManagedWidget("buttonBox1",
+    rightBbox = XtCreateManagedWidget("buttonBox3",
 				xmButtonBoxWidgetClass,
 				bbox, args, argcnt);
 
@@ -955,15 +955,14 @@ void MakeControlPanel(Widget right_pane)
 	}
 
     /* Second Row */
-
-    bbox = XtVaCreateManagedWidget("buttonBox1",
+    bbox = XtVaCreateManagedWidget("buttonBox4",
 				   xmButtonBoxWidgetClass,
 				   right_pane,
 				   XmNequalSize, True,
 				   XmNfillOption, XmFillNone,
 				   XmNorientation, XmHORIZONTAL,
 				   XmNshowSash, False,
-				   XmNskipAdjust, True,
+				   XmNskipAdjust, False,
 				   NULL );
 
     pb = XtVaCreateManagedWidget("show_pb", xmPushButtonWidgetClass,
@@ -976,13 +975,13 @@ void MakeControlPanel(Widget right_pane)
 				       bbox, NULL);
     XtAddCallback(pb, XmNactivateCallback, ExplainCB, NULL);
 
-    bbox = XtVaCreateManagedWidget("buttonBox1",
+    bbox = XtVaCreateManagedWidget("buttonBox5",
 				   xmButtonBoxWidgetClass,
 				   right_pane,
 				   XmNfillOption, XmFillNone,
 				   XmNorientation, XmHORIZONTAL,
 				   XmNshowSash, False,
-				   XmNskipAdjust, True,
+				   XmNskipAdjust, False,
 				   NULL );
 
     pb = XtVaCreateManagedWidget("quit_pb", xmPushButtonWidgetClass,
