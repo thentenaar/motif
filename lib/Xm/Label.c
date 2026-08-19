@@ -2608,6 +2608,7 @@ _XmLabelConvert(Widget w,
 	  targs[target_count++] = atoms[XmA_MOTIF_COMPOUND_STRING];
 	  targs[target_count++] = atoms[XmAUTF8_STRING];
 	  targs[target_count++] = atoms[XmACOMPOUND_TEXT];
+	  targs[target_count++] = C_ENCODING;
 	  targs[target_count++] = atoms[XmATEXT];
 	}
       type = XA_ATOM;
