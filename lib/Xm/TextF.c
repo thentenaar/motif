@@ -6140,12 +6140,19 @@ DragProcCallback(Widget w,
 		 XtPointer client,
 		 XtPointer call)
 {
-  enum { XmACOMPOUND_TEXT, XmATEXT, XmAUTF8_STRING, NUM_ATOMS };
-  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSTEXT, XmSUTF8_STRING };
+  enum {
+    XmACOMPOUND_TEXT, XmATEXT, XmAUTF8_STRING, XmA_MOTIF_COMPOUND_STRING,
+    NUM_ATOMS
+  };
+
+  static char *atom_names[] = {
+    XmSCOMPOUND_TEXT, XmSTEXT, XmSUTF8_STRING,
+    XmS_MOTIF_COMPOUND_STRING
+  };
 
   XmDragProcCallbackStruct *cb = (XmDragProcCallbackStruct *)call;
   Widget drag_cont;
-  Atom targets[5];
+  Atom targets[6];
   Arg args[10];
   Atom *exp_targets;
   Cardinal num_exp_targets, n;
@@ -6154,11 +6161,12 @@ DragProcCallback(Widget w,
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
-  targets[0] = XmeGetEncodingAtom(w);
-  targets[1] = atoms[XmACOMPOUND_TEXT];
-  targets[2] = XA_STRING;
-  targets[3] = atoms[XmATEXT];
-  targets[4] = atoms[XmAUTF8_STRING];
+  targets[0] = atoms[XmA_MOTIF_COMPOUND_STRING];
+  targets[1] = atoms[XmAUTF8_STRING];
+  targets[2] = atoms[XmACOMPOUND_TEXT];
+  targets[3] = XmeGetEncodingAtom(w);
+  targets[4] = atoms[XmATEXT];
+  targets[5] = XA_STRING;
 
   drag_cont = cb->dragContext;
 
@@ -6170,7 +6178,7 @@ DragProcCallback(Widget w,
   switch(cb->reason) {
   case XmCR_DROP_SITE_ENTER_MESSAGE:
     if (XmTargetsAreCompatible(XtDisplay(drag_cont), exp_targets,
-			       num_exp_targets, targets, 4))
+			       num_exp_targets, targets, 6))
       cb->dropSiteStatus = XmVALID_DROP_SITE;
     else
       cb->dropSiteStatus = XmINVALID_DROP_SITE;
@@ -6195,10 +6203,17 @@ DragProcCallback(Widget w,
 static void
 RegisterDropSite(Widget w)
 {
-  enum { XmACOMPOUND_TEXT, XmATEXT, XmAUTF8_STRING, NUM_ATOMS };
-  static char *atom_names[] = { XmSCOMPOUND_TEXT, XmSTEXT, XmSUTF8_STRING };
+  enum {
+    XmACOMPOUND_TEXT, XmATEXT, XmAUTF8_STRING, XmA_MOTIF_COMPOUND_STRING,
+    NUM_ATOMS
+  };
 
-  Atom targets[5];
+  static char *atom_names[] = {
+    XmSCOMPOUND_TEXT, XmSTEXT, XmSUTF8_STRING,
+    XmS_MOTIF_COMPOUND_STRING
+  };
+
+  Atom targets[6];
   Arg args[10];
   int n;
   Atom atoms[XtNumber(atom_names)];
@@ -6206,15 +6221,16 @@ RegisterDropSite(Widget w)
   assert(XtNumber(atom_names) == NUM_ATOMS);
   XInternAtoms(XtDisplay(w), atom_names, XtNumber(atom_names), False, atoms);
 
-  targets[0] = XmeGetEncodingAtom(w);
-  targets[1] = atoms[XmACOMPOUND_TEXT];
-  targets[2] = XA_STRING;
-  targets[3] = atoms[XmATEXT];
-  targets[4] = atoms[XmAUTF8_STRING];
+  targets[0] = atoms[XmA_MOTIF_COMPOUND_STRING];
+  targets[1] = atoms[XmAUTF8_STRING];
+  targets[2] = atoms[XmACOMPOUND_TEXT];
+  targets[3] = XmeGetEncodingAtom(w);
+  targets[4] = atoms[XmATEXT];
+  targets[5] = XA_STRING;
 
   n = 0;
   XtSetArg(args[n], XmNimportTargets, targets); n++;
-  XtSetArg(args[n], XmNnumImportTargets, 5); n++;
+  XtSetArg(args[n], XmNnumImportTargets, 6); n++;
   XtSetArg(args[n], XmNdragProc, DragProcCallback); n++;
   XmeDropSink(w, args, n);
 }
