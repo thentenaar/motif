@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,9 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
 #ifndef _XmScaleP_h
 #define _XmScaleP_h
-
 
 #include <Xm/Scale.h>
 #include <Xm/ManagerP.h>
@@ -70,9 +69,9 @@ typedef struct
    int            minimum;
    unsigned char  orientation;
    unsigned char  processing_direction;
-   XmString       title; 
+   XmString       title;
    XmFontList     font_list;
-   XFontStruct  * font_struct;
+   XFontStruct  * font_struct; /* unused */
    Boolean        show_value;
    short          decimal_points;
    Dimension      scale_width;
@@ -109,6 +108,9 @@ typedef struct
    XtCallbackList   convert_callback;       /* Selection convert callback */
 
    Region value_region;
+   XmString value_str;
+   XmString min_str;
+   XmString max_str;
 } XmScalePart;
 
 
