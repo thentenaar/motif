@@ -36,47 +36,6 @@ static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
 #include <locale.h>
 #include <X11/Xos.h>
 
-#ifndef CSRG_BASED
-/*
- * Modification by Integrated Computer Solutions, Inc.  May 2000
- *
- * Original:
- *
- * # ifdef linux
- * #  define RADIXCHAR MON_DECIMAL_POINT
- * # endif
- * # include <langinfo.h>
- *
- * glibc >= 2.0 defines RADIXCHAR in langinfo.h, simply make sure
- * that it is not redefined here.
- */
-# include <langinfo.h>
-# if defined(linux) && !defined(RADIXCHAR)
-#  define RADIXCHAR DECIMAL_POINT
-# endif
-# ifdef X_LOCALE
-#  ifdef linux
-   /* avoid conflicting with <X11/Xlocale.h> defines */
-#   undef LC_ALL
-#   undef LC_COLLATE
-#   undef LC_CTYPE
-#   undef LC_MONETARY
-#   undef LC_NUMERIC
-#   undef LC_TIME
-#  endif
-# endif
-#else
-# define nl_langinfo(radixchar)	"."
-#endif /* !CSRG_BASED */
-
-#ifdef __cplusplus
-extern "C" { /* some 'locale.h' do not have prototypes (sun) */
-#endif
-#include <X11/Xlocale.h>
-#ifdef __cplusplus
-} /* Close scope of 'extern "C"' declaration */
-#endif /* __cplusplus */
-
 #include <Xm/Screen.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DragC.h>
