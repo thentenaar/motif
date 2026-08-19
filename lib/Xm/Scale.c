@@ -76,6 +76,7 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 } /* Close scope of 'extern "C"' declaration */
 #endif /* __cplusplus */
 
+#include <Xm/Screen.h>
 #include <Xm/DisplayP.h>
 #include <Xm/DragC.h>
 #include <Xm/DragIconP.h>
@@ -118,11 +119,19 @@ static Region null_region = NULL;
 #define SCALE_DEFAULT_MAJOR_SIZE \
 	(100 + (2 * sw->scale.highlight_thickness))
 #define SCALE_DEFAULT_MINOR_SIZE \
-	(15 + (2 * sw->scale.highlight_thickness))
+	(10 + (6 * (XmScreenDpi(XmScreenOfObject(sw)) / 96.)) \
+	+ (2 * sw->scale.highlight_thickness))
 
+/**
+ * The default is 30 pixels. Add an additional 5 pixels for every 150
+ * pixels of width/height (depending on orientation) to keep the slider
+ * nice and chunky feeling.
+ */
+#define DEFAULT_SLIDER_SIZE 30
 #define SLIDER_SIZE(sca)	((sca->scale.sliding_mode == XmTHERMOMETER)?\
-				 0:sca->scale.slider_size)
-
+				 0:(sca->scale.slider_size + ((5 * (\
+				 (sca->scale.orientation == XmHORIZONTAL) ?\
+				 sca->core.width : sca->core.height) / 150))))
 
 /* this one is context dependent, args and n are used */
 #define SET(name, val) {XtSetArg (args[n], (name), (val)); n++;}
@@ -453,7 +462,7 @@ static XtResource resources[] =
    { /* undocumented - need synthetic hook to be complete */
        XmNsliderSize, XmCSliderSize, XmRHorizontalInt, sizeof (int),
        XtOffsetOf(XmScaleRec, scale.slider_size),
-       XmRImmediate, (XtPointer) 30
+       XmRImmediate, (XtPointer)DEFAULT_SLIDER_SIZE
    },
    {
        XmNshowArrows, XmCShowArrows, XmRShowArrows, sizeof (XtEnum),
@@ -2197,8 +2206,6 @@ ScrollHeight(
     if (sw->scale.orientation == XmHORIZONTAL) {
 	if (!(tmp = sw->scale.scale_height))
 	    tmp = SCALE_DEFAULT_MINOR_SIZE;
-	else
-	    tmp = sw->scale.scale_height;
     }	else {
 	if (!(tmp = sw->scale.scale_height)){
 	    if (sw->core.height != 0)
