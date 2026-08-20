@@ -302,9 +302,17 @@ BuildHierarchy(Widget parent, WidgetClass class)
 static void NewChildCB(Widget w, XtPointer client, XtPointer call)
 {
 	static int count = 0;
+	XmHierarchyNodeState state;
 	char buffer[30];
-	sprintf (buffer, "New Child %d", count++);
+
+	(void)call;
+	snprintf(buffer, sizeof buffer, "New Child %d", count++);
 	CreateNode((Widget)client, w, buffer, XmAlwaysOpen);
+
+	/* Parent: XmAlwaysOpen -> XmOpen so it gets the open/close button */
+	XtVaGetValues(w, XmNnodeState, &state, NULL);
+	if (state == XmAlwaysOpen)
+		XtVaSetValues(w, XmNnodeState, XmOpen, NULL);
 }
 
 /*
