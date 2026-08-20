@@ -30,8 +30,6 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 #include <config.h>
 #endif
 
-#include <stdlib.h>
-
 #include <Xm/DisplayP.h>        /* for enableThinThickness */
 #include <Xm/DrawP.h>
 #include <Xm/DropSMgr.h>	/* for XmDropSiteStartUpdate/EndUPdate */
@@ -46,6 +44,9 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 #include "RepTypeI.h"
 #include "ScreenI.h"
 #include "XmI.h"
+
+/* Default w/h scaled by DPI */
+#define DEFAULT_DIM(w) (MAX(11, (3 + 8 * (XmScreenDpi(XmScreenOfObject(new_w)) / 96.))))
 
 /* see comments in ScrollBarP.h */
 #define slider_visual	etched_slider
@@ -923,12 +924,12 @@ Initialize(
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
 		new_w->core.width = 100;
 	    else
-		new_w->core.width = (int)(11 * (XmScreenDpi(XmScreenOfObject(new_w)) / 96.));
+		new_w->core.width = DEFAULT_DIM(new_w);
 	}
     if (request->core.height == 0)
 	{
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
-		new_w->core.height = (int)(11 * (XmScreenDpi(XmScreenOfObject(new_w)) / 96.));
+		new_w->core.height = DEFAULT_DIM(new_w);
 	    else
 		new_w->core.height = 100;
 	}
@@ -1536,7 +1537,6 @@ Redisplay(
 {
     XmScrollBarWidget sbw = (XmScrollBarWidget) wid ;
 
-
     if (sbw->primitive.shadow_thickness > 0)
 	XmeDrawShadows (XtDisplay (sbw), XtWindow (sbw),
 		      sbw->primitive.bottom_shadow_GC,
@@ -2062,13 +2062,13 @@ ValidateInputs(
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
 		new_w->core.width = 100;
 	    else
-		new_w->core.width = (int)(11 * (XmScreenDpi(XmScreenOfObject(new_w)) / 96.));
+		new_w->core.width = DEFAULT_DIM(new_w);
 	}
 
     if (new_w->core.height == 0)
 	{
 	    if (new_w->scrollBar.orientation == XmHORIZONTAL)
-		new_w->core.height = (int)(11 * (XmScreenDpi(XmScreenOfObject(new_w)) / 96.));
+		new_w->core.height = DEFAULT_DIM(new_w);
 	    else
 		new_w->core.height = 100;
 	}
