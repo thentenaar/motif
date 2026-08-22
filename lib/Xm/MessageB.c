@@ -32,7 +32,9 @@ static char rcsid[] = "$TOG: MessageB.c /main/18 1999/10/13 16:17:09 mgreess $"
 #endif
 #endif
 
+#include <stdarg.h>
 #include <string.h>
+
 #include <Xm/AccColorT.h>	/* for XmAccessColorDataRec */
 #include <Xm/ActivatableT.h>
 #include <Xm/ArrowB.h>
@@ -48,7 +50,6 @@ static char rcsid[] = "$TOG: MessageB.c /main/18 1999/10/13 16:17:09 mgreess $"
 #include <Xm/ToggleBG.h>
 #include <Xm/TraitP.h>
 #include <Xm/VendorSP.h>	/* for the default display */
-#include <Xm/VaSimpleP.h>
 #include "BulletinBI.h"
 #include "GeoUtilsI.h"
 #include "ImageCachI.h"
@@ -1308,12 +1309,12 @@ XmVaCreateMessageBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMessageBoxWidgetClass,
                          parent, False,
@@ -1332,11 +1333,11 @@ XmVaCreateManagedMessageBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMessageBoxWidgetClass,
                          parent, True,

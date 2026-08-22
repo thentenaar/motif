@@ -57,7 +57,6 @@
 #include <Xm/AccTextT.h>
 #include <Xm/TransferT.h>
 #include <Xm/SpecRenderT.h>
-#include <Xm/VaSimpleP.h>
 
 #include "TextFI.h"
 #include "TextFSelI.h"
@@ -10041,12 +10040,12 @@ Widget XmVaCreateDataField(Widget parent, char *name, ...)
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDataFieldWidgetClass,
                          parent, False,
@@ -10061,11 +10060,11 @@ Widget XmVaCreateManagedDataField(Widget parent, char *name, ...)
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDataFieldWidgetClass,
                          parent, True,

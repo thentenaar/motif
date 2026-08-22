@@ -32,6 +32,8 @@ static char rcsid[] = "$TOG: ToggleBG.c /main/46 1999/12/06 18:10:15 samborn $"
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
+
 #include "XmI.h"
 #include <X11/ShellP.h>
 #include <Xm/CareVisualT.h>
@@ -42,7 +44,6 @@ static char rcsid[] = "$TOG: ToggleBG.c /main/46 1999/12/06 18:10:15 samborn $"
 #include <Xm/MenuT.h>
 #include <Xm/ToggleBGP.h>
 #include <Xm/TraitP.h>
-#include <Xm/VaSimpleP.h>
 #include "BaseClassI.h"
 #include "CacheI.h"
 #include "ColorI.h"
@@ -4042,19 +4043,18 @@ XmVaCreateToggleButtonGadget(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmToggleButtonGadgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 Widget
@@ -4067,18 +4067,17 @@ XmVaCreateManagedToggleButtonGadget(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmToggleButtonGadgetClass,
                          parent, True,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 /*********************************************************

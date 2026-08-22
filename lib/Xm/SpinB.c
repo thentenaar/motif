@@ -28,8 +28,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <stdarg.h>
+
 #include <X11/StringDefs.h>
 #include <X11/Intrinsic.h>
 #include <X11/IntrinsicP.h>
@@ -46,7 +46,6 @@
 #include <Xm/TextF.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "GeoUtilsI.h"
 #include "GMUtilsI.h"
 #include "MessagesI.h"
@@ -2781,19 +2780,18 @@ Widget XmVaCreateSpinBox(Widget parent, char *name, ...)
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSpinBoxWidgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 Widget XmVaCreateManagedSpinBox(Widget parent, char *name, ...)
@@ -2802,11 +2800,11 @@ Widget XmVaCreateManagedSpinBox(Widget parent, char *name, ...)
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSpinBoxWidgetClass,
                          parent, True,

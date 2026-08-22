@@ -30,13 +30,12 @@
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <ctype.h>
 
 #include "ColorSP.h"
 
 #include <Xm/Xm.h>
-#include <Xm/VaSimpleP.h>
-
 #include <Xm/ButtonBox.h>
 #include <Xm/Scale.h>
 #include <Xm/ScrolledW.h>
@@ -45,7 +44,6 @@
 #include <Xm/ToggleB.h>
 #include <Xm/Frame.h>
 #include <Xm/Label.h>
-
 #include <Xm/ExtP.h>
 #include "XmI.h"
 
@@ -1610,12 +1608,12 @@ XmVaCreateColorSelector(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmColorSelectorWidgetClass,
                          parent, False,
@@ -1634,11 +1632,11 @@ XmVaCreateManagedColorSelector(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmColorSelectorWidgetClass,
                          parent, True,

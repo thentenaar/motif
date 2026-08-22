@@ -32,12 +32,13 @@ static char rcsid[] = "$TOG: FileSB.c /main/21 1997/09/26 13:38:52 bill $"
 #endif
 
 #include <stdlib.h>
+#include <stdarg.h>
+
 #include <Xm/XmosP.h>
 #include "XmI.h"
 #include "RepTypeI.h"
 #include <Xm/FileSBP.h>
 #include <Xm/GadgetP.h>
-
 #include <Xm/List.h>
 #include <Xm/LabelG.h>
 #include <Xm/RowColumnP.h>
@@ -48,7 +49,6 @@ static char rcsid[] = "$TOG: FileSB.c /main/21 1997/09/26 13:38:52 bill $"
 #include <Xm/DragC.h>
 #include <Xm/DropSMgr.h>
 #include <Xm/Protocols.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/TraitP.h>
 #include <Xm/ActivatableT.h>
 #include "BulletinBI.h"
@@ -3230,12 +3230,12 @@ XmVaCreateFileSelectionBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmFileSelectionBoxWidgetClass,
                          parent, False,
@@ -3254,11 +3254,11 @@ XmVaCreateManagedFileSelectionBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmFileSelectionBoxWidgetClass,
                          parent, True,

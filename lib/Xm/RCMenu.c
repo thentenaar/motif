@@ -47,7 +47,8 @@ static char *rcsid = "$TOG: RCMenu.c /main/25 1999/05/24 18:06:57 samborn $";
 #endif
 
 #include <stdio.h>
-#include <ctype.h>
+#include <stdarg.h>
+
 #include "XmI.h"
 #include <X11/keysym.h>
 #include <Xm/CascadeBGP.h>
@@ -66,7 +67,6 @@ static char *rcsid = "$TOG: RCMenu.c /main/25 1999/05/24 18:06:57 samborn $";
 #include <Xm/ToggleB.h>
 #include <Xm/ToggleBG.h>
 #include <Xm/TraitP.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/VendorSP.h>
 #include "GadgetUtiI.h"
 #include "ManagerI.h"

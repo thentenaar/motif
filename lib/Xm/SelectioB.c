@@ -38,6 +38,8 @@ static char rcsid[] = "$TOG: SelectioB.c /main/19 1997/06/18 17:42:11 samborn $"
 **-------------------------------------------------------------------------
 */
 #include <stdlib.h>
+#include <stdarg.h>
+
 #include <Xm/AccTextT.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/ArrowB.h>
@@ -51,7 +53,6 @@ static char rcsid[] = "$TOG: SelectioB.c /main/19 1997/06/18 17:42:11 samborn $"
 #include <Xm/TextF.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "BulletinBI.h"
 #include "GeoUtilsI.h"
 #include "GMUtilsI.h"
@@ -2032,12 +2033,12 @@ XmVaCreateSelectionBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSelectionBoxWidgetClass,
                          parent, False,
@@ -2056,11 +2057,11 @@ XmVaCreateManagedSelectionBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSelectionBoxWidgetClass,
                          parent, True,

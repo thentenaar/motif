@@ -31,7 +31,7 @@ static char rcsid[] = "$XConsortium: VaSimple.c /main/11 1995/10/25 20:26:43 cde
 #endif
 #endif
 
-#include <Xm/VaSimpleP.h>
+#include <stdarg.h>
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>
 #include "MessagesI.h"
@@ -54,6 +54,7 @@ static char rcsid[] = "$XConsortium: VaSimple.c /main/11 1995/10/25 20:26:43 cde
 #define MESSAGE2 _XmMMsgVaSimple_0001
 #define MESSAGE3 _XmMMsgVaSimple_0002
 
+#define StringToName(string) XrmStringToName(string)
 
 /********  Static Function Declarations  ********/
 static XmButtonType _XmVaBType_to_XmBType(
@@ -531,14 +532,13 @@ XmVaCreateSimpleMenuBar(Widget parent, String name, ...)
 
 /* Count number of arg (arg in this case means number of arg groups) */
 
-    Va_start(var,name);
+    va_start(var, name);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
 
-    Va_start(var,name);
-
+    va_start(var, name);
     num_args = args_count + (XMCASCADE_ARGS_PER_LIST + MB_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &menuBarButtonTypes, &menuBarStrings,
@@ -599,13 +599,12 @@ XmVaCreateSimplePulldownMenu(Widget parent, String name, int post_from_button, X
     _XmAppLock(app);
 
 /* Count number of arg (arg in this case means number of arg groups) */
-    Va_start(var,callback);
+    va_start(var, callback);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
-    Va_start(var,callback);
-
+    va_start(var, callback);
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + PD_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &pulldownMenuButtonTypes,
@@ -674,13 +673,12 @@ XmVaCreateSimplePopupMenu(Widget parent, String name, XtCallbackProc callback, .
     _XmAppLock(app);
 
 /* Count number of arg (arg in this case means number of arg groups) */
-    Va_start(var,callback);
+    va_start(var, callback);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
-    Va_start(var,callback);
-
+    va_start(var, callback);
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + PU_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &popupMenuButtonTypes,
@@ -748,12 +746,12 @@ XmVaCreateSimpleOptionMenu(Widget parent, String name, XmString option_label, Ke
     _XmAppLock(app);
 
 /* Count number of arg (arg in this case means number of arg groups) */
-    Va_start(var,callback);
+    va_start(var, callback);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
-    Va_start(var,callback);
+    va_start(var, callback);
 
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + OM_EXTRA_ARGS);
 
@@ -824,13 +822,12 @@ XmVaCreateSimpleRadioBox(Widget parent, String name, int button_set, XtCallbackP
     _XmAppLock(app);
 
 /* Count number of arg (arg in this case means number of arg groups) */
-    Va_start(var,callback);
+    va_start(var, callback);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
-    Va_start(var,callback);
-
+    va_start(var, callback);
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + RB_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &radioBoxButtonTypes,
@@ -898,13 +895,12 @@ XmVaCreateSimpleCheckBox(Widget parent, String name, XtCallbackProc callback, ..
     _XmAppLock(app);
 
 /* Count number of arg (arg in this case means number of arg groups) */
-    Va_start(var,callback);
+    va_start(var, callback);
     _XmCountVaList(var, &button_count, &args_count, &typed_count, &total_count);
     va_end(var);
 
 /* Convert into a normal ArgList */
-    Va_start(var,callback);
-
+    va_start(var, callback);
     num_args = args_count + (XMBUTTONS_ARGS_PER_LIST + CB_EXTRA_ARGS);
 
     _XmVaProcessEverything(parent, var, &checkBoxButtonTypes,

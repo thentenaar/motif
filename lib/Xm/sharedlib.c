@@ -1,5 +1,5 @@
 /* $XConsortium: sharedlib.c /main/5 1996/01/25 20:57:39 pascale $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,9 +20,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- */
-/*
- * HISTORY
  */
 
 #include "XmP.h"
@@ -82,7 +79,6 @@
 #include "ToggleBGP.h"
 #include "ToggleBP.h"
 #include "TransltnsP.h"
-#include "VaSimpleP.h"
 #include "VendorSEP.h"
 #include "VendorSP.h"
 

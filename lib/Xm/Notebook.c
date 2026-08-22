@@ -26,6 +26,8 @@
 #endif
 
 #include <stdlib.h>
+#include <stdarg.h>
+
 #include <Xm/AccTextT.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/ArrowBG.h>
@@ -42,7 +44,6 @@
 #include <Xm/TravConT.h>
 #include <Xm/UnhighlightT.h>
 #include <Xm/VendorSEP.h>
-#include <Xm/VaSimpleP.h>
 #include "CareVisualTI.h"
 #include "ColorI.h"
 #include "GeoUtilsI.h"
@@ -7054,12 +7055,12 @@ XmVaCreateNotebook(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmNotebookWidgetClass,
                          parent, False,
@@ -7078,11 +7079,11 @@ XmVaCreateManagedNotebook(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmNotebookWidgetClass,
                          parent, True,

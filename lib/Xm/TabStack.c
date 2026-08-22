@@ -32,8 +32,10 @@
  *
  */
 #include <stdio.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <sys/types.h>
+
 #include "XmI.h"
 #include <Xm/XmP.h>
 #include <Xm/DialogS.h>
@@ -43,7 +45,6 @@
 #include <Xm/RowColumn.h>
 #include <Xm/TabStackP.h>
 #include <Xm/TabBoxP.h>
-#include <Xm/VaSimpleP.h>
 
 #undef TEAR_OFF_TABS
 
@@ -3256,12 +3257,12 @@ XmVaCreateTabStack(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTabStackWidgetClass,
                          parent, False,
@@ -3280,11 +3281,11 @@ XmVaCreateManagedTabStack(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTabStackWidgetClass,
                          parent, True,

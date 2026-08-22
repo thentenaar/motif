@@ -26,6 +26,8 @@
 #include <config.h>
 #endif
 
+#include <stdarg.h>
+
 #include "XmI.h"
 #include "MessagesI.h"
 #include <Xm/MultiListP.h>
@@ -36,8 +38,6 @@
 #include <Xm/PushB.h>
 #include <Xm/ScrollBar.h>
 #include <Xm/TextF.h>
-
-#include <Xm/VaSimpleP.h>
 #include <Xm/ExtP.h>
 
 /************************************************************
@@ -1138,12 +1138,12 @@ XmVaCreateMultiList(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMultiListWidgetClass,
                          parent, False,
@@ -1162,11 +1162,11 @@ XmVaCreateManagedMultiList(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMultiListWidgetClass,
                          parent, True,

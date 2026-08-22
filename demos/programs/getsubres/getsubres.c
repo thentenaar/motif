@@ -24,13 +24,12 @@
  */
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <Xm/XmAll.h>
 #include <Xmd/Help.h>
 
 /* This is no your ordinary demo, it displays widget class info and
    needs a couple of P.h file usually reserved for widget writers */
-#include <Xm/VaSimpleP.h>
-
 #include <Xm/SashP.h>
 #include <Xm/TearOffBP.h>
 #include <Xm/GrabShellP.h>
@@ -236,7 +235,7 @@ static void AddToBuffer(const char *fmt, ...)
     char tmp[256] ;
     Cardinal i, tmplen ;
 
-    Va_start(args, fmt);
+    va_start(args, fmt);
 
     (void)vsnprintf(tmp, sizeof tmp, fmt, args);
     tmplen = strlen(tmp) ;

@@ -26,6 +26,8 @@
 #include <config.h>
 #endif
 
+#include <stdarg.h>
+
 #include <Xm/AccColorT.h>
 #include <Xm/CareVisualT.h>
 #include <Xm/ContItemT.h>
@@ -35,7 +37,6 @@
 #include <Xm/IconGP.h>
 #include <Xm/TraitP.h>		/* for XmeTraitSet */
 #include <Xm/XmosP.h>
-#include <Xm/VaSimpleP.h>
 #include "BaseClassI.h"
 #include "CacheI.h"
 #include "ColorI.h"
@@ -3637,12 +3638,12 @@ XmVaCreateIconGadget(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmIconGadgetClass,
                          parent, False,
@@ -3661,11 +3662,11 @@ XmVaCreateManagedIconGadget(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmIconGadgetClass,
                          parent, True,
@@ -3673,3 +3674,4 @@ XmVaCreateManagedIconGadget(
     va_end(var);
     return w;
 }
+

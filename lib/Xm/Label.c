@@ -31,7 +31,9 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
 #include <string.h>
+
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xatom.h>
@@ -52,7 +54,6 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #include <Xm/TraitP.h>
 #include <Xm/TransferT.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 
 #include "GadgetUtiI.h"
 #include "GMUtilsI.h"
@@ -2242,19 +2243,18 @@ XmVaCreateLabel(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmLabelWidgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 Widget
@@ -2267,18 +2267,17 @@ XmVaCreateManagedLabel(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmLabelWidgetClass,
                          parent, True,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 

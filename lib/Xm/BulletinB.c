@@ -31,6 +31,7 @@ static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
 
 #include "BulletinBI.h"
 #include <Xm/BaseClassP.h>
@@ -49,7 +50,6 @@ static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
 #include <Xm/DialogSavvyT.h>
 #include <Xm/SpecRenderT.h>
 #include <Xm/TakesDefT.h>
-#include <Xm/VaSimpleP.h>
 #include "XmI.h"
 #include "BaseClassI.h"
 #include "CallbackI.h"
@@ -63,7 +63,6 @@ static char rcsid[] = "$TOG: BulletinB.c /main/22 1999/10/13 16:15:40 mgreess $"
 /* Local defines:
 */
 
-#define STRING_CHARSET          "ISO8859-1"
 #define	MARGIN_DEFAULT		10
 
 #define DONT_CARE               -1L
@@ -2251,12 +2250,12 @@ XmVaCreateBulletinBoard(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmBulletinBoardWidgetClass,
                          parent, False,
@@ -2275,11 +2274,11 @@ XmVaCreateManagedBulletinBoard(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmBulletinBoardWidgetClass,
                          parent, True,

@@ -28,7 +28,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
+
 #include <Xm/XmP.h>
 #include <X11/Shell.h>
 #include <X11/cursorfont.h>
@@ -46,7 +48,6 @@
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
 #include <Xm/VendorS.h>
-#include <Xm/VaSimpleP.h>
 #include "GeoUtilsI.h"
 #include "MenuShellI.h"
 #include "MessagesI.h"
@@ -3346,12 +3347,12 @@ XmVaCreateComboBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmComboBoxWidgetClass,
                          parent, False,
@@ -3370,11 +3371,11 @@ XmVaCreateManagedComboBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmComboBoxWidgetClass,
                          parent, True,

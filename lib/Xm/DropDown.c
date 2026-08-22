@@ -22,12 +22,11 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdarg.h>
 
 #include <X11/Shell.h>
 #include <Xm/Xm.h>
 #include <Xm/XmP.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/DrawP.h>
 #include <Xm/DropDownP.h>
 #include <Xm/ScreenP.h>
@@ -2478,12 +2477,12 @@ XmVaCreateDropDown(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDropDownWidgetClass,
                          parent, False,
@@ -2502,11 +2501,11 @@ XmVaCreateManagedDropDown(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDropDownWidgetClass,
                          parent, True,

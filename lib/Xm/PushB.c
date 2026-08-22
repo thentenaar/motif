@@ -32,6 +32,8 @@ static char rcsid[] = "$TOG: PushB.c /main/29 1999/01/27 16:08:33 mgreess $"
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
+
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <Xm/ActivatableT.h>
@@ -46,7 +48,6 @@ static char rcsid[] = "$TOG: PushB.c /main/29 1999/01/27 16:08:33 mgreess $"
 #include <Xm/TearOffBP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "ColorI.h"
 #include "LabelI.h"
 #include "MenuProcI.h"
@@ -2957,12 +2958,12 @@ XmVaCreatePushButton(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmPushButtonWidgetClass,
                          parent, False,
@@ -2981,11 +2982,11 @@ XmVaCreateManagedPushButton(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmPushButtonWidgetClass,
                          parent, True,

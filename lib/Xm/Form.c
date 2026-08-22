@@ -32,10 +32,11 @@ static char rcsid[] = "$TOG: Form.c /main/19 1998/03/25 12:24:56 csn $"
 #endif
 
 #include <stdlib.h>		/* for abs, float operation... */
+#include <stdarg.h>
+
 #include <Xm/DrawP.h>
 #include <Xm/FormP.h>
 #include <Xm/DialogS.h>
-#include <Xm/VaSimpleP.h>
 #include "XmI.h"
 #include "MessagesI.h"
 #include "RepTypeI.h"
@@ -3266,12 +3267,12 @@ XmVaCreateForm(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var,name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmFormWidgetClass,
                          parent, False,
@@ -3290,11 +3291,11 @@ XmVaCreateManagedForm(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmFormWidgetClass,
                          parent, True,

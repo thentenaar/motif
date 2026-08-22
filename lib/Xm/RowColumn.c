@@ -32,6 +32,7 @@ static char rcsid[] = "$TOG: RowColumn.c /main/25 1998/07/22 15:41:49 mgreess $"
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "XmI.h"
 #include <Xm/BaseClassP.h>
@@ -57,7 +58,6 @@ static char rcsid[] = "$TOG: RowColumn.c /main/25 1998/07/22 15:41:49 mgreess $"
 #include <Xm/ToggleBP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/VirtKeysP.h>
 #include "GeoUtilsI.h"
 #include "GMUtilsI.h"
@@ -3254,12 +3254,12 @@ XmVaCreateRowColumn(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmRowColumnWidgetClass,
                          parent, False,
@@ -3278,11 +3278,11 @@ XmVaCreateManagedRowColumn(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmRowColumnWidgetClass,
                          parent, True,
@@ -3290,6 +3290,7 @@ XmVaCreateManagedRowColumn(
     va_end(var);
     return w;
 }
+
 Widget
 XmCreateWorkArea(
         Widget p,

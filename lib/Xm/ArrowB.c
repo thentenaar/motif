@@ -33,12 +33,12 @@ static char rcsid[] = "$XConsortium: ArrowB.c /main/16 1995/10/25 19:50:57 cde-s
 
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <Xm/ArrowBP.h>
 #include <Xm/TransltnsP.h>
 #include <Xm/DrawP.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/TraitP.h>
-#include <Xm/VaSimpleP.h>
 #include "PrimitiveI.h"
 #include "RepTypeI.h"
 #include "ScreenI.h"
@@ -823,12 +823,12 @@ XmVaCreateArrowButton(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmArrowButtonWidgetClass,
                          parent, False,
@@ -847,11 +847,11 @@ XmVaCreateManagedArrowButton(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmArrowButtonWidgetClass,
                          parent, True,

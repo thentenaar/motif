@@ -31,11 +31,12 @@ static char rcsid[] = "$XConsortium: MainW.c /main/20 1996/10/17 15:21:07 cde-os
 #endif
 #endif
 
+#include <stdarg.h>
+
 #include "XmI.h"
 #include <Xm/SeparatoGP.h>  /* just access the position/dimension fields,*/
 #include <Xm/ScrollBarP.h>  /*   could live without that if needed */
 #include <Xm/MainWP.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/MenuT.h>
 #include <Xm/TraitP.h>
 #include "MessagesI.h"
@@ -1422,12 +1423,12 @@ XmVaCreateMainWindow(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMainWindowWidgetClass,
                          parent, False,
@@ -1446,11 +1447,11 @@ XmVaCreateManagedMainWindow(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmMainWindowWidgetClass,
                          parent, True,

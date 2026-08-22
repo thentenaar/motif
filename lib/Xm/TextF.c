@@ -33,8 +33,9 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #endif
 
 #include <stdio.h>
-#include <limits.h>		/* required for MB_LEN_MAX definition */
+#include <stdarg.h>
 #include <string.h>
+#include <limits.h>
 
 #include "XmI.h"
 #include <X11/ShellP.h>
@@ -56,7 +57,6 @@ static char rcsid[] = "$TOG: TextF.c /main/65 1999/09/01 17:28:48 mgreess $"
 #include <Xm/TransferP.h>
 #include <Xm/TransltnsP.h>
 #include <Xm/XmosP.h>
-#include <Xm/VaSimpleP.h>
 #include "DestI.h"
 #include "DisplayI.h"
 #include "ImageCachI.h"
@@ -8418,12 +8418,12 @@ XmVaCreateTextField(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTextFieldWidgetClass,
                          parent, False,
@@ -8443,11 +8443,11 @@ XmVaCreateManagedTextField(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTextFieldWidgetClass,
                          parent, True,

@@ -33,6 +33,8 @@ static char rcsid[] = "$TOG: Text.c /main/47 1999/01/26 15:18:26 mgreess $"
 #define TEXT
 
 #include <string.h>
+#include <stdarg.h>
+
 #include <X11/Xos.h>
 #include <X11/keysymdef.h>
 #include <Xm/AccTextT.h>
@@ -45,7 +47,6 @@ static char rcsid[] = "$TOG: Text.c /main/47 1999/01/26 15:18:26 mgreess $"
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
 #include <Xm/XmosP.h>
-#include <Xm/VaSimpleP.h>
 #include "MessagesI.h"
 #include "RepTypeI.h"
 #include "TextI.h"
@@ -4168,20 +4169,20 @@ XmVaCreateText(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTextWidgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
+
 Widget
 XmVaCreateManagedText(
         Widget parent,
@@ -4192,11 +4193,11 @@ XmVaCreateManagedText(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmTextWidgetClass,
                          parent, True,

@@ -31,8 +31,9 @@ static char rcsid[] = "$TOG: DrawingA.c /main/16 1999/10/13 16:16:41 mgreess $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
+
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "DrawingAI.h"
 #include "GadgetUtiI.h"
 #include "GMUtilsI.h"
@@ -625,12 +626,12 @@ XmVaCreateDrawingArea(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDrawingAreaWidgetClass,
                          parent, False,
@@ -649,11 +650,11 @@ XmVaCreateManagedDrawingArea(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDrawingAreaWidgetClass,
                          parent, True,

@@ -1,4 +1,4 @@
-/* 
+/*
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,25 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+*/
 #ifndef _XmVaSimpleP_h
 #define _XmVaSimpleP_h
 
-#include <Xm/XmP.h>
+#include <stdarg.h>
+#define Va_start(a,b) va_start(a,b)
 
-# include <stdarg.h>
-# define Va_start(a,b) va_start(a,b)
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define StringToName(string) XrmStringToName(string)
-
-#ifdef __cplusplus
-}  /* Close scope of 'extern "C"' declaration which encloses file. */
+#if defined(__GNUC__) || defined(__clang__) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
+#warning "VaSimpleP.h is deprecated, include <stdarg.h> instead"
 #endif
 
 #endif /* _XmVaSimpleP_h */
-/* DON'T ADD ANYTHING AFTER THIS #endif */

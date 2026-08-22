@@ -25,13 +25,13 @@
 /************************************************************
  *       INCLUDE FILES
  ************************************************************/
-#include <Xm/Xm.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <Xm/Xm.h>
 #include <Xm/ButtonBoxP.h>
 #include <Xm/ExtP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TakesDefT.h>
-#include <Xm/VaSimpleP.h>
 #include "XmI.h"
 
 /************************************************************
@@ -1114,12 +1114,12 @@ XmVaCreateButtonBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmButtonBoxWidgetClass,
                          parent, False,
@@ -1138,11 +1138,11 @@ XmVaCreateManagedButtonBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmButtonBoxWidgetClass,
                          parent, True,

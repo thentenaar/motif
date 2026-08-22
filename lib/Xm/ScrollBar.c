@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
@@ -30,6 +31,8 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
+
 #include <Xm/DisplayP.h>        /* for enableThinThickness */
 #include <Xm/DrawP.h>
 #include <Xm/DropSMgr.h>	/* for XmDropSiteStartUpdate/EndUPdate */
@@ -38,7 +41,6 @@ static char rcsid[] = "$TOG: ScrollBar.c /main/20 1997/03/10 14:52:28 dbl $"
 #include <Xm/ScrollBarP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "ColorI.h"
 #include "MessagesI.h"
 #include "RepTypeI.h"
@@ -4437,12 +4439,12 @@ XmVaCreateScrollBar(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScrollBarWidgetClass,
                          parent, False,
@@ -4461,11 +4463,11 @@ XmVaCreateManagedScrollBar(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScrollBarWidgetClass,
                          parent, True,

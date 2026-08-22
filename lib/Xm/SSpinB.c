@@ -37,11 +37,10 @@
 #include <config.h>
 #endif
 
-
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
+
 #include <X11/StringDefs.h>
 #include <X11/Intrinsic.h>
 #include <X11/IntrinsicP.h>
@@ -51,7 +50,6 @@
 #include <X11/keysym.h>
 
 #include <Xm/TextF.h>
-#include <Xm/VaSimpleP.h>
 #include "MessagesI.h"
 #include "XmI.h"
 
@@ -634,12 +632,12 @@ XmVaCreateSimpleSpinBox(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSimpleSpinBoxWidgetClass,
                          parent, False,
@@ -658,11 +656,11 @@ XmVaCreateManagedSimpleSpinBox(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmSimpleSpinBoxWidgetClass,
                          parent, True,

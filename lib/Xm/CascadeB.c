@@ -31,6 +31,8 @@ static char rcsid[] = "$TOG: CascadeB.c /main/27 1999/08/11 14:26:35 mgreess $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
+
 #include "XmI.h"		/* ShellP.h doesn't define externalref. */
 #include <X11/ShellP.h>
 #include <X11/keysymdef.h>
@@ -46,7 +48,6 @@ static char rcsid[] = "$TOG: CascadeB.c /main/27 1999/08/11 14:26:35 mgreess $"
 #include <Xm/TearOffP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "CascadeBI.h"
 #include "CascadeBGI.h"
 #include "LabelI.h"
@@ -2416,12 +2417,12 @@ XmVaCreateCascadeButton(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCascadeButtonWidgetClass,
                          parent, False,
@@ -2440,11 +2441,11 @@ XmVaCreateManagedCascadeButton(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCascadeButtonWidgetClass,
                          parent, True,

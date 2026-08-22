@@ -32,6 +32,8 @@ static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
+
 #include <X11/X.h>
 #include <Xm/ActivatableT.h>
 #include <Xm/DisplayP.h>
@@ -41,7 +43,6 @@ static char rcsid[] = "$TOG: DrawnB.c /main/20 1999/04/29 13:05:14 samborn $"
 #include <Xm/ManagerP.h>
 #include <Xm/MenuT.h>
 #include <Xm/RowColumnP.h>
-#include <Xm/VaSimpleP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
 #include "XmI.h"
@@ -1606,12 +1607,12 @@ XmVaCreateDrawnButton(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDrawnButtonWidgetClass,
                          parent, False,
@@ -1630,11 +1631,11 @@ XmVaCreateManagedDrawnButton(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmDrawnButtonWidgetClass,
                          parent, True,
@@ -1642,3 +1643,4 @@ XmVaCreateManagedDrawnButton(
     va_end(var);
     return w;
 }
+

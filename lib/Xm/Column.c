@@ -30,7 +30,6 @@
 #include <Xm/ColumnP.h>
 #include <Xm/RowColumn.h>
 #include <Xm/Label.h>
-#include <Xm/VaSimpleP.h>
 #include "XmI.h"
 
 #define XK_LATIN1
@@ -2766,12 +2765,12 @@ XmVaCreateColumn(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmColumnWidgetClass,
                          parent, False,
@@ -2790,11 +2789,11 @@ XmVaCreateManagedColumn(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmColumnWidgetClass,
                          parent, True,
@@ -2802,3 +2801,4 @@ XmVaCreateManagedColumn(
     va_end(var);
     return w;
 }
+

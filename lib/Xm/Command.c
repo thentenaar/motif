@@ -31,20 +31,20 @@ static char rcsid[] = "$TOG: Command.c /main/21 1999/01/26 18:12:51 mgreess $"
 #include <config.h>
 #endif
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
 #include "XmI.h"
 #include "CommandI.h"
 #include <Xm/DialogS.h>
 #include <Xm/List.h>
 #include <Xm/TextF.h>
-#include <Xm/VaSimpleP.h>
 #include "BulletinBI.h"
 #include "MessagesI.h"
 #include "RepTypeI.h"
 #include "SelectioBI.h"
 #include "XmStringI.h"
-
-#include <string.h>
-#include <stdlib.h>
 
 #define ARG_LIST_CNT 25
 
@@ -880,12 +880,12 @@ XmVaCreateCommand(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCommandWidgetClass,
                          parent, False,
@@ -904,11 +904,11 @@ XmVaCreateManagedCommand(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCommandWidgetClass,
                          parent, True,

@@ -31,7 +31,8 @@ static char rcsid[] = "$TOG: ScrolledW.c /main/16 1997/07/25 16:49:57 samborn $"
 #include <config.h>
 #endif
 
-#include <stdlib.h>                               /* for abs, float operation... */
+#include <stdarg.h>
+
 #include <Xm/ClipWindowP.h>
 #include <Xm/DragDrop.h>
 #include <Xm/DrawP.h>
@@ -39,7 +40,6 @@ static char rcsid[] = "$TOG: ScrolledW.c /main/16 1997/07/25 16:49:57 samborn $"
 #include <Xm/ScrollBarP.h>                        /* might be worth getting rid of this one */
 #include <Xm/TraitP.h>
 #include <Xm/TransltnsP.h>
-#include <Xm/VaSimpleP.h>
 #include "GeoUtilsI.h"
 #include "MessagesI.h"
 #include "RepTypeI.h"
@@ -3755,12 +3755,12 @@ XmVaCreateScrolledWindow(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScrolledWindowWidgetClass,
                          parent, False,
@@ -3779,11 +3779,11 @@ XmVaCreateManagedScrolledWindow(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScrolledWindowWidgetClass,
                          parent, True,

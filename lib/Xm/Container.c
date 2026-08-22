@@ -29,7 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include <Xm/ClipWindowP.h>
 #include <Xm/ContItemT.h>
@@ -49,7 +51,6 @@
 #include <Xm/TravConT.h>
 #include <Xm/CareVisualT.h>
 #include <Xm/PointInT.h>
-#include <Xm/VaSimpleP.h>
 #include "ColorI.h"
 #include "GadgetUtiI.h"
 #include "GeoUtilsI.h"
@@ -9692,12 +9693,12 @@ XmVaCreateContainer(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmContainerWidgetClass,
                          parent, False,
@@ -9716,11 +9717,11 @@ XmVaCreateManagedContainer(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmContainerWidgetClass,
                          parent, True,

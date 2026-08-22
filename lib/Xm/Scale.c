@@ -32,6 +32,7 @@ static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <limits.h>
 #include <locale.h>
 #include <X11/Xos.h>
@@ -46,7 +47,6 @@ static char rcsid[] = "$TOG: Scale.c /main/31 1999/10/13 16:18:07 mgreess $"
 #include <Xm/TraitP.h>
 #include <Xm/TransferT.h>
 #include <Xm/XmosP.h>
-#include <Xm/VaSimpleP.h>
 #include "GeoUtilsI.h"
 #include "GMUtilsI.h"
 #include "MessagesI.h"
@@ -3152,20 +3152,20 @@ XmVaCreateScale(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScaleWidgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
+
 Widget
 XmVaCreateManagedScale(
         Widget parent,
@@ -3176,11 +3176,11 @@ XmVaCreateManagedScale(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmScaleWidgetClass,
                          parent, True,

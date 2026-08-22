@@ -31,7 +31,9 @@ static char rcsid[] = "$TOG: CascadeBG.c /main/28 1999/02/01 18:47:11 mgreess $"
 #include <config.h>
 #endif
 
+#include <stdarg.h>
 #include <string.h>
+
 #include "XmI.h"
 #include <X11/ShellP.h>
 #include <X11/keysymdef.h>
@@ -46,7 +48,6 @@ static char rcsid[] = "$TOG: CascadeBG.c /main/28 1999/02/01 18:47:11 mgreess $"
 #include <Xm/MenuT.h>
 #include <Xm/RowColumnP.h>
 #include <Xm/TraitP.h>
-#include <Xm/VaSimpleP.h>
 #include "BaseClassI.h"
 #include "CacheI.h"
 #include "CascadeBI.h"
@@ -2909,12 +2910,12 @@ XmVaCreateCascadeButtonGadget(
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCascadeButtonGadgetClass,
                          parent, False,
@@ -2933,11 +2934,11 @@ XmVaCreateManagedCascadeButtonGadget(
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmCascadeButtonGadgetClass,
                          parent, True,

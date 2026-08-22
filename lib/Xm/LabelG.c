@@ -33,6 +33,8 @@ static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
 
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
+
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xatom.h>
@@ -56,7 +58,6 @@ static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
 #include <Xm/ScreenP.h>
 #include <Xm/TraitP.h>
 #include <Xm/TransferT.h>
-#include <Xm/VaSimpleP.h>
 #include "BaseClassI.h"
 #include "CacheI.h"
 #include "ColorI.h"
@@ -3436,38 +3437,37 @@ Widget XmVaCreateLabelGadget(Widget parent, char *name, ...)
     va_list var;
     int count;
 
-    Va_start(var,name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmLabelGadgetClass,
                          parent, False,
                          var, count);
     va_end(var);
     return w;
-
 }
+
 Widget XmVaCreateManagedLabelGadget(Widget parent, char *name, ...)
 {
     Widget w = NULL;
     va_list var;
     int count;
 
-    Va_start(var, name);
+    va_start(var, name);
     count = XmeCountVaListSimple(var);
     va_end(var);
 
-    Va_start(var, name);
+    va_start(var, name);
     w = XmeVLCreateWidget(name,
                          xmLabelGadgetClass,
                          parent, True,
                          var, count);
     va_end(var);
     return w;
-
 }
 
 /*
