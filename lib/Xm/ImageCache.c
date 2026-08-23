@@ -145,7 +145,6 @@ static Boolean CompareStrings (XmHashKey key_1, XmHashKey key_2);
 static Boolean CompareGCDatas (XmHashKey key_1, XmHashKey key_2);
 static XmHashValue HashPixmap (XmHashKey key);
 static XmHashValue HashPixmapData (XmHashKey key);
-static XmHashValue HashString (XmHashKey key);
 static XmHashValue HashGCData (XmHashKey key);
 static void InitializeImageSet( void ) ;
 static void InitializePixmapSets( void ) ;
@@ -189,31 +188,6 @@ static int FreeCacheColors(Display *display, Colormap colormap,
 
 /*** IMAGE CACHE PART FIRST ***/
 
-
-
-
-/* Compare two strings. */
-static Boolean
-CompareStrings (XmHashKey key_1,
-		XmHashKey key_2)
-{
-  char *data_1 = (char *) key_1;
-  char *data_2 = (char *) key_2;
-
-  return ((data_1 == data_2) || (strcmp(data_1, data_2) == 0));
-}
-
-
-/* Hash a string. */
-static XmHashValue
-HashString (XmHashKey key)
-{
-  char *data = (char *) key;
-  unsigned int len = strlen(data);
-
-  return (((len << 8) | data[0]) << 8) | data[len];
-}
-
 /************************************************************************
  *
  *  InitializeImageSet
@@ -229,8 +203,8 @@ InitializeImageSet( void )
   assert (image_set == NULL);
 
   _XmProcessLock();
-  image_set =
-    _XmAllocHashTable (MAX_BUILTIN_IMAGES + 100, CompareStrings, HashString);
+  image_set = _XmAllocHashTable(MAX_BUILTIN_IMAGES + 100,
+                                XmHashCompareString, XmHashString);
 
   /* Load the built-in image data.
      Builtins have a non NULL builtin data.
@@ -1071,7 +1045,7 @@ HashPixmapData (XmHashKey key)
 {
   PixmapData *data = (PixmapData *) key;
 
-  return ((long)data->screen + HashString ((XmHashKey)data->image_name));
+  return ((long)data->screen + XmHashString((XmHashKey)data->image_name));
 }
 
 /************************************************************************

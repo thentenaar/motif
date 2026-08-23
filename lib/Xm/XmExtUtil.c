@@ -439,7 +439,7 @@ char *XmCopyISOLatin1Lowered(const char *src)
 	}
 
 	len  = strlen(src);
-	dest = XtCalloc(1, len);
+	dest = XtCalloc(1, len + 1);
 	for (i = 0; i < len; i++) {
 		c = (unsigned char)src[i];
 		if (c >= XK_A && c <= XK_Z)               c += XK_a - XK_A;
@@ -448,7 +448,6 @@ char *XmCopyISOLatin1Lowered(const char *src)
 		dest[i] = (char)c;
 	}
 
-    *dest = '\0';
     return dest;
 }
 

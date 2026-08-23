@@ -27,7 +27,7 @@
 
 #ifndef _XmHashI_h
 #define _XmHashI_h
- 
+
 #include <Xm/XmP.h>
 
 #ifdef __cplusplus
@@ -41,6 +41,14 @@ typedef struct _XmHashTableRec  *XmHashTable;
 typedef Boolean (*XmHashCompareProc)(XmHashKey, XmHashKey);
 typedef XmHashValue (*XmHashFunction)(XmHashKey);
 typedef Boolean (*XmHashMapProc)(XmHashKey, XtPointer value, XtPointer data);
+
+XmHashValue XmHashString(XmHashKey);
+XmHashValue XmHashXmString(XmHashKey);
+XmHashValue XmHashXmStringLower(XmHashKey k);
+Boolean XmHashCompareString(XmHashKey, XmHashKey);
+Boolean XmHashCompareStringLower(XmHashKey, XmHashKey);
+Boolean XmHashCompareXmString(XmHashKey, XmHashKey);
+Boolean XmHashCompareXmStringLower(XmHashKey, XmHashKey);
 
 XmHashTable _XmAllocHashTable(Cardinal, XmHashCompareProc, XmHashFunction);
 void _XmResizeHashTable(XmHashTable, Cardinal);

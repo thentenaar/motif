@@ -140,9 +140,6 @@ static int CheckDirCache(
                         String path);
 static Boolean TestIconFile(
                         String path) ;
-static Boolean CompareIconNames (XmHashKey key_1, XmHashKey key_2);
-static XmHashValue HashIconName (XmHashKey key);
-
 /********    End Static Function Declarations    ********/
 
 
@@ -484,30 +481,19 @@ typedef struct _DtIconNameEntryRec{
     String	key_name;
 }DtIconNameEntryRec, *DtIconNameEntry;
 
-
 /* Compare two icon names from icon entry rec */
-static Boolean
-CompareIconNames (XmHashKey key_1,
-		XmHashKey key_2)
+static Boolean CompareIconNames(XmHashKey a, XmHashKey b)
 {
-  DtIconNameEntry data_1 = (DtIconNameEntry) key_1;
-  DtIconNameEntry data_2 = (DtIconNameEntry) key_2;
-
-  return ((data_1->key_name == data_2->key_name) ||
-	  (strcmp(data_1->key_name, data_2->key_name) == 0));
+	DtIconNameEntry data_1 = (DtIconNameEntry)a;
+	DtIconNameEntry data_2 = (DtIconNameEntry)b;
+	return XmHashCompareString(data_1->key_name, data_2->key_name);
 }
-
 
 /* Hash an icon name . */
-static XmHashValue
-HashIconName (XmHashKey key)
+static XmHashValue HashIconName (XmHashKey key)
 {
-  DtIconNameEntry data = (DtIconNameEntry) key;
-  unsigned int len = strlen(data->key_name);
-
-  return (((len << 8) | data->key_name[0]) << 8) | data->key_name[len];
+	return XmHashString(((DtIconNameEntry)key)->key_name);
 }
-
 
 String XmGetIconFileName(Screen *screen, String instance, String class,
                          String prefix, unsigned int size)
@@ -558,8 +544,7 @@ String XmGetIconFileName(Screen *screen, String instance, String class,
 
     /* generate the icon paths once per application: iconPath and bmPath */
     if (!iconNameCache) {
-	iconNameCache =  _XmAllocHashTable(100,
-					   CompareIconNames, HashIconName);
+	iconNameCache = _XmAllocHashTable(100, CompareIconNames, HashIconName);
 
 	cacheList.numDirs =
 	  cacheList.maxDirs = 0;

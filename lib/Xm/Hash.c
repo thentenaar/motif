@@ -29,7 +29,14 @@
 #include <config.h>
 #endif
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#endif
 
+#include <string.h>
+#include <assert.h>
+
+#include <Xm/Ext.h>
 #include "XmI.h"
 #include "HashI.h"
 
@@ -59,22 +66,106 @@ static void FreeBucket(XmHashBucket);
 static XmHashBucket FreeBucketList = NULL;
 
 /* Dumb default hash functions */
-
-static Boolean
-Compare(XmHashKey x, XmHashKey y)
+static Boolean Compare(XmHashKey x, XmHashKey y)
 {
-  return(x == y);
+	return x == y;
 }
 
-static XmHashValue
-Hash(XmHashKey x)
+/* NB: Loses the difference between int and intptr_t */
+static XmHashValue Hash(XmHashKey x)
 {
-  return((XmHashValue) (long) x);
+	return (XmHashValue)(intptr_t)x;
+}
+
+/**
+ * 32-bit FNV1a for simple string hashing
+ */
+XmHashValue XmHashString(XmHashKey k)
+{
+	String s = (String)k;
+	unsigned int i, v = 0;
+	assert(s && *s);
+
+	if (!v) v = 2166136261;
+	while ((i = (unsigned int)*s++))
+		v = (v ^ (i & 0xff)) * 16777619;
+	return v;
+}
+
+XmHashValue XmHashXmString(XmHashKey k)
+{
+	XmHashValue v;
+	unsigned char *s;
+
+	s = XmStringUngenerate((XmString)k, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
+	v = XmHashString((XmHashKey)s);
+	XtFree((XtPointer)s);
+	return v;
+}
+
+XmHashValue XmHashXmStringLower(XmHashKey k)
+{
+	XmHashValue v;
+	char *x;
+	unsigned char *s;
+
+	s = XmStringUngenerate((XmString)k, NULL, XmCHARSET_TEXT, XmUTF8_TEXT);
+	x = XmCopyISOLatin1Lowered((char *)s);
+	XtFree((XtPointer)s);
+
+	v = XmHashString((XmHashKey)x);
+	XtFree(x);
+	return v;
+}
+
+/**
+ * Simple string equality
+ */
+Boolean XmHashCompareString(XmHashKey a, XmHashKey b)
+{
+	return a == b || (strlen(a) == strlen(b) && !strcmp(a, b));
+}
+
+Boolean XmHashCompareStringLower(XmHashKey a, XmHashKey b)
+{
+	Boolean ret;
+	char *x, *y;
+
+	if (a == b)
+		return True;
+
+	x = XmCopyISOLatin1Lowered(a);
+	y = XmCopyISOLatin1Lowered(b);
+	ret = strlen(x) == strlen(y) && !strcmp(x, y);
+	XtFree(x);
+	XtFree(y);
+	return ret;
+}
+
+Boolean XmHashCompareXmString(XmHashKey a, XmHashKey b)
+{
+	return XmStringCompare((XmString)a, (XmString)b);
+}
+
+Boolean XmHashCompareXmStringLower(XmHashKey a, XmHashKey b)
+{
+	Boolean ret;
+	unsigned char *x, *y;
+
+	if (a == b)
+		return True;
+
+	x = XmStringUngenerate(a, NULL, XmCHARSET_TEXT, XmUTF8_TEXT);
+	y = XmStringUngenerate(b, NULL, XmCHARSET_TEXT, XmUTF8_TEXT);
+	ret = XmHashCompareStringLower(x, y);
+	XtFree((XtPointer)x);
+	XtFree((XtPointer)y);
+	return ret;
 }
 
 /* Available table sizes,  should be prime numbers */
 
-static const int size_table[] =
+static const Cardinal size_table[] =
 	{ 17, 31, 67, 131, 257, 521, 1031, 2053, 4099, 8209, 0 };
 
 XmHashTable
@@ -197,6 +288,9 @@ _XmGetHashEntryIterate(XmHashTable table, XmHashKey key, XtPointer *iterator)
 {
   XmHashValue index;
   XmHashBucket entry;
+
+  if (!table)
+    return NULL;
 
   if (iterator && *iterator != NULL) {
     /* If iterating over a number of matching entries */
