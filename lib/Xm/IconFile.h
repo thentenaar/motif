@@ -46,7 +46,7 @@ extern "C" {
 /********    Public Function Declarations for IconFile.c    ********/
 
 extern String XmGetIconFileName(Screen *screen, String instance,
-                                String class, String prefix,
+                                String klass, String prefix,
                                 unsigned int size);
 
 /********    End Public Function Declarations    ********/
