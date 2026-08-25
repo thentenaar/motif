@@ -1724,8 +1724,12 @@ static void cache_rendition(_XmStringEntry ent, const XmRendition rend,
 /**
  * If we've got an Xft rendition, walk the string to see where we may
  * need to apply fallback fonts, and add them to the _XmStringRendition.
+ *
+ * If we created this rendition in _XmRenditionMerge, free it here if
+ * we didn't use it to avoid leaking it.
  */
-static void make_renditions(_XmStringEntry ent, const XmRendition rend, XmRenderTable rt)
+static void make_renditions(_XmStringEntry ent, const XmRendition rend,
+                            XmRenderTable rt)
 {
 	XmTextPosition c, c2, len, split;
 	Boolean has_cp;
@@ -1847,9 +1851,11 @@ static _XmStringRenderingCache plan_renditions(_XmStringEntry ent,
 	}
 
 #if USE_XFT
-	if (rend && _XmRendFontType(rend) == XmFONT_IS_XFT)
+	if (rend && _XmRendFontType(rend) == XmFONT_IS_XFT) {
 		make_renditions(ent, rend, rt);
-	else
+		if (_XmRendRefcount(rend) == 1)
+			XmRenditionFree(rend);
+	} else
 #endif
 	/**
 	 * If we don't have a rendition, we likely can't load anything.
@@ -2236,7 +2242,10 @@ static void _XmStringCacheFree(_XmStringCache current)
 			rc = (_XmStringRenderingCache)current;
 			for (tmp = rc->rendition_head; tmp; tmp = nx) {
 				nx = tmp->next;
-				XmRenditionFree(tmp->rendition);
+				if (_XmRendLoadModel(tmp->rendition) == XmLOAD_LAZY) {
+					if (_XmRendRefcountDec(tmp->rendition) == 1)
+						XmRenditionDematerialize(tmp->rendition);
+				} else XmRenditionFree(tmp->rendition);
 				XtFree((XtPointer)tmp);
 			}
 		}

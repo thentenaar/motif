@@ -673,8 +673,10 @@ XmString XmStringNormalize(const XmString s, enum XmCodepointNormalForm form)
 		out = XmStringConcatAndFree(out, tmp);
 		XtFree((XtPointer)norm);
 		XtFree((XtPointer)buf);
+		XtFree((XtPointer)val);
 	}
 
+	XmStringFreeContext(ctx);
 	_XmProcessUnlock();
 	return out;
 }

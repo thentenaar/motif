@@ -846,6 +846,9 @@ _XmRenditionMerge(Display *d,	/* unused */
 	{
 	  if (NameIsString(_XmRendFontName(rend)))
 	    XtFree(_XmRendFontName(rend));
+#if USE_XFT
+	  XtFree(_XmRendFontStyle(rend));
+#endif
 	  if (ListIsList(_XmRendTabs(rend)))
 	    XmTabListFree(_XmRendTabs(rend));
 	}
@@ -1171,7 +1174,7 @@ MergeInto(XmRendition toRend,
     _XmRendTabs(toRend) = XmTabListCopy(_XmRendTabs(fromRend), 0, 0);
 #if USE_XFT
   if (_XmRendXftFont(toRend) == NULL)
-    _XmRendXftFont(toRend) = _XmRendXftFont(fromRend);
+    _XmRendXftFont(toRend) = XftFontCopy(_XmRendDisplay(fromRend), _XmRendXftFont(fromRend));
   if (_XmRendBG(toRend) == XmUNSPECIFIED_PIXEL)
     _XmRendXftBG(toRend) = _XmRendXftBG(fromRend);
   if (_XmRendFG(toRend) == XmUNSPECIFIED_PIXEL)
@@ -1783,6 +1786,9 @@ XmRenderTableFree(XmRenderTable table)
 {
   int 		i;
 
+  if (!table)
+    return;
+
   _XmProcessLock();
   for (i = 0; i < _XmRTCount(table); i++)
     XmRenditionFree(_XmRTRenditions(table)[i]);
@@ -1859,6 +1865,7 @@ static void set_props_from_pattern(XmRendition rend, const FcPattern *p)
 	return;
 #else
 	int i;
+	double d;
 	FcChar8 *s;
 
 	if (!rend || !p)
@@ -1894,10 +1901,10 @@ static void set_props_from_pattern(XmRendition rend, const FcPattern *p)
 	if (FcPatternGetString(p, FC_STYLE, 0, &s) == FcResultMatch)
 		_XmRendFontStyle(rend) = XtNewString((char *)s);
 
-	if (FcPatternGetInteger(p, FC_SIZE, 0, &i) == FcResultMatch)
-		_XmRendFontSize(rend) = i;
-	if (FcPatternGetInteger(p, FC_PIXEL_SIZE, 0, &i) == FcResultMatch)
-		_XmRendPixelSize(rend) = i;
+	if (FcPatternGetDouble(p, FC_SIZE, 0, &d) == FcResultMatch)
+		_XmRendFontSize(rend) = (int)d;
+	if (FcPatternGetDouble(p, FC_PIXEL_SIZE, 0, &d) == FcResultMatch)
+		_XmRendPixelSize(rend) = (int)d;
 	if (FcPatternGetInteger(p, FC_SLANT, 0, &i) == FcResultMatch)
 		_XmRendFontSlant(rend) = i;
 	if (FcPatternGetInteger(p, FC_WEIGHT, 0, &i) == FcResultMatch)
@@ -1974,7 +1981,7 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
 
 	for (i = 0; i < _XmRTCount(tbl); i++) {
 		rend = _XmRTRenditions(tbl)[i];
-		if (_XmRendFontType(rend) != XmFONT_IS_XFT || !_XmRendXftFont(rend))
+		if (rend == orig || _XmRendFontType(rend) != XmFONT_IS_XFT || !_XmRendXftFont(rend))
 			continue;
 
 		if (!FcCharSetHasChar(_XmRendXftFont(rend)->charset, (FcChar32)cp))
@@ -2050,10 +2057,28 @@ unlock:
 
 found:
 	rend = XmRenditionCreate(NULL, XmS, NULL, 0);
-	_XmRendXftFont(rend)  = XftFontOpenPattern(d, p2);
+	if (!(_XmRendXftFont(rend) = XftFontOpenPattern(d, p2))) {
+		FcPatternDestroy(p2);
+		XmRenditionFree(rend);
+		rend = NULL;
+		goto done;
+	}
+
 	_XmRendFontType(rend) = XmFONT_IS_XFT;
 	_XmRendDisplay(rend)  = _XmRendDisplay(orig);
 	set_props_from_pattern(rend, _XmRendXftFont(rend)->pattern);
+
+	/**
+	 * Fontconfig thinks this should match, but in reality, it doesn't.
+	 * This could be a bad font, fontconfig misconfiguration, etc.
+	 * We need to bail here to avoid getting stuck in a loop between
+	 * thinking we have a suitable font, and probing for a fallback.
+	 */
+	if (!FcCharSetHasChar(_XmRendXftFont(rend)->charset, (FcChar32)cp)) {
+		XmRenditionFree(rend);
+		rend = NULL;
+		goto done;
+	}
 
 	/* Append it to the render table */
 	_XmRendRefcount(rend) = _XmRTRefcount(tbl);
@@ -2175,6 +2200,11 @@ CleanupResources(XmRendition rend,
 #if USE_XFT
   if ((unsigned int)(unsigned long)_XmRendXftFont (rend) == XmAS_IS)
     _XmRendXftFont (rend) = NULL;
+  else if (copy && !_XmRendXftFont(rend))
+    _XmRendXftFont(rend) = XftFontCopy(_XmRendDisplay(rend), _XmRendXftFont(rend));
+
+  if (copy && _XmRendFontStyle(rend))
+    _XmRendFontStyle(rend) = XtNewString(_XmRendFontStyle(rend));
 #endif
 
   if (((unsigned int)(unsigned long)_XmRendFontName(rend) == XmAS_IS) ||
@@ -2203,36 +2233,6 @@ ValidateTag(XmRendition rend,
     }
 }
 
-#if USE_XFT
-static int
-GetSameRenditions(XmRendition *rend_cache, XmRendition rend, int count_rend)
-{
-	int i;
-	for (i=0; i<count_rend; i++){
-
-		if ( rend_cache && (rend_cache[i])
-				&& ((((_XmRendFontName(rend) 	&& _XmRendFontName(rend_cache[i]) ) && !strcmp(_XmRendFontName(rend_cache[i]), _XmRendFontName(rend)))
-					|| 	(!_XmRendFontName(rend) && !_XmRendFontName(rend_cache[i])))
-				&& (((_XmRendFontFoundry(rend) && _XmRendFontFoundry(rend_cache[i])) && !strcmp(_XmRendFontFoundry(rend_cache[i]), _XmRendFontFoundry(rend)))
-					|| 	(!_XmRendFontFoundry(rend) && !_XmRendFontFoundry(rend_cache[i])))
-				&& (((_XmRendFontStyle(rend) && _XmRendFontStyle(rend_cache[i])) && !strcmp(_XmRendFontStyle(rend_cache[i]), _XmRendFontStyle(rend)))
-					|| 	(!_XmRendFontStyle(rend) && !_XmRendFontStyle(rend_cache[i])) )
-				&& _XmRendFontSize(rend) == _XmRendFontSize(rend_cache[i])
-				&& _XmRendPixelSize(rend) == _XmRendPixelSize(rend_cache[i])
-				&& _XmRendFontSlant(rend) == _XmRendFontSlant(rend_cache[i])
-				&& _XmRendFontWeight(rend) == _XmRendFontWeight(rend_cache[i])
-				&& _XmRendFontSpacing(rend) == _XmRendFontSpacing(rend_cache[i]))
-	   	   )
-		{
-			return i;
-		}
-
-	}
-	return -1;
-
-}
-#endif
-
 /* Make sure all the font related resources make sense together and */
 /* then load the font specified by fontName if necessary. */
 static void
@@ -2252,7 +2252,8 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 
   _XmRendDisplay(rend) = display;
 
-  if (_XmRendLoadModel(rend) != XmLOAD_DEFERRED)
+  if (_XmRendLoadModel(rend) != XmLOAD_DEFERRED &&
+      _XmRendLoadModel(rend) != XmLOAD_LAZY)
     {
       XmDisplay			dsp = NULL;
       XmDisplayCallbackStruct	cb;
@@ -2316,9 +2317,9 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 				FcPatternAddString(p, FC_STYLE, (XftChar8 *)_XmRendFontStyle(rend));
 
 			if (_XmRendFontSize(rend))
-				FcPatternAddInteger(p, FC_SIZE, _XmRendFontSize(rend));
+				FcPatternAddDouble(p, FC_SIZE, (double)_XmRendFontSize(rend));
 			if (_XmRendPixelSize(rend))
-				FcPatternAddInteger(p, FC_PIXEL_SIZE, _XmRendPixelSize(rend));
+				FcPatternAddDouble(p, FC_PIXEL_SIZE, (double)_XmRendPixelSize(rend));
 			if (_XmRendFontSlant(rend))
 				FcPatternAddInteger(p, FC_SLANT, _XmRendFontSlant(rend));
 			if (_XmRendFontWeight(rend))
@@ -2328,9 +2329,10 @@ ValidateAndLoadFont(XmRendition rend, Display *display)
 			FcPatternAddDouble(p, FC_DPI, DpiOfXmScreen(XmScreenOfScreen(DefaultScreenOfDisplay(display))));
 
 			p2 = XftFontMatch(display, 0, p, &res);
-			_XmRendXftFont(rend) = XftFontOpenPattern(display, p2);
-			set_props_from_pattern(rend, _XmRendXftFont(rend)->pattern);
+			if (!(_XmRendXftFont(rend) = XftFontOpenPattern(display, p2)))
+				FcPatternDestroy(p2);
 			FcPatternDestroy(p);
+			set_props_from_pattern(rend, _XmRendXftFont(rend)->pattern);
 			result = !!_XmRendXftFont(rend);
 			break;
 #endif
@@ -2567,6 +2569,8 @@ static Boolean FreeRendition(XmRendition rendition)
       if (_XmRendTagCount(rendition) != 0)
 	XtFree((char *)_XmRendTags(rendition));
 #if USE_XFT
+      XtFree(_XmRendFontStyle(rendition));
+
       if (_XmRendXftFont(rendition) && _XmRendXftFont(rendition) != DEFAULT_xftFont)
         {
           XftFontClose(_XmRendDisplay(rendition),
@@ -2587,6 +2591,97 @@ void XmRenditionFree(XmRendition rendition)
 	if (FreeRendition(rendition))
 		FreeHandle(rendition);
 	_XmProcessUnlock();
+}
+
+/**
+ * Lazily load a font, returning True if it was successfuly loaded,
+ * False otherwise.
+ */
+Boolean XmRenditionMaterialize(XmRendition rendition)
+{
+	Display *d;
+	int mcnt;
+	char **mcset = NULL, *def_str;
+
+	if (!rendition || _XmRendLoadModel(rendition) != XmLOAD_LAZY)
+		return False;
+
+	d = _XmRendDisplay(rendition);
+	_XmRendRefcountInc(rendition);
+
+#if USE_XFT
+	if (_XmRendFontType(rendition) == XmFONT_IS_XFT) {
+		if (_XmRendXftFont(rendition))
+			return True;
+
+		_XmRendLoadModel(rendition) = XmLOAD_IMMEDIATE;
+		ValidateAndLoadFont(rendition, d);
+		_XmRendLoadModel(rendition) = XmLOAD_LAZY;
+		if (!_XmRendXftFont(rendition))
+			return False;
+
+		XftFontCopy(d, _XmRendXftFont(rendition));
+		return True;
+	}
+#endif
+
+	if (_XmRendFont(rendition))
+		return True;
+
+	/* Avoid Xt's converter caching */
+	if (_XmRendFontType(rendition) == XmFONT_IS_FONTSET) {
+		_XmRendFont(rendition) = XCreateFontSet(d, _XmRendFontName(rendition),
+		                                        &mcset, &mcnt, &def_str);
+		if (!_XmRendFont(rendition)) {
+			if ((_XmRendFont(rendition) = XLoadQueryFont(d, _XmRendFontName(rendition))))
+				_XmRendFontType(rendition) = XmFONT_IS_FONT;
+		}
+
+		if (mcset) XFreeStringList(mcset);
+	} else _XmRendFont(rendition) = XLoadQueryFont(d, _XmRendFontName(rendition));
+
+	return !!_XmRendFont(rendition);
+}
+
+/**
+ * Release a materialized lazy-loaded font
+ */
+void XmRenditionDematerialize(XmRendition rendition)
+{
+	Display *d;
+
+	if (!rendition || _XmRendLoadModel(rendition) != XmLOAD_LAZY)
+		return;
+
+	/**
+	 * If the ref count is greater than 1, the XmString rendition
+	 * cache (or something else)  is holding a reference. XmString
+	 * will Dematerialize the font once its cache gets destroyed,
+	 * otherwise, the holder of the reference is responsible for
+	 * Dematerializing the font.
+	 */
+	d = _XmRendDisplay(rendition);
+	if (_XmRendRefcountDec(rendition) > 1)
+		return;
+
+#if USE_XFT
+	if (_XmRendFontType(rendition) == XmFONT_IS_XFT) {
+		if (!_XmRendXftFont(rendition))
+			return;
+
+		XftFontClose(d, _XmRendXftFont(rendition));
+		_XmRendXftFont(rendition) = NULL;
+		return;
+	}
+#endif
+
+	if (!_XmRendFont(rendition))
+		return;
+
+	if (_XmRendFontType(rendition) == XmFONT_IS_FONTSET)
+		XFreeFontSet(d, (XFontSet)_XmRendFont(rendition));
+	else XFreeFont(d, _XmRendFont(rendition));
+	_XmRendFont(rendition) = NULL;
 }
 
 /* Get resource values from rendition. */

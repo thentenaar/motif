@@ -91,7 +91,7 @@ typedef struct __XmRenditionRec
   unsigned int	fontOnly : REND_OPTIMIZED_BITS;
   unsigned int	refcount : REND_REFCOUNT_BITS;
 
-  unsigned char	loadModel;
+  XmLoadModel	loadModel;
   XmStringTag	tag;
   String	fontName;
   XmFontType	fontType;

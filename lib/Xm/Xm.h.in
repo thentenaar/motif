@@ -279,9 +279,12 @@ typedef enum {
 #define XmREVERSED_GROUND_COLORS (XmDEFAULT_SELECT_COLOR - 1)
 #define XmHIGHLIGHT_COLOR        (XmREVERSED_GROUND_COLORS - 1)
 
-enum { XmUNSPECIFIED_LOAD_MODEL, XmLOAD_DEFERRED, XmLOAD_IMMEDIATE };
-
-
+typedef enum {
+	XmUNSPECIFIED_LOAD_MODEL, /* XXX: Unused */
+	XmLOAD_DEFERRED,
+	XmLOAD_IMMEDIATE,
+	XmLOAD_LAZY
+} XmLoadModel;
 
 /************************************************************************
  *  Primitive Resources and define values
@@ -1847,6 +1850,8 @@ extern void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal a
 extern void XmRenditionRetrieve(XmRendition rendition,
 				ArgList arglist,
 				Cardinal argcount);
+extern Boolean XmRenditionMaterialize(XmRendition rendition);
+extern void XmRenditionDematerialize(XmRendition rendition);
 extern void XmRenditionFree(XmRendition rendition);
 extern XmRendition XmRenditionCreate(Widget widget,
 				     XmStringTag tag,
