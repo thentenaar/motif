@@ -594,12 +594,25 @@ LocatePulldown(
         }
     }
 
-    if (x1 < 0) x1 = monitor->x + 4;
-    if (x1 + XtWidth(m) >= monitor->width)
+    /* If a cascade would leave this monitor, try the other side first. */
+    if (x1 + XtWidth(m) > monitor->x + monitor->width) {
+      if (!IsOption(root) &&
+          (XmIsCascadeButton(p) || XmIsCascadeButtonGadget(p))) {
+	x1 -= XtWidth(m) + x - XtX(p);
+      }
+    } else if (x1 < monitor->x) {
+      if (!IsOption(root) &&
+          (XmIsCascadeButton(p) || XmIsCascadeButtonGadget(p))) {
+	x1 += XtWidth(m) + x - XtX(p);
+      }
+    }
+
+    if (x1 < monitor->x) x1 = monitor->x + 4;
+    if (x1 + XtWidth(m) >= monitor->x + monitor->width)
         x1 = monitor->x + monitor->width - XtWidth(m) - 4;
 
-    if (y1 < 0) y1 = monitor->y + 4;
-    if (y1 + XtHeight(m) >= monitor->height)
+    if (y1 < monitor->y) y1 = monitor->y + 4;
+    if (y1 + XtHeight(m) >= monitor->y + monitor->height)
         y1 = monitor->y + monitor->height - XtHeight(m) - 4;
 
     XtX(m) = x1;

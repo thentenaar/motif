@@ -905,20 +905,24 @@ ForceMenuPaneOnScreen(
    Position x1, y1;
    XmMonitorInfo *monitor = NULL;
    Position rightEdgeOfMenu, bottomEdgeOfMenu;
+   Position monitorRight, monitorBottom;
    Widget pulldown_button = RC_CascadeBtn(rowcol);
    Dimension RowColBorderWidth = rowcol->core.border_width << 1;
    Dimension CascadeBorderWidth = 0;
 
    if (pulldown_button) {
-      XtTranslateCoords(pulldown_button, XtX(pulldown_button), XtY(pulldown_button), &x1, &y1);
-      monitor = XmGetMonitorInfoAt(XmScreenOfObject(pulldown_button), x1, y1);
-      CascadeBorderWidth = pulldown_button->core.border_width << 1;
+       XtTranslateCoords(pulldown_button, 0, 0, &x1, &y1);
+       monitor = XmGetMonitorInfoAt(XmScreenOfObject(pulldown_button), x1, y1);
+       CascadeBorderWidth = pulldown_button->core.border_width << 1;
    }
 
    if (!monitor) {
       if (!(monitor = XmGetMonitorInfoAt(XmScreenOfObject((Widget)rowcol), *x, *y)))
           return;
    }
+
+   monitorRight = monitor->x + monitor->width;
+   monitorBottom = monitor->y + monitor->height;
 
    /* Force the rowcol to be completely visible */
    rightEdgeOfMenu  = *x + RowColBorderWidth + rowcol->core.width;
@@ -933,9 +937,9 @@ ForceMenuPaneOnScreen(
        (RC_Type(XtParent(pulldown_button)) == XmMENU_OPTION))
    {
       Position old_x = *x;
-      if (bottomEdgeOfMenu >= monitor->height)
+      if (bottomEdgeOfMenu >= monitorBottom)
       {
-          *y = monitor->height - rowcol->core.height - RowColBorderWidth - 1;
+          *y = monitorBottom - rowcol->core.height - RowColBorderWidth - 1;
           if (LayoutIsRtoLM(rowcol))
              *x = old_x - rowcol->core.width - (rowcol->core.border_width <<1);
           else
@@ -944,9 +948,9 @@ ForceMenuPaneOnScreen(
           bottomEdgeOfMenu = *y + RowColBorderWidth + rowcol->core.height;
       }
 
-      if (*y < 0)
+      if (*y < monitor->y)
       {
-          *y = 0;
+          *y = monitor->y;
 
 	  /* Consider CascadeBtn as well as RowCol width to allow multi
 	   * column RowColumn
@@ -959,13 +963,13 @@ ForceMenuPaneOnScreen(
           bottomEdgeOfMenu = *y + RowColBorderWidth + rowcol->core.height;
       }
 
-      if (rightEdgeOfMenu >= monitor->width)
+      if (rightEdgeOfMenu >= monitorRight)
       {
 	  *x = old_x - rowcol->core.width + RowColBorderWidth;
 	  rightEdgeOfMenu = *x + RowColBorderWidth + rowcol->core.width;
       }
 
-      if (*x < 0)
+      if (*x < monitor->x)
       {
           if (LayoutIsRtoLM(rowcol))
              *x = old_x + pulldown_button->core.width + CascadeBorderWidth;
@@ -978,10 +982,10 @@ ForceMenuPaneOnScreen(
    /*
     * If the submenu is offscreen force it completely on.
     */
-   if (rightEdgeOfMenu >= monitor->width)
-       *x -= (rightEdgeOfMenu - monitor->width + 1);
+   if (rightEdgeOfMenu >= monitorRight)
+       *x -= (rightEdgeOfMenu - monitorRight + 1);
 
-   if (bottomEdgeOfMenu >= monitor->height)
+   if (bottomEdgeOfMenu >= monitorBottom)
    {
       if (pulldown_button && XtParent(pulldown_button) &&
 		XmIsRowColumn(XtParent(pulldown_button)) &&
@@ -998,16 +1002,16 @@ ForceMenuPaneOnScreen(
 		    + RowColBorderWidth
 		    + rowcol->core.height + 1);
 
-	 if (y_temp > 0)
+	 if (y_temp > monitor->y)
 	     *y = y_temp;
       }
       else
-	  *y -= (bottomEdgeOfMenu - monitor->height + 1);
+	  *y -= (bottomEdgeOfMenu - monitorBottom + 1);
    }
 
    /* Make sure that the top left corner is on screen! */
-   if (*x <= 0) *x = monitor->x + 4;
-   if (*y <= 0) *y = monitor->y + 4;
+   if (*x <= monitor->x) *x = monitor->x + 4;
+   if (*y <= monitor->y) *y = monitor->y + 4;
    FreeXmMonitorInfo(monitor);
 }
 
