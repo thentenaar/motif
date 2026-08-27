@@ -2548,7 +2548,7 @@ PrintBox(
  ****************/
 {
 /****************/
-    printf( "%sw: %X, m: 0x%X, x: %d, y: %d, w: %d, h: %d, b: %d\n",
+    printf( "%s w: %p, m: 0x%X, x: %d, y: %d, w: %d, h: %d, b: %d\n",
                   hdr, box->kid, box->box.request_mode, box->box.x, box->box.y,
                       box->box.width, box->box.height, box->box.border_width) ;
     return ;
@@ -2568,7 +2568,7 @@ PrintList(
 
     num = 0 ;
     while(    listPtr->kid    )
-    {   sprintf( subhdr, "%si: %d ", hdr, num) ;
+    {   sprintf( subhdr, "%s i: %d ", hdr, num) ;
         PrintBox( subhdr, listPtr) ;
         ++num ;
         ++listPtr ;
@@ -2593,11 +2593,11 @@ PrintMatrix(
 /****************/
     row = 1 ;
     boxPtr = spec->boxes ;
-    layoutPtr = spec->layouts.row ;
+    layoutPtr = &spec->layouts->row;
     while(    !(layoutPtr->end)    )
     {   col = 1 ;
         while(    boxPtr->kid    )
-        {   sprintf( subhdr, "%srow: %d, col: %d, ", hdr, row, col) ;
+        {   sprintf( subhdr, "%s row: %d, col: %d, ", hdr, row, col) ;
             PrintBox( subhdr, boxPtr) ;
             ++col ;
             ++boxPtr ;
