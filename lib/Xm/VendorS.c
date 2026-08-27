@@ -2995,7 +2995,7 @@ Destroy(
 		 XmFontListFree(ve->vendor.text_font_list);
 	     if (ve->vendor.title)
 		 XmStringFree(ve->vendor.title);
-	     if (ve->vendor.icon_name)
+	     if (ve->vendor.icon_name && ve->vendor.icon_name != ve->vendor.title)
 		 XmStringFree(ve->vendor.icon_name);
 
 	     if (ve->vendor.im_info)
