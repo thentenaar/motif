@@ -2637,7 +2637,7 @@ GetDepth(WidgetClass wc)
  * those applications recognize non MT-safe libraries is a different
  * issue.
  */
-inline void _XmFastSubclassInit(WidgetClass wc, unsigned int bit)
+void _XmFastSubclassInit(WidgetClass wc, unsigned int bit)
 {
 	XmBaseClassExt *basePtr = _XmGetBaseClassExtPtr(wc, XmQmotif);
 
@@ -2645,8 +2645,7 @@ inline void _XmFastSubclassInit(WidgetClass wc, unsigned int bit)
 		_XmSetFlagsBit(((*basePtr)->flags), bit);
 }
 
-Boolean inline
-_XmIsFastSubclass(WidgetClass wc, unsigned int bit)
+Boolean _XmIsFastSubclass(WidgetClass wc, unsigned int bit)
 {
 	XmBaseClassExt *basePtr = _XmGetBaseClassExtPtr(wc, XmQmotif);
 
