@@ -33,6 +33,7 @@ static char rcsid[] = "$TOG: RepType.c /main/17 1997/09/15 10:10:39 cshi $"
 #include "RepTypeI.h"
 #include "MessagesI.h"
 #include <Xm/XmosP.h>		/* for (indirectly) atoi() */
+#include <Xm/FontDialog.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -351,6 +352,12 @@ static const char * const FontTypeNames[] =
 static const unsigned char FontTypeMap[] =
 {   XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmAS_IS, XmFONT_IS_XFT
    } ;
+static const char * const FontSourceNames[] =
+{   "x", "xft"
+   } ;
+static const unsigned char FontSourceMap[] =
+{   XmFONT_SOURCE_X, XmFONT_SOURCE_XFT
+   } ;
 static const char * const IconAttachmentNames[] =
 {   "attach_north_west", "attach_north", "attach_north_east", "attach_east",
     "attach_south_east", "attach_south", "attach_south_west", "attach_west",
@@ -526,7 +533,7 @@ static const char * const SelectionTechniqueNames[] =
     } ;
 static const char * const SelectionTypeNames[] =
 {   "dialog_work_area", "dialog_prompt", "dialog_selection", "dialog_command",
-    "dialog_file_selection"
+    "dialog_file_selection", "dialog_font"
     } ;
 static const char * const SeparatorTypeNames[] =
 {   "no_line", "single_line", "double_line", "single_dashed_line",
@@ -1154,6 +1161,10 @@ static XmRepTypeEntryRec StandardRepTypes[] = {
   {
     XmRPixmapPlacement, (String*)PixmapPlacementNames, (unsigned char *)PixmapPlacementMap,
     XtNumber(PixmapPlacementNames), FALSE,
+  },
+  {
+    XmRFontSource, (String*)FontSourceNames, (unsigned char *)FontSourceMap,
+    XtNumber(FontSourceNames), False,
   }
 } ;
 

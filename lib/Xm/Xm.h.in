@@ -764,7 +764,6 @@ typedef struct
     int		pattern_length XM_DEPRECATED;
 } XmFileSelectionBoxCallbackStruct;
 
-
 typedef struct
 {
    int reason;
@@ -817,6 +816,12 @@ typedef struct
     XmRenderTable	render_table;
     XmStringTag		tag;
 } XmDisplayCallbackStruct;
+
+typedef struct {
+	int reason;
+	XEvent *event;
+	XmRendition rendition;
+} XmFontDialogCallbackStruct;
 
 /************************************************************************
  *  PushButton defines
@@ -1251,7 +1256,7 @@ enum{	XmPLACE_TOP,			XmPLACE_ABOVE_SELECTION,
 */
 enum{	XmDIALOG_WORK_AREA,		XmDIALOG_PROMPT,
 	XmDIALOG_SELECTION,		XmDIALOG_COMMAND,
-	XmDIALOG_FILE_SELECTION
+	XmDIALOG_FILE_SELECTION, XmDIALOG_FONT
 	} ;
 
 /************************************************************************

@@ -1699,6 +1699,16 @@ CSashCursor
 NsashCursor
 NvalueString
 NmodifyVerifyCallbackStr
+RFontSource
+CfontString
+NfontString
+CstyleString
+NstyleString
+CsampleText
+CsampleTitle
+NsampleTitle
+Cprefer100dpi
+Nprefer100dpi
 
 #file XmStrDefsI.h
 #table _XmStringsI

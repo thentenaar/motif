@@ -48,6 +48,7 @@
 #include <Xm/DropSMgr.h>
 #include <Xm/DropTrans.h>
 #include <Xm/FileSB.h>
+#include <Xm/FontDialog.h>
 #include <Xm/Form.h>
 #include <Xm/Frame.h>
 #include <Xm/Gadget.h>

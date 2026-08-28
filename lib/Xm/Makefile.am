@@ -188,7 +188,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         Xmpoll.h        TearOffP.h \
         TearOffBP.h     MenuUtilP.h     MenuT.h         XmAll.h \
         TraitP.h        SpinB.h         SpinBP.h        SSpinB.h \
-        SSpinBP.h \
+        SSpinBP.h       FontDialog.h    FontDialogP.h \
         Container.h     ContainerP.h    IconG.h         IconGP.h \
         Notebook.h      NotebookP.h     ContItemT.h     ContainerT.h \
         RCMenuP.h       ClipWindowP.h   TransferT.h \
@@ -217,7 +217,7 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         GeoUtils.c      ImageCache.c    Label.c         LabelG.c \
         List.c          MainW.c         MapEvents.c     MenuShell.c \
         MenuUtil.c      MessageB.c      PanedW.c        PushB.c \
-        PushBG.c        Region.c        ResConvert.c \
+        PushBG.c        Region.c        ResConvert.c    FontDialog.c \
         ResInd.c        RowColumn.c     Sash.c          Scale.c \
         ScrollBar.c     ScrolledW.c     SelectioB.c     SeparatoG.c \
         Separator.c     Simple.c        Svg.c           Text.c \
