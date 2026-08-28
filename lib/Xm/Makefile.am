@@ -22,8 +22,7 @@ EXTRA_HDRS = Ext.h ExtP.h  \
              ColorS.h ColorSP.h \
              Picture.h PictureP.h DataF.h DataFP.h DataFSelP.h \
              Ext18List.h Ext18ListP.h MultiList.h MultiListP.h \
-             Paned.h PanedP.h FontS.h FontSP.h \
-             IconBox.h IconBoxP.h IconButton.h IconButtonP.h xmlist.h \
+             Paned.h PanedP.h IconBox.h IconBoxP.h IconButton.h IconButtonP.h xmlist.h \
              Hierarchy.h HierarchyP.h Outline.h OutlineP.h \
              TabBox.h TabBoxP.h TabStack.h TabStackP.h \
              TabList.h DrawUtils.h Tree.h TreeP.h \
@@ -32,7 +31,7 @@ EXTRA_HDRS = Ext.h ExtP.h  \
 
 EXTRA_SRCS = XmExtUtil.c \
              Column.c ButtonBox.c ColorS.c Picture.c DataFSel.c DataF.c \
-             MultiList.c I18List.c Paned.c FontS.c IconBox.c IconButton.c xmlist.c \
+             MultiList.c I18List.c Paned.c IconBox.c IconButton.c xmlist.c \
              Hierarchy.c Outline.c TabBox.c TabList.c TabStack.c \
              DrawUtils.c Tree.c DropDown.c \
              XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefs25.ht XmStrDefsI.ht

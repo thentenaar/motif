@@ -108,8 +108,8 @@ static char rcsid[] = "$TOG: Mrminit.c /main/14 1999/05/19 15:25:33 mgreess $"
 #include <Xm/DropDownP.h>
 #include <Xm/FileSB.h>
 #include <Xm/FileSBP.h>
-#include <Xm/FontS.h>
-#include <Xm/FontSP.h>
+#include <Xm/FontDialog.h>
+#include <Xm/FontDialogP.h>
 #include <Xm/Form.h>
 #include <Xm/FormP.h>
 #include <Xm/Frame.h>
@@ -337,8 +337,8 @@ void MrmInitialize (void)
      (WidgetClass)&xmFormClassRec);
 
   MrmRegisterClass
-    (0, NULL, "XmCreateFontSelector", XmCreateFontSelector,
-     (WidgetClass)&xmFontSelectorClassRec);
+    (0, NULL, "XmCreateFontDialog", XmCreateFontDialog,
+    (WidgetClass)&xmFontDialogClassRec);
 
   MrmRegisterClass
     (0, NULL, "XmCreateFormDialog", XmCreateFormDialog,

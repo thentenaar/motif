@@ -24,7 +24,6 @@ SUBDIRS = airport \
          tooltips \
          ButtonBox \
          Column \
-         FontSel \
          Outline \
          TabStack \
          Tree \

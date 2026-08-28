@@ -39,7 +39,7 @@ static char rcsid[] = "$TOG: wmldbcreate.c /main/8 1997/04/14 12:55:30 dbl $"
 #include <stdlib.h>
 
 #include <Mrm/MrmWidget.h>
-#include <Xm/Xm.h>
+#include <Xm/XmAll.h>
 #include <Xm/MwmUtil.h>
 
 #include <Dt/Editor.h>

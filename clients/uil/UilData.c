@@ -53,6 +53,7 @@ static char rcsid[] = "$TOG: UilData.c /main/14 1999/04/16 10:41:44 mgreess $"
 **/
 
 #include <setjmp.h>
+#include <Xm/XmAll.h>
 
 #include <Dt/Editor.h>
 #include <Dt/Help.h>

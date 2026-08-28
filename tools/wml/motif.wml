@@ -480,6 +480,10 @@ EnumerationSet
         { XmTreeCompressNone; XmTreeCompressLeaves; XmTreeCompressLeaves;};
     XmTreeLineStyle : integer
         { LineSolid; LineOnOffDash; LineDoubleDash;};
+    XmFontDialogSource : integer {
+      XmFONT_SOURCE_X;
+      XmFONT_SOURCE_XFT;
+    };
 ! Define controls list of common aggregates of widgets
 
 ControlList
@@ -515,7 +519,7 @@ ControlList
         XmMultiList;
         XmFileSelectionBox;
         XmFileSelectionDialog;
-        XmFontSelector;
+        XmFontDialog;
         XmForm;
         XmFormDialog;
         XmFrame;
@@ -601,7 +605,7 @@ ControlList
         XmMultiList;
         XmFileSelectionBox;
         XmFileSelectionDialog;
-        XmFontSelector;
+        XmFontDialog;
         XmForm;
         XmFormDialog;
         XmFrame;
@@ -5856,165 +5860,83 @@ Child
   Xm_ColorSlidersToggle : XmToggleButton;
 
 !
-! Resources for the XmFontSelector
+! Resources for XmFontDialog
 !
 Resource
-  XmN100DPIstring : Argument {
-    Type = compound_string;
+  XmNsource : Argument {
+    Type           = integer;
+    EnumerationSet = XmFontDialogSource;
+    Default        = "XmDIALOG_SOURCE_XFT";
   };
-  XmN75DPIstring : Argument {
-    Type = compound_string;
+  XmNprefer100dpi : Argument {
+    Type    = boolean;
+    Default = True;
   };
-  XmNanyLowerString : Argument {
-    Type = compound_string;
+  XmNfontString : Argument {
+    Type    = compound_string;
+    Default = "Font";
   };
-  XmNanyString : Argument {
-    Type = compound_string;
-  };
-  XmNboldString : Argument {
-    Type = compound_string;
-  };
-  XmNbothString : Argument {
-    Type = compound_string;
-  };
-  XmNcurrentFont : Argument {
-    Type = string;
-  };
-  XmNdefaultEncodingString : Argument {
-    Type = string;
-  };
-  XmNencodingString : Argument {
-    Type = compound_string;
-  };
-  XmNencodingList : Argument {
-    Type = asciz_table;
-  };
-  XmNfamilyString : Argument {
-    Type = compound_string;
-  };
-  XmNitalicString : Argument {
-    Type = compound_string;
-  };
-  XmNmonoSpaceString : Argument {
-    Type = compound_string;
-  };
-  XmNoptionString : Argument {
-    Type = compound_string;
-  };
-  XmNotherString : Argument {
-    Type = compound_string;
-  };
-  XmNpropSpaceString : Argument {
-    Type = compound_string;
-  };
-  XmNsampleText : Argument {
-    Type = compound_string;
-  };
-  XmNscalingString : Argument {
-    Type = compound_string;
-  };
-  XmNshowFontName : Argument {
-    Type = boolean;
-  };
-  XmNshowNameString : Argument {
-    Type = compound_string;
+  XmNstyleString : Argument {
+    Type    = compound_string;
+    Default = "Style";
   };
   XmNsizeString : Argument {
-    Type = compound_string;
+    Type    = compound_string;
+    Default = "Size";
   };
-  XmNtextRows : Argument {
-    Type = integer;
+  XmNsampleTitle : Argument {
+    Type    = compound_string;
+    Default = "Sample";
   };
-  XmNuseScaling : Argument {
-    Type = boolean;
-  };
-  XmNxlfdString : Argument {
-    Type = compound_string;
+  XmNsampleText : Argument {
+    Type    = compound_string;
+    Default = "AaBbYyZz";
   };
 
-Class XmFontSelector : Widget {
-  SuperClass = "XmPaned";
-  ConvenienceFunction = XmCreateFontSelector;
+Class XmFontDialog : Widget {
+  SuperClass  = XmBulletinBoard;
+  ParentClass = XmDialogShell;
+  DialogClass = True;
+  ConvenienceFunction = XmCreateFontDialog;
   Resources {
-    XmN100DPIstring {
-      Default = "100 dpi";
-    };
-    XmN75DPIstring {
-      Default = "75 dpi";
-    };
-    XmNanyString {
-      Default = "Any";
-    };
-    XmNanyLowerString {
-      Default = "any";
-    };
-    XmNboldString {
-      Default = "Bold";
-    };
-    XmNbothString {
-      Default = "Both";
-    };
-    XmNcurrentFont;
-    XmNdefaultEncodingString { Default = "iso8859-1"; };
-    XmNencodingString  {
-      Default = "Encoding";
-    };
-    XmNencodingList;
-    XmNfamilyString {
-      Default = "Family";
-    };
-    XmNitalicString {
-      Default = "Italic";
-    };
-    XmNmarginHeight {
-      Default = "0";
-    };
-    XmNmonoSpaceString  {
-      Default = "Fixed Width Fonts";
-    };
-    XmNoptionString {
-      Default = "Options...";
-    };
-    XmNotherString {
-      Default = "Other Fonts";
-    };
-    XmNpropSpaceString {
-      Default = "Proportional Fonts";
-    };
-    XmNsampleText {
-      Default = "adcdef...";
-    };
-    XmNscalingString {
-      Default = "Use Font Scaling";
-    };
-    XmNshowFontName;
-    XmNshowNameString;
-    XmNsizeString {
-      Default = "Size";
-    };
-    XmNspacing ;
-    XmNtextRows;
-    XmNuseScaling;
-    XmNfontList;
-    XmNforeground;
-    ! to prevent shooting foot off
-    XmNnavigationType;
-    XmNorientation;
-    XmNseparatorOn;
-    XmNsashIndent;
-    XmNsashTranslations;
-    XmNsashWidth;
-    XmNsashHeight;
-    XmNsashShadowThickness;
-    XmNvalueChangedCallback;
-    XmNxlfdString {
-      Default = "Xlfd String";
-    };
+    XmNdialogType { Default = "XmDIALOG_FONT"; };
+    XmNsource;
+    XmNprefer100dpi;
+    XmNvisibleItemCount { Default = 6; };
+    XmNfontString;
+    XmNstyleString;
+    XmNsizeString;
+    XmNsampleTitle;
+    XmNsampleText;
+    XmNokLabelString;
+    XmNcancelLabelString;
   };
   Controls {
-    XmPopupMenu;
+    AllWidgetsAndGadgets;
+  };
+  Children {
+    Xm_FontLabel;
+    Xm_StyleLabel;
+    Xm_SizeLabel;
+    Xm_FontList;
+    Xm_StyleList;
+    Xm_SizeList;
+    Xm_Separator;
+    Xm_OK_Button;
+    Xm_Cancel_Button;
   };
 };
+
+Child
+    Xm_FontLabel     : XmLabel;
+    Xm_StyleLabel    : XmLabel;
+    Xm_SizeLabel     : XmLabel;
+    Xm_FontList      : XmScrolledList;
+    Xm_StyleList     : XmScrolledList;
+    Xm_SizeList      : XmScrolledList;
+    Xm_Separator     : XmSeparator;
+    Xm_OK_Button     : XmPushButton;
+    Xm_Cancel_Button : XmPushButton;
 
 !
 ! Resources for the XmTree Widget
