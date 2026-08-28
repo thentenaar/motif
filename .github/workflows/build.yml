@@ -14,77 +14,77 @@ permissions:
   contents: write
 
 jobs:
-  alpine-build:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x86_64, x86]
-        compiler: [gcc, clang]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Setup Alpine
-        id:   alpine
-        uses: jirutka/setup-alpine@v1
-        with:
-          arch: ${{ matrix.arch }}
-          branch: v3.24
-          packages: >
-            libx11-dev
-            libxpm-dev
-            libxt-dev
-            libxmu-dev
-            libxext-dev
-            libxft-dev
-            libxcursor-dev
-            libxrandr-dev
-            libxrender-dev
-            libjpeg-turbo-dev
-            libpng-dev
-            linux-headers
-            musl-dev
-            gcc
-            g++
-            git
-            autoconf
-            automake
-            libtool
-            make
-            flex
-            byacc
-            xvfb
-            xbitmaps
-            check-dev
-            clang
-            clang-dev
-            doas
-      - name: Make
-        run: |
-          cd /home/runner/work/motif/motif
-          CC=${{ matrix.compiler }} ./autogen.sh --enable-tests --disable-demos
-          make
-        shell: alpine.sh {0}
-      - name: Test
-        run: |
-          cd /home/runner/work/motif/motif
-          doas -u root rm -f /etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf
-          Xvfb :0 &>/dev/null &
-          DISPLAY=:0 make check
-          kill -TERM %1
-        shell: alpine.sh {0}
-      - name: libcheck -> JUnit XML
-        if: (!cancelled())
-        run: |
-          sudo apt install -y xsltproc
-          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
-      - name: Test Results
-        if: (!cancelled())
-        uses: dorny/test-reporter@v3
-        with:
-          name: Test Results
-          path: results.junit.xml
-          reporter: java-junit
-          max-annotations: 0
+#  alpine-build:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        arch: [x86_64, x86]
+#        compiler: [gcc, clang]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v7
+#      - name: Setup Alpine
+#        id:   alpine
+#        uses: jirutka/setup-alpine@v1
+#        with:
+#          arch: ${{ matrix.arch }}
+#          branch: v3.24
+#          packages: >
+#            libx11-dev
+#            libxpm-dev
+#            libxt-dev
+#            libxmu-dev
+#            libxext-dev
+#            libxft-dev
+#            libxcursor-dev
+#            libxrandr-dev
+#            libxrender-dev
+#            libjpeg-turbo-dev
+#            libpng-dev
+#            linux-headers
+#            musl-dev
+#            gcc
+#            g++
+#            git
+#            autoconf
+#            automake
+#            libtool
+#            make
+#            flex
+#            byacc
+#            xvfb
+#            xbitmaps
+#            check-dev
+#            clang
+#            clang-dev
+#            doas
+#      - name: Make
+#        run: |
+#          cd /home/runner/work/motif/motif
+#          CC=${{ matrix.compiler }} ./autogen.sh --enable-tests --disable-demos
+#          make
+#        shell: alpine.sh {0}
+#      - name: Test
+#        run: |
+#          cd /home/runner/work/motif/motif
+#          doas -u root rm -f /etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf
+#          Xvfb :0 &>/dev/null &
+#          DISPLAY=:0 make check
+#          kill -TERM %1
+#        shell: alpine.sh {0}
+#      - name: libcheck -> JUnit XML
+#        if: (!cancelled())
+#        run: |
+#          sudo apt install -y xsltproc
+#          xsltproc -o results.junit.xml tests/results.xml.xsl tests/results.xml
+#      - name: Test Results
+#        if: (!cancelled())
+#        uses: dorny/test-reporter@v3
+#        with:
+#          name: Test Results
+#          path: results.junit.xml
+#          reporter: java-junit
+#          max-annotations: 0
 
   debian-build:
     strategy:
