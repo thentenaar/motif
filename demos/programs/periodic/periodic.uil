@@ -1,4 +1,4 @@
-! 
+!
 ! Motif
 !
 ! Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,10 +19,10 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
-! 
+!
+!
 ! HISTORY
-! 
+!
 !   $XConsortium: periodic.uil /main/8 1996/11/08 15:41:22 drk $
 !******************************************************************************
 
@@ -36,8 +36,8 @@
 !*****************************************************************
 
 
-module periodic 
-    version = 'v2.0'
+module periodic
+    version = 'v2.1'
     names = case_sensitive
     objects = {
 	XmLabel = widget;
@@ -136,6 +136,7 @@ object appMain : XmMainWindow {
 	unmanaged XmWorkingDialog workingDialog;
 	unmanaged XmPromptDialog promptDialog;
 	unmanaged XmInformationDialog showDialog;
+	unmanaged XmFontDialog fontDialog;
     };
 };
 
@@ -551,7 +552,7 @@ object separatorFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = separatorFrameText;
-	}; }; 
+	}; };
 	XmSeparator { };
     };
 };
@@ -568,7 +569,7 @@ object arrowFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = arrowFrameText;
-	}; }; 
+	}; };
 	XmForm {
 	    arguments {
 		XmNfractionBase = 3;
@@ -632,7 +633,7 @@ object pushFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = pushFrameText;
-	}; }; 
+	}; };
 	XmForm {
 	    controls {
 		XmPushButton pushButton;
@@ -663,7 +664,7 @@ object toggleFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = toggleFrameText;
-	}; }; 
+	}; };
 	XmForm { controls { XmToggleButton toggleButton; }; };
     };
 };
@@ -708,7 +709,7 @@ object labelLabel : XmLabel {
 	XmNlabelString = labelText;
     };
 };
- 
+
 object optionFrame : XmFrame {
     arguments {
 	arguments formArgs;
@@ -812,8 +813,8 @@ object radioFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = radioFrameText;
-	}; }; 
-	XmRadioBox { 
+	}; };
+	XmRadioBox {
 	    arguments { XmNradioAlwaysOne = true; XmNspacing = 0; };
 	    controls {
 		XmToggleButton {
@@ -850,8 +851,8 @@ object treeFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = radioFrameText;
-	}; }; 
-	XmRadioBox { 
+	}; };
+	XmRadioBox {
 	    arguments { XmNradioAlwaysOne = true; XmNspacing = 0; };
 	    controls {
 		XmToggleButton {
@@ -890,7 +891,7 @@ object textFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = textFrameText;
-	}; }; 
+	}; };
 	XmText { arguments {
 	    XmNeditMode = XmMULTI_LINE_EDIT;
 	}; };
@@ -909,7 +910,7 @@ object scrollFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = scrollFrameText;
-	}; }; 
+	}; };
 	XmForm {
 	    controls {
 		XmScrollBar { arguments {
@@ -937,7 +938,7 @@ object listFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = listFrameText;
-	}; }; 
+	}; };
 	XmScrolledList { arguments {
 	    XmNitems = greekAlphabet;
 	}; };
@@ -956,10 +957,10 @@ object comboBoxFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = comboBoxFrameText;
-	}; }; 
+	}; };
 	XmForm {
 	    controls {
-		XmComboBox { 
+		XmComboBox {
 		    arguments {
 			XmNpositionMode = XmONE_BASED;
 			XmNleftAttachment = XmATTACH_FORM;
@@ -987,7 +988,7 @@ object paneFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = paneFrameText;
-	}; }; 
+	}; };
 	XmPanedWindow { controls {
 	    XmScrolledText { arguments {
 		XmNvalue = pane1Text;
@@ -1126,7 +1127,7 @@ object drawBtnFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = drawBtnFrameText;
-	}; }; 
+	}; };
 	XmDrawnButton drawnButton;
     };
 };
@@ -1154,7 +1155,7 @@ object spinBoxFrame : XmFrame {
 	XmLabel  { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = spinBoxFrameText;
-	}; }; 
+	}; };
 	XmForm {
 	    controls {
 		XmSpinBox {
@@ -1183,14 +1184,14 @@ object spinBoxFrame : XmFrame {
 
 object commandFrame : XmFrame {
     arguments {
-        XmNtabLabelString = "XmCommand";    
+        XmNtabLabelString = "XmCommand";
     };
     controls {
 	XmLabel { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = commandFrameText;
 	}; };
-	XmCommand { 
+	XmCommand {
 	    arguments {
 		XmNmarginWidth = 4;
 		XmNmarginHeight = 4;
@@ -1213,7 +1214,7 @@ object tabFrame: XmFrame {
        XmLabel { arguments {
 	    arguments titleArgs;
 	    XmNlabelString = "TabStack";
-	}; }; 
+	}; };
        XmTabStack tabstack;
     };
 };
@@ -1338,7 +1339,7 @@ object High :XmPushButton
 object column: XmColumn {
     arguments {
         XmNtabLabelString = "XmColumn";
-    
+
     };
     controls {
         XmText { arguments {
@@ -1361,7 +1362,7 @@ object column: XmColumn {
             XmNcolumns = 14;
             XmNentryLabelString = "State";
 	}; };
-        
+
     };
 };
 object notebookFrame : XmFrame {
@@ -1386,7 +1387,7 @@ object notebook : XmNotebook {
 	XmPushButton { arguments {
 	    XmNlabelString = dialogText;
 	    XmNnotebookChildType = XmMAJOR_TAB;
-	    XmNpageNumber = 1;	    
+	    XmNpageNumber = 1;
 	}; };
         XmPushButton { arguments {
             XmNlabelString = notebookWidgetsText;
@@ -1522,6 +1523,7 @@ object dialogContainer : XmContainer {
 	XmIconGadget filePick;
 	XmIconGadget selectPick;
 	XmIconGadget promptPick;
+	XmIconGadget fontPick;
     };
 };
 
@@ -1580,6 +1582,12 @@ object promptPick : XmIconGadget {
     };
 };
 
+object fontPick : XmIconGadget {
+    arguments {
+		XmNlabelString     = fontPickText;
+    	XmNlargeIconPixmap = fontPixmap;
+    };
+};
 
 ! Notebook Page 2
 
@@ -2226,7 +2234,7 @@ object showDialog : XmInformationDialog {
 		compound_string("", separate = true) &
 		compound_string("Ops: Cathy, Darrell", separate = true) &
 		compound_string("", separate = true) &
-		compound_string("Also starring: Beth, Lorraine", 
+		compound_string("Also starring: Beth, Lorraine",
 				separate = true) &
 		compound_string("");
     };
@@ -2394,6 +2402,13 @@ object promptDialog : XmPromptDialog {
     };
 };
 
+object fontDialog : XmFontDialog {
+    arguments {
+	XmNdialogTitle       = fontTitleText;
+	XmNokLabelString     = fontOkText;
+	XmNcancelLabelString = fontCancelText;
+    };
+};
 
 ! Notebook Pages 3..10
 
@@ -2552,7 +2567,7 @@ list layoutRControls : controls {
 };
 
 object layoutLTForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 3;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmLEFT_TO_RIGHT_TOP_TO_BOTTOM;
@@ -2561,7 +2576,7 @@ object layoutLTForm : XmForm {
 };
 
 object layoutRTForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 4;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmRIGHT_TO_LEFT_TOP_TO_BOTTOM;
@@ -2570,7 +2585,7 @@ object layoutRTForm : XmForm {
 };
 
 object layoutTLForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 5;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmTOP_TO_BOTTOM_LEFT_TO_RIGHT;
@@ -2579,7 +2594,7 @@ object layoutTLForm : XmForm {
 };
 
 object layoutTRForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 6;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmTOP_TO_BOTTOM_RIGHT_TO_LEFT;
@@ -2588,7 +2603,7 @@ object layoutTRForm : XmForm {
 };
 
 object layoutBLForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 7;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmBOTTOM_TO_TOP_LEFT_TO_RIGHT;
@@ -2597,7 +2612,7 @@ object layoutBLForm : XmForm {
 };
 
 object layoutBRForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 8;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmBOTTOM_TO_TOP_RIGHT_TO_LEFT;
@@ -2606,7 +2621,7 @@ object layoutBRForm : XmForm {
 };
 
 object layoutLBForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 9;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmLEFT_TO_RIGHT_BOTTOM_TO_TOP;
@@ -2615,7 +2630,7 @@ object layoutLBForm : XmForm {
 };
 
 object layoutRBForm : XmForm {
-    arguments {  
+    arguments {
 	XmNpageNumber = 10;
 	XmNfractionBase = 40;
 	XmNlayoutDirection = XmRIGHT_TO_LEFT_BOTTOM_TO_TOP;
@@ -2640,11 +2655,11 @@ object toggleButtonPage : XmForm {
 object toggleButtonExample : XmToggleButton {
     arguments {
 	arguments formArgs;
-      	XmNleftPosition = 10; 
+      	XmNleftPosition = 10;
       	XmNrightPosition = 30;
-      	XmNtopPosition = 0; 
+      	XmNtopPosition = 0;
       	XmNbottomPosition = 10;
-	
+
 	XmNlabelString = toggleExampleText;
 	XmNindicatorOn = XmINDICATOR_CHECK_BOX;
 	XmNindicatorType = XmN_OF_MANY;
@@ -2663,11 +2678,11 @@ object toggleButtonExample : XmToggleButton {
 object toggleButtonControlWin : XmScrolledWindow {
     arguments {
 	arguments formArgs;
-      	XmNleftPosition = 0; 
+      	XmNleftPosition = 0;
 	XmNleftOffset = 5;
       	XmNrightPosition = 40;
 	XmNrightOffset = 5;
-      	XmNtopPosition = 10; 
+      	XmNtopPosition = 10;
       	XmNbottomPosition = 40;
         XmNscrollBarDisplayPolicy = XmAS_NEEDED;
         XmNscrollingPolicy = XmAUTOMATIC;
@@ -2721,7 +2736,7 @@ object toggleIndOnControl : XmComboBox {
       	XmNselectedItem = toggleCheckBoxItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
               	XmNvisibleItemCount = 7;
               	XmNitems = toggleIndOnItems;
@@ -2745,7 +2760,7 @@ object toggleIndTypeControl : XmComboBox {
       	XmNselectedItem = toggleNofManyItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
 	    arguments {
 		XmNvisibleItemCount = 4;
 		XmNitems = toggleIndTypeItems;
@@ -2769,7 +2784,7 @@ object toggleIndSizeControl : XmComboBox {
       	XmNselectedItem = toggle20Item;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 5;
 		XmNitems = toggleIndSizeItems;
@@ -2793,7 +2808,7 @@ object toggleTogModeControl : XmComboBox {
       	XmNselectedItem = toggleBooleanItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 2;
 		XmNitems = toggleTogModeItems;
@@ -2817,7 +2832,7 @@ object toggleVizOffControl : XmComboBox {
       	XmNselectedItem = toggleOnItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 2;
 		XmNitems = toggleVizOffItems;
@@ -2841,7 +2856,7 @@ object toggleSelColorControl : XmComboBox {
       	XmNselectedItem = toggleDefaultSelectItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 3;
 		XmNitems = toggleSelColorItems;
@@ -2865,7 +2880,7 @@ object toggleUnselColorControl : XmComboBox {
       	XmNselectedItem = toggleBackgroundItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 1;
 		XmNitems = toggleUnselColorItems;
@@ -2889,7 +2904,7 @@ object toggleFillControl : XmComboBox {
       	XmNselectedItem = toggleOnItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 2;
 		XmNitems = toggleFillItems;
@@ -2913,7 +2928,7 @@ object toggleSetControl : XmComboBox {
       	XmNselectedItem = toggleSetItem;
     };
     controls {
-        Xm_List { 
+        Xm_List {
             arguments {
 		XmNvisibleItemCount = 3;
 		XmNitems = toggleSetItems;

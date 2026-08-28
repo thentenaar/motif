@@ -19,7 +19,7 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 ! HISTORY
 
 
@@ -34,7 +34,7 @@ hebrewAlphabet : string_table (
 			"kaph", "lamedh", "mem", "nun", "samekh",
 			"ayin", "pe", "sadhe", "qoph", "resh",
 			"sin", "shin", "tav");
-			
+
 
 greekAlphabet : string_table (
 			"alpha", "beta", "gamma", "delta",
@@ -175,6 +175,7 @@ errorTitleText :	"ErrorDialog";
 fileTitleText :		"FileSelectionDialog";
 selectTitleText :	"SelectionDialog";
 promptTitleText :	"PromptDialog";
+fontTitleText : "FontDialog";
 
 ! widget text
 
@@ -232,6 +233,7 @@ workingPickText :	"Working";
 filePickText :		"FileSelection";
 selectPickText :	"Selection";
 promptPickText :	"Prompt";
+fontPickText : "Font";
 
 ! option menu
 
@@ -400,7 +402,7 @@ questionYesText :	"Yes";
 questionMaybeText :	"Maybe";
 questionNoText :	"No";
 questionMessageText :
-		compound_string("This is Motif 2.3.", separate = true) &
+		compound_string("This is Motif 2.5.", separate = true) &
 		compound_string("", separate = true) &
 		compound_string("Any questions ?");
 questionPixmap : icon("                         ",
@@ -573,6 +575,36 @@ promptPixmap : icon("                         ",
 		    "                         ",
 		    "                         ");
 
+!
+! Font Dialog
+!
+fontOkText     : "Ok";
+fontCancelText : "Cancel";
+fontPixmap : icon("                         ",
+		   "                         ",
+		   "                         ",
+		   "        ****             ",
+		   "        *  *             ",
+		   "       **  **            ",
+		   "       *    *            ",
+		   "       *    *            ",
+		   "      **    **           ",
+		   "      *      *           ",
+		   "      *      *    ****   ",
+		   "     **      **  **  **  ",
+		   "     *        *      **  ",
+		   "     **********   *****  ",
+		   "    **        **  *  **  ",
+		   "    *          * **  **  ",
+		   "    *          * **  **  ",
+		   "   **          ** ****** ",
+		   "   *            *        ",
+		   "  ****        ****       ",
+		   "                         ",
+		   "                         ",
+		   "                         ",
+		   "                         ",
+		   "                         ");
 
 ! Widgets container (page 2 of the notebook)
 
@@ -807,9 +839,9 @@ toggleIndOnItems : string_table ( "None", "Fill", "Box",
 				  "Cross", "Cross box" );
 toggleIndTypeText : "XmNindicatorType:";
 toggleNofManyItem : "N-of-Many";
-toggleIndTypeItems : string_table ( toggleNofManyItem, 
-				    "1-of-Many", 
-				    "1-of-Many-Round", 
+toggleIndTypeItems : string_table ( toggleNofManyItem,
+				    "1-of-Many",
+				    "1-of-Many-Round",
                                     "1-of-Many-Diamond" );
 toggleIndSizeText : "XmNindicatorSize:";
 toggle20Item : "20";
@@ -823,7 +855,7 @@ toggleVizOffItems : string_table ( toggleOnItem, "Off" );
 toggleSelColorText : "XmNselectColor:";
 toggleDefaultSelectItem : "Default Select";
 toggleSelColorItems : string_table ( toggleDefaultSelectItem,
-				     "Reversed Ground", 
+				     "Reversed Ground",
 				     "Highlight" );
 toggleUnselColorText : "XmNunselectColor:";
 toggleBackgroundItem : "Background";
