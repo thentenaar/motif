@@ -405,6 +405,7 @@ demos/programs/draw/Makefile \
 demos/programs/earth/Makefile \
 demos/programs/filemanager/Makefile \
 demos/programs/fileview/Makefile \
+demos/programs/font_dialog/Makefile \
 demos/programs/getsubres/Makefile \
 demos/programs/hellomotif/Makefile \
 demos/programs/hellomotifi18n/Makefile \

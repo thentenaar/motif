@@ -7,8 +7,10 @@ SUBDIRS = airport \
          earth \
          filemanager \
          fileview \
+         font_dialog \
          getsubres \
          hellomotif \
+         hellomotifi18n \
          i18ninput \
          panner \
          periodic \
@@ -19,7 +21,6 @@ SUBDIRS = airport \
          Exm \
          todo \
          workspace \
-         hellomotifi18n \
          tooltips \
          ButtonBox \
          Column \

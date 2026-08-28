@@ -102,6 +102,7 @@ demos/programs/draw/draw
 demos/programs/earth/earth
 demos/programs/filemanager/filemanager
 demos/programs/fileview/fileview
+demos/programs/font_dialog/font_dialog
 demos/programs/getsubres/getsubres
 demos/programs/hellomotif/hellomotif
 demos/programs/i18ninput/i18ninput
