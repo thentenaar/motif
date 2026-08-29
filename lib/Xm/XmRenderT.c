@@ -1139,9 +1139,16 @@ CopyInto(XmRendition toRend,
   if (_XmRendFontType(fromRend) == XmFONT_IS_XFT && _XmRendXftFont(fromRend))
       _XmRendXftFont(toRend) = XftFontCopy(_XmRendDisplay(fromRend),
                                            _XmRendXftFont(fromRend));
+  if (!NameIsString(_XmRendFontStyle(fromRend)))
+    _XmRendFontStyle(toRend) = NULL;
+  else
+    _XmRendFontStyle(toRend) = XtNewString(_XmRendFontStyle(fromRend));
 
-  _XmRendFontStyle (toRend) = _XmRendFontStyle (fromRend);
-  _XmRendFontFoundry (toRend) = _XmRendFontFoundry (fromRend);
+  if (!NameIsString(_XmRendFontFoundry(fromRend)))
+    _XmRendFontFoundry(toRend) = NULL;
+  else
+    _XmRendFontFoundry(toRend) = XtNewString(_XmRendFontFoundry(fromRend));
+
   _XmRendFontSize (toRend) = _XmRendFontSize (fromRend);
   _XmRendPixelSize (toRend) = _XmRendPixelSize (fromRend);
 #else
