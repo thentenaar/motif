@@ -240,6 +240,7 @@ man_MANS = ApplicationShell.3 \
     XmFileSelectionBox.3 \
     XmFileSelectionBoxGetChild.3 \
     XmFileSelectionDoSearch.3 \
+    XmFontDialog.3 \
     XmFontList.3 \
     XmFontListAdd.3 \
     XmFontListAppendEntry.3 \
@@ -256,7 +257,6 @@ man_MANS = ApplicationShell.3 \
     XmFontListInitFontContext.3 \
     XmFontListNextEntry.3 \
     XmFontListRemoveEntry.3 \
-    XmFontSelector.3 \
     XmForm.3 \
     XmFrame.3 \
     XmGadget.3 \

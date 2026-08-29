@@ -43,7 +43,6 @@ static void font_selected(Widget w, XtPointer client, XtPointer call)
 
 	label = (Widget)client;
 	fd_cb = (XmFontDialogCallbackStruct *)call;
-
 	if (!label| !fd_cb)
 		return;
 
@@ -54,6 +53,7 @@ static void font_selected(Widget w, XtPointer client, XtPointer call)
 	rt  = XmRenderTableAddRenditions(NULL, &fd_cb->rendition, 1, 0);
 	XtVaSetValues(label, XmNrenderTable, rt, XmNlabelString, tmp, NULL);
 	XmStringFree(tmp);
+	XmRenderTableFree(rt);
 
 	/**
 	 * The rendition we get in the callback data is a copy, so we must
@@ -132,12 +132,12 @@ int main(int argc, char *argv[])
 	                                     XmNbottomAttachment, XmATTACH_FORM,
 	                                     XmNleftAttachment, XmATTACH_FORM, NULL);
 	x_button = XtVaCreateManagedWidget("X Fonts",
-	                                     xmPushButtonWidgetClass, form,
-	                                     XmNtopAttachment, XmATTACH_WIDGET,
-	                                     XmNtopWidget, frame,
-	                                     XmNbottomAttachment, XmATTACH_FORM,
-	                                     XmNleftAttachment, XmATTACH_WIDGET,
-	                                     XmNleftWidget, xft_button, NULL);
+	                                   xmPushButtonWidgetClass, form,
+	                                   XmNtopAttachment, XmATTACH_WIDGET,
+	                                   XmNtopWidget, frame,
+	                                   XmNbottomAttachment, XmATTACH_FORM,
+	                                   XmNleftAttachment, XmATTACH_WIDGET,
+	                                   XmNleftWidget, xft_button, NULL);
 	quit_button = XtVaCreateManagedWidget("Quit",
 	                                      xmPushButtonWidgetClass, form,
 	                                      XmNtopAttachment, XmATTACH_WIDGET,
@@ -147,11 +147,9 @@ int main(int argc, char *argv[])
 	                                      XmNleftWidget, x_button, NULL);
 
 	/* Create our dialogs */
-	xft_dialog = mkdialog(top,
-	                      XmStringCreateLocalized("Pick a Xft Font"),
+	xft_dialog = mkdialog(top, XmStringCreateLocalized("Pick a Xft Font"),
 	                      XmFONT_SOURCE_XFT, label);
-	x_dialog   = mkdialog(top,
-	                      XmStringCreateLocalized("Pick a X Font"),
+	x_dialog   = mkdialog(top, XmStringCreateLocalized("Pick a X Font"),
 	                      XmFONT_SOURCE_X, label);
 
 	/* Finally, hook up our button callbacks */

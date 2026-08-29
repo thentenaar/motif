@@ -1,0 +1,132 @@
+.TH XMFONTDIALOG 3 2026-08-29 "Motif 2.5.3"
+.SH NAME
+XmFontDialog - Font Selection Dialog
+
+.SH SYNOPSIS
+.nf
+#include <Xm/FontDialog.h>
+.fi
+
+.SH DESCRIPTION
+Allows a user to easily select a font from available Xft or X fonts by
+foundry and family, style, and point size. The available options are
+displayed in three scrolled lists: font, style, and size; which cascade
+in that order as the selected options change. The sample string is
+displayed in a frame below the lists, rendered in the currently selected
+font.
+
+.SH CLASSES
+\fBXmFontDialog\fP inherits behaviors, resources, and traits from
+\fBXmBulletinBoard\fP and its superclasses.
+
+Its class pointer is \fBxmFontDialogWidgetClass\fP.
+
+.SH WIDGETS
+\fBXmFontDialog\fP creates the following descendant widgets. Applications
+can use \fBXtNameToWidget\fP to access particular named descendants.
+
+.TS
+tab(|) box;
+lb| lb| lb
+l| lb| l.
+Name|Class|Purpose
+_
+FontLabel|XmLabelGadget|Label for the font list
+StyleLabel|XmLabelGadget|Label for the style list
+SizeLabel|XmLabelGadget|Label for the size list
+FontList|XmScrolledList|List of font foundry + family
+StyleList|XmScrolledList|List of font styles
+SizeList|XmScrolledList|List of point sizes
+SampleFrame|XmFrame|Frame containing the sample display
+SampleFrameTitle|XmLabelGadget|Title for sample frame
+Sample|XmLabelGadget|Sample display label
+Separator|XmSeparatorGadget|Horizontal separator
+OK|XmPushButtonGadget|OK button
+Cancel|XmPushButtonGadget|Cancel button
+.TE
+
+.SH RESOURCES
+
+.TS
+tab(|) box;
+cb s s s s
+lb| lb| lb| lb| lb
+l| lb| lb| l| l.
+XmFontDialog Resource Set
+=
+Name|Class|Type|Default|Access
+_
+XmNdialogType|XmCDialogType|unsigned char|XmDIALOG_FONT|G
+XmNsource|XmCSource|unsigned char|XmFONT_SOURCE_XFT|C
+XmNprefer100dpi|XmCprefer100dpi|Boolean|True|C
+XmNvisibleItemCount|XmCVisibleItemCount|int|6|CSG
+XmNfontString|XmCfontString|XmString|"Font"|CSG
+XmNstyleString|XmCstyleString|XmString|"Style"|CSG
+XmNsizeString|XmCsizeString|XmString|"Size"|CSG
+XmNsampleTitle|XmCsampleTitle|XmString|"Sample"|CSG
+XmNsampleText|XmCsampleText|XmString|"AaBbYyZz"|CSG
+XmNokLabelString|XmCOkLabelString|XmString|dynamic|CSG
+XmNcancelLabelString|XmCCancelLabelString|XmString|dynamic|CSG
+XmNokCallback|XmCCallback|XtCallbackList|NULL|C
+XmNcancelCallback|XmCCallback|XtCallbackList|NULL|C
+.TE
+
+.IP "\fBXmNdialogType\fP" 8
+Specifies the type of the dialog (\fIXmDIALOG_FONT\fP).
+.IP "\fBXmNsource\fP" 8
+Specifies whether to load Xft (\fIXmFONT_SOURCE_XFT\fP) or
+X (\fIXmFONT_SOURCE_X\fP) fonts.
+.IP "\fBXmNprefer100dpi\fP" 8
+If \fBTrue\fP ignore 75 dpi fonts. Only applicable for X fonts.
+.IP "\fBXmNvisibleItemCount\fP" 8
+Number of items to keep visible in each of the three lists.
+.IP "\fBXmNfontString\fP" 8
+String to display above the font list.
+.IP "\fBXmNstyleString\fP" 8
+String to display above the style list.
+.IP "\fBXmNsizeString\fP" 8
+String to display above the size list.
+.IP "\fBXmNsampleTitle\fP" 8
+Title for the sample frame.
+.IP "\fBXmNsampleText\fP" 8
+Sample text to render in the frame.
+.IP "\fBXmNokLabelString\fP" 8
+Label for the \fBOK\fP button. If unspecified, this uses the localized
+version of "OK" provided by \fBXmBulletinBoard\fP.
+.IP "\fBXmNcancelLabelString\fP" 8
+Label for the \fBCancel\fP button. If unspecified, this uses the localized
+version of "Cancel" provided by \fBXmBulletinBoard\fP.
+.IP "\fBXmNokCallback\fP" 8
+Callback list for \fBXmNactivate\fP on the \fBOK\fP button.
+.IP "\fBXmNcancelCallback\fP" 8
+Callback list for \fBXmNactivate\fP on the \fBCancel\fP button.
+
+.SS INHERITED RESOURCES
+See \fBXmBulletinBoard\fP(3).
+
+.SH CALLBACKS
+A pointer to the following structure is passed to each callback routine
+for \fBXmNokCallback\fP and \fBXmNcancelCallback\fP:
+
+.nf
+typedef struct {
+	\fBint \fPreason;
+	\fBXEvent *\fPevent;
+	\fBXmRendition \fPrendition;
+} XmFontDialogCallbackStruct;
+.fi
+.IP "\fIreason\fP" 10
+Indicates why the callback was invoked (\fBXmCR_OK\fP or \fBXmCR_CANCEL\fP)
+.IP "\fIevent\fP" 10
+The \fBXEvent\fP that triggered the callback
+.IP "\fIrendition\fP" 10
+A copy of the currently selected rendition, supplied to the \fBOK\fP
+callback. The callback must free this.
+
+.SH SEE ALSO
+\fBXtNameToWidget\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
