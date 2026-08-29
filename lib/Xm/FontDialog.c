@@ -1189,7 +1189,8 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 			memcpy(setwidth, "Regular", 8);
 		}
 
-		use_weight = weight && (*weight != 'M' && *weight != 'm');
+		use_weight = weight && (*weight != 'M' && *weight != 'm' &&
+		                        *weight != 'r' && *weight != 'R');
 		use_slant  = slant  && (*slant  != 'R' && *slant  != 'r');
 		bsz        = (use_weight ? strlen(weight) + 1 : 0) +
 		             (use_slant  ? strlen(slant)  + 1 : 0) +
