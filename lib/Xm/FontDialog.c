@@ -748,12 +748,15 @@ static XmGeoMatrix GeoMatrixCreate(Widget w, Widget inst, XtWidgetGeometry *desi
 static XmRendition load_xft(Widget w, const String family, String style)
 {
 	Arg args[4];
+	XmRendition r;
 
+	r = XmRenditionCreate(w, XmS, NULL, 0);
 	XtSetArg(args[0], XmNfontType, XmFONT_IS_XFT);
 	XtSetArg(args[1], XmNfontName, family);
 	XtSetArg(args[2], XmNloadModel, XmLOAD_LAZY);
 	if (style) XtSetArg(args[3], XmNfontStyle, style);
-	return XmRenditionCreate(w, XmS, args, 3 + !!style);
+	XmRenditionUpdate(r, args, 3 + !!style);
+	return r;
 }
 #endif
 
@@ -763,11 +766,14 @@ static XmRendition load_xft(Widget w, const String family, String style)
 static XmRendition load_fontset(Widget w, const String xlfd)
 {
 	Arg args[3];
+	XmRendition r;
 
+	r = XmRenditionCreate(w, XmS, NULL, 0);
 	XtSetArg(args[0], XmNfontType, XmFONT_IS_FONTSET);
 	XtSetArg(args[1], XmNfontName, xlfd);
 	XtSetArg(args[2], XmNloadModel, XmLOAD_LAZY);
-	return XmRenditionCreate(w, XmS, args, 3);
+	XmRenditionUpdate(r, args, 3);
+	return r;
 }
 
 /**
