@@ -349,7 +349,7 @@ static void Initialize(Widget req, Widget new, ArgList args, Cardinal *num_args)
 {
 	int sz;
 	Cardinal i;
-	Arg arg[6];
+	Arg arg[5];
 	XmRenderTable rt;
 	struct font_prop *info;
 	XmFontDialogWidget fd = (XmFontDialogWidget)new;
@@ -361,6 +361,7 @@ static void Initialize(Widget req, Widget new, ArgList args, Cardinal *num_args)
 	fd->fontdlg.selected_font  = 1;
 	fd->fontdlg.selected_style = 1;
 	fd->fontdlg.selected_size  = 1;
+	fd->fontdlg.sample         = NULL;
 
 	/* Determine our default pixelsize */
 	if (!(rt = fd->bulletin_board.label_font_list))
@@ -440,20 +441,6 @@ static void Initialize(Widget req, Widget new, ArgList args, Cardinal *num_args)
 		fd->fontdlg.sample_frame, "SampleFrameTitle", arg, 5
 	);
 	XtManageChild(fd->fontdlg.sample_label);
-
-	/**
-	 * Sample label
-	 */
-	XtSetArg(arg[0], XmNtraversalOn,  False);
-	XtSetArg(arg[1], XmNmarginTop,    5);
-	XtSetArg(arg[2], XmNmarginBottom, 5);
-	XtSetArg(arg[3], XmNmarginLeft,   5);
-	XtSetArg(arg[4], XmNmarginRight,  5);
-	XtSetArg(arg[5], XmNalignment,    XmALIGNMENT_CENTER);
-	fd->fontdlg.sample = XmCreateLabelGadget(
-		fd->fontdlg.sample_frame, "Sample", arg, 6
-	);
-	XtManageChild(fd->fontdlg.sample);
 
 	/**
 	 * Separator + Buttons
@@ -1085,9 +1072,9 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 	char **names       = NULL;
 	XFontStruct *finfo = NULL;
 	struct font_prop *style, *size;
-	Atom FOUNDRY, FAMILY_NAME, WEIGHT_NAME, SLANT;
-	Atom SETWIDTH_NAME, POINT_SIZE, RESOLUTION_X, FONT;
-	String foundry, family, weight, slant, setwidth, font, tmp;
+	Atom FOUNDRY, FAMILY_NAME, WEIGHT_NAME, SLANT, SETWIDTH_NAME;
+	Atom POINT_SIZE, RESOLUTION_X;
+	String foundry, family, weight, slant, setwidth, tmp;
 	XErrorHandler olderr;
 	XmString q;
 	Boolean use_weight, use_slant;
@@ -1103,7 +1090,6 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 	SETWIDTH_NAME = XInternAtom(d, "SETWIDTH_NAME", False);
 	POINT_SIZE    = XInternAtom(d, "POINT_SIZE", False);
 	RESOLUTION_X  = XInternAtom(d, "RESOLUTION_X", False);
-	FONT          = XInternAtom(d, "FONT", False);
 
 	/**
 	 * 10k is intentional. According to the xlsfont source, even
@@ -1122,7 +1108,6 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		weight   = NULL;
 		slant    = NULL;
 		setwidth = NULL;
-		font     = NULL;
 		points   = 0;
 		res      = 0;
 
@@ -1142,17 +1127,35 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 				points = finfo[i].properties[j].card32 / 10;
 			if (finfo[i].properties[j].name == RESOLUTION_X)
 				res = finfo[i].properties[j].card32;
-			if (finfo[i].properties[j].name == FONT)
-				font = XGetAtomName(d, finfo[i].properties[j].card32);
 		}
 
 		/* Ignore outline fonts / familyless fonts / nil family */
-		if (!font || !points || !foundry || !family || !strcmp(family + 1, "il"))
+		if (!points || !foundry || !family || !strcmp(family + 1, "il"))
 			goto next;
 
 		/* Ignore 75 DPI fonts if requested */
 		if (res < 96 && fd->fontdlg.prefer_100dpi)
 			goto next;
+
+		/* Remove the pixel size, etc. */
+		memset(dash, 0, sizeof dash);
+		for (tmp = names[i] + 1; *tmp; tmp++) {
+			if (*tmp == '-') {
+				dash[0] = dash[1];
+				dash[1] = dash[2];
+				dash[2] = dash[3];
+				dash[3] = dash[4];
+				dash[4] = dash[5];
+				dash[5] = dash[6];
+				dash[6] = dash[7];
+				dash[7] = (int)(tmp - names[i]);
+			}
+		}
+
+		/* Ignore proportional fonts */
+		if (!memcmp(names[i] + dash[0], "-0-0-", 5))
+			goto next;
+		sprintf(names[i] + dash[0] + 1, "*-%d-%d-*", points * 10, res);
 
 		/* See if we have this family already */
 		bsz = (foundry ? strlen(foundry) : 0) +
@@ -1215,25 +1218,9 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		q = XmStringCreate(tmp, XmFONTLIST_DEFAULT_TAG);
 		XtFree(tmp);
 
-		if (!_XmGetHashEntry(size->ht, (XmHashKey)q)) {
-			/* Remove the pixel size, etc. */
-			memset(dash, 0, sizeof dash);
-			for (tmp = font + 1; *tmp; tmp++) {
-				if (*tmp == '-') {
-					dash[0] = dash[1];
-					dash[1] = dash[2];
-					dash[2] = dash[3];
-					dash[3] = dash[4];
-					dash[4] = dash[5];
-					dash[5] = dash[6];
-					dash[6] = dash[7];
-					dash[7] = (int)(tmp - font);
-				}
-			}
-
-			sprintf(font + dash[0] + 1, "*-%d-%d-*", points * 10, res);
-			append_leaf(w, size, q, font, NULL, False);
-		} else XmStringFree(q);
+		if (!_XmGetHashEntry(size->ht, (XmHashKey)q))
+			append_leaf(w, size, q, names[i], NULL, False);
+		else XmStringFree(q);
 
 next:
 		XFree(foundry);
@@ -1241,7 +1228,6 @@ next:
 		XFree(weight);
 		XFree(slant);
 		XFree(setwidth);
-		XFree(font);
 	}
 
 	XSetErrorHandler(olderr);
@@ -1253,13 +1239,18 @@ next:
  */
 static void update_sample(XmFontDialogWidget fd)
 {
-	Arg args[2];
+	Arg args[6];
 	XmRendition r;
 	XmString s = NULL;
 	struct font_prop *info, *font, *style;
 
 	if (!fd || !(info = (struct font_prop *)fd->fontdlg.info))
 		return;
+
+	if (fd->fontdlg.sample) {
+		XtDestroyWidget(fd->fontdlg.sample);
+		fd->fontdlg.sample = NULL;
+	}
 
 	font  = info->children[fd->fontdlg.selected_font  - 1];
 	style = font->children[fd->fontdlg.selected_style - 1];
@@ -1273,20 +1264,33 @@ static void update_sample(XmFontDialogWidget fd)
 		_XmRendRefcountDec(r);
 	}
 
-	XtUnmanageChild(fd->fontdlg.sample);
+	/**
+	 * Sample label
+	 */
+	XtSetArg(args[0], XmNtraversalOn,  False);
+	XtSetArg(args[1], XmNmarginTop,    5);
+	XtSetArg(args[2], XmNmarginBottom, 5);
+	XtSetArg(args[3], XmNmarginLeft,   5);
+	XtSetArg(args[4], XmNmarginRight,  5);
+	XtSetArg(args[5], XmNalignment,    XmALIGNMENT_CENTER);
+	fd->fontdlg.sample = XmCreateLabelGadget(
+		fd->fontdlg.sample_frame, "Sample", args, 6
+	);
+
 	if (!XmRenditionMaterialize(r)) {
 		s = XmStringCreate(
 			(String)"Failed to load the requested font",
 			(XmStringTag)"UTF-8"
 		);
-		XtVaSetValues(fd->fontdlg.sample, XmNlabelString, s, NULL);
-		XmStringFree(s);
+		XtSetArg(args[0], XmNlabelString, s);
+		XtSetValues(fd->fontdlg.sample, args, 1);
 	} else {
 		XtSetArg(args[0], XmNlabelString, fd->fontdlg.sample_text);
 		XtSetArg(args[1], XmNrenderTable, fd->fontdlg.rend);
 		XtSetValues(fd->fontdlg.sample, args, 2);
 	}
 	XtManageChild(fd->fontdlg.sample);
+	XmStringFree(s);
 
 	/* Ensure the frame redraws */
 	if (XtIsRealized(fd->fontdlg.sample_frame)) {
