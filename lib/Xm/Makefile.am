@@ -117,6 +117,7 @@ ScrollFramTI.h \
 ScrolledWI.h \
 SelectioBI.h \
 SeparatoGI.h \
+SharedPtrI.h \
 SvgI.h \
 SyntheticI.h \
 TearOffI.h \
@@ -222,7 +223,7 @@ SRCS1 = XmStrDefs.c ArrowB.c        ArrowBG.c       BulletinB.c     CallbackI.c 
         TextIn.c        TextOut.c       TextStrSo.c     TextSel.c \
         ToggleB.c       ToggleBG.c      TrackLoc.c      UniqueEvnt.c \
         VaSimple.c      VirtKeys.c      XmString.c      ResEncod.c\
-        TextF.c         TextFSel.c      XmChar.c \
+        TextF.c         TextFSel.c      XmChar.c        SharedPtr.c  \
         Cache.c         Protocols.c     Primitive.c     Manager.c \
         Traversal.c     TravAct.c       TraversalI.c    BaseClass.c
 
