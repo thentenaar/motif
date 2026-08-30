@@ -5863,14 +5863,14 @@ Child
 ! Resources for XmFontDialog
 !
 Resource
-  XmNsource : Argument {
+  XmNfontSource : Argument {
     Type           = integer;
     EnumerationSet = XmFontDialogSource;
     Default        = "XmDIALOG_SOURCE_XFT";
   };
   XmNprefer100dpi : Argument {
     Type    = boolean;
-    Default = True;
+    Default = "True";
   };
   XmNfontString : Argument {
     Type    = compound_string;
@@ -5900,9 +5900,9 @@ Class XmFontDialog : Widget {
   ConvenienceFunction = XmCreateFontDialog;
   Resources {
     XmNdialogType { Default = "XmDIALOG_FONT"; };
-    XmNsource;
+    XmNfontSource;
     XmNprefer100dpi;
-    XmNvisibleItemCount { Default = 6; };
+    XmNvisibleItemCount { Default = "6"; };
     XmNfontString;
     XmNstyleString;
     XmNsizeString;
@@ -5934,7 +5934,6 @@ Child
     Xm_FontList      : XmScrolledList;
     Xm_StyleList     : XmScrolledList;
     Xm_SizeList      : XmScrolledList;
-    Xm_Separator     : XmSeparator;
     Xm_OK_Button     : XmPushButton;
     Xm_Cancel_Button : XmPushButton;
 

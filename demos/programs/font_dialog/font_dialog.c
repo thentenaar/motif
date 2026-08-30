@@ -72,7 +72,7 @@ static Widget mkdialog(Widget parent, XmString title,
 	Widget dialog;
 
 	XtSetArg(arg[0], XmNtitleString, title);
-	XtSetArg(arg[1], XmNsource, source);
+	XtSetArg(arg[1], XmNfontSource, source);
 	dialog = XmCreateFontDialog(parent, "Font Dialog", arg, 2);
 	XtAddCallback(dialog, XmNokCallback, font_selected, frame);
 	XmStringFree(title);

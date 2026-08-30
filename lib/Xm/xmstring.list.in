@@ -1699,6 +1699,8 @@ CSashCursor
 NsashCursor
 NvalueString
 NmodifyVerifyCallbackStr
+NfontSource
+CfontSource
 RFontSource
 CfontString
 NfontString

@@ -200,7 +200,7 @@ static XtResource resources[] = {
 	XmRImmediate, (XtPointer)XmDIALOG_FONT
 },
 { /* Xft or X core fonts */
-	XmNsource, XmCSource, XmRFontSource,
+	XmNfontSource, XmCfontSource, XmRFontSource,
 	sizeof(unsigned char), XtOffsetOf(XmFontDialogRec, fontdlg.source),
 	XmRImmediate, (XtPointer)XmFONT_SOURCE_XFT
 },
