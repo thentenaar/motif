@@ -1772,7 +1772,7 @@ SecondaryObjectCreate(
 static void InitializePrehook(Widget req, Widget new_w, ArgList args,
                               Cardinal *num_args)
 {
-	if (LabG_Font(new_w))
+	if (!LabG_Font(new_w))
 		LabG_Font(new_w) = XmeGetDefaultRenderTable(new_w, XmBUTTON_FONTLIST);
 }
 

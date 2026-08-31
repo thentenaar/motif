@@ -34,19 +34,19 @@
 
 /******************************************************************************
  *
- * Simple.c - ExmSimple widget.  This widget renders a rectangle or an oval. 
+ * Simple.c - ExmSimple widget.  This widget renders a rectangle or an oval.
  *            The ExmSimple widget demonstrates how to create a
  *            subclass of XmPrimitive that can, itselve, serve as a superclass
- *            for other widgets.  ExmSimple also demonstrates how to  
+ *            for other widgets.  ExmSimple also demonstrates how to
  *               * create a new representation type (ExmRSimpleShape).
  *               * install the XmQTcontainerItem trait and its trait methods.
  *               * install the XmQTcareParentVisual trait and methods.
- *               * access the trait methods of the XmQTcontainer trait. 
+ *               * access the trait methods of the XmQTcontainer trait.
  *            See the "OSF/Motif Widget Writer's Guide" for more details.
  *
 ******************************************************************************/
 
-/* Include appropriate header files. */ 
+/* Include appropriate header files. */
 #include <Exm/SimpleP.h>    /* private header file for the ExmSimple widget */
 #include <Xm/DrawP.h>       /* header file for Xme drawing functions */
 #include <Xm/RepType.h>     /* header file for representation type facility */
@@ -57,15 +57,15 @@
 #include <Xm/ContainerT.h>  /* header file for XmQTcontainer trait */
 
 
-/* The following section defines constants for the widget.  
-   The IDEAL_SHAPE_SIZE constant defines the starting preferred width 
-   and height for the widget visual (which is either a rectangle or an oval). 
+/* The following section defines constants for the widget.
+   The IDEAL_SHAPE_SIZE constant defines the starting preferred width
+   and height for the widget visual (which is either a rectangle or an oval).
 */
 static const int IDEAL_SHAPE_SIZE  = 30;
 static const int FIND_NATURAL_SIZE = 0;
 
 
-/* Declare all static functions. */ 
+/* Declare all static functions. */
 static void ClassInitialize(void);
 static void ClassPartInitialize(WidgetClass wclass);
 static void Initialize(
@@ -116,13 +116,13 @@ static void Reconfigure (
                         WidgetClass  class,
                         Widget       new_w,
                         Widget       old_w);
-static	void ContItemSetValues(Widget w, 
+static	void ContItemSetValues(Widget w,
 			       XmContainerItemData contItemData);
 
-static	void ContItemGetValues(Widget w, 
+static	void ContItemGetValues(Widget w,
 			       XmContainerItemData contItemData);
 
-static  Boolean HandleRedraw (Widget kid, 
+static  Boolean HandleRedraw (Widget kid,
 			      Widget cur_parent,
 			      Widget new_parent,
 			      Mask visual_flag);
@@ -132,10 +132,10 @@ static void SetSelectedVisual (Widget wid) ;
 
 
 /* Define the resources for the ExmSimple widget.  This widget supports
-   three new resources: ExmNsimpleShape, XmNmarginWidth, and XmNmarginHeight. 
+   three new resources: ExmNsimpleShape, XmNmarginWidth, and XmNmarginHeight.
    Naturally, ExmSimple also supports the resources of its two superclasses:
    Core and XmPrimitive. */
-static XtResource resources[] = 
+static XtResource resources[] =
 {
     {
 	ExmNsimpleShape,   /* resource name */
@@ -147,18 +147,18 @@ static XtResource resources[] =
 	(XtPointer)ExmSHAPE_OVAL /* default shape is oval */
     },
     {
- 	XmNmarginWidth, 
-	XmCMarginWidth, 
-	XmRHorizontalDimension, 
+ 	XmNmarginWidth,
+	XmCMarginWidth,
+	XmRHorizontalDimension,
 	sizeof (Dimension),
-	XtOffsetOf( ExmSimpleRec, simple.margin_width), 
+	XtOffsetOf( ExmSimpleRec, simple.margin_width),
 	XmRImmediate,
 	(XtPointer) 4
     },
     {
-	XmNmarginHeight, 
-	XmCMarginHeight, 
-	XmRVerticalDimension, 
+	XmNmarginHeight,
+	XmCMarginHeight,
+	XmRVerticalDimension,
 	sizeof (Dimension),
 	XtOffsetOf( ExmSimpleRec, simple.margin_height),
 	XmRImmediate,
@@ -166,22 +166,22 @@ static XtResource resources[] =
     },
 };
 
-/* Two of the three resources will also be handled as synthetic resources. */ 
+/* Two of the three resources will also be handled as synthetic resources. */
 static XmSyntheticResource syn_resources[] =
 {
-    { 
-	XmNmarginWidth, 
+    {
+	XmNmarginWidth,
 	sizeof (Dimension),
-	XtOffsetOf( ExmSimpleRec, simple.margin_width), 
+	XtOffsetOf( ExmSimpleRec, simple.margin_width),
 	XmeFromHorizontalPixels,
-	XmeToHorizontalPixels 
+	XmeToHorizontalPixels
     },
-    { 
-	XmNmarginHeight, 
+    {
+	XmNmarginHeight,
 	sizeof (Dimension),
 	XtOffsetOf( ExmSimpleRec, simple.margin_height),
-	XmeFromVerticalPixels, 
-	XmeToVerticalPixels 
+	XmeFromVerticalPixels,
+	XmeToVerticalPixels
     },
 };
 
@@ -189,7 +189,7 @@ static XmSyntheticResource syn_resources[] =
 
 /* Define the widget class record.  See Chapter 3 of the
    "OSF/Motif Widget Writer's Guide" for details. */
- 
+
 /* Here is the XmPrimitive class extension record. */
 static XmPrimitiveClassExtRec primClassExtRec = {
     /* next_extension */             NULL,
@@ -199,8 +199,8 @@ static XmPrimitiveClassExtRec primClassExtRec = {
     /* widget_baseline */            NULL,
     /* widget_display_rect */        WidgetDisplayRect,
     /* widget_margins */             NULL,
-};    
-    
+};
+
 externaldef (exmsimpleclassrec) ExmSimpleClassRec exmSimpleClassRec = {
   { /* Here is the core class record. */
     /* superclass */                 (WidgetClass)&xmPrimitiveClassRec,
@@ -235,7 +235,7 @@ externaldef (exmsimpleclassrec) ExmSimpleClassRec exmSimpleClassRec = {
     /* query_geometry */             QueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
+  },
   { /* Here is the XmPrimitive class record. */
     /* border_highlight */           XmInheritBorderHighlight,
     /* border_unhighlight */         XmInheritBorderUnhighlight,
@@ -244,7 +244,7 @@ externaldef (exmsimpleclassrec) ExmSimpleClassRec exmSimpleClassRec = {
     /* syn_resources */              syn_resources,
     /* num_syn_resources */          XtNumber(syn_resources),
     /* extension */                  (XtPointer)&primClassExtRec,
-  },    
+  },
   { /* Here is the ExmSimple class record. */
     /* draw_visual */                DrawVisual,
     /* draw_shadow */                DrawShadow,
@@ -255,24 +255,24 @@ externaldef (exmsimpleclassrec) ExmSimpleClassRec exmSimpleClassRec = {
     /* calc_widget_size */           CalcWidgetSize,
     /* reconfigure */                Reconfigure,
     /* extension */                  NULL,
-  }    
-};    
+  }
+};
 /* Establish the widget class name as an externally accessible symbol.
-   Use the "externaldef" macro rather than the "extern" keyword. */ 
+   Use the "externaldef" macro rather than the "extern" keyword. */
   externaldef( exmsimplewidgetclass) WidgetClass exmSimpleWidgetClass =
                                 (WidgetClass) &exmSimpleClassRec;
 
 
 /* Declare trait record variables. */
 
-/* Declare a trait record variable for the XmQTcontainerItem trait. */ 
+/* Declare a trait record variable for the XmQTcontainerItem trait. */
 static const XmContainerItemTraitRec simpleCIT = {
   0,		/* version */
   ContItemSetValues,
   ContItemGetValues,
 };
 
-/* Declare a trait record variable for the XmQTcareParentVisual trait. */ 
+/* Declare a trait record variable for the XmQTcareParentVisual trait. */
 static const XmCareVisualTraitRec simpleCVT = {
     0,		/* version */
     HandleRedraw,
@@ -280,8 +280,8 @@ static const XmCareVisualTraitRec simpleCVT = {
 
 
 /* Declare any global static variables. */
-/* The SimpleShapeNames variable holds some normalized values.  
-   The XmRepTypeRegister function will use these values to determine the 
+/* The SimpleShapeNames variable holds some normalized values.
+   The XmRepTypeRegister function will use these values to determine the
    legal values for a given representation type. */
 static String SimpleShapeNames[] = {
 	"simple_oval",
@@ -293,18 +293,18 @@ static XmRepTypeId simpleShapeId;
 /******************************************************************************
  *
  *  ClassInitialize:
- *     Called the first time a widget of this class is instantiated. 
+ *     Called the first time a widget of this class is instantiated.
  *
  *****************************************************************************/
-static void 
+static void
 ClassInitialize( void )
 {
  /* The ExmNsimpleShape resource requires a value of data type ExmRSimpleShape.
     Since this is not a standard Motif data type, we must create this
     data type just for the ExmSimple widget.
-    We want ExmRSimpleShape to hold an enumerated value, either 
+    We want ExmRSimpleShape to hold an enumerated value, either
     XmSIMPLE_OVAL or XmSIMPLE_RECTANGLE.  The best way to accomplish
-    this is to register the new data type with representation type facility. */ 
+    this is to register the new data type with representation type facility. */
    simpleShapeId = XmRepTypeRegister (ExmRSimpleShape, SimpleShapeNames,
 				      NULL, XtNumber(SimpleShapeNames));
 }
@@ -319,11 +319,11 @@ ClassInitialize( void )
  *****************************************************************************/
 static void ClassPartInitialize(WidgetClass wclass)
 {
- ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)widgetClass;
+ ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)wclass;
  ExmSimpleWidgetClass sc = (ExmSimpleWidgetClass) wc->core_class.superclass;
 
- /* The following code allows subclasses of ExmSimple to inherit certain 
-    methods of ExmSimple. */ 
+ /* The following code allows subclasses of ExmSimple to inherit certain
+    methods of ExmSimple. */
    if (wc->simple_class.draw_visual == ExmInheritDrawVisual)
        wc->simple_class.draw_visual = sc->simple_class.draw_visual;
    if (wc->simple_class.draw_shadow == ExmInheritDrawShadow)
@@ -341,10 +341,10 @@ static void ClassPartInitialize(WidgetClass wclass)
    if (wc->simple_class.reconfigure == ExmInheritReconfigure)
        wc->simple_class.reconfigure = sc->simple_class.reconfigure;
 
-  /* Install the containerItem trait on ExmSimple and all its subclasses. */ 
+  /* Install the containerItem trait on ExmSimple and all its subclasses. */
     XmeTraitSet((XtPointer) wc, XmQTcontainerItem, (XtPointer) &simpleCIT);
 
-  /* Install the careParentVisual trait on ExmSimple and all subclasses. */ 
+  /* Install the careParentVisual trait on ExmSimple and all subclasses. */
     XmeTraitSet((XtPointer) wc, XmQTcareParentVisual, (XtPointer) &simpleCVT);
 }
 
@@ -353,11 +353,11 @@ static void ClassPartInitialize(WidgetClass wclass)
 /******************************************************************************
  *
  *  Initialize:
- *     Called by the Intrinsics when this widget is instantiated. 
+ *     Called by the Intrinsics when this widget is instantiated.
  *
  *****************************************************************************/
 
-static void 
+static void
 Initialize(
         Widget request_w,
         Widget new_w,
@@ -371,20 +371,20 @@ Initialize(
  /* Look at the value assigned to the ExmNsimpleShape resource.  If the
     value assigned is neither ExmSHAPE_OVAL nor ExmSHAPE_RECTANGLE, then
     issue a warning message and set ExmNsimpleShape to ExmSHAPE_OVAL. */
-   if (!XmRepTypeValidValue (simpleShapeId, 
+   if (!XmRepTypeValidValue (simpleShapeId,
                              nw->simple.simple_shape, (Widget)nw))
      nw->simple.simple_shape = ExmSHAPE_OVAL;
 
- /* Call a function that creates the GC's needed by the widget. */ 
-   if (wc->simple_class.create_gc) 
+ /* Call a function that creates the GC's needed by the widget. */
+   if (wc->simple_class.create_gc)
      (*(wc->simple_class.create_gc))((Widget)nw);
 
- /* If the widget's width is set to 0, that's a trigger for the widget 
+ /* If the widget's width is set to 0, that's a trigger for the widget
     to calculate its width.  We are not actually going to calculate
     its width here, rather we are going to set the need_to_compute_width
-    flag appropriately. */ 
+    flag appropriately. */
    if (rw->core.width == FIND_NATURAL_SIZE) {
-     nw->simple.need_to_compute_width = True; 
+     nw->simple.need_to_compute_width = True;
    }
    else {
      nw->simple.need_to_compute_width = False;
@@ -392,7 +392,7 @@ Initialize(
      nw->core.width = rw->core.width;
    }
 
-   if (rw->core.height == FIND_NATURAL_SIZE) 
+   if (rw->core.height == FIND_NATURAL_SIZE)
      nw->simple.need_to_compute_height = True;
    else {
      nw->simple.need_to_compute_height = False;
@@ -402,18 +402,18 @@ Initialize(
 
  /* mark us as not selected to start with */
    nw->simple.saved_foreground = XmUNSPECIFIED_PIXEL ;
-    
+
  /* In order not to resize the widget at each level of the Initialize
     chain, the actual class is passed to this method */
-   if (wc->simple_class.reconfigure) 
+   if (wc->simple_class.reconfigure)
      (*(wc->simple_class.reconfigure))(exmSimpleWidgetClass, new_w, NULL);
 }
 
 
 /******************************************************************************
  *
- *  Destroy: 
- *      Called by the Intrinsics whenever this widget is deallocated. 
+ *  Destroy:
+ *      Called by the Intrinsics whenever this widget is deallocated.
  *
  *****************************************************************************/
 static void
@@ -421,21 +421,21 @@ Destroy (Widget w)
 {
  ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass) XtClass(w);
 
- /* The ExmSimple widget allocates two internal GC's.  In order to prevent 
-    memory leaks, we must destroy these GC's.  */ 
-   if (wc->simple_class.destroy_gc) 
+ /* The ExmSimple widget allocates two internal GC's.  In order to prevent
+    memory leaks, we must destroy these GC's.  */
+   if (wc->simple_class.destroy_gc)
      (*(wc->simple_class.destroy_gc))(w);
 }
 
 /*****************************************************************************
- * 
+ *
  * Realize
  *      Called by the Intrinsics to create the window for the widget.  This
- *      class's realize method creates a propagating window for this 
- *      exact class,  but uses the default window otherwise 
+ *      class's realize method creates a propagating window for this
+ *      exact class,  but uses the default window otherwise
  *
  *****************************************************************************/
-static void 
+static void
 Realize(Widget w,
         XtValueMask *p_valueMask,
         XSetWindowAttributes *attributes )
@@ -446,7 +446,7 @@ Realize(Widget w,
    xmPrimitiveClassRec.core_class.realize(w, p_valueMask, attributes);
 
    /* ExmSimple wants to propagate all unused events to its hierarchy, which
-      Primitive.Realize doesn't do.  So if this is an ExmSimple widget, 
+      Primitive.Realize doesn't do.  So if this is an ExmSimple widget,
       we fix the do_not_propagate window attribute */
    if (XtClass(w) == exmSimpleWidgetClass) {
      Mask adjustMask;
@@ -460,15 +460,15 @@ Realize(Widget w,
 
 /******************************************************************************
  *
- *  Resize: 
+ *  Resize:
  *      Called by the Intrinsics whenever a parent resizes a child.
- *      Also called by the Reconfigure method. 
+ *      Also called by the Reconfigure method.
  *
  *****************************************************************************/
-static void 
+static void
 Resize (
         Widget w
-       ) 
+       )
 {
  ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)XtClass(w);
  ExmSimpleWidget sw = (ExmSimpleWidget)w;
@@ -487,28 +487,28 @@ Resize (
    total_target_widget_width = (2 * mw) + sw->simple.visual.width;
 
  /* When there is not enough space to display the entire widget, we
-    must clip part of the widget, but which part? */ 
+    must clip part of the widget, but which part? */
 
    if (sw->core.width >= total_target_widget_width) {
-     /* We have enough space to display everything (the visual, the margins, 
-        and the border decorations). */ 
+     /* We have enough space to display everything (the visual, the margins,
+        and the border decorations). */
      sw->simple.visual.x = mw;
      sw->simple.visual.width = sw->core.width - (2 * mw);
-   } else if (sw->core.width > ((2 * window_decoration_thickness) + 
+   } else if (sw->core.width > ((2 * window_decoration_thickness) +
 				sw->simple.visual.width)) {
      /* We do not have enough space to display everything, but we do have
         enough space to display the visual and the border decorations.
-        The left and right margins will have to be reduced. */ 
+        The left and right margins will have to be reduced. */
      sw->simple.visual.x = (sw->core.width - sw->simple.visual.width)/2;
    } else if (sw->core.width > 2 * window_decoration_thickness) {
     /* Space is very tight.  We will eliminate the left and right margins
-       all together.  Furthermore, we will reduce the size of the visual.  */  
+       all together.  Furthermore, we will reduce the size of the visual.  */
      sw->simple.visual.x = window_decoration_thickness;
-     sw->simple.visual.width = sw->core.width - 
+     sw->simple.visual.width = sw->core.width -
 	 (2 * window_decoration_thickness);
    } else {
-     /* We do not have enough space to display even one pixel 
-	of the visual. */ 
+     /* We do not have enough space to display even one pixel
+	of the visual. */
      sw->simple.visual.width = 0;
    }
 
@@ -517,24 +517,24 @@ Resize (
  total_target_widget_height = (2 * mh) + sw->simple.visual.height;
 
  if (sw->core.height >= total_target_widget_height) {
-   /* We have enough space to display everything (the visual, the margins, 
-      and the border decorations). */ 
+   /* We have enough space to display everything (the visual, the margins,
+      and the border decorations). */
    sw->simple.visual.y = mh;
    sw->simple.visual.height = sw->core.height - (2 * mh);
- } else if (sw->core.height > ((2 * window_decoration_thickness) 
+ } else if (sw->core.height > ((2 * window_decoration_thickness)
 			       + sw->simple.visual.height)) {
    /* We do not have enough space to display everything, but we do have
       enough space to display the visual and the border decorations.
-      The top and bottom margins will have to be reduced. */ 
+      The top and bottom margins will have to be reduced. */
    sw->simple.visual.y = (sw->core.height - sw->simple.visual.height)/2;
  } else if (sw->core.height > 2 * window_decoration_thickness) {
    /* Space is very tight.  We will eliminate the top and right margins
-      all together.  Furthermore, we will reduce the size of the visual.  */  
+      all together.  Furthermore, we will reduce the size of the visual.  */
    sw->simple.visual.y = window_decoration_thickness;
-   sw->simple.visual.height = sw->core.height - 
+   sw->simple.visual.height = sw->core.height -
      (2 * window_decoration_thickness);
  } else {
-   /* We do not have enough space to display even one pixel of the visual. */ 
+   /* We do not have enough space to display even one pixel of the visual. */
    sw->simple.visual.height = 0;
  }
 }
@@ -543,28 +543,28 @@ Resize (
  *
  *  Redisplay:
  *     Called by the Intrinsics whenever a portion of the widget that was
- *     obscured becomes exposed.   
+ *     obscured becomes exposed.
  *
  *****************************************************************************/
-static void 
+static void
 Redisplay (
         Widget w,
         XEvent *event,
-        Region region 
-          ) 
+        Region region
+          )
 {
  ExmSimpleWidgetClass wc = (ExmSimpleWidgetClass)XtClass(w);
 
- /* Call the function that draws the widget visual. */ 
-   if (wc->simple_class.draw_visual) 
+ /* Call the function that draws the widget visual. */
+   if (wc->simple_class.draw_visual)
      (*wc->simple_class.draw_visual) (w);
 
  /* Call the function that draws the widget shadow. */
-   if (wc->simple_class.draw_shadow) 
+   if (wc->simple_class.draw_shadow)
      (*wc->simple_class.draw_shadow) (w);
 
  /* Envelop our superclass expose method.  The superclass expose
-    method of XmPrimitive knows how to draw the border highlight. */ 
+    method of XmPrimitive knows how to draw the border highlight. */
    (*(xmPrimitiveClassRec.core_class.expose))(w, event, region);
 }
 
@@ -574,10 +574,10 @@ Redisplay (
  *
  *  SetValues:
  *     Called by the Intrinsics when an application attempts to
- *     change the value of a resource.  
+ *     change the value of a resource.
  *
  *****************************************************************************/
-static Boolean 
+static Boolean
 SetValues (
         Widget old_w,
         Widget request_w,
@@ -594,7 +594,7 @@ SetValues (
 
  /* Validate the value of ExmNsimpleShape by calling XmRepTypeValidValue. */
    if (nw->simple.simple_shape != cw->simple.simple_shape) {
-     if (!XmRepTypeValidValue (simpleShapeId, nw->simple.simple_shape, 
+     if (!XmRepTypeValidValue (simpleShapeId, nw->simple.simple_shape,
                                (Widget)nw))
        nw->simple.simple_shape = cw->simple.simple_shape;
      else
@@ -605,8 +605,8 @@ SetValues (
  if (XtIsSensitive(new_w) != XtIsSensitive(old_w))
    redisplayFlag = True;
 
- /* If the widget's foreground or background color changes, 
-    then we must update the GC. */ 
+ /* If the widget's foreground or background color changes,
+    then we must update the GC. */
    if (nw->primitive.foreground != cw->primitive.foreground ||
        nw->core.background_pixel != cw->core.background_pixel) {
      if (wc->simple_class.destroy_gc)
@@ -637,8 +637,8 @@ SetValues (
      nw->simple.need_to_compute_height = False;
    }
 
- /* Check for any changes in total widget set, margin size, or 
-    window decoration size.  If any are found, call Reconfigure. */ 
+ /* Check for any changes in total widget set, margin size, or
+    window decoration size.  If any are found, call Reconfigure. */
    nw->simple.need_to_reconfigure = False;
    if (nw->core.width != cw->core.width ||
        nw->core.height != cw->core.height ||
@@ -646,7 +646,7 @@ SetValues (
        nw->simple.margin_height != cw->simple.margin_height ||
        nw->primitive.shadow_thickness != cw->primitive.shadow_thickness ||
        nw->primitive.highlight_thickness != cw->primitive.highlight_thickness
-      ) 
+      )
    Reconfigure (exmSimpleWidgetClass, new_w, old_w);
 
    return (redisplayFlag);
@@ -660,16 +660,16 @@ SetValues (
  *     Called by the Intrinsics in response to a proposed changed in geometry.
  *
  *****************************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 QueryGeometry (
         Widget widget,
         XtWidgetGeometry *parent_request,
         XtWidgetGeometry *child_reply
-              ) 
+              )
 {
  ExmSimpleWidget sw = (ExmSimpleWidget) widget;
 
-   if (!XtIsRealized(widget)) {   /* Simple has not yet been realized. */ 
+   if (!XtIsRealized(widget)) {   /* Simple has not yet been realized. */
      child_reply->width  = XtWidth(widget);   /* might be 0 */
      child_reply->height = XtHeight(widget);  /* might be 0 */
    } else {                       /* Simple has been realized. */
@@ -690,7 +690,7 @@ QueryGeometry (
  *     widget visual (either an oval or a rectangle).
  *
  *****************************************************************************/
-static void 
+static void
 DrawVisual (
         Widget w
            )
@@ -727,19 +727,19 @@ DrawVisual (
  *      Called by Redisplay.
  *
  *****************************************************************************/
-static void 
+static void
 DrawShadow (
         Widget w
            )
 {
  ExmSimpleWidget sw = (ExmSimpleWidget)w;
 
- /* If there is enough room in the widget to draw a shadow, 
-    and if the shadow thickness resource is nonzero, then draw a 
-    Motif-style shadow in the appropriate place around the widget's border. */ 
+ /* If there is enough room in the widget to draw a shadow,
+    and if the shadow thickness resource is nonzero, then draw a
+    Motif-style shadow in the appropriate place around the widget's border. */
    if (sw->core.width  > (2 * sw->primitive.highlight_thickness) &&
        sw->core.height > (2 * sw->primitive.highlight_thickness) &&
-       sw->primitive.shadow_thickness > 0) 
+       sw->primitive.shadow_thickness > 0)
      XmeDrawShadows (XtDisplay (sw), XtWindow (sw),
       		     sw->primitive.top_shadow_GC,
       		     sw->primitive.bottom_shadow_GC,
@@ -747,7 +747,7 @@ DrawShadow (
       		     sw->primitive.highlight_thickness,
       		     sw->core.width - (2 * sw->primitive.highlight_thickness),
       		     sw->core.height - (2 * sw->primitive.highlight_thickness),
-      		     sw->primitive.shadow_thickness, 
+      		     sw->primitive.shadow_thickness,
                      XmSHADOW_ETCHED_OUT);
 }
 
@@ -759,7 +759,7 @@ DrawShadow (
  *      Called by Initialize and by SetValues.
  *
  *****************************************************************************/
-static void 
+static void
 CreateGC (
         Widget w
          )
@@ -774,7 +774,7 @@ CreateGC (
     and the other to render an insensitive widget. */
 
 
- /* First, create the sensitive GC (named normal_GC). */ 
+ /* First, create the sensitive GC (named normal_GC). */
    valueMask = GCForeground | GCBackground | GCGraphicsExposures;
    values.foreground = sw->primitive.foreground;
    values.background = sw->core.background_pixel;
@@ -783,14 +783,14 @@ CreateGC (
 
  /* Next, create the insensitive GC.  This GC will share the same
     foreground, background, and graphics exposures as the sensitive
-    GC, but will hold a different fill style and stipple pattern. 
+    GC, but will hold a different fill style and stipple pattern.
     The stipple pattern is stored in the XmNinsensitiveStippleBitmap
     resource of XmScreen. */
    valueMask |= GCFillStyle | GCStipple;
    values.fill_style = FillStippled;
 
  /* Gather the Motif-appropriate insensitive stipple bitmap. */
-   XtSetArg(args[0], XmNinsensitiveStippleBitmap, &insensitiveStippleBitmap); 
+   XtSetArg(args[0], XmNinsensitiveStippleBitmap, &insensitiveStippleBitmap);
    XtGetValues(XmGetXmScreen(XtScreen(w)), args, 1);
    values.stipple = insensitiveStippleBitmap;
 
@@ -805,14 +805,14 @@ CreateGC (
  *      Called by the Destroy method.
  *
  *****************************************************************************/
-static void 
-DestroyGC ( 
+static void
+DestroyGC (
         Widget w
           )
 {
  ExmSimpleWidget sw = (ExmSimpleWidget)w;
 
- /* Deallocate the resources used by the two GC's. */ 
+ /* Deallocate the resources used by the two GC's. */
    XtReleaseGC ((Widget)sw, sw->simple.normal_gc);
    XtReleaseGC ((Widget)sw, sw->simple.insensitive_gc);
 }
@@ -822,10 +822,10 @@ DestroyGC (
 /******************************************************************************
  *
  *  SelectGC:
- *     Called by DrawVisual. 
+ *     Called by DrawVisual.
  *
  *****************************************************************************/
-static GC 
+static GC
 SelectGC (
         Widget w
          )
@@ -833,8 +833,8 @@ SelectGC (
  ExmSimpleWidget sw = (ExmSimpleWidget)w;
  GC drawGC;
 
- /* Select between the normal (sensitive) GC and the insensitive GC. */ 
-   drawGC = XtIsSensitive(w)  ? sw->simple.normal_gc 
+ /* Select between the normal (sensitive) GC and the insensitive GC. */
+   drawGC = XtIsSensitive(w)  ? sw->simple.normal_gc
                               : sw->simple.insensitive_gc;
    return (drawGC);
 }
@@ -843,11 +843,11 @@ SelectGC (
 
 /******************************************************************************
  *
- *  CalcVisualSize: 
+ *  CalcVisualSize:
  *      Called by CalcWidgetSize.
  *
  *****************************************************************************/
-static void 
+static void
 CalcVisualSize (
         Widget w
                )
@@ -864,10 +864,10 @@ CalcVisualSize (
 /******************************************************************************
  *
  *  CalcWidgetSize:
- *      Called by Reconfigure 
+ *      Called by Reconfigure
  *
  *****************************************************************************/
-static void 
+static void
 CalcWidgetSize(
         Widget w
               )
@@ -880,9 +880,9 @@ CalcWidgetSize(
      (*(wc->simple_class.calc_visual_size))((Widget)sw);
 
  /* Compute the widget's width if asked to.  Otherwise, set the
-    widget's width to the preferred width. */ 
+    widget's width to the preferred width. */
    if (sw->simple.need_to_compute_width == True)
-     sw->core.width = sw->simple.visual.width + 
+     sw->core.width = sw->simple.visual.width +
                      (2 * (sw->simple.margin_width +
 		           sw->primitive.shadow_thickness +
 		           sw->primitive.highlight_thickness));
@@ -890,9 +890,9 @@ CalcWidgetSize(
      sw->core.width = sw->simple.pref_width;
 
  /* Compute the widget's height if asked to.  Otherwise, set the
-    widget's height to the preferred height. */ 
+    widget's height to the preferred height. */
    if (sw->simple.need_to_compute_height == True)
-     sw->core.height = sw->simple.visual.height + 
+     sw->core.height = sw->simple.visual.height +
                       (2 * (sw->simple.margin_height +
 		            sw->primitive.shadow_thickness +
 		            sw->primitive.highlight_thickness));
@@ -905,12 +905,12 @@ CalcWidgetSize(
 /******************************************************************************
  *
  *  WidgetDisplayRect:
- *      Called by several Motif managers to determine how to align the visuals 
- *      drawn by primitives.  In addition, an application can access this 
- *      method by calling XmWidgetGetDisplayRect. 
+ *      Called by several Motif managers to determine how to align the visuals
+ *      drawn by primitives.  In addition, an application can access this
+ *      method by calling XmWidgetGetDisplayRect.
  *
  *****************************************************************************/
-static Boolean  
+static Boolean
 WidgetDisplayRect(
         Widget       w,
         XRectangle  *displayrect
@@ -918,26 +918,26 @@ WidgetDisplayRect(
 {
  ExmSimpleWidget  my_widget = (ExmSimpleWidget) w;
 
-   if ((my_widget->simple.visual.width > 0) && 
+   if ((my_widget->simple.visual.width > 0) &&
        (my_widget->simple.visual.height > 0)) {
    /* The widget is currently displaying a visual.  Write the dimensions
-      of the visual's bounding box into displayrect. */ 
-     displayrect->x =       my_widget->simple.visual.x; 
-     displayrect->y =       my_widget->simple.visual.y; 
-     displayrect->width =   my_widget->simple.visual.width; 
-     displayrect->height =  my_widget->simple.visual.height; 
+      of the visual's bounding box into displayrect. */
+     displayrect->x =       my_widget->simple.visual.x;
+     displayrect->y =       my_widget->simple.visual.y;
+     displayrect->width =   my_widget->simple.visual.width;
+     displayrect->height =  my_widget->simple.visual.height;
      return True;  /* Yes, this widget contains something displayable. */
    }
    else  {
      /* The widget is not currently displaying a visual. */
-     return False; 
+     return False;
    }
 }
 
 /******************************************************************************
  *
  *  Reconfigure:
- *      Called by the Initialize and SetValues methods.  
+ *      Called by the Initialize and SetValues methods.
  *
  *****************************************************************************/
 static void
@@ -951,15 +951,15 @@ Reconfigure (
  ExmSimpleWidget nw = (ExmSimpleWidget)new_w;
  ExmSimpleWidget cw = (ExmSimpleWidget)old_w;
 
- /* If Reconfigure is called from a leaf chained method, the following code 
+ /* If Reconfigure is called from a leaf chained method, the following code
     calls CalcWidgetSize.   If Reconfigure is not called from a leaf chained
     method, wait until the final leaf method is called.  (That is because
-    the subclass CalcWidgetSize method may need information derived in its 
+    the subclass CalcWidgetSize method may need information derived in its
     SetValues method.) */
 
  /* The Reconfigure method can only reconfigure an ExmSimple widget
     or an ExmSimple subclass. */
-   if (!ExmIsSimple((Widget)nw)) 
+   if (!ExmIsSimple((Widget)nw))
      return;
 
    if (class == XtClass(nw)) {
@@ -970,14 +970,14 @@ Reconfigure (
      nw->simple.pref_height = nw->core.height;
 
    if (cw == NULL ||
-      (nw->core.width  == cw->core.width && 
+      (nw->core.width  == cw->core.width &&
        nw->core.height == cw->core.height)
       ) {
-     if (wc->core_class.resize) 
+     if (wc->core_class.resize)
        (*(wc->core_class.resize))((Widget)nw);
      }
    }
-   else 
+   else
      nw->simple.need_to_reconfigure = True;
 }
 
@@ -986,21 +986,21 @@ Reconfigure (
 
 /******************************************************************************
  *
- *  ContItemSetValues 
- *      This is a trait method of the XmQTcontainterItem trait. 
+ *  ContItemSetValues
+ *      This is a trait method of the XmQTcontainterItem trait.
  *
  *****************************************************************************/
 static	void
-ContItemSetValues(Widget w, 
+ContItemSetValues(Widget w,
 		  XmContainerItemData contItemData)
 {
     ExmSimpleWidget sw = (ExmSimpleWidget)w;
 
-    /* A Container widget calls this trait method to set new visual attributes 
+    /* A Container widget calls this trait method to set new visual attributes
        on ExmSimple. */
 
     if (contItemData->valueMask & ContItemViewType) {
-      /* We will treat SMALL_ICON as one shape (oval) and LARGE_ICON as 
+      /* We will treat SMALL_ICON as one shape (oval) and LARGE_ICON as
          a different shape (rectangle). */
 	if (contItemData->view_type == XmSMALL_ICON)
 	    XtVaSetValues(w, ExmNsimpleShape, ExmSHAPE_OVAL, NULL);
@@ -1033,29 +1033,29 @@ ContItemSetValues(Widget w,
 
 /******************************************************************************
  *
- *  ContItemGetValues 
- *      This is a trait method of the XmQTcontainterItem trait. 
+ *  ContItemGetValues
+ *      This is a trait method of the XmQTcontainterItem trait.
  *
  *****************************************************************************/
 static	void
-ContItemGetValues(Widget w, 
+ContItemGetValues(Widget w,
 		  XmContainerItemData contItemData)
-{    
+{
     ExmSimpleWidget sw = (ExmSimpleWidget)w;
 
     if (contItemData->valueMask & ContItemViewType) {
 	if (sw->simple.simple_shape == ExmSHAPE_OVAL)
 	    contItemData->view_type = XmSMALL_ICON;
-	else 
+	else
 	    contItemData->view_type = XmLARGE_ICON;
-    }  
+    }
 
     if (contItemData->valueMask & ContItemVisualEmphasis) {
 	/* we know awe are in a selected state if our foreground
 	   is currently saved */
 	if (sw->simple.saved_foreground == XmUNSPECIFIED_PIXEL)
 	    contItemData->visual_emphasis = XmNOT_SELECTED;
-	else 
+	else
 	    contItemData->visual_emphasis = XmSELECTED;
     }
 
@@ -1073,7 +1073,7 @@ ContItemGetValues(Widget w,
 /******************************************************************************
  *
  *  SetSelectedVisual
- *      Get the select color of the parent and set our foreground 
+ *      Get the select color of the parent and set our foreground
  *
  *****************************************************************************/
 
@@ -1083,7 +1083,7 @@ SetSelectedVisual (
 {
     /* our parent is notifying us that its select color has changed
        so let's try to get the new value using the Container trait
-       getValue method and then change our foreground - somehow, there 
+       getValue method and then change our foreground - somehow, there
        is the  assumption that if this method gets called with SelectColor
        on, then it must be a Container, which is ok in 2.0 */
     XmContainerDataRec container_data ;
@@ -1092,9 +1092,9 @@ SetSelectedVisual (
     ExmSimpleWidget sw = (ExmSimpleWidget)wid;
 
     /* get the container trait record */
-    container_trait = (XmContainerTrait) 
+    container_trait = (XmContainerTrait)
 	XmeTraitGet((XtPointer)
-		    XtClass(XtParent(wid)), 
+		    XtClass(XtParent(wid)),
 		    XmQTcontainer) ;
 
     if (container_trait) {
@@ -1109,7 +1109,7 @@ SetSelectedVisual (
 		select_color = BlackPixelOfScreen(XtScreen(wid));
 	    else
 		select_color = container_data.select_color;
-	} 
+	}
     }
 
     /* only set the foreground of the one selected */
@@ -1122,14 +1122,14 @@ SetSelectedVisual (
 
 /******************************************************************************
  *
- *  HandleRedraw 
- *      This is a trait method of the XmQTcareParentVisual trait. 
+ *  HandleRedraw
+ *      This is a trait method of the XmQTcareParentVisual trait.
  *
  *****************************************************************************/
 
-static Boolean 
+static Boolean
 HandleRedraw (
-	Widget kid, 	       
+	Widget kid,
 	Widget cur_parent,
 	Widget new_parent,
 	Mask visual_flag)
@@ -1173,7 +1173,7 @@ ExmCreateSimple (
                        )
 {
  /* Convenience function to instantiate an ExmSimple widget. */
-   return (XtCreateWidget (name, exmSimpleWidgetClass, parent, 
+   return (XtCreateWidget (name, exmSimpleWidgetClass, parent,
                            arglist, argCount));
 }
 

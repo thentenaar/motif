@@ -593,12 +593,11 @@ process_printer_list(Widget w)
     /* Terminate with 0 */
     buf[count++] = 0;
     /* Make sure printer lists are big enough */
-    pw -> print.printers = (char**) XtRealloc((char*) pw -> print.printers,
-					      sizeof(char*) *
-					      pw -> print.num_printers + 1);
-    pw -> print.is_printer =
-      (Boolean*) XtRealloc((char*) pw -> print.is_printer,
-			   sizeof(Boolean) * pw -> print.num_printers + 1);
+    pw->print.printers = (char **)XtRealloc((XtPointer)pw->print.printers,
+                                            sizeof(char *) * (pw->print.num_printers + 1));
+    pw->print.is_printer =
+      (Boolean*) XtRealloc((XtPointer)pw->print.is_printer,
+                           sizeof(Boolean) * (pw->print.num_printers + 1));
     pw -> print.printers[pw -> print.num_printers] = XtNewString(buf);
     pw -> print.is_printer[pw -> print.num_printers] = ! is_path;
     pw -> print.num_printers++;
