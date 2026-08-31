@@ -94,8 +94,6 @@ static char rcsid[] = "$TOG: Mrminit.c /main/14 1999/05/19 15:25:33 mgreess $"
 #include <Xm/ColorS.h>
 #include <Xm/ColorSP.h>
 #include <Xm/CutPaste.h>
-#include <Xm/DataF.h>
-#include <Xm/DataFP.h>
 #include <Xm/DialogS.h>
 #include <Xm/DialogSP.h>
 #include <Xm/DrawingA.h>
@@ -303,10 +301,6 @@ void MrmInitialize (void)
   MrmRegisterClass
     (0, NULL, "XmCreateColorSelector", XmCreateColorSelector,
      (WidgetClass)&xmColorSelectorClassRec);
-
-  MrmRegisterClass
-    (0, NULL, "XmCreateDataField", XmCreateDataField,
-     (WidgetClass)&xmDataFieldClassRec);
 
   MrmRegisterClass
     (0, NULL, "XmCreateDialogShell", XmCreateDialogShell,

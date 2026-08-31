@@ -565,7 +565,6 @@ ControlList
         XmTemplateDialog;
         XmText;
         XmTextField;
-        XmDataField;
         XmToggleButton;
         XmToggleButtonGadget;
 	XmTree;
@@ -646,7 +645,6 @@ ControlList
         XmTemplateDialog;
         XmText;
         XmTextField;
-        XmDataField;
         XmToggleButton;
 	XmTree;
         XmWarningDialog;
@@ -6381,32 +6379,3 @@ Class XmTabStack : Widget {
   };
 };
 
-!
-! Resources for XmDataField
-
-Resource
-    XmNpicture : Argument
-        { Type = compound_string;
-          Default = "Null"; };
-    XmNautoFill : Argument
-        { Type = boolean;
-          Default = "True"; };
-    XmNpictureErrorCallback : Reason
-	{ };
-    XmNvalidateCallback : Reason
-	{ };
-
-Class
-    XmDataField : Widget
-        {
-        SuperClass = XmTextField;
-        ConvenienceFunction = XmCreateDataField;
-        Resources
-            {
-		XmNpicture;
-		XmNautoFill;
-		XmNalignment;
-		XmNpictureErrorCallback;
-		XmNvalidateCallback;
-            };
-        };

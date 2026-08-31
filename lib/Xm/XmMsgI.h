@@ -292,12 +292,4 @@ externalref nl_catd Xm_catd;
 #define _XmMMsgSSpinB_0001          _XmCatgets(Xm_catd, MS_SSpinB, MSG_SSpinB_0001, _XmMsgSSpinB_0001)
 #define _XmMMsgSSpinB_0002          _XmCatgets(Xm_catd, MS_SSpinB, MSG_SSpinB_0002, _XmMsgSSpinB_0002)
 #define _XmMMsgSSpinB_0003          _XmCatgets(Xm_catd, MS_SSpinB, MSG_SSpinB_0003, _XmMsgSSpinB_0003)
-#define _XmMMsgDataF_0000   	    _XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0000, _XmMsgDataF_0000)
-#define _XmMMsgDataF_0001      		_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0001, _XmMsgDataF_0001)
-#define _XmMMsgDataF_0002       	_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0002, _XmMsgDataF_0002)
-#define _XmMMsgDataF_0003       	_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0003, _XmMsgDataF_0003)
-#define _XmMMsgDataF_0004       	_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0004, _XmMsgDataF_0004)
-#define _XmMMsgDataF_0005       	_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0005, _XmMsgDataF_0005)
-#define _XmMMsgDataF_0006       	_XmCatgets(Xm_catd, MS_DataF, MSG_DataF_0006, _XmMsgDataF_0006)
-#define _XmMMsgDataFWcs_0000       	_XmCatgets(Xm_catd, MS_DataFWcs, MSG_DatFWcs_0000, _XmMsgDataFWcs_0000)
-#define _XmMMsgDataFWcs_0001       	_XmCatgets(Xm_catd, MS_DataFWcs, MSG_DataFWcs_0001, _XmMsgDataFWcs_0001)
+

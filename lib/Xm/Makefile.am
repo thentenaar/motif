@@ -20,7 +20,6 @@ EXTRA_HDRS = Ext.h ExtP.h  \
              Column.h ColumnP.h \
              ButtonBox.h ButtonBoxP.h \
              ColorS.h ColorSP.h \
-             Picture.h PictureP.h DataF.h DataFP.h DataFSelP.h \
              Ext18List.h Ext18ListP.h MultiList.h MultiListP.h \
              Paned.h PanedP.h IconBox.h IconBoxP.h IconButton.h IconButtonP.h xmlist.h \
              Hierarchy.h HierarchyP.h Outline.h OutlineP.h \
@@ -30,7 +29,7 @@ EXTRA_HDRS = Ext.h ExtP.h  \
              ToolTipT.h ToolTipCT.h
 
 EXTRA_SRCS = XmExtUtil.c \
-             Column.c ButtonBox.c ColorS.c Picture.c DataFSel.c DataF.c \
+             Column.c ButtonBox.c ColorS.c \
              MultiList.c I18List.c Paned.c IconBox.c IconButton.c xmlist.c \
              Hierarchy.c Outline.c TabBox.c TabList.c TabStack.c \
              DrawUtils.c Tree.c DropDown.c \

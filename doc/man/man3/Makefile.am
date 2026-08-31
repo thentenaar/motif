@@ -178,21 +178,6 @@ man_MANS = ApplicationShell.3 \
     XmCvtXmStringToByteStream.3 \
     XmCvtXmStringToCT.3 \
     XmCvtXmStringToTextProperty.3 \
-    XmDataField.3 \
-    XmDataFieldCopy.3 \
-    XmDataFieldCut.3 \
-    XmDataFieldPaste.3 \
-    XmDataFieldGetSelection.3 \
-    XmDataFieldGetSelectionPosition.3 \
-    XmDataFieldGetString.3 \
-    XmDataFieldGetStringWcs.3 \
-    XmDataFieldSetAddMode.3 \
-    XmDataFieldSetEditable.3 \
-    XmDataFieldSetHighlight.3 \
-    XmDataFieldSetInsertionPosition.3 \
-    XmDataFieldSetSelection.3 \
-    XmDataFieldSetString.3 \
-    XmDataFieldXYToPos.3 \
     XmDeactivateProtocol.3 \
     XmDeactivateWMProtocol.3 \
     XmDestroyPixmap.3 \
@@ -643,7 +628,6 @@ man_MANS = ApplicationShell.3 \
     XmVaCreateComboBox.3 \
     XmVaCreateCommand.3 \
     XmVaCreateContainer.3 \
-    XmVaCreateDataField.3 \
     XmVaCreateDrawingArea.3 \
     XmVaCreateDrawnButton.3 \
     XmVaCreateDropDown.3 \

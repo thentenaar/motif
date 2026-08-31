@@ -23,7 +23,6 @@ SUBDIRS = airport \
          workspace \
          tooltips \
          ButtonBox \
-         Column \
          Outline \
          TabStack \
          Tree \
