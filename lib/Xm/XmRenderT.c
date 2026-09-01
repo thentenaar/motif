@@ -2153,13 +2153,9 @@ XmRenderTableGetRenditions(XmRenderTable table,
 					 FALSE, FALSE, FALSE, NULL);
       if (rend != NULL)
 	{
-	  rends[count] = CopyRendition(rend);
-	  count++;
+	  rends[i] = CopyRendition(rend);
 	}
     }
-
-  if (count < tag_count)
-    rends = (XmRendition *)XtRealloc((char *)rends, count * sizeof(XmRendition));
 
   if (app)
 	_XmAppUnlock(app);
