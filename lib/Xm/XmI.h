@@ -229,11 +229,20 @@ extern Pixel _XmAssignInsensitiveColor(Widget w);
 # define _XmDisplayToAppContext(d) \
         XtAppContext app = XtDisplayToApplicationContext(d)
 
-# define _XmAppLock(app)	XtAppLock(app)
-# define _XmAppUnlock(app)	XtAppUnlock(app)
-# define _XmProcessLock()	XtProcessLock()
-# define _XmProcessUnlock()	XtProcessUnlock()
+# define _XmAppUnlock(app)	_XmUnlock(app)
+# define _XmProcessUnlock()	_XmUnlock(NULL)
 # define _XmIsThreadInitialized() (XtToolkitThreadInitialize())
+
+/**
+ * Having these as functions will make future debugging easier.
+ *
+ * Note that these are all noops if Xt was built without thread support.
+ */
+extern void _XmAppLock(XtAppContext);
+extern void _XmProcessLock(void);
+extern XtAppContext _XmLock(Display *);
+extern XtAppContext _XmLockWidget(Widget);
+extern void _XmUnlock(XtAppContext);
 
 #ifdef __cplusplus
 }

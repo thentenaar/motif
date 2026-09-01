@@ -1479,6 +1479,50 @@ _XmOSKeySymToCharacter(KeySym keysym,
   return 1;
 }
 
+/**
+ * Having these as functions will make future debugging easier.
+ *
+ * Note that these are all noops if Xt was built without thread support.
+ */
+void _XmAppLock(XtAppContext ctx)
+{
+	XtAppLock(ctx);
+}
+
+void _XmProcessLock(void)
+{
+	XtProcessLock();
+}
+
+XtAppContext _XmLock(Display *d)
+{
+	XtAppContext ctx;
+
+	if (!d) d = _XmGetDefaultDisplay();
+	if ((ctx = XtDisplayToApplicationContext(d)))
+		_XmAppLock(ctx);
+	else _XmProcessLock();
+
+	return ctx;
+}
+
+XtAppContext _XmLockWidget(Widget w)
+{
+	XtAppContext ctx;
+
+	if ((ctx = XtWidgetToApplicationContext(w)))
+		_XmAppLock(ctx);
+	else _XmProcessLock();
+
+	return ctx;
+}
+
+extern void _XmUnlock(XtAppContext app)
+{
+	if (app) XtAppUnlock(app);
+	else XtProcessUnlock();
+}
+
 /* ****************************************************** **
 ** Threading stuff. Stuck here to allow easier debugging.
 ** ****************************************************** */
