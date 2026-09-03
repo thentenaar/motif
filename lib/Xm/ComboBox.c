@@ -1772,11 +1772,9 @@ CBDropDownList(Widget    widget,
 	    XtY(cb);
 
 	  tmp = monitor->x + monitor->width - XtWidth(CB_ListShell(cb));
-	  tmp = MIN(tmp, shell_x - monitor->x);
-	  shell_x = MAX(monitor->x, tmp);
+	  shell_x = MAX(monitor->x, MIN(tmp, shell_x));
 	  tmp = monitor->y + monitor->height - XtHeight(CB_ListShell(cb));
-	  tmp = MIN(tmp, shell_y - monitor->y);
-	  shell_y = MAX(monitor->y, tmp);
+	  shell_y = MAX(monitor->y, MIN(tmp, shell_y));
 	  FreeXmMonitorInfo(monitor);
 
 	  /* CR 8446: The shell width may have changed unexpectedly. */
