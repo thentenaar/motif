@@ -130,9 +130,8 @@ START_TEST(remove_entry_not_in_list)
 	e  = XmFontListEntryLoad(display, "fixed", XmFONT_IS_FONT, XmSTRING_DEFAULT_CHARSET);
 	fl = XmFontListAppendEntry(NULL, e);
 	e2 = XmFontListEntryLoad(display, "8x13bold", XmFONT_IS_FONT, XmSTRING_DEFAULT_CHARSET);
-	ck_assert_msg((fx = XmFontListRemoveEntry(fl, e2)) == fl,
-	              "Unexpected return value");
-	XmFontListFree(fl);
+	ck_assert_msg((fx = XmFontListRemoveEntry(fl, e2)) != fl, "Unexpected return value");
+	if (fx) XmFontListFree(fx);
 	XmFontListEntryFree(&e);
 	XmFontListEntryFree(&e2);
 }
