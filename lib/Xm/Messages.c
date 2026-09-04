@@ -1543,6 +1543,9 @@ externaldef(messages) const char *_XmMsgXmRenderT_0005 =
   "XmNloadModel is XmLOAD_IMMEDIATE but XmNfont and XmNfontName not specified.\n\
 Cannot load font.";
 
+externaldef(messages) const char *_XmMsgXmRenderT_0006 =
+  "XmRenditionGetValues or XmRenditionSetValues was called on an invalid XmRendition.";
+
 /**************** XmSelect.c ****************/
 
 /* Needed for message catalog BC. Do not remove */

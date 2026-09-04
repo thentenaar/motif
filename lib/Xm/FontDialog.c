@@ -55,6 +55,7 @@
 #include "XmRenderTI.h"
 #include "RepTypeI.h"
 #include "HashI.h"
+#include "SharedPtrI.h"
 #include "FontDialogP.h"
 
 /**
@@ -488,12 +489,6 @@ static void Destroy(Widget w)
 {
 	Cardinal i, j;
 	XmFontDialogWidget fd = (XmFontDialogWidget)w;
-	struct font_prop *info;
-
-	if (fd->fontdlg.rend) {
-		XmRenditionDematerialize(*_XmRTRenditions(fd->fontdlg.rend));
-		XmRenderTableFree(fd->fontdlg.rend);
-	}
 
 	font_prop_destroy((struct font_prop *)fd->fontdlg.info);
 }
@@ -730,37 +725,32 @@ static XmGeoMatrix GeoMatrixCreate(Widget w, Widget inst, XtWidgetGeometry *desi
 
 #if USE_XFT
 /**
- * Load a Xft font. The rendition props will get filled on load.
+ * Create a lazy-loadable Xft font. The rendition props will get filled
+ * later when it gets loaded.
  */
 static XmRendition load_xft(Widget w, const String family, String style)
 {
 	Arg args[4];
-	XmRendition r;
 
-	r = XmRenditionCreate(w, XmS, NULL, 0);
 	XtSetArg(args[0], XmNfontType, XmFONT_IS_XFT);
 	XtSetArg(args[1], XmNfontName, family);
 	XtSetArg(args[2], XmNloadModel, XmLOAD_LAZY);
 	if (style) XtSetArg(args[3], XmNfontStyle, style);
-	XmRenditionUpdate(r, args, 3 + !!style);
-	return r;
+	return XmRenditionCreate(w, XmS, args, 3 + !!style);
 }
 #endif
 
 /**
- * Load a XFontSet
+ * Lazy-loadable X font.
  */
 static XmRendition load_fontset(Widget w, const String xlfd)
 {
 	Arg args[3];
-	XmRendition r;
 
-	r = XmRenditionCreate(w, XmS, NULL, 0);
 	XtSetArg(args[0], XmNfontType, XmFONT_IS_FONTSET);
 	XtSetArg(args[1], XmNfontName, xlfd);
 	XtSetArg(args[2], XmNloadModel, XmLOAD_LAZY);
-	XmRenditionUpdate(r, args, 3);
-	return r;
+	return XmRenditionCreate(w, XmS, args, 3);
 }
 
 /**
@@ -852,7 +842,7 @@ static void append_leaf(Widget w, struct font_prop *node, XmString k,
 	if (pos < node->cnt)
 		memmove(node->rend + pos + 1, node->rend + pos, (node->cnt - pos) * sizeof(XmRendition));
 	node->rend[pos] = r;
-	_XmAddHashEntry(node->ht, (XmHashKey)k, (XtPointer)True);
+	_XmAddHashEntry(node->ht, k, (XtPointer)True);
 	node->cnt++;
 }
 
@@ -881,7 +871,7 @@ static struct font_prop *append_prop(struct font_prop *node, XmString k)
 	if (pos < node->cnt)
 		memmove(node->children + pos + 1, node->children + pos, (node->cnt - pos) * sizeof *node->children);
 	node->children[pos] = child;
-	_XmAddHashEntry(node->ht, (XmHashKey)k, child);
+	_XmAddHashEntry(node->ht, k, child);
 	node->cnt++;
 	return child;
 }
@@ -968,7 +958,7 @@ static void load_fontconfig(Widget w, struct font_prop *info, int sz)
 		x = XmStringNormalize(q, XM_CODEPOINT_NORM_NFC);
 		XmStringFree(q);
 
-		if (!(style = _XmGetHashEntry(info->ht, (XmHashKey)x))) {
+		if (!(style = _XmGetHashEntry(info->ht, x))) {
 			style = append_prop(info, x);
 		} else {
 			XmStringFree(x);
@@ -986,7 +976,7 @@ static void load_fontconfig(Widget w, struct font_prop *info, int sz)
 			q = XmStringCreate((String)s2, (XmStringTag)"UTF-8");
 			x = XmStringNormalize(q, XM_CODEPOINT_NORM_NFC);
 			XmStringFree(q);
-			if (_XmGetHashEntry(style->ht, (XmHashKey)x)) {
+			if (_XmGetHashEntry(style->ht, x)) {
 				XmStringFree(x);
 				continue;
 			}
@@ -1025,8 +1015,10 @@ static void load_fontconfig(Widget w, struct font_prop *info, int sz)
 					q = XmStringCreate(tmp, (XmStringTag)"UTF-8");
 					XtFree(tmp);
 
-					if (_XmGetHashEntry(size->ht, (XmHashKey)q))
+					if (_XmGetHashEntry(size->ht, q)) {
+						XmStringFree(q);
 						continue;
+					}
 
 					/* ... and the pattern */
 					bsz = strlen((String)s) + 15;
@@ -1072,8 +1064,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 	char **names       = NULL;
 	XFontStruct *finfo = NULL;
 	struct font_prop *style, *size;
-	Atom FOUNDRY, FAMILY_NAME, WEIGHT_NAME, SLANT, SETWIDTH_NAME;
-	Atom POINT_SIZE, RESOLUTION_X;
+	Atom FOUNDRY, WEIGHT_NAME, SLANT, SETWIDTH_NAME, RESOLUTION_X;
 	String foundry, family, weight, slant, setwidth, tmp;
 	XErrorHandler olderr;
 	XmString q;
@@ -1084,11 +1075,9 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 
 	fd = (XmFontDialogWidget)w;
 	FOUNDRY       = XInternAtom(d, "FOUNDRY", False);
-	FAMILY_NAME   = XInternAtom(d, "FAMILY_NAME", False);
 	WEIGHT_NAME   = XInternAtom(d, "WEIGHT_NAME", False);
 	SLANT         = XInternAtom(d, "SLANT", False);
 	SETWIDTH_NAME = XInternAtom(d, "SETWIDTH_NAME", False);
-	POINT_SIZE    = XInternAtom(d, "POINT_SIZE", False);
 	RESOLUTION_X  = XInternAtom(d, "RESOLUTION_X", False);
 
 	/**
@@ -1115,7 +1104,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		for (j = 0; j < finfo[i].n_properties; j++) {
 			if (finfo[i].properties[j].name == FOUNDRY)
 				foundry = XGetAtomName(d, finfo[i].properties[j].card32);
-			if (finfo[i].properties[j].name == FAMILY_NAME)
+			if (finfo[i].properties[j].name == XA_FAMILY_NAME)
 				family = XGetAtomName(d, finfo[i].properties[j].card32);
 			if (finfo[i].properties[j].name == WEIGHT_NAME)
 				weight = XGetAtomName(d, finfo[i].properties[j].card32);
@@ -1123,7 +1112,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 				slant = XGetAtomName(d, finfo[i].properties[j].card32);
 			if (finfo[i].properties[j].name == SETWIDTH_NAME)
 				setwidth = XGetAtomName(d, finfo[i].properties[j].card32);
-			if (finfo[i].properties[j].name == POINT_SIZE)
+			if (finfo[i].properties[j].name == XA_POINT_SIZE)
 				points = finfo[i].properties[j].card32 / 10;
 			if (finfo[i].properties[j].name == RESOLUTION_X)
 				res = finfo[i].properties[j].card32;
@@ -1165,12 +1154,16 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		q = XmStringCreate(tmp, XmFONTLIST_DEFAULT_TAG);
 		XtFree(tmp);
 
-		if (!(style = _XmGetHashEntry(info->ht, (XmHashKey)q)))
+		if (!(style = _XmGetHashEntry(info->ht, q)))
 			style = append_prop(info, q);
 		else XmStringFree(q);
 
 		/* Compose style string (ex: "Regular" / "Bold Italic") */
-		if (slant && (*slant == 'O' || *slant == 'o' || *slant == 'I' || *slant == 'i')) {
+		if (slant && (*slant == 'O' || *slant == 'o')) {
+			XFree(slant);
+			slant = malloc(8);
+			memcpy(slant, "Oblique", 8);
+		} else if (slant && (*slant == 'I' || *slant == 'i')) {
 			XFree(slant);
 			slant = malloc(7);
 			memcpy(slant, "Italic", 7);
@@ -1178,7 +1171,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 
 		/* We don't want "Bold Italic Regular" */
 		if ((weight && (*weight == 'b' || *weight == 'B')) ||
-		    (slant  && *slant == 'I')) {
+		    (slant  && (*slant == 'I' || *slant == 'O'))) {
 			if (!setwidth) setwidth = malloc(1);
 			*setwidth = '\0';
 		}
@@ -1209,7 +1202,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		XtFree(tmp);
 
 		/* See if we have this style already */
-		if (!(size = _XmGetHashEntry(style->ht, (XmHashKey)q)))
+		if (!(size = _XmGetHashEntry(style->ht, q)))
 			size = append_prop(style, q);
 		else XmStringFree(q);
 
@@ -1219,7 +1212,7 @@ static void load_corefonts(Widget w, struct font_prop *info, int sz)
 		q = XmStringCreate(tmp, XmFONTLIST_DEFAULT_TAG);
 		XtFree(tmp);
 
-		if (!_XmGetHashEntry(size->ht, (XmHashKey)q))
+		if (!_XmGetHashEntry(size->ht, q))
 			append_leaf(w, size, q, names[i], NULL, False);
 		else XmStringFree(q);
 
@@ -1242,6 +1235,7 @@ static void update_sample(XmFontDialogWidget fd)
 {
 	Arg args[6];
 	XmRendition r;
+	XmRenderTable rt;
 	XmString s = NULL;
 	struct font_prop *info, *font, *style;
 
@@ -1256,14 +1250,7 @@ static void update_sample(XmFontDialogWidget fd)
 	font  = info->children[fd->fontdlg.selected_font  - 1];
 	style = font->children[fd->fontdlg.selected_style - 1];
 	r     = style->rend[fd->fontdlg.selected_size     - 1];
-
-	if (fd->fontdlg.rend) {
-		XmRenditionDematerialize(*_XmRTRenditions(fd->fontdlg.rend));
-		*_XmRTRenditions(fd->fontdlg.rend) = r;
-	} else {
-		fd->fontdlg.rend = XmRenderTableAddRenditions(NULL, &r, 1, 0);
-		_XmRendRefcountDec(r);
-	}
+	rt    = XmRenderTableAddRenditions(NULL, &r, 1, 0);
 
 	/**
 	 * Sample label
@@ -1278,7 +1265,7 @@ static void update_sample(XmFontDialogWidget fd)
 		fd->fontdlg.sample_frame, "Sample", args, 6
 	);
 
-	if (!XmRenditionMaterialize(r)) {
+	if (!XmRenditionLoad(r, False)) {
 		s = XmStringCreate(
 			(String)"Failed to load the requested font",
 			(XmStringTag)"UTF-8"
@@ -1287,10 +1274,12 @@ static void update_sample(XmFontDialogWidget fd)
 		XtSetValues(fd->fontdlg.sample, args, 1);
 	} else {
 		XtSetArg(args[0], XmNlabelString, fd->fontdlg.sample_text);
-		XtSetArg(args[1], XmNrenderTable, fd->fontdlg.rend);
+		XtSetArg(args[1], XmNrenderTable, rt);
 		XtSetValues(fd->fontdlg.sample, args, 2);
 	}
+
 	XtManageChild(fd->fontdlg.sample);
+	XmRenderTableFree(rt);
 	XmStringFree(s);
 
 	/* Ensure the frame redraws */
@@ -1425,22 +1414,11 @@ static void button_proc(Widget w, XtPointer client, XtPointer call)
 		font  = info->children[fd->fontdlg.selected_font  - 1];
 		style = font->children[fd->fontdlg.selected_style - 1];
 		r     = style->rend[fd->fontdlg.selected_size     - 1];
-		r     = _XmRenditionCopy(r, False);
+		r     = XmSharedPtrCopy(r, True);
 
-		/**
-		 * _XmRenditionCopy() / CopyInto() refs the Xft font, but doesn't
-		 * generate new copies of X fonts.
-		 */
-#if USE_XFT
-		if (_XmRendXftFont(r))
-			XftFontClose(_XmRendDisplay(r), _XmRendXftFont(r));
-		_XmRendXftFont(r) = NULL;
-		_XmRendFont(r)    = NULL;
-#endif
-		if (XmRenditionMaterialize(r))
+		if (XmRenditionLoad(r, False))
 			_XmRendLoadModel(r) = XmLOAD_IMMEDIATE;
 		else _XmRendLoadModel(r) = XmLOAD_DEFERRED;
-		_XmRendRefcount(r) = 1;
 
 		fd_cb.reason    = XmCR_OK;
 		fd_cb.rendition = r;

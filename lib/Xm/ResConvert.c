@@ -1746,9 +1746,10 @@ XmFontList XmeGetDefaultRenderTable(Widget w, unsigned char fontListType)
 
 	/* Load a default rendition and add it to an empty rendertable */
 	fontlist = (XmFontList)_XmCreateRenderTable(w, NULL, NULL, 0);
-	if (!_XmRenderTableFindFallback(fontlist, NULL, False, NULL, &rend))
+	if (!_XmRenderTableFindFirstFont(fontlist, &rend))
 		XmeWarning(w, MSG2);
 
+	XmRenditionFree(rend);
 	DefaultSystemFontList(XtDisplay(w), fontlist);
 	_XmProcessUnlock();
 	return fontlist;

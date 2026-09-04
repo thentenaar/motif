@@ -31,6 +31,8 @@
 
 #include <string.h>
 #include <Xm/XmP.h>
+#include <Xm/XmRenderT.h>
+#include "SharedPtrI.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -270,7 +272,7 @@ typedef struct __XmStringScanning {
 typedef struct __XmStringRendition {
 	XmTextPosition start;
 	XmTextPosition end;
-	XmRendition  rendition;
+	XmWeakPtr      rendition;
 	struct __XmStringRendition *prev;
 	struct __XmStringRendition *next;
 } *_XmStringRendition;
@@ -282,6 +284,7 @@ typedef struct __XmStringRendering {
   _XmStringCacheHeader header;           /* cache_type == _XmRENDERING_CACHE */
   /* Matching fields */
   XmRenderTable        rt;
+  XmRenditionStyle     style;
 
   /* Cached data */
   Dimension            width;	     /* width of segment */
@@ -826,11 +829,6 @@ unsigned char *_Xmstrrev(const unsigned char *s, size_t len);
 
 extern XFontStruct * _XmGetFirstFont(
                         XmFontListEntry entry) ;
-extern Boolean _XmFontListSearch(
-                        XmFontList fontlist,
-                        XmStringTag charset,
-                        short *indx,
-                        XFontStruct **font_struct) ;
 
 extern int _XmStringIndexCacheTag(
                         XmStringTag tag,
@@ -859,43 +857,6 @@ extern void _XmStringExtent(
                         Dimension *height) ;
 extern Boolean _XmStringEmpty(
                         _XmString string) ;
-extern void _XmStringDraw(
-                        Display *d,
-                        Window w,
-                        XmFontList fontlist,
-                        _XmString string,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip) ;
-extern void _XmStringDrawImage(
-                        Display *d,
-                        Window w,
-                        XmFontList fontlist,
-                        _XmString string,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip) ;
-extern void _XmStringDrawUnderline(
-                        Display *d,
-                        Window w,
-                        XmFontList f,
-                        _XmString s,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip,
-                        _XmString u) ;
 extern void _XmStringRender(Display *d,
                             Drawable w,
                             XmRenderTable rendertable,
@@ -940,31 +901,6 @@ extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
                                 XmRenderTable rt,
 				float *width,
 				XmRendition *rend);
-extern void _XmStringDrawSegment(Display *d,
-				 Drawable w,
-				 Position x,
-				 Position y,
-				 Dimension width,
-				 Dimension height,
-				 _XmStringNREntry seg,
-				 XmRendition rend,
-				 XmRenderTable rendertable,
-				 Boolean image,
-				 XmString *underline,
-				 Dimension descender
-				 );
-extern void _XmStringDrawLining(Display *d,
-				Drawable w,
-				Position x,
-				Position y,
-				Dimension width,
-				Dimension height,
-				Dimension descender,
-				XmRendition rend,
-				Pixel select_color,
-				XmHighlightMode mode,
-				Boolean colors_set);
-
 extern Boolean _XmStringSegmentExtents(_XmStringEntry entry,
 				       XmRenderTable rendertable,
 				       XmRendition *rend_in_out,

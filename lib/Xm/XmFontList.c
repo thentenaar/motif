@@ -99,7 +99,6 @@ XmFontListEntryCreate(
 
     n = 0;
     XtSetArg(args[n], XmNfontType, type); n++;
-    XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 #if USE_XFT
     if (type == XmFONT_IS_XFT)
         XtSetArg(args[n], XmNxftFont, font);
@@ -158,7 +157,6 @@ XmFontListEntryCreate_r(char *tag,
 
   n = 0;
   XtSetArg(args[n], XmNfontType, type); n++;
-  XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
   XtSetArg(args[n], XmNfont, font); n++;
 
   ret_val =
@@ -211,7 +209,7 @@ XmFontListEntryGetFont(
 #if USE_XFT
   XtSetArg(args[n], XmNxftFont, &ret_val2); n++;
 #endif
-  XmRenditionRetrieve(entry, args, n);
+  XmRenditionGetValues(entry, args, n);
 
 #if USE_XFT
   if (*typeReturn == XmFONT_IS_XFT)
@@ -247,10 +245,8 @@ char *
 XmFontListEntryGetTag(
         XmFontListEntry entry )
 {
-  Cardinal	n;
-  Arg		args[1];
-  char		*tag;
-  char		*ret_val;
+  Arg		arg;
+  char		*tag = NULL;
 #ifdef XTHREADS
   XtAppContext  app=NULL;
 #endif
@@ -268,11 +264,8 @@ XmFontListEntryGetTag(
     _XmProcessLock();
 #endif
 
-  n = 0;
-  XtSetArg(args[n], XmNtag, &tag); n++;
-  XmRenditionRetrieve(entry, args, n);
-
-  ret_val = XtNewString(tag);
+  XtSetArg(arg, XmNtag, &tag);
+  XmRenditionGetValues(entry, &arg, 1);
 
 #ifdef XTHREADS
   if (app)
@@ -281,7 +274,7 @@ XmFontListEntryGetTag(
     _XmProcessUnlock();
 #endif
 
-  return ret_val;
+  return tag;
 }
 
 XmFontList
@@ -376,13 +369,9 @@ XmFontListRemoveEntry(
     _XmProcessLock();
 #endif
 
-  n = 0;
-  XtSetArg(args[n], XmNtag, &tags[0]); n++;
-  XtSetArg(args[n], XmNfontType, &type1); n++;
-  XtSetArg(args[n], XmNfont, &font1); n++;
-  XmRenditionRetrieve(entry, args, n);
-
-  old = _XmRenderTableRemoveRenditions(old, tags, 1, TRUE, type1, font1);
+  XtSetArg(args[0], XmNtag, &tags[0]);
+  XmRenditionGetValues(entry, args, 1);
+  old = XmRenderTableRemoveRenditions(old, tags, 1);
 
 #ifdef XTHREADS
   if (app)
@@ -424,7 +413,7 @@ XmFontListEntryLoad(
   XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   ret_val = _XmRenditionCreate(display, NULL, XmS, XmCFontList,
-		    _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN),
+		    tag ? _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN) : XmFONTLIST_DEFAULT_TAG,
 			    args, n, NULL);
   _XmAppUnlock(app);
   return ret_val;
@@ -467,7 +456,6 @@ XmFontListCreate(
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
   XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
-  XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   rends[0] =
     XmRenditionCreate(NULL,
@@ -524,7 +512,6 @@ XmFontListCreate_r(
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
   XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
-  XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   rends[0] =
     XmRenditionCreate(wid,
@@ -623,7 +610,6 @@ XmFontListAdd(
   n = 0;
   XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
   XtSetArg(args[n], XmNfont, (XtPointer)font); n++;
-  XtSetArg(args[n], XmNloadModel, XmLOAD_IMMEDIATE); n++;
 
   rends[0] =
     XmRenditionCreate(NULL,
@@ -667,7 +653,7 @@ _XmGetFirstFont(
   n = 0;
   XtSetArg(args[n], XmNfontType, &type); n++;
   XtSetArg(args[n], XmNfont, &font); n++;
-  XmRenditionRetrieve(entry, args, n);
+  XmRenditionGetValues(entry, args, n);
 
   if (font == (XtPointer)XmAS_IS)
     {
@@ -692,6 +678,30 @@ _XmGetFirstFont(
 }
 
 /*
+ * find an entry in the font list which matches, return index (or -1) and
+ * font stuct ptr (or first in list).
+ */
+Boolean
+_XmFontListSearch(
+        XmFontList fontlist,
+        XmStringCharSet charset,
+        XFontStruct **font_struct )
+{
+    XmFontListEntry    entry;
+    Boolean            success;
+
+    entry   = XmRenderTableResolve(fontlist, NULL, 0, charset, NULL);
+    success = !!entry;
+
+    if (success) {
+      *font_struct = _XmGetFirstFont(entry);
+      XmRenditionFree(entry);
+    } else *font_struct = NULL;
+
+    return success && (*font_struct != NULL);
+}
+
+/*
  * Find an entry in the fontlist which matches the current charset or
  * return the first font if none match.
  */
@@ -701,7 +711,6 @@ XmeRenderTableGetDefaultFont(
         XFontStruct **font_struct )
 {
   XmStringTag	       tag = XmFONTLIST_DEFAULT_TAG;
-  short		       indx = -1;
   Boolean	       retval;
 #ifdef XTHREADS
   XtAppContext	       app=NULL;
@@ -715,7 +724,7 @@ XmeRenderTableGetDefaultFont(
     _XmProcessLock();
 #endif
 
-  retval = _XmFontListSearch (fontlist, tag, &indx, font_struct);
+  retval = _XmFontListSearch (fontlist, tag, font_struct);
 
 #ifdef XTHREADS
   if (app)
@@ -725,36 +734,6 @@ XmeRenderTableGetDefaultFont(
 #endif
 
   return(retval);
-}
-
-/*
- * find an entry in the font list which matches, return index (or -1) and
- * font stuct ptr (or first in list).
- */
-Boolean
-_XmFontListSearch(
-        XmFontList fontlist,
-        XmStringCharSet charset,
-        short *indx,
-        XFontStruct **font_struct )
-{
-    XmFontListEntry    entry;
-    Boolean            success;
-
-    success = _XmRenderTableFindFallback(fontlist, charset,
-					 FALSE, indx, &entry);
-
-    /* For backward compatibility we must try to return something for */
-    /* any non-null charset, not just XmFONTLIST_DEFAULT_TAG. */
-    if (fontlist && charset && !success)
-      success = _XmRenderTableFindFirstFont(fontlist, indx, &entry);
-
-    if (success)
-      *font_struct = _XmGetFirstFont(entry);
-    else
-      *font_struct = NULL;
-
-    return success && (*font_struct != NULL);
 }
 
 /*
@@ -818,7 +797,7 @@ XmFontListGetNextFont(
   _XmProcessUnlock();
   n = 0;
   XtSetArg(args[n], XmNtag, &tag); n++;
-  XmRenditionRetrieve(rend, args, n);
+  XmRenditionGetValues(rend, args, n);
 
   *charset = XtNewString(tag);
 

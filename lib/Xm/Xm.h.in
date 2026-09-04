@@ -61,6 +61,7 @@
 #include <Xm/Gadget.h>
 #include <Xm/Cursor.h>
 #include <Xm/XmChar.h>
+#include <Xm/XmRenderT.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -280,7 +281,7 @@ typedef enum {
 #define XmHIGHLIGHT_COLOR        (XmREVERSED_GROUND_COLORS - 1)
 
 typedef enum {
-	XmUNSPECIFIED_LOAD_MODEL, /* XXX: Unused */
+	XmUNSPECIFIED_LOAD_MODEL, /* User-supplied font */
 	XmLOAD_DEFERRED,
 	XmLOAD_IMMEDIATE,
 	XmLOAD_LAZY
@@ -1695,45 +1696,37 @@ extern Dimension XmStringWidth(XmRenderTable rt, XmString string);
 extern Dimension XmStringHeight(XmRenderTable rt, XmString string);
 extern void XmStringExtent(XmRenderTable rt, XmString string,
                            Dimension *width, Dimension *height);
-extern int XmStringLineCount(
-                        XmString string) ;
-extern void XmStringDraw(
-                        Display *d,
-                        Window w,
-                        XmFontList fontlist,
-                        XmString string,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip) ;
-extern void XmStringDrawImage(
-                        Display *d,
-                        Window w,
-                        XmFontList fontlist,
-                        XmString string,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip) ;
-extern void XmStringDrawUnderline(
-                        Display *d,
-                        Window w,
-                        XmFontList fntlst,
-                        XmString str,
-                        GC gc,
-                        Position x,
-                        Position y,
-                        Dimension width,
-                        unsigned char align,
-                        unsigned char lay_dir,
-                        XRectangle *clip,
-                        XmString under) ;
+extern int XmStringLineCount(XmString string);
+
+extern void XmStringDraw(Display *d, Window w, XmRenderTable rendertable,
+                         XmString string, GC gc, Position x, Position y,
+                         Dimension width, unsigned char align,
+                         unsigned char lay_dir, XRectangle *clip);
+extern void XmStringDrawImage(Display *d, Window w, XmRenderTable rendertable,
+                              XmString string, GC gc, Position x, Position y,
+                              Dimension width, unsigned char align,
+                              unsigned char lay_dir, XRectangle *clip);
+extern void XmStringDrawUnderline(Display *d, Window w, XmRenderTable fntlst,
+                                  XmString str, GC gc, Position x, Position y,
+                                  Dimension width, unsigned char align,
+                                  unsigned char lay_dir, XRectangle *clip,
+                                  XmString under);
+extern void XmStringDrawStyled(Display *d, Drawable w, XmRenderTable rt,
+                               XmRenditionStyle style, XmString string,
+                               Position x, Position y, Dimension width,
+                               unsigned char align, unsigned char lay_dir,
+                               XRectangle *clip);
+extern void XmStringDrawImageStyled(Display *d, Drawable w, XmRenderTable rt,
+                                    XmRenditionStyle style, XmString string,
+                                    Position x, Position y, Dimension width,
+                                    unsigned char align, unsigned char lay_dir,
+                                    XRectangle *clip);
+extern void XmStringDrawUnderlineStyled(Display *d, Drawable w, XmRenderTable rt,
+                                        XmRenditionStyle style, XmString string,
+                                        Position x, Position y, Dimension width,
+                                        unsigned char align, unsigned char lay_dir,
+                                        XRectangle *clip, XmString under);
+
 extern Boolean XmStringSerializedIsValid(const unsigned char *stream);
 extern size_t XmStringSerializedLength(const unsigned char *stream);
 extern size_t XmStringSerialize(const XmString string, unsigned char **stream_out);
@@ -1851,27 +1844,30 @@ extern XmTabList XmTabListInsertTabs(XmTabList oldlist,
 
 extern XmRenderTable XmRenderTableCvtFromProp(Widget, char *prop, unsigned int len);
 extern unsigned int XmRenderTableCvtToProp(Widget, XmRenderTable table, char **prop_return);
-extern void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal argcount);
-extern void XmRenditionRetrieve(XmRendition rendition,
-				ArgList arglist,
-				Cardinal argcount);
-extern Boolean XmRenditionMaterialize(XmRendition rendition);
-extern void XmRenditionDematerialize(XmRendition rendition);
+extern void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal count);
+extern void XmRenditionGetValues(XmRendition rendition, ArgList args, Cardinal count);
+extern Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback);
+extern void XmRenditionUnload(XmRendition rendition);
 extern void XmRenditionFree(XmRendition rendition);
+extern void XmFreeRenditionArray(XmRendition *rends, Cardinal count);
 extern XmRendition XmRenditionCreate(Widget widget,
 				     XmStringTag tag,
 				     ArgList arglist,
 				     Cardinal argcount);
+extern XmRenderTable XmRenderTableCreate(Widget parent);
 extern XmRendition
   *XmRenderTableGetRenditions(XmRenderTable table,
 			      XmStringTag *tags,
 			      Cardinal tag_count);
 extern XmRendition XmRenderTableGetRendition(XmRenderTable table,
 					     XmStringTag tag);
-extern Boolean XmRenditionHasCodepoint(const XmRendition r, XmCodepoint cp);
+extern Boolean XmRenditionHasCodepoint(const XmRendition rend, XmCodepoint cp);
 extern XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
                                                    const XmRendition orig,
                                                    XmCodepoint cp);
+extern XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
+                                        Cardinal count, XmStringTag fallback,
+                                        XmRenditionStyle style);
 extern int XmRenderTableGetTags(XmRenderTable table,
 				XmStringTag **tag_list);
 extern void XmRenderTableFree(XmRenderTable table);

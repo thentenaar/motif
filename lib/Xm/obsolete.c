@@ -116,3 +116,13 @@ char *XmCvtXmStringToUTF8String(XmString string)
 	return (char *)XmStringUngenerate(string, NULL, XmUTF8_TEXT, XmUTF8_TEXT);
 }
 
+void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal argcount)
+{
+	XmRenditionSetValues(rendition, arglist, argcount);
+}
+
+void XmRenditionRetrieve(XmRendition rendition, ArgList arglist, Cardinal argcount)
+{
+	XmRenditionGetValues(rendition, arglist, argcount);
+}
+

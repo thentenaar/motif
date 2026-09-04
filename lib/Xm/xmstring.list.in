@@ -1711,6 +1711,15 @@ CsampleTitle
 NsampleTitle
 Cprefer100dpi
 Nprefer100dpi
+RXftFont
+NfontPixelSize
+CFontPixelSize
+NfontSlant
+CFontSlant
+NfontWeight
+CFontWeight
+NfontFamily
+CFontFamily
 
 #file XmStrDefsI.h
 #table _XmStringsI

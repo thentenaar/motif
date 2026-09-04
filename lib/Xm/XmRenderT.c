@@ -1,6 +1,7 @@
 /**
  * Motif
  *
+ * Copyright (c) 2026 Tim Hentenaar
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
  *
  * These libraries and programs are free software; you can
@@ -31,28 +32,26 @@ static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #endif
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#ifdef __cplusplus
-extern "C" { /* some 'locale.h' do not have prototypes (sun) */
-#endif
-#include <X11/Xlocale.h>
-#ifdef __cplusplus
-} /* Close scope of 'extern "C"' declaration */
-#endif /* __cplusplus */
+#include <assert.h>
 
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xresource.h>
 #include <Xm/Display.h>		/* For XmGetXmDisplay */
 #include <Xm/DisplayP.h>	/* For direct access to callback fields */
+#include <Xm/XmRenderT.h>
 #include "MessagesI.h"
 #include "XmI.h"
+#include "HashI.h"
+#include "SharedPtrI.h"
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 #include "XmTabListI.h"
+
 #if USE_XFT
 #include <X11/Xft/Xft.h>
 #endif
@@ -61,91 +60,23 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #define NO_NULL_TAG_MSG			_XmMMsgXmRenderT_0000
 #define NULL_DISPLAY_MSG      		_XmMMsgXmRenderT_0001
 #define INVALID_TYPE_MSG      		_XmMMsgXmRenderT_0002
-#define CONVERSION_FAILED_MSG 		_XmMMsgXmRenderT_0003
-#define NULL_FONT_TYPE_MSG    		_XmMMsgXmRenderT_0004
+#if 0
+#define CONVERSION_FAILED_MSG 		_XmMMsgXmRenderT_0003 /* TODO: Remove */
+#define NULL_FONT_TYPE_MSG    		_XmMMsgXmRenderT_0004 /* TODO: Remove */
+#endif
 #define NULL_LOAD_IMMEDIATE_MSG		_XmMMsgXmRenderT_0005
+#define INVALID_RENDITION		_XmMMsgXmRenderT_0006
 
-/* local macros */
-#define GetHandle(type)		(type *)XtMalloc(sizeof(type))
-#define FreeHandle(handle)	XtFree((char *)handle)
-#define SetPtr(handle, ptr)	*(handle) = ptr
-#define GetPtr(handle)		*(handle)
-#define NameIsString(fontname) \
-  (((fontname) != NULL) && ((fontname) != (String)XmAS_IS))
-#define ListIsList(tablist) \
-  (((tablist) != NULL) && \
-   ((unsigned int)(unsigned long)(tablist) != XmAS_IS))
-
-/**********************************************************************
- *	      IMPORTANT NOTE: IMPLEMENTATION OF SHARING
- *
- *	Instances of XmRenderTable and XmRendition are shared via a
- *	reference counting mechanism. This comment provides a general
- *	overview of how this is done.
- *
- *	First, both rendertable and renditions are indirectly
- *	referenced via a handle mechanism.  See the GetHandle,
- *	FreeHandle, SetPtr and GetPtr macros above.  This allows
- *	either the handle to change without the underlying data
- * 	structure changing, or the underlying data structure to change
- *	without the handle changing. I will indicate below where this
- *	happens.
- *
- *	Second, the real data structure for rendertable and rendition
- *	contain a reference count.  This count is incremented on copy
- *	and decremented on free.  If a decrement produces a zero
- *	refcount, the actual memory is freed.  If an increment
- *	produces a zero refcount, then the refcount has overflowed.  The
- *	refcount is decremented, and new memory is allocated for a new
- *	copy.
- *
- *	Finally, I have defined a terminology for the different types
- *	of "copying" that can done based on allocating a new handle or
- *	not and allocating a new data structure or not.  This probably
- *	conflicts with some other existing terminology, probably in
- *	object oriented programming.  Sorry about that.
- *
- *	Function:	Clone	Copy	Renew	Duplicate
- *			(Mutate)	(Update)
- *
- *	handle		new	new	old	old
- *	structure	new	inc	new	inc
- *			(changed)	(changed)
- *
- *	(changed) indicates that the data in the new structure has
- *	been changed from the data in the old structure.
- *
- *	I will use these terms as a short hand in describing the
- *	functions below.
- **********************************************************************/
-
+/**
+ * TODO: Refactor the code using this later
+ */
+#define GetPtr(r) (*(char **)(r))
 
 /********    Static Function Declarations    ********/
 
-static void CopyInto(XmRendition toRend,
-		     XmRendition fromRend);
-static void MergeInto(XmRendition toRend,
-		     XmRendition fromRend);
-static XmRendition CloneRendition(XmRendition rend);
-static XmRendition CopyRendition(XmRendition rend);
-static XmRendition RenewRendition(XmRendition rend);
-static XmRendition DuplicateRendition(XmRendition rend);
-static Boolean FreeRendition(XmRendition rend);
-static void RenditionWarning(char *tag, char *type,
-			     char *message, Display *dpy);
-static void CleanupResources(XmRendition rend, Boolean copy);
-static void ValidateTag(XmRendition rend,
-			XmStringTag dflt);
-static void ValidateAndLoadFont(XmRendition rend, Display *display);
-static void SetRend(XmRendition to,
-		    XmRendition from);
-static Boolean RendComplete(XmRendition rend);
 static void CopyFromArg(XtArgVal src,
 			char *dst,
 			unsigned int size);
-static void CopyToArg(char *src,
-		      XtArgVal *dst,
-		      unsigned int size);
 static Cardinal GetNamesAndClasses(Widget w,
 				   XrmNameList names,
 				   XrmClassList classes);
@@ -159,137 +90,119 @@ static Boolean GetResources(XmRendition rend,
 			    XmStringTag tag,
 			    ArgList arglist,
 			    Cardinal argcount);
-static void SetDefault(XmRendition rend);
+static void merge_renditions(XmRendition to, XmRendition from);
 #if USE_XFT
+static void set_props_from_pattern(XmRendition rend, const FcPattern *p);
 static XftColor GetCachedXftColor(Display *display, Pixel color);
 #endif
 
 /********    End Static Function Declarations    ********/
 
 /* Resource List. */
-
-/************************************************************************/
-/* N.B.:  The SetDefault procedure has a hardcoded list of all the	*/
-/*	common resources.  Be sure to update it when adding resources.	*/
-/************************************************************************/
-
-#define DEFAULT_loadModel		XmAS_IS
-#define DEFAULT_tag			XmS
-#define DEFAULT_fontName		(String)XmAS_IS
-#define DEFAULT_fontType		(XmFontType)XmAS_IS
-#define DEFAULT_font			(XtPointer)XmAS_IS
-#define DEFAULT_tabs			(XmTabList)XmAS_IS
-#define DEFAULT_background		XmUNSPECIFIED_PIXEL
-#define DEFAULT_foreground		XmUNSPECIFIED_PIXEL
-#define DEFAULT_underlineType		XmAS_IS
-#define DEFAULT_strikethruType		XmAS_IS
-#define DEFAULT_backgroundState		XmAS_IS
-#define DEFAULT_foregroundState		XmAS_IS
-#if USE_XFT
-#define DEFAULT_xftFont			(XtPointer)XmAS_IS
-#define DEFAULT_fontStyle		(String)NULL
-#define DEFAULT_fontFoundry		(String)NULL
-#define DEFAULT_fontSize		0
-#endif
-
 static XtResource _XmRenditionResources[] = {
   {
-    XmNtag, XmCTag, XmRString,
-    sizeof(XmStringTag), XtOffsetOf(_XmRenditionRec, tag),
-    XmRImmediate, (XtPointer) DEFAULT_tag
-  },
-  {
-    XmNfontName, XmCFontName, XmRString,
-    sizeof(String), XtOffsetOf(_XmRenditionRec, fontName),
-    XmRImmediate, (XtPointer) DEFAULT_fontName
+    XmNloadModel, XmCLoadModel, XmRLoadModel,
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, loadModel),
+    XmRImmediate, (XtPointer)XmUNSPECIFIED_LOAD_MODEL
   },
   {
     XmNfontType, XmCFontType, XmRFontType,
     sizeof(XmFontType), XtOffsetOf(_XmRenditionRec, fontType),
-    XmRImmediate, (XtPointer) DEFAULT_fontType
+    XmRImmediate, (XtPointer)XmAS_IS
+  },
+  {
+    XmNtag, XmCTag, XmRString,
+    sizeof(XmStringTag), XtOffsetOf(_XmRenditionRec, tag),
+    XmRImmediate, XmS
   },
   {
     XmNfont, XmCFont, XmRFontStruct,
     sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, font),
-    XmRImmediate, (XtPointer) DEFAULT_font
+    XmRImmediate, NULL
+  },
+  { /* This will use XmNfontName for backward compatbility */
+    XmNfontName, XmCFontName, XmRString,
+    sizeof(String), XtOffsetOf(_XmRenditionRec, pattern),
+    XmRImmediate, NULL
   },
   {
-    XmNloadModel, XmCLoadModel, XmRLoadModel,
-    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, loadModel),
-    XmRImmediate, (XtPointer) DEFAULT_loadModel
+    XmNfontFoundry, XmCFontFoundry, XmRString,
+    sizeof(String), XtOffsetOf(_XmRenditionRec, fontFoundry),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontFamily, XmCFontFamily, XmRString,
+    sizeof(String), XtOffsetOf(_XmRenditionRec, fontFamily),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontStyle, XmCFontStyle, XmRString,
+    sizeof(String), XtOffsetOf(_XmRenditionRec, fontStyle),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontSize, XmCFontSize, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, fontSize),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontPixelSize, XmCFontPixelSize, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, pixelSize),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontSlant, XmCFontSlant, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, fontSlant),
+    XmRImmediate, NULL
+  },
+  {
+    XmNfontWeight, XmCFontWeight, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, fontWeight),
+    XmRImmediate, NULL
   },
   {
     XmNtabList, XmCTabList, XmRTabList,
     sizeof(XmTabList), XtOffsetOf(_XmRenditionRec, tabs),
-    XmRImmediate, (XtPointer) DEFAULT_tabs
+    XmRImmediate, NULL
   },
-#if USE_XFT
   {
-    XmNxftFont, XmCXftFont, XmRPointer,
-    sizeof (XtPointer), XtOffsetOf (_XmRenditionRec, xftFont),
-    XmRImmediate, (XtPointer) DEFAULT_xftFont
+    XmNxftFont, XmCXftFont, XmRXftFont,
+    sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, xftFont),
+    XmRImmediate, NULL
   },
   {
     XmNrenditionBackground, XmCRenditionBackground, XmRRenditionPixel,
-    sizeof (Pixel), XtOffsetOf (_XmRenditionRec, xftBackground.pixel),
-    XmRImmediate, (XtPointer) DEFAULT_background
+    sizeof(Pixel), XtOffsetOf(_XmRenditionRec, style.bg.pixel),
+    XmRImmediate, (XtPointer)XmUNSPECIFIED_PIXEL
   },
   {
     XmNrenditionForeground, XmCRenditionForeground, XmRRenditionPixel,
-    sizeof (Pixel), XtOffsetOf (_XmRenditionRec, xftForeground.pixel),
-    XmRImmediate, (XtPointer) DEFAULT_foreground
+    sizeof(Pixel), XtOffsetOf(_XmRenditionRec, style.fg.pixel),
+    XmRImmediate, (XtPointer)XmUNSPECIFIED_PIXEL
   },
-  {
-    XmNfontStyle, XmCFontStyle, XmRString,
-    sizeof(String), XtOffsetOf (_XmRenditionRec, fontStyle),
-    XmRImmediate, (XtPointer) DEFAULT_fontStyle
-  },
-  {
-    XmNfontFoundry, XmCFontFoundry, XmRString,
-    sizeof(String), XtOffsetOf (_XmRenditionRec, fontFoundry),
-    XmRImmediate, (XtPointer) DEFAULT_fontFoundry
-  },
-  {
-    XmNfontSize, XmCFontSize, XmRInt,
-    sizeof(int), XtOffsetOf (_XmRenditionRec, fontSize),
-    XmRImmediate, (XtPointer) DEFAULT_fontSize
-  },
-#else
-  {
-    XmNrenditionBackground, XmCRenditionBackground, XmRRenditionPixel,
-    sizeof (Pixel), XtOffsetOf (_XmRenditionRec, background),
-    XmRImmediate, (XtPointer) DEFAULT_background
-  },
-  {
-    XmNrenditionForeground, XmCRenditionForeground, XmRRenditionPixel,
-    sizeof (Pixel), XtOffsetOf (_XmRenditionRec, foreground),
-    XmRImmediate, (XtPointer) DEFAULT_foreground
-  },
-#endif
   {
     XmNunderlineType, XmCUnderlineType, XmRLineType,
-    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, underlineType),
-    XmRImmediate, (XtPointer) DEFAULT_underlineType
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, style.underline),
+    XmRImmediate, (XtPointer)XmAS_IS
   },
   {
     XmNstrikethruType, XmCStrikethruType, XmRLineType,
-    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, strikethruType),
-    XmRImmediate, (XtPointer) DEFAULT_strikethruType
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, style.strikethru),
+    XmRImmediate, (XtPointer)XmAS_IS
   },
   {
     XmNforegroundState, XmCGroundState, XmRGroundState,
-    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, foregroundState),
-    XmRImmediate, (XtPointer) DEFAULT_foregroundState
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, style.fg_state),
+    XmRImmediate, (XtPointer)XmAS_IS
   },
   {
     XmNbackgroundState, XmCGroundState, XmRGroundState,
-    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, backgroundState),
-    XmRImmediate, (XtPointer) DEFAULT_backgroundState
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, style.bg_state),
+    XmRImmediate, (XtPointer)XmAS_IS
   },
 };
 
-static const Cardinal _XmNumRenditionResources =
-	XtNumber(_XmRenditionResources);
+static const Cardinal _XmNumRenditionResources = XtNumber(_XmRenditionResources);
 
 /* Searches up widget hierarchy, quarkifying ancestor names and */
 /* classes. */
@@ -576,1048 +489,6 @@ GetResources(XmRendition rend,
   return got_one;
 }
 
-/* Sets all resources to defaults from resource list. */
-static void
-SetDefault(XmRendition rend)
-{
-  /* A more robust implementation of this routine would to to loop
-   * over _XmRenditionResources and use CopyFromArg to reset values
-   * in rend, but to improve performance we use direct assignments.
-   */
-
-  if (rend == NULL) return;
-
-#if USE_XFT
-  memset (&(_XmRendXftFG(rend)), 0, sizeof (XftColor));
-  memset (&(_XmRendXftBG(rend)), 0, sizeof (XftColor));
-#endif
-
-  /* Leave _XmRendFontOnly unchanged.	 */
-  /* Leave _XmRendRefcount unchanged.	 */
-  _XmRendLoadModel(rend)      = DEFAULT_loadModel;
-  _XmRendTag(rend)	      = DEFAULT_tag;
-  _XmRendFontName(rend)	      = DEFAULT_fontName;
-  _XmRendFontType(rend)	      = DEFAULT_fontType;
-  _XmRendFont(rend)	      = DEFAULT_font;
-  /* Leave _XmRendDisplay unchanged.	 */
-  /* Leave _XmRendGC unchanged.		 */
-  /* Leave _XmRendTags unchanged.	 */
-  /* Leave _XmRendCount unchanged.	 */
-  /* Leave _XmRendHadEnds unchanged.	 */
-  _XmRendTabs(rend)	      = DEFAULT_tabs;
-  _XmRendBG(rend)	      = DEFAULT_background;
-  _XmRendFG(rend)	      = DEFAULT_foreground;
-  _XmRendUnderlineType(rend)  = DEFAULT_underlineType;
-  _XmRendStrikethruType(rend) = DEFAULT_strikethruType;
-  _XmRendBGState(rend)	      = DEFAULT_backgroundState;
-  _XmRendFGState(rend)	      = DEFAULT_foregroundState;
-
-#if USE_XFT
-  _XmRendXftFG(rend).color.alpha = 0xffff;
-  _XmRendXftBG(rend).color.alpha = 0xffff;
-  _XmRendXftFont(rend) = DEFAULT_xftFont;
-  _XmRendFontStyle(rend) = DEFAULT_fontStyle;
-  _XmRendFontFoundry(rend) = DEFAULT_fontFoundry;
-  _XmRendFontSize(rend) = DEFAULT_fontSize;
-  _XmRendPixelSize(rend) = 0;
-  _XmRendFontSlant(rend) = 0;
-  _XmRendFontSpacing(rend) = 0;
-  _XmRendFontWeight(rend) = 0;
-#endif
-}
-
-/* Extern function to pick out display from rendertable. */
-Display *
-_XmRenderTableDisplay(XmRenderTable table)
-{
-  return(_XmRTDisplay(table));
-}
-
-/* Find a rendition in table with matching tag.  Call callback if not */
-/* found and callback available.  Fail if need_font is true and */
-/* rendition found does not provide font. */
-XmRendition
-_XmRenderTableFindRendition(XmRenderTable table,
-			    XmStringTag tag,
-			    Boolean cached_tag,
-			    Boolean need_font,
-			    Boolean call,
-			    short *index)
-{
-  int				i, j;
-  XmRendition			rend;
-  Boolean			hit = FALSE;
-  XmDisplayCallbackStruct	cb;
-  XmDisplay			dsp;
-  XmRenderTable			copy;
-
-  if ((table == NULL) || (tag == NULL)) return(NULL);
-
-
-  for (;;) /* May have to try twice */
-    {
-      for (i = 0; i < _XmRTCount(table); i++)
-	{
-	  rend = _XmRTRenditions(table)[i];
-
-	  if ((cached_tag) ?
-	      (_XmRendTag(rend) == tag) :
-	      (strcmp(_XmRendTag(rend), tag) == 0))
-	    {
-	      hit = TRUE;
-
-	      if ((_XmRendFont(rend) == NULL) && (_XmRendXftFont (rend) == NULL) &&
-		  NameIsString(_XmRendFontName(rend)))
-		{
-		  if (_XmRendLoadModel(rend) == XmLOAD_DEFERRED)
-		    _XmRendLoadModel(rend) = XmLOAD_IMMEDIATE;
-
-		  ValidateAndLoadFont(rend, _XmRendDisplay(rend));
-
-		  if (need_font && (_XmRendFont(rend) == NULL &&
-                      _XmRendXftFont(rend) == NULL))
-		    break;
-		}
-
-	      if (index != NULL) *index = i;
-	      return(rend);
-	    }
-	}
-
-      /* Are we done? */
-      if (hit || !call) break;
-
-      call = FALSE;
-
-      /* Call callback */
-      if (_XmRTDisplay(table) != NULL)
-	{
-	  dsp = (XmDisplay) XmGetXmDisplay(_XmRTDisplay(table));
-
-	  /* CR 7964: XtHasCallbacks is surprisingly expensive, */
-	  /*	so we use a conservative approximation here. */
-	  if (dsp && dsp->display.noRenditionCallback)
-	    {
-	      copy = XmRenderTableCopy(table, NULL, 0);
-
-	      cb.reason = XmCR_NO_RENDITION;
-	      cb.event = NULL;
-	      cb.render_table = copy;
-	      cb.tag = tag;
-
-	      XtCallCallbackList((Widget)dsp,
-				 dsp->display.noRenditionCallback,
-				 &cb);
-
-	      if (cb.render_table != copy)
-		{
-		  /* Callback mutated table.  Update table with */
-		  /* substitution and search again. */
-
-		  for (j = 0; j < _XmRTCount(table); j++)
-		    XmRenditionFree(_XmRTRenditions(table)[j]);
-
-		  if (_XmRTRefcountDec(table) == 0)
-		    XtFree((char *)GetPtr(table));
-
-		  SetPtr(table, GetPtr(cb.render_table));
-		  FreeHandle(cb.render_table);
-		}
-	      else break;
-	    }
-	  else break;
-	}
-      else break;
-    }
-
-  /* Didn't find it. */
-  if (index != NULL) *index = -1;
-  return(NULL);
-}
-
-/* If to has resource unset and from has it set, set in to. */
-static void
-SetRend(XmRendition to,
-	XmRendition from)
-{
-  if (NameIsString(_XmRendFontName(from)) &&
-      !NameIsString(_XmRendFontName(to)))
-    _XmRendFontName(to) = _XmRendFontName(from);
-  if ((_XmRendFontType(from) != XmAS_IS) &&
-      (_XmRendFontType(to) == XmAS_IS))
-    _XmRendFontType(to) = _XmRendFontType(from);
-  if ((_XmRendLoadModel(from) != XmAS_IS) &&
-      (_XmRendLoadModel(to) == XmAS_IS))
-    _XmRendLoadModel(to) = _XmRendLoadModel(from);
-  if ((_XmRendFont(from) != NULL) &&
-      ((unsigned int)(unsigned long)_XmRendFont(to) == XmAS_IS))
-    _XmRendFont(to) = _XmRendFont(from);
-  if (ListIsList(_XmRendTabs(from)) &&
-      !ListIsList(_XmRendTabs(to)))
-    _XmRendTabs(to) = _XmRendTabs(from);
-#if USE_XFT
-  if ((_XmRendFG(from) != XmUNSPECIFIED_PIXEL) &&
-      (_XmRendFG(to) == XmUNSPECIFIED_PIXEL))
-    {
-      _XmRendFG(to) = _XmRendFG(from);
-      _XmRendXftFG(to) = GetCachedXftColor(_XmRendDisplay(to), _XmRendFG(to));
-    }
-  if ((_XmRendBG(from) != XmUNSPECIFIED_PIXEL) &&
-      (_XmRendBG(to) == XmUNSPECIFIED_PIXEL))
-    {
-      _XmRendBG(to) = _XmRendBG (from);
-      _XmRendXftBG(to) = GetCachedXftColor(_XmRendDisplay(to), _XmRendBG(to));
-    }
-  if ((_XmRendXftFont (from) != NULL) &&
-      ((unsigned int) (unsigned long) _XmRendXftFont (to) == XmAS_IS))
-    _XmRendXftFont (to) = _XmRendXftFont (from);
-  if ((_XmRendFontStyle (from) != NULL) && _XmRendFontStyle (to) == NULL)
-    _XmRendFontStyle (to) = _XmRendFontStyle (from);
-  if ((_XmRendFontFoundry (from) != NULL) && _XmRendFontFoundry (to) == NULL)
-    _XmRendFontFoundry (to) = _XmRendFontFoundry (from);
-  if (_XmRendFontSize (to) == 0)
-    _XmRendFontSize (to) = _XmRendFontSize (from);
-#else
-  if ((_XmRendFG(from) != XmUNSPECIFIED_PIXEL) &&
-      (_XmRendFG(to) == XmUNSPECIFIED_PIXEL))
-    _XmRendFG(to) = _XmRendFG (from);
-  if ((_XmRendBG(from) != XmUNSPECIFIED_PIXEL) &&
-      (_XmRendBG(to) == XmUNSPECIFIED_PIXEL))
-    _XmRendBG(to) = _XmRendBG (from);
-#endif
-  if ((_XmRendUnderlineType(from) != XmAS_IS) &&
-      (_XmRendUnderlineType(to) == XmAS_IS))
-    _XmRendUnderlineType(to) = _XmRendUnderlineType(from);
-  if ((_XmRendStrikethruType(from) != XmAS_IS) &&
-      (_XmRendStrikethruType(to) == XmAS_IS))
-    _XmRendStrikethruType(to) = _XmRendStrikethruType(from);
-}
-
-/* Check that all resources are not default values. */
-static Boolean
-RendComplete(XmRendition rend)
-{
-  return(((unsigned int)(unsigned long)_XmRendFontName(rend) != XmAS_IS) &&
-	 (_XmRendFontType(rend) != XmAS_IS) &&
-	 (_XmRendLoadModel(rend) != XmAS_IS) &&
-	 (
-	  ((unsigned int) (unsigned long) _XmRendFont (rend) != XmAS_IS)
-#if USE_XFT
-            || ((unsigned int) (unsigned long) _XmRendXftFont (rend) != XmAS_IS)
-#endif
-         ) &&
-	 ((unsigned int)(unsigned long)_XmRendTabs(rend) != XmAS_IS) &&
-	 (_XmRendFG(rend) != XmUNSPECIFIED_PIXEL) &&
-	 (_XmRendBG(rend) != XmUNSPECIFIED_PIXEL) &&
-	 (_XmRendUnderlineType(rend) != XmAS_IS) &&
-	 (_XmRendStrikethruType(rend) != XmAS_IS));
-}
-
-/* Search rt for all renditions matching tags, successively merging */
-/* resource values in scr rendition. */
-XmRendition
-_XmRenditionMerge(Display *d,	/* unused */
-		  XmRendition *scr,
-		  XmRendition base_rend,
-		  XmRenderTable rt,
-		  XmStringTag base_tag,
-		  XmStringTag *tags,
-		  unsigned short tag_count,
-		  Boolean copy
-		  )
-{
-  XmRendition 	rend, tmp;
-  int 		i;
-
-  if (scr == NULL)
-    {
-      rend = XmRenditionCreate(NULL, XmS, NULL, 0); /* Create new */
-      if (rend && !_XmRendFont(rend))     _XmRendFont(rend)     = DEFAULT_font;
-      if (rend && !_XmRendFontType(rend)) _XmRendFontType(rend) = DEFAULT_fontType;
-      if (rend && !_XmRendDisplay(rend))  _XmRendDisplay(rend)  = _XmRTDisplay(rt);
-#if USE_XFT
-      if (rend && !_XmRendXftFont(rend))  _XmRendXftFont(rend)  = DEFAULT_xftFont;
-#endif
-    }
-  else
-    {
-      rend = *scr;
-      if (copy)
-	{
-	  if (NameIsString(_XmRendFontName(rend)))
-	    XtFree(_XmRendFontName(rend));
-#if USE_XFT
-	  XtFree(_XmRendFontStyle(rend));
-#endif
-	  if (ListIsList(_XmRendTabs(rend)))
-	    XmTabListFree(_XmRendTabs(rend));
-	}
-      SetDefault(rend);			  /* Reset state */
-    }
-
-  for (i = (tag_count - 1); i >= 0; i--)
-    {
-      tmp = _XmRenderTableFindRendition(rt, tags[i], TRUE, FALSE, TRUE, NULL);
-      if (tmp == NULL) continue;
-
-      SetRend(rend, tmp);
-      if (RendComplete(rend)) break;
-    }
-
-  if (!RendComplete(rend))
-    {
-      short index;
-
-      _XmRenderTableFindFallback(rt, base_tag, True, &index, &tmp);
-      if (tmp != NULL) SetRend(rend, tmp);
-    }
-
-  if (base_rend != NULL)
-    {
-      SetRend(rend, base_rend);
-
-      if (_XmRendFGState(base_rend) == XmFORCE_COLOR)
-#if USE_XFT
-	_XmRendXftFG(rend) = _XmRendXftFG(base_rend);
-#else
-	_XmRendFG(rend) = _XmRendFG(base_rend);
-#endif
-
-      if (_XmRendBGState(base_rend) == XmFORCE_COLOR)
-	_XmRendBG(rend) = _XmRendBG(base_rend);
-    }
-
-  /* This implies we lack a rendition in the table for the given tag(s) */
-  if (!scr && rend && _XmRendFontType(rend) == XmAS_IS) {
-      XmRenditionFree(rend);
-      return NULL;
-  }
-
-  CleanupResources(rend, copy);
-  return rend;
-}
-
-/**
- * If we somehow end up with an empty RenderTable, try to load
- * the default hardcoded renditions, and add the first one
- * in preference order (Xft, FontSet, Font) to the table and
- * return True if successful. If rend_out is set, it will receive a
- * pointer to the created rendition, or NULL on failure.
- */
-static Boolean _XmRenderTableDefaultFont(XmRenderTable rt, XmRendition *rend_out)
-{
-	Arg args[3];
-	char buf[26];
-	XmRendition rend = NULL;
-	XmScreen s;
-
-	if (rend_out) *rend_out = NULL;
-	if (!rt || !_XmRTDisplay(rt)) return False;
-
-#if USE_XFT
-	/* Try the default Xft font */
-	s = XmScreenOfScreen(DefaultScreenOfDisplay(_XmRTDisplay(rt)));
-	snprintf(buf, sizeof buf, XmDEFAULT_XFTFONT, 10 + (int)(3 * (XmScreenDpi(s) / 96.)));
-	XtSetArg(args[0], XmNfontName, buf);
-	XtSetArg(args[1], XmNfontType, XmFONT_IS_XFT);
-	rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
-	                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
-	                          args, 2, NULL);
-	if (rend && !_XmRendXftFont(rend)) {
-		XmRenditionFree(rend);
-		rend = NULL;
-	}
-#endif
-
-	/* See if we have the default fontset */
-	if (!rend) {
-		XtSetArg(args[0], XmNfontName, XmDEFAULT_FONTSET);
-		XtSetArg(args[1], XmNfontType, XmFONT_IS_FONTSET);
-		rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
-		                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
-		                          args, 2, NULL);
-		if (rend && !_XmRendFont(rend)) {
-			XmRenditionFree(rend);
-			rend = NULL;
-		}
-	}
-
-	/* Fall back to the default core font */
-	if (!rend) {
-		XtSetArg(args[0], XmNfontName, XmDEFAULT_FONT);
-		XtSetArg(args[1], XmNfontType, XmFONT_IS_FONT);
-		rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS,
-		                          XmCRenderTable, XmFONTLIST_DEFAULT_TAG,
-		                          args, 2, NULL);
-		if (rend && !_XmRendFont(rend)) {
-			XmRenditionFree(rend);
-			rend = NULL;
-		}
-	}
-
-	/* Add it to the render table */
-	if (rend) {
-		_XmRTRenditions(rt) = (XmRendition *)XtRealloc(
-			(XtPointer)_XmRTRenditions(rt),
-			(_XmRTCount(rt) + 1) * sizeof(XmRendition)
-		);
-		_XmRTRenditions(rt)[_XmRTCount(rt)++] = rend;
-	}
-
-	if (rend_out) *rend_out = _XmRenditionCopy(rend, True);
-	return !!rend;
-}
-
-/****************
- * If the cached_tag flag is true, _XmRenderTableFindFallback assumes that the
- *   tag pointer is a pointer out of the (local) tag cache.
- *   Since XmRenditionCreate also uses tag pointers out of this cache,
- *   a string compare is avoided by simply comparing pointer values.
- ****************/
-extern Boolean
-_XmRenderTableFindFallback(
-        XmRenderTable rendertable,
-        XmStringTag tag,
-        Boolean cached_tag,
-        short *indx,
-	XmRendition *rend_ptr )
-{
-  XmStringTag     search_cset = NULL;
-
-  if (indx) *indx = -1;
-
-  if (rendertable)
-    {
-      if (tag != NULL)
-	{
-	  if (cached_tag)			  /* No XmSTRING_DEFAULT_CHARSET */
-	    {
-	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, tag, TRUE, TRUE, FALSE,
-					    indx);
-	      if (*rend_ptr != NULL) return(TRUE);
-	    }
-	  else
-	    {
-	      XmStringTag       curtag;
-
-	      if (!strcmp(tag, XmSTRING_DEFAULT_CHARSET))
-		curtag = XmStringGetCharset();
-	      else curtag = tag;
-
-	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, curtag, FALSE, TRUE, FALSE,
-					    indx);
-
-	      if (curtag != tag)
-	      	XtFree(curtag);
-	      if (*rend_ptr != NULL) return(TRUE);
-	    }
-
-	  /* Didn't find a match.  See if tag is one of the defaults
-	     and search for the other. */
-	  if (_XmStringIsCurrentCharset(tag))
-	    {
-	      search_cset = XmFONTLIST_DEFAULT_TAG;
-
-	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, search_cset, TRUE,
-					    TRUE, FALSE, indx);
-
-	      if (*rend_ptr != NULL) return(TRUE);
-	    }
-	  else if ((tag == XmFONTLIST_DEFAULT_TAG) ||
-		   (strcmp(tag, XmFONTLIST_DEFAULT_TAG) == 0))
-	    {
-	      search_cset = XmStringGetCharset();
-
-	      *rend_ptr = (XmRendition)
-		_XmRenderTableFindRendition(rendertable, search_cset, FALSE,
-					    TRUE, FALSE, indx);
-
-	      XtFree(search_cset);
-	      if (*rend_ptr != NULL) return(TRUE);
-	    }
-	}
-
-	/* Otherwise pick up first font(set) if tag is a default value. */
-	if (!tag || tag == XmFONTLIST_DEFAULT_TAG ||
-	    !strcmp(tag, XmFONTLIST_DEFAULT_TAG)  ||
-	    _XmStringIsCurrentCharset(tag))
-	    return _XmRenderTableFindFirstFont(rendertable, indx, rend_ptr);
-    }
-
-  if (rend_ptr) *rend_ptr = NULL;
-  if (indx)     *indx = -1;
-  return False;
-}
-
-extern Boolean
-_XmRenderTableFindFirstFont(XmRenderTable rendertable,
-			    short *indx,
-			    XmRendition *rend_ptr)
-{
-  int i, f_idx = -1, fs_idx = -1;
-#if USE_XFT
-  int xft_idx = -1;
-#endif
-
-  for (i = _XmRTCount(rendertable) - 1; i >= 0; i--)
-    {
-      *rend_ptr = _XmRTRenditions(rendertable)[i];
-
-      if (_XmRendFont(*rend_ptr) != NULL)
-      {
-	if (_XmRendFontType(*rend_ptr) == XmFONT_IS_FONT) f_idx = i;
-	else if (_XmRendFontType(*rend_ptr) == XmFONT_IS_FONTSET) fs_idx = i;
-#if USE_XFT
-      } else if (_XmRendXftFont(*rend_ptr) != NULL) {
-        if (_XmRendFontType(*rend_ptr) == XmFONT_IS_XFT) xft_idx = i;
-#endif
-      }
-  }
-#if USE_XFT
-  if (xft_idx >= 0)
-    {
-      if (rend_ptr) *rend_ptr = _XmRTRenditions (rendertable)[xft_idx];
-      if (indx)     *indx = xft_idx;
-    }
-  else
-#endif
-  if (fs_idx >= 0)
-    {
-      if (rend_ptr) *rend_ptr = _XmRTRenditions(rendertable)[fs_idx];
-      if (indx)     *indx = fs_idx;
-    }
-  else if (f_idx >= 0)
-    {
-      if (rend_ptr) *rend_ptr = _XmRTRenditions(rendertable)[f_idx];
-      if (indx)     *indx = f_idx;
-    }
-  else
-    {
-      if (_XmRenderTableDefaultFont(rendertable, rend_ptr)) {
-        if (indx) *indx = _XmRTCount(rendertable) - 1;
-        return True;
-      }
-
-      if (rend_ptr) *rend_ptr = NULL;
-      if (indx)     *indx = -1;
-      return False;
-    }
-
-  return True;
-}
-
-/* Put value of every resource in fromRend into toRend, copying where */
-/* necessary. */
-static void
-CopyInto(XmRendition toRend,
-	 XmRendition fromRend)
-{
-  _XmRendTag(toRend) = _XmStringCacheTag(_XmRendTag(fromRend),
-					 XmSTRING_TAG_STRLEN);
-  /* CR 7890 - the fontName might be XmAS_IS here - if so, we
-   ** obviously don't want to do an XtNewString (implicit strcpy)
-   */
-  if (!NameIsString(_XmRendFontName(fromRend)))
-    _XmRendFontName(toRend) = NULL;
-  else
-    _XmRendFontName(toRend) = XtNewString(_XmRendFontName(fromRend));
-  _XmRendFontType(toRend) = _XmRendFontType(fromRend);
-  _XmRendLoadModel(toRend) = _XmRendLoadModel(fromRend);
-  _XmRendFont(toRend) = _XmRendFont(fromRend);
-  _XmRendDisplay(toRend) = _XmRendDisplay(fromRend);
-
-  if (!ListIsList(_XmRendTabs(fromRend)))
-    _XmRendTabs(toRend) = NULL;
-  else
-    _XmRendTabs(toRend) = XmTabListCopy(_XmRendTabs(fromRend), 0, 0);
-#if USE_XFT
-  _XmRendXftBG (toRend) = _XmRendXftBG (fromRend);
-  _XmRendXftFG (toRend) = _XmRendXftFG (fromRend);
-  if (_XmRendFontType(fromRend) == XmFONT_IS_XFT && _XmRendXftFont(fromRend))
-      _XmRendXftFont(toRend) = XftFontCopy(_XmRendDisplay(fromRend),
-                                           _XmRendXftFont(fromRend));
-  if (!NameIsString(_XmRendFontStyle(fromRend)))
-    _XmRendFontStyle(toRend) = NULL;
-  else
-    _XmRendFontStyle(toRend) = XtNewString(_XmRendFontStyle(fromRend));
-
-  if (!NameIsString(_XmRendFontFoundry(fromRend)))
-    _XmRendFontFoundry(toRend) = NULL;
-  else
-    _XmRendFontFoundry(toRend) = XtNewString(_XmRendFontFoundry(fromRend));
-
-  _XmRendFontSize (toRend) = _XmRendFontSize (fromRend);
-  _XmRendPixelSize (toRend) = _XmRendPixelSize (fromRend);
-#else
-  _XmRendBG (toRend) = _XmRendBG (fromRend);
-  _XmRendFG (toRend) = _XmRendFG (fromRend);
-#endif
-  _XmRendUnderlineType(toRend) = _XmRendUnderlineType(fromRend);
-  _XmRendStrikethruType(toRend) = _XmRendStrikethruType(fromRend);
-}
-
-/* As above, except only change resources in toRend that are default. */
-static void
-MergeInto(XmRendition toRend,
-	 XmRendition fromRend)
-{
-  _XmRendTag(toRend) = _XmStringCacheTag(_XmRendTag(fromRend),
-					 XmSTRING_TAG_STRLEN);
-  if ((_XmRendFontName(toRend) == NULL) &&
-      NameIsString(_XmRendFontName(fromRend)))
-    _XmRendFontName(toRend) = XtNewString(_XmRendFontName(fromRend));
-  if (_XmRendFontType(toRend) == XmAS_IS)
-    _XmRendFontType(toRend) = _XmRendFontType(fromRend);
-  if (_XmRendLoadModel(toRend) == XmAS_IS)
-    _XmRendLoadModel(toRend) = _XmRendLoadModel(fromRend);
-  if (_XmRendFont(toRend) == NULL)
-    _XmRendFont(toRend) = _XmRendFont(fromRend);
-
-  if (!ListIsList(_XmRendTabs(toRend)) &&
-      ListIsList(_XmRendTabs(fromRend)))
-    _XmRendTabs(toRend) = XmTabListCopy(_XmRendTabs(fromRend), 0, 0);
-#if USE_XFT
-  if (_XmRendXftFont(toRend) == NULL)
-    _XmRendXftFont(toRend) = XftFontCopy(_XmRendDisplay(fromRend), _XmRendXftFont(fromRend));
-  if (_XmRendBG(toRend) == XmUNSPECIFIED_PIXEL)
-    _XmRendXftBG(toRend) = _XmRendXftBG(fromRend);
-  if (_XmRendFG(toRend) == XmUNSPECIFIED_PIXEL)
-    _XmRendXftFG(toRend) = _XmRendXftFG(fromRend);
-  if (_XmRendFontStyle(toRend) == NULL)
-    _XmRendFontStyle(toRend) = _XmRendFontStyle(fromRend);
-  if (_XmRendFontFoundry(toRend) == NULL)
-    _XmRendFontFoundry(toRend) = _XmRendFontFoundry(fromRend);
-  if (_XmRendFontSize(toRend) == 0)
-    _XmRendFontSize(toRend) = _XmRendFontSize(fromRend);
-#else
-  if (_XmRendBG(toRend) == XmUNSPECIFIED_PIXEL)
-    _XmRendBG(toRend) = _XmRendBG (fromRend);
-  if (_XmRendFG(toRend) == XmUNSPECIFIED_PIXEL)
-    _XmRendFG(toRend) = _XmRendFG (fromRend);
-#endif
-  if (_XmRendUnderlineType(toRend) == XmAS_IS)
-    _XmRendUnderlineType(toRend) = _XmRendUnderlineType(fromRend);
-  if (_XmRendUnderlineType(toRend) == XmAS_IS)
-    _XmRendStrikethruType(toRend) = _XmRendStrikethruType(fromRend);
-}
-
-/* Make a Clone--new handle and new data structure--of a rendition. */
-static XmRendition
-CloneRendition(XmRendition rend)
-{
-  _XmRendition 	copy;
-  XmRendition	copy_handle;
-
-  if (rend == NULL) return(NULL);
-
-  copy = (_XmRendition)XtCalloc(1, sizeof(_XmRenditionRec));
-  copy_handle = GetHandle(_XmRendition);
-  SetPtr(copy_handle, copy);
-
-  _XmRendFontOnly(copy_handle) = FALSE;
-  _XmRendRefcount(copy_handle) = 1;
-
-  CopyInto(copy_handle, rend);
-  return(copy_handle);
-}
-
-/* Set the old handle to point to a new data structure. */
-static XmRendition
-RenewRendition(XmRendition rend)
-{
-  _XmRendition copy;
-
-  if (rend == NULL) return(NULL);
-
-  copy = (_XmRendition)XtMalloc(sizeof(_XmRenditionRec));
-  memcpy((char *)copy, (char *)GetPtr(rend), sizeof(_XmRenditionRec));
-  SetPtr(rend, copy);
-
-  _XmRendFontOnly(rend) = FALSE;
-  _XmRendRefcount(rend) = 1;
-
-  return(rend);
-}
-
-/* Allocate a new handle which points to the old data structure with */
-/* an incremented refcount. */
-static XmRendition
-CopyRendition(XmRendition rend)
-{
-  XmRendition	copy;
-
-  if (rend == NULL) return(NULL);
-
-  if (_XmRendRefcountInc(rend) == 0)
-    {
-      _XmRendRefcountDec(rend);
-      return(CloneRendition(rend));
-    }
-  else
-    {
-      copy = GetHandle(_XmRendition);
-      SetPtr(copy, GetPtr(rend));
-      return(copy);
-    }
-}
-
-/* Increment the refcount.  Clone if overflow. */
-static XmRendition
-DuplicateRendition(XmRendition rend)
-{
-  if (!rend || !*rend) return NULL;
-
-  if (_XmRendRefcountInc(rend) == 0)
-    {
-      _XmRendRefcountDec(rend);
-      return(CloneRendition(rend));
-    }
-  else
-    {
-      return(rend);
-    }
-}
-
-/* Make a copy of a rendition, *including* the "scratch" info (tags,
- * GC, hadEnds).
- * Shared indicates whether or not this is a shared copy.
- */
-XmRendition
-_XmRenditionCopy(XmRendition rend,
-		 Boolean shared)
-{
-  XmRendition toRend;
-  int i;
-
-  if (rend == NULL) return(NULL);
-
-  if (shared) toRend = CopyRendition(rend);
-  else toRend = CloneRendition(rend);
-
-  /* If we had to clone, copy the 'scratch' info. */
-  if (*toRend != *rend)
-    {
-      _XmRendGC(toRend) = _XmRendGC(rend);
-      _XmRendTagCount(toRend) = _XmRendTagCount(rend);
-      _XmRendHadEnds(toRend) = _XmRendHadEnds(rend);
-      _XmRendTags(toRend) =
-	(XmStringTag *)XtMalloc(sizeof(XmStringTag) * _XmRendTagCount(rend));
-      for (i = 0; i < _XmRendTagCount(rend); i++)
-	_XmRendTags(toRend)[i] = _XmRendTags(rend)[i];
-    }
-
-  return(toRend);
-}
-
-/* Creates new rendertable, adding any new renditions. */
-/* Mutate rendertable.  Copy renditions. */
-XmRenderTable
-XmRenderTableAddRenditions(XmRenderTable oldtable,
-			   XmRendition *renditions,
-			   Cardinal rendition_count,
-			   XmMergeMode merge_mode)
-{
-  int			i, next;
-  int			count = rendition_count;
-  XmRendition		rend, match;
-  _XmRenderTable	table;
-  XmRenderTable		newtable, tmptable = NULL;
-  Boolean		*matches;
-  short			idx;
-  XtAppContext		app=NULL;
-
-  if ((renditions == NULL) || (rendition_count == 0))
-    return(oldtable);
-
-  if (_XmRendDisplay(renditions[0]))
-	app = XtDisplayToApplicationContext(_XmRendDisplay(renditions[0]));
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
-
-  if (oldtable == NULL)
-    {
-      /* Malloc new table */
-      table = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      table->renditions = (XmRendition *)XtMalloc(rendition_count * sizeof *table->renditions);
-      oldtable = GetHandle(_XmRenderTable);
-      SetPtr(oldtable, table);
-
-      _XmRTCount(oldtable) = rendition_count;
-      _XmRTDisplay(oldtable) = NULL;
-      _XmRTRefcount(oldtable) = 1;
-
-      /* Copy renditions */
-      for (i = 0; i < rendition_count; i++)
-	{
-	  _XmRTRenditions(oldtable)[i] = CopyRendition(renditions[i]);
-	  if (_XmRTDisplay(oldtable) == NULL)
-	    _XmRTDisplay(oldtable) = _XmRendDisplay(renditions[i]);
-	}
-    }
-  else
-    {
-      matches = (Boolean *)XtCalloc(rendition_count, sizeof *matches);
-
-      /* May have to copy table if shared. */
-      if (_XmRTRefcount(oldtable) > 1)
-	{
-	  /* Allocate new table */
-      table = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      table->renditions = (XmRendition *)XtMalloc(_XmRTCount(oldtable) * sizeof *table->renditions);
-
-	  newtable = GetHandle(_XmRenderTable);
-	  SetPtr(newtable, table);
-
-	  _XmRTDisplay(newtable) = _XmRTDisplay(oldtable);
-	  _XmRTRefcount(newtable) = 1;
-
-	  /* Move old Renditions. */
-	  for (i = 0; i < _XmRTCount(oldtable); i++)
-	    _XmRTRenditions(newtable)[i] = _XmRTRenditions(oldtable)[i];
-
-	  _XmRTCount(newtable) = _XmRTCount(oldtable);
-	  _XmRTRefcountDec(oldtable);
-
-	  /* Free at end so we don't get same memory from malloc. */
-	  tmptable = oldtable;
-	  oldtable = newtable;
-	}
-
-      /* Merge matching renditions */
-      for (i = 0; i < rendition_count; i++)
-	{
-	  rend = renditions[i];
-
-	  match =
-	    _XmRenderTableFindRendition(oldtable, _XmRendTag(rend),
-					TRUE, FALSE, FALSE, &idx);
-	  if ((match != NULL) && (merge_mode != XmDUPLICATE))
-	    {
-	      /* Merge renditions. */
-	      switch (merge_mode)
-		{
-		case XmMERGE_REPLACE:
-		  XmRenditionFree(match);
-		  _XmRTRenditions(oldtable)[idx] =
-		    CopyRendition(rend);
-		  break;
-
-		case XmSKIP:
-		  break;
-
-		case XmMERGE_OLD:
-		  if (_XmRendRefcount(match) > 1)
-		    {
-		      match = CloneRendition(match);
-		      _XmRTRenditions(oldtable)[idx] = match;
-		    }
-		  MergeInto(match, rend);
-		  break;
-
-		case XmMERGE_NEW:
-		  rend = CloneRendition(rend);
-		  MergeInto(rend, match);
-		  _XmRTRenditions(oldtable)[idx] = rend;
-		  XmRenditionFree(match);
-		  break;
-
-		default:
-		  printf("NYI");
-		  break;
-		}
-
-	      matches[i] = TRUE;
-	      --count;
-	    }
-	}
-
-      if (count > 0)				  /* Allocate new table */
-	{
-      table = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      table->renditions = (XmRendition *)XtMalloc(
-        (rendition_count + _XmRTCount(oldtable)) * sizeof *table->renditions
-      );
-	  newtable = GetHandle(_XmRenderTable);
-	  SetPtr(newtable, table);
-
-	  _XmRTDisplay(newtable) = _XmRTDisplay(oldtable);
-	  _XmRTRefcount(newtable) = 1;
-
-	  /* Move old Renditions. */
-	  for (i = 0; i < _XmRTCount(oldtable); i++)
-	    _XmRTRenditions(newtable)[i] = _XmRTRenditions(oldtable)[i];
-
-	  /* Copy new renditions. */
-	  next = _XmRTCount(oldtable);
-
-	  for (i = 0; i < rendition_count; i++)
-	    {
-	      if (!matches[i])
-		{
-		  _XmRTRenditions(newtable)[next] =
-		    CopyRendition(renditions[i]);
-		  if (_XmRTDisplay(newtable) == NULL)
-		    _XmRTDisplay(newtable) = _XmRTDisplay(oldtable);
-		  ++next;
-		}
-	    }
-
-	  _XmRTCount(newtable) = _XmRTCount(oldtable) + count;
-
-	  /* Deallocate oldtable */
-	  XtFree((char *)GetPtr(oldtable));
-	  FreeHandle(oldtable);
-	}
-      /* Otherwise just return newhandle to oldtable */
-      else
-	{
-	  table = GetPtr(oldtable);
-	  newtable = GetHandle(_XmRenderTable);
-	  SetPtr(newtable, table);
-	  FreeHandle(oldtable);
-	}
-
-      XtFree((XtPointer)matches);
-      oldtable = newtable;
-    }
-
-  if (tmptable != NULL) FreeHandle(tmptable);
-  if (app)
-      _XmAppUnlock(app);
-  else _XmProcessUnlock();
-
-  return oldtable;
-}
-
-/* Remove matching renditions. */
-/* Mutates oldtable, decrements removed renditions. */
-XmRenderTable
-XmRenderTableRemoveRenditions(XmRenderTable oldtable,
-			      XmStringTag *tags,
-			      int tag_count)
-{
-  XmRenderTable ret_val;
-  XtAppContext  app=NULL;
-
-  if (_XmRTDisplay(oldtable))
-	app = XtDisplayToApplicationContext(_XmRTDisplay(oldtable));
-  if (app)
-    _XmAppLock(app);
-  else _XmProcessLock();
-
-  ret_val = _XmRenderTableRemoveRenditions(oldtable, tags,tag_count,
-				FALSE, XmFONT_IS_FONT, NULL);
-
-  if (app)
-     _XmAppUnlock(app);
-  else _XmProcessUnlock();
-
-  return ret_val;
-}
-
-/* Remove matching renditions. */
-/* Mutates oldtable, decrements removed renditions. */
-/* If chk_font TRUE, checks that font and type also match. */
-XmRenderTable
-_XmRenderTableRemoveRenditions(XmRenderTable oldtable,
-			       XmStringTag *tags,
-			       int tag_count,
-			       Boolean chk_font,
-			       XmFontType type,
-			       XtPointer font)
-{
-  int			i, j;
-  int			count;
-  _XmRenderTable	table;
-  XmRenderTable		newtable = NULL;
-
-  if ((oldtable == NULL) || (tags == NULL) || (tag_count == 0))
-    return(oldtable);
-
-  count = 0;
-
-  if (_XmRTRefcount(oldtable) > 1)
-    {
-      /* Allocate new table */
-      table = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      table->renditions = (XmRendition *)XtMalloc(_XmRTCount(oldtable) * sizeof *table->renditions);
-
-      newtable = GetHandle(_XmRenderTable);
-      SetPtr(newtable, table);
-
-      _XmRTDisplay(newtable) = _XmRTDisplay(oldtable);
-      _XmRTRefcount(newtable) = 1;
-
-      /* Move old Renditions. */
-      for (i = 0; i < _XmRTCount(oldtable); i++)
-	_XmRTRenditions(newtable)[i] = _XmRTRenditions(oldtable)[i];
-      _XmRTCount(newtable) = _XmRTCount(oldtable);
-
-      if (_XmRTRefcountDec(oldtable) == 0)
-	XtFree((char *)GetPtr(oldtable));
-      FreeHandle(oldtable);
-
-      oldtable = newtable;
-    }
-  /* Iterate over renditions */
-  for (i = 0; i < _XmRTCount(oldtable); i++)
-    {
-      /* Match against tags */
-      for (j = 0; j < tag_count; j++)
-	{
-	  if ((strcmp(_XmRendTag(_XmRTRenditions(oldtable)[i]),
-		      tags[j]) == 0) &&
-	      (!chk_font ||
-	       ((font == _XmRendFont(_XmRTRenditions(oldtable)[i])) &&
-		(type == _XmRendFontType(_XmRTRenditions(oldtable)[i])))))
-	    {
-	      XmRenditionFree(_XmRTRenditions(oldtable)[i]);
-	      _XmRTRenditions(oldtable)[i] = NULL;
-	      break;
-	    }
-	}
-      if (_XmRTRenditions(oldtable)[i] != NULL)
-	{
-	  if (count != i)
-	    _XmRTRenditions(oldtable)[count] = _XmRTRenditions(oldtable)[i];
-
-	  count++;
-	}
-    }
-  if (count == 0)
-    /* No renditions left. Return NULL. */
-    {
-      XmRenderTableFree(oldtable);
-      return NULL;
-    }
-  else if (count < _XmRTCount(oldtable))
-    {
-      /* Realloc table */
-      table = *oldtable;
-      table->renditions = (XmRendition *)XtRealloc(
-          (XtPointer)table->renditions,
-          count * sizeof *table->renditions
-      );
-
-      if (newtable == NULL)
-	{
-	  newtable = GetHandle(_XmRenderTable);
-	  FreeHandle(oldtable);
-	}
-      SetPtr(newtable, table);
-
-      _XmRTCount(newtable) = count;
-
-      return newtable;
-    }
-
-  return oldtable;
-}
-
 static void
 CopyFromArg(XtArgVal src, char *dst, unsigned int size)
 {
@@ -1645,280 +516,1520 @@ CopyFromArg(XtArgVal src, char *dst, unsigned int size)
   }
 } /* CopyFromArg */
 
-static void
-CopyToArg(char *src, XtArgVal *dst, unsigned int size)
+/**
+ * Create and initialize a XmRenditionStyle
+ */
+XmRenditionStyle XmRenditionStyleCreate(void)
 {
-  if ((void *)(*dst) == NULL) {
-    /* old GetValues semantics (storing directly into arglists) are bad,
-     * but preserve for compatibility as long as arglist contains NULL.
-     */
-    if	    (size == sizeof(long))	   *dst = (XtArgVal)*(long*)src;
-    else if (size == sizeof(int))	   *dst = (XtArgVal)*(int*)src;
-    else if (size == sizeof(short))    *dst = (XtArgVal)*(short*)src;
-    else if (size == sizeof(char))	   *dst = (XtArgVal)*(char*)src;
-    else if (size == sizeof(XtPointer)) *dst = (XtArgVal)*(XtPointer*)src;
-    else if (size == sizeof(char*))    *dst = (XtArgVal)*(char**)src;
-    else if (size == sizeof(XtArgVal)) *dst = *(XtArgVal*)src;
-    else memcpy((char*)dst, (char*)src, (size_t)size);
-  }
-  else {
-    /* proper GetValues semantics: argval is pointer to destination */
-    if	(size == sizeof(long))	   *((long*)*dst) = *(long*)src;
-    else if (size == sizeof(int))	*((int*)*dst) = *(int*)src;
-    else if (size == sizeof(short))    *((short*)*dst) = *(short*)src;
-    else if (size == sizeof(char))	   *((char*)*dst) = *(char*)src;
-    else if (size == sizeof(XtPointer)) *((XtPointer*)*dst) = *(XtPointer*)src;
-    else if (size == sizeof(char*))    *((char**)*dst) = *(char**)src;
-    else if (size == sizeof(XtArgVal)) *((XtArgVal*)*dst)= *(XtArgVal*)src;
-    else memcpy((char *)*dst, (char *)src, (size_t)size);
-  }
-} /* CopyToArg */
+	XmRenditionStyle style = (XmRenditionStyle)XtCalloc(1, sizeof *style);
 
-/* Copies renditions matching tags to a new table. */
-/* If all renditions copied then duplicate rendertable, duplicate */
-/* renditions.  Otherwise, mutate rendertable, duplicate renditions. */
-XmRenderTable
-XmRenderTableCopy(XmRenderTable table,
-		  XmStringTag *tags,
-		  int tag_count)
-{
-  XmRenderTable		rt = NULL;
-  _XmRenderTable	t = NULL;
-  int			i, j, count;
-  XmRendition		rend = NULL;
-  XtAppContext		app = NULL;
-
-  if (!table)
-      return NULL;
-
-  if (_XmRTDisplay(table))
-     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
-
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
-
-  count = 0;
-  if ((_XmRTRefcountInc(table) == 0) || (tags != NULL))
-    {
-      /* Malloc new table */
-      _XmRTRefcountDec(table);
-
-      t = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      t->renditions = (XmRendition *)XtMalloc(
-          _XmRTCount(table) * sizeof *t->renditions
-      );
-
-      rt = GetHandle(_XmRenderTable);
-      SetPtr(rt, t);
-      _XmRTRefcount(rt) = 1;
-    }
-
-  if (tags == NULL)
-    {
-      /* Increment renditions. */
-      for (i = 0; i < _XmRTCount(table); i++)
-	{
-	  rend = DuplicateRendition(_XmRTRenditions(table)[i]);
-	  /* Check for overflow. */
-	  if (rend != _XmRTRenditions(table)[i]) break;
-	}
-
-      if (i < _XmRTCount(table))		  /* Overflow! */
-	{
-	  /* Malloc new table. */
-      t = (_XmRenderTable)XtNew(_XmRenderTableRec);
-      t->renditions = (XmRendition *)XtMalloc(
-          _XmRTCount(table) * sizeof *t->renditions
-      );
-
-	  rt = GetHandle(_XmRenderTable);
-	  SetPtr(rt, t);
-	  _XmRTRefcount(rt) = 1;
-
-	  _XmRTCount(rt) = _XmRTCount(table);
-
-	  /* Move renditions done already. */
-	  for (j = 0; j < i; j++)
-	    _XmRTRenditions(rt)[j] = _XmRTRenditions(table)[j];
-	  _XmRTRenditions(rt)[i] = rend;
-	  /* Copy rest */
-	  for (j = i + 1; j < _XmRTCount(rt); j++)
-	    _XmRTRenditions(rt)[j] = DuplicateRendition(_XmRTRenditions(table)[j]);
-	}
-      else
-	{
-	  rt = GetHandle(_XmRenderTable);
-	  SetPtr(rt, GetPtr(table));
-	}
-    }
-  else
-    {
-      /* Copy matching renditions. */
-      for (i = 0; i < tag_count; i++)
-	{
-	  XmRendition match;
-
-	  match = XmRenderTableGetRendition(table, tags[i]);
-
-	  if (match != NULL)
-	    {
-	      _XmRTRenditions(rt)[i] = match;
-	      ++count;
-	    }
-	}
-
-      /* Realloc table */
-      t->renditions = (XmRendition *)XtRealloc(
-          (XtPointer)t->renditions,
-          count * sizeof *t->renditions
-      );
-      SetPtr(rt, t);
-      _XmRTCount(rt) = count;
-    }
-
-  _XmRTDisplay(rt) = _XmRTDisplay(table);
-
-  if (app)
-	_XmAppUnlock(app);
-  else _XmProcessUnlock();
-
-  return rt;
+	style->underline  = XmAS_IS;
+	style->strikethru = XmAS_IS;
+	style->fg_state   = XmAS_IS;
+	style->bg_state   = XmAS_IS;
+	style->fg.pixel   = XmUNSPECIFIED_PIXEL;
+	style->bg.pixel   = XmUNSPECIFIED_PIXEL;
+	style->fg.alpha   = 0xffff;
+	style->bg.alpha   = 0xffff;
+	return style;
 }
 
-/* Decrement rendertable, free if refcount is zero.  XmRenditionFree */
-/* renditions. */
-void
-XmRenderTableFree(XmRenderTable table)
+/**
+ * Duplicate a XmRenditionStyle
+ */
+XmRenditionStyle XmRenditionStyleDup(const XmRenditionStyle style)
 {
-  int 		i;
+	XmRenditionStyle s;
 
-  if (!table)
-    return;
+	if (!style)
+		return XmRenditionStyleCreate();
 
-  _XmProcessLock();
-  for (i = 0; i < _XmRTCount(table); i++)
-    XmRenditionFree(_XmRTRenditions(table)[i]);
-
-  if (!_XmRTRefcountDec(table)) {
-    XtFree((XtPointer)_XmRTRenditions(table));
-    XtFree((XtPointer)GetPtr(table));
-  }
-
-  FreeHandle(table);
-  _XmProcessUnlock();
+	s = (XmRenditionStyle)XtCalloc(1, sizeof *style);
+	memcpy(s, style, sizeof *s);
+	return s;
 }
 
-/* Get list of tags of all renditions in table. */
-int
-XmRenderTableGetTags(XmRenderTable table,
-		     XmStringTag **tag_list)
+/**
+ * Cascade style properties from b to a.
+ *
+ * Returns True if modifications were made to a, False otherwise
+ */
+Boolean XmRenditionStyleMerge(XmRenditionStyle a, const XmRenditionStyle b)
 {
-  int i, ret_val;
-  XtAppContext app = NULL;
+	Boolean mod = False;
+	const struct __XmRenditionRec *r;
 
-  if (!table) {
-      if (tag_list) *tag_list = NULL;
-      return 0;
-  }
+	if (!a || !b)
+		return True;
 
-  if (_XmRTDisplay(table))
-     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
+	if (a->underline == XmAS_IS) {
+		a->underline = b->underline;
+		mod = True;
+	}
 
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
+	if (a->strikethru == XmAS_IS) {
+		a->strikethru = b->strikethru;
+		mod = True;
+	}
 
-  *tag_list =
-    (XmStringTag *)XtMalloc(sizeof(XmStringTag) * _XmRTCount(table));
+	if (a->fg_state != XmFORCE_COLOR && a->fg.pixel == XmUNSPECIFIED_PIXEL) {
+		memcpy(&a->fg, &b->fg, sizeof a->fg);
+		a->fg_state = b->fg_state;
+		mod = True;
+	}
 
-  for (i = 0; i < _XmRTCount(table); i++)
-      (*tag_list)[i] =
-	XtNewString(_XmRendTag(_XmRTRenditions(table)[i]));
+	if (a->bg_state != XmFORCE_COLOR && a->bg.pixel == XmUNSPECIFIED_PIXEL) {
+		memcpy(&a->bg, &b->bg, sizeof a->bg);
+		a->bg_state = b->bg_state;
+		mod = True;
+	}
 
-  ret_val = _XmRTCount(table);
-  if (app)
-	_XmAppUnlock(app);
-  else _XmProcessUnlock();
+	if (!a->fg.alpha) a->fg.alpha = 0xffff;
+	if (!a->bg.alpha) a->bg.alpha = 0xffff;
+	return mod;
+}
 
-  return ret_val;
+/**
+ * Free a XmRenditionStyle
+ */
+void XmRenditionStyleFree(XmRenditionStyle style)
+{
+	XtFree((XtPointer)style);
+}
+
+/**
+ * If we somehow end up with an empty RenderTable, try to load
+ * the default hardcoded renditions, and add the first one
+ * in preference order (Xft, FontSet, Font) to the table and
+ * return True if successful. If rend_out is set, it will receive
+ * the created rendition, or NULL on failure.
+ */
+static Boolean rendertable_default_font(XmRenderTable rt, XmRendition *rend_out)
+{
+	Arg args[4];
+	XmRendition rend = NULL;
+	struct __XmRenderTableRec *t;
+	const struct __XmRenditionRec *r;
+	XmScreen s;
+
+	if (rend_out) *rend_out = NULL;
+	if (!(t = XmSharedPtrGet(rt)))
+		return False;
+
+	XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
+#if USE_XFT
+	/* Try the default Xft font */
+	s = XmScreenOfScreen(DefaultScreenOfDisplay(t->display));
+	XtSetArg(args[1], XmNfontName, XmDEFAULT_XFTFONT);
+	XtSetArg(args[2], XmNfontType, XmFONT_IS_XFT);
+	XtSetArg(args[3], XmNfontPixelSize, 10 + (int)(3 * (XmScreenDpi(s) / 96.)));
+	rend = _XmRenditionCreate(t->display, NULL, XmS, XmCRenderTable,
+	                          XmFONTLIST_DEFAULT_TAG, args, 4, NULL);
+	r = XmSharedPtrGet(rend);
+	if (r && !r->xftFont) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
+#endif
+
+	/* See if we have the default fontset */
+	if (!rend) {
+		XtSetArg(args[1], XmNfontName, XmDEFAULT_FONTSET);
+		XtSetArg(args[2], XmNfontType, XmFONT_IS_FONTSET);
+		rend = _XmRenditionCreate(t->display, NULL, XmS, XmCRenderTable,
+		                          XmFONTLIST_DEFAULT_TAG, args, 3, NULL);
+		r = XmSharedPtrGet(rend);
+		if (r && r->font) {
+			XmRenditionFree(rend);
+			rend = NULL;
+		}
+	}
+
+	/* Fall back to the default core font */
+	if (!rend) {
+		XtSetArg(args[1], XmNfontName, XmDEFAULT_FONT);
+		XtSetArg(args[2], XmNfontType, XmFONT_IS_FONT);
+		rend = _XmRenditionCreate(t->display, NULL, XmS, XmCRenderTable,
+		                          XmFONTLIST_DEFAULT_TAG, args, 3, NULL);
+		r = XmSharedPtrGet(rend);
+		if (r && !r->font) {
+			XmRenditionFree(rend);
+			rend = NULL;
+		}
+	}
+
+	/* Add it to the render table */
+	if (rend) {
+		t->renditions = (XmRendition *)XtRealloc(
+			(XtPointer)t->renditions,
+			(t->count + 1) * sizeof *t->renditions
+		);
+		t->renditions[t->count++] = rend;
+
+		if (r && !_XmGetHashEntry(t->ht, r->tag))
+			_XmAddHashEntry(t->ht, r->tag, rend);
+	}
+
+	if (rend_out) *rend_out = XmSharedPtrCopy(rend, False);
+	return !!rend;
+}
+
+/**
+ * Free a rendition table struct
+ */
+static void rendertable_free(void *ptr)
+{
+	Cardinal i;
+	struct __XmRenderTableRec *t = (struct __XmRenderTableRec *)ptr;
+
+	for (i = 0; i < t->count; i++)
+		XmSharedPtrFree(t->renditions[i]);
+	_XmFreeHashTable(t->ht);
+	XtFree((XtPointer)t->renditions);
+	XtFree((XtPointer)t);
+	return;
+}
+
+/**
+ * Duplicate a rendition table struct
+ */
+static void *rendertable_dup(void *ptr)
+{
+	Cardinal i;
+	const struct __XmRenderTableRec *t = (const struct __XmRenderTableRec *)ptr;
+	struct __XmRenderTableRec *new;
+
+	new = (struct __XmRenderTableRec *)XtCalloc(1, sizeof *new);
+	new->ht      = _XmAllocHashTable(16, XmHashCompareString, XmHashString);
+	new->display = t->display;
+	if (!t->count)
+		return new;
+
+	new->count      = t->count;
+	new->renditions = (XmRendition *)XtCalloc(t->count, sizeof *t->renditions);
+	for (i = 0; i < t->count; i++) {
+		new->renditions[i] = XmSharedPtrCopy(t->renditions[i], True);
+		if (!_XmGetHashEntry(new->ht, (*t->renditions[i])->tag))
+			_XmAddHashEntry(new->ht, (*t->renditions[i])->tag, new->renditions[i]);
+	}
+
+	return new;
+}
+
+/**
+ * Allocate a new RenderTable
+ */
+XmRenderTable XmRenderTableCreate(Widget parent)
+{
+	return (XmRenderTable)_XmCreateRenderTable(parent, NULL, NULL, 0);
+}
+
+/* Mrm create function for rendertables. */
+Widget _XmCreateRenderTable(Widget parent, String name, ArgList args, Cardinal count)
+{
+	struct __XmRenderTableRec *table;
+	const struct __XmRenderTableRec *p;
+
+	(void)name;
+	(void)args;
+	(void)count;
+
+	table     = (struct __XmRenderTableRec *)XtCalloc(1, sizeof *table);
+	table->ht = _XmAllocHashTable(16, XmHashCompareString, XmHashString);
+
+	/**
+	 * NB: If this is really a rendertable, the destroy_callbacks field
+	 * of the core part of the widget is at the same offset as our
+	 * SharedPtr's duplication proc.
+	 */
+	if (parent && parent->core.destroy_callbacks == (XtCallbackList)rendertable_dup) {
+		if (!(p = XmSharedPtrGet(parent)) || !(table->display = p->display))
+			table->display = _XmGetDefaultDisplay();
+	} else if (!parent || !(table->display = XtDisplayOfObject(parent)))
+		table->display = _XmGetDefaultDisplay();
+
+	return (Widget)XmSharedPtrCreate(table, rendertable_free, rendertable_dup);
+}
+
+/**
+ * Extern function to pick out display from rendertable.
+ * Used by Mrm.
+ */
+Display * _XmRenderTableDisplay(XmRenderTable table)
+{
+	const struct __XmRenderTableRec *rt;
+
+	rt = XmSharedPtrGet(table);
+	return rt ? rt->display : NULL;
+}
+
+/**
+ * Duplicates renditions matching tags to a new table.
+ */
+XmRenderTable XmRenderTableCopy(XmRenderTable table, XmStringTag *tags,
+                                int tag_count)
+{
+	Cardinal i, count = 0;
+	XmRenderTable new;
+	XmRendition *matches;
+	struct __XmRenderTableRec *new_rt;
+	const struct __XmRenderTableRec *rt;
+	XtAppContext app;
+
+	if (!(rt = XmSharedPtrGet(table)))
+		return NULL;
+
+	app = _XmLock(rt->display);
+	if (!tags || !tag_count) {
+		_XmUnlock(app);
+		return XmSharedPtrCopy(table, True);
+	}
+
+	if (!(new = XmRenderTableCreate((Widget)table))) {
+		_XmUnlock(app);
+		return NULL;
+	}
+
+	new_rt = XmSharedPtrGet(new);
+	new_rt->renditions = (XmRendition *)XtCalloc(tag_count, sizeof *new_rt->renditions);
+	if ((matches = XmRenderTableGetRenditions(table, tags, tag_count))) {
+		for (i = 0; i < (Cardinal)tag_count; i++) {
+			if (matches[i]) {
+				new_rt->renditions[count++] = XmSharedPtrCopy(matches[i], True);
+				if (!_XmGetHashEntry(new_rt->ht, (*new_rt->renditions[count - 1])->tag)) {
+					_XmAddHashEntry(new_rt->ht,
+					                (*new_rt->renditions[count - 1])->tag,
+					                new_rt->renditions[count - 1]);
+				}
+				XmRenditionFree(matches[i]);
+			}
+		}
+	}
+	XtFree((XtPointer)matches);
+
+	new_rt->renditions = (XmRendition *)XtRealloc(
+		(XtPointer)new_rt->renditions,
+		count * sizeof *new_rt->renditions
+	);
+
+	if (!(new_rt->count = count))
+		new_rt->renditions = NULL;
+	_XmUnlock(app);
+	return new;
+}
+
+/**
+ * Get list of tags of all renditions in table.
+ */
+int XmRenderTableGetTags(XmRenderTable table, XmStringTag **tag_list)
+{
+	Cardinal i;
+	int count = 0;
+	const struct __XmRenderTableRec *rt;
+	const struct __XmRenditionRec *r;
+	XtAppContext app;
+
+	if (!(rt = XmSharedPtrGet(table)) || !tag_list || !rt->count) {
+		if (tag_list) *tag_list = NULL;
+		return 0;
+	}
+
+	app = _XmLock(rt->display);
+	*tag_list = (XmStringTag *)XtCalloc(rt->count, sizeof **tag_list);
+	for (i = 0; i < rt->count; i++) {
+		if (!(r = XmSharedPtrGet(rt->renditions[i])))
+			continue;
+		*tag_list[count++] = XtNewString(r->tag);
+	}
+
+	*tag_list = (XmStringTag *)XtRealloc((XtPointer)*tag_list, count * sizeof **tag_list);
+	_XmUnlock(app);
+	return count;
+}
+
+/**
+ * Get renditions matching particular tags from a render table
+ */
+XmRendition *XmRenderTableGetRenditions(XmRenderTable table, char **tags,
+                                        Cardinal tag_count)
+{
+	XmRendition rend, *rends;
+	Cardinal i, count;
+	const struct __XmRenderTableRec *t;
+	XtAppContext app;
+
+	if (!(t = XmSharedPtrGet(table)) || !tags || !tag_count)
+		return NULL;
+
+	app   = _XmLock(t->display);
+	rends = (XmRendition *)XtCalloc(tag_count, sizeof rend);
+
+	for (i = 0; i < tag_count; i++) {
+		if (tags[i] && (rend = _XmGetHashEntry(t->ht, tags[i])))
+			rends[i] = XmSharedPtrCopy(rend, False);
+	}
+
+	_XmUnlock(app);
+	return rends;
+}
+
+/**
+ * Get the rendition in the table matching the given tag.
+ */
+XmRendition XmRenderTableGetRendition(XmRenderTable table, XmStringTag tag)
+{
+	XmRendition r = NULL;
+	const struct __XmRenderTableRec *t;
+	XtAppContext app;
+
+	if (!(t = XmSharedPtrGet(table)) || !tag)
+		return NULL;
+
+	app = _XmLock(t->display);
+	r   = _XmGetHashEntry(t->ht, tag);
+	r   = XmSharedPtrCopy(r, False);
+	_XmUnlock(app);
+	return r;
+}
+
+/***
+ * Add a series of entries to a rendertable, handling tag conflicts
+ * according to \a merge_mode.
+ *
+ * Like most rendertable ops, this assumes tags are unique in the
+ * renditions array / table. Only the first entry with a particular tag
+ * is considered when matching by tag.
+ *
+ * Renditions with an empty tag (XmS) will be copied thru.
+ */
+XmRenderTable XmRenderTableAddRenditions(XmRenderTable oldtable,  XmRendition *renditions,
+                                         Cardinal rendition_count, XmMergeMode merge_mode)
+{
+
+	Cardinal i, count = 0;
+	struct __XmRenderTableRec *t, *new;
+	XmRendition r, m;
+	XmRenderTable newtable;
+	XmHashTable ht;
+	XtAppContext app;
+
+	if (!renditions || !rendition_count)
+		return oldtable;
+
+	if (!(t = XmSharedPtrGet(oldtable)))
+		oldtable = NULL;
+	app = _XmLock(t ? t->display : _XmGetDefaultDisplay());
+
+	/**
+	 * If we don't have an old table, create a new one containing
+	 * the given renditions.
+	 */
+	if (!oldtable) {
+		oldtable = XmRenderTableCreate(NULL);
+		t = XmSharedPtrGet(oldtable);
+		t->count      = rendition_count;
+		t->renditions = (XmRendition *)XtMalloc(rendition_count * sizeof *t->renditions);
+
+		for (i = 0; i < rendition_count; i++) {
+			t->renditions[i] = XmSharedPtrCopy(renditions[i], False);
+			if (!_XmGetHashEntry(t->ht, (*renditions[i])->tag))
+				_XmAddHashEntry(t->ht, (*renditions[i])->tag, t->renditions[i]);
+		}
+
+		_XmUnlock(app);
+		return oldtable;
+	}
+
+	/**
+	 * Otherwise, merge the two rendition lists into a newly-allocated
+	 * table.
+	 */
+	newtable = XmRenderTableCreate((Widget)oldtable);
+	new      = XmSharedPtrGet(newtable);
+	ht       = _XmAllocHashTable(0, XmHashCompareString, XmHashString);
+
+	/**
+	 * Only the first instance of a particular tag is considered
+	 * when matching, in keeping with existing RenderTable customs.
+	 *
+	 * This hash table speeds up searching the rendition list by tag.
+	 */
+	for (i = 0; i < rendition_count; i++) {
+		if (*(*renditions[i])->tag && !_XmGetHashEntry(ht, (*renditions[i])->tag))
+			_XmAddHashEntry(ht, (*renditions[i])->tag, renditions[i]);
+	}
+
+	new->renditions = (XmRendition *)XtMalloc(
+		(t->count + rendition_count) * sizeof *new->renditions
+	);
+
+	for (i = 0; i < t->count; i++) {
+		/* Copy renditions thru that don't match the rendition list */
+		if (!(r = _XmGetHashEntry(ht, (*t->renditions[i])->tag))) {
+			new->renditions[count++] = t->renditions[i];
+			if (!_XmGetHashEntry(new->ht, (*t->renditions[i])->tag))
+				_XmAddHashEntry(new->ht, (*t->renditions[i])->tag, t->renditions[i]);
+			t->renditions[i] = NULL;
+			continue;
+		}
+
+		/**
+		 * We have a hit, merge the two renditions
+		 */
+		switch (merge_mode) {
+		case XmMERGE_OLD: /* Dup the old, update it with the new */
+			m = XmSharedPtrCopy(t->renditions[i], True);
+			merge_renditions(m, r);
+			new->renditions[count++] = m;
+			if (!_XmGetHashEntry(new->ht, (*r)->tag))
+				_XmAddHashEntry(new->ht, (*r)->tag, new->renditions[count - 1]);
+			_XmRemoveHashEntry(ht, (*r)->tag);
+			break;
+		case XmMERGE_NEW: /* Dup the new, update it with the old */
+			r = XmSharedPtrCopy(r, True);
+			merge_renditions(r, t->renditions[i]);
+			new->renditions[count++] = r;
+			if (!_XmGetHashEntry(new->ht, (*r)->tag))
+				_XmAddHashEntry(new->ht, (*r)->tag, new->renditions[count - 1]);
+			_XmRemoveHashEntry(ht, (*r)->tag);
+			break;
+		case XmMERGE_REPLACE: /* Take the supplied rendition */
+			new->renditions[count++] = XmSharedPtrCopy(r, False);
+			if (!_XmGetHashEntry(new->ht, (*r)->tag))
+				_XmAddHashEntry(new->ht, (*r)->tag, new->renditions[count - 1]);
+			_XmRemoveHashEntry(ht, (*r)->tag);
+			break;
+		case XmDUPLICATE: /* Copy both */
+			new->renditions[count++] = XmSharedPtrCopy(t->renditions[i], False);
+			if (!_XmGetHashEntry(new->ht, (*t->renditions[i])->tag))
+				_XmAddHashEntry(new->ht, (*t->renditions[i])->tag, new->renditions[count - 1]);
+			break;
+		case XmSKIP: /* Copy neither */
+			_XmRemoveHashEntry(ht, (*r)->tag);
+			break;
+		}
+	}
+
+	/**
+	 * Copy unhandled entries from the provided rendition array.
+	 */
+	for (i = 0; i < rendition_count; i++) {
+		if (*(*renditions[i])->tag && !_XmGetHashEntry(ht, (*renditions[i])->tag))
+			continue;
+		new->renditions[count++] = XmSharedPtrCopy(renditions[i], False);
+		if (!_XmGetHashEntry(new->ht, (*renditions[i])->tag))
+			_XmAddHashEntry(new->ht, (*renditions[i])->tag, new->renditions[count - 1]);
+	}
+
+	new->renditions = (XmRendition *)XtRealloc(
+		(XtPointer)new->renditions,
+		count * sizeof *new->renditions
+	);
+
+	if (!(new->count = count))
+		new->renditions = NULL;
+
+	XmRenderTableFree(oldtable);
+	_XmFreeHashTable(ht);
+	_XmUnlock(app);
+	return newtable;
+}
+
+/**
+ * Remove all renditions from oldtable matching the given tags.
+ *
+ * If all renditions would be removed, free oldtable and return NULL.
+ * Otherwise, free any matching renditions along with oldtable, and
+ * return a newly-allocated rendertable containing the renditions
+ * that didn't match the given tags.
+ */
+XmRenderTable XmRenderTableRemoveRenditions(XmRenderTable oldtable,
+                                            XmStringTag *tags, int tag_count)
+{
+	Boolean match;
+	Cardinal i, count = 0;
+	int j;
+	XmRenderTable ret;
+	const struct __XmRenditionRec *r;
+	struct __XmRenderTableRec *rt, *new;
+	XtAppContext app;
+
+	if (!(rt = XmSharedPtrGet(oldtable)) || !tags || !tag_count)
+		return oldtable;
+
+	app = _XmLock(rt->display);
+	ret = XmRenderTableCreate((Widget)oldtable);
+	new = XmSharedPtrGet(ret);
+	new->renditions = (XmRendition *)XtMalloc(rt->count * sizeof *new->renditions);
+
+	/**
+	 * Filter-out renditions matching the given tags
+	 * by stealing renditions that don't match.
+	 */
+	for (i = 0; i < rt->count; i++) {
+		match = False;
+		r = XmSharedPtrGet(rt->renditions[i]);
+
+		for (j = 0; j < tag_count; j++) {
+			if (tags[j] && (tags[j] == r->tag || !strcmp(tags[j], r->tag))) {
+				match = True;
+				break;
+			}
+		}
+
+		if (!match) {
+			new->renditions[count++] = rt->renditions[i];
+			_XmRemoveHashEntry(rt->ht, (*rt->renditions[i])->tag);
+			if (!_XmGetHashEntry(new->ht, (*rt->renditions[i])->tag)) {
+				_XmAddHashEntry(new->ht,
+				               (*rt->renditions[i])->tag,
+				               rt->renditions[i]);
+			}
+			rt->renditions[i] = NULL;
+		}
+	}
+
+	if (count) {
+		new->renditions = (XmRendition *)XtRealloc(
+			(XtPointer)new->renditions,
+			count * sizeof *new->renditions
+		);
+
+		if (!(new->count = count))
+			new->renditions = NULL;
+	} else {
+		XmRenderTableFree(ret);
+		ret = NULL;
+	}
+
+	XmRenderTableFree(oldtable);
+	_XmUnlock(app);
+	return ret;
+}
+
+/**
+ * Finds the first font in the rendertable in the following order:
+ * 1. Xft
+ * 2. XFontSet
+ * 3. XFontStruct
+ *
+ * This function is used by XmFontList.
+ */
+Boolean _XmRenderTableFindFirstFont(XmRenderTable rt, XmRendition *rend_out)
+{
+	Cardinal i, f_idx = UINT_MAX, fs_idx = UINT_MAX;
+	struct __XmRenderTableRec *t;
+	const struct __XmRenditionRec *r;
+	XmScreen s;
+#if USE_XFT
+	Cardinal xft_idx = UINT_MAX;
+#endif
+
+	if (!rend_out || !(t = XmSharedPtrGet(rt)))
+		return False;
+
+	*rend_out = NULL;
+	for (i = t->count - 1; i < UINT_MAX; i--) {
+		r = XmSharedPtrGet(t->renditions[i]);
+		if (r->font) {
+			if (r->fontType == XmFONT_IS_FONT)         f_idx  = i;
+			else if (r->fontType == XmFONT_IS_FONTSET) fs_idx = i;
+		}
+#if USE_XFT
+		else if (r->xftFont && r->fontType == XmFONT_IS_XFT) xft_idx = i;
+#endif
+	}
+
+#if USE_XFT
+	if (xft_idx < UINT_MAX) {
+		if (rend_out) *rend_out = XmSharedPtrCopy(t->renditions[xft_idx], False);
+		return True;
+	} else
+#endif
+
+	if (fs_idx < UINT_MAX) {
+		if (rend_out) *rend_out = XmSharedPtrCopy(t->renditions[fs_idx], False);
+		return True;
+	} else if (f_idx < UINT_MAX) {
+		if (rend_out) *rend_out = XmSharedPtrCopy(t->renditions[f_idx], False);
+		return True;
+	} else if (rendertable_default_font(rt, rend_out))
+		return True;
+
+	return False;
+}
+
+/**
+ * Call the "no rendition" callback.
+ *
+ * This should happen when we don't find a rendition in a rendertable
+ * matching a particular tag, and only gets called during the process
+ * of rendering a XmString segment.
+ *
+ * Returns True if we added a rendition to \a rt for the given tag,
+ * False otherwise.
+ */
+static Boolean no_rendition(XmRenderTable rt, XmStringTag tag)
+{
+	Boolean ret = False;
+	XmDisplay d;
+	XmRendition r;
+	XmDisplayCallbackStruct cb;
+	struct __XmRenderTableRec *t;
+	const struct __XmRenderTableRec *t2;
+
+	if (!(t = XmSharedPtrGet(rt)) || !(d = (XmDisplay)XmGetXmDisplay(t->display)))
+		return ret;
+
+	if (!d->display.noRenditionCallback)
+		return ret;
+
+	/* NB: We copy the rendertable so the callback can't rug-pull it */
+	memset(&cb, 0, sizeof cb);
+	cb.reason       = XmCR_NO_RENDITION;
+	cb.render_table = XmSharedPtrCopy(rt, False);
+	cb.tag          = tag;
+
+	/**
+	 * The callback will be expected to free the render table passed
+	 * via the callback struct, and present us with a new render table
+	 * containing a rendition for the given tag.
+	 *
+	 * See: XmDisplay(3)
+	 */
+	XtCallCallbackList((Widget)d, d->display.noRenditionCallback, &cb);
+
+	/**
+	 * Best thing we can do here is to add the rendition supplied
+	 * in the table to the original table. The previous implementation
+	 * allowed the application to effectively nuke the rendertable by
+	 * changing the table's handle to point to the new one. This is
+	 * much safer.
+	 */
+	if (cb.render_table != rt && (t2 = XmSharedPtrGet(cb.render_table))) {
+		if ((r = _XmGetHashEntry(t2->ht, tag))) {
+			t->renditions = (XmRendition *)XtRealloc(
+				(XtPointer)t->renditions,
+				(t->count + 1) * sizeof *t->renditions
+			);
+
+			t->renditions[t->count++] = XmSharedPtrCopy(r, False);
+			if (!_XmGetHashEntry(t->ht, tag))
+				_XmAddHashEntry(t->ht, tag, t->renditions[t->count - 1]);
+			ret = True;
+		}
+
+		XmRenderTableFree(cb.render_table);
+	}
+
+	return ret;
+}
+
+/**
+ * Set the rendition (if we finally have a font) and cascade style props.
+ *
+ * Returns True if the rendition has a font and the style has been fully
+ * populated
+ */
+static Boolean cascade(XmRendition *rend, XmRendition tmp, XmRenditionStyle style)
+{
+	Boolean style_mod = False;
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(tmp)))
+		return False;
+
+	if (!*rend && (r->font || r->xftFont))
+		*rend = tmp;
+
+	style_mod = XmRenditionStyleMerge(style, &r->style);
+	return *rend && !style_mod;
+}
+
+/**
+ * Resolve the rendition and style properties for the given set of tags,
+ * and fallback tag.
+ *
+ * If \a style is specified, the merged styles are placed therein.
+ */
+XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
+                                 Cardinal count, XmStringTag fallback,
+                                 XmRenditionStyle style)
+{
+	Cardinal i;
+	Boolean complete = False;
+	XmRendition rend = NULL, tmp;
+	struct __XmRenditionRec *r;
+
+	if (!rt)
+		return NULL;
+
+	/**
+	 * First, search by tag (in reverse order -- in keeping with the
+	 * previous implementation) taking the first font, and cascading
+	 * the style values.
+	 *
+	 * If we don't find a tag, and the NO_RENDITION callback yields
+	 * a new rendition, try again.
+	 */
+	if (tags && count) {
+		for (i = count - 1; i < UINT_MAX; i--) {
+			if ((tmp = XmRenderTableGetRendition(rt, tags[i]))) {
+				if (cascade(&rend, tmp, style))
+					break;
+			} else if (no_rendition(rt, tags[i])) ++i;
+		}
+	}
+
+	/* Next, try the fallback tag */
+	if (!rend && !(rend = XmRenderTableGetRendition(rt, fallback))) {
+		/* Try the current charset */
+		fallback = XmStringGetCharset();
+		rend     = XmRenderTableGetRendition(rt, fallback);
+		XtFree(fallback);
+	}
+
+	/* ... and failing that, the default tag (Motif 1.x) */
+	if (!rend)
+		rend = XmRenderTableGetRendition(rt, XmFONTLIST_DEFAULT_TAG);
+
+	/* Motif 2.x: Used for multibyte strings */
+	if (!rend)
+		rend = XmRenderTableGetRendition(rt, _MOTIF_DEFAULT_LOCALE);
+
+	/* Finally... */
+    if (!rend)
+    	_XmRenderTableFindFirstFont(rt, &rend);
+
+out:
+	if (rend && (r = XmSharedPtrGet(rend))) {
+		XmRenditionStyleMerge(style, &r->style);
+		XmRenditionLoad(rend, False);
+	}
+
+	return rend;
+}
+
+/**
+ * Get the height, ascent, and descent of the font in the given
+ * rendertable for XmFONTLIST_DEFAULT_TAG or the default font if
+ * the default tag cannot be found in the table.
+ */
+void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
+                                        int *ascent, int *descent)
+{
+	int a = 0, d = 0;
+	XmRendition rend;
+	XFontStruct **f_list;
+	char **n_list;
+	const struct __XmRenderTableRec *t;
+	const struct __XmRenditionRec *r;
+	XtAppContext app;
+
+	if (!(t = XmSharedPtrGet(rt)))
+		goto out;
+	app = _XmLock(t->display);
+
+	/* Get default rendition */
+	if (!(rend = XmRenderTableResolve(rt, NULL, 0, XmFONTLIST_DEFAULT_TAG, NULL))) {
+		if (!rendertable_default_font(rt, &rend))
+			goto unlock;
+	}
+
+	r = XmSharedPtrGet(rend);
+	switch (r->fontType) {
+	case XmFONT_IS_FONT:
+		a = ((XFontStruct *)r->font)->ascent;
+		d = ((XFontStruct *)r->font)->descent;
+		break;
+	case XmFONT_IS_FONTSET:
+		if (!XFontsOfFontSet((XFontSet)r->font, &f_list, &n_list))
+			break;
+
+		a = f_list[0]->ascent;
+		d = f_list[0]->descent;
+		break;
+#if USE_XFT
+	case XmFONT_IS_XFT:
+		a = r->xftFont->ascent;
+		d = r->xftFont->descent;
+		break;
+#endif
+	}
+
+unlock:
+	XmRenditionFree(rend);
+	_XmUnlock(app);
+
+out:
+	if (ascent)  *ascent  = a;
+	if (descent) *descent = d;
+	if (height)  *height  = a + d;
+}
+
+/**
+ * Free a XmRenderTable
+ */
+void XmRenderTableFree(XmRenderTable table)
+{
+	XmSharedPtrFree(table);
+}
+
+/* Wrapper for calling XtWarning functions. */
+static void RenditionWarning(char *tag, char *type, char *message, Display *d)
+{
+	const char *params[1];
+	Cardinal num_params = 1;
+
+	/**
+	 * the MotifWarningHandler installed in VendorS.c knows about
+	 * this convention
+	 */
+	params[0] = XME_WARNING;
+	XtAppWarningMsg(
+		XtDisplayToApplicationContext(d ? d : _XmGetDefaultDisplay()),
+		tag, type, "XmRendition", message, (String *)params, &num_params
+	);
+}
+
+/**
+ * Merge two renditions, replacing any default values in \a to with
+ * values from \a from.
+ */
+static void merge_renditions(XmRendition to, XmRendition from)
+{
+	struct __XmRenditionRec *rt, *rf;
+
+	rt = XmSharedPtrGet(to);
+	rf = XmSharedPtrGet(from);
+	if (!rt || !rf)
+		return;
+
+	if (rt->loadModel == XmAS_IS)
+		rt->loadModel = rf->loadModel;
+
+	if (!rt->tag)
+		rt->tag = _XmStringCacheTag(rf->tag, XmSTRING_TAG_STRLEN);
+
+	if (rt->fontType == XmAS_IS)
+		rt->fontType = rf->fontType;
+
+	if (!rt->font && rf->font) {
+		XtFree(rt->pattern);
+		rt->pattern = NULL;
+		if (rf->pattern)
+			rt->pattern = XtNewString(rf->pattern);
+		XmRenditionLoad(to, False);
+	}
+
+	if (!rt->tabs && rf->tabs)
+		rt->tabs = XmTabListCopy(rf->tabs, 0, 0);
+
+	if (rt->style.underline == XmAS_IS)
+		rt->style.underline = rf->style.underline;
+
+	if (rt->style.strikethru == XmAS_IS)
+		rt->style.strikethru = rf->style.strikethru;
+
+	if (rt->style.bg_state == XmAS_IS)
+		rt->style.bg_state = rf->style.bg_state;
+
+	if (rt->style.fg_state == XmAS_IS)
+		rt->style.fg_state = rf->style.fg_state;
+
+	if (rt->style.bg.pixel == XmUNSPECIFIED_PIXEL)
+		rt->style.bg.pixel = rf->style.bg.pixel;
+
+	if (rt->style.fg.pixel == XmUNSPECIFIED_PIXEL)
+		rt->style.fg.pixel = rf->style.fg.pixel;
+
+#if USE_XFT
+	/* These should only be updated if the Xft font changes */
+	if (rt->fontType == XmFONT_IS_XFT && !rt->xftFont && rf->xftFont) {
+		XtFree(rt->pattern);
+		rt->pattern = NULL;
+		rt->xftFont     = XftFontCopy(rf->display, rf->xftFont);
+		rt->fontFoundry = rf->fontFoundry;
+		rt->fontFamily  = rf->fontFamily;
+		rt->fontStyle   = rf->fontStyle;
+		rt->pixelSize   = rf->pixelSize;
+		rt->display     = rf->display;
+
+		if (rf->pattern)
+			rt->pattern = XtNewString(rf->pattern);
+	} else if (!rt->xftFont && !rf->xftFont) {
+		if (!rt->pattern && rf->pattern)
+			rt->pattern = XtNewString(rf->pattern);
+	}
+#else
+	if (!rt->fontFoundry && rf->fontFoundry)
+		rt->fontFoundry = XtNewString(rf->fontFoundry);
+	if (!rt->fontFamily && rf->fontFamily)
+		rt->fontFamily = XtNewString(rf->fontFamily);
+	if (!rt->fontStyle && rf->fontStyle)
+		rt->fontStyle = XtNewString(rf->fontStyle);
+#endif
+}
+
+/**
+ * Free a rendition struct
+ */
+static void rendition_free(void *ptr)
+{
+	Display *d;
+	struct __XmRenditionRec *r = ptr;
+
+	if (!r) return;
+	d = r->display ? r->display : _XmGetDefaultDisplay();
+	XtFree(r->pattern);
+	XmTabListFree(r->tabs);
+
+	if (r->fontType != XmFONT_IS_XFT || !r->xftFont) {
+		/* These are copied from args or the X font info */
+		XtFree(r->fontFamily);
+		XtFree(r->fontStyle);
+		XtFree(r->fontFoundry);
+	}
+#if USE_XFT
+	else {
+		/* These belong to the XftFont's pattern */
+		r->fontFamily  = NULL;
+		r->fontStyle   = NULL;
+		r->fontFoundry = NULL;
+	}
+#endif
+
+	/* Release font if we own it */
+	if (r->loadModel != XmUNSPECIFIED_LOAD_MODEL) {
+		switch (r->fontType) {
+		case XmFONT_IS_FONT:
+			if (r->font) XFreeFont(d, r->font);
+			r->font = NULL;
+			break;
+		case XmFONT_IS_FONTSET:
+			if (r->font) XFreeFontSet(d, (XFontSet)r->font);
+			r->font = NULL;
+			break;
+#if USE_XFT
+		case XmFONT_IS_XFT:
+			if (r->xftFont) XftFontClose(d, r->xftFont);
+			r->xftFont = NULL;
+			break;
+#endif
+		}
+	}
+
+	XtFree((XtPointer)r);
+}
+
+/**
+ * Duplicate a rendition struct
+ */
+static void *rendition_dup(void *ptr)
+{
+	Display *d;
+	XmSharedPtr p;
+	int mcnt;
+	char **mcset = NULL, *def_str;
+	struct __XmRenditionRec *new;
+	const struct __XmRenditionRec *r = ptr;
+
+	d = r->display;
+	if (!d) d = _XmGetDefaultDisplay();
+
+	new = (struct __XmRenditionRec *)XtCalloc(1, sizeof *new);
+	new->loadModel         = r->loadModel;
+	new->fontType          = r->fontType;
+	new->tag               = r->tag;
+	new->display           = d;
+	new->tabs              = XmTabListCopy(r->tabs, 0, 0);
+	new->fontSize          = r->fontSize;
+	new->fontSlant         = r->fontSlant;
+	new->fontSpacing       = r->fontSpacing;
+	new->fontWeight        = r->fontWeight;
+	new->pixelSize         = r->pixelSize;
+	new->style.underline   = r->style.underline;
+	new->style.strikethru  = r->style.strikethru;
+	new->style.fg_state    = r->style.fg_state;
+	new->style.bg_state    = r->style.bg_state;
+	new->style.fg          = r->style.fg;
+	new->style.bg          = r->style.bg;
+
+	if (r->pattern)
+		new->pattern = XtNewString(r->pattern);
+
+	if (r->fontType == XmFONT_IS_XFT) {
+		new->fontFoundry = r->fontFoundry;
+		new->fontFamily  = r->fontFamily;
+		new->fontStyle   = r->fontStyle;
+		if (r->loadModel == XmUNSPECIFIED_LOAD_MODEL)
+			new->xftFont = r->xftFont;
+#if USE_XFT
+		else if (r->xftFont) new->xftFont = XftFontCopy(d, r->xftFont);
+#endif
+	} else {
+		new->fontFoundry = XtNewString(r->fontFoundry);
+		new->fontFamily  = XtNewString(r->fontFamily);
+		new->fontStyle   = XtNewString(r->fontStyle);
+
+		if (r->loadModel == XmUNSPECIFIED_LOAD_MODEL)
+			new->font = r->font;
+		else if (r->font && r->pattern) {
+			switch (r->fontType) {
+			case XmFONT_IS_FONT:
+				new->font = XLoadQueryFont(d, r->pattern);
+				break;
+			case XmFONT_IS_FONTSET:
+				new->font = (XtPointer)XCreateFontSet(d, r->pattern, &mcset, &mcnt, &def_str);
+				if (mcset) XFreeStringList(mcset);
+				break;
+			default:
+				new->font = NULL;
+			}
+		}
+	}
+
+	return new;
+}
+
+/**
+ * Create a new rendition
+ */
+XmRendition XmRenditionCreate(Widget widget, XmStringTag tag,
+                              ArgList args, Cardinal count)
+{
+	return _XmRenditionCreate(NULL, widget, XmS, XmCRenderTable, tag,
+	                          args, count, NULL);
+}
+
+/* Internal function.  Called from XmRenditionCreate, resource */
+/* converter, and Mrm create function. */
+XmRendition _XmRenditionCreate(Display *display, Widget widget, String resname,
+                               String resclass, XmStringTag tag, ArgList args,
+                               Cardinal count, Boolean *in_db)
+{
+	XmRendition rend;
+	struct __XmRenditionRec *r;
+	Boolean free_tag = False, result;
+
+	if (!display)
+		display = widget ? XtDisplayOfObject(widget) : _XmGetDefaultDisplay();
+
+	/* Allocate rendition. */
+	r    = (struct __XmRenditionRec *)XtCalloc(1, sizeof *r);
+	rend = (XmRendition)XmSharedPtrCreate(r, rendition_free, rendition_dup);
+	r->display = display;
+
+	/* Ensure we're fully opaque */
+	r->style.bg.alpha = 0xffff;
+	r->style.fg.alpha = 0xffff;
+
+	/* X resource DB query */
+	result = GetResources(rend, display, widget, resname, resclass, tag,
+	                      args, count);
+	if (in_db != NULL) *in_db = result;
+
+	if (!tag && !result) {
+		XmRenditionFree(rend);
+		return NULL;
+	}
+
+	if (!tag) {
+		tag = XmStringGetCharset();
+		free_tag = True;
+	}
+
+	r->tag = _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN);
+	if (free_tag && tag != r->tag)
+		XtFree(tag);
+
+	if (r->pattern)   r->pattern   = XtNewString(r->pattern);
+	if (r->fontStyle) r->fontStyle = XtNewString(r->fontStyle);
+	if (r->loadModel != XmLOAD_DEFERRED && r->loadModel != XmLOAD_LAZY)
+		XmRenditionLoad(rend, True);
+	return rend;
+}
+
+/* Mrm create function for renditions. */
+Widget _XmCreateRendition(Widget parent, String name, ArgList args, Cardinal count)
+{
+	XmRenderTable rt = (XmRenderTable)parent;
+	struct __XmRenderTableRec *table;
+	const struct __XmRenditionRec *r;
+	XmRendition rend;
+
+	if (!(table = XmSharedPtrGet(rt)))
+		return NULL;
+
+	rend = _XmRenditionCreate(table->display, NULL, XmS, XmCRenderTable,
+	                          name, args, count, NULL);
+	r    = XmSharedPtrGet(rend);
+
+	/* Ignore repeats */
+	if (_XmGetHashEntry(table->ht, r->tag)) {
+		XmRenditionFree(rend);
+		return NULL;
+	}
+
+	table->renditions = (XmRendition *)XtRealloc(
+		(XtPointer)table->renditions,
+		++table->count * sizeof rend
+	);
+
+	table->renditions[table->count - 1] = rend;
+	if (!_XmGetHashEntry(table->ht, r->tag))
+		_XmAddHashEntry(table->ht, r->tag, rend);
+	return XmSharedPtrCopy(rend, False);
 }
 
 /**
  * Determine if a rendition has a glyph for a particular codepoint
  */
-Boolean XmRenditionHasCodepoint(const XmRendition r, XmCodepoint cp)
+Boolean XmRenditionHasCodepoint(const XmRendition rend, XmCodepoint cp)
 {
-#if !USE_XFT
-	(void)r;
-	(void)cp;
-	return True;
-#else
-	if (!r || _XmRendFontType(r) != XmFONT_IS_XFT || !_XmRendXftFont(r))
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)))
 		return False;
 
-	return !!FcCharSetHasChar(_XmRendXftFont(r)->charset, (FcChar32)cp);
+	if (r->fontType != XmFONT_IS_XFT || !r->xftFont)
+		return True;
+
+#if USE_XFT
+	return !!FcCharSetHasChar(r->xftFont->charset, (FcChar32)cp);
+#else
+	return True;
 #endif
 }
 
+#if USE_XFT
 /**
  * Set XmRendition properties from a FontConfig pattern
  */
 static void set_props_from_pattern(XmRendition rend, const FcPattern *p)
 {
-#if !USE_XFT
-	(void)rend;
-	(void)p;
-	return;
-#else
 	int i;
 	double d;
 	FcChar8 *s;
+	struct __XmRenditionRec *r;
 
-	if (!rend || !p)
+	if (!p || !(r = XmSharedPtrGet(rend)))
 		return;
 
-	_XmRendFontSize(rend)    = DEFAULT_fontSize;
-	_XmRendPixelSize(rend)   = 0;
-	_XmRendFontSlant(rend)   = 0;
-	_XmRendFontWeight(rend)  = 0;
-	_XmRendFontSpacing(rend) = 0;
-
-	if (_XmRendFontName(rend) != DEFAULT_fontName) {
-		XtFree(_XmRendFontName(rend));
-		_XmRendFontName(rend) = DEFAULT_fontName;
-	}
-
-	if (_XmRendFontFoundry(rend) != DEFAULT_fontFoundry) {
-		XtFree(_XmRendFontFoundry(rend));
-		_XmRendFontFoundry(rend) = DEFAULT_fontFoundry;
-	}
-
-	if (_XmRendFontStyle(rend) != DEFAULT_fontStyle) {
-		XtFree(_XmRendFontStyle(rend));
-		_XmRendFontStyle(rend) = DEFAULT_fontStyle;
-	}
-
-	if (FcPatternGetString(p, FC_FAMILY, 0, &s) == FcResultMatch)
-		_XmRendFontName(rend) = XtNewString((char *)s);
+	r->fontSize    = 0;
+	r->pixelSize   = 0;
+	r->fontSlant   = 0;
+	r->fontWeight  = 0;
+	r->fontSpacing = 0;
+	r->fontFoundry = NULL;
+	r->fontFamily  = NULL;
+	r->fontStyle   = NULL;
 
 	if (FcPatternGetString(p, FC_FOUNDRY, 0, &s) == FcResultMatch)
-		_XmRendFontFoundry(rend) = XtNewString((char *)s);
-
+		r->fontFoundry = (String)s;
+	if (FcPatternGetString(p, FC_FAMILY, 0, &s) == FcResultMatch)
+		r->fontFamily = (String)s;
 	if (FcPatternGetString(p, FC_STYLE, 0, &s) == FcResultMatch)
-		_XmRendFontStyle(rend) = XtNewString((char *)s);
-
+		r->fontStyle = (String)s;
 	if (FcPatternGetDouble(p, FC_SIZE, 0, &d) == FcResultMatch)
-		_XmRendFontSize(rend) = (int)d;
+		r->fontSize = (int)d;
 	if (FcPatternGetDouble(p, FC_PIXEL_SIZE, 0, &d) == FcResultMatch)
-		_XmRendPixelSize(rend) = (int)d;
+		r->pixelSize = (int)d;
 	if (FcPatternGetInteger(p, FC_SLANT, 0, &i) == FcResultMatch)
-		_XmRendFontSlant(rend) = i;
+		r->fontSlant = i;
 	if (FcPatternGetInteger(p, FC_WEIGHT, 0, &i) == FcResultMatch)
-		_XmRendFontWeight(rend) = i;
+		r->fontWeight = i;
 	if (FcPatternGetInteger(p, FC_SPACING, 0, &i) == FcResultMatch)
-		_XmRendFontSpacing(rend) = i;
+		r->fontSpacing = i;
+}
+#endif /* USE_XFT */
+
+/**
+ * Ignore X errors, in case of BadAtom
+ */
+static int ignore_x_errors(Display *disp, XErrorEvent *event)
+{
+	(void)disp;
+	(void)event;
+    return 0;
+}
+
+/**
+ * Set XmRendition properties from XFontProps.
+ *
+ * Normalize integer props to standard values used by fontconfig for
+ * parity with Xft.
+ *
+ * NB: These values, point size in particular, might not be accurate.
+ */
+static void set_props_from_fontstruct(XmRendition rend, const XFontStruct *fs)
+{
+	int i;
+	double dpi;
+	String slant, weight;
+	Atom FOUNDRY, WEIGHT_NAME, SLANT;
+	XErrorHandler olderr;
+	struct __XmRenditionRec *r;
+
+	if (!fs || !(r = XmSharedPtrGet(rend)))
+		return;
+
+	FOUNDRY     = XInternAtom(r->display, "FOUNDRY", False);
+	WEIGHT_NAME = XInternAtom(r->display, "WEIGHT_NAME", False);
+	SLANT       = XInternAtom(r->display, "SLANT", False);
+
+	/* In case of BadAtom... */
+	olderr = XSetErrorHandler(ignore_x_errors);
+
+	for (i = 0; i < fs->n_properties; i++) {
+		if (fs->properties[i].name == FOUNDRY) {
+			XtFree(r->fontFoundry);
+			r->fontFoundry = XGetAtomName(r->display, fs->properties[i].card32);
+			continue;
+		}
+
+		if (fs->properties[i].name == XA_FAMILY_NAME) {
+			XtFree(r->fontFamily);
+			r->fontFamily = XGetAtomName(r->display, fs->properties[i].card32);
+			continue;
+		}
+
+		if (fs->properties[i].name == XA_POINT_SIZE) {
+			r->fontSize = fs->properties[i].card32 / 10;
+			continue;
+		}
+
+		if (fs->properties[i].name == SLANT) {
+			slant = XGetAtomName(r->display, fs->properties[i].card32);
+			switch (*slant) {
+			case 'r': case 'R': r->fontSlant = 0;   break; /* Roman   */
+			case 'i': case 'I': r->fontSlant = 100; break; /* Italic  */
+			case 'o': case 'O': r->fontSlant = 110; break; /* Oblique */
+			default:            r->fontSlant = 0;
+			}
+
+			XFree(slant);
+			continue;
+		}
+
+		if (fs->properties[i].name == WEIGHT_NAME) {
+			weight = XGetAtomName(r->display, fs->properties[i].card32);
+			switch (*weight) {
+			case 'm': case 'M': r->fontWeight = 100; break; /* Medium   */
+			case 'd': case 'D': r->fontWeight = 180; break; /* Demibold */
+			case 'b': case 'B': r->fontWeight = 200; break; /* Bold     */
+			default:            r->fontWeight = 80;         /* Regular  */
+			}
+
+			XFree(weight);
+			continue;
+		}
+	}
+
+	dpi = DpiOfXmScreen(XmScreenOfScreen(DefaultScreenOfDisplay(r->display)));
+	r->pixelSize = (int)(r->fontSize * (dpi / 72.));
+	XSetErrorHandler(olderr);
+}
+
+static void set_props_from_font(XmRendition rend)
+{
+	XFontStruct **f_list;
+	char **mcset = NULL;
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)))
+		return;
+
+	if (r->fontType == XmFONT_IS_FONT && r->font)
+		set_props_from_fontstruct(rend, r->font);
+
+	if (r->fontType == XmFONT_IS_FONTSET && r->font) {
+		if (XFontsOfFontSet((XFontSet)r->font, &f_list, &mcset)) {
+			if (mcset) XFreeStringList(mcset);
+			set_props_from_fontstruct(rend, *f_list);
+		}
+	}
+
+#if USE_XFT
+	if (r->fontType == XmFONT_IS_XFT && r->xftFont)
+		set_props_from_pattern(rend, r->xftFont->pattern);
 #endif
+}
+
+/**
+ * Load an X font, trying to load it as a FontSet first, falling back
+ * to XFontStruct if it fails.
+ */
+static Boolean load_xfont(XmRendition rend)
+{
+	int mcnt;
+	char **mcset = NULL, *def_str;
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)) || !r->pattern)
+		return False;
+
+	if (r->fontType == XmFONT_IS_FONTSET &&
+	    (r->font = XCreateFontSet(r->display, r->pattern, &mcset, &mcnt, &def_str)))
+		if (mcset) XFreeStringList(mcset);
+
+	if (r->fontType == XmFONT_IS_FONT || !r->font) {
+		if ((r->font = XLoadQueryFont(r->display, r->pattern)))
+			r->fontType = XmFONT_IS_FONT;
+	}
+
+	if (r->font) set_props_from_font(rend);
+	return !!r->font;
+}
+
+#if USE_XFT
+static Boolean load_xft(XmRendition rend)
+{
+	FcPattern *p, *p2;
+	FcResult res;
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)) || !r->pattern)
+		return False;
+
+	/* r->pattern is either a pattern, or family name */
+	if (strchr(r->pattern, '-') || strchr(r->pattern, '='))
+		p = FcNameParse((FcChar8 *)r->pattern);
+	else {
+		p = FcPatternCreate();
+		FcPatternAddString(p, FC_FAMILY, (FcChar8 *)r->pattern);
+	}
+
+	if (r->fontFoundry) FcPatternAddString(p,  FC_FOUNDRY,    (FcChar8 *)r->fontFoundry);
+	if (r->fontStyle)   FcPatternAddString(p,  FC_STYLE,      (FcChar8 *)r->fontStyle);
+	if (r->fontSize)    FcPatternAddDouble(p,  FC_SIZE,       (double)r->fontSize);
+	if (r->pixelSize)   FcPatternAddDouble(p,  FC_PIXEL_SIZE, (double)r->pixelSize);
+	if (r->fontSlant)   FcPatternAddInteger(p, FC_SLANT,      r->fontSlant);
+	if (r->fontWeight)  FcPatternAddInteger(p, FC_WEIGHT,     r->fontWeight);
+	if (r->fontSpacing) FcPatternAddInteger(p, FC_SPACING,    r->fontSpacing);
+	FcPatternAddDouble(p, FC_DPI, DpiOfXmScreen(XmScreenOfScreen(DefaultScreenOfDisplay(r->display))));
+
+	p2 = XftFontMatch(r->display, 0, p, &res);
+	if (!(r->xftFont = XftFontOpenPattern(r->display, p2)))
+		FcPatternDestroy(p2);
+	else {
+		XtFree(r->fontStyle);
+		r->fontStyle = NULL;
+	}
+	FcPatternDestroy(p);
+
+	set_props_from_font(rend);
+	return !!r->xftFont;
+}
+#endif
+
+/**
+ * Load the font specified by the rendition's font type and pattern.
+ *
+ * If do_callback is True, the "NO_FONT" callback will be called
+ * in the event that the font fails to load.
+ *
+ * Returns True if the font was successfully loaded, False otherwise.
+ */
+Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback)
+{
+	Boolean loaded = False;
+	XmDisplay d;
+	XmDisplayCallbackStruct cb;
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)))
+		return False;
+
+	/* User-supplied fonts are presumed loaded */
+	if (r->loadModel == XmUNSPECIFIED_LOAD_MODEL)
+		return True;
+
+	if (!r->display) {
+		RenditionWarning(r->tag, "NULL_DISPLAY", NULL_DISPLAY_MSG, NULL);
+		return False;
+	}
+
+	if ((!r->pattern || !*r->pattern)) {
+		if (r->loadModel == XmLOAD_IMMEDIATE) {
+			RenditionWarning(r->tag, "NULL_LOAD_IMMEDIATE",
+			                 NULL_LOAD_IMMEDIATE_MSG, r->display);
+		}
+
+		return False;
+	}
+
+	switch (r->fontType) {
+	case XmFONT_IS_FONT:
+	case XmFONT_IS_FONTSET:
+		if (r->font)
+			return True;
+		loaded = load_xfont(rend);
+		break;
+	case XmFONT_IS_XFT:
+		if (r->xftFont)
+			return True;
+#if USE_XFT
+		loaded = load_xft(rend);
+#endif
+		break;
+	default:
+		RenditionWarning(r->tag, "INVALID_TYPE", INVALID_TYPE_MSG, r->display);
+	}
+
+	/* Call the NO_FONT callback if requested */
+	if (!loaded && do_callback) {
+		d = (XmDisplay)XmGetXmDisplay(r->display);
+		if (d && d->display.noFontCallback) {
+			memset(&cb, 0, sizeof cb);
+			cb.reason    = XmCR_NO_FONT;
+			cb.rendition = rend;
+			cb.font_name = r->pattern;
+			XtCallCallbackList((Widget)d, d->display.noFontCallback, &cb);
+		}
+	}
+
+	return loaded;
+}
+
+/**
+ * Unload a font, resetting the font properties
+ */
+void XmRenditionUnload(XmRendition rend)
+{
+	struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)) || r->loadModel == XmUNSPECIFIED_LOAD_MODEL)
+		return;
+
+	if (r->fontType == XmFONT_IS_XFT) {
+		if (!r->xftFont)
+			goto out;
+
+#if USE_XFT
+		XftFontClose(r->display, r->xftFont);
+#endif
+		r->xftFont = NULL;
+		goto out;
+	}
+
+	if (!r->font)
+		goto out;
+
+	if (r->fontType == XmFONT_IS_FONTSET)
+		XFreeFontSet(r->display, (XFontSet)r->font);
+	else XFreeFont(r->display, r->font);
+	r->font = NULL;
+
+out:
+	r->fontFoundry = NULL;
+	r->fontFamily  = NULL;
+	r->fontStyle   = NULL;
+	r->fontSize    = 0;
+	r->fontSlant   = 0;
+	r->fontWeight  = 0;
+	r->fontSpacing = 0;
+	r->pixelSize   = 0;
 }
 
 /**
@@ -1948,8 +2059,11 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
 	(void)cp;
 	return NULL;
 #else
-	int i;
+	Cardinal i;
 	Display *d;
+	struct __XmRenderTableRec *rt;
+	struct __XmRenditionRec *r;
+	const struct __XmRenditionRec *orig_r;
 	XmRendition rend = NULL;
 	XtAppContext app;
 	FcPattern *p = NULL, *p2 = NULL;
@@ -1960,15 +2074,16 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
 	static FcCharSet *rej = NULL;
 	char buf[16];
 
-	if (!tbl || !(d = _XmRTDisplay(tbl)))
+	if (!(rt = XmSharedPtrGet(tbl)))
 		return NULL;
 
 	/* This only applies to Xft fonts */
-	if (_XmRendFontType(orig) != XmFONT_IS_XFT)
+	orig_r = XmSharedPtrGet(orig);
+	if (!rt->display || !orig_r || orig_r->fontType != XmFONT_IS_XFT)
 		return NULL;
 
-	app = XtDisplayToApplicationContext(d);
-	_XmAppLock(app);
+	d   = rt->display;
+	app = _XmLock(d);
 	if (!rej) rej = FcCharSetCreate();
 
 	/* Make sure it's not a reject */
@@ -1986,23 +2101,24 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
 	FcObjectSetAdd(os, FC_SIZE);
 	FcObjectSetAdd(os, FC_PIXEL_SIZE);
 
-	for (i = 0; i < _XmRTCount(tbl); i++) {
-		rend = _XmRTRenditions(tbl)[i];
-		if (rend == orig || _XmRendFontType(rend) != XmFONT_IS_XFT || !_XmRendXftFont(rend))
+	for (i = 0; i < rt->count; i++) {
+		rend = rt->renditions[i];
+		r    = XmSharedPtrGet(rend);
+		if (rend == orig || r == orig_r || r->fontType != XmFONT_IS_XFT || !r->xftFont)
 			continue;
 
-		if (!FcCharSetHasChar(_XmRendXftFont(rend)->charset, (FcChar32)cp))
+		if (!FcCharSetHasChar(r->xftFont->charset, (FcChar32)cp))
 			continue;
 
 		/* We have the codepoint, see if we have a style fit */
-		if (!_XmRendXftFont(orig)) {
+		if (!orig_r->xftFont) {
 			FcCharSetDestroy(cs);
 			FcObjectSetDestroy(os);
 			goto unlock;
 		}
 
-		p  = _XmRendXftFont(orig)->pattern;
-		p2 = _XmRendXftFont(rend)->pattern;
+		p  = orig_r->xftFont->pattern;
+		p2 = r->xftFont->pattern;
 		if (FcPatternEqualSubset(p, p2, os)) {
 			FcCharSetDestroy(cs);
 			FcObjectSetDestroy(os);
@@ -2011,7 +2127,7 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
 	}
 
 	/* Try the same font pattern with the codepoint */
-	p2 = FcPatternDuplicate(_XmRendXftFont(orig)->pattern);
+	p2 = FcPatternDuplicate(orig_r->xftFont->pattern);
 	FcObjectSetAdd(os, FC_FOUNDRY);
 	FcObjectSetAdd(os, FC_FAMILY);
 	p = FcPatternFilter(p2, os);
@@ -2059,21 +2175,22 @@ done:
 	FcCharSetDestroy(cs);
 
 unlock:
-	_XmAppUnlock(app);
-	return _XmRenditionCopy(rend, True);
+	_XmUnlock(app);
+	return XmSharedPtrCopy(rend, False);
 
 found:
 	rend = XmRenditionCreate(NULL, XmS, NULL, 0);
-	if (!(_XmRendXftFont(rend) = XftFontOpenPattern(d, p2))) {
+	r    = XmSharedPtrGet(rend);
+	if (!(r->xftFont = XftFontOpenPattern(d, p2))) {
 		FcPatternDestroy(p2);
 		XmRenditionFree(rend);
 		rend = NULL;
 		goto done;
 	}
 
-	_XmRendFontType(rend) = XmFONT_IS_XFT;
-	_XmRendDisplay(rend)  = _XmRendDisplay(orig);
-	set_props_from_pattern(rend, _XmRendXftFont(rend)->pattern);
+	r->fontType = XmFONT_IS_XFT;
+	r->display  = orig_r->display;
+	set_props_from_pattern(rend, r->xftFont->pattern);
 
 	/**
 	 * Fontconfig thinks this should match, but in reality, it doesn't.
@@ -2081,780 +2198,270 @@ found:
 	 * We need to bail here to avoid getting stuck in a loop between
 	 * thinking we have a suitable font, and probing for a fallback.
 	 */
-	if (!FcCharSetHasChar(_XmRendXftFont(rend)->charset, (FcChar32)cp)) {
+	if (!FcCharSetHasChar(r->xftFont->charset, (FcChar32)cp)) {
 		XmRenditionFree(rend);
 		rend = NULL;
 		goto done;
 	}
 
 	/* Append it to the render table */
-	_XmRendRefcount(rend) = _XmRTRefcount(tbl);
-	_XmRTRenditions(tbl) = (XmRendition *)XtRealloc(
-		(XtPointer)_XmRTRenditions(tbl),
-		++_XmRTCount(tbl) * sizeof *_XmRTRenditions(tbl)
+	rt->renditions = (XmRendition *)XtRealloc(
+		(XtPointer)rt->renditions,
+		(rt->count + 1) * sizeof *rt->renditions
 	);
 
-	_XmRTRenditions(tbl)[_XmRTCount(tbl) - 1] = rend;
+	rt->renditions[rt->count++] = rend;
 	goto done;
 #endif /* USE_XFT */
 }
 
-/* Returns copy of matching rendition. */
-XmRendition
-XmRenderTableGetRendition(XmRenderTable table,
-			  XmStringTag tag)
+/* Get resource values from rendition. */
+void XmRenditionGetValues(XmRendition rendition, ArgList args, Cardinal count)
 {
-  XmRendition ret_val;
-  XtAppContext app = NULL;
+	Cardinal i, j;
+	Display *d;
+	void *p;
+	int mcnt;
+	char **mcset = NULL, *def_str;
+	XmLoadModel lm;
+	struct __XmRenditionRec *orig;
+	XtAppContext app;
 
-  if (_XmRTDisplay(table))
-     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
+	if (!rendition || !args || !count)
+		return;
 
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
-
-  ret_val = CopyRendition(_XmRenderTableFindRendition(table, tag,
-			FALSE, FALSE, FALSE, NULL));
-
-  if (app)
-	_XmAppUnlock(app);
-  else _XmProcessUnlock();
-
-  return ret_val;
-}
-
-/* Returns array of copies of matching renditions. */
-XmRendition *
-XmRenderTableGetRenditions(XmRenderTable table,
-			   char **tags,
-			   Cardinal tag_count)
-{
-  XmRendition	rend, *rends;
-  int		i, count;
-  XtAppContext  app = NULL;
-
-  if (!table || !tags || !tag_count)
-      return NULL;
-
-  if (_XmRTDisplay(table))
-     app = XtDisplayToApplicationContext(_XmRTDisplay(table));
-
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
-
-  rends = (XmRendition *)XtMalloc(tag_count * sizeof(XmRendition));
-  count = 0;
-
-  for (i = 0; i < tag_count; i++)
-    {
-      rend = _XmRenderTableFindRendition(table, tags[i],
-					 FALSE, FALSE, FALSE, NULL);
-      if (rend != NULL)
-	{
-	  rends[i] = CopyRendition(rend);
+	/* Ensure our rendition is still valid */
+	d = _XmGetDefaultDisplay();
+	if (!(orig = XmSharedPtrGet(rendition))) {
+		RenditionWarning(NULL, "INVALID_RENDITION", INVALID_RENDITION, d);
+		return;
 	}
-    }
 
-  if (app)
-	_XmAppUnlock(app);
-  else _XmProcessUnlock();
+	if (orig->display) d = orig->display;
+	app = _XmLock(d);
 
-  return rends;
-}
+	/* Ensure we have a display */
+	if (!orig->display)
+		orig->display = d;
 
-/* Wrapper for calling XtWarning functions. */
-static void
-RenditionWarning(char *tag,
-		 char *type,
-		 char *message,
-     		 Display *dpy)
-{
-  char *params[1];
-  Cardinal num_params = 1 ;
-  Display *d;
+	for (i = 0; i < count; i++) {
+		if (!args[i].value)
+			continue;
 
-  /* the MotifWarningHandler installed in VendorS.c knows about
-     this convention */
-  params[0] = XME_WARNING;
+		for (j = 0; j < _XmNumRenditionResources; j++) {
+			if (args[i].name != _XmRenditionResources[j].resource_name &&
+			    strcmp(_XmRenditionResources[j].resource_name, args[i].name))
+				continue;
 
-  if (dpy)
-     d = dpy;
-  else
-     d = _XmGetDefaultDisplay();
-  if (d)
-    XtAppWarningMsg (XtDisplayToApplicationContext(d),
-		     tag, type, "XmRendition",
-		     message, params, &num_params);
-  else XtWarning(message);
-}
-
-/* Replace XmAS_IS and copy as necessary. */
-static void
-CleanupResources(XmRendition rend,
-		 Boolean copy)
-{
-  if ((unsigned int)(unsigned long)_XmRendFont(rend) == XmAS_IS)
-    _XmRendFont(rend) = NULL;
-  else if (_XmRendFontType(rend) == XmAS_IS)
-    _XmRendFontType(rend) = XmFONT_IS_FONT;
-
-#if USE_XFT
-  if ((unsigned int)(unsigned long)_XmRendXftFont (rend) == XmAS_IS)
-    _XmRendXftFont (rend) = NULL;
-  else if (copy && !_XmRendXftFont(rend))
-    _XmRendXftFont(rend) = XftFontCopy(_XmRendDisplay(rend), _XmRendXftFont(rend));
-
-  if (copy && _XmRendFontStyle(rend))
-    _XmRendFontStyle(rend) = XtNewString(_XmRendFontStyle(rend));
-#endif
-
-  if (((unsigned int)(unsigned long)_XmRendFontName(rend) == XmAS_IS) ||
-      (_XmRendFontName(rend) && !strcmp(_XmRendFontName(rend), XmSXmAS_IS)))
-    _XmRendFontName(rend) = NULL;
-  else if (copy && _XmRendFontName(rend))
-    _XmRendFontName(rend) = XtNewString(_XmRendFontName(rend));
-
-  if ((unsigned int)(unsigned long)_XmRendTabs(rend) == XmAS_IS)
-    _XmRendTabs(rend) = NULL;
-  else if (copy)
-    _XmRendTabs(rend) = XmTabListCopy(_XmRendTabs(rend), 0, 0);
-}
-
-
-/* Emit warning and set default if tag is NULL. */
-static void
-ValidateTag(XmRendition rend,
-	    XmStringTag dflt)
-{
-  if (_XmRendTag(rend) == NULL)
-    {
-      RenditionWarning(_XmRendTag(rend), "NO_NULL_TAG",
-	NO_NULL_TAG_MSG, _XmRendDisplay(rend));
-      _XmRendTag(rend) = _XmStringCacheTag(dflt, XmSTRING_TAG_STRLEN);
-    }
-}
-
-/* Make sure all the font related resources make sense together and */
-/* then load the font specified by fontName if necessary. */
-static void
-ValidateAndLoadFont(XmRendition rend, Display *display)
-{
-  XrmString 		locale;
-  XtPointer 		font;
-  XrmValue         	args[2];
-  Cardinal         	num_args = 0;
-  XrmValue         	fromVal;
-  XrmValue         	toVal;
-  Boolean		result = False;
-#if USE_XFT
-  FcPattern *p, *p2;
-  FcResult res;
-#endif
-
-  _XmRendDisplay(rend) = display;
-
-  if (_XmRendLoadModel(rend) != XmLOAD_DEFERRED &&
-      _XmRendLoadModel(rend) != XmLOAD_LAZY)
-    {
-      XmDisplay			dsp = NULL;
-      XmDisplayCallbackStruct	cb;
-
-      if ((_XmRendFont(rend) == NULL) &&
-#if USE_XFT
-          (_XmRendXftFont (rend) == NULL) &&
-#endif
-	  (_XmRendFontName(rend) != NULL))
-	{
-	  if (_XmRendFontType(rend) != XmAS_IS)
-	    {
-	      if (display == NULL)
-		{
-		  RenditionWarning(_XmRendTag(rend), "NULL_DISPLAY",
-				   NULL_DISPLAY_MSG, NULL);
-		  return;
-		}
-
-	      args[0].addr = (XPointer) &display;
-	      args[0].size = sizeof(Display*);
-	      num_args++;
-
-	      fromVal.addr = _XmRendFontName(rend);
-	      fromVal.size = strlen(_XmRendFontName(rend));
-
-	      toVal.addr = (XPointer) &font;
-	      toVal.size = sizeof (XtPointer);
-
-	      switch (_XmRendFontType(rend))
-		{
-		case XmFONT_IS_FONT:
-		  result =
-		    XtCallConverter(display, XtCvtStringToFontStruct,
-				    args, num_args, &fromVal, &toVal, NULL);
-		  break;
-		case XmFONT_IS_FONTSET:
-		  locale =
-		    XrmQuarkToString(XrmStringToQuark(setlocale(LC_ALL, NULL)));
-		  args[1].addr = (XPointer) &locale;
-		  args[1].size = sizeof(XrmString);
-		  num_args++;
-
-		  result = XtCallConverter (display, XtCvtStringToFontSet, args,
-					    num_args, &fromVal, &toVal, NULL);
-		  break;
-#if USE_XFT
-		case XmFONT_IS_XFT:
-			if (_XmRendFontName(rend) && (strchr(_XmRendFontName(rend), '-') || strchr(_XmRendFontName(rend), '=')))
-				p = FcNameParse((const FcChar8 *)_XmRendFontName(rend));
-			else {
-				p = FcPatternCreate();
-				if (_XmRendFontName(rend))
-					FcPatternAddString(p, FC_FAMILY, (FcChar8 *)_XmRendFontName(rend));
+			/* Ensure the font is loaded if requested (and we own it) */
+			lm = orig->loadModel;
+			if (lm != XmUNSPECIFIED_LOAD_MODEL && lm != XmLOAD_LAZY) {
+				orig->loadModel = XmLOAD_IMMEDIATE;
+				if (!orig->font && _XmRenditionResources[j].resource_type == XmRFontStruct)
+					XmRenditionLoad(rendition, True);
+				if (!orig->xftFont && _XmRenditionResources[j].resource_type == XmRXftFont)
+					XmRenditionLoad(rendition, True);
+				orig->loadModel = lm;
 			}
 
-			if (_XmRendFontFoundry(rend))
-				FcPatternAddString(p, FC_FOUNDRY, (XftChar8 *)_XmRendFontFoundry(rend));
+			assert(_XmRenditionResources[j].resource_offset +
+			       _XmRenditionResources[j].resource_size <= sizeof *orig);
 
-			if (_XmRendFontStyle(rend))
-				FcPatternAddString(p, FC_STYLE, (XftChar8 *)_XmRendFontStyle(rend));
+			p = (char *)orig + _XmRenditionResources[j].resource_offset;
+			if (_XmRenditionResources[j].resource_type == XtRString) {
+				*(String *)args[i].value = XtNewString(*(String *)p);
+				break;
+			}
 
-			if (_XmRendFontSize(rend))
-				FcPatternAddDouble(p, FC_SIZE, (double)_XmRendFontSize(rend));
-			if (_XmRendPixelSize(rend))
-				FcPatternAddDouble(p, FC_PIXEL_SIZE, (double)_XmRendPixelSize(rend));
-			if (_XmRendFontSlant(rend))
-				FcPatternAddInteger(p, FC_SLANT, _XmRendFontSlant(rend));
-			if (_XmRendFontWeight(rend))
-				FcPatternAddInteger(p, FC_WEIGHT, _XmRendFontWeight(rend));
-			if (_XmRendFontSpacing(rend))
-				FcPatternAddInteger(p, FC_SPACING, _XmRendFontSpacing(rend));
-			FcPatternAddDouble(p, FC_DPI, DpiOfXmScreen(XmScreenOfScreen(DefaultScreenOfDisplay(display))));
+			if (_XmRenditionResources[j].resource_type == XmRTabList) {
+				*(XmTabList *)args[i].value = XmTabListCopy(*(XmTabList *)p, 0, 0);
+				break;
+			}
 
-			p2 = XftFontMatch(display, 0, p, &res);
-			if (!(_XmRendXftFont(rend) = XftFontOpenPattern(display, p2)))
-				FcPatternDestroy(p2);
-			FcPatternDestroy(p);
-			set_props_from_pattern(rend, _XmRendXftFont(rend)->pattern);
-			result = !!_XmRendXftFont(rend);
+			if (orig->font && _XmRenditionResources[j].resource_type == XmRFontStruct) {
+				if (orig->fontType != XmFONT_IS_FONT && orig->fontType != XmFONT_IS_FONTSET) {
+					*(XtPointer *)args[i].value = NULL;
+					break;
+
+				}
+			}
+
+			if (orig->xftFont && _XmRenditionResources[j].resource_type == XmRXftFont) {
+				if (orig->fontType != XmFONT_IS_XFT) {
+					*(XtPointer *)args[i].value = NULL;
+					break;
+				}
+			}
+
+			memcpy((void *)args[i].value, p,
+			       _XmRenditionResources[j].resource_size);
 			break;
-#endif
-		default:
-		  RenditionWarning(_XmRendTag(rend), "INVALID_TYPE",
-				   INVALID_TYPE_MSG,
-				   _XmRendDisplay(rend));
-		  break;
 		}
+	}
 
-	      /* NoFontCallback. */
-	      if (!result)
-		{
-		  if (display != NULL)
-		    {
-		      dsp = (XmDisplay) XmGetXmDisplay(display);
-		      cb.reason = XmCR_NO_FONT;
-		      cb.event = NULL;
-		      cb.rendition = rend;
-		      cb.font_name = _XmRendFontName(rend);
+	_XmUnlock(app);
+}
 
-		      /* We must know for sure whether there are any */
-		      /* callbacks, so we have to use XtHasCallbacks. */
-		      if (XtHasCallbacks((Widget)dsp, XmNnoFontCallback) ==
-			  XtCallbackHasSome)
-			{
-			  XtCallCallbackList((Widget)dsp,
-					     dsp->display.noFontCallback,
-					     &cb);
-			  return;
+/* Set resources in rendition. */
+void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal count)
+{
+	Cardinal i, j;
+	Display *d;
+	void *p;
+	Boolean has_font = False, user_font = False;
+	struct __XmRenditionRec new, *orig;
+	XtAppContext app;
+
+	if (!rendition || !args || !count)
+		return;
+
+	/* Ensure our rendition is still valid */
+	d = _XmGetDefaultDisplay();
+	if (!(orig = XmSharedPtrGet(rendition))) {
+		RenditionWarning(NULL, "INVALID_RENDITION", INVALID_RENDITION, d);
+		return;
+	}
+
+	if (orig->display) d = orig->display;
+	app = _XmLock(d);
+
+	/* Ensure we have a display */
+	if (!orig->display)
+		orig->display = d;
+
+	/* Process args on a scratch instance */
+	memcpy(&new, orig, sizeof new);
+	for (i = 0; i < count; i++) {
+		for (j = 0; j < _XmNumRenditionResources; j++) {
+			if (args[i].name != _XmRenditionResources[j].resource_name &&
+			    strcmp(_XmRenditionResources[j].resource_name, args[i].name))
+				continue;
+
+			p = (char *)&new + _XmRenditionResources[j].resource_offset;
+			assert(_XmRenditionResources[j].resource_offset +
+			       _XmRenditionResources[j].resource_size <= sizeof new);
+
+			if (_XmRenditionResources[j].resource_type == XtRString) {
+				*(String *)p = XtNewString((String)args[i].value);
+				break;
 			}
-		    }
 
-		  RenditionWarning(_XmRendTag(rend), "CONVERSION_FAILED",
-				   CONVERSION_FAILED_MSG,
-				   _XmRendDisplay(rend));
+			if (_XmRenditionResources[j].resource_type == XmRTabList) {
+				*(XmTabList *)p = XmTabListCopy((XmTabList)args[i].value, 0, 0);
+				break;
+			}
+
+			memcpy(p, &args[i].value, _XmRenditionResources[j].resource_size);
+			break;
 		}
-	      else
-		{
+	}
+
+	/* Now, check for changes between orig and new */
+	if (orig->tag != new.tag) {
+		if (new.tag)
+			orig->tag = _XmStringCacheTag(new.tag, XmSTRING_TAG_STRLEN);
+		else RenditionWarning(NULL, "NO_NULL_TAG", NO_NULL_TAG_MSG, d);
+	}
+
+	if (orig->tabs != new.tabs) {
+		XmTabListFree(orig->tabs);
+		orig->tabs = new.tabs;
+	}
+
+	/**
+	 * Check for a caller-supplied font.
+	 *
+	 * We don't take ownership of caller-supplied fonts, and presume
+	 * validity if the supplied font is non-NULL.
+	 */
+	user_font  = new.font && orig->font != new.font;
 #if USE_XFT
-		  if (_XmRendFontType(rend) != XmFONT_IS_XFT)
+	user_font |= new.xftFont && orig->xftFont != new.xftFont;
 #endif
-		    _XmRendFont(rend) = font;
+
+	/**
+	 * (Re-)load the font if related properties change.
+	 */
+	if (orig->loadModel != new.loadModel || user_font ||
+	    (orig->pattern && new.pattern && strcmp(orig->pattern, new.pattern)) ||
+	    (!orig->pattern && new.pattern)  ||
+	    orig->fontType != new.fontType) {
+		has_font = !!orig->font;
+#if USE_XFT
+		has_font |= !!orig->xftFont;
+#endif
+
+		if (has_font && orig->loadModel != XmUNSPECIFIED_LOAD_MODEL)
+			XmRenditionUnload(rendition);
+
+		if ((orig->pattern && new.pattern && strcmp(orig->pattern, new.pattern)) ||
+		    (!orig->pattern && new.pattern)) {
+			XtFree(orig->pattern);
+			orig->pattern = NULL;
+
+			if (new.pattern) {
+				orig->pattern = new.pattern;
+				new.pattern = NULL;
+			}
 		}
-	    }
-	  else
-	    {
-	      RenditionWarning(_XmRendTag(rend), "NULL_FONT_TYPE",
-			       NULL_FONT_TYPE_MSG,
-				_XmRendDisplay(rend));
-	    }
+
+		orig->loadModel = new.loadModel;
+		orig->fontType  = new.fontType;
+		if (user_font) {
+			orig->loadModel = XmUNSPECIFIED_LOAD_MODEL;
+			if (new.fontType == XmFONT_IS_FONT || new.fontType == XmFONT_IS_FONTSET) {
+				if ((orig->font = new.font))
+					set_props_from_font(rendition);
+			} else if ((orig->xftFont = new.xftFont))
+				set_props_from_font(rendition);
+		} else if (orig->pattern && orig->loadModel != XmLOAD_LAZY)
+			XmRenditionLoad(rendition, True);
 	}
-      else if ((_XmRendLoadModel(rend) == XmLOAD_IMMEDIATE) &&
-	       (_XmRendFont(rend) == NULL) &&
-#if USE_XFT
-	       (_XmRendXftFont (rend) == NULL) &&
-#endif
-	       (_XmRendFontName(rend) == NULL))
-	{
-	  RenditionWarning(_XmRendTag(rend), "NULL_LOAD_IMMEDIATE",
-			   NULL_LOAD_IMMEDIATE_MSG,
-			   _XmRendDisplay(rend));
-	}
-    }
-}
 
-/* Create new rendition. */
-XmRendition
-XmRenditionCreate(Widget widget,
-		  XmStringTag tag,
-		  ArgList arglist,
-		  Cardinal argcount)
-{
-  XmRendition  ret_val;
-  XtAppContext app=NULL;
+	orig->style.underline  = new.style.underline;
+	orig->style.strikethru = new.style.strikethru;
+	orig->style.bg_state   = new.style.bg_state;
+	orig->style.fg_state   = new.style.fg_state;
+	orig->style.fg.pixel   = new.style.fg.pixel;
+	orig->style.bg.pixel   = new.style.bg.pixel;
 
-  /* If cannot applock, assume its an internal call (from
-   *	fontlist code, etc.) and already process locked.
-   */
-  if (widget)
-	app = XtWidgetToApplicationContext(widget);
-  if (app)
-	_XmAppLock(app);
-  else _XmProcessLock();
-
-  ret_val = _XmRenditionCreate(NULL, widget, XmS, XmCRenderTable,
-			    tag, arglist, argcount, NULL);
-  if (app)
-	_XmAppUnlock(app);
-  else _XmProcessUnlock();
-
-  return ret_val;
-}
-
-/* Internal function.  Called from XmRenditionCreate, resource */
-/* converter, and Mrm create function. */
-XmRendition
-_XmRenditionCreate(Display *display,
-		   Widget widget,
-		   String resname,
-		   String resclass,
-		   XmStringTag tag,
-		   ArgList arglist,
-		   Cardinal argcount,
-		   Boolean *in_db)
-{
-  XmRendition	rend;
-  _XmRendition	rend_int;
-  Boolean 	free_tag = False, result;
-
-  if ((display == NULL) && (widget != NULL))
-    display = XtDisplayOfObject(widget);
-
- if ((tag != NULL) &&
-     (tag != XmFONTLIST_DEFAULT_TAG) &&
-     (!strcmp(tag, XmSTRING_DEFAULT_CHARSET))) {
-   tag = XmStringGetCharset();
-   free_tag = True;
- }
-
-  /* Allocate rendition. */
-  rend_int = (_XmRendition)XtCalloc(1, sizeof(_XmRenditionRec));
-  rend = GetHandle(_XmRendition);
-  SetPtr(rend, rend_int);
-
-  _XmRendRefcount(rend) = 1;
-
-  /* For now, FontOnly renditions aren't implemented. */
-  _XmRendFontOnly(rend) = FALSE;
-
-  /* X resource DB query */
-  result =
-    GetResources(rend, display, widget, resname, resclass, tag,
-		 arglist, argcount);
-
-  if (in_db != NULL) *in_db = result;
-
-  if (tag == NULL)
-    {
-      if (result == FALSE)
-	{
-	  XtFree((XtPointer)rend_int);
-	  FreeHandle(rend);
-	  return NULL;
-	}
-      else tag = _MOTIF_DEFAULT_LOCALE;
-    }
-
-  /* If this is the current charset, it's already in the cache */
-  _XmRendTag(rend) = _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN);
-  if (free_tag && tag != _XmRendTag(rend))
-  	XtFree(tag);
-
-  /* Cleanup and validate resources. */
-  CleanupResources(rend, TRUE);
-  ValidateTag(rend, XmS);
-  ValidateAndLoadFont(rend, display);
-
-  return(rend);
-}
-
-/* Mrm create function for rendertables. */
-Widget
-_XmCreateRenderTable(Widget parent,
-		     String name, /* unused */
-		     ArgList arglist, /* unused */
-		     Cardinal argcount)	/* unused */
-{
-  XmRenderTable 	newtable;
-  _XmRenderTable	table;
-
-  /* Malloc new table */
-  table = (_XmRenderTable)XtMalloc(sizeof(_XmRenderTableRec));
-  newtable = GetHandle(_XmRenderTable);
-  SetPtr(newtable, table);
-  _XmRTCount(newtable) = 0;
-  _XmRTRefcount(newtable) = 1;
-  _XmRTRenditions(newtable) = NULL;
-  _XmRTDisplay(newtable) = XtDisplay(parent);
-
-  return((Widget)newtable);
-}
-
-/* Mrm create function for renditions. */
-Widget
-_XmCreateRendition(Widget parent,
-		   String name,
-		   ArgList arglist,
-		   Cardinal argcount)
-{
-  XmRenderTable		rt = (XmRenderTable)parent;
-  _XmRenderTable	table;
-  XmRendition		rend;
-
-  table = GetPtr(rt);
-
-  rend = _XmRenditionCreate(_XmRTDisplay(rt), NULL, XmS, XmCRenderTable,
-			    name, arglist, argcount, NULL);
-
-  /* Ignore repeats */
-  if (_XmRenderTableFindRendition(rt, _XmRendTag(rend),
-				  TRUE, FALSE, FALSE, NULL)
-      != NULL)
-    {
-      XmRenditionFree(rend);
-      return NULL;
-    }
-
-  table->renditions = (XmRendition *)XtRealloc(
-    (XtPointer)table->renditions,
-    ++table->count * sizeof *table->renditions
-  );
-
-  /* Copy new rendition. */
-  table->renditions[table->count - 1] = CopyRendition(rend);
-  SetPtr(rt, table);
-  return (Widget)rend;
-}
-
-/* Free data structure and any copied values. */
-/* TRUE return -> freed.  FALSE -> just decremented. */
-static Boolean FreeRendition(XmRendition rendition)
-{
-  if (!rendition)
-    return False;
-
-  if (*rendition && _XmRendRefcountDec(rendition) == 0)
-    {
-      /* CR 7890 - the fontName might be XmAS_IS here */
-      if (NameIsString(_XmRendFontName(rendition)))
-	XtFree(_XmRendFontName(rendition));
-      if (ListIsList(_XmRendTabs(rendition)))
-	XmTabListFree(_XmRendTabs(rendition));
-      if (_XmRendTagCount(rendition) != 0)
-	XtFree((char *)_XmRendTags(rendition));
-#if USE_XFT
-      XtFree(_XmRendFontStyle(rendition));
-
-      if (_XmRendXftFont(rendition) && _XmRendXftFont(rendition) != DEFAULT_xftFont)
-        {
-          XftFontClose(_XmRendDisplay(rendition),
-              _XmRendXftFont(rendition));
-          _XmRendXftFont(rendition) = NULL;
-        }
-#endif
-
-      XtFree((char *)GetPtr(rendition));
-      return True;
-    }
-  return False;
+	/* Free copied strings on new */
+	XtFree(new.fontFoundry);
+	XtFree(new.fontFamily);
+	XtFree(new.fontStyle);
+	XtFree(new.pattern);
+	_XmUnlock(app);
 }
 
 void XmRenditionFree(XmRendition rendition)
 {
-	_XmProcessLock();
-	if (FreeRendition(rendition))
-		FreeHandle(rendition);
-	_XmProcessUnlock();
+	Display *d;
+	struct __XmRenditionRec *orig;
+	XtAppContext app;
+
+	if (!rendition)
+		return;
+
+	d = _XmGetDefaultDisplay();
+	if (!(orig = XmSharedPtrGet(rendition)))
+		return;
+	if (orig->display) d = orig->display;
+
+	app = _XmLock(d);
+	XmSharedPtrFree(rendition);
+	_XmUnlock(app);
 }
 
 /**
- * Lazily load a font, returning True if it was successfuly loaded,
- * False otherwise.
+ * Free an array of renditions
  */
-Boolean XmRenditionMaterialize(XmRendition rendition)
+void XmFreeRenditionArray(XmRendition *rends, Cardinal count)
 {
-	Display *d;
-	int mcnt;
-	char **mcset = NULL, *def_str;
+	Cardinal i;
 
-	if (!rendition || _XmRendLoadModel(rendition) != XmLOAD_LAZY)
-		return False;
-
-	d = _XmRendDisplay(rendition);
-	_XmRendRefcountInc(rendition);
-
-#if USE_XFT
-	if (_XmRendFontType(rendition) == XmFONT_IS_XFT) {
-		if (_XmRendXftFont(rendition))
-			return True;
-
-		_XmRendLoadModel(rendition) = XmLOAD_IMMEDIATE;
-		ValidateAndLoadFont(rendition, d);
-		_XmRendLoadModel(rendition) = XmLOAD_LAZY;
-		if (!_XmRendXftFont(rendition))
-			return False;
-
-		XftFontCopy(d, _XmRendXftFont(rendition));
-		return True;
-	}
-#endif
-
-	if (_XmRendFont(rendition))
-		return True;
-
-	/* Avoid Xt's converter caching */
-	if (_XmRendFontType(rendition) == XmFONT_IS_FONTSET) {
-		_XmRendFont(rendition) = XCreateFontSet(d, _XmRendFontName(rendition),
-		                                        &mcset, &mcnt, &def_str);
-		if (!_XmRendFont(rendition)) {
-			if ((_XmRendFont(rendition) = XLoadQueryFont(d, _XmRendFontName(rendition))))
-				_XmRendFontType(rendition) = XmFONT_IS_FONT;
-		}
-
-		if (mcset) XFreeStringList(mcset);
-	} else _XmRendFont(rendition) = XLoadQueryFont(d, _XmRendFontName(rendition));
-
-	return !!_XmRendFont(rendition);
-}
-
-/**
- * Release a materialized lazy-loaded font
- */
-void XmRenditionDematerialize(XmRendition rendition)
-{
-	Display *d;
-
-	if (!rendition || _XmRendLoadModel(rendition) != XmLOAD_LAZY)
-		return;
-
-	/**
-	 * If the ref count is greater than 1, the XmString rendition
-	 * cache (or something else)  is holding a reference. XmString
-	 * will Dematerialize the font once its cache gets destroyed,
-	 * otherwise, the holder of the reference is responsible for
-	 * Dematerializing the font.
-	 */
-	d = _XmRendDisplay(rendition);
-	if (_XmRendRefcountDec(rendition) > 1)
-		return;
-
-#if USE_XFT
-	if (_XmRendFontType(rendition) == XmFONT_IS_XFT) {
-		if (!_XmRendXftFont(rendition))
-			return;
-
-		XftFontClose(d, _XmRendXftFont(rendition));
-		_XmRendXftFont(rendition) = NULL;
-		return;
-	}
-#endif
-
-	if (!_XmRendFont(rendition))
-		return;
-
-	if (_XmRendFontType(rendition) == XmFONT_IS_FONTSET)
-		XFreeFontSet(d, (XFontSet)_XmRendFont(rendition));
-	else XFreeFont(d, _XmRendFont(rendition));
-	_XmRendFont(rendition) = NULL;
-}
-
-/* Get resource values from rendition. */
-void
-XmRenditionRetrieve(XmRendition rendition,
-		    ArgList arglist,
-		    Cardinal argcount)
-{
-  int			i, j;
-  Arg			*arg;
-  XtResource		*res;
-  char			*as_is = (char *)XmAS_IS;
-
-  if (rendition == NULL) return;
-
-  _XmProcessLock();
-  /* Get resources */
-  for (i = 0; i < argcount; i++)
-    {
-      arg = &(arglist[i]);
-
-      for (j = 0; j < _XmNumRenditionResources; j++)
-	{
-	  res = &(_XmRenditionResources[j]);
-
-	  if (strcmp(res->resource_name, arg->name) == 0)
-	    {
-	      /* CR 7890: Font hook - if there's a fontName but the
-	      ** font hasn't been fetched yet, now's a good time to
-	      ** get it - if the caller wants to use the font to, say,
-	      ** compute font metrics for layout (as CSText does), it won't
-	      ** like to get NULL back
-	      */
-	      if (strcmp(res->resource_name, XmNfont) == 0)
-		{
-		  if ((_XmRendFont(rendition) == NULL) &&
-#if USE_XFT
-		      (_XmRendXftFont (rendition) == NULL) &&
-#endif
-		      (_XmRendFontName(rendition) != NULL))
-		    {
-		      if (_XmRendLoadModel(rendition) == XmLOAD_DEFERRED)
-			_XmRendLoadModel(rendition) = XmLOAD_IMMEDIATE;
-		      ValidateAndLoadFont(rendition, _XmRendDisplay(rendition));
-		    }
-		  if (_XmRendFont (rendition) == NULL
-#if USE_XFT
-		      && _XmRendXftFont (rendition) == NULL
-#endif
-		     )
-		    CopyToArg((char*)&as_is, &(arg->value), sizeof(char*));
-		  else CopyToArg(((char *)GetPtr(rendition) +
-				  res->resource_offset),
-				 &(arg->value),
-				 res->resource_size);
-		}
-	      else if (((strcmp(res->resource_name, XmNfontName) == 0) &&
-		       (_XmRendFontName(rendition) == NULL)) ||
-		       ((strcmp(res->resource_name, XmNtabList) == 0) &&
-		       (_XmRendTabs(rendition) == NULL)))
-		CopyToArg((char*)&as_is, &(arg->value), sizeof(char*));
-	      else CopyToArg(((char *)GetPtr(rendition) + res->resource_offset),
-			     &(arg->value),
-			     res->resource_size);
-	      break;
-	    }
-	}
-    }
-    _XmProcessUnlock();
-}
-
-/* Set resources in rendition. */
-/* Renew rendition if necessary, then update resources. */
-void
-XmRenditionUpdate(XmRendition rendition,
-		  ArgList arglist,
-		  Cardinal argcount)
-{
-  XmStringTag	oldtag;
-  char		*oldname;
-  XtPointer	oldfont;
-  XmTabList	oldtabs;
-  int		i, j;
-  XtResource	*res;
-  Arg		*arg;
-  Display	*display = _XmGetDefaultDisplay();
-  Boolean	can_free;
-  XtAppContext app = NULL;
-
-  if (!rendition)
-  	return;
-
-  if (_XmRendDisplay(rendition))
-     app = XtDisplayToApplicationContext(_XmRendDisplay(rendition));
-
-  if (app)
-     _XmAppLock(app);
-  else _XmProcessLock();
-
-  if (_XmRendDisplay(rendition) && (_XmRendDisplay(rendition) != display))
- 	display = _XmRendDisplay(rendition);
-
-  /* Save old values to check for dependencies and free memory. */
-  oldtag = _XmRendTag(rendition);
-  oldname = _XmRendFontName(rendition);
-  oldfont = _XmRendFont(rendition);
-  oldtabs = _XmRendTabs(rendition);
-  can_free = TRUE;
-
-  /* New memory if needed. */
-  if (_XmRendRefcount(rendition) > 1)
-    {
-      _XmRendRefcountDec(rendition);
-      RenewRendition(rendition);
-      can_free = FALSE;
-    }
-
-  for (i = 0; i < argcount; i++)
-    {
-      arg = &(arglist[i]);
-
-      for (j = 0; j < _XmNumRenditionResources; j++)
-	{
-	  res = &(_XmRenditionResources[j]);
-
-	  if (strcmp(res->resource_name, arg->name) == 0)
-	    {
-	      CopyFromArg((arg->value),
-			  ((char *)GetPtr(rendition) + res->resource_offset),
-			  res->resource_size);
-	      break;
-	    }
-	}
-    }
-
-  CopyInto(rendition, rendition);
-
-  /** Validate resources **/
-
-  /* CR 7890 - handle cases of fontName == NULL and fontName == XmAS_IS */
-
-  /* If fontName changed but not font, NULL font so it's updated.
-   ** (first make sure we won't crash on the strcmp) */
-
-  if (NameIsString(oldname) && NameIsString(_XmRendFontName(rendition)))    {
-    if (strcmp(oldname, _XmRendFontName(rendition)) != 0)
-      {
-	if (oldfont == _XmRendFont(rendition))
-	  _XmRendFont(rendition) = NULL;
-      }
-    if (can_free) XtFree(oldname);
-  }
-  /* Also handle the case where we started with a NULL fontName and
-   ** had a real fontName specified */
-  else if ((oldname == NULL) && NameIsString(_XmRendFontName(rendition)))
-    {
-      if (oldfont == _XmRendFontName(rendition))
-	_XmRendFont(rendition) = NULL;
-    }
-
-  if (_XmRendFont(rendition) == (XtPointer)XmAS_IS)
-    _XmRendFont(rendition) = NULL;
-
-  if ((oldtabs != _XmRendTabs(rendition)) && can_free) XmTabListFree(oldtabs);
-
-  ValidateTag(rendition, oldtag);
-  ValidateAndLoadFont(rendition, display);
-  if (app)
-     _XmAppUnlock(app);
-  else _XmProcessUnlock();
+	for (i = 0; i < count; i++)
+		XmRenditionFree(rends[i]);
+	XtFree((XtPointer)rends);
 }
 
 /*****************************************************************************/
@@ -2924,11 +2531,11 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
   char *str;
   char temp[2048];
   char temp2[1024];
-
+  XtAppContext app;
   XmRendition rendition;
-  _XmWidgetToAppContext(widget);
+  const struct __XmRenditionRec *r;
 
-  _XmAppLock(app);
+  app = _XmLockWidget(widget);
   buffer = XtMalloc(allocated_size);
 
   _XmProcessLock();
@@ -2950,29 +2557,30 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
   /* Now iterate over the list of renditions */
   for(i = 0; i < _XmRTCount(table); i++) {
     rendition = _XmRTRenditions(table)[i];
-    snprintf(temp, sizeof temp, "\"%s\", ", _XmRendTag(rendition));
+    if (!(r = XmSharedPtrGet(rendition)))
+    	continue;
+    snprintf(temp, sizeof temp, "\"%s\", ", r->tag);
     size = strlen(temp);
     CVTaddString(buffer, temp, size);
 
-    if (_XmRendFontType(rendition) == XmAS_IS)
+    if (r->fontType == XmAS_IS)
       str = "-1, ";
     else {
-      snprintf(temp, sizeof temp, "%d \"%s\" %d,", _XmRendFontType(rendition),
-	      _XmRendFontName(rendition), _XmRendLoadModel(rendition));
+      snprintf(temp, sizeof temp, "%d \"%s\" %d,", r->fontType,
+	           r->pattern, r->loadModel);
       str = temp;
     }
     size = strlen(str);
     CVTaddString(buffer, str, size);
 
-    if ((unsigned int)(unsigned long)_XmRendTabs(rendition) == XmAS_IS ||
-	_XmRendTabs(rendition) == NULL)
+    if (!r->tabs)
       str = "-1, ";
     else {
       _XmTab tab;
       _XmTabList tlist;
       int number;
       strcpy(temp, "[ ");
-      tlist = (_XmTabList) _XmRendTabs(rendition);
+      tlist = (_XmTabList)r->tabs;
       number = tlist -> count;
       tab = (_XmTab) tlist -> start;
 
@@ -2989,37 +2597,37 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
     size = strlen(str);
     CVTaddString(buffer, str, size);
 
-    if (_XmRendBG(rendition) == XmAS_IS)
+    if (r->style.bg.pixel == XmAS_IS)
       str = "-1, ";
     else {
-      sprintf(temp, "%ld, ", _XmRendBG(rendition));
+      sprintf(temp, "%ld, ", r->style.bg.pixel);
       str = temp;
     }
     size = strlen(str);
     CVTaddString(buffer, str, size);
 
-    if (_XmRendFG(rendition) == XmAS_IS)
+    if (r->style.fg.pixel == XmAS_IS)
       str = "-1, ";
     else {
-      sprintf(temp, "%ld, ", _XmRendFG(rendition));
+      sprintf(temp, "%ld, ", r->style.fg.pixel);
       str = temp;
     }
     size = strlen(str);
     CVTaddString(buffer, str, size);
 
-    if (_XmRendUnderlineType(rendition) == XmAS_IS)
+    if (r->style.underline == XmAS_IS)
       str = "-1, ";
     else {
-      sprintf(temp, "%d, ", _XmRendUnderlineType(rendition));
+      sprintf(temp, "%d, ", r->style.underline);
       str = temp;
     }
     size = strlen(str);
     CVTaddString(buffer, str, size);
 
-    if (_XmRendStrikethruType(rendition) == XmAS_IS)
+    if (r->style.strikethru == XmAS_IS)
       str = "-1, ";
     else {
-      sprintf(temp, "%d, ", _XmRendStrikethruType(rendition));
+      sprintf(temp, "%d, ", r->style.strikethru);
       str = temp;
     }
     size = strlen(str);
@@ -3030,7 +2638,7 @@ XmRenderTableCvtToProp(Widget widget, /* unused */
   /* Return the converted rendertable string */
   *prop_return = buffer;
 
-  _XmAppUnlock(app);
+  _XmUnlock(app);
   /* chars_used is always the size - the NULL terminator */
   return(chars_used + 1);
 }
@@ -3252,77 +2860,70 @@ _XmXftDrawString2(Display *display, Window window, GC gc, XftFont *font, int bpc
     }
 }
 
-void
-_XmXftDrawString(Display *display, Window window, XmRendition rend, int bpc,
-                Position x, Position y,
-                char *s, int len, Boolean image
-		)
+void _XmXftDrawString(Display *display, Window window, XmRendition rend,
+                      XmRenditionStyle style, int bpc, Position x,
+                      Position y, char *s, int len, Boolean image)
 {
     XGCValues gc_val;
-    XftDraw	*draw = _XmXftDrawCreate(display, window);
-    XftColor    fg_color = _XmRendXftFG(rend);
+    XGlyphInfo ext;
+    XftDraw	*draw;
+    XftColor fg_color, bg_color;
+    struct __XmRenditionRec *r;
+
+	if (!(r = XmSharedPtrGet(rend)))
+		return;
+
+	/* Fill in the queried RGB values for our colors */
+	draw = _XmXftDrawCreate(display, window);
+	if (style->bg.pixel == XmUNSPECIFIED_PIXEL) {
+		XGetGCValues(display, style->gc, GCBackground, &gc_val);
+		bg_color = GetCachedXftColor(display, gc_val.background);
+	} else bg_color = GetCachedXftColor(display, style->bg.pixel);
+
+	if (style->fg.pixel == XmUNSPECIFIED_PIXEL) {
+		XGetGCValues(display, style->gc, GCForeground, &gc_val);
+		fg_color = GetCachedXftColor(display, gc_val.foreground);
+	} else fg_color = GetCachedXftColor(display, style->fg.pixel);
 
     if (image)
     {
-        XftColor bg_color = _XmRendXftBG(rend);
-	XGlyphInfo ext;
 	ext.xOff = 0;
 
 	switch (bpc)
 	{
 	    case -1:
-	        XftTextExtents8(display, _XmRendXftFont(rend),
-		                (FcChar8 *)s, len, &ext);
+	        XftTextExtents8(display, r->xftFont, (FcChar8 *)s, len, &ext);
 		break;
 	    case 1:
-	        XftTextExtentsUtf8(display, _XmRendXftFont(rend),
-		                (FcChar8*)s, len, &ext);
+	        XftTextExtentsUtf8(display, r->xftFont, (FcChar8*)s, len, &ext);
 		break;
 	    case 2:
-	        XftTextExtents16(display, _XmRendXftFont(rend),
-		                 (FcChar16*)s, len, &ext);
+	        XftTextExtents16(display, r->xftFont, (FcChar16*)s, len, &ext);
 		break;
 	    case 4:
-	        XftTextExtents32(display, _XmRendXftFont(rend),
-		                 (FcChar32*)s, len, &ext);
+	        XftTextExtents32(display, r->xftFont, (FcChar32*)s, len, &ext);
 		break;
 	}
 
-	if (_XmRendBG(rend) == XmUNSPECIFIED_PIXEL)
-	{
-	    XGetGCValues(display, _XmRendGC(rend), GCBackground, &gc_val);
-	    bg_color = GetCachedXftColor(display, gc_val.background);
-	}
-
-        XftDrawRect(draw, &bg_color, x, y - _XmRendXftFont(rend)->ascent,
+        XftDrawRect(draw, &bg_color, x, y - r->xftFont->ascent,
 	            ext.xOff,
-		    _XmRendXftFont(rend)->ascent +
-		    _XmRendXftFont(rend)->descent);
-    }
-
-    if (_XmRendFG(rend) == XmUNSPECIFIED_PIXEL)
-    {
-	XGetGCValues(display, _XmRendGC(rend), GCForeground, &gc_val);
-	fg_color = GetCachedXftColor(display, gc_val.foreground);
+		    r->xftFont->ascent +
+		    r->xftFont->descent);
     }
 
     switch (bpc)
     {
 	case -1:
-		XftDrawString8(draw, &fg_color, _XmRendXftFont(rend),
-			x, y, (XftChar8 *)s, len);
+		XftDrawString8(draw, &fg_color, r->xftFont, x, y, (XftChar8 *)s, len);
 		break;
 	case 1:
-		XftDrawStringUtf8(draw, &fg_color, _XmRendXftFont(rend),
-			x, y, (XftChar8 *)s, len);
+		XftDrawStringUtf8(draw, &fg_color, r->xftFont, x, y, (XftChar8 *)s, len);
 		break;
 	case 2:
-		XftDrawString16(draw, &fg_color, _XmRendXftFont(rend),
-			x, y, (XftChar16 *)s, len);
+		XftDrawString16(draw, &fg_color, r->xftFont, x, y, (XftChar16 *)s, len);
 		break;
 	case 4:
-		XftDrawString32(draw, &fg_color, _XmRendXftFont(rend),
-			x, y, (XftChar32 *)s, len);
+		XftDrawString32(draw, &fg_color, r->xftFont, x, y, (XftChar32 *)s, len);
 		break;
 	default:
 		XmeWarning(NULL, "_XmXftDrawString(unsupported bpc)\n");
@@ -3566,7 +3167,7 @@ XmRenderTableCvtFromProp(Widget w,
 
  finish:
   new_rt = XmRenderTableAddRenditions(new_rt, rarray, rarray_count, XmMERGE_REPLACE);
-  for (i = 0; i < rarray_count; i++) XmRenditionFree(rarray[i]);
+  XmFreeRenditionArray(rarray, rarray_count);
   _XmAppUnlock(app);
   return(new_rt);
 
@@ -3575,81 +3176,5 @@ XmRenderTableCvtFromProp(Widget w,
   for(i = 0; i < freecount; i++) XtFree((char*) freelater[i]);
   freecount = 0;
   goto finish;
-}
-
-void
-XmRenderTableGetDefaultFontExtents(XmRenderTable rendertable,
-                                    int *height,
-				    int *ascent,
-				    int *descent)
-{
-    XmStringTag	    tag = XmFONTLIST_DEFAULT_TAG;
-    XmRendition     rend;
-    Boolean         success;
-    short           indx;
-    int             h,a,d;
-
-  XtAppContext	       app=NULL;
-
-  if ( _XmRTDisplay(rendertable) )
-    app = XtDisplayToApplicationContext(_XmRTDisplay(rendertable));
-
-  if (app)
-    _XmAppLock(app);
-  else
-    _XmProcessLock();
-
-    a = d = h = 0;
-    /* Get default rendition */
-    success = _XmRenderTableFindFallback(rendertable, tag, FALSE, &indx, &rend);
-
-    /* For backward compatibility we must try to return something for */
-    /* any non-null charset, not just XmFONTLIST_DEFAULT_TAG. */
-    if (rendertable && tag && !success)
-      success = _XmRenderTableFindFirstFont(rendertable, &indx, &rend);
-
-    if (success) {
-        /* Find font height */
-        switch (_XmRendFontType(rend)) {
-            case XmFONT_IS_FONT:
-                if (_XmRendFont(rend)) {
-                    a = ((XFontStruct*)_XmRendFont(rend))->ascent;
-                    d = ((XFontStruct*)_XmRendFont(rend))->descent;
-                    h = a + d;
-                }
-                break;
-            case XmFONT_IS_FONTSET:
-                if (_XmRendFont(rend)) {
-                    XFontStruct **font_struct_list;
-                    char **font_name_list;
-
-                    if (XFontsOfFontSet((XFontSet)_XmRendFont(rend),
-                                &font_struct_list, &font_name_list)) {
-                        a = font_struct_list[0]->ascent;
-                        d = font_struct_list[0]->descent;
-                        h = a + d;
-                    }
-                }
-                break;
-#if USE_XFT
-                case XmFONT_IS_XFT:
-                    if (_XmRendXftFont(rend)) {
-                        a = _XmRendXftFont(rend)->ascent;
-                        d = _XmRendXftFont(rend)->descent;
-                        h = a + d;
-                    }
-                    break;
-#endif
-        }
-    }
-
-  if (app)
-    _XmAppUnlock(app);
-  else
-    _XmProcessUnlock();
-
-  if (ascent) *ascent = a;
-  if (descent) *descent = d;
-  if (height) *height = h;
 }
 

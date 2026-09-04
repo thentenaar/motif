@@ -84,9 +84,8 @@ XmHashValue XmHashString(XmHashKey k)
 {
 	String s = (String)k;
 	unsigned int i, v = 0;
-	assert(s && *s);
 
-	if (!v) v = 2166136261;
+	v = 2166136261;
 	while ((i = (unsigned int)*s++))
 		v = (v ^ (i & 0xff)) * 16777619;
 	return v;
@@ -289,7 +288,7 @@ _XmGetHashEntryIterate(XmHashTable table, XmHashKey key, XtPointer *iterator)
   XmHashValue index;
   XmHashBucket entry;
 
-  if (!table)
+  if (!table || !key)
     return NULL;
 
   if (iterator && *iterator != NULL) {
@@ -321,6 +320,7 @@ _XmAddHashEntry(XmHashTable table, XmHashKey key, XtPointer value)
   XmHashValue index;
   XmHashBucket entry;
 
+  if (!key) return;
   hash = table -> hasher(key);
   index = hash % table -> size;
 
@@ -339,6 +339,7 @@ _XmRemoveHashEntry(XmHashTable table, XmHashKey key)
   XmHashValue index;
   XmHashBucket entry, last = NULL;
 
+  if (!key) return NULL;
   index = (table -> hasher(key)) % table -> size;
 
   entry = table -> buckets[index];

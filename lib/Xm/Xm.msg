@@ -844,6 +844,7 @@ MSG_XmRenderT_0003 Conversion failed.  Cannot load font.
 MSG_XmRenderT_0004 XmNfontType set to XmAS_IS.  Cannot load font.
 MSG_XmRenderT_0005 XmNloadModel is XmLOAD_IMMEDIATE but XmNfont and XmNfontName not specified.\n\
 Cannot load font.
+MSG_XmRenderT_0006 XmRenditionGetValues or XmRenditionSetValues was called on an invalid XmRendition.
 
 $set MS_XmSelect
 

@@ -108,7 +108,7 @@ typedef struct {
 
 externaldef(xmos) char _XmSDEFAULT_FONT[]       = "fixed";
 externaldef(xmos) char _XmSDEFAULT_FONTSET[]    = "*-medium-r-normal-*-13-*";
-externaldef(xmos) char _XmSDEFAULT_XFTFONT[]    = "sans-serif:pixelsize=%d";
+externaldef(xmos) char _XmSDEFAULT_XFTFONT[]    = "sans-serif";
 externaldef(xmos) char _XmSDEFAULT_BACKGROUND[] = "#c4c4c4";
 
 /**************** end of vendor dependant defaults ********/
@@ -1508,9 +1508,11 @@ XtAppContext _XmLock(Display *d)
 
 XtAppContext _XmLockWidget(Widget w)
 {
+	Display *d;
 	XtAppContext ctx;
 
-	if ((ctx = XtWidgetToApplicationContext(w)))
+	d = w ? XtDisplayOfObject(w) : _XmGetDefaultDisplay();
+	if ((ctx = XtDisplayToApplicationContext(d)))
 		_XmAppLock(ctx);
 	else _XmProcessLock();
 

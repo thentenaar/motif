@@ -198,6 +198,12 @@ extern char *XmRegisterSegmentEncoding(char *fontlist_tag, char *ct_encoding);
 XM_DEPRECATED
 extern char *XmMapSegmentEncoding(char *fontlist_tag);
 
+XM_ALTERNATIVE(Use XmRenditionSetValues instead)
+extern void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal argcount);
+
+XM_ALTERNATIVE(Use XmRenditionGetValues instead)
+extern void XmRenditionRetrieve(XmRendition rendition, ArgList arglist, Cardinal argcount);
+
 #ifdef _XmP_h
 /**
  * Obsolete private functions

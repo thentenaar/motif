@@ -28,6 +28,7 @@
 #include <Xm/PrimitiveP.h>
 #include <Xm/ScrollBar.h>
 #include <Xm/ScrolledW.h>
+#include <Xm/XmRenderT.h>
 #include <Xm/XmosP.h>
 
 #ifdef __cplusplus
@@ -187,7 +188,7 @@ typedef struct _XmListPart
   XtCallbackList DestinationCallback;
 
   /* Selection rendition fields */
-  XmRendition	scratchRend;
+  XmRenditionStyle style;
   Pixel		selectColor;
 
   /* This field is used to house the top position of the list before a

@@ -287,6 +287,7 @@ externalref nl_catd Xm_catd;
 #define _XmMMsgXmRenderT_0003       _XmCatgets(Xm_catd, MS_XmRenderT, MSG_XmRenderT_0003, _XmMsgXmRenderT_0003)
 #define _XmMMsgXmRenderT_0004       _XmCatgets(Xm_catd, MS_XmRenderT, MSG_XmRenderT_0004, _XmMsgXmRenderT_0004)
 #define _XmMMsgXmRenderT_0005       _XmCatgets(Xm_catd, MS_XmRenderT, MSG_XmRenderT_0005, _XmMsgXmRenderT_0005)
+#define _XmMMsgXmRenderT_0006       _XmCatgets(Xm_catd, MS_XmRenderT, MSG_XmRenderT_0006, _XmMsgXmRenderT_0006)
 #define _XmMMsgXmString_0000        _XmCatgets(Xm_catd, MS_XmString, MSG_XmString_0000, _XmMsgXmString_0000)
 #define _XmMMsgXmTabList_0000       _XmCatgets(Xm_catd, MS_XmTabList, MSG_XmTabList_0000, _XmMsgXmTabList_0000)
 #define _XmMMsgSSpinB_0001          _XmCatgets(Xm_catd, MS_SSpinB, MSG_SSpinB_0001, _XmMsgSSpinB_0001)

@@ -972,7 +972,7 @@ Initialize(Widget request,
   lw->list.hExtent = lw->list.hmax = 0;
   lw->list.AutoSelectionType = XmAUTO_UNSET;
   lw->list.LastSetVizCount = 0;		/* CR 6014 */
-  lw->list.scratchRend = NULL;
+  lw->list.style = NULL;
   lw->list.drag_start_timer = 0;
   lw->list.drag_abort_action = 0;
   lw->list.MaxWidth = 0;
@@ -1099,7 +1099,7 @@ Initialize(Widget request,
     lw->list.SelectionMode = XmADD_MODE;
 
   /* Deal with selectColor */
-  lw->list.scratchRend = XmRenditionCreate(NULL, XmS, NULL, 0);
+  lw->list.style = XmRenditionStyleCreate();
   if (lw->list.selectColor == XmDEFAULT_SELECT_COLOR)
     {
       _XmSelectColorDefault((Widget)lw,
@@ -1925,8 +1925,7 @@ Destroy(Widget wid)
     XtReleaseGC((Widget) lw, lw->list.HighlightGC);
   if (lw->list.InsensitiveGC != NULL)
     XtReleaseGC((Widget) lw, lw->list.InsensitiveGC);
-  if (lw->list.scratchRend != NULL)
-    XmRenditionFree(lw->list.scratchRend);
+  XmRenditionStyleFree(lw->list.style);
 
   if (lw->list.itemCount)
     {
@@ -2380,6 +2379,7 @@ DrawItems(XmListWidget lw,
   Position x, y = 0;
   int	   width = CalcVizWidth(lw);
   GC       gc;
+  Pixel p;
 
   if (LayoutIsRtoLP(lw))
     x = lw->list.BaseX + lw->list.XOrigin;
@@ -2412,7 +2412,7 @@ DrawItems(XmListWidget lw,
       else
 	  {
 		gc = lw->list.InsensitiveGC;
-		_XmRendFG(lw->list.scratchRend) = _XmAssignInsensitiveColor((Widget)lw);
+		lw->list.style->fg.pixel = _XmAssignInsensitiveColor((Widget)lw);
 	  }
 
       /* CR 7281: Set rendition background too. */
@@ -2422,64 +2422,45 @@ DrawItems(XmListWidget lw,
 	  /* CR 7635: Fix selected insensitive item stippling. */
 	  if (XtIsSensitive((Widget)lw))
 	    {
-	      _XmRendFG(lw->list.scratchRend) = lw->core.background_pixel;
-	      _XmRendBG(lw->list.scratchRend) = lw->primitive.foreground;
+	      lw->list.style->fg.pixel = lw->core.background_pixel;
+	      lw->list.style->bg.pixel = lw->primitive.foreground;
 	    }
 	  else
-	      _XmRendBG(lw->list.scratchRend) = lw->core.background_pixel;
-	  _XmRendFGState(lw->list.scratchRend) = XmFORCE_COLOR;
-	  _XmRendBGState(lw->list.scratchRend) = XmFORCE_COLOR;
+	      lw->list.style->bg.pixel = lw->core.background_pixel;
+	  lw->list.style->fg_state = XmFORCE_COLOR;
+	  lw->list.style->bg_state = XmFORCE_COLOR;
 	}
       else
 	{
 	  if (XtIsSensitive((Widget)lw))
 	  {
-		  _XmRendFG(lw->list.scratchRend) = lw->primitive.foreground;
-		  _XmRendFGState(lw->list.scratchRend) = XmAS_IS;
-		  _XmRendBG(lw->list.scratchRend) = lw->core.background_pixel;
-		  _XmRendBGState(lw->list.scratchRend) = XmAS_IS;
+		  lw->list.style->fg.pixel = lw->primitive.foreground;
+		  lw->list.style->bg.pixel = lw->core.background_pixel;
+		  lw->list.style->fg_state = XmAS_IS;
+		  lw->list.style->bg_state = XmAS_IS;
 	  }
-	  else
-		  _XmRendBG(lw->list.scratchRend) = lw->core.background_pixel;
+	  else lw->list.style->bg.pixel = lw->core.background_pixel;
 	}
 
-      _XmRendGC(lw->list.scratchRend) = gc;
-#if USE_XFT
-      _XmRendXftFG(lw->list.scratchRend) =
-          _XmXftGetXftColor(XtDisplay(lw), _XmRendFG(lw->list.scratchRend));
-#endif
+      lw->list.style->gc = gc;
 
 if (!XtIsSensitive((Widget)lw))
 {
 	/*Draw shadow for insensitive text*/
-	Pixel p;
-	p = _XmRendFG(lw->list.scratchRend);
-	_XmRendFG(lw->list.scratchRend) = lw->primitive.top_shadow_color;
-	_XmStringRender(XtDisplay(lw),
-		      XtWindow(lw),
-		      lw->list.font,
-		      lw->list.scratchRend,
-		      (_XmString)lw->list.items[pos],
-		      x + 1,
-		      y + 1 + ((int)(lw->list.MaxItemHeight -
-				   lw->list.InternalList[pos]->height) >> 1),
-		      width,
-		      XmALIGNMENT_BEGINNING,
-		      lw->list.StrDir);
-	_XmRendFG(lw->list.scratchRend) = p;
+	p = lw->list.style->fg.pixel;
+	lw->list.style->fg.pixel = lw->primitive.top_shadow_color;
+	XmStringDrawStyled(XtDisplay(lw), XtWindow(lw), lw->list.font,
+	                   lw->list.style, lw->list.items[pos], x + 1,
+	                   y + 1 + ((int)(lw->list.MaxItemHeight -
+	                                  lw->list.InternalList[pos]->height) >> 1),
+	                   width, XmALIGNMENT_BEGINNING, lw->list.StrDir, NULL);
+	lw->list.style->fg.pixel = p;
 }
-      /* CR 9204: Let _XmStringRender handle right-to-left drawing. */
-      _XmStringRender(XtDisplay(lw),
-		      XtWindow(lw),
-		      lw->list.font,
-		      lw->list.scratchRend,
-		      (_XmString)lw->list.items[pos],
-		      x,
-		      y + ((int)(lw->list.MaxItemHeight -
-				   lw->list.InternalList[pos]->height) >> 1),
-		      width,
-		      XmALIGNMENT_BEGINNING,
-		      lw->list.StrDir);
+      XmStringDrawStyled(XtDisplay(lw), XtWindow(lw), lw->list.font,
+                         lw->list.style, lw->list.items[pos], x,
+                         y + ((int)(lw->list.MaxItemHeight -
+                                    lw->list.InternalList[pos]->height) >> 1),
+                         width, XmALIGNMENT_BEGINNING, lw->list.StrDir, NULL);
     }
 }
 

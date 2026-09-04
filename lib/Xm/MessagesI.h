@@ -288,6 +288,7 @@ externalref const char *_XmMsgXmRenderT_0002 ;
 externalref const char *_XmMsgXmRenderT_0003 ;
 externalref const char *_XmMsgXmRenderT_0004 ;
 externalref const char *_XmMsgXmRenderT_0005 ;
+externalref const char *_XmMsgXmRenderT_0006 ;
 externalref const char *_XmMsgXmString_0000 ;
 externalref const char *_XmMsgXmTabList_0000 ;
 externalref const char *_XmMsgScrollFrameT_0000 ;

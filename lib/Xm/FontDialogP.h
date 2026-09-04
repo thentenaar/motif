@@ -68,7 +68,6 @@ typedef struct _XmFontDialogPart {
 
 	/* Font info */
 	XtPointer info;
-	XmRenderTable rend; /**< Current sample rendertable */
 
 	/* Other props */
 	unsigned char type;

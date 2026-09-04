@@ -2921,7 +2921,7 @@ Cardinal *num_args)                               /* unused */
         menuSTrait->updateHistory(XtParent(new_w), (Widget) new_w, True);
 
     if (CleanupFontFlag)
-        if (LabG_Font(current)) XmFontListFree(LabG_Font(current));
+        XmFontListFree(LabG_Font(current));
 
     return flag;
 }

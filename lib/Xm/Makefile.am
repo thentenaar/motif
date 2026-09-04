@@ -200,7 +200,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         Gadget.h        LayoutT.h       IconH.h         IconHP.h \
         UnitTypeT.h     TxtPropCv.h     MenuProcP.h     MenuStateP.h\
         ColorObjP.h     TravConT.h      UnhighlightT.h  PointInT.h \
-        XpmP.h		    Xmfuncs.h \
+        XpmP.h		    Xmfuncs.h       XmRenderT.h \
         SlideC.h        SlideCP.h       deprecated.h    obsolete.h \
         version.h       $(EXTRA_HDRS)
 
