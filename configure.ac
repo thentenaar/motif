@@ -433,7 +433,6 @@ demos/programs/workspace/Makefile \
 demos/programs/tooltips/Makefile \
 demos/programs/ButtonBox/Makefile \
 demos/programs/ColorSel/Makefile \
-demos/programs/Column/Makefile \
 demos/programs/Combo2/Makefile \
 demos/programs/Ext18List/Makefile \
 demos/programs/Ext18List/pixmaps/Makefile \

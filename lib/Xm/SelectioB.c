@@ -561,13 +561,11 @@ Initialize(
 	new_w->selection_box.selection_label_string = NULL ;
     }
 
-
-    _XmSelectionBoxCreateText(new_w);
-
     /* Do not reset text_string to XmUNSPECIFIED until after calls
      *   to CreateList and CreateText.
      */
     new_w->selection_box.text_string = (XmString) XmUNSPECIFIED ;
+    _XmSelectionBoxCreateText(new_w);
 
     if(    new_w->manager.initial_focus == NULL    )
         {
