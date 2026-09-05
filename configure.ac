@@ -338,13 +338,19 @@ AS_IF([test "x$enable_glw" = "xyes"],[
 	AS_IF([test "x$enable_demos" != "xno"],[AC_CONFIG_FILES([demos/GLw/Makefile])])
 ])
 
-dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
-dnl warnings are spurious.
 m4_define([_NO_UNDEF], [])
-AS_IF([test "x$host_os" = "xcygwin"],[
+case "$host_os" in
+cygwin)
+	dnl Cygwin needs -no-undefined for DLLs, and the maybe-undefined
+	dnl warnings are spurious.
 	m4_define([_NO_UNDEF],[-no-undefined])
 	CFLAGS="${CFLAGS} -Wno-maybe-uninitialized -Wno-char-subscripts"
-])
+	;;
+solaris2.*)
+	dnl Illumos needs _XPG6 for the proper iconv prototype
+	CPPFLAGS="${CPPFLAGS} -D_XPG6"
+	;;
+esac
 AC_SUBST([NO_UNDEF], [_NO_UNDEF])
 
 AC_CONFIG_HEADERS(include/config.h lib/Xm/Xm.h)
