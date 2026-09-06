@@ -60,5 +60,6 @@ void xmchar_suite(SRunner *runner);
 void xmstring_suite(SRunner *runner);
 void xmtextf_suite(SRunner *runner);
 void sharedptr_suite(SRunner *runner);
+void xmrendition_suite(SRunner *runner);
 
 #endif /* SUITES_H */

@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 	xmstring_suite(runner);
 	xmtextf_suite(runner);
 	sharedptr_suite(runner);
+	xmrendition_suite(runner);
 
 	/**
 	 * Given that some things in Motif / Xt rely on static initialization
