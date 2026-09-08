@@ -1721,7 +1721,7 @@ static void value_trough_extents(XmScaleWidget sw, Dimension *width,
 
 	XmStringExtent(sw->scale.font_list, sw->scale.min_str, &w_min, &h_min);
 	XmStringExtent(sw->scale.font_list, sw->scale.max_str, &w_max, &h_max);
-	XmRenderTableGetDefaultFontExtents(sw->scale.font_list, NULL, &a, &d);
+	XmRenderTableGetDefaultExtents(sw->scale.font_list, NULL, NULL, NULL, &a, &d);
 
 	if (width)   *width   = MAX(w_min, w_max);
 	if (height)  *height  = MAX(h_min, h_max);

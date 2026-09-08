@@ -1404,17 +1404,10 @@ ComputeVizCount(XmListWidget lw)
     }
   else /* Have to guess by getting height of default font. */
     {
-#if USE_XFT
-      XmRenderTableGetDefaultFontExtents(lw->list.font,
-                                         &lineheight, NULL, NULL);
+      XmRenderTableGetDefaultExtents(lw->list.font, NULL, NULL,
+                                     &lineheight, NULL, NULL);
       if (lineheight == 0)
         lineheight = 1;
-#else
-      if (XmeRenderTableGetDefaultFont(lw->list.font, &font_struct))
-	lineheight = font_struct->ascent + font_struct->descent;
-      else
-	lineheight = 1;
-#endif
     }
 
   if (lineheight + lw->list.spacing != 0)
@@ -2622,19 +2615,12 @@ SetDefaultSize(XmListWidget lw,
 
   if (lw->list.itemCount == 0)
     {
-#if USE_XFT
-      XmRenderTableGetDefaultFontExtents(lw->list.font, &max_height, NULL, NULL);
+      XmRenderTableGetDefaultExtents(lw->list.font, NULL, NULL,
+                                     &max_height, NULL, NULL);
 
       lw->list.MaxItemHeight = (Dimension)max_height;
       if (lw->list.MaxItemHeight == 0)
         lw->list.MaxItemHeight = 1;
-#else
-      (void)max_height;
-      if (XmeRenderTableGetDefaultFont(lw->list.font, &fs))
-	lw->list.MaxItemHeight = fs->ascent + fs->descent;
-      else
-	lw->list.MaxItemHeight = 1;
-#endif
     }
   else if (reset_max_width || reset_max_height)
     {

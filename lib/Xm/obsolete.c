@@ -126,3 +126,9 @@ void XmRenditionRetrieve(XmRendition rendition, ArgList arglist, Cardinal argcou
 	XmRenditionGetValues(rendition, arglist, argcount);
 }
 
+void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
+                                          int *ascent, int *descent)
+{
+	XmRenderTableGetDefaultExtents(rt, NULL, NULL, height, ascent, descent);
+}
+

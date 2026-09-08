@@ -1720,6 +1720,12 @@ NfontWeight
 CFontWeight
 NfontFamily
 CFontFamily
+NinkWidth
+CInkWidth
+Nascent
+CAscent
+Ndescent
+CDescent
 
 #file XmStrDefsI.h
 #table _XmStringsI

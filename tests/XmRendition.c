@@ -48,6 +48,10 @@ static int x_weight     = 0;
 static int x_slant      = 0;
 static int x_pointsz    = 0;
 static int x_pixelsz    = 0;
+static int x_width      = 0;
+static int x_inkwidth   = 0;
+static int x_ascent     = 0;
+static int x_descent    = 0;
 
 /* Xft font props */
 static String xft_font    = NULL;
@@ -57,6 +61,9 @@ static int xft_weight     = 0;
 static int xft_slant      = 0;
 static int xft_pointsz    = 0;
 static int xft_pixelsz    = 0;
+static int xft_width      = 0;
+static int xft_ascent     = 0;
+static int xft_descent    = 0;
 
 /**
  * Ignore X errors, in case of BadAtom
@@ -141,10 +148,14 @@ static void _init_xt(void)
 		XFree(slant);
 	}
 
+	x_pixelsz = (int)(x_pointsz * (d / 72.));
+	x_inkwidth = finfo[0].max_bounds.width;
+	x_width    = finfo[0].max_bounds.rbearing -
+	             finfo[0].max_bounds.lbearing;
+	x_ascent   = finfo[0].ascent;
+	x_descent  = finfo[0].descent;
 	XSetErrorHandler(olderr);
 	XFreeFontInfo(names, finfo, count);
-	x_pixelsz = (int)(x_pointsz * (d / 72.));
-
 
 xft:
 #if USE_XFT
@@ -177,6 +188,10 @@ xft:
 			xft_pointsz = (int)d;
 		if (FcPatternGetDouble(f->pattern, FC_PIXEL_SIZE, 0, &d) == FcResultMatch)
 			xft_pixelsz = (int)d;
+
+		xft_width   = f->max_advance_width;
+		xft_ascent  = f->ascent;
+		xft_descent = f->descent;
 		XftFontClose(display, f);
 		break;
 	}
@@ -804,6 +819,18 @@ START_TEST(getvalues_xfont)
 	ck_assert_msg(pixelsz == x_pixelsz,
 	              "pixelSize (%d) should equal x_pixelsz (%d)",
 	              pixelsz, x_pixelsz);
+	ck_assert_msg(r->width == x_width,
+	              "Expected r->width (%d) to equal x_width (%d)",
+	              r->width, x_width);
+	ck_assert_msg(r->ink_width == x_inkwidth,
+	              "Expected r->ink_width (%d) to equal x_inkwidth (%d)",
+	              r->ink_width, x_inkwidth);
+	ck_assert_msg(r->ascent == x_ascent,
+	              "Expected r->ascent (%d) to equal x_ascent (%d)",
+	              r->ascent, x_ascent);
+	ck_assert_msg(r->descent == x_descent,
+	              "Expected r->descent (%d) to equal x_descent (%d)",
+	              r->descent, x_descent);
 	XmRenditionFree(rend);
 }
 END_TEST
@@ -859,6 +886,18 @@ START_TEST(getvalues_xft)
 	ck_assert_msg(pixelsz == xft_pixelsz,
 	              "pixelSize (%d) should equal xft_pixelsz (%d)",
 	              pixelsz, xft_pixelsz);
+	ck_assert_msg(r->width == xft_width,
+	              "Expected r->width (%d) to equal xft_width (%d)",
+	              r->width, xft_width);
+	ck_assert_msg(r->ink_width == xft_width,
+	              "Expected r->ink_width (%d) to equal xft_width (%d)",
+	              r->ink_width, xft_width);
+	ck_assert_msg(r->ascent == xft_ascent,
+	              "Expected r->ascent (%d) to equal xft_ascent (%d)",
+	              r->ascent, xft_ascent);
+	ck_assert_msg(r->descent == xft_descent,
+	              "Expected r->descent (%d) to equal xft_descent (%d)",
+	              r->descent, xft_descent);
 	XmRenditionFree(rend);
 }
 END_TEST
@@ -931,6 +970,18 @@ START_TEST(setvalues_xfont)
 	ck_assert_msg(r->pixelSize == x_pixelsz,
 	              "Expected r->pixelSize (%d) to equal x_pixelsz (%d)",
 	              r->pixelSize, x_pixelsz);
+	ck_assert_msg(r->width == x_width,
+	              "Expected r->width (%d) to equal x_width (%d)",
+	              r->width, x_width);
+	ck_assert_msg(r->ink_width == x_inkwidth,
+	              "Expected r->ink_width (%d) to equal x_inkwidth (%d)",
+	              r->ink_width, x_inkwidth);
+	ck_assert_msg(r->ascent == x_ascent,
+	              "Expected r->ascent (%d) to equal x_ascent (%d)",
+	              r->ascent, x_ascent);
+	ck_assert_msg(r->descent == x_descent,
+	              "Expected r->descent (%d) to equal x_descent (%d)",
+	              r->descent, x_descent);
 	XmRenditionFree(rend);
 }
 END_TEST
@@ -979,6 +1030,18 @@ START_TEST(setvalues_xft)
 	ck_assert_msg(r->pixelSize == xft_pixelsz,
 	              "Expected r->pixelSize (%d) to equal xft_pixelsz (%d)",
 	              r->pixelSize, xft_pixelsz);
+	ck_assert_msg(r->width == xft_width,
+	              "Expected r->width (%d) to equal xft_width (%d)",
+	              r->width, xft_width);
+	ck_assert_msg(r->ink_width == xft_width,
+	              "Expected r->ink_width (%d) to equal xft_width (%d)",
+	              r->ink_width, xft_width);
+	ck_assert_msg(r->ascent == xft_ascent,
+	              "Expected r->ascent (%d) to equal xft_ascent (%d)",
+	              r->ascent, xft_ascent);
+	ck_assert_msg(r->descent == xft_descent,
+	              "Expected r->descent (%d) to equal xft_descent (%d)",
+	              r->descent, xft_descent);
 	XmRenditionFree(rend);
 }
 END_TEST

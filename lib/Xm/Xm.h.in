@@ -1883,6 +1883,8 @@ extern XmRenderTable
 			     XmRendition *renditions,
 			     Cardinal rendition_count,
 			     XmMergeMode merge_mode);
+void XmRenderTableGetDefaultExtents(XmRenderTable rt, int *width, int *ink_width,
+                                    int *height, int *ascent, int *descent);
 
 /********    End Public Function Declarations    ********/
 

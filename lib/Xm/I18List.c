@@ -2196,8 +2196,8 @@ SetVisibleSize(Widget w, Boolean set_width)
     /* If we have no rows, guess at row size with font struct info... */
     if (XmI18List_num_rows(ilist) == 0)
     {
-        XmRenderTableGetDefaultFontExtents(XmI18List_font_list(ilist),
-	                                   &height, NULL, NULL);
+        XmRenderTableGetDefaultExtents(XmI18List_font_list(ilist),
+                                       NULL, NULL, &height, NULL, NULL);
 
 	if (height == 0)
 	    height = VERTICAL_SPACE * XmI18List_visible_rows(ilist);

@@ -976,13 +976,15 @@ START_TEST(resolve_cascades_styles)
 END_TEST
 
 /* Ensure we get something */
-START_TEST(default_font_extents_empty_table)
+START_TEST(default_extents_empty_table)
 {
 	XmRenderTable rt;
-	int h = 0, a = 0, d = 0;
+	int w = 0, x = 0, h = 0, a = 0, d = 0;
 
 	rt = XmRenderTableCreate(NULL);
-	XmRenderTableGetDefaultFontExtents(rt, &h, &a, &d);
+	XmRenderTableGetDefaultExtents(rt, &w, &x, &h, &a, &d);
+	ck_assert_msg(w, "Expected a width");
+	ck_assert_msg(x, "Expected an ink width");
 	ck_assert_msg(h, "Expected a height");
 	ck_assert_msg(a, "Expected an ascent");
 	ck_assert_msg(d, "Expected a descent");
@@ -1081,8 +1083,8 @@ void xmrendertable_suite(SRunner *runner)
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
-	t = tcase_create("GetDefaultFontExtents");
-	tcase_add_test(t, default_font_extents_empty_table);
+	t = tcase_create("GetDefaultExtents");
+	tcase_add_test(t, default_extents_empty_table);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

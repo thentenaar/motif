@@ -22,7 +22,7 @@
  */
 
 /**
- * Prototypes for obsolete prototypes, split out from Xm.h
+ * Prototypes for obsolete functions, etc. split out from Xm.h
  */
 
 #ifdef _Xm_h
@@ -215,6 +215,10 @@ extern XmString XmeGetLocalizedString(char *reserved, Widget widget,
 
 XM_ALTERNATIVE(Set XmNtitleString / XmNiconNameString on the shell instead)
 extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
+
+XM_ALTERNATIVE(Use XmRenderTableGetDefaultExtents / XmNascent, etc. on XmRendition instead)
+extern void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
+                                               int *ascent, int *descent);
 
 #endif /* _XmP_h */
 #endif /* XM_OBSOLETE_H */

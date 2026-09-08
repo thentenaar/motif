@@ -1260,12 +1260,6 @@ extern String XmeGetHomeDirName(void) ;
 extern int XmeMicroSleep(
                         long secs) ;
 
-extern void XmRenderTableGetDefaultFontExtents(
-                        XmRenderTable rendertable,
-			int *height,
-			int *ascent,
-			int *descent) ;
-
 /********    End Function Declarations for Xme        ********/
 
 /********        ********/

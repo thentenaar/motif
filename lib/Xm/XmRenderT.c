@@ -120,6 +120,11 @@ static XtResource _XmRenditionResources[] = {
     sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, font),
     XmRImmediate, NULL
   },
+  {
+    XmNxftFont, XmCXftFont, XmRXftFont,
+    sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, xftFont),
+    XmRImmediate, NULL
+  },
   { /* This will use XmNfontName for backward compatbility */
     XmNfontName, XmCFontName, XmRString,
     sizeof(String), XtOffsetOf(_XmRenditionRec, pattern),
@@ -161,13 +166,28 @@ static XtResource _XmRenditionResources[] = {
     XmRImmediate, NULL
   },
   {
-    XmNtabList, XmCTabList, XmRTabList,
-    sizeof(XmTabList), XtOffsetOf(_XmRenditionRec, tabs),
+    XmNwidth, XmCWidth, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, width),
     XmRImmediate, NULL
   },
   {
-    XmNxftFont, XmCXftFont, XmRXftFont,
-    sizeof(XtPointer), XtOffsetOf(_XmRenditionRec, xftFont),
+    XmNinkWidth, XmCInkWidth, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, ink_width),
+    XmRImmediate, NULL
+  },
+  {
+    XmNascent, XmCAscent, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, ascent),
+    XmRImmediate, NULL
+  },
+  {
+    XmNdescent, XmCDescent, XmRInt,
+    sizeof(int), XtOffsetOf(_XmRenditionRec, descent),
+    XmRImmediate, NULL
+  },
+  {
+    XmNtabList, XmCTabList, XmRTabList,
+    sizeof(XmTabList), XtOffsetOf(_XmRenditionRec, tabs),
     XmRImmediate, NULL
   },
   {
@@ -1311,20 +1331,22 @@ out:
 }
 
 /**
- * Get the height, ascent, and descent of the font in the given
- * rendertable for XmFONTLIST_DEFAULT_TAG or the default font if
- * the default tag cannot be found in the table.
+ * Get the width, height, ascent, and descent of the font corresponding
+ * to XmFONTLIST_DEFAULT_TAG, or the default if such could not be found.
+ *
+ * "width" is the maximum character layout width supplied by the rendition.
  */
-void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
-                                        int *ascent, int *descent)
+void XmRenderTableGetDefaultExtents(XmRenderTable rt, int *width, int *ink_width,
+                                    int *height, int *ascent, int *descent)
 {
-	int a = 0, d = 0;
+	int n = 0, a = 0, d = 0;
+	Arg arg[4];
 	XmRendition rend;
-	XFontStruct **f_list;
-	char **n_list;
 	const struct __XmRenderTableRec *t;
-	const struct __XmRenditionRec *r;
 	XtAppContext app;
+
+	if (ink_width) *ink_width = 0;
+	if (width)     *width     = 0;
 
 	if (!(t = XmSharedPtrGet(rt)))
 		goto out;
@@ -1336,35 +1358,21 @@ void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
 			goto unlock;
 	}
 
-	r = XmSharedPtrGet(rend);
-	switch (r->fontType) {
-	case XmFONT_IS_FONT:
-		a = ((XFontStruct *)r->font)->ascent;
-		d = ((XFontStruct *)r->font)->descent;
-		break;
-	case XmFONT_IS_FONTSET:
-		if (!XFontsOfFontSet((XFontSet)r->font, &f_list, &n_list))
-			break;
-
-		a = f_list[0]->ascent;
-		d = f_list[0]->descent;
-		break;
-#if USE_XFT
-	case XmFONT_IS_XFT:
-		a = r->xftFont->ascent;
-		d = r->xftFont->descent;
-		break;
-#endif
-	}
+	if (width)     { XtSetArg(arg[n], XmNwidth,    width);     n++; }
+	if (ink_width) { XtSetArg(arg[n], XmNinkWidth, ink_width); n++; }
+	XtSetArg(arg[n], XmNascent,  &a); n++;
+	XtSetArg(arg[n], XmNdescent, &d); n++;
+	XmRenditionLoad(rend, False);
+	XmRenditionGetValues(rend, arg, n);
+	XmRenditionFree(rend);
 
 unlock:
-	XmRenditionFree(rend);
 	_XmUnlock(app);
 
 out:
+	if (height)  *height  = a + d;
 	if (ascent)  *ascent  = a;
 	if (descent) *descent = d;
-	if (height)  *height  = a + d;
 }
 
 /**
@@ -1447,12 +1455,16 @@ static void merge_renditions(XmRendition to, XmRendition from)
 	/* These should only be updated if the Xft font changes */
 	if (rt->fontType == XmFONT_IS_XFT && !rt->xftFont && rf->xftFont) {
 		XtFree(rt->pattern);
-		rt->pattern = NULL;
+		rt->pattern     = NULL;
 		rt->xftFont     = XftFontCopy(rf->display, rf->xftFont);
 		rt->fontFoundry = rf->fontFoundry;
 		rt->fontFamily  = rf->fontFamily;
 		rt->fontStyle   = rf->fontStyle;
 		rt->pixelSize   = rf->pixelSize;
+		rt->width       = rf->width;
+		rt->ink_width   = rf->ink_width;
+		rt->ascent      = rf->ascent;
+		rt->descent     = rf->descent;
 		rt->display     = rf->display;
 
 		if (rf->pattern)
@@ -1834,23 +1846,42 @@ static void set_props_from_fontstruct(XmRendition rend, const XFontStruct *fs)
 static void set_props_from_font(XmRendition rend)
 {
 	XFontStruct **f_list;
+	XFontSetExtents *e;
 	char **names = NULL;
 	struct __XmRenditionRec *r;
 
 	if (!(r = XmSharedPtrGet(rend)))
 		return;
 
-	if (r->fontType == XmFONT_IS_FONT && r->font)
+	if (r->fontType == XmFONT_IS_FONT && r->font) {
 		set_props_from_fontstruct(rend, r->font);
+		r->width     = ((XFontStruct *)r->font)->max_bounds.rbearing -
+		               ((XFontStruct *)r->font)->max_bounds.lbearing;
+		r->ink_width = ((XFontStruct *)r->font)->max_bounds.width;
+		r->ascent    = ((XFontStruct *)r->font)->ascent;
+		r->descent   = ((XFontStruct *)r->font)->descent;
+	}
 
 	if (r->fontType == XmFONT_IS_FONTSET && r->font) {
-		if (XFontsOfFontSet((XFontSet)r->font, &f_list, &names))
-			set_props_from_fontstruct(rend, *f_list);
+		if (!XFontsOfFontSet((XFontSet)r->font, &f_list, &names))
+			return;
+
+		set_props_from_fontstruct(rend, *f_list);
+		e = XExtentsOfFontSet((XFontSet)r->font);
+		r->width     = e->max_logical_extent.width;
+		r->ink_width = e->max_ink_extent.width;
+		r->ascent    = -e->max_logical_extent.y;
+		r->descent   = e->max_logical_extent.height + e->max_logical_extent.y;
 	}
 
 #if USE_XFT
-	if (r->fontType == XmFONT_IS_XFT && r->xftFont)
+	if (r->fontType == XmFONT_IS_XFT && r->xftFont) {
 		set_props_from_pattern(rend, r->xftFont->pattern);
+		r->width     = r->xftFont->max_advance_width;
+		r->ink_width = r->width;
+		r->ascent    = r->xftFont->ascent;
+		r->descent   = r->xftFont->descent;
+	}
 #endif
 }
 
@@ -1960,13 +1991,19 @@ Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback)
 	switch (r->fontType) {
 	case XmFONT_IS_FONT:
 	case XmFONT_IS_FONTSET:
-		if (r->font)
+		if (r->font) {
+			set_props_from_font(rend);
 			return True;
+		}
+
 		loaded = load_xfont(rend);
 		break;
 	case XmFONT_IS_XFT:
-		if (r->xftFont)
+		if (r->xftFont) {
+			set_props_from_font(rend);
 			return True;
+		}
+
 #if USE_XFT
 		loaded = load_xft(rend);
 #endif

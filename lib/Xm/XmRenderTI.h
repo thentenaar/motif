@@ -81,6 +81,10 @@ typedef struct __XmRenditionRec
 	int fontSlant;
 	int fontWeight;
 	int fontSpacing;
+	int ascent;
+	int descent;
+	int width;
+	int ink_width;
 	struct _XmRenditionStyle style;
 
 #if USE_XFT

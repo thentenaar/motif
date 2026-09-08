@@ -4542,7 +4542,7 @@ static void CalcCornerSize(XmTabBoxWidget tab)
 {
 	int size;
 
-	XmRenderTableGetDefaultFontExtents(XmTabBox_font_list(tab), &size, NULL, NULL);
+	XmRenderTableGetDefaultExtents(XmTabBox_font_list(tab), NULL, NULL, &size, NULL, NULL);
 	XmTabBox__corner_size(tab) = size * XmTabBox_tab_corner_percent(tab) / 100;
 }
 
