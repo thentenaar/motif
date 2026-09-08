@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifndef _XmScaleP_h
 #define _XmScaleP_h
 
@@ -70,7 +71,7 @@ typedef struct
    unsigned char  orientation;
    unsigned char  processing_direction;
    XmString       title;
-   XmFontList     font_list;
+   XmRenderTable  font_list;
    XFontStruct  * font_struct; /* unused */
    Boolean        show_value;
    short          decimal_points;

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 #ifndef _XmIconButtonP_h
@@ -67,7 +66,7 @@ typedef struct {
     String label;		/* The label to display. */
     Pixmap pixmap;		/* The pixmap to display. */
     Pixel arm_color;		/* The color to arm this widget with. */
-    XmFontList font_list;	/* The font in MOTIF(tm) format. */
+    XmRenderTable font_list;	/* The font in MOTIF(tm) format. */
     XmIconPlacement icon_placement; /* Where to place the icon label. */
     Boolean recompute;		/* Whether to recompute size every time. */
     Boolean set;		/* State of the button. */

@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifndef _XmLabelP_h_
 #define _XmLabelP_h_
 
@@ -74,7 +75,7 @@ typedef struct _XmLabelPart
   unsigned char	  label_type;
   unsigned char	  alignment;
   unsigned char	  string_direction;
-  XmFontList	  font;
+  XmRenderTable	  font;
 
   Dimension	  margin_height;  /* margin around widget */
   Dimension	  margin_width;
@@ -151,10 +152,6 @@ typedef struct _XmLabelRec
 #define Lab_MenuType(w)		(((XmLabelWidget)(w))->label.menu_type)
 #define Lab_Shadow(w)	 (((XmLabelWidget)(w))->primitive.shadow_thickness)
 #define Lab_Highlight(w) (((XmLabelWidget)(w))->primitive.highlight_thickness)
-#define Lab_Baseline(w)						\
-  (_XmStringBaseline (((XmLabelWidget)(w))->label.font,		\
-		      ((XmLabelWidget)(w))->label._label))
-
 #define Lab_ComputingSize(w)	(((XmLabelWidget)(w))->label.computing_size)
 #define Lab_IsMenupane(w)	((Lab_MenuType(w) == XmMENU_POPUP) ||	\
 				 (Lab_MenuType(w) == XmMENU_PULLDOWN))

@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,6 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- *
  */
 
 #ifndef __Xmcolumnp_h__
@@ -57,11 +56,11 @@ typedef struct _XmColumnConstraintPart {
 
     Boolean		show_label;
     Boolean		stretchable;
-    
+
     Pixmap              label_pixmap;
     XmString		label_string;
 
-    XmFontList		label_font_list;
+    XmRenderTable	label_font_list;
 
     /* Private */
 
@@ -79,14 +78,14 @@ typedef struct _XmColumnConstraintRec {
 } XmColumnConstraintRec, * XmColumnConstraintPtr;
 
 typedef struct _XmColumnPart {
-    
+
     /* Public */
 
     unsigned char default_label_alignment;
     unsigned char default_fill_style;
     unsigned char orientation;
     unsigned char distribution;
-    
+
     Dimension	  item_spacing;
     Dimension	  label_spacing;
 

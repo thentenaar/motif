@@ -45,6 +45,17 @@ extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #include "XmStringI.h"
 
 /*
+ * These are the fontlist structures
+ */
+
+typedef struct _XmFontListContextRec
+{
+  Boolean		error;			  /* something bad */
+  unsigned short	index;			  /* next rendition */
+  XmRenderTable		table;			  /* associated table */
+} XmFontListContextRec;
+
+/*
  * Data structure macros for fontlist access
  */
 

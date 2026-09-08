@@ -38,17 +38,6 @@
 extern "C" {
 #endif
 
-/*
- * These are the fontlist structures
- */
-
-typedef struct _XmFontListContextRec
-{
-  Boolean		error;			  /* something bad */
-  unsigned short	index;			  /* next rendition */
-  XmRenderTable		table;			  /* associated table */
-} XmFontListContextRec;
-
 /* useful macros */
 #define two_byte_font(f)        (( (f)->min_byte1 != 0 || (f)->max_byte1 != 0))
 
@@ -827,9 +816,6 @@ size_t _Xmstrlen(const unsigned char *s, size_t byte_count);
  */
 unsigned char *_Xmstrrev(const unsigned char *s, size_t len);
 
-extern XFontStruct * _XmGetFirstFont(
-                        XmFontListEntry entry) ;
-
 extern int _XmStringIndexCacheTag(
                         XmStringTag tag,
                         int length) ;
@@ -837,63 +823,10 @@ extern XmStringTag _XmStringCacheTag(
                         XmStringTag tag,
                         int length) ;
 
-
-extern Boolean _XmStringInitContext(
-                        _XmStringContext *context,
-                        _XmString string) ;
-
-extern void _XmStringFreeContext(
-                        _XmStringContext context) ;
-extern Dimension _XmStringWidth(
-                        XmFontList fontlist,
-                        _XmString string) ;
-extern Dimension _XmStringHeight(
-                        XmFontList fontlist,
-                        _XmString string) ;
-extern void _XmStringExtent(
-                        XmFontList fontlist,
-                        _XmString string,
-                        Dimension *width,
-                        Dimension *height) ;
-extern Boolean _XmStringEmpty(
-                        _XmString string) ;
-extern void _XmStringRender(Display *d,
-                            Drawable w,
-                            XmRenderTable rendertable,
-                            XmRendition rend,
-                            _XmString string,
-                            Position x,
-                            Position y,
-                            Dimension width,
-                            unsigned char align,
-                            unsigned char lay_dir
-                            ) ;
-extern _XmString _XmStringCreate(
-                        XmString cs) ;
-extern void _XmStringFree(
-                        _XmString string) ;
-extern char * _XmCharsetCanonicalize(
-                        String charset) ;
-extern _XmString _XmStringCopy(
-                        _XmString string) ;
-extern Boolean _XmStringByteCompare(
-                        _XmString a,
-                        _XmString b) ;
-extern Boolean _XmStringHasSubstring(
-                        _XmString string,
-                        _XmString substring) ;
-extern XmString _XmStringCreateExternal(
-                        XmFontList fontlist,
-                        _XmString cs) ;
-extern Dimension _XmStringBaseline(
-                        XmFontList fontlist,
-                        _XmString string) ;
 extern void _XmStringGetBaselines(XmRenderTable rendertable,
                                   _XmString string,
                                   Dimension **baselines,
                                   Cardinal *line_count);
-extern int _XmStringLineCount(
-                        _XmString string) ;
 extern Boolean _XmStringIsCurrentCharset(const XmStringTag c);
 extern NextTabResult _XmStringGetNextTabWidth(XmStringContext ctx,
 				Widget widget,

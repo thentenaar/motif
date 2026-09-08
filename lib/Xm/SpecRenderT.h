@@ -1,5 +1,5 @@
 /* $XConsortium: SpecRenderT.h /main/5 1995/07/15 20:55:28 drk $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,9 +21,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 #ifndef _XmSpecRenderT_H
 #define _XmSpecRenderT_H
 
@@ -37,8 +35,7 @@ externalref XrmQuark XmQTspecifyRenderTable;
 
 /* Trait structures and typedefs, place typedefs first */
 
-typedef XmFontList (*XmSpecRenderGetTableProc)(Widget wid,
-					       XtEnum type);
+typedef XmRenderTable (*XmSpecRenderGetTableProc)(Widget wid, XtEnum type);
 
 /* Version 0: initial release. */
 

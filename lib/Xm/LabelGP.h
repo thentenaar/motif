@@ -20,6 +20,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifndef _XmLabelGP_h
 #define _XmLabelGP_h
 
@@ -143,7 +144,7 @@ typedef struct _XmLabelGadgetPart
   KeySym          mnemonic;
   XmStringTag mnemonicCharset;
   char 		  *accelerator;
-  XmFontList	  font;
+  XmRenderTable	  font;
 
   Pixmap	  pixmap;
   Pixmap	  pixmap_insen;
@@ -314,7 +315,6 @@ typedef struct _LRectangle
 					   label.cache)
 #define LabG_Shadow(w)    (((XmLabelGadget)(w))->gadget.shadow_thickness)
 #define LabG_Highlight(w) (((XmLabelGadget)(w))->gadget.highlight_thickness)
-#define LabG_Baseline(w)  (_XmStringBaseline ((LabG_Font(w)), (LabG__Label(w))))
 #define LabG_ClassCachePart(w)	\
 	(((XmLabelGadgetClass)xmLabelGadgetClass)->gadget_class.cache_part)
 

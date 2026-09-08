@@ -1895,6 +1895,7 @@ _XmStringCreate(
   return((_XmString)XmStringCopy(cs));
 }
 
+/* XXX: Used by NEdit/Xlt */
 /* Used to create external XmString from internal, now just copies. */
 XmString
 _XmStringCreateExternal(
@@ -2185,7 +2186,7 @@ _XmSetFocusResetFlag(
 /********************************************************************/
 
 void
-_XmStringUpdate(XmFontList fontlist, /* unused */
+_XmStringUpdate(XmRenderTable fontlist, /* unused */
 		_XmString string ) /* unused */
 {
 }

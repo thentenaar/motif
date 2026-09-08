@@ -57,7 +57,7 @@ typedef struct _XmVendorShellExtClassRec{
 }XmVendorShellExtClassRec;
 
 typedef struct {
- XmFontList		default_font_list;
+ XmRenderTable		default_font_list;
  unsigned char		focus_policy;
  XmFocusData		focus_data;
  unsigned char		delete_response;
@@ -84,9 +84,9 @@ typedef struct {
  XtCallbackList		realize_callback;
  XtGrabKind		grab_kind;
  Boolean		audible_warning;
- XmFontList             button_font_list;
- XmFontList             label_font_list;
- XmFontList             text_font_list;
+ XmRenderTable          button_font_list;
+ XmRenderTable          label_font_list;
+ XmRenderTable          text_font_list;
  String			input_method_string;
  String			preedit_type_string;
  unsigned int           light_threshold;

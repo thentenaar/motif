@@ -1,3 +1,26 @@
+/**
+ * Motif
+ *
+ * Copyright (c) 1987-2012, The Open Group. All rights reserved.
+ *
+ * These libraries and programs are free software; you can
+ * redistribute them and/or modify them under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
+ * Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * These libraries and programs are distributed in the hope that
+ * they will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with these librararies and programs; if not, write
+ * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301 USA
+ */
+
 #ifndef _XmMultiListP_h_
 #define _XmMultiListP_h_
 
@@ -130,8 +153,8 @@ typedef struct _XmI18ListPart {
     short num_rows;		/* number of rows in the list. */
     XmMultiListRowInfo *row_data;/* Data to put into each column. */
     Boolean first_col_pixmaps;	/* Should we put mini_icons in the first
-				   column of each entry? */		
-    XmFontList font_list;	/* This widget's font list. */
+				   column of each entry? */
+    XmRenderTable font_list;	/* This widget's font list. */
 
     Widget v_bar, h_bar;	/* Scrollbars that may be used
 				   to scroll this widget. */
@@ -149,17 +172,17 @@ typedef struct _XmI18ListPart {
     unsigned char string_direction;
     unsigned char alignment;
 
-    /* 
+    /*
      * Private State
      */
 
     short * column_widths;	/* Width of each column. */
-    short end;			/* The non-anchor end point. */ 
-    short anchor;		/* The anchor point for the extended 
+    short end;			/* The non-anchor end point. */
+    short anchor;		/* The anchor point for the extended
 				   selection. */
 
     int sep_y;			/*location of the top of the separator line.*/
-    
+
     short title_row_height;	/* height of title row */
     short row_height;	/* height of all other data rows */
 
@@ -185,12 +208,12 @@ typedef struct _XmI18ListPart {
 
     Pixel entry_background_pixel;
     Boolean entry_background_use;
-    GC entry_background_gc;			
-    GC entry_background_fill_gc;			
-    GC entry_background_stippled_gc;		
-    GC entry_background_stippled_rev_gc;	
-    GC entry_background_inv_gc;			
-    GC entry_background_rev_gc;			
+    GC entry_background_gc;
+    GC entry_background_fill_gc;
+    GC entry_background_stippled_gc;
+    GC entry_background_stippled_rev_gc;
+    GC entry_background_inv_gc;
+    GC entry_background_rev_gc;
 
     Boolean check_set_render_table; /* used in CheckSetRenderTable */
 
@@ -275,7 +298,7 @@ typedef struct _XmI18ListRec	*XmI18ListWidget;
 extern XmMultiListClassRec xmMultiListClassRec;
 
 extern XmI18ListClassRec xiI18ListClassRec;
-extern WidgetClass xmI18ListWidgetClass; 
+extern WidgetClass xmI18ListWidgetClass;
 
 #if defined(__cplusplus)
 }

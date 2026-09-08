@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,8 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
  */
+
 #ifndef _XmTabStackP_h_
 #define _XmTabStackP_h_
 
@@ -58,7 +58,7 @@ typedef struct _XmTabStackPart {
     XtCallbackList       tab_select_callback;
 
     /* Resource to pass down to Tab Box */
-    XmFontList		 font_list;
+    XmRenderTable		 font_list;
     XmTabStyle		 tab_style;
     XmTabMode		 tab_mode;
     XmTabSide            tab_side;
@@ -71,7 +71,7 @@ typedef struct _XmTabStackPart {
     Boolean		 use_image_cache;
     Boolean		 stacked_effect;
     Boolean		 tab_auto_select;
-    
+
     Dimension            tab_margin_width;
     Dimension            tab_margin_height;
     Dimension		 tab_label_spacing;
@@ -114,7 +114,7 @@ typedef struct _XmTabStackPart {
     Boolean		do_notify;	/* for notify XmNtabSelectedCallback */
 
     Boolean		check_set_render_table;
-  
+
 } XmTabStackPart;
 
 #define XmTabStack_tab_select_callback(w) (((XmTabStackWidget)(w))->tab_stack.tab_select_callback)

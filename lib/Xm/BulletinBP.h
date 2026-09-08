@@ -1,4 +1,4 @@
-/* 
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/ 
+ */
+
 #ifndef _XmBulletinBoardP_h
 #define _XmBulletinBoardP_h
 
@@ -91,15 +92,15 @@ typedef struct
 
   XtTranslations text_translations;
 
-  XmFontList	button_font_list;	/*  font lists		*/
-  XmFontList	label_font_list;
-  XmFontList	text_font_list;
+  XmRenderTable	button_font_list;	/*  font lists		*/
+  XmRenderTable	label_font_list;
+  XmRenderTable	text_font_list;
 
   Boolean	allow_overlap;		/*  policies		*/
   Boolean	default_position;
   Boolean	auto_unmanage;
   unsigned char	resize_policy;
-  
+
   Dimension	old_width;		/*  shadow resources	*/
   Dimension	old_height;
   Dimension	old_shadow_thickness;

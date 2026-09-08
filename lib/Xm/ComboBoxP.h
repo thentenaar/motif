@@ -1,5 +1,5 @@
 /* $XConsortium: ComboBoxP.h /main/8 1995/09/19 23:00:21 cde-sun $ */
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -21,15 +21,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
-/*
- * HISTORY
- */
+
 /*	ComboBoxP.h  */
 #ifndef _XmComboBoxP_H
 #define _XmComboBoxP_H
 
 #include <Xm/ManagerP.h>
-#include <Xm/ComboBox.h> 
+#include <Xm/ComboBox.h>
 
 
 #ifdef __cplusplus
@@ -43,7 +41,7 @@ typedef struct _XmComboBoxClassPart {
 } XmComboBoxClassPart;
 
 
-/* Full class record declaration. */	
+/* Full class record declaration. */
 typedef struct _XmComboBoxClassRec {
   CoreClassPart		core_class;
   CompositeClassPart	composite_class;
@@ -55,7 +53,7 @@ typedef struct _XmComboBoxClassRec {
 externalref XmComboBoxClassRec xmComboBoxClassRec;
 
 /*
- * New fields for the ComboBox widget record.	
+ * New fields for the ComboBox widget record.
  */
 
 typedef struct _XmComboBoxPart {
@@ -70,12 +68,12 @@ typedef struct _XmComboBoxPart {
   XtCallbackList	selection_callback;
   XmString		selected_item; /* synthetic, not updated */
   int			selected_position;
-  XmFontList		render_table;
+  XmRenderTable		render_table;
 
   /* Internal data */
-  Widget		list_shell; 
+  Widget		list_shell;
   Widget		list;		/* Now accessible as a resource */
-  Widget		scrolled_w; 
+  Widget		scrolled_w;
   Widget		vsb;
   Widget		hsb;
   int 			ideal_ebheight;
@@ -88,7 +86,7 @@ typedef struct _XmComboBoxPart {
   Boolean		scrolling;
   XtEnum		shell_state;
   /* NOTE that text_changed is also used for MT_safe resolution of
-   * the XmNRenderTable, XmNFontList resource settings 
+   * the XmNRenderTable, XmNFontList resource settings
    */
   Boolean		text_changed;
 
@@ -103,7 +101,7 @@ typedef struct _XmComboBoxPart {
 } XmComboBoxPart;
 
 
-/* Full instance record declaration. */	
+/* Full instance record declaration. */
 
 typedef struct _XmComboBoxRec {
   CorePart		core;
