@@ -174,7 +174,7 @@ void
 XmFontListEntryFree(
         XmFontListEntry  *entry )
 {
-  if (entry != NULL) XmRenditionFree(*entry);
+  XmRenditionFree(*entry);
 }
 
 XtPointer
@@ -655,7 +655,7 @@ _XmGetFirstFont(
   XtSetArg(args[n], XmNfont, &font); n++;
   XmRenditionGetValues(entry, args, n);
 
-  if (font == (XtPointer)XmAS_IS)
+  if (!font || font == (XtPointer)XmAS_IS)
     {
       font_struct = NULL;
     }
