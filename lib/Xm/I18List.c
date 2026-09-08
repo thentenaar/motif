@@ -71,11 +71,6 @@
 
 #define NoTimeout ((XtIntervalId) 0)
 
-/*
- * DANGER:  XmeRenderTableGetDefaultFont is an undocumented
- *          internal MOTIF(tm) function.
- */
-
 /************************************************************
 *	MACROS
 *************************************************************/
@@ -84,8 +79,6 @@
 /************************************************************
 *	GLOBAL DECLARATIONS
 *************************************************************/
-
-extern Boolean XmeRenderTableGetDefaultFont(XmRenderTable, XFontStruct **);
 
 static Widget global_current_widget;		/* static global to hold
 						   widget id for qsort. */
@@ -2203,23 +2196,11 @@ SetVisibleSize(Widget w, Boolean set_width)
     /* If we have no rows, guess at row size with font struct info... */
     if (XmI18List_num_rows(ilist) == 0)
     {
-#if USE_XFT
         XmRenderTableGetDefaultFontExtents(XmI18List_font_list(ilist),
 	                                   &height, NULL, NULL);
 
 	if (height == 0)
 	    height = VERTICAL_SPACE * XmI18List_visible_rows(ilist);
-#else
-	XFontStruct	*font = (XFontStruct *) NULL;
-
-	XmeRenderTableGetDefaultFont(XmI18List_font_list(ilist), &font);
-
-	if (font)
-	    height = (font->ascent + font->descent + VERTICAL_SPACE) *
-		XmI18List_visible_rows(ilist);
-	else
-	    height = VERTICAL_SPACE * XmI18List_visible_rows(ilist);
-#endif
     }
     else
     {
