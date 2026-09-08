@@ -76,8 +76,6 @@
  *          internal MOTIF(tm) function.
  */
 
-#define GetDefaultFont XmeRenderTableGetDefaultFont
-
 /************************************************************
 *	MACROS
 *************************************************************/
@@ -87,7 +85,7 @@
 *	GLOBAL DECLARATIONS
 *************************************************************/
 
-extern Boolean XmeRenderTableGetDefaultFont (XmFontList, XFontStruct **);
+extern Boolean XmeRenderTableGetDefaultFont(XmRenderTable, XFontStruct **);
 
 static Widget global_current_widget;		/* static global to hold
 						   widget id for qsort. */
@@ -266,7 +264,7 @@ static XtResource resources[] =
 
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmI18ListRec, ilist.font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmI18ListRec, ilist.font_list),
     XmRCallProc, (XtPointer)CheckSetRenderTable
   },
 
@@ -2002,7 +2000,6 @@ CreateGCs(Widget w)
     Cardinal num_args = 0;
     Pixel temp;
     Pixmap stipple;
-    XFontStruct *font;
 
     stipple = XCreateBitmapFromData(XtDisplay(w),
 				    RootWindowOfScreen(XtScreen(w)), gray_bits,
@@ -2012,14 +2009,11 @@ CreateGCs(Widget w)
     XtSetArg(args[num_args], XmNbackground, &(values.background)); num_args++;
     XtGetValues(w, args, num_args);
 
-    XmeRenderTableGetDefaultFont (XmI18List_font_list(ilist), &font);
-
-    values.font = font->fid;
     values.stipple = stipple;
     values.fill_style = FillStippled;
     values.graphics_exposures = False;
 
-    mask = GCForeground | GCBackground | GCFont | GCGraphicsExposures | GCFillStyle;
+    mask = GCForeground | GCBackground | GCGraphicsExposures | GCFillStyle;
     XmI18List_gc(ilist) = XtGetGC(w, mask, &values);
 
     if (XmI18List_entry_background_use(ilist))
