@@ -571,7 +571,7 @@ Initialize(Widget    request,	/* unused */
   /* Get a real render table. */
   if (CB_RenderTable(newcb) == NULL)
     CB_RenderTable(newcb) = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
-  CB_RenderTable(newcb) = XmFontListCopy(CB_RenderTable(newcb));
+  CB_RenderTable(newcb) = XmRenderTableCopy(CB_RenderTable(newcb), NULL, 0);
 
   /* Ignore XmNheight resource value for descedants */
   num_child_args = 0;
@@ -693,7 +693,7 @@ SetValues(Widget    current,
   Arg		   shell_args[10];
   Cardinal	   neditbox = 0;
   Arg		   editbox_args[10];
-  XmFontList	   old_render_table = NULL;
+  XmRenderTable old_render_table = NULL;
 
   /* The position_mode cannot be changed after creation. */
   if (CB_PositionMode(curcb) != CB_PositionMode(newcb))
@@ -788,7 +788,7 @@ SetValues(Widget    current,
       if (CB_RenderTable(newcb) == NULL)
 	CB_RenderTable(newcb) = XmeGetDefaultRenderTable(new_w,
 							 XmTEXT_FONTLIST);
-      CB_RenderTable(newcb) = XmFontListCopy(CB_RenderTable(newcb));
+      CB_RenderTable(newcb) = XmRenderTableCopy(CB_RenderTable(newcb), NULL, 0);
 
       XtSetArg(editbox_args[neditbox], XmNrenderTable, CB_RenderTable(newcb)),
         neditbox++;
@@ -889,7 +889,7 @@ SetValues(Widget    current,
     XtSetValues(CB_EditBox(newcb), editbox_args, neditbox);
 
   if (old_render_table)
-	XmFontListFree(old_render_table);
+	XmRenderTableFree(old_render_table);
 
 
   /* Recompute our ideal size. */
@@ -1300,7 +1300,7 @@ Destroy(Widget widget)
   if (cb->combo_box.arrow_GC)
     XtReleaseGC(widget, cb->combo_box.arrow_GC);
 
-  XmFontListFree(CB_RenderTable(cb));
+  XmRenderTableFree(CB_RenderTable(cb));
 }
 
 /*

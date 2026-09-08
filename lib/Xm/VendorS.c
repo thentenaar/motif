@@ -265,8 +265,7 @@ static void Redisplay(
                         Widget wid,
                         XEvent *event,
                         Region region) ;
-static XmFontList GetTable(Widget wid,
-			   XtEnum type);
+static XmRenderTable GetTable(Widget wid, XtEnum type);
 static XmDirection GetDirection(Widget);
 static void GetColors(Widget widget,
 		      XmAccessColorData color_data);
@@ -1601,7 +1600,7 @@ VendorExtInitialize(
     static char *atom_names[] = { _XA_MOTIF_WM_OFFSET, _XA_MOTIF_WM_MESSAGES,
 	 XmIWM_DELETE_WINDOW };
 
-    XmFontList                  defaultFont;
+    XmRenderTable defaultFont;
     XmVendorShellExtObject	ve;
     XmVendorShellExtObject	req_ve;
     XmVendorShellExtObjectClass	vec = (XmVendorShellExtObjectClass) XtClass(new_w);
@@ -1744,7 +1743,7 @@ VendorExtInitialize(
 	if ( !defaultFont )
 	  defaultFont = XmeGetDefaultRenderTable( (Widget) extParent, XmBUTTON_FONTLIST);
       }
-     ve->vendor.button_font_list = XmFontListCopy (defaultFont);
+     ve->vendor.button_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 
      defaultFont =  ve->vendor.label_font_list;
      if ( !defaultFont )
@@ -1753,7 +1752,7 @@ VendorExtInitialize(
 	 if ( !defaultFont )
 	   defaultFont = XmeGetDefaultRenderTable( (Widget) extParent, XmLABEL_FONTLIST);
      }
-     ve->vendor.label_font_list = XmFontListCopy (defaultFont);
+     ve->vendor.label_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 
      defaultFont =  ve->vendor.text_font_list;
      if ( !defaultFont )
@@ -1762,7 +1761,7 @@ VendorExtInitialize(
 	 if ( !defaultFont )
 	     defaultFont = XmeGetDefaultRenderTable( (Widget) extParent, XmTEXT_FONTLIST);
      }
-    ve->vendor.text_font_list = XmFontListCopy (defaultFont);
+    ve->vendor.text_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
     ve->vendor.im_height = 0;
     ve->vendor.im_vs_height_set = False;
     ve->vendor.im_info = NULL;
@@ -2059,7 +2058,7 @@ VendorExtSetValues(
   XmVendorShellExtPartPtr ove, nve;
   XmVendorShellExtObject  ov = (XmVendorShellExtObject) old;
   XmVendorShellExtObject  nv = (XmVendorShellExtObject) new_w;
-  XmFontList		  defaultFont;
+  XmRenderTable defaultFont;
 
   (void)ref;
   ove = (XmVendorShellExtPartPtr) &(ov->vendor);
@@ -2108,7 +2107,7 @@ VendorExtSetValues(
 
   if (nve->button_font_list != ove->button_font_list)
     {
-      XmFontListFree(ove->button_font_list);
+      XmRenderTableFree(ove->button_font_list);
       defaultFont = nve->button_font_list;
       if (!defaultFont)
 	{
@@ -2117,12 +2116,12 @@ VendorExtSetValues(
 	    defaultFont = XmeGetDefaultRenderTable( (Widget) new_w,
 						XmBUTTON_FONTLIST);
 	}
-      nve->button_font_list = XmFontListCopy (defaultFont);
+      nve->button_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
     }
 
   if (nve->label_font_list != ove->label_font_list)
     {
-      XmFontListFree(ove->label_font_list);
+      XmRenderTableFree(ove->label_font_list);
       defaultFont = nve->label_font_list;
       if (!defaultFont)
 	{
@@ -2131,12 +2130,12 @@ VendorExtSetValues(
 	    defaultFont = XmeGetDefaultRenderTable( (Widget) new_w,
 						XmLABEL_FONTLIST);
 	}
-      nve->label_font_list = XmFontListCopy (defaultFont);
+      nve->label_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
     }
 
   if (nve->text_font_list != ove->text_font_list)
     {
-      XmFontListFree(ove->text_font_list);
+      XmRenderTableFree(ove->text_font_list);
       defaultFont = nve->text_font_list;
       if (!defaultFont)
 	{
@@ -2145,7 +2144,7 @@ VendorExtSetValues(
 	    defaultFont = XmeGetDefaultRenderTable( (Widget) new_w,
 						XmTEXT_FONTLIST);
 	}
-      nve->text_font_list = XmFontListCopy (defaultFont);
+      nve->text_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
     }
 
   if (nve->input_policy != ove->input_policy)
@@ -2987,12 +2986,9 @@ Destroy(
 		 XtFree(ve->vendor.input_method_string);
 	     if (ve->vendor.preedit_type_string)
 		 XtFree(ve->vendor.preedit_type_string);
-	     if (ve->vendor.button_font_list)
-		 XmFontListFree(ve->vendor.button_font_list);
-	     if (ve->vendor.label_font_list)
-		 XmFontListFree(ve->vendor.label_font_list);
-	     if (ve->vendor.text_font_list)
-		 XmFontListFree(ve->vendor.text_font_list);
+		 XmRenderTableFree(ve->vendor.button_font_list);
+		 XmRenderTableFree(ve->vendor.label_font_list);
+		 XmRenderTableFree(ve->vendor.text_font_list);
 	     if (ve->vendor.title)
 		 XmStringFree(ve->vendor.title);
 	     if (ve->vendor.icon_name && ve->vendor.icon_name != ve->vendor.title)
@@ -3058,10 +3054,7 @@ static void Redisplay(Widget wid, XEvent *event, Region region)
  * Trait method for specify render table
  *
  **************************************************************/
-static XmFontList
-GetTable(
-	  Widget wid,
-	  XtEnum type)
+static XmRenderTable GetTable(Widget wid, XtEnum type)
 {
     XmWidgetExtData   extData;
     XmVendorShellExtObject ve;

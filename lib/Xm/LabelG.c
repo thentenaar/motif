@@ -259,7 +259,7 @@ static XtResource resources[] =
 
     {
         XmNfontList, XmCFontList, XmRFontList,
-        sizeof(XmFontList), XtOffsetOf(XmLabelGadgetRec, label.font),
+        sizeof(XmRenderTable), XtOffsetOf(XmLabelGadgetRec, label.font),
         XmRCallProc, (XtPointer)CheckSetRenderTable
     },
 
@@ -1771,7 +1771,7 @@ Cardinal *num_args)
         /* CR 2990:  Let subclasses choose their own default font. */
         LabG_Font(new_w) = XmeGetDefaultRenderTable (new_w, XmLABEL_FONTLIST);
     }
-    LabG_Font(new_w) = XmFontListCopy(LabG_Font(new_w));
+    LabG_Font(new_w) = XmRenderTableCopy(LabG_Font(new_w), NULL, 0);
 
     menuSTrait = (XmMenuSystemTrait)
         XmeTraitGet((XtPointer) XtClass((Widget) XtParent(new_w)), XmQTmenuSystem);
@@ -2135,8 +2135,7 @@ Destroy(Widget w)
     if (LabG__acceleratorText(w) != NULL)
         XmStringFree (LabG__acceleratorText(w));
     XtFree (LabG_Accelerator(w));
-    if (LabG_Font(w)  != NULL)
-        XmFontListFree (LabG_Font(w));
+    XmRenderTableFree(LabG_Font(w));
     XtFree (LabG_MnemonicCharset (w));
 
     XtFree ((char*) ((XmLabelGadget)w)->label.baselines);
@@ -2661,7 +2660,7 @@ Cardinal *num_args)                               /* unused */
             LabG_Font(new_w) =
                 XmeGetDefaultRenderTable((Widget) new_w, XmLABEL_FONTLIST);
         }
-        LabG_Font(new_w) = XmFontListCopy (LabG_Font(new_w));
+        LabG_Font(new_w) = XmRenderTableCopy(LabG_Font(new_w), NULL, 0);
     }
 
     /*  Reinitialize the interesting input types.  */
@@ -2921,7 +2920,7 @@ Cardinal *num_args)                               /* unused */
         menuSTrait->updateHistory(XtParent(new_w), (Widget) new_w, True);
 
     if (CleanupFontFlag)
-        XmFontListFree(LabG_Font(current));
+        XmRenderTableFree(LabG_Font(current));
 
     return flag;
 }

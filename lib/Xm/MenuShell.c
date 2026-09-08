@@ -170,8 +170,7 @@ static void _XmMenuPopdownAction(
                         XEvent *event,
                         String *params,
                         Cardinal *num_params) ;
-static XmFontList GetTable(Widget wid,
-			   XtEnum type);
+static XmRenderTable GetTable(Widget wid, XtEnum type);
 static void CheckSetRenderTables(Widget wid,
 				int offset,
 				XrmValue *value);
@@ -195,7 +194,7 @@ static XtResource resources[] =
    {     XmNdefaultFontList,
          XmCDefaultFontList,
          XmRFontList,
-         sizeof(XmFontList),
+         sizeof(XmRenderTable),
          XtOffsetOf( struct _XmMenuShellRec, menu_shell.default_font_list),
          XmRString,
          (XtPointer) NULL
@@ -204,7 +203,7 @@ static XtResource resources[] =
    {      XmNlabelFontList,
           XmCLabelFontList,
           XmRLabelFontList,
-          sizeof(XmFontList),
+          sizeof(XmRenderTable),
           XtOffsetOf( struct _XmMenuShellRec, menu_shell.label_font_list),
           XmRCallProc,
           (XtPointer) CheckSetRenderTables
@@ -213,7 +212,7 @@ static XtResource resources[] =
    {      XmNbuttonFontList,
           XmCButtonFontList,
           XmRButtonFontList,
-          sizeof(XmFontList),
+          sizeof(XmRenderTable),
           XtOffsetOf( struct _XmMenuShellRec, menu_shell.button_font_list),
           XmRCallProc,
           (XtPointer) CheckSetRenderTables
@@ -608,7 +607,7 @@ Initialize(
         ArgList args,
         Cardinal *num_args )
 {
-    XmFontList defaultFont;
+    XmRenderTable defaultFont;
     XmMenuShellWidget ms = (XmMenuShellWidget) new_w;
 
     new_w->core.background_pixmap = None;
@@ -639,12 +638,10 @@ Initialize(
 	/* backward compatibility */
 	defaultFont =  ms->menu_shell.default_font_list;
 
-	if ( !defaultFont )
-	    defaultFont = XmeGetDefaultRenderTable( (Widget) ms,
-					    XmBUTTON_FONTLIST);
+	if (!defaultFont)
+	    defaultFont = XmeGetDefaultRenderTable((Widget)ms, XmBUTTON_FONTLIST);
     }
-
-    ms->menu_shell.button_font_list = XmFontListCopy (defaultFont);
+    ms->menu_shell.button_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 
     defaultFont =  ms->menu_shell.label_font_list;
 
@@ -657,11 +654,11 @@ Initialize(
 						XmLABEL_FONTLIST);
     }
 
-    ms->menu_shell.label_font_list = XmFontListCopy (defaultFont);
+    ms->menu_shell.label_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 
     if(ms->menu_shell.default_font_list != NULL)
         ms->menu_shell.default_font_list =
-            XmFontListCopy(ms->menu_shell.default_font_list);
+            XmRenderTableCopy(ms->menu_shell.default_font_list, NULL, 0);
 
     _XmSetSwallowEventHandler((Widget) ms, True);
 
@@ -710,7 +707,7 @@ SetValues(
 {
    XmMenuShellWidget new_w = (XmMenuShellWidget) nw ;
    XmMenuShellWidget old_w = (XmMenuShellWidget) cw ;
-	XmFontList defaultFont;
+   XmRenderTable defaultFont;
 
    /* CR 7124: XmNlayoutDirection is a CG resource. */
    if (old_w->menu_shell.layout_direction !=
@@ -723,7 +720,7 @@ SetValues(
 	if (new_w->menu_shell.button_font_list !=
 		old_w->menu_shell.button_font_list)
 	{
-		XmFontListFree(old_w->menu_shell.button_font_list);
+		XmRenderTableFree(old_w->menu_shell.button_font_list);
 		defaultFont = new_w->menu_shell.button_font_list;
 		if (!defaultFont)
 			{
@@ -732,13 +729,13 @@ SetValues(
 			   defaultFont = XmeGetDefaultRenderTable( (Widget) new_w,
                                             XmBUTTON_FONTLIST);
 			}
-	new_w->menu_shell.button_font_list = XmFontListCopy (defaultFont);
+	new_w->menu_shell.button_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 	}
 
 	if (new_w->menu_shell.label_font_list !=
 		old_w->menu_shell.label_font_list)
 	{
-		XmFontListFree(old_w->menu_shell.label_font_list);
+		XmRenderTableFree(old_w->menu_shell.label_font_list);
 		defaultFont = new_w->menu_shell.label_font_list;
 		if (!defaultFont)
 			{
@@ -747,7 +744,7 @@ SetValues(
 			   defaultFont = XmeGetDefaultRenderTable( (Widget) new_w,
                                             XmLABEL_FONTLIST);
 			}
-	new_w->menu_shell.label_font_list = XmFontListCopy (defaultFont);
+	new_w->menu_shell.label_font_list = XmRenderTableCopy(defaultFont, NULL, 0);
 	}
 
    new_w->shell.allow_shell_resize = TRUE;
@@ -2174,10 +2171,7 @@ CheckSetRenderTables(Widget wid,
  * Trait method for specify render table
  *
  **************************************************************/
-static XmFontList
-GetTable(
-	  Widget wid,
-	  XtEnum type)
+static XmRenderTable GetTable(Widget wid, XtEnum type)
 {
     XmMenuShellWidget menu = (XmMenuShellWidget) wid ;
 
@@ -2187,10 +2181,8 @@ GetTable(
     case XmTEXT_RENDER_TABLE : return menu->menu_shell.default_font_list ;
     }
 
-    return NULL ;
+    return NULL;
 }
-
-
 
 /*
  * Clear traversal in the associated menu hierarchy
@@ -2254,20 +2246,13 @@ XmCreateMenuShell(
    return (XtCreatePopupShell (name, xmMenuShellWidgetClass, parent, al, ac));
 }
 
-static void
-Destroy(
-        Widget wid )
+static void Destroy(Widget wid)
 {
     XmMenuShellWidget ms = (XmMenuShellWidget) wid ;
     _XmDestroyFocusData(ms->menu_shell.focus_data);
-    if (ms->menu_shell.default_font_list != NULL)
-       XmFontListFree (ms->menu_shell.default_font_list);
-
-    if (ms->menu_shell.button_font_list != NULL)
-       XmFontListFree (ms->menu_shell.button_font_list);
-
-    if (ms->menu_shell.label_font_list != NULL)
-       XmFontListFree (ms->menu_shell.label_font_list);
+    XmRenderTableFree(ms->menu_shell.default_font_list);
+    XmRenderTableFree(ms->menu_shell.button_font_list);
+    XmRenderTableFree(ms->menu_shell.label_font_list);
 
     /* Clear pointers for renderTable XmRCallProc */
     check_set_save = NULL;

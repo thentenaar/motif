@@ -138,8 +138,7 @@ static void GetDialogTitle(
                         XtArgVal *value) ;
 static Widget GetBBWithDB(
                         Widget wid) ;
-static XmFontList GetTable(Widget wid,
-			   XtEnum type);
+static XmRenderTable GetTable(Widget wid, XtEnum type);
 static void CallMapUnmap(Widget wid,
 			 Boolean map_unmap) ;
 static void BulletinBoardSetDefaultShadow(
@@ -256,19 +255,19 @@ static XtResource resources[] =
 		XmRImmediate, 0
 	},
 	{	XmNbuttonFontList,
-		XmCButtonFontList, XmRButtonFontList, sizeof (XmFontList),
+		XmCButtonFontList, XmRButtonFontList, sizeof(XmRenderTable),
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.button_font_list),
 		XmRCallProc, (XtPointer) CheckSetRenderTables
 	},
 
 	{	XmNlabelFontList,
-		XmCLabelFontList, XmRLabelFontList, sizeof (XmFontList),
+		XmCLabelFontList, XmRLabelFontList, sizeof(XmRenderTable),
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.label_font_list),
 		XmRCallProc, (XtPointer) CheckSetRenderTables
 	},
 
 	{	XmNtextFontList,
-		XmCTextFontList, XmRTextFontList, sizeof (XmFontList),
+		XmCTextFontList, XmRTextFontList, sizeof(XmRenderTable),
 		XtOffsetOf( struct _XmBulletinBoardRec, bulletin_board.text_font_list),
 		XmRCallProc, (XtPointer) CheckSetRenderTables
 	},
@@ -500,7 +499,7 @@ Initialize(
     Cardinal       ac ;
             int             mwm_functions ;
             char *          text_value ;
-            XmFontList      defaultFL ;
+            XmRenderTable   defaultFL ;
             int             mwmStyle ;
             Widget          ancestor ;
             XmWidgetExtData extData ;
@@ -520,19 +519,19 @@ Initialize(
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmBUTTON_FONTLIST) ;
         }
-    BB_ButtonFontList( new_w) = XmFontListCopy( defaultFL) ;
+    BB_ButtonFontList(new_w) = XmRenderTableCopy(defaultFL, NULL, 0);
 
     defaultFL = BB_LabelFontList( new_w) ;
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmLABEL_FONTLIST) ;
         }
-    BB_LabelFontList( new_w) = XmFontListCopy( defaultFL) ;
+    BB_LabelFontList(new_w) = XmRenderTableCopy(defaultFL, NULL, 0) ;
 
     defaultFL = BB_TextFontList( new_w) ;
     if(    !defaultFL    )
     {   defaultFL = XmeGetDefaultRenderTable( (Widget) new_w, XmTEXT_FONTLIST) ;
         }
-    BB_TextFontList( new_w) = XmFontListCopy( defaultFL) ;
+    BB_TextFontList(new_w) = XmRenderTableCopy(defaultFL, NULL, 0);
 
     if(    (request->manager.shadow_thickness == XmINVALID_DIMENSION)
        && XtIsShell( XtParent( request))    ){
@@ -743,13 +742,13 @@ Destroy(
     /*	Free fontlists.
     */
     if(    bb->bulletin_board.button_font_list    )
-    {   XmFontListFree( bb->bulletin_board.button_font_list) ;
+    {   XmRenderTableFree(bb->bulletin_board.button_font_list);
         }
     if(    bb->bulletin_board.label_font_list    )
-    {   XmFontListFree( bb->bulletin_board.label_font_list) ;
+    {   XmRenderTableFree(bb->bulletin_board.label_font_list);
         }
     if(    bb->bulletin_board.text_font_list    )
-    {   XmFontListFree( bb->bulletin_board.text_font_list) ;
+    {   XmRenderTableFree(bb->bulletin_board.text_font_list);
         }
 
     bbClass = (XmBulletinBoardWidgetClass) bb->core.widget_class ;
@@ -930,43 +929,43 @@ SetValues(
     if(    request->bulletin_board.button_font_list
                                != current->bulletin_board.button_font_list    )
     {   if(    current->bulletin_board.button_font_list    )
-        {   XmFontListFree( current->bulletin_board.button_font_list) ;
+        {   XmRenderTableFree(current->bulletin_board.button_font_list);
             }
         if(    new_w->bulletin_board.button_font_list    )
-        {   new_w->bulletin_board.button_font_list = XmFontListCopy(
-                                    request->bulletin_board.button_font_list) ;
+        {   new_w->bulletin_board.button_font_list = XmRenderTableCopy(
+                                    request->bulletin_board.button_font_list, NULL, 0);
             }
         if(    !new_w->bulletin_board.button_font_list    )
-        {   new_w->bulletin_board.button_font_list = XmFontListCopy(
-                     XmeGetDefaultRenderTable( (Widget) new_w, XmBUTTON_FONTLIST)) ;
+        {   new_w->bulletin_board.button_font_list = XmRenderTableCopy(
+                     XmeGetDefaultRenderTable((Widget)new_w, XmBUTTON_FONTLIST), NULL, 0);
             }
         }
     if(    request->bulletin_board.label_font_list
                                 != current->bulletin_board.label_font_list    )
     {   if(    current->bulletin_board.label_font_list    )
-        {   XmFontListFree( current->bulletin_board.label_font_list) ;
+        {   XmRenderTableFree(current->bulletin_board.label_font_list);
             }
         if(    new_w->bulletin_board.label_font_list    )
-        {   new_w->bulletin_board.label_font_list = XmFontListCopy(
-                                     request->bulletin_board.label_font_list) ;
+        {   new_w->bulletin_board.label_font_list = XmRenderTableCopy(
+                                     request->bulletin_board.label_font_list, NULL, 0);
             }
         if(    !new_w->bulletin_board.label_font_list    )
-        {   new_w->bulletin_board.label_font_list = XmFontListCopy(
-                      XmeGetDefaultRenderTable( (Widget) new_w, XmLABEL_FONTLIST)) ;
+        {   new_w->bulletin_board.label_font_list = XmRenderTableCopy(
+                      XmeGetDefaultRenderTable((Widget)new_w, XmLABEL_FONTLIST), NULL, 0);
             }
         }
     if(    request->bulletin_board.text_font_list
                                  != current->bulletin_board.text_font_list    )
     {   if(    current->bulletin_board.text_font_list    )
-        {   XmFontListFree( current->bulletin_board.text_font_list) ;
+        {   XmRenderTableFree(current->bulletin_board.text_font_list);
             }
         if(    new_w->bulletin_board.text_font_list    )
-        {   new_w->bulletin_board.text_font_list = XmFontListCopy(
-                                      request->bulletin_board.text_font_list) ;
+        {   new_w->bulletin_board.text_font_list = XmRenderTableCopy(
+                                      request->bulletin_board.text_font_list, NULL, 0);
             }
         if(    !new_w->bulletin_board.text_font_list    )
-        {   new_w->bulletin_board.text_font_list = XmFontListCopy(
-                       XmeGetDefaultRenderTable( (Widget) new_w, XmTEXT_FONTLIST)) ;
+        {   new_w->bulletin_board.text_font_list = XmRenderTableCopy(
+                       XmeGetDefaultRenderTable((Widget)new_w, XmTEXT_FONTLIST), NULL, 0);
             }
         }
     if(    BB_DefaultButton( new_w) != BB_DefaultButton( current)    )
@@ -2162,10 +2161,7 @@ CheckSetRenderTables(Widget wid,
  * Trait method for specify render table
  *
  **************************************************************/
-static XmFontList
-GetTable(
-	 Widget wid,
-	 XtEnum type)
+static XmRenderTable GetTable(Widget wid, XtEnum type)
 {
     XmBulletinBoardWidget bb = (XmBulletinBoardWidget) wid ;
 
@@ -2177,8 +2173,6 @@ GetTable(
 
     return NULL ;
 }
-
-
 
 
 /****************************************************************

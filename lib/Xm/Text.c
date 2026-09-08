@@ -2942,7 +2942,7 @@ _XmTextSetEditable(Widget widget,
 				&xmim_point.x, &xmim_point.y);
     (void)_XmTextGetDisplayRect((Widget)tw, &xmim_area);
     n = 0;
-    XtSetArg(args[n], XmNfontList, o_data->fontlist); n++;
+    XtSetArg(args[n], XmNrenderTable, o_data->fontlist); n++;
     XtSetArg(args[n], XmNbackground, widget->core.background_pixel); n++;
     XtSetArg(args[n], XmNforeground, tw->primitive.foreground); n++;
     XtSetArg(args[n], XmNbackgroundPixmap,

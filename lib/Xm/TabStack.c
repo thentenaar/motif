@@ -380,7 +380,7 @@ static XtResource resources[] =
 
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof (XmFontList), XtOffsetOf(XmTabStackRec, tab_stack.font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmTabStackRec, tab_stack.font_list),
     XmRCallProc, (XtPointer) CheckSetRenderTable
   },
 
@@ -758,7 +758,7 @@ static void Initialize(Widget request, Widget set, ArgList arg_list, Cardinal *a
     {
 	XmTabStack_font_list(ts) = XmeGetDefaultRenderTable(set, XmLABEL_FONTLIST);
     }
-    XmTabStack_font_list(ts) = XmFontListCopy(XmTabStack_font_list(ts));
+    XmTabStack_font_list(ts) = XmRenderTableCopy(XmTabStack_font_list(ts), NULL, 0);
     XmTabStack__gc(ts) = NULL;
 
     /*
@@ -1002,7 +1002,7 @@ static void Destroy(Widget widget)
 	XmTabbedStackListFree(XmTabStack__tab_list(tab));
     }
 
-    XmFontListFree(XmTabStack_font_list(tab));
+    XmRenderTableFree(XmTabStack_font_list(tab));
 
     if( XmTabStack__gc(tab) != NULL )
     {
@@ -1316,12 +1316,12 @@ SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 
     if( cfield(font_list) != sfield(font_list) )
     {
-	XmFontListFree(cfield(font_list));
+	XmRenderTableFree(cfield(font_list));
 	if( sfield(font_list) == NULL )
 	{
 	    sfield(font_list) = XmeGetDefaultRenderTable(set, XmLABEL_FONTLIST);
 	}
-	sfield(font_list) = XmFontListCopy(sfield(font_list));
+	sfield(font_list) = XmRenderTableCopy(sfield(font_list), NULL, 0);
     }
 
     if( cfield(tab_side) != sfield(tab_side) ||

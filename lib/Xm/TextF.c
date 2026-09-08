@@ -911,7 +911,7 @@ static XtResource resources[] =
   },
 
   {
-    XmNfontList, XmCFontList, XmRFontList, sizeof(XmFontList),
+    XmNfontList, XmCFontList, XmRFontList, sizeof(XmRenderTable),
     XtOffsetOf(struct _XmTextFieldRec, text.font_list),
     XmRCallProc, (XtPointer)CheckSetRenderTable
   },
@@ -5803,7 +5803,7 @@ InitializeTextStruct(XmTextFieldWidget tf)
     GetXYFromPos(tf, TextF_CursorPosition(tf), &xmim_point.x, &xmim_point.y);
     (void)TextFieldGetDisplayRect((Widget)tf, &xmim_area);
     n = 0;
-    XtSetArg(args[n], XmNfontList, TextF_FontList(tf)); n++;
+    XtSetArg(args[n], XmNrenderTable, TextF_FontList(tf)); n++;
     XtSetArg(args[n], XmNbackground, tf->core.background_pixel); n++;
     XtSetArg(args[n], XmNforeground, tf->primitive.foreground); n++;
     XtSetArg(args[n], XmNbackgroundPixmap,tf->core.background_pixmap);n++;
@@ -6385,7 +6385,7 @@ Destroy(Widget wid)
 
   XtFree((char *)tf->text.highlight.list);
 
-  XmFontListFree((XmFontList)TextF_FontList(tf));
+  XmRenderTableFree(TextF_FontList(tf));
 
   if (tf->text.add_mode_cursor != XmUNSPECIFIED_PIXMAP)
     (void) XmDestroyPixmap(XtScreen(tf), tf->text.add_mode_cursor);
@@ -6662,7 +6662,7 @@ SetValues(Widget old,
       TextF_FontList(new_tf) = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
     TextF_FontList(new_tf) = XmRenderTableCopy(TextF_FontList(new_tf), NULL, 0);
     LoadFontMetrics(new_tf);
-    XtSetArg(im_args[n], XmNfontList, TextF_FontList(new_tf)); n++;
+    XtSetArg(im_args[n], XmNrenderTable, TextF_FontList(new_tf)); n++;
     redisplay = True;
   }
 
@@ -6867,7 +6867,7 @@ SetValues(Widget old,
 	   TextF_FontAscent(new_tf) + TextF_FontDescent(new_tf)); n++;
   XmImSetValues((Widget)new_tf, im_args, n);
 
-  if (new_font) XmFontListFree((XmFontList)TextF_FontList(old_tf));
+  if (new_font) XmRenderTableFree(TextF_FontList(old_tf));
 
   if (!redisplay) redisplay = new_tf->text.redisplay;
 
@@ -7961,7 +7961,7 @@ XmTextFieldSetEditable(Widget w,
 		 &xmim_point.y);
     (void)TextFieldGetDisplayRect((Widget)tf, &xmim_area);
     n = 0;
-    XtSetArg(args[n], XmNfontList, TextF_FontList(tf)); n++;
+    XtSetArg(args[n], XmNrenderTable, TextF_FontList(tf)); n++;
     XtSetArg(args[n], XmNbackground, tf->core.background_pixel); n++;
     XtSetArg(args[n], XmNforeground, tf->primitive.foreground); n++;
     XtSetArg(args[n], XmNbackgroundPixmap,tf->core.background_pixmap);n++;

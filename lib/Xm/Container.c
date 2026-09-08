@@ -1201,6 +1201,7 @@ Initialize(
     Arg	wargs[10];
     Atom	targets[1];
     XmScrollFrameTrait	scrollFrameTrait;
+    XmRenderTable defaultFont = NULL;
 
     /*
      * Verify enumerated resources.
@@ -1285,14 +1286,12 @@ Initialize(
      */
     if (ncw->container.render_table == NULL)
 	{
-	    XmFontList	defaultFont = NULL;
-
 	    defaultFont = XmeGetDefaultRenderTable(nw,XmLABEL_FONTLIST);
-	    ncw->container.render_table = XmFontListCopy(defaultFont);
+	    ncw->container.render_table = XmRenderTableCopy(defaultFont, NULL, 0);
 	}
     else
 	ncw->container.render_table =
-	    XmFontListCopy(ncw->container.render_table);
+	    XmRenderTableCopy(ncw->container.render_table, NULL, 0);
 
     /*
      * Copy XmTablist if set, otherwise, keep track that it's dynamic.
@@ -1445,7 +1444,7 @@ Destroy(
     XmScrollFrameTrait	scrollFrameTrait = (XmScrollFrameTrait)
 	XmeTraitGet((XtPointer)XtClass(XtParent(wid)),XmQTscrollFrame);
 
-    XmFontListFree(cw->container.render_table);
+    XmRenderTableFree(cw->container.render_table);
 
 
     XtReleaseGC(wid,cw->container.normalGC);
@@ -1609,6 +1608,7 @@ SetValues(
     XmContainerConstraint c;
     XPoint 		snap_point;
     int			i;
+    XmRenderTable defaultFont = NULL;
 
     ncw->container.self = True;
 
@@ -1701,18 +1701,13 @@ SetValues(
 	}
     if (ncw->container.render_table == NULL)
 	{
-	    XmFontList	defaultFont = NULL;
-
 	    defaultFont = XmeGetDefaultRenderTable(nw,XmLABEL_FONTLIST);
-	    ncw->container.render_table = XmFontListCopy(defaultFont);
+	    ncw->container.render_table = XmRenderTableCopy(defaultFont, NULL, 0);
 	}
     else
 	ncw->container.render_table =
-	    XmFontListCopy(ncw->container.render_table);
-
-    if (ccw->container.render_table)
-        XmRenderTableFree(ccw->container.render_table);
-
+	    XmRenderTableCopy(ncw->container.render_table, NULL, 0);
+    XmRenderTableFree(ccw->container.render_table);
 
     /*
      * Check if we'll need layout.

@@ -254,7 +254,7 @@ static XtResource resources[] =
 
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmLabelRec, label.font),
+    sizeof(XmRenderTable), XtOffsetOf(XmLabelRec, label.font),
     XmRCallProc, (XtPointer)CheckSetRenderTable
   },
 
@@ -1118,7 +1118,7 @@ Initialize(
       /* CR 2990: Let subclasses choose their own default font. */
       lw->label.font = XmeGetDefaultRenderTable (new_w, XmLABEL_FONTLIST);
     }
-  lw->label.font = XmFontListCopy(lw->label.font);
+  lw->label.font = XmRenderTableCopy(lw->label.font, NULL, 0);
 
   menuSTrait = (XmMenuSystemTrait)
     XmeTraitGet((XtPointer) XtClass(XtParent(new_w)), XmQTmenuSystem);
@@ -1326,15 +1326,13 @@ Destroy(
   if (lw->label.accelerator != NULL)
     XtFree (lw->label.accelerator);
 
-  if (lw->label.font != NULL)
-    XmFontListFree (lw->label.font);
-
   if (lw->label.mnemonicCharset != NULL)
     XtFree (lw->label.mnemonicCharset);
 
   if (lw->label.baselines != NULL)
     XtFree ((char*) lw->label.baselines);
 
+  XmRenderTableFree(lw->label.font);
   XtReleaseGC ((Widget) lw, lw->label.normal_GC);
   XtReleaseGC ((Widget) lw, lw->label.insensitive_GC);
   XtReleaseGC ((Widget) lw, lw->label.shadow_GC);
@@ -1817,7 +1815,7 @@ SetValues(Widget cw,
 	  newlp->font =
 	    XmeGetDefaultRenderTable((Widget) new_w, XmLABEL_FONTLIST);
 	}
-      newlp->font = XmFontListCopy (newlp->font);
+      newlp->font = XmRenderTableCopy(newlp->font, NULL, 0);
 
     }
 
@@ -2077,7 +2075,7 @@ SetValues(Widget cw,
     menuSTrait->updateHistory(XtParent(new_w), (Widget) new_w, True);
 
   if (CleanupFontFlag)
-    if (curlp->font) XmFontListFree(curlp->font);
+    XmRenderTableFree(curlp->font);
 
   return flag;
 }

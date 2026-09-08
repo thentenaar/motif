@@ -322,7 +322,7 @@ static XtResource resources[] =
 
    {
        XmNfontList, XmCFontList, XmRFontList,
-       sizeof(XmFontList), XtOffsetOf(XmScaleRec, scale.font_list),
+       sizeof(XmRenderTable), XtOffsetOf(XmScaleRec, scale.font_list),
        XmRCallProc, (XtPointer)CheckSetRenderTable
    },
 
@@ -873,7 +873,7 @@ CreateScaleTitle(
 	   the label will use its own name as XmString */
 	n = 0;
 	XtSetArg (args[n], XmNlabelString, new_w->scale.title);	n++;
-	XtSetArg (args[n], XmNfontList, new_w->scale.font_list);	n++;
+	XtSetArg (args[n], XmNrenderTable, new_w->scale.font_list);	n++;
 
 	title = (XmLabelGadget) XmCreateLabelGadget( (Widget) new_w,
 						    "Title",
@@ -998,7 +998,7 @@ Initialize(
 	if (!new_w->scale.font_list) {
 	    new_w->scale.font_list =
 		XmeGetDefaultRenderTable((Widget)new_w, XmLABEL_FONTLIST);
-		new_w->scale.font_list = XmFontListCopy(new_w->scale.font_list);
+		new_w->scale.font_list = XmRenderTableCopy(new_w->scale.font_list, NULL, 0);
 	}
 
     CreateScaleTitle(new_w);
@@ -1207,15 +1207,13 @@ HandleTitle(
 	/* cur title is either NULL or (-1), as set in CreateScaleTitle,
 	   so diff are always pertinent */
 	/* new title can be NULL or a valid xmstring */
-	if (new_w->scale.title != cur->scale.title) {
-	    XtSetArg (args[n], XmNlabelString, new_w->scale.title);	n++;
-	}
+	if (new_w->scale.title != cur->scale.title)
+	    XtSetArg (args[n], XmNlabelString, new_w->scale.title); n++;
 
-	if (new_w->scale.font_list != cur->scale.font_list) {
-	    XtSetArg (args[n], XmNfontList, new_w->scale.font_list);	n++;
-	}
+	if (new_w->scale.font_list != cur->scale.font_list)
+	    XtSetArg(args[n], XmNrenderTable, new_w->scale.font_list); n++;
 
-	if (n) XtSetValues (new_w->composite.children[0], args, n);
+	if (n) XtSetValues(new_w->composite.children[0], args, n);
 
 	if (new_w->scale.title != cur->scale.title) {
 	    if (new_w->scale.title != NULL) {
@@ -1337,7 +1335,7 @@ SetValues(
 	if (!new_w->scale.font_list) {
 	    new_w->scale.font_list =
 		XmeGetDefaultRenderTable((Widget)new_w, XmLABEL_FONTLIST);
-		new_w->scale.font_list = XmFontListCopy(new_w->scale.font_list);
+		new_w->scale.font_list = XmRenderTableCopy(new_w->scale.font_list, NULL, 0);
 	    XtReleaseGC((Widget)new_w, new_w->scale.foreground_GC);
 	    GetForegroundGC(new_w);
 	    redisplay = True;
@@ -1469,7 +1467,7 @@ static void Destroy(Widget w)
 {
 	XmScaleWidget sw = (XmScaleWidget)w;
 	XtReleaseGC(w, sw->scale.foreground_GC);
-	XmFontListFree(sw->scale.font_list);
+	XmRenderTableFree(sw->scale.font_list);
 	XmStringFree(sw->scale.min_str);
 	XmStringFree(sw->scale.max_str);
 	XmStringFree(sw->scale.value_str);

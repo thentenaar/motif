@@ -112,7 +112,7 @@ static void XmTabBoxTraversePrevious _ARGS((Widget, XEvent*, String*,
 static void XmTabBoxTraverseNext _ARGS((Widget, XEvent*, String*, Cardinal*));
 
 static void CalcTabSize _ARGS((XmTabBoxWidget, XmTabAttributes,
-			       XmTabOrientation, XmFontList, int, int, int,
+			       XmTabOrientation, XmRenderTable, int, int, int,
 			       int, int, int, Dimension*, Dimension*));
 
 static void CalcStackedGeometry _ARGS((XmTabBoxWidget, XRectangle*));
@@ -490,7 +490,7 @@ static XtResource resources[] =
 
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmTabBoxRec, tab_box.font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmTabBoxRec, tab_box.font_list),
     XmRCallProc, (XtPointer) CheckSetRenderTable
   },
 
@@ -733,7 +733,7 @@ Initialize(Widget request, Widget set, ArgList arg_list, Cardinal *arg_cnt)
 	XmTabBox_font_list(st) = XmeGetDefaultRenderTable((Widget) st,
 						      XmLABEL_FONTLIST);
     }
-    XmTabBox_font_list(st) = XmFontListCopy(XmTabBox_font_list(st));
+    XmTabBox_font_list(st) = XmRenderTableCopy(XmTabBox_font_list(st), NULL, 0);
 
 
     _XmFilterArgs(arg_list, *arg_cnt, xm_std_filter,
@@ -831,7 +831,7 @@ static void Destroy(Widget widget)
     XmTabBoxWidget tab = (XmTabBoxWidget) widget;
 
     XmTabbedStackListFree(XmTabBox_tab_list(tab));
-    XmFontListFree(XmTabBox_font_list(tab));
+    XmRenderTableFree(XmTabBox_font_list(tab));
     if( ValidPixmap(XmTabBox__bitmap(tab)) )
     {
 	XFreePixmap(XtDisplay(tab), XmTabBox__bitmap(tab));
@@ -1265,13 +1265,13 @@ SetValues(Widget current, Widget request, Widget set, ArgList arg_list,
 
     if( cfield(font_list) != sfield(font_list) )
     {
-	XmFontListFree(cfield(font_list));
-	cfield(font_list) = (XmFontList) NULL;
+	XmRenderTableFree(cfield(font_list));
+	cfield(font_list) = NULL;
 	if( sfield(font_list) == NULL )
 	{
 	    sfield(font_list) = XmeGetDefaultRenderTable(set, XmLABEL_FONTLIST);
 	}
-	sfield(font_list) == XmFontListCopy(sfield(font_list));
+	sfield(font_list) == XmRenderTableCopy(sfield(font_list), NULL, 0);
 	need_layout = True;
 	need_resize = True;
     }
@@ -2132,7 +2132,7 @@ XmTabBoxTraverseNext(Widget widget, XEvent *event, String *params,
 
 static void
 CalcTabSize(XmTabBoxWidget tab, XmTabAttributes info,
-	    XmTabOrientation orientation, XmFontList font_list,
+	    XmTabOrientation orientation, XmRenderTable font_list,
 	    int shadow_thickness, int highlight_thickness,
 	    int margin_width, int margin_height,
 	    int spacing, int corner_size,
@@ -3404,7 +3404,7 @@ DrawTab(XmTabBoxWidget tab, XmTabAttributes info, XiTabRect *geometry,
 {
     XmTabEdge        edge = XmTabBox_tab_edge(tab);
     Widget           canvas = XmTabBox__canvas(tab);
-    XmFontList       font_list = XmTabBox_font_list(tab);
+    XmRenderTable    font_list = XmTabBox_font_list(tab);
     Dimension        shadow_thickness = tab->manager.shadow_thickness,
                      margin_width = XmTabBox_tab_margin_width(tab),
                      margin_height = XmTabBox_tab_margin_width(tab),
@@ -4540,43 +4540,10 @@ XiRotateImage(XmTabBoxWidget tab, XImage *src, int degree)
 
 static void CalcCornerSize(XmTabBoxWidget tab)
 {
-    XmFontContext   fc;
-    XmFontListEntry entry;
-    XmFontType      font_type;
-    XtPointer       value;
-    int             tmp, size = 0;
+	int size;
 
-    XmFontListInitFontContext(&fc, XmTabBox_font_list(tab));
-
-    while((entry = XmFontListNextEntry(fc))) {
-	if (!(value = (XtPointer)XmFontListEntryGetFont(entry, &font_type)))
-		continue;
-
-	if( font_type == XmFONT_IS_FONT )
-	{
-	    tmp = ((XFontStruct *)value)->ascent + ((XFontStruct *)value)->descent;
-	    AssignMax(size, tmp);
-	}
-#if USE_XFT
-        else if (font_type == XmFONT_IS_XFT)
-	{
-	    tmp = ((XftFont*)value)->ascent + ((XftFont*)value)->descent;
-	    AssignMax(size, tmp);
-	}
-#endif
-	else
-	{
-	    XFontSetExtents *extents;
-
-	    extents = XExtentsOfFontSet((XFontSet) value);
-	    tmp = extents->max_logical_extent.height;
-	    AssignMax(size, tmp);
-	}
-    }
-    XmFontListFreeFontContext(fc);
-
-
-    XmTabBox__corner_size(tab) = size * XmTabBox_tab_corner_percent(tab)/ 100;
+	XmRenderTableGetDefaultFontExtents(XmTabBox_font_list(tab), &size, NULL, NULL);
+	XmTabBox__corner_size(tab) = size * XmTabBox_tab_corner_percent(tab) / 100;
 }
 
 static int XiXYtoTab(XmTabBoxWidget tab, int x, int y)
@@ -5103,7 +5070,7 @@ DrawLeftToRightTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		   int label_height, XRectangle *clip)
 {
     XRectangle draw;
-    XmFontList font_list = XmTabBox_font_list(tab);
+    XmRenderTable font_list = XmTabBox_font_list(tab);
     int        x, y, tmp, spacing = XmTabBox_tab_label_spacing(tab);
     Boolean    sensitive;
 
@@ -5373,7 +5340,7 @@ DrawRightToLeftTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		   int label_height, XRectangle *clip, Boolean selected)
 {
     XRectangle draw;
-    XmFontList font_list = XmTabBox_font_list(tab);
+    XmRenderTable font_list = XmTabBox_font_list(tab);
     int        x, y, tmp, spacing = XmTabBox_tab_label_spacing(tab);
     XImage     *src_ximage, *dst_ximage;
     Pixmap     bitmap;
@@ -5921,7 +5888,7 @@ DrawVerticalTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 		Boolean selected)
 {
     XRectangle draw;
-    XmFontList font_list = XmTabBox_font_list(tab);
+    XmRenderTable font_list = XmTabBox_font_list(tab);
     int        x, y, tmp, spacing = XmTabBox_tab_label_spacing(tab);
     XImage     *src_ximage, *dst_ximage;
     Pixmap     bitmap;

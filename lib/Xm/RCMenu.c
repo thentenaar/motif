@@ -2570,7 +2570,7 @@ _XmRC_UpdateOptionMenuCBG(
 
 	 if (LabG_Font(lg) != LabG_Font(cbg))
 	 {
-            XtSetArg (al[ac], XmNfontList, LabG_Font(lg)); ac++;
+            XtSetArg (al[ac], XmNrenderTable, LabG_Font(lg)); ac++;
 	 }
       }
       else if (LabG_IsPixmap (lg))
@@ -2589,7 +2589,7 @@ _XmRC_UpdateOptionMenuCBG(
 
 	 if (LabG_Font(lg) != LabG_Font(cbg))
 	 {
-            XtSetArg (al[ac], XmNfontList, LabG_Font(lg)); ac++;
+            XtSetArg (al[ac], XmNrenderTable, LabG_Font(lg)); ac++;
 	 }
 	 pix = LabG_Pixmap(lg);
          XtSetArg (al[ac], XmNlabelPixmap, pix);      ac++;
@@ -2610,7 +2610,7 @@ _XmRC_UpdateOptionMenuCBG(
 
 	 if (lw->label.font != LabG_Font(cbg))
 	 {
-            XtSetArg (al[ac], XmNfontList, lw->label.font); ac++;
+            XtSetArg (al[ac], XmNrenderTable, lw->label.font); ac++;
 	 }
       }
       else if (Lab_IsPixmap (lw))
@@ -2629,7 +2629,7 @@ _XmRC_UpdateOptionMenuCBG(
 
 	 if (lw->label.font != LabG_Font(cbg))
 	 {
-            XtSetArg (al[ac], XmNfontList, lw->label.font); ac++;
+            XtSetArg (al[ac], XmNrenderTable, lw->label.font); ac++;
 	 }
 	 pix = lw->label.pixmap;
          XtSetArg (al[ac], XmNlabelPixmap, pix);      ac++;

@@ -159,7 +159,7 @@ static XtResource resources[] =
 
   {
     XmNdefaultEntryLabelFontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmBulletinBoardRec, bulletin_board.label_font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmBulletinBoardRec, bulletin_board.label_font_list),
     XmRCallProc, (XtPointer) CheckSetDefaultEntryLabelRenderTable
   },
 
@@ -237,7 +237,7 @@ static XtResource constraint_resources[] =
 
   {
     XmNentryLabelFontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmColumnConstraintRec, column.label_font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmColumnConstraintRec, column.label_font_list),
     XmRCallProc, (XtPointer) CheckSetEntryLabelRenderTable
   },
 
@@ -1110,7 +1110,7 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 	int    nargs;
 	char   buf[256];
 	Widget label;
-	XmFontList lfont;
+	XmRenderTable rt;
 
 	VerifyConstraints(request, NULL, new_w);
 
@@ -1128,10 +1128,10 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 
 	label_widget = True;
 
-	lfont = XmColumnC_label_font_list(new_w);
+	rt = XmColumnC_label_font_list(new_w);
 	bbpart = BBPart(XtParent(new_w));
-	if(lfont == NULL)
-	    lfont = bbpart->label_font_list;
+	if(!rt && bbpart)
+	    rt = bbpart->label_font_list;
 
 	nargs = 0;
 	XtSetArg(args[nargs], XmNmarginWidth,        0); nargs++;
@@ -1149,7 +1149,7 @@ ConstraintInitialize(Widget request, Widget new_w, ArgList arg_list,
 	XtSetArg(args[nargs],
 		 XmNlabelPixmap, XiC(new_w)->label_pixmap); nargs++;
 	XtSetArg(args[nargs], XmNalignment,   XiAlignment(new_w));     nargs++;
-	XtSetArg(args[nargs], XmNrenderTable,    lfont);          nargs++;
+	XtSetArg(args[nargs], XmNrenderTable,    rt);          nargs++;
 	XtSetArg(args[nargs], XmNrecomputeSize, True);                 nargs++;
 	XtSetArg(args[nargs], XmNforeground,  cw->manager.foreground); nargs++;
 	XtSetArg(args[nargs],
@@ -1195,6 +1195,7 @@ ConstraintSetValues(Widget current, Widget request, Widget new_w,
     XmColumnWidget         cw = (XmColumnWidget) XtParent(new_w);
     XmColumnConstraintPart *cc = XiC(current),
                            *sc = XiC(new_w);
+    XmRenderTable          rt;
     Boolean                relayout = False;
     Arg                    args[10];
     Cardinal               i = 0;
@@ -1215,10 +1216,9 @@ ConstraintSetValues(Widget current, Widget request, Widget new_w,
 
     if( cc->label_font_list != sc->label_font_list )
     {
-	XmFontList lfont = XmColumnC_label_font_list(new_w);
-	if(lfont == NULL)
-	    lfont = BBPart(XtParent(new_w))->label_font_list;
-	XtSetArg(args[i], XmNrenderTable, lfont); ++i;
+	if (!(rt = XmColumnC_label_font_list(new_w)))
+	    rt = BBPart(XtParent(new_w))->label_font_list;
+	XtSetArg(args[i], XmNrenderTable, rt); ++i;
     }
 
     if( cc->label_alignment != sc->label_alignment )

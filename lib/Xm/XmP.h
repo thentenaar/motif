@@ -1214,7 +1214,7 @@ extern void XmeQueryBestCursorSize(Widget w,
     /* Xm.c */
 extern void XmeWarning(Widget w, const char *message);
     /* ResConvert.c */
-extern XmFontList XmeGetDefaultRenderTable(
+extern XmRenderTable XmeGetDefaultRenderTable(
         Widget w,
         unsigned char fontListType );
 extern Boolean XmeNamesAreEqual(
@@ -1240,9 +1240,9 @@ extern XmStringComponentType XmeStringGetComponent(_XmStringContext context,
 						   Boolean	    copy_data,
 						   unsigned int    *length,
 						   XtPointer       *value);
-    /* XmFontList.c */
+    /* XmFontList.c (only used by CDE) */
 extern Boolean XmeRenderTableGetDefaultFont(
-			XmFontList fontlist,
+			XmRenderTable fontlist,
 			XFontStruct **font_struct ) ;
     /* GMUtils.c */
 extern XtGeometryResult XmeReplyToQueryGeometry(

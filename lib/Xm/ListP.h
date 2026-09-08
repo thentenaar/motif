@@ -77,7 +77,7 @@ typedef struct _XmListPart
   short             ItemSpacing;
   Dimension         margin_width;
   Dimension    	    margin_height;
-  XmFontList 	    font;
+  XmRenderTable	    font;
   XmString	   *items;
   int		    itemCount;
   XmString	   *selectedItems;

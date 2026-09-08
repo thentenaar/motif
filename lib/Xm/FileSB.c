@@ -1496,7 +1496,7 @@ ListFix(
     XmKidGeometry   dirListGeo ;
     Arg             argv[2] ;
     Cardinal        argc ;
-    XmFontList      listFonts ;
+    XmRenderTable   rt;
     FS_GeoExtension extension ;
     int             listLabelsOffset ;
     /****************/
@@ -1526,11 +1526,10 @@ ListFix(
             if(    FS_PathMode( geoSpec->composite) ==  XmPATH_MODE_FULL  )
               {
                 argc = 0 ;
-                XtSetArg( argv[argc], XmNfontList, &listFonts) ; ++argc ;
-                XtGetValues( (Widget) fileList, argv, argc) ;
+                XtSetArg(argv[argc], XmNrenderTable, &rt); ++argc;
+                XtGetValues((Widget) fileList, argv, argc);
 
-                listPathWidth = XmStringWidth( listFonts, FS_Directory(
-                                                         geoSpec->composite)) ;
+                listPathWidth = XmStringWidth(rt, FS_Directory(geoSpec->composite));
 
                 if(    !(FS_StateFlags( geoSpec->composite) & XmFS_NO_MATCH)    )
                 {
@@ -1717,7 +1716,7 @@ UpdateHorizPos(
   Dimension listPathWidth ;
   Arg argv[2] ;
   Cardinal argc ;
-  XmFontList listFonts ;
+  XmRenderTable rt;
   XmString dirString = FS_Directory( wid) ;
 
   if(    FS_PathMode( wid)  ==  XmPATH_MODE_RELATIVE   )
@@ -1730,9 +1729,9 @@ UpdateHorizPos(
       /* Move horizontal position so path does not show in file list.
        */
       argc = 0 ;
-      XtSetArg( argv[argc], XmNfontList, &listFonts) ; ++argc ;
-      XtGetValues( SB_List( wid), argv, argc) ;
-      listPathWidth = XmStringWidth( listFonts, dirString) ;
+      XtSetArg(argv[argc], XmNrenderTable, &rt); ++argc;
+      XtGetValues(SB_List( wid), argv, argc);
+      listPathWidth = XmStringWidth(rt, dirString);
       XmListSetHorizPos( SB_List( wid), listPathWidth) ;
     }
   /* Move horizontal scroll position of directory list as far to the
@@ -1740,10 +1739,10 @@ UpdateHorizPos(
    *   never hidden.
    */
   argc = 0 ;
-  XtSetArg( argv[argc], XmNfontList, &listFonts) ; ++argc ;
+  XtSetArg(argv[argc], XmNrenderTable, &rt); ++argc;
   XtGetValues( FS_DirList( wid), argv, argc) ;
 
-  listPathWidth = XmStringWidth( listFonts, dirString) ;
+  listPathWidth = XmStringWidth(rt, dirString);
   XmListSetHorizPos( FS_DirList( wid), listPathWidth) ;
 
   return ;

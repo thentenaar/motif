@@ -1281,11 +1281,11 @@ Initialize(
    XmDrawnButtonWidget req_w = (XmDrawnButtonWidget) rw ;
 
    /* CR 2990:  Use XmNbuttonFontList as the default font. */
-   if (req_w->label.font == NULL)
+   if (!req_w->label.font)
      {
-       XmFontListFree (new_w->label.font);
+       XmRenderTableFree(new_w->label.font);
        new_w->label.font =
-	 XmFontListCopy (XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST));
+	 XmRenderTableCopy(XmeGetDefaultRenderTable(nw, XmBUTTON_FONTLIST), NULL, 0);
      }
 
    new_w->drawnbutton.armed = FALSE;
@@ -1443,7 +1443,7 @@ SetValuesPrehook(
   XmDrawnButtonWidget bw = (XmDrawnButtonWidget) nw ;
 
   /* CR 2990: Use XmNbuttonFontList as the default font. */
-  if (bw->label.font == NULL)
+  if (!bw->label.font)
     bw->label.font = XmeGetDefaultRenderTable (nw, XmBUTTON_FONTLIST);
 
   return False;

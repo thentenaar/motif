@@ -575,7 +575,7 @@ static XtResource resources[] = {
   },
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmListRec, list.font),
+    sizeof(XmRenderTable), XtOffsetOf(XmListRec, list.font),
     XmRCallProc, (XtPointer)CheckSetRenderTable
   },
   {
@@ -1080,7 +1080,7 @@ Initialize(Widget request,
 
   if (lw->list.font == NULL)
     lw->list.font = XmeGetDefaultRenderTable ((Widget) lw,XmTEXT_FONTLIST);
-  lw->list.font = XmFontListCopy(lw->list.font);
+  lw->list.font = XmRenderTableCopy(lw->list.font, NULL, 0);
 
 
   /*
@@ -1209,7 +1209,7 @@ Initialize(Widget request,
       GetPreeditPosition(lw, &xmim_point);
       XmImVaSetValues((Widget) lw,
 		      XmNspotLocation, &xmim_point,
-		      XmNfontList, lw->list.font, NULL);
+		      XmNrenderTable, lw->list.font, NULL);
     }
 
   /*
@@ -1455,6 +1455,7 @@ SetValues(Widget old,
   Dimension height = 0;
   int i, j;
   XrmValue val;
+  XmRenderTable font;
 
   if (!XmRepTypeValidValue(XmRID_SELECTION_POLICY,
 			   newlw->list.SelectionPolicy, (Widget) newlw))
@@ -1788,19 +1789,15 @@ SetValues(Widget old,
       (newlw->core.background_pixel != oldlw->core.background_pixel) ||
       (newlw->list.font != oldlw->list.font))
     {
-      if (newlw->list.font == NULL)
-	{
-	  XmFontList font = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
-	  newlw->list.font = XmFontListCopy(font);
-	}
-      else if (newlw->list.font != oldlw->list.font)
-	{
-	  newlw->list.font = XmFontListCopy(newlw->list.font);
-	}
+      if (!newlw->list.font) {
+	  font = XmeGetDefaultRenderTable(new_w, XmTEXT_FONTLIST);
+	  newlw->list.font = XmRenderTableCopy(font, NULL, 0);
+      } else if (newlw->list.font != oldlw->list.font)
+	  newlw->list.font = XmRenderTableCopy(newlw->list.font, NULL, 0);
 
       if (newlw->list.font != oldlw->list.font)
 	{
-	  XmFontListFree(oldlw->list.font);
+	  XmRenderTableFree(oldlw->list.font);
 	  new_size = TRUE;
 	  ResetExtents(newlw, True);
 	  reset_max = FALSE;
@@ -1893,7 +1890,7 @@ SetValues(Widget old,
       if (newlw->list.font != oldlw->list.font ||
 	  oldlw->list.matchBehavior != XmQUICK_NAVIGATE)
 	XmImVaSetValues((Widget)newlw, XmNspotLocation, &xmim_point,
-			XmNfontList, newlw->list.font, NULL);
+			XmNrenderTable, newlw->list.font, NULL);
       else
 	XmImVaSetValues((Widget)newlw, XmNspotLocation, &xmim_point, NULL);
     }
@@ -1938,7 +1935,7 @@ Destroy(Widget wid)
 
   ClearSelectedList(lw);
   ClearSelectedPositions(lw);
-  XmFontListFree(lw->list.font);
+  XmRenderTableFree(lw->list.font);
 
   XmImUnregister(wid);
 }

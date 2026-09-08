@@ -130,7 +130,7 @@ static XtResource extResources[] =
     },
     {
 	XmNdefaultFontList,
-	XmCDefaultFontList, XmRFontList, sizeof (XmFontList),
+	XmCDefaultFontList, XmRFontList, sizeof (XmRenderTable),
 	Offset (default_font_list),
 	XmRImmediate, (XtPointer) NULL,
     },
@@ -142,19 +142,19 @@ static XtResource extResources[] =
     },
     {
         XmNbuttonFontList,
-        XmCButtonFontList, XmRButtonFontList, sizeof (XmFontList),
+        XmCButtonFontList, XmRButtonFontList, sizeof (XmRenderTable),
         Offset (button_font_list),
 	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNlabelFontList,
-        XmCLabelFontList, XmRLabelFontList, sizeof (XmFontList),
+        XmCLabelFontList, XmRLabelFontList, sizeof (XmRenderTable),
         Offset (label_font_list),
 	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },
     {
         XmNtextFontList,
-        XmCTextFontList, XmRTextFontList, sizeof (XmFontList),
+        XmCTextFontList, XmRTextFontList, sizeof (XmRenderTable),
         Offset (text_font_list),
 	XmRCallProc, (XtPointer)CheckSetRenderTables,
     },

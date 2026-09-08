@@ -234,7 +234,7 @@ static XtResource resources[] =
 
   {
     XmNfontList, XmCFontList, XmRFontList,
-    sizeof(XmFontList), XtOffsetOf(XmIconButtonRec, icon.font_list),
+    sizeof(XmRenderTable), XtOffsetOf(XmIconButtonRec, icon.font_list),
     XmRCallProc, (XtPointer)CheckSetRenderTable
   },
 
@@ -548,7 +548,7 @@ Initialize(Widget req, Widget set, ArgList args, Cardinal * num_args)
     }
 
     /* Make a local copy of the font list */
-    XmIconButton_font_list(iw) = XmFontListCopy( XmIconButton_font_list(iw));
+    XmIconButton_font_list(iw) = XmRenderTableCopy(XmIconButton_font_list(iw), NULL, 0);
 
     if ((req->core.width == 0) || (req->core.height == 0)) {
 	Dimension width, height;
@@ -792,14 +792,14 @@ SetValues(Widget current, Widget request, Widget set,
     if( XmIconButton_font_list(old_iw) != XmIconButton_font_list(set_iw) ) {
 	if( XmIconButton_font_list(old_iw)  != NULL )
 	{
-	    XmFontListFree (XmIconButton_font_list(old_iw));
+	    XmRenderTableFree(XmIconButton_font_list(old_iw));
 	}
 	if( XmIconButton_font_list(set_iw) == NULL )
 	{
 	    XmIconButton_font_list(set_iw) = XmeGetDefaultRenderTable(set,
 							   XmBUTTON_FONTLIST);
 	}
-	XmIconButton_font_list(set_iw) = XmFontListCopy(XmIconButton_font_list(set_iw));
+	XmIconButton_font_list(set_iw) = XmRenderTableCopy(XmIconButton_font_list(set_iw), NULL, 0);
 	recalc = redisplay = True;
     }
 
@@ -937,7 +937,7 @@ Destroy(Widget w)
 
     XtFree(XmIconButton_label(iw));
     XmStringFree(XmIconButton_label_string(iw));
-    if (XmIconButton_font_list(iw)  != NULL) XmFontListFree (XmIconButton_font_list(iw));
+    XmRenderTableFree(XmIconButton_font_list(iw));
     DestroyGCs(w);
 
     if (XmIconButton_unset_timer(w) != NO_TIMER) {
