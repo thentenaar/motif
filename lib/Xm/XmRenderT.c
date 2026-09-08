@@ -1834,7 +1834,7 @@ static void set_props_from_fontstruct(XmRendition rend, const XFontStruct *fs)
 static void set_props_from_font(XmRendition rend)
 {
 	XFontStruct **f_list;
-	char **mcset = NULL;
+	char **names = NULL;
 	struct __XmRenditionRec *r;
 
 	if (!(r = XmSharedPtrGet(rend)))
@@ -1844,10 +1844,8 @@ static void set_props_from_font(XmRendition rend)
 		set_props_from_fontstruct(rend, r->font);
 
 	if (r->fontType == XmFONT_IS_FONTSET && r->font) {
-		if (XFontsOfFontSet((XFontSet)r->font, &f_list, &mcset)) {
-			if (mcset) XFreeStringList(mcset);
+		if (XFontsOfFontSet((XFontSet)r->font, &f_list, &names))
 			set_props_from_fontstruct(rend, *f_list);
-		}
 	}
 
 #if USE_XFT
