@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.3
 */
@@ -2377,7 +2378,7 @@ ProcessWmWindowTitle (ClientData *pCD, Boolean firstTime)
     {
 	unsigned int boxdim = TitleBarHeight (pCD);
 	unsigned long decor = pCD->decor;
-	XmFontList  fontList;
+	XmRenderTable fontList;
 	int minWidth;
 
 	if (DECOUPLE_TITLE_APPEARANCE(pCD))

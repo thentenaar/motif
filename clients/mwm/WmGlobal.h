@@ -1,11 +1,4 @@
-#ifndef _WmGlobal_h
-#define _WmGlobal_h
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -26,7 +19,15 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
+#ifndef _WmGlobal_h
+#define _WmGlobal_h
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /*
  * Motif Release 1.2.4
 */
@@ -388,7 +389,7 @@ extern Pixel		FPselectcolor;
 #endif /* WSM */
 
 
-
+
 /*************************************<->*************************************
  *
  *  Miscellaneous utility window manager data structures ...
@@ -431,7 +432,7 @@ typedef struct _WmColorData
 typedef Atom WorkspaceID;
 #endif
 
-
+
 /*************************************<->*************************************
  *
  *  Event processing data structures ...
@@ -673,7 +674,7 @@ typedef struct _Gadget_Rectangle
 #define F_GROUP_GROUP		(1L << 3)
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  Workspace data structures ...
@@ -741,7 +742,7 @@ typedef struct _WsDtHelpData
 typedef struct _WsDtHelpData *PtrWsDtHelpData;
 #endif /*  PANELIST */
 
-
+
 /*************************************<->*************************************
  *
  *  DtSessionItems
@@ -782,7 +783,7 @@ typedef struct _SessionGeom
 
 #endif /* WSM */
 
-
+
 /*************************************<->*************************************
  *
  *  Menu specification data structures ...
@@ -918,7 +919,7 @@ typedef struct _matchlist {
 } MatchList;
 #endif /* !defined(WSM) || defined(MWM_QATS_PROTOCOL) */
 
-
+
 /*************************************<->*************************************
  *
  *  Window and function specification data structures ...
@@ -986,7 +987,7 @@ typedef struct _WmTimer
 #define TIMER_QUIT		1
 #define TIMER_RAISE		2
 
-
+
 /*************************************<->*************************************
  *
  *  Window manager frame component data structures
@@ -1007,7 +1008,7 @@ typedef struct _RList
 
 
 
-
+
 /*************************************<->*************************************
  *
  *  Window manager component appearance data structure ...
@@ -1023,7 +1024,7 @@ typedef struct _RList
 
 typedef struct _AppearanceData
 {
-    XmFontList	fontList;			/* resource */
+    XmRenderTable fontList;			/* resource */
     XFontStruct	*font;
     unsigned int	titleHeight;		/* title bar's height */
     Boolean	saveUnder;			/* resource */
@@ -1060,7 +1061,7 @@ typedef struct _AppearanceData
 
 typedef struct _AppearanceData *PtrAppearanceData;
 
-
+
 /*************************************<->*************************************
  *
  *  IconInfo
@@ -1080,7 +1081,7 @@ typedef struct _IconInfo
 typedef struct _IconInfo *PtrIconInfo;
 
 
-
+
 /*************************************<->*************************************
  *
  *  IconPlacement
@@ -1108,7 +1109,7 @@ typedef struct _IconPlacementData
 } IconPlacementData;
 
 
-
+
 /*************************************<->*************************************
  *
  *  IconBoxData
@@ -1150,7 +1151,7 @@ typedef struct _IconBoxData *PtrIconBoxData;
 #define IB_MARGIN_WIDTH		3
 #define IB_HIGHLIGHT_BORDER	3
 
-
+
 /*************************************<->*************************************
  *
  *  Bitmap/Pixmap cache data
@@ -1192,7 +1193,7 @@ typedef struct _BitmapCache
 
 
 
-
+
 /******************************<->*************************************
  *
  *  Client window list entry data structure ...
@@ -1216,7 +1217,7 @@ typedef struct _ClientListEntry
 } ClientListEntry;
 
 
-
+
 /*************************************<->*************************************
  *
  *  Frame information
@@ -1244,7 +1245,7 @@ typedef struct _FrameInfo
 } FrameInfo;
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmScreenData
@@ -1516,7 +1517,7 @@ typedef struct _WmScreenData *PtrScreenData;
 #define MAX_WORKSPACE_COUNT	64
 
 
-
+
 /*************************************<->*************************************
  *
  *  BackdropData
@@ -1595,7 +1596,7 @@ typedef struct _WmActionArg {
 #endif /* WSM */
 
 
-
+
 /*************************************<->*************************************
  *
  *  WmWorkspaceData
@@ -1676,7 +1677,7 @@ typedef struct _WmWorkspaceData *PtrWorkspaceData;
 #define TRANSIENT_DECORATION(pcd) ((pcd)->pSD->transientDecoration)
 #define TRANSIENT_FUNCTIONS(pcd) ((pcd)->pSD->transientFunctions)
 
-
+
 /*************************************<->*************************************
  *
  *  ClientData
@@ -2003,7 +2004,7 @@ typedef struct _ClientData *PtrClientData;
   ((pix) != XmUNSPECIFIED_PIXMAP && (pix) != None && (pix) != (Pixmap)NULL)
 
 #ifdef WSM
-
+
 /*************************************<->*************************************
  *
  *  WsClientData
@@ -2037,7 +2038,6 @@ typedef enum _FrameStyle
     WmSLAB
 } FrameStyle;
 
-
 /*************************************<->*************************************
  *
  *  WmGlobalData

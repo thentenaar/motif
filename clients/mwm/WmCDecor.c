@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.1
 */
@@ -1105,7 +1106,7 @@ void GetTextBox (ClientData *pcd, XRectangle *pBox)
 #ifdef WSM
     Dimension textWidth;
     Dimension offset;
-    XmFontList  fontList;
+    XmRenderTable  fontList;
 #endif /* WSM */
 
     /* get size of title area */
@@ -1209,7 +1210,7 @@ void DrawWindowTitle (ClientData *pcd, Boolean eraseFirst)
     unsigned long decoration = pcd->decor;
     XRectangle textBox;
     Window win;
-    XmFontList  fontList;
+    XmRenderTable fontList;
 
     /* make sure there is a title bar first */
     if (!(decoration & MWM_DECOR_TITLE))

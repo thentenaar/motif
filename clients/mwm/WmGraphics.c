@@ -1085,11 +1085,11 @@ void WmDrawString (Display *dpy, Drawable d, GC gc, int x, int y, char *string, 
  *
  *************************************<->***********************************/
 #ifdef WSM
-void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
+void WmDrawXmString (Display *dpy, Window w, XmRenderTable xmfontlist,
 		     XmString xmstring, GC gc, Position x, Position y,
 		     Dimension width,  XRectangle *pbox, Boolean bCenter)
 #else /* WSM */
-void WmDrawXmString (Display *dpy, Window w, XmFontList xmfontlist,
+void WmDrawXmString (Display *dpy, Window w, XmRenderTable xmfontlist,
 		     XmString xmstring, GC gc, Position x, Position y,
 		     Dimension width,  XRectangle *pbox)
 #endif /* WSM */

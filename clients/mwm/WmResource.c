@@ -2268,7 +2268,7 @@ XtResource wmAppearanceResources[] =
 	XmNfontList,
 	XmCFontList,
 	XmRFontList,
-	sizeof (XmFontList),
+	sizeof (XmRenderTable),
 	XtOffsetOf (AppearanceData, fontList),
 	XtRString,
 	"fixed"
