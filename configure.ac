@@ -455,7 +455,6 @@ demos/unsupported/dogs/Makefile \
 demos/unsupported/motifshell/Makefile \
 demos/unsupported/uilsymdump/Makefile \
 demos/unsupported/xmapdef/Makefile \
-demos/unsupported/xmfonts/Makefile \
 demos/unsupported/xmforc/Makefile \
 demos/unsupported/xmform/Makefile \
 demos/doc/Makefile \
