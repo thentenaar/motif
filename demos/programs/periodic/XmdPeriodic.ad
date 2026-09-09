@@ -19,12 +19,12 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
-! 
+!
+!
 ! HISTORY
 
 XmdPeriodic*XmText.columns:                         10
-XmdPeriodic*XmTextField.columns:                    10
+XmdPeriodic*XmTextField.columns:                    14
 XmdPeriodic*XmComboBox*columns:                      8
 XmdPeriodic*scaleFrame*XmScale.width:               50
 XmdPeriodic*scrollFrame*XmScrollBar.width:          50
@@ -48,6 +48,7 @@ XmdPeriodic*XmMessageBox*fontList:         *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
 XmdPeriodic*fileDialog*fontList:           *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
 XmdPeriodic*selectDialog*fontList:         *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
 XmdPeriodic*promptDialog*fontList:         *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
+XmdPeriodic*fontDialog*fontList:           *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
 XmdPeriodic*toggleButtonExample*fontList:  *-*-*-medium-r-*-*-*-140-*-*-p-*-*-*
 XmdPeriodic*toggleButtonControls*fontList: *-*-*-medium-r-*-*-*-100-*-*-p-*-*-*
 XmdPeriodic*toggleButtonPage*fontList:     *-*-*-medium-r-*-*-*-100-*-*-p-*-*-*

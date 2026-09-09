@@ -195,6 +195,7 @@ static String fallbackResources[] = {
 "*fileDialog*fontList:           *-*-*-medium-r-*-*-*-140-*-*-*-*-*-*",
 "*selectDialog*fontList:         *-*-*-medium-r-*-*-*-140-*-*-*-*-*-*",
 "*promptDialog*fontList:         *-*-*-medium-r-*-*-*-140-*-*-*-*-*-*",
+"*fontDialog*fontList:           *-*-*-medium-r-*-*-*-140-*-*-*-*-*-*",
 "*toggleButtonExample*fontList:  *-*-*-medium-r-*-*-*-140-*-*-*-*-*-*",
 "*toggleButtonControls*fontList: *-*-*-medium-r-*-*-*-100-*-*-*-*-*-*",
 "*toggleButtonPage*fontList:     *-*-*-medium-r-*-*-*-100-*-*-*-*-*-*",
