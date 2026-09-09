@@ -149,17 +149,14 @@ AC_ARG_WITH([xcursor],
 	[with_xcursor=$withval], [with_xcursor=yes])
 
 dnl Xinerama has been deprecated for ages, so the user should manually
-dnl indicate that they actually want it unless we lack xrandr.
+dnl indicate that they actually want it.
 AC_ARG_WITH([xinerama],
 	[AS_HELP_STRING([--with-xinerama], [Enable Xinerama support])],
 	[with_xinerama=$withval], [with_xinerama=no])
 
 AS_IF([test "x$with_xrandr" = "xyes"],[
-	PKG_CHECK_MODULES([XRANDR], [xrandr], [], [
-		with_xrandr=no
-		with_xinerama=yes
-	])
-],[with_xinerama=yes])
+	PKG_CHECK_MODULES([XRANDR], [xrandr], [], [with_xrandr=no])
+])
 
 AS_IF([test "x$with_xinerama" = "xyes"],[
 	PKG_CHECK_MODULES([XINERAMA], [xinerama], [], [with_xinerama=no])
