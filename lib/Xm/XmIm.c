@@ -162,7 +162,7 @@ static int ImGetGeo(Widget vw,
 static void ImSetGeo(Widget vw,
 		     XmImXICInfo this_icp );
 static void ImGeoReq(Widget vw);
-static XFontSet extract_fontset(XmFontList fl);
+static XFontSet extract_fontset(XmRenderTable rt);
 static XmImDisplayInfo get_xim_info(Widget w);
 static XtPointer* get_im_info_ptr(Widget w,
 				  Boolean create);
@@ -387,7 +387,7 @@ XmImSetFocusValues(Widget w,
   XmImXICInfo xic_info;
   Widget p;
   Pixel fg, bg;
-  XmFontList fl=NULL;
+  XmRenderTable fl=NULL;
   XFontSet fs=NULL;
   XmVendorShellExtObject ve;
   XmWidgetExtData extData;
@@ -416,7 +416,7 @@ XmImSetFocusValues(Widget w,
     /* Safe, since we have a window - so it's no gadget */
     XtVaGetValues(w, XmNbackground, &bg, NULL);
     XtVaGetValues(w, XmNforeground, &fg, NULL);
-    XtVaGetValues(w, XmNfontList, &fl, NULL);
+    XtVaGetValues(w, XmNrenderTable, &fl, NULL);
     if (fl) fs = extract_fontset(fl);
     if (fs)
       list = XVaCreateNestedList(0,
@@ -1863,7 +1863,7 @@ add_fs(String name,
 {
   XFontSet fs;
 
-  if ( (fs = extract_fontset((XmFontList)value)) == NULL)
+  if ( (fs = extract_fontset((XmRenderTable)value)) == NULL)
     return 0;
 
   VaSetArg(slp, name, (XPointer) fs);
@@ -2115,43 +2115,32 @@ ImGeoReq(Widget vw )
   ImSetGeo(vw, NULL);
 }
 
-static XFontSet
-extract_fontset(
-		XmFontList fl )
+/**
+ * XXX: This assumed that the default font in the rendertable will
+ * be a fontset. I'm assuming this is for modes other than onthespot,
+ * so is this still needed?
+ */
+static XFontSet extract_fontset(XmRenderTable rt)
 {
-  XmFontContext context;
-  XmFontListEntry next_entry;
-  XmFontType type_return;
-  XtPointer tmp_font;
-  XFontSet first_fs = NULL;
-  char *font_tag = NULL;
+	Arg arg[2];
+	XmFontType type;
+	XFontSet ret = NULL;
+	XmRendition rend;
 
-  if (!XmFontListInitFontContext(&context, fl))
-    return NULL;
+	/* Get the default font */
+	if (!(rend = XmRenderTableResolve(rt, NULL, 0, XmFONTLIST_DEFAULT_TAG, NULL)))
+		return NULL;
 
-  do {
-    next_entry = XmFontListNextEntry(context);
-    if (next_entry)
-      {
-	tmp_font = XmFontListEntryGetFont(next_entry, &type_return);
-	if (type_return == XmFONT_IS_FONTSET)
-	  {
-	    font_tag = XmFontListEntryGetTag(next_entry);
-	    if (!strcmp(font_tag, XmFONTLIST_DEFAULT_TAG))
-	      {
-		XmFontListFreeFontContext(context);
-		if (font_tag) XtFree(font_tag);
-		return (XFontSet)tmp_font;
-	      }
-	    if (font_tag) XtFree(font_tag);
-	    if (first_fs == NULL)
-	      first_fs = (XFontSet)tmp_font;
-	  }
-      }
-  } while (next_entry);
+	XtSetArg(arg[0], XmNfontType, &type);
+	XtSetArg(arg[1], XmNfont,     &ret);
+	XmRenditionGetValues(rend, arg, 2);
 
-  XmFontListFreeFontContext(context);
-  return first_fs;
+	if (type != XmFONT_IS_FONTSET)
+		ret = NULL;
+
+	/* XXX: Let's hope nothing pulls this out from under XIM */
+	XmRenditionFree(rend);
+	return ret;
 }
 
 /* Fetch (creating if necessary) the Display's xmim_info. */

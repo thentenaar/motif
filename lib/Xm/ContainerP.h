@@ -198,7 +198,7 @@ typedef	struct	_XmContainerPart
         Dimension       ideal_width;
         Dimension       ideal_height;
 	/* Note: first_change_managed is also used to resolve between
-	 * XmRenderTable & XmFontList when setting up the resource table
+	 * XmRenderTable when setting up the resource table
 	 */
 	Boolean		first_change_managed;
 	Boolean         extending_mode;

@@ -64,8 +64,12 @@ static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 
 #define MSG1	_XmMMsgTextOut_0000
 #define MSG2	_XmMMsgTextF_0001
+
+/****
+ * TODO: Remove these
 #define MSG3	_XmMMsgTextF_0002
 #define MSG4	_XmMMsgTextF_0003
+*/
 
 #define XmDYNAMIC_BOOL        ((Boolean) (255))
 
@@ -260,7 +264,7 @@ static Position posToXYCachedY;
 static XtResource output_resources[] =
 {
     {
-      XmNfontList, XmCFontList, XmRFontList, sizeof(XmFontList),
+      XmNfontList, XmCFontList, XmRFontList, sizeof(XmRenderTable),
       XtOffsetOf(OutputDataRec, fontlist),
       XmRImmediate, (XtPointer)NULL
     },
@@ -3599,142 +3603,56 @@ SizeFromRowsCols(XmTextWidget tw,
   }
 }
 
-static Boolean
-LoadFontMetrics(XmTextWidget tw)
+static Boolean LoadFontMetrics(XmTextWidget tw)
 {
+  Arg args[7];
+  XmRendition rend;
+  XmFontType type;
+  XtPointer font = NULL, xft_font = NULL;
+  int width = 0, ink_width = 0, a = 0, d = 0;
   OutputData data = tw->text.output->data;
-  XmFontContext context;
-  XmFontListEntry next_entry;
-  XmFontType type_return = XmFONT_IS_FONT;
-  XtPointer tmp_font;
-  Boolean have_font_struct = False;
-  Boolean have_font_set = False;
-#if USE_XFT
-  Boolean have_xft_font = False;
-#endif
-  XFontSetExtents *fs_extents;
-  XFontStruct *font = NULL;
-  unsigned long width = 0;
-  char* font_tag = NULL;
 
-  if (!XmFontListInitFontContext(&context, data->fontlist))
-    XmeWarning((Widget) tw, MSG3);
-
-  do {
-    next_entry = XmFontListNextEntry(context);
-    if (next_entry
-      && (tmp_font = XmFontListEntryGetFont(next_entry, &type_return))) {
-      if (type_return == XmFONT_IS_FONTSET) {
-	font_tag = XmFontListEntryGetTag(next_entry);
-	if (!have_font_set) { /* this saves the first fontset found, just in
-			      * case we don't find a default tag set.
-			      */
-	  data->use_fontset = True;
-#if USE_XFT
-	  data->use_xft = False;
-#endif
-	  data->font = (XFontStruct *)tmp_font;
-	  have_font_struct = True; /* we have a font set, so no need to
-				    * consider future font structs */
-	  have_font_set = True;    /* we have a font set. */
-
-	  if (!strcmp(XmFONTLIST_DEFAULT_TAG, font_tag)) {
-	    if (font_tag) XtFree(font_tag);
-	    break; /* Break out!  We've found the one we want. */
-	  }
-	} else if (!strcmp(XmFONTLIST_DEFAULT_TAG, font_tag)) {
-	  data->font = (XFontStruct *)tmp_font;
-	  have_font_set = True;    /* we have a font set. */
-	  if (font_tag) XtFree(font_tag);
-	  break; /* Break out!  We've found the one we want. */
-	}
-	if (font_tag) XtFree(font_tag);
-      } else if (type_return == XmFONT_IS_FONT && !have_font_struct) {
-	data->use_fontset = False;
-#if USE_XFT
-	data->use_xft = False;
-#endif
-	/* save the first one in case no font set is found */
-	data->font = (XFontStruct*)tmp_font;
-	data->use_fontset = False;
-	have_font_struct = True;
-#if USE_XFT
-      } else if (type_return == XmFONT_IS_XFT && !have_xft_font) {
-	data->use_fontset = False;
-	data->use_xft = True;
-	have_xft_font = True;
-	data->font = (XFontStruct*)tmp_font;
-#endif
-      }
-    }
-  } while(next_entry != NULL);
-
-#if USE_XFT
-  if (!have_font_struct && !have_font_set && !have_xft_font) {
-#else
-  if (!have_font_struct && !have_font_set) {
-#endif
-    XmeWarning ((Widget)tw, MSG4); /* fontlist without font null entry cause
-				  core dump */
+  /* Get the default font */
+  if (!(rend = XmRenderTableResolve(data->fontlist, NULL, 0, XmFONTLIST_DEFAULT_TAG, NULL)))
     return False;
-  }
 
-  XmFontListFreeFontContext(context);
+  /* Ensure the metadata gets loaded */
+  XmRenditionLoad(rend, False);
 
-  if(data->use_fontset) {
-    fs_extents = XExtentsOfFontSet((XFontSet)data->font);
-    if (XmDirectionMatch(XmPrim_layout_direction(tw),
-			 XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-      width = (unsigned long)fs_extents->max_ink_extent.width;
-    } else {
-      width = (unsigned long)fs_extents->max_logical_extent.width;
-    }
-    /* max_logical_extent.y is number of pixels from origin to top of
-     * rectangle (i.e. y is negative) */
-    data->font_ascent = -fs_extents->max_logical_extent.y;
-    data->font_descent = fs_extents->max_logical_extent.height +
-      fs_extents->max_logical_extent.y;
-#if USE_XFT
-  } else if (data->use_xft) {
-    width = ((XftFont*)data->font)->max_advance_width;
-    data->font_ascent = ((XftFont*)data->font)->ascent;
-    data->font_descent = ((XftFont*)data->font)->descent;
-#endif
-  } else {
-    font = data->font;
-    data->font_ascent = font->max_bounds.ascent;
-    data->font_descent = font->max_bounds.descent;
-    if (XmDirectionMatch(XmPrim_layout_direction(tw),
-			 XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-	  width = font->max_bounds.rbearing - font->max_bounds.lbearing;
-    } else {
-      if ((!XGetFontProperty(font, XA_QUAD_WIDTH, &width)) || width == 0) {
-	if (font->per_char && font->min_char_or_byte2 <= '0' &&
-	    font->max_char_or_byte2 >= '0')
-	  width = font->per_char['0' - font->min_char_or_byte2].width;
-	else
-	  width = font->max_bounds.width;
-      }
-    }
-  }
+  XtSetArg(args[0], XmNfontType, &type);
+  XtSetArg(args[1], XmNfont,     &font);
+  XtSetArg(args[2], XmNxftFont,  &xft_font);
+  XtSetArg(args[3], XmNwidth,    &width);
+  XtSetArg(args[4], XmNinkWidth, &ink_width);
+  XtSetArg(args[5], XmNascent,   &a);
+  XtSetArg(args[6], XmNdescent,  &d);
+  XmRenditionGetValues(rend, args, 7);
+
+  data->use_fontset  = type == XmFONT_IS_FONTSET;
+  data->use_xft      = type == XmFONT_IS_XFT;
+  data->font         = data->use_xft ? xft_font : font;
+  data->font_ascent  = (Dimension)a;
+  data->font_descent = (Dimension)d;
+  data->rendition    = rend; /* So that we hold a ref to the font */
+
   if (XmDirectionMatch(XmPrim_layout_direction(tw),
 		       XmTOP_TO_BOTTOM_RIGHT_TO_LEFT)) {
-    if (width <= 0) width = 1;
+    if ((width = ink_width) <= 0) width = 1;
     data->linewidth = width;
-    data->averagecharwidth = (int) width;
-    data->tabheight = (int)(8 * (data->font_ascent + data->font_descent));
+    data->averagecharwidth = width;
+    data->tabheight = 8 * (data->font_ascent + data->font_descent);
   } else {
     data->lineheight = data->font_descent + data->font_ascent;
     if (width <= 0) width = 1;
-    data->averagecharwidth = (int) width; /* This assumes there will be no
+    data->averagecharwidth = width; /* This assumes there will be no
 					   truncation */
     if (data->use_fontset) {
 	data->tabwidth = 8 * XmbTextEscapement((XFontSet)data->font, "0", 1);
 	/* Check if tabwidth was not calculated correctly */
 	if (data->tabwidth == 0)
-	    data->tabwidth = (int)(8 * width);
+	    data->tabwidth = 8 * width;
     } else {
-	data->tabwidth = (int)(8 * width); /* This assumes there will be no
+	data->tabwidth = 8 * width; /* This assumes there will be no
 					      truncation */
     }
   }
@@ -3798,11 +3716,7 @@ LoadGCs(XmTextWidget tw,
    * Get GC for drawing text.
    */
 
-#if USE_XFT
   if (!data->use_fontset && !data->use_xft) {
-#else
-  if (!data->use_fontset) {
-#endif
     valueMask |= GCFont;
     values.font = data->font->fid;
   }
@@ -4195,7 +4109,7 @@ OutputSetValues(Widget oldw,
       (void)LoadFontMetrics(newtw);
     }
 
-    /* We want to be able to connect to an IM if XmNfontList has changed. */
+    /* We want to be able to connect to an IM if XmNrenderTable has changed. */
     if (newtw->text.editable) {
       newtw->text.editable = False;
       XmTextSetEditable(new_w, True);
@@ -4271,7 +4185,7 @@ OutputSetValues(Widget oldw,
       newtw->primitive.foreground != oldtw->primitive.foreground) {
     XtSetArg(im_args[n], XmNbackground, newtw->core.background_pixel); n++;
     XtSetArg(im_args[n], XmNforeground, newtw->primitive.foreground); n++;
-    XtSetArg(im_args[n], XmNfontList, data->fontlist); n++;
+    XtSetArg(im_args[n], XmNrenderTable, data->fontlist); n++;
   }
 
   /* Don't word wrap, have multiple row or have vertical scrollbars
@@ -4972,8 +4886,8 @@ OutputDestroy(Widget w)
   XtReleaseGC(w, data->gc);
   XtReleaseGC(w, data->save_gc);
   XtReleaseGC(w, data->cursor_gc);
-
-  XmFontListFree(data->fontlist);
+  XmRenditionFree(data->rendition);
+  XmRenderTableFree(data->fontlist);
 
   if (data->add_mode_cursor != XmUNSPECIFIED_PIXMAP)
     (void) XmDestroyPixmap(XtScreen(tw), data->add_mode_cursor);
@@ -5441,7 +5355,7 @@ _XmTextOutputCreate(Widget wid,
     data->fontlist = XmRenderTableCopy(data->rendertable, NULL, 0);
   else data->fontlist = XmRenderTableCopy(data->fontlist, NULL, 0);
   if(!LoadFontMetrics(tw)) {
-    XmFontListFree(data->fontlist);
+    XmRenderTableFree(data->fontlist);
     data->fontlist = XmRenderTableCopy(
 		       XmeGetDefaultRenderTable(wid, XmTEXT_FONTLIST), NULL, 0);
     (void)!LoadFontMetrics(tw);

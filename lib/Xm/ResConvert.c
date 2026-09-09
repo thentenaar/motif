@@ -836,7 +836,7 @@ CvtStringToXmFontListDestroy(
         XrmValue *args,		/* unused */
         Cardinal *num_args)	/* unused */
 {
-    XmFontListFree( *((XmFontList *) to->addr)) ;
+    XmRenderTableFree( *((XmRenderTable *) to->addr)) ;
 
     return ;
     }
@@ -875,6 +875,7 @@ CvtStringToXmFontList(
         XrmValue *to,
         XtPointer *converter_data) /* unused */
 {
+  Arg arg[3];
   Boolean got_it = FALSE;
   char *s;
   char *newString;
@@ -883,8 +884,8 @@ CvtStringToXmFontList(
   char *fontTag;
   XmFontType fontType;
   char delim;
-  XmFontListEntry fontListEntry;
-  XmFontList      fontList = NULL;
+  XmRendition rend;
+  XmRenderTable rt = NULL;
 
   if (from->addr)
     {
@@ -914,13 +915,14 @@ CvtStringToXmFontList(
       do {
 	if (*fontName)
 	  {
-	    fontListEntry = XmFontListEntryLoad(dpy, fontName,
-						fontType, fontTag);
-	    if (fontListEntry != NULL)
+	    XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
+	    XtSetArg(arg[1], XmNfontType,  fontType);
+	    XtSetArg(arg[2], XmNfontName,  fontName);
+	    if ((rend = XmRenditionCreate((Widget)rt, fontTag, arg, 3)))
 	      {
 		got_it = TRUE;
-		fontList = XmFontListAppendEntry(fontList, fontListEntry);
-		XmFontListEntryFree(&fontListEntry);
+		rt = XmRenderTableAddRenditions(rt, &rend, 1, XmDUPLICATE);
+		XmRenditionFree(rend);
 	      }
 	    else
 	      XtDisplayStringConversionWarning(dpy, fontName, XmRFontList);
@@ -933,13 +935,12 @@ CvtStringToXmFontList(
 
   if (got_it)
     {
-      _XM_CONVERTER_DONE(to, XmFontList, fontList, XmFontListFree(fontList);)
+      _XM_CONVERTER_DONE(to, XmRenderTable, rt, XmRenderTableFree(rt);)
     }
 
   XtDisplayStringConversionWarning(dpy, (char *) from->addr, XmRFontList);
   return FALSE;
 }
-
 
 static Boolean
 CvtStringToButtonFontList(Display *dpy,
@@ -1666,10 +1667,10 @@ CvtStringToVerticalDimension(
 typedef struct _system_font_list
 {
     Display	*display;
-    XmFontList	 fontlist;
+    XmRenderTable fontlist;
 } SystemFontList;
 
-static XmFontList DefaultSystemFontList(Display *display, XmFontList fontlist)
+static XmRenderTable DefaultSystemFontList(Display *display, XmRenderTable fontlist)
 {
     static SystemFontList	*sFontLists = NULL;
     static int			 nsFontLists = 0;
@@ -1713,9 +1714,9 @@ static XmFontList DefaultSystemFontList(Display *display, XmFontList fontlist)
     return NULL;
 }
 
-XmFontList XmeGetDefaultRenderTable(Widget w, unsigned char fontListType)
+XmRenderTable XmeGetDefaultRenderTable(Widget w, unsigned char fontListType)
 {
-	XmFontList fontlist = NULL;
+	XmRenderTable rt = NULL;
 	Widget wx = w;
 	XmSpecRenderTrait trait;
 	XmRendition rend;
@@ -1729,30 +1730,30 @@ XmFontList XmeGetDefaultRenderTable(Widget w, unsigned char fontListType)
 				(XtPointer)XtClass(wx), XmQTspecifyRenderTable
 			);
 
-			if (trait && (fontlist = trait->getRenderTable(wx, fontListType)))
+			if (trait && (rt = trait->getRenderTable(wx, fontListType)))
 				break;
 		}
 
 		_XmAppUnlock(app);
-		if (fontlist)
-			return fontlist;
+		if (rt)
+			return rt;
 	}
 
 	_XmProcessLock();
-    if ((fontlist = DefaultSystemFontList(XtDisplay(w), NULL))) {
+    if ((rt = DefaultSystemFontList(XtDisplay(w), NULL))) {
 		_XmProcessUnlock();
-		return fontlist;
+		return rt;
 	}
 
 	/* Load a default rendition and add it to an empty rendertable */
-	fontlist = (XmFontList)_XmCreateRenderTable(w, NULL, NULL, 0);
-	if (!_XmRenderTableFindFirstFont(fontlist, &rend))
+	rt = XmRenderTableCreate(w);
+	if (!(rend = XmRenderTableResolve(rt, NULL, 0, XmFONTLIST_DEFAULT_TAG, NULL)))
 		XmeWarning(w, MSG2);
 
 	XmRenditionFree(rend);
-	DefaultSystemFontList(XtDisplay(w), fontlist);
+	DefaultSystemFontList(XtDisplay(w), rt);
 	_XmProcessUnlock();
-	return fontlist;
+	return rt;
 }
 
 static void

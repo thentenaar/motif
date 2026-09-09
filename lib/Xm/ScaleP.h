@@ -88,7 +88,7 @@ typedef struct
       The field will be referenced as scale.state_flags
       using a define in the .c file */
    /* Note: Instead, last_value is now being used to resolve between
-    * XmRenderTable & XmFontList when setting up the resource table
+    * XmRenderTable when setting up the resource table
     */
    int last_value;
 
