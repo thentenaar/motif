@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -55,8 +55,8 @@ GetGC(Widget widget,
   XtGCMask value_mask = GCForeground|GCLineWidth;
   XGCValues values;
 
-  XtVaGetValues(widget, 
-		XmNforeground, &foreground, 
+  XtVaGetValues(widget,
+		XmNforeground, &foreground,
 		NULL);
   values.foreground = foreground;
   values.line_width = 1;
@@ -65,10 +65,9 @@ GetGC(Widget widget,
     values.font = text_data->font->fid;
     value_mask |= GCFont;
   }
-    
+
   text_data->gc = XtGetGC(widget, value_mask, &values);
 }
-
 
 /****************************************************************
  * GetFont:
@@ -78,70 +77,36 @@ GetGC(Widget widget,
  *   found if there is no such rendition. Also fills in baseline
  *   and lineheight values.
  ****************************************************************/
-static void 
-GetFont(Widget widget,
-	DaTextData text_data)
+static void GetFont(Widget widget, DaTextData text_data)
 {
-  XmRenderTable rt;
-  XmFontContext context;
-  XmFontListEntry next_entry;
-  XmFontType type_return = XmFONT_IS_FONT;
-  XtPointer tmp_font;
-  Boolean have_font_struct = False;
-  Boolean have_font_set = False;
-  char* font_tag = NULL;
-  
-  rt = XmeGetDefaultRenderTable(widget, XmTEXT_FONTLIST);
-  
-  if (!XmFontListInitFontContext(&context, rt))
+  Arg args[5];
+  int a = 0, d = 0;
+  XmRendition rend;
+  XmFontType type;
+  String p = NULL;
+
+  /* Forcibly load (and leak) a X font since this demo doesn't deal with Xft */
+  XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
+  XtSetArg(args[1], XmNfontType, XmFONT_IS_FONTSET);
+  XtSetArg(args[2], XmNfontName, "*-medium-r-*140*");
+  if (!(rend = XmRenditionCreate(widget, "default", args, 3)))
     return;
-  
-  do {
-    next_entry = XmFontListNextEntry(context);
-    if (next_entry) {
-      tmp_font = XmFontListEntryGetFont(next_entry, &type_return);
-      font_tag = XmFontListEntryGetTag(next_entry);
-      if (strcmp(XmFONTLIST_DEFAULT_TAG, font_tag) == 0) {
-	/* If there is a real font in this font entry, we're done */
-	if (type_return == XmFONT_IS_FONTSET) {
-	  text_data->font_set = (XFontSet)tmp_font;
-	  text_data->font = NULL;
-	  break;
-	} else if (type_return == XmFONT_IS_FONT) {
-	  text_data->font = (XFontStruct *)tmp_font;
-	  text_data->font_set = NULL;
-	  break;
-	}
-      } else {
-	/* save the first one in case no font is found 
-	 * in default entry. Font sets prevail over fonts */
-	if (type_return == XmFONT_IS_FONTSET) {
-	  if (!have_font_set) {
-	    text_data->font_set = (XFontSet)tmp_font;
-	    have_font_set = True;	  
-	  }
-	} else if (type_return == XmFONT_IS_FONT) {
-	  if (!have_font_struct && !have_font_set) {
-	    text_data->font = (XFontStruct*)tmp_font;
-	    have_font_struct = True;
-	  }
-	}
-      }
-      if (font_tag) XtFree(font_tag);
+
+  XtSetArg(args[0], XmNfontType, &type);
+  XtSetArg(args[1], XmNfont,     &text_data->font);
+  XtSetArg(args[2], XmNascent,   &a);
+  XtSetArg(args[3], XmNdescent,  &d);
+  XtSetArg(args[4], XmNfontName,  &p);
+  XmRenditionGetValues(rend, args, 5);
+
+  if (text_data->font) {
+    text_data->baseline   = a;
+    text_data->lineheight = a + d;
+
+    if (type == XmFONT_IS_FONTSET) {
+      text_data->font_set = (XFontSet)text_data->font;
+      text_data->font     = NULL;
     }
-  } while (next_entry != NULL);
-  
-  XmFontListFreeFontContext(context);
-  
-  if (text_data->font_set) {
-    XFontSetExtents *fs_extents;
-    fs_extents = XExtentsOfFontSet(text_data->font_set);
-    text_data->baseline = -fs_extents->max_logical_extent.y;
-    text_data->lineheight = fs_extents->max_logical_extent.height;
-  } else if (text_data->font) {
-    text_data->baseline = text_data->font->max_bounds.ascent;
-    text_data->lineheight = (text_data->font->max_bounds.ascent +
-			     text_data->font->max_bounds.descent);
   }
 }
 
@@ -175,7 +140,7 @@ DaOverView(Widget widget,
  * DaRedrawText:
  *   Draw a line one pixel below the text baseline.
  *   Draw the text.
- *   Draw a cursor marking where the next character typed will be 
+ *   Draw a cursor marking where the next character typed will be
  *   drawn.
  ****************************************************************/
 /*CCB*/
@@ -188,8 +153,8 @@ DaRedrawText(Widget widget,
    Dimension margin_width, margin_height, width;
    XPoint points[3];
 
-   XtVaGetValues(widget, 
-		 XmNuserData, &text_data, 
+   XtVaGetValues(widget,
+		 XmNuserData, &text_data,
 		 XmNmarginWidth, &margin_width,
 		 XmNmarginHeight, &margin_height,
 		 XmNwidth, &width,
@@ -205,28 +170,28 @@ DaRedrawText(Widget widget,
      text_data->cursor_pos = margin_width;
      XtVaSetValues(widget, XmNuserData, text_data, NULL);
    }
-   
+
    /* Draw baseline */
    XDrawLine(XtDisplay(widget), XtWindow(widget),
-	     text_data->gc, 
-	     margin_width, text_data->baseline + margin_height + 1, 
+	     text_data->gc,
+	     margin_width, text_data->baseline + margin_height + 1,
 	     width - margin_width, text_data->baseline + margin_height + 1);
-   
+
    /* If there is text, draw it */
    if (text_data->text_length > 0) {
      if (text_data->font_set) {
-       XmbDrawString(XtDisplay(widget), XtWindow(widget), 
-		     text_data->font_set, text_data->gc, 
-		     margin_width, text_data->baseline + margin_height, 
+       XmbDrawString(XtDisplay(widget), XtWindow(widget),
+		     text_data->font_set, text_data->gc,
+		     margin_width, text_data->baseline + margin_height,
 		     text_data->text, text_data->text_length);
      } else if (text_data->font) {
        XDrawString(XtDisplay(widget), XtWindow(widget),
-		   text_data->gc, 
-		   margin_width, text_data->baseline + margin_height, 
+		   text_data->gc,
+		   margin_width, text_data->baseline + margin_height,
 		   text_data->text, text_data->text_length);
      }
-   } 
-   
+   }
+
    /* Draw the cursor */
    points[0].x = text_data->cursor_pos - 3;
    points[0].y = text_data->baseline + margin_height + 3;
@@ -245,7 +210,7 @@ DaRedrawText(Widget widget,
 /****************************************************************
  * DaInputText:
  *   If we received a keypress event, check whether any character(s)
- *   was typed. If so, add it to the text, forward the cursor 
+ *   was typed. If so, add it to the text, forward the cursor
  *   position and redraw.
  ****************************************************************/
 /*CCB*/
@@ -258,60 +223,60 @@ DaInputText(Widget widget,
   XmAnyCallbackStruct *cbs = (XmAnyCallbackStruct *)calldata;
   XPoint spot;
   Dimension margin_width, margin_height;
-  
+
   if (cbs->event && cbs->event->type == KeyPress) {
     char insert_string[100];
     int insert_length;
     Status status_return;
-    
-    XtVaGetValues(widget, 
-		  XmNuserData, &text_data, 
+
+    XtVaGetValues(widget,
+		  XmNuserData, &text_data,
 		  XmNmarginWidth, &margin_width,
 		  XmNmarginHeight, &margin_height,
 		  NULL);
-  
+
     /* Get the characters typed, if any */
-    insert_length = XmImMbLookupString(widget, (XKeyEvent *) cbs->event, 
+    insert_length = XmImMbLookupString(widget, (XKeyEvent *) cbs->event,
 				       insert_string, 100,
 				       NULL, &status_return);
 
     /* if we got any text, append it to the rest */
     if (insert_length > 0 &&
 	(status_return == XLookupChars || status_return == XLookupBoth)) {
-       if (text_data->text_length + insert_length > 
+       if (text_data->text_length + insert_length >
 	   text_data->alloced_length) {
 	 text_data->alloced_length += insert_length + 20;
-	 text_data->text = XtRealloc(text_data->text, 
+	 text_data->text = XtRealloc(text_data->text,
 				     text_data->alloced_length);
        }
        strncpy(&(text_data->text[text_data->text_length]),
 	       insert_string, insert_length);
-       
+
        text_data->text_length += insert_length;
 
        /* compute new cursor position */
        if (text_data->text_length > 0) {
 	 if (text_data->font_set) {
-	   text_data->cursor_pos = 
-	     margin_width + XmbTextEscapement(text_data->font_set, 
-					      text_data->text, 
+	   text_data->cursor_pos =
+	     margin_width + XmbTextEscapement(text_data->font_set,
+					      text_data->text,
 					      text_data->text_length);
 	 } else if (text_data->font) {
-	   text_data->cursor_pos = 
-	     margin_width + XTextWidth(text_data->font, 
-				       text_data->text, 
+	   text_data->cursor_pos =
+	     margin_width + XTextWidth(text_data->font,
+				       text_data->text,
 				       text_data->text_length);
 	 }
-       } 
-       
+       }
+
        /* Tell input method about new cursor position */
        spot.x = text_data->cursor_pos;
        spot.y = text_data->baseline + margin_height;
-       
-       XmImVaSetValues(widget, 
+
+       XmImVaSetValues(widget,
 		       XmNspotLocation, &spot,
 		       NULL);
-     } 
+     }
     /* redraw the text. This isn't very efficient, but it does the job... */
     XClearWindow(XtDisplay(widget), XtWindow(widget));
     DaRedrawText(widget, NULL, NULL);
@@ -328,10 +293,10 @@ DaResizedText(Widget widget,
 	      XtPointer client_data,
 	      XtPointer calldata)
 {
-  /* redraw the text. This isn't very efficient or smart, 
+  /* redraw the text. This isn't very efficient or smart,
      but it does the job... */
   XClearWindow(XtDisplay(widget), XtWindow(widget));
-  DaRedrawText(widget, NULL, NULL);   
+  DaRedrawText(widget, NULL, NULL);
 }
 
 /****************************************************************
@@ -339,10 +304,10 @@ DaResizedText(Widget widget,
  *   Keyboard focus movement event handler. Inform the input
  *   method when we lose or gain keyboard focus.
  ****************************************************************/
-void 
-DaFocusHandler(Widget widget, 
-	       XtPointer client_data, 
-	       XEvent *event, 
+void
+DaFocusHandler(Widget widget,
+	       XtPointer client_data,
+	       XEvent *event,
 	       Boolean *cont)
 {
   DaTextData text_data = NULL;
@@ -352,13 +317,13 @@ DaFocusHandler(Widget widget,
 
   if (!event)
     return;
-  
-  XtVaGetValues(widget, 
-		XmNuserData, &text_data, 
+
+  XtVaGetValues(widget,
+		XmNuserData, &text_data,
 		XmNmarginHeight, &margin_height,
 		NULL);
 
-  switch (event->type) 
+  switch (event->type)
     {
     case FocusIn:
     case EnterNotify:
@@ -372,12 +337,12 @@ DaFocusHandler(Widget widget,
 	spot.x = spot.y = 10;
       }
       rt = XmeGetDefaultRenderTable(widget, XmTEXT_FONTLIST);
-	
-      XmImVaSetFocusValues(widget, 
+
+      XmImVaSetFocusValues(widget,
 			   XmNspotLocation, &spot,
 			   XmNrenderTable, rt, /* since DrawingArea does
 						  not have a resource */
-			   XmNlineSpace, (text_data ? 
+			   XmNlineSpace, (text_data ?
 					  text_data->lineheight :
 					  10),
 			   NULL);

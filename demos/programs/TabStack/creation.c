@@ -81,11 +81,11 @@ Createform(Widget parent)
     Widget   label2;
     Widget   separator;
     Widget   pushButton;
-    
+
     /*
      * Register the converters for the widgets.
      */
-    RegisterBxConverters(XtWidgetToApplicationContext(parent)); 
+    RegisterBxConverters(XtWidgetToApplicationContext(parent));
     XtInitializeWidgetClass(xmFormWidgetClass);
     XtInitializeWidgetClass(xmTabStackWidgetClass);
     XtInitializeWidgetClass(xmScrolledWindowWidgetClass);
@@ -96,67 +96,67 @@ Createform(Widget parent)
     XtInitializeWidgetClass(xmLabelWidgetClass);
     XtInitializeWidgetClass(xmSeparatorWidgetClass);
     XtInitializeWidgetClass(xmPushButtonWidgetClass);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNresizePolicy, XmRESIZE_GROW); ac++;
-    XtSetArg(args[ac], XmNdialogTitle, 
-        CONVERT(parent, "EnhancementPak TabStack Demo", 
+    XtSetArg(args[ac], XmNdialogTitle,
+        CONVERT(parent, "EnhancementPak TabStack Demo",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, 333); ac++;
     XtSetArg(args[ac], XmNy, 277); ac++;
     XtSetArg(args[ac], XmNwidth, 839); ac++;
     XtSetArg(args[ac], XmNheight, 508); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     form = XmCreateForm(parent,
         "form",
-        args, 
+        args,
         ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNresizePolicy, XmRESIZE_GROW); ac++;
     XtSetArg(args[ac], XmNx, 10); ac++;
     XtSetArg(args[ac], XmNy, 10); ac++;
     XtSetArg(args[ac], XmNwidth, 818); ac++;
     XtSetArg(args[ac], XmNheight, 436); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     tabStack = XmCreateTabStack(form,
         "tabStack",
-        args, 
+        args,
         ac);
     XtManageChild(tabStack);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNscrollingPolicy, XmAPPLICATION_DEFINED); ac++;
     XtSetArg(args[ac], XmNx, -794); ac++;
     XtSetArg(args[ac], XmNy, 56); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     scrolledWindow = XmCreateScrolledWindow(tabStack,
         "scrolledWindow",
-        args, 
+        args,
         ac);
     XtManageChild(scrolledWindow);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "LightBlue", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "LightBlue",
         XmRPixel, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNvalue, "The XmTabStack widget manages a group of widgets such that only one widget\n\
 in the group is visible at a time. Each child is associated with a \"tab\"\n\
@@ -174,402 +174,402 @@ appears to be raised above the other tabs.  When a tab is selected the\n\
 child associated with the tab is made visible. One tab is selected at all\n\
 times."); ac++;
     XtSetArg(args[ac], XmNeditMode, XmMULTI_LINE_EDIT); ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     text = XmCreateText(scrolledWindow,
         "text",
-        args, 
+        args,
         ac);
     XtManageChild(text);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNresizePolicy, XmRESIZE_GROW); ac++;
     XtSetArg(args[ac], XmNx, 12); ac++;
     XtSetArg(args[ac], XmNy, 56); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     form1 = XmCreateForm(tabStack,
         "form1",
-        args, 
+        args,
         ac);
     XtManageChild(form1);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNshadowType, XmSHADOW_IN); ac++;
     XtSetArg(args[ac], XmNx, 484); ac++;
     XtSetArg(args[ac], XmNy, 10); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     frame = XmCreateFrame(form1,
         "frame",
-        args, 
+        args,
         ac);
     XtManageChild(frame);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNresizePolicy, XmRESIZE_GROW); ac++;
     XtSetArg(args[ac], XmNx, 2); ac++;
     XtSetArg(args[ac], XmNy, 2); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     form2 = XmCreateForm(frame,
         "form2",
-        args, 
+        args,
         ac);
     XtManageChild(form2);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNisHomogeneous, False); ac++;
     XtSetArg(args[ac], XmNnumColumns, 2); ac++;
     XtSetArg(args[ac], XmNx, 89); ac++;
     XtSetArg(args[ac], XmNy, 89); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     radioBox1 = XmCreateRadioBox(form2,
         "radioBox1",
-        args, 
+        args,
         ac);
     XtManageChild(radioBox1);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Round", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Round",
         XmRXmString, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton4 = XmCreateToggleButton(radioBox1,
         "toggleButton4",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton4);
     XtAddCallback(toggleButton4, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabStyle=rounded");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Beveled", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Beveled",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNset, True); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton5 = XmCreateToggleButton(radioBox1,
         "toggleButton5",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton5);
     XtAddCallback(toggleButton5, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabStyle=beveled");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Square", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Square",
         XmRXmString, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton6 = XmCreateToggleButton(radioBox1,
         "toggleButton6",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton6);
     XtAddCallback(toggleButton6, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabStyle=squared");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Corners:", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Corners:",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, 10); ac++;
     XtSetArg(args[ac], XmNy, 89); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     label4 = XmCreateLabel(form2,
         "label4",
-        args, 
+        args,
         ac);
     XtManageChild(label4);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNisHomogeneous, False); ac++;
     XtSetArg(args[ac], XmNnumColumns, 2); ac++;
     XtSetArg(args[ac], XmNx, 92); ac++;
     XtSetArg(args[ac], XmNy, 10); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     radioBox = XmCreateRadioBox(form2,
         "radioBox",
-        args, 
+        args,
         ac);
     XtManageChild(radioBox);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Top", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Top",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNset, True); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton = XmCreateToggleButton(radioBox,
         "toggleButton",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton);
     XtAddCallback(toggleButton, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabSide=top");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Bottom", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Bottom",
         XmRXmString, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton1 = XmCreateToggleButton(radioBox,
         "toggleButton1",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton1);
     XtAddCallback(toggleButton1, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabSide=bottom");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Right", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Right",
         XmRXmString, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton2 = XmCreateToggleButton(radioBox,
         "toggleButton2",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton2);
     XtAddCallback(toggleButton2, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabSide=right");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Left", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Left",
         XmRXmString, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     toggleButton3 = XmCreateToggleButton(radioBox,
         "toggleButton3",
-        args, 
+        args,
         ac);
     XtManageChild(toggleButton3);
     XtAddCallback(toggleButton3, XmNvalueChangedCallback, BxSetValuesCB, (XtPointer)"tabStack1.tabSide=left");
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Tabs On:", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Tabs On:",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, 10); ac++;
     XtSetArg(args[ac], XmNy, 10); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     label3 = XmCreateLabel(form2,
         "label3",
-        args, 
+        args,
         ac);
     XtManageChild(label3);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNresizePolicy, XmRESIZE_GROW); ac++;
     XtSetArg(args[ac], XmNheight, 276); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     tabStack1 = XmCreateTabStack(form1,
         "tabStack1",
-        args, 
+        args,
         ac);
     XtManageChild(tabStack1);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, ":::t\"Sample TabStack\"\"Label One\"", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, ":::t\"Sample TabStack\"\"Label One\"",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, 12); ac++;
     XtSetArg(args[ac], XmNy, 50); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     label = XmCreateLabel(tabStack1,
         "label",
-        args, 
+        args,
         ac);
     XtManageChild(label);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, ":::t\"Sample TabStack\"\"Label Two\"", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, ":::t\"Sample TabStack\"\"Label Two\"",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, -441); ac++;
     XtSetArg(args[ac], XmNy, 50); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     label1 = XmCreateLabel(tabStack1,
         "label1",
-        args, 
+        args,
         ac);
     XtManageChild(label1);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, ":::t\"Sample TabStack\"\"Label Three\"", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, ":::t\"Sample TabStack\"\"Label Three\"",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, -441); ac++;
     XtSetArg(args[ac], XmNy, 50); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     label2 = XmCreateLabel(tabStack1,
         "label2",
-        args, 
+        args,
         ac);
     XtManageChild(label2);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNx, 9); ac++;
     XtSetArg(args[ac], XmNy, 456); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     separator = XmCreateSeparator(form,
         "separator",
-        args, 
+        args,
         ac);
     XtManageChild(separator);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNlabelString, 
-        CONVERT(parent, "Quit", 
+    XtSetArg(args[ac], XmNlabelString,
+        CONVERT(parent, "Quit",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNx, 784); ac++;
     XtSetArg(args[ac], XmNy, 468); ac++;
-    XtSetArg(args[ac], XmNbackground, 
-        CONVERT(parent, "#ccc", 
+    XtSetArg(args[ac], XmNbackground,
+        CONVERT(parent, "#ccc",
         XmRPixel, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNfontList, 
-        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1", 
+    XtSetArg(args[ac], XmNrenderTable,
+        CONVERT(parent, "-*-helvetica-bold-r-*-*-*-120-*-*-*-*-iso8859-1",
         XmRFontList, 0, &argok)); if (argok) ac++;
-    XtSetArg(args[ac], XmNforeground, 
-        CONVERT(parent, "Black", 
+    XtSetArg(args[ac], XmNforeground,
+        CONVERT(parent, "Black",
         XmRPixel, 0, &argok)); if (argok) ac++;
     pushButton = XmCreatePushButton(form,
         "pushButton",
-        args, 
+        args,
         ac);
     XtManageChild(pushButton);
     XtAddCallback(pushButton, XmNactivateCallback, BxExitCB, (XtPointer)0);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_FORM); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_WIDGET); ac++;
@@ -581,20 +581,20 @@ times."); ac++;
     XtSetArg(args[ac], XmNleftOffset, 10); ac++;
     XtSetArg(args[ac], XmNrightOffset, 11); ac++;
     XtSetValues(tabStack, args, ac);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNtabLabelString, 
-        CONVERT(parent, "Description", 
+    XtSetArg(args[ac], XmNtabLabelString,
+        CONVERT(parent, "Description",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetValues(scrolledWindow, args, ac);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNtabLabelString, 
-        CONVERT(parent, "Resources", 
+    XtSetArg(args[ac], XmNtabLabelString,
+        CONVERT(parent, "Resources",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetArg(args[ac], XmNtabLabelPixmap, XPM_PIXMAP(parent, allviewpix_icon));  ac++;
     XtSetValues(form1, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_FORM); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_FORM); ac++;
@@ -604,7 +604,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNbottomOffset, 10); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(frame, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_WIDGET); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_NONE); ac++;
@@ -616,7 +616,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNbottomOffset, 0); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(radioBox1, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET); ac++;
@@ -627,7 +627,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNbottomOffset, 0); ac++;
     XtSetArg(args[ac], XmNleftOffset, 10); ac++;
     XtSetValues(label4, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_FORM); ac++;
     XtSetArg(args[ac], XmNleftAttachment, XmATTACH_POSITION); ac++;
@@ -636,7 +636,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNtopOffset, 10); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(radioBox, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET); ac++;
@@ -647,7 +647,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNbottomOffset, 0); ac++;
     XtSetArg(args[ac], XmNleftOffset, 10); ac++;
     XtSetValues(label3, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_FORM); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_FORM); ac++;
@@ -659,25 +659,25 @@ times."); ac++;
     XtSetArg(args[ac], XmNleftOffset, 9); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(tabStack1, args, ac);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNtabLabelString, 
-        CONVERT(parent, "One", 
+    XtSetArg(args[ac], XmNtabLabelString,
+        CONVERT(parent, "One",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetValues(label, args, ac);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNtabLabelString, 
-        CONVERT(parent, "Two", 
+    XtSetArg(args[ac], XmNtabLabelString,
+        CONVERT(parent, "Two",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetValues(label1, args, ac);
-    
+
     ac = 0;
-    XtSetArg(args[ac], XmNtabLabelString, 
-        CONVERT(parent, "Three", 
+    XtSetArg(args[ac], XmNtabLabelString,
+        CONVERT(parent, "Three",
         XmRXmString, 0, &argok)); if (argok) ac++;
     XtSetValues(label2, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_NONE); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_WIDGET); ac++;
@@ -688,7 +688,7 @@ times."); ac++;
     XtSetArg(args[ac], XmNleftOffset, 9); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(separator, args, ac);
-    
+
     ac = 0;
     XtSetArg(args[ac], XmNtopAttachment, XmATTACH_NONE); ac++;
     XtSetArg(args[ac], XmNbottomAttachment, XmATTACH_FORM); ac++;
@@ -697,6 +697,6 @@ times."); ac++;
     XtSetArg(args[ac], XmNbottomOffset, 10); ac++;
     XtSetArg(args[ac], XmNrightOffset, 10); ac++;
     XtSetValues(pushButton, args, ac);
-    
+
     return( form );
 }

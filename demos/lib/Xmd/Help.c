@@ -20,7 +20,7 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 /*
  * HISTORY
@@ -28,7 +28,7 @@
 
 /* uncomment for ExmTab button - you'll need to change the Imakefiles
    for many of the demos however. */
-/* #define USE_TAB 1 */ 
+/* #define USE_TAB 1 */
 
 /* This define controls whether XmCSText or XmLabel is used as */
 /* the text_display area. */
@@ -69,13 +69,13 @@ static void Initialize(
                         Widget new_w,
                         ArgList args,
                         Cardinal *num_args );
-static void Destroy( 
+static void Destroy(
                         Widget wid) ;
 static void Layout(
 		   Widget, Widget );
 static void Resize (
                         Widget w );
-static void SetValuesAlmost( 
+static void SetValuesAlmost(
                         Widget cw,
                         Widget nw,
                         XtWidgetGeometry *request,
@@ -120,13 +120,13 @@ static XmIncludeStatus esc_parse_proc(XtPointer      *in_out,
 	   XmString       *str_include,
 	   XtPointer       call_data);
 static XmString parse_text(String value);
-static void page_change(Widget, XtPointer, 
+static void page_change(Widget, XtPointer,
 			XmNotebookCallbackStruct *);
 static void unmanage_cb(Widget, Widget, XtPointer);
 
 /* No translations and no actions. */
 
-/* Define the resources for the XmdHelp widget. */ 
+/* Define the resources for the XmdHelp widget. */
 static XtResource resources[] =
 {
   { XmdNhelpFile, XmdCHelpFile, XmRString, sizeof(String),
@@ -143,11 +143,11 @@ static XtResource resources[] =
       XmRImmediate, (XtPointer) NULL },
 };
 
-/* Define the widget class record.  See Chapter 4 of the 
-   "OSF/Motif Widget Writer's Guide" for details. */ 
-externaldef(Xmdhelpclassrec) XmdHelpClassRec xmdHelpClassRec = 
-{ 
-  { /* Here is the Core class record. */ 
+/* Define the widget class record.  See Chapter 4 of the
+   "OSF/Motif Widget Writer's Guide" for details. */
+externaldef(Xmdhelpclassrec) XmdHelpClassRec xmdHelpClassRec =
+{
+  { /* Here is the Core class record. */
     /* superclass */                 (WidgetClass) &xmManagerClassRec,
     /* class_name */                 "XmdHelp",
     /* widget_size */                sizeof(XmdHelpRec),
@@ -180,24 +180,24 @@ externaldef(Xmdhelpclassrec) XmdHelpClassRec xmdHelpClassRec =
     /* query_geometry */             QueryGeometry,
     /* display_accelerator */        NULL,
     /* extension */                  NULL,
-  },    
-  { /* Here is the Composite class record. */ 
+  },
+  { /* Here is the Composite class record. */
     /* geometry_manager */           GeometryManager,
     /* change_managed */             ChangeManaged,
     /* insert_child */               XtInheritInsertChild,
     /* delete_child */               XtInheritDeleteChild,
     /* extension */                  NULL,
-  },    
-  { /* Here is the Constaint class record. */ 
+  },
+  { /* Here is the Constaint class record. */
     /* constraint_resources */       NULL,
     /* constraint_num_resources */   0,
-    /* constraint_size */            sizeof(XmdHelpConstraintRec), 
+    /* constraint_size */            sizeof(XmdHelpConstraintRec),
     /* constraint_initialize */      NULL,
     /* constraint_destroy */         NULL,
     /* constraint_set_values */      NULL,
     /* extension */                  NULL,
-  },    
-  { /* Here is the XmManager class record. */ 
+  },
+  { /* Here is the XmManager class record. */
     /* translations */               XtInheritTranslations,
     /* syn_resources */              NULL,
     /* num_syn_resources */          0,
@@ -205,11 +205,11 @@ externaldef(Xmdhelpclassrec) XmdHelpClassRec xmdHelpClassRec =
     /* num_syn_constraint_resources */ 0,
     /* parent_process */             ParentProcess,
     /* extension */                  NULL,
-  },    
-  { /* Here is the XmdHelp class record. */ 
-      (XtPointer) NULL, 		    /* extension */ 
-  }    
-};    
+  },
+  { /* Here is the XmdHelp class record. */
+      (XtPointer) NULL, 		    /* extension */
+  }
+};
 
 /* Establish the widget class name as an externally accessible symbol.
    Use the "externaldef" macro rather than the "extern" keyword. */
@@ -222,7 +222,7 @@ externaldef(Xmdhelpwidgetclass) WidgetClass xmdHelpWidgetClass =
  *      Called when this widget is first instantiated.
  *
  ***************************************************************************/
-static void 
+static void
 Initialize(Widget request_w,
 	   Widget new_w,
 	   ArgList p_args,
@@ -250,7 +250,7 @@ Initialize(Widget request_w,
   /* Create a default RenderTable if none specified */
   if (nw -> help.rendertable == (XmRenderTable) NULL) {
     for(n = 0; n < 5; n++)
-      tabs[n] = XmTabCreate(1.0, XmINCHES, XmRELATIVE, 
+      tabs[n] = XmTabCreate(1.0, XmINCHES, XmRELATIVE,
 			    XmALIGNMENT_BEGINNING, NULL);
     csTabs = XmTabListInsertTabs(NULL, tabs, 5, 0);
     for(n = 0; n < 5; n++) XmTabFree(tabs[n]);
@@ -275,17 +275,17 @@ Initialize(Widget request_w,
     n = 0;
     XtSetArg(args[n], XmNfontName, TITLE_FONT_NAME); n++;
     XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-    rend[i] = XmRenditionCreate(new_w, "title", args, n); i++; 
+    rend[i] = XmRenditionCreate(new_w, "title", args, n); i++;
     n = 0;
     XtSetArg(args[n], XmNfontName, BOLD_FONT_NAME); n++;
     XtSetArg(args[n], XmNfontType, XmFONT_IS_FONT); n++;
-    rend[i] = XmRenditionCreate(new_w, "subtitle", args, n); i++; 
+    rend[i] = XmRenditionCreate(new_w, "subtitle", args, n); i++;
     csRT = XmRenderTableAddRenditions(NULL, rend, i, XmMERGE_OLD);;
     nw -> help.rendertable = csRT;
     for(n = 0; n < i; n++)
       XmRenditionFree(rend[n]);
   } else {
-    nw -> help.rendertable = 
+    nw -> help.rendertable =
       XmRenderTableCopy(nw -> help.rendertable, NULL, 0);
     csRT = nw -> help.rendertable;
   }
@@ -294,7 +294,7 @@ Initialize(Widget request_w,
   n = 0;
   XtSetArg(args[n], XmNcurrentPageNumber, 1); n++;
   nw -> help.notebook = XmCreateNotebook(new_w, "Notebook", args, n);
-  XtAddCallback(nw -> help.notebook, XmNpageChangedCallback, 
+  XtAddCallback(nw -> help.notebook, XmNpageChangedCallback,
 		(XtCallbackProc) page_change, (XtPointer) nw);
 
 #ifdef USE_LABEL
@@ -305,17 +305,16 @@ Initialize(Widget request_w,
   XtSetArg(args[n], XmNpageNumber, 1); n++;
   XtSetArg(args[n], XmNresizable, FALSE); n++;
   XtSetArg(args[n], XmNnotebookChildType, XmPAGE); n++;
-  display_parent = 
+  display_parent =
     XmCreateScrolledWindow(nw -> help.notebook, "Text_SW", args, n);
 #endif /* USE_LABEL */
 
   n = 0;
-  /* XtSetArg(args[n], XmNrenderTable, csRT); n++; */
-  XtSetArg(args[n], XmNfontList, csRT); n++;
+  XtSetArg(args[n], XmNrenderTable, csRT); n++;
 #ifdef USE_LABEL
   XtSetArg(args[n], XmNscrolledWindowChildType, XmWORK_AREA); n++;
   XtSetArg(args[n], XmNalignment, XmALIGNMENT_BEGINNING); n++;
-  nw -> help.text_display = 
+  nw -> help.text_display =
     XmCreateLabel(display_parent, "Text", args, n);
 #else
   XtSetArg(args[n], XmNrows, 14); n++;
@@ -324,7 +323,7 @@ Initialize(Widget request_w,
   XtSetArg(args[n], XmNpageNumber, 1); n++;
   XtSetArg(args[n], XmNnotebookChildType, XmPAGE); n++;
   XtSetArg(args[n], XmNeditable, False); n++;
-  nw -> help.text_display = 
+  nw -> help.text_display =
     XmCreateScrolledCSText(nw -> help.notebook, "Text", args, n);
 #endif /* USE_LABEL */
 
@@ -332,12 +331,12 @@ Initialize(Widget request_w,
   XtSetArg(args[n], XmNmarginWidth, 15); n++;
   XtSetArg(args[n], XmNmarginHeight, 10); n++;
   nw -> help.dismiss = XmCreatePushButton(new_w, "Dismiss", args, n);
-  XtAddCallback(nw -> help.dismiss, XmNactivateCallback, 
+  XtAddCallback(nw -> help.dismiss, XmNactivateCallback,
 		(XtCallbackProc) unmanage_cb, (XtPointer) new_w);
   /* this is also the default button */
-  trait_default = (XmTakesDefaultTrait) 
+  trait_default = (XmTakesDefaultTrait)
     XmeTraitGet((XtPointer) XtClass(nw -> help.dismiss), XmQTtakesDefault) ;
-  if (trait_default) 
+  if (trait_default)
     trait_default->showAsDefault(nw -> help.dismiss, XmDEFAULT_ON);
 
   nw -> help.allocated_titles = 0;
@@ -371,10 +370,10 @@ Initialize(Widget request_w,
  *      Called when the widget is destroyed.
  *
  ****************************************************************************/
-static void 
+static void
 Destroy(
         Widget wid )
-{   
+{
   XmdHelpWidget help = (XmdHelpWidget) wid;
   int i;
 
@@ -395,13 +394,13 @@ Destroy(
  *      Called by the Intrinsics whenever any of the resource values change.
  *
  ****************************************************************************/
-static Boolean 
+static Boolean
 SetValues (
         Widget old_w,
         Widget request_w,
         Widget new_w,
         ArgList args,
-        Cardinal *num_args 
+        Cardinal *num_args
           )
 {
   XmdHelpWidget cw = (XmdHelpWidget)old_w;
@@ -412,9 +411,9 @@ SetValues (
     /* Free the old */
     XmRenderTableFree(cw -> help.rendertable);
     /* Copy the new */
-    nw -> help.rendertable = 
+    nw -> help.rendertable =
       XmRenderTableCopy(nw -> help.rendertable, NULL, 0);
-    XtVaSetValues(nw -> help.text_display, 
+    XtVaSetValues(nw -> help.text_display,
 		  XmNrenderTable, nw -> help.rendertable,
 		  NULL, NULL);
   }
@@ -438,36 +437,36 @@ SetValues (
  }
 
  return(False);
-}	    
+}
 
 /****************************************************************************
  *
  *  Resize:
  *
  ****************************************************************************/
-static void  
+static void
 Resize (
         Widget w
        )
 {
-  Layout(w, NULL); 
+  Layout(w, NULL);
 }
 
 /*************************************************************************
  *
  *  SetValuesAlmost:
  *       Called by the Intrinsics when an XtMakeGeometryRequest call
- *       returns either XmGeometryAlmost or XtGeometryNo.  
+ *       returns either XmGeometryAlmost or XtGeometryNo.
  *
  ***************************************************************************/
-static void 
+static void
 SetValuesAlmost(
         Widget cw,		/* unused */
         Widget nw,
         XtWidgetGeometry *request,
         XtWidgetGeometry *reply )
-{  
-  /* The parent said XtGeometryNo to the geometry request. 
+{
+  /* The parent said XtGeometryNo to the geometry request.
      Therefore, we need to relayout because this request
      was due to a change in internal geometry resource of the ExmGrid */
     if (!reply->request_mode) {
@@ -484,7 +483,7 @@ SetValuesAlmost(
  *     Instigator tells whether or not to resize all children.
  *
  *************************************************************************/
-static void 
+static void
 Layout(
         Widget wid,
         Widget instigator
@@ -506,7 +505,7 @@ Layout(
 
     if (XtIsManaged(child)) {
       if (instigator != child) {
-	XmeConfigureObject(child, x, y, 
+	XmeConfigureObject(child, x, y,
 			   XtWidth(child), XtHeight(child),
 			   XtBorderWidth(child));
 	x += XtWidth(child) + spacing;
@@ -522,17 +521,17 @@ Layout(
  *       preferred size.
  *
  ***************************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 QueryGeometry (
         Widget w,
         XtWidgetGeometry *request,
-        XtWidgetGeometry *reply 
+        XtWidgetGeometry *reply
               )
 {
   XmdHelpWidget help = (XmdHelpWidget) w;
 
-  /* If the parent calls XtQueryGeometry before the widget has been 
-     realized, use the current size as the preferred size. */ 
+  /* If the parent calls XtQueryGeometry before the widget has been
+     realized, use the current size as the preferred size. */
   /* Deal with user initial size setting */
     if (!XtIsRealized(w))  {  /* Widget is not yet realized. */
 	reply->width = XtWidth(w) ;    /* might be 0 */
@@ -540,7 +539,7 @@ QueryGeometry (
     } else {	    /* Widget is realized. */
 	/* always computes natural size afterwards */
 	reply->width = 0;
-	reply->height = 0; 
+	reply->height = 0;
     }
 
   CalcSize (w, NULL, &reply->width, &reply->height);
@@ -552,11 +551,11 @@ QueryGeometry (
 /****************************************************************************
  *
  *  GeometryManager:
- *       Called by Intrinsics in response to a geometry change request from 
+ *       Called by Intrinsics in response to a geometry change request from
  *       one of the children
  *
  ***************************************************************************/
-static XtGeometryResult 
+static XtGeometryResult
 GeometryManager (
         Widget w,  /* instigator */
         XtWidgetGeometry *request,
@@ -587,17 +586,17 @@ GeometryManager (
     parentRequest.request_mode |= XtCWQueryOnly;
   result = XtMakeGeometryRequest ((Widget)XtParent(w), &parentRequest, NULL);
 
-  /*  Turn XtGeometryAlmost into XtGeometryNo. */ 
-  if (result == XtGeometryAlmost) 
+  /*  Turn XtGeometryAlmost into XtGeometryNo. */
+  if (result == XtGeometryAlmost)
     result = XtGeometryNo;
 
-  if (result == XtGeometryNo || 
-      request->request_mode & XtCWQueryOnly) { 
+  if (result == XtGeometryNo ||
+      request->request_mode & XtCWQueryOnly) {
     /* Restore original geometry. */
     w->core.width = curWidth;
     w->core.height = curHeight;
     w->core.border_width = curBW;
-  } else {    
+  } else {
     /* result == XtGeometryYes and this wasn't just a query */
     Layout (XtParent(w), w); /* Layout with this child as the instigator,
 			       so that we don't resize this child. */
@@ -614,7 +613,7 @@ GeometryManager (
  *           * an unmanaged child becomes managed.
  *
  *************************************************************************/
-static void 
+static void
 ChangeManaged(
         Widget w
              )
@@ -622,10 +621,10 @@ ChangeManaged(
   XmdHelpWidget help = (XmdHelpWidget) w;
   Dimension helpWidth, helpHeight;
   int i;
-	
-  /* If you get an initial (C) size from the user or application, keep it.  
+
+  /* If you get an initial (C) size from the user or application, keep it.
      Otherwise, just force width and height to 0 so that CalcSize will
-     overwrite the appropriate fields. */ 
+     overwrite the appropriate fields. */
   if (!XtIsRealized(w))  {
     /* The first time, only attempts to change non specified sizes */
     helpWidth = XtWidth(w) ;	/* might be 0 */
@@ -642,7 +641,7 @@ ChangeManaged(
   while (XtMakeResizeRequest (w, helpWidth, helpHeight,
 			      &helpWidth, &helpHeight) == XtGeometryAlmost);
   Layout (w, NULL);
-    
+
   /* Update keyboard traversal */
   XmeNavigChangeManaged (w);
 }
@@ -651,11 +650,11 @@ ChangeManaged(
  *
  *  CalcSize:
  *     Called by QueryGeometry, SetValues, GeometryManager, and ChangeManaged.
- *     Calculate the ideal size of the Help widget. 
+ *     Calculate the ideal size of the Help widget.
  *     Only affects the returned size if it is 0.
  *
  ****************************************************************************/
-static void 
+static void
 CalcSize (
         Widget wid,
         Widget instigator,
@@ -671,7 +670,7 @@ CalcSize (
   int x, y;
 
   x = y = spacing;
-	
+
   /* There are only a few children.  They are laid out in a simple
      left to right fashion */
   for (i = 0; i < hw -> composite.num_children; i++) {
@@ -679,10 +678,10 @@ CalcSize (
     Dimension cw, ch, cb;
     XtWidgetGeometry reply;
     Widget child;
-    
+
     child = hw -> composite.children[i];
     if (!XtIsManaged(child)) continue ;
-	    
+
     /* Get child's preferred geometry if not the instigator. */
     if (child != instigator) {
       XtQueryGeometry (child, NULL, &reply);
@@ -708,7 +707,7 @@ CalcSize (
   if (!*helpHeight) *helpHeight = height;
 }
 
-static Boolean 
+static Boolean
 ParentProcess(Widget wid, XmParentProcessData event )
 {
   XmdHelpWidget hw = (XmdHelpWidget) wid;
@@ -719,12 +718,12 @@ ParentProcess(Widget wid, XmParentProcessData event )
     primitive_class = (XmPrimitiveWidgetClass) XtClass(dbutton);
     if (primitive_class->primitive_class.arm_and_activate &&
 	XtIsSensitive(dbutton))
-      { 
+      {
 	(*(primitive_class->primitive_class.arm_and_activate))
 	  (dbutton, event->input_action.event,
 	   event->input_action.params, event->input_action.num_params) ;
-      } 
-    
+      }
+
   return True;
   }
 
@@ -734,13 +733,13 @@ ParentProcess(Widget wid, XmParentProcessData event )
 /*****************************************************************************
  * ReadHelpFile
  *
- * This reads in the new helpfile using the values of help_file and 
+ * This reads in the new helpfile using the values of help_file and
  * help_path
- * 
+ *
  * help_path is a path in the syntax of a XtResolvePathname path
  *****************************************************************************/
 
-static void 
+static void
 ReadHelpFile(Widget w)
 {
   XmdHelpWidget help = (XmdHelpWidget)w;
@@ -797,7 +796,7 @@ ReadHelpFile(Widget w)
   fgets(line, 256, input);
 
   /* Read until we find a title */
-  while(! feof(input) && 
+  while(! feof(input) &&
 	(subtitle = strncmp(line,"<title>",7) != 0) &&
 	strncmp(line,"<subtitle>", 10) != 0)
     fgets(line, 256, input);
@@ -813,11 +812,11 @@ ReadHelpFile(Widget w)
       help -> help.allocated_titles += 10;
       help -> help.titles =
 	(XmStringTable) XtRealloc((char*) help -> help.titles,
-				  sizeof(XmString) * 
+				  sizeof(XmString) *
 				  help -> help.allocated_titles);
       help -> help.help_text =
 	(XmStringTable) XtRealloc((char*) help -> help.help_text,
-				  sizeof(XmString) * 
+				  sizeof(XmString) *
 				  help -> help.allocated_titles);
     }
 
@@ -836,17 +835,17 @@ ReadHelpFile(Widget w)
       XtSetArg(args[n], XmNnotebookChildType, XmMINOR_TAB); n++;
     }
 #ifdef USE_TAB
-    XtSetArg(args[n], ExmNcompoundString, 
+    XtSetArg(args[n], ExmNcompoundString,
 	     help -> help.titles[help -> help.num_titles]); n++;
     tab = ExmCreateTabButton(help -> help.notebook, "tab", args, n);
 #else
-    XtSetArg(args[n], XmNlabelString, 
+    XtSetArg(args[n], XmNlabelString,
 	     help -> help.titles[help -> help.num_titles]); n++;
     tab = XmCreatePushButton(help -> help.notebook, "tab", args, n);
 #endif /* USE_TAB */
     XtManageChild(tab);
-    
-    
+
+
     /* Now start parsing the rest,  until we find another line
        which has <title> at the begin */
     subtitle = False;
@@ -871,7 +870,7 @@ ReadHelpFile(Widget w)
 }
 
 
-static XmIncludeStatus 
+static XmIncludeStatus
 parse_proc(XtPointer      *in_out,
 	   XtPointer       text_end,
 	   XmTextType      type,
@@ -914,17 +913,17 @@ parse_proc(XtPointer      *in_out,
   *in_out = (XtPointer) ptr;
   if (start)
     *str_include =
-      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, len, 
+      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_BEGIN, len,
 			      rendition_name);
   else
     *str_include =
-      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END, len, 
+      XmStringComponentCreate(XmSTRING_COMPONENT_RENDITION_END, len,
 			      rendition_name);
   XtFree(rendition_name);
   return XmINSERT;
 }
 
-static XmIncludeStatus 
+static XmIncludeStatus
 esc_parse_proc(XtPointer      *in_out,
 	       XtPointer       text_end,
 	       XmTextType      type,
@@ -950,7 +949,7 @@ esc_parse_proc(XtPointer      *in_out,
   return XmINSERT;
 }
 
-static XmString 
+static XmString
 parse_text(String value)
 {
   static XmParseTable table = NULL;
@@ -998,12 +997,12 @@ parse_text(String value)
     }
 
   /* Parse the text into an XmString. */
-  result = XmStringParseText(value, NULL, NULL, XmCHARSET_TEXT, 
+  result = XmStringParseText(value, NULL, NULL, XmCHARSET_TEXT,
 			     table, table_size, NULL);
   return(result);
 }
 
-static void 
+static void
 page_change(Widget w, XtPointer help_w, XmNotebookCallbackStruct *cb)
 {
   XmdHelpWidget help = (XmdHelpWidget) help_w;
@@ -1031,32 +1030,32 @@ page_change(Widget w, XtPointer help_w, XmNotebookCallbackStruct *cb)
 		NULL, NULL);
 }
 
-static void 
+static void
 unmanage_cb(Widget button, Widget hw, XtPointer ignore)
 {
   XtUnmanageChild(hw);
 }
 
-/* 
+/*
  * External functions
  */
 
 /******************************************************************************
  *
  *  XmdCreateHelp:
- *      Called by an application. 
+ *      Called by an application.
  *
  *****************************************************************************/
-Widget 
+Widget
 XmdCreateHelp (
         Widget parent,
         char *name,
-        ArgList arglist, 
+        ArgList arglist,
         Cardinal argcount
               )
 {
   /* This is a convenience function to instantiate an XmdHelp widget. */
-  return (XtCreateWidget (name, xmdHelpWidgetClass, parent, 
+  return (XtCreateWidget (name, xmdHelpWidgetClass, parent,
 			  arglist, argcount));
 }
 
@@ -1064,22 +1063,22 @@ XmdCreateHelp (
  *
  *  XmdCreateHelpDialog
  *      Called by an application to create an XmdHelp managed by a
- *      DialogShell. 
+ *      DialogShell.
  *
  *****************************************************************************/
-Widget 
+Widget
 XmdCreateHelpDialog (
         Widget parent,
         char *name,
-        ArgList arglist, 
+        ArgList arglist,
         Cardinal argcount
               )
 {
-  return(XmeCreateClassDialog(xmdHelpWidgetClass, 
+  return(XmeCreateClassDialog(xmdHelpWidgetClass,
 			      parent, name, arglist, argcount));
 }
 
-void 
+void
 XmdGotoHelpItem(Widget w, int item, Widget help)
 {
   Widget notebook = XtNameToWidget(help, "*Notebook");

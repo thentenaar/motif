@@ -126,28 +126,27 @@ char *ExtractNormalString(XmString cs)
  *-------------------------------------------------------------*/
 void FontSelectApply(Widget w, XtPointer client_data, XtPointer call_data)
 {
+  Arg args[3];
   XmListCallbackStruct *cdata = (XmListCallbackStruct *)call_data;
   Widget       textWidget = (Widget)client_data;
   char        *textstr;
-  XmFontList   fontList;
-  XFontStruct *mfinfo;
+  XmRenderTable rt;
+  XmRendition rend;
 
   /* no font selected... */
-  (void)w;
   if (!cdata->item) return;
 
   textstr = ExtractNormalString(cdata->item);
-  if ((mfinfo = XLoadQueryFont(display, textstr))==NULL) {
-      printf ("couldn't open %s font\n", textstr);
-      return;
+  XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
+  XtSetArg(args[1], XmNfontType, XmFONT_IS_FONT);
+  XtSetArg(args[2], XmNfontName, textstr);
+  if (!(rend = XmRenditionCreate(w, XmFONTLIST_DEFAULT_TAG, args, 3))) {
+    fprintf(stderr, "couldn't open %s font\n", textstr);
+    return;
   }
 
-  fontList = XmFontListAppendEntry(
-  	NULL,
-  	XmFontListEntryCreate(XmSTRING_DEFAULT_CHARSET, XmFONT_IS_FONT, mfinfo)
-  );
-
-  XtVaSetValues(textWidget, XmNfontList,  fontList, NULL);
+  rt = XmRenderTableAddRenditions(NULL, &rend, 1, XmDUPLICATE);
+  XtVaSetValues(textWidget, XmNrenderTable,  rt, NULL);
 }
 
 /*-------------------------------------------------------------*
@@ -157,23 +156,25 @@ void FontSelectOK (Widget w, XtPointer client_data, XtPointer call_data)
 {
   XmSelectionBoxCallbackStruct *callback_data =
     (XmSelectionBoxCallbackStruct *)call_data;
+  Arg args[3];
+  XmRenderTable rt;
+  XmRendition rend;
   char        *textstr;
-  XmFontList   fontList;
-  XFontStruct *mfinfo;
 
-  (void)w;
   if (!callback_data->value)
     return;
 
   textstr = ExtractNormalString (callback_data->value);
-  if ((mfinfo = XLoadQueryFont(display, textstr))==NULL)
-      printf ("couldn't open %s font\n", textstr);
-  fontList = XmFontListAppendEntry(
-  	NULL,
-  	XmFontListEntryCreate(XmSTRING_DEFAULT_CHARSET, XmFONT_IS_FONT, mfinfo)
-  );
+  XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
+  XtSetArg(args[1], XmNfontType, XmFONT_IS_FONT);
+  XtSetArg(args[2], XmNfontName, textstr);
+  if (!(rend = XmRenditionCreate(w, XmFONTLIST_DEFAULT_TAG, args, 3))) {
+    fprintf(stderr, "couldn't open %s font\n", textstr);
+    return;
+  }
 
-  XtVaSetValues(TextWin, XmNfontList, fontList, NULL);
+  rt = XmRenderTableAddRenditions(NULL, &rend, 1, XmDUPLICATE);
+  XtVaSetValues(TextWin, XmNrenderTable, rt, NULL);
 }
 
 /*-------------------------------------------------------------*
@@ -184,27 +185,29 @@ void FontTest(Widget w, XtPointer client_data, XtPointer call_data)
   XmSelectionBoxCallbackStruct *callback_data =
     (XmSelectionBoxCallbackStruct *)call_data;
   Widget       txtWidget = (Widget)client_data;
+  Arg args[3];
+  XmRenderTable rt;
+  XmRendition rend;
   char        *textstr;
-  XmFontList   fontList;
-  XFontStruct *mfinfo;
 
-  (void)w;
   if (!callback_data->value)
     return;
 
   if (!(textstr = ExtractNormalString (callback_data->value)))
       textstr = DEFAULT_FONT;
 
-  if ((mfinfo = XLoadQueryFont(display, textstr))==NULL)
-      printf ("couldn't open %s font\n", textstr);
-  fontList = XmFontListAppendEntry(
-  	NULL,
-  	XmFontListEntryCreate(XmSTRING_DEFAULT_CHARSET, XmFONT_IS_FONT, mfinfo)
-  );
+  XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
+  XtSetArg(args[1], XmNfontType, XmFONT_IS_FONT);
+  XtSetArg(args[2], XmNfontName, textstr);
+  if (!(rend = XmRenditionCreate(w, XmFONTLIST_DEFAULT_TAG, args, 3))) {
+    fprintf(stderr, "couldn't open %s font\n", textstr);
+    return;
+  }
 
+  rt = XmRenderTableAddRenditions(NULL, &rend, 1, XmDUPLICATE);
   XtVaSetValues(txtWidget,
-		XmNfontList,  fontList,
-		XmNvalue,     TEST_HELP,
+		XmNrenderTable, rt,
+		XmNvalue,       TEST_HELP,
 		NULL);
 }
 

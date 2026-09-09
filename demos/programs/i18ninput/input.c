@@ -584,21 +584,20 @@ create_input_widget(char    * name,
  *
  ****************************************************************/
 
-/*ARGSUSED*/
 static void
 SelectFont(Widget widget,
 	   XtPointer args,
 	   XtPointer calldata)
 {
   XmRowColumnCallbackStruct *cbs = (XmRowColumnCallbackStruct*)calldata;
-  XmFontList fontlist;
+  XmRenderTable fontlist;
   Widget *children, *swchildren;
   Cardinal num_children, num_swchildren;
   Widget form = widget;
   Boolean set = False;
   int i, j;
 
-  XtVaGetValues(cbs->widget, XmNfontList, &fontlist, XmNset, &set, NULL);
+  XtVaGetValues(cbs->widget, XmNrenderTable, &fontlist, XmNset, &set, NULL);
   if (!set)
     return; /* do not change font when toggle is unset */
 
@@ -607,12 +606,12 @@ SelectFont(Widget widget,
     form = XtParent(form);
 
   if (form) {
-    /* Find an XmText[Field] child and apply XmNfontList */
+    /* Find an XmText[Field] child and apply XmNrenderTable */
     XtVaGetValues(form, XmNchildren, &children,
 		  XmNnumChildren, &num_children, NULL);
     for (i = 0; i < num_children; i++) {
       if (XmIsText(children[i]) || XmIsTextField(children[i])) {
-	XtVaSetValues(children[i], XmNfontList, fontlist, NULL);
+	XtVaSetValues(children[i], XmNrenderTable, fontlist, NULL);
 	break;
       }
       if (XmIsScrolledWindow(children[i])) {
@@ -621,7 +620,7 @@ SelectFont(Widget widget,
 		      XmNnumChildren, &num_swchildren, NULL);
 	for (j = 0; j < num_swchildren; j++)
 	  if (XmIsText(swchildren[j])) {
-	    XtVaSetValues(swchildren[j], XmNfontList, fontlist, NULL);
+	    XtVaSetValues(swchildren[j], XmNrenderTable, fontlist, NULL);
 	    break;
 	  }
 	if (j != num_swchildren)

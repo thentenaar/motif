@@ -19,7 +19,7 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 ! HISTORY
 module helloworld_i18n
     version = 'v1.0'
@@ -41,7 +41,7 @@ procedure
 
 object
     helloworld_main : XmRowColumn {
-	arguments { 
+	arguments {
             XmNstringDirection = string_direction ;
 	};
 	controls {
@@ -60,11 +60,11 @@ object
 
 object
     helloworld_button : XmPushButton {
-	arguments { 
+	arguments {
 	    XmNfontList =	 local_font;
             XmNlabelString =	 hello_label ;
 	};
-	callbacks { 
+	callbacks {
 	    XmNactivateCallback = procedure helloworld_button_activate();
 	};
     };
