@@ -721,7 +721,7 @@ UrmCreateWidgetInstance (URMResourceContextPtr	context_id,
   /*
   ** We should really let Xt take care of handling the fontlists by using its
   ** converters; but for the meanwhile avoid freeing the fontlists here, as the
-  ** widget may be one which doesn't do an XmFontListCopy. Instead, later free
+  ** widget may be one which doesn't do an XmRenderTableCopy. Instead, later free
   ** our extra copy.
   */
   if (ftllist != NULL)
@@ -999,7 +999,7 @@ Cardinal UrmSetWidgetInstance(URMResourceContextPtr context_id,
   /*
   ** We should really let Xt take care of handling the fontlists by using its
   ** converters; but for the meanwhile avoid freeing the fontlists here, as the
-  ** widget may be one which doesn't do an XmFontListCopy. Instead, later free
+  ** widget may be one which doesn't do an XmRenderTableCopy. Instead, later free
   ** our extra copy.
   */
   if (ftllist != NULL)
@@ -1992,6 +1992,7 @@ Urm__CW_ConvertValue (Widget			parent,
   /*
    *  Local variables
    */
+  Arg arg[4];
   XmDisplay     dd;
   Cardinal		result ;	/* function results */
   XFontStruct		*font ;		/* result of conversion to font */
@@ -1999,14 +2000,14 @@ Urm__CW_ConvertValue (Widget			parent,
   char			**missing_csets;  /* For XCreateFontSet */
   int			missing_cset_cnt; /* For XCreateFontSet */
   char			*def_string;	/* For XCreateFontSet */
-  XmFontListEntry	fontset_entry; /* For creating fontlist */
+  XmRendition fontset_entry; /* For creating fontlist */
   XtTranslations	trans ;		/* result of parsing trans table */
   WidgetClass		clrec ;		/* result of class name conversion */
   XtPointer		addr ;		/* result of variable conversion */
   String		fontstg ;	/* font id string */
   RGMFontItemPtr	fontptr ;	/* val as font descriptor */
   RGMFontListPtr	fontlist ;	/* val as font list */
-  XmFontList		dfontlist = NULL;	/* converted font list */
+  XmRenderTable		dfontlist = NULL;	/* converted font list */
   RGMColorDescPtr	colorptr ;	/* val as color descriptor */
   Pixel			pix ;		/* result of color/pixel conversion */
   int			ndx ;		/* conversion loop index */
@@ -2259,14 +2260,24 @@ Urm__CW_ConvertValue (Widget			parent,
 	  switch(reptype)
 	    {
 	    case MrmRtypeFont:
-	      fontset_entry = XmFontListEntryCreate(fontptr->cset.charset,
-						    XmFONT_IS_FONT, font);
-	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
+	      XtSetArg(arg[0], XmNloadModel, XmUNSPECIFIED_LOAD_MODEL);
+	      XtSetArg(arg[1], XmNfontType,  XmFONT_IS_FONT);
+	      XtSetArg(arg[2], XmNfontName,  fontptr->font.font);
+	      XtSetArg(arg[3], XmNfont,      font);
+	      fontset_entry = XmRenditionCreate(NULL, fontptr->cset.charset, arg, 4);
+	      XmRenditionLoad(fontset_entry, False);
+	      dfontlist = XmRenderTableAddRenditions(NULL, &fontset_entry, 1, XmDUPLICATE);
+	      XmRenditionFree(fontset_entry);
 	      break;
 	    case MrmRtypeFontSet:
-	      fontset_entry = XmFontListEntryCreate(fontptr->cset.charset,
-						    XmFONT_IS_FONTSET, fontset);
-	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
+	      XtSetArg(arg[0], XmNloadModel, XmUNSPECIFIED_LOAD_MODEL);
+	      XtSetArg(arg[1], XmNfontType,  XmFONT_IS_FONTSET);
+	      XtSetArg(arg[2], XmNfontName,  fontptr->font.font);
+	      XtSetArg(arg[3], XmNfont,      fontset);
+	      fontset_entry = XmRenditionCreate(NULL, fontptr->cset.charset, arg, 4);
+	      XmRenditionLoad(fontset_entry, False);
+	      dfontlist = XmRenderTableAddRenditions(NULL, &fontset_entry, 1, XmDUPLICATE);
+	      XmRenditionFree(fontset_entry);
 	      break;
 	    }
 
@@ -2348,10 +2359,15 @@ Urm__CW_ConvertValue (Widget			parent,
 	  switch(fontlist->item[ndx].type)
 	    {
 	    case MrmRtypeFont:
-	      dfontlist = XmFontListAppendEntry(dfontlist,
-	                      XmFontListEntryCreate(
-	                          fontlist->item[ndx].cset.charset,
-		                      XmFONT_IS_FONT, font));
+	      XtSetArg(arg[0], XmNloadModel, XmUNSPECIFIED_LOAD_MODEL);
+	      XtSetArg(arg[1], XmNfontType,  XmFONT_IS_FONT);
+	      XtSetArg(arg[2], XmNfontName,  fontlist->item[ndx].font.font);
+	      XtSetArg(arg[3], XmNfont,      font);
+	      fontset_entry = XmRenditionCreate(NULL, fontlist->item[ndx].cset.charset, arg, 4);
+	      XmRenditionLoad(fontset_entry, False);
+	      dfontlist = XmRenderTableAddRenditions(NULL, &fontset_entry, 1, XmDUPLICATE);
+	      XmRenditionFree(fontset_entry);
+
 	      if ( dfontlist == NULL )
 		{
 		  sprintf (err_msg, _MrmMMsg_0073,
@@ -2361,11 +2377,15 @@ Urm__CW_ConvertValue (Widget			parent,
 		}
 	      break;
 	    case MrmRtypeFontSet:
-	      fontset_entry =
-		XmFontListEntryCreate(fontlist->item[ndx].cset.charset,
-				      XmFONT_IS_FONTSET,
-				      fontset);
-	      dfontlist = XmFontListAppendEntry(NULL, fontset_entry);
+	      XtSetArg(arg[0], XmNloadModel, XmUNSPECIFIED_LOAD_MODEL);
+	      XtSetArg(arg[1], XmNfontType,  XmFONT_IS_FONTSET);
+	      XtSetArg(arg[2], XmNfontName,  fontlist->item[ndx].font.font);
+	      XtSetArg(arg[3], XmNfont,      font);
+	      fontset_entry = XmRenditionCreate(NULL, fontlist->item[ndx].cset.charset, arg, 4);
+	      XmRenditionLoad(fontset_entry, False);
+	      dfontlist = XmRenderTableAddRenditions(NULL, &fontset_entry, 1, XmDUPLICATE);
+	      XmRenditionFree(fontset_entry);
+
 	      if ( dfontlist == NULL )
 		{
 		  sprintf (err_msg, _MrmMMsg_0074,
@@ -2380,7 +2400,7 @@ Urm__CW_ConvertValue (Widget			parent,
       *val = (long) dfontlist ;
       /*
        * Save only the final fontlist to be freed later. All intermediate
-       * ones are freed by XmFontListAdd
+       * ones are freed by XmRenderTableAddRenditions
        */
       if ( ftllist != NULL )
 	{
@@ -2778,7 +2798,7 @@ Urm__CW_SafeCopyValue (long				*val,
  *      widgets callbacks. All the tags are stored in a pointer list. The first
  *      item on the list is the MRMtype followed by a pointer to the actual
  *      data. Use XmStringFree for comound string types,
- *	XmFontListFree for font-lists, and XtFree for all other
+ *	XmRenderTableFree for font-lists, and XtFree for all other
  *      types.
  *
  *  FORMAL PARAMETERS:
@@ -2835,7 +2855,7 @@ UrmDestroyCallback (Widget                     w, /* unused */
 	  break;
 	  /* END OSF Fix CR 6224 */
 	case MrmRtypeFontList:
-	  XmFontListFree ((XmFontList)list_id->ptr_vec[ndx]);
+	  XmRenderTableFree((XmRenderTable)list_id->ptr_vec[ndx]);
 	  break;
         default:
 	  /* BEGIN OSF Fix CR 6843 */
