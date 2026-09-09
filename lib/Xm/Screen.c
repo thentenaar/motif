@@ -807,10 +807,16 @@ static void Initialize(Widget requested_widget, Widget new_widget,
 static void validate_icon_assignment(Widget w,    XmDragIconObject *new,
                                      Screen *scr, XmDragIconObject *old)
 {
-	Widget p = XtParent(new);
-	if (*new && *new != *old && p && XtScreenOfObject(p) != scr) {
+	Widget p;
+
+	if (!new || !*new || *new == *old)
+		return;
+
+	p = XtParent(*new);
+	if (p && XtScreenOfObject(p) != scr) {
 		XmeWarning(w, SCREEN_MISMATCH);
 		*new = *old;
+		*old = NULL;
 	}
 }
 
