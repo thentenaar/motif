@@ -257,7 +257,7 @@ extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
 XM_ALTERNATIVE(Use XmRenderTableResolve or XmRenderTableGetRendition for XmFONTLIST_DEFAULT_TAG instead)
 extern Boolean XmeRenderTableGetDefaultFont(XmRenderTable fontlist, XFontStruct **font_struct);
 
-XM_ALTERNATIVE(Use XmRenderTableGetDefaultExtents / XmNascent, etc. on XmRendition instead)
+XM_ALTERNATIVE(Use XmRenderTableGetDefaultExtents / XmNascent etc. on XmRendition instead)
 extern void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
                                                int *ascent, int *descent);
 
