@@ -402,7 +402,7 @@ questionYesText :	"Yes";
 questionMaybeText :	"Maybe";
 questionNoText :	"No";
 questionMessageText :
-		compound_string("This is Motif 2.5.", separate = true) &
+		compound_string("This is Motif 2.6.", separate = true) &
 		compound_string("", separate = true) &
 		compound_string("Any questions ?");
 questionPixmap : icon("                         ",

@@ -1,12 +1,12 @@
 dnl Library version
 m4_define([_XM_MAJOR],   [2])
-m4_define([_XM_MINOR],   [5])
-m4_define([_XM_PATCH],   [3])
+m4_define([_XM_MINOR],   [6])
+m4_define([_XM_PATCH],   [0])
 m4_define([_XM_VERSION], [_XM_MAJOR._XM_MINOR._XM_PATCH])
 
 dnl Shared library version (libtool)
 m4_define([ABI_CURRENT],  [5])
-m4_define([ABI_REVISION], [1])
+m4_define([ABI_REVISION], [2])
 m4_define([ABI_AGE],      [0])
 m4_define([_ABI_VERSION], [ABI_CURRENT:ABI_REVISION:ABI_AGE])
 

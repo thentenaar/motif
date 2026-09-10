@@ -1,8 +1,7 @@
-XMSTRING_LIST = xmstring.list
 
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = $(BUILT_SOURCES)
-EXTRA_DIST = $(XMSTRING_LIST) Xm.msg XmStrDefs.ct
+EXTRA_DIST = xmstring.list Xm.msg XmStrDefs.ct
 DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
                    -I$(top_builddir)/include -I$(top_builddir)/lib
 AM_CPPFLAGS      = -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
@@ -33,7 +32,8 @@ EXTRA_SRCS = XmExtUtil.c \
              MultiList.c I18List.c Paned.c IconBox.c IconButton.c xmlist.c \
              Hierarchy.c Outline.c TabBox.c TabList.c TabStack.c \
              DrawUtils.c Tree.c DropDown.c \
-             XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefs25.ht XmStrDefsI.ht
+             XmStrDefs.ht XmStrDefs22.ht XmStrDefs23.ht XmStrDefs25.ht \
+             XmStrDefs26.ht XmStrDefsI.ht
 
 if XM_WITH_JPEG
 JPEG_SRCS = Jpeg.c
@@ -178,7 +178,7 @@ xm_HEADERS = ArrowB.h      ArrowBG.h       ArrowBGP.h      ArrowBP.h \
         ToggleBGP.h     ToggleBP.h      XmP.h           XmChar.h \
         BaseClassP.h    ManagerP.h      PrimitiveP.h    GadgetP.h \
         XmStrDefs.h     XmStrDefs22.h   XmStrDefs23.h   XmStrDefs25.h \
-        VaSimpleP.h     VirtKeys.h      VirtKeysP.h \
+        XmStrDefs26.h   VaSimpleP.h     VirtKeys.h      VirtKeysP.h \
         ExtObjectP.h    Display.h       DisplayP.h      Screen.h \
         ScreenP.h       ShellEP.h       VendorS.h       VendorSP.h \
         VendorSEP.h     DesktopP.h      AtomMgr.h \
@@ -253,21 +253,23 @@ NEW_WID_SRCS =         IconH.c        Container.c     IconG.c  \
 libXm_la_SOURCES = $(SRCS1) $(SRCS2) $(OBSO_SRCS) $(NEW_WID_SRCS) \
                    $(EXTRA_SRCS) $(JPEG_SRCS) $(PNG_SRCS)
 
-STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefs25.h XmStrDefsI.h
+STRING_FILES = XmStrDefs.h XmStrDefs22.h XmStrDefs23.h XmStrDefs25.h \
+               XmStrDefs26.h XmStrDefsI.h
 
 BUILT_SOURCES = $(STRING_FILES) XmStrDefs.c $(CAT_FILES)
 
 $(STRING_FILES): XmStrDefs.c
 
-XmStrDefs.c: Makefile $(XMSTRING_LIST) XmStrDefs.ht XmStrDefsI.ht XmStrDefs.ct $(top_builddir)/config/makestrs
-	test -f $(XMSTRING_LIST) || $(LN_S) $(srcdir)/$(XMSTRING_LIST) $(XMSTRING_LIST)
-	test -f XmStrDefs.ht || $(LN_S) $(srcdir)/XmStrDefs.ht XmStrDefs.ht
+XmStrDefs.c: Makefile xmstring.list XmStrDefs.ht XmStrDefsI.ht XmStrDefs.ct $(top_builddir)/config/makestrs
+	test -f xmstring.list  || $(LN_S) $(srcdir)/xmstring.list xmstring.list
+	test -f XmStrDefs.ht   || $(LN_S) $(srcdir)/XmStrDefs.ht XmStrDefs.ht
 	test -f XmStrDefs22.ht || $(LN_S) $(srcdir)/XmStrDefs22.ht XmStrDefs22.ht
 	test -f XmStrDefs23.ht || $(LN_S) $(srcdir)/XmStrDefs23.ht XmStrDefs23.ht
 	test -f XmStrDefs25.ht || $(LN_S) $(srcdir)/XmStrDefs25.ht XmStrDefs25.ht
-	test -f XmStrDefsI.ht || $(LN_S) $(srcdir)/XmStrDefsI.ht XmStrDefsI.ht
-	test -f XmStrDefs.ct || $(LN_S) $(srcdir)/XmStrDefs.ct XmStrDefs.ct
-	$(top_builddir)/config/makestrs -f $(XMSTRING_LIST) >XmStrDefs.c
+	test -f XmStrDefs26.ht || $(LN_S) $(srcdir)/XmStrDefs26.ht XmStrDefs26.ht
+	test -f XmStrDefsI.ht  || $(LN_S) $(srcdir)/XmStrDefsI.ht XmStrDefsI.ht
+	test -f XmStrDefs.ct   || $(LN_S) $(srcdir)/XmStrDefs.ct XmStrDefs.ct
+	$(top_builddir)/config/makestrs -f xmstring.list >XmStrDefs.c
 
 if XM_MSGCAT
 CAT_FILES = Xm.cat XmMsgCatI.h

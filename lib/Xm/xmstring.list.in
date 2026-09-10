@@ -1695,6 +1695,10 @@ SUTF8_STRING
 #table _XmStrings25
 #htmpl XmStrDefs25.ht
 NiconNameString
+
+#file XmStrDefs26.h
+#table _XmStrings26
+#htmpl XmStrDefs26.ht
 CSashCursor
 NsashCursor
 NvalueString
