@@ -1800,15 +1800,12 @@ CreateGCs(Widget w)
     Pixmap stipple;
     Arg args[2];
     Cardinal num_args = 0;
-    XFontStruct *fs = NULL;
 
     XtSetArg(args[num_args], XmNforeground, &fg); num_args++;
     XtSetArg(args[num_args], XmNbackground, &bg); num_args++;
     XtGetValues(w, args, num_args);
 
     stipple = GetGreyStipple(w);
-
-    XmeRenderTableGetDefaultFont(XmIconButton_font_list(iw), &fs);
 
     values.foreground = fg;
     values.background = bg;
@@ -1818,11 +1815,6 @@ CreateGCs(Widget w)
 
     mask = GCForeground | GCBackground | GCGraphicsExposures;
 	smask = mask | GCFillStyle;
-
-    if (fs) {
-        values.font = fs->fid;
-        mask |= GCFont;
-    }
 
     XmIconButton_gc(iw) = XtGetGC(w, mask, &values);
 

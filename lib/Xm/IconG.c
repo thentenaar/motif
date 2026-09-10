@@ -2966,9 +2966,8 @@ UpdateSelectGCs(
 	Widget	wid,
         Pixel select_color)
 {
-    XGCValues	values;
-    XtGCMask	valueMask;
-    XFontStruct	*fs = (XFontStruct *)NULL;
+    XGCValues values;
+    XtGCMask valueMask = GCForeground | GCBackground | GCGraphicsExposures;;
     XtGCMask  modifyMask = GCClipMask | GCClipXOrigin | GCClipYOrigin;
 
    if (IG_SelectedGC(wid))
@@ -2976,21 +2975,12 @@ UpdateSelectGCs(
     if (IG_InverseGC(wid))
 	XtReleaseGC(XtParent(wid),IG_InverseGC(wid));
 
-    valueMask = GCForeground | GCBackground | GCGraphicsExposures;
-    values.graphics_exposures = FALSE;
-
-    /* we need a font becasue the inverse gc is going to be
-       used to render some text */
-    if (XmeRenderTableGetDefaultFont(IG_RenderTable(wid), &fs)) {
-	values.font = fs->fid;
-	valueMask |= GCFont;
-    }
-
     /* the select color can take the special value XmREVERSED_GROUND_COLORS,
        which means use parent background as ink for text and parent
        foreground as back for the icon rendering */
+    values.graphics_exposures = False;
+    values.background = IG_Foreground(wid);
 
-    values.background = IG_Foreground(wid) ;
     if (select_color != XmREVERSED_GROUND_COLORS) {
 	values.foreground = select_color ;
 	IG_InverseGC(wid) = NULL ;
@@ -3046,12 +3036,7 @@ UpdateGCs(
     valueMask = GCForeground | GCBackground | GCGraphicsExposures;
     values.foreground = IG_Foreground(wid) ;
     values.background = IG_Background(wid) ;
-    values.graphics_exposures = FALSE;
-
-    if (XmeRenderTableGetDefaultFont(IG_RenderTable(wid), &fs)) {
-	values.font = fs->fid;
-	valueMask |= GCFont;
-    }
+    values.graphics_exposures = False;
 
     IG_NormalGC(wid) = XtAllocateGC(XtParent(wid),
 					 XtParent(wid)->core.depth,

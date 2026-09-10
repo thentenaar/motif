@@ -799,9 +799,6 @@ Realize(Widget widget, XtValueMask *value_mask,
 {
     XmTabBoxWidget   tb = (XmTabBoxWidget) widget;
     XGCValues        gcValues;
-    XFontStruct      *font = NULL;
-    XtGCMask         gcMask;
-
     XtRealizeProc realize;
 
     _XmProcessLock();
@@ -815,15 +812,10 @@ Realize(Widget widget, XtValueMask *value_mask,
      * this GC as opposed to share it because we will be changing
      * attributes of it a, what seems like, random.
      */
-    XmeRenderTableGetDefaultFont(XmTabBox_font_list(tb), &font);
     gcValues.background = tb->core.background_pixel;
-    gcMask = GCBackground;
-    if (font) {
-        gcValues.font = font->fid;
-	gcMask |= GCFont;
-    }
+
     /* CR03128 */
-    XmTabBox__tab_GC(tb) = XmTabBox__text_GC(tb) = XtGetGC(widget, gcMask, &gcValues);
+    XmTabBox__tab_GC(tb) = XmTabBox__text_GC(tb) = XtGetGC(widget, GCBackground, &gcValues);
 }
 
 static void Destroy(Widget widget)
@@ -899,16 +891,8 @@ static void Redisplay(Widget widget, XEvent *event, Region region)
     else getNewGC = True;
     if (getNewGC)
     {
-      XFontStruct *font = NULL;
-      XtGCMask    gcMask;
-      XmeRenderTableGetDefaultFont(XmTabBox_font_list(tab), &font);
       gcValues.background = tab->core.background_pixel;
-      gcMask = GCBackground;
-      if (font) {
-          gcValues.font = font->fid;
-	  gcMask |= GCFont;
-      }
-      XmTabBox__tab_GC(tab) = XmTabBox__text_GC(tab) = XtGetGC((Widget)tab, gcMask, &gcValues);
+      XmTabBox__tab_GC(tab) = XmTabBox__text_GC(tab) = XtGetGC((Widget)tab, GCBackground, &gcValues);
     } /* CR03218 end */
     if( XmTabBox__inited(tab) == False ) return;
 
@@ -5345,6 +5329,7 @@ DrawRightToLeftTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
     XImage     *src_ximage, *dst_ximage;
     Pixmap     bitmap;
     Boolean    sensitive;
+    XGCValues gcValues;
 
     x = draw.x = clip->x;
     y = draw.y = clip->y;
@@ -5623,25 +5608,16 @@ DrawRightToLeftTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 	     * We do not yet have either of the GC created so lets go
 	     * ahead and create them now.
 	     */
-	    XFontStruct *font = NULL;
-	    XGCValues   gcValues;
-	    unsigned long gcMask;
-
 	    gcValues.background = tab->core.background_pixel;
 	    gcValues.foreground = tab->core.background_pixel;
 	    XmTabBox__zero_GC(tab) = XCreateGC(XtDisplay(tab), bitmap,
 					      GCForeground | GCBackground,
 					      &gcValues);
 
-	    XmeRenderTableGetDefaultFont(font_list, &font);
 	    gcValues.foreground = 1;
 	    gcValues.background = 0;
-	    gcMask = GCForeground | GCBackground;
-	    if (font) {
-	        gcValues.font = font->fid;
-	        gcMask |= GCFont;
-	    }
-	    XmTabBox__one_GC(tab) = XCreateGC(XtDisplay(tab), bitmap, gcMask,
+	    XmTabBox__one_GC(tab) = XCreateGC(XtDisplay(tab), bitmap,
+	                                      GCForeground | GCBackground,
 	                                      &gcValues);
 	}
 
@@ -5893,6 +5869,7 @@ DrawVerticalTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
     XImage     *src_ximage, *dst_ximage;
     Pixmap     bitmap;
     Boolean    sensitive;
+    XGCValues gcValues;
 
     x = draw.x = clip->x;
     y = draw.y = clip->y;
@@ -6215,25 +6192,16 @@ DrawVerticalTab(XmTabBoxWidget tab, XmTabAttributes info, GC gc,
 	     * We do not yet have either of the GC created so lets go
 	     * ahead and create them now.
 	     */
-	    XFontStruct *font = NULL;
-	    XGCValues   gcValues;
-	    unsigned long gcMask;
-
 	    gcValues.background = tab->core.background_pixel;
 	    gcValues.foreground = tab->core.background_pixel;
 	    XmTabBox__zero_GC(tab) = XCreateGC(XtDisplay(tab), bitmap,
 					      GCForeground | GCBackground,
 					      &gcValues);
 
-	    XmeRenderTableGetDefaultFont(font_list, &font);
 	    gcValues.foreground = 1;
 	    gcValues.background = 0;
-	    gcMask = GCForeground | GCBackground;
-	    if (font) {
-	        gcValues.font = font->fid;
-		gcMask |= GCFont;
-	    }
-	    XmTabBox__one_GC(tab) = XCreateGC(XtDisplay(tab), bitmap, gcMask,
+	    XmTabBox__one_GC(tab) = XCreateGC(XtDisplay(tab), bitmap,
+	                                      GCForeground | GCBackground,
 	                                      &gcValues);
 	}
 

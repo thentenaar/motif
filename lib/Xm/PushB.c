@@ -691,24 +691,14 @@ GetFillGC(
  *     the pushbutton when not armed.
  *
  ************************************************************************/
-static void
-GetBackgroundGC(
-        XmPushButtonWidget pb )
+static void GetBackgroundGC(XmPushButtonWidget pb)
 {
-  XGCValues       values;
-  XtGCMask        valueMask;
-  XFontStruct     *fs;
-
-  valueMask = GCForeground | GCBackground | GCFont | GCGraphicsExposures;
+  XGCValues values;
+  XtGCMask valueMask = GCForeground | GCBackground | GCGraphicsExposures;
 
   values.foreground = pb->core.background_pixel;
   values.background = pb->primitive.foreground;
   values.graphics_exposures = False;
-
-  if (XmeRenderTableGetDefaultFont(pb->label.font, &fs))
-    values.font = fs->fid;
-  else
-    valueMask &= ~GCFont;
 
   /* add background_pixmap to GC */
   if (pb->core.background_pixmap != XmUNSPECIFIED_PIXMAP)

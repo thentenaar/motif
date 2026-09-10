@@ -1209,7 +1209,6 @@ SetNormalGC(XmLabelGadget lw)
     XGCValues       values;
     XtGCMask        valueMask, dynamicMask;
     XmManagerWidget mw;
-    XFontStruct     *fs = (XFontStruct *) NULL;
 
     mw = (XmManagerWidget) XtParent(lw);
 
@@ -1219,12 +1218,6 @@ SetNormalGC(XmLabelGadget lw)
     values.foreground = LabG_Foreground(lw);
     values.background = LabG_Background(lw);
     values.graphics_exposures = FALSE;
-
-    if (XmeRenderTableGetDefaultFont(LabG_Font(lw), &fs))
-    {
-        valueMask |= GCFont;
-        values.font = fs->fid;
-    }
 
     LabG_NormalGC(lw) = XtAllocateGC((Widget) mw, 0, valueMask, &values,
         dynamicMask, 0);
@@ -1255,7 +1248,6 @@ _XmLabelSetBackgroundGC(XmLabelGadget lw)
     XGCValues   values;
     XtGCMask    valueMask;
     XmManagerWidget mw;
-    XFontStruct     *fs = (XFontStruct *) NULL;
 
     mw = (XmManagerWidget) XtParent(lw);
 
@@ -1294,12 +1286,6 @@ _XmLabelSetBackgroundGC(XmLabelGadget lw)
             values.fill_style = FillTiled;
             values.tile = mw->core.background_pixmap;
         }
-    }
-
-    if (XmeRenderTableGetDefaultFont(LabG_Font(lw), &fs))
-    {
-        valueMask |= GCFont;
-        values.font = fs->fid;
     }
 
     LabG_BackgroundGC(lw) = XtGetGC ((Widget) mw, valueMask, &values);

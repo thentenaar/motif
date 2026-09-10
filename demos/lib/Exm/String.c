@@ -730,7 +730,6 @@ CreateGC (
  ExmStringWidget sw = (ExmStringWidget)w;
  XGCValues    values;
  XtGCMask     valueMask;
- XFontStruct *fs = (XFontStruct *) NULL;
  Arg          args[2];
  Pixmap       insensitiveStippleBitmap;
 
@@ -742,16 +741,6 @@ CreateGC (
    values.foreground = sw->primitive.foreground;
    values.background = sw->core.background_pixel;
    values.graphics_exposures = False;
-
- /* In order to set the GCFont field of the GC, we must gather XFontStruct
-    information out of the render table. This is only to get a reasonable
-    initial value. XmStringDraw will pick the necessary fonts from the
-    render table, so we will not need to update the GC when the render
-    table changes. */
-   if (XmeRenderTableGetDefaultFont(sw->string.render_table, &fs)) {
-     values.font = fs->fid;
-     valueMask |= GCFont;
-   }
 
    sw->simple.normal_gc = XtGetGC ((Widget)sw, valueMask, &values);
 

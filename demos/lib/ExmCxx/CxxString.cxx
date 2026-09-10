@@ -591,7 +591,6 @@ void ExmCxxString::create_gc(void)
 {
   XGCValues values;
   XtGCMask valueMask;
-  XFontStruct *fs = (XFontStruct *) NULL;
   Arg          args[2];
   Pixmap       insensitiveStippleBitmap;
 
@@ -603,14 +602,6 @@ void ExmCxxString::create_gc(void)
   values.foreground = primitive.foreground;
   values.background = core.background_pixel;
   values.graphics_exposures = False;
-
-  /* In order to set the GCFont field of the GC, we must gather XFontStruct
-     information out of the render table. */
-  XmeRenderTableGetDefaultFont(string.render_table, &fs);
-  if (fs != NULL) {
-    values.font = fs->fid;
-    valueMask |= GCFont;
-  }
 
   simple.normal_gc = XtGetGC ((Widget)this, valueMask, &values);
 

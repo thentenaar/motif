@@ -2018,7 +2018,6 @@ GetGC(
   XmManagerWidget mw = (XmManagerWidget) XtParent(tw);
   XGCValues values;
   XtGCMask  valueMask;
-  XFontStruct *fs = (XFontStruct *) NULL;
   Pixel sel_color, select_pixel;
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay((Widget) tw));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
@@ -2031,6 +2030,7 @@ GetGC(
   else
     sel_color = TBG_SelectColor(tw);
 
+  /* TODO: Clean up all this comma abuse */
   valueMask = 0;
   valueMask |= GCForeground, values.foreground = sel_color;
   valueMask |= GCBackground, values.background =  LabG_Background(tw);
@@ -2045,9 +2045,6 @@ GetGC(
    * the XmString draw functions.
    */
   valueMask = 0;
-  if (XmeRenderTableGetDefaultFont(LabG_Font(tw), &fs))
-    valueMask |= GCFont, values.font = fs->fid;
-
   valueMask |= GCForeground, values.foreground = LabG_Background(tw);
   valueMask |= GCBackground, values.background = LabG_Foreground(tw);
   valueMask |= GCFillStyle, values.fill_style = FillSolid;
@@ -2084,8 +2081,6 @@ GetGC(
       valueMask = 0;
       valueMask |= GCForeground, values.foreground = select_pixel;
       valueMask |= GCBackground, values.background = LabG_Foreground(tw);
-      if (fs != NULL)
-	  valueMask |= GCFont, values.font = fs->fid;
       valueMask |= GCGraphicsExposures, values.graphics_exposures = FALSE;
 
       TBG_ArmGC(tw) = XtGetGC((Widget) tw, valueMask, &values);

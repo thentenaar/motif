@@ -2260,24 +2260,14 @@ GetArmGC(
  *     the cascade button when not armed.
  *
  ************************************************************************/
-static void
-GetBackgroundGC(
-        XmCascadeButtonWidget cb )
+static void GetBackgroundGC(XmCascadeButtonWidget cb)
 {
-  XGCValues       values;
-  XtGCMask        valueMask;
-  XFontStruct     *fs;
-
-  valueMask = GCForeground | GCBackground | GCFont | GCGraphicsExposures;
+  XGCValues values;
+  XtGCMask valueMask = GCForeground | GCBackground | GCGraphicsExposures;
 
   values.foreground = cb->core.background_pixel;
   values.background = cb->primitive.foreground;
   values.graphics_exposures = False;
-
-  if (XmeRenderTableGetDefaultFont(cb->label.font, &fs))
-    values.font = fs->fid;
-  else
-    valueMask &= ~GCFont;
 
   CB_BackgroundGC(cb) = XtGetGC ((Widget) cb, valueMask, &values);
 }

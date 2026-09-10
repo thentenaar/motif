@@ -4421,24 +4421,28 @@ ProcessAppearanceResources (WmScreenData *pSD)
 void
 MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean makeActiveResources)
 {
+    Arg arg[3];
     Pixel foreground;
+    XmRendition r;
+    int a, d;
 
-    /*
-     * Extract a font from the font list.
-     */
-
-    if (! XmeRenderTableGetDefaultFont(pAData->fontList, &(pAData->font)))
-    {
+    /* Get the default font */
+    if (!(r = XmRenderTableResolve(pAData->fontList, NULL, 0, NULL, NULL))) {
 	sprintf((char *)wmGD.tmpBuffer, ((char *)GETMESSAGE(62, 23, "failed to load font: %.100s")), (char*) pAData->fontList);
 	Warning((char *)wmGD.tmpBuffer);
 	ExitWM(WM_ERROR_EXIT_VALUE);
     }
 
+    XtSetArg(arg[0], XmNascent, &a);
+    XtSetArg(arg[1], XmNdescent, &d);
+    XtSetArg(arg[2], XmNfont, &pAData->font);
+    XmRenditionGetValues(r, arg, 3);
+    XmRenditionFree(r);
+
     /*
      *  Calculate title bar's height and store it in pAData.
      */
-    pAData->titleHeight = (pAData->font)->ascent + (pAData->font)->descent
-        + WM_TITLE_BAR_PADDING;
+    pAData->titleHeight = a + d + WM_TITLE_BAR_PADDING;
 
     /*
      * Make standard (inactive) appearance resources.
@@ -4680,7 +4684,6 @@ GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixm
     XGCValues gcv;
     XtGCMask  mask;
 
-
     /*
      * Get base GC
      */
@@ -4688,12 +4691,17 @@ GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixm
     mask = GCForeground | GCBackground | GCFont;
     gcv.foreground = fg;
     gcv.background = bg;
-    gcv.font = font->fid;
 
     if (bg_pixmap)
     {
 	mask |= GCTile;
 	gcv.tile = bg_pixmap;
+    }
+
+    if (font)
+    {
+	mask |= GCFont;
+	gcv.font = font->fid;
     }
 
     *pGC = XCreateGC (DISPLAY, pSD->rootWindow, mask, &gcv);

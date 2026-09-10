@@ -1605,7 +1605,6 @@ GetGC(
 {
   XGCValues values;
   XtGCMask  valueMask;
-  XFontStruct *fs = (XFontStruct *) NULL;
   Pixel sel_color, select_pixel;
   XmDisplay dpy = (XmDisplay) XmGetXmDisplay(XtDisplay(tw));
   Boolean etched_in = dpy->display.enable_etched_in_menu;
@@ -1618,6 +1617,7 @@ GetGC(
   else
     sel_color = tw->toggle.select_color;
 
+  /* TODO: Clean up all this comma abuse */
   valueMask = 0;
   valueMask |= GCForeground, values.foreground = sel_color;
   valueMask |= GCBackground, values.background = tw->core.background_pixel;
@@ -1631,9 +1631,6 @@ GetGC(
    * the XmString draw functions.
    */
   valueMask = 0;
-
-  if (XmeRenderTableGetDefaultFont(tw->label.font, &fs))
-    valueMask |= GCFont, values.font = fs->fid;
 
   valueMask |= GCForeground, values.foreground = tw->core.background_pixel;
   valueMask |= GCBackground, values.background = tw->primitive.foreground;
@@ -1669,8 +1666,6 @@ GetGC(
       valueMask = 0;
       valueMask |= GCForeground, values.foreground = select_pixel;
       valueMask |= GCBackground, values.background = tw->primitive.foreground;
-      if (fs != NULL)
-	  valueMask |= GCFont, values.font = fs->fid;
       valueMask |= GCGraphicsExposures, values.graphics_exposures = FALSE;
 
       tw->toggle.arm_GC = XtGetGC((Widget) tw, valueMask, &values);

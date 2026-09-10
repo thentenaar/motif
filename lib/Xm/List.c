@@ -2658,7 +2658,6 @@ MakeGC(XmListWidget lw)
   XGCValues values;
   XtGCMask  modifyMask;
   XtGCMask  valueMask;
-  XFontStruct *fs = (XFontStruct *) NULL;
 
   valueMask = GCForeground | GCBackground | GCClipMask | GCGraphicsExposures;
 
@@ -2670,13 +2669,6 @@ MakeGC(XmListWidget lw)
 
   if (lw->list.InsensitiveGC != NULL)
     XtReleaseGC((Widget) lw, lw->list.InsensitiveGC);
-
-  /*
-   * This is sloppy - get the default font and use it for the GC.
-   * The StringDraw routines will change it if needed.
-   */
-  if (XmeRenderTableGetDefaultFont(lw->list.font, &fs))
-    values.font = fs->fid, valueMask |= GCFont;
 
   values.graphics_exposures = False;
   if (lw->list.selectColor == XmREVERSED_GROUND_COLORS)

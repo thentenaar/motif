@@ -656,7 +656,6 @@ SetNormalGC(XmLabelWidget lw)
 {
   XGCValues       values;
   XtGCMask        valueMask, dynamicMask;
-  XFontStruct     *fs = (XFontStruct *) NULL;
 
   valueMask = GCForeground | GCBackground | GCGraphicsExposures;
   dynamicMask = GCClipMask | GCClipXOrigin | GCClipYOrigin;
@@ -664,9 +663,6 @@ SetNormalGC(XmLabelWidget lw)
   values.foreground = lw->primitive.foreground;
   values.background = lw->core.background_pixel;
   values.graphics_exposures = False;
-
-  if (XmeRenderTableGetDefaultFont(lw->label.font, &fs))
-    values.font = fs->fid, valueMask |= GCFont;
 
   lw->label.normal_GC = XtAllocateGC((Widget) lw, 0, valueMask, &values,
 				     dynamicMask, 0);

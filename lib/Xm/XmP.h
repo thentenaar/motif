@@ -1240,10 +1240,6 @@ extern XmStringComponentType XmeStringGetComponent(_XmStringContext context,
 						   Boolean	    copy_data,
 						   unsigned int    *length,
 						   XtPointer       *value);
-    /* XmFontList.c (only used by CDE) */
-extern Boolean XmeRenderTableGetDefaultFont(
-			XmRenderTable fontlist,
-			XFontStruct **font_struct ) ;
     /* GMUtils.c */
 extern XtGeometryResult XmeReplyToQueryGeometry(
 			Widget widget,
