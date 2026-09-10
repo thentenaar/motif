@@ -1401,8 +1401,11 @@ SetWorkspaceInfoProperty (WmWorkspaceData *pWS)
     i = 0;
 
     /* Convert workspace title to ascii */
-    sTitle = (String) WmXmStringToString (pWS->title);
-    ppchList[i++] = (char *) sTitle;
+    tp.encoding = XA_STRING;
+    if (XmCvtXmStringToTextProperty(DISPLAY, pWS->title, &tp) == Success)
+        sTitle = tp.value;
+    else sTitle = WmXmStringToString(pWS->title);
+    ppchList[i++] = sTitle;
 
     /*  Pixel set id */
     ix = (i * WIP_NUMBER_SIZE);

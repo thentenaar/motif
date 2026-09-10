@@ -3670,17 +3670,13 @@ Boolean IconVisible (ClientData *pCD)
  *  If xmString is NULL, then do nothing
  *
  *************************************<->***********************************/
-String WmXmStringToString (XmString xmString)
+String WmXmStringToString(XmString xms)
 {
-    XmStringContext xmStrContext;
-    char *asciiString = NULL;
+	String s = NULL;
 
-    if (!xmString)
-        return NULL;
+	if (!xms)
+		return NULL;
 
-    XmStringInitContext (&xmStrContext, xmString);
-    XmStringGetNextTriple(xmStrContext, NULL, (XtPointer *)&asciiString);
-    XmStringFreeContext(xmStrContext);
-    return asciiString;
+	return XmStringUngenerate(xms, NULL, XmUTF8_TEXT, XmCHARSET_TEXT);
 } /* END OF FUNCTION WmXmStringToString */
 
