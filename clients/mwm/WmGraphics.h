@@ -38,8 +38,6 @@ extern void BevelRectangle (RList *prTop, RList *prBot, int x, int y,
 			    unsigned int width, unsigned int height,
 			    unsigned int top_wid, unsigned int right_wid,
 			    unsigned int bot_wid, unsigned int left_wid);
-extern void DrawStringInBox (Display *dpy, Window win, GC gc,
-			     XFontStruct *pfs, XRectangle *pbox, String str);
 extern Boolean ExtendRList (RList *prl, unsigned int amt);
 extern void FreeRList (RList *prl);
 extern void StretcherCorner (RList *prTop, RList *prBot, int x, int y,
