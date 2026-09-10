@@ -113,7 +113,6 @@ static void Help(Widget w, XEvent *event, String *params, Cardinal *num_params);
 static void GetLabelString(Widget wid, int resource, XtArgVal *value);
 static void GetAccelerator(Widget wid, int resource, XtArgVal *value);
 static void GetAcceleratorText(Widget wid, int resource, XtArgVal *value);
-static XmStringTag _XmStringCharSetCreate(XmStringTag stringcharset);
 static void GetMnemonicCharSet(Widget wid, int resource, XtArgVal *value);
 static void SetValuesAlmost(Widget cw, Widget nw,
 			    XtWidgetGeometry *request, XtWidgetGeometry *reply);
@@ -1155,11 +1154,9 @@ Initialize(
    * Convert the given mnemonicCharset to the internal Xm-form.
    */
   if  (lw->label.mnemonicCharset != NULL)
-    lw->label.mnemonicCharset =
-      _XmStringCharSetCreate (lw->label.mnemonicCharset);
+    lw->label.mnemonicCharset = XtNewString(lw->label.mnemonicCharset);
   else
-    lw->label.mnemonicCharset =
-      _XmStringCharSetCreate (XmFONTLIST_DEFAULT_TAG);
+    lw->label.mnemonicCharset = XtNewString(XmFONTLIST_DEFAULT_TAG);
 
   /* Accelerators are currently only supported in menus */
   if ((lw->label._acc_text != NULL) && Lab_IsMenupane(lw))
@@ -2033,11 +2030,9 @@ SetValues(Widget cw,
   if (new_w->label.mnemonicCharset != current->label.mnemonicCharset)
     {
       if (new_w->label.mnemonicCharset)
-	new_w->label.mnemonicCharset =
-	  _XmStringCharSetCreate(new_w->label.mnemonicCharset);
+	new_w->label.mnemonicCharset = XtNewString(new_w->label.mnemonicCharset);
       else
-	new_w->label.mnemonicCharset =
-	  _XmStringCharSetCreate(XmFONTLIST_DEFAULT_TAG);
+	new_w->label.mnemonicCharset = XtNewString(XmFONTLIST_DEFAULT_TAG);
 
       if (current->label.mnemonicCharset != NULL)
 	XtFree (current->label.mnemonicCharset);
@@ -2279,11 +2274,6 @@ XmVaCreateManagedLabel(
 }
 
 
-static XmStringTag _XmStringCharSetCreate(XmStringTag stringcharset)
-{
-	return XtNewString(stringcharset);
-}
-
 /************************************************************************
  *
  * GetMnemonicCharSet
@@ -2305,7 +2295,7 @@ GetMnemonicCharSet(Widget wid,
     {
       size = strlen (lw->label.mnemonicCharset);
       if (size > 0)
-	cset = (char *) (_XmStringCharSetCreate(lw->label.mnemonicCharset));
+	cset = XtNewString(lw->label.mnemonicCharset);
     }
 
   *value = (XtArgVal) cset;
