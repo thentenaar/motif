@@ -159,8 +159,11 @@ extern Boolean XmDirectionMatchPartial(XmDirection d1,
  * becaused they are used later on.
  *
  ****************/
-typedef enum{ XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmFONT_IS_XFT
-	      } XmFontType;
+typedef enum {
+	XmFONT_IS_FONT,
+	XmFONT_IS_FONTSET,
+	XmFONT_IS_XFT
+} XmFontType;
 
 enum { XmSTRING_DIRECTION_L_TO_R,
        XmSTRING_DIRECTION_R_TO_L,
@@ -173,10 +176,6 @@ typedef union __XmStringRec	*XmString;		/* opaque to outside */
 typedef XmString *	XmStringTable;		/* opaque to outside */
 typedef char *		XmStringTag;		/* Null term string */
 typedef unsigned char	XmStringComponentType;	/* component tags */
-
-typedef struct __XmRenditionRec	     **XmFontListEntry; /* opaque to outside */
-typedef struct __XmRenderTableRec    **XmFontList;      /* opaque to outside */
-typedef struct _XmFontListContextRec *XmFontContext;   /* opaque to outside */
 
 typedef struct __XmStringContextRec *_XmStringContext; /* opaque to outside */
 typedef union __XmStringRec        *_XmString;        /* opaque to outside */
@@ -269,7 +268,7 @@ typedef struct __XmRenderTableRec	**XmRenderTable; /* opaque */
 typedef enum {
   XmSKIP,		XmMERGE_REPLACE,
   XmMERGE_OLD,		XmMERGE_NEW,
-  XmDUPLICATE	/* For XmFontListAdd and XmFontListAppendEntry. */
+  XmDUPLICATE
   } XmMergeMode;
 
 #define XmAS_IS			255
@@ -1631,44 +1630,6 @@ extern XmChar XmStringCharAt(const XmString string, XmTextPosition pos);
 extern XmCodepoint XmStringCodepointAt(const XmString string, XmTextPosition pos);
 extern XmString XmStringNormalize(const XmString s, enum XmCodepointNormalForm form);
 
-extern XmFontListEntry XmFontListEntryCreate(
-                        char *tag,
-                        XmFontType type,
-                        XtPointer font) ;
-extern XmFontListEntry XmFontListEntryCreate_r(
-                        char *tag,
-                        XmFontType type,
-                        XtPointer font,
-                        Widget wid) ;
-extern void XmFontListEntryFree(
-                        XmFontListEntry *entry) ;
-extern XtPointer XmFontListEntryGetFont(
-                        XmFontListEntry entry,
-                        XmFontType *typeReturn) ;
-extern char * XmFontListEntryGetTag(
-                        XmFontListEntry entry) ;
-extern XmFontList XmFontListAppendEntry(
-                        XmFontList old,
-                        XmFontListEntry entry) ;
-extern XmFontListEntry XmFontListNextEntry(
-                        XmFontContext context) ;
-extern XmFontList XmFontListRemoveEntry(
-                        XmFontList old,
-                        XmFontListEntry entry) ;
-extern XmFontListEntry XmFontListEntryLoad(
-                        Display *display,
-                        char *fontName,
-                        XmFontType type,
-                        char *tag) ;
-extern void XmFontListFree(XmFontList fontlist) ;
-extern XmFontList XmFontListCopy(
-                        XmFontList fontlist) ;
-extern Boolean XmFontListInitFontContext(
-                        XmFontContext *context,
-                        XmFontList fontlist) ;
-
-extern void XmFontListFreeFontContext(
-                        XmFontContext context) ;
 extern XmString XmStringConcat(
                         XmString a,
                         XmString b) ;
@@ -1689,9 +1650,7 @@ extern XmStringTag XmStringGetMultibyteCharset(void);
 extern Boolean XmStringIsVoid(const XmString string);
 extern void XmStringFree(
                         XmString string) ;
-extern Dimension XmStringBaseline(
-                        XmFontList fontlist,
-                        XmString string) ;
+extern Dimension XmStringBaseline(XmRenderTable rt, XmString string);
 extern Dimension XmStringWidth(XmRenderTable rt, XmString string);
 extern Dimension XmStringHeight(XmRenderTable rt, XmString string);
 extern void XmStringExtent(XmRenderTable rt, XmString string,

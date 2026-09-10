@@ -53,8 +53,6 @@ void png_suite(SRunner *runner);
 void svg_suite(SRunner *runner);
 void txtpropcv_suite(SRunner *runner);
 void xmdesktopobject_suite(SRunner *runner);
-void xmfontlistentry_suite(SRunner *runner);
-void xmfontlist_suite(SRunner *runner);
 void xmscreen_suite(SRunner *runner);
 void xmchar_suite(SRunner *runner);
 void xmstring_suite(SRunner *runner);

@@ -56,6 +56,11 @@
 /* This should be XmStringTag */
 typedef char * XmStringCharSet; /* Null term string */
 
+/* Deprecated alias for XmRenderTable / XmRendition */
+typedef struct __XmRenditionRec	     **XmFontListEntry; /* opaque to outside */
+typedef struct __XmRenderTableRec    **XmFontList;      /* opaque to outside */
+typedef struct _XmFontListContextRec *XmFontContext;   /* opaque to outside */
+
 XM_ALTERNATIVE(Use XtSetValues for XmNmenuCursor on XmScreen instead)
 extern void XmSetMenuCursor(Display *display, Cursor cursorId);
 
@@ -153,30 +158,6 @@ extern unsigned int XmCvtXmStringToByteStream(const XmString string,
 XM_ALTERNATIVE(Use XmStringUnserialize instead)
 extern XmString XmCvtByteStreamToXmString(const unsigned char *stream);
 
-XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
-extern XmFontList XmFontListCreate(XFontStruct *font, XmStringCharSet charset);
-
-XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
-extern XmFontList XmFontListCreate_r(XFontStruct *font,
-                                     XmStringCharSet charset, Widget wid);
-
-XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
-extern XmFontList XmStringCreateFontList(XFontStruct *font, XmStringCharSet charset);
-
-XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
-extern XmFontList XmStringCreateFontList_r(XFontStruct *font,
-                                           XmStringCharSet charset, Widget wid);
-
-XM_ALTERNATIVE(Use XmFontListAppendEntry instead)
-extern XmFontList XmFontListAdd(XmFontList old, XFontStruct *font,
-                                XmStringCharSet charset);
-
-XM_ALTERNATIVE(Use XmFontListNextEntry instead)
-extern Boolean XmFontListGetNextFont(
-                        XmFontContext context,
-                        XmStringCharSet *charset,
-                        XFontStruct **font);
-
 XM_ALTERNATIVE(Use XInternAtom instead)
 extern Atom XmInternAtom(Display *display, String name, Boolean only_if_exists);
 
@@ -203,6 +184,63 @@ extern void XmRenditionUpdate(XmRendition rendition, ArgList arglist, Cardinal a
 
 XM_ALTERNATIVE(Use XmRenditionGetValues instead)
 extern void XmRenditionRetrieve(XmRendition rendition, ArgList arglist, Cardinal argcount);
+
+XM_ALTERNATIVE(Use XmRenditionCreate instead)
+extern XmFontListEntry XmFontListEntryCreate(char *tag, XmFontType type, XtPointer font);
+
+XM_ALTERNATIVE(Use XmRenditionCreate instead)
+extern XmFontListEntry XmFontListEntryCreate_r(char *tag, XmFontType type, XtPointer font, Widget wid);
+
+XM_ALTERNATIVE(Use XmRenditionFree instead)
+extern void XmFontListEntryFree(XmFontListEntry *entry);
+
+XM_ALTERNATIVE(Get XmNfont / XmNxftFont on XmRendition instead)
+extern XtPointer XmFontListEntryGetFont(XmFontListEntry entry, XmFontType *typeReturn);
+
+XM_ALTERNATIVE(Get XmNtag on XmRendition instead)
+extern char * XmFontListEntryGetTag(XmFontListEntry entry);
+
+XM_ALTERNATIVE(Use XmRenderTableAddRenditions instead)
+extern XmFontList XmFontListAppendEntry(XmFontList old, XmFontListEntry entry);
+
+XM_ALTERNATIVE(Use XmRenderTableRemoveRenditions instead)
+extern XmFontList XmFontListRemoveEntry(XmFontList old, XmFontListEntry entry);
+
+XM_ALTERNATIVE(Use XmRenditionLoad instead)
+extern XmFontListEntry XmFontListEntryLoad(Display *display, char *fontName, XmFontType type, char *tag);
+
+XM_ALTERNATIVE(Use XmRenderTableFree instead)
+extern void XmFontListFree(XmFontList fontlist);
+
+XM_ALTERNATIVE(Use XmRenderTableCopy instead)
+extern XmFontList XmFontListCopy(XmFontList fontlist);
+
+XM_DEPRECATED
+extern Boolean XmFontListInitFontContext(XmFontContext *context,  XmFontList fontlist);
+
+XM_ALTERNATIVE(Use XmRenderTableGetRendition instead)
+extern XmFontListEntry XmFontListNextEntry(XmFontContext context);
+
+XM_DEPRECATED
+extern void XmFontListFreeFontContext(XmFontContext context);
+
+XM_ALTERNATIVE(Use XmRenderTableCreate instead)
+extern XmFontList XmFontListCreate(XFontStruct *font, XmStringCharSet charset);
+
+XM_ALTERNATIVE(Use XmRenderTableCreate instead)
+extern XmFontList XmFontListCreate_r(XFontStruct *font,XmStringCharSet charset, Widget wid);
+
+XM_ALTERNATIVE(Use XmRenderTableCreate instead)
+extern XmFontList XmStringCreateFontList(XFontStruct *font, XmStringCharSet charset);
+
+XM_ALTERNATIVE(Use XmRenderTableCreate instead)
+extern XmFontList XmStringCreateFontList_r(XFontStruct *font, XmStringCharSet charset, Widget wid);
+
+XM_ALTERNATIVE(Use XmRenderTableAddRenditions instead)
+extern XmFontList XmFontListAdd(XmFontList old, XFontStruct *font, XmStringCharSet charset);
+
+XM_ALTERNATIVE(Use XmRenderTableGetRendition instead)
+extern Boolean XmFontListGetNextFont(XmFontContext context, XmStringCharSet *charset, XFontStruct **font);
 
 #ifdef _XmP_h
 /**

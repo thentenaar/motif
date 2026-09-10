@@ -31,6 +31,18 @@
 #include <string.h>
 #include <ctype.h>
 
+/**
+ * This entire file is obsolete, so no harm in allowing deprecated
+ * declarations here.
+ */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #ifdef __cplusplus
 extern "C" { /* some 'locale.h' do not have prototypes (sun) */
 #endif
@@ -824,4 +836,10 @@ XmFontListFreeFontContext(
   if (context != NULL) XtFree((char *)context);
   _XmProcessUnlock();
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
