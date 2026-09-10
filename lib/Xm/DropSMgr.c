@@ -97,7 +97,7 @@ static char rcsid[] = "$TOG: DropSMgr.c /main/21 1999/08/11 14:44:57 vipin $"
 #include "TraversalI.h"		/* for _XmIntersectionOf() */
 
 #define MESSAGE1 _XmMMsgDropSMgr_0001
-#define MESSAGE2 _XmMMsgDropSMgr_0002
+/* #define MESSAGE2 _XmMMsgDropSMgr_0002 XXX: Unused */
 #define MESSAGE3 _XmMMsgDropSMgr_0003
 #define MESSAGE4 _XmMMsgDropSMgr_0004
 #define MESSAGE5 _XmMMsgDropSMgr_0005
@@ -1510,7 +1510,7 @@ DoAnimation(
   Dimension bw = 0;
   Arg args[1];
 
-  if (GetDSAnimationStyle(info) == XmDRAG_UNDER_NONE)
+  if (!dc || GetDSAnimationStyle(info) == XmDRAG_UNDER_NONE)
     return;
 
   /*
@@ -1936,7 +1936,7 @@ HandleLeave(
 		(cbRec.dropSiteStatus == XmVALID_DROP_SITE))
 		DoAnimation(dsm, motionData, (XtPointer) &cbRec);
 
-	if (dsm->dropManager.notifyProc)
+	if (dsm->dropManager.notifyProc && cbRec.dragContext)
 	{
 		XmDropSiteEnterPendingCallbackStruct	outCB;
 
@@ -1968,11 +1968,8 @@ ProcessMotion(
   XmDSInfo	newDSInfo;
   unsigned char style;
 
-  if (dsm->dropManager.curDragContext == NULL)
-    {
-      XmeWarning((Widget)dsm, MESSAGE2);
+  if (!dsm->dropManager.curDragContext)
       return;
-    }
 
   style = _XmGetActiveProtocolStyle(dsm->dropManager.curDragContext);
   dsm->dropManager.curTime = callback->timeStamp;
@@ -3058,10 +3055,10 @@ ChangeRoot(
         XtPointer clientData,
         XtPointer callData )
 {
-	XmDragTopLevelClientData cd =
-		(XmDragTopLevelClientData) clientData;
-	XmTopLevelEnterCallback callback =
-		(XmTopLevelEnterCallback) callData;
+	XmDragMotionCallbackStruct cbRec;
+	XmDragMotionClientDataStruct cdRec;
+	XmDragTopLevelClientData cd = (XmDragTopLevelClientData)clientData;
+	XmTopLevelEnterCallback callback = (XmTopLevelEnterCallback)callData;
 	Widget		newRoot = cd->destShell;
 	XtPointer	dataPtr = cd->iccInfo;
 
@@ -3098,11 +3095,6 @@ ChangeRoot(
 	{
 		if (dsm->dropManager.curInfo != NULL)
 		{
-			XmDragMotionCallbackStruct cbRec ;
-			XmDragMotionClientDataStruct cdRec ;
-			unsigned char style = _XmGetActiveProtocolStyle(
-				dsm->dropManager.curDragContext);
-
 			/* Fake out a motion message from the DragC */
 			cbRec.reason = XmCR_DROP_SITE_LEAVE;
 			cbRec.event = callback->event;
@@ -3118,9 +3110,9 @@ ChangeRoot(
 			cdRec.window = cd->window;
 			cdRec.dragOver = cd->dragOver;
 
-			HandleLeave(dsm, &cdRec, &cbRec,
-				    (XmDSInfo) dsm->dropManager.curInfo,
-				    style, False);
+			HandleLeave(dsm, &cdRec, &cbRec, (XmDSInfo)dsm->dropManager.curInfo,
+			            _XmGetActiveProtocolStyle(dsm->dropManager.curDragContext),
+			            False);
 
 			dsm->dropManager.curInfo = NULL;
 		}
@@ -3878,21 +3870,18 @@ DestroyInfo(
         XmDropSiteManagerObject dsm,
         Widget widget )
 {
-	XmDSInfo info = (XmDSInfo) DSMWidgetToInfo(dsm, widget);
+	Widget shell;
+	XmDragMotionCallbackStruct cbRec ;
+	XmDragMotionClientDataStruct cdRec ;
+	XmDSInfo info = (XmDSInfo)DSMWidgetToInfo(dsm, widget);
 
-	if (info == NULL)
+	if (!info)
 		return;
 
 	DSMStartUpdate(dsm, widget);
 
-	if (info == (XmDSInfo) (dsm->dropManager.curInfo))
+	if (info == (XmDSInfo)(dsm->dropManager.curInfo))
 	{
-		Widget shell;
-		XmDragMotionCallbackStruct cbRec ;
-		XmDragMotionClientDataStruct cdRec ;
-		unsigned char style = _XmGetActiveProtocolStyle(
-			dsm->dropManager.curDragContext);
-
 		/* Fake out a motion message from the DragC */
 		cbRec.reason = XmCR_DROP_SITE_LEAVE;
 		cbRec.event = NULL;
@@ -3911,13 +3900,14 @@ DestroyInfo(
 			shell = XtParent(shell);
 
 		cdRec.window = XtWindow(shell);
-		cdRec.dragOver = (Widget)
-			(((XmDragContext)(dsm->dropManager.curDragContext))
-				->drag.curDragOver);
+		cdRec.dragOver = NULL;
 
-		HandleLeave(dsm, &cdRec, &cbRec,
-			    (XmDSInfo) dsm->dropManager.curInfo, style, False);
+		if (dsm->dropManager.curDragContext)
+			cdRec.dragOver = (Widget)(((XmDragContext)(dsm->dropManager.curDragContext))->drag.curDragOver);
 
+		HandleLeave(dsm, &cdRec, &cbRec, (XmDSInfo)dsm->dropManager.curInfo,
+		            _XmGetActiveProtocolStyle(dsm->dropManager.curDragContext),
+		            False);
 		dsm->dropManager.curInfo = NULL;
 	}
 

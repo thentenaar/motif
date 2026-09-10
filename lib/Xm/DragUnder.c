@@ -805,12 +805,15 @@ AnimateEnter(
     Widget dc = dpcb->dragContext;
     XmAnimationSaveData	aSaveData;
     Widget dswidget = GetDSWidget((XmDSInfo) (dsm->dropManager.curInfo));
+    Widget hwidget  = dswidget;
     Boolean dummy;
 
     /*
      *  Create and fill an XmAnimationSaveData structure containing the
      *  data needed to animate the dropsite.  Save it for AnimateLeave().
      */
+    if (!dswidget)
+        return;
 
     aSaveData = CreateAnimationSaveData ((XmDragContext) dc, aData, dpcb);
     *((XtPointer *) aData->saveAddr) = (XtPointer) aSaveData;
@@ -823,9 +826,8 @@ AnimateEnter(
 
     if (aSaveData->activeMode == XmDRAG_WINDOW) {
       /* Install the event handler to redo visual on Exposure */
-      Widget hwidget = dswidget;
       if (XmIsGadget(hwidget))
-	hwidget = XtParent(hwidget);
+        hwidget = XtParent(hwidget);
       XtInsertEventHandler(hwidget, ExposureMask, False,
 			   (XtEventHandler) AnimateExpose,
 			   (XtPointer) aSaveData, XtListTail);

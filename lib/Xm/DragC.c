@@ -1423,16 +1423,13 @@ DropLoseSelection(
     }
 }
 
-static void
-DragDropFinish(
-        XmDragContext dc )
+static void DragDropFinish(XmDragContext dc)
 {
     Widget w = NULL;
     Atom xdndSelection;
 
     XmDropSiteManagerObject dsm = (XmDropSiteManagerObject)
 		_XmGetDropSiteManagerObject((XmDisplay)(XtParent(dc)));
-
 
     /* Handle completion */
     if (dc->drag.dropFinishCallback) {
@@ -1481,13 +1478,12 @@ DragDropFinish(
 			 (XtPointer)dc);
 
     XtVaGetValues((Widget)dc, XmNsourceWidget, &w, NULL);
-    if (w)
-	XtRemoveCallback(w, XmNdestroyCallback, cancelDrag, (XtPointer)dc);
+    if (w) XtRemoveCallback(w, XmNdestroyCallback, cancelDrag, (XtPointer)dc);
 
-    XtDestroyWidget((Widget) dc);
+	if (dsm->dropManager.curDragContext == (Widget)dc)
+		dsm->dropManager.curDragContext = NULL;
+    XtDestroyWidget((Widget)dc);
 }
-
-
 
 /*
  * This callback is called when a drag operation needs to be terminated.
@@ -3295,19 +3291,20 @@ XmTargetsAreCompatible(
     return False;
 }
 
-
-unsigned char
-_XmGetActiveProtocolStyle(
-        Widget w )
+unsigned char _XmGetActiveProtocolStyle(Widget w)
 {
+  XmDisplay xmDisplay;
   unsigned char initiator = XmDRAG_NONE,
-    receiver = XmDRAG_NONE,
-    active = XmDRAG_NONE;
+                receiver  = XmDRAG_NONE,
+                active    = XmDRAG_NONE;
   XmDragContext	dc = (XmDragContext)w;
-  XmDisplay		xmDisplay = (XmDisplay)XtParent(dc);
 
+  if (!dc)
+    return XmDRAG_NONE;
+
+  xmDisplay = (XmDisplay)XtParent(dc);
   initiator = xmDisplay->display.dragInitiatorProtocolStyle;
-  receiver = xmDisplay->display.dragReceiverProtocolStyle;
+  receiver  = xmDisplay->display.dragReceiverProtocolStyle;
 
   if (!dc->drag.sourceIsExternal)
     {
