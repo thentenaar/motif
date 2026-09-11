@@ -1,193 +1,315 @@
-'\" t
-...\" RendA.sgm /main/10 1996/09/08 20:56:54 rws $
-.de P!
-.fl
-\!!1 setgray
-.fl
-\\&.\"
-.fl
-\!!0 setgray
-.fl			\" force out current output buffer
-\!!save /psv exch def currentpoint translate 0 0 moveto
-\!!/showpage{}def
-.fl			\" prolog
-.sy sed -e 's/^/!/' \\$1\" bring in postscript file
-\!!psv restore
-.
-.de pF
-.ie     \\*(f1 .ds f1 \\n(.f
-.el .ie \\*(f2 .ds f2 \\n(.f
-.el .ie \\*(f3 .ds f3 \\n(.f
-.el .ie \\*(f4 .ds f4 \\n(.f
-.el .tm ? font overflow
-.ft \\$1
-..
-.de fP
-.ie     !\\*(f4 \{\
-.	ft \\*(f4
-.	ds f4\"
-'	br \}
-.el .ie !\\*(f3 \{\
-.	ft \\*(f3
-.	ds f3\"
-'	br \}
-.el .ie !\\*(f2 \{\
-.	ft \\*(f2
-.	ds f2\"
-'	br \}
-.el .ie !\\*(f1 \{\
-.	ft \\*(f1
-.	ds f1\"
-'	br \}
-.el .tm ? font underflow
-..
-.ds f1\"
-.ds f2\"
-.ds f3\"
-.ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
-.TH "XmRendition" "library call"
-.SH "NAME"
-\fBXmRendition\fR \(em The Rendition registry
-.iX "XmRendition"
-.SH "SYNOPSIS"
-.PP
+.TH XMRENDITION 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRendition - Motif Font Abstraction
+
+.SH SYNOPSIS
 .nf
-#include <Xm/Xm\&.h>
-XmRendition
+#include <Xm/Xm.h>
 .fi
-.SH "DESCRIPTION"
+
+.SH DESCRIPTION
+\fBXmRendition\fP is a pseudo-widget used as an abstraction over the
+various font types available on the system. This data structure is
+intentionally opaque, and contains information about a particular
+font, and certain stylistic parameters, which are exposed though the
+resources given below. \fBXmRendition\fP's resources can be accessed
+through the \fBXmRenditionGetValues\fP and \fBXmRenditionSetValues\fP
+functions, patterned after \fBXtGetValues\fP and \fBXtSetValues\fP. As
+it is not a true \fBWidget\fP, calling the Xt functions on it will
+certainly fail.
+
+Renditions inform the compound string (\fBXmString\fP) drawing code about
+how a particular string, or part of a string, should be drawn. This
+association is based on matching the rendition's tag against that of the
+compound string within a \fBXmRenderTable\fP. Though stylistic
+parameters such as color and line type are available on the rendition,
+primarily for establishing defaults, full advantage should be taken of
+the \fBXmRenditionStyle\fP type to convey programmatically-defined
+instances of those properties for drawing rather than modifying those
+properties of the rendition.
+
+.SH FONT LOADING
+For \fBXmRendition\fP to load a font, it must have a load model, type,
+and pattern. The pattern (\fIXmNfontName\fP) is the textual string used
+to load the font. This will be a XLFD string for X fonts and fontsets,
+or a Fontconfig pattern string for Xft fonts.
+
+Modifying font specification resources (\fIXmNfontName\fP,
+\fIXmNfontType\fP, \fIXmNfont\fP, \fIXmNxftFont\fP, \fIXmNloadModel\fP)
+of a rendition will cause the underlying font to be unloaded and reloaded,
+save for externally loaded fonts (see below). Setting \fIXmNfont\fP or
+\fIXmNxftFont\fP will force the loading model to \fBXmUNSPECIFIED_LOAD_MODEL\fP.
+
+.SS IMMEDIATE LOADING
+By specifying the load model as \fBXmLOAD_IMMEDIATE\fP, the font will be
+loaded when the \fBXmRendition\fP object is created.
+
+.SS DEFERRED LOADING
+A rendition may have the load model \fBXmLOAD_DEFERRED\fP, indicating that
+the underlying font will be materialized the first time the rendition is
+used to render a compound string or a part thereof; or the first time its
+resource properties are queried.
+
+.SS ON-DEMAND LOADING
+The \fBXmLOAD_LAZY\fP model indicates that the user will explicitly
+manage the loading of the font using the \fBXmRenditionLoad\fP and
+\fBXmRenditionUnload\fP functions.
+
+.SS EXTERNAL LOADING
+\fBXmUNSPECIFIED_LOAD_MODEL\fP is used for cases where the user wants
+to handle the font loading themselves. This is acheived by specifying
+the \fIXmNfontType\fP and the corresponding \fIXmNfont\fP or \fIXmNxftFont\fP
+property. Motif will not take ownership of such fonts, and will expect
+the user to manage their lifecycle. Care must be taken to ensure that
+the font type agrees with the provided font object.
+
+.SH EXAMPLES
+.SS LOADING A FONT
+The simplest way to load a font is by passing a perpared set of arguments
+to \fBXmRenditionCreate\fP. For example, to load the X font "fixed":
 .PP
-\fBXmRendition\fR is a pseudo widget used for the rendering of
-\fBXmString\fRs\&. \fBXmRendition\fR has two parts:
-\fBXmStringTag\fR and rendering information\&. The \fBXmStringTag\fR part
-can be matched with an \fBXmStringTag\fR associated with a
-\fBLOCALE\fP, \fBCHARSET\fP, or \fBRENDITION[BEGIN|END]\fP component
-within \fBXmString\fR\&.
-The rendering information contains
-information about the font or fontset, colors, tabs, and lines to be
-used in rendering a text component\&.
+.EX
+Arg arg[3];
+XmRendition r;
+
+XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
+XtSetArg(arg[1], XmNfontType, XmFONT_IS_FONT);
+XtSetArg(arg[2], XmNfontName, "fixed");
+r = XmRenditionCreate(NULL, XmSTRING_DEFAULT_CHARSET, arg, 3);
+
+/* ... */
+
+XmRenditionFree(r);
+.EE
+
+.SH LOADING A XFT FONT
+For Xft fonts, the metadata properties may be specified in the arguments
+given to \fBXmRenditionCreate\fP. These are added to the Fontconfig pattern
+that will be matched to load the font. When the font is loaded, the
+font-supplied values will replace them. A 12-point sans-serif font could
+thus be loaded:
 .PP
-If a resource in a rendition is unspecified, usually by setting it to
-\fBXmAS_IS\fP or \fBXmUNSPECIFIED_PIXEL\fP,
-then the value to be used for that resource is the value of the
-immediately preceding rendition in \fBXmString\fR\&. If that value
-is unspecified, then the preceding value is used, and so on\&. If
-no renditions specify a value for a resource, then a default value
-will be used\&.
-.SS "Classes"
-.PP
-\fBXmRendition\fR does not inherit from any widget class\&.
-.SS "New Resources"
-.PP
-The following table defines a set of widget resources used by the
-programmer to specify data\&. To reference a resource by name
-or by class in a \fB\&.Xdefaults\fP file, remove the \fBXmN\fP or \fBXmC\fP
-prefix and use the remaining letters\&. To specify one of the defined
-values for a resource in a \fB\&.Xdefaults\fP file, remove the \fBXm\fP prefix
-and use the remaining letters (in either lowercase or uppercase, but include
-any underscores between words)\&. The codes in the access column
-indicate if the given resource can be set at creation time (C),
-set by using \fBXmRenditionUpdate\fP (S), retrieved by using
-\fBXmRenditionRetrieve\fP (G), or is not applicable (N/A)\&.
-.PP
+.EX
+XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
+XtSetArg(arg[1], XmNfontType, XmFONT_IS_XFT);
+XtSetArg(arg[2], XmNfontName, "sans-serif");
+XtSetArg(arg[3], XmNfontSize, 12);
+r = XmRenditionCreate(NULL, XmSTRING_DEFAULT_CHARSET, arg, 4);
+.EE
+
+.SH RESOURCES
 .TS
-tab() box;
-c s s s s
-l| l| l| l| l.
-\fBXmRendition Resource Set\fP
-\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
-_____
-XmNrenditionBackgroundXmCRenditionBackgroundPixelXmUNSPECIFIED_PIXELCSG
-_____
-XmNfontXmCFontXtPointerXmAS_ISCSG
-_____
-XmNfontNameXmCFontNameStringXmAS_ISCSG
-_____
-XmNfontTypeXmCFontTypeXmFontTypeXmAS_ISCSG
-_____
-XmNrenditionForegroundXmCRenditionForegroundPixelXmUNSPECIFIED_PIXELCSG
-_____
-XmNloadModelXmCLoadModelunsigned charXmAS_ISCSG
-_____
-XmNstrikethruTypeXmCStrikethruTypeunsigned charXmAS_ISCSG
-_____
-XmNtabListXmCTabListXmTabListXmAS_ISCSG
-_____
-XmNtagXmCTagXmStringTag""G
-_____
-XmNunderlineTypeXmCUnderlineTypeunsigned charXmAS_ISCSG
-_____
+tab(|) box;
+cb s s s s
+lb| lb| lb| lb| lb
+l| lb| lb| l| l.
+XmRendition Resource Set
+=
+Name|Class|Type|Default|Access
+_
+XmNloadModel|XmCLoadModel|unsigned char|XmUNSPECIFIED_LOAD_MODEL|CSG
+XmNfontType|XmCFontType|XmFontType|XmAS_IS|CSG
+XmNtag|XmCTag|XmStringTag|XmS|CG
+XmNfont|XmCFont|XtPointer|NULL|CSG
+XmNxftFont|XmCXftFont|XtPointer|NULL|CSG
+XmNfontName|XmCFontName|String|NULL|CSG
+XmNfontFoundry|XmCFontFoundry|String|NULL|CG
+XmNfontFamily|XmCFontFamily|String|NULL|CG
+XmNfontStyle|XmCFontStyle|String|NULL|CG
+XmNfontSize|XmCFontSize|int|0|CG
+XmNfontPixelSize|XmCFontPixelSize|int|0|CG
+XmNfontSlant|XmCFontSlant|int|0|CG
+XmNfontWeight|XmCFontWeight|int|0|CG
+XmNwidth|XmCWidth|int|0|G
+XmNinkWidth|XmCInkWidth|int|0|G
+XmNascent|XmCAscent|int|0|G
+XmNdescent|XmCDescent|int|0|G
+XmNtabList|XmCTabList|XmTabList|NULL|CSG
+XmNrenditionBackground|XmCRenditionBackground|Pixel|XmUNSPECIFIED_PIXEL|CSG
+XmNrenditionForeground|XmCRenditionForeground|Pixel|XmUNSPECIFIED_PIXEL|CSG
+XmNunderlineType|XmCUnderlineType|unsigned char|XmAS_IS|CSG
+XmNstrikethruType|XmCStrikethruType|unsigned char|XmAS_IS|CSG
+XmNforegroundState|XmCGroundState|unsigned char|XmAS_IS|CSG
+XmNbackgroundState|XmCGroundState|unsigned char|XmAS_IS|CSG
 .TE
-.IP "\fBXmNrenditionBackground\fP" 10
-Specifies the background drawing color\&. A value of
-\fBXmUNSPECIFIED_PIXEL\fP indicates that the background is not
-specified for this rendition\&.
-.IP "\fBXmNfont\fP" 10
-Specifies the actual font or fontset to be used by this rendition\&. The
-value of this resource, if set to other than \fBXmAS_IS\fP, will be
-used regardless of the settings of the other font resources\&. Setting
-this resource will force \fBXmNloadModel\fP to be
-\fBXmLOAD_IMMEDIATE\fP\&. If this resource is not initially set, then
-it will be set subsequently by the rendition whenever the font or
-fontset specified by \fBXmNfontName\fP is loaded\&. If both
-\fBXmNfontName\fP and \fBXmNfont\fP are specified in a resource file,
-the \fBXmNfont\fP specification will take precedence\&.
-.IP "\fBXmNfontName\fP" 10
-Specifies an X Logical Font Description (XLFD) string, which is
-interpreted either as a font name or as a base font name list\&. A base
-font name list is a comma-separated and NULL-terminated string\&. A
-value of \fBXmAS_IS\fP indicates that the font is not specified for
-this rendition\&. If both \fBXmNfontName\fP and \fBXmNfont\fP are
-specified in a resource file, the \fBXmNfont\fP specification will
-take precedence\&.
-.IP "\fBXmNfontType\fP" 10
-Specifies whether the
-\fBXmNfontName\fP resource refers to a font name or to a base font name
-list\&. Valid values are \fBXmFONT_IS_FONT\fP and
-\fBXmFONT_IS_FONTSET\fP\&.
-.IP "\fBXmNrenditionForeground\fP" 10
-Specifies the foreground drawing color\&. A value of
-\fBXmUNSPECIFIED_PIXEL\fP indicates that the foreground is not
-specified for this rendition\&.
-.IP "\fBXmNloadModel\fP" 10
-Specifies whether the font or fontset specified by \fBXmNfontName\fP
-is to be loaded when the rendition is created (\fBXmLOAD_IMMEDIATE\fP)
-or only when the font is required to render an \fBXmString\fR segment
-(\fBXmLOAD_DEFERRED\fP)\&.
-Note that specifying \fBXmLOAD_IMMEDIATE\fP for \fBXmNloadModel\fP is
-valid only if \fBXmNfontName\fP is specified, in which case the
-specified font will be loaded on creation, or if \fBXmNfont\fP is
-specified, in which case the font is already loaded\&.
-\fBXmLOAD_DEFERRED\fP is only valid when \fBXmNfontName\fP is
-specified\&.
-.IP "\fBXmNstrikethruType\fP" 10
-Specifies the type of line to be used to strike through a text
-segment\&. Valid values are \fBXmNO_LINE\fP, \fBXmSINGLE_LINE\fP,
-\fBXmDOUBLE_LINE\fP, \fBXmSINGLE_DASHED_LINE\fP, and
-\fBXmDOUBLE_DASHED_LINE\fP\&. A value of \fBXmAS_IS\fP indicates that
-the strike-through type is not specified for this rendition\&.
-.IP "\fBXmNtabList\fP" 10
-Specifies the tab list to be used in rendering compound strings
-containing tab components\&.
-.IP "\fBXmNtag\fP" 10
-Specifies the tag string to be used in matching the renditions with
-other renditions or with \fBXmStringTag\fR components in
-\fBXmStrings\fP\&. This resource must always be specified\&. That is,
-NULL is not a legal value but the empty string is\&.
-This resource is automatically set to the value of the \fItag\fP parameter in
-the \fBXmRenditionCreate\fP call\&.
-.IP "\fBXmNunderlineType\fP" 10
-Specifies the type of line to be used to underline a text segment\&.
-Valid values are \fBXmNO_LINE\fP, \fBXmSINGLE_LINE\fP,
-\fBXmDOUBLE_LINE\fP, \fBXmSINGLE_DASHED_LINE\fP, and
-\fBXmDOUBLE_DASHED_LINE\fP\&. A value of \fBXmAS_IS\fP indicates that
-the underline type is not specified for this rendition\&.
-.SH "RELATED"
-.PP
-\fBXmRenditionCreate\fP(3),
-\fBXmRenditionFree\fP(3),
-\fBXmRenditionRetrieve\fP(3),
-\fBXmRenditionUpdate\fP(3), and
-\fBXmString\fP(3)\&.
-...\" created by instant / docbook-to-man, Sun 22 Dec 1996, 20:28
+
+.IP "\fBXmNloadModel\fP" 8
+As previously discussed, this specifies the loading model to use. Valid
+values are:
+.RS 8
+.IP \(bu 4
+\fBXmUNSPECIFIED_LOAD_MODEL\fP \(em The font is user-supplied.
+.IP \(bu 4
+\fBXmLOAD_DEFERRED\fP \(em Load the font on first use.
+.IP \(bu 4
+\fBXmLOAD_IMMEDIATE\fP \(em Load the font at XmRendition creation.
+.IP \(bu 4
+\fBXmLOAD_LAZY\fP \(em Load the font on-demand with \fBXmRenditionLoad\fP.
+.RE
+
+.IP "\fBXmNfontType\fP" 8
+This indicates the type of font being used and must be one of:
+.RS 8
+.IP \(bu 4
+\fBXmFONT_IS_FONT\fP \(em Plain X font
+.IP \(bu 4
+\fBXmFONT_IS_FONTSET\fP \(em X fontset
+.IP \(bu 4
+\fBXmFONT_IS_XFT\fP \(em Xft font
+.RE
+
+.IP "\fBXmNtag\fP" 8
+.RS 8
+Tag (\fBXmStringTag\fP) to use for selecting this rendition for rendering.
+This value may be queried, but is fixed once the rendition is created.
+.RE
+
+.IP "\fBXmNfont\fP" 8
+.RS 8
+Depending on font type, \fBXFontStruct *\fP or \fBXFontSet\fP associated
+with this rendition, cast to \fBXtPointer\fP.
+.RE
+
+.IP "\fBXmNxftFont\fP" 8
+.RS 8
+\fBXftFont *\fP associated with this rendition, cast to \fBXtPointer\fP.
+.RE
+
+.IP "\fBXmNfontName\fP" 8
+.RS 8
+Specification string for this rendition. For X fonts this will be a
+X Logical Font Description (XLFD) string, and for Xft fonts, a
+Fontconfig pattern string.
+.RE
+
+.IP "\fBXmNfontFoundry\fP" 8
+.RS 8
+Font foundry string, supplied by the font.
+.RE
+
+.IP "\fBXmNfontFamily\fP" 8
+.RS 8
+Font family string, supplied by the font.
+.RE
+
+.IP "\fBXmNfontStyle\fP" 8
+.RS 8
+Font style string, only supplied by Xft fonts.
+.RE
+
+.IP "\fBXmNfontSize\fP" 8
+.RS 8
+Font size in points, supplied by the font.
+.RE
+
+.IP "\fBXmNfontPixelSize\fP" 8
+.RS 8
+Font size in pixels. For Xft fonts, this is supplied by the font, for X
+fonts, this is calculated based on the screen DPI and point size,
+.RE
+
+.IP "\fBXmNfontSlant\fP" 8
+.RS 8
+Slant value supplied by the font. Motif pre-defines the following
+constants for convenience:
+.IP \(bu 4
+\fBXmSLANT_ROMAN\fP \(em Regular, upright slant.
+.IP \(bu 4
+\fBXmSLANT_ITALIC\fP \(em Right-slanted glyphs which may be narrower than
+their roman counterparts, usually inspired by handwriting.
+.IP \(bu 4
+\fBXmSLANT_OBLIQUE\fP \(em Simply right-slanted versions of roman glyphs.
+.RE
+
+.IP "\fBXmNfontWeight\fP" 8
+.RS 8
+Weight value supplied by the font. Motif pre-defines the following
+constants for convenience:
+.IP \(bu 4
+\fBXmWEIGHT_REGULAR\fP \(em Regular weight.
+.IP \(bu 4
+\fBXmWEIGHT_MEDIUM\fP \(em Medium weight between regular and bold, ideal
+for emphasis.
+.IP \(bu 4
+\fBXmWEIGHT_DEMIBOLD\fP \(em Darker than medium, lighter than bold.
+.IP \(bu 4
+\fBXmWEIGHT_BOLD\fP \(em Heavy weight ideal for strong text or headers.
+.RE
+
+.IP "\fBXmNwidth\fP" 8
+.RS 8
+Indicated maximum layout width for a glyph in the font in pixels.
+.RE
+
+.IP "\fBXmNinkWidth\fP" 8
+.RS 8
+Indicated maximum ink width for a glyph in the font in pixels.
+.RE
+
+.IP "\fBXmNascent\fP" 8
+.RS 8
+Indicated ascent value for the font in pixels.
+.RE
+
+.IP "\fBXmNdescent\fP" 8
+.RS 8
+Indicated descent value for the font in pixels.
+.RE
+
+.IP "\fBXmNtabList\fP" 8
+.RS 8
+Specifies the tab list which specifies how compound strings containing
+tab components are laid out in columns.
+.RE
+
+.IP "\fBXmNrenditionForeground\fP" 8
+.IP "\fBXmNrenditionBackground\fP" 8
+.RS 8
+Specifies the foreground or background color for the rendition. A value
+of \fBXmUNSPECIFIED_PIXEL\fP indicates that the particular color is
+not specified for this rendition.
+.RE
+
+.IP "\fBXmNforegroundState\fP" 8
+.IP "\fBXmNbackgroundState\fP" 8
+.RS 8
+If ether of these resources are set to \fBXmFORCE_COLOR\fP, the respective
+color specified in the rendition will be preferred over values from other
+styles/renditions evaluated when rendering a compound string (or part
+thereof). These resources have been present at least as far back as
+Motif 2.1.30 and were heretofore undocumented.
+.RE
+
+.IP "\fBXmNunderlineType\fP" 8
+.IP "\fBXmNstrikethruType\fP" 8
+.RS 8
+Specifies the line type for striking through or underlining a compound
+string. Valid values are:
+.IP \(bu 4
+\fBXmAS_IS\fP \(em The value is unspecified.
+.IP \(bu 4
+\fBXmNO_LINE\fP \(em Strikethrough / underline will not be applied.
+.IP \(bu 4
+\fBXmSINGLE_LINE\fP \(em A single line will be used.
+.IP \(bu 4
+\fBXmDOUBLE_LINE\fP \(em A double line will be used.
+.IP \(bu 4
+\fBXmSINGLE_DASHED_LINE\fP \(em A single-dashed line will be used.
+.IP \(bu 4
+\fBXmDOUBLE_DASHED_LINE\fP \(em A double-dashed line will be used.
+.RE
+
+.SH HISTORY
+\fBXmRendition\fP was added to Motif sometime around version 2.0 as a
+replacement for the prior \fBXmFont\fP abstraction, and was updated
+to include support for Xft fonts in Motif 2.3.0. The font metrics and
+metadata properties (e.g., \fIXmNascent\fP, \fIXmNfontFamily\fP), along
+with \fBXmRenditionStyle\fP were added in version 2.6.0.
+
+.SH SEE ALSO
+\fBXmRenditionStyle\fP(3), \fBXmRenderTable\fP(3), \fBXmString\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
