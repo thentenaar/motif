@@ -948,45 +948,7 @@ void FreeRList (RList *prl)
 }/* END OF FUNCTION FreeRList */
 /*************************************<->*************************************
  *
- *  WmDrawString
- *
- *
- *  Description:
- *  -----------
- *  Draws a string
- *
- *
- *  Inputs:
- *  ------
- *  (same parameters used by XDrawString and XDrawImageString)
- *
- *  Outputs:
- *  -------
- *
- *  Comments:
- *  --------
- *  o If wmGD.cleanText is True, then the text is drawn using
- *    XDrawImageString. This provides some clean space around the text
- *    if the background area is stippled -- especially useful on
- *    B/W displays.
- *
- *************************************<->***********************************/
-void WmDrawString (Display *dpy, Drawable d, GC gc, int x, int y, char *string, unsigned int length)
-{
-    if (ACTIVE_PSD->cleanText)
-    {
-	XDrawImageString(dpy, d, gc, x, y, string, length);
-    }
-    else
-    {
-	XDrawString(dpy, d, gc, x, y, string, length);
-    }
-
-}/* END OF FUNCTION WmDrawString */
-
-/*************************************<->*************************************
- *
- *  WmXmDrawString
+ *  WmDrawXmString
  *
  *
  *  Description:
