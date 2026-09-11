@@ -103,7 +103,7 @@ void SetStdGlobalResourceValues (void);
 void ProcessScreenListResource (void);
 void ProcessAppearanceResources (WmScreenData *pSD);
 void MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean makeActiveResources);
-void GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixmap bg_pixmap, Pixel ts_color, Pixmap ts_pixmap, Pixel bs_color, Pixmap bs_pixmap, GC *pGC, GC *ptsGC, GC *pbsGC);
+void GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, Pixmap bg_pixmap, Pixel ts_color, Pixmap ts_pixmap, Pixel bs_color, Pixmap bs_pixmap, GC *pGC, GC *ptsGC, GC *pbsGC);
 void ProcessScreenResources (WmScreenData *pSD, unsigned char *screenName);
 void ProcessWorkspaceResources (WmWorkspaceData *pWS);
 void ProcessClientResources (ClientData *pCD);
@@ -4533,7 +4533,6 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
     GetAppearanceGCs (pSD,
 		      pAData->foreground,
 		      pAData->background,
-		      pAData->font,
 		      pAData->backgroundPixmap,
 		      pAData->topShadowColor,
 		      pAData->topShadowPixmap,
@@ -4623,7 +4622,6 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
     GetAppearanceGCs (pSD,
 		      pAData->activeForeground,
 		      pAData->activeBackground,
-		      pAData->font,
 		      pAData->activeBackgroundPixmap,
 		      pAData->activeTopShadowColor,
 		      pAData->activeTopShadowPixmap,
@@ -4640,7 +4638,7 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
 
 /*************************************<->*************************************
  *
- *  GetAppearanceGCs (pSD, fg, bg, font, bg_pixmap, ts_color,
+ *  GetAppearanceGCs (pSD, fg, bg, bg_pixmap, ts_color,
  *                    ts_pixmap, bs_color, bs_pixmap, pGC, ptsGC, pbsGC)
  *
  *
@@ -4679,7 +4677,7 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
  *************************************<->***********************************/
 
 void
-GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixmap bg_pixmap, Pixel ts_color, Pixmap ts_pixmap, Pixel bs_color, Pixmap bs_pixmap, GC *pGC, GC *ptsGC, GC *pbsGC)
+GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, Pixmap bg_pixmap, Pixel ts_color, Pixmap ts_pixmap, Pixel bs_color, Pixmap bs_pixmap, GC *pGC, GC *ptsGC, GC *pbsGC)
 {
     XGCValues gcv;
     XtGCMask  mask;
@@ -4688,7 +4686,7 @@ GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixm
      * Get base GC
      */
 
-    mask = GCForeground | GCBackground | GCFont;
+    mask = GCForeground | GCBackground;
     gcv.foreground = fg;
     gcv.background = bg;
 
@@ -4696,12 +4694,6 @@ GetAppearanceGCs (WmScreenData *pSD, Pixel fg, Pixel bg, XFontStruct *font, Pixm
     {
 	mask |= GCTile;
 	gcv.tile = bg_pixmap;
-    }
-
-    if (font)
-    {
-	mask |= GCFont;
-	gcv.font = font->fid;
     }
 
     *pGC = XCreateGC (DISPLAY, pSD->rootWindow, mask, &gcv);

@@ -216,7 +216,7 @@ extern Pixel		FPselectcolor;
 #define QUIT_MWM_ACTION		3
 
 /* extract text height in pixels from a (XFontStruct *) */
-#define TEXT_HEIGHT(pfs) (((pfs)->ascent)+((pfs)->descent))
+#define TEXT_HEIGHT(pfs) (((pfs).ascent)+((pfs).descent))
 
 /* icon frame shadow widths */
 #ifdef WSM
@@ -1028,7 +1028,6 @@ typedef struct _AppearanceData
     int ascent;
     int descent;
     int char_width;
-    XFontStruct	*font;
     unsigned int	titleHeight;		/* title bar's height */
     Boolean	saveUnder;			/* resource */
     Pixel	background;			/* resource */
