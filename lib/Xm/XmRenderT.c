@@ -577,7 +577,6 @@ XmRenditionStyle XmRenditionStyleDup(const XmRenditionStyle style)
 Boolean XmRenditionStyleMerge(XmRenditionStyle a, const XmRenditionStyle b)
 {
 	Boolean mod = False;
-	const struct __XmRenditionRec *r;
 
 	if (!a || !b)
 		return True;
@@ -2392,12 +2391,6 @@ void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal count)
 	}
 
 	/* Now, check for changes between orig and new */
-	if (orig->tag != new.tag) {
-		if (new.tag)
-			orig->tag = _XmStringCacheTag(new.tag, XmSTRING_TAG_STRLEN);
-		else RenditionWarning(NULL, "NO_NULL_TAG", NO_NULL_TAG_MSG, d);
-	}
-
 	if (orig->tabs != new.tabs) {
 		XmTabListFree(orig->tabs);
 		orig->tabs = new.tabs;
