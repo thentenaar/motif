@@ -54,6 +54,7 @@ static char rcsid[] = "$XConsortium: WmFeedback.c /main/6 1996/10/23 17:20:55 rs
 #define FEEDBACK_BEVEL		2
 
 #define DEFAULT_POSITION_STRING	"(0000x0000)"
+#define DEFAULT_POSITION_STRLEN 11
 
 #define  CB_HIGHLIGHT_THICKNESS  3
 
@@ -237,15 +238,16 @@ static ConfirmFunc confirm_func[4] = {Do_Set_Behavior,
  *  Comments:
  *  --------
  *************************************<->***********************************/
-void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, unsigned int height, unsigned long style)
+void ShowFeedbackWindow(WmScreenData *pSD, int x, int y, unsigned int width,
+                        unsigned int height, unsigned long style)
 {
+    XmString s;
     unsigned long        mask = 0;
     XSetWindowAttributes win_attribs;
     XWindowChanges       win_changes;
-    int                  direction, ascent, descent;
-    XCharStruct          xcsLocation;
-    int                  winX, winY;
+    int                  winX, winY, h = 0;
     int                  tmpX, tmpY;
+    unsigned int junkWidth, junkHeight;
 
     if ( (pSD->fbStyle = style) == FB_OFF)
 	return;
@@ -254,41 +256,39 @@ void ShowFeedbackWindow (WmScreenData *pSD, int x, int y, unsigned int width, un
     pSD->fbLastY = y;
     pSD->fbLastWidth = width;
     pSD->fbLastHeight = height;
+    h = pSD->feedbackAppearance.ascent + pSD->feedbackAppearance.descent;
 
     /*
      * Derive the size and position of the window from the text extents
      * Set starting position of each string
      */
-    XTextExtents(pSD->feedbackAppearance.font, DEFAULT_POSITION_STRING,
-		 strlen(DEFAULT_POSITION_STRING), &direction, &ascent,
-		 &descent, &xcsLocation);
-
-    pSD->fbWinWidth = xcsLocation.width + 4*FEEDBACK_BEVEL;
+    s = XmStringCreateLocalized(DEFAULT_POSITION_STRING);
+    pSD->fbWinWidth = XmStringWidth(pSD->feedbackAppearance.fontList, s) +
+                      4*FEEDBACK_BEVEL;
+    XmStringFree(s);
 
     switch (pSD->fbStyle)
     {
 	case FB_SIZE:
-	    pSD->fbSizeY = 2*FEEDBACK_BEVEL + ascent;
-	    pSD->fbWinHeight = (ascent + descent) + 4*FEEDBACK_BEVEL;
+	    pSD->fbSizeY = 2*FEEDBACK_BEVEL;
+	    pSD->fbWinHeight = h + 4*FEEDBACK_BEVEL;
 	    break;
 
 	case FB_POSITION:
-	    pSD->fbLocY = 2*FEEDBACK_BEVEL + ascent;
-	    pSD->fbWinHeight = (ascent + descent) + 4*FEEDBACK_BEVEL;
+	    pSD->fbLocY = 2*FEEDBACK_BEVEL;
+	    pSD->fbWinHeight = h + 4*FEEDBACK_BEVEL;
 	    break;
 
 	default:
 	case (FB_SIZE | FB_POSITION):
-	    pSD->fbLocY = 2*FEEDBACK_BEVEL + ascent;
-	    pSD->fbSizeY = pSD->fbLocY + ascent + descent;
-	    pSD->fbWinHeight = 2*(ascent + descent) + 4*FEEDBACK_BEVEL;
+	    pSD->fbLocY = 2*FEEDBACK_BEVEL;
+	    pSD->fbSizeY = pSD->fbLocY + h;
+	    pSD->fbWinHeight = 2*h + 4*FEEDBACK_BEVEL;
 	    break;
     }
 
     if (pSD->feedbackGeometry) /* set by user */
     {
-	unsigned int junkWidth, junkHeight;
-
 	mask = XParseGeometry(pSD->feedbackGeometry, &tmpX, &tmpY,
 			      &junkWidth, &junkHeight);
     }
@@ -455,17 +455,39 @@ void PaintFeedbackWindow (WmScreenData *pSD)
 	 */
 	if (pSD->fbStyle & FB_POSITION)
 	{
-	    WmDrawString (DISPLAY, pSD->feedbackWin,
-			 pSD->feedbackAppearance.inactiveGC,
-			 pSD->fbLocX, pSD->fbLocY,
-			 pSD->fbLocation, strlen(pSD->fbLocation));
+#ifdef WSM
+	    WmDrawXmString(DISPLAY, pSD->feedbackWin,
+	                   pSD->feedbackAppearance.fontList,
+	                   pSD->fbLocation,
+	                   pSD->feedbackAppearance.inactiveGC,
+	                   pSD->fbLocX, pSD->fbLocY,
+	                   pSD->fbWinWidth - 2 * FEEDBACK_BEVEL, NULL, True);
+#else
+	    WmDrawXmString(DISPLAY, pSD->feedbackWin,
+	                   pSD->feedbackAppearance.fontList,
+	                   pSD->fbLocation,
+	                   pSD->feedbackAppearance.inactiveGC,
+	                   pSD->fbLocX, pSD->fbLocY,
+	                   pSD->fbWinWidth - 2 * FEEDBACK_BEVEL, NULL);
+#endif /* WSM */
 	}
 	if (pSD->fbStyle & FB_SIZE)
 	{
-	    WmDrawString (DISPLAY, pSD->feedbackWin,
-			 pSD->feedbackAppearance.inactiveGC,
-			 pSD->fbSizeX, pSD->fbSizeY,
-			 pSD->fbSize, strlen(pSD->fbSize));
+#ifdef WSM
+	    WmDrawXmString(DISPLAY, pSD->feedbackWin,
+	                   pSD->feedbackAppearance.fontList,
+	                   pSD->fbSize,
+	                   pSD->feedbackAppearance.inactiveGC,
+	                   pSD->fbSizeX, pSD->fbSizeY,
+	                   pSD->fbWinWidth - 2 * FEEDBACK_BEVEL, NULL, True);
+#else
+	    WmDrawXmString(DISPLAY, pSD->feedbackWin,
+	                   pSD->feedbackAppearance.fontList,
+	                   pSD->fbSize,
+	                   pSD->feedbackAppearance.inactiveGC,
+	                   pSD->fbSizeX, pSD->fbSizeY,
+	                   pSD->fbWinWidth - 2 * FEEDBACK_BEVEL, NULL);
+#endif /* WSM */
 	}
     }
 }
@@ -587,27 +609,28 @@ void UpdateFeedbackInfo (WmScreenData *pSD, int x, int y, unsigned int width, un
  *  --------
  *
  *************************************<->***********************************/
-void UpdateFeedbackText (WmScreenData *pSD, int x, int y, unsigned int width, unsigned int height)
+void UpdateFeedbackText(WmScreenData *pSD, int x, int y,
+                        unsigned int width, unsigned int height)
 {
-    int         direction, ascent, descent;
-    XCharStruct xcs;
+	Dimension w;
+	char buf[DEFAULT_POSITION_STRLEN + 1];
 
-    if (pSD->fbStyle & FB_POSITION)
-    {
-	sprintf (pSD->fbLocation, "(%4d,%-4d)", x, y);
-	XTextExtents(pSD->feedbackAppearance.font, pSD->fbLocation,
-		 strlen(pSD->fbLocation), &direction, &ascent,
-		 &descent, &xcs);
-	pSD->fbLocX = (pSD->fbWinWidth - xcs.width)/2;
+	if (pSD->fbStyle & FB_POSITION) {
+		snprintf(buf, sizeof buf, "(%4d,%-4d)", x, y);
+		XmStringFree(pSD->fbLocation);
+		pSD->fbLocation = XmStringCreateLocalized(buf);
+
+		w = XmStringWidth(pSD->feedbackAppearance.fontList, pSD->fbLocation);
+		pSD->fbLocX = (pSD->fbWinWidth - w) / 2;
     }
 
-    if (pSD->fbStyle & FB_SIZE)
-    {
-	sprintf (pSD->fbSize,     "%4dx%-4d", width, height);
-	XTextExtents(pSD->feedbackAppearance.font, pSD->fbSize,
-		 strlen(pSD->fbSize), &direction, &ascent,
-		 &descent, &xcs);
-	pSD->fbSizeX = (pSD->fbWinWidth - xcs.width)/2;
+	if (pSD->fbStyle & FB_SIZE) {
+		snprintf(buf, sizeof buf, "%4dx%-4d", width, height);
+		XmStringFree(pSD->fbSize);
+		pSD->fbSize = XmStringCreateLocalized(buf);
+
+		w = XmStringWidth(pSD->feedbackAppearance.fontList, pSD->fbSize);
+		pSD->fbSizeX = (pSD->fbWinWidth - w) / 2;
     }
 }
 

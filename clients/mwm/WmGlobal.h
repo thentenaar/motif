@@ -1025,6 +1025,9 @@ typedef struct _RList
 typedef struct _AppearanceData
 {
     XmRenderTable fontList;			/* resource */
+    int ascent;
+    int descent;
+    int char_width;
     XFontStruct	*font;
     unsigned int	titleHeight;		/* title bar's height */
     Boolean	saveUnder;			/* resource */
@@ -1344,8 +1347,8 @@ typedef struct _WmScreenData
     unsigned long fbStyle;
     unsigned int fbWinWidth;
     unsigned int fbWinHeight;
-    char fbLocation[20];
-    char fbSize[20];
+    XmString fbLocation;
+    XmString fbSize;
     int fbLocX;
     int fbLocY;
     int fbSizeX;

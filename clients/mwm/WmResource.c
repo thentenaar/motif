@@ -4433,16 +4433,16 @@ MakeAppearanceResources (WmScreenData *pSD, AppearanceData *pAData, Boolean make
 	ExitWM(WM_ERROR_EXIT_VALUE);
     }
 
-    XtSetArg(arg[0], XmNascent, &a);
-    XtSetArg(arg[1], XmNdescent, &d);
-    XtSetArg(arg[2], XmNfont, &pAData->font);
+    XtSetArg(arg[0], XmNascent,  &pAData->ascent);
+    XtSetArg(arg[1], XmNdescent, &pAData->descent);
+    XtSetArg(arg[2], XmNwidth,   &pAData->char_width);
     XmRenditionGetValues(r, arg, 3);
     XmRenditionFree(r);
 
     /*
      *  Calculate title bar's height and store it in pAData.
      */
-    pAData->titleHeight = a + d + WM_TITLE_BAR_PADDING;
+    pAData->titleHeight = pAData->ascent + pAData->descent + WM_TITLE_BAR_PADDING;
 
     /*
      * Make standard (inactive) appearance resources.

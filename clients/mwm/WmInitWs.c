@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 /*
  * Motif Release 1.2.4
 */
@@ -1353,8 +1354,8 @@ InitWmScreen (WmScreenData *pSD, int sNum)
     pSD->fbStyle = FB_OFF;
     pSD->fbWinWidth = 0;
     pSD->fbWinHeight = 0;
-    pSD->fbLocation[0] = '\0';
-    pSD->fbSize[0] = '\0';
+    pSD->fbLocation = NULL;
+    pSD->fbSize = NULL;
     pSD->fbLocX = 0;
     pSD->fbLocY = 0;
     pSD->fbSizeX = 0;

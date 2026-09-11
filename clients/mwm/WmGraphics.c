@@ -1032,15 +1032,15 @@ void WmDrawXmString (Display *dpy, Window w, XmRenderTable xmfontlist,
 #ifdef WSM
     alignment = bCenter ? XmALIGNMENT_CENTER : XmALIGNMENT_BEGINNING;
 
-    if (textWidth >= pbox->width)  /* can't center text if no room */
+    if (pbox && textWidth >= pbox->width)  /* can't center text if no room */
     {                              /* left justify & clip text */
 	alignment = XmALIGNMENT_BEGINNING;
     }
 #else /* WSM */
-    if (textWidth < pbox->width) {      /* center text if there's room */
+    if (pbox && textWidth < pbox->width) {      /* center text if there's room */
 	alignment = XmALIGNMENT_CENTER;
     }
-    else
+    else if (pbox)
     {                              /* left justify & clip text */
 	alignment = XmALIGNMENT_BEGINNING;
     }
