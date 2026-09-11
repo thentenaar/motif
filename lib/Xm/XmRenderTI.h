@@ -31,9 +31,7 @@
 
 #include <Xm/XmP.h>
 #include <Xm/XmRenderT.h>
-#if USE_XFT
 #include <X11/Xft/Xft.h>
-#endif
 
 #include "HashI.h"
 
@@ -57,11 +55,7 @@
 #define _XmRendFontSlant(r)     ((_XmRendition)*(r))->fontSlant
 #define _XmRendFontSpacing(r)   ((_XmRendition)*(r))->fontSpacing
 #define _XmRendFontWeight(r)    ((_XmRendition)*(r))->fontWeight
-#if USE_XFT
 #define _XmRendXftFont(r)       ((_XmRendition)*(r))->xftFont
-#else
-#define _XmRendXftFont(r)       (NULL)
-#endif
 
 typedef struct __XmRenditionRec
 {
@@ -87,11 +81,7 @@ typedef struct __XmRenditionRec
 	int ink_width;
 	struct _XmRenditionStyle style;
 
-#if USE_XFT
 	XftFont *xftFont;
-#else
-	XtPointer xftFont;
-#endif
 } _XmRenditionRec, *_XmRendition;
 
 /* Accessor macros. */
@@ -138,7 +128,6 @@ extern Boolean _XmRenderTableFindFallback(XmRenderTable ,
 extern Boolean _XmRenderTableFindFirstFont(XmRenderTable rendertable,
 					   XmRendition *rend_ptr);
 
-#if USE_XFT
 /*
  * XftDraw cache functions
  */
@@ -159,7 +148,6 @@ void _XmXftSetClipRectangles(Display *display, Window window, Position x, Positi
 XftColor _XmXftGetXftColor(Display *display, Pixel color);
 
 void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width);
-#endif
 
 /********    End Private Function Declarations    ********/
 

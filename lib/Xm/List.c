@@ -2563,10 +2563,8 @@ SetClipRect(XmListWidget widget)
   rect.width = w;
   rect.height = h;
 
-#if USE_XFT
     _XmXftSetClipRectangles(XtDisplay(lw), XtWindow(lw), x, y,
 	                    &rect, 1);
-#endif
 
   if (lw->list.NormalGC)
     XSetClipRectangles(XtDisplay(lw), lw->list.NormalGC, x, y,

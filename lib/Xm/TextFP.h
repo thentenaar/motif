@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -20,14 +20,13 @@
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
  */
+
 #ifndef _XmTextFP_h
 #define _XmTextFP_h
 
 #include <Xm/PrimitiveP.h>
 #include <Xm/TextF.h>
-#if USE_XFT
 #include <X11/Xft/Xft.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,11 +91,7 @@ typedef struct _XmTextFieldPart {
     wchar_t *wc_value;		/* pointer to widget value stored as wchar_t * [unused] */
 
     XmRenderTable font_list;
-#if USE_XFT
     XtPointer font;	        /* font retrieved from the fontlist (Unused) */
-#else
-    XFontStruct *font;	        /* font retrieved from the fontlist (Unused) */
-#endif
     XmTextScanType *selection_array; /* Description of what to cycle
 					through on selections */
     _XmHighlightData highlight;      /* Info on the highlighting regions. */
@@ -229,11 +224,9 @@ typedef struct _XmTextFieldPart {
 
     Boolean check_set_render_table; /* used for MT safe work */
     Boolean programmatic_highlights;	/* XmTextFieldSetHighlight called */
-#if USE_XFT
     Boolean use_xft;
-#endif
 
-    /* 2.5 */
+    /* 2.6 */
     XtCallbackList str_modify_verify_callback;
     XmString xms_value;
     unsigned char alignment;
@@ -308,12 +301,10 @@ typedef struct _XmTextFieldRec {
 	(((XmTextFieldWidget)(tfg)) -> text.threshold)
 #define TextF_UseFontSet(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.have_fontset) /* XXX: Unused */
-#if USE_XFT
 #define TextF_UseXft(tfg)		\
 	(((XmTextFieldWidget)(tfg)) -> text.use_xft) /* XXX: Unused */
 #define	TextF_XftFont(tfg)		\
 	((XftFont*)(((XmTextFieldWidget)(tfg)) -> text.font)) /* XXX: Unused */
-#endif
 
 /*
  * On the spot support.

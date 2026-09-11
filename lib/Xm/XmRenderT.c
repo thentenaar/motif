@@ -41,6 +41,7 @@ static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #include <X11/IntrinsicP.h>
 #include <X11/ShellP.h>
 #include <X11/Xresource.h>
+#include <X11/Xft/Xft.h>
 #include <Xm/Display.h>		/* For XmGetXmDisplay */
 #include <Xm/DisplayP.h>	/* For direct access to callback fields */
 #include <Xm/XmRenderT.h>
@@ -51,10 +52,6 @@ static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #include "XmRenderTI.h"
 #include "XmStringI.h"
 #include "XmTabListI.h"
-
-#if USE_XFT
-#include <X11/Xft/Xft.h>
-#endif
 
 /* Warning Messages */
 #define NO_NULL_TAG_MSG			_XmMMsgXmRenderT_0000
@@ -91,10 +88,8 @@ static Boolean GetResources(XmRendition rend,
 			    ArgList arglist,
 			    Cardinal argcount);
 static void merge_renditions(XmRendition to, XmRendition from);
-#if USE_XFT
 static void set_props_from_pattern(XmRendition rend, const FcPattern *p);
 static XftColor GetCachedXftColor(Display *display, Pixel color);
-#endif
 
 /********    End Static Function Declarations    ********/
 
@@ -635,10 +630,9 @@ static Boolean rendertable_default_font(XmRenderTable rt, XmRendition *rend_out)
 	if (!(t = XmSharedPtrGet(rt)))
 		return False;
 
-	XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
-#if USE_XFT
 	/* Try the default Xft font */
 	s = XmScreenOfScreen(DefaultScreenOfDisplay(t->display));
+	XtSetArg(args[0], XmNloadModel, XmLOAD_IMMEDIATE);
 	XtSetArg(args[1], XmNfontName, XmDEFAULT_XFTFONT);
 	XtSetArg(args[2], XmNfontType, XmFONT_IS_XFT);
 	XtSetArg(args[3], XmNfontPixelSize, 10 + (int)(3 * (XmScreenDpi(s) / 96.)));
@@ -649,7 +643,6 @@ static Boolean rendertable_default_font(XmRenderTable rt, XmRendition *rend_out)
 		XmRenditionFree(rend);
 		rend = NULL;
 	}
-#endif
 
 	/* See if we have the default fontset */
 	if (!rend) {
@@ -1140,9 +1133,7 @@ Boolean _XmRenderTableFindFirstFont(XmRenderTable rt, XmRendition *rend_out)
 	struct __XmRenderTableRec *t;
 	const struct __XmRenditionRec *r;
 	XmScreen s;
-#if USE_XFT
 	Cardinal xft_idx = UINT_MAX;
-#endif
 
 	if (!rend_out || !(t = XmSharedPtrGet(rt)))
 		return False;
@@ -1153,20 +1144,13 @@ Boolean _XmRenderTableFindFirstFont(XmRenderTable rt, XmRendition *rend_out)
 		if (r->font) {
 			if (r->fontType == XmFONT_IS_FONT)         f_idx  = i;
 			else if (r->fontType == XmFONT_IS_FONTSET) fs_idx = i;
-		}
-#if USE_XFT
-		else if (r->xftFont && r->fontType == XmFONT_IS_XFT) xft_idx = i;
-#endif
+		} else if (r->xftFont && r->fontType == XmFONT_IS_XFT) xft_idx = i;
 	}
 
-#if USE_XFT
 	if (xft_idx < UINT_MAX) {
 		if (rend_out) *rend_out = XmSharedPtrCopy(t->renditions[xft_idx], False);
 		return True;
-	} else
-#endif
-
-	if (fs_idx < UINT_MAX) {
+	} else if (fs_idx < UINT_MAX) {
 		if (rend_out) *rend_out = XmSharedPtrCopy(t->renditions[fs_idx], False);
 		return True;
 	} else if (f_idx < UINT_MAX) {
@@ -1450,7 +1434,6 @@ static void merge_renditions(XmRendition to, XmRendition from)
 	if (rt->style.fg.pixel == XmUNSPECIFIED_PIXEL)
 		rt->style.fg.pixel = rf->style.fg.pixel;
 
-#if USE_XFT
 	/* These should only be updated if the Xft font changes */
 	if (rt->fontType == XmFONT_IS_XFT && !rt->xftFont && rf->xftFont) {
 		XtFree(rt->pattern);
@@ -1472,14 +1455,6 @@ static void merge_renditions(XmRendition to, XmRendition from)
 		if (!rt->pattern && rf->pattern)
 			rt->pattern = XtNewString(rf->pattern);
 	}
-#else
-	if (!rt->fontFoundry && rf->fontFoundry)
-		rt->fontFoundry = XtNewString(rf->fontFoundry);
-	if (!rt->fontFamily && rf->fontFamily)
-		rt->fontFamily = XtNewString(rf->fontFamily);
-	if (!rt->fontStyle && rf->fontStyle)
-		rt->fontStyle = XtNewString(rf->fontStyle);
-#endif
 }
 
 /**
@@ -1500,15 +1475,12 @@ static void rendition_free(void *ptr)
 		XtFree(r->fontFamily);
 		XtFree(r->fontStyle);
 		XtFree(r->fontFoundry);
-	}
-#if USE_XFT
-	else {
+	} else {
 		/* These belong to the XftFont's pattern */
 		r->fontFamily  = NULL;
 		r->fontStyle   = NULL;
 		r->fontFoundry = NULL;
 	}
-#endif
 
 	/* Release font if we own it */
 	if (r->loadModel != XmUNSPECIFIED_LOAD_MODEL) {
@@ -1521,12 +1493,10 @@ static void rendition_free(void *ptr)
 			if (r->font) XFreeFontSet(d, (XFontSet)r->font);
 			r->font = NULL;
 			break;
-#if USE_XFT
 		case XmFONT_IS_XFT:
 			if (r->xftFont) XftFontClose(d, r->xftFont);
 			r->xftFont = NULL;
 			break;
-#endif
 		}
 	}
 
@@ -1575,9 +1545,7 @@ static void *rendition_dup(void *ptr)
 		new->fontStyle   = r->fontStyle;
 		if (r->loadModel == XmUNSPECIFIED_LOAD_MODEL)
 			new->xftFont = r->xftFont;
-#if USE_XFT
 		else if (r->xftFont) new->xftFont = XftFontCopy(d, r->xftFont);
-#endif
 	} else {
 		new->fontFoundry = XtNewString(r->fontFoundry);
 		new->fontFamily  = XtNewString(r->fontFamily);
@@ -1706,14 +1674,9 @@ Boolean XmRenditionHasCodepoint(const XmRendition rend, XmCodepoint cp)
 	if (r->fontType != XmFONT_IS_XFT || !r->xftFont)
 		return True;
 
-#if USE_XFT
 	return !!FcCharSetHasChar(r->xftFont->charset, (FcChar32)cp);
-#else
-	return True;
-#endif
 }
 
-#if USE_XFT
 /**
  * Set XmRendition properties from a FontConfig pattern
  */
@@ -1753,7 +1716,6 @@ static void set_props_from_pattern(XmRendition rend, const FcPattern *p)
 	if (FcPatternGetInteger(p, FC_SPACING, 0, &i) == FcResultMatch)
 		r->fontSpacing = i;
 }
-#endif /* USE_XFT */
 
 /**
  * Ignore X errors, in case of BadAtom
@@ -1873,7 +1835,6 @@ static void set_props_from_font(XmRendition rend)
 		r->descent   = e->max_logical_extent.height + e->max_logical_extent.y;
 	}
 
-#if USE_XFT
 	if (r->fontType == XmFONT_IS_XFT && r->xftFont) {
 		set_props_from_pattern(rend, r->xftFont->pattern);
 		r->width     = r->xftFont->max_advance_width;
@@ -1881,7 +1842,6 @@ static void set_props_from_font(XmRendition rend)
 		r->ascent    = r->xftFont->ascent;
 		r->descent   = r->xftFont->descent;
 	}
-#endif
 }
 
 /**
@@ -1910,7 +1870,6 @@ static Boolean load_xfont(XmRendition rend)
 	return !!r->font;
 }
 
-#if USE_XFT
 static Boolean load_xft(XmRendition rend)
 {
 	FcPattern *p, *p2;
@@ -1949,7 +1908,6 @@ static Boolean load_xft(XmRendition rend)
 	set_props_from_font(rend);
 	return !!r->xftFont;
 }
-#endif
 
 /**
  * Load the font specified by the rendition's font type and pattern.
@@ -2003,9 +1961,7 @@ Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback)
 			return True;
 		}
 
-#if USE_XFT
 		loaded = load_xft(rend);
-#endif
 		break;
 	default:
 		RenditionWarning(r->tag, "INVALID_TYPE", INVALID_TYPE_MSG, r->display);
@@ -2040,9 +1996,7 @@ void XmRenditionUnload(XmRendition rend)
 		if (!r->xftFont)
 			goto out;
 
-#if USE_XFT
 		XftFontClose(r->display, r->xftFont);
-#endif
 		r->xftFont = NULL;
 		goto out;
 	}
@@ -2087,12 +2041,6 @@ XmRendition XmRenditionFallbackForCodepoint(XmRenderTable tbl,
                                             const XmRendition orig,
                                             XmCodepoint cp)
 {
-#if !USE_XFT
-	(void)tbl;
-	(void)orig;
-	(void)cp;
-	return NULL;
-#else
 	Cardinal i;
 	Display *d;
 	struct __XmRenderTableRec *rt;
@@ -2246,7 +2194,6 @@ found:
 
 	rt->renditions[rt->count++] = rend;
 	goto done;
-#endif /* USE_XFT */
 }
 
 /* Get resource values from rendition. */
@@ -2403,9 +2350,7 @@ void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal count)
 	 * validity if the supplied font is non-NULL.
 	 */
 	user_font  = new.font && orig->font != new.font;
-#if USE_XFT
 	user_font |= new.xftFont && orig->xftFont != new.xftFont;
-#endif
 
 	/**
 	 * (Re-)load the font if related properties change.
@@ -2414,10 +2359,7 @@ void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal count)
 	    (orig->pattern && new.pattern && strcmp(orig->pattern, new.pattern)) ||
 	    (!orig->pattern && new.pattern)  ||
 	    orig->fontType != new.fontType) {
-		has_font = !!orig->font;
-#if USE_XFT
-		has_font |= !!orig->xftFont;
-#endif
+		has_font = !!orig->font || !!orig->xftFont;
 
 		if (has_font && orig->loadModel != XmUNSPECIFIED_LOAD_MODEL)
 			XmRenditionUnload(rendition);
@@ -2768,7 +2710,6 @@ ReadToken(char *string, int *position, Token reusetoken)
   return(new_token);
 }
 
-#if USE_XFT
 static struct _XmXftDrawCacheStruct {
 	Display	*display;
 	Window	window;
@@ -3027,7 +2968,6 @@ void _XmXftFontAverageWidth(Widget w, XtPointer f, int *width)
     if (width)
     	*width = ext.width / l;
 }
-#endif
 
 XmRenderTable
 XmRenderTableCvtFromProp(Widget w,

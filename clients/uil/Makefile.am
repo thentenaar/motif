@@ -16,7 +16,7 @@ DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
 AM_CPPFLAGS      = -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\" \
                    -I$(top_srcdir)/clients/uil \
                    -I$(top_srcdir)/tools/wml \
-                   -I$(top_builddir)/tools/wml $(X_CFLAGS) $(XFT_CFLAGS)
+                   -I$(top_builddir)/tools/wml $(X_CFLAGS)
 
 UilParser.c:
 	test -f UilParser.c || $(LN_S) $(srcdir)/UilMain.c UilParser.c

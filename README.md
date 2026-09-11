@@ -61,7 +61,7 @@ installed, and an X server to be running, and can be run by:
 - Transparent [Xdnd](https://www.freedesktop.org/wiki/Specifications/XDND) protocol support
 - Mesa's [GL drawingarea](https://gitlab.freedesktop.org/mesa/glw) widget has been included,
   and may be built by specifying ``--enable-glw``.
-- JPEG, PNG, Xft, and Xrandr support is enabled by default if present at build-time.
+- JPEG, PNG, and Xrandr support is enabled by default if present at build-time.
   Specify ``--without-jpeg``, etc. to disable them.
 - The following macros that were previously exposed in ``Xm.h`` have been
 renamed, and will evaluate to 1 if enabled, 0 if disabled:

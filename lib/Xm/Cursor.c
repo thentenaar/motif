@@ -30,6 +30,7 @@
 #include <string.h>
 #include <X11/cursorfont.h>
 #include <X11/Intrinsic.h>
+#include <X11/extensions/Xrender.h>
 
 #include <Xm/ScreenP.h>
 #include "SvgI.h"
@@ -51,9 +52,6 @@ static const char null_bits[] = {
     0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
 };
-
-#if XM_WITH_XRENDER
-#include <X11/extensions/Xrender.h>
 
 /**
  * Render an ARGB image (SVG or PNG) to the specified size
@@ -127,7 +125,6 @@ done:
 	fclose(fp);
 	return p;
 }
-#endif /* XM_WITH_XRENDER */
 
 /**
  * Load a cursor given a filename (i.e., file.svg -- or simply file)
@@ -148,8 +145,6 @@ Cursor XmeLoadCursorImage(Display *display, Screen *screen, const char *name,
                           int hot_x, int hot_y)
 {
 	Cursor c = None;
-
-#if XM_WITH_XRENDER
 	const char *def, *filename = NULL;
 	int i,j,size = 0;
 	Pixmap p;
@@ -218,8 +213,6 @@ Cursor XmeLoadCursorImage(Display *display, Screen *screen, const char *name,
 
 	XFreePixmap(display, p);
 	_XmAppUnlock(app);
-#endif /* XM_WITH_XRENDER */
-
 	return c;
 }
 

@@ -33,6 +33,7 @@ static char rcsid[] = "$TOG: TextIn.c /main/36 1999/01/27 16:10:29 mgreess $"
 
 #include <stdio.h>
 #include <string.h>
+#include <X11/Xft/Xft.h>
 #include <Xm/XmosP.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
@@ -62,10 +63,6 @@ static char rcsid[] = "$TOG: TextIn.c /main/36 1999/01/27 16:10:29 mgreess $"
 #include "TextStrSoI.h"
 #include "TravActI.h"
 #include "TraversalI.h"
-
-#if USE_XFT
-#include <X11/Xft/Xft.h>
-#endif
 
 #define MSG1	        _XmMMsgTextIn_0000
 #define GRABKBDERROR	_XmMMsgRowColText_0024
@@ -1210,12 +1207,10 @@ PrintableString(XmTextWidget tw,
   OutputData o_data = tw->text.output->data;
   if (o_data->use_fontset) {
     return (XmbTextEscapement((XFontSet)o_data->font, str, n) != 0);
-#if USE_XFT
   } else if (o_data->use_xft) {
     XGlyphInfo ext;
     XftTextExtentsUtf8(XtDisplay(tw), (XftFont*)o_data->font, (_Xconst FcChar8 *)str, n, &ext);
     return ext.xOff != 0;
-#endif
   } else {
     return (XTextWidth(o_data->font, str, n) != 0);
   }

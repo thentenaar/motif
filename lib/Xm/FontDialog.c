@@ -35,11 +35,8 @@
 #include <stdint.h>
 #endif
 
-#if USE_XFT
 #include <fontconfig/fontconfig.h>
 #include <X11/Xft/Xft.h>
-#endif
-
 #include <X11/Intrinsic.h>
 #include <Xm/XmP.h>
 #include <Xm/RepType.h>
@@ -85,9 +82,7 @@ static Boolean SetValues(Widget cur, Widget req, Widget new,
 static void DeleteChild(Widget child);
 static XmGeoMatrix GeoMatrixCreate(Widget w, Widget inst, XtWidgetGeometry *desired);
 
-#if USE_XFT
 static void load_fontconfig(Widget w, struct font_prop *info, int sz);
-#endif
 static void load_corefonts(Widget w, struct font_prop *info, int sz);
 static void font_prop_destroy(struct font_prop *p);
 static void update_sample(XmFontDialogWidget fd);
@@ -377,12 +372,8 @@ static void Initialize(Widget req, Widget new, ArgList args, Cardinal *num_args)
 	 * The user can select whether to source from Fontconfig or corefonts,
 	 * but we have to be sure to load something.
 	 */
-#if USE_XFT
 	if (fd->fontdlg.source == XmFONT_SOURCE_XFT)
 		load_fontconfig(new, info, sz);
-#else
-	fd->fontdlg.source = XmFONT_SOURCE_X;
-#endif
 
 	if (fd->fontdlg.source == XmFONT_SOURCE_X)
 		load_corefonts(new, info, sz);
@@ -723,7 +714,6 @@ static XmGeoMatrix GeoMatrixCreate(Widget w, Widget inst, XtWidgetGeometry *desi
 	return geo;
 }
 
-#if USE_XFT
 /**
  * Create a lazy-loadable Xft font. The rendition props will get filled
  * later when it gets loaded.
@@ -738,7 +728,6 @@ static XmRendition load_xft(Widget w, const String family, String style)
 	if (style) XtSetArg(args[3], XmNfontStyle, style);
 	return XmRenditionCreate(w, XmS, args, 3 + !!style);
 }
-#endif
 
 /**
  * Lazy-loadable X font.
@@ -830,13 +819,8 @@ static void append_leaf(Widget w, struct font_prop *node, XmString k,
 		(node->cnt + 1) * sizeof(XmRendition)
 	);
 
-#if USE_XFT
 	if (xft) r = load_xft(w, family, style);
-	else
-#endif
-	{
-		r = load_fontset(w, family);
-	}
+	else     r = load_fontset(w, family);
 
 	pos = insert(node->list, node->cnt, k, True);
 	if (pos < node->cnt)
@@ -900,7 +884,6 @@ static void font_prop_destroy(struct font_prop *p)
 	XtFree((XtPointer)p);
 }
 
-#if USE_XFT
 /**
  * Load fonts and styles from fontconfig, appending them to our font info
  * struct.
@@ -1041,7 +1024,6 @@ static void load_fontconfig(Widget w, struct font_prop *info, int sz)
 	FcObjectSetDestroy(os);
 	FcFontSetDestroy(fs);
 }
-#endif /* USE_XFT */
 
 /**
  * Ignore X errors, in case of BadAtom

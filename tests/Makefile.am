@@ -7,11 +7,11 @@ AM_TESTS_ENVIRONMENT = env AM_TAP_AWK='$(AWK)'
 LOG_DRIVER           = $(SHELL) $(top_srcdir)/tap-driver.sh
 TESTS                = tests
 AM_CPPFLAGS          = -I. -DRESDIR="$(abs_top_srcdir)/tests/" \
-                       $(X_CFLAGS) $(XFT_CFLAGS) $(CHECK_CFLAGS)
+                       $(X_CFLAGS) $(CHECK_CFLAGS)
 check_PROGRAMS       = tests
 noinst_HEADERS       = suites.h
 tests_LDADD          = $(top_builddir)/lib/Xm/libXm.la $(X_LIBS) \
-                       $(XFT_LIBS) $(XCURSOR_LIBS) $(CHECK_LIBS)
+                       $(XCURSOR_LIBS) $(CHECK_LIBS)
 tests_SOURCES        = runner.c XmDesktopObject.c XmScreen.c XmString.c \
                        Svg.c Cursor.c XmChar.c XmTextF.c TxtPropCv.c    \
                        SharedPtr.c XmRendition.c XmRenderTable.c

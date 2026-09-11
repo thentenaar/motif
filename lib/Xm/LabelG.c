@@ -77,10 +77,8 @@ static char rcsid[] = "$TOG: LabelG.c /main/24 1999/01/26 15:31:18 mgreess $"
 #include <Xm/XmP.h>
 #include <Xm/ColorI.h>
 
-#if USE_XFT
 #include "XmRenderTI.h"
 #include <X11/Xft/Xft.h>
-#endif
 
 #define Pix(w)      LabG_Pixmap(w)
 #define Pix_insen(w)    LabG_PixmapInsensitive(w)
@@ -2266,18 +2264,13 @@ LRectangle *background_box)
             clip_rect.height = 0;
 
         XSetClipRectangles(XtDisplay(lw), clipgc, 0,0, &clip_rect, 1, Unsorted);
-#if USE_XFT
         _XmXftSetClipRectangles(XtDisplay(lw), XtWindow(lw), 0, 0, &clip_rect, 1);
-#endif
     } else
     {
     XSetClipMask (XtDisplay (lw), clipgc, None);
-#if USE_XFT
 	XftDrawSetClip(_XmXftDrawCreate(XtDisplay(lw), XtWindow(lw)), NULL);
-#endif
     }
 
-#if USE_XFT
     {
     int width, height;
 
@@ -2297,7 +2290,6 @@ LRectangle *background_box)
     XFillRectangle(XtDisplay(lw), XtWindow(lw), LabG_BackgroundGC(lw),
 		x, y, width, height);
     }
-#endif
 
     /*  Draw the pixmap or text  */
     LabelDrawBackground((Widget)lw, event, region, background_box);

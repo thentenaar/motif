@@ -1672,7 +1672,6 @@ static void cache_rendition(_XmStringEntry ent, const XmRenderTable rt,
 	rcache->header.dirty   = True;
 }
 
-#if USE_XFT
 /**
  * If we've got an Xft rendition, walk the string to see where we may
  * need to apply fallback fonts, and add them to the _XmStringRendition.
@@ -1748,7 +1747,6 @@ static void make_renditions(_XmStringEntry ent, const XmRendition rend,
 		cache_rendition(ent, rt, rend, style, c2, len);
 	XmRenditionFree(fallback);
 }
-#endif /* USE_XFT */
 
 /**
  * Find a suitable rendition for this string entry, then apply it. If the
@@ -1792,15 +1790,12 @@ static _XmStringRenderingCache plan_renditions(_XmStringEntry ent,
 	if (!rend && tags)
 		XtFree((XtPointer)tags);
 
-#if USE_XFT
 	if (rend && _XmRendFontType(rend) == XmFONT_IS_XFT) {
 		make_renditions(ent, rend, style, rt);
-	} else
-#endif
-	/**
-	 * If we don't have a rendition, we likely can't load anything.
-	 */
-	if (!rend) {
+	} else if (!rend) {
+		/**
+		 * If we don't have a rendition, we likely can't load anything.
+		 */
 		XmeWarning(NULL, NO_FONT_MSG);
 		return NULL;
 	} else {
@@ -2706,9 +2701,7 @@ static void SubStringPosition(const XmRenderTable rt, const XmRendition rend,
 	XmCodepoint c_a, c_b;
 	XmTextType type;
 	Boolean fail;
-#if USE_XFT
 	XGlyphInfo ext;
-#endif
 
 	if (!seg || !under_seg)
 		return;
@@ -2771,13 +2764,11 @@ static void SubStringPosition(const XmRenderTable rt, const XmRendition rend,
 		case XmFONT_IS_FONTSET:
 			*under_begin = x + abs(Xutf8TextEscapement(font_set, a, begin));
 			break;
-#if USE_XFT
 		case XmFONT_IS_XFT:
 			XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
 				               (FcChar8 *)a, begin, &ext);
 			*under_begin = x + ext.xOff;
 			break;
-#endif
 		}
 	} else *under_begin = x;
 
@@ -2790,13 +2781,11 @@ static void SubStringPosition(const XmRenderTable rt, const XmRendition rend,
 	case XmFONT_IS_FONTSET:
 		width = abs(Xutf8TextEscapement(font_set, b, b_bytes));
 		break;
-#if USE_XFT
 	case XmFONT_IS_XFT:
 		XftTextExtentsUtf8(_XmRendDisplay(rend), _XmRendXftFont(rend),
 				           (FcChar8 *)b, b_bytes, &ext);
 		width = ext.xOff;
 		break;
-#endif
 	}
 
 	*under_end = *under_begin + width - 2;
@@ -2825,10 +2814,8 @@ static void _XmStringDrawLining(Display *d, Drawable w, Position x,
   under = rend_style->underline;
   thru  = rend_style->strikethru;
 
-#if USE_XFT
   if (_XmRendFontType(rend) == XmFONT_IS_XFT)
     w = XftDrawDrawable(_XmXftDrawCreate(d, w));
-#endif
 
   if (!colors_set)
     {
@@ -3086,7 +3073,6 @@ static void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 		gcv.background = bg;
 	XChangeGC(d, gc, mask, &gcv);
 
-#if USE_XFT
 	if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
 		ulyoff = -2; /* Ensure the underline sits at the end of the descender */
 		draw   = XftDrawDrawable(_XmXftDrawCreate(d, w));
@@ -3115,7 +3101,6 @@ static void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 			XmRenditionFree(rtmp);
 		}
 	} else {
-#endif
 		if (_XmEntryDirectionGet((_XmStringEntry)seg) == XmSTRING_DIRECTION_R_TO_L)
 			draw_text = (char *)_Xmstrrev((const unsigned char *)seg_text, seg_len);
 		else draw_text = seg_text;
@@ -3138,9 +3123,7 @@ static void _XmStringDrawSegment(Display *d, Drawable w, Position x,
 
 		if (draw_text != seg_text)
 			XtFree(draw_text);
-#if USE_XFT
 	}
-#endif
 
 	/* Draw underline if needed */
 	if (underline) {
@@ -3837,10 +3820,8 @@ _calc_align_and_clip(
             (clip->y <= y + descender))
 	{
 	    *restore = TRUE;
-#if USE_XFT
             if (font_type == XmFONT_IS_XFT)
 	      _XmXftSetClipRectangles(d, w, 0, 0, clip, 1);
-#endif
             XSetClipRectangles (d, gc, 0, 0, clip, 1, YXBanded);
 	}
 }
@@ -3933,12 +3914,10 @@ static void _render(Display *d, Drawable w, XmRenderTable rt,
       }
   }
   if (restore_clip) {
-#if USE_XFT
 	  if (_XmRendFontType(rend) == XmFONT_IS_XFT) {
 		  XftDraw *draw = _XmXftDrawCreate(d, w);
 		  XftDrawSetClip(draw, NULL);
 	  } else
-#endif
 		  XSetClipMask (d, style->gc, None);
   }
 
@@ -4470,10 +4449,7 @@ static void ComputeMetrics(XmRendition rend, XmRenditionStyle style,
   XRectangle ink, logical;
   size_t  ucs_str_len;
   XChar2b *ucs_str;
-
-#if USE_XFT
   XGlyphInfo info;
-#endif
 
   wid = 0;
   hi = 0;
@@ -4509,7 +4485,6 @@ static void ComputeMetrics(XmRendition rend, XmRenditionStyle style,
 	  asc  = -(logical.y);
 	  desc = logical.height + logical.y;
     break;
-#if USE_XFT
     case XmFONT_IS_XFT:
 	asc  = _XmRendXftFont(rend)->ascent;
 	desc = _XmRendXftFont(rend)->descent;
@@ -4519,7 +4494,6 @@ static void ComputeMetrics(XmRendition rend, XmRenditionStyle style,
 	                   text, byte_count, &info);
 	wid = info.xOff;
 	break;
-#endif /* USE_XFT */
   }
 
   /* Adjust for underlining. Add one pixel for line and one pixel at bottom so

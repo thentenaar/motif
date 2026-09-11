@@ -55,7 +55,6 @@ END_TEST
 
 START_TEST(load_image_svg)
 {
-#if XM_WITH_XRENDER
 	Cursor c = None;
 	XVisualInfo vis;
 
@@ -67,15 +66,12 @@ START_TEST(load_image_svg)
 
 	if (c != None)
 		XFreeCursor(display, c);
-#else
-	puts("Skipping test (no Xrender support)");
-#endif /* XM_WITH_RENDER */
 }
 END_TEST
 
 START_TEST(load_image_png)
 {
-#if XM_WITH_XRENDER && XM_WITH_PNG
+#if XM_WITH_PNG
 	Cursor c = None;
 	XVisualInfo vis;
 
@@ -87,14 +83,14 @@ START_TEST(load_image_png)
 	if (c != None)
 		XFreeCursor(display, c);
 #else
-	puts("Skipping test (no Xrender or PNG support)");
+	puts("Skipping test (no PNG support)");
 #endif
 }
 END_TEST
 
 START_TEST(load_xcursor_file)
 {
-#if XM_WITH_XRENDER && XM_WITH_XCURSOR
+#if XM_WITH_XCURSOR
 	Cursor c = None;
 	XVisualInfo vis;
 
@@ -106,14 +102,14 @@ START_TEST(load_xcursor_file)
 	if (c != None)
 		XFreeCursor(display, c);
 #else
-	puts("Skipping test (no Xrender or Xcursor support)");
+	puts("Skipping test (no Xcursor support)");
 #endif
 }
 END_TEST
 
 START_TEST(load_non_xcursor_file)
 {
-#if XM_WITH_XRENDER && XM_WITH_XCURSOR
+#if XM_WITH_XCURSOR
 	Cursor c = None;
 	XVisualInfo vis;
 
@@ -125,7 +121,7 @@ START_TEST(load_non_xcursor_file)
 	if (c != None)
 		XFreeCursor(display, c);
 #else
-	puts("Skipping test (no Xrender or Xcursor support)");
+	puts("Skipping test (no Xcursor support)");
 #endif
 }
 END_TEST

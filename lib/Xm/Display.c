@@ -35,10 +35,7 @@ static char rcsid[] = "$TOG: Display.c /main/23 1997/06/18 17:36:59 samborn $"
 
 #include <stdio.h>
 
-#if USE_XFT
 #include <fontconfig/fontconfig.h>
-#endif
-
 #include <X11/Intrinsic.h>
 #include <X11/extensions/shape.h>
 #include <X11/Xatom.h>
@@ -591,9 +588,7 @@ DisplayInitialize(
 	}
     }
 
-#if USE_XFT
     FcInit();
-#endif
 }
 
 
@@ -673,9 +668,7 @@ DisplayDestroy(
 
     XDeleteContext( XtDisplay( w), None, context) ;
 
-#if USE_XFT
     FcFini();
-#endif
 }
 
 XmDropSiteManagerObject

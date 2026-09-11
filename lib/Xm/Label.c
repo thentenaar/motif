@@ -72,10 +72,8 @@ static char rcsid[] = "$TOG: Label.c /main/26 1997/06/18 17:40:00 samborn $"
 #include <Xm/XmP.h>
 #include <Xm/ColorI.h>
 
-#if USE_XFT
 #include "XmRenderTI.h"
 #include <X11/Xft/Xft.h>
-#endif
 
 #define Pix(w)			((w)->label.pixmap)
 #define Pix_insen(w)		((w)->label.pixmap_insen)
@@ -1399,18 +1397,13 @@ Redisplay(
 	clip_rect.height = 0;
 
       XSetClipRectangles(XtDisplay(lw), clipgc, 0,0, &clip_rect, 1, Unsorted);
-#if USE_XFT
       _XmXftSetClipRectangles(XtDisplay(lw), XtWindow(lw), 0, 0, &clip_rect, 1);
-#endif
     } else
     {
       XSetClipMask (XtDisplay (lw), clipgc, None);
-#if USE_XFT
       XftDrawSetClip(_XmXftDrawCreate(XtDisplay(lw), XtWindow(lw)), NULL);
-#endif
     }
 
-#if USE_XFT
     /* it is needed to clear anti-aliased text before draw it again */
     if ((Lab_IsText (lw) || Lab_IsPixmapAndText(lw)) && (lp->_label != NULL)
 		&& lp->TextRect.width > 0 && lp->TextRect.height > 0)
@@ -1421,7 +1414,6 @@ Redisplay(
  			lp->TextRect.width,
 			lp->TextRect.height, False);
      }
-#endif
 
   if (Lab_IsPixmap(lw) || Lab_IsPixmapAndText(lw))
     {

@@ -84,14 +84,12 @@ static void _init_xt(void)
 	XErrorHandler olderr = NULL;
 	String slant = NULL, weight = NULL;
 	Atom FOUNDRY, WEIGHT_NAME, SLANT;
-#if USE_XFT
 	FcPattern *p, *p2;
 	FcObjectSet *os;
 	FcFontSet *fs;
 	FcChar8 *s;
 	FcResult res;
 	XftFont *f;
-#endif
 
 	setenv("LANG", "C", 1);
 	display = XtDisplay(init_xt("check_XmRendition"));
@@ -158,7 +156,6 @@ static void _init_xt(void)
 	XFreeFontInfo(names, finfo, count);
 
 xft:
-#if USE_XFT
 	/**
 	 * Probe for a usable Xft font
 	 */
@@ -199,8 +196,6 @@ xft:
 	FcFontSetDestroy(fs);
 	FcPatternDestroy(p);
 	FcObjectSetDestroy(os);
-#endif
-
 	return;
 }
 
@@ -550,7 +545,6 @@ END_TEST
 
 START_TEST(load_xft)
 {
-#if USE_XFT
 	Arg arg[3];
 	XmRendition rend;
 	const struct __XmRenditionRec *r;
@@ -579,7 +573,6 @@ START_TEST(load_xft)
 	              "Expected pixelSize (%d) to equal %d",
 	              r->pixelSize, xft_pixelsz);
 	XmRenditionFree(rend);
-#endif
 }
 END_TEST
 
@@ -663,7 +656,6 @@ END_TEST
 
 START_TEST(unload_xft)
 {
-#if USE_XFT
 	Arg arg[3];
 	XmRendition rend;
 	const struct __XmRenditionRec *r;
@@ -688,7 +680,6 @@ START_TEST(unload_xft)
 	ck_assert_msg(!r->fontSpacing, "Expected 0 spacing");
 	ck_assert_msg(!r->pixelSize,   "Expected 0 pixel size");
 	XmRenditionFree(rend);
-#endif
 }
 END_TEST
 

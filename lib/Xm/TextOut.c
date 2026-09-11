@@ -56,10 +56,7 @@ static char rcsid[] = "$TOG: TextOut.c /main/41 1999/08/12 11:37:30 vipin $"
 #include "TextOutI.h"
 #include "TraversalI.h"
 #include "XmI.h"
-
-#if USE_XFT
 #include "XmRenderTI.h"
-#endif
 #include <Xm/XmP.h>
 
 #define MSG1	_XmMMsgTextOut_0000
@@ -479,10 +476,8 @@ SetMarginGC(XmTextWidget tw,
   XRectangle ClipRect;
 
   GetRect(tw, &ClipRect);
-#if USE_XFT
   if (tw->text.output->data->use_xft)
     _XmXftSetClipRectangles(XtDisplay(tw), XtWindow(tw), 0, 0, &ClipRect, 1);
-#endif
   XSetClipRectangles(XtDisplay(tw), gc, 0, 0, &ClipRect, 1,
                      Unsorted);
 }
@@ -665,11 +660,7 @@ FindWidth(XmTextWidget tw,
   int csize = 1;
   int i;
 
-#if USE_XFT
   if (!data->use_fontset && !data->use_xft)
-#else
-  if (!data->use_fontset)
-#endif
     return _FontStructFindWidth(tw, x, block, from, to);
 
   if (to > block->length)
@@ -691,14 +682,12 @@ FindWidth(XmTextWidget tw,
 	result += (data->tabwidth -
 		   ((x + result - data->leftmargin) % data->tabwidth));
       else
-#if USE_XFT
         if (data->use_xft) {
 	  XGlyphInfo	ext;
 	  XftTextExtentsUtf8(XtDisplay(tw), ((XftFont*)data->font),
 	                  (FcChar8*)ptr, csize, &ext);
 	  result += ext.xOff;
 	} else
-#endif
 	result += XmbTextEscapement((XFontSet)data->font, ptr, csize);
     }
 
@@ -709,14 +698,12 @@ FindWidth(XmTextWidget tw,
 	result += (data->tabwidth -
 		   ((x + result - data->leftmargin) % data->tabwidth));
       else
-#if USE_XFT
         if (data->use_xft) {
 	  XGlyphInfo	ext;
 	  XftTextExtentsUtf8(XtDisplay(tw), ((XftFont*)data->font),
 	                  (FcChar8*)ptr, 1, &ext);
 	  result += ext.xOff;
 	} else
-#endif
 	result += XmbTextEscapement((XFontSet)data->font, ptr, 1);
     }
   }
@@ -766,7 +753,6 @@ _FontStructFindHeight(XmTextWidget tw,
   return result;
 }
 
-#if USE_XFT
 static int
 _XftFindHeight(XmTextWidget tw,
 		     int y,    /* Starting position (needed for tabs) */
@@ -808,7 +794,6 @@ _XftFindHeight(XmTextWidget tw,
   }
   return result;
 }
-#endif
 
 static int
 FindHeight(XmTextWidget tw,
@@ -826,10 +811,8 @@ FindHeight(XmTextWidget tw,
   int i = 0;
   XOrientation orient;
 
-#if USE_XFT
   if (data->use_xft)
     return _XftFindHeight(tw, y, block, from, to);
-#endif
 
   if (!data->use_fontset)
     return _FontStructFindHeight(tw, y, block, from, to);
@@ -2447,12 +2430,10 @@ Draw(XmTextWidget tw,
 			  XtWindow(tw->text.inner_widget),
 			  (XFontSet) data->font, data->gc,
 			  x, y - data->voffset, block.ptr, length);
-#if USE_XFT
 	  } else if (data->use_xft) {
 	    _XmXftDrawString2(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 			      data->gc, (XftFont*) data->font, 1,
 			      x, y - data->voffset, block.ptr, length);
-#endif
 	  } else {
 	    int len = 0, csize = 0, wx = 0, orig_x = 0, orig_y = 0;
 	    char *p = NULL;
@@ -2517,7 +2498,6 @@ Draw(XmTextWidget tw,
 			  XtWindow(tw->text.inner_widget),
 			  (XFontSet) data->font, data->gc,
 			  wx, y - data->voffset, block.ptr, length);
-#if USE_XFT
 	  } else if (data->use_xft) {
 	    if (stipple)
 	      {
@@ -2534,7 +2514,6 @@ Draw(XmTextWidget tw,
 			      data->gc, (XftFont*) data->font, 1,
 			      x - data->hoffset, y - data->voffset,
 			      block.ptr, length);
-#endif
 	  } else {
 	    int len = 0, csize = 0, wx = 0, orig_x = 0, orig_y = 0;
 	    char *p = NULL;
@@ -2775,12 +2754,10 @@ Draw(XmTextWidget tw,
 			XtWindow(tw->text.inner_widget),
 			(XFontSet) data->font, data->gc,
 			x - data->hoffset, y, block.ptr, length);
-#if USE_XFT
 	} else if (data->use_xft) {
 	  _XmXftDrawString2(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 			    data->gc, (XftFont*) data->font, 1,
 			    x - data->hoffset, y, block.ptr, length);
-#endif
 	} else {
 	  if (_XmIsISO10646(XtDisplay(tw), data->font)) {
 	    size_t ucsstr_len = 0;
@@ -2827,7 +2804,6 @@ Draw(XmTextWidget tw,
 			XtWindow(tw->text.inner_widget),
 			(XFontSet) data->font, data->gc,
 			x - data->hoffset, y, block.ptr, length);
-#if USE_XFT
 	} else if (data->use_xft) {
 	  if (stipple)
 	    {
@@ -2841,7 +2817,6 @@ Draw(XmTextWidget tw,
 	  _XmXftDrawString2(XtDisplay(tw), XtWindow(tw->text.inner_widget),
 			    data->gc, (XftFont*) data->font, 1,
 			    x - data->hoffset, y, block.ptr, length);
-#endif
 	} else {
 	  if (_XmIsISO10646(XtDisplay(tw), data->font)) {
 	    size_t ucsstr_len = 0;

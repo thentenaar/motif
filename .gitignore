@@ -8,6 +8,7 @@
 .libs
 .cache
 .ccls-cache
+.dirstamp
 Makefile.in
 aclocal.m4
 acinclude.m4
@@ -131,7 +132,9 @@ lib/Xm/XmStrDefs.h
 lib/Xm/XmStrDefs22.h
 lib/Xm/XmStrDefs23.h
 lib/Xm/XmStrDefs25.h
+lib/Xm/XmStrDefs26.h
 lib/Xm/XmStrDefsI.h
+tools/wml/Uil.[ch]
 tools/wml/UilConst.h
 tools/wml/UilKeyTab.h
 tools/wml/UilLexPars.c

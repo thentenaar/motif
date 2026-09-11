@@ -7,12 +7,12 @@ DEFAULT_INCLUDES = -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib \
 AM_CPPFLAGS      = -DXMBINDDIR_FALLBACK=\"@XMBINDDIR_FALLBACK@\" \
                    -DINCDIR=\"@INCDIR@\" -DLIBDIR=\"@LIBDIR@\"   \
                    -DDATADIR=\"@DATADIR@\" \
-                   $(XFT_CFLAGS) $(XCURSOR_CFLAGS) $(X_CFLAGS)
+                   $(XCURSOR_CFLAGS) $(X_CFLAGS)
 xmdir = $(includedir)/Xm
 
 libXm_la_LDFLAGS = -version-info @ABI_VERSION@ @NO_UNDEF@
-libXm_la_LIBADD  = $(XFT_LIBS) $(XRANDR_LIBS) $(XINERAMA_LIBS) \
-                   $(XCURSOR_LIBS) $(XRENDER_LIBS) $(X_LIBS)
+libXm_la_LIBADD  = $(XRANDR_LIBS) $(XINERAMA_LIBS) $(XCURSOR_LIBS) \
+                   $(X_LIBS)
 lib_LTLIBRARIES  = libXm.la
 
 EXTRA_HDRS = Ext.h ExtP.h  \

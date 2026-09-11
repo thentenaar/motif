@@ -48,7 +48,7 @@ AC_CHECK_SIZEOF([long])
 
 dnl Check for X
 PKG_INSTALLDIR
-PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext])
+PKG_CHECK_MODULES([X], [x11 xpm xt xmu xext xrender xft >= 2 fontconfig])
 
 dnl Check for XICProc
 AC_CHECK_TYPE([XICProc],,,[#include <X11/Xlib.h>])
@@ -119,10 +119,6 @@ AC_ARG_WITH([png],
 	[AS_HELP_STRING([--with-png], [Enable png support])],
 	[with_png=$withval], [with_png=auto])
 
-AC_ARG_WITH([xft],
-	[AS_HELP_STRING([--with-xft], [Enable xft support])],
-	[with_xft=$withval], [with_xft=auto])
-
 AS_IF([test "x$with_jpeg" != "xno"],[
 	PKG_CHECK_MODULES([JPEG], [libjpeg], [with_jpeg=yes], [with_jpeg=no])
 ])
@@ -131,18 +127,10 @@ AS_IF([test "x$with_png" != "xno"],[
 	PKG_CHECK_MODULES([PNG], [libpng], [with_png=yes], [with_png=no])
 ])
 
-AS_IF([test "x$with_xft" != "xno"],[
-	PKG_CHECK_MODULES([XFT], [xft >= 2 fontconfig], [with_xft=yes], [with_xft=no])
-])
-
-dnl Optimistically look for xrandr, xrender, and xcursor
+dnl Optimistically look for xrandr and xcursor
 AC_ARG_WITH([xrandr],
 	[AS_HELP_STRING([--with-xrandr], [Enable Xrandr support])],
 	[with_xrandr=$withval], [with_xrandr=yes])
-
-AC_ARG_WITH([xrender],
-	[AS_HELP_STRING([--with-xrender], [Enable Xrender support])],
-	[with_xrender=$withval], [with_xrender=yes])
 
 AC_ARG_WITH([xcursor],
 	[AS_HELP_STRING([--with-xcursor], [Enable Xcursor support])],
@@ -160,10 +148,6 @@ AS_IF([test "x$with_xrandr" = "xyes"],[
 
 AS_IF([test "x$with_xinerama" = "xyes"],[
 	PKG_CHECK_MODULES([XINERAMA], [xinerama], [], [with_xinerama=no])
-])
-
-AS_IF([test "x$with_xrender" = "xyes"],[
-	PKG_CHECK_MODULES([XRENDER], [xrender], [], [with_xrender=no])
 ])
 
 AS_IF([test "x$with_xcursor" = "xyes"],[
@@ -186,13 +170,6 @@ AC_ARG_ENABLE([debug],
 		[--enable-debug],
 		[enable debugging support])
 	], [enable_debug=$enableval], [enable_debug=no]
-)
-
-AC_ARG_ENABLE([utf8],
-	[AS_HELP_STRING(
-		[--enable-utf8],
-		[enable UTF-8 support])
-	], [enable_utf8=$enableval], [enable_utf8=yes]
 )
 
 AC_ARG_ENABLE([message-catalog],
@@ -256,12 +233,6 @@ AC_SUBST([XM_MINOR], [_XM_MINOR])
 AC_SUBST([XM_PATCH], [_XM_PATCH])
 
 AC_DEFINE_UNQUOTED(
-	[USE_XFT],
-	$(test "x$with_xft" != "xyes" ; echo $?),
-	[1 if Motif was built with Xft support]
-)
-
-AC_DEFINE_UNQUOTED(
 	[XM_WITH_JPEG],
 	$(test "x$with_jpeg" != "xyes" ; echo $?),
 	[1 if Motif was built with JPEG support]
@@ -283,12 +254,6 @@ AC_DEFINE_UNQUOTED(
 	[XM_WITH_XINERAMA],
 	$(test "x$with_xinerama"  != "xyes" ; echo $?),
 	[1 if Motif was built with Xinerama support]
-)
-
-AC_DEFINE_UNQUOTED(
-	[XM_WITH_XRENDER],
-	$(test "x$with_xrender"  != "xyes" ; echo $?),
-	[1 if Motif was built with Xrender support]
 )
 
 AC_DEFINE_UNQUOTED(

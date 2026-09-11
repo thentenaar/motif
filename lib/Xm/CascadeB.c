@@ -594,11 +594,9 @@ Redisplay(
 		else
 	        XClearArea(XtDisplay(cb), XtWindow(cb),
 				0, 0, cb->core.width, cb->core.height, False);
-#if USE_XFT
 	} else if (Lab_MenuType(cb) != XmWORK_AREA) { /* adeed with XFT support */
         XClearArea(XtDisplay(cb), XtWindow(cb),
 			0, 0, cb->core.width, cb->core.height, False);
-#endif
 	}
 	if (etched_in && CB_IsArmed(cb)) {
 	    Pixel junk, select_pix;
