@@ -1,4 +1,4 @@
-.TH XMRENDITIONCREATE 3 2026-09-08 "Motif 2.0"
+.TH XMRENDITIONCREATE 3 2026-09-08 "Motif 2.6.0"
 .SH NAME
 XmRenditionCreate - Create a rendition
 
@@ -15,7 +15,8 @@ XmRenditionCreate - Create a rendition
 .SH DESCRIPTION
 Create a new rendition with the properties given in \fIargs\fP, using
 default values for any property not included in \fIargs\fP. The \fItag\fP
-property must be specified and non-NULL.
+property must be specified and non-NULL. If \fIwidget\fP is \fBNULL\fP,
+the default display is used.
 
 If the load model is \fBXmLOAD_IMMEDIATE\fP, the font will be loaded
 before this function returns. If the font fails to load, and the
@@ -24,7 +25,7 @@ be called.
 
 .IP "\fIwidget\fP" 12
 Widget (or \fBXmRenderTable\fP cast to \fBWidget\fP) from whence to
-take the \fBDisplay *\fP.
+get the display, or \fBNULL\fP.
 .IP "\fItag\fP" 12
 Tag to use
 .IP "\fIargs\fP" 12
