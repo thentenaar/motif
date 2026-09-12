@@ -1,0 +1,40 @@
+.TH XMRENDITIONLOAD 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionLoad - Load the font underlying a rendition
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBBoolean XmRenditionLoad\fR(\fBXmRendition \fRrendition,
+\fB                       \fR \fBBoolean \fRdo_callback);
+.fi
+
+.SH DESCRIPTION
+Load the font specified by a rendition's font type and pattern. If
+\fIdo_callback\fP is \fBTrue\fP, the \fBXmNnoFont\fP callback on
+\fBXmDisplay\fP will be called if loading the font fails.
+
+For user-supplied fonts using the \fBXmUNSPECIFIED_LOAD_MODEL\fP model,
+this function simply returns \fBTrue\fP as the font is presumed to have
+already been loaded by the user.
+
+Otherwise, if the font has already been loaded, calling this function
+causes the font metadata to be reloaded.
+
+.IP "\fIrendition\fP" 12
+Rendition to load.
+.IP "\fIdo_callback\fP" 12
+Specifies whether or not to call the \fBXmNnoFontCallback\fP if loading
+fails.
+
+.SH RETURN VALUE
+\fBTrue\fP if the font was loaded successfully, \fBFalse\fP otherwise.
+
+.SH SEE ALSO
+\fBXmDisplay\fP(3), \fBXmRenditionUnload\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -1,0 +1,26 @@
+.TH XMRENDITIONUNLOAD 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionUnload - Unload the font underlying a rendition
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBvoid XmRenditionUnload\fR(\fBXmRendition \fRrendition);
+.fi
+
+.SH DESCRIPTION
+If the underlying font used by the rendition has been loaded, calling this
+function will unload it. The font and font metadata resources are reset
+to \fBNULL\fP or zero depending on their type.
+
+.IP "\fIrendition\fP" 12
+Rendition to unload.
+
+.SH SEE ALSO
+\fBXmDisplay\fP(3), \fBXmRenditionLoad\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
