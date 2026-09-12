@@ -956,21 +956,61 @@ START_TEST(resolve_cascades_styles)
 	              "Expected strikethru (%x) to be XmAS_IS (%x)",
 	              style->underline, XmAS_IS);
 
-	ck_assert_msg((*rend)->style.fg.pixel == (*t->renditions[2])->style.fg.pixel,
+	ck_assert_msg(r->style.fg.pixel == (*t->renditions[2])->style.fg.pixel,
 	              "Expected rend->style.fg.pixel (0x%08lx) to be 0x%08lx",
-	              (*rend)->style.fg.pixel, (*t->renditions[2])->style.fg.pixel);
-	ck_assert_msg((*rend)->style.underline == XmAS_IS,
+	              r->style.fg.pixel, (*t->renditions[2])->style.fg.pixel);
+	ck_assert_msg(r->style.underline == XmAS_IS,
 	              "Expected rend->style.underline (0x%x) to be XmAS_IS",
-	              (*rend)->style.underline);
-	ck_assert_msg((*rend)->style.strikethru == XmAS_IS,
+	              r->style.underline);
+	ck_assert_msg(r->style.strikethru == XmAS_IS,
 	              "Expected rend->style.strikethru (0x%x) to be XmAS_IS (%x)",
-	              (*rend)->style.underline, XmAS_IS);
-	ck_assert_msg((*rend)->font == (void *)0xdeadbeef,
-	              "Expected rend->font (%p) to be 0xdeadbeef",
-	              (*rend)->font);
+	              r->style.underline, XmAS_IS);
+	ck_assert_msg(r->font == (void *)0xdeadbeef,
+	              "Expected rend->font (%p) to be 0xdeadbeef", r->font);
 	XmRenderTableFree(rt);
 	XmRenditionFree(rend);
 	XmRenditionStyleFree(style);
+	XtFree(cs);
+}
+END_TEST
+
+START_TEST(resolve_tags_without_fonts)
+{
+	XmRendition rend;
+	XmRenderTable rt;
+	Widget xd;
+	XmStringTag cs, tag, fallback, tags[5];
+	struct __XmRenditionRec *r;
+	struct __XmRenderTableRec *t;
+
+	tag      = (XmStringTag)"tag";
+	fallback = (XmStringTag)"fallback";
+	cs       = XmStringGetCharset();
+
+	rt = setup_resolve_table(tag, fallback, cs, True, True);
+	t  = XmSharedPtrGet(rt);
+	xd = XmGetXmDisplay(t->display);
+
+	tags[0] = (*t->renditions[0])->tag;
+	tags[1] = (*t->renditions[1])->tag;
+	tags[2] = (*t->renditions[2])->tag;
+	tags[3] = (*t->renditions[3])->tag;
+	tags[4] = (*t->renditions[4])->tag;
+
+	/* If none of the renditions have a font, we should get the default */
+	(*t->renditions[0])->font = NULL;
+	(*t->renditions[1])->font = NULL;
+	(*t->renditions[2])->font = NULL;
+	(*t->renditions[3])->font = NULL;
+	(*t->renditions[4])->font = NULL;
+
+	rend = XmRenderTableResolve(rt, tags, 5, (XmStringTag)"not-fallback", NULL);
+	ck_assert_msg((r = XmSharedPtrGet(rend)), "Expected to get a rendition");
+	ck_assert_msg(!strcmp(r->tag, XmFONTLIST_DEFAULT_TAG),
+	              "Expected tag (%s) to be %s", r->tag, XmFONTLIST_DEFAULT_TAG);
+	ck_assert_msg(r->font || r->xftFont, "Expected to have a font");
+	XmRenderTableFree(rt);
+	XmRenditionFree(rend);
 	XtFree(cs);
 }
 END_TEST
@@ -1079,6 +1119,7 @@ void xmrendertable_suite(SRunner *runner)
 	tcase_add_test(t, resolve_calls_no_rendition_callback);
 	tcase_add_test(t, resolve_callback_supplies_rendition);
 	tcase_add_test(t, resolve_cascades_styles);
+	tcase_add_test(t, resolve_tags_without_fonts);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

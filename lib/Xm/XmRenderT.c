@@ -1284,6 +1284,12 @@ XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
 		}
 	}
 
+	/* If we don't have a font, keep trying to find one */
+	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
+
 	/* Next, try the fallback tag */
 	if (!rend && !(rend = XmRenderTableGetRendition(rt, fallback))) {
 		/* Try the current charset */
@@ -1292,13 +1298,28 @@ XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
 		XtFree(fallback);
 	}
 
+	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
+
 	/* ... and failing that, the default tag (Motif 1.x) */
 	if (!rend)
 		rend = XmRenderTableGetRendition(rt, XmFONTLIST_DEFAULT_TAG);
 
+	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
+
 	/* Motif 2.x: Used for multibyte strings */
 	if (!rend)
 		rend = XmRenderTableGetRendition(rt, _MOTIF_DEFAULT_LOCALE);
+
+	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+		XmRenditionFree(rend);
+		rend = NULL;
+	}
 
 	/* Finally... */
     if (!rend)
