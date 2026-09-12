@@ -1,0 +1,65 @@
+.TH XMRENDITIONSETVALUES 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionSetValues - Modify rendition resources
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBvoid XmRenditionSetValues\fR(\fBXmRendition \fRrendition,
+\fB                         \fR \fBArgList \fRargs,
+\fB                         \fR \fBCardinal \fRcount);
+.fi
+
+.SH DESCRIPTION
+\fBXmRenditionSetValues\fP fetches resource values from a rendition, based
+on the names in \fIargs\fP, in roughly the same manner as \fBXtSetValues\fP.
+This function copies values destined for \fBString\fP resources and the
+\fBXmNtabList\fP resource.
+
+Modifying font specification resources (\fIXmNfontName\fP,
+\fIXmNfontType\fP, \fIXmNfont\fP, \fIXmNxftFont\fP, \fIXmNloadModel\fP)
+of a rendition will cause the underlying font to be unloaded and reloaded,
+unless the current loading model is \fBXmUNSPECIFIED_LOAD_MODEL\fP. Setting
+\fIXmNfont\fP or \fIXmNxftFont\fP will force the loading model to
+\fBXmUNSPECIFIED_LOAD_MODEL\fP. Changing the loading model from
+\fBXmUNSPECIFIED_LOAD_MODEL\fP to another model will cause the font to
+be loaded also.
+
+Any argument names that do not match the resources of \fBXmRendition\fP
+will be ignored. Resources lacking the \fIS\fP access mode will not be
+modified.
+
+.IP "\fIrendition\fP" 10
+Specifies the rendition.
+.IP "\fIargs\fP" 10
+Specifies the argument list.
+.IP "\fIcount\fP" 10
+Specifies the number of attribute/value pairs in the argument list.
+
+.SH CAVEAT DRACONEM
+\fBXmNfont\fP and \fBXmNxftFont\fP are \fInot\fP copied, thus care must
+be taken to ensure they don't get rug-pulled out from under the rendition.
+
+.SH EXAMPLES
+.SS SETTING RESOURCES
+The following illustrates the use of \fBXmRenditionSetValues\fP to modify
+the values of a few basic resources:
+.PP
+.EX
+Arg arg[3];
+XmRendition r;
+
+XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
+XtSetArg(arg[1], XmNfontType,  XmFONT_IS_XFT);
+XtSetArg(arg[2], XmNfontName,  "sans-serif");
+XmRenditionSetValues(r, arg, 3);
+.EE
+
+.SH SEE ALSO
+\fBXmRendition\fP(3), \fBXmRenditionGetValues\fP(3), \fBXtSetValues\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

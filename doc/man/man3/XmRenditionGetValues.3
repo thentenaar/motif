@@ -1,0 +1,67 @@
+.TH XMRENDITIONGETVALUES 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionGetValues - Obtain rendition resources
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBvoid XmRenditionGetValues\fR(\fBXmRendition \fRrendition,
+\fB                         \fR \fBArgList \fRargs,
+\fB                         \fR \fBCardinal \fRcount);
+.fi
+
+.SH DESCRIPTION
+\fBXmRenditionGetValues\fP fetches resource values from a rendition, based
+on the names in \fIargs\fP, in roughly the same manner as \fBXtGetValues\fP.
+This function returns copies of \fBString\fP resources and the \fBXmNtabList\fP
+resource.
+
+If the rendition's \fBXmNloadModel\fP is \fBXmLOAD_IMMEDIATE\fP or
+\fBXmLOAD_DEFERRED\fP, the underlying font is \fBNULL\fP, the
+\fBXmNfontType\fP is set, and the \fBXmNfontName\fP is not \fBNULL\fP,
+the font will be loaded directly so that the \fBXmNfont\fP or
+\fBXmNxftFont\fP value can be properly returned.
+
+Any argument names that do not match the resources of \fBXmRendition\fP
+will be ignored, and the pointers passed along with them will remain
+unmodified.
+
+.IP "\fIrendition\fP" 10
+Specifies the rendition.
+.IP "\fIargs\fP" 10
+Specifies the argument list.
+.IP "\fIcount\fP" 10
+Specifies the number of attribute/value pairs in the argument list.
+
+.SH CAVEAT DRACONEM
+\fBXmNfont\fP and \fBXmNxftFont\fP are \fInot\fP copied, thus care must
+be taken to ensure they don't get rug-pulled out from under the rendition.
+
+.SH EXAMPLES
+.SS RETRIEVING RESOURCES
+The following illustrates the use of \fBXmRenditionGetValues\fP to fetch
+the values of a few basic resources:
+.PP
+.EX
+Arg arg[4];
+XmRendition r;
+XmLoadModel lm;
+XmFontType  type;
+XtPointer font;
+String pattern;
+
+XtSetArg(arg[0], XmNloadModel, &lm);
+XtSetArg(arg[1], XmNfontType,  &type);
+XtSetArg(arg[2], XmNfontName,  &pattern);
+XtSetArg(arg[3], XmNfont,      &font);
+XmRenditionGetValues(r, arg, 4);
+.EE
+
+.SH SEE ALSO
+\fBXmRendition\fP(3), \fBXmRenditionSetValues\fP(3), \fBXtGetValues\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

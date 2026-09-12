@@ -386,7 +386,9 @@ man_MANS = ApplicationShell.3 \
     XmRenditionCreate.3 \
     XmRenditionFallbackForCodepoint.3 \
     XmRenditionFree.3 \
+    XmRenditionGetValues.3 \
     XmRenditionHasCodepoint.3 \
+    XmRenditionSetValues.3 \
     XmRenditionRetrieve.3 \
     XmRenditionUpdate.3 \
     XmRenditionStyle.3 \
