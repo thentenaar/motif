@@ -2008,6 +2008,8 @@ void XmRenditionUnload(XmRendition rend)
 		XFreeFontSet(r->display, (XFontSet)r->font);
 	else XFreeFont(r->display, r->font);
 	r->font = NULL;
+	XtFree(r->fontFoundry);
+	XtFree(r->fontFamily);
 
 out:
 	r->fontFoundry = NULL;
