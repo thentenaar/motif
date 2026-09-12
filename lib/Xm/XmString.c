@@ -4475,7 +4475,9 @@ static void ComputeMetrics(XmRendition rend, XmRenditionStyle style,
 	    wid = Half(byte_count) * font_struct->max_bounds.width;
     break;
     case XmFONT_IS_FONTSET:
-	  font_set = (XFontSet)_XmRendFont(rend);
+	  if (!(font_set = (XFontSet)_XmRendFont(rend)))
+	    goto done;
+
 	  Xutf8TextExtents(font_set, (char *)text, byte_count, &ink, &logical);
 	  if (!logical.height)
 	    logical.height = XExtentsOfFontSet(font_set)->max_logical_extent.height;
@@ -4486,6 +4488,8 @@ static void ComputeMetrics(XmRendition rend, XmRenditionStyle style,
 	  desc = logical.height + logical.y;
     break;
     case XmFONT_IS_XFT:
+	if (!_XmRendXftFont(rend))
+	    goto done;
 	asc  = _XmRendXftFont(rend)->ascent;
 	desc = _XmRendXftFont(rend)->descent;
 	hi   = _XmRendXftFont(rend)->height;
