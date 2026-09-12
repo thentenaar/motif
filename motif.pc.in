@@ -6,7 +6,7 @@ includedir=@includedir@
 Name: motif
 Description: Motif User Interface Toolkit
 Version: @XM_VERSION@
-Requires: xt
-Requires.private: xpm xt xft xmu xext x11
+Requires: xt xft >= 2
+Requires.private: xpm xt xft xmu xext x11 xrender
 Cflags: -I${includedir}
 Libs: -L${libdir} -lXm
