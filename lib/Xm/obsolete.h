@@ -242,26 +242,6 @@ extern XmFontList XmFontListAdd(XmFontList old, XFontStruct *font, XmStringCharS
 XM_ALTERNATIVE(Use XmRenderTableGetRendition instead)
 extern Boolean XmFontListGetNextFont(XmFontContext context, XmStringCharSet *charset, XFontStruct **font);
 
-#ifdef _XmP_h
-/**
- * Obsolete private functions
- */
-
-XM_ALTERNATIVE(Use XmStringCreateLocalized instead)
-extern XmString XmeGetLocalizedString(char *reserved, Widget widget,
-                                      char *resource, String string);
-
-XM_ALTERNATIVE(Set XmNtitleString / XmNiconNameString on the shell instead)
-extern void XmeSetWMShellTitle(XmString xmstr, Widget shell);
-
-XM_ALTERNATIVE(Use XmRenderTableResolve or XmRenderTableGetRendition for XmFONTLIST_DEFAULT_TAG instead)
-extern Boolean XmeRenderTableGetDefaultFont(XmRenderTable fontlist, XFontStruct **font_struct);
-
-XM_ALTERNATIVE(Use XmRenderTableGetDefaultExtents / XmNascent etc. on XmRendition instead)
-extern void XmRenderTableGetDefaultFontExtents(XmRenderTable rt, int *height,
-                                               int *ascent, int *descent);
-
-#endif /* _XmP_h */
 #endif /* XM_OBSOLETE_H */
 #endif /* _Xm_h */
 

@@ -47,7 +47,6 @@
 extern "C" {
 #endif
 
-
 /***************************************************************************
  *
  *  Macros replacing toolkit macros so that gadgets are handled properly.
@@ -1267,7 +1266,7 @@ extern int XmeMicroSleep(
 
 
 #include <Xm/BaseClassP.h>
-
+#include <Xm/obsoleteP.h>
 
 /***********************************************************************
  *
