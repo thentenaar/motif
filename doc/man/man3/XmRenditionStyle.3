@@ -1,0 +1,95 @@
+.TH XMRENDITIONSTYLE 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionStyle - Styling for XmRendition
+
+.SH SYNOPSIS
+.nf
+#include <Xm/XmRenderT.h>
+
+\fBtypedef struct\fR XmRenditionColor {
+	\fBPixel\fR pixel;
+} XmRenditionColor;
+
+\fBtypedef struct\fR _XmRenditionStyle {
+	\fBunsigned char\fR underline;
+	\fBunsigned char\fR strikethru;
+	\fBunsigned char\fR fg_state;
+	\fBunsigned char\fR bg_state;
+	\fBGC\fR gc;
+	\fBXmRenditionColor\fR fg;
+	\fBXmRenditionColor\fR bg;
+} *XmRenditionStyle;
+.fi
+
+.SH DESCRIPTION
+The \fBXmRenditionStyle\fP structure conveys the stylistic properties
+used by the "Styled" \fBXmString\fP drawing functions to render text. The
+structure members are roughly congruent with those of \fBXmRendition\fP,
+save for the addition of the \fBXmRenditionColor\fP to represent color
+information. This affords the flexibility of decoupling the management
+of the styling from the rendition itself.
+
+Instances of \fBXmRenditionStyle\fP can be created with the
+\fBXmRenditionStyleCreate\fP function, and should be freed with the
+\fBXmRenditionStyleFree\fP function.
+
+.SH MEMBERS
+.IP "\fBunderline\fP" 8
+.IP "\fBstrikethru\fP" 8
+.RS 8
+Specifies the line type for striking through or underlining a compound
+string. Valid values are:
+.IP \(bu 4
+\fBXmAS_IS\fP \(em The value is unspecified (the default value).
+.IP \(bu 4
+\fBXmNO_LINE\fP \(em Strikethrough / underline will not be applied.
+.IP \(bu 4
+\fBXmSINGLE_LINE\fP \(em A single line will be used.
+.IP \(bu 4
+\fBXmDOUBLE_LINE\fP \(em A double line will be used.
+.IP \(bu 4
+\fBXmSINGLE_DASHED_LINE\fP \(em A single-dashed line will be used.
+.IP \(bu 4
+\fBXmDOUBLE_DASHED_LINE\fP \(em A double-dashed line will be used.
+.RE
+
+.IP "\fBfg_state\fP" 8
+.IP "\fBbg_state\fP" 8
+.RS 8
+If ether of these resources are set to \fBXmFORCE_COLOR\fP, the respective
+color specified in the rendition will be preferred over values from other
+styles/renditions evaluated when rendering a compound string (or part
+thereof). The default value for these members is \fBXmAS_IS\fP.
+.RE
+
+.IP "\fBgc\fP" 8
+.RS 8
+Graphics context to use for rendering. If \fIfg\fP or \fIbg\fP have a
+value of \fBXmUNSPECIFIED_PIXEL\fP, the foreground and background colors
+given in this \fBGC\fP will be used if specified. This member defaults
+to \fBNULL\fP.
+.RE
+
+.IP "\fBfg\fP" 8
+.IP "\fBbg\fP" 8
+.RS 8
+Specifies the foreground or background color to render with. Currently,
+only the \fBPixel\fP member of \fBXmRenditionColor\fP has effect, and
+it has a default value of \fBXmUNSPECIFIED_PIXEL\fP.
+.RE
+
+.SH HISTORY
+This was added in Motif 2.6.0, along with three new \fBXmString\fP drawing
+functions to better accomodate application-defined styling of text
+drawn using \fBXmRendition\fP. Previously, only the \fBXmRendition\fP was
+used to convey the styling, and this was added so that applications can
+more flexibly manage styling separately from the rendition.
+
+.SH SEE ALSO
+\fBXmRendition\fP(3), \fBXmStringDrawStyled\fP(3),
+\fBXmStringDrawImageStyled\fP(3), \fBXmStringDrawUnderlineStyled\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -1,0 +1,30 @@
+.TH XMRENDITIONSTYLEDUP 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionStyleDup - Duplicate a rendition style
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmRenditionStyle XmRenditionStyleDup\fR(\fBconst XmRenditionStyle\fR style);
+.fi
+
+.SH DESCRIPTION
+Allocate a new \fBXmRenditionStyle\fP and initialize it as a copy of \fIstyle\fP.
+If \fIstyle\fP is \fBNULL\fP, a new \fBXmRenditionStyle\fP will be allocated,
+initialized, and returned.
+
+.IP "\fIstyle\fP" 12
+Rendition style to duplicate.
+
+.SH RETURN VALUE
+A newly-allocated copy of \fIstyle\fP.
+
+.SH SEE ALSO
+\fBXmRenditionStyle\fP(3), \fBXmRenditionStyleCreate\fP(3),
+\fBXmRenditionStyleFree\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

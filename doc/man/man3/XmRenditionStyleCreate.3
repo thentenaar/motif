@@ -1,0 +1,46 @@
+.TH XMRENDITIONSTYLECREATE 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenditionStyleCreate - Create a rendition style
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+.P
+\fBXmRenditionStyle XmRenditionStyleCreate\fR(\fBvoid\fR);
+.fi
+
+.SH DESCRIPTION
+Allocate a new \fBXmRenditionStyle\fP and initialize it to its default
+values.
+
+.SH DEFAULT VALUES
+.IP "\fBunderline\fP" 8
+.IP "\fBstrikethru\fP" 8
+.IP "\fBfg_state\fP" 8
+.IP "\fBbg_state\fP" 8
+.RS 8
+The default values for these is \fBXmAS_IS\fP.
+.RE
+
+.IP "\fBgc\fP" 8
+.RS 8
+This defaults to \fBNULL\fP.
+.RE
+
+.IP "\fBfg.pixel\fP" 8
+.IP "\fBbg.pixel\fP" 8
+.RS 8
+These default to \fBXmUNSPECIFIED_PIXEL\fP.
+.RE
+
+.SH RETURN VALUE
+A newly-allocated and properly-initialized \fBXmRenditionStyle\fP.
+
+.SH SEE ALSO
+\fBXmRenditionStyle\fP(3), \fBXmRenditionStyleDup\fP(3),
+\fBXmRenditionStyleFree\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

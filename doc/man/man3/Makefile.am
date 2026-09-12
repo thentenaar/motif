@@ -389,6 +389,11 @@ man_MANS = ApplicationShell.3 \
     XmRenditionHasCodepoint.3 \
     XmRenditionRetrieve.3 \
     XmRenditionUpdate.3 \
+    XmRenditionStyle.3 \
+    XmRenditionStyleCreate.3 \
+    XmRenditionStyleDup.3 \
+    XmRenditionStyleFree.3 \
+    XmRenditionStyleMerge.3 \
     XmRepTypeAddReverse.3 \
     XmRepTypeGetId.3 \
     XmRepTypeGetNameList.3 \
