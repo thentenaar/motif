@@ -1534,7 +1534,7 @@ externaldef(messages) const char *_XmMsgXmRenderT_0002 =
   "XmNfontType invalid.  Cannot load font.";
 
 externaldef(messages) const char *_XmMsgXmRenderT_0003 =
-  "Conversion failed.  Cannot load font.";
+  "Failed to load font.";
 
 externaldef(messages) const char *_XmMsgXmRenderT_0004 =
   "XmNfontType set to XmAS_IS.  Cannot load font.";

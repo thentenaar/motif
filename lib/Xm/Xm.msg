@@ -840,7 +840,7 @@ $set MS_XmRenderT
 MSG_XmRenderT_0000 XmNtag cannot be NULL.  Setting to empty string.
 MSG_XmRenderT_0001 Display is NULL.  Cannot load font.
 MSG_XmRenderT_0002 XmNfontType invalid.  Cannot load font.
-MSG_XmRenderT_0003 Conversion failed.  Cannot load font.
+MSG_XmRenderT_0003 Failed to load font.
 MSG_XmRenderT_0004 XmNfontType set to XmAS_IS.  Cannot load font.
 MSG_XmRenderT_0005 XmNloadModel is XmLOAD_IMMEDIATE but XmNfont and XmNfontName not specified.\n\
 Cannot load font.

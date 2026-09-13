@@ -54,15 +54,15 @@ static char rcsid[] = "$TOG: XmRenderT.c /main/14 1998/10/26 20:14:42 samborn $"
 #include "XmTabListI.h"
 
 /* Warning Messages */
-#define NO_NULL_TAG_MSG			_XmMMsgXmRenderT_0000
-#define NULL_DISPLAY_MSG      		_XmMMsgXmRenderT_0001
-#define INVALID_TYPE_MSG      		_XmMMsgXmRenderT_0002
+#define NO_NULL_TAG_MSG         _XmMMsgXmRenderT_0000
+#define NULL_DISPLAY_MSG        _XmMMsgXmRenderT_0001
+#define INVALID_TYPE_MSG        _XmMMsgXmRenderT_0002
+#define LOAD_FAILED             _XmMMsgXmRenderT_0003
+#define NULL_LOAD_IMMEDIATE_MSG _XmMMsgXmRenderT_0005
+#define INVALID_RENDITION       _XmMMsgXmRenderT_0006
 #if 0
-#define CONVERSION_FAILED_MSG 		_XmMMsgXmRenderT_0003 /* TODO: Remove */
 #define NULL_FONT_TYPE_MSG    		_XmMMsgXmRenderT_0004 /* TODO: Remove */
 #endif
-#define NULL_LOAD_IMMEDIATE_MSG		_XmMMsgXmRenderT_0005
-#define INVALID_RENDITION		_XmMMsgXmRenderT_0006
 
 /**
  * TODO: Refactor the code using this later
@@ -530,6 +530,23 @@ CopyFromArg(XtArgVal src, char *dst, unsigned int size)
     memcpy((char *)dst, p, (size_t)size);
   }
 } /* CopyFromArg */
+
+/* Wrapper for calling XtWarning functions. */
+static void RenditionWarning(char *tag, char *type, char *message, Display *d)
+{
+	const char *params[1];
+	Cardinal num_params = 1;
+
+	/**
+	 * the MotifWarningHandler installed in VendorS.c knows about
+	 * this convention
+	 */
+	params[0] = XME_WARNING;
+	XtAppWarningMsg(
+		XtDisplayToApplicationContext(d ? d : _XmGetDefaultDisplay()),
+		tag, type, "XmRendition", message, (String *)params, &num_params
+	);
+}
 
 /**
  * Create and initialize a XmRenditionStyle
@@ -1387,23 +1404,6 @@ void XmRenderTableFree(XmRenderTable table)
 	XmSharedPtrFree(table);
 }
 
-/* Wrapper for calling XtWarning functions. */
-static void RenditionWarning(char *tag, char *type, char *message, Display *d)
-{
-	const char *params[1];
-	Cardinal num_params = 1;
-
-	/**
-	 * the MotifWarningHandler installed in VendorS.c knows about
-	 * this convention
-	 */
-	params[0] = XME_WARNING;
-	XtAppWarningMsg(
-		XtDisplayToApplicationContext(d ? d : _XmGetDefaultDisplay()),
-		tag, type, "XmRendition", message, (String *)params, &num_params
-	);
-}
-
 /**
  * Merge two renditions, replacing any default values in \a to with
  * values from \a from.
@@ -1645,8 +1645,10 @@ XmRendition _XmRenditionCreate(Display *display, Widget widget, String resname,
 
 	if (r->pattern)   r->pattern   = XtNewString(r->pattern);
 	if (r->fontStyle) r->fontStyle = XtNewString(r->fontStyle);
-	if (r->loadModel != XmLOAD_DEFERRED && r->loadModel != XmLOAD_LAZY)
-		XmRenditionLoad(rend, True);
+	if (r->loadModel != XmLOAD_DEFERRED && r->loadModel != XmLOAD_LAZY) {
+		if (!XmRenditionLoad(rend, True) && result)
+			RenditionWarning(r->tag, "LOAD_FAILED", LOAD_FAILED, r->display);
+	}
 	return rend;
 }
 
@@ -1988,7 +1990,7 @@ Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback)
 		RenditionWarning(r->tag, "INVALID_TYPE", INVALID_TYPE_MSG, r->display);
 	}
 
-	/* Call the NO_FONT callback if requested */
+	/* Call the NO_FONT callback to supply a font if requested */
 	if (!loaded && do_callback) {
 		d = (XmDisplay)XmGetXmDisplay(r->display);
 		if (d && d->display.noFontCallback) {
@@ -1997,6 +1999,7 @@ Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback)
 			cb.rendition = rend;
 			cb.font_name = r->pattern;
 			XtCallCallbackList((Widget)d, d->display.noFontCallback, &cb);
+			loaded = r->font || r->xftFont;
 		}
 	}
 
@@ -2263,6 +2266,7 @@ void XmRenditionGetValues(XmRendition rendition, ArgList args, Cardinal count)
 				orig->loadModel = XmLOAD_IMMEDIATE;
 				if (!orig->font && _XmRenditionResources[j].resource_type == XmRFontStruct)
 					XmRenditionLoad(rendition, True);
+
 				if (!orig->xftFont && _XmRenditionResources[j].resource_type == XmRXftFont)
 					XmRenditionLoad(rendition, True);
 				orig->loadModel = lm;
