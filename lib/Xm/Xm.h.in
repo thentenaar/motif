@@ -1808,6 +1808,7 @@ extern void XmRenditionSetValues(XmRendition rendition, ArgList args, Cardinal c
 extern void XmRenditionGetValues(XmRendition rendition, ArgList args, Cardinal count);
 extern Boolean XmRenditionLoad(XmRendition rend, Boolean do_callback);
 extern void XmRenditionUnload(XmRendition rendition);
+extern Boolean XmRenditionIsLoaded(XmRendition rendition);
 extern void XmRenditionFree(XmRendition rendition);
 extern void XmFreeRenditionArray(XmRendition *rends, Cardinal count);
 extern XmRendition XmRenditionCreate(Widget widget,

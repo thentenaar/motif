@@ -388,6 +388,7 @@ man_MANS = ApplicationShell.3 \
     XmRenditionFree.3 \
     XmRenditionGetValues.3 \
     XmRenditionHasCodepoint.3 \
+    XmRenditionIsLoaded.3 \
     XmRenditionLoad.3 \
     XmRenditionSetValues.3 \
     XmRenditionUnload.3 \

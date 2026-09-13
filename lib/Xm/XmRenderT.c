@@ -2047,6 +2047,16 @@ out:
 }
 
 /**
+ * Determine if a rendition has already been loaded
+ */
+Boolean XmRenditionIsLoaded(XmRendition rendition)
+{
+	struct __XmRenditionRec *r;
+
+	return (r = XmSharedPtrGet(rendition)) && (r->font || r->xftFont);
+}
+
+/**
  * Find a fallback rendition for a given codepoint
  *
  * \param tbl  Render table to search

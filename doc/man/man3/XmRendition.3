@@ -40,6 +40,10 @@ of a rendition will cause the underlying font to be unloaded and reloaded,
 save for externally loaded fonts (see below). Setting \fIXmNfont\fP or
 \fIXmNxftFont\fP will force the loading model to \fBXmUNSPECIFIED_LOAD_MODEL\fP.
 
+A rendition can be checked to see if the font was loaded successfully
+with \fBXmRenditionIsLoaded\fP. Loading failures will generally emit a
+warning message to standard output.
+
 .SS IMMEDIATE LOADING
 By specifying the load model as \fBXmLOAD_IMMEDIATE\fP, the font will be
 loaded when the \fBXmRendition\fP object is created.
@@ -76,10 +80,10 @@ XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
 XtSetArg(arg[1], XmNfontType, XmFONT_IS_FONT);
 XtSetArg(arg[2], XmNfontName, "fixed");
 r = XmRenditionCreate(NULL, XmSTRING_DEFAULT_CHARSET, arg, 3);
-
-/* ... */
-
-XmRenditionFree(r);
+if (r && XmRenditionIsLoaded(r)) {
+	/* ... */
+	XmRenditionFree(r);
+}
 .EE
 
 .SH LOADING A XFT FONT

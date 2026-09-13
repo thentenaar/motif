@@ -1,0 +1,32 @@
+.TH XMRENDITIONISLOADED 3 2026-09-12 "Motif 2.6.0"
+.SH NAME
+XmRenditionIsLoaded - Determine if a rendition has been loaded
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBBoolean XmRenditionIsLoaded\fR(\fBXmRendition \fRrendition);
+.fi
+
+.SH DESCRIPTION
+Determine if a rendition has been loaded successfully. This is useful for
+cases where the rendition is automatically loaded by \fBXmRenditionCreate\fP,
+\fBXmRenditionGetValues\fP, or \fBXmRenditionSetValues\fP and the user
+wants to check whether or not the rendition was properly loaded before
+use.
+
+.IP "\fIrendition\fP" 10
+Specifies the rendition.
+
+.SH RETURN VALUE
+\fBTrue\fP if the rendition has been successfully loaded, \fBFalse\fP
+otherwise.
+
+.SH SEE ALSO
+\fBXmRenditionCreate\fP(3), \fBXmRenditionLoad\fP(3), \fBXmRenditionUnload\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -20,7 +20,8 @@ this function simply returns \fBTrue\fP as the font is presumed to have
 already been loaded by the user.
 
 Otherwise, if the font has already been loaded, calling this function
-causes the font metadata to be reloaded.
+causes the font metadata to be reloaded. Successful loading can be
+verified with the \fBXmRenditionIsLoaded\fP function.
 
 .IP "\fIrendition\fP" 12
 Rendition to load.
@@ -32,7 +33,7 @@ fails.
 \fBTrue\fP if the font was loaded successfully, \fBFalse\fP otherwise.
 
 .SH SEE ALSO
-\fBXmDisplay\fP(3), \fBXmRenditionUnload\fP(3)
+\fBXmDisplay\fP(3), \fBXmRenditionUnload\fP(3), \fBXmRenditionIsLoaded\fP(3)
 
 .SH AUTHOR
 Tim Hentenaar <tim@hentenaar.com>
