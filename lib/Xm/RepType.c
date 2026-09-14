@@ -34,6 +34,8 @@ static char rcsid[] = "$TOG: RepType.c /main/17 1997/09/15 10:10:39 cshi $"
 #include "MessagesI.h"
 #include <Xm/XmosP.h>		/* for (indirectly) atoi() */
 #include <Xm/FontDialog.h>
+#include <fontconfig/fontconfig.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -346,18 +348,50 @@ static const char * const FileTypeMaskNames[] =
 static const unsigned char FileTypeMaskMap[] =
 {   XmFILE_DIRECTORY, XmFILE_REGULAR, XmFILE_ANY_TYPE
     } ;
-static const char * const FontTypeNames[] =
-{   "font_is_font", "font_is_fontset", "as_is", "font_is_xft"
-   } ;
-static const unsigned char FontTypeMap[] =
-{   XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmAS_IS, XmFONT_IS_XFT
-   } ;
+
+static const char * const FontSlantNames[] = {
+	"roman", "italic", "oblique"
+};
+
+static const unsigned char FontSlantMap[] = {
+	XmSLANT_ROMAN, XmSLANT_ITALIC, XmSLANT_OBLIQUE
+};
+
 static const char * const FontSourceNames[] =
 {   "x", "xft"
    } ;
 static const unsigned char FontSourceMap[] =
 {   XmFONT_SOURCE_X, XmFONT_SOURCE_XFT
    } ;
+
+static const char * const FontTypeNames[] = {
+	"font_is_font", "font_is_fontset", "as_is", "font_is_xft",
+	"font", "fontset", "xft"
+};
+
+static const unsigned char FontTypeMap[] = {
+	XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmAS_IS, XmFONT_IS_XFT,
+	XmFONT_IS_FONT, XmFONT_IS_FONTSET, XmFONT_IS_XFT
+};
+
+static const char * const FontWeightNames[] = {
+	"thin",      "extralight", "ultralight",
+	"light",     "demilight",  "semilight",
+	"book",      "regular",    "normal",
+	"medium",    "demibold",   "bold",
+	"extrabold", "ultrabold",  "black",
+	"heavy",     "extrablack", "ultrablack"
+};
+
+static const unsigned char FontWeightMap[] = {
+	FC_WEIGHT_THIN,      FC_WEIGHT_EXTRALIGHT, FC_WEIGHT_ULTRALIGHT,
+	FC_WEIGHT_LIGHT,     FC_WEIGHT_DEMILIGHT,  FC_WEIGHT_SEMILIGHT,
+	FC_WEIGHT_BOOK,      XmWEIGHT_REGULAR,     XmWEIGHT_REGULAR,
+	XmWEIGHT_MEDIUM,     XmWEIGHT_DEMIBOLD,    XmWEIGHT_BOLD,
+	FC_WEIGHT_EXTRABOLD, FC_WEIGHT_ULTRABOLD,  FC_WEIGHT_BLACK,
+	FC_WEIGHT_HEAVY,     FC_WEIGHT_EXTRABLACK, FC_WEIGHT_ULTRABLACK
+};
+
 static const char * const IconAttachmentNames[] =
 {   "attach_north_west", "attach_north", "attach_north_east", "attach_east",
     "attach_south_east", "attach_south", "attach_south_west", "attach_west",
@@ -669,8 +703,6 @@ static const unsigned char PixmapPlacementMap[] =
 {   XmPIXMAP_TOP, XmPIXMAP_BOTTOM, XmPIXMAP_LEFT, XmPIXMAP_RIGHT
     } ;
 
-
-
 /* Note that this array does not initialize rep_type_id fields,
  * for this field is useless.  It always matches the index of the
  * entry in the array.  We have to keep the field since the structure
@@ -855,8 +887,20 @@ static XmRepTypeEntryRec StandardRepTypes[] = {
     XtNumber(FileTypeMaskNames), FALSE,
   },
   {
+    XmRFontSlant, (String*)FontSlantNames, (unsigned char *)FontSlantMap,
+    XtNumber(FontSlantNames), False,
+  },
+  {
+    XmRFontSource, (String*)FontSourceNames, (unsigned char *)FontSourceMap,
+    XtNumber(FontSourceNames), False,
+  },
+  {
     XmRFontType, (String*)FontTypeNames, (unsigned char *)FontTypeMap,
     XtNumber(FontTypeNames), FALSE,
+  },
+  {
+    XmRFontWeight, (String*)FontWeightNames, (unsigned char *)FontWeightMap,
+    XtNumber(FontWeightNames), False,
   },
   {
     XmRIconAttachment, (String*)IconAttachmentNames, NULL,
@@ -958,6 +1002,10 @@ static XmRepTypeEntryRec StandardRepTypes[] = {
   {
     XmRPathMode, (String*)PathModeNames, NULL,
     XtNumber(PathModeNames), FALSE,
+  },
+  {
+    XmRPixmapPlacement, (String*)PixmapPlacementNames, (unsigned char *)PixmapPlacementMap,
+    XtNumber(PixmapPlacementNames), FALSE,
   },
   {
     XmRPositionMode, (String*)PositionModeNames, NULL,
@@ -1158,14 +1206,6 @@ static XmRepTypeEntryRec StandardRepTypes[] = {
     XmRWhichButton, (String*)WhichButtonNames, (unsigned char *)WhichButtonMap,
     XtNumber(WhichButtonNames),  FALSE,
   },
-  {
-    XmRPixmapPlacement, (String*)PixmapPlacementNames, (unsigned char *)PixmapPlacementMap,
-    XtNumber(PixmapPlacementNames), FALSE,
-  },
-  {
-    XmRFontSource, (String*)FontSourceNames, (unsigned char *)FontSourceMap,
-    XtNumber(FontSourceNames), False,
-  }
 } ;
 
 static const Cardinal StandardNumRecs = XtNumber( StandardRepTypes );

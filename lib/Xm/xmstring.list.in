@@ -1720,8 +1720,10 @@ NfontPixelSize
 CFontPixelSize
 NfontSlant
 CFontSlant
+RFontSlant
 NfontWeight
 CFontWeight
+RFontWeight
 NfontFamily
 CFontFamily
 NinkWidth

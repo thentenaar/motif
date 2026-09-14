@@ -151,13 +151,13 @@ static XtResource _XmRenditionResources[] = {
     XmRImmediate, NULL
   },
   {
-    XmNfontSlant, XmCFontSlant, XmRInt,
-    sizeof(int), XtOffsetOf(_XmRenditionRec, fontSlant),
+    XmNfontSlant, XmCFontSlant, XmRFontSlant,
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, fontSlant),
     XmRImmediate, NULL
   },
   {
-    XmNfontWeight, XmCFontWeight, XmRInt,
-    sizeof(int), XtOffsetOf(_XmRenditionRec, fontWeight),
+    XmNfontWeight, XmCFontWeight, XmRFontWeight,
+    sizeof(unsigned char), XtOffsetOf(_XmRenditionRec, fontWeight),
     XmRImmediate, NULL
   },
   {

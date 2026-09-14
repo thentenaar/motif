@@ -41,29 +41,29 @@
 static Display *display;
 
 /* X font props */
-static String x_font    = NULL;
-static String x_foundry = NULL;
-static String x_family  = NULL;
-static int x_weight     = 0;
-static int x_slant      = 0;
-static int x_pointsz    = 0;
-static int x_pixelsz    = 0;
-static int x_width      = 0;
-static int x_inkwidth   = 0;
-static int x_ascent     = 0;
-static int x_descent    = 0;
+static String x_font          = NULL;
+static String x_foundry       = NULL;
+static String x_family        = NULL;
+static unsigned char x_weight = 0;
+static unsigned char x_slant  = 0;
+static int x_pointsz          = 0;
+static int x_pixelsz          = 0;
+static int x_width            = 0;
+static int x_inkwidth         = 0;
+static int x_ascent           = 0;
+static int x_descent          = 0;
 
 /* Xft font props */
-static String xft_font    = NULL;
-static String xft_foundry = NULL;
-static String xft_family  = NULL;
-static int xft_weight     = 0;
-static int xft_slant      = 0;
-static int xft_pointsz    = 0;
-static int xft_pixelsz    = 0;
-static int xft_width      = 0;
-static int xft_ascent     = 0;
-static int xft_descent    = 0;
+static String xft_font          = NULL;
+static String xft_foundry       = NULL;
+static String xft_family        = NULL;
+static unsigned char xft_weight = 0;
+static unsigned char xft_slant  = 0;
+static int xft_pointsz          = 0;
+static int xft_pixelsz          = 0;
+static int xft_width            = 0;
+static int xft_ascent           = 0;
+static int xft_descent          = 0;
 
 /**
  * Ignore X errors, in case of BadAtom
@@ -178,9 +178,9 @@ xft:
 		if (FcPatternGetString(f->pattern, FC_FAMILY, 0, &s) == FcResultMatch)
 			xft_family = XtNewString((String)s);
 		if (FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &i) == FcResultMatch)
-			xft_weight = i;
+			xft_weight = i & 0xff;
 		if (FcPatternGetInteger(f->pattern, FC_SLANT, 0, &i) == FcResultMatch)
-			xft_slant = i;
+			xft_slant = i & 0xff;
 		if (FcPatternGetDouble(f->pattern, FC_SIZE, 0, &d) == FcResultMatch)
 			xft_pointsz = (int)d;
 		if (FcPatternGetDouble(f->pattern, FC_PIXEL_SIZE, 0, &d) == FcResultMatch)
@@ -763,7 +763,8 @@ START_TEST(getvalues_xfont)
 {
 	Arg arg[7];
 	String foundry, family;
-	int weight, slant, pointsz, pixelsz;
+	unsigned char weight, slant;
+	int pointsz, pixelsz;
 	XmRendition rend;
 	XtPointer f = (void *)0x2468;
 	const struct __XmRenditionRec *r;
@@ -830,7 +831,8 @@ START_TEST(getvalues_xft)
 {
 	Arg arg[7];
 	String foundry, family;
-	int weight, slant, pointsz, pixelsz;
+	unsigned char weight, slant;
+	int pointsz, pixelsz;
 	XmRendition rend;
 	XtPointer f = (void *)0x2468;
 	const struct __XmRenditionRec *r;

@@ -72,8 +72,8 @@ typedef struct __XmRenditionRec
 	String fontStyle;
 	int fontSize;
 	int pixelSize;
-	int fontSlant;
-	int fontWeight;
+	unsigned char fontSlant;
+	unsigned char fontWeight;
 	int fontSpacing;
 	int ascent;
 	int descent;
