@@ -2622,84 +2622,58 @@ CvtStringToXmTabList(Display *dpy,
   return(FALSE);
 }
 
-static Boolean
-cvtStringToXmRenderTable(Display *dpy,
-			 Widget widget,
-			 String resname,
-			 String resclass,
-			 XrmValue *from,
-			 XrmValue *to)
+static Boolean cvtStringToXmRenderTable(Display *dpy, Widget widget,
+                                        String resname, String resclass,
+                                        XrmValue *from, XrmValue *to)
 {
-  char 		*s;
-  XmRendition	rend[1];
-  XmRenderTable	rt;
-  char		*tag;
-  Boolean	has_default = FALSE, in_db = FALSE;
-  char *strtok_buf = NULL;
+	Arg arg;
+	String s, tag;
+	XmRendition rend;
+	XmRenderTable rt = NULL;
+	Boolean first = True, in_db = False;
+	char *b = NULL;
 
-  if (from->addr)
-    {
-      s = XtNewString((char *)from->addr);
-      rt = NULL;
-      has_default = FALSE;
+	if (!from->addr)
+		return False;
 
-      /* Try for default rendition */
-      rend[0] = _XmRenditionCreate(NULL, widget, resname, resclass,
-				   NULL, NULL, 0, NULL);
-
-      if (rend[0] != NULL)
-	{
-	  rt = XmRenderTableAddRenditions(NULL, rend, 1, XmMERGE_REPLACE);
-	  has_default = TRUE;
+	/* Try the default (no tag) */
+	XtSetArg(arg, XmNloadModel, XmLOAD_IMMEDIATE);
+	rend = _XmRenditionCreate(NULL, widget, resname, resclass, NULL,
+	                          &arg, 1, NULL);
+	if (rend) {
+		rt = XmRenderTableAddRenditions(rt, &rend, 1, XmMERGE_REPLACE);
+		XmRenditionFree(rend);
 	}
 
-      /* Try to get first tag. */
-      if ((tag = _Xmstrtok(s, " \t\r\n\v\f,", &strtok_buf)) != NULL)
-	{
-	  XmRenditionFree(rend[0]);
-	  rend[0] = _XmRenditionCreate(NULL, widget, resname, resclass,
-				       tag, NULL, 0, &in_db);
+	/* Create renditions for each tag */
+	s = XtNewString((String)from->addr);
+	while ((tag = _Xmstrtok(b ? NULL : s, "\t\r\n\v\f, ", &b))) {
+		/* Prevent XLFD pattern strings from polluting the tag cache */
+		if (strchr(tag, '*'))
+			goto fallback;
 
-	  if (!has_default && !in_db)
-	    {
-	      /* Call the fontlist converter */
-	      XmRenditionFree(rend[0]);
-	      XtFree(s);
-	      return CvtStringToXmFontList(dpy, NULL, 0, from, to, NULL);
-	    }
+		rend = _XmRenditionCreate(NULL, widget, resname, resclass, tag,
+		                          &arg, 1, &in_db);
+		if (first && !in_db) {
+			XmRenditionFree(rend);
+			goto fallback;
+		} else first = False;
 
-	  rt = XmRenderTableAddRenditions(rt, rend, 1, XmMERGE_REPLACE);
-	}
-      else if (rend[0] == NULL)
-	{
-	  /* warning */
-	  XtFree(s);
-	  return FALSE;
-	}
-      else
-	{
-	  /* only a default rendition */
-	  XtFree(s);
-	  XmRenditionFree(rend[0]);
-	  _XM_CONVERTER_DONE(to, XmRenderTable, rt, XmRenderTableFree(rt);)
+		rt = XmRenderTableAddRenditions(rt, &rend, 1, XmMERGE_REPLACE);
+		XmRenditionFree(rend);
 	}
 
-      while ((tag = _Xmstrtok(NULL, " \t\r\n\v\f,", &strtok_buf)) != NULL)
-	{
-	  XmRenditionFree(rend[0]);
+	XtFree(s);
+	if (!rt)
+		return False;
 
-	  rend[0] = _XmRenditionCreate(NULL, widget, resname, resclass,
-				       tag, NULL, 0, NULL);
+	_XM_CONVERTER_DONE(to, XmRenderTable, rt, XmRenderTableFree(rt);)
+	return False;
 
-	  rt = XmRenderTableAddRenditions(rt, rend, 1, XmMERGE_REPLACE);
-	}
-
-      XtFree(s);
-      XmRenditionFree(rend[0]);
-      _XM_CONVERTER_DONE(to, XmRenderTable, rt, XmRenderTableFree(rt);)
-    }
-
-  return FALSE;
+fallback:
+	/* Fallback to the old spec */
+	XtFree(s);
+	return CvtStringToXmFontList(dpy, NULL, 0, from, to, NULL);
 }
 
 static Boolean

@@ -302,8 +302,7 @@ GetResources(XmRendition rend,
   static Boolean	*found = NULL;
   int			i, j;
   static XrmResourceList	table = NULL;
-  static XrmQuark	QString;
-  static XrmQuark	Qfont;
+  static XrmQuark	QString, Qfont, QxftFont;
   Arg			*arg;
   XrmName		argName;
   XrmResource		*res;
@@ -374,6 +373,7 @@ GetResources(XmRendition rend,
 				   _XmNumRenditionResources);
       QString = XrmPermStringToQuark(XtCString);
       Qfont = XrmPermStringToQuark(XmNfont);
+      QxftFont = XrmPermStringToQuark(XmNxftFont);
     }
 
   /* Set resources from arglist. */
@@ -429,44 +429,18 @@ GetResources(XmRendition rend,
 	      /* convert if necessary */
 	      if (rawType != res->xrm_type)
 		{
-		  if (wid != NULL)
+		  if (wid && res->xrm_name != Qfont && res->xrm_name != QxftFont)
 		    {
 		      convValue.size = res->xrm_size;
 		      convValue.addr = (char *)GetPtr(rend) + res->xrm_offset;
-		      /*
-		       * Check for special font case.
-		       * Depending upon the fontType resource, try to convert
-		       * to a FontSet, else to a FontStruct.
-		       */
-		      if ((res->xrm_name == Qfont) &&
-			  (_XmRendFontType(rend) == XmFONT_IS_FONTSET))
-			  copied = have_value =
-			     XtConvertAndStore(wid,
-					       XrmQuarkToString(rawType),
-					       &value,
-					       "FontSet",
-					       &convValue);
-		      else
-			  copied = have_value =
-			     XtConvertAndStore(wid,
-					       XrmQuarkToString(rawType),
-					       &value,
-					       XrmQuarkToString(res->xrm_type),
-					       &convValue);
+		      copied = have_value = XtConvertAndStore(
+		      	wid, XrmQuarkToString(rawType), &value,
+		      	XrmQuarkToString(res->xrm_type), &convValue
+		      );
 		    }
 		  else have_value = False;
 		}
 	      else have_value = True;
-
-	      /* Check for special font case */
-	      if (have_value)
-		{
-		  if (res->xrm_name == Qfont)
-		    {
-		      _XmRendFontName(rend) = value.addr;
-		      copied = True;
-		    }
-		}
 	    }
 
 	  if (!got_one && have_value) got_one = True;
@@ -1610,7 +1584,7 @@ XmRendition _XmRenditionCreate(Display *display, Widget widget, String resname,
 {
 	XmRendition rend;
 	struct __XmRenditionRec *r;
-	Boolean free_tag = False, result;
+	Boolean result;
 
 	if (!display)
 		display = widget ? XtDisplayOfObject(widget) : _XmGetDefaultDisplay();
@@ -1627,22 +1601,21 @@ XmRendition _XmRenditionCreate(Display *display, Widget widget, String resname,
 	/* X resource DB query */
 	result = GetResources(rend, display, widget, resname, resclass, tag,
 	                      args, count);
-	if (in_db != NULL) *in_db = result;
+	if (in_db) *in_db = result;
 
 	if (!tag && !result) {
 		XmRenditionFree(rend);
 		return NULL;
-	}
+	} else if (!tag)
+		tag = XmFONTLIST_DEFAULT_TAG;
 
-	if (!tag) {
-		tag = XmStringGetCharset();
-		free_tag = True;
+	/* Just in case we get junk from Xrm */
+	if (r->loadModel != XmUNSPECIFIED_LOAD_MODEL) {
+		r->font    = NULL;
+		r->xftFont = NULL;
 	}
 
 	r->tag = _XmStringCacheTag(tag, XmSTRING_TAG_STRLEN);
-	if (free_tag && tag != r->tag)
-		XtFree(tag);
-
 	if (r->pattern)   r->pattern   = XtNewString(r->pattern);
 	if (r->fontStyle) r->fontStyle = XtNewString(r->fontStyle);
 	if (r->loadModel != XmLOAD_DEFERRED && r->loadModel != XmLOAD_LAZY) {
