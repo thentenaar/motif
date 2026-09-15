@@ -918,7 +918,7 @@ CvtStringToXmFontList(
 	    XtSetArg(arg[0], XmNloadModel, XmLOAD_IMMEDIATE);
 	    XtSetArg(arg[1], XmNfontType,  fontType);
 	    XtSetArg(arg[2], XmNfontName,  fontName);
-	    if ((rend = XmRenditionCreate((Widget)rt, fontTag, arg, 3)))
+	    if ((rend = XmRenditionCreate(NULL, fontTag, arg, 3)))
 	      {
 		got_it = TRUE;
 		rt = XmRenderTableAddRenditions(rt, &rend, 1, XmDUPLICATE);

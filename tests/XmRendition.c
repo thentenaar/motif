@@ -222,7 +222,9 @@ START_TEST(create_null_widget)
 	rend = XmRenditionCreate(NULL, "test", NULL, 0);
 	ck_assert_msg((r = XmSharedPtrGet(rend)), "Expected non-NULL result");
 	ck_assert_msg(r->display == _XmGetDefaultDisplay(), "Expected r->display to be the default");
-	XmSharedPtrFree(rend);
+	ck_assert_msg(!r->free_fg, "Expected r->free_fg to be False");
+	ck_assert_msg(!r->free_bg, "Expected r->free_bg to be False");
+	XmRenditionFree(rend);
 }
 
 START_TEST(create_default_tag)
@@ -234,7 +236,7 @@ START_TEST(create_default_tag)
 	ck_assert_msg((r = XmSharedPtrGet(rend)), "Expected non-NULL result");
 	ck_assert_msg(!strcmp(r->tag, XmFONTLIST_DEFAULT_TAG),
 	              "Expected tag (%s) to be XmFONTLIST_DEFAULT_TAG", r->tag);
-	XmSharedPtrFree(rend);
+	XmRenditionFree(rend);
 }
 END_TEST
 
@@ -245,7 +247,7 @@ START_TEST(create_null_tag)
 
 	rend = XmRenditionCreate(NULL, NULL, NULL, 0);
 	ck_assert_msg(!XmSharedPtrGet(rend), "Expected NULL result");
-	XmSharedPtrFree(rend);
+	XmRenditionFree(rend);
 }
 END_TEST
 
@@ -275,6 +277,8 @@ START_TEST(create_sets_pattern)
 	rend = XmRenditionCreate(NULL, XmSTRING_DEFAULT_CHARSET, arg, 3);
 	ck_assert_msg((r = XmSharedPtrGet(rend)), "Expected non-NULL result");
 	ck_assert_msg(!strcmp(r->pattern, spec), "Expected pattern to equal spec");
+	ck_assert_msg(!r->free_fg, "Expected r->free_fg to be False");
+	ck_assert_msg(!r->free_bg, "Expected r->free_bg to be False");
 	XmRenditionFree(rend);
 }
 END_TEST
@@ -645,10 +649,10 @@ START_TEST(unload_xfont)
 	ck_assert_msg(!r->fontFoundry, "Expected NULL foundry");
 	ck_assert_msg(!r->fontFamily,  "Expected NULL family");
 	ck_assert_msg(!r->fontStyle,   "Expected NULL style");
-	ck_assert_msg(!r->fontWeight,  "Expected 0 weight");
-	ck_assert_msg(!r->fontSlant,   "Expected 0 slant");
+	ck_assert_msg(r->fontWeight  == XmAS_IS, "Expected XmAS_IS weight");
+	ck_assert_msg(r->fontSlant   == XmAS_IS, "Expected XmAS_IS slant");
+	ck_assert_msg(r->fontSpacing == XmAS_IS, "Expected XmAS_IS spacing");
 	ck_assert_msg(!r->fontSize,    "Expected 0 size");
-	ck_assert_msg(!r->fontSpacing, "Expected 0 spacing");
 	ck_assert_msg(!r->pixelSize,   "Expected 0 pixel size");
 	XmRenditionFree(rend);
 }
@@ -674,10 +678,10 @@ START_TEST(unload_xft)
 	ck_assert_msg(!r->fontFoundry, "Expected NULL foundry");
 	ck_assert_msg(!r->fontFamily,  "Expected NULL family");
 	ck_assert_msg(!r->fontStyle,   "Expected NULL style");
-	ck_assert_msg(!r->fontWeight,  "Expected 0 weight");
-	ck_assert_msg(!r->fontSlant,   "Expected 0 slant");
+	ck_assert_msg(r->fontWeight  == XmAS_IS, "Expected XmAS_IS weight");;
+	ck_assert_msg(r->fontSlant   == XmAS_IS, "Expected XmAS_IS slant");
+	ck_assert_msg(r->fontSpacing == XmAS_IS, "Expected XmAS_IS spacing");
 	ck_assert_msg(!r->fontSize,    "Expected 0 size");
-	ck_assert_msg(!r->fontSpacing, "Expected 0 spacing");
 	ck_assert_msg(!r->pixelSize,   "Expected 0 pixel size");
 	XmRenditionFree(rend);
 }

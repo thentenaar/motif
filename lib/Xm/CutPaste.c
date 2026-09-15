@@ -4547,8 +4547,7 @@ GetTypeFromTarget(Display *display, Atom target)
       target == atoms[XmALINK_SELECTION] ||
       target == atoms[XmAINSERT_PROPERTY])
     return(atoms[XmANone]);
-  if (target == atoms[XmA_MOTIF_ENCODING_REGISTRY] ||
-      target == atoms[XmA_MOTIF_RENDER_TABLE])
+  if (target == atoms[XmA_MOTIF_ENCODING_REGISTRY])
     return(XA_STRING);
 
   return(target); /* by default */

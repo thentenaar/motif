@@ -15,7 +15,8 @@ XmRenditionSetValues - Modify rendition resources
 \fBXmRenditionSetValues\fP fetches resource values from a rendition, based
 on the names in \fIargs\fP, in roughly the same manner as \fBXtSetValues\fP.
 This function copies values destined for \fBString\fP resources and the
-\fBXmNtabList\fP resource.
+\fBXmNtabList\fP resource. \fBNOTE:\fP The values in the argument list
+do not undergo Xt-style type converison.
 
 Modifying font specification resources (\fIXmNfontName\fP,
 \fIXmNfontType\fP, \fIXmNfont\fP, \fIXmNxftFont\fP, \fIXmNloadModel\fP)

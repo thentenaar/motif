@@ -2199,7 +2199,7 @@ XmeStandardConvert(Widget w,
       cs -> value = (XtPointer) value;
       cs -> format = 8;
       cs -> length = size;
-      cs -> type = XA_STRING;
+      cs -> type = atoms[XmA_MOTIF_RENDER_TABLE];
     }
   } else if (atoms[XmA_MOTIF_ENCODING_REGISTRY] == cs -> target) {
     int len;

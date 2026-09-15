@@ -27,12 +27,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include "SharedPtrI.h"
 #include "XmStringI.h"
 #include "XmRenderTI.h"
+#include "XmTabListI.h"
 #include <check.h>
 
 #include "suites.h"
@@ -1032,6 +1034,343 @@ START_TEST(default_extents_empty_table)
 }
 END_TEST
 
+/* tag, font type, load model */
+static const char basic_props[42] = {
+	0x01, 0x00, 0x27,
+	0x03, 0x1c, 0x46, 0x4f, 0x4e, 0x54, 0x4c, 0x49, 0x53, 0x54, 0x5f,
+	0x44, 0x45, 0x46, 0x41, 0x55, 0x4c, 0x54, 0x5f, 0x54, 0x41, 0x47,
+	0x5f, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x00,
+	0x05, 0x01, 0x00,
+	0x04, 0x01, 0x00,
+	0x01, 0x00, 0x00
+};
+
+#define AP_TAG_OFFSET      5
+#define AP_PATTERN_OFFSET 17
+#define AP_STYLE_OFFSET   30
+#define AP_FG_OFFSET      52
+#define AP_BG_OFFSET      62
+
+static const char all_props[115] = {
+	0x01, 0x00, 0x70,
+	0x03, 0x04, 0x74, 0x61, 0x67, 0x00,
+	0x05, 0x01, 0x02,
+	0x04, 0x01, 0x03,
+	0x06, 0x0b, 0x73, 0x61, 0x6e, 0x73, 0x2d, 0x73, 0x65, 0x72, 0x69, 0x66, 0x00,
+	0x07, 0x06, 0x53, 0x74, 0x79, 0x6c, 0x65, 0x00,
+	0x08, 0x01, 0x6e,
+	0x09, 0x01, 0xc8,
+	0x0c, 0x01, 0x03,
+	0x0d, 0x01, 0x01,
+	0x0b, 0x08, 0xff, 0xff, 0xcc, 0xcc, 0x33, 0x33, 0x11, 0x11,
+	0x0a, 0x08, 0xff, 0xff, 0x22, 0x22, 0xee, 0xee, 0x11, 0x11,
+	0x0e, 0x09, '1', '.', '0', '0', '0', '0', '0', '0', 0x00,
+	0x0f, 0x01, 0x05,
+	0x10, 0x01, 0x02,
+	0x11, 0x01, 0x01,
+	0x02, 0x00,
+	0x0e, 0x09, '2', '.', '0', '0', '0', '0', '0', '0', 0x00,
+	0x0f, 0x01, 0x07,
+	0x10, 0x01, 0x01,
+	0x11, 0x01, 0x00,
+	0x02, 0x00,
+	0x01, 0x00, 0x00
+};
+
+START_TEST(toprop_null_table)
+{
+	char *ret = NULL;
+
+	ck_assert_msg(!XmRenderTableCvtToProp(NULL, NULL, &ret),
+	              "Expected a return of zero for NULL table");
+}
+END_TEST
+
+START_TEST(toprop_empty_table)
+{
+	XmRenderTable rt;
+	char *props = NULL;
+
+	rt = XmRenderTableCreate(NULL);
+	ck_assert_msg(!XmRenderTableCvtToProp(NULL, rt, &props),
+	              "Expected a return of zero for empty table");
+	ck_assert_msg(!props, "Expected NULL props for empty table");
+	XmRenderTableFree(rt);
+}
+END_TEST
+
+START_TEST(toprop_basic_props)
+{
+	XmRenderTable rt;
+	char *props = NULL;
+	unsigned int len = 0;
+
+	rt  = setup_table(NULL);
+	len = XmRenderTableCvtToProp(NULL, rt, &props);
+
+	ck_assert_msg(len == sizeof basic_props,
+	              "Expected a length of %lu bytes (got %u)",
+	              sizeof basic_props, len);
+	ck_assert_msg(props, "Expected props to be non-NULL");
+	ck_assert_msg(!memcmp(props, basic_props, len),
+	              "Expected bytes to match");
+
+	XtFree(props);
+	XmRenderTableFree(rt);
+}
+END_TEST
+
+START_TEST(toprop_all_props)
+{
+	Arg arg[11];
+	Colormap cmap;
+	XColor bg, fg;
+	XmTab tab;
+	XmTabList tabs;
+	XmRendition rend;
+	XmRenderTable rt;
+	unsigned int len = 0;
+	char *props = NULL, *expected;
+
+	fg.red   = 0xcccc;
+	fg.green = 0x3333;
+	fg.blue  = 0x1111;
+	cmap = DefaultColormap(display, DefaultScreen(display));
+	if (!XAllocColor(display, cmap, &fg))
+		fg.pixel = XmUNSPECIFIED_PIXEL;
+
+	bg.red   = 0x2222;
+	bg.green = 0xeeee;
+	bg.blue  = 0x1111;
+	if (!XAllocColor(display, cmap, &bg))
+		bg.pixel = XmUNSPECIFIED_PIXEL;
+
+	tab  = XmTabCreate(1.0f, XmINCHES, XmABSOLUTE, XmALIGNMENT_END, NULL);
+	tabs = XmTabListInsertTabs(NULL, &tab, 1, INT_MAX);
+	tab  = XmTabCreate(2.0f, XmMILLIMETERS, XmRELATIVE, XmALIGNMENT_CENTER, NULL);
+	tabs = XmTabListInsertTabs(tabs, &tab, 1, INT_MAX);
+	ck_assert_msg(tabs, "Expected to create a tablist");
+
+	XtSetArg(arg[0],  XmNloadModel,           XmLOAD_LAZY);
+	XtSetArg(arg[1],  XmNfontType,            XmFONT_IS_XFT);
+	XtSetArg(arg[2],  XmNfontName,            "sans-serif");
+	XtSetArg(arg[3],  XmNfontStyle,           "Style");
+	XtSetArg(arg[4],  XmNfontWeight,          XmWEIGHT_BOLD);
+	XtSetArg(arg[5],  XmNfontSlant,           XmSLANT_OBLIQUE);
+	XtSetArg(arg[6],  XmNunderlineType,       XmSINGLE_DASHED_LINE);
+	XtSetArg(arg[7],  XmNstrikethruType,      XmSINGLE_LINE);
+	XtSetArg(arg[8],  XmNrenditionForeground, fg.pixel);
+	XtSetArg(arg[9],  XmNrenditionBackground, bg.pixel);
+	XtSetArg(arg[10], XmNtabList,             tabs);
+	rend = XmRenditionCreate(NULL, "tag", arg, 11);
+	ck_assert_msg(rend, "Expected to create a rendition");
+	rt = XmRenderTableAddRenditions(NULL, &rend, 1, XmMERGE_NEW);
+	ck_assert_msg(rt, "Expected a render table");
+	XmTabListFree(tabs);
+	XmRenditionFree(rend);
+
+	/* Render table -> TLV */
+	len = XmRenderTableCvtToProp(NULL, rt, &props);
+
+	/* Make sure we have the correct color values */
+	XQueryColor(display, cmap, &fg);
+	XQueryColor(display, cmap, &bg);
+	XFreeColors(display, cmap, &fg.pixel, 1, 0);
+	XFreeColors(display, cmap, &bg.pixel, 1, 0);
+
+	expected = XtMalloc(sizeof all_props);
+	memcpy(expected, all_props, sizeof all_props);
+	expected[AP_FG_OFFSET]     = (fg.red >> 8) & 0xff;
+	expected[AP_FG_OFFSET + 1] = fg.red & 0xff;
+	expected[AP_FG_OFFSET + 2] = (fg.green >> 8) & 0xff;
+	expected[AP_FG_OFFSET + 3] = fg.green & 0xff;
+	expected[AP_FG_OFFSET + 4] = (fg.blue >> 8) & 0xff;
+	expected[AP_FG_OFFSET + 5] = fg.blue & 0xff;
+	expected[AP_BG_OFFSET]     = (bg.red >> 8) & 0xff;
+	expected[AP_BG_OFFSET + 1] = bg.red & 0xff;
+	expected[AP_BG_OFFSET + 2] = (bg.green >> 8) & 0xff;
+	expected[AP_BG_OFFSET + 3] = bg.green & 0xff;
+	expected[AP_BG_OFFSET + 4] = (bg.blue >> 8) & 0xff;
+	expected[AP_BG_OFFSET + 5] = bg.blue & 0xff;
+
+	ck_assert_msg(len == sizeof all_props, "Expected %lu bytes (got %u)",
+	              sizeof all_props, len);
+	ck_assert_msg(!memcmp(expected, all_props, sizeof all_props),
+	              "Expected bytes to compare equal");
+	XtFree(expected);
+	XtFree(props);
+	XmRenderTableFree(rt);
+}
+END_TEST
+
+START_TEST(fromprop_null_prop)
+{
+	ck_assert_msg(!XmRenderTableCvtFromProp(NULL, NULL, 100),
+	              "Expected NULL result for NULL prop");
+}
+END_TEST
+
+START_TEST(fromprop_zero_length)
+{
+	ck_assert_msg(!XmRenderTableCvtFromProp(NULL, basic_props, 0),
+	              "Expected NULL result for zero length");
+}
+END_TEST
+
+START_TEST(fromprop_no_rendition_tag)
+{
+	char *data;
+
+	data = XtMalloc(sizeof basic_props);
+	memcpy(data, basic_props, sizeof basic_props);
+
+	/* Nuke the RT_RENDITION tag */
+	*data = 0x55;
+
+	ck_assert_msg(!XmRenderTableCvtFromProp(NULL, data, sizeof basic_props),
+	              "Expected NULL result for no rendition tag");
+	XtFree(data);
+}
+END_TEST
+
+START_TEST(fromprop_basic_props)
+{
+	char *data;
+	XmRenderTable rt;
+	XmRendition rend;
+	struct __XmRenditionRec *r;
+	struct __XmRenderTableRec *t;
+
+	data = XtMalloc(sizeof basic_props);
+	memcpy(data, basic_props, sizeof basic_props);
+	rt = XmRenderTableCvtFromProp(NULL, data, sizeof basic_props);
+
+	ck_assert_msg((t = XmSharedPtrGet(rt)), "Expected to get a render table");
+	ck_assert_msg(t->count == 1, "Expected one rendition (got %u)", t->count);
+	ck_assert_msg((r = XmSharedPtrGet(*t->renditions)), "Expected a rendition");
+	ck_assert_msg(r->tag, "Expected rendition to have a tag");
+	ck_assert_msg(!strcmp(r->tag, XmFONTLIST_DEFAULT_TAG),
+	              "Expected XmFONTLIST_DEFAULT_TAG, got %s", r->tag);
+	ck_assert_msg(r->loadModel == XmUNSPECIFIED_LOAD_MODEL,
+	              "Expected XmUNSPECIFIED_LOAD_MODEL, got %d",
+	              r->loadModel);
+	ck_assert_msg(r->fontType == XmFONT_IS_FONT,
+	              "Expected XmFONT_IS_FONT, got %d", r->fontType);
+	XtFree(data);
+	XmRenderTableFree(rt);
+}
+END_TEST
+
+START_TEST(fromprop_all_props)
+{
+	char *data;
+	Colormap cmap;
+	XColor bg, fg;
+	_XmTab tab;
+	_XmTabList tabs;
+	XmRenderTable rt;
+	XmRendition rend;
+	unsigned int i;
+	struct __XmRenditionRec *r;
+	struct __XmRenderTableRec *t;
+
+	fg.red   = 0xcccc;
+	fg.green = 0x3333;
+	fg.blue  = 0x1111;
+	cmap = DefaultColormap(display, DefaultScreen(display));
+	if (!XAllocColor(display, cmap, &fg))
+		fg.pixel = XmUNSPECIFIED_PIXEL;
+
+	bg.red   = 0x2222;
+	bg.green = 0xeeee;
+	bg.blue  = 0x1111;
+	if (!XAllocColor(display, cmap, &bg))
+		bg.pixel = XmUNSPECIFIED_PIXEL;
+
+	data = XtMalloc(sizeof all_props);
+	memcpy(data, all_props, sizeof all_props);
+	data[AP_FG_OFFSET]     = (fg.red >> 8) & 0xff;
+	data[AP_FG_OFFSET + 1] = fg.red & 0xff;
+	data[AP_FG_OFFSET + 2] = (fg.green >> 8) & 0xff;
+	data[AP_FG_OFFSET + 3] = fg.green & 0xff;
+	data[AP_FG_OFFSET + 4] = (fg.blue >> 8) & 0xff;
+	data[AP_FG_OFFSET + 5] = fg.blue & 0xff;
+	data[AP_BG_OFFSET]     = (bg.red >> 8) & 0xff;
+	data[AP_BG_OFFSET + 1] = bg.red & 0xff;
+	data[AP_BG_OFFSET + 2] = (bg.green >> 8) & 0xff;
+	data[AP_BG_OFFSET + 3] = bg.green & 0xff;
+	data[AP_BG_OFFSET + 4] = (bg.blue >> 8) & 0xff;
+	data[AP_BG_OFFSET + 5] = bg.blue & 0xff;
+
+	rt = XmRenderTableCvtFromProp(NULL, data, sizeof all_props);
+	XtFree(data);
+	ck_assert_msg((t = XmSharedPtrGet(rt)), "Expected to get a render table");
+	ck_assert_msg(t->count == 1, "Expected one rendition (got %u)", t->count);
+	ck_assert_msg((r = XmSharedPtrGet(*t->renditions)), "Expected a rendition");
+	ck_assert_msg(r->tag, "Expected rendition to have a tag");
+	ck_assert_msg(!strcmp(r->tag, all_props + AP_TAG_OFFSET),
+	              "Expected tag %s, got %s", all_props + AP_TAG_OFFSET,
+	              r->tag);
+	ck_assert_msg(r->loadModel == XmLOAD_LAZY,
+	              "Expected XmLOAD_LAZY, got %d", r->loadModel);
+	ck_assert_msg(r->fontType == XmFONT_IS_XFT,
+	              "Expected XmFONT_IS_XFT, got %d", r->fontType);
+	ck_assert_msg(!strcmp(r->pattern, all_props + AP_PATTERN_OFFSET),
+	              "Expected pattern %s, got %s",
+	              all_props + AP_PATTERN_OFFSET, r->pattern);
+	ck_assert_msg(!strcmp(r->fontStyle, all_props + AP_STYLE_OFFSET),
+	              "Expected style %s, got %s",
+	              all_props + AP_STYLE_OFFSET, r->fontStyle);
+	ck_assert_msg(r->fontWeight == XmWEIGHT_BOLD,
+	              "Expected XmWEIGHT_BOLD, got %d", r->fontWeight);
+	ck_assert_msg(r->fontSlant == XmSLANT_OBLIQUE,
+	              "Expected XmSLANT_OBLIQUE, got %d", r->fontSlant);
+	ck_assert_msg(r->style.underline == XmSINGLE_DASHED_LINE,
+	              "Expected underline XmSINGLE_DASHED_LINE, got %d", r->style.underline);
+	ck_assert_msg(r->style.strikethru == XmSINGLE_LINE,
+	              "Expected stikethru XmSINGLE_LINE, got %d", r->style.strikethru);
+	ck_assert_msg(r->style.fg.pixel == fg.pixel,
+	              "Expected fg.pixel 0x%08lx, got 0x%08lx", fg.pixel, r->style.fg.pixel);
+	ck_assert_msg(r->style.bg.pixel == bg.pixel,
+	              "Expected bg.pixel 0x%08lx, got 0x%08lx", bg.pixel, r->style.bg.pixel);
+	ck_assert_msg(r->free_fg, "Expected r->free_fg to be True");
+	ck_assert_msg(r->free_bg, "Expected r->free_bg to be True");
+
+	ck_assert_msg((tabs = (_XmTabList)r->tabs), "Expected a tablist");
+	ck_assert_msg(tabs->count == 2, "Expected 2 tabs, got %u", tabs->count);
+	ck_assert_msg((tab = tabs->start), "Expected non-NULL starting tab");
+	ck_assert_msg(tab->value == 1.0f,
+	              "Expected tab 1's value to be 1.0f (got %f)",
+	              tab->value);
+	ck_assert_msg(tab->units == XmINCHES,
+	              "Expected tab 1's units to be XmINCHES (got %d)",
+	              tab->units);
+	ck_assert_msg(tab->offsetModel == XmABSOLUTE,
+	              "Expected tab 1's offsetModel to be XmABSOLUTE (got %d)",
+	              tab->offsetModel);
+	ck_assert_msg(tab->alignment == XmALIGNMENT_END,
+	              "Expected tab 1's alignment to be XmALIGNMENT_END (got %d)",
+	              tab->alignment);
+	ck_assert_msg((tab = tab->next), "Expected non-NULL second tab");
+	ck_assert_msg(tab->value == 2.0f,
+	              "Expected tab 2's value to be 2.0f (got %f)",
+	              tab->value);
+	ck_assert_msg(tab->units == XmMILLIMETERS,
+	              "Expected tab 2's units to be XmMILLIMETERS (got %d)",
+	              tab->units);
+	ck_assert_msg(tab->offsetModel == XmRELATIVE,
+	              "Expected tab 1's offsetModel to be XmRELATIVE (got %d)",
+	              tab->offsetModel);
+	ck_assert_msg(tab->alignment == XmALIGNMENT_CENTER,
+	              "Expected tab 1's alignment to be XmALIGNMENT_CENTER (got %d)",
+	              tab->alignment);
+
+	XFreeColors(display, cmap, &fg.pixel, 1, 0);
+	XFreeColors(display, cmap, &bg.pixel, 1, 0);
+	XmRenderTableFree(rt);
+}
+END_TEST
+
 void xmrendertable_suite(SRunner *runner)
 {
 	TCase *t;
@@ -1126,6 +1465,25 @@ void xmrendertable_suite(SRunner *runner)
 
 	t = tcase_create("GetDefaultExtents");
 	tcase_add_test(t, default_extents_empty_table);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("CvtToProp");
+	tcase_add_test(t, toprop_null_table);
+	tcase_add_test(t, toprop_empty_table);
+	tcase_add_test(t, toprop_basic_props);
+	tcase_add_test(t, toprop_all_props);
+	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
+	tcase_set_timeout(t, 1);
+	suite_add_tcase(s, t);
+
+	t = tcase_create("CvtFromProp");
+	tcase_add_test(t, fromprop_null_prop);
+	tcase_add_test(t, fromprop_zero_length);
+	tcase_add_test(t, fromprop_no_rendition_tag);
+	tcase_add_test(t, fromprop_basic_props);
+	tcase_add_test(t, fromprop_all_props);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);

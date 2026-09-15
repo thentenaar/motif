@@ -65,6 +65,8 @@ typedef struct __XmRenditionRec
 	XtPointer font;
 	Display *display;
 	XmTabList tabs;
+	Boolean free_fg; /* If we allocated the color */
+	Boolean free_bg;
 
 	String pattern; /**< Pattern string used to load the font */
 	String fontFoundry;

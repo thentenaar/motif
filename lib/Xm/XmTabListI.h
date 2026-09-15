@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,11 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
- * 
  */
-/*
- * HISTORY
- */
+
 /* $XConsortium: XmTabListI.h /main/5 1995/07/13 18:28:19 drk $ */
 #ifndef _XmTabListI_h
 #define _XmTabListI_h
@@ -81,11 +78,11 @@ extern XmTab _XmTabCopy(XmTab tab);
 extern Widget _XmCreateTabList(Widget parent,
                                String name,
                                ArgList arglist,
-                               Cardinal argcount); 
+                               Cardinal argcount);
 extern Widget _XmCreateTab(Widget parent,
 			   String name,
 			   ArgList arglist,
-			   Cardinal argcount); 
+			   Cardinal argcount);
 extern Position _XmTabListGetPosition(
 				     Screen * screen,
 				     XmTabList tab_list,

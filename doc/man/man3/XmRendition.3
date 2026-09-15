@@ -122,8 +122,8 @@ XmNfontFamily|XmCFontFamily|String|NULL|CG
 XmNfontStyle|XmCFontStyle|String|NULL|CG
 XmNfontSize|XmCFontSize|int|0|CG
 XmNfontPixelSize|XmCFontPixelSize|int|0|CG
-XmNfontSlant|XmCFontSlant|int|0|CG
-XmNfontWeight|XmCFontWeight|int|0|CG
+XmNfontSlant|XmCFontSlant|int|XmAS_IS|CG
+XmNfontWeight|XmCFontWeight|int|XmAS_IS|CG
 XmNwidth|XmCWidth|int|0|G
 XmNinkWidth|XmCInkWidth|int|0|G
 XmNascent|XmCAscent|int|0|G
@@ -269,9 +269,13 @@ tab components are laid out in columns.
 .IP "\fBXmNrenditionForeground\fP" 8
 .IP "\fBXmNrenditionBackground\fP" 8
 .RS 8
-Specifies the foreground or background color for the rendition. A value
-of \fBXmUNSPECIFIED_PIXEL\fP indicates that the particular color is
-not specified for this rendition.
+Specifies the foreground or background color for the rendition, as a
+\fBPixel\fP value. A value of \fBXmUNSPECIFIED_PIXEL\fP indiciates that
+that particular color is not set for this rendition.
+
+The resource converter for this field (applied when these are loaded via
+X resources) expects an X color name, or the special string
+"unspecified_pixel".
 .RE
 
 .IP "\fBXmNforegroundState\fP" 8

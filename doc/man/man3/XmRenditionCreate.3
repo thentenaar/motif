@@ -23,9 +23,11 @@ before this function returns. If the font fails to load, and the
 \fBXmNnoFontCallback\fP is set on \fBXmDisplay\fP, the callback will
 be called.
 
+\fBNOTE:\fP The values in the argument list do not undergo Xt-style type
+converison.
+
 .IP "\fIwidget\fP" 12
-Widget (or \fBXmRenderTable\fP cast to \fBWidget\fP) from whence to
-get the display, or \fBNULL\fP.
+Widget from whence to get the display, or \fBNULL\fP.
 .IP "\fItag\fP" 12
 Tag to use
 .IP "\fIargs\fP" 12
