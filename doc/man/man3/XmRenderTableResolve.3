@@ -1,0 +1,83 @@
+.TH XMRENDERTABLERESOLVE 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenderTableResolve - Resolve a rendition for rendering
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBXmRendition XmRenderTableResolve\fR(\fBXmRenderTable\fR rt,
+\fB                                \fR \fBXmStringTag *\fRtags,
+\fB                                \fR \fBCardinal\fP count,
+\fB                                \fR \fBXmStringTag\fP fallback,
+\fB                                \fR \fBXmRenditionStyle\fP style);
+.fi
+
+.SH DESCRIPTION
+Resolve the rendition and style properties for the given set of tags,
+using the fallback tag if none of the specified tags could be found.
+The style properties are cascaded among all matched renditions in the table,
+starting at the tail of the tag list. If none of the specified renditions
+can be found, the fallback tag will be checked. Resolution continues using
+the order given below until a font is found. Default style properties in
+\fIstyle\fP are progressively replaced with non-default values as resolution
+progresses. Thus, the values given by this function will be precisely the
+same as those passed through to the \fBXmString\fP drawing routines.
+
+If tags are given, for each failed tag match, the \fBXmNnoRenditionCallback\fP
+on \fBXmDisplay\fP will be called if the callback list on \fBXmDisplay\fP
+is not \fBNULL\fP, and if the callback provides a rendition matching the
+tag, it will be used.
+
+.IP "\fIrt\fP" 12
+Render table to search.
+.IP "\fItags\fP" 12
+Tags to match against.
+.IP "\fIcount\fP" 12
+Number of items in the tag list.
+.IP "\fIfallback\fP" 12
+Fallback tag (if no tags are given, or none matched).
+.IP "\fIstyle\fP" 12
+Style properties are cascaded into this \fBXmRenditionStyle\fP instance
+(optional).
+
+.SH RESOLUTION ORDER
+The fonts are checked in the following order:
+.IP \(bu 4
+Specified tags (in reverse order).
+.IP \(bu 4
+Provided fallback tag (if not null).
+.IP \(bu 4
+The default tag (XmFONTLIST_DEFAULT_TAG).
+.IP \(bu 4
+_MOTIF_DEFAULT_LOCALE
+.IP \(bu 4
+The first font in the table (xft, then fontset, then font).
+.IP \(bu 4
+The hard-coded default font (xft, then fontset, then font).
+
+.SH RETURN VALUE
+The \fBXmRendition\fP that would be used for rendering, given the parameters,
+or NULL if no such rendition could be found or a \fBNULL\fP table is given. The
+returned rendition must be freed with \fBXmRenditionFree\fP(3).
+
+.SH EXAMPLE
+.SS RESOLVING THE DEFAULT RENDITION
+.EX
+XmRenderTable rt;
+XmRendition r;
+XmRenditionStyle s;
+
+s = XmRenditionStyleCreate();
+r = XmRenderTableResolve(rt, NULL, 0, XmFONTLIST_DEFAULT_TAG, s);
+XmRenditionFree(r);
+XmRenditionStyleFree(s);
+.EE
+
+.SH SEE ALSO
+\fBXmDisplay\fP(3), \fBXmRenditionStyle\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

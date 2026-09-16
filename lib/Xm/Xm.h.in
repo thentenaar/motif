@@ -1816,10 +1816,8 @@ extern XmRendition XmRenditionCreate(Widget widget,
 				     ArgList arglist,
 				     Cardinal argcount);
 extern XmRenderTable XmRenderTableCreate(Widget parent);
-extern XmRendition
-  *XmRenderTableGetRenditions(XmRenderTable table,
-			      XmStringTag *tags,
-			      Cardinal tag_count);
+extern XmRendition *XmRenderTableGetRenditions(XmRenderTable table,
+                                               XmStringTag *tags, Cardinal tag_count);
 extern XmRendition XmRenderTableGetRendition(XmRenderTable table,
 					     XmStringTag tag);
 extern Boolean XmRenditionHasCodepoint(const XmRendition rend, XmCodepoint cp);

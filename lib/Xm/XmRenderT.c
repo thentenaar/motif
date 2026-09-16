@@ -836,6 +836,7 @@ int XmRenderTableGetTags(XmRenderTable table, XmStringTag **tag_list)
 	}
 
 	*tag_list = (XmStringTag *)XtRealloc((XtPointer)*tag_list, count * sizeof **tag_list);
+	if (!count) *tag_list = NULL;
 	_XmUnlock(app);
 	return count;
 }
@@ -843,8 +844,8 @@ int XmRenderTableGetTags(XmRenderTable table, XmStringTag **tag_list)
 /**
  * Get renditions matching particular tags from a render table
  */
-XmRendition *XmRenderTableGetRenditions(XmRenderTable table, char **tags,
-                                        Cardinal tag_count)
+XmRendition *XmRenderTableGetRenditions(XmRenderTable table,
+                                        XmStringTag *tags, Cardinal tag_count)
 {
 	XmRendition rend, *rends;
 	Cardinal i, count;
@@ -1084,14 +1085,11 @@ XmRenderTable XmRenderTableRemoveRenditions(XmRenderTable oldtable,
 		}
 	}
 
-	if (count) {
+	if ((new->count = count)) {
 		new->renditions = (XmRendition *)XtRealloc(
 			(XtPointer)new->renditions,
 			count * sizeof *new->renditions
 		);
-
-		if (!(new->count = count))
-			new->renditions = NULL;
 	} else {
 		XmRenderTableFree(ret);
 		ret = NULL;

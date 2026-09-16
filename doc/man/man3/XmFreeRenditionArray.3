@@ -1,0 +1,27 @@
+.TH XMFREERENDITIONARRAY 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmFreeRenditionArray - Convenience function to free an array of Renditions
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBvoid XmRenderTableFreeRenditionArray\fR(\fBXmRenderition *\fRrends,
+\fB                                    \fR \fBCardinal\fR count);
+.fi
+
+.SH DESCRIPTION
+Free \fIcount\fP renditions in the given array. then free the array.
+
+.IP "\fIrends\fP" 12
+Array of renditions to free.
+.IP "\fIcount\fP" 12
+Number of renditions in the array.
+
+.SH SEE ALSO
+\fBXmRenderTableGetRenditions\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

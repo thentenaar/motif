@@ -244,6 +244,7 @@ man_MANS = ApplicationShell.3 \
     XmFontListRemoveEntry.3 \
     XmForm.3 \
     XmFrame.3 \
+    XmFreeRenditionArray.3 \
     XmGadget.3 \
     XmGetAtomName.3 \
     XmGetColorCalculation.3 \
@@ -375,13 +376,16 @@ man_MANS = ApplicationShell.3 \
     XmRenderTable.3 \
     XmRenderTableAddRenditions.3 \
     XmRenderTableCopy.3 \
+    XmRenderTableCreate.3 \
     XmRenderTableCvtFromProp.3 \
     XmRenderTableCvtToProp.3 \
     XmRenderTableFree.3 \
+    XmRenderTableGetDefaultExtents.3 \
     XmRenderTableGetRendition.3 \
     XmRenderTableGetRenditions.3 \
     XmRenderTableGetTags.3 \
     XmRenderTableRemoveRenditions.3 \
+    XmRenderTableResolve.3 \
     XmRendition.3 \
     XmRenditionCreate.3 \
     XmRenditionFallbackForCodepoint.3 \

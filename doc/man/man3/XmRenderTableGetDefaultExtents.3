@@ -1,0 +1,52 @@
+.TH XMRENDERTABLEGETDEFAULTEXTENTS 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenderTableGetDefaultExtents - Get extents for a render table's default font
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBvoid XmRenderTableGetDefaultExtents\fR(\fBXmRenderTable\fR rt,
+\fB                                   \fR \fBint *\fRwidth,
+\fB                                   \fR \fBint *\fRink_width,
+\fB                                   \fR \fBint *\fRheight,
+\fB                                   \fR \fBint *\fRascent,
+\fB                                   \fR \fBint *\fRdescent);
+.fi
+
+.SH DESCRIPTION
+Obtain extents for the font corresponding to the default tag,
+\fBXmFONTLIST_DEFAULT_TAG\fP, the first font in the table if the tag
+cannot be found, or the hard-coded fallback font if the table is empty.
+
+This function works by resolving the font with \fBXmRenderTableResolve\fP
+and grabbing the font metrics from the font. Any of the output parameters
+that are \fBNULL\fP are not filled in by this function. If a \fBNULL\fP
+table is given, the output will be set to zero.
+
+.IP "\fIrt\fP" 12
+Render table to probe.
+.IP "\fIwidth\fP" 12
+Return parameter to receive the font maximum character layout width.
+.IP "\fIink_width\fP" 12
+Return parameter to receive the font maximum character ink width.
+.IP "\fIheight\fP" 12
+Return parameter to receive the font maximum character height.
+.IP "\fIascent\fP" 12
+Return parameter to receive the font ascent.
+.IP "\fIdescent\fP" 12
+Return parameter to receive the font descent.
+
+.SH HISTORY
+This was originally a private function, \fBXmRenderTableGetDefaultFontExtents\fP,
+used by various widgets for sizing to the default font. This function was
+improved in Motif 2.6.0 to include the width and ink width, and made public
+for the benefit of widgets that don't want to bother handling the font.
+
+.SH SEE ALSO
+\fBXmRenderTableResolve\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:

@@ -1,0 +1,28 @@
+.TH XMRENDERTABLECREATE 3 2026-09-08 "Motif 2.6.0"
+.SH NAME
+XmRenderTableCreate - Create a render table
+
+.SH SYNOPSIS
+.nf
+#include <Xm/Xm.h>
+
+\fBXmRenderTable XmRenderTableCreate\fR(\fBWidget\fR parent);
+.fi
+
+.SH DESCRIPTION
+Create a new, empty render table.
+
+.IP "\fIparent\fP" 12
+Widget from whence to get the display, or \fBNULL\fP.
+
+.SH RETURN VALUE
+A newly-created \fBXmRenderTable\fP or \fBNULL\fP on failure. The resulting
+render table must be freed with \fBXmRenderTableFree\fP(3).
+
+.SH SEE ALSO
+\fBXmRendition\fP(3), \fBXmDisplay\fP(3), \fBXmRenderTableFree\fP(3)
+
+.SH AUTHOR
+Tim Hentenaar <tim@hentenaar.com>
+
+\"vi:set ft=groff:
