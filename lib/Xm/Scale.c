@@ -1207,11 +1207,15 @@ HandleTitle(
 	/* cur title is either NULL or (-1), as set in CreateScaleTitle,
 	   so diff are always pertinent */
 	/* new title can be NULL or a valid xmstring */
-	if (new_w->scale.title != cur->scale.title)
-	    XtSetArg (args[n], XmNlabelString, new_w->scale.title); n++;
+	if (new_w->scale.title != cur->scale.title) {
+	    XtSetArg (args[n], XmNlabelString, new_w->scale.title);
+	    n++;
+	}
 
-	if (new_w->scale.font_list != cur->scale.font_list)
-	    XtSetArg(args[n], XmNrenderTable, new_w->scale.font_list); n++;
+	if (new_w->scale.font_list != cur->scale.font_list) {
+	    XtSetArg(args[n], XmNrenderTable, new_w->scale.font_list);
+	    n++;
+	}
 
 	if (n) XtSetValues(new_w->composite.children[0], args, n);
 
