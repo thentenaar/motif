@@ -1295,7 +1295,7 @@ externaldef(uil_sym_glbl) char **uil_child_names =\n\
 static void wmlOutputUilSymEnum(void)
 {
 static const char * const canned1 =
-"\n\
+"#include <fontconfig/fontconfig.h>\n\
 /*\n\
  * Enumeration value vectors for each enumeration set\n\
  */\n\

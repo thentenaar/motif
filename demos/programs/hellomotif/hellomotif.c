@@ -1,4 +1,4 @@
-/*
+/**
  * Motif
  *
  * Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,8 @@
  * License along with these librararies and programs; if not, write
  * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301 USA
-*/
+ */
+
 #ifdef REV_INFO
 #ifndef lint
 static char rcsid[] = "$XConsortium: hellomotif.c /main/6 1995/07/14 09:42:12 drk $"
@@ -29,10 +30,6 @@ static char rcsid[] = "$XConsortium: hellomotif.c /main/6 1995/07/14 09:42:12 dr
 #include <Xm/XmAll.h>       /* Motif Toolkit */
 #include <Mrm/MrmPublic.h>  /* Mrm Toolkit */
 
-
-/* Although it's really bad to hardcode Positions, keep this for
-   now for compatibility */
-#define NEW_BUTTON_X 11
 /* not mentioning hardcoding labels... look at hellomotif_i18n for a
    better example  */
 #define NEW_BUTTON_LABEL  "Goodbye\nWorld!"
@@ -148,7 +145,6 @@ Activate(
 						     NULL,
 						     XmCHARSET_TEXT, NULL);
 	XtVaSetValues(widget,
-		      XmNx, NEW_BUTTON_X,
 		      XmNlabelString, new_button_label,
 		      NULL);
 

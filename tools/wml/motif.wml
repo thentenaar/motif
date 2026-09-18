@@ -446,7 +446,7 @@ EnumerationSet
     FontType : integer
         { XmAS_IS; XmFONT_IS_FONT; XmFONT_IS_FONTSET; XmFONT_IS_XFT; };
     LoadModel : integer
-        { XmAS_IS; XmLOAD_IMMEDIATE; XmLOAD_DEFERRED; };
+        { XmUNSPECIFIED_LOAD_MODEL; XmLOAD_IMMEDIATE; XmLOAD_DEFERRED; XmLOAD_LAZY; };
     LineType : integer
         { XmAS_IS; XmSINGLE_LINE; XmDOUBLE_LINE;
           XmSINGLE_DASHED_LINE; XmDOUBLE_DASHED_LINE;
@@ -483,6 +483,39 @@ EnumerationSet
     XmFontDialogSource : integer {
       XmFONT_SOURCE_X;
       XmFONT_SOURCE_XFT;
+    };
+    FontSlant : integer {
+      XmSLANT_ROMAN;
+      XmSLANT_ITALIC;
+      XmSLANT_OBLIQUE;
+      FC_SLANT_ROMAN;
+      FC_SLANT_ITALIC;
+      FC_SLANT_OBLIQUE;
+    };
+    FontWeight : integer {
+      XmWEIGHT_REGULAR;
+      XmWEIGHT_MEDIUM;
+      XmWEIGHT_DEMIBOLD;
+      XmWEIGHT_BOLD;
+      FC_WEIGHT_THIN;
+      FC_WEIGHT_EXTRALIGHT;
+      FC_WEIGHT_ULTRALIGHT;
+      FC_WEIGHT_LIGHT;
+      FC_WEIGHT_DEMILIGHT;
+      FC_WEIGHT_SEMILIGHT;
+      FC_WEIGHT_BOOK;
+      FC_WEIGHT_REGULAR;
+      FC_WEIGHT_NORMAL;
+      FC_WEIGHT_MEDIUM;
+      FC_WEIGHT_DEMIBOLD;
+      FC_WEIGHT_SEMIBOLD;
+      FC_WEIGHT_BOLD;
+      FC_WEIGHT_EXTRABOLD;
+      FC_WEIGHT_ULTRABOLD;
+      FC_WEIGHT_BLACK;
+      FC_WEIGHT_HEAVY;
+      FC_WEIGHT_EXTRABLACK;
+      FC_WEIGHT_ULTRABLACK;
     };
 ! Define controls list of common aggregates of widgets
 
@@ -1140,7 +1173,7 @@ Resource
           Default = "Fixed"; };
     XmNrenderTable : Argument
         { Type = widget_ref;
-          Default = "Fixed"; };
+          Default = "dynamic"; };
     XmNlabelInsensitivePixmap : Argument
         { Type = pixmap;
           Default = "XmUNSPECIFIED_PIXMAP"; };
@@ -4433,80 +4466,103 @@ Class
         };
 
 ! pseudo-classes for renditions
-Class
-    XmRenderTable : Widget
-        {
-        SuperClass = Object;
-        ConvenienceFunction = _XmCreateRenderTable;
-        Controls
-            {
-            XmRendition;
-            };
-        };
+Class XmRenderTable : Widget {
+  SuperClass = Object;
+  ConvenienceFunction = _XmCreateRenderTable;
+  Controls {
+    XmRendition;
+  };
+};
 
-Class
-    XmRendition : Widget
-        {
-        SuperClass = Object;
-        ConvenienceFunction = _XmCreateRendition;
-        Resources
-            {
-            XmNfontName;
-            XmNfontType;
-            XmNloadModel;
-            XmNfont;
-            XmNrenditionBackground;
-            XmNrenditionForeground;
-            XmNunderlineType;
-            XmNstrikethruType;
-	    XmNfontFoundry;
-	    XmNfontSize;
-	    XmNfontStyle;
-            };
-        Controls
-            {
-            XmTabList;
-            };
-        };
-
+! Resources for XmRendition
 Resource
-    XmNfontName : Argument
-         { Type = string;
-           Default = "XmAS_IS"; };
-    XmNfontType : Argument
-         { Type = integer;
-           EnumerationSet = FontType;
-           Default = "XmAS_IS"; };
-    XmNloadModel : Argument
-         { Type = integer;
-           EnumerationSet = LoadModel;
-           Default = "XmAS_IS"; };
-    XmNfont : Argument
-         { Type = font;
-           Default = "XmAS_IS"; };
-    XmNrenditionBackground : Argument
-        { Type = color;
-          Default = "XmUNSPECIFIED_PIXEL"; };
-    XmNrenditionForeground : Argument
-        { Type = color;
-          Default = "XmUNSPECIFIED_PIXEL"; };
-    XmNunderlineType : Argument
-         { Type = integer;
-           EnumerationSet = LineType;
-           Default = "XmAS_IS"; };
-    XmNstrikethruType : Argument
-         { Type = integer;
-           EnumerationSet = LineType;
-           Default = "XmAS_IS"; };
-    XmNfontFoundry : Argument
-         { Type = string;
-           Default = "Null"; };
-    XmNfontSize : Argument
-         { Type = integer;
-           Default = "0"; };
-    XmNfontStyle : Argument
-         { Type = string;
-           Default = "Null"; };
+  XmNloadModel : Argument {
+    Type = integer;
+    EnumerationSet = LoadModel;
+    Default = "XmUNSPECIFIED_LOAD_MODEL";
+  };
+  XmNfontType : Argument {
+    Type = integer;
+    EnumerationSet = FontType;
+    Default = "XmAS_IS";
+  };
+  XmNfontName : Argument {
+    Type = string;
+    Default = "XmAS_IS";
+  };
+  XmNfontFoundry : Argument {
+    Type = string;
+    Default = "Null";
+  };
+  XmNfontFamily : Argument {
+    Type = string;
+    Default = "Null";
+  };
+  XmNfontStyle : Argument {
+    Type = string;
+    Default = "Null";
+  };
+  XmNfontSize : Argument {
+    Type = integer;
+    Default = "0";
+  };
+  XmNfontPixelSize : Argument {
+    Type = integer;
+    Default = "0";
+  };
+  XmNfontSlant : Argument {
+    Type = integer;
+    EnumerationSet = FontSlant;
+    Default = "XmAS_IS";
+  };
+  XmNfontWeight : Argument {
+    Type = integer;
+    EnumerationSet = FontWeight;
+    Default = "XmAS_IS";
+  };
+  XmNrenditionBackground : Argument {
+    Type = color;
+    Default = "XmUNSPECIFIED_PIXEL";
+  };
+  XmNrenditionForeground : Argument {
+    Type = color;
+    Default = "XmUNSPECIFIED_PIXEL";
+  };
+  XmNunderlineType : Argument {
+    Type = integer;
+    EnumerationSet = LineType;
+    Default = "XmAS_IS";
+  };
+  XmNstrikethruType : Argument {
+    Type = integer;
+    EnumerationSet = LineType;
+    Default = "XmAS_IS";
+  };
+
+Class XmRendition : Widget {
+  SuperClass = Object;
+  ConvenienceFunction = _XmCreateRendition;
+  Resources {
+    XmNloadModel;
+    XmNfontType;
+    XmNfontName;
+    XmNfontFoundry;
+    XmNfontFamily;
+    XmNfontStyle;
+    XmNfontSize;
+    XmNfontPixelSize;
+    XmNfontSlant;
+    XmNfontWeight;
+    XmNrenditionBackground;
+    XmNrenditionForeground;
+    XmNunderlineType;
+    XmNstrikethruType;
+  };
+
+  Controls {
+    XmTabList;
+  };
+};
 
 Class
     XmTabList : Widget

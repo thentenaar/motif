@@ -1,4 +1,4 @@
-! 
+!
 ! Motif
 !
 ! Copyright (c) 1987-2012, The Open Group. All rights reserved.
@@ -19,7 +19,7 @@
 ! License along with these librararies and programs; if not, write
 ! to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ! Floor, Boston, MA 02110-1301 USA
-! 
+!
 !*******************************************************************************
 module helloworld
     version = 'v1.0'
@@ -28,33 +28,71 @@ module helloworld
 procedure
     helloworld_button_activate();
 
-object
-    helloworld_main : XmBulletinBoard {
-	controls {
-	    XmLabel	helloworld_label;
-	    XmPushButton	helloworld_button;
-	};
-    };
-
-object
-    helloworld_button : XmPushButton {
-	arguments { 
-	    XmNx = 15;
-	    XmNy = 60;
-	    XmNlabelString = compound_string('Hello',separate=true) & 'World!';
-	};
-	callbacks { 
-	    XmNactivateCallback = procedure helloworld_button_activate();
-	};
-    };
-
-object
-    helloworld_label : XmLabel {
+object helloworld_main : XmBulletinBoard {
 	arguments {
-	    XmNlabelString = compound_string('Press button once',separate=true) &
-		          compound_string('to change label;',separate=true) &
-		          'twice to exit.';
+		XmNwidth  = 250;
+		XmNheight = 215;
+		XmNbuttonRenderTable = button_table;
 	};
-    };
+	controls {
+		XmRenderTable button_table;
+		XmLabel       helloworld_label;
+		XmPushButton  helloworld_button;
+	};
+};
+
+object helloworld_button : XmPushButton {
+	arguments {
+		XmNx = 80;
+		XmNy = 150;
+		XmNlabelString = compound_string('Hello',separate=true) & 'World!';
+	};
+	callbacks {
+		XmNactivateCallback = procedure helloworld_button_activate();
+	};
+};
+
+object helloworld_label : XmLabel {
+	arguments {
+		XmNrenderTable = label_table;
+		XmNlabelString = compound_string('Press button once',separate=true) &
+		                 compound_string('to change label;',separate=true) &
+						 'twice to exit.';
+	};
+	controls {
+		XmRenderTable label_table;
+	};
+};
+
+object label_table : XmRenderTable {
+	controls {
+		XmRendition label;
+	};
+};
+
+object label : XmRendition {
+	arguments {
+		XmNfontName  = "monospace";
+		XmNfontType  = XmFONT_IS_XFT;
+		XmNfontSize  = 8;
+		XmNloadModel = XmLOAD_IMMEDIATE;
+	};
+};
+
+object button_table : XmRenderTable {
+	controls {
+		XmRendition button;
+	};
+};
+
+object button : XmRendition {
+	arguments {
+		XmNfontName   = "serif";
+		XmNfontType   = XmFONT_IS_XFT;
+		XmNfontSize   = 8;
+		XmNfontWeight = XmWEIGHT_BOLD;
+		XmNloadModel  = XmLOAD_DEFERRED;
+	};
+};
 
 end module;
