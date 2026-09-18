@@ -150,6 +150,62 @@ the \fBbold\fP tag.
 *renderTable.bold.fontType: fontset
 .EE
 
+.SH USAGE IN UIL
+To specify a render table in \fBUIL\fP(5), you must create a render table
+object with the renditions to be added to the table's \fIcontrols\fP. This
+example creates a render table with a singular rendition which will have
+a tag of "rend", and load a monospace Xft font with a size of 8 points.
+
+.EX
+object label_table : XmRenderTable {
+	controls {
+		XmRendition rend;
+	};
+};
+
+object rend : XmRendition {
+	arguments {
+		XmNfontName  = "monospace";
+		XmNfontType  = XmFONT_IS_XFT;
+		XmNfontSize  = 8;
+		XmNloadModel = XmLOAD_IMMEDIATE;
+	};
+};
+.EE
+
+This can be added to a widget by specifying the table as its
+\fBXmNrenderTable\fP argument.
+
+.EX
+object label : XmLabel {
+	arguments {
+		XmNrenderTable = label_table;
+		XmNlabelString = compound_string('Hello, world!');
+	};
+	controls {
+		XmRenderTable label_table;
+	};
+};
+.EE
+
+Some widgets (e.g., \fBXmBulletinBoard\fP) are a special case, and care
+must be taken to ensure that the render table is the first control in
+the \fIcontrols\fP list so that it gets created before the other children,
+otherwise they will pull the default render table instead of the
+intended render table.
+
+.EX
+object bb : XmBulletinBoard {
+	arguments {
+		XmNbuttonRenderTable = button_table;
+	};
+	controls {
+		XmRenderTable button_table;
+		XmPushButton  button;
+	};
+};
+.EE
+
 .SH CAVEAT DRACONES
 Prior to Motif 2.0, the \fBXmNfontList\fP resource was used to specify the
 set of renditions a particular widget was to use. This resource is deprecated,
