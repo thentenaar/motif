@@ -1122,6 +1122,9 @@ Boolean _XmRenderTableFindFirstFont(XmRenderTable rt, XmRendition *rend_out)
 	*rend_out = NULL;
 	for (i = t->count - 1; i < UINT_MAX; i--) {
 		r = XmSharedPtrGet(t->renditions[i]);
+		if (r->loadModel == XmLOAD_DEFERRED)
+			XmRenditionLoad(t->renditions[i], True);
+
 		if (r->font) {
 			if (r->fontType == XmFONT_IS_FONT)         f_idx  = i;
 			else if (r->fontType == XmFONT_IS_FONTSET) fs_idx = i;
@@ -1223,6 +1226,9 @@ static Boolean cascade(XmRendition *rend, XmRendition tmp, XmRenditionStyle styl
 	if (!(r = XmSharedPtrGet(tmp)))
 		return False;
 
+	if (!*rend && r->loadModel == XmLOAD_DEFERRED && !r->font && !r->xftFont)
+		XmRenditionLoad(tmp, True);
+
 	if (!*rend && (r->font || r->xftFont))
 		*rend = tmp;
 
@@ -1279,7 +1285,10 @@ XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
 		XtFree(fallback);
 	}
 
-	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+	if ((r = XmSharedPtrGet(rend)) && r->loadModel == XmLOAD_DEFERRED)
+		XmRenditionLoad(rend, True);
+
+	if (r && !r->font && !r->xftFont) {
 		XmRenditionFree(rend);
 		rend = NULL;
 	}
@@ -1288,7 +1297,10 @@ XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
 	if (!rend)
 		rend = XmRenderTableGetRendition(rt, XmFONTLIST_DEFAULT_TAG);
 
-	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+	if ((r = XmSharedPtrGet(rend)) && r->loadModel == XmLOAD_DEFERRED)
+		XmRenditionLoad(rend, True);
+
+	if (r && !r->font && !r->xftFont) {
 		XmRenditionFree(rend);
 		rend = NULL;
 	}
@@ -1297,7 +1309,10 @@ XmRendition XmRenderTableResolve(XmRenderTable rt, XmStringTag *tags,
 	if (!rend)
 		rend = XmRenderTableGetRendition(rt, _MOTIF_DEFAULT_LOCALE);
 
-	if ((r = XmSharedPtrGet(rend)) && !r->font && !r->xftFont) {
+	if ((r = XmSharedPtrGet(rend)) && r->loadModel == XmLOAD_DEFERRED)
+		XmRenditionLoad(rend, True);
+
+	if (r && !r->font && !r->xftFont) {
 		XmRenditionFree(rend);
 		rend = NULL;
 	}
