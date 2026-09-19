@@ -44,6 +44,11 @@ static char rcsid[] = "$TOG: ImageCache.c /main/44 1998/10/06 17:26:25 samborn $
 #include <X11/Xresource.h>
 #include <X11/Xlibint.h>
 
+#if HAVE_SYS_SHM_H
+#include <sys/shm.h>
+#include <X11/extensions/XShm.h>
+#endif
+
 #include <Xm/AccColorT.h>       /* for new _XmGetColoredPixmap API */
 #include <Xm/ColorObjP.h>       /* for Xme Color Obj access API */
 #include <Xm/IconFile.h>        /* XmGetIconFileName */
@@ -1940,6 +1945,7 @@ static void render_image(Screen *screen, Display *display, Drawable d,
                          int depth, GC gc, XImage *src, int sx, int sy,
                          int sw, int sh, int dx, int dy, int dw, int dh)
 {
+	Boolean is_shared = False;
 	char *data;
 	Visual *vis;
 	XImage *dest_image;
@@ -1948,11 +1954,9 @@ static void render_image(Screen *screen, Display *display, Drawable d,
 	XGCValues gcv;
 	int psz, x, y, ox, oy, r, g, b, a;
 
-	psz = depth > 16 ? 32 : depth < 16 ? 8 : 16;
-	if (!(data = Xmalloc(dw * dh * (psz >> 3)))) {
-		XmeWarning(NULL, "render_image: Out of memory");
-		return;
-	}
+#if HAVE_SYS_SHM_H
+	XShmSegmentInfo shminfo;
+#endif
 
 	vis = DefaultVisualOfScreen(screen);
 	gcv.foreground = ULONG_MAX;
@@ -1966,8 +1970,40 @@ static void render_image(Screen *screen, Display *display, Drawable d,
 
 	bg.pixel = gcv.background;
 	XQueryColor(display, screen->cmap, &bg);
-	dest_image = XCreateImage(display, vis, depth, ZPixmap, 0, data,
-	                          dw, dh, psz, 0);
+
+#if HAVE_SYS_SHM_H
+	/* If we have the shared memory extention, use it */
+	if (XShmQueryExtension(display)) {
+		dest_image = XShmCreateImage(display, vis, depth, ZPixmap, NULL,
+		                             &shminfo, dw, dh);
+		shminfo.readOnly = False;
+		shminfo.shmid = shmget(IPC_PRIVATE, dest_image->bytes_per_line * dh,
+		                       IPC_CREAT | 0600);
+		if (shminfo.shmid != -1) {
+			if ((shminfo.shmaddr = shmat(shminfo.shmid, NULL, 0)) != (char *)-1) {
+				dest_image->data = shminfo.shmaddr;
+				XShmAttach(display, &shminfo);
+				XSync(display, False);
+				is_shared = True;
+			}
+
+			/* The shared segment will be removed when everyone detaches */
+			shmctl(shminfo.shmid, IPC_RMID, NULL);
+		}
+	}
+#endif /* HAVE_SYS_SHM_H */
+
+	/* Fallback to the usual method if we can't get shared memory */
+	if (!is_shared) {
+		psz = depth > 16 ? 32 : depth < 16 ? 8 : 16;
+		if (!(data = Xmalloc(dw * dh * (psz >> 3)))) {
+			XmeWarning(NULL, "render_image: Out of memory");
+			return;
+		}
+
+		dest_image = XCreateImage(display, vis, depth, ZPixmap, 0, data,
+		                          dw, dh, psz, 0);
+	}
 
 	for (y = 0; y < dh; y++) {
 		for (x = 0; x < dw; x++) {
@@ -2047,13 +2083,20 @@ static void render_image(Screen *screen, Display *display, Drawable d,
 			xc.blue  = b * 257;
 			pixel    = gcv.foreground;
 
-			/* Slowly interrogate the colormap for Pixel values */
-			if (XAllocColor(display, screen->cmap, &xc))
+			/* Slowly interrogate the cache / colormap for Pixel values */
+			if (GetCacheColor(display, screen->cmap, NULL, &xc, NULL))
 				pixel = xc.pixel;
 			XPutPixel(dest_image, dx + x, dy + y, pixel);
 		}
 	}
 
+#if HAVE_SYS_SHM_H
+	if (is_shared) {
+		XShmPutImage(display, d, gc, dest_image, 0, 0, dx, dy, dw, dh, False);
+		XShmDetach(display, &shminfo);
+		shmdt(shminfo.shmaddr);
+	} else
+#endif /* HAVE_SYS_SHM_H */
 	XPutImage(display, d, gc, dest_image, 0, 0, dx, dy, dw, dh);
 	XDestroyImage(dest_image);
 }
@@ -2073,16 +2116,6 @@ void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
 		sy  = 0;
 		sw  = dw;
 		sh  = dh;
-	}
-
-	/* Same depth, size, and format */
-	if (src->depth == depth && dw == sw && dh == sh &&
-	    src->red_mask   == vis->red_mask   &&
-	    src->green_mask == vis->green_mask &&
-	    src->blue_mask  == vis->blue_mask) {
-		XPutImage(display, d, gc, src, sx, sy, dx, dy, dw, dh);
-		if (free_src) XDestroyImage(src);
-		return;
 	}
 
 	render_image(screen, display, d, depth, gc, src, sx, sy, sw, sh,
