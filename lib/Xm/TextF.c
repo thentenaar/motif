@@ -6277,7 +6277,8 @@ Initialize(Widget request,
 
   /* If we have XmString, use it */
   if (req_tf->text.xms_value) {
-    new_tf->text.xms_value     = req_tf->text.xms_value;
+    /* The resource belongs to the caller; retain our own reference. */
+    new_tf->text.xms_value     = XmStringCopy(req_tf->text.xms_value);
     new_tf->text.string_length = XmStringLen(new_tf->text.xms_value);
     return;
   } else if (new_tf->text.xms_value) return;
@@ -6699,6 +6700,8 @@ SetValues(Widget old,
       new_tf->text.xms_value = val;
     }
   } else {
+    /* XmNvalueString is borrowed, unlike the converted synthetic values. */
+    new_tf->text.xms_value = XmStringCopy(new_tf->text.xms_value);
     XmStringFree(wcs);
     XmStringFree(val);
   }
