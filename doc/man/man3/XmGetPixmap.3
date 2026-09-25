@@ -45,7 +45,7 @@
 .ds f2\"
 .ds f3\"
 .ds f4\"
-.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
 .TH "XmGetPixmap" "library call"
 .SH "NAME"
 \fBXmGetPixmap\fP \(em A pixmap caching function that generates a pixmap, stores it in a pixmap cache, and returns the pixmap
@@ -110,7 +110,7 @@ In addition to X bitmap files (XBM), Motif also supports XPM (X
 Pixmap) file formats and, from version 2.3, JPEG and PNG image formats\&.
 (Note that support of JPEG and PNG image format is an optional feature
 of Motif, in order to check if current version supports PNG and JPEG
-image formats the PNG_SUPPORT and JPEG_SUPPORT macros should be checked
+image formats the XM_WITH_PNG and XM_WITH_JPEG macros should be checked
 correspondingly.)
 The \fBXBMLANGPATH\fP specifies the path for
 both XBM, XPM, PNG and JPEG files\&. Refer to the \fBXmGetPixmapByDepth\fP

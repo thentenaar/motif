@@ -360,7 +360,6 @@ man_MANS = ApplicationShell.3 \
     XmPrimitive.3 \
     XmPrintPopupPDM.3 \
     XmPrintSetup.3 \
-    XmPrintShell.3 \
     XmPrintToFile.3 \
     XmProcessTraversal.3 \
     XmPushButton.3 \

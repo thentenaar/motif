@@ -2105,12 +2105,11 @@ void _XmPutScaledImage(Screen *screen, Display *display, Drawable d,
                        int depth, GC gc, XImage *src, int sx, int sy,
                        int sw, int sh, int dx, int dy, int dw, int dh)
 {
-	int free_src = 0;
-	Visual *vis = DefaultVisualOfScreen(screen);
+	Boolean free_src = False;
 
 	/* svg: Rasterize to the given size */
 	if (XImageIsSVG(src)) {
-		++free_src;
+		free_src = True;
 		src = src->f.sub_image(src, sx, sy, dw, dh);
 		sx  = 0;
 		sy  = 0;
