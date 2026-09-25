@@ -27,6 +27,8 @@
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <Xm/TextF.h>
+#include <Xm/FileSB.h>
+#include "XmStringI.h"
 #include <Xm/AccTextT.h>
 #include <Xm/TraitP.h>
 #include <check.h>
@@ -54,6 +56,58 @@ START_TEST(initial_state)
 	ck_assert_msg(!XmTextFieldGetLastPosition(text), "Last position should be 0 by default");
 	ck_assert_msg(XmTextFieldGetEditable(text), "Should be editable by default");
 	ck_assert_msg(XmTextFieldGetMaxLength(text) == INT_MAX, "Max length should be INT_MAX by default");
+}
+END_TEST
+
+START_TEST(initial_value_string_ownership)
+{
+	XmString value = XmStringCreateLocalized("initial value");
+	XmString result;
+	Widget field = XtVaCreateWidget("initial", xmTextFieldWidgetClass, shell,
+	                                XmNvalueString, value, NULL);
+
+	ck_assert_msg(_XmStrRefCountGet(value) >= 2,
+	              "Text field must retain its own reference to XmNvalueString");
+	XmStringFree(value);
+	result = XmTextFieldGetXmString(field);
+	value = XmStringCreateLocalized("initial value");
+	ck_assert_msg(XmStringCompare(result, value), "Initial value must survive caller release");
+	XmStringFree(result);
+	XmStringFree(value);
+	XtDestroyWidget(field);
+}
+END_TEST
+
+START_TEST(set_value_string_ownership)
+{
+	XmString value = XmStringCreateLocalized("replacement value");
+	XmString result;
+
+	XtVaSetValues(text, XmNvalueString, value, NULL);
+	ck_assert_msg(_XmStrRefCountGet(value) >= 2,
+	              "Text field must retain its own reference after XtSetValues");
+	XmStringFree(value);
+	result = XmTextFieldGetXmString(text);
+	value = XmStringCreateLocalized("replacement value");
+	ck_assert_msg(XmStringCompare(result, value), "Replacement must survive caller release");
+	XmStringFree(result);
+	XmStringFree(value);
+}
+END_TEST
+
+START_TEST(file_dialog_pattern_ownership)
+{
+	Arg args[1];
+	XmString pattern = XmStringCreateLocalized("*.[Bb][Dd][Ff]");
+	Widget dialog;
+
+	XtSetArg(args[0], XmNpattern, pattern);
+	dialog = XmCreateFileSelectionDialog(shell, "open", args, 1);
+	XmStringFree(pattern);
+	pattern = XmStringCreateLocalized("*");
+	XtVaSetValues(dialog, XmNpattern, pattern, NULL);
+	XmStringFree(pattern);
+	XtDestroyWidget(XtParent(dialog));
 }
 END_TEST
 
@@ -449,12 +503,15 @@ void xmtextf_suite(SRunner *runner)
 
 	t = tcase_create("Init");
 	tcase_add_test(t, initial_state);
+	tcase_add_test(t, initial_value_string_ownership);
+	tcase_add_test(t, file_dialog_pattern_ownership);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
 	tcase_set_timeout(t, 1);
 	suite_add_tcase(s, t);
 
 	t = tcase_create("Set Value");
 	tcase_add_test(t, set_value);
+	tcase_add_test(t, set_value_string_ownership);
 	tcase_add_test(t, set_calls_modify_verify_cb);
 	tcase_add_test(t, set_calls_value_changed_cb);
 	tcase_add_checked_fixture(t, _init_xt, uninit_xt);
