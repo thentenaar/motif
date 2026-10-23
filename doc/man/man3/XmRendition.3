@@ -102,26 +102,42 @@ r = XmRenditionCreate(NULL, XmSTRING_DEFAULT_CHARSET, arg, 4);
 .EE
 
 .SH RESOURCES
+.\" Keep a five-column overview where it fits; stack fields on narrow displays.
+.na
+.nh
+.ie (\n[.l]-\n[.i]>=74n) \{\
 .TS
 tab(|) box;
 cb s s s s
 lb| lb| lb| lb| lb
-l| lb| lb| l| l.
+ltw(13n)| lbtw(13n)| lbtw(11n)| ltw(14n)| lt.
 XmRendition Resource Set
 =
 Name|Class|Type|Default|Access
 _
-XmNloadModel|XmCLoadModel|unsigned char|XmUNSPECIFIED_LOAD_MODEL|CSG
+XmNloadModel|XmCLoadModel|T{
+unsigned char
+T}|T{
+Xm\:UNSPECIFIED_\:LOAD_\:MODEL
+T}|CSG
 XmNfontType|XmCFontType|XmFontType|XmAS_IS|CSG
 XmNtag|XmCTag|XmStringTag|XmS|CG
 XmNfont|XmCFont|XtPointer|NULL|CSG
 XmNxftFont|XmCXftFont|XtPointer|NULL|CSG
 XmNfontName|XmCFontName|String|NULL|CSG
-XmNfontFoundry|XmCFontFoundry|String|NULL|CG
+T{
+Xm\:Nfont\:Foundry
+T}|T{
+Xm\:CFont\:Foundry
+T}|String|NULL|CG
 XmNfontFamily|XmCFontFamily|String|NULL|CG
 XmNfontStyle|XmCFontStyle|String|NULL|CG
 XmNfontSize|XmCFontSize|int|0|CG
-XmNfontPixelSize|XmCFontPixelSize|int|0|CG
+T{
+Xm\:Nfont\:Pixel\:Size
+T}|T{
+Xm\:CFont\:Pixel\:Size
+T}|int|0|CG
 XmNfontSlant|XmCFontSlant|int|XmAS_IS|CG
 XmNfontWeight|XmCFontWeight|int|XmAS_IS|CG
 XmNwidth|XmCWidth|int|0|G
@@ -129,18 +145,316 @@ XmNinkWidth|XmCInkWidth|int|0|G
 XmNascent|XmCAscent|int|0|G
 XmNdescent|XmCDescent|int|0|G
 XmNtabList|XmCTabList|XmTabList|NULL|CSG
-XmNrenditionBackground|XmCRenditionBackground|Pixel|XmUNSPECIFIED_PIXEL|CSG
-XmNrenditionForeground|XmCRenditionForeground|Pixel|XmUNSPECIFIED_PIXEL|CSG
-XmNunderlineType|XmCUnderlineType|unsigned char|XmAS_IS|CSG
-XmNstrikethruType|XmCStrikethruType|unsigned char|XmAS_IS|CSG
-XmNforegroundState|XmCGroundState|unsigned char|XmAS_IS|CSG
-XmNbackgroundState|XmCGroundState|unsigned char|XmAS_IS|CSG
+T{
+Xm\:Nrendition\:Background
+T}|T{
+Xm\:CRendition\:Background
+T}|Pixel|T{
+Xm\:UNSPECIFIED_\:PIXEL
+T}|CSG
+T{
+Xm\:Nrendition\:Foreground
+T}|T{
+Xm\:CRendition\:Foreground
+T}|Pixel|T{
+Xm\:UNSPECIFIED_\:PIXEL
+T}|CSG
+T{
+Xm\:Nunderline\:Type
+T}|T{
+Xm\:CUnderline\:Type
+T}|T{
+unsigned char
+T}|XmAS_IS|CSG
+T{
+Xm\:Nstrikethru\:Type
+T}|T{
+Xm\:CStrikethru\:Type
+T}|T{
+unsigned char
+T}|XmAS_IS|CSG
+T{
+Xm\:Nforeground\:State
+T}|T{
+Xm\:CGround\:State
+T}|T{
+unsigned char
+T}|XmAS_IS|CSG
+T{
+Xm\:Nbackground\:State
+T}|T{
+Xm\:CGround\:State
+T}|T{
+unsigned char
+T}|XmAS_IS|CSG
 .TE
+.\}
+.el \{\
+.\" Use continuation rows for long identifiers; mandoc ignores their soft breaks.
+.nr RVw \n[.l]-\n[.i]-14n
+.TS
+tab(|) box;
+cb s.
+XmRendition Resource Set
+=
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNloadModel
+_
+Class|XmCLoadModel
+Type|T{
+unsigned char
+T}
+Default|XmUNSPECIFIED_
+|LOAD_MODEL
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontType
+_
+Class|XmCFontType
+Type|XmFontType
+Default|XmAS_IS
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNtag
+_
+Class|XmCTag
+Type|XmStringTag
+Default|XmS
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfont
+_
+Class|XmCFont
+Type|XtPointer
+Default|NULL
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNxftFont
+_
+Class|XmCXftFont
+Type|XtPointer
+Default|NULL
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontName
+_
+Class|XmCFontName
+Type|String
+Default|NULL
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontFoundry
+_
+Class|T{
+Xm\:CFont\:Foundry
+T}
+Type|String
+Default|NULL
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontFamily
+_
+Class|T{
+Xm\:CFont\:Family
+T}
+Type|String
+Default|NULL
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontStyle
+_
+Class|XmCFontStyle
+Type|String
+Default|NULL
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontSize
+_
+Class|XmCFontSize
+Type|int
+Default|0
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontPixelSize
+_
+Class|T{
+Xm\:CFont\:Pixel\:Size
+T}
+Type|int
+Default|0
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontSlant
+_
+Class|XmCFontSlant
+Type|int
+Default|XmAS_IS
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNfontWeight
+_
+Class|T{
+Xm\:CFont\:Weight
+T}
+Type|int
+Default|XmAS_IS
+Access|CG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNwidth
+_
+Class|XmCWidth
+Type|int
+Default|0
+Access|G
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNinkWidth
+_
+Class|XmCInkWidth
+Type|int
+Default|0
+Access|G
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNascent
+_
+Class|XmCAscent
+Type|int
+Default|0
+Access|G
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNdescent
+_
+Class|XmCDescent
+Type|int
+Default|0
+Access|G
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNtabList
+_
+Class|XmCTabList
+Type|XmTabList
+Default|NULL
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNrenditionBackground
+_
+Class|XmCRendition
+|Background
+Type|Pixel
+Default|T{
+Xm\:UNSPECIFIED_\:PIXEL
+T}
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNrenditionForeground
+_
+Class|XmCRendition
+|Foreground
+Type|Pixel
+Default|T{
+Xm\:UNSPECIFIED_\:PIXEL
+T}
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNunderlineType
+_
+Class|T{
+Xm\:CUnderline\:Type
+T}
+Type|T{
+unsigned char
+T}
+Default|XmAS_IS
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNstrikethruType
+_
+Class|T{
+Xm\:CStrikethru\:Type
+T}
+Type|T{
+unsigned char
+T}
+Default|XmAS_IS
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNforegroundState
+_
+Class|T{
+Xm\:CGround\:State
+T}
+Type|T{
+unsigned char
+T}
+Default|XmAS_IS
+Access|CSG
+_
+.T&
+lb s, l| ltw(\n[RVw]u).
+XmNbackgroundState
+_
+Class|T{
+Xm\:CGround\:State
+T}
+Type|T{
+unsigned char
+T}
+Default|XmAS_IS
+Access|CSG
+.TE
+.rr RVw
+.\}
+.ad
+.hy
 
-.IP "\fBXmNloadModel\fP" 8
+.IP "\fBXmNloadModel\fP" 4
 As previously discussed, this specifies the loading model to use. Valid
 values are:
-.RS 8
+.RS 2
 .IP \(bu 4
 \fBXmUNSPECIFIED_LOAD_MODEL\fP \(em The font is user-supplied.
 .IP \(bu 4
@@ -151,9 +465,9 @@ values are:
 \fBXmLOAD_LAZY\fP \(em Load the font on-demand with \fBXmRenditionLoad\fP.
 .RE
 
-.IP "\fBXmNfontType\fP" 8
+.IP "\fBXmNfontType\fP" 4
 This indicates the type of font being used and must be one of:
-.RS 8
+.RS 2
 .IP \(bu 4
 \fBXmFONT_IS_FONT\fP \(em Plain X font
 .IP \(bu 4
@@ -162,58 +476,58 @@ This indicates the type of font being used and must be one of:
 \fBXmFONT_IS_XFT\fP \(em Xft font
 .RE
 
-.IP "\fBXmNtag\fP" 8
-.RS 8
+.IP "\fBXmNtag\fP" 4
+.RS 2
 Tag (\fBXmStringTag\fP) to use for selecting this rendition for rendering.
 This value may be queried, but is fixed once the rendition is created.
 .RE
 
-.IP "\fBXmNfont\fP" 8
-.RS 8
+.IP "\fBXmNfont\fP" 4
+.RS 2
 Depending on font type, \fBXFontStruct *\fP or \fBXFontSet\fP associated
 with this rendition, cast to \fBXtPointer\fP.
 .RE
 
-.IP "\fBXmNxftFont\fP" 8
-.RS 8
+.IP "\fBXmNxftFont\fP" 4
+.RS 2
 \fBXftFont *\fP associated with this rendition, cast to \fBXtPointer\fP.
 .RE
 
-.IP "\fBXmNfontName\fP" 8
-.RS 8
+.IP "\fBXmNfontName\fP" 4
+.RS 2
 Specification string for this rendition. For X fonts this will be a
 X Logical Font Description (XLFD) string, and for Xft fonts, a
 Fontconfig pattern string.
 .RE
 
-.IP "\fBXmNfontFoundry\fP" 8
-.RS 8
+.IP "\fBXmNfontFoundry\fP" 4
+.RS 2
 Font foundry string, supplied by the font.
 .RE
 
-.IP "\fBXmNfontFamily\fP" 8
-.RS 8
+.IP "\fBXmNfontFamily\fP" 4
+.RS 2
 Font family string, supplied by the font.
 .RE
 
-.IP "\fBXmNfontStyle\fP" 8
-.RS 8
+.IP "\fBXmNfontStyle\fP" 4
+.RS 2
 Font style string, only supplied by Xft fonts.
 .RE
 
-.IP "\fBXmNfontSize\fP" 8
-.RS 8
+.IP "\fBXmNfontSize\fP" 4
+.RS 2
 Font size in points, supplied by the font.
 .RE
 
-.IP "\fBXmNfontPixelSize\fP" 8
-.RS 8
+.IP "\fBXmNfontPixelSize\fP" 4
+.RS 2
 Font size in pixels. For Xft fonts, this is supplied by the font, for X
 fonts, this is calculated based on the screen DPI and point size,
 .RE
 
-.IP "\fBXmNfontSlant\fP" 8
-.RS 8
+.IP "\fBXmNfontSlant\fP" 4
+.RS 2
 Slant value supplied by the font. Motif pre-defines the following
 constants for convenience:
 .IP \(bu 4
@@ -225,8 +539,8 @@ their roman counterparts, usually inspired by handwriting.
 \fBXmSLANT_OBLIQUE\fP \(em Simply right-slanted versions of roman glyphs.
 .RE
 
-.IP "\fBXmNfontWeight\fP" 8
-.RS 8
+.IP "\fBXmNfontWeight\fP" 4
+.RS 2
 Weight value supplied by the font. Motif pre-defines the following
 constants for convenience:
 .IP \(bu 4
@@ -240,35 +554,35 @@ for emphasis.
 \fBXmWEIGHT_BOLD\fP \(em Heavy weight ideal for strong text or headers.
 .RE
 
-.IP "\fBXmNwidth\fP" 8
-.RS 8
+.IP "\fBXmNwidth\fP" 4
+.RS 2
 Indicated maximum layout width for a glyph in the font in pixels.
 .RE
 
-.IP "\fBXmNinkWidth\fP" 8
-.RS 8
+.IP "\fBXmNinkWidth\fP" 4
+.RS 2
 Indicated maximum ink width for a glyph in the font in pixels.
 .RE
 
-.IP "\fBXmNascent\fP" 8
-.RS 8
+.IP "\fBXmNascent\fP" 4
+.RS 2
 Indicated ascent value for the font in pixels.
 .RE
 
-.IP "\fBXmNdescent\fP" 8
-.RS 8
+.IP "\fBXmNdescent\fP" 4
+.RS 2
 Indicated descent value for the font in pixels.
 .RE
 
-.IP "\fBXmNtabList\fP" 8
-.RS 8
+.IP "\fBXmNtabList\fP" 4
+.RS 2
 Specifies the tab list which specifies how compound strings containing
 tab components are laid out in columns.
 .RE
 
-.IP "\fBXmNrenditionForeground\fP" 8
-.IP "\fBXmNrenditionBackground\fP" 8
-.RS 8
+.IP "\fBXmNrenditionForeground\fP" 4
+.IP "\fBXmNrenditionBackground\fP" 4
+.RS 2
 Specifies the foreground or background color for the rendition, as a
 \fBPixel\fP value. A value of \fBXmUNSPECIFIED_PIXEL\fP indiciates that
 that particular color is not set for this rendition.
@@ -278,9 +592,9 @@ X resources) expects an X color name, or the special string
 "unspecified_pixel".
 .RE
 
-.IP "\fBXmNforegroundState\fP" 8
-.IP "\fBXmNbackgroundState\fP" 8
-.RS 8
+.IP "\fBXmNforegroundState\fP" 4
+.IP "\fBXmNbackgroundState\fP" 4
+.RS 2
 If ether of these resources are set to \fBXmFORCE_COLOR\fP, the respective
 color specified in the rendition will be preferred over values from other
 styles/renditions evaluated when rendering a compound string (or part
@@ -288,9 +602,9 @@ thereof). These resources have been present at least as far back as
 Motif 2.1.30 and were heretofore undocumented.
 .RE
 
-.IP "\fBXmNunderlineType\fP" 8
-.IP "\fBXmNstrikethruType\fP" 8
-.RS 8
+.IP "\fBXmNunderlineType\fP" 4
+.IP "\fBXmNstrikethruType\fP" 4
+.RS 2
 Specifies the line type for striking through or underlining a compound
 string. Valid values are:
 .IP \(bu 4
