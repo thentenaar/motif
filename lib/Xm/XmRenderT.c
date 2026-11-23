@@ -2957,12 +2957,15 @@ _XmXftDrawCreate(Display *display, Window window)
 {
 	XftDraw			*draw;
 	XWindowAttributes	wa;
+	XtAppContext app;
 	int			i;
 	Status status;
 
+	app = _XmLock(display);
 	for (i=0; i<_XmXftDrawCacheSize; i++) {
 		if (_XmXftDrawCache[i].display == display &&
 		    _XmXftDrawCache[i].window == window) {
+			_XmUnlock(app);
 			return _XmXftDrawCache[i].draw;
 		}
 	}
@@ -2977,6 +2980,7 @@ _XmXftDrawCreate(Display *display, Window window)
 			_XmXftDrawCache[i].display = display;
 			_XmXftDrawCache[i].draw = draw;
 			_XmXftDrawCache[i].window = window;
+			_XmUnlock(app);
 			return draw;
 		}
 	i = _XmXftDrawCacheSize;	/* Next free index */
@@ -2989,52 +2993,38 @@ _XmXftDrawCreate(Display *display, Window window)
 	_XmXftDrawCache[i].display = display;
 	_XmXftDrawCache[i].draw = draw;
 	_XmXftDrawCache[i].window = window;
+	_XmUnlock(app);
 
 	return draw;
 }
 
-/*
+/**
  * The XftDraw cache keeps one XftDraw per window: free the one of this
- * window, if there's one. Unlike _XmXftDrawDestroy(), it's not an error
- * for the window to have none (it never drew text).
+ * window, if there's one. It's not an error for the window to have none
+ * (it never drew text).
  */
-void
-_XmXftDrawRelease(Display *display, Window window)
+void _XmXftDrawDestroy(Display *display, Window window)
 {
-    int i;
+	int i;
+	XftDraw *draw;
+	XtAppContext app;
 
-    if (!display || window == None)
-        return;
+	if (!display || window == None)
+		return;
 
-    for (i=0; i<_XmXftDrawCacheSize; i++)
-	if (_XmXftDrawCache[i].display == display &&
-	    _XmXftDrawCache[i].window == window) {
-	        XftDraw *draw = _XmXftDrawCache[i].draw;
-
-	        _XmXftDrawCache[i].display = NULL;
-	        _XmXftDrawCache[i].draw = NULL;
-	        _XmXftDrawCache[i].window = None;
-	        if (draw)
-	            XftDrawDestroy(draw);
-	        return;
-        }
-}
-
-void
-_XmXftDrawDestroy(Display *display, Window window, XftDraw *draw)
-{
-    int i;
-
-    for (i=0; i<_XmXftDrawCacheSize; i++)
-	if (_XmXftDrawCache[i].display == display &&
-	    _XmXftDrawCache[i].window == window) {
-	        _XmXftDrawCache[i].display = NULL;
-	        _XmXftDrawCache[i].draw = NULL;
-	        _XmXftDrawCache[i].window = None;
-	        XftDrawDestroy(draw);
-	        return;
-        }
-    XmeWarning(NULL, "_XmXftDrawDestroy() this should not happen\n");
+	app = _XmLock(display);
+	for (i = 0; i < _XmXftDrawCacheSize; i++) {
+		if ((draw = _XmXftDrawCache[i].draw) &&
+		    _XmXftDrawCache[i].display == display &&
+		    _XmXftDrawCache[i].window  == window) {
+			_XmXftDrawCache[i].display = NULL;
+			_XmXftDrawCache[i].draw    = NULL;
+			_XmXftDrawCache[i].window  = None;
+			XftDrawDestroy(draw);
+			break;
+		}
+	}
+	_XmUnlock(app);
 }
 
 void

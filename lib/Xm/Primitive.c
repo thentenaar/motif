@@ -894,7 +894,7 @@ static void Destroy(Widget w)
 
    /* Free the XftDraw cached for this window (its own text, or its gadgets') */
    if (XtIsRealized(w))
-       _XmXftDrawRelease(XtDisplay(w), XtWindow(w));
+       _XmXftDrawDestroy(XtDisplay(w), XtWindow(w));
 }
 
 /************************************************************************

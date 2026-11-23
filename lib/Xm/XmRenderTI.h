@@ -135,13 +135,11 @@ extern Boolean _XmRenderTableFindFirstFont(XmRenderTable rendertable,
  */
 XftDraw * _XmXftDrawCreate(Display *display, Window window);
 
-void _XmXftDrawDestroy(Display *display, Window window, XftDraw *d);
-
-/*
+/**
  * Free the cached XftDraw of a window, if any. Called when a widget that
  * may have drawn into that window is destroyed.
  */
-void _XmXftDrawRelease(Display *display, Window window);
+void _XmXftDrawDestroy(Display *display, Window window);
 
 void _XmXftDrawString(Display *display, Window window, XmRendition rend,
                       XmRenditionStyle style, int bpc, Position x,
