@@ -58,6 +58,7 @@ static char rcsid[] = "$TOG: Primitive.c /main/25 1999/01/27 16:08:04 mgreess $"
 #include "TraversalI.h"
 #include "UniqueEvnI.h"
 #include "XmI.h"
+#include "XmRenderTI.h"
 
 
 #define MESSAGE1	_XmMMsgPrimitive_0000
@@ -890,6 +891,10 @@ static void Destroy(Widget w)
    XtReleaseGC( w, pw->primitive.top_shadow_GC);
    XtReleaseGC( w, pw->primitive.bottom_shadow_GC);
    XtReleaseGC( w, pw->primitive.highlight_GC);
+
+   /* Free the XftDraw cached for this window (its own text, or its gadgets') */
+   if (XtIsRealized(w))
+       _XmXftDrawRelease(XtDisplay(w), XtWindow(w));
 }
 
 /************************************************************************

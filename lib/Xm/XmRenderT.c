@@ -2993,6 +2993,33 @@ _XmXftDrawCreate(Display *display, Window window)
 	return draw;
 }
 
+/*
+ * The XftDraw cache keeps one XftDraw per window: free the one of this
+ * window, if there's one. Unlike _XmXftDrawDestroy(), it's not an error
+ * for the window to have none (it never drew text).
+ */
+void
+_XmXftDrawRelease(Display *display, Window window)
+{
+    int i;
+
+    if (!display || window == None)
+        return;
+
+    for (i=0; i<_XmXftDrawCacheSize; i++)
+	if (_XmXftDrawCache[i].display == display &&
+	    _XmXftDrawCache[i].window == window) {
+	        XftDraw *draw = _XmXftDrawCache[i].draw;
+
+	        _XmXftDrawCache[i].display = NULL;
+	        _XmXftDrawCache[i].draw = NULL;
+	        _XmXftDrawCache[i].window = None;
+	        if (draw)
+	            XftDrawDestroy(draw);
+	        return;
+        }
+}
+
 void
 _XmXftDrawDestroy(Display *display, Window window, XftDraw *draw)
 {

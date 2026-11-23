@@ -57,6 +57,7 @@ static char rcsid[] = "$TOG: Manager.c /main/22 1999/01/27 16:07:30 mgreess $"
 #include "TraversalI.h"
 #include "UniqueEvnI.h"
 #include "XmI.h"
+#include "XmRenderTI.h"
 
 #define MESSAGE1 _XmMMsgManager_0000
 #define MESSAGE2 _XmMMsgManager_0001
@@ -910,6 +911,10 @@ Destroy(
    XtReleaseGC (w, mw->manager.top_shadow_GC);
    XtReleaseGC (w, mw->manager.bottom_shadow_GC);
    XtReleaseGC (w, mw->manager.highlight_GC);
+
+   /* Free the XftDraw cached for this window (its own text, or its gadgets') */
+   if (XtIsRealized(w))
+       _XmXftDrawRelease(XtDisplay(w), XtWindow(w));
 }
 
 
