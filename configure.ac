@@ -35,7 +35,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
 AC_PATH_PROG([PKG_CONFIG], [pkg-config])
-AC_PROG_YACC
+AC_CHECK_PROGS(YACC, byacc yacc 'bison -y', [${am_missing_run} yacc])
 AM_PROG_LEX(noyywrap)
 
 dnl Check the host system type and compiler characteristics
